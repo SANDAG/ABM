@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="module_sandagabm" default="compile.module.sandagabm">
+  <dirname property="module.sandagabm.basedir" file="${ant.file.module_sandagabm}"/>
+  
+  <property name="module.jdk.home.sandagabm" value="${project.jdk.home}"/>
+  <property name="module.jdk.classpath.sandagabm" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.sandagabm" value="${compiler.args}"/>
+  
+  <property name="sandagabm.output.dir" value="${module.sandagabm.basedir}/build/classes"/>
+  
+  <path id="sandagabm.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="sandagabm.module.classpath">
+    <path refid="${module.jdk.classpath.sandagabm}"/>
+    <pathelement location="${common-base.output.dir}"/>
+    <pathelement location="${logging-log4j-1.2.9.output.dir}"/>
+    <pathelement location="${module.sandagabm.basedir}/../../third-party/logging-log4j-1.2.9/log4j-1.2.9.jar"/>
+    <pathelement location="${module.sandagabm.basedir}/../../third-party/ssj/lib/ssj.jar"/>
+    <pathelement location="${module.sandagabm.basedir}/../../cmf/common-base/lib/junit.jar"/>
+    <pathelement location="${module.sandagabm.basedir}/../../cmf/common-base/lib/or124.jar"/>
+    <pathelement location="${module.common-base.basedir}/../../third-party/jexcelapi/jxl.jar"/>
+    <!-- <pathelement location="${module.common-base.basedir}/lib/jxl.jar"/> -->
+    <pathelement location="${module.sandagabm.basedir}/../../cmf/common-base/lib/xml4j.jar"/>
+    <pathelement location="${module.sandagabm.basedir}/../../cmf/common-base/lib/mysql-connector-java-3.0.10-stable-bin.jar"/>
+    <pathelement location="${module.sandagabm.basedir}/../../cmf/common-base/lib/dx.jar"/>
+    <pathelement location="${module.sandagabm.basedir}/../../cmf/common-base/lib/jds.jar"/>
+    <pathelement location="${module.sandagabm.basedir}/../../cmf/common-base/lib/cajo.jar"/>
+    <pathelement location="${module.sandagabm.basedir}/../../cmf/common-base/lib/dxml.jar"/>
+    <pathelement location="${module.sandagabm.basedir}/../../third-party/jppf-2.5/JPPF-2.5-driver/lib/jppf-server.jar"/>
+    <pathelement location="${module.sandagabm.basedir}/../../third-party/jppf-2.5/JPPF-2.5-admin-ui/lib/jppf-admin.jar"/>
+    <pathelement location="${module.sandagabm.basedir}/../../third-party/jppf-2.5/JPPF-2.5-admin-ui/lib/jppf-common.jar"/>
+    <pathelement location="${module.sandagabm.basedir}/../../third-party/jppf-2.5/JPPF-2.5-admin-ui/lib/jppf-common-node.jar"/>
+    <pathelement location="${module.sandagabm.basedir}/../../third-party/jppf-2.5/JPPF-2.5-admin-ui/lib/jppf-client.jar"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.sandagabm">
+	<!--<exclude name="org/sandag/abm/visitor/**"/> -->
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.sandagabm">
+    <patternset refid="excluded.from.module.sandagabm"/>
+  </patternset>
+  
+  <path id="sandagabm.module.sourcepath">
+    <dirset dir="${module.sandagabm.basedir}">
+      <include name="src/java"/>
+    </dirset>
+  </path>
+
+  <target name="compile.module.sandagabm" description="compile module sandagabm classes">
+    <mkdir dir="${sandagabm.output.dir}"/>
+    <javac destdir="${sandagabm.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memoryMaximumSize="${compiler.max.memory}" fork="true" executable="${module.jdk.home.sandagabm}/bin/javac">
+      <compilerarg line="${compiler.args.sandagabm}"/>
+      <bootclasspath refid="sandagabm.module.bootclasspath"/>
+      <classpath refid="sandagabm.module.classpath"/>
+      <src refid="sandagabm.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.sandagabm"/>
+    </javac>
+    <copy todir="${sandagabm.output.dir}">
+      <fileset dir="${module.sandagabm.basedir}/src/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.sandagabm"/>
+      </fileset>
+    </copy>
+ </target>
+  
+  <target name="clean.module.sandagabm" description="cleanup module">
+    <delete dir="${sandagabm.output.dir}"/>
+  </target>
+</project>
