@@ -43,25 +43,35 @@
 		</dependency>
 	</dependencies>
 
-  <distributionManagement>
-    <snapshotRepository>
-      <id>nexus</id>
-      <name>Snapshots</name>
-      <url>http://svn.sandag.org:8081/nexus/content/repositories/snapshots</url>
-      <uniqueVersion>false</uniqueVersion>
-    </snapshotRepository>
+	<distributionManagement>
+		<snapshotRepository>
+			<id>nexus</id>
+			<name>Snapshots</name>
+			<url>http://svn.sandag.org:8081/nexus/content/repositories/snapshots</url>
+			<uniqueVersion>false</uniqueVersion>
+		</snapshotRepository>
 		<repository>
 			<id>nexus</id>
 			<name>Releases</name>
-			<url>http://svn.sandag.org:8081/nexus/content/repositories/releases/</url>
+		<url>http://svn.sandag.org:8081/nexus/content/repositories/releases/</url>
 		</repository>
 	</distributionManagement>
   
 	<repositories>
 		<repository>
-			<id>nexus</id>
+			<id>nexus-thirdparty</id>
 			<name>Sandag Nexus</name>
 			<url>http://svn.sandag.org:8081/nexus/content/repositories/thirdparty</url>
+		</repository>
+		<repository>
+			<id>nexus-release</id>
+			<name>Sandag Nexus Release</name>
+			<url>http://svn.sandag.org:8081/nexus/content/repositories/release</url>
+		</repository>
+		<repository>
+			<id>nexus-snapshots</id>
+			<name>Sandag Nexus Snapshots</name>
+			<url>http://svn.sandag.org:8081/nexus/content/repositories/snapshots</url>
 		</repository>
 	</repositories>
 </project>
