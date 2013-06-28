@@ -43,6 +43,20 @@
 		</dependency>
 	</dependencies>
 
+  <distributionManagement>
+    <snapshotRepository>
+      <id>nexus</id>
+      <name>Snapshots</name>
+      <url>http://svn.sandag.org:8081/nexus/content/repositories/snapshots</url>
+      <uniqueVersion>false</uniqueVersion>
+    </snapshotRepository>
+		<repository>
+			<id>nexus</id>
+			<name>Releases</name>
+			<url>http://svn.sandag.org:8081/nexus/content/repositories/releases/</url>
+		</repository>
+	</distributionManagement>
+  
 	<repositories>
 		<repository>
 			<id>nexus</id>
