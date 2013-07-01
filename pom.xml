@@ -10,6 +10,20 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>2.10</version>
+				<configuration>
+          <failsOnError>false</failsOnError>
+					<configLocation>checkstyle.xml</configLocation>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+ 
 	<dependencies>
 		<dependency>
 			<groupId>pb</groupId>
@@ -35,6 +49,12 @@
 			<groupId>ca.umontreal.iro</groupId>
 			<artifactId>ssj</artifactId>
 			<version>2.5</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>icu4j</artifactId>
+					<groupId>com.ibm.icu</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -45,13 +65,13 @@
 
 	<distributionManagement>
 		<snapshotRepository>
-			<id>nexus</id>
+			<id>nexus-snapshots</id>
 			<name>Snapshots</name>
 			<url>http://svn.sandag.org:8081/nexus/content/repositories/snapshots</url>
 			<uniqueVersion>false</uniqueVersion>
 		</snapshotRepository>
 		<repository>
-			<id>nexus</id>
+			<id>nexus-release</id>
 			<name>Releases</name>
 		<url>http://svn.sandag.org:8081/nexus/content/repositories/releases/</url>
 		</repository>
