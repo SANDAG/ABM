@@ -18,7 +18,7 @@
 				<version>2.10</version>
 				<configuration>
           <failsOnError>false</failsOnError>
-					<configLocation>checkstyle.xml</configLocation>
+					<configLocation>sun_checks.xml</configLocation>
 				</configuration>
 			</plugin>
 		</plugins>
