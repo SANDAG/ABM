@@ -1,27 +1,25 @@
 package org.sandag.abm.accessibilities;
 
-import com.pb.common.util.ResourceUtil;
-import com.pb.common.util.Tracer;
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
-import java.rmi.RemoteException;
-import java.net.UnknownHostException;
-import com.pb.common.matrix.MatrixType;
-import org.sandag.abm.ctramp.MatrixDataServer;
-import org.sandag.abm.ctramp.Util;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
+import org.sandag.abm.ctramp.MatrixDataServer;
+import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.Modes;
+import org.sandag.abm.modechoice.Modes.AccessMode;
 import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
 import org.sandag.abm.modechoice.TransitDriveAccessUEC;
 import org.sandag.abm.modechoice.TransitWalkAccessUEC;
-import org.sandag.abm.modechoice.Modes.AccessMode;
+import com.pb.common.matrix.MatrixType;
+import com.pb.common.util.ResourceUtil;
+import com.pb.common.util.Tracer;
 
 /**
  * This class builds utility components for walk-transit.
@@ -33,11 +31,12 @@ public class TransitUtilities
         implements Serializable
 {
 
-    protected transient Logger         logger     = Logger.getLogger(TransitUtilities.class);
+    protected transient Logger      logger     = Logger.getLogger(TransitUtilities.class);
 
     private static final String[]   TAPPERIODS = {"OP", "PK"};
 
-    // store tap-tap exponentiated utilities (period, from tap, to tap, ride mode)
+    // store tap-tap exponentiated utilities (period, from tap, to tap, ride
+    // mode)
     private double[][][][]          tapExpUtilities;
 
     // store walk-access mgra-tap exponentiated utilities (mgra, tap)
@@ -62,7 +61,8 @@ public class TransitUtilities
     /**
      * Default constructor.
      * 
-     * @param rb The ResourceBundle for this class.
+     * @param rb
+     *            The ResourceBundle for this class.
      */
     public TransitUtilities(HashMap<String, String> rbMap)
     {
@@ -122,9 +122,8 @@ public class TransitUtilities
 
             // get the mgras associated with the origin taz
             int[] mgraList = tazManager.getMgraArray(traceOtaz[i]);
-            if ( mgraList == null )
-                continue;
-            
+            if (mgraList == null) continue;
+
             // iterate through them, and add all taps within walking distance
             // to the traceTap array
 
@@ -141,10 +140,10 @@ public class TransitUtilities
             {
                 // get the mgras associated with the origin taz
                 mgraList = tazManager.getMgraArray(traceDtaz[j]);
-                if ( mgraList == null )
-                    continue;
-                
-                // iterate through them, and add all taps within walking distance
+                if (mgraList == null) continue;
+
+                // iterate through them, and add all taps within walking
+                // distance
                 // to the traceTap array
                 for (int dMgra : mgraList)
                 {
@@ -187,7 +186,8 @@ public class TransitUtilities
     }
 
     /**
-     * set the array of TAP utilities built by calling calculateUtilityComponents().
+     * set the array of TAP utilities built by calling
+     * calculateUtilityComponents().
      */
     public void setTapUtilitiesArray(double[][][][] tapExpUtils)
     {
@@ -195,7 +195,8 @@ public class TransitUtilities
     }
 
     /**
-     * get the array of TAP utilities built by calling calculateUtilityComponents().
+     * get the array of TAP utilities built by calling
+     * calculateUtilityComponents().
      */
     public double[][][][] getTapUtilitiesArray()
     {
@@ -203,11 +204,12 @@ public class TransitUtilities
     }
 
     /**
-     * This is the main method, that builds the utility components for TAP-TAP and
-     * MGRA-TAP. The arrays that are filled in are: tapExpUtilities[][][] and
-     * mgraExpUtilities[][].
+     * This is the main method, that builds the utility components for TAP-TAP
+     * and MGRA-TAP. The arrays that are filled in are: tapExpUtilities[][][]
+     * and mgraExpUtilities[][].
      * 
-     * @param rb The ResourceBundle for this class.
+     * @param rb
+     *            The ResourceBundle for this class.
      */
     public void calculateUtilityComponents()
     {
@@ -321,8 +323,8 @@ public class TransitUtilities
      * 
      * public void calculateFullMgraUtilities(){
      * 
-     * logger.info("Calculating Full MGRA-MGRA exponentiated utilities"); double[][]
-     * expUtilities = new
+     * logger.info("Calculating Full MGRA-MGRA exponentiated utilities");
+     * double[][] expUtilities = new
      * double[WTPERIODS.length][Modes.TransitModes.values().length];
      * 
      * for(int period=0;period<WTPERIODS.length;++period){
@@ -356,12 +358,15 @@ public class TransitUtilities
      */
 
     /**
-     * Calculate the utilities for all tap-pairs for this mgra-pair, and return the
-     * best utilities by mode.
+     * Calculate the utilities for all tap-pairs for this mgra-pair, and return
+     * the best utilities by mode.
      * 
-     * @param oMgra Origin/Production MGRA
-     * @param dMgra Destination/Attraction MGRA
-     * @param period The period
+     * @param oMgra
+     *            Origin/Production MGRA
+     * @param dMgra
+     *            Destination/Attraction MGRA
+     * @param period
+     *            The period
      * @return An array of exponentiated utilities, by mode.
      */
     public double[] calculateWalkTransitExpUtilities(int oMgra, int dMgra, int period)
@@ -383,8 +388,7 @@ public class TransitUtilities
             logger.info("Walk-Transit Mgra-Mgra calculations for " + oMgra + " to " + dMgra
                     + " period " + period);
             logger.info("");
-            logger
-                    .info("iTap,jTap,mode,tapExpUtility,mgraTapExpUtility,tapMgraExpUtility,totalExpUtility");
+            logger.info("iTap,jTap,mode,tapExpUtility,mgraTapExpUtility,tapMgraExpUtility,totalExpUtility");
             writeCalculations = true;
         }
         int iPos = -1;
@@ -412,7 +416,8 @@ public class TransitUtilities
                     }
                 }
 
-                // the uec object stores the best utilities for this interchange.
+                // the uec object stores the best utilities for this
+                // interchange.
                 walkUEC[period].comparePaths(expUtilities, iTap, jTap, writeCalculations);
 
             } // end jTap
@@ -438,12 +443,15 @@ public class TransitUtilities
     }
 
     /**
-     * Calculate the utilities for all tap-pairs for this mgra-pair, and return the
-     * best utilities by mode.
+     * Calculate the utilities for all tap-pairs for this mgra-pair, and return
+     * the best utilities by mode.
      * 
-     * @param oTaz Origin/Production TAZ
-     * @param dMgra Destination/Attraction MGRA
-     * @param period The period
+     * @param oTaz
+     *            Origin/Production TAZ
+     * @param dMgra
+     *            Destination/Attraction MGRA
+     * @param period
+     *            The period
      * @return An array of exponentiated utilities, by mode.
      */
     public double[] calculateDriveTransitExpUtilities(int oTaz, int dMgra, int period)
@@ -454,7 +462,8 @@ public class TransitUtilities
 
         AccessMode accMode = AccessMode.PARK_N_RIDE;
 
-        // skip Tazs with no TAPs within driving distance on origin or within walking
+        // skip Tazs with no TAPs within driving distance on origin or within
+        // walking
         // distance on destination end
         if (tazManager.getParkRideOrKissRideTapsForZone(oTaz, accMode) == null
                 || mgraManager.getMgraWlkTapsDistArray()[dMgra][0] == null) return expUtilities;
@@ -474,8 +483,7 @@ public class TransitUtilities
             logger.info("Drive-Transit Taz-Mgra calculations for " + oTaz + " to " + dMgra
                     + " period " + period);
             logger.info("");
-            logger
-                    .info("iTap,jTap,mode,tapExpUtility,tazTapExpUtility,tapMgraExpUtility,totalExpUtility");
+            logger.info("iTap,jTap,mode,tapExpUtility,tazTapExpUtility,tapMgraExpUtility,totalExpUtility");
             trace = true;
         }
 
@@ -504,7 +512,8 @@ public class TransitUtilities
                     }
                 }
 
-                // the uec object stores the best utilities for this interchange.
+                // the uec object stores the best utilities for this
+                // interchange.
                 driveUEC[period].comparePaths(expUtilities, iTap, jTap, writeCalculations);
 
             } // end jTap
@@ -533,8 +542,10 @@ public class TransitUtilities
     /**
      * Get the best walk taps for the given transit mode and period.
      * 
-     * @param transitMode The transit mode to look up.
-     * @param period 0 For off-peak, 1 for peak
+     * @param transitMode
+     *            The transit mode to look up.
+     * @param period
+     *            0 For off-peak, 1 for peak
      * @return An array where element 0 = best pTap, and element 1 = best aTap.
      */
     public int[] getBestWalkTaps(Modes.TransitMode transitMode, int period)
@@ -547,7 +558,8 @@ public class TransitUtilities
     /**
      * Get the best taps for the given period.
      * 
-     * @param period 0 For off-peak, 1 for peak
+     * @param period
+     *            0 For off-peak, 1 for peak
      * @return An array where element 0 = best pTap, and element 1 = best aTap.
      */
     public int[] getBestWalkTaps(int period)
@@ -561,8 +573,10 @@ public class TransitUtilities
     /**
      * Get the best walk taps for the given transit mode and period.
      * 
-     * @param transitMode The transit mode to look up.
-     * @param period 0 For off-peak, 1 for peak
+     * @param transitMode
+     *            The transit mode to look up.
+     * @param period
+     *            0 For off-peak, 1 for peak
      * @return An array where element 0 = best pTap, and element 1 = best aTap.
      */
     public int[] getBestDriveTaps(Modes.TransitMode transitMode, int period)
@@ -575,7 +589,8 @@ public class TransitUtilities
     /**
      * Get the best taps for the given period.
      * 
-     * @param period 0 For off-peak, 1 for peak
+     * @param period
+     *            0 For off-peak, 1 for peak
      * @return An array where element 0 = best pTap, and element 1 = best aTap.
      */
     public int[] getBestDriveTaps(int period)
@@ -597,11 +612,12 @@ public class TransitUtilities
     }
 
     /**
-     * Get the best transit mode for a given period. Returns null if no transit mode
-     * has an exponentiated utility. Call only after calling
+     * Get the best transit mode for a given period. Returns null if no transit
+     * mode has an exponentiated utility. Call only after calling
      * getWalkTransitExpUtilities().
      * 
-     * @param period 0 For off-peak, 1 for peak
+     * @param period
+     *            0 For off-peak, 1 for peak
      * @return The best transit mode (highest exponentiated utility)
      */
     public Modes.TransitMode getBestWalkTransitMode(int period)
@@ -624,11 +640,12 @@ public class TransitUtilities
     }
 
     /**
-     * Get the best drive transit mode for a given period. Returns null if no transit
-     * mode has an exponentiated utility. Call only after calling
+     * Get the best drive transit mode for a given period. Returns null if no
+     * transit mode has an exponentiated utility. Call only after calling
      * getWalkTransitExpUtilities().
      * 
-     * @param period 0 For off-peak, 1 for peak
+     * @param period
+     *            0 For off-peak, 1 for peak
      * @return The best transit mode (highest exponentiated utility)
      */
     public Modes.TransitMode getBestDriveTransitMode(int period)
@@ -653,10 +670,10 @@ public class TransitUtilities
     /**
      * The main method runs this class, for testing purposes.
      * 
-     * @param args args[0] is the property file for this test run.
-     * @throws IOException 
+     * @param args
+     *            args[0] is the property file for this test run.
      */
-    public static void main(String[] args) throws IOException
+    public static void main(String[] args)
     {
 
         ResourceBundle rb = ResourceUtil.getPropertyBundle(new File(args[0]));
@@ -682,18 +699,22 @@ public class TransitUtilities
             } catch (RuntimeException e)
             {
                 matrixServer.stop32BitMatrixIoServer();
-                System.out.println(  "RuntimeException caught in com.pb.sandag.accessibilities.main() -- exiting." );
+                System.out
+                        .println("RuntimeException caught in com.pb.sandag.accessibilities.main() -- exiting.");
                 e.printStackTrace();
             }
 
-            // bind this concrete object with the cajo library objects for managing
+            // bind this concrete object with the cajo library objects for
+            // managing
             // RMI
             try
             {
                 Remote.config(serverAddress, serverPort, null, 0);
             } catch (Exception e)
             {
-                System.out.println(String.format( "UnknownHostException. serverAddress = %s, serverPort = %d -- exiting.", serverAddress, serverPort) );
+                System.out.println(String.format(
+                        "UnknownHostException. serverAddress = %s, serverPort = %d -- exiting.",
+                        serverAddress, serverPort));
                 e.printStackTrace();
                 matrixServer.stop32BitMatrixIoServer();
                 throw new RuntimeException();
@@ -702,17 +723,19 @@ public class TransitUtilities
             try
             {
                 ItemServer.bind(matrixServer, className);
-            } catch (RemoteException e)
+            } catch (IOException e)
             {
-                System.out.println(String.format( "RemoteException. serverAddress = %s, serverPort = %d -- exiting.", serverAddress, serverPort) );
+                System.out.println(String.format(
+                        "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",
+                        serverAddress, serverPort));
                 e.printStackTrace();
                 matrixServer.stop32BitMatrixIoServer();
                 throw new RuntimeException();
             }
         }
 
-        TransitUtilities wtu = new TransitUtilities(ResourceUtil
-                .changeResourceBundleIntoHashMap(rb));
+        TransitUtilities wtu = new TransitUtilities(
+                ResourceUtil.changeResourceBundleIntoHashMap(rb));
         wtu.calculateUtilityComponents();
 
         if (os64bit)

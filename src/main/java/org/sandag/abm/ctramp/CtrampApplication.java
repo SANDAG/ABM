@@ -244,8 +244,8 @@ public class CtrampApplication implements Serializable
                 else {
                     
                     ms = new MatrixDataServerRmi( matrixServerAddress, serverPort, MatrixDataServer.MATRIX_DATA_SERVER_NAME );
-                    ms.testRemote(Thread.currentThread().getName());
-                    ms.start32BitMatrixIoServer( mt );
+                    ms.testRemote( "CtrampApplication" );
+                    ms.start32BitMatrixIoServer( mt, "CtrampApplication" );
                     
                     MatrixDataManager mdm = MatrixDataManager.getInstance();
                     mdm.setMatrixDataServerObject(ms);
@@ -297,7 +297,7 @@ public class CtrampApplication implements Serializable
             stop32BitMatrixIoServer();
         }
         else if ( ms != null ){
-            ms.stop32BitMatrixIoServer();
+            ms.stop32BitMatrixIoServer( "CtrampApplication" );
         }
 
     }
