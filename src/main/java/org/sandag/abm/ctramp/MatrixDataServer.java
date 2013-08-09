@@ -181,6 +181,20 @@ public class MatrixDataServer
 
     }
 
+    public void start32BitMatrixIoServer(MatrixType mType, String label)
+    {
+
+        // start the matrix I/O server process
+        ioVm32Bit.setSizeInMegaBytes( ramFor32BitProcess );
+        ioVm32Bit.startJVM32();
+
+        // establish that matrix reader and writer classes will use the RMI versions
+        // for TPPLUS format matrices
+        ioVm32Bit.startMatrixDataServer(mType);
+        logger.info("matrix data server 32 bit process initialized by " + label + ".");
+
+    }
+
     public void stop32BitMatrixIoServer()
     {
 
@@ -190,6 +204,18 @@ public class MatrixDataServer
         // close the JVM in which the RMI reader/writer classes were running
         ioVm32Bit.stopJVM32();
         logger.info("matrix data server 32 bit process stopped.");
+
+    }
+    
+    public void stop32BitMatrixIoServer( String label )
+    {
+
+        // stop the matrix I/O server process
+        ioVm32Bit.stopMatrixDataServer();
+
+        // close the JVM in which the RMI reader/writer classes were running
+        ioVm32Bit.stopJVM32();
+        logger.info("matrix data server 32 bit process released by " + label + ".");
 
     }
     

@@ -5,6 +5,7 @@ import org.sandag.abm.ctramp.TourModeChoiceDMU;
 import org.sandag.abm.ctramp.ModelStructure;
 import com.pb.common.calculator.IndexValues;
 
+
 public class SandagAppendMcLogsumDMU
         extends TourModeChoiceDMU
 {

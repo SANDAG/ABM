@@ -520,7 +520,7 @@ public class TourDepartureTimeAndDurationDMU
     {
         int count = 0;
         for (Tour t : person.getListOfIndividualNonMandatoryTours())
-            if (!t.getTourPurpose().startsWith("escort")) count++;
+        	if (!t.getTourPrimaryPurpose().equalsIgnoreCase( ModelStructure.ESCORT_PRIMARY_PURPOSE_NAME)) count++;
         return count;
     }
 

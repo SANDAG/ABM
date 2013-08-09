@@ -720,8 +720,8 @@ public class SandagTripTables {
                     try {
                         // create the RMI data server object
                         ms = new MatrixDataServerRmi( matrixServerAddress, serverPort, MatrixDataServer.MATRIX_DATA_SERVER_NAME );
-                        ms.testRemote(Thread.currentThread().getName());
-                        ms.start32BitMatrixIoServer( mt );
+                        ms.testRemote( "SandagTripTables" );
+                        ms.start32BitMatrixIoServer( mt, "SandagTripTables" );
                     }
                     catch ( RuntimeException e ) {
                         logger.error ( "RuntimeException caught starting matrix server: " + matrixServerAddress + ":" + serverPort + " from RMI object -- exiting.", e );
@@ -802,7 +802,7 @@ public class SandagTripTables {
             tripTables.stop32BitMatrixIoServer();
         }
         else {
-            tripTables.ms.stop32BitMatrixIoServer();
+            tripTables.ms.stop32BitMatrixIoServer( "SandagTripTables" );
         }
 		
         
