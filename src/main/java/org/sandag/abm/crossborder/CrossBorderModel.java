@@ -236,11 +236,9 @@ public class CrossBorderModel
     }
 
     /**
-     * This class is the divide-and-conquer action (void return task) for
-     * running the cross-border model using the fork-join framework. The
-     * divisible problem is an array of tours, and the actual work is the
-     * {@link CrossBorderModel#runModel(CrossBorderTour[],int,int)} method,
-     * applied to a section of the array.
+     * This class is the divide-and-conquer action (void return task) for running the cross-border model using the fork-join framework. The divisible
+     * problem is an array of tours, and the actual work is the {@link CrossBorderModel#runModel(CrossBorderTour[],int,int)} method, applied to a
+     * section of the array.
      */
     private class CrossBorderModelAction
             extends DnCRecursiveAction

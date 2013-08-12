@@ -3,68 +3,70 @@ package org.sandag.abm.crossborder;
 import org.apache.log4j.Logger;
 import org.sandag.abm.application.SandagModelStructure;
 
-public class CrossBorderModelStructure extends SandagModelStructure{
-	
-	public final static byte NUMBER_CROSSBORDER_PURPOSES = 6;
-	public final static byte WORK    = 0;
-	public final static byte SCHOOL  = 1;
-	public final static byte CARGO   = 2;
-	public final static byte SHOP    = 3;
-	public final static byte VISIT   = 4;
-	public final static byte OTHER   = 5;
-	
-	public final static String[] CROSSBORDER_PURPOSES = {"WORK","SCHOOL","CARGO","SHOP","VISIT","OTHER"};
+public class CrossBorderModelStructure
+        extends SandagModelStructure
+{
 
-	public final static byte DEPARTURE = 0;
-	public final static byte ARRIVAL = 1;
+    public final static byte     NUMBER_CROSSBORDER_PURPOSES = 6;
+    public final static byte     WORK                        = 0;
+    public final static byte     SCHOOL                      = 1;
+    public final static byte     CARGO                       = 2;
+    public final static byte     SHOP                        = 3;
+    public final static byte     VISIT                       = 4;
+    public final static byte     OTHER                       = 5;
 
-    public static final int      AM                                                                 = 0;
-    public static final int      PM                                                                 = 1;
-    public static final int      OP                                                                 = 2;
-    public static final int[]    SKIM_PERIODS                                                       = {
-            AM, PM, OP                                                                              };
-    public static final String[] SKIM_PERIOD_STRINGS                                                = {
-            "AM", "PM", "OP"                                                                        };
-    public static final int UPPER_EA = 3;
-    public static final int UPPER_AM = 9;
-    public static final int UPPER_MD = 22;
-    public static final int UPPER_PM = 29;
-    public static final String[] MODEL_PERIOD_LABELS = { "EA", "AM", "MD", "PM", "EV" };
+    public final static String[] CROSSBORDER_PURPOSES        = {"WORK", "SCHOOL", "CARGO", "SHOP",
+            "VISIT", "OTHER"                                 };
 
-	public static final byte TOUR_MODES = 4;
-	
-	public static final byte DRIVEALONE   = 1;
-	public static final byte SHARED2      = 2;	
-	public static final byte SHARED3      = 3;
-	public static final byte WALK         = 4;
-	
-	//note that time periods start at 1 and go to 40
-	public static final byte TIME_PERIODS = 40;
+    public final static byte     DEPARTURE                   = 0;
+    public final static byte     ARRIVAL                     = 1;
 
-    
-	/**
-	 * Calculate and return the destination choice size term segment
-	 * 
-	 * @param purpose
-	 * @return Right now, just the purpose is returned.
-	 */
-	public static int getDCSizeSegment(int purpose){
+    public static final int      AM                          = 0;
+    public static final int      PM                          = 1;
+    public static final int      OP                          = 2;
+    public static final int[]    SKIM_PERIODS                = {AM, PM, OP};
+    public static final String[] SKIM_PERIOD_STRINGS         = {"AM", "PM", "OP"};
+    public static final int      UPPER_EA                    = 3;
+    public static final int      UPPER_AM                    = 9;
+    public static final int      UPPER_MD                    = 22;
+    public static final int      UPPER_PM                    = 29;
+    public static final String[] MODEL_PERIOD_LABELS         = {"EA", "AM", "MD", "PM", "EV"};
 
-		return purpose;
-		
-	}
+    public static final byte     TOUR_MODES                  = 4;
 
+    public static final byte     DRIVEALONE                  = 1;
+    public static final byte     SHARED2                     = 2;
+    public static final byte     SHARED3                     = 3;
+    public static final byte     WALK                        = 4;
 
-	/**
-	 * Calculate the purpose from the dc size segment.
-	 * 
-	 * @param segment  The dc size segment (0-17)
-	 * @return  The purpose
-	 */
-	public static int getPurposeFromDCSizeSegment(int segment){
-		
-    	return segment;
-	}
+    // note that time periods start at 1 and go to 40
+    public static final byte     TIME_PERIODS                = 40;
+
+    /**
+     * Calculate and return the destination choice size term segment
+     * 
+     * @param purpose
+     * @return Right now, just the purpose is returned.
+     */
+    public static int getDCSizeSegment(int purpose)
+    {
+
+        return purpose;
+
+    }
+
+    /**
+     * Calculate the purpose from the dc size segment.
+     * 
+     * @param segment
+     *            The dc size segment (0-17)
+     * @return The purpose
+     */
+    public static int getPurposeFromDCSizeSegment(int segment)
+    {
+
+        return segment;
+    }
 
     /**
      * return the Skim period index 0=am, 1=pm, 2=off-peak
@@ -103,4 +105,3 @@ public class CrossBorderModelStructure extends SandagModelStructure{
     }
 
 }
-
