@@ -35,8 +35,8 @@ public class AccessibilitiesDMU
     // a
     // given
     // mgra-pair
-    
-    private Household hhObject;
+
+    private Household                  hhObject;
 
     // the alternativeData tabledataset has the following fields
     // sizeTermIndex: Used to index into the sizeTerms array
@@ -100,31 +100,28 @@ public class AccessibilitiesDMU
         sizeIndex = alternativeData.getColumnPosition("sizeTermIndex");
 
     }
-    
 
     public int getNumPreschool()
     {
         return hhObject.getNumPreschool();
     }
-    
+
     public int getNumGradeSchoolStudents()
     {
         return hhObject.getNumGradeSchoolStudents();
     }
-    
+
     public int getNumHighSchoolStudents()
     {
         return hhObject.getNumHighSchoolStudents();
     }
-    
-    
+
     public int getAutoSufficiency()
     {
         return autoSufficiency;
     }
-    
-    
-    public void setHouseholdObject( Household hh )
+
+    public void setHouseholdObject(Household hh)
     {
         hhObject = hh;
     }

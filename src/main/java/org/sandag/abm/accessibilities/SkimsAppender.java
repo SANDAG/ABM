@@ -25,22 +25,22 @@ import com.pb.common.util.ResourceUtil;
 public final class SkimsAppender
 {
 
-    protected transient Logger       logger                       = Logger.getLogger(SkimsAppender.class);
+    protected transient Logger        logger                       = Logger.getLogger(SkimsAppender.class);
 
-    private static final String   OBS_DATA_RECORDS_FILE_KEY    = "onBoard.survey.file";
-    private static final String   HIS_DATA_RECORDS_FILE_KEY    = "homeInterview.survey.file";
+    private static final String       OBS_DATA_RECORDS_FILE_KEY    = "onBoard.survey.file";
+    private static final String       HIS_DATA_RECORDS_FILE_KEY    = "homeInterview.survey.file";
 
-    private static final int      OBS_UNIQUE_ID                = 1;
-    private static final int      OBS_ORIG_MGRA                = 78;
-    private static final int      OBS_DEST_MGRA                = 79;
-    
-//    used for trip file:    
-    private static final int      OBS_OUT_TOUR_PERIOD           = 133;
-    private static final int      OBS_IN_TOUR_PERIOD            = 134;
+    private static final int          OBS_UNIQUE_ID                = 1;
+    private static final int          OBS_ORIG_MGRA                = 78;
+    private static final int          OBS_DEST_MGRA                = 79;
 
-//    used for tour file:    
-//    private static final int      OBS_DEPART_PERIOD            = 132;
-//    private static final int      OBS_ARRIVE_PERIOD            = 133;
+    // used for trip file:
+    private static final int          OBS_OUT_TOUR_PERIOD          = 133;
+    private static final int          OBS_IN_TOUR_PERIOD           = 134;
+
+    // used for tour file:
+    // private static final int OBS_DEPART_PERIOD = 132;
+    // private static final int OBS_ARRIVE_PERIOD = 133;
 
     /*
      * for home based tour mode choice estimation files private static final int
@@ -52,26 +52,27 @@ public final class SkimsAppender
     /*
      * for work based tour mode choice estimation files
      */
-    private static final int      HIS_ORIG_MGRA                = 76;
-    private static final int      HIS_DEST_MGRA                = 84;
-    private static final int      HIS_DEPART_PERIOD            = 159;
-    private static final int      HIS_ARRIVE_PERIOD            = 160;
+    private static final int          HIS_ORIG_MGRA                = 76;
+    private static final int          HIS_DEST_MGRA                = 84;
+    private static final int          HIS_DEPART_PERIOD            = 159;
+    private static final int          HIS_ARRIVE_PERIOD            = 160;
 
-    // survey periods are: 0=not used, 1=03:00-05:59, 2=06:00-08:59, 3=09:00-11:59,
+    // survey periods are: 0=not used, 1=03:00-05:59, 2=06:00-08:59,
+    // 3=09:00-11:59,
     // 4=12:00-15:29, 5=15:30-18:59, 6=19:00-02:59
     // skim periods are: 0=0(N/A), 1=3(OP), 2=1(AM), 3=3(OP), 4=3(OP), 5=2(PM),
     // 6=3(OP)
 
-    // define a conversion array to convert period values in the survey file to skim
+    // define a conversion array to convert period values in the survey file to
+    // skim
     // period indices used in this propgram: 1=am peak, 2=pm peak,
     // 3=off-peak.
-    private static final String[] SKIM_PERIOD_LABELS           = {"am", "pm", "op"};
-    private static final int[]    SURVEY_PERIOD_TO_SKIM_PERIOD = {0, 3, 1, 3, 3, 2, 3};
+    private static final String[]     SKIM_PERIOD_LABELS           = {"am", "pm", "op"};
+    private static final int[]        SURVEY_PERIOD_TO_SKIM_PERIOD = {0, 3, 1, 3, 3, 2, 3};
 
-    private MatrixDataServerIf    ms;
+    private MatrixDataServerIf        ms;
     private BestTransitPathCalculator bestPathUEC;
-    
-    
+
     private SkimsAppender()
     {
     }
@@ -80,12 +81,12 @@ public final class SkimsAppender
     {
 
         HashMap<String, String> rbMap = ResourceUtil.changeResourceBundleIntoHashMap(rb);
-        
+
         // instantiate these objects right away
         TazDataManager tazs = TazDataManager.getInstance(rbMap);
         MgraDataManager mgraManager = MgraDataManager.getInstance(rbMap);
         TapDataManager tapManager = TapDataManager.getInstance(rbMap);
-        
+
         AutoAndNonMotorizedSkimsCalculator anm = null;
         WalkTransitWalkSkimsCalculator wtw = null;
         WalkTransitDriveSkimsCalculator wtd = null;
@@ -95,7 +96,6 @@ public final class SkimsAppender
         Logger wtwLogger = Logger.getLogger("wtw");
         Logger wtdLogger = Logger.getLogger("wtd");
         Logger dtwLogger = Logger.getLogger("dtw");
-
 
         String outputFileNameObs = Util.getStringValueFromPropertyMap(rbMap,
                 "obs.skims.output.file");
@@ -114,7 +114,7 @@ public final class SkimsAppender
 
             anm = new AutoAndNonMotorizedSkimsCalculator(rbMap);
 
-            McLogsumsCalculator logsumHelper = new McLogsumsCalculator();                        
+            McLogsumsCalculator logsumHelper = new McLogsumsCalculator();
             bestPathUEC = logsumHelper.getBestTransitPathCalculator();
 
             wtw = new WalkTransitWalkSkimsCalculator();
@@ -131,34 +131,36 @@ public final class SkimsAppender
             heading += ",obOrigMgra,obDestMgra,obPeriod";
             heading += getAutoSkimsHeaderRecord("auto", anm.getAutoSkimNames());
             heading += getNonMotorizedSkimsHeaderRecord("nm", anm.getNmSkimNames());
-            heading += getTransitSkimsHeaderRecord("wtw", wtw.getLocalSkimNames(), wtw
-                    .getPremiumSkimNames());
-            heading += getTransitSkimsHeaderRecord("wtd", wtd.getLocalSkimNames(), wtd
-                    .getPremiumSkimNames());
-            heading += getTransitSkimsHeaderRecord("dtw", dtw.getLocalSkimNames(), dtw
-                    .getPremiumSkimNames());
+            heading += getTransitSkimsHeaderRecord("wtw", wtw.getLocalSkimNames(),
+                    wtw.getPremiumSkimNames());
+            heading += getTransitSkimsHeaderRecord("wtd", wtd.getLocalSkimNames(),
+                    wtd.getPremiumSkimNames());
+            heading += getTransitSkimsHeaderRecord("dtw", dtw.getLocalSkimNames(),
+                    dtw.getPremiumSkimNames());
 
             heading += ",ObsSeq,Id,ibOrigMgra,ibDestMgra,ibPeriod";
             heading += getAutoSkimsHeaderRecord("auto", anm.getAutoSkimNames());
             heading += getNonMotorizedSkimsHeaderRecord("nm", anm.getNmSkimNames());
-            heading += getTransitSkimsHeaderRecord("wtw", wtw.getLocalSkimNames(), wtw
-                    .getPremiumSkimNames());
-            heading += getTransitSkimsHeaderRecord("wtd", wtd.getLocalSkimNames(), wtd
-                    .getPremiumSkimNames());
-            heading += getTransitSkimsHeaderRecord("dtw", dtw.getLocalSkimNames(), dtw
-                    .getPremiumSkimNames());
+            heading += getTransitSkimsHeaderRecord("wtw", wtw.getLocalSkimNames(),
+                    wtw.getPremiumSkimNames());
+            heading += getTransitSkimsHeaderRecord("wtd", wtd.getLocalSkimNames(),
+                    wtd.getPremiumSkimNames());
+            heading += getTransitSkimsHeaderRecord("dtw", dtw.getLocalSkimNames(),
+                    dtw.getPremiumSkimNames());
 
             if (outputFileNameObs != "")
             {
                 try
                 {
-                    // create an output stream for the mode choice estimation file
+                    // create an output stream for the mode choice estimation
+                    // file
                     // with
                     // observed TOD
                     writer = new FileWriter(new File(outputFileNameObs));
                     outStreamObs = new PrintWriter(new BufferedWriter(writer));
 
-                    // create an array of similar files, 1 for each TOD period, for
+                    // create an array of similar files, 1 for each TOD period,
+                    // for
                     // TOD
                     // choice estimation
                     for (int i = 0; i < SKIM_PERIOD_LABELS.length; i++)
@@ -188,7 +190,8 @@ public final class SkimsAppender
                     writer = new FileWriter(new File(outputFileNameHis));
                     outStreamHis = new PrintWriter(new BufferedWriter(writer));
 
-                    // create an array of similar files, 1 for each TOD period, for
+                    // create an array of similar files, 1 for each TOD period,
+                    // for
                     // TOD
                     // choice estimation
                     for (int i = 0; i < SKIM_PERIOD_LABELS.length; i++)
@@ -238,8 +241,10 @@ public final class SkimsAppender
                 odt[3] = obsOdt[3];
                 odt[4] = obsOdt[4];
 
-                if ( odt[0] == 0 || odt[1] == 0 ) {
-                    outStreamObs.println(String.format("%d,%d,%d,%d,%d", seq, odt[4], odt[0], odt[1], odt[2]));
+                if (odt[0] == 0 || odt[1] == 0)
+                {
+                    outStreamObs.println(String.format("%d,%d,%d,%d,%d", seq, odt[4], odt[0],
+                            odt[1], odt[2]));
                     seq++;
                     continue;
                 }
@@ -262,13 +267,15 @@ public final class SkimsAppender
                 for (int i = 0; i < SKIM_PERIOD_LABELS.length; i++)
                 {
                     odt[2] = i + 1;
-                    writeSkimsToFile(seq, outStreamObsTod[i], false, odt, anm, wtw, wtd, dtw, loggers);
+                    writeSkimsToFile(seq, outStreamObsTod[i], false, odt, anm, wtw, wtd, dtw,
+                            loggers);
                 }
 
                 // write inbound direction
                 odt[0] = obsOdt[1]; // dest
                 odt[1] = obsOdt[0]; // orig
-                odt[2] = SURVEY_PERIOD_TO_SKIM_PERIOD[obsOdt[3]]; // arrival skim
+                odt[2] = SURVEY_PERIOD_TO_SKIM_PERIOD[obsOdt[3]]; // arrival
+                                                                  // skim
                                                                   // period
                 // index
 
@@ -284,7 +291,8 @@ public final class SkimsAppender
                 for (int i = 0; i < SKIM_PERIOD_LABELS.length; i++)
                 {
                     odt[2] = i + 1;
-                    writeSkimsToFile(seq, outStreamObsTod[i], false, odt, anm, wtw, wtd, dtw, loggers);
+                    writeSkimsToFile(seq, outStreamObsTod[i], false, odt, anm, wtw, wtd, dtw,
+                            loggers);
                 }
 
                 if (outStreamObs != null)
@@ -329,13 +337,15 @@ public final class SkimsAppender
                 for (int i = 0; i < SKIM_PERIOD_LABELS.length; i++)
                 {
                     odt[2] = i + 1;
-                    writeSkimsToFile(seq, outStreamHisTod[i], false, odt, anm, wtw, wtd, dtw, loggers);
+                    writeSkimsToFile(seq, outStreamHisTod[i], false, odt, anm, wtw, wtd, dtw,
+                            loggers);
                 }
 
                 // write inbound direction
                 odt[0] = hisOdt[1]; // dest
                 odt[1] = hisOdt[0]; // orig
-                odt[2] = SURVEY_PERIOD_TO_SKIM_PERIOD[hisOdt[3]]; // arrival skim
+                odt[2] = SURVEY_PERIOD_TO_SKIM_PERIOD[hisOdt[3]]; // arrival
+                                                                  // skim
                                                                   // period
                 // index
 
@@ -351,7 +361,8 @@ public final class SkimsAppender
                 for (int i = 0; i < SKIM_PERIOD_LABELS.length; i++)
                 {
                     odt[2] = i + 1;
-                    writeSkimsToFile(seq, outStreamHisTod[i], false, odt, anm, wtw, wtd, dtw, loggers);
+                    writeSkimsToFile(seq, outStreamHisTod[i], false, odt, anm, wtw, wtd, dtw,
+                            loggers);
                 }
 
                 if (outStreamHis != null)
@@ -386,12 +397,12 @@ public final class SkimsAppender
         Logger wtdLogger = loggers[2];
         Logger dtwLogger = loggers[3];
 
-        
         int[][] bestTapPairs = null;
         double[][] returnedSkims = null;
 
         if (outStream != null)
-            outStream.print(String.format("%d,%d,%d,%d,%d", sequence, odt[4], odt[0], odt[1], odt[2]));
+            outStream.print(String.format("%d,%d,%d,%d,%d", sequence, odt[4], odt[0], odt[1],
+                    odt[2]));
 
         double[] skims = anm.getAutoSkims(odt[0], odt[1], odt[2], loggingEnabled, autoLogger);
         if (loggingEnabled)
@@ -420,10 +431,9 @@ public final class SkimsAppender
             if (bestTapPairs[i] == null) returnedSkims[i] = wtw.getNullTransitSkims(i);
             else
             {
-                returnedSkims[i] = wtw.getWalkTransitWalkSkims(i, 
-                        bestPathUEC.getBestAccessTime(i),
-                        bestPathUEC.getBestEgressTime(i),
-                        bestTapPairs[i][0], bestTapPairs[i][1], odt[2], loggingEnabled);
+                returnedSkims[i] = wtw.getWalkTransitWalkSkims(i, bestPathUEC.getBestAccessTime(i),
+                        bestPathUEC.getBestEgressTime(i), bestTapPairs[i][0], bestTapPairs[i][1],
+                        odt[2], loggingEnabled);
             }
         }
         if (loggingEnabled) wtw.logReturnedSkims(odt, bestTapPairs, returnedSkims);
@@ -441,9 +451,8 @@ public final class SkimsAppender
             if (bestTapPairs[i] == null) returnedSkims[i] = wtd.getNullTransitSkims(i);
             else
             {
-                returnedSkims[i] = wtd.getWalkTransitDriveSkims(i, 
-                        bestPathUEC.getBestAccessTime(i),
-                        bestPathUEC.getBestEgressTime(i),
+                returnedSkims[i] = wtd.getWalkTransitDriveSkims(i,
+                        bestPathUEC.getBestAccessTime(i), bestPathUEC.getBestEgressTime(i),
                         bestTapPairs[i][0], bestTapPairs[i][1], odt[2], loggingEnabled);
             }
         }
@@ -462,9 +471,8 @@ public final class SkimsAppender
             if (bestTapPairs[i] == null) returnedSkims[i] = dtw.getNullTransitSkims(i);
             else
             {
-                returnedSkims[i] = dtw.getDriveTransitWalkSkims(i, 
-                        bestPathUEC.getBestAccessTime(i),
-                        bestPathUEC.getBestEgressTime(i),
+                returnedSkims[i] = dtw.getDriveTransitWalkSkims(i,
+                        bestPathUEC.getBestAccessTime(i), bestPathUEC.getBestEgressTime(i),
                         bestTapPairs[i][0], bestTapPairs[i][1], odt[2], loggingEnabled);
             }
         }
@@ -481,7 +489,9 @@ public final class SkimsAppender
     /**
      * Start the matrix server
      * 
-     * @param rb is a ResourceBundle for the properties file for this application
+     * @param rb
+     *            is a ResourceBundle for the properties file for this
+     *            application
      */
     private void startMatrixServer(ResourceBundle rb)
     {
@@ -504,8 +514,9 @@ public final class SkimsAppender
         } catch (Exception e)
         {
 
-            logger.error(String
-                    .format("exception caught running ctramp model components -- exiting."), e);
+            logger.error(
+                    String.format("exception caught running ctramp model components -- exiting."),
+                    e);
             throw new RuntimeException();
 
         }
@@ -516,10 +527,13 @@ public final class SkimsAppender
      * create a String which can be written to an output file with all the skim
      * values for the orig/dest/period.
      * 
-     * @param odt is an int[] with the first element the origin mgra and the second
-     *            element the dest mgra and third element the departure period index
-     * @param skims is a double[][] of skim values with the first dimesion the ride
-     *            mode indices and second dimention the skim categories
+     * @param odt
+     *            is an int[] with the first element the origin mgra and the
+     *            second element the dest mgra and third element the departure
+     *            period index
+     * @param skims
+     *            is a double[][] of skim values with the first dimesion the
+     *            ride mode indices and second dimention the skim categories
      */
     private String getTransitSkimsRecord(int[] odt, double[][] skims)
     {
@@ -544,9 +558,12 @@ public final class SkimsAppender
      * create a String which can be written to an output file with all the skim
      * values for the orig/dest/period.
      * 
-     * @param odt is an int[] with the first element the origin mgra and the second
-     *            element the dest mgra and third element the departure period index
-     * @param skims is a double[] of skim values
+     * @param odt
+     *            is an int[] with the first element the origin mgra and the
+     *            second element the dest mgra and third element the departure
+     *            period index
+     * @param skims
+     *            is a double[] of skim values
      */
     private String getAutoSkimsRecord(double[] skims)
     {
@@ -562,11 +579,13 @@ public final class SkimsAppender
     }
 
     /**
-     * create a String for the output file header record which can be written to an
-     * output file with all the skim value namess for the orig/dest/period.
+     * create a String for the output file header record which can be written to
+     * an output file with all the skim value namess for the orig/dest/period.
      * 
-     * @param odt is an int[] with the first element the origin mgra and the second
-     *            element the dest mgra and third element the departure period index
+     * @param odt
+     *            is an int[] with the first element the origin mgra and the
+     *            second element the dest mgra and third element the departure
+     *            period index
      */
     private String getTransitSkimsHeaderRecord(String transitServiveLabel, String[] localNames,
             String[] premiumNames)
@@ -595,11 +614,13 @@ public final class SkimsAppender
     }
 
     /**
-     * create a String for the output file header record which can be written to an
-     * output file with all the skim value namess for the orig/dest/period.
+     * create a String for the output file header record which can be written to
+     * an output file with all the skim value namess for the orig/dest/period.
      * 
-     * @param odt is an int[] with the first element the origin mgra and the second
-     *            element the dest mgra and third element the departure period index
+     * @param odt
+     *            is an int[] with the first element the origin mgra and the
+     *            second element the dest mgra and third element the departure
+     *            period index
      */
     private String getAutoSkimsHeaderRecord(String label, String[] names)
     {
@@ -613,11 +634,13 @@ public final class SkimsAppender
     }
 
     /**
-     * create a String for the output file header record which can be written to an
-     * output file with all the skim value namess for the orig/dest/period.
+     * create a String for the output file header record which can be written to
+     * an output file with all the skim value namess for the orig/dest/period.
      * 
-     * @param odt is an int[] with the first element the origin mgra and the second
-     *            element the dest mgra and third element the departure period index
+     * @param odt
+     *            is an int[] with the first element the origin mgra and the
+     *            second element the dest mgra and third element the departure
+     *            period index
      */
     private String getNonMotorizedSkimsHeaderRecord(String label, String[] names)
     {
@@ -636,8 +659,7 @@ public final class SkimsAppender
         String obsFileName = Util.getStringValueFromPropertyMap(rbMap, OBS_DATA_RECORDS_FILE_KEY);
         if (obsFileName == null)
         {
-            logger
-                    .error("Error getting the filename from the properties file for the Sandag on-board survey data records file.");
+            logger.error("Error getting the filename from the properties file for the Sandag on-board survey data records file.");
             logger.error("Properties file target: " + OBS_DATA_RECORDS_FILE_KEY + " not found.");
             logger.error("Please specify a filename value for the " + OBS_DATA_RECORDS_FILE_KEY
                     + " property.");
@@ -653,11 +675,9 @@ public final class SkimsAppender
             return inTds;
         } catch (Exception e)
         {
-            logger
-                    .fatal(String
-                            .format(
-                                    "Exception occurred reading Sandag on-board survey data records file: %s into TableDataSet object.",
-                                    obsFileName));
+            logger.fatal(String
+                    .format("Exception occurred reading Sandag on-board survey data records file: %s into TableDataSet object.",
+                            obsFileName));
             throw new RuntimeException(e);
         }
 
@@ -669,8 +689,7 @@ public final class SkimsAppender
         String hisFileName = Util.getStringValueFromPropertyMap(rbMap, HIS_DATA_RECORDS_FILE_KEY);
         if (hisFileName == null)
         {
-            logger
-                    .error("Error getting the filename from the properties file for the Sandag home interview survey data records file.");
+            logger.error("Error getting the filename from the properties file for the Sandag home interview survey data records file.");
             logger.error("Properties file target: " + HIS_DATA_RECORDS_FILE_KEY + " not found.");
             logger.error("Please specify a filename value for the " + HIS_DATA_RECORDS_FILE_KEY
                     + " property.");
@@ -686,11 +705,9 @@ public final class SkimsAppender
             return inTds;
         } catch (Exception e)
         {
-            logger
-                    .fatal(String
-                            .format(
-                                    "Exception occurred reading Sandag home interview survey data records file: %s into TableDataSet object.",
-                                    hisFileName));
+            logger.fatal(String
+                    .format("Exception occurred reading Sandag home interview survey data records file: %s into TableDataSet object.",
+                            hisFileName));
             throw new RuntimeException(e);
         }
 
@@ -699,7 +716,8 @@ public final class SkimsAppender
     private int[][] getOnBoardSurveyOrigDestTimes(TableDataSet obsTds)
     {
 
-        // odts are an array with elements: origin mgra, destination mgra, departure
+        // odts are an array with elements: origin mgra, destination mgra,
+        // departure
         // period(1-6), and arrival period(1-6).
         int[][] odts = new int[obsTds.getRowCount()][5];
 
@@ -708,7 +726,7 @@ public final class SkimsAppender
         int[] departs = obsTds.getColumnAsInt(OBS_OUT_TOUR_PERIOD);
         int[] arrives = obsTds.getColumnAsInt(OBS_IN_TOUR_PERIOD);
         int[] ids = obsTds.getColumnAsInt(OBS_UNIQUE_ID);
-        
+
         for (int r = 1; r <= obsTds.getRowCount(); r++)
         {
             odts[r - 1][0] = origs[r - 1];
@@ -724,7 +742,8 @@ public final class SkimsAppender
     private int[][] getHomeInterviewSurveyOrigDestTimes(TableDataSet hisTds)
     {
 
-        // odts are an array with elements: origin mgra, destination mgra, departure
+        // odts are an array with elements: origin mgra, destination mgra,
+        // departure
         // period(1-6), and arrival period(1-6).
         int[][] odts = new int[hisTds.getRowCount()][4];
 
@@ -750,7 +769,9 @@ public final class SkimsAppender
         ResourceBundle rb;
         if (args.length == 0)
         {
-            System.out.println(String.format("no properties file base name (without .properties extension) was specified as an argument."));
+            System.out
+                    .println(String
+                            .format("no properties file base name (without .properties extension) was specified as an argument."));
             return;
         } else
         {
