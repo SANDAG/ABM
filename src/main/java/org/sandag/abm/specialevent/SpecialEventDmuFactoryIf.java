@@ -7,6 +7,7 @@ public interface SpecialEventDmuFactoryIf
 {
 
     public SpecialEventTripModeChoiceDMU getSpecialEventTripModeChoiceDMU();
+
     public SpecialEventOriginChoiceDMU getSpecialEventOriginChoiceDMU();
 
 }
