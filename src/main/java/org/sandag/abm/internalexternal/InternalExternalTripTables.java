@@ -163,8 +163,7 @@ public class InternalExternalTripTables
     {
 
         /*
-         * This won't work because external stations aren't listed in the MGRA
-         * file int[] tazIndex = tazManager.getTazsOneBased(); int tazs =
+         * This won't work because external stations aren't listed in the MGRA file int[] tazIndex = tazManager.getTazsOneBased(); int tazs =
          * tazIndex.length-1;
          */
         // Instead, use maximum taz number
@@ -232,8 +231,7 @@ public class InternalExternalTripTables
     }
 
     /**
-     * Create trip tables for all time periods and modes. This is the main entry
-     * point into the class; it should be called after instantiating the
+     * Create trip tables for all time periods and modes. This is the main entry point into the class; it should be called after instantiating the
      * SandagTripTables object.
      * 
      */
@@ -292,9 +290,8 @@ public class InternalExternalTripTables
     }
 
     /**
-     * This is the main workhorse method in this class. It iterates over records
-     * in the trip file. Attributes for the trip record are read, and the trip
-     * record is accumulated in the relevant matrix.
+     * This is the main workhorse method in this class. It iterates over records in the trip file. Attributes for the trip record are read, and the
+     * trip record is accumulated in the relevant matrix.
      * 
      * @param timePeriod
      *            The time period to process
@@ -401,12 +398,10 @@ public class InternalExternalTripTables
     }
 
     /**
-     * Get the output trip table file names from the properties file, and write
-     * trip tables for all modes for the given time period.
+     * Get the output trip table file names from the properties file, and write trip tables for all modes for the given time period.
      * 
      * @param period
-     *            Time period, which will be used to find the period time string
-     *            to append to each trip table matrix file
+     *            Time period, which will be used to find the period time string to append to each trip table matrix file
      */
     public void writeTrips(int period, MatrixType mt)
     {
