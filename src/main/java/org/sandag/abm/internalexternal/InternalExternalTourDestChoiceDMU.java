@@ -2,43 +2,44 @@ package org.sandag.abm.internalexternal;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
 import org.sandag.abm.ctramp.TourModeChoiceDMU;
 import org.sandag.abm.ctramp.ModelStructure;
-
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.datafile.TableDataSet;
 
-public class InternalExternalTourDestChoiceDMU        implements Serializable, VariableTable
+public class InternalExternalTourDestChoiceDMU
+        implements Serializable, VariableTable
 {
 
-    protected transient Logger                logger                                    = Logger.getLogger("internalExternalModel");
+    protected transient Logger         logger = Logger.getLogger("internalExternalModel");
 
-    
     protected HashMap<String, Integer> methodIndexMap;
     protected IndexValues              dmuIndex;
-    
-    
+
     public InternalExternalTourDestChoiceDMU(InternalExternalModelStructure modelStructure)
     {
         setupMethodIndexMap();
         dmuIndex = new IndexValues();
-        
+
     }
 
- 
-   /**
+    /**
      * Set this index values for this tour mode choice DMU object.
      * 
-     * @param hhIndex is the DMU household index
-     * @param zoneIndex is the DMU zone index
-     * @param origIndex is the DMU origin index
-     * @param destIndex is the DMU desatination index
+     * @param hhIndex
+     *            is the DMU household index
+     * @param zoneIndex
+     *            is the DMU zone index
+     * @param origIndex
+     *            is the DMU origin index
+     * @param destIndex
+     *            is the DMU desatination index
      */
-    public void setDmuIndexValues(int hhIndex, int zoneIndex, int origIndex, int destIndex, boolean debug)
+    public void setDmuIndexValues(int hhIndex, int zoneIndex, int origIndex, int destIndex,
+            boolean debug)
     {
         dmuIndex.setHHIndex(hhIndex);
         dmuIndex.setZoneIndex(zoneIndex);
@@ -55,48 +56,39 @@ public class InternalExternalTourDestChoiceDMU        implements Serializable, V
 
     }
 
-
-	public IndexValues getDmuIndexValues()
+    public IndexValues getDmuIndexValues()
     {
         return dmuIndex;
     }
 
-
-   
     private void setupMethodIndexMap()
     {
         methodIndexMap = new HashMap<String, Integer>();
 
-//        methodIndexMap.put("getTimeOutbound", 0);
-         
+        // methodIndexMap.put("getTimeOutbound", 0);
+
     }
 
     public double getValueForIndex(int variableIndex, int arrayIndex)
     {
 
         double returnValue = -1;
-        
+
         /*
-
-        switch (variableIndex)
-        {
-
-            case 0:
-                returnValue = getTimeOutbound();
-                break;
-           
-            default:
-                logger.error("method number = " + variableIndex + " not found");
-                throw new RuntimeException("method number = " + variableIndex + " not found");
-
-        }
-
+         * 
+         * switch (variableIndex) {
+         * 
+         * case 0: returnValue = getTimeOutbound(); break;
+         * 
+         * default: logger.error("method number = " + variableIndex + " not found"); throw new RuntimeException("method number = " + variableIndex +
+         * " not found");
+         * 
+         * }
          */
         return returnValue;
 
     }
 
-  
     public int getIndexValue(String variableName)
     {
         return methodIndexMap.get(variableName);
@@ -121,6 +113,5 @@ public class InternalExternalTourDestChoiceDMU        implements Serializable, V
     {
         throw new UnsupportedOperationException();
     }
-
 
 }
