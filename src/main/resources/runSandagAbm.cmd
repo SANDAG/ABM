@@ -7,7 +7,7 @@ set ITERATION=%4
 
 %PROJECT_DRIVE%
 cd %PROJECT_DIRECTORY%
-call %PROJECT_DIRECTORY%\CTRampEnv.bat
+call %PROJECT_DIRECTORY%\bin\CTRampEnv.bat
 
 rem ### First save the JAVA_PATH environment variable so it s value can be restored at the end.
 set OLDJAVAPATH=%JAVA_PATH%
@@ -19,15 +19,13 @@ set JAVA_PATH=%JAVA_64_PATH%
 
 rem ### Name the project directory.  This directory will hava data and runtime subdirectories
 set RUNTIME=%PROJECT_DIRECTORY%
-set CONFIG=%RUNTIME%/config
+set CONFIG=%RUNTIME%/conf
 
 rem ### Set the name of the properties file the application uses by giving just the base part of the name (with ".xxx" extension)
 set PROPERTIES_NAME=sandag_abm
 
-set JAR_LOCATION=%PROJECT_DIRECTORY%/application
-set LIB_JAR_PATH=%JAR_LOCATION%\sandag_abm_pb.jar
-
-set JAR_LOCATION=%RUNTIME%/application
+set JAR_LOCATION=%PROJECT_DIRECTORY%/lib
+set LIB_JAR_PATH=%JAR_LOCATION%\*
 
 rem ### Define the CLASSPATH environment variable for the classpath needed in this model run.
 set OLDCLASSPATH=%CLASSPATH%
@@ -45,7 +43,7 @@ rem ### Sandag ABM needs more than 16000m virtual machine, try 32000m
 rem java -server -Xms24000m -Xmx24000m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% -Djppf.config=jppf-client.properties org.sandag.abm.application.SandagTourBasedModel %PROPERTIES_NAME% -iteration 1 -sampleRate 0.1 -sampleSeed 1
 rem java -Xdebug -Xrunjdwp:transport=dt_socket,address=1044,server=y,suspend=y -server -Xms28000m -Xmx28000m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% -Djppf.config=jppf-client.properties org.sandag.abm.application.SandagTourBasedModel %PROPERTIES_NAME% -iteration 1 -sampleRate %SAMPLERATE% -sampleSeed 1
 
-ping –n 5 localhost > nul
+ping ï¿½n 5 localhost > nul
 
 rem ## DISTRIBUTED ##
 rem java -Xdebug -Xrunjdwp:transport=dt_socket,address=1045,server=y,suspend=y -server -Xms8000m -Xmx8000m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% -Djppf.config=jppf-clientDistributed.properties org.sandag.abm.application.SandagTourBasedModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% -sampleSeed 1
