@@ -262,7 +262,7 @@
         <dependency>
             <groupId>pb</groupId>
             <artifactId>common-base</artifactId>
-            <version>2013-08-08-ABM</version>
+            <version>2013.08.08-ABM</version>
         </dependency>
         <dependency>
             <groupId>pb</groupId>
