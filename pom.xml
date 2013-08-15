@@ -7,6 +7,72 @@
     <version>13.0.0-SNAPSHOT</version>
     <name>SANDAG CT-RAMP Activity Based Model</name>
 
+    <profiles>
+        <profile>
+            <id>local-cluster</id>
+            <properties>
+                <jppf.server.host>127.0.0.1</jppf.server.host>
+                <map.folder>e$</map.folder>
+                <jppf.management.host>127.0.0.1</jppf.management.host>
+                <matrix.server.host>127.0.0.1</matrix.server.host>
+                <matrix.server.port>1191</matrix.server.port>
+                <household.server.host>127.0.0.1</household.server.host>
+                <household.server.port>1129</household.server.port>
+                <master.node.ip>127.0.0.1</master.node.ip>
+                <node.1.ip>127.0.0.1</node.1.ip>
+                <node.2.ip>127.0.0.1</node.2.ip>
+                <java.32.port>1190</java.32.port>
+            </properties>
+        </profile>
+        <profile>
+            <id>charger-cluster</id>
+            <properties>
+                <jppf.server.host>172.16.34.51</jppf.server.host>
+                <map.folder>d$</map.folder>
+                <jppf.management.host>172.16.34.51</jppf.management.host>
+                <matrix.server.host>172.16.34.51</matrix.server.host>
+                <matrix.server.port>1191</matrix.server.port>
+                <household.server.host>172.16.34.50</household.server.host>
+                <household.server.port>1129</household.server.port>
+                <master.node.ip>172.16.34.51</master.node.ip>
+                <node.1.ip>172.16.34.50</node.1.ip>
+                <node.2.ip>172.16.34.52</node.2.ip>
+                <java.32.port>1190</java.32.port>
+            </properties>
+        </profile>
+        <profile>
+            <id>mustang-cluster</id>
+            <properties>
+                <jppf.server.host>172.16.34.40</jppf.server.host>
+                <map.folder>d$</map.folder>
+                <jppf.management.host>172.16.34.40</jppf.management.host>
+                <matrix.server.host>172.16.34.40</matrix.server.host>
+                <matrix.server.port>1191</matrix.server.port>
+                <household.server.host>172.16.34.42</household.server.host>
+                <household.server.port>1129</household.server.port>
+                <master.node.ip>172.16.34.40</master.node.ip>
+                <node.1.ip>172.16.34.41</node.1.ip>
+                <node.2.ip>172.16.34.42</node.2.ip>
+                <java.32.port>1190</java.32.port>
+            </properties>
+        </profile>
+        <profile>
+            <id>sdsc-cluster</id>
+            <properties>
+                <jppf.server.host></jppf.server.host>
+                <jppf.management.host></jppf.management.host>
+                <matrix.server.host></matrix.server.host>
+                <matrix.server.port></matrix.server.port>
+                <household.server.host></household.server.host>
+                <household.server.port></household.server.port>
+                <master.node.ip></master.node.ip>
+                <node.1.ip></node.1.ip>
+                <node.2.ip></node.2.ip>
+                <java.32.port></java.32.port>
+            </properties>
+        </profile>
+    </profiles>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -87,7 +153,7 @@
                             <resources>
                                 <resource>
                                     <directory>src/main/gisdk</directory>
-                                    <filtering>false</filtering>
+                                    <filtering>true</filtering>
                                 </resource>
                             </resources>
                         </configuration>
@@ -103,7 +169,7 @@
                             <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>
-                                    <filtering>false</filtering>
+                                    <filtering>true</filtering>
                                     <includes>
                                         <include>**/*.properties</include>
                                         <include>*.xml</include>
@@ -123,7 +189,7 @@
                             <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>
-                                    <filtering>false</filtering>
+                                    <filtering>true</filtering>
                                     <includes>
                                         <include>**/*.bat</include>
                                         <include>*.cmd</include>
