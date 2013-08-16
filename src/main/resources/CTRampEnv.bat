@@ -2,23 +2,23 @@ rem this file has environment variables for CT-RAMP batch files
 
 
 rem set ports
-set JAVA_32_PORT=1190
-set MATRIX_MANAGER_PORT=1191
-set HH_MANAGER_PORT=1129
+set JAVA_32_PORT=${java.32.port}
+set MATRIX_MANAGER_PORT=${matrix.server.port}
+set HH_MANAGER_PORT=${household.server.port}
 
 rem set machine names
-set MAIN=MUSTANG
-set NODE1=GALAXIE
-set NODE2=COBRA
+set MAIN=${master.node.ip}
+set NODE1=${node.1.ip}
+set NODE2=${node.2.ip}
 set NODE3=
 
 rem set IP addresses
-set MAIN_IP=172.16.34.40
-set NODE1_IP=172.16.34.42
+set MAIN_IP=${master.node.ip}
+set NODE1_IP=${node.1.ip}
 
 rem all nodes need to map the scenario drive, currently mapped as x:
 set MAPDRIVE=x:
-set MAPDRIVEFOLDER=\\MUSTANG\MustangD
+set MAPDRIVEFOLDER=\\${master.node.ip}\${map.folder}
 
 rem account settings for remote access using psexec
 set USERNAME=joelf

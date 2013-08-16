@@ -53,9 +53,21 @@ public class MatrixDataServerRmi
         remote.method("start32BitMatrixIoServer", objArray);
     }
 
+    public void start32BitMatrixIoServer(MatrixType mType, String label)
+    {
+        Object[] objArray = {mType, label};
+        remote.method("start32BitMatrixIoServer", objArray);
+    }
+
     public void stop32BitMatrixIoServer()
     {
         Object[] objArray = {};
+        remote.method("stop32BitMatrixIoServer", objArray);
+    }
+
+    public void stop32BitMatrixIoServer( String label )
+    {
+        Object[] objArray = { label };
         remote.method("stop32BitMatrixIoServer", objArray);
     }
 

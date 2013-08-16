@@ -7,6 +7,7 @@ public interface InternalExternalDmuFactoryIf
 {
 
     public InternalExternalTourDestChoiceDMU getInternalExternalTourDestChoiceDMU();
+
     public InternalExternalTripModeChoiceDMU getInternalExternalTripModeChoiceDMU();
 
 }

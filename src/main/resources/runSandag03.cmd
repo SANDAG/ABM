@@ -5,7 +5,7 @@ set DRIVE=%1
 set PROJECT_DIRECTORY=%2
 
 rem ############  JPPF DRIVER  ############
-set JPPF_LIB=%PROJECT_DIRECTORY%\application\sandag_abm_pb.jar
+set JPPF_LIB=%PROJECT_DIRECTORY%\lib\*
 set CLASSPATH=%PROJECT_DIRECTORY%\config;%JPPF_LIB%
 
 %DRIVE%

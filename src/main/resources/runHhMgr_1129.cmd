@@ -7,7 +7,7 @@ set PROJECT_DIRECTORY=%2
 %PROJECT_DRIVE%
 cd %PROJECT_DIRECTORY%
 
-call %PROJECT_DIRECTORY%\CTRampEnv.bat
+call %PROJECT_DIRECTORY%\bin\CTRampEnv.bat
 
 rem ### First save the JAVA_PATH environment variable so it s value can be restored at the end.
 set OLDJAVAPATH=%JAVA_PATH%
@@ -28,9 +28,9 @@ set DRIVE=%MAPDRIVE%
 
 rem ### Name the project directory.  This directory will hava data and runtime subdirectories
 set RUNTIME=%DRIVE%%PROJECT_DIRECTORY%
-set CONFIG=%RUNTIME%/config
+set CONFIG=%RUNTIME%/conf
 
-set JAR_LOCATION=%RUNTIME%/application
+set JAR_LOCATION=%RUNTIME%/lib
 
 set LIB_JAR_PATH=%JAR_LOCATION%\sandag_abm_pb.jar
 
