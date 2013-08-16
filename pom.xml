@@ -313,19 +313,9 @@
 
     <repositories>
         <repository>
-            <id>nexus-thirdparty</id>
+            <id>nexus-sandag-public</id>
             <name>Sandag Nexus</name>
-            <url>http://svn.sandag.org:8081/nexus/content/repositories/thirdparty</url>
-        </repository>
-        <repository>
-            <id>nexus-release</id>
-            <name>Sandag Nexus Release</name>
-            <url>http://svn.sandag.org:8081/nexus/content/repositories/release</url>
-        </repository>
-        <repository>
-            <id>nexus-snapshots</id>
-            <name>Sandag Nexus Snapshots</name>
-            <url>http://svn.sandag.org:8081/nexus/content/repositories/snapshots</url>
-        </repository>
+            <url>http://svn.sandag.org:8081/nexus/content/groups/public/</url>
+        </repository>        
     </repositories>
 </project>
