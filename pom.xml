@@ -247,7 +247,7 @@
                             <outputDirectory>${project.build.directory}/${project.name}/${project.version}/input</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>input</directory>
+                                    <directory>src/main/resources/input</directory>
                                 </resource>
                             </resources>
                         </configuration>
