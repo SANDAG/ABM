@@ -17,19 +17,13 @@ import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.Person;
 
 /**
- * Implements an invidual mandatory tour frequency model, which selects the number of
- * work, school, or work and school tours for each person who selects a mandatory
- * activity. There are essentially seven separate models, one for each person type
- * (full-time worker, part-time worker, university student, non working adults,
- * retired, driving students, and non-driving students), except pre-school students.
- * The choices are one work tour, two work tours, one school tour, two school tours,
- * and one work and school tour. Availability arrays are defined for each person
- * type.
+ * Implements an invidual mandatory tour frequency model, which selects the number of work, school, or work and school tours for each person who
+ * selects a mandatory activity. There are essentially seven separate models, one for each person type (full-time worker, part-time worker, university
+ * student, non working adults, retired, driving students, and non-driving students), except pre-school students. The choices are one work tour, two
+ * work tours, one school tour, two school tours, and one work and school tour. Availability arrays are defined for each person type.
  * 
- * The UEC for the model has two additional matrix calcuation tabs, which computes
- * the one-way walk distance and the round-trip auto time to work and/or school for
- * the model. This allows us to compute the work and/or school time, by setting the
- * DMU destination index, just using the UEC.
+ * The UEC for the model has two additional matrix calcuation tabs, which computes the one-way walk distance and the round-trip auto time to work
+ * and/or school for the model. This allows us to compute the work and/or school time, by setting the DMU destination index, just using the UEC.
  * 
  * @author D. Ory
  * 
@@ -38,10 +32,8 @@ public class HouseholdIndividualMandatoryTourFrequencyModel
         implements Serializable
 {
 
-    private transient Logger                    logger                   = Logger
-                                                                                 .getLogger(HouseholdIndividualMandatoryTourFrequencyModel.class);
-    private transient Logger                    tourFreq                 = Logger
-                                                                                 .getLogger("tourFreq");
+    private transient Logger                    logger                   = Logger.getLogger(HouseholdIndividualMandatoryTourFrequencyModel.class);
+    private transient Logger                    tourFreq                 = Logger.getLogger("tourFreq");
 
     private static final String                 IMTF_CONTROL_FILE_TARGET = "imtf.uec.file";
     private static final String                 IMTF_DATA_SHEET_TARGET   = "imtf.data.page";
@@ -56,29 +48,31 @@ public class HouseholdIndividualMandatoryTourFrequencyModel
     public static final int                     CHOICE_TWO_SCHOOL        = 4;
     public static final int                     CHOICE_WORK_AND_SCHOOL   = 5;
 
-    public static final String[]                choiceResults            = {"1 Work", "2 Work", "1 School", "2 School", "Wrk & Schl", "Worker Works At Home", "Student Works At Home", "Worker School At Home", "Student School At Home" };
+    public static final String[]                choiceResults            = {"1 Work", "2 Work",
+            "1 School", "2 School", "Wrk & Schl", "Worker Works At Home", "Student Works At Home",
+            "Worker School At Home", "Student School At Home"            };
 
     private IndividualMandatoryTourFrequencyDMU imtfDmuObject;
     private ChoiceModelApplication              choiceModelApplication;
 
-    private AccessibilitiesTable accTable;
+    private AccessibilitiesTable                accTable;
     private MandatoryAccessibilitiesCalculator  mandAcc;
 
     /**
-     * Constructor establishes the ChoiceModelApplication, which applies the logit
-     * model via the UEC spreadsheet, and it also establishes the UECs used to
-     * compute the one-way walk distance to work and/or school and the round-trip
-     * auto time to work and/or school. The model must be the first UEC tab, the
-     * one-way distance calculations must be the second UEC tab, round-trip time must
-     * be the third UEC tab.
+     * Constructor establishes the ChoiceModelApplication, which applies the logit model via the UEC spreadsheet, and it also establishes the UECs
+     * used to compute the one-way walk distance to work and/or school and the round-trip auto time to work and/or school. The model must be the first
+     * UEC tab, the one-way distance calculations must be the second UEC tab, round-trip time must be the third UEC tab.
      * 
-     * @param dmuObject is the UEC dmu object for this choice model
-     * @param uecFileName is the UEC control file name
-     * @param resourceBundle is the application ResourceBundle, from which a
-     *            properties file HashMap will be created for the UEC
-     * @param tazDataManager is the object used to interact with the zonal data table
-     * @param modelStructure is the ModelStructure object that defines segmentation
-     *            and other model structure relate atributes
+     * @param dmuObject
+     *            is the UEC dmu object for this choice model
+     * @param uecFileName
+     *            is the UEC control file name
+     * @param resourceBundle
+     *            is the application ResourceBundle, from which a properties file HashMap will be created for the UEC
+     * @param tazDataManager
+     *            is the object used to interact with the zonal data table
+     * @param modelStructure
+     *            is the ModelStructure object that defines segmentation and other model structure relate atributes
      */
     public HouseholdIndividualMandatoryTourFrequencyModel(HashMap<String, String> propertyMap,
             ModelStructure modelStructure, CtrampDmuFactoryIf dmuFactory,
@@ -120,11 +114,10 @@ public class HouseholdIndividualMandatoryTourFrequencyModel
     }
 
     /**
-     * Applies the model for the array of households that are stored in the
-     * HouseholdDataManager. The results are summarized by person type.
+     * Applies the model for the array of households that are stored in the HouseholdDataManager. The results are summarized by person type.
      * 
-     * @param householdDataManager is the object containg the Household objects for
-     *            which this model is to be applied.
+     * @param householdDataManager
+     *            is the object containg the Household objects for which this model is to be applied.
      */
     public void applyModel(Household household)
     {
@@ -146,7 +139,8 @@ public class HouseholdIndividualMandatoryTourFrequencyModel
         // household
         String[] types = {"", "escort0", "escort1", "escort2"};
         int autoSufficiency = household.getAutoSufficiency();
-        float accessibility = accTable.getAggregateAccessibility(types[autoSufficiency], household.getHhMgra());
+        float accessibility = accTable.getAggregateAccessibility(types[autoSufficiency],
+                household.getHhMgra());
         imtfDmuObject.setEscortAccessibility(accessibility);
 
         // loop through the person array (1-based)
@@ -184,11 +178,13 @@ public class HouseholdIndividualMandatoryTourFrequencyModel
                     if (household.getDebugChoiceModels())
                     {
 
-                        choiceModelDescription = String.format("Individual Mandatory Tour Frequency Choice Model:");
+                        choiceModelDescription = String
+                                .format("Individual Mandatory Tour Frequency Choice Model:");
                         decisionMakerLabel = String.format("HH=%d, PersonNum=%d, PersonType=%s.",
                                 household.getHhId(), person.getPersonNum(), person.getPersonType());
 
-                        choiceModelApplication.choiceModelUtilityTraceLoggerHeading( choiceModelDescription, decisionMakerLabel);
+                        choiceModelApplication.choiceModelUtilityTraceLoggerHeading(
+                                choiceModelDescription, decisionMakerLabel);
 
                         modelLogger.info(" ");
                         String loggerString = "Individual Mandatory Tour Frequency Choice Model: Debug Statement for Household ID: "
@@ -218,7 +214,8 @@ public class HouseholdIndividualMandatoryTourFrequencyModel
                         {
 
                             double[] accessibilities = mandAcc.calculateAccessibilitiesForMgraPair(
-                                    household.getHhMgra(), workMgra, household.getDebugChoiceModels(), tourFreq);
+                                    household.getHhMgra(), workMgra,
+                                    household.getDebugChoiceModels(), tourFreq);
 
                             distance = person.getWorkLocationDistance();
                             time = accessibilities[0]; // sov time
@@ -229,11 +226,12 @@ public class HouseholdIndividualMandatoryTourFrequencyModel
                             if (accessibilities[3] > 0.0 && accessibilities[3] < time)
                                 time = accessibilities[3];
 
-                        }
-                        else {
+                        } else
+                        {
                             // no work location; skip the rest if no school location.
                             int schoolMgra = person.getUsualSchoolLocation();
-                            if (schoolMgra <= 0 || schoolMgra == ModelStructure.NOT_ENROLLED_SEGMENT_INDEX)
+                            if (schoolMgra <= 0
+                                    || schoolMgra == ModelStructure.NOT_ENROLLED_SEGMENT_INDEX)
                                 continue;
                         }
 
@@ -251,11 +249,12 @@ public class HouseholdIndividualMandatoryTourFrequencyModel
                         if (schoolMgra != ModelStructure.NOT_ENROLLED_SEGMENT_INDEX)
                         {
                             distance = person.getSchoolLocationDistance();
-                        }
-                        else {
+                        } else
+                        {
                             // no school location; skip the rest if no work location.
                             int workMgra = person.getUsualWorkLocation();
-                            if (workMgra <= 0 || workMgra == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR)
+                            if (workMgra <= 0
+                                    || workMgra == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR)
                                 continue;
                         }
 
@@ -273,13 +272,13 @@ public class HouseholdIndividualMandatoryTourFrequencyModel
 
                     // if the choice model has at least one available alternative,
                     // make choice.
-                    if (choiceModelApplication.getAvailabilityCount() > 0)
-                        choice = choiceModelApplication.getChoiceResult(rn);
+                    if (choiceModelApplication.getAvailabilityCount() > 0) choice = choiceModelApplication
+                            .getChoiceResult(rn);
                     else
                     {
-                        logger.error(String.format(
-                            "Exception caught for j=%d, activity=%s, HHID=%d, no available alternatives to choose from in choiceModelApplication.",
-                            j, activity, household.getHhId()));
+                        logger.error(String
+                                .format("Exception caught for j=%d, activity=%s, HHID=%d, no available alternatives to choose from in choiceModelApplication.",
+                                        j, activity, household.getHhId()));
                         throw new RuntimeException();
                     }
 
@@ -291,9 +290,12 @@ public class HouseholdIndividualMandatoryTourFrequencyModel
                         double[] probabilities = choiceModelApplication.getProbabilities();
 
                         int personNum = person.getPersonNum();
-                        modelLogger.info("Person num: " + personNum + ", Person type: " + person.getPersonType());
-                        modelLogger.info("Alternative                 Utility       Probability           CumProb");
-                        modelLogger.info("------------------   --------------    --------------    --------------");
+                        modelLogger.info("Person num: " + personNum + ", Person type: "
+                                + person.getPersonType());
+                        modelLogger
+                                .info("Alternative                 Utility       Probability           CumProb");
+                        modelLogger
+                                .info("------------------   --------------    --------------    --------------");
 
                         double cumProb = 0.0;
                         for (int k = 0; k < probabilities.length; ++k)
@@ -315,8 +317,10 @@ public class HouseholdIndividualMandatoryTourFrequencyModel
                         modelLogger.info("");
 
                         // write choice model alternative info to debug log file
-                        choiceModelApplication.logAlternativesInfo(choiceModelDescription, decisionMakerLabel);
-                        choiceModelApplication.logSelectionInfo(choiceModelDescription, decisionMakerLabel, rn, choice);
+                        choiceModelApplication.logAlternativesInfo(choiceModelDescription,
+                                decisionMakerLabel);
+                        choiceModelApplication.logSelectionInfo(choiceModelDescription,
+                                decisionMakerLabel, rn, choice);
 
                         // write UEC calculation results to separate model specific
                         // log file

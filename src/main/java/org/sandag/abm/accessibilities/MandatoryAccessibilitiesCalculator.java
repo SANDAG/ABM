@@ -125,8 +125,7 @@ public class MandatoryAccessibilitiesCalculator
     }
 
     /**
-     * Calculate the work logsum for the household MGRA and sampled work
-     * location MGRA.
+     * Calculate the work logsum for the household MGRA and sampled work location MGRA.
      * 
      * @param hhMgra
      *            Household MGRA
@@ -157,8 +156,7 @@ public class MandatoryAccessibilitiesCalculator
 
         double sovUtility = accessibilities[4];
         double hovUtility = accessibilities[12];
-        double transitLogsum = accessibilities[8]; // includes both walk and
-                                                   // drive access
+        double transitLogsum = accessibilities[8]; // includes both walk and drive access
         double nmExpUtility = ntUtilities.getNMotorExpUtility(hhMgra, workMgra,
                 NonTransitUtilities.OFFPEAK_PERIOD_INDEX);
 
@@ -215,8 +213,7 @@ public class MandatoryAccessibilitiesCalculator
     }
 
     /**
-     * Calculate the school logsum for the household MGRA and sampled school
-     * location MGRA.
+     * Calculate the school logsum for the household MGRA and sampled school location MGRA.
      * 
      * @param hhMgra
      *            Household MGRA
@@ -225,11 +222,9 @@ public class MandatoryAccessibilitiesCalculator
      * @param autoSufficiency
      *            Auto sufficiency category
      * @param studentType
-     *            Student type 0=Pre-school (SOV not available) 1=K-8 (SOV not
-     *            available) 2=9-12 (Normal car-sufficiency-based logsum)
-     *            3=College/university(typical) (Normal car-sufficiency-based
-     *            logsum) 4=College/university(non-typical) (Normal
-     *            car-sufficiency-based logsum)
+     *            Student type 0=Pre-school (SOV not available) 1=K-8 (SOV not available) 2=9-12 (Normal car-sufficiency-based logsum)
+     *            3=College/university(typical) (Normal car-sufficiency-based logsum) 4=College/university(non-typical) (Normal car-sufficiency-based
+     *            logsum)
      * @return School mode choice logsum
      */
     public double calculateSchoolLogsum(int hhMgra, int schoolMgra, int autoSufficiency,
@@ -253,8 +248,7 @@ public class MandatoryAccessibilitiesCalculator
 
         double sovUtility = accessibilities[4];
         double hovUtility = accessibilities[12];
-        double transitLogsum = accessibilities[8]; // includes both walk and
-                                                   // drive access
+        double transitLogsum = accessibilities[8]; // includes both walk and drive access
         double nmExpUtility = ntUtilities.getNMotorExpUtility(hhMgra, schoolMgra,
                 NonTransitUtilities.OFFPEAK_PERIOD_INDEX);
 
@@ -362,17 +356,13 @@ public class MandatoryAccessibilitiesCalculator
                 autoSkimUEC.logAnswersArray(aLogger,
                         String.format("autoSkimUEC:  oMgra=%d, dMgra=%d", oMgra, dMgra));
 
-            // autoResults[0] is peak non-toll sov time, autoResults[1] is peak
-            // non-toll sov dist
-            // autoResults[2] is off-peak non-toll sov time, autoResults[3] is
-            // off-peak non-toll sov dist
+            // autoResults[0] is peak non-toll sov time, autoResults[1] is peak non-toll sov dist
+            // autoResults[2] is off-peak non-toll sov time, autoResults[3] is off-peak non-toll sov dist
             accessibilities[0] = autoResults[PEAK_NONTOLL_SOV_TIME_INDEX];
             accessibilities[1] = autoResults[PEAK_NONTOLL_SOV_DIST_INDEX];
 
-            // pre-calculate the hov, sov, and non-motorized exponentiated
-            // utilities for the origin MGRA.
-            // the method called returns cached values if they were already
-            // calculated.
+            // pre-calculate the hov, sov, and non-motorized exponentiated utilities for the origin MGRA.
+            // the method called returns cached values if they were already calculated.
             ntUtilities.buildUtilitiesForOrigMgraAndPeriod(oMgra,
                     NonTransitUtilities.PEAK_PERIOD_INDEX);
 
@@ -403,8 +393,7 @@ public class MandatoryAccessibilitiesCalculator
 
             // walk transit
 
-            // determine the best transit path, which also stores the best
-            // utilities array and the best mode
+            // determine the best transit path, which also stores the best utilities array and the best mode
             bestPathCalculator.findBestWalkTransitWalkTaps(TransitWalkAccessUEC.AM, oMgra, dMgra,
                     debug, aLogger);
 
@@ -417,8 +406,7 @@ public class MandatoryAccessibilitiesCalculator
                     sumWlkExpUtilities += Math.exp(walkTransitWalkUtilities[i]);
             }
 
-            // calculate ln( sum of exponentiated utilities ) and set in
-            // accessibilities array and the dmu object
+            // calculate ln( sum of exponentiated utilities ) and set in accessibilities array and the dmu object
             if (sumWlkExpUtilities > 0) accessibilities[7] = Math.log(sumWlkExpUtilities);
             else accessibilities[7] = -999;
 
@@ -472,62 +460,40 @@ public class MandatoryAccessibilitiesCalculator
             /*
              * // walk transit
              * 
-             * // calculate the exp utilities, which will also calculate and
-             * store best mode double[] walkTransitExpUtilities =
-             * transitUtilities.calculateWalkTransitExpUtilities( oMgra, dMgra,
-             * 1 );
+             * // calculate the exp utilities, which will also calculate and store best mode double[] walkTransitExpUtilities =
+             * transitUtilities.calculateWalkTransitExpUtilities( oMgra, dMgra, 1 );
              * 
-             * // add up the exp utilities dmu.setWlkNestLogsum(-999f); double
-             * sumWlkExpUtilities = 0; for (int i = 0; i <
-             * walkTransitExpUtilities.length; ++i) sumWlkExpUtilities +=
-             * walkTransitExpUtilities[i];
+             * // add up the exp utilities dmu.setWlkNestLogsum(-999f); double sumWlkExpUtilities = 0; for (int i = 0; i <
+             * walkTransitExpUtilities.length; ++i) sumWlkExpUtilities += walkTransitExpUtilities[i];
              * 
-             * if (sumWlkExpUtilities > 0)
-             * dmu.setWlkNestLogsum(Math.log(sumWlkExpUtilities));
+             * if (sumWlkExpUtilities > 0) dmu.setWlkNestLogsum(Math.log(sumWlkExpUtilities));
              * 
              * accessibilities[7] = dmu.getWlkNestLogsum();
              * 
-             * Modes.TransitMode bestMode =
-             * transitUtilities.getBestWalkTransitMode(1);
+             * Modes.TransitMode bestMode = transitUtilities.getBestWalkTransitMode(1);
              * 
-             * if (bestMode != null) { int[] bestTaps =
-             * transitUtilities.getBestWalkTaps(bestMode, 1);
-             * dmu.setBestMode(bestMode.ordinal()); int oTapPosition =
-             * mgraManager.getTapPosition(oMgra, bestTaps[0]); int dTapPosition
-             * = mgraManager.getTapPosition(dMgra, bestTaps[1]);
+             * if (bestMode != null) { int[] bestTaps = transitUtilities.getBestWalkTaps(bestMode, 1); dmu.setBestMode(bestMode.ordinal()); int
+             * oTapPosition = mgraManager.getTapPosition(oMgra, bestTaps[0]); int dTapPosition = mgraManager.getTapPosition(dMgra, bestTaps[1]);
              * 
-             * if (oTapPosition == -1 || dTapPosition == -1) {
-             * logger.fatal("Error:  Best walk mode " + bestMode +
-             * " found for origin mgra " + oMgra + " to destination mgra " +
-             * dMgra + " but oTap pos " + oTapPosition + " and dTap pos " +
-             * dTapPosition); throw new RuntimeException(); }
+             * if (oTapPosition == -1 || dTapPosition == -1) { logger.fatal("Error:  Best walk mode " + bestMode + " found for origin mgra " + oMgra +
+             * " to destination mgra " + dMgra + " but oTap pos " + oTapPosition + " and dTap pos " + dTapPosition); throw new RuntimeException(); }
              * 
-             * if (walkTransitExpUtilities[bestMode.ordinal()] <= 0.0) {
-             * logger.fatal("Error:  Best walk mode " + bestMode +
-             * " found for origin mgra " + oMgra + " to destination mgra " +
-             * dMgra + " but exp Utility = " +
-             * walkTransitExpUtilities[bestMode.ordinal()]); throw new
-             * RuntimeException(); } accessibilities[5] =
-             * Math.log(walkTransitExpUtilities[bestMode.ordinal()]);
+             * if (walkTransitExpUtilities[bestMode.ordinal()] <= 0.0) { logger.fatal("Error:  Best walk mode " + bestMode + " found for origin mgra "
+             * + oMgra + " to destination mgra " + dMgra + " but exp Utility = " + walkTransitExpUtilities[bestMode.ordinal()]); throw new
+             * RuntimeException(); } accessibilities[5] = Math.log(walkTransitExpUtilities[bestMode.ordinal()]);
              * 
-             * dmu.setMgraTapWalkTime(mgraManager.getMgraToTapWalkTime(oMgra,
-             * oTapPosition));
-             * dmu.setTapMgraWalkTime(mgraManager.getMgraToTapWalkTime(dMgra,
-             * dTapPosition)); iv.setOriginZone(bestTaps[0]);
-             * iv.setDestZone(bestTaps[1]); double[] wlkTransitTimes =
-             * bestWalkTransitUEC.solve(iv, dmu, null); if (debug)
-             * bestWalkTransitUEC.logAnswersArray(aLogger, String.format(
-             * "bestWalkTransitUEC:  oMgra=%d, dMgra=%d", oMgra, dMgra));
-             * accessibilities[2] = wlkTransitTimes[0]; accessibilities[9] =
-             * wlkTransitTimes[1];
+             * dmu.setMgraTapWalkTime(mgraManager.getMgraToTapWalkTime(oMgra, oTapPosition));
+             * dmu.setTapMgraWalkTime(mgraManager.getMgraToTapWalkTime(dMgra, dTapPosition)); iv.setOriginZone(bestTaps[0]);
+             * iv.setDestZone(bestTaps[1]); double[] wlkTransitTimes = bestWalkTransitUEC.solve(iv, dmu, null); if (debug)
+             * bestWalkTransitUEC.logAnswersArray(aLogger, String.format( "bestWalkTransitUEC:  oMgra=%d, dMgra=%d", oMgra, dMgra));
+             * accessibilities[2] = wlkTransitTimes[0]; accessibilities[9] = wlkTransitTimes[1];
              * 
              * }
              */
 
             // drive transit
 
-            // determine the best transit path, which also stores the best
-            // utilities array and the best mode
+            // determine the best transit path, which also stores the best utilities array and the best mode
             bestPathCalculator.findBestDriveTransitWalkTaps(TransitWalkAccessUEC.AM, oMgra, dMgra,
                     debug, aLogger);
 
@@ -540,8 +506,7 @@ public class MandatoryAccessibilitiesCalculator
                     sumDrvExpUtilities += Math.exp(driveTransitWalkUtilities[i]);
             }
 
-            // calculate ln( sum of exponentiated utilities ) and set in
-            // accessibilities array and the dmu object
+            // calculate ln( sum of exponentiated utilities ) and set in accessibilities array and the dmu object
             if (sumDrvExpUtilities > 0) accessibilities[11] = Math.log(sumDrvExpUtilities);
             else accessibilities[11] = -999;
 
@@ -599,48 +564,32 @@ public class MandatoryAccessibilitiesCalculator
             /*
              * // drive transit
              * 
-             * // calculate the exp utilities, which will also calculate and
-             * store best // mode double[] driveTransitExpUtilities =
-             * transitUtilities.calculateDriveTransitExpUtilities( oTaz, dMgra,
-             * 1);
+             * // calculate the exp utilities, which will also calculate and store best // mode double[] driveTransitExpUtilities =
+             * transitUtilities.calculateDriveTransitExpUtilities( oTaz, dMgra, 1);
              * 
-             * // add up the exp utilities dmu.setDrvNestLogsum(-999); double
-             * sumDrvExpUtilities = 0; for (int i = 0; i <
-             * driveTransitExpUtilities.length; ++i) sumDrvExpUtilities +=
-             * driveTransitExpUtilities[i]; if (sumDrvExpUtilities > 0)
+             * // add up the exp utilities dmu.setDrvNestLogsum(-999); double sumDrvExpUtilities = 0; for (int i = 0; i <
+             * driveTransitExpUtilities.length; ++i) sumDrvExpUtilities += driveTransitExpUtilities[i]; if (sumDrvExpUtilities > 0)
              * dmu.setDrvNestLogsum(Math.log(sumDrvExpUtilities));
              * 
              * accessibilities[11] = dmu.getDrvNestLogsum();
              * 
              * bestMode = transitUtilities.getBestDriveTransitMode(1);
              * 
-             * if (bestMode != null) { int[] bestTaps =
-             * transitUtilities.getBestDriveTaps(bestMode, 1);
-             * dmu.setBestMode(bestMode.ordinal()); int oTapPosition =
-             * tazManager.getTapPosition(oTaz, bestTaps[0],
-             * Modes.AccessMode.PARK_N_RIDE); int dTapPosition =
+             * if (bestMode != null) { int[] bestTaps = transitUtilities.getBestDriveTaps(bestMode, 1); dmu.setBestMode(bestMode.ordinal()); int
+             * oTapPosition = tazManager.getTapPosition(oTaz, bestTaps[0], Modes.AccessMode.PARK_N_RIDE); int dTapPosition =
              * mgraManager.getTapPosition(dMgra, bestTaps[1]);
              * 
-             * if (oTapPosition == -1 || dTapPosition == -1) {
-             * logger.fatal("Error:  Best drive mode " + bestMode +
-             * " found for origin taz " + oTaz + " to destination mgra " + dMgra
-             * + " but oTap pos " + oTapPosition + " and dTap pos " +
-             * dTapPosition); throw new RuntimeException(); }
+             * if (oTapPosition == -1 || dTapPosition == -1) { logger.fatal("Error:  Best drive mode " + bestMode + " found for origin taz " + oTaz +
+             * " to destination mgra " + dMgra + " but oTap pos " + oTapPosition + " and dTap pos " + dTapPosition); throw new RuntimeException(); }
              * 
-             * dmu.setDriveTimeToTap(tazManager.getTapTime(oTaz, oTapPosition,
-             * Modes.AccessMode.PARK_N_RIDE));
-             * dmu.setDriveDistToTap(tazManager.getTapDist(oTaz, oTapPosition,
-             * Modes.AccessMode.PARK_N_RIDE));
+             * dmu.setDriveTimeToTap(tazManager.getTapTime(oTaz, oTapPosition, Modes.AccessMode.PARK_N_RIDE));
+             * dmu.setDriveDistToTap(tazManager.getTapDist(oTaz, oTapPosition, Modes.AccessMode.PARK_N_RIDE));
              * 
-             * dmu.setTapMgraWalkTime(mgraManager.getMgraToTapWalkTime(dMgra,
-             * dTapPosition));
+             * dmu.setTapMgraWalkTime(mgraManager.getMgraToTapWalkTime(dMgra, dTapPosition));
              * 
-             * iv.setOriginZone(bestTaps[0]); iv.setDestZone(bestTaps[1]);
-             * double[] drvTransitTimes = bestDriveTransitUEC.solve(iv, dmu,
-             * null); if (debug) bestDriveTransitUEC.logAnswersArray(aLogger,
-             * String.format( "bestDriveTransitUEC:  oMgra=%d, dMgra=%d", oMgra,
-             * dMgra)); accessibilities[3] = drvTransitTimes[0];
-             * accessibilities[10] = drvTransitTimes[1];
+             * iv.setOriginZone(bestTaps[0]); iv.setDestZone(bestTaps[1]); double[] drvTransitTimes = bestDriveTransitUEC.solve(iv, dmu, null); if
+             * (debug) bestDriveTransitUEC.logAnswersArray(aLogger, String.format( "bestDriveTransitUEC:  oMgra=%d, dMgra=%d", oMgra, dMgra));
+             * accessibilities[3] = drvTransitTimes[0]; accessibilities[10] = drvTransitTimes[1];
              * 
              * }
              */
@@ -652,8 +601,7 @@ public class MandatoryAccessibilitiesCalculator
                         String.format("transitLogsumUEC:  oMgra=%d, dMgra=%d", oMgra, dMgra));
             }
 
-            // transit logsum results array has only 1 alternative, so result is
-            // in 0 element.
+            // transit logsum results array has only 1 alternative, so result is in 0 element.
             accessibilities[8] = transitLogsumResults[0];
 
         } // end if oMgra and dMgra > 0
@@ -662,8 +610,7 @@ public class MandatoryAccessibilitiesCalculator
     }
 
     /**
-     * Calculate auto skims for a given origin to all destination mgras, and
-     * return auto distance.
+     * Calculate auto skims for a given origin to all destination mgras, and return auto distance.
      * 
      * @param oMgra
      *            The origin mgra
@@ -693,8 +640,7 @@ public class MandatoryAccessibilitiesCalculator
     }
 
     /**
-     * Calculate auto skims for a given origin to all destination mgras, and
-     * return auto distance.
+     * Calculate auto skims for a given origin to all destination mgras, and return auto distance.
      * 
      * @param oMgra
      *            The origin mgra

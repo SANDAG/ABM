@@ -57,46 +57,31 @@ public class SandagModelStructure
     public final String[]        OTH_DISCR_PURPOSE_SEGMENT_NAMES                                    = {};
 
     /*
-    public final int             NON_MANDATORY_SOA_UEC_INDEX_ESCORT_KIDS                            = 9;
-    public final int             NON_MANDATORY_SOA_UEC_INDEX_ESCORT_NO_KIDS                         = 10;
-    public final int             NON_MANDATORY_SOA_UEC_INDEX_SHOPPING                               = 11;
-    public final int             NON_MANDATORY_SOA_UEC_INDEX_EAT_OUT                                = 12;
-    public final int             NON_MANDATORY_SOA_UEC_INDEX_OTHER_MAINT                            = 13;
-    public final int             NON_MANDATORY_SOA_UEC_INDEX_SOCIAL                                 = 14;
-    public final int             NON_MANDATORY_SOA_UEC_INDEX_OTHER_DISCR                            = 15;
-
-    public final int             NON_MANDATORY_DC_UEC_INDEX_ESCORT_KIDS                             = 4;
-    public final int             NON_MANDATORY_DC_UEC_INDEX_ESCORT_NO_KIDS                          = 4;
-    public final int             NON_MANDATORY_DC_UEC_INDEX_SHOPPING                                = 5;
-    public final int             NON_MANDATORY_DC_UEC_INDEX_EAT_OUT                                 = 6;
-    public final int             NON_MANDATORY_DC_UEC_INDEX_OTHER_MAINT                             = 7;
-    public final int             NON_MANDATORY_DC_UEC_INDEX_SOCIAL                                  = 8;
-    public final int             NON_MANDATORY_DC_UEC_INDEX_OTHER_DISCR                             = 9;
-
-    public final int             NON_MANDATORY_MC_UEC_INDEX_ESCORT_KIDS                             = 4;
-    public final int             NON_MANDATORY_MC_UEC_INDEX_ESCORT_NO_KIDS                          = 4;
-    public final int             NON_MANDATORY_MC_UEC_INDEX_SHOPPING                                = 4;
-    public final int             NON_MANDATORY_MC_UEC_INDEX_EAT_OUT                                 = 4;
-    public final int             NON_MANDATORY_MC_UEC_INDEX_OTHER_MAINT                             = 4;
-    public final int             NON_MANDATORY_MC_UEC_INDEX_SOCIAL                                  = 4;
-    public final int             NON_MANDATORY_MC_UEC_INDEX_OTHER_DISCR                             = 4;
-
-    public final int             NON_MANDATORY_STOP_FREQ_UEC_INDEX_ESCORT                           = 4;
-    public final int             NON_MANDATORY_STOP_FREQ_UEC_INDEX_SHOPPING                         = 5;
-    public final int             NON_MANDATORY_STOP_FREQ_UEC_INDEX_OTHER_MAINT                      = 6;
-    public final int             NON_MANDATORY_STOP_FREQ_UEC_INDEX_EAT_OUT                          = 7;
-    public final int             NON_MANDATORY_STOP_FREQ_UEC_INDEX_SOCIAL                           = 8;
-    public final int             NON_MANDATORY_STOP_FREQ_UEC_INDEX_OTHER_DISCR                      = 9;
-
-    public final int             NON_MANDATORY_STOP_LOC_UEC_INDEX_ESCORT                            = 2;
-    public final int             NON_MANDATORY_STOP_LOC_UEC_INDEX_SHOPPING                          = 3;
-    public final int             NON_MANDATORY_STOP_LOC_UEC_INDEX_EAT_OUT                           = 4;
-    public final int             NON_MANDATORY_STOP_LOC_UEC_INDEX_OTHER_MAINT                       = 5;
-    public final int             NON_MANDATORY_STOP_LOC_UEC_INDEX_SOCIAL                            = 6;
-    public final int             NON_MANDATORY_STOP_LOC_UEC_INDEX_OTHER_DISCR                       = 7;
-
-    public final int             NON_MANDATORY_TRIP_MODE_CHOICE_UEC_INDEX                           = 4;
-*/
+     * public final int NON_MANDATORY_SOA_UEC_INDEX_ESCORT_KIDS = 9; public final int NON_MANDATORY_SOA_UEC_INDEX_ESCORT_NO_KIDS = 10; public final
+     * int NON_MANDATORY_SOA_UEC_INDEX_SHOPPING = 11; public final int NON_MANDATORY_SOA_UEC_INDEX_EAT_OUT = 12; public final int
+     * NON_MANDATORY_SOA_UEC_INDEX_OTHER_MAINT = 13; public final int NON_MANDATORY_SOA_UEC_INDEX_SOCIAL = 14; public final int
+     * NON_MANDATORY_SOA_UEC_INDEX_OTHER_DISCR = 15;
+     * 
+     * public final int NON_MANDATORY_DC_UEC_INDEX_ESCORT_KIDS = 4; public final int NON_MANDATORY_DC_UEC_INDEX_ESCORT_NO_KIDS = 4; public final int
+     * NON_MANDATORY_DC_UEC_INDEX_SHOPPING = 5; public final int NON_MANDATORY_DC_UEC_INDEX_EAT_OUT = 6; public final int
+     * NON_MANDATORY_DC_UEC_INDEX_OTHER_MAINT = 7; public final int NON_MANDATORY_DC_UEC_INDEX_SOCIAL = 8; public final int
+     * NON_MANDATORY_DC_UEC_INDEX_OTHER_DISCR = 9;
+     * 
+     * public final int NON_MANDATORY_MC_UEC_INDEX_ESCORT_KIDS = 4; public final int NON_MANDATORY_MC_UEC_INDEX_ESCORT_NO_KIDS = 4; public final int
+     * NON_MANDATORY_MC_UEC_INDEX_SHOPPING = 4; public final int NON_MANDATORY_MC_UEC_INDEX_EAT_OUT = 4; public final int
+     * NON_MANDATORY_MC_UEC_INDEX_OTHER_MAINT = 4; public final int NON_MANDATORY_MC_UEC_INDEX_SOCIAL = 4; public final int
+     * NON_MANDATORY_MC_UEC_INDEX_OTHER_DISCR = 4;
+     * 
+     * public final int NON_MANDATORY_STOP_FREQ_UEC_INDEX_ESCORT = 4; public final int NON_MANDATORY_STOP_FREQ_UEC_INDEX_SHOPPING = 5; public final
+     * int NON_MANDATORY_STOP_FREQ_UEC_INDEX_OTHER_MAINT = 6; public final int NON_MANDATORY_STOP_FREQ_UEC_INDEX_EAT_OUT = 7; public final int
+     * NON_MANDATORY_STOP_FREQ_UEC_INDEX_SOCIAL = 8; public final int NON_MANDATORY_STOP_FREQ_UEC_INDEX_OTHER_DISCR = 9;
+     * 
+     * public final int NON_MANDATORY_STOP_LOC_UEC_INDEX_ESCORT = 2; public final int NON_MANDATORY_STOP_LOC_UEC_INDEX_SHOPPING = 3; public final int
+     * NON_MANDATORY_STOP_LOC_UEC_INDEX_EAT_OUT = 4; public final int NON_MANDATORY_STOP_LOC_UEC_INDEX_OTHER_MAINT = 5; public final int
+     * NON_MANDATORY_STOP_LOC_UEC_INDEX_SOCIAL = 6; public final int NON_MANDATORY_STOP_LOC_UEC_INDEX_OTHER_DISCR = 7;
+     * 
+     * public final int NON_MANDATORY_TRIP_MODE_CHOICE_UEC_INDEX = 4;
+     */
     public final String[]        AT_WORK_DC_PURPOSE_NAMES                                           = {"atwork"};
     public final String[]        AT_WORK_DC_SIZE_SEGMENT_NAMES                                      = {
             "cbd", "urban", "suburban", "rural"                                                     };
@@ -113,9 +98,9 @@ public class SandagModelStructure
     public final int             AT_WORK_MC_UEC_INDEX_BUSINESS                                      = 5;
     public final int             AT_WORK_MC_UEC_INDEX_MAINT                                         = 5;
 
-    public final int             SD_AT_WORK_PURPOSE_INDEX_EAT                                      = 1;
-    public final int             SD_AT_WORK_PURPOSE_INDEX_BUSINESS                                 = 2;
-    public final int             SD_AT_WORK_PURPOSE_INDEX_MAINT                                    = 3;
+    public final int             SD_AT_WORK_PURPOSE_INDEX_EAT                                       = 1;
+    public final int             SD_AT_WORK_PURPOSE_INDEX_BUSINESS                                  = 2;
+    public final int             SD_AT_WORK_PURPOSE_INDEX_MAINT                                     = 3;
 
     public final int             AT_WORK_STOP_FREQ_UEC_INDEX_EAT                                    = 9;
     public final int             AT_WORK_STOP_FREQ_UEC_INDEX_BUSINESS                               = 9;
@@ -125,42 +110,39 @@ public class SandagModelStructure
     public static final int[]    SOV_ALTS                                                           = {
             1, 2                                                                                    };
     public static final int[]    HOV_ALTS                                                           = {
-        3, 4, 5, 6, 7, 8                                                                        };
-    public static final int[]    HOV2_ALTS                                                           = {
-        3, 4, 5                                                                        };
-    public static final int[]    HOV3_ALTS                                                           = {
-        6, 7, 8                                                                        };
-    public static final int[]    WALK_ALTS                                                          = {
-        9                                                                                       };
-    public static final int[]    BIKE_ALTS                                                          = {
-        10                                                                                      };
+            3, 4, 5, 6, 7, 8                                                                        };
+    public static final int[]    HOV2_ALTS                                                          = {
+            3, 4, 5                                                                                 };
+    public static final int[]    HOV3_ALTS                                                          = {
+            6, 7, 8                                                                                 };
+    public static final int[]    WALK_ALTS                                                          = {9};
+    public static final int[]    BIKE_ALTS                                                          = {10};
     public static final int[]    NON_MOTORIZED_ALTS                                                 = {
-        9, 10                                                                                    };
+            9, 10                                                                                   };
     public static final int[]    TRANSIT_ALTS                                                       = {
-        11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25                              };
-    public static final int[]    WALK_LOCAL_ALTS                                                    = {
-        11                                                                                      };
+            11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25                              };
+    public static final int[]    WALK_LOCAL_ALTS                                                    = {11};
     public static final int[]    WALK_PREMIUM_ALTS                                                  = {
-        12, 13, 14, 15                                                                          };
+            12, 13, 14, 15                                                                          };
     public static final int[]    WALK_TRANSIT_ALTS                                                  = {
-        11, 12, 13, 14, 15                                                                      };
+            11, 12, 13, 14, 15                                                                      };
     public static final int[]    DRIVE_TRANSIT_ALTS                                                 = {
-        16, 17, 18, 19, 20, 21, 22, 23, 24, 25                                                      };
+            16, 17, 18, 19, 20, 21, 22, 23, 24, 25                                                  };
     public static final int[]    PNR_ALTS                                                           = {
-        16, 17, 18, 19, 20                                                                          };
+            16, 17, 18, 19, 20                                                                      };
     public static final int[]    KNR_ALTS                                                           = {
-        21, 22, 23, 24, 25                                                                          };
-    public static final int[]    SCHOOL_BUS_ALTS                                                    = {
-        26                                                                                     };
+            21, 22, 23, 24, 25                                                                      };
+    public static final int[]    SCHOOL_BUS_ALTS                                                    = {26};
     public static final int[]    TRIP_SOV_ALTS                                                      = {
-        1, 2                                                                                    };
+            1, 2                                                                                    };
     public static final int[]    TRIP_HOV_ALTS                                                      = {
-        3, 4, 5, 6, 7, 8                                                                        };
-    
-    public static final int[]     PAY_ALTS = {2,5,8};
-    
-    public static final int[]    OTHER_ALTS = {26};
-    
+            3, 4, 5, 6, 7, 8                                                                        };
+
+    public static final int[]    PAY_ALTS                                                           = {
+            2, 5, 8                                                                                 };
+
+    public static final int[]    OTHER_ALTS                                                         = {26};
+
     private static final int     WALK                                                               = 9;
     private static final int     BIKE                                                               = 10;
 
@@ -169,13 +151,13 @@ public class SandagModelStructure
     public static final int      WALK_BRT                                                           = 13;
     public static final int      WALK_LRT                                                           = 14;
     public static final int      WALK_COMM_RAIL                                                     = 15;
-    
+
     public static final int      PNR_LOCAL_BUS                                                      = 16;
     public static final int      PNR_EXPRESS_BUS                                                    = 17;
     public static final int      PNR_BRT                                                            = 18;
     public static final int      PNR_LRT                                                            = 19;
     public static final int      PNR_COMM_RAIL                                                      = 20;
-    
+
     public static final int      KNR_LOCAL_BUS                                                      = 21;
     public static final int      KNR_EXPRESS_BUS                                                    = 22;
     public static final int      KNR_BRT                                                            = 23;
@@ -183,15 +165,15 @@ public class SandagModelStructure
     public static final int      KNR_COMM_RAIL                                                      = 25;
     public static final int      SCHOOL_BUS                                                         = 26;
     public static final int      TAXI                                                               = 27;
-    
-    public static final String[] modeName = {"SOV_GP","SOV_PAY","SR2_GP","SR2_HOV","SR2_PAY","SR3_GP","SR3_HOV",
-    	"SR3_PAY","WALK","BIKE","WLK_LOC","WLK_EXP","WLK_BRT","WLK_LRT","WLK_CMR","PNR_LOC","PNR_EXP","PNR_BRT","PNR_LRT","PNR_CMR",
-    	"KNR_LOC","KNR_EXP","KNR_BRT","KNR_LRT","KNR_CMR","SCHLBUS"
-    };
-    
+
+    public static final String[] modeName                                                           = {
+            "SOV_GP", "SOV_PAY", "SR2_GP", "SR2_HOV", "SR2_PAY", "SR3_GP", "SR3_HOV", "SR3_PAY",
+            "WALK", "BIKE", "WLK_LOC", "WLK_EXP", "WLK_BRT", "WLK_LRT", "WLK_CMR", "PNR_LOC",
+            "PNR_EXP", "PNR_BRT", "PNR_LRT", "PNR_CMR", "KNR_LOC", "KNR_EXP", "KNR_BRT", "KNR_LRT",
+            "KNR_CMR", "SCHLBUS"                                                                    };
+
     public static final int      MAXIMUM_TOUR_MODE_ALT_INDEX                                        = 26;
 
-    
     public final double[][]      CDAP_6_PLUS_PROPORTIONS                                            = {
             {0.0, 0.0, 0.0}, {0.79647, 0.09368, 0.10985}, {0.61678, 0.25757, 0.12565},
             {0.69229, 0.15641, 0.15130}, {0.00000, 0.67169, 0.32831}, {0.00000, 0.54295, 0.45705},
@@ -207,8 +189,6 @@ public class SandagModelStructure
 
     public static final int      MIN_DRIVING_AGE                                                    = 16;
 
-    
-    
     public SandagModelStructure()
     {
         super();
@@ -236,14 +216,11 @@ public class SandagModelStructure
         setNonMandatoryPurposeNameValues();
 
         /*
-        setNonMandatoryDcSoaUecSheetIndexValues();
-        setNonMandatoryDcUecSheetIndexValues();
-        setNonMandatoryModeChoiceUecSheetIndexValues();
-
-        setNonMandatoryStopFreqUecSheetIndexValues();
-        setNonMandatoryStopLocUecSheetIndexValues();
-        setNonMandatoryTripModeChoiceUecSheetIndexValues();
-*/
+         * setNonMandatoryDcSoaUecSheetIndexValues(); setNonMandatoryDcUecSheetIndexValues(); setNonMandatoryModeChoiceUecSheetIndexValues();
+         * 
+         * setNonMandatoryStopFreqUecSheetIndexValues(); setNonMandatoryStopLocUecSheetIndexValues();
+         * setNonMandatoryTripModeChoiceUecSheetIndexValues();
+         */
         setAtWorkPurposeNameValues();
 
         setAtWorkDcSoaUecSheetIndexValues();
@@ -254,86 +231,40 @@ public class SandagModelStructure
 
         createDcSizePurposeSegmentMap();
 
-//        mapModelSegmentsToDcSizeArraySegments();
+        // mapModelSegmentsToDcSizeArraySegments();
 
     }
 
-/*    
-    private void mapModelSegmentsToDcSizeArraySegments()
-    {
+    /*
+     * private void mapModelSegmentsToDcSizeArraySegments() {
+     * 
+     * Logger logger = Logger.getLogger(this.getClass());
+     * 
+     * dcSizeDcModelPurposeMap = new HashMap<String, String>(); dcModelDcSizePurposeMap = new HashMap<String, String>();
+     * 
+     * // loop over soa model names and map top dc size array indices for (int i = 0; i < dcModelPurposeIndexMap.size(); i++) { String modelSegment =
+     * dcModelIndexPurposeMap.get(i);
+     * 
+     * // look for this modelSegment name in the dc size array names map, with // and without "_segment". if
+     * (dcSizeArrayPurposeIndexMap.containsKey(modelSegment)) { dcSizeDcModelPurposeMap.put(modelSegment, modelSegment);
+     * dcModelDcSizePurposeMap.put(modelSegment, modelSegment); } else { int underscoreIndex = modelSegment.indexOf('_'); if (underscoreIndex < 0) {
+     * if (dcSizeArrayPurposeIndexMap.containsKey(modelSegment + "_" + modelSegment)) { dcSizeDcModelPurposeMap .put(modelSegment + "_" +
+     * modelSegment, modelSegment); dcModelDcSizePurposeMap .put(modelSegment, modelSegment + "_" + modelSegment); } else { logger .error(String
+     * .format( "could not establish correspondence between DC SOA model purpose string = %s", modelSegment));
+     * logger.error(String.format("and a DC array purpose string:")); int j = 0; for (String key : dcSizeArrayPurposeIndexMap.keySet())
+     * logger.error(String.format("%-2d: %s", ++j, key)); throw new RuntimeException(); } } else { // all at-work size segments should map to one
+     * model segment if (modelSegment.substring(0, underscoreIndex).equalsIgnoreCase( AT_WORK_PURPOSE_NAME)) {
+     * dcSizeDcModelPurposeMap.put(AT_WORK_PURPOSE_NAME + "_" + AT_WORK_PURPOSE_NAME, modelSegment); dcModelDcSizePurposeMap.put(modelSegment,
+     * AT_WORK_PURPOSE_NAME + "_" + AT_WORK_PURPOSE_NAME); } else { logger .error(String .format(
+     * "could not establish correspondence between DC SOA model purpose string = %s", modelSegment));
+     * logger.error(String.format("and a DC array purpose string:")); int j = 0; for (String key : dcSizeArrayPurposeIndexMap.keySet())
+     * logger.error(String.format("%-2d: %s", ++j, key)); throw new RuntimeException(); } } }
+     * 
+     * }
+     * 
+     * }
+     */
 
-        Logger logger = Logger.getLogger(this.getClass());
-
-        dcSizeDcModelPurposeMap = new HashMap<String, String>();
-        dcModelDcSizePurposeMap = new HashMap<String, String>();
-
-        // loop over soa model names and map top dc size array indices
-        for (int i = 0; i < dcModelPurposeIndexMap.size(); i++)
-        {
-            String modelSegment = dcModelIndexPurposeMap.get(i);
-
-            // look for this modelSegment name in the dc size array names map, with
-            // and without "_segment".
-            if (dcSizeArrayPurposeIndexMap.containsKey(modelSegment))
-            {
-                dcSizeDcModelPurposeMap.put(modelSegment, modelSegment);
-                dcModelDcSizePurposeMap.put(modelSegment, modelSegment);
-            } else
-            {
-                int underscoreIndex = modelSegment.indexOf('_');
-                if (underscoreIndex < 0)
-                {
-                    if (dcSizeArrayPurposeIndexMap.containsKey(modelSegment + "_" + modelSegment))
-                    {
-                        dcSizeDcModelPurposeMap
-                                .put(modelSegment + "_" + modelSegment, modelSegment);
-                        dcModelDcSizePurposeMap
-                                .put(modelSegment, modelSegment + "_" + modelSegment);
-                    } else
-                    {
-                        logger
-                                .error(String
-                                        .format(
-                                                "could not establish correspondence between DC SOA model purpose string = %s",
-                                                modelSegment));
-                        logger.error(String.format("and a DC array purpose string:"));
-                        int j = 0;
-                        for (String key : dcSizeArrayPurposeIndexMap.keySet())
-                            logger.error(String.format("%-2d: %s", ++j, key));
-                        throw new RuntimeException();
-                    }
-                } else
-                {
-                    // all at-work size segments should map to one model segment
-                    if (modelSegment.substring(0, underscoreIndex).equalsIgnoreCase(
-                            AT_WORK_PURPOSE_NAME))
-                    {
-                        dcSizeDcModelPurposeMap.put(AT_WORK_PURPOSE_NAME + "_"
-                                + AT_WORK_PURPOSE_NAME, modelSegment);
-                        dcModelDcSizePurposeMap.put(modelSegment, AT_WORK_PURPOSE_NAME + "_"
-                                + AT_WORK_PURPOSE_NAME);
-                    } else
-                    {
-                        logger
-                                .error(String
-                                        .format(
-                                                "could not establish correspondence between DC SOA model purpose string = %s",
-                                                modelSegment));
-                        logger.error(String.format("and a DC array purpose string:"));
-                        int j = 0;
-                        for (String key : dcSizeArrayPurposeIndexMap.keySet())
-                            logger.error(String.format("%-2d: %s", ++j, key));
-                        throw new RuntimeException();
-                    }
-                }
-            }
-
-        }
-
-    }
-*/
-    
-    
     public String getSchoolPurpose(int age)
     {
         if (age < MIN_DRIVING_AGE) return (schoolPurposeName + "_" + SCHOOL_PURPOSE_SEGMENT_NAMES[0])
@@ -399,7 +330,7 @@ public class SandagModelStructure
         boolean returnValue = false;
         for (int i = 0; i < HOV_ALTS.length; i++)
         {
-            if (HOV_ALTS[i] == tourMode) 
+            if (HOV_ALTS[i] == tourMode)
             {
                 returnValue = true;
                 break;
@@ -413,7 +344,7 @@ public class SandagModelStructure
         boolean returnValue = false;
         for (int i = 0; i < HOV2_ALTS.length; i++)
         {
-            if (HOV2_ALTS[i] == tourMode) 
+            if (HOV2_ALTS[i] == tourMode)
             {
                 returnValue = true;
                 break;
@@ -427,7 +358,7 @@ public class SandagModelStructure
         boolean returnValue = false;
         for (int i = 0; i < HOV3_ALTS.length; i++)
         {
-            if (HOV3_ALTS[i] == tourMode) 
+            if (HOV3_ALTS[i] == tourMode)
             {
                 returnValue = true;
                 break;
@@ -447,8 +378,8 @@ public class SandagModelStructure
         {
             if (HOV_ALTS[i] == tourMode) return true;
         }
-        
-        if(tourMode==TAXI) return true;
+
+        if (tourMode == TAXI) return true;
 
         return false;
     }
@@ -539,7 +470,8 @@ public class SandagModelStructure
 
     public boolean getTourModeIsWalkTransit(int tourMode)
     {
-        boolean returnValue = getTourModeIsWalkLocal(tourMode) || getTourModeIsWalkPremium(tourMode);
+        boolean returnValue = getTourModeIsWalkLocal(tourMode)
+                || getTourModeIsWalkPremium(tourMode);
         return returnValue;
     }
 
@@ -598,29 +530,34 @@ public class SandagModelStructure
         }
         return returnValue;
     }
-    
-    public static boolean getTripModeIsPay(int tripMode){
-    	boolean returnValue = false;
-    	for (int i = 0; i < PAY_ALTS.length; i++)
-    	{
-    		if (PAY_ALTS[i] == tripMode)
-    		{
-    			returnValue = true;
-    			break;
-    		}
-    	}
-    	
-    	return returnValue;
+
+    public static boolean getTripModeIsPay(int tripMode)
+    {
+        boolean returnValue = false;
+        for (int i = 0; i < PAY_ALTS.length; i++)
+        {
+            if (PAY_ALTS[i] == tripMode)
+            {
+                returnValue = true;
+                break;
+            }
+        }
+
+        return returnValue;
     }
-   /**
+
+    /**
      * Get the name of the mode
-     * @param mode The mode index (1-26)
-     * @return  The name of the mode
+     * 
+     * @param mode
+     *            The mode index (1-26)
+     * @return The name of the mode
      */
-    public String getModeName(int mode){
-    	
-    	return modeName[mode-1];
-    	
+    public String getModeName(int mode)
+    {
+
+        return modeName[mode - 1];
+
     }
 
     private int createPurposeIndexMaps(String purposeName, String[] segmentNames, int index,
@@ -652,8 +589,7 @@ public class SandagModelStructure
     }
 
     /**
-     * This method defines the segmentation for which destination choice size
-     * variables are calculated.
+     * This method defines the segmentation for which destination choice size variables are calculated.
      */
     private void createDcSizePurposeSegmentMap()
     {
@@ -974,78 +910,44 @@ public class SandagModelStructure
     }
 
     /*
-    private void setNonMandatoryDcSoaUecSheetIndexValues()
-    {
-        dcSoaUecIndexMap.put("escort_kids", NON_MANDATORY_SOA_UEC_INDEX_ESCORT_KIDS);
-        dcSoaUecIndexMap.put("escort_no kids", NON_MANDATORY_SOA_UEC_INDEX_ESCORT_NO_KIDS);
-        dcSoaUecIndexMap.put("shopping", NON_MANDATORY_SOA_UEC_INDEX_SHOPPING);
-        dcSoaUecIndexMap.put("eatout", NON_MANDATORY_SOA_UEC_INDEX_EAT_OUT);
-        dcSoaUecIndexMap.put("othmaint", NON_MANDATORY_SOA_UEC_INDEX_OTHER_MAINT);
-        dcSoaUecIndexMap.put("social", NON_MANDATORY_SOA_UEC_INDEX_SOCIAL);
-        dcSoaUecIndexMap.put("othdiscr", NON_MANDATORY_SOA_UEC_INDEX_OTHER_DISCR);
-    }
-
-    private void setNonMandatoryDcUecSheetIndexValues()
-    {
-        dcUecIndexMap.put("escort_kids", NON_MANDATORY_DC_UEC_INDEX_ESCORT_KIDS);
-        dcUecIndexMap.put("escort_no kids", NON_MANDATORY_DC_UEC_INDEX_ESCORT_NO_KIDS);
-        dcUecIndexMap.put("shopping", NON_MANDATORY_DC_UEC_INDEX_SHOPPING);
-        dcUecIndexMap.put("eatout", NON_MANDATORY_DC_UEC_INDEX_EAT_OUT);
-        dcUecIndexMap.put("othmaint", NON_MANDATORY_DC_UEC_INDEX_OTHER_MAINT);
-        dcUecIndexMap.put("social", NON_MANDATORY_DC_UEC_INDEX_SOCIAL);
-        dcUecIndexMap.put("othdiscr", NON_MANDATORY_DC_UEC_INDEX_OTHER_DISCR);
-    }
-
-    private void setNonMandatoryModeChoiceUecSheetIndexValues()
-    {
-        tourModeChoiceUecIndexMap.put("escort_kids", NON_MANDATORY_MC_UEC_INDEX_ESCORT_KIDS);
-        tourModeChoiceUecIndexMap.put("escort_no kids", NON_MANDATORY_MC_UEC_INDEX_ESCORT_NO_KIDS);
-        tourModeChoiceUecIndexMap.put("shopping", NON_MANDATORY_MC_UEC_INDEX_SHOPPING);
-        tourModeChoiceUecIndexMap.put("eatout", NON_MANDATORY_MC_UEC_INDEX_EAT_OUT);
-        tourModeChoiceUecIndexMap.put("othmaint", NON_MANDATORY_MC_UEC_INDEX_OTHER_MAINT);
-        tourModeChoiceUecIndexMap.put("social", NON_MANDATORY_MC_UEC_INDEX_SOCIAL);
-        tourModeChoiceUecIndexMap.put("othdiscr", NON_MANDATORY_MC_UEC_INDEX_OTHER_DISCR);
-    }
-
-    private void setNonMandatoryStopFreqUecSheetIndexValues()
-    {
-        stopFreqUecIndexMap.put("escort_kids", NON_MANDATORY_STOP_FREQ_UEC_INDEX_ESCORT);
-        stopFreqUecIndexMap.put("escort_no kids", NON_MANDATORY_STOP_FREQ_UEC_INDEX_ESCORT);
-        stopFreqUecIndexMap.put("shopping", NON_MANDATORY_STOP_FREQ_UEC_INDEX_SHOPPING);
-        stopFreqUecIndexMap.put("eatout", NON_MANDATORY_STOP_FREQ_UEC_INDEX_EAT_OUT);
-        stopFreqUecIndexMap.put("othmaint", NON_MANDATORY_STOP_FREQ_UEC_INDEX_OTHER_MAINT);
-        stopFreqUecIndexMap.put("social", NON_MANDATORY_STOP_FREQ_UEC_INDEX_SOCIAL);
-        stopFreqUecIndexMap.put("othdiscr", NON_MANDATORY_STOP_FREQ_UEC_INDEX_OTHER_DISCR);
-    }
-
-    private void setNonMandatoryStopLocUecSheetIndexValues()
-    {
-        stopLocUecIndexMap.put(ESCORT_PURPOSE_NAME, NON_MANDATORY_STOP_LOC_UEC_INDEX_ESCORT);
-        stopLocUecIndexMap.put(SHOPPING_PURPOSE_NAME, NON_MANDATORY_STOP_LOC_UEC_INDEX_SHOPPING);
-        stopLocUecIndexMap.put(EAT_OUT_PURPOSE_NAME, NON_MANDATORY_STOP_LOC_UEC_INDEX_EAT_OUT);
-        stopLocUecIndexMap
-                .put(OTH_MAINT_PURPOSE_NAME, NON_MANDATORY_STOP_LOC_UEC_INDEX_OTHER_MAINT);
-        stopLocUecIndexMap.put(SOCIAL_PURPOSE_NAME, NON_MANDATORY_STOP_LOC_UEC_INDEX_SOCIAL);
-        stopLocUecIndexMap
-                .put(OTH_DISCR_PURPOSE_NAME, NON_MANDATORY_STOP_LOC_UEC_INDEX_OTHER_DISCR);
-    }
-
-    private void setNonMandatoryTripModeChoiceUecSheetIndexValues()
-    {
-        tripModeChoiceUecIndexMap
-                .put(ESCORT_PURPOSE_NAME, NON_MANDATORY_TRIP_MODE_CHOICE_UEC_INDEX);
-        tripModeChoiceUecIndexMap.put(SHOPPING_PURPOSE_NAME,
-                NON_MANDATORY_TRIP_MODE_CHOICE_UEC_INDEX);
-        tripModeChoiceUecIndexMap.put(EAT_OUT_PURPOSE_NAME,
-                NON_MANDATORY_TRIP_MODE_CHOICE_UEC_INDEX);
-        tripModeChoiceUecIndexMap.put(OTH_MAINT_PURPOSE_NAME,
-                NON_MANDATORY_TRIP_MODE_CHOICE_UEC_INDEX);
-        tripModeChoiceUecIndexMap
-                .put(SOCIAL_PURPOSE_NAME, NON_MANDATORY_TRIP_MODE_CHOICE_UEC_INDEX);
-        tripModeChoiceUecIndexMap.put(OTH_DISCR_PURPOSE_NAME,
-                NON_MANDATORY_TRIP_MODE_CHOICE_UEC_INDEX);
-    }
-*/
+     * private void setNonMandatoryDcSoaUecSheetIndexValues() { dcSoaUecIndexMap.put("escort_kids", NON_MANDATORY_SOA_UEC_INDEX_ESCORT_KIDS);
+     * dcSoaUecIndexMap.put("escort_no kids", NON_MANDATORY_SOA_UEC_INDEX_ESCORT_NO_KIDS); dcSoaUecIndexMap.put("shopping",
+     * NON_MANDATORY_SOA_UEC_INDEX_SHOPPING); dcSoaUecIndexMap.put("eatout", NON_MANDATORY_SOA_UEC_INDEX_EAT_OUT); dcSoaUecIndexMap.put("othmaint",
+     * NON_MANDATORY_SOA_UEC_INDEX_OTHER_MAINT); dcSoaUecIndexMap.put("social", NON_MANDATORY_SOA_UEC_INDEX_SOCIAL); dcSoaUecIndexMap.put("othdiscr",
+     * NON_MANDATORY_SOA_UEC_INDEX_OTHER_DISCR); }
+     * 
+     * private void setNonMandatoryDcUecSheetIndexValues() { dcUecIndexMap.put("escort_kids", NON_MANDATORY_DC_UEC_INDEX_ESCORT_KIDS);
+     * dcUecIndexMap.put("escort_no kids", NON_MANDATORY_DC_UEC_INDEX_ESCORT_NO_KIDS); dcUecIndexMap.put("shopping",
+     * NON_MANDATORY_DC_UEC_INDEX_SHOPPING); dcUecIndexMap.put("eatout", NON_MANDATORY_DC_UEC_INDEX_EAT_OUT); dcUecIndexMap.put("othmaint",
+     * NON_MANDATORY_DC_UEC_INDEX_OTHER_MAINT); dcUecIndexMap.put("social", NON_MANDATORY_DC_UEC_INDEX_SOCIAL); dcUecIndexMap.put("othdiscr",
+     * NON_MANDATORY_DC_UEC_INDEX_OTHER_DISCR); }
+     * 
+     * private void setNonMandatoryModeChoiceUecSheetIndexValues() { tourModeChoiceUecIndexMap.put("escort_kids",
+     * NON_MANDATORY_MC_UEC_INDEX_ESCORT_KIDS); tourModeChoiceUecIndexMap.put("escort_no kids", NON_MANDATORY_MC_UEC_INDEX_ESCORT_NO_KIDS);
+     * tourModeChoiceUecIndexMap.put("shopping", NON_MANDATORY_MC_UEC_INDEX_SHOPPING); tourModeChoiceUecIndexMap.put("eatout",
+     * NON_MANDATORY_MC_UEC_INDEX_EAT_OUT); tourModeChoiceUecIndexMap.put("othmaint", NON_MANDATORY_MC_UEC_INDEX_OTHER_MAINT);
+     * tourModeChoiceUecIndexMap.put("social", NON_MANDATORY_MC_UEC_INDEX_SOCIAL); tourModeChoiceUecIndexMap.put("othdiscr",
+     * NON_MANDATORY_MC_UEC_INDEX_OTHER_DISCR); }
+     * 
+     * private void setNonMandatoryStopFreqUecSheetIndexValues() { stopFreqUecIndexMap.put("escort_kids", NON_MANDATORY_STOP_FREQ_UEC_INDEX_ESCORT);
+     * stopFreqUecIndexMap.put("escort_no kids", NON_MANDATORY_STOP_FREQ_UEC_INDEX_ESCORT); stopFreqUecIndexMap.put("shopping",
+     * NON_MANDATORY_STOP_FREQ_UEC_INDEX_SHOPPING); stopFreqUecIndexMap.put("eatout", NON_MANDATORY_STOP_FREQ_UEC_INDEX_EAT_OUT);
+     * stopFreqUecIndexMap.put("othmaint", NON_MANDATORY_STOP_FREQ_UEC_INDEX_OTHER_MAINT); stopFreqUecIndexMap.put("social",
+     * NON_MANDATORY_STOP_FREQ_UEC_INDEX_SOCIAL); stopFreqUecIndexMap.put("othdiscr", NON_MANDATORY_STOP_FREQ_UEC_INDEX_OTHER_DISCR); }
+     * 
+     * private void setNonMandatoryStopLocUecSheetIndexValues() { stopLocUecIndexMap.put(ESCORT_PURPOSE_NAME,
+     * NON_MANDATORY_STOP_LOC_UEC_INDEX_ESCORT); stopLocUecIndexMap.put(SHOPPING_PURPOSE_NAME, NON_MANDATORY_STOP_LOC_UEC_INDEX_SHOPPING);
+     * stopLocUecIndexMap.put(EAT_OUT_PURPOSE_NAME, NON_MANDATORY_STOP_LOC_UEC_INDEX_EAT_OUT); stopLocUecIndexMap .put(OTH_MAINT_PURPOSE_NAME,
+     * NON_MANDATORY_STOP_LOC_UEC_INDEX_OTHER_MAINT); stopLocUecIndexMap.put(SOCIAL_PURPOSE_NAME, NON_MANDATORY_STOP_LOC_UEC_INDEX_SOCIAL);
+     * stopLocUecIndexMap .put(OTH_DISCR_PURPOSE_NAME, NON_MANDATORY_STOP_LOC_UEC_INDEX_OTHER_DISCR); }
+     * 
+     * private void setNonMandatoryTripModeChoiceUecSheetIndexValues() { tripModeChoiceUecIndexMap .put(ESCORT_PURPOSE_NAME,
+     * NON_MANDATORY_TRIP_MODE_CHOICE_UEC_INDEX); tripModeChoiceUecIndexMap.put(SHOPPING_PURPOSE_NAME, NON_MANDATORY_TRIP_MODE_CHOICE_UEC_INDEX);
+     * tripModeChoiceUecIndexMap.put(EAT_OUT_PURPOSE_NAME, NON_MANDATORY_TRIP_MODE_CHOICE_UEC_INDEX);
+     * tripModeChoiceUecIndexMap.put(OTH_MAINT_PURPOSE_NAME, NON_MANDATORY_TRIP_MODE_CHOICE_UEC_INDEX); tripModeChoiceUecIndexMap
+     * .put(SOCIAL_PURPOSE_NAME, NON_MANDATORY_TRIP_MODE_CHOICE_UEC_INDEX); tripModeChoiceUecIndexMap.put(OTH_DISCR_PURPOSE_NAME,
+     * NON_MANDATORY_TRIP_MODE_CHOICE_UEC_INDEX); }
+     */
     private void setAtWorkPurposeNameValues()
     {
 
@@ -1127,9 +1029,10 @@ public class SandagModelStructure
     {
         return MODEL_PERIOD_LABELS[period];
     }
-    
-    public int getNumberModelPeriods(){
-    	return MODEL_PERIOD_LABELS.length;
+
+    public int getNumberModelPeriods()
+    {
+        return MODEL_PERIOD_LABELS.length;
     }
 
     public String getSkimMatrixPeriodString(int period)
@@ -1167,8 +1070,7 @@ public class SandagModelStructure
         if (SKIM_PERIOD_COMBINATIONS[startPeriodIndex][endPeriodIndex] < 0)
         {
             String errorString = String
-                    .format(
-                            "startPeriod=%d, startPeriod=%d, endPeriod=%d, endPeriod=%d is invalid combination.",
+                    .format("startPeriod=%d, startPeriod=%d, endPeriod=%d, endPeriod=%d is invalid combination.",
                             startPeriod, startPeriodIndex, endPeriod, endPeriodIndex);
             throw new RuntimeException(errorString);
         } else
@@ -1223,7 +1125,7 @@ public class SandagModelStructure
         schoolSegmentIndexNameMap = argMap;
     }
 
-    public void setJtfAltLabels( String[] labels )
+    public void setJtfAltLabels(String[] labels)
     {
         jtfAltLabels = labels;
     }
@@ -1233,13 +1135,12 @@ public class SandagModelStructure
         return jtfAltLabels;
     }
 
-
     public boolean getTripModeIsWalkTransit(int tripMode)
     {
 
-        for (int i = 0; i < WALK_TRANSIT_ALTS.length; i++) {
-            if ( WALK_TRANSIT_ALTS[i] == tripMode )
-                return true;
+        for (int i = 0; i < WALK_TRANSIT_ALTS.length; i++)
+        {
+            if (WALK_TRANSIT_ALTS[i] == tripMode) return true;
         }
 
         return false;
@@ -1248,9 +1149,9 @@ public class SandagModelStructure
     public boolean getTripModeIsPnrTransit(int tripMode)
     {
 
-        for (int i = 0; i < PNR_ALTS.length; i++) {
-            if ( PNR_ALTS[i] == tripMode )
-                return true;
+        for (int i = 0; i < PNR_ALTS.length; i++)
+        {
+            if (PNR_ALTS[i] == tripMode) return true;
         }
 
         return false;
@@ -1259,20 +1160,23 @@ public class SandagModelStructure
     public boolean getTripModeIsKnrTransit(int tripMode)
     {
 
-        for (int i = 0; i < KNR_ALTS.length; i++) {
-            if ( KNR_ALTS[i] == tripMode )
-                return true;
+        for (int i = 0; i < KNR_ALTS.length; i++)
+        {
+            if (KNR_ALTS[i] == tripMode) return true;
         }
 
         return false;
     }
 
-    public int getRideModeIndexForTripMode( int tripMode ) {
-        
+    public int getRideModeIndexForTripMode(int tripMode)
+    {
+
         int rideModeIndex = -1;
-        
-        if ( getTripModeIsWalkTransit(tripMode) ) {
-            switch ( tripMode ) {
+
+        if (getTripModeIsWalkTransit(tripMode))
+        {
+            switch (tripMode)
+            {
                 case WALK_LOCAL_BUS:
                     rideModeIndex = Modes.getTransitModeIndex("LB");
                     break;
@@ -1291,10 +1195,13 @@ public class SandagModelStructure
             }
         }
 
-        if ( rideModeIndex < 0 ) {
-            
-            if ( getTripModeIsPnrTransit(tripMode) ) {
-                switch ( tripMode ) {
+        if (rideModeIndex < 0)
+        {
+
+            if (getTripModeIsPnrTransit(tripMode))
+            {
+                switch (tripMode)
+                {
                     case PNR_LOCAL_BUS:
                         rideModeIndex = Modes.getTransitModeIndex("LB");
                         break;
@@ -1315,10 +1222,13 @@ public class SandagModelStructure
 
         }
 
-        if ( rideModeIndex < 0 ) {
-            
-            if ( getTripModeIsKnrTransit(tripMode) ) {
-                switch ( tripMode ) {
+        if (rideModeIndex < 0)
+        {
+
+            if (getTripModeIsKnrTransit(tripMode))
+            {
+                switch (tripMode)
+                {
                     case KNR_LOCAL_BUS:
                         rideModeIndex = Modes.getTransitModeIndex("LB");
                         break;
@@ -1338,42 +1248,43 @@ public class SandagModelStructure
             }
 
         }
-        
+
         return rideModeIndex;
     }
 
-	public boolean getTripModeIsNonMotorized(int i) {
+    public boolean getTripModeIsNonMotorized(int i)
+    {
 
-		if(i== WALK || i == BIKE)
-			return true;
-		else 
-			return false;
-	}
+        if (i == WALK || i == BIKE) return true;
+        else return false;
+    }
 
-	public boolean getTripModeIsS2(int tripMode) {
+    public boolean getTripModeIsS2(int tripMode)
+    {
         boolean returnValue = false;
         for (int i = 0; i < HOV2_ALTS.length; i++)
         {
-            if (HOV2_ALTS[i] == tripMode) 
+            if (HOV2_ALTS[i] == tripMode)
             {
                 returnValue = true;
                 break;
             }
         }
         return returnValue;
-	}
-	   public boolean getTripModeIsS3(int tripMode)
-	    {
-	        boolean returnValue = false;
-	        for (int i = 0; i < HOV3_ALTS.length; i++)
-	        {
-	            if (HOV3_ALTS[i] == tripMode) 
-	            {
-	                returnValue = true;
-	                break;
-	            }
-	        }
-	        return returnValue;
-	    }
+    }
+
+    public boolean getTripModeIsS3(int tripMode)
+    {
+        boolean returnValue = false;
+        for (int i = 0; i < HOV3_ALTS.length; i++)
+        {
+            if (HOV3_ALTS[i] == tripMode)
+            {
+                returnValue = true;
+                break;
+            }
+        }
+        return returnValue;
+    }
 
 }

@@ -56,11 +56,9 @@ public final class TripSkimsAppender
     // 4=12:00-15:29,
     // 5=15:30-18:59,
     // 6=19:00-02:59
-    // skim periods are: 0=0(N/A), 1=3(OP), 2=1(AM), 3=3(OP), 4=3(OP), 5=2(PM),
-    // 6=3(OP)
+    // skim periods are: 0=0(N/A), 1=3(OP), 2=1(AM), 3=3(OP), 4=3(OP), 5=2(PM), 6=3(OP)
 
-    // define a conversion array to convert period values in the survey file to
-    // skim
+    // define a conversion array to convert period values in the survey file to skim
     // period indices used in this propgram: 1=am peak, 2=pm peak, 3=off-peak.
     private static final String[]     SKIM_PERIOD_LABELS           = {"am", "pm", "op"};
     private static final int[]        SURVEY_PERIOD_TO_SKIM_PERIOD = {0, 3, 1, 3, 3, 2, 3};
@@ -139,14 +137,12 @@ public final class TripSkimsAppender
         // 25040, wlkCoaster, mgra 4989 = taz 3270, mgra 7796 = taz 1986
         // int[][] hisOdts = { { 7796, 4989, 2, 0 } };
 
-        // if ( debugOrigMgra <= 0 || debugDestMgra <= 0 || departModelPeriod <=
-        // 0 || departModelPeriod > 6 )
+        // if ( debugOrigMgra <= 0 || debugDestMgra <= 0 || departModelPeriod <= 0 || departModelPeriod > 6 )
         // {
         // logger.error("please set values for command line arguments: properties file, orig mgra, dest mgra, depart model period.");
         // System.exit(-1);
         // }
-        // int[][] hisOdts = { { debugOrigMgra, debugDestMgra,
-        // departModelPeriod, 0 } };
+        // int[][] hisOdts = { { debugOrigMgra, debugDestMgra, departModelPeriod, 0 } };
 
         // write skims data for home interview survey records
         int seq = 1;
@@ -155,8 +151,7 @@ public final class TripSkimsAppender
             // write outbound direction
             odt[0] = hisOdt[0]; // orig
             odt[1] = hisOdt[1]; // dest
-            odt[2] = SURVEY_PERIOD_TO_SKIM_PERIOD[hisOdt[2]]; // depart skim
-                                                              // period
+            odt[2] = SURVEY_PERIOD_TO_SKIM_PERIOD[hisOdt[2]]; // depart skim period
             odt[3] = hisOdt[3];
 
             try
@@ -278,8 +273,7 @@ public final class TripSkimsAppender
      * Start the matrix server
      * 
      * @param rb
-     *            is a ResourceBundle for the properties file for this
-     *            application
+     *            is a ResourceBundle for the properties file for this application
      */
     private void startMatrixServer(ResourceBundle rb)
     {
@@ -312,16 +306,12 @@ public final class TripSkimsAppender
     }
 
     /**
-     * create a String which can be written to an output file with all the skim
-     * values for the orig/dest/period.
+     * create a String which can be written to an output file with all the skim values for the orig/dest/period.
      * 
      * @param odt
-     *            is an int[] with the first element the origin mgra and the
-     *            second element the dest mgra and third element the departure
-     *            period index
+     *            is an int[] with the first element the origin mgra and the second element the dest mgra and third element the departure period index
      * @param skims
-     *            is a double[][] of skim values with the first dimesion the
-     *            ride mode indices and second dimention the skim categories
+     *            is a double[][] of skim values with the first dimesion the ride mode indices and second dimention the skim categories
      */
     private String getTransitSkimsRecord(int[] odt, double[][] skims)
     {
@@ -343,13 +333,10 @@ public final class TripSkimsAppender
     }
 
     /**
-     * create a String which can be written to an output file with all the skim
-     * values for the orig/dest/period.
+     * create a String which can be written to an output file with all the skim values for the orig/dest/period.
      * 
      * @param odt
-     *            is an int[] with the first element the origin mgra and the
-     *            second element the dest mgra and third element the departure
-     *            period index
+     *            is an int[] with the first element the origin mgra and the second element the dest mgra and third element the departure period index
      * @param skims
      *            is a double[] of skim values
      */
@@ -367,13 +354,11 @@ public final class TripSkimsAppender
     }
 
     /**
-     * create a String for the output file header record which can be written to
-     * an output file with all the skim value namess for the orig/dest/period.
+     * create a String for the output file header record which can be written to an output file with all the skim value namess for the
+     * orig/dest/period.
      * 
      * @param odt
-     *            is an int[] with the first element the origin mgra and the
-     *            second element the dest mgra and third element the departure
-     *            period index
+     *            is an int[] with the first element the origin mgra and the second element the dest mgra and third element the departure period index
      */
     private String getTransitSkimsHeaderRecord(String transitServiveLabel, String[] localNames,
             String[] premiumNames)
@@ -402,13 +387,11 @@ public final class TripSkimsAppender
     }
 
     /**
-     * create a String for the output file header record which can be written to
-     * an output file with all the skim value namess for the orig/dest/period.
+     * create a String for the output file header record which can be written to an output file with all the skim value namess for the
+     * orig/dest/period.
      * 
      * @param odt
-     *            is an int[] with the first element the origin mgra and the
-     *            second element the dest mgra and third element the departure
-     *            period index
+     *            is an int[] with the first element the origin mgra and the second element the dest mgra and third element the departure period index
      */
     private String getAutoSkimsHeaderRecord(String label, String[] names)
     {
@@ -422,13 +405,11 @@ public final class TripSkimsAppender
     }
 
     /**
-     * create a String for the output file header record which can be written to
-     * an output file with all the skim value namess for the orig/dest/period.
+     * create a String for the output file header record which can be written to an output file with all the skim value namess for the
+     * orig/dest/period.
      * 
      * @param odt
-     *            is an int[] with the first element the origin mgra and the
-     *            second element the dest mgra and third element the departure
-     *            period index
+     *            is an int[] with the first element the origin mgra and the second element the dest mgra and third element the departure period index
      */
     private String getNonMotorizedSkimsHeaderRecord(String label, String[] names)
     {
@@ -474,8 +455,7 @@ public final class TripSkimsAppender
     private int[][] getHomeInterviewSurveyOrigDestTimes(TableDataSet hisTds)
     {
 
-        // odts are an array with elements: origin mgra, destination mgra,
-        // departure period(1-6), and his sampno.
+        // odts are an array with elements: origin mgra, destination mgra, departure period(1-6), and his sampno.
         int[][] odts = new int[hisTds.getRowCount()][4];
 
         int[] sampnos = hisTds.getColumnAsInt(HIS_SAMPNO);
@@ -561,13 +541,11 @@ public final class TripSkimsAppender
             } else
             {
                 System.out.println("starting matrix data server in a 32 bit process.");
-                // start the 32 bit JVM used specifically for running matrix io
-                // classes
+                // start the 32 bit JVM used specifically for running matrix io classes
                 ioVm32Bit = MatrixIO32BitJvm.getInstance();
                 ioVm32Bit.startJVM32();
 
-                // establish that matrix reader and writer classes will use the
-                // RMI versions for TRANSCAD format matrices
+                // establish that matrix reader and writer classes will use the RMI versions for TRANSCAD format matrices
                 ioVm32Bit.startMatrixDataServer(MatrixType.TRANSCAD);
             }
 
@@ -581,14 +559,11 @@ public final class TripSkimsAppender
 
             if (ms == null)
             {
-                // establish that matrix reader and writer classes will not use
-                // the RMI versions any longer.
-                // local matrix i/o, as specified by setting types, is now the
-                // default again.
+                // establish that matrix reader and writer classes will not use the RMI versions any longer.
+                // local matrix i/o, as specified by setting types, is now the default again.
                 ioVm32Bit.stopMatrixDataServer();
 
-                // close the JVM in which the RMI reader/writer classes were
-                // running
+                // close the JVM in which the RMI reader/writer classes were running
                 ioVm32Bit.stopJVM32();
                 System.out.println("matrix data server 32 bit process stopped.");
             } else
@@ -600,10 +575,8 @@ public final class TripSkimsAppender
         } catch (RuntimeException e)
         {
 
-            // establish that matrix reader and writer classes will not use the
-            // RMI versions any longer.
-            // local matrix i/o, as specified by setting types, is now the
-            // default again.
+            // establish that matrix reader and writer classes will not use the RMI versions any longer.
+            // local matrix i/o, as specified by setting types, is now the default again.
             ioVm32Bit.stopMatrixDataServer();
 
             // close the JVM in which the RMI reader/writer classes were running

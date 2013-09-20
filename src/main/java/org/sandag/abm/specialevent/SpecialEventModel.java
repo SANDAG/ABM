@@ -4,6 +4,8 @@ import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
 import java.io.File;
 import java.io.IOException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.MissingResourceException;
 import org.apache.log4j.Logger;
@@ -18,16 +20,15 @@ import org.sandag.abm.modechoice.TazDataManager;
 import com.pb.common.calculator.MatrixDataManager;
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
+import com.pb.common.matrix.Matrix;
 import com.pb.common.matrix.MatrixType;
 import com.pb.common.util.ResourceUtil;
 
 /**
  * Trips for special events.
  * 
- * This programs models trips to special events using the Event Model framework.
- * The Event Model framework generates and distributes trips. These trips are
- * put through a mode choice model. User benefits are optionally calculated and
- * written to a SUMMIT formatted file.
+ * This programs models trips to special events using the Event Model framework. The Event Model framework generates and distributes trips. These
+ * trips are put through a mode choice model. User benefits are optionally calculated and written to a SUMMIT formatted file.
  * 
  */
 public class SpecialEventModel
@@ -141,14 +142,12 @@ public class SpecialEventModel
             SpecialEventTrip[] trips = new SpecialEventTrip[2];
             int tripNumber = 0;
 
-            // generate an outbound trip from the tour origin to the destination
-            // and choose a mode
+            // generate an outbound trip from the tour origin to the destination and choose a mode
             trips[tripNumber] = new SpecialEventTrip(tour, true);
             tripModeChoiceModel.chooseMode(tour, trips[tripNumber]);
             ++tripNumber;
 
-            // generate an inbound trip from the tour destination to the origin
-            // and choose a mode
+            // generate an inbound trip from the tour destination to the origin and choose a mode
             trips[tripNumber] = new SpecialEventTrip(tour, false);
             tripModeChoiceModel.chooseMode(tour, trips[tripNumber]);
             ++tripNumber;
@@ -185,8 +184,7 @@ public class SpecialEventModel
                     e);
         }
 
-        // bind this concrete object with the cajo library objects for managing
-        // RMI
+        // bind this concrete object with the cajo library objects for managing RMI
         try
         {
             Remote.config(serverAddress, serverPort, null, 0);
@@ -202,7 +200,7 @@ public class SpecialEventModel
         try
         {
             ItemServer.bind(matrixServer, className);
-        } catch (IOException e)
+        } catch (RemoteException e)
         {
             logger.error(String.format(
                     "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",
@@ -218,8 +216,7 @@ public class SpecialEventModel
     /**
      * Run Special Events Model.
      * 
-     * The Special Events Model generates, distributes, and chooses modes for
-     * attendees of sporting events and similar activities.
+     * The Special Events Model generates, distributes, and chooses modes for attendees of sporting events and similar activities.
      */
     public static void main(String[] args)
     {
@@ -245,8 +242,7 @@ public class SpecialEventModel
         int serverPort = 0;
         try
         {
-            // get matrix server address. if "none" is specified, no server will
-            // be
+            // get matrix server address. if "none" is specified, no server will be
             // started, and matrix io will ocurr within the current process.
             matrixServerAddress = Util.getStringValueFromPropertyMap(pMap,
                     "RunModel.MatrixServerAddress");
@@ -256,14 +252,12 @@ public class SpecialEventModel
                 serverPort = Util.getIntegerValueFromPropertyMap(pMap, "RunModel.MatrixServerPort");
             } catch (MissingResourceException e)
             {
-                // if no matrix server address entry is found, leave undefined
-                // --
+                // if no matrix server address entry is found, leave undefined --
                 // it's eithe not needed or show could create an error.
             }
         } catch (MissingResourceException e)
         {
-            // if no matrix server address entry is found, set to localhost, and
-            // a
+            // if no matrix server address entry is found, set to localhost, and a
             // separate matrix io process will be started on localhost.
             matrixServerAddress = "localhost";
             serverPort = MATRIX_DATA_SERVER_PORT;
@@ -291,8 +285,7 @@ public class SpecialEventModel
                     specialEventModel.ms.testRemote("SpecialEventModel");
                     specialEventModel.ms.start32BitMatrixIoServer(mt, "SpecialEventModel");
 
-                    // these methods need to be called to set the matrix data
-                    // manager in the matrix data server
+                    // these methods need to be called to set the matrix data manager in the matrix data server
                     MatrixDataManager mdm = MatrixDataManager.getInstance();
                     mdm.setMatrixDataServerObject(specialEventModel.ms);
                 }
@@ -315,8 +308,7 @@ public class SpecialEventModel
 
         specialEventModel.runModel();
 
-        // if a separate process for running matrix data mnager was started,
-        // we're
+        // if a separate process for running matrix data mnager was started, we're
         // done with it, so close it.
         if (matrixServerAddress.equalsIgnoreCase("localhost"))
         {

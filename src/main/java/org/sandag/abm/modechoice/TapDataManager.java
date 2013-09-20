@@ -21,7 +21,7 @@ public final class TapDataManager
         implements Serializable
 {
 
-    protected transient Logger       logger = Logger.getLogger(TapDataManager.class);
+    protected transient Logger    logger = Logger.getLogger(TapDataManager.class);
     private static TapDataManager instance;
 
     // tapID, [tapNum, lotId, ??, taz][list of values]
@@ -31,14 +31,15 @@ public final class TapDataManager
     private int[]                 lotUse;
 
     // an array of taps
-    private int[]                  taps;
+    private int[]                 taps;
     private int                   maxTap;
 
-    public int getMaxTap() {
-		return maxTap;
-	}
+    public int getMaxTap()
+    {
+        return maxTap;
+    }
 
-	private TapDataManager(HashMap<String, String> rbMap)
+    private TapDataManager(HashMap<String, String> rbMap)
     {
 
         System.out.println("I'm the TapDataManager");
@@ -49,10 +50,8 @@ public final class TapDataManager
     }
 
     /**
-     * This method should only be used after the getInstance(HashMap<String, String>
-     * rbMap) method has been called since the rbMap is needed to read in all the
-     * data and populate the object. This method will return the instance that has
-     * already been populated.
+     * This method should only be used after the getInstance(HashMap<String, String> rbMap) method has been called since the rbMap is needed to read
+     * in all the data and populate the object. This method will return the instance that has already been populated.
      * 
      * @return instance
      * @throws RuntimeException
@@ -70,19 +69,16 @@ public final class TapDataManager
     }
 
     /**
-     * This method will read in the tapParkingInfo.ptype file and store the info in a
-     * TreeMap where key equals the iTap and value equals an array of [][3] elements.
-     * The TreeMap will be passed to the populateTap function which will transpose
-     * the array of [][3] elements to an array of [4][] elements and attaches it to
-     * the this.tapParkingInfo[key]
+     * This method will read in the tapParkingInfo.ptype file and store the info in a TreeMap where key equals the iTap and value equals an array of
+     * [][3] elements. The TreeMap will be passed to the populateTap function which will transpose the array of [][3] elements to an array of [4][]
+     * elements and attaches it to the this.tapParkingInfo[key]
      * 
-     * //TODO: Test this and see if there is only a single lot associated // TODO
-     * with each tap.
+     * //TODO: Test this and see if there is only a single lot associated // TODO with each tap.
      * 
      * The file has 5 columns - tap, lotId, parking type, taz, and capacity
      * 
-     * @param rb - the resource bundle that lists the tap.ptype file and
-     *            scenario.path.
+     * @param rb
+     *            - the resource bundle that lists the tap.ptype file and scenario.path.
      */
     private void readTap(HashMap<String, String> rbMap)
     {
@@ -124,12 +120,11 @@ public final class TapDataManager
     }
 
     /**
-     * The function will get a TreeMap having with iTaps as keys and [][4] arrays.
-     * For each iTap in the TreeMap it will transpose the [][4] array associated with
-     * it and attach it to the this.tapParkingInfo[key] element.
+     * The function will get a TreeMap having with iTaps as keys and [][4] arrays. For each iTap in the TreeMap it will transpose the [][4] array
+     * associated with it and attach it to the this.tapParkingInfo[key] element.
      * 
-     * @param map - a TreeMap containing all the records of the tapParkingInfo.ptype
-     *            file
+     * @param map
+     *            - a TreeMap containing all the records of the tapParkingInfo.ptype file
      */
     private void populateTap(TreeMap<Integer, List<float[]>> map)
     {
@@ -176,16 +171,16 @@ public final class TapDataManager
     /**
      * Set the array of tap numbers (taps[]), indexed at 1.
      * 
-     * @param rb A Resourcebundle with skims.path and tap.skim.file properties.
+     * @param rb
+     *            A Resourcebundle with skims.path and tap.skim.file properties.
      */
     public void getTapList(HashMap<String, String> rbMap)
     {
 
-    	//read taps from walk file
-        File mgraWlkTapCorresFile = new File(
-                Util.getStringValueFromPropertyMap(rbMap, "scenario.path") +
-                Util.getStringValueFromPropertyMap(rbMap, "mgra.wlkacc.taps.and.distance.file")
-                );
+        // read taps from walk file
+        File mgraWlkTapCorresFile = new File(Util.getStringValueFromPropertyMap(rbMap,
+                "scenario.path")
+                + Util.getStringValueFromPropertyMap(rbMap, "mgra.wlkacc.taps.and.distance.file"));
         ArrayList<Integer> tapList = new ArrayList<Integer>();
         String s;
 
@@ -196,7 +191,7 @@ public final class TapDataManager
 
             // read the first data file line containing column names
             s = br.readLine();
-                
+
             // read the data records
             while ((s = br.readLine()) != null)
             {
@@ -211,11 +206,11 @@ public final class TapDataManager
         {
             e.printStackTrace();
         }
-        
+
         // read taps from park-and-ride file
         File tazTdzCorresFile = new File(Util.getStringValueFromPropertyMap(rbMap, "scenario.path")
                 + Util.getStringValueFromPropertyMap(rbMap, "tap.ptype.file"));
-       
+
         try
         {
             BufferedReader br = new BufferedReader(new FileReader(tazTdzCorresFile));
@@ -247,14 +242,14 @@ public final class TapDataManager
 
     public void printStats()
     {
-    	/*
-        logger.info("Tap 561 is in zone: " + tapParkingInfo[561][1][0]);
-        logger.info("Tap 298 lot capacity: " + tapParkingInfo[298][2][0]);
-   		*/
+        /*
+         * logger.info("Tap 561 is in zone: " + tapParkingInfo[561][1][0]); logger.info("Tap 298 lot capacity: " + tapParkingInfo[298][2][0]);
+         */
     }
-    
-    public int getTazForTap(int tap){
-    	return (int) tapParkingInfo[tap][1][0];
+
+    public int getTazForTap(int tap)
+    {
+        return (int) tapParkingInfo[tap][1][0];
     }
 
     public static TapDataManager getInstance(HashMap<String, String> rbMap)
@@ -291,7 +286,7 @@ public final class TapDataManager
     {
         return taps;
     }
-    
+
     public static void main(String[] args)
     {
         ResourceBundle rb = ResourceUtil.getPropertyBundle(new File(args[0]));

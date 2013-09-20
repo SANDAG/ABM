@@ -10,8 +10,7 @@ public class IndividualMandatoryTourFrequencyDMU
         implements Serializable, VariableTable
 {
 
-    protected transient Logger         logger = Logger
-                                                      .getLogger(IndividualMandatoryTourFrequencyDMU.class);
+    protected transient Logger         logger = Logger.getLogger(IndividualMandatoryTourFrequencyDMU.class);
 
     protected HashMap<String, Integer> methodIndexMap;
 
@@ -166,8 +165,10 @@ public class IndividualMandatoryTourFrequencyDMU
     public int getStudentIsEmployed()
     {
 
-        if (person.getPersonIsUniversityStudent() == 1 || person.getPersonIsStudentDriving() == 1) { return (person
-                .getPersonIsWorker()); }
+        if (person.getPersonIsUniversityStudent() == 1 || person.getPersonIsStudentDriving() == 1)
+        {
+            return (person.getPersonIsWorker());
+        }
 
         return (0);
     }
@@ -178,9 +179,11 @@ public class IndividualMandatoryTourFrequencyDMU
         if (person.getPersonTypeIsFullTimeWorker() == 1
                 || person.getPersonTypeIsPartTimeWorker() == 1
                 || person.getPersonIsNonWorkingAdultUnder65() == 1
-                || person.getPersonIsNonWorkingAdultOver65() == 1) {
+                || person.getPersonIsNonWorkingAdultOver65() == 1)
+        {
 
-        return (person.getPersonIsStudent()); }
+            return (person.getPersonIsStudent());
+        }
 
         return (0);
 
@@ -245,14 +248,16 @@ public class IndividualMandatoryTourFrequencyDMU
 
     public int getWorkAtHome()
     {
-        return person.getPersonWorkLocationZone() == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR ? 1 : 0;
+        return person.getPersonWorkLocationZone() == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR ? 1
+                : 0;
     }
-    
+
     public int getSchoolAtHome()
     {
-        return person.getPersonSchoolLocationZone() == ModelStructure.NOT_ENROLLED_SEGMENT_INDEX ? 1 : 0;
+        return person.getPersonSchoolLocationZone() == ModelStructure.NOT_ENROLLED_SEGMENT_INDEX ? 1
+                : 0;
     }
-    
+
     public int getUsualSchoolLocation()
     {
         return person.getUsualSchoolLocation();

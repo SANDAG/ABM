@@ -38,8 +38,7 @@ public final class ParkLocationEstimationAppender
     private static final int      DEST_FIELD                       = 8;
 
     // define indices for storing input data in an internal table.
-    // start field indices at 1; reserve 0 for the input file record sequence
-    // number.
+    // start field indices at 1; reserve 0 for the input file record sequence number.
     private static final int      ID                               = 1;
     private static final int      DEPART                           = 2;
     private static final int      TYPE                             = 3;
@@ -126,20 +125,16 @@ public final class ParkLocationEstimationAppender
             if (odtSet[ORIG] > 0 && odtSet[DEST] > 0)
             {
 
-                int skimPeriodIndex = modelStructure.getSkimPeriodIndex(odtSet[DEPART]) + 1; // depart
-                                                                                             // skim
-                                                                                             // period
+                int skimPeriodIndex = modelStructure.getSkimPeriodIndex(odtSet[DEPART]) + 1; // depart skim period
                 double[] autoSkims = anm.getAutoSkims(odtSet[ORIG], odtSet[DEST], skimPeriodIndex,
                         (seq == DEBUG_EST_RECORD), logger);
                 aDist = autoSkims[AUTO_DIST_SKIM_INDEX];
                 aTime = autoSkims[AUTO_TIME_SKIM_INDEX];
 
-                // get the array of mgras within walking distance of the
-                // destination
+                // get the array of mgras within walking distance of the destination
                 int[] walkMgras = mgraManager.getMgrasWithinWalkDistanceFrom(odtSet[ORIG]);
 
-                // set the distance values for the mgras walkable to the
-                // destination
+                // set the distance values for the mgras walkable to the destination
                 if (walkMgras != null)
                 {
 
@@ -173,8 +168,7 @@ public final class ParkLocationEstimationAppender
     private int[][] getPlcEstimationData(TableDataSet hisTds)
     {
 
-        // odts are an array with elements: origin mgra, destination mgra,
-        // departure
+        // odts are an array with elements: origin mgra, destination mgra, departure
         // period(1-6), and arrival period(1-6).
         int[][] odts = new int[hisTds.getRowCount()][NUM_FIELDS + 1];
 
@@ -242,8 +236,7 @@ public final class ParkLocationEstimationAppender
      * Start the matrix server
      * 
      * @param rb
-     *            is a ResourceBundle for the properties file for this
-     *            application
+     *            is a ResourceBundle for the properties file for this application
      */
     protected void startMatrixServer(ResourceBundle rb)
     {

@@ -23,23 +23,16 @@ import org.sandag.abm.ctramp.Person;
 import org.apache.log4j.Logger;
 
 /**
- * Implements a coordinated daily activity pattern model, which is a joint choice of
- * activity types of each member of a household. The class builds and applies
- * separate choice models for households of sizes 1, 2, 3, 4, and 5. For households
- * larger than 5, the persons in the household are ordered such that the first 5
- * members include up to 2 workers and 3 children (youngest to oldest), the 5-person
- * model is applied for these 5 household members, than a separate, simple
- * cross-sectional distribution is looked up for the remaining household members.
+ * Implements a coordinated daily activity pattern model, which is a joint choice of activity types of each member of a household. The class builds
+ * and applies separate choice models for households of sizes 1, 2, 3, 4, and 5. For households larger than 5, the persons in the household are
+ * ordered such that the first 5 members include up to 2 workers and 3 children (youngest to oldest), the 5-person model is applied for these 5
+ * household members, than a separate, simple cross-sectional distribution is looked up for the remaining household members.
  * 
- * The utilities are computed using four separate UEC spreadsheets. The first
- * computes the activity utility for each person individually; the second computes
- * the activity utility for each person when paired with each other person; the third
- * computes the activity utility for each person when paired with each group of two
- * other people in the household; and the fourth computes the activity utility
- * considering all the members of the household. These utilities are then aggregated
- * to represent each possible activity pattern for the household, and the choice is
- * made. For households larger than 5, a second model is applied after the first,
- * which selects a pattern for the 5+ household members from a predefined
+ * The utilities are computed using four separate UEC spreadsheets. The first computes the activity utility for each person individually; the second
+ * computes the activity utility for each person when paired with each other person; the third computes the activity utility for each person when
+ * paired with each group of two other people in the household; and the fourth computes the activity utility considering all the members of the
+ * household. These utilities are then aggregated to represent each possible activity pattern for the household, and the choice is made. For
+ * households larger than 5, a second model is applied after the first, which selects a pattern for the 5+ household members from a predefined
  * distribution.
  * 
  * @author D. Ory
@@ -49,14 +42,10 @@ public class HouseholdCoordinatedDailyActivityPatternModel
         implements Serializable
 {
 
-    private transient Logger                   logger                                 = Logger
-                                                                                              .getLogger(HouseholdCoordinatedDailyActivityPatternModel.class);
-    private transient Logger                   cdapLogger                             = Logger
-                                                                                              .getLogger("cdap");
-    private transient Logger                   cdapUecLogger                          = Logger
-                                                                                              .getLogger("cdap_uec");
-    private transient Logger                   cdapLogsumLogger                       = Logger
-                                                                                              .getLogger("cdap_logsum");
+    private transient Logger                   logger                                 = Logger.getLogger(HouseholdCoordinatedDailyActivityPatternModel.class);
+    private transient Logger                   cdapLogger                             = Logger.getLogger("cdap");
+    private transient Logger                   cdapUecLogger                          = Logger.getLogger("cdap_uec");
+    private transient Logger                   cdapLogsumLogger                       = Logger.getLogger("cdap_logsum");
 
     private static final String                UEC_FILE_NAME_PROPERTY                 = "cdap.uec.file";
     private static final String                UEC_DATA_PAGE_PROPERTY                 = "cdap.data.page";
@@ -80,7 +69,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
     // collection of logit models - one for each household size
     private ArrayList<LogitModel>              logitModelList;
 
-    private AccessibilitiesTable accTable;
+    private AccessibilitiesTable               accTable;
 
     // DMU for the UEC
     private CoordinatedDailyActivityPatternDMU cdapDmuObject;
@@ -93,7 +82,8 @@ public class HouseholdCoordinatedDailyActivityPatternModel
             allMemberInteractionUec, jointUec;
 
     public HouseholdCoordinatedDailyActivityPatternModel(HashMap<String, String> propertyMap,
-            ModelStructure myModelStructure, CtrampDmuFactoryIf dmuFactory, AccessibilitiesTable myAccTable)
+            ModelStructure myModelStructure, CtrampDmuFactoryIf dmuFactory,
+            AccessibilitiesTable myAccTable)
     {
 
         modelStructure = myModelStructure;
@@ -291,9 +281,8 @@ public class HouseholdCoordinatedDailyActivityPatternModel
     }
 
     /**
-     * Prepares a separate logit model for households of size 1, 2, 3, 4, and 5. Each
-     * model has 3^n alternatives, where n is the household size. The models are
-     * cleared and re-used for each household of the specified size.
+     * Prepares a separate logit model for households of size 1, 2, 3, 4, and 5. Each model has 3^n alternatives, where n is the household size. The
+     * models are cleared and re-used for each household of the specified size.
      * 
      */
     private void createLogitModels()
@@ -323,7 +312,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
             // create the alternatives and add them to the logit model
             int numberOfAltsCounter = 0;
             int totalAltsCounter = 0;
-            while(numberOfAltsCounter < numberOfAlternatives)
+            while (numberOfAltsCounter < numberOfAlternatives)
             {
 
                 // set the string for the alternative
@@ -378,13 +367,11 @@ public class HouseholdCoordinatedDailyActivityPatternModel
     }
 
     /**
-     * Selects the coordinated daily activity pattern choice for the passed in
-     * Household. The method works for households of all sizes, though two separate
-     * models are applied for households with more than 5 members.
+     * Selects the coordinated daily activity pattern choice for the passed in Household. The method works for households of all sizes, though two
+     * separate models are applied for households with more than 5 members.
      * 
      * @param householdObject
-     * @return a string of length household size, where each character in the string
-     *         represents the activity pattern for that person, in order (see
+     * @return a string of length household size, where each character in the string represents the activity pattern for that person, in order (see
      *         Household.reOrderPersonsForCdap method).
      */
     public String getCoordinatedDailyActivityPatternChoice(Household householdObject)
@@ -441,7 +428,8 @@ public class HouseholdCoordinatedDailyActivityPatternModel
         int[] availability = {-1, 1, 1, 1};
 
         String[] accStrings = {"", "hov0", "hov1", "hov2"};
-        float retAccess = accTable.getAggregateAccessibility(accStrings[householdObject.getAutoSufficiency()], householdObject.getHhMgra());
+        float retAccess = accTable.getAggregateAccessibility(
+                accStrings[householdObject.getAutoSufficiency()], householdObject.getHhMgra());
 
         cdapDmuObject.setRetailAccessibility(retAccess);
 
@@ -456,8 +444,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
             cdapDmuObject.setPersonA(personA);
 
             int workMgra = personA.getPersonWorkLocationZone();
-            if (workMgra > 0
-                    && workMgra != ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR) cdapDmuObject
+            if (workMgra > 0 && workMgra != ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR) cdapDmuObject
                     .setWorkLocationModeChoiceLogsumA(personA.getWorkLocationLogsum());
             else cdapDmuObject.setWorkLocationModeChoiceLogsumA(0.0);
 
@@ -558,9 +545,9 @@ public class HouseholdCoordinatedDailyActivityPatternModel
                     personA.logEntirePersonObject(cdapUecLogger);
                     cdapUecLogger.info("PersonB:");
                     personB.logEntirePersonObject(cdapUecLogger);
-                    twoPeopleUec.logAnswersArray(cdapUecLogger, "TWO PERSON, personA personNum="
-                            + personA.getPersonNum() + " personB personNum="
-                            + personB.getPersonNum());
+                    twoPeopleUec.logAnswersArray(cdapUecLogger,
+                            "TWO PERSON, personA personNum=" + personA.getPersonNum()
+                                    + " personB personNum=" + personB.getPersonNum());
 
                 } // debug trace
 
@@ -607,8 +594,8 @@ public class HouseholdCoordinatedDailyActivityPatternModel
                     cdapDmuObject.setPersonC(personC);
 
                     // compute the three person utilities
-                    double[] threePersonUtilities = threePeopleUec.solve(cdapDmuObject
-                            .getIndexValues(), cdapDmuObject, availability);
+                    double[] threePersonUtilities = threePeopleUec.solve(
+                            cdapDmuObject.getIndexValues(), cdapDmuObject, availability);
 
                     // log these utilities for trace households
                     if (householdObject.getDebugChoiceModels())
@@ -668,8 +655,8 @@ public class HouseholdCoordinatedDailyActivityPatternModel
         } // i (person A loop)
 
         // compute the interaction utilities
-        double[] allMemberInteractionUtilities = allMemberInteractionUec.solve(cdapDmuObject
-                .getIndexValues(), cdapDmuObject, availability);
+        double[] allMemberInteractionUtilities = allMemberInteractionUec.solve(
+                cdapDmuObject.getIndexValues(), cdapDmuObject, availability);
 
         // log these utilities for trace households
         if (householdObject.getDebugChoiceModels())
@@ -760,8 +747,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
                     }
 
                     workMgra = getWorkLocationForThisCdapPerson(k + 1);
-                    if (workMgra > 0
-                            && workMgra != ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR)
+                    if (workMgra > 0 && workMgra != ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR)
                     {
                         Person tempPerson = getCdapPerson(k + 1);
                         workLocationAccessibilityForWorkers += tempPerson.getWorkLocationLogsum();
@@ -940,14 +926,12 @@ public class HouseholdCoordinatedDailyActivityPatternModel
     }
 
     /**
-     * Applies a simple choice from fixed proportions by person type for members of
-     * households with more than 5 people who are not included in the CDAP model. The
-     * choices of the additional household members are independent of each other.
+     * Applies a simple choice from fixed proportions by person type for members of households with more than 5 people who are not included in the
+     * CDAP model. The choices of the additional household members are independent of each other.
      * 
      * @param householdObject
      * @param patternStringForOtherHhMembers
-     * @return the pattern for the entire household, including the 5-member pattern
-     *         chosen by the logit model and the additional members chosen by the
+     * @return the pattern for the entire household, including the 5-member pattern chosen by the logit model and the additional members chosen by the
      *         fixed-distribution model.
      * 
      */
@@ -980,12 +964,10 @@ public class HouseholdCoordinatedDailyActivityPatternModel
     }
 
     /**
-     * Method reorders the persons in the household for use with the CDAP model,
-     * which only explicitly models the interaction of five persons in a HH. Priority
-     * in the reordering is first given to full time workers (up to two), then to
-     * part time workers (up to two workers, of any type), then to children (youngest
-     * to oldest, up to three). If the method is called for a household with less
-     * than 5 people, the cdapPersonArray is the same as the person array.
+     * Method reorders the persons in the household for use with the CDAP model, which only explicitly models the interaction of five persons in a HH.
+     * Priority in the reordering is first given to full time workers (up to two), then to part time workers (up to two workers, of any type), then to
+     * children (youngest to oldest, up to three). If the method is called for a household with less than 5 people, the cdapPersonArray is the same as
+     * the person array.
      * 
      */
     public void reOrderPersonsForCdap(Household household)
@@ -1221,7 +1203,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
 
             int randomIndex = (int) (hhRandom.nextDouble() * hhSize);
             randomCount++;
-            while(iCountedYou[randomIndex] || randomIndex == 0)
+            while (iCountedYou[randomIndex] || randomIndex == 0)
             {
                 randomIndex = (int) (hhRandom.nextDouble() * hhSize);
                 randomCount++;
@@ -1242,7 +1224,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
 
             int randomIndex = (int) (hhRandom.nextDouble() * hhSize);
             randomCount++;
-            while(iCountedYou[randomIndex] || randomIndex == 0)
+            while (iCountedYou[randomIndex] || randomIndex == 0)
             {
                 randomIndex = (int) (hhRandom.nextDouble() * hhSize);
                 randomCount++;
@@ -1263,7 +1245,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
 
             int randomIndex = (int) (hhRandom.nextDouble() * hhSize);
             randomCount++;
-            while(iCountedYou[randomIndex] || randomIndex == 0)
+            while (iCountedYou[randomIndex] || randomIndex == 0)
             {
                 randomIndex = (int) (hhRandom.nextDouble() * hhSize);
                 randomCount++;
@@ -1284,7 +1266,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
 
             int randomIndex = (int) (hhRandom.nextDouble() * hhSize);
             randomCount++;
-            while(iCountedYou[randomIndex] || randomIndex == 0)
+            while (iCountedYou[randomIndex] || randomIndex == 0)
             {
                 randomIndex = (int) (hhRandom.nextDouble() * hhSize);
                 randomCount++;
@@ -1305,7 +1287,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
 
             int randomIndex = (int) (hhRandom.nextDouble() * hhSize);
             randomCount++;
-            while(iCountedYou[randomIndex] || randomIndex == 0)
+            while (iCountedYou[randomIndex] || randomIndex == 0)
             {
                 randomIndex = (int) (hhRandom.nextDouble() * hhSize);
                 randomCount++;
@@ -1347,8 +1329,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
     }
 
     /**
-     * Method returns an array of persons not modeled by the CDAP model (i.e. persons
-     * 6 to X, when ordered by the reOrderPersonsForCdap method
+     * Method returns an array of persons not modeled by the CDAP model (i.e. persons 6 to X, when ordered by the reOrderPersonsForCdap method
      * 
      * @param personsModeledByCdap
      * @return
@@ -1372,8 +1353,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
     }
 
     /**
-     * Returns true if this CDAP person number (meaning the number of persons for the
-     * purposes of the CDAP model) is an adult; false if not.
+     * Returns true if this CDAP person number (meaning the number of persons for the purposes of the CDAP model) is an adult; false if not.
      * 
      * @param cdapPersonNumber
      * @return

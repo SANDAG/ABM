@@ -18,8 +18,7 @@ public class SpecialEventTrip
     private float[] modeProbabilities;
     private float[] modeUtilities;
 
-    // best tap pairs for transit path; dimensioned by ride mode, then boarding
-    // (0) and alighting (1)
+    // best tap pairs for transit path; dimensioned by ride mode, then boarding (0) and alighting (1)
     private int[][] bestWtwTapPairs;
     private int[][] bestWtdTapPairs;
     private int[][] bestDtwTapPairs;

@@ -12,7 +12,7 @@ public class SandagModelStructureTest
         assertTrue(SandagModelStructure.getTripModeIsPay(2));
         assertTrue(SandagModelStructure.getTripModeIsPay(5));
         assertTrue(SandagModelStructure.getTripModeIsPay(8));
-        
+
         assertFalse(SandagModelStructure.getTripModeIsPay(1));
     }
 

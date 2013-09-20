@@ -14,8 +14,7 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 
 /**
- * This class is used to return auto skim values and non-motorized skim values
- * for MGRA pairs associated with estimation data file records.
+ * This class is used to return auto skim values and non-motorized skim values for MGRA pairs associated with estimation data file records.
  * 
  * @author Jim Hicks
  * @version March, 2010
@@ -34,8 +33,7 @@ public class AutoAndNonMotorizedSkimsCalculator
     private static final String[]         PERIODS                = TransitWalkAccessUEC.PERIODS;
     private static final int              NUM_PERIODS            = TransitWalkAccessUEC.PERIODS.length;
 
-    // set the indices used for the non-motorized names array and the return
-    // skims
+    // set the indices used for the non-motorized names array and the return skims
     // array
     private static final int              WALK_INDEX             = 0;
     private static final int              BIKE_INDEX             = 1;
@@ -147,17 +145,15 @@ public class AutoAndNonMotorizedSkimsCalculator
     }
 
     /**
-     * Return the array of auto skims for the origin MGRA, destination MGRA, and
-     * departure time period. Used for appending skims data to estimation files,
-     * not part of main ABM.
+     * Return the array of auto skims for the origin MGRA, destination MGRA, and departure time period. Used for appending skims data to estimation
+     * files, not part of main ABM.
      * 
      * @param origMgra
      *            Origin MGRA
      * @param workMgra
      *            Destination MGRA
      * @param departPeriod
-     *            Departure skim period index - 1 = AM period, 2 = PM period, 3
-     *            = OffPeak period.
+     *            Departure skim period index - 1 = AM period, 2 = PM period, 3 = OffPeak period.
      * @return Array of 9 skim values for the MGRA pair and departure period
      */
     public double[] getAutoSkims(int origMgra, int destMgra, int departPeriod, boolean debug,
@@ -177,8 +173,7 @@ public class AutoAndNonMotorizedSkimsCalculator
                 separator += "^";
         }
 
-        // assign a helper UEC object to the array element for the desired
-        // departure
+        // assign a helper UEC object to the array element for the desired departure
         // time period
         UtilityExpressionCalculator autoSkimUEC = autoSkimUECs[departPeriod];
 
@@ -229,12 +224,10 @@ public class AutoAndNonMotorizedSkimsCalculator
     /**
      * Get the non-motorized skims.
      * 
-     * Get all the mgras within walking distance of the origin mgra. If the set
-     * of mgras is not null, and the destination mgra is in the set, get the
+     * Get all the mgras within walking distance of the origin mgra. If the set of mgras is not null, and the destination mgra is in the set, get the
      * walk and bike times from the mgraManager;
      * 
-     * If the destination mgra is not within walking distance of the origin
-     * MGRA, get the drive-alone non-toll off-peak distance skim value for the
+     * If the destination mgra is not within walking distance of the origin MGRA, get the drive-alone non-toll off-peak distance skim value for the
      * mgra pair and calculate the walk time and bike time.
      * 
      * @param origMgra
@@ -304,8 +297,7 @@ public class AutoAndNonMotorizedSkimsCalculator
 
         }
 
-        // the destination was not within walk distance, so calculate walk and
-        // bike
+        // the destination was not within walk distance, so calculate walk and bike
         // times from the TAZ-TAZ skim distance
         int oTaz = mgraManager.getTaz(origMgra);
         int dTaz = mgraManager.getTaz(destMgra);
@@ -340,41 +332,31 @@ public class AutoAndNonMotorizedSkimsCalculator
     }
 
     /*
-     * public double[] getNonMotorizedSkims(int origMgra, int destMgra, int
-     * departPeriod, boolean debug, Logger logger) {
+     * public double[] getNonMotorizedSkims(int origMgra, int destMgra, int departPeriod, boolean debug, Logger logger) {
      * 
-     * String separator = ""; String header = ""; if (debug) { logger.info("");
-     * logger.info(""); header =
-     * "get non-motorized skims debug info for origMgra=" + origMgra +
-     * ", destMgra=" + destMgra; for (int i = 0; i < header.length(); i++)
-     * separator += "^"; }
+     * String separator = ""; String header = ""; if (debug) { logger.info(""); logger.info(""); header =
+     * "get non-motorized skims debug info for origMgra=" + origMgra + ", destMgra=" + destMgra; for (int i = 0; i < header.length(); i++) separator
+     * += "^"; }
      * 
      * double[] nmSkims = new double[NUM_NM_SKIMS];
      * 
-     * // get the array of mgras within walking distance of the origin int[]
-     * walkMgras = mgraManager.getMgrasWithinWalkDistanceFrom(origMgra);
+     * // get the array of mgras within walking distance of the origin int[] walkMgras = mgraManager.getMgrasWithinWalkDistanceFrom(origMgra);
      * 
-     * // if one of the walk mgras is the destination, set the skim values and
-     * // return if (walkMgras != null) {
+     * // if one of the walk mgras is the destination, set the skim values and // return if (walkMgras != null) {
      * 
      * for (int wMgra : walkMgras) {
      * 
-     * if (wMgra == destMgra) { nmSkims[WALK_INDEX] =
-     * mgraManager.getMgraToMgraWalkTime(origMgra, destMgra);
-     * nmSkims[BIKE_INDEX] = mgraManager.getMgraToMgraBikeTime(origMgra,
-     * destMgra);
+     * if (wMgra == destMgra) { nmSkims[WALK_INDEX] = mgraManager.getMgraToMgraWalkTime(origMgra, destMgra); nmSkims[BIKE_INDEX] =
+     * mgraManager.getMgraToMgraBikeTime(origMgra, destMgra);
      * 
      * if (debug) {
      * 
      * logger.info(separator); logger.info(header); logger.info(separator);
      * 
-     * logger.info("non-motorized skims array values"); logger .info(
-     * "determined from the mgraManager for an mgra pair within walking distance of each other."
-     * ); logger.info(String.format("%5s %40s %15s", "i", "skimName", "value"));
-     * logger.info(String.format("%5s %40s %15s", "-----", "----------",
-     * "----------")); for (int i = 0; i < nmSkims.length; i++) {
-     * logger.info(String.format("%5d %40s %15.2f", i, NM_SKIM_DESCRIPTIONS[i],
-     * nmSkims[i])); }
+     * logger.info("non-motorized skims array values"); logger
+     * .info("determined from the mgraManager for an mgra pair within walking distance of each other."); logger.info(String.format("%5s %40s %15s",
+     * "i", "skimName", "value")); logger.info(String.format("%5s %40s %15s", "-----", "----------", "----------")); for (int i = 0; i <
+     * nmSkims.length; i++) { logger.info(String.format("%5d %40s %15.2f", i, NM_SKIM_DESCRIPTIONS[i], nmSkims[i])); }
      * 
      * }
      * 
@@ -384,31 +366,24 @@ public class AutoAndNonMotorizedSkimsCalculator
      * 
      * }
      * 
-     * // the destination was not within walk distance, so calculate walk and
-     * bike // times from the TAZ-TAZ skim distance int oTaz =
+     * // the destination was not within walk distance, so calculate walk and bike // times from the TAZ-TAZ skim distance int oTaz =
      * mgraManager.getTaz(origMgra); int dTaz = mgraManager.getTaz(destMgra);
      * 
      * iv.setOriginZone(oTaz); iv.setDestZone(dTaz);
      * 
-     * // get the DA NT OP distance value for the mgra pair double[] autoSkims =
-     * autoSkimUECs[OP].solve(iv, dmu, null); double distance = autoSkims[2];
+     * // get the DA NT OP distance value for the mgra pair double[] autoSkims = autoSkimUECs[OP].solve(iv, dmu, null); double distance =
+     * autoSkims[2];
      * 
-     * nmSkims[WALK_INDEX] = (distance / WALK_SPEED) * 60.0; nmSkims[BIKE_INDEX]
-     * = (distance / BIKE_SPEED) * 60.0;
+     * nmSkims[WALK_INDEX] = (distance / WALK_SPEED) * 60.0; nmSkims[BIKE_INDEX] = (distance / BIKE_SPEED) * 60.0;
      * 
      * if (debug) {
      * 
      * logger.info(separator); logger.info(header); logger.info(separator);
      * 
-     * logger.info("non-motorized skims array values"); logger.info(
-     * "calculated for an mgra pair not within walking distance of each other."
-     * ); logger.info("origTaz = " + oTaz + ", destTaz = " + dTaz +
-     * ", od distance = " + (float) distance);
-     * logger.info(String.format("%5s %40s %15s", "i", "skimName", "value"));
-     * logger.info(String.format("%5s %40s %15s", "-----", "----------",
-     * "----------")); for (int i = 0; i < nmSkims.length; i++) {
-     * logger.info(String .format("%5d %40s %15.2f", i, NM_SKIM_DESCRIPTIONS[i],
-     * nmSkims[i])); }
+     * logger.info("non-motorized skims array values"); logger.info("calculated for an mgra pair not within walking distance of each other.");
+     * logger.info("origTaz = " + oTaz + ", destTaz = " + dTaz + ", od distance = " + (float) distance); logger.info(String.format("%5s %40s %15s",
+     * "i", "skimName", "value")); logger.info(String.format("%5s %40s %15s", "-----", "----------", "----------")); for (int i = 0; i <
+     * nmSkims.length; i++) { logger.info(String .format("%5d %40s %15.2f", i, NM_SKIM_DESCRIPTIONS[i], nmSkims[i])); }
      * 
      * }
      * 
@@ -417,11 +392,9 @@ public class AutoAndNonMotorizedSkimsCalculator
      * }
      */
     /**
-     * Get all the mgras within walking distance of the origin mgra and set the
-     * distances to those mgras.
+     * Get all the mgras within walking distance of the origin mgra and set the distances to those mgras.
      * 
-     * Then loop through all mgras without a distance and get the drive-alone
-     * non-toll off-peak distance skim value for the taz pair associated with
+     * Then loop through all mgras without a distance and get the drive-alone non-toll off-peak distance skim value for the taz pair associated with
      * each mgra pair.
      * 
      * @param origMgra
@@ -429,43 +402,33 @@ public class AutoAndNonMotorizedSkimsCalculator
      * @param An
      *            array in which to put the distances
      * @param tourModeIsAuto
-     *            is a boolean set to true if tour mode is not non-motorized,
-     *            transit, or school bus. if auto tour mode, then no need to
-     *            determine walk distance, and drive skims can be used directly.
-     *            public void getDistancesFromMgra( int origMgra, double[]
-     *            distances, boolean tourModeIsAuto ) {
+     *            is a boolean set to true if tour mode is not non-motorized, transit, or school bus. if auto tour mode, then no need to determine
+     *            walk distance, and drive skims can be used directly. public void getDistancesFromMgra( int origMgra, double[] distances, boolean
+     *            tourModeIsAuto ) {
      * 
      *            Arrays.fill(distances, 0);
      * 
      *            if ( ! tourModeIsAuto ){
      * 
-     *            // get the array of mgras within walking distance of the
-     *            destination int[] walkMgras =
+     *            // get the array of mgras within walking distance of the destination int[] walkMgras =
      *            mgraManager.getMgrasWithinWalkDistanceFrom(origMgra);
      * 
-     *            // set the distance values for the mgras walkable to the
-     *            destination if (walkMgras != null) {
+     *            // set the distance values for the mgras walkable to the destination if (walkMgras != null) {
      * 
-     *            // get distances, in feet, and convert to miles for (int wMgra
-     *            : walkMgras) distances[wMgra] =
-     *            mgraManager.getMgraToMgraWalkDistFrom(origMgra, wMgra) /
-     *            5280.0;
+     *            // get distances, in feet, and convert to miles for (int wMgra : walkMgras) distances[wMgra] =
+     *            mgraManager.getMgraToMgraWalkDistFrom(origMgra, wMgra) / 5280.0;
      * 
      *            }
      * 
      *            }
      * 
      * 
-     *            int oTaz = mgraManager.getTaz(origMgra);
-     *            iv.setOriginZone(oTaz); for (int wMgra=1; wMgra <=
-     *            mgraManager.getMaxMgra(); wMgra++) {
+     *            int oTaz = mgraManager.getTaz(origMgra); iv.setOriginZone(oTaz); for (int wMgra=1; wMgra <= mgraManager.getMaxMgra(); wMgra++) {
      * 
-     *            // skip mgras where distance has already been set if (
-     *            distances[wMgra] > 0 ) continue;
+     *            // skip mgras where distance has already been set if ( distances[wMgra] > 0 ) continue;
      * 
-     *            // calculate distances from the TAZ-TAZ skim distance int dTaz
-     *            = mgraManager.getTaz(wMgra); iv.setDestZone(dTaz); double[]
-     *            autoSkims = autoSkimUECs[OP].solve(iv, dmu, null);
+     *            // calculate distances from the TAZ-TAZ skim distance int dTaz = mgraManager.getTaz(wMgra); iv.setDestZone(dTaz); double[] autoSkims
+     *            = autoSkimUECs[OP].solve(iv, dmu, null);
      * 
      *            distances[wMgra] = autoSkims[2]; }
      * 
@@ -473,11 +436,9 @@ public class AutoAndNonMotorizedSkimsCalculator
      */
 
     /**
-     * Get all the mgras within walking distance of the origin mgra and set the
-     * distances to those mgras.
+     * Get all the mgras within walking distance of the origin mgra and set the distances to those mgras.
      * 
-     * Then loop through all mgras without a distance and get the drive-alone
-     * non-toll off-peak distance skim value for the taz pair associated with
+     * Then loop through all mgras without a distance and get the drive-alone non-toll off-peak distance skim value for the taz pair associated with
      * each mgra pair.
      * 
      * @param origMgra
@@ -485,9 +446,8 @@ public class AutoAndNonMotorizedSkimsCalculator
      * @param An
      *            array in which to put the distances
      * @param tourModeIsAuto
-     *            is a boolean set to true if tour mode is not non-motorized,
-     *            transit, or school bus. if auto tour mode, then no need to
-     *            determine walk distance, and drive skims can be used directly.
+     *            is a boolean set to true if tour mode is not non-motorized, transit, or school bus. if auto tour mode, then no need to determine
+     *            walk distance, and drive skims can be used directly.
      * 
      */
 
@@ -529,11 +489,9 @@ public class AutoAndNonMotorizedSkimsCalculator
     }
 
     /**
-     * Get all the mgras within walking distance of the destination mgra and set
-     * the distances from those mgras.
+     * Get all the mgras within walking distance of the destination mgra and set the distances from those mgras.
      * 
-     * Then loop through all mgras without a distance and get the drive-alone
-     * non-toll off-peak distance skim value for the taz pair associated with
+     * Then loop through all mgras without a distance and get the drive-alone non-toll off-peak distance skim value for the taz pair associated with
      * each mgra pair.
      * 
      * @param destMgra
@@ -541,9 +499,8 @@ public class AutoAndNonMotorizedSkimsCalculator
      * @param An
      *            array in which to put the distances
      * @param tourModeIsAuto
-     *            is a boolean set to true if tour mode is not non-motorized,
-     *            transit, or school bus. if auto tour mode, then no need to
-     *            determine walk distance, and drive skims can be used directly.
+     *            is a boolean set to true if tour mode is not non-motorized, transit, or school bus. if auto tour mode, then no need to determine
+     *            walk distance, and drive skims can be used directly.
      */
 
     public void getDistancesToMgra(int destMgra, double[] distances, boolean tourModeIsAuto)
@@ -562,8 +519,7 @@ public class AutoAndNonMotorizedSkimsCalculator
             {
 
                 // get distances, in feet, and convert to miles
-                // get distances from destMgra since this is the direction of
-                // distances read from the data file
+                // get distances from destMgra since this is the direction of distances read from the data file
                 for (int wMgra : walkMgras)
                     distances[wMgra] = mgraManager.getMgraToMgraWalkDistTo(destMgra, wMgra) / 5280.0;
 
@@ -571,8 +527,7 @@ public class AutoAndNonMotorizedSkimsCalculator
 
         }
 
-        // if the TAZ distances have not been computed yet for this destination
-        // TAZ, compute them from the UEC.
+        // if the TAZ distances have not been computed yet for this destination TAZ, compute them from the UEC.
         int dTaz = mgraManager.getTaz(destMgra);
 
         for (int wMgra = 1; wMgra <= mgraManager.getMaxMgra(); wMgra++)
@@ -589,37 +544,29 @@ public class AutoAndNonMotorizedSkimsCalculator
     }
 
     /*
-     * public void getDistancesToMgra( int destMgra, double[] distances, boolean
-     * tourModeIsAuto ) {
+     * public void getDistancesToMgra( int destMgra, double[] distances, boolean tourModeIsAuto ) {
      * 
      * Arrays.fill(distances, 0);
      * 
      * if ( ! tourModeIsAuto ){
      * 
-     * // get the array of mgras within walking distance of the destination
-     * int[] walkMgras = mgraManager.getMgrasWithinWalkDistanceTo(destMgra);
+     * // get the array of mgras within walking distance of the destination int[] walkMgras = mgraManager.getMgrasWithinWalkDistanceTo(destMgra);
      * 
-     * // set the distance values for the mgras walkable to the destination if
-     * (walkMgras != null) {
+     * // set the distance values for the mgras walkable to the destination if (walkMgras != null) {
      * 
-     * // get distances, in feet, and convert to miles // get distances from
-     * destMgra since this is the direction of distances read from the data file
-     * for (int wMgra : walkMgras) distances[wMgra] =
-     * mgraManager.getMgraToMgraWalkDistTo(destMgra, wMgra) / 5280.0;
+     * // get distances, in feet, and convert to miles // get distances from destMgra since this is the direction of distances read from the data file
+     * for (int wMgra : walkMgras) distances[wMgra] = mgraManager.getMgraToMgraWalkDistTo(destMgra, wMgra) / 5280.0;
      * 
      * }
      * 
      * }
      * 
      * 
-     * int dTaz = mgraManager.getTaz(destMgra); iv.setDestZone(dTaz); for (int
-     * wMgra=1; wMgra <= mgraManager.getMaxMgra(); wMgra++) {
+     * int dTaz = mgraManager.getTaz(destMgra); iv.setDestZone(dTaz); for (int wMgra=1; wMgra <= mgraManager.getMaxMgra(); wMgra++) {
      * 
-     * // skip mgras where distance has already been set if ( distances[wMgra] >
-     * 0 ) continue;
+     * // skip mgras where distance has already been set if ( distances[wMgra] > 0 ) continue;
      * 
-     * // calculate distances from the TAZ-TAZ skim distance int oTaz =
-     * mgraManager.getTaz(wMgra); iv.setOriginZone(oTaz); double[] autoSkims =
+     * // calculate distances from the TAZ-TAZ skim distance int oTaz = mgraManager.getTaz(wMgra); iv.setOriginZone(oTaz); double[] autoSkims =
      * autoSkimUECs[OP].solve(iv, dmu, null);
      * 
      * distances[wMgra] = autoSkims[2]; }
@@ -628,24 +575,19 @@ public class AutoAndNonMotorizedSkimsCalculator
      */
 
     /*
-     * public double[] getDistancesToMgra( int destMgra, boolean tourModeIsAuto
-     * ) {
+     * public double[] getDistancesToMgra( int destMgra, boolean tourModeIsAuto ) {
      * 
      * 
      * Arrays.fill(distances, 0);
      * 
      * if ( ! tourModeIsAuto ){
      * 
-     * // get the array of mgras within walking distance of the destination
-     * int[] walkMgras = mgraManager.getMgrasWithinWalkDistanceTo(destMgra);
+     * // get the array of mgras within walking distance of the destination int[] walkMgras = mgraManager.getMgrasWithinWalkDistanceTo(destMgra);
      * 
-     * // set the distance values for the mgras walkable to the destination if
-     * (walkMgras != null) {
+     * // set the distance values for the mgras walkable to the destination if (walkMgras != null) {
      * 
-     * // get distances, in feet, and convert to miles // get distances from
-     * destMgra since this is the direction of distances read from the data file
-     * for (int wMgra : walkMgras) distances[wMgra] =
-     * mgraManager.getMgraToMgraWalkDistTo(destMgra, wMgra) / 5280.0;
+     * // get distances, in feet, and convert to miles // get distances from destMgra since this is the direction of distances read from the data file
+     * for (int wMgra : walkMgras) distances[wMgra] = mgraManager.getMgraToMgraWalkDistTo(destMgra, wMgra) / 5280.0;
      * 
      * }
      * 
@@ -653,16 +595,14 @@ public class AutoAndNonMotorizedSkimsCalculator
      * 
      * 
      * 
-     * // if the TAZ distances have not been computed yet for this destination
-     * TAZ, compute them from the UEC. int dTaz = mgraManager.getTaz(destMgra);
+     * // if the TAZ distances have not been computed yet for this destination TAZ, compute them from the UEC. int dTaz =
+     * mgraManager.getTaz(destMgra);
      * 
      * for (int wMgra=1; wMgra <= mgraManager.getMaxMgra(); wMgra++) {
      * 
-     * // skip mgras where distance has already been set if ( distances[wMgra] >
-     * 0 ) continue;
+     * // skip mgras where distance has already been set if ( distances[wMgra] > 0 ) continue;
      * 
-     * int oTaz = mgraManager.getTaz(wMgra); distances[wMgra] =
-     * storedToTazDistanceSkims[OP][dTaz][oTaz];
+     * int oTaz = mgraManager.getTaz(wMgra); distances[wMgra] = storedToTazDistanceSkims[OP][dTaz][oTaz];
      * 
      * }
      * 
@@ -671,8 +611,8 @@ public class AutoAndNonMotorizedSkimsCalculator
      * }
      * 
      * 
-     * /** Calculate utility expressions for auto skims for a given origin to
-     * get distances to all destination mgras, and return off-peak sov distance.
+     * /** Calculate utility expressions for auto skims for a given origin to get distances to all destination mgras, and return off-peak sov
+     * distance.
      * 
      * @param oMgra The origin mgra
      * 
@@ -685,8 +625,7 @@ public class AutoAndNonMotorizedSkimsCalculator
      * 
      * for (int i=1; i <= mgraManager.getMaxMgra(); i++) {
      * 
-     * // calculate distances from the TAZ-TAZ skim distance int dTaz =
-     * mgraManager.getTaz(i); distances[i] =
+     * // calculate distances from the TAZ-TAZ skim distance int dTaz = mgraManager.getTaz(i); distances[i] =
      * storedFromTazDistanceSkims[OP][oTaz][dTaz];
      * 
      * }
@@ -701,8 +640,7 @@ public class AutoAndNonMotorizedSkimsCalculator
      * 
      * for (int i=1; i <= mgraManager.getMaxMgra(); i++) {
      * 
-     * // calculate distances from the TAZ-TAZ skim distance int dTaz =
-     * mgraManager.getTaz(i); distances[i] =
+     * // calculate distances from the TAZ-TAZ skim distance int dTaz = mgraManager.getTaz(i); distances[i] =
      * storedFromTazDistanceSkims[AM][oTaz][dTaz];
      * 
      * }
@@ -723,8 +661,7 @@ public class AutoAndNonMotorizedSkimsCalculator
      * 
      * int dTaz = mgraManager.getTaz(i); iv.setDestZone(dTaz);
      * 
-     * // sov distance double[] autoResults = autoSkimUECs[OP].solve(iv, dmu,
-     * null); distances[i] = autoResults[2];
+     * // sov distance double[] autoResults = autoSkimUECs[OP].solve(iv, dmu, null); distances[i] = autoResults[2];
      * 
      * }
      * 
@@ -742,8 +679,7 @@ public class AutoAndNonMotorizedSkimsCalculator
      * 
      * int dTaz = mgraManager.getTaz(i); iv.setDestZone(dTaz);
      * 
-     * // sov distance double[] autoResults = autoSkimUECs[OP].solve(iv, dmu,
-     * null); distances[i] = autoResults[2];
+     * // sov distance double[] autoResults = autoSkimUECs[OP].solve(iv, dmu, null); distances[i] = autoResults[2];
      * 
      * }
      * 
@@ -767,13 +703,11 @@ public class AutoAndNonMotorizedSkimsCalculator
     }
 
     /**
-     * Calculate utility expressions for auto skims for a given origin to get
-     * distances to all destination mgras, and return am peak sov distance.
+     * Calculate utility expressions for auto skims for a given origin to get distances to all destination mgras, and return am peak sov distance.
      * 
      * @param oMgra
      *            The origin mgra
-     * @return An array of am peak sov distances public double[]
-     *         getAmPkSkimDistancesFromMgra(int oMgra) {
+     * @return An array of am peak sov distances public double[] getAmPkSkimDistancesFromMgra(int oMgra) {
      * 
      *         double[] distances = new double[mgraManager.getMaxMgra() + 1];
      * 
@@ -783,8 +717,7 @@ public class AutoAndNonMotorizedSkimsCalculator
      * 
      *         int dTaz = mgraManager.getTaz(i); iv.setDestZone(dTaz);
      * 
-     *         // sov distance double[] autoResults = autoSkimUECs[AM].solve(iv,
-     *         dmu, null); distances[i] = autoResults[2];
+     *         // sov distance double[] autoResults = autoSkimUECs[AM].solve(iv, dmu, null); distances[i] = autoResults[2];
      * 
      *         }
      * 
@@ -818,8 +751,7 @@ public class AutoAndNonMotorizedSkimsCalculator
      * 
      * int dTaz = mgraManager.getTaz(i); iv.setDestZone(dTaz);
      * 
-     * // sov distance double[] autoResults = autoSkimUECs[AM].solve(iv, dmu,
-     * null); distances[i] = autoResults[2];
+     * // sov distance double[] autoResults = autoSkimUECs[AM].solve(iv, dmu, null); distances[i] = autoResults[2];
      * 
      * }
      * 
@@ -836,12 +768,9 @@ public class AutoAndNonMotorizedSkimsCalculator
      * @param depart
      *            is the departure period for the segment
      * @param bestTapPairs
-     *            is an int[][] of TAP values with the first dimesion the ride
-     *            mode and second dimension a 2 element array with best orig and
-     *            dest TAP
+     *            is an int[][] of TAP values with the first dimesion the ride mode and second dimension a 2 element array with best orig and dest TAP
      * @param returnedSkims
-     *            is a double[][] of skim values with the first dimesion the
-     *            ride mode indices and second dimention the skim categories
+     *            is a double[][] of skim values with the first dimesion the ride mode indices and second dimention the skim categories
      */
     public void logReturnedSkims(int orig, int dest, int depart, double[] skims, String skimLabel,
             Logger logger)

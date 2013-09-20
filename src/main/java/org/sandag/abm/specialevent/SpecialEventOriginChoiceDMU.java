@@ -19,13 +19,7 @@ public class SpecialEventOriginChoiceDMU
     protected float                    tourDepartPeriod;
     protected float                    tourArrivePeriod;
     protected int                      purpose;
-    protected double[][]               sizeTerms;                                     // by
-                                                                                       // purpose,
-                                                                                       // alternative
-                                                                                       // (taz
-                                                                                       // or
-                                                                                       // sampled
-                                                                                       // mgras)
+    protected double[][]               sizeTerms;                                     // by purpose, alternative (taz or sampled mgras)
 
     protected double                   nmWalkTimeOut;
     protected double                   nmWalkTimeIn;
@@ -82,8 +76,7 @@ public class SpecialEventOriginChoiceDMU
 
     /**
      * @param sizeTerms
-     *            the sizeTerms to set. The size term is the array of origin taz
-     *            sizes.
+     *            the sizeTerms to set. The size term is the array of origin taz sizes.
      */
     public void setSizeTerms(double[][] sizeTerms)
     {

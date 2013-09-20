@@ -28,19 +28,16 @@ public class UsualWorkSchoolLocationChoiceModel
         implements Serializable
 {
 
-    private transient Logger         logger                                             = Logger
-                                                                                                .getLogger(UsualWorkSchoolLocationChoiceModel.class);
+    private transient Logger         logger                                             = Logger.getLogger(UsualWorkSchoolLocationChoiceModel.class);
 
     private static final String      USE_NEW_SOA_METHOD_PROPERTY_KEY                    = "uwsl.use.new.soa";
-    
-    
+
     private static final String      PROPERTIES_DC_SOA_WORK_SAMPLE_SIZE                 = "uwsl.work.soa.SampleSize";
     private static final String      PROPERTIES_DC_SOA_SCHOOL_SAMPLE_SIZE               = "uwsl.school.soa.SampleSize";
     private static final String      PROPERTIES_UEC_USUAL_LOCATION                      = "uwsl.dc.uec.file";
     private static final String      PROPERTIES_UEC_USUAL_LOCATION_NEW                  = "uwsl.dc2.uec.file";
     private static final String      PROPERTIES_UEC_USUAL_LOCATION_SOA                  = "uwsl.soa.uec.file";
 
-    
     private static final String      PROPERTIES_RESULTS_WORK_SCHOOL_LOCATION_CHOICE     = "Results.UsualWorkAndSchoolLocationChoice";
 
     private static final String      PROPERTIES_WORK_SCHOOL_LOCATION_CHOICE_PACKET_SIZE = "distributed.task.packet.size";
@@ -77,8 +74,8 @@ public class UsualWorkSchoolLocationChoiceModel
 
     private MgraDataManager          mgraManager;
     private TazDataManager           tdm;
-    
-    private int maxTaz;
+
+    private int                      maxTaz;
 
     private MatrixDataServerIf       ms;
     private ModelStructure           modelStructure;
@@ -91,7 +88,7 @@ public class UsualWorkSchoolLocationChoiceModel
     private int                      soaSchoolSampleSize;
 
     private HashSet<Integer>         skipSegmentIndexSet;
-    
+
     private BuildAccessibilities     aggAcc;
     private DestChoiceSize           workerDcSizeObj;
     private DestChoiceSize           schoolDcSizeObj;
@@ -101,8 +98,7 @@ public class UsualWorkSchoolLocationChoiceModel
     private JPPFClient               jppfClient                                         = null;
 
     private boolean                  useNewSoaMethod;
-    
-    
+
     public UsualWorkSchoolLocationChoiceModel(ResourceBundle resourceBundle,
             String restartModelString, JPPFClient jppfClient, ModelStructure modelStructure,
             MatrixDataServerIf ms, CtrampDmuFactoryIf dmuFactory, BuildAccessibilities aggAcc)
@@ -162,25 +158,30 @@ public class UsualWorkSchoolLocationChoiceModel
         soaSchoolSampleSize = ResourceUtil.getIntegerProperty(resourceBundle,
                 PROPERTIES_DC_SOA_SCHOOL_SAMPLE_SIZE);
 
-        
         useNewSoaMethod = ResourceUtil.getBooleanProperty(resourceBundle,
                 USE_NEW_SOA_METHOD_PROPERTY_KEY);
-        
+
         // locate the UECs for destination choice, sample of alts, and mode choice
         String usualWorkLocationUecFileName;
         String usualSchoolLocationUecFileName;
-        if ( useNewSoaMethod ) {
-            usualWorkLocationUecFileName = ResourceUtil.getProperty(resourceBundle, PROPERTIES_UEC_USUAL_LOCATION_NEW);
-            usualSchoolLocationUecFileName = ResourceUtil.getProperty(resourceBundle, PROPERTIES_UEC_USUAL_LOCATION_NEW);
-        }
-        else {
-            usualWorkLocationUecFileName = ResourceUtil.getProperty(resourceBundle, PROPERTIES_UEC_USUAL_LOCATION);
-            usualSchoolLocationUecFileName = ResourceUtil.getProperty(resourceBundle, PROPERTIES_UEC_USUAL_LOCATION);
+        if (useNewSoaMethod)
+        {
+            usualWorkLocationUecFileName = ResourceUtil.getProperty(resourceBundle,
+                    PROPERTIES_UEC_USUAL_LOCATION_NEW);
+            usualSchoolLocationUecFileName = ResourceUtil.getProperty(resourceBundle,
+                    PROPERTIES_UEC_USUAL_LOCATION_NEW);
+        } else
+        {
+            usualWorkLocationUecFileName = ResourceUtil.getProperty(resourceBundle,
+                    PROPERTIES_UEC_USUAL_LOCATION);
+            usualSchoolLocationUecFileName = ResourceUtil.getProperty(resourceBundle,
+                    PROPERTIES_UEC_USUAL_LOCATION);
         }
         workLocUecFileName = uecPath + usualWorkLocationUecFileName;
         schoolLocUecFileName = uecPath + usualSchoolLocationUecFileName;
 
-        String usualLocationSoaUecFileName = ResourceUtil.getProperty(resourceBundle, PROPERTIES_UEC_USUAL_LOCATION_SOA);
+        String usualLocationSoaUecFileName = ResourceUtil.getProperty(resourceBundle,
+                PROPERTIES_UEC_USUAL_LOCATION_SOA);
         soaUecFileName = uecPath + usualLocationSoaUecFileName;
 
         mgraManager = MgraDataManager.getInstance();
@@ -191,7 +192,8 @@ public class UsualWorkSchoolLocationChoiceModel
             double[][] workerSizeTerms)
     {
 
-        HashMap<String, String> propertyMap = ResourceUtil.changeResourceBundleIntoHashMap(resourceBundle);
+        HashMap<String, String> propertyMap = ResourceUtil
+                .changeResourceBundleIntoHashMap(resourceBundle);
 
         // get the map of size term segment values to names
         HashMap<Integer, Integer> occupValueIndexMap = aggAcc.getWorkOccupValueIndexMap();
@@ -199,14 +201,16 @@ public class UsualWorkSchoolLocationChoiceModel
         HashMap<Integer, String> workSegmentIndexNameMap = aggAcc.getWorkSegmentIndexNameMap();
         HashMap<String, Integer> workSegmentNameIndexMap = aggAcc.getWorkSegmentNameIndexMap();
 
-        int maxShadowPriceIterations = Integer.parseInt(propertyMap.get(DestChoiceSize.PROPERTIES_WORK_DC_SHADOW_NITER));
+        int maxShadowPriceIterations = Integer.parseInt(propertyMap
+                .get(DestChoiceSize.PROPERTIES_WORK_DC_SHADOW_NITER));
 
         // create an object for calculating destination choice attraction size terms
         // and managing shadow price calculations.
         workerDcSizeObj = new DestChoiceSize(propertyMap, workSegmentIndexNameMap,
                 workSegmentNameIndexMap, workerSizeTerms, maxShadowPriceIterations);
 
-        int[][] originLocationsByHomeMgra = householdDataManager.getWorkersByHomeMgra(occupValueIndexMap);
+        int[][] originLocationsByHomeMgra = householdDataManager
+                .getWorkersByHomeMgra(occupValueIndexMap);
 
         // balance the size variables
         workerDcSizeObj.balanceSizeVariables(originLocationsByHomeMgra);
@@ -218,16 +222,17 @@ public class UsualWorkSchoolLocationChoiceModel
                 .get(CtrampApplication.PROPERTIES_WORK_LOCATION_CHOICE_SHADOW_PRICE_INPUT_FILE);
         if (fileName != null)
         {
-        	if(fileName.length()>2){
-        		String projectDirectory = ResourceUtil.getProperty(resourceBundle, CtrampApplication.PROPERTIES_PROJECT_DIRECTORY);
-        		workerDcSizeObj.restoreShadowPricingInfo(projectDirectory + fileName);
-        		int underScoreIndex = fileName.lastIndexOf('_');
-        		int dotIndex = fileName.lastIndexOf('.');
-        		currentIter = Integer.parseInt(fileName.substring(underScoreIndex + 1, dotIndex));
-        		currentIter++;
-        	}
+            if (fileName.length() > 2)
+            {
+                String projectDirectory = ResourceUtil.getProperty(resourceBundle,
+                        CtrampApplication.PROPERTIES_PROJECT_DIRECTORY);
+                workerDcSizeObj.restoreShadowPricingInfo(projectDirectory + fileName);
+                int underScoreIndex = fileName.lastIndexOf('_');
+                int dotIndex = fileName.lastIndexOf('.');
+                currentIter = Integer.parseInt(fileName.substring(underScoreIndex + 1, dotIndex));
+                currentIter++;
+            }
         }
-        
 
         // String restartFlag = propertyMap.get(
         // CtrampApplication.PROPERTIES_RESTART_WITH_HOUSEHOLD_SERVER );
@@ -238,17 +243,17 @@ public class UsualWorkSchoolLocationChoiceModel
 
         long initTime = System.currentTimeMillis();
 
-
         // shadow pricing iterations
         for (int iter = 0; iter < workerDcSizeObj.getMaxShadowPriceIterations(); iter++)
         {
-            
+
             try
             {
                 JPPFJob job = new JPPFJob();
                 job.setId("Work Location Choice Job");
 
-                ArrayList<int[]> startEndTaskIndicesList = getTaskHouseholdRanges( householdDataManager.getNumHouseholds() );
+                ArrayList<int[]> startEndTaskIndicesList = getTaskHouseholdRanges(householdDataManager
+                        .getNumHouseholds());
 
                 DataProvider dataProvider = new MemoryMapDataProvider();
                 dataProvider.setValue("propertyMap", propertyMap);
@@ -277,17 +282,19 @@ public class UsualWorkSchoolLocationChoiceModel
                     startIndex = startEndIndices[0];
                     endIndex = startEndIndices[1];
 
-                    if ( useNewSoaMethod ) {
-                        myTaskNew = new WorkLocationChoiceTaskJppfNew(taskIndex, startIndex, endIndex, iter);
+                    if (useNewSoaMethod)
+                    {
+                        myTaskNew = new WorkLocationChoiceTaskJppfNew(taskIndex, startIndex,
+                                endIndex, iter);
                         job.addTask(myTaskNew);
-                    }
-                    else {
-                        myTask = new WorkLocationChoiceTaskJppf(taskIndex, startIndex, endIndex, iter);
+                    } else
+                    {
+                        myTask = new WorkLocationChoiceTaskJppf(taskIndex, startIndex, endIndex,
+                                iter);
                         job.addTask(myTask);
                     }
                     taskIndex++;
                 }
-                               
 
                 logger.info("Usual work location choice model submitting tasks to jppf job");
                 List<JPPFTask> results = jppfClient.submit(job);
@@ -326,11 +333,9 @@ public class UsualWorkSchoolLocationChoiceModel
                     numChosenDests[i] += finalModeledDestChoiceLocationsByDestMgra[i][j];
             }
 
-            logger
-                    .info(String
-                            .format(
-                                    "Usual work location choice tasks completed for shadow price iteration %d in %d seconds.",
-                                    iter, ((System.currentTimeMillis() - initTime) / 1000)));
+            logger.info(String
+                    .format("Usual work location choice tasks completed for shadow price iteration %d in %d seconds.",
+                            iter, ((System.currentTimeMillis() - initTime) / 1000)));
             logger.info(String.format("Chosen dests by segment:"));
             double total = 0;
             for (int i = 0; i < numChosenDests.length; i++)
@@ -366,13 +371,15 @@ public class UsualWorkSchoolLocationChoiceModel
             double[][] schoolSizeTerms, double[][] schoolFactors)
     {
 
-        HashMap<String, String> propertyMap = ResourceUtil.changeResourceBundleIntoHashMap(resourceBundle);
+        HashMap<String, String> propertyMap = ResourceUtil
+                .changeResourceBundleIntoHashMap(resourceBundle);
 
         // get the maps of segment names and indices for school location choice size
         HashMap<Integer, String> schoolSegmentIndexNameMap = aggAcc.getSchoolSegmentIndexNameMap();
         HashMap<String, Integer> schoolSegmentNameIndexMap = aggAcc.getSchoolSegmentNameIndexMap();
 
-        int maxShadowPriceIterations = Integer.parseInt(propertyMap.get(DestChoiceSize.PROPERTIES_SCHOOL_DC_SHADOW_NITER));
+        int maxShadowPriceIterations = Integer.parseInt(propertyMap
+                .get(DestChoiceSize.PROPERTIES_SCHOOL_DC_SHADOW_NITER));
 
         // create an object for calculating destination choice attraction size terms
         // and managing shadow price calculations.
@@ -382,13 +389,14 @@ public class UsualWorkSchoolLocationChoiceModel
         // get the set of segment indices for which shadow pricing should be skipped.
         skipSegmentIndexSet = aggAcc.getNoShadowPriceSchoolSegmentIndexSet();
         schoolDcSizeObj.setNoShadowPriceSchoolSegmentIndices(skipSegmentIndexSet);
-        
+
         // set the school segment external factors calculated for university segment in the method that called this one.
         schoolDcSizeObj.setExternalFactors(schoolFactors);
-        
-        householdDataManager.setSchoolDistrictMappings( schoolSegmentNameIndexMap, aggAcc.getMgraGsDistrict(), aggAcc.getMgraHsDistrict(),
-                aggAcc.getGsDistrictIndexMap(), aggAcc.getHsDistrictIndexMap() );
-                
+
+        householdDataManager.setSchoolDistrictMappings(schoolSegmentNameIndexMap,
+                aggAcc.getMgraGsDistrict(), aggAcc.getMgraHsDistrict(),
+                aggAcc.getGsDistrictIndexMap(), aggAcc.getHsDistrictIndexMap());
+
         int[][] originLocationsByHomeMgra = householdDataManager.getStudentsByHomeMgra();
 
         // balance the size variables
@@ -397,19 +405,22 @@ public class UsualWorkSchoolLocationChoiceModel
         if (PACKET_SIZE == 0) PACKET_SIZE = householdDataManager.getNumHouseholds();
 
         int currentIter = 0;
-        String fileName = propertyMap.get(CtrampApplication.PROPERTIES_SCHOOL_LOCATION_CHOICE_SHADOW_PRICE_INPUT_FILE);
+        String fileName = propertyMap
+                .get(CtrampApplication.PROPERTIES_SCHOOL_LOCATION_CHOICE_SHADOW_PRICE_INPUT_FILE);
         if (fileName != null)
-        	if(fileName.length()>2){
-        		{
-        			String projectDirectory = ResourceUtil.getProperty(resourceBundle,
-        					CtrampApplication.PROPERTIES_PROJECT_DIRECTORY);
-        			schoolDcSizeObj.restoreShadowPricingInfo(projectDirectory + fileName);
-        			int underScoreIndex = fileName.lastIndexOf('_');
-        			int dotIndex = fileName.lastIndexOf('.');
-        			currentIter = Integer.parseInt(fileName.substring(underScoreIndex + 1, dotIndex));
-        			currentIter++;
-        		}
-        	}
+            if (fileName.length() > 2)
+            {
+                {
+                    String projectDirectory = ResourceUtil.getProperty(resourceBundle,
+                            CtrampApplication.PROPERTIES_PROJECT_DIRECTORY);
+                    schoolDcSizeObj.restoreShadowPricingInfo(projectDirectory + fileName);
+                    int underScoreIndex = fileName.lastIndexOf('_');
+                    int dotIndex = fileName.lastIndexOf('.');
+                    currentIter = Integer.parseInt(fileName
+                            .substring(underScoreIndex + 1, dotIndex));
+                    currentIter++;
+                }
+            }
         // String restartFlag = propertyMap.get(
         // CtrampApplication.PROPERTIES_RESTART_WITH_HOUSEHOLD_SERVER );
         // if ( restartFlag == null )
@@ -431,7 +442,8 @@ public class UsualWorkSchoolLocationChoiceModel
                 JPPFJob job = new JPPFJob();
                 job.setId("School Location Choice Job");
 
-                ArrayList<int[]> startEndTaskIndicesList = getTaskHouseholdRanges(householdDataManager.getNumHouseholds());
+                ArrayList<int[]> startEndTaskIndicesList = getTaskHouseholdRanges(householdDataManager
+                        .getNumHouseholds());
 
                 DataProvider dataProvider = new MemoryMapDataProvider();
                 dataProvider.setValue("propertyMap", propertyMap);
@@ -458,12 +470,15 @@ public class UsualWorkSchoolLocationChoiceModel
                     startIndex = startEndIndices[0];
                     endIndex = startEndIndices[1];
 
-                    if ( useNewSoaMethod ) {
-                        myTaskNew = new SchoolLocationChoiceTaskJppfNew(taskIndex, startIndex, endIndex, iter);
+                    if (useNewSoaMethod)
+                    {
+                        myTaskNew = new SchoolLocationChoiceTaskJppfNew(taskIndex, startIndex,
+                                endIndex, iter);
                         job.addTask(myTaskNew);
-                    }
-                    else {
-                        myTask = new SchoolLocationChoiceTaskJppf(taskIndex, startIndex, endIndex, iter);
+                    } else
+                    {
+                        myTask = new SchoolLocationChoiceTaskJppf(taskIndex, startIndex, endIndex,
+                                iter);
                         job.addTask(myTask);
                     }
                     taskIndex++;
@@ -494,7 +509,8 @@ public class UsualWorkSchoolLocationChoiceModel
 
             // sum the chosen destinations by purpose, dest zone and subzone for
             // shadow pricing adjustment
-            int[][] finalModeledDestChoiceLocationsByDestMgra = householdDataManager.getSchoolToursByDestMgra();
+            int[][] finalModeledDestChoiceLocationsByDestMgra = householdDataManager
+                    .getSchoolToursByDestMgra();
 
             int[] numChosenDests = new int[schoolSegmentIndexNameMap.size()];
 
@@ -504,28 +520,32 @@ public class UsualWorkSchoolLocationChoiceModel
                     numChosenDests[i] += finalModeledDestChoiceLocationsByDestMgra[i][j];
             }
 
-            logger.info(String.format( "Usual school location choice tasks completed for shadow price iteration %d.", iter));
+            logger.info(String.format(
+                    "Usual school location choice tasks completed for shadow price iteration %d.",
+                    iter));
             logger.info(String.format("Chosen dests by segment:"));
             double total = 0;
             for (int i = 0; i < numChosenDests.length; i++)
             {
                 String segmentString = schoolSegmentIndexNameMap.get(i);
-                logger.info(String.format("\t%-8d%-20s = %10d", i + 1, segmentString, numChosenDests[i]));
+                logger.info(String.format("\t%-8d%-20s = %10d", i + 1, segmentString,
+                        numChosenDests[i]));
                 total += numChosenDests[i];
             }
             logger.info(String.format("\t%-8s%-20s = %10.0f", "total", "", total));
 
-            logger.info( String.format(
-                "Usual school location choice tasks completed for shadow price iteration %d in %d seconds.",
-                iter, ((System.currentTimeMillis() - initTime) / 1000)));
+            logger.info(String
+                    .format("Usual school location choice tasks completed for shadow price iteration %d in %d seconds.",
+                            iter, ((System.currentTimeMillis() - initTime) / 1000)));
 
             // apply the shadow price adjustments
             schoolDcSizeObj.reportMaxDiff(iter, finalModeledDestChoiceLocationsByDestMgra);
-            schoolDcSizeObj.saveSchoolMaxDiffValues(iter, finalModeledDestChoiceLocationsByDestMgra);
+            schoolDcSizeObj
+                    .saveSchoolMaxDiffValues(iter, finalModeledDestChoiceLocationsByDestMgra);
             schoolDcSizeObj.updateShadowPrices(finalModeledDestChoiceLocationsByDestMgra);
             schoolDcSizeObj.updateSizeVariables();
             schoolDcSizeObj.updateShadowPricingInfo(currentIter, originLocationsByHomeMgra,
-                finalModeledDestChoiceLocationsByDestMgra, "school");
+                    finalModeledDestChoiceLocationsByDestMgra, "school");
 
             householdDataManager.setUwslRandomCount(currentIter);
 
@@ -540,12 +560,13 @@ public class UsualWorkSchoolLocationChoiceModel
     }
 
     /**
-     * Loops through the households in the HouseholdDataManager, gets the households
-     * and persons and writes a row with detail on each of these in a file.
+     * Loops through the households in the HouseholdDataManager, gets the households and persons and writes a row with detail on each of these in a
+     * file.
      * 
-     * @param householdDataManager is the object from which the array of household
-     *            objects can be retrieved.
-     * @param projectDirectory is the root directory for the output file named
+     * @param householdDataManager
+     *            is the object from which the array of household objects can be retrieved.
+     * @param projectDirectory
+     *            is the root directory for the output file named
      */
     public void saveResults(HouseholdDataManagerIf householdDataManager, String projectDirectory,
             int globalIteration)
@@ -638,9 +659,11 @@ public class UsualWorkSchoolLocationChoiceModel
                         outStream.println(String.format(
                                 "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%.5e,%.5e,%d,%.5e,%.5e", hhId,
                                 homeMgra, income, personId, personNum, personType, personAge,
-                                employmentCategory, studentCategory, workSegmentIndex, schoolSegmentIndex,
-                                workLocation, person.getWorkLocationDistance(), person.getWorkLocationLogsum(),
-                                schoolLocation, person.getSchoolLocationDistance(), person.getSchoolLocationLogsum()));
+                                employmentCategory, studentCategory, workSegmentIndex,
+                                schoolSegmentIndex, workLocation, person.getWorkLocationDistance(),
+                                person.getWorkLocationLogsum(), schoolLocation,
+                                person.getSchoolLocationDistance(),
+                                person.getSchoolLocationLogsum()));
 
                     }
 
@@ -722,7 +745,7 @@ public class UsualWorkSchoolLocationChoiceModel
         if (numInitializationHouseholds < numberOfHouseholds)
         {
 
-            while(endIndex < numInitializationHouseholds)
+            while (endIndex < numInitializationHouseholds)
             {
                 endIndex = startIndex + INITIALIZATION_PACKET_SIZE - 1;
 
@@ -736,7 +759,7 @@ public class UsualWorkSchoolLocationChoiceModel
 
         }
 
-        while(endIndex < numberOfHouseholds - 1)
+        while (endIndex < numberOfHouseholds - 1)
         {
             endIndex = startIndex + PACKET_SIZE - 1;
             if (endIndex + PACKET_SIZE > numberOfHouseholds) endIndex = numberOfHouseholds - 1;
@@ -761,7 +784,7 @@ public class UsualWorkSchoolLocationChoiceModel
         int startIndex = 0;
         int endIndex = 0;
 
-        while(endIndex < numberOfHouseholds - 1)
+        while (endIndex < numberOfHouseholds - 1)
         {
             endIndex = startIndex + NUM_WRITE_PACKETS - 1;
             if (endIndex + NUM_WRITE_PACKETS > numberOfHouseholds)

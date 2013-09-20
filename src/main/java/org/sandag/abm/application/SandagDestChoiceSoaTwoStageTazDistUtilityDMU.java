@@ -30,7 +30,6 @@ public class SandagDestChoiceSoaTwoStageTazDistUtilityDMU
 
     }
 
-
     public double getValueForIndex(int variableIndex, int arrayIndex)
     {
 

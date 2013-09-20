@@ -6,8 +6,7 @@ import java.util.HashMap;
 /**
  * @author Jim Hicks
  * 
- *         Class for managing household and person object data read from synthetic
- *         population files.
+ *         Class for managing household and person object data read from synthetic population files.
  */
 public class HouseholdDataManagerRmi
         implements HouseholdDataManagerIf, Serializable
@@ -36,34 +35,40 @@ public class HouseholdDataManagerRmi
         remote.method("setDebugHhIdsFromHashmap", objArray);
     }
 
-    public void setupHouseholdDataManager(ModelStructure modelStructure, String inputHouseholdFileName, String inputPersonFileName)
+    public void setupHouseholdDataManager(ModelStructure modelStructure,
+            String inputHouseholdFileName, String inputPersonFileName)
     {
         Object[] objArray = {modelStructure, inputHouseholdFileName, inputPersonFileName};
         remote.method("setupHouseholdDataManager", objArray);
     }
 
-    public void setSchoolDistrictMappings( HashMap<String, Integer> segmentNameIndexMap, int[] mgraGsDist, int[] mgraHsDist,
-            HashMap<Integer,Integer> gsDistSegMap, HashMap<Integer,Integer> hsDistSegMap)
+    public void setSchoolDistrictMappings(HashMap<String, Integer> segmentNameIndexMap,
+            int[] mgraGsDist, int[] mgraHsDist, HashMap<Integer, Integer> gsDistSegMap,
+            HashMap<Integer, Integer> hsDistSegMap)
     {
-        Object[] objArray = {segmentNameIndexMap, mgraGsDist, mgraHsDist, gsDistSegMap, hsDistSegMap};
+        Object[] objArray = {segmentNameIndexMap, mgraGsDist, mgraHsDist, gsDistSegMap,
+                hsDistSegMap};
         remote.method("setSchoolDistrictMappings", objArray);
     }
 
-    public void computeTransponderChoiceTazPercentArrays() {
+    public void computeTransponderChoiceTazPercentArrays()
+    {
         Object[] objArray = {};
         remote.method("computeTransponderChoiceTazPercentArrays", objArray);
     }
-    
-    public double[] getPercentHhsIncome100Kplus() {
+
+    public double[] getPercentHhsIncome100Kplus()
+    {
         Object[] objArray = {};
-        return (double[])remote.method("getPercentHhsIncome100Kplus", objArray);
+        return (double[]) remote.method("getPercentHhsIncome100Kplus", objArray);
     }
-    
-    public double[] getPercentHhsMultipleAutos() {
+
+    public double[] getPercentHhsMultipleAutos()
+    {
         Object[] objArray = {};
-        return (double[])remote.method("getPercentHhsMultipleAutos", objArray);
+        return (double[]) remote.method("getPercentHhsMultipleAutos", objArray);
     }
-    
+
     public void logPersonSummary()
     {
         Object[] objArray = {};
@@ -81,7 +86,7 @@ public class HouseholdDataManagerRmi
         Object[] objArray = {segmentValueIndexMap};
         return (int[]) remote.method("getWorksAtHomeBySegment", objArray);
     }
-    
+
     public int[][] getWorkToursByDestMgra(HashMap<Integer, Integer> segmentValueIndexMap)
     {
         Object[] objArray = {segmentValueIndexMap};
@@ -155,8 +160,7 @@ public class HouseholdDataManagerRmi
     }
 
     /**
-     * set the hh id for which debugging info from choice models applied to this
-     * household will be logged if debug logging.
+     * set the hh id for which debugging info from choice models applied to this household will be logged if debug logging.
      */
     public void setDebugHouseholdId(int debugHhId, boolean value)
     {
@@ -165,8 +169,7 @@ public class HouseholdDataManagerRmi
     }
 
     /**
-     * Sets the HashSet used to trace households for debug purposes and sets the
-     * debug switch for each of the listed households. Also sets
+     * Sets the HashSet used to trace households for debug purposes and sets the debug switch for each of the listed households. Also sets
      */
     public void setTraceHouseholdSet()
     {
@@ -295,8 +298,7 @@ public class HouseholdDataManagerRmi
     }
 
     /**
-     * return the array of Household objects holding the synthetic population and
-     * choice model outcomes.
+     * return the array of Household objects holding the synthetic population and choice model outcomes.
      * 
      * @return hhs
      */
@@ -325,8 +327,7 @@ public class HouseholdDataManagerRmi
     }
 
     /**
-     * return the array of Household objects holding the synthetic population and
-     * choice model outcomes.
+     * return the array of Household objects holding the synthetic population and choice model outcomes.
      * 
      * @return hhs
      */
@@ -348,8 +349,7 @@ public class HouseholdDataManagerRmi
     }
 
     /**
-     * set walk segment (0-none, 1-short, 2-long walk to transit access) for the
-     * origin for this tour
+     * set walk segment (0-none, 1-short, 2-long walk to transit access) for the origin for this tour
      */
     public int getInitialOriginWalkSegment(int taz, double randomNumber)
     {

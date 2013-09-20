@@ -38,10 +38,8 @@ public final class BuildAccessibilities
     protected transient Logger          logger                                    = Logger.getLogger(BuildAccessibilities.class);
 
     /*
-     * OLD names private static final String[] WORK_OCCUP_SEGMENT_NAME_LIST = {
-     * "White Collar", "Services", "Health", "Retail and Food", "Blue Collar",
-     * "Military" }; private static final int[] WORK_OCCUP_SEGMENT_VALUE_LIST =
-     * { 71, 72,74, 75, 76, 77 };
+     * OLD names private static final String[] WORK_OCCUP_SEGMENT_NAME_LIST = { "White Collar", "Services", "Health", "Retail and Food",
+     * "Blue Collar", "Military" }; private static final int[] WORK_OCCUP_SEGMENT_VALUE_LIST = { 71, 72,74, 75, 76, 77 };
      */
     private static final String[]       WORK_OCCUP_SEGMENT_NAME_LIST              = {
             "Management Business Science and Arts", "Services", "Sales and Office",
@@ -50,8 +48,7 @@ public final class BuildAccessibilities
     private static final int[]          WORK_OCCUP_SEGMENT_VALUE_LIST             = {50, 51, 53,
             54, 55, 56                                                            };
 
-    // these segment group labels and indices are used for creating all the
-    // school location choice segments
+    // these segment group labels and indices are used for creating all the school location choice segments
     public static final String[]        SCHOOL_DC_SIZE_SEGMENT_NAME_LIST          = {"preschool",
             "k-8", "unified k-8", "9-12", "unified 9-12", "univ typical", "univ non-typical"};
     public static final int             PRESCHOOL_SEGMENT_GROUP_INDEX             = 0;
@@ -64,16 +61,14 @@ public final class BuildAccessibilities
 
     private static final int            UNIFIED_DISTRICT_OFFSET                   = 1000000;
 
-    // these indices define the alternative numbers and size term calculation
-    // indices
+    // these indices define the alternative numbers and size term calculation indices
     public static final int             PRESCHOOL_ALT_INDEX                       = 0;
     public static final int             GRADE_SCHOOL_ALT_INDEX                    = 1;
     public static final int             HIGH_SCHOOL_ALT_INDEX                     = 2;
     public static final int             UNIV_TYPICAL_ALT_INDEX                    = 3;
     public static final int             UNIV_NONTYPICAL_ALT_INDEX                 = 4;
 
-    // school segments: preschool, grade school, high school, university
-    // typical, university non-typical
+    // school segments: preschool, grade school, high school, university typical, university non-typical
     private static final int[]          SCHOOL_LOC_SEGMENT_TO_UEC_SHEET_INDEX     = {3, 4, 5, 6, 6};
     private static final int[]          SCHOOL_LOC_SOA_SEGMENT_TO_UEC_SHEET_INDEX = {5, 4, 3, 2, 2};
     private static final int[]          SCHOOL_SEGMENT_TO_STF_UEC_SHEET_INDEX     = {3, 3, 3, 2, 2};
@@ -99,8 +94,7 @@ public final class BuildAccessibilities
     public static final int[][]         EXTERNAL_LUZS_FOR_CORDON_LUZ              = { {234},
             {230, 231, 235, 236}, {233}, {232}                                    };
 
-    // in the LU logsums array, 1st dimension is averaging type, 2nd is pk or
-    // op, 3rd is auto sufficiency segment, 4th is orig LUZ, 5th is dest LUZ.
+    // in the LU logsums array, 1st dimension is averaging type, 2nd is pk or op, 3rd is auto sufficiency segment, 4th is orig LUZ, 5th is dest LUZ.
     public static final int             SIMPLE                                    = 0;
     public static final int             LOGIT                                     = 1;
     public static final int             PK                                        = 0;
@@ -135,8 +129,7 @@ public final class BuildAccessibilities
     private int[]                       schoolDcUecSheets;
     private int[]                       schoolStfUecSheets;
 
-    // a set of school segment indices for which shadow pricing is not done -
-    // currently includes pre-school segment only.
+    // a set of school segment indices for which shadow pricing is not done - currently includes pre-school segment only.
     private HashSet<Integer>            noShadowPriceSchoolSegmentIndices;
 
     private HashMap<Integer, String>    psSegmentIndexNameMap;
@@ -390,10 +383,8 @@ public final class BuildAccessibilities
     //
     // }
 
-    // This method is only called if the main ABM command line argument for
-    // calculating land use accessibilities is true
-    // otherwise, the array lanUseLogsums is null and serves as an indicator
-    // that LU accessibilities are not needed
+    // This method is only called if the main ABM command line argument for calculating land use accessibilities is true
+    // otherwise, the array lanUseLogsums is null and serves as an indicator that LU accessibilities are not needed
     public void setCalculatedLandUseAccessibilities()
     {
 
@@ -421,8 +412,7 @@ public final class BuildAccessibilities
             cordonLuzForExternalLuz[externalLuz] = EXTERNAL_LUZ_CORDON_LUZS[i];
         }
 
-        // associate the minutes to add to cordon LUZ to represent time to each
-        // external LUZ.
+        // associate the minutes to add to cordon LUZ to represent time to each external LUZ.
         for (int i = 0; i < EXTERNAL_LUZS.length; i++)
         {
             int externalLuz = EXTERNAL_LUZS[i];
@@ -432,11 +422,8 @@ public final class BuildAccessibilities
     }
 
     /**
-     * Calculate size terms and store in sizeTerms array. This method
-     * initializes the sizeTerms array and loops through mgras in the
-     * mgraManager, calculates the size term for all size term purposes as
-     * defined in the size term uec, and stores the results in the sizeTerms
-     * array.
+     * Calculate size terms and store in sizeTerms array. This method initializes the sizeTerms array and loops through mgras in the mgraManager,
+     * calculates the size term for all size term purposes as defined in the size term uec, and stores the results in the sizeTerms array.
      * 
      */
     public void calculateSizeTerms()
@@ -460,8 +447,7 @@ public final class BuildAccessibilities
             double[] utilities = sizeTermUEC.solve(iv, aDmu, null);
 
             // if ( mgra < 100 )
-            // sizeTermUEC.logAnswersArray(logger,
-            // "NonMandatory Size Terms, MGRA = " + mgra );
+            // sizeTermUEC.logAnswersArray(logger, "NonMandatory Size Terms, MGRA = " + mgra );
 
             // store the size terms
             for (int purp = 0; purp < alternatives; ++purp)
@@ -482,11 +468,9 @@ public final class BuildAccessibilities
     }
 
     /**
-     * Calculate size terms used for worker DC and store in workerSizeTerms
-     * array. This method initializes the workerSizeTerms array and loops
-     * through mgras in the mgraManager, calculates the size term for all work
-     * size term occupation categories as defined in the worker size term uec,
-     * and stores the results in the workerSizeTerms array.
+     * Calculate size terms used for worker DC and store in workerSizeTerms array. This method initializes the workerSizeTerms array and loops through
+     * mgras in the mgraManager, calculates the size term for all work size term occupation categories as defined in the worker size term uec, and
+     * stores the results in the workerSizeTerms array.
      * 
      */
     public void calculateWorkerSizeTerms()
@@ -524,14 +508,10 @@ public final class BuildAccessibilities
     }
 
     /**
-     * Calculate size terms used for school DC and store in schoolSizeTerms
-     * array. This method initializes the schoolSizeTerms array and loops
-     * through mgras in the mgraManager, calculates the size term for all school
-     * size term categories, preschool is defined in the preschool size term
-     * uec, K-8 and 9-12 use their respective enrollments as size terms, and
-     * university uses a size term uec, segmented by "typical student". Size
-     * terms for preschool, k-8, 9-12, university typical amd university
-     * non-typical are stored in the studentSizeTerms array.
+     * Calculate size terms used for school DC and store in schoolSizeTerms array. This method initializes the schoolSizeTerms array and loops through
+     * mgras in the mgraManager, calculates the size term for all school size term categories, preschool is defined in the preschool size term uec,
+     * K-8 and 9-12 use their respective enrollments as size terms, and university uses a size term uec, segmented by "typical student". Size terms
+     * for preschool, k-8, 9-12, university typical amd university non-typical are stored in the studentSizeTerms array.
      * 
      */
     public void calculateSchoolSizeTerms()
@@ -635,8 +615,7 @@ public final class BuildAccessibilities
         logger.info("Calculating constants");
 
         int modes = constantsUEC.getNumberOfAlternatives();
-        expConstants = new double[MARKET_SEGMENTS + 1][modes]; // last element
-                                                               // in
+        expConstants = new double[MARKET_SEGMENTS + 1][modes]; // last element in
         // market segments is
         // for total
 
@@ -737,8 +716,7 @@ public final class BuildAccessibilities
     private float[][][] aggregateMgraAccessibilitiesToLuz(float[][] landUseAccessibilities)
     {
 
-        // simple averaging uses accumulated logsum values, logit averaging uses
-        // accumulated utility values
+        // simple averaging uses accumulated logsum values, logit averaging uses accumulated utility values
         float[][][] returnValues = new float[NUM_AVG_METHODS][MAX_LUZ + 1][];
         int[] numberOfMgraValues = new int[MAX_LUZ + 1];
 
@@ -764,16 +742,14 @@ public final class BuildAccessibilities
 
             numberOfMgraValues[luz]++;
 
-            // aggregate the mgra column values in the corresponding luz row of
-            // the return array - excluding the last column
+            // aggregate the mgra column values in the corresponding luz row of the return array - excluding the last column
             for (int j = 0; j < numColumns - 1; j++)
             {
                 returnValues[SIMPLE][luz][j] += landUseAccessibilities[i][j];
                 returnValues[LOGIT][luz][j] += Math.exp(landUseAccessibilities[i][j]);
             }
 
-            // calculate logsums from external LUZs to all destination LUZs if
-            // the origin LUZ is a cordon LUZ
+            // calculate logsums from external LUZs to all destination LUZs if the origin LUZ is a cordon LUZ
             if (externalLuzsForCordonLuz[luz] != null)
             {
 
@@ -813,16 +789,14 @@ public final class BuildAccessibilities
             int numColumns = returnValues[SIMPLE][i].length;
             int luz = (int) returnValues[SIMPLE][i][numColumns - 1];
 
-            // average the the luz values of the return array - excluding the
-            // last column
+            // average the the luz values of the return array - excluding the last column
             for (int j = 0; j < numColumns - 1; j++)
             {
                 returnValues[SIMPLE][luz][j] /= numberOfMgraValues[luz];
                 returnValues[LOGIT][luz][j] = (float) Math.log(returnValues[LOGIT][luz][j]);
             }
 
-            // calculate logsums from external LUZs to all destination LUZs if
-            // the origin LUZ is a cordon LUZ
+            // calculate logsums from external LUZs to all destination LUZs if the origin LUZ is a cordon LUZ
             if (externalLuzsForCordonLuz[luz] != null)
             {
 
@@ -866,18 +840,15 @@ public final class BuildAccessibilities
 
     /**
      * @param client
-     *            is a JPPFClient object which is used to establish a connection
-     *            to a computing node, submit tasks, and receive results.
+     *            is a JPPFClient object which is used to establish a connection to a computing node, submit tasks, and receive results.
      */
     private float[][] submitTasks(ArrayList<int[]> startEndIndexList, HashMap<String, String> rbMap)
     {
 
         // Create a setup task object and submit it to the computing node.
-        // This setup task creates the HouseholdChoiceModelManager and causes it
-        // to
+        // This setup task creates the HouseholdChoiceModelManager and causes it to
         // create the necessary numuber
-        // of HouseholdChoiceModels objects which will operate in parallel on
-        // the
+        // of HouseholdChoiceModels objects which will operate in parallel on the
         // computing node.
 
         ExecutorService exec = Executors.newFixedThreadPool(numThreads);
@@ -931,8 +902,7 @@ public final class BuildAccessibilities
                 if (landUseLogsums != null)
                 {
 
-                    // get land use accessibilities result if they were
-                    // calculated
+                    // get land use accessibilities result if they were calculated
                     taskAccessibilities = (float[][]) resultBundle.get(4);
                     if (taskAccessibilities != null)
                     {
@@ -1024,8 +994,7 @@ public final class BuildAccessibilities
     }
 
     /**
-     * @return the array of alternative labels from the UEC used to calculate
-     *         work tour destination choice size terms.
+     * @return the array of alternative labels from the UEC used to calculate work tour destination choice size terms.
      */
     public String[] getWorkSegmentNameList()
     {
@@ -1033,8 +1002,7 @@ public final class BuildAccessibilities
     }
 
     /**
-     * @return the table, MGRAs by occupations, of size terms calcuated for
-     *         worker DC.
+     * @return the table, MGRAs by occupations, of size terms calcuated for worker DC.
      */
     public double[][] getWorkerSizeTerms()
     {
@@ -1042,8 +1010,7 @@ public final class BuildAccessibilities
     }
 
     /**
-     * @return the array of alternative labels from the UEC used to calculate
-     *         work tour destination choice size terms.
+     * @return the array of alternative labels from the UEC used to calculate work tour destination choice size terms.
      */
     public String[] getSchoolSegmentNameList()
     {
@@ -1051,8 +1018,7 @@ public final class BuildAccessibilities
     }
 
     /**
-     * Specify the mapping between PECAS occupation codes, occupation segment
-     * labels, and work location choice segment indices.
+     * Specify the mapping between PECAS occupation codes, occupation segment labels, and work location choice segment indices.
      */
     public void createWorkSegmentNameIndices()
     {
@@ -1060,8 +1026,7 @@ public final class BuildAccessibilities
         // get the list of segment names for worker tour destination choice size
         String[] occupNameList = WORK_OCCUP_SEGMENT_NAME_LIST;
 
-        // get the list of segment values for worker tour destination choice
-        // size
+        // get the list of segment values for worker tour destination choice size
         int[] occupValueList = WORK_OCCUP_SEGMENT_VALUE_LIST;
 
         for (int value : occupValueList)
@@ -1075,8 +1040,7 @@ public final class BuildAccessibilities
     }
 
     /**
-     * Specify/create the mapping between school segment labels, and school
-     * location choice segment indices.
+     * Specify/create the mapping between school segment labels, and school location choice segment indices.
      */
     public void createSchoolSegmentNameIndices()
     {
@@ -1087,8 +1051,7 @@ public final class BuildAccessibilities
 
         String segmentName = "";
 
-        // add preschool segment to list of segments which will not be shadow
-        // price adjusted
+        // add preschool segment to list of segments which will not be shadow price adjusted
         int sizeSegmentIndex = 0;
         segmentName = SCHOOL_DC_SIZE_SEGMENT_NAME_LIST[PRESCHOOL_SEGMENT_GROUP_INDEX];
         noShadowPriceSchoolSegmentIndices.add(sizeSegmentIndex);
@@ -1101,8 +1064,7 @@ public final class BuildAccessibilities
         psSegmentIndexNameMap.put(sizeSegmentIndex, segmentName);
         psSegmentNameIndexMap.put(segmentName, sizeSegmentIndex);
 
-        // increment the segmentIndex so it's new value is the first grade
-        // school index
+        // increment the segmentIndex so it's new value is the first grade school index
         // add grade school segments to list
         sizeSegmentIndex++;
         gsDistrictIndexMap = new HashMap<Integer, Integer>();
@@ -1157,8 +1119,7 @@ public final class BuildAccessibilities
         univNonTypSegmentNameIndexMap.put(segmentName, sizeSegmentIndex);
         univNonTypicalSegment = sizeSegmentIndex;
 
-        // create arrays dimensioned as the number of school segments created
-        // and assign their values
+        // create arrays dimensioned as the number of school segments created and assign their values
 
         // 2 university segments
         universitySegments = new int[2];
@@ -1346,8 +1307,7 @@ public final class BuildAccessibilities
     }
 
     /**
-     * @return the array of stop frequency uec model sheet indices, indexed by
-     *         school segment
+     * @return the array of stop frequency uec model sheet indices, indexed by school segment
      */
     public int[] getSchoolStfUecSheets()
     {
@@ -1355,8 +1315,7 @@ public final class BuildAccessibilities
     }
 
     /**
-     * @return the table, MGRAs by school types, of size terms calcuated for
-     *         school DC.
+     * @return the table, MGRAs by school types, of size terms calcuated for school DC.
      */
     public double[][] getSchoolSizeTerms()
     {

@@ -18,8 +18,7 @@ public abstract class StopFrequencyDMU
         implements Serializable, VariableTable
 {
 
-    protected transient Logger         logger                            = Logger
-                                                                                 .getLogger(StopFrequencyDMU.class);
+    protected transient Logger         logger                            = Logger.getLogger(StopFrequencyDMU.class);
 
     protected HashMap<String, Integer> methodIndexMap;
 
@@ -45,12 +44,12 @@ public abstract class StopFrequencyDMU
     protected Tour                     tour;
 
     protected ModelStructure           modelStructure;
-    
+
     private double                     shoppingAccessibility;
     private double                     maintenanceAccessibility;
     private double                     discretionaryAccessibility;
 
-    public StopFrequencyDMU( ModelStructure modelStructure )
+    public StopFrequencyDMU(ModelStructure modelStructure)
     {
         this.modelStructure = modelStructure;
         dmuIndex = new IndexValues();
@@ -92,10 +91,12 @@ public abstract class StopFrequencyDMU
         this.tour = tour;
     }
 
-    public int getTourIsJoint() {
-        return tour.getTourCategory().equalsIgnoreCase( ModelStructure.JOINT_NON_MANDATORY_CATEGORY ) ? 1 : 0;
+    public int getTourIsJoint()
+    {
+        return tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY) ? 1
+                : 0;
     }
-    
+
     public void setShoppingAccessibility(double shoppingAccessibility)
     {
         this.shoppingAccessibility = shoppingAccessibility;
@@ -309,8 +310,7 @@ public abstract class StopFrequencyDMU
     }
 
     /**
-     * @return the number of inbound stops that correspond to the chosen stop
-     *         frequency alternative
+     * @return the number of inbound stops that correspond to the chosen stop frequency alternative
      */
     public int getNumIbStopsAlt(int alt)
     {
@@ -318,17 +318,16 @@ public abstract class StopFrequencyDMU
     }
 
     /**
-     * @return the number of outbound stops that correspond to the chosen stop
-     *         frequency alternative
+     * @return the number of outbound stops that correspond to the chosen stop frequency alternative
      */
     public int getNumObStopsAlt(int alt)
     {
         return NUM_OB_STOPS_FOR_ALT[alt];
     }
 
-    
     /**
      * get the tour duration, measured in hours
+     * 
      * @return duration of tour in hours - number of half-hour intervals - arrive period - depart period divided by 2.
      */
     public float getTourDurationInHours()
@@ -338,26 +337,24 @@ public abstract class StopFrequencyDMU
 
     public int getTourModeIsAuto()
     {
-        return modelStructure.getTourModeIsSovOrHov( tour.getTourModeChoice() ) ? 1 : 0;
+        return modelStructure.getTourModeIsSovOrHov(tour.getTourModeChoice()) ? 1 : 0;
     }
-    
+
     public int getTourModeIsTransit()
     {
-        return modelStructure.getTourModeIsTransit( tour.getTourModeChoice() ) ? 1 : 0;
+        return modelStructure.getTourModeIsTransit(tour.getTourModeChoice()) ? 1 : 0;
     }
-    
+
     public int getTourModeIsNonMotorized()
     {
-        return modelStructure.getTourModeIsNonMotorized( tour.getTourModeChoice() ) ? 1 : 0;
+        return modelStructure.getTourModeIsNonMotorized(tour.getTourModeChoice()) ? 1 : 0;
     }
-    
+
     public int getTourModeIsSchoolBus()
     {
-        return modelStructure.getTourModeIsSchoolBus( tour.getTourModeChoice() ) ? 1 : 0;
+        return modelStructure.getTourModeIsSchoolBus(tour.getTourModeChoice()) ? 1 : 0;
     }
-    
-    
-    
+
     public int getIndexValue(String variableName)
     {
         return methodIndexMap.get(variableName);

@@ -19,8 +19,6 @@ public class Person
     public static final int      DEFAULT_NON_MANDATORY_END_PERIOD           = 22;
     // 2 pm default arrival period
     public static final int      DEFAULT_AT_WORK_SUBTOUR_END_PERIOD         = 20;
-    
-    
 
     public static final int      MIN_ADULT_AGE                              = 19;
     public static final int      MIN_STUDENT_AGE                            = 5;
@@ -92,9 +90,9 @@ public class Person
     private float                schoolLocLogsum;
 
     private int                  freeParkingAvailable;
-    private int                  internalExternalTripChoice = 1;
+    private int                  internalExternalTripChoice                 = 1;
     private double               reimbursePercent;
-    
+
     private String               cdapActivity;
     private int                  imtfChoice;
     private int                  inmtfChoice;
@@ -162,14 +160,15 @@ public class Person
     {
         return windows;
     }
-    
-    public String getTimePeriodLabel(int windowIndex){
+
+    public String getTimePeriodLabel(int windowIndex)
+    {
         return modelStructure.getTimePeriodLabel(windowIndex);
     }
 
     public void initializeWindows()
     {
-        windows = new int[modelStructure.getNumberOfTimePeriods()+1];
+        windows = new int[modelStructure.getNumberOfTimePeriods() + 1];
     }
 
     public void resetTimeWindow(int startPeriod, int endPeriod)
@@ -189,16 +188,14 @@ public class Person
     }
 
     /**
-     * code the time window array for this tour being scheduled.
-     * 0: unscheduled,
-     * 1: scheduled, middle of tour,
-     * 2: scheduled, start of tour,
-     * 3: scheduled, end of tour,
-     * 4: scheduled, end of previous tour, start of current tour or
-     *               end of current tour, start of subsequent tour;
-     *               or current tour start/end same period.
-     * @param start is the departure period index for the tour
-     * @param end is the arrival period index for the tour
+     * code the time window array for this tour being scheduled. 0: unscheduled, 1: scheduled, middle of tour, 2: scheduled, start of tour, 3:
+     * scheduled, end of tour, 4: scheduled, end of previous tour, start of current tour or end of current tour, start of subsequent tour; or current
+     * tour start/end same period.
+     * 
+     * @param start
+     *            is the departure period index for the tour
+     * @param end
+     *            is the arrival period index for the tour
      */
     public void scheduleWindow(int start, int end)
     {
@@ -207,29 +204,19 @@ public class Person
          * This is the logic used in ARC/MTC, but for SANDAG, we don't allow overlapping tours
          * 
          * 
-        if (start == end)
-        {
-            windows[start] = 4;
-        } else
-        {
-            if (windows[start] == 3) windows[start] = 4;
-            else if (windows[start] == 0) windows[start] = 2;
+         * if (start == end) { windows[start] = 4; } else { if (windows[start] == 3) windows[start] = 4; else if (windows[start] == 0) windows[start]
+         * = 2;
+         * 
+         * if (windows[end] == 2) windows[end] = 4; else if (windows[end] == 0) windows[end] = 3; }
+         * 
+         * for (int h = start + 1; h < end; h++) { windows[h] = 1; }
+         */
 
-            if (windows[end] == 2) windows[end] = 4;
-            else if (windows[end] == 0) windows[end] = 3;
-        }
-
-        for (int h = start + 1; h < end; h++)
+        for (int h = start; h <= end; h++)
         {
             windows[h] = 1;
         }
-        */
-        
-        for (int h=start; h <= end; h++)
-        {
-            windows[h] = 1;
-        }
-        
+
     }
 
     public boolean[] getAvailableTimeWindows(int[] altStarts, int[] altEnds)
@@ -256,41 +243,30 @@ public class Person
          * This is the logic used in ARC/MTC, but for SANDAG, we don't allow overlapping tours
          * 
          * 
-        // check start period, if window is 0, it is unscheduled;
-        // if window is 3, it is the last period of another tour, and available
-        // as the first period of this tour.
-        if (windows[start] == 1) return false;
-        else if (windows[start] == 2 && start != end) return false;
+         * // check start period, if window is 0, it is unscheduled; // if window is 3, it is the last period of another tour, and available // as the
+         * first period of this tour. if (windows[start] == 1) return false; else if (windows[start] == 2 && start != end) return false;
+         * 
+         * // check end period, if window is 0, it is unscheduled; // if window is 2, it is the first period of another tour, and available // as the
+         * last period of this tour. if (windows[end] == 1) return false; else if (windows[end] == 3 && start != end) return false;
+         * 
+         * // the alternative is available if start and end are available, and all periods // from start+1,...,end-1 are available. for (int h = start
+         * + 1; h < end; h++) { if (windows[h] > 0) return false; }
+         * 
+         * return true;
+         */
 
-        // check end period, if window is 0, it is unscheduled;
-        // if window is 2, it is the first period of another tour, and available
-        // as the last period of this tour.
-        if (windows[end] == 1) return false;
-        else if (windows[end] == 3 && start != end) return false;
-
-        // the alternative is available if start and end are available, and all periods
-        // from start+1,...,end-1 are available.
-        for (int h = start + 1; h < end; h++)
-        {
-            if (windows[h] > 0) return false;
-        }
-
-        return true;
-         */        
-        
         // the alternative is available if all intervals between start and end, inclusive, are available
-        for (int h=start; h <= end; h++)
+        for (int h = start; h <= end; h++)
         {
             if (windows[h] > 0) return false;
         }
 
         return true;
-        
+
     }
 
     /**
-     * @return true if the window for the argument is the end of a previously
-     *         scheduled tour and this period does not overlap with any other tour.
+     * @return true if the window for the argument is the end of a previously scheduled tour and this period does not overlap with any other tour.
      */
     public boolean isPreviousArrival(int period)
     {
@@ -301,8 +277,7 @@ public class Person
     }
 
     /**
-     * @return true if the window for the argument is the start of a previously
-     *         scheduled tour and this period does not overlap with any other tour.
+     * @return true if the window for the argument is the start of a previously scheduled tour and this period does not overlap with any other tour.
      */
     public boolean isPreviousDeparture(int period)
     {
@@ -328,20 +303,21 @@ public class Person
         persId = id;
     }
 
-    public void setFreeParkingAvailableResult( int chosenAlt )
+    public void setFreeParkingAvailableResult(int chosenAlt)
     {
         freeParkingAvailable = chosenAlt;
     }
-    
+
     /**
      * set the chosen alternative number: 1=no, 2=yes
+     * 
      * @param chosenAlt
      */
-    public void setInternalExternalTripChoiceResult( int chosenAlt )
+    public void setInternalExternalTripChoiceResult(int chosenAlt)
     {
         internalExternalTripChoice = chosenAlt;
     }
-    
+
     public void setParkingReimbursement(double pct)
     {
         reimbursePercent = pct;
@@ -456,12 +432,9 @@ public class Person
     {
 
         /*
-         * // if purpose is escort, need to determine if household has kids or not
-         * String purposeName = primaryPurposeName; if (
-         * purposeName.equalsIgnoreCase( modelStructure.ESCORT_PURPOSE_NAME ) ) { if
-         * ( hhObj.getNumChildrenUnder19() > 0 ) purposeName += "_" +
-         * modelStructure.ESCORT_SEGMENT_NAMES[0]; else purposeName += "_" +
-         * modelStructure.ESCORT_SEGMENT_NAMES[1]; } int purposeIndex =
+         * // if purpose is escort, need to determine if household has kids or not String purposeName = primaryPurposeName; if (
+         * purposeName.equalsIgnoreCase( modelStructure.ESCORT_PURPOSE_NAME ) ) { if ( hhObj.getNumChildrenUnder19() > 0 ) purposeName += "_" +
+         * modelStructure.ESCORT_SEGMENT_NAMES[0]; else purposeName += "_" + modelStructure.ESCORT_SEGMENT_NAMES[1]; } int purposeIndex =
          * modelStructure.getDcModelPurposeIndex( purposeName );
          */
 
@@ -508,8 +481,8 @@ public class Person
 
             tempTour.setTourDepartPeriod(-1);
             tempTour.setTourArrivePeriod(-1);
-            //tempTour.setTourDepartPeriod(DEFAULT_MANDATORY_START_PERIOD);
-            //tempTour.setTourArrivePeriod(DEFAULT_MANDATORY_END_PERIOD);
+            // tempTour.setTourDepartPeriod(DEFAULT_MANDATORY_START_PERIOD);
+            // tempTour.setTourArrivePeriod(DEFAULT_MANDATORY_END_PERIOD);
 
             workTourArrayList.add(tempTour);
         }
@@ -527,9 +500,8 @@ public class Person
     {
 
         /*
-         * String segmentedPurpose = modelStructure.AT_WORK_PURPOSE_NAME + "_" +
-         * tourPurpose; int purposeIndex = modelStructure.getDcModelPurposeIndex(
-         * segmentedPurpose );
+         * String segmentedPurpose = modelStructure.AT_WORK_PURPOSE_NAME + "_" + tourPurpose; int purposeIndex =
+         * modelStructure.getDcModelPurposeIndex( segmentedPurpose );
          */
 
         Tour tempTour = new Tour(id, this.hhObj, this,
@@ -562,17 +534,16 @@ public class Person
 
             tempTour.setTourOrigMgra(this.hhObj.getHhMgra());
 
-            if (schoolLoc == ModelStructure.NOT_ENROLLED_SEGMENT_INDEX)
-                tempTour.setTourDestMgra(hhObj.getHhMgra());
-            else
-                tempTour.setTourDestMgra(schoolLoc);
+            if (schoolLoc == ModelStructure.NOT_ENROLLED_SEGMENT_INDEX) tempTour
+                    .setTourDestMgra(hhObj.getHhMgra());
+            else tempTour.setTourDestMgra(schoolLoc);
 
             tempTour.setTourPurpose(tourPurpose);
 
             tempTour.setTourDepartPeriod(-1);
             tempTour.setTourArrivePeriod(-1);
-            //tempTour.setTourDepartPeriod(DEFAULT_MANDATORY_START_PERIOD);
-            //tempTour.setTourArrivePeriod(DEFAULT_MANDATORY_END_PERIOD);
+            // tempTour.setTourDepartPeriod(DEFAULT_MANDATORY_START_PERIOD);
+            // tempTour.setTourArrivePeriod(DEFAULT_MANDATORY_END_PERIOD);
 
             schoolTourArrayList.add(tempTour);
         }
@@ -951,18 +922,18 @@ public class Person
     {
         int count = 0;
         Tour[] jt = hhObj.getJointTourArray();
-        if (jt == null)
-            return 0;
+        if (jt == null) return 0;
 
-        for (int i = 0; i < jt.length; i++) {
-            if ( jt[i] == null )
-                continue;
+        for (int i = 0; i < jt.length; i++)
+        {
+            if (jt[i] == null) continue;
             String jtPurposeName = jt[i].getTourPurpose();
             int[] personNumsParticipating = jt[i].getPersonNumArray();
-            for ( int p : personNumsParticipating ){
-                if ( p == persNum ) {
-                    if ( jtPurposeName.equalsIgnoreCase(purposeName) )
-                        count++;
+            for (int p : personNumsParticipating)
+            {
+                if (p == persNum)
+                {
+                    if (jtPurposeName.equalsIgnoreCase(purposeName)) count++;
                     break;
                 }
             }
@@ -1318,11 +1289,9 @@ public class Person
     }
 
     /**
-     * return maximum periods of overlap between this person and other adult persons in
-     * the household.
+     * return maximum periods of overlap between this person and other adult persons in the household.
      * 
-     * @return the most number of periods mutually available between this person and
-     *         other adult household members
+     * @return the most number of periods mutually available between this person and other adult household members
      */
     public int getMaxAdultOverlaps()
     {
@@ -1330,11 +1299,10 @@ public class Person
     }
 
     /**
-     * set maximum periods of overlap between this person and other adult persons in
-     * the household.
+     * set maximum periods of overlap between this person and other adult persons in the household.
      * 
-     * @param overlaps are the most number of periods mutually available between this
-     *            person and other adult household members
+     * @param overlaps
+     *            are the most number of periods mutually available between this person and other adult household members
      */
     public void setMaxAdultOverlaps(int overlaps)
     {
@@ -1342,11 +1310,9 @@ public class Person
     }
 
     /**
-     * return maximum periods of overlap between this person and other children in the
-     * household.
+     * return maximum periods of overlap between this person and other children in the household.
      * 
-     * @return the most number of periods mutually available between this person and
-     *         other child household members
+     * @return the most number of periods mutually available between this person and other child household members
      */
     public int getMaxChildOverlaps()
     {
@@ -1354,11 +1320,10 @@ public class Person
     }
 
     /**
-     * set maximum periods of overlap between this person and other children in the
-     * household.
+     * set maximum periods of overlap between this person and other children in the household.
      * 
-     * @param overlaps are the most number of periods mutually available between this
-     *            person and other child household members
+     * @param overlaps
+     *            are the most number of periods mutually available between this person and other child household members
      */
     public void setMaxChildOverlaps(int overlaps)
     {
@@ -1388,44 +1353,43 @@ public class Person
     {
         int maxWindow = 0;
         int currentWindow = 0;
-        for (int i = 1; i < windows.length; i++){
-            if (windows[i] == 0){
+        for (int i = 1; i < windows.length; i++)
+        {
+            if (windows[i] == 0)
+            {
                 currentWindow++;
-            }
-            else{
-                if (currentWindow > maxWindow)
-                    maxWindow = currentWindow;
+            } else
+            {
+                if (currentWindow > maxWindow) maxWindow = currentWindow;
                 currentWindow = 0;
             }
         }
-        if (currentWindow > maxWindow)
-            maxWindow = currentWindow;
+        if (currentWindow > maxWindow) maxWindow = currentWindow;
 
         return maxWindow;
     }
 
     /**
-     * determine the maximum consecutive pairwise available time window for this person
-     * and the person for which a window was passed
+     * determine the maximum consecutive pairwise available time window for this person and the person for which a window was passed
      * 
      * @return the length of the maximum pairwise available window in units of time intervals
      */
-    public int getMaximumContinuousPairwiseAvailableWindow( int[] otherWindow )
+    public int getMaximumContinuousPairwiseAvailableWindow(int[] otherWindow)
     {
         int maxWindow = 0;
         int currentWindow = 0;
-        for (int i = 1; i < windows.length; i++){
-            if (windows[i] == 0 && otherWindow[i] == 0){
+        for (int i = 1; i < windows.length; i++)
+        {
+            if (windows[i] == 0 && otherWindow[i] == 0)
+            {
                 currentWindow++;
-            }
-            else{
-                if (currentWindow > maxWindow)
-                    maxWindow = currentWindow;
+            } else
+            {
+                if (currentWindow > maxWindow) maxWindow = currentWindow;
                 currentWindow = 0;
             }
         }
-        if (currentWindow > maxWindow)
-            maxWindow = currentWindow;
+        if (currentWindow > maxWindow) maxWindow = currentWindow;
 
         return maxWindow;
     }
@@ -1481,8 +1445,7 @@ public class Person
     }
 
     /**
-     * initialize the person attributes and tour objects for restarting the model at
-     * joint tour frequency
+     * initialize the person attributes and tour objects for restarting the model at joint tour frequency
      */
     public void initializeForJtfRestart()
     {
@@ -1512,8 +1475,7 @@ public class Person
     }
 
     /**
-     * initialize the person attributes and tour objects for restarting the model at
-     * individual non-mandatory tour frequency.
+     * initialize the person attributes and tour objects for restarting the model at individual non-mandatory tour frequency.
      */
     public void initializeForInmtfRestart()
     {
@@ -1543,8 +1505,7 @@ public class Person
     }
 
     /**
-     * initialize the person attributes and tour objects for restarting the model at
-     * at-work sub-tour frequency.
+     * initialize the person attributes and tour objects for restarting the model at at-work sub-tour frequency.
      */
     public void initializeForAwfRestart()
     {
@@ -1573,8 +1534,7 @@ public class Person
     }
 
     /**
-     * initialize the person attributes and tour objects for restarting the model at
-     * stop frequency.
+     * initialize the person attributes and tour objects for restarting the model at stop frequency.
      */
     public void initializeForStfRestart()
     {
@@ -1604,7 +1564,7 @@ public class Person
 
     public void logPersonObject(Logger logger, int totalChars)
     {
-        
+
         Household.logHelper(logger, "persNum: ", persNum, totalChars);
         Household.logHelper(logger, "persId: ", persId, totalChars);
         Household.logHelper(logger, "persAge: ", persAge, totalChars);
@@ -1617,7 +1577,8 @@ public class Person
         Household.logHelper(logger, "workLocSegmentIndex: ", workLocSegmentIndex, totalChars);
         Household.logHelper(logger, "schoolLocSegmentIndex: ", schoolLocSegmentIndex, totalChars);
         Household.logHelper(logger, "freeParkingAvailable: ", freeParkingAvailable, totalChars);
-        Household.logHelper(logger, "reimbursementPct: ", String.format("%.2f%%", (100*reimbursePercent)), totalChars);
+        Household.logHelper(logger, "reimbursementPct: ",
+                String.format("%.2f%%", (100 * reimbursePercent)), totalChars);
         Household.logHelper(logger, "cdapActivity: ", cdapActivity, totalChars);
         Household.logHelper(logger, "imtfChoice: ", imtfChoice, totalChars);
         Household.logHelper(logger, "inmtfChoice: ", inmtfChoice, totalChars);
@@ -1727,9 +1688,10 @@ public class Person
             {
                 int id = tour.getTourId();
                 String alias = "";
-                if (tour.getTourPurpose().equalsIgnoreCase(ModelStructure.ESCORT_PRIMARY_PURPOSE_NAME)) alias = "ie";
-                else if (tour.getTourPurpose()
-                        .equalsIgnoreCase(ModelStructure.EAT_OUT_PRIMARY_PURPOSE_NAME)) alias = "iE";
+                if (tour.getTourPurpose().equalsIgnoreCase(
+                        ModelStructure.ESCORT_PRIMARY_PURPOSE_NAME)) alias = "ie";
+                else if (tour.getTourPurpose().equalsIgnoreCase(
+                        ModelStructure.EAT_OUT_PRIMARY_PURPOSE_NAME)) alias = "iE";
                 else if (tour.getTourPurpose().equalsIgnoreCase(
                         ModelStructure.SHOPPING_PRIMARY_PURPOSE_NAME)) alias = "iS";
                 else if (tour.getTourPurpose().equalsIgnoreCase(
@@ -1769,7 +1731,8 @@ public class Person
         Household.logHelper(logger, "workLocSegmentIndex: ", workLocSegmentIndex, totalChars);
         Household.logHelper(logger, "schoolLocSegmentIndex: ", schoolLocSegmentIndex, totalChars);
         Household.logHelper(logger, "freeParkingAvailable: ", freeParkingAvailable, totalChars);
-        Household.logHelper(logger, "reimbursementPct: ", String.format("%.2f%%", (100*reimbursePercent)), totalChars);
+        Household.logHelper(logger, "reimbursementPct: ",
+                String.format("%.2f%%", (100 * reimbursePercent)), totalChars);
         Household.logHelper(logger, "cdapActivity: ", cdapActivity, totalChars);
         Household.logHelper(logger, "imtfChoice: ", imtfChoice, totalChars);
         Household.logHelper(logger, "inmtfChoice: ", inmtfChoice, totalChars);

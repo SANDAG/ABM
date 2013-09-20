@@ -2,11 +2,12 @@ package org.sandag.abm.visitor;
 
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
-import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.MissingResourceException;
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
+import org.sandag.abm.crossborder.CrossBorderModel;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.MatrixDataServer;
 import org.sandag.abm.ctramp.MatrixDataServerRmi;
@@ -164,8 +165,7 @@ public class VisitorModel
 
             } else
             {
-                // generate an outbound trip from the tour origin to the
-                // destination and choose a mode
+                // generate an outbound trip from the tour origin to the destination and choose a mode
                 trips[tripNumber] = new VisitorTrip(tour, true);
                 tripModeChoiceModel.chooseMode(tour, trips[tripNumber]);
                 ++tripNumber;
@@ -189,8 +189,7 @@ public class VisitorModel
             } else
             {
 
-                // generate an inbound trip from the tour destination to the
-                // origin and choose a mode
+                // generate an inbound trip from the tour destination to the origin and choose a mode
                 trips[tripNumber] = new VisitorTrip(tour, false);
                 tripModeChoiceModel.chooseMode(tour, trips[tripNumber]);
                 ++tripNumber;
@@ -228,8 +227,7 @@ public class VisitorModel
                     e);
         }
 
-        // bind this concrete object with the cajo library objects for managing
-        // RMI
+        // bind this concrete object with the cajo library objects for managing RMI
         try
         {
             Remote.config(serverAddress, serverPort, null, 0);
@@ -245,7 +243,7 @@ public class VisitorModel
         try
         {
             ItemServer.bind(matrixServer, className);
-        } catch (IOException e)
+        } catch (RemoteException e)
         {
             logger.error(String.format(
                     "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",
@@ -314,8 +312,7 @@ public class VisitorModel
         int serverPort = 0;
         try
         {
-            // get matrix server address. if "none" is specified, no server will
-            // be
+            // get matrix server address. if "none" is specified, no server will be
             // started, and matrix io will ocurr within the current process.
             matrixServerAddress = Util.getStringValueFromPropertyMap(pMap,
                     "RunModel.MatrixServerAddress");
@@ -325,14 +322,12 @@ public class VisitorModel
                 serverPort = Util.getIntegerValueFromPropertyMap(pMap, "RunModel.MatrixServerPort");
             } catch (MissingResourceException e)
             {
-                // if no matrix server address entry is found, leave undefined
-                // --
+                // if no matrix server address entry is found, leave undefined --
                 // it's eithe not needed or show could create an error.
             }
         } catch (MissingResourceException e)
         {
-            // if no matrix server address entry is found, set to localhost, and
-            // a
+            // if no matrix server address entry is found, set to localhost, and a
             // separate matrix io process will be started on localhost.
             matrixServerAddress = "localhost";
             serverPort = MATRIX_DATA_SERVER_PORT;
@@ -360,8 +355,7 @@ public class VisitorModel
                     visitorModel.ms.testRemote("VisitorModel");
                     visitorModel.ms.start32BitMatrixIoServer(mt, "VisitorModel");
 
-                    // these methods need to be called to set the matrix data
-                    // manager in the matrix data server
+                    // these methods need to be called to set the matrix data manager in the matrix data server
                     MatrixDataManager mdm = MatrixDataManager.getInstance();
                     mdm.setMatrixDataServerObject(visitorModel.ms);
                 }
@@ -384,8 +378,7 @@ public class VisitorModel
 
         visitorModel.runModel();
 
-        // if a separate process for running matrix data mnager was started,
-        // we're
+        // if a separate process for running matrix data mnager was started, we're
         // done with it, so close it.
         if (matrixServerAddress.equalsIgnoreCase("localhost"))
         {

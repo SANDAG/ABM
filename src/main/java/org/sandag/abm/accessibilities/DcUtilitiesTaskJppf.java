@@ -136,8 +136,7 @@ public class DcUtilitiesTaskJppf
 
             luAccessibilities = new float[mgraManager.getMaxMgra() + 1][luAlts + 1];
 
-            // combine non-mandatory, work, and school size terms into one array
-            // to be indexed into as follows
+            // combine non-mandatory, work, and school size terms into one array to be indexed into as follows
             // 0-12 non-mandatory, 13-18 work, 19-23 school
             luSizeTerms = new double[sizeTerms.length][MAX_LU_SIZE_TERM_INDEX + 1];
             for (int c = 0; c <= MAX_LU_NONMAN_SIZE_TERM_INDEX; c++)
@@ -152,25 +151,19 @@ public class DcUtilitiesTaskJppf
                 for (int r = 0; r < schoolSizeTerms[c].length; r++)
                     luSizeTerms[r][c + MAX_LU_WORK_SIZE_TERM_INDEX + 1] = schoolSizeTerms[c][r];
 
-            // for ( int c=MAX_LU_NONMAN_SIZE_TERM_INDEX+1; c <=
-            // MAX_LU_WORK_SIZE_TERM_INDEX; c++ )
+            // for ( int c=MAX_LU_NONMAN_SIZE_TERM_INDEX+1; c <= MAX_LU_WORK_SIZE_TERM_INDEX; c++ )
             // for ( int r=0; r < workSizeTerms.length; r++ )
-            // luSizeTerms[r][c] =
-            // workSizeTerms[r][c-MAX_LU_NONMAN_SIZE_TERM_INDEX-1];
+            // luSizeTerms[r][c] = workSizeTerms[r][c-MAX_LU_NONMAN_SIZE_TERM_INDEX-1];
             //
-            // for ( int c=MAX_LU_WORK_SIZE_TERM_INDEX+1; c <=
-            // MAX_LU_SCHOOL_SIZE_TERM_INDEX; c++ )
+            // for ( int c=MAX_LU_WORK_SIZE_TERM_INDEX+1; c <= MAX_LU_SCHOOL_SIZE_TERM_INDEX; c++ )
             // for ( int r=0; r < schoolSizeTerms.length; r++ )
-            // luSizeTerms[r][c] =
-            // schoolSizeTerms[r][c-MAX_LU_WORK_SIZE_TERM_INDEX-1];
+            // luSizeTerms[r][c] = schoolSizeTerms[r][c-MAX_LU_WORK_SIZE_TERM_INDEX-1];
 
             // try {
-            // outStream = new PrintWriter( new BufferedWriter( new FileWriter(
-            // "landUseModeChoiceLogsumCheck" + "_" + taskIndex + ".csv" ) ) );
+            // outStream = new PrintWriter( new BufferedWriter( new FileWriter( "landUseModeChoiceLogsumCheck" + "_" + taskIndex + ".csv" ) ) );
             // }
             // catch (IOException e) {
-            // System.out.println("IO Exception writing file for checking integerizing procedure: "
-            // );
+            // System.out.println("IO Exception writing file for checking integerizing procedure: " );
             // e.printStackTrace();
             // System.exit(-1);
             // }
@@ -295,10 +288,8 @@ public class DcUtilitiesTaskJppf
 
             accessibilities[iMgra] = new float[alts + 1];
 
-            // pre-calculate the hov, sov, and non-motorized exponentiated
-            // utilities for the origin MGRA.
-            // the method called returns cached values if they were already
-            // calculated.
+            // pre-calculate the hov, sov, and non-motorized exponentiated utilities for the origin MGRA.
+            // the method called returns cached values if they were already calculated.
             ntUtilities.buildUtilitiesForOrigMgraAndPeriod(iMgra,
                     NonTransitUtilities.PEAK_PERIOD_INDEX);
             ntUtilities.buildUtilitiesForOrigMgraAndPeriod(iMgra,
@@ -337,10 +328,8 @@ public class DcUtilitiesTaskJppf
                             NonTransitUtilities.OFFPEAK_PERIOD_INDEX);
                     opHovExpUtility = ntUtilities.getHovExpUtility(iTaz, jTaz,
                             NonTransitUtilities.OFFPEAK_PERIOD_INDEX);
-                    // opSovExpUtility =
-                    // ntUtilities.getAllUtilities()[0][0][iTaz][jTaz];
-                    // opHovExpUtility =
-                    // ntUtilities.getAllUtilities()[1][0][iTaz][jTaz];
+                    // opSovExpUtility = ntUtilities.getAllUtilities()[0][0][iTaz][jTaz];
+                    // opHovExpUtility = ntUtilities.getAllUtilities()[1][0][iTaz][jTaz];
                 } catch (Exception e)
                 {
                     logger.error("exception for op sov/hov utilitiy taskIndex=" + taskIndex
@@ -350,8 +339,7 @@ public class DcUtilitiesTaskJppf
                 }
 
                 // calculate OP walk-transit exponentiated utility
-                // determine the best transit path, which also stores the best
-                // utilities array and the best mode
+                // determine the best transit path, which also stores the best utilities array and the best mode
                 bestPathCalculator.findBestWalkTransitWalkTaps(TransitWalkAccessUEC.MD, iMgra,
                         jMgra, false, logger);
 
@@ -365,8 +353,7 @@ public class DcUtilitiesTaskJppf
                 }
 
                 // calculate OP drive-transit exponentiated utility
-                // determine the best transit path, which also stores the best
-                // utilities array and the best mode
+                // determine the best transit path, which also stores the best utilities array and the best mode
                 bestPathCalculator.findBestDriveTransitWalkTaps(TransitWalkAccessUEC.MD, iMgra,
                         jMgra, false, logger);
 
@@ -387,10 +374,8 @@ public class DcUtilitiesTaskJppf
                             NonTransitUtilities.PEAK_PERIOD_INDEX);
                     pkHovExpUtility = ntUtilities.getHovExpUtility(iTaz, jTaz,
                             NonTransitUtilities.PEAK_PERIOD_INDEX);
-                    // pkSovExpUtility =
-                    // ntUtilities.getAllUtilities()[0][1][iTaz][jTaz];
-                    // pkHovExpUtility =
-                    // ntUtilities.getAllUtilities()[1][1][iTaz][jTaz];
+                    // pkSovExpUtility = ntUtilities.getAllUtilities()[0][1][iTaz][jTaz];
+                    // pkHovExpUtility = ntUtilities.getAllUtilities()[1][1][iTaz][jTaz];
                 } catch (Exception e)
                 {
                     logger.error("exception for pk sov/hov utility taskIndex=" + taskIndex + ", i="
@@ -399,8 +384,7 @@ public class DcUtilitiesTaskJppf
                 }
 
                 // calculate PK walk-transit exponentiated utility
-                // determine the best WTW transit path, which also stores the
-                // best utilities array and the best mode
+                // determine the best WTW transit path, which also stores the best utilities array and the best mode
                 bestPathCalculator.findBestWalkTransitWalkTaps(TransitWalkAccessUEC.AM, iMgra,
                         jMgra, false, logger);
 
@@ -414,8 +398,7 @@ public class DcUtilitiesTaskJppf
                 }
 
                 // calculate PK drive-transit exponentiated utility
-                // determine the best DTW transit path, which also stores the
-                // best utilities array and the best mode
+                // determine the best DTW transit path, which also stores the best utilities array and the best mode
                 bestPathCalculator.findBestDriveTransitWalkTaps(TransitWalkAccessUEC.AM, iMgra,
                         jMgra, false, logger);
 
@@ -530,8 +513,7 @@ public class DcUtilitiesTaskJppf
 
                 }
 
-                // if luModeChoiceLogsums is null, is has not been initialized,
-                // meaning that LU accessibility calculations are not needed
+                // if luModeChoiceLogsums is null, is has not been initialized, meaning that LU accessibility calculations are not needed
                 if (calculateLuAccessibilities)
                 {
 
@@ -541,15 +523,13 @@ public class DcUtilitiesTaskJppf
                             + pkDTExpUtility * expConstants[0][4] + nmExpUtility
                             * expConstants[0][3];
 
-                    // 1: AM Mode Choice utility for autos<adults auto
-                    // sufficiency
+                    // 1: AM Mode Choice utility for autos<adults auto sufficiency
                     luUtilities[1] = pkSovExpUtility * expConstants[1][0] + pkHovExpUtility
                             * expConstants[1][1] + pkWTExpUtility * expConstants[1][2]
                             + pkDTExpUtility * expConstants[1][4] + nmExpUtility
                             * expConstants[1][3];
 
-                    // 2: AM Mode Choice utility for autos>=adults auto
-                    // sufficiency
+                    // 2: AM Mode Choice utility for autos>=adults auto sufficiency
                     luUtilities[2] = pkSovExpUtility * expConstants[2][0] + pkHovExpUtility
                             * expConstants[2][1] + pkWTExpUtility * expConstants[2][2]
                             + pkDTExpUtility * expConstants[2][4] + nmExpUtility
@@ -561,15 +541,13 @@ public class DcUtilitiesTaskJppf
                             + opDTExpUtility * expConstants[0][4] + nmExpUtility
                             * expConstants[0][3];
 
-                    // 4: MD Mode Choice utility for autos<adults auto
-                    // sufficiency
+                    // 4: MD Mode Choice utility for autos<adults auto sufficiency
                     luUtilities[4] = opSovExpUtility * expConstants[1][0] + opHovExpUtility
                             * expConstants[1][1] + opWTExpUtility * expConstants[1][2]
                             + opDTExpUtility * expConstants[1][4] + nmExpUtility
                             * expConstants[1][3];
 
-                    // 5: MD Mode Choice utility for autos>=adults auto
-                    // sufficiency
+                    // 5: MD Mode Choice utility for autos>=adults auto sufficiency
                     luUtilities[5] = opSovExpUtility * expConstants[2][0] + opHovExpUtility
                             * expConstants[2][1] + opWTExpUtility * expConstants[2][2]
                             + opDTExpUtility * expConstants[2][4] + nmExpUtility
@@ -616,8 +594,7 @@ public class DcUtilitiesTaskJppf
                         }
                     }
 
-                    // save calculated utilities in a table to return tot the
-                    // calling method for accumulating
+                    // save calculated utilities in a table to return tot the calling method for accumulating
                     luUtilityResult[0] = iMgra;
                     luUtilityResult[1] = jMgra;
                     for (int k = 0; k < luUtilities.length; k++)
@@ -682,13 +659,10 @@ public class DcUtilitiesTaskJppf
 
     }
 
-    // private void debugLandUseModeChoiceLogsums( int iMgra, int jMgra, int
-    // iLuz, int jLuz, float[] luUtilities ) {
+    // private void debugLandUseModeChoiceLogsums( int iMgra, int jMgra, int iLuz, int jLuz, float[] luUtilities ) {
     //
-    // String record = ( iLuz + "," + jLuz + "," + iMgra + "," + jMgra + "," +
-    // luUtilities[0] );
-    // // don't need to report the last logsum (not used for mode choice
-    // logsums)
+    // String record = ( iLuz + "," + jLuz + "," + iMgra + "," + jMgra + "," + luUtilities[0] );
+    // // don't need to report the last logsum (not used for mode choice logsums)
     // for( int j=1; j < luUtilities.length - 1; j++ )
     // record += ( "," + luUtilities[j] );
     // outStream.println ( record );
@@ -718,8 +692,7 @@ public class DcUtilitiesTaskJppf
                 accumulatedLandUseLogsums);
 
         // if ( iLuz == DEBUG_ILUZ && jLuz == DEBUG_JLUZ )
-        // debugLandUseModeChoiceLogsums( iMgra, jMgra, iLuz, jLuz, luUtilities
-        // );
+        // debugLandUseModeChoiceLogsums( iMgra, jMgra, iLuz, jLuz, luUtilities );
 
     }
 
@@ -741,8 +714,7 @@ public class DcUtilitiesTaskJppf
         accumulatedLandUseLogsums[BuildAccessibilities.SIMPLE][BuildAccessibilities.OP][BuildAccessibilities.LS2][iLuz][jLuz] += Math
                 .log(luUtilities[5]);
 
-        // calculate logsums from external LUZs to all destination LUZs if the
-        // origin LUZ is a cordon LUZ
+        // calculate logsums from external LUZs to all destination LUZs if the origin LUZ is a cordon LUZ
         if (externalLuzsForCordonLuz[iLuz] != null)
         {
 
@@ -771,8 +743,7 @@ public class DcUtilitiesTaskJppf
 
         }
 
-        // calculate logsums to external LUZs from all origin LUZs if the
-        // destination LUZ is a cordon LUZ
+        // calculate logsums to external LUZs from all origin LUZs if the destination LUZ is a cordon LUZ
         if (externalLuzsForCordonLuz[jLuz] != null)
         {
 
@@ -815,8 +786,7 @@ public class DcUtilitiesTaskJppf
         accumulatedLandUseLogsums[BuildAccessibilities.LOGIT][BuildAccessibilities.OP][BuildAccessibilities.LS1][iLuz][jLuz] += luUtilities[4];
         accumulatedLandUseLogsums[BuildAccessibilities.LOGIT][BuildAccessibilities.OP][BuildAccessibilities.LS2][iLuz][jLuz] += luUtilities[5];
 
-        // calculate logsums from external LUZs to all destination LUZs if the
-        // origin LUZ is a cordon LUZ
+        // calculate logsums from external LUZs to all destination LUZs if the origin LUZ is a cordon LUZ
         if (externalLuzsForCordonLuz[iLuz] != null)
         {
 
@@ -839,8 +809,7 @@ public class DcUtilitiesTaskJppf
 
         }
 
-        // calculate logsums to external LUZs from all origin LUZs if the
-        // destination LUZ is a cordon LUZ
+        // calculate logsums to external LUZs from all origin LUZs if the destination LUZ is a cordon LUZ
         if (externalLuzsForCordonLuz[jLuz] != null)
         {
 

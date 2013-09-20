@@ -4,6 +4,7 @@ import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
 import java.io.File;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -32,39 +33,11 @@ public class CrossBorderTripTables
     private TableDataSet            tripData;
 
     // Some parameters
-    private int[]                   modeIndex;                                               // an
-                                                                                              // index
-                                                                                              // array,
-                                                                                              // dimensioned
-                                                                                              // by
-                                                                                              // number
-                                                                                              // of
-                                                                                              // total
-                                                                                              // modes,
-                                                                                              // returns
-                                                                                              // 0=auto
-                                                                                              // modes,
-                                                                                              // 1=non-motor,
-                                                                                              // 2=transit,
-                                                                                              // 3=
+    private int[]                   modeIndex;                                               // an index array, dimensioned by number of total modes,
+                                                                                              // returns 0=auto modes, 1=non-motor, 2=transit, 3=
                                                                                               // other
-    private int[]                   matrixIndex;                                             // an
-                                                                                              // index
-                                                                                              // array,
-                                                                                              // dimensioned
-                                                                                              // by
-                                                                                              // number
-                                                                                              // of
-                                                                                              // modes,
-                                                                                              // returns
-                                                                                              // the
-                                                                                              // element
-                                                                                              // of
-                                                                                              // the
-                                                                                              // matrix
-                                                                                              // array
-                                                                                              // to
-                                                                                              // store
+    private int[]                   matrixIndex;                                             // an index array, dimensioned by number of modes,
+                                                                                              // returns the element of the matrix array to store
                                                                                               // value
 
     // array modes: AUTO, NON-MOTORIZED, TRANSIT, OTHER
@@ -123,7 +96,7 @@ public class CrossBorderTripTables
         numberOfPeriods = modelStructure.getNumberModelPeriods();
 
         // number of modes
-        modeIndex = new int[SandagModelStructure.MAXIMUM_TOUR_MODE_ALT_INDEX + 1];
+        modeIndex = new int[modelStructure.MAXIMUM_TOUR_MODE_ALT_INDEX + 1];
         matrixIndex = new int[modeIndex.length];
 
         // set the mode arrays
@@ -180,8 +153,7 @@ public class CrossBorderTripTables
         int[] tapIndex = tapManager.getTaps();
         int taps = tapIndex.length - 1;
 
-        // Initialize matrices; one for each mode group (auto, non-mot, tran,
-        // other)
+        // Initialize matrices; one for each mode group (auto, non-mot, tran, other)
         // All matrices will be dimensioned by TAZs except for transit, which is
         // dimensioned by TAPs
         int numberOfModes = 4;
@@ -310,12 +282,10 @@ public class CrossBorderTripTables
 
             if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
 
-            // originMGRA destinationMGRA originIsTourDestination
-            // destinationIsTourDestination period tripMode boardingTap
-            // alightingTap
+            // originMGRA destinationMGRA originIsTourDestination destinationIsTourDestination period tripMode boardingTap alightingTap
 
             int departTime = (int) tripData.getValueAt(i, "period");
-            int period = SandagModelStructure.getModelPeriodIndex(departTime);
+            int period = modelStructure.getModelPeriodIndex(departTime);
             if (period != timePeriod) continue;
 
             int tripMode = (int) tripData.getValueAt(i, "tripMode");
@@ -335,8 +305,7 @@ public class CrossBorderTripTables
                 alightTap = (int) tripData.getValueAt(i, "alightingTAP");
             }
 
-            // scale individual person trips by occupancy for vehicle trips
-            // (auto modes only)
+            // scale individual person trips by occupancy for vehicle trips (auto modes only)
             float vehicleTrips = 1 / sampleRate;
 
             if (modelStructure.getTripModeIsS2(tripMode))
@@ -488,8 +457,7 @@ public class CrossBorderTripTables
                     e);
         }
 
-        // bind this concrete object with the cajo library objects for managing
-        // RMI
+        // bind this concrete object with the cajo library objects for managing RMI
         try
         {
             Remote.config(serverAddress, serverPort, null, 0);
@@ -505,7 +473,7 @@ public class CrossBorderTripTables
         try
         {
             ItemServer.bind(matrixServer, className);
-        } catch (IOException e)
+        } catch (RemoteException e)
         {
             logger.error(String.format(
                     "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",
@@ -563,8 +531,7 @@ public class CrossBorderTripTables
         int serverPort = 0;
         try
         {
-            // get matrix server address. if "none" is specified, no server will
-            // be
+            // get matrix server address. if "none" is specified, no server will be
             // started, and matrix io will ocurr within the current process.
             matrixServerAddress = Util.getStringValueFromPropertyMap(pMap,
                     "RunModel.MatrixServerAddress");
@@ -574,14 +541,12 @@ public class CrossBorderTripTables
                 serverPort = Util.getIntegerValueFromPropertyMap(pMap, "RunModel.MatrixServerPort");
             } catch (MissingResourceException e)
             {
-                // if no matrix server address entry is found, leave undefined
-                // --
+                // if no matrix server address entry is found, leave undefined --
                 // it's eithe not needed or show could create an error.
             }
         } catch (MissingResourceException e)
         {
-            // if no matrix server address entry is found, set to localhost, and
-            // a
+            // if no matrix server address entry is found, set to localhost, and a
             // separate matrix io process will be started on localhost.
             matrixServerAddress = "localhost";
             serverPort = MATRIX_DATA_SERVER_PORT;
@@ -631,8 +596,7 @@ public class CrossBorderTripTables
 
         tripTables.createTripTables(mt);
 
-        // if a separate process for running matrix data mnager was started,
-        // we're
+        // if a separate process for running matrix data mnager was started, we're
         // done with it, so close it.
         if (matrixServerAddress.equalsIgnoreCase("localhost"))
         {

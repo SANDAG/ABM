@@ -183,8 +183,7 @@ public class SpecialEventTripModeChoiceModel
         if (trip.isInbound()) dmu.setOutboundHalfTourDirection(0);
         else dmu.setOutboundHalfTourDirection(1);
 
-        // set the dmu skim attributes (which involves setting the best wtw
-        // taps, since the tour taps are null
+        // set the dmu skim attributes (which involves setting the best wtw taps, since the tour taps are null
         logsumHelper.setTripMcDmuSkimAttributes(tour, trip, dmu);
 
         int eventNumber = tour.getEventNumber();

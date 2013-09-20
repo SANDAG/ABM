@@ -149,8 +149,7 @@ public final class NonMandatoryDcEstimationMcLogsumsAppender
             PrintWriter outStream2)
     {
 
-        // print the chosen destMgra and the depart/arrive logsum field names to
-        // both
+        // print the chosen destMgra and the depart/arrive logsum field names to both
         // files
         if (outStream1 != null) outStream1.print("seq,sampno,chosenMgra");
 
@@ -164,8 +163,7 @@ public final class NonMandatoryDcEstimationMcLogsumsAppender
 
         outStream2.print("seq,sampno,chosenMgra,chosenTodLogsum");
 
-        // print each set of sample destMgra and the depart/arrive logsum
-        // fieldnames
+        // print each set of sample destMgra and the depart/arrive logsum fieldnames
         // to file 1.
         // print each set of sample destMgra and the chosen depart/arrive logsum
         // fieldname to file 2.
@@ -270,8 +268,7 @@ public final class NonMandatoryDcEstimationMcLogsumsAppender
     private int[][] getDcEstimationDataOrigDestTimes(TableDataSet hisTds)
     {
 
-        // odts are an array with elements: origin mgra, destination mgra,
-        // departure
+        // odts are an array with elements: origin mgra, destination mgra, departure
         // period(1-6), and arrival period(1-6).
         int[][] odts = new int[hisTds.getRowCount()][NUM_FIELDS];
         mgras = new int[hisTds.getRowCount()][NUM_MGRA_FIELDS];
@@ -321,10 +318,8 @@ public final class NonMandatoryDcEstimationMcLogsumsAppender
             odts[r - 1][AGE] = age[r - 1];
             odts[r - 1][JOINT] = jointId[r - 1] > 0 ? 1 : 0;
 
-            // the offest constant is used because at-work subtours in
-            // estimation file are coded as work purpose index (=1),
-            // but the model index to use is 5. Nonmandatory and escort files
-            // have correct purpose codes, so offset is 0.
+            // the offest constant is used because at-work subtours in estimation file are coded as work purpose index (=1),
+            // but the model index to use is 5. Nonmandatory and escort files have correct purpose codes, so offset is 0.
             int purposeIndex = purpose[r - 1] + PURPOSE_INDEX_OFFSET;
 
             odts[r - 1][ESCORT] = purposeIndex == 4 ? 1 : 0;

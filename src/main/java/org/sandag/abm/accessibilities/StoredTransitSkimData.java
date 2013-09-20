@@ -5,8 +5,7 @@ public class StoredTransitSkimData
 
     private static StoredTransitSkimData objInstance = null;
 
-    // these arrays are shared by McLogsumsAppender objects and are used by wtw,
-    // wtd, and dtw calculators.
+    // these arrays are shared by McLogsumsAppender objects and are used by wtw, wtd, and dtw calculators.
     private double[][][][][]             storedWtwDepartPeriodTapTapSkims;
     private double[][][][][]             storedWtdDepartPeriodTapTapSkims;
     private double[][][][][]             storedDtwDepartPeriodTapTapSkims;

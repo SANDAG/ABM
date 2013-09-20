@@ -3,24 +3,33 @@ package org.sandag.abm.visitor;
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.net.UnknownHostException;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.MatrixDataServer;
 import org.sandag.abm.ctramp.MatrixDataServerRmi;
+import org.sandag.abm.ctramp.TazDataHandler;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+import com.pb.common.datafile.CSVFileReader;
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.matrix.Matrix;
+import com.pb.common.matrix.MatrixIO32BitJvm;
 import com.pb.common.matrix.MatrixType;
 import com.pb.common.matrix.MatrixWriter;
+import com.pb.common.matrix.TranscadMatrixWriter;
+import com.pb.common.summit.*;
 import com.pb.common.util.ResourceUtil;
 
 public class VisitorTripTables
@@ -32,39 +41,11 @@ public class VisitorTripTables
     private TableDataSet            tripData;
 
     // Some parameters
-    private int[]                   modeIndex;                                               // an
-                                                                                              // index
-                                                                                              // array,
-                                                                                              // dimensioned
-                                                                                              // by
-                                                                                              // number
-                                                                                              // of
-                                                                                              // total
-                                                                                              // modes,
-                                                                                              // returns
-                                                                                              // 0=auto
-                                                                                              // modes,
-                                                                                              // 1=non-motor,
-                                                                                              // 2=transit,
-                                                                                              // 3=
+    private int[]                   modeIndex;                                               // an index array, dimensioned by number of total modes,
+                                                                                              // returns 0=auto modes, 1=non-motor, 2=transit, 3=
                                                                                               // other
-    private int[]                   matrixIndex;                                             // an
-                                                                                              // index
-                                                                                              // array,
-                                                                                              // dimensioned
-                                                                                              // by
-                                                                                              // number
-                                                                                              // of
-                                                                                              // modes,
-                                                                                              // returns
-                                                                                              // the
-                                                                                              // element
-                                                                                              // of
-                                                                                              // the
-                                                                                              // matrix
-                                                                                              // array
-                                                                                              // to
-                                                                                              // store
+    private int[]                   matrixIndex;                                             // an index array, dimensioned by number of modes,
+                                                                                              // returns the element of the matrix array to store
                                                                                               // value
 
     // array modes: AUTO, NON-MOTORIZED, TRANSIT, OTHER
@@ -104,7 +85,7 @@ public class VisitorTripTables
         numberOfPeriods = modelStructure.getNumberModelPeriods();
 
         // number of modes
-        modeIndex = new int[SandagModelStructure.MAXIMUM_TOUR_MODE_ALT_INDEX + 1];
+        modeIndex = new int[modelStructure.MAXIMUM_TOUR_MODE_ALT_INDEX + 1];
         matrixIndex = new int[modeIndex.length];
 
         // set the mode arrays
@@ -145,8 +126,7 @@ public class VisitorTripTables
     {
 
         /*
-         * This won't work because external stations aren't listed in the MGRA
-         * file int[] tazIndex = tazManager.getTazsOneBased(); int tazs =
+         * This won't work because external stations aren't listed in the MGRA file int[] tazIndex = tazManager.getTazsOneBased(); int tazs =
          * tazIndex.length-1;
          */
         // Instead, use maximum taz number
@@ -161,8 +141,7 @@ public class VisitorTripTables
         int[] tapIndex = tapManager.getTaps();
         int taps = tapIndex.length - 1;
 
-        // Initialize matrices; one for each mode group (auto, non-mot, tran,
-        // other)
+        // Initialize matrices; one for each mode group (auto, non-mot, tran, other)
         // All matrices will be dimensioned by TAZs except for transit, which is
         // dimensioned by TAPs
         int numberOfModes = 4;
@@ -214,8 +193,7 @@ public class VisitorTripTables
     }
 
     /**
-     * Create trip tables for all time periods and modes. This is the main entry
-     * point into the class; it should be called after instantiating the
+     * Create trip tables for all time periods and modes. This is the main entry point into the class; it should be called after instantiating the
      * SandagTripTables object.
      * 
      */
@@ -273,9 +251,8 @@ public class VisitorTripTables
     }
 
     /**
-     * This is the main workhorse method in this class. It iterates over records
-     * in the trip file. Attributes for the trip record are read, and the trip
-     * record is accumulated in the relevant matrix.
+     * This is the main workhorse method in this class. It iterates over records in the trip file. Attributes for the trip record are read, and the
+     * trip record is accumulated in the relevant matrix.
      * 
      * @param timePeriod
      *            The time period to process
@@ -294,7 +271,7 @@ public class VisitorTripTables
             if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
 
             int departTime = (int) tripData.getValueAt(i, "period");
-            int period = SandagModelStructure.getModelPeriodIndex(departTime);
+            int period = modelStructure.getModelPeriodIndex(departTime);
             if (period != timePeriod) continue;
 
             int originMGRA = (int) tripData.getValueAt(i, "originMGRA");
@@ -302,7 +279,7 @@ public class VisitorTripTables
             int tripMode = (int) tripData.getValueAt(i, "tripMode");
 
             // save taxi trips as shared-2
-            if (tripMode == SandagModelStructure.TAXI)
+            if (tripMode == modelStructure.TAXI)
             {
                 tripMode = 3;
             }
@@ -376,12 +353,10 @@ public class VisitorTripTables
     }
 
     /**
-     * Get the output trip table file names from the properties file, and write
-     * trip tables for all modes for the given time period.
+     * Get the output trip table file names from the properties file, and write trip tables for all modes for the given time period.
      * 
      * @param period
-     *            Time period, which will be used to find the period time string
-     *            to append to each trip table matrix file
+     *            Time period, which will be used to find the period time string to append to each trip table matrix file
      */
     public void writeTrips(int period, MatrixType mt)
     {
@@ -459,8 +434,7 @@ public class VisitorTripTables
                     e);
         }
 
-        // bind this concrete object with the cajo library objects for managing
-        // RMI
+        // bind this concrete object with the cajo library objects for managing RMI
         try
         {
             Remote.config(serverAddress, serverPort, null, 0);
@@ -476,7 +450,7 @@ public class VisitorTripTables
         try
         {
             ItemServer.bind(matrixServer, className);
-        } catch (IOException e)
+        } catch (RemoteException e)
         {
             logger.error(String.format(
                     "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",
@@ -526,8 +500,7 @@ public class VisitorTripTables
         int serverPort = 0;
         try
         {
-            // get matrix server address. if "none" is specified, no server will
-            // be
+            // get matrix server address. if "none" is specified, no server will be
             // started, and matrix io will ocurr within the current process.
             matrixServerAddress = Util.getStringValueFromPropertyMap(pMap,
                     "RunModel.MatrixServerAddress");
@@ -537,14 +510,12 @@ public class VisitorTripTables
                 serverPort = Util.getIntegerValueFromPropertyMap(pMap, "RunModel.MatrixServerPort");
             } catch (MissingResourceException e)
             {
-                // if no matrix server address entry is found, leave undefined
-                // --
+                // if no matrix server address entry is found, leave undefined --
                 // it's eithe not needed or show could create an error.
             }
         } catch (MissingResourceException e)
         {
-            // if no matrix server address entry is found, set to localhost, and
-            // a
+            // if no matrix server address entry is found, set to localhost, and a
             // separate matrix io process will be started on localhost.
             matrixServerAddress = "localhost";
             serverPort = MATRIX_DATA_SERVER_PORT;
@@ -594,8 +565,7 @@ public class VisitorTripTables
 
         tripTables.createTripTables(mt);
 
-        // if a separate process for running matrix data mnager was started,
-        // we're
+        // if a separate process for running matrix data mnager was started, we're
         // done with it, so close it.
         if (matrixServerAddress.equalsIgnoreCase("localhost"))
         {

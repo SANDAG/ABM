@@ -18,8 +18,7 @@ import com.pb.common.util.ResourceUtil;
 public class SandagCreateTripGenerationFiles
 {
 
-    private static Logger         logger                                        = Logger
-                                                                                        .getLogger(SandagCreateTripGenerationFiles.class);
+    private static Logger         logger                                        = Logger.getLogger(SandagCreateTripGenerationFiles.class);
 
     private static final String   SANDAG_TRIP_GEN_FILE_KEY                      = "trip.model.trips.file";
     private static final String   ABM_TRIP_GEN_FILE_KEY                         = "output.trips.file";
@@ -87,8 +86,7 @@ public class SandagCreateTripGenerationFiles
         String tgInputFile = rbMap.get(SANDAG_TRIP_GEN_FILE_KEY);
         if (tgInputFile == null)
         {
-            logger
-                    .error("Error getting the filename from the properties file for the input Sandag Trip Prods/Attrs by MDZ file.");
+            logger.error("Error getting the filename from the properties file for the input Sandag Trip Prods/Attrs by MDZ file.");
             logger.error("Properties file target: " + SANDAG_TRIP_GEN_FILE_KEY + " not found.");
             logger.error("Please specify a filename value for the " + SANDAG_TRIP_GEN_FILE_KEY
                     + " property.");
@@ -98,8 +96,7 @@ public class SandagCreateTripGenerationFiles
         String tgOutputFile = rbMap.get(ABM_TRIP_GEN_FILE_KEY);
         if (tgOutputFile == null)
         {
-            logger
-                    .error("Error getting the filename from the properties file to use for the new Trip Prods/Attrs by MDZ file created.");
+            logger.error("Error getting the filename from the properties file to use for the new Trip Prods/Attrs by MDZ file created.");
             logger.error("Properties file target: " + ABM_TRIP_GEN_FILE_KEY + " not found.");
             logger.error("Please specify a filename value for the " + ABM_TRIP_GEN_FILE_KEY
                     + " property.");
@@ -109,8 +106,7 @@ public class SandagCreateTripGenerationFiles
         String abmTripFile = rbMap.get(ABM_INDIV_TRIP_FILE_KEY);
         if (abmTripFile == null)
         {
-            logger
-                    .error("Error getting the filename from the properties file to use for the ABM Model individual trips file.");
+            logger.error("Error getting the filename from the properties file to use for the ABM Model individual trips file.");
             logger.error("Properties file target: " + ABM_INDIV_TRIP_FILE_KEY + " not found.");
             logger.error("Please specify a filename value for the " + ABM_INDIV_TRIP_FILE_KEY
                     + " property.");
@@ -120,8 +116,7 @@ public class SandagCreateTripGenerationFiles
         String correspFile = rbMap.get(TAZ_TDZ_CORRESP_KEY);
         if (correspFile == null)
         {
-            logger
-                    .error("Error getting the filename from the properties file to use for the TAZ / TDZ correspondence file.");
+            logger.error("Error getting the filename from the properties file to use for the TAZ / TDZ correspondence file.");
             logger.error("Properties file target: " + TAZ_TDZ_CORRESP_KEY + " not found.");
             logger.error("Please specify a filename value for the " + TAZ_TDZ_CORRESP_KEY
                     + " property.");
@@ -165,11 +160,9 @@ public class SandagCreateTripGenerationFiles
             inTgTds = reader.readFile(new File(fileName));
         } catch (Exception e)
         {
-            logger
-                    .fatal(String
-                            .format(
-                                    "Exception occurred reading input trip generation data file: %s into TableDataSet object.",
-                                    fileName));
+            logger.fatal(String
+                    .format("Exception occurred reading input trip generation data file: %s into TableDataSet object.",
+                            fileName));
             throw new RuntimeException(e);
         }
 
@@ -255,11 +248,9 @@ public class SandagCreateTripGenerationFiles
             tazTdzTds = reader.readFile(new File(correspFile));
         } catch (Exception e)
         {
-            logger
-                    .fatal(String
-                            .format(
-                                    "Exception occurred reading input taz-tdz correspondence file: %s into TableDataSet object.",
-                                    correspFile));
+            logger.fatal(String
+                    .format("Exception occurred reading input taz-tdz correspondence file: %s into TableDataSet object.",
+                            correspFile));
             throw new RuntimeException(e);
         }
 
@@ -448,11 +439,9 @@ public class SandagCreateTripGenerationFiles
 
         } catch (NumberFormatException e)
         {
-            logger
-                    .fatal(String
-                            .format(
-                                    "NumberFormatException occurred reading record of input abm indiv trip file: %s.",
-                                    fileName));
+            logger.fatal(String
+                    .format("NumberFormatException occurred reading record of input abm indiv trip file: %s.",
+                            fileName));
             logger.fatal(String.format("last record number read = %d.", lineCount));
         } catch (IOException e)
         {
@@ -488,27 +477,16 @@ public class SandagCreateTripGenerationFiles
     {
 
         /*
-         * assignment rules: replace tpurp4s = 1 if orig_purpose=="Home" &
-         * dest_purpose=="Work"; replace tpurp4s = 1 if orig_purpose=="Work" &
-         * dest_purpose=="Home"; replace tpurp4s = 2 if orig_purpose=="Home" &
-         * dest_purpose=="University"; replace tpurp4s = 2 if
-         * orig_purpose=="University" & dest_purpose=="Home"; replace tpurp4s = 3 if
-         * orig_purpose=="Home" & dest_purpose=="School"; replace tpurp4s = 3 if
-         * orig_purpose=="School" & dest_purpose=="Home"; replace tpurp4s = 4 if
-         * orig_purpose=="Home" & dest_purpose=="Shop"; replace tpurp4s = 4 if
-         * orig_purpose=="Shop" & dest_purpose=="Home"; replace tpurp4s = 5 if
-         * orig_purpose=="Home" & (dest_purpose=="Maintenance" |
-         * dest_purpose=="Eating Out" | dest_purpose=="Visiting" |
-         * dest_purpose=="Discretionary"); replace tpurp4s = 5 if
-         * dest_purpose=="Home" & (orig_purpose=="Maintenance" |
-         * orig_purpose=="Eating Out" | orig_purpose=="Visiting" |
-         * orig_purpose=="Discretionary"); replace tpurp4s = 8 if
-         * orig_purpose=="Home" & dest_purpose=="Escort"; replace tpurp4s = 8 if
-         * orig_purpose=="Escort" & dest_purpose=="Home"; replace tpurp4s = 6 if
-         * orig_purpose=="Work" & dest_purpose!="Home"; replace tpurp4s = 6 if
-         * orig_purpose!="Home" & dest_purpose=="Work"; replace tpurp4s = 6 if
-         * orig_purpose=="Work-Based" | dest_purpose=="Work-Based"; replace tpurp4s =
-         * 7 if tpurp4s==0;
+         * assignment rules: replace tpurp4s = 1 if orig_purpose=="Home" & dest_purpose=="Work"; replace tpurp4s = 1 if orig_purpose=="Work" &
+         * dest_purpose=="Home"; replace tpurp4s = 2 if orig_purpose=="Home" & dest_purpose=="University"; replace tpurp4s = 2 if
+         * orig_purpose=="University" & dest_purpose=="Home"; replace tpurp4s = 3 if orig_purpose=="Home" & dest_purpose=="School"; replace tpurp4s =
+         * 3 if orig_purpose=="School" & dest_purpose=="Home"; replace tpurp4s = 4 if orig_purpose=="Home" & dest_purpose=="Shop"; replace tpurp4s = 4
+         * if orig_purpose=="Shop" & dest_purpose=="Home"; replace tpurp4s = 5 if orig_purpose=="Home" & (dest_purpose=="Maintenance" |
+         * dest_purpose=="Eating Out" | dest_purpose=="Visiting" | dest_purpose=="Discretionary"); replace tpurp4s = 5 if dest_purpose=="Home" &
+         * (orig_purpose=="Maintenance" | orig_purpose=="Eating Out" | orig_purpose=="Visiting" | orig_purpose=="Discretionary"); replace tpurp4s = 8
+         * if orig_purpose=="Home" & dest_purpose=="Escort"; replace tpurp4s = 8 if orig_purpose=="Escort" & dest_purpose=="Home"; replace tpurp4s = 6
+         * if orig_purpose=="Work" & dest_purpose!="Home"; replace tpurp4s = 6 if orig_purpose!="Home" & dest_purpose=="Work"; replace tpurp4s = 6 if
+         * orig_purpose=="Work-Based" | dest_purpose=="Work-Based"; replace tpurp4s = 7 if tpurp4s==0;
          */
 
         int tripPurposeIndex = 0;
@@ -701,10 +679,8 @@ public class SandagCreateTripGenerationFiles
                 abmProds += newTrips[i][abProdIndex];
             }
 
-            logger
-                    .info(String.format("%10s   %-30s   %15.1f   %15d   %15.6f   %15.1f", heading,
-                            TABLE_HEADING_DESCRIPTIONS[abProdIndex], total, abTotal, scaleFactor,
-                            abmProds));
+            logger.info(String.format("%10s   %-30s   %15.1f   %15d   %15.6f   %15.1f", heading,
+                    TABLE_HEADING_DESCRIPTIONS[abProdIndex], total, abTotal, scaleFactor, abmProds));
 
             index++;
 
@@ -771,10 +747,8 @@ public class SandagCreateTripGenerationFiles
 
             index++;
 
-            logger
-                    .info(String.format("%10s   %-30s   %15.1f   %15d   %15.6f   %15.1f", heading,
-                            TABLE_HEADING_DESCRIPTIONS[abAttrIndex], total, abTotal, scaleFactor,
-                            abmAttrs));
+            logger.info(String.format("%10s   %-30s   %15.1f   %15d   %15.6f   %15.1f", heading,
+                    TABLE_HEADING_DESCRIPTIONS[abAttrIndex], total, abTotal, scaleFactor, abmAttrs));
 
         }
     }
@@ -1000,11 +974,9 @@ public class SandagCreateTripGenerationFiles
             writer.writeFile(outAbmTds, new File(tgOutputFile));
         } catch (IOException e)
         {
-            logger
-                    .fatal(String
-                            .format(
-                                    "Exception occurred writing new trip generation data file = %s from TableDataSet object.",
-                                    tgOutputFile));
+            logger.fatal(String
+                    .format("Exception occurred writing new trip generation data file = %s from TableDataSet object.",
+                            tgOutputFile));
             throw new RuntimeException(e);
         }
     }
@@ -1024,9 +996,8 @@ public class SandagCreateTripGenerationFiles
 
         if (args.length == 0)
         {
-            logger
-                    .error(String
-                            .format("no properties file base name (without .properties extension) was specified as an argument."));
+            logger.error(String
+                    .format("no properties file base name (without .properties extension) was specified as an argument."));
             return;
         } else
         {

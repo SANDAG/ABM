@@ -21,8 +21,7 @@ import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
 
 /**
- * This class is used to return walk-transit-walk skim values for MGRA pairs
- * associated with estimation data file records.
+ * This class is used to return walk-transit-walk skim values for MGRA pairs associated with estimation data file records.
  * 
  * @author Jim Hicks
  * @version March, 2010
@@ -89,8 +88,7 @@ public class WalkTransitWalkSkimsCalculator
         mgraManager = MgraDataManager.getInstance();
         maxTap = mgraManager.getMaxTap();
 
-        // point the stored Array of skims: by Prem or Local, DepartPeriod, O
-        // tap, D tap, skim values[] to a shared data store
+        // point the stored Array of skims: by Prem or Local, DepartPeriod, O tap, D tap, skim values[] to a shared data store
         StoredTransitSkimData storedDataObject = StoredTransitSkimData.getInstance(
                 NUM_SERVICE_TYPES, NUM_PERIODS, maxTap);
         storedDepartPeriodTapTapSkims = storedDataObject.getStoredWtwDepartPeriodTapTapSkims();
@@ -171,23 +169,19 @@ public class WalkTransitWalkSkimsCalculator
     }
 
     /**
-     * Return the array of walk-transit best tap pairs for the given origin
-     * MGRA, destination MGRA, and departure time period.
+     * Return the array of walk-transit best tap pairs for the given origin MGRA, destination MGRA, and departure time period.
      * 
      * @param origMgra
      *            Origin MGRA
      * @param workMgra
      *            Destination MGRA
      * @param departPeriod
-     *            Departure time period - 1 = AM period, 2 = PM period, 3 =
-     *            OffPeak period
+     *            Departure time period - 1 = AM period, 2 = PM period, 3 = OffPeak period
      * @param debug
      *            boolean flag to indicate if debugging reports should be logged
      * @param logger
-     *            Logger to which debugging reports should be logged if debug is
-     *            tru
-     * @return int[][] Array of best tap pair values - rows are ride modes,
-     *         columns are orig and dest tap, respectively.
+     *            Logger to which debugging reports should be logged if debug is tru
+     * @return int[][] Array of best tap pair values - rows are ride modes, columns are orig and dest tap, respectively.
      */
     public int[][] getBestTapPairs(int origMgra, int destMgra, int departPeriod, boolean debug,
             Logger aLogger)
@@ -251,22 +245,17 @@ public class WalkTransitWalkSkimsCalculator
     }
 
     /**
-     * Return the array of walk-transit skims for the ride mode, origin TAP,
-     * destination TAP, and departure time period.
+     * Return the array of walk-transit skims for the ride mode, origin TAP, destination TAP, and departure time period.
      * 
      * @param rideModeIndex
-     *            rode mode indices, for which best utilities and best tap pairs
-     *            were determined 0 = CR, 1 = LR, 2 = BRT, 3 = Exp bus, 4 = Loc
-     *            bus
+     *            rode mode indices, for which best utilities and best tap pairs were determined 0 = CR, 1 = LR, 2 = BRT, 3 = Exp bus, 4 = Loc bus
      * @param origTap
      *            best Origin TAP for the MGRA pair
      * @param destTap
      *            best Destination TAP for the MGRA pair
      * @param departPeriod
-     *            skim period index for the departure period - 0 = AM period, 1
-     *            = PM period, 2 = OffPeak period
-     * @return Array of skim values for the MGRA pair and departure period for
-     *         the ride mode type - local or premium
+     *            skim period index for the departure period - 0 = AM period, 1 = PM period, 2 = OffPeak period
+     * @return Array of skim values for the MGRA pair and departure period for the ride mode type - local or premium
      */
     public double[] getWalkTransitWalkSkims(int rideModeIndex, double pWalkTime, double aWalkTime,
             int origTap, int destTap, int departPeriod, boolean debug)
@@ -280,15 +269,13 @@ public class WalkTransitWalkSkimsCalculator
 
         if (Modes.getIsPremiumTransit(rideModeIndex))
         {
-            // allocate space for the origin tap if it hasn't been allocated
-            // already
+            // allocate space for the origin tap if it hasn't been allocated already
             if (storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap] == null)
             {
                 storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap] = new double[maxTap + 1][];
             }
 
-            // if the destTap skims are not already stored, calculate them and
-            // store
+            // if the destTap skims are not already stored, calculate them and store
             // them
             if (storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap] == null)
             {
@@ -325,15 +312,13 @@ public class WalkTransitWalkSkimsCalculator
             return storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap];
         } else
         {
-            // allocate space for the origin tap if it hasn't been allocated
-            // already
+            // allocate space for the origin tap if it hasn't been allocated already
             if (storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap] == null)
             {
                 storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap] = new double[maxTap + 1][];
             }
 
-            // if the destTap skims are not already stored, calculate them and
-            // store
+            // if the destTap skims are not already stored, calculate them and store
             // them
             if (storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap] == null)
             {
@@ -384,8 +369,7 @@ public class WalkTransitWalkSkimsCalculator
      * Start the matrix server
      * 
      * @param rb
-     *            is a ResourceBundle for the properties file for this
-     *            application
+     *            is a ResourceBundle for the properties file for this application
      */
     private void startMatrixServer(ResourceBundle rb)
     {
@@ -421,16 +405,11 @@ public class WalkTransitWalkSkimsCalculator
      * log a report of the final skim values for the MGRA odt
      * 
      * @param odt
-     *            is an int[] with the first element the origin mgra and the
-     *            second element the dest mgra and third element the departure
-     *            period index
+     *            is an int[] with the first element the origin mgra and the second element the dest mgra and third element the departure period index
      * @param bestTapPairs
-     *            is an int[][] of TAP values with the first dimesion the ride
-     *            mode and second dimension a 2 element array with best orig and
-     *            dest TAP
+     *            is an int[][] of TAP values with the first dimesion the ride mode and second dimension a 2 element array with best orig and dest TAP
      * @param returnedSkims
-     *            is a double[][] of skim values with the first dimesion the
-     *            ride mode indices and second dimention the skim categories
+     *            is a double[][] of skim values with the first dimesion the ride mode indices and second dimention the skim categories
      */
     public void logReturnedSkims(int[] odt, int[][] bestTapPairs, double[][] skims)
     {

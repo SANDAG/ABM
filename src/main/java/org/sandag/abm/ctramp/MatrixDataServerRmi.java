@@ -10,8 +10,7 @@ import org.sandag.abm.ctramp.UtilRmi;
 /**
  * @author Jim Hicks
  * 
- *         Class for managing matrix data in a remote process and accessed by UECs
- *         using RMI.
+ *         Class for managing matrix data in a remote process and accessed by UECs using RMI.
  */
 public class MatrixDataServerRmi
         implements MatrixDataServerIf, Serializable
@@ -36,11 +35,12 @@ public class MatrixDataServerRmi
         remote.method("clear", objArray);
     }
 
-    public void writeMatrixFile( String fileName, Matrix[] m, MatrixType mt ){
-        Object[] objArray = { fileName, m, mt };
+    public void writeMatrixFile(String fileName, Matrix[] m, MatrixType mt)
+    {
+        Object[] objArray = {fileName, m, mt};
         remote.method("writeMatrixFile", objArray);
     }
-    
+
     public Matrix getMatrix(DataEntry dataEntry)
     {
         Object[] objArray = {dataEntry};
@@ -65,15 +65,15 @@ public class MatrixDataServerRmi
         remote.method("stop32BitMatrixIoServer", objArray);
     }
 
-    public void stop32BitMatrixIoServer( String label )
+    public void stop32BitMatrixIoServer(String label)
     {
-        Object[] objArray = { label };
+        Object[] objArray = {label};
         remote.method("stop32BitMatrixIoServer", objArray);
     }
 
-    public String testRemote( String remoteObjectName )
+    public String testRemote(String remoteObjectName)
     {
-        Object[] objArray = { remoteObjectName };
+        Object[] objArray = {remoteObjectName};
         return (String) remote.method("testRemote", objArray);
     }
 

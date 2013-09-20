@@ -1,18 +1,16 @@
 package org.sandag.abm.accessibilities;
 
-import com.pb.common.util.ObjectUtil;
-import com.pb.common.datafile.CSVFileWriter;
-import com.pb.common.datafile.OLD_CSVFileReader;
-import com.pb.common.datafile.TableDataSet;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import org.apache.log4j.Logger;
+import com.pb.common.datafile.CSVFileWriter;
+import com.pb.common.datafile.OLD_CSVFileReader;
+import com.pb.common.datafile.TableDataSet;
 
 /**
- * This class holds the accessibility table that is built, or reads it from a
- * previously written file.
+ * This class holds the accessibility table that is built, or reads it from a previously written file.
  * 
  * @author Jim Hicks
  * @version May, 2011
@@ -70,8 +68,7 @@ public final class AccessibilitiesTable
      * @param computedAccessibilities
      *            array of accessibilities
      * 
-     *            use this constructor if the accessibilities were calculated as
-     *            opposed to read from a file.
+     *            use this constructor if the accessibilities were calculated as opposed to read from a file.
      */
     public AccessibilitiesTable(float[][] computedAccessibilities)
     {
@@ -84,8 +81,7 @@ public final class AccessibilitiesTable
      * @param accessibilitiesInputFileName
      *            path and filename of file to read
      * 
-     *            use this constructor if the accessibilities are to be read
-     *            from a file.
+     *            use this constructor if the accessibilities are to be read from a file.
      */
     public AccessibilitiesTable(String accessibilitiesInputFileName)
     {
@@ -132,10 +128,8 @@ public final class AccessibilitiesTable
 
         File accFile = new File(accFileName);
 
-        // the accessibilities array is indexed by mgra values which might no be
-        // consecutive.
-        // create an arraylist of data table rows, with the last field being the
-        // mgra value,
+        // the accessibilities array is indexed by mgra values which might no be consecutive.
+        // create an arraylist of data table rows, with the last field being the mgra value,
         // convert to a tabledataset, then write to a csv file.
 
         ArrayList<String> dataColumnHeadings = new ArrayList<String>();
@@ -217,10 +211,8 @@ public final class AccessibilitiesTable
 
         File accFile = new File(luAccFileName);
 
-        // the accessibilities array is indexed by mgra values which might no be
-        // consecutive.
-        // create an arraylist of data table rows, with the last field being the
-        // mgra value,
+        // the accessibilities array is indexed by mgra values which might no be consecutive.
+        // create an arraylist of data table rows, with the last field being the mgra value,
         // convert to a tabledataset, then write to a csv file.
 
         ArrayList<float[]> dataTableRows = new ArrayList<float[]>();
@@ -279,10 +271,8 @@ public final class AccessibilitiesTable
 
         File accFile = new File(luLogsumFileName);
 
-        // the accessibilities array is indexed by mgra values which might no be
-        // consecutive.
-        // create an arraylist of data table rows, with the last field being the
-        // mgra value,
+        // the accessibilities array is indexed by mgra values which might no be consecutive.
+        // create an arraylist of data table rows, with the last field being the mgra value,
         // convert to a tabledataset, then write to a csv file.
 
         ArrayList<float[]> dataTableRows = new ArrayList<float[]>();

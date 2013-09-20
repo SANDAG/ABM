@@ -14,36 +14,35 @@ public class ParkingChoiceDMU
         implements Serializable, VariableTable
 {
 
-    protected transient Logger logger = Logger.getLogger(ParkingChoiceDMU.class);
+    protected transient Logger         logger = Logger.getLogger(ParkingChoiceDMU.class);
 
     protected HashMap<String, Integer> methodIndexMap;
 
-    private IndexValues dmuIndex;
-    
-    private int personType;
-    private int activityIntervals;
-    private int destPurpose;
-    private double reimbPct;
+    private IndexValues                dmuIndex;
 
-    private double[] distancesOrigAlt;
-    private double[] distancesAltDest;
+    private int                        personType;
+    private int                        activityIntervals;
+    private int                        destPurpose;
+    private double                     reimbPct;
 
-    private double[] altParkingCostsM;
-    private int[] altMstallsoth;
-    private int[] altMstallssam;
-    private float[] altMparkcost;
-    private int[] altDstallsoth;
-    private int[] altDstallssam;
-    private float[] altDparkcost;
-    private int[] altHstallsoth;
-    private int[] altHstallssam;
-    private float[] altHparkcost;
-    private int[] altNumfreehrs;
+    private double[]                   distancesOrigAlt;
+    private double[]                   distancesAltDest;
 
-    private int[] parkAreaMgras;
-    private int[] altMgraIndices;
-    
-    
+    private double[]                   altParkingCostsM;
+    private int[]                      altMstallsoth;
+    private int[]                      altMstallssam;
+    private float[]                    altMparkcost;
+    private int[]                      altDstallsoth;
+    private int[]                      altDstallssam;
+    private float[]                    altDparkcost;
+    private int[]                      altHstallsoth;
+    private int[]                      altHstallssam;
+    private float[]                    altHparkcost;
+    private int[]                      altNumfreehrs;
+
+    private int[]                      parkAreaMgras;
+    private int[]                      altMgraIndices;
+
     public ParkingChoiceDMU()
     {
         dmuIndex = new IndexValues();
@@ -69,196 +68,231 @@ public class ParkingChoiceDMU
     {
         return dmuIndex;
     }
-    
 
-    public void setPersonType(int value) {
+    public void setPersonType(int value)
+    {
         personType = value;
     }
-    
-    public void setActivityIntervals(int value) {
+
+    public void setActivityIntervals(int value)
+    {
         activityIntervals = value;
     }
-    
-    public void setDestPurpose(int value) {
+
+    public void setDestPurpose(int value)
+    {
         destPurpose = value;
     }
 
-    public void setReimbPct(double value) {
+    public void setReimbPct(double value)
+    {
         reimbPct = value;
     }
 
     /**
-     * @param mgras is the array of MGRAs in parking area from "plc.alts.corresp.file".
-     * This is a 0-based array
+     * @param mgras
+     *            is the array of MGRAs in parking area from "plc.alts.corresp.file". This is a 0-based array
      */
-    public void setParkAreaMgraArray( int[] mgras ) {
+    public void setParkAreaMgraArray(int[] mgras)
+    {
         parkAreaMgras = mgras;
     }
-    
+
     /**
-     * @param indices is an array of indices representing this person's park location choice sample.
-     * the index value in this array points to the parkAreaMgras element, and the corresponding mgra value.
-     * This is a 0-based array
+     * @param indices
+     *            is an array of indices representing this person's park location choice sample. the index value in this array points to the
+     *            parkAreaMgras element, and the corresponding mgra value. This is a 0-based array
      */
-    public void setSampleIndicesArray( int[] indices ) {
+    public void setSampleIndicesArray(int[] indices)
+    {
         altMgraIndices = indices;
     }
-    
-    public void setDistancesOrigAlt( double[] distances ) {
+
+    public void setDistancesOrigAlt(double[] distances)
+    {
         distancesOrigAlt = distances;
     }
-    
-    public void setDistancesAltDest( double[] distances ) {
+
+    public void setDistancesAltDest(double[] distances)
+    {
         distancesAltDest = distances;
     }
-    
-    public void setParkingCostsM( double[] values ) {
+
+    public void setParkingCostsM(double[] values)
+    {
         altParkingCostsM = values;
     }
-    
-    public void setMstallsoth( int[] values ) {
+
+    public void setMstallsoth(int[] values)
+    {
         altMstallsoth = values;
     }
 
-    public void setMstallssam( int[] values ) {
+    public void setMstallssam(int[] values)
+    {
         altMstallssam = values;
     }
 
-    public void setMparkCost( float[] values ) {
+    public void setMparkCost(float[] values)
+    {
         altMparkcost = values;
     }
 
-    public void setDstallsoth( int[] values ) {
+    public void setDstallsoth(int[] values)
+    {
         altDstallsoth = values;
     }
 
-    public void setDstallssam( int[] values ) {
+    public void setDstallssam(int[] values)
+    {
         altDstallssam = values;
     }
 
-    public void setDparkCost( float[] values ) {
+    public void setDparkCost(float[] values)
+    {
         altDparkcost = values;
     }
 
-    public void setHstallsoth( int[] values ) {
+    public void setHstallsoth(int[] values)
+    {
         altHstallsoth = values;
     }
 
-    public void setHstallssam( int[] values ) {
+    public void setHstallssam(int[] values)
+    {
         altHstallssam = values;
     }
 
-    public void setHparkCost( float[] values ) {
+    public void setHparkCost(float[] values)
+    {
         altHparkcost = values;
     }
 
-    public void setNumfreehrs( int[] values ) {
+    public void setNumfreehrs(int[] values)
+    {
         altNumfreehrs = values;
     }
 
-    
-    public int getPersonType() {
+    public int getPersonType()
+    {
         return personType;
     }
-    
-    public int getActivityIntervals() {
+
+    public int getActivityIntervals()
+    {
         return activityIntervals;
     }
-    
-    public int getTripDestPurpose() {
+
+    public int getTripDestPurpose()
+    {
         return destPurpose;
     }
 
-    public double getReimbPct() {
+    public double getReimbPct()
+    {
         return reimbPct;
     }
 
-    
     /**
-     * @param alt is the index value in the alternatives array (0,...,num alts).
+     * @param alt
+     *            is the index value in the alternatives array (0,...,num alts).
      * @return the distance between the trip origin mgra and the alternative park mgra.
      */
-    public double getDistanceTripOrigToParkAlt( int alt ) {
+    public double getDistanceTripOrigToParkAlt(int alt)
+    {
         return distancesOrigAlt[alt];
     }
-    
+
     /**
-     * @param alt is the index value in the alternatives array (0,...,num alts).
+     * @param alt
+     *            is the index value in the alternatives array (0,...,num alts).
      * @return the distance between the alternative park mgra and the trip destination mgra.
      */
-    public double getDistanceTripDestFromParkAlt( int alt ) {
+    public double getDistanceTripDestFromParkAlt(int alt)
+    {
         return distancesAltDest[alt];
     }
-    
+
     /**
-     * @param alt is the index value in the alternatives array (0,...,num alts).
+     * @param alt
+     *            is the index value in the alternatives array (0,...,num alts).
      * @return the cost for this person to park at the alternative park mgra.
      */
-    public double getLsWgtAvgCostM( int alt ) {
+    public double getLsWgtAvgCostM(int alt)
+    {
         return altParkingCostsM[alt];
     }
 
-    public int getMstallsoth( int alt ) {
+    public int getMstallsoth(int alt)
+    {
         return altMstallsoth[alt];
     }
 
-    public int getMstallssam( int alt ) {
+    public int getMstallssam(int alt)
+    {
         return altMstallssam[alt];
     }
 
-    public float getMparkcost( int alt ) {
+    public float getMparkcost(int alt)
+    {
         return altMparkcost[alt];
     }
 
-    public int getDstallsoth( int alt ) {
+    public int getDstallsoth(int alt)
+    {
         return altDstallsoth[alt];
     }
 
-    public int getDstallssam( int alt ) {
+    public int getDstallssam(int alt)
+    {
         return altDstallssam[alt];
     }
 
-    public float getDparkcost( int alt ) {
+    public float getDparkcost(int alt)
+    {
         return altDparkcost[alt];
     }
 
-    public int getHstallsoth( int alt ) {
+    public int getHstallsoth(int alt)
+    {
         return altHstallsoth[alt];
     }
 
-    public int getHstallssam( int alt ) {
+    public int getHstallssam(int alt)
+    {
         return altHstallssam[alt];
     }
 
-    public float getHparkcost( int alt ) {
+    public float getHparkcost(int alt)
+    {
         return altHparkcost[alt];
     }
 
-    public int getNumfreehrs( int alt ) {
+    public int getNumfreehrs(int alt)
+    {
         return altNumfreehrs[alt];
     }
 
     /**
      * @return 1 if the altMgra attribute that was set equals the trip destination
-     */    
-    public int getDestSameAsParkAlt( int alt ) {
+     */
+    public int getDestSameAsParkAlt(int alt)
+    {
         int index = altMgraIndices[alt];
         int altMgra = parkAreaMgras[index];
         return altMgra == dmuIndex.getDestZone() ? 1 : 0;
     }
-    
+
     /**
      * @return the altMgra attribute for this alternative
-     */    
-    public int getParkMgraAlt( int alt ) {
+     */
+    public int getParkMgraAlt(int alt)
+    {
         int index = altMgraIndices[alt];
         int altMgra = parkAreaMgras[index];
         return altMgra;
     }
-    
-    
-    
-    
+
     public int getIndexValue(String variableName)
     {
         return methodIndexMap.get(variableName);

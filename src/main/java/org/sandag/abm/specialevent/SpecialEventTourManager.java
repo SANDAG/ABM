@@ -111,8 +111,7 @@ public class SpecialEventTourManager
      * @param random
      *            a uniformly-distributed random number.
      * @param eventType
-     *            a string identifying the type of event, which should be a
-     *            column in the income data table
+     *            a string identifying the type of event, which should be a column in the income data table
      * @return income chosen
      */
     public int chooseIncome(double random, String eventType)
@@ -138,8 +137,7 @@ public class SpecialEventTourManager
      * @param random
      *            a uniformly-distributed random number.
      * @param eventType
-     *            a string identifying the type of event, which should be a
-     *            column in the party size data table
+     *            a string identifying the type of event, which should be a column in the party size data table
      * @return party size chosen
      */
     public int choosePartySize(double random, String eventType)
@@ -316,9 +314,8 @@ public class SpecialEventTourManager
     }
 
     /**
-     * A helper method that returns an array containing boarding tap (element 0)
-     * and alighting tap (element 1) for the given trip mode. Returns an array
-     * of zeroes if the trip modes are not transit.
+     * A helper method that returns an array containing boarding tap (element 0) and alighting tap (element 1) for the given trip mode. Returns an
+     * array of zeroes if the trip modes are not transit.
      * 
      * @param party
      *            The trip

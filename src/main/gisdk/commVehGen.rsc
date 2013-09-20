@@ -28,11 +28,12 @@
 **************************************************************/
 Macro "Commercial Vehicle Generation" 
 
-/*
-    RunMacro("TCB Init")
+ /*
+   RunMacro("TCB Init")
 
-      scenarioDirectory = "d:\\projects\\SANDAG\\AB_Model\\commercial_vehicles"
-*/   
+    scenarioDirectory = "d:\\projects\\SANDAG\\AB_Model\\commercial_vehicles"
+    
+  */
    
    shared path, inputDir, outputDir, mgraDataFile       
    
@@ -130,9 +131,10 @@ Macro "Commercial Vehicle Generation"
    for i = 1 to mgra.length do
        
        tazNumber = taz[i]
-       tazProd[tazNumber] =  tazProd[tazNumber] + verySmallP[tazNumber]
-       tazAttr[tazNumber] =  tazAttr[tazNumber] + verySmallA[tazNumber]
-      
+       // tazProd[tazNumber] =  tazProd[tazNumber] + verySmallP[tazNumber]
+       // tazAttr[tazNumber] =  tazAttr[tazNumber] + verySmallA[tazNumber]
+       tazProd[tazNumber] =  tazProd[tazNumber] + verySmallP[i]
+       tazAttr[tazNumber] =  tazAttr[tazNumber] + verySmallA[i]
       if writeMgraData = true then do
          AddRecord("truckTripsMgra", {
              {"MGRA", mgra[i]},

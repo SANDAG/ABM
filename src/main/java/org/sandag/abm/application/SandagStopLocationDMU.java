@@ -5,7 +5,8 @@ import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.StopLocationDMU;
 
-public class SandagStopLocationDMU extends StopLocationDMU
+public class SandagStopLocationDMU
+        extends StopLocationDMU
 {
 
     public SandagStopLocationDMU(ModelStructure modelStructure)
@@ -45,7 +46,6 @@ public class SandagStopLocationDMU extends StopLocationDMU
 
     }
 
-    
     public double getValueForIndex(int variableIndex, int arrayIndex)
     {
 
@@ -99,15 +99,14 @@ public class SandagStopLocationDMU extends StopLocationDMU
                 return getLnSlcSizeSampleAlt(arrayIndex);
             case 23:
                 return getIncomeInDollars();
-                
 
             default:
-                Logger logger = Logger.getLogger( StopLocationDMU.class );
+                Logger logger = Logger.getLogger(StopLocationDMU.class);
                 logger.error("method number = " + variableIndex + " not found");
                 throw new RuntimeException("method number = " + variableIndex + " not found");
 
         }
-        
+
     }
 
 }

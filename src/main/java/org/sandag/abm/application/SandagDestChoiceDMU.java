@@ -17,7 +17,7 @@ public class SandagDestChoiceDMU
     private void setupMethodIndexMap()
     {
         methodIndexMap = new HashMap<String, Integer>();
-        
+
         methodIndexMap.put("getMcLogsumDestAlt", 3);
         methodIndexMap.put("getNumGradeSchoolStudents", 4);
         methodIndexMap.put("getNumHighSchoolStudents", 5);
@@ -71,9 +71,8 @@ public class SandagDestChoiceDMU
     }
 
     /*
-     * public int getSubtourType() { if ( tour.getTourCategory().equalsIgnoreCase(
-     * ModelStructure.AT_WORK_CATEGORY ) ) return tour.getTourPurposeIndex(); else
-     * return 0; }
+     * public int getSubtourType() { if ( tour.getTourCategory().equalsIgnoreCase( ModelStructure.AT_WORK_CATEGORY ) ) return
+     * tour.getTourPurposeIndex(); else return 0; }
      */
 
     public double getValueForIndex(int variableIndex, int arrayIndex)

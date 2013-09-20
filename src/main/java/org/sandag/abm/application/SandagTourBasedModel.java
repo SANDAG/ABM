@@ -13,41 +13,39 @@ import org.sandag.abm.ctramp.CtrampApplication;
 public final class SandagTourBasedModel
 {
 
-    private static Logger      logger                       = Logger.getLogger(SandagTourBasedModel.class);
+    private static Logger      logger                          = Logger.getLogger(SandagTourBasedModel.class);
 
-    public static final String PROPERTIES_PROJECT_DIRECTORY = "Project.Directory";
+    public static final String PROPERTIES_PROJECT_DIRECTORY    = "Project.Directory";
 
-    private static final int   DEFAULT_ITERATION_NUMBER     = 1;
-    private static final float DEFAULT_SAMPLE_RATE          = 1.0f;
-    private static final int   DEFAULT_SAMPLE_SEED          = 0;
+    private static final int   DEFAULT_ITERATION_NUMBER        = 1;
+    private static final float DEFAULT_SAMPLE_RATE             = 1.0f;
+    private static final int   DEFAULT_SAMPLE_SEED             = 0;
 
-    public static final int    DEBUG_CHOICE_MODEL_HHID      = 740151;
+    public static final int    DEBUG_CHOICE_MODEL_HHID         = 740151;
 
     private ResourceBundle     rb;
 
     // values for these variables are set as command line arguments, or default vaues
     // are used if no command line arguments are specified.
-    private int                globalIterationNumber        = 0;
-    private float              iterationSampleRate          = 0f;
-    private int                sampleSeed                   = 0;
-    private boolean			   calculateLandUseAccessibilities = false;
-    
+    private int                globalIterationNumber           = 0;
+    private float              iterationSampleRate             = 0f;
+    private int                sampleSeed                      = 0;
+    private boolean            calculateLandUseAccessibilities = false;
 
     /**
      * 
-     * @param rb , java.util.ResourceBundle containing environment settings from a
-     *            properties file specified on the command line
-     * @param globalIterationNumber , int iteration number for which the model is
-     *            run, set by another process controlling a model stream with
-     *            feedback.
-     * @param iterationSampleRate , float percentage [0.0, 1.0] inicating the portion
-     *            of all households to be modeled.
+     * @param rb
+     *            , java.util.ResourceBundle containing environment settings from a properties file specified on the command line
+     * @param globalIterationNumber
+     *            , int iteration number for which the model is run, set by another process controlling a model stream with feedback.
+     * @param iterationSampleRate
+     *            , float percentage [0.0, 1.0] inicating the portion of all households to be modeled.
      * 
-     *            This object defines the implementation of the ARC tour based,
-     *            activity based travel demand model.
+     *            This object defines the implementation of the ARC tour based, activity based travel demand model.
      */
-    private SandagTourBasedModel(ResourceBundle aRb, HashMap<String,String> aPropertyMap, int aGlobalIterationNumber,
-            float aIterationSampleRate, int aSampleSeed, boolean aCalculateLandUseAccessibilities)
+    private SandagTourBasedModel(ResourceBundle aRb, HashMap<String, String> aPropertyMap,
+            int aGlobalIterationNumber, float aIterationSampleRate, int aSampleSeed,
+            boolean aCalculateLandUseAccessibilities)
     {
         rb = aRb;
         globalIterationNumber = aGlobalIterationNumber;
@@ -56,11 +54,12 @@ public final class SandagTourBasedModel
         calculateLandUseAccessibilities = aCalculateLandUseAccessibilities;
     }
 
-    private void runTourBasedModel( HashMap<String,String> propertyMap )
+    private void runTourBasedModel(HashMap<String, String> propertyMap)
     {
 
         // new a ctramp application object
-        SandagCtrampApplication ctrampApplication = new SandagCtrampApplication(rb, propertyMap, calculateLandUseAccessibilities);
+        SandagCtrampApplication ctrampApplication = new SandagCtrampApplication(rb, propertyMap,
+                calculateLandUseAccessibilities);
 
         // create modelStructure object
         SandagModelStructure modelStructure = new SandagModelStructure();
@@ -113,7 +112,6 @@ public final class SandagTourBasedModel
 
         HouseholdDataManagerIf householdDataManager;
 
-
         try
         {
 
@@ -126,10 +124,13 @@ public final class SandagTourBasedModel
 
                 // have the household data manager read the synthetic population
                 // files and apply its tables to objects mapping method.
-                String inputHouseholdFileName = rb.getString(HouseholdDataManager.PROPERTIES_SYNPOP_INPUT_HH);
-                String inputPersonFileName = rb.getString(HouseholdDataManager.PROPERTIES_SYNPOP_INPUT_PERS);
+                String inputHouseholdFileName = rb
+                        .getString(HouseholdDataManager.PROPERTIES_SYNPOP_INPUT_HH);
+                String inputPersonFileName = rb
+                        .getString(HouseholdDataManager.PROPERTIES_SYNPOP_INPUT_PERS);
                 householdDataManager.setHouseholdSampleRate(iterationSampleRate, sampleSeed);
-                householdDataManager.setupHouseholdDataManager(modelStructure, inputHouseholdFileName, inputPersonFileName);
+                householdDataManager.setupHouseholdDataManager(modelStructure,
+                        inputHouseholdFileName, inputPersonFileName);
 
             } else
             {
@@ -183,7 +184,8 @@ public final class SandagTourBasedModel
                     String inputPersonFileName = rb
                             .getString(HouseholdDataManager.PROPERTIES_SYNPOP_INPUT_PERS);
                     householdDataManager.setHouseholdSampleRate(iterationSampleRate, sampleSeed);
-                    householdDataManager.setupHouseholdDataManager(modelStructure, inputHouseholdFileName, inputPersonFileName);
+                    householdDataManager.setupHouseholdDataManager(modelStructure,
+                            inputHouseholdFileName, inputPersonFileName);
 
                 } else
                 {
@@ -207,13 +209,15 @@ public final class SandagTourBasedModel
             SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure);
 
             // run the models
-            ctrampApplication.runModels(householdDataManager, dmuFactory, globalIterationNumber, iterationSampleRate);
+            ctrampApplication.runModels(householdDataManager, dmuFactory, globalIterationNumber,
+                    iterationSampleRate);
 
         } catch (Exception e)
         {
 
-            logger.error(String
-                    .format("exception caught running ctramp model components -- exiting."), e);
+            logger.error(
+                    String.format("exception caught running ctramp model components -- exiting."),
+                    e);
             throw new RuntimeException();
 
         }
@@ -230,19 +234,20 @@ public final class SandagTourBasedModel
         boolean calculateLandUseAccessibilities = false;
 
         ResourceBundle rb = null;
-        HashMap<String,String> pMap;
+        HashMap<String, String> pMap;
 
         logger.info(String.format("SANDAG Activity Based Model using CT-RAMP version %s",
                 CtrampApplication.VERSION));
 
         if (args.length == 0)
         {
-            logger.error( String.format("no properties file base name (without .properties extension) was specified as an argument.") );
+            logger.error(String
+                    .format("no properties file base name (without .properties extension) was specified as an argument."));
             return;
         } else
         {
             rb = ResourceBundle.getBundle(args[0]);
-            pMap = ResourceUtil.getResourceBundleAsHashMap ( args[0] );
+            pMap = ResourceUtil.getResourceBundleAsHashMap(args[0]);
 
             // optional arguments
             for (int i = 1; i < args.length; i++)
@@ -268,7 +273,7 @@ public final class SandagTourBasedModel
 
                 if (args[i].equalsIgnoreCase("-luAcc"))
                 {
-                	calculateLandUseAccessibilities = Boolean.parseBoolean(args[i + 1]);
+                    calculateLandUseAccessibilities = Boolean.parseBoolean(args[i + 1]);
                     logger.info(String.format("-luAcc %s.", calculateLandUseAccessibilities));
                 }
 
@@ -307,11 +312,13 @@ public final class SandagTourBasedModel
 
             logger.info("");
             logger.info("starting tour based model.");
-            mainObject.runTourBasedModel( pMap );
+            mainObject.runTourBasedModel(pMap);
 
         } catch (RuntimeException e)
         {
-            logger.error( "RuntimeException caught in org.sandag.abm.application.SandagTourBasedModel.main() -- exiting.", e );
+            logger.error(
+                    "RuntimeException caught in org.sandag.abm.application.SandagTourBasedModel.main() -- exiting.",
+                    e);
         }
 
         logger.info("");

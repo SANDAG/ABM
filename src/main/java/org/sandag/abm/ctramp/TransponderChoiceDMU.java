@@ -18,18 +18,17 @@ public class TransponderChoiceDMU
 
     protected HashMap<String, Integer> methodIndexMap;
 
-    private IndexValues dmuIndex;
+    private IndexValues                dmuIndex;
 
-    private Household hh;
+    private Household                  hh;
 
-    private double percentTazIncome100Kplus;
-    private double percentTazMultpleAutos;
-    private double expectedTravelTimeSavings;
-    private double transpDist;
-    private double pctDetour;
-    private double accessibility;
-    
-    
+    private double                     percentTazIncome100Kplus;
+    private double                     percentTazMultpleAutos;
+    private double                     expectedTravelTimeSavings;
+    private double                     transpDist;
+    private double                     pctDetour;
+    private double                     accessibility;
+
     public TransponderChoiceDMU()
     {
         dmuIndex = new IndexValues();
@@ -51,70 +50,81 @@ public class TransponderChoiceDMU
         }
     }
 
-    public void setHouseholdObject(Household hhObj) {
+    public void setHouseholdObject(Household hhObj)
+    {
         hh = hhObj;
     }
 
-
-    public void setPctIncome100Kplus( double value) {
+    public void setPctIncome100Kplus(double value)
+    {
         percentTazIncome100Kplus = value;
     }
 
-    public void setPctTazMultpleAutos( double value) {
+    public void setPctTazMultpleAutos(double value)
+    {
         percentTazMultpleAutos = value;
     }
 
-    public void setExpectedTravelTimeSavings( double value) {
+    public void setExpectedTravelTimeSavings(double value)
+    {
         expectedTravelTimeSavings = value;
     }
 
-    public void setTransponderDistance( double value) {
+    public void setTransponderDistance(double value)
+    {
         transpDist = value;
     }
-    
-    public void setPctDetour( double value) {
+
+    public void setPctDetour(double value)
+    {
         pctDetour = value;
     }
-    
-    public void setAccessibility( double value) {
+
+    public void setAccessibility(double value)
+    {
         accessibility = value;
     }
-    
-    
-    public double getPctIncome100Kplus() {
+
+    public double getPctIncome100Kplus()
+    {
         return percentTazIncome100Kplus;
     }
-    
-    public double getPctTazMultpleAutos() {
+
+    public double getPctTazMultpleAutos()
+    {
         return percentTazMultpleAutos;
     }
-    
-    public double getExpectedTravelTimeSavings() {
+
+    public double getExpectedTravelTimeSavings()
+    {
         return expectedTravelTimeSavings;
     }
-    
-    public double getTransponderDistance() {
+
+    public double getTransponderDistance()
+    {
         return transpDist;
     }
-    
-    public double getPctDetour() {
+
+    public double getPctDetour()
+    {
         return pctDetour;
     }
-    
-    public double getAccessibility() {
+
+    public double getAccessibility()
+    {
         return accessibility;
     }
-    
-    public int getAutoOwnership() {
+
+    public int getAutoOwnership()
+    {
         return hh.getAutoOwnershipModelResult();
     }
 
-    public IndexValues getDmuIndexValues() {
-        return dmuIndex; 
+    public IndexValues getDmuIndexValues()
+    {
+        return dmuIndex;
     }
-    
-    
-    
+
     public int getIndexValue(String variableName)
     {
         return methodIndexMap.get(variableName);

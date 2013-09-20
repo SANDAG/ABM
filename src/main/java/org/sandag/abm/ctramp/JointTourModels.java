@@ -29,58 +29,57 @@ import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
 
 /**
- * Created by IntelliJ IDEA. User: Jim Date: Jul 11, 2008 Time: 9:25:30 AM To change
- * this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: Jim Date: Jul 11, 2008 Time: 9:25:30 AM To change this template use File | Settings | File Templates.
  */
-public class JointTourModels implements Serializable
+public class JointTourModels
+        implements Serializable
 {
 
-    private transient Logger       logger                                  = Logger.getLogger(JointTourModels.class);
-    private transient Logger       tourFreq                                = Logger.getLogger("tourFreq");
+    private transient Logger         logger                              = Logger.getLogger(JointTourModels.class);
+    private transient Logger         tourFreq                            = Logger.getLogger("tourFreq");
 
     // these are public because CtrampApplication creates a ChoiceModelAppplication in order to get the alternatives for a log report
-    public static final String     UEC_FILE_PROPERTIES_TARGET              = "jtfcp.uec.file";
-    public static final String     UEC_DATA_PAGE_TARGET                    = "jtfcp.data.page";
-    public static final String     UEC_JOINT_TOUR_FREQ_COMP_MODEL_PAGE     = "jtfcp.freq.comp.page";
-    
-    private static final String    UEC_JOINT_TOUR_PARTIC_MODEL_PAGE        = "jtfcp.participate.page";
+    public static final String       UEC_FILE_PROPERTIES_TARGET          = "jtfcp.uec.file";
+    public static final String       UEC_DATA_PAGE_TARGET                = "jtfcp.data.page";
+    public static final String       UEC_JOINT_TOUR_FREQ_COMP_MODEL_PAGE = "jtfcp.freq.comp.page";
 
-    public static final int        JOINT_TOUR_COMPOSITION_ADULTS           = 1;
-    public static final int        JOINT_TOUR_COMPOSITION_CHILDREN         = 2;
-    public static final int        JOINT_TOUR_COMPOSITION_MIXED            = 3;
+    private static final String      UEC_JOINT_TOUR_PARTIC_MODEL_PAGE    = "jtfcp.participate.page";
 
-    public static final String[]   JOINT_TOUR_COMPOSITION_NAMES            = {"", "adult", "child", "mixed"};
+    public static final int          JOINT_TOUR_COMPOSITION_ADULTS       = 1;
+    public static final int          JOINT_TOUR_COMPOSITION_CHILDREN     = 2;
+    public static final int          JOINT_TOUR_COMPOSITION_MIXED        = 3;
 
-    public static final int        PURPOSE_1_FIELD                         = 2;
-    public static final int        PURPOSE_2_FIELD                         = 3;
-    public static final int        PARTY_1_FIELD                           = 4;
-    public static final int        PARTY_2_FIELD                           = 5;
-    
-    
+    public static final String[]     JOINT_TOUR_COMPOSITION_NAMES        = {"", "adult", "child",
+            "mixed"                                                      };
+
+    public static final int          PURPOSE_1_FIELD                     = 2;
+    public static final int          PURPOSE_2_FIELD                     = 3;
+    public static final int          PARTY_1_FIELD                       = 4;
+    public static final int          PARTY_2_FIELD                       = 5;
+
     // DMU for the UEC
-    private JointTourModelsDMU     dmuObject;
-    private AccessibilitiesTable accTable;
-    
-    private ChoiceModelApplication jointTourFrequencyModel;
-    private ChoiceModelApplication jointTourParticipation;
-    private TableDataSet jointModelsAltsTable;
-    private HashMap<Integer,String> purposeIndexNameMap;
-    
+    private JointTourModelsDMU       dmuObject;
+    private AccessibilitiesTable     accTable;
 
-    private int[]                  invalidCount                            = new int[5];
+    private ChoiceModelApplication   jointTourFrequencyModel;
+    private ChoiceModelApplication   jointTourParticipation;
+    private TableDataSet             jointModelsAltsTable;
+    private HashMap<Integer, String> purposeIndexNameMap;
 
-    private String                 threadName                              = null;
+    private int[]                    invalidCount                        = new int[5];
 
-    
+    private String                   threadName                          = null;
 
-    public JointTourModels(HashMap<String, String> propertyMap, AccessibilitiesTable myAccTable, ModelStructure modelStructure, CtrampDmuFactoryIf dmuFactory)
+    public JointTourModels(HashMap<String, String> propertyMap, AccessibilitiesTable myAccTable,
+            ModelStructure modelStructure, CtrampDmuFactoryIf dmuFactory)
     {
 
         accTable = myAccTable;
-        
+
         try
         {
-            threadName = "[" + java.net.InetAddress.getLocalHost().getHostName() + ": " + Thread.currentThread().getName() + "]";
+            threadName = "[" + java.net.InetAddress.getLocalHost().getHostName() + ": "
+                    + Thread.currentThread().getName() + "]";
         } catch (UnknownHostException e1)
         {
             // TODO Auto-generated catch block
@@ -90,47 +89,54 @@ public class JointTourModels implements Serializable
         setUpModels(propertyMap, modelStructure, dmuFactory);
     }
 
-    public void setUpModels(HashMap<String, String> propertyMap, ModelStructure modelStructure, CtrampDmuFactoryIf dmuFactory)
+    public void setUpModels(HashMap<String, String> propertyMap, ModelStructure modelStructure,
+            CtrampDmuFactoryIf dmuFactory)
     {
 
         logger.info(String.format("setting up %s tour frequency model on %s",
                 ModelStructure.JOINT_NON_MANDATORY_CATEGORY, threadName));
 
-        String uecFileDirectory = propertyMap.get( CtrampApplication.PROPERTIES_UEC_PATH );
+        String uecFileDirectory = propertyMap.get(CtrampApplication.PROPERTIES_UEC_PATH);
 
         String uecFileName = propertyMap.get(UEC_FILE_PROPERTIES_TARGET);
         uecFileName = uecFileDirectory + uecFileName;
 
         dmuObject = dmuFactory.getJointTourModelsDMU();
 
-        purposeIndexNameMap = new HashMap<Integer,String>();
-        purposeIndexNameMap.put(ModelStructure.SHOPPING_PRIMARY_PURPOSE_INDEX, ModelStructure.SHOPPING_PRIMARY_PURPOSE_NAME);
-        purposeIndexNameMap.put(ModelStructure.OTH_MAINT_PRIMARY_PURPOSE_INDEX, ModelStructure.OTH_MAINT_PRIMARY_PURPOSE_NAME);
-        purposeIndexNameMap.put(ModelStructure.EAT_OUT_PRIMARY_PURPOSE_INDEX, ModelStructure.EAT_OUT_PRIMARY_PURPOSE_NAME);
-        purposeIndexNameMap.put(ModelStructure.VISITING_PRIMARY_PURPOSE_INDEX, ModelStructure.VISITING_PRIMARY_PURPOSE_NAME);
-        purposeIndexNameMap.put(ModelStructure.OTH_DISCR_PRIMARY_PURPOSE_INDEX, ModelStructure.OTH_DISCR_PRIMARY_PURPOSE_NAME);
+        purposeIndexNameMap = new HashMap<Integer, String>();
+        purposeIndexNameMap.put(ModelStructure.SHOPPING_PRIMARY_PURPOSE_INDEX,
+                ModelStructure.SHOPPING_PRIMARY_PURPOSE_NAME);
+        purposeIndexNameMap.put(ModelStructure.OTH_MAINT_PRIMARY_PURPOSE_INDEX,
+                ModelStructure.OTH_MAINT_PRIMARY_PURPOSE_NAME);
+        purposeIndexNameMap.put(ModelStructure.EAT_OUT_PRIMARY_PURPOSE_INDEX,
+                ModelStructure.EAT_OUT_PRIMARY_PURPOSE_NAME);
+        purposeIndexNameMap.put(ModelStructure.VISITING_PRIMARY_PURPOSE_INDEX,
+                ModelStructure.VISITING_PRIMARY_PURPOSE_NAME);
+        purposeIndexNameMap.put(ModelStructure.OTH_DISCR_PRIMARY_PURPOSE_INDEX,
+                ModelStructure.OTH_DISCR_PRIMARY_PURPOSE_NAME);
 
-        int dataSheet = Integer.parseInt( propertyMap.get(UEC_DATA_PAGE_TARGET) );
-        int freqCompSheet = Integer.parseInt( propertyMap.get(UEC_JOINT_TOUR_FREQ_COMP_MODEL_PAGE) );
-        int particSheet = Integer.parseInt( propertyMap.get(UEC_JOINT_TOUR_PARTIC_MODEL_PAGE) );
-        
+        int dataSheet = Integer.parseInt(propertyMap.get(UEC_DATA_PAGE_TARGET));
+        int freqCompSheet = Integer.parseInt(propertyMap.get(UEC_JOINT_TOUR_FREQ_COMP_MODEL_PAGE));
+        int particSheet = Integer.parseInt(propertyMap.get(UEC_JOINT_TOUR_PARTIC_MODEL_PAGE));
+
         // set up the models
-        jointTourFrequencyModel = new ChoiceModelApplication(uecFileName, freqCompSheet, dataSheet, propertyMap, (VariableTable) dmuObject);
+        jointTourFrequencyModel = new ChoiceModelApplication(uecFileName, freqCompSheet, dataSheet,
+                propertyMap, (VariableTable) dmuObject);
         jointModelsAltsTable = jointTourFrequencyModel.getUEC().getAlternativeData();
-        modelStructure.setJtfAltLabels( jointTourFrequencyModel.getAlternativeNames() );
-        
-        jointTourParticipation = new ChoiceModelApplication(uecFileName, particSheet, dataSheet, propertyMap, (VariableTable) dmuObject);
+        modelStructure.setJtfAltLabels(jointTourFrequencyModel.getAlternativeNames());
+
+        jointTourParticipation = new ChoiceModelApplication(uecFileName, particSheet, dataSheet,
+                propertyMap, (VariableTable) dmuObject);
     }
 
     public void applyModel(Household household)
     {
-        
+
         // this household does not make joint tours if the CDAP pattern does not contain "j".
-        if ( ! household.getCoordinatedDailyActivityPattern().contains("j") )
-            return;
+        if (!household.getCoordinatedDailyActivityPattern().contains("j")) return;
 
         household.calculateTimeWindowOverlaps();
-        
+
         try
         {
 
@@ -140,7 +146,9 @@ public class JointTourModels implements Serializable
 
             Logger modelLogger = tourFreq;
             if (household.getDebugChoiceModels())
-                household.logHouseholdObject("Pre Joint Tour Frequency Choice HHID=" + household.getHhId() + " Object", modelLogger);
+                household.logHouseholdObject(
+                        "Pre Joint Tour Frequency Choice HHID=" + household.getHhId() + " Object",
+                        modelLogger);
 
             // if it's not a valid household for joint tour frequency, keep track of
             // count for logging later, and return.
@@ -165,24 +173,34 @@ public class JointTourModels implements Serializable
 
             // set the household id, origin taz, hh taz, and debugFlag=false in the dmu
             dmuObject.setHouseholdObject(household);
-            
+
             // set the accessibility values needed based on auto sufficiency category for the hh.
-            if ( household.getAutoSufficiency() == 1 ) {
-                dmuObject.setShopHOVAccessibility(accTable.getAggregateAccessibility("shopHov0", household.getHhMgra()));
-                dmuObject.setMaintHOVAccessibility(accTable.getAggregateAccessibility("maintHov0", household.getHhMgra()));
-                dmuObject.setDiscrHOVAccessibility(accTable.getAggregateAccessibility("discrHov0", household.getHhMgra()));
+            if (household.getAutoSufficiency() == 1)
+            {
+                dmuObject.setShopHOVAccessibility(accTable.getAggregateAccessibility("shopHov0",
+                        household.getHhMgra()));
+                dmuObject.setMaintHOVAccessibility(accTable.getAggregateAccessibility("maintHov0",
+                        household.getHhMgra()));
+                dmuObject.setDiscrHOVAccessibility(accTable.getAggregateAccessibility("discrHov0",
+                        household.getHhMgra()));
+            } else if (household.getAutoSufficiency() == 2)
+            {
+                dmuObject.setShopHOVAccessibility(accTable.getAggregateAccessibility("shopHov1",
+                        household.getHhMgra()));
+                dmuObject.setMaintHOVAccessibility(accTable.getAggregateAccessibility("maintHov1",
+                        household.getHhMgra()));
+                dmuObject.setDiscrHOVAccessibility(accTable.getAggregateAccessibility("discrHov1",
+                        household.getHhMgra()));
+            } else if (household.getAutoSufficiency() == 3)
+            {
+                dmuObject.setShopHOVAccessibility(accTable.getAggregateAccessibility("shopHov2",
+                        household.getHhMgra()));
+                dmuObject.setMaintHOVAccessibility(accTable.getAggregateAccessibility("maintHov2",
+                        household.getHhMgra()));
+                dmuObject.setDiscrHOVAccessibility(accTable.getAggregateAccessibility("discrHov2",
+                        household.getHhMgra()));
             }
-            else if ( household.getAutoSufficiency() == 2 ) {
-                dmuObject.setShopHOVAccessibility(accTable.getAggregateAccessibility("shopHov1", household.getHhMgra()));
-                dmuObject.setMaintHOVAccessibility(accTable.getAggregateAccessibility("maintHov1", household.getHhMgra()));
-                dmuObject.setDiscrHOVAccessibility(accTable.getAggregateAccessibility("discrHov1", household.getHhMgra()));
-            }
-            else if ( household.getAutoSufficiency() == 3 ) {
-                dmuObject.setShopHOVAccessibility(accTable.getAggregateAccessibility("shopHov2", household.getHhMgra()));
-                dmuObject.setMaintHOVAccessibility(accTable.getAggregateAccessibility("maintHov2", household.getHhMgra()));
-                dmuObject.setDiscrHOVAccessibility(accTable.getAggregateAccessibility("discrHov2", household.getHhMgra()));
-            }
-            
+
             IndexValues index = dmuObject.getDmuIndexValues();
 
             // write debug header
@@ -198,7 +216,8 @@ public class JointTourModels implements Serializable
                 decisionMakerLabel = String.format("HH=%d, hhSize=%d.", household.getHhId(),
                         household.getHhSize());
 
-                jointTourFrequencyModel.choiceModelUtilityTraceLoggerHeading(choiceModelDescription, decisionMakerLabel);
+                jointTourFrequencyModel.choiceModelUtilityTraceLoggerHeading(
+                        choiceModelDescription, decisionMakerLabel);
 
                 modelLogger.info(" ");
                 loggingHeader = choiceModelDescription + " for " + decisionMakerLabel;
@@ -223,45 +242,56 @@ public class JointTourModels implements Serializable
             if (jointTourFrequencyModel.getAvailabilityCount() > 0)
             {
                 chosenFreqAlt = jointTourFrequencyModel.getChoiceResult(rn);
-                household.setJointTourFreqResult(chosenFreqAlt, jointTourFrequencyModel.getAlternativeNames()[chosenFreqAlt - 1]);
+                household.setJointTourFreqResult(chosenFreqAlt,
+                        jointTourFrequencyModel.getAlternativeNames()[chosenFreqAlt - 1]);
             } else
             {
-                logger.error(String.format("Exception caught for HHID=%d, no available joint tour frequency alternatives to choose from in choiceModelApplication.", household.getHhId()));
+                logger.error(String
+                        .format("Exception caught for HHID=%d, no available joint tour frequency alternatives to choose from in choiceModelApplication.",
+                                household.getHhId()));
                 throw new RuntimeException();
             }
 
             // debug output
             if (household.getDebugChoiceModels())
             {
-                
-                String[] altNames = jointTourFrequencyModel.getAlternativeNames(); 
+
+                String[] altNames = jointTourFrequencyModel.getAlternativeNames();
 
                 double[] utilities = jointTourFrequencyModel.getUtilities();
                 double[] probabilities = jointTourFrequencyModel.getProbabilities();
 
-                modelLogger.info("HHID: " + household.getHhId() + ", HHSize: " + household.getHhSize());
-                modelLogger.info("Alternative                 Utility       Probability           CumProb");
-                modelLogger.info("------------------   --------------    --------------    --------------");
+                modelLogger.info("HHID: " + household.getHhId() + ", HHSize: "
+                        + household.getHhSize());
+                modelLogger
+                        .info("Alternative                 Utility       Probability           CumProb");
+                modelLogger
+                        .info("------------------   --------------    --------------    --------------");
 
                 double cumProb = 0.0;
                 for (int k = 0; k < altNames.length; k++)
                 {
                     cumProb += probabilities[k];
                     String altString = String.format("%-3d %10s", k + 1, altNames[k]);
-                    modelLogger.info(String.format("%-15s%18.6e%18.6e%18.6e", altString, utilities[k], probabilities[k], cumProb));
+                    modelLogger.info(String.format("%-15s%18.6e%18.6e%18.6e", altString,
+                            utilities[k], probabilities[k], cumProb));
                 }
 
                 modelLogger.info(" ");
-                String altString = String.format("%-3d %10s", chosenFreqAlt, altNames[chosenFreqAlt-1]);
-                modelLogger.info(String.format("Choice: %s, with rn=%.8f, randomCount=%d", altString, rn, randomCount));
+                String altString = String.format("%-3d %10s", chosenFreqAlt,
+                        altNames[chosenFreqAlt - 1]);
+                modelLogger.info(String.format("Choice: %s, with rn=%.8f, randomCount=%d",
+                        altString, rn, randomCount));
 
                 modelLogger.info(separator);
                 modelLogger.info("");
                 modelLogger.info("");
 
                 // write choice model alternative info to debug log file
-                jointTourFrequencyModel.logAlternativesInfo(choiceModelDescription, decisionMakerLabel);
-                jointTourFrequencyModel.logSelectionInfo(choiceModelDescription, decisionMakerLabel, rn, chosenFreqAlt);
+                jointTourFrequencyModel.logAlternativesInfo(choiceModelDescription,
+                        decisionMakerLabel);
+                jointTourFrequencyModel.logSelectionInfo(choiceModelDescription,
+                        decisionMakerLabel, rn, chosenFreqAlt);
 
                 // write UEC calculation results to separate model specific log file
                 jointTourFrequencyModel.logUECResults(modelLogger, loggingHeader);
@@ -272,8 +302,8 @@ public class JointTourModels implements Serializable
 
         } catch (Exception e)
         {
-            logger.error(String.format("error joint tour choices model for hhId=%d.", household
-                    .getHhId()));
+            logger.error(String.format("error joint tour choices model for hhId=%d.",
+                    household.getHhId()));
             throw new RuntimeException();
         }
 
@@ -302,11 +332,11 @@ public class JointTourModels implements Serializable
         Logger modelLogger = tourFreq;
 
         int loopCount = 0;
-        while(!validParty)
+        while (!validParty)
         {
 
-            dmuObject.setTourObject( jointTour );
-            
+            dmuObject.setTourObject(jointTour);
+
             adults = 0;
             children = 0;
 
@@ -325,7 +355,9 @@ public class JointTourModels implements Serializable
 
                 if (household.getDebugChoiceModels() || loopCount == 1000)
                 {
-                    decisionMakerLabel = String.format( "HH=%d, hhSize=%d, PersonNum=%d, PersonType=%s, tourId=%d.", household.getHhId(), household.getHhSize(), person.getPersonNum(),
+                    decisionMakerLabel = String.format(
+                            "HH=%d, hhSize=%d, PersonNum=%d, PersonType=%s, tourId=%d.",
+                            household.getHhId(), household.getHhSize(), person.getPersonNum(),
                             person.getPersonType(), jointTour.getTourId());
                     household.logPersonObject(decisionMakerLabel, modelLogger, person);
                 }
@@ -336,7 +368,7 @@ public class JointTourModels implements Serializable
                 switch (jointTour.getJointTourComposition())
                 {
 
-                    // adults only in joint tour
+                // adults only in joint tour
                     case 1:
                         if (persons[p].getPersonIsAdult() == 1)
                         {
@@ -345,11 +377,14 @@ public class JointTourModels implements Serializable
                             if (household.getDebugChoiceModels() || loopCount == 1000)
                             {
 
-                                choiceModelDescription = String.format("Adult Party Joint Tour Participation Choice Model:");
-                                jointTourParticipation.choiceModelUtilityTraceLoggerHeading(choiceModelDescription, decisionMakerLabel);
+                                choiceModelDescription = String
+                                        .format("Adult Party Joint Tour Participation Choice Model:");
+                                jointTourParticipation.choiceModelUtilityTraceLoggerHeading(
+                                        choiceModelDescription, decisionMakerLabel);
 
                                 modelLogger.info(" ");
-                                loggingHeader = choiceModelDescription + " for " + decisionMakerLabel + ".";
+                                loggingHeader = choiceModelDescription + " for "
+                                        + decisionMakerLabel + ".";
                                 for (int k = 0; k < loggingHeader.length(); k++)
                                     separator += "+";
                                 modelLogger.info(loggingHeader);
@@ -358,8 +393,9 @@ public class JointTourModels implements Serializable
                                 modelLogger.info("");
                             }
 
-                            jointTourParticipation.computeUtilities(dmuObject, dmuObject.getDmuIndexValues());
-                            
+                            jointTourParticipation.computeUtilities(dmuObject,
+                                    dmuObject.getDmuIndexValues());
+
                             // get the random number from the household
                             Random random = household.getHhRandom();
                             int randomCount = household.getHhRandomCount();
@@ -368,11 +404,13 @@ public class JointTourModels implements Serializable
                             // if the choice model has at least one available
                             // alternative, make choice.
                             int chosen = -1;
-                            if (jointTourParticipation.getAvailabilityCount() > 0)
-                                chosen = jointTourParticipation.getChoiceResult(rn);
+                            if (jointTourParticipation.getAvailabilityCount() > 0) chosen = jointTourParticipation
+                                    .getChoiceResult(rn);
                             else
                             {
-                                logger.error(String.format("Exception caught for HHID=%d, person p=%d, no available adults only joint tour participation alternatives to choose from in choiceModelApplication.", jointTour.getHhId(), p));
+                                logger.error(String
+                                        .format("Exception caught for HHID=%d, person p=%d, no available adults only joint tour participation alternatives to choose from in choiceModelApplication.",
+                                                jointTour.getHhId(), p));
                                 throw new RuntimeException();
                             }
 
@@ -385,21 +423,31 @@ public class JointTourModels implements Serializable
                                 double[] utilities = jointTourParticipation.getUtilities();
                                 double[] probabilities = jointTourParticipation.getProbabilities();
 
-                                modelLogger.info("HHID: " + household.getHhId() + ", HHSize: " + household.getHhSize() + ", tourId: " + jointTour.getTourId() + ", jointFreqChosen: " + household.getJointTourFreqChosenAltName() );
-                                modelLogger.info("Alternative                 Utility       Probability           CumProb");
-                                modelLogger.info("------------------   --------------    --------------    --------------");
+                                modelLogger.info("HHID: " + household.getHhId() + ", HHSize: "
+                                        + household.getHhSize() + ", tourId: "
+                                        + jointTour.getTourId() + ", jointFreqChosen: "
+                                        + household.getJointTourFreqChosenAltName());
+                                modelLogger
+                                        .info("Alternative                 Utility       Probability           CumProb");
+                                modelLogger
+                                        .info("------------------   --------------    --------------    --------------");
 
                                 double cumProb = 0.0;
                                 for (int k = 0; k < altNames.length; k++)
                                 {
                                     cumProb += probabilities[k];
-                                    String altString = String.format("%-3d %13s", k + 1, altNames[k]);
-                                    modelLogger.info(String.format("%-18s%18.6e%18.6e%18.6e", altString, utilities[k], probabilities[k], cumProb));
+                                    String altString = String.format("%-3d %13s", k + 1,
+                                            altNames[k]);
+                                    modelLogger.info(String.format("%-18s%18.6e%18.6e%18.6e",
+                                            altString, utilities[k], probabilities[k], cumProb));
                                 }
 
                                 modelLogger.info(" ");
-                                String altString = String.format("%-3d %13s", chosen, altNames[chosen - 1]);
-                                modelLogger.info(String.format( "Choice: %s, with rn=%.8f, randomCount=%d", altString, rn, randomCount));
+                                String altString = String.format("%-3d %13s", chosen,
+                                        altNames[chosen - 1]);
+                                modelLogger.info(String.format(
+                                        "Choice: %s, with rn=%.8f, randomCount=%d", altString, rn,
+                                        randomCount));
 
                                 modelLogger.info(separator);
                                 modelLogger.info("");
@@ -407,19 +455,25 @@ public class JointTourModels implements Serializable
 
                                 // write choice model alternative info to debug log
                                 // file
-                                jointTourParticipation.logAlternativesInfo(choiceModelDescription, decisionMakerLabel);
-                                jointTourParticipation.logSelectionInfo(choiceModelDescription, decisionMakerLabel, rn, chosen);
+                                jointTourParticipation.logAlternativesInfo(choiceModelDescription,
+                                        decisionMakerLabel);
+                                jointTourParticipation.logSelectionInfo(choiceModelDescription,
+                                        decisionMakerLabel, rn, chosen);
 
                                 // write UEC calculation results to separate model
                                 // specific log file
                                 jointTourParticipation.logUECResults(modelLogger, loggingHeader);
-                                
-                                if ( loopCount == 1000 ) {
-                                    jointTourFrequencyModel.choiceModelUtilityTraceLoggerHeading(choiceModelDescription, decisionMakerLabel);
-                                    jointTourFrequencyModel.computeUtilities(dmuObject, dmuObject.getDmuIndexValues());
-                                    jointTourFrequencyModel.logUECResults(modelLogger, loggingHeader);
+
+                                if (loopCount == 1000)
+                                {
+                                    jointTourFrequencyModel.choiceModelUtilityTraceLoggerHeading(
+                                            choiceModelDescription, decisionMakerLabel);
+                                    jointTourFrequencyModel.computeUtilities(dmuObject,
+                                            dmuObject.getDmuIndexValues());
+                                    jointTourFrequencyModel.logUECResults(modelLogger,
+                                            loggingHeader);
                                 }
-                                
+
                             }
 
                             // particpate is alternative 1, not participating is alternative 2.
@@ -440,11 +494,14 @@ public class JointTourModels implements Serializable
                             if (household.getDebugChoiceModels() || loopCount == 1000)
                             {
 
-                                choiceModelDescription = String.format("Child Party Joint Tour Participation Choice Model:");
-                                jointTourParticipation.choiceModelUtilityTraceLoggerHeading(choiceModelDescription, decisionMakerLabel);
+                                choiceModelDescription = String
+                                        .format("Child Party Joint Tour Participation Choice Model:");
+                                jointTourParticipation.choiceModelUtilityTraceLoggerHeading(
+                                        choiceModelDescription, decisionMakerLabel);
 
                                 modelLogger.info(" ");
-                                loggingHeader = choiceModelDescription + " for " + decisionMakerLabel + ".";
+                                loggingHeader = choiceModelDescription + " for "
+                                        + decisionMakerLabel + ".";
                                 for (int k = 0; k < loggingHeader.length(); k++)
                                     separator += "+";
                                 modelLogger.info(loggingHeader);
@@ -453,7 +510,8 @@ public class JointTourModels implements Serializable
                                 modelLogger.info("");
                             }
 
-                            jointTourParticipation.computeUtilities(dmuObject, dmuObject.getDmuIndexValues());
+                            jointTourParticipation.computeUtilities(dmuObject,
+                                    dmuObject.getDmuIndexValues());
                             Random random = household.getHhRandom();
                             int randomCount = household.getHhRandomCount();
                             double rn = random.nextDouble();
@@ -461,11 +519,13 @@ public class JointTourModels implements Serializable
                             // if the choice model has at least one available
                             // alternative, make choice.
                             int chosen = -1;
-                            if (jointTourParticipation.getAvailabilityCount() > 0)
-                                chosen = jointTourParticipation.getChoiceResult(rn);
+                            if (jointTourParticipation.getAvailabilityCount() > 0) chosen = jointTourParticipation
+                                    .getChoiceResult(rn);
                             else
                             {
-                                logger.error(String.format("Exception caught for HHID=%d, person p=%d, no available children only joint tour participation alternatives to choose from in choiceModelApplication.", jointTour.getHhId(), p));
+                                logger.error(String
+                                        .format("Exception caught for HHID=%d, person p=%d, no available children only joint tour participation alternatives to choose from in choiceModelApplication.",
+                                                jointTour.getHhId(), p));
                                 throw new RuntimeException();
                             }
 
@@ -478,21 +538,30 @@ public class JointTourModels implements Serializable
                                 double[] utilities = jointTourParticipation.getUtilities();
                                 double[] probabilities = jointTourParticipation.getProbabilities();
 
-                                modelLogger.info("HHID: " + household.getHhId() + ", HHSize: " + household.getHhSize() + ", tourId: " + jointTour.getTourId());
-                                modelLogger.info("Alternative                 Utility       Probability           CumProb");
-                                modelLogger.info("------------------   --------------    --------------    --------------");
+                                modelLogger.info("HHID: " + household.getHhId() + ", HHSize: "
+                                        + household.getHhSize() + ", tourId: "
+                                        + jointTour.getTourId());
+                                modelLogger
+                                        .info("Alternative                 Utility       Probability           CumProb");
+                                modelLogger
+                                        .info("------------------   --------------    --------------    --------------");
 
                                 double cumProb = 0.0;
                                 for (int k = 0; k < altNames.length; k++)
                                 {
                                     cumProb += probabilities[k];
-                                    String altString = String.format("%-3d %13s", k + 1, altNames[k]);
-                                    modelLogger.info(String.format("%-18s%18.6e%18.6e%18.6e", altString, utilities[k], probabilities[k], cumProb));
+                                    String altString = String.format("%-3d %13s", k + 1,
+                                            altNames[k]);
+                                    modelLogger.info(String.format("%-18s%18.6e%18.6e%18.6e",
+                                            altString, utilities[k], probabilities[k], cumProb));
                                 }
 
                                 modelLogger.info(" ");
-                                String altString = String.format("%-3d %13s", chosen, altNames[chosen - 1]);
-                                modelLogger.info(String.format( "Choice: %s, with rn=%.8f, randomCount=%d", altString, rn, randomCount));
+                                String altString = String.format("%-3d %13s", chosen,
+                                        altNames[chosen - 1]);
+                                modelLogger.info(String.format(
+                                        "Choice: %s, with rn=%.8f, randomCount=%d", altString, rn,
+                                        randomCount));
 
                                 modelLogger.info(separator);
                                 modelLogger.info("");
@@ -500,17 +569,23 @@ public class JointTourModels implements Serializable
 
                                 // write choice model alternative info to debug log
                                 // file
-                                jointTourParticipation.logAlternativesInfo(choiceModelDescription, decisionMakerLabel);
-                                jointTourParticipation.logSelectionInfo(choiceModelDescription, decisionMakerLabel, rn, chosen);
+                                jointTourParticipation.logAlternativesInfo(choiceModelDescription,
+                                        decisionMakerLabel);
+                                jointTourParticipation.logSelectionInfo(choiceModelDescription,
+                                        decisionMakerLabel, rn, chosen);
 
                                 // write UEC calculation results to separate model
                                 // specific log file
                                 jointTourParticipation.logUECResults(modelLogger, loggingHeader);
 
-                                if ( loopCount == 1000 ) {
-                                    jointTourFrequencyModel.choiceModelUtilityTraceLoggerHeading(choiceModelDescription, decisionMakerLabel);
-                                    jointTourFrequencyModel.computeUtilities(dmuObject, dmuObject.getDmuIndexValues());
-                                    jointTourFrequencyModel.logUECResults(modelLogger, loggingHeader);
+                                if (loopCount == 1000)
+                                {
+                                    jointTourFrequencyModel.choiceModelUtilityTraceLoggerHeading(
+                                            choiceModelDescription, decisionMakerLabel);
+                                    jointTourFrequencyModel.computeUtilities(dmuObject,
+                                            dmuObject.getDmuIndexValues());
+                                    jointTourFrequencyModel.logUECResults(modelLogger,
+                                            loggingHeader);
                                 }
                             }
 
@@ -530,11 +605,14 @@ public class JointTourModels implements Serializable
                         if (household.getDebugChoiceModels() || loopCount == 1000)
                         {
 
-                            choiceModelDescription = String.format("Mixed Party Joint Tour Participation Choice Model:");
-                            jointTourParticipation.choiceModelUtilityTraceLoggerHeading(choiceModelDescription, decisionMakerLabel);
+                            choiceModelDescription = String
+                                    .format("Mixed Party Joint Tour Participation Choice Model:");
+                            jointTourParticipation.choiceModelUtilityTraceLoggerHeading(
+                                    choiceModelDescription, decisionMakerLabel);
 
                             modelLogger.info(" ");
-                            loggingHeader = choiceModelDescription + " for " + decisionMakerLabel + ".";
+                            loggingHeader = choiceModelDescription + " for " + decisionMakerLabel
+                                    + ".";
                             for (int k = 0; k < loggingHeader.length(); k++)
                                 separator += "+";
                             modelLogger.info(loggingHeader);
@@ -543,7 +621,8 @@ public class JointTourModels implements Serializable
                             modelLogger.info("");
                         }
 
-                        jointTourParticipation.computeUtilities(dmuObject, dmuObject.getDmuIndexValues());
+                        jointTourParticipation.computeUtilities(dmuObject,
+                                dmuObject.getDmuIndexValues());
                         Random random = household.getHhRandom();
                         int randomCount = household.getHhRandomCount();
                         double rn = random.nextDouble();
@@ -551,11 +630,13 @@ public class JointTourModels implements Serializable
                         // if the choice model has at least one available
                         // alternative, make choice.
                         int chosen = -1;
-                        if (jointTourParticipation.getAvailabilityCount() > 0)
-                            chosen = jointTourParticipation.getChoiceResult(rn);
+                        if (jointTourParticipation.getAvailabilityCount() > 0) chosen = jointTourParticipation
+                                .getChoiceResult(rn);
                         else
                         {
-                            logger.error(String.format("Exception caught for HHID=%d, person p=%d, no available mixed adult/children joint tour participation alternatives to choose from in choiceModelApplication.", jointTour.getHhId(), p));
+                            logger.error(String
+                                    .format("Exception caught for HHID=%d, person p=%d, no available mixed adult/children joint tour participation alternatives to choose from in choiceModelApplication.",
+                                            jointTour.getHhId(), p));
                             throw new RuntimeException();
                         }
 
@@ -568,37 +649,49 @@ public class JointTourModels implements Serializable
                             double[] utilities = jointTourParticipation.getUtilities();
                             double[] probabilities = jointTourParticipation.getProbabilities();
 
-                            modelLogger.info("HHID: " + household.getHhId() + ", HHSize: " + household.getHhSize() + ", tourId: " + jointTour.getTourId());
-                            modelLogger.info("Alternative                 Utility       Probability           CumProb");
-                            modelLogger.info("------------------   --------------    --------------    --------------");
+                            modelLogger.info("HHID: " + household.getHhId() + ", HHSize: "
+                                    + household.getHhSize() + ", tourId: " + jointTour.getTourId());
+                            modelLogger
+                                    .info("Alternative                 Utility       Probability           CumProb");
+                            modelLogger
+                                    .info("------------------   --------------    --------------    --------------");
 
                             double cumProb = 0.0;
                             for (int k = 0; k < altNames.length; k++)
                             {
                                 cumProb += probabilities[k];
                                 String altString = String.format("%-3d %13s", k + 1, altNames[k]);
-                                modelLogger.info(String.format("%-18s%18.6e%18.6e%18.6e", altString, utilities[k], probabilities[k], cumProb));
+                                modelLogger.info(String.format("%-18s%18.6e%18.6e%18.6e",
+                                        altString, utilities[k], probabilities[k], cumProb));
                             }
 
                             modelLogger.info(" ");
-                            String altString = String.format("%-3d %13s", chosen, altNames[chosen - 1]);
-                            modelLogger.info(String.format( "Choice: %s, with rn=%.8f, randomCount=%d", altString, rn, randomCount));
+                            String altString = String.format("%-3d %13s", chosen,
+                                    altNames[chosen - 1]);
+                            modelLogger.info(String.format(
+                                    "Choice: %s, with rn=%.8f, randomCount=%d", altString, rn,
+                                    randomCount));
 
                             modelLogger.info(separator);
                             modelLogger.info("");
                             modelLogger.info("");
 
                             // write choice model alternative info to debug log file
-                            jointTourParticipation.logAlternativesInfo(choiceModelDescription, decisionMakerLabel);
-                            jointTourParticipation.logSelectionInfo(choiceModelDescription, decisionMakerLabel, rn, chosen);
+                            jointTourParticipation.logAlternativesInfo(choiceModelDescription,
+                                    decisionMakerLabel);
+                            jointTourParticipation.logSelectionInfo(choiceModelDescription,
+                                    decisionMakerLabel, rn, chosen);
 
                             // write UEC calculation results to separate model
                             // specific log file
                             jointTourParticipation.logUECResults(modelLogger, loggingHeader);
 
-                            if ( loopCount == 1000 ) {
-                                jointTourFrequencyModel.choiceModelUtilityTraceLoggerHeading(choiceModelDescription, decisionMakerLabel);
-                                jointTourFrequencyModel.computeUtilities(dmuObject, dmuObject.getDmuIndexValues());
+                            if (loopCount == 1000)
+                            {
+                                jointTourFrequencyModel.choiceModelUtilityTraceLoggerHeading(
+                                        choiceModelDescription, decisionMakerLabel);
+                                jointTourFrequencyModel.computeUtilities(dmuObject,
+                                        dmuObject.getDmuIndexValues());
                                 jointTourFrequencyModel.logUECResults(modelLogger, loggingHeader);
                             }
                         }
@@ -607,10 +700,8 @@ public class JointTourModels implements Serializable
                         if (chosen == 1)
                         {
                             jointTourPersonList.add(p);
-                            if (persons[p].getPersonIsAdult() == 1)
-                                adults++;
-                            else
-                                children++;
+                            if (persons[p].getPersonIsAdult() == 1) adults++;
+                            else children++;
                         }
                         break;
 
@@ -636,18 +727,19 @@ public class JointTourModels implements Serializable
                     break;
 
             }
-            
-            if ( ! validParty )
-                loopCount++;
 
-            if ( loopCount > 1000 ) {
-                logger.warn( "loop count in joint tour participation model is " + loopCount);
-                if ( loopCount > 2000 ){
-                    logger.error( "terminating on excessive loop count." );
+            if (!validParty) loopCount++;
+
+            if (loopCount > 1000)
+            {
+                logger.warn("loop count in joint tour participation model is " + loopCount);
+                if (loopCount > 2000)
+                {
+                    logger.error("terminating on excessive loop count.");
                     throw new RuntimeException();
                 }
             }
-            
+
         } // end while
 
         // create an array of person indices for participation in the tour
@@ -661,8 +753,8 @@ public class JointTourModels implements Serializable
             for (int i = 0; i < personNums.length; i++)
             {
                 Person person = household.getPersons()[personNums[i]];
-                String decisionMakerLabel = String.format(
-                                "Person in Party, HH=%d, hhSize=%d, PersonNum=%d, PersonType=%s, tourId=%d.",
+                String decisionMakerLabel = String
+                        .format("Person in Party, HH=%d, hhSize=%d, PersonNum=%d, PersonType=%s, tourId=%d.",
                                 household.getHhId(), household.getHhSize(), person.getPersonNum(),
                                 person.getPersonType(), jointTour.getTourId());
                 household.logPersonObject(decisionMakerLabel, modelLogger, person);
@@ -672,37 +764,40 @@ public class JointTourModels implements Serializable
     }
 
     /**
-     * creates the tour objects in the Household object given the chosen joint tour
-     * frequency alternative.
+     * creates the tour objects in the Household object given the chosen joint tour frequency alternative.
      * 
      * @param chosenAlt
      */
     private void createJointTours(Household household, int chosenAlt)
     {
-        
-        int purposeIndex1 = (int)jointModelsAltsTable.getValueAt( chosenAlt, PURPOSE_1_FIELD); 
-        int purposeIndex2 = (int)jointModelsAltsTable.getValueAt( chosenAlt, PURPOSE_2_FIELD); 
 
-        if ( purposeIndex1 > 0 && purposeIndex2 > 0 ) {            
+        int purposeIndex1 = (int) jointModelsAltsTable.getValueAt(chosenAlt, PURPOSE_1_FIELD);
+        int purposeIndex2 = (int) jointModelsAltsTable.getValueAt(chosenAlt, PURPOSE_2_FIELD);
 
-            Tour t1 = new Tour(household, (String) purposeIndexNameMap.get(purposeIndex1), ModelStructure.JOINT_NON_MANDATORY_CATEGORY, purposeIndex1);
-            int party1 = (int)jointModelsAltsTable.getValueAt( chosenAlt, PARTY_1_FIELD); 
+        if (purposeIndex1 > 0 && purposeIndex2 > 0)
+        {
+
+            Tour t1 = new Tour(household, (String) purposeIndexNameMap.get(purposeIndex1),
+                    ModelStructure.JOINT_NON_MANDATORY_CATEGORY, purposeIndex1);
+            int party1 = (int) jointModelsAltsTable.getValueAt(chosenAlt, PARTY_1_FIELD);
             t1.setJointTourComposition(party1);
 
-            Tour t2 = new Tour(household, (String) purposeIndexNameMap.get(purposeIndex2), ModelStructure.JOINT_NON_MANDATORY_CATEGORY, purposeIndex2);                
-            int party2 = (int)jointModelsAltsTable.getValueAt( chosenAlt, PARTY_2_FIELD); 
+            Tour t2 = new Tour(household, (String) purposeIndexNameMap.get(purposeIndex2),
+                    ModelStructure.JOINT_NON_MANDATORY_CATEGORY, purposeIndex2);
+            int party2 = (int) jointModelsAltsTable.getValueAt(chosenAlt, PARTY_2_FIELD);
             t2.setJointTourComposition(party2);
 
             household.createJointTourArray(t1, t2);
 
             jointTourParticipation(t1);
             jointTourParticipation(t2);
-            
-            }
-        else{
 
-            Tour t1 = new Tour(household, (String) purposeIndexNameMap.get(purposeIndex1), ModelStructure.JOINT_NON_MANDATORY_CATEGORY, purposeIndex1);
-            int party1 = (int)jointModelsAltsTable.getValueAt( chosenAlt, PARTY_1_FIELD); 
+        } else
+        {
+
+            Tour t1 = new Tour(household, (String) purposeIndexNameMap.get(purposeIndex1),
+                    ModelStructure.JOINT_NON_MANDATORY_CATEGORY, purposeIndex1);
+            int party1 = (int) jointModelsAltsTable.getValueAt(chosenAlt, PARTY_1_FIELD);
             t1.setJointTourComposition(party1);
 
             household.createJointTourArray(t1);
@@ -713,17 +808,17 @@ public class JointTourModels implements Serializable
 
     }
 
-
-    public static void main( String[] args )
+    public static void main(String[] args)
     {
-                
+
         // set values for these arguments so an object instance can be created
         // and setup run to test integrity of UEC files before running full model.
         HashMap<String, String> propertyMap;
- 
+
         if (args.length == 0)
         {
-            System.out.println("no properties file base name (without .properties extension) was specified as an argument.");
+            System.out
+                    .println("no properties file base name (without .properties extension) was specified as an argument.");
             return;
         } else
         {
@@ -731,78 +826,67 @@ public class JointTourModels implements Serializable
             propertyMap = ResourceUtil.changeResourceBundleIntoHashMap(rb);
         }
 
-        
-        
         /*
          *         
-         */          
+         */
         String matrixServerAddress = (String) propertyMap.get("RunModel.MatrixServerAddress");
         String matrixServerPort = (String) propertyMap.get("RunModel.MatrixServerPort");
 
-        MatrixDataServerIf ms = new MatrixDataServerRmi(matrixServerAddress, Integer.parseInt(matrixServerPort), MatrixDataServer.MATRIX_DATA_SERVER_NAME);
+        MatrixDataServerIf ms = new MatrixDataServerRmi(matrixServerAddress,
+                Integer.parseInt(matrixServerPort), MatrixDataServer.MATRIX_DATA_SERVER_NAME);
         ms.testRemote(Thread.currentThread().getName());
         ms.start32BitMatrixIoServer(MatrixType.TRANSCAD);
 
         MatrixDataManager mdm = MatrixDataManager.getInstance();
         mdm.setMatrixDataServerObject(ms);
 
-        
         MgraDataManager mgraManager = MgraDataManager.getInstance(propertyMap);
         TazDataManager tazManager = TazDataManager.getInstance(propertyMap);
-        
+
         ModelStructure modelStructure = new SandagModelStructure();
         SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure);
- 
-                
-        
-        String projectDirectory = propertyMap.get(CtrampApplication.PROPERTIES_PROJECT_DIRECTORY);
-        String accFileName = projectDirectory + Util.getStringValueFromPropertyMap(propertyMap, "acc.output.file");      
-        AccessibilitiesTable accTable = new AccessibilitiesTable(accFileName);
-    
-        
-        
-        String hhHandlerAddress = (String) propertyMap.get("RunModel.HouseholdServerAddress");
-        int hhServerPort = Integer.parseInt((String) propertyMap.get("RunModel.HouseholdServerPort"));
-        
-        HouseholdDataManagerIf householdDataManager = new HouseholdDataManagerRmi(hhHandlerAddress, hhServerPort,
-                SandagHouseholdDataManager.HH_DATA_SERVER_NAME);
 
+        String projectDirectory = propertyMap.get(CtrampApplication.PROPERTIES_PROJECT_DIRECTORY);
+        String accFileName = projectDirectory
+                + Util.getStringValueFromPropertyMap(propertyMap, "acc.output.file");
+        AccessibilitiesTable accTable = new AccessibilitiesTable(accFileName);
+
+        String hhHandlerAddress = (String) propertyMap.get("RunModel.HouseholdServerAddress");
+        int hhServerPort = Integer.parseInt((String) propertyMap
+                .get("RunModel.HouseholdServerPort"));
+
+        HouseholdDataManagerIf householdDataManager = new HouseholdDataManagerRmi(hhHandlerAddress,
+                hhServerPort, SandagHouseholdDataManager.HH_DATA_SERVER_NAME);
 
         householdDataManager.setPropertyFileValues(propertyMap);
-        householdDataManager.setHouseholdSampleRate( 1.0f, 0 );
+        householdDataManager.setHouseholdSampleRate(1.0f, 0);
         householdDataManager.setDebugHhIdsFromHashmap();
         householdDataManager.setTraceHouseholdSet();
 
-        int id = householdDataManager.getArrayIndex( 423804 );
-        Household[] hh = householdDataManager.getHhArray( id, id );
+        int id = householdDataManager.getArrayIndex(423804);
+        Household[] hh = householdDataManager.getHhArray(id, id);
 
-        
-        JointTourModels jtfModel = new JointTourModels( propertyMap, accTable, modelStructure, dmuFactory );
-        jtfModel.applyModel( hh[0] );
-        
+        JointTourModels jtfModel = new JointTourModels(propertyMap, accTable, modelStructure,
+                dmuFactory);
+        jtfModel.applyModel(hh[0]);
 
-        
-        
         /*
-         * Use this block to instantiate a UEC for the joint freq/comp model and a UEC for the joint participate model.
-         * After checking the UECs are instantiated correctly (spelling/typos/dmu methods implemented/etc.), test model implementation.
-        String uecFileDirectory = propertyMap.get( CtrampApplication.PROPERTIES_UEC_PATH );
-
-        ModelStructure modelStructure = new SandagModelStructure();
-        SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure);
-        
-        JointTourModelsDMU dmuObject = dmuFactory.getJointTourModelsDMU();
-        File uecFile = new File(uecFileDirectory + propertyMap.get( UEC_FILE_PROPERTIES_TARGET ));
-        UtilityExpressionCalculator uec = new UtilityExpressionCalculator(uecFile, 1, 0, propertyMap, (VariableTable)dmuObject);
-        System.out.println("Jount tour freq/comp choice UEC passed.");
-
-        uec = new UtilityExpressionCalculator(uecFile, 2, 0, propertyMap, (VariableTable)dmuObject);
-        System.out.println("Joint tour participation choice UEC passed.");
+         * Use this block to instantiate a UEC for the joint freq/comp model and a UEC for the joint participate model. After checking the UECs are
+         * instantiated correctly (spelling/typos/dmu methods implemented/etc.), test model implementation. String uecFileDirectory = propertyMap.get(
+         * CtrampApplication.PROPERTIES_UEC_PATH );
+         * 
+         * ModelStructure modelStructure = new SandagModelStructure(); SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure);
+         * 
+         * JointTourModelsDMU dmuObject = dmuFactory.getJointTourModelsDMU(); File uecFile = new File(uecFileDirectory + propertyMap.get(
+         * UEC_FILE_PROPERTIES_TARGET )); UtilityExpressionCalculator uec = new UtilityExpressionCalculator(uecFile, 1, 0, propertyMap,
+         * (VariableTable)dmuObject); System.out.println("Jount tour freq/comp choice UEC passed.");
+         * 
+         * uec = new UtilityExpressionCalculator(uecFile, 2, 0, propertyMap, (VariableTable)dmuObject);
+         * System.out.println("Joint tour participation choice UEC passed.");
          */
 
-        
         ms.stop32BitMatrixIoServer();
-    
+
     }
 
 }
