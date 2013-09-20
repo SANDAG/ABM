@@ -138,38 +138,21 @@ public final class StopLocationSampleCalculator
                 (VariableTable) mcDmuObject);
 
         /*
-         * SandagStopDCSoaDMU slcSoaDmuObject = new
-         * SandagStopDCSoaDMU(modelStructure);
+         * SandagStopDCSoaDMU slcSoaDmuObject = new SandagStopDCSoaDMU(modelStructure);
          * 
-         * String slcSoaUecFile = rbMap.get(PROPERTIES_UEC_SLC_SOA_CHOICE);
-         * slcSoaUecFile = uecPath + slcSoaUecFile;
+         * String slcSoaUecFile = rbMap.get(PROPERTIES_UEC_SLC_SOA_CHOICE); slcSoaUecFile = uecPath + slcSoaUecFile;
          * 
-         * ChoiceModelApplication[] slcSoaModel = new
-         * ChoiceModelApplication[MAX_STOP_PURPOSE_INDEX+1];
-         * slcSoaModel[WORK_STOP_PURPOSE_INDEX] = new
-         * ChoiceModelApplication(slcSoaUecFile, WORK_STOP_PURPOSE_INDEX, 0,
-         * rbMap, (VariableTable) slcSoaDmuObject);
-         * slcSoaModel[UNIV_STOP_PURPOSE_INDEX] = new
-         * ChoiceModelApplication(slcSoaUecFile, UNIV_STOP_PURPOSE_INDEX, 0,
-         * rbMap, (VariableTable) slcSoaDmuObject);
-         * slcSoaModel[ESCORT_STOP_PURPOSE_INDEX] = new
-         * ChoiceModelApplication(slcSoaUecFile, ESCORT_STOP_PURPOSE_INDEX, 0,
-         * rbMap, (VariableTable) slcSoaDmuObject);
-         * slcSoaModel[SHOP_STOP_PURPOSE_INDEX] = new
-         * ChoiceModelApplication(slcSoaUecFile, SHOP_STOP_PURPOSE_INDEX, 0,
-         * rbMap, (VariableTable) slcSoaDmuObject);
-         * slcSoaModel[EAT_OUT_STOP_PURPOSE_INDEX] = new
-         * ChoiceModelApplication(slcSoaUecFile, EAT_OUT_STOP_PURPOSE_INDEX, 0,
-         * rbMap, (VariableTable) slcSoaDmuObject);
-         * slcSoaModel[MAINT_STOP_PURPOSE_INDEX] = new
-         * ChoiceModelApplication(slcSoaUecFile, MAINT_STOP_PURPOSE_INDEX, 0,
-         * rbMap, (VariableTable) slcSoaDmuObject);
-         * slcSoaModel[VISIT_STOP_PURPOSE_INDEX] = new
-         * ChoiceModelApplication(slcSoaUecFile, VISIT_STOP_PURPOSE_INDEX, 0,
-         * rbMap, (VariableTable) slcSoaDmuObject);
-         * slcSoaModel[DISCR_STOP_PURPOSE_INDEX] = new
-         * ChoiceModelApplication(slcSoaUecFile, DISCR_STOP_PURPOSE_INDEX, 0,
-         * rbMap, (VariableTable) slcSoaDmuObject);
+         * ChoiceModelApplication[] slcSoaModel = new ChoiceModelApplication[MAX_STOP_PURPOSE_INDEX+1]; slcSoaModel[WORK_STOP_PURPOSE_INDEX] = new
+         * ChoiceModelApplication(slcSoaUecFile, WORK_STOP_PURPOSE_INDEX, 0, rbMap, (VariableTable) slcSoaDmuObject);
+         * slcSoaModel[UNIV_STOP_PURPOSE_INDEX] = new ChoiceModelApplication(slcSoaUecFile, UNIV_STOP_PURPOSE_INDEX, 0, rbMap, (VariableTable)
+         * slcSoaDmuObject); slcSoaModel[ESCORT_STOP_PURPOSE_INDEX] = new ChoiceModelApplication(slcSoaUecFile, ESCORT_STOP_PURPOSE_INDEX, 0, rbMap,
+         * (VariableTable) slcSoaDmuObject); slcSoaModel[SHOP_STOP_PURPOSE_INDEX] = new ChoiceModelApplication(slcSoaUecFile, SHOP_STOP_PURPOSE_INDEX,
+         * 0, rbMap, (VariableTable) slcSoaDmuObject); slcSoaModel[EAT_OUT_STOP_PURPOSE_INDEX] = new ChoiceModelApplication(slcSoaUecFile,
+         * EAT_OUT_STOP_PURPOSE_INDEX, 0, rbMap, (VariableTable) slcSoaDmuObject); slcSoaModel[MAINT_STOP_PURPOSE_INDEX] = new
+         * ChoiceModelApplication(slcSoaUecFile, MAINT_STOP_PURPOSE_INDEX, 0, rbMap, (VariableTable) slcSoaDmuObject);
+         * slcSoaModel[VISIT_STOP_PURPOSE_INDEX] = new ChoiceModelApplication(slcSoaUecFile, VISIT_STOP_PURPOSE_INDEX, 0, rbMap, (VariableTable)
+         * slcSoaDmuObject); slcSoaModel[DISCR_STOP_PURPOSE_INDEX] = new ChoiceModelApplication(slcSoaUecFile, DISCR_STOP_PURPOSE_INDEX, 0, rbMap,
+         * (VariableTable) slcSoaDmuObject);
          */
 
         double absoulteDistanceDeviationCoefficient = -0.05;
@@ -217,9 +200,7 @@ public final class StopLocationSampleCalculator
             int origMgra = odtSet[ORIG_MGRA];
             int destMgra = odtSet[DEST_MGRA];
             int departPeriod = odtSet[TRIP_PERIOD]; // depart period
-            int skimPeriodIndex = modelStructure.getSkimPeriodIndex(departPeriod) + 1; // depart
-                                                                                       // skim
-                                                                                       // period
+            int skimPeriodIndex = modelStructure.getSkimPeriodIndex(departPeriod) + 1; // depart skim period
             double odDist = logsumHelper.getAnmSkimCalculator().getAutoSkims(origMgra, destMgra,
                     skimPeriodIndex, false, logger)[AUTO_DIST_SKIM_INDEX];
             double osDist = logsumHelper.getAnmSkimCalculator().getAutoSkims(origMgra, mgra,
@@ -389,8 +370,7 @@ public final class StopLocationSampleCalculator
     private int[][] getDcEstimationDataOrigDestTimes(TableDataSet hisTds)
     {
 
-        // odts are an array with elements: origin mgra, destination mgra,
-        // departure
+        // odts are an array with elements: origin mgra, destination mgra, departure
         // period(1-6), and arrival period(1-6).
         int[][] odts = new int[hisTds.getRowCount()][NUM_FIELDS];
         mgras = new int[hisTds.getRowCount()][NUM_MGRA_FIELDS];

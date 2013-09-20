@@ -1,10 +1,10 @@
 package org.sandag.abm.crossborder;
 
+import com.pb.sawdust.util.concurrent.DnCRecursiveAction;
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.MissingResourceException;
+import java.rmi.RemoteException;
+import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -19,7 +19,6 @@ import org.sandag.abm.modechoice.TazDataManager;
 import com.pb.common.calculator.MatrixDataManager;
 import com.pb.common.matrix.MatrixType;
 import com.pb.common.util.ResourceUtil;
-import com.pb.sawdust.util.concurrent.DnCRecursiveAction;
 
 public class CrossBorderModel
 {
@@ -52,8 +51,7 @@ public class CrossBorderModel
         this.rbMap = rbMap;
 
         synchronized (INITIALIZATION_LOCK)
-        { // lock to make sure only one of these actually initializes things so
-          // we don't cross threads
+        { // lock to make sure only one of these actually initializes things so we don't cross threads
             mgraManager = MgraDataManager.getInstance(rbMap);
             tazManager = TazDataManager.getInstance(rbMap);
         }
@@ -87,8 +85,7 @@ public class CrossBorderModel
             // only let one thread in to initialize
             synchronized (calculatorsInitialized)
             {
-                // if still not initialized, then this is the first in so do the
-                // initialization (otherwise skip)
+                // if still not initialized, then this is the first in so do the initialization (otherwise skip)
                 if (!calculatorsInitialized.get())
                 {
                     tazDistanceCalculator = new AutoTazSkimsCalculator(rbMap);
@@ -196,8 +193,7 @@ public class CrossBorderModel
 
             } else
             {
-                // generate an outbound trip from the tour origin to the
-                // destination and choose a mode
+                // generate an outbound trip from the tour origin to the destination and choose a mode
                 trips[tripNumber] = new CrossBorderTrip(tour, true);
                 tripModeChoiceModel.chooseMode(tour, trips[tripNumber]);
                 ++tripNumber;
@@ -221,8 +217,7 @@ public class CrossBorderModel
             } else
             {
 
-                // generate an inbound trip from the tour destination to the
-                // origin and choose a mode
+                // generate an inbound trip from the tour destination to the origin and choose a mode
                 trips[tripNumber] = new CrossBorderTrip(tour, false);
                 tripModeChoiceModel.chooseMode(tour, trips[tripNumber]);
                 ++tripNumber;
@@ -278,8 +273,7 @@ public class CrossBorderModel
         {
             // if there are 3 extra tasks queued up, then start executing
             // if there are 1000 or less tours to process, then start executing
-            // otherwise, keep dividing to build up tasks for the threads to
-            // process
+            // otherwise, keep dividing to build up tasks for the threads to process
             return getSurplusQueuedTaskCount() < 3 && length > 1000;
         }
     }
@@ -293,11 +287,9 @@ public class CrossBorderModel
         tourManager.generateCrossBorderTours();
         CrossBorderTour[] tours = tourManager.getTours();
 
-        // get new keys to see if we want to run in concurrent mode, and the
-        // parallelism
+        // get new keys to see if we want to run in concurrent mode, and the parallelism
         // (defaults to single threaded and parallelism = # of processors)
-        // note that concurrent can use up memory very quickly, so setting the
-        // parallelism might be prudent
+        // note that concurrent can use up memory very quickly, so setting the parallelism might be prudent
         boolean concurrent = rbMap.containsKey(RUN_MODEL_CONCURRENT_PROPERTY_KEY)
                 && Boolean.valueOf(Util.getStringValueFromPropertyMap(rbMap,
                         RUN_MODEL_CONCURRENT_PROPERTY_KEY));
@@ -357,8 +349,7 @@ public class CrossBorderModel
                     e);
         }
 
-        // bind this concrete object with the cajo library objects for managing
-        // RMI
+        // bind this concrete object with the cajo library objects for managing RMI
         try
         {
             Remote.config(serverAddress, serverPort, null, 0);
@@ -374,7 +365,7 @@ public class CrossBorderModel
         try
         {
             ItemServer.bind(matrixServer, className);
-        } catch (IOException e)
+        } catch (RemoteException e)
         {
             logger.error(String.format(
                     "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",
@@ -433,8 +424,7 @@ public class CrossBorderModel
         int serverPort = 0;
         try
         {
-            // get matrix server address. if "none" is specified, no server will
-            // be
+            // get matrix server address. if "none" is specified, no server will be
             // started, and matrix io will ocurr within the current process.
             matrixServerAddress = Util.getStringValueFromPropertyMap(pMap,
                     "RunModel.MatrixServerAddress");
@@ -444,14 +434,12 @@ public class CrossBorderModel
                 serverPort = Util.getIntegerValueFromPropertyMap(pMap, "RunModel.MatrixServerPort");
             } catch (MissingResourceException e)
             {
-                // if no matrix server address entry is found, leave undefined
-                // --
+                // if no matrix server address entry is found, leave undefined --
                 // it's eithe not needed or show could create an error.
             }
         } catch (MissingResourceException e)
         {
-            // if no matrix server address entry is found, set to localhost, and
-            // a
+            // if no matrix server address entry is found, set to localhost, and a
             // separate matrix io process will be started on localhost.
             matrixServerAddress = "localhost";
             serverPort = MATRIX_DATA_SERVER_PORT;
@@ -479,8 +467,7 @@ public class CrossBorderModel
                     crossBorderModel.ms.testRemote("CrossBorderModel");
                     crossBorderModel.ms.start32BitMatrixIoServer(mt, "CrossBorderModel");
 
-                    // these methods need to be called to set the matrix data
-                    // manager in the matrix data server
+                    // these methods need to be called to set the matrix data manager in the matrix data server
                     MatrixDataManager mdm = MatrixDataManager.getInstance();
                     mdm.setMatrixDataServerObject(crossBorderModel.ms);
                 }
@@ -503,8 +490,7 @@ public class CrossBorderModel
 
         crossBorderModel.runModel();
 
-        // if a separate process for running matrix data mnager was started,
-        // we're
+        // if a separate process for running matrix data mnager was started, we're
         // done with it, so close it.
         if (matrixServerAddress.equalsIgnoreCase("localhost"))
         {

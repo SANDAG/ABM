@@ -12,8 +12,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 /**
- * This class is used to return auto skim values and non-motorized skim values
- * for MGRA pairs associated with estimation data file records.
+ * This class is used to return auto skim values and non-motorized skim values for MGRA pairs associated with estimation data file records.
  * 
  * @author Jim Hicks
  * @version March, 2010
@@ -83,11 +82,9 @@ public class AutoTazSkimsCalculator
     }
 
     /**
-     * Get all the mgras within walking distance of the origin mgra and set the
-     * distances to those mgras.
+     * Get all the mgras within walking distance of the origin mgra and set the distances to those mgras.
      * 
-     * Then loop through all mgras without a distance and get the drive-alone
-     * non-toll off-peak distance skim value for the taz pair associated with
+     * Then loop through all mgras without a distance and get the drive-alone non-toll off-peak distance skim value for the taz pair associated with
      * each mgra pair.
      * 
      * @param origMgra
@@ -95,9 +92,8 @@ public class AutoTazSkimsCalculator
      * @param An
      *            array in which to put the distances
      * @param tourModeIsAuto
-     *            is a boolean set to true if tour mode is not non-motorized,
-     *            transit, or school bus. if auto tour mode, then no need to
-     *            determine walk distance, and drive skims can be used directly.
+     *            is a boolean set to true if tour mode is not non-motorized, transit, or school bus. if auto tour mode, then no need to determine
+     *            walk distance, and drive skims can be used directly.
      */
     public void computeTazDistanceArrays()
     {

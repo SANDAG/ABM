@@ -119,7 +119,7 @@ public class SandagTourModeChoiceDMU
         return getNmBikeTimeIn();
     }
 
-  	private void setupMethodIndexMap()
+    private void setupMethodIndexMap()
     {
         methodIndexMap = new HashMap<String, Integer>();
 
@@ -152,8 +152,7 @@ public class SandagTourModeChoiceDMU
         methodIndexMap.put("getPersonType", 27);
         methodIndexMap.put("getFreeParkingEligibility", 28);
         methodIndexMap.put("getParkingArea", 29);
-        
-        
+
         methodIndexMap.put("getNm_walkTime_out", 90);
         methodIndexMap.put("getNm_walkTime_in", 91);
         methodIndexMap.put("getNm_bikeTime_out", 92);

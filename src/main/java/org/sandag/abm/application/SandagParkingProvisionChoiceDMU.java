@@ -73,7 +73,6 @@ public class SandagParkingProvisionChoiceDMU
             case 15:
                 return getHParkCost();
 
-
             default:
                 logger.error("method number = " + variableIndex + " not found");
                 throw new RuntimeException("method number = " + variableIndex + " not found");

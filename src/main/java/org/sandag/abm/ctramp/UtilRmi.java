@@ -20,7 +20,7 @@ public class UtilRmi
         implements java.io.Serializable
 {
 
-    private transient Logger logger = Logger.getLogger(UtilRmi.class);
+    private transient Logger logger          = Logger.getLogger(UtilRmi.class);
     private String           connectString;
 
     private static int       MAX_RETRY_COUNT = 100;
@@ -39,7 +39,7 @@ public class UtilRmi
         Object itemObject = null;
         Object returnObject = null;
 
-        while(connectExceptionCount < MAX_RETRY_COUNT)
+        while (connectExceptionCount < MAX_RETRY_COUNT)
         {
 
             try

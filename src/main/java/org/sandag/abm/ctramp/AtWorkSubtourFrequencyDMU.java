@@ -162,8 +162,7 @@ public class AtWorkSubtourFrequencyDMU
     }
 
     /**
-     * set the value of the non-mandatory eat out accessibility for this decision
-     * maker
+     * set the value of the non-mandatory eat out accessibility for this decision maker
      */
     public void setNmEatOutAccessibilityWorkplace(double nmEatOutAccessibillity)
     {

@@ -33,7 +33,7 @@ public abstract class DestChoiceDMU
     protected double[]                 dcSoaCorrections;
 
     protected int                      toursLeftCount;
-    
+
     protected ModelStructure           modelStructure;
     protected MgraDataManager          mgraManager;
     protected BuildAccessibilities     aggAcc;
@@ -114,7 +114,7 @@ public abstract class DestChoiceDMU
     {
         toursLeftCount = count;
     }
-    
+
     public void setDmuIndexValues(int hhId, int zoneId, int origTaz, int destTaz)
     {
         dmuIndex.setHHIndex(hhId);
@@ -154,15 +154,15 @@ public abstract class DestChoiceDMU
     {
         return toursLeftCount;
     }
-    
-    protected int getMaxContinuousAvailableWindow() {
 
-        if ( tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY))
-            return hh.getMaxJointTimeWindow( tour );
-        else
-            return person.getMaximumContinuousAvailableWindow();
+    protected int getMaxContinuousAvailableWindow()
+    {
+
+        if (tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY)) return hh
+                .getMaxJointTimeWindow(tour);
+        else return person.getMaximumContinuousAvailableWindow();
     }
-    
+
     protected double getDcSoaCorrectionsAlt(int alt)
     {
         return dcSoaCorrections[alt];
@@ -242,13 +242,12 @@ public abstract class DestChoiceDMU
     {
         return hh.getNumGradeSchoolStudents();
     }
-    
+
     public int getNumHighSchoolStudents()
     {
         return hh.getNumHighSchoolStudents();
     }
-    
-    
+
     protected int getNumChildrenUnder16()
     {
         return hh.getNumChildrenUnder16();
@@ -316,7 +315,8 @@ public abstract class DestChoiceDMU
 
     protected int getTourIsJoint()
     {
-        return tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY) ? 1 : 0;
+        return tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY) ? 1
+                : 0;
     }
 
     protected double getTotEmpAccessibilityAlt(int alt)

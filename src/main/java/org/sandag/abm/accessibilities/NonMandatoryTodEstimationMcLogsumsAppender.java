@@ -113,8 +113,7 @@ public final class NonMandatoryTodEstimationMcLogsumsAppender
     private void writeTodFile(HashMap<String, String> rbMap, PrintWriter outStream2)
     {
 
-        // print the chosen destMgra and the depart/arrive logsum field names to
-        // the
+        // print the chosen destMgra and the depart/arrive logsum field names to the
         // file
         outStream2.print("seq,hisseq,chosenMgra");
         for (String[] labels : departArriveCombinationLabels)
@@ -183,8 +182,7 @@ public final class NonMandatoryTodEstimationMcLogsumsAppender
     private int[][] getTodEstimationDataOrigDestTimes(TableDataSet hisTds)
     {
 
-        // odts are an array with elements: origin mgra, destination mgra,
-        // departure
+        // odts are an array with elements: origin mgra, destination mgra, departure
         // period(1-6), and arrival period(1-6).
         int[][] odts = new int[hisTds.getRowCount()][NUM_FIELDS];
         mgras = new int[hisTds.getRowCount()][NUM_MGRA_FIELDS];

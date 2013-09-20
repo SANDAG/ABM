@@ -1,12 +1,8 @@
 /*
- * Copyright 2005 PB Consult Inc. Licensed under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
- * or agreed to in writing, software distributed under the License is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
+ * Copyright 2005 PB Consult Inc. Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in
+ * writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing permissions and limitations under the License.
  */
 package org.sandag.abm.accessibilities;
 
@@ -79,8 +75,7 @@ public class BestTransitPathCalculator
     private UtilityExpressionCalculator   driveEgressUEC;
     private UtilityExpressionCalculator[] tapToTapUEC = new UtilityExpressionCalculator[NUM_PERIODS];
 
-    // these arrays are shared by the BestTransitPathCalculator objects created
-    // for each hh choice model object
+    // these arrays are shared by the BestTransitPathCalculator objects created for each hh choice model object
     private double[][][]                  storedWalkAccessUtils;
     private double[][][]                  storedDriveAccessUtils;
     private double[][][]                  storedWalkEgressUtils;
@@ -194,8 +189,7 @@ public class BestTransitPathCalculator
         maxTap = mgraManager.getMaxTap();
         maxTaz = tazManager.getMaxTaz();
 
-        // these arrays are shared by the BestTransitPathCalculator objects
-        // created for each hh choice model object
+        // these arrays are shared by the BestTransitPathCalculator objects created for each hh choice model object
         StoredUtilityData storedDataObject = StoredUtilityData.getInstance(maxMgra, maxTap, maxTaz,
                 NUM_ACC_EGR, NUM_PERIODS);
         storedWalkAccessUtils = storedDataObject.getStoredWalkAccessUtils();
@@ -204,8 +198,7 @@ public class BestTransitPathCalculator
         storedDriveEgressUtils = storedDataObject.getStoredDriveEgressUtils();
         storedDepartPeriodTapTapUtils = storedDataObject.getStoredDepartPeriodTapTapUtils();
 
-        // use the walk access UEC to get the number of alternatives for
-        // dimensioning
+        // use the walk access UEC to get the number of alternatives for dimensioning
         // combined utility array.
         // access, egress, and tap-tap UECs all have same number
         combinedUtilities = new double[walkAccessUEC.getNumberOfAlternatives()];
@@ -231,8 +224,7 @@ public class BestTransitPathCalculator
 
         if (pTapSet != null)
         {
-            // loop through tap set until the specified tap is found, then get
-            // walk time from mgraManager
+            // loop through tap set until the specified tap is found, then get walk time from mgraManager
             int pPos = -1;
             for (int tap : pTapSet)
             {
@@ -271,8 +263,7 @@ public class BestTransitPathCalculator
 
         if (pTapSet != null)
         {
-            // loop through tap set until the specified tap is found, then get
-            // walk time from mgraManager
+            // loop through tap set until the specified tap is found, then get walk time from mgraManager
             int pPos = -1;
             for (int tap : pTapSet)
             {
@@ -308,8 +299,7 @@ public class BestTransitPathCalculator
 
         if (aTapSet != null)
         {
-            // loop through tap set until the specified tap is found, then get
-            // walk time from mgraManager
+            // loop through tap set until the specified tap is found, then get walk time from mgraManager
             int aPos = -1;
             for (int tap : aTapSet)
             {
@@ -348,8 +338,7 @@ public class BestTransitPathCalculator
 
         if (aTapSet != null)
         {
-            // loop through tap set until the specified tap is found, then get
-            // walk time from mgraManager
+            // loop through tap set until the specified tap is found, then get walk time from mgraManager
             int aPos = -1;
             for (int tap : aTapSet)
             {
@@ -368,13 +357,10 @@ public class BestTransitPathCalculator
     }
 
     /**
-     * This is the main method that finds the best TAP-pairs for each ride mode.
-     * It cycles through walk TAPs at the origin end (associated with the origin
-     * MGRA) and alighting TAPs at the destination end (associated with the
-     * destination MGRA) and calculates a utility for every available ride mode
-     * for each TAP pair. It compares the utility calculated for that TAP-pair
-     * to previously calculated utilities and stores the origin and destination
-     * TAP that had the best utility for each ride mode.
+     * This is the main method that finds the best TAP-pairs for each ride mode. It cycles through walk TAPs at the origin end (associated with the
+     * origin MGRA) and alighting TAPs at the destination end (associated with the destination MGRA) and calculates a utility for every available ride
+     * mode for each TAP pair. It compares the utility calculated for that TAP-pair to previously calculated utilities and stores the origin and
+     * destination TAP that had the best utility for each ride mode.
      * 
      * @param pMgra
      *            The origin/production MGRA.
@@ -425,13 +411,11 @@ public class BestTransitPathCalculator
                 // used to know where we are in time/dist arrays for taps
                 aPos++;
 
-                // set the pTap to aTap utility values, if they haven't already
-                // been
+                // set the pTap to aTap utility values, if they haven't already been
                 // computed.
                 setUtilitiesForTapPair(WTW, period, pTap, aTap, writeCalculations, myLogger);
 
-                // Set the aTap to aMgra walk egress utility values, if they
-                // haven't
+                // Set the aTap to aMgra walk egress utility values, if they haven't
                 // already been computed.
                 setWalkEgressUtility(aTap, aMgra, aPos, writeCalculations, myLogger);
 
@@ -460,10 +444,8 @@ public class BestTransitPathCalculator
                     throw new RuntimeException();
                 }
 
-                // compare the utilities for this TAP pair to previously
-                // calculated
-                // utilities for each ride mode and store the TAP numbers if
-                // this
+                // compare the utilities for this TAP pair to previously calculated
+                // utilities for each ride mode and store the TAP numbers if this
                 // TAP pair is the best.
                 try
                 {
@@ -490,17 +472,13 @@ public class BestTransitPathCalculator
     }
 
     /**
-     * This method finds the best TAP-pairs for each ride mode. It cycles
-     * through drive access TAPs at the origin end (associated with the origin
-     * MGRA) and alighting TAPs at the destination end (associated with the
-     * destination MGRA) and calculates a utility for every available ride mode
-     * for each TAP pair. It compares the utility calculated for that TAP-pair
-     * to previously calculated utilities and stores the origin and destination
-     * TAP that had the best utility for each ride mode.
+     * This method finds the best TAP-pairs for each ride mode. It cycles through drive access TAPs at the origin end (associated with the origin
+     * MGRA) and alighting TAPs at the destination end (associated with the destination MGRA) and calculates a utility for every available ride mode
+     * for each TAP pair. It compares the utility calculated for that TAP-pair to previously calculated utilities and stores the origin and
+     * destination TAP that had the best utility for each ride mode.
      * 
      * @param period
-     *            The departure period ofr which the best path is to be
-     *            determined
+     *            The departure period ofr which the best path is to be determined
      * @param pMgra
      *            The origin/production MGRA.
      * @param aMgra
@@ -566,14 +544,12 @@ public class BestTransitPathCalculator
 
                     // int dummy=0;
                     // if ( pMgra==18736 && aMgra==4309 && period==1 ){
-                    // if ( (pTap==839 && aTap==1889) || (pTap==839 &&
-                    // aTap==2151) || (pTap==839 && aTap==1880) ){
+                    // if ( (pTap==839 && aTap==1889) || (pTap==839 && aTap==2151) || (pTap==839 && aTap==1880) ){
                     // dummy = 1;
                     // }
                     // }
 
-                    // set the pTap to aTap utility values, if they haven't
-                    // already
+                    // set the pTap to aTap utility values, if they haven't already
                     // been computed.
                     setUtilitiesForTapPair(DTW, period, pTap, aTap, writeCalculations, myLogger);
 
@@ -604,8 +580,7 @@ public class BestTransitPathCalculator
 
                     // compare the utilities for this TAP pair to previously
                     // calculated
-                    // utilities for each ride mode and store the TAP numbers if
-                    // this
+                    // utilities for each ride mode and store the TAP numbers if this
                     // TAP pair is the best.
                     try
                     {
@@ -633,13 +608,10 @@ public class BestTransitPathCalculator
     }
 
     /**
-     * This method finds the best TAP-pairs for each ride mode. It cycles
-     * through drive access TAPs at the origin end (associated with the origin
-     * MGRA) and alighting TAPs at the destination end (associated with the
-     * destination MGRA) and calculates a utility for every available ride mode
-     * for each TAP pair. It compares the utility calculated for that TAP-pair
-     * to previously calculated utilities and stores the origin and destination
-     * TAP that had the best utility for each ride mode.
+     * This method finds the best TAP-pairs for each ride mode. It cycles through drive access TAPs at the origin end (associated with the origin
+     * MGRA) and alighting TAPs at the destination end (associated with the destination MGRA) and calculates a utility for every available ride mode
+     * for each TAP pair. It compares the utility calculated for that TAP-pair to previously calculated utilities and stores the origin and
+     * destination TAP that had the best utility for each ride mode.
      * 
      * @param pTaz
      *            The origin/production MGRA.
@@ -700,8 +672,7 @@ public class BestTransitPathCalculator
                     // haven't already been computed.
                     setDriveEgressUtility(aTap, aTaz, aPos, accMode, writeCalculations, myLogger);
 
-                    // set the pTap to aTap utility values, if they haven't
-                    // already
+                    // set the pTap to aTap utility values, if they haven't already
                     // been computed.
                     setUtilitiesForTapPair(WTD, period, pTap, aTap, writeCalculations, myLogger);
 
@@ -732,8 +703,7 @@ public class BestTransitPathCalculator
 
                     // compare the utilities for this TAP pair to previously
                     // calculated
-                    // utilities for each ride mode and store the TAP numbers if
-                    // this
+                    // utilities for each ride mode and store the TAP numbers if this
                     // TAP pair is the best.
                     try
                     {
@@ -838,10 +808,8 @@ public class BestTransitPathCalculator
     }
 
     /**
-     * This method calculates the utilities for a given Tap pair. It is called
-     * from the method @link {@link #findBestWalkTaps(int, int)}. The walk times
-     * in the dmu must be set separately, or set to 0 for a set of utilities
-     * that are mgra-independent.
+     * This method calculates the utilities for a given Tap pair. It is called from the method @link {@link #findBestWalkTaps(int, int)}. The walk
+     * times in the dmu must be set separately, or set to 0 for a set of utilities that are mgra-independent.
      * 
      * @param accEgr
      *            The access\egress mode
@@ -852,10 +820,8 @@ public class BestTransitPathCalculator
      * @param aTap
      *            The destination/attraction Tap.
      * @param myTrace
-     *            True if debug calculations are to be written to the logger for
-     *            this Tap-pair.
-     * @return A set of utilities for the Tap-pair, dimensioned by ride mode in @link
-     *         <Modes>.
+     *            True if debug calculations are to be written to the logger for this Tap-pair.
+     * @return A set of utilities for the Tap-pair, dimensioned by ride mode in @link <Modes>.
      */
     public void setUtilitiesForTapPair(int accEgr, int period, int pTap, int aTap, boolean myTrace,
             Logger myLogger)
@@ -936,8 +902,7 @@ public class BestTransitPathCalculator
     }
 
     /**
-     * @return the TAP to destination access time stored for the best TAP-TAP
-     *         pair.
+     * @return the TAP to destination access time stored for the best TAP-TAP pair.
      */
     public double getBestEgressTime(int rideModeIndex)
     {
@@ -945,10 +910,8 @@ public class BestTransitPathCalculator
     }
 
     /**
-     * Compare the paths calculated for this TAP-pair to the paths for
-     * previously- calculated TAP-pairs for each ride mode. If the current path
-     * is the best path, for that ride mode, set the bestUtilities[], bestPTap[]
-     * and bestATap[], bestAccessTime[] and bestEgressTime[] for that ride mode.
+     * Compare the paths calculated for this TAP-pair to the paths for previously- calculated TAP-pairs for each ride mode. If the current path is the
+     * best path, for that ride mode, set the bestUtilities[], bestPTap[] and bestATap[], bestAccessTime[] and bestEgressTime[] for that ride mode.
      * 
      * @param calculatedUtilities
      *            An array of utilities by ride mode.
@@ -1054,8 +1017,7 @@ public class BestTransitPathCalculator
     /**
      * Get the best utilities.
      * 
-     * @return An array of the best utilities, dimensioned by ride-mode in @link
-     *         <Modes>.
+     * @return An array of the best utilities, dimensioned by ride-mode in @link <Modes>.
      */
     public double[] getBestUtilities()
     {
@@ -1083,10 +1045,8 @@ public class BestTransitPathCalculator
     }
 
     /**
-     * Clears the arrays. This method gets called for two different purposes.
-     * One is to compare alternatives based on utilities and the other based on
-     * exponentiated utilities. For this reason, the bestUtilities will be
-     * initialized by the value passed in as an argument set by the calling
+     * Clears the arrays. This method gets called for two different purposes. One is to compare alternatives based on utilities and the other based on
+     * exponentiated utilities. For this reason, the bestUtilities will be initialized by the value passed in as an argument set by the calling
      * method.
      * 
      * @param initialization
@@ -1102,8 +1062,7 @@ public class BestTransitPathCalculator
     }
 
     /**
-     * Get the best ptap and atap in an array. Only to be called after
-     * comparePaths() has been called.
+     * Get the best ptap and atap in an array. Only to be called after comparePaths() has been called.
      * 
      * @param transitMode
      *            Mode to look up.
@@ -1121,12 +1080,10 @@ public class BestTransitPathCalculator
     }
 
     /**
-     * Get the best transit mode for a given transit path. Returns null if no
-     * transit mode has a valid utility. Call only after calling
+     * Get the best transit mode for a given transit path. Returns null if no transit mode has a valid utility. Call only after calling
      * findBestWalkTransitWalkTaps().
      * 
-     * @return The best transit mode (highest utility), or null if no modes have
-     *         a valid utility.
+     * @return The best transit mode (highest utility), or null if no modes have a valid utility.
      */
     public Modes.TransitMode getBestTransitMode()
     {

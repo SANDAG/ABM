@@ -43,10 +43,8 @@ public final class SkimsAppender
     // private static final int OBS_ARRIVE_PERIOD = 133;
 
     /*
-     * for home based tour mode choice estimation files private static final int
-     * HIS_ORIG_MGRA = 72; private static final int HIS_DEST_MGRA = 75; private
-     * static final int HIS_DEPART_PERIOD = 185; private static final int
-     * HIS_ARRIVE_PERIOD = 186;
+     * for home based tour mode choice estimation files private static final int HIS_ORIG_MGRA = 72; private static final int HIS_DEST_MGRA = 75;
+     * private static final int HIS_DEPART_PERIOD = 185; private static final int HIS_ARRIVE_PERIOD = 186;
      */
 
     /*
@@ -57,14 +55,12 @@ public final class SkimsAppender
     private static final int          HIS_DEPART_PERIOD            = 159;
     private static final int          HIS_ARRIVE_PERIOD            = 160;
 
-    // survey periods are: 0=not used, 1=03:00-05:59, 2=06:00-08:59,
-    // 3=09:00-11:59,
+    // survey periods are: 0=not used, 1=03:00-05:59, 2=06:00-08:59, 3=09:00-11:59,
     // 4=12:00-15:29, 5=15:30-18:59, 6=19:00-02:59
     // skim periods are: 0=0(N/A), 1=3(OP), 2=1(AM), 3=3(OP), 4=3(OP), 5=2(PM),
     // 6=3(OP)
 
-    // define a conversion array to convert period values in the survey file to
-    // skim
+    // define a conversion array to convert period values in the survey file to skim
     // period indices used in this propgram: 1=am peak, 2=pm peak,
     // 3=off-peak.
     private static final String[]     SKIM_PERIOD_LABELS           = {"am", "pm", "op"};
@@ -152,15 +148,13 @@ public final class SkimsAppender
             {
                 try
                 {
-                    // create an output stream for the mode choice estimation
-                    // file
+                    // create an output stream for the mode choice estimation file
                     // with
                     // observed TOD
                     writer = new FileWriter(new File(outputFileNameObs));
                     outStreamObs = new PrintWriter(new BufferedWriter(writer));
 
-                    // create an array of similar files, 1 for each TOD period,
-                    // for
+                    // create an array of similar files, 1 for each TOD period, for
                     // TOD
                     // choice estimation
                     for (int i = 0; i < SKIM_PERIOD_LABELS.length; i++)
@@ -190,8 +184,7 @@ public final class SkimsAppender
                     writer = new FileWriter(new File(outputFileNameHis));
                     outStreamHis = new PrintWriter(new BufferedWriter(writer));
 
-                    // create an array of similar files, 1 for each TOD period,
-                    // for
+                    // create an array of similar files, 1 for each TOD period, for
                     // TOD
                     // choice estimation
                     for (int i = 0; i < SKIM_PERIOD_LABELS.length; i++)
@@ -274,8 +267,7 @@ public final class SkimsAppender
                 // write inbound direction
                 odt[0] = obsOdt[1]; // dest
                 odt[1] = obsOdt[0]; // orig
-                odt[2] = SURVEY_PERIOD_TO_SKIM_PERIOD[obsOdt[3]]; // arrival
-                                                                  // skim
+                odt[2] = SURVEY_PERIOD_TO_SKIM_PERIOD[obsOdt[3]]; // arrival skim
                                                                   // period
                 // index
 
@@ -344,8 +336,7 @@ public final class SkimsAppender
                 // write inbound direction
                 odt[0] = hisOdt[1]; // dest
                 odt[1] = hisOdt[0]; // orig
-                odt[2] = SURVEY_PERIOD_TO_SKIM_PERIOD[hisOdt[3]]; // arrival
-                                                                  // skim
+                odt[2] = SURVEY_PERIOD_TO_SKIM_PERIOD[hisOdt[3]]; // arrival skim
                                                                   // period
                 // index
 
@@ -490,8 +481,7 @@ public final class SkimsAppender
      * Start the matrix server
      * 
      * @param rb
-     *            is a ResourceBundle for the properties file for this
-     *            application
+     *            is a ResourceBundle for the properties file for this application
      */
     private void startMatrixServer(ResourceBundle rb)
     {
@@ -524,16 +514,12 @@ public final class SkimsAppender
     }
 
     /**
-     * create a String which can be written to an output file with all the skim
-     * values for the orig/dest/period.
+     * create a String which can be written to an output file with all the skim values for the orig/dest/period.
      * 
      * @param odt
-     *            is an int[] with the first element the origin mgra and the
-     *            second element the dest mgra and third element the departure
-     *            period index
+     *            is an int[] with the first element the origin mgra and the second element the dest mgra and third element the departure period index
      * @param skims
-     *            is a double[][] of skim values with the first dimesion the
-     *            ride mode indices and second dimention the skim categories
+     *            is a double[][] of skim values with the first dimesion the ride mode indices and second dimention the skim categories
      */
     private String getTransitSkimsRecord(int[] odt, double[][] skims)
     {
@@ -555,13 +541,10 @@ public final class SkimsAppender
     }
 
     /**
-     * create a String which can be written to an output file with all the skim
-     * values for the orig/dest/period.
+     * create a String which can be written to an output file with all the skim values for the orig/dest/period.
      * 
      * @param odt
-     *            is an int[] with the first element the origin mgra and the
-     *            second element the dest mgra and third element the departure
-     *            period index
+     *            is an int[] with the first element the origin mgra and the second element the dest mgra and third element the departure period index
      * @param skims
      *            is a double[] of skim values
      */
@@ -579,13 +562,11 @@ public final class SkimsAppender
     }
 
     /**
-     * create a String for the output file header record which can be written to
-     * an output file with all the skim value namess for the orig/dest/period.
+     * create a String for the output file header record which can be written to an output file with all the skim value namess for the
+     * orig/dest/period.
      * 
      * @param odt
-     *            is an int[] with the first element the origin mgra and the
-     *            second element the dest mgra and third element the departure
-     *            period index
+     *            is an int[] with the first element the origin mgra and the second element the dest mgra and third element the departure period index
      */
     private String getTransitSkimsHeaderRecord(String transitServiveLabel, String[] localNames,
             String[] premiumNames)
@@ -614,13 +595,11 @@ public final class SkimsAppender
     }
 
     /**
-     * create a String for the output file header record which can be written to
-     * an output file with all the skim value namess for the orig/dest/period.
+     * create a String for the output file header record which can be written to an output file with all the skim value namess for the
+     * orig/dest/period.
      * 
      * @param odt
-     *            is an int[] with the first element the origin mgra and the
-     *            second element the dest mgra and third element the departure
-     *            period index
+     *            is an int[] with the first element the origin mgra and the second element the dest mgra and third element the departure period index
      */
     private String getAutoSkimsHeaderRecord(String label, String[] names)
     {
@@ -634,13 +613,11 @@ public final class SkimsAppender
     }
 
     /**
-     * create a String for the output file header record which can be written to
-     * an output file with all the skim value namess for the orig/dest/period.
+     * create a String for the output file header record which can be written to an output file with all the skim value namess for the
+     * orig/dest/period.
      * 
      * @param odt
-     *            is an int[] with the first element the origin mgra and the
-     *            second element the dest mgra and third element the departure
-     *            period index
+     *            is an int[] with the first element the origin mgra and the second element the dest mgra and third element the departure period index
      */
     private String getNonMotorizedSkimsHeaderRecord(String label, String[] names)
     {
@@ -716,8 +693,7 @@ public final class SkimsAppender
     private int[][] getOnBoardSurveyOrigDestTimes(TableDataSet obsTds)
     {
 
-        // odts are an array with elements: origin mgra, destination mgra,
-        // departure
+        // odts are an array with elements: origin mgra, destination mgra, departure
         // period(1-6), and arrival period(1-6).
         int[][] odts = new int[obsTds.getRowCount()][5];
 
@@ -742,8 +718,7 @@ public final class SkimsAppender
     private int[][] getHomeInterviewSurveyOrigDestTimes(TableDataSet hisTds)
     {
 
-        // odts are an array with elements: origin mgra, destination mgra,
-        // departure
+        // odts are an array with elements: origin mgra, destination mgra, departure
         // period(1-6), and arrival period(1-6).
         int[][] odts = new int[hisTds.getRowCount()][4];
 

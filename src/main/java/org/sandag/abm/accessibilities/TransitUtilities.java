@@ -1,25 +1,26 @@
 package org.sandag.abm.accessibilities;
 
+import com.pb.common.util.ResourceUtil;
+import com.pb.common.util.Tracer;
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
+import java.rmi.RemoteException;
+import java.net.UnknownHostException;
+import com.pb.common.matrix.MatrixType;
+import org.sandag.abm.ctramp.MatrixDataServer;
+import org.sandag.abm.ctramp.Util;
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
-import org.sandag.abm.ctramp.MatrixDataServer;
-import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.Modes;
-import org.sandag.abm.modechoice.Modes.AccessMode;
 import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
 import org.sandag.abm.modechoice.TransitDriveAccessUEC;
 import org.sandag.abm.modechoice.TransitWalkAccessUEC;
-import com.pb.common.matrix.MatrixType;
-import com.pb.common.util.ResourceUtil;
-import com.pb.common.util.Tracer;
+import org.sandag.abm.modechoice.Modes.AccessMode;
 
 /**
  * This class builds utility components for walk-transit.
@@ -35,8 +36,7 @@ public class TransitUtilities
 
     private static final String[]   TAPPERIODS = {"OP", "PK"};
 
-    // store tap-tap exponentiated utilities (period, from tap, to tap, ride
-    // mode)
+    // store tap-tap exponentiated utilities (period, from tap, to tap, ride mode)
     private double[][][][]          tapExpUtilities;
 
     // store walk-access mgra-tap exponentiated utilities (mgra, tap)
@@ -142,8 +142,7 @@ public class TransitUtilities
                 mgraList = tazManager.getMgraArray(traceDtaz[j]);
                 if (mgraList == null) continue;
 
-                // iterate through them, and add all taps within walking
-                // distance
+                // iterate through them, and add all taps within walking distance
                 // to the traceTap array
                 for (int dMgra : mgraList)
                 {
@@ -161,8 +160,7 @@ public class TransitUtilities
     }
 
     /**
-     * set the utilities values created by another object by calling
-     * calculateUtilityComponents()
+     * set the utilities values created by another object by calling calculateUtilityComponents()
      */
     public void setUtilitiesArrays(double[][][] utilitiesArrays)
     {
@@ -171,11 +169,9 @@ public class TransitUtilities
     }
 
     /**
-     * get the wlk abd drv utilities arrays built by calling
-     * calculateUtilityComponents().
+     * get the wlk abd drv utilities arrays built by calling calculateUtilityComponents().
      * 
-     * @return array of 2 utilities arrays: wlkAccessExpUtilities and
-     *         drvAccessExpUtilities
+     * @return array of 2 utilities arrays: wlkAccessExpUtilities and drvAccessExpUtilities
      */
     public double[][][] getUtilitiesArrays()
     {
@@ -186,8 +182,7 @@ public class TransitUtilities
     }
 
     /**
-     * set the array of TAP utilities built by calling
-     * calculateUtilityComponents().
+     * set the array of TAP utilities built by calling calculateUtilityComponents().
      */
     public void setTapUtilitiesArray(double[][][][] tapExpUtils)
     {
@@ -195,8 +190,7 @@ public class TransitUtilities
     }
 
     /**
-     * get the array of TAP utilities built by calling
-     * calculateUtilityComponents().
+     * get the array of TAP utilities built by calling calculateUtilityComponents().
      */
     public double[][][][] getTapUtilitiesArray()
     {
@@ -204,8 +198,7 @@ public class TransitUtilities
     }
 
     /**
-     * This is the main method, that builds the utility components for TAP-TAP
-     * and MGRA-TAP. The arrays that are filled in are: tapExpUtilities[][][]
+     * This is the main method, that builds the utility components for TAP-TAP and MGRA-TAP. The arrays that are filled in are: tapExpUtilities[][][]
      * and mgraExpUtilities[][].
      * 
      * @param rb
@@ -323,28 +316,22 @@ public class TransitUtilities
      * 
      * public void calculateFullMgraUtilities(){
      * 
-     * logger.info("Calculating Full MGRA-MGRA exponentiated utilities");
-     * double[][] expUtilities = new
+     * logger.info("Calculating Full MGRA-MGRA exponentiated utilities"); double[][] expUtilities = new
      * double[WTPERIODS.length][Modes.TransitModes.values().length];
      * 
      * for(int period=0;period<WTPERIODS.length;++period){
      * 
      * logger.info("...Period "+WTPERIODS[period]);
      * 
-     * //LOOP OVER ORIGIN MGRA int originMgras = 0; for(Integer iMgra :
-     * mgraManager.mgras){ //Origin MGRA
+     * //LOOP OVER ORIGIN MGRA int originMgras = 0; for(Integer iMgra : mgraManager.mgras){ //Origin MGRA
      * 
-     * ++originMgras; if(originMgras<=10 || (originMgras % 500) ==0 )
-     * logger.info("...Origin MGRA "+iMgra);
+     * ++originMgras; if(originMgras<=10 || (originMgras % 500) ==0 ) logger.info("...Origin MGRA "+iMgra);
      * 
-     * //skip mgras with no TAPs within walking distance
-     * if(mgraManager.mgraWlkTapsDistArray[iMgra][0] == null) continue;
+     * //skip mgras with no TAPs within walking distance if(mgraManager.mgraWlkTapsDistArray[iMgra][0] == null) continue;
      * 
-     * //LOOP OVER DESTINATION MGRA for(Integer jMgra : mgraManager.mgras){
-     * //Destination MGRA
+     * //LOOP OVER DESTINATION MGRA for(Integer jMgra : mgraManager.mgras){ //Destination MGRA
      * 
-     * //skip mgras with no TAPs within walking distance
-     * if(mgraManager.mgraWlkTapsDistArray[jMgra][0] == null) continue;
+     * //skip mgras with no TAPs within walking distance if(mgraManager.mgraWlkTapsDistArray[jMgra][0] == null) continue;
      * 
      * walkUEC[period].clearArrays();
      * 
@@ -358,8 +345,7 @@ public class TransitUtilities
      */
 
     /**
-     * Calculate the utilities for all tap-pairs for this mgra-pair, and return
-     * the best utilities by mode.
+     * Calculate the utilities for all tap-pairs for this mgra-pair, and return the best utilities by mode.
      * 
      * @param oMgra
      *            Origin/Production MGRA
@@ -416,8 +402,7 @@ public class TransitUtilities
                     }
                 }
 
-                // the uec object stores the best utilities for this
-                // interchange.
+                // the uec object stores the best utilities for this interchange.
                 walkUEC[period].comparePaths(expUtilities, iTap, jTap, writeCalculations);
 
             } // end jTap
@@ -443,8 +428,7 @@ public class TransitUtilities
     }
 
     /**
-     * Calculate the utilities for all tap-pairs for this mgra-pair, and return
-     * the best utilities by mode.
+     * Calculate the utilities for all tap-pairs for this mgra-pair, and return the best utilities by mode.
      * 
      * @param oTaz
      *            Origin/Production TAZ
@@ -462,8 +446,7 @@ public class TransitUtilities
 
         AccessMode accMode = AccessMode.PARK_N_RIDE;
 
-        // skip Tazs with no TAPs within driving distance on origin or within
-        // walking
+        // skip Tazs with no TAPs within driving distance on origin or within walking
         // distance on destination end
         if (tazManager.getParkRideOrKissRideTapsForZone(oTaz, accMode) == null
                 || mgraManager.getMgraWlkTapsDistArray()[dMgra][0] == null) return expUtilities;
@@ -512,8 +495,7 @@ public class TransitUtilities
                     }
                 }
 
-                // the uec object stores the best utilities for this
-                // interchange.
+                // the uec object stores the best utilities for this interchange.
                 driveUEC[period].comparePaths(expUtilities, iTap, jTap, writeCalculations);
 
             } // end jTap
@@ -612,8 +594,7 @@ public class TransitUtilities
     }
 
     /**
-     * Get the best transit mode for a given period. Returns null if no transit
-     * mode has an exponentiated utility. Call only after calling
+     * Get the best transit mode for a given period. Returns null if no transit mode has an exponentiated utility. Call only after calling
      * getWalkTransitExpUtilities().
      * 
      * @param period
@@ -640,8 +621,7 @@ public class TransitUtilities
     }
 
     /**
-     * Get the best drive transit mode for a given period. Returns null if no
-     * transit mode has an exponentiated utility. Call only after calling
+     * Get the best drive transit mode for a given period. Returns null if no transit mode has an exponentiated utility. Call only after calling
      * getWalkTransitExpUtilities().
      * 
      * @param period
@@ -704,8 +684,7 @@ public class TransitUtilities
                 e.printStackTrace();
             }
 
-            // bind this concrete object with the cajo library objects for
-            // managing
+            // bind this concrete object with the cajo library objects for managing
             // RMI
             try
             {
@@ -723,7 +702,7 @@ public class TransitUtilities
             try
             {
                 ItemServer.bind(matrixServer, className);
-            } catch (IOException e)
+            } catch (RemoteException e)
             {
                 System.out.println(String.format(
                         "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",

@@ -1,8 +1,7 @@
 package org.sandag.abm.ctramp;
 
 /**
- * This class holds definitions that are inherant in CT-RAMP based models including:
- * person types tour category types purposes activity types
+ * This class holds definitions that are inherant in CT-RAMP based models including: person types tour category types purposes activity types
  * 
  * @author Jim
  * 

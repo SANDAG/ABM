@@ -1,11 +1,8 @@
 /*
- * Copyright 2005 PB Consult Inc. Licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License. You
- * may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software distributed
- * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
- * CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
+ * Copyright 2005 PB Consult Inc. Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in
+ * writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing permissions and limitations under the License.
  */
 package org.sandag.abm.modechoice;
 
@@ -15,8 +12,8 @@ import org.apache.log4j.Logger;
 import com.pb.common.calculator.VariableTable;
 
 /**
- * WalkDMU is the Decision-Making Unit class for the Walk-transit choice. The class
- * contains getter and setter methods for the variables used in the WalkPathUEC.
+ * WalkDMU is the Decision-Making Unit class for the Walk-transit choice. The class contains getter and setter methods for the variables used in the
+ * WalkPathUEC.
  * 
  * @author Joel Freedman
  * @version 1.0, March, 2009
@@ -30,9 +27,9 @@ public class TransitWalkAccessDMU
 
     protected HashMap<String, Integer> methodIndexMap;
 
-    double                              tapToMgraWalkTime;
-    double                              mgraToTapWalkTime;
-    double                              escalatorTime;
+    double                             tapToMgraWalkTime;
+    double                             mgraToTapWalkTime;
+    double                             escalatorTime;
 
     public TransitWalkAccessDMU()
     {
@@ -52,7 +49,8 @@ public class TransitWalkAccessDMU
     /**
      * Set the time from the production/origin MGRA to the boarding TAP.
      * 
-     * @param walkTime The time from the production/origin MGRA to the boarding TAP.
+     * @param walkTime
+     *            The time from the production/origin MGRA to the boarding TAP.
      */
     public void setMgraTapWalkTime(double walkTime)
     {
@@ -72,8 +70,8 @@ public class TransitWalkAccessDMU
     /**
      * Set the time from the alighting TAP to the attraction/destination MGRA.
      * 
-     * @param walkTime The time from the alighting TAP to the attraction/destination
-     *            MGRA.
+     * @param walkTime
+     *            The time from the alighting TAP to the attraction/destination MGRA.
      */
     public void setTapMgraWalkTime(double walkTime)
     {
@@ -93,7 +91,8 @@ public class TransitWalkAccessDMU
     /**
      * Set the time to get to the platform.
      * 
-     * @param escalatorTime The time in minutes.
+     * @param escalatorTime
+     *            The time in minutes.
      */
     public void setEscalatorTime(double escalatorTime)
     {
@@ -103,7 +102,8 @@ public class TransitWalkAccessDMU
     /**
      * Log the DMU values.
      * 
-     * @param localLogger The logger to use.
+     * @param localLogger
+     *            The logger to use.
      */
     public void logValues(Logger localLogger)
     {

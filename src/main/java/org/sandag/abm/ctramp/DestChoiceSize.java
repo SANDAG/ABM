@@ -54,15 +54,19 @@ public class DestChoiceSize
 
     /**
      * 
-     * @param propertyMap is the model properties file key:value pairs
-     * @param segmentNameIndexMap is a map from segment name to size term array
-     *            index.
-     * @param segmentIndexNameMap is a map from size term array index to segment
-     *            name.
-     * @param segmentSizeTerms is an array by segment index and MGRA index
+     * @param propertyMap
+     *            is the model properties file key:value pairs
+     * @param segmentNameIndexMap
+     *            is a map from segment name to size term array index.
+     * @param segmentIndexNameMap
+     *            is a map from size term array index to segment name.
+     * @param segmentSizeTerms
+     *            is an array by segment index and MGRA index
      */
-    public DestChoiceSize(HashMap<String, String> propertyMap, HashMap<Integer, String> segmentIndexNameMap,
-            HashMap<String, Integer> segmentNameIndexMap, double[][] segmentSizeTerms, int maxIterations)
+    public DestChoiceSize(HashMap<String, String> propertyMap,
+            HashMap<Integer, String> segmentIndexNameMap,
+            HashMap<String, Integer> segmentNameIndexMap, double[][] segmentSizeTerms,
+            int maxIterations)
     {
 
         this.segmentIndexNameMap = segmentIndexNameMap;
@@ -74,7 +78,8 @@ public class DestChoiceSize
 
         maxShadowPriceIterations = maxIterations;
 
-        String projectDirectory = Util.getStringValueFromPropertyMap(propertyMap, CtrampApplication.PROPERTIES_PROJECT_DIRECTORY);
+        String projectDirectory = Util.getStringValueFromPropertyMap(propertyMap,
+                CtrampApplication.PROPERTIES_PROJECT_DIRECTORY);
         dcShadowOutputFileName = projectDirectory + propertyMap.get(PROPERTIES_DC_SHADOW_OUTPUT);
 
         mgraManager = MgraDataManager.getInstance();
@@ -107,8 +112,7 @@ public class DestChoiceSize
     }
 
     /**
-     * @return the maximum number of shadow price iterations set in the properties
-     *         file
+     * @return the maximum number of shadow price iterations set in the properties file
      */
     public int getMaxShadowPriceIterations()
     {
@@ -119,23 +123,21 @@ public class DestChoiceSize
     {
         externalFactors = factors;
     }
-    
-    public void setNoShadowPriceSchoolSegmentIndices (HashSet<Integer> indexSet) {
+
+    public void setNoShadowPriceSchoolSegmentIndices(HashSet<Integer> indexSet)
+    {
         noShadowPriceSchoolSegmentIndices = indexSet;
     }
 
     /**
-     * Scale the destination choice size values so that the total modeled
-     * destinations by segment match the total origins. total Origin/Destination
-     * constraining usuallu done for home oriented mandatory tours, e.g. work
-     * university, school. This method also has the capability to read a file of
-     * destination size adjustments and apply them during the balancing procedure.
-     * This capability was used in the Morpc model and was transferred to the
-     * Baylanta project, but may or may not be used.
+     * Scale the destination choice size values so that the total modeled destinations by segment match the total origins. total Origin/Destination
+     * constraining usuallu done for home oriented mandatory tours, e.g. work university, school. This method also has the capability to read a file
+     * of destination size adjustments and apply them during the balancing procedure. This capability was used in the Morpc model and was transferred
+     * to the Baylanta project, but may or may not be used.
      * 
-     * @param originsByHomeZone - total long term choice origin locations (i.e.
-     *            number of workers, university students, or school age students) in
-     *            residence zone, subzone, by segment.
+     * @param originsByHomeZone
+     *            - total long term choice origin locations (i.e. number of workers, university students, or school age students) in residence zone,
+     *            subzone, by segment.
      * 
      */
     public void balanceSizeVariables(int[][] originsByHomeMgra)
@@ -179,7 +181,8 @@ public class DestChoiceSize
         {
             String segmentString = segmentIndexNameMap.get(i);
             segmentSum += totalOriginLocations[i];
-            logger.info(String.format("    %-6d  %-55s:  %10.1f", i, segmentString, totalOriginLocations[i]));
+            logger.info(String.format("    %-6d  %-55s:  %10.1f", i, segmentString,
+                    totalOriginLocations[i]));
         } // i
         logger.info(String.format("    %-6s  %-55s:  %10.1f", " ", "Total", segmentSum));
         logger.info("");
@@ -192,7 +195,8 @@ public class DestChoiceSize
         {
             String segmentString = segmentIndexNameMap.get(i);
             segmentSum += totalDestSize[i];
-            logger.info(String.format("    %-6d  %-55s:  %10.1f", i, segmentString, totalDestSize[i]));
+            logger.info(String.format("    %-6d  %-55s:  %10.1f", i, segmentString,
+                    totalDestSize[i]));
         }
         logger.info(String.format("    %-6s  %-55s:  %10.1f", " ", "Total", segmentSum));
         logger.info("");
@@ -214,11 +218,11 @@ public class DestChoiceSize
             tot = 0.0;
             for (int j = 1; j <= maxMgra; j++)
             {
-                
-                if (totalDestSize[i] > 0.0)
-                    scaledSize[i][j] = (balanceSize[i][j] * externalFactors[i][j] * totalOriginLocations[i]) / totalDestSize[i];
-                else
-                    scaledSize[i][j] = 0.0f;
+
+                if (totalDestSize[i] > 0.0) scaledSize[i][j] = (balanceSize[i][j]
+                        * externalFactors[i][j] * totalOriginLocations[i])
+                        / totalDestSize[i];
+                else scaledSize[i][j] = 0.0f;
 
                 tot += scaledSize[i][j];
 
@@ -291,8 +295,7 @@ public class DestChoiceSize
             for (int j = 1; j <= maxMgra; j++)
             {
                 dcSize[i][j] = scaledSize[i][j] * shadowPrice[i][j];
-                if (dcSize[i][j] < 0.0f)
-                    dcSize[i][j] = 0.0f;
+                if (dcSize[i][j] < 0.0f) dcSize[i][j] = 0.0f;
             }
         }
 
@@ -306,15 +309,15 @@ public class DestChoiceSize
 
         for (int i = 0; i < numSegments; i++)
         {
-            if ( noShadowPriceSchoolSegmentIndices != null && noShadowPriceSchoolSegmentIndices.contains(i) )
-                continue;
+            if (noShadowPriceSchoolSegmentIndices != null
+                    && noShadowPriceSchoolSegmentIndices.contains(i)) continue;
 
             for (int j = 1; j <= maxMgra; j++)
             {
                 if (modeledDestinationLocationsByDestMgra[i][j] > 0)
                     shadowPrice[i][j] *= (scaledSize[i][j] / modeledDestinationLocationsByDestMgra[i][j]);
-                //else
-                //    shadowPrice[i][j] *= scaledSize[i][j];
+                // else
+                // shadowPrice[i][j] *= scaledSize[i][j];
             }
         }
 
@@ -339,11 +342,12 @@ public class DestChoiceSize
         for (int r = 0; r < maxSize.length; r++)
         {
 
-            logger.info(String.format(
-                "Frequency of chosen mgra locations with non-zero DC Size < %s by range of relative error",
-                (maxSize[r] < 1000000 ? String.format("%.1f", maxSize[r]) : "+Inf")));
-            logger.info(String.format("%-6s  %-55s %15s %15s %15s %15s %15s %15s %15s %8s", "index", "segment",
-                    "0 DCs", "< 5%", "< 10%", "< 25%", "< 50%", "< 100%", "100% +", "Total"));
+            logger.info(String
+                    .format("Frequency of chosen mgra locations with non-zero DC Size < %s by range of relative error",
+                            (maxSize[r] < 1000000 ? String.format("%.1f", maxSize[r]) : "+Inf")));
+            logger.info(String.format("%-6s  %-55s %15s %15s %15s %15s %15s %15s %15s %8s",
+                    "index", "segment", "0 DCs", "< 5%", "< 10%", "< 25%", "< 50%", "< 100%",
+                    "100% +", "Total"));
 
             int tot = 0;
             int[] tots = new int[maxDeltas.length + 1];
@@ -469,20 +473,20 @@ public class DestChoiceSize
     {
 
         // define labels for the schoolsegment categories
-        String[] segmentRangelabels = { "Pre-School", "K-8", "9-12", "Univ" };
+        String[] segmentRangelabels = {"Pre-School", "K-8", "9-12", "Univ"};
 
         // define the highest index value for the range of segments for the school segment category
-        int[] segmentRange = { 0, 36, 54, 56 };
+        int[] segmentRange = {0, 36, 54, 56};
 
         double[] maxSize = {10, 100, 1000, Double.MAX_VALUE};
         double[] maxDeltas = {0.05, 0.10, 0.25, 0.50, 1.0, 999.9};
 
         int[][][] freqs = new int[segmentRangelabels.length][maxSize.length][maxDeltas.length];
-        
+
         int[][] nObs = new int[segmentRangelabels.length][maxSize.length];
         double[][] sse = new double[segmentRangelabels.length][maxSize.length];
         double[][] sumObs = new double[segmentRangelabels.length][maxSize.length];
-        
+
         double[][] rmse = new double[segmentRangelabels.length][maxSize.length];
         double[][] meanSize = new double[segmentRangelabels.length][maxSize.length];
 
@@ -492,42 +496,50 @@ public class DestChoiceSize
         convergeLogger.info("School Shadow Price Iteration " + iteration);
 
         double[] minRange = new double[segmentRangelabels.length];
-        
+
         int minS = 0;
-        for ( int s=0; s < segmentRangelabels.length; s++ ) {
+        for (int s = 0; s < segmentRangelabels.length; s++)
+        {
 
-            convergeLogger.info ( "" );
-            convergeLogger.info ( "" );
-            convergeLogger.info ( segmentRangelabels[s] + " convergence statistics" );
-            
-            if ( s > 0 )
-                minS = segmentRange[s-1] + 1;
-            
-            for ( int r=0; r < maxSize.length; r++ ){
-                
-                for (int i=minS; i <= segmentRange[s]; i++) {
+            convergeLogger.info("");
+            convergeLogger.info("");
+            convergeLogger.info(segmentRangelabels[s] + " convergence statistics");
 
-                    for (int j = 1; j <= maxMgra; j++) {
+            if (s > 0) minS = segmentRange[s - 1] + 1;
 
-                        if (scaledSize[i][j] > minRange[s] && scaledSize[i][j] <= maxSize[r]) {
+            for (int r = 0; r < maxSize.length; r++)
+            {
 
-                            if (modeledDestinationLocationsByDestMgra[i][j] > 0.0) {
+                for (int i = minS; i <= segmentRange[s]; i++)
+                {
+
+                    for (int j = 1; j <= maxMgra; j++)
+                    {
+
+                        if (scaledSize[i][j] > minRange[s] && scaledSize[i][j] <= maxSize[r])
+                        {
+
+                            if (modeledDestinationLocationsByDestMgra[i][j] > 0.0)
+                            {
 
                                 int delta = maxDeltas.length - 1;
-                                double diff = Math.abs( scaledSize[i][j] - modeledDestinationLocationsByDestMgra[i][j] );
+                                double diff = Math.abs(scaledSize[i][j]
+                                        - modeledDestinationLocationsByDestMgra[i][j]);
                                 double relDiff = diff / scaledSize[i][j];
-                                for (int k = 0; k < maxDeltas.length; k++) {
-                                    if (relDiff < maxDeltas[k]) {
+                                for (int k = 0; k < maxDeltas.length; k++)
+                                {
+                                    if (relDiff < maxDeltas[k])
+                                    {
                                         delta = k;
                                         break;
                                     }
                                 }
-                                
+
                                 freqs[s][r][delta]++;
 
                                 // calculations for %RMSE
-                                sse[s][r] += ( diff * diff );
-                                
+                                sse[s][r] += (diff * diff);
+
                             }
 
                             // calculations for %RMSE
@@ -541,76 +553,83 @@ public class DestChoiceSize
                 }
 
                 rmse[s][r] = -1.0;
-                if (nObs[s][r] > 1) {
+                if (nObs[s][r] > 1)
+                {
                     meanSize[s][r] = sumObs[s][r] / nObs[s][r];
-                    rmse[s][r] = 100.0 * ( Math.sqrt( ( sse[s][r] / ( nObs[s][r] - 1) ) ) / meanSize[s][r] );
+                    rmse[s][r] = 100.0 * (Math.sqrt((sse[s][r] / (nObs[s][r] - 1))) / meanSize[s][r]);
                 }
 
                 minRange[s] = maxSize[r];
 
             }
 
-            convergeLogger.info ( "%RMSE by DC Size Range Category" );
-            for ( int i=0; i < maxSize.length-1; i++ )
-                convergeLogger.info( String.format( "< %-8.2f %12.2f", maxSize[i],  rmse[s][i] ) );
-            convergeLogger.info( String.format( "%-8s %14.2f", "  1000+",  rmse[s][maxSize.length-1] ) );
-            
-            convergeLogger.info( "" );
-            
-            convergeLogger.info ( "%Mean DC Size by DC Size Range Category" );
-            for ( int i=0; i < maxSize.length-1; i++ )
-                convergeLogger.info( String.format( "< %-8.2f %12.2f", maxSize[i],  meanSize[s][i] ) );
-            convergeLogger.info( String.format( "%-8s %14.2f", "  1000+", meanSize[s][maxSize.length-1] ) );
+            convergeLogger.info("%RMSE by DC Size Range Category");
+            for (int i = 0; i < maxSize.length - 1; i++)
+                convergeLogger.info(String.format("< %-8.2f %12.2f", maxSize[i], rmse[s][i]));
+            convergeLogger.info(String
+                    .format("%-8s %14.2f", "  1000+", rmse[s][maxSize.length - 1]));
 
-            convergeLogger.info( "" );
-            
+            convergeLogger.info("");
 
-            convergeLogger.info ( "Freq of MGRAs by DC Size Range Category and Relative Error" );
-            for ( int r=0; r < maxSize.length-1; r++ ) {
-                    
-                convergeLogger.info( String.format( "Size < %-8.0f", maxSize[r] ) );
-                for ( int i=0; i < maxDeltas.length-1; i++ )
-                    convergeLogger.info( String.format( "< %-8.2f %12d", maxDeltas[i],  freqs[s][r][i] ) );
-                convergeLogger.info( String.format( "%-8s %14d", "  1.0+",  freqs[s][r][maxDeltas.length-1] ) );
-                    
-                convergeLogger.info( "" );
+            convergeLogger.info("%Mean DC Size by DC Size Range Category");
+            for (int i = 0; i < maxSize.length - 1; i++)
+                convergeLogger.info(String.format("< %-8.2f %12.2f", maxSize[i], meanSize[s][i]));
+            convergeLogger.info(String.format("%-8s %14.2f", "  1000+",
+                    meanSize[s][maxSize.length - 1]));
+
+            convergeLogger.info("");
+
+            convergeLogger.info("Freq of MGRAs by DC Size Range Category and Relative Error");
+            for (int r = 0; r < maxSize.length - 1; r++)
+            {
+
+                convergeLogger.info(String.format("Size < %-8.0f", maxSize[r]));
+                for (int i = 0; i < maxDeltas.length - 1; i++)
+                    convergeLogger.info(String
+                            .format("< %-8.2f %12d", maxDeltas[i], freqs[s][r][i]));
+                convergeLogger.info(String.format("%-8s %14d", "  1.0+",
+                        freqs[s][r][maxDeltas.length - 1]));
+
+                convergeLogger.info("");
             }
 
-            convergeLogger.info( String.format( "Size >= 1000" ) );
-            for ( int i=0; i < maxDeltas.length-1; i++ )
-                convergeLogger.info( String.format( "< %-8.2f %12d", maxDeltas[i],  freqs[s][maxSize.length-1][i] ) );
-            convergeLogger.info( String.format( "%-8s %14d", "  1.0+",  freqs[s][maxSize.length-1][maxDeltas.length-1] ) );
-                
-            convergeLogger.info( "" );
+            convergeLogger.info(String.format("Size >= 1000"));
+            for (int i = 0; i < maxDeltas.length - 1; i++)
+                convergeLogger.info(String.format("< %-8.2f %12d", maxDeltas[i],
+                        freqs[s][maxSize.length - 1][i]));
+            convergeLogger.info(String.format("%-8s %14d", "  1.0+",
+                    freqs[s][maxSize.length - 1][maxDeltas.length - 1]));
+
+            convergeLogger.info("");
 
         }
-        
+
         convergeLogger.info("");
         convergeLogger.info("");
         convergeLogger.info("");
         convergeLogger.info("");
-        
+
     }
-    
 
     public void saveWorkMaxDiffValues(int iteration, int[][] modeledDestinationLocationsByDestMgra)
     {
 
         // define labels for the schoolsegment categories
-        String[] segmentRangelabels = { "White Collar", "Services", "Health", "Retail and Food", "Blue Collar", "Military" };
+        String[] segmentRangelabels = {"White Collar", "Services", "Health", "Retail and Food",
+                "Blue Collar", "Military"};
 
         // define the highest index value for the range of segments for the school segment category
-        int[] segmentRange = { 0, 1, 2, 3, 4, 5 };
+        int[] segmentRange = {0, 1, 2, 3, 4, 5};
 
         double[] maxSize = {10, 100, 1000, Double.MAX_VALUE};
         double[] maxDeltas = {0.05, 0.10, 0.25, 0.50, 1.0, 999.9};
 
         int[][][] freqs = new int[segmentRangelabels.length][maxSize.length][maxDeltas.length];
-        
+
         int[][] nObs = new int[segmentRangelabels.length][maxSize.length];
         double[][] sse = new double[segmentRangelabels.length][maxSize.length];
         double[][] sumObs = new double[segmentRangelabels.length][maxSize.length];
-        
+
         double[][] rmse = new double[segmentRangelabels.length][maxSize.length];
         double[][] meanSize = new double[segmentRangelabels.length][maxSize.length];
 
@@ -620,42 +639,50 @@ public class DestChoiceSize
         convergeLogger.info("Work Shadow Price Iteration " + iteration);
 
         double[] minRange = new double[segmentRangelabels.length];
-        
+
         int minS = 0;
-        for ( int s=0; s < segmentRangelabels.length; s++ ) {
+        for (int s = 0; s < segmentRangelabels.length; s++)
+        {
 
-            convergeLogger.info ( "" );
-            convergeLogger.info ( "" );
-            convergeLogger.info ( segmentRangelabels[s] + " convergence statistics" );
-            
-            if ( s > 0 )
-                minS = segmentRange[s-1] + 1;
-            
-            for ( int r=0; r < maxSize.length; r++ ){
-                
-                for (int i=minS; i <= segmentRange[s]; i++) {
+            convergeLogger.info("");
+            convergeLogger.info("");
+            convergeLogger.info(segmentRangelabels[s] + " convergence statistics");
 
-                    for (int j = 1; j <= maxMgra; j++) {
+            if (s > 0) minS = segmentRange[s - 1] + 1;
 
-                        if (scaledSize[i][j] > minRange[s] && scaledSize[i][j] <= maxSize[r]) {
+            for (int r = 0; r < maxSize.length; r++)
+            {
 
-                            if (modeledDestinationLocationsByDestMgra[i][j] > 0.0) {
+                for (int i = minS; i <= segmentRange[s]; i++)
+                {
+
+                    for (int j = 1; j <= maxMgra; j++)
+                    {
+
+                        if (scaledSize[i][j] > minRange[s] && scaledSize[i][j] <= maxSize[r])
+                        {
+
+                            if (modeledDestinationLocationsByDestMgra[i][j] > 0.0)
+                            {
 
                                 int delta = maxDeltas.length - 1;
-                                double diff = Math.abs( scaledSize[i][j] - modeledDestinationLocationsByDestMgra[i][j] );
+                                double diff = Math.abs(scaledSize[i][j]
+                                        - modeledDestinationLocationsByDestMgra[i][j]);
                                 double relDiff = diff / scaledSize[i][j];
-                                for (int k = 0; k < maxDeltas.length; k++) {
-                                    if (relDiff < maxDeltas[k]) {
+                                for (int k = 0; k < maxDeltas.length; k++)
+                                {
+                                    if (relDiff < maxDeltas[k])
+                                    {
                                         delta = k;
                                         break;
                                     }
                                 }
-                                
+
                                 freqs[s][r][delta]++;
 
                                 // calculations for %RMSE
-                                sse[s][r] += ( diff * diff );
-                                
+                                sse[s][r] += (diff * diff);
+
                             }
 
                             // calculations for %RMSE
@@ -669,61 +696,68 @@ public class DestChoiceSize
                 }
 
                 rmse[s][r] = -1.0;
-                if (nObs[s][r] > 1) {
+                if (nObs[s][r] > 1)
+                {
                     meanSize[s][r] = sumObs[s][r] / nObs[s][r];
-                    rmse[s][r] = 100.0 * ( Math.sqrt( ( sse[s][r] / ( nObs[s][r] - 1) ) ) / meanSize[s][r] );
+                    rmse[s][r] = 100.0 * (Math.sqrt((sse[s][r] / (nObs[s][r] - 1))) / meanSize[s][r]);
                 }
 
                 minRange[s] = maxSize[r];
 
             }
 
-            convergeLogger.info ( "%RMSE by DC Size Range Category" );
-            for ( int i=0; i < maxSize.length-1; i++ )
-                convergeLogger.info( String.format( "< %-8.2f %12.2f", maxSize[i],  rmse[s][i] ) );
-            convergeLogger.info( String.format( "%-8s %14.2f", "  1000+",  rmse[s][maxSize.length-1] ) );
-            
-            convergeLogger.info( "" );
-            
-            convergeLogger.info ( "%Mean DC Size by DC Size Range Category" );
-            for ( int i=0; i < maxSize.length-1; i++ )
-                convergeLogger.info( String.format( "< %-8.2f %12.2f", maxSize[i],  meanSize[s][i] ) );
-            convergeLogger.info( String.format( "%-8s %14.2f", "  1000+", meanSize[s][maxSize.length-1] ) );
+            convergeLogger.info("%RMSE by DC Size Range Category");
+            for (int i = 0; i < maxSize.length - 1; i++)
+                convergeLogger.info(String.format("< %-8.2f %12.2f", maxSize[i], rmse[s][i]));
+            convergeLogger.info(String
+                    .format("%-8s %14.2f", "  1000+", rmse[s][maxSize.length - 1]));
 
-            convergeLogger.info( "" );
-            
+            convergeLogger.info("");
 
-            convergeLogger.info ( "Freq of MGRAs by DC Size Range Category and Relative Error" );
-            for ( int r=0; r < maxSize.length-1; r++ ) {
-                    
-                convergeLogger.info( String.format( "Size < %-8.0f", maxSize[r] ) );
-                for ( int i=0; i < maxDeltas.length-1; i++ )
-                    convergeLogger.info( String.format( "< %-8.2f %12d", maxDeltas[i],  freqs[s][r][i] ) );
-                convergeLogger.info( String.format( "%-8s %14d", "  1.0+",  freqs[s][r][maxDeltas.length-1] ) );
-                    
-                convergeLogger.info( "" );
+            convergeLogger.info("%Mean DC Size by DC Size Range Category");
+            for (int i = 0; i < maxSize.length - 1; i++)
+                convergeLogger.info(String.format("< %-8.2f %12.2f", maxSize[i], meanSize[s][i]));
+            convergeLogger.info(String.format("%-8s %14.2f", "  1000+",
+                    meanSize[s][maxSize.length - 1]));
+
+            convergeLogger.info("");
+
+            convergeLogger.info("Freq of MGRAs by DC Size Range Category and Relative Error");
+            for (int r = 0; r < maxSize.length - 1; r++)
+            {
+
+                convergeLogger.info(String.format("Size < %-8.0f", maxSize[r]));
+                for (int i = 0; i < maxDeltas.length - 1; i++)
+                    convergeLogger.info(String
+                            .format("< %-8.2f %12d", maxDeltas[i], freqs[s][r][i]));
+                convergeLogger.info(String.format("%-8s %14d", "  1.0+",
+                        freqs[s][r][maxDeltas.length - 1]));
+
+                convergeLogger.info("");
             }
 
-            convergeLogger.info( String.format( "Size >= 1000" ) );
-            for ( int i=0; i < maxDeltas.length-1; i++ )
-                convergeLogger.info( String.format( "< %-8.2f %12d", maxDeltas[i],  freqs[s][maxSize.length-1][i] ) );
-            convergeLogger.info( String.format( "%-8s %14d", "  1.0+",  freqs[s][maxSize.length-1][maxDeltas.length-1] ) );
-                
-            convergeLogger.info( "" );
-        }
-        
-        convergeLogger.info("");
-        convergeLogger.info("");
-        convergeLogger.info("");
-        convergeLogger.info("");
-        
-    }
-    
+            convergeLogger.info(String.format("Size >= 1000"));
+            for (int i = 0; i < maxDeltas.length - 1; i++)
+                convergeLogger.info(String.format("< %-8.2f %12d", maxDeltas[i],
+                        freqs[s][maxSize.length - 1][i]));
+            convergeLogger.info(String.format("%-8s %14d", "  1.0+",
+                    freqs[s][maxSize.length - 1][maxDeltas.length - 1]));
 
-    public boolean getSegmentIsInSkipSegmentSet( int segment ) {
-        return noShadowPriceSchoolSegmentIndices.contains( segment );
+            convergeLogger.info("");
+        }
+
+        convergeLogger.info("");
+        convergeLogger.info("");
+        convergeLogger.info("");
+        convergeLogger.info("");
+
     }
-    
+
+    public boolean getSegmentIsInSkipSegmentSet(int segment)
+    {
+        return noShadowPriceSchoolSegmentIndices.contains(segment);
+    }
+
     public void updateShadowPricingInfo(int iteration, int[][] originsByHomeMgra,
             int[][] modeledDestinationLocationsByDestMgra, String mandatoryType)
     {
@@ -836,35 +870,35 @@ public class DestChoiceSize
             int column = columnIndex + i * numberOfColumnsPerPurpose + scaledSizeColumnOffset + 1;
             double[] columnData = tds.getColumnAsDoubleFromDouble(column);
             for (int z = 1; z <= maxMgra; z++)
-                scaledSize[i][z] = columnData[z-1];
+                scaledSize[i][z] = columnData[z - 1];
 
             // next restore the final size values
             column = columnIndex + i * numberOfColumnsPerPurpose + finalSizeColumnOffset + 1;
             columnData = tds.getColumnAsDoubleFromDouble(column);
             for (int z = 1; z <= maxMgra; z++)
-                dcSize[i][z] = columnData[z-1];
+                dcSize[i][z] = columnData[z - 1];
 
             // next restore the previous size values from the final size of the previous iteration
             column = columnIndex + i * numberOfColumnsPerPurpose + finalSizeColumnOffset + 1;
             columnData = tds.getColumnAsDoubleFromDouble(column);
             for (int z = 1; z <= maxMgra; z++)
-                previousSize[i][z] = columnData[z-1];
+                previousSize[i][z] = columnData[z - 1];
 
             // finally restore the final shadow price values
             column = columnIndex + i * numberOfColumnsPerPurpose + finalShadowPriceOffset + 1;
             columnData = tds.getColumnAsDoubleFromDouble(column);
             for (int z = 1; z <= maxMgra; z++)
-                shadowPrice[i][z] = columnData[z-1];
+                shadowPrice[i][z] = columnData[z - 1];
 
         }
 
     }
 
     /**
-     * Create a new double[], dimension it exactly as the argument array, and copy
-     * the element values from the argument array to the new one.
+     * Create a new double[], dimension it exactly as the argument array, and copy the element values from the argument array to the new one.
      * 
-     * @param in a 1-dimension double array to be duplicated
+     * @param in
+     *            a 1-dimension double array to be duplicated
      * @return an exact duplicate of the argument array
      */
     private double[] duplicateDouble1DArray(double[] in)
@@ -878,10 +912,10 @@ public class DestChoiceSize
     }
 
     /**
-     * Create a new double[][], dimension it exactly as the argument array, and copy
-     * the element values from the argument array to the new one.
+     * Create a new double[][], dimension it exactly as the argument array, and copy the element values from the argument array to the new one.
      * 
-     * @param in a 2-dimensional double array to be duplicated
+     * @param in
+     *            a 2-dimensional double array to be duplicated
      * @return an exact duplicate of the argument array
      */
     private double[][] duplicateDouble2DArray(double[][] in)

@@ -5,8 +5,7 @@ public class StoredUtilityData
 
     private static StoredUtilityData objInstance = null;
 
-    // these arrays are shared by multiple BestTransitPathCalculator objects in
-    // a distributed computing environment
+    // these arrays are shared by multiple BestTransitPathCalculator objects in a distributed computing environment
     private double[][][]             storedWalkAccessUtils;
     private double[][][]             storedDriveAccessUtils;
     private double[][][]             storedWalkEgressUtils;

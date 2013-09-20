@@ -18,7 +18,7 @@ public class DcSoaDMU
     protected Household                hh;
     protected Person                   person;
     protected Tour                     tour;
-    
+
     protected IndexValues              dmuIndex = null;
     protected String                   dmuLabel = "Origin Location";
 
@@ -26,8 +26,7 @@ public class DcSoaDMU
     protected double[]                 distance;
 
     protected BuildAccessibilities     aggAcc;
-    
-    
+
     public DcSoaDMU()
     {
         dmuIndex = new IndexValues();
@@ -97,25 +96,25 @@ public class DcSoaDMU
 
     public int getTourPurposeIsEscort()
     {
-        return tour.getTourPrimaryPurpose().equalsIgnoreCase(ModelStructure.ESCORT_PRIMARY_PURPOSE_NAME) ? 1 : 0;
+        return tour.getTourPrimaryPurpose().equalsIgnoreCase(
+                ModelStructure.ESCORT_PRIMARY_PURPOSE_NAME) ? 1 : 0;
     }
-    
+
     public int getNumPreschool()
     {
         return hh.getNumPreschool();
     }
-    
+
     public int getNumGradeSchoolStudents()
     {
         return hh.getNumGradeSchoolStudents();
     }
-    
+
     public int getNumHighSchoolStudents()
     {
         return hh.getNumHighSchoolStudents();
     }
-    
-    
+
     protected double getLnDcSize(int alt)
     {
 

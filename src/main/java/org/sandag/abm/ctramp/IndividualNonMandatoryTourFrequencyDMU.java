@@ -107,8 +107,7 @@ public class IndividualNonMandatoryTourFrequencyDMU
     }
 
     /**
-     * @return 1 if household has at least 1 car, and the number of cars equals the
-     *         number of workers
+     * @return 1 if household has at least 1 car, and the number of cars equals the number of workers
      */
     public int getCarsEqualsWorkers()
     {
@@ -128,8 +127,7 @@ public class IndividualNonMandatoryTourFrequencyDMU
     }
 
     /**
-     * @return 1 if household has at least 1 car, and the number of cars equals the
-     *         number of workers
+     * @return 1 if household has at least 1 car, and the number of cars equals the number of workers
      */
     public int getMoreCarsThanWorkers()
     {
@@ -222,8 +220,7 @@ public class IndividualNonMandatoryTourFrequencyDMU
     }
 
     /**
-     * determines the number of persons in the "decision making" household of type:
-     * full-time worker. returns the count, or 3, if count is 3 or more.
+     * determines the number of persons in the "decision making" household of type: full-time worker. returns the count, or 3, if count is 3 or more.
      * 
      * @return count (up to a max of 3) of the number of full-time workers.
      */
@@ -244,8 +241,7 @@ public class IndividualNonMandatoryTourFrequencyDMU
     }
 
     /**
-     * determines the number of persons in the "decision making" household of type:
-     * part-time worker. returns the count, or 3, if count is 3 or more.
+     * determines the number of persons in the "decision making" household of type: part-time worker. returns the count, or 3, if count is 3 or more.
      * 
      * @return count (up to a max of 3) of the number of part-time workers.
      */
@@ -266,8 +262,8 @@ public class IndividualNonMandatoryTourFrequencyDMU
     }
 
     /**
-     * determines the number of persons in the "decision making" household of type:
-     * university student. returns the count, or 3, if count is 3 or more.
+     * determines the number of persons in the "decision making" household of type: university student. returns the count, or 3, if count is 3 or
+     * more.
      * 
      * @return count (up to a max of 3) of the number of university students.
      */
@@ -288,8 +284,7 @@ public class IndividualNonMandatoryTourFrequencyDMU
     }
 
     /**
-     * determines the number of persons in the "decision making" household of type:
-     * non-worker. returns the count, or 3, if count is 3 or more.
+     * determines the number of persons in the "decision making" household of type: non-worker. returns the count, or 3, if count is 3 or more.
      * 
      * @return count (up to a max of 3) of the number of non-workers.
      */
@@ -311,8 +306,8 @@ public class IndividualNonMandatoryTourFrequencyDMU
     }
 
     /**
-     * determines the number of persons in the "decision making" household of type:
-     * driving-age student. returns the count, or 3, if count is 3 or more.
+     * determines the number of persons in the "decision making" household of type: driving-age student. returns the count, or 3, if count is 3 or
+     * more.
      * 
      * @return count (up to a max of 3) of the number of driving-age students.
      */
@@ -333,8 +328,8 @@ public class IndividualNonMandatoryTourFrequencyDMU
     }
 
     /**
-     * determines the number of persons in the "decision making" household of type:
-     * non-driving-age student. returns the count, or 3, if count is 3 or more.
+     * determines the number of persons in the "decision making" household of type: non-driving-age student. returns the count, or 3, if count is 3 or
+     * more.
      * 
      * @return count (up to a max of 3) of the number of non-driving-age students.
      */
@@ -355,8 +350,7 @@ public class IndividualNonMandatoryTourFrequencyDMU
     }
 
     /**
-     * determines the number of persons in the "decision making" household of type:
-     * pre-school age. returns the count, or 3, if count is 3 or more.
+     * determines the number of persons in the "decision making" household of type: pre-school age. returns the count, or 3, if count is 3 or more.
      * 
      * @return count (up to a max of 3) of the number of pre-school age children.
      */
@@ -423,8 +417,7 @@ public class IndividualNonMandatoryTourFrequencyDMU
     /**
      * called by methods invoked by UEC.solve()
      * 
-     * @return maximum number of hours mutually available between pairs of adults in
-     *         household
+     * @return maximum number of hours mutually available between pairs of adults in household
      */
     public int getMaxAdultOverlaps()
     {
@@ -434,8 +427,7 @@ public class IndividualNonMandatoryTourFrequencyDMU
     /**
      * called by methods invoked by UEC.solve()
      * 
-     * @return maximum number of hours mutually available between pairs of children
-     *         in household
+     * @return maximum number of hours mutually available between pairs of children in household
      */
     public int getMaxChildOverlaps()
     {
@@ -445,8 +437,7 @@ public class IndividualNonMandatoryTourFrequencyDMU
     /**
      * called by methods invoked by UEC.solve()
      * 
-     * @return maximum number of hours mutually available between pairs or
-     *         adults/children where pairs consist of different types in household
+     * @return maximum number of hours mutually available between pairs or adults/children where pairs consist of different types in household
      */
     public int getMaxMixedOverlaps()
     {

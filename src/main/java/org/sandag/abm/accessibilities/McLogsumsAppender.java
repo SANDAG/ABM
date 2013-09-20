@@ -142,8 +142,7 @@ public class McLogsumsAppender
 
     private BestTransitPathCalculator bestPathUEC;
 
-    // modeChoiceLogsums is an array of logsums for each unique depart/arrive
-    // skim
+    // modeChoiceLogsums is an array of logsums for each unique depart/arrive skim
     // period combination, for each sample destination
     protected double[][]              modeChoiceLogsums;
     protected double[][]              tripModeChoiceLogsums;
@@ -289,8 +288,7 @@ public class McLogsumsAppender
         chosenDepartArriveCombination[0] = odt[DEPART_PERIOD];
         chosenDepartArriveCombination[1] = odt[ARRIVE_PERIOD];
 
-        // create an array with the chosen dest and the sample dests, for which
-        // to
+        // create an array with the chosen dest and the sample dests, for which to
         // compute the logsums
         mgraSetForLogsums[0] = chosenMgra;
         for (int m = 0; m < mgraSample.length; m++)
@@ -302,8 +300,7 @@ public class McLogsumsAppender
 
             if (mcModel != null && destMgra > 0)
             {
-                // set the mode choice attributes needed by @variables in the
-                // UEC
+                // set the mode choice attributes needed by @variables in the UEC
                 // spreadsheets
                 mcDmuObject.setDmuIndexValues(odt[0], origMgra, origMgra, destMgra, false);
 
@@ -318,20 +315,16 @@ public class McLogsumsAppender
                 Arrays.fill(modeChoiceLogsums[m], -999);
             }
 
-            // compute the logsum for each depart/arrival time combination for
-            // the
+            // compute the logsum for each depart/arrival time combination for the
             // selected destination mgra
             int i = 0;
             for (int[] combo : departArriveCombinations)
             {
 
-                // mcModel might be null in the case where an estimation file
-                // record
-                // contains multiple purposes and the logsums are not desired
-                // for
+                // mcModel might be null in the case where an estimation file record
+                // contains multiple purposes and the logsums are not desired for
                 // some purposes.
-                // destMgra might be null in the case of destination choice
-                // where
+                // destMgra might be null in the case of destination choice where
                 // some sample destinations are repeated, so the set of 30 or 40
                 // contain 0s to reflect that.
                 if (mcModel == null || destMgra == 0)
@@ -352,8 +345,7 @@ public class McLogsumsAppender
                     int departPeriod = DEFAULT_DEPART_INDICES[combo[0]];
                     int arrivePeriod = DEFAULT_ARRIVE_INDICES[combo[1]];
 
-                    // if the depart/arrive combination was flagged as
-                    // unavailable,
+                    // if the depart/arrive combination was flagged as unavailable,
                     // can skip the logsum calculation
                     if (unavailableCombination(departPeriod, arrivePeriod, departAvailable,
                             arriveAvailable))
@@ -383,8 +375,7 @@ public class McLogsumsAppender
                     modeChoiceLogsums[m][logsumIndex] = logsum;
                     departArriveLogsums[m][i] = logsum;
 
-                    // write UEC calculation results to logsum specific log file
-                    // if
+                    // write UEC calculation results to logsum specific log file if
                     // its the chosen dest and its the chosen time combo
                     if ((odt[0] == debugEstimationFileRecord1 || odt[0] == debugEstimationFileRecord2)
                             && (m == 0) /* && isChosenDepartArriveCombo */)
@@ -514,8 +505,7 @@ public class McLogsumsAppender
 
         int departPeriod = odt[TRIP_PERIOD];
 
-        // create an array with the chosen dest and the sample dests, for which
-        // to
+        // create an array with the chosen dest and the sample dests, for which to
         // compute the logsums
         mgraSetForLogsums[0] = chosenMgra;
         for (int m = 0; m < mgraSample.length; m++)
@@ -534,8 +524,7 @@ public class McLogsumsAppender
 
             if (mcModel != null && sampleMgra > 0)
             {
-                // set the mode choice attributes needed by @variables in the
-                // UEC
+                // set the mode choice attributes needed by @variables in the UEC
                 // spreadsheets
                 mcDmuObject.setDmuIndexValues(odt[0], origMgra, origMgra, sampleMgra, false);
 
@@ -695,8 +684,7 @@ public class McLogsumsAppender
         tripModeChoiceLogsums[0] = -999;
         tripModeChoiceLogsums[1] = -999;
 
-        // mcModel would be null if the estimation file record has a stop
-        // purpose for which no ChoiceModelApplication has been defined.
+        // mcModel would be null if the estimation file record has a stop purpose for which no ChoiceModelApplication has been defined.
         if (origMgra == 0 || destMgra == 0 || sampleMgra == 0 || odt[TOUR_MODE] == 0
                 || mcModel == null) return tripModeChoiceLogsums;
 
@@ -751,8 +739,7 @@ public class McLogsumsAppender
 
         int departPeriod = odt[TRIP_PERIOD];
 
-        // set the mode choice attributes needed by @variables in the UEC
-        // spreadsheets
+        // set the mode choice attributes needed by @variables in the UEC spreadsheets
         mcDmuObject.setDmuIndexValues(odt[0], origMgra, origMgra, sampleMgra, false);
 
         mcDmuObject.setDestDuDen(mgraManager.getDuDenValue(sampleMgra));
@@ -891,13 +878,10 @@ public class McLogsumsAppender
      * @param arrivePeriod
      *            is the arrival interval
      * @param departAvailable
-     *            is the model time period the departure interval belongs to
-     *            (EA, AM, MD, PM, EV)
+     *            is the model time period the departure interval belongs to (EA, AM, MD, PM, EV)
      * @param arriveAvailable
-     *            is the model time period the arrival interval belongs to (EA,
-     *            AM, MD, PM, EV)
-     * @return true if the depart and/or arrival periods are unavailable, false
-     *         if both are available.
+     *            is the model time period the arrival interval belongs to (EA, AM, MD, PM, EV)
+     * @return true if the depart and/or arrival periods are unavailable, false if both are available.
      */
     protected boolean unavailableCombination(int departPeriod, int arrivePeriod,
             int[] departAvailable, int[] arriveAvailable)
@@ -915,11 +899,9 @@ public class McLogsumsAppender
     }
 
     /**
-     * return the array of mode choice model cumulative probabilities determined
-     * while computing the mode choice logsum for the trip segmen during stop
-     * location choice. These probabilities arrays are stored for each sampled
-     * stop location so that when the selected sample stop location is known,
-     * the mode choice can be drawn from the already computed probabilities.
+     * return the array of mode choice model cumulative probabilities determined while computing the mode choice logsum for the trip segmen during
+     * stop location choice. These probabilities arrays are stored for each sampled stop location so that when the selected sample stop location is
+     * known, the mode choice can be drawn from the already computed probabilities.
      * 
      * @return mode choice cumulative probabilities array
      */
@@ -932,8 +914,7 @@ public class McLogsumsAppender
      * Start the matrix server
      * 
      * @param rb
-     *            is a ResourceBundle for the properties file for this
-     *            application
+     *            is a ResourceBundle for the properties file for this application
      */
     protected void startMatrixServer(ResourceBundle rb)
     {

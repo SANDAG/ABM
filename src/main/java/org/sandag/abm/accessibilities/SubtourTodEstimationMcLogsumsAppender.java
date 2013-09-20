@@ -103,8 +103,7 @@ public final class SubtourTodEstimationMcLogsumsAppender
     private void writeTodFile(HashMap<String, String> rbMap, PrintWriter outStream2)
     {
 
-        // print the chosen destMgra and the depart/arrive logsum field names to
-        // the
+        // print the chosen destMgra and the depart/arrive logsum field names to the
         // file
         outStream2.print("seq,hisseq,chosenMgra");
         for (String[] labels : departArriveCombinationLabels)
@@ -175,8 +174,7 @@ public final class SubtourTodEstimationMcLogsumsAppender
     private int[][] getTodEstimationDataOrigDestTimes(TableDataSet hisTds)
     {
 
-        // odts are an array with elements: origin mgra, destination mgra,
-        // departure
+        // odts are an array with elements: origin mgra, destination mgra, departure
         // period(1-6), and arrival period(1-6).
         int[][] odts = new int[hisTds.getRowCount()][NUM_FIELDS];
         mgras = new int[hisTds.getRowCount()][NUM_MGRA_FIELDS];
@@ -242,21 +240,16 @@ public final class SubtourTodEstimationMcLogsumsAppender
         appender.runLogsumAppender(rb);
 
         /*
-         * used this to read/parse the UEC expressions - debugging the UEC
-         * sheet.
+         * used this to read/parse the UEC expressions - debugging the UEC sheet.
          * 
-         * HashMap<String,String> rbMap =
-         * ResourceUtil.changeResourceBundleIntoHashMap(rb);
+         * HashMap<String,String> rbMap = ResourceUtil.changeResourceBundleIntoHashMap(rb);
          * 
-         * String uecPath = rbMap.get(CtrampApplication.PROPERTIES_UEC_PATH);
-         * String mcUecFile = rbMap.get(PROPERTIES_UEC_TOUR_MODE_CHOICE);
-         * mcUecFile = uecPath + mcUecFile;
+         * String uecPath = rbMap.get(CtrampApplication.PROPERTIES_UEC_PATH); String mcUecFile = rbMap.get(PROPERTIES_UEC_TOUR_MODE_CHOICE); mcUecFile
+         * = uecPath + mcUecFile;
          * 
-         * ModelStructure modelStructure = new SandagModelStructure();
-         * SandagAppendMcLogsumDMU mcDmuObject = new
-         * SandagAppendMcLogsumDMU(modelStructure); ChoiceModelApplication
-         * mcModel = new ChoiceModelApplication(mcUecFile, SUBTOUR_SHEET, 0,
-         * rbMap, (VariableTable) mcDmuObject);
+         * ModelStructure modelStructure = new SandagModelStructure(); SandagAppendMcLogsumDMU mcDmuObject = new
+         * SandagAppendMcLogsumDMU(modelStructure); ChoiceModelApplication mcModel = new ChoiceModelApplication(mcUecFile, SUBTOUR_SHEET, 0, rbMap,
+         * (VariableTable) mcDmuObject);
          */
 
         System.out.println("total runtime = " + ((System.currentTimeMillis() - startTime) / 1000)

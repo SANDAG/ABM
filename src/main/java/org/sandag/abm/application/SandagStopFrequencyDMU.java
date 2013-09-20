@@ -25,9 +25,9 @@ public class SandagStopFrequencyDMU
     private HashMap<Integer, Integer> tourPurposeChoiceModelIndexMap;
     private int[]                     modelSheetValues;
 
-    public SandagStopFrequencyDMU( ModelStructure modelStructure )
+    public SandagStopFrequencyDMU(ModelStructure modelStructure)
     {
-        super( modelStructure );
+        super(modelStructure);
         setupModelIndexMappings();
         setupMethodIndexMap();
 
@@ -111,8 +111,7 @@ public class SandagStopFrequencyDMU
     }
 
     /**
-     * @return the array of unique worksheet model sheet values for whic a
-     *         ChoiceModelApplication object will be created. The size of this array
+     * @return the array of unique worksheet model sheet values for whic a ChoiceModelApplication object will be created. The size of this array
      *         determines the number of ChoiceModelApplication objects.
      */
     public int[] getModelSheetValuesArray()
@@ -121,8 +120,7 @@ public class SandagStopFrequencyDMU
     }
 
     /**
-     * @return the HashMap<Integer, Integer> that relates primary tour purpose
-     *         indices to ChoiceModelApplication array indices.
+     * @return the HashMap<Integer, Integer> that relates primary tour purpose indices to ChoiceModelApplication array indices.
      */
     public HashMap<Integer, Integer> getTourPurposeChoiceModelIndexMap()
     {
@@ -230,7 +228,6 @@ public class SandagStopFrequencyDMU
                 return getTourModeIsNonMotorized();
             case 29:
                 return getTourModeIsSchoolBus();
-                
 
             default:
                 logger.error("method number = " + variableIndex + " not found");

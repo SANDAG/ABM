@@ -4,7 +4,7 @@
 
     <groupId>org.sandag</groupId>
     <artifactId>SANDAG-ABM</artifactId>
-    <version>13.0.0-SNAPSHOT</version>
+    <version>13.0.0-RELEASE</version>
     <name>SANDAG CT-RAMP Activity Based Model</name>
 
     <profiles>
@@ -152,7 +152,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/${project.name}/${project.version}/lib</outputDirectory>
+                            <outputDirectory>${project.build.directory}/${project.name}/${project.version}/application</outputDirectory>
                             <overWriteReleases>false</overWriteReleases>
                             <overWriteSnapshots>false</overWriteSnapshots>
                             <overWriteIfNewer>true</overWriteIfNewer>
@@ -237,6 +237,70 @@
                             </resources>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>copy-input-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/${project.name}/${project.version}/input</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>input</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>                    
+                    <execution>
+                        <id>copy-inputtruck-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/${project.name}/${project.version}/input_truck</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>input_truck</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>*.csv</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-logFiles-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/${project.name}/${project.version}/logFiles</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>logFiles</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution> 
+                    <execution>
+                        <id>copy-report-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/${project.name}/${project.version}/report</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>report</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>                     
                 </executions>
             </plugin>
             <plugin>
@@ -251,7 +315,7 @@
                         <exclude>**/*.properties</exclude>
                         <exclude>*.xml</exclude>
                     </excludes>
-                    <outputDirectory>${project.build.directory}/${project.name}/${project.version}/lib</outputDirectory>
+                    <outputDirectory>${project.build.directory}/${project.name}/${project.version}/application</outputDirectory>
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>

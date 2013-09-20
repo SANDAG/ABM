@@ -4,6 +4,7 @@ import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
 import java.io.File;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.MissingResourceException;
 import org.apache.log4j.Logger;
@@ -130,14 +131,10 @@ public class VisitorTourEstimationFile
     /**
      * Calculate mode choice logsums
      * 
-     * TOURNUM: Unique ID SURVNUM: Number associated with traveler PersonType: 0
-     * - Business, 1 - Personal Persons: Number of persons (in addition to
-     * traveler) on tour HHIncome: 1= $0-29,999; 2 = 30,000-59,999; 3 =
-     * 60,000-99,999; 4 = 100,000-149,000; 5=$150,000 or more; 6 = DK/Refused
-     * AutoAvail: 0 - No auto, 1 - Auto Available PURPOSE: 1 - Work, 2 - Other
-     * (non-dining) 3 - Dining originMGRA - origin of tour (hotel/overnight
-     * location) destMGRA - primary destination MGRA PeriodDepart: Period of
-     * Tour Departure from hotel/overnight location PeriodArrive: Period of Tour
+     * TOURNUM: Unique ID SURVNUM: Number associated with traveler PersonType: 0 - Business, 1 - Personal Persons: Number of persons (in addition to
+     * traveler) on tour HHIncome: 1= $0-29,999; 2 = 30,000-59,999; 3 = 60,000-99,999; 4 = 100,000-149,000; 5=$150,000 or more; 6 = DK/Refused
+     * AutoAvail: 0 - No auto, 1 - Auto Available PURPOSE: 1 - Work, 2 - Other (non-dining) 3 - Dining originMGRA - origin of tour (hotel/overnight
+     * location) destMGRA - primary destination MGRA PeriodDepart: Period of Tour Departure from hotel/overnight location PeriodArrive: Period of Tour
      * Arrival at primary destination SAMPLE_: 1:30 sampled alternatives
      * 
      */
@@ -266,8 +263,7 @@ public class VisitorTourEstimationFile
         int serverPort = 0;
         try
         {
-            // get matrix server address. if "none" is specified, no server will
-            // be
+            // get matrix server address. if "none" is specified, no server will be
             // started, and matrix io will ocurr within the current process.
             matrixServerAddress = Util.getStringValueFromPropertyMap(pMap,
                     "RunModel.MatrixServerAddress");
@@ -277,14 +273,12 @@ public class VisitorTourEstimationFile
                 serverPort = Util.getIntegerValueFromPropertyMap(pMap, "RunModel.MatrixServerPort");
             } catch (MissingResourceException e)
             {
-                // if no matrix server address entry is found, leave undefined
-                // --
+                // if no matrix server address entry is found, leave undefined --
                 // it's eithe not needed or show could create an error.
             }
         } catch (MissingResourceException e)
         {
-            // if no matrix server address entry is found, set to localhost, and
-            // a
+            // if no matrix server address entry is found, set to localhost, and a
             // separate matrix io process will be started on localhost.
             matrixServerAddress = "localhost";
             serverPort = MATRIX_DATA_SERVER_PORT;
@@ -312,8 +306,7 @@ public class VisitorTourEstimationFile
                     visitorEstimationFile.ms.testRemote(Thread.currentThread().getName());
                     visitorEstimationFile.ms.start32BitMatrixIoServer(mt);
 
-                    // these methods need to be called to set the matrix data
-                    // manager in the matrix data server
+                    // these methods need to be called to set the matrix data manager in the matrix data server
                     MatrixDataManager mdm = MatrixDataManager.getInstance();
                     mdm.setMatrixDataServerObject(visitorEstimationFile.ms);
                 }
@@ -336,8 +329,7 @@ public class VisitorTourEstimationFile
 
         visitorEstimationFile.createEstimationFile();
 
-        // if a separate process for running matrix data mnager was started,
-        // we're
+        // if a separate process for running matrix data mnager was started, we're
         // done with it, so close it.
         if (matrixServerAddress.equalsIgnoreCase("localhost"))
         {
@@ -378,8 +370,7 @@ public class VisitorTourEstimationFile
                     e);
         }
 
-        // bind this concrete object with the cajo library objects for managing
-        // RMI
+        // bind this concrete object with the cajo library objects for managing RMI
         try
         {
             Remote.config(serverAddress, serverPort, null, 0);
@@ -395,7 +386,7 @@ public class VisitorTourEstimationFile
         try
         {
             ItemServer.bind(matrixServer, className);
-        } catch (IOException e)
+        } catch (RemoteException e)
         {
             logger.error(String.format(
                     "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",

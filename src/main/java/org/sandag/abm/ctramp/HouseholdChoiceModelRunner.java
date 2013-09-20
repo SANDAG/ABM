@@ -15,8 +15,7 @@ import com.pb.common.calculator.MatrixDataServerIf;
 public class HouseholdChoiceModelRunner
 {
 
-    private Logger                  logger                                = Logger
-                                                                                  .getLogger(HouseholdChoiceModelRunner.class);
+    private Logger                  logger                                = Logger.getLogger(HouseholdChoiceModelRunner.class);
 
     private static int              PACKET_SIZE                           = 0;
 
@@ -103,8 +102,8 @@ public class HouseholdChoiceModelRunner
     }
 
     /**
-     * @param client is a JPPFClient object which is used to establish a connection
-     *            to a computing node, submit tasks, and receive results.
+     * @param client
+     *            is a JPPFClient object which is used to establish a connection to a computing node, submit tasks, and receive results.
      */
     private void submitTasks()
     {
@@ -133,7 +132,8 @@ public class HouseholdChoiceModelRunner
             dataProvider.setValue("restartModelString", restartModelString);
             job.setDataProvider(dataProvider);
 
-            ArrayList<int[]> startEndTaskIndicesList = getTaskHouseholdRanges(hhDataManager.getNumHouseholds());
+            ArrayList<int[]> startEndTaskIndicesList = getTaskHouseholdRanges(hhDataManager
+                    .getNumHouseholds());
 
             int startIndex = 0;
             int endIndex = 0;
@@ -156,10 +156,14 @@ public class HouseholdChoiceModelRunner
 
                 try
                 {
-                    logger.info(String.format("HH TASK: %s returned: %s, maxAlts: %d.", task.getId(), (String) task.getResult(), ((HouseholdChoiceModelsTaskJppf) task).getMaxAlts()));
+                    logger.info(String.format("HH TASK: %s returned: %s, maxAlts: %d.",
+                            task.getId(), (String) task.getResult(),
+                            ((HouseholdChoiceModelsTaskJppf) task).getMaxAlts()));
                 } catch (Exception e)
                 {
-                    logger.error( "Exception returned by computing node caught in HouseholdChoiceModelsTaskJppf.", e);
+                    logger.error(
+                            "Exception returned by computing node caught in HouseholdChoiceModelsTaskJppf.",
+                            e);
                     throw new RuntimeException();
                 }
 
@@ -167,7 +171,9 @@ public class HouseholdChoiceModelRunner
 
         } catch (Exception e)
         {
-            logger.error( "Exception caught creating/submitting/receiving HouseholdChoiceModelsTaskJppf.", e);
+            logger.error(
+                    "Exception caught creating/submitting/receiving HouseholdChoiceModelsTaskJppf.",
+                    e);
             throw new RuntimeException();
         }
 
@@ -189,7 +195,7 @@ public class HouseholdChoiceModelRunner
             if (numInitializationHouseholds < numberOfHouseholds)
             {
 
-                while(endIndex < numInitializationHouseholds)
+                while (endIndex < numInitializationHouseholds)
                 {
                     endIndex = startIndex + INITIALIZATION_PACKET_SIZE - 1;
 
@@ -203,7 +209,7 @@ public class HouseholdChoiceModelRunner
 
             }
 
-            while(endIndex < numberOfHouseholds - 1)
+            while (endIndex < numberOfHouseholds - 1)
             {
                 endIndex = startIndex + PACKET_SIZE - 1;
                 if (endIndex + PACKET_SIZE > numberOfHouseholds) endIndex = numberOfHouseholds - 1;

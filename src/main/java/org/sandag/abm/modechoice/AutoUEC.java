@@ -5,10 +5,8 @@ import com.pb.common.newmodel.LogitModel;
 import com.pb.common.util.Tracer;
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.Util;
-
 import com.pb.common.newmodel.ChoiceModelApplication;
 import com.pb.common.newmodel.UtilityExpressionCalculator;
-
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,7 +23,7 @@ public class AutoUEC
         implements Serializable
 {
 
-    protected transient Logger             logger = Logger.getLogger(AutoUEC.class);
+    protected transient Logger          logger = Logger.getLogger(AutoUEC.class);
     private TazDataManager              tazs;
     private UtilityExpressionCalculator uec;
     private LogitModel                  model;
@@ -44,10 +42,14 @@ public class AutoUEC
     /**
      * Constructor.
      * 
-     * @param rb ResourceBundle
-     * @param UECFileName The path/name of the UEC containing the auto model.
-     * @param modelSheet The sheet (0-indexed) containing the model specification.
-     * @param dataSheet The sheet (0-indexed) containing the data specification.
+     * @param rb
+     *            ResourceBundle
+     * @param UECFileName
+     *            The path/name of the UEC containing the auto model.
+     * @param modelSheet
+     *            The sheet (0-indexed) containing the model specification.
+     * @param dataSheet
+     *            The sheet (0-indexed) containing the data specification.
      */
     public AutoUEC(HashMap<String, String> rbHashMap, String uecFileName, int modelSheet,
             int dataSheet)
@@ -70,7 +72,7 @@ public class AutoUEC
         // set up the tracer object
         tracer = Tracer.getTracer();
         tracer.setTrace(trace);
-        if ( trace )
+        if (trace)
         {
             for (int i = 0; i < traceOtaz.length; i++)
             {
@@ -85,8 +87,10 @@ public class AutoUEC
     /**
      * Solve auto utilities for a given zone-pair
      * 
-     * @param pTaz Production/Origin TAZ.
-     * @param aTaz Attraction/Destination TAZ.
+     * @param pTaz
+     *            Production/Origin TAZ.
+     * @param aTaz
+     *            Attraction/Destination TAZ.
      * @return The root utility.
      */
     public double calculateUtilitiesForTazPair(int pTaz, int aTaz, double avgTazHourlyParkingCost)
@@ -102,7 +106,7 @@ public class AutoUEC
         availFlag = new int[uec.getNumberOfAlternatives() + 1];
         Arrays.fill(availFlag, 1);
 
-        dmu.setAvgHourlyParkingCostAtDestTaz( avgTazHourlyParkingCost );
+        dmu.setAvgHourlyParkingCostAtDestTaz(avgTazHourlyParkingCost);
         dmu.setPTazTerminalTime(tazs.getOriginTazTerminalTime(pTaz));
         dmu.setATazTerminalTime(tazs.getDestinationTazTerminalTime(aTaz));
 

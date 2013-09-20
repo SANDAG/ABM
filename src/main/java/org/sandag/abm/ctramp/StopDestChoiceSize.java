@@ -16,8 +16,7 @@ public class StopDestChoiceSize
         implements Serializable
 {
 
-    private transient Logger                                     logger                        = Logger
-                                                                                                       .getLogger(StopDestChoiceSize.class);
+    private transient Logger                                     logger                        = Logger.getLogger(StopDestChoiceSize.class);
 
     public static final String                                   PROPERTIES_STOP_DC_SIZE_INPUT = "StopDestinationChoice.SizeCoefficients.InputFile";
 
@@ -125,9 +124,8 @@ public class StopDestChoiceSize
 
             if (!tazDataManager.isValidZoneTableField(label))
             {
-                logger
-                        .fatal("Stop size coefficient table column does not correspond to taz data column: "
-                                + label);
+                logger.fatal("Stop size coefficient table column does not correspond to taz data column: "
+                        + label);
                 errors = true;
             }
             sizeTazColumns.add(label);
@@ -173,16 +171,18 @@ public class StopDestChoiceSize
 
                 } else
                 {
-                    logger
-                            .fatal("Invalid purpose found in stop destination choice size coefficient table: "
-                                    + purpose);
+                    logger.fatal("Invalid purpose found in stop destination choice size coefficient table: "
+                            + purpose);
                     errors = true;
                 }
             }
         }
 
-        if (errors) { throw new RuntimeException(
-                "Errors in stop destination choice size coefficient file; see log file for details."); }
+        if (errors)
+        {
+            throw new RuntimeException(
+                    "Errors in stop destination choice size coefficient file; see log file for details.");
+        }
     }
 
     private void determineSizeCoefficients()

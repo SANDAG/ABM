@@ -37,8 +37,7 @@ public class ParkingProvisionChoiceDMU
     private double                     lsWgtAvgCostM;
     private double                     lsWgtAvgCostD;
     private double                     lsWgtAvgCostH;
-    
-    
+
     public ParkingProvisionChoiceDMU()
     {
         dmuIndex = new IndexValues();
@@ -67,65 +66,76 @@ public class ParkingProvisionChoiceDMU
         }
     }
 
-    public void setMgraParkArea( int value) {
+    public void setMgraParkArea(int value)
+    {
         mgraParkArea = value;
     }
 
-    public void setNumFreeHours( int value) {
+    public void setNumFreeHours(int value)
+    {
         numFreeHours = value;
     }
 
-    public void setLsWgtAvgCostM( double cost ) {
+    public void setLsWgtAvgCostM(double cost)
+    {
         lsWgtAvgCostM = cost;
     }
-    
-    public void setLsWgtAvgCostD( double cost ) {
+
+    public void setLsWgtAvgCostD(double cost)
+    {
         lsWgtAvgCostD = cost;
     }
-    
-    public void setLsWgtAvgCostH( double cost ) {
+
+    public void setLsWgtAvgCostH(double cost)
+    {
         lsWgtAvgCostH = cost;
     }
-    
-    public void setMStallsOth( int value ) {
+
+    public void setMStallsOth(int value)
+    {
         mstallsoth = value;
     }
-    
-    public void setMStallsSam( int value ) {
+
+    public void setMStallsSam(int value)
+    {
         mstallssam = value;
     }
-    
-    public void setMParkCost( float value ) {
+
+    public void setMParkCost(float value)
+    {
         mparkcost = value;
     }
-    
-    public void setDStallsOth( int value ) {
+
+    public void setDStallsOth(int value)
+    {
         dstallsoth = value;
     }
-    
-    public void setDStallsSam( int value ) {
+
+    public void setDStallsSam(int value)
+    {
         dstallssam = value;
     }
-    
-    public void setDParkCost( float value ) {
+
+    public void setDParkCost(float value)
+    {
         dparkcost = value;
     }
-    
-    public void setHStallsOth( int value ) {
+
+    public void setHStallsOth(int value)
+    {
         hstallsoth = value;
     }
-    
-    public void setHStallsSam( int value ) {
+
+    public void setHStallsSam(int value)
+    {
         hstallssam = value;
     }
-    
-    public void setHParkCost( float value ) {
+
+    public void setHParkCost(float value)
+    {
         hparkcost = value;
     }
-    
 
-    
-    
     public IndexValues getDmuIndexValues()
     {
         return dmuIndex;
@@ -138,68 +148,81 @@ public class ParkingProvisionChoiceDMU
         return hh.getIncomeInDollars();
     }
 
-    public double getLsWgtAvgCostM() {
+    public double getLsWgtAvgCostM()
+    {
         return lsWgtAvgCostM;
     }
 
-    public double getLsWgtAvgCostD() {
+    public double getLsWgtAvgCostD()
+    {
         return lsWgtAvgCostD;
     }
 
-    public double getLsWgtAvgCostH() {
+    public double getLsWgtAvgCostH()
+    {
         return lsWgtAvgCostH;
     }
 
-    public int getMgraParkArea() {
+    public int getMgraParkArea()
+    {
         return mgraParkArea;
     }
 
-    public int getNumFreeHours() {
+    public int getNumFreeHours()
+    {
         return numFreeHours;
     }
 
-    public int getMStallsOth() {
+    public int getMStallsOth()
+    {
         return mstallsoth;
     }
 
-    public int getMStallsSam() {
+    public int getMStallsSam()
+    {
         return mstallssam;
     }
 
-    public float getMParkCost() {
+    public float getMParkCost()
+    {
         return mparkcost;
     }
 
-    public int getDStallsOth() {
+    public int getDStallsOth()
+    {
         return dstallsoth;
     }
 
-    public int getDStallsSam() {
+    public int getDStallsSam()
+    {
         return dstallssam;
     }
 
-    public float getDParkCost() {
+    public float getDParkCost()
+    {
         return dparkcost;
     }
 
-    public int getHStallsOth() {
+    public int getHStallsOth()
+    {
         return hstallsoth;
     }
 
-    public int getHStallsSam() {
+    public int getHStallsSam()
+    {
         return hstallssam;
     }
 
-    public float getHParkCost() {
+    public float getHParkCost()
+    {
         return hparkcost;
     }
 
-    public int getWorkLocMgra() {
+    public int getWorkLocMgra()
+    {
         return person.getPersonWorkLocationZone();
     }
 
-
-    
     public int getIndexValue(String variableName)
     {
         return methodIndexMap.get(variableName);

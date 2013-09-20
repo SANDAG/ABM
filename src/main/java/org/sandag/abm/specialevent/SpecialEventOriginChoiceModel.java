@@ -18,34 +18,12 @@ import com.pb.common.newmodel.UtilityExpressionCalculator;
 public class SpecialEventOriginChoiceModel
 {
 
-    private double[][]                  mgraSizeTerms;                                 // by
-                                                                                        // purpose,
-                                                                                        // MGRA
-    private double[][]                  tazSizeTerms;                                  // by
-                                                                                        // purpose,
-                                                                                        // TAZ
-    private double[][][]                mgraProbabilities;                             // by
-                                                                                        // purpose,
-                                                                                        // tazNumber,
-                                                                                        // mgra
-                                                                                        // index
-                                                                                        // (sequential,
-                                                                                        // 0-based)
-    private Matrix[]                    tazProbabilities;                              // by
-                                                                                        // purpose,
-                                                                                        // origin
-                                                                                        // TAZ,
-                                                                                        // destination
-                                                                                        // TAZ
+    private double[][]                  mgraSizeTerms;                                 // by purpose, MGRA
+    private double[][]                  tazSizeTerms;                                  // by purpose, TAZ
+    private double[][][]                mgraProbabilities;                             // by purpose, tazNumber, mgra index (sequential, 0-based)
+    private Matrix[]                    tazProbabilities;                              // by purpose, origin TAZ, destination TAZ
 
-    private TableDataSet                alternativeData;                               // the
-                                                                                        // alternatives,
-                                                                                        // with
-                                                                                        // a
-                                                                                        // dest
-                                                                                        // field
-                                                                                        // indicating
-                                                                                        // tazNumber
+    private TableDataSet                alternativeData;                               // the alternatives, with a dest field indicating tazNumber
 
     private transient Logger            logger = Logger.getLogger("specialEventModel");
 
@@ -55,15 +33,7 @@ public class SpecialEventOriginChoiceModel
     private ChoiceModelApplication      destModel;
     private UtilityExpressionCalculator sizeTermUEC;
     private HashMap<String, String>     rbMap;
-    private HashMap<String, Integer>    purposeMap;                                    // string
-                                                                                        // is
-                                                                                        // purpose,
-                                                                                        // int
-                                                                                        // is
-                                                                                        // alternative
-                                                                                        // for
-                                                                                        // size
-                                                                                        // terms
+    private HashMap<String, Integer>    purposeMap;                                    // string is purpose, int is alternative for size terms
 
     /**
      * Constructor
@@ -95,14 +65,12 @@ public class SpecialEventOriginChoiceModel
         int modelPage = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap,
                 "specialEvent.dc.model.page"));
 
-        // read the model pages from the property file, create one choice model
-        // for each
+        // read the model pages from the property file, create one choice model for each
         // get page from property file
 
         SpecialEventOriginChoiceDMU dcDmu = dmuFactory.getSpecialEventOriginChoiceDMU();
 
-        // create a ChoiceModelApplication object for the filename, model page
-        // and data page.
+        // create a ChoiceModelApplication object for the filename, model page and data page.
         destModel = new ChoiceModelApplication(destUecFileName, modelPage, dataPage, rbMap,
                 (VariableTable) dcDmu);
 
@@ -162,8 +130,7 @@ public class SpecialEventOriginChoiceModel
 
         }
 
-        // now calculate probability of selecting each MGRA within each TAZ for
-        // SOA
+        // now calculate probability of selecting each MGRA within each TAZ for SOA
         mgraProbabilities = new double[purposes][maxTaz + 1][];
         int[] tazs = tazManager.getTazs();
 
@@ -196,8 +163,7 @@ public class SpecialEventOriginChoiceModel
 
         }
 
-        // calculate logged size terms for mgra and taz vectors to be used in
-        // dmu
+        // calculate logged size terms for mgra and taz vectors to be used in dmu
         for (int purpose = 0; purpose < purposes; ++purpose)
         {
             for (int taz = 0; taz < tazSizeTerms[purpose].length; ++taz)
@@ -213,8 +179,7 @@ public class SpecialEventOriginChoiceModel
     }
 
     /**
-     * Calculate taz probabilities. This method initializes and calculates the
-     * tazProbabilities array.
+     * Calculate taz probabilities. This method initializes and calculates the tazProbabilities array.
      */
     public void calculateTazProbabilities(SpecialEventDmuFactoryIf dmuFactory)
     {
@@ -233,8 +198,7 @@ public class SpecialEventOriginChoiceModel
         // initialize the arrays
         tazProbabilities = new Matrix[purposes];
 
-        // iterate through the alternatives in the alternatives file and set the
-        // size term for each alternative
+        // iterate through the alternatives in the alternatives file and set the size term for each alternative
         UtilityExpressionCalculator modelUEC = destModel.getUEC();
         TableDataSet altData = modelUEC.getAlternativeData();
 
@@ -250,8 +214,7 @@ public class SpecialEventOriginChoiceModel
             int[] tazs = altData.getColumnAsInt("dest");
             tazProbabilities[purpose].setExternalNumbersZeroBased(tazs);
 
-            // iterate through destination zones, solve the UEC for all origins
-            // and store the results in the matrix
+            // iterate through destination zones, solve the UEC for all origins and store the results in the matrix
             for (int taz = 0; taz < tazs.length; ++taz)
             {
 
@@ -331,13 +294,11 @@ public class SpecialEventOriginChoiceModel
             }
         }
 
-        // get the taz number of the alternative, and an array of mgras in that
-        // taz
+        // get the taz number of the alternative, and an array of mgras in that taz
         int[] mgraArray = tazManager.getMgraArray(originTaz);
 
         // now find an MGRA in the taz corresponding to the random number drawn:
-        // note that the indexing needs to be offset by the cumulative
-        // probability of the chosen taz and the
+        // note that the indexing needs to be offset by the cumulative probability of the chosen taz and the
         // mgra probabilities need to be scaled by the alternatives probability
         int mgraNumber = 0;
 

@@ -30,9 +30,9 @@ public class HouseholdAutoOwnershipModel
     private ChoiceModelApplication             aoModel;
     private AutoOwnershipChoiceDMU             aoDmuObject;
 
-
     public HouseholdAutoOwnershipModel(HashMap<String, String> rbMap,
-            CtrampDmuFactoryIf dmuFactory, AccessibilitiesTable myAccTable, MandatoryAccessibilitiesCalculator myMandAcc)
+            CtrampDmuFactoryIf dmuFactory, AccessibilitiesTable myAccTable,
+            MandatoryAccessibilitiesCalculator myMandAcc)
     {
 
         logger.info("setting up AO choice model.");
@@ -43,7 +43,7 @@ public class HouseholdAutoOwnershipModel
         // to use the accessibilities components.
         accTable = myAccTable;
         mandAcc = myMandAcc;
-        
+
         // locate the auto ownership UEC
         String uecPath = rbMap.get(CtrampApplication.PROPERTIES_UEC_PATH);
         String autoOwnershipUecFile = rbMap.get(AO_CONTROL_FILE_TARGET);
@@ -62,12 +62,12 @@ public class HouseholdAutoOwnershipModel
     }
 
     /**
-     * Set the dmu attributes, compute the pre-AO or AO utilities, and select an
-     * alternative
+     * Set the dmu attributes, compute the pre-AO or AO utilities, and select an alternative
      * 
-     * @param hhObj for which to apply thye model
-     * @param preAutoOwnership is true if running pre-auto ownership, or false to run
-     *            primary auto ownership model.
+     * @param hhObj
+     *            for which to apply thye model
+     * @param preAutoOwnership
+     *            is true if running pre-auto ownership, or false to run primary auto ownership model.
      */
 
     public void applyModel(Household hhObj, boolean preAutoOwnership)
@@ -79,9 +79,12 @@ public class HouseholdAutoOwnershipModel
 
         // set the non-mandatory accessibility values for the home MGRA.
         // values used by both pre-ao and ao models.
-        aoDmuObject.setHomeTazAutoAccessibility( accTable.getAggregateAccessibility("auto", hhObj.getHhMgra() ) );
-        aoDmuObject.setHomeTazTransitAccessibility( accTable.getAggregateAccessibility("transit", hhObj.getHhMgra() ) );
-        aoDmuObject.setHomeTazNonMotorizedAccessibility( accTable.getAggregateAccessibility( "nonmotor", hhObj.getHhMgra() ) );
+        aoDmuObject.setHomeTazAutoAccessibility(accTable.getAggregateAccessibility("auto",
+                hhObj.getHhMgra()));
+        aoDmuObject.setHomeTazTransitAccessibility(accTable.getAggregateAccessibility("transit",
+                hhObj.getHhMgra()));
+        aoDmuObject.setHomeTazNonMotorizedAccessibility(accTable.getAggregateAccessibility(
+                "nonmotor", hhObj.getHhMgra()));
 
         if (preAutoOwnership)
         {
@@ -115,11 +118,14 @@ public class HouseholdAutoOwnershipModel
                         // if 0 <= dist < 1, nmFactor = 0
                         // if 1 <= dist <= 3, nmFactor = [0.0, 1.0]
                         // if 3 <= dist, nmFactor = 1.0
-                        double nmFactor = 0.5 * (Math.min(Math.max(persons[i].getWorkLocationDistance(), 1.0), 3.0)) - 0.5;
+                        double nmFactor = 0.5 * (Math.min(
+                                Math.max(persons[i].getWorkLocationDistance(), 1.0), 3.0)) - 0.5;
 
                         // if auto logsum < transit logsum, do not accumulate auto
                         // dependency
-                        double[] workerAccessibilities = mandAcc.calculateWorkerMandatoryAccessibilities(hhObj.getHhMgra(), workMgra);
+                        double[] workerAccessibilities = mandAcc
+                                .calculateWorkerMandatoryAccessibilities(hhObj.getHhMgra(),
+                                        workMgra);
                         if (workerAccessibilities[AUTO_LOGSUM_INDEX] >= workerAccessibilities[TRANSIT_LOGSUM_INDEX])
                         {
                             double logsumDiff = workerAccessibilities[AUTO_LOGSUM_INDEX]
@@ -149,12 +155,14 @@ public class HouseholdAutoOwnershipModel
                         // if 0 <= dist < 1, nmFactor = 0
                         // if 1 <= dist <= 3, nmFactor = [0.0, 1.0]
                         // if 3 <= dist, nmFactor = 1.0
-                        double nmFactor = 0.5 * (Math.min(Math.max(persons[i]
-                                .getWorkLocationDistance(), 1.0), 3.0)) - 0.5;
+                        double nmFactor = 0.5 * (Math.min(
+                                Math.max(persons[i].getWorkLocationDistance(), 1.0), 3.0)) - 0.5;
 
                         // if auto logsum < transit logsum, do not accumulate auto
                         // dependency
-                        double[] studentAccessibilities = mandAcc.calculateStudentMandatoryAccessibilities(hhObj.getHhMgra(), schoolMgra);
+                        double[] studentAccessibilities = mandAcc
+                                .calculateStudentMandatoryAccessibilities(hhObj.getHhMgra(),
+                                        schoolMgra);
                         if (studentAccessibilities[AUTO_LOGSUM_INDEX] >= studentAccessibilities[TRANSIT_LOGSUM_INDEX])
                         {
                             double logsumDiff = studentAccessibilities[AUTO_LOGSUM_INDEX]
@@ -196,18 +204,14 @@ public class HouseholdAutoOwnershipModel
                 chosenAlt = aoModel.getChoiceResult(rn);
             } catch (ModelException e)
             {
-                logger
-                        .error(String.format(
-                                "exception caught for HHID=%d in choiceModelApplication.", hhObj
-                                        .getHhId()));
+                logger.error(String.format(
+                        "exception caught for HHID=%d in choiceModelApplication.", hhObj.getHhId()));
             }
         } else
         {
-            logger
-                    .error(String
-                            .format(
-                                    "error: HHID=%d has no available auto ownership alternatives to choose from in choiceModelApplication.",
-                                    hhObj.getHhId()));
+            logger.error(String
+                    .format("error: HHID=%d has no available auto ownership alternatives to choose from in choiceModelApplication.",
+                            hhObj.getHhId()));
             throw new RuntimeException();
         }
 
@@ -222,10 +226,8 @@ public class HouseholdAutoOwnershipModel
             double[] utilities = aoModel.getUtilities();
             double[] probabilities = aoModel.getProbabilities();
 
-            aoLogger
-                    .info("Alternative                    Utility       Probability           CumProb");
-            aoLogger
-                    .info("--------------------   ---------------      ------------      ------------");
+            aoLogger.info("Alternative                    Utility       Probability           CumProb");
+            aoLogger.info("--------------------   ---------------      ------------      ------------");
 
             double cumProb = 0.0;
             for (int k = 0; k < aoModel.getNumberOfAlternatives(); k++)
@@ -239,20 +241,19 @@ public class HouseholdAutoOwnershipModel
             aoLogger.info(String.format("Choice: %s, with rn=%.8f, randomCount=%d", chosenAlt, rn,
                     randomCount));
 
-            aoLogger
-                    .info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            aoLogger.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             aoLogger.info("");
             aoLogger.info("");
 
             // write choice model alternative info to debug log file
-            aoModel.logAlternativesInfo("Household Auto Ownership Choice", String.format("HH_%d",
-                    hhObj.getHhId()));
-            aoModel.logSelectionInfo("Household Auto Ownership Choice", String.format("HH_%d",
-                    hhObj.getHhId()), rn, chosenAlt);
+            aoModel.logAlternativesInfo("Household Auto Ownership Choice",
+                    String.format("HH_%d", hhObj.getHhId()));
+            aoModel.logSelectionInfo("Household Auto Ownership Choice",
+                    String.format("HH_%d", hhObj.getHhId()), rn, chosenAlt);
 
             // write UEC calculation results to separate model specific log file
-            aoModel.logUECResults(aoLogger, String.format("Household Auto Ownership Choice, HH_%d",
-                    hhObj.getHhId()));
+            aoModel.logUECResults(aoLogger,
+                    String.format("Household Auto Ownership Choice, HH_%d", hhObj.getHhId()));
         }
 
         if (preAutoOwnership) hhObj.setPreAoRandomCount(hhObj.getHhRandomCount());

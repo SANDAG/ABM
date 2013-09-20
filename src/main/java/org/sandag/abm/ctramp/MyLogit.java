@@ -30,8 +30,8 @@ public class MyLogit
     }
 
     /**
-     * Overrides the base class getUtility() method to call a method to return the
-     * array of exponentiated utilities, having passed to it an array of utilities.
+     * Overrides the base class getUtility() method to call a method to return the array of exponentiated utilities, having passed to it an array of
+     * utilities.
      * 
      * @return The composite utility (logsum value) of all the alternatives.
      */
@@ -74,7 +74,7 @@ public class MyLogit
         }
 
         // exponentiate the utilities array and save result in expUtilities.
-        MathUtil.expArray( utilities, expUtilities );
+        MathUtil.expArray(utilities, expUtilities);
 
         // sum the exponentiated utilities
         for (i = 0; i < expUtilities.length; i++)

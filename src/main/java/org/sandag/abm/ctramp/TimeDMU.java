@@ -50,7 +50,7 @@ public class TimeDMU
     // public void setImtfWorkSwitch(int workOn){
     // imtfWorkSwitch = workOn;
     // }
-    //    
+    //
     // /**
     // * Used in the Individual Mandatory Tour Frequency model; set to true
     // * when the model is applied for a student (to get round trip time to school,
@@ -61,11 +61,11 @@ public class TimeDMU
     // public void setImtfSchoolSwitch(int schoolOn){
     // imtfSchoolSwitch = schoolOn;
     // }
-    //    
+    //
     // public int getImtfWorkSwitch(){
     // return this.imtfWorkSwitch;
     // }
-    //    
+    //
     // public int getImtfSchoolSwitch(){
     // return this.imtfSchoolSwitch;
     // }

@@ -133,8 +133,7 @@ public final class StopLocationEstimationMcLogsumsAppender
         outStream
                 .print("seq,portion,sampn,perno,tour_id,tripno,stopid,stopno,chosenMgra,chosenMgraLogsumIK,chosenMgraLogsumKJ");
 
-        // print each set of sample destMgra and the depart/arrive logsum
-        // fieldnames
+        // print each set of sample destMgra and the depart/arrive logsum fieldnames
         // to file 1.
         // print each set of sample destMgra and the chosen depart/arrive logsum
         // fieldname to file 2.
@@ -220,8 +219,7 @@ public final class StopLocationEstimationMcLogsumsAppender
     private int[][] getDcEstimationDataOrigDestTimes(TableDataSet hisTds)
     {
 
-        // odts are an array with elements: origin mgra, destination mgra,
-        // departure
+        // odts are an array with elements: origin mgra, destination mgra, departure
         // period(1-6), and arrival period(1-6).
         int[][] odts = new int[hisTds.getRowCount()][NUM_FIELDS];
         mgras = new int[hisTds.getRowCount()][NUM_MGRA_FIELDS];

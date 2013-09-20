@@ -15,87 +15,81 @@ import org.sandag.abm.accessibilities.BuildAccessibilities;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
 
-public class SchoolLocationChoiceModel implements Serializable {
+public class SchoolLocationChoiceModel
+        implements Serializable
+{
 
-    private transient Logger                     logger                           = Logger.getLogger(SchoolLocationChoiceModel.class);
-    private transient Logger                     dcManLogger                      = Logger.getLogger("tourDcMan");
+    private transient Logger           logger                         = Logger.getLogger(SchoolLocationChoiceModel.class);
+    private transient Logger           dcManLogger                    = Logger.getLogger("tourDcMan");
 
-    
     // this constant used as a dimension for saving distance and logsums for
     // alternatives in samples
-    private static final int                     MAXIMUM_SOA_ALTS_FOR_ANY_MODEL   = 200;
+    private static final int           MAXIMUM_SOA_ALTS_FOR_ANY_MODEL = 200;
 
-    private static final int                     DC_DATA_SHEET                    = 0;
+    private static final int           DC_DATA_SHEET                  = 0;
 
+    private MgraDataManager            mgraManager;
+    private DestChoiceSize             dcSizeObj;
 
-    private MgraDataManager                      mgraManager;
-    private DestChoiceSize                       dcSizeObj;
+    private DestChoiceTwoStageModelDMU dcTwoStageDmuObject;
 
-    private DestChoiceTwoStageModelDMU           dcTwoStageDmuObject;
-     
-    private DestChoiceTwoStageModel              dcTwoStageModelObject;
-    private TourModeChoiceModel                  mcModel;
+    private DestChoiceTwoStageModel    dcTwoStageModelObject;
+    private TourModeChoiceModel        mcModel;
 
-    private String[]                             segmentNameList;
-    private HashMap<String, Integer>             segmentNameIndexMap;
+    private String[]                   segmentNameList;
+    private HashMap<String, Integer>   segmentNameIndexMap;
 
+    private int[]                      dcModelIndices;
 
-    private int[]                                dcModelIndices;
-    
     // A ChoiceModelApplication object and modeAltsAvailable[] is needed for each purpose
-    private ChoiceModelApplication[]             locationChoiceModels;
-    private ChoiceModelApplication               locationChoiceModel;
+    private ChoiceModelApplication[]   locationChoiceModels;
+    private ChoiceModelApplication     locationChoiceModel;
 
+    private boolean[]                  dcModelAltsAvailable;
+    private int[]                      dcModelAltsSample;
+    private int[]                      dcModelSampleValues;
 
-    private boolean[]                            dcModelAltsAvailable;
-    private int[]                                dcModelAltsSample;
-    private int[]                                dcModelSampleValues;
-    
-    private int[]                                uecSheetIndices;
-    
-    int                                          origMgra;
+    private int[]                      uecSheetIndices;
 
-    private int                                  modelIndex;
-    private int                                  shadowPricingIteration;
+    int                                origMgra;
 
-    private double[]                             sampleAlternativeDistances;
-    private double[]                             sampleAlternativeLogsums;
+    private int                        modelIndex;
+    private int                        shadowPricingIteration;
 
-    private double[] mgraDistanceArray;
-    
-    private BuildAccessibilities                 aggAcc;
+    private double[]                   sampleAlternativeDistances;
+    private double[]                   sampleAlternativeLogsums;
 
-    private int soaSampleSize;
+    private double[]                   mgraDistanceArray;
 
-    private long soaRunTime;
-    
-    
-    
-    public SchoolLocationChoiceModel( int index, HashMap<String, String> propertyMap,
-            DestChoiceSize dcSizeObj, BuildAccessibilities aggAcc,
-            String dcUecFileName, String soaUecFile, int soaSampleSize, String modeChoiceUecFile,
+    private BuildAccessibilities       aggAcc;
+
+    private int                        soaSampleSize;
+
+    private long                       soaRunTime;
+
+    public SchoolLocationChoiceModel(int index, HashMap<String, String> propertyMap,
+            DestChoiceSize dcSizeObj, BuildAccessibilities aggAcc, String dcUecFileName,
+            String soaUecFile, int soaSampleSize, String modeChoiceUecFile,
             CtrampDmuFactoryIf dmuFactory, TourModeChoiceModel mcModel,
-            double[][][] schoolSizeProbs, double[][][] schoolTazDistProbs )
+            double[][][] schoolSizeProbs, double[][][] schoolTazDistProbs)
     {
 
         this.aggAcc = aggAcc;
         this.dcSizeObj = dcSizeObj;
         this.mcModel = mcModel;
         this.soaSampleSize = soaSampleSize;
-        
-        modelIndex = index;
 
+        modelIndex = index;
 
         mgraManager = MgraDataManager.getInstance();
 
         dcTwoStageDmuObject = dmuFactory.getDestChoiceSoaTwoStageDMU();
-        dcTwoStageDmuObject.setAggAcc( this.aggAcc );
+        dcTwoStageDmuObject.setAggAcc(this.aggAcc);
 
-        dcTwoStageModelObject = new DestChoiceTwoStageModel( propertyMap, soaSampleSize );
-        dcTwoStageModelObject.setTazDistProbs( schoolTazDistProbs );        
-        dcTwoStageModelObject.setMgraSizeProbs( schoolSizeProbs );        
-        
-        
+        dcTwoStageModelObject = new DestChoiceTwoStageModel(propertyMap, soaSampleSize);
+        dcTwoStageModelObject.setTazDistProbs(schoolTazDistProbs);
+        dcTwoStageModelObject.setMgraSizeProbs(schoolSizeProbs);
+
         shadowPricingIteration = 0;
 
         sampleAlternativeDistances = new double[MAXIMUM_SOA_ALTS_FOR_ANY_MODEL];
@@ -103,14 +97,12 @@ public class SchoolLocationChoiceModel implements Serializable {
 
     }
 
-
     public void setupSchoolSegments()
     {
         aggAcc.createSchoolSegmentNameIndices();
         uecSheetIndices = aggAcc.getSchoolDcUecSheets();
         segmentNameList = aggAcc.getSchoolSegmentNameList();
     }
-    
 
     public void setupDestChoiceModelArrays(HashMap<String, String> propertyMap,
             String dcUecFileName, String soaUecFile, int soaSampleSize)
@@ -118,46 +110,48 @@ public class SchoolLocationChoiceModel implements Serializable {
 
         segmentNameIndexMap = dcSizeObj.getSegmentNameIndexMap();
 
-
         // create a lookup array to map purpose index to model index
         dcModelIndices = new int[uecSheetIndices.length];
 
         // get a set of unique model sheet numbers so that we can create ChoiceModelApplication objects once for each model sheet used
-        // also create a HashMap to relate size segment index to SOA Model objects 
-        HashMap<Integer,Integer> modelIndexMap = new HashMap<Integer,Integer>();
+        // also create a HashMap to relate size segment index to SOA Model objects
+        HashMap<Integer, Integer> modelIndexMap = new HashMap<Integer, Integer>();
         int dcModelIndex = 0;
         int dcSegmentIndex = 0;
-        for ( int uecIndex : uecSheetIndices ) {
+        for (int uecIndex : uecSheetIndices)
+        {
             // if the uec sheet for the model segment is not in the map, add it, otherwise, get it from the map
-            if ( ! modelIndexMap.containsKey(uecIndex) ) {
-                modelIndexMap.put( uecIndex, dcModelIndex );
+            if (!modelIndexMap.containsKey(uecIndex))
+            {
+                modelIndexMap.put(uecIndex, dcModelIndex);
                 dcModelIndices[dcSegmentIndex] = dcModelIndex++;
+            } else
+            {
+                dcModelIndices[dcSegmentIndex] = modelIndexMap.get(uecIndex);
             }
-            else {
-                dcModelIndices[dcSegmentIndex] = modelIndexMap.get( uecIndex );
-            }
-            
+
             dcSegmentIndex++;
         }
         // the value of dcModelIndex is the number of ChoiceModelApplication objects to create
-        // the modelIndexMap keys are the uec sheets to use in building ChoiceModelApplication objects 
-        
-        
+        // the modelIndexMap keys are the uec sheets to use in building ChoiceModelApplication objects
+
         locationChoiceModels = new ChoiceModelApplication[modelIndexMap.size()];
 
         int i = 0;
-        for (int uecIndex : modelIndexMap.keySet() )
+        for (int uecIndex : modelIndexMap.keySet())
         {
 
             int modelIndex = -1;
             try
             {
-                modelIndex = modelIndexMap.get(uecIndex); 
-                locationChoiceModels[modelIndex] = new ChoiceModelApplication(dcUecFileName, uecIndex,
-                        DC_DATA_SHEET, propertyMap, (VariableTable)dcTwoStageDmuObject);
+                modelIndex = modelIndexMap.get(uecIndex);
+                locationChoiceModels[modelIndex] = new ChoiceModelApplication(dcUecFileName,
+                        uecIndex, DC_DATA_SHEET, propertyMap, (VariableTable) dcTwoStageDmuObject);
             } catch (RuntimeException e)
             {
-                logger.error( String.format("exception caught setting up DC ChoiceModelApplication[%d] for modelIndex=%d of %d models", i, modelIndex, modelIndexMap.size()) );
+                logger.error(String
+                        .format("exception caught setting up DC ChoiceModelApplication[%d] for modelIndex=%d of %d models",
+                                i, modelIndex, modelIndexMap.size()));
                 logger.fatal("Exception caught:", e);
                 logger.fatal("Throwing new RuntimeException() to terminate.");
                 throw new RuntimeException();
@@ -168,11 +162,10 @@ public class SchoolLocationChoiceModel implements Serializable {
         dcModelAltsAvailable = new boolean[soaSampleSize + 1];
         dcModelAltsSample = new int[soaSampleSize + 1];
         dcModelSampleValues = new int[soaSampleSize];
-                
+
         mgraDistanceArray = new double[mgraManager.getMaxMgra() + 1];
 
     }
-
 
     public void applySchoolLocationChoice(Household hh)
     {
@@ -202,24 +195,28 @@ public class SchoolLocationChoiceModel implements Serializable {
                     || p.getPersonIsStudentDriving() == 1 || p.getPersonIsUniversityStudent() == 1)
             {
 
-                if (p.getPersonIsPreschoolChild() == 1) {
-                    segmentIndex = segmentNameIndexMap.get( BuildAccessibilities.SCHOOL_DC_SIZE_SEGMENT_NAME_LIST[BuildAccessibilities.PRESCHOOL_SEGMENT_GROUP_INDEX] );
+                if (p.getPersonIsPreschoolChild() == 1)
+                {
+                    segmentIndex = segmentNameIndexMap
+                            .get(BuildAccessibilities.SCHOOL_DC_SIZE_SEGMENT_NAME_LIST[BuildAccessibilities.PRESCHOOL_SEGMENT_GROUP_INDEX]);
                     segmentType = BuildAccessibilities.PRESCHOOL_ALT_INDEX;
-                }
-                else if (p.getPersonIsGradeSchool() == 1) {
+                } else if (p.getPersonIsGradeSchool() == 1)
+                {
                     segmentIndex = aggAcc.getMgraGradeSchoolSegmentIndex(homeMgra);
                     segmentType = BuildAccessibilities.GRADE_SCHOOL_ALT_INDEX;
-                }
-                else if (p.getPersonIsHighSchool() == 1) {
+                } else if (p.getPersonIsHighSchool() == 1)
+                {
                     segmentIndex = aggAcc.getMgraHighSchoolSegmentIndex(homeMgra);
                     segmentType = BuildAccessibilities.HIGH_SCHOOL_ALT_INDEX;
-                }
-                else if (p.getPersonIsUniversityStudent() == 1 && p.getAge() < 30) {
-                    segmentIndex = segmentNameIndexMap.get(  BuildAccessibilities.SCHOOL_DC_SIZE_SEGMENT_NAME_LIST[BuildAccessibilities.UNIV_TYPICAL_SEGMENT_GROUP_INDEX] );
+                } else if (p.getPersonIsUniversityStudent() == 1 && p.getAge() < 30)
+                {
+                    segmentIndex = segmentNameIndexMap
+                            .get(BuildAccessibilities.SCHOOL_DC_SIZE_SEGMENT_NAME_LIST[BuildAccessibilities.UNIV_TYPICAL_SEGMENT_GROUP_INDEX]);
                     segmentType = BuildAccessibilities.UNIV_TYPICAL_ALT_INDEX;
-                }
-                else if (p.getPersonIsUniversityStudent() == 1 && p.getAge() >= 30) {
-                    segmentIndex = segmentNameIndexMap.get(  BuildAccessibilities.SCHOOL_DC_SIZE_SEGMENT_NAME_LIST[BuildAccessibilities.UNIV_NONTYPICAL_SEGMENT_GROUP_INDEX] );
+                } else if (p.getPersonIsUniversityStudent() == 1 && p.getAge() >= 30)
+                {
+                    segmentIndex = segmentNameIndexMap
+                            .get(BuildAccessibilities.SCHOOL_DC_SIZE_SEGMENT_NAME_LIST[BuildAccessibilities.UNIV_NONTYPICAL_SEGMENT_GROUP_INDEX]);
                     segmentType = BuildAccessibilities.UNIV_NONTYPICAL_ALT_INDEX;
                 }
 
@@ -235,11 +232,13 @@ public class SchoolLocationChoiceModel implements Serializable {
                 } else
                 {
                     // if the segment is in the skip shadow pricing set, and the iteration is > 0, dont' compute new choice
-                    if ( shadowPricingIteration == 0 || !dcSizeObj.getSegmentIsInSkipSegmentSet( segmentIndex ) )
+                    if (shadowPricingIteration == 0
+                            || !dcSizeObj.getSegmentIsInSkipSegmentSet(segmentIndex))
                         p.setSchoolLocationSegmentIndex(segmentIndex);
                 }
 
-                if ( segmentType < 0 ){
+                if (segmentType < 0)
+                {
                     segmentType = ModelStructure.NOT_ENROLLED_SEGMENT_INDEX;
                 }
             }
@@ -262,9 +261,8 @@ public class SchoolLocationChoiceModel implements Serializable {
             }
 
             // if the segment is in the skip shadow pricing set, and the iteration is > 0, dont' compute new choice
-            if ( shadowPricingIteration > 0 && dcSizeObj.getSegmentIsInSkipSegmentSet( segmentIndex ) )
+            if (shadowPricingIteration > 0 && dcSizeObj.getSegmentIsInSkipSegmentSet(segmentIndex))
                 continue;
-            
 
             double[] results = null;
             int modelIndex = 0;
@@ -279,26 +277,27 @@ public class SchoolLocationChoiceModel implements Serializable {
                 dcTwoStageDmuObject.setDmuIndexValues(hh.getHhId(), homeMgra, origMgra, 0);
 
                 double[] homeMgraSizeArray = dcSizeObj.getDcSizeArray()[segmentIndex];
-                mcModel.getAnmSkimCalculator().getAmPkSkimDistancesFromMgra( homeMgra, mgraDistanceArray );
+                mcModel.getAnmSkimCalculator().getAmPkSkimDistancesFromMgra(homeMgra,
+                        mgraDistanceArray);
 
                 // set size array for the tour segment and distance array from the home mgra to all destinaion mgras.
                 dcTwoStageDmuObject.setMgraSizeArray(homeMgraSizeArray);
-                dcTwoStageDmuObject.setMgraDistanceArray( mgraDistanceArray );
+                dcTwoStageDmuObject.setMgraDistanceArray(mgraDistanceArray);
 
-                
                 modelIndex = dcModelIndices[segmentIndex];
                 locationChoiceModel = locationChoiceModels[modelIndex];
 
                 // get the school location alternative chosen from the sample
-                results = selectLocationFromSampleOfAlternatives( "school", segmentType, p, segmentNameList[segmentIndex], segmentIndex, tourNum++,
-                        homeMgraSizeArray, mgraDistanceArray );
-
+                results = selectLocationFromSampleOfAlternatives("school", segmentType, p,
+                        segmentNameList[segmentIndex], segmentIndex, tourNum++, homeMgraSizeArray,
+                        mgraDistanceArray);
 
             } catch (RuntimeException e)
             {
-                logger.fatal(String.format(
-                    "Exception caught in dcModel selecting location for i=%d, hh.hhid=%d, person i=%d, in school location choice, modelIndex=%d, segmentType=%d, segmentIndex=%d, segmentName=%s",
-                    i, hh.getHhId(), i, modelIndex, segmentType, segmentIndex, segmentNameList[segmentIndex]));
+                logger.fatal(String
+                        .format("Exception caught in dcModel selecting location for i=%d, hh.hhid=%d, person i=%d, in school location choice, modelIndex=%d, segmentType=%d, segmentIndex=%d, segmentName=%s",
+                                i, hh.getHhId(), i, modelIndex, segmentType, segmentIndex,
+                                segmentNameList[segmentIndex]));
                 logger.fatal("Exception caught:", e);
                 logger.fatal("Throwing new RuntimeException() to terminate.");
                 throw new RuntimeException();
@@ -314,12 +313,11 @@ public class SchoolLocationChoiceModel implements Serializable {
 
     /**
      * 
-     * @return an array with chosen mgra, distance to chosen mgra, and logsum to
-     *         chosen mgra.
+     * @return an array with chosen mgra, distance to chosen mgra, and logsum to chosen mgra.
      */
-    private double[] selectLocationFromSampleOfAlternatives(String segmentType, int segmentTypeIndex,
-            Person person, String segmentName, int sizeSegmentIndex, int tourNum,
-            double[] homeMgraSizeArray, double[] homeMgraDistanceArray)
+    private double[] selectLocationFromSampleOfAlternatives(String segmentType,
+            int segmentTypeIndex, Person person, String segmentName, int sizeSegmentIndex,
+            int tourNum, double[] homeMgraSizeArray, double[] homeMgraDistanceArray)
     {
 
         // set tour origin taz/subzone and start/end times for calculating mode
@@ -328,22 +326,22 @@ public class SchoolLocationChoiceModel implements Serializable {
 
         Household household = person.getHouseholdObject();
 
-
         // get sample of locations and correction factors for sample using the alternate method
-        dcTwoStageModelObject.chooseSample( household.getHhTaz(), sizeSegmentIndex, segmentTypeIndex, soaSampleSize, household.getHhRandom(), household.getDebugChoiceModels() );
+        dcTwoStageModelObject.chooseSample(household.getHhTaz(), sizeSegmentIndex,
+                segmentTypeIndex, soaSampleSize, household.getHhRandom(),
+                household.getDebugChoiceModels());
         int[] finalSample = dcTwoStageModelObject.getUniqueSampleMgras();
-        double[] sampleCorrectionFactors = dcTwoStageModelObject.getUniqueSampleMgraCorrectionFactors();
+        double[] sampleCorrectionFactors = dcTwoStageModelObject
+                .getUniqueSampleMgraCorrectionFactors();
         int numUniqueAlts = dcTwoStageModelObject.getNumberofUniqueMgrasInSample();
 
-        Arrays.fill( dcModelAltsAvailable, false );
-        Arrays.fill( dcModelAltsSample, 0 );
-        Arrays.fill( dcModelSampleValues, 999999 );
-
+        Arrays.fill(dcModelAltsAvailable, false);
+        Arrays.fill(dcModelAltsSample, 0);
+        Arrays.fill(dcModelSampleValues, 999999);
 
         // set sample of alternatives correction factors used in destination
         // choice utility for the sampled alternatives.
-        dcTwoStageDmuObject.setDcSoaCorrections( sampleCorrectionFactors );
-
+        dcTwoStageDmuObject.setDcSoaCorrections(sampleCorrectionFactors);
 
         // for the destination mgras in the sample, compute mc logsums and save in dmuObject.
         // also save correction factor and set availability and sample value for the
@@ -355,21 +353,19 @@ public class SchoolLocationChoiceModel implements Serializable {
             dcModelSampleValues[i] = finalSample[i];
 
             // set logsum value in DC dmuObject for the logsum index, sampled zone and subzone.
-            double logsum = getModeChoiceLogsum( household, person, destMgra, segmentTypeIndex );
+            double logsum = getModeChoiceLogsum(household, person, destMgra, segmentTypeIndex);
             dcTwoStageDmuObject.setMcLogsum(i, logsum);
-            
+
             sampleAlternativeLogsums[i] = logsum;
             sampleAlternativeDistances[i] = homeMgraDistanceArray[finalSample[i]];
-            
+
             // set availaibility and sample values for the purpose, dcAlt.
-            dcModelAltsAvailable[i+1] = true;
-            dcModelAltsSample[i+1] = 1;
+            dcModelAltsAvailable[i + 1] = true;
+            dcModelAltsSample[i + 1] = 1;
 
         }
-        
-        dcTwoStageDmuObject.setSampleArray( dcModelSampleValues );
 
-
+        dcTwoStageDmuObject.setSampleArray(dcModelSampleValues);
 
         // log headers to traceLogger if the person making the destination choice is
         // from a household requesting trace information
@@ -383,10 +379,12 @@ public class SchoolLocationChoiceModel implements Serializable {
             choiceModelDescription = String.format(
                     "Usual %s Location Choice Model for: Segment=%s", segmentType, segmentName);
             decisionMakerLabel = String.format("HH=%d, PersonNum=%d, PersonType=%s, TourNum=%d",
-                    person.getHouseholdObject().getHhId(), person.getPersonNum(), person.getPersonType(), tourNum);
+                    person.getHouseholdObject().getHhId(), person.getPersonNum(),
+                    person.getPersonType(), tourNum);
 
             modelLogger.info(" ");
-            modelLogger.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            modelLogger
+                    .info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             modelLogger.info("Usual " + segmentType + " Location Choice Model for: Segment="
                     + segmentName + ", Person Num: " + person.getPersonNum() + ", Person Type: "
                     + person.getPersonType() + ", TourNum=" + tourNum);
@@ -399,7 +397,8 @@ public class SchoolLocationChoiceModel implements Serializable {
         }
 
         // compute destination choice proportions and choose alternative
-        locationChoiceModel.computeUtilities( dcTwoStageDmuObject, dcTwoStageDmuObject.getDmuIndexValues(), dcModelAltsAvailable, dcModelAltsSample );
+        locationChoiceModel.computeUtilities(dcTwoStageDmuObject,
+                dcTwoStageDmuObject.getDmuIndexValues(), dcModelAltsAvailable, dcModelAltsSample);
 
         Random hhRandom = household.getHhRandom();
         int randomCount = household.getHhRandomCount();
@@ -417,11 +416,11 @@ public class SchoolLocationChoiceModel implements Serializable {
             }
         } else
         {
-            logger.error(String.format(
-                "Exception caught for HHID=%d, PersonNum=%d, no available %s destination choice alternatives to choose from in choiceModelApplication.",
-                dcTwoStageDmuObject.getHouseholdObject().getHhId(), dcTwoStageDmuObject.getPersonObject().getPersonNum(), segmentName));
+            logger.error(String
+                    .format("Exception caught for HHID=%d, PersonNum=%d, no available %s destination choice alternatives to choose from in choiceModelApplication.",
+                            dcTwoStageDmuObject.getHouseholdObject().getHhId(), dcTwoStageDmuObject
+                                    .getPersonObject().getPersonNum(), segmentName));
         }
-
 
         if (household.getDebugChoiceModels() || chosen <= 0)
         {
@@ -439,41 +438,46 @@ public class SchoolLocationChoiceModel implements Serializable {
             modelLogger
                     .info("--------------------- --------------    --------------    --------------    --------------    --------------    --------------");
 
-
             double cumProb = 0.0;
             for (int j = 1; j < finalSample.length; j++)
             {
                 int alt = finalSample[j];
                 cumProb += probabilities[j];
                 String altString = String.format("j=%d, mgra=%d", j, alt);
-                modelLogger.info(String.format("%-21s%15s%18.6e%18.6e%18.6e",
-                        altString, availabilities[j+1], utilities[j], probabilities[j], cumProb));
+                modelLogger.info(String.format("%-21s%15s%18.6e%18.6e%18.6e", altString,
+                        availabilities[j + 1], utilities[j], probabilities[j], cumProb));
             }
 
             modelLogger.info(" ");
-            if ( chosen > 0 ) {
-                String altString = String.format("j=%d, mgra=%d", chosen-1, finalSample[chosen-1]);
-                modelLogger.info(String.format( "Choice: %s with rn=%.8f, randomCount=%d", altString, rn, randomCount) );
-            }
-            else {
-                String altString = String.format("No Chosen Alt, availability count = %d", locationChoiceModel.getAvailabilityCount());
-                modelLogger.info( altString );
+            if (chosen > 0)
+            {
+                String altString = String.format("j=%d, mgra=%d", chosen - 1,
+                        finalSample[chosen - 1]);
+                modelLogger.info(String.format("Choice: %s with rn=%.8f, randomCount=%d",
+                        altString, rn, randomCount));
+            } else
+            {
+                String altString = String.format("No Chosen Alt, availability count = %d",
+                        locationChoiceModel.getAvailabilityCount());
+                modelLogger.info(altString);
             }
             modelLogger
                     .info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             modelLogger.info(" ");
 
             locationChoiceModel.logAlternativesInfo(choiceModelDescription, decisionMakerLabel);
-            locationChoiceModel.logSelectionInfo(choiceModelDescription, decisionMakerLabel, rn, chosen);
+            locationChoiceModel.logSelectionInfo(choiceModelDescription, decisionMakerLabel, rn,
+                    chosen);
 
             // write UEC calculation results to separate model specific log file
             locationChoiceModel.logUECResults(modelLogger, loggingHeader);
 
             if (chosen < 0)
             {
-                logger.error(String.format(
-                    "Exception caught for HHID=%d, PersonNum=%d, no available %s destination choice alternatives to choose from in choiceModelApplication.",
-                    dcTwoStageDmuObject.getHouseholdObject().getHhId(), dcTwoStageDmuObject.getPersonObject().getPersonNum(), segmentName));
+                logger.error(String
+                        .format("Exception caught for HHID=%d, PersonNum=%d, no available %s destination choice alternatives to choose from in choiceModelApplication.",
+                                dcTwoStageDmuObject.getHouseholdObject().getHhId(),
+                                dcTwoStageDmuObject.getPersonObject().getPersonNum(), segmentName));
                 System.exit(-1);
             }
 
@@ -481,82 +485,90 @@ public class SchoolLocationChoiceModel implements Serializable {
 
         double[] returnArray = new double[3];
 
-        returnArray[0] = finalSample[chosen-1];
-        returnArray[1] = sampleAlternativeDistances[chosen-1];
-        returnArray[2] = sampleAlternativeLogsums[chosen-1];
+        returnArray[0] = finalSample[chosen - 1];
+        returnArray[1] = sampleAlternativeDistances[chosen - 1];
+        returnArray[2] = sampleAlternativeLogsums[chosen - 1];
 
         return returnArray;
 
     }
 
-    
-    private double getModeChoiceLogsum( Household household, Person person, int sampleDestMgra, int segmentTypeIndex ) {
- 
+    private double getModeChoiceLogsum(Household household, Person person, int sampleDestMgra,
+            int segmentTypeIndex)
+    {
+
         int purposeIndex = 0;
         String purpose = "";
-        if ( segmentTypeIndex < 0 ) {
+        if (segmentTypeIndex < 0)
+        {
             purposeIndex = ModelStructure.WORK_PRIMARY_PURPOSE_INDEX;
             purpose = ModelStructure.WORK_PRIMARY_PURPOSE_NAME;
-        }
-        else if ( segmentTypeIndex == BuildAccessibilities.PRESCHOOL_ALT_INDEX ) {
+        } else if (segmentTypeIndex == BuildAccessibilities.PRESCHOOL_ALT_INDEX)
+        {
             purposeIndex = ModelStructure.SCHOOL_PRIMARY_PURPOSE_INDEX;
             purpose = ModelStructure.SCHOOL_PRIMARY_PURPOSE_NAME;
-        }
-        else if ( segmentTypeIndex == BuildAccessibilities.GRADE_SCHOOL_ALT_INDEX ) {
+        } else if (segmentTypeIndex == BuildAccessibilities.GRADE_SCHOOL_ALT_INDEX)
+        {
             purposeIndex = ModelStructure.SCHOOL_PRIMARY_PURPOSE_INDEX;
             purpose = ModelStructure.SCHOOL_PRIMARY_PURPOSE_NAME;
-        }
-        else if ( segmentTypeIndex == BuildAccessibilities.HIGH_SCHOOL_ALT_INDEX ) {
+        } else if (segmentTypeIndex == BuildAccessibilities.HIGH_SCHOOL_ALT_INDEX)
+        {
             purposeIndex = ModelStructure.SCHOOL_PRIMARY_PURPOSE_INDEX;
             purpose = ModelStructure.SCHOOL_PRIMARY_PURPOSE_NAME;
-        }
-        else if ( segmentTypeIndex == BuildAccessibilities.UNIV_TYPICAL_ALT_INDEX ) {
+        } else if (segmentTypeIndex == BuildAccessibilities.UNIV_TYPICAL_ALT_INDEX)
+        {
             purposeIndex = ModelStructure.UNIVERSITY_PRIMARY_PURPOSE_INDEX;
             purpose = ModelStructure.UNIVERSITY_PRIMARY_PURPOSE_NAME;
-        }
-        else if ( segmentTypeIndex == BuildAccessibilities.UNIV_NONTYPICAL_ALT_INDEX ) {
+        } else if (segmentTypeIndex == BuildAccessibilities.UNIV_NONTYPICAL_ALT_INDEX)
+        {
             purposeIndex = ModelStructure.UNIVERSITY_PRIMARY_PURPOSE_INDEX;
             purpose = ModelStructure.UNIVERSITY_PRIMARY_PURPOSE_NAME;
         }
 
         // create a temporary tour to use to calculate mode choice logsum
-        Tour mcLogsumTour = new Tour( person, 0, purposeIndex );
+        Tour mcLogsumTour = new Tour(person, 0, purposeIndex);
         mcLogsumTour.setTourPurpose(purpose);
-        mcLogsumTour.setTourOrigMgra( household.getHhMgra() );
-        mcLogsumTour.setTourDestMgra( sampleDestMgra );
+        mcLogsumTour.setTourOrigMgra(household.getHhMgra());
+        mcLogsumTour.setTourDestMgra(sampleDestMgra);
         mcLogsumTour.setTourDepartPeriod(Person.DEFAULT_MANDATORY_START_PERIOD);
         mcLogsumTour.setTourArrivePeriod(Person.DEFAULT_MANDATORY_END_PERIOD);
-        
 
         String choiceModelDescription = "";
         String decisionMakerLabel = "";
-        
-        if (household.getDebugChoiceModels()) {
+
+        if (household.getDebugChoiceModels())
+        {
             dcManLogger.info("");
             dcManLogger.info("");
-            choiceModelDescription = "location choice logsum for segmentTypeIndex=" + segmentTypeIndex + ", temp tour PurposeIndex=" + purposeIndex;
-            decisionMakerLabel = "HHID: " + household.getHhId() + ", PersNum: " + person.getPersonNum();
-            household.logPersonObject( choiceModelDescription + ", " + decisionMakerLabel, dcManLogger, person );
+            choiceModelDescription = "location choice logsum for segmentTypeIndex="
+                    + segmentTypeIndex + ", temp tour PurposeIndex=" + purposeIndex;
+            decisionMakerLabel = "HHID: " + household.getHhId() + ", PersNum: "
+                    + person.getPersonNum();
+            household.logPersonObject(choiceModelDescription + ", " + decisionMakerLabel,
+                    dcManLogger, person);
         }
 
         double logsum = -1;
-        try {
-            logsum = mcModel.getModeChoiceLogsum ( household, person, mcLogsumTour, dcManLogger, choiceModelDescription, decisionMakerLabel );
-        }
-        catch(Exception e) {
-            choiceModelDescription = "location choice logsum for segmentTypeIndex=" + segmentTypeIndex + ", temp tour PurposeIndex=" + purposeIndex;
-            decisionMakerLabel = "HHID: " + household.getHhId() + ", PersNum: " + person.getPersonNum();
-            logger.fatal( "exception caught calculating ModeChoiceLogsum for usual work/school location choice." );
-            logger.fatal( "choiceModelDescription = " + choiceModelDescription );
-            logger.fatal( "decisionMakerLabel = " + decisionMakerLabel );
+        try
+        {
+            logsum = mcModel.getModeChoiceLogsum(household, person, mcLogsumTour, dcManLogger,
+                    choiceModelDescription, decisionMakerLabel);
+        } catch (Exception e)
+        {
+            choiceModelDescription = "location choice logsum for segmentTypeIndex="
+                    + segmentTypeIndex + ", temp tour PurposeIndex=" + purposeIndex;
+            decisionMakerLabel = "HHID: " + household.getHhId() + ", PersNum: "
+                    + person.getPersonNum();
+            logger.fatal("exception caught calculating ModeChoiceLogsum for usual work/school location choice.");
+            logger.fatal("choiceModelDescription = " + choiceModelDescription);
+            logger.fatal("decisionMakerLabel = " + decisionMakerLabel);
             e.printStackTrace();
             System.exit(-1);
         }
-        
+
         return logsum;
     }
-    
-    
+
     public int getModelIndex()
     {
         return modelIndex;
@@ -567,12 +579,14 @@ public class SchoolLocationChoiceModel implements Serializable {
         this.dcSizeObj = dcSizeObj;
     }
 
-    public long getSoaRunTime() {
+    public long getSoaRunTime()
+    {
         return soaRunTime;
     }
-    
-    public void resetSoaRunTime() {
+
+    public void resetSoaRunTime()
+    {
         soaRunTime = 0;
     }
-            
+
 }

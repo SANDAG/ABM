@@ -5,8 +5,7 @@ import java.util.HashMap;
 /**
  * @author Jim Hicks
  * 
- *         Class for managing household and person object data read from synthetic
- *         population files.
+ *         Class for managing household and person object data read from synthetic population files.
  */
 public interface HouseholdDataManagerIf
 {
@@ -18,11 +17,11 @@ public interface HouseholdDataManagerIf
     public void setDebugHhIdsFromHashmap();
 
     public void computeTransponderChoiceTazPercentArrays();
-    
+
     public double[] getPercentHhsIncome100Kplus();
 
     public double[] getPercentHhsMultipleAutos();
-    
+
     public int[] getRandomOrderHhIndexArray(int numHhs);
 
     public int getArrayIndex(int hhId);
@@ -31,10 +30,12 @@ public interface HouseholdDataManagerIf
 
     public void setHhArray(Household[] tempHhs, int startIndex);
 
-    public void setSchoolDistrictMappings( HashMap<String, Integer> segmentNameIndexMap, int[] mgraGsDist, int[] mgraHsDist,
-            HashMap<Integer,Integer> gsDistSegMap, HashMap<Integer,Integer> hsDistSegMap );
-    
-    public void setupHouseholdDataManager(ModelStructure modelStructure, String inputHouseholdFileName, String inputPersonFileName);
+    public void setSchoolDistrictMappings(HashMap<String, Integer> segmentNameIndexMap,
+            int[] mgraGsDist, int[] mgraHsDist, HashMap<Integer, Integer> gsDistSegMap,
+            HashMap<Integer, Integer> hsDistSegMap);
+
+    public void setupHouseholdDataManager(ModelStructure modelStructure,
+            String inputHouseholdFileName, String inputPersonFileName);
 
     public int[][] getTourPurposePersonsByHomeMgra(String[] purposeList);
 
@@ -45,7 +46,7 @@ public interface HouseholdDataManagerIf
     public int[][] getWorkToursByDestMgra(HashMap<Integer, Integer> segmentValueIndexMap);
 
     public int[] getWorksAtHomeBySegment(HashMap<Integer, Integer> segmentValueIndexMap);
-    
+
     public int[][] getSchoolToursByDestMgra();
 
     public int[] getIndividualNonMandatoryToursByHomeMgra(String purposeString);
@@ -95,20 +96,17 @@ public interface HouseholdDataManagerIf
     public void resetStlRandom();
 
     /**
-     * Sets the HashSet used to trace households for debug purposes and sets the
-     * debug switch for each of the listed households. Also sets
+     * Sets the HashSet used to trace households for debug purposes and sets the debug switch for each of the listed households. Also sets
      */
     public void setTraceHouseholdSet();
 
     /**
-     * Sets the HashSet used to trace households for debug purposes and sets the
-     * debug switch for each of the listed households. Also sets
+     * Sets the HashSet used to trace households for debug purposes and sets the debug switch for each of the listed households. Also sets
      */
     public void setHouseholdSampleRate(float sampleRate, int sampleSeed);
 
     /**
-     * return the array of Household objects holding the synthetic population and
-     * choice model outcomes.
+     * return the array of Household objects holding the synthetic population and choice model outcomes.
      * 
      * @return hhs
      */
@@ -124,8 +122,7 @@ public interface HouseholdDataManagerIf
     public int getNumHouseholds();
 
     /**
-     * set walk segment (0-none, 1-short, 2-long walk to transit access) for the
-     * origin for this tour
+     * set walk segment (0-none, 1-short, 2-long walk to transit access) for the origin for this tour
      */
     public int getInitialOriginWalkSegment(int taz, double randomNumber);
 
