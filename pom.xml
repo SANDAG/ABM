@@ -236,7 +236,7 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>
+                    </execution> 
                     <execution>
                         <id>copy-input-resources</id>
                         <phase>package</phase>
@@ -247,11 +247,11 @@
                             <outputDirectory>${project.build.directory}/${project.name}/${project.version}/input</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>src/main/resources/input</directory>
+                                    <directory>input</directory>
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>                    
+                    </execution>                   
                     <execution>
                         <id>copy-inputtruck-resources</id>
                         <phase>package</phase>
