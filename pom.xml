@@ -251,7 +251,22 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>                   
+                    </execution>   
+                    <execution>
+                        <id>copy-output-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/${project.name}/${project.version}/output</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>input</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>                 
                     <execution>
                         <id>copy-inputtruck-resources</id>
                         <phase>package</phase>
