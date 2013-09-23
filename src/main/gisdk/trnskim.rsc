@@ -761,7 +761,8 @@ Macro "Create transit networks"
    periods = {"_EA","_AM","_MD","_PM","_EV"}
    modes = {"prem","locl"}
    
-   timexfer_per = {"NO", "YES", "NO", "YES", "NO"}
+  // timexfer_per = {"NO", "YES", "NO", "YES", "NO"}
+   timexfer_per = {"NO", "YES", "NO", "NO", "NO"}
    timexfer_mod = {"YES", "NO"}
    
    

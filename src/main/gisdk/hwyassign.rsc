@@ -315,9 +315,9 @@ Macro "hwy assignment" (args)
       Opts.Global.[Iterations]=1000
       Opts.Flag.[Do Share Report] = 1
       Opts.Output.[Flow Table] = outputDir+"\\"+asign[i]
-      if (turn_flag=1 & iteration=4) then Opts.Input.[Turning Movement Node Set] = {db_node_lyr, node_lyr, "Selection", turn_qry}
-      if (turn_flag=1 & iteration=4) then Opts.Flag.[Do Turn Movement] = 1
-      if (turn_flag=1 & iteration=4) then Opts.Output.[Movement Table] = outputDir+"\\"+turn[i]
+      if (turn_flag=1 & iteration=3) then Opts.Input.[Turning Movement Node Set] = {db_node_lyr, node_lyr, "Selection", turn_qry}
+      if (turn_flag=1 & iteration=3) then Opts.Flag.[Do Turn Movement] = 1
+      if (turn_flag=1 & iteration=3) then Opts.Output.[Movement Table] = outputDir+"\\"+turn[i]
       Opts.Field.[MSA Flow] = "_MSAFlow" + periods[i]
       Opts.Field.[MSA Cost] = "_MSACost" + periods[i]
       Opts.Global.[MSA Iteration] = iteration

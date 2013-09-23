@@ -3,8 +3,8 @@ Macro "Run SANDAG ABM"
    RunMacro("TCB Init")
 
    shared path, inputDir, outputDir, inputTruckDir, mxzone, mxtap, mgraDataFile,mxext,mxlink,mxrte
-   
-   sample_rate = { 0.20, 0.60, 0.50 }
+ 
+   sample_rate = { 0.2, 0.5, 1.0 }
    max_iterations=sample_rate.length    //number of feedback loops
   
    cpulist={1,2,3,4}
@@ -18,8 +18,9 @@ Macro "Run SANDAG ABM"
    TAB1=1
    TAB2=2
 
-   path = "d:\\projects\\sandag\\series12\\base2008_5_period"
-   mgraDataFile      = "mgra12_based_input08_rev_balboa.csv"
+   path = "d:\\projects\\sandag\\series13\\2010"
+   mgraDataFile      = "mgra13_based_input2010.csv"
+
 
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","*********Model Run Starting************"})
    
@@ -41,7 +42,7 @@ Macro "Run SANDAG ABM"
    SetReportFileName(path+"\\tcreport.xml")
    
    RunMacro("parameters")
-   	
+	
   // Build highway network
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - run create hwy"})
    ok = RunMacro("TCB Run Macro", 1, "run create hwy",{}) 
@@ -56,10 +57,12 @@ Macro "Run SANDAG ABM"
    ok = RunMacro("TCB Run Macro", 1, "update headways",{})
    if !ok then goto quit
 
-   // Create trip tables for first assignment from 4-step model
-   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - run create trip tables from 4-step"})
-   ok = RunMacro("TCB Run Macro", 1, "Create TOD Tables From 4Step Model",{}) 
-   if !ok then goto quit
+   // Create trip tables for first assignment from 4-step model: Note, if this macro isn't run, then
+   // copy base tables to outputs directory 
+
+   //RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - run create trip tables from 4-step"})
+   //ok = RunMacro("TCB Run Macro", 1, "Create TOD Tables From 4Step Model",{}) 
+   //if !ok then goto quit
 
    //Looping
    for iteration = 1 to max_iterations do        
@@ -133,6 +136,12 @@ Macro "Run SANDAG ABM"
 
    end
 
+ 
+      //Construct trip tables
+      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Create Auto Tables"})
+      ok = RunMacro("TCB Run Macro", 1, "Create Auto Tables",{}) 
+      if !ok then goto quit
+
   // Run final highway assignment
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - hwy assignment"})
    ok = RunMacro("TCB Run Macro", 1, "hwy assignment",{4}) 
@@ -142,6 +151,7 @@ Macro "Run SANDAG ABM"
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Create Transit Tables"})
    ok = RunMacro("TCB Run Macro", 1, "Create Transit Tables",{}) 
    if !ok then goto quit
+ 
 
    //Assign trip tables
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Assign Transit"})
@@ -152,7 +162,7 @@ Macro "Run SANDAG ABM"
     RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Create LUZ Skims"})
    ok = RunMacro("TCB Run Macro", 1, "Create LUZ Skims",{}) 
    if !ok then goto quit
-   	
+  	
 
    RunMacro("TCB Closing", ok, "False")
    return(1)

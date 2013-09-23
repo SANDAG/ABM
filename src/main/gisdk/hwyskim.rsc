@@ -529,10 +529,6 @@ Macro "hwy skim" (arr)
       mtxcore={"Length (Skim)"}+{SkimVar1+" (Skim)"}
       for j = 1 to mtxcore.length do
          Opts = null
-	 Opts.Global.Factor = 0.5
-         Opts.Global.Neighbors = 3
-         Opts.Global.Operation = 1
-
          Opts.Input.[Matrix Currency] = {outputDir + "\\"+skimmat,mtxcore[j], , }
          RunMacro("HwycadLog",{"hwyskim.rsc: hwy skim","Intrazonal: "+skimmat+"; "+mtxcore[j]})
          ok = RunMacro("TCB Run Procedure", j, "Intrazonal", Opts)
