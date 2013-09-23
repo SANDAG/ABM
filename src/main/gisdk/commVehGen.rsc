@@ -24,16 +24,17 @@
   version:  0.1
   authors:  dto (2010 08 31); jef (2012 03 07)
  
+     	5-2013 wsu fixed indexing bug
+ 	7-2013 jef reduced truck rate for military employment to 0.3
  
 **************************************************************/
 Macro "Commercial Vehicle Generation" 
 
- /*
-   RunMacro("TCB Init")
+/*
+    RunMacro("TCB Init")
 
-    scenarioDirectory = "d:\\projects\\SANDAG\\AB_Model\\commercial_vehicles"
-    
-  */
+      scenarioDirectory = "d:\\projects\\SANDAG\\AB_Model\\commercial_vehicles"
+*/   
    
    shared path, inputDir, outputDir, mgraDataFile       
    
@@ -41,7 +42,7 @@ Macro "Commercial Vehicle Generation"
    tazCommTripFile   = "tazCommVeh.csv"
    
    writeMgraData = false
-   calibrationFactor = 2.0
+   calibrationFactor = 1.75
    
        
    // read in the mgra data in CSV format
@@ -85,13 +86,15 @@ Macro "Commercial Vehicle Generation"
    FPSEMPN = emp_prof_bus_svcs 
    HEREMPN = emp_health  + emp_pvt_ed_k12 + emp_pvt_ed_post_k12_oth + emp_amusement 
    AGREMPN = emp_ag  
-   MWTEMPN = emp_const_non_bldg_prod + emp_const_bldg_prod + emp_mfg_prod +  emp_trans  
+   MWTEMPN = emp_const_non_bldg_prod + emp_const_bldg_prod + emp_mfg_prod +  emp_trans 
+   MILITARY = emp_fed_mil 
    TOTEMP  = emp_total 
-   OTHEMPN = TOTEMP - (RETEMPN + FPSEMPN + HEREMPN + AGREMPN + MWTEMPN)
+   OTHEMPN = TOTEMP - (RETEMPN + FPSEMPN + HEREMPN + AGREMPN + MWTEMPN + MILITARY)
    TOTHH   = hh
    
    verySmallP = calibrationFactor * (0.95409 * RETEMPN + 0.54333 * FPSEMPN + 0.50769 * HEREMPN + 
                               0.63558 * OTHEMPN + 1.10181 * AGREMPN + 0.81576 * MWTEMPN +
+                              0.30000 * MILITARY +
                               0.1 * TOTHH)
    verySmallA = verySmallP
    
@@ -131,10 +134,9 @@ Macro "Commercial Vehicle Generation"
    for i = 1 to mgra.length do
        
        tazNumber = taz[i]
-       // tazProd[tazNumber] =  tazProd[tazNumber] + verySmallP[tazNumber]
-       // tazAttr[tazNumber] =  tazAttr[tazNumber] + verySmallA[tazNumber]
        tazProd[tazNumber] =  tazProd[tazNumber] + verySmallP[i]
        tazAttr[tazNumber] =  tazAttr[tazNumber] + verySmallA[i]
+   
       if writeMgraData = true then do
          AddRecord("truckTripsMgra", {
              {"MGRA", mgra[i]},
