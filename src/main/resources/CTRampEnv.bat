@@ -22,13 +22,13 @@ set MAPDRIVEFOLDER=\\${master.node.ip}\${map.folder}
 
 rem account settings for remote access using psexec
 set USERNAME=joelf
-set PASSWORD=BluePen!
+set PASSWORD=B@seB@ll!
 
 rem location of mapAndRun.bat on remote machines
 set MAPANDRUN=e:\remoteExecution\mapAndRun.bat
 
 rem set location of java
-set JAVA_64_PATH=C:\Progra~1\Java\jdk1.6.0_26
-set JAVA_32_PATH="C:\Program Files (x86)\Java\jre6"
+set JAVA_64_PATH=C:\Progra~1\Java\jre7
+set JAVA_32_PATH=C:\Progra~2\Java\jre7
 set JAVA_HOME_32=%JAVA_32_PATH%
 set TRANSCAD_PATH=C:\Progra~2\TransCAD50
