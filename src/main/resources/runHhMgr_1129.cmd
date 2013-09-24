@@ -30,7 +30,7 @@ rem ### Name the project directory.  This directory will hava data and runtime s
 set RUNTIME=%DRIVE%%PROJECT_DIRECTORY%
 set CONFIG=%RUNTIME%/conf
 
-set JAR_LOCATION=%RUNTIME%/lib
+set JAR_LOCATION=%RUNTIME%/application
 
 set LIB_JAR_PATH=%JAR_LOCATION%\sandag_abm_pb.jar
 

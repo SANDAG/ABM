@@ -5,7 +5,7 @@ set DRIVE=%1
 set PROJECT_DIRECTORY=%2
 
 rem ############  JPPF DRIVER  ############
-set JPPF_LIB=%PROJECT_DIRECTORY%\lib\*
+set JPPF_LIB=%PROJECT_DIRECTORY%\application\*
 set CLASSPATH=%PROJECT_DIRECTORY%\config;%JPPF_LIB%
 
 call %PROJECT_DIRECTORY%\bin\CTRampEnv.bat
