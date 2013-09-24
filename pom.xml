@@ -51,8 +51,8 @@
                 <household.server.host>172.16.34.42</household.server.host>
                 <household.server.port>1129</household.server.port>
                 <master.node.ip>172.16.34.40</master.node.ip>
-                <node.1.ip>172.16.34.41</node.1.ip>
-                <node.2.ip>172.16.34.42</node.2.ip>
+                <node.1.ip>172.16.34.42</node.1.ip>
+                <node.2.ip>172.16.34.41</node.2.ip>
                 <java.32.port>1190</java.32.port>
             </properties>
         </profile>
@@ -236,36 +236,6 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution> 
-                    <execution>
-                        <id>copy-input-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/${project.name}/${project.version}/input</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>input</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>   
-                    <execution>
-                        <id>copy-output-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/${project.name}/${project.version}/output</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>input</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
                     </execution>                 
                     <execution>
                         <id>copy-inputtruck-resources</id>
@@ -285,37 +255,27 @@
                                 </resource>
                             </resources>
                         </configuration>
+                    </execution>                  
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <mkdir dir="${project.build.directory}/${project.name}/${project.version}/logFiles" />
+                                <mkdir dir="${project.build.directory}/${project.name}/${project.version}/input" /> 
+                                <mkdir dir="${project.build.directory}/${project.name}/${project.version}/output" />                                   
+                                <mkdir dir="${project.build.directory}/${project.name}/${project.version}/report" />
+                            </target>
+                        </configuration>
                     </execution>
-                    <execution>
-                        <id>copy-logFiles-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/${project.name}/${project.version}/logFiles</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>logFiles</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution> 
-                    <execution>
-                        <id>copy-report-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/${project.name}/${project.version}/report</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>report</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>                     
                 </executions>
             </plugin>
             <plugin>
