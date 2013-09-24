@@ -19,10 +19,10 @@ taskkill /F /IM java.exe
 rem ### Name the project directory.  This directory will hava data and runtime subdirectories
 set CONFIG=%PROJECT_DIRECTORY%/conf
 
-rem set JAR_LOCATION=%PROJECT_DIRECTORY%/lib
-rem set LIB_JAR_PATH=%JAR_LOCATION%\sandag_abm_pb.jar
+rem set JAR_LOCATION=%PROJECT_DIRECTORY%/application
+rem set LIB_JAR_PATH=%JAR_LOCATION%\sandag_abm.jar
 
-set JAR_LOCATION=%PROJECT_DIRECTORY%/lib
+set JAR_LOCATION=%PROJECT_DIRECTORY%/application
 set LIB_JAR_PATH=%JAR_LOCATION%\*
 
 rem ### Define the CLASSPATH environment variable for the classpath needed in this model run.
