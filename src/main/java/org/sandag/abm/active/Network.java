@@ -55,12 +55,12 @@ public class Network
         Node fromNode = edge.getFromNode();
         Node toNode = edge.getToNode();
         
-        if ( ! nodeIndex.containsKey(fromNode) ){
+        if ( ! nodeIndex.containsKey(fromNode) ) {
             addNode(fromNode);
             successorIndex.put(fromNode, new ArrayList<Node>());
             predecessorIndex.put(fromNode, new ArrayList<Node>());
         }
-        if ( ! nodeIndex.containsKey(toNode) ){
+        if ( ! nodeIndex.containsKey(toNode) ) {
             addNode(toNode);
             successorIndex.put(toNode, new ArrayList<Node>());
             predecessorIndex.put(toNode, new ArrayList<Node>());
@@ -72,17 +72,17 @@ public class Network
         if ( ! successorIndex.get(fromNode).contains(toNode) ) { successorIndex.get(fromNode).add(toNode); }
         if ( ! predecessorIndex.get(toNode).contains(fromNode) ) { successorIndex.get(toNode).add(fromNode); }
     
-        for (Node n : getSuccessors(fromNode)){
+        for (Node n : getSuccessors(fromNode)) {
             Traversal t = new Traversal(edge, new Edge(toNode, n));
-            if ( ! traversalIndex.containsKey(t) ){
+            if ( ! traversalIndex.containsKey(t) ) {
                 traversalAttributeTable.appendRow(null);
                 traversalIndex.put(t, traversalAttributeTable.getRowCount());
             }
         }
         
-        for (Node n : getPredecessors(toNode)){
+        for (Node n : getPredecessors(toNode)) {
             Traversal t = new Traversal(new Edge(n, fromNode), edge);
-            if ( ! traversalIndex.containsKey(t) ){
+            if ( ! traversalIndex.containsKey(t) ) {
                 traversalAttributeTable.appendRow(null);
                 traversalIndex.put(t, traversalAttributeTable.getRowCount());
             }
@@ -203,5 +203,5 @@ public class Network
     {
         return traversalIndex.keySet().iterator();
     }
-    
+
 }
