@@ -18,8 +18,8 @@ Macro "Run SANDAG ABM"
    TAB1=1
    TAB2=2
 
-   path = "d:\\projects\\sandag\\series13\\2010"
-   mgraDataFile      = "mgra13_based_input2010.csv"
+   path = "d:\\projects\\sandag\\series13\\${year}"
+   mgraDataFile      = "mgra13_based_input${year}.csv"
 
 
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","*********Model Run Starting************"})
