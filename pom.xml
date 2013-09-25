@@ -8,6 +8,58 @@
     <name>SANDAG CT-RAMP Activity Based Model</name>
 
     <profiles>
+         <profile>
+            <id>year-2010</id>
+            <properties>
+                <year>2010</year>
+                <crossBorder.tours>123276</crossBorder.tours>
+                <airport.enplanements>11441719</airport.enplanements>
+				<airport.connecting>463624</airport.connecting>
+				<airport.airportMgra>2997</airport.airportMgra>
+				<crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
+				<crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
+				<PopulationSynthesizer.OccupCodes>input/pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
+            </properties>
+        </profile>
+        <profile>
+            <id>year-2020</id>
+            <properties>
+                <year>2020</year>
+                <crossBorder.tours>123276</crossBorder.tours>
+                <airport.enplanements>11441719</airport.enplanements>
+				<airport.connecting>463624</airport.connecting>
+				<airport.airportMgra>2997</airport.airportMgra>
+				<crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>    
+				<crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
+				<PopulationSynthesizer.OccupCodes>input/pecas_occ_occsoc_acs_2050.csv</PopulationSynthesizer.OccupCodes> 
+            </properties>
+        </profile>
+        <profile>
+            <id>year-2035</id>
+            <properties>
+                <year>2035</year>
+                <crossBorder.tours>123276</crossBorder.tours>
+                <airport.enplanements>11441719</airport.enplanements>
+				<airport.connecting>463624</airport.connecting>
+				<airport.airportMgra>2997</airport.airportMgra>
+				<crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2035.csv</crossborder.dc.soa.alts.file>    
+				<crossBorder.dc.uec.file>CrossBorderDestinationChoice2035.xls</crossBorder.dc.uec.file>
+				<PopulationSynthesizer.OccupCodes>input/pecas_occ_occsoc_acs_2050.csv</PopulationSynthesizer.OccupCodes> 
+            </properties>
+        </profile>
+        <profile>
+            <id>year-2050</id>
+            <properties>
+                <year>2050</year>
+                <crossBorder.tours>198655</crossBorder.tours>
+                <airport.enplanements>22263450</airport.enplanements>
+				<airport.connecting>902126</airport.connecting>
+				<airport.airportMgra>2997</airport.airportMgra>
+				<crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2050.csv</crossborder.dc.soa.alts.file>    
+				<crossBorder.dc.uec.file>CrossBorderDestinationChoice2050.xls</crossBorder.dc.uec.file>
+				<PopulationSynthesizer.OccupCodes>input/pecas_occ_occsoc_acs_2050.csv</PopulationSynthesizer.OccupCodes> 
+            </properties>
+        </profile>
         <profile>
             <id>local-cluster</id>
             <properties>
