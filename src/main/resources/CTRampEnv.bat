@@ -7,18 +7,17 @@ set MATRIX_MANAGER_PORT=${matrix.server.port}
 set HH_MANAGER_PORT=${household.server.port}
 
 rem set machine names
-set MAIN=${master.node.ip}
-set NODE1=${node.1.ip}
-set NODE2=${node.2.ip}
-set NODE3=
+set MAIN=${master.node.name}
+set NODE1=${node.1.name}
+set NODE2=${node.2.name}
 
 rem set IP addresses
-set MAIN_IP=${master.node.ip}
-set NODE1_IP=${node.1.ip}
+set MAIN_IP=${master.node.name}
+set HHMGR_IP=${node.1.name}
 
 rem all nodes need to map the scenario drive, currently mapped as x:
 set MAPDRIVE=x:
-set MAPDRIVEFOLDER=\\${master.node.ip}\${map.folder}
+set MAPDRIVEFOLDER=\\${master.node.name}\${map.folder}
 
 rem account settings for remote access using psexec
 set USERNAME=joelf
@@ -31,4 +30,4 @@ rem set location of java
 set JAVA_64_PATH=C:\Progra~1\Java\jre7
 set JAVA_32_PATH=C:\Progra~2\Java\jre7
 set JAVA_HOME_32=%JAVA_32_PATH%
-set TRANSCAD_PATH=C:\Progra~2\TransCAD50
+set TRANSCAD_PATH=C:\Progra~2\TransCAD
