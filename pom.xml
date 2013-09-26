@@ -12,9 +12,22 @@
             <id>year-2010</id>
             <properties>
                 <year>2010</year>
-                <crossBorder.tours>123276</crossBorder.tours>
+                <crossBorder.tours>115320</crossBorder.tours>
                 <airport.enplanements>11441719</airport.enplanements>
 				<airport.connecting>463624</airport.connecting>
+				<airport.airportMgra>2997</airport.airportMgra>
+				<crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
+				<crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
+				<PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
+            </properties>
+        </profile>
+         <profile>
+            <id>year-2012</id>
+            <properties>
+                <year>2012</year>
+                <crossBorder.tours>119308</crossBorder.tours>
+                <airport.enplanements>11673771</airport.enplanements>
+				<airport.connecting>473027</airport.connecting>
 				<airport.airportMgra>2997</airport.airportMgra>
 				<crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
 				<crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
