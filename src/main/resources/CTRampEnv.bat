@@ -24,7 +24,7 @@ set USERNAME=joelf
 set PASSWORD=B@seB@ll!
 
 rem location of mapAndRun.bat on remote machines
-set MAPANDRUN=e:\remoteExecution\mapAndRun.bat
+set MAPANDRUN=${MAPANDRUN}
 
 rem set location of java
 set JAVA_64_PATH=C:\Progra~1\Java\jre7
