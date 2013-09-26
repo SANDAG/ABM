@@ -38,8 +38,8 @@ Macro "Run SANDAG ABM"
    outputDir = path+"\\output"
    inputTruckDir = path+"\\input_truck"
  
-   SetLogFileName(path+"\\tclog.xml")
-   SetReportFileName(path+"\\tcreport.xml")
+   SetLogFileName(path+"\\logFiles\\tclog.xml")
+   SetReportFileName(path+"\\logFiles\\tcreport.xml")
    
    RunMacro("parameters")
 	
@@ -68,17 +68,17 @@ Macro "Run SANDAG ABM"
    for iteration = 1 to max_iterations do        
 
       // Start matrix manager locally
-      runString = path+"\\runMtxMgr.cmd "+drive+" "+path_no_drive
+      runString = path+"\\bin\\runMtxMgr.cmd "+drive+" "+path_no_drive
       ok = RunMacro("TCB Run Command", 1, "Start matrix manager", runString)
       if !ok then goto quit  
 	
       // Start  JPPF driver 
-      runString = path+"\\runDriver.cmd "+drive+" "+path_no_drive
+      runString = path+"\\bin\\runDriver.cmd "+drive+" "+path_no_drive
       ok = RunMacro("TCB Run Command", 1, "Start JPPF Driver", runString)
       if !ok then goto quit  
 
       // Start HH Manager, and worker nodes
-      runString = path+"\\StartHHAndNodes.cmd "+drive+" "+path_no_drive
+      runString = path+"\\bin\\StartHHAndNodes.cmd "+drive+" "+path_no_drive
       ok = RunMacro("TCB Run Command", 1, "Start HH Manager, JPPF Driver, and nodes", runString)
       if !ok then goto quit  
 
@@ -98,7 +98,7 @@ Macro "Run SANDAG ABM"
       if !ok then goto quit
 
       // Run CT-RAMP, airport model, visitor model, cross-border model, internal-external model
-      runString = path+"\\runSandagAbm.cmd "+drive+" "+path_forward_slash +" "+r2s(sample_rate[iteration])+" "+i2s(iteration)
+      runString = path+"\\bin\\runSandagAbm.cmd "+drive+" "+path_forward_slash +" "+r2s(sample_rate[iteration])+" "+i2s(iteration)
       RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run CT-RAMP, airport model, visitor model, cross-border model, internal-external model"+" "+runString})
       ok = RunMacro("TCB Run Command", 1, "Run CT-RAMP", runString)
       if !ok then goto quit  
