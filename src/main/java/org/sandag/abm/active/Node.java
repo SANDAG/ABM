@@ -20,5 +20,19 @@ public class Node implements Comparable<Node>
     {
         return this.id.compareTo(o.id);
     }
+    
+    @Override
+    public int hashCode() 
+    {
+    	return id.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o) 
+    {
+    	if ((o == null) || !(o instanceof Node))
+    		return false;
+    	return ((Node) o).id.equals(id);
+    }
 
 }
