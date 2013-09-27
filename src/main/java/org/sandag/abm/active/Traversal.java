@@ -1,5 +1,7 @@
 package org.sandag.abm.active;
 
+import java.util.Objects;
+
 public class Traversal implements Comparable<Traversal>
 {
 private Edge fromEdge, toEdge;
@@ -22,6 +24,18 @@ private Edge fromEdge, toEdge;
         this.toEdge = new Edge(id2, id3);
     }
     
+    public Traversal(Node node1, Node node2)
+    {
+        this.fromEdge = null;
+        this.toEdge = new Edge(node1,node2);
+    }
+    
+    public Traversal(int id1, int id2)
+    {
+        this.fromEdge = null;
+        this.toEdge = new Edge(id1, id2);
+    }
+    
     public Edge getFromEdge()
     {
         return fromEdge;
@@ -38,5 +52,18 @@ private Edge fromEdge, toEdge;
         int fromResult = this.fromEdge.compareTo(o.fromEdge);
         int toResult = this.toEdge.compareTo(o.toEdge);
         return fromResult + ( (fromResult == 0) ? 1 : 0 ) * toResult;
+    }
+    
+    public boolean equals(Object o) {
+    	if ((o == null) || !(o instanceof Traversal))
+    		return false;
+    	Traversal t = (Traversal) o;
+    	if ((fromEdge != null) && (!fromEdge.equals(t.fromEdge)))
+    		return false;
+    	return toEdge.equals(t.toEdge);
+    }
+    
+    public int hashCode() {
+    	return Objects.hash(fromEdge,toEdge);
     }
 }
