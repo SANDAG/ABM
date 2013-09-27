@@ -1,47 +1,47 @@
 package org.sandag.abm.ctramp;
 
 /**
- * Created by IntelliJ IDEA. User: Jim Date: Jul 9, 2008 Time: 3:13:17 PM To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: Jim Date: Jul 9, 2008 Time: 3:13:17 PM To
+ * change this template use File | Settings | File Templates.
  */
-public interface CtrampDmuFactoryIf
-{
+public interface CtrampDmuFactoryIf {
 
-    public AutoOwnershipChoiceDMU getAutoOwnershipDMU();
+	public AutoOwnershipChoiceDMU getAutoOwnershipDMU();
 
-    public ParkingProvisionChoiceDMU getFreeParkingChoiceDMU();
+	public ParkingProvisionChoiceDMU getFreeParkingChoiceDMU();
 
-    public TransponderChoiceDMU getTransponderChoiceDMU();
+	public TransponderChoiceDMU getTransponderChoiceDMU();
 
-    public InternalExternalTripChoiceDMU getInternalExternalTripChoiceDMU();
+	public InternalExternalTripChoiceDMU getInternalExternalTripChoiceDMU();
 
-    public CoordinatedDailyActivityPatternDMU getCoordinatedDailyActivityPatternDMU();
+	public CoordinatedDailyActivityPatternDMU getCoordinatedDailyActivityPatternDMU();
 
-    public DcSoaDMU getDcSoaDMU();
+	public DcSoaDMU getDcSoaDMU();
 
-    public DestChoiceDMU getDestChoiceDMU();
+	public DestChoiceDMU getDestChoiceDMU();
 
-    public DestChoiceTwoStageModelDMU getDestChoiceSoaTwoStageDMU();
+	public DestChoiceTwoStageModelDMU getDestChoiceSoaTwoStageDMU();
 
-    public DestChoiceTwoStageSoaTazDistanceUtilityDMU getDestChoiceSoaTwoStageTazDistUtilityDMU();
+	public DestChoiceTwoStageSoaTazDistanceUtilityDMU getDestChoiceSoaTwoStageTazDistUtilityDMU();
 
-    public TourModeChoiceDMU getModeChoiceDMU();
+	public TourModeChoiceDMU getModeChoiceDMU();
 
-    public IndividualMandatoryTourFrequencyDMU getIndividualMandatoryTourFrequencyDMU();
+	public IndividualMandatoryTourFrequencyDMU getIndividualMandatoryTourFrequencyDMU();
 
-    public TourDepartureTimeAndDurationDMU getTourDepartureTimeAndDurationDMU();
+	public TourDepartureTimeAndDurationDMU getTourDepartureTimeAndDurationDMU();
 
-    public AtWorkSubtourFrequencyDMU getAtWorkSubtourFrequencyDMU();
+	public AtWorkSubtourFrequencyDMU getAtWorkSubtourFrequencyDMU();
 
-    public JointTourModelsDMU getJointTourModelsDMU();
+	public JointTourModelsDMU getJointTourModelsDMU();
 
-    public IndividualNonMandatoryTourFrequencyDMU getIndividualNonMandatoryTourFrequencyDMU();
+	public IndividualNonMandatoryTourFrequencyDMU getIndividualNonMandatoryTourFrequencyDMU();
 
-    public StopFrequencyDMU getStopFrequencyDMU();
+	public StopFrequencyDMU getStopFrequencyDMU();
 
-    public StopLocationDMU getStopLocationDMU();
+	public StopLocationDMU getStopLocationDMU();
 
-    public TripModeChoiceDMU getTripModeChoiceDMU();
+	public TripModeChoiceDMU getTripModeChoiceDMU();
 
-    public ParkingChoiceDMU getParkingChoiceDMU();
+	public ParkingChoiceDMU getParkingChoiceDMU();
 
 }

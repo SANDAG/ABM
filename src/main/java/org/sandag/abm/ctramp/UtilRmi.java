@@ -16,122 +16,109 @@ import org.apache.log4j.Logger;
  * 
  */
 
-public class UtilRmi
-        implements java.io.Serializable
-{
+public class UtilRmi implements java.io.Serializable {
 
-    private transient Logger logger          = Logger.getLogger(UtilRmi.class);
-    private String           connectString;
+	private transient Logger logger = Logger.getLogger(UtilRmi.class);
+	private String connectString;
 
-    private static int       MAX_RETRY_COUNT = 100;
-    private static int       MAX_RETRY_TIME  = 1000;                           // milliseconds
+	private static int MAX_RETRY_COUNT = 100;
+	private static int MAX_RETRY_TIME = 1000; // milliseconds
 
-    public UtilRmi(String connectString)
-    {
-        this.connectString = connectString;
-    }
+	public UtilRmi(String connectString) {
+		this.connectString = connectString;
+	}
 
-    public Object method(String name, Object[] args)
-    {
+	public Object method(String name, Object[] args) {
 
-        int connectExceptionCount = 0;
+		int connectExceptionCount = 0;
 
-        Object itemObject = null;
-        Object returnObject = null;
+		Object itemObject = null;
+		Object returnObject = null;
 
-        while (connectExceptionCount < MAX_RETRY_COUNT)
-        {
+		while (connectExceptionCount < MAX_RETRY_COUNT) {
 
-            try
-            {
-                itemObject = Remote.getItem(connectString);
-                break;
-            } catch (ConnectIOException e)
-            {
+			try {
+				itemObject = Remote.getItem(connectString);
+				break;
+			} catch (ConnectIOException e) {
 
-                try
-                {
-                    Thread.currentThread().wait(MAX_RETRY_TIME);
-                } catch (InterruptedException e1)
-                {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
+				try {
+					Thread.currentThread().wait(MAX_RETRY_TIME);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 
-                connectExceptionCount++;
+				connectExceptionCount++;
 
-            } catch (RemoteException e)
-            {
-                logger.error("RemoteException exception making RMI method call: " + connectString
-                        + "." + name + "().", e);
-                throw new RuntimeException();
-            } catch (MalformedURLException e)
-            {
-                logger.error("MalformedURLException exception making RMI method call: "
-                        + connectString + "." + name + "().", e);
-                throw new RuntimeException();
-            } catch (NotBoundException e)
-            {
-                logger.error("NotBoundException exception making RMI method call: " + connectString
-                        + "." + name + "().", e);
-                throw new RuntimeException();
-            } catch (IOException e)
-            {
-                logger.error("IOException exception making RMI method call: " + connectString + "."
-                        + name + "().", e);
-                throw new RuntimeException();
-            } catch (ClassNotFoundException e)
-            {
-                logger.error("ClassNotFoundException exception making RMI method call: "
-                        + connectString + "." + name + "().", e);
-                throw new RuntimeException();
-            } catch (InstantiationException e)
-            {
-                logger.error("InstantiationException exception making RMI method call: "
-                        + connectString + "." + name + "().", e);
-                throw new RuntimeException();
-            } catch (IllegalAccessException e)
-            {
-                logger.error("IllegalAccessException exception making RMI method call: "
-                        + connectString + "." + name + "().", e);
-                throw new RuntimeException();
-            } catch (UnsatisfiedLinkError e)
-            {
-                logger.error("UnsatisfiedLinkError exception making RMI method call: "
-                        + connectString + "." + name + "().", e);
-                throw new RuntimeException();
-            }
+			} catch (RemoteException e) {
+				logger.error(
+						"RemoteException exception making RMI method call: "
+								+ connectString + "." + name + "().", e);
+				throw new RuntimeException();
+			} catch (MalformedURLException e) {
+				logger.error(
+						"MalformedURLException exception making RMI method call: "
+								+ connectString + "." + name + "().", e);
+				throw new RuntimeException();
+			} catch (NotBoundException e) {
+				logger.error(
+						"NotBoundException exception making RMI method call: "
+								+ connectString + "." + name + "().", e);
+				throw new RuntimeException();
+			} catch (IOException e) {
+				logger.error("IOException exception making RMI method call: "
+						+ connectString + "." + name + "().", e);
+				throw new RuntimeException();
+			} catch (ClassNotFoundException e) {
+				logger.error(
+						"ClassNotFoundException exception making RMI method call: "
+								+ connectString + "." + name + "().", e);
+				throw new RuntimeException();
+			} catch (InstantiationException e) {
+				logger.error(
+						"InstantiationException exception making RMI method call: "
+								+ connectString + "." + name + "().", e);
+				throw new RuntimeException();
+			} catch (IllegalAccessException e) {
+				logger.error(
+						"IllegalAccessException exception making RMI method call: "
+								+ connectString + "." + name + "().", e);
+				throw new RuntimeException();
+			} catch (UnsatisfiedLinkError e) {
+				logger.error(
+						"UnsatisfiedLinkError exception making RMI method call: "
+								+ connectString + "." + name + "().", e);
+				throw new RuntimeException();
+			}
 
-        }
+		}
 
-        if (connectExceptionCount > 0)
-        {
-            logger.warn("UtilRmi.method() timed out " + connectExceptionCount
-                    + "times connecting to: " + connectString + "." + name + "().");
-        }
-        if (connectExceptionCount == MAX_RETRY_COUNT)
-        {
-            logger.error("UtilRmi.method() connection was never made.");
-            throw new RuntimeException();
-        }
+		if (connectExceptionCount > 0) {
+			logger.warn("UtilRmi.method() timed out " + connectExceptionCount
+					+ "times connecting to: " + connectString + "." + name
+					+ "().");
+		}
+		if (connectExceptionCount == MAX_RETRY_COUNT) {
+			logger.error("UtilRmi.method() connection was never made.");
+			throw new RuntimeException();
+		}
 
-        try
-        {
-            returnObject = Remote.invoke(itemObject, name, args);
-        } catch (InvocationTargetException e)
-        {
-            logger.error("InvocationTargetException exception making RMI method call: "
-                    + connectString + "." + name + "().", e);
-            throw new RuntimeException();
-        } catch (Exception e)
-        {
-            logger.error("Exception exception making RMI method call: " + connectString + "."
-                    + name + "().", e);
-            throw new RuntimeException();
-        }
+		try {
+			returnObject = Remote.invoke(itemObject, name, args);
+		} catch (InvocationTargetException e) {
+			logger.error(
+					"InvocationTargetException exception making RMI method call: "
+							+ connectString + "." + name + "().", e);
+			throw new RuntimeException();
+		} catch (Exception e) {
+			logger.error("Exception exception making RMI method call: "
+					+ connectString + "." + name + "().", e);
+			throw new RuntimeException();
+		}
 
-        return returnObject;
+		return returnObject;
 
-    }
+	}
 
 }
