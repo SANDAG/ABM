@@ -51,7 +51,7 @@ rem ## DISTRIBUTED ##
 rem java -Xdebug -Xrunjdwp:transport=dt_socket,address=1045,server=y,suspend=y -server -Xms8000m -Xmx8000m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% -Djppf.config=jppf-clientDistributed.properties org.sandag.abm.application.SandagTourBasedModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% -sampleSeed 1
 
 rem Run locally
-%JAVA_64_PATH%\bin\java -showversion -server -Xms30000m -Xmx30000m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% -Djppf.config=jppf-clientDistributed.properties org.sandag.abm.application.SandagTourBasedModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% -sampleSeed 1 -luAcc true
+%JAVA_64_PATH%\bin\java -showversion -server -Xms48000m -Xmx48000m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% -Djppf.config=jppf-clientDistributed.properties org.sandag.abm.application.SandagTourBasedModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% -sampleSeed 1 -luAcc true
 
 rem Build trip tables
 %JAVA_64_PATH%\bin\java -server -Xms10000m -Xmx10000m -Djava.library.path=%TRANSCAD_PATH% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.application.SandagTripTables %PROPERTIES_NAME%  -iteration %ITERATION% -sampleRate %SAMPLERATE% 
