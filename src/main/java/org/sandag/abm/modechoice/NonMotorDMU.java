@@ -12,135 +12,122 @@ import com.pb.common.calculator.VariableTable;
  * @version May 28,2009
  *          <p/>
  */
-public class NonMotorDMU
-        implements Serializable, VariableTable
-{
+public class NonMotorDMU implements Serializable, VariableTable {
 
-    protected transient Logger         logger = Logger.getLogger(NonMotorDMU.class);
+	protected transient Logger logger = Logger.getLogger(NonMotorDMU.class);
 
-    protected HashMap<String, Integer> methodIndexMap;
+	protected HashMap<String, Integer> methodIndexMap;
 
-    private float                      mgraWalkTime;
-    private float                      mgraBikeTime;
+	private float mgraWalkTime;
+	private float mgraBikeTime;
 
-    public NonMotorDMU()
-    {
-        setupMethodIndexMap();
-    }
+	public NonMotorDMU() {
+		setupMethodIndexMap();
+	}
 
-    /**
-     * Get MGRA-MGRA walk time.
-     * 
-     * @return Mgra-mgra walk time in minutes.
-     */
-    public float getMgraWalkTime()
-    {
-        return mgraWalkTime;
-    }
+	/**
+	 * Get MGRA-MGRA walk time.
+	 * 
+	 * @return Mgra-mgra walk time in minutes.
+	 */
+	public float getMgraWalkTime() {
+		return mgraWalkTime;
+	}
 
-    /**
-     * Set Mgra-Mgra walk time in minutes.
-     * 
-     * @param mgraWalkTime
-     *            Mgra walk time in minutes.
-     */
-    public void setMgraWalkTime(float mgraWalkTime)
-    {
-        this.mgraWalkTime = mgraWalkTime;
-    }
+	/**
+	 * Set Mgra-Mgra walk time in minutes.
+	 * 
+	 * @param mgraWalkTime
+	 *            Mgra walk time in minutes.
+	 */
+	public void setMgraWalkTime(float mgraWalkTime) {
+		this.mgraWalkTime = mgraWalkTime;
+	}
 
-    /**
-     * Get MGRA-MGRA bike time.
-     * 
-     * @return Mgra-mgra bike time in minutes.
-     */
-    public float getMgraBikeTime()
-    {
-        return mgraBikeTime;
-    }
+	/**
+	 * Get MGRA-MGRA bike time.
+	 * 
+	 * @return Mgra-mgra bike time in minutes.
+	 */
+	public float getMgraBikeTime() {
+		return mgraBikeTime;
+	}
 
-    /**
-     * Set Mgra-Mgra bike time in minutes.
-     * 
-     * @param mgraBikeTime
-     *            Mgra bike time in minutes.
-     */
-    public void setMgraBikeTime(float mgraBikeTime)
-    {
-        this.mgraBikeTime = mgraBikeTime;
-    }
+	/**
+	 * Set Mgra-Mgra bike time in minutes.
+	 * 
+	 * @param mgraBikeTime
+	 *            Mgra bike time in minutes.
+	 */
+	public void setMgraBikeTime(float mgraBikeTime) {
+		this.mgraBikeTime = mgraBikeTime;
+	}
 
-    /**
-     * Log the DMU values.
-     * 
-     * @param localLogger
-     *            The logger to use.
-     */
-    public void logValues(Logger localLogger)
-    {
+	/**
+	 * Log the DMU values.
+	 * 
+	 * @param localLogger
+	 *            The logger to use.
+	 */
+	public void logValues(Logger localLogger) {
 
-        localLogger.info("");
-        localLogger.info("Non-Motorized DMU Values:");
-        localLogger.info("");
-        localLogger.info(String.format("MGRA-MGRA Walk Time: %9.4f", mgraWalkTime));
-        localLogger.info(String.format("MGRA-MGRA Bike Time: %9.4f", mgraBikeTime));
+		localLogger.info("");
+		localLogger.info("Non-Motorized DMU Values:");
+		localLogger.info("");
+		localLogger.info(String.format("MGRA-MGRA Walk Time: %9.4f",
+				mgraWalkTime));
+		localLogger.info(String.format("MGRA-MGRA Bike Time: %9.4f",
+				mgraBikeTime));
 
-    }
+	}
 
-    private void setupMethodIndexMap()
-    {
-        methodIndexMap = new HashMap<String, Integer>();
+	private void setupMethodIndexMap() {
+		methodIndexMap = new HashMap<String, Integer>();
 
-        methodIndexMap.put("getMgraBikeTime", 0);
-        methodIndexMap.put("getMgraWalkTime", 1);
+		methodIndexMap.put("getMgraBikeTime", 0);
+		methodIndexMap.put("getMgraWalkTime", 1);
 
-    }
+	}
 
-    public double getValueForIndex(int variableIndex, int arrayIndex)
-    {
+	public double getValueForIndex(int variableIndex, int arrayIndex) {
 
-        double returnValue = 0;
+		double returnValue = 0;
 
-        switch (variableIndex)
-        {
-            case 0:
-                returnValue = getMgraBikeTime();
-                break;
-            case 1:
-                returnValue = getMgraWalkTime();
-                break;
-            default:
-                logger.error("method number = " + variableIndex + " not found");
-                throw new RuntimeException("method number = " + variableIndex + " not found");
+		switch (variableIndex) {
+		case 0:
+			returnValue = getMgraBikeTime();
+			break;
+		case 1:
+			returnValue = getMgraWalkTime();
+			break;
+		default:
+			logger.error("method number = " + variableIndex + " not found");
+			throw new RuntimeException("method number = " + variableIndex
+					+ " not found");
 
-        }
+		}
 
-        return returnValue;
-    }
+		return returnValue;
+	}
 
-    public int getIndexValue(String variableName)
-    {
-        return methodIndexMap.get(variableName);
-    }
+	public int getIndexValue(String variableName) {
+		return methodIndexMap.get(variableName);
+	}
 
-    public int getAssignmentIndexValue(String variableName)
-    {
-        throw new UnsupportedOperationException();
-    }
+	public int getAssignmentIndexValue(String variableName) {
+		throw new UnsupportedOperationException();
+	}
 
-    public double getValueForIndex(int variableIndex)
-    {
-        throw new UnsupportedOperationException();
-    }
+	public double getValueForIndex(int variableIndex) {
+		throw new UnsupportedOperationException();
+	}
 
-    public void setValue(String variableName, double variableValue)
-    {
-        throw new UnsupportedOperationException();
-    }
+	public void setValue(String variableName, double variableValue) {
+		throw new UnsupportedOperationException();
+	}
 
-    public void setValue(int variableIndex, double variableValue)
-    {
-        throw new UnsupportedOperationException();
-    }
+	public void setValue(int variableIndex, double variableValue) {
+		throw new UnsupportedOperationException();
+	}
 
 }
