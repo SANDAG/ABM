@@ -1,207 +1,206 @@
 package org.sandag.abm.active;
-import com.pb.common.datafile.*;
 import java.util.*;
 
-public class Network
+public class Network <T extends Node, U extends Edge, V extends Traversal>
 {
-    private TableDataSet nodeAttributeTable;
-    private TableDataSet edgeAttributeTable;
-    private TableDataSet traversalAttributeTable;
+  
+    private List<T> nodes;
+    private List<U> edges;
+    private List<V> traversals;
     
-    private Map<Node,Integer> nodeIndex;
-    private Map<Edge,Integer> edgeIndex;
-    private Map<Traversal,Integer> traversalIndex;
+    private Map<Integer,Integer> nodeIndex;
+    private Map<EdgeKey,Integer> edgeIndex;
+    private Map<TraversalKey,Integer> traversalIndex;
     
-    private Map<Node,ArrayList<Node>> successorIndex;
-    private Map<Node,ArrayList<Node>> predecessorIndex;
+    private Map<Integer,ArrayList<Integer>> successorIndex;
+    private Map<Integer,ArrayList<Integer>> predecessorIndex;
     
     public Network()
     {
-        nodeAttributeTable = new TableDataSet();
-        edgeAttributeTable = new TableDataSet();
-        traversalAttributeTable = new TableDataSet();
-        nodeIndex = new HashMap<Node,Integer>();
-        edgeIndex = new HashMap<Edge,Integer>();
-        traversalIndex = new HashMap<Traversal,Integer>();
-        successorIndex =  new HashMap<Node,ArrayList<Node>>();
-        predecessorIndex =  new HashMap<Node,ArrayList<Node>>();
+        nodes = new ArrayList<T>();
+        edges = new ArrayList<U>();
+        traversals = new ArrayList<V>();
+        nodeIndex = new HashMap<Integer,Integer>();
+        edgeIndex = new HashMap<EdgeKey,Integer>();
+        traversalIndex = new HashMap<TraversalKey,Integer>();
+        successorIndex =  new HashMap<Integer,ArrayList<Integer>>();
+        predecessorIndex =  new HashMap<Integer,ArrayList<Integer>>();
     }
     
-    public void addNode(Node node, HashMap attributes)
+    public T getNode(int nodeId)
     {
-        nodeAttributeTable.appendRow(attributes);
-        nodeIndex.put(node, nodeAttributeTable.getRowCount());
-        successorIndex.put(node, new ArrayList<Node>());
-        predecessorIndex.put(node, new ArrayList<Node>());
+        return nodes.get(nodeIndex.get(nodeId));
     }
     
-    public void addNode(int id, HashMap attributes)
+    public U getEdge(int fromId, int toId)
     {
-        addNode(new Node(id), attributes);
+        return edges.get(edgeIndex.get(new EdgeKey(fromId,toId)));
     }
     
-    public void addNode(Node node)
+    public V getTraversal(int startId, int thruId, int endId)
     {
-        addNode(node, null);
+        return traversals.get(traversalIndex.get(new TraversalKey(startId, thruId, endId)));
     }
     
-    public void addNode(int id)
-    {
-        addNode(new Node(id));
+    public List<Integer> getSuccessorIds(int nodeId) {
+        return successorIndex.get(nodeId);
     }
     
-    public void addEdge(Edge edge, HashMap attributes)
+    public List<Integer> getPredecessorIds(int nodeId) {
+        return predecessorIndex.get(nodeId);
+    }
+    
+    public List<T> getSuccessors(int nodeId)
     {
-        Node fromNode = edge.getFromNode();
-        Node toNode = edge.getToNode();
-        
-        if ( ! nodeIndex.containsKey(fromNode) ) {
-            addNode(fromNode);
-            successorIndex.put(fromNode, new ArrayList<Node>());
-            predecessorIndex.put(fromNode, new ArrayList<Node>());
+        List<T> successors = new ArrayList<T>();
+        for ( int s : successorIndex.get(nodeId) ) {
+            successors.add(nodes.get(nodeIndex.get(s)));
         }
-        if ( ! nodeIndex.containsKey(toNode) ) {
-            addNode(toNode);
-            successorIndex.put(toNode, new ArrayList<Node>());
-            predecessorIndex.put(toNode, new ArrayList<Node>());
+        return successors;
+    }
+    
+    public List<T> getPredecessors(int nodeId)
+    {
+        List<T> predecessors = new ArrayList<T>();
+        for ( int p : predecessorIndex.get(nodeId) ) {
+            predecessors.add(nodes.get(nodeIndex.get(p)));
         }
-        
-        edgeAttributeTable.appendRow(attributes);
-        edgeIndex.put(edge, edgeAttributeTable.getRowCount());
-        
-        if ( ! successorIndex.get(fromNode).contains(toNode) ) { successorIndex.get(fromNode).add(toNode); }
-        if ( ! predecessorIndex.get(toNode).contains(fromNode) ) { successorIndex.get(toNode).add(fromNode); }
-    
-        for (Node n : getSuccessors(fromNode)) {
-            Traversal t = new Traversal(edge, new Edge(toNode, n));
-            if ( ! traversalIndex.containsKey(t) ) {
-                traversalAttributeTable.appendRow(null);
-                traversalIndex.put(t, traversalAttributeTable.getRowCount());
-            }
-        }
-        
-        for (Node n : getPredecessors(toNode)) {
-            Traversal t = new Traversal(new Edge(n, fromNode), edge);
-            if ( ! traversalIndex.containsKey(t) ) {
-                traversalAttributeTable.appendRow(null);
-                traversalIndex.put(t, traversalAttributeTable.getRowCount());
-            }
-        }
+        return predecessors;
     }
     
-    public void addEdge(Edge edge)
+    public Iterator<T> nodeIterator()
     {
-        addEdge(edge, null);
+        return nodes.iterator();
     }
     
-    public void addEdge(int fromId, int toId, HashMap attributes)
+    public Iterator<U> edgeIterator()
     {
-        addEdge(new Edge(fromId, toId), attributes);
+        return edges.iterator();
     }
     
-    public void addEdge(int fromId, int toId)
+    public Iterator<V> traversalIterator()
     {
-        addEdge(new Edge(fromId, toId));
-    }
-    
-    public List<Node> getSuccessors(Node node)
-    {
-        return successorIndex.get(node);
-    }
-    
-    public List<Node> getPredecessors(Node node)
-    {
-        return predecessorIndex.get(node);
-    }
-    
-    public void addNodeAttribute(String attribute)
-    {
-        nodeAttributeTable.appendColumn(null, attribute);
-    }
-    
-    public void addEdgeAttribute(String attribute)
-    {
-        edgeAttributeTable.appendColumn(null, attribute);
-    }
-    
-    public void addTraversalAttribute(String attribute)
-    {
-        traversalAttributeTable.appendColumn(null, attribute);
-    }
-    
-    public float getNodeAttributeValue(Node node, String attribute)
-    {
-        return nodeAttributeTable.getValueAt(nodeIndex.get(node), attribute);
-    }
-    
-    public float getNodeAttributeValue(int id, String attribute)
-    {
-        return nodeAttributeTable.getValueAt(nodeIndex.get(new Node(id)), attribute);
-    }
-    
-    public float getEdgeAttributeValue(Edge edge, String attribute)
-    {
-        return edgeAttributeTable.getValueAt(edgeIndex.get(edge), attribute);
-    }
-    
-    public float getEdgeAttributeValue(int id1, int id2, String attribute)
-    {
-        return edgeAttributeTable.getValueAt(edgeIndex.get(new Edge(id1, id2)), attribute);
-    }
-    
-    public float getTraversalAttributeValue(Traversal traversal, String attribute)
-    {
-        return traversalAttributeTable.getValueAt(traversalIndex.get(traversal), attribute);
-    }
-    
-    public float getTraversalAttributeValue(int id1, int id2, int id3, String attribute)
-    {
-        return traversalAttributeTable.getValueAt(traversalIndex.get(new Traversal(id1, id2, id3)), attribute);
-    }
-    
-    public void setNodeAttributeValue(Node node, String attribute, Number value)
-    {
-        nodeAttributeTable.setValueAt(nodeIndex.get(node), attribute, (Float) value);
-    }
-    
-    public void setNodeAttributeValue(int id, String attribute, Number value)
-    {
-        nodeAttributeTable.setValueAt(nodeIndex.get(new Node(id)), attribute, (Float) value);
-    }
-    
-    public void setEdgeAttributeValue(Edge edge, String attribute, Number value)
-    {
-        edgeAttributeTable.setValueAt(edgeIndex.get(edge), attribute, (Float) value);
-    }
-    
-    public void setEdgeAttributeValue(int id1, int id2, String attribute, Number value)
-    {
-        edgeAttributeTable.setValueAt(edgeIndex.get(new Edge(id1, id2)), attribute, (Float) value);
-    }
-    
-    public void setTraversalAttributeValue(Traversal traversal, String attribute, Number value)
-    {
-        traversalAttributeTable.setValueAt(traversalIndex.get(traversal), attribute, (Float) value);
-    }
-    
-    public void setTraversalAttributeValue(int id1, int id2, int id3, String attribute, Number value)
-    {
-        traversalAttributeTable.setValueAt(traversalIndex.get(new Traversal(id1, id2, id3)), attribute, (Float) value);
-    }
-    
-    public Iterator<Node> nodeIterator()
-    {
-        return nodeIndex.keySet().iterator();
-    }
-    
-    public Iterator<Edge> edgeIterator()
-    {
-        return edgeIndex.keySet().iterator();
-    }
-    
-    public Iterator<Traversal> traversalIterator()
-    {
-        return traversalIndex.keySet().iterator();
+        return traversals.iterator();
     }
 
+    public void addNode(T node)
+    {
+        if ( nodeIndex.containsKey(node.getId()) ) {
+            throw new RuntimeException("Network already contains Node with id " + node.getId());
+        }
+        nodeIndex.put(node.getId(), nodes.size());
+        nodes.add(node);
+        if (! successorIndex.containsKey(node.getId()) ) { successorIndex.put(node.getId(), new ArrayList<Integer>()); }
+        if (! predecessorIndex.containsKey(node.getId()) ) { predecessorIndex.put(node.getId(), new ArrayList<Integer>()); }
+    }
+    
+    public void addEdge(U edge)
+    {
+        int fromId = edge.getFromId();
+        int toId = edge.getToId();
+        EdgeKey edgeIndexKey = new EdgeKey(fromId, toId);
+        
+        if ( edgeIndex.containsKey(edgeIndexKey) ) {
+            throw new RuntimeException("Network already contains Edge with fromId " + edge.getFromId() + " and toId " + edge.getToId());
+        }
+        
+        edgeIndex.put(edgeIndexKey, edges.size());
+        edges.add(edge);
+        
+        if ( ! successorIndex.containsKey(fromId) ) { successorIndex.put(fromId, new ArrayList<Integer>()); }
+        if ( ! predecessorIndex.containsKey(toId) ) { predecessorIndex.put(toId, new ArrayList<Integer>()); }
+        
+        if ( ! successorIndex.get(fromId).contains(toId) ) { successorIndex.get(fromId).add(toId); }
+        if ( ! predecessorIndex.get(toId).contains(fromId) ) { predecessorIndex.get(toId).add(fromId); }
+    }
+    
+    public void addTraversal(V traversal)
+    {
+        int startId = traversal.getStartId();
+        int thruId = traversal.getThruId();
+        int endId = traversal.getEndId();
+        TraversalKey traversalIndexKey = new TraversalKey(startId, thruId, endId);
+        
+        traversalIndex.put(traversalIndexKey, traversals.size());
+        traversals.add(traversal);
+    }
+    
+    public boolean containsNodeId(int id) {
+        return nodeIndex.containsKey(id);
+    }
+    
+    public boolean containsEdgeIds(int[] ids) {
+        return edgeIndex.containsKey(new EdgeKey(ids[0],ids[1]));
+    }
+    
+    public boolean containsTraversalIds(int[] ids) {
+        return traversalIndex.containsKey(new TraversalKey(ids[0],ids[1],ids[2]));
+    }
+    
+    private class EdgeKey {
+        private int fromId, toId;
+        
+        EdgeKey(int fromId, int toId) {
+            this.fromId = fromId;
+            this.toId = toId;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + fromId;
+            result = prime * result + toId;
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            EdgeKey other = (EdgeKey) obj;
+            if (fromId != other.fromId) return false;
+            if (toId != other.toId) return false;
+            return true;
+        }        
+    }
+    
+    private class TraversalKey {
+        private int startId, thruId, endId;
+
+        public TraversalKey(int startId, int thruId, int endId)
+        {
+            this.startId = startId;
+            this.thruId = thruId;
+            this.endId = endId;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + endId;
+            result = prime * result + startId;
+            result = prime * result + thruId;
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            TraversalKey other = (TraversalKey) obj;
+            if (endId != other.endId) return false;
+            if (startId != other.startId) return false;
+            if (thruId != other.thruId) return false;
+            return true;
+        }
+    }
+        
 }

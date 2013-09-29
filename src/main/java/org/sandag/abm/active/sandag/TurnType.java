@@ -1,4 +1,4 @@
-package org.sandag.abm.active;
+package org.sandag.abm.active.sandag;
 import java.util.*;
 
 public enum TurnType
