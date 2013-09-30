@@ -11,12 +11,11 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 
-public class DijkstraOOShortestPath extends AbstractShortestPath {
+public class DijkstraOOShortestPath implements ShortestPath {
 	private final NetworkInterface network;
 	private final TraversalEvaluator traversalEvaluator;
 	
 	public DijkstraOOShortestPath(NetworkInterface network, TraversalEvaluator traversalEvaluator) {
-		super(network);
 		this.network = network;
 		this.traversalEvaluator = traversalEvaluator;
 	}
@@ -36,9 +35,22 @@ public class DijkstraOOShortestPath extends AbstractShortestPath {
 			return (int) Math.signum(cost - other.cost);
 		}
 	}
+
+	@Override
+	public ShortestPathResults getShortestPaths(Set<Node> originNodes, Set<Node> destinationNodes) {
+		return getShortestPaths(originNodes,destinationNodes,Double.POSITIVE_INFINITY);
+	}
+
+	@Override
+	public ShortestPathResults getShortestPaths(Set<Node> originNodes, Set<Node> destinationNodes, double maxCost) {
+		ShortestPathResultsContainer spResults = new BasicShortestPathResults();
+		for (Node originNode : originNodes)
+			spResults.addAll(getShortestPaths(originNode,destinationNodes,maxCost));
+		return spResults;
+	}
 	
-	public OriginShortestPathResult getShortestPaths(Node originNode, double maxCost) {
-		List<Node> orderedNodes = getOrderedNodeList();
+	private ShortestPathResults getShortestPaths(Node originNode, Set<Node> destinationNodes, double maxCost) {
+		//List<Node> orderedNodes = getOrderedNodeList();
 		Map<Node,Path> paths = new HashMap<>();         //zone node paths
 		Map<Node,Double> costs = new HashMap<>();       //zone node costs
 		Map<Edge,Double> finalCosts = new HashMap<>();  //cost to (and including) edge
@@ -47,7 +59,7 @@ public class DijkstraOOShortestPath extends AbstractShortestPath {
 		
 		PriorityQueue<TraversedEdge> traversalQueue = new PriorityQueue<>();
 		
-		Set<Node> targets = new HashSet<>(orderedNodes);
+		Set<Node> targets = new HashSet<>(destinationNodes);
 		Path basePath = new Path(originNode);
 		if (targets.contains(originNode)) {
 			targets.remove(originNode);
@@ -91,19 +103,16 @@ public class DijkstraOOShortestPath extends AbstractShortestPath {
 				}
 			}
 		}
-		Path[] pathsArray = new Path[orderedNodes.size()];
-		double[] costsArray = new double[orderedNodes.size()];
-		int counter = 0;
-		for (Node node : orderedNodes) {
-			if (paths.containsKey(node)) {
-				pathsArray[counter] = paths.get(node);
-				costsArray[counter] = costs.get(node);
-			} else {
-				costsArray[counter] = Double.POSITIVE_INFINITY;
-			}
-			counter++;
+		
+		BasicShortestPathResults spResults = new BasicShortestPathResults();
+		for (Node destinationNode : destinationNodes) {
+			boolean pathDefined = paths.containsKey(destinationNode);
+			Path path = pathDefined ? paths.get(destinationNode) : null;
+			double cost = pathDefined ? costs.get(destinationNode) : Double.POSITIVE_INFINITY;
+			spResults.addResult(new NodePair(originNode,destinationNode),path,cost);
 		}
-		return new OriginShortestPathResult(pathsArray,costsArray);
+		
+		return spResults;
 	}
 	
 	protected double evaluateTraversal(Traversal traversal) {

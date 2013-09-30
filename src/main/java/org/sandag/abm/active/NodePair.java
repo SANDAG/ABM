@@ -32,7 +32,7 @@ public class NodePair implements Comparable<NodePair>{
 		if (!(other instanceof NodePair))
 			return false;
 		NodePair np = (NodePair) other;
-		return (originNode == np.originNode) && (destinationNode == np.destinationNode);
+		return (originNode.equals(np.originNode)) && (destinationNode.equals(np.destinationNode));
 	}
 	
 	public int hashCode() {
