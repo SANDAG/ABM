@@ -4,8 +4,12 @@
 
     <groupId>org.sandag</groupId>
     <artifactId>SANDAG-ABM</artifactId>
-    <version>13.0.0-RELEASE</version>
+    <version>13.0.0</version>
     <name>SANDAG CT-RAMP Activity Based Model</name>
+    
+    <properties>
+        <encoding.type>UTF-8</encoding.type>
+    </properties>
 
     <profiles>
          <profile>
@@ -197,10 +201,6 @@
         </profile>
     </profiles>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
     <reporting>
         <plugins>
             <plugin>
@@ -208,6 +208,7 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>2.10</version>
                 <configuration>
+                    <encoding>${encoding.type}</encoding>
                     <failsOnError>false</failsOnError>
                     <configLocation>sun_checks.xml</configLocation>
                 </configuration>
@@ -246,6 +247,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
+                            <encoding>${encoding.type}</encoding>
                             <outputDirectory>${project.build.directory}/${project.name}/${project.version}/application</outputDirectory>
                             <overWriteReleases>false</overWriteReleases>
                             <overWriteSnapshots>false</overWriteSnapshots>
@@ -265,6 +267,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
+                            <encoding>${encoding.type}</encoding>
                             <outputDirectory>${project.build.directory}/${project.name}/${project.version}/uec</outputDirectory>
                             <resources>
                                 <resource>
@@ -281,6 +284,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
+                            <encoding>${encoding.type}</encoding>
                             <outputDirectory>${project.build.directory}/${project.name}/${project.version}/gisdk</outputDirectory>
                             <resources>
                                 <resource>
@@ -297,6 +301,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
+                            <encoding>${encoding.type}</encoding>
                             <outputDirectory>${project.build.directory}/${project.name}/${project.version}/conf</outputDirectory>
                             <resources>
                                 <resource>
@@ -338,6 +343,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
+                            <encoding>${encoding.type}</encoding>
                             <outputDirectory>${project.build.directory}/${project.name}/${project.version}/input_truck</outputDirectory>
                             <resources>
                                 <resource>
