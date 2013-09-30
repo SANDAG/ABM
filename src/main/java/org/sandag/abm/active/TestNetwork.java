@@ -20,6 +20,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.mahout.math.Arrays;
+import org.sandag.abm.active.ParallelShortestPath.ParallelMethod;
 
 import com.pb.sawdust.util.concurrent.DnCRecursiveAction;
 
@@ -165,10 +166,10 @@ public class TestNetwork implements NetworkInterface {
 	}
 	
 	public static void main(String ... args) {
-//		final NetworkInterface network = new TestNetwork(Paths.get("D:/projects/sandag/sp/dijkstraData.txt"),TestNetworkType.ADJACENCY_COST);
-		double sampleFraction = 1.0;
+		double sampleFraction = 0.01;
 		double maxCost = 30*5280;
 		System.out.print("reading network...");
+//		final NetworkInterface network = new TestNetwork(Paths.get("D:/projects/sandag/sp/dijkstraData.txt"),TestNetworkType.ADJACENCY_COST,sampleFraction);
 		final NetworkInterface network = new TestNetwork(Paths.get("D:/projects/sandag/sp/mtc_final_network.csv"),TestNetworkType.AB_COST,sampleFraction);
 		System.out.println("done");
 		
@@ -191,97 +192,30 @@ public class TestNetwork implements NetworkInterface {
 		};
 		//for (ShortestPath sp : new ShortestPath[] {sp1,sp2,sp3}) {
 		//for (int sptype : new int[] {1,2,3}) {
-		for (int sptype : new int[] {2}) {
+		for (int sptype : new int[] {1}) {
 			long time = System.currentTimeMillis();
 			ShortestPath sp = null;
 			if (sptype == 1)
-				sp = new DijkstraShortestPath(network,traversalEvaluator);
+				sp = new DijkstraArrayShortestPath(network,traversalEvaluator);
 			else if (sptype == 2)
 				sp = new DijkstraOOShortestPath(network,traversalEvaluator);
 			else if (sptype == 3)
 				sp = new DijkstraOOCacheShortestPath(network,traversalEvaluator);
-			
-			List<Node> orderedNodes = sp.getOrderedNodeList();
-			Path[][] allPaths = new Path[orderedNodes.size()][];
-			double[][] allCosts = new double[orderedNodes.size()][];
-			System.out.println("origins to process: " + allPaths.length);
-//			int counter = 0;
-//			for (Node node : orderedNodes) {
-//				OriginShortestPathResult ospr = sp.getShortestPaths(node);
-//				allPaths[counter] = ospr.getPaths();
-//				allCosts[counter] = ospr.getCosts();
-//				counter++;
-//				//if (counter % 10 == 0)
-//					System.out.println("   done with " + counter + " origins");
-//			}
-			
-			Node[] orderedNodesArray = orderedNodes.toArray(new Node[orderedNodes.size()]);
-			DnCRecursiveAction action = new ShortestPathRecursiveAction(sp,maxCost,allPaths,allCosts,orderedNodesArray);
-			new ForkJoinPool().execute(action);
-			action.getResult();
+
+			Set<Node> originNodes = new LinkedHashSet<>();
+			Iterator<Node> centroidIterator = network.centroidIterator();
+			while (centroidIterator.hasNext())
+				originNodes.add(centroidIterator.next());
+			System.out.println("origins to process: " + originNodes.size());
+//			ShortestPath psp = new ParallelShortestPath(sp,ParallelMethod.FORK_JOIN);
+			ShortestPath psp = new ParallelShortestPath(sp,ParallelMethod.QUEUE);
+			ShortestPathResults spResults = psp.getShortestPaths(originNodes,originNodes,maxCost);
 			
 			System.out.println("Time to run: " + (((double) (System.currentTimeMillis() - time)) / 1000));
-			for (int i : new int[] {7,37,59,82,99,115,133,165,188,197}) 
-				System.out.println(i + " : " + allCosts[0][i-1]);
-			System.out.println(allPaths[0][6].getPathString());
+//			for (int i : new int[] {7,37,59,82,99,115,133,165,188,197}) 
+//				System.out.println(i + " : " + spResults.getShortestPathResult(new NodePair(new Node(1),new Node(i))).getCost());
+//			System.out.println(spResults.getShortestPathResult(new NodePair(new Node(1),new Node(7))).getPath().getPathString());
 		}
-	}
-	
-	private static class ShortestPathRecursiveAction extends DnCRecursiveAction {
-		AtomicInteger counter;
-		private final ShortestPath sp;
-		private final double maxCost;
-		private final Path[][] allPaths;
-		private final double[][] allCosts;
-		private final Node[] orderedNodes;
-
-		protected ShortestPathRecursiveAction(ShortestPath sp, double maxCost, Path[][] allPaths, double[][] allCosts, Node[] orderedNodes) {
-			super(0,orderedNodes.length);
-			this.sp = sp;
-			this.maxCost = maxCost;
-			this.allPaths = allPaths;
-			this.allCosts = allCosts;
-			this.orderedNodes = orderedNodes;
-			counter = new AtomicInteger(0);
-		}
-
-		protected ShortestPathRecursiveAction(long start, long length, DnCRecursiveAction next,
-				                            ShortestPath sp, double maxCost,
-				                            Path[][] allPaths, double[][] allCosts, Node[] orderedNodes, AtomicInteger counter) {
-			super(start,length,next);
-			this.sp = sp;
-			this.maxCost = maxCost;
-			this.allPaths = allPaths;
-			this.allCosts = allCosts;
-			this.orderedNodes = orderedNodes;
-			this.counter = counter;
-		}
-
-		@Override
-		protected void computeAction(long start, long length) {
-			int end = (int) (start + length);
-			for (int n = (int) start; n < end; n++) {
-				Node node = orderedNodes[n];
-				OriginShortestPathResult ospr = sp.getShortestPaths(node,maxCost);
-				allPaths[n] = ospr.getPaths();
-				allCosts[n] = ospr.getCosts();
-				int c = counter.incrementAndGet(); 
-				if (c % 10 == 0)
-					System.out.println("   done with " + c + " origins");
-			}
-			
-		}
-
-		@Override
-		protected boolean continueDividing(long newLength) {
-			return (newLength > 5) && (getSurplusQueuedTaskCount() < 3);
-		}
-
-		@Override
-		protected DnCRecursiveAction getNextAction(long start, long length, DnCRecursiveAction next) {
-			return new ShortestPathRecursiveAction(start,length,next,sp,maxCost,allPaths,allCosts,orderedNodes,counter);
-		}
-		
 	}
 
 }

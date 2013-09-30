@@ -14,25 +14,33 @@ import java.util.Set;
 import java.util.TreeSet;
 
 
-public class DijkstraShortestPath extends AbstractShortestPath {
+public class DijkstraArrayShortestPath implements ShortestPath {
 	private final AdjacencyNetwork network;
+	private final Set<Node> centroids;
 	
-	public DijkstraShortestPath(NetworkInterface network, TraversalEvaluator traversalEvaluator) {
-		super(network);
+	public DijkstraArrayShortestPath(NetworkInterface network, TraversalEvaluator traversalEvaluator) {
+		this.centroids = new HashSet<>();
 		this.network = new AdjacencyNetwork(network,traversalEvaluator);
 	}
-	
-//	public void updateShortestPaths(int nodeIndex, Path[][] pathsContainer, double[][] costsContainer) {
-//		OriginShortestPathResult result = getShortestPaths(nodeIndex);
-//		pathsContainer[nodeIndex] = result.getPaths();
-//		costsContainer[nodeIndex] = result.getCosts();
-//	}
-	
-	public OriginShortestPathResult getShortestPaths(Node originNode, double maxCost) {
-		for (int i = 0; i < network.nodeIndices.length; i++)
-			if (network.nodeIndices[i].equals(originNode))
-				return getShortestPaths(i,maxCost);
-		throw new IllegalArgumentException("Origin node not found (id=" + originNode.getId() + "): " + originNode);
+
+	@Override
+	public ShortestPathResults getShortestPaths(Set<Node> originNodes, Set<Node> destinationNodes) {
+		return getShortestPaths(originNodes,destinationNodes,Double.POSITIVE_INFINITY);
+	}
+
+	@Override
+	public ShortestPathResults getShortestPaths(Set<Node> originNodes, Set<Node> destinationNodes, double maxCost) {
+		Set<Node> unfinishedOrigins = new HashSet<Node>(originNodes);
+		ShortestPathResultsContainer spResults = new BasicShortestPathResults();
+		for (int i = 0; i < network.nodeIndices.length; i++) {
+			if (originNodes.contains(network.nodeIndices[i])) {
+				spResults.addAll(getShortestPaths(i,destinationNodes,maxCost));
+				unfinishedOrigins.remove(network.nodeIndices[i]);
+			}
+		}
+		if (!unfinishedOrigins.isEmpty())
+			throw new IllegalStateException("Not all origins processed: " + unfinishedOrigins);
+		return spResults;
 	}
 	
 	private final ThreadLocal<double[]> finalCostsContainer = new ThreadLocal<double[]>() {
@@ -56,12 +64,13 @@ public class DijkstraShortestPath extends AbstractShortestPath {
 		}
 	};
 	
-	private OriginShortestPathResult getShortestPaths(int nodeIndex, double maxCost) {
-		Set<Node> targetNodes = new TreeSet<>(getOrderedNodeList());
+	private ShortestPathResults getShortestPaths(int nodeIndex, Set<Node> destinationNodes, double maxCost) {
+		Set<Node> targetNodes = new TreeSet<>(destinationNodes);
 		Map<Node,Integer> targetIndices = new HashMap<>();
 		int counter = 0;
 		for (Node targetNode : targetNodes)
 			targetIndices.put(targetNode,counter++);
+		Map<Node,Integer> resultsIndices = new HashMap<>(targetIndices); //just a copy, for later
 		
 		Path[] paths = new Path[targetNodes.size()];
 		double[] costs = new double[targetNodes.size()];
@@ -101,7 +110,6 @@ public class DijkstraShortestPath extends AbstractShortestPath {
 				traversalQueue.add(traversal);
 			}
 		}
-		
 		//djikstra
 		while (!traversalQueue.isEmpty() && !targets.isEmpty()) {
 			int traversal = traversalQueue.poll();
@@ -110,7 +118,10 @@ public class DijkstraShortestPath extends AbstractShortestPath {
 			if (finalCosts[edge] < Double.POSITIVE_INFINITY) //already considered
 				continue;
 			
-			finalCosts[edge] = tempCosts[traversal];
+			double cost = tempCosts[traversal];
+			if (cost == Double.POSITIVE_INFINITY)
+				continue;
+			finalCosts[edge] = cost;
 			int toNode = network.toNodeList[edge];
 			if (targets.containsKey(toNode)) {
 			    int centroidNode = targets.remove(toNode); 
@@ -129,7 +140,15 @@ public class DijkstraShortestPath extends AbstractShortestPath {
 				}
 			}
 		}
-		return new OriginShortestPathResult(paths, costs);
+		
+		BasicShortestPathResults spResults = new BasicShortestPathResults();
+		Node originNode = network.nodeIndices[nodeIndex];
+		for (Node destinationNode : destinationNodes) {
+			int index = resultsIndices.get(destinationNode);
+			spResults.addResult(new NodePair(originNode,destinationNode),paths[index],costs[index]);
+		}
+		
+		return spResults;
 	}
 	
 	private class AdjacencyNetwork {
@@ -142,7 +161,6 @@ public class DijkstraShortestPath extends AbstractShortestPath {
 		final double[] traversalCosts; //# of edge pairs -> the traversal cost (with edge cost added)
 		
 		AdjacencyNetwork(NetworkInterface network, TraversalEvaluator traversalEvaluator) {
-			System.out.print(" building adjacency network...");
 			Iterator<Node> nodeIterator = network.nodeIterator();
 			Map<Node,Integer> nodes = new LinkedHashMap<>();
 			int counter = 0;
@@ -210,7 +228,6 @@ public class DijkstraShortestPath extends AbstractShortestPath {
 			for (double traversalCost : costs)
 				traversalCosts[counter++] = traversalCost;
 			edgeList[edgeCount] = traversalCosts.length;
-			System.out.println("done");
 		}
 
 	}
