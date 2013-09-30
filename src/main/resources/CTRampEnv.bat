@@ -12,8 +12,8 @@ set NODE1=${node.1.name}
 set NODE2=${node.2.name}
 
 rem set IP addresses
-set MAIN_IP=${master.node.name}
-set HHMGR_IP=${node.1.name}
+set MAIN_IP=${master.node.ip}
+set HHMGR_IP=${node.1.ip}
 
 rem all nodes need to map the scenario drive, currently mapped as x:
 set MAPDRIVE=x:
