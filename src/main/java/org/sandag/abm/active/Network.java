@@ -13,8 +13,6 @@ public interface Network<N extends Node, E extends Edge<N>, T extends Traversal<
     
     T getTraversal(E fromEdge, E toEdge);
     
-    T getNullTraversal(E edge);
-    
     Collection<N> getSuccessors(N node);
     
     Collection<N> getPredecessors(N node);

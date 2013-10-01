@@ -12,11 +12,9 @@ import java.util.Set;
 
 public class CompositeShortestPathResults<N extends Node> implements ShortestPathResults<N> {
 	private final Map<NodePair<N>,ShortestPathResults<N>> spResultsLookup;
-	private final Set<NodePair<N>> unconnectedNodes;
 	
 	public CompositeShortestPathResults() {
 		spResultsLookup = new HashMap<>();
-		unconnectedNodes = new HashSet<>();
 	}
 	
 	public void addShortestPathResults(ShortestPathResults<N> spResults) {
@@ -24,7 +22,6 @@ public class CompositeShortestPathResults<N extends Node> implements ShortestPat
 			if (spResultsLookup.put(nodePair,spResults) != null)
 				throw new IllegalArgumentException("Repeated shortest path results for node pair: (" + 
 			                                       nodePair.getFromNode().getId() + "," + nodePair.getToNode().getId() + ")");
-		unconnectedNodes.addAll(spResults.getUnconnectedNodes());
 	}
 
 	@Override
@@ -48,11 +45,6 @@ public class CompositeShortestPathResults<N extends Node> implements ShortestPat
 		for (ShortestPathResults<N> spr : spResultsLookup.values())
 			results.addAll(spr.getResults());
 		return results;
-	}
-
-	@Override
-	public Set<NodePair<N>> getUnconnectedNodes() {
-		return Collections.unmodifiableSet(unconnectedNodes);
 	}
 
 }

@@ -4,5 +4,4 @@ public interface ShortestPathResultsContainer<N extends Node> extends ShortestPa
 	void addResult(ShortestPathResult<N> spResult);
 	void addResult(NodePair<N> od, Path<N> path, double cost);
 	void addAll(ShortestPathResults<N> results);
-	void addUnconnectedNodes(NodePair<N> nodes);
 }

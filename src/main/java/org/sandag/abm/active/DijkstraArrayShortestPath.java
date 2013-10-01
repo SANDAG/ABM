@@ -14,24 +14,23 @@ import java.util.Set;
 import java.util.TreeSet;
 
 
-public class DijkstraArrayShortestPath implements ShortestPath {
+@SuppressWarnings("rawtypes") //ignore all of the Path[] arrays because we can't instantiate generic arrays
+public class DijkstraArrayShortestPath<N extends Node> implements ShortestPath<N> {
 	private final AdjacencyNetwork network;
-	private final Set<Node> centroids;
 	
-	public DijkstraArrayShortestPath(NetworkInterface network, TraversalEvaluator traversalEvaluator) {
-		this.centroids = new HashSet<>();
+	public <E extends Edge<N>,T extends Traversal<E>> DijkstraArrayShortestPath(Network<N,E,T> network, PathElementEvaluator<E,T> traversalEvaluator) {
 		this.network = new AdjacencyNetwork(network,traversalEvaluator);
 	}
 
 	@Override
-	public ShortestPathResults getShortestPaths(Set<Node> originNodes, Set<Node> destinationNodes) {
+	public ShortestPathResults<N> getShortestPaths(Set<N> originNodes, Set<N> destinationNodes) {
 		return getShortestPaths(originNodes,destinationNodes,Double.POSITIVE_INFINITY);
 	}
 
 	@Override
-	public ShortestPathResults getShortestPaths(Set<Node> originNodes, Set<Node> destinationNodes, double maxCost) {
-		Set<Node> unfinishedOrigins = new HashSet<Node>(originNodes);
-		ShortestPathResultsContainer spResults = new BasicShortestPathResults();
+	public ShortestPathResults<N> getShortestPaths(Set<N> originNodes, Set<N> destinationNodes, double maxCost) {
+		Set<N> unfinishedOrigins = new HashSet<N>(originNodes);
+		ShortestPathResultsContainer<N> spResults = new BasicShortestPathResults<>();
 		for (int i = 0; i < network.nodeIndices.length; i++) {
 			if (originNodes.contains(network.nodeIndices[i])) {
 				spResults.addAll(getShortestPaths(i,destinationNodes,maxCost));
@@ -64,13 +63,13 @@ public class DijkstraArrayShortestPath implements ShortestPath {
 		}
 	};
 	
-	private ShortestPathResults getShortestPaths(int nodeIndex, Set<Node> destinationNodes, double maxCost) {
-		Set<Node> targetNodes = new TreeSet<>(destinationNodes);
-		Map<Node,Integer> targetIndices = new HashMap<>();
+	private ShortestPathResults<N> getShortestPaths(int nodeIndex, Set<N> destinationNodes, double maxCost) {
+		Set<N> targetNodes = new TreeSet<>(destinationNodes);
+		Map<N,Integer> targetIndices = new HashMap<>();
 		int counter = 0;
-		for (Node targetNode : targetNodes)
+		for (N targetNode : targetNodes)
 			targetIndices.put(targetNode,counter++);
-		Map<Node,Integer> resultsIndices = new HashMap<>(targetIndices); //just a copy, for later
+		Map<N,Integer> resultsIndices = new HashMap<>(targetIndices); //just a copy, for later
 		
 		Path[] paths = new Path[targetNodes.size()];
 		double[] costs = new double[targetNodes.size()];
@@ -82,13 +81,14 @@ public class DijkstraArrayShortestPath implements ShortestPath {
 		PriorityQueue<Integer> traversalQueue = new PriorityQueue<>(network.traversalFromList.length,new Comparator<Integer>() {
 			@Override
 			public int compare(Integer o1, Integer o2) {
-//				return (int) Math.signum(tempCosts[o1] - tempCosts[o2]);
+				//return (int) Math.signum(tempCosts[o1] - tempCosts[o2]);
 				//return ((Double) tempCosts[o1]).compareTo(tempCosts[o2]);
 				return Double.compare(tempCosts[o1],tempCosts[o2]);
 			}
 		});
 
-		Path startPath = new Path(network.nodeIndices[nodeIndex]);
+		@SuppressWarnings("unchecked") //node indices only holds N
+		Path<N> startPath = new Path<N>((N) network.nodeIndices[nodeIndex]);
 		Map<Integer,Integer> targets = new HashMap<>();
 		for (int i = 0; i < network.nodeIndices.length; i++) 
 			if (targetNodes.contains(network.nodeIndices[i]))
@@ -106,7 +106,7 @@ public class DijkstraArrayShortestPath implements ShortestPath {
 			double c = network.traversalCosts[traversal];
 			if (c < maxCost) {
 				tempCosts[traversal] = c;
-				tempPaths[traversal] = startPath.extendPath(network.nodeIndices[network.toNodeList[network.traversalToList[traversal]]]);
+				tempPaths[traversal] = startPath.extendPath((N) network.nodeIndices[network.toNodeList[network.traversalToList[traversal]]]);
 				traversalQueue.add(traversal);
 			}
 		}
@@ -126,26 +126,27 @@ public class DijkstraArrayShortestPath implements ShortestPath {
 			if (targets.containsKey(toNode)) {
 			    int centroidNode = targets.remove(toNode); 
 				paths[centroidNode] = tempPaths[traversal];
-				costs[centroidNode] = tempCosts[traversal];
+				costs[centroidNode] = cost;
 			}
 			
 			int startEdgePoint = network.edgeList[edge] + 1; //skip the untraversed link (where origin is starting point)
 			endEdgePoint = network.edgeList[edge+1];
 			for (int i = startEdgePoint; i < endEdgePoint; i++) {
 				double c = finalCosts[edge] + network.traversalCosts[i];
-				if (c <= maxCost) {
+				if (c < maxCost) {
 					tempCosts[i] = c;
-					tempPaths[i] = new Path(tempPaths[traversal],network.nodeIndices[network.toNodeList[network.traversalToList[i]]]);
+					tempPaths[i] = new Path<N>((Path<N>) tempPaths[traversal],(N) network.nodeIndices[network.toNodeList[network.traversalToList[i]]]);
 					traversalQueue.add(i);
 				}
 			}
 		}
 		
-		BasicShortestPathResults spResults = new BasicShortestPathResults();
-		Node originNode = network.nodeIndices[nodeIndex];
-		for (Node destinationNode : destinationNodes) {
+		BasicShortestPathResults<N> spResults = new BasicShortestPathResults<N>();
+		@SuppressWarnings("unchecked") //node indices only holds N
+		N originNode = (N) network.nodeIndices[nodeIndex];
+		for (N destinationNode : destinationNodes) {
 			int index = resultsIndices.get(destinationNode);
-			spResults.addResult(new NodePair(originNode,destinationNode),paths[index],costs[index]);
+			spResults.addResult(new NodePair<N>(originNode,destinationNode),(Path<N>) paths[index],costs[index]);
 		}
 		
 		return spResults;
@@ -160,9 +161,10 @@ public class DijkstraArrayShortestPath implements ShortestPath {
 		final int[] traversalToList;   //# of edges + # of edge pairs -> points to the to node (toNodeList point) in the traversal
 		final double[] traversalCosts; //# of edge pairs -> the traversal cost (with edge cost added)
 		
-		AdjacencyNetwork(NetworkInterface network, TraversalEvaluator traversalEvaluator) {
-			Iterator<Node> nodeIterator = network.nodeIterator();
-			Map<Node,Integer> nodes = new LinkedHashMap<>();
+		<E extends Edge<N>,T extends Traversal<E>> 
+		AdjacencyNetwork(Network<N,E,T> network, PathElementEvaluator<E,T> pathElementEvaluator) {
+			Iterator<N> nodeIterator = network.nodeIterator();
+			Map<N,Integer> nodes = new LinkedHashMap<>();
 			int counter = 0;
 			while (nodeIterator.hasNext())
 				nodes.put(nodeIterator.next(),counter++);
@@ -171,7 +173,7 @@ public class DijkstraArrayShortestPath implements ShortestPath {
 			for (Node n : nodes.keySet())
 				nodeIndices[nodes.get(n)] = n;
 
-			Iterator<Edge> edgeIterator = network.edgeIterator();
+			Iterator<E> edgeIterator = network.edgeIterator();
 			int edgeCount = 0;
 			while (edgeIterator.hasNext()) {
 				edgeIterator.next();
@@ -182,15 +184,16 @@ public class DijkstraArrayShortestPath implements ShortestPath {
 			fromNodeList[nodeCount] = edgeCount;
 			edgeList = new int[edgeCount+1];
 			toNodeList = new int[edgeCount];
-			Map<NodePair,Integer> edgePositions = new HashMap<>();
+			Map<NodePair<N>,Integer> edgePositions = new HashMap<>();
 			
 			int edgeCounter = 0;
 			for (int f = 0; f < nodeIndices.length; f++) {
-				Node fromNode = nodeIndices[f];
+				@SuppressWarnings("unchecked") //this is a correct cast
+				N fromNode = (N) nodeIndices[f];
 				fromNodeList[f] = edgeCounter;
-				for (Node toNode : network.getSuccessors(fromNode)) {
+				for (N toNode : network.getSuccessors(fromNode)) {
 					int edgeIndex = edgeCounter++;
-					NodePair nodePair = new NodePair(fromNode,toNode);
+					NodePair<N> nodePair = new NodePair<>(fromNode,toNode);
 					toNodeList[edgeIndex] = nodes.get(toNode);
 					edgePositions.put(nodePair,edgeIndex);
 				}
@@ -203,14 +206,17 @@ public class DijkstraArrayShortestPath implements ShortestPath {
 				for (int toIndex = fromNodeList[f]; toIndex < fromNodeList[f+1]; toIndex++) {
 					int t = toNodeList[toIndex];
 					edgeList[toIndex] = edgeCounter++;
-					NodePair nodePair = new NodePair(nodeIndices[f],nodeIndices[t]);
+					@SuppressWarnings("unchecked") //these casts are correct
+					NodePair<N> nodePair = new NodePair<>((N) nodeIndices[f],(N) nodeIndices[t]);
 					traversals.add(new int[] {f,edgePositions.get(nodePair)});
-					costs.add(traversalEvaluator.evaluate(new Traversal(nodeIndices[f],nodeIndices[t])));
+					E fromEdge = network.getEdge(nodePair);
+					costs.add(pathElementEvaluator.evaluate(fromEdge));
 					for (int endIndex = fromNodeList[t]; endIndex < fromNodeList[t+1]; endIndex++) {
 						int e = toNodeList[endIndex];
-						nodePair = new NodePair(nodeIndices[t],nodeIndices[e]);
+						nodePair = new NodePair<>((N) nodeIndices[t],(N) nodeIndices[e]);
+						E toEdge = network.getEdge(nodePair);
 						traversals.add(new int[] {t,edgePositions.get(nodePair)});
-						costs.add(traversalEvaluator.evaluate(new Traversal(nodeIndices[f],nodeIndices[t],nodeIndices[e])));
+						costs.add(pathElementEvaluator.evaluate(toEdge) + pathElementEvaluator.evaluate(network.getTraversal(fromEdge,toEdge)));
 						edgeCounter++;
 					}
 				}

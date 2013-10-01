@@ -1,61 +1,46 @@
 package org.sandag.abm.active;
 
-public abstract class SimpleTraversal implements Traversal
+import java.util.Objects;
+
+public class SimpleTraversal<E extends Edge<?>> implements Traversal<E>
 {
-    private int startId,thruId,endId;
-
-    public int getStartId()
+    private final E fromEdge;
+    private final E toEdge;
+    
+    public SimpleTraversal(E fromEdge, E toEdge)
     {
-        return startId;
+    	this.fromEdge = fromEdge;
+    	this.toEdge = toEdge;
     }
 
-    public void setStartId(int startId)
+    @Override
+    public E getFromEdge()
     {
-        this.startId = startId;
+        return fromEdge;
     }
 
-    public int getThruId()
+    @Override
+    public E getToEdge()
     {
-        return thruId;
-    }
-
-    public void setThruId(int thruId)
-    {
-        this.thruId = thruId;
-    }
-
-    public int getEndId()
-    {
-        return endId;
-    }
-
-    public void setEndId(int endId)
-    {
-        this.endId = endId;
+        return toEdge;
     }
 
     @Override
     public int hashCode()
     {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + endId;
-        result = prime * result + startId;
-        result = prime * result + thruId;
-        return result;
+        return Objects.hash(fromEdge,toEdge);
     }
 
     @Override
     public boolean equals(Object obj)
     {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        SimpleTraversal other = (SimpleTraversal) obj;
-        if (endId != other.endId) return false;
-        if (startId != other.startId) return false;
-        if (thruId != other.thruId) return false;
-        return true;
+    	if ((obj == null) || (!(obj instanceof Traversal)))
+    		return false;
+    	Traversal<?> traversal = (Traversal<?>) obj;
+    	if (fromEdge == null)
+    		return (fromEdge == traversal.getFromEdge()) && (toEdge.equals(traversal.getToEdge()));
+    	else
+    		return (fromEdge.equals(traversal.getFromEdge())) && (toEdge.equals(traversal.getToEdge()));
     }
     
 }

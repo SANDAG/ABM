@@ -12,26 +12,40 @@ import com.pbworld.sawdust.util.collections.LinkedSetList;
 
 public abstract class AbstractNetworkFactory<N extends Node,E extends Edge<N>,T extends Traversal<E>> extends NetworkFactory<N,E,T> 
 {
+	
+	@Override
+    public Network<N,E,T> createNetwork()
+    {
+        Network<N,E,T> network = new SimpleNetwork<>(getNodes(),getEdges(),getTraversals());
+        calculateDerivedNodeAttributes(network);
+        calculateDerivedEdgeAttributes(network);
+        calculateDerivedTraversalAttributes(network);
+        return network;
+    }
 
 
-    protected Collection<T> getTraversals() {
+	@Override
+    protected Collection<T> getTraversals() 
+    {
     	Collection<E> edges = getEdges();
     	Map<N,List<E>> predecessors = new HashMap<>();
-    	for (E edge : edges) {
-    		N toNode = edge.getToNode();
-    		if (!predecessors.containsKey(toNode))
-    			predecessors.put(toNode,new LinkedList<E>());
-    		predecessors.get(toNode).add(edge);
-    	}
+    	for (N node : getNodes())
+			predecessors.put(node,new LinkedList<E>());
+    	for (E edge : edges) 
+    		predecessors.get(edge.getToNode()).add(edge);
     	Set<T> traversals = new LinkedSetList<>();
 		for (E toEdge : getEdges()) {
-			traversals.add(getTraversal(toEdge));
 			for (E fromEdge : predecessors.get(toEdge.getFromNode()))
-				traversals.add(getTraversal(fromEdge,toEdge));
+				if (!isReversal(fromEdge,toEdge))
+					traversals.add(getTraversal(fromEdge,toEdge));
 		}
 		return Collections.unmodifiableCollection(traversals);
     }
+	
+	private boolean isReversal(E edge1, E edge2) {
+		return (edge1.getToNode().equals(edge2.getFromNode())) &&
+			   (edge1.getFromNode().equals(edge2.getToNode()));
+	}
     
-    abstract protected T getTraversal(E edge);
     abstract protected T getTraversal(E fromEdge, E toEdge);
 }
