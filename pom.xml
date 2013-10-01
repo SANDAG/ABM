@@ -316,7 +316,28 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>copy-bin-resources</id>
+                        <id>copy-bat-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${project.build.directory}/${project.name}/${project.version}/bin</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>**/*.bat</include>
+                                        <include>*.cmd</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-exe-resources</id>
                         <phase>package</phase>
                         <goals>
                             <goal>copy-resources</goal>
@@ -326,16 +347,15 @@
                             <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>
-                                    <filtering>true</filtering>
+                                    <filtering>false</filtering>
                                     <includes>
-                                        <include>**/*.bat</include>
-                                        <include>*.cmd</include>
                                         <include>*.exe</include>
                                     </includes>
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>                 
+                    </execution>
+  
                     <execution>
                         <id>copy-inputtruck-resources</id>
                         <phase>package</phase>
@@ -439,7 +459,7 @@
         <dependency>
             <groupId>pb</groupId>
             <artifactId>common-base</artifactId>
-            <version>2013.08.08-ABM</version>
+            <version>r1109-ABM</version>
         </dependency>
         <dependency>
             <groupId>pb</groupId>
