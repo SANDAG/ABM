@@ -130,7 +130,7 @@ Macro "Run SANDAG ABM"
       if !ok then goto quit
 
       //Run Truck Model
-      properties = "sandag_abm.properties"
+      properties = "\\conf\\sandag_abm.properties"
       RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - truck model"})
       ok = RunMacro("truck model",properties, iteration)
       if !ok then goto quit   
