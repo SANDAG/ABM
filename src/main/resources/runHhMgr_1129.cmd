@@ -25,7 +25,7 @@ set CONFIG=%RUNTIME%/conf
 
 set JAR_LOCATION=%RUNTIME%/application
 
-set LIB_JAR_PATH=%JAR_LOCATION%\sandag_abm.jar
+set LIB_JAR_PATH=%JAR_LOCATION%\*
 
 rem ### Define the CLASSPATH environment variable for the classpath needed in this model run.
 set CLASSPATH=%CONFIG%;%RUNTIME%;%LIB_JAR_PATH%;%JAR_LOCATION%\*

@@ -26,7 +26,7 @@ rem ### Set the name of the properties file the application uses by giving just 
 set PROPERTIES_NAME=sandag_abm
 
 set JAR_LOCATION=%PROJECT_DIRECTORY%/application
-set LIB_JAR_PATH=%JAR_LOCATION%\sandag_abm.jar
+set LIB_JAR_PATH=%JAR_LOCATION%\*
 
 rem ### Define the CLASSPATH environment variable for the classpath needed in this model run.
 set OLDCLASSPATH=%CLASSPATH%
