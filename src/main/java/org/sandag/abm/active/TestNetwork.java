@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,35 +25,36 @@ import org.sandag.abm.active.ParallelShortestPath.ParallelMethod;
 
 import com.pb.sawdust.util.concurrent.DnCRecursiveAction;
 
-public class TestNetwork implements NetworkInterface {
+public class TestNetworkFactory extends AbstractNetworkFactory<Node,Edge<Node>,Traversal<Edge<Node>>> {
 	private final Set<Node> nodes;
 	private final Set<Node> centroids;
-	private final Map<Node,List<Node>> successors;
-	private final Map<Edge,Double> edgeCosts;
+	private final Set<Edge<Node>> edges;
+	private final Set<Traversal<Edge<Node>>> traversals;
+	private final Map<Edge<Node>,Double> edgeCosts;
 	
 	public static enum TestNetworkType {
 		ADJACENCY_COST,
 		AB_COST
 	}
 	
-	public TestNetwork(java.nio.file.Path file, TestNetworkType networkType, double sampleFraction) {
+	public TestNetworkFactory(java.nio.file.Path file, TestNetworkType networkType, double sampleFraction) {
 		nodes = new TreeSet<>();
-		successors = new HashMap<>();
-		edgeCosts = new HashMap<>();
 		centroids = new TreeSet<>();
+		edges = new HashSet<>();
+		traversals = new HashSet<>();
+		edgeCosts = new HashMap<>();
+		
 		Map<Integer,Node> nodeSet = new HashMap<>();
 		switch (networkType) {
 			case ADJACENCY_COST : {
-				int counter = 0;
 				try (Scanner reader = new Scanner(file.toFile())) {
 					while (reader.hasNext()) {
 						String line = reader.nextLine();
 						String[] splitLine = line.split("[\\t,]");
 						int nodeId = Integer.parseInt(splitLine[0]);
 						if (!nodeSet.containsKey(nodeId)) {
-							Node n = new Node(nodeId); 
+							Node n = new SimpleNode(nodeId); 
 							nodeSet.put(nodeId,n);
-							successors.put(n,new LinkedList<Node>());
 							nodes.add(n);
 							centroids.add(n);
 						}
@@ -61,15 +63,15 @@ public class TestNetwork implements NetworkInterface {
 							nodeId = Integer.parseInt(splitLine[i]);
 							double cost = Double.parseDouble(splitLine[i+1]);
 							if (!nodeSet.containsKey(nodeId)) {
-								Node n = new Node(nodeId); 
+								Node n = new SimpleNode(nodeId); 
 								nodeSet.put(nodeId,n);
-								successors.put(n,new LinkedList<Node>());
 								nodes.add(n);
 								centroids.add(n);
 							}
 							Node t = nodeSet.get(nodeId);
-							edgeCosts.put(new Edge(f,t),cost);
-							successors.get(f).add(t);
+							Edge<Node> edge = new SimpleEdge<Node>(f,t);  
+							edges.add(edge);
+							edgeCosts.put(edge,cost);
 						}
 					}
 				} catch (IOException e) {
@@ -96,25 +98,24 @@ public class TestNetwork implements NetworkInterface {
 						boolean ttaz = Integer.parseInt(splitLine[6]) == 1;
 						
 						if (!nodeSet.containsKey(fromNode)) {
-							Node n = new Node(fromNode); 
+							Node n = new SimpleNode(fromNode); 
 							nodeSet.put(fromNode,n);
-							successors.put(n,new LinkedList<Node>());
 							nodes.add(n);
 							if (ftaz && (random.nextDouble() < sampleFraction)) 
 								centroids.add(n);
 						}
 						Node f = nodeSet.get(fromNode);
 						if (!nodeSet.containsKey(toNode)) {
-							Node n = new Node(toNode); 
+							Node n = new SimpleNode(toNode); 
 							nodeSet.put(toNode,n);
-							successors.put(n,new LinkedList<Node>());
 							nodes.add(n);
 							if (ttaz && (random.nextDouble() < sampleFraction))
 								centroids.add(n);
 						}
 						Node t = nodeSet.get(toNode);
-						edgeCosts.put(new Edge(f,t),cost);
-						successors.get(f).add(t);
+						Edge<Node> edge = new SimpleEdge<Node>(f,t);
+						edges.add(edge);
+						edgeCosts.put(edge,cost);
 					}
 				} catch (IOException e) {
 					throw new RuntimeException(e);
@@ -124,27 +125,54 @@ public class TestNetwork implements NetworkInterface {
 	}
 
 	@Override
-	public Iterator<Node> nodeIterator() {
-        return nodes.iterator();
+	protected Collection<Node> getNodes() {
+		return nodes;
 	}
 
 	@Override
-	public Iterator<Node> centroidIterator() {
-		return centroids.iterator();
+	protected Collection<Edge<Node>> getEdges() {
+		return edges;
 	}
 
 	@Override
-	public Iterator<Edge> edgeIterator() {
-		return edgeCosts.keySet().iterator();
+	protected Collection<Traversal<Edge<Node>>> getTraversals() {
+		return traversals;
 	}
 
 	@Override
-	public List<Node> getSuccessors(Node node) {
-		return successors.get(node);
+	protected Traversal<Edge<Node>> getTraversal(Edge<Node> edge) {
+		return new SimpleTraversal<Edge<Node>>(edge);
+	}
+
+	@Override
+	protected Traversal<Edge<Node>> getTraversal(Edge<Node> fromEdge, Edge<Node> toEdge) {
+		return new SimpleTraversal<Edge<Node>>(fromEdge,toEdge);
 	}
 	
-	public double getEdgeCost(Edge edge) {
-		return edgeCosts.get(edge);
+	@Override
+	public TestNetwork createNetwork() {
+		return new TestNetwork(nodes,edges,traversals,centroids,edgeCosts);
+	}
+	
+	class TestNetwork extends SimpleNetwork<Node,Edge<Node>,Traversal<Edge<Node>>> {
+		private final Set<Node> centroids;
+		private final Map<Edge<Node>,Double> edgeCosts;
+
+		public TestNetwork(Collection<Node> nodes, Collection<Edge<Node>> edges, Collection<Traversal<Edge<Node>>> traversals, 
+				           Set<Node> centroids, Map<Edge<Node>,Double> edgeCosts) {
+			super(nodes, edges, traversals);
+			this.centroids = centroids;
+			this.edgeCosts = edgeCosts;
+		}
+		
+		public Iterator<Node> centroidIterator() {
+			return centroids.iterator();
+		}
+		
+		public double getEdgeCost(Edge<Node> edge) {
+			return edgeCosts.get(edge);
+		}
+		
 	}
 	
 	private static void printSubarray(int[] array, int count) {
@@ -169,12 +197,12 @@ public class TestNetwork implements NetworkInterface {
 		double sampleFraction = 0.01;
 		double maxCost = 30*5280;
 		System.out.print("reading network...");
-//		final NetworkInterface network = new TestNetwork(Paths.get("D:/projects/sandag/sp/dijkstraData.txt"),TestNetworkType.ADJACENCY_COST,sampleFraction);
-		final NetworkInterface network = new TestNetwork(Paths.get("D:/projects/sandag/sp/mtc_final_network.csv"),TestNetworkType.AB_COST,sampleFraction);
+		TestNetworkFactory networkFactory = new TestNetworkFactory(Paths.get("D:/projects/sandag/sp/dijkstraData.txt"),TestNetworkType.ADJACENCY_COST,sampleFraction);
+//		TestNetworkFactory networkFactory = new TestNetworkFactory(Paths.get("D:/projects/sandag/sp/mtc_final_network.csv"),TestNetworkType.AB_COST,sampleFraction);
+		final TestNetwork network = networkFactory.createNetwork();
 		System.out.println("done");
 		
-		TraversalEvaluator traversalEvaluator = new TraversalEvaluator() {
-			private final TestNetwork n = (TestNetwork) network;
+		TraversalEvaluator<Traversal<Edge<Node>>> traversalEvaluator = new TraversalEvaluator<Traversal<Edge<Node>>>() {
 			private final Set<Node> centroids = new HashSet<>();
 			{
 				Iterator<Node> centroidIterator = network.centroidIterator();
@@ -183,24 +211,24 @@ public class TestNetwork implements NetworkInterface {
 			}
 			
 			@Override
-			public double evaluate(Traversal traversal) {
+			public double evaluate(Traversal<Edge<Node>> traversal) {
 				Edge fromEdge = traversal.getFromEdge();
 				if (fromEdge != null && centroids.contains(fromEdge.getToNode()))
 					return Double.POSITIVE_INFINITY;
-				return n.getEdgeCost(traversal.getToEdge());
+				return network.getEdgeCost(traversal.getToEdge());
 			}
 		};
 		//for (ShortestPath sp : new ShortestPath[] {sp1,sp2,sp3}) {
 		//for (int sptype : new int[] {1,2,3}) {
 		for (int sptype : new int[] {1}) {
 			long time = System.currentTimeMillis();
-			ShortestPath sp = null;
+			ShortestPath<Node> sp = null;
 			if (sptype == 1)
-				sp = new DijkstraArrayShortestPath(network,traversalEvaluator);
+				sp = new DijkstraArrayShortestPath<Node>(network,traversalEvaluator);
 			else if (sptype == 2)
-				sp = new DijkstraOOShortestPath(network,traversalEvaluator);
+				sp = new DijkstraOOShortestPath<Node,Edge<Node>,Traversal<Edge<Node>>>(network,traversalEvaluator);
 			else if (sptype == 3)
-				sp = new DijkstraOOCacheShortestPath(network,traversalEvaluator);
+				sp = new DijkstraOOCacheShortestPath<Node,Edge<Node>,Traversal<Edge<Node>>>(network,traversalEvaluator);
 
 			Set<Node> originNodes = new LinkedHashSet<>();
 			Iterator<Node> centroidIterator = network.centroidIterator();
@@ -208,8 +236,8 @@ public class TestNetwork implements NetworkInterface {
 				originNodes.add(centroidIterator.next());
 			System.out.println("origins to process: " + originNodes.size());
 //			ShortestPath psp = new ParallelShortestPath(sp,ParallelMethod.FORK_JOIN);
-			ShortestPath psp = new ParallelShortestPath(sp,ParallelMethod.QUEUE);
-			ShortestPathResults spResults = psp.getShortestPaths(originNodes,originNodes,maxCost);
+			ShortestPath<Node> psp = new ParallelShortestPath<Node>(sp,ParallelMethod.QUEUE);
+			ShortestPathResults<Node> spResults = psp.getShortestPaths(originNodes,originNodes,maxCost);
 			
 			System.out.println("Time to run: " + (((double) (System.currentTimeMillis() - time)) / 1000));
 //			for (int i : new int[] {7,37,59,82,99,115,133,165,188,197}) 
