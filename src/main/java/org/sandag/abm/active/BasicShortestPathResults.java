@@ -10,11 +10,9 @@ import java.util.Set;
 
 public class BasicShortestPathResults<N extends Node> extends AbstractShortestPathResultsContainer<N> {
 	private final Map<NodePair<N>,ShortestPathResult<N>> results;
-	private final Set<NodePair<N>> unconnectedNodes;
 	
 	public BasicShortestPathResults() {
 		results = new LinkedHashMap<>(); //iteration order may not matter, but just in case, this is cheap
-		unconnectedNodes = new HashSet<>();
 	}
 
 	@Override
@@ -48,17 +46,6 @@ public class BasicShortestPathResults<N extends Node> extends AbstractShortestPa
 	@Override
 	public Collection<ShortestPathResult<N>> getResults() {
 		return results.values();
-	}
-
-	@Override
-	public void addUnconnectedNodes(NodePair<N> nodes) {
-		unconnectedNodes.add(nodes);
-		
-	}
-
-	@Override
-	public Set<NodePair<N>> getUnconnectedNodes() {
-		return Collections.unmodifiableSet(unconnectedNodes);
 	}
 
 }

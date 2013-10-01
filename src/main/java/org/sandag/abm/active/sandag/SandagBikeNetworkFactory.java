@@ -297,17 +297,6 @@ public class SandagBikeNetworkFactory extends AbstractNetworkFactory<SandagBikeN
 	}
 
 	@Override
-	protected Collection<SandagBikeTraversal> getTraversals() {
-		loadNetworkData();
-		return traversals;
-	}
-
-	@Override
-	protected SandagBikeTraversal getTraversal(SandagBikeEdge edge) {
-		return new SandagBikeTraversal(edge);
-	}
-
-	@Override
 	protected SandagBikeTraversal getTraversal(SandagBikeEdge fromEdge, SandagBikeEdge toEdge) {
 		return new SandagBikeTraversal(fromEdge,toEdge);
 	}

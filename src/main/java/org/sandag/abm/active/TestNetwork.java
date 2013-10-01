@@ -29,7 +29,7 @@ public class TestNetworkFactory extends AbstractNetworkFactory<Node,Edge<Node>,T
 	private final Set<Node> nodes;
 	private final Set<Node> centroids;
 	private final Set<Edge<Node>> edges;
-	private final Set<Traversal<Edge<Node>>> traversals;
+	private final Collection<Traversal<Edge<Node>>> traversals;
 	private final Map<Edge<Node>,Double> edgeCosts;
 	
 	public static enum TestNetworkType {
@@ -41,7 +41,6 @@ public class TestNetworkFactory extends AbstractNetworkFactory<Node,Edge<Node>,T
 		nodes = new TreeSet<>();
 		centroids = new TreeSet<>();
 		edges = new HashSet<>();
-		traversals = new HashSet<>();
 		edgeCosts = new HashMap<>();
 		
 		Map<Integer,Node> nodeSet = new HashMap<>();
@@ -101,7 +100,8 @@ public class TestNetworkFactory extends AbstractNetworkFactory<Node,Edge<Node>,T
 							Node n = new SimpleNode(fromNode); 
 							nodeSet.put(fromNode,n);
 							nodes.add(n);
-							if (ftaz && (random.nextDouble() < sampleFraction)) 
+							//if (ftaz && (random.nextDouble() < sampleFraction)) 
+							if (fmaz && (random.nextDouble() < sampleFraction))
 								centroids.add(n);
 						}
 						Node f = nodeSet.get(fromNode);
@@ -109,7 +109,8 @@ public class TestNetworkFactory extends AbstractNetworkFactory<Node,Edge<Node>,T
 							Node n = new SimpleNode(toNode); 
 							nodeSet.put(toNode,n);
 							nodes.add(n);
-							if (ttaz && (random.nextDouble() < sampleFraction))
+							//if (ttaz && (random.nextDouble() < sampleFraction))
+							if (tmaz && (random.nextDouble() < sampleFraction))
 								centroids.add(n);
 						}
 						Node t = nodeSet.get(toNode);
@@ -122,6 +123,7 @@ public class TestNetworkFactory extends AbstractNetworkFactory<Node,Edge<Node>,T
 				}
 			}
 		}
+		traversals = getTraversals();
 	}
 
 	@Override
@@ -132,16 +134,6 @@ public class TestNetworkFactory extends AbstractNetworkFactory<Node,Edge<Node>,T
 	@Override
 	protected Collection<Edge<Node>> getEdges() {
 		return edges;
-	}
-
-	@Override
-	protected Collection<Traversal<Edge<Node>>> getTraversals() {
-		return traversals;
-	}
-
-	@Override
-	protected Traversal<Edge<Node>> getTraversal(Edge<Node> edge) {
-		return new SimpleTraversal<Edge<Node>>(edge);
 	}
 
 	@Override
@@ -194,15 +186,17 @@ public class TestNetworkFactory extends AbstractNetworkFactory<Node,Edge<Node>,T
 	}
 	
 	public static void main(String ... args) {
-		double sampleFraction = 0.01;
-		double maxCost = 30*5280;
+		double sampleFraction = 0.25;
+		//double maxCost = 30*5280;
+		double maxCost = 3*5280;
+//		maxCost = Double.POSITIVE_INFINITY;
 		System.out.print("reading network...");
-		TestNetworkFactory networkFactory = new TestNetworkFactory(Paths.get("D:/projects/sandag/sp/dijkstraData.txt"),TestNetworkType.ADJACENCY_COST,sampleFraction);
-//		TestNetworkFactory networkFactory = new TestNetworkFactory(Paths.get("D:/projects/sandag/sp/mtc_final_network.csv"),TestNetworkType.AB_COST,sampleFraction);
+//		TestNetworkFactory networkFactory = new TestNetworkFactory(Paths.get("D:/projects/sandag/sp/dijkstraData.txt"),TestNetworkType.ADJACENCY_COST,sampleFraction);
+		TestNetworkFactory networkFactory = new TestNetworkFactory(Paths.get("D:/projects/sandag/sp/mtc_final_network.csv"),TestNetworkType.AB_COST,sampleFraction);
 		final TestNetwork network = networkFactory.createNetwork();
 		System.out.println("done");
 		
-		TraversalEvaluator<Traversal<Edge<Node>>> traversalEvaluator = new TraversalEvaluator<Traversal<Edge<Node>>>() {
+		PathElementEvaluator<Edge<Node>,Traversal<Edge<Node>>> pathElementEvaluator = new PathElementEvaluator<Edge<Node>,Traversal<Edge<Node>>>() {
 			private final Set<Node> centroids = new HashSet<>();
 			{
 				Iterator<Node> centroidIterator = network.centroidIterator();
@@ -213,22 +207,27 @@ public class TestNetworkFactory extends AbstractNetworkFactory<Node,Edge<Node>,T
 			@Override
 			public double evaluate(Traversal<Edge<Node>> traversal) {
 				Edge fromEdge = traversal.getFromEdge();
-				if (fromEdge != null && centroids.contains(fromEdge.getToNode()))
+				if (centroids.contains(fromEdge.getToNode()))
 					return Double.POSITIVE_INFINITY;
-				return network.getEdgeCost(traversal.getToEdge());
+				return 0;
+			}
+
+			@Override
+			public double evaluate(Edge<Node> edge) {
+				return network.getEdgeCost(edge);
 			}
 		};
 		//for (ShortestPath sp : new ShortestPath[] {sp1,sp2,sp3}) {
-		//for (int sptype : new int[] {1,2,3}) {
-		for (int sptype : new int[] {1}) {
+//		for (int sptype : new int[] {1,2,3}) {
+		for (int sptype : new int[] {2}) {
 			long time = System.currentTimeMillis();
 			ShortestPath<Node> sp = null;
 			if (sptype == 1)
-				sp = new DijkstraArrayShortestPath<Node>(network,traversalEvaluator);
+				sp = new DijkstraArrayShortestPath<Node>(network,pathElementEvaluator);
 			else if (sptype == 2)
-				sp = new DijkstraOOShortestPath<Node,Edge<Node>,Traversal<Edge<Node>>>(network,traversalEvaluator);
+				sp = new DijkstraOOShortestPath<Node,Edge<Node>,Traversal<Edge<Node>>>(network,pathElementEvaluator);
 			else if (sptype == 3)
-				sp = new DijkstraOOCacheShortestPath<Node,Edge<Node>,Traversal<Edge<Node>>>(network,traversalEvaluator);
+				sp = new DijkstraOOCacheShortestPath<Node,Edge<Node>,Traversal<Edge<Node>>>(network,pathElementEvaluator);
 
 			Set<Node> originNodes = new LinkedHashSet<>();
 			Iterator<Node> centroidIterator = network.centroidIterator();
@@ -241,8 +240,8 @@ public class TestNetworkFactory extends AbstractNetworkFactory<Node,Edge<Node>,T
 			
 			System.out.println("Time to run: " + (((double) (System.currentTimeMillis() - time)) / 1000));
 //			for (int i : new int[] {7,37,59,82,99,115,133,165,188,197}) 
-//				System.out.println(i + " : " + spResults.getShortestPathResult(new NodePair(new Node(1),new Node(i))).getCost());
-//			System.out.println(spResults.getShortestPathResult(new NodePair(new Node(1),new Node(7))).getPath().getPathString());
+//				System.out.println(i + " : " + spResults.getShortestPathResult(new NodePair(new SimpleNode(1),new SimpleNode(i))).getCost());
+//			System.out.println(spResults.getShortestPathResult(new NodePair(new SimpleNode(1),new SimpleNode(7))).getPath().getPathString());
 		}
 	}
 
