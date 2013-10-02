@@ -407,7 +407,7 @@ Macro "hwy skim" (arr)
          vw_set = link_lyr + "|" + set
          SetLayer(link_lyr)
          n = SelectByQuery(set, "Several","Select * where !(((ihov=1|(ihov=2&abln"+periods[i]+"<9)|ihov=4|(ihov=3&itoll"+periods[i]+">0&abln"+periods[i]+"<9))|ifc>7)&ITRUCK<5)",)
-         if n = 0 then excl_qry[1]=null   //reset value if no selection records
+         if n = 0 then excl_qry=null   //reset value if no selection records
          
          set = "s2t"+periods[i]
          vw_set = link_lyr + "|" + set
@@ -528,7 +528,11 @@ Macro "hwy skim" (arr)
       // mtxcore={"Length (Skim)"}+{SkimVar1[i]+" (Skim)"}+{SkimVar2[i]+" (Skim)"}+{SkimVar3[i]+" (Skim)"}
       mtxcore={"Length (Skim)"}+{SkimVar1+" (Skim)"}
       for j = 1 to mtxcore.length do
-         Opts = null
+         Opts = null	 
+         Opts.Global.Factor = 0.5
+         Opts.Global.Neighbors = 3
+         Opts.Global.Operation = 1
+
          Opts.Input.[Matrix Currency] = {outputDir + "\\"+skimmat,mtxcore[j], , }
          RunMacro("HwycadLog",{"hwyskim.rsc: hwy skim","Intrazonal: "+skimmat+"; "+mtxcore[j]})
          ok = RunMacro("TCB Run Procedure", j, "Intrazonal", Opts)
