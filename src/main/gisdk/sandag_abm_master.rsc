@@ -41,11 +41,11 @@ Macro "Run SANDAG ABM"
    SetReportFileName(path+"\\logFiles\\tcreport.xml")
    
    // copy initial trip tables from input to output folder
-   CopyFile(inputDir\\trip_EA.mtx, outputDir\\trip_EA.mtx)
-   CopyFile(inputDir\\trip_AM.mtx, outputDir\\trip_AM.mtx)
-   CopyFile(inputDir\\trip_MD.mtx, outputDir\\trip_MD.mtx)
-   CopyFile(inputDir\\trip_PM.mtx, outputDir\\trip_PM.mtx)
-   CopyFile(inputDir\\trip_EV.mtx, outputDir\\trip_EV.mtx)
+   CopyFile(inputDir\\"trip_EA.mtx", outputDir\\"trip_EA.mtx")
+   CopyFile(inputDir\\"trip_AM.mtx", outputDir\\"trip_AM.mtx")
+   CopyFile(inputDir\\"trip_MD.mtx", outputDir\\"trip_MD.mtx")
+   CopyFile(inputDir\\"trip_PM.mtx", outputDir\\"trip_PM.mtx")
+   CopyFile(inputDir\\"trip_EV.mtx", outputDir\\"trip_EV.mtx")
       
    RunMacro("parameters")
 	
