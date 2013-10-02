@@ -1,7 +1,6 @@
 package org.sandag.abm.active.sandag;
 import java.util.*;
 import org.sandag.abm.active.*;
-
 import static org.junit.Assert.*;
 import org.junit.*;
 
@@ -22,7 +21,7 @@ public class SandagBikeNetworkFactoryTest
             propertyMap.put(key, rb.getString(key));
         }
         factory = new SandagBikeNetworkFactory(propertyMap);
-        network = factory.create();
+        network = factory.createNetwork();
     }
     
     @Test
@@ -44,7 +43,7 @@ public class SandagBikeNetworkFactoryTest
         SandagBikeEdge edge1, edge2;
         while (edgeIterator.hasNext()) {
             edge1 = edgeIterator.next();
-            edge2 = network.getEdge(edge1.getFromId(), edge1.getToId());
+            edge2 = network.getEdge(edge1.getFromNode(), edge1.getToNode());
             assertEquals(edge1, edge2);
         }
     }
@@ -56,7 +55,7 @@ public class SandagBikeNetworkFactoryTest
         SandagBikeTraversal traversal1, traversal2;
         while (traversalIterator.hasNext()) {
             traversal1 = traversalIterator.next();
-            traversal2 = network.getTraversal(traversal1.getStartId(), traversal1.getThruId(), traversal1.getEndId());
+            traversal2 = network.getTraversal(traversal1.getFromEdge(), traversal1.getToEdge());
             assertEquals(traversal1, traversal2);
         }
     }
@@ -68,8 +67,8 @@ public class SandagBikeNetworkFactoryTest
         SandagBikeNode node;
         while (nodeIterator.hasNext()) {
             node = nodeIterator.next();
-            for (Node successor : network.getSuccessors(node.getId()) ) {
-                assertTrue(network.containsEdgeIds(new int[] {node.getId(), successor.getId()}));
+            for (SandagBikeNode successor : network.getSuccessors(node) ) {
+                assertTrue(network.containsEdge(node, successor));
             }
         }
     }
@@ -81,8 +80,8 @@ public class SandagBikeNetworkFactoryTest
         SandagBikeNode node;
         while (nodeIterator.hasNext()) {
             node = nodeIterator.next();
-            for (Node predecessor : network.getPredecessors(node.getId()) ) {
-                assertTrue(network.containsEdgeIds(new int[] {predecessor.getId(), node.getId()}));
+            for (SandagBikeNode predecessor : network.getPredecessors(node) ) {
+                assertTrue(network.containsEdge(predecessor, node));
             }
         }
     }
@@ -94,8 +93,8 @@ public class SandagBikeNetworkFactoryTest
         while (edgeIterator.hasNext()) {
             edge = edgeIterator.next();
             int count = 0;
-            for (SandagBikeNode node : network.getSuccessors(edge.getFromId()) ) {
-                count = count + ( node.getId() == edge.getToId() ? 1 : 0);
+            for (SandagBikeNode node : network.getSuccessors(edge.getFromNode()) ) {
+                count = count + ( node.equals(edge.getToNode()) ? 1 : 0);
             }
             assertEquals(1,count);
         }
@@ -108,8 +107,8 @@ public class SandagBikeNetworkFactoryTest
         while (edgeIterator.hasNext()) {
             edge = edgeIterator.next();
             int count = 0;
-            for (SandagBikeNode node : network.getPredecessors(edge.getToId()) ) {
-                count = count + ( node.getId() == edge.getFromId() ? 1 : 0);
+            for (SandagBikeNode node : network.getPredecessors(edge.getToNode()) ) {
+                count = count + ( node.equals( edge.getFromNode()) ? 1 : 0);
             }
             assertEquals(1,count);
         }
@@ -119,10 +118,11 @@ public class SandagBikeNetworkFactoryTest
     public void testEachEdgeAndSuccessorFormsTraversal() {
         Iterator <SandagBikeEdge> edgeIterator = network.edgeIterator();
         SandagBikeEdge edge;
+        
         while (edgeIterator.hasNext()) {
             edge = edgeIterator.next();
-            for (int s : network.getSuccessorIds(edge.getToId()) ) {
-                assertTrue(network.containsTraversalIds(new int[] {edge.getFromId(), edge.getToId(), s}));
+            for (SandagBikeNode s : network.getSuccessors(edge.getToNode()) ) {
+                assertTrue(s.equals(edge.getFromNode()) || network.containsTraversal(edge, network.getEdge(edge.getToNode(),s)));
             }
         }
     }
@@ -133,8 +133,8 @@ public class SandagBikeNetworkFactoryTest
         SandagBikeEdge edge;
         while (edgeIterator.hasNext()) {
             edge = edgeIterator.next();
-            for (int p : network.getPredecessorIds(edge.getFromId()) ) {
-                assertTrue(network.containsTraversalIds(new int[] {p, edge.getFromId(), edge.getToId()}));
+            for (SandagBikeNode p : network.getPredecessors(edge.getFromNode()) ) {
+                assertTrue(p.equals(edge.getToNode()) || network.containsTraversal(network.getEdge(p, edge.getFromNode()), edge));
             }
         }
     }
@@ -145,8 +145,8 @@ public class SandagBikeNetworkFactoryTest
         SandagBikeTraversal traversal;
         while (traversalIterator.hasNext()) {
             traversal = traversalIterator.next();
-            assertTrue(network.containsEdgeIds(new int[] {traversal.getStartId(), traversal.getThruId()}));
-            assertTrue(network.containsEdgeIds(new int[] {traversal.getThruId(), traversal.getEndId()}));
+            assertTrue(network.containsEdge(traversal.getFromEdge().getFromNode(), traversal.getFromEdge().getToNode()));
+            assertTrue(network.containsEdge(traversal.getToEdge().getFromNode(), traversal.getToEdge().getToNode()));
         }
     }
     
@@ -156,39 +156,61 @@ public class SandagBikeNetworkFactoryTest
         assertEquals(3629, node.mgra);
         assertEquals(6264311, node.x, 5);
         
-        SandagBikeEdge edge = network.getEdge(755011, 753841);
+        SandagBikeEdge edge = network.getEdge(network.getNode(755011), network.getNode(753841));
         assertEquals(580.8311, edge.distance, 0.001);
-        edge = network.getEdge(746401, 749381);
+        edge = network.getEdge(network.getNode(746401), network.getNode(749381));
         assertEquals(5, edge.gain);
-        edge = network.getEdge(749381, 746401);
+        edge = network.getEdge(network.getNode(749381), network.getNode(746401));
         assertEquals(0, edge.gain);
     }
     
     @Test
     public void testTurnTypesMatchInput() {
-        SandagBikeTraversal traversal = network.getTraversal(728811, 727491, 728811);
-        assertEquals(TurnType.REVERSAL, traversal.turnType);
-        traversal = network.getTraversal(728811,727491,723691);
+        int start, thru, end;
+        SandagBikeTraversal traversal;
+
+        start = 728811; thru = 727491; end =723691;
+        traversal = network.getTraversal( network.getEdge(network.getNode(start), network.getNode(thru)), network.getEdge(network.getNode(thru), network.getNode(end)));
         assertEquals(TurnType.NONE, traversal.turnType);
-        traversal = network.getTraversal(728811,727491,727871);
+        
+        start = 728811; thru = 727491; end =727871;
+        traversal = network.getTraversal( network.getEdge(network.getNode(start), network.getNode(thru)), network.getEdge(network.getNode(thru), network.getNode(end)));
         assertEquals(TurnType.LEFT,traversal.turnType);
-        traversal = network.getTraversal(728811,727491,726911);
+        
+        start = 728811; thru = 727491; end =726911;
+        traversal = network.getTraversal( network.getEdge(network.getNode(start), network.getNode(thru)), network.getEdge(network.getNode(thru), network.getNode(end)));
         assertEquals(TurnType.RIGHT, traversal.turnType);
-        traversal = network.getTraversal(723511, 725251, 723691);
+        
+        start = 723511; thru = 725251; end =723691;
+        traversal = network.getTraversal( network.getEdge(network.getNode(start), network.getNode(thru)), network.getEdge(network.getNode(thru), network.getNode(end)));
         assertEquals(TurnType.RIGHT, traversal.turnType);
-        traversal = network.getTraversal(723511, 725251, 726911);
+        
+        start = 723511; thru = 725251; end =726911;
+        traversal = network.getTraversal( network.getEdge(network.getNode(start), network.getNode(thru)), network.getEdge(network.getNode(thru), network.getNode(end)));        
         assertEquals(TurnType.NONE, traversal.turnType);
-        traversal = network.getTraversal(726911, 723691, 725251);
+        
+        start = 726911; thru = 723691; end =725251;
+        traversal = network.getTraversal( network.getEdge(network.getNode(start), network.getNode(thru)), network.getEdge(network.getNode(thru), network.getNode(end)));
         assertEquals(TurnType.RIGHT, traversal.turnType);
-        traversal = network.getTraversal(739131, 739421, 736701);
+        
+        start = 739131; thru = 739421; end =736701;
+        traversal = network.getTraversal( network.getEdge(network.getNode(start), network.getNode(thru)), network.getEdge(network.getNode(thru), network.getNode(end)));
         assertEquals(TurnType.NONE, traversal.turnType);
-        traversal = network.getTraversal(762181, 760261, 759961);
+        
+        start = 762181; thru = 760261; end =759961;
+        traversal = network.getTraversal( network.getEdge(network.getNode(start), network.getNode(thru)), network.getEdge(network.getNode(thru), network.getNode(end)));
         assertEquals(TurnType.RIGHT, traversal.turnType);
-        traversal = network.getTraversal(743031, 741901, 100003897);
+        
+        start = 743031; thru = 741901; end =100003897;
+        traversal = network.getTraversal( network.getEdge(network.getNode(start), network.getNode(thru)), network.getEdge(network.getNode(thru), network.getNode(end)));
         assertEquals(TurnType.NONE, traversal.turnType);
-        traversal = network.getTraversal(743031, 741901, 740811);
+        
+        start = 743031; thru = 741901; end =740811;
+        traversal = network.getTraversal( network.getEdge(network.getNode(start), network.getNode(thru)), network.getEdge(network.getNode(thru), network.getNode(end)));
         assertEquals(TurnType.NONE, traversal.turnType);
-        traversal = network.getTraversal(743031, 741901, 742821);
+        
+        start = 743031; thru = 741901; end =742821;
+        traversal = network.getTraversal( network.getEdge(network.getNode(start), network.getNode(thru)), network.getEdge(network.getNode(thru), network.getNode(end)));
         assertEquals(TurnType.LEFT, traversal.turnType);
     }
 }
