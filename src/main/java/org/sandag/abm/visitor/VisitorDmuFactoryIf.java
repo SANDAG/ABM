@@ -3,14 +3,15 @@ package org.sandag.abm.visitor;
 /**
  * A DMU factory interface
  */
-public interface VisitorDmuFactoryIf {
+public interface VisitorDmuFactoryIf
+{
 
-	public VisitorTourModeChoiceDMU getVisitorTourModeChoiceDMU();
+    VisitorTourModeChoiceDMU getVisitorTourModeChoiceDMU();
 
-	public VisitorTourDestChoiceDMU getVisitorTourDestChoiceDMU();
+    VisitorTourDestChoiceDMU getVisitorTourDestChoiceDMU();
 
-	public VisitorStopLocationChoiceDMU getVisitorStopLocationChoiceDMU();
+    VisitorStopLocationChoiceDMU getVisitorStopLocationChoiceDMU();
 
-	public VisitorTripModeChoiceDMU getVisitorTripModeChoiceDMU();
+    VisitorTripModeChoiceDMU getVisitorTripModeChoiceDMU();
 
 }

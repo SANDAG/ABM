@@ -3,14 +3,15 @@ package org.sandag.abm.crossborder;
 /**
  * A DMU factory interface
  */
-public interface CrossBorderDmuFactoryIf {
+public interface CrossBorderDmuFactoryIf
+{
 
-	public CrossBorderTourModeChoiceDMU getCrossBorderTourModeChoiceDMU();
+    CrossBorderTourModeChoiceDMU getCrossBorderTourModeChoiceDMU();
 
-	public CrossBorderStationDestChoiceDMU getCrossBorderStationChoiceDMU();
+    CrossBorderStationDestChoiceDMU getCrossBorderStationChoiceDMU();
 
-	public CrossBorderTripModeChoiceDMU getCrossBorderTripModeChoiceDMU();
+    CrossBorderTripModeChoiceDMU getCrossBorderTripModeChoiceDMU();
 
-	public CrossBorderStopLocationChoiceDMU getCrossBorderStopLocationChoiceDMU();
+    CrossBorderStopLocationChoiceDMU getCrossBorderStopLocationChoiceDMU();
 
 }
