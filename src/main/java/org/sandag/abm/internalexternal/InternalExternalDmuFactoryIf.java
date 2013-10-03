@@ -3,10 +3,11 @@ package org.sandag.abm.internalexternal;
 /**
  * A DMU factory interface
  */
-public interface InternalExternalDmuFactoryIf {
+public interface InternalExternalDmuFactoryIf
+{
 
-	public InternalExternalTourDestChoiceDMU getInternalExternalTourDestChoiceDMU();
+    InternalExternalTourDestChoiceDMU getInternalExternalTourDestChoiceDMU();
 
-	public InternalExternalTripModeChoiceDMU getInternalExternalTripModeChoiceDMU();
+    InternalExternalTripModeChoiceDMU getInternalExternalTripModeChoiceDMU();
 
 }

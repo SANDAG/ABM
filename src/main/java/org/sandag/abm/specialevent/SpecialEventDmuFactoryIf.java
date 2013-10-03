@@ -3,10 +3,11 @@ package org.sandag.abm.specialevent;
 /**
  * A DMU factory interface
  */
-public interface SpecialEventDmuFactoryIf {
+public interface SpecialEventDmuFactoryIf
+{
 
-	public SpecialEventTripModeChoiceDMU getSpecialEventTripModeChoiceDMU();
+    SpecialEventTripModeChoiceDMU getSpecialEventTripModeChoiceDMU();
 
-	public SpecialEventOriginChoiceDMU getSpecialEventOriginChoiceDMU();
+    SpecialEventOriginChoiceDMU getSpecialEventOriginChoiceDMU();
 
 }

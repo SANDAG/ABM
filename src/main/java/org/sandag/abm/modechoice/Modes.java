@@ -10,113 +10,128 @@ import java.io.Serializable;
  *          <p/>
  *          Created by IntelliJ IDEA.
  */
-public class Modes implements Serializable {
+public final class Modes
+        implements Serializable
+{
 
-	public enum AutoMode {
-		DRIVE_ALONE_TOLL("dat"), DRIVE_ALONE_NONTOLL("dan"), TWOPLUS_NONTOLL_NONHOV(
-				"2+nn"), TWOPLUS_NONTOLL_HOV("2+nh"), TWOPLUS_TOLL_HOV("2+th"), THREEPLUS_NONTOLL_NONHOV(
-				"3+nn"), THREEPLUS_NONTOLL_HOV("3+nh"), THREEPLUS_TOLL_HOV(
-				"3+th");
+    public enum AutoMode
+    {
+        DRIVE_ALONE_TOLL("dat"), DRIVE_ALONE_NONTOLL("dan"), TWOPLUS_NONTOLL_NONHOV("2+nn"), TWOPLUS_NONTOLL_HOV(
+                "2+nh"), TWOPLUS_TOLL_HOV("2+th"), THREEPLUS_NONTOLL_NONHOV("3+nn"), THREEPLUS_NONTOLL_HOV(
+                "3+nh"), THREEPLUS_TOLL_HOV("3+th");
 
-		private final String name;
+        private final String name;
 
-		AutoMode(String s) {
-			this.name = s;
-		}
+        AutoMode(String s)
+        {
+            this.name = s;
+        }
 
-		public AutoMode[] getAutoModes() {
-			return AutoMode.values();
-		}
+        public AutoMode[] getAutoModes()
+        {
+            return AutoMode.values();
+        }
 
-		public String toString() {
-			return name;
-		}
-	}
+        public String toString()
+        {
+            return name;
+        }
+    }
 
-	public enum TransitMode {
-		COMMUTER_RAIL("cr", true), // label and true = premium
-		LIGHT_RAIL("lr", true), BRT("brt", true), EXPRESS_BUS("eb", true), LOCAL_BUS(
-				"lb", false);
+    public enum TransitMode
+    {
+        COMMUTER_RAIL("cr", true), // label and true = premium
+        LIGHT_RAIL("lr", true), BRT("brt", true), EXPRESS_BUS("eb", true), LOCAL_BUS("lb", false);
 
-		private final String name;
-		private final boolean premium;
+        private final String  name;
+        private final boolean premium;
 
-		TransitMode(String name, boolean premium) {
-			this.name = name;
-			this.premium = premium;
-		}
+        TransitMode(String name, boolean premium)
+        {
+            this.name = name;
+            this.premium = premium;
+        }
 
-		public TransitMode[] getTransitModes() {
-			return TransitMode.values();
-		}
+        public TransitMode[] getTransitModes()
+        {
+            return TransitMode.values();
+        }
 
-		public boolean isPremiumMode(TransitMode transitMode) {
-			return transitMode.premium;
-		}
+        public boolean isPremiumMode(TransitMode transitMode)
+        {
+            return transitMode.premium;
+        }
 
-		public String toString() {
-			return name;
-		}
+        public String toString()
+        {
+            return name;
+        }
 
-	}
+    }
 
-	public enum AccessMode {
-		WALK("WLK"), PARK_N_RIDE("PNR"), KISS_N_RIDE("KNR");
-		private final String name;
+    public enum AccessMode
+    {
+        WALK("WLK"), PARK_N_RIDE("PNR"), KISS_N_RIDE("KNR");
+        private final String name;
 
-		AccessMode(String name) {
-			this.name = name;
-		}
+        AccessMode(String name)
+        {
+            this.name = name;
+        }
 
-		public AccessMode[] getAccessModes() {
-			return AccessMode.values();
-		}
+        public AccessMode[] getAccessModes()
+        {
+            return AccessMode.values();
+        }
 
-		public String toString() {
-			return name;
-		}
+        public String toString()
+        {
+            return name;
+        }
 
-	}
+    }
 
-	public enum NonMotorizedMode {
-		WALK, BIKE
-	}
+    public enum NonMotorizedMode
+    {
+        WALK, BIKE
+    }
 
-	public enum OtherMode {
-		SCHOOL_BUS
-	}
+    public enum OtherMode
+    {
+        SCHOOL_BUS
+    }
+    
+    private Modes()
+    {
+        //Not implemented in utility classes
+    }
 
-	public static int getTransitModeIndex(String modeName) {
-		if (modeName.equals("cr") || modeName.equals("CR"))
-			return TransitMode.COMMUTER_RAIL.ordinal();
-		if (modeName.equals("lr") || modeName.equals("LR"))
-			return TransitMode.LIGHT_RAIL.ordinal();
-		if (modeName.equals("brt") || modeName.equals("BRT"))
-			return TransitMode.BRT.ordinal();
-		if (modeName.equals("eb") || modeName.equals("EB"))
-			return TransitMode.EXPRESS_BUS.ordinal();
-		if (modeName.equals("lb") || modeName.equals("LB"))
-			return TransitMode.LOCAL_BUS.ordinal();
-		return -1;
-	}
+    public static int getTransitModeIndex(String modeName)
+    {
+        if (modeName.equals("cr") || modeName.equals("CR"))
+            return TransitMode.COMMUTER_RAIL.ordinal();
+        if (modeName.equals("lr") || modeName.equals("LR"))
+            return TransitMode.LIGHT_RAIL.ordinal();
+        if (modeName.equals("brt") || modeName.equals("BRT")) return TransitMode.BRT.ordinal();
+        if (modeName.equals("eb") || modeName.equals("EB"))
+            return TransitMode.EXPRESS_BUS.ordinal();
+        if (modeName.equals("lb") || modeName.equals("LB")) return TransitMode.LOCAL_BUS.ordinal();
+        return -1;
+    }
 
-	public static Boolean getIsPremiumTransit(int modeIndex) {
-		if (modeIndex == TransitMode.COMMUTER_RAIL.ordinal())
-			return TransitMode.COMMUTER_RAIL.premium;
-		else if (modeIndex == TransitMode.LIGHT_RAIL.ordinal())
-			return TransitMode.LIGHT_RAIL.premium;
-		else if (modeIndex == TransitMode.BRT.ordinal())
-			return TransitMode.BRT.premium;
-		else if (modeIndex == TransitMode.EXPRESS_BUS.ordinal())
-			return TransitMode.EXPRESS_BUS.premium;
-		else if (modeIndex == TransitMode.LOCAL_BUS.ordinal())
-			return TransitMode.LOCAL_BUS.premium;
-		else
-			return null;
-	}
+    public static Boolean getIsPremiumTransit(int modeIndex)
+    {
+        if (modeIndex == TransitMode.COMMUTER_RAIL.ordinal()) return TransitMode.COMMUTER_RAIL.premium;
+        else if (modeIndex == TransitMode.LIGHT_RAIL.ordinal()) return TransitMode.LIGHT_RAIL.premium;
+        else if (modeIndex == TransitMode.BRT.ordinal()) return TransitMode.BRT.premium;
+        else if (modeIndex == TransitMode.EXPRESS_BUS.ordinal()) return TransitMode.EXPRESS_BUS.premium;
+        else if (modeIndex == TransitMode.LOCAL_BUS.ordinal()) return TransitMode.LOCAL_BUS.premium;
+        else return null;
+    }
 
-	public static void main(String[] args) {
-		System.out.println(AutoMode.DRIVE_ALONE_NONTOLL.toString());
+    public static void main(String[] args)
+    {
+        System.out.println(AutoMode.DRIVE_ALONE_NONTOLL.toString());
 
-	}
+    }
 }

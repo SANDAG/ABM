@@ -7,11 +7,16 @@ package org.sandag.abm.ctramp;
  * @author Jim
  * 
  */
-public class Definitions {
+public final class Definitions
+{
 
-	// Coordinated daily activity pattern type definitions
-	public static final String MANDATORY_PATTERN = "M";
-	public static final String NONMANDATORY_PATTERN = "N";
-	public static final String HOME_PATTERN = "H";
+    // Coordinated daily activity pattern type definitions
+    public static final String MANDATORY_PATTERN    = "M";
+    public static final String NONMANDATORY_PATTERN = "N";
+    public static final String HOME_PATTERN         = "H";
 
+    private Definitions()
+    {
+        //Not implemented in utility classes
+    }
 }

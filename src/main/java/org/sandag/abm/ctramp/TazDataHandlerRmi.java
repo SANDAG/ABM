@@ -41,226 +41,257 @@ import java.io.Serializable;
  * 
  */
 
-public class TazDataHandlerRmi implements TazDataIf, Serializable {
+public class TazDataHandlerRmi
+        implements TazDataIf, Serializable
+{
 
-	UtilRmi remote;
-	String connectString;
+    UtilRmi remote;
+    String  connectString;
 
-	public TazDataHandlerRmi(String hostname, int port, String className) {
+    public TazDataHandlerRmi(String hostname, int port, String className)
+    {
 
-		connectString = String.format("//%s:%d/%s", hostname, port, className);
-		remote = new UtilRmi(connectString);
+        connectString = String.format("//%s:%d/%s", hostname, port, className);
+        remote = new UtilRmi(connectString);
 
-	}
+    }
 
-	public String testRemote() {
-		Object[] objArray = {};
-		return (String) remote.method("testRemote", objArray);
-	}
+    public String testRemote()
+    {
+        Object[] objArray = {};
+        return (String) remote.method("testRemote", objArray);
+    }
 
-	public int[] getAltToZoneArray() {
-		Object[] objArray = {};
-		return (int[]) remote.method("getAltToZoneArray", objArray);
-	}
+    public int[] getAltToZoneArray()
+    {
+        Object[] objArray = {};
+        return (int[]) remote.method("getAltToZoneArray", objArray);
+    }
 
-	public int[] getAltToSubZoneArray() {
-		Object[] objArray = {};
-		return (int[]) remote.method("getAltToSubZoneArray", objArray);
-	}
+    public int[] getAltToSubZoneArray()
+    {
+        Object[] objArray = {};
+        return (int[]) remote.method("getAltToSubZoneArray", objArray);
+    }
 
-	public int[] getIndexToZoneArray() {
-		Object[] objArray = {};
-		return (int[]) remote.method("getIndexToZoneArray", objArray);
-	}
+    public int[] getIndexToZoneArray()
+    {
+        Object[] objArray = {};
+        return (int[]) remote.method("getIndexToZoneArray", objArray);
+    }
 
-	public int[] getZoneTableRowArray() {
-		Object[] objArray = {};
-		return (int[]) remote.method("getZoneTableRowArray", objArray);
-	}
+    public int[] getZoneTableRowArray()
+    {
+        Object[] objArray = {};
+        return (int[]) remote.method("getZoneTableRowArray", objArray);
+    }
 
-	/**
-	 * @param field
-	 *            is the field name to be checked against the column names in
-	 *            the zone data table.
-	 * @return true if field matches one of the zone data table column names,
-	 *         otherwise false.
-	 */
-	public boolean isValidZoneTableField(String field) {
-		Object[] objArray = { field };
-		return (Boolean) remote.method("isValidZoneTableField", objArray);
-	}
+    /**
+     * @param field
+     *            is the field name to be checked against the column names in
+     *            the zone data table.
+     * @return true if field matches one of the zone data table column names,
+     *         otherwise false.
+     */
+    public boolean isValidZoneTableField(String field)
+    {
+        Object[] objArray = {field};
+        return (Boolean) remote.method("isValidZoneTableField", objArray);
+    }
 
-	public String[] getZoneDataTableColumnLabels() {
-		Object[] objArray = {};
-		return (String[]) remote.method("getZoneDataTableColumnLabels",
-				objArray);
-	}
+    public String[] getZoneDataTableColumnLabels()
+    {
+        Object[] objArray = {};
+        return (String[]) remote.method("getZoneDataTableColumnLabels", objArray);
+    }
 
-	public int getNumberOfZones() {
-		Object[] objArray = {};
-		return (Integer) remote.method("getNumberOfZones", objArray);
-	}
+    public int getNumberOfZones()
+    {
+        Object[] objArray = {};
+        return (Integer) remote.method("getNumberOfZones", objArray);
+    }
 
-	public int getNumberOfSubZones() {
-		Object[] objArray = {};
-		return (Integer) remote.method("getNumberOfSubZones", objArray);
-	}
+    public int getNumberOfSubZones()
+    {
+        Object[] objArray = {};
+        return (Integer) remote.method("getNumberOfSubZones", objArray);
+    }
 
-	public String[] getSubZoneNames() {
-		Object[] objArray = {};
-		return (String[]) remote.method("getSubZoneNames", objArray);
-	}
+    public String[] getSubZoneNames()
+    {
+        Object[] objArray = {};
+        return (String[]) remote.method("getSubZoneNames", objArray);
+    }
 
-	public double[] getZonalWalkPercentagesForTaz(int taz) {
-		Object[] objArray = { taz };
-		return (double[]) remote.method("getZonalWalkPercentagesForTaz",
-				objArray);
-	}
+    public double[] getZonalWalkPercentagesForTaz(int taz)
+    {
+        Object[] objArray = {taz};
+        return (double[]) remote.method("getZonalWalkPercentagesForTaz", objArray);
+    }
 
-	public float getZoneTableValue(int taz, String fieldName) {
-		Object[] objArray = { taz, fieldName };
-		return (Float) remote.method("getZoneTableValue", objArray);
-	}
+    public float getZoneTableValue(int taz, String fieldName)
+    {
+        Object[] objArray = {taz, fieldName};
+        return (Float) remote.method("getZoneTableValue", objArray);
+    }
 
-	public int[] getZoneTableIntColumn(String fieldName) {
-		Object[] objArray = { fieldName };
-		return (int[]) remote.method("getZoneTableIntColumn", objArray);
-	}
+    public int[] getZoneTableIntColumn(String fieldName)
+    {
+        Object[] objArray = {fieldName};
+        return (int[]) remote.method("getZoneTableIntColumn", objArray);
+    }
 
-	// get the table column from the fieldname passed in
-	public float[] getZoneTableFloatColumn(String fieldName) {
-		Object[] objArray = { fieldName };
-		return (float[]) remote.method("getZoneTableFloatColumn", objArray);
-	}
+    // get the table column from the fieldname passed in
+    public float[] getZoneTableFloatColumn(String fieldName)
+    {
+        Object[] objArray = {fieldName};
+        return (float[]) remote.method("getZoneTableFloatColumn", objArray);
+    }
 
-	/**
-	 * @param tableRowNumber
-	 *            is the zone table row number
-	 * @return zone number for the table row.
-	 */
-	public int getTazNumber(int tableRowNumber) {
-		Object[] objArray = { tableRowNumber };
-		return (Integer) remote.method("getTazNumber", objArray);
-	}
+    /**
+     * @param tableRowNumber
+     *            is the zone table row number
+     * @return zone number for the table row.
+     */
+    public int getTazNumber(int tableRowNumber)
+    {
+        Object[] objArray = {tableRowNumber};
+        return (Integer) remote.method("getTazNumber", objArray);
+    }
 
-	/**
-	 * @return area type from the zone data table for the zone.
-	 */
-	public int[] getZonalAreaType() {
-		Object[] objArray = {};
-		return (int[]) remote.method("getZonalAreaType", objArray);
-	}
+    /**
+     * @return area type from the zone data table for the zone.
+     */
+    public int[] getZonalAreaType()
+    {
+        Object[] objArray = {};
+        return (int[]) remote.method("getZonalAreaType", objArray);
+    }
 
-	/**
-	 * @return district from the zone data table for the zone.
-	 */
-	public int[] getZonalDistrict() {
-		Object[] objArray = {};
-		return (int[]) remote.method("getZonalDistrict", objArray);
-	}
+    /**
+     * @return district from the zone data table for the zone.
+     */
+    public int[] getZonalDistrict()
+    {
+        Object[] objArray = {};
+        return (int[]) remote.method("getZonalDistrict", objArray);
+    }
 
-	public int[] getZonalParkTot() {
-		Object[] objArray = {};
-		return (int[]) remote.method("getZonalParkTot", objArray);
-	}
+    public int[] getZonalParkTot()
+    {
+        Object[] objArray = {};
+        return (int[]) remote.method("getZonalParkTot", objArray);
+    }
 
-	public int[] getZonalParkLong() {
-		Object[] objArray = {};
-		return (int[]) remote.method("getZonalParkLong", objArray);
-	}
+    public int[] getZonalParkLong()
+    {
+        Object[] objArray = {};
+        return (int[]) remote.method("getZonalParkLong", objArray);
+    }
 
-	public float[] getZonalPropFree() {
-		Object[] objArray = {};
-		return (float[]) remote.method("getZonalPropFree", objArray);
-	}
+    public float[] getZonalPropFree()
+    {
+        Object[] objArray = {};
+        return (float[]) remote.method("getZonalPropFree", objArray);
+    }
 
-	public float[] getZonalParkRate() {
-		Object[] objArray = {};
-		return (float[]) remote.method("getZonalParkRate", objArray);
-	}
+    public float[] getZonalParkRate()
+    {
+        Object[] objArray = {};
+        return (float[]) remote.method("getZonalParkRate", objArray);
+    }
 
-	/**
-	 * @return integer county value from the zone data table for the zone.
-	 */
-	public int[] getZonalCounty() {
-		Object[] objArray = {};
-		return (int[]) remote.method("getZonalCounty", objArray);
-	}
+    /**
+     * @return integer county value from the zone data table for the zone.
+     */
+    public int[] getZonalCounty()
+    {
+        Object[] objArray = {};
+        return (int[]) remote.method("getZonalCounty", objArray);
+    }
 
-	public int getZoneIsCbd(int taz) {
-		Object[] objArray = { taz };
-		return (Integer) remote.method("getZoneIsCbd", objArray);
-	}
+    public int getZoneIsCbd(int taz)
+    {
+        Object[] objArray = {taz};
+        return (Integer) remote.method("getZoneIsCbd", objArray);
+    }
 
-	public int getZoneIsUrban(int taz) {
-		Object[] objArray = { taz };
-		return (Integer) remote.method("getZoneIsUrban", objArray);
-	}
+    public int getZoneIsUrban(int taz)
+    {
+        Object[] objArray = {taz};
+        return (Integer) remote.method("getZoneIsUrban", objArray);
+    }
 
-	public int getZoneIsSuburban(int taz) {
-		Object[] objArray = { taz };
-		return (Integer) remote.method("getZoneIsSuburban", objArray);
-	}
+    public int getZoneIsSuburban(int taz)
+    {
+        Object[] objArray = {taz};
+        return (Integer) remote.method("getZoneIsSuburban", objArray);
+    }
 
-	public int getZoneIsRural(int taz) {
-		Object[] objArray = { taz };
-		return (Integer) remote.method("getZoneIsRural", objArray);
-	}
+    public int getZoneIsRural(int taz)
+    {
+        Object[] objArray = {taz};
+        return (Integer) remote.method("getZoneIsRural", objArray);
+    }
 
-	public float[] getPkAutoRetailAccessibity() {
-		Object[] objArray = {};
-		return (float[]) remote.method("getPkAutoRetailAccessibity", objArray);
-	}
+    public float[] getPkAutoRetailAccessibity()
+    {
+        Object[] objArray = {};
+        return (float[]) remote.method("getPkAutoRetailAccessibity", objArray);
+    }
 
-	public float[] getPkAutoTotalAccessibity() {
-		Object[] objArray = {};
-		return (float[]) remote.method("getPkAutoTotalAccessibity", objArray);
-	}
+    public float[] getPkAutoTotalAccessibity()
+    {
+        Object[] objArray = {};
+        return (float[]) remote.method("getPkAutoTotalAccessibity", objArray);
+    }
 
-	public float[] getPkTransitRetailAccessibity() {
-		Object[] objArray = {};
-		return (float[]) remote.method("getPkTransitRetailAccessibity",
-				objArray);
-	}
+    public float[] getPkTransitRetailAccessibity()
+    {
+        Object[] objArray = {};
+        return (float[]) remote.method("getPkTransitRetailAccessibity", objArray);
+    }
 
-	public float[] getPkTransitTotalAccessibity() {
-		Object[] objArray = {};
-		return (float[]) remote
-				.method("getPkTransitTotalAccessibity", objArray);
-	}
+    public float[] getPkTransitTotalAccessibity()
+    {
+        Object[] objArray = {};
+        return (float[]) remote.method("getPkTransitTotalAccessibity", objArray);
+    }
 
-	public float[] getOpAutoRetailAccessibity() {
-		Object[] objArray = {};
-		return (float[]) remote.method("getOpAutoRetailAccessibity", objArray);
-	}
+    public float[] getOpAutoRetailAccessibity()
+    {
+        Object[] objArray = {};
+        return (float[]) remote.method("getOpAutoRetailAccessibity", objArray);
+    }
 
-	public float[] getOpAutoTotalAccessibity() {
-		Object[] objArray = {};
-		return (float[]) remote.method("getOpAutoTotalAccessibity", objArray);
-	}
+    public float[] getOpAutoTotalAccessibity()
+    {
+        Object[] objArray = {};
+        return (float[]) remote.method("getOpAutoTotalAccessibity", objArray);
+    }
 
-	public float[] getOpTransitRetailAccessibity() {
-		Object[] objArray = {};
-		return (float[]) remote.method("getOpTransitRetailAccessibity",
-				objArray);
-	}
+    public float[] getOpTransitRetailAccessibity()
+    {
+        Object[] objArray = {};
+        return (float[]) remote.method("getOpTransitRetailAccessibity", objArray);
+    }
 
-	public float[] getOpTransitTotalAccessibity() {
-		Object[] objArray = {};
-		return (float[]) remote
-				.method("getOpTransitTotalAccessibity", objArray);
-	}
+    public float[] getOpTransitTotalAccessibity()
+    {
+        Object[] objArray = {};
+        return (float[]) remote.method("getOpTransitTotalAccessibity", objArray);
+    }
 
-	public float[] getNonMotorizedRetailAccessibity() {
-		Object[] objArray = {};
-		return (float[]) remote.method("getNonMotorizedRetailAccessibity",
-				objArray);
-	}
+    public float[] getNonMotorizedRetailAccessibity()
+    {
+        Object[] objArray = {};
+        return (float[]) remote.method("getNonMotorizedRetailAccessibity", objArray);
+    }
 
-	public float[] getNonMotorizedTotalAccessibity() {
-		Object[] objArray = {};
-		return (float[]) remote.method("getNonMotorizedTotalAccessibity",
-				objArray);
-	}
+    public float[] getNonMotorizedTotalAccessibity()
+    {
+        Object[] objArray = {};
+        return (float[]) remote.method("getNonMotorizedTotalAccessibity", objArray);
+    }
 
 }
