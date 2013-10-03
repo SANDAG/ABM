@@ -32,4 +32,4 @@ rem set location of java
 set JAVA_64_PATH=C:\Progra~1\Java\jre7
 set JAVA_32_PATH=C:\Progra~2\Java\jre7
 set JAVA_HOME_32=%JAVA_32_PATH%
-set TRANSCAD_PATH=C:\Progra~2\TransCAD
+set TRANSCAD_PATH=${TRANSCAD_PATH}
