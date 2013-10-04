@@ -18,8 +18,8 @@ import java.util.TreeSet;
 public class DijkstraArrayShortestPath<N extends Node> implements ShortestPath<N> {
 	private final AdjacencyNetwork network;
 	
-	public <E extends Edge<N>,T extends Traversal<E>> DijkstraArrayShortestPath(Network<N,E,T> network, PathElementEvaluator<E,T> traversalEvaluator) {
-		this.network = new AdjacencyNetwork(network,traversalEvaluator);
+	public <E extends Edge<N>,T extends Traversal<E>> DijkstraArrayShortestPath(Network<N,E,T> network, EdgeEvaluator<E> edgeEvaluator, TraversalEvaluator<T> traversalEvaluator) {
+		this.network = new AdjacencyNetwork(network,edgeEvaluator,traversalEvaluator);
 	}
 
 	@Override
@@ -162,7 +162,7 @@ public class DijkstraArrayShortestPath<N extends Node> implements ShortestPath<N
 		final double[] traversalCosts; //# of edge pairs -> the traversal cost (with edge cost added)
 		
 		<E extends Edge<N>,T extends Traversal<E>> 
-		AdjacencyNetwork(Network<N,E,T> network, PathElementEvaluator<E,T> pathElementEvaluator) {
+		AdjacencyNetwork(Network<N,E,T> network, EdgeEvaluator<E> edgeEvaluator, TraversalEvaluator<T> traversalEvaluator) {
 			Iterator<N> nodeIterator = network.nodeIterator();
 			Map<N,Integer> nodes = new LinkedHashMap<>();
 			int counter = 0;
@@ -210,13 +210,13 @@ public class DijkstraArrayShortestPath<N extends Node> implements ShortestPath<N
 					NodePair<N> nodePair = new NodePair<>((N) nodeIndices[f],(N) nodeIndices[t]);
 					traversals.add(new int[] {f,edgePositions.get(nodePair)});
 					E fromEdge = network.getEdge(nodePair);
-					costs.add(pathElementEvaluator.evaluate(fromEdge));
+					costs.add(edgeEvaluator.evaluate(fromEdge));
 					for (int endIndex = fromNodeList[t]; endIndex < fromNodeList[t+1]; endIndex++) {
 						int e = toNodeList[endIndex];
 						nodePair = new NodePair<>((N) nodeIndices[t],(N) nodeIndices[e]);
 						E toEdge = network.getEdge(nodePair);
 						traversals.add(new int[] {t,edgePositions.get(nodePair)});
-						costs.add(pathElementEvaluator.evaluate(toEdge) + pathElementEvaluator.evaluate(network.getTraversal(fromEdge,toEdge)));
+						costs.add(edgeEvaluator.evaluate(toEdge) + traversalEvaluator.evaluate(network.getTraversal(fromEdge,toEdge)));
 						edgeCounter++;
 					}
 				}

@@ -8,11 +8,13 @@ import java.util.Set;
 
 public class DijkstraOOShortestPath<N extends Node,E extends Edge<N>,T extends Traversal<E>> implements ShortestPath<N> {
 	private final Network<N,E,T> network;
-	private final PathElementEvaluator<E,T> pathElementEvaluator;
+	private final EdgeEvaluator<E> edgeEvaluator;
+	private final TraversalEvaluator<T> traversalEvaluator;
 	
-	public DijkstraOOShortestPath(Network<N,E,T> network, PathElementEvaluator<E,T> traversalEvaluator) {
+	public DijkstraOOShortestPath(Network<N,E,T> network, EdgeEvaluator<E> edgeEvaluator, TraversalEvaluator<T> traversalEvaluator) {
 		this.network = network;
-		this.pathElementEvaluator = traversalEvaluator;
+		this.edgeEvaluator = edgeEvaluator;
+		this.traversalEvaluator = traversalEvaluator;
 	}
 	
 	private class TraversedEdge implements Comparable<TraversedEdge> {
@@ -62,7 +64,7 @@ public class DijkstraOOShortestPath<N extends Node,E extends Edge<N>,T extends T
 		//initialize traversalQueue and costs
 		for (N successor : network.getSuccessors(originNode)) {
 			E edge = network.getEdge(originNode,successor);
-			double edgeCost = pathElementEvaluator.evaluate(edge);
+			double edgeCost = edgeEvaluator.evaluate(edge);
 			if (edgeCost < maxCost) {
 				TraversedEdge traversedEdge = new TraversedEdge(edge,edgeCost,basePath.extendPath(successor));
 				traversalQueue.add(traversedEdge);
@@ -109,7 +111,7 @@ public class DijkstraOOShortestPath<N extends Node,E extends Edge<N>,T extends T
 	}
 	
 	protected double evaluateTraversalCost(T traversal) {
-		return pathElementEvaluator.evaluate(traversal.getToEdge()) + pathElementEvaluator.evaluate(traversal);
+		return edgeEvaluator.evaluate(traversal.getToEdge()) + traversalEvaluator.evaluate(traversal);
 	}
 
 }

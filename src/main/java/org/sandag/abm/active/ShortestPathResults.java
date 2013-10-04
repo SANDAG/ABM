@@ -1,7 +1,6 @@
 package org.sandag.abm.active;
 
 import java.util.Collection;
-import java.util.Set;
 
 public interface ShortestPathResults<N extends Node> extends Iterable<NodePair<N>> {
 	int size();
