@@ -12,7 +12,7 @@ public class SimpleNetwork<N extends Node,E extends Edge<N>,T extends Traversal<
     
     public SimpleNetwork(Collection<N> nodes, Collection<E> edges, Collection<T> traversals)
     {
-    	this.nodes = new LinkedHashMap<>();
+    	this.nodes = new LinkedHashMap<>(); // use LinkedHashMap for fast iteration over keys
     	this.edges = new LinkedHashMap<>();
     	this.traversals = new LinkedHashMap<>();
     	
@@ -23,8 +23,8 @@ public class SimpleNetwork<N extends Node,E extends Edge<N>,T extends Traversal<
     	for (T traversal : traversals)
     		this.traversals.put(new EdgePair(traversal.getFromEdge(),traversal.getToEdge()),traversal);
     	
-    	successors = new LinkedHashMap<>();
-    	predecessors = new LinkedHashMap<>();
+    	successors = new HashMap<>(); // save memory and insertion time over LinkedHashMap
+    	predecessors = new HashMap<>();
 
     	for (N node : this.nodes.values()) {
     		successors.put(node,new LinkedList<N>());

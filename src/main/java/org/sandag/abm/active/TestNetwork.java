@@ -196,38 +196,41 @@ public class TestNetworkFactory extends AbstractNetworkFactory<Node,Edge<Node>,T
 		final TestNetwork network = networkFactory.createNetwork();
 		System.out.println("done");
 		
-		PathElementEvaluator<Edge<Node>,Traversal<Edge<Node>>> pathElementEvaluator = new PathElementEvaluator<Edge<Node>,Traversal<Edge<Node>>>() {
-			private final Set<Node> centroids = new HashSet<>();
-			{
-				Iterator<Node> centroidIterator = network.centroidIterator();
-				while (centroidIterator.hasNext())
-					centroids.add(centroidIterator.next());
-			}
-			
-			@Override
-			public double evaluate(Traversal<Edge<Node>> traversal) {
-				Edge fromEdge = traversal.getFromEdge();
-				if (centroids.contains(fromEdge.getToNode()))
-					return Double.POSITIVE_INFINITY;
-				return 0;
-			}
-
+		EdgeEvaluator<Edge<Node>> edgeEvaluator = new EdgeEvaluator<Edge<Node>>() {
 			@Override
 			public double evaluate(Edge<Node> edge) {
 				return network.getEdgeCost(edge);
 			}
 		};
+		
+		TraversalEvaluator<Traversal<Edge<Node>>> traversalEvaluator = new TraversalEvaluator<Traversal<Edge<Node>>>() {
+		    private final Set<Node> centroids = new HashSet<>();
+            {
+                Iterator<Node> centroidIterator = network.centroidIterator();
+                while (centroidIterator.hasNext())
+                    centroids.add(centroidIterator.next());
+            }
+            
+            @Override
+            public double evaluate(Traversal<Edge<Node>> traversal) {
+                Edge fromEdge = traversal.getFromEdge();
+                if (centroids.contains(fromEdge.getToNode()))
+                    return Double.POSITIVE_INFINITY;
+                return 0;
+            }
+		};
+        
 		//for (ShortestPath sp : new ShortestPath[] {sp1,sp2,sp3}) {
 //		for (int sptype : new int[] {1,2,3}) {
 		for (int sptype : new int[] {2}) {
 			long time = System.currentTimeMillis();
 			ShortestPath<Node> sp = null;
 			if (sptype == 1)
-				sp = new DijkstraArrayShortestPath<Node>(network,pathElementEvaluator);
+				sp = new DijkstraArrayShortestPath<Node>(network,edgeEvaluator,traversalEvaluator);
 			else if (sptype == 2)
-				sp = new DijkstraOOShortestPath<Node,Edge<Node>,Traversal<Edge<Node>>>(network,pathElementEvaluator);
+				sp = new DijkstraOOShortestPath<Node,Edge<Node>,Traversal<Edge<Node>>>(network,edgeEvaluator,traversalEvaluator);
 			else if (sptype == 3)
-				sp = new DijkstraOOCacheShortestPath<Node,Edge<Node>,Traversal<Edge<Node>>>(network,pathElementEvaluator);
+				sp = new DijkstraOOCacheShortestPath<Node,Edge<Node>,Traversal<Edge<Node>>>(network,edgeEvaluator,traversalEvaluator);
 
 			Set<Node> originNodes = new LinkedHashSet<>();
 			Iterator<Node> centroidIterator = network.centroidIterator();

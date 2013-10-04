@@ -7,8 +7,8 @@ import java.util.Set;
 public class DijkstraOOCacheShortestPath<N extends Node,E extends Edge<N>,T extends Traversal<E>> extends DijkstraOOShortestPath<N,E,T> {
 	private final ThreadLocal<Map<T,Double>> cachedCosts;
 
-	public DijkstraOOCacheShortestPath(Network<N,E,T> network,PathElementEvaluator<E,T> traversalEvaluator) {
-		super(network,traversalEvaluator);
+	public DijkstraOOCacheShortestPath(Network<N,E,T> network,EdgeEvaluator<E> edgeEvaluator, TraversalEvaluator<T> traversalEvaluator) {
+		super(network,edgeEvaluator,traversalEvaluator);
 		cachedCosts = new ThreadLocal<Map<T,Double>>() {
 			protected Map<T,Double> initialValue() {
 				return new HashMap<>();
