@@ -12,11 +12,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.pb.sawdust.util.concurrent.DnCRecursiveTask;
 
-public class ParallelShortestPath<N extends Node> implements ShortestPath<N> {
-	private final ShortestPath<N> sp;
+public class ParallelSingleSourceDijkstra<N extends Node> implements ShortestPathStrategy<N> {
+	private final ShortestPathStrategy<N> sp;
 	private final ParallelMethod method;
 	
-	public ParallelShortestPath(ShortestPath<N> sp, ParallelMethod method) {
+	public ParallelSingleSourceDijkstra(ShortestPathStrategy<N> sp, ParallelMethod method) {
 		this.sp = sp;
 		this.method = method;
 	}
@@ -27,23 +27,23 @@ public class ParallelShortestPath<N extends Node> implements ShortestPath<N> {
 	}
 
 	@Override
-	public ShortestPathResults<N> getShortestPaths(Set<N> originNodes, Set<N> destinationNodes, double maxCost) {
+	public ShortestPathResultSet<N> getShortestPaths(Set<N> originNodes, Set<N> destinationNodes, double maxCost) {
 		switch (method) {
 			case FORK_JOIN : {
 				ShortestPathRecursiveTask task = new ShortestPathRecursiveTask(sp,originNodes,destinationNodes,maxCost);
 				new ForkJoinPool().execute(task);
-				ShortestPathResultsContainer<N> sprc = task.getResult();
+				ModifiableShortestPathResultSet<N> sprc = task.getResult();
 				return sprc;
 			}
 			case QUEUE : {
 				int threadCount = Runtime.getRuntime().availableProcessors();
 				ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-				final Queue<ShortestPathResultsContainer<N>> sprcQueue = new ConcurrentLinkedQueue<>();
+				final Queue<ModifiableShortestPathResultSet<N>> sprcQueue = new ConcurrentLinkedQueue<>();
 				final Queue<N> originNodeQueue = new ConcurrentLinkedQueue<>(originNodes);
-				ThreadLocal<ShortestPathResultsContainer<N>> sprcThreadLocal = new ThreadLocal<ShortestPathResultsContainer<N>>() {
+				ThreadLocal<ModifiableShortestPathResultSet<N>> sprcThreadLocal = new ThreadLocal<ModifiableShortestPathResultSet<N>>() {
 					@Override
-					public ShortestPathResultsContainer<N> initialValue() {
-						ShortestPathResultsContainer<N> sprc = new BasicShortestPathResults<>();
+					public ModifiableShortestPathResultSet<N> initialValue() {
+						ModifiableShortestPathResultSet<N> sprc = new BasicShortestPathResultSet<>();
 						sprcQueue.add(sprc);
 						return sprc;
 					}
@@ -59,8 +59,8 @@ public class ParallelShortestPath<N extends Node> implements ShortestPath<N> {
 				}
 				executor.shutdown();
 				
-				ShortestPathResultsContainer<N> finalContainer = null;
-				for (ShortestPathResultsContainer<N> sprc : sprcQueue)
+				ModifiableShortestPathResultSet<N> finalContainer = null;
+				for (ModifiableShortestPathResultSet<N> sprc : sprcQueue)
 					if (finalContainer == null)
 						finalContainer = sprc;
 					else
@@ -73,20 +73,20 @@ public class ParallelShortestPath<N extends Node> implements ShortestPath<N> {
 	}
 
 	@Override
-	public ShortestPathResults<N> getShortestPaths(Set<N> originNodes, Set<N> destinationNodes) {
+	public ShortestPathResultSet<N> getShortestPaths(Set<N> originNodes, Set<N> destinationNodes) {
 		return getShortestPaths(originNodes,destinationNodes,Double.POSITIVE_INFINITY);
 	}
 	
 	private class QueueMethodTask implements Runnable {
-		private final ShortestPath<N> sp;
+		private final ShortestPathStrategy<N> sp;
 		private final Queue<N> originNodes;
 		private final Set<N> destinationNodes;
 		private final double maxCost;
 		private final AtomicInteger counter;
-		private final ThreadLocal<ShortestPathResultsContainer<N>> spr;
+		private final ThreadLocal<ModifiableShortestPathResultSet<N>> spr;
 		private final CountDownLatch latch;
 		
-		private QueueMethodTask(ShortestPath<N> sp, Queue<N> originNodes, Set<N> destinationNodes, double maxCost, AtomicInteger counter, ThreadLocal<ShortestPathResultsContainer<N>> spr, CountDownLatch latch) {
+		private QueueMethodTask(ShortestPathStrategy<N> sp, Queue<N> originNodes, Set<N> destinationNodes, double maxCost, AtomicInteger counter, ThreadLocal<ModifiableShortestPathResultSet<N>> spr, CountDownLatch latch) {
 			this.sp = sp;
 			this.destinationNodes = destinationNodes;
 			this.originNodes = originNodes;
@@ -108,8 +108,8 @@ public class ParallelShortestPath<N extends Node> implements ShortestPath<N> {
 				}
 				if (origins.size() == 0)
 					break;
-				ShortestPathResults<N> result = sp.getShortestPaths(origins,destinationNodes,maxCost);
-				ShortestPathResultsContainer<N> sprc = spr.get();
+				ShortestPathResultSet<N> result = sp.getShortestPaths(origins,destinationNodes,maxCost);
+				ModifiableShortestPathResultSet<N> sprc = spr.get();
 				for (ShortestPathResult<N> spResult : result.getResults()) 
 					sprc.addResult(spResult);
 				int c = counter.addAndGet(origins.size()); 
@@ -122,14 +122,14 @@ public class ParallelShortestPath<N extends Node> implements ShortestPath<N> {
 	}
 	
 	
-	private class ShortestPathRecursiveTask extends DnCRecursiveTask<ShortestPathResultsContainer<N>> {
+	private class ShortestPathRecursiveTask extends DnCRecursiveTask<ModifiableShortestPathResultSet<N>> {
 		AtomicInteger counter;
-		private final ShortestPath<N> sp;
+		private final ShortestPathStrategy<N> sp;
 		private final Set<N> destinations;
 		private final Node[] origins;
 		private final double maxCost;
 
-		protected ShortestPathRecursiveTask(ShortestPath<N> sp, Set<N> origins, Set<N> destinations, double maxCost) {
+		protected ShortestPathRecursiveTask(ShortestPathStrategy<N> sp, Set<N> origins, Set<N> destinations, double maxCost) {
 			super(0,origins.size());
 			this.sp = sp;
 			this.origins = origins.toArray(new Node[origins.size()]);
@@ -138,8 +138,8 @@ public class ParallelShortestPath<N extends Node> implements ShortestPath<N> {
 			counter = new AtomicInteger(0);
 		}
 
-		protected ShortestPathRecursiveTask(long start, long length, DnCRecursiveTask<ShortestPathResultsContainer<N>> next,
-				                            ShortestPath<N> sp, Node[] origins, Set<N> destinations, double maxCost, AtomicInteger counter) {
+		protected ShortestPathRecursiveTask(long start, long length, DnCRecursiveTask<ModifiableShortestPathResultSet<N>> next,
+				                            ShortestPathStrategy<N> sp, Node[] origins, Set<N> destinations, double maxCost, AtomicInteger counter) {
 			super(start,length,next);
 			this.sp = sp;
 			this.origins = origins;
@@ -150,13 +150,13 @@ public class ParallelShortestPath<N extends Node> implements ShortestPath<N> {
 
 		@Override
 		@SuppressWarnings("unchecked") //origins only hold N, we just can't declare as such because of generics
-		protected ShortestPathResultsContainer<N> computeTask(long start, long length) {
+		protected ModifiableShortestPathResultSet<N> computeTask(long start, long length) {
 			Set<N> originNodes = new HashSet<>();
 			int end = (int) (start + length);
 			for (int n = (int) start; n < end; n++) 
 				originNodes.add((N) origins[n]);
-			ShortestPathResults<N> result = sp.getShortestPaths(originNodes,destinations);
-			ShortestPathResultsContainer<N> spr = new BasicShortestPathResults<>();
+			ShortestPathResultSet<N> result = sp.getShortestPaths(originNodes,destinations);
+			ModifiableShortestPathResultSet<N> spr = new BasicShortestPathResultSet<>();
 			for (ShortestPathResult<N> spResult : result.getResults()) 
 				spr.addResult(spResult);
 			
@@ -172,12 +172,12 @@ public class ParallelShortestPath<N extends Node> implements ShortestPath<N> {
 		}
 
 		@Override
-		protected DnCRecursiveTask<ShortestPathResultsContainer<N>> getNextTask(long start, long length, DnCRecursiveTask<ShortestPathResultsContainer<N>> next) {
+		protected DnCRecursiveTask<ModifiableShortestPathResultSet<N>> getNextTask(long start, long length, DnCRecursiveTask<ModifiableShortestPathResultSet<N>> next) {
 			return new ShortestPathRecursiveTask(start,length,next,sp,origins,destinations,maxCost,counter);
 		}
 
 		@Override
-		protected ShortestPathResultsContainer<N> joinResults(ShortestPathResultsContainer<N> spr1, ShortestPathResultsContainer<N> spr2) {
+		protected ModifiableShortestPathResultSet<N> joinResults(ModifiableShortestPathResultSet<N> spr1, ModifiableShortestPathResultSet<N> spr2) {
 			if (spr1.size() > spr2.size()) {
 				spr1.addAll(spr2);
 				return spr1;

@@ -1,6 +1,6 @@
 package org.sandag.abm.active;
 
-public abstract class AbstractShortestPathResultsContainer<N extends Node> implements ShortestPathResultsContainer<N> {
+public abstract class AbstractShortestPathResultSet<N extends Node> implements ModifiableShortestPathResultSet<N> {
 
 	@Override
 	public void addResult(NodePair<N> od, Path<N> path, double cost) {
@@ -8,7 +8,7 @@ public abstract class AbstractShortestPathResultsContainer<N extends Node> imple
 	}
 
 	@Override
-	public void addAll(ShortestPathResults<N> results) {
+	public void addAll(ShortestPathResultSet<N> results) {
 		for (ShortestPathResult<N> result : results.getResults())
 			addResult(result);
 	}

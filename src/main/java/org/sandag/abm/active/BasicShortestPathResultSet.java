@@ -8,10 +8,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class BasicShortestPathResults<N extends Node> extends AbstractShortestPathResultsContainer<N> {
+public class BasicShortestPathResultSet<N extends Node> extends AbstractShortestPathResultSet<N> {
 	private final Map<NodePair<N>,ShortestPathResult<N>> results;
 	
-	public BasicShortestPathResults() {
+	public BasicShortestPathResultSet() {
 		results = new LinkedHashMap<>(); //iteration order may not matter, but just in case, this is cheap
 	}
 

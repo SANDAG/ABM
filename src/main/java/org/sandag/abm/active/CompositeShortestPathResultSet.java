@@ -10,14 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class CompositeShortestPathResults<N extends Node> implements ShortestPathResults<N> {
-	private final Map<NodePair<N>,ShortestPathResults<N>> spResultsLookup;
+public class CompositeShortestPathResultSet<N extends Node> implements ShortestPathResultSet<N> {
+	private final Map<NodePair<N>,ShortestPathResultSet<N>> spResultsLookup;
 	
-	public CompositeShortestPathResults() {
+	public CompositeShortestPathResultSet() {
 		spResultsLookup = new HashMap<>();
 	}
 	
-	public void addShortestPathResults(ShortestPathResults<N> spResults) {
+	public void addShortestPathResults(ShortestPathResultSet<N> spResults) {
 		for (NodePair<N> nodePair : spResults)
 			if (spResultsLookup.put(nodePair,spResults) != null)
 				throw new IllegalArgumentException("Repeated shortest path results for node pair: (" + 
@@ -42,7 +42,7 @@ public class CompositeShortestPathResults<N extends Node> implements ShortestPat
 	@Override
 	public Collection<ShortestPathResult<N>> getResults() {
 		List<ShortestPathResult<N>> results = new LinkedList<>();
-		for (ShortestPathResults<N> spr : spResultsLookup.values())
+		for (ShortestPathResultSet<N> spr : spResultsLookup.values())
 			results.addAll(spr.getResults());
 		return results;
 	}

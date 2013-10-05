@@ -26,6 +26,16 @@ public class PropertyParser
         return floatList;
     }
     
+    public double[] parseDoublePropertyArray(String property)
+    {
+        List<String> stringList = Arrays.asList(propertyMap.get(property).split("\\s*,\\s*"));
+        double[] array = new double[stringList.size()];
+        for (int i=0; i < stringList.size(); i++) {
+            array[i] = Double.parseDouble(stringList.get(i));
+        }
+        return array;
+    }
+    
     public List<Integer> parseIntPropertyList(String property)
     {
         List<String> stringList = Arrays.asList(propertyMap.get(property).split("\\s*,\\s*"));
