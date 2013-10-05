@@ -6,12 +6,12 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 
-public class DijkstraOOShortestPath<N extends Node,E extends Edge<N>,T extends Traversal<E>> implements ShortestPath<N> {
+public class RepeatedSingleSourceDijkstra<N extends Node,E extends Edge<N>,T extends Traversal<E>> implements ShortestPathStrategy<N> {
 	private final Network<N,E,T> network;
 	private final EdgeEvaluator<E> edgeEvaluator;
 	private final TraversalEvaluator<T> traversalEvaluator;
 	
-	public DijkstraOOShortestPath(Network<N,E,T> network, EdgeEvaluator<E> edgeEvaluator, TraversalEvaluator<T> traversalEvaluator) {
+	public RepeatedSingleSourceDijkstra(Network<N,E,T> network, EdgeEvaluator<E> edgeEvaluator, TraversalEvaluator<T> traversalEvaluator) {
 		this.network = network;
 		this.edgeEvaluator = edgeEvaluator;
 		this.traversalEvaluator = traversalEvaluator;
@@ -34,19 +34,19 @@ public class DijkstraOOShortestPath<N extends Node,E extends Edge<N>,T extends T
 	}
 
 	@Override
-	public ShortestPathResults<N> getShortestPaths(Set<N> originNodes, Set<N> destinationNodes) {
+	public ShortestPathResultSet<N> getShortestPaths(Set<N> originNodes, Set<N> destinationNodes) {
 		return getShortestPaths(originNodes,destinationNodes,Double.POSITIVE_INFINITY);
 	}
 
 	@Override
-	public ShortestPathResults<N> getShortestPaths(Set<N> originNodes, Set<N> destinationNodes, double maxCost) {
-		ShortestPathResultsContainer<N> spResults = new BasicShortestPathResults<>();
+	public ShortestPathResultSet<N> getShortestPaths(Set<N> originNodes, Set<N> destinationNodes, double maxCost) {
+		ModifiableShortestPathResultSet<N> spResults = new BasicShortestPathResultSet<>();
 		for (N originNode : originNodes)
 			spResults.addAll(getShortestPaths(originNode,destinationNodes,maxCost));
 		return spResults;
 	}
 	
-	protected ShortestPathResults<N> getShortestPaths(N originNode, Set<N> destinationNodes, double maxCost) {
+	protected ShortestPathResultSet<N> getShortestPaths(N originNode, Set<N> destinationNodes, double maxCost) {
 		Map<N,Path<N>> paths = new HashMap<>();         //zone node paths
 		Map<N,Double> costs = new HashMap<>();          //zone node costs
 		Map<E,Double> finalCosts = new HashMap<>();     //cost to (and including) edge
@@ -99,7 +99,7 @@ public class DijkstraOOShortestPath<N extends Node,E extends Edge<N>,T extends T
 			}
 		}
 		
-		BasicShortestPathResults<N> spResults = new BasicShortestPathResults<>();
+		BasicShortestPathResultSet<N> spResults = new BasicShortestPathResultSet<>();
 		for (N destinationNode : destinationNodes) {
 			boolean pathDefined = paths.containsKey(destinationNode);
 			Path<N> path = pathDefined ? paths.get(destinationNode) : null;
