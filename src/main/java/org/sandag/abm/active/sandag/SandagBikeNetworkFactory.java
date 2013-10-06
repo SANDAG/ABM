@@ -141,6 +141,7 @@ public class SandagBikeNetworkFactory extends AbstractNetworkFactory<SandagBikeN
         while ( nodeIterator.hasNext() ) {
         	SandagBikeNode n = nodeIterator.next();
             n.centroid = ( n.mgra > 0 ) || ( n.taz > 0 );
+            if ( n.mgra > 0 ) { n.taz = 0; }
         }
     }
 

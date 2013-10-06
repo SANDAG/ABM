@@ -25,7 +25,7 @@ public class Path<N extends Node> implements Iterable<N> {
 	
 	public N getNode(int index) {
 		if (index < 0 || index >= length)
-			throw new IllegalArgumentException("Invalid index for path of length " + length);
+			throw new IllegalArgumentException("Invalid index " + index + " for path of length " + length);
 		return getNodeNoChecks(index+1);
 	}
 	

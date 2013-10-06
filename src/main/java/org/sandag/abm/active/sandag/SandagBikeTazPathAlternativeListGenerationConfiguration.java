@@ -14,10 +14,10 @@ import org.sandag.abm.active.ShortestPathStrategy;
 import org.sandag.abm.active.sandag.SandagBikePathAlternativeListGenerationConfiguration.SandagBikeDistanceEvaluator;
 import org.sandag.abm.active.sandag.SandagBikePathAlternativeListGenerationConfiguration.ZeroTraversalEvaluator;
 
-public abstract class SandagBikeTazPathAlternativeListGenerationConfiguration extends SandagBikePathAlternativeListGenerationConfiguration
+public class SandagBikeTazPathAlternativeListGenerationConfiguration extends SandagBikePathAlternativeListGenerationConfiguration
 {
     
-    private SandagBikeTazPathAlternativeListGenerationConfiguration(Map<String,String> propertyMap, Network<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> network)
+    public SandagBikeTazPathAlternativeListGenerationConfiguration(Map<String,String> propertyMap, Network<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> network)
     {
         super(propertyMap, network);
         this.PROPERTIES_MAXDIST_ZONE = "active.maxdist.taz";
