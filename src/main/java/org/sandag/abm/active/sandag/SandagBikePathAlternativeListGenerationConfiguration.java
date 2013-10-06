@@ -140,12 +140,14 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
             ShortestPathResultSet<SandagBikeNode> resultSet = sps.getShortestPaths(nodes, nodes, Double.parseDouble(propertyMap.get(PROPERTIES_MAXDIST_ZONE)));
             int originZone, destinationZone;
             for (NodePair<SandagBikeNode> odPair : resultSet) {
-                originZone = inverseZonalCentroidMap.get(odPair.getFromNode());
-                destinationZone = inverseZonalCentroidMap.get(odPair.getToNode());
-                if ( nearbyZonalDistanceMap.containsKey(originZone) ) {
-                    nearbyZonalDistanceMap.put(originZone, new HashMap<Integer,Double>() );
+                if ( ( resultSet.getShortestPathResult(odPair).getPath() != null ) && ! ( odPair.getFromNode().equals(odPair.getToNode()) ) ) {
+                    originZone = inverseZonalCentroidMap.get(odPair.getFromNode());
+                    destinationZone = inverseZonalCentroidMap.get(odPair.getToNode());
+                    if ( ! nearbyZonalDistanceMap.containsKey(originZone) ) {
+                        nearbyZonalDistanceMap.put(originZone, new HashMap<Integer,Double>() );
+                    }
+                    nearbyZonalDistanceMap.get(originZone).put(destinationZone,resultSet.getShortestPathResult(odPair).getCost());
                 }
-                nearbyZonalDistanceMap.get(originZone).put(destinationZone,resultSet.getShortestPathResult(odPair).getCost());
             }
         }
         return nearbyZonalDistanceMap;

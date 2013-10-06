@@ -7,10 +7,10 @@ import java.util.Map;
 import java.util.Set;
 import org.sandag.abm.active.Network;
 
-public abstract class SandagBikeMgraPathAlternativeListGenerationConfiguration extends SandagBikePathAlternativeListGenerationConfiguration
+public class SandagBikeMgraPathAlternativeListGenerationConfiguration extends SandagBikePathAlternativeListGenerationConfiguration
 {
     
-    private SandagBikeMgraPathAlternativeListGenerationConfiguration(Map<String,String> propertyMap, Network<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> network)
+    public SandagBikeMgraPathAlternativeListGenerationConfiguration(Map<String,String> propertyMap, Network<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> network)
     {
         super(propertyMap, network);
         this.PROPERTIES_MAXDIST_ZONE = "active.maxdist.mgra";

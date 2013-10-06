@@ -29,7 +29,7 @@ public class PathAlternativeList<N extends Node, E extends Edge<N>>
     
     public void add(Path<N> path)
     {
-        if ( ! path.getNode(0).equals(odPair.getFromNode()) || ! path.getNode(path.getLength()).equals(odPair.getToNode()) ) {
+        if ( ! path.getNode(0).equals(odPair.getFromNode()) || ! path.getNode(path.getLength() - 1).equals(odPair.getToNode()) ) {
             throw new IllegalStateException("OD pair of path does not match that of path alternative list");
         }
         paths.add(path);
