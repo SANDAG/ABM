@@ -35,6 +35,17 @@ public class SandagBikeNetworkFactory extends AbstractNetworkFactory<SandagBikeN
     private static final String PROPERTIES_EDGE_AUTOSPERMITTED_VALUES = "active.edge.autospermitted.values";
     
     private static final double TURN_ANGLE_TOLERANCE = Math.PI / 6;
+    private static final double DISTANCE_CONVERSION_FACTOR = 0.000189;
+    private static final double INACCESSIBLE_COST_COEF = 999.0;
+    
+    private static final String PROPERTIES_COEF_DISTANCE = "active.coef.distance";
+    private static final String PROPERTIES_COEF_DISTCLA1 = "active.coef.distcla1";
+    private static final String PROPERTIES_COEF_DISTCLA2 = "active.coef.distcla2";
+    private static final String PROPERTIES_COEF_DISTCLA3 = "active.coef.distcla3";
+    private static final String PROPERTIES_COEF_DARTNE2  = "active.coef.dartne2";
+    private static final String PROPERTIES_COEF_DWRONGWY = "active.coef.dwrongwy";
+    private static final String PROPERTIES_COEF_GAIN = "active.coef.gain";
+    private static final String PROPERTIES_COEF_TURN = "active.coef.turn";
     
     public SandagBikeNetworkFactory(Map<String,String> propertyMap)
     {
@@ -156,6 +167,17 @@ public class SandagBikeNetworkFactory extends AbstractNetworkFactory<SandagBikeN
             	SandagBikeEdge edge = edgeIterator.next();
                 edge.autosPermitted = propertyParser.isIntValueInPropertyList(apf.getInt(edge),PROPERTIES_EDGE_AUTOSPERMITTED_VALUES);
                 edge.centroidConnector = propertyParser.isIntValueInPropertyList(cf.getInt(edge),PROPERTIES_EDGE_CENTROID_VALUE);
+                edge.distance = edge.distance * (float) DISTANCE_CONVERSION_FACTOR;
+                edge.cost = (double) edge.distance * (
+                                           Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTANCE))
+                                         + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTCLA1)) * ( edge.bikeClass == 1 ? 1 : 0 )
+                                         + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTCLA2)) * ( edge.bikeClass == 2 ? 1 : 0 )
+                                         + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTCLA3)) * ( edge.bikeClass == 3 ? 1 : 0 )
+                                         + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DARTNE2))  * ( edge.bikeClass != 2 ? 1 : 0 ) * ( ( edge.functionalClass < 5 && edge.functionalClass > 0 ) ? 1 : 0 )
+                                         + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DWRONGWY)) * ( edge.bikeClass != 1 ? 1 : 0 ) * ( edge.lanes == 0 ? 1 : 0 )
+                                     )
+                                     + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_GAIN)) * edge.gain
+                                     + INACCESSIBLE_COST_COEF * ( ( edge.functionalClass < 3 && edge.functionalClass > 0 ) ? 1 : 0 );
             }
             
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -171,6 +193,8 @@ public class SandagBikeNetworkFactory extends AbstractNetworkFactory<SandagBikeN
         while ( traversalIterator.hasNext() ) {
         	SandagBikeTraversal t = traversalIterator.next();
             t.turnType = calculateTurnType(t,network);
+            t.thruCentroid = t.getFromEdge().centroidConnector && t.getToEdge().centroidConnector;
+            t.cost = Double.parseDouble(propertyMap.get(PROPERTIES_COEF_TURN)) * ( ( t.turnType != TurnType.NONE ) ? 1 : 0 ) + INACCESSIBLE_COST_COEF * ( t.thruCentroid ? 1 : 0 );
         }
     }
     

@@ -5,9 +5,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.sandag.abm.active.*;
+import java.io.*;
 
 public class PathAlternativeListGenerationApplicationTest
 {
@@ -17,6 +17,8 @@ public class PathAlternativeListGenerationApplicationTest
     Network<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> network;
     PathAlternativeListGenerationConfiguration<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> configuration;
     PathAlternativeListGenerationApplication<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> application;
+    final static String PROPERTIES_OUTPUT_PATH = "active.output.path";
+    final static String PROPERTIES_OUTPUT_LINK = "active.output.link";
     
     @Before
     public void setUp() {
@@ -36,11 +38,25 @@ public class PathAlternativeListGenerationApplicationTest
     @Test
     public void testGenerateAlternativeLists()
     {
+        long time1 = System.currentTimeMillis();
+        Map<NodePair<SandagBikeNode>, PathAlternativeList<SandagBikeNode, SandagBikeEdge>> alternativeLists = application.generateAlternativeLists();
+        long time2 = System.currentTimeMillis();
+        System.out.println("Count of od pairs: " + alternativeLists.size());
+        
         try {
-            Map<NodePair<SandagBikeNode>, PathAlternativeList<SandagBikeNode, SandagBikeEdge>> alternativeLists = application.generateAlternativeLists();
-        } catch (DestinationNotFoundException e) {
+            PathAlternativeListWriter<SandagBikeNode, SandagBikeEdge> writer = new PathAlternativeListWriter<>(propertyMap.get(PROPERTIES_OUTPUT_PATH), propertyMap.get(PROPERTIES_OUTPUT_LINK));
+            writer.writeHeaders();
+            for ( NodePair<SandagBikeNode> odPair : alternativeLists.keySet() ) {
+                if ( odPair.getFromNode().mgra % 1000 == 0 ) {
+                    writer.write(alternativeLists.get(odPair));
+                }
+            }
+            writer.close();
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+        
+        System.out.println("Time to generate (s): " + (time2-time1) / 1000 );
     }
 
 }

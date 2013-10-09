@@ -47,19 +47,21 @@ public class RepeatedSingleSourceDijkstra<N extends Node,E extends Edge<N>,T ext
 	}
 	
 	protected ShortestPathResultSet<N> getShortestPaths(N originNode, Set<N> destinationNodes, double maxCost) {
-		Map<N,Path<N>> paths = new HashMap<>();         //zone node paths
-		Map<N,Double> costs = new HashMap<>();          //zone node costs
+	    
+	    BasicShortestPathResultSet<N> spResults = new BasicShortestPathResultSet<>();
 		Map<E,Double> finalCosts = new HashMap<>();     //cost to (and including) edge
 		
 		PriorityQueue<TraversedEdge> traversalQueue = new PriorityQueue<>();
 		
 		Set<N> targets = new HashSet<>(destinationNodes);
 		Path<N> basePath = new Path<>(originNode);
-		if (targets.contains(originNode)) {
-			targets.remove(originNode);
-			costs.put(originNode,0.0);
-			paths.put(originNode,basePath);
-		}
+		
+		// Don't remove origin node, and then we can force a circle for intrazonal trips
+		//if (targets.contains(originNode)) {
+		//	targets.remove(originNode);
+		//	costs.put(originNode,0.0);
+		//	paths.put(originNode,basePath);
+		//}
 		
 		//initialize traversalQueue and costs
 		for (N successor : network.getSuccessors(originNode)) {
@@ -85,8 +87,7 @@ public class RepeatedSingleSourceDijkstra<N extends Node,E extends Edge<N>,T ext
 			N fromNode = edge.getFromNode();
 			N toNode = edge.getToNode();
 			if (targets.remove(toNode)) {
-				paths.put(toNode,path);
-				costs.put(toNode,cost);
+			    spResults.addResult(new NodePair<N>(originNode,toNode),path,cost);
 			}
 
 			for (N successor : network.getSuccessors(toNode)) {
@@ -99,14 +100,8 @@ public class RepeatedSingleSourceDijkstra<N extends Node,E extends Edge<N>,T ext
 			}
 		}
 		
-		BasicShortestPathResultSet<N> spResults = new BasicShortestPathResultSet<>();
-		for (N destinationNode : destinationNodes) {
-			boolean pathDefined = paths.containsKey(destinationNode);
-			Path<N> path = pathDefined ? paths.get(destinationNode) : null;
-			double cost = pathDefined ? costs.get(destinationNode) : Double.POSITIVE_INFINITY;
-			spResults.addResult(new NodePair<N>(originNode,destinationNode),path,cost);
-		}
-
+		// Not returning null path references and infinite costs for nodes not found for possibility of insufficient memory
+		
 		return spResults;
 	}
 	

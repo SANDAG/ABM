@@ -2,6 +2,7 @@ package org.sandag.abm.active;
 
 
 import java.util.*;
+import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
@@ -15,47 +16,51 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
     Network<N,E,T> network;
     Map<Integer,Map<Integer,Double>> nearbyZonalDistanceMap;
     Map<Integer,Integer> zonalCentroidIdMap;
-    double[] pathSizeDistanceBreaks;
-    double[] pathSizeOversampleTargets;
-    double[] randomizationLowerBounds;
-    double[] randomizationUpperBounds;
-    int maxRandomizationIters;
+    double[] sampleDistanceBreaks;
+    double[] samplePathSizes;
+    double[] sampleMinCounts;
+    double[] sampleMaxCounts;
+    double[] randomizationSpreads;
     boolean randomCostSeeded;
-    EdgeEvaluator<E> pathSizeOverlapEvaluator;
+    EdgeEvaluator<E> edgeLengthEvaluator;
     EdgeEvaluator<E> edgeCostEvaluator;
     TraversalEvaluator<T> traversalCostEvaluator;
     double maxCost;
+    long startTime;
     
-    private static final int ORIGIN_PROGRESS_REPORT_COUNT = 10;
+    private static final int ORIGIN_PROGRESS_REPORT_COUNT = 50;
+    private static final double PATHSIZE_PRECISION_TOLERANCE = 0.001;
     
     public PathAlternativeListGenerationApplication(PathAlternativeListGenerationConfiguration<N,E,T> configuration) {
         this.configuration = configuration;
         this.network = configuration.getNetwork();
-        this.nearbyZonalDistanceMap = configuration.getNearbyZonalDistanceMap();
-        this.zonalCentroidIdMap = configuration.getZonalCentroidIdMap();
-        this.pathSizeDistanceBreaks = configuration.getPathSizeDistanceBreaks();
-        this.pathSizeOversampleTargets = configuration.getPathSizeOversampleTargets();
-        this.randomizationLowerBounds = configuration.getRandomizationLowerBounds();
-        this.randomizationUpperBounds = configuration.getRandomizationUpperBounds();
-        this.maxRandomizationIters = configuration.getMaxRandomizationIters();
+        this.nearbyZonalDistanceMap = Collections.unmodifiableMap(configuration.getNearbyZonalDistanceMap());
+        this.zonalCentroidIdMap = Collections.unmodifiableMap(configuration.getZonalCentroidIdMap());
+        this.sampleDistanceBreaks = configuration.getSampleDistanceBreaks();
+        this.samplePathSizes = configuration.getSamplePathSizes();
+        this.sampleMinCounts = configuration.getSampleMinCounts();
+        this.sampleMaxCounts = configuration.getSampleMaxCounts();
+        this.randomizationSpreads = configuration.getRandomizationSpreads();
         this.randomCostSeeded = configuration.isRandomCostSeeded();
-        this.pathSizeOverlapEvaluator = configuration.getPathSizeOverlapEvaluator();
+        this.edgeLengthEvaluator = configuration.getEdgeLengthEvaluator();
         this.edgeCostEvaluator = configuration.getEdgeCostEvaluator();
         this.traversalCostEvaluator = configuration.getTraversalCostEvaluator();
         this.maxCost = configuration.getMaxCost();
     }
 
-    public Map<NodePair<N>,PathAlternativeList<N,E>> generateAlternativeLists() throws DestinationNotFoundException
+    public Map<NodePair<N>,PathAlternativeList<N,E>> generateAlternativeLists()
     {      
+        System.out.println("Generating path alternative lists...");
+        startTime = System.currentTimeMillis();
         int threadCount = Runtime.getRuntime().availableProcessors();
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
         final Queue<Map<NodePair<N>,PathAlternativeList<N,E>>> alternativeListsQueue = new ConcurrentLinkedQueue<>(); 
         final Queue<Integer> originQueue = new ConcurrentLinkedQueue<>(zonalCentroidIdMap.keySet());
-        final Queue<DestinationNotFoundException> exceptionQueue = new ConcurrentLinkedQueue<>();
+        final ConcurrentHashMap<Integer,List<Integer>> insufficientSamplePairs = new ConcurrentHashMap<>();
         final CountDownLatch latch = new CountDownLatch(threadCount);
         final AtomicInteger counter = new AtomicInteger();
         for (int i = 0; i < threadCount; i++)
-            executor.execute(new GenerationTask(originQueue,alternativeListsQueue,counter,latch,exceptionQueue));
+            executor.execute(new GenerationTask(originQueue,alternativeListsQueue,counter,latch,insufficientSamplePairs));
         try {
             latch.await();
         } catch (InterruptedException e) {
@@ -63,28 +68,42 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
         }
         executor.shutdown();
         
-        while ( exceptionQueue.size() > 0 )
-        {
-            throw exceptionQueue.poll();
+        for (int origin : insufficientSamplePairs.keySet() ) {          
+            String message = "Sample insufficient for origin zone " + origin + " and destination zones ";
+            for (int destination : insufficientSamplePairs.get(origin) ) {
+                message = message + destination + " ";
+            }
+            System.out.println(message);
         }
         
+
         Map<NodePair<N>,PathAlternativeList<N,E>> alternativeLists = new HashMap<>();
         for (Map<NodePair<N>,PathAlternativeList<N,E>> als : alternativeListsQueue) {
+            //System.out.println("Combining alternative lists, count: " + alternativeLists.size());
             alternativeLists.putAll(als);
         }
+        
+        
+        /*
+        for (int o : zonalCentroidIdMap.keySet()) {
+            for (int d : nearbyZonalDistanceMap.keySet()) {
+                NodePair<N> pair = new NodePair<>(network.getNode(zonalCentroidIdMap.get(o)),network.getNode(zonalCentroidIdMap.get(d)));
+                if ( ! alternativeLists.containsKey(pair) ) {
+                    System.out.println("Alternative lists do not include nearby zone pair origin " + o + " and destination " + d);
+                }
+            }
+        }
+        */
         
         return alternativeLists;
     }
     
     private int findFirstIndexGreaterThan(double value, double[] array)
     {
-        int index = 0;
-        double current = 0.0;
-        while ( current <= value && index < (array.length - 1) ) {
-            index += 1;
-            current = array[index];
+        for (int i=0; i < array.length; i++) {
+            if ( array[i] >= value ) { return i; }
         }
-        return index;
+        return array.length;
     }
     
     private class GenerationTask implements Runnable
@@ -93,16 +112,16 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
         private final AtomicInteger counter;
         private final CountDownLatch latch;
 
-        private final Queue<DestinationNotFoundException> exceptionQueue;
+        private final ConcurrentHashMap<Integer,List<Integer>> insufficientSamplePairs;
         private final Queue<Map<NodePair<N>,PathAlternativeList<N,E>>> alternativeListsQueue;
         
-        private GenerationTask(Queue<Integer> originQueue, Queue<Map<NodePair<N>,PathAlternativeList<N,E>>> alternativeListsQueue, AtomicInteger counter, CountDownLatch latch, Queue<DestinationNotFoundException> exceptionQueue)
+        private GenerationTask(Queue<Integer> originQueue, Queue<Map<NodePair<N>,PathAlternativeList<N,E>>> alternativeListsQueue, AtomicInteger counter, CountDownLatch latch, ConcurrentHashMap<Integer,List<Integer>> insufficientSamplePairs)
         {
             this.originQueue = originQueue;
             this.counter = counter;
             this.latch = latch;
             this.alternativeListsQueue = alternativeListsQueue;
-            this.exceptionQueue = exceptionQueue;
+            this.insufficientSamplePairs = insufficientSamplePairs;
         }
         
         @Override
@@ -113,11 +132,13 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
             Map<N,Integer> destinationZoneMap = new HashMap<>();
             Map<N,Double> destinationDistanceMap = new HashMap<>();
             Map<N,Double> destinationPathSizeMap = new HashMap<>();
+            Map<N,Double> destinationMinCountMap = new HashMap<>();
+            Map<N,Double> destinationMaxCountMap = new HashMap<>();
             HashMap<NodePair<N>, PathAlternativeList<N,E>> alternativeLists = new HashMap<>();
             EdgeEvaluator<E> randomizedEdgeCost;
-            TraversalEvaluator<T> randomizedTraversalCost;
             ShortestPathStrategy<N> shortestPathStrategy;
             ShortestPathResultSet<N> result;
+            int distanceIndex;
             
             while ( originQueue.size() > 0 ) {
                 int origin = originQueue.poll();
@@ -129,7 +150,11 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
                 destinationZoneMap.clear();
                 destinationDistanceMap.clear();
                 destinationPathSizeMap.clear();
+                destinationMinCountMap.clear();
+                destinationMaxCountMap.clear();
                 N destinationNode;
+                
+                PathAlternativeList<N,E> alternativeList;
                 
                 if ( nearbyZonalDistanceMap.containsKey(origin) ) {
                     for (int destination : nearbyZonalDistanceMap.get(origin).keySet()) {
@@ -137,115 +162,86 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
                         destinationNodes.add(destinationNode);
                         destinationDistanceMap.put(destinationNode, nearbyZonalDistanceMap.get(origin).get(destination));
                         destinationZoneMap.put(destinationNode, destination);
-                        destinationPathSizeMap.put(destinationNode, pathSizeOversampleTargets[findFirstIndexGreaterThan(destinationDistanceMap.get(destinationNode), pathSizeDistanceBreaks)]);
+                        distanceIndex = findFirstIndexGreaterThan(destinationDistanceMap.get(destinationNode), sampleDistanceBreaks);
+                        destinationPathSizeMap.put(destinationNode, samplePathSizes[distanceIndex]);
+                        destinationMinCountMap.put(destinationNode, sampleMinCounts[distanceIndex]);
+                        destinationMaxCountMap.put(destinationNode, sampleMaxCounts[distanceIndex]);
                     }
                 }
                 
                 int iterCount = 0;
-                while( iterCount < maxRandomizationIters && destinationNodes.size() > 0 ) {
+                while( destinationNodes.size() > 0 ) {
                     
-                    double lower = randomizationLowerBounds[Math.min(iterCount,randomizationLowerBounds.length-1)];
-                    double upper = randomizationUpperBounds[Math.min(iterCount,randomizationUpperBounds.length-1)];
+                    double spread = randomizationSpreads[Math.min(iterCount,randomizationSpreads.length-1)];
    
                     if ( randomCostSeeded ) { 
-                        randomizedEdgeCost = new RandomizedEdgeCost(edgeCostEvaluator,lower, upper, Objects.hash(origin,iterCount));
-                        randomizedTraversalCost = new RandomizedTraversalCost(traversalCostEvaluator, lower, upper, Objects.hash(origin,iterCount) + 1);
+                        randomizedEdgeCost = new RandomizedEdgeCost(edgeCostEvaluator, edgeLengthEvaluator, spread, Objects.hash(origin,iterCount));
                     } else {
-                        randomizedEdgeCost = new RandomizedEdgeCost(edgeCostEvaluator,lower, upper);
-                        randomizedTraversalCost = new RandomizedTraversalCost(traversalCostEvaluator, lower, upper);
+                        randomizedEdgeCost = new RandomizedEdgeCost(edgeCostEvaluator, edgeLengthEvaluator, spread);
                     }
                         
-                    shortestPathStrategy = new RepeatedSingleSourceDijkstra<N,E,T>(network, randomizedEdgeCost, randomizedTraversalCost);                    
+                    shortestPathStrategy = new RepeatedSingleSourceDijkstra<N,E,T>(network, randomizedEdgeCost, traversalCostEvaluator);                    
                     result = shortestPathStrategy.getShortestPaths(singleOriginNode,destinationNodes,maxCost);
                     
                     for (NodePair<N> odPair : result) {
-                        if ( ! alternativeLists.containsKey(odPair) ) { alternativeLists.put(odPair,new PathAlternativeList<N,E>(odPair, network, pathSizeOverlapEvaluator)); }
-                        alternativeLists.get(odPair).add(result.getShortestPathResult(odPair).getPath());
-                        if ( alternativeLists.get(odPair).getSizeMeasureTotal() >= destinationPathSizeMap.get(odPair.getToNode()) ) {
+                        if ( ! alternativeLists.containsKey(odPair) ) { alternativeLists.put(odPair,new PathAlternativeList<N,E>(odPair, network, edgeLengthEvaluator)); }
+                        alternativeList = alternativeLists.get(odPair);
+                        alternativeList.add(result.getShortestPathResult(odPair).getPath());
+                        destinationNode = odPair.getToNode();
+                        
+                        if ( alternativeList.getSizeMeasureTotal() >= destinationPathSizeMap.get(destinationNode) - PATHSIZE_PRECISION_TOLERANCE && alternativeList.getCount() >= destinationMinCountMap.get(destinationNode) ) {
                             destinationNodes.remove(odPair.getToNode());
-                            alternativeLists.get(odPair).clearPathSizeCalculator();
+                            alternativeList.clearPathSizeCalculator();                            
+                        } else if ( alternativeList.getCount() >= destinationMaxCountMap.get(destinationNode) ) {
+                            destinationNodes.remove(odPair.getToNode());
+                            alternativeList.clearPathSizeCalculator();
+                            if ( ! insufficientSamplePairs.containsKey(origin) ) { insufficientSamplePairs.put( origin, new ArrayList<Integer>() ); }
+                            insufficientSamplePairs.get(origin).add(destinationZoneMap.get(destinationNode));       
                         }
                     }
                     
-                    alternativeListsQueue.add(alternativeLists);
-                    
                     iterCount++;
                 }
-                
-                if ( destinationNodes.size() > 0 ) {
-                    String message = "Total path sizes of sample insufficient for origin zone " + origin + "and destination zones ";
-                    for (N node : destinationNodes) {
-                        message = message + destinationZoneMap.get(node).toString() + " ";
-                    }
-                    exceptionQueue.add(new DestinationNotFoundException(message));
-                }
-                
+                              
                 int c = counter.addAndGet(1); 
-                if ( ( c % ORIGIN_PROGRESS_REPORT_COUNT ) == 0) { System.out.println("   done with " + c + " origins"); }
+                if ( ( c % ORIGIN_PROGRESS_REPORT_COUNT ) == 0) { System.out.println("   done with " + c + " origins, run time: " + ( System.currentTimeMillis() - startTime) / 1000 + " sec."); }
             }
+            alternativeListsQueue.add(alternativeLists);
             latch.countDown();
         }  
-    }
- 
+    } 
 
     private class RandomizedEdgeCost implements EdgeEvaluator<E>
     {
         private EdgeEvaluator<E> edgeCostEvaluator;
+        private EdgeEvaluator<E> edgeLengthEvaluator;
         private Random random;
-        private double lower, upper;
+        private double spread;
         
-        public RandomizedEdgeCost(EdgeEvaluator<E> edgeCostEvaluator, double lower, double upper)
+        public RandomizedEdgeCost(EdgeEvaluator<E> edgeCostEvaluator, EdgeEvaluator<E> edgeLengthEvaluator, double spread)
         {
             this.edgeCostEvaluator = edgeCostEvaluator;
-            this.lower = lower;
-            this.upper = upper;
+            this.edgeLengthEvaluator = edgeLengthEvaluator;
+            this.spread = spread;
             random = new Random();
         }
         
-        public RandomizedEdgeCost(EdgeEvaluator<E> edgeCostEvaluator, double lower, double upper, long seed)
+        public RandomizedEdgeCost(EdgeEvaluator<E> edgeCostEvaluator, EdgeEvaluator<E> edgeLengthEvaluator, double spread, long seed)
         {
             this.edgeCostEvaluator = edgeCostEvaluator;
-            this.lower = lower;
-            this.upper = upper;
+            this.edgeLengthEvaluator = edgeLengthEvaluator;
+            this.spread = spread;
             random = new Random(seed);
         }
 
         @Override
         public double evaluate(E edge)
         {
-            return edgeCostEvaluator.evaluate(edge) * ( lower + random.nextDouble() * (upper - lower) );
+            return edgeCostEvaluator.evaluate(edge) + edgeLengthEvaluator.evaluate(edge) * random.nextDouble() * spread;
         }
         
     }
     
-    private class RandomizedTraversalCost implements TraversalEvaluator<T>
-    {
-        private TraversalEvaluator<T> traversalCostEvaluator;
-        private Random random;
-        private double lower, upper;
-        
-        public RandomizedTraversalCost(TraversalEvaluator<T> traversalCostEvaluator, double lower, double upper)
-        {
-            this.traversalCostEvaluator = traversalCostEvaluator;
-            this.lower = lower;
-            this.upper = upper;
-            random = new Random();
-        }
-        
-        public RandomizedTraversalCost(TraversalEvaluator<T> traversalCostEvaluator, double lower, double upper, long seed)
-        {
-            this.traversalCostEvaluator = traversalCostEvaluator;
-            this.lower = lower;
-            this.upper = upper;
-            random = new Random(seed);
-        }
-
-        @Override
-        public double evaluate(T traversal)
-        {
-            return traversalCostEvaluator.evaluate(traversal) * ( lower + random.nextDouble() * (upper - lower) );
-        }
-        
-    }
 }
+
 

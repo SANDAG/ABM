@@ -18,12 +18,13 @@ public class SandagBikeMgraPathAlternativeListGenerationConfiguration extends Sa
     
     protected void createZonalCentroidIdMap()
     {
+        System.out.println("Creating MGRA Zonal Centroid Id Map...");
         zonalCentroidIdMap = new HashMap<Integer,Integer>();
         Iterator<SandagBikeNode> nodeIterator = network.nodeIterator();
         SandagBikeNode n;
         while ( nodeIterator.hasNext() ) {
             n = nodeIterator.next();
-            if ( n.taz > 0 ) { zonalCentroidIdMap.put((int) n.mgra, n.getId()); }
+            if ( n.mgra > 0 ) { zonalCentroidIdMap.put((int) n.mgra, n.getId()); }
         }
     }
 

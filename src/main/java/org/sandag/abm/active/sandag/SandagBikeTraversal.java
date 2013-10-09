@@ -6,6 +6,7 @@ public class SandagBikeTraversal extends SimpleTraversal<SandagBikeEdge>
 {
 	public volatile TurnType turnType;
 	public volatile double cost;
+	public volatile boolean thruCentroid;
 	
     public SandagBikeTraversal(SandagBikeEdge fromEdge, SandagBikeEdge toEdge) {
 		super(fromEdge, toEdge);
