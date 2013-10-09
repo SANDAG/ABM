@@ -143,7 +143,6 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
             while ( originQueue.size() > 0 ) {
                 int origin = originQueue.poll();
                 
-                alternativeLists.clear();
                 singleOriginNode.clear();
                 singleOriginNode.add(network.getNode(zonalCentroidIdMap.get(origin)));
                 destinationNodes.clear();
