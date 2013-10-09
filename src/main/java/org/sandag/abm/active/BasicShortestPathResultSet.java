@@ -1,18 +1,13 @@
 package org.sandag.abm.active;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class BasicShortestPathResultSet<N extends Node> extends AbstractShortestPathResultSet<N> {
 	private final Map<NodePair<N>,ShortestPathResult<N>> results;
 	
 	public BasicShortestPathResultSet() {
-		results = new LinkedHashMap<>(); //iteration order may not matter, but just in case, this is cheap
+		results = new HashMap<>(); //iteration order may not matter, but just in case, this is cheap
 	}
 
 	@Override

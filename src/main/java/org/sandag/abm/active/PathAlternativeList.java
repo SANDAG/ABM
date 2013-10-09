@@ -2,6 +2,7 @@ package org.sandag.abm.active;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -25,12 +26,16 @@ public class PathAlternativeList<N extends Node, E extends Edge<N>>
         this.network = network;
         this.lengthEvaluator = lengthEvaluator;
         this.sizeCalculator = new PathSizeCalculator(this);
+        this.sizeMeasureTotal = 0.0;
     }
     
     public void add(Path<N> path)
     {
         if ( ! path.getNode(0).equals(odPair.getFromNode()) || ! path.getNode(path.getLength() - 1).equals(odPair.getToNode()) ) {
             throw new IllegalStateException("OD pair of path does not match that of path alternative list");
+        }
+        for (Path<N> otherPath : paths) {
+            if ( path.equals(otherPath) ) { return; }
         }
         paths.add(path);
         sizeMeasures.add(0.0);
@@ -57,7 +62,7 @@ public class PathAlternativeList<N extends Node, E extends Edge<N>>
         return sizeMeasureTotal;
     }
 
-    public int size()
+    public int getCount()
     {
         return paths.size();
     }
@@ -90,14 +95,16 @@ public class PathAlternativeList<N extends Node, E extends Edge<N>>
             Map<E,List<Integer>> incidenceMap;
             List<Double> lengths;
             PathAlternativeList<N,E> alternatives;
+            int nUsingEdge;
+            double edgeLength;
             
             private PathSizeCalculator(PathAlternativeList<N,E> alternatives)
             {
                 incidenceMap = new HashMap<E,List<Integer>>();
                 lengths = new ArrayList<Double>();
                 this.alternatives = alternatives;
-                if ( alternatives.size() > 0 ) {
-                    for (int i=0; i < alternatives.size(); i++) {
+                if ( alternatives.getCount() > 0 ) {
+                    for (int i=0; i < alternatives.getCount(); i++) {
                         alternatives.setSizeMeasure(i, 0.0);
                         update();
                     }
@@ -110,8 +117,6 @@ public class PathAlternativeList<N extends Node, E extends Edge<N>>
                 N previous = null;
                 E edge;
                 int index = lengths.size() - 1;
-                double edgeLength;
-                int nUsingEdge;
                 double decrement;
                 for (N node : alternatives.get(index) ) {
                     if ( previous != null ) {
@@ -123,7 +128,6 @@ public class PathAlternativeList<N extends Node, E extends Edge<N>>
                         edgeLength = lengthEvaluator.evaluate(edge);
                         lengths.set(index, lengths.get(index) + edgeLength);
                         nUsingEdge = incidenceMap.get(edge).size();
-                        lengths.set(index, lengths.get(index) + edgeLength );
                         alternatives.setSizeMeasure(index, alternatives.getSizeMeasures().get(index) + edgeLength / nUsingEdge );
                         for (Integer i : incidenceMap.get(edge).subList(0,nUsingEdge-1) ) {
                             decrement = edgeLength / lengths.get(i) / ( nUsingEdge ) / ( nUsingEdge - 1 );
@@ -136,4 +140,5 @@ public class PathAlternativeList<N extends Node, E extends Edge<N>>
             }
                 
     }
+
 }

@@ -15,6 +15,7 @@ import com.pb.sawdust.util.concurrent.DnCRecursiveTask;
 public class ParallelSingleSourceDijkstra<N extends Node> implements ShortestPathStrategy<N> {
 	private final ShortestPathStrategy<N> sp;
 	private final ParallelMethod method;
+	private final int SEGMENT_SIZE = 50;
 	
 	public ParallelSingleSourceDijkstra(ShortestPathStrategy<N> sp, ParallelMethod method) {
 		this.sp = sp;
@@ -98,7 +99,7 @@ public class ParallelSingleSourceDijkstra<N extends Node> implements ShortestPat
 
 		@Override
 		public void run() {
-			int segmentSize = 5;
+			int segmentSize = SEGMENT_SIZE;
 			final Set<N> origins = new HashSet<>();
 			while (originNodes.size() > 0) {
 				while ((originNodes.size() > 0) && (origins.size() < segmentSize)) {
