@@ -23,6 +23,8 @@
 				<crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
 				<crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
 				<PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
+				<workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
+				<schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
          <profile>
@@ -36,6 +38,8 @@
 				<crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
 				<crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
 				<PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
+				<workShadowPricing.iteration>ShadowPricingOutput_work_20.csv</workShadowPricing.iteration>
+				<schoolShadowPricing.iteration>ShadowPricingOutput_school_20.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
@@ -49,6 +53,8 @@
 				<crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>    
 				<crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
 				<PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs_2020.csv</PopulationSynthesizer.OccupCodes> 
+				<workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
+				<schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
@@ -62,6 +68,8 @@
 				<crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2035.csv</crossborder.dc.soa.alts.file>    
 				<crossBorder.dc.uec.file>CrossBorderDestinationChoice2035.xls</crossBorder.dc.uec.file>
 				<PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs_2035.csv</PopulationSynthesizer.OccupCodes> 
+				<workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
+				<schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
@@ -75,6 +83,8 @@
 				<crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2050.csv</crossborder.dc.soa.alts.file>    
 				<crossBorder.dc.uec.file>CrossBorderDestinationChoice2050.xls</crossBorder.dc.uec.file>
 				<PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs_2050.csv</PopulationSynthesizer.OccupCodes> 
+				<workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
+				<schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
@@ -112,6 +122,7 @@
                 <java.32.port>1190</java.32.port>
                 <MAPANDRUN>e:\remoteExecution\mapAndRun.bat</MAPANDRUN>
                 <workpath>d:\\projects\\sandag\\series13</workpath>
+                <TRANSCAD_PATH>C:\Progra~2\TransCAD50</TRANSCAD_PATH>
             </properties>
         </profile>
         <profile>
@@ -133,6 +144,7 @@
                 <java.32.port>1190</java.32.port>
                 <MAPANDRUN>e:\remoteExecution\mapAndRun.bat</MAPANDRUN>
                 <workpath>d:\\projects\\sandag\\series13</workpath>
+                <TRANSCAD_PATH>C:\Progra~2\TransCAD</TRANSCAD_PATH>
             </properties>
         </profile>
         <profile>
@@ -152,6 +164,7 @@
                 <java.32.port>1190</java.32.port>
                 <MAPANDRUN>c:\remoteExecution\mapAndRun.bat</MAPANDRUN>
                 <workpath>c:\\projects\\sandag\\series13</workpath>
+                <TRANSCAD_PATH>C:\Progra~2\TransCAD</TRANSCAD_PATH>
             </properties>
         </profile>        
         <profile>
@@ -316,7 +329,28 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>copy-bin-resources</id>
+                        <id>copy-bat-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${project.build.directory}/${project.name}/${project.version}/bin</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>**/*.bat</include>
+                                        <include>*.cmd</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-exe-resources</id>
                         <phase>package</phase>
                         <goals>
                             <goal>copy-resources</goal>
@@ -326,16 +360,15 @@
                             <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>
-                                    <filtering>true</filtering>
+                                    <filtering>false</filtering>
                                     <includes>
-                                        <include>**/*.bat</include>
-                                        <include>*.cmd</include>
                                         <include>*.exe</include>
                                     </includes>
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>                 
+                    </execution>
+  
                     <execution>
                         <id>copy-inputtruck-resources</id>
                         <phase>package</phase>

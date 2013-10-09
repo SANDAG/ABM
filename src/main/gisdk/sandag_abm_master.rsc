@@ -41,11 +41,11 @@ Macro "Run SANDAG ABM"
    SetReportFileName(path+"\\logFiles\\tcreport.xml")
    
    // copy initial trip tables from input to output folder
-   CopyFile(inputDir\\trip_EA.mtx, outputDir\\trip_EA.mtx)
-   CopyFile(inputDir\\trip_AM.mtx, outputDir\\trip_AM.mtx)
-   CopyFile(inputDir\\trip_MD.mtx, outputDir\\trip_MD.mtx)
-   CopyFile(inputDir\\trip_PM.mtx, outputDir\\trip_PM.mtx)
-   CopyFile(inputDir\\trip_EV.mtx, outputDir\\trip_EV.mtx)
+   CopyFile(inputDir+"\\trip_EA.mtx", outputDir+"\\trip_EA.mtx")
+   CopyFile(inputDir+"\\trip_AM.mtx", outputDir+"\\trip_AM.mtx")
+   CopyFile(inputDir+"\\trip_MD.mtx", outputDir+"\\trip_MD.mtx")
+   CopyFile(inputDir+"\\trip_PM.mtx", outputDir+"\\trip_PM.mtx")
+   CopyFile(inputDir+"\\trip_EV.mtx", outputDir+"\\trip_EV.mtx")
       
    RunMacro("parameters")
 	
@@ -130,7 +130,7 @@ Macro "Run SANDAG ABM"
       if !ok then goto quit
 
       //Run Truck Model
-      properties = "sandag_abm.properties"
+      properties = "\\conf\\sandag_abm.properties"
       RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - truck model"})
       ok = RunMacro("truck model",properties, iteration)
       if !ok then goto quit   
