@@ -1,8 +1,8 @@
 package org.sandag.abm.active;
 
 
+import java.io.IOException;
 import java.util.*;
-import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
@@ -27,6 +27,7 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
     TraversalEvaluator<T> traversalCostEvaluator;
     double maxCost;
     long startTime;
+    String outputDir;
     
     private static final int ORIGIN_PROGRESS_REPORT_COUNT = 50;
     private static final double PATHSIZE_PRECISION_TOLERANCE = 0.001;
@@ -40,17 +41,19 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
         this.samplePathSizes = configuration.getSamplePathSizes();
         this.sampleMinCounts = configuration.getSampleMinCounts();
         this.sampleMaxCounts = configuration.getSampleMaxCounts();
-        this.randomizationSpreads = configuration.getRandomizationSpreads();
+        this.randomizationSpreads = configuration.getRandomizationScales();
         this.randomCostSeeded = configuration.isRandomCostSeeded();
         this.edgeLengthEvaluator = configuration.getEdgeLengthEvaluator();
         this.edgeCostEvaluator = configuration.getEdgeCostEvaluator();
         this.traversalCostEvaluator = configuration.getTraversalCostEvaluator();
         this.maxCost = configuration.getMaxCost();
+        this.outputDir = configuration.getOutputDirectory();
     }
 
     public Map<NodePair<N>,PathAlternativeList<N,E>> generateAlternativeLists()
     {      
         System.out.println("Generating path alternative lists...");
+        System.out.println("Writing to " + outputDir);
         startTime = System.currentTimeMillis();
         int threadCount = Runtime.getRuntime().availableProcessors();
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
@@ -75,25 +78,22 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
             }
             System.out.println(message);
         }
+        System.out.println("Total insufficient sample pairs: " + insufficientSamplePairs.size());
         
-
         Map<NodePair<N>,PathAlternativeList<N,E>> alternativeLists = new HashMap<>();
         for (Map<NodePair<N>,PathAlternativeList<N,E>> als : alternativeListsQueue) {
-            //System.out.println("Combining alternative lists, count: " + alternativeLists.size());
+            System.out.println("Combining alternative lists, count: " + alternativeLists.size());
             alternativeLists.putAll(als);
         }
         
-        
-        /*
-        for (int o : zonalCentroidIdMap.keySet()) {
-            for (int d : nearbyZonalDistanceMap.keySet()) {
+        for (int o : nearbyZonalDistanceMap.keySet()) {
+            for (int d : nearbyZonalDistanceMap.get(o).keySet()) {
                 NodePair<N> pair = new NodePair<>(network.getNode(zonalCentroidIdMap.get(o)),network.getNode(zonalCentroidIdMap.get(d)));
                 if ( ! alternativeLists.containsKey(pair) ) {
                     System.out.println("Alternative lists do not include nearby zone pair origin " + o + " and destination " + d);
                 }
             }
         }
-        */
         
         return alternativeLists;
     }
@@ -140,6 +140,8 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
             ShortestPathResultSet<N> result;
             int distanceIndex;
             
+            PathAlternativeListWriter<N,E> writer;
+            
             while ( originQueue.size() > 0 ) {
                 int origin = originQueue.poll();
                 
@@ -168,7 +170,7 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
                     }
                 }
                 
-                int iterCount = 0;
+                int iterCount = 1;
                 while( destinationNodes.size() > 0 ) {
                     
                     double spread = randomizationSpreads[Math.min(iterCount,randomizationSpreads.length-1)];
@@ -188,10 +190,10 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
                         alternativeList.add(result.getShortestPathResult(odPair).getPath());
                         destinationNode = odPair.getToNode();
                         
-                        if ( alternativeList.getSizeMeasureTotal() >= destinationPathSizeMap.get(destinationNode) - PATHSIZE_PRECISION_TOLERANCE && alternativeList.getCount() >= destinationMinCountMap.get(destinationNode) ) {
+                        if ( alternativeList.getSizeMeasureTotal() >= destinationPathSizeMap.get(destinationNode) - PATHSIZE_PRECISION_TOLERANCE && iterCount >= destinationMinCountMap.get(destinationNode) ) {
                             destinationNodes.remove(odPair.getToNode());
-                            alternativeList.clearPathSizeCalculator();                            
-                        } else if ( alternativeList.getCount() >= destinationMaxCountMap.get(destinationNode) ) {
+                            alternativeList.clearPathSizeCalculator();
+                        } else if ( iterCount >= destinationMaxCountMap.get(destinationNode) ) {
                             destinationNodes.remove(odPair.getToNode());
                             alternativeList.clearPathSizeCalculator();
                             if ( ! insufficientSamplePairs.containsKey(origin) ) { insufficientSamplePairs.put( origin, new ArrayList<Integer>() ); }
@@ -201,6 +203,20 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
                     
                     iterCount++;
                 }
+                
+                
+                /*
+                try {
+                    writer = new PathAlternativeListWriter<N,E>(outputDir + "paths_" + origin + ".csv", outputDir + "links_" + origin + ".csv");
+                    writer.writeHeaders();
+                    for (PathAlternativeList<N,E> list : alternativeLists.values()) {
+                        writer.write(list);
+                    }
+                    writer.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+                */
                               
                 int c = counter.addAndGet(1); 
                 if ( ( c % ORIGIN_PROGRESS_REPORT_COUNT ) == 0) { System.out.println("   done with " + c + " origins, run time: " + ( System.currentTimeMillis() - startTime) / 1000 + " sec."); }

@@ -1,5 +1,8 @@
 package org.sandag.abm.active.sandag;
 import java.util.*;
+import java.io.FileWriter;
+import java.io.File;
+import java.io.IOException;
 import org.sandag.abm.active.*;
 import static org.junit.Assert.*;
 import org.junit.*;
@@ -22,6 +25,18 @@ public class SandagBikeNetworkFactoryTest
         }
         factory = new SandagBikeNetworkFactory(propertyMap);
         network = factory.createNetwork();
+        try {
+            FileWriter writer =  new FileWriter(new File(propertyMap.get("active.sample.output") + "edges.csv"));
+            Iterator<SandagBikeEdge> it = network.edgeIterator();
+            while ( it.hasNext() ) {
+                SandagBikeEdge e = it.next();
+                writer.write(e.getFromNode().getId() + "," + e.getToNode().getId() + "," + e.cost + "\n");
+            }
+            writer.flush();
+            writer.close();   
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
     
     @Test
@@ -157,7 +172,7 @@ public class SandagBikeNetworkFactoryTest
         assertEquals(6264311, node.x, 5);
         
         SandagBikeEdge edge = network.getEdge(network.getNode(755011), network.getNode(753841));
-        assertEquals(580.8311, edge.distance, 0.001);
+        assertEquals(0.11, edge.distance, 0.01);
         edge = network.getEdge(network.getNode(746401), network.getNode(749381));
         assertEquals(5, edge.gain);
         edge = network.getEdge(network.getNode(749381), network.getNode(746401));
@@ -212,5 +227,9 @@ public class SandagBikeNetworkFactoryTest
         start = 743031; thru = 741901; end =742821;
         traversal = network.getTraversal( network.getEdge(network.getNode(start), network.getNode(thru)), network.getEdge(network.getNode(thru), network.getNode(end)));
         assertEquals(TurnType.LEFT, traversal.turnType);
+        
+        start = 752521; thru = 750321; end =747871;
+        traversal = network.getTraversal( network.getEdge(network.getNode(start), network.getNode(thru)), network.getEdge(network.getNode(thru), network.getNode(end)));
+        assertEquals(TurnType.NONE, traversal.turnType);
     }
 }

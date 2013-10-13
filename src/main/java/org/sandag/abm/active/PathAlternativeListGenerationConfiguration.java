@@ -9,7 +9,7 @@ public interface PathAlternativeListGenerationConfiguration<N extends Node, E ex
     public EdgeEvaluator<E> getEdgeCostEvaluator();
     public TraversalEvaluator<T> getTraversalCostEvaluator();
     public double getMaxCost();
-    public double[] getRandomizationSpreads();
+    public double[] getRandomizationScales();
     public double[] getSampleDistanceBreaks();
     public double[] getSamplePathSizes();
     public double[] getSampleMinCounts();
@@ -17,4 +17,5 @@ public interface PathAlternativeListGenerationConfiguration<N extends Node, E ex
     public boolean isRandomCostSeeded();
     public Map<Integer,Map<Integer,Double>> getNearbyZonalDistanceMap();
     public Map<Integer,Integer> getZonalCentroidIdMap(); 
+    public String getOutputDirectory();
 }
