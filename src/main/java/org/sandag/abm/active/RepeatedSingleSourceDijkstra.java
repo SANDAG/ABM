@@ -67,11 +67,17 @@ public class RepeatedSingleSourceDijkstra<N extends Node,E extends Edge<N>,T ext
 		for (N successor : network.getSuccessors(originNode)) {
 			E edge = network.getEdge(originNode,successor);
 			double edgeCost = edgeEvaluator.evaluate(edge);
+			if (edgeCost < 0) {
+			    throw new RuntimeException("Negative weight found for edge with fromNode " + edge.getFromNode().getId() + " and toNode " + edge.getToNode().getId() ); 
+			}
+			
 			if (edgeCost < maxCost) {
 				TraversedEdge traversedEdge = new TraversedEdge(edge,edgeCost,basePath.extendPath(successor));
 				traversalQueue.add(traversedEdge);
 			}
 		}
+		
+		double traversalCost;
 		
 		//dijkstra
 		while (!traversalQueue.isEmpty() && !targets.isEmpty()) {
@@ -94,7 +100,11 @@ public class RepeatedSingleSourceDijkstra<N extends Node,E extends Edge<N>,T ext
 				if (successor.equals(fromNode))
 					continue; //no u-turns will be allowed, so don't pollute heap
 				T traversal = network.getTraversal(traversedEdge.edge,network.getEdge(toNode,successor));
-				double traversalCost = cost + evaluateTraversalCost(traversal);
+				traversalCost = evaluateTraversalCost(traversal);
+				if (traversalCost < 0) {
+	                throw new RuntimeException("Negative weight found for traversal with start node " + traversal.getFromEdge().getFromNode().getId() + ", thru node " + traversal.getFromEdge().getToNode().getId() + ", and end node " + traversal.getToEdge().getToNode().getId() ); 
+	            }
+				traversalCost += cost;
 				if (traversalCost < maxCost) 
 					traversalQueue.add(new TraversedEdge(traversal.getToEdge(),traversalCost,path.extendPath(successor)));
 			}

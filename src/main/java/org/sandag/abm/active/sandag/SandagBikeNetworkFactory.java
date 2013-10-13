@@ -173,7 +173,7 @@ public class SandagBikeNetworkFactory extends AbstractNetworkFactory<SandagBikeN
                                          + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTCLA1)) * ( edge.bikeClass == 1 ? 1 : 0 )
                                          + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTCLA2)) * ( edge.bikeClass == 2 ? 1 : 0 )
                                          + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTCLA3)) * ( edge.bikeClass == 3 ? 1 : 0 )
-                                         + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DARTNE2))  * ( edge.bikeClass != 2 ? 1 : 0 ) * ( ( edge.functionalClass < 5 && edge.functionalClass > 0 ) ? 1 : 0 )
+                                         + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DARTNE2))  * ( edge.bikeClass != 2 && edge.bikeClass != 1 ? 1 : 0 ) * ( ( edge.functionalClass < 5 && edge.functionalClass > 0 ) ? 1 : 0 )
                                          + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DWRONGWY)) * ( edge.bikeClass != 1 ? 1 : 0 ) * ( edge.lanes == 0 ? 1 : 0 )
                                      )
                                      + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_GAIN)) * edge.gain

@@ -8,12 +8,13 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
     protected Map<String,String> propertyMap;
     protected PropertyParser propertyParser;
     protected final String PROPERTIES_SAMPLE_MAXCOST = "active.sample.maxcost";
-    protected final String PROPERTIES_SAMPLE_RANDOM_SPREADS = "active.sample.random.spreads";
+    protected final String PROPERTIES_SAMPLE_RANDOM_SCALES = "active.sample.random.scales";
     protected final String PROPERTIES_SAMPLE_RANDOM_SEEDED = "active.pathsize.random.seeded";
     protected final String PROPERTIES_SAMPLE_DISTANCE_BREAKS = "active.sample.distance.breaks";
     protected final String PROPERTIES_SAMPLE_PATHSIZES = "active.sample.pathsizes";
     protected final String PROPERTIES_SAMPLE_COUNT_MIN = "active.sample.count.min";
     protected final String PROPERTIES_SAMPLE_COUNT_MAX = "active.sample.count.max";
+    protected final String PROPERTIES_SAMPLE_OUTPUT = "active.sample.output";
     
     protected String PROPERTIES_MAXDIST_ZONE;
     
@@ -36,9 +37,19 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
         return network;
     }
     
+    public String getOutputDirectory()
+    {
+        return propertyMap.get(PROPERTIES_SAMPLE_OUTPUT);
+    }
+    
     static class SandagBikeDistanceEvaluator implements EdgeEvaluator<SandagBikeEdge>
     {            
         public double evaluate(SandagBikeEdge edge) { return edge.distance; }
+    }
+    
+    static class SandagBikeAccessibleDistanceEvaluator implements EdgeEvaluator<SandagBikeEdge>
+    {            
+        public double evaluate(SandagBikeEdge edge) { return edge.distance + (edge.cost > 998 ? 999 : 0); }
     }
     
     static class ZeroTraversalEvaluator implements TraversalEvaluator<SandagBikeTraversal>
@@ -81,9 +92,9 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
     }
 
     @Override
-    public double[] getRandomizationSpreads()
+    public double[] getRandomizationScales()
     {
-        return propertyParser.parseDoublePropertyArray(PROPERTIES_SAMPLE_RANDOM_SPREADS);
+        return propertyParser.parseDoublePropertyArray(PROPERTIES_SAMPLE_RANDOM_SCALES);
     }
 
     @Override
@@ -121,7 +132,7 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
     {
         if ( nearbyZonalDistanceMap == null ) {
             nearbyZonalDistanceMap = new HashMap<>();
-            ShortestPathStrategy<SandagBikeNode> sps = new ParallelSingleSourceDijkstra<SandagBikeNode>(new RepeatedSingleSourceDijkstra<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal>(network, new SandagBikeDistanceEvaluator(), new ZeroTraversalEvaluator()), ParallelSingleSourceDijkstra.ParallelMethod.QUEUE);
+            ShortestPathStrategy<SandagBikeNode> sps = new ParallelSingleSourceDijkstra<SandagBikeNode>(new RepeatedSingleSourceDijkstra<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal>(network, new SandagBikeAccessibleDistanceEvaluator(), new ZeroTraversalEvaluator()), ParallelSingleSourceDijkstra.ParallelMethod.QUEUE);
             if ( zonalCentroidIdMap == null ) {
                 createZonalCentroidIdMap();
             }
