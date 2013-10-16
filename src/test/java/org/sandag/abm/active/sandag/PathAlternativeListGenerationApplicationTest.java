@@ -28,7 +28,7 @@ public class PathAlternativeListGenerationApplicationTest
         }
         factory = new SandagBikeNetworkFactory(propertyMap);
         network = factory.createNetwork();
-        configuration = new SandagBikeMgraPathAlternativeListGenerationConfiguration(propertyMap, network);
+        configuration = new SandagBikeTazPathAlternativeListGenerationConfiguration(propertyMap, network);
         application =  new PathAlternativeListGenerationApplication<>(configuration);
     }
 
@@ -36,7 +36,7 @@ public class PathAlternativeListGenerationApplicationTest
     public void testGenerateAlternativeLists()
     {
         long time1 = System.currentTimeMillis();
-        Map<NodePair<SandagBikeNode>, PathAlternativeList<SandagBikeNode,SandagBikeEdge>> alternativeLists = application.generateAlternativeLists();
+        application.generateAlternativeLists();
         long time2 = System.currentTimeMillis();
         
         System.out.println("Time to generate (s): " + (time2-time1) / 1000 );
@@ -46,6 +46,7 @@ public class PathAlternativeListGenerationApplicationTest
         
         List<Integer> traceOrigins = parser.parseIntPropertyList("active.trace.origins");
         
+        /*
         for (Integer origin : traceOrigins) {
             
             try {
@@ -67,6 +68,8 @@ public class PathAlternativeListGenerationApplicationTest
             }
             
         }
+        */
+        
     }
 
 }
