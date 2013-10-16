@@ -15,6 +15,7 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
     protected final String PROPERTIES_SAMPLE_COUNT_MIN = "active.sample.count.min";
     protected final String PROPERTIES_SAMPLE_COUNT_MAX = "active.sample.count.max";
     protected final String PROPERTIES_SAMPLE_OUTPUT = "active.sample.output";
+    protected final String PROPERTIES_TRACE_ORIGINS = "active.trace.origins";
     
     protected String PROPERTIES_MAXDIST_ZONE;
     
@@ -29,6 +30,11 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
         this.nearbyZonalDistanceMap = null;
         this.zonalCentroidIdMap = null;
         this.network = network;
+    }
+    
+    public Set<Integer> getTraceOrigins()
+    {
+        return new HashSet<>(propertyParser.parseIntPropertyList(PROPERTIES_TRACE_ORIGINS));
     }
     
     @Override

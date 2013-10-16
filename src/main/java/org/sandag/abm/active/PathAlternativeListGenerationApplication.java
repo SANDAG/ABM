@@ -1,6 +1,5 @@
 package org.sandag.abm.active;
 
-
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,6 +27,7 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
     double maxCost;
     long startTime;
     String outputDir;
+    Set<Integer> traceOrigins;
     
     private static final int ORIGIN_PROGRESS_REPORT_COUNT = 50;
     private static final double PATHSIZE_PRECISION_TOLERANCE = 0.001;
@@ -48,22 +48,22 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
         this.traversalCostEvaluator = configuration.getTraversalCostEvaluator();
         this.maxCost = configuration.getMaxCost();
         this.outputDir = configuration.getOutputDirectory();
+        this.traceOrigins = configuration.getTraceOrigins();
     }
 
-    public Map<NodePair<N>,PathAlternativeList<N,E>> generateAlternativeLists()
+    public void generateAlternativeLists()
     {      
         System.out.println("Generating path alternative lists...");
         System.out.println("Writing to " + outputDir);
         startTime = System.currentTimeMillis();
         int threadCount = Runtime.getRuntime().availableProcessors();
-        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-        final Queue<Map<NodePair<N>,PathAlternativeList<N,E>>> alternativeListsQueue = new ConcurrentLinkedQueue<>(); 
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount); 
         final Queue<Integer> originQueue = new ConcurrentLinkedQueue<>(zonalCentroidIdMap.keySet());
         final ConcurrentHashMap<Integer,List<Integer>> insufficientSamplePairs = new ConcurrentHashMap<>();
         final CountDownLatch latch = new CountDownLatch(threadCount);
         final AtomicInteger counter = new AtomicInteger();
         for (int i = 0; i < threadCount; i++)
-            executor.execute(new GenerationTask(originQueue,alternativeListsQueue,counter,latch,insufficientSamplePairs));
+            executor.execute(new GenerationTask(originQueue,counter,latch,insufficientSamplePairs));
         try {
             latch.await();
         } catch (InterruptedException e) {
@@ -71,6 +71,7 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
         }
         executor.shutdown();
         
+        /*
         for (int origin : insufficientSamplePairs.keySet() ) {          
             String message = "Sample insufficient for origin zone " + origin + " and destination zones ";
             for (int destination : insufficientSamplePairs.get(origin) ) {
@@ -78,24 +79,14 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
             }
             System.out.println(message);
         }
+        */
+        
+        int totalPairs = 0;
+        for (int o : nearbyZonalDistanceMap.keySet() ) {
+            totalPairs += nearbyZonalDistanceMap.get(o).size();
+        }
+        System.out.println("Total OD pairs: " + totalPairs);
         System.out.println("Total insufficient sample pairs: " + insufficientSamplePairs.size());
-        
-        Map<NodePair<N>,PathAlternativeList<N,E>> alternativeLists = new HashMap<>();
-        for (Map<NodePair<N>,PathAlternativeList<N,E>> als : alternativeListsQueue) {
-            System.out.println("Combining alternative lists, count: " + alternativeLists.size());
-            alternativeLists.putAll(als);
-        }
-        
-        for (int o : nearbyZonalDistanceMap.keySet()) {
-            for (int d : nearbyZonalDistanceMap.get(o).keySet()) {
-                NodePair<N> pair = new NodePair<>(network.getNode(zonalCentroidIdMap.get(o)),network.getNode(zonalCentroidIdMap.get(d)));
-                if ( ! alternativeLists.containsKey(pair) ) {
-                    System.out.println("Alternative lists do not include nearby zone pair origin " + o + " and destination " + d);
-                }
-            }
-        }
-        
-        return alternativeLists;
     }
     
     private int findFirstIndexGreaterThan(double value, double[] array)
@@ -113,14 +104,12 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
         private final CountDownLatch latch;
 
         private final ConcurrentHashMap<Integer,List<Integer>> insufficientSamplePairs;
-        private final Queue<Map<NodePair<N>,PathAlternativeList<N,E>>> alternativeListsQueue;
         
-        private GenerationTask(Queue<Integer> originQueue, Queue<Map<NodePair<N>,PathAlternativeList<N,E>>> alternativeListsQueue, AtomicInteger counter, CountDownLatch latch, ConcurrentHashMap<Integer,List<Integer>> insufficientSamplePairs)
+        private GenerationTask(Queue<Integer> originQueue, AtomicInteger counter, CountDownLatch latch, ConcurrentHashMap<Integer,List<Integer>> insufficientSamplePairs)
         {
             this.originQueue = originQueue;
             this.counter = counter;
             this.latch = latch;
-            this.alternativeListsQueue = alternativeListsQueue;
             this.insufficientSamplePairs = insufficientSamplePairs;
         }
         
@@ -145,6 +134,7 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
             while ( originQueue.size() > 0 ) {
                 int origin = originQueue.poll();
                 
+                alternativeLists.clear();
                 singleOriginNode.clear();
                 singleOriginNode.add(network.getNode(zonalCentroidIdMap.get(origin)));
                 destinationNodes.clear();
@@ -204,24 +194,25 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
                     iterCount++;
                 }
                 
-                
-                /*
-                try {
-                    writer = new PathAlternativeListWriter<N,E>(outputDir + "paths_" + origin + ".csv", outputDir + "links_" + origin + ".csv");
-                    writer.writeHeaders();
-                    for (PathAlternativeList<N,E> list : alternativeLists.values()) {
-                        writer.write(list);
+                if ( traceOrigins.contains(origin) ) {
+                    try {
+                        writer = new PathAlternativeListWriter<N,E>(outputDir + "paths_" + origin + ".csv", outputDir + "links_" + origin + ".csv");
+                        writer.writeHeaders();
+                        for (PathAlternativeList<N,E> list : alternativeLists.values()) {
+                            writer.write(list);
+                        }
+                        writer.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e.getMessage());
                     }
-                    writer.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e.getMessage());
                 }
-                */
-                              
+                
                 int c = counter.addAndGet(1); 
-                if ( ( c % ORIGIN_PROGRESS_REPORT_COUNT ) == 0) { System.out.println("   done with " + c + " origins, run time: " + ( System.currentTimeMillis() - startTime) / 1000 + " sec."); }
+                if ( ( c % ORIGIN_PROGRESS_REPORT_COUNT ) == 0) {
+                    System.out.println("   done with " + c + " origins, run time: " + ( System.currentTimeMillis() - startTime) / 1000 + " sec.");
+                }
             }
-            alternativeListsQueue.add(alternativeLists);
+
             latch.countDown();
         }  
     } 
