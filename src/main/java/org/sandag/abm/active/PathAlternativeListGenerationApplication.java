@@ -51,10 +51,11 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
         this.traceOrigins = configuration.getTraceOrigins();
     }
 
-    public void generateAlternativeLists()
+    public Map<NodePair<N>,PathAlternativeList<N,E>> generateAlternativeLists()
     {      
         System.out.println("Generating path alternative lists...");
         System.out.println("Writing to " + outputDir);
+        Map<NodePair<N>,PathAlternativeList<N,E>> alternativeLists = new ConcurrentHashMap<>();
         startTime = System.currentTimeMillis();
         int threadCount = Runtime.getRuntime().availableProcessors();
         ExecutorService executor = Executors.newFixedThreadPool(threadCount); 
@@ -63,7 +64,7 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
         final CountDownLatch latch = new CountDownLatch(threadCount);
         final AtomicInteger counter = new AtomicInteger();
         for (int i = 0; i < threadCount; i++)
-            executor.execute(new GenerationTask(originQueue,counter,latch,insufficientSamplePairs));
+            executor.execute(new GenerationTask(originQueue,counter,latch,alternativeLists,insufficientSamplePairs));
         try {
             latch.await();
         } catch (InterruptedException e) {
@@ -87,6 +88,8 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
         }
         System.out.println("Total OD pairs: " + totalPairs);
         System.out.println("Total insufficient sample pairs: " + insufficientSamplePairs.size());
+        
+        return alternativeLists;
     }
     
     private int findFirstIndexGreaterThan(double value, double[] array)
@@ -104,13 +107,15 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
         private final CountDownLatch latch;
 
         private final ConcurrentHashMap<Integer,List<Integer>> insufficientSamplePairs;
+        private final Map<NodePair<N>,PathAlternativeList<N,E>> alternativeLists;
         
-        private GenerationTask(Queue<Integer> originQueue, AtomicInteger counter, CountDownLatch latch, ConcurrentHashMap<Integer,List<Integer>> insufficientSamplePairs)
+        private GenerationTask(Queue<Integer> originQueue, AtomicInteger counter, CountDownLatch latch, Map<NodePair<N>,PathAlternativeList<N,E>> alternativeLists, ConcurrentHashMap<Integer,List<Integer>> insufficientSamplePairs)
         {
             this.originQueue = originQueue;
             this.counter = counter;
             this.latch = latch;
             this.insufficientSamplePairs = insufficientSamplePairs;
+            this.alternativeLists = alternativeLists;
         }
         
         @Override
@@ -211,6 +216,7 @@ public class PathAlternativeListGenerationApplication<N extends Node, E extends 
                 if ( ( c % ORIGIN_PROGRESS_REPORT_COUNT ) == 0) {
                     System.out.println("   done with " + c + " origins, run time: " + ( System.currentTimeMillis() - startTime) / 1000 + " sec.");
                 }
+                this.alternativeLists.putAll(alternativeLists);
             }
 
             latch.countDown();
