@@ -29,6 +29,10 @@ public class PathAlternativeList<N extends Node, E extends Edge<N>>
         this.sizeMeasureTotal = 0.0;
     }
     
+    public Network<N,E,?> getNetwork() {
+        return network;
+    }
+    
     public void add(Path<N> path)
     {
         if ( ! path.getNode(0).equals(odPair.getFromNode()) || ! path.getNode(path.getLength() - 1).equals(odPair.getToNode()) ) {
