@@ -1,4 +1,4 @@
-package org.sandag.abm.active;
+package org.sandag.abm.active.sandag;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,21 +8,20 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-
 import org.apache.log4j.Logger;
-import org.sandag.abm.active.sandag.SandagBikeEdge;
-import org.sandag.abm.active.sandag.SandagBikeNetworkFactory;
-import org.sandag.abm.active.sandag.SandagBikeNode;
-import org.sandag.abm.active.sandag.SandagBikeTazPathAlternativeListGenerationConfiguration;
-import org.sandag.abm.active.sandag.SandagBikeTraversal;
+import org.sandag.abm.active.Network;
+import org.sandag.abm.active.NodePair;
+import org.sandag.abm.active.PathAlternativeList;
+import org.sandag.abm.active.PathAlternativeListGenerationApplication;
+import org.sandag.abm.active.PathAlternativeListGenerationConfiguration;
+import org.sandag.abm.active.PathAlternativeListWriter;
 import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.Person;
 import org.sandag.abm.ctramp.Tour;
-
 import com.pb.common.newmodel.ChoiceModelApplication;
 
 //note this class is not thread safe! - use a ThreadLocal or something to isolate it amongst threads
-public class PathChoiceModel {
+public class SandagBikePathChoiceModel {
 	public static final String PATH_CHOICE_MODEL_UEC_SPREADSHEET_PROPERTY = "path.choice.uec.spreadsheet";
 	public static final String PATH_CHOICE_MODEL_UEC_MODEL_SHEET_PROPERTY = "path.choice.uec.model.sheet";
 	public static final String PATH_CHOICE_MODEL_UEC_DATA_SHEET_PROPERTY = "path.choice.uec.data.sheet";
@@ -32,15 +31,15 @@ public class PathChoiceModel {
 	public static final String PATH_CHOICE_ALTS_FILE_PROPERTY = "path.alts.file";
 	public static final String PATH_CHOICE_ALTS_LINK_FILE_PROPERTY = "path.alts.link.file";
 	
-	private static final Logger logger = Logger.getLogger(PathChoiceModel.class);
+	private static final Logger logger = Logger.getLogger(SandagBikePathChoiceModel.class);
 	
 	private final ThreadLocal<ChoiceModelApplication> model;
-	private final ThreadLocal<PathChoiceDmu> dmu;
+	private final ThreadLocal<SandagBikePathChoiceDmu> dmu;
 	private final int maxPathCount;
 	private final ThreadLocal<boolean[]> pathAltsAvailable;
 	private final ThreadLocal<int[]> pathAltsSample;
 	
-	public PathChoiceModel(final Map<String,String> propertyMap) {
+	public SandagBikePathChoiceModel(final Map<String,String> propertyMap) {
 		final String uecSpreadsheet = propertyMap.get(PATH_CHOICE_MODEL_UEC_SPREADSHEET_PROPERTY);
 		final int modelSheet = Integer.parseInt(propertyMap.get(PATH_CHOICE_MODEL_UEC_MODEL_SHEET_PROPERTY));
 		final int dataSheet = Integer.parseInt(propertyMap.get(PATH_CHOICE_MODEL_UEC_DATA_SHEET_PROPERTY));
@@ -53,10 +52,10 @@ public class PathChoiceModel {
 				return map;
 			}
 		};
-		dmu = new ThreadLocal<PathChoiceDmu>() {
+		dmu = new ThreadLocal<SandagBikePathChoiceDmu>() {
 			@Override
-			protected PathChoiceDmu initialValue() {
-				return new PathChoiceDmu();
+			protected SandagBikePathChoiceDmu initialValue() {
+				return new SandagBikePathChoiceDmu();
 			}
 		};
 		model = new ThreadLocal<ChoiceModelApplication>() {
@@ -97,7 +96,7 @@ public class PathChoiceModel {
 	}
 	
 
-	public double[] getPathProbabilities(Person person, PathAlternatives paths, boolean inboundTrip, Tour tour, boolean debug) {
+	public double[] getPathProbabilities(Person person, SandagBikePathAlternatives paths, boolean inboundTrip, Tour tour, boolean debug) {
 		applyPathChoiceModel(person,paths,inboundTrip,tour);
         double[] probabilities = Arrays.copyOf(model.get().getProbabilities(),paths.getPathCount());
         if (debug)
@@ -106,13 +105,13 @@ public class PathChoiceModel {
 		
 	}
 	
-	public double getPathLogsums(Person person, PathAlternatives paths, boolean inboundTrip, Tour tour) {
+	public double getPathLogsums(Person person, SandagBikePathAlternatives paths, boolean inboundTrip, Tour tour) {
 		applyPathChoiceModel(person,paths,inboundTrip,tour);
 		return model.get().getLogsum();
 	}
 
-    private void applyPathChoiceModel(Person person, PathAlternatives paths, boolean inboundTrip, Tour tour) {
-    	PathChoiceDmu dmu = this.dmu.get();
+    private void applyPathChoiceModel(Person person, SandagBikePathAlternatives paths, boolean inboundTrip, Tour tour) {
+    	SandagBikePathChoiceDmu dmu = this.dmu.get();
     	dmu.setPersonIsFemale(person.getPersonIsFemale() == 1);
     	dmu.setTourPurpose(tour.getTourPrimaryPurposeIndex());
     	dmu.setIsInboundTrip(inboundTrip);
@@ -131,7 +130,7 @@ public class PathChoiceModel {
         model.get().computeUtilities(dmu,dmu.getDmuIndexValues(),pathAltsAvailable,pathAltsSample);
     }
     
-    private void debugPathChoiceModel(Person person, PathAlternatives paths, boolean inboundTrip, Tour tour, double[] probabilities) {
+    private void debugPathChoiceModel(Person person, SandagBikePathAlternatives paths, boolean inboundTrip, Tour tour, double[] probabilities) {
     	//want: person id, tour id, inbound trip, path count, path probabilities 
     	logger.info(String.format("debug of path choice model for person id %s, tour id %s, inbound trip: %s, path alternative count: %s",
     			                  person.getPersonId(),tour.getTourId(),inboundTrip,paths.getPathCount()));
@@ -163,8 +162,8 @@ public class PathChoiceModel {
         
         NodePair<SandagBikeNode> np = pathAlternatives.keySet().iterator().next(); //just pick "first" od pair
         
-        String pathAltFile = PathChoiceModel.getPathAltsFile(propertyMap);
-        String pathAltLinksFile = PathChoiceModel.getPathAltsLinkFile(propertyMap);
+        String pathAltFile = SandagBikePathChoiceModel.getPathAltsFile(propertyMap);
+        String pathAltLinksFile = SandagBikePathChoiceModel.getPathAltsLinkFile(propertyMap);
         try (PathAlternativeListWriter<SandagBikeNode,SandagBikeEdge> writer = new PathAlternativeListWriter<>(pathAltFile,pathAltLinksFile)) {
         	writer.writeHeaders();
         	writer.write(pathAlternatives.get(np));
@@ -172,12 +171,12 @@ public class PathChoiceModel {
 			throw new RuntimeException(e);
 		}
         
-        EvaluationPathAlternatives<SandagBikeNode,SandagBikeEdge> epa = new EvaluationPathAlternatives<>(pathAlternatives.get(np));
+        SandagBikePathAlternatives epa = new SandagBikePathAlternatives(pathAlternatives.get(np));
         Person person = new Person(null,1,new SandagModelStructure());
         person.setPersGender(2);
         Tour tour = new Tour(person,1,1);
         
-        PathChoiceModel pcModel = new PathChoiceModel((HashMap<String,String>) propertyMap);
+        SandagBikePathChoiceModel pcModel = new SandagBikePathChoiceModel((HashMap<String,String>) propertyMap);
         System.out.println(pcModel.getPathLogsums(person,epa,true,tour));
         System.out.println(Arrays.toString(pcModel.getPathProbabilities(person,epa,true,tour,true)));
         

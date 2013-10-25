@@ -1,21 +1,19 @@
-package org.sandag.abm.active;
+package org.sandag.abm.active.sandag;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.DestChoiceTwoStageSoaTazDistanceUtilityDMU;
 import org.sandag.abm.ctramp.Person;
 import org.sandag.abm.ctramp.StopLocationDMU;
 import org.sandag.abm.ctramp.Tour;
-
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 
-public class PathChoiceDmu implements VariableTable,Serializable {
+public class SandagBikePathChoiceDmu implements VariableTable,Serializable {
 	
-	private final transient Logger logger = Logger.getLogger(PathChoiceDmu.class);
+	private final transient Logger logger = Logger.getLogger(SandagBikePathChoiceDmu.class);
 
     protected final Map<String, Integer> methodIndexMap;
     private final IndexValues dmuIndex;
@@ -23,10 +21,10 @@ public class PathChoiceDmu implements VariableTable,Serializable {
     private int personIsFemale;
     private int isInboundTrip;
     private int tourPurpose;
-    private PathAlternatives paths;
+    private SandagBikePathAlternatives paths;
     
     
-    public PathChoiceDmu() {
+    public SandagBikePathChoiceDmu() {
         methodIndexMap = new HashMap<>();
         dmuIndex = new IndexValues();
         setupMethodIndexMap();
@@ -60,11 +58,11 @@ public class PathChoiceDmu implements VariableTable,Serializable {
     	this.tourPurpose = tourPurpose;
     }
     
-    public void setPathAlternatives(PathAlternatives paths) {
+    public void setPathAlternatives(SandagBikePathAlternatives paths) {
     	this.paths = paths;
     }
     
-    public PathAlternatives getPathAlternatives() {
+    public SandagBikePathAlternatives getPathAlternatives() {
     	return paths;
     }
     
