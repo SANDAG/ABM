@@ -44,7 +44,6 @@
     </appender>
 -->
 
-
     <appender name="DEBUG-FILE" class="org.apache.log4j.FileAppender">
         <param name="File" value="./logFiles/event-debug.log"/>
         <param name="Append" value="false"/>
@@ -55,7 +54,7 @@
 
 
     <appender name="UWSL-FILE" class="org.apache.log4j.FileAppender">
-        <param name="File" value="../testOutputs/logFiles/event-uwsl-converge.log"/>
+        <param name="File" value="./logFiles/event-uwsl-converge.log"/>
         <param name="Append" value="false"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
