@@ -54,31 +54,31 @@ rem Run locally
 %JAVA_64_PATH%\bin\java -showversion -server -Xms30000m -Xmx30000m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% -Djppf.config=jppf-clientDistributed.properties org.sandag.abm.application.SandagTourBasedModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% -sampleSeed 1 -luAcc true
 
 rem Build trip tables
-%JAVA_64_PATH%\bin\java -server -Xms10000m -Xmx10000m -Djava.library.path=%TRANSCAD_PATH% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.application.SandagTripTables %PROPERTIES_NAME%  -iteration %ITERATION% -sampleRate %SAMPLERATE% 
+%JAVA_64_PATH%\bin\java -server -Xms30000m -Xmx30000m -Djava.library.path=%TRANSCAD_PATH% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.application.SandagTripTables %PROPERTIES_NAME%  -iteration %ITERATION% -sampleRate %SAMPLERATE% 
 
 rem Airport model
-%JAVA_64_PATH%\bin\java -server -Xms10000m -Xmx10000m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.airport.AirportModel %PROPERTIES_NAME%  
+%JAVA_64_PATH%\bin\java -server -Xms30000m -Xmx30000m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.airport.AirportModel %PROPERTIES_NAME%  
 
 rem Build airport model trip tables
-%JAVA_64_PATH%\bin\java -server -Xms10000m -Xmx10000m -Djava.library.path=%TRANSCAD_PATH% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.airport.AirportTripTables %PROPERTIES_NAME% 
+%JAVA_64_PATH%\bin\java -server -Xms30000m -Xmx30000m -Djava.library.path=%TRANSCAD_PATH% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.airport.AirportTripTables %PROPERTIES_NAME% 
 
 rem Cross-border model (25% sample)
-%JAVA_64_PATH%\bin\java -server -Xms20000m -Xmx20000m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.crossborder.CrossBorderModel %PROPERTIES_NAME% -sampleRate 0.25  
+%JAVA_64_PATH%\bin\java -server -Xms30000m -Xmx30000m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.crossborder.CrossBorderModel %PROPERTIES_NAME% -sampleRate 0.25  
 
 rem Build cross-border model trip tables
-%JAVA_64_PATH%\bin\java -server -Xms10000m -Xmx10000m -Djava.library.path=%TRANSCAD_PATH% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.crossborder.CrossBorderTripTables %PROPERTIES_NAME% -sampleRate 0.25
+%JAVA_64_PATH%\bin\java -server -Xms30000m -Xmx30000m -Djava.library.path=%TRANSCAD_PATH% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.crossborder.CrossBorderTripTables %PROPERTIES_NAME% -sampleRate 0.25
 
 rem Visitor model
-%JAVA_64_PATH%\bin\java -server -Xms20000m -Xmx20000m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.visitor.VisitorModel %PROPERTIES_NAME% -sampleRate %SAMPLERATE%  
+%JAVA_64_PATH%\bin\java -server -Xms30000m -Xmx30000m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.visitor.VisitorModel %PROPERTIES_NAME% -sampleRate %SAMPLERATE%  
 
 rem Build visitor model trip tables
-%JAVA_64_PATH%\bin\java -server -Xms10000m -Xmx10000m -Djava.library.path=%TRANSCAD_PATH% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.visitor.VisitorTripTables %PROPERTIES_NAME% -sampleRate %SAMPLERATE%
+%JAVA_64_PATH%\bin\java -server -Xms30000m -Xmx30000m -Djava.library.path=%TRANSCAD_PATH% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.visitor.VisitorTripTables %PROPERTIES_NAME% -sampleRate %SAMPLERATE%
 
 rem Internal-external model
-%JAVA_64_PATH%\bin\java -server -Xms12000m -Xmx12000m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.internalexternal.InternalExternalModel %PROPERTIES_NAME% -iteration %ITERATION%  
+%JAVA_64_PATH%\bin\java -server -Xms30000m -Xmx30000m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.internalexternal.InternalExternalModel %PROPERTIES_NAME% -iteration %ITERATION%  
 
 rem Build internal-external model trip tables
-%JAVA_64_PATH%\bin\java -server -Xms10000m -Xmx10000m -Djava.library.path=%TRANSCAD_PATH% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.internalexternal.InternalExternalTripTables %PROPERTIES_NAME% -sampleRate %SAMPLERATE%
+%JAVA_64_PATH%\bin\java -server -Xms30000m -Xmx30000m -Djava.library.path=%TRANSCAD_PATH% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.internalexternal.InternalExternalTripTables %PROPERTIES_NAME% -sampleRate %SAMPLERATE%
 
 rem kill java tasks
 taskkill /F /IM java.exe
