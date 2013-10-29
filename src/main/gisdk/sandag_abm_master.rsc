@@ -63,12 +63,6 @@ Macro "Run SANDAG ABM"
    ok = RunMacro("TCB Run Macro", 1, "update headways",{})
    if !ok then goto quit
 
-   // Create trip tables for first assignment from 4-step model: Note, if this macro isn't run, then
-   // copy base tables to outputs directory 
-
-   //RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - run create trip tables from 4-step"})
-   //ok = RunMacro("TCB Run Macro", 1, "Create TOD Tables From 4Step Model",{}) 
-   //if !ok then goto quit
 
    //Looping
    for iteration = 1 to max_iterations do        
@@ -141,12 +135,6 @@ Macro "Run SANDAG ABM"
       if !ok then goto quit
 
    end
-
- 
-      //Construct trip tables
-      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Create Auto Tables"})
-      ok = RunMacro("TCB Run Macro", 1, "Create Auto Tables",{}) 
-      if !ok then goto quit
 
   // Run final highway assignment
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - hwy assignment"})
