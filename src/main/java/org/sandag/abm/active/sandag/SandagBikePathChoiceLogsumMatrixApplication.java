@@ -1,5 +1,6 @@
 package org.sandag.abm.active.sandag;
 
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.ResourceBundle;
 
 import org.sandag.abm.active.AbstractPathChoiceLogsumMatrixApplication;
 import org.sandag.abm.active.Network;
+import org.sandag.abm.active.NodePair;
 import org.sandag.abm.active.PathAlternativeList;
 import org.sandag.abm.active.PathAlternativeListGenerationConfiguration;
 import org.sandag.abm.application.SandagModelStructure;
@@ -81,7 +83,9 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
         configuration = new SandagBikeTazPathAlternativeListGenerationConfiguration(propertyMap, network);
         application = new SandagBikePathChoiceLogsumMatrixApplication(configuration,propertyMap);
         
-        application.calculateMarketSegmentLogsums();
+        Map<NodePair<SandagBikeNode>,double[]> logsums = application.calculateMarketSegmentLogsums();
+        for (NodePair<SandagBikeNode> od : logsums.keySet()) 
+        	System.out.println(od + " : " + Arrays.toString(logsums.get(od)));
     }
     
 }
