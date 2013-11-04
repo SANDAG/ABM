@@ -3,6 +3,7 @@ package org.sandag.abm.active;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -92,6 +93,26 @@ public class PathAlternativeList<N extends Node, E extends Edge<N>>
             sizeCalculator = new PathSizeCalculator(this);
             sizeMeasuresUpdated = true;
         }
+    }
+    
+    public PathAlternativeList<N,E> resampleAlternatives()
+    {
+    	List<Path<N>> originalPaths = new LinkedList<>(paths);
+    	paths.clear();
+    	sizeMeasures.clear();
+        sizeMeasureTotal = 0.0;
+        
+        for (Path path : originalPaths)
+        	add(path);
+        return this;
+    }
+    
+    public PathAlternativeList<N,E> getNewPathSample()
+    {
+    	PathAlternativeList<N,E> pal = new PathAlternativeList<>(odPair,network,lengthEvaluator);
+    	for (Path path : paths)
+    		pal.add(path);
+    	return pal;
     }
     
     private class PathSizeCalculator

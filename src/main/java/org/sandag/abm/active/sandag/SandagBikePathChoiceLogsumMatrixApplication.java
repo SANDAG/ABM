@@ -1,8 +1,15 @@
 package org.sandag.abm.active.sandag;
 
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
+
 import org.sandag.abm.active.AbstractPathChoiceLogsumMatrixApplication;
+import org.sandag.abm.active.Network;
 import org.sandag.abm.active.PathAlternativeList;
 import org.sandag.abm.active.PathAlternativeListGenerationConfiguration;
+import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.Person;
 import org.sandag.abm.ctramp.Tour;
 
@@ -18,17 +25,25 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
     private Person[] persons;
     private Tour[] tours;
     
-    public SandagBikePathChoiceLogsumMatrixApplication(PathAlternativeListGenerationConfiguration<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> configuration)
+    public SandagBikePathChoiceLogsumMatrixApplication(PathAlternativeListGenerationConfiguration<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> configuration, 
+    		                                           final Map<String,String> propertyMap)
     {
         super(configuration);
-        model = new ThreadLocal<SandagBikePathChoiceModel>();
+        model = new ThreadLocal<SandagBikePathChoiceModel>() {
+        	@Override
+        	protected SandagBikePathChoiceModel initialValue() {
+        		return new SandagBikePathChoiceModel(propertyMap);
+        	}
+        };
         persons = new Person[MARKET_SEGMENT_NAMES.length];
         tours = new Tour[MARKET_SEGMENT_NAMES.length];
+        
+        //for dummy person
+        SandagModelStructure modelStructure = new SandagModelStructure();
         for (int i=0; i<MARKET_SEGMENT_NAMES.length; i++) {
-            // TODO: Check to ensure we can construct dummy persons and tours like this
-            persons[i] = new Person(null, 0, null);
+            persons[i] = new Person(null,1,modelStructure);
             persons[i].setPersGender(MARKET_SEGMENT_FEMALE_VALUES[i]);
-            tours[i] = new Tour(null, 0, MARKET_SEGMENT_TOUR_PURPOSE_INDICES[i]);
+            tours[i] = new Tour(persons[i],1,MARKET_SEGMENT_TOUR_PURPOSE_INDICES[i]);
         }
     }
 
@@ -41,6 +56,32 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
             logsums[i] = model.get().getPathLogsums(persons[i], alts, MARKET_SEGMENT_INBOUND_TRIP_VALUES[i], tours[i]);
         }
         return logsums;    
+    }
+    
+
+    
+    public static void main(String ... args) {
+        String RESOURCE_BUNDLE_NAME = "sandag_abm_active_test";
+        Map<String,String> propertyMap = new HashMap<String,String>();
+        SandagBikeNetworkFactory factory;
+        Network<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> network;
+        PathAlternativeListGenerationConfiguration<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> configuration;
+        SandagBikePathChoiceLogsumMatrixApplication application;
+        
+        ResourceBundle rb = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME);
+        propertyMap = new HashMap<>();
+        Enumeration<String> keys = rb.getKeys();
+        while (keys.hasMoreElements()) {
+            String key = keys.nextElement();
+            propertyMap.put(key, rb.getString(key));
+        }
+        factory = new SandagBikeNetworkFactory(propertyMap);
+        network = factory.createNetwork();
+        
+        configuration = new SandagBikeTazPathAlternativeListGenerationConfiguration(propertyMap, network);
+        application = new SandagBikePathChoiceLogsumMatrixApplication(configuration,propertyMap);
+        
+        application.calculateMarketSegmentLogsums();
     }
     
 }

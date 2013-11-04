@@ -1,6 +1,7 @@
 package org.sandag.abm.active.sandag;
 
 import java.util.*;
+
 import org.sandag.abm.active.*;
 
 public abstract class SandagBikePathAlternativeListGenerationConfiguration implements PathAlternativeListGenerationConfiguration<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal>
@@ -34,7 +35,9 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
     
     public Set<Integer> getTraceOrigins()
     {
-        return new HashSet<>(propertyParser.parseIntPropertyList(PROPERTIES_TRACE_ORIGINS));
+        return propertyMap.containsKey(PROPERTIES_TRACE_ORIGINS) ? 
+        		new HashSet<>(propertyParser.parseIntPropertyList(PROPERTIES_TRACE_ORIGINS)) :
+        		new HashSet<Integer>();
     }
     
     @Override
@@ -173,6 +176,12 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
         }
         
         return zonalCentroidIdMap;
+    }
+    
+    @Override
+    public Map<String,String> getPropertyMap() 
+    {
+    	return propertyMap;
     }
     
     protected abstract void createZonalCentroidIdMap();
