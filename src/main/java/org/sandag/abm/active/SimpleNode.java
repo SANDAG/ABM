@@ -14,5 +14,10 @@ public class SimpleNode implements Node
     {
         this.id = id;
     }
+    
+    public String toString()
+    {
+    	return "<node: " + id + ">";
+    }
    
 }

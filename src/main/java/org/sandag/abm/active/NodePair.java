@@ -38,4 +38,8 @@ public class NodePair implements Comparable<NodePair>{
 	public int hashCode() {
 		return Objects.hash(originNode,destinationNode);
 	}
+	
+	public String toString() {
+		return "<od pair: " + fromNode + "," + toNode + ">";
+	}
 }

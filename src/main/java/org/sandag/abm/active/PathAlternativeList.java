@@ -101,9 +101,11 @@ public class PathAlternativeList<N extends Node, E extends Edge<N>>
     	paths.clear();
     	sizeMeasures.clear();
         sizeMeasureTotal = 0.0;
+        restartPathSizeCalculator();
         
         for (Path path : originalPaths)
         	add(path);
+        
         return this;
     }
     
