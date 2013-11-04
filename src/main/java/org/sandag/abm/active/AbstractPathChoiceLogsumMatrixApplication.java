@@ -1,6 +1,8 @@
 package org.sandag.abm.active;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -9,8 +11,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.log4j.Logger;
+import org.sandag.abm.active.sandag.SandagBikePathChoiceModel;
+
 public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, E extends Edge<N>, T extends Traversal<E>>
 {
+	private static final Logger logger = Logger.getLogger(AbstractPathChoiceLogsumMatrixApplication.class);
+	
     PathAlternativeListGenerationConfiguration<N,E,T> configuration;
     Network<N,E,T> network;
     Map<Integer,Map<Integer,Double>> nearbyZonalDistanceMap;
@@ -28,6 +35,7 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
     long startTime;
     String outputDir;
     Set<Integer> traceOrigins;
+    Map<String,String> propertyMap;
     
     private static final int ORIGIN_PROGRESS_REPORT_COUNT = 50;
     private static final double PATHSIZE_PRECISION_TOLERANCE = 0.001;
@@ -51,6 +59,7 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
         this.maxCost = configuration.getMaxCost();
         this.outputDir = configuration.getOutputDirectory();
         this.traceOrigins = configuration.getTraceOrigins();
+        this.propertyMap = configuration.getPropertyMap();
     }
 
     public Map<NodePair<N>,double[]> calculateMarketSegmentLogsums()
@@ -59,7 +68,7 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
         System.out.println("Writing to " + outputDir);
         Map<NodePair<N>,double[]> logsums = new ConcurrentHashMap<>();
         startTime = System.currentTimeMillis();
-        int threadCount = Runtime.getRuntime().availableProcessors();
+        int threadCount = 1;//Runtime.getRuntime().availableProcessors();
         ExecutorService executor = Executors.newFixedThreadPool(threadCount); 
         final Queue<Integer> originQueue = new ConcurrentLinkedQueue<>(zonalCentroidIdMap.keySet());
         final ConcurrentHashMap<Integer,List<Integer>> insufficientSamplePairs = new ConcurrentHashMap<>();
@@ -178,7 +187,8 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
                     } else if ( iterCount >= destinationMaxCountMap.get(destinationNode) ) {
                         destinationNodes.remove(odPair.getToNode());
                         alternativeList.clearPathSizeCalculator();
-                        if ( ! insufficientSamplePairs.containsKey(origin) ) { insufficientSamplePairs.put( origin, new ArrayList<Integer>() ); }
+                        if ( ! insufficientSamplePairs.containsKey(origin) ) 
+                        	insufficientSamplePairs.put( origin, new ArrayList<Integer>() );
                         insufficientSamplePairs.get(origin).add(destinationZoneMap.get(destinationNode));       
                     }
                 }
@@ -189,11 +199,10 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
             return alternativeLists;
         }
         
-        private PathAlternativeList<N,E> resampleAlternatives(PathAlternativeList<N,E> alts)
-        {
-            // TODO: write code to actually re-sample the alternatives
-            return alts;
-        }
+//        private PathAlternativeList<N,E> resampleAlternatives(PathAlternativeList<N,E> alts)
+//        {
+//            return alts.getNewPathSample();
+//        }
         
         @Override
         public void run()
@@ -216,14 +225,39 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
                     }
                 }
                 
-                for( NodePair<N> odPair : alternativeLists.keySet() ) {
-                    alternativeLists.put(odPair, resampleAlternatives(alternativeLists.get(odPair)));
-                }
+                //note: either of these ways will work
+                //      this first one gets a new sample from the old one, while the second mutates (via a resample) the alternatives themselves
+//                for( NodePair<N> odPair : alternativeLists.keySet() )
+//                    alternativeLists.put(odPair, resampleAlternatives(alternativeLists.get(odPair)));
+                for (PathAlternativeList<N,E> pal : alternativeLists.values())
+                	pal.resampleAlternatives();
                 
                 double[] logsumValues;
                 for(NodePair<N> odPair : alternativeLists.keySet()) {
+
+                    String pathAltFile = SandagBikePathChoiceModel.getPathAltsFile(propertyMap);
+                    String pathAltLinksFile = SandagBikePathChoiceModel.getPathAltsLinkFile(propertyMap);
+                    try (PathAlternativeListWriter<N,E> writer = new PathAlternativeListWriter<>(pathAltFile,pathAltLinksFile)) {
+                        writer.writeHeaders();
+                        writer.write(alternativeLists.get(odPair));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    
                     logsumValues = calculateMarketSegmentLogsums(alternativeLists.get(odPair));
                     logsums.put(odPair,logsumValues);
+                    
+
+                    try {
+                    	Files.delete(Paths.get(pathAltFile));
+                    } catch (IOException e) {
+                    	logger.warn("problem deleting " + pathAltFile,e);
+                    }
+                    try {
+                    	Files.delete(Paths.get(pathAltLinksFile));
+                    } catch (IOException e) {
+                    	logger.warn("problem deleting " + pathAltLinksFile,e);
+                    }
                 }
                 
                 int c = counter.addAndGet(1); 

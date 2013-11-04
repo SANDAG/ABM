@@ -55,7 +55,7 @@ public class SandagBikePathAlternatives {
 	}
 
 	public double getSizeAlt(int path) {
-		return pathAlternativeList.getSizeMeasures().get(path-1) / pathAlternativeList.getSizeMeasureTotal();
+		return pathAlternativeList.getSizeMeasures().get(path) / pathAlternativeList.getSizeMeasureTotal();
 	}
 
 	public double getDistanceAlt(int path) {

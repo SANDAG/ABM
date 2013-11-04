@@ -79,47 +79,47 @@ public class SandagBikePathChoiceDmu implements VariableTable,Serializable {
     }
     
     public double getSizeAlt(int path) {
-    	return paths.getSizeAlt(path);
+    	return paths.getSizeAlt(path-1);
     }
     
     public double getDistanceAlt(int path) {
-    	return paths.getDistanceAlt(path);
+    	return paths.getDistanceAlt(path-1);
     }
     
     public double getDistanceClass1Alt(int path) {
-    	return paths.getDistanceClass1Alt(path);
+    	return paths.getDistanceClass1Alt(path-1);
     }
     
     public double getDistanceClass2Alt(int path) {
-    	return paths.getDistanceClass2Alt(path);
+    	return paths.getDistanceClass2Alt(path-1);
     }
     
     public double getDistanceClass3Alt(int path) {
-    	return paths.getDistanceClass3Alt(path);
+    	return paths.getDistanceClass3Alt(path-1);
     }
     
     public double getDistanceArtNoLaneAlt(int path) {
-    	return paths.getDistanceArtNoLaneAlt(path);
+    	return paths.getDistanceArtNoLaneAlt(path-1);
     }
     
     public double getDistanceCycleTrackAlt(int path) {
-    	return paths.getDistanceCycleTrackAlt(path);
+    	return paths.getDistanceCycleTrackAlt(path-1);
     }
     
     public double getDistanceBikeBlvdAlt(int path) {
-    	return paths.getDistanceBikeBlvdAlt(path);
+    	return paths.getDistanceBikeBlvdAlt(path-1);
     }
     
     public double getDistanceWrongWayAlt(int path) {
-    	return paths.getDistanceWrongWayAlt(path);
+    	return paths.getDistanceWrongWayAlt(path-1);
     }
     
     public double getGainAlt(int path) {
-    	return paths.getGainAlt(path);
+    	return paths.getGainAlt(path-1);
     }
     
     public double getTurnsAlt(int path) {
-    	return paths.getTurnsAlt(path);
+    	return paths.getTurnsAlt(path-1);
     }
     
     public IndexValues getDmuIndexValues() {
