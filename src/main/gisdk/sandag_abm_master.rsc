@@ -4,6 +4,11 @@ Macro "Run SANDAG ABM"
 
    shared path, inputDir, outputDir, inputTruckDir, mxzone, mxtap, mgraDataFile,mxext,mxlink,mxrte
  
+   // Stop residual Java processes on nodes
+   runString = path+"\\bin\\stopABM.cmd"
+   ok = RunMacro("TCB Run Command", 1, "Stop Nodes", runString)
+   if !ok then goto quit  
+
    sample_rate = { 0.2, 0.5, 1.0 }
    max_iterations=sample_rate.length    //number of feedback loops
   
@@ -165,11 +170,7 @@ Macro "Run SANDAG ABM"
     RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Create LUZ Skims"})
    ok = RunMacro("TCB Run Macro", 1, "Create LUZ Skims",{}) 
    if !ok then goto quit
- 
-   // Stop nodes
-   runString = path+"\\bin\\stopABM.cmd"
-   ok = RunMacro("TCB Run Command", 1, "Stop Nodes", runString)
-   if !ok then goto quit  	
+	
 
    RunMacro("TCB Closing", ok, "False")
    return(1)
