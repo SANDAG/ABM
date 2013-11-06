@@ -165,7 +165,11 @@ Macro "Run SANDAG ABM"
     RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Create LUZ Skims"})
    ok = RunMacro("TCB Run Macro", 1, "Create LUZ Skims",{}) 
    if !ok then goto quit
-  	
+ 
+   // Stop nodes
+   runString = path+"\\bin\\stopABM.cmd"
+   ok = RunMacro("TCB Run Command", 1, "Stop Nodes", runString)
+   if !ok then goto quit  	
 
    RunMacro("TCB Closing", ok, "False")
    return(1)
