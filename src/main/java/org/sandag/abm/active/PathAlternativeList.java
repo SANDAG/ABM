@@ -95,28 +95,6 @@ public class PathAlternativeList<N extends Node, E extends Edge<N>>
         }
     }
     
-    public PathAlternativeList<N,E> resampleAlternatives()
-    {
-    	List<Path<N>> originalPaths = new LinkedList<>(paths);
-    	paths.clear();
-    	sizeMeasures.clear();
-        sizeMeasureTotal = 0.0;
-        restartPathSizeCalculator();
-        
-        for (Path path : originalPaths)
-        	add(path);
-        
-        return this;
-    }
-    
-    public PathAlternativeList<N,E> getNewPathSample()
-    {
-    	PathAlternativeList<N,E> pal = new PathAlternativeList<>(odPair,network,lengthEvaluator);
-    	for (Path path : paths)
-    		pal.add(path);
-    	return pal;
-    }
-    
     private class PathSizeCalculator
     {
             Map<E,List<Integer>> incidenceMap;
@@ -167,5 +145,12 @@ public class PathAlternativeList<N extends Node, E extends Edge<N>>
             }
                 
     }
+    
+    public NodePair<N> getODPair() {
+        return odPair;
+    }
 
+    public EdgeEvaluator<E> getLengthEvaluator() {
+        return lengthEvaluator;
+    }
 }

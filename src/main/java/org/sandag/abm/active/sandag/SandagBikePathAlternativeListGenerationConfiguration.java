@@ -186,4 +186,13 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
     
     protected abstract void createZonalCentroidIdMap();
     
+    public Map<Integer,Integer> getInverseZonalCentroidIdMap()
+    {
+        HashMap<Integer,Integer> newMap = new HashMap<>();
+        Map<Integer,Integer> origMap = getZonalCentroidIdMap();
+        for (Integer o : origMap.keySet()) {
+            newMap.put(origMap.get(o), o);
+        }
+        return newMap;
+    }
 }
