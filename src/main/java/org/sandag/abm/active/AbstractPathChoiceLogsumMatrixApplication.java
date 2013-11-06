@@ -10,7 +10,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.log4j.Logger;
 import org.sandag.abm.active.sandag.SandagBikePathChoiceModel;
 
@@ -196,13 +195,71 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
                 iterCount++;
             }
             
+            //for( NodePair<N> odPair : alternativeLists.keySet() )
+            //    alternativeLists.put(odPair, resampleAlternatives(alternativeLists.get(odPair), destinationPathSizeMap.get(odPair.getToNode())));
+            
             return alternativeLists;
         }
         
-//        private PathAlternativeList<N,E> resampleAlternatives(PathAlternativeList<N,E> alts)
-//        {
-//            return alts.getNewPathSample();
-//        }
+        private PathAlternativeList<N,E> resampleAlternatives(PathAlternativeList<N,E> alts, double targetSize)
+        {
+            if ( targetSize >= alts.getSizeMeasureTotal()) { return alts; }
+            Random r;
+            if (randomCostSeeded) {
+                r = new Random(alts.getODPair().hashCode());
+            } else {
+                r = new Random();
+            }
+            PathAlternativeList<N,E> newAlts = new PathAlternativeList<>(alts.getODPair(),network,alts.getLengthEvaluator());
+            double[] prob = new double[alts.getCount()];
+            double[] cum = new double[alts.getCount()];
+            double tot = 0.0;
+            for (int i=0; i<prob.length; i++) {
+                prob[i] =  alts.getSizeMeasures().get(i) / alts.getSizeMeasureTotal() ;
+                tot = tot + prob[i];
+                cum[i] = tot;
+            }
+            cum[alts.getCount()-1] = 1.0;
+            while (newAlts.getSizeMeasureTotal() < targetSize) {
+                double p = r.nextDouble();
+                int idx = binarySearch(cum,p);
+                newAlts.add(alts.get(idx));
+                double curProb = cum[idx];
+                if (idx > 0) { curProb = curProb - cum[idx-1]; }
+                for ( int i=0; i<cum.length; i++) {
+                    if ( i < idx ) {
+                        cum[i] = cum[i] / (1-curProb);
+                    } else {
+                        cum[i] = ( cum[i] - curProb ) / (1-curProb); 
+                    }
+                }
+            }
+            return newAlts;
+        }
+        
+        private int binarySearch(double[] values, double target)
+        {
+            return binarySearch(values, target, 0, values.length);
+        }
+        
+        private int binarySearch(double[] values, double target, int lower, int upper)
+        {   
+            if ( lower <= upper ) {
+                int mid = (lower + upper) / 2;
+                
+                if ( values[mid] > target ) {
+                    return binarySearch(values, target, lower, upper - 1);
+                } else {
+                    return binarySearch(values, target, mid + 1, upper);
+                }
+            }
+
+            if ( values[lower] > target ) {
+                return lower;
+            } else {
+                return lower + 1;
+            }
+        }
         
         @Override
         public void run()
@@ -224,13 +281,6 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
                         throw new RuntimeException(e.getMessage());
                     }
                 }
-                
-                //note: either of these ways will work
-                //      this first one gets a new sample from the old one, while the second mutates (via a resample) the alternatives themselves
-//                for( NodePair<N> odPair : alternativeLists.keySet() )
-//                    alternativeLists.put(odPair, resampleAlternatives(alternativeLists.get(odPair)));
-                for (PathAlternativeList<N,E> pal : alternativeLists.values())
-                	pal.resampleAlternatives();
                 
                 double[] logsumValues;
                 for(NodePair<N> odPair : alternativeLists.keySet()) {

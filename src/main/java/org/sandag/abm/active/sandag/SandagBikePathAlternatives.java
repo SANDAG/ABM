@@ -50,6 +50,8 @@ public class SandagBikePathAlternatives {
 	                    turns.set(i, turns.get(i) + ( traversal.turnType != TurnType.NONE  ? 1 : 0 ) );
 	                }
 	            }
+	            grandparent = parent;
+	            parent = current;
 	        }
 	    }
 	}

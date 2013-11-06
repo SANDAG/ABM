@@ -1,11 +1,9 @@
 package org.sandag.abm.active.sandag;
 
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
-
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 import org.sandag.abm.active.AbstractPathChoiceLogsumMatrixApplication;
 import org.sandag.abm.active.Network;
 import org.sandag.abm.active.NodePair;
@@ -60,14 +58,12 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
         return logsums;    
     }
     
-
-    
     public static void main(String ... args) {
         String RESOURCE_BUNDLE_NAME = "sandag_abm_active_test";
         Map<String,String> propertyMap = new HashMap<String,String>();
         SandagBikeNetworkFactory factory;
         Network<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> network;
-        PathAlternativeListGenerationConfiguration<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> configuration;
+        List<PathAlternativeListGenerationConfiguration<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal>> configurations = new ArrayList<>();
         SandagBikePathChoiceLogsumMatrixApplication application;
         
         ResourceBundle rb = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME);
@@ -79,13 +75,36 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
         }
         factory = new SandagBikeNetworkFactory(propertyMap);
         network = factory.createNetwork();
-        
-        configuration = new SandagBikeTazPathAlternativeListGenerationConfiguration(propertyMap, network);
-        application = new SandagBikePathChoiceLogsumMatrixApplication(configuration,propertyMap);
-        
-        Map<NodePair<SandagBikeNode>,double[]> logsums = application.calculateMarketSegmentLogsums();
-        for (NodePair<SandagBikeNode> od : logsums.keySet()) 
-        	System.out.println(od + " : " + Arrays.toString(logsums.get(od)));
+
+        configurations.add(new SandagBikeTazPathAlternativeListGenerationConfiguration(propertyMap, network));
+        configurations.add(new SandagBikeMgraPathAlternativeListGenerationConfiguration(propertyMap, network));
+        String[] fileProperties = new String[] {"active.logsum.matrix.file.taz", "active.logsum.matrix.file.mgra"};
+
+        for(int i=0; i<configurations.size(); i++)  {
+            PathAlternativeListGenerationConfiguration<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> configuration  = configurations.get(i);
+            String filename = propertyMap.get(fileProperties[i]);
+            application = new SandagBikePathChoiceLogsumMatrixApplication(configuration,propertyMap);
+            
+            Map<NodePair<SandagBikeNode>,double[]> logsums = application.calculateMarketSegmentLogsums();
+            Map<Integer,Integer> centroids = configuration.getInverseZonalCentroidIdMap();
+            
+            try
+            {
+                FileWriter writer = new FileWriter(new File(filename));
+                writer.write("i, j, " + Arrays.toString(MARKET_SEGMENT_NAMES).substring(1).replaceFirst("]", "") + "\n");
+                for (NodePair<SandagBikeNode> od : logsums.keySet()) {
+                    writer.write(centroids.get(od.getFromNode().getId()) + ", " + centroids.get(od.getToNode().getId()) + ", " + Arrays.toString(logsums.get(od)).substring(1).replaceFirst("]", "") + "\n" );
+                }
+                writer.flush();
+                writer.close();  
+            } catch (IOException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            
+        }
+
     }
     
 }

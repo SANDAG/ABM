@@ -20,4 +20,5 @@ public interface PathAlternativeListGenerationConfiguration<N extends Node, E ex
     public String getOutputDirectory();
     public Set<Integer> getTraceOrigins();
     public Map<String,String> getPropertyMap();
+    public Map<Integer,Integer> getInverseZonalCentroidIdMap(); 
 }
