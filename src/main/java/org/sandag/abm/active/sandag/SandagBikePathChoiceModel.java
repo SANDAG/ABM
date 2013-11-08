@@ -1,21 +1,8 @@
 package org.sandag.abm.active.sandag;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
-import org.sandag.abm.active.Network;
-import org.sandag.abm.active.NodePair;
-import org.sandag.abm.active.PathAlternativeList;
-import org.sandag.abm.active.PathAlternativeListGenerationApplication;
-import org.sandag.abm.active.PathAlternativeListGenerationConfiguration;
-import org.sandag.abm.active.PathAlternativeListWriter;
-import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.Person;
 import org.sandag.abm.ctramp.Tour;
 import com.pb.common.newmodel.ChoiceModelApplication;
@@ -39,19 +26,11 @@ public class SandagBikePathChoiceModel {
 	private final ThreadLocal<boolean[]> pathAltsAvailable;
 	private final ThreadLocal<int[]> pathAltsSample;
 	
-	public SandagBikePathChoiceModel(final Map<String,String> propertyMap) {
+	public SandagBikePathChoiceModel(final HashMap<String,String> propertyMap) {
 		final String uecSpreadsheet = propertyMap.get(PATH_CHOICE_MODEL_UEC_SPREADSHEET_PROPERTY);
 		final int modelSheet = Integer.parseInt(propertyMap.get(PATH_CHOICE_MODEL_UEC_MODEL_SHEET_PROPERTY));
 		final int dataSheet = Integer.parseInt(propertyMap.get(PATH_CHOICE_MODEL_UEC_DATA_SHEET_PROPERTY));
-		final ThreadLocal<HashMap<String,String>> threadPropertyMap =  new ThreadLocal<HashMap<String,String>>() {
-			@Override
-			protected HashMap<String,String> initialValue() {
-				HashMap<String,String> map = new HashMap<>(propertyMap);
-				map.put(PATH_CHOICE_ALTS_FILE_PROPERTY,getPathAltsFile(propertyMap));
-				map.put(PATH_CHOICE_ALTS_LINK_FILE_PROPERTY,getPathAltsLinkFile(propertyMap));
-				return map;
-			}
-		};
+
 		dmu = new ThreadLocal<SandagBikePathChoiceDmu>() {
 			@Override
 			protected SandagBikePathChoiceDmu initialValue() {
@@ -61,7 +40,7 @@ public class SandagBikePathChoiceModel {
 		model = new ThreadLocal<ChoiceModelApplication>() {
 			@Override
 			protected ChoiceModelApplication initialValue() {
-				return new ChoiceModelApplication(uecSpreadsheet,modelSheet,dataSheet,threadPropertyMap.get(),dmu.get());
+				return new ChoiceModelApplication(uecSpreadsheet,modelSheet,dataSheet,propertyMap,dmu.get());
 			}
 		};
 		
@@ -78,21 +57,6 @@ public class SandagBikePathChoiceModel {
 				return new int[maxPathCount+1];
 			}
 		};			
-	}
-	
-
-	private static String getThreadSpecificPathFile(Map<String,String> propertyMap, String property) {
-		return propertyMap.get(property).replace(propertyMap.get(PATH_CHOICE_ALTS_ID_TOKEN_PROPERTY),"" + Thread.currentThread().getId());
-	}
-	
-	public static String getPathAltsFile(Map<String,String> propertyMap) {
-		//note this is thread-specific!
-		return getThreadSpecificPathFile(propertyMap,PATH_CHOICE_ALTS_FILE_PROPERTY);
-	}
-	
-	public static String getPathAltsLinkFile(Map<String,String> propertyMap) {
-		//note this is thread-specific!
-		return getThreadSpecificPathFile(propertyMap,PATH_CHOICE_ALTS_LINK_FILE_PROPERTY);
 	}
 	
 
@@ -135,61 +99,6 @@ public class SandagBikePathChoiceModel {
     	logger.info(String.format("debug of path choice model for person id %s, tour id %s, inbound trip: %s, path alternative count: %s",
     			                  person.getPersonId(),tour.getTourId(),inboundTrip,paths.getPathCount()));
     	logger.info("    path probabilities: " + Arrays.toString(probabilities));
-    }
-    
-    public static void main(String ... args) {
-    	//PathAlternativeList pal = new PathAlternativeList<>(odPair, network, lengthEvaluator)
-    			
-        String RESOURCE_BUNDLE_NAME = "sandag_abm_active_test";
-        Map<String,String> propertyMap = new HashMap<String,String>();
-        SandagBikeNetworkFactory factory;
-        Network<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> network;
-        PathAlternativeListGenerationConfiguration<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> configuration;
-        PathAlternativeListGenerationApplication<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> application;
-        ResourceBundle rb = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME);
-        propertyMap = new HashMap<>();
-        Enumeration<String> keys = rb.getKeys();
-        while (keys.hasMoreElements()) {
-            String key = keys.nextElement();
-            propertyMap.put(key, rb.getString(key));
-        }
-        factory = new SandagBikeNetworkFactory(propertyMap);
-        network = factory.createNetwork();
-        configuration = new SandagBikeTazPathAlternativeListGenerationConfiguration(propertyMap, network);
-        application =  new PathAlternativeListGenerationApplication<>(configuration);
-        Map<NodePair<SandagBikeNode>,PathAlternativeList<SandagBikeNode,SandagBikeEdge>> pathAlternatives = application.generateAlternativeLists();
-        System.out.println("done, got " + pathAlternatives.size() + " node pairs");
-        
-        NodePair<SandagBikeNode> np = pathAlternatives.keySet().iterator().next(); //just pick "first" od pair
-        
-        String pathAltFile = SandagBikePathChoiceModel.getPathAltsFile(propertyMap);
-        String pathAltLinksFile = SandagBikePathChoiceModel.getPathAltsLinkFile(propertyMap);
-        try (PathAlternativeListWriter<SandagBikeNode,SandagBikeEdge> writer = new PathAlternativeListWriter<>(pathAltFile,pathAltLinksFile)) {
-        	writer.writeHeaders();
-        	writer.write(pathAlternatives.get(np));
-        } catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-        
-        SandagBikePathAlternatives epa = new SandagBikePathAlternatives(pathAlternatives.get(np));
-        Person person = new Person(null,1,new SandagModelStructure());
-        person.setPersGender(2);
-        Tour tour = new Tour(person,1,1);
-        
-        SandagBikePathChoiceModel pcModel = new SandagBikePathChoiceModel((HashMap<String,String>) propertyMap);
-        System.out.println(pcModel.getPathLogsums(person,epa,true,tour));
-        System.out.println(Arrays.toString(pcModel.getPathProbabilities(person,epa,true,tour,true)));
-        
-        try {
-        	Files.delete(Paths.get(pathAltFile));
-        } catch (IOException e) {
-        	throw new RuntimeException(e);
-        }
-        try {
-        	Files.delete(Paths.get(pathAltLinksFile));
-        } catch (IOException e) {
-        	throw new RuntimeException(e);
-        }
     }
 
 }

@@ -46,6 +46,8 @@ public class SandagBikeNetworkFactory extends AbstractNetworkFactory<SandagBikeN
     private static final String PROPERTIES_COEF_DWRONGWY = "active.coef.dwrongwy";
     private static final String PROPERTIES_COEF_GAIN = "active.coef.gain";
     private static final String PROPERTIES_COEF_TURN = "active.coef.turn";
+    private static final String PROPERTIES_COEF_DISTANCE_WALK = "active.coef.distance.walk";
+    private static final String PROPERTIES_COEF_GAIN_WALK = "active.coef.gain.walk";
     
     public SandagBikeNetworkFactory(Map<String,String> propertyMap)
     {
@@ -168,7 +170,7 @@ public class SandagBikeNetworkFactory extends AbstractNetworkFactory<SandagBikeN
                 edge.autosPermitted = propertyParser.isIntValueInPropertyList(apf.getInt(edge),PROPERTIES_EDGE_AUTOSPERMITTED_VALUES);
                 edge.centroidConnector = propertyParser.isIntValueInPropertyList(cf.getInt(edge),PROPERTIES_EDGE_CENTROID_VALUE);
                 edge.distance = edge.distance * (float) DISTANCE_CONVERSION_FACTOR;
-                edge.cost = (double) edge.distance * (
+                edge.bikeCost = (double) edge.distance * (
                                            Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTANCE))
                                          + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTCLA1)) * ( edge.bikeClass == 1 ? 1 : 0 )
                                          + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTCLA2)) * ( edge.bikeClass == 2 ? 1 : 0 )
@@ -178,6 +180,7 @@ public class SandagBikeNetworkFactory extends AbstractNetworkFactory<SandagBikeN
                                      )
                                      + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_GAIN)) * edge.gain
                                      + INACCESSIBLE_COST_COEF * ( ( edge.functionalClass < 3 && edge.functionalClass > 0 ) ? 1 : 0 );
+                edge.walkCost = (double) edge.distance * Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTANCE_WALK)) + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_GAIN_WALK)) * edge.gain; 
             }
             
         } catch (NoSuchFieldException | IllegalAccessException e) {

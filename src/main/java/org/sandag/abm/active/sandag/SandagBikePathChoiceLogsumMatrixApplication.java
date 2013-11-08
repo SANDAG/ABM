@@ -17,7 +17,7 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
 {
 
     private static final String[] MARKET_SEGMENT_NAMES = {"MaleMandatoryOutbound", "MaleMandatoryInbound", "MaleOther", "FemaleMandatoryOutbound", "FemaleMandatoryInbound", "FemaleOther"};
-    private static final int[] MARKET_SEGMENT_FEMALE_VALUES = {0,0,0,1,1,1};
+    private static final int[] MARKET_SEGMENT_GENDER_VALUES = {1,1,1,2,2,2};
     private static final int[] MARKET_SEGMENT_TOUR_PURPOSE_INDICES = {1,1,4,1,1,4};
     private static final boolean[] MARKET_SEGMENT_INBOUND_TRIP_VALUES = {false,true,false,false,true,false};
     
@@ -32,7 +32,7 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
         model = new ThreadLocal<SandagBikePathChoiceModel>() {
         	@Override
         	protected SandagBikePathChoiceModel initialValue() {
-        		return new SandagBikePathChoiceModel(propertyMap);
+        		return new SandagBikePathChoiceModel((HashMap<String,String>) propertyMap);
         	}
         };
         persons = new Person[MARKET_SEGMENT_NAMES.length];
@@ -42,7 +42,7 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
         SandagModelStructure modelStructure = new SandagModelStructure();
         for (int i=0; i<MARKET_SEGMENT_NAMES.length; i++) {
             persons[i] = new Person(null,1,modelStructure);
-            persons[i].setPersGender(MARKET_SEGMENT_FEMALE_VALUES[i]);
+            persons[i].setPersGender(MARKET_SEGMENT_GENDER_VALUES[i]);
             tours[i] = new Tour(persons[i],1,MARKET_SEGMENT_TOUR_PURPOSE_INDICES[i]);
         }
     }
@@ -78,12 +78,14 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
 
         configurations.add(new SandagBikeTazPathAlternativeListGenerationConfiguration(propertyMap, network));
         configurations.add(new SandagBikeMgraPathAlternativeListGenerationConfiguration(propertyMap, network));
-        String[] fileProperties = new String[] {"active.logsum.matrix.file.taz", "active.logsum.matrix.file.mgra"};
+        String[] fileProperties = new String[] {"active.logsum.matrix.file.bike.taz", "active.logsum.matrix.file.bike.mgra"};
 
         for(int i=0; i<configurations.size(); i++)  {
             PathAlternativeListGenerationConfiguration<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> configuration  = configurations.get(i);
-            String filename = propertyMap.get(fileProperties[i]);
+            String filename = propertyMap.get(configuration.getOutputDirectory() + fileProperties[i]);
             application = new SandagBikePathChoiceLogsumMatrixApplication(configuration,propertyMap);
+            
+            new File(configuration.getOutputDirectory()).mkdirs();
             
             Map<NodePair<SandagBikeNode>,double[]> logsums = application.calculateMarketSegmentLogsums();
             Map<Integer,Integer> centroids = configuration.getInverseZonalCentroidIdMap();

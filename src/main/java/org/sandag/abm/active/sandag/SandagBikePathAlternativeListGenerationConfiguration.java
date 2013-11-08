@@ -15,7 +15,7 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
     protected final String PROPERTIES_SAMPLE_PATHSIZES = "active.sample.pathsizes";
     protected final String PROPERTIES_SAMPLE_COUNT_MIN = "active.sample.count.min";
     protected final String PROPERTIES_SAMPLE_COUNT_MAX = "active.sample.count.max";
-    protected final String PROPERTIES_SAMPLE_OUTPUT = "active.sample.output";
+    protected final String PROPERTIES_OUTPUT = "active.output.bike";
     protected final String PROPERTIES_TRACE_ORIGINS = "active.trace.origins";
     
     protected String PROPERTIES_MAXDIST_ZONE;
@@ -48,7 +48,7 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
     
     public String getOutputDirectory()
     {
-        return propertyMap.get(PROPERTIES_SAMPLE_OUTPUT);
+        return propertyMap.get(PROPERTIES_OUTPUT);
     }
     
     static class SandagBikeDistanceEvaluator implements EdgeEvaluator<SandagBikeEdge>
@@ -58,7 +58,7 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
     
     static class SandagBikeAccessibleDistanceEvaluator implements EdgeEvaluator<SandagBikeEdge>
     {            
-        public double evaluate(SandagBikeEdge edge) { return edge.distance + (edge.cost > 998 ? 999 : 0); }
+        public double evaluate(SandagBikeEdge edge) { return edge.distance + (edge.bikeCost > 998 ? 999 : 0); }
     }
     
     static class ZeroTraversalEvaluator implements TraversalEvaluator<SandagBikeTraversal>
@@ -77,7 +77,7 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
     {
         final class SandagBikeEdgeCostEvaluator implements EdgeEvaluator<SandagBikeEdge>
         {
-            public double evaluate(SandagBikeEdge edge) { return edge.cost; }
+            public double evaluate(SandagBikeEdge edge) { return edge.bikeCost; }
         }
         
         return new SandagBikeEdgeCostEvaluator();
