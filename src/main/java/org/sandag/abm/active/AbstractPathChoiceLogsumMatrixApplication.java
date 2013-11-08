@@ -195,8 +195,21 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
                 iterCount++;
             }
             
-            //for( NodePair<N> odPair : alternativeLists.keySet() )
-            //    alternativeLists.put(odPair, resampleAlternatives(alternativeLists.get(odPair), destinationPathSizeMap.get(odPair.getToNode())));
+            if ( traceOrigins.contains(origin) ) {
+                try {
+                    PathAlternativeListWriter<N,E> writer = new PathAlternativeListWriter<N,E>(outputDir + "origpaths_" + origin + ".csv", outputDir + "origlinks_" + origin + ".csv");
+                    writer.writeHeaders();
+                    for (PathAlternativeList<N,E> list : alternativeLists.values()) {
+                        writer.write(list);
+                    }
+                    writer.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+            }
+            
+            for( NodePair<N> odPair : alternativeLists.keySet() )
+                alternativeLists.put(odPair, resampleAlternatives(alternativeLists.get(odPair), destinationPathSizeMap.get(odPair.getToNode())));
             
             return alternativeLists;
         }
@@ -220,9 +233,10 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
                 cum[i] = tot;
             }
             cum[alts.getCount()-1] = 1.0;
-            while (newAlts.getSizeMeasureTotal() < targetSize) {
+
+            while (newAlts.getSizeMeasureTotal() < targetSize  && newAlts.getCount() < alts.getCount() ) {
                 double p = r.nextDouble();
-                int idx = binarySearch(cum,p);
+                int idx = BinarySearch.binarySearch(cum,p);
                 newAlts.add(alts.get(idx));
                 double curProb = cum[idx];
                 if (idx > 0) { curProb = curProb - cum[idx-1]; }
@@ -237,30 +251,6 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
             return newAlts;
         }
         
-        private int binarySearch(double[] values, double target)
-        {
-            return binarySearch(values, target, 0, values.length);
-        }
-        
-        private int binarySearch(double[] values, double target, int lower, int upper)
-        {   
-            if ( lower <= upper ) {
-                int mid = (lower + upper) / 2;
-                
-                if ( values[mid] > target ) {
-                    return binarySearch(values, target, lower, upper - 1);
-                } else {
-                    return binarySearch(values, target, mid + 1, upper);
-                }
-            }
-
-            if ( values[lower] > target ) {
-                return lower;
-            } else {
-                return lower + 1;
-            }
-        }
-        
         @Override
         public void run()
         {                      
@@ -271,7 +261,7 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
                 
                 if ( traceOrigins.contains(origin) ) {
                     try {
-                        PathAlternativeListWriter<N,E> writer = new PathAlternativeListWriter<N,E>(outputDir + "paths_" + origin + ".csv", outputDir + "links_" + origin + ".csv");
+                        PathAlternativeListWriter<N,E> writer = new PathAlternativeListWriter<N,E>(outputDir + "resamplepaths_" + origin + ".csv", outputDir + "resamplelinks_" + origin + ".csv");
                         writer.writeHeaders();
                         for (PathAlternativeList<N,E> list : alternativeLists.values()) {
                             writer.write(list);
@@ -284,30 +274,10 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
                 
                 double[] logsumValues;
                 for(NodePair<N> odPair : alternativeLists.keySet()) {
-
-                    String pathAltFile = SandagBikePathChoiceModel.getPathAltsFile(propertyMap);
-                    String pathAltLinksFile = SandagBikePathChoiceModel.getPathAltsLinkFile(propertyMap);
-                    try (PathAlternativeListWriter<N,E> writer = new PathAlternativeListWriter<>(pathAltFile,pathAltLinksFile)) {
-                        writer.writeHeaders();
-                        writer.write(alternativeLists.get(odPair));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
                     
                     logsumValues = calculateMarketSegmentLogsums(alternativeLists.get(odPair));
                     logsums.put(odPair,logsumValues);
                     
-
-                    try {
-                    	Files.delete(Paths.get(pathAltFile));
-                    } catch (IOException e) {
-                    	logger.warn("problem deleting " + pathAltFile,e);
-                    }
-                    try {
-                    	Files.delete(Paths.get(pathAltLinksFile));
-                    } catch (IOException e) {
-                    	logger.warn("problem deleting " + pathAltLinksFile,e);
-                    }
                 }
                 
                 int c = counter.addAndGet(1); 

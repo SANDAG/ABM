@@ -22,6 +22,7 @@ public class SandagBikePathChoiceDmu implements VariableTable,Serializable {
     private int isInboundTrip;
     private int tourPurpose;
     private SandagBikePathAlternatives paths;
+    private int pathCount = 0;
     
     
     public SandagBikePathChoiceDmu() {
@@ -60,6 +61,7 @@ public class SandagBikePathChoiceDmu implements VariableTable,Serializable {
     
     public void setPathAlternatives(SandagBikePathAlternatives paths) {
     	this.paths = paths;
+    	pathCount = paths.getPathCount();
     }
     
     public SandagBikePathAlternatives getPathAlternatives() {

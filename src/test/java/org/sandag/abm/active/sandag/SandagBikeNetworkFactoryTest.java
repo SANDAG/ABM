@@ -30,7 +30,7 @@ public class SandagBikeNetworkFactoryTest
             Iterator<SandagBikeEdge> it = network.edgeIterator();
             while ( it.hasNext() ) {
                 SandagBikeEdge e = it.next();
-                writer.write(e.getFromNode().getId() + "," + e.getToNode().getId() + "," + e.cost + "\n");
+                writer.write(e.getFromNode().getId() + "," + e.getToNode().getId() + "," + e.bikeCost + "\n");
             }
             writer.flush();
             writer.close();   
