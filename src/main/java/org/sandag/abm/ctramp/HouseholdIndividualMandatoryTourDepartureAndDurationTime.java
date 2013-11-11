@@ -48,6 +48,8 @@ public class HouseholdIndividualMandatoryTourDepartureAndDurationTime
     private TazDataManager                  tazs;
     private MgraDataManager                 mgraManager;
 
+    private BikeLogsum bls;
+    
     private ChoiceModelApplication          workTourChoiceModel;
     private ChoiceModelApplication          schoolTourChoiceModel;
     private ChoiceModelApplication          univTourChoiceModel;
@@ -140,6 +142,8 @@ public class HouseholdIndividualMandatoryTourDepartureAndDurationTime
         needToComputeLogsum = new boolean[numLogsumIndices];
 
         modeChoiceLogsums = new double[numLogsumIndices];
+        
+        bls = BikeLogsum.getBikeLogsum(propertyMap);
 
     }
 
@@ -1551,6 +1555,8 @@ public class HouseholdIndividualMandatoryTourDepartureAndDurationTime
         mcDmuObject.setTourObject(t);
         mcDmuObject.setDmuIndexValues(household.getHhId(), t.getTourOrigMgra(),
                 t.getTourOrigMgra(), t.getTourDestMgra(), household.getDebugChoiceModels());
+        
+        mcDmuObject.setBikeLogsum(bls,t,person);
 
         mcDmuObject.setOrigDuDen(mgraManager.getDuDenValue(t.getTourOrigMgra()));
         mcDmuObject.setOrigEmpDen(mgraManager.getEmpDenValue(t.getTourOrigMgra()));

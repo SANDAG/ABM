@@ -8,6 +8,7 @@ import java.util.MissingResourceException;
 import java.util.Random;
 import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
+
 import org.sandag.abm.accessibilities.BuildAccessibilities;
 import org.sandag.abm.accessibilities.MandatoryAccessibilitiesCalculator;
 import org.sandag.abm.accessibilities.NonTransitUtilities;
@@ -123,6 +124,7 @@ public class SubtourDestChoiceModel
     private boolean                              useNewSoaMethod;
 
     private int                                  soaSampleSize;
+    private BikeLogsum bls;
 
     private long                                 soaRunTime;
 
@@ -149,7 +151,9 @@ public class SubtourDestChoiceModel
         logger.info(String.format("creating %s subtour dest choice mode instance", tourCategory));
 
         mgraManager = MgraDataManager.getInstance();
-        tazs = TazDataManager.getInstance();
+        tazs = TazDataManager.getInstance();  
+        
+        bls = BikeLogsum.getBikeLogsum(propertyMap);
 
         soaSampleSize = Util.getIntegerValueFromPropertyMap(propertyMap,
                 PROPERTIES_DC_SOA_NON_MAND_SAMPLE_SIZE_KEY);
@@ -369,6 +373,8 @@ public class SubtourDestChoiceModel
                     mcDmuObject.setTourObject(tour);
                     mcDmuObject.setDmuIndexValues(hh.getHhId(), homeMgra, origMgra, 0,
                             hh.getDebugChoiceModels());
+
+                    mcDmuObject.setBikeLogsum(bls,tour,p);
 
                     // update the DC dmuObject for this person
                     dcDmuObject.setHouseholdObject(hh);
@@ -854,6 +860,9 @@ public class SubtourDestChoiceModel
         mcDmuObject.setWorkTourObject(workTour);
         mcDmuObject.setDmuIndexValues(household.getHhId(), household.getHhMgra(),
                 t.getTourOrigMgra(), sampleDestMgra, household.getDebugChoiceModels());
+
+        mcDmuObject.setBikeLogsum(bls,t,person);
+        
 
         mcDmuObject.setPTazTerminalTime(tazs.getOriginTazTerminalTime(mgraManager.getTaz(t
                 .getTourOrigMgra())));

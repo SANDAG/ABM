@@ -1,5 +1,13 @@
 package org.sandag.abm.ctramp;
 
+import org.sandag.abm.ctramp.CtrampDmuFactoryIf;
+import org.sandag.abm.ctramp.Household;
+import org.sandag.abm.ctramp.ModelStructure;
+import org.sandag.abm.ctramp.Person;
+import org.sandag.abm.ctramp.Stop;
+import org.sandag.abm.ctramp.StopLocationDMU;
+import org.sandag.abm.ctramp.Tour;
+import org.sandag.abm.ctramp.TripModeChoiceDMU;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -241,6 +249,7 @@ public class IntermediateStopChoiceModels
     private StopDepartArrivePeriodModel        stopTodModel;
 
     private int                                availAltsToLog                                      = 55;                                                  // set
+    private BikeLogsum bls;
                                                                                                                                                            // larger
                                                                                                                                                            // than
                                                                                                                                                            // number
@@ -314,6 +323,8 @@ public class IntermediateStopChoiceModels
 
         setupStopLocationChoiceModels(propertyMap, dmuFactory);
         setupParkingLocationModel(propertyMap, dmuFactory);
+        
+        bls = BikeLogsum.getBikeLogsum(propertyMap);
     }
 
     private void setupStopLocationChoiceModels(HashMap<String, String> propertyMap,
@@ -2365,8 +2376,9 @@ public class IntermediateStopChoiceModels
             int altMgra = finalSample[i];
             mcDmuObject.getDmuIndexValues().setDestZone(altMgra);
 
-            // set distances to/from stop anchor points to stop location
-            // alternative.
+            mcDmuObject.setBikeLogsum(bls,s.getTour(),s.getTour().getPersonObject(),s.getOrig(),altMgra,s.isInboundStop());
+            
+            // set distances to/from stop anchor points to stop location alternative.
             ikDistance[i] = distanceFromStopOrigToAllMgras[altMgra];
             kjDistance[i] = distanceToFinalDestFromAllMgras[altMgra];
 
@@ -3644,6 +3656,8 @@ public class IntermediateStopChoiceModels
         int altMgra = s.getDest();
         mcDmuObject.getDmuIndexValues().setDestZone(altMgra);
 
+        mcDmuObject.setBikeLogsum(bls,s.getTour(),s.getTour().getPersonObject(),s.getOrig(),altMgra,s.isInboundStop());
+        
         // set the mode choice attributes for the sample location
         mcDmuObject.setDestDuDen(mgraManager.getDuDenValue(altMgra));
         mcDmuObject.setDestEmpDen(mgraManager.getEmpDenValue(altMgra));

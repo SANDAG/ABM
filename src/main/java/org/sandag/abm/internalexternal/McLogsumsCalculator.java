@@ -2,12 +2,15 @@ package org.sandag.abm.internalexternal;
 
 import java.io.Serializable;
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoAndNonMotorizedSkimsCalculator;
 import org.sandag.abm.accessibilities.BestTransitPathCalculator;
 import org.sandag.abm.accessibilities.DriveTransitWalkSkimsCalculator;
 import org.sandag.abm.accessibilities.WalkTransitDriveSkimsCalculator;
 import org.sandag.abm.accessibilities.WalkTransitWalkSkimsCalculator;
+import org.sandag.abm.ctramp.BikeLogsum;
+import org.sandag.abm.ctramp.BikeLogsumSegment;
 import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.Modes;
@@ -100,6 +103,7 @@ public class McLogsumsCalculator
     private WalkTransitWalkSkimsCalculator     wtw;
     private WalkTransitDriveSkimsCalculator    wtd;
     private DriveTransitWalkSkimsCalculator    dtw;
+    private BikeLogsum                         bls;
 
     private int                                setTourMcLogsumDmuAttributesTotalTime = 0;
     private int                                setTripMcLogsumDmuAttributesTotalTime = 0;
@@ -132,6 +136,7 @@ public class McLogsumsCalculator
         wtd.setup(rbMap, wtdSkimLogger, bestPathUEC);
         dtw = new DriveTransitWalkSkimsCalculator();
         dtw.setup(rbMap, dtwSkimLogger, bestPathUEC);
+        bls = BikeLogsum.getBikeLogsum(rbMap);
     }
 
     public void setTazDistanceSkimArrays(double[][][] storedFromTazDistanceSkims,
@@ -180,6 +185,7 @@ public class McLogsumsCalculator
         boolean debug = tour.getDebugChoiceModels();
 
         setNmTripMcDmuAttributes(mcDmuObject, origMgra, destMgra, departPeriod, debug);
+         
 
         int[][] bestTapPairs = null;
 
@@ -201,6 +207,7 @@ public class McLogsumsCalculator
 
         setDtwTripMcDmuAttributes(mcDmuObject, origMgra, destMgra, departPeriod, null, debug);
 
+        mcDmuObject.setBikeLogsum(bls.getValue(new BikeLogsumSegment(tour.getFemale() == 1,false,trip.isInbound()),origMgra,origMgra));
     }
 
     private void setNmTripMcDmuAttributes(InternalExternalTripModeChoiceDMU tripMcDmuObject,

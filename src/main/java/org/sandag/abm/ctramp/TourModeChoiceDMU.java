@@ -56,6 +56,7 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
 		hh = hhObject;
 	}
 
+
 	public Household getHouseholdObject() {
 		return hh;
 	}
@@ -79,6 +80,34 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
 	public Tour getTourObject() {
 		return tour;
 	}
+    public double getBikeLogsum() {
+		return bikeLogsum;
+	}
+
+
+	public void setBikeLogsum(double bikeLogsum) {
+		this.bikeLogsum = bikeLogsum;
+	}
+	
+	public void setBikeLogsum(BikeLogsum bls, Tour tour, Person person) {
+		if (person == null) {
+			setBikeLogsum(bls.getMultiSegmentLogsum(tour.getTourOrigMgra(),tour.getTourDestMgra(),
+		    		BikeLogsumSegment.getTourSegments(tour.getTourPrimaryPurposeIndex() <= 3)));
+		} else {
+			setBikeLogsum(bls.getMultiSegmentLogsum(tour.getTourOrigMgra(),tour.getTourDestMgra(),
+		    		BikeLogsumSegment.getTourSegments(person.getPersonIsFemale() == 1,tour.getTourPrimaryPurposeIndex() <= 3)));
+		}
+	}
+	
+	public void setBikeLogsum(BikeLogsum bls, Tour tour) {
+		setBikeLogsum(bls,tour,null);
+	}
+
+    
+    public void setHouseholdObject(Household hhObject)
+    {
+        hh = hhObject;
+    }
 
 	public int getParkingArea() {
 		return parkingArea;

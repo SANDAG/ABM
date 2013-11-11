@@ -107,6 +107,9 @@ public class McLogsumsCalculator
     private int                                setTourMcLogsumDmuAttributesTotalTime = 0;
     private int                                setTripMcLogsumDmuAttributesTotalTime = 0;
 
+    private BikeLogsum bls;
+
+    
     public McLogsumsCalculator()
     {
         if (mgraManager == null) mgraManager = MgraDataManager.getInstance();
@@ -126,6 +129,8 @@ public class McLogsumsCalculator
 
     public void setupSkimCalculators(HashMap<String, String> rbMap)
     {
+    	bls = BikeLogsum.getBikeLogsum(rbMap);
+    	
         bestPathUEC = new BestTransitPathCalculator(rbMap);
 
         anm = new AutoAndNonMotorizedSkimsCalculator(rbMap);
@@ -297,12 +302,18 @@ public class McLogsumsCalculator
         mcDmuIndex.setOriginZone(mgraManager.getTaz(origMgra));
         mcDmuIndex.setDestZone(mgraManager.getTaz(destMgra));
 
-        setTripMcLogsumDmuAttributesTotalTime += (System.currentTimeMillis() - currentTime);
+        
+        mcDmuObject.setBikeLogsum(bls,mcDmuObject.getTourObject(),mcDmuObject.getTourObject().getPersonObject(),origMgra,destMgra,mcDmuObject.getOuboundHalfTourDirection() == 0);
 
-        mcDmuObject.setPTazTerminalTime(tazManager.getOriginTazTerminalTime(mgraManager
-                .getTaz(origMgra)));
-        mcDmuObject.setATazTerminalTime(tazManager.getDestinationTazTerminalTime(mgraManager
-                .getTaz(destMgra)));
+        setTripMcLogsumDmuAttributesTotalTime += ( System.currentTimeMillis() - currentTime );
+        
+        mcDmuObject.setPTazTerminalTime( tazManager.getOriginTazTerminalTime(mgraManager.getTaz(origMgra)) );
+        mcDmuObject.setATazTerminalTime( tazManager.getDestinationTazTerminalTime(mgraManager.getTaz(destMgra)) );
+
+
+
+
+
 
         mcModel.computeUtilities(mcDmuObject, mcDmuIndex);
         double logsum = mcModel.getLogsum();

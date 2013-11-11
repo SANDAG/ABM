@@ -35,6 +35,7 @@ public class InternalExternalTripModeChoiceDMU
 
     public InternalExternalTripModeChoiceDMU(InternalExternalModelStructure modelStructure,
             Logger aLogger)
+    protected double bikeLogsum;
     {
         if (aLogger == null)
         {
@@ -333,6 +334,14 @@ public class InternalExternalTripModeChoiceDMU
     {
         return hhSize;
     }
+	
+	public void setBikeLogsum(double bikeLogsum) {
+		this.bikeLogsum = bikeLogsum;
+	}
+	
+	public double getBikeLogsum() {
+		return bikeLogsum;
+	}
 
     public void setHhSize(int hhSize)
     {

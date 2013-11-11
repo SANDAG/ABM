@@ -3,12 +3,18 @@ package org.sandag.abm.ctramp;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Random;
-import org.apache.log4j.Logger;
-import org.sandag.abm.accessibilities.AutoAndNonMotorizedSkimsCalculator;
-import org.sandag.abm.modechoice.MgraDataManager;
+
+
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.newmodel.ChoiceModelApplication;
+
+import org.apache.log4j.Logger;
+import org.sandag.abm.accessibilities.AutoAndNonMotorizedSkimsCalculator;
+import org.sandag.abm.accessibilities.DriveTransitWalkSkimsCalculator;
+import org.sandag.abm.accessibilities.WalkTransitDriveSkimsCalculator;
+import org.sandag.abm.accessibilities.WalkTransitWalkSkimsCalculator;
+import org.sandag.abm.modechoice.MgraDataManager;
 
 public class TourModeChoiceModel
         implements Serializable
@@ -77,11 +83,12 @@ public class TourModeChoiceModel
 
     private boolean                  saveUtilsProbsFlag                     = false;
 
-    private MgraDataManager          mgraManager;
-
-    public TourModeChoiceModel(HashMap<String, String> propertyMap,
-            ModelStructure myModelStructure, String myTourCategory, CtrampDmuFactoryIf dmuFactory,
-            McLogsumsCalculator myLogsumHelper)
+    private MgraDataManager mgraManager;
+    
+    private BikeLogsum bls;
+    
+    public TourModeChoiceModel(HashMap<String, String> propertyMap, ModelStructure myModelStructure,
+            String myTourCategory, CtrampDmuFactoryIf dmuFactory, McLogsumsCalculator myLogsumHelper)
     {
 
         modelStructure = myModelStructure;
@@ -95,7 +102,9 @@ public class TourModeChoiceModel
         mcDmuObject = dmuFactory.getModeChoiceDMU();
         setupModeChoiceModelApplicationArray(propertyMap, tourCategory);
 
-        mgraManager = MgraDataManager.getInstance();
+        mgraManager = MgraDataManager.getInstance(); 
+        
+        bls = BikeLogsum.getBikeLogsum(propertyMap);
     }
 
     public AutoAndNonMotorizedSkimsCalculator getAnmSkimCalculator()
@@ -260,6 +269,11 @@ public class TourModeChoiceModel
         mcDmuObject.setTourObject(tour);
         mcDmuObject.setDmuIndexValues(household.getHhId(), tour.getTourDestMgra(),
                 tour.getTourOrigMgra(), tour.getTourDestMgra(), household.getDebugChoiceModels());
+
+        mcDmuObject.setBikeLogsum(bls,tour,person);
+        
+        
+    }    
 
         return getModeChoiceLogsum(mcDmuObject, tour, modelLogger, choiceModelDescription,
                 decisionMakerLabel);
