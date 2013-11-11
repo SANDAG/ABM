@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
+import org.sandag.abm.ctramp.TourModeChoiceDMU;
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 
@@ -64,10 +65,11 @@ public class InternalExternalTripModeChoiceDMU
 
     protected double                   nmWalkTime;
     protected double                   nmBikeTime;
-
-    protected double[][][]             transitSkim;
-    protected int                      outboundHalfTourDirection;
-
+   
+    protected double[][][] transitSkim;
+    protected int outboundHalfTourDirection;
+    protected double bikeLogsum;
+    
     public InternalExternalTripModeChoiceDMU(InternalExternalModelStructure modelStructure)
     {
         setupMethodIndexMap();
@@ -362,6 +364,14 @@ public class InternalExternalTripModeChoiceDMU
     {
         return hhSize;
     }
+	
+	public void setBikeLogsum(double bikeLogsum) {
+		this.bikeLogsum = bikeLogsum;
+	}
+	
+	public double getBikeLogsum() {
+		return bikeLogsum;
+	}
 
     public void setHhSize(int hhSize)
     {

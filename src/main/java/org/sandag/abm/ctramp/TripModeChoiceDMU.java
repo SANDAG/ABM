@@ -2,7 +2,9 @@ package org.sandag.abm.ctramp;
 
 import java.io.Serializable;
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
+
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 
@@ -114,6 +116,8 @@ public class TripModeChoiceDMU
 
     protected double[][][]             transitSkim;
 
+     protected double bikeLogsum;
+    
     public TripModeChoiceDMU(ModelStructure modelStructure)
     {
         this.modelStructure = modelStructure;
@@ -121,9 +125,23 @@ public class TripModeChoiceDMU
 
         transitSkim = new double[TourModeChoiceDMU.NUM_ACC_EGR][TourModeChoiceDMU.NUM_LOC_PREM][TourModeChoiceDMU.NUM_SKIMS];
     }
+    
 
-    public void setParkingCostInfo(int[] mgraParkArea, double[] lsWgtAvgCostM,
-            double[] lsWgtAvgCostD, double[] lsWgtAvgCostH)
+    public double getBikeLogsum() {
+		return bikeLogsum;
+	}
+
+
+	public void setBikeLogsum(double bikeLogsum) {
+		this.bikeLogsum = bikeLogsum;
+	}
+	
+	public void setBikeLogsum(BikeLogsum bls, Tour tour, Person person, int origMgra, int destMgra, boolean inbound) {
+		setBikeLogsum(bls.getValue(new BikeLogsumSegment(person.getPersonIsFemale() == 1,tour.getTourPrimaryPurposeIndex() <= 3, inbound),origMgra,destMgra));
+	}
+    
+    
+    public void setParkingCostInfo( int[] mgraParkArea, double[] lsWgtAvgCostM, double[] lsWgtAvgCostD, double[] lsWgtAvgCostH )
     {
         this.mgraParkArea = mgraParkArea;
         this.lsWgtAvgCostM = lsWgtAvgCostM;
@@ -259,6 +277,10 @@ public class TripModeChoiceDMU
     public void setOutboundHalfTourDirection(int arg)
     {
         outboundHalfTourDirection = arg;
+    }
+    
+    public int getOuboundHalfTourDirection() {
+    	return outboundHalfTourDirection;
     }
 
     public void setDepartPeriod(int period)

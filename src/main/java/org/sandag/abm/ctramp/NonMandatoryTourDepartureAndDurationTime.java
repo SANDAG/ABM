@@ -86,6 +86,8 @@ public class NonMandatoryTourDepartureAndDurationTime
 
     private boolean[]                       needToComputeLogsum;
     private double[]                        modeChoiceLogsums;
+    
+    private BikeLogsum bls;
 
     private int                             noAltChoice                   = 1;
 
@@ -125,6 +127,8 @@ public class NonMandatoryTourDepartureAndDurationTime
         int numLogsumIndices = modelStructure.getSkimPeriodCombinationIndices().length;
         needToComputeLogsum = new boolean[numLogsumIndices];
         modeChoiceLogsums = new double[numLogsumIndices];
+        
+        bls = BikeLogsum.getBikeLogsum(propertyMap);
 
         // create the array of tod model indices
         int[] uecSheetIndices = new int[tourPurposeNames.length];
@@ -1133,6 +1137,10 @@ public class NonMandatoryTourDepartureAndDurationTime
         mcDmuObject.setTourObject(t);
         mcDmuObject.setDmuIndexValues(household.getHhId(), t.getTourOrigMgra(),
                 t.getTourOrigMgra(), t.getTourDestMgra(), household.getDebugChoiceModels());
+
+        mcDmuObject.setBikeLogsum(bls,t,person);
+        
+        
 
         mcDmuObject.setPTazTerminalTime(tazs.getOriginTazTerminalTime(mgraManager.getTaz(t
                 .getTourOrigMgra())));

@@ -2,7 +2,9 @@ package org.sandag.abm.ctramp;
 
 import java.io.Serializable;
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
+
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 
@@ -74,8 +76,9 @@ public class TourModeChoiceDMU
     protected double                   nmBikeTimeIn;
 
     protected double[][][][]           transitSkim;
+    protected double bikeLogsum;
 
-    public TourModeChoiceDMU(ModelStructure modelStructure)
+	public TourModeChoiceDMU(ModelStructure modelStructure)
     {
         this.modelStructure = modelStructure;
         dmuIndex = new IndexValues();
@@ -83,7 +86,32 @@ public class TourModeChoiceDMU
         transitSkim = new double[McLogsumsCalculator.NUM_ACC_EGR][McLogsumsCalculator.NUM_LOC_PREM][McLogsumsCalculator.NUM_SKIMS][McLogsumsCalculator.NUM_DIR];
 
     }
+    
 
+    public double getBikeLogsum() {
+		return bikeLogsum;
+	}
+
+
+	public void setBikeLogsum(double bikeLogsum) {
+		this.bikeLogsum = bikeLogsum;
+	}
+	
+	public void setBikeLogsum(BikeLogsum bls, Tour tour, Person person) {
+		if (person == null) {
+			setBikeLogsum(bls.getMultiSegmentLogsum(tour.getTourOrigMgra(),tour.getTourDestMgra(),
+		    		BikeLogsumSegment.getTourSegments(tour.getTourPrimaryPurposeIndex() <= 3)));
+		} else {
+			setBikeLogsum(bls.getMultiSegmentLogsum(tour.getTourOrigMgra(),tour.getTourDestMgra(),
+		    		BikeLogsumSegment.getTourSegments(person.getPersonIsFemale() == 1,tour.getTourPrimaryPurposeIndex() <= 3)));
+		}
+	}
+	
+	public void setBikeLogsum(BikeLogsum bls, Tour tour) {
+		setBikeLogsum(bls,tour,null);
+	}
+
+    
     public void setHouseholdObject(Household hhObject)
     {
         hh = hhObject;
