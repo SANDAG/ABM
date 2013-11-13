@@ -8,12 +8,11 @@
     <name>SANDAG CT-RAMP Activity Based Model</name>
     
     <properties>
-        <encoding.type>UTF-8</encoding.type>
+        <encoding.type>UTF-8</encoding.type>  
     </properties>
-
     <profiles>
          <profile>
-            <id>year-2010</id>
+            <id>2010</id>
             <properties>
                 <year>2010</year>
                 <crossBorder.tours>93409</crossBorder.tours>
@@ -29,6 +28,8 @@
 				<visitor.mc.uec.file>VisitorTourModeChoice2010.xls</visitor.mc.uec.file>
 				<visitor.trip.mc.uec.file>VisitorTripModeChoice2010.xls</visitor.trip.mc.uec.file>
 				<airport.mc.uec.file>AirportModeChoice2010.xls</airport.mc.uec.file>
+				<acc.uec.file>Accessibilities2010.xls</acc.uec.file>
+				<utility.bestTransitPath.uec.file>BestTransitPathUtility2010.xls</utility.bestTransitPath.uec.file>				
 				<PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
 				<workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
 				<schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
@@ -36,7 +37,7 @@
             </properties>
         </profile>
          <profile>
-            <id>year-2012</id>
+            <id>2012</id>
             <properties>
                 <year>2012</year>
                 <crossBorder.tours>96639</crossBorder.tours>
@@ -52,13 +53,15 @@
 				<visitor.mc.uec.file>VisitorTourModeChoice2010.xls</visitor.mc.uec.file>
 				<visitor.trip.mc.uec.file>VisitorTripModeChoice2010.xls</visitor.trip.mc.uec.file>
 				<airport.mc.uec.file>AirportModeChoice2010.xls</airport.mc.uec.file>
+				<acc.uec.file>Accessibilities2010.xls</acc.uec.file>
+				<utility.bestTransitPath.uec.file>BestTransitPathUtility2010.xls</utility.bestTransitPath.uec.file>
 				<PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
 				<workShadowPricing.iteration>ShadowPricingOutput_work_20.csv</workShadowPricing.iteration>
 				<schoolShadowPricing.iteration>ShadowPricingOutput_school_20.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
-            <id>year-2020</id>
+            <id>2020</id>
             <properties>
                 <year>2020</year>
                 <crossBorder.tours>106316</crossBorder.tours>
@@ -74,13 +77,15 @@
 				<visitor.mc.uec.file>VisitorTourModeChoice2020.xls</visitor.mc.uec.file>
 				<visitor.trip.mc.uec.file>VisitorTripModeChoice2020.xls</visitor.trip.mc.uec.file>
 				<airport.mc.uec.file>AirportModeChoice2020.xls</airport.mc.uec.file>
+				<acc.uec.file>Accessibilities2020.xls</acc.uec.file>
+				<utility.bestTransitPath.uec.file>BestTransitPathUtility2020.xls</utility.bestTransitPath.uec.file>				
 				<PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs_2050.csv</PopulationSynthesizer.OccupCodes> 
 				<workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
 				<schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
-            <id>year-2035</id>
+            <id>2035</id>
             <properties>
                 <year>2035</year>
                 <crossBorder.tours>127147</crossBorder.tours>
@@ -96,13 +101,15 @@
 				<visitor.mc.uec.file>VisitorTourModeChoice2035.xls</visitor.mc.uec.file>
 				<visitor.trip.mc.uec.file>VisitorTripModeChoice2035.xls</visitor.trip.mc.uec.file>
 				<airport.mc.uec.file>AirportModeChoice2035.xls</airport.mc.uec.file>
+				<acc.uec.file>Accessibilities2035.xls</acc.uec.file>
+				<utility.bestTransitPath.uec.file>BestTransitPathUtility2035.xls</utility.bestTransitPath.uec.file>
 				<PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs_2050.csv</PopulationSynthesizer.OccupCodes> 
 				<workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
 				<schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
-            <id>year-2050</id>
+            <id>2050</id>
             <properties>
                 <year>2050</year>
                 <crossBorder.tours>152059</crossBorder.tours>
@@ -118,13 +125,15 @@
 				<visitor.mc.uec.file>VisitorTourModeChoice2050.xls</visitor.mc.uec.file>
 				<visitor.trip.mc.uec.file>VisitorTripModeChoice2050.xls</visitor.trip.mc.uec.file>
 				<airport.mc.uec.file>AirportModeChoice2050.xls</airport.mc.uec.file>
+				<acc.uec.file>Accessibilities2050.xls</acc.uec.file>
+				<utility.bestTransitPath.uec.file>BestTransitPathUtility2050.xls</utility.bestTransitPath.uec.file>
 				<PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs_2050.csv</PopulationSynthesizer.OccupCodes> 
 				<workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
 				<schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
-            <id>local-cluster</id>
+            <id>local</id>
             <properties>
                 <jppf.server.host>127.0.0.1</jppf.server.host>
                 <map.folder>e$</map.folder>
@@ -140,7 +149,7 @@
             </properties>
         </profile>
         <profile>
-            <id>charger-cluster</id>
+            <id>charger</id>
             <properties>
                 <jppf.server.host>172.16.34.51</jppf.server.host>
                 <map.folder>d</map.folder>
@@ -162,7 +171,7 @@
             </properties>
         </profile>
         <profile>
-            <id>mustang-cluster</id>
+            <id>mustang</id>
             <properties>
                 <jppf.server.host>172.16.34.40</jppf.server.host>
                 <map.folder>MustangD</map.folder>
@@ -184,7 +193,7 @@
             </properties>
         </profile>
         <profile>
-            <id>aztec-cluster</id>
+            <id>aztec</id>
             <properties>
                 <jppf.server.host>172.16.34.30</jppf.server.host>
                 <map.folder>abm</map.folder>

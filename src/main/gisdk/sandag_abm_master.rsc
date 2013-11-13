@@ -4,6 +4,11 @@ Macro "Run SANDAG ABM"
 
    shared path, inputDir, outputDir, inputTruckDir, mxzone, mxtap, mgraDataFile,mxext,mxlink,mxrte
  
+   // Stop residual Java processes on nodes
+   runString = path+"\\bin\\stopABM.cmd"
+   ok = RunMacro("TCB Run Command", 1, "Stop Nodes", runString)
+   if !ok then goto quit  
+
    sample_rate = { 0.2, 0.5, 1.0 }
    max_iterations=sample_rate.length    //number of feedback loops
   
@@ -63,12 +68,6 @@ Macro "Run SANDAG ABM"
    ok = RunMacro("TCB Run Macro", 1, "update headways",{})
    if !ok then goto quit
 
-   // Create trip tables for first assignment from 4-step model: Note, if this macro isn't run, then
-   // copy base tables to outputs directory 
-
-   //RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - run create trip tables from 4-step"})
-   //ok = RunMacro("TCB Run Macro", 1, "Create TOD Tables From 4Step Model",{}) 
-   //if !ok then goto quit
 
    //Looping
    for iteration = 1 to max_iterations do        
@@ -142,12 +141,6 @@ Macro "Run SANDAG ABM"
 
    end
 
- 
-      //Construct trip tables
-      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Create Auto Tables"})
-      ok = RunMacro("TCB Run Macro", 1, "Create Auto Tables",{}) 
-      if !ok then goto quit
-
   // Run final highway assignment
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - hwy assignment"})
    ok = RunMacro("TCB Run Macro", 1, "hwy assignment",{4}) 
@@ -158,17 +151,26 @@ Macro "Run SANDAG ABM"
    ok = RunMacro("TCB Run Macro", 1, "Create Transit Tables",{}) 
    if !ok then goto quit
  
-
-   //Assign trip tables
+   //Run final and only transit assignment
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Assign Transit"})
    ok = RunMacro("TCB Run Macro", 1, "Assign Transit",{}) 
    if !ok then goto quit
-   	
+
+   // Skim highway network based on final highway assignment
+   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Hwy skim all"})
+   ok = RunMacro("TCB Run Macro", 1, "Hwy skim all",{}) 
+   if !ok then goto quit
+	
+   // Skim transit network based on final transit assignemnt
+   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Build transit skims"})
+   ok = RunMacro("TCB Run Macro", 1, "Build transit skims",{}) 
+   if !ok then goto quit
+  	
    //Create LUZ skims	
     RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Create LUZ Skims"})
    ok = RunMacro("TCB Run Macro", 1, "Create LUZ Skims",{}) 
    if !ok then goto quit
-  	
+	
 
    RunMacro("TCB Closing", ok, "False")
    return(1)
