@@ -82,7 +82,7 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
 
         for(int i=0; i<configurations.size(); i++)  {
             PathAlternativeListGenerationConfiguration<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> configuration  = configurations.get(i);
-            String filename = propertyMap.get(configuration.getOutputDirectory() + fileProperties[i]);
+            String filename = configuration.getOutputDirectory() +  propertyMap.get(fileProperties[i]);
             application = new SandagBikePathChoiceLogsumMatrixApplication(configuration,propertyMap);
             
             new File(configuration.getOutputDirectory()).mkdirs();
