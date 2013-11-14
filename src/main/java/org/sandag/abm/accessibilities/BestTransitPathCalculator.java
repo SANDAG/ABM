@@ -858,7 +858,7 @@ public class BestTransitPathCalculator
 	 * @return A set of utilities for the Tap-pair, dimensioned by ride mode in @link
 	 *         <Modes>.
 	 */
-	public synchronized void setUtilitiesForTapPair(int accEgr, int period, int pTap,
+	public void setUtilitiesForTapPair(int accEgr, int period, int pTap,
 			int aTap, boolean myTrace, Logger myLogger) {
 
         // allocate space for the pTap if necessary
