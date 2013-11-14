@@ -24,6 +24,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import org.apache.log4j.Logger;
 import org.sandag.abm.modechoice.MgraDataManager;
+import org.sandag.abm.modechoice.TapDataManager;
+import org.sandag.abm.modechoice.TazDataManager;
+
 import com.pb.common.newmodel.UtilityExpressionCalculator;
 
 /**
@@ -936,6 +939,7 @@ public final class BuildAccessibilities
         if (landUseLogsums != null)
         	averageLandUseModeChoiceLogsums();
         
+
         return accessibilities;
         
     }

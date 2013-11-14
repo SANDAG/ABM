@@ -35,7 +35,9 @@ import com.pb.common.newmodel.ChoiceModelApplication;
 
 import org.sandag.abm.ctramp.StopFrequencyDMU;
 import org.sandag.abm.accessibilities.AccessibilitiesTable;
+import org.sandag.abm.accessibilities.BestTransitPathCalculator;
 import org.sandag.abm.accessibilities.BuildAccessibilities;
+import org.sandag.abm.accessibilities.StoredUtilityData;
 //import org.sandag.abm.accessibilities.BuildAccessibilities;
 import org.sandag.abm.ctramp.CtrampDmuFactoryIf;
 import org.sandag.abm.ctramp.Definitions;
@@ -49,6 +51,7 @@ import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.Person;
 import org.sandag.abm.ctramp.Tour;
 import org.sandag.abm.modechoice.MgraDataManager;
+import org.sandag.abm.modechoice.TazDataManager;
 
 // 1.0.1 - 09/21/09 - starting point for SANDAG AB model implementation - AO model
 
@@ -321,7 +324,8 @@ public class CtrampApplication implements Serializable
         if (restartModel == null) restartModel = "none";
         if (!restartModel.equalsIgnoreCase("none")) restartModels(householdDataManager);
 
-        JPPFClient jppfClient = new JPPFClient();
+        
+        JPPFClient jppfClient = null;
 
         boolean runPreAutoOwnershipChoiceModel = ResourceUtil.getBooleanProperty(resourceBundle, PROPERTIES_RUN_PRE_AUTO_OWNERSHIP);
         if (runPreAutoOwnershipChoiceModel)
@@ -430,7 +434,9 @@ public class CtrampApplication implements Serializable
                 buildNonMandatoryAccessibilities( calculateLandUseAccessibilities );
             }
             
+            
             // new the usual school and location choice model object
+            jppfClient = new JPPFClient();
             UsualWorkSchoolLocationChoiceModel usualWorkSchoolLocationChoiceModel = new UsualWorkSchoolLocationChoiceModel(
                     resourceBundle, restartModel, jppfClient, modelStructure, ms, dmuFactory, aggAcc);
 
@@ -665,7 +671,12 @@ public class CtrampApplication implements Serializable
         {
 
             aggAcc.calculateDCUtilitiesDistributed(propertyMap);
+            
+            // release the memory used to store the access-tap, tap-egress, and tap-tap utilities while calculating accessibilities for the client program
+            HashMap<String,String> rbMap = ResourceUtil.changeResourceBundleIntoHashMap(resourceBundle);
+            StoredUtilityData.getInstance( MgraDataManager.getInstance(rbMap).getMaxMgra(), MgraDataManager.getInstance(rbMap).getMaxTap(), TazDataManager.getInstance(rbMap).getMaxTaz(), BestTransitPathCalculator.NUM_ACC_EGR, BestTransitPathCalculator.NUM_PERIODS ).deallocateArrays();            
 
+            MatrixDataManager.getInstance().clearData();
         }
 
     }

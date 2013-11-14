@@ -170,8 +170,26 @@ public class DestChoiceModelManager
         }
 
         aggAcc = BuildAccessibilities.getInstance();
-        if ( ! aggAcc.getAccessibilitiesAreBuilt() ) {
             
+        // assume that if the filename exists, at was created previously, either in another model run, or by the main client
+        // if the filename doesn't exist, then calculate the accessibilities
+        String projectDirectory = propertyMap.get(CtrampApplication.PROPERTIES_PROJECT_DIRECTORY);
+        String accFileName = projectDirectory + Util.getStringValueFromPropertyMap(propertyMap, "acc.output.file");
+        boolean accFileReadFlag = Util.getBooleanValueFromPropertyMap(propertyMap, CtrampApplication.READ_ACCESSIBILITIES);
+
+        if (  (new File(accFileName)).canRead() ) {
+
+            logger.info("filling Accessibilities Object in DestChoiceModelManager by reading file: " + accFileName + ".");
+            aggAcc.readAccessibilityTableFromFile(accFileName);
+
+            aggAcc.setupBuildAccessibilities(propertyMap, false);
+            aggAcc.createSchoolSegmentNameIndices();
+    
+            aggAcc.calculateSizeTerms();
+
+        }
+        else {
+
             aggAcc.setupBuildAccessibilities(propertyMap, false);
             aggAcc.createSchoolSegmentNameIndices();
     
@@ -179,26 +197,11 @@ public class DestChoiceModelManager
             aggAcc.calculateConstants();
     
 
-            // assume that if the filename exists, at was created previously, either in another model run, or by the main client
-            // if the filename doesn't exist, then calculate the accessibilities
-            String projectDirectory = propertyMap.get(CtrampApplication.PROPERTIES_PROJECT_DIRECTORY);
-            String accFileName = projectDirectory + Util.getStringValueFromPropertyMap(propertyMap, "acc.output.file");
-            boolean accFileReadFlag = Util.getBooleanValueFromPropertyMap(propertyMap, CtrampApplication.READ_ACCESSIBILITIES);
+            logger.info("filling Accessibilities Object in DestChoiceModelManager by calculating them.");
+            aggAcc.calculateDCUtilitiesDistributed(propertyMap);
 
-            if ( accFileReadFlag && (new File(accFileName)).canRead() ) {
-    
-                logger.info("filling Accessibilities Object in DestChoiceModelManager by reading file: " + accFileName + ".");
-                aggAcc.readAccessibilityTableFromFile(accFileName);
-    
-            }
-            else {
-    
-                logger.info("filling Accessibilities Object in DestChoiceModelManager by calculating them.");
-                aggAcc.calculateDCUtilitiesDistributed(propertyMap);
-    
-            }
-            
         }
+            
         
 
         // compute the array of cumulative taz distance based SOA probabilities for each origin taz.
