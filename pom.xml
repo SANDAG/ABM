@@ -8,87 +8,132 @@
     <name>SANDAG CT-RAMP Activity Based Model</name>
     
     <properties>
-        <encoding.type>UTF-8</encoding.type>
+        <encoding.type>UTF-8</encoding.type>  
     </properties>
-
     <profiles>
          <profile>
-            <id>year-2010</id>
+            <id>2010</id>
             <properties>
                 <year>2010</year>
-                <crossBorder.tours>115320</crossBorder.tours>
+                <crossBorder.tours>93409</crossBorder.tours>
                 <airport.enplanements>11441719</airport.enplanements>
 				<airport.connecting>463624</airport.connecting>
 				<airport.airportMgra>2997</airport.airportMgra>
 				<crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
 				<crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
+				<tourModeChoice.uec.file>TourModeChoice2010.xls</tourModeChoice.uec.file>
+				<tripModeChoice.uec.file>TripModeChoice2010.xls</tripModeChoice.uec.file>
+				<internalExternal.trip.mc.uec.file>InternalExternalTripModeChoice2010.xls</internalExternal.trip.mc.uec.file>
+				<crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice2010.xls</crossBorder.trip.mc.uec.file>
+				<visitor.mc.uec.file>VisitorTourModeChoice2010.xls</visitor.mc.uec.file>
+				<visitor.trip.mc.uec.file>VisitorTripModeChoice2010.xls</visitor.trip.mc.uec.file>
+				<airport.mc.uec.file>AirportModeChoice2010.xls</airport.mc.uec.file>
+				<acc.uec.file>Accessibilities2010.xls</acc.uec.file>
+				<utility.bestTransitPath.uec.file>BestTransitPathUtility2010.xls</utility.bestTransitPath.uec.file>				
 				<PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
 				<workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
 				<schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
+				<auto.opterating.maintenance>7.5</auto.opterating.maintenance>
             </properties>
         </profile>
          <profile>
-            <id>year-2012</id>
+            <id>2012</id>
             <properties>
                 <year>2012</year>
-                <crossBorder.tours>119308</crossBorder.tours>
+                <crossBorder.tours>96639</crossBorder.tours>
                 <airport.enplanements>11673771</airport.enplanements>
 				<airport.connecting>473027</airport.connecting>
 				<airport.airportMgra>2997</airport.airportMgra>
 				<crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
 				<crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
+				<tourModeChoice.uec.file>TourModeChoice2010.xls</tourModeChoice.uec.file>
+				<tripModeChoice.uec.file>TripModeChoice2010.xls</tripModeChoice.uec.file>
+				<internalExternal.trip.mc.uec.file>InternalExternalTripModeChoice2010.xls</internalExternal.trip.mc.uec.file>
+				<crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice2010.xls</crossBorder.trip.mc.uec.file>
+				<visitor.mc.uec.file>VisitorTourModeChoice2010.xls</visitor.mc.uec.file>
+				<visitor.trip.mc.uec.file>VisitorTripModeChoice2010.xls</visitor.trip.mc.uec.file>
+				<airport.mc.uec.file>AirportModeChoice2010.xls</airport.mc.uec.file>
+				<acc.uec.file>Accessibilities2010.xls</acc.uec.file>
+				<utility.bestTransitPath.uec.file>BestTransitPathUtility2010.xls</utility.bestTransitPath.uec.file>
 				<PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
 				<workShadowPricing.iteration>ShadowPricingOutput_work_20.csv</workShadowPricing.iteration>
 				<schoolShadowPricing.iteration>ShadowPricingOutput_school_20.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
-            <id>year-2020</id>
+            <id>2020</id>
             <properties>
                 <year>2020</year>
-                <crossBorder.tours>123276</crossBorder.tours>
-                <airport.enplanements>11441719</airport.enplanements>
-				<airport.connecting>463624</airport.connecting>
+                <crossBorder.tours>106316</crossBorder.tours>
+                <airport.enplanements>13268804</airport.enplanements>
+				<airport.connecting>537658</airport.connecting>
 				<airport.airportMgra>2997</airport.airportMgra>
-				<crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>    
-				<crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
-				<PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs_2020.csv</PopulationSynthesizer.OccupCodes> 
+				<crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
+				<crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
+				<tourModeChoice.uec.file>TourModeChoice2020.xls</tourModeChoice.uec.file>
+				<tripModeChoice.uec.file>TripModeChoice2020.xls</tripModeChoice.uec.file>
+				<internalExternal.trip.mc.uec.file>InternalExternalTripModeChoice2020.xls</internalExternal.trip.mc.uec.file>
+				<crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice2020.xls</crossBorder.trip.mc.uec.file>
+				<visitor.mc.uec.file>VisitorTourModeChoice2020.xls</visitor.mc.uec.file>
+				<visitor.trip.mc.uec.file>VisitorTripModeChoice2020.xls</visitor.trip.mc.uec.file>
+				<airport.mc.uec.file>AirportModeChoice2020.xls</airport.mc.uec.file>
+				<acc.uec.file>Accessibilities2020.xls</acc.uec.file>
+				<utility.bestTransitPath.uec.file>BestTransitPathUtility2020.xls</utility.bestTransitPath.uec.file>				
+				<PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs_2050.csv</PopulationSynthesizer.OccupCodes> 
 				<workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
 				<schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
-            <id>year-2035</id>
+            <id>2035</id>
             <properties>
                 <year>2035</year>
-                <crossBorder.tours>123276</crossBorder.tours>
-                <airport.enplanements>11441719</airport.enplanements>
-				<airport.connecting>463624</airport.connecting>
+                <crossBorder.tours>127147</crossBorder.tours>
+                <airport.enplanements>16612756</airport.enplanements>
+				<airport.connecting>673157</airport.connecting>
 				<airport.airportMgra>2997</airport.airportMgra>
-				<crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2035.csv</crossborder.dc.soa.alts.file>    
-				<crossBorder.dc.uec.file>CrossBorderDestinationChoice2035.xls</crossBorder.dc.uec.file>
-				<PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs_2035.csv</PopulationSynthesizer.OccupCodes> 
+				<crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
+				<crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
+				<tourModeChoice.uec.file>TourModeChoice2035.xls</tourModeChoice.uec.file>
+				<tripModeChoice.uec.file>TripModeChoice2035.xls</tripModeChoice.uec.file>
+				<internalExternal.trip.mc.uec.file>InternalExternalTripModeChoice2035.xls</internalExternal.trip.mc.uec.file>
+				<crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice2035.xls</crossBorder.trip.mc.uec.file>
+				<visitor.mc.uec.file>VisitorTourModeChoice2035.xls</visitor.mc.uec.file>
+				<visitor.trip.mc.uec.file>VisitorTripModeChoice2035.xls</visitor.trip.mc.uec.file>
+				<airport.mc.uec.file>AirportModeChoice2035.xls</airport.mc.uec.file>
+				<acc.uec.file>Accessibilities2035.xls</acc.uec.file>
+				<utility.bestTransitPath.uec.file>BestTransitPathUtility2035.xls</utility.bestTransitPath.uec.file>
+				<PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs_2050.csv</PopulationSynthesizer.OccupCodes> 
 				<workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
 				<schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
-            <id>year-2050</id>
+            <id>2050</id>
             <properties>
                 <year>2050</year>
-                <crossBorder.tours>198655</crossBorder.tours>
+                <crossBorder.tours>152059</crossBorder.tours>
                 <airport.enplanements>22263450</airport.enplanements>
 				<airport.connecting>902126</airport.connecting>
 				<airport.airportMgra>2997</airport.airportMgra>
-				<crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2050.csv</crossborder.dc.soa.alts.file>    
-				<crossBorder.dc.uec.file>CrossBorderDestinationChoice2050.xls</crossBorder.dc.uec.file>
+				<crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2040.csv</crossborder.dc.soa.alts.file>    
+				<crossBorder.dc.uec.file>CrossBorderDestinationChoice2040.xls</crossBorder.dc.uec.file>
+				<tourModeChoice.uec.file>TourModeChoice2050.xls</tourModeChoice.uec.file>
+				<tripModeChoice.uec.file>TripModeChoice2050.xls</tripModeChoice.uec.file>
+				<internalExternal.trip.mc.uec.file>InternalExternalTripModeChoice2050.xls</internalExternal.trip.mc.uec.file>
+				<crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice2050.xls</crossBorder.trip.mc.uec.file>
+				<visitor.mc.uec.file>VisitorTourModeChoice2050.xls</visitor.mc.uec.file>
+				<visitor.trip.mc.uec.file>VisitorTripModeChoice2050.xls</visitor.trip.mc.uec.file>
+				<airport.mc.uec.file>AirportModeChoice2050.xls</airport.mc.uec.file>
+				<acc.uec.file>Accessibilities2050.xls</acc.uec.file>
+				<utility.bestTransitPath.uec.file>BestTransitPathUtility2050.xls</utility.bestTransitPath.uec.file>
 				<PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs_2050.csv</PopulationSynthesizer.OccupCodes> 
 				<workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
 				<schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
-            <id>local-cluster</id>
+            <id>local</id>
             <properties>
                 <jppf.server.host>127.0.0.1</jppf.server.host>
                 <map.folder>e$</map.folder>
@@ -104,7 +149,7 @@
             </properties>
         </profile>
         <profile>
-            <id>charger-cluster</id>
+            <id>charger</id>
             <properties>
                 <jppf.server.host>172.16.34.51</jppf.server.host>
                 <map.folder>d</map.folder>
@@ -126,7 +171,7 @@
             </properties>
         </profile>
         <profile>
-            <id>mustang-cluster</id>
+            <id>mustang</id>
             <properties>
                 <jppf.server.host>172.16.34.40</jppf.server.host>
                 <map.folder>MustangD</map.folder>
@@ -148,10 +193,10 @@
             </properties>
         </profile>
         <profile>
-            <id>aztec-cluster</id>
+            <id>aztec</id>
             <properties>
                 <jppf.server.host>172.16.34.30</jppf.server.host>
-                <map.folder>???</map.folder>
+                <map.folder>abm</map.folder>
                 <jppf.management.host>172.16.34.30</jppf.management.host>
                 <matrix.server.host>172.16.34.30</matrix.server.host>
                 <matrix.server.port>1191</matrix.server.port>
@@ -162,9 +207,9 @@
                 <master.node.name>AZTEC</master.node.name>
                 <node.1.name>HAWKEYE</node.1.name>
                 <java.32.port>1190</java.32.port>
-                <MAPANDRUN>c:\remoteExecution\mapAndRun.bat</MAPANDRUN>
-                <workpath>c:\\projects\\sandag\\series13</workpath>
-                <TRANSCAD_PATH>C:\Progra~2\TransCAD</TRANSCAD_PATH>
+                <MAPANDRUN>c:\ABM\remoteExecution\mapAndRun.bat</MAPANDRUN>
+                <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>
+                <TRANSCAD_PATH>C:\Progra~2\TransCAD50</TRANSCAD_PATH>
             </properties>
         </profile>        
         <profile>
