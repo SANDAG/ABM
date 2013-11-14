@@ -17,8 +17,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import org.apache.log4j.Logger;
 import org.jppf.client.JPPFClient;
+import org.sandag.abm.accessibilities.BestTransitPathCalculator;
 import org.sandag.abm.accessibilities.BuildAccessibilities;
+import org.sandag.abm.accessibilities.StoredUtilityData;
 import org.sandag.abm.modechoice.MgraDataManager;
+import org.sandag.abm.modechoice.TazDataManager;
 import com.pb.common.calculator.MatrixDataManager;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.datafile.DataFile;
@@ -242,8 +245,8 @@ public class CtrampApplication
 
                     ms = new MatrixDataServerRmi(matrixServerAddress, serverPort,
                             MatrixDataServer.MATRIX_DATA_SERVER_NAME);
-                    ms.testRemote("CtrampApplication");
-                    ms.start32BitMatrixIoServer(mt, "CtrampApplication");
+                    ms.testRemote(Thread.currentThread().getName());
+                    ms.start32BitMatrixIoServer(mt);
 
                     MatrixDataManager mdm = MatrixDataManager.getInstance();
                     mdm.setMatrixDataServerObject(ms);
@@ -302,7 +305,7 @@ public class CtrampApplication
             stop32BitMatrixIoServer();
         } else if (ms != null)
         {
-            ms.stop32BitMatrixIoServer("CtrampApplication");
+            ms.stop32BitMatrixIoServer();
         }
 
     }
@@ -331,7 +334,7 @@ public class CtrampApplication
         if (restartModel == null) restartModel = "none";
         if (!restartModel.equalsIgnoreCase("none")) restartModels(householdDataManager);
 
-        JPPFClient jppfClient = new JPPFClient();
+        JPPFClient jppfClient = null;
 
         boolean runPreAutoOwnershipChoiceModel = ResourceUtil.getBooleanProperty(resourceBundle,
                 PROPERTIES_RUN_PRE_AUTO_OWNERSHIP);
@@ -443,6 +446,7 @@ public class CtrampApplication
             }
 
             // new the usual school and location choice model object
+            jppfClient = new JPPFClient();
             UsualWorkSchoolLocationChoiceModel usualWorkSchoolLocationChoiceModel = new UsualWorkSchoolLocationChoiceModel(
                     resourceBundle, restartModel, jppfClient, modelStructure, ms, dmuFactory,
                     aggAcc);
@@ -700,6 +704,18 @@ public class CtrampApplication
 
             aggAcc.calculateDCUtilitiesDistributed(propertyMap);
 
+            // release the memory used to store the access-tap, tap-egress, and
+            // tap-tap utilities while calculating accessibilities for the
+            // client program
+            HashMap<String, String> rbMap = ResourceUtil
+                    .changeResourceBundleIntoHashMap(resourceBundle);
+            StoredUtilityData.getInstance(MgraDataManager.getInstance(rbMap).getMaxMgra(),
+                    MgraDataManager.getInstance(rbMap).getMaxTap(),
+                    TazDataManager.getInstance(rbMap).getMaxTaz(),
+                    BestTransitPathCalculator.NUM_ACC_EGR, BestTransitPathCalculator.NUM_PERIODS)
+                    .deallocateArrays();
+
+            MatrixDataManager.getInstance().clearData();
         }
 
     }
