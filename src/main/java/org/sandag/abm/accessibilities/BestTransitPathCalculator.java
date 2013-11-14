@@ -837,29 +837,29 @@ public class BestTransitPathCalculator
         }
     }
 
-    /**
-     * This method calculates the utilities for a given Tap pair. It is called
-     * from the method @link {@link #findBestWalkTaps(int, int)}. The walk times
-     * in the dmu must be set separately, or set to 0 for a set of utilities
-     * that are mgra-independent.
-     * 
-     * @param accEgr
-     *            The access\egress mode
-     * @param period
-     *            The skim period (1-initialized)
-     * @param pTap
-     *            The origin/production Tap
-     * @param aTap
-     *            The destination/attraction Tap.
-     * @param myTrace
-     *            True if debug calculations are to be written to the logger for
-     *            this Tap-pair.
-     * @return A set of utilities for the Tap-pair, dimensioned by ride mode in @link
-     *         <Modes>.
-     */
-    public void setUtilitiesForTapPair(int accEgr, int period, int pTap, int aTap, boolean myTrace,
-            Logger myLogger)
-    {
+
+	/**
+	 * This method calculates the utilities for a given Tap pair. It is called
+	 * from the method @link {@link #findBestWalkTaps(int, int)}. The walk times
+	 * in the dmu must be set separately, or set to 0 for a set of utilities
+	 * that are mgra-independent.
+	 * 
+	 * @param accEgr
+	 *            The access\egress mode
+	 * @param period
+	 *            The skim period (1-initialized)
+	 * @param pTap
+	 *            The origin/production Tap
+	 * @param aTap
+	 *            The destination/attraction Tap.
+	 * @param myTrace
+	 *            True if debug calculations are to be written to the logger for
+	 *            this Tap-pair.
+	 * @return A set of utilities for the Tap-pair, dimensioned by ride mode in @link
+	 *         <Modes>.
+	 */
+	public synchronized void setUtilitiesForTapPair(int accEgr, int period, int pTap,
+			int aTap, boolean myTrace, Logger myLogger) {
 
         // allocate space for the pTap if necessary
         if (storedDepartPeriodTapTapUtils[accEgr][period] == null)
