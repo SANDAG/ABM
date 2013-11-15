@@ -10,7 +10,7 @@ import java.io.Serializable;
  *          <p/>
  *          Created by IntelliJ IDEA.
  */
-public class Modes
+public final class Modes
         implements Serializable
 {
 
@@ -99,6 +99,11 @@ public class Modes
     public enum OtherMode
     {
         SCHOOL_BUS
+    }
+    
+    private Modes()
+    {
+        //Not implemented in utility classes
     }
 
     public static int getTransitModeIndex(String modeName)

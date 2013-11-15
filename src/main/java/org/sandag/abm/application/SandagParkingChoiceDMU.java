@@ -38,7 +38,6 @@ public class SandagParkingChoiceDMU
         methodIndexMap.put("getReimbPct", 19);
     }
 
-    
     public double getValueForIndex(int variableIndex, int arrayIndex)
     {
 
@@ -46,13 +45,13 @@ public class SandagParkingChoiceDMU
         {
 
             case 1:
-                return getParkMgraAlt( arrayIndex );
+                return getParkMgraAlt(arrayIndex);
             case 2:
-                return getDistanceTripOrigToParkAlt( arrayIndex );
+                return getDistanceTripOrigToParkAlt(arrayIndex);
             case 3:
-                return getDistanceTripDestFromParkAlt( arrayIndex );
+                return getDistanceTripDestFromParkAlt(arrayIndex);
             case 4:
-                return getDestSameAsParkAlt( arrayIndex );
+                return getDestSameAsParkAlt(arrayIndex);
             case 5:
                 return getPersonType();
             case 6:
@@ -60,31 +59,30 @@ public class SandagParkingChoiceDMU
             case 7:
                 return getTripDestPurpose();
             case 8:
-                return getLsWgtAvgCostM( arrayIndex );
+                return getLsWgtAvgCostM(arrayIndex);
             case 9:
-                return getMstallsoth( arrayIndex );
+                return getMstallsoth(arrayIndex);
             case 10:
-                return getMstallssam( arrayIndex );
+                return getMstallssam(arrayIndex);
             case 11:
-                return getMparkcost( arrayIndex );
+                return getMparkcost(arrayIndex);
             case 12:
-                return getDstallsoth( arrayIndex );
+                return getDstallsoth(arrayIndex);
             case 13:
-                return getDstallssam( arrayIndex );
+                return getDstallssam(arrayIndex);
             case 14:
-                return getDparkcost( arrayIndex );
+                return getDparkcost(arrayIndex);
             case 15:
-                return getHstallsoth( arrayIndex );
+                return getHstallsoth(arrayIndex);
             case 16:
-                return getHstallssam( arrayIndex );
+                return getHstallssam(arrayIndex);
             case 17:
-                return getHparkcost( arrayIndex );
+                return getHparkcost(arrayIndex);
             case 18:
-                return getNumfreehrs( arrayIndex );
+                return getNumfreehrs(arrayIndex);
             case 19:
                 return getReimbPct();
-                
-                
+
             default:
                 logger.error("method number = " + variableIndex + " not found");
                 throw new RuntimeException("method number = " + variableIndex + " not found");

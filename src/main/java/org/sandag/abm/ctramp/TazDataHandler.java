@@ -12,39 +12,40 @@ import com.pb.common.datafile.TableDataSet;
 import com.pb.common.util.ResourceUtil;
 
 /**
- * This class provides methods defined in the TazDataIf interface for accessing zonal
- * data stored in its TazDataManager object.
+ * This class provides methods defined in the TazDataIf interface for accessing
+ * zonal data stored in its TazDataManager object.
  * 
- * A CT-RAMP tour based model application could create an instance of a subclass of
- * this class, where additional project specific varaible definitions and methods are
- * defined and pass that instance to its model component objects.
+ * A CT-RAMP tour based model application could create an instance of a subclass
+ * of this class, where additional project specific varaible definitions and
+ * methods are defined and pass that instance to its model component objects.
  * 
  * Alternatively, an application could use TazDataHandlerRmi as the base class
- * instead and create a "remoteable" subclass. The TazDataHandlerRmi class implements
- * the same interface, so the model component classes can be unaware of whether the
- * taz data handler object accesses zonal data from its member object or remotely
- * from a server. Those methods in the rmi class access zonal data from a
- * TazDataManager object contained in a "taz data server" object which must exist in
- * a separate JVM on the same machine or on another addressable machine over the
- * network.
+ * instead and create a "remoteable" subclass. The TazDataHandlerRmi class
+ * implements the same interface, so the model component classes can be unaware
+ * of whether the taz data handler object accesses zonal data from its member
+ * object or remotely from a server. Those methods in the rmi class access zonal
+ * data from a TazDataManager object contained in a "taz data server" object
+ * which must exist in a separate JVM on the same machine or on another
+ * addressable machine over the network.
  * 
- * The flexibility provided by this design is intended to allow the "local" instance
- * to be declared and passed within a single JVM to model components for possibly
- * greater performance (yet to be tested and proven) at production run time. The
- * "rmi" instance however allows the model components to access zonal data from a
- * "long-running process" (the server class may execute for weeks or months). This
- * approach aids in model development as during development, model applications can
- * be written to skip startup procedures for reading zonal data, and access them
- * directly from the server that is already running.
+ * The flexibility provided by this design is intended to allow the "local"
+ * instance to be declared and passed within a single JVM to model components
+ * for possibly greater performance (yet to be tested and proven) at production
+ * run time. The "rmi" instance however allows the model components to access
+ * zonal data from a "long-running process" (the server class may execute for
+ * weeks or months). This approach aids in model development as during
+ * development, model applications can be written to skip startup procedures for
+ * reading zonal data, and access them directly from the server that is already
+ * running.
  * 
- * A similar approach is planned for managing objects such as Household objects and
- * ModelResults objects so that model components, for example individual
+ * A similar approach is planned for managing objects such as Household objects
+ * and ModelResults objects so that model components, for example individual
  * non-mandatory tour related models which occur well into the tour based model
- * stream, can be run in a "hot-start" fasion, where the model component of interest
- * is executed immediately where all the preliminary data and prior model results it
- * requires are stored in long-running server objects. Testing and debugging of these
- * model components can occur without the time required to run through all
- * preliminary steps.
+ * stream, can be run in a "hot-start" fasion, where the model component of
+ * interest is executed immediately where all the preliminary data and prior
+ * model results it requires are stored in long-running server objects. Testing
+ * and debugging of these model components can occur without the time required
+ * to run through all preliminary steps.
  * 
  * 
  */
@@ -53,8 +54,7 @@ public class TazDataHandler
         implements TazDataIf, Serializable
 {
 
-    protected transient Logger    logger                                             = Logger
-                                                                                             .getLogger(TazDataHandler.class);
+    protected transient Logger    logger                                             = Logger.getLogger(TazDataHandler.class);
 
     public static final String    PROPERTIES_TAZ_DATA                                = "TazData.File";
     public static final String    PROPERTIES_WALK_SHARES_DATA                        = "TazWalkShares.File";
@@ -131,7 +131,8 @@ public class TazDataHandler
 
     protected TableDataSet        zoneDataTable;
 
-    // zoneTableRow is a correspondence between zone number (i,e, origin taz or dest
+    // zoneTableRow is a correspondence between zone number (i,e, origin taz or
+    // dest
     // taz) and the TableDataSet row
     // in which those zonal attributes are stored.
     protected int[]               zoneTableRow;
@@ -145,18 +146,22 @@ public class TazDataHandler
     protected int[]               altToZone;
 
     // altToSubZone is a correspondence between DC alternative number
-    // (1,...,numZones*numSubzones) and 0-based subzone index (0,...,numSubZones-1)
+    // (1,...,numZones*numSubzones) and 0-based subzone index
+    // (0,...,numSubZones-1)
     protected int[]               altToSubZone;
 
-    // 1st dimension is indexed by zone number, 2nd dimension is walk segments - e.g.
+    // 1st dimension is indexed by zone number, 2nd dimension is walk segments -
+    // e.g.
     // 0: no walk %, 1: shrt %, 2: long %.
     protected float[][]           zonalWalkPctArray;
 
     protected String[]            subZoneNames;
 
-    // TODO: need to apply consistent zone number/zone table row/o & d zonal index/
+    // TODO: need to apply consistent zone number/zone table row/o & d zonal
+    // index/
     // correspondence defined in this class
-    // TODO: and make sure that proper indexing is applied in all models that use
+    // TODO: and make sure that proper indexing is applied in all models that
+    // use
     // zone table data.
 
     public TazDataHandler(ResourceBundle rb, String projectDirectory)
@@ -235,7 +240,8 @@ public class TazDataHandler
             reader.setDelimSet("," + reader.getDelimSet());
             zoneTable = reader.readFile(new File(zoneDataFileName));
 
-            // set global max zone and num zones values, and make sure there are no
+            // set global max zone and num zones values, and make sure there are
+            // no
             // duplicates.
             zoneCol = zoneTable.getColumnPosition(tazDataZoneFieldName);
             HashMap<Integer, Integer> zoneValues = new HashMap<Integer, Integer>();
@@ -245,11 +251,9 @@ public class TazDataHandler
                 int zone = (int) zoneTable.getValueAt(i, zoneCol);
                 if (zoneValues.containsKey(zone))
                 {
-                    logger
-                            .fatal(String
-                                    .format(
-                                            "zone employment table read from %s has duplicate value for ZONE=%d in column %d at record number %d",
-                                            zoneDataFileName, zone, zoneCol, (i + 1)));
+                    logger.fatal(String
+                            .format("zone employment table read from %s has duplicate value for ZONE=%d in column %d at record number %d",
+                                    zoneDataFileName, zone, zoneCol, (i + 1)));
                     throw new RuntimeException();
                 } else
                 {
@@ -262,11 +266,9 @@ public class TazDataHandler
 
         } catch (IOException e)
         {
-            logger
-                    .error(String
-                            .format(
-                                    "Exception occurred reading zonal employment data file: %s into TableDataSet object.",
-                                    zoneDataFileName));
+            logger.error(String
+                    .format("Exception occurred reading zonal employment data file: %s into TableDataSet object.",
+                            zoneDataFileName));
             throw new RuntimeException();
         }
 
@@ -310,33 +312,27 @@ public class TazDataHandler
                 int tazPosition = wa.getColumnPosition(walkPctZoneFieldName);
                 if (tazPosition <= 0)
                 {
-                    logger
-                            .fatal(String
-                                    .format(
-                                            "expected zone field name=%s was not a field in the walk access file: %s.",
-                                            WALK_PERCENTAGE_FILE_ZONE_FIELD_NAME, fileName));
+                    logger.fatal(String
+                            .format("expected zone field name=%s was not a field in the walk access file: %s.",
+                                    WALK_PERCENTAGE_FILE_ZONE_FIELD_NAME, fileName));
                     throw new RuntimeException();
                 }
 
                 int shrtPosition = wa.getColumnPosition(walkPctShortFieldName);
                 if (shrtPosition <= 0)
                 {
-                    logger
-                            .fatal(String
-                                    .format(
-                                            "expected short field name=%s was not a field in the walk access file: %s.",
-                                            WALK_PERCENTAGE_FILE_SHORT_FIELD_NAME, fileName));
+                    logger.fatal(String
+                            .format("expected short field name=%s was not a field in the walk access file: %s.",
+                                    WALK_PERCENTAGE_FILE_SHORT_FIELD_NAME, fileName));
                     throw new RuntimeException();
                 }
 
                 int longPosition = wa.getColumnPosition(walkPctLongFieldName);
                 if (longPosition <= 0)
                 {
-                    logger
-                            .fatal(String
-                                    .format(
-                                            "expected long field name=%s was not a field in the walk access file: %s.",
-                                            WALK_PERCENTAGE_FILE_LONG_FIELD_NAME, fileName));
+                    logger.fatal(String
+                            .format("expected long field name=%s was not a field in the walk access file: %s.",
+                                    WALK_PERCENTAGE_FILE_LONG_FIELD_NAME, fileName));
                     throw new RuntimeException();
                 }
 
@@ -352,15 +348,14 @@ public class TazDataHandler
 
             } catch (IOException e)
             {
-                logger.fatal(String.format("exception caught reading walk access file: %s",
-                        fileName), e);
+                logger.fatal(
+                        String.format("exception caught reading walk access file: %s", fileName), e);
             }
 
         } else
         {
 
-            logger
-                    .fatal("no zonal walk access data file was named in properties file with target: 'WalkPercentages.file ='.");
+            logger.fatal("no zonal walk access data file was named in properties file with target: 'WalkPercentages.file ='.");
             throw new RuntimeException();
 
         }
@@ -394,11 +389,9 @@ public class TazDataHandler
                 int tazPosition = acc.getColumnPosition(ACCESSIBILITIES_FILE_ZONE_FIELD_NAME);
                 if (tazPosition <= 0)
                 {
-                    logger
-                            .fatal(String
-                                    .format(
-                                            "expected zone field name=%s was not a field in the zonal accessibilities file: %s.",
-                                            ACCESSIBILITIES_FILE_ZONE_FIELD_NAME, fileName));
+                    logger.fatal(String
+                            .format("expected zone field name=%s was not a field in the zonal accessibilities file: %s.",
+                                    ACCESSIBILITIES_FILE_ZONE_FIELD_NAME, fileName));
                     throw new RuntimeException();
                 }
 
@@ -406,11 +399,9 @@ public class TazDataHandler
                         .getColumnPosition(ACCESSIBILITIES_PEAK_AUTO_RETAIL_FIELD_NAME);
                 if (pkAutoRetailPosition <= 0)
                 {
-                    logger
-                            .fatal(String
-                                    .format(
-                                            "expected field name=%s was not a field in the zonal accessibilities file: %s.",
-                                            ACCESSIBILITIES_PEAK_AUTO_RETAIL_FIELD_NAME, fileName));
+                    logger.fatal(String
+                            .format("expected field name=%s was not a field in the zonal accessibilities file: %s.",
+                                    ACCESSIBILITIES_PEAK_AUTO_RETAIL_FIELD_NAME, fileName));
                     throw new RuntimeException();
                 }
 
@@ -418,11 +409,9 @@ public class TazDataHandler
                         .getColumnPosition(ACCESSIBILITIES_PEAK_AUTO_TOTAL_FIELD_NAME);
                 if (pkAutoTotalPosition <= 0)
                 {
-                    logger
-                            .fatal(String
-                                    .format(
-                                            "expected field name=%s was not a field in the zonal accessibilities file: %s.",
-                                            ACCESSIBILITIES_PEAK_AUTO_TOTAL_FIELD_NAME, fileName));
+                    logger.fatal(String
+                            .format("expected field name=%s was not a field in the zonal accessibilities file: %s.",
+                                    ACCESSIBILITIES_PEAK_AUTO_TOTAL_FIELD_NAME, fileName));
                     throw new RuntimeException();
                 }
 
@@ -430,12 +419,9 @@ public class TazDataHandler
                         .getColumnPosition(ACCESSIBILITIES_PEAK_TRANSIT_RETAIL_FIELD_NAME);
                 if (pkTransitRetailPosition <= 0)
                 {
-                    logger
-                            .fatal(String
-                                    .format(
-                                            "expected field name=%s was not a field in the zonal accessibilities file: %s.",
-                                            ACCESSIBILITIES_PEAK_TRANSIT_RETAIL_FIELD_NAME,
-                                            fileName));
+                    logger.fatal(String
+                            .format("expected field name=%s was not a field in the zonal accessibilities file: %s.",
+                                    ACCESSIBILITIES_PEAK_TRANSIT_RETAIL_FIELD_NAME, fileName));
                     throw new RuntimeException();
                 }
 
@@ -443,11 +429,9 @@ public class TazDataHandler
                         .getColumnPosition(ACCESSIBILITIES_PEAK_TRANSIT_TOTAL_FIELD_NAME);
                 if (pkTransitTotalPosition <= 0)
                 {
-                    logger
-                            .fatal(String
-                                    .format(
-                                            "expected field name=%s was not a field in the zonal accessibilities file: %s.",
-                                            ACCESSIBILITIES_PEAK_TRANSIT_TOTAL_FIELD_NAME, fileName));
+                    logger.fatal(String
+                            .format("expected field name=%s was not a field in the zonal accessibilities file: %s.",
+                                    ACCESSIBILITIES_PEAK_TRANSIT_TOTAL_FIELD_NAME, fileName));
                     throw new RuntimeException();
                 }
 
@@ -455,12 +439,9 @@ public class TazDataHandler
                         .getColumnPosition(ACCESSIBILITIES_OFF_PEAK_AUTO_RETAIL_FIELD_NAME);
                 if (opAutoRetailPosition <= 0)
                 {
-                    logger
-                            .fatal(String
-                                    .format(
-                                            "expected field name=%s was not a field in the zonal accessibilities file: %s.",
-                                            ACCESSIBILITIES_OFF_PEAK_AUTO_RETAIL_FIELD_NAME,
-                                            fileName));
+                    logger.fatal(String
+                            .format("expected field name=%s was not a field in the zonal accessibilities file: %s.",
+                                    ACCESSIBILITIES_OFF_PEAK_AUTO_RETAIL_FIELD_NAME, fileName));
                     throw new RuntimeException();
                 }
 
@@ -468,12 +449,9 @@ public class TazDataHandler
                         .getColumnPosition(ACCESSIBILITIES_OFF_PEAK_AUTO_TOTAL_FIELD_NAME);
                 if (opAutoTotalPosition <= 0)
                 {
-                    logger
-                            .fatal(String
-                                    .format(
-                                            "expected field name=%s was not a field in the zonal accessibilities file: %s.",
-                                            ACCESSIBILITIES_OFF_PEAK_AUTO_TOTAL_FIELD_NAME,
-                                            fileName));
+                    logger.fatal(String
+                            .format("expected field name=%s was not a field in the zonal accessibilities file: %s.",
+                                    ACCESSIBILITIES_OFF_PEAK_AUTO_TOTAL_FIELD_NAME, fileName));
                     throw new RuntimeException();
                 }
 
@@ -481,12 +459,9 @@ public class TazDataHandler
                         .getColumnPosition(ACCESSIBILITIES_OFF_PEAK_TRANSIT_RETAIL_FIELD_NAME);
                 if (opTransitRetailPosition <= 0)
                 {
-                    logger
-                            .fatal(String
-                                    .format(
-                                            "expected field name=%s was not a field in the zonal accessibilities file: %s.",
-                                            ACCESSIBILITIES_OFF_PEAK_TRANSIT_RETAIL_FIELD_NAME,
-                                            fileName));
+                    logger.fatal(String
+                            .format("expected field name=%s was not a field in the zonal accessibilities file: %s.",
+                                    ACCESSIBILITIES_OFF_PEAK_TRANSIT_RETAIL_FIELD_NAME, fileName));
                     throw new RuntimeException();
                 }
 
@@ -494,12 +469,9 @@ public class TazDataHandler
                         .getColumnPosition(ACCESSIBILITIES_OFF_PEAK_TRANSIT_TOTAL_FIELD_NAME);
                 if (opTransitTotalPosition <= 0)
                 {
-                    logger
-                            .fatal(String
-                                    .format(
-                                            "expected field name=%s was not a field in the zonal accessibilities file: %s.",
-                                            ACCESSIBILITIES_OFF_PEAK_TRANSIT_TOTAL_FIELD_NAME,
-                                            fileName));
+                    logger.fatal(String
+                            .format("expected field name=%s was not a field in the zonal accessibilities file: %s.",
+                                    ACCESSIBILITIES_OFF_PEAK_TRANSIT_TOTAL_FIELD_NAME, fileName));
                     throw new RuntimeException();
                 }
 
@@ -507,12 +479,9 @@ public class TazDataHandler
                         .getColumnPosition(ACCESSIBILITIES_NON_MOTORIZED_RETAIL_FIELD_NAME);
                 if (nonMotorizedRetailPosition <= 0)
                 {
-                    logger
-                            .fatal(String
-                                    .format(
-                                            "expected field name=%s was not a field in the zonal accessibilities file: %s.",
-                                            ACCESSIBILITIES_NON_MOTORIZED_RETAIL_FIELD_NAME,
-                                            fileName));
+                    logger.fatal(String
+                            .format("expected field name=%s was not a field in the zonal accessibilities file: %s.",
+                                    ACCESSIBILITIES_NON_MOTORIZED_RETAIL_FIELD_NAME, fileName));
                     throw new RuntimeException();
                 }
 
@@ -520,12 +489,9 @@ public class TazDataHandler
                         .getColumnPosition(ACCESSIBILITIES_NON_MOTORIZED_TOTAL_FIELD_NAME);
                 if (nonMotorizedTotalPosition <= 0)
                 {
-                    logger
-                            .fatal(String
-                                    .format(
-                                            "expected field name=%s was not a field in the zonal accessibilities file: %s.",
-                                            ACCESSIBILITIES_NON_MOTORIZED_TOTAL_FIELD_NAME,
-                                            fileName));
+                    logger.fatal(String
+                            .format("expected field name=%s was not a field in the zonal accessibilities file: %s.",
+                                    ACCESSIBILITIES_NON_MOTORIZED_TOTAL_FIELD_NAME, fileName));
                     throw new RuntimeException();
                 }
 
@@ -553,9 +519,8 @@ public class TazDataHandler
         } else
         {
 
-            logger
-                    .fatal("no zonal accessibilities data file was named in properties file with target: "
-                            + fileName);
+            logger.fatal("no zonal accessibilities data file was named in properties file with target: "
+                    + fileName);
             throw new RuntimeException();
 
         }
@@ -563,7 +528,8 @@ public class TazDataHandler
     }
 
     /**
-     * @param alt is the DC alternaive number
+     * @param alt
+     *            is the DC alternaive number
      * @return zone number for the DC alt.
      */
     private int getZoneFromAlt(int alt)
@@ -581,7 +547,8 @@ public class TazDataHandler
     }
 
     /**
-     * @param alt is the DC alternaive number
+     * @param alt
+     *            is the DC alternaive number
      * @return walk subzone index for the DC alt.
      */
     private int getWalkSubzoneFromAlt(int alt)
@@ -590,11 +557,9 @@ public class TazDataHandler
         int subzone = alt - (zone - 1) * NUM_SUBZONES - 1;
         if (subzone < 0 || subzone >= NUM_SUBZONES)
         {
-            logger
-                    .fatal(String
-                            .format(
-                                    "invalid value for walk subzone index = %d, zone = %d, determined for alt = %d.",
-                                    subzone, zone, alt));
+            logger.fatal(String
+                    .format("invalid value for walk subzone index = %d, zone = %d, determined for alt = %d.",
+                            subzone, zone, alt));
             logger.fatal(String.format("NUM_ZONES = %d, NUM_SUBZONES = %d.", NUM_ZONES,
                     NUM_SUBZONES));
             throw new RuntimeException();
@@ -630,8 +595,9 @@ public class TazDataHandler
 
     /**
      * 
-     * @param field is the field name to be checked against the column names in the
-     *            zone data table.
+     * @param field
+     *            is the field name to be checked against the column names in
+     *            the zone data table.
      * @return true if field matches one of the zone data table column names,
      *         otherwise false.
      */
@@ -690,7 +656,8 @@ public class TazDataHandler
     }
 
     /**
-     * @param tableRowNumber is the zone table row number
+     * @param tableRowNumber
+     *            is the zone table row number
      * @return zone number for the table row.
      */
     public int getTazNumber(int tableRowNumber)
@@ -706,11 +673,9 @@ public class TazDataHandler
         int atFieldPosition = zoneDataTable.getColumnPosition(tazDataAtFieldName);
         if (atFieldPosition < 0)
         {
-            logger
-                    .error(String
-                            .format(
-                                    "The area type field name = %s defined in %s is not found as a field name in the zone data table.",
-                                    tazDataAtFieldName, this.getClass().getName()));
+            logger.error(String
+                    .format("The area type field name = %s defined in %s is not found as a field name in the zone data table.",
+                            tazDataAtFieldName, this.getClass().getName()));
             throw new RuntimeException();
         }
         return zoneDataTable.getColumnAsInt(atFieldPosition);
@@ -724,11 +689,9 @@ public class TazDataHandler
         int districtFieldPosition = zoneDataTable.getColumnPosition(tazDataDistFieldName);
         if (districtFieldPosition < 0)
         {
-            logger
-                    .error(String
-                            .format(
-                                    "The district field name = %s defined in %s is not found as a field name in the zone data table.",
-                                    tazDataDistFieldName, this.getClass().getName()));
+            logger.error(String
+                    .format("The district field name = %s defined in %s is not found as a field name in the zone data table.",
+                            tazDataDistFieldName, this.getClass().getName()));
             throw new RuntimeException();
         }
         return zoneDataTable.getColumnAsInt(districtFieldPosition);
@@ -742,11 +705,9 @@ public class TazDataHandler
         int countyFieldPosition = zoneDataTable.getColumnPosition(tazDataCountyFieldName);
         if (countyFieldPosition < 0)
         {
-            logger
-                    .error(String
-                            .format(
-                                    "The county field name = %s defined in %s is not found as a field name in the zone data table.",
-                                    tazDataCountyFieldName, this.getClass().getName()));
+            logger.error(String
+                    .format("The county field name = %s defined in %s is not found as a field name in the zone data table.",
+                            tazDataCountyFieldName, this.getClass().getName()));
             throw new RuntimeException();
         }
         return zoneDataTable.getColumnAsInt(countyFieldPosition);
@@ -795,11 +756,9 @@ public class TazDataHandler
         int parkTotFieldPosition = zoneDataTable.getColumnPosition(parkTotFieldName);
         if (parkTotFieldPosition < 0)
         {
-            logger
-                    .error(String
-                            .format(
-                                    "The parkTot field name = %s defined in %s is not found as a field name in the zone data table.",
-                                    parkTotFieldName, this.getClass().getName()));
+            logger.error(String
+                    .format("The parkTot field name = %s defined in %s is not found as a field name in the zone data table.",
+                            parkTotFieldName, this.getClass().getName()));
             throw new RuntimeException();
         }
         return zoneDataTable.getColumnAsInt(parkTotFieldPosition);
@@ -813,11 +772,9 @@ public class TazDataHandler
         int parkLongFieldPosition = zoneDataTable.getColumnPosition(parkLongFieldName);
         if (parkLongFieldPosition < 0)
         {
-            logger
-                    .error(String
-                            .format(
-                                    "The parkLong field name = %s defined in %s is not found as a field name in the zone data table.",
-                                    parkLongFieldName, this.getClass().getName()));
+            logger.error(String
+                    .format("The parkLong field name = %s defined in %s is not found as a field name in the zone data table.",
+                            parkLongFieldName, this.getClass().getName()));
             throw new RuntimeException();
         }
         return zoneDataTable.getColumnAsInt(parkLongFieldPosition);
@@ -831,11 +788,9 @@ public class TazDataHandler
         int propFreeFieldPosition = zoneDataTable.getColumnPosition(propFreeFieldName);
         if (propFreeFieldPosition < 0)
         {
-            logger
-                    .error(String
-                            .format(
-                                    "The propFree field name = %s defined in %s is not found as a field name in the zone data table.",
-                                    propFreeFieldName, this.getClass().getName()));
+            logger.error(String
+                    .format("The propFree field name = %s defined in %s is not found as a field name in the zone data table.",
+                            propFreeFieldName, this.getClass().getName()));
             throw new RuntimeException();
         }
         return zoneDataTable.getColumnAsFloat(propFreeFieldPosition);
@@ -849,11 +804,9 @@ public class TazDataHandler
         int parkRateFieldPosition = zoneDataTable.getColumnPosition(parkRateFieldName);
         if (parkRateFieldPosition < 0)
         {
-            logger
-                    .error(String
-                            .format(
-                                    "The parkRate field name = %s defined in %s is not found as a field name in the zone data table.",
-                                    parkRateFieldName, this.getClass().getName()));
+            logger.error(String
+                    .format("The parkRate field name = %s defined in %s is not found as a field name in the zone data table.",
+                            parkRateFieldName, this.getClass().getName()));
             throw new RuntimeException();
         }
         return zoneDataTable.getColumnAsFloat(parkRateFieldPosition);

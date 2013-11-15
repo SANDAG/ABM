@@ -1,366 +1,382 @@
 package org.sandag.abm.crossborder;
 
 import java.io.Serializable;
-
 import org.apache.log4j.Logger;
-import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.Household;
-import org.sandag.abm.ctramp.Stop;
-
 import com.pb.common.math.MersenneTwister;
 
-public class CrossBorderTour implements Serializable{
-	
-	private MersenneTwister random;
-	private int ID;
-	
-	//following variables determined via simulation
-	private byte purpose;
-	private boolean sentriAvailable;
-  
-	
-	private CrossBorderStop[]    outboundStops;
-    private CrossBorderStop[]    inboundStops;
-    
-    private CrossBorderTrip[] trips;
+public class CrossBorderTour
+        implements Serializable
+{
 
-    private int  departTime;
-	private int  arriveTime;
+    private MersenneTwister       random;
+    private int                   ID;
 
-	private boolean debugChoiceModels;
-	
-	//following variables chosen via choice models
-	private int poe;
-	private int originMGRA;
-	private int destinationMGRA;
-	private int originTAZ;
-	private int destinationTAZ;
-	private byte tourMode;
+    // following variables determined via simulation
+    private byte                  purpose;
+    private boolean               sentriAvailable;
 
-	// best tap pairs for transit path; dimensioned by ride mode, then boarding (0) and alighting (1)
-    private int[][]   bestWtwTapPairsOut;
-    private int[][]   bestWtwTapPairsIn;
-    private int[][]   bestWtdTapPairsOut;
-    private int[][]   bestWtdTapPairsIn;
-    private int[][]   bestDtwTapPairsOut;
-    private int[][]   bestDtwTapPairsIn;
+    private CrossBorderStop[]     outboundStops;
+    private CrossBorderStop[]     inboundStops;
 
-    private static final String[] RIDE_MODE_LABELS = { "CR", "LRT", "BRT", "EB", "LB" };
-	
+    private CrossBorderTrip[]     trips;
 
-     
-    
-    
+    private int                   departTime;
+    private int                   arriveTime;
+
+    private boolean               debugChoiceModels;
+
+    // following variables chosen via choice models
+    private int                   poe;
+    private int                   originMGRA;
+    private int                   destinationMGRA;
+    private int                   originTAZ;
+    private int                   destinationTAZ;
+    private byte                  tourMode;
+
+    // best tap pairs for transit path; dimensioned by ride mode, then boarding
+    // (0) and alighting (1)
+    private int[][]               bestWtwTapPairsOut;
+    private int[][]               bestWtwTapPairsIn;
+    private int[][]               bestWtdTapPairsOut;
+    private int[][]               bestWtdTapPairsIn;
+    private int[][]               bestDtwTapPairsOut;
+    private int[][]               bestDtwTapPairsIn;
+
+    private static final String[] RIDE_MODE_LABELS = {"CR", "LRT", "BRT", "EB", "LB"};
+
     /**
-	 * Public constructor.
-	 * 
-	 * @param seed  A seed for the random number generator.
-	 */
-	public CrossBorderTour(long seed){
-		
-		random = new MersenneTwister(seed);
-	}
-	
+     * Public constructor.
+     * 
+     * @param seed
+     *            A seed for the random number generator.
+     */
+    public CrossBorderTour(long seed)
+    {
 
-	/**
-	 * @return the iD
-	 */
-	public int getID() {
-		return ID;
-	}
+        random = new MersenneTwister(seed);
+    }
 
+    /**
+     * @return the iD
+     */
+    public int getID()
+    {
+        return ID;
+    }
 
-	/**
-	 * @param iD the iD to set
-	 */
-	public void setID(int iD) {
-		ID = iD;
-	}
+    /**
+     * @param iD
+     *            the iD to set
+     */
+    public void setID(int iD)
+    {
+        ID = iD;
+    }
 
+    /**
+     * @return the sentriAvailable
+     */
+    public boolean isSentriAvailable()
+    {
+        return sentriAvailable;
+    }
 
-	/**
-	 * @return the sentriAvailable
-	 */
-	public boolean isSentriAvailable() {
-		return sentriAvailable;
-	}
+    /**
+     * @return the poe
+     */
+    public int getPoe()
+    {
+        return poe;
+    }
 
+    /**
+     * @param poe
+     *            the poe to set
+     */
+    public void setPoe(int poe)
+    {
+        this.poe = poe;
+    }
 
-	/**
-	 * @return the poe
-	 */
-	public int getPoe() {
-		return poe;
-	}
+    /**
+     * @param sentriAvailable
+     *            the sentriAvailable to set
+     */
+    public void setSentriAvailable(boolean sentriAvailable)
+    {
+        this.sentriAvailable = sentriAvailable;
+    }
 
+    /**
+     * @return the purpose
+     */
+    public byte getPurpose()
+    {
+        return purpose;
+    }
 
-	/**
-	 * @param poe the poe to set
-	 */
-	public void setPoe(int poe) {
-		this.poe = poe;
-	}
+    /**
+     * @return the outboundStops
+     */
+    public CrossBorderStop[] getOutboundStops()
+    {
+        return outboundStops;
+    }
 
+    /**
+     * @param outboundStops
+     *            the outboundStops to set
+     */
+    public void setOutboundStops(CrossBorderStop[] outboundStops)
+    {
+        this.outboundStops = outboundStops;
+    }
 
-	/**
-	 * @param sentriAvailable the sentriAvailable to set
-	 */
-	public void setSentriAvailable(boolean sentriAvailable) {
-		this.sentriAvailable = sentriAvailable;
-	}
+    /**
+     * @return the inboundStops
+     */
+    public CrossBorderStop[] getInboundStops()
+    {
+        return inboundStops;
+    }
 
+    /**
+     * @param inboundStops
+     *            the inboundStops to set
+     */
+    public void setInboundStops(CrossBorderStop[] inboundStops)
+    {
+        this.inboundStops = inboundStops;
+    }
 
-	/**
-	 * @return the purpose
-	 */
-	public byte getPurpose() {
-		return purpose;
-	}
+    /**
+     * @param purpose
+     *            the purpose to set
+     */
+    public void setPurpose(byte purpose)
+    {
+        this.purpose = purpose;
+    }
 
-	/**
-	 * @return the outboundStops
-	 */
-	public CrossBorderStop[] getOutboundStops() {
-		return outboundStops;
-	}
+    /**
+     * @return the departTime
+     */
+    public int getDepartTime()
+    {
+        return departTime;
+    }
 
+    /**
+     * @param departTime
+     *            the departTime to set
+     */
+    public void setDepartTime(int departTime)
+    {
+        this.departTime = departTime;
+    }
 
-	/**
-	 * @param outboundStops the outboundStops to set
-	 */
-	public void setOutboundStops(CrossBorderStop[] outboundStops) {
-		this.outboundStops = outboundStops;
-	}
+    public CrossBorderTrip[] getTrips()
+    {
+        return trips;
+    }
 
+    public void setTrips(CrossBorderTrip[] trips)
+    {
+        this.trips = trips;
+    }
 
-	/**
-	 * @return the inboundStops
-	 */
-	public CrossBorderStop[] getInboundStops() {
-		return inboundStops;
-	}
+    /**
+     * @return the originMGRA
+     */
+    public int getOriginMGRA()
+    {
+        return originMGRA;
+    }
 
+    /**
+     * @param originMGRA
+     *            the originMGRA to set
+     */
+    public void setOriginMGRA(int originMGRA)
+    {
+        this.originMGRA = originMGRA;
+    }
 
-	/**
-	 * @param inboundStops the inboundStops to set
-	 */
-	public void setInboundStops(CrossBorderStop[] inboundStops) {
-		this.inboundStops = inboundStops;
-	}
+    public int getOriginTAZ()
+    {
+        return originTAZ;
+    }
 
+    public void setOriginTAZ(int originTAZ)
+    {
+        this.originTAZ = originTAZ;
+    }
 
-	/**
-	 * @param purpose the purpose to set
-	 */
-	public void setPurpose(byte purpose) {
-		this.purpose = purpose;
-	}
+    public int getDestinationTAZ()
+    {
+        return destinationTAZ;
+    }
 
+    public void setDestinationTAZ(int destinationTAZ)
+    {
+        this.destinationTAZ = destinationTAZ;
+    }
 
-	/**
-	 * @return the departTime
-	 */
-	public int getDepartTime() {
-		return departTime;
-	}
+    /**
+     * @return the tour mode
+     */
+    public byte getTourMode()
+    {
+        return tourMode;
+    }
 
-	/**
-	 * @param departTime the departTime to set
-	 */
-	public void setDepartTime(int departTime) {
-		this.departTime = departTime;
-	}
+    /**
+     * @param mode
+     *            the tour mode to set
+     */
+    public void setTourMode(byte mode)
+    {
+        this.tourMode = mode;
+    }
 
-	public CrossBorderTrip[] getTrips() {
-		return trips;
-	}
+    /**
+     * Get a random number from the parties random class.
+     * 
+     * @return A random number.
+     */
+    public double getRandom()
+    {
+        return random.nextDouble();
+    }
 
+    /**
+     * @return the debugChoiceModels
+     */
+    public boolean getDebugChoiceModels()
+    {
+        return debugChoiceModels;
+    }
 
-	public void setTrips(CrossBorderTrip[] trips) {
-		this.trips = trips;
-	}
+    /**
+     * @param debugChoiceModels
+     *            the debugChoiceModels to set
+     */
+    public void setDebugChoiceModels(boolean debugChoiceModels)
+    {
+        this.debugChoiceModels = debugChoiceModels;
+    }
 
+    public void setBestWtwTapPairsOut(int[][] tapPairArray)
+    {
+        bestWtwTapPairsOut = tapPairArray;
+    }
 
-	/**
-	 * @return the originMGRA
-	 */
-	public int getOriginMGRA() {
-		return originMGRA;
-	}
+    public void setBestWtwTapPairsIn(int[][] tapPairArray)
+    {
+        bestWtwTapPairsIn = tapPairArray;
+    }
 
-	/**
-	 * @param originMGRA the originMGRA to set
-	 */
-	public void setOriginMGRA(int originMGRA) {
-		this.originMGRA = originMGRA;
-	}
+    public void setBestWtdTapPairsOut(int[][] tapPairArray)
+    {
+        bestWtdTapPairsOut = tapPairArray;
+    }
 
-	public int getOriginTAZ() {
-		return originTAZ;
-	}
+    public void setBestWtdTapPairsIn(int[][] tapPairArray)
+    {
+        bestWtdTapPairsIn = tapPairArray;
+    }
 
+    public void setBestDtwTapPairsOut(int[][] tapPairArray)
+    {
+        bestDtwTapPairsOut = tapPairArray;
+    }
 
-	public void setOriginTAZ(int originTAZ) {
-		this.originTAZ = originTAZ;
-	}
+    public void setBestDtwTapPairsIn(int[][] tapPairArray)
+    {
+        bestDtwTapPairsIn = tapPairArray;
+    }
 
+    public int[][] getBestWtwTapPairsOut()
+    {
+        return bestWtwTapPairsOut;
+    }
 
-	public int getDestinationTAZ() {
-		return destinationTAZ;
-	}
+    public int[][] getBestWtwTapPairsIn()
+    {
+        return bestWtwTapPairsIn;
+    }
 
+    public int[][] getBestWtdTapPairsOut()
+    {
+        return bestWtdTapPairsOut;
+    }
 
-	public void setDestinationTAZ(int destinationTAZ) {
-		this.destinationTAZ = destinationTAZ;
-	}
+    public int[][] getBestWtdTapPairsIn()
+    {
+        return bestWtdTapPairsIn;
+    }
 
+    public int[][] getBestDtwTapPairsOut()
+    {
+        return bestDtwTapPairsOut;
+    }
 
-	/**
-	 * @return the tour mode
-	 */
-	public byte getTourMode() {
-		return tourMode;
-	}
+    public int[][] getBestDtwTapPairsIn()
+    {
+        return bestDtwTapPairsIn;
+    }
 
-	/**
-	 * @param mode the tour mode to set
-	 */
-	public void setTourMode(byte mode) {
-		this.tourMode = mode;
-	}
+    /**
+     * Get the number of outbound stops
+     * 
+     * @return 0 if not initialized, else number of stops
+     */
+    public int getNumberOutboundStops()
+    {
+        if (outboundStops == null) return 0;
+        else return outboundStops.length;
 
-	
-	/**
-	 * Get a random number from the parties random class.
-	 * @return  A random number.
-	 */
-	public double getRandom(){
-		return random.nextDouble();
-	}
+    }
 
-	/**
-	 * @return the debugChoiceModels
-	 */
-	public boolean getDebugChoiceModels() {
-		return debugChoiceModels;
-	}
+    /**
+     * Get the number of return stops
+     * 
+     * @return 0 if not initialized, else number of stops
+     */
+    public int getNumberInboundStops()
+    {
+        if (inboundStops == null) return 0;
+        else return inboundStops.length;
 
+    }
 
-	/**
-	 * @param debugChoiceModels the debugChoiceModels to set
-	 */
-	public void setDebugChoiceModels(boolean debugChoiceModels) {
-		this.debugChoiceModels = debugChoiceModels;
-	}
+    /**
+     * @return the destinationMGRA
+     */
+    public int getDestinationMGRA()
+    {
+        return destinationMGRA;
+    }
 
-	   public void setBestWtwTapPairsOut( int[][] tapPairArray )
-	    {
-	        bestWtwTapPairsOut = tapPairArray;
-	    }
+    /**
+     * @param destinationMGRA
+     *            the destinationMGRA to set
+     */
+    public void setDestinationMGRA(int destinationMGRA)
+    {
+        this.destinationMGRA = destinationMGRA;
+    }
 
-	    public void setBestWtwTapPairsIn( int[][] tapPairArray )
-	    {
-	        bestWtwTapPairsIn = tapPairArray;
-	    }
+    public void setArriveTime(int arriveTime)
+    {
+        this.arriveTime = arriveTime;
+    }
 
-	    public void setBestWtdTapPairsOut( int[][] tapPairArray )
-	    {
-	        bestWtdTapPairsOut = tapPairArray;
-	    }
-
-	    public void setBestWtdTapPairsIn( int[][] tapPairArray )
-	    {
-	        bestWtdTapPairsIn = tapPairArray;
-	    }
-
-	    public void setBestDtwTapPairsOut( int[][] tapPairArray )
-	    {
-	        bestDtwTapPairsOut = tapPairArray;
-	    }
-
-	    public void setBestDtwTapPairsIn( int[][] tapPairArray )
-	    {
-	        bestDtwTapPairsIn = tapPairArray;
-	    }
-
-	    
-	    public int[][] getBestWtwTapPairsOut()
-	    {
-	        return bestWtwTapPairsOut;
-	    }
-	    
-	    public int[][] getBestWtwTapPairsIn()
-	    {
-	        return bestWtwTapPairsIn;
-	    }
-	    
-	    public int[][] getBestWtdTapPairsOut()
-	    {
-	        return bestWtdTapPairsOut;
-	    }
-	    
-	    public int[][] getBestWtdTapPairsIn()
-	    {
-	        return bestWtdTapPairsIn;
-	    }
-	    
-	    public int[][] getBestDtwTapPairsOut()
-	    {
-	        return bestDtwTapPairsOut;
-	    }
-	    
-	    public int[][] getBestDtwTapPairsIn()
-	    {
-	        return bestDtwTapPairsIn;
-	    }
-	    /**
-	     * Get the number of outbound stops
-	     * @return 0 if not initialized, else number of stops
-	     */
-	    public int getNumberOutboundStops(){
-	    	if (outboundStops==null)
-	    		return 0;
-	    	else 
-	    		return outboundStops.length;
-	    	
-	    }
-	    /**
-	     * Get the number of return stops
-	     * @return 0 if not initialized, else number of stops
-	     */
-	    public int getNumberInboundStops(){
-	    	if (inboundStops==null)
-	    		return 0;
-	    	else 
-	    		return inboundStops.length;
-	    	
-	    }
-
-
-	/**
-	 * @return the destinationMGRA
-	 */
-	public int getDestinationMGRA() {
-		return destinationMGRA;
-	}
-
-
-	/**
-	 * @param destinationMGRA the destinationMGRA to set
-	 */
-	public void setDestinationMGRA(int destinationMGRA) {
-		this.destinationMGRA = destinationMGRA;
-	}
-
-
-	public void setArriveTime(int arriveTime) {
-		this.arriveTime = arriveTime;
-	}
-
-
-	public int getArriveTime() {
-		return arriveTime;
-	}
+    public int getArriveTime()
+    {
+        return arriveTime;
+    }
 
     public void logTourObject(Logger logger, int totalChars)
     {
@@ -372,110 +388,118 @@ public class CrossBorderTour implements Serializable{
         Household.logHelper(logger, "tourDepartPeriod: ", departTime, totalChars);
         Household.logHelper(logger, "tourArrivePeriod: ", arriveTime, totalChars);
         Household.logHelper(logger, "tourMode: ", tourMode, totalChars);
-       // Household.logHelper(logger, "stopFreqChoice: ", stopFreqChoice, totalChars);
+        // Household.logHelper(logger, "stopFreqChoice: ", stopFreqChoice,
+        // totalChars);
 
         String tempString = null;
         /*
-        String tempString = String.format("outboundStops[%s]:", outboundStops == null ? "" : String.valueOf(outboundStops.length));
-        logger.info(tempString);
+         * String tempString = String.format("outboundStops[%s]:", outboundStops
+         * == null ? "" : String.valueOf(outboundStops.length));
+         * logger.info(tempString);
+         * 
+         * tempString = String.format("inboundStops[%s]:", inboundStops == null
+         * ? "" : String.valueOf(inboundStops.length)); logger.info(tempString);
+         */
 
-        tempString = String.format("inboundStops[%s]:", inboundStops == null ? "" : String.valueOf(inboundStops.length));
-        logger.info(tempString);
- */       
-        
-        if ( bestWtwTapPairsOut == null ) {
+        if (bestWtwTapPairsOut == null)
+        {
             tempString = "bestWtwTapPairsOut: no tap pairs saved";
-        }
-        else {
-            if ( bestWtwTapPairsOut[0] == null )
-                tempString = "bestWtwTapPairsOut: " + RIDE_MODE_LABELS[0] + "[" + "none" + "," + "none" + "]";
-            else
-                tempString = "bestWtwTapPairsOut: " + RIDE_MODE_LABELS[0] + "[" + bestWtwTapPairsOut[0][0] + "," + bestWtwTapPairsOut[0][1] + "]";
-            for (int i=1; i < bestWtwTapPairsOut.length; i++)
-                if ( bestWtwTapPairsOut[i] == null )
-                    tempString += ", " + RIDE_MODE_LABELS[i] + "[" + "none" + "," + "none" + "]";
-                else
-                    tempString += ", " + RIDE_MODE_LABELS[i] + "[" + bestWtwTapPairsOut[i][0] + "," + bestWtwTapPairsOut[i][1] + "]";
+        } else
+        {
+            if (bestWtwTapPairsOut[0] == null) tempString = "bestWtwTapPairsOut: "
+                    + RIDE_MODE_LABELS[0] + "[" + "none" + "," + "none" + "]";
+            else tempString = "bestWtwTapPairsOut: " + RIDE_MODE_LABELS[0] + "["
+                    + bestWtwTapPairsOut[0][0] + "," + bestWtwTapPairsOut[0][1] + "]";
+            for (int i = 1; i < bestWtwTapPairsOut.length; i++)
+                if (bestWtwTapPairsOut[i] == null) tempString += ", " + RIDE_MODE_LABELS[i] + "["
+                        + "none" + "," + "none" + "]";
+                else tempString += ", " + RIDE_MODE_LABELS[i] + "[" + bestWtwTapPairsOut[i][0]
+                        + "," + bestWtwTapPairsOut[i][1] + "]";
         }
         logger.info(tempString);
 
-        if ( bestWtwTapPairsIn == null ) {
+        if (bestWtwTapPairsIn == null)
+        {
             tempString = "bestWtwTapPairsIn: no tap pairs saved";
-        }
-        else {
-            if ( bestWtwTapPairsIn[0] == null )
-                tempString = "bestWtwTapPairsIn: " + RIDE_MODE_LABELS[0] + "[" + "none" + "," + "none" + "]";
-            else
-                tempString = "bestWtwTapPairsIn: " + RIDE_MODE_LABELS[0] + "[" + bestWtwTapPairsIn[0][0] + "," + bestWtwTapPairsIn[0][1] + "]";
-            for (int i=1; i < bestWtwTapPairsIn.length; i++)
-                if ( bestWtwTapPairsIn[i] == null )
-                    tempString += ", " + RIDE_MODE_LABELS[0] + "[" + "none" + "," + "none" + "]";
-                else
-                    tempString += ", " + RIDE_MODE_LABELS[i] + "[" + bestWtwTapPairsIn[i][0] + "," + bestWtwTapPairsIn[i][1] + "]";
+        } else
+        {
+            if (bestWtwTapPairsIn[0] == null) tempString = "bestWtwTapPairsIn: "
+                    + RIDE_MODE_LABELS[0] + "[" + "none" + "," + "none" + "]";
+            else tempString = "bestWtwTapPairsIn: " + RIDE_MODE_LABELS[0] + "["
+                    + bestWtwTapPairsIn[0][0] + "," + bestWtwTapPairsIn[0][1] + "]";
+            for (int i = 1; i < bestWtwTapPairsIn.length; i++)
+                if (bestWtwTapPairsIn[i] == null) tempString += ", " + RIDE_MODE_LABELS[0] + "["
+                        + "none" + "," + "none" + "]";
+                else tempString += ", " + RIDE_MODE_LABELS[i] + "[" + bestWtwTapPairsIn[i][0] + ","
+                        + bestWtwTapPairsIn[i][1] + "]";
         }
         logger.info(tempString);
 
-        if ( bestWtdTapPairsOut == null ) {
+        if (bestWtdTapPairsOut == null)
+        {
             tempString = "bestWtdTapPairsOut: no tap pairs saved";
-        }
-        else {
-            if ( bestWtdTapPairsOut[0] == null )
-                tempString = "bestWtdTapPairsOut: " + RIDE_MODE_LABELS[0] + "[" + "none" + "," + "none" + "]";
-            else
-                tempString = "bestWtdTapPairsOut: " + RIDE_MODE_LABELS[0] + "[" + bestWtdTapPairsOut[0][0] + "," + bestWtdTapPairsOut[0][1] + "]";
-            for (int i=1; i < bestWtdTapPairsOut.length; i++)
-                if ( bestWtdTapPairsOut[i] == null )
-                    tempString += ", " + RIDE_MODE_LABELS[i] + "[" + "none" + "," + "none" + "]";
-                else
-                    tempString += ", " + RIDE_MODE_LABELS[i] + "[" + bestWtdTapPairsOut[i][0] + "," + bestWtdTapPairsOut[i][1] + "]";
+        } else
+        {
+            if (bestWtdTapPairsOut[0] == null) tempString = "bestWtdTapPairsOut: "
+                    + RIDE_MODE_LABELS[0] + "[" + "none" + "," + "none" + "]";
+            else tempString = "bestWtdTapPairsOut: " + RIDE_MODE_LABELS[0] + "["
+                    + bestWtdTapPairsOut[0][0] + "," + bestWtdTapPairsOut[0][1] + "]";
+            for (int i = 1; i < bestWtdTapPairsOut.length; i++)
+                if (bestWtdTapPairsOut[i] == null) tempString += ", " + RIDE_MODE_LABELS[i] + "["
+                        + "none" + "," + "none" + "]";
+                else tempString += ", " + RIDE_MODE_LABELS[i] + "[" + bestWtdTapPairsOut[i][0]
+                        + "," + bestWtdTapPairsOut[i][1] + "]";
         }
         logger.info(tempString);
 
-        if ( bestWtdTapPairsIn == null ) {
+        if (bestWtdTapPairsIn == null)
+        {
             tempString = "bestWtdTapPairsIn: no tap pairs saved";
-        }
-        else {
-            if ( bestWtdTapPairsIn[0] == null )
-                tempString = "bestWtdTapPairsIn: " + RIDE_MODE_LABELS[0] + "[" + "none" + "," + "none" + "]";
-            else
-                tempString = "bestWtdTapPairsIn: " + RIDE_MODE_LABELS[0] + "[" + bestWtdTapPairsIn[0][0] + "," + bestWtdTapPairsIn[0][1] + "]";
-            for (int i=1; i < bestWtdTapPairsIn.length; i++)
-                if ( bestWtdTapPairsIn[i] == null )
-                    tempString += ", " + RIDE_MODE_LABELS[0] + "[" + "none" + "," + "none" + "]";
-                else
-                    tempString += ", " + RIDE_MODE_LABELS[i] + "[" + bestWtdTapPairsIn[i][0] + "," + bestWtdTapPairsIn[i][1] + "]";
+        } else
+        {
+            if (bestWtdTapPairsIn[0] == null) tempString = "bestWtdTapPairsIn: "
+                    + RIDE_MODE_LABELS[0] + "[" + "none" + "," + "none" + "]";
+            else tempString = "bestWtdTapPairsIn: " + RIDE_MODE_LABELS[0] + "["
+                    + bestWtdTapPairsIn[0][0] + "," + bestWtdTapPairsIn[0][1] + "]";
+            for (int i = 1; i < bestWtdTapPairsIn.length; i++)
+                if (bestWtdTapPairsIn[i] == null) tempString += ", " + RIDE_MODE_LABELS[0] + "["
+                        + "none" + "," + "none" + "]";
+                else tempString += ", " + RIDE_MODE_LABELS[i] + "[" + bestWtdTapPairsIn[i][0] + ","
+                        + bestWtdTapPairsIn[i][1] + "]";
         }
         logger.info(tempString);
 
-        if ( bestDtwTapPairsOut == null ) {
+        if (bestDtwTapPairsOut == null)
+        {
             tempString = "bestDtwTapPairsOut: no tap pairs saved";
-        }
-        else {
-            if ( bestDtwTapPairsOut[0] == null )
-                tempString = "bestDtwTapPairsOut: " + RIDE_MODE_LABELS[0] + "[" + "none" + "," + "none" + "]";
-            else
-                tempString = "bestDtwTapPairsOut: " + RIDE_MODE_LABELS[0] + "[" + bestDtwTapPairsOut[0][0] + "," + bestDtwTapPairsOut[0][1] + "]";
-            for (int i=1; i < bestDtwTapPairsOut.length; i++)
-                if ( bestDtwTapPairsOut[i] == null )
-                    tempString += ", " + RIDE_MODE_LABELS[i] + "[" + "none" + "," + "none" + "]";
-                else
-                    tempString += ", " + RIDE_MODE_LABELS[i] + "[" + bestDtwTapPairsOut[i][0] + "," + bestDtwTapPairsOut[i][1] + "]";
+        } else
+        {
+            if (bestDtwTapPairsOut[0] == null) tempString = "bestDtwTapPairsOut: "
+                    + RIDE_MODE_LABELS[0] + "[" + "none" + "," + "none" + "]";
+            else tempString = "bestDtwTapPairsOut: " + RIDE_MODE_LABELS[0] + "["
+                    + bestDtwTapPairsOut[0][0] + "," + bestDtwTapPairsOut[0][1] + "]";
+            for (int i = 1; i < bestDtwTapPairsOut.length; i++)
+                if (bestDtwTapPairsOut[i] == null) tempString += ", " + RIDE_MODE_LABELS[i] + "["
+                        + "none" + "," + "none" + "]";
+                else tempString += ", " + RIDE_MODE_LABELS[i] + "[" + bestDtwTapPairsOut[i][0]
+                        + "," + bestDtwTapPairsOut[i][1] + "]";
         }
         logger.info(tempString);
 
-        if ( bestDtwTapPairsIn == null ) {
+        if (bestDtwTapPairsIn == null)
+        {
             tempString = "bestDtwTapPairsIn: no tap pairs saved";
-        }
-        else {
-            if ( bestDtwTapPairsIn[0] == null )
-                tempString = "bestDtwTapPairsIn: " + RIDE_MODE_LABELS[0] + "[" + "none" + "," + "none" + "]";
-            else
-                tempString = "bestDtwTapPairsIn: " + RIDE_MODE_LABELS[0] + "[" + bestDtwTapPairsIn[0][0] + "," + bestDtwTapPairsIn[0][1] + "]";
-            for (int i=1; i < bestDtwTapPairsIn.length; i++)
-                if ( bestDtwTapPairsIn[i] == null )
-                    tempString += ", " + RIDE_MODE_LABELS[0] + "[" + "none" + "," + "none" + "]";
-                else
-                    tempString += ", " + RIDE_MODE_LABELS[i] + "[" + bestDtwTapPairsIn[i][0] + "," + bestDtwTapPairsIn[i][1] + "]";
+        } else
+        {
+            if (bestDtwTapPairsIn[0] == null) tempString = "bestDtwTapPairsIn: "
+                    + RIDE_MODE_LABELS[0] + "[" + "none" + "," + "none" + "]";
+            else tempString = "bestDtwTapPairsIn: " + RIDE_MODE_LABELS[0] + "["
+                    + bestDtwTapPairsIn[0][0] + "," + bestDtwTapPairsIn[0][1] + "]";
+            for (int i = 1; i < bestDtwTapPairsIn.length; i++)
+                if (bestDtwTapPairsIn[i] == null) tempString += ", " + RIDE_MODE_LABELS[0] + "["
+                        + "none" + "," + "none" + "]";
+                else tempString += ", " + RIDE_MODE_LABELS[i] + "[" + bestDtwTapPairsIn[i][0] + ","
+                        + bestDtwTapPairsIn[i][1] + "]";
         }
         logger.info(tempString);
 

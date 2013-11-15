@@ -41,7 +41,8 @@ public class NonMotorDMU
     /**
      * Set Mgra-Mgra walk time in minutes.
      * 
-     * @param mgraWalkTime Mgra walk time in minutes.
+     * @param mgraWalkTime
+     *            Mgra walk time in minutes.
      */
     public void setMgraWalkTime(float mgraWalkTime)
     {
@@ -61,7 +62,8 @@ public class NonMotorDMU
     /**
      * Set Mgra-Mgra bike time in minutes.
      * 
-     * @param mgraBikeTime Mgra bike time in minutes.
+     * @param mgraBikeTime
+     *            Mgra bike time in minutes.
      */
     public void setMgraBikeTime(float mgraBikeTime)
     {
@@ -71,7 +73,8 @@ public class NonMotorDMU
     /**
      * Log the DMU values.
      * 
-     * @param localLogger The logger to use.
+     * @param localLogger
+     *            The logger to use.
      */
     public void logValues(Logger localLogger)
     {

@@ -35,7 +35,8 @@ public class SandagDcSoaDMU
 
     }
 
-    // DMU methods - define one of these for every @var in the mode choice control
+    // DMU methods - define one of these for every @var in the mode choice
+    // control
     // file.
     public double getLnDcSizeAlt(int alt)
     {

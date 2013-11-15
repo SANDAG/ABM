@@ -45,7 +45,7 @@ public class SqliteService
             ResultSet rs = s
                     .executeQuery("SELECT id, numProcessed, totalToProcess, startUp, runTime, shutDown FROM "
                             + tableName + " ORDER BY id");
-            while(rs.next())
+            while (rs.next())
             {
                 System.out.println(rs.getInt("id") + ", " + rs.getInt("numProcessed") + ", "
                         + rs.getInt("totalToProcess") + ", " + rs.getInt("startUp") + ", "
@@ -69,8 +69,7 @@ public class SqliteService
 
             Statement s = c.createStatement();
             String query = String
-                    .format(
-                            "INSERT INTO %s (id, numProcessed, totalToProcess, startUp, runTime, shutDown) VALUES (%d, %d, %d, %d, %d, %d)",
+                    .format("INSERT INTO %s (id, numProcessed, totalToProcess, startUp, runTime, shutDown) VALUES (%d, %d, %d, %d, %d, %d)",
                             tableName, id, numProcessed, totalToProcess, startUp, runTime, shutDown);
             s.execute(query);
 
@@ -91,8 +90,7 @@ public class SqliteService
 
             Statement s = c.createStatement();
             String query = String
-                    .format(
-                            "UPDATE %s SET numProcessed=%d, totalToProcess=%d, startUp=%d, runTime=%d, shutDown=%d WHERE id=%d",
+                    .format("UPDATE %s SET numProcessed=%d, totalToProcess=%d, startUp=%d, runTime=%d, shutDown=%d WHERE id=%d",
                             tableName, numProcessed, totalToProcess, startUp, runTime, shutDown, id);
             s.execute(query);
 

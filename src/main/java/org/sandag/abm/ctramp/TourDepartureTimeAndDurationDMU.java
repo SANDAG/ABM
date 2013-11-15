@@ -10,8 +10,7 @@ public class TourDepartureTimeAndDurationDMU
         implements Serializable, VariableTable
 {
 
-    protected transient Logger         logger                               = Logger
-                                                                                    .getLogger(TourDepartureTimeAndDurationDMU.class);
+    protected transient Logger         logger = Logger.getLogger(TourDepartureTimeAndDurationDMU.class);
 
     protected HashMap<String, Integer> methodIndexMap;
 
@@ -21,10 +20,10 @@ public class TourDepartureTimeAndDurationDMU
     protected Household                household;
     protected Tour                     tour;
 
-    protected double destEmpDen;
-    protected int subsequentTourIsWork;
-    protected int subsequentTourIsSchool;
-    
+    protected double                   destEmpDen;
+    protected int                      subsequentTourIsWork;
+    protected int                      subsequentTourIsSchool;
+
     protected double[]                 modeChoiceLogsums;
 
     private int[]                      altStarts;
@@ -120,7 +119,6 @@ public class TourDepartureTimeAndDurationDMU
         subsequentTourIsSchool = trueOrFalse;
     }
 
-
     /**
      * Set the sequence number of this tour among all scheduled
      * 
@@ -179,9 +177,10 @@ public class TourDepartureTimeAndDurationDMU
 
     public int getPreDrivingAgeChild()
     {
-        return (person.getPersonIsStudentNonDriving() == 1 || person.getPersonIsPreschoolChild() == 1 ) ? 1 : 0;
+        return (person.getPersonIsStudentNonDriving() == 1 || person.getPersonIsPreschoolChild() == 1) ? 1
+                : 0;
     }
-    
+
     public int getPersonAge()
     {
         return person.getAge();
@@ -315,36 +314,40 @@ public class TourDepartureTimeAndDurationDMU
     public int getNumIndivShopTours()
     {
         int count = 0;
-        for ( Tour t : person.getListOfIndividualNonMandatoryTours() )
-            if (t.getTourPurpose().equalsIgnoreCase(ModelStructure.SHOPPING_PRIMARY_PURPOSE_NAME)) count++;
-        
+        for (Tour t : person.getListOfIndividualNonMandatoryTours())
+            if (t.getTourPurpose().equalsIgnoreCase(ModelStructure.SHOPPING_PRIMARY_PURPOSE_NAME))
+                count++;
+
         return count;
     }
 
     public int getNumIndivMaintTours()
     {
         int count = 0;
-        for ( Tour t : person.getListOfIndividualNonMandatoryTours() )
-            if (t.getTourPurpose().equalsIgnoreCase(ModelStructure.OTH_MAINT_PRIMARY_PURPOSE_NAME)) count++;
-        
+        for (Tour t : person.getListOfIndividualNonMandatoryTours())
+            if (t.getTourPurpose().equalsIgnoreCase(ModelStructure.OTH_MAINT_PRIMARY_PURPOSE_NAME))
+                count++;
+
         return count;
     }
 
     public int getNumIndivVisitTours()
     {
         int count = 0;
-        for ( Tour t : person.getListOfIndividualNonMandatoryTours() )
-            if (t.getTourPurpose().equalsIgnoreCase(ModelStructure.VISITING_PRIMARY_PURPOSE_NAME)) count++;
-        
+        for (Tour t : person.getListOfIndividualNonMandatoryTours())
+            if (t.getTourPurpose().equalsIgnoreCase(ModelStructure.VISITING_PRIMARY_PURPOSE_NAME))
+                count++;
+
         return count;
     }
 
     public int getNumIndivDiscrTours()
     {
         int count = 0;
-        for ( Tour t : person.getListOfIndividualNonMandatoryTours() )
-            if (t.getTourPurpose().equalsIgnoreCase(ModelStructure.OTH_DISCR_PRIMARY_PURPOSE_NAME)) count++;
-        
+        for (Tour t : person.getListOfIndividualNonMandatoryTours())
+            if (t.getTourPurpose().equalsIgnoreCase(ModelStructure.OTH_DISCR_PRIMARY_PURPOSE_NAME))
+                count++;
+
         return count;
     }
 
@@ -381,10 +384,10 @@ public class TourDepartureTimeAndDurationDMU
         int count = 0;
         if (tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY))
             count = tour.getPersonNumArray().length;
-        
+
         return count;
     }
-    
+
     public int getKidsOnJointTour()
     {
 
@@ -397,7 +400,9 @@ public class TourDepartureTimeAndDurationDMU
             for (int i = 0; i < personNums.length; i++)
             {
                 int p = personNums[i];
-                if ((persons[p].getPersonIsPreschoolChild() + persons[p].getPersonIsStudentNonDriving() + persons[p].getPersonIsStudentDriving()) > 0 ) count++;
+                if ((persons[p].getPersonIsPreschoolChild()
+                        + persons[p].getPersonIsStudentNonDriving() + persons[p]
+                            .getPersonIsStudentDriving()) > 0) count++;
             }
         }
 
@@ -439,7 +444,8 @@ public class TourDepartureTimeAndDurationDMU
 
     }
 
-    // return 1 if at least one university student is in joint tour, otherwise 0.
+    // return 1 if at least one university student is in joint tour, otherwise
+    // 0.
     public int getUnivInTour()
     {
 
@@ -504,8 +510,8 @@ public class TourDepartureTimeAndDurationDMU
     }
 
     /**
-     * @return number of individual non-mandatory tours, including escort, for the
-     *         person
+     * @return number of individual non-mandatory tours, including escort, for
+     *         the person
      */
     public int getPersonNonMandatoryTotalWithEscort()
     {
@@ -513,35 +519,40 @@ public class TourDepartureTimeAndDurationDMU
     }
 
     /**
-     * @return number of individual non-mandatory tours, excluding escort, for the
-     *         person
+     * @return number of individual non-mandatory tours, excluding escort, for
+     *         the person
      */
     public int getPersonNonMandatoryTotalNoEscort()
     {
         int count = 0;
         for (Tour t : person.getListOfIndividualNonMandatoryTours())
-            if (!t.getTourPurpose().startsWith("escort")) count++;
+            if (!t.getTourPrimaryPurpose().equalsIgnoreCase(
+                    ModelStructure.ESCORT_PRIMARY_PURPOSE_NAME)) count++;
         return count;
     }
 
     /**
-     * @return number of individual non-mandatory discretionary tours for the person
+     * @return number of individual non-mandatory discretionary tours for the
+     *         person
      */
     public int getPersonDiscrToursTotal()
     {
         int count = 0;
         for (Tour t : person.getListOfIndividualNonMandatoryTours())
         {
-            if (t.getTourPrimaryPurpose().equalsIgnoreCase( ModelStructure.EAT_OUT_PRIMARY_PURPOSE_NAME) ||
-                t.getTourPrimaryPurpose().equalsIgnoreCase( ModelStructure.VISITING_PRIMARY_PURPOSE_NAME) ||
-                t.getTourPrimaryPurpose().equalsIgnoreCase( ModelStructure.OTH_DISCR_PRIMARY_PURPOSE_NAME) )
-                    count++;
+            if (t.getTourPrimaryPurpose().equalsIgnoreCase(
+                    ModelStructure.EAT_OUT_PRIMARY_PURPOSE_NAME)
+                    || t.getTourPrimaryPurpose().equalsIgnoreCase(
+                            ModelStructure.VISITING_PRIMARY_PURPOSE_NAME)
+                    || t.getTourPrimaryPurpose().equalsIgnoreCase(
+                            ModelStructure.OTH_DISCR_PRIMARY_PURPOSE_NAME)) count++;
         }
         return count;
     }
 
     /**
-     * @return number of individual non-mandatory tours, excluding escort, for the person
+     * @return number of individual non-mandatory tours, excluding escort, for
+     *         the person
      */
     public int getPersonEscortTotal()
     {
@@ -591,8 +602,8 @@ public class TourDepartureTimeAndDurationDMU
     public int getPersonJointAndIndivDiscrToursTotal()
     {
 
-        int totDiscr = getPersonDiscrToursTotal(); 
-        
+        int totDiscr = getPersonDiscrToursTotal();
+
         Tour[] jtArray = household.getJointTourArray();
         if (jtArray == null)
         {
@@ -603,9 +614,12 @@ public class TourDepartureTimeAndDurationDMU
             int numJtParticipations = 0;
             for (Tour jt : jtArray)
             {
-                if (jt.getTourPrimaryPurpose().equalsIgnoreCase( ModelStructure.EAT_OUT_PRIMARY_PURPOSE_NAME) ||
-                        jt.getTourPrimaryPurpose().equalsIgnoreCase( ModelStructure.VISITING_PRIMARY_PURPOSE_NAME) ||
-                        jt.getTourPrimaryPurpose().equalsIgnoreCase( ModelStructure.OTH_DISCR_PRIMARY_PURPOSE_NAME) )
+                if (jt.getTourPrimaryPurpose().equalsIgnoreCase(
+                        ModelStructure.EAT_OUT_PRIMARY_PURPOSE_NAME)
+                        || jt.getTourPrimaryPurpose().equalsIgnoreCase(
+                                ModelStructure.VISITING_PRIMARY_PURPOSE_NAME)
+                        || jt.getTourPrimaryPurpose().equalsIgnoreCase(
+                                ModelStructure.OTH_DISCR_PRIMARY_PURPOSE_NAME))
                 {
                     int[] personJtIndices = jt.getPersonNumArray();
                     for (int pNum : personJtIndices)
@@ -728,15 +742,19 @@ public class TourDepartureTimeAndDurationDMU
         int start = altStarts[alt - 1];
         int end = altEnds[alt - 1];
 
-        // determine the availabilty of each period after the alternative time window
+        // determine the availabilty of each period after the alternative time
+        // window
         // is hypothetically scheduled
-        // if start == end, the availability won't change, so no need to compute.
+        // if start == end, the availability won't change, so no need to
+        // compute.
         if (start != end)
         {
 
-            // the start and end periods will always be available after scheduling, so
+            // the start and end periods will always be available after
+            // scheduling, so
             // don't need to check them.
-            // the periods between start/end must be 0 or the alternative could not
+            // the periods between start/end must be 0 or the alternative could
+            // not
             // have been available,
             // so count them all as unavailable after scheduling this window.
             periodsAvail -= (end - start - 1);
@@ -765,24 +783,23 @@ public class TourDepartureTimeAndDurationDMU
 
     public int getMaxJointTimeWindow()
     {
-        return household.getMaxJointTimeWindow( tour );
+        return household.getMaxJointTimeWindow(tour);
     }
-
 
     /**
      * get the number of tours left to be scheduled, including the current tour
+     * 
      * @return number of tours left to be scheduled, including the current tour
      */
     public int getToursLeftToSchedule()
     {
-        if ( tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY) ){
+        if (tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY))
+        {
             Tour[] jt = household.getJointTourArray();
             return jt.length - tourNumber + 1;
-        }
-        else
-            return person.getListOfIndividualNonMandatoryTours().size() - tourNumber + 1;
+        } else return person.getListOfIndividualNonMandatoryTours().size() - tourNumber + 1;
     }
-    
+
     public int getEndOfPreviousTour()
     {
         return endOfPreviousScheduledTour;
@@ -790,7 +807,8 @@ public class TourDepartureTimeAndDurationDMU
 
     public int getTourCategoryIsJoint()
     {
-        return tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY) ? 1 : 0;
+        return tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY) ? 1
+                : 0;
     }
 
     public float getOpSovTimeOd()

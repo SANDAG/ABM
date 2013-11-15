@@ -4,7 +4,8 @@ import java.util.HashMap;
 import org.sandag.abm.ctramp.JointTourModelsDMU;
 import org.sandag.abm.ctramp.ModelStructure;
 
-public class SandagJointTourModelsDMU extends JointTourModelsDMU
+public class SandagJointTourModelsDMU
+        extends JointTourModelsDMU
 {
 
     public SandagJointTourModelsDMU(ModelStructure modelStructure)

@@ -16,8 +16,8 @@ import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.datafile.TableDataSet;
-import com.pb.common.util.ResourceUtil;
 import com.pb.common.newmodel.ChoiceModelApplication;
+import com.pb.common.util.ResourceUtil;
 
 public final class NonMandatoryTodEstimationMcLogsumsAppender
         extends McLogsumsAppender
@@ -81,14 +81,14 @@ public final class NonMandatoryTodEstimationMcLogsumsAppender
 
         departArriveLogsums = new double[NUM_MGRA_FIELDS + 1][departArriveCombinations.length];
 
-        String outputFileName = Util.getStringValueFromPropertyMap(rbMap, "tod.est.skims.output.file");
+        String outputFileName = Util.getStringValueFromPropertyMap(rbMap,
+                "tod.est.skims.output.file");
 
         PrintWriter outStream = null;
 
         if (outputFileName == null)
         {
-            logger
-                    .info("no output file name was specified in the properties file.  Nothing to do.");
+            logger.info("no output file name was specified in the properties file.  Nothing to do.");
             return;
         }
 
@@ -113,7 +113,8 @@ public final class NonMandatoryTodEstimationMcLogsumsAppender
     private void writeTodFile(HashMap<String, String> rbMap, PrintWriter outStream2)
     {
 
-        // print the chosen destMgra and the depart/arrive logsum field names to the
+        // print the chosen destMgra and the depart/arrive logsum field names to
+        // the
         // file
         outStream2.print("seq,hisseq,chosenMgra");
         for (String[] labels : departArriveCombinationLabels)
@@ -128,7 +129,6 @@ public final class NonMandatoryTodEstimationMcLogsumsAppender
         String uecPath = rbMap.get(CtrampApplication.PROPERTIES_UEC_PATH);
         String mcUecFile = rbMap.get(PROPERTIES_UEC_TOUR_MODE_CHOICE);
         mcUecFile = uecPath + mcUecFile;
-
 
         SandagAppendMcLogsumDMU mcDmuObject = new SandagAppendMcLogsumDMU(modelStructure);
 
@@ -183,7 +183,8 @@ public final class NonMandatoryTodEstimationMcLogsumsAppender
     private int[][] getTodEstimationDataOrigDestTimes(TableDataSet hisTds)
     {
 
-        // odts are an array with elements: origin mgra, destination mgra, departure
+        // odts are an array with elements: origin mgra, destination mgra,
+        // departure
         // period(1-6), and arrival period(1-6).
         int[][] odts = new int[hisTds.getRowCount()][NUM_FIELDS];
         mgras = new int[hisTds.getRowCount()][NUM_MGRA_FIELDS];
@@ -236,7 +237,8 @@ public final class NonMandatoryTodEstimationMcLogsumsAppender
             odts[r - 1][ESCORT] = purpose[r - 1] == 4 ? 1 : 0;
             odts[r - 1][PARTYSIZE] = jointParticipants[r - 1];
 
-            odts[r - 1][TOUR_PURPOSE] = odts[r - 1][JOINT] == 1 && purpose[r - 1] > 4 ? jtPurpose[r - 1] : purpose[r - 1];
+            odts[r - 1][TOUR_PURPOSE] = odts[r - 1][JOINT] == 1 && purpose[r - 1] > 4 ? jtPurpose[r - 1]
+                    : purpose[r - 1];
 
         }
 
@@ -251,7 +253,8 @@ public final class NonMandatoryTodEstimationMcLogsumsAppender
         ResourceBundle rb;
         if (args.length == 0)
         {
-            System.out.println("no properties file base name (without .properties extension) was specified as an argument.");
+            System.out
+                    .println("no properties file base name (without .properties extension) was specified as an argument.");
             return;
         } else
         {
@@ -259,13 +262,15 @@ public final class NonMandatoryTodEstimationMcLogsumsAppender
         }
 
         HashMap<String, String> rbMap = ResourceUtil.changeResourceBundleIntoHashMap(rb);
-        
-        NonMandatoryTodEstimationMcLogsumsAppender appender = new NonMandatoryTodEstimationMcLogsumsAppender(rbMap);
+
+        NonMandatoryTodEstimationMcLogsumsAppender appender = new NonMandatoryTodEstimationMcLogsumsAppender(
+                rbMap);
 
         appender.startMatrixServer(rb);
         appender.runLogsumAppender(rb);
 
-        System.out.println("total runtime = " + ((System.currentTimeMillis() - startTime) / 1000) + " seconds.");
+        System.out.println("total runtime = " + ((System.currentTimeMillis() - startTime) / 1000)
+                + " seconds.");
 
     }
 

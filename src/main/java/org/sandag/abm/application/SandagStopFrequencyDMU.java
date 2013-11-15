@@ -8,7 +8,8 @@ public class SandagStopFrequencyDMU
         extends StopFrequencyDMU
 {
 
-    // the SANDAG UEC worksheet numbers defined below are used to associate worksheet
+    // the SANDAG UEC worksheet numbers defined below are used to associate
+    // worksheet
     // pages to CTRAMP purpose indices
     private static final int          WORK_MODEL_SHEET       = 1;
     private static final int          UNIVERSITY_MODEL_SHEET = 2;
@@ -25,9 +26,9 @@ public class SandagStopFrequencyDMU
     private HashMap<Integer, Integer> tourPurposeChoiceModelIndexMap;
     private int[]                     modelSheetValues;
 
-    public SandagStopFrequencyDMU( ModelStructure modelStructure )
+    public SandagStopFrequencyDMU(ModelStructure modelStructure)
     {
-        super( modelStructure );
+        super(modelStructure);
         setupModelIndexMappings();
         setupMethodIndexMap();
 
@@ -47,7 +48,8 @@ public class SandagStopFrequencyDMU
     private void setupModelIndexMappings()
     {
 
-        // setup the mapping from tour primary purpose indices to the worksheet page
+        // setup the mapping from tour primary purpose indices to the worksheet
+        // page
         // indices
         tourPurposeModelSheetMap = new HashMap<Integer, Integer>();
         tourPurposeModelSheetMap.put(ModelStructure.WORK_PRIMARY_PURPOSE_INDEX, WORK_MODEL_SHEET);
@@ -72,7 +74,8 @@ public class SandagStopFrequencyDMU
 
         // setup a mapping between primary tour purpose indices and
         // ChoiceModelApplication array indices
-        // so that only as many ChoiceModelApplication objects are created in the
+        // so that only as many ChoiceModelApplication objects are created in
+        // the
         // Stop Frequency model implementation
         // as there are worksheet model pages.
         tourPurposeChoiceModelIndexMap = new HashMap<Integer, Integer>();
@@ -85,7 +88,8 @@ public class SandagStopFrequencyDMU
             // get the sheet number associated with the tour purpose
             int modelSheetKey = tourPurposeModelSheetMap.get(modelPurposeKey);
 
-            // if the sheet number already exists in the sheet index to choice model
+            // if the sheet number already exists in the sheet index to choice
+            // model
             // index mapping, get that index
             // and use it for the purpose to model index mapping
             if (modelSheetIndexMap.containsKey(modelSheetKey))
@@ -94,7 +98,8 @@ public class SandagStopFrequencyDMU
                 tourPurposeChoiceModelIndexMap.put(modelPurposeKey, index);
             } else
             {
-                // otherwise add this sheet number to the model index mapping and use
+                // otherwise add this sheet number to the model index mapping
+                // and use
                 // it
                 // for the purpose to model index mapping.
                 modelSheetIndexMap.put(modelSheetKey, modelIndex);
@@ -112,8 +117,8 @@ public class SandagStopFrequencyDMU
 
     /**
      * @return the array of unique worksheet model sheet values for whic a
-     *         ChoiceModelApplication object will be created. The size of this array
-     *         determines the number of ChoiceModelApplication objects.
+     *         ChoiceModelApplication object will be created. The size of this
+     *         array determines the number of ChoiceModelApplication objects.
      */
     public int[] getModelSheetValuesArray()
     {
@@ -230,7 +235,6 @@ public class SandagStopFrequencyDMU
                 return getTourModeIsNonMotorized();
             case 29:
                 return getTourModeIsSchoolBus();
-                
 
             default:
                 logger.error("method number = " + variableIndex + " not found");

@@ -2,70 +2,68 @@ package org.sandag.abm.visitor;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
 import org.sandag.abm.ctramp.TourModeChoiceDMU;
-import org.sandag.abm.ctramp.ModelStructure;
-
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 
-public class VisitorTourModeChoiceDMU        implements Serializable, VariableTable
+public class VisitorTourModeChoiceDMU
+        implements Serializable, VariableTable
 {
 
-    protected transient Logger                logger                                    = Logger.getLogger(TourModeChoiceDMU.class);
+    protected transient Logger         logger       = Logger.getLogger(TourModeChoiceDMU.class);
 
-    protected static final int                LB  = McLogsumsCalculator.LB;
-    protected static final int                EB  = McLogsumsCalculator.EB;
-    protected static final int                BRT = McLogsumsCalculator.BRT;
-    protected static final int                LR  = McLogsumsCalculator.LR;
-    protected static final int                CR  = McLogsumsCalculator.CR;
-    protected static final int                NUM_LOC_PREM = McLogsumsCalculator.NUM_LOC_PREM;
+    protected static final int         LB           = McLogsumsCalculator.LB;
+    protected static final int         EB           = McLogsumsCalculator.EB;
+    protected static final int         BRT          = McLogsumsCalculator.BRT;
+    protected static final int         LR           = McLogsumsCalculator.LR;
+    protected static final int         CR           = McLogsumsCalculator.CR;
+    protected static final int         NUM_LOC_PREM = McLogsumsCalculator.NUM_LOC_PREM;
 
-    protected static final int                WTW = McLogsumsCalculator.WTW;
-    protected static final int                WTD = McLogsumsCalculator.WTD;
-    protected static final int                DTW = McLogsumsCalculator.DTW;
-    protected static final int                NUM_ACC_EGR = McLogsumsCalculator.NUM_ACC_EGR;
-    
-    protected static final int                LB_IVT = McLogsumsCalculator.LB_IVT;
-    protected static final int                EB_IVT = McLogsumsCalculator.EB_IVT;
-    protected static final int                BRT_IVT = McLogsumsCalculator.BRT_IVT;
-    protected static final int                LR_IVT = McLogsumsCalculator.LR_IVT;
-    protected static final int                CR_IVT = McLogsumsCalculator.CR_IVT;
-    protected static final int                ACC = McLogsumsCalculator.ACC;
-    protected static final int                EGR = McLogsumsCalculator.EGR;
-    protected static final int                AUX = McLogsumsCalculator.AUX;
-    protected static final int                FWAIT = McLogsumsCalculator.FWAIT;
-    protected static final int                XWAIT = McLogsumsCalculator.XWAIT;
-    protected static final int                FARE = McLogsumsCalculator.FARE;
-    protected static final int                XFERS = McLogsumsCalculator.XFERS;
-    protected static final int                NUM_SKIMS = McLogsumsCalculator.NUM_SKIMS;
-    
-    protected static final int                OUT = McLogsumsCalculator.OUT;
-    protected static final int                IN = McLogsumsCalculator.IN;
-    protected static final int                NUM_DIR = McLogsumsCalculator.NUM_DIR;
-    
+    protected static final int         WTW          = McLogsumsCalculator.WTW;
+    protected static final int         WTD          = McLogsumsCalculator.WTD;
+    protected static final int         DTW          = McLogsumsCalculator.DTW;
+    protected static final int         NUM_ACC_EGR  = McLogsumsCalculator.NUM_ACC_EGR;
+
+    protected static final int         LB_IVT       = McLogsumsCalculator.LB_IVT;
+    protected static final int         EB_IVT       = McLogsumsCalculator.EB_IVT;
+    protected static final int         BRT_IVT      = McLogsumsCalculator.BRT_IVT;
+    protected static final int         LR_IVT       = McLogsumsCalculator.LR_IVT;
+    protected static final int         CR_IVT       = McLogsumsCalculator.CR_IVT;
+    protected static final int         ACC          = McLogsumsCalculator.ACC;
+    protected static final int         EGR          = McLogsumsCalculator.EGR;
+    protected static final int         AUX          = McLogsumsCalculator.AUX;
+    protected static final int         FWAIT        = McLogsumsCalculator.FWAIT;
+    protected static final int         XWAIT        = McLogsumsCalculator.XWAIT;
+    protected static final int         FARE         = McLogsumsCalculator.FARE;
+    protected static final int         XFERS        = McLogsumsCalculator.XFERS;
+    protected static final int         NUM_SKIMS    = McLogsumsCalculator.NUM_SKIMS;
+
+    protected static final int         OUT          = McLogsumsCalculator.OUT;
+    protected static final int         IN           = McLogsumsCalculator.IN;
+    protected static final int         NUM_DIR      = McLogsumsCalculator.NUM_DIR;
+
     protected HashMap<String, Integer> methodIndexMap;
     protected IndexValues              dmuIndex;
 
-    protected float tourDepartPeriod;
-    protected float tourArrivePeriod;
-    protected double origDuDen;
-    protected double origEmpDen;
-    protected double origTotInt;
-    protected double destDuDen;
-    protected double destEmpDen;
-    protected double destTotInt;
-    
- 	protected int partySize;
-    protected int autoAvailable;
-    protected int income;
-    protected int tourPurpose;
-    
+    protected float                    tourDepartPeriod;
+    protected float                    tourArrivePeriod;
+    protected double                   origDuDen;
+    protected double                   origEmpDen;
+    protected double                   origTotInt;
+    protected double                   destDuDen;
+    protected double                   destEmpDen;
+    protected double                   destTotInt;
+
+    protected int                      partySize;
+    protected int                      autoAvailable;
+    protected int                      income;
+    protected int                      tourPurpose;
+
     protected float                    pTazTerminalTime;
     protected float                    aTazTerminalTime;
-    
+
     protected double                   nmWalkTimeOut;
     protected double                   nmWalkTimeIn;
     protected double                   nmBikeTimeOut;
@@ -74,25 +72,30 @@ public class VisitorTourModeChoiceDMU        implements Serializable, VariableTa
     protected double                   lsWgtAvgCostD;
     protected double                   lsWgtAvgCostH;
 
-    protected double[][][][] transitSkim;
+    protected double[][][][]           transitSkim;
 
     public VisitorTourModeChoiceDMU(VisitorModelStructure modelStructure)
     {
         setupMethodIndexMap();
         dmuIndex = new IndexValues();
         transitSkim = new double[McLogsumsCalculator.NUM_ACC_EGR][McLogsumsCalculator.NUM_LOC_PREM][McLogsumsCalculator.NUM_SKIMS][McLogsumsCalculator.NUM_DIR];
-        
+
     }
 
     /**
      * Set this index values for this tour mode choice DMU object.
      * 
-     * @param hhIndex is the DMU household index
-     * @param zoneIndex is the DMU zone index
-     * @param origIndex is the DMU origin index
-     * @param destIndex is the DMU desatination index
+     * @param hhIndex
+     *            is the DMU household index
+     * @param zoneIndex
+     *            is the DMU zone index
+     * @param origIndex
+     *            is the DMU origin index
+     * @param destIndex
+     *            is the DMU desatination index
      */
-    public void setDmuIndexValues(int hhIndex, int zoneIndex, int origIndex, int destIndex, boolean debug)
+    public void setDmuIndexValues(int hhIndex, int zoneIndex, int origIndex, int destIndex,
+            boolean debug)
     {
         dmuIndex.setHHIndex(hhIndex);
         dmuIndex.setZoneIndex(zoneIndex);
@@ -114,30 +117,36 @@ public class VisitorTourModeChoiceDMU        implements Serializable, VariableTa
         return dmuIndex;
     }
 
-    public void setLsWgtAvgCostM( double cost ) {
+    public void setLsWgtAvgCostM(double cost)
+    {
         lsWgtAvgCostM = cost;
     }
-    
-    public void setLsWgtAvgCostD( double cost ) {
+
+    public void setLsWgtAvgCostD(double cost)
+    {
         lsWgtAvgCostD = cost;
     }
-    
-    public void setLsWgtAvgCostH( double cost ) {
+
+    public void setLsWgtAvgCostH(double cost)
+    {
         lsWgtAvgCostH = cost;
     }
-    
-    public double getLsWgtAvgCostM() {
+
+    public double getLsWgtAvgCostM()
+    {
         return lsWgtAvgCostM;
     }
-    
-    public double getLsWgtAvgCostD() {
+
+    public double getLsWgtAvgCostD()
+    {
         return lsWgtAvgCostD;
     }
 
-    public double getLsWgtAvgCostH() {
+    public double getLsWgtAvgCostH()
+    {
         return lsWgtAvgCostH;
     }
-    
+
     public float getTimeOutbound()
     {
         return tourDepartPeriod;
@@ -149,18 +158,22 @@ public class VisitorTourModeChoiceDMU        implements Serializable, VariableTa
     }
 
     /**
-	 * @param tourDepartPeriod the tourDepartPeriod to set
-	 */
-	public void setTourDepartPeriod(float tourDepartPeriod) {
-		this.tourDepartPeriod = tourDepartPeriod;
-	}
+     * @param tourDepartPeriod
+     *            the tourDepartPeriod to set
+     */
+    public void setTourDepartPeriod(float tourDepartPeriod)
+    {
+        this.tourDepartPeriod = tourDepartPeriod;
+    }
 
-	/**
-	 * @param tourArrivePeriod the tourArrivePeriod to set
-	 */
-	public void setTourArrivePeriod(float tourArrivePeriod) {
-		this.tourArrivePeriod = tourArrivePeriod;
-	}
+    /**
+     * @param tourArrivePeriod
+     *            the tourArrivePeriod to set
+     */
+    public void setTourArrivePeriod(float tourArrivePeriod)
+    {
+        this.tourArrivePeriod = tourArrivePeriod;
+    }
 
     public void setOrigDuDen(double arg)
     {
@@ -192,15 +205,17 @@ public class VisitorTourModeChoiceDMU        implements Serializable, VariableTa
         destTotInt = arg;
     }
 
-    public int getTourPurpose() {
-		return tourPurpose;
-	}
+    public int getTourPurpose()
+    {
+        return tourPurpose;
+    }
 
-	public void setTourPurpose(int tourPurpose) {
-		this.tourPurpose = tourPurpose;
-	}
+    public void setTourPurpose(int tourPurpose)
+    {
+        this.tourPurpose = tourPurpose;
+    }
 
-	public double getODUDen()
+    public double getODUDen()
     {
         return origDuDen;
     }
@@ -230,90 +245,96 @@ public class VisitorTourModeChoiceDMU        implements Serializable, VariableTa
         return destTotInt;
     }
 
-    public void setNmWalkTimeOut( double nmWalkTime )
+    public void setNmWalkTimeOut(double nmWalkTime)
     {
         nmWalkTimeOut = nmWalkTime;
     }
-    
+
     public double getNmWalkTimeOut()
     {
         return nmWalkTimeOut;
     }
-    
-    public void setNmWalkTimeIn( double nmWalkTime )
+
+    public void setNmWalkTimeIn(double nmWalkTime)
     {
         nmWalkTimeIn = nmWalkTime;
     }
-    
+
     public double getNmWalkTimeIn()
     {
         return nmWalkTimeIn;
     }
-    
-    public void setNmBikeTimeOut( double nmBikeTime )
+
+    public void setNmBikeTimeOut(double nmBikeTime)
     {
         nmBikeTimeOut = nmBikeTime;
     }
-    
+
     public double getNmBikeTimeOut()
     {
         return nmBikeTimeOut;
     }
-    
-    public void setNmBikeTimeIn( double nmBikeTime )
+
+    public void setNmBikeTimeIn(double nmBikeTime)
     {
         nmBikeTimeIn = nmBikeTime;
     }
-    
+
     public double getNmBikeTimeIn()
     {
         return nmBikeTimeIn;
     }
-    
 
     public void setPTazTerminalTime(float time)
     {
         pTazTerminalTime = time;
     }
-    
+
     public void setATazTerminalTime(float time)
     {
         aTazTerminalTime = time;
     }
+
     public double getPTazTerminalTime()
     {
         return pTazTerminalTime;
     }
-    
+
     public double getATazTerminalTime()
     {
         return aTazTerminalTime;
     }
-       
-    public int getPartySize() {
-		return partySize;
-	}
 
-	public void setPartySize(int partySize) {
-		this.partySize = partySize;
-	}
+    public int getPartySize()
+    {
+        return partySize;
+    }
 
-	public int getAutoAvailable() {
-		return autoAvailable;
-	}
+    public void setPartySize(int partySize)
+    {
+        this.partySize = partySize;
+    }
 
-	public void setAutoAvailable(int autoAvailable) {
-		this.autoAvailable = autoAvailable;
-	}
+    public int getAutoAvailable()
+    {
+        return autoAvailable;
+    }
 
-	public int getIncome() {
-		return income;
-	}
+    public void setAutoAvailable(int autoAvailable)
+    {
+        this.autoAvailable = autoAvailable;
+    }
 
-	public void setIncome(int income) {
-		this.income = income;
-	}
-   
+    public int getIncome()
+    {
+        return income;
+    }
+
+    public void setIncome(int income)
+    {
+        this.income = income;
+    }
+
     private void setupMethodIndexMap()
     {
         methodIndexMap = new HashMap<String, Integer>();
@@ -331,11 +352,11 @@ public class VisitorTourModeChoiceDMU        implements Serializable, VariableTa
         methodIndexMap.put("getMonthlyParkingCost", 23);
         methodIndexMap.put("getDailyParkingCost", 24);
         methodIndexMap.put("getHourlyParkingCost", 25);
-        methodIndexMap.put("getPartySize",30);
-        methodIndexMap.put("getAutoAvailable",31);
-        methodIndexMap.put("getIncome",32);
-        methodIndexMap.put("getTourPurpose",33);
-         
+        methodIndexMap.put("getPartySize", 30);
+        methodIndexMap.put("getAutoAvailable", 31);
+        methodIndexMap.put("getIncome", 32);
+        methodIndexMap.put("getTourPurpose", 33);
+
         methodIndexMap.put("getNm_walkTime_out", 90);
         methodIndexMap.put("getNm_walkTime_in", 91);
         methodIndexMap.put("getNm_bikeTime_out", 92);
@@ -660,7 +681,7 @@ public class VisitorTourModeChoiceDMU        implements Serializable, VariableTa
             case 1:
                 returnValue = getTimeInbound();
                 break;
-             case 14:
+            case 14:
                 returnValue = getPTazTerminalTime();
                 break;
             case 15:
@@ -694,18 +715,18 @@ public class VisitorTourModeChoiceDMU        implements Serializable, VariableTa
                 returnValue = getLsWgtAvgCostH();
                 break;
             case 30:
-            	returnValue = getPartySize();   
+                returnValue = getPartySize();
                 break;
             case 31:
-            	returnValue = getAutoAvailable();   
+                returnValue = getAutoAvailable();
                 break;
             case 32:
-            	returnValue = getIncome();   
+                returnValue = getIncome();
                 break;
             case 33:
-            	returnValue = getTourPurpose();   
+                returnValue = getTourPurpose();
                 break;
-           
+
             case 90:
                 returnValue = getNmWalkTimeOut();
                 break;
@@ -1629,11 +1650,13 @@ public class VisitorTourModeChoiceDMU        implements Serializable, VariableTa
 
     }
 
-    public void setTransitSkim(int accEgr, int lbPrem, int skimIndex, int dir, double value){
+    public void setTransitSkim(int accEgr, int lbPrem, int skimIndex, int dir, double value)
+    {
         transitSkim[accEgr][lbPrem][skimIndex][dir] = value;
     }
 
-    protected double getTransitSkim(int accEgr, int lbPrem, int skimIndex, int dir){
+    protected double getTransitSkim(int accEgr, int lbPrem, int skimIndex, int dir)
+    {
         return transitSkim[accEgr][lbPrem][skimIndex][dir];
     }
 
@@ -1661,6 +1684,5 @@ public class VisitorTourModeChoiceDMU        implements Serializable, VariableTa
     {
         throw new UnsupportedOperationException();
     }
-
 
 }

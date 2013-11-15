@@ -1,16 +1,15 @@
 package org.sandag.abm.modechoice;
 
-import com.pb.common.calculator.IndexValues;
-import com.pb.common.newmodel.LogitModel;
-import com.pb.common.util.Tracer;
-import com.pb.common.newmodel.UtilityExpressionCalculator;
-import com.pb.common.newmodel.ChoiceModelApplication;
-
-import org.apache.log4j.Logger;
-import org.sandag.abm.ctramp.Util;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
+import org.apache.log4j.Logger;
+import org.sandag.abm.ctramp.Util;
+import com.pb.common.calculator.IndexValues;
+import com.pb.common.newmodel.ChoiceModelApplication;
+import com.pb.common.newmodel.LogitModel;
+import com.pb.common.newmodel.UtilityExpressionCalculator;
+import com.pb.common.util.Tracer;
 
 /**
  * This class is used for ...
@@ -24,7 +23,7 @@ public class NonMotorUEC
         implements Serializable
 {
 
-    private transient Logger               logger = Logger.getLogger(NonMotorUEC.class);
+    private transient Logger            logger = Logger.getLogger(NonMotorUEC.class);
     private TazDataManager              tazManager;
     private MgraDataManager             mgraManager;
     private UtilityExpressionCalculator uec;
@@ -84,8 +83,10 @@ public class NonMotorUEC
     /**
      * Calculate utilities for a given TAZ pair.
      * 
-     * @param pTaz Production/Origin TAZ.
-     * @param aTaz Attraction/Destination TAZ.
+     * @param pTaz
+     *            Production/Origin TAZ.
+     * @param aTaz
+     *            Attraction/Destination TAZ.
      * @return The root utility.
      */
     public double calculateUtilitiesForTazPair(int pTaz, int aTaz)
@@ -134,8 +135,10 @@ public class NonMotorUEC
     /**
      * Calculate utilities for a given TAZ pair.
      * 
-     * @param oMgra Production/Origin Mgra.
-     * @param dMgra Attraction/Destination Mgra.
+     * @param oMgra
+     *            Production/Origin Mgra.
+     * @param dMgra
+     *            Attraction/Destination Mgra.
      * @return The root utility.
      */
     public double calculateUtilitiesForMgraPair(int oMgra, int dMgra)

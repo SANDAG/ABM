@@ -1,10 +1,7 @@
 package org.sandag.abm.application;
 
-import org.sandag.abm.ctramp.Household;
-import org.sandag.abm.ctramp.HouseholdDataManager;
-import org.sandag.abm.ctramp.Person;
-import com.pb.common.datafile.OLD_CSVFileReader;
-import com.pb.common.datafile.TableDataSet;
+import gnu.cajo.invoke.Remote;
+import gnu.cajo.utils.ItemServer;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,14 +9,17 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import gnu.cajo.invoke.Remote;
-import gnu.cajo.utils.ItemServer;
+import org.sandag.abm.ctramp.Household;
+import org.sandag.abm.ctramp.HouseholdDataManager;
+import org.sandag.abm.ctramp.Person;
+import com.pb.common.datafile.OLD_CSVFileReader;
+import com.pb.common.datafile.TableDataSet;
 
 /**
  * @author Jim Hicks
  * 
- *         Class for managing household and person object data read from synthetic
- *         population files.
+ *         Class for managing household and person object data read from
+ *         synthetic population files.
  */
 public class SandagHouseholdDataManager
         extends HouseholdDataManager
@@ -33,15 +33,15 @@ public class SandagHouseholdDataManager
     public static final String PROPERTIES_OCCUP_CODES    = "PopulationSynthesizer.OccupCodes";
     public static final String PROPERTIES_INDUSTRY_CODES = "PopulationSynthesizer.IndustryCodes";
 
-    
     public SandagHouseholdDataManager()
     {
         super();
     }
 
     /**
-     * Associate data in hh and person TableDataSets read from synthetic population
-     * files with Household objects and Person objects with Households.
+     * Associate data in hh and person TableDataSets read from synthetic
+     * population files with Household objects and Person objects with
+     * Households.
      * 
      */
     public void mapTablesToHouseholdObjects()
@@ -60,9 +60,11 @@ public class SandagHouseholdDataManager
         int[] occCodes = readOccupCorrespondenceData();
         int[] indCodes = readIndustryCorrespondenceData();
 
-        // get the maximum HH id value to use to dimension the hhIndex correspondence
+        // get the maximum HH id value to use to dimension the hhIndex
+        // correspondence
         // array.
-        // the hhIndex array will store the hhArray index number for the given hh
+        // the hhIndex array will store the hhArray index number for the given
+        // hh
         // index.
         int maxHhId = 0;
         for (int r = 1; r <= hhTable.getRowCount(); r++)
@@ -92,12 +94,12 @@ public class SandagHouseholdDataManager
                 int index = sortedIndices[r - 1];
                 hhIndexArray[hh.getHhId()] = index;
 
-                int htaz = (int) hhTable.getValueAt(r, hhTable
-                        .getColumnPosition(HH_HOME_TAZ_FIELD_NAME));
+                int htaz = (int) hhTable.getValueAt(r,
+                        hhTable.getColumnPosition(HH_HOME_TAZ_FIELD_NAME));
                 hh.setHhTaz(htaz);
 
-                int hmgra = (int) hhTable.getValueAt(r, hhTable
-                        .getColumnPosition(HH_HOME_MGRA_FIELD_NAME));
+                int hmgra = (int) hhTable.getValueAt(r,
+                        hhTable.getColumnPosition(HH_HOME_MGRA_FIELD_NAME));
                 hh.setHhMgra(hmgra);
 
                 double rn = hh.getHhRandom().nextDouble();
@@ -105,54 +107,59 @@ public class SandagHouseholdDataManager
                 hh.setHhWalkSubzone(origWalkSubzone);
 
                 // autos could be modeled or from PUMA
-                int numAutos = (int) hhTable.getValueAt(r, hhTable
-                        .getColumnPosition(HH_AUTOS_FIELD_NAME));
+                int numAutos = (int) hhTable.getValueAt(r,
+                        hhTable.getColumnPosition(HH_AUTOS_FIELD_NAME));
                 hh.setHhAutos(numAutos);
 
-                // set the hhSize variable and create Person objects for each person
-                int numPersons = (int) hhTable.getValueAt(r, hhTable
-                        .getColumnPosition(HH_SIZE_FIELD_NAME));
+                // set the hhSize variable and create Person objects for each
+                // person
+                int numPersons = (int) hhTable.getValueAt(r,
+                        hhTable.getColumnPosition(HH_SIZE_FIELD_NAME));
                 hh.setHhSize(numPersons);
 
-                int numWorkers = (int) hhTable.getValueAt(r, hhTable
-                        .getColumnPosition(HH_WORKERS_FIELD_NAME));
+                int numWorkers = (int) hhTable.getValueAt(r,
+                        hhTable.getColumnPosition(HH_WORKERS_FIELD_NAME));
                 hh.setHhWorkers(numWorkers);
 
-                int incomeCat = (int) hhTable.getValueAt(r, hhTable
-                        .getColumnPosition(HH_INCOME_CATEGORY_FIELD_NAME));
+                int incomeCat = (int) hhTable.getValueAt(r,
+                        hhTable.getColumnPosition(HH_INCOME_CATEGORY_FIELD_NAME));
                 hh.setHhIncome(incomeCat);
 
-                int incomeInDollars = (int) hhTable.getValueAt(r, hhTable
-                        .getColumnPosition(HH_INCOME_DOLLARS_FIELD_NAME));
+                int incomeInDollars = (int) hhTable.getValueAt(r,
+                        hhTable.getColumnPosition(HH_INCOME_DOLLARS_FIELD_NAME));
                 hh.setHhIncomeInDollars(incomeInDollars);
 
-                // 0=Housing unit, 1=Institutional group quarters, 2=Noninstitutional
+                // 0=Housing unit, 1=Institutional group quarters,
+                // 2=Noninstitutional
                 // group quarters
-                int unitType = (int) hhTable.getValueAt(r, hhTable
-                        .getColumnPosition(HH_UNITTYPE_FIELD_NAME));
+                int unitType = (int) hhTable.getValueAt(r,
+                        hhTable.getColumnPosition(HH_UNITTYPE_FIELD_NAME));
                 hh.setUnitType(unitType);
 
                 // 1=Family household:married-couple, 2=Family household:male
                 // householder,no wife present, 3=Family household:female
                 // householder,no
                 // husband present
-                // 4=Nonfamily household:male householder, living alone, 5=Nonfamily
+                // 4=Nonfamily household:male householder, living alone,
+                // 5=Nonfamily
                 // household:male householder, not living alone,
                 // 6=Nonfamily household:female householder, living alone,
                 // 7=Nonfamily household:female householder, not living alone
-                int type = (int) hhTable.getValueAt(r, hhTable
-                        .getColumnPosition(HH_TYPE_FIELD_NAME));
+                int type = (int) hhTable.getValueAt(r,
+                        hhTable.getColumnPosition(HH_TYPE_FIELD_NAME));
                 hh.setHhType(type);
 
-                // 1=mobile home, 2=one-family house detached from any other house,
+                // 1=mobile home, 2=one-family house detached from any other
+                // house,
                 // 3=one-family house attached to one or more houses,
-                // 4=building with 2 apartments, 5=building with 3 or 4 apartments,
+                // 4=building with 2 apartments, 5=building with 3 or 4
+                // apartments,
                 // 6=building with 5 to 9 apartments,
                 // 7=building with 10 to 19 apartments, 8=building with 20 to 49
                 // apartments,
                 // 9=building with 50 or more apartments, 10=Boat,RV,van,etc.
-                int bldgsz = (int) hhTable.getValueAt(r, hhTable
-                        .getColumnPosition(HH_BLDGSZ_FIELD_NAME));
+                int bldgsz = (int) hhTable.getValueAt(r,
+                        hhTable.getColumnPosition(HH_BLDGSZ_FIELD_NAME));
                 hh.setHhBldgsz(bldgsz);
 
                 hh.initializeWindows();
@@ -161,11 +168,9 @@ public class SandagHouseholdDataManager
             } catch (Exception e)
             {
 
-                logger
-                        .fatal(String
-                                .format(
-                                        "exception caught mapping household data record to a Household object, r=%d, id=%d.",
-                                        r, id));
+                logger.fatal(String
+                        .format("exception caught mapping household data record to a Household object, r=%d, id=%d.",
+                                r, id));
                 throw new RuntimeException(e);
 
             }
@@ -187,8 +192,8 @@ public class SandagHouseholdDataManager
             {
 
                 // get the Household object for this person data to be stored in
-                hhid = (int) personTable.getValueAt(r, personTable
-                        .getColumnPosition(PERSON_HH_ID_FIELD_NAME));
+                hhid = (int) personTable.getValueAt(r,
+                        personTable.getColumnPosition(PERSON_HH_ID_FIELD_NAME));
                 int index = hhIndexArray[hhid];
                 Household hh = hhArray[index];
                 fieldCount = 1;
@@ -200,31 +205,32 @@ public class SandagHouseholdDataManager
                 }
 
                 // get the Person object for this person data to be stored in
-                persId = (int) personTable.getValueAt(r, personTable
-                        .getColumnPosition(PERSON_PERSON_ID_FIELD_NAME));
+                persId = (int) personTable.getValueAt(r,
+                        personTable.getColumnPosition(PERSON_PERSON_ID_FIELD_NAME));
                 Person person = hh.getPerson(persNum++);
                 person.setPersId(persId);
                 fieldCount++;
 
-                // get required values from table record and store in Person object
-                int age = (int) personTable.getValueAt(r, personTable
-                        .getColumnPosition(PERSON_AGE_FIELD_NAME));
+                // get required values from table record and store in Person
+                // object
+                int age = (int) personTable.getValueAt(r,
+                        personTable.getColumnPosition(PERSON_AGE_FIELD_NAME));
                 person.setPersAge(age);
                 fieldCount++;
 
-                int gender = (int) personTable.getValueAt(r, personTable
-                        .getColumnPosition(PERSON_GENDER_FIELD_NAME));
+                int gender = (int) personTable.getValueAt(r,
+                        personTable.getColumnPosition(PERSON_GENDER_FIELD_NAME));
                 person.setPersGender(gender);
                 fieldCount++;
 
-                int occcen1 = (int) personTable.getValueAt(r, personTable
-                        .getColumnPosition(PERSON_OCCCEN1_FIELD_NAME));
+                int occcen1 = (int) personTable.getValueAt(r,
+                        personTable.getColumnPosition(PERSON_OCCCEN1_FIELD_NAME));
                 int pecasOccup = occCodes[occcen1];
 
                 if (pecasOccup == 0) logger.warn("pecasOccup==0 for occcen1=" + occcen1);
 
-                int indcen = (int) personTable.getValueAt(r, personTable
-                        .getColumnPosition(PERSON_INDCEN_FIELD_NAME));
+                int indcen = (int) personTable.getValueAt(r,
+                        personTable.getColumnPosition(PERSON_INDCEN_FIELD_NAME));
                 int activityCode = indCodes[indcen];
 
                 if ((pecasOccup == 71)
@@ -251,41 +257,46 @@ public class SandagHouseholdDataManager
                 person.setPersPecasOccup(pecasOccup);
                 fieldCount++;
 
-                // Employment status (1-employed FT, 2-employed PT, 3-not employed,
+                // Employment status (1-employed FT, 2-employed PT, 3-not
+                // employed,
                 // 4-under age 16)
-                int empCat = (int) personTable.getValueAt(r, personTable
-                        .getColumnPosition(PERSON_EMPLOYMENT_CATEGORY_FIELD_NAME));
+                int empCat = (int) personTable.getValueAt(r,
+                        personTable.getColumnPosition(PERSON_EMPLOYMENT_CATEGORY_FIELD_NAME));
                 person.setPersEmploymentCategory(empCat);
                 fieldCount++;
 
-                // Student status (1 - student in grade or high school; 2 - student
+                // Student status (1 - student in grade or high school; 2 -
+                // student
                 // in college or higher; 3 - not a student)
-                int studentCat = (int) personTable.getValueAt(r, personTable
-                        .getColumnPosition(PERSON_STUDENT_CATEGORY_FIELD_NAME));
+                int studentCat = (int) personTable.getValueAt(r,
+                        personTable.getColumnPosition(PERSON_STUDENT_CATEGORY_FIELD_NAME));
                 person.setPersStudentCategory(studentCat);
                 fieldCount++;
 
-                // Person type (1-FT worker age 16+, 2-PT worker nonstudent age 16+,
+                // Person type (1-FT worker age 16+, 2-PT worker nonstudent age
+                // 16+,
                 // 3-university student, 4-nonworker nonstudent age 16-64,
                 // 5-nonworker nonstudent age 65+,
                 // 6-"age 16-19 student, not FT wrkr or univ stud", 7-age 6-15
                 // schpred, 8 under age 6 presch
-                int personType = (int) personTable.getValueAt(r, personTable
-                        .getColumnPosition(PERSON_TYPE_CATEGORY_FIELD_NAME));
+                int personType = (int) personTable.getValueAt(r,
+                        personTable.getColumnPosition(PERSON_TYPE_CATEGORY_FIELD_NAME));
                 person.setPersonTypeCategory(personType);
                 fieldCount++;
 
                 // Person educational attainment level to determine high school
-                // graduate status ( < 9 - not a graduate, 10+ - high school graduate
+                // graduate status ( < 9 - not a graduate, 10+ - high school
+                // graduate
                 // and
                 // beyond)
-                int educ = (int) personTable.getValueAt(r, personTable
-                        .getColumnPosition(PERSON_EDUCATION_ATTAINMENT_FIELD_NAME));
+                int educ = (int) personTable.getValueAt(r,
+                        personTable.getColumnPosition(PERSON_EDUCATION_ATTAINMENT_FIELD_NAME));
                 if (educ >= 9) person.setPersonIsHighSchoolGraduate(true);
                 else person.setPersonIsHighSchoolGraduate(false);
                 fieldCount++;
 
-                // Person educational attainment level to determine higher education
+                // Person educational attainment level to determine higher
+                // education
                 // status ( > 12 - at least a bachelor's degree )
                 if (educ >= 13) person.setPersonHasBachelors(true);
                 else person.setPersonHasBachelors(false);
@@ -294,9 +305,10 @@ public class SandagHouseholdDataManager
                 // Person grade enrolled in ( 0-"not enrolled", 1-"preschool",
                 // 2-"Kindergarten", 3-"Grade 1 to grade 4",
                 // 4-"Grade 5 to grade 8", 5-"Grade 9 to grade 12",
-                // 6-"College undergraduate", 7-"Graduate or professional school" )
-                int grade = (int) personTable.getValueAt(r, personTable
-                        .getColumnPosition(PERSON_GRADE_ENROLLED_FIELD_NAME));
+                // 6-"College undergraduate",
+                // 7-"Graduate or professional school" )
+                int grade = (int) personTable.getValueAt(r,
+                        personTable.getColumnPosition(PERSON_GRADE_ENROLLED_FIELD_NAME));
                 person.setPersonIsGradeSchool(false);
                 person.setPersonIsHighSchool(false);
                 if (grade >= 2 && grade <= 4) person.setPersonIsGradeSchool(true);
@@ -356,10 +368,9 @@ public class SandagHouseholdDataManager
         logger.warn(invalidPersonTypeCount1
                 + " person type = university and student category = non-student person records"
                 + " had their student category changed to university or higher.");
-        logger
-                .warn(invalidPersonTypeCount2
-                        + " Student category = student and employment category = full-time worker person records"
-                        + " had their student category changed to non-student.");
+        logger.warn(invalidPersonTypeCount2
+                + " Student category = student and employment category = full-time worker person records"
+                + " had their student category changed to non-student.");
         logger.warn(invalidPersonTypeCount3
                 + " Student category = non-student and person type = student person records"
                 + " had their student category changed to student high school or less.");
@@ -584,11 +595,9 @@ public class SandagHouseholdDataManager
             indTable = reader.readFile(new File(fileName));
         } catch (Exception e)
         {
-            logger
-                    .fatal(String
-                            .format(
-                                    "Exception occurred reading indistry codes data file: %s into TableDataSet object.",
-                                    fileName));
+            logger.fatal(String
+                    .format("Exception occurred reading indistry codes data file: %s into TableDataSet object.",
+                            fileName));
             throw new RuntimeException(e);
         }
 

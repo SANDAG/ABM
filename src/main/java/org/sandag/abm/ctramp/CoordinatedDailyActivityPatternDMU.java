@@ -7,8 +7,9 @@ import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 
 /**
- * Decision making unit object for the Coordinated Daily Activity Pattern Model. This
- * DMU contains all the getters specified in the UEC, i.e. all the "@" variables.
+ * Decision making unit object for the Coordinated Daily Activity Pattern Model.
+ * This DMU contains all the getters specified in the UEC, i.e. all the "@"
+ * variables.
  * 
  * @author D. Ory
  * 
@@ -17,8 +18,7 @@ public class CoordinatedDailyActivityPatternDMU
         implements Serializable, VariableTable
 {
 
-    protected transient Logger         logger = Logger
-                                                      .getLogger(CoordinatedDailyActivityPatternDMU.class);
+    protected transient Logger         logger = Logger.getLogger(CoordinatedDailyActivityPatternDMU.class);
 
     protected HashMap<String, Integer> methodIndexMap;
 
@@ -281,7 +281,8 @@ public class CoordinatedDailyActivityPatternDMU
         else return 1;
     }
 
-    // no usual school location is 1 if person is a student, location is home mgra,
+    // no usual school location is 1 if person is a student, location is home
+    // mgra,
     // and distance to school is 0.
     public int getNoUsualSchoolLocationA()
     {

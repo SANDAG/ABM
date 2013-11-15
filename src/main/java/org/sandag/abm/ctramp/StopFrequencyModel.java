@@ -1,22 +1,18 @@
 package org.sandag.abm.ctramp;
 
+import java.io.File;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
+import org.apache.log4j.Logger;
+import org.sandag.abm.accessibilities.AccessibilitiesTable;
+import org.sandag.abm.modechoice.MgraDataManager;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.newmodel.ChoiceModelApplication;
-import org.sandag.abm.accessibilities.AccessibilitiesTable;
-import org.sandag.abm.ctramp.CtrampDmuFactoryIf;
-import org.sandag.abm.ctramp.Household;
-import org.sandag.abm.ctramp.ModelStructure;
-import org.sandag.abm.ctramp.Person;
-import org.sandag.abm.ctramp.StopFrequencyDMU;
-import org.sandag.abm.ctramp.Tour;
-import org.sandag.abm.modechoice.MgraDataManager;
-import org.sandag.abm.modechoice.TazDataManager;
-import java.io.File;
-import java.io.Serializable;
-import java.util.*;
-import org.apache.log4j.Logger;
 
 /**
  * This class will be used for determining the number of stops on individual
@@ -31,10 +27,8 @@ public class StopFrequencyModel
         implements Serializable
 {
 
-    private transient Logger            logger                                    = Logger
-                                                                                          .getLogger(StopFrequencyModel.class);
-    private transient Logger            stopFreqLogger                            = Logger
-                                                                                          .getLogger("stopFreqLog");
+    private transient Logger            logger                                    = Logger.getLogger(StopFrequencyModel.class);
+    private transient Logger            stopFreqLogger                            = Logger.getLogger("stopFreqLog");
 
     private static final String         PROPERTIES_UEC_STOP_FREQ                  = "stf.uec.file";
     private static final String         PROPERTIES_STOP_PURPOSE_LOOKUP_FILE       = "stf.purposeLookup.proportions";
@@ -80,16 +74,20 @@ public class StopFrequencyModel
 
     private AccessibilitiesTable        accTable;
     private ModelStructure              modelStructure;
-    private MgraDataManager              mgraManager;
+    private MgraDataManager             mgraManager;
 
     /**
-     * Constructor that will be used to set up the ChoiceModelApplications for each
-     * type of tour
+     * Constructor that will be used to set up the ChoiceModelApplications for
+     * each type of tour
      * 
-     * @param projectDirectory - name of root level project directory
-     * @param resourceBundle - properties file with paths identified
-     * @param dmuObject - decision making unit for stop frequency
-     * @param tazDataManager - holds information about TAZs in the model.
+     * @param projectDirectory
+     *            - name of root level project directory
+     * @param resourceBundle
+     *            - properties file with paths identified
+     * @param dmuObject
+     *            - decision making unit for stop frequency
+     * @param tazDataManager
+     *            - holds information about TAZs in the model.
      */
     public StopFrequencyModel(HashMap<String, String> propertyMap, CtrampDmuFactoryIf dmuFactory,
             ModelStructure myModelStructure, AccessibilitiesTable myAccTable)
@@ -101,8 +99,8 @@ public class StopFrequencyModel
 
     private void setupModels(HashMap<String, String> propertyMap, CtrampDmuFactoryIf dmuFactory)
     {
-        
-        mgraManager = MgraDataManager.getInstance(propertyMap);        
+
+        mgraManager = MgraDataManager.getInstance(propertyMap);
 
         logger.info(String.format("setting up stop frequency choice models."));
 
@@ -125,7 +123,8 @@ public class StopFrequencyModel
             choiceModelApplication[i] = new ChoiceModelApplication(uecFileName,
                     modelSheetsArray[i], UEC_DATA_PAGE, propertyMap, (VariableTable) dmuObject);
 
-        String purposeLookupFileName = uecPath + propertyMap.get(PROPERTIES_STOP_PURPOSE_LOOKUP_FILE);
+        String purposeLookupFileName = uecPath
+                + propertyMap.get(PROPERTIES_STOP_PURPOSE_LOOKUP_FILE);
 
         // read the stop purpose lookup table data and populate the maps used to
         // assign stop purposes
@@ -141,140 +140,176 @@ public class StopFrequencyModel
 
         Logger modelLogger = stopFreqLogger;
         if (household.getDebugChoiceModels())
-            household.logHouseholdObject("Pre Stop Frequency Choice: HH=" + household.getHhId(), stopFreqLogger);
+            household.logHouseholdObject("Pre Stop Frequency Choice: HH=" + household.getHhId(),
+                    stopFreqLogger);
 
         // get this household's person array
         Person[] personArray = household.getPersons();
 
-        // set the household id, origin taz, hh taz, and debugFlag=false in the dmu
+        // set the household id, origin taz, hh taz, and debugFlag=false in the
+        // dmu
         dmuObject.setHouseholdObject(household);
 
-        // set the auto sufficiency dependent non-mandatory accessibility values for
+        // set the auto sufficiency dependent non-mandatory accessibility values
+        // for
         // the household
         int autoSufficiency = household.getAutoSufficiency();
-        dmuObject.setShoppingAccessibility( accTable.getAggregateAccessibility( shopTypes[autoSufficiency], household.getHhMgra() ) );
-        dmuObject.setMaintenanceAccessibility( accTable.getAggregateAccessibility( maintTypes[autoSufficiency], household.getHhMgra() ) );
-        dmuObject.setDiscretionaryAccessibility( accTable.getAggregateAccessibility( discrTypes[autoSufficiency], household.getHhMgra() ) );
-
+        dmuObject.setShoppingAccessibility(accTable.getAggregateAccessibility(
+                shopTypes[autoSufficiency], household.getHhMgra()));
+        dmuObject.setMaintenanceAccessibility(accTable.getAggregateAccessibility(
+                maintTypes[autoSufficiency], household.getHhMgra()));
+        dmuObject.setDiscretionaryAccessibility(accTable.getAggregateAccessibility(
+                discrTypes[autoSufficiency], household.getHhMgra()));
 
         // process the joint tours for the household first
         Tour[] jt = household.getJointTourArray();
-        if ( jt != null ) {
-            
+        if (jt != null)
+        {
+
             List<Tour> tourList = new ArrayList<Tour>();
-            for ( Tour t : jt )
-                tourList.add( t );
-            
+            for (Tour t : jt)
+                tourList.add(t);
+
             int tourCount = 0;
-            for ( Tour tour : tourList ) {
-                
-                try { 
-           
+            for (Tour tour : tourList)
+            {
+
+                try
+                {
+
                     tour.clearStopModelResults();
-                    
-                    int modelIndex = tourPurposeModelIndexMap.get( tour.getTourPrimaryPurposeIndex() );
+
+                    int modelIndex = tourPurposeModelIndexMap
+                            .get(tour.getTourPrimaryPurposeIndex());
 
                     // write debug header
                     String separator = "";
-                    String choiceModelDescription = "" ;
+                    String choiceModelDescription = "";
                     String decisionMakerLabel = "";
                     String loggingHeader = "";
 
-                    if( household.getDebugChoiceModels() ) { 
-                        choiceModelDescription = String.format ( "Joint Tour Stop Frequency Choice Model:" );
-                        decisionMakerLabel = String.format ( "HH=%d, TourType=%s, TourId=%d, TourPurpose=%s.", household.getHhId(), tour.getTourCategory(), tour.getTourId(), tour.getTourPurpose() );
-                        choiceModelApplication[modelIndex].choiceModelUtilityTraceLoggerHeading( choiceModelDescription, decisionMakerLabel );
+                    if (household.getDebugChoiceModels())
+                    {
+                        choiceModelDescription = String
+                                .format("Joint Tour Stop Frequency Choice Model:");
+                        decisionMakerLabel = String.format(
+                                "HH=%d, TourType=%s, TourId=%d, TourPurpose=%s.",
+                                household.getHhId(), tour.getTourCategory(), tour.getTourId(),
+                                tour.getTourPurpose());
+                        choiceModelApplication[modelIndex].choiceModelUtilityTraceLoggerHeading(
+                                choiceModelDescription, decisionMakerLabel);
                         modelLogger.info(" ");
                         loggingHeader = choiceModelDescription + " for " + decisionMakerLabel;
-                        
-                        for (int k=0; k < loggingHeader.length(); k++)
+
+                        for (int k = 0; k < loggingHeader.length(); k++)
                             separator += "+";
-                    
-                        modelLogger.info( loggingHeader );
-                        modelLogger.info( separator );
-                        modelLogger.info( "" );
-                        modelLogger.info( "" );
+
+                        modelLogger.info(loggingHeader);
+                        modelLogger.info(separator);
+                        modelLogger.info("");
+                        modelLogger.info("");
                     }
-                    
+
                     // set the tour object
                     dmuObject.setTourObject(tour);
 
-                    // set the tour orig/dest TAZs associated with the tour orig/dest MGRAs in the IndexValues object.   
-                    dmuObject.setDmuIndexValues( household.getHhId(), household.getHhTaz(),  mgraManager.getTaz(tour.getTourOrigMgra()), mgraManager.getTaz(tour.getTourDestMgra()) );
+                    // set the tour orig/dest TAZs associated with the tour
+                    // orig/dest MGRAs in the IndexValues object.
+                    dmuObject.setDmuIndexValues(household.getHhId(), household.getHhTaz(),
+                            mgraManager.getTaz(tour.getTourOrigMgra()),
+                            mgraManager.getTaz(tour.getTourDestMgra()));
 
                     // compute the utilities
-                    choiceModelApplication[modelIndex].computeUtilities( dmuObject, dmuObject.getDmuIndexValues() );
+                    choiceModelApplication[modelIndex].computeUtilities(dmuObject,
+                            dmuObject.getDmuIndexValues());
 
                     // get the random number from the household
                     Random random = household.getHhRandom();
                     int randomCount = household.getHhRandomCount();
                     double rn = random.nextDouble();
 
-                    // if the choice model has at least one available alternative, make choice.
+                    // if the choice model has at least one available
+                    // alternative, make choice.
                     int choice = -1;
-                    if (  choiceModelApplication[modelIndex].getAvailabilityCount() > 0 )
-                        choice = choiceModelApplication[modelIndex].getChoiceResult( rn );
-                    else {
-                        logger.error ( String.format( "Exception caught applying joint tour stop frequency choice model for %s type tour: HHID=%d, tourCount=%d, randomCount=%f -- no avaialable stop frequency alternative to choose.",
-                            tour.getTourCategory(), household.getHhId(), tourCount, randomCount ) );
+                    if (choiceModelApplication[modelIndex].getAvailabilityCount() > 0) choice = choiceModelApplication[modelIndex]
+                            .getChoiceResult(rn);
+                    else
+                    {
+                        logger.error(String
+                                .format("Exception caught applying joint tour stop frequency choice model for %s type tour: HHID=%d, tourCount=%d, randomCount=%f -- no avaialable stop frequency alternative to choose.",
+                                        tour.getTourCategory(), household.getHhId(), tourCount,
+                                        randomCount));
                         throw new RuntimeException();
                     }
 
                     // debug output
-                    if( household.getDebugChoiceModels() ) {
-                    
+                    if (household.getDebugChoiceModels())
+                    {
+
                         double[] utilities = choiceModelApplication[modelIndex].getUtilities();
-                        double[] probabilities = choiceModelApplication[modelIndex].getProbabilities();
-                        String[] altNames = choiceModelApplication[modelIndex].getAlternativeNames();
+                        double[] probabilities = choiceModelApplication[modelIndex]
+                                .getProbabilities();
+                        String[] altNames = choiceModelApplication[modelIndex]
+                                .getAlternativeNames();
 
                         // 0s-indexing
-                        modelLogger.info( decisionMakerLabel );
-                        modelLogger.info( "Alternative                 Utility       Probability           CumProb" );
-                        modelLogger.info( "------------------   --------------    --------------    --------------" );
-                        
+                        modelLogger.info(decisionMakerLabel);
+                        modelLogger
+                                .info("Alternative                 Utility       Probability           CumProb");
+                        modelLogger
+                                .info("------------------   --------------    --------------    --------------");
+
                         double cumProb = 0.0;
-                        for( int k=0; k < altNames.length; k++ ) {
+                        for (int k = 0; k < altNames.length; k++)
+                        {
                             cumProb += probabilities[k];
-                            String altString = String.format( "%-3d %15s", k+1, altNames[k] );
-                            modelLogger.info(String.format("%-20s%18.6e%18.6e%18.6e", altString, utilities[k], probabilities[k], cumProb));
+                            String altString = String.format("%-3d %15s", k + 1, altNames[k]);
+                            modelLogger.info(String.format("%-20s%18.6e%18.6e%18.6e", altString,
+                                    utilities[k], probabilities[k], cumProb));
                         }
-                        
-                        modelLogger.info(" "); String altString = String.format( "%-3d  %s", choice, altNames[choice-1] );
-                        modelLogger.info( String.format("Choice: %s, with rn=%.8f, randomCount=%d", altString, rn, randomCount ) );
-                        modelLogger.info( separator );
+
+                        modelLogger.info(" ");
+                        String altString = String.format("%-3d  %s", choice, altNames[choice - 1]);
+                        modelLogger.info(String.format("Choice: %s, with rn=%.8f, randomCount=%d",
+                                altString, rn, randomCount));
+                        modelLogger.info(separator);
                         modelLogger.info("");
                         modelLogger.info("");
 
                         // write choice model alternative info to debug log file
-                        choiceModelApplication[modelIndex].logAlternativesInfo ( choiceModelDescription, decisionMakerLabel );
-                        choiceModelApplication[modelIndex].logSelectionInfo (  choiceModelDescription, decisionMakerLabel, rn, choice );
+                        choiceModelApplication[modelIndex].logAlternativesInfo(
+                                choiceModelDescription, decisionMakerLabel);
+                        choiceModelApplication[modelIndex].logSelectionInfo(choiceModelDescription,
+                                decisionMakerLabel, rn, choice);
 
-                        // write UEC calculation results to separate model specific log file
-                        choiceModelApplication[modelIndex].logUECResults( modelLogger, loggingHeader );
+                        // write UEC calculation results to separate model
+                        // specific log file
+                        choiceModelApplication[modelIndex]
+                                .logUECResults(modelLogger, loggingHeader);
                     }
 
-                    // save the chosen alternative and create and populate the arrays of inbound/outbound
+                    // save the chosen alternative and create and populate the
+                    // arrays of inbound/outbound
                     // stops in the tour object
-                    totalStops += setStopFreqChoice ( tour, choice );
+                    totalStops += setStopFreqChoice(tour, choice);
 
                     totalTours++;
                     tourCount++;
-                    
-                }
-                catch ( Exception e ) {
-                    logger.error ( String.format( "Exception caught processing joint tour stop frequency choice model for %s type tour:  HHID=%d, tourCount=%d.",
-                        tour.getTourCategory(), household.getHhId(), tourCount ) );
+
+                } catch (Exception e)
+                {
+                    logger.error(String
+                            .format("Exception caught processing joint tour stop frequency choice model for %s type tour:  HHID=%d, tourCount=%d.",
+                                    tour.getTourCategory(), household.getHhId(), tourCount));
                     throw new RuntimeException(e);
                 }
-            
+
             }
-        
+
         }
 
-
-        
-        
-        // now loop through the person array (1-based), and process all tours for
+        // now loop through the person array (1-based), and process all tours
+        // for
         // each person
         for (int j = 1; j < personArray.length; ++j)
         {
@@ -307,8 +342,9 @@ public class StopFrequencyModel
                 {
 
                     tour.clearStopModelResults();
-                    
-                    int modelIndex = tourPurposeModelIndexMap.get(tour.getTourPrimaryPurposeIndex());
+
+                    int modelIndex = tourPurposeModelIndexMap
+                            .get(tour.getTourPrimaryPurposeIndex());
 
                     // write debug header
                     String separator = "";
@@ -318,12 +354,16 @@ public class StopFrequencyModel
                     if (household.getDebugChoiceModels())
                     {
 
-                        choiceModelDescription = String.format("Individual Tour Stop Frequency Choice Model:");
-                        decisionMakerLabel = String.format(
-                            "HH=%d, PersonNum=%d, PersonType=%s, TourType=%s, TourId=%d, TourPurpose=%s, modelIndex=%d.",
-                            household.getHhId(), person.getPersonNum(), person.getPersonType(), tour.getTourCategory(), tour.getTourId(), tour.getTourPurpose(), modelIndex);
+                        choiceModelDescription = String
+                                .format("Individual Tour Stop Frequency Choice Model:");
+                        decisionMakerLabel = String
+                                .format("HH=%d, PersonNum=%d, PersonType=%s, TourType=%s, TourId=%d, TourPurpose=%s, modelIndex=%d.",
+                                        household.getHhId(), person.getPersonNum(),
+                                        person.getPersonType(), tour.getTourCategory(),
+                                        tour.getTourId(), tour.getTourPurpose(), modelIndex);
 
-                        choiceModelApplication[modelIndex].choiceModelUtilityTraceLoggerHeading( choiceModelDescription, decisionMakerLabel );
+                        choiceModelApplication[modelIndex].choiceModelUtilityTraceLoggerHeading(
+                                choiceModelDescription, decisionMakerLabel);
 
                         modelLogger.info(" ");
                         loggingHeader = choiceModelDescription + " for " + decisionMakerLabel;
@@ -340,25 +380,30 @@ public class StopFrequencyModel
                     dmuObject.setTourObject(tour);
 
                     // compute the utilities
-                    dmuObject.setDmuIndexValues( household.getHhId(), household.getHhTaz(), mgraManager.getTaz(tour.getTourOrigMgra()), mgraManager.getTaz(tour.getTourDestMgra()) );
+                    dmuObject.setDmuIndexValues(household.getHhId(), household.getHhTaz(),
+                            mgraManager.getTaz(tour.getTourOrigMgra()),
+                            mgraManager.getTaz(tour.getTourDestMgra()));
 
-                    choiceModelApplication[modelIndex].computeUtilities(dmuObject, dmuObject.getDmuIndexValues());
+                    choiceModelApplication[modelIndex].computeUtilities(dmuObject,
+                            dmuObject.getDmuIndexValues());
 
                     // get the random number from the household
                     Random random = household.getHhRandom();
                     int randomCount = household.getHhRandomCount();
                     double rn = random.nextDouble();
 
-                    // if the choice model has at least one available alternative,
+                    // if the choice model has at least one available
+                    // alternative,
                     // make choice.
                     int choice = -1;
-                    if (choiceModelApplication[modelIndex].getAvailabilityCount() > 0)
-                        choice = choiceModelApplication[modelIndex].getChoiceResult(rn);
+                    if (choiceModelApplication[modelIndex].getAvailabilityCount() > 0) choice = choiceModelApplication[modelIndex]
+                            .getChoiceResult(rn);
                     else
                     {
-                        logger.error(String.format(
-                            "Exception caught applying Individual Tour stop frequency choice model for %s type tour: j=%d, HHID=%d, personNum=%d, tourCount=%d, randomCount=%f -- no avaialable stop frequency alternative to choose.",
-                            tour.getTourCategory(), j, household.getHhId(), person.getPersonNum(), tourCount, randomCount));
+                        logger.error(String
+                                .format("Exception caught applying Individual Tour stop frequency choice model for %s type tour: j=%d, HHID=%d, personNum=%d, tourCount=%d, randomCount=%f -- no avaialable stop frequency alternative to choose.",
+                                        tour.getTourCategory(), j, household.getHhId(),
+                                        person.getPersonNum(), tourCount, randomCount));
                         throw new RuntimeException();
                     }
 
@@ -402,7 +447,8 @@ public class StopFrequencyModel
                         choiceModelApplication[modelIndex].logSelectionInfo(choiceModelDescription,
                                 decisionMakerLabel, rn, choice);
 
-                        // write UEC calculation results to separate model specific
+                        // write UEC calculation results to separate model
+                        // specific
                         // log file
                         choiceModelApplication[modelIndex]
                                 .logUECResults(modelLogger, loggingHeader);
@@ -411,7 +457,8 @@ public class StopFrequencyModel
 
                     // choiceResultsFreq[choice][modelIndex]++;
 
-                    // save the chosen alternative and create and populate the arrays
+                    // save the chosen alternative and create and populate the
+                    // arrays
                     // of inbound/outbound stops in the tour object
                     totalStops += setStopFreqChoice(tour, choice);
                     totalTours++;
@@ -420,9 +467,10 @@ public class StopFrequencyModel
 
                 } catch (Exception e)
                 {
-                    logger.error( String.format(
-                        "Exception caught processing Individual Tour stop frequency choice model for %s type tour:  j=%d, HHID=%d, personNum=%d, tourCount=%d.",
-                        tour.getTourCategory(), j, household.getHhId(), person.getPersonNum(), tourCount));
+                    logger.error(String
+                            .format("Exception caught processing Individual Tour stop frequency choice model for %s type tour:  j=%d, HHID=%d, personNum=%d, tourCount=%d.",
+                                    tour.getTourCategory(), j, household.getHhId(),
+                                    person.getPersonNum(), tourCount));
                     throw new RuntimeException(e);
                 }
 
@@ -450,7 +498,8 @@ public class StopFrequencyModel
         int numObStops = dmuObject.getNumObStopsAlt(stopFreqChoice);
         if (numObStops > 0)
         {
-            // get a stop purpose for each outbound stop generated, plus the stop at
+            // get a stop purpose for each outbound stop generated, plus the
+            // stop at
             // the primary destination
             String[] obStopOrigPurposes = new String[numObStops + 1];
             String[] obStopDestPurposes = new String[numObStops + 1];
@@ -459,16 +508,17 @@ public class StopFrequencyModel
                     ModelStructure.AT_WORK_CATEGORY) ? "Work" : "Home";
             for (int i = 0; i < numObStops; i++)
             {
-                if (i > 0)
-                    obStopOrigPurposes[i] = obStopDestPurposes[i - 1];
-                obStopPurposeIndices[i] = getStopPurpose(hh, OUTBOUND_DIRECTION_NAME, tourDepartPeriod, tourPrimaryPurpose, personType);
-                obStopDestPurposes[i] = indexPurposeMap.get( obStopPurposeIndices[i] );
+                if (i > 0) obStopOrigPurposes[i] = obStopDestPurposes[i - 1];
+                obStopPurposeIndices[i] = getStopPurpose(hh, OUTBOUND_DIRECTION_NAME,
+                        tourDepartPeriod, tourPrimaryPurpose, personType);
+                obStopDestPurposes[i] = indexPurposeMap.get(obStopPurposeIndices[i]);
             }
             obStopOrigPurposes[numObStops] = obStopDestPurposes[numObStops - 1];
             obStopDestPurposes[numObStops] = tourPrimaryPurpose;
             // the last stop record is for the trip from stop to destination
 
-            // pass in the array of stop purposes; length of array determines number
+            // pass in the array of stop purposes; length of array determines
+            // number
             // of outbound stop objects created.
             if (tour.getOutboundStops() != null)
             {
@@ -498,17 +548,18 @@ public class StopFrequencyModel
             ibStopOrigPurposes[0] = tour.getTourPrimaryPurpose();
             for (int i = 0; i < numIbStops; i++)
             {
-                if (i > 0)
-                    ibStopOrigPurposes[i] = ibStopDestPurposes[i - 1];
-                ibStopPurposeIndices[i] = getStopPurpose(hh, INBOUND_DIRECTION_NAME, tourArrivePeriod, tourPrimaryPurpose, personType);
-                ibStopDestPurposes[i] = indexPurposeMap.get( ibStopPurposeIndices[i] );
+                if (i > 0) ibStopOrigPurposes[i] = ibStopDestPurposes[i - 1];
+                ibStopPurposeIndices[i] = getStopPurpose(hh, INBOUND_DIRECTION_NAME,
+                        tourArrivePeriod, tourPrimaryPurpose, personType);
+                ibStopDestPurposes[i] = indexPurposeMap.get(ibStopPurposeIndices[i]);
             }
             ibStopOrigPurposes[numIbStops] = ibStopDestPurposes[numIbStops - 1];
             ibStopDestPurposes[numIbStops] = tour.getTourCategory().equalsIgnoreCase(
                     ModelStructure.AT_WORK_CATEGORY) ? "Work" : "Home";
             // the last stop record is for the trip from stop to home or work
 
-            // pass in the array of stop purposes; length of array determines number
+            // pass in the array of stop purposes; length of array determines
+            // number
             // of inbound stop objects created.
             if (tour.getInboundStops() != null)
             {
@@ -552,18 +603,20 @@ public class StopFrequencyModel
         }
 
         // allocate a HashMap array for each direction, dimensioned to maximum
-        // departure hour, to map keys determined by combination of categories to
+        // departure hour, to map keys determined by combination of categories
+        // to
         // proportions arrays.
         int numDepartPeriods = modelStructure.getNumberOfTimePeriods();
-        outProportionsMaps = new HashMap[numDepartPeriods+1];
-        inProportionsMaps = new HashMap[numDepartPeriods+1];
+        outProportionsMaps = new HashMap[numDepartPeriods + 1];
+        inProportionsMaps = new HashMap[numDepartPeriods + 1];
         for (int i = 0; i <= numDepartPeriods; i++)
         {
             outProportionsMaps[i] = new HashMap<String, double[]>();
             inProportionsMaps[i] = new HashMap<String, double[]>();
         }
 
-        // create a mapping between names used in lookup file and purpose names used
+        // create a mapping between names used in lookup file and purpose names
+        // used
         // in model
         HashMap<String, String> primaryPurposeMap = new HashMap<String, String>();
         primaryPurposeMap.put(dmuObject.STOP_PURPOSE_FILE_WORK_NAME,
@@ -587,7 +640,8 @@ public class StopFrequencyModel
         primaryPurposeMap.put(dmuObject.STOP_PURPOSE_FILE_WORK_BASED_NAME,
                 ModelStructure.WORK_BASED_PRIMARY_PURPOSE_NAME);
 
-        // create a mapping between stop purpose alternative indices selected from
+        // create a mapping between stop purpose alternative indices selected
+        // from
         // monte carlo process and stop purpose names used in model
         // the indices are the order of the proportions columns in the table
         indexPurposeMap = new HashMap<Integer, String>();
@@ -601,7 +655,8 @@ public class StopFrequencyModel
         indexPurposeMap.put(8, ModelStructure.VISITING_PRIMARY_PURPOSE_NAME);
         indexPurposeMap.put(9, ModelStructure.OTH_DISCR_PRIMARY_PURPOSE_NAME);
 
-        // create a mapping between names used in lookup file and person type names
+        // create a mapping between names used in lookup file and person type
+        // names
         // used in model
         HashMap<String, String> personTypeMap = new HashMap<String, String>();
         personTypeMap.put(FT_WORKER_PERSON_TYPE_NAME, Person.PERSON_TYPE_FULL_TIME_WORKER_NAME);
@@ -609,18 +664,23 @@ public class StopFrequencyModel
         personTypeMap.put(UNIVERSITY_PERSON_TYPE_NAME, Person.PERSON_TYPE_UNIVERSITY_STUDENT_NAME);
         personTypeMap.put(NONWORKER_PERSON_TYPE_NAME, Person.PERSON_TYPE_NON_WORKER_NAME);
         personTypeMap.put(RETIRED_PERSON_TYPE_NAME, Person.PERSON_TYPE_RETIRED_NAME);
-        personTypeMap.put(DRIVING_STUDENT_PERSON_TYPE_NAME, Person.PERSON_TYPE_STUDENT_DRIVING_NAME);
-        personTypeMap.put(NONDRIVING_STUDENT_PERSON_TYPE_NAME, Person.PERSON_TYPE_STUDENT_NON_DRIVING_NAME);
+        personTypeMap
+                .put(DRIVING_STUDENT_PERSON_TYPE_NAME, Person.PERSON_TYPE_STUDENT_DRIVING_NAME);
+        personTypeMap.put(NONDRIVING_STUDENT_PERSON_TYPE_NAME,
+                Person.PERSON_TYPE_STUDENT_NON_DRIVING_NAME);
         personTypeMap.put(PRESCHOOL_PERSON_TYPE_NAME, Person.PERSON_TYPE_PRE_SCHOOL_CHILD_NAME);
         personTypeMap.put(ALL_PERSON_TYPE_NAME, ALL_PERSON_TYPE_NAME);
 
         // fields in lookup file are:
-        // PrimPurp Direction DepartRangeStart DepartRangeEnd Ptype Work University
+        // PrimPurp Direction DepartRangeStart DepartRangeEnd Ptype Work
+        // University
         // School Escort Shop Maintenance Eating Out Visiting Discretionary
 
-        // populate the outProportionsMaps and inProportionsMaps arrays of maps from
+        // populate the outProportionsMaps and inProportionsMaps arrays of maps
+        // from
         // data in the TableDataSet.
-        // when stops are generated, they can lookup the proportions for stop purpose
+        // when stops are generated, they can lookup the proportions for stop
+        // purpose
         // selection from a map determined
         // by tour purpose, person type, outbound/inbound direction and tour
         // departure time. From these proportions,
@@ -646,18 +706,20 @@ public class StopFrequencyModel
             int arriveperiodRangeEnd = (int) purposeLookupTable.getValueAt(i + 1,
                     TOUR_DEPARTURE_END_RANGE_COLUMN_HEADING);
 
-            int startRange = modelStructure.getTimePeriodIndexForTime(departPeriodRangeStart); 
-            int endRange = modelStructure.getTimePeriodIndexForTime(arriveperiodRangeEnd); 
-            
+            int startRange = modelStructure.getTimePeriodIndexForTime(departPeriodRangeStart);
+            int endRange = modelStructure.getTimePeriodIndexForTime(arriveperiodRangeEnd);
+
             // get the person type
             String personType = personTypeMap.get(purposeLookupTable.getStringValueAt(i + 1,
                     PERSON_TYPE_COLUMN_HEADING));
 
-            // columns following person type are proportions by stop purpose. Get the
+            // columns following person type are proportions by stop purpose.
+            // Get the
             // index of the first stop purpose proportion.
             int firstPropColumn = purposeLookupTable.getColumnPosition(PERSON_TYPE_COLUMN_HEADING) + 1;
 
-            // starting at this column, read the proportions for all stop purposes.
+            // starting at this column, read the proportions for all stop
+            // purposes.
             // Create the array of proportions for this table record.
             double[] props = new double[indexPurposeMap.size()];
             for (int j = 0; j < props.length; j++)
@@ -665,11 +727,13 @@ public class StopFrequencyModel
                 props[j] = purposeLookupTable.getValueAt(i + 1, firstPropColumn + j);
             }
 
-            // get a HashMap for the direction and each hour in the start/end range,
+            // get a HashMap for the direction and each hour in the start/end
+            // range,
             // and store the proportions in that map for the key.
             // the key to use for any of these HashMaps is created consisting of
             // "TourPrimPurp_PersonType"
-            // if the person type for the record is "All", a key is defined for each
+            // if the person type for the record is "All", a key is defined for
+            // each
             // person type, and the proportions stored for each key.
             if (personType.equalsIgnoreCase(ALL_PERSON_TYPE_NAME))
             {
@@ -678,7 +742,8 @@ public class StopFrequencyModel
                     String key = tourPrimPurp + "_" + ptype;
                     if (direction.equalsIgnoreCase(OUTBOUND_DIRECTION_NAME))
                     {
-                        for (int k = startRange; k <= endRange; k++){
+                        for (int k = startRange; k <= endRange; k++)
+                        {
                             outProportionsMaps[k].put(key, props);
                         }
                     } else if (direction.equalsIgnoreCase(INBOUND_DIRECTION_NAME))
@@ -705,8 +770,8 @@ public class StopFrequencyModel
 
     }
 
-    private int getStopPurpose(Household household, String halfTourDirection,
-            int tourDepartPeriod, String tourPrimaryPurpose, String personType)
+    private int getStopPurpose(Household household, String halfTourDirection, int tourDepartPeriod,
+            String tourPrimaryPurpose, String personType)
     {
 
         double[] props = null;
@@ -714,8 +779,8 @@ public class StopFrequencyModel
 
         try
         {
-            if (halfTourDirection.equalsIgnoreCase(OUTBOUND_DIRECTION_NAME))
-                props = outProportionsMaps[tourDepartPeriod].get(key);
+            if (halfTourDirection.equalsIgnoreCase(OUTBOUND_DIRECTION_NAME)) props = outProportionsMaps[tourDepartPeriod]
+                    .get(key);
             else if (halfTourDirection.equalsIgnoreCase(INBOUND_DIRECTION_NAME))
                 props = inProportionsMaps[tourDepartPeriod].get(key);
 

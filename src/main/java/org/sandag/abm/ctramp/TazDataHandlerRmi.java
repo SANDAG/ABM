@@ -3,39 +3,40 @@ package org.sandag.abm.ctramp;
 import java.io.Serializable;
 
 /**
- * This class provides methods defined in the TazDataIf interface for accessing zonal
- * data stored in its TazDataManager object.
+ * This class provides methods defined in the TazDataIf interface for accessing
+ * zonal data stored in its TazDataManager object.
  * 
- * A CT-RAMP tour based model application could create an instance of a subclass of
- * this class, where additional project specific varaible definitions and methods are
- * defined and pass that instance to its model component objects.
+ * A CT-RAMP tour based model application could create an instance of a subclass
+ * of this class, where additional project specific varaible definitions and
+ * methods are defined and pass that instance to its model component objects.
  * 
  * Alternatively, an application could use TazDataHandlerRmi as the base class
- * instead and create a "remoteable" subclass. The TazDataHandlerRmi class implements
- * the same interface, so the model component classes can be unaware of whether the
- * taz data handler object accesses zonal data from its member object or remotely
- * from a server. Those methods in the rmi class access zonal data from a
- * TazDataManager object contained in a "taz data server" object which must exist in
- * a separate JVM on the same machine or on another addressable machine over the
- * network.
+ * instead and create a "remoteable" subclass. The TazDataHandlerRmi class
+ * implements the same interface, so the model component classes can be unaware
+ * of whether the taz data handler object accesses zonal data from its member
+ * object or remotely from a server. Those methods in the rmi class access zonal
+ * data from a TazDataManager object contained in a "taz data server" object
+ * which must exist in a separate JVM on the same machine or on another
+ * addressable machine over the network.
  * 
- * The flexibility provided by this design is intended to allow the "local" instance
- * to be declared and passed within a single JVM to model components for possibly
- * greater performance (yet to be tested and proven) at production run time. The
- * "rmi" instance however allows the model components to access zonal data from a
- * "long-running process" (the server class may execute for weeks or months). This
- * approach aids in model development as during development, model applications can
- * be written to skip startup procedures for reading zonal data, and access them
- * directly from the server that is already running.
+ * The flexibility provided by this design is intended to allow the "local"
+ * instance to be declared and passed within a single JVM to model components
+ * for possibly greater performance (yet to be tested and proven) at production
+ * run time. The "rmi" instance however allows the model components to access
+ * zonal data from a "long-running process" (the server class may execute for
+ * weeks or months). This approach aids in model development as during
+ * development, model applications can be written to skip startup procedures for
+ * reading zonal data, and access them directly from the server that is already
+ * running.
  * 
- * A similar approach is planned for managing objects such as Household objects and
- * ModelResults objects so that model components, for example individual
+ * A similar approach is planned for managing objects such as Household objects
+ * and ModelResults objects so that model components, for example individual
  * non-mandatory tour related models which occur well into the tour based model
- * stream, can be run in a "hot-start" fasion, where the model component of interest
- * is executed immediately where all the preliminary data and prior model results it
- * requires are stored in long-running server objects. Testing and debugging of these
- * model components can occur without the time required to run through all
- * preliminary steps.
+ * stream, can be run in a "hot-start" fasion, where the model component of
+ * interest is executed immediately where all the preliminary data and prior
+ * model results it requires are stored in long-running server objects. Testing
+ * and debugging of these model components can occur without the time required
+ * to run through all preliminary steps.
  * 
  * 
  */
@@ -86,8 +87,9 @@ public class TazDataHandlerRmi
     }
 
     /**
-     * @param field is the field name to be checked against the column names in the
-     *            zone data table.
+     * @param field
+     *            is the field name to be checked against the column names in
+     *            the zone data table.
      * @return true if field matches one of the zone data table column names,
      *         otherwise false.
      */
@@ -147,7 +149,8 @@ public class TazDataHandlerRmi
     }
 
     /**
-     * @param tableRowNumber is the zone table row number
+     * @param tableRowNumber
+     *            is the zone table row number
      * @return zone number for the table row.
      */
     public int getTazNumber(int tableRowNumber)

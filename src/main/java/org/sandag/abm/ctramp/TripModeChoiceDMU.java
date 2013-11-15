@@ -10,175 +10,177 @@ public class TripModeChoiceDMU
         implements Serializable, VariableTable
 {
 
-    protected transient Logger logger = Logger.getLogger(TourModeChoiceDMU.class);
-    
-    protected static final int                LB  = McLogsumsCalculator.LB;
-    protected static final int                EB  = McLogsumsCalculator.EB;
-    protected static final int                BRT = McLogsumsCalculator.BRT;
-    protected static final int                LR  = McLogsumsCalculator.LR;
-    protected static final int                CR  = McLogsumsCalculator.CR;
-    protected static final int                NUM_LOC_PREM = McLogsumsCalculator.NUM_LOC_PREM;
+    protected transient Logger         logger       = Logger.getLogger(TourModeChoiceDMU.class);
 
-    protected static final int                WTW = McLogsumsCalculator.WTW;
-    protected static final int                WTD = McLogsumsCalculator.WTD;
-    protected static final int                DTW = McLogsumsCalculator.DTW;
-    protected static final int                NUM_ACC_EGR = McLogsumsCalculator.NUM_ACC_EGR;
-    
-    protected static final int                LB_IVT = McLogsumsCalculator.LB_IVT;
-    protected static final int                EB_IVT = McLogsumsCalculator.EB_IVT;
-    protected static final int                BRT_IVT = McLogsumsCalculator.BRT_IVT;
-    protected static final int                LR_IVT = McLogsumsCalculator.LR_IVT;
-    protected static final int                CR_IVT = McLogsumsCalculator.CR_IVT;
-    protected static final int                ACC = McLogsumsCalculator.ACC;
-    protected static final int                EGR = McLogsumsCalculator.EGR;
-    protected static final int                AUX = McLogsumsCalculator.AUX;
-    protected static final int                FWAIT = McLogsumsCalculator.FWAIT;
-    protected static final int                XWAIT = McLogsumsCalculator.XWAIT;
-    protected static final int                FARE = McLogsumsCalculator.FARE;
-    protected static final int                XFERS = McLogsumsCalculator.XFERS;
-    protected static final int                NUM_SKIMS = McLogsumsCalculator.NUM_SKIMS;
-    
-    protected static final int                OUT = McLogsumsCalculator.OUT;
-    protected static final int                IN = McLogsumsCalculator.IN;
-    protected static final int                NUM_DIR = McLogsumsCalculator.NUM_DIR;
-    
+    protected static final int         LB           = McLogsumsCalculator.LB;
+    protected static final int         EB           = McLogsumsCalculator.EB;
+    protected static final int         BRT          = McLogsumsCalculator.BRT;
+    protected static final int         LR           = McLogsumsCalculator.LR;
+    protected static final int         CR           = McLogsumsCalculator.CR;
+    protected static final int         NUM_LOC_PREM = McLogsumsCalculator.NUM_LOC_PREM;
+
+    protected static final int         WTW          = McLogsumsCalculator.WTW;
+    protected static final int         WTD          = McLogsumsCalculator.WTD;
+    protected static final int         DTW          = McLogsumsCalculator.DTW;
+    protected static final int         NUM_ACC_EGR  = McLogsumsCalculator.NUM_ACC_EGR;
+
+    protected static final int         LB_IVT       = McLogsumsCalculator.LB_IVT;
+    protected static final int         EB_IVT       = McLogsumsCalculator.EB_IVT;
+    protected static final int         BRT_IVT      = McLogsumsCalculator.BRT_IVT;
+    protected static final int         LR_IVT       = McLogsumsCalculator.LR_IVT;
+    protected static final int         CR_IVT       = McLogsumsCalculator.CR_IVT;
+    protected static final int         ACC          = McLogsumsCalculator.ACC;
+    protected static final int         EGR          = McLogsumsCalculator.EGR;
+    protected static final int         AUX          = McLogsumsCalculator.AUX;
+    protected static final int         FWAIT        = McLogsumsCalculator.FWAIT;
+    protected static final int         XWAIT        = McLogsumsCalculator.XWAIT;
+    protected static final int         FARE         = McLogsumsCalculator.FARE;
+    protected static final int         XFERS        = McLogsumsCalculator.XFERS;
+    protected static final int         NUM_SKIMS    = McLogsumsCalculator.NUM_SKIMS;
+
+    protected static final int         OUT          = McLogsumsCalculator.OUT;
+    protected static final int         IN           = McLogsumsCalculator.IN;
+    protected static final int         NUM_DIR      = McLogsumsCalculator.NUM_DIR;
+
     protected HashMap<String, Integer> methodIndexMap;
-    
-    
+
     protected Tour                     tour;
     protected Person                   person;
     protected Household                hh;
     protected IndexValues              dmuIndex;
-    
+
     protected double                   nmWalkTime;
     protected double                   nmBikeTime;
-    
+
     protected ModelStructure           modelStructure;
-    
-    protected double origDuDen;
-    protected double origEmpDen;
-    protected double origTotInt;
-    protected double destDuDen;
-    protected double destEmpDen;
-    protected double destTotInt;
 
-    protected int tripOrigIsTourDest;
-    protected int tripDestIsTourDest;
-    
-    protected int tripTime;
-    protected int firstTrip;
-    protected int lastTrip;
-    protected int outboundStops;
-    protected int inboundStops;
+    protected double                   origDuDen;
+    protected double                   origEmpDen;
+    protected double                   origTotInt;
+    protected double                   destDuDen;
+    protected double                   destEmpDen;
+    protected double                   destTotInt;
 
-    protected int incomeInDollars;
-    protected int age;
-    protected int adults;
-    protected int autos;
-    protected int hhSize;
-    protected int personIsFemale;
+    protected int                      tripOrigIsTourDest;
+    protected int                      tripDestIsTourDest;
 
-    protected int departPeriod;
-    protected int arrivePeriod;
-    protected int tripPeriod;
+    protected int                      tripTime;
+    protected int                      firstTrip;
+    protected int                      lastTrip;
+    protected int                      outboundStops;
+    protected int                      inboundStops;
 
-    protected int escortTour;
-    protected int jointTour;
-    protected int partySize;
-    
-    protected int outboundHalfTourDirection;
-    
-    protected int tourModeIsDA;
-    protected int tourModeIsS2;
-    protected int tourModeIsS3;
-    protected int tourModeIsWalk;
-    protected int tourModeIsBike;
-    protected int tourModeIsWTran;
-    protected int tourModeIsPnr;
-    protected int tourModeIsKnr;
-    protected int tourModeIsSchBus;
-    
+    protected int                      incomeInDollars;
+    protected int                      age;
+    protected int                      adults;
+    protected int                      autos;
+    protected int                      hhSize;
+    protected int                      personIsFemale;
 
-    protected double reimburseAmount;
-    
-    protected float pTazTerminalTime;
-    protected float aTazTerminalTime;
-    
-    protected int[] mgraParkArea;
-    
-    protected double[]                           lsWgtAvgCostM;
-    protected double[]                           lsWgtAvgCostD;
-    protected double[]                           lsWgtAvgCostH;
+    protected int                      departPeriod;
+    protected int                      arrivePeriod;
+    protected int                      tripPeriod;
 
-    protected boolean segmentIsIk; 
-    protected boolean autoModeRequiredForDriveTransit; 
-    protected boolean walkModeAllowedForDriveTransit; 
+    protected int                      escortTour;
+    protected int                      jointTour;
+    protected int                      partySize;
 
-    protected double[][][] transitSkim;
-    
-    
+    protected int                      outboundHalfTourDirection;
+
+    protected int                      tourModeIsDA;
+    protected int                      tourModeIsS2;
+    protected int                      tourModeIsS3;
+    protected int                      tourModeIsWalk;
+    protected int                      tourModeIsBike;
+    protected int                      tourModeIsWTran;
+    protected int                      tourModeIsPnr;
+    protected int                      tourModeIsKnr;
+    protected int                      tourModeIsSchBus;
+
+    protected double                   reimburseAmount;
+
+    protected float                    pTazTerminalTime;
+    protected float                    aTazTerminalTime;
+
+    protected int[]                    mgraParkArea;
+
+    protected double[]                 lsWgtAvgCostM;
+    protected double[]                 lsWgtAvgCostD;
+    protected double[]                 lsWgtAvgCostH;
+
+    protected boolean                  segmentIsIk;
+    protected boolean                  autoModeRequiredForDriveTransit;
+    protected boolean                  walkModeAllowedForDriveTransit;
+
+    protected double[][][]             transitSkim;
+
     public TripModeChoiceDMU(ModelStructure modelStructure)
     {
         this.modelStructure = modelStructure;
         dmuIndex = new IndexValues();
-        
+
         transitSkim = new double[TourModeChoiceDMU.NUM_ACC_EGR][TourModeChoiceDMU.NUM_LOC_PREM][TourModeChoiceDMU.NUM_SKIMS];
     }
-    
-    
-    public void setParkingCostInfo( int[] mgraParkArea, double[] lsWgtAvgCostM, double[] lsWgtAvgCostD, double[] lsWgtAvgCostH )
+
+    public void setParkingCostInfo(int[] mgraParkArea, double[] lsWgtAvgCostM,
+            double[] lsWgtAvgCostD, double[] lsWgtAvgCostH)
     {
         this.mgraParkArea = mgraParkArea;
         this.lsWgtAvgCostM = lsWgtAvgCostM;
         this.lsWgtAvgCostD = lsWgtAvgCostD;
         this.lsWgtAvgCostH = lsWgtAvgCostH;
     }
-    
+
     public void setHouseholdObject(Household hhObject)
     {
         hh = hhObject;
     }
-    
+
     public Household getHouseholdObject()
     {
         return hh;
     }
-    
+
     public void setPersonObject(Person personObject)
     {
         person = personObject;
     }
-    
+
     public Person getPersonObject()
     {
         return person;
     }
-    
+
     public void setTourObject(Tour tourObject)
     {
         tour = tourObject;
     }
-    
+
     public Tour getTourObject()
     {
         return tour;
     }
-    
+
     /**
      * Set this index values for this tour mode choice DMU object.
      * 
-     * @param hhIndex is the DMU household index
-     * @param zoneIndex is the DMU zone index
-     * @param origIndex is the DMU origin index
-     * @param destIndex is the DMU desatination index
+     * @param hhIndex
+     *            is the DMU household index
+     * @param zoneIndex
+     *            is the DMU zone index
+     * @param origIndex
+     *            is the DMU origin index
+     * @param destIndex
+     *            is the DMU desatination index
      */
-    public void setDmuIndexValues(int hhIndex, int zoneIndex, int origIndex, int destIndex, boolean debug)
+    public void setDmuIndexValues(int hhIndex, int zoneIndex, int origIndex, int destIndex,
+            boolean debug)
     {
         dmuIndex.setHHIndex(hhIndex);
         dmuIndex.setZoneIndex(zoneIndex);
         dmuIndex.setOriginZone(origIndex);
         dmuIndex.setDestZone(destIndex);
-    
+
         dmuIndex.setDebug(false);
         dmuIndex.setDebugLabel("");
         if (debug)
@@ -186,11 +188,9 @@ public class TripModeChoiceDMU
             dmuIndex.setDebug(true);
             dmuIndex.setDebugLabel("Debug MC UEC");
         }
-    
+
     }
 
-    
-    
     public float getTimeOutbound()
     {
         return tour.getTourDepartPeriod();
@@ -201,22 +201,21 @@ public class TripModeChoiceDMU
         return tour.getTourArrivePeriod();
     }
 
-    
-    public void setSegmentIsIk( boolean flag )
+    public void setSegmentIsIk(boolean flag)
     {
         segmentIsIk = flag;
     }
-    
+
     public int getSegmentIsIk()
     {
         return segmentIsIk ? 1 : 0;
     }
-    
+
     public void setIncomeInDollars(int arg)
     {
         incomeInDollars = arg;
     }
-    
+
     public void setAutos(int arg)
     {
         autos = arg;
@@ -342,165 +341,166 @@ public class TripModeChoiceDMU
         tourModeIsSchBus = arg;
     }
 
-    
-    
-    
     public void setOrigDuDen(double arg)
     {
         origDuDen = arg;
     }
-    
+
     public void setOrigEmpDen(double arg)
     {
         origEmpDen = arg;
     }
-    
+
     public void setOrigTotInt(double arg)
     {
         origTotInt = arg;
     }
-    
+
     public void setDestDuDen(double arg)
     {
         destDuDen = arg;
     }
-    
+
     public void setDestEmpDen(double arg)
     {
         destEmpDen = arg;
     }
-    
+
     public void setDestTotInt(double arg)
     {
         destTotInt = arg;
     }
-    
-    public void setReimburseProportion( double prop) {
+
+    public void setReimburseProportion(double prop)
+    {
         reimburseAmount = prop;
     }
-    
+
     public void setPTazTerminalTime(float time)
     {
         pTazTerminalTime = time;
     }
-    
+
     public void setATazTerminalTime(float time)
     {
         aTazTerminalTime = time;
     }
 
-    public void setTripOrigIsTourDest( int value ) {
-        tripOrigIsTourDest = value; 
+    public void setTripOrigIsTourDest(int value)
+    {
+        tripOrigIsTourDest = value;
     }
-    
-    public void setTripDestIsTourDest( int value ) {
-        tripDestIsTourDest = value; 
+
+    public void setTripDestIsTourDest(int value)
+    {
+        tripDestIsTourDest = value;
     }
-    
-    
-    
-    
+
     public IndexValues getDmuIndexValues()
     {
         return dmuIndex;
     }
-    
-    public void setAutoModeRequiredForTripSegment( boolean flag ) {
-        autoModeRequiredForDriveTransit = flag; 
+
+    public void setAutoModeRequiredForTripSegment(boolean flag)
+    {
+        autoModeRequiredForDriveTransit = flag;
     }
-    
-    public void setWalkModeAllowedForTripSegment( boolean flag ) {
-        walkModeAllowedForDriveTransit = flag; 
+
+    public void setWalkModeAllowedForTripSegment(boolean flag)
+    {
+        walkModeAllowedForDriveTransit = flag;
     }
-    
-    
+
     public void setIndexDest(int d)
     {
         dmuIndex.setDestZone(d);
     }
-    
+
     public void setNonMotorizedWalkTime(double walkTime)
     {
         nmWalkTime = walkTime;
     }
-        
+
     public void setNonMotorizedBikeTime(double bikeTime)
     {
         nmBikeTime = bikeTime;
     }
-    
-    protected void setTransitSkim(int accEgr, int lbPrem, int skimIndex, double value){
+
+    protected void setTransitSkim(int accEgr, int lbPrem, int skimIndex, double value)
+    {
         transitSkim[accEgr][lbPrem][skimIndex] = value;
     }
-    
-    protected double getTransitSkim(int accEgr, int lbPrem, int skimIndex){
+
+    protected double getTransitSkim(int accEgr, int lbPrem, int skimIndex)
+    {
         return transitSkim[accEgr][lbPrem][skimIndex];
     }
-    
-    
-    public int getAutoModeAllowedForTripSegment() {
-        return autoModeRequiredForDriveTransit ? 1 : 0;        
+
+    public int getAutoModeAllowedForTripSegment()
+    {
+        return autoModeRequiredForDriveTransit ? 1 : 0;
     }
-    
-    public int getWalkModeAllowedForTripSegment() {
-        return walkModeAllowedForDriveTransit ? 1 : 0;        
+
+    public int getWalkModeAllowedForTripSegment()
+    {
+        return walkModeAllowedForDriveTransit ? 1 : 0;
     }
-    
 
     public int getTourModeIsDA()
     {
         boolean tourModeIsDa = modelStructure.getTourModeIsSov(tour.getTourModeChoice());
         return tourModeIsDa ? 1 : 0;
     }
-    
+
     public int getTourModeIsS2()
     {
         boolean tourModeIsS2 = modelStructure.getTourModeIsS2(tour.getTourModeChoice());
         return tourModeIsS2 ? 1 : 0;
     }
-    
+
     public int getTourModeIsS3()
     {
         boolean tourModeIsS3 = modelStructure.getTourModeIsS3(tour.getTourModeChoice());
         return tourModeIsS3 ? 1 : 0;
     }
-    
+
     public int getTourModeIsSchBus()
     {
         boolean tourModeIsSchBus = modelStructure.getTourModeIsSchoolBus(tour.getTourModeChoice());
         return tourModeIsSchBus ? 1 : 0;
     }
-    
+
     public int getTourModeIsWalk()
     {
         boolean tourModeIsWalk = modelStructure.getTourModeIsWalk(tour.getTourModeChoice());
         return tourModeIsWalk ? 1 : 0;
     }
-    
+
     public int getTourModeIsBike()
     {
         boolean tourModeIsBike = modelStructure.getTourModeIsBike(tour.getTourModeChoice());
         return tourModeIsBike ? 1 : 0;
     }
-    
+
     public int getTourModeIsWTran()
     {
-        boolean tourModeIsWTran = modelStructure.getTourModeIsWalkLocal(tour.getTourModeChoice()) || modelStructure.getTourModeIsWalkPremium(tour.getTourModeChoice());
+        boolean tourModeIsWTran = modelStructure.getTourModeIsWalkLocal(tour.getTourModeChoice())
+                || modelStructure.getTourModeIsWalkPremium(tour.getTourModeChoice());
         return tourModeIsWTran ? 1 : 0;
     }
-    
+
     public int getTourModeIsPnr()
     {
         boolean tourModeIsPnr = modelStructure.getTourModeIsPnr(tour.getTourModeChoice());
         return tourModeIsPnr ? 1 : 0;
     }
-    
+
     public int getTourModeIsKnr()
     {
         boolean tourModeIsKnr = modelStructure.getTourModeIsKnr(tour.getTourModeChoice());
         return tourModeIsKnr ? 1 : 0;
     }
-    
+
     public double getODUDen()
     {
         return origDuDen;
@@ -546,19 +546,20 @@ public class TripModeChoiceDMU
         if (tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY)) return 1;
         else return 0;
     }
-    
+
     public int getTourCategoryEscort()
     {
-        if (tour.getTourPrimaryPurpose().equalsIgnoreCase(ModelStructure.ESCORT_PRIMARY_PURPOSE_NAME)) return 1;
+        if (tour.getTourPrimaryPurpose().equalsIgnoreCase(
+                ModelStructure.ESCORT_PRIMARY_PURPOSE_NAME)) return 1;
         else return 0;
     }
-    
+
     public int getTourCategorySubtour()
     {
         if (tour.getTourCategory().equalsIgnoreCase(ModelStructure.AT_WORK_CATEGORY)) return 1;
         else return 0;
     }
-    
+
     public int getNumberOfParticipantsInJointTour()
     {
         int[] participants = tour.getPersonNumArray();
@@ -566,125 +567,128 @@ public class TripModeChoiceDMU
         if (participants != null) returnValue = participants.length;
         return returnValue;
     }
-    
+
     public int getHhSize()
     {
         return hh.getHhSize();
     }
-    
+
     public int getAutos()
     {
         return hh.getAutoOwnershipModelResult();
     }
-    
+
     public int getAge()
     {
         return person.getAge();
     }
-    
+
     public int getFemale()
     {
         return person.getPersonIsFemale();
     }
-    
+
     public int getIncome()
     {
         return hh.getIncome();
     }
-    
+
     public double getNmWalkTime()
     {
         return nmWalkTime;
     }
-    
+
     public double getNmBikeTime()
     {
         return nmBikeTime;
     }
-    
-    public double getReimburseAmount() {
+
+    public double getReimburseAmount()
+    {
         return reimburseAmount;
     }
-    
-    public double getMonthlyParkingCostTourDest() {
+
+    public double getMonthlyParkingCostTourDest()
+    {
         return lsWgtAvgCostM[tour.getTourDestMgra()];
     }
-    
-    public double getDailyParkingCostTourDest() {
+
+    public double getDailyParkingCostTourDest()
+    {
         return lsWgtAvgCostD[tour.getTourDestMgra()];
     }
-    
-    public double getHourlyParkingCostTourDest() {
+
+    public double getHourlyParkingCostTourDest()
+    {
         return lsWgtAvgCostH[tour.getTourDestMgra()];
     }
-    
-    public double getHourlyParkingCostTripOrig() {
+
+    public double getHourlyParkingCostTripOrig()
+    {
         return lsWgtAvgCostH[dmuIndex.getOriginZone()];
     }
-    
-    public double getHourlyParkingCostTripDest() {
+
+    public double getHourlyParkingCostTripDest()
+    {
         return lsWgtAvgCostH[dmuIndex.getDestZone()];
     }
-    
-    public int getTripOrigIsTourDest() {
-        return tripOrigIsTourDest; 
+
+    public int getTripOrigIsTourDest()
+    {
+        return tripOrigIsTourDest;
     }
-    
-    public int getTripDestIsTourDest() {
-        return tripDestIsTourDest; 
+
+    public int getTripDestIsTourDest()
+    {
+        return tripDestIsTourDest;
     }
-    
-    public int getFreeOnsite() {
-        return person.getFreeParkingAvailableResult() == ParkingProvisionModel.FP_MODEL_FREE_ALT ? 1 : 0;
+
+    public int getFreeOnsite()
+    {
+        return person.getFreeParkingAvailableResult() == ParkingProvisionModel.FP_MODEL_FREE_ALT ? 1
+                : 0;
     }
-    
-    public int getPersonType() {
+
+    public int getPersonType()
+    {
         return person.getPersonTypeNumber();
     }
-    
+
     public double getPTazTerminalTime()
     {
         return pTazTerminalTime;
     }
-    
+
     public double getATazTerminalTime()
     {
         return aTazTerminalTime;
     }
-    
-    
-    
-    
-    
-        
-    
-    
-    
+
     public int getIndexValue(String variableName)
     {
         return methodIndexMap.get(variableName);
     }
-    
+
     public int getAssignmentIndexValue(String variableName)
     {
         throw new UnsupportedOperationException();
     }
-    
+
     public double getValueForIndex(int variableIndex)
     {
         throw new UnsupportedOperationException();
     }
-    
+
     public double getValueForIndex(int variableIndex, int arrayIndex)
     {
         throw new UnsupportedOperationException();
     }
-    
+
     public void setValue(String variableName, double variableValue)
     {
         throw new UnsupportedOperationException();
     }
-    
+
     public void setValue(int variableIndex, double variableValue)
     {
         throw new UnsupportedOperationException();

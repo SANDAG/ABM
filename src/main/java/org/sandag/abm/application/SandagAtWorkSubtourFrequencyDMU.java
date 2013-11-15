@@ -1,9 +1,9 @@
 package org.sandag.abm.application;
 
 import java.util.HashMap;
-import com.pb.common.calculator.VariableTable;
 import org.sandag.abm.ctramp.AtWorkSubtourFrequencyDMU;
 import org.sandag.abm.ctramp.ModelStructure;
+import com.pb.common.calculator.VariableTable;
 
 public class SandagAtWorkSubtourFrequencyDMU
         extends AtWorkSubtourFrequencyDMU

@@ -34,9 +34,9 @@ public abstract class DestChoiceTwoStageModelDMU
 
     protected double[]                 mgraSizeArray;
     protected double[]                 mgraDistanceArray;
-    
+
     protected int                      toursLeftCount;
-    
+
     protected ModelStructure           modelStructure;
     protected MgraDataManager          mgraManager;
     protected BuildAccessibilities     aggAcc;
@@ -48,14 +48,15 @@ public abstract class DestChoiceTwoStageModelDMU
         initDmuObject();
     }
 
-    abstract public void setMcLogsum(int mgra, double logsum);
+    public abstract void setMcLogsum(int mgra, double logsum);
 
     private void initDmuObject()
     {
 
         dmuIndex = new IndexValues();
 
-        // create default objects - some choice models use these as place holders for values
+        // create default objects - some choice models use these as place
+        // holders for values
         person = new Person(null, -1, modelStructure);
         hh = new Household(modelStructure);
 
@@ -93,7 +94,7 @@ public abstract class DestChoiceTwoStageModelDMU
         accTable = myAccTable;
     }
 
-    public void setMgraSizeArray( double[] mgraSizeArray )
+    public void setMgraSizeArray(double[] mgraSizeArray)
     {
         this.mgraSizeArray = mgraSizeArray;
     }
@@ -102,13 +103,13 @@ public abstract class DestChoiceTwoStageModelDMU
     {
         this.mgraDistanceArray = mgraDistanceArray;
     }
-    
-    public void setSampleArray( int[] sampleArray )
+
+    public void setSampleArray(int[] sampleArray)
     {
         sampleMgras = sampleArray;
     }
 
-    public void setDcSoaCorrections( double[] sampleCorrections )
+    public void setDcSoaCorrections(double[] sampleCorrections)
     {
         dcSoaCorrections = sampleCorrections;
     }
@@ -122,7 +123,7 @@ public abstract class DestChoiceTwoStageModelDMU
     {
         toursLeftCount = count;
     }
-    
+
     public void setDmuIndexValues(int hhId, int zoneId, int origTaz, int destTaz)
     {
         dmuIndex.setHHIndex(hhId);
@@ -155,71 +156,72 @@ public abstract class DestChoiceTwoStageModelDMU
         return person;
     }
 
-    // DMU methods - define one of these for every @var in the mode choice control
+    // DMU methods - define one of these for every @var in the mode choice
+    // control
     // file.
 
     protected int getToursLeftCount()
     {
         return toursLeftCount;
     }
-    
-    protected int getMaxContinuousAvailableWindow() {
 
-        if ( tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY))
-            return hh.getMaxJointTimeWindow( tour );
-        else
-            return person.getMaximumContinuousAvailableWindow();
+    protected int getMaxContinuousAvailableWindow()
+    {
+
+        if (tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY)) return hh
+                .getMaxJointTimeWindow(tour);
+        else return person.getMaximumContinuousAvailableWindow();
     }
-    
+
     protected double getDcSoaCorrectionsAlt(int alt)
     {
-        return dcSoaCorrections[alt-1];
+        return dcSoaCorrections[alt - 1];
     }
 
     protected double getMcLogsumDestAlt(int alt)
     {
-        return modeChoiceLogsums[alt-1];
+        return modeChoiceLogsums[alt - 1];
     }
 
     protected double getPopulationDestAlt(int alt)
     {
-        int mgra = sampleMgras[alt-1];
+        int mgra = sampleMgras[alt - 1];
         return aggAcc.getMgraPopulation(mgra);
     }
 
     protected double getHouseholdsDestAlt(int alt)
     {
-        int mgra = sampleMgras[alt-1];
+        int mgra = sampleMgras[alt - 1];
         return aggAcc.getMgraHouseholds(mgra);
     }
 
     protected double getGradeSchoolEnrollmentDestAlt(int alt)
     {
-        int mgra = sampleMgras[alt-1];
+        int mgra = sampleMgras[alt - 1];
         return aggAcc.getMgraGradeSchoolEnrollment(mgra);
     }
 
     protected double getHighSchoolEnrollmentDestAlt(int alt)
     {
-        int mgra = sampleMgras[alt-1];
+        int mgra = sampleMgras[alt - 1];
         return aggAcc.getMgraHighSchoolEnrollment(mgra);
     }
 
     protected double getUniversityEnrollmentDestAlt(int alt)
     {
-        int mgra = sampleMgras[alt-1];
+        int mgra = sampleMgras[alt - 1];
         return aggAcc.getMgraUniversityEnrollment(mgra);
     }
 
     protected double getOtherCollegeEnrollmentDestAlt(int alt)
     {
-        int mgra = sampleMgras[alt-1];
+        int mgra = sampleMgras[alt - 1];
         return aggAcc.getMgraOtherCollegeEnrollment(mgra);
     }
 
     protected double getAdultSchoolEnrollmentDestAlt(int alt)
     {
-        int mgra = sampleMgras[alt-1];
+        int mgra = sampleMgras[alt - 1];
         return aggAcc.getMgraAdultSchoolEnrollment(mgra);
     }
 
@@ -257,13 +259,12 @@ public abstract class DestChoiceTwoStageModelDMU
     {
         return hh.getNumGradeSchoolStudents();
     }
-    
+
     public int getNumHighSchoolStudents()
     {
         return hh.getNumHighSchoolStudents();
     }
-    
-    
+
     protected int getNumChildrenUnder16()
     {
         return hh.getNumChildrenUnder16();
@@ -331,30 +332,31 @@ public abstract class DestChoiceTwoStageModelDMU
 
     protected int getTourIsJoint()
     {
-        return tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY) ? 1 : 0;
+        return tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY) ? 1
+                : 0;
     }
 
     protected double getTotEmpAccessibilityAlt(int alt)
     {
-        int mgra = sampleMgras[alt-1];
+        int mgra = sampleMgras[alt - 1];
         return homeMgraTotalEmploymentAccessibilityArray[mgra];
     }
 
     protected double getNonMandatoryAccessibilityAlt(int alt)
     {
-        int mgra = sampleMgras[alt-1];
+        int mgra = sampleMgras[alt - 1];
         return accTable.getAggregateAccessibility("nonmotor", mgra);
     }
 
     protected double getOpSovDistanceAlt(int alt)
     {
-        int mgra = sampleMgras[alt-1];
+        int mgra = sampleMgras[alt - 1];
         return mgraDistanceArray[mgra];
     }
 
     protected double getLnDcSizeAlt(int alt)
     {
-        int mgra = sampleMgras[alt-1];
+        int mgra = sampleMgras[alt - 1];
         return Math.log(mgraSizeArray[mgra] + 1);
     }
 

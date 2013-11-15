@@ -5,7 +5,6 @@ import gnu.cajo.utils.ItemServer;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.ResourceBundle;
@@ -13,7 +12,6 @@ import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.MatrixDataServer;
 import org.sandag.abm.ctramp.Util;
-import com.pb.common.newmodel.UtilityExpressionCalculator;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.Modes;
 import org.sandag.abm.modechoice.TapDataManager;
@@ -23,6 +21,7 @@ import com.pb.common.datafile.CSVFileWriter;
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.matrix.MatrixType;
+import com.pb.common.newmodel.UtilityExpressionCalculator;
 import com.pb.common.util.InTextFile;
 import com.pb.common.util.OutTextFile;
 import com.pb.common.util.ResourceUtil;
@@ -30,8 +29,8 @@ import com.pb.common.util.ResourceUtil;
 public class MandatoryAccessibilities
 {
 
-    protected transient Logger             logger          = Logger.getLogger(MandatoryAccessibilities.class);
-    
+    protected transient Logger          logger          = Logger.getLogger(MandatoryAccessibilities.class);
+
     private TableDataSet                surveyData;
 
     private UtilityExpressionCalculator autoSkimUEC;
@@ -79,7 +78,8 @@ public class MandatoryAccessibilities
     /**
      * Constructor.
      * 
-     * @param rb ResourceBundle with appropriate properties set.
+     * @param rb
+     *            ResourceBundle with appropriate properties set.
      */
     public MandatoryAccessibilities(HashMap<String, String> rbMap)
     {
@@ -127,7 +127,8 @@ public class MandatoryAccessibilities
     /**
      * Build utility components for SOV,HOV,Walk, and Transit modes.
      * 
-     * @param rb Resourcebundle with appropriate keys.
+     * @param rb
+     *            Resourcebundle with appropriate keys.
      */
     public void buildAccessibilityComponents(HashMap<String, String> rbMap)
     {
@@ -135,7 +136,8 @@ public class MandatoryAccessibilities
         double[][][] sovExpUtilities = null;
         double[][][] hovExpUtilities = null;
         double[][][] nMotorExpUtilities = null;
-        ntUtilities = new NonTransitUtilities(rbMap, sovExpUtilities, hovExpUtilities, nMotorExpUtilities);
+        ntUtilities = new NonTransitUtilities(rbMap, sovExpUtilities, hovExpUtilities,
+                nMotorExpUtilities);
         ntUtilities.buildUtilities();
         transitUtilities = new TransitUtilities(rbMap);
         transitUtilities.calculateUtilityComponents();
@@ -145,7 +147,8 @@ public class MandatoryAccessibilities
     /**
      * Read household survey data.
      * 
-     * @param rb ResourceBundle with survey.file property set.
+     * @param rb
+     *            ResourceBundle with survey.file property set.
      */
     public void readData(HashMap<String, String> rbMap)
     {
@@ -165,9 +168,9 @@ public class MandatoryAccessibilities
     }
 
     /**
-     * This method calculates work location choice logsums for a work location choice
-     * estimation file, which contains records for workers, including chosen and
-     * unchosen (sampled) work mgras.
+     * This method calculates work location choice logsums for a work location
+     * choice estimation file, which contains records for workers, including
+     * chosen and unchosen (sampled) work mgras.
      * 
      * @param rb
      */
@@ -179,12 +182,15 @@ public class MandatoryAccessibilities
 
         logger.info("Reading and calculating work location choice logsums from " + inFileName);
         int numberOfFields = 255; // number of fields on input file
-        int hhMgraField = 7; // number of field with household MGRA (starting at 1)
+        int hhMgraField = 7; // number of field with household MGRA (starting at
+                             // 1)
         int chosenMgraField = 10; // number of actual work MGRA
-        int carSuffField = 15; // number of field with car sufficiency for household
+        int carSuffField = 15; // number of field with car sufficiency for
+                               // household
         int startSampledMgraField = 16; // number of field that starts listing
         // sampled MGRAs
-        int numberSampledMgras = 40; // number of sampled mgras (assumed consecutive
+        int numberSampledMgras = 40; // number of sampled mgras (assumed
+                                     // consecutive
         // starting at startSampledMgraField
 
         String[] fields = new String[numberOfFields];
@@ -265,12 +271,15 @@ public class MandatoryAccessibilities
     }
 
     /**
-     * Calculate the work logsum for the household MGRA and sampled work location
-     * MGRA.
+     * Calculate the work logsum for the household MGRA and sampled work
+     * location MGRA.
      * 
-     * @param hhMgra Household MGRA
-     * @param workMgra Sampled work MGRA
-     * @param autoSufficiency Auto sufficiency category
+     * @param hhMgra
+     *            Household MGRA
+     * @param workMgra
+     *            Sampled work MGRA
+     * @param autoSufficiency
+     *            Auto sufficiency category
      * @return Work mode choice logsum
      */
     public double calculateWorkLogsum(int hhMgra, int workMgra, int autoSufficiency)
@@ -280,7 +289,8 @@ public class MandatoryAccessibilities
 
         double sovUtility = accessibilities[4];
         double hovUtility = accessibilities[12];
-        double transitLogsum = accessibilities[8]; // includes both walk and drive
+        double transitLogsum = accessibilities[8]; // includes both walk and
+                                                   // drive
         // access
         double nmExpUtility = ntUtilities.getNMotorExpUtility(hhMgra, workMgra, 0);
 
@@ -364,8 +374,10 @@ public class MandatoryAccessibilities
     /**
      * Calculate the accessibilities for a given origin and destination mgra
      * 
-     * @param oMgra The origin mgra
-     * @param dMgra The destination mgra
+     * @param oMgra
+     *            The origin mgra
+     * @param dMgra
+     *            The destination mgra
      * @return An array of accessibilities
      */
     public double[] calculateAccessibilitiesForMgraPair(int oMgra, int dMgra)
@@ -409,7 +421,8 @@ public class MandatoryAccessibilities
 
             // walk transit
 
-            // calculate the exp utilities, which will also calculate and store best
+            // calculate the exp utilities, which will also calculate and store
+            // best
             // mode
             double[] walkTransitExpUtilities = transitUtilities.calculateWalkTransitExpUtilities(
                     oMgra, dMgra, 1);
@@ -462,7 +475,8 @@ public class MandatoryAccessibilities
 
             // drive transit
 
-            // calculate the exp utilities, which will also calculate and store best
+            // calculate the exp utilities, which will also calculate and store
+            // best
             // mode
             double[] driveTransitExpUtilities = transitUtilities.calculateDriveTransitExpUtilities(
                     oTaz, dMgra, 1);
@@ -525,7 +539,8 @@ public class MandatoryAccessibilities
         logger.info("Calculating constants");
 
         int modes = constantsUEC.getNumberOfAlternatives();
-        expConstants = new double[MARKET_SEGMENTS + 1][modes]; // last element in
+        expConstants = new double[MARKET_SEGMENTS + 1][modes]; // last element
+                                                               // in
         // market segments is
         // for total
         IndexValues myIv = new IndexValues();
@@ -561,9 +576,8 @@ public class MandatoryAccessibilities
      * Start the matrix server
      * 
      * @param rb
-     * @throws IOException 
      */
-    public void startMatrixServer(ResourceBundle rb) throws IOException
+    public void startMatrixServer(ResourceBundle rb)
     {
 
         logger.info("Starting Matrix Server");
@@ -587,7 +601,8 @@ public class MandatoryAccessibilities
                     e);
         }
 
-        // bind this concrete object with the cajo library objects for managing RMI
+        // bind this concrete object with the cajo library objects for managing
+        // RMI
         try
         {
             Remote.config(serverAddress, serverPort, null, 0);
@@ -614,7 +629,7 @@ public class MandatoryAccessibilities
 
     }
 
-    public static void main(String[] args) throws IOException
+    public static void main(String[] args)
     {
 
         ResourceBundle rb = ResourceUtil.getPropertyBundle(new File(args[0]));

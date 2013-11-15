@@ -8,13 +8,6 @@ import java.util.Random;
 import org.apache.log4j.Logger;
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
-import org.sandag.abm.ctramp.AtWorkSubtourFrequencyDMU;
-import org.sandag.abm.ctramp.CtrampDmuFactoryIf;
-import org.sandag.abm.ctramp.Household;
-import org.sandag.abm.ctramp.ModelStructure;
-import org.sandag.abm.ctramp.Person;
-import org.sandag.abm.ctramp.TazDataIf;
-import org.sandag.abm.ctramp.Tour;
 import com.pb.common.newmodel.ChoiceModelApplication;
 
 //
@@ -23,8 +16,7 @@ public class HouseholdAtWorkSubtourFrequencyModel
         implements Serializable
 {
 
-    private transient Logger          logger                   = Logger
-                                                                       .getLogger(HouseholdAtWorkSubtourFrequencyModel.class);
+    private transient Logger          logger                   = Logger.getLogger(HouseholdAtWorkSubtourFrequencyModel.class);
     private transient Logger          tourFreq                 = Logger.getLogger("tourFreq");
 
     private static final String       AWTF_CONTROL_FILE_TARGET = "awtf.uec.file";
@@ -47,16 +39,21 @@ public class HouseholdAtWorkSubtourFrequencyModel
     private String[]                  alternativeNames;
 
     /**
-     * Constructor establishes the ChoiceModelApplication, which applies the logit
-     * model via the UEC spreadsheet.
+     * Constructor establishes the ChoiceModelApplication, which applies the
+     * logit model via the UEC spreadsheet.
      * 
-     * @param dmuObject is the UEC dmu object for this choice model
-     * @param uecFileName is the UEC control file name
-     * @param resourceBundle is the application ResourceBundle, from which a
-     *            properties file HashMap will be created for the UEC
-     * @param tazDataManager is the object used to interact with the zonal data table
-     * @param modelStructure is the ModelStructure object that defines segmentation
-     *            and other model structure relate atributes
+     * @param dmuObject
+     *            is the UEC dmu object for this choice model
+     * @param uecFileName
+     *            is the UEC control file name
+     * @param resourceBundle
+     *            is the application ResourceBundle, from which a properties
+     *            file HashMap will be created for the UEC
+     * @param tazDataManager
+     *            is the object used to interact with the zonal data table
+     * @param modelStructure
+     *            is the ModelStructure object that defines segmentation and
+     *            other model structure relate atributes
      */
     public HouseholdAtWorkSubtourFrequencyModel(HashMap<String, String> propertyMap,
             ModelStructure modelStructure, CtrampDmuFactoryIf dmuFactory)
@@ -93,8 +90,9 @@ public class HouseholdAtWorkSubtourFrequencyModel
      * Applies the model for the array of households that are stored in the
      * HouseholdDataManager. The results are summarized by person type.
      * 
-     * @param householdDataManager is the object containg the Household objects for
-     *            which this model is to be applied.
+     * @param householdDataManager
+     *            is the object containg the Household objects for which this
+     *            model is to be applied.
      */
     public void applyModel(Household household)
     {
@@ -104,13 +102,15 @@ public class HouseholdAtWorkSubtourFrequencyModel
 
         Logger modelLogger = tourFreq;
         if (household.getDebugChoiceModels())
-            household.logHouseholdObject("Pre AtWork Subtour Frequency Choice HHID="
-                    + household.getHhId() + " Object", modelLogger);
+            household.logHouseholdObject(
+                    "Pre AtWork Subtour Frequency Choice HHID=" + household.getHhId() + " Object",
+                    modelLogger);
 
         // get this household's person array
         Person[] personArray = household.getPersons();
 
-        // set the household id, origin taz, hh taz, and debugFlag=false in the dmu
+        // set the household id, origin taz, hh taz, and debugFlag=false in the
+        // dmu
         dmuObject.setHouseholdObject(household);
 
         // loop through the person array (1-based)
@@ -208,18 +208,16 @@ public class HouseholdAtWorkSubtourFrequencyModel
                     int randomCount = household.getHhRandomCount();
                     double rn = random.nextDouble();
 
-                    // if the choice model has at least one available alternative,
+                    // if the choice model has at least one available
+                    // alternative,
                     // make choice.
                     if (choiceModelApplication.getAvailabilityCount() > 0) choice = choiceModelApplication
                             .getChoiceResult(rn);
                     else
                     {
-                        logger
-                                .error(String
-                                        .format(
-                                                "Exception caught for j=%d, tourNum=%d, HHID=%d, no available at-work frequency alternatives to choose from in choiceModelApplication.",
-                                                j, workTourIndex, person.getHouseholdObject()
-                                                        .getHhId()));
+                        logger.error(String
+                                .format("Exception caught for j=%d, tourNum=%d, HHID=%d, no available at-work frequency alternatives to choose from in choiceModelApplication.",
+                                        j, workTourIndex, person.getHouseholdObject().getHhId()));
                         throw new RuntimeException();
                     }
 
@@ -264,7 +262,8 @@ public class HouseholdAtWorkSubtourFrequencyModel
                         choiceModelApplication.logSelectionInfo(choiceModelDescription,
                                 decisionMakerLabel, rn, choice);
 
-                        // write UEC calculation results to separate model specific
+                        // write UEC calculation results to separate model
+                        // specific
                         // log file
                         choiceModelApplication.logUECResults(modelLogger, loggingHeader);
 

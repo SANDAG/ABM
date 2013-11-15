@@ -16,8 +16,8 @@ import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.datafile.TableDataSet;
-import com.pb.common.util.ResourceUtil;
 import com.pb.common.newmodel.ChoiceModelApplication;
+import com.pb.common.util.ResourceUtil;
 
 public final class NonMandatoryDcEstimationMcLogsumsAppender
         extends McLogsumsAppender
@@ -30,24 +30,24 @@ public final class NonMandatoryDcEstimationMcLogsumsAppender
      * for DC estimation file
      */
     private static final int    SEQ_FIELD                  = 2;
-    
-//  for Atwork subtour DC    
-//    private static final int    ORIG_MGRA_FIELD            = 79;
-//    private static final int    DEST_MGRA_FIELD            = 220;
-//    private static final int    MGRA1_FIELD                = 221;
-//    private static final int    PURPOSE_INDEX_OFFSET       = 4;
-    
-//  for Escort DC    
+
+    // for Atwork subtour DC
+    // private static final int ORIG_MGRA_FIELD = 79;
+    // private static final int DEST_MGRA_FIELD = 220;
+    // private static final int MGRA1_FIELD = 221;
+    // private static final int PURPOSE_INDEX_OFFSET = 4;
+
+    // for Escort DC
     private static final int    ORIG_MGRA_FIELD            = 76;
     private static final int    DEST_MGRA_FIELD            = 79;
     private static final int    MGRA1_FIELD                = 217;
     private static final int    PURPOSE_INDEX_OFFSET       = 0;
 
-//  for NonMandatory DC    
-//  private static final int    ORIG_MGRA_FIELD            = 76;
-//  private static final int    DEST_MGRA_FIELD            = 79;
-//  private static final int    MGRA1_FIELD                = 221;
-//  private static final int    PURPOSE_INDEX_OFFSET       = 0;
+    // for NonMandatory DC
+    // private static final int ORIG_MGRA_FIELD = 76;
+    // private static final int DEST_MGRA_FIELD = 79;
+    // private static final int MGRA1_FIELD = 221;
+    // private static final int PURPOSE_INDEX_OFFSET = 0;
 
     private static final int    DEPART_PERIOD_FIELD        = 189;
     private static final int    ARRIVE_PERIOD_FIELD        = 190;
@@ -107,8 +107,7 @@ public final class NonMandatoryDcEstimationMcLogsumsAppender
                 "dc.est.skims.output.file");
         if (outputFileName == null)
         {
-            logger
-                    .info("no output file name was specified in the properties file.  Nothing to do.");
+            logger.info("no output file name was specified in the properties file.  Nothing to do.");
             return;
         }
 
@@ -150,7 +149,8 @@ public final class NonMandatoryDcEstimationMcLogsumsAppender
             PrintWriter outStream2)
     {
 
-        // print the chosen destMgra and the depart/arrive logsum field names to both
+        // print the chosen destMgra and the depart/arrive logsum field names to
+        // both
         // files
         if (outStream1 != null) outStream1.print("seq,sampno,chosenMgra");
 
@@ -164,7 +164,8 @@ public final class NonMandatoryDcEstimationMcLogsumsAppender
 
         outStream2.print("seq,sampno,chosenMgra,chosenTodLogsum");
 
-        // print each set of sample destMgra and the depart/arrive logsum fieldnames
+        // print each set of sample destMgra and the depart/arrive logsum
+        // fieldnames
         // to file 1.
         // print each set of sample destMgra and the chosen depart/arrive logsum
         // fieldname to file 2.
@@ -192,13 +193,19 @@ public final class NonMandatoryDcEstimationMcLogsumsAppender
 
         SandagAppendMcLogsumDMU mcDmuObject = new SandagAppendMcLogsumDMU(modelStructure);
 
-        ChoiceModelApplication[] mcModel = new ChoiceModelApplication[5+1];
-        mcModel[WORK_CATEGORY] = new ChoiceModelApplication(mcUecFile, WORK_SHEET, 0, rbMap, (VariableTable) mcDmuObject);
-        mcModel[UNIVERSITY_CATEGORY] = new ChoiceModelApplication(mcUecFile, UNIVERSITY_SHEET, 0, rbMap, (VariableTable) mcDmuObject);
-        mcModel[SCHOOL_CATEGORY] = new ChoiceModelApplication(mcUecFile, SCHOOL_SHEET, 0, rbMap, (VariableTable) mcDmuObject);
-        mcModel[MAINTENANCE_CATEGORY] = new ChoiceModelApplication(mcUecFile, MAINTENANCE_SHEET, 0, rbMap, (VariableTable) mcDmuObject);
-        mcModel[DISCRETIONARY_CATEGORY] = new ChoiceModelApplication(mcUecFile, DISCRETIONARY_SHEET, 0, rbMap, (VariableTable) mcDmuObject);
-        mcModel[SUBTOUR_CATEGORY] = new ChoiceModelApplication(mcUecFile, SUBTOUR_SHEET, 0, rbMap, (VariableTable) mcDmuObject);
+        ChoiceModelApplication[] mcModel = new ChoiceModelApplication[5 + 1];
+        mcModel[WORK_CATEGORY] = new ChoiceModelApplication(mcUecFile, WORK_SHEET, 0, rbMap,
+                (VariableTable) mcDmuObject);
+        mcModel[UNIVERSITY_CATEGORY] = new ChoiceModelApplication(mcUecFile, UNIVERSITY_SHEET, 0,
+                rbMap, (VariableTable) mcDmuObject);
+        mcModel[SCHOOL_CATEGORY] = new ChoiceModelApplication(mcUecFile, SCHOOL_SHEET, 0, rbMap,
+                (VariableTable) mcDmuObject);
+        mcModel[MAINTENANCE_CATEGORY] = new ChoiceModelApplication(mcUecFile, MAINTENANCE_SHEET, 0,
+                rbMap, (VariableTable) mcDmuObject);
+        mcModel[DISCRETIONARY_CATEGORY] = new ChoiceModelApplication(mcUecFile,
+                DISCRETIONARY_SHEET, 0, rbMap, (VariableTable) mcDmuObject);
+        mcModel[SUBTOUR_CATEGORY] = new ChoiceModelApplication(mcUecFile, SUBTOUR_SHEET, 0, rbMap,
+                (VariableTable) mcDmuObject);
 
         // write skims data for estimation data file records
         int seq = 1;
@@ -210,7 +217,8 @@ public final class NonMandatoryDcEstimationMcLogsumsAppender
 
             odtSet[0] = seq;
 
-            if (outStream1 != null){
+            if (outStream1 != null)
+            {
                 outStream1.print(seq + "," + odtSet[SAMPNO]);
             }
             outStream2.print(seq + "," + odtSet[SAMPNO]);
@@ -262,7 +270,8 @@ public final class NonMandatoryDcEstimationMcLogsumsAppender
     private int[][] getDcEstimationDataOrigDestTimes(TableDataSet hisTds)
     {
 
-        // odts are an array with elements: origin mgra, destination mgra, departure
+        // odts are an array with elements: origin mgra, destination mgra,
+        // departure
         // period(1-6), and arrival period(1-6).
         int[][] odts = new int[hisTds.getRowCount()][NUM_FIELDS];
         mgras = new int[hisTds.getRowCount()][NUM_MGRA_FIELDS];
@@ -311,13 +320,15 @@ public final class NonMandatoryDcEstimationMcLogsumsAppender
             odts[r - 1][FEMALE] = gender[r - 1] == 2 ? 1 : 0;
             odts[r - 1][AGE] = age[r - 1];
             odts[r - 1][JOINT] = jointId[r - 1] > 0 ? 1 : 0;
-            
-            // the offest constant is used because at-work subtours in estimation file are coded as work purpose index (=1),
-            // but the model index to use is 5.  Nonmandatory and escort files have correct purpose codes, so offset is 0.
+
+            // the offest constant is used because at-work subtours in
+            // estimation file are coded as work purpose index (=1),
+            // but the model index to use is 5. Nonmandatory and escort files
+            // have correct purpose codes, so offset is 0.
             int purposeIndex = purpose[r - 1] + PURPOSE_INDEX_OFFSET;
-            
+
             odts[r - 1][ESCORT] = purposeIndex == 4 ? 1 : 0;
-            
+
             odts[r - 1][PARTYSIZE] = jointPerson1Participates[r - 1]
                     + jointPerson2Participates[r - 1] + jointPerson3Participates[r - 1]
                     + jointPerson4Participates[r - 1] + jointPerson5Participates[r - 1];
@@ -336,7 +347,8 @@ public final class NonMandatoryDcEstimationMcLogsumsAppender
         ResourceBundle rb;
         if (args.length == 0)
         {
-            System.out.println("no properties file base name (without .properties extension) was specified as an argument.");
+            System.out
+                    .println("no properties file base name (without .properties extension) was specified as an argument.");
             return;
         } else
         {
@@ -345,7 +357,8 @@ public final class NonMandatoryDcEstimationMcLogsumsAppender
 
         HashMap<String, String> rbMap = ResourceUtil.changeResourceBundleIntoHashMap(rb);
 
-        NonMandatoryDcEstimationMcLogsumsAppender appender = new NonMandatoryDcEstimationMcLogsumsAppender(rbMap);
+        NonMandatoryDcEstimationMcLogsumsAppender appender = new NonMandatoryDcEstimationMcLogsumsAppender(
+                rbMap);
 
         appender.startMatrixServer(rb);
         appender.runLogsumAppender(rb);

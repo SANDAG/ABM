@@ -6,7 +6,8 @@ package org.sandag.abm.internalexternal;
 public interface InternalExternalDmuFactoryIf
 {
 
-    public InternalExternalTourDestChoiceDMU getInternalExternalTourDestChoiceDMU();
-    public InternalExternalTripModeChoiceDMU getInternalExternalTripModeChoiceDMU();
+    InternalExternalTourDestChoiceDMU getInternalExternalTourDestChoiceDMU();
+
+    InternalExternalTripModeChoiceDMU getInternalExternalTripModeChoiceDMU();
 
 }

@@ -5,9 +5,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.StringTokenizer;
 
-public class Util
+public final class Util
         implements Serializable
 {
+    private Util()
+    {
+        //Not implemented in utility classes
+    }
 
     public static boolean getBooleanValueFromPropertyMap(HashMap<String, String> rbMap, String key)
     {
@@ -18,7 +22,8 @@ public class Util
             returnValue = Boolean.parseBoolean(value);
         } else
         {
-            System.out.println("property file key: " + key + " = " + value + " should be either 'true' or 'false'.");
+            System.out.println("property file key: " + key + " = " + value
+                    + " should be either 'true' or 'false'.");
             throw new RuntimeException();
         }
 
@@ -41,7 +46,8 @@ public class Util
             return Integer.parseInt(value);
         } else
         {
-            System.out.println( "property file key: " + key + " missing.  No integer value can be determined.");
+            System.out.println("property file key: " + key
+                    + " missing.  No integer value can be determined.");
             throw new RuntimeException();
         }
     }
@@ -59,7 +65,7 @@ public class Util
             if (valueSet != null)
             {
                 StringTokenizer valueTokenizer = new StringTokenizer(valueList, ",");
-                while(valueTokenizer.hasMoreTokens())
+                while (valueTokenizer.hasMoreTokens())
                 {
                     String listValue = valueTokenizer.nextToken();
                     int intValue = Integer.parseInt(listValue.trim());
@@ -74,7 +80,8 @@ public class Util
 
         } else
         {
-            System.out.println( "property file key: " + key + " missing.  No integer value can be determined.");
+            System.out.println("property file key: " + key
+                    + " missing.  No integer value can be determined.");
             throw new RuntimeException();
         }
 
@@ -84,8 +91,10 @@ public class Util
 
     /**
      * 
-     * @param cumProbabilities cumulative probabilities array
-     * @param entry target to search for in array
+     * @param cumProbabilities
+     *            cumulative probabilities array
+     * @param entry
+     *            target to search for in array
      * @return the array index i where cumProbabilities[i] < entry and
      *         cumProbabilities[i-1] <= entry.
      */
@@ -99,14 +108,16 @@ public class Util
         // if entry is outside the allowed range, return -1
         if (entry < 0 || entry >= 1.0)
         {
-            System.out.println( "entry = " + entry + " is outside of allowable range for cumulative distribution [0,...,1.0)");
+            System.out.println("entry = " + entry
+                    + " is outside of allowable range for cumulative distribution [0,...,1.0)");
             return -1;
         }
 
-        // if cumProbabilities[cumProbabilities.length-1] is not equal to 1.0, return -1
+        // if cumProbabilities[cumProbabilities.length-1] is not equal to 1.0,
+        // return -1
         if (cumProbabilities[cumProbabilities.length - 1] != 1.0)
         {
-            System.out.println( "cumProbabilities[cumProbabilities.length-1] = "
+            System.out.println("cumProbabilities[cumProbabilities.length-1] = "
                     + cumProbabilities[cumProbabilities.length - 1] + " must equal 1.0");
             return -1;
         }
@@ -122,9 +133,12 @@ public class Util
         {
             if (entry < cumProbabilities[0]) return 0;
             else return 1;
-        } else if (entry < cumProbabilities[mid] && entry >= cumProbabilities[mid - 1]) { return mid; }
+        } else if (entry < cumProbabilities[mid] && entry >= cumProbabilities[mid - 1])
+        {
+            return mid;
+        }
 
-        while(true)
+        while (true)
         {
 
             if (entry < cumProbabilities[mid])
@@ -142,7 +156,10 @@ public class Util
             {
                 if (entry < cumProbabilities[0]) return 0;
                 else return 1;
-            } else if (entry < cumProbabilities[mid] && entry >= cumProbabilities[mid - 1]) { return mid; }
+            } else if (entry < cumProbabilities[mid] && entry >= cumProbabilities[mid - 1])
+            {
+                return mid;
+            }
 
             if (safetyCount++ > cumProbabilities.length)
             {
@@ -156,29 +173,36 @@ public class Util
 
     /**
      * 
-     * @param cumProbabilities cumulative probabilities array
-     * @param numIndices are the number of probability values to consider in the cumulative probabilities array
-     * @param entry target to search for in array between indices 1 and numValues.
+     * @param cumProbabilities
+     *            cumulative probabilities array
+     * @param numIndices
+     *            are the number of probability values to consider in the
+     *            cumulative probabilities array
+     * @param entry
+     *            target to search for in array between indices 1 and numValues.
      * @return the array index i where cumProbabilities[i] < entry and
      *         cumProbabilities[i-1] <= entry.
      */
-    public static int binarySearchDouble(double cumProbabilityLowerBound, double[] cumProbabilities, int numIndices, double entry)
+    public static int binarySearchDouble(double cumProbabilityLowerBound,
+            double[] cumProbabilities, int numIndices, double entry)
     {
 
         // search for 0-based index i for cumProbabilities such that
-        //      cumProbabilityLowerBound <= entry < cumProbabilities[0], i = 0;
+        // cumProbabilityLowerBound <= entry < cumProbabilities[0], i = 0;
         // or
-        //      cumProbabilities[i-1] <= entry < cumProbabilities[i], for i = 1,...numIndices-1;
+        // cumProbabilities[i-1] <= entry < cumProbabilities[i], for i =
+        // 1,...numIndices-1;
 
-        
         // if entry is outside the allowed range, return -1
-        if ( entry < cumProbabilityLowerBound || entry >= cumProbabilities[numIndices-1] )
+        if (entry < cumProbabilityLowerBound || entry >= cumProbabilities[numIndices - 1])
         {
-            System.out.println( "entry = " + entry + " is outside of allowable range of cumulative probabilities.");
-            System.out.println( "cumProbabilityLowerBound = " + cumProbabilityLowerBound + ", cumProbabilities[numIndices-1] = " + cumProbabilities[numIndices-1] + ", numIndices = " + numIndices );
+            System.out.println("entry = " + entry
+                    + " is outside of allowable range of cumulative probabilities.");
+            System.out.println("cumProbabilityLowerBound = " + cumProbabilityLowerBound
+                    + ", cumProbabilities[numIndices-1] = " + cumProbabilities[numIndices - 1]
+                    + ", numIndices = " + numIndices);
             return -1;
         }
-
 
         int hi = numIndices;
         int lo = 0;
@@ -189,17 +213,14 @@ public class Util
         // if mid is 0,
         if (mid == 0)
         {
-            if (entry < cumProbabilities[0])
-                return 0;
-            else
-                return 1;
-        }
-        else if (entry < cumProbabilities[mid] && entry >= cumProbabilities[mid - 1])
+            if (entry < cumProbabilities[0]) return 0;
+            else return 1;
+        } else if (entry < cumProbabilities[mid] && entry >= cumProbabilities[mid - 1])
         {
             return mid;
         }
 
-        while(true)
+        while (true)
         {
 
             if (entry < cumProbabilities[mid])
@@ -215,17 +236,13 @@ public class Util
             // if mid is 0,
             if (mid == 0)
             {
-                if (entry < cumProbabilities[0])
-                    return 0;
-                else
-                    return 1;
-            }
-            else if (entry < cumProbabilities[mid] && entry >= cumProbabilities[mid - 1])
+                if (entry < cumProbabilities[0]) return 0;
+                else return 1;
+            } else if (entry < cumProbabilities[mid] && entry >= cumProbabilities[mid - 1])
             {
                 return mid;
             }
 
-            
             if (safetyCount++ > numIndices)
             {
                 System.out.println("binary search stuck in the while loop");

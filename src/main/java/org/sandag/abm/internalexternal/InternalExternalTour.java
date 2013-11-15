@@ -1,242 +1,254 @@
 package org.sandag.abm.internalexternal;
 
 import java.io.Serializable;
-
 import org.apache.log4j.Logger;
-import org.sandag.abm.application.SandagModelStructure;
-import org.sandag.abm.crossborder.CrossBorderStop;
-import org.sandag.abm.crossborder.CrossBorderTrip;
 import org.sandag.abm.ctramp.Household;
-import org.sandag.abm.ctramp.Stop;
-
 import com.pb.common.math.MersenneTwister;
 
-public class InternalExternalTour implements Serializable{
-	
-	private MersenneTwister random;
-	private int ID;
-	
-	//following variables set from household and person objects
-   private int income;
-	private int autos;
-	private int age;
-	private int female;
-	
- 
-	
-//	private InternalExternalStop[]    outboundStops;
-//    private InternalExternalStop[]    inboundStops;
-    
+public class InternalExternalTour
+        implements Serializable
+{
+
+    private MersenneTwister        random;
+    private int                    ID;
+
+    // following variables set from household and person objects
+    private int                    income;
+    private int                    autos;
+    private int                    age;
+    private int                    female;
+
+    // private InternalExternalStop[] outboundStops;
+    // private InternalExternalStop[] inboundStops;
+
     private InternalExternalTrip[] trips;
 
-    private int  departTime;
-	private int  arriveTime;
+    private int                    departTime;
+    private int                    arriveTime;
 
-	private boolean debugChoiceModels;
-	
-	//following variables chosen via choice models
-	private int originMGRA;
-	private int destinationMGRA;
-	private int destinationTAZ;  // the external TAZ may be different from the external MGRA
-	
-	
+    private boolean                debugChoiceModels;
 
-	/**
-	 * Public constructor.
-	 * 
-	 * @param seed  A seed for the random number generator.
-	 */
-	public InternalExternalTour(long seed){
-		
-		random = new MersenneTwister(seed);
-	}
-	
+    // following variables chosen via choice models
+    private int                    originMGRA;
+    private int                    destinationMGRA;
+    private int                    destinationTAZ;   // the external TAZ may be
+                                                      // different from the
+                                                      // external MGRA
 
-	/**
-	 * @return the destinationTAZ
-	 */
-	public int getDestinationTAZ() {
-		return destinationTAZ;
-	}
+    /**
+     * Public constructor.
+     * 
+     * @param seed
+     *            A seed for the random number generator.
+     */
+    public InternalExternalTour(long seed)
+    {
 
+        random = new MersenneTwister(seed);
+    }
 
-	/**
-	 * @param destinationTAZ the destinationTAZ to set
-	 */
-	public void setDestinationTAZ(int destinationTAZ) {
-		this.destinationTAZ = destinationTAZ;
-	}
+    /**
+     * @return the destinationTAZ
+     */
+    public int getDestinationTAZ()
+    {
+        return destinationTAZ;
+    }
 
-	/**
-	 * @return the iD
-	 */
-	public int getID() {
-		return ID;
-	}
+    /**
+     * @param destinationTAZ
+     *            the destinationTAZ to set
+     */
+    public void setDestinationTAZ(int destinationTAZ)
+    {
+        this.destinationTAZ = destinationTAZ;
+    }
 
+    /**
+     * @return the iD
+     */
+    public int getID()
+    {
+        return ID;
+    }
 
-	/**
-	 * @param iD the iD to set
-	 */
-	public void setID(int iD) {
-		ID = iD;
-	}
+    /**
+     * @param iD
+     *            the iD to set
+     */
+    public void setID(int iD)
+    {
+        ID = iD;
+    }
 
+    /**
+     * @return the departTime
+     */
+    public int getDepartTime()
+    {
+        return departTime;
+    }
 
-	
-	/**
-	 * @return the departTime
-	 */
-	public int getDepartTime() {
-		return departTime;
-	}
+    /**
+     * @param departTime
+     *            the departTime to set
+     */
+    public void setDepartTime(int departTime)
+    {
+        this.departTime = departTime;
+    }
 
-	/**
-	 * @param departTime the departTime to set
-	 */
-	public void setDepartTime(int departTime) {
-		this.departTime = departTime;
-	}
+    public InternalExternalTrip[] getTrips()
+    {
+        return trips;
+    }
 
-	public InternalExternalTrip[] getTrips() {
-		return trips;
-	}
+    public void setTrips(InternalExternalTrip[] trips)
+    {
+        this.trips = trips;
+    }
 
+    /**
+     * @return the originMGRA
+     */
+    public int getOriginMGRA()
+    {
+        return originMGRA;
+    }
 
-	public void setTrips(InternalExternalTrip[] trips) {
-		this.trips = trips;
-	}
+    /**
+     * @param originMGRA
+     *            the originMGRA to set
+     */
+    public void setOriginMGRA(int originMGRA)
+    {
+        this.originMGRA = originMGRA;
+    }
 
+    /**
+     * Get a random number from the parties random class.
+     * 
+     * @return A random number.
+     */
+    public double getRandom()
+    {
+        return random.nextDouble();
+    }
 
-	/**
-	 * @return the originMGRA
-	 */
-	public int getOriginMGRA() {
-		return originMGRA;
-	}
+    /**
+     * @return the debugChoiceModels
+     */
+    public boolean getDebugChoiceModels()
+    {
+        return debugChoiceModels;
+    }
 
-	/**
-	 * @param originMGRA the originMGRA to set
-	 */
-	public void setOriginMGRA(int originMGRA) {
-		this.originMGRA = originMGRA;
-	}
+    /**
+     * @param debugChoiceModels
+     *            the debugChoiceModels to set
+     */
+    public void setDebugChoiceModels(boolean debugChoiceModels)
+    {
+        this.debugChoiceModels = debugChoiceModels;
+    }
 
-		
-	/**
-	 * Get a random number from the parties random class.
-	 * @return  A random number.
-	 */
-	public double getRandom(){
-		return random.nextDouble();
-	}
+    /**
+     * Get the number of outbound stops
+     * 
+     * @return 0 if not initialized, else number of stops
+     */
+    public int getNumberOutboundStops()
+    {
+        return 0;
 
-	/**
-	 * @return the debugChoiceModels
-	 */
-	public boolean getDebugChoiceModels() {
-		return debugChoiceModels;
-	}
+    }
 
+    /**
+     * Get the number of return stops
+     * 
+     * @return 0 if not initialized, else number of stops
+     */
+    public int getNumberInboundStops()
+    {
+        return 0;
 
-	/**
-	 * @param debugChoiceModels the debugChoiceModels to set
-	 */
-	public void setDebugChoiceModels(boolean debugChoiceModels) {
-		this.debugChoiceModels = debugChoiceModels;
-	}
+    }
 
-	    /**
-	     * Get the number of outbound stops
-	     * @return 0 if not initialized, else number of stops
-	     */
-	    public int getNumberOutboundStops(){
-	    	return 0;
-	    	
-	    	
-	    }
-	    /**
-	     * Get the number of return stops
-	     * @return 0 if not initialized, else number of stops
-	     */
-	    public int getNumberInboundStops(){
-	    	return 0;
-	      	
-	    }
+    /**
+     * @return the destinationMGRA
+     */
+    public int getDestinationMGRA()
+    {
+        return destinationMGRA;
+    }
 
+    /**
+     * @param destinationMGRA
+     *            the destinationMGRA to set
+     */
+    public void setDestinationMGRA(int destinationMGRA)
+    {
+        this.destinationMGRA = destinationMGRA;
+    }
 
-	/**
-	 * @return the destinationMGRA
-	 */
-	public int getDestinationMGRA() {
-		return destinationMGRA;
-	}
+    public void setArriveTime(int arriveTime)
+    {
+        this.arriveTime = arriveTime;
+    }
 
+    public int getArriveTime()
+    {
+        return arriveTime;
+    }
 
-	/**
-	 * @param destinationMGRA the destinationMGRA to set
-	 */
-	public void setDestinationMGRA(int destinationMGRA) {
-		this.destinationMGRA = destinationMGRA;
-	}
+    /**
+     * @return the income
+     */
+    public int getIncome()
+    {
+        return income;
+    }
 
+    /**
+     * @param income
+     *            the income to set
+     */
+    public void setIncome(int income)
+    {
+        this.income = income;
+    }
 
-	public void setArriveTime(int arriveTime) {
-		this.arriveTime = arriveTime;
-	}
+    public int getAutos()
+    {
+        return autos;
+    }
 
+    public void setAutos(int autos)
+    {
+        this.autos = autos;
+    }
 
-	public int getArriveTime() {
-		return arriveTime;
-	}
+    public int getAge()
+    {
+        return age;
+    }
 
- 
-	/**
-	 * @return the income
-	 */
-	public int getIncome() {
-		return income;
-	}
+    public void setAge(int age)
+    {
+        this.age = age;
+    }
 
+    public int getFemale()
+    {
+        return female;
+    }
 
-	/**
-	 * @param income the income to set
-	 */
-	public void setIncome(int income) {
-		this.income = income;
-	}
+    public void setFemale(int female)
+    {
+        this.female = female;
+    }
 
-
-
-
-
-	public int getAutos() {
-		return autos;
-	}
-
-	public void setAutos(int autos) {
-		this.autos = autos;
-	}
-
-	public int getAge() {
-		return age;
-	}
-
-	public void setAge(int age) {
-		this.age = age;
-	}
-
-	public int getFemale() {
-		return female;
-	}
-
-	public void setFemale(int female) {
-		this.female = female;
-	}
-
-
-
-	public void logTourObject(Logger logger, int totalChars)
+    public void logTourObject(Logger logger, int totalChars)
     {
 
         Household.logHelper(logger, "tourId: ", ID, totalChars);
@@ -244,8 +256,6 @@ public class InternalExternalTour implements Serializable{
         Household.logHelper(logger, "tourDestMgra: ", destinationMGRA, totalChars);
         Household.logHelper(logger, "tourDepartPeriod: ", departTime, totalChars);
         Household.logHelper(logger, "tourArrivePeriod: ", arriveTime, totalChars);
-  
-    
 
     }
 }

@@ -8,8 +8,8 @@ public class SandagInternalExternalTripChoiceDMU
         extends InternalExternalTripChoiceDMU
 {
 
-    private transient Logger       logger                 = Logger.getLogger( SandagInternalExternalTripChoiceDMU.class );
-    
+    private transient Logger logger = Logger.getLogger(SandagInternalExternalTripChoiceDMU.class);
+
     public SandagInternalExternalTripChoiceDMU()
     {
         super();

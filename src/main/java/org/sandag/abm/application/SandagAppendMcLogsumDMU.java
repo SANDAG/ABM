@@ -1,8 +1,8 @@
 package org.sandag.abm.application;
 
 import java.util.HashMap;
-import org.sandag.abm.ctramp.TourModeChoiceDMU;
 import org.sandag.abm.ctramp.ModelStructure;
+import org.sandag.abm.ctramp.TourModeChoiceDMU;
 import com.pb.common.calculator.IndexValues;
 
 public class SandagAppendMcLogsumDMU
@@ -35,10 +35,14 @@ public class SandagAppendMcLogsumDMU
     /**
      * Set this index values for this tour mode choice DMU object.
      * 
-     * @param hhIndex is the DMU household index
-     * @param zoneIndex is the DMU zone index
-     * @param origIndex is the DMU origin index
-     * @param destIndex is the DMU desatination index
+     * @param hhIndex
+     *            is the DMU household index
+     * @param zoneIndex
+     *            is the DMU zone index
+     * @param origIndex
+     *            is the DMU origin index
+     * @param destIndex
+     *            is the DMU desatination index
      */
     public void setDmuIndexValues(int hhIndex, int zoneIndex, int origIndex, int destIndex,
             boolean debug)
@@ -62,7 +66,6 @@ public class SandagAppendMcLogsumDMU
     {
         return dmuIndex;
     }
-
 
     public void setTransitSkim(int accEgr, int lbPrem, int skimIndex, int dir, double value)
     {

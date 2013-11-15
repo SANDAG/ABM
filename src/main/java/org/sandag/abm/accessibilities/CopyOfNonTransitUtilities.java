@@ -1,25 +1,22 @@
 package org.sandag.abm.accessibilities;
 
-
-import com.pb.common.util.ResourceUtil;
-import com.pb.common.util.Tracer;
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
-import java.rmi.RemoteException;
-import java.net.UnknownHostException;
-import com.pb.common.matrix.MatrixType;
-import org.sandag.abm.ctramp.MatrixDataServer;
-import org.sandag.abm.ctramp.Util;
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
+import org.sandag.abm.ctramp.MatrixDataServer;
+import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.AutoUEC;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.NonMotorUEC;
 import org.sandag.abm.modechoice.TazDataManager;
+import com.pb.common.matrix.MatrixType;
+import com.pb.common.util.ResourceUtil;
+import com.pb.common.util.Tracer;
 
 /**
  * This class builds utility components for auto modes (SOV and HOV).
@@ -31,14 +28,14 @@ public class CopyOfNonTransitUtilities
         implements Serializable
 {
 
-    protected transient Logger              logger     = Logger.getLogger(CopyOfNonTransitUtilities.class);
+    protected transient Logger           logger               = Logger.getLogger(CopyOfNonTransitUtilities.class);
 
     public static final int              OFFPEAK_PERIOD_INDEX = 0;
-    public static final int              PEAK_PERIOD_INDEX = 1;
-    
-    private static final String[]        SOVPERIODS = {"OP", "PK"};
-    private static final String[]        HOVPERIODS = {"OP", "PK"};
-    private static final String[]        NMTPERIODS = {"OP"};
+    public static final int              PEAK_PERIOD_INDEX    = 1;
+
+    private static final String[]        SOVPERIODS           = {"OP", "PK"};
+    private static final String[]        HOVPERIODS           = {"OP", "PK"};
+    private static final String[]        NMTPERIODS           = {"OP"};
 
     // store taz-taz exponentiated utilities (period, from taz, to taz)
     private double[][][]                 sovExpUtilities;
@@ -64,7 +61,8 @@ public class CopyOfNonTransitUtilities
     /**
      * Constructor.
      * 
-     * @param rb Resourcebundle with path to acc.uec.file, acc.data.page,
+     * @param rb
+     *            Resourcebundle with path to acc.uec.file, acc.data.page,
      *            acc.sov.offpeak.page, and acc.hov.offpeak.page
      */
 
@@ -95,7 +93,8 @@ public class CopyOfNonTransitUtilities
         sovUEC[PEAK_PERIOD_INDEX] = new AutoUEC(rbMap, uecFileName, peakSOVPage, dataPage);
         hovUEC[OFFPEAK_PERIOD_INDEX] = new AutoUEC(rbMap, uecFileName, offpeakHOVPage, dataPage);
         hovUEC[PEAK_PERIOD_INDEX] = new AutoUEC(rbMap, uecFileName, peakHOVPage, dataPage);
-        nMotorUEC[OFFPEAK_PERIOD_INDEX] = new NonMotorUEC(rbMap, uecFileName, nonMotorPage, dataPage);
+        nMotorUEC[OFFPEAK_PERIOD_INDEX] = new NonMotorUEC(rbMap, uecFileName, nonMotorPage,
+                dataPage);
 
         trace = Util.getBooleanValueFromPropertyMap(rbMap, "Trace");
         int[] traceOtaz = Util.getIntegerArrayFromPropertyMap(rbMap, "Trace.otaz");
@@ -104,7 +103,7 @@ public class CopyOfNonTransitUtilities
         // set up the tracer object
         tracer = Tracer.getTracer();
         tracer.setTrace(trace);
-        if ( trace )
+        if (trace)
         {
             for (int i = 0; i < traceOtaz.length; i++)
             {
@@ -119,8 +118,6 @@ public class CopyOfNonTransitUtilities
         int maxMgra = mgraManager.getMaxMgra();
         logger.info("max Mgra " + maxMgra);
 
-        
-        
         mgraNMotorExpUtilities = new HashMap[NMTPERIODS.length][maxMgra + 1];
 
         sovExpUtilities = new double[SOVPERIODS.length][maxTaz + 1][];
@@ -130,7 +127,8 @@ public class CopyOfNonTransitUtilities
     }
 
     /**
-     * set the utilities values created by another object by calling buildUtilities()
+     * set the utilities values created by another object by calling
+     * buildUtilities()
      */
     public void setAllUtilities(double[][][][] ntUtilities)
     {
@@ -155,8 +153,8 @@ public class CopyOfNonTransitUtilities
     }
 
     /**
-     * set the HashMap of non-motorized utilities, period,oMgra,dMgra (where dMgra is
-     * ragged)
+     * set the HashMap of non-motorized utilities, period,oMgra,dMgra (where
+     * dMgra is ragged)
      * 
      * @param mgraNMotorExpUtilities
      */
@@ -166,8 +164,8 @@ public class CopyOfNonTransitUtilities
     }
 
     /**
-     * get the HashMap of non-motorized utilities, period,oMgra,dMgra (where dMgra is
-     * ragged) that was built by calling buildUtilities().
+     * get the HashMap of non-motorized utilities, period,oMgra,dMgra (where
+     * dMgra is ragged) that was built by calling buildUtilities().
      * 
      * @return mgraNMotorExpUtilities
      */
@@ -177,236 +175,223 @@ public class CopyOfNonTransitUtilities
     }
 
     /**
-     * Build SOV, HOV, and non-motorized exponentiated utilities for all TAZ-pairs.
-     * Also builds non-motorized exponentiated utilities for close-in mgra pairs.
+     * Build SOV, HOV, and non-motorized exponentiated utilities for all
+     * TAZ-pairs. Also builds non-motorized exponentiated utilities for close-in
+     * mgra pairs.
      * 
      */
-    public void buildUtilities(){}
-    /*    
     public void buildUtilities()
     {
+    }
 
-        logger.info("Calculating Non-Transit Zonal Utilities");
+    /*
+     * public void buildUtilities() {
+     * 
+     * logger.info("Calculating Non-Transit Zonal Utilities");
+     * 
+     * // first calculate the Tap-Tap utilities, exponentiate, and store
+     * logger.info("Calculating Taz-Taz utilities");
+     * 
+     * int maxMgra = mgraManager.getMaxMgra(); logger.info("max Mgra " +
+     * maxMgra);
+     * 
+     * mgraNMotorExpUtilities = new HashMap[NMTPERIODS.length][maxMgra + 1];
+     * 
+     * sovExpUtilities = new double[SOVPERIODS.length][maxTaz + 1][maxTaz + 1];
+     * hovExpUtilities = new double[HOVPERIODS.length][maxTaz + 1][maxTaz + 1];
+     * nMotorExpUtilities = new double[NMTPERIODS.length][maxTaz + 1][maxTaz +
+     * 1];
+     * 
+     * for (int iTaz = 1; iTaz <= maxTaz; ++iTaz) {
+     * 
+     * if (iTaz <= 10 || (iTaz % 500) == 0) logger.info("...Origin TAZ " +
+     * iTaz);
+     * 
+     * // calculate the utilities for close-in mgras int[] oMgras =
+     * tazManager.getMgraArray(iTaz); if ( oMgras == null ) continue;
+     * 
+     * for (int oMgra : oMgras) {
+     * 
+     * // if there are mgras within walking distance if
+     * (mgraManager.getMgrasWithinWalkDistanceFrom(oMgra) != null) { int[]
+     * dMgras = mgraManager.getMgrasWithinWalkDistanceFrom(oMgra);
+     * 
+     * int mgraNumber = 0;
+     * 
+     * // cycle through periods, and calculate utilities for (int period = 0;
+     * period < NMTPERIODS.length; ++period) {
+     * 
+     * mgraNMotorExpUtilities[period][oMgra] = new HashMap<Integer, Double>();
+     * 
+     * // cycle through the destination mgras for (int dMgra : dMgras) {
+     * 
+     * double nmtUtility = nMotorUEC[period].calculateUtilitiesForMgraPair(
+     * oMgra, dMgra );
+     * 
+     * // exponentiate the utility if (nmtUtility > -500)
+     * mgraNMotorExpUtilities[period][oMgra].put( dMgra, Math.exp(nmtUtility) );
+     * ++mgraNumber;
+     * 
+     * }
+     * 
+     * }
+     * 
+     * } }
+     * 
+     * for (int jTaz = 1; jTaz <= maxTaz; ++jTaz) {
+     * 
+     * if (seek && !tracer.isTraceZonePair(iTaz, jTaz)) continue;
+     * 
+     * for (int period = 0; period < SOVPERIODS.length; ++period) {
+     * 
+     * double sovUtility = sovUEC[period].calculateUtilitiesForTazPair(iTaz,
+     * jTaz); // exponentiate the SOV utility if (sovUtility > -500)
+     * sovExpUtilities[period][iTaz][jTaz] = Math.exp(sovUtility); }
+     * 
+     * for (int period = 0; period < HOVPERIODS.length; ++period) {
+     * 
+     * double hovUtility = hovUEC[period].calculateUtilitiesForTazPair(iTaz,
+     * jTaz); // exponentiate the SOV utility if (hovUtility > -500)
+     * hovExpUtilities[period][iTaz][jTaz] = Math.exp(hovUtility); }
+     * 
+     * for (int period = 0; period < NMTPERIODS.length; ++period) {
+     * 
+     * double nmtUtility = nMotorUEC[period].calculateUtilitiesForTazPair(iTaz,
+     * jTaz); // exponentiate the SOV utility if (nmtUtility > -500)
+     * nMotorExpUtilities[period][iTaz][jTaz] = Math.exp(nmtUtility); }
+     * 
+     * } }
+     * 
+     * }
+     */
 
-        // first calculate the Tap-Tap utilities, exponentiate, and store
-        logger.info("Calculating Taz-Taz utilities");
+    public void buildUtilitiesForOrigMgraAndPeriod(int iMgra, int period)
+    {
 
-        int maxMgra = mgraManager.getMaxMgra();
-        logger.info("max Mgra " + maxMgra);
+        int iTaz = mgraManager.getTaz(iMgra);
+        if (sovExpUtilities[period][iTaz] != null) return;
 
-        mgraNMotorExpUtilities = new HashMap[NMTPERIODS.length][maxMgra + 1];
+        sovExpUtilities[period][iTaz] = new double[maxTaz + 1];
+        hovExpUtilities[period][iTaz] = new double[maxTaz + 1];
 
-        sovExpUtilities = new double[SOVPERIODS.length][maxTaz + 1][maxTaz + 1];
-        hovExpUtilities = new double[HOVPERIODS.length][maxTaz + 1][maxTaz + 1];
-        nMotorExpUtilities = new double[NMTPERIODS.length][maxTaz + 1][maxTaz + 1];
-
-        for (int iTaz = 1; iTaz <= maxTaz; ++iTaz)
+        for (int jTaz = 1; jTaz <= maxTaz; ++jTaz)
         {
 
-            if (iTaz <= 10 || (iTaz % 500) == 0) logger.info("...Origin TAZ " + iTaz);
+            double sovUtility = sovUEC[period].calculateUtilitiesForTazPair(iTaz, jTaz, 0);
+            // exponentiate the SOV utility
+            if (sovUtility > -500) sovExpUtilities[period][iTaz][jTaz] = Math.exp(sovUtility);
 
-            // calculate the utilities for close-in mgras
-            int[] oMgras = tazManager.getMgraArray(iTaz);
-            if ( oMgras == null )
-                continue;
-            
-            for (int oMgra : oMgras)
-            {
+            double hovUtility = hovUEC[period].calculateUtilitiesForTazPair(iTaz, jTaz, 0);
+            // exponentiate the SOV utility
+            if (hovUtility > -500) hovExpUtilities[period][iTaz][jTaz] = Math.exp(hovUtility);
 
-                // if there are mgras within walking distance
-                if (mgraManager.getMgrasWithinWalkDistanceFrom(oMgra) != null)
-                {
-                    int[] dMgras = mgraManager.getMgrasWithinWalkDistanceFrom(oMgra);
+        }
 
-                    int mgraNumber = 0;
+        // non-motorized utilities are only needed for off-peak period, so if
+        // period index == 1 (peak) no nead to calculate off-peak
+        if (nMotorExpUtilities[OFFPEAK_PERIOD_INDEX][iTaz] == null)
+        {
 
-                    // cycle through periods, and calculate utilities
-                    for (int period = 0; period < NMTPERIODS.length; ++period)
-                    {
-
-                        mgraNMotorExpUtilities[period][oMgra] = new HashMap<Integer, Double>();
-
-                        // cycle through the destination mgras
-                        for (int dMgra : dMgras)
-                        {
-
-                            double nmtUtility = nMotorUEC[period].calculateUtilitiesForMgraPair( oMgra, dMgra );
-
-                            // exponentiate the utility
-                            if (nmtUtility > -500)
-                                mgraNMotorExpUtilities[period][oMgra].put( dMgra, Math.exp(nmtUtility) );
-                            ++mgraNumber;
-
-                        }
-
-                    }
-
-                }
-            }
+            nMotorExpUtilities[OFFPEAK_PERIOD_INDEX][iTaz] = new double[maxTaz + 1];
 
             for (int jTaz = 1; jTaz <= maxTaz; ++jTaz)
             {
 
-                if (seek && !tracer.isTraceZonePair(iTaz, jTaz)) continue;
-
-                for (int period = 0; period < SOVPERIODS.length; ++period)
-                {
-
-                    double sovUtility = sovUEC[period].calculateUtilitiesForTazPair(iTaz, jTaz);
-                    // exponentiate the SOV utility
-                    if (sovUtility > -500)
-                        sovExpUtilities[period][iTaz][jTaz] = Math.exp(sovUtility);
-                }
-
-                for (int period = 0; period < HOVPERIODS.length; ++period)
-                {
-
-                    double hovUtility = hovUEC[period].calculateUtilitiesForTazPair(iTaz, jTaz);
-                    // exponentiate the SOV utility
-                    if (hovUtility > -500)
-                        hovExpUtilities[period][iTaz][jTaz] = Math.exp(hovUtility);
-                }
-
-                for (int period = 0; period < NMTPERIODS.length; ++period)
-                {
-
-                    double nmtUtility = nMotorUEC[period].calculateUtilitiesForTazPair(iTaz, jTaz);
-                    // exponentiate the SOV utility
-                    if (nmtUtility > -500)
-                        nMotorExpUtilities[period][iTaz][jTaz] = Math.exp(nmtUtility);
-                }
-
-            }
-        }
-
-    }
-    */
-
-    public void buildUtilitiesForOrigMgraAndPeriod( int iMgra, int period ) {
-
-        int iTaz = mgraManager.getTaz(iMgra);
-        if ( sovExpUtilities[period][iTaz] != null )
-            return;
-        
-        sovExpUtilities[period][iTaz] = new double[maxTaz+1];
-        hovExpUtilities[period][iTaz] = new double[maxTaz+1];
-        
-        for (int jTaz = 1; jTaz <= maxTaz; ++jTaz) {
-
-            double sovUtility = sovUEC[period].calculateUtilitiesForTazPair(iTaz, jTaz, 0);
-            // exponentiate the SOV utility
-            if (sovUtility > -500)
-                sovExpUtilities[period][iTaz][jTaz] = Math.exp(sovUtility);
-
-            double hovUtility = hovUEC[period].calculateUtilitiesForTazPair(iTaz, jTaz, 0);
-            // exponentiate the SOV utility
-            if (hovUtility > -500)
-                hovExpUtilities[period][iTaz][jTaz] = Math.exp(hovUtility);
-
-        }
-
-
-        // non-motorized utilities are only needed for off-peak period, so if period index == 1 (peak) no nead to calculate off-peak
-        if (nMotorExpUtilities[OFFPEAK_PERIOD_INDEX][iTaz] == null ) {
-            
-            nMotorExpUtilities[OFFPEAK_PERIOD_INDEX][iTaz] = new double[maxTaz+1];
-            
-            for (int jTaz = 1; jTaz <= maxTaz; ++jTaz) {
-
-                double nmtUtility = nMotorUEC[OFFPEAK_PERIOD_INDEX].calculateUtilitiesForTazPair(iTaz, jTaz);
+                double nmtUtility = nMotorUEC[OFFPEAK_PERIOD_INDEX].calculateUtilitiesForTazPair(
+                        iTaz, jTaz);
                 // exponentiate the SOV utility
                 if (nmtUtility > -500)
                     nMotorExpUtilities[OFFPEAK_PERIOD_INDEX][iTaz][jTaz] = Math.exp(nmtUtility);
 
             }
-            
+
         }
 
     }
-    
+
     /**
-     * Get the non-motorized exponentiated utility for the mgra-pair and period. This
-     * method will return the taz-taz exponentiated non-motorized utility if the
-     * mgra-mgra exp utility doesn't exist. Otherwise the mgra-mgra exp. utility will
-     * be returned.
+     * Get the non-motorized exponentiated utility for the mgra-pair and period.
+     * This method will return the taz-taz exponentiated non-motorized utility
+     * if the mgra-mgra exp utility doesn't exist. Otherwise the mgra-mgra exp.
+     * utility will be returned.
      * 
-     * @param iMgra Origin/production mgra.
-     * @param jMgra Destination/attraction mgra.
-     * @param period Period.
+     * @param iMgra
+     *            Origin/production mgra.
+     * @param jMgra
+     *            Destination/attraction mgra.
+     * @param period
+     *            Period.
      * @return The non-motorized exponentiated utility.
      */
     /*
+     * public double getNMotorExpUtility(int iMgra, int jMgra, int period) { //
+     * no mgra-mgra utilities for this origin if
+     * (mgraNMotorExpUtilities[period][iMgra] == null) { int iTaz =
+     * mgraManager.getTaz(iMgra); int jTaz = mgraManager.getTaz(jMgra); return
+     * nMotorExpUtilities[period][iTaz][jTaz]; }
+     * 
+     * // mgra-mgra utilities exist if
+     * (mgraNMotorExpUtilities[period][iMgra].containsKey(jMgra)) { return
+     * mgraNMotorExpUtilities[period][iMgra].get(jMgra); }
+     * 
+     * // no mgra-mgra utilities for this destination int iTaz =
+     * mgraManager.getTaz(iMgra); int jTaz = mgraManager.getTaz(jMgra); return
+     * nMotorExpUtilities[period][iTaz][jTaz]; }
+     */
     public double getNMotorExpUtility(int iMgra, int jMgra, int period)
     {
-        // no mgra-mgra utilities for this origin
+
+        // if no utilities exist for period and origin mgra, try to compute them
         if (mgraNMotorExpUtilities[period][iMgra] == null)
         {
-            int iTaz = mgraManager.getTaz(iMgra);
-            int jTaz = mgraManager.getTaz(jMgra);
-            return nMotorExpUtilities[period][iTaz][jTaz];
-        }
-
-        // mgra-mgra utilities exist
-        if (mgraNMotorExpUtilities[period][iMgra].containsKey(jMgra))
-        {
-            return mgraNMotorExpUtilities[period][iMgra].get(jMgra);
-        }
-
-        // no mgra-mgra utilities for this destination
-        int iTaz = mgraManager.getTaz(iMgra);
-        int jTaz = mgraManager.getTaz(jMgra);
-        return nMotorExpUtilities[period][iTaz][jTaz];
-    }
-    */
-    public double getNMotorExpUtility(int iMgra, int jMgra, int period)
-    {
-        
-        // if no utilities exist for period and origin mgra, try to compute them
-        if ( mgraNMotorExpUtilities[period][iMgra] == null ) {
 
             // get the mgras within walking distance of the iMgra
             int[] dMgras = mgraManager.getMgrasWithinWalkDistanceFrom(iMgra);
 
-            if ( dMgras == null ) {
-                mgraNMotorExpUtilities[period][iMgra] = new HashMap<Integer, Double>( 0 );
-            }
-            else {
-                mgraNMotorExpUtilities[period][iMgra] = new HashMap<Integer, Double>( dMgras.length );
+            if (dMgras == null)
+            {
+                mgraNMotorExpUtilities[period][iMgra] = new HashMap<Integer, Double>(0);
+            } else
+            {
+                mgraNMotorExpUtilities[period][iMgra] = new HashMap<Integer, Double>(dMgras.length);
 
                 // cycle through the destination mgras
-                for (int dMgra : dMgras) {
+                for (int dMgra : dMgras)
+                {
                     // calculate utility for the specified mgra and period
-                    double nmtUtility = nMotorUEC[period].calculateUtilitiesForMgraPair( iMgra, dMgra );
-        
+                    double nmtUtility = nMotorUEC[period].calculateUtilitiesForMgraPair(iMgra,
+                            dMgra);
+
                     // exponentiate the utility
                     if (nmtUtility > -500)
-                        mgraNMotorExpUtilities[period][iMgra].put( dMgra, Math.exp(nmtUtility) );
+                        mgraNMotorExpUtilities[period][iMgra].put(dMgra, Math.exp(nmtUtility));
                 }
 
             }
 
         }
 
-
         // if jMgra is in the HashMap, return its utility value
-        if ( mgraNMotorExpUtilities[period][iMgra].containsKey( jMgra ) )
-            return mgraNMotorExpUtilities[period][iMgra].get( jMgra );
+        if (mgraNMotorExpUtilities[period][iMgra].containsKey(jMgra))
+            return mgraNMotorExpUtilities[period][iMgra].get(jMgra);
 
-        
-        // otherwise, get exponentiated utilities based on highway skim values for the taz pair associated with iMgra and jMgra.
+        // otherwise, get exponentiated utilities based on highway skim values
+        // for the taz pair associated with iMgra and jMgra.
         int iTaz = mgraManager.getTaz(iMgra);
         int jTaz = mgraManager.getTaz(jMgra);
         return nMotorExpUtilities[period][iTaz][jTaz];
 
     }
-    
-    
+
     /**
      * Get the SOV Exponentiated Utility for a given ptaz, ataz, and period
      * 
-     * @param pTaz Production/Origin TAZ
-     * @param aTaz Attraction/Destination TAZ
-     * @param period Period
+     * @param pTaz
+     *            Production/Origin TAZ
+     * @param aTaz
+     *            Attraction/Destination TAZ
+     * @param period
+     *            Period
      * @return SOV Exponentiated Utility.
      */
     public double getSovExpUtility(int pTaz, int aTaz, int period)
@@ -417,9 +402,12 @@ public class CopyOfNonTransitUtilities
     /**
      * Get the HOV Exponentiated Utility for a given ptaz, ataz, and period
      * 
-     * @param pTaz Production/Origin TAZ
-     * @param aTaz Attraction/Destination TAZ
-     * @param period Period
+     * @param pTaz
+     *            Production/Origin TAZ
+     * @param aTaz
+     *            Attraction/Destination TAZ
+     * @param period
+     *            Period
      * @return SOV Exponentiated Utility.
      */
     public double getHovExpUtility(int pTaz, int aTaz, int period)
@@ -430,10 +418,10 @@ public class CopyOfNonTransitUtilities
     /**
      * The main method runs this class, for testing purposes.
      * 
-     * @param args args[0] is the property file for this test run.
-     * @throws IOException 
+     * @param args
+     *            args[0] is the property file for this test run.
      */
-    public static void main(String[] args) throws IOException
+    public static void main(String[] args)
     {
 
         ResourceBundle rb = ResourceUtil.getPropertyBundle(new File(args[0]));
@@ -462,18 +450,22 @@ public class CopyOfNonTransitUtilities
             } catch (RuntimeException e)
             {
                 matrixServer.stop32BitMatrixIoServer();
-                System.out.println( "RuntimeException caught in com.pb.sandag.accessibilities.main() -- exiting." );
+                System.out
+                        .println("RuntimeException caught in com.pb.sandag.accessibilities.main() -- exiting.");
                 e.printStackTrace();
             }
 
-            // bind this concrete object with the cajo library objects for managing
+            // bind this concrete object with the cajo library objects for
+            // managing
             // RMI
             try
             {
                 Remote.config(serverAddress, serverPort, null, 0);
             } catch (Exception e)
             {
-                System.out.println(String.format( "UnknownHostException. serverAddress = %s, serverPort = %d -- exiting.", serverAddress, serverPort) );
+                System.out.println(String.format(
+                        "UnknownHostException. serverAddress = %s, serverPort = %d -- exiting.",
+                        serverAddress, serverPort));
                 e.printStackTrace();
                 matrixServer.stop32BitMatrixIoServer();
                 throw new RuntimeException();
@@ -484,7 +476,9 @@ public class CopyOfNonTransitUtilities
                 ItemServer.bind(matrixServer, className);
             } catch (RemoteException e)
             {
-                System.out.println(String.format( "RemoteException. serverAddress = %s, serverPort = %d -- exiting.", serverAddress, serverPort) );
+                System.out.println(String.format(
+                        "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",
+                        serverAddress, serverPort));
                 e.printStackTrace();
                 matrixServer.stop32BitMatrixIoServer();
                 throw new RuntimeException();

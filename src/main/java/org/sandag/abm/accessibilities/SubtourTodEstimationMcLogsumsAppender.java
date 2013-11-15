@@ -10,35 +10,34 @@ import java.util.ResourceBundle;
 import org.sandag.abm.application.SandagAppendMcLogsumDMU;
 import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.CtrampApplication;
-import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.datafile.TableDataSet;
-import com.pb.common.util.ResourceUtil;
 import com.pb.common.newmodel.ChoiceModelApplication;
+import com.pb.common.util.ResourceUtil;
 
 public final class SubtourTodEstimationMcLogsumsAppender
         extends McLogsumsAppender
 {
 
-    private static final int DEBUG_EST_RECORD1        = 1;
-    private static final int DEBUG_EST_RECORD2        = -1;
+    private static final int DEBUG_EST_RECORD1    = 1;
+    private static final int DEBUG_EST_RECORD2    = -1;
 
-    private static final int SUBTOUR_PURPOSE          = 10;
-    
-    private static final int SEQ_FIELD                = 7;
-    private static final int ORIG_MGRA_FIELD          = 81;
-    private static final int DEST_MGRA_FIELD          = 89;
-    private static final int DEPART_PERIOD_FIELD      = 3;
-    private static final int ARRIVE_PERIOD_FIELD      = 4;
-    private static final int WORK_TOUR_MODE_FIELD     = 98;
-    private static final int AUTOS_FIELD              = 11;
-    private static final int AGE_FIELD                = 44;
-    private static final int MGRA1_FIELD              = 1;
-    private static final int NUM_MGRA_FIELDS          = 0;
+    private static final int SUBTOUR_PURPOSE      = 10;
+
+    private static final int SEQ_FIELD            = 7;
+    private static final int ORIG_MGRA_FIELD      = 81;
+    private static final int DEST_MGRA_FIELD      = 89;
+    private static final int DEPART_PERIOD_FIELD  = 3;
+    private static final int ARRIVE_PERIOD_FIELD  = 4;
+    private static final int WORK_TOUR_MODE_FIELD = 98;
+    private static final int AUTOS_FIELD          = 11;
+    private static final int AGE_FIELD            = 44;
+    private static final int MGRA1_FIELD          = 1;
+    private static final int NUM_MGRA_FIELDS      = 0;
 
     private SubtourTodEstimationMcLogsumsAppender(HashMap<String, String> rbMap)
     {
@@ -71,14 +70,14 @@ public final class SubtourTodEstimationMcLogsumsAppender
 
         departArriveLogsums = new double[1][departArriveCombinations.length];
 
-        String outputFileName = Util.getStringValueFromPropertyMap(rbMap, "tod.est.skims.output.file");
+        String outputFileName = Util.getStringValueFromPropertyMap(rbMap,
+                "tod.est.skims.output.file");
 
         PrintWriter outStream = null;
 
         if (outputFileName == null)
         {
-            logger
-                    .info("no output file name was specified in the properties file.  Nothing to do.");
+            logger.info("no output file name was specified in the properties file.  Nothing to do.");
             return;
         }
 
@@ -103,7 +102,8 @@ public final class SubtourTodEstimationMcLogsumsAppender
     private void writeTodFile(HashMap<String, String> rbMap, PrintWriter outStream2)
     {
 
-        // print the chosen destMgra and the depart/arrive logsum field names to the
+        // print the chosen destMgra and the depart/arrive logsum field names to
+        // the
         // file
         outStream2.print("seq,hisseq,chosenMgra");
         for (String[] labels : departArriveCombinationLabels)
@@ -119,22 +119,21 @@ public final class SubtourTodEstimationMcLogsumsAppender
         String mcUecFile = rbMap.get(PROPERTIES_UEC_TOUR_MODE_CHOICE);
         mcUecFile = uecPath + mcUecFile;
 
-
         SandagAppendMcLogsumDMU mcDmuObject = new SandagAppendMcLogsumDMU(modelStructure);
 
         ChoiceModelApplication[] mcModel = new ChoiceModelApplication[5 + 1];
-        mcModel[WORK_CATEGORY] = new ChoiceModelApplication(mcUecFile, WORK_SHEET, 0,
-                rbMap, (VariableTable) mcDmuObject);
+        mcModel[WORK_CATEGORY] = new ChoiceModelApplication(mcUecFile, WORK_SHEET, 0, rbMap,
+                (VariableTable) mcDmuObject);
         mcModel[UNIVERSITY_CATEGORY] = new ChoiceModelApplication(mcUecFile, UNIVERSITY_SHEET, 0,
                 rbMap, (VariableTable) mcDmuObject);
-        mcModel[SCHOOL_CATEGORY] = new ChoiceModelApplication(mcUecFile, SCHOOL_SHEET, 0,
-                rbMap, (VariableTable) mcDmuObject);
+        mcModel[SCHOOL_CATEGORY] = new ChoiceModelApplication(mcUecFile, SCHOOL_SHEET, 0, rbMap,
+                (VariableTable) mcDmuObject);
         mcModel[MAINTENANCE_CATEGORY] = new ChoiceModelApplication(mcUecFile, MAINTENANCE_SHEET, 0,
                 rbMap, (VariableTable) mcDmuObject);
-        mcModel[DISCRETIONARY_CATEGORY] = new ChoiceModelApplication(mcUecFile, DISCRETIONARY_SHEET, 0,
-                rbMap, (VariableTable) mcDmuObject);
-        mcModel[SUBTOUR_CATEGORY] = new ChoiceModelApplication(mcUecFile, SUBTOUR_SHEET, 0,
-                rbMap, (VariableTable) mcDmuObject);
+        mcModel[DISCRETIONARY_CATEGORY] = new ChoiceModelApplication(mcUecFile,
+                DISCRETIONARY_SHEET, 0, rbMap, (VariableTable) mcDmuObject);
+        mcModel[SUBTOUR_CATEGORY] = new ChoiceModelApplication(mcUecFile, SUBTOUR_SHEET, 0, rbMap,
+                (VariableTable) mcDmuObject);
 
         // write skims data for estimation data file records
         int seq = 1;
@@ -175,7 +174,8 @@ public final class SubtourTodEstimationMcLogsumsAppender
     private int[][] getTodEstimationDataOrigDestTimes(TableDataSet hisTds)
     {
 
-        // odts are an array with elements: origin mgra, destination mgra, departure
+        // odts are an array with elements: origin mgra, destination mgra,
+        // departure
         // period(1-6), and arrival period(1-6).
         int[][] odts = new int[hisTds.getRowCount()][NUM_FIELDS];
         mgras = new int[hisTds.getRowCount()][NUM_MGRA_FIELDS];
@@ -202,7 +202,7 @@ public final class SubtourTodEstimationMcLogsumsAppender
             odts[r - 1][SAMPNO] = hisseq[r - 1];
 
             odts[r - 1][TOUR_PURPOSE] = SUBTOUR_PURPOSE;
-            
+
             odts[r - 1][DEPART_PERIOD] = departs[r - 1];
             odts[r - 1][ARRIVE_PERIOD] = arrives[r - 1];
 
@@ -225,7 +225,8 @@ public final class SubtourTodEstimationMcLogsumsAppender
         ResourceBundle rb;
         if (args.length == 0)
         {
-            System.out.println("no properties file base name (without .properties extension) was specified as an argument.");
+            System.out
+                    .println("no properties file base name (without .properties extension) was specified as an argument.");
             return;
         } else
         {
@@ -233,29 +234,32 @@ public final class SubtourTodEstimationMcLogsumsAppender
         }
 
         HashMap<String, String> rbMap = ResourceUtil.changeResourceBundleIntoHashMap(rb);
-        SubtourTodEstimationMcLogsumsAppender appender = new SubtourTodEstimationMcLogsumsAppender(rbMap);
+        SubtourTodEstimationMcLogsumsAppender appender = new SubtourTodEstimationMcLogsumsAppender(
+                rbMap);
 
         appender.startMatrixServer(rb);
         appender.runLogsumAppender(rb);
 
+        /*
+         * used this to read/parse the UEC expressions - debugging the UEC
+         * sheet.
+         * 
+         * HashMap<String,String> rbMap =
+         * ResourceUtil.changeResourceBundleIntoHashMap(rb);
+         * 
+         * String uecPath = rbMap.get(CtrampApplication.PROPERTIES_UEC_PATH);
+         * String mcUecFile = rbMap.get(PROPERTIES_UEC_TOUR_MODE_CHOICE);
+         * mcUecFile = uecPath + mcUecFile;
+         * 
+         * ModelStructure modelStructure = new SandagModelStructure();
+         * SandagAppendMcLogsumDMU mcDmuObject = new
+         * SandagAppendMcLogsumDMU(modelStructure); ChoiceModelApplication
+         * mcModel = new ChoiceModelApplication(mcUecFile, SUBTOUR_SHEET, 0,
+         * rbMap, (VariableTable) mcDmuObject);
+         */
 
-/*
- * used this to read/parse the UEC expressions - debugging the UEC sheet.
- *         
-        HashMap<String,String> rbMap = ResourceUtil.changeResourceBundleIntoHashMap(rb);
-        
-        String uecPath = rbMap.get(CtrampApplication.PROPERTIES_UEC_PATH);
-        String mcUecFile = rbMap.get(PROPERTIES_UEC_TOUR_MODE_CHOICE);
-        mcUecFile = uecPath + mcUecFile;
-
-        ModelStructure modelStructure = new SandagModelStructure();
-        SandagAppendMcLogsumDMU mcDmuObject = new SandagAppendMcLogsumDMU(modelStructure);
-        ChoiceModelApplication mcModel = new ChoiceModelApplication(mcUecFile, SUBTOUR_SHEET, 0,
-                rbMap, (VariableTable) mcDmuObject);
-*/        
-        
-
-        System.out.println("total runtime = " + ((System.currentTimeMillis() - startTime) / 1000) + " seconds.");
+        System.out.println("total runtime = " + ((System.currentTimeMillis() - startTime) / 1000)
+                + " seconds.");
 
     }
 

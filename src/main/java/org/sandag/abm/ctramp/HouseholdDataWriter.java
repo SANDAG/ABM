@@ -1,23 +1,23 @@
 package org.sandag.abm.ctramp;
 
-import com.pb.common.calculator.IndexValues;
-//import com.pb.common.util.ObjectUtil;
-import com.pb.common.util.ResourceUtil;
-import com.pb.common.newmodel.UtilityExpressionCalculator;
-
-import org.sandag.abm.accessibilities.MandatoryAccessibilitiesDMU;
-import org.sandag.abm.ctramp.CtrampApplication;
-import org.sandag.abm.ctramp.ConnectionHelper;
-import org.sandag.abm.modechoice.MgraDataManager;
-import java.util.*;
-import java.io.PrintWriter;
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
+import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import org.apache.log4j.Logger;
+import org.sandag.abm.accessibilities.MandatoryAccessibilitiesDMU;
+import org.sandag.abm.modechoice.MgraDataManager;
+import com.pb.common.calculator.IndexValues;
+import com.pb.common.newmodel.UtilityExpressionCalculator;
+// import com.pb.common.util.ObjectUtil;
 
 /**
  * @author crf <br/>
@@ -26,54 +26,53 @@ import org.apache.log4j.Logger;
 public class HouseholdDataWriter
 {
 
-    private transient Logger    logger                          = Logger.getLogger(HouseholdDataWriter.class);
+    private transient Logger            logger                          = Logger.getLogger(HouseholdDataWriter.class);
 
-    private static final String PROPERTIES_HOUSEHOLD_DATA_FILE  = "Results.HouseholdDataFile";
-    private static final String PROPERTIES_PERSON_DATA_FILE     = "Results.PersonDataFile";
-    private static final String PROPERTIES_INDIV_TOUR_DATA_FILE = "Results.IndivTourDataFile";
-    private static final String PROPERTIES_JOINT_TOUR_DATA_FILE = "Results.JointTourDataFile";
-    private static final String PROPERTIES_INDIV_TRIP_DATA_FILE = "Results.IndivTripDataFile";
-    private static final String PROPERTIES_JOINT_TRIP_DATA_FILE = "Results.JointTripDataFile";
+    private static final String         PROPERTIES_HOUSEHOLD_DATA_FILE  = "Results.HouseholdDataFile";
+    private static final String         PROPERTIES_PERSON_DATA_FILE     = "Results.PersonDataFile";
+    private static final String         PROPERTIES_INDIV_TOUR_DATA_FILE = "Results.IndivTourDataFile";
+    private static final String         PROPERTIES_JOINT_TOUR_DATA_FILE = "Results.JointTourDataFile";
+    private static final String         PROPERTIES_INDIV_TRIP_DATA_FILE = "Results.IndivTripDataFile";
+    private static final String         PROPERTIES_JOINT_TRIP_DATA_FILE = "Results.JointTripDataFile";
 
-    private static final String PROPERTIES_HOUSEHOLD_TABLE      = "Results.HouseholdTable";
-    private static final String PROPERTIES_PERSON_TABLE         = "Results.PersonTable";
-    private static final String PROPERTIES_INDIV_TOUR_TABLE     = "Results.IndivTourTable";
-    private static final String PROPERTIES_JOINT_TOUR_TABLE     = "Results.JointTourTable";
-    private static final String PROPERTIES_INDIV_TRIP_TABLE     = "Results.IndivTripTable";
-    private static final String PROPERTIES_JOINT_TRIP_TABLE     = "Results.JointTripTable";
+    private static final String         PROPERTIES_HOUSEHOLD_TABLE      = "Results.HouseholdTable";
+    private static final String         PROPERTIES_PERSON_TABLE         = "Results.PersonTable";
+    private static final String         PROPERTIES_INDIV_TOUR_TABLE     = "Results.IndivTourTable";
+    private static final String         PROPERTIES_JOINT_TOUR_TABLE     = "Results.JointTourTable";
+    private static final String         PROPERTIES_INDIV_TRIP_TABLE     = "Results.IndivTripTable";
+    private static final String         PROPERTIES_JOINT_TRIP_TABLE     = "Results.JointTripTable";
 
-    private static final int    NUM_WRITE_PACKETS               = 2000;
+    private static final int            NUM_WRITE_PACKETS               = 2000;
 
-    private final String        intFormat                       = "%d";
-    private final String        floatFormat                     = "%f";
-    private final String        doubleFormat                    = "%f";
-    private final String        fileStringFormat                = "%s";
-    private final String        databaseStringFormat            = "'%s'";
-    private String              stringFormat                    = fileStringFormat;
+    private final String                intFormat                       = "%d";
+    private final String                floatFormat                     = "%f";
+    private final String                doubleFormat                    = "%f";
+    private final String                fileStringFormat                = "%s";
+    private final String                databaseStringFormat            = "'%s'";
+    private String                      stringFormat                    = fileStringFormat;
 
-    private boolean             saveUtilsProbsFlag              = false;
+    private boolean                     saveUtilsProbsFlag              = false;
 
-    private HashMap<String,String> rbMap;
-    
+    private HashMap<String, String>     rbMap;
+
     private MandatoryAccessibilitiesDMU dmu;
     private UtilityExpressionCalculator autoSkimUEC;
-    private IndexValues iv;
-    private MgraDataManager mgraManager;
-    
-    private ModelStructure      modelStructure;
-    private int                 iteration;
-    
-    private HashMap<Integer, String> purposeIndexNameMap;
-    
+    private IndexValues                 iv;
+    private MgraDataManager             mgraManager;
 
-    public HouseholdDataWriter(HashMap<String,String> rbMap, ModelStructure modelStructure,
+    private ModelStructure              modelStructure;
+    private int                         iteration;
+
+    private HashMap<Integer, String>    purposeIndexNameMap;
+
+    public HouseholdDataWriter(HashMap<String, String> rbMap, ModelStructure modelStructure,
             int iteration)
     {
         logger.info("Writing data structures to files.");
         this.modelStructure = modelStructure;
         this.iteration = iteration;
         this.rbMap = rbMap;
-        
+
         // create a UEC to get highway distance traveled for tours
         String uecFileName = rbMap.get("acc.mandatory.uec.file");
         int dataPage = Integer.parseInt(rbMap.get("acc.mandatory.data.page"));
@@ -83,11 +82,13 @@ public class HouseholdDataWriter
         autoSkimUEC = new UtilityExpressionCalculator(uecFile, autoSkimPage, dataPage, rbMap, dmu);
         iv = new IndexValues();
         mgraManager = MgraDataManager.getInstance(rbMap);
-        
+
         purposeIndexNameMap = this.modelStructure.getIndexPrimaryPurposeNameMap();
-        
-        // default is to not save the tour mode choice utils and probs for each tour
-        String saveUtilsProbsString = rbMap.get(CtrampApplication.PROPERTIES_SAVE_TOUR_MODE_CHOICE_UTILS);
+
+        // default is to not save the tour mode choice utils and probs for each
+        // tour
+        String saveUtilsProbsString = rbMap
+                .get(CtrampApplication.PROPERTIES_SAVE_TOUR_MODE_CHOICE_UTILS);
         if (saveUtilsProbsString != null)
         {
             if (saveUtilsProbsString.equalsIgnoreCase("true")) saveUtilsProbsFlag = true;
@@ -95,7 +96,8 @@ public class HouseholdDataWriter
 
     }
 
-    // NOTE - this method should not be called simultaneously with the file one one
+    // NOTE - this method should not be called simultaneously with the file one
+    // one
     // as the string format is changed
     public void writeDataToDatabase(HouseholdDataManagerIf householdData, String dbFileName)
     {
@@ -107,7 +109,8 @@ public class HouseholdDataWriter
         logger.info("Finished writing data structures to database (" + delta + " minutes).");
     }
 
-    // NOTE - this method should not be called simultaneously with the database one
+    // NOTE - this method should not be called simultaneously with the database
+    // one
     // one as the string format is changed
     public void writeDataToFiles(HouseholdDataManagerIf householdData)
     {
@@ -143,8 +146,8 @@ public class HouseholdDataWriter
                     if (hh == null) continue;
                     hhid = hh.getHhId();
 
-//                    long size = ObjectUtil.sizeOf(hh);
-//                    if (size > maxSize) maxSize = size;
+                    // long size = ObjectUtil.sizeOf(hh);
+                    // if (size > maxSize) maxSize = size;
 
                     writer.writeHouseholdData(formHouseholdDataEntry(hh));
                     for (Person p : hh.getPersons())
@@ -171,7 +174,8 @@ public class HouseholdDataWriter
                 }
             }
 
-//            logger.info("max size for all Household objects after writing output files is " + maxSize + " bytes.");
+            // logger.info("max size for all Household objects after writing output files is "
+            // + maxSize + " bytes.");
 
         } catch (RuntimeException e)
         {
@@ -352,7 +356,7 @@ public class HouseholdDataWriter
         data.add(string(p.getInternalExternalTripChoiceResult()));
         return data;
     }
-    
+
     private List<String> formIndivTourColumnNames()
     {
         List<String> data = new LinkedList<String>();
@@ -368,7 +372,7 @@ public class HouseholdDataWriter
         data.add("start_period");
         data.add("end_period");
         data.add("tour_mode");
-        data.add("tour_distance");        
+        data.add("tour_distance");
         data.add("atWork_freq");
         data.add("num_ob_stops");
         data.add("num_ib_stops");
@@ -526,11 +530,10 @@ public class HouseholdDataWriter
         {
             int numModeAlts = modelStructure.getMaxTourModeIndex();
             float[] utils = t.getTourModalUtilities();
-            
-            int dummy=0;
-            if (utils == null)
-                dummy=1;
-            
+
+            int dummy = 0;
+            if (utils == null) dummy = 1;
+
             for (int i = 0; i < utils.length; i++)
                 data.add(string(utils[i]));
             for (int i = utils.length; i < numModeAlts; i++)
@@ -568,11 +571,10 @@ public class HouseholdDataWriter
         {
             int numModeAlts = modelStructure.getMaxTourModeIndex();
             float[] utils = t.getTourModalUtilities();
-   
-            int dummy=0;
-            if (utils == null)
-                dummy=1;
-            
+
+            int dummy = 0;
+            if (utils == null) dummy = 1;
+
             for (int i = 0; i < utils.length; i++)
                 data.add(string(utils[i]));
             for (int i = utils.length; i < numModeAlts; i++)
@@ -606,18 +608,18 @@ public class HouseholdDataWriter
     }
 
     /*
-     * private int getBitMask(int number) { switch (number) { case 1 : return 1; case
-     * 2 : return 2; case 3 : return 4; case 4 : return 8; case 5 : return 16; case 6
-     * : return 32; case 7 : return 64; case 8 : return 128; case 9 : return 256;
-     * case 10 : return 512; case 11 : return 1024; case 12 : return 2048; case 13 :
-     * return 4096; case 14 : return 8192; case 15 : return 16384; case 16 : return
-     * 32768; case 17 : return 65536; case 18 : return 131072; case 19 : return
-     * 262144; case 20 : return 524288; case 21 : return 1048576; case 22 : return
-     * 2097152; case 23 : return 4194304; case 24 : return 8388608; case 25 : return
-     * 16777216; case 26 : return 33554432; case 27 : return 67108864; case 28 :
-     * return 134217728; case 29 : return 268435456; case 30 : return 536870912;
-     * default : throw new RuntimeException("Participation array value unknown: " +
-     * number); } }
+     * private int getBitMask(int number) { switch (number) { case 1 : return 1;
+     * case 2 : return 2; case 3 : return 4; case 4 : return 8; case 5 : return
+     * 16; case 6 : return 32; case 7 : return 64; case 8 : return 128; case 9 :
+     * return 256; case 10 : return 512; case 11 : return 1024; case 12 : return
+     * 2048; case 13 : return 4096; case 14 : return 8192; case 15 : return
+     * 16384; case 16 : return 32768; case 17 : return 65536; case 18 : return
+     * 131072; case 19 : return 262144; case 20 : return 524288; case 21 :
+     * return 1048576; case 22 : return 2097152; case 23 : return 4194304; case
+     * 24 : return 8388608; case 25 : return 16777216; case 26 : return
+     * 33554432; case 27 : return 67108864; case 28 : return 134217728; case 29
+     * : return 268435456; case 30 : return 536870912; default : throw new
+     * RuntimeException("Participation array value unknown: " + number); } }
      */
 
     private List<String> formIndivTripColumnNames()
@@ -866,9 +868,8 @@ public class HouseholdDataWriter
         }
         if (participants.length < 2)
         {
-            logger
-                    .error("length of tour participants array is not null, but is < 2; should be >= 2 for joint tour, hhid="
-                            + t.getHhId() + ".");
+            logger.error("length of tour participants array is not null, but is < 2; should be >= 2 for joint tour, hhid="
+                    + t.getHhId() + ".");
             throw new RuntimeException();
         }
 
@@ -976,9 +977,8 @@ public class HouseholdDataWriter
         }
         if (participants.length < 2)
         {
-            logger
-                    .error("length of tour participants array is not null, but is < 2; should be >= 2 for joint tour, hhid="
-                            + t.getHhId() + ".");
+            logger.error("length of tour participants array is not null, but is < 2; should be >= 2 for joint tour, hhid="
+                    + t.getHhId() + ".");
             throw new RuntimeException();
         }
 
@@ -1132,7 +1132,7 @@ public class HouseholdDataWriter
             Iterator<String> cols = columns.iterator();
             Iterator<SqliteDataTypes> tps = types.iterator();
             sb.append(cols.next()).append(" ").append(tps.next().name());
-            while(cols.hasNext())
+            while (cols.hasNext())
                 sb.append(",").append(cols.next()).append(" ").append(tps.next().name());
             sb.append(");");
             return sb.toString();
@@ -1272,10 +1272,14 @@ public class HouseholdDataWriter
 
             String hhFile = formFileName(rbMap.get(PROPERTIES_HOUSEHOLD_DATA_FILE), iteration);
             String personFile = formFileName(rbMap.get(PROPERTIES_PERSON_DATA_FILE), iteration);
-            String indivTourFile = formFileName(rbMap.get(PROPERTIES_INDIV_TOUR_DATA_FILE), iteration);
-            String jointTourFile = formFileName(rbMap.get(PROPERTIES_JOINT_TOUR_DATA_FILE), iteration);
-            String indivTripFile = formFileName(rbMap.get(PROPERTIES_INDIV_TRIP_DATA_FILE), iteration);
-            String jointTripFile = formFileName(rbMap.get(PROPERTIES_JOINT_TRIP_DATA_FILE), iteration);
+            String indivTourFile = formFileName(rbMap.get(PROPERTIES_INDIV_TOUR_DATA_FILE),
+                    iteration);
+            String jointTourFile = formFileName(rbMap.get(PROPERTIES_JOINT_TOUR_DATA_FILE),
+                    iteration);
+            String indivTripFile = formFileName(rbMap.get(PROPERTIES_INDIV_TRIP_DATA_FILE),
+                    iteration);
+            String jointTripFile = formFileName(rbMap.get(PROPERTIES_JOINT_TRIP_DATA_FILE),
+                    iteration);
 
             try
             {
@@ -1358,7 +1362,7 @@ public class HouseholdDataWriter
             char delimiter = ',';
             Iterator<String> it = data.iterator();
             StringBuilder sb = new StringBuilder(it.next());
-            while(it.hasNext())
+            while (it.hasNext())
                 sb.append(delimiter).append(it.next());
             return sb.toString();
         }
@@ -1394,7 +1398,7 @@ public class HouseholdDataWriter
         int startIndex = 0;
         int endIndex = 0;
 
-        while(endIndex < numberOfHouseholds - 1)
+        while (endIndex < numberOfHouseholds - 1)
         {
             endIndex = startIndex + NUM_WRITE_PACKETS - 1;
             if (endIndex + NUM_WRITE_PACKETS > numberOfHouseholds)
@@ -1413,10 +1417,11 @@ public class HouseholdDataWriter
     }
 
     /**
-     * Calculate auto skims for a given origin to all destination mgras, and return
-     * auto distance.
+     * Calculate auto skims for a given origin to all destination mgras, and
+     * return auto distance.
      * 
-     * @param oMgra The origin mgra
+     * @param oMgra
+     *            The origin mgra
      * @return An array of distances
      */
     private double calculateDistancesForAllMgras(int oMgra, int dMgra)

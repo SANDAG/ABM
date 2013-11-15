@@ -50,7 +50,8 @@ public class AtWorkSubtourFrequencyDMU
         tour = tourObject;
     }
 
-    // DMU methods - define one of these for every @var in the mode choice control
+    // DMU methods - define one of these for every @var in the mode choice
+    // control
     // file.
 
     public void setDmuIndexValues(int hhId, int zoneId, int origTaz, int destTaz)
@@ -162,8 +163,8 @@ public class AtWorkSubtourFrequencyDMU
     }
 
     /**
-     * set the value of the non-mandatory eat out accessibility for this decision
-     * maker
+     * set the value of the non-mandatory eat out accessibility for this
+     * decision maker
      */
     public void setNmEatOutAccessibilityWorkplace(double nmEatOutAccessibillity)
     {
