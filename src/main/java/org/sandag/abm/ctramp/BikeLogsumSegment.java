@@ -34,4 +34,17 @@ public class BikeLogsumSegment {
 										new BikeLogsumSegment(false,mandatory,true)};
 	}
 	
+	public String toString() {
+		StringBuilder sb = new StringBuilder("<BikeLogsumSegment: ");
+		boolean isFemale = (segmentId & 1) > 0;
+		boolean isMandatory = (segmentId & 2) > 0;
+		boolean inbound = (segmentId & 4) > 0;
+		sb.append(isFemale ? "female" : "male");
+		sb.append(",").append(isMandatory ? "mandatory" : "non-mandatory");
+		if (isMandatory)
+			sb.append(",").append(inbound ? "inbound" : "outbound");
+		sb.append(">");
+		return sb.toString();
+	}
+	
 }

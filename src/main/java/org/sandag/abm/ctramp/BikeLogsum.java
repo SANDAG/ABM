@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -30,7 +31,7 @@ public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment> {
 							Integer.parseInt(rbMap.get(BIKE_LOGSUM_NODE_PAIR_COUNT_PROPERTY)) : DEFAULT_BIKE_LOGSUM_NODE_PAIR_COUNT;
 				    String mgraFile = Paths.get(rbMap.get(CtrampApplication.PROPERTIES_PROJECT_DIRECTORY),rbMap.get(MgraDataManager.PROPERTIES_MGRA_DATA_FILE)).toString();
 				    String tazLogsumFile = Paths.get(rbMap.get(BIKE_LOGSUM_OUTPUT_PROPERTY),rbMap.get(BIKE_LOGSUM_TAZ_FILE_PROPERTY)).toString();
-				    String mgraLogsumFile = Paths.get(rbMap.get(BIKE_LOGSUM_OUTPUT_PROPERTY),rbMap.get(BIKE_LOGSUM_TAZ_FILE_PROPERTY)).toString();
+				    String mgraLogsumFile = Paths.get(rbMap.get(BIKE_LOGSUM_OUTPUT_PROPERTY),rbMap.get(BIKE_LOGSUM_MGRA_FILE_PROPERTY)).toString();
 					instance = new BikeLogsum(tazLogsumFile,mgraLogsumFile,nodePairCount,mgraFile);
 				}
 			}
@@ -62,7 +63,7 @@ public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment> {
 						String column = lineData[i].toLowerCase();
 						if (column.equals(mgraColumnName))
 							mgraColumn = i;
-						if (lineData[i].equals(tazColumnName))
+						if (column.equals(tazColumnName))
 							tazColumn = i;
 					}
 					first = false;
@@ -96,6 +97,8 @@ public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment> {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				String[] lineData = line.trim().split(",");
+				for (int i = 0; i < lineData.length; i++)
+					lineData[i] = lineData[i].trim();
 				if (first) {
 					for (int i = 2; i < (2 + segmentWidth); i++) { //first two are for row and column
 						String columnName = lineData[i].toLowerCase();
@@ -160,6 +163,33 @@ public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment> {
 		
 		public int hashCode() {
 			return row + 37*column;
+		}
+	}
+	
+	public static void main(String ... args) {
+		Map<String,String> testRb = new HashMap<>();
+		
+		testRb.put(BIKE_LOGSUM_OUTPUT_PROPERTY,"D:/projects/sandag/output_test");
+		testRb.put(BIKE_LOGSUM_MGRA_FILE_PROPERTY,"bikeMgraLogsum.csv");
+		testRb.put(BIKE_LOGSUM_TAZ_FILE_PROPERTY,"bikeTazLogsum.csv");
+		testRb.put(BIKE_LOGSUM_NODE_PAIR_COUNT_PROPERTY,"55000");
+		testRb.put(CtrampApplication.PROPERTIES_PROJECT_DIRECTORY,"D:/projects/sandag/abm_reporting/abm_shell");
+		testRb.put(MgraDataManager.PROPERTIES_MGRA_DATA_FILE,"input/mgra12_based_input08_rev.csv");
+		BikeLogsum logsum = BikeLogsum.getBikeLogsum(testRb);
+		
+		System.out.println(logsum.logsum.size());
+
+		
+		int origin = 3668;
+		int destination = 9707;
+		boolean[] bs = {true,false};
+		for (boolean mandatory : bs) {
+			for (boolean female : bs) {
+				for (boolean inbound : bs) {
+					BikeLogsumSegment bls = new BikeLogsumSegment(female,mandatory,inbound);
+					System.out.println("origin " + origin + ", destination " + destination + ", " + bls + ": " + logsum.getValue(bls,origin,destination));
+				}
+			}
 		}
 	}
 
