@@ -14,10 +14,6 @@ public class SandagBikePathChoiceModel {
 	public static final String PATH_CHOICE_MODEL_UEC_DATA_SHEET_PROPERTY = "path.choice.uec.data.sheet";
 	public static final String PATH_CHOICE_MODEL_MAX_PATH_COUNT_PROPERTY = "path.choice.max.path.count";
 	
-	public static final String PATH_CHOICE_ALTS_ID_TOKEN_PROPERTY = "path.alts.id.token";
-	public static final String PATH_CHOICE_ALTS_FILE_PROPERTY = "path.alts.file";
-	public static final String PATH_CHOICE_ALTS_LINK_FILE_PROPERTY = "path.alts.link.file";
-	
 	private static final Logger logger = Logger.getLogger(SandagBikePathChoiceModel.class);
 	
 	private final ThreadLocal<ChoiceModelApplication> model;
