@@ -1,9 +1,12 @@
 package org.sandag.abm.active.sandag;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
+
 import org.sandag.abm.active.AbstractPathChoiceLogsumMatrixApplication;
 import org.sandag.abm.active.Network;
 import org.sandag.abm.active.NodePair;
@@ -89,6 +92,22 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
             
             Map<NodePair<SandagBikeNode>,double[]> logsums = application.calculateMarketSegmentLogsums();
             Map<Integer,Integer> centroids = configuration.getInverseZonalCentroidIdMap();
+            
+            try (PrintWriter writer = new PrintWriter(filename)) {
+            	StringBuilder sb = new StringBuilder("i,j");
+            	for (String segment : MARKET_SEGMENT_NAMES)
+            		sb.append(",").append(segment);
+            	writer.println(sb.toString());
+            	for (NodePair<SandagBikeNode> od : logsums.keySet()) {
+            		sb = new StringBuilder();
+            		sb.append(od.getFromNode().getId()).append(",").append(od.getToNode().getId());
+            		for (double logsum : logsums.get(od))
+            			sb.append(",").append(logsum);
+            		writer.println(sb.toString());
+            	}
+            } catch (IOException e) {
+            	throw new RuntimeException(e);
+			}
             
             try
             {
