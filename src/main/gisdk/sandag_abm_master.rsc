@@ -75,7 +75,6 @@ Macro "Run SANDAG ABM"
       // Start matrix manager locally
       runString = path+"\\bin\\runMtxMgr.cmd "+drive+" "+path_no_drive
       ok = RunMacro("TCB Run Command", 1, "Start matrix manager", runString)
-      if !ok then goto quit  
 	
       // Start  JPPF driver 
       runString = path+"\\bin\\runDriver.cmd "+drive+" "+path_no_drive

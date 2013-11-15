@@ -96,9 +96,6 @@ matrixCore = {
      end
    end
 
-   ok = RunMacro("Collapse OnOffs By Route", onOffTables, rt_file)
-   if !ret_value then goto quit
-
    quit:
     RunMacro("close all")
     Return( ok )
