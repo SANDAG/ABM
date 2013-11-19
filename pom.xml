@@ -433,7 +433,27 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>                  
+                    </execution>   
+                    <execution>
+                        <id>copy-report-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${project.build.directory}/${project.name}/${project.version}/report</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>input</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>*.xls</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>                 
                 </executions>
             </plugin>
             <plugin>
