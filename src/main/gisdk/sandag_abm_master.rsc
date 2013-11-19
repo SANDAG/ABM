@@ -3,8 +3,13 @@ Macro "Run SANDAG ABM"
    RunMacro("TCB Init")
 
    shared path, inputDir, outputDir, inputTruckDir, mxzone, mxtap, mgraDataFile,mxext,mxlink,mxrte
-   
-   sample_rate = { 0.20, 0.60, 0.50 }
+ 
+   // Stop residual Java processes on nodes
+   runString = path+"\\bin\\stopABM.cmd"
+   ok = RunMacro("TCB Run Command", 1, "Stop Nodes", runString)
+   if !ok then goto quit  
+
+   sample_rate = { 0.2, 0.5, 1.0 }
    max_iterations=sample_rate.length    //number of feedback loops
   
    cpulist={1,2,3,4}
@@ -18,8 +23,8 @@ Macro "Run SANDAG ABM"
    TAB1=1
    TAB2=2
 
-   path = "d:\\projects\\sandag\\series12\\base2008_5_period"
-   mgraDataFile      = "mgra12_based_input08_rev_balboa.csv"
+   path = "${workpath}\\${year}"
+   mgraDataFile      = "mgra13_based_input${year}.csv"
 
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","*********Model Run Starting************"})
    
@@ -37,11 +42,18 @@ Macro "Run SANDAG ABM"
    outputDir = path+"\\output"
    inputTruckDir = path+"\\input_truck"
  
-   SetLogFileName(path+"\\tclog.xml")
-   SetReportFileName(path+"\\tcreport.xml")
+   SetLogFileName(path+"\\logFiles\\tclog.xml")
+   SetReportFileName(path+"\\logFiles\\tcreport.xml")
    
+   // copy initial trip tables from input to output folder
+   CopyFile(inputDir+"\\trip_EA.mtx", outputDir+"\\trip_EA.mtx")
+   CopyFile(inputDir+"\\trip_AM.mtx", outputDir+"\\trip_AM.mtx")
+   CopyFile(inputDir+"\\trip_MD.mtx", outputDir+"\\trip_MD.mtx")
+   CopyFile(inputDir+"\\trip_PM.mtx", outputDir+"\\trip_PM.mtx")
+   CopyFile(inputDir+"\\trip_EV.mtx", outputDir+"\\trip_EV.mtx")
+      
    RunMacro("parameters")
-   	
+	
   // Build highway network
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - run create hwy"})
    ok = RunMacro("TCB Run Macro", 1, "run create hwy",{}) 
@@ -56,26 +68,21 @@ Macro "Run SANDAG ABM"
    ok = RunMacro("TCB Run Macro", 1, "update headways",{})
    if !ok then goto quit
 
-   // Create trip tables for first assignment from 4-step model
-   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - run create trip tables from 4-step"})
-   ok = RunMacro("TCB Run Macro", 1, "Create TOD Tables From 4Step Model",{}) 
-   if !ok then goto quit
 
    //Looping
    for iteration = 1 to max_iterations do        
 
       // Start matrix manager locally
-      runString = path+"\\runMtxMgr.cmd "+drive+" "+path_no_drive
+      runString = path+"\\bin\\runMtxMgr.cmd "+drive+" "+path_no_drive
       ok = RunMacro("TCB Run Command", 1, "Start matrix manager", runString)
-      if !ok then goto quit  
 	
       // Start  JPPF driver 
-      runString = path+"\\runDriver.cmd "+drive+" "+path_no_drive
+      runString = path+"\\bin\\runDriver.cmd "+drive+" "+path_no_drive
       ok = RunMacro("TCB Run Command", 1, "Start JPPF Driver", runString)
       if !ok then goto quit  
 
       // Start HH Manager, and worker nodes
-      runString = path+"\\StartHHAndNodes.cmd "+drive+" "+path_no_drive
+      runString = path+"\\bin\\StartHHAndNodes.cmd "+drive+" "+path_no_drive
       ok = RunMacro("TCB Run Command", 1, "Start HH Manager, JPPF Driver, and nodes", runString)
       if !ok then goto quit  
 
@@ -95,7 +102,7 @@ Macro "Run SANDAG ABM"
       if !ok then goto quit
 
       // Run CT-RAMP, airport model, visitor model, cross-border model, internal-external model
-      runString = path+"\\runSandagAbm.cmd "+drive+" "+path_forward_slash +" "+r2s(sample_rate[iteration])+" "+i2s(iteration)
+      runString = path+"\\bin\\runSandagAbm.cmd "+drive+" "+path_forward_slash +" "+r2s(sample_rate[iteration])+" "+i2s(iteration)
       RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run CT-RAMP, airport model, visitor model, cross-border model, internal-external model"+" "+runString})
       ok = RunMacro("TCB Run Command", 1, "Run CT-RAMP", runString)
       if !ok then goto quit  
@@ -121,7 +128,7 @@ Macro "Run SANDAG ABM"
       if !ok then goto quit
 
       //Run Truck Model
-      properties = "sandag_abm.properties"
+      properties = "\\conf\\sandag_abm.properties"
       RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - truck model"})
       ok = RunMacro("truck model",properties, iteration)
       if !ok then goto quit   
@@ -142,17 +149,27 @@ Macro "Run SANDAG ABM"
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Create Transit Tables"})
    ok = RunMacro("TCB Run Macro", 1, "Create Transit Tables",{}) 
    if !ok then goto quit
-
-   //Assign trip tables
+ 
+   //Run final and only transit assignment
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Assign Transit"})
    ok = RunMacro("TCB Run Macro", 1, "Assign Transit",{}) 
    if !ok then goto quit
-   	
+
+   // Skim highway network based on final highway assignment
+   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Hwy skim all"})
+   ok = RunMacro("TCB Run Macro", 1, "Hwy skim all",{}) 
+   if !ok then goto quit
+	
+   // Skim transit network based on final transit assignemnt
+   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Build transit skims"})
+   ok = RunMacro("TCB Run Macro", 1, "Build transit skims",{}) 
+   if !ok then goto quit
+  	
    //Create LUZ skims	
     RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Create LUZ Skims"})
    ok = RunMacro("TCB Run Macro", 1, "Create LUZ Skims",{}) 
    if !ok then goto quit
-   	
+	
 
    RunMacro("TCB Closing", ok, "False")
    return(1)

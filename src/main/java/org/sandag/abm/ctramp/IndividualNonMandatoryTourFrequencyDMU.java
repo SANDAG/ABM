@@ -58,7 +58,8 @@ public class IndividualNonMandatoryTourFrequencyDMU
         person = persObject;
     }
 
-    // DMU methods - define one of these for every @var in the mode choice control
+    // DMU methods - define one of these for every @var in the mode choice
+    // control
     // file.
 
     public void setDmuIndexValues(int hhId, int zoneId, int origTaz, int destTaz)
@@ -96,7 +97,8 @@ public class IndividualNonMandatoryTourFrequencyDMU
      */
     public int getHouseholdSize()
     {
-        // 1-based indexing, so the array is dimensioned 1 more than the number of
+        // 1-based indexing, so the array is dimensioned 1 more than the number
+        // of
         // persons.
         return hh.getPersons().length - 1;
     }
@@ -107,8 +109,8 @@ public class IndividualNonMandatoryTourFrequencyDMU
     }
 
     /**
-     * @return 1 if household has at least 1 car, and the number of cars equals the
-     *         number of workers
+     * @return 1 if household has at least 1 car, and the number of cars equals
+     *         the number of workers
      */
     public int getCarsEqualsWorkers()
     {
@@ -118,7 +120,8 @@ public class IndividualNonMandatoryTourFrequencyDMU
         // household must have at least 1 car, otherwise return 0.
         if (numAutos > 0)
         {
-            // if at least one car and numWorkers == numAutos, return 1, otherwise 0.
+            // if at least one car and numWorkers == numAutos, return 1,
+            // otherwise 0.
             if (numAutos == numWorkers) return 1;
             else return 0;
         } else
@@ -128,8 +131,8 @@ public class IndividualNonMandatoryTourFrequencyDMU
     }
 
     /**
-     * @return 1 if household has at least 1 car, and the number of cars equals the
-     *         number of workers
+     * @return 1 if household has at least 1 car, and the number of cars equals
+     *         the number of workers
      */
     public int getMoreCarsThanWorkers()
     {
@@ -222,8 +225,8 @@ public class IndividualNonMandatoryTourFrequencyDMU
     }
 
     /**
-     * determines the number of persons in the "decision making" household of type:
-     * full-time worker. returns the count, or 3, if count is 3 or more.
+     * determines the number of persons in the "decision making" household of
+     * type: full-time worker. returns the count, or 3, if count is 3 or more.
      * 
      * @return count (up to a max of 3) of the number of full-time workers.
      */
@@ -231,7 +234,8 @@ public class IndividualNonMandatoryTourFrequencyDMU
     {
         Person[] p = hh.getPersons();
 
-        // get the count of persons of type: full time worker; if more than 3, return
+        // get the count of persons of type: full time worker; if more than 3,
+        // return
         // 3.
         int count = 0;
         for (int i = 1; i < p.length; i++)
@@ -244,8 +248,8 @@ public class IndividualNonMandatoryTourFrequencyDMU
     }
 
     /**
-     * determines the number of persons in the "decision making" household of type:
-     * part-time worker. returns the count, or 3, if count is 3 or more.
+     * determines the number of persons in the "decision making" household of
+     * type: part-time worker. returns the count, or 3, if count is 3 or more.
      * 
      * @return count (up to a max of 3) of the number of part-time workers.
      */
@@ -253,7 +257,8 @@ public class IndividualNonMandatoryTourFrequencyDMU
     {
         Person[] p = hh.getPersons();
 
-        // get the count of persons of type: part-time worker; if more than 3, return
+        // get the count of persons of type: part-time worker; if more than 3,
+        // return
         // 3.
         int count = 0;
         for (int i = 1; i < p.length; i++)
@@ -266,8 +271,8 @@ public class IndividualNonMandatoryTourFrequencyDMU
     }
 
     /**
-     * determines the number of persons in the "decision making" household of type:
-     * university student. returns the count, or 3, if count is 3 or more.
+     * determines the number of persons in the "decision making" household of
+     * type: university student. returns the count, or 3, if count is 3 or more.
      * 
      * @return count (up to a max of 3) of the number of university students.
      */
@@ -288,8 +293,8 @@ public class IndividualNonMandatoryTourFrequencyDMU
     }
 
     /**
-     * determines the number of persons in the "decision making" household of type:
-     * non-worker. returns the count, or 3, if count is 3 or more.
+     * determines the number of persons in the "decision making" household of
+     * type: non-worker. returns the count, or 3, if count is 3 or more.
      * 
      * @return count (up to a max of 3) of the number of non-workers.
      */
@@ -297,7 +302,8 @@ public class IndividualNonMandatoryTourFrequencyDMU
     {
         Person[] p = hh.getPersons();
 
-        // get the count of persons of type: nonworker + retired; if more than 3,
+        // get the count of persons of type: nonworker + retired; if more than
+        // 3,
         // return 3.
         int count = 0;
         for (int i = 1; i < p.length; i++)
@@ -311,8 +317,9 @@ public class IndividualNonMandatoryTourFrequencyDMU
     }
 
     /**
-     * determines the number of persons in the "decision making" household of type:
-     * driving-age student. returns the count, or 3, if count is 3 or more.
+     * determines the number of persons in the "decision making" household of
+     * type: driving-age student. returns the count, or 3, if count is 3 or
+     * more.
      * 
      * @return count (up to a max of 3) of the number of driving-age students.
      */
@@ -320,7 +327,8 @@ public class IndividualNonMandatoryTourFrequencyDMU
     {
         Person[] p = hh.getPersons();
 
-        // get the count of persons of type: driving-age student; if more than 3,
+        // get the count of persons of type: driving-age student; if more than
+        // 3,
         // return 3.
         int count = 0;
         for (int i = 1; i < p.length; i++)
@@ -333,16 +341,19 @@ public class IndividualNonMandatoryTourFrequencyDMU
     }
 
     /**
-     * determines the number of persons in the "decision making" household of type:
-     * non-driving-age student. returns the count, or 3, if count is 3 or more.
+     * determines the number of persons in the "decision making" household of
+     * type: non-driving-age student. returns the count, or 3, if count is 3 or
+     * more.
      * 
-     * @return count (up to a max of 3) of the number of non-driving-age students.
+     * @return count (up to a max of 3) of the number of non-driving-age
+     *         students.
      */
     public int getNonDrivingAgeStudents()
     {
         Person[] p = hh.getPersons();
 
-        // get the count of persons of type: non-driving-age student; if more than 3,
+        // get the count of persons of type: non-driving-age student; if more
+        // than 3,
         // return 3.
         int count = 0;
         for (int i = 1; i < p.length; i++)
@@ -355,16 +366,18 @@ public class IndividualNonMandatoryTourFrequencyDMU
     }
 
     /**
-     * determines the number of persons in the "decision making" household of type:
-     * pre-school age. returns the count, or 3, if count is 3 or more.
+     * determines the number of persons in the "decision making" household of
+     * type: pre-school age. returns the count, or 3, if count is 3 or more.
      * 
-     * @return count (up to a max of 3) of the number of pre-school age children.
+     * @return count (up to a max of 3) of the number of pre-school age
+     *         children.
      */
     public int getPreSchoolers()
     {
         Person[] p = hh.getPersons();
 
-        // get the count of persons of type: pre-school; if more than 3, return 3.
+        // get the count of persons of type: pre-school; if more than 3, return
+        // 3.
         int count = 0;
         for (int i = 1; i < p.length; i++)
         {
@@ -423,8 +436,8 @@ public class IndividualNonMandatoryTourFrequencyDMU
     /**
      * called by methods invoked by UEC.solve()
      * 
-     * @return maximum number of hours mutually available between pairs of adults in
-     *         household
+     * @return maximum number of hours mutually available between pairs of
+     *         adults in household
      */
     public int getMaxAdultOverlaps()
     {
@@ -434,8 +447,8 @@ public class IndividualNonMandatoryTourFrequencyDMU
     /**
      * called by methods invoked by UEC.solve()
      * 
-     * @return maximum number of hours mutually available between pairs of children
-     *         in household
+     * @return maximum number of hours mutually available between pairs of
+     *         children in household
      */
     public int getMaxChildOverlaps()
     {
@@ -446,7 +459,8 @@ public class IndividualNonMandatoryTourFrequencyDMU
      * called by methods invoked by UEC.solve()
      * 
      * @return maximum number of hours mutually available between pairs or
-     *         adults/children where pairs consist of different types in household
+     *         adults/children where pairs consist of different types in
+     *         household
      */
     public int getMaxMixedOverlaps()
     {
@@ -491,7 +505,8 @@ public class IndividualNonMandatoryTourFrequencyDMU
         return maxOverlap;
     }
 
-    // TODO: find out if this is suposed to be total pairwise available hours, or
+    // TODO: find out if this is suposed to be total pairwise available hours,
+    // or
     // largest consecutive hours available for persons.
     // TODO: right now, assuming total pairwise available hours
     private int getOverlap(Person dmuPerson, Person otherPerson)

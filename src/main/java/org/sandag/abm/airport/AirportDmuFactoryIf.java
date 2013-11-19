@@ -6,6 +6,6 @@ package org.sandag.abm.airport;
 public interface AirportDmuFactoryIf
 {
 
-    public AirportModelDMU getAirportModelDMU();
+    AirportModelDMU getAirportModelDMU();
 
 }

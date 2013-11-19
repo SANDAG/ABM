@@ -3,7 +3,6 @@ package org.sandag.abm.specialevent;
 import java.util.HashMap;
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoAndNonMotorizedSkimsCalculator;
-import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.Util;

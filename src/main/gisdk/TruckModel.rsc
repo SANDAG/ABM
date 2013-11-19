@@ -122,7 +122,7 @@ EndMacro
 Produces standard truck trips 
  
 Inputs:
-   input\mgra12_based_input08_rev_balboa.csv
+   input\mgra13_based_input2010.csv
    input\TruckTripRates.csv
    output\hhByTaz.csv.csv
    output\empByTaz.csv.csv
@@ -329,7 +329,7 @@ Creates households by taz and employment by taz files to use in the truck trip g
  
 Inputs:
    sandag.properties
-   input\mgra12_based_input08_rev_balboa.csv
+   input\mgra13_based_input${year}.csv
 
 Outputs:
    output\empByTaz.csv
@@ -338,7 +338,7 @@ Outputs:
 **********************************************************************************************************/
 Macro "Create hh and emp by taz"
     shared path, inputDir, outputDir, mxzone      
-    mgraDataFile      = "mgra12_based_input08_rev_balboa.csv"
+    mgraDataFile      = "mgra13_based_input${year}.csv"
     empbytaz          = "empByTaz.csv"
     hhbytaz           = "hhByTaz.csv"
     

@@ -6,8 +6,8 @@ package org.sandag.abm.specialevent;
 public interface SpecialEventDmuFactoryIf
 {
 
-    public SpecialEventTripModeChoiceDMU getSpecialEventTripModeChoiceDMU();
+    SpecialEventTripModeChoiceDMU getSpecialEventTripModeChoiceDMU();
 
-    public SpecialEventOriginChoiceDMU getSpecialEventOriginChoiceDMU();
+    SpecialEventOriginChoiceDMU getSpecialEventOriginChoiceDMU();
 
 }

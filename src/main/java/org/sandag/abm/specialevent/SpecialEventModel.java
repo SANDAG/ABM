@@ -4,6 +4,7 @@ import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
 import java.io.File;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.MissingResourceException;
 import org.apache.log4j.Logger;
@@ -30,7 +31,7 @@ import com.pb.common.util.ResourceUtil;
  * written to a SUMMIT formatted file.
  * 
  */
-public class SpecialEventModel
+public final class SpecialEventModel
 {
 
     public static final int         MATRIX_DATA_SERVER_PORT        = 1171;
@@ -202,7 +203,7 @@ public class SpecialEventModel
         try
         {
             ItemServer.bind(matrixServer, className);
-        } catch (IOException e)
+        } catch (RemoteException e)
         {
             logger.error(String.format(
                     "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",

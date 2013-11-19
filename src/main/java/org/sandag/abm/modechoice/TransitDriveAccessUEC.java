@@ -1,11 +1,12 @@
 /*
- * Copyright 2005 PB Consult Inc. Licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License. You
- * may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software distributed
- * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
- * CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
+ * Copyright 2005 PB Consult Inc. Licensed under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  */
 package org.sandag.abm.modechoice;
 
@@ -14,12 +15,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import org.apache.log4j.Logger;
 import org.sandag.abm.modechoice.Modes.AccessMode;
-
 import com.pb.common.newmodel.UtilityExpressionCalculator;
 
 /**
- * ParkRidePathUEC calculates the best PNR utilities for a given production/origin
- * TDZ and attraction/destination MGRA.
+ * ParkRidePathUEC calculates the best PNR utilities for a given
+ * production/origin TDZ and attraction/destination MGRA.
  * 
  * @author Christi Willison
  * @version 1.0, Feb 12, 2009
@@ -28,9 +28,11 @@ public class TransitDriveAccessUEC
         extends TransitPathUEC
 {
 
-    private TransitDriveAccessDMU dmu = new TransitDriveAccessDMU(); // DMU for this
+    private TransitDriveAccessDMU dmu = new TransitDriveAccessDMU(); // DMU for
+                                                                     // this
     // UEC
-    private AccessMode            accMode;                          // gets passed
+    private AccessMode            accMode;                          // gets
+                                                                     // passed
     // in to
     // constructor; either
     // PNR or KNR
@@ -46,10 +48,14 @@ public class TransitDriveAccessUEC
     /**
      * Constructor.
      * 
-     * @param rb ResourceBundle
-     * @param UECFileName The path/name of the UEC containing the walk-transit model.
-     * @param modelSheet The sheet (0-indexed) containing the model specification.
-     * @param dataSheet The sheet (0-indexed) containing the data specification.
+     * @param rb
+     *            ResourceBundle
+     * @param UECFileName
+     *            The path/name of the UEC containing the walk-transit model.
+     * @param modelSheet
+     *            The sheet (0-indexed) containing the model specification.
+     * @param dataSheet
+     *            The sheet (0-indexed) containing the data specification.
      */
     public TransitDriveAccessUEC(HashMap<String, String> rbMap, String UECFileName, int modelSheet,
             int dataSheet, AccessMode am)
@@ -69,11 +75,14 @@ public class TransitDriveAccessUEC
      * piece-wise utilities are built, where TAP-TAP pair utilities are computed
      * separately from MGRA-TAP walk utilities, to cut down on processing time.
      * 
-     * @param rb ResourceBundle
-     * @param UECFileName The path/name of the UEC containing the drive-transit
-     *            model.
-     * @param modelSheet The sheet (0-indexed) containing the model specification.
-     * @param dataSheet The sheet (0-indexed) containing the data specification.
+     * @param rb
+     *            ResourceBundle
+     * @param UECFileName
+     *            The path/name of the UEC containing the drive-transit model.
+     * @param modelSheet
+     *            The sheet (0-indexed) containing the model specification.
+     * @param dataSheet
+     *            The sheet (0-indexed) containing the data specification.
      */
     public void createDriveAccessUEC(HashMap<String, String> rbMap, String UECFileName,
             int modelSheet, int dataSheet)
@@ -84,33 +93,36 @@ public class TransitDriveAccessUEC
     }
 
     /**
-     * This method finds the best TAP-pairs for each ride mode. It cycles through
-     * drive access TAPs at the origin end (associated with the origin MGRA) and
-     * alighting TAPs at the destination end (associated with the destination MGRA)
-     * and calculates a utility for every available ride mode for each TAP pair. It
-     * compares the utility calculated for that TAP-pair to previously calculated
-     * utilities and stores the origin and destination TAP that had the best utility
-     * for each ride mode.
+     * This method finds the best TAP-pairs for each ride mode. It cycles
+     * through drive access TAPs at the origin end (associated with the origin
+     * MGRA) and alighting TAPs at the destination end (associated with the
+     * destination MGRA) and calculates a utility for every available ride mode
+     * for each TAP pair. It compares the utility calculated for that TAP-pair
+     * to previously calculated utilities and stores the origin and destination
+     * TAP that had the best utility for each ride mode.
      * 
-     * @param pTaz The origin/production MGRA.
-     * @param aMgra The destination/attraction MGRA.
+     * @param pTaz
+     *            The origin/production MGRA.
+     * @param aMgra
+     *            The destination/attraction MGRA.
      * 
      */
     public void findBestDriveTransitWalkTaps(int pMgra, int aMgra, boolean debug)
     {
 
-        super.clearArrays( Double.NEGATIVE_INFINITY );
+        super.clearArrays(Double.NEGATIVE_INFINITY);
         bestDriveAccessTime = 0;
         bestWalkEgressTime = 0;
-
 
         int pTaz = mgraManager.getTaz(pMgra);
         int aTaz = mgraManager.getTaz(aMgra);
 
         if (tazManager.getParkRideOrKissRideTapsForZone(pTaz, accMode) == null
-                || mgraManager.getMgraWlkTapsDistArray()[aMgra][0] == null) { return; }
+                || mgraManager.getMgraWlkTapsDistArray()[aMgra][0] == null)
+        {
+            return;
+        }
 
-        
         boolean writeCalculations = false;
         if (tracer.isTraceOn() && tracer.isTraceZonePair(pTaz, aTaz))
         {
@@ -128,7 +140,8 @@ public class TransitDriveAccessUEC
             dmu.setDriveTimeToTap(driveTime);
             dmu.setCarToStationWalkTime(0f);
 
-            int lotID = (int) tapManager.getTapParkingInfo()[pTap][0][0]; // lot ID
+            int lotID = (int) tapManager.getTapParkingInfo()[pTap][0][0]; // lot
+                                                                          // ID
             float lotCapacity = tapManager.getTapParkingInfo()[pTap][2][0]; // lot
             // capacity
             if ((accMode == AccessMode.PARK_N_RIDE && tapManager.getLotUse(lotID) < lotCapacity)
@@ -171,7 +184,8 @@ public class TransitDriveAccessUEC
 
                     // compare the utilities for this TAP pair to previously
                     // calculated utilities
-                    // for each ride mode and store the TAP numbers if this TAP pair
+                    // for each ride mode and store the TAP numbers if this TAP
+                    // pair
                     // is the best.
                     boolean foundNewBestPath = super.comparePaths(results, pTap, aTap,
                             writeCalculations);
@@ -191,22 +205,24 @@ public class TransitDriveAccessUEC
     }
 
     /**
-     * This method finds the best TAP-pairs for each ride mode. It cycles through
-     * drive access TAPs at the origin end (associated with the origin MGRA) and
-     * alighting TAPs at the destination end (associated with the destination MGRA)
-     * and calculates a utility for every available ride mode for each TAP pair. It
-     * compares the utility calculated for that TAP-pair to previously calculated
-     * utilities and stores the origin and destination TAP that had the best utility
-     * for each ride mode.
+     * This method finds the best TAP-pairs for each ride mode. It cycles
+     * through drive access TAPs at the origin end (associated with the origin
+     * MGRA) and alighting TAPs at the destination end (associated with the
+     * destination MGRA) and calculates a utility for every available ride mode
+     * for each TAP pair. It compares the utility calculated for that TAP-pair
+     * to previously calculated utilities and stores the origin and destination
+     * TAP that had the best utility for each ride mode.
      * 
-     * @param pTaz The origin/production MGRA.
-     * @param aMgra The destination/attraction MGRA.
+     * @param pTaz
+     *            The origin/production MGRA.
+     * @param aMgra
+     *            The destination/attraction MGRA.
      * 
      */
     public void findBestWalkTransitDriveTaps(int pMgra, int aMgra, boolean debug)
     {
 
-        super.clearArrays( Double.NEGATIVE_INFINITY );
+        super.clearArrays(Double.NEGATIVE_INFINITY);
         bestWalkAccessTime = 0;
         bestDriveEgressTime = 0;
 
@@ -214,8 +230,10 @@ public class TransitDriveAccessUEC
         int aTaz = mgraManager.getTaz(aMgra);
 
         if (mgraManager.getMgraWlkTapsDistArray()[pMgra][0] == null
-                || tazManager.getParkRideOrKissRideTapsForZone(aTaz, accMode) == null) { return; }
-
+                || tazManager.getParkRideOrKissRideTapsForZone(aTaz, accMode) == null)
+        {
+            return;
+        }
 
         boolean writeCalculations = false;
         if (tracer.isTraceOn() && tracer.isTraceZonePair(pTaz, aTaz))
@@ -278,7 +296,8 @@ public class TransitDriveAccessUEC
 
                     // compare the utilities for this TAP pair to previously
                     // calculated utilities
-                    // for each ride mode and store the TAP numbers if this TAP pair
+                    // for each ride mode and store the TAP numbers if this TAP
+                    // pair
                     // is the best.
                     boolean foundNewBestPath = super.comparePaths(results, pTap, aTap,
                             writeCalculations);
@@ -298,14 +317,17 @@ public class TransitDriveAccessUEC
     }
 
     /**
-     * This method calculates the utilities for a given Tap pair. It is called from
-     * the method @link {@link #findBestDriveAccessTaps(int, int)}. The walk times in
-     * the dmu must be set separately, or set to 0 for a set of utilities that are
-     * mgra-independent.
+     * This method calculates the utilities for a given Tap pair. It is called
+     * from the method @link {@link #findBestDriveAccessTaps(int, int)}. The
+     * walk times in the dmu must be set separately, or set to 0 for a set of
+     * utilities that are mgra-independent.
      * 
-     * @param pTap The origin/production Tap
-     * @param aTap The destination/attraction Tap.
-     * @param trace True if debug calculations are to be written to the logger for
+     * @param pTap
+     *            The origin/production Tap
+     * @param aTap
+     *            The destination/attraction Tap.
+     * @param trace
+     *            True if debug calculations are to be written to the logger for
      *            this Tap-pair.
      * @return A set of utilities for the Tap-pair, dimensioned by ride mode in @link
      *         <Modes>.
@@ -343,12 +365,15 @@ public class TransitDriveAccessUEC
     }
 
     /**
-     * This method calculates the drive-access portion of the utility for a given TAZ
-     * to a given tap.
+     * This method calculates the drive-access portion of the utility for a
+     * given TAZ to a given tap.
      * 
-     * @param taz The TAZ
-     * @param tapPosition The position of the Tap in the MGRA manager
-     * @param trace True if debug calculations are to be written to the logger for
+     * @param taz
+     *            The TAZ
+     * @param tapPosition
+     *            The position of the Tap in the MGRA manager
+     * @param trace
+     *            True if debug calculations are to be written to the logger for
      *            this mgra-tap pair.
      * @return A drive-access utility for the Taz-Tap pair.
      */
@@ -379,7 +404,8 @@ public class TransitDriveAccessUEC
     }
 
     /**
-     * @return the origin MGRA to TAP walk time stored for the best TAP-TAP pair.
+     * @return the origin MGRA to TAP walk time stored for the best TAP-TAP
+     *         pair.
      */
     public float getBestWalkAccessTime()
     {
@@ -387,8 +413,8 @@ public class TransitDriveAccessUEC
     }
 
     /**
-     * @return the TAP to destination MGRA drive time stored for the best TAP-TAP
-     *         pair.
+     * @return the TAP to destination MGRA drive time stored for the best
+     *         TAP-TAP pair.
      */
     public float getBestDriveEgressTime()
     {
@@ -396,7 +422,8 @@ public class TransitDriveAccessUEC
     }
 
     /**
-     * @return the origin MGRA to TAP drive time stored for the best TAP-TAP pair.
+     * @return the origin MGRA to TAP drive time stored for the best TAP-TAP
+     *         pair.
      */
     public float getBestDriveAccessTime()
     {
@@ -413,8 +440,8 @@ public class TransitDriveAccessUEC
     }
 
     /**
-     * set a Logger object which has been configured to direct logging to a specific
-     * file.
+     * set a Logger object which has been configured to direct logging to a
+     * specific file.
      */
     public void setLogger(Logger newLogger)
     {

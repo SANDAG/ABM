@@ -4,14 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
-import com.pb.common.calculator.VariableTable;
-import com.pb.common.datafile.OLD_CSVFileReader;
-import com.pb.common.datafile.TableDataSet;
-import com.pb.common.newmodel.ChoiceModelApplication;
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
+import com.pb.common.calculator.VariableTable;
+import com.pb.common.datafile.OLD_CSVFileReader;
+import com.pb.common.datafile.TableDataSet;
+import com.pb.common.newmodel.ChoiceModelApplication;
 
 public class CrossBorderTourModeChoiceModel
         implements Serializable
@@ -24,18 +24,19 @@ public class CrossBorderTourModeChoiceModel
     private MgraDataManager     mgraManager;
 
     /**
-     * A private class used as a key to store the wait times for a particular station.
+     * A private class used as a key to store the wait times for a particular
+     * station.
      * 
      * @author Freedman
      * 
      */
     private class WaitTimeClass
     {
-        int   beginPeriod[];   // by time periods
-        int   endPeriod[];     // by time periods
-        float StandardWait[];  // by time periods
-        float SENTRIWait[];    // by time periods
-        float PedestrianWait[]; // by time periods
+        int[]   beginPeriod;   // by time periods
+        int[]   endPeriod;     // by time periods
+        float[] StandardWait;  // by time periods
+        float[] SENTRIWait;    // by time periods
+        float[] PedestrianWait; // by time periods
     }
 
     HashMap<Integer, WaitTimeClass>        waitTimeMap;
@@ -46,10 +47,14 @@ public class CrossBorderTourModeChoiceModel
     private static final String            PROPERTIES_UEC_NONMANDATORY_MODEL_SHEET = "crossBorder.tour.mc.nonmandatory.model.page";
     private static final String            PROPERTIES_POE_WAITTIMES                = "crossBorder.poe.waittime.file";
 
-    private ChoiceModelApplication[]       mcModel;                                                                                // by segment -
-                                                                                                                                    // mandatory vs
+    private ChoiceModelApplication[]       mcModel;                                                                                // by
+                                                                                                                                    // segment
+                                                                                                                                    // -
+                                                                                                                                    // mandatory
+                                                                                                                                    // vs
                                                                                                                                     // non-mandatory
-                                                                                                                                    // (each has
+                                                                                                                                    // (each
+                                                                                                                                    // has
                                                                                                                                     // different
                                                                                                                                     // nesting
                                                                                                                                     // coefficients)
@@ -131,7 +136,8 @@ public class CrossBorderTourModeChoiceModel
         int nonmandatoryModelPage = new Integer(Util.getStringValueFromPropertyMap(propertyMap,
                 PROPERTIES_UEC_NONMANDATORY_MODEL_SHEET));
 
-        // default is to not save the tour mode choice utils and probs for each tour
+        // default is to not save the tour mode choice utils and probs for each
+        // tour
         String saveUtilsProbsString = propertyMap
                 .get(CtrampApplication.PROPERTIES_SAVE_TOUR_MODE_CHOICE_UTILS);
         if (saveUtilsProbsString != null)
@@ -163,7 +169,8 @@ public class CrossBorderTourModeChoiceModel
             String choiceModelDescription, String decisionMakerLabel)
     {
 
-        // set all tour mode DMU attributes including calculation of trip mode choice logsums for inbound & outbound directions.
+        // set all tour mode DMU attributes including calculation of trip mode
+        // choice logsums for inbound & outbound directions.
         setDmuAttributes(tour);
 
         return getModeChoiceLogsum(tour, modelLogger, choiceModelDescription, decisionMakerLabel);
@@ -198,7 +205,8 @@ public class CrossBorderTourModeChoiceModel
         int[] beginTime = wait.beginPeriod;
         int[] endTime = wait.endPeriod;
 
-        // iterate through time arrays, find corresponding row, and set wait times
+        // iterate through time arrays, find corresponding row, and set wait
+        // times
         for (int i = 0; i < beginTime.length; ++i)
         {
             if (period >= beginTime[i] && period <= endTime[i])
@@ -212,10 +220,12 @@ public class CrossBorderTourModeChoiceModel
     }
 
     /**
-     * Set trip mode choice logsums (outbound and inbound) for calculation of tour mode choice model.
+     * Set trip mode choice logsums (outbound and inbound) for calculation of
+     * tour mode choice model.
      * 
      * @param tour
-     *            The tour with other attributes such as origin, destination, purpose coded.
+     *            The tour with other attributes such as origin, destination,
+     *            purpose coded.
      */
     public void setTripLogsums(CrossBorderTour tour)
     {
@@ -391,15 +401,18 @@ public class CrossBorderTourModeChoiceModel
 
         double rn = tour.getRandom();
 
-        // if the choice model has at least one available alternative, make choice.
+        // if the choice model has at least one available alternative, make
+        // choice.
         int chosen;
         if (mcModel[modelIndex].getAvailabilityCount() > 0)
         {
 
             chosen = mcModel[modelIndex].getChoiceResult(rn);
 
-            // best tap pairs were determined and saved in mcDmuObject while setting dmu skim attributes
-            // if chosen mode is a transit mode, save these tap pairs in the tour object; if not transit tour attributes remain null.
+            // best tap pairs were determined and saved in mcDmuObject while
+            // setting dmu skim attributes
+            // if chosen mode is a transit mode, save these tap pairs in the
+            // tour object; if not transit tour attributes remain null.
             if (modelStructure.getTourModeIsTransit(chosen))
             {
                 tour.setBestWtwTapPairsOut(logsumsCalculator.getBestWtwTapsOut());
@@ -487,7 +500,8 @@ public class CrossBorderTourModeChoiceModel
         if (saveUtilsProbsFlag)
         {
 
-            // get the utilities and probabilities arrays for the tour mode choice
+            // get the utilities and probabilities arrays for the tour mode
+            // choice
             // model for this tour and save them to the tour object
             double[] dUtils = mcModel[modelIndex].getUtilities();
             double[] dProbs = mcModel[modelIndex].getProbabilities();
@@ -513,7 +527,8 @@ public class CrossBorderTourModeChoiceModel
      * Read wait time file and store wait times in waitTimeMap HashMap.
      * 
      * @param fileName
-     *            Name of file containing station, beginPeriod, endPeriod and wait time for standard, SENTRI, and pedestrians.
+     *            Name of file containing station, beginPeriod, endPeriod and
+     *            wait time for standard, SENTRI, and pedestrians.
      */
     protected void readWaitTimeFile(String fileName)
     {

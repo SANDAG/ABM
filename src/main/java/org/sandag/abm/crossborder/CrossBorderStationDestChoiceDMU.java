@@ -3,12 +3,8 @@ package org.sandag.abm.crossborder;
 import java.io.Serializable;
 import java.util.HashMap;
 import org.apache.log4j.Logger;
-import org.sandag.abm.ctramp.McLogsumsCalculator;
-import org.sandag.abm.ctramp.TourModeChoiceDMU;
-import org.sandag.abm.ctramp.ModelStructure;
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
-import com.pb.common.datafile.TableDataSet;
 
 public class CrossBorderStationDestChoiceDMU
         implements Serializable, VariableTable
@@ -22,15 +18,55 @@ public class CrossBorderStationDestChoiceDMU
     protected float                    tourDepartPeriod;
     protected float                    tourArrivePeriod;
     protected int                      purpose;
-    protected double[][]               sizeTerms;                                    // by purpose, alternative (station-taz or sampled station-mgra)
-    protected double[]                 stationSizeTerms;                             // by alternative (station-taz or sampled station-mgra)
-    protected double[]                 correctionFactors;                            // by alternative (sampled station-mgra pair, for full model
+    protected double[][]               sizeTerms;                                    // by
+                                                                                      // purpose,
+                                                                                      // alternative
+                                                                                      // (station-taz
+                                                                                      // or
+                                                                                      // sampled
+                                                                                      // station-mgra)
+    protected double[]                 stationSizeTerms;                             // by
+                                                                                      // alternative
+                                                                                      // (station-taz
+                                                                                      // or
+                                                                                      // sampled
+                                                                                      // station-mgra)
+    protected double[]                 correctionFactors;                            // by
+                                                                                      // alternative
+                                                                                      // (sampled
+                                                                                      // station-mgra
+                                                                                      // pair,
+                                                                                      // for
+                                                                                      // full
+                                                                                      // model
                                                                                       // only)
-    protected double[]                 tourModeLogsums;                              // by alternative (sampled station-mgra pair, for full model
+    protected double[]                 tourModeLogsums;                              // by
+                                                                                      // alternative
+                                                                                      // (sampled
+                                                                                      // station-mgra
+                                                                                      // pair,
+                                                                                      // for
+                                                                                      // full
+                                                                                      // model
                                                                                       // only)
-    protected int[]                    poeNumbers;                                   // by alternative (station-taz or sampled station-mgra)
-    protected int[]                    originTazs;                                   // by alternative (station-taz or sampled station-mgra)
-    protected int[]                    destinationTazs;                              // by alternative (station-taz or sampled station-mgra)
+    protected int[]                    poeNumbers;                                   // by
+                                                                                      // alternative
+                                                                                      // (station-taz
+                                                                                      // or
+                                                                                      // sampled
+                                                                                      // station-mgra)
+    protected int[]                    originTazs;                                   // by
+                                                                                      // alternative
+                                                                                      // (station-taz
+                                                                                      // or
+                                                                                      // sampled
+                                                                                      // station-mgra)
+    protected int[]                    destinationTazs;                              // by
+                                                                                      // alternative
+                                                                                      // (station-taz
+                                                                                      // or
+                                                                                      // sampled
+                                                                                      // station-mgra)
 
     protected double                   nmWalkTimeOut;
     protected double                   nmWalkTimeIn;
@@ -63,7 +99,8 @@ public class CrossBorderStationDestChoiceDMU
      * Set the poe number array
      * 
      * @param poeNumbers
-     *            An array of POE numbers, one for each alternative (either station-taz or sampled station-mgra)
+     *            An array of POE numbers, one for each alternative (either
+     *            station-taz or sampled station-mgra)
      */
     public void setPoeNumbers(int[] poeNumbers)
     {
@@ -86,7 +123,8 @@ public class CrossBorderStationDestChoiceDMU
      * Set the tour mode choice logsums
      * 
      * @param poeNumbers
-     *            An array of tour mode choice logsums, one for each alternative (sampled station-mgra)
+     *            An array of tour mode choice logsums, one for each alternative
+     *            (sampled station-mgra)
      */
     public void setTourModeLogsums(double[] logsums)
     {
@@ -124,8 +162,11 @@ public class CrossBorderStationDestChoiceDMU
     }
 
     /**
-     * @return the sizeTerms. The size term is the size of the alternative north of the border. It is indexed by alternative, where alternative is
-     *         either taz-station pair or mgra-station pair, depending on whether the DMU is being used for the SOA model or the actual model.
+     * @return the sizeTerms. The size term is the size of the alternative north
+     *         of the border. It is indexed by alternative, where alternative is
+     *         either taz-station pair or mgra-station pair, depending on
+     *         whether the DMU is being used for the SOA model or the actual
+     *         model.
      */
     public double getSizeTerm(int alt)
     {
@@ -134,9 +175,11 @@ public class CrossBorderStationDestChoiceDMU
 
     /**
      * @param sizeTerms
-     *            the sizeTerms to set. The size term is the size of the alternative north of the border. It is indexed by alternative, where
-     *            alternative is either taz-station pair or mgra-station pair, depending on whether the DMU is being used for the SOA model or the
-     *            actual model.
+     *            the sizeTerms to set. The size term is the size of the
+     *            alternative north of the border. It is indexed by alternative,
+     *            where alternative is either taz-station pair or mgra-station
+     *            pair, depending on whether the DMU is being used for the SOA
+     *            model or the actual model.
      */
     public void setSizeTerms(double[][] sizeTerms)
     {
@@ -144,8 +187,11 @@ public class CrossBorderStationDestChoiceDMU
     }
 
     /**
-     * @return the accessibility of the station to population south of the border. The size term is indexed by alternative, where alternative is
-     *         either taz-station pair or mgra-station pair, depending on whether the DMU is being used for the SOA model or the actual model.
+     * @return the accessibility of the station to population south of the
+     *         border. The size term is indexed by alternative, where
+     *         alternative is either taz-station pair or mgra-station pair,
+     *         depending on whether the DMU is being used for the SOA model or
+     *         the actual model.
      */
     public double getStationPopulationAccessibility(int alt)
     {
@@ -154,8 +200,11 @@ public class CrossBorderStationDestChoiceDMU
 
     /**
      * @param accessibilities
-     *            is the accessibility of the station to population south of the border. The size term is indexed by alternative, where alternative is
-     *            either taz-station pair or mgra-station pair, depending on whether the DMU is being used for the SOA model or the actual model.
+     *            is the accessibility of the station to population south of the
+     *            border. The size term is indexed by alternative, where
+     *            alternative is either taz-station pair or mgra-station pair,
+     *            depending on whether the DMU is being used for the SOA model
+     *            or the actual model.
      */
     public void setStationPopulationAccessibilities(double[] accessibilities)
     {

@@ -3,7 +3,6 @@ package org.sandag.abm.ctramp;
 import java.util.HashMap;
 import java.util.Random;
 import org.apache.log4j.Logger;
-import org.sandag.abm.ctramp.Stop;
 
 public class Household
         implements java.io.Serializable
@@ -33,7 +32,7 @@ public class Household
     private int                       imtfModelPattern;
     private String                    jtfModelPattern;
     private int                       tpChoice;
-    
+
     private Random                    hhRandom;
     private int                       randomCount = 0;
     private HashMap<Integer, Integer> uwslRandomCountList;
@@ -227,26 +226,30 @@ public class Household
 
     public void setHhAutos(int autos)
     {
-        // this sets the variable that will be used in work/school location choice.
-        // after auto ownership runs, this variable gets updated with number of autos
+        // this sets the variable that will be used in work/school location
+        // choice.
+        // after auto ownership runs, this variable gets updated with number of
+        // autos
         // for result.
         aoModelAutos = autos;
     }
 
-    public void setTpChoice( int value ){
+    public void setTpChoice(int value)
+    {
         tpChoice = value;
     }
-    
+
     public void setAutoOwnershipModelResult(int aoModelAlternativeChosen)
     {
-        // store the number of autos owned by the household (AO model alternative -
+        // store the number of autos owned by the household (AO model
+        // alternative -
         // 1).
         aoModelAutos = aoModelAlternativeChosen - 1;
     }
 
     /**
-     * auto sufficiency: 1 if cars < workers, 2 if cars equal workers, 3 if cars >
-     * workers
+     * auto sufficiency: 1 if cars < workers, 2 if cars equal workers, 3 if cars
+     * > workers
      * 
      * @return auto sufficiency value
      */
@@ -261,7 +264,7 @@ public class Household
     {
         return aoModelAutos;
     }
-    
+
     public int getTpChoice()
     {
         return tpChoice;
@@ -392,8 +395,8 @@ public class Household
     }
 
     /**
-     * unitType: 0=Housing unit, 1=Institutional group quarters, 2=Noninstitutional
-     * group quarters
+     * unitType: 0=Housing unit, 1=Institutional group quarters,
+     * 2=Noninstitutional group quarters
      * 
      * @return 1 if household is group quarters, 0 for non-group quarters
      */
@@ -422,7 +425,7 @@ public class Household
         }
         return (count);
     }
-    
+
     public int getNumHighSchoolStudents()
     {
         int count = 0;
@@ -432,7 +435,7 @@ public class Household
         }
         return (count);
     }
-    
+
     public int getNumberOfChildren6To18WithoutMandatoryActivity()
     {
 
@@ -483,14 +486,15 @@ public class Household
     }
 
     /**
-     * return the number of school age students this household has for the purpose
-     * index.
+     * return the number of school age students this household has for the
+     * purpose index.
      * 
-     * @param purposeIndex is the DC purpose index to be compared to the usual school
+     * @param purposeIndex
+     *            is the DC purpose index to be compared to the usual school
      *            location index saved for this person upon reading synthetic
      *            population file.
-     * @return num, a value of the number of school age students in the household for
-     *         this purpose index.
+     * @return num, a value of the number of school age students in the
+     *         household for this purpose index.
      */
     public int getNumberOfDrivingAgedStudentsWithDcPurposeIndex(int segmentIndex)
     {
@@ -517,8 +521,11 @@ public class Household
 
     public Person getPerson(int persNum)
     {
-        if (persNum < 1 || persNum > hhSize) { throw new RuntimeException(String.format(
-                "persNum value = %d is out of range for hhSize = %d", persNum, hhSize)); }
+        if (persNum < 1 || persNum > hhSize)
+        {
+            throw new RuntimeException(String.format(
+                    "persNum value = %d is out of range for hhSize = %d", persNum, hhSize));
+        }
 
         return persons[persNum];
     }
@@ -849,11 +856,11 @@ public class Household
     {
         int numAdults = 0;
         for (int i = 1; i < persons.length; i++)
-            numAdults += ( persons[i].getPersonIsFullTimeWorker()
-                        + persons[i].getPersonIsPartTimeWorker()
-                        + persons[i].getPersonIsUniversityStudent()
-                        + persons[i].getPersonIsNonWorkingAdultUnder65()
-                        + persons[i].getPersonIsNonWorkingAdultOver65() );
+            numAdults += (persons[i].getPersonIsFullTimeWorker()
+                    + persons[i].getPersonIsPartTimeWorker()
+                    + persons[i].getPersonIsUniversityStudent()
+                    + persons[i].getPersonIsNonWorkingAdultUnder65() + persons[i]
+                    .getPersonIsNonWorkingAdultOver65());
         return numAdults;
     }
 
@@ -898,19 +905,22 @@ public class Household
     }
 
     /**
-     * joint tour frequency choice is not applied to a household unless it has: 2 or
-     * more persons, each with at least one out-of home activity, and at least 1 of
-     * the persons not a pre-schooler.
+     * joint tour frequency choice is not applied to a household unless it has:
+     * 2 or more persons, each with at least one out-of home activity, and at
+     * least 1 of the persons not a pre-schooler.
      * */
     public int getValidHouseholdForJointTourFrequencyModel()
     {
 
-        // return one of the following condition codes for this household producing
+        // return one of the following condition codes for this household
+        // producing
         // joint tours:
         // 1: household eligible for joint tour production
         // 2: household ineligible due to 1 person hh.
-        // 3: household ineligible due to fewer than 2 persons traveling out of home
-        // 4: household ineligible due to fewer than 1 non-preschool person traveling
+        // 3: household ineligible due to fewer than 2 persons traveling out of
+        // home
+        // 4: household ineligible due to fewer than 1 non-preschool person
+        // traveling
         // out of home
 
         // no joint tours for single person household
@@ -927,26 +937,29 @@ public class Household
             }
         }
 
-        // if the number of persons leaving home during the day is not at least 2, no
+        // if the number of persons leaving home during the day is not at least
+        // 2, no
         // joint tours
         if (leavesHome < 2) return 3;
 
-        // if the number of non-preschool persons leaving home during the day is not
+        // if the number of non-preschool persons leaving home during the day is
+        // not
         // at least 1, no joint tours
         if (nonPreSchoolerLeavesHome < 1) return 4;
 
-        // if all conditions are met, we can apply joint tour frequency model to this
+        // if all conditions are met, we can apply joint tour frequency model to
+        // this
         // household
         return 1;
 
     }
 
     /**
-     * return maximum periods of overlap between this person and other adult persons in
-     * the household.
+     * return maximum periods of overlap between this person and other adult
+     * persons in the household.
      * 
-     * @return the most number of periods mutually available between this person and
-     *         other adult household members
+     * @return the most number of periods mutually available between this person
+     *         and other adult household members
      */
     public int getMaxAdultOverlaps()
     {
@@ -954,11 +967,11 @@ public class Household
     }
 
     /**
-     * return maximum periods of overlap between this person and other children in the
-     * household.
+     * return maximum periods of overlap between this person and other children
+     * in the household.
      * 
-     * @return the most number of periods mutually available between this person and
-     *         other child household members
+     * @return the most number of periods mutually available between this person
+     *         and other child household members
      */
     public int getMaxChildOverlaps()
     {
@@ -966,62 +979,68 @@ public class Household
     }
 
     /**
-     * return maximum periods of overlap between this person(adult/child) and other
-     * persons(child/adult) in the household.
+     * return maximum periods of overlap between this person(adult/child) and
+     * other persons(child/adult) in the household.
      * 
-     * @return the most number of periods mutually available between this person and
-     *         other type household members
+     * @return the most number of periods mutually available between this person
+     *         and other type household members
      */
     public int getMaxMixedOverlaps()
     {
         return maxMixedOverlaps;
     }
 
-    public int getMaxJointTimeWindow( Tour t )
+    public int getMaxJointTimeWindow(Tour t)
     {
         // get array of person array indices participating in joint tour
-        int[] participatingPersonIndices = t.getPersonNumArray(); 
+        int[] participatingPersonIndices = t.getPersonNumArray();
 
         // create an array to hold time window arrays for each participant
-        int[][] personWindows = new int[participatingPersonIndices.length][]; 
-        
+        int[][] personWindows = new int[participatingPersonIndices.length][];
+
         // get time window arrays for each participant
         int k = 0;
-        for (int i : participatingPersonIndices )
+        for (int i : participatingPersonIndices)
             personWindows[k++] = persons[i].getTimeWindows();
 
-        int count = 0;;
+        int count = 0;
+        
         int maxCount = 0;
         // loop over time window intervals
-        for (int w=1; w < personWindows[0].length; w++) {
-            
-            // loop over party; determine if interval is available for everyone in party;
+        for (int w = 1; w < personWindows[0].length; w++)
+        {
+
+            // loop over party; determine if interval is available for everyone
+            // in party;
             boolean available = true;
-            for (k=0; k < personWindows.length; k++) {
-                if ( personWindows[k][w] > 0 ) {
+            for (k = 0; k < personWindows.length; k++)
+            {
+                if (personWindows[k][w] > 0)
+                {
                     available = false;
                     break;
                 }
             }
 
-            // if available for whole party, increment count; determine maximum continous time window available to whole party.
-            if ( available ) {
+            // if available for whole party, increment count; determine maximum
+            // continous time window available to whole party.
+            if (available)
+            {
                 count++;
-                if ( count > maxCount )
-                    maxCount = count;
-            }
-            else {
+                if (count > maxCount) maxCount = count;
+            } else
+            {
                 count = 0;
             }
-                
+
         }
-        
+
         return maxCount;
     }
 
     /**
-     * @return number of adults in household with "M" or "N" activity pattern - that
-     *         is, traveling adults.
+     * @return number of adults in household with "M" or "N" activity pattern -
+     *         that is, traveling adults.
      */
     public int getTravelActiveAdults()
     {
@@ -1038,15 +1057,16 @@ public class Household
             }
         }
 
-        // return the number of adults traveling = number of adults minus the number
+        // return the number of adults traveling = number of adults minus the
+        // number
         // of adults staying home.
         return adults - adultsStayingHome;
 
     }
 
     /**
-     * @return number of children in household with "M" or "N" activity pattern -
-     *         that is, traveling children.
+     * @return number of children in household with "M" or "N" activity pattern
+     *         - that is, traveling children.
      */
     public int getTravelActiveChildren()
     {
@@ -1063,7 +1083,8 @@ public class Household
             }
         }
 
-        // return the number of adults traveling = number of adults minus the number
+        // return the number of adults traveling = number of adults minus the
+        // number
         // of adults staying home.
         return children - childrenStayingHome;
 
@@ -1086,55 +1107,59 @@ public class Household
         for (int p = 1; p < persons.length; p++)
         {
 
-            // determine if person p is an adult -- that is, person is not any of the
+            // determine if person p is an adult -- that is, person is not any
+            // of the
             // three child types
             pAdult = persons[p].getPersonIsPreschoolChild() == 0
                     && persons[p].getPersonIsStudentNonDriving() == 0
                     && persons[p].getPersonIsStudentDriving() == 0;
 
-            
-            // loop over person indices to compute length of pairwise available time windows.
+            // loop over person indices to compute length of pairwise available
+            // time windows.
             for (int q = 1; q < persons.length; q++)
             {
 
                 if (p == q) continue;
 
-                // determine if person q is an adult -- that is, person is not any of the three child types
+                // determine if person q is an adult -- that is, person is not
+                // any of the three child types
                 qAdult = persons[q].getPersonIsPreschoolChild() == 0
                         && persons[q].getPersonIsStudentNonDriving() == 0
                         && persons[q].getPersonIsStudentDriving() == 0;
 
-                // get the length of the maximum pairwise available time window between persons p and q.
-                int maxWindow = persons[p].getMaximumContinuousPairwiseAvailableWindow( persons[q].getTimeWindows() );
-                
-                // determine max time window overlap between adult pairs, children pairs, and mixed pairs in the household
-                // for max windows in all pairs in hh, don't need to check q,p once we'alread done p,q, so skip q <= p.
-                if ( q > p ){
-                    if (pAdult && qAdult) {
-                        if (maxWindow > maxAdultOverlaps)
-                            maxAdultOverlaps = maxWindow;
-                    }
-                    else if (!pAdult && !qAdult) {
-                        if (maxWindow > maxChildOverlaps)
-                            maxChildOverlaps = maxWindow;
-                    }
-                    else {
-                        if (maxWindow > maxMixedOverlaps)
-                            maxMixedOverlaps = maxWindow;
+                // get the length of the maximum pairwise available time window
+                // between persons p and q.
+                int maxWindow = persons[p].getMaximumContinuousPairwiseAvailableWindow(persons[q]
+                        .getTimeWindows());
+
+                // determine max time window overlap between adult pairs,
+                // children pairs, and mixed pairs in the household
+                // for max windows in all pairs in hh, don't need to check q,p
+                // once we'alread done p,q, so skip q <= p.
+                if (q > p)
+                {
+                    if (pAdult && qAdult)
+                    {
+                        if (maxWindow > maxAdultOverlaps) maxAdultOverlaps = maxWindow;
+                    } else if (!pAdult && !qAdult)
+                    {
+                        if (maxWindow > maxChildOverlaps) maxChildOverlaps = maxWindow;
+                    } else
+                    {
+                        if (maxWindow > maxMixedOverlaps) maxMixedOverlaps = maxWindow;
                     }
                 }
 
+                // determine the max time window overlap between this person and
+                // other household adults and children.
+                if (qAdult)
+                {
+                    if (maxWindow > maxAdultOverlapsP[p]) maxAdultOverlapsP[p] = maxWindow;
+                } else
+                {
+                    if (maxWindow > maxChildOverlapsP[p]) maxChildOverlapsP[p] = maxWindow;
+                }
 
-                // determine the max time window overlap between this person and other household adults and children.
-                if ( qAdult) {
-                    if (maxWindow > maxAdultOverlapsP[p])
-                        maxAdultOverlapsP[p] = maxWindow;
-                }
-                else {
-                    if (maxWindow > maxChildOverlapsP[p])
-                        maxChildOverlapsP[p] = maxWindow;
-                }
-                
             } // end of person q
 
             // set person attributes
@@ -1191,8 +1216,8 @@ public class Household
 
     public void scheduleJointTourTimeWindows(Tour t, int start, int end)
     {
-        int[] participatingPersonIndices = t.getPersonNumArray(); 
-        for (int i : participatingPersonIndices )            
+        int[] participatingPersonIndices = t.getPersonNumArray();
+        for (int i : participatingPersonIndices)
         {
             Person person = persons[i];
             person.scheduleWindow(start, end);
@@ -1454,8 +1479,8 @@ public class Household
         Household.logHelper(logger, "maxChildOverlaps: ", maxChildOverlaps, totalChars);
         Household.logHelper(logger, "maxMixedOverlaps: ", maxMixedOverlaps, totalChars);
 
-        String tempString = String.format("Joint Tours[%s]:", jointTours == null ? "" : String
-                .valueOf(jointTours.length));
+        String tempString = String.format("Joint Tours[%s]:",
+                jointTours == null ? "" : String.valueOf(jointTours.length));
         logger.info(tempString);
 
         logger.info(separater);
@@ -1504,27 +1529,27 @@ public class Household
 
     }
 
-    public void logStopObject( String titleString, Logger logger, Stop stop, ModelStructure modelStructure ) {
-        
+    public void logStopObject(String titleString, Logger logger, Stop stop,
+            ModelStructure modelStructure)
+    {
+
         int totalChars = 119;
         String separater = "";
-        for (int i=0; i < totalChars; i++)
+        for (int i = 0; i < totalChars; i++)
             separater += "S";
 
-       
-        logger.info( separater );
-        logger.info( titleString );
-        logger.info( separater );
+        logger.info(separater);
+        logger.info(titleString);
+        logger.info(separater);
 
-        
-        stop.logStopObject( logger, totalChars );
+        stop.logStopObject(logger, totalChars);
 
         logger.info(separater);
-        logger.info( "" );
-        logger.info( "" );
+        logger.info("");
+        logger.info("");
 
     }
-    
+
     public void logEntireHouseholdObject(String titleString, Logger logger)
     {
 

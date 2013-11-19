@@ -4,7 +4,6 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoAndNonMotorizedSkimsCalculator;
 import org.sandag.abm.ctramp.CtrampApplication;
-import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
@@ -152,7 +151,8 @@ public class InternalExternalTripModeChoiceModel
         dmu.setAge(tour.getAge());
         dmu.setFemale(tour.getFemale());
 
-        // set the dmu skim attributes (which involves setting the best wtw taps, since the tour taps are null
+        // set the dmu skim attributes (which involves setting the best wtw
+        // taps, since the tour taps are null
         logsumHelper.setTripMcDmuSkimAttributes(tour, trip, dmu);
 
         dmu.setOutboundStops(tour.getNumberInboundStops());

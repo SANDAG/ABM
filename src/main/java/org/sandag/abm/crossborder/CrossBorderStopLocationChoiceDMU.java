@@ -3,12 +3,8 @@ package org.sandag.abm.crossborder;
 import java.io.Serializable;
 import java.util.HashMap;
 import org.apache.log4j.Logger;
-import org.sandag.abm.ctramp.McLogsumsCalculator;
-import org.sandag.abm.ctramp.TourModeChoiceDMU;
-import org.sandag.abm.ctramp.ModelStructure;
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
-import com.pb.common.datafile.TableDataSet;
 
 public class CrossBorderStopLocationChoiceDMU
         implements Serializable, VariableTable
@@ -25,10 +21,28 @@ public class CrossBorderStopLocationChoiceDMU
     protected int                      inboundStop;
     protected int                      tourDuration;
 
-    protected double[][]               sizeTerms;                                    // by purpose, alternative (taz or sampled mgra)
-    protected double[]                 correctionFactors;                            // by alternative (sampled mgra, for full model only)
+    protected double[][]               sizeTerms;                                    // by
+                                                                                      // purpose,
+                                                                                      // alternative
+                                                                                      // (taz
+                                                                                      // or
+                                                                                      // sampled
+                                                                                      // mgra)
+    protected double[]                 correctionFactors;                            // by
+                                                                                      // alternative
+                                                                                      // (sampled
+                                                                                      // mgra,
+                                                                                      // for
+                                                                                      // full
+                                                                                      // model
+                                                                                      // only)
 
-    protected int[]                    sampleNumber;                                 // by alternative (taz or sampled mgra)
+    protected int[]                    sampleNumber;                                 // by
+                                                                                      // alternative
+                                                                                      // (taz
+                                                                                      // or
+                                                                                      // sampled
+                                                                                      // mgra)
 
     protected double[]                 osMcLogsumAlt;
     protected double[]                 sdMcLogsumAlt;
@@ -227,8 +241,11 @@ public class CrossBorderStopLocationChoiceDMU
     }
 
     /**
-     * @return the sizeTerms. The size term is the size of the alternative north of the border. It is indexed by alternative, where alternative is
-     *         either taz-station pair or mgra-station pair, depending on whether the DMU is being used for the SOA model or the actual model.
+     * @return the sizeTerms. The size term is the size of the alternative north
+     *         of the border. It is indexed by alternative, where alternative is
+     *         either taz-station pair or mgra-station pair, depending on
+     *         whether the DMU is being used for the SOA model or the actual
+     *         model.
      */
     public double getSizeTerm(int alt)
     {
@@ -237,9 +254,11 @@ public class CrossBorderStopLocationChoiceDMU
 
     /**
      * @param sizeTerms
-     *            the sizeTerms to set. The size term is the size of the alternative north of the border. It is indexed by alternative, where
-     *            alternative is either taz-station pair or mgra-station pair, depending on whether the DMU is being used for the SOA model or the
-     *            actual model.
+     *            the sizeTerms to set. The size term is the size of the
+     *            alternative north of the border. It is indexed by alternative,
+     *            where alternative is either taz-station pair or mgra-station
+     *            pair, depending on whether the DMU is being used for the SOA
+     *            model or the actual model.
      */
     public void setSizeTerms(double[][] sizeTerms)
     {

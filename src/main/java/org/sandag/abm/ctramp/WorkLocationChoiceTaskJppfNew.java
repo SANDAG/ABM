@@ -3,16 +3,15 @@ package org.sandag.abm.ctramp;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
-import com.pb.common.calculator.MatrixDataServerIf;
 import org.jppf.server.protocol.JPPFTask;
 import org.jppf.task.storage.DataProvider;
-import org.sandag.abm.accessibilities.BuildAccessibilities;
+import com.pb.common.calculator.MatrixDataServerIf;
 
 public class WorkLocationChoiceTaskJppfNew
         extends JPPFTask
 {
 
-    private static String  VERSION   = "Task.1.0.3";
+    private static String                     VERSION   = "Task.1.0.3";
 
     private transient HashMap<String, String> propertyMap;
     private transient MatrixDataServerIf      ms;
@@ -28,10 +27,10 @@ public class WorkLocationChoiceTaskJppfNew
     private transient CtrampDmuFactoryIf      dmuFactory;
     private transient String                  restartModelString;
 
-    private int                     iteration;
-    private int                     startIndex;
-    private int                     endIndex;
-    private int                     taskIndex = -1;
+    private int                               iteration;
+    private int                               startIndex;
+    private int                               endIndex;
+    private int                               taskIndex = -1;
 
     public WorkLocationChoiceTaskJppfNew(int taskIndex, int startIndex, int endIndex, int iteration)
     {
@@ -50,7 +49,8 @@ public class WorkLocationChoiceTaskJppfNew
         String threadName = null;
         try
         {
-            threadName = "[" + java.net.InetAddress.getLocalHost().getHostName() + "] " + Thread.currentThread().getName();
+            threadName = "[" + java.net.InetAddress.getLocalHost().getHostName() + "] "
+                    + Thread.currentThread().getName();
         } catch (UnknownHostException e1)
         {
             // TODO Auto-generated catch block
@@ -80,20 +80,23 @@ public class WorkLocationChoiceTaskJppfNew
             e.printStackTrace();
         }
 
-        
         // get the factory object used to create and recycle dcModel objects.
         DestChoiceModelManager modelManager = DestChoiceModelManager.getInstance();
 
-        // one of tasks needs to initialize the manager object by passing attributes
+        // one of tasks needs to initialize the manager object by passing
+        // attributes
         // needed to create a destination choice model object.
-        modelManager.managerSetup(propertyMap, modelStructure, ms, dcUecFileName, soaUecFileName, soaSampleSize, dmuFactory, restartModelString);
+        modelManager.managerSetup(propertyMap, modelStructure, ms, dcUecFileName, soaUecFileName,
+                soaSampleSize, dmuFactory, restartModelString);
 
-        // get a dcModel object from manager, which either creates one or returns one for re-use.
-        WorkLocationChoiceModel dcModel = modelManager.getWorkLocModelObject(taskIndex, iteration, dcSizeObj, uecIndices, soaUecIndices);
-
+        // get a dcModel object from manager, which either creates one or
+        // returns one for re-use.
+        WorkLocationChoiceModel dcModel = modelManager.getWorkLocModelObject(taskIndex, iteration,
+                dcSizeObj, uecIndices, soaUecIndices);
 
         // logger.info( String.format(
-        // "%s, task=%d run(), thread=%s, start=%d, end=%d.", VERSION, taskIndex,
+        // "%s, task=%d run(), thread=%s, start=%d, end=%d.", VERSION,
+        // taskIndex,
         // threadName, startIndex, endIndex ) );
         System.out.println(String.format("%s: %s, task=%d run(), thread=%s, start=%d, end=%d.",
                 new Date(), VERSION, taskIndex, threadName, startIndex, endIndex));
@@ -114,15 +117,17 @@ public class WorkLocationChoiceTaskJppfNew
         try
         {
 
-            boolean runDebugHouseholdsOnly = Util.getBooleanValueFromPropertyMap( propertyMap, HouseholdDataManager.DEBUG_HHS_ONLY_KEY );
+            boolean runDebugHouseholdsOnly = Util.getBooleanValueFromPropertyMap(propertyMap,
+                    HouseholdDataManager.DEBUG_HHS_ONLY_KEY);
 
             for (i = 0; i < householdArray.length; i++)
             {
-                // for debugging only - process only household objects specified for debugging, if property key was set to true
-                if ( runDebugHouseholdsOnly && ! householdArray[i].getDebugChoiceModels() )
-                //if ( householdArray[i].getHhTaz() % 200 != 0 )
+                // for debugging only - process only household objects specified
+                // for debugging, if property key was set to true
+                if (runDebugHouseholdsOnly && !householdArray[i].getDebugChoiceModels())
+                // if ( householdArray[i].getHhTaz() % 200 != 0 )
                     continue;
-                
+
                 dcModel.applyWorkLocationChoice(householdArray[i]);
             }
 
@@ -130,12 +135,11 @@ public class WorkLocationChoiceTaskJppfNew
 
         } catch (Exception e)
         {
-            if (i >= 0 && i < householdArray.length)
-                System.out.println(String.format(
-                    "exception caught in taskIndex=%d applying dc model for i=%d, hhId=%d, startIndex=%d.",
-                    taskIndex, i, householdArray[i].getHhId(), startIndex));
-            else
-                System.out.println(String.format(
+            if (i >= 0 && i < householdArray.length) System.out
+                    .println(String
+                            .format("exception caught in taskIndex=%d applying dc model for i=%d, hhId=%d, startIndex=%d.",
+                                    taskIndex, i, householdArray[i].getHhId(), startIndex));
+            else System.out.println(String.format(
                     "exception caught in taskIndex=%d applying dc model for i=%d, startIndex=%d.",
                     taskIndex, i, startIndex));
             System.out.println("Exception caught:");
@@ -149,18 +153,20 @@ public class WorkLocationChoiceTaskJppfNew
         // logger.info( String.format(
         // "task=%d finished, thread=%s, getHhs=%d, processHhs=%d.", taskIndex,
         // threadName, getHhs, processHhs ) );
-        System.out.println(String.format("%s: task=%d finished, thread=%s.", new Date(), taskIndex, threadName));
+        System.out.println(String.format("%s: task=%d finished, thread=%s.", new Date(), taskIndex,
+                threadName));
 
         long total = (System.currentTimeMillis() - startTime) / 1000;
-        String resultString = String.format(
-            "result for thread=%s, task=%d, startIndex=%d, endIndex=%d, startTime=%s, endTime=%s, setup1=%d, setup2=%d, getHhs=%d, run=%d, total=%d.",
-            threadName, taskIndex, startIndex, endIndex, start, new Date(), setup1, setup2, getHhs, processHhs, total);
+        String resultString = String
+                .format("result for thread=%s, task=%d, startIndex=%d, endIndex=%d, startTime=%s, endTime=%s, setup1=%d, setup2=%d, getHhs=%d, run=%d, total=%d.",
+                        threadName, taskIndex, startIndex, endIndex, start, new Date(), setup1,
+                        setup2, getHhs, processHhs, total);
         // logger.info( resultString );
         setResult(resultString);
 
         modelManager.returnWorkLocModelObject(dcModel, taskIndex, startIndex, endIndex);
 
-        clearClassAttributes();        
+        clearClassAttributes();
     }
 
     public String getId()
@@ -168,7 +174,8 @@ public class WorkLocationChoiceTaskJppfNew
         return Integer.toString(taskIndex);
     }
 
-    private void clearClassAttributes() {
+    private void clearClassAttributes()
+    {
         propertyMap = null;
         ms = null;
         modelStructure = null;
@@ -180,7 +187,7 @@ public class WorkLocationChoiceTaskJppfNew
         dcUecFileName = null;
         soaUecFileName = null;
         dmuFactory = null;
-        restartModelString = null;        
+        restartModelString = null;
     }
-    
+
 }

@@ -5,130 +5,133 @@ import java.util.HashMap;
 /**
  * @author Jim Hicks
  * 
- *         Class for managing household and person object data read from synthetic
- *         population files.
+ *         Class for managing household and person object data read from
+ *         synthetic population files.
  */
 public interface HouseholdDataManagerIf
 {
 
-    public String testRemote();
+    String testRemote();
 
-    public void setPropertyFileValues(HashMap<String, String> propertyMap);
+    void setPropertyFileValues(HashMap<String, String> propertyMap);
 
-    public void setDebugHhIdsFromHashmap();
+    void setDebugHhIdsFromHashmap();
 
-    public void computeTransponderChoiceTazPercentArrays();
-    
-    public double[] getPercentHhsIncome100Kplus();
+    void computeTransponderChoiceTazPercentArrays();
 
-    public double[] getPercentHhsMultipleAutos();
-    
-    public int[] getRandomOrderHhIndexArray(int numHhs);
+    double[] getPercentHhsIncome100Kplus();
 
-    public int getArrayIndex(int hhId);
+    double[] getPercentHhsMultipleAutos();
 
-    public void setHhArray(Household[] hhs);
+    int[] getRandomOrderHhIndexArray(int numHhs);
 
-    public void setHhArray(Household[] tempHhs, int startIndex);
+    int getArrayIndex(int hhId);
 
-    public void setSchoolDistrictMappings( HashMap<String, Integer> segmentNameIndexMap, int[] mgraGsDist, int[] mgraHsDist,
-            HashMap<Integer,Integer> gsDistSegMap, HashMap<Integer,Integer> hsDistSegMap );
-    
-    public void setupHouseholdDataManager(ModelStructure modelStructure, String inputHouseholdFileName, String inputPersonFileName);
+    void setHhArray(Household[] hhs);
 
-    public int[][] getTourPurposePersonsByHomeMgra(String[] purposeList);
+    void setHhArray(Household[] tempHhs, int startIndex);
 
-    public int[][] getWorkersByHomeMgra(HashMap<Integer, Integer> segmentValueIndexMap);
+    void setSchoolDistrictMappings(HashMap<String, Integer> segmentNameIndexMap,
+            int[] mgraGsDist, int[] mgraHsDist, HashMap<Integer, Integer> gsDistSegMap,
+            HashMap<Integer, Integer> hsDistSegMap);
 
-    public int[][] getStudentsByHomeMgra();
+    void setupHouseholdDataManager(ModelStructure modelStructure,
+            String inputHouseholdFileName, String inputPersonFileName);
 
-    public int[][] getWorkToursByDestMgra(HashMap<Integer, Integer> segmentValueIndexMap);
+    int[][] getTourPurposePersonsByHomeMgra(String[] purposeList);
 
-    public int[] getWorksAtHomeBySegment(HashMap<Integer, Integer> segmentValueIndexMap);
-    
-    public int[][] getSchoolToursByDestMgra();
+    int[][] getWorkersByHomeMgra(HashMap<Integer, Integer> segmentValueIndexMap);
 
-    public int[] getIndividualNonMandatoryToursByHomeMgra(String purposeString);
+    int[][] getStudentsByHomeMgra();
 
-    public int[] getJointToursByHomeMgra(String purposeString);
+    int[][] getWorkToursByDestMgra(HashMap<Integer, Integer> segmentValueIndexMap);
 
-    public int[] getAtWorkSubtoursByWorkMgra(String purposeString);
+    int[] getWorksAtHomeBySegment(HashMap<Integer, Integer> segmentValueIndexMap);
 
-    public void logPersonSummary();
+    int[][] getSchoolToursByDestMgra();
 
-    public void setUwslRandomCount(int iter);
+    int[] getIndividualNonMandatoryToursByHomeMgra(String purposeString);
 
-    public void resetUwslRandom(int iter);
+    int[] getJointToursByHomeMgra(String purposeString);
 
-    public void resetPreAoRandom();
+    int[] getAtWorkSubtoursByWorkMgra(String purposeString);
 
-    public void resetAoRandom(int iter);
+    void logPersonSummary();
 
-    public void resetFpRandom();
+    void setUwslRandomCount(int iter);
 
-    public void resetCdapRandom();
+    void resetUwslRandom(int iter);
 
-    public void resetImtfRandom();
+    void resetPreAoRandom();
 
-    public void resetImtodRandom();
+    void resetAoRandom(int iter);
 
-    public void resetAwfRandom();
+    void resetFpRandom();
 
-    public void resetAwlRandom();
+    void resetCdapRandom();
 
-    public void resetAwtodRandom();
+    void resetImtfRandom();
 
-    public void resetJtfRandom();
+    void resetImtodRandom();
 
-    public void resetJtlRandom();
+    void resetAwfRandom();
 
-    public void resetJtodRandom();
+    void resetAwlRandom();
 
-    public void resetInmtfRandom();
+    void resetAwtodRandom();
 
-    public void resetInmtlRandom();
+    void resetJtfRandom();
 
-    public void resetInmtodRandom();
+    void resetJtlRandom();
 
-    public void resetStfRandom();
+    void resetJtodRandom();
 
-    public void resetStlRandom();
+    void resetInmtfRandom();
 
-    /**
-     * Sets the HashSet used to trace households for debug purposes and sets the
-     * debug switch for each of the listed households. Also sets
-     */
-    public void setTraceHouseholdSet();
+    void resetInmtlRandom();
+
+    void resetInmtodRandom();
+
+    void resetStfRandom();
+
+    void resetStlRandom();
 
     /**
      * Sets the HashSet used to trace households for debug purposes and sets the
      * debug switch for each of the listed households. Also sets
      */
-    public void setHouseholdSampleRate(float sampleRate, int sampleSeed);
+    void setTraceHouseholdSet();
 
     /**
-     * return the array of Household objects holding the synthetic population and
-     * choice model outcomes.
+     * Sets the HashSet used to trace households for debug purposes and sets the
+     * debug switch for each of the listed households. Also sets
+     */
+    void setHouseholdSampleRate(float sampleRate, int sampleSeed);
+
+    /**
+     * return the array of Household objects holding the synthetic population
+     * and choice model outcomes.
      * 
      * @return hhs
      */
-    public Household[] getHhArray();
+    Household[] getHhArray();
 
-    public Household[] getHhArray(int firstHhIndex, int lastHhIndex);
+    Household[] getHhArray(int firstHhIndex, int lastHhIndex);
 
     /**
-     * return the number of household objects read from the synthetic population.
+     * return the number of household objects read from the synthetic
+     * population.
      * 
      * @return
      */
-    public int getNumHouseholds();
+    int getNumHouseholds();
 
     /**
      * set walk segment (0-none, 1-short, 2-long walk to transit access) for the
      * origin for this tour
      */
-    public int getInitialOriginWalkSegment(int taz, double randomNumber);
+    int getInitialOriginWalkSegment(int taz, double randomNumber);
 
-    public long getBytesUsedByHouseholdArray();
+    long getBytesUsedByHouseholdArray();
 
 }

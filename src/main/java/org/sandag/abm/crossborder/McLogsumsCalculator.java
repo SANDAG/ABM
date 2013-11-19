@@ -1,7 +1,6 @@
 package org.sandag.abm.crossborder;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.HashMap;
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoAndNonMotorizedSkimsCalculator;
@@ -9,12 +8,10 @@ import org.sandag.abm.accessibilities.BestTransitPathCalculator;
 import org.sandag.abm.accessibilities.DriveTransitWalkSkimsCalculator;
 import org.sandag.abm.accessibilities.WalkTransitDriveSkimsCalculator;
 import org.sandag.abm.accessibilities.WalkTransitWalkSkimsCalculator;
-import com.pb.common.newmodel.UtilityExpressionCalculator;
 import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.Modes;
 import org.sandag.abm.modechoice.TazDataManager;
-import com.pb.common.calculator.IndexValues;
 
 public class McLogsumsCalculator
         implements Serializable
@@ -26,8 +23,10 @@ public class McLogsumsCalculator
     private transient Logger                                wtdSkimLogger                         = Logger.getLogger("crossBorderModel");
     private transient Logger                                dtwSkimLogger                         = Logger.getLogger("crossBorderModel");
 
-    // public static final String PROPERTIES_UEC_TOUR_MODE_CHOICE = "tourModeChoice.uec.file";
-    // public static final String PROPERTIES_UEC_TRIP_MODE_CHOICE = "tripModeChoice.uec.file";
+    // public static final String PROPERTIES_UEC_TOUR_MODE_CHOICE =
+    // "tourModeChoice.uec.file";
+    // public static final String PROPERTIES_UEC_TRIP_MODE_CHOICE =
+    // "tripModeChoice.uec.file";
 
     private static final int                                LB_ACC_TIME_INDEX                     = 0;
     private static final int                                LB_EGR_TIME_INDEX                     = 1;
@@ -202,8 +201,10 @@ public class McLogsumsCalculator
     }
 
     /**
-     * This method finds the best walk-transit-walk tap pairs if they don't exist in the trip object (and sets the best tap pairs in the trip object),
-     * then fills in the trip mode choice DMU object with the skim values corresponding to those tap pairs.
+     * This method finds the best walk-transit-walk tap pairs if they don't
+     * exist in the trip object (and sets the best tap pairs in the trip
+     * object), then fills in the trip mode choice DMU object with the skim
+     * values corresponding to those tap pairs.
      * 
      * @param tour
      * @param trip
@@ -241,31 +242,48 @@ public class McLogsumsCalculator
     }
 
     /*
-     * public double calculateTripMcLogsum(int origMgra, int destMgra, int departPeriod, boolean isInbound, ChoiceModelApplication mcModel,
+     * public double calculateTripMcLogsum(int origMgra, int destMgra, int
+     * departPeriod, boolean isInbound, ChoiceModelApplication mcModel,
      * TripModeChoiceDMU mcDmuObject, Logger myLogger) {
      * 
-     * long currentTime = System.currentTimeMillis(); setTripMcDmuSkimAttributes( mcDmuObject, origMgra, destMgra, departPeriod, isInbound,
-     * mcDmuObject.getDmuIndexValues().getDebug() ); setTripMcLogsumDmuAttributesTotalTime += ( System.currentTimeMillis() - currentTime );
+     * long currentTime = System.currentTimeMillis();
+     * setTripMcDmuSkimAttributes( mcDmuObject, origMgra, destMgra,
+     * departPeriod, isInbound, mcDmuObject.getDmuIndexValues().getDebug() );
+     * setTripMcLogsumDmuAttributesTotalTime += ( System.currentTimeMillis() -
+     * currentTime );
      * 
-     * // set the land use data items in the DMU for the origin mcDmuObject.setOrigDuDen( mgraManager.getDuDenValue( origMgra ) );
-     * mcDmuObject.setOrigEmpDen( mgraManager.getEmpDenValue( origMgra ) ); mcDmuObject.setOrigTotInt( mgraManager.getTotIntValue( origMgra ) );
+     * // set the land use data items in the DMU for the origin
+     * mcDmuObject.setOrigDuDen( mgraManager.getDuDenValue( origMgra ) );
+     * mcDmuObject.setOrigEmpDen( mgraManager.getEmpDenValue( origMgra ) );
+     * mcDmuObject.setOrigTotInt( mgraManager.getTotIntValue( origMgra ) );
      * 
-     * // set the land use data items in the DMU for the destination mcDmuObject.setDestDuDen( mgraManager.getDuDenValue( destMgra ) );
-     * mcDmuObject.setDestEmpDen( mgraManager.getEmpDenValue( destMgra ) ); mcDmuObject.setDestTotInt( mgraManager.getTotIntValue( destMgra ) );
+     * // set the land use data items in the DMU for the destination
+     * mcDmuObject.setDestDuDen( mgraManager.getDuDenValue( destMgra ) );
+     * mcDmuObject.setDestEmpDen( mgraManager.getEmpDenValue( destMgra ) );
+     * mcDmuObject.setDestTotInt( mgraManager.getTotIntValue( destMgra ) );
      * 
-     * // mode choice UEC references highway skim matrices directly, so set index orig/dest to O/D TAZs. IndexValues mcDmuIndex =
-     * mcDmuObject.getDmuIndexValues(); mcDmuIndex.setOriginZone(mgraManager.getTaz(origMgra)); mcDmuIndex.setDestZone(mgraManager.getTaz(destMgra));
+     * // mode choice UEC references highway skim matrices directly, so set
+     * index orig/dest to O/D TAZs. IndexValues mcDmuIndex =
+     * mcDmuObject.getDmuIndexValues();
+     * mcDmuIndex.setOriginZone(mgraManager.getTaz(origMgra));
+     * mcDmuIndex.setDestZone(mgraManager.getTaz(destMgra));
      * 
-     * // double dailyParkingCost = getPersonDailyParkingCost( mcDmuObject.getPersonObject(), destMgra ); // mcDmuObject.setDailyParkingCost(
-     * dailyParkingCost ); // mcDmuObject.setHourlyParkingCost( lsWgtAvgCostH[destMgra] ); // mcDmuObject.setReimburseAmount( lsWgtAvgCostM[destMgra]
-     * - dailyParkingCost );
+     * // double dailyParkingCost = getPersonDailyParkingCost(
+     * mcDmuObject.getPersonObject(), destMgra ); //
+     * mcDmuObject.setDailyParkingCost( dailyParkingCost ); //
+     * mcDmuObject.setHourlyParkingCost( lsWgtAvgCostH[destMgra] ); //
+     * mcDmuObject.setReimburseAmount( lsWgtAvgCostM[destMgra] -
+     * dailyParkingCost );
      * 
      * 
-     * mcModel.computeUtilities(mcDmuObject, mcDmuIndex); double logsum = mcModel.getLogsum(); tripModeChoiceSegmentStoredProbabilities =
-     * Arrays.copyOf( mcModel.getCumulativeProbabilities(), mcModel.getNumberOfAlternatives() );
+     * mcModel.computeUtilities(mcDmuObject, mcDmuIndex); double logsum =
+     * mcModel.getLogsum(); tripModeChoiceSegmentStoredProbabilities =
+     * Arrays.copyOf( mcModel.getCumulativeProbabilities(),
+     * mcModel.getNumberOfAlternatives() );
      * 
-     * if ( mcDmuIndex.getDebug() ) mcModel.logUECResults(myLogger, "Trip Mode Choice Utility Expressions for mgras: " + origMgra + " to " + destMgra
-     * + " for HHID: " + mcDmuIndex.getHHIndex() );
+     * if ( mcDmuIndex.getDebug() ) mcModel.logUECResults(myLogger,
+     * "Trip Mode Choice Utility Expressions for mgras: " + origMgra + " to " +
+     * destMgra + " for HHID: " + mcDmuIndex.getHHIndex() );
      * 
      * return logsum;
      * 
@@ -273,9 +291,11 @@ public class McLogsumsCalculator
      */
 
     /**
-     * return the array of mode choice model cumulative probabilities determined while computing the mode choice logsum for the trip segmen during
-     * stop location choice. These probabilities arrays are stored for each sampled stop location so that when the selected sample stop location is
-     * known, the mode choice can be drawn from the already computed probabilities.
+     * return the array of mode choice model cumulative probabilities determined
+     * while computing the mode choice logsum for the trip segmen during stop
+     * location choice. These probabilities arrays are stored for each sampled
+     * stop location so that when the selected sample stop location is known,
+     * the mode choice can be drawn from the already computed probabilities.
      * 
      * @return mode choice cumulative probabilities array
      */

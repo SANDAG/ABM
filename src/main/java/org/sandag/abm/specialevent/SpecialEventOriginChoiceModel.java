@@ -315,7 +315,11 @@ public class SpecialEventOriginChoiceModel
         {
             originTaz = (int) tazCumProb.getExternalColumnNumber(i);
             if (tazCumProb.getValueAt(originTaz, destinationTaz) > random)
-            { // the probabilities are stored column-wise
+            { // the
+              // probabilities
+              // are
+              // stored
+              // column-wise
                 if (i != 0)
                 {
                     cumProb = tazCumProb.getValueAt(originTaz,

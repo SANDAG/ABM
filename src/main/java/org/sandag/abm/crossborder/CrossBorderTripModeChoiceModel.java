@@ -157,7 +157,8 @@ public class CrossBorderTripModeChoiceModel
         dmu.setTourArrivePeriod(tour.getArriveTime());
         dmu.setTripPeriod(trip.getPeriod());
 
-        // set the dmu skim attributes (which involves setting the best wtw taps, since the tour taps are null
+        // set the dmu skim attributes (which involves setting the best wtw
+        // taps, since the tour taps are null
         logsumHelper.setTripMcDmuSkimAttributes(tour, trip, dmu);
 
         if (tour.getPurpose() == modelStructure.WORK) dmu.setWorkTour(1);

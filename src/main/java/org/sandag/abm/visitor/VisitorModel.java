@@ -2,7 +2,7 @@ package org.sandag.abm.visitor;
 
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
-import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.MissingResourceException;
 import org.apache.log4j.Logger;
@@ -245,7 +245,7 @@ public class VisitorModel
         try
         {
             ItemServer.bind(matrixServer, className);
-        } catch (IOException e)
+        } catch (RemoteException e)
         {
             logger.error(String.format(
                     "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",

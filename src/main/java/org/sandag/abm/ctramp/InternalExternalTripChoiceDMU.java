@@ -15,66 +15,71 @@ public class InternalExternalTripChoiceDMU
 
     protected HashMap<String, Integer> methodIndexMap;
 
-    private Household hh;
-    private Person person;
+    private Household                  hh;
+    private Person                     person;
 
-    private double distanceToCordonsLogsum;
-    private double vehiclesPerHouseholdMember;
-    
-    private IndexValues iv;
-    
-    
+    private double                     distanceToCordonsLogsum;
+    private double                     vehiclesPerHouseholdMember;
+
+    private IndexValues                iv;
+
     public InternalExternalTripChoiceDMU()
     {
         iv = new IndexValues();
     }
 
-    public void setDmuIndexValues( int hhid, int hhtaz ) {
+    public void setDmuIndexValues(int hhid, int hhtaz)
+    {
         iv.setHHIndex(hhid);
         iv.setZoneIndex(hhtaz);
-        iv.setDebug( hh.getDebugChoiceModels() );
+        iv.setDebug(hh.getDebugChoiceModels());
     }
-    
-    public IndexValues getDmuIndexValues() {
+
+    public IndexValues getDmuIndexValues()
+    {
         return iv;
     }
-    
-    public void setHouseholdObject(Household hhObj) {
+
+    public void setHouseholdObject(Household hhObj)
+    {
         hh = hhObj;
     }
 
-    public void setPersonObject(Person persObj) {
+    public void setPersonObject(Person persObj)
+    {
         person = persObj;
     }
 
-
-    public void setDistanceToCordonsLogsum( double value) {
+    public void setDistanceToCordonsLogsum(double value)
+    {
         distanceToCordonsLogsum = value;
     }
 
-    public double getDistanceToCordonsLogsum() {
+    public double getDistanceToCordonsLogsum()
+    {
         return distanceToCordonsLogsum;
     }
 
-    public void setVehiclesPerHouseholdMember( double value) {
+    public void setVehiclesPerHouseholdMember(double value)
+    {
         vehiclesPerHouseholdMember = value;
     }
 
-    public double getVehiclesPerHouseholdMember() {
+    public double getVehiclesPerHouseholdMember()
+    {
         return vehiclesPerHouseholdMember;
     }
 
-    public int getHhIncomeInDollars() {
+    public int getHhIncomeInDollars()
+    {
         return hh.getIncomeInDollars();
     }
-    
-    public int getAge() {
+
+    public int getAge()
+    {
         return person.getAge();
     }
-    
-    
-    
-    
+
     public int getIndexValue(String variableName)
     {
         return methodIndexMap.get(variableName);

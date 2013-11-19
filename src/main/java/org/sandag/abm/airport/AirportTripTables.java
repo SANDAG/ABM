@@ -4,6 +4,7 @@ import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
 import java.io.File;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -76,7 +77,7 @@ public class AirportTripTables
     // one file per time period
     private int                     numberOfPeriods;
 
-    private String                  purposeName[]           = {"RES_BUS", "RES_PER", "VIS_BUS",
+    private String[]                  purposeName           = {"RES_BUS", "RES_PER", "VIS_BUS",
             "VIS_PER"                                       };
     private HashMap<String, String> rbMap;
 
@@ -105,7 +106,7 @@ public class AirportTripTables
         numberOfPeriods = modelStructure.getNumberModelPeriods();
 
         // number of modes
-        modeIndex = new int[SandagModelStructure.MAXIMUM_TOUR_MODE_ALT_INDEX + 1];
+        modeIndex = new int[modelStructure.MAXIMUM_TOUR_MODE_ALT_INDEX + 1];
         matrixIndex = new int[modeIndex.length];
 
         // set the mode arrays
@@ -300,7 +301,7 @@ public class AirportTripTables
             if (purpose == 4) continue;
 
             int departTime = (int) tripData.getValueAt(i, "departTime");
-            int period = SandagModelStructure.getModelPeriodIndex(departTime);
+            int period = modelStructure.getModelPeriodIndex(departTime);
             if (period != timePeriod) continue;
 
             int originMGRA = (int) tripData.getValueAt(i, "originMgra");
@@ -390,7 +391,8 @@ public class AirportTripTables
                                                                      // the
                                                                      // driver
                                                                      // will
-                                                                     // also pay
+                                                                     // also
+                                                                     // pay
                 mat = 1;
                 else mat = 0;
                 float value = matrix[mode][mat].getValueAt(destinationTAZ, originTAZ);
@@ -501,7 +503,7 @@ public class AirportTripTables
         try
         {
             ItemServer.bind(matrixServer, className);
-        } catch (IOException e)
+        } catch (RemoteException e)
         {
             logger.error(String.format(
                     "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",

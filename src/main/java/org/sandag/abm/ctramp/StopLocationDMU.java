@@ -30,21 +30,21 @@ public class StopLocationDMU
     protected int                      tourModeIndex;
     protected double                   origDestDistance;
 
-    // these arrays are dimensioned to the total number of location choice alternatives (number of MGRAs)
+    // these arrays are dimensioned to the total number of location choice
+    // alternatives (number of MGRAs)
     protected int[]                    walkTransitAvailableAtMgra;
     protected double[]                 distancesFromOrigMgra;
     protected double[]                 distancesFromTourOrigMgra;
     protected double[]                 distancesToDestMgra;
     protected double[]                 distancesToTourDestMgra;
     protected double[]                 logSizeTerms;
-    
-    // these arrays are dimensioned to the maximum number of alternatives in the sample
+
+    // these arrays are dimensioned to the maximum number of alternatives in the
+    // sample
     protected double[]                 mcLogsums;
     protected double[]                 slcSoaCorrections;
     protected int[]                    sampleArray;
 
-
-    
     public StopLocationDMU(ModelStructure modelStructure)
     {
         dmuIndex = new IndexValues();
@@ -76,26 +76,29 @@ public class StopLocationDMU
         person = tour.getPersonObject();
         household = person.getHouseholdObject();
     }
-    
 
     /**
      * set the value for the number of unique alternatives in the sample.
      * sampleArray can be indexed as i=1; i <= numberInSample.
      * sampleArray.length - 1 is the maximum number of locations in the sample.
      * 
-     * @param num - number of unique alternatives in the sample.
+     * @param num
+     *            - number of unique alternatives in the sample.
      */
-    public void setNumberInSample( int num ) 
+    public void setNumberInSample(int num)
     {
         numberInSample = num;
     }
-    
+
     /**
-     * set the array of sample MGRA values from which the stop location MGRA will be selected.
-     * @param sample - the sample array of MGRA location choice alternatives.
-     *               - use numberInSample as upperbound of relevant choices in sample 
+     * set the array of sample MGRA values from which the stop location MGRA
+     * will be selected.
+     * 
+     * @param sample
+     *            - the sample array of MGRA location choice alternatives. - use
+     *            numberInSample as upperbound of relevant choices in sample
      */
-    public void setSampleOfAlternatives( int[] sample )
+    public void setSampleOfAlternatives(int[] sample)
     {
         sampleArray = sample;
     }
@@ -110,83 +113,91 @@ public class StopLocationDMU
         mcLogsums = logsums;
     }
 
-
     public void setLogSize(double[] size)
     {
         logSizeTerms = size;
     }
-    
+
     /**
-     * set the array of distance values from the origin MGRA of the stop to all MGRAs.
+     * set the array of distance values from the origin MGRA of the stop to all
+     * MGRAs.
+     * 
      * @param distances
      */
-    public void setDistancesFromOrigMgra( double[] distances )
+    public void setDistancesFromOrigMgra(double[] distances)
     {
         distancesFromOrigMgra = distances;
     }
-    
+
     /**
      * set the array of distance values from the tour origin MGRA to all MGRAs.
+     * 
      * @param distances
      */
-    public void setDistancesFromTourOrigMgra( double[] distances )
+    public void setDistancesFromTourOrigMgra(double[] distances)
     {
         distancesFromTourOrigMgra = distances;
     }
-    
+
     /**
-     * set the array of distance values from all MGRAs to the final destination MGRA of the stop.
+     * set the array of distance values from all MGRAs to the final destination
+     * MGRA of the stop.
+     * 
      * @param distances
      */
-    public void setDistancesToDestMgra( double[] distances )
+    public void setDistancesToDestMgra(double[] distances)
     {
         distancesToDestMgra = distances;
     }
 
     /**
-     * set the array of distance values from all MGRAs to the tour destination MGRA.
+     * set the array of distance values from all MGRAs to the tour destination
+     * MGRA.
+     * 
      * @param distances
      */
-    public void setDistancesToTourDestMgra( double[] distances )
+    public void setDistancesToTourDestMgra(double[] distances)
     {
         distancesToTourDestMgra = distances;
     }
 
     /**
-     * set the OD distance value from the stop origin MGRA to the final destination MGRA of the stop.
+     * set the OD distance value from the stop origin MGRA to the final
+     * destination MGRA of the stop.
+     * 
      * @param distances
      */
-    public void setOrigDestDistance( double distance )
+    public void setOrigDestDistance(double distance)
     {
         origDestDistance = distance;
     }
 
     /**
      * set the tour mode index value for the tour of the stop being located
+     * 
      * @param tour
      */
-    public void setTourModeIndex( int index )
+    public void setTourModeIndex(int index)
     {
         tourModeIndex = index;
     }
 
     /**
-     * set the array of attributes for all MGRAs that says their is walk transit access for the indexed mgra
+     * set the array of attributes for all MGRAs that says their is walk transit
+     * access for the indexed mgra
+     * 
      * @param tour
      */
-    public void setWalkTransitAvailable( int[] avail )
+    public void setWalkTransitAvailable(int[] avail)
     {
         walkTransitAvailableAtMgra = avail;
     }
-
-    
-
 
     public IndexValues getDmuIndexValues()
     {
         return dmuIndex;
     }
-    
+
     public int getSampleMgraAlt(int alt)
     {
         return sampleArray[alt];
@@ -203,8 +214,11 @@ public class StopLocationDMU
     }
 
     /**
-     * get the logged size term from the full set of size terms for all mgra associated with the sample alternative
-     * @param alt - element number for the sample array
+     * get the logged size term from the full set of size terms for all mgra
+     * associated with the sample alternative
+     * 
+     * @param alt
+     *            - element number for the sample array
      * @return logged size term for mgra associated with the sample element
      */
     public double getLnSlcSizeSampleAlt(int alt)
@@ -214,8 +228,11 @@ public class StopLocationDMU
     }
 
     /**
-     * get the logged size term ffrom the full set of size terms for all mgra alternatives
-     * @param mgra - mgra location alternive
+     * get the logged size term ffrom the full set of size terms for all mgra
+     * alternatives
+     * 
+     * @param mgra
+     *            - mgra location alternive
      * @return logged size term for mgra
      */
     public double getLnSlcSizeAlt(int mgra)
@@ -223,11 +240,10 @@ public class StopLocationDMU
         return logSizeTerms[mgra];
     }
 
-    
-    
     protected int getTourIsJoint()
     {
-        return tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY) ? 1 : 0;
+        return tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY) ? 1
+                : 0;
     }
 
     public int getTourMode()
@@ -272,31 +288,34 @@ public class StopLocationDMU
 
     public int getStopsOnHalfTour()
     {
-        return stop.isInboundStop() ? tour.getInboundStops().length : tour.getOutboundStops().length; 
+        return stop.isInboundStop() ? tour.getInboundStops().length
+                : tour.getOutboundStops().length;
     }
 
-    public double getOrigToMgraDistanceAlt( int alt )
+    public double getOrigToMgraDistanceAlt(int alt)
     {
-//        int dummy=0;
-//        double dist = Math.abs(distancesFromOrigMgra[alt] - distancesToDestMgra[alt]);
-//        double maxSegDist = Math.max(distancesFromOrigMgra[alt], distancesToDestMgra[alt]);
-//        if ( dist > 0 && dist < 1 && origDestDistance > 40 )
-//            dummy = 1;
-            
+        // int dummy=0;
+        // double dist = Math.abs(distancesFromOrigMgra[alt] -
+        // distancesToDestMgra[alt]);
+        // double maxSegDist = Math.max(distancesFromOrigMgra[alt],
+        // distancesToDestMgra[alt]);
+        // if ( dist > 0 && dist < 1 && origDestDistance > 40 )
+        // dummy = 1;
+
         return distancesFromOrigMgra[alt];
     }
 
-    public double getTourOrigToMgraDistanceAlt( int alt )
+    public double getTourOrigToMgraDistanceAlt(int alt)
     {
         return distancesFromTourOrigMgra[alt];
     }
 
-    public double getMgraToDestDistanceAlt( int alt )
+    public double getMgraToDestDistanceAlt(int alt)
     {
         return distancesToDestMgra[alt];
     }
 
-    public double getMgraToTourDestDistanceAlt( int alt )
+    public double getMgraToTourDestDistanceAlt(int alt)
     {
         return distancesToTourDestMgra[alt];
     }
@@ -325,16 +344,11 @@ public class StopLocationDMU
         return tourModeIsWalkLocal || tourModeIsWalkPremium ? 1 : 0;
     }
 
-    public int getWalkTransitAvailableAlt( int alt )
+    public int getWalkTransitAvailableAlt(int alt)
     {
         return walkTransitAvailableAtMgra[alt];
     }
 
-
-
-    
-    
-    
     public int getIndexValue(String variableName)
     {
         return methodIndexMap.get(variableName);

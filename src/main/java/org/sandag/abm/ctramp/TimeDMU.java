@@ -50,22 +50,24 @@ public class TimeDMU
     // public void setImtfWorkSwitch(int workOn){
     // imtfWorkSwitch = workOn;
     // }
-    //    
+    //
     // /**
     // * Used in the Individual Mandatory Tour Frequency model; set to true
-    // * when the model is applied for a student (to get round trip time to school,
-    // * which uses peak skims in the o/d direction and off-peak skims in the d/o
+    // * when the model is applied for a student (to get round trip time to
+    // school,
+    // * which uses peak skims in the o/d direction and off-peak skims in the
+    // d/o
     // * direction)
     // * @param schoolOn
     // */
     // public void setImtfSchoolSwitch(int schoolOn){
     // imtfSchoolSwitch = schoolOn;
     // }
-    //    
+    //
     // public int getImtfWorkSwitch(){
     // return this.imtfWorkSwitch;
     // }
-    //    
+    //
     // public int getImtfSchoolSwitch(){
     // return this.imtfSchoolSwitch;
     // }

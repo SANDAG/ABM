@@ -9,7 +9,8 @@ import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 
 /**
- * This class is the stop frequency model for cross border tours. It is currently based on a static probability distribution stored in an input file,
+ * This class is the stop frequency model for cross border tours. It is
+ * currently based on a static probability distribution stored in an input file,
  * and indexed into by tour purpose and duration.
  * 
  * @author Freedman
@@ -19,11 +20,40 @@ public class CrossBorderStopFrequencyModel
 {
     private transient Logger  logger = Logger.getLogger("crossBorderModel");
 
-    private double[][]        cumProbability;                               // by purpose, alternative: cumulative probability distribution
-    private int[][]           lowerBoundDurationHours;                      // by purpose, alternative: lower bound in hours
-    private int[][]           upperBoundDurationHours;                      // by purpose, alternative: upper bound in hours
-    private int[][]           outboundStops;                                // by purpose, alternative: number of outbound stops
-    private int[][]           inboundStops;                                 // by purpose, alternative: number of inbound stops
+    private double[][]        cumProbability;                               // by
+                                                                             // purpose,
+                                                                             // alternative:
+                                                                             // cumulative
+                                                                             // probability
+                                                                             // distribution
+    private int[][]           lowerBoundDurationHours;                      // by
+                                                                             // purpose,
+                                                                             // alternative:
+                                                                             // lower
+                                                                             // bound
+                                                                             // in
+                                                                             // hours
+    private int[][]           upperBoundDurationHours;                      // by
+                                                                             // purpose,
+                                                                             // alternative:
+                                                                             // upper
+                                                                             // bound
+                                                                             // in
+                                                                             // hours
+    private int[][]           outboundStops;                                // by
+                                                                             // purpose,
+                                                                             // alternative:
+                                                                             // number
+                                                                             // of
+                                                                             // outbound
+                                                                             // stops
+    private int[][]           inboundStops;                                 // by
+                                                                             // purpose,
+                                                                             // alternative:
+                                                                             // number
+                                                                             // of
+                                                                             // inbound
+                                                                             // stops
     CrossBorderModelStructure modelStructure;
 
     /**
@@ -71,7 +101,8 @@ public class CrossBorderStopFrequencyModel
 
         int[] alts = new int[purposes];
 
-        // take a pass through the data and see how many alternatives there are for each purpose
+        // take a pass through the data and see how many alternatives there are
+        // for each purpose
         int rowCount = probabilityTable.getRowCount();
         for (int row = 1; row <= rowCount; ++row)
         {
@@ -228,7 +259,8 @@ public class CrossBorderStopFrequencyModel
     }
 
     /**
-     * Generate an array of outbound stops, from tour origin to primary destination, in order.
+     * Generate an array of outbound stops, from tour origin to primary
+     * destination, in order.
      * 
      * @param tour
      *            The parent tour.
@@ -253,7 +285,8 @@ public class CrossBorderStopFrequencyModel
     }
 
     /**
-     * Generate an array of inbound stops, from primary dest back to tour origin, in order.
+     * Generate an array of inbound stops, from primary dest back to tour
+     * origin, in order.
      * 
      * @param tour
      *            Parent tour.

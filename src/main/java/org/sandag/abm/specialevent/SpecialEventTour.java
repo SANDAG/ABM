@@ -2,9 +2,7 @@ package org.sandag.abm.specialevent;
 
 import java.io.Serializable;
 import org.apache.log4j.Logger;
-import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.Household;
-import org.sandag.abm.ctramp.Stop;
 import com.pb.common.math.MersenneTwister;
 
 public class SpecialEventTour

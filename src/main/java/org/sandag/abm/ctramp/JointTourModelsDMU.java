@@ -6,10 +6,11 @@ import org.apache.log4j.Logger;
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 
-public class JointTourModelsDMU implements Serializable, VariableTable
+public class JointTourModelsDMU
+        implements Serializable, VariableTable
 {
 
-    protected transient Logger         logger                  = Logger.getLogger(TourModeChoiceDMU.class);
+    protected transient Logger         logger = Logger.getLogger(TourModeChoiceDMU.class);
 
     protected HashMap<String, Integer> methodIndexMap;
 
@@ -20,8 +21,6 @@ public class JointTourModelsDMU implements Serializable, VariableTable
     private float                      shopHOVAccessibility;
     private float                      maintHOVAccessibility;
     private float                      discrHOVAccessibility;
-    
-
 
     public JointTourModelsDMU()
     {
@@ -43,9 +42,9 @@ public class JointTourModelsDMU implements Serializable, VariableTable
         tour = tourObject;
     }
 
-    // DMU methods - define one of these for every @var in the mode choice control
+    // DMU methods - define one of these for every @var in the mode choice
+    // control
     // file.
-
 
     public IndexValues getDmuIndexValues()
     {
@@ -57,7 +56,7 @@ public class JointTourModelsDMU implements Serializable, VariableTable
         int count = 0;
         for (Person p : hh.getPersons())
             if (p != null && p.getPersonIsFullTimeWorker() == 1)
-                if (! p.getCdapActivity().equalsIgnoreCase(ModelStructure.HOME_PATTERN)) count++;
+                if (!p.getCdapActivity().equalsIgnoreCase(ModelStructure.HOME_PATTERN)) count++;
         return count;
     }
 
@@ -66,7 +65,7 @@ public class JointTourModelsDMU implements Serializable, VariableTable
         int count = 0;
         for (Person p : hh.getPersons())
             if (p != null && p.getPersonIsPartTimeWorker() == 1)
-                if (! p.getCdapActivity().equalsIgnoreCase(ModelStructure.HOME_PATTERN)) count++;
+                if (!p.getCdapActivity().equalsIgnoreCase(ModelStructure.HOME_PATTERN)) count++;
         return count;
     }
 
@@ -75,7 +74,7 @@ public class JointTourModelsDMU implements Serializable, VariableTable
         int count = 0;
         for (Person p : hh.getPersons())
             if (p != null && p.getPersonIsUniversityStudent() == 1)
-                if (! p.getCdapActivity().equalsIgnoreCase(ModelStructure.HOME_PATTERN)) count++;
+                if (!p.getCdapActivity().equalsIgnoreCase(ModelStructure.HOME_PATTERN)) count++;
         return count;
     }
 
@@ -84,7 +83,7 @@ public class JointTourModelsDMU implements Serializable, VariableTable
         int count = 0;
         for (Person p : hh.getPersons())
             if (p != null && p.getPersonIsNonWorkingAdultUnder65() == 1)
-                if (! p.getCdapActivity().equalsIgnoreCase(ModelStructure.HOME_PATTERN)) count++;
+                if (!p.getCdapActivity().equalsIgnoreCase(ModelStructure.HOME_PATTERN)) count++;
         return count;
     }
 
@@ -93,7 +92,7 @@ public class JointTourModelsDMU implements Serializable, VariableTable
         int count = 0;
         for (Person p : hh.getPersons())
             if (p != null && p.getPersonIsNonWorkingAdultOver65() == 1)
-                if (! p.getCdapActivity().equalsIgnoreCase(ModelStructure.HOME_PATTERN)) count++;
+                if (!p.getCdapActivity().equalsIgnoreCase(ModelStructure.HOME_PATTERN)) count++;
         return count;
     }
 
@@ -102,7 +101,7 @@ public class JointTourModelsDMU implements Serializable, VariableTable
         int count = 0;
         for (Person p : hh.getPersons())
             if (p != null && p.getPersonIsStudentDriving() == 1)
-                if (! p.getCdapActivity().equalsIgnoreCase(ModelStructure.HOME_PATTERN)) count++;
+                if (!p.getCdapActivity().equalsIgnoreCase(ModelStructure.HOME_PATTERN)) count++;
         return count;
     }
 
@@ -111,7 +110,7 @@ public class JointTourModelsDMU implements Serializable, VariableTable
         int count = 0;
         for (Person p : hh.getPersons())
             if (p != null && p.getPersonIsStudentNonDriving() == 1)
-                if (! p.getCdapActivity().equalsIgnoreCase(ModelStructure.HOME_PATTERN)) count++;
+                if (!p.getCdapActivity().equalsIgnoreCase(ModelStructure.HOME_PATTERN)) count++;
         return count;
     }
 
@@ -120,10 +119,9 @@ public class JointTourModelsDMU implements Serializable, VariableTable
         int count = 0;
         for (Person p : hh.getPersons())
             if (p != null && p.getPersonIsPreschoolChild() == 1)
-                if (! p.getCdapActivity().equalsIgnoreCase(ModelStructure.HOME_PATTERN)) count++;
+                if (!p.getCdapActivity().equalsIgnoreCase(ModelStructure.HOME_PATTERN)) count++;
         return count;
     }
-
 
     public int getMaxPairwiseAdultOverlapsHh()
     {
@@ -144,12 +142,12 @@ public class JointTourModelsDMU implements Serializable, VariableTable
     {
         return tour.getPersonObject().getMaxAdultOverlaps();
     }
-    
+
     public int getMaxPairwiseOverlapOtherChildren()
     {
         return tour.getPersonObject().getMaxChildOverlaps();
     }
-    
+
     public int getTravelActiveAdults()
     {
         return hh.getTravelActiveAdults();
@@ -212,29 +210,33 @@ public class JointTourModelsDMU implements Serializable, VariableTable
 
     public int getTourPurposeIsMaint()
     {
-        return tour.getTourPurpose().equalsIgnoreCase(ModelStructure.OTH_MAINT_PRIMARY_PURPOSE_NAME) ? 1 : 0;
+        return tour.getTourPurpose()
+                .equalsIgnoreCase(ModelStructure.OTH_MAINT_PRIMARY_PURPOSE_NAME) ? 1 : 0;
     }
 
     public int getTourPurposeIsEat()
     {
-        return tour.getTourPurpose().equalsIgnoreCase(ModelStructure.EAT_OUT_PRIMARY_PURPOSE_NAME) ? 1 : 0;
+        return tour.getTourPurpose().equalsIgnoreCase(ModelStructure.EAT_OUT_PRIMARY_PURPOSE_NAME) ? 1
+                : 0;
     }
 
     public int getTourPurposeIsVisit()
     {
-        return tour.getTourPurpose().equalsIgnoreCase(ModelStructure.VISITING_PRIMARY_PURPOSE_NAME) ? 1 : 0;
+        return tour.getTourPurpose().equalsIgnoreCase(ModelStructure.VISITING_PRIMARY_PURPOSE_NAME) ? 1
+                : 0;
     }
 
     public int getTourPurposeIsDiscr()
     {
-        return tour.getTourPurpose().equalsIgnoreCase(ModelStructure.OTH_DISCR_PRIMARY_PURPOSE_NAME) ? 1 : 0;
+        return tour.getTourPurpose()
+                .equalsIgnoreCase(ModelStructure.OTH_DISCR_PRIMARY_PURPOSE_NAME) ? 1 : 0;
     }
 
     public int getPersonType()
     {
         return tour.getPersonObject().getPersonTypeNumber();
     }
-    
+
     public int getJointTourComposition()
     {
         return tour.getJointTourComposition();
@@ -275,10 +277,6 @@ public class JointTourModelsDMU implements Serializable, VariableTable
         return discrHOVAccessibility;
     }
 
-
-
-    
-    
     public int getIndexValue(String variableName)
     {
         return methodIndexMap.get(variableName);

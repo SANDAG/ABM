@@ -1,38 +1,34 @@
 package org.sandag.abm.ctramp;
 
-import java.util.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AccessibilitiesTable;
 import org.sandag.abm.accessibilities.MandatoryAccessibilitiesCalculator;
-import org.sandag.abm.ctramp.CtrampDmuFactoryIf;
-import org.sandag.abm.ctramp.Definitions;
-import org.sandag.abm.ctramp.ModelStructure;
-import org.sandag.abm.ctramp.Household;
-import org.sandag.abm.ctramp.Person;
-import org.sandag.abm.ctramp.Tour;
-import org.sandag.abm.ctramp.IndividualNonMandatoryTourFrequencyDMU;
 import com.pb.common.calculator.VariableTable;
-import com.pb.common.datafile.TableDataSet;
 import com.pb.common.datafile.CSVFileReader;
+import com.pb.common.datafile.TableDataSet;
 import com.pb.common.newmodel.ChoiceModelApplication;
 
 /**
- * Implements an invidual mandatory tour frequency model, which selects the number of
- * work, school, or work and school tours for each person who selects a mandatory
- * activity. There are essentially seven separate models, one for each person type
- * (full-time worker, part-time worker, university student, non working adults,
- * retired, driving students, and non-driving students), except pre-school students.
- * The choices are one work tour, two work tours, one school tour, two school tours,
- * and one work and school tour. Availability arrays are defined for each person
- * type.
+ * Implements an invidual mandatory tour frequency model, which selects the
+ * number of work, school, or work and school tours for each person who selects
+ * a mandatory activity. There are essentially seven separate models, one for
+ * each person type (full-time worker, part-time worker, university student, non
+ * working adults, retired, driving students, and non-driving students), except
+ * pre-school students. The choices are one work tour, two work tours, one
+ * school tour, two school tours, and one work and school tour. Availability
+ * arrays are defined for each person type.
  * 
- * The UEC for the model has two additional matrix calcuation tabs, which computes
- * the one-way walk distance and the round-trip auto time to work and/or school for
- * the model. This allows us to compute the work and/or school time, by setting the
- * DMU destination index, just using the UEC.
+ * The UEC for the model has two additional matrix calcuation tabs, which
+ * computes the one-way walk distance and the round-trip auto time to work
+ * and/or school for the model. This allows us to compute the work and/or school
+ * time, by setting the DMU destination index, just using the UEC.
  * 
  * @author D. Ory
  * 
@@ -41,10 +37,8 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
         implements Serializable
 {
 
-    private transient Logger                       logger                                                 = Logger
-                                                                                                                  .getLogger(HouseholdIndividualNonMandatoryTourFrequencyModel.class);
-    private transient Logger                       tourFreq                                               = Logger
-                                                                                                                  .getLogger("tourFreq");
+    private transient Logger                       logger                                                 = Logger.getLogger(HouseholdIndividualNonMandatoryTourFrequencyModel.class);
+    private transient Logger                       tourFreq                                               = Logger.getLogger("tourFreq");
 
     private static final String                    UEC_DATA_PAGE_KEY                                      = "inmtf.data.page";
     private static final String                    UEC_PERSONTYPE_1_PAGE_KEY                              = "inmtf.perstype1.page";
@@ -64,7 +58,7 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
 
     private static final int                       AUTO_LOGSUM_INDEX                                      = 6;
 
-    private AccessibilitiesTable accTable;
+    private AccessibilitiesTable                   accTable;
     private MandatoryAccessibilitiesCalculator     mandAcc;
 
     private HashMap<Integer, String>               purposeIndexToNameMap;
@@ -91,29 +85,35 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
             "", "visit0", "visit1", "visit2"                                                              };
 
     /**
-     * Constructor establishes the ChoiceModelApplication, which applies the logit
-     * model via the UEC spreadsheet, and it also establishes the UECs used to
-     * compute the one-way walk distance to work and/or school and the round-trip
-     * auto time to work and/or school. The model must be the first UEC tab, the
-     * one-way distance calculations must be the second UEC tab, round-trip time must
-     * be the third UEC tab.
+     * Constructor establishes the ChoiceModelApplication, which applies the
+     * logit model via the UEC spreadsheet, and it also establishes the UECs
+     * used to compute the one-way walk distance to work and/or school and the
+     * round-trip auto time to work and/or school. The model must be the first
+     * UEC tab, the one-way distance calculations must be the second UEC tab,
+     * round-trip time must be the third UEC tab.
      * 
-     * @param dmuObject is the UEC dmu object for this choice model
-     * @param uecFileName is the UEC control file name
-     * @param resourceBundle is the application ResourceBundle, from which a
-     *            properties file HashMap will be created for the UEC
-     * @param tazDataManager is the object used to interact with the zonal data table
-     * @param modelStructure is the ModelStructure object that defines segmentation
-     *            and other model structure relate atributes
+     * @param dmuObject
+     *            is the UEC dmu object for this choice model
+     * @param uecFileName
+     *            is the UEC control file name
+     * @param resourceBundle
+     *            is the application ResourceBundle, from which a properties
+     *            file HashMap will be created for the UEC
+     * @param tazDataManager
+     *            is the object used to interact with the zonal data table
+     * @param modelStructure
+     *            is the ModelStructure object that defines segmentation and
+     *            other model structure relate atributes
      */
 
     public HouseholdIndividualNonMandatoryTourFrequencyModel(HashMap<String, String> propertyMap,
-            CtrampDmuFactoryIf dmuFactory, AccessibilitiesTable myAccTable, MandatoryAccessibilitiesCalculator myMandAcc)
+            CtrampDmuFactoryIf dmuFactory, AccessibilitiesTable myAccTable,
+            MandatoryAccessibilitiesCalculator myMandAcc)
     {
 
         accTable = myAccTable;
         mandAcc = myMandAcc;
-        
+
         setUpModels(propertyMap, dmuFactory);
 
     }
@@ -168,18 +168,22 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
                     (VariableTable) dmuObject);
 
         // the alternatives are the same for each person type; use the first
-        // choiceModelApplication to get its uec and from it, get the TableDataSet
+        // choiceModelApplication to get its uec and from it, get the
+        // TableDataSet
         // of alternatives
-        // to use to determine which tour purposes should be generated for the chose
+        // to use to determine which tour purposes should be generated for the
+        // chose
         // alternative.
         int ftIndex = personTypeIndexToModelIndexMap.get(1);
         alternativesTable = choiceModelApplication[ftIndex].getUEC().getAlternativeData();
 
-        // check the field names in the alternatives table; make sure the their order
+        // check the field names in the alternatives table; make sure the their
+        // order
         // is as expected.
         String[] fieldNames = alternativesTable.getColumnLabels();
 
-        // create a mapping between names used in lookup file and purpose names used
+        // create a mapping between names used in lookup file and purpose names
+        // used
         // in model
         HashMap<String, String> primaryPurposeMap = new HashMap<String, String>();
         primaryPurposeMap.put(ModelStructure.ESCORT_PRIMARY_PURPOSE_NAME,
@@ -205,13 +209,10 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
 
         if (!fieldNames[0].equalsIgnoreCase("a") && !fieldNames[0].equalsIgnoreCase("alt"))
         {
-            logger
-                    .error("error while checking order of fields in IndividualNonMandatoryTourFrequencyModel alternatives file.");
-            logger
-                    .error(String
-                            .format(
-                                    "first field expected to be 'a' or 'alt' (case insensitive), but %s was found instead.",
-                                    fieldNames[0]));
+            logger.error("error while checking order of fields in IndividualNonMandatoryTourFrequencyModel alternatives file.");
+            logger.error(String
+                    .format("first field expected to be 'a' or 'alt' (case insensitive), but %s was found instead.",
+                            fieldNames[0]));
             throw new RuntimeException();
         } else
         {
@@ -222,13 +223,10 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
                 String name = primaryPurposeMap.get(primaryName).trim();
                 if (!fieldNames[i].equalsIgnoreCase(name))
                 {
-                    logger
-                            .error("error while checking order of fields in IndividualNonMandatoryTourFrequencyModel alternatives file.");
-                    logger
-                            .error(String
-                                    .format(
-                                            "field %d expected to be '%s' (case insensitive), but %s was found instead.",
-                                            i, name, fieldNames[i]));
+                    logger.error("error while checking order of fields in IndividualNonMandatoryTourFrequencyModel alternatives file.");
+                    logger.error(String
+                            .format("field %d expected to be '%s' (case insensitive), but %s was found instead.",
+                                    i, name, fieldNames[i]));
                     throw new RuntimeException();
                 }
             }
@@ -244,8 +242,9 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
      * Applies the model for the array of households that are stored in the
      * HouseholdDataManager. The results are summarized by person type.
      * 
-     * @param householdDataManager is the object containg the Household objects for
-     *            which this model is to be applied.
+     * @param householdDataManager
+     *            is the object containg the Household objects for which this
+     *            model is to be applied.
      */
     public void applyModel(Household household)
     {
@@ -259,29 +258,40 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
             household.logHouseholdObject("Pre Individual Non-Mandatory Tour Frequency Choice HHID="
                     + household.getHhId() + " Object", modelLogger);
 
-        // this will be an array with values 1 -> tours.length being the number of
+        // this will be an array with values 1 -> tours.length being the number
+        // of
         // non-mandatory tours in each category
-        // this keeps it consistent with the way the alternatives are held in the
+        // this keeps it consistent with the way the alternatives are held in
+        // the
         // alternatives file/arrays
         float[] tours = null;
 
         // get this household's person array
         Person[] personArray = household.getPersons();
 
-        // set the household id, origin taz, hh taz, and debugFlag=false in the dmu
+        // set the household id, origin taz, hh taz, and debugFlag=false in the
+        // dmu
         dmuObject.setHouseholdObject(household);
 
-        // set the auto sufficiency dependent non-mandatory accessibility values for
+        // set the auto sufficiency dependent non-mandatory accessibility values
+        // for
         // the household
         int autoSufficiency = household.getAutoSufficiency();
-        dmuObject.setShopAccessibility(accTable.getAggregateAccessibility(shopTypes[autoSufficiency], household.getHhMgra()));
-        dmuObject.setMaintAccessibility(accTable.getAggregateAccessibility( maintTypes[autoSufficiency], household.getHhMgra() ));
-        dmuObject.setEatOutAccessibility(accTable.getAggregateAccessibility( eatOutTypes[autoSufficiency], household.getHhMgra()) );
-        dmuObject.setVisitAccessibility(accTable.getAggregateAccessibility( visitTypes[autoSufficiency], household.getHhMgra()) );
-        dmuObject.setDiscrAccessibility(accTable.getAggregateAccessibility( discrTypes[autoSufficiency], household.getHhMgra()) );
-        dmuObject.setEscortAccessibility(accTable.getAggregateAccessibility( escortTypes[autoSufficiency], household.getHhMgra()) );
+        dmuObject.setShopAccessibility(accTable.getAggregateAccessibility(
+                shopTypes[autoSufficiency], household.getHhMgra()));
+        dmuObject.setMaintAccessibility(accTable.getAggregateAccessibility(
+                maintTypes[autoSufficiency], household.getHhMgra()));
+        dmuObject.setEatOutAccessibility(accTable.getAggregateAccessibility(
+                eatOutTypes[autoSufficiency], household.getHhMgra()));
+        dmuObject.setVisitAccessibility(accTable.getAggregateAccessibility(
+                visitTypes[autoSufficiency], household.getHhMgra()));
+        dmuObject.setDiscrAccessibility(accTable.getAggregateAccessibility(
+                discrTypes[autoSufficiency], household.getHhMgra()));
+        dmuObject.setEscortAccessibility(accTable.getAggregateAccessibility(
+                escortTypes[autoSufficiency], household.getHhMgra()));
 
-        dmuObject.setNmDcLogsum(accTable.getAggregateAccessibility("nonmotor", household.getHhMgra()));
+        dmuObject.setNmDcLogsum(accTable.getAggregateAccessibility("nonmotor",
+                household.getHhMgra()));
 
         String separator = "";
         String choiceModelDescription = "";
@@ -309,7 +319,8 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
 
                     if (household.getDebugChoiceModels())
                     {
-                        decisionMakerLabel = String.format("HH=%d, PersonNum=%d, PersonType=%s", household.getHhId(), person.getPersonNum(), person.getPersonType());
+                        decisionMakerLabel = String.format("HH=%d, PersonNum=%d, PersonType=%s",
+                                household.getHhId(), person.getPersonNum(), person.getPersonType());
                         household.logPersonObject(decisionMakerLabel, modelLogger, person);
                     }
 
@@ -325,22 +336,22 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
 
                     int workMgra = person.getUsualWorkLocation();
                     double accessibility = 0.0;
-                    if (workMgra > 0
-                            && workMgra != ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR)
+                    if (workMgra > 0 && workMgra != ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR)
                     {
                         double[] accessibilities = mandAcc.calculateAccessibilitiesForMgraPair(
-                                household.getHhMgra(), workMgra, household.getDebugChoiceModels(), tourFreq);
+                                household.getHhMgra(), workMgra, household.getDebugChoiceModels(),
+                                tourFreq);
                         accessibility = accessibilities[AUTO_LOGSUM_INDEX];
                     }
                     dmuObject.setWorkAccessibility(accessibility);
 
                     int schoolMgra = person.getUsualSchoolLocation();
                     accessibility = 0.0;
-                    if (schoolMgra > 0
-                            && schoolMgra != ModelStructure.NOT_ENROLLED_SEGMENT_INDEX)
+                    if (schoolMgra > 0 && schoolMgra != ModelStructure.NOT_ENROLLED_SEGMENT_INDEX)
                     {
                         double[] accessibilities = mandAcc.calculateAccessibilitiesForMgraPair(
-                                household.getHhMgra(), schoolMgra, household.getDebugChoiceModels(), tourFreq);
+                                household.getHhMgra(), schoolMgra,
+                                household.getDebugChoiceModels(), tourFreq);
                         accessibility = accessibilities[AUTO_LOGSUM_INDEX];
                     }
                     dmuObject.setSchoolAccessibility(accessibility);
@@ -379,25 +390,29 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
 
                     }
 
-                    choiceModelApplication[modelIndex].computeUtilities(dmuObject, dmuObject.getDmuIndexValues(), availabilityArray, sampleArray);
+                    choiceModelApplication[modelIndex].computeUtilities(dmuObject,
+                            dmuObject.getDmuIndexValues(), availabilityArray, sampleArray);
 
                     // get the random number from the household
                     Random random = household.getHhRandom();
                     int randomCount = household.getHhRandomCount();
                     double rn = random.nextDouble();
 
-                    // if the choice model has at least one available alternative,
+                    // if the choice model has at least one available
+                    // alternative,
                     // make choice.
-                    if (choiceModelApplication[modelIndex].getAvailabilityCount() > 0) choice = choiceModelApplication[modelIndex].getChoiceResult(rn);
+                    if (choiceModelApplication[modelIndex].getAvailabilityCount() > 0) choice = choiceModelApplication[modelIndex]
+                            .getChoiceResult(rn);
                     else
                     {
-                        logger.error(String.format(
-                            "Exception caught for j=%d, activity=%s, HHID=%d, no Non-Mandatory Tour Frequency alternatives available to choose from in choiceModelApplication.",
-                            j, activity, person.getHouseholdObject().getHhId()));
+                        logger.error(String
+                                .format("Exception caught for j=%d, activity=%s, HHID=%d, no Non-Mandatory Tour Frequency alternatives available to choose from in choiceModelApplication.",
+                                        j, activity, person.getHouseholdObject().getHhId()));
                         throw new RuntimeException();
                     }
 
-                    // create the non-mandatory tour objects for the choice made.
+                    // create the non-mandatory tour objects for the choice
+                    // made.
                     // createIndividualNonMandatoryTours ( person, choice );
                     tours = runIndividualNonMandatoryToursIncreaseModel(person, choice);
                     createIndividualNonMandatoryTours_new(person, tours);
@@ -406,45 +421,59 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
                     if (household.getDebugChoiceModels())
                     {
 
-                        String[] alternativeNames = choiceModelApplication[modelIndex].getAlternativeNames();
+                        String[] alternativeNames = choiceModelApplication[modelIndex]
+                                .getAlternativeNames();
                         double[] utilities = choiceModelApplication[modelIndex].getUtilities();
-                        double[] probabilities = choiceModelApplication[modelIndex].getProbabilities();
+                        double[] probabilities = choiceModelApplication[modelIndex]
+                                .getProbabilities();
 
                         int personNum = person.getPersonNum();
-                        modelLogger.info("Person num: " + personNum + ", Person type: " + personTypeString);
-                        modelLogger.info("Alternative                                                                        Utility       Probability           CumProb");
-                        modelLogger.info("---------------------------------------------                               --------------    --------------    --------------");
+                        modelLogger.info("Person num: " + personNum + ", Person type: "
+                                + personTypeString);
+                        modelLogger
+                                .info("Alternative                                                                        Utility       Probability           CumProb");
+                        modelLogger
+                                .info("---------------------------------------------                               --------------    --------------    --------------");
 
                         double cumProb = 0.0;
                         for (int k = 0; k < alternativeNames.length; k++)
                         {
                             cumProb += probabilities[k];
-                            String altString = String.format("%-3d %-66s", k + 1, getAlternativeNameFromChoice(k + 1));
-                            modelLogger.info(String.format("%-72s%18.6e%18.6e%18.6e", altString, utilities[k], probabilities[k], cumProb));
+                            String altString = String.format("%-3d %-66s", k + 1,
+                                    getAlternativeNameFromChoice(k + 1));
+                            modelLogger.info(String.format("%-72s%18.6e%18.6e%18.6e", altString,
+                                    utilities[k], probabilities[k], cumProb));
                         }
 
                         modelLogger.info(" ");
-                        String altString = String.format("%-3d %s", choice, getAlternativeNameFromChoice(choice));
+                        String altString = String.format("%-3d %s", choice,
+                                getAlternativeNameFromChoice(choice));
                         modelLogger.info(String.format(
                                 "Original Choice: %s, with rn=%.8f, randomCount=%d", altString, rn,
                                 randomCount));
 
-                        altString = String.format("%-3d %s", choice, getAlternativeNameFromModifiedChoice(tours));
-                        modelLogger.info(String.format("Revised Choice After Increase: %s", altString));
+                        altString = String.format("%-3d %s", choice,
+                                getAlternativeNameFromModifiedChoice(tours));
+                        modelLogger.info(String.format("Revised Choice After Increase: %s",
+                                altString));
 
                         modelLogger.info(separator);
                         modelLogger.info("");
                         modelLogger.info("");
 
                         // write choice model alternative info to debug log file
-                        choiceModelApplication[modelIndex].logAlternativesInfo(choiceModelDescription, decisionMakerLabel);
-                        choiceModelApplication[modelIndex].logSelectionInfo(choiceModelDescription, decisionMakerLabel, rn, choice);
+                        choiceModelApplication[modelIndex].logAlternativesInfo(
+                                choiceModelDescription, decisionMakerLabel);
+                        choiceModelApplication[modelIndex].logSelectionInfo(choiceModelDescription,
+                                decisionMakerLabel, rn, choice);
 
                         loggingHeader = choiceModelDescription + " for " + decisionMakerLabel;
 
-                        // write UEC calculation results to separate model specific
+                        // write UEC calculation results to separate model
+                        // specific
                         // log file
-                        choiceModelApplication[modelIndex].logUECResults(modelLogger, loggingHeader);
+                        choiceModelApplication[modelIndex]
+                                .logUECResults(modelLogger, loggingHeader);
 
                     }
 
@@ -475,7 +504,8 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
 
         // rowValues is a 0s based indexed array, but the first field is the
         // alternative number,
-        // and subsequent fields indicate the number of tours to be generated for the
+        // and subsequent fields indicate the number of tours to be generated
+        // for the
         // purpose corresponding to the field.
         for (int i = 1; i < rowValues.length; i++)
         {
@@ -500,7 +530,8 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
 
         // rowValues is a 0s based indexed array, but the first field is the
         // alternative number,
-        // and subsequent fields indicate the nuimber of tours to be generated for
+        // and subsequent fields indicate the nuimber of tours to be generated
+        // for
         // the purpose corresponding to the field.
         for (int i = 1; i < rowValues.length; i++)
         {
@@ -523,7 +554,8 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
      * 
      * public void logResults(){
      * 
-     * logger.info(" "); logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+     * logger.info(" "); logger.info(
+     * "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
      * ); logger.info("Individual Non-Mandatory Tour Frequency Model Results");
      * 
      * // count of model results logger.info(" "); String firstHeader =
@@ -536,22 +568,25 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
      * columnTotals = new int[purposeNames.length-1];
      * 
      * for( int i=0; i < columnTotals.length; i++ ) { firstHeader +=
-     * String.format("%12s", purposeNames[i+1]); secondHeader += "----------- "; }
+     * String.format("%12s", purposeNames[i+1]); secondHeader += "----------- ";
+     * }
      * 
-     * firstHeader += String.format("%12s","Total"); secondHeader += "-----------";
+     * firstHeader += String.format("%12s","Total"); secondHeader +=
+     * "-----------";
      * 
      * logger.info(firstHeader); logger.info(secondHeader);
      * 
      * 
      * 
      * int lineTotal = 0; for(int i=0;i<Person.personTypeNameArray.length;++i){
-     * String personTypeString = Person.personTypeNameArray[i]; String stringToLog =
-     * String.format("%-30s", personTypeString);
+     * String personTypeString = Person.personTypeNameArray[i]; String
+     * stringToLog = String.format("%-30s", personTypeString);
      * 
      * if(countByPersonType.containsKey(personTypeString)){
      * 
-     * lineTotal = 0; int[] countArray = countByPersonType.get(personTypeString);
-     * for(int j=0;j<columnTotals.length;++j){ stringToLog +=
+     * lineTotal = 0; int[] countArray =
+     * countByPersonType.get(personTypeString); for(int
+     * j=0;j<columnTotals.length;++j){ stringToLog +=
      * String.format("%12d",countArray[j]); columnTotals[j] += countArray[j];
      * lineTotal += countArray[j]; } // j } // if key else{
      * 
@@ -564,12 +599,15 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
      * 
      * } // i
      * 
-     * String stringToLog = String.format("%-30s", "Total"); lineTotal = 0; for(int
-     * j=0;j<columnTotals.length;++j){ stringToLog +=
-     * String.format("%12d",columnTotals[j]); lineTotal += columnTotals[j]; } // j
+     * String stringToLog = String.format("%-30s", "Total"); lineTotal = 0;
+     * for(int j=0;j<columnTotals.length;++j){ stringToLog +=
+     * String.format("%12d",columnTotals[j]); lineTotal += columnTotals[j]; } //
+     * j
      * 
-     * logger.info(secondHeader); stringToLog += String.format("%12d",lineTotal);
-     * logger.info(stringToLog); logger.info(" "); logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+     * logger.info(secondHeader); stringToLog +=
+     * String.format("%12d",lineTotal); logger.info(stringToLog);
+     * logger.info(" "); logger.info(
+     * "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
      * ); logger.info(" "); logger.info(" ");
      * 
      * }
@@ -577,9 +615,11 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
 
     private void loadIndividualNonMandatoryIncreaseModelData(String filePath)
     {
-        // this array matches the alternative table's structure, with the first row
+        // this array matches the alternative table's structure, with the first
+        // row
         // being an alternative
-        // could possibly look for the alternative with the largest sum, but this
+        // could possibly look for the alternative with the largest sum, but
+        // this
         // assumes the maximum tours
         // are done across the board; then again this is hard-coded
         maxTourFrequencyChoiceList = new int[] {-1, 2, 1, 1, 1, 1, 1};
@@ -590,10 +630,9 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
             probabilityTable = (new CSVFileReader().readFile(new File(filePath)));
         } catch (IOException e)
         {
-            logger
-                    .error(
-                            "Exception caught reading Individual Non-Mandatory Tour Frequency extension probability table.",
-                            e);
+            logger.error(
+                    "Exception caught reading Individual Non-Mandatory Tour Frequency extension probability table.",
+                    e);
             throw new RuntimeException(e);
         }
 
@@ -607,15 +646,15 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
 
         for (int i = 1; i <= probabilityTable.getRowCount(); i++)
         {
-            int key = getTourIncreaseTableKey((int) probabilityTable.getValueAt(i,
-                    nonMandatoryTourTypeColumn), (int) probabilityTable.getValueAt(i,
-                    personTypeColumnName), ((int) probabilityTable.getValueAt(i,
-                    mandatoryTourParticipationColumnName)) == 1, ((int) probabilityTable
-                    .getValueAt(i, jointTourParticipationColumnName)) == 1);
-            tourFrequencyIncreaseProbabilityMap.put(key, new float[] {
-                    probabilityTable.getValueAt(i, zeroAdditionalToursColumnName),
-                    probabilityTable.getValueAt(i, oneAdditionalToursColumnName),
-                    probabilityTable.getValueAt(i, twoAdditionalToursColumnName)});
+            int key = getTourIncreaseTableKey(
+                    (int) probabilityTable.getValueAt(i, nonMandatoryTourTypeColumn),
+                    (int) probabilityTable.getValueAt(i, personTypeColumnName),
+                    ((int) probabilityTable.getValueAt(i, mandatoryTourParticipationColumnName)) == 1,
+                    ((int) probabilityTable.getValueAt(i, jointTourParticipationColumnName)) == 1);
+            tourFrequencyIncreaseProbabilityMap.put(key,
+                    new float[] {probabilityTable.getValueAt(i, zeroAdditionalToursColumnName),
+                            probabilityTable.getValueAt(i, oneAdditionalToursColumnName),
+                            probabilityTable.getValueAt(i, twoAdditionalToursColumnName)});
         }
     }
 
@@ -624,7 +663,8 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
         // use the 1s based choice value as the table row number
         // rowValues is a 0s based indexed array, but the first field is the
         // alternative number,
-        // and subsequent fields indicate the nuimber of tours to be generated for
+        // and subsequent fields indicate the nuimber of tours to be generated
+        // for
         // the purpose corresponding to the field.
 
         Household household = person.getHouseholdObject();
@@ -650,13 +690,14 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
         float[] rowValues = null;
 
         boolean notDone = true;
-        while(notDone)
+        while (notDone)
         {
 
             rowValues = alternativesTable.getRowValues(choice);
 
             int firstCount = tourCountSum(rowValues);
-            if (firstCount == 0 || firstCount >= 5) // if 0 or 5+ tours already, we
+            if (firstCount == 0 || firstCount >= 5) // if 0 or 5+ tours already,
+                                                    // we
                 // are done
                 break;
 
@@ -689,24 +730,29 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
                     Logger modelLogger = tourFreq;
                     String[] alternativeNames = {"no additional", "1 additional", "2 additional"};
 
-                    modelLogger.info("Individual Non-Mandatory Tour Frequency Increase Choice for tour purposeName="
-                            + purposeIndexToNameMap.get(i) + ", purposeIndex=" + i);
+                    modelLogger
+                            .info("Individual Non-Mandatory Tour Frequency Increase Choice for tour purposeName="
+                                    + purposeIndexToNameMap.get(i) + ", purposeIndex=" + i);
                     modelLogger.info("Alternative                Probability           CumProb");
                     modelLogger.info("---------------         --------------    --------------");
 
-                    // probabilities array has tour frequency extension probabilities alread stored as cumulative probabilities.
-                    // calculate alternative probabilities from cumulative for logging.
+                    // probabilities array has tour frequency extension
+                    // probabilities alread stored as cumulative probabilities.
+                    // calculate alternative probabilities from cumulative for
+                    // logging.
                     double prob = probabilities[0];
                     double cumProb = probabilities[0];
                     for (int k = 1; k < alternativeNames.length; k++)
                     {
                         cumProb = probabilities[k];
-                        prob = probabilities[k] - probabilities[k-1];
-                        String altString = String.format("%-3d %-15s", k+1, alternativeNames[k]);
-                        modelLogger.info(String.format("%-20s%18.6e%18.6e", altString, prob, cumProb));
+                        prob = probabilities[k] - probabilities[k - 1];
+                        String altString = String.format("%-3d %-15s", k + 1, alternativeNames[k]);
+                        modelLogger.info(String.format("%-20s%18.6e%18.6e", altString, prob,
+                                cumProb));
                     }
 
-                    modelLogger.info(String.format("choice: %s, with rn=%.8f, randomCount=%d", newChoice+1, rn, randomCount));
+                    modelLogger.info(String.format("choice: %s, with rn=%.8f, randomCount=%d",
+                            newChoice + 1, rn, randomCount));
 
                     modelLogger.info("");
                     modelLogger.info("");
@@ -749,14 +795,16 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
         }
     }
 
-    // private void createIndividualNonMandatoryTours ( Person person, int choice ) {
+    // private void createIndividualNonMandatoryTours ( Person person, int
+    // choice ) {
     //
     // // use the 1s based choice value as the table row number
     // float[] rowValues = alternativesTable.getRowValues( choice );
     //
     // // rowValues is a 0s based indexed array, but the first field is the
     // alternative number,
-    // // and subsequent fields indicate the nuimber of tours to be generated for the
+    // // and subsequent fields indicate the nuimber of tours to be generated
+    // for the
     // purpose corresponding to the field.
     // for ( int i=1; i < rowValues.length; i++ ) {
     //

@@ -2,7 +2,7 @@ package org.sandag.abm.crossborder;
 
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
-import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.util.concurrent.ForkJoinPool;
@@ -52,8 +52,10 @@ public class CrossBorderModel
         this.rbMap = rbMap;
 
         synchronized (INITIALIZATION_LOCK)
-        { // lock to make sure only one of these actually initializes things so
-          // we don't cross threads
+        { // lock to make sure only one of
+          // these actually initializes
+          // things so we don't cross
+          // threads
             mgraManager = MgraDataManager.getInstance(rbMap);
             tazManager = TazDataManager.getInstance(rbMap);
         }
@@ -236,9 +238,11 @@ public class CrossBorderModel
     }
 
     /**
-     * This class is the divide-and-conquer action (void return task) for running the cross-border model using the fork-join framework. The divisible
-     * problem is an array of tours, and the actual work is the {@link CrossBorderModel#runModel(CrossBorderTour[],int,int)} method, applied to a
-     * section of the array.
+     * This class is the divide-and-conquer action (void return task) for
+     * running the cross-border model using the fork-join framework. The
+     * divisible problem is an array of tours, and the actual work is the
+     * {@link CrossBorderModel#runModel(CrossBorderTour[],int,int)} method,
+     * applied to a section of the array.
      */
     private class CrossBorderModelAction
             extends DnCRecursiveAction
@@ -374,7 +378,7 @@ public class CrossBorderModel
         try
         {
             ItemServer.bind(matrixServer, className);
-        } catch (IOException e)
+        } catch (RemoteException e)
         {
             logger.error(String.format(
                     "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",

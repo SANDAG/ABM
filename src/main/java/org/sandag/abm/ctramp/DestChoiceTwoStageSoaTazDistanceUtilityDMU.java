@@ -23,13 +23,12 @@ public class DestChoiceTwoStageSoaTazDistanceUtilityDMU
     protected double[]                 numHhs;
     protected int[]                    gsDistricts;
     protected int[]                    hsDistricts;
-    
-    
+
     public DestChoiceTwoStageSoaTazDistanceUtilityDMU()
     {
     }
 
-    public void setIndexValuesObject( IndexValues index )
+    public void setIndexValuesObject(IndexValues index)
     {
         dmuIndex = index;
     }
@@ -38,111 +37,92 @@ public class DestChoiceTwoStageSoaTazDistanceUtilityDMU
     {
         dcSize = size;
     }
-    
 
     public void setTazUnivEnrollment(double[] enrollment)
     {
         univEnrollment = enrollment;
     }
-    
 
     public void setTazGsEnrollment(double[] enrollment)
     {
         gsEnrollment = enrollment;
     }
-    
 
     public void setTazHsEnrollment(double[] enrollment)
     {
         hsEnrollment = enrollment;
     }
-    
 
     public void setNumHhs(double[] hhs)
     {
         numHhs = hhs;
     }
-    
 
     public void setTazGsDistricts(int[] districts)
     {
         gsDistricts = districts;
     }
-    
 
     public void setTazHsDistricts(int[] districts)
     {
         hsDistricts = districts;
     }
-    
 
-    public double getLnDestChoiceSizeTazAlt( int taz )
+    public double getLnDestChoiceSizeTazAlt(int taz)
     {
-        return dcSize[taz] == 0 ? -999 : Math.log( dcSize[taz] );
+        return dcSize[taz] == 0 ? -999 : Math.log(dcSize[taz]);
     }
-    
 
-    public double getSizeTazAlt( int taz )
+    public double getSizeTazAlt(int taz)
     {
         return dcSize[taz];
     }
-    
 
-    public double getUniversityEnrollmentTazAlt( int taz )
+    public double getUniversityEnrollmentTazAlt(int taz)
     {
         return univEnrollment[taz];
     }
-    
 
-    public double getGradeSchoolEnrollmentTazAlt( int taz )
+    public double getGradeSchoolEnrollmentTazAlt(int taz)
     {
         return gsEnrollment[taz];
     }
-    
 
-    public double getHighSchoolEnrollmentTazAlt( int taz )
+    public double getHighSchoolEnrollmentTazAlt(int taz)
     {
         return hsEnrollment[taz];
     }
-    
 
-    public double getHouseholdsTazAlt( int taz )
+    public double getHouseholdsTazAlt(int taz)
     {
         return numHhs[taz];
     }
-    
 
     public int getHomeTazGradeSchoolDistrict()
     {
         return gsDistricts[dmuIndex.getZoneIndex()];
     }
-    
 
-    public int getGradeSchoolDistrictTazAlt( int taz )
+    public int getGradeSchoolDistrictTazAlt(int taz)
     {
         return gsDistricts[taz];
     }
-    
 
     public int getHomeTazHighSchoolDistrict()
     {
         return hsDistricts[dmuIndex.getZoneIndex()];
     }
-    
 
-    public int getHighSchoolDistrictTazAlt( int taz )
+    public int getHighSchoolDistrictTazAlt(int taz)
     {
         return hsDistricts[taz];
     }
-    
 
     public IndexValues getDmuIndexValues()
     {
         return dmuIndex;
     }
 
-
-    
     public int getIndexValue(String variableName)
     {
         return methodIndexMap.get(variableName);

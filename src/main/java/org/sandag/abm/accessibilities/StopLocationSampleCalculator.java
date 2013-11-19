@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ResourceBundle;
-import org.sandag.abm.application.SandagTripModeChoiceDMU;
 import org.sandag.abm.application.SandagModelStructure;
+import org.sandag.abm.application.SandagTripModeChoiceDMU;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
 import org.sandag.abm.modechoice.MgraDataManager;
@@ -14,9 +14,9 @@ import org.sandag.abm.modechoice.TazDataManager;
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.datafile.TableDataSet;
-import com.pb.common.util.ResourceUtil;
 import com.pb.common.newmodel.ChoiceModelApplication;
 import com.pb.common.newmodel.UtilityExpressionCalculator;
+import com.pb.common.util.ResourceUtil;
 
 public final class StopLocationSampleCalculator
         extends McLogsumsAppender

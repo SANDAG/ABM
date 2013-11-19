@@ -1,8 +1,12 @@
 package org.sandag.abm.ctramp;
 
-import gnu.cajo.invoke.Remote;
-import gnu.cajo.utils.ItemServer;
-import java.rmi.RemoteException;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,48 +15,32 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeMap;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.net.UnknownHostException;
 import org.apache.log4j.Logger;
 import org.jppf.client.JPPFClient;
-import com.pb.common.matrix.MatrixIO32BitJvm;
-import com.pb.common.matrix.MatrixType;
-import com.pb.common.util.ObjectUtil;
-import com.pb.common.util.ResourceUtil;
+import org.sandag.abm.accessibilities.BestTransitPathCalculator;
+import org.sandag.abm.accessibilities.BuildAccessibilities;
+import org.sandag.abm.accessibilities.StoredUtilityData;
+import org.sandag.abm.modechoice.MgraDataManager;
+import org.sandag.abm.modechoice.TazDataManager;
 import com.pb.common.calculator.MatrixDataManager;
-import com.pb.common.calculator.MatrixDataServerIf;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.datafile.DataFile;
 import com.pb.common.datafile.DataReader;
 import com.pb.common.datafile.DataWriter;
+import com.pb.common.matrix.MatrixIO32BitJvm;
+import com.pb.common.matrix.MatrixType;
 import com.pb.common.newmodel.ChoiceModelApplication;
-
-import org.sandag.abm.ctramp.StopFrequencyDMU;
-import org.sandag.abm.accessibilities.AccessibilitiesTable;
-import org.sandag.abm.accessibilities.BuildAccessibilities;
-//import org.sandag.abm.accessibilities.BuildAccessibilities;
-import org.sandag.abm.ctramp.CtrampDmuFactoryIf;
-import org.sandag.abm.ctramp.Definitions;
-import org.sandag.abm.ctramp.Household;
-import org.sandag.abm.ctramp.HouseholdDataManagerIf; // import
+import com.pb.common.util.ResourceUtil;
+// import org.sandag.abm.accessibilities.BuildAccessibilities;
+// import
 // org.sandag.abm.ctramp.HouseholdDataWriter;
 // import org.sandag.abm.ctramp.IndividualMandatoryTourFrequencyModel;
-import org.sandag.abm.ctramp.MatrixDataServer;
-import org.sandag.abm.ctramp.MatrixDataServerRmi;
-import org.sandag.abm.ctramp.ModelStructure;
-import org.sandag.abm.ctramp.Person;
-import org.sandag.abm.ctramp.Tour;
-import org.sandag.abm.modechoice.MgraDataManager;
 
-// 1.0.1 - 09/21/09 - starting point for SANDAG AB model implementation - AO model
+// 1.0.1 - 09/21/09 - starting point for SANDAG AB model implementation - AO
+// model
 
-public class CtrampApplication implements Serializable
+public class CtrampApplication
+        implements Serializable
 {
 
     private transient Logger                           logger                                                    = Logger.getLogger(CtrampApplication.class);
@@ -157,8 +145,8 @@ public class CtrampApplication implements Serializable
     private static final int                           NUM_WRITE_PACKETS                                         = 1000;
 
     private ResourceBundle                             resourceBundle;
-    private HashMap<String,String>                     propertyMap;
-    
+    private HashMap<String, String>                    propertyMap;
+
     private MatrixIO32BitJvm                           ioVm32Bit;
     private MatrixDataServerRmi                        ms;
 
@@ -169,13 +157,14 @@ public class CtrampApplication implements Serializable
     private HashMap<String, HashMap<String, Integer>>  cdapByPersonTypeAndActivity;
 
     private BuildAccessibilities                       aggAcc;
-    private boolean									   calculateLandUseAccessibilities;
+    private boolean                                    calculateLandUseAccessibilities;
 
-    public CtrampApplication(ResourceBundle rb, HashMap<String,String> rbMap, boolean calculateLandUseAccessibilities)
+    public CtrampApplication(ResourceBundle rb, HashMap<String, String> rbMap,
+            boolean calculateLandUseAccessibilities)
     {
         resourceBundle = rb;
         propertyMap = rbMap;
-        this.calculateLandUseAccessibilities = calculateLandUseAccessibilities; 
+        this.calculateLandUseAccessibilities = calculateLandUseAccessibilities;
     }
 
     public void setupModels(ModelStructure modelStructure)
@@ -185,7 +174,8 @@ public class CtrampApplication implements Serializable
 
     }
 
-    // public void runPopulationSynthesizer( SANDAGPopSyn populationSynthesizer ){
+    // public void runPopulationSynthesizer( SANDAGPopSyn populationSynthesizer
+    // ){
     //
     // // run population synthesizer
     // boolean runModelPopulationSynthesizer =
@@ -200,104 +190,122 @@ public class CtrampApplication implements Serializable
             CtrampDmuFactoryIf dmuFactory, int globalIterationNumber, float iterationSampleRate)
     {
 
-        logger.info("Running JPPF CtrampApplication.runModels() for " + householdDataManager.getNumHouseholds() + " households.");
+        logger.info("Running JPPF CtrampApplication.runModels() for "
+                + householdDataManager.getNumHouseholds() + " households.");
 
         String matrixServerAddress = "";
         int serverPort = 0;
         try
         {
-            // get matrix server address. if "none" is specified, no server will be
+            // get matrix server address. if "none" is specified, no server will
+            // be
             // started, and matrix io will ocurr within the current process.
-            matrixServerAddress = Util.getStringValueFromPropertyMap( propertyMap, "RunModel.MatrixServerAddress" );                
-            try {
+            matrixServerAddress = Util.getStringValueFromPropertyMap(propertyMap,
+                    "RunModel.MatrixServerAddress");
+            try
+            {
                 // get matrix server port.
-                serverPort = Util.getIntegerValueFromPropertyMap( propertyMap, "RunModel.MatrixServerPort" );
-            }
-            catch ( RuntimeException e ) {
+                serverPort = Util.getIntegerValueFromPropertyMap(propertyMap,
+                        "RunModel.MatrixServerPort");
+            } catch (RuntimeException e)
+            {
                 serverPort = MATRIX_DATA_SERVER_PORT;
             }
-        }
-        catch ( RuntimeException e ) {
+        } catch (RuntimeException e)
+        {
             matrixServerAddress = "localhost";
             serverPort = MATRIX_DATA_SERVER_PORT;
         }
 
-        String matrixTypeName = Util.getStringValueFromPropertyMap( propertyMap,"Results.MatrixType" );
-        MatrixType mt = MatrixType.lookUpMatrixType( matrixTypeName );
+        String matrixTypeName = Util.getStringValueFromPropertyMap(propertyMap,
+                "Results.MatrixType");
+        MatrixType mt = MatrixType.lookUpMatrixType(matrixTypeName);
 
-        if ( mt != MatrixType.BINARY ) {
-            
-            try 
+        if (mt != MatrixType.BINARY)
+        {
+
+            try
             {
-                if ( matrixServerAddress.equalsIgnoreCase("localhost") ) {
+                if (matrixServerAddress.equalsIgnoreCase("localhost"))
+                {
 
-                    try {
+                    try
+                    {
                         // create the concrete data server object
-                        start32BitMatrixIoServer( mt );    
-                    }
-                    catch ( RuntimeException e ) {
-                        logger.error ( "RuntimeException caught starting 32 bit Matrix IO Process.", e );
+                        start32BitMatrixIoServer(mt);
+                    } catch (RuntimeException e)
+                    {
+                        logger.error("RuntimeException caught starting 32 bit Matrix IO Process.",
+                                e);
                         stop32BitMatrixIoServer();
                     }
 
-                }
-                else {
-                    
-                    ms = new MatrixDataServerRmi( matrixServerAddress, serverPort, MatrixDataServer.MATRIX_DATA_SERVER_NAME );
-                    ms.testRemote( "CtrampApplication" );
-                    ms.start32BitMatrixIoServer( mt, "CtrampApplication" );
-                    
+                } else
+                {
+
+                    ms = new MatrixDataServerRmi(matrixServerAddress, serverPort,
+                            MatrixDataServer.MATRIX_DATA_SERVER_NAME);
+                    ms.testRemote(Thread.currentThread().getName());
+                    ms.start32BitMatrixIoServer(mt);
+
                     MatrixDataManager mdm = MatrixDataManager.getInstance();
                     mdm.setMatrixDataServerObject(ms);
-                    
+
                 }
 
-            }
-            catch (Exception e) {
+            } catch (Exception e)
+            {
 
-                if ( mt != MatrixType.BINARY ) {
+                if (mt != MatrixType.BINARY)
+                {
                     stop32BitMatrixIoServer();
-                }
-                else {
+                } else
+                {
                     ms.stop32BitMatrixIoServer();
                 }
-                
-                logger.error( String.format("exception caught starting MatrixDataServer -- exiting."), e );
+
+                logger.error(
+                        String.format("exception caught starting MatrixDataServer -- exiting."), e);
                 throw new RuntimeException();
 
             }
-            
-            // get the property that indicates if the MatrixDataServer should be cleared.
+
+            // get the property that indicates if the MatrixDataServer should be
+            // cleared.
             // default is to clear the manager
             boolean clearMatrixMgr = true;
-            try {
-                clearMatrixMgr = Util.getBooleanValueFromPropertyMap( propertyMap, PROPERTIES_CLEAR_MATRIX_MANAGER_ON_START );
+            try
+            {
+                clearMatrixMgr = Util.getBooleanValueFromPropertyMap(propertyMap,
+                        PROPERTIES_CLEAR_MATRIX_MANAGER_ON_START);
+            } catch (RuntimeException e)
+            {
+                // catch the RuntimeExcption that's thrown if the property key
+                // is not found in the properties file.
+                // no need to anything - the boolean clearMatrixMgr was
+                // initialized to the default action.
             }
-            catch ( RuntimeException e ) {
-                // catch the RuntimeExcption that's thrown if the property key is not found in the properties file.
-                // no need to anything - the boolean clearMatrixMgr was initialized to the default action.
-            }
-            
-            // if the property to clear matrices is true and a remote MatrixDataServer is being used, clear the matrices.
-            // if matrices are being read directly into the current process, no need to clear.
-            if ( clearMatrixMgr && !matrixServerAddress.equalsIgnoreCase("localhost") )
-                ms.clear();
-            
+
+            // if the property to clear matrices is true and a remote
+            // MatrixDataServer is being used, clear the matrices.
+            // if matrices are being read directly into the current process, no
+            // need to clear.
+            if (clearMatrixMgr && !matrixServerAddress.equalsIgnoreCase("localhost")) ms.clear();
+
         }
-        
-        
+
         // run core activity based model for the specified iteration
         runModelSequence(globalIterationNumber, householdDataManager, dmuFactory);
 
-        
-        
-        // if a separate process for running matrix data mnager was started, we're
+        // if a separate process for running matrix data mnager was started,
+        // we're
         // done with it, so close it.
-        if ( matrixServerAddress.equalsIgnoreCase("localhost") ) {
+        if (matrixServerAddress.equalsIgnoreCase("localhost"))
+        {
             stop32BitMatrixIoServer();
-        }
-        else if ( ms != null ){
-            ms.stop32BitMatrixIoServer( "CtrampApplication" );
+        } else if (ms != null)
+        {
+            ms.stop32BitMatrixIoServer();
         }
 
     }
@@ -306,38 +314,47 @@ public class CtrampApplication implements Serializable
      * This method maintains the sequencing of the various AB Model choice model
      * components
      * 
-     * @param iteration is the global iteration number in the sequence of AB Model
+     * @param iteration
+     *            is the global iteration number in the sequence of AB Model
      *            runs during feedback
-     * @param householdDataManager is the handle to the household object data manager
-     * @param dmuFactory is the factory object for creating DMU objects used in
-     *            choice models
+     * @param householdDataManager
+     *            is the handle to the household object data manager
+     * @param dmuFactory
+     *            is the factory object for creating DMU objects used in choice
+     *            models
      */
-    private void runModelSequence(int iteration, HouseholdDataManagerIf householdDataManager, CtrampDmuFactoryIf dmuFactory)
+    private void runModelSequence(int iteration, HouseholdDataManagerIf householdDataManager,
+            CtrampDmuFactoryIf dmuFactory)
     {
 
         String restartModel = ResourceUtil.getProperty(resourceBundle,
                 PROPERTIES_RESTART_WITH_HOUSEHOLD_SERVER);
-        boolean logResults = Util.getStringValueFromPropertyMap( propertyMap, "RunModel.LogResults").equalsIgnoreCase("true");
+        boolean logResults = Util.getStringValueFromPropertyMap(propertyMap, "RunModel.LogResults")
+                .equalsIgnoreCase("true");
         if (restartModel == null) restartModel = "none";
         if (!restartModel.equalsIgnoreCase("none")) restartModels(householdDataManager);
 
-        JPPFClient jppfClient = new JPPFClient();
+        JPPFClient jppfClient = null;
 
-        boolean runPreAutoOwnershipChoiceModel = ResourceUtil.getBooleanProperty(resourceBundle, PROPERTIES_RUN_PRE_AUTO_OWNERSHIP);
+        boolean runPreAutoOwnershipChoiceModel = ResourceUtil.getBooleanProperty(resourceBundle,
+                PROPERTIES_RUN_PRE_AUTO_OWNERSHIP);
         if (runPreAutoOwnershipChoiceModel)
         {
 
             logger.info("creating Accessibilities Object for Pre-AO.");
-            buildNonMandatoryAccessibilities( calculateLandUseAccessibilities );
+            buildNonMandatoryAccessibilities(calculateLandUseAccessibilities);
 
             logger.info("starting Pre-Auto Ownership Model.");
-            HashMap<String, String> propertyMap = ResourceUtil.changeResourceBundleIntoHashMap(resourceBundle);
+            HashMap<String, String> propertyMap = ResourceUtil
+                    .changeResourceBundleIntoHashMap(resourceBundle);
 
             householdDataManager.resetPreAoRandom();
 
-            HouseholdAutoOwnershipModel aoModel = new HouseholdAutoOwnershipModel( propertyMap, dmuFactory, aggAcc.getAccessibilitiesTableObject(), null );
+            HouseholdAutoOwnershipModel aoModel = new HouseholdAutoOwnershipModel(propertyMap,
+                    dmuFactory, aggAcc.getAccessibilitiesTableObject(), null);
 
-            ArrayList<int[]> startEndTaskIndicesList = getWriteHouseholdRanges(householdDataManager.getNumHouseholds());
+            ArrayList<int[]> startEndTaskIndicesList = getWriteHouseholdRanges(householdDataManager
+                    .getNumHouseholds());
 
             for (int[] startEndIndices : startEndTaskIndicesList)
             {
@@ -355,9 +372,9 @@ public class CtrampApplication implements Serializable
                         aoModel.applyModel(householdArray[i], true);
                     } catch (RuntimeException e)
                     {
-                        logger.fatal(String.format(
-                            "exception caught running pre-AO for i=%d, startIndex=%d, endIndex=%d, hhId=%d.",
-                            i, startIndex, endIndex, householdArray[i].getHhId()));
+                        logger.fatal(String
+                                .format("exception caught running pre-AO for i=%d, startIndex=%d, endIndex=%d, hhId=%d.",
+                                        i, startIndex, endIndex, householdArray[i].getHhId()));
                         logger.fatal("Exception caught:", e);
                         logger.fatal("Throwing new RuntimeException() to terminate.");
                         throw new RuntimeException();
@@ -370,7 +387,8 @@ public class CtrampApplication implements Serializable
 
             saveAoResults(householdDataManager, projectDirectory, true);
 
-            // clear the zonal data used in the AO UEC so a different zonal data file
+            // clear the zonal data used in the AO UEC so a different zonal data
+            // file
             // (MGRA data) can be used later by other UECs.
             // TableDataSetManager tableDataManager =
             // TableDataSetManager.getInstance();
@@ -406,9 +424,7 @@ public class CtrampApplication implements Serializable
                 // default value is true if property was not defined
                 runSchoolLocationChoice = true;
             }
-            logger
-                    .info("flag to run school location choice was set to: "
-                            + runSchoolLocationChoice);
+            logger.info("flag to run school location choice was set to: " + runSchoolLocationChoice);
 
             boolean writeLocationChoiceResultsFile = false;
             try
@@ -423,20 +439,22 @@ public class CtrampApplication implements Serializable
             }
             logger.info("flag to write uwsl result was set to: " + writeLocationChoiceResultsFile);
 
-
             if (aggAcc == null)
             {
                 logger.info("creating Accessibilities Object for UWSL.");
-                buildNonMandatoryAccessibilities( calculateLandUseAccessibilities );
+                buildNonMandatoryAccessibilities(calculateLandUseAccessibilities);
             }
-            
+
             // new the usual school and location choice model object
+            jppfClient = new JPPFClient();
             UsualWorkSchoolLocationChoiceModel usualWorkSchoolLocationChoiceModel = new UsualWorkSchoolLocationChoiceModel(
-                    resourceBundle, restartModel, jppfClient, modelStructure, ms, dmuFactory, aggAcc);
+                    resourceBundle, restartModel, jppfClient, modelStructure, ms, dmuFactory,
+                    aggAcc);
 
             if (runWorkLocationChoice)
             {
-                // calculate and get the array of worker size terms table - MGRAs by
+                // calculate and get the array of worker size terms table -
+                // MGRAs by
                 // occupations
                 aggAcc.createWorkSegmentNameIndices();
                 aggAcc.calculateWorkerSizeTerms();
@@ -444,7 +462,8 @@ public class CtrampApplication implements Serializable
 
                 // run the model
                 logger.info("starting usual work location choice.");
-                usualWorkSchoolLocationChoiceModel.runWorkLocationChoiceModel(householdDataManager, workerSizeTerms);
+                usualWorkSchoolLocationChoiceModel.runWorkLocationChoiceModel(householdDataManager,
+                        workerSizeTerms);
                 logger.info("finished with usual work location choice.");
             }
 
@@ -456,15 +475,18 @@ public class CtrampApplication implements Serializable
                 double[][] schoolSizeTerms = aggAcc.getSchoolSizeTerms();
 
                 logger.info("starting usual school location choice.");
-                usualWorkSchoolLocationChoiceModel.runSchoolLocationChoiceModel( householdDataManager, schoolSizeTerms, schoolFactors );
+                usualWorkSchoolLocationChoiceModel.runSchoolLocationChoiceModel(
+                        householdDataManager, schoolSizeTerms, schoolFactors);
                 logger.info("finished with usual school location choice.");
             }
 
             if (writeLocationChoiceResultsFile)
             {
                 logger.info("writing work/school location choice results file; may take a few minutes ...");
-                usualWorkSchoolLocationChoiceModel.saveResults(householdDataManager, projectDirectory, iteration);
-                logger.info(String.format("finished writing work/school location choice results file."));
+                usualWorkSchoolLocationChoiceModel.saveResults(householdDataManager,
+                        projectDirectory, iteration);
+                logger.info(String
+                        .format("finished writing work/school location choice results file."));
             }
 
             usualWorkSchoolLocationChoiceModel = null;
@@ -472,27 +494,37 @@ public class CtrampApplication implements Serializable
         }
         logger.info("flag to run UWSL was set to: " + runUsualWorkSchoolChoiceModel);
 
-        boolean runAutoOwnershipChoiceModel = ResourceUtil.getBooleanProperty(resourceBundle, PROPERTIES_RUN_AUTO_OWNERSHIP);
-        boolean runTransponderChoiceModel = ResourceUtil.getBooleanProperty( resourceBundle, PROPERTIES_RUN_TRANSPONDER_CHOICE);
-        boolean runFreeParkingChoiceModel = ResourceUtil.getBooleanProperty( resourceBundle, PROPERTIES_RUN_FREE_PARKING_AVAILABLE);
-        boolean runInternalExternalTripChoiceModel = ResourceUtil.getBooleanProperty( resourceBundle, PROPERTIES_RUN_INTERNAL_EXTERNAL_TRIP);
-        boolean runCoordinatedDailyActivityPatternChoiceModel = ResourceUtil.getBooleanProperty( resourceBundle, PROPERTIES_RUN_DAILY_ACTIVITY_PATTERN);
-        boolean runMandatoryTourFreqChoiceModel = ResourceUtil.getBooleanProperty(resourceBundle, PROPERTIES_RUN_INDIV_MANDATORY_TOUR_FREQ);
-        boolean runJointTourFreqChoiceModel = ResourceUtil.getBooleanProperty(resourceBundle, PROPERTIES_RUN_JOINT_TOUR_FREQ);
-        boolean runIndivNonManTourFrequencyModel = ResourceUtil.getBooleanProperty(resourceBundle, PROPERTIES_RUN_INDIV_NON_MANDATORY_TOUR_FREQ);
-        boolean runAtWorkSubTourFrequencyModel = ResourceUtil.getBooleanProperty(resourceBundle, PROPERTIES_RUN_AT_WORK_SUBTOUR_FREQ);
-        boolean runStopFrequencyModel = ResourceUtil.getBooleanProperty(resourceBundle, PROPERTIES_RUN_STOP_FREQUENCY);
-        
+        boolean runAutoOwnershipChoiceModel = ResourceUtil.getBooleanProperty(resourceBundle,
+                PROPERTIES_RUN_AUTO_OWNERSHIP);
+        boolean runTransponderChoiceModel = ResourceUtil.getBooleanProperty(resourceBundle,
+                PROPERTIES_RUN_TRANSPONDER_CHOICE);
+        boolean runFreeParkingChoiceModel = ResourceUtil.getBooleanProperty(resourceBundle,
+                PROPERTIES_RUN_FREE_PARKING_AVAILABLE);
+        boolean runInternalExternalTripChoiceModel = ResourceUtil.getBooleanProperty(
+                resourceBundle, PROPERTIES_RUN_INTERNAL_EXTERNAL_TRIP);
+        boolean runCoordinatedDailyActivityPatternChoiceModel = ResourceUtil.getBooleanProperty(
+                resourceBundle, PROPERTIES_RUN_DAILY_ACTIVITY_PATTERN);
+        boolean runMandatoryTourFreqChoiceModel = ResourceUtil.getBooleanProperty(resourceBundle,
+                PROPERTIES_RUN_INDIV_MANDATORY_TOUR_FREQ);
+        boolean runJointTourFreqChoiceModel = ResourceUtil.getBooleanProperty(resourceBundle,
+                PROPERTIES_RUN_JOINT_TOUR_FREQ);
+        boolean runIndivNonManTourFrequencyModel = ResourceUtil.getBooleanProperty(resourceBundle,
+                PROPERTIES_RUN_INDIV_NON_MANDATORY_TOUR_FREQ);
+        boolean runAtWorkSubTourFrequencyModel = ResourceUtil.getBooleanProperty(resourceBundle,
+                PROPERTIES_RUN_AT_WORK_SUBTOUR_FREQ);
+        boolean runStopFrequencyModel = ResourceUtil.getBooleanProperty(resourceBundle,
+                PROPERTIES_RUN_STOP_FREQUENCY);
+
         if (runAutoOwnershipChoiceModel || runTransponderChoiceModel || runFreeParkingChoiceModel
-                || runInternalExternalTripChoiceModel || runCoordinatedDailyActivityPatternChoiceModel
-                || runMandatoryTourFreqChoiceModel || runIndivNonManTourFrequencyModel
-                || runAtWorkSubTourFrequencyModel || runStopFrequencyModel)
+                || runInternalExternalTripChoiceModel
+                || runCoordinatedDailyActivityPatternChoiceModel || runMandatoryTourFreqChoiceModel
+                || runIndivNonManTourFrequencyModel || runAtWorkSubTourFrequencyModel
+                || runStopFrequencyModel)
         {
 
             // We're resetting the random number sequence used by pre-AO for the
             // primary AO
-            if (runAutoOwnershipChoiceModel)
-                householdDataManager.resetPreAoRandom();
+            if (runAutoOwnershipChoiceModel) householdDataManager.resetPreAoRandom();
 
             if (runTransponderChoiceModel)
                 householdDataManager.computeTransponderChoiceTazPercentArrays();
@@ -500,55 +532,55 @@ public class CtrampApplication implements Serializable
             logger.info("starting HouseholdChoiceModelRunner.");
             HashMap<String, String> propertyMap = ResourceUtil
                     .changeResourceBundleIntoHashMap(resourceBundle);
-            HouseholdChoiceModelRunner runner = new HouseholdChoiceModelRunner(propertyMap, jppfClient, restartModel, householdDataManager, ms, modelStructure, dmuFactory);
+            HouseholdChoiceModelRunner runner = new HouseholdChoiceModelRunner(propertyMap,
+                    jppfClient, restartModel, householdDataManager, ms, modelStructure, dmuFactory);
             runner.runHouseholdChoiceModels();
 
             if (runAutoOwnershipChoiceModel)
             {
                 saveAoResults(householdDataManager, projectDirectory, false);
-                if(logResults) logAoResults(householdDataManager, false);
+                if (logResults) logAoResults(householdDataManager, false);
             }
 
             if (runTransponderChoiceModel)
             {
-                if(logResults)logTpResults(householdDataManager);
+                if (logResults) logTpResults(householdDataManager);
             }
 
             if (runFreeParkingChoiceModel)
             {
-                if(logResults) logFpResults(householdDataManager);
+                if (logResults) logFpResults(householdDataManager);
             }
 
             if (runInternalExternalTripChoiceModel)
             {
-                if(logResults) logIeResults(householdDataManager);
+                if (logResults) logIeResults(householdDataManager);
             }
 
             if (runCoordinatedDailyActivityPatternChoiceModel)
             {
                 saveCdapResults(householdDataManager, projectDirectory);
-                if(logResults) logCdapResults(householdDataManager);
+                if (logResults) logCdapResults(householdDataManager);
             }
-            
 
             if (runMandatoryTourFreqChoiceModel)
             {
-                if(logResults) logImtfResults(householdDataManager);
+                if (logResults) logImtfResults(householdDataManager);
             }
 
             if (runJointTourFreqChoiceModel)
             {
-                if(logResults) logJointModelResults(householdDataManager, dmuFactory);
+                if (logResults) logJointModelResults(householdDataManager, dmuFactory);
             }
 
             if (runAtWorkSubTourFrequencyModel)
             {
-                if(logResults) logAtWorkSubtourFreqResults(householdDataManager);
+                if (logResults) logAtWorkSubtourFreqResults(householdDataManager);
             }
 
             if (runStopFrequencyModel)
             {
-                if(logResults) logIndivStfResults(householdDataManager);
+                if (logResults) logIndivStfResults(householdDataManager);
             }
 
         }
@@ -563,7 +595,8 @@ public class CtrampApplication implements Serializable
                     PROPERTIES_WRITE_DATA_TO_FILE);
         } catch (MissingResourceException e)
         {
-            // if exception is caught while getting property file value, then boolean
+            // if exception is caught while getting property file value, then
+            // boolean
             // flag remains false
         }
         try
@@ -572,7 +605,8 @@ public class CtrampApplication implements Serializable
                     PROPERTIES_WRITE_DATA_TO_DATABASE);
         } catch (MissingResourceException e)
         {
-            // if exception is caught while getting property file value, then boolean
+            // if exception is caught while getting property file value, then
+            // boolean
             // flag remains false
         }
 
@@ -594,7 +628,8 @@ public class CtrampApplication implements Serializable
                     dataWriter.writeDataToDatabase(householdDataManager, dbFilename);
                 } catch (MissingResourceException e)
                 {
-                    // if exception is caught while getting property file value, then
+                    // if exception is caught while getting property file value,
+                    // then
                     // boolean flag remains false
                 }
             }
@@ -603,17 +638,17 @@ public class CtrampApplication implements Serializable
     }
 
     /**
-     * Build the mandatory accessibilities object used by the usual work and school
-     * location choice models
+     * Build the mandatory accessibilities object used by the usual work and
+     * school location choice models
      * 
-     * @return BuildAccessibilities object containing mandatory size term and logsum
-     *         information private void buildMandatoryAccessibilities() {
+     * @return BuildAccessibilities object containing mandatory size term and
+     *         logsum information private void buildMandatoryAccessibilities() {
      * 
      *         HashMap<String, String> propertyMap =
      *         ResourceUtil.changeResourceBundleIntoHashMap(resourceBundle);
      * 
-     *         if ( aggAcc == null ) aggAcc = new BuildAccessibilities( propertyMap
-     *         );
+     *         if ( aggAcc == null ) aggAcc = new BuildAccessibilities(
+     *         propertyMap );
      * 
      *         MatrixDataManager mdm = MatrixDataManager.getInstance();
      *         mdm.setMatrixDataServerObject( ms );
@@ -621,8 +656,8 @@ public class CtrampApplication implements Serializable
      *         aggAcc.setupBuildAccessibilities( propertyMap );
      *         aggAcc.calculateConstants();
      * 
-     *         // do this in dest choice model //aggAcc.buildAccessibilityComponents(
-     *         propertyMap );
+     *         // do this in dest choice model
+     *         //aggAcc.buildAccessibilityComponents( propertyMap );
      * 
      *         }
      */
@@ -631,27 +666,30 @@ public class CtrampApplication implements Serializable
      * Build the non-mandatory accessibilities object used by the auto ownership
      * model
      * 
-     * @return BuildAccessibilities object containing non-mandatory size term and
-     *         logsum information
+     * @return BuildAccessibilities object containing non-mandatory size term
+     *         and logsum information
      */
-    private void buildNonMandatoryAccessibilities( boolean calculateLandUseAccessibilities )
+    private void buildNonMandatoryAccessibilities(boolean calculateLandUseAccessibilities)
     {
 
-        HashMap<String, String> propertyMap = ResourceUtil.changeResourceBundleIntoHashMap(resourceBundle);
+        HashMap<String, String> propertyMap = ResourceUtil
+                .changeResourceBundleIntoHashMap(resourceBundle);
 
         aggAcc = BuildAccessibilities.getInstance();
         aggAcc.setupBuildAccessibilities(propertyMap, calculateLandUseAccessibilities);
-        if ( calculateLandUseAccessibilities );
-        	aggAcc.setCalculatedLandUseAccessibilities();
+        if (calculateLandUseAccessibilities)
+        ;
+        aggAcc.setCalculatedLandUseAccessibilities();
 
         aggAcc.calculateSizeTerms();
         aggAcc.calculateWorkerSizeTerms();
         aggAcc.createSchoolSegmentNameIndices();
         aggAcc.calculateSchoolSizeTerms();
         aggAcc.calculateConstants();
-        //aggAcc.buildAccessibilityComponents(propertyMap);
+        // aggAcc.buildAccessibilityComponents(propertyMap);
 
-        boolean readAccessibilities = ResourceUtil.getBooleanProperty(resourceBundle, READ_ACCESSIBILITIES);
+        boolean readAccessibilities = ResourceUtil.getBooleanProperty(resourceBundle,
+                READ_ACCESSIBILITIES);
         if (readAccessibilities)
         {
 
@@ -666,33 +704,47 @@ public class CtrampApplication implements Serializable
 
             aggAcc.calculateDCUtilitiesDistributed(propertyMap);
 
+            // release the memory used to store the access-tap, tap-egress, and
+            // tap-tap utilities while calculating accessibilities for the
+            // client program
+            HashMap<String, String> rbMap = ResourceUtil
+                    .changeResourceBundleIntoHashMap(resourceBundle);
+            StoredUtilityData.getInstance(MgraDataManager.getInstance(rbMap).getMaxMgra(),
+                    MgraDataManager.getInstance(rbMap).getMaxTap(),
+                    TazDataManager.getInstance(rbMap).getMaxTaz(),
+                    BestTransitPathCalculator.NUM_ACC_EGR, BestTransitPathCalculator.NUM_PERIODS)
+                    .deallocateArrays();
+
+            MatrixDataManager.getInstance().clearData();
         }
 
     }
 
     /*
      * method used in original ARC implementation private void runIteration( int
-     * iteration, HouseholdDataManagerIf householdDataManager, CtrampDmuFactoryIf
-     * dmuFactory ) { String restartModel = ""; if ( hhDiskObjectKey != null && !
-     * hhDiskObjectKey.equalsIgnoreCase("none") ) { String doFileName =
-     * hhDiskObjectFile + "_" + hhDiskObjectKey;
+     * iteration, HouseholdDataManagerIf householdDataManager,
+     * CtrampDmuFactoryIf dmuFactory ) { String restartModel = ""; if (
+     * hhDiskObjectKey != null && ! hhDiskObjectKey.equalsIgnoreCase("none") ) {
+     * String doFileName = hhDiskObjectFile + "_" + hhDiskObjectKey;
      * householdDataManager.createHhArrayFromSerializedObjectInFile( doFileName,
      * hhDiskObjectKey ); restartModel = hhDiskObjectKey; restartModels (
      * householdDataManager ); } else { restartModel = ResourceUtil.getProperty(
-     * resourceBundle, PROPERTIES_RESTART_WITH_HOUSEHOLD_SERVER ); if ( restartModel
-     * == null ) restartModel = "none"; if ( ! restartModel.equalsIgnoreCase("none")
-     * ) restartModels ( householdDataManager ); } JPPFClient jppfClient = new
-     * JPPFClient(); boolean runUsualWorkSchoolChoiceModel =
+     * resourceBundle, PROPERTIES_RESTART_WITH_HOUSEHOLD_SERVER ); if (
+     * restartModel == null ) restartModel = "none"; if ( !
+     * restartModel.equalsIgnoreCase("none") ) restartModels (
+     * householdDataManager ); } JPPFClient jppfClient = new JPPFClient();
+     * boolean runUsualWorkSchoolChoiceModel =
      * ResourceUtil.getBooleanProperty(resourceBundle,
      * PROPERTIES_RUN_WORKSCHOOL_CHOICE); if(runUsualWorkSchoolChoiceModel){ //
-     * create an object for calculating destination choice attraction size terms and
-     * managing shadow price calculations. DestChoiceSize dcSizeObj = new
-     * DestChoiceSize( modelStructure, tazDataManager ); // new the usual school and
-     * location choice model object UsualWorkSchoolLocationChoiceModel
+     * create an object for calculating destination choice attraction size terms
+     * and managing shadow price calculations. DestChoiceSize dcSizeObj = new
+     * DestChoiceSize( modelStructure, tazDataManager ); // new the usual school
+     * and location choice model object UsualWorkSchoolLocationChoiceModel
      * usualWorkSchoolLocationChoiceModel = new
-     * UsualWorkSchoolLocationChoiceModel(resourceBundle, restartModel, jppfClient,
-     * modelStructure, ms, tazDataManager, dcSizeObj, dmuFactory ); // run the model
-     * logger.info ( "starting usual work and school location choice.");
+     * UsualWorkSchoolLocationChoiceModel(resourceBundle, restartModel,
+     * jppfClient, modelStructure, ms, tazDataManager, dcSizeObj, dmuFactory );
+     * // run the model logger.info (
+     * "starting usual work and school location choice.");
      * usualWorkSchoolLocationChoiceModel
      * .runSchoolAndLocationChoiceModel(householdDataManager); logger.info (
      * "finished with usual work and school location choice."); logger.info (
@@ -700,17 +752,19 @@ public class CtrampApplication implements Serializable
      * ); usualWorkSchoolLocationChoiceModel.saveResults( householdDataManager,
      * projectDirectory, iteration ); logger.info (
      * String.format("finished writing results file.") );
-     * usualWorkSchoolLocationChoiceModel = null; dcSizeObj = null; System.gc(); //
-     * write a disk object fle for the householdDataManager, in case we want to
-     * restart from the next step. if ( hhDiskObjectFile != null ) { logger.info (
+     * usualWorkSchoolLocationChoiceModel = null; dcSizeObj = null; System.gc();
+     * // write a disk object fle for the householdDataManager, in case we want
+     * to restart from the next step. if ( hhDiskObjectFile != null ) {
+     * logger.info (
      * "writing household disk object file after work/school location choice; may take a long time ..."
-     * ); String hhFileName = String.format( "%s_%d_ao", hhDiskObjectFile, iteration
-     * ); householdDataManager.createSerializedHhArrayInFileFromObject( hhFileName,
+     * ); String hhFileName = String.format( "%s_%d_ao", hhDiskObjectFile,
+     * iteration );
+     * householdDataManager.createSerializedHhArrayInFileFromObject( hhFileName,
      * "ao" ); logger.info (String.format(
      * "finished writing household disk object file = %s after uwsl; continuing to household choice models ..."
      * , hhFileName) ); } } boolean runAutoOwnershipChoiceModel =
-     * ResourceUtil.getBooleanProperty(resourceBundle, PROPERTIES_RUN_AUTO_OWNERSHIP
-     * ); boolean runFreeParkingChoiceModel =
+     * ResourceUtil.getBooleanProperty(resourceBundle,
+     * PROPERTIES_RUN_AUTO_OWNERSHIP ); boolean runFreeParkingChoiceModel =
      * ResourceUtil.getBooleanProperty(resourceBundle,
      * PROPERTIES_RUN_FREE_PARKING_AVAILABLE ); boolean
      * runCoordinatedDailyActivityPatternChoiceModel =
@@ -724,11 +778,13 @@ public class CtrampApplication implements Serializable
      * PROPERTIES_RUN_MAND_TOUR_DEP_TIME_AND_DUR ); boolean
      * runMandatoryTourModeChoiceModel =
      * ResourceUtil.getBooleanProperty(resourceBundle,
-     * PROPERTIES_RUN_MAND_TOUR_MODE_CHOICE ); boolean runJointTourFrequencyModel =
-     * ResourceUtil.getBooleanProperty(resourceBundle, PROPERTIES_RUN_JOINT_TOUR_FREQ
-     * ); boolean runJointTourLocationChoiceModel =
+     * PROPERTIES_RUN_MAND_TOUR_MODE_CHOICE ); boolean
+     * runJointTourFrequencyModel =
      * ResourceUtil.getBooleanProperty(resourceBundle,
-     * PROPERTIES_RUN_JOINT_LOCATION_CHOICE ); boolean runJointTourModeChoiceModel =
+     * PROPERTIES_RUN_JOINT_TOUR_FREQ ); boolean runJointTourLocationChoiceModel
+     * = ResourceUtil.getBooleanProperty(resourceBundle,
+     * PROPERTIES_RUN_JOINT_LOCATION_CHOICE ); boolean
+     * runJointTourModeChoiceModel =
      * ResourceUtil.getBooleanProperty(resourceBundle,
      * PROPERTIES_RUN_JOINT_TOUR_MODE_CHOICE ); boolean
      * runJointTourDepartureTimeAndDurationModel =
@@ -760,23 +816,26 @@ public class CtrampApplication implements Serializable
      * PROPERTIES_RUN_AT_WORK_SUBTOUR_DEP_TIME_AND_DUR ); boolean
      * runStopFrequencyModel = ResourceUtil.getBooleanProperty(resourceBundle,
      * PROPERTIES_RUN_STOP_FREQUENCY ); boolean runStopLocationModel =
-     * ResourceUtil.getBooleanProperty(resourceBundle, PROPERTIES_RUN_STOP_LOCATION
-     * ); boolean runHouseholdModels = false; if ( runAutoOwnershipChoiceModel ||
-     * runFreeParkingChoiceModel || runCoordinatedDailyActivityPatternChoiceModel ||
+     * ResourceUtil.getBooleanProperty(resourceBundle,
+     * PROPERTIES_RUN_STOP_LOCATION ); boolean runHouseholdModels = false; if (
+     * runAutoOwnershipChoiceModel || runFreeParkingChoiceModel ||
+     * runCoordinatedDailyActivityPatternChoiceModel ||
      * runMandatoryTourFreqChoiceModel || runMandatoryTourModeChoiceModel ||
      * runMandatoryTourTimeOfDayChoiceModel || runJointTourFrequencyModel ||
      * runJointTourLocationChoiceModel || runJointTourModeChoiceModel ||
-     * runJointTourDepartureTimeAndDurationModel || runIndivNonManTourFrequencyModel
-     * || runIndivNonManTourLocationChoiceModel || runIndivNonManTourModeChoiceModel
-     * || runIndivNonManTourDepartureTimeAndDurationModel ||
+     * runJointTourDepartureTimeAndDurationModel ||
+     * runIndivNonManTourFrequencyModel || runIndivNonManTourLocationChoiceModel
+     * || runIndivNonManTourModeChoiceModel ||
+     * runIndivNonManTourDepartureTimeAndDurationModel ||
      * runAtWorkSubTourFrequencyModel || runAtWorkSubtourLocationChoiceModel ||
      * runAtWorkSubtourModeChoiceModel ||
      * runAtWorkSubtourDepartureTimeAndDurationModel || runStopFrequencyModel ||
      * runStopLocationModel ) runHouseholdModels = true; // disk object file is
-     * labeled with the next component eligible to be run if model restarted String
-     * lastComponent = "uwsl"; String nextComponent = "ao"; if( runHouseholdModels )
-     * { logger.info ( "starting HouseholdChoiceModelRunner." ); HashMap<String,
-     * String> propertyMap =
+     * labeled with the next component eligible to be run if model restarted
+     * String lastComponent = "uwsl"; String nextComponent = "ao"; if(
+     * runHouseholdModels ) { logger.info (
+     * "starting HouseholdChoiceModelRunner." ); HashMap<String, String>
+     * propertyMap =
      * ResourceUtil.changeResourceBundleIntoHashMap(resourceBundle);
      * HouseholdChoiceModelRunner runner = new HouseholdChoiceModelRunner(
      * propertyMap, jppfClient, restartModel, householdDataManager, ms,
@@ -787,38 +846,43 @@ public class CtrampApplication implements Serializable
      * runFreeParkingChoiceModel ){ logFpResults( householdDataManager );
      * lastComponent = "fp"; nextComponent = "cdap"; } if(
      * runCoordinatedDailyActivityPatternChoiceModel ){ saveCdapResults(
-     * householdDataManager, projectDirectory ); logCdapResults( householdDataManager
-     * ); lastComponent = "cdap"; nextComponent = "imtf"; } if(
-     * runMandatoryTourFreqChoiceModel ){ logImtfResults( householdDataManager );
-     * lastComponent = "imtf"; nextComponent = "imtod"; } if(
-     * runMandatoryTourTimeOfDayChoiceModel || runMandatoryTourModeChoiceModel ){
-     * lastComponent = "imtod"; nextComponent = "jtf"; } if(
-     * runJointTourFrequencyModel ){ logJointModelResults( householdDataManager );
-     * lastComponent = "jtf"; nextComponent = "jtl"; } if(
-     * runJointTourLocationChoiceModel ){ lastComponent = "jtl"; nextComponent =
-     * "jtod"; } if( runJointTourDepartureTimeAndDurationModel ||
-     * runJointTourModeChoiceModel ){ lastComponent = "jtod"; nextComponent =
-     * "inmtf"; } if( runIndivNonManTourFrequencyModel ){ lastComponent = "inmtf";
-     * nextComponent = "inmtl"; } if( runIndivNonManTourLocationChoiceModel ){
-     * lastComponent = "inmtl"; nextComponent = "inmtod"; } if(
+     * householdDataManager, projectDirectory ); logCdapResults(
+     * householdDataManager ); lastComponent = "cdap"; nextComponent = "imtf"; }
+     * if( runMandatoryTourFreqChoiceModel ){ logImtfResults(
+     * householdDataManager ); lastComponent = "imtf"; nextComponent = "imtod";
+     * } if( runMandatoryTourTimeOfDayChoiceModel ||
+     * runMandatoryTourModeChoiceModel ){ lastComponent = "imtod"; nextComponent
+     * = "jtf"; } if( runJointTourFrequencyModel ){ logJointModelResults(
+     * householdDataManager ); lastComponent = "jtf"; nextComponent = "jtl"; }
+     * if( runJointTourLocationChoiceModel ){ lastComponent = "jtl";
+     * nextComponent = "jtod"; } if( runJointTourDepartureTimeAndDurationModel
+     * || runJointTourModeChoiceModel ){ lastComponent = "jtod"; nextComponent =
+     * "inmtf"; } if( runIndivNonManTourFrequencyModel ){ lastComponent =
+     * "inmtf"; nextComponent = "inmtl"; } if(
+     * runIndivNonManTourLocationChoiceModel ){ lastComponent = "inmtl";
+     * nextComponent = "inmtod"; } if(
      * runIndivNonManTourDepartureTimeAndDurationModel ||
-     * runIndivNonManTourModeChoiceModel ){ lastComponent = "inmtod"; nextComponent =
-     * "awf"; } if( runAtWorkSubTourFrequencyModel ){ logAtWorkSubtourFreqResults(
-     * householdDataManager ); lastComponent = "awf"; nextComponent = "awl"; } if(
-     * runAtWorkSubtourLocationChoiceModel ){ lastComponent = "awl"; nextComponent =
-     * "awtod"; } if( runAtWorkSubtourDepartureTimeAndDurationModel ||
-     * runAtWorkSubtourModeChoiceModel ){ lastComponent = "awtod"; nextComponent =
-     * "stf"; } if( runStopFrequencyModel ){ lastComponent = "stf"; nextComponent =
-     * "stl"; } if( runStopLocationModel ){ lastComponent = "stl"; nextComponent =
-     * "done"; } // write a disk object fle for the householdDataManager, in case we
-     * want to restart from the next step. if ( hhDiskObjectFile != null && !
-     * lastComponent.equalsIgnoreCase("uwsl") ) { logger.info (String.format(
+     * runIndivNonManTourModeChoiceModel ){ lastComponent = "inmtod";
+     * nextComponent = "awf"; } if( runAtWorkSubTourFrequencyModel ){
+     * logAtWorkSubtourFreqResults( householdDataManager ); lastComponent =
+     * "awf"; nextComponent = "awl"; } if( runAtWorkSubtourLocationChoiceModel
+     * ){ lastComponent = "awl"; nextComponent = "awtod"; } if(
+     * runAtWorkSubtourDepartureTimeAndDurationModel ||
+     * runAtWorkSubtourModeChoiceModel ){ lastComponent = "awtod"; nextComponent
+     * = "stf"; } if( runStopFrequencyModel ){ lastComponent = "stf";
+     * nextComponent = "stl"; } if( runStopLocationModel ){ lastComponent =
+     * "stl"; nextComponent = "done"; } // write a disk object fle for the
+     * householdDataManager, in case we want to restart from the next step. if (
+     * hhDiskObjectFile != null && ! lastComponent.equalsIgnoreCase("uwsl") ) {
+     * logger.info (String.format(
      * "writing household disk object file after %s choice model; may take a long time ..."
      * , lastComponent) ); String hhFileName = hhDiskObjectFile + "_" +
-     * nextComponent; householdDataManager.createSerializedHhArrayInFileFromObject(
-     * hhFileName, nextComponent ); logger.info (
-     * String.format("finished writing household disk object file = %s.", hhFileName)
-     * ); } logger.info ( "finished with HouseholdChoiceModelRunner." ); }
+     * nextComponent;
+     * householdDataManager.createSerializedHhArrayInFileFromObject( hhFileName,
+     * nextComponent ); logger.info (
+     * String.format("finished writing household disk object file = %s.",
+     * hhFileName) ); } logger.info (
+     * "finished with HouseholdChoiceModelRunner." ); }
      */
 
     public String getProjectDirectoryName()
@@ -829,17 +893,19 @@ public class CtrampApplication implements Serializable
     /**
      * Start a 32-bit matrix server to write matrices.
      * 
-     * @param mType   Matrix type 
+     * @param mType
+     *            Matrix type
      */
     private void start32BitMatrixIoServer(MatrixType mType)
     {
 
         // start the matrix I/O server process
         ioVm32Bit = MatrixIO32BitJvm.getInstance();
-        ioVm32Bit.setSizeInMegaBytes( 1024 );
+        ioVm32Bit.setSizeInMegaBytes(1024);
         ioVm32Bit.startJVM32();
 
-        // establish that matrix reader and writer classes will use the RMI versions
+        // establish that matrix reader and writer classes will use the RMI
+        // versions
         ioVm32Bit.startMatrixDataServer(mType);
         logger.info("matrix data server 32 bit process started.");
 
@@ -847,7 +913,7 @@ public class CtrampApplication implements Serializable
 
     /**
      * Stop the 32-bit matrix server.
-    */
+     */
     private void stop32BitMatrixIoServer()
     {
 
@@ -859,8 +925,7 @@ public class CtrampApplication implements Serializable
         logger.info("matrix data server 32 bit process stopped.");
 
     }
-    
-    
+
     public void restartModels(HouseholdDataManagerIf householdDataManager)
     {
 
@@ -895,7 +960,8 @@ public class CtrampApplication implements Serializable
                         PROPERTIES_RUN_AUTO_OWNERSHIP);
                 if (runAutoOwnershipModel)
                 {
-                    // We're resetting the random number sequence used by pre-AO for
+                    // We're resetting the random number sequence used by pre-AO
+                    // for
                     // the primary AO
                     householdDataManager.resetPreAoRandom();
                     // householdDataManager.resetAoRandom( restartIter+1 );
@@ -925,11 +991,13 @@ public class CtrampApplication implements Serializable
                         } else
                         {
                             // boolean
-                            // runIndividualMandatoryTourDepartureAndDurationModel =
+                            // runIndividualMandatoryTourDepartureAndDurationModel
+                            // =
                             // ResourceUtil.getBooleanProperty(resourceBundle,
                             // PROPERTIES_RUN_MAND_TOUR_DEP_TIME_AND_DUR);
                             // if (
-                            // runIndividualMandatoryTourDepartureAndDurationModel )
+                            // runIndividualMandatoryTourDepartureAndDurationModel
+                            // )
                             // {
                             // householdDataManager.resetImtodRandom();
                             // }
@@ -963,10 +1031,12 @@ public class CtrampApplication implements Serializable
                                 householdDataManager.resetInmtfRandom();
                             }
                             // else {
-                            // boolean runIndividualNonMandatoryTourLocationModel =
+                            // boolean
+                            // runIndividualNonMandatoryTourLocationModel =
                             // ResourceUtil.getBooleanProperty(resourceBundle,
                             // PROPERTIES_RUN_INDIV_NON_MANDATORY_LOCATION_CHOICE);
-                            // if ( runIndividualNonMandatoryTourLocationModel ) {
+                            // if ( runIndividualNonMandatoryTourLocationModel )
+                            // {
                             // householdDataManager.resetInmtlRandom();
                             // }
                             // else {
@@ -995,10 +1065,12 @@ public class CtrampApplication implements Serializable
                             // householdDataManager.resetAwlRandom();
                             // }
                             // else {
-                            // boolean runAtWorkSubtourDepartureTimeAndDurationModel
+                            // boolean
+                            // runAtWorkSubtourDepartureTimeAndDurationModel
                             // = ResourceUtil.getBooleanProperty(resourceBundle,
                             // PROPERTIES_RUN_AT_WORK_SUBTOUR_DEP_TIME_AND_DUR);
-                            // if ( runAtWorkSubtourDepartureTimeAndDurationModel ) {
+                            // if (
+                            // runAtWorkSubtourDepartureTimeAndDurationModel ) {
                             // householdDataManager.resetAwtodRandom();
                             // }
                             // else {
@@ -1035,41 +1107,46 @@ public class CtrampApplication implements Serializable
     }
 
     /**
-     * private void createSerializedObjectInFileFromObject( Object objectToSerialize,
-     * String serializedObjectFileName, String serializedObjectKey ){ try{ DataFile
-     * dataFile = new DataFile( serializedObjectFileName, 1 ); DataWriter dw = new
-     * DataWriter( serializedObjectKey ); dw.writeObject( objectToSerialize );
+     * private void createSerializedObjectInFileFromObject( Object
+     * objectToSerialize, String serializedObjectFileName, String
+     * serializedObjectKey ){ try{ DataFile dataFile = new DataFile(
+     * serializedObjectFileName, 1 ); DataWriter dw = new DataWriter(
+     * serializedObjectKey ); dw.writeObject( objectToSerialize );
      * dataFile.insertRecord( dw ); dataFile.close(); }
-     * catch(NotSerializableException e) { logger.error( String.format("NotSerializableException for %s.  Trying to create serialized object with key=%s, in filename=%s."
+     * catch(NotSerializableException e) { logger.error( String.format(
+     * "NotSerializableException for %s.  Trying to create serialized object with key=%s, in filename=%s."
      * , objectToSerialize.getClass().getName(), serializedObjectKey,
      * serializedObjectFileName ), e ); throw new RuntimeException(); }
      * catch(IOException e) { logger.error( String.format(
-     * "IOException trying to write disk object file=%s, with key=%s for writing.",
-     * serializedObjectFileName, serializedObjectKey ), e ); throw new
+     * "IOException trying to write disk object file=%s, with key=%s for writing."
+     * , serializedObjectFileName, serializedObjectKey ), e ); throw new
      * RuntimeException(); } }
      * 
      * 
      * private Object createObjectFromSerializedObjectInFile( Object newObject,
-     * String serializedObjectFileName, String serializedObjectKey ){ try{ DataFile
-     * dataFile = new DataFile( serializedObjectFileName, "r" ); DataReader dr =
-     * dataFile.readRecord( serializedObjectKey ); newObject = dr.readObject();
-     * dataFile.close(); return newObject; } catch(IOException e) { logger.error(
-     * String.format("IOException trying to read disk object file=%s, with key=%s.",
+     * String serializedObjectFileName, String serializedObjectKey ){ try{
+     * DataFile dataFile = new DataFile( serializedObjectFileName, "r" );
+     * DataReader dr = dataFile.readRecord( serializedObjectKey ); newObject =
+     * dr.readObject(); dataFile.close(); return newObject; } catch(IOException
+     * e) { logger.error( String.format(
+     * "IOException trying to read disk object file=%s, with key=%s.",
      * serializedObjectFileName, serializedObjectKey ), e ); throw new
      * RuntimeException(); } catch(ClassNotFoundException e) { logger.error(
      * String.format
      * ("could not instantiate %s object, with key=%s from filename=%s.",
-     * newObject.getClass().getName(), serializedObjectFileName, serializedObjectKey
-     * ), e ); throw new RuntimeException(); } }
+     * newObject.getClass().getName(), serializedObjectFileName,
+     * serializedObjectKey ), e ); throw new RuntimeException(); } }
      **/
     /**
      * Loops through the households in the HouseholdDataManager, gets the auto
-     * ownership result for each household, and writes a text file with hhid and auto
-     * ownership.
+     * ownership result for each household, and writes a text file with hhid and
+     * auto ownership.
      * 
-     * @param householdDataManager is the object from which the array of household
-     *            objects can be retrieved.
-     * @param projectDirectory is the root directory for the output file named
+     * @param householdDataManager
+     *            is the object from which the array of household objects can be
+     *            retrieved.
+     * @param projectDirectory
+     *            is the root directory for the output file named
      */
     private void saveAoResults(HouseholdDataManagerIf householdDataManager,
             String projectDirectory, boolean preModel)
@@ -1081,7 +1158,8 @@ public class CtrampApplication implements Serializable
 
             aoResultsFileName = resourceBundle.getString(PROPERTIES_RESULTS_AUTO_OWNERSHIP);
 
-            // change the filename property value to include "_pre" at the end of the
+            // change the filename property value to include "_pre" at the end
+            // of the
             // name before the extension, if this is a pre-auto ownership run
             if (preModel)
             {
@@ -1099,7 +1177,8 @@ public class CtrampApplication implements Serializable
 
         } catch (MissingResourceException e)
         {
-            // if filename not specified in properties file, don't need to write it.
+            // if filename not specified in properties file, don't need to write
+            // it.
             return;
         }
 
@@ -1234,10 +1313,11 @@ public class CtrampApplication implements Serializable
         logger.info("");
         logger.info("");
         logger.info("Transponder Choice Model Results");
-        logger.info( String.format( "%-16s  %20s", "Category", "Num Households" ) );
-        logger.info( String.format( "%-16s  %20s", "----------", "------------------" ) );
+        logger.info(String.format("%-16s  %20s", "Category", "Num Households"));
+        logger.info(String.format("%-16s  %20s", "----------", "------------------"));
 
-        ArrayList<int[]> startEndTaskIndicesList = getWriteHouseholdRanges(householdDataManager.getNumHouseholds());
+        ArrayList<int[]> startEndTaskIndicesList = getWriteHouseholdRanges(householdDataManager
+                .getNumHouseholds());
 
         int numYes = 0;
         int numNo = 0;
@@ -1255,46 +1335,50 @@ public class CtrampApplication implements Serializable
             {
 
                 Household household = householdArray[i];
-                if ( household.getTpChoice()+1 == TransponderChoiceModel.TP_MODEL_NO_ALT )
-                    numNo++;
-                else if ( household.getTpChoice()+1 == TransponderChoiceModel.TP_MODEL_YES_ALT )
-                    numYes++;
+                if (household.getTpChoice() + 1 == TransponderChoiceModel.TP_MODEL_NO_ALT) numNo++;
+                else if (household.getTpChoice() + 1 == TransponderChoiceModel.TP_MODEL_YES_ALT) numYes++;
                 else numOther++;
-                
+
             }
 
         }
 
-        logger.info( String.format("%-16s  %20d", "No", numNo ) );
-        logger.info( String.format("%-16s  %20d", "Yes", numYes ) );
-        logger.info( String.format("%-16s  %20d", "Other", numOther ) );
+        logger.info(String.format("%-16s  %20d", "No", numNo));
+        logger.info(String.format("%-16s  %20d", "Yes", numYes));
+        logger.info(String.format("%-16s  %20d", "Other", numOther));
 
-        logger.info(String.format("%-16s  %20s", "----------", "------------------" ) );
-        logger.info(String.format("%-16s  %20d", "Total", (numNo + numYes + numOther) ) );
+        logger.info(String.format("%-16s  %20s", "----------", "------------------"));
+        logger.info(String.format("%-16s  %20d", "Total", (numNo + numYes + numOther)));
 
     }
 
     private void logFpResults(HouseholdDataManagerIf householdDataManager)
     {
 
-        String[] fpCategoryLabel = { "No Choice Made", "Free Available", "Must Pay", "Reimbursed" };
+        String[] fpCategoryLabel = {"No Choice Made", "Free Available", "Must Pay", "Reimbursed"};
 
         logger.info("");
         logger.info("");
         logger.info("Free Parking Choice Model Results");
-        logger.info(String.format("%-16s  %20s  %20s  %20s  %20s", "Category", "Workers in area 1", "Workers in area 2", "Workers in area 3", "Workers in area 4"));
-        logger.info(String.format("%-16s  %20s  %20s  %20s  %20s", "----------", "------------------", "------------------", "------------------", "------------------"));
+        logger.info(String.format("%-16s  %20s  %20s  %20s  %20s", "Category", "Workers in area 1",
+                "Workers in area 2", "Workers in area 3", "Workers in area 4"));
+        logger.info(String.format("%-16s  %20s  %20s  %20s  %20s", "----------",
+                "------------------", "------------------", "------------------",
+                "------------------"));
 
-        // track the results by 4 work areas - only workers in area 1 should have made choices
+        // track the results by 4 work areas - only workers in area 1 should
+        // have made choices
         int numParkAreas = 4;
         int[][] workLocationsByFreeParking;
         workLocationsByFreeParking = new int[fpCategoryLabel.length][numParkAreas];
-        
-        // get the correspndence between mgra and park area to associate work locations with areas
+
+        // get the correspndence between mgra and park area to associate work
+        // locations with areas
         MgraDataManager mgraManager = MgraDataManager.getInstance(propertyMap);
         int[] parkAreas = mgraManager.getMgraParkAreas();
 
-        ArrayList<int[]> startEndTaskIndicesList = getWriteHouseholdRanges(householdDataManager.getNumHouseholds());
+        ArrayList<int[]> startEndTaskIndicesList = getWriteHouseholdRanges(householdDataManager
+                .getNumHouseholds());
 
         for (int[] startEndIndices : startEndTaskIndicesList)
         {
@@ -1310,17 +1394,19 @@ public class CtrampApplication implements Serializable
 
                 Household household = householdArray[i];
                 Person[] persons = household.getPersons();
-                for ( int p=1; p < persons.length; p++ ) {
+                for (int p = 1; p < persons.length; p++)
+                {
                     int workLocation = persons[p].getUsualWorkLocation();
-                    if ( workLocation > 0 && workLocation != ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR ) {
+                    if (workLocation > 0
+                            && workLocation != ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR)
+                    {
                         int area = parkAreas[workLocation];
                         int areaIndex = area - 1;
 
                         int fp = persons[p].getFreeParkingAvailableResult();
                         int freqIndex = 0;
-                        if ( fp > 0 )
-                            freqIndex = fp;
-                            
+                        if (fp > 0) freqIndex = fp;
+
                         workLocationsByFreeParking[freqIndex][areaIndex]++;
                     }
                 }
@@ -1332,32 +1418,39 @@ public class CtrampApplication implements Serializable
         int[] total = new int[numParkAreas];
         for (int i = 0; i < workLocationsByFreeParking.length; i++)
         {
-            logger.info(String.format("%-16s  %20d  %20d  %20d  %20d", fpCategoryLabel[i], workLocationsByFreeParking[i][0], workLocationsByFreeParking[i][1], workLocationsByFreeParking[i][2], workLocationsByFreeParking[i][3]));
-            for ( int j=0; j < numParkAreas; j++ )
+            logger.info(String.format("%-16s  %20d  %20d  %20d  %20d", fpCategoryLabel[i],
+                    workLocationsByFreeParking[i][0], workLocationsByFreeParking[i][1],
+                    workLocationsByFreeParking[i][2], workLocationsByFreeParking[i][3]));
+            for (int j = 0; j < numParkAreas; j++)
                 total[j] += workLocationsByFreeParking[i][j];
         }
-        logger.info(String.format("%-16s  %20s  %20s  %20s  %20s", "----------", "------------------", "------------------", "------------------", "------------------"));
-        logger.info(String.format("%-16s  %20d  %20d  %20d  %20d", "Totals", total[0], total[1], total[2], total[3]));
+        logger.info(String.format("%-16s  %20s  %20s  %20s  %20s", "----------",
+                "------------------", "------------------", "------------------",
+                "------------------"));
+        logger.info(String.format("%-16s  %20d  %20d  %20d  %20d", "Totals", total[0], total[1],
+                total[2], total[3]));
 
     }
 
     private void logIeResults(HouseholdDataManagerIf householdDataManager)
     {
 
-        String[] ieCategoryLabel = { "No IE Trip", "Yes IE Trip" };
+        String[] ieCategoryLabel = {"No IE Trip", "Yes IE Trip"};
 
         logger.info("");
         logger.info("");
         logger.info("Internal-External Trip Choice Model Results");
-        logger.info(String.format("%-30s  %20s  %20s  %20s", "Person Type", ieCategoryLabel[0], ieCategoryLabel[1], "Total" ));
-        logger.info(String.format("%-30s  %20s  %20s  %20s", "-------------", "-------------", "-------------", "---------" ));
+        logger.info(String.format("%-30s  %20s  %20s  %20s", "Person Type", ieCategoryLabel[0],
+                ieCategoryLabel[1], "Total"));
+        logger.info(String.format("%-30s  %20s  %20s  %20s", "-------------", "-------------",
+                "-------------", "---------"));
 
         // summarize yes/no choice by person type
         int[][] personTypeByIeChoice;
         personTypeByIeChoice = new int[Person.personTypeNameArray.length][2];
 
-        
-        ArrayList<int[]> startEndTaskIndicesList = getWriteHouseholdRanges(householdDataManager.getNumHouseholds());
+        ArrayList<int[]> startEndTaskIndicesList = getWriteHouseholdRanges(householdDataManager
+                .getNumHouseholds());
 
         for (int[] startEndIndices : startEndTaskIndicesList)
         {
@@ -1373,21 +1466,24 @@ public class CtrampApplication implements Serializable
 
                 Household household = householdArray[i];
                 Person[] persons = household.getPersons();
-                for ( int p=1; p < persons.length; p++ ) {
+                for (int p = 1; p < persons.length; p++)
+                {
 
                     int ie = persons[p].getInternalExternalTripChoiceResult();
-                    
-                    // ie = 1 means no, 2 means yes.  Get index by subtracting 1.
-                    // person typ indices are 1 based, so subtract 1 for array index
-                    try {
-                        personTypeByIeChoice[persons[p].getPersonTypeNumber()-1][ie-1]++;
-                    }
-                    catch ( ArrayIndexOutOfBoundsException e ){
-                        logger.error( "array index error" );
-                        logger.error( "hhid=" + household.getHhId() + ", p=" + p + ", ie=" + ie + ", personType=" + persons[p].getPersonTypeNumber(), e );
+
+                    // ie = 1 means no, 2 means yes. Get index by subtracting 1.
+                    // person typ indices are 1 based, so subtract 1 for array
+                    // index
+                    try
+                    {
+                        personTypeByIeChoice[persons[p].getPersonTypeNumber() - 1][ie - 1]++;
+                    } catch (ArrayIndexOutOfBoundsException e)
+                    {
+                        logger.error("array index error");
+                        logger.error("hhid=" + household.getHhId() + ", p=" + p + ", ie=" + ie
+                                + ", personType=" + persons[p].getPersonTypeNumber(), e);
                     }
                 }
-                
 
             }
 
@@ -1397,20 +1493,23 @@ public class CtrampApplication implements Serializable
         for (int i = 0; i < personTypeByIeChoice.length; i++)
         {
             int total = personTypeByIeChoice[i][0] + personTypeByIeChoice[i][1];
-            logger.info(String.format("%-30s  %20d  %20d  %20d", Person.personTypeNameArray[i], personTypeByIeChoice[i][0], personTypeByIeChoice[i][1], total));
+            logger.info(String.format("%-30s  %20d  %20d  %20d", Person.personTypeNameArray[i],
+                    personTypeByIeChoice[i][0], personTypeByIeChoice[i][1], total));
             totals[0] += personTypeByIeChoice[i][0];
             totals[1] += personTypeByIeChoice[i][1];
         }
-        logger.info(String.format("%-30s  %20s  %20s  %20s", "-------------", "-------------", "-------------", "---------" ));
-        logger.info(String.format("%-30s  %20d  %20d  %20d", "Totals", totals[0], totals[1], (totals[0]+totals[1]) ));
+        logger.info(String.format("%-30s  %20s  %20s  %20s", "-------------", "-------------",
+                "-------------", "---------"));
+        logger.info(String.format("%-30s  %20d  %20d  %20d", "Totals", totals[0], totals[1],
+                (totals[0] + totals[1])));
 
     }
 
     /**
-     * Records the coordinated daily activity pattern model results to the logger. A
-     * household-level summary simply records each pattern type and a person-level
-     * summary summarizes the activity choice by person type (full-time worker,
-     * university student, etc).
+     * Records the coordinated daily activity pattern model results to the
+     * logger. A household-level summary simply records each pattern type and a
+     * person-level summary summarizes the activity choice by person type
+     * (full-time worker, university student, etc).
      * 
      */
     public void logCdapResults(HouseholdDataManagerIf householdDataManager)
@@ -1421,8 +1520,7 @@ public class CtrampApplication implements Serializable
 
         getLogReportSummaries(householdDataManager);
 
-        logger
-                .info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         logger.info("Coordinated Daily Activity Pattern Model Results");
 
         // count of activities by person type
@@ -1524,8 +1622,7 @@ public class CtrampApplication implements Serializable
         logger.info(String.format("%-18s%10d", "Total", total));
         logger.info(" ");
 
-        logger
-                .info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         logger.info(" ");
         logger.info(" ");
 
@@ -1552,7 +1649,8 @@ public class CtrampApplication implements Serializable
         // summarize results
         HashMap<String, int[]> countByPersonType = new HashMap<String, int[]>();
 
-        ArrayList<int[]> startEndTaskIndicesList = getWriteHouseholdRanges(householdDataManager.getNumHouseholds());
+        ArrayList<int[]> startEndTaskIndicesList = getWriteHouseholdRanges(householdDataManager
+                .getNumHouseholds());
 
         for (int[] startEndIndices : startEndTaskIndicesList)
         {
@@ -1572,27 +1670,31 @@ public class CtrampApplication implements Serializable
 
                     // only summarize persons with mandatory pattern
                     String personActivity = personArray[j].getCdapActivity();
-                    if (personActivity != null && personArray[j].getCdapActivity().equalsIgnoreCase("M"))
+                    if (personActivity != null
+                            && personArray[j].getCdapActivity().equalsIgnoreCase("M"))
                     {
 
                         String personTypeString = personArray[j].getPersonType();
                         int choice = personArray[j].getImtfChoice();
-                        
-                        if ( choice == 0 ) {
-                            
-                            // there are 5 IMTF alts, so it's the offset for the extra at home categories
-                            if ( personArray[j].getPersonEmploymentCategoryIndex() < Person.EmployStatus.NOT_EMPLOYED.ordinal() &&
-                                    personArray[j].getPersonWorkLocationZone() == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR )
-                                        choice = 5 + 1;
-                            else if ( personArray[j].getPersonEmploymentCategoryIndex() < Person.EmployStatus.NOT_EMPLOYED.ordinal() &&
-                                    personArray[j].getPersonSchoolLocationZone() == ModelStructure.NOT_ENROLLED_SEGMENT_INDEX )
-                                        choice = 5 + 2;
-                            else if ( personArray[j].getPersonIsStudent() < Person.EmployStatus.NOT_EMPLOYED.ordinal() &&
-                                    personArray[j].getPersonWorkLocationZone() == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR )
-                                        choice = 5 + 3;
-                            else if ( personArray[j].getPersonIsStudent() < Person.EmployStatus.NOT_EMPLOYED.ordinal() &&
-                                    personArray[j].getPersonSchoolLocationZone() == ModelStructure.NOT_ENROLLED_SEGMENT_INDEX )
-                                        choice = 5 + 4;
+
+                        if (choice == 0)
+                        {
+
+                            // there are 5 IMTF alts, so it's the offset for the
+                            // extra at home categories
+                            if (personArray[j].getPersonEmploymentCategoryIndex() < Person.EmployStatus.NOT_EMPLOYED
+                                    .ordinal()
+                                    && personArray[j].getPersonWorkLocationZone() == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR) choice = 5 + 1;
+                            else if (personArray[j].getPersonEmploymentCategoryIndex() < Person.EmployStatus.NOT_EMPLOYED
+                                    .ordinal()
+                                    && personArray[j].getPersonSchoolLocationZone() == ModelStructure.NOT_ENROLLED_SEGMENT_INDEX) choice = 5 + 2;
+                            else if (personArray[j].getPersonIsStudent() < Person.EmployStatus.NOT_EMPLOYED
+                                    .ordinal()
+                                    && personArray[j].getPersonWorkLocationZone() == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR) choice = 5 + 3;
+                            else if (personArray[j].getPersonIsStudent() < Person.EmployStatus.NOT_EMPLOYED
+                                    .ordinal()
+                                    && personArray[j].getPersonSchoolLocationZone() == ModelStructure.NOT_ENROLLED_SEGMENT_INDEX)
+                                choice = 5 + 4;
 
                         }
 
@@ -1681,34 +1783,42 @@ public class CtrampApplication implements Serializable
         stringToLog += String.format("%12d", lineTotal);
         logger.info(stringToLog);
         logger.info(" ");
-        logger
-                .info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         logger.info(" ");
         logger.info(" ");
 
     }
 
-    private void logJointModelResults(HouseholdDataManagerIf householdDataManager, CtrampDmuFactoryIf dmuFactory)
+    private void logJointModelResults(HouseholdDataManagerIf householdDataManager,
+            CtrampDmuFactoryIf dmuFactory)
     {
 
         String uecFileDirectory = ResourceUtil.getProperty(resourceBundle, PROPERTIES_UEC_PATH);
-        String uecFileName = ResourceUtil.getProperty(resourceBundle, JointTourModels.UEC_FILE_PROPERTIES_TARGET );
+        String uecFileName = ResourceUtil.getProperty(resourceBundle,
+                JointTourModels.UEC_FILE_PROPERTIES_TARGET);
         uecFileName = uecFileDirectory + uecFileName;
 
-        int dataSheet = ResourceUtil.getIntegerProperty( resourceBundle, JointTourModels.UEC_DATA_PAGE_TARGET );
-        int freqCompSheet = ResourceUtil.getIntegerProperty( resourceBundle, JointTourModels.UEC_JOINT_TOUR_FREQ_COMP_MODEL_PAGE );
-        
+        int dataSheet = ResourceUtil.getIntegerProperty(resourceBundle,
+                JointTourModels.UEC_DATA_PAGE_TARGET);
+        int freqCompSheet = ResourceUtil.getIntegerProperty(resourceBundle,
+                JointTourModels.UEC_JOINT_TOUR_FREQ_COMP_MODEL_PAGE);
+
         // get the alternative names
-        JointTourModelsDMU dmuObject = dmuFactory.getJointTourModelsDMU();        
-        ChoiceModelApplication jointTourFrequencyModel = new ChoiceModelApplication(uecFileName, freqCompSheet, dataSheet, ResourceUtil.changeResourceBundleIntoHashMap(resourceBundle), (VariableTable) dmuObject );
+        JointTourModelsDMU dmuObject = dmuFactory.getJointTourModelsDMU();
+        ChoiceModelApplication jointTourFrequencyModel = new ChoiceModelApplication(uecFileName,
+                freqCompSheet, dataSheet,
+                ResourceUtil.changeResourceBundleIntoHashMap(resourceBundle),
+                (VariableTable) dmuObject);
         String[] altLabels = jointTourFrequencyModel.getAlternativeNames();
 
-        // this is the first index in the summary array for choices made by eligible households
+        // this is the first index in the summary array for choices made by
+        // eligible households
         int[] jointTourChoiceFreq = new int[altLabels.length + 1];
 
         TreeMap<String, Integer> partySizeFreq = new TreeMap<String, Integer>();
 
-        ArrayList<int[]> startEndTaskIndicesList = getWriteHouseholdRanges(householdDataManager.getNumHouseholds());
+        ArrayList<int[]> startEndTaskIndicesList = getWriteHouseholdRanges(householdDataManager
+                .getNumHouseholds());
 
         for (int[] startEndIndices : startEndTaskIndicesList)
         {
@@ -1730,9 +1840,9 @@ public class CtrampApplication implements Serializable
 
                     if (jtfAlt > 0)
                     {
-                        logger.error(String.format(
-                            "HHID=%d, joint tour array is null, but a valid alternative=%d is recorded for the household.",
-                            householdArray[i].getHhId(), jtfAlt));
+                        logger.error(String
+                                .format("HHID=%d, joint tour array is null, but a valid alternative=%d is recorded for the household.",
+                                        householdArray[i].getHhId(), jtfAlt));
                         throw new RuntimeException();
                     }
 
@@ -1743,9 +1853,9 @@ public class CtrampApplication implements Serializable
 
                     if (jtfAlt < 1)
                     {
-                        logger.error(String.format(
-                            "HHID=%d, joint tour array is not null, but an invalid alternative=%d is recorded for the household.",
-                            householdArray[i].getHhId(), jtfAlt));
+                        logger.error(String
+                                .format("HHID=%d, joint tour array is not null, but an invalid alternative=%d is recorded for the household.",
+                                        householdArray[i].getHhId(), jtfAlt));
                         throw new RuntimeException();
                     }
 
@@ -1772,11 +1882,11 @@ public class CtrampApplication implements Serializable
 
                         // create a key to use for a frequency map for
                         // "JointTourPurpose_Composition_NumAdults_NumChildren"
-                        String key = String.format("%s_%d_%d_%d", jt[j].getTourPurpose(), compAlt, adults, children);
+                        String key = String.format("%s_%d_%d_%d", jt[j].getTourPurpose(), compAlt,
+                                adults, children);
 
                         int value = 0;
-                        if (partySizeFreq.containsKey(key))
-                            value = partySizeFreq.get(key);
+                        if (partySizeFreq.containsKey(key)) value = partySizeFreq.get(key);
                         partySizeFreq.put(key, ++value);
 
                     }
@@ -1799,7 +1909,8 @@ public class CtrampApplication implements Serializable
         logger.info(String.format("%-5d   %-26s   %12d", 0, "None", jointTourChoiceFreq[0]));
         for (int i = 1; i <= altLabels.length; i++)
         {
-            logger.info(String.format("%-5d   %-26s   %12d", i, altLabels[i-1], jointTourChoiceFreq[i]));
+            logger.info(String.format("%-5d   %-26s   %12d", i, altLabels[i - 1],
+                    jointTourChoiceFreq[i]));
             rowTotal += jointTourChoiceFreq[i];
         }
         logger.info(String.format("%-34s   %12d", "Total Households", rowTotal));
@@ -1849,8 +1960,7 @@ public class CtrampApplication implements Serializable
 
         logger.info(" ");
         logger.info(" ");
-        logger
-                .info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         logger.info(" ");
 
     }
@@ -1862,7 +1972,8 @@ public class CtrampApplication implements Serializable
         cdapByHhSizeAndPattern = new HashMap<Integer, HashMap<String, Integer>>();
         cdapByPersonTypeAndActivity = new HashMap<String, HashMap<String, Integer>>();
 
-        ArrayList<int[]> startEndTaskIndicesList = getWriteHouseholdRanges(householdDataManager.getNumHouseholds());
+        ArrayList<int[]> startEndTaskIndicesList = getWriteHouseholdRanges(householdDataManager
+                .getNumHouseholds());
 
         for (int[] startEndIndices : startEndTaskIndicesList)
         {
@@ -1878,8 +1989,7 @@ public class CtrampApplication implements Serializable
 
                 // get the household's activity pattern choice
                 String pattern = hhObject.getCoordinatedDailyActivityPattern();
-                if ( pattern == null )
-                    continue;
+                if (pattern == null) continue;
 
                 Person[] personArray = hhObject.getPersons();
                 for (int j = 1; j < personArray.length; j++)
@@ -1895,7 +2005,8 @@ public class CtrampApplication implements Serializable
                     if (cdapByPersonTypeAndActivity.containsKey(personTypeString))
                     {
 
-                        HashMap<String, Integer> activityCountMap = cdapByPersonTypeAndActivity.get(personTypeString);
+                        HashMap<String, Integer> activityCountMap = cdapByPersonTypeAndActivity
+                                .get(personTypeString);
 
                         // check if the activity is in the activity map
                         int currentCount = 1;
@@ -1917,10 +2028,12 @@ public class CtrampApplication implements Serializable
                 } // j (person loop)
 
                 // count each type of pattern string by hhSize
-                if ( (! cdapByHhSizeAndPattern.isEmpty()) && cdapByHhSizeAndPattern.containsKey(pattern.length()))
+                if ((!cdapByHhSizeAndPattern.isEmpty())
+                        && cdapByHhSizeAndPattern.containsKey(pattern.length()))
                 {
 
-                    HashMap<String, Integer> patternCountMap = cdapByHhSizeAndPattern.get(pattern.length());
+                    HashMap<String, Integer> patternCountMap = cdapByHhSizeAndPattern.get(pattern
+                            .length());
 
                     int currentCount = 1;
                     if (patternCountMap.containsKey(pattern))
@@ -1944,9 +2057,9 @@ public class CtrampApplication implements Serializable
     }
 
     /**
-     * Loops through the households in the HouseholdDataManager, gets the coordinated
-     * daily activity pattern for each person in the household, and writes a text
-     * file with hhid, personid, persnum, and activity pattern.
+     * Loops through the households in the HouseholdDataManager, gets the
+     * coordinated daily activity pattern for each person in the household, and
+     * writes a text file with hhid, personid, persnum, and activity pattern.
      * 
      * @param householdDataManager
      */
@@ -1959,7 +2072,8 @@ public class CtrampApplication implements Serializable
             cdapResultsFileName = resourceBundle.getString(PROPERTIES_RESULTS_CDAP);
         } catch (MissingResourceException e)
         {
-            // if filename not specified in properties file, don't need to write it.
+            // if filename not specified in properties file, don't need to write
+            // it.
             return;
         }
 
@@ -2038,7 +2152,8 @@ public class CtrampApplication implements Serializable
         String[] alternativeNames = modelStructure.getAwfAltLabels();
         HashMap<String, int[]> awfByPersonType = new HashMap<String, int[]>();
 
-        ArrayList<int[]> startEndTaskIndicesList = getWriteHouseholdRanges(householdDataManager.getNumHouseholds());
+        ArrayList<int[]> startEndTaskIndicesList = getWriteHouseholdRanges(householdDataManager
+                .getNumHouseholds());
 
         for (int[] startEndIndices : startEndTaskIndicesList)
         {
@@ -2107,8 +2222,7 @@ public class CtrampApplication implements Serializable
         }
 
         logger.info(" ");
-        logger
-                .info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         logger.info("At-Work Subtour Frequency Model Results");
 
         // count of model results
@@ -2178,8 +2292,7 @@ public class CtrampApplication implements Serializable
         stringToLog += String.format("%16d", lineTotal);
         logger.info(stringToLog);
         logger.info(" ");
-        logger
-                .info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         logger.info(" ");
         logger.info(" ");
 
@@ -2193,8 +2306,7 @@ public class CtrampApplication implements Serializable
     {
 
         logger.info(" ");
-        logger
-                .info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         logger.info("Individual Tour Stop Frequency Model Results");
 
         // count of model results
@@ -2210,7 +2322,8 @@ public class CtrampApplication implements Serializable
         HashMap<Integer, String> indexPurposeMap = modelStructure.getIndexPrimaryPurposeNameMap();
         HashMap<String, Integer> purposeIndexMap = modelStructure.getPrimaryPurposeNameIndexMap();
 
-        ArrayList<int[]> startEndTaskIndicesList = getWriteHouseholdRanges(householdDataManager.getNumHouseholds());
+        ArrayList<int[]> startEndTaskIndicesList = getWriteHouseholdRanges(householdDataManager
+                .getNumHouseholds());
 
         for (int[] startEndIndices : startEndTaskIndicesList)
         {
@@ -2297,8 +2410,7 @@ public class CtrampApplication implements Serializable
         stringToLog += String.format("%18d", lineTotal);
         logger.info(stringToLog);
         logger.info(" ");
-        logger
-                .info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         logger.info(" ");
         logger.info(" ");
 
@@ -2316,13 +2428,11 @@ public class CtrampApplication implements Serializable
             dataFile.close();
         } catch (NotSerializableException e)
         {
-            logger
-                    .error(
-                            String
-                                    .format(
-                                            "NotSerializableException for %s.  Trying to create serialized object with key=%s, in filename=%s.",
-                                            objectToSerialize.getClass().getName(),
-                                            serializedObjectKey, serializedObjectFileName), e);
+            logger.error(
+                    String.format(
+                            "NotSerializableException for %s.  Trying to create serialized object with key=%s, in filename=%s.",
+                            objectToSerialize.getClass().getName(), serializedObjectKey,
+                            serializedObjectFileName), e);
             throw new RuntimeException();
         } catch (IOException e)
         {
@@ -2367,7 +2477,7 @@ public class CtrampApplication implements Serializable
         int startIndex = 0;
         int endIndex = 0;
 
-        while(endIndex < numberOfHouseholds - 1)
+        while (endIndex < numberOfHouseholds - 1)
         {
             endIndex = startIndex + NUM_WRITE_PACKETS - 1;
             if (endIndex + NUM_WRITE_PACKETS > numberOfHouseholds)

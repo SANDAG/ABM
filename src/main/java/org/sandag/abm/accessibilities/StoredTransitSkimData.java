@@ -1,6 +1,6 @@
 package org.sandag.abm.accessibilities;
 
-public class StoredTransitSkimData
+public final class StoredTransitSkimData
 {
 
     private static StoredTransitSkimData objInstance = null;

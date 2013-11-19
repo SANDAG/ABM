@@ -1,18 +1,17 @@
 package org.sandag.abm.accessibilities;
 
-import com.pb.common.util.Tracer;
-import com.pb.common.calculator.IndexValues;
+import java.io.File;
+import java.io.Serializable;
+import java.util.HashMap;
+import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.Util;
-import com.pb.common.newmodel.UtilityExpressionCalculator;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.Modes;
 import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
 import org.sandag.abm.modechoice.TransitWalkAccessUEC;
-import java.io.File;
-import java.io.Serializable;
-import java.util.HashMap;
-import org.apache.log4j.Logger;
+import com.pb.common.calculator.IndexValues;
+import com.pb.common.newmodel.UtilityExpressionCalculator;
 
 /**
  * This class builds accessibility components for all modes.

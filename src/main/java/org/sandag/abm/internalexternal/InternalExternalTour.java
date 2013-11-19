@@ -2,11 +2,7 @@ package org.sandag.abm.internalexternal;
 
 import java.io.Serializable;
 import org.apache.log4j.Logger;
-import org.sandag.abm.application.SandagModelStructure;
-import org.sandag.abm.crossborder.CrossBorderStop;
-import org.sandag.abm.crossborder.CrossBorderTrip;
 import org.sandag.abm.ctramp.Household;
-import org.sandag.abm.ctramp.Stop;
 import com.pb.common.math.MersenneTwister;
 
 public class InternalExternalTour
@@ -35,7 +31,9 @@ public class InternalExternalTour
     // following variables chosen via choice models
     private int                    originMGRA;
     private int                    destinationMGRA;
-    private int                    destinationTAZ;   // the external TAZ may be different from the external MGRA
+    private int                    destinationTAZ;   // the external TAZ may be
+                                                      // different from the
+                                                      // external MGRA
 
     /**
      * Public constructor.

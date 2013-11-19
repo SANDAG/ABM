@@ -70,6 +70,7 @@ matrixCore = {
         flowFile =    outputDir+"\\flow"+matrixCore[mat]+periodName[per]+".bin"
         walkFile =    outputDir+"\\ntl"+matrixCore[mat]+periodName[per]+".bin"
         onOffFile =   outputDir+"\\ono"+matrixCore[mat]+periodName[per]+".bin"
+        aggFile =  outputDir+"\\agg"+matrixCore[mat]+periodName[per]+".bin"
         onOffTables[i] = onOffFile
 
    
@@ -82,6 +83,7 @@ matrixCore = {
         Opts.Output.[Flow Table] = flowFile
         Opts.Output.[Walk Flow Table] = walkFile
         Opts.Output.[OnOff Table] = onOffFile
+        Opts.Output.[Aggre Table] = aggFile
         Opts.Flag.[Do Maximum Fare] = 1 //added for 4.8 build 401
    
       //Opts.Output.[Critical Matrix].Label = "Critical Matrix"
@@ -93,9 +95,6 @@ matrixCore = {
        if !ok then goto quit    	
      end
    end
-
-   ok = RunMacro("Collapse OnOffs By Route", onOffTables, rt_file)
-   if !ret_value then goto quit
 
    quit:
     RunMacro("close all")

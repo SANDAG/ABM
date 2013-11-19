@@ -9,14 +9,12 @@ import org.jppf.client.JPPFJob;
 import org.jppf.server.protocol.JPPFTask;
 import org.jppf.task.storage.DataProvider;
 import org.jppf.task.storage.MemoryMapDataProvider;
-import org.sandag.abm.accessibilities.BuildAccessibilities;
 import com.pb.common.calculator.MatrixDataServerIf;
 
 public class HouseholdChoiceModelRunner
 {
 
-    private Logger                  logger                                = Logger
-                                                                                  .getLogger(HouseholdChoiceModelRunner.class);
+    private Logger                  logger                                = Logger.getLogger(HouseholdChoiceModelRunner.class);
 
     private static int              PACKET_SIZE                           = 0;
 
@@ -41,9 +39,11 @@ public class HouseholdChoiceModelRunner
 
     // The number of initialization packets are the number of "small" packets
     // submited at the beginning of a
-    // distributed task to minimize synchronization issues that significantly slow
+    // distributed task to minimize synchronization issues that significantly
+    // slow
     // down model object setup.
-    // It is assumed that after theses small packets have run, all the model objects
+    // It is assumed that after theses small packets have run, all the model
+    // objects
     // will have been setup,
     // and the task objects can process much bigger chuncks of households.
 
@@ -103,7 +103,8 @@ public class HouseholdChoiceModelRunner
     }
 
     /**
-     * @param client is a JPPFClient object which is used to establish a connection
+     * @param client
+     *            is a JPPFClient object which is used to establish a connection
      *            to a computing node, submit tasks, and receive results.
      */
     private void submitTasks()
@@ -114,9 +115,11 @@ public class HouseholdChoiceModelRunner
         if (PACKET_SIZE == 0) PACKET_SIZE = hhDataManager.getNumHouseholds();
 
         // Create a setup task object and submit it to the computing node.
-        // This setup task creates the HouseholdChoiceModelManager and causes it to
+        // This setup task creates the HouseholdChoiceModelManager and causes it
+        // to
         // create the necessary numuber
-        // of HouseholdChoiceModels objects which will operate in parallel on the
+        // of HouseholdChoiceModels objects which will operate in parallel on
+        // the
         // computing node.
         try
         {
@@ -133,7 +136,8 @@ public class HouseholdChoiceModelRunner
             dataProvider.setValue("restartModelString", restartModelString);
             job.setDataProvider(dataProvider);
 
-            ArrayList<int[]> startEndTaskIndicesList = getTaskHouseholdRanges(hhDataManager.getNumHouseholds());
+            ArrayList<int[]> startEndTaskIndicesList = getTaskHouseholdRanges(hhDataManager
+                    .getNumHouseholds());
 
             int startIndex = 0;
             int endIndex = 0;
@@ -156,10 +160,14 @@ public class HouseholdChoiceModelRunner
 
                 try
                 {
-                    logger.info(String.format("HH TASK: %s returned: %s, maxAlts: %d.", task.getId(), (String) task.getResult(), ((HouseholdChoiceModelsTaskJppf) task).getMaxAlts()));
+                    logger.info(String.format("HH TASK: %s returned: %s, maxAlts: %d.",
+                            task.getId(), (String) task.getResult(),
+                            ((HouseholdChoiceModelsTaskJppf) task).getMaxAlts()));
                 } catch (Exception e)
                 {
-                    logger.error( "Exception returned by computing node caught in HouseholdChoiceModelsTaskJppf.", e);
+                    logger.error(
+                            "Exception returned by computing node caught in HouseholdChoiceModelsTaskJppf.",
+                            e);
                     throw new RuntimeException();
                 }
 
@@ -167,7 +175,9 @@ public class HouseholdChoiceModelRunner
 
         } catch (Exception e)
         {
-            logger.error( "Exception caught creating/submitting/receiving HouseholdChoiceModelsTaskJppf.", e);
+            logger.error(
+                    "Exception caught creating/submitting/receiving HouseholdChoiceModelsTaskJppf.",
+                    e);
             throw new RuntimeException();
         }
 
@@ -189,7 +199,7 @@ public class HouseholdChoiceModelRunner
             if (numInitializationHouseholds < numberOfHouseholds)
             {
 
-                while(endIndex < numInitializationHouseholds)
+                while (endIndex < numInitializationHouseholds)
                 {
                     endIndex = startIndex + INITIALIZATION_PACKET_SIZE - 1;
 
@@ -203,7 +213,7 @@ public class HouseholdChoiceModelRunner
 
             }
 
-            while(endIndex < numberOfHouseholds - 1)
+            while (endIndex < numberOfHouseholds - 1)
             {
                 endIndex = startIndex + PACKET_SIZE - 1;
                 if (endIndex + PACKET_SIZE > numberOfHouseholds) endIndex = numberOfHouseholds - 1;

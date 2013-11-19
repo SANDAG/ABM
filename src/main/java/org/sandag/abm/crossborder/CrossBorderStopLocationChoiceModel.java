@@ -8,8 +8,8 @@ import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.datafile.TableDataSet;
-import com.pb.common.newmodel.ConcreteAlternative;
 import com.pb.common.newmodel.ChoiceModelApplication;
+import com.pb.common.newmodel.ConcreteAlternative;
 import com.pb.common.newmodel.UtilityExpressionCalculator;
 
 public class CrossBorderStopLocationChoiceModel
@@ -27,24 +27,68 @@ public class CrossBorderStopLocationChoiceModel
     private ChoiceModelApplication           soaModel;
     private ChoiceModelApplication           destModel;
 
-    // the following arrays are calculated in the station-destination choice model and passed in the constructor.
-    private double[][]                       mgraSizeTerms;                                // by purpose, MGRA
-    private double[][][]                     mgraProbabilities;                            // by purpose, TAZ, MGRA
+    // the following arrays are calculated in the station-destination choice
+    // model and passed in the constructor.
+    private double[][]                       mgraSizeTerms;                                // by
+                                                                                            // purpose,
+                                                                                            // MGRA
+    private double[][][]                     mgraProbabilities;                            // by
+                                                                                            // purpose,
+                                                                                            // TAZ,
+                                                                                            // MGRA
 
-    private TableDataSet                     alternativeData;                              // the alternatives, with a "dest" - indicating the
-                                                                                            // destination TAZ in San Diego County
+    private TableDataSet                     alternativeData;                              // the
+                                                                                            // alternatives,
+                                                                                            // with
+                                                                                            // a
+                                                                                            // "dest"
+                                                                                            // -
+                                                                                            // indicating
+                                                                                            // the
+                                                                                            // destination
+                                                                                            // TAZ
+                                                                                            // in
+                                                                                            // San
+                                                                                            // Diego
+                                                                                            // County
 
     // following are used for each taz alternative
-    private double[]                         soaTourOrigToStopDistanceAlt;                 // by TAZ
-    private double[]                         soaStopToTourDestDistanceAlt;                 // by TAZ
-    private double[][]                       tazSizeTerms;                                 // by purpose, TAZ - set by constructor
+    private double[]                         soaTourOrigToStopDistanceAlt;                 // by
+                                                                                            // TAZ
+    private double[]                         soaStopToTourDestDistanceAlt;                 // by
+                                                                                            // TAZ
+    private double[][]                       tazSizeTerms;                                 // by
+                                                                                            // purpose,
+                                                                                            // TAZ
+                                                                                            // -
+                                                                                            // set
+                                                                                            // by
+                                                                                            // constructor
 
     // following are used for sampled mgras
     private int                              sampleRate;
-    private double[][]                       sampledSizeTerms;                             // by purpose, alternative (taz or sampled mgra)
-    private double[]                         correctionFactors;                            // by alternative (sampled mgra, for full model only)
-    private int[]                            sampledTazs;                                  // by alternative (sampled taz)
-    private int[]                            sampledMgras;                                 // by alternative(sampled mgra)
+    private double[][]                       sampledSizeTerms;                             // by
+                                                                                            // purpose,
+                                                                                            // alternative
+                                                                                            // (taz
+                                                                                            // or
+                                                                                            // sampled
+                                                                                            // mgra)
+    private double[]                         correctionFactors;                            // by
+                                                                                            // alternative
+                                                                                            // (sampled
+                                                                                            // mgra,
+                                                                                            // for
+                                                                                            // full
+                                                                                            // model
+                                                                                            // only)
+    private int[]                            sampledTazs;                                  // by
+                                                                                            // alternative
+                                                                                            // (sampled
+                                                                                            // taz)
+    private int[]                            sampledMgras;                                 // by
+                                                                                            // alternative(sampled
+                                                                                            // mgra)
     private double[]                         tourOrigToStopDistanceAlt;
     private double[]                         stopToTourDestDistanceAlt;
     private double[]                         osMcLogsumAlt;
@@ -54,10 +98,28 @@ public class CrossBorderStopLocationChoiceModel
 
     private CrossBorderTrip                  trip;
 
-    private int                              originMgra;                                   // the origin MGRA of the stop (originMgra -> stopMgra ->
+    private int                              originMgra;                                   // the
+                                                                                            // origin
+                                                                                            // MGRA
+                                                                                            // of
+                                                                                            // the
+                                                                                            // stop
+                                                                                            // (originMgra
+                                                                                            // ->
+                                                                                            // stopMgra
+                                                                                            // ->
                                                                                             // destinationMgra)
-    private int                              destinationMgra;                              // the destination MGRA of the stop (originMgra ->
-                                                                                            // stopMgra -> destinationMgra)
+    private int                              destinationMgra;                              // the
+                                                                                            // destination
+                                                                                            // MGRA
+                                                                                            // of
+                                                                                            // the
+                                                                                            // stop
+                                                                                            // (originMgra
+                                                                                            // ->
+                                                                                            // stopMgra
+                                                                                            // ->
+                                                                                            // destinationMgra)
     private int                              originTAZ;
     private int                              destinationTAZ;
 
@@ -135,8 +197,14 @@ public class CrossBorderStopLocationChoiceModel
         alternativeData = uec.getAlternativeData();
         int purposes = modelStructure.CROSSBORDER_PURPOSES.length;
 
-        sampledSizeTerms = new double[purposes][sampleRate + 1]; // by purpose, alternative (taz or sampled mgra)
-        correctionFactors = new double[sampleRate + 1]; // by alternative (sampled mgra, for full model only)
+        sampledSizeTerms = new double[purposes][sampleRate + 1]; // by purpose,
+                                                                 // alternative
+                                                                 // (taz or
+                                                                 // sampled
+                                                                 // mgra)
+        correctionFactors = new double[sampleRate + 1]; // by alternative
+                                                        // (sampled mgra, for
+                                                        // full model only)
         sampledTazs = new int[sampleRate + 1]; // by alternative (sampled taz)
         sampledMgras = new int[sampleRate + 1]; // by alternative (sampled mgra)
         tourOrigToStopDistanceAlt = new double[sampleRate + 1];
@@ -169,14 +237,15 @@ public class CrossBorderStopLocationChoiceModel
             destinationMgra = tour.getOriginMGRA();
             destinationTAZ = mgraManager.getTaz(destinationMgra);
 
-            // origin for inbound stops is tour destination if first stop, or last chosen stop location
+            // origin for inbound stops is tour destination if first stop, or
+            // last chosen stop location
             if (stop.getId() == 0)
             {
                 originMgra = tour.getDestinationMGRA();
                 originTAZ = mgraManager.getTaz(originMgra);
             } else
             {
-                CrossBorderStop stops[] = tour.getInboundStops();
+                CrossBorderStop[] stops = tour.getInboundStops();
                 originMgra = stops[stop.getId() - 1].getMgra();
                 originTAZ = mgraManager.getTaz(originMgra);
             }
@@ -190,14 +259,15 @@ public class CrossBorderStopLocationChoiceModel
             destinationMgra = tour.getDestinationMGRA();
             destinationTAZ = mgraManager.getTaz(destinationMgra);
 
-            // origin for outbound stops is tour origin if first stop, or last chosen stop location
+            // origin for outbound stops is tour origin if first stop, or last
+            // chosen stop location
             if (stop.getId() == 0)
             {
                 originMgra = tour.getOriginMGRA();
                 originTAZ = mgraManager.getTaz(originMgra);
             } else
             {
-                CrossBorderStop stops[] = tour.getOutboundStops();
+                CrossBorderStop[] stops = tour.getOutboundStops();
                 originMgra = stops[stop.getId() - 1].getMgra();
                 originTAZ = mgraManager.getTaz(originMgra);
             }
@@ -243,9 +313,12 @@ public class CrossBorderStopLocationChoiceModel
             // set the sampled taz in the array
             sampledTazs[sample] = sampledTaz;
 
-            // now find an MGRA in the taz corresponding to the random number drawn:
-            // note that the indexing needs to be offset by the cumulative probability of the chosen taz and the
-            // mgra probabilities need to be scaled by the alternatives probability
+            // now find an MGRA in the taz corresponding to the random number
+            // drawn:
+            // note that the indexing needs to be offset by the cumulative
+            // probability of the chosen taz and the
+            // mgra probabilities need to be scaled by the alternatives
+            // probability
             int[] mgraArray = tazManager.getMgraArray(sampledTaz);
             int mgraNumber = 0;
             double[] mgraCumProb = mgraProbabilities[purpose][sampledTaz];
@@ -264,7 +337,8 @@ public class CrossBorderStopLocationChoiceModel
                     mgraNumber = mgraArray[i];
                     sampledMgras[sample] = mgraNumber;
 
-                    // for now, store the probability in the correction factors array
+                    // for now, store the probability in the correction factors
+                    // array
                     correctionFactors[sample] = mgraCumProb[i] * altProb;
 
                     break;

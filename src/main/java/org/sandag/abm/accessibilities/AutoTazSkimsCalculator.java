@@ -1,15 +1,15 @@
 package org.sandag.abm.accessibilities;
 
-import com.pb.common.calculator.IndexValues;
-import com.pb.common.calculator.VariableTable;
-import org.sandag.abm.ctramp.CtrampApplication;
-import org.sandag.abm.ctramp.Util;
-import com.pb.common.newmodel.UtilityExpressionCalculator;
-import org.sandag.abm.modechoice.TazDataManager;
-import org.sandag.abm.modechoice.TransitWalkAccessUEC;
 import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
+import org.sandag.abm.ctramp.CtrampApplication;
+import org.sandag.abm.ctramp.Util;
+import org.sandag.abm.modechoice.TazDataManager;
+import org.sandag.abm.modechoice.TransitWalkAccessUEC;
+import com.pb.common.calculator.IndexValues;
+import com.pb.common.calculator.VariableTable;
+import com.pb.common.newmodel.UtilityExpressionCalculator;
 
 /**
  * This class is used to return auto skim values and non-motorized skim values

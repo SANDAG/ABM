@@ -7,18 +7,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
-import org.sandag.abm.application.SandagModelStructure;
-import org.sandag.abm.application.SandagSummitFile;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
-import org.sandag.abm.visitor.VisitorTour;
-import org.sandag.abm.visitor.VisitorTrip;
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.math.MersenneTwister;
-import com.pb.common.util.OutTextFile;
 import com.pb.common.util.ResourceUtil;
 
 public class InternalExternalTourManager
@@ -48,8 +42,9 @@ public class InternalExternalTourManager
     private HashMap<Long, HouseholdClass> householdData;
 
     /**
-     * Constructor. Reads properties file and opens/stores all probability distributions for sampling. Estimates number of airport travel parties and
-     * initializes parties[].
+     * Constructor. Reads properties file and opens/stores all probability
+     * distributions for sampling. Estimates number of airport travel parties
+     * and initializes parties[].
      * 
      * @param resourceFile
      *            Property file.
@@ -318,8 +313,9 @@ public class InternalExternalTourManager
     }
 
     /**
-     * A helper method that returns an array containing boarding tap (element 0) and alighting tap (element 1) for the given trip mode. Returns an
-     * array of zeroes if the trip modes are not transit.
+     * A helper method that returns an array containing boarding tap (element 0)
+     * and alighting tap (element 1) for the given trip mode. Returns an array
+     * of zeroes if the trip modes are not transit.
      * 
      * @param party
      *            The trip
@@ -342,7 +338,7 @@ public class InternalExternalTourManager
         return taps;
     }
 
-    public static void main(String args[])
+    public static void main(String[] args)
     {
 
         String propertiesFile = null;

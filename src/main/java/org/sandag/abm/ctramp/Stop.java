@@ -2,7 +2,6 @@ package org.sandag.abm.ctramp;
 
 import java.io.Serializable;
 import org.apache.log4j.Logger;
-import org.sandag.abm.ctramp.Household;
 
 public class Stop
         implements Serializable
@@ -20,11 +19,12 @@ public class Stop
 
     String  origPurpose;
     String  destPurpose;
-    int stopPurposeIndex;
-    
+    int     stopPurposeIndex;
+
     Tour    parentTour;
 
-    public Stop(Tour parentTour, String origPurpose, String destPurpose, int id, boolean inbound, int stopPurposeIndex)
+    public Stop(Tour parentTour, String origPurpose, String destPurpose, int id, boolean inbound,
+            int stopPurposeIndex)
     {
         this.parentTour = parentTour;
         this.origPurpose = origPurpose;
@@ -53,17 +53,17 @@ public class Stop
     {
         this.mode = mode;
     }
-    
+
     public void setBoardTap(int tap)
     {
         boardTap = tap;
     }
-    
+
     public void setAlightTap(int tap)
     {
         alightTap = tap;
     }
-    
+
     public void setStopPeriod(int period)
     {
         stopPeriod = period;
@@ -98,7 +98,7 @@ public class Stop
     {
         return stopPurposeIndex;
     }
-    
+
     public int getMode()
     {
         return mode;
@@ -108,12 +108,12 @@ public class Stop
     {
         return boardTap;
     }
-    
+
     public int getAlightTap()
     {
         return alightTap;
     }
-    
+
     public int getStopPeriod()
     {
         return stopPeriod;
@@ -134,25 +134,26 @@ public class Stop
         return id;
     }
 
-    public void logStopObject( Logger logger, int totalChars ) {
-        
+    public void logStopObject(Logger logger, int totalChars)
+    {
+
         String separater = "";
-        for (int i=0; i < totalChars; i++)
+        for (int i = 0; i < totalChars; i++)
             separater += "-";
 
-        Household.logHelper( logger, "stopId: ", id, totalChars );
-        Household.logHelper( logger, "origPurpose: ", origPurpose, totalChars );
-        Household.logHelper( logger, "destPurpose: ", destPurpose, totalChars );
-        Household.logHelper( logger, "orig: ", orig, totalChars );
-        Household.logHelper( logger, "dest: ", dest, totalChars );
-        Household.logHelper( logger, "mode: ", mode, totalChars );
-        Household.logHelper( logger, "direction: ", inbound ? "inbound" : "outbound", totalChars );
-        Household.logHelper( logger, inbound ? "outbound departPeriod: " : "inbound arrivePeriod: ", stopPeriod, totalChars );
+        Household.logHelper(logger, "stopId: ", id, totalChars);
+        Household.logHelper(logger, "origPurpose: ", origPurpose, totalChars);
+        Household.logHelper(logger, "destPurpose: ", destPurpose, totalChars);
+        Household.logHelper(logger, "orig: ", orig, totalChars);
+        Household.logHelper(logger, "dest: ", dest, totalChars);
+        Household.logHelper(logger, "mode: ", mode, totalChars);
+        Household.logHelper(logger, "direction: ", inbound ? "inbound" : "outbound", totalChars);
+        Household.logHelper(logger, inbound ? "outbound departPeriod: " : "inbound arrivePeriod: ",
+                stopPeriod, totalChars);
         logger.info(separater);
-        logger.info( "" );
-        logger.info( "" );
+        logger.info("");
+        logger.info("");
 
     }
-    
 
 }

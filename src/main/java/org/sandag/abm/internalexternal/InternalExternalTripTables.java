@@ -4,6 +4,7 @@ import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
 import java.io.File;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -122,7 +123,7 @@ public class InternalExternalTripTables
         numberOfPeriods = modelStructure.getNumberModelPeriods();
 
         // number of modes
-        modeIndex = new int[SandagModelStructure.MAXIMUM_TOUR_MODE_ALT_INDEX + 1];
+        modeIndex = new int[modelStructure.MAXIMUM_TOUR_MODE_ALT_INDEX + 1];
         matrixIndex = new int[modeIndex.length];
 
         // set the mode arrays
@@ -163,7 +164,8 @@ public class InternalExternalTripTables
     {
 
         /*
-         * This won't work because external stations aren't listed in the MGRA file int[] tazIndex = tazManager.getTazsOneBased(); int tazs =
+         * This won't work because external stations aren't listed in the MGRA
+         * file int[] tazIndex = tazManager.getTazsOneBased(); int tazs =
          * tazIndex.length-1;
          */
         // Instead, use maximum taz number
@@ -231,7 +233,8 @@ public class InternalExternalTripTables
     }
 
     /**
-     * Create trip tables for all time periods and modes. This is the main entry point into the class; it should be called after instantiating the
+     * Create trip tables for all time periods and modes. This is the main entry
+     * point into the class; it should be called after instantiating the
      * SandagTripTables object.
      * 
      */
@@ -290,8 +293,9 @@ public class InternalExternalTripTables
     }
 
     /**
-     * This is the main workhorse method in this class. It iterates over records in the trip file. Attributes for the trip record are read, and the
-     * trip record is accumulated in the relevant matrix.
+     * This is the main workhorse method in this class. It iterates over records
+     * in the trip file. Attributes for the trip record are read, and the trip
+     * record is accumulated in the relevant matrix.
      * 
      * @param timePeriod
      *            The time period to process
@@ -310,7 +314,7 @@ public class InternalExternalTripTables
             if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
 
             int departTime = (int) tripData.getValueAt(i, "period");
-            int period = SandagModelStructure.getModelPeriodIndex(departTime);
+            int period = modelStructure.getModelPeriodIndex(departTime);
             if (period != timePeriod) continue;
 
             int originMGRA = (int) tripData.getValueAt(i, "originMgra");
@@ -398,10 +402,12 @@ public class InternalExternalTripTables
     }
 
     /**
-     * Get the output trip table file names from the properties file, and write trip tables for all modes for the given time period.
+     * Get the output trip table file names from the properties file, and write
+     * trip tables for all modes for the given time period.
      * 
      * @param period
-     *            Time period, which will be used to find the period time string to append to each trip table matrix file
+     *            Time period, which will be used to find the period time string
+     *            to append to each trip table matrix file
      */
     public void writeTrips(int period, MatrixType mt)
     {
@@ -500,7 +506,7 @@ public class InternalExternalTripTables
         try
         {
             ItemServer.bind(matrixServer, className);
-        } catch (IOException e)
+        } catch (RemoteException e)
         {
             logger.error(String.format(
                     "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",

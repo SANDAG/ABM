@@ -1,25 +1,24 @@
 package org.sandag.abm.crossborder;
 
-import org.apache.log4j.Logger;
 import org.sandag.abm.application.SandagModelStructure;
 
 public class CrossBorderModelStructure
         extends SandagModelStructure
 {
 
-    public final static byte     NUMBER_CROSSBORDER_PURPOSES = 6;
-    public final static byte     WORK                        = 0;
-    public final static byte     SCHOOL                      = 1;
-    public final static byte     CARGO                       = 2;
-    public final static byte     SHOP                        = 3;
-    public final static byte     VISIT                       = 4;
-    public final static byte     OTHER                       = 5;
+    public static final byte     NUMBER_CROSSBORDER_PURPOSES = 6;
+    public static final byte     WORK                        = 0;
+    public static final byte     SCHOOL                      = 1;
+    public static final byte     CARGO                       = 2;
+    public static final byte     SHOP                        = 3;
+    public static final byte     VISIT                       = 4;
+    public static final byte     OTHER                       = 5;
 
-    public final static String[] CROSSBORDER_PURPOSES        = {"WORK", "SCHOOL", "CARGO", "SHOP",
+    public static final String[] CROSSBORDER_PURPOSES        = {"WORK", "SCHOOL", "CARGO", "SHOP",
             "VISIT", "OTHER"                                 };
 
-    public final static byte     DEPARTURE                   = 0;
-    public final static byte     ARRIVAL                     = 1;
+    public static final byte     DEPARTURE                   = 0;
+    public static final byte     ARRIVAL                     = 1;
 
     public static final int      AM                          = 0;
     public static final int      PM                          = 1;

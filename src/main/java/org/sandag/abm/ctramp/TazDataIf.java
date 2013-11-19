@@ -8,117 +8,126 @@ package org.sandag.abm.ctramp;
 public interface TazDataIf
 {
 
-    public String testRemote();
+    String testRemote();
 
-    public int[] getAltToZoneArray();
+    int[] getAltToZoneArray();
 
-    public int[] getAltToSubZoneArray();
+    int[] getAltToSubZoneArray();
 
-    public int[] getIndexToZoneArray();
+    int[] getIndexToZoneArray();
 
-    public int[] getZoneTableRowArray();
+    int[] getZoneTableRowArray();
 
-    public int getZoneIsCbd(int taz);
+    int getZoneIsCbd(int taz);
 
-    public int getZoneIsUrban(int taz);
+    int getZoneIsUrban(int taz);
 
-    public int getZoneIsSuburban(int taz);
+    int getZoneIsSuburban(int taz);
 
-    public int getZoneIsRural(int taz);
+    int getZoneIsRural(int taz);
 
-    public float[] getPkAutoRetailAccessibity();
+    float[] getPkAutoRetailAccessibity();
 
-    public float[] getPkAutoTotalAccessibity();
+    float[] getPkAutoTotalAccessibity();
 
-    public float[] getPkTransitRetailAccessibity();
+    float[] getPkTransitRetailAccessibity();
 
-    public float[] getPkTransitTotalAccessibity();
+    float[] getPkTransitTotalAccessibity();
 
-    public float[] getOpAutoRetailAccessibity();
+    float[] getOpAutoRetailAccessibity();
 
-    public float[] getOpAutoTotalAccessibity();
+    float[] getOpAutoTotalAccessibity();
 
-    public float[] getOpTransitRetailAccessibity();
+    float[] getOpTransitRetailAccessibity();
 
-    public float[] getOpTransitTotalAccessibity();
+    float[] getOpTransitTotalAccessibity();
 
-    public float[] getNonMotorizedRetailAccessibity();
+    float[] getNonMotorizedRetailAccessibity();
 
-    public float[] getNonMotorizedTotalAccessibity();
+    float[] getNonMotorizedTotalAccessibity();
 
     /**
      * 
-     * @param field is the field name to be checked against the column names in the
-     *            zone data table.
+     * @param field
+     *            is the field name to be checked against the column names in
+     *            the zone data table.
      * @return true if field matches one of the zone data table column names,
      *         otherwise false.
      */
-    public boolean isValidZoneTableField(String field);
+    boolean isValidZoneTableField(String field);
 
     /**
      * @return a String[] of the column labels in the zone data table
      */
-    public String[] getZoneDataTableColumnLabels();
+    String[] getZoneDataTableColumnLabels();
 
     /**
-     * @return an int value for the number of zones, i.e. rows in the zone data table
+     * @return an int value for the number of zones, i.e. rows in the zone data
+     *         table
      */
-    public int getNumberOfZones();
+    int getNumberOfZones();
 
     /**
-     * @return an int value for the number of subZones, i.e. number of walkTransit
-     *         accessible segments defined in model for zones. Typical value might be
-     *         3, "no walk access", "short walk access", "long walk access".
+     * @return an int value for the number of subZones, i.e. number of
+     *         walkTransit accessible segments defined in model for zones.
+     *         Typical value might be 3, "no walk access", "short walk access",
+     *         "long walk access".
      */
-    public int getNumberOfSubZones();
+    int getNumberOfSubZones();
 
     /**
      * @return a String[] for the subZone names, e.g. "no walk access",
      *         "short walk access", "long walk access".
      */
-    public String[] getSubZoneNames();
+    String[] getSubZoneNames();
 
     /**
-     * @param taz is the taz index for the zonalWalkPctArray which is dimensioned to
-     *            ZONES+1, assuming taz index values range from 1 to NUM_ZONES.
-     * @return a double[], dimensioned to NUM_SIBZONES, with the subzone proportions
-     *         for the TAZ passed in
+     * @param taz
+     *            is the taz index for the zonalWalkPctArray which is
+     *            dimensioned to ZONES+1, assuming taz index values range from 1
+     *            to NUM_ZONES.
+     * @return a double[], dimensioned to NUM_SIBZONES, with the subzone
+     *         proportions for the TAZ passed in
      */
-    public double[] getZonalWalkPercentagesForTaz(int taz);
+    double[] getZonalWalkPercentagesForTaz(int taz);
 
     /**
-     * @param taz is the taz index for the zone data table which is dimensioned to
-     *            ZONES+1, assuming taz index values range from 1 to NUM_ZONES.
-     * @param fieldName is the column label in the zone data table.
-     * @return a float value from the zone data table at the specified row index and
-     *         column label.
+     * @param taz
+     *            is the taz index for the zone data table which is dimensioned
+     *            to ZONES+1, assuming taz index values range from 1 to
+     *            NUM_ZONES.
+     * @param fieldName
+     *            is the column label in the zone data table.
+     * @return a float value from the zone data table at the specified row index
+     *         and column label.
      */
-    public float getZoneTableValue(int taz, String fieldName);
+    float getZoneTableValue(int taz, String fieldName);
 
-    public int[] getZoneTableIntColumn(String fieldName);
+    int[] getZoneTableIntColumn(String fieldName);
 
-    public float[] getZoneTableFloatColumn(String fieldName);
+    float[] getZoneTableFloatColumn(String fieldName);
 
     /**
-     * @param tableRowNumber is the zone table row number
+     * @param tableRowNumber
+     *            is the zone table row number
      * @return zone number for the table row.
      */
-    public int getTazNumber(int tableRowNumber);
+    int getTazNumber(int tableRowNumber);
 
     /**
      * @return area type from the zone data table for the zone index.
      */
-    public int[] getZonalAreaType();
+    int[] getZonalAreaType();
 
     /**
      * @return district from the zone data table for the zone index.
      */
-    public int[] getZonalDistrict();
+    int[] getZonalDistrict();
 
     /**
      * @return integer county value from the zone data table for the zone index.
      */
-    public int[] getZonalCounty();
+    int[] getZonalCounty();
 
     /**
      * @return the parking rate array

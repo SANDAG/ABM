@@ -9,8 +9,9 @@ import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 
 /**
- * This class is the TOD choice model for IE tours. It is currently based on a static probability distribution stored in an input file, and indexed
- * into by purpose. Since there are no IE purposes, the purpose is 0.
+ * This class is the TOD choice model for IE tours. It is currently based on a
+ * static probability distribution stored in an input file, and indexed into by
+ * purpose. Since there are no IE purposes, the purpose is 0.
  * 
  * @author Freedman
  * 
@@ -19,9 +20,22 @@ public class InternalExternalTourTimeOfDayChoiceModel
 {
     private transient Logger       logger = Logger.getLogger("internalExternalModel");
 
-    private double[][]             cumProbability;                                    // by purpose, alternative: cumulative probability distribution
-    private int[][]                outboundPeriod;                                    // by purpose, alternative: outbound period
-    private int[][]                returnPeriod;                                      // by purpose, alternative: return period
+    private double[][]             cumProbability;                                    // by
+                                                                                       // purpose,
+                                                                                       // alternative:
+                                                                                       // cumulative
+                                                                                       // probability
+                                                                                       // distribution
+    private int[][]                outboundPeriod;                                    // by
+                                                                                       // purpose,
+                                                                                       // alternative:
+                                                                                       // outbound
+                                                                                       // period
+    private int[][]                returnPeriod;                                      // by
+                                                                                       // purpose,
+                                                                                       // alternative:
+                                                                                       // return
+                                                                                       // period
     InternalExternalModelStructure modelStructure;
 
     /**
@@ -69,9 +83,19 @@ public class InternalExternalTourTimeOfDayChoiceModel
         int periods = modelStructure.TIME_PERIODS; // start at 1
         int periodCombinations = periods * (periods + 1) / 2;
 
-        cumProbability = new double[purposes][periodCombinations]; // by purpose, alternative: cumulative probability distribution
-        outboundPeriod = new int[purposes][periodCombinations]; // by purpose, alternative: outbound period
-        returnPeriod = new int[purposes][periodCombinations]; // by purpose, alternative: return period
+        cumProbability = new double[purposes][periodCombinations]; // by
+                                                                   // purpose,
+                                                                   // alternative:
+                                                                   // cumulative
+                                                                   // probability
+                                                                   // distribution
+        outboundPeriod = new int[purposes][periodCombinations]; // by purpose,
+                                                                // alternative:
+                                                                // outbound
+                                                                // period
+        returnPeriod = new int[purposes][periodCombinations]; // by purpose,
+                                                              // alternative:
+                                                              // return period
 
         // fill up arrays
         int rowCount = probabilityTable.getRowCount();

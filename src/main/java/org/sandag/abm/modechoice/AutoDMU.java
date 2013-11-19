@@ -63,7 +63,8 @@ public class AutoDMU
     /**
      * Log the DMU values.
      * 
-     * @param localLogger The logger to use.
+     * @param localLogger
+     *            The logger to use.
      */
     public void logValues(Logger localLogger)
     {
@@ -71,7 +72,8 @@ public class AutoDMU
         localLogger.info("");
         localLogger.info("Auto DMU Values:");
         localLogger.info("");
-        localLogger.info(String.format("Average TAZ Parking cost at destination:     %9f", avgHourlyParkingCostAtDestTaz));
+        localLogger.info(String.format("Average TAZ Parking cost at destination:     %9f",
+                avgHourlyParkingCostAtDestTaz));
         localLogger.info(String.format("Production/Origin Terminal Time: %9.4f", pTazTerminalTime));
         localLogger.info(String.format("Attraction/Destin Terminal Time: %9.4f", aTazTerminalTime));
 

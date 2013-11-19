@@ -10,15 +10,14 @@ import java.util.ResourceBundle;
 import org.sandag.abm.application.SandagAppendMcLogsumDMU;
 import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.CtrampApplication;
-import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.datafile.TableDataSet;
-import com.pb.common.util.ResourceUtil;
 import com.pb.common.newmodel.ChoiceModelApplication;
+import com.pb.common.util.ResourceUtil;
 
 public final class SubtourTodEstimationMcLogsumsAppender
         extends McLogsumsAppender

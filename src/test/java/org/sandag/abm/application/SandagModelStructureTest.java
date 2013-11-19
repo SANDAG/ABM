@@ -1,6 +1,7 @@
 package org.sandag.abm.application;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 
 public class SandagModelStructureTest
@@ -12,7 +13,7 @@ public class SandagModelStructureTest
         assertTrue(SandagModelStructure.getTripModeIsPay(2));
         assertTrue(SandagModelStructure.getTripModeIsPay(5));
         assertTrue(SandagModelStructure.getTripModeIsPay(8));
-        
+
         assertFalse(SandagModelStructure.getTripModeIsPay(1));
     }
 

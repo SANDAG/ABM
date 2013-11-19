@@ -1,14 +1,6 @@
 package org.sandag.abm.accessibilities;
 
-import com.pb.common.util.Tracer;
-import com.pb.common.datafile.TableDataSet;
-import org.sandag.abm.ctramp.McLogsumsCalculator;
-import org.sandag.abm.ctramp.Util;
-import com.pb.common.newmodel.UtilityExpressionCalculator;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -17,8 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
 import org.apache.log4j.Logger;
+import org.sandag.abm.ctramp.McLogsumsCalculator;
+import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TransitWalkAccessUEC;
+import com.pb.common.datafile.TableDataSet;
+import com.pb.common.newmodel.UtilityExpressionCalculator;
+import com.pb.common.util.Tracer;
 
 public class DcUtilitiesTaskJppf
         implements Callable<List<Object>>
@@ -275,9 +272,9 @@ public class DcUtilitiesTaskJppf
             luUtilityList = new ArrayList<float[]>();
 
             accumulatedLandUseLogsums = new float[BuildAccessibilities.NUM_AVG_METHODS][BuildAccessibilities.NUM_PERIODS][BuildAccessibilities.NUM_SUFFICIENCY_SEGMENTS][BuildAccessibilities.MAX_LUZ + 1][BuildAccessibilities.MAX_LUZ + 1];
-            ;
+            
             accumulatedLandUseLogsumsCount = new int[BuildAccessibilities.MAX_LUZ + 1][BuildAccessibilities.MAX_LUZ + 1];
-            ;
+            
 
         }
 

@@ -2,7 +2,6 @@ package org.sandag.abm.crossborder;
 
 import java.io.Serializable;
 import org.apache.log4j.Logger;
-import org.sandag.abm.ctramp.ModelStructure;
 
 public class CrossBorderStop
         implements Serializable

@@ -9,7 +9,7 @@ About:
  	impmhdt_MD.mtx (Length (Skim), *STM_MD (Skim),  mhdt – ITOLL2_MD)
 
 Inputs:
-	1) luzToTazSeries12.xls  (Luz to TAZ reference)  
+	1) luzToTazSeries13.xls  (Luz to TAZ reference)  
 	2) ExternalZones.xls     (Luz internal to external reference) 
  	3) impdat_AM.mtx 
  	4) impdat_MD.mtx 
@@ -31,11 +31,11 @@ Macro "Create LUZ Skims"
 
   // Input Files
   ext_luz_excel  = inputDir+"\\ExternalZones.xls"
-  luz_taz_excel   = inputDir+"\\luzToTazSeries12.xls" 
+  luz_taz_excel   = inputDir+"\\luzToTazSeries13.xls" 
   
   // Temp files
   ext_luz_file  = outputDir+"\\ExternalZones.bin"
-  luz_taz_file  = outputDir+"\\luzToTazSeries12.bin" 
+  luz_taz_file  = outputDir+"\\luzToTazSeries13.bin" 
   tempfile      = outputDir+"\\temp_luz.bin"
   luzskims_bin  = outputDir+"\\temp_luz_export.bin" 
     
@@ -244,7 +244,7 @@ Macro "Create LUZ Skims"
     end   
   
   // Delete temp luz files
-  delFiles = {"temp_luz.bin","temp_luz.BX","temp_luz.DCB","luzToTazSeries12.bin","luzToTazSeries12.DCB",
+  delFiles = {"temp_luz.bin","temp_luz.BX","temp_luz.DCB","luzToTazSeries13.bin","luzToTazSeries13.DCB",
   	         "ExternalZones.bin","ExternalZones.DCB","temp_luz_export.bin","temp_luz_export.DCB"}
   for d =1 to delFiles.length do
   	 info = GetFileInfo(outputDir+"\\"+delFiles[d])

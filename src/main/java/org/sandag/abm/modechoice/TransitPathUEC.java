@@ -1,25 +1,26 @@
 /*
- * Copyright 2005 PB Consult Inc. Licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License. You
- * may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software distributed
- * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
- * CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
+ * Copyright 2005 PB Consult Inc. Licensed under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  */
 package org.sandag.abm.modechoice;
 
-import com.pb.common.calculator.IndexValues;
-import com.pb.common.calculator.VariableTable;
-import com.pb.common.newmodel.UtilityExpressionCalculator;
-import com.pb.common.util.Tracer;
-import org.apache.log4j.Logger;
-import org.sandag.abm.ctramp.Util;
-import org.sandag.abm.modechoice.Modes.TransitMode;
 import java.io.File;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
+import org.apache.log4j.Logger;
+import org.sandag.abm.ctramp.Util;
+import org.sandag.abm.modechoice.Modes.TransitMode;
+import com.pb.common.calculator.IndexValues;
+import com.pb.common.calculator.VariableTable;
+import com.pb.common.newmodel.UtilityExpressionCalculator;
+import com.pb.common.util.Tracer;
 
 /**
  * TransitPathUEC is a class that ...
@@ -34,7 +35,7 @@ public class TransitPathUEC
         implements Serializable
 {
 
-    protected transient Logger     logger = Logger.getLogger(TransitPathUEC.class);
+    protected transient Logger  logger = Logger.getLogger(TransitPathUEC.class);
 
     double[]                    bestUtilities;
     int[]                       bestPTap;
@@ -57,7 +58,8 @@ public class TransitPathUEC
     /**
      * Constructor.
      * 
-     * @param rb ResourceBundle for the UEC.
+     * @param rb
+     *            ResourceBundle for the UEC.
      */
     public TransitPathUEC(HashMap<String, String> rbMap)
     {
@@ -87,11 +89,16 @@ public class TransitPathUEC
     /**
      * Create the UEC for the main transit portion of the utility.
      * 
-     * @param uecSpreadsheet The .xls workbook with the model specification.
-     * @param modelSheet The sheet with model specifications.
-     * @param dataSheet The sheet with the data specifications.
-     * @param rb A resource bundle with the path to the skims "skims.path"
-     * @param dmu The DMU class for this UEC.
+     * @param uecSpreadsheet
+     *            The .xls workbook with the model specification.
+     * @param modelSheet
+     *            The sheet with model specifications.
+     * @param dataSheet
+     *            The sheet with the data specifications.
+     * @param rb
+     *            A resource bundle with the path to the skims "skims.path"
+     * @param dmu
+     *            The DMU class for this UEC.
      */
     public void createUEC(File uecSpreadsheet, int modelSheet, int dataSheet,
             HashMap<String, String> rbMap, VariableTable dmu)
@@ -100,14 +107,16 @@ public class TransitPathUEC
     }
 
     /**
-     * Clears the arrays.
-     * This method gets called for two different purposes.  One is to compare alternatives based on utilities and the other
-     * based on exponentiated utilities.  For this reason, the bestUtilities will be initialized by the
-     * value passed in as an argument set by the calling method.
+     * Clears the arrays. This method gets called for two different purposes.
+     * One is to compare alternatives based on utilities and the other based on
+     * exponentiated utilities. For this reason, the bestUtilities will be
+     * initialized by the value passed in as an argument set by the calling
+     * method.
      * 
-     * @param initialization value
+     * @param initialization
+     *            value
      */
-    public void clearArrays( double initialValue )
+    public void clearArrays(double initialValue)
     {
         Arrays.fill(bestUtilities, initialValue);
         Arrays.fill(bestPTap, 0);
@@ -128,7 +137,8 @@ public class TransitPathUEC
     /**
      * Set the UEC file for this UEC.
      * 
-     * @param UECFile The UEC file for this UEC.
+     * @param UECFile
+     *            The UEC file for this UEC.
      */
     public void setUECFile(File UECFile)
     {
@@ -136,14 +146,17 @@ public class TransitPathUEC
     }
 
     /**
-     * Compare the paths calculated for this TAP-pair to the paths for previously-
-     * calculated TAP-pairs for each ride mode. If the current path is the best path,
-     * for that ride mode, set the bestUtilities[], bestPTap[] and bestATap[] for
-     * that ride mode.
+     * Compare the paths calculated for this TAP-pair to the paths for
+     * previously- calculated TAP-pairs for each ride mode. If the current path
+     * is the best path, for that ride mode, set the bestUtilities[], bestPTap[]
+     * and bestATap[] for that ride mode.
      * 
-     * @param calculatedUtilities An array of utilities by ride mode.
-     * @param pTap The origin TAP for this set of utilities.
-     * @param aTap The destination TAP for this set of utilities.
+     * @param calculatedUtilities
+     *            An array of utilities by ride mode.
+     * @param pTap
+     *            The origin TAP for this set of utilities.
+     * @param aTap
+     *            The destination TAP for this set of utilities.
      */
     public boolean comparePaths(double[] calculatedUtilities, int pTap, int aTap, boolean trace)
     {
@@ -177,14 +190,19 @@ public class TransitPathUEC
     }
 
     /**
-     * Create a UEC object and DMU object for the auto-access portion of utility (for
-     * drive-access modes).
+     * Create a UEC object and DMU object for the auto-access portion of utility
+     * (for drive-access modes).
      * 
-     * @param uecSpreadsheet The .xls workbook with the model specification.
-     * @param modelSheet The sheet with model specifications.
-     * @param dataSheet The sheet with the data specifications.
-     * @param rb A resource bundle with the path to the skims "skims.path"
-     * @param dmu The DMU class for this UEC.
+     * @param uecSpreadsheet
+     *            The .xls workbook with the model specification.
+     * @param modelSheet
+     *            The sheet with model specifications.
+     * @param dataSheet
+     *            The sheet with the data specifications.
+     * @param rb
+     *            A resource bundle with the path to the skims "skims.path"
+     * @param dmu
+     *            The DMU class for this UEC.
      */
     public void createDriveAccessUEC(File uecSpreadsheet, int modelSheet, int dataSheet,
             HashMap<String, String> rbMap, VariableTable dmu)
@@ -195,12 +213,17 @@ public class TransitPathUEC
     }
 
     /**
-     * Calculate the auto-access portion of the utility (for drive-access modes).
+     * Calculate the auto-access portion of the utility (for drive-access
+     * modes).
      * 
-     * @param tdzManager TDZ data manager
-     * @param itdz The origin TDZ.
-     * @param pos The position of the TAP for this origin TDZ.
-     * @param accessMode The access mode (PARK_N_RIDE or KISS_N_RIDE).
+     * @param tdzManager
+     *            TDZ data manager
+     * @param itdz
+     *            The origin TDZ.
+     * @param pos
+     *            The position of the TAP for this origin TDZ.
+     * @param accessMode
+     *            The access mode (PARK_N_RIDE or KISS_N_RIDE).
      * 
      * @return The auto-access utility.
      */
@@ -220,7 +243,8 @@ public class TransitPathUEC
     /**
      * Log the best utilities so far to the logger.
      * 
-     * @param localLogger The logger to use for output.
+     * @param localLogger
+     *            The logger to use for output.
      */
     public void logBestUtilities(Logger localLogger)
     {
@@ -285,10 +309,11 @@ public class TransitPathUEC
     }
 
     /**
-     * Get the best ptap and atap in an array. Only to be called after comparePaths()
-     * has been called.
+     * Get the best ptap and atap in an array. Only to be called after
+     * comparePaths() has been called.
      * 
-     * @param transitMode Mode to look up.
+     * @param transitMode
+     *            Mode to look up.
      * @return element 0 = best ptap, element 1 = best atap
      */
     public int[] getBestTaps(Modes.TransitMode transitMode)

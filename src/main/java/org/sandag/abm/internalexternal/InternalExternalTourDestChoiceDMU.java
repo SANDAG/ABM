@@ -3,12 +3,8 @@ package org.sandag.abm.internalexternal;
 import java.io.Serializable;
 import java.util.HashMap;
 import org.apache.log4j.Logger;
-import org.sandag.abm.ctramp.McLogsumsCalculator;
-import org.sandag.abm.ctramp.TourModeChoiceDMU;
-import org.sandag.abm.ctramp.ModelStructure;
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
-import com.pb.common.datafile.TableDataSet;
 
 public class InternalExternalTourDestChoiceDMU
         implements Serializable, VariableTable
@@ -80,8 +76,9 @@ public class InternalExternalTourDestChoiceDMU
          * 
          * case 0: returnValue = getTimeOutbound(); break;
          * 
-         * default: logger.error("method number = " + variableIndex + " not found"); throw new RuntimeException("method number = " + variableIndex +
-         * " not found");
+         * default: logger.error("method number = " + variableIndex +
+         * " not found"); throw new RuntimeException("method number = " +
+         * variableIndex + " not found");
          * 
          * }
          */

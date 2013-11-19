@@ -9,9 +9,10 @@ import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 
 /**
- * This class is the stop purpose choice model for cross border tours. It is currently based on a static probability distribution stored in an input
- * file, and indexed into by purpose, tour leg direction (inbound or outbound), the stop number, and whether there is just one or multiple stops on
- * the tour leg.
+ * This class is the stop purpose choice model for cross border tours. It is
+ * currently based on a static probability distribution stored in an input file,
+ * and indexed into by purpose, tour leg direction (inbound or outbound), the
+ * stop number, and whether there is just one or multiple stops on the tour leg.
  * 
  * @author Freedman
  * 
@@ -20,12 +21,39 @@ public class CrossBorderStopPurposeModel
 {
     private transient Logger  logger = Logger.getLogger("crossBorderModel");
 
-    private double[][]        cumProbability;                               // by alternative, stop purpose: cumulative probability distribution
+    private double[][]        cumProbability;                               // by
+                                                                             // alternative,
+                                                                             // stop
+                                                                             // purpose:
+                                                                             // cumulative
+                                                                             // probability
+                                                                             // distribution
     CrossBorderModelStructure modelStructure;
 
-    HashMap<Integer, Integer> arrayElementMap;                              // Hashmap used to get the element number of the cumProbability array
-                                                                             // based on the
-                                                                             // tour purpose, tour leg direction, stop number, and stop complexity.
+    HashMap<Integer, Integer> arrayElementMap;                              // Hashmap
+                                                                             // used
+                                                                             // to
+                                                                             // get
+                                                                             // the
+                                                                             // element
+                                                                             // number
+                                                                             // of
+                                                                             // the
+                                                                             // cumProbability
+                                                                             // array
+                                                                             // based
+                                                                             // on
+                                                                             // the
+                                                                             // tour
+                                                                             // purpose,
+                                                                             // tour
+                                                                             // leg
+                                                                             // direction,
+                                                                             // stop
+                                                                             // number,
+                                                                             // and
+                                                                             // stop
+                                                                             // complexity.
 
     /**
      * Constructor.
@@ -69,7 +97,8 @@ public class CrossBorderStopPurposeModel
 
         logger.info("Begin calculating stop purpose probability distribution");
 
-        // take a pass through the data and see how many alternatives there are for each purpose
+        // take a pass through the data and see how many alternatives there are
+        // for each purpose
         int rowCount = probabilityTable.getRowCount();
         int purposes = modelStructure.NUMBER_CROSSBORDER_PURPOSES; // start at 0
 

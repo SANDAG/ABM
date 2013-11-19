@@ -1,7 +1,6 @@
 package org.sandag.abm.application;
 
 import java.util.HashMap;
-import org.sandag.abm.ctramp.TourModeChoiceDMU;
 import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.TripModeChoiceDMU;
 import com.pb.common.calculator.IndexValues;
@@ -10,8 +9,6 @@ public class SandagTripModeChoiceDMU
         extends TripModeChoiceDMU
 {
 
-    
-    
     public SandagTripModeChoiceDMU(ModelStructure modelStructure)
     {
         super(modelStructure);
@@ -21,10 +18,14 @@ public class SandagTripModeChoiceDMU
     /**
      * Set this index values for this tour mode choice DMU object.
      * 
-     * @param hhIndex is the DMU household index
-     * @param zoneIndex is the DMU zone index
-     * @param origIndex is the DMU origin index
-     * @param destIndex is the DMU destination index
+     * @param hhIndex
+     *            is the DMU household index
+     * @param zoneIndex
+     *            is the DMU zone index
+     * @param origIndex
+     *            is the DMU origin index
+     * @param destIndex
+     *            is the DMU destination index
      */
     public void setDmuIndexValues(int hhIndex, int zoneIndex, int origIndex, int destIndex,
             boolean debug)
@@ -49,7 +50,6 @@ public class SandagTripModeChoiceDMU
         return dmuIndex;
     }
 
-
     public void setTransitSkim(int accEgr, int lbPrem, int skimIndex, double value)
     {
         transitSkim[accEgr][lbPrem][skimIndex] = value;
@@ -60,10 +60,6 @@ public class SandagTripModeChoiceDMU
         return transitSkim[accEgr][lbPrem][skimIndex];
     }
 
-
-
-    
-    
     public int getEscortTour()
     {
         return escortTour;
@@ -128,58 +124,57 @@ public class SandagTripModeChoiceDMU
     {
         return outboundStops;
     }
-    
+
     public int getInboundStops()
     {
         return inboundStops;
     }
-    
+
     public int getTourModeIsDA()
     {
         return tourModeIsDA;
     }
-    
+
     public int getTourModeIsS2()
     {
         return tourModeIsS2;
     }
-    
+
     public int getTourModeIsS3()
     {
         return tourModeIsS3;
     }
-    
+
     public int getTourModeIsWalk()
     {
         return tourModeIsWalk;
     }
-    
+
     public int getTourModeIsBike()
     {
         return tourModeIsBike;
     }
-    
+
     public int getTourModeIsWTran()
     {
         return tourModeIsWTran;
     }
-    
+
     public int getTourModeIsPnr()
     {
         return tourModeIsPnr;
     }
-    
+
     public int getTourModeIsKnr()
     {
         return tourModeIsKnr;
     }
-    
+
     public int getTourModeIsSchBus()
     {
         return tourModeIsSchBus;
     }
-    
-    
+
     private void setupMethodIndexMap()
     {
         methodIndexMap = new HashMap<String, Integer>();
@@ -484,10 +479,10 @@ public class SandagTripModeChoiceDMU
                 break;
             case 46:
                 returnValue = getFreeOnsite();
-                break;                
+                break;
             case 47:
                 returnValue = getPersonType();
-                break;                
+                break;
             case 90:
                 returnValue = getNmWalkTime();
                 break;
@@ -495,489 +490,379 @@ public class SandagTripModeChoiceDMU
                 returnValue = getNmBikeTime();
                 break;
             case 100:
-                returnValue = getTransitSkim( WTW, LB, LB_IVT );
+                returnValue = getTransitSkim(WTW, LB, LB_IVT);
                 break;
             case 101:
-                returnValue = getTransitSkim( WTW, LB, FWAIT );
+                returnValue = getTransitSkim(WTW, LB, FWAIT);
                 break;
             case 102:
-                returnValue = getTransitSkim( WTW, LB, XWAIT );
+                returnValue = getTransitSkim(WTW, LB, XWAIT);
                 break;
             case 103:
-                returnValue = getTransitSkim( WTW, LB, ACC );
+                returnValue = getTransitSkim(WTW, LB, ACC);
                 break;
             case 104:
-                returnValue = getTransitSkim( WTW, LB, EGR );
+                returnValue = getTransitSkim(WTW, LB, EGR);
                 break;
             case 105:
-                returnValue = getTransitSkim( WTW, LB, AUX );
+                returnValue = getTransitSkim(WTW, LB, AUX);
                 break;
             case 106:
-                returnValue = getTransitSkim( WTW, LB, FARE );
+                returnValue = getTransitSkim(WTW, LB, FARE);
                 break;
             case 107:
-                returnValue = getTransitSkim( WTW, LB, XFERS );
+                returnValue = getTransitSkim(WTW, LB, XFERS);
                 break;
             case 108:
-                returnValue = getTransitSkim( WTW, EB, LB_IVT );
+                returnValue = getTransitSkim(WTW, EB, LB_IVT);
                 break;
             case 109:
-                returnValue = getTransitSkim( WTW, EB, EB_IVT );
+                returnValue = getTransitSkim(WTW, EB, EB_IVT);
                 break;
             case 110:
-                returnValue = getTransitSkim( WTW, EB, FWAIT );
+                returnValue = getTransitSkim(WTW, EB, FWAIT);
                 break;
             case 111:
-                returnValue = getTransitSkim( WTW, EB, XWAIT );
+                returnValue = getTransitSkim(WTW, EB, XWAIT);
                 break;
             case 112:
-                returnValue = getTransitSkim( WTW, EB, ACC );
+                returnValue = getTransitSkim(WTW, EB, ACC);
                 break;
             case 113:
-                returnValue = getTransitSkim( WTW, EB, EGR );
+                returnValue = getTransitSkim(WTW, EB, EGR);
                 break;
             case 114:
-                returnValue = getTransitSkim( WTW, EB, AUX );
+                returnValue = getTransitSkim(WTW, EB, AUX);
                 break;
             case 115:
-                returnValue = getTransitSkim( WTW, EB, FARE );
+                returnValue = getTransitSkim(WTW, EB, FARE);
                 break;
             case 116:
-                returnValue = getTransitSkim( WTW, EB, XFERS );
+                returnValue = getTransitSkim(WTW, EB, XFERS);
                 break;
             case 117:
-                returnValue = getTransitSkim( WTW, BRT, LB_IVT );
+                returnValue = getTransitSkim(WTW, BRT, LB_IVT);
                 break;
             case 118:
-                returnValue = getTransitSkim( WTW, BRT, EB_IVT );
+                returnValue = getTransitSkim(WTW, BRT, EB_IVT);
                 break;
             case 119:
-                returnValue = getTransitSkim( WTW, BRT, BRT_IVT );
+                returnValue = getTransitSkim(WTW, BRT, BRT_IVT);
                 break;
             case 120:
-                returnValue = getTransitSkim( WTW, BRT, FWAIT );
+                returnValue = getTransitSkim(WTW, BRT, FWAIT);
                 break;
             case 121:
-                returnValue = getTransitSkim( WTW, BRT, XWAIT );
+                returnValue = getTransitSkim(WTW, BRT, XWAIT);
                 break;
             case 122:
-                returnValue = getTransitSkim( WTW, BRT, ACC );
+                returnValue = getTransitSkim(WTW, BRT, ACC);
                 break;
             case 123:
-                returnValue = getTransitSkim( WTW, BRT, EGR );
+                returnValue = getTransitSkim(WTW, BRT, EGR);
                 break;
             case 124:
-                returnValue = getTransitSkim( WTW, BRT, AUX );
+                returnValue = getTransitSkim(WTW, BRT, AUX);
                 break;
             case 125:
-                returnValue = getTransitSkim( WTW, BRT, FARE );
+                returnValue = getTransitSkim(WTW, BRT, FARE);
                 break;
             case 126:
-                returnValue = getTransitSkim( WTW, BRT, XFERS );
+                returnValue = getTransitSkim(WTW, BRT, XFERS);
                 break;
             case 127:
-                returnValue = getTransitSkim( WTW, LR, LB_IVT );
+                returnValue = getTransitSkim(WTW, LR, LB_IVT);
                 break;
             case 128:
-                returnValue = getTransitSkim( WTW, LR, EB_IVT );
+                returnValue = getTransitSkim(WTW, LR, EB_IVT);
                 break;
             case 129:
-                returnValue = getTransitSkim( WTW, LR, BRT_IVT );
+                returnValue = getTransitSkim(WTW, LR, BRT_IVT);
                 break;
             case 130:
-                returnValue = getTransitSkim( WTW, LR, LR_IVT );
+                returnValue = getTransitSkim(WTW, LR, LR_IVT);
                 break;
             case 131:
-                returnValue = getTransitSkim( WTW, LR, FWAIT );
+                returnValue = getTransitSkim(WTW, LR, FWAIT);
                 break;
             case 132:
-                returnValue = getTransitSkim( WTW, LR, XWAIT );
+                returnValue = getTransitSkim(WTW, LR, XWAIT);
                 break;
             case 133:
-                returnValue = getTransitSkim( WTW, LR, ACC );
+                returnValue = getTransitSkim(WTW, LR, ACC);
                 break;
             case 134:
-                returnValue = getTransitSkim( WTW, LR, EGR );
+                returnValue = getTransitSkim(WTW, LR, EGR);
                 break;
             case 135:
-                returnValue = getTransitSkim( WTW, LR, AUX );
+                returnValue = getTransitSkim(WTW, LR, AUX);
                 break;
             case 136:
-                returnValue = getTransitSkim( WTW, LR, FARE );
+                returnValue = getTransitSkim(WTW, LR, FARE);
                 break;
             case 137:
-                returnValue = getTransitSkim( WTW, LR, XFERS );
+                returnValue = getTransitSkim(WTW, LR, XFERS);
                 break;
             case 138:
-                returnValue = getTransitSkim( WTW, CR, LB_IVT );
+                returnValue = getTransitSkim(WTW, CR, LB_IVT);
                 break;
             case 139:
-                returnValue = getTransitSkim( WTW, CR, EB_IVT );
+                returnValue = getTransitSkim(WTW, CR, EB_IVT);
                 break;
             case 140:
-                returnValue = getTransitSkim( WTW, CR, BRT_IVT );
+                returnValue = getTransitSkim(WTW, CR, BRT_IVT);
                 break;
             case 141:
-                returnValue = getTransitSkim( WTW, CR, LR_IVT );
+                returnValue = getTransitSkim(WTW, CR, LR_IVT);
                 break;
             case 142:
-                returnValue = getTransitSkim( WTW, CR, CR_IVT );
+                returnValue = getTransitSkim(WTW, CR, CR_IVT);
                 break;
             case 143:
-                returnValue = getTransitSkim( WTW, CR, FWAIT );
+                returnValue = getTransitSkim(WTW, CR, FWAIT);
                 break;
             case 144:
-                returnValue = getTransitSkim( WTW, CR, XWAIT );
+                returnValue = getTransitSkim(WTW, CR, XWAIT);
                 break;
             case 145:
-                returnValue = getTransitSkim( WTW, CR, ACC );
+                returnValue = getTransitSkim(WTW, CR, ACC);
                 break;
             case 146:
-                returnValue = getTransitSkim( WTW, CR, EGR );
+                returnValue = getTransitSkim(WTW, CR, EGR);
                 break;
             case 147:
-                returnValue = getTransitSkim( WTW, CR, AUX );
+                returnValue = getTransitSkim(WTW, CR, AUX);
                 break;
             case 148:
-                returnValue = getTransitSkim( WTW, CR, FARE );
+                returnValue = getTransitSkim(WTW, CR, FARE);
                 break;
             case 149:
-                returnValue = getTransitSkim( WTW, CR, XFERS );
+                returnValue = getTransitSkim(WTW, CR, XFERS);
                 break;
             case 150:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, LB, LB_IVT );
-                else
-                    returnValue = getTransitSkim( WTD, LB, LB_IVT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, LB, LB_IVT);
+                else returnValue = getTransitSkim(WTD, LB, LB_IVT);
                 break;
             case 151:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, LB, FWAIT );
-                else
-                    returnValue = getTransitSkim( WTD, LB, FWAIT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, LB, FWAIT);
+                else returnValue = getTransitSkim(WTD, LB, FWAIT);
                 break;
             case 152:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, LB, XWAIT );
-                else
-                    returnValue = getTransitSkim( WTD, LB, XWAIT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, LB, XWAIT);
+                else returnValue = getTransitSkim(WTD, LB, XWAIT);
                 break;
             case 153:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = 0;
-                else
-                    returnValue = getTransitSkim( WTD, LB, ACC );
+                if (outboundHalfTourDirection == 1) returnValue = 0;
+                else returnValue = getTransitSkim(WTD, LB, ACC);
                 break;
             case 154:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, LB, EGR );
-                else
-                    returnValue = 0;
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, LB, EGR);
+                else returnValue = 0;
                 break;
             case 155:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, LB, ACC );
-                else
-                    returnValue = getTransitSkim( WTD, LB, EGR );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, LB, ACC);
+                else returnValue = getTransitSkim(WTD, LB, EGR);
                 break;
             case 156:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, LB, AUX );
-                else
-                    returnValue = getTransitSkim( WTD, LB, AUX );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, LB, AUX);
+                else returnValue = getTransitSkim(WTD, LB, AUX);
                 break;
             case 157:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, LB, FARE );
-                else
-                    returnValue = getTransitSkim( WTD, LB, FARE );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, LB, FARE);
+                else returnValue = getTransitSkim(WTD, LB, FARE);
                 break;
             case 158:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, LB, XFERS );
-                else
-                    returnValue = getTransitSkim( WTD, LB, XFERS );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, LB, XFERS);
+                else returnValue = getTransitSkim(WTD, LB, XFERS);
                 break;
             case 159:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, EB, LB_IVT );
-                else
-                    returnValue = getTransitSkim( WTD, EB, LB_IVT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, EB, LB_IVT);
+                else returnValue = getTransitSkim(WTD, EB, LB_IVT);
                 break;
             case 160:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, EB, EB_IVT );
-                else
-                    returnValue = getTransitSkim( WTD, EB, EB_IVT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, EB, EB_IVT);
+                else returnValue = getTransitSkim(WTD, EB, EB_IVT);
                 break;
             case 161:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, EB, FWAIT );
-                else
-                    returnValue = getTransitSkim( WTD, EB, FWAIT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, EB, FWAIT);
+                else returnValue = getTransitSkim(WTD, EB, FWAIT);
                 break;
             case 162:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, EB, XWAIT );
-                else
-                    returnValue = getTransitSkim( WTD, EB, XWAIT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, EB, XWAIT);
+                else returnValue = getTransitSkim(WTD, EB, XWAIT);
                 break;
             case 163:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = 0;
-                else
-                    returnValue = getTransitSkim( WTD, EB, ACC );
+                if (outboundHalfTourDirection == 1) returnValue = 0;
+                else returnValue = getTransitSkim(WTD, EB, ACC);
                 break;
             case 164:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, EB, EGR );
-                else
-                    returnValue = 0;
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, EB, EGR);
+                else returnValue = 0;
                 break;
             case 165:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, EB, ACC );
-                else
-                    returnValue = getTransitSkim( WTD, EB, EGR );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, EB, ACC);
+                else returnValue = getTransitSkim(WTD, EB, EGR);
                 break;
             case 166:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, EB, AUX );
-                else
-                    returnValue = getTransitSkim( WTD, EB, AUX );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, EB, AUX);
+                else returnValue = getTransitSkim(WTD, EB, AUX);
                 break;
             case 167:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, EB, FARE );
-                else
-                    returnValue = getTransitSkim( WTD, EB, FARE );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, EB, FARE);
+                else returnValue = getTransitSkim(WTD, EB, FARE);
                 break;
             case 168:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, EB, XFERS );
-                else
-                    returnValue = getTransitSkim( WTD, EB, XFERS );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, EB, XFERS);
+                else returnValue = getTransitSkim(WTD, EB, XFERS);
                 break;
             case 169:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, BRT, LB_IVT );
-                else
-                    returnValue = getTransitSkim( WTD, BRT, LB_IVT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, BRT, LB_IVT);
+                else returnValue = getTransitSkim(WTD, BRT, LB_IVT);
                 break;
             case 170:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, BRT, EB_IVT );
-                else
-                    returnValue = getTransitSkim( WTD, BRT, EB_IVT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, BRT, EB_IVT);
+                else returnValue = getTransitSkim(WTD, BRT, EB_IVT);
                 break;
             case 171:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, BRT, BRT_IVT );
-                else
-                    returnValue = getTransitSkim( WTD, BRT, BRT_IVT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, BRT, BRT_IVT);
+                else returnValue = getTransitSkim(WTD, BRT, BRT_IVT);
                 break;
             case 172:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, BRT, FWAIT );
-                else
-                    returnValue = getTransitSkim( WTD, BRT, FWAIT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, BRT, FWAIT);
+                else returnValue = getTransitSkim(WTD, BRT, FWAIT);
                 break;
             case 173:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, BRT, XWAIT );
-                else
-                    returnValue = getTransitSkim( WTD, BRT, XWAIT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, BRT, XWAIT);
+                else returnValue = getTransitSkim(WTD, BRT, XWAIT);
                 break;
             case 174:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = 0;
-                else
-                    returnValue = getTransitSkim( WTD, BRT, ACC );
+                if (outboundHalfTourDirection == 1) returnValue = 0;
+                else returnValue = getTransitSkim(WTD, BRT, ACC);
                 break;
             case 175:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, BRT, EGR );
-                else
-                    returnValue = 0;
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, BRT, EGR);
+                else returnValue = 0;
                 break;
             case 176:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, BRT, ACC );
-                else
-                    returnValue = getTransitSkim( WTD, BRT, EGR );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, BRT, ACC);
+                else returnValue = getTransitSkim(WTD, BRT, EGR);
                 break;
             case 177:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, BRT, AUX );
-                else
-                    returnValue = getTransitSkim( WTD, BRT, AUX );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, BRT, AUX);
+                else returnValue = getTransitSkim(WTD, BRT, AUX);
                 break;
             case 178:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, BRT, FARE );
-                else
-                    returnValue = getTransitSkim( WTD, BRT, FARE );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, BRT, FARE);
+                else returnValue = getTransitSkim(WTD, BRT, FARE);
                 break;
             case 179:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, BRT, XFERS );
-                else
-                    returnValue = getTransitSkim( WTD, BRT, XFERS );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, BRT, XFERS);
+                else returnValue = getTransitSkim(WTD, BRT, XFERS);
                 break;
             case 180:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, LR, LB_IVT );
-                else
-                    returnValue = getTransitSkim( WTD, LR, LB_IVT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, LR, LB_IVT);
+                else returnValue = getTransitSkim(WTD, LR, LB_IVT);
                 break;
             case 181:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, LR, EB_IVT );
-                else
-                    returnValue = getTransitSkim( WTD, LR, EB_IVT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, LR, EB_IVT);
+                else returnValue = getTransitSkim(WTD, LR, EB_IVT);
                 break;
             case 182:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, LR, BRT_IVT );
-                else
-                    returnValue = getTransitSkim( WTD, LR, BRT_IVT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, LR, BRT_IVT);
+                else returnValue = getTransitSkim(WTD, LR, BRT_IVT);
                 break;
             case 183:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, LR, LR_IVT );
-                else
-                    returnValue = getTransitSkim( WTD, LR, LR_IVT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, LR, LR_IVT);
+                else returnValue = getTransitSkim(WTD, LR, LR_IVT);
                 break;
             case 184:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, LR, FWAIT );
-                else
-                    returnValue = getTransitSkim( WTD, LR, FWAIT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, LR, FWAIT);
+                else returnValue = getTransitSkim(WTD, LR, FWAIT);
                 break;
             case 185:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, LR, XWAIT );
-                else
-                    returnValue = getTransitSkim( WTD, LR, XWAIT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, LR, XWAIT);
+                else returnValue = getTransitSkim(WTD, LR, XWAIT);
                 break;
             case 186:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = 0;
-                else
-                    returnValue = getTransitSkim( WTD, LR, ACC );
+                if (outboundHalfTourDirection == 1) returnValue = 0;
+                else returnValue = getTransitSkim(WTD, LR, ACC);
                 break;
             case 187:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, LR, EGR );
-                else
-                    returnValue = 0;
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, LR, EGR);
+                else returnValue = 0;
                 break;
             case 188:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, LR, ACC );
-                else
-                    returnValue = getTransitSkim( WTD, LR, EGR );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, LR, ACC);
+                else returnValue = getTransitSkim(WTD, LR, EGR);
                 break;
             case 189:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, LR, AUX );
-                else
-                    returnValue = getTransitSkim( WTD, LR, AUX );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, LR, AUX);
+                else returnValue = getTransitSkim(WTD, LR, AUX);
                 break;
             case 190:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, LR, FARE );
-                else
-                    returnValue = getTransitSkim( WTD, LR, FARE );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, LR, FARE);
+                else returnValue = getTransitSkim(WTD, LR, FARE);
                 break;
             case 191:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, LR, XFERS );
-                else
-                    returnValue = getTransitSkim( WTD, LR, XFERS );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, LR, XFERS);
+                else returnValue = getTransitSkim(WTD, LR, XFERS);
                 break;
             case 192:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, CR, LB_IVT );
-                else
-                    returnValue = getTransitSkim( WTD, CR, LB_IVT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, CR, LB_IVT);
+                else returnValue = getTransitSkim(WTD, CR, LB_IVT);
                 break;
             case 193:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, CR, EB_IVT );
-                else
-                    returnValue = getTransitSkim( WTD, CR, EB_IVT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, CR, EB_IVT);
+                else returnValue = getTransitSkim(WTD, CR, EB_IVT);
                 break;
             case 194:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, CR, BRT_IVT );
-                else
-                    returnValue = getTransitSkim( WTD, CR, BRT_IVT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, CR, BRT_IVT);
+                else returnValue = getTransitSkim(WTD, CR, BRT_IVT);
                 break;
             case 195:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, CR, LR_IVT );
-                else
-                    returnValue = getTransitSkim( WTD, CR, LR_IVT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, CR, LR_IVT);
+                else returnValue = getTransitSkim(WTD, CR, LR_IVT);
                 break;
             case 196:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, CR, CR_IVT );
-                else
-                    returnValue = getTransitSkim( WTD, CR, CR_IVT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, CR, CR_IVT);
+                else returnValue = getTransitSkim(WTD, CR, CR_IVT);
                 break;
             case 197:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, CR, FWAIT );
-                else
-                    returnValue = getTransitSkim( WTD, CR, FWAIT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, CR, FWAIT);
+                else returnValue = getTransitSkim(WTD, CR, FWAIT);
                 break;
             case 198:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, CR, XWAIT );
-                else
-                    returnValue = getTransitSkim( WTD, CR, XWAIT );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, CR, XWAIT);
+                else returnValue = getTransitSkim(WTD, CR, XWAIT);
                 break;
             case 199:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = 0;
-                else
-                    returnValue = getTransitSkim( WTD, CR, ACC );
+                if (outboundHalfTourDirection == 1) returnValue = 0;
+                else returnValue = getTransitSkim(WTD, CR, ACC);
                 break;
             case 200:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, CR, EGR );
-                else
-                    returnValue = 0;
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, CR, EGR);
+                else returnValue = 0;
                 break;
             case 201:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, CR, ACC );
-                else
-                    returnValue = getTransitSkim( WTD, CR, EGR );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, CR, ACC);
+                else returnValue = getTransitSkim(WTD, CR, EGR);
                 break;
             case 202:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, CR, AUX );
-                else
-                    returnValue = getTransitSkim( WTD, CR, AUX );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, CR, AUX);
+                else returnValue = getTransitSkim(WTD, CR, AUX);
                 break;
             case 203:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, CR, FARE );
-                else
-                    returnValue = getTransitSkim( WTD, CR, FARE );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, CR, FARE);
+                else returnValue = getTransitSkim(WTD, CR, FARE);
                 break;
             case 204:
-                if ( outboundHalfTourDirection == 1 )
-                    returnValue = getTransitSkim( DTW, CR, XFERS );
-                else
-                    returnValue = getTransitSkim( WTD, CR, XFERS );
+                if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, CR, XFERS);
+                else returnValue = getTransitSkim(WTD, CR, XFERS);
                 break;
 
             default:
-                logger.error( "method number = " + variableIndex + " not found" );
-                throw new RuntimeException( "method number = " + variableIndex + " not found" );
+                logger.error("method number = " + variableIndex + " not found");
+                throw new RuntimeException("method number = " + variableIndex + " not found");
 
         }
 

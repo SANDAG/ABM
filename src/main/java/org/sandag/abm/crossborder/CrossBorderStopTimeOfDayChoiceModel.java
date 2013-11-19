@@ -9,7 +9,8 @@ import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 
 /**
- * This class is the TOD choice model for cross border tours. It is currently based on a static probability distribution stored in an input file, and
+ * This class is the TOD choice model for cross border tours. It is currently
+ * based on a static probability distribution stored in an input file, and
  * indexed into by purpose.
  * 
  * @author Freedman
@@ -19,19 +20,67 @@ public class CrossBorderStopTimeOfDayChoiceModel
 {
     private transient Logger          logger = Logger.getLogger("crossBorderModel");
 
-    private double[][]                outboundCumProbability;                       // by alternative: outbound cumulative probability distribution
-    private int[]                     outboundOffsets;                              // by alternative: offsets for outbound stop duration choice
+    private double[][]                outboundCumProbability;                       // by
+                                                                                     // alternative:
+                                                                                     // outbound
+                                                                                     // cumulative
+                                                                                     // probability
+                                                                                     // distribution
+    private int[]                     outboundOffsets;                              // by
+                                                                                     // alternative:
+                                                                                     // offsets
+                                                                                     // for
+                                                                                     // outbound
+                                                                                     // stop
+                                                                                     // duration
+                                                                                     // choice
 
-    private double[][]                inboundCumProbability;                        // by alternative: inbound cumulative probability distribution
-    private int[]                     inboundOffsets;                               // by alternative: offsets for inbound stop duration choice
+    private double[][]                inboundCumProbability;                        // by
+                                                                                     // alternative:
+                                                                                     // inbound
+                                                                                     // cumulative
+                                                                                     // probability
+                                                                                     // distribution
+    private int[]                     inboundOffsets;                               // by
+                                                                                     // alternative:
+                                                                                     // offsets
+                                                                                     // for
+                                                                                     // inbound
+                                                                                     // stop
+                                                                                     // duration
+                                                                                     // choice
     private CrossBorderModelStructure modelStructure;
 
-    private HashMap<Integer, Integer> outboundElementMap;                           // Hashmap used to get the element number of the cumProbability
-                                                                                     // array based on the
+    private HashMap<Integer, Integer> outboundElementMap;                           // Hashmap
+                                                                                     // used
+                                                                                     // to
+                                                                                     // get
+                                                                                     // the
+                                                                                     // element
+                                                                                     // number
+                                                                                     // of
+                                                                                     // the
+                                                                                     // cumProbability
+                                                                                     // array
+                                                                                     // based
+                                                                                     // on
+                                                                                     // the
     // tour duration and stop number.
 
-    private HashMap<Integer, Integer> inboundElementMap;                            // Hashmap used to get the element number of the cumProbability
-                                                                                     // array based on the
+    private HashMap<Integer, Integer> inboundElementMap;                            // Hashmap
+                                                                                     // used
+                                                                                     // to
+                                                                                     // get
+                                                                                     // the
+                                                                                     // element
+                                                                                     // number
+                                                                                     // of
+                                                                                     // the
+                                                                                     // cumProbability
+                                                                                     // array
+                                                                                     // based
+                                                                                     // on
+                                                                                     // the
 
     // tour duration and stop number.
 
@@ -60,8 +109,9 @@ public class CrossBorderStopTimeOfDayChoiceModel
     }
 
     /**
-     * Read the outbound stop duration file and store the cumulative probability distribution as well as the offsets and set the key map to index into
-     * the probability array.
+     * Read the outbound stop duration file and store the cumulative probability
+     * distribution as well as the offsets and set the key map to index into the
+     * probability array.
      * 
      * @param fileName
      */
@@ -117,8 +167,9 @@ public class CrossBorderStopTimeOfDayChoiceModel
     }
 
     /**
-     * Read the inbound stop duration file and store the cumulative probability distribution as well as the offsets and set the key map to index into
-     * the probability array.
+     * Read the inbound stop duration file and store the cumulative probability
+     * distribution as well as the offsets and set the key map to index into the
+     * probability array.
      * 
      * @param fileName
      */
@@ -219,7 +270,8 @@ public class CrossBorderStopTimeOfDayChoiceModel
             double[] cumProb = outboundCumProbability[element];
             double random = tour.getRandom();
 
-            // iterate through the offset distribution, choose an offset, and set in the stop
+            // iterate through the offset distribution, choose an offset, and
+            // set in the stop
             if (tour.getDebugChoiceModels())
             {
                 logger.info("Stop TOD Choice Model for tour " + tour.getID() + " outbound stop "

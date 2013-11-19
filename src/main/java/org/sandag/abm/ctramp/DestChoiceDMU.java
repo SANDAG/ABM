@@ -33,7 +33,7 @@ public abstract class DestChoiceDMU
     protected double[]                 dcSoaCorrections;
 
     protected int                      toursLeftCount;
-    
+
     protected ModelStructure           modelStructure;
     protected MgraDataManager          mgraManager;
     protected BuildAccessibilities     aggAcc;
@@ -45,14 +45,15 @@ public abstract class DestChoiceDMU
         initDmuObject();
     }
 
-    abstract public void setMcLogsum(int mgra, double logsum);
+    public abstract void setMcLogsum(int mgra, double logsum);
 
     private void initDmuObject()
     {
 
         dmuIndex = new IndexValues();
 
-        // create default objects - some choice models use these as place holders for values
+        // create default objects - some choice models use these as place
+        // holders for values
         person = new Person(null, -1, modelStructure);
         hh = new Household(modelStructure);
 
@@ -114,7 +115,7 @@ public abstract class DestChoiceDMU
     {
         toursLeftCount = count;
     }
-    
+
     public void setDmuIndexValues(int hhId, int zoneId, int origTaz, int destTaz)
     {
         dmuIndex.setHHIndex(hhId);
@@ -147,22 +148,23 @@ public abstract class DestChoiceDMU
         return person;
     }
 
-    // DMU methods - define one of these for every @var in the mode choice control
+    // DMU methods - define one of these for every @var in the mode choice
+    // control
     // file.
 
     protected int getToursLeftCount()
     {
         return toursLeftCount;
     }
-    
-    protected int getMaxContinuousAvailableWindow() {
 
-        if ( tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY))
-            return hh.getMaxJointTimeWindow( tour );
-        else
-            return person.getMaximumContinuousAvailableWindow();
+    protected int getMaxContinuousAvailableWindow()
+    {
+
+        if (tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY)) return hh
+                .getMaxJointTimeWindow(tour);
+        else return person.getMaximumContinuousAvailableWindow();
     }
-    
+
     protected double getDcSoaCorrectionsAlt(int alt)
     {
         return dcSoaCorrections[alt];
@@ -242,13 +244,12 @@ public abstract class DestChoiceDMU
     {
         return hh.getNumGradeSchoolStudents();
     }
-    
+
     public int getNumHighSchoolStudents()
     {
         return hh.getNumHighSchoolStudents();
     }
-    
-    
+
     protected int getNumChildrenUnder16()
     {
         return hh.getNumChildrenUnder16();
@@ -316,7 +317,8 @@ public abstract class DestChoiceDMU
 
     protected int getTourIsJoint()
     {
-        return tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY) ? 1 : 0;
+        return tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY) ? 1
+                : 0;
     }
 
     protected double getTotEmpAccessibilityAlt(int alt)

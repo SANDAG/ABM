@@ -1,6 +1,5 @@
 package org.sandag.abm.crossborder;
 
-import org.sandag.abm.ctramp.ModelStructure;
 
 public class CrossBorderTrip
 {
@@ -19,7 +18,8 @@ public class CrossBorderTrip
     private boolean originIsTourDestination;
     private boolean destinationIsTourDestination;
 
-    // best tap pairs for transit path; dimensioned by ride mode, then boarding (0) and alighting (1)
+    // best tap pairs for transit path; dimensioned by ride mode, then boarding
+    // (0) and alighting (1)
     private int[][] bestWtwTapPairs;
     private int[][] bestWtdTapPairs;
     private int[][] bestDtwTapPairs;
@@ -97,7 +97,8 @@ public class CrossBorderTrip
     }
 
     /**
-     * Create a cross border trip from a tour\stop. Note: trip mode is unknown. Stop period is only known for first, last stop on tour.
+     * Create a cross border trip from a tour\stop. Note: trip mode is unknown.
+     * Stop period is only known for first, last stop on tour.
      * 
      * @param tour
      *            The tour.
@@ -111,8 +112,10 @@ public class CrossBorderTrip
     }
 
     /**
-     * Initialize from stop attributes. A trip will be created to the stop if toStop is true, else a trip will be created from the stop. Use after all
-     * stop locations are known, or else reset the stop origin and destination mgras accordingly after using.
+     * Initialize from stop attributes. A trip will be created to the stop if
+     * toStop is true, else a trip will be created from the stop. Use after all
+     * stop locations are known, or else reset the stop origin and destination
+     * mgras accordingly after using.
      * 
      * @param tour
      * @param stop
@@ -156,14 +159,20 @@ public class CrossBorderTrip
             } else
             {
                 // not first trip on outbound journey, origin is last stop
-                this.originMgra = stops[stop.getId() - 1].getMgra(); // last stop location
-                this.originTAZ = stops[stop.getId() - 1].getTAZ(); // last stop location
-                this.originPurpose = stops[stop.getId() - 1].getPurpose(); // last stop location
+                this.originMgra = stops[stop.getId() - 1].getMgra(); // last
+                                                                     // stop
+                                                                     // location
+                this.originTAZ = stops[stop.getId() - 1].getTAZ(); // last stop
+                                                                   // location
+                this.originPurpose = stops[stop.getId() - 1].getPurpose(); // last
+                                                                           // stop
+                                                                           // location
                 this.period = (byte) stops[stop.getId() - 1].getStopPeriod();
             }
         } else if (!inbound && !toStop)
         {
-            // outbound and trip is from stop to either next stop or tour destination.
+            // outbound and trip is from stop to either next stop or tour
+            // destination.
 
             // last trip on outbound journey, destination is tour destination
             if (stop.getId() == (stops.length - 1))
@@ -186,7 +195,8 @@ public class CrossBorderTrip
 
         } else if (inbound && toStop)
         {
-            // inbound, trip is to stop from either tour destination or last stop.
+            // inbound, trip is to stop from either tour destination or last
+            // stop.
 
             // first inbound trip; origin is tour destination
             if (stop.getId() == 0)
@@ -198,8 +208,11 @@ public class CrossBorderTrip
             } else
             {
                 // not first inbound trip; origin is last stop
-                this.originMgra = stops[stop.getId() - 1].getMgra(); // last stop location
-                this.originTAZ = stops[stop.getId() - 1].getTAZ(); // last stop location
+                this.originMgra = stops[stop.getId() - 1].getMgra(); // last
+                                                                     // stop
+                                                                     // location
+                this.originTAZ = stops[stop.getId() - 1].getTAZ(); // last stop
+                                                                   // location
                 this.originPurpose = stops[stop.getId() - 1].getPurpose();
             }
 

@@ -1,15 +1,6 @@
 package org.sandag.abm.accessibilities;
 
-import com.pb.common.util.Tracer;
-import com.pb.common.calculator.IndexValues;
-import org.sandag.abm.ctramp.CtrampApplication;
-import org.sandag.abm.ctramp.ModelStructure;
-import org.sandag.abm.ctramp.Util;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,8 +13,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import org.apache.log4j.Logger;
+import org.sandag.abm.ctramp.CtrampApplication;
+import org.sandag.abm.ctramp.ModelStructure;
+import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
+import com.pb.common.calculator.IndexValues;
 import com.pb.common.newmodel.UtilityExpressionCalculator;
+import com.pb.common.util.Tracer;
 
 /**
  * This class builds accessibility components for all modes.

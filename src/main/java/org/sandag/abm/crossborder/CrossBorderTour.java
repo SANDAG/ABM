@@ -2,9 +2,7 @@ package org.sandag.abm.crossborder;
 
 import java.io.Serializable;
 import org.apache.log4j.Logger;
-import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.Household;
-import org.sandag.abm.ctramp.Stop;
 import com.pb.common.math.MersenneTwister;
 
 public class CrossBorderTour
@@ -36,7 +34,8 @@ public class CrossBorderTour
     private int                   destinationTAZ;
     private byte                  tourMode;
 
-    // best tap pairs for transit path; dimensioned by ride mode, then boarding (0) and alighting (1)
+    // best tap pairs for transit path; dimensioned by ride mode, then boarding
+    // (0) and alighting (1)
     private int[][]               bestWtwTapPairsOut;
     private int[][]               bestWtwTapPairsIn;
     private int[][]               bestWtdTapPairsOut;
@@ -389,14 +388,17 @@ public class CrossBorderTour
         Household.logHelper(logger, "tourDepartPeriod: ", departTime, totalChars);
         Household.logHelper(logger, "tourArrivePeriod: ", arriveTime, totalChars);
         Household.logHelper(logger, "tourMode: ", tourMode, totalChars);
-        // Household.logHelper(logger, "stopFreqChoice: ", stopFreqChoice, totalChars);
+        // Household.logHelper(logger, "stopFreqChoice: ", stopFreqChoice,
+        // totalChars);
 
         String tempString = null;
         /*
-         * String tempString = String.format("outboundStops[%s]:", outboundStops == null ? "" : String.valueOf(outboundStops.length));
+         * String tempString = String.format("outboundStops[%s]:", outboundStops
+         * == null ? "" : String.valueOf(outboundStops.length));
          * logger.info(tempString);
          * 
-         * tempString = String.format("inboundStops[%s]:", inboundStops == null ? "" : String.valueOf(inboundStops.length)); logger.info(tempString);
+         * tempString = String.format("inboundStops[%s]:", inboundStops == null
+         * ? "" : String.valueOf(inboundStops.length)); logger.info(tempString);
          */
 
         if (bestWtwTapPairsOut == null)

@@ -22,14 +22,14 @@ public class TransitDriveAccessDMU
 
     protected HashMap<String, Integer> methodIndexMap;
 
-    double                              driveTimeToTap;
-    double                              driveDistToTap;
-    double                              driveDistFromTap;
-    double                              driveTimeFromTap;
-    double                              tapToMgraWalkTime;
-    double                              mgraToTapWalkTime;
-    double                              carToStationWalkTime;
-    double                              escalatorTime;
+    double                             driveTimeToTap;
+    double                             driveDistToTap;
+    double                             driveDistFromTap;
+    double                             driveTimeFromTap;
+    double                             tapToMgraWalkTime;
+    double                             mgraToTapWalkTime;
+    double                             carToStationWalkTime;
+    double                             escalatorTime;
     int                                accessMode;
 
     public TransitDriveAccessDMU()
@@ -50,7 +50,8 @@ public class TransitDriveAccessDMU
     /**
      * Set the walk time from the alighting TAP to the destination MGRA.
      * 
-     * @param walkTime The walk time from the alighting TAP to the destination MGRA.
+     * @param walkTime
+     *            The walk time from the alighting TAP to the destination MGRA.
      */
     public void setTapMgraWalkTime(double walkTime)
     {
@@ -70,7 +71,8 @@ public class TransitDriveAccessDMU
     /**
      * Set the walk time to the boarding TAP from the origin MGRA
      * 
-     * @param walkTime The walk time to the boarding TAP from the origin MGRA.
+     * @param walkTime
+     *            The walk time to the boarding TAP from the origin MGRA.
      */
     public void setMgraTapWalkTime(double walkTime)
     {
@@ -90,7 +92,8 @@ public class TransitDriveAccessDMU
     /**
      * Set the walk time from the lot to the station.
      * 
-     * @param carToStationWalkTime The time in minutes.
+     * @param carToStationWalkTime
+     *            The time in minutes.
      */
     public void setCarToStationWalkTime(double carToStationWalkTime)
     {
@@ -110,7 +113,8 @@ public class TransitDriveAccessDMU
     /**
      * Set the time to get to the platform.
      * 
-     * @param escalatorTime The time in minutes.
+     * @param escalatorTime
+     *            The time in minutes.
      */
     public void setEscalatorTime(double escalatorTime)
     {
@@ -130,7 +134,8 @@ public class TransitDriveAccessDMU
     /**
      * Set the access mode for this DMU.
      * 
-     * @param accessMode The access mode.
+     * @param accessMode
+     *            The access mode.
      */
     public void setAccessMode(int accessMode)
     {
@@ -150,7 +155,8 @@ public class TransitDriveAccessDMU
     /**
      * Set the drive time from the origin/production TDZ/TAZ to the TAP.
      * 
-     * @param driveTimeToTap The drive time in minutes.
+     * @param driveTimeToTap
+     *            The drive time in minutes.
      */
     public void setDriveTimeToTap(double driveTimeToTap)
     {
@@ -170,7 +176,8 @@ public class TransitDriveAccessDMU
     /**
      * Set the drive distance from the origin/production TDZ/TAZ to the TAP.
      * 
-     * @param driveDistToTap The drive distance in miles.
+     * @param driveDistToTap
+     *            The drive distance in miles.
      */
     public void setDriveDistToTap(double driveDistToTap)
     {
@@ -190,7 +197,8 @@ public class TransitDriveAccessDMU
     /**
      * Set the drive time from the TAP to the destination/attraction TDZ/TAZ.
      * 
-     * @param driveTime The drive time in minutes.
+     * @param driveTime
+     *            The drive time in minutes.
      */
     public void setDriveTimeFromTap(double driveTime)
     {
@@ -198,7 +206,8 @@ public class TransitDriveAccessDMU
     }
 
     /**
-     * Get the drive distance from the TAP to the destination/attraction TDZ/TAZ.
+     * Get the drive distance from the TAP to the destination/attraction
+     * TDZ/TAZ.
      * 
      * @return The drive distance in miles.
      */
@@ -208,9 +217,11 @@ public class TransitDriveAccessDMU
     }
 
     /**
-     * Set the drive distance from the TAP to the destination/attraction TDZ/TAZ.
+     * Set the drive distance from the TAP to the destination/attraction
+     * TDZ/TAZ.
      * 
-     * @param driveDist The drive distance in miles.
+     * @param driveDist
+     *            The drive distance in miles.
      */
     public void setDriveDistFromTap(double driveDist)
     {
@@ -220,7 +231,8 @@ public class TransitDriveAccessDMU
     /**
      * Log the DMU values.
      * 
-     * @param localLogger The logger to use.
+     * @param localLogger
+     *            The logger to use.
      */
     public void logValues(Logger localLogger)
     {
@@ -238,8 +250,8 @@ public class TransitDriveAccessDMU
         localLogger.info(String.format("Escalator time:           %9.4f", escalatorTime));
 
         AccessMode[] accessModes = AccessMode.values();
-        localLogger.info(String.format("Access Mode:              %5s", accessModes[accessMode]
-                .toString()));
+        localLogger.info(String.format("Access Mode:              %5s",
+                accessModes[accessMode].toString()));
     }
 
     private void setupMethodIndexMap()

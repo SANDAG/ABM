@@ -5,6 +5,7 @@ import gnu.cajo.utils.ItemServer;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
@@ -219,7 +220,7 @@ public class MandatoryAccessibilities
 
                 // skip header row
                 char c = fields[0].charAt(0);
-                if (Character.isLetter(c))
+                if (new Character(c).isLetter(c))
                 {
 
                     // print the header line to the output file
@@ -617,7 +618,7 @@ public class MandatoryAccessibilities
         try
         {
             ItemServer.bind(matrixServer, className);
-        } catch (IOException e)
+        } catch (RemoteException e)
         {
             logger.error(String.format(
                     "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",

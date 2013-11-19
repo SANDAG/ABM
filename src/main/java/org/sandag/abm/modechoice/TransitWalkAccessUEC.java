@@ -1,11 +1,12 @@
 /*
- * Copyright 2005 PB Consult Inc. Licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License. You
- * may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software distributed
- * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
- * CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
+ * Copyright 2005 PB Consult Inc. Licensed under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  */
 package org.sandag.abm.modechoice;
 
@@ -13,7 +14,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import org.apache.log4j.Logger;
-
 import com.pb.common.newmodel.UtilityExpressionCalculator;
 
 /**
@@ -25,17 +25,17 @@ import com.pb.common.newmodel.UtilityExpressionCalculator;
 public class TransitWalkAccessUEC
         extends TransitPathUEC
 {
-    
-    public static final int              EA          = 0;
-    public static final int              AM          = 1;
-    public static final int              MD          = 2;
-    public static final int              PM          = 3;
-    public static final int              EV          = 4;
-    public static final String[]         PERIODS     = { "EA", "AM", "MD", "PM", "EV" };
-    public static final int              NUM_PERIODS = PERIODS.length;    
+
+    public static final int             EA          = 0;
+    public static final int             AM          = 1;
+    public static final int             MD          = 2;
+    public static final int             PM          = 3;
+    public static final int             EV          = 4;
+    public static final String[]        PERIODS     = {"EA", "AM", "MD", "PM", "EV"};
+    public static final int             NUM_PERIODS = PERIODS.length;
 
     // DMU for this UEC
-    private TransitWalkAccessDMU        dmu     = new TransitWalkAccessDMU();
+    private TransitWalkAccessDMU        dmu         = new TransitWalkAccessDMU();
 
     private TapDataManager              tapManager;
     private MgraDataManager             mgraManager;
@@ -49,10 +49,14 @@ public class TransitWalkAccessUEC
     /**
      * Constructor.
      * 
-     * @param rbMap HashMap<String, String>
-     * @param UECFileName The path/name of the UEC containing the walk-transit model.
-     * @param modelSheet The sheet (0-indexed) containing the model specification.
-     * @param dataSheet The sheet (0-indexed) containing the data specification.
+     * @param rbMap
+     *            HashMap<String, String>
+     * @param UECFileName
+     *            The path/name of the UEC containing the walk-transit model.
+     * @param modelSheet
+     *            The sheet (0-indexed) containing the model specification.
+     * @param dataSheet
+     *            The sheet (0-indexed) containing the data specification.
      */
     public TransitWalkAccessUEC(HashMap<String, String> rbMap, String UECFileName, int modelSheet,
             int dataSheet)
@@ -69,10 +73,14 @@ public class TransitWalkAccessUEC
      * piece-wise utilities are built, where TAP-TAP pair utilities are computed
      * separately from MGRA-TAP walk utilities, to cut down on processing time.
      * 
-     * @param rb ResourceBundle
-     * @param UECFileName The path/name of the UEC containing the walk-transit model.
-     * @param modelSheet The sheet (0-indexed) containing the model specification.
-     * @param dataSheet The sheet (0-indexed) containing the data specification.
+     * @param rb
+     *            ResourceBundle
+     * @param UECFileName
+     *            The path/name of the UEC containing the walk-transit model.
+     * @param modelSheet
+     *            The sheet (0-indexed) containing the model specification.
+     * @param dataSheet
+     *            The sheet (0-indexed) containing the data specification.
      */
     public void createWalkAccessUEC(HashMap<String, String> rbMap, String UECFileName,
             int modelSheet, int dataSheet)
@@ -83,28 +91,30 @@ public class TransitWalkAccessUEC
     }
 
     /**
-     * This is the main method that finds the best TAP-pairs for each ride mode. It
-     * cycles through walk TAPs at the origin end (associated with the origin MGRA)
-     * and alighting TAPs at the destination end (associated with the destination
-     * MGRA) and calculates a utility for every available ride mode for each TAP
-     * pair. It compares the utility calculated for that TAP-pair to previously
-     * calculated utilities and stores the origin and destination TAP that had the
-     * best utility for each ride mode.
+     * This is the main method that finds the best TAP-pairs for each ride mode.
+     * It cycles through walk TAPs at the origin end (associated with the origin
+     * MGRA) and alighting TAPs at the destination end (associated with the
+     * destination MGRA) and calculates a utility for every available ride mode
+     * for each TAP pair. It compares the utility calculated for that TAP-pair
+     * to previously calculated utilities and stores the origin and destination
+     * TAP that had the best utility for each ride mode.
      * 
-     * @param pMgra The origin/production MGRA.
-     * @param aMgra The destination/attraction MGRA.
+     * @param pMgra
+     *            The origin/production MGRA.
+     * @param aMgra
+     *            The destination/attraction MGRA.
      * 
      */
     public void findBestWalkTransitWalkTaps(int pMgra, int aMgra, boolean debug)
     {
 
-        super.clearArrays( Double.NEGATIVE_INFINITY );
+        super.clearArrays(Double.NEGATIVE_INFINITY);
         bestWalkAccessTime = 0;
         bestWalkEgressTime = 0;
 
         int[] pMgraSet = mgraManager.getMgraWlkTapsDistArray()[pMgra][0];
         int[] aMgraSet = mgraManager.getMgraWlkTapsDistArray()[aMgra][0];
-        
+
         if (pMgraSet == null || aMgraSet == null)
         {
             return;
@@ -124,7 +134,7 @@ public class TransitWalkAccessUEC
         {
             // used to know where we are in time/dist arrays for taps
             pPos++;
-            
+
             // Set DMU values
             float pWalkTime = mgraManager.getMgraToTapWalkTime(pMgra, pPos);
             dmu.setMgraTapWalkTime(pWalkTime);
@@ -148,10 +158,11 @@ public class TransitWalkAccessUEC
                     uec.logResultsArray(logger, pTap, aTap);
                 }
 
-                
-                // compare the utilities for this TAP pair to previously calculated
+                // compare the utilities for this TAP pair to previously
+                // calculated
                 // utilities
-                // for each ride mode and store the TAP numbers if this TAP pair is
+                // for each ride mode and store the TAP numbers if this TAP pair
+                // is
                 // the best.
                 boolean foundNewBestPath = super.comparePaths(results, pTap, aTap,
                         writeCalculations);
@@ -170,14 +181,17 @@ public class TransitWalkAccessUEC
     }
 
     /**
-     * This method calculates the utilities for a given Tap pair. It is called from
-     * the method @link {@link #findBestWalkTaps(int, int)}. The walk times in the
-     * dmu must be set separately, or set to 0 for a set of utilities that are
-     * mgra-independent.
+     * This method calculates the utilities for a given Tap pair. It is called
+     * from the method @link {@link #findBestWalkTaps(int, int)}. The walk times
+     * in the dmu must be set separately, or set to 0 for a set of utilities
+     * that are mgra-independent.
      * 
-     * @param pTap The origin/production Tap
-     * @param aTap The destination/attraction Tap.
-     * @param trace True if debug calculations are to be written to the logger for
+     * @param pTap
+     *            The origin/production Tap
+     * @param aTap
+     *            The destination/attraction Tap.
+     * @param trace
+     *            True if debug calculations are to be written to the logger for
      *            this Tap-pair.
      * @return A set of utilities for the Tap-pair, dimensioned by ride mode in @link
      *         <Modes>.
@@ -215,12 +229,15 @@ public class TransitWalkAccessUEC
     }
 
     /**
-     * This method calculates the walk-access utility for a given mgra to a given
-     * tap.
+     * This method calculates the walk-access utility for a given mgra to a
+     * given tap.
      * 
-     * @param mgra The mgra
-     * @param tapPosition The position of the Tap in the MGRA manager
-     * @param trace True if debug calculations are to be written to the logger for
+     * @param mgra
+     *            The mgra
+     * @param tapPosition
+     *            The position of the Tap in the MGRA manager
+     * @param trace
+     *            True if debug calculations are to be written to the logger for
      *            this mgra-tap pair.
      * @return A walk-access utility for the mgra-Tap pair.
      */
@@ -248,7 +265,8 @@ public class TransitWalkAccessUEC
     }
 
     /**
-     * @return the origin MGRA to TAP walk time stored for the best TAP-TAP pair.
+     * @return the origin MGRA to TAP walk time stored for the best TAP-TAP
+     *         pair.
      */
     public float getBestWalkAccessTime()
     {
@@ -265,8 +283,8 @@ public class TransitWalkAccessUEC
     }
 
     /**
-     * set a Logger object which has been configured to direct logging to a specific
-     * file.
+     * set a Logger object which has been configured to direct logging to a
+     * specific file.
      */
     public void setLogger(Logger newLogger)
     {

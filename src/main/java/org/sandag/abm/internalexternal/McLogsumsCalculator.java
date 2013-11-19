@@ -161,8 +161,10 @@ public class McLogsumsCalculator
     }
 
     /**
-     * This method finds the best walk-transit-walk tap pairs if they don't exist in the trip object (and sets the best tap pairs in the trip object),
-     * then fills in the trip mode choice DMU object with the skim values corresponding to those tap pairs.
+     * This method finds the best walk-transit-walk tap pairs if they don't
+     * exist in the trip object (and sets the best tap pairs in the trip
+     * object), then fills in the trip mode choice DMU object with the skim
+     * values corresponding to those tap pairs.
      * 
      * @param tour
      * @param trip
@@ -225,9 +227,11 @@ public class McLogsumsCalculator
     }
 
     /**
-     * return the array of mode choice model cumulative probabilities determined while computing the mode choice logsum for the trip segmen during
-     * stop location choice. These probabilities arrays are stored for each sampled stop location so that when the selected sample stop location is
-     * known, the mode choice can be drawn from the already computed probabilities.
+     * return the array of mode choice model cumulative probabilities determined
+     * while computing the mode choice logsum for the trip segmen during stop
+     * location choice. These probabilities arrays are stored for each sampled
+     * stop location so that when the selected sample stop location is known,
+     * the mode choice can be drawn from the already computed probabilities.
      * 
      * @return mode choice cumulative probabilities array
      */

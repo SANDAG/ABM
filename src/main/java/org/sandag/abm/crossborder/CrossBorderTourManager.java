@@ -6,16 +6,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
-import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
-import org.sandag.abm.airport.AirportParty;
 import org.sandag.abm.application.SandagModelStructure;
-import org.sandag.abm.application.SandagSummitFile;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
-import com.pb.common.util.OutTextFile;
 import com.pb.common.util.ResourceUtil;
 
 public class CrossBorderTourManager
@@ -37,8 +33,9 @@ public class CrossBorderTourManager
     private int               traceId;
 
     /**
-     * Constructor. Reads properties file and opens/stores all probability distributions for sampling. Estimates number of airport travel parties and
-     * initializes parties[].
+     * Constructor. Reads properties file and opens/stores all probability
+     * distributions for sampling. Estimates number of airport travel parties
+     * and initializes parties[].
      * 
      * @param resourceFile
      *            Property file.
@@ -111,10 +108,13 @@ public class CrossBorderTourManager
     }
 
     /**
-     * Read file containing probabilities by purpose. Store cumulative distribution in purposeDistribution.
+     * Read file containing probabilities by purpose. Store cumulative
+     * distribution in purposeDistribution.
      * 
      * @param fileName
-     *            Name of file containing two columns, one row for each purpose. First column has purpose number, second column has probability.
+     *            Name of file containing two columns, one row for each purpose.
+     *            First column has purpose number, second column has
+     *            probability.
      */
     protected double[] setPurposeDistribution(String fileName, double[] purposeDistribution)
     {
@@ -279,8 +279,9 @@ public class CrossBorderTourManager
     }
 
     /**
-     * A helper method that returns an array containing boarding tap (element 0) and alighting tap (element 1) for the given trip mode. Returns an
-     * array of zeroes if the trip modes are not transit.
+     * A helper method that returns an array containing boarding tap (element 0)
+     * and alighting tap (element 1) for the given trip mode. Returns an array
+     * of zeroes if the trip modes are not transit.
      * 
      * @param party
      *            The trip
@@ -311,7 +312,7 @@ public class CrossBorderTourManager
         return tours;
     }
 
-    public static void main(String args[])
+    public static void main(String[] args)
     {
 
         String propertiesFile = null;

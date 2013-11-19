@@ -14,18 +14,24 @@ import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
-import com.pb.common.util.Tracer;
 import com.pb.common.newmodel.ChoiceModelApplication;
 import com.pb.common.newmodel.UtilityExpressionCalculator;
+import com.pb.common.util.Tracer;
 
 /**
- * This class is used for both the sample of alternatives and the full destination choice model for border crossing tours.
+ * This class is used for both the sample of alternatives and the full
+ * destination choice model for border crossing tours.
  * 
- * The model first calculates a set of station-level logsums which represent the attractiveness of each station based upon the accessibility to Mexico
- * populations (taking into account population size of Colonias and distance between each station and each Colonia. The model then creates a sample of
- * alternatives where each alternative is a pair of border crossing station (entry MGRA) and destination MGRA in San Diego County, by tour purpose.
- * This is sampled from for each tour, and a mode choice logsum is calculated for each station-MGRA pair. The full destination choice model is run on
- * the sample with the mode choice logsums influencing station - destination choice, and a station-MGRA pair is chosen for each tour.
+ * The model first calculates a set of station-level logsums which represent the
+ * attractiveness of each station based upon the accessibility to Mexico
+ * populations (taking into account population size of Colonias and distance
+ * between each station and each Colonia. The model then creates a sample of
+ * alternatives where each alternative is a pair of border crossing station
+ * (entry MGRA) and destination MGRA in San Diego County, by tour purpose. This
+ * is sampled from for each tour, and a mode choice logsum is calculated for
+ * each station-MGRA pair. The full destination choice model is run on the
+ * sample with the mode choice logsums influencing station - destination choice,
+ * and a station-MGRA pair is chosen for each tour.
  * 
  * @author Freedman
  * 
@@ -35,24 +41,48 @@ public class CrossBorderStationDestChoiceModel
 
     private double[][]   mgraSizeTerms;           // by purpose, MGRA
     private double[][]   tazSizeTerms;            // by purpose, TAZ
-    private double[][]   tazStationProbabilities; // by purpose, station-TAZ alternative
+    private double[][]   tazStationProbabilities; // by purpose, station-TAZ
+                                                   // alternative
     private double[][][] mgraProbabilities;       // by purpose, TAZ, MGRA
-    private double[]     stationLogsums;          // by entry station, logsum from colonia to station
-    private double[]     soaStationLogsums;       // by station-TAZ alternative, station logsums
-    private double[][]   soaSizeTerms;            // by purpose, station-TAZ alternative, size terms for tazs
-    private int[]        soaOriginTazs;           // by station-TAZ alternative, origin Taz
-    private int[]        soaDestinationTazs;      // by station-TAZ alternative, destination Taz
+    private double[]     stationLogsums;          // by entry station, logsum
+                                                   // from colonia to
+                                                   // station
+    private double[]     soaStationLogsums;       // by station-TAZ
+                                                   // alternative, station
+                                                   // logsums
+    private double[][]   soaSizeTerms;            // by purpose, station-TAZ
+                                                   // alternative,
+                                                   // size terms for tazs
+    private int[]        soaOriginTazs;           // by station-TAZ
+                                                   // alternative, origin Taz
+    private int[]        soaDestinationTazs;      // by station-TAZ
+                                                   // alternative, destination
+                                                   // Taz
 
-    private int[]        sampledDestinationMgra;  // destination mgra for each of n samples
-    private int[]        sampledEntryMgra;        // entry mgra for each of n samples
-    private double[][]   sampledSizeTerms;        // size term for each of n samples (1st dimension is purpose)
-    private double[]     sampledStationLogsums;   // station logsum for each of n samples
+    private int[]        sampledDestinationMgra;  // destination mgra for each
+                                                   // of n
+                                                   // samples
+    private int[]        sampledEntryMgra;        // entry mgra for each of n
+                                                   // samples
+    private double[][]   sampledSizeTerms;        // size term for each of n
+                                                   // samples (1st
+                                                   // dimension is purpose)
+    private double[]     sampledStationLogsums;   // station logsum for each of
+                                                   // n
+                                                   // samples
     private int[]        sampledStations;         // POE for each of n samples
-    private int[]        sampledOriginTazs;       // Origin Taz for each of n samples
-    private int[]        sampledDestinationTazs;  // Destination Taz for each of n samples
+    private int[]        sampledOriginTazs;       // Origin Taz for each of n
+                                                   // samples
+    private int[]        sampledDestinationTazs;  // Destination Taz for each
+                                                   // of n
+                                                   // samples
 
-    private double[]     sampledCorrectionFactors; // correction factor for each of n samples
-    private double[]     tourModeChoiceLogsums;   // mode choice logsum for each of n samples
+    private double[]     sampledCorrectionFactors; // correction factor for each
+                                                   // of
+                                                   // n samples
+    private double[]     tourModeChoiceLogsums;   // mode choice logsum for
+                                                   // each of n
+                                                   // samples
 
     private class KeyClass
     {
@@ -78,14 +108,40 @@ public class CrossBorderStationDestChoiceModel
     }
 
     private KeyClass                       key;
-    private HashMap<KeyClass, Integer>     frequencyChosen;                              // by alternative, number of times chosen
+    private HashMap<KeyClass, Integer>     frequencyChosen;                              // by
+                                                                                          // alternative,
+                                                                                          // number
+                                                                                          // of
+                                                                                          // times
+                                                                                          // chosen
 
-    private TableDataSet                   alternativeData;                              // the alternatives, with the following fields:
-                                                                                          // "EntryMGRA" - indicating border crossing entry MGRA
-                                                                                          // "dest" - indicating the destination TAZ in San Diego
+    private TableDataSet                   alternativeData;                              // the
+                                                                                          // alternatives,
+                                                                                          // with
+                                                                                          // the
+                                                                                          // following
+                                                                                          // fields:
+                                                                                          // "EntryMGRA"
+                                                                                          // -
+                                                                                          // indicating
+                                                                                          // border
+                                                                                          // crossing
+                                                                                          // entry
+                                                                                          // MGRA
+                                                                                          // "dest"
+                                                                                          // -
+                                                                                          // indicating
+                                                                                          // the
+                                                                                          // destination
+                                                                                          // TAZ
+                                                                                          // in
+                                                                                          // San
+                                                                                          // Diego
                                                                                           // County
 
-    private int                            stations;                                     // number of stations
+    private int                            stations;                                     // number
+                                                                                          // of
+                                                                                          // stations
     private int                            sampleRate;
 
     private transient Logger               logger = Logger.getLogger("crossBorderModel");
@@ -147,7 +203,8 @@ public class CrossBorderStationDestChoiceModel
         int modelPage = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap,
                 "crossBorder.dc.model.page"));
 
-        // read the model pages from the property file, create one choice model for each
+        // read the model pages from the property file, create one choice model
+        // for each
         CrossBorderStationDestChoiceDMU dcDmu = dmuFactory.getCrossBorderStationChoiceDMU();
 
         // create a ChoiceModelApplication object for the SOA model.
@@ -189,7 +246,8 @@ public class CrossBorderStationDestChoiceModel
                 "crossBorder.dc.colonia.file");
         coloniaDistanceFile = directory + coloniaDistanceFile;
 
-        // calculate logsums for each station (based on Super-Colonia population and distance to station)
+        // calculate logsums for each station (based on Super-Colonia population
+        // and distance to station)
         float distanceParam = new Float(Util.getStringValueFromPropertyMap(rbMap,
                 "crossBorder.dc.colonia.distance.parameter"));
         calculateStationLogsum(coloniaDistanceFile, distanceParam);
@@ -200,7 +258,8 @@ public class CrossBorderStationDestChoiceModel
         sampledCorrectionFactors = new double[sampleRate + 1];
         frequencyChosen = new HashMap<KeyClass, Integer>();
 
-        // set up a tour mode choice model for calculation of tour mode probabilities
+        // set up a tour mode choice model for calculation of tour mode
+        // probabilities
         tourModeChoiceModel = new CrossBorderTourModeChoiceModel(rbMap, myStructure, dmuFactory,
                 myLogsumHelper);
         tourModeChoiceLogsums = new double[sampleRate + 1];
@@ -215,14 +274,17 @@ public class CrossBorderStationDestChoiceModel
     }
 
     /**
-     * Calculate the station logsum. Station logsums are based on distance from supercolonia to station and population of supercolonia, as follows:
+     * Calculate the station logsum. Station logsums are based on distance from
+     * supercolonia to station and population of supercolonia, as follows:
      * 
      * stationLogsum_i = LN [ Sum( exp(distanceParam * distance) * population) ]
      * 
-     * supercolonia population and distances are stored in @param fileName. Fields in file include:
+     * supercolonia population and distances are stored in @param fileName.
+     * Fields in file include:
      * 
-     * Population Population of supercolonia Distance_MGRANumber where MGRANumber is the number of the MGRA corresponding to the entry station, with
-     * one field for each possible entry station.
+     * Population Population of supercolonia Distance_MGRANumber where
+     * MGRANumber is the number of the MGRA corresponding to the entry station,
+     * with one field for each possible entry station.
      * 
      * @param fileName
      *            Name of file containing supercolonia population and distance
@@ -249,7 +311,8 @@ public class CrossBorderStationDestChoiceModel
         logger.info("End reading the data in file " + fileName);
 
         stations = 0;
-        // iterate through columns in table, calculate number of station alternatives (entry stations)
+        // iterate through columns in table, calculate number of station
+        // alternatives (entry stations)
         String[] columnLabels = coloniaTable.getColumnLabels();
         for (int i = 0; i < columnLabels.length; ++i)
         {
@@ -330,7 +393,8 @@ public class CrossBorderStationDestChoiceModel
             }
         }
 
-        // now calculate probability of selecting each MGRA within each TAZ for SOA
+        // now calculate probability of selecting each MGRA within each TAZ for
+        // SOA
         mgraProbabilities = new double[purposes][maxTaz + 1][];
         int[] tazs = tazManager.getTazs();
 
@@ -363,7 +427,8 @@ public class CrossBorderStationDestChoiceModel
 
         }
 
-        // calculate logged size terms for mgra and taz vectors to be used in dmu
+        // calculate logged size terms for mgra and taz vectors to be used in
+        // dmu
         for (int purpose = 0; purpose < purposes; ++purpose)
         {
             for (int taz = 0; taz < tazSizeTerms[purpose].length; ++taz)
@@ -379,7 +444,8 @@ public class CrossBorderStationDestChoiceModel
     }
 
     /**
-     * Calculate taz probabilities. This method initializes and calculates the tazProbabilities array.
+     * Calculate taz probabilities. This method initializes and calculates the
+     * tazProbabilities array.
      */
     public void calculateTazProbabilities(CrossBorderDmuFactoryIf dmuFactory)
     {
@@ -395,14 +461,22 @@ public class CrossBorderStationDestChoiceModel
         // initialize taz probabilities array
         int purposes = tazSizeTerms.length;
 
-        // initialize the index for station population accessibility and taz size term
+        // initialize the index for station population accessibility and taz
+        // size term
         int alternatives = soaModel.getNumberOfAlternatives();
-        soaStationLogsums = new double[alternatives + 1]; // by station-TAZ alternative - station logsums
-        soaSizeTerms = new double[purposes][alternatives + 1]; // by purpose, station-TAZ alternative - size terms for tazs
+        soaStationLogsums = new double[alternatives + 1]; // by station-TAZ
+                                                          // alternative -
+                                                          // station logsums
+        soaSizeTerms = new double[purposes][alternatives + 1]; // by purpose,
+                                                               // station-TAZ
+                                                               // alternative -
+                                                               // size terms
+                                                               // for tazs
         soaOriginTazs = new int[alternatives + 1];
         soaDestinationTazs = new int[alternatives + 1];
 
-        // iterate through the alternatives in the alternatives file and set the size term and station logsum for each alternative
+        // iterate through the alternatives in the alternatives file and set the
+        // size term and station logsum for each alternative
         UtilityExpressionCalculator soaModelUEC = soaModel.getUEC();
         TableDataSet altData = soaModelUEC.getAlternativeData();
 
@@ -437,7 +511,8 @@ public class CrossBorderStationDestChoiceModel
 
         // set the stations for each alternative
         int poeField = altData.getColumnPosition("poe");
-        int[] poeNumbers = altData.getColumnAsInt(poeField, 1); // return field as 1-based
+        int[] poeNumbers = altData.getColumnAsInt(poeField, 1); // return field
+                                                                // as 1-based
 
         dmu.setPoeNumbers(poeNumbers);
 
@@ -448,7 +523,8 @@ public class CrossBorderStationDestChoiceModel
         // initialize array to hold taz-station probabilities
         tazStationProbabilities = new double[purposes][alternatives + 1];
 
-        // iterate through purposes, calculate probabilities for each and store in array
+        // iterate through purposes, calculate probabilities for each and store
+        // in array
         for (int purpose = 0; purpose < purposes; ++purpose)
         {
 
@@ -504,7 +580,8 @@ public class CrossBorderStationDestChoiceModel
                 }
             }
 
-            // get the taz number of the alternative, and an array of mgras in that taz
+            // get the taz number of the alternative, and an array of mgras in
+            // that taz
             int destinationTaz = (int) alternativeData.getValueAt(alt + 1, "dest");
             int poe = (int) alternativeData.getValueAt(alt + 1, "poe");
             int entryMgra = (int) alternativeData.getValueAt(alt + 1, "mgra_entry");
@@ -517,9 +594,12 @@ public class CrossBorderStationDestChoiceModel
             // set the destination taz
             sampledDestinationTazs[sample] = destinationTaz;
 
-            // now find an MGRA in the taz corresponding to the random number drawn:
-            // note that the indexing needs to be offset by the cumulative probability of the chosen taz and the
-            // mgra probabilities need to be scaled by the alternatives probability
+            // now find an MGRA in the taz corresponding to the random number
+            // drawn:
+            // note that the indexing needs to be offset by the cumulative
+            // probability of the chosen taz and the
+            // mgra probabilities need to be scaled by the alternatives
+            // probability
             int mgraNumber = 0;
             double[] mgraCumProb = mgraProbabilities[purpose][destinationTaz];
             for (int i = 0; i < mgraCumProb.length; ++i)
@@ -530,7 +610,8 @@ public class CrossBorderStationDestChoiceModel
                     mgraNumber = mgraArray[i];
                     sampledDestinationMgra[sample] = mgraNumber;
 
-                    // for now, store the probability in the correction factors array
+                    // for now, store the probability in the correction factors
+                    // array
                     sampledCorrectionFactors[sample] = mgraCumProb[i] * altProb;
 
                     break;
@@ -575,10 +656,12 @@ public class CrossBorderStationDestChoiceModel
     }
 
     /**
-     * Use the tour mode choice model to calculate the logsum for each sampled station-mgra pair and store in the array.
+     * Use the tour mode choice model to calculate the logsum for each sampled
+     * station-mgra pair and store in the array.
      * 
      * @param tour
-     *            The tour attributes used are tour purpose, depart and arrive periods, and sentri availability.
+     *            The tour attributes used are tour purpose, depart and arrive
+     *            periods, and sentri availability.
      */
     private void calculateLogsumsForSample(CrossBorderTour tour)
     {
@@ -611,7 +694,8 @@ public class CrossBorderStationDestChoiceModel
      * Choose a station and internal destination MGRA for the tour.
      * 
      * @param tour
-     *            A cross border tour with a tour purpose and departure\arrival time and SENTRI availability members.
+     *            A cross border tour with a tour purpose and departure\arrival
+     *            time and SENTRI availability members.
      */
     public void chooseStationAndDestination(CrossBorderTour tour)
     {
@@ -622,10 +706,12 @@ public class CrossBorderStationDestChoiceModel
         double random = tour.getRandom();
         dmu.setPurpose(tour.getPurpose());
 
-        // set size terms for each sampled station-mgra pair corresponding to mgra
+        // set size terms for each sampled station-mgra pair corresponding to
+        // mgra
         dmu.setSizeTerms(sampledSizeTerms);
 
-        // set population accessibility for each station-mgra pair corresponding to station
+        // set population accessibility for each station-mgra pair corresponding
+        // to station
         dmu.setStationPopulationAccessibilities(sampledStationLogsums);
 
         // set the sampled stations

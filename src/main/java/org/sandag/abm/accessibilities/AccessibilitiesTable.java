@@ -1,14 +1,13 @@
 package org.sandag.abm.accessibilities;
 
-import com.pb.common.util.ObjectUtil;
-import com.pb.common.datafile.CSVFileWriter;
-import com.pb.common.datafile.OLD_CSVFileReader;
-import com.pb.common.datafile.TableDataSet;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import org.apache.log4j.Logger;
+import com.pb.common.datafile.CSVFileWriter;
+import com.pb.common.datafile.OLD_CSVFileReader;
+import com.pb.common.datafile.TableDataSet;
 
 /**
  * This class holds the accessibility table that is built, or reads it from a

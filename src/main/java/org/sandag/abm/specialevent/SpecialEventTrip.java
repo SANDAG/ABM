@@ -1,6 +1,5 @@
 package org.sandag.abm.specialevent;
 
-import org.sandag.abm.ctramp.ModelStructure;
 
 public class SpecialEventTrip
 {

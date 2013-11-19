@@ -16,8 +16,8 @@ import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.datafile.TableDataSet;
-import com.pb.common.util.ResourceUtil;
 import com.pb.common.newmodel.ChoiceModelApplication;
+import com.pb.common.util.ResourceUtil;
 
 public final class VisitorTourLocationChoiceAppender
         extends McLogsumsAppender

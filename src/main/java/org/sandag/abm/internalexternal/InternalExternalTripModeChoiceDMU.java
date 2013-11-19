@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
-import org.sandag.abm.ctramp.TourModeChoiceDMU;
-import org.sandag.abm.ctramp.ModelStructure;
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 

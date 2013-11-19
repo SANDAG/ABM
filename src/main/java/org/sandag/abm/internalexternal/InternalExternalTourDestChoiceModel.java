@@ -9,11 +9,12 @@ import org.sandag.abm.modechoice.TazDataManager;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.matrix.Matrix;
-import com.pb.common.newmodel.UtilityExpressionCalculator;
 import com.pb.common.newmodel.ChoiceModelApplication;
+import com.pb.common.newmodel.UtilityExpressionCalculator;
 
 /**
- * This class is used for external station destination choice model for IE tours.
+ * This class is used for external station destination choice model for IE
+ * tours.
  * 
  * 
  * @author Freedman
@@ -60,7 +61,8 @@ public class InternalExternalTourDestChoiceModel
         dcDmu = dmuFactory.getInternalExternalTourDestChoiceDMU();
 
         // create the full model UECs
-        // read the model pages from the property file, create one choice model for each full model
+        // read the model pages from the property file, create one choice model
+        // for each full model
         String internalExternalDCFileName = Util.getStringValueFromPropertyMap(rbMap,
                 "internalExternal.dc.uec.file");
         internalExternalDCFileName = uecFileDirectory + internalExternalDCFileName;
@@ -74,14 +76,16 @@ public class InternalExternalTourDestChoiceModel
     }
 
     /**
-     * Calculate taz probabilities. This method initializes and calculates the tazProbabilities array.
+     * Calculate taz probabilities. This method initializes and calculates the
+     * tazProbabilities array.
      */
     public void calculateTazProbabilities(InternalExternalDmuFactoryIf dmuFactory)
     {
 
         logger.info("Calculating IE Model TAZ Probabilities Arrays");
 
-        // iterate through the alternatives in the alternatives file and set the size term and station logsum for each alternative
+        // iterate through the alternatives in the alternatives file and set the
+        // size term and station logsum for each alternative
         UtilityExpressionCalculator soaModelUEC = destModel.getUEC();
         altData = soaModelUEC.getAlternativeData();
 
@@ -90,7 +94,8 @@ public class InternalExternalTourDestChoiceModel
 
         tazProbabilities = new Matrix("Prob_Matrix", "Probability Matrix", maxTaz + 1, maxTaz + 1);
 
-        // iterate through origin zones, solve the UEC and store the results in the matrix
+        // iterate through origin zones, solve the UEC and store the results in
+        // the matrix
         for (int taz = 1; taz <= maxTaz; ++taz)
         {
 
@@ -136,7 +141,8 @@ public class InternalExternalTourDestChoiceModel
 
         }
 
-        // cycle through probability array for origin taz and find destination station & corresponding MGRA
+        // cycle through probability array for origin taz and find destination
+        // station & corresponding MGRA
         int chosenTaz = -1;
         int chosenMgra = -1;
         for (int i = 1; i <= altData.getRowCount(); ++i)

@@ -16,11 +16,11 @@ import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
-import com.pb.common.newmodel.ChoiceModelApplication;
 import com.pb.common.calculator.MatrixDataManager;
 import com.pb.common.calculator.MatrixDataServerIf;
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
+import com.pb.common.newmodel.ChoiceModelApplication;
 
 public class McLogsumsAppender
         implements Serializable
