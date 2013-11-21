@@ -6,8 +6,7 @@ Macro "Run SANDAG ABM"
  
    // Stop residual Java processes on nodes
    runString = path+"\\bin\\stopABM.cmd"
-   ok = RunMacro("TCB Run Command", 1, "Stop Nodes", runString)
-   if !ok then goto quit  
+   ok = RunMacro("TCB Run Command", 1, "Stop Nodes", runString) 
 
    sample_rate = { 0.2, 0.5, 1.0 }
    max_iterations=sample_rate.length    //number of feedback loops
@@ -75,6 +74,7 @@ Macro "Run SANDAG ABM"
       // Start matrix manager locally
       runString = path+"\\bin\\runMtxMgr.cmd "+drive+" "+path_no_drive
       ok = RunMacro("TCB Run Command", 1, "Start matrix manager", runString)
+      if !ok then goto quit 
 	
       // Start  JPPF driver 
       runString = path+"\\bin\\runDriver.cmd "+drive+" "+path_no_drive
