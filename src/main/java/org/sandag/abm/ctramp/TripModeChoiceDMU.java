@@ -81,7 +81,8 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
 
     protected double[][][]             transitSkim;
 
-     protected double bikeLogsum;
+    protected double femaleBikeLogsum;
+    protected double maleBikeLogsum;
     public TripModeChoiceDMU(ModelStructure modelStructure, Logger aLogger)
     {
         if (aLogger == null) aLogger = Logger.getLogger(TourModeChoiceDMU.class);
@@ -91,18 +92,25 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
 
         transitSkim = new double[TripModeChoiceDMU.NUM_ACC_EGR][TripModeChoiceDMU.NUM_LOC_PREM][TripModeChoiceDMU.NUM_SKIMS];
     }
-
-    public double getBikeLogsum() {
-		return bikeLogsum;
-	}
-
-
-	public void setBikeLogsum(double bikeLogsum) {
-		this.bikeLogsum = bikeLogsum;
-	}
 	
-	public void setBikeLogsum(BikeLogsum bls, Tour tour, Person person, int origMgra, int destMgra, boolean inbound) {
-		setBikeLogsum(bls.getValue(new BikeLogsumSegment(person.getPersonIsFemale() == 1,tour.getTourPrimaryPurposeIndex() <= 3, inbound),origMgra,destMgra));
+	public void setBikeLogsum(BikeLogsum bls, Tour tour, Person person, int origin, int dest, boolean inbound) {
+		boolean mandatory = tour.getTourPrimaryPurposeIndex() <= 3;
+		setBikeLogsum(bls.getValue(new BikeLogsumSegment(true,mandatory,inbound),origin,dest),
+				      bls.getValue(new BikeLogsumSegment(false,mandatory,inbound),origin,dest));
+	}
+    
+    public double getFemaleBikeLogsum() {
+		return femaleBikeLogsum;
+	}
+    
+    public double getMaleBikeLogsum() {
+		return maleBikeLogsum;
+	}
+
+
+	private void setBikeLogsum(double femaleBikeLogsum, double maleBikeLogsum) {
+		this.femaleBikeLogsum = femaleBikeLogsum;
+		this.maleBikeLogsum = maleBikeLogsum;
 	}
 
     public void setParkingCostInfo(int[] mgraParkArea, double[] lsWgtAvgCostM,

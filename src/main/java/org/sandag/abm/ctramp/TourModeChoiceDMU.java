@@ -57,6 +57,11 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
 	}
 
 
+    protected double[][][][]           transitSkim;
+    protected double inboundFemaleBikeLogsum;
+    protected double outboundFemaleBikeLogsum;
+    protected double inboundMaleBikeLogsum;
+    protected double outboundMaleBikeLogsum;
 	public Household getHouseholdObject() {
 		return hh;
 	}
@@ -72,6 +77,8 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
 	public void setTourObject(Tour tourObject) {
 		tour = tourObject;
 	}
+    public double getInboundFemaleBikeLogsum() {
+		return inboundFemaleBikeLogsum;
 
 	public void setWorkTourObject(Tour tourObject) {
 		workTour = tourObject;
@@ -87,16 +94,22 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
 
 	public void setBikeLogsum(double bikeLogsum) {
 		this.bikeLogsum = bikeLogsum;
+	private void setBikeLogsum(double inboundFemaleBikeLogsum, double outboundFemaleBikeLogsum,
+			                   double inboundMaleBikeLogsum  , double outboundMaleBikeLogsum) {
+		this.inboundFemaleBikeLogsum = inboundFemaleBikeLogsum;
+		this.outboundFemaleBikeLogsum = outboundFemaleBikeLogsum;
+		this.inboundMaleBikeLogsum = inboundMaleBikeLogsum;
+		this.outboundMaleBikeLogsum = outboundMaleBikeLogsum;
 	}
 	
 	public void setBikeLogsum(BikeLogsum bls, Tour tour, Person person) {
-		if (person == null) {
-			setBikeLogsum(bls.getMultiSegmentLogsum(tour.getTourOrigMgra(),tour.getTourDestMgra(),
-		    		BikeLogsumSegment.getTourSegments(tour.getTourPrimaryPurposeIndex() <= 3)));
-		} else {
-			setBikeLogsum(bls.getMultiSegmentLogsum(tour.getTourOrigMgra(),tour.getTourDestMgra(),
-		    		BikeLogsumSegment.getTourSegments(person.getPersonIsFemale() == 1,tour.getTourPrimaryPurposeIndex() <= 3)));
-		}
+		int origin = tour.getTourOrigMgra();
+		int dest = tour.getTourDestMgra();
+		boolean mandatory = tour.getTourPrimaryPurposeIndex() <= 3;
+		setBikeLogsum(bls.getValue(new BikeLogsumSegment(true,mandatory,true),origin,dest),
+				      bls.getValue(new BikeLogsumSegment(true,mandatory,false),origin,dest),
+				      bls.getValue(new BikeLogsumSegment(false,mandatory,true),origin,dest),
+			          bls.getValue(new BikeLogsumSegment(false,mandatory,false),origin,dest));
 	}
 	
 	public void setBikeLogsum(BikeLogsum bls, Tour tour) {
