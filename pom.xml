@@ -196,7 +196,7 @@
             <id>aztec</id>
             <properties>
                 <jppf.server.host>172.16.34.30</jppf.server.host>
-                <map.folder>abm</map.folder>
+                <map.folder>c$</map.folder>
                 <jppf.management.host>172.16.34.30</jppf.management.host>
                 <matrix.server.host>172.16.34.30</matrix.server.host>
                 <matrix.server.port>1191</matrix.server.port>

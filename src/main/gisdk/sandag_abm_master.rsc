@@ -169,7 +169,13 @@ Macro "Run SANDAG ABM"
     RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Create LUZ Skims"})
    ok = RunMacro("TCB Run Macro", 1, "Create LUZ Skims",{}) 
    if !ok then goto quit
-	
+
+   // copy final trip tables from output to input folder as warm start trip tables for next runs
+   CopyFile(outputDir+"\\trip_EA.mtx", inputDir+"\\trip_EA.mtx")
+   CopyFile(outputDir+"\\trip_AM.mtx", inputDir+"\\trip_AM.mtx")
+   CopyFile(outputDir+"\\trip_MD.mtx", inputDir+"\\trip_MD.mtx")
+   CopyFile(outputDir+"\\trip_PM.mtx", inputDir+"\\trip_PM.mtx")
+   CopyFile(outputDir+"\\trip_EV.mtx", inputDir+"\\trip_EV.mtx")
 
    RunMacro("TCB Closing", ok, "False")
    return(1)
