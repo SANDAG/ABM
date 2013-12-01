@@ -102,7 +102,7 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
             }
             
             Map<NodePair<SandagBikeNode>,double[]> logsums = application.calculateMarketSegmentLogsums();
-            Map<Integer,Integer> centroids = configuration.getInverseZonalCentroidIdMap();
+            Map<Integer,Integer> centroids = configuration.getInverseOriginZonalCentroidIdMap();
             
             try (PrintWriter writer = new PrintWriter(outputFile.toFile())) {
             	StringBuilder sb = new StringBuilder("i,j");
