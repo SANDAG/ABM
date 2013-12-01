@@ -16,9 +16,11 @@ public interface PathAlternativeListGenerationConfiguration<N extends Node, E ex
     public double[] getSampleMaxCounts();
     public boolean isRandomCostSeeded();
     public Map<Integer,Map<Integer,Double>> getNearbyZonalDistanceMap();
-    public Map<Integer,Integer> getZonalCentroidIdMap(); 
+    public Map<Integer,Integer> getOriginZonalCentroidIdMap();
+    public Map<Integer,Integer> getDestinationZonalCentroidIdMap();
     public String getOutputDirectory();
     public Set<Integer> getTraceOrigins();
     public Map<String,String> getPropertyMap();
-    public Map<Integer,Integer> getInverseZonalCentroidIdMap(); 
+    public Map<Integer,Integer> getInverseOriginZonalCentroidIdMap(); 
+    public Map<Integer,Integer> getInverseDestinationZonalCentroidIdMap();
 }

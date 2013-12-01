@@ -20,7 +20,8 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
     PathAlternativeListGenerationConfiguration<N,E,T> configuration;
     Network<N,E,T> network;
     Map<Integer,Map<Integer,Double>> nearbyZonalDistanceMap;
-    Map<Integer,Integer> zonalCentroidIdMap;
+    Map<Integer,Integer> originZonalCentroidIdMap;
+    Map<Integer,Integer> destinationZonalCentroidIdMap;
     double[] sampleDistanceBreaks;
     double[] samplePathSizes;
     double[] sampleMinCounts;
@@ -45,7 +46,8 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
         this.configuration = configuration;
         this.network = configuration.getNetwork();
         this.nearbyZonalDistanceMap = Collections.unmodifiableMap(configuration.getNearbyZonalDistanceMap());
-        this.zonalCentroidIdMap = Collections.unmodifiableMap(configuration.getZonalCentroidIdMap());
+        this.originZonalCentroidIdMap = Collections.unmodifiableMap(configuration.getOriginZonalCentroidIdMap());
+        this.destinationZonalCentroidIdMap = Collections.unmodifiableMap(configuration.getDestinationZonalCentroidIdMap());
         this.sampleDistanceBreaks = configuration.getSampleDistanceBreaks();
         this.samplePathSizes = configuration.getSamplePathSizes();
         this.sampleMinCounts = configuration.getSampleMinCounts();
@@ -69,7 +71,7 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
         startTime = System.currentTimeMillis();
         int threadCount = Runtime.getRuntime().availableProcessors();
         ExecutorService executor = Executors.newFixedThreadPool(threadCount); 
-        final Queue<Integer> originQueue = new ConcurrentLinkedQueue<>(zonalCentroidIdMap.keySet());
+        final Queue<Integer> originQueue = new ConcurrentLinkedQueue<>(originZonalCentroidIdMap.keySet());
         final ConcurrentHashMap<Integer,List<Integer>> insufficientSamplePairs = new ConcurrentHashMap<>();
         final CountDownLatch latch = new CountDownLatch(threadCount);
         final AtomicInteger counter = new AtomicInteger();
@@ -143,13 +145,17 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
             ShortestPathResultSet<N> result;
             int distanceIndex;
             
-            singleOriginNode.add(network.getNode(zonalCentroidIdMap.get(origin)));
-            N destinationNode;
+            singleOriginNode.add(network.getNode(originZonalCentroidIdMap.get(origin)));
+            N destinationNode = null;
             PathAlternativeList<N,E> alternativeList;
             
             if ( nearbyZonalDistanceMap.containsKey(origin) ) {
                 for (int destination : nearbyZonalDistanceMap.get(origin).keySet()) {
-                    destinationNode = network.getNode(zonalCentroidIdMap.get(destination));
+                    try {
+                        destinationNode = network.getNode(destinationZonalCentroidIdMap.get(destination));
+                    } catch (NullPointerException e) {
+                        System.out.println(destinationZonalCentroidIdMap.get(destination));
+                    }
                     destinationNodes.add(destinationNode);
                     destinationDistanceMap.put(destinationNode, nearbyZonalDistanceMap.get(origin).get(destination));
                     destinationZoneMap.put(destinationNode, destination);

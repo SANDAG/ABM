@@ -28,7 +28,7 @@ public class SandagWalkPathChoiceLogsumMatrixApplication extends AbstractPathCho
     protected double[] calculateMarketSegmentLogsums(PathAlternativeList<SandagBikeNode, SandagBikeEdge> alternativeList)
     {
         if ( alternativeList.getCount() > 1 ) {
-            throw new UnsupportedOperationException("Walk logsums cannot be calculated for multiple-path alternative lists");
+            throw new UnsupportedOperationException("Walk logsums cannot be calculated for alternative lists containing multiple paths");
         }
         
         double utility = 0;
@@ -40,7 +40,7 @@ public class SandagWalkPathChoiceLogsumMatrixApplication extends AbstractPathCho
             parent = n;
         }
 
-        return new double[] {utility};    
+        return new double[] {-utility};    
     }
     
     public static void main(String ... args) {
@@ -61,8 +61,10 @@ public class SandagWalkPathChoiceLogsumMatrixApplication extends AbstractPathCho
         factory = new SandagBikeNetworkFactory(propertyMap);
         network = factory.createNetwork();
 
-        configurations.add(new SandagWalkPathAlternativeListGenerationConfiguration(new SandagBikeMgraPathAlternativeListGenerationConfiguration(propertyMap,network)));
-        String[] fileProperties = new String[] {"active.logsum.matrix.file.walk"};
+        configurations.add(new SandagWalkMgraMgraPathAlternativeListGenerationConfiguration(propertyMap,network));
+        configurations.add(new SandagWalkMgraTapPathAlternativeListGenerationConfiguration(propertyMap,network));
+        configurations.add(new SandagWalkTapMgraPathAlternativeListGenerationConfiguration(propertyMap,network));
+        String[] fileProperties = new String[] {"active.logsum.matrix.file.walk.mgra","active.logsum.matrix.file.walk.mgraToTap","active.logsum.matrix.file.walk.tapToMgra"};
         
         for(int i=0; i<configurations.size(); i++)  {
             PathAlternativeListGenerationConfiguration<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> configuration  = configurations.get(i);
@@ -72,14 +74,15 @@ public class SandagWalkPathChoiceLogsumMatrixApplication extends AbstractPathCho
             new File(configuration.getOutputDirectory()).mkdirs();
             
             Map<NodePair<SandagBikeNode>,double[]> logsums = application.calculateMarketSegmentLogsums();
-            Map<Integer,Integer> centroids = configuration.getInverseZonalCentroidIdMap();
+            Map<Integer,Integer> originCentroids = configuration.getInverseOriginZonalCentroidIdMap();
+            Map<Integer,Integer> destinationCentroids = configuration.getInverseDestinationZonalCentroidIdMap();
             
             try
             {
                 FileWriter writer = new FileWriter(new File(filename));
-                writer.write("i, j, logsum\n");
+                writer.write("i, j, value\n");
                 for (NodePair<SandagBikeNode> od : logsums.keySet()) {
-                    writer.write(centroids.get(od.getFromNode().getId()) + ", " + centroids.get(od.getToNode().getId()) + ", " + Arrays.toString(logsums.get(od)).substring(1).replaceFirst("]", "") + "\n" );
+                    writer.write(originCentroids.get(od.getFromNode().getId()) + ", " + destinationCentroids.get(od.getToNode().getId()) + ", " + Arrays.toString(logsums.get(od)).substring(1).replaceFirst("]", "") + "\n" );
                 }
                 writer.flush();
                 writer.close();  

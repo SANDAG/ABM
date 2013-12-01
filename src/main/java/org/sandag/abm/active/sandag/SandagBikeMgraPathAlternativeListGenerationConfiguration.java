@@ -13,7 +13,7 @@ public class SandagBikeMgraPathAlternativeListGenerationConfiguration extends Sa
     public SandagBikeMgraPathAlternativeListGenerationConfiguration(Map<String,String> propertyMap, Network<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> network)
     {
         super(propertyMap, network);
-        this.PROPERTIES_MAXDIST_ZONE = "active.maxdist.mgra";
+        this.PROPERTIES_MAXDIST_ZONE = "active.maxdist.bike.mgra";
     }
     
     protected void createZonalCentroidIdMap()

@@ -169,13 +169,19 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
     }
     
     @Override
-    public Map<Integer, Integer> getZonalCentroidIdMap()
+    public Map<Integer, Integer> getOriginZonalCentroidIdMap()
     {
         if (zonalCentroidIdMap == null) {
             createZonalCentroidIdMap();
         }
         
         return zonalCentroidIdMap;
+    }
+    
+    @Override
+    public Map<Integer, Integer> getDestinationZonalCentroidIdMap()
+    {
+        return getOriginZonalCentroidIdMap();
     }
     
     @Override
@@ -186,13 +192,18 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
     
     protected abstract void createZonalCentroidIdMap();
     
-    public Map<Integer,Integer> getInverseZonalCentroidIdMap()
+    public Map<Integer,Integer> getInverseOriginZonalCentroidIdMap()
     {
         HashMap<Integer,Integer> newMap = new HashMap<>();
-        Map<Integer,Integer> origMap = getZonalCentroidIdMap();
+        Map<Integer,Integer> origMap = getOriginZonalCentroidIdMap();
         for (Integer o : origMap.keySet()) {
             newMap.put(origMap.get(o), o);
         }
         return newMap;
+    }
+    
+    public Map<Integer, Integer> getInverseDestinationZonalCentroidIdMap()
+    {
+        return getInverseOriginZonalCentroidIdMap();
     }
 }
