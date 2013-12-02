@@ -186,6 +186,7 @@ public class McLogsumsCalculator
 
         setNmTripMcDmuAttributes(mcDmuObject, origMgra, destMgra, departPeriod, debug);
          
+         mcDmuObject.setBikeLogsum(bls.getValue(new BikeLogsumSegment(tour.getFemale() == 1,false,trip.isInbound()),origMgra,destMgra));
 
         int[][] bestTapPairs = null;
 

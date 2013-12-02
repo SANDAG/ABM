@@ -118,9 +118,6 @@ public class TripModeChoiceDMU
 
 
     
-    protected double femaleBikeLogsum;
-    protected double maleBikeLogsum;
-    
     
     public TripModeChoiceDMU(ModelStructure modelStructure)
     {
@@ -129,26 +126,6 @@ public class TripModeChoiceDMU
 
         transitSkim = new double[TourModeChoiceDMU.NUM_ACC_EGR][TourModeChoiceDMU.NUM_LOC_PREM][TourModeChoiceDMU.NUM_SKIMS];
     }
-	
-	public void setBikeLogsum(BikeLogsum bls, Tour tour, Person person, int origin, int dest, boolean inbound) {
-		boolean mandatory = tour.getTourPrimaryPurposeIndex() <= 3;
-		setBikeLogsum(bls.getValue(new BikeLogsumSegment(true,mandatory,inbound),origin,dest),
-				      bls.getValue(new BikeLogsumSegment(false,mandatory,inbound),origin,dest));
-	}
-    
-    public double getFemaleBikeLogsum() {
-		return femaleBikeLogsum;
-	}
-    
-    public double getMaleBikeLogsum() {
-		return maleBikeLogsum;
-	}
-
-
-	private void setBikeLogsum(double femaleBikeLogsum, double maleBikeLogsum) {
-		this.femaleBikeLogsum = femaleBikeLogsum;
-		this.maleBikeLogsum = maleBikeLogsum;
-	}
     
     
     public void setParkingCostInfo( int[] mgraParkArea, double[] lsWgtAvgCostM, double[] lsWgtAvgCostD, double[] lsWgtAvgCostH )
@@ -427,7 +404,13 @@ public class TripModeChoiceDMU
     {
         tripDestIsTourDest = value;
     }
-
+    
+    public void setBikeLogsum(int origin, int dest, boolean inbound) {
+    	//do nothing - this is a stub to allow SANDAG to work correctly
+    	// see SandagTripModeChoiceModelDMU for actual implementation
+    }
+    
+    
     public IndexValues getDmuIndexValues()
     {
         return dmuIndex;

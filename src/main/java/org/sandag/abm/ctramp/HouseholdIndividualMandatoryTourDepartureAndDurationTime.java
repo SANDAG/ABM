@@ -7,14 +7,23 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
+
+import java.io.Serializable;
+import java.util.*;
+
+import com.pb.common.calculator.VariableTable;
+import com.pb.common.datafile.TableDataSet;
+import com.pb.common.util.ResourceUtil;
+import com.pb.common.newmodel.ChoiceModelApplication;
+
 import org.sandag.abm.application.SandagCtrampDmuFactory;
 import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
-import com.pb.common.calculator.VariableTable;
-import com.pb.common.datafile.TableDataSet;
-import com.pb.common.newmodel.ChoiceModelApplication;
-import com.pb.common.util.ResourceUtil;
+
+
+
+
 
 /**
  * Created by IntelliJ IDEA. User: Jim Date: Jul 11, 2008 Time: 9:25:30 AM To
@@ -1556,7 +1565,7 @@ public class HouseholdIndividualMandatoryTourDepartureAndDurationTime
         mcDmuObject.setDmuIndexValues(household.getHhId(), t.getTourOrigMgra(),
                 t.getTourOrigMgra(), t.getTourDestMgra(), household.getDebugChoiceModels());
         
-        mcDmuObject.setBikeLogsum(bls,t,person);
+
 
         mcDmuObject.setOrigDuDen(mgraManager.getDuDenValue(t.getTourOrigMgra()));
         mcDmuObject.setOrigEmpDen(mgraManager.getEmpDenValue(t.getTourOrigMgra()));
@@ -1599,7 +1608,7 @@ public class HouseholdIndividualMandatoryTourDepartureAndDurationTime
         }
 
         ModelStructure modelStructure = new SandagModelStructure();
-        SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure);
+        SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure,propertyMap);
         String[] tourPurposeList = {"White Collar", "Services", "Health", "Retail and Food",
                 "Blue Collar", "Military"};
 

@@ -11,8 +11,12 @@
 package org.sandag.abm.application;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.sandag.abm.ctramp.AtWorkSubtourFrequencyDMU;
 import org.sandag.abm.ctramp.AutoOwnershipChoiceDMU;
+import org.sandag.abm.ctramp.BikeLogsum;
 import org.sandag.abm.ctramp.CoordinatedDailyActivityPatternDMU;
 import org.sandag.abm.ctramp.CtrampDmuFactoryIf;
 import org.sandag.abm.ctramp.DcSoaDMU;
@@ -44,10 +48,12 @@ public class SandagCtrampDmuFactory
 {
 
     private ModelStructure modelStructure;
+    private Map<String, String> propertyMap;
 
-    public SandagCtrampDmuFactory(ModelStructure modelStructure)
+    public SandagCtrampDmuFactory(ModelStructure modelStructure, Map<String, String> propertyMap)
     {
         this.modelStructure = modelStructure;
+        this.propertyMap = propertyMap;
     }
 
     public AutoOwnershipChoiceDMU getAutoOwnershipDMU()
@@ -97,7 +103,9 @@ public class SandagCtrampDmuFactory
 
     public TourModeChoiceDMU getModeChoiceDMU()
     {
-        return new SandagTourModeChoiceDMU(modelStructure);
+        SandagTourModeChoiceDMU dmu = new SandagTourModeChoiceDMU(modelStructure);
+        dmu.setBikeLogsum(BikeLogsum.getBikeLogsum(propertyMap));
+        return dmu;
     }
 
     public IndividualMandatoryTourFrequencyDMU getIndividualMandatoryTourFrequencyDMU()
@@ -137,7 +145,9 @@ public class SandagCtrampDmuFactory
 
     public TripModeChoiceDMU getTripModeChoiceDMU()
     {
-        return new SandagTripModeChoiceDMU(modelStructure);
+        SandagTripModeChoiceDMU dmu = new SandagTripModeChoiceDMU(modelStructure);
+        dmu.setBikeLogsum(BikeLogsum.getBikeLogsum(propertyMap));
+        return dmu;
     }
 
     public ParkingChoiceDMU getParkingChoiceDMU()

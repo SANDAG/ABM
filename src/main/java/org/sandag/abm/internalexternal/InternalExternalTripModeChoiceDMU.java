@@ -507,6 +507,7 @@ public class InternalExternalTripModeChoiceDMU
         methodIndexMap.put("getDt_cr_WalkAuxTime", 202);
         methodIndexMap.put("getDt_cr_fare", 203);
         methodIndexMap.put("getDt_cr_xfers", 204);
+        methodIndexMap.put("getBikeLogsum",205);
 
     }
 
@@ -939,6 +940,9 @@ public class InternalExternalTripModeChoiceDMU
                 if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, CR, XFERS);
                 else returnValue = getTransitSkim(WTD, CR, XFERS);
                 break;
+            case 205:
+            	returnValue = getBikeLogsum();
+            break;
 
             default:
                 logger.error("method number = " + variableIndex + " not found");

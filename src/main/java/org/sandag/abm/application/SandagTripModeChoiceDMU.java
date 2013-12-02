@@ -1,14 +1,28 @@
 package org.sandag.abm.application;
 
 import java.util.HashMap;
+import org.sandag.abm.ctramp.TourModeChoiceDMU;
+
+import org.sandag.abm.ctramp.BikeLogsum;
+import org.sandag.abm.ctramp.BikeLogsumSegment;
+import org.sandag.abm.ctramp.Household;
+import org.sandag.abm.ctramp.Person;
+import org.sandag.abm.ctramp.Tour;
+import org.sandag.abm.ctramp.TourModeChoiceDMU;
 import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.TripModeChoiceDMU;
+
 import com.pb.common.calculator.IndexValues;
 
 public class SandagTripModeChoiceDMU
         extends TripModeChoiceDMU
 {
-
+	private int setPersonHhTourCounter = 0;
+	private BikeLogsum bls;
+    protected double femaleBikeLogsum;
+    protected double maleBikeLogsum;
+    protected double femaleInParty;
+    protected double maleInParty;
     public SandagTripModeChoiceDMU(ModelStructure modelStructure)
     {
         super(modelStructure);
@@ -175,6 +189,78 @@ public class SandagTripModeChoiceDMU
         return tourModeIsSchBus;
     }
 
+    public void setBikeLogsum(BikeLogsum bls) 
+    {
+    	this.bls = bls;
+    }
+    
+    public void setPersonObject(Person person) 
+    {
+    	super.setPersonObject(person);
+    	checkSetPersonHhTour();
+    }
+
+    public void setHouseholdObject(Household hh) 
+    {
+    	super.setHouseholdObject(hh);
+    	checkSetPersonHhTour();
+    }
+
+    public void setTourObject(Tour tour) 
+    {
+    	super.setTourObject(tour);
+    	checkSetPersonHhTour();
+    }
+    
+    private void checkSetPersonHhTour() 
+    {
+    	setPersonHhTourCounter = (setPersonHhTourCounter+1) % 3;
+    	if (setPersonHhTourCounter == 0) {
+    		setParty(person,tour,hh);
+    	}
+    }
+	
+	public double getFemaleInParty() 
+	{
+		return femaleInParty;
+	}
+	
+	public double getMaleInParty() 
+	{
+		return maleInParty;
+	}
+	
+	public void setParty(Person person, Tour tour, Household hh) 
+	{
+        if (person != null) {
+        	femaleInParty = person.getPersonIsFemale();
+        	maleInParty = femaleInParty == 0 ? 1 : 0;
+        } else {
+        	for (int participant : tour.getPersonNumArray()) {
+        		femaleInParty = 0;
+        		maleInParty = 0;
+        		if (hh.getPerson(participant).getPersonIsFemale() == 1)
+        			femaleInParty = 1;
+        		else
+        			maleInParty = 1;
+        	}
+        }
+	}
+	
+	public void setBikeLogsum(int origin, int dest, boolean inbound) {
+		boolean mandatory = tour.getTourPrimaryPurposeIndex() <= 3;
+		femaleBikeLogsum = bls.getValue(new BikeLogsumSegment(true,mandatory,inbound),origin,dest);
+		maleBikeLogsum = bls.getValue(new BikeLogsumSegment(false,mandatory,inbound),origin,dest);
+	}
+    
+    public double getFemaleBikeLogsum() {
+		return femaleBikeLogsum;
+	}
+    
+    public double getMaleBikeLogsum() {
+		return maleBikeLogsum;
+	}
+    
     private void setupMethodIndexMap()
     {
         methodIndexMap = new HashMap<String, Integer>();
@@ -334,6 +420,11 @@ public class SandagTripModeChoiceDMU
         methodIndexMap.put("getDt_cr_WalkAuxTime", 202);
         methodIndexMap.put("getDt_cr_fare", 203);
         methodIndexMap.put("getDt_cr_xfers", 204);
+        
+        methodIndexMap.put("getFemaleInParty", 205);
+        methodIndexMap.put("getMaleInParty", 206);
+        methodIndexMap.put("getFemaleBikeLogsum", 207);
+        methodIndexMap.put("getMaleBikeLogsum", 208);
 
     }
 
@@ -859,6 +950,18 @@ public class SandagTripModeChoiceDMU
                 if (outboundHalfTourDirection == 1) returnValue = getTransitSkim(DTW, CR, XFERS);
                 else returnValue = getTransitSkim(WTD, CR, XFERS);
                 break;
+            case 205:
+            	returnValue = getFemaleInParty();
+            	break;
+            case 206:
+            	returnValue = getMaleInParty();
+            	break;
+            case 207:
+            	returnValue = getFemaleBikeLogsum();
+            	break;
+            case 208:
+            	returnValue = getMaleBikeLogsum();
+            	break;
 
             default:
                 logger.error("method number = " + variableIndex + " not found");

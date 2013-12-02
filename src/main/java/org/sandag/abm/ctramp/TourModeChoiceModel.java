@@ -269,8 +269,6 @@ public class TourModeChoiceModel
         mcDmuObject.setTourObject(tour);
         mcDmuObject.setDmuIndexValues(household.getHhId(), tour.getTourDestMgra(),
                 tour.getTourOrigMgra(), tour.getTourDestMgra(), household.getDebugChoiceModels());
-
-        mcDmuObject.setBikeLogsum(bls,tour,person);
         
         
     }    

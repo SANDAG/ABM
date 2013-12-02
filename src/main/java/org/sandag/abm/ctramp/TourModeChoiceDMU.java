@@ -75,11 +75,7 @@ public class TourModeChoiceDMU
     protected double                   nmBikeTimeOut;
     protected double                   nmBikeTimeIn;
 
-    protected double[][][][]           transitSkim;
-    protected double inboundFemaleBikeLogsum;
-    protected double outboundFemaleBikeLogsum;
-    protected double inboundMaleBikeLogsum;
-    protected double outboundMaleBikeLogsum;
+    protected double[][][][] transitSkim;
 
 	public TourModeChoiceDMU(ModelStructure modelStructure)
     {
@@ -89,46 +85,6 @@ public class TourModeChoiceDMU
         transitSkim = new double[McLogsumsCalculator.NUM_ACC_EGR][McLogsumsCalculator.NUM_LOC_PREM][McLogsumsCalculator.NUM_SKIMS][McLogsumsCalculator.NUM_DIR];
 
     }
-    
-    public double getInboundFemaleBikeLogsum() {
-		return inboundFemaleBikeLogsum;
-	}
-    
-    public double getOutboundFemaleBikeLogsum() {
-		return outboundFemaleBikeLogsum;
-	}
-    
-    public double getInboundMaleBikeLogsum() {
-		return inboundMaleBikeLogsum;
-	}
-    
-    public double getOutboundMaleBikeLogsum() {
-		return outboundMaleBikeLogsum;
-	}
-
-
-	private void setBikeLogsum(double inboundFemaleBikeLogsum, double outboundFemaleBikeLogsum,
-			                   double inboundMaleBikeLogsum  , double outboundMaleBikeLogsum) {
-		this.inboundFemaleBikeLogsum = inboundFemaleBikeLogsum;
-		this.outboundFemaleBikeLogsum = outboundFemaleBikeLogsum;
-		this.inboundMaleBikeLogsum = inboundMaleBikeLogsum;
-		this.outboundMaleBikeLogsum = outboundMaleBikeLogsum;
-	}
-	
-	public void setBikeLogsum(BikeLogsum bls, Tour tour, Person person) {
-		int origin = tour.getTourOrigMgra();
-		int dest = tour.getTourDestMgra();
-		boolean mandatory = tour.getTourPrimaryPurposeIndex() <= 3;
-		setBikeLogsum(bls.getValue(new BikeLogsumSegment(true,mandatory,true),origin,dest),
-				      bls.getValue(new BikeLogsumSegment(true,mandatory,false),origin,dest),
-				      bls.getValue(new BikeLogsumSegment(false,mandatory,true),origin,dest),
-			          bls.getValue(new BikeLogsumSegment(false,mandatory,false),origin,dest));
-	}
-	
-	public void setBikeLogsum(BikeLogsum bls, Tour tour) {
-		setBikeLogsum(bls,tour,null);
-	}
-
     
     public void setHouseholdObject(Household hhObject)
     {

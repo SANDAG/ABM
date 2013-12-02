@@ -374,8 +374,6 @@ public class SubtourDestChoiceModel
                     mcDmuObject.setDmuIndexValues(hh.getHhId(), homeMgra, origMgra, 0,
                             hh.getDebugChoiceModels());
 
-                    mcDmuObject.setBikeLogsum(bls,tour,p);
-
                     // update the DC dmuObject for this person
                     dcDmuObject.setHouseholdObject(hh);
                     dcDmuObject.setPersonObject(p);
@@ -860,8 +858,6 @@ public class SubtourDestChoiceModel
         mcDmuObject.setWorkTourObject(workTour);
         mcDmuObject.setDmuIndexValues(household.getHhId(), household.getHhMgra(),
                 t.getTourOrigMgra(), sampleDestMgra, household.getDebugChoiceModels());
-
-        mcDmuObject.setBikeLogsum(bls,t,person);
         
 
         mcDmuObject.setPTazTerminalTime(tazs.getOriginTazTerminalTime(mgraManager.getTaz(t
@@ -1033,7 +1029,7 @@ public class SubtourDestChoiceModel
          *         
          */
         ModelStructure modelStructure = new SandagModelStructure();
-        SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure);
+        SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure,propertyMap);
 
         BuildAccessibilities aggAcc = BuildAccessibilities.getInstance();
         if (!aggAcc.getAccessibilitiesAreBuilt())

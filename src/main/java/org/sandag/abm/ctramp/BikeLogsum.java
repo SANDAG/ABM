@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.sandag.abm.modechoice.MgraDataManager;
 
 /**
@@ -20,6 +21,8 @@ import org.sandag.abm.modechoice.MgraDataManager;
  * can be provided (a default value of 26 million will be used otherwise) via the {@code BIKE_LOGSUM_NODE_PAIR_COUNT_PROPERTY} property.
  */
 public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment> {
+    private Logger logger = Logger.getLogger(BikeLogsum.class);
+	
 	public static final String BIKE_LOGSUM_OUTPUT_PROPERTY = "active.output.bike";
 	public static final String BIKE_LOGSUM_MGRA_FILE_PROPERTY = "active.logsum.matrix.file.bike.mgra";
 	public static final String BIKE_LOGSUM_TAZ_FILE_PROPERTY = "active.logsum.matrix.file.bike.taz";
@@ -120,17 +123,17 @@ public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment> {
 	}
 	
 	private void loadLogsum(String logsumFile, boolean taz) {
-		System.out.println("Processing bike logsum from " + logsumFile);
+		logger.info("Processing bike logsum from " + logsumFile);
+		int counter = 0;
+		long startTime = System.currentTimeMillis();
+		
 		int segmentWidth = BikeLogsumSegment.segmentWidth();
 		try (BufferedReader reader = new BufferedReader(new FileReader(logsumFile))) {
 			int[] segmentIndex = new int[segmentWidth];
 			boolean first = true;
 
 			String line;
-			int counter = 0;
 			while ((line = reader.readLine()) != null) {
-				if (++counter % 100_000 == 0)
-					System.out.println("Finished processing " + counter + " node pairs (logsum lookup size: " + logsum.size() + ")");
 				String[] lineData = line.trim().split(",");
 				for (int i = 0; i < lineData.length; i++)
 					lineData[i] = lineData[i].trim();
@@ -145,6 +148,8 @@ public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment> {
 					first = false;
 					continue;
 				}
+				if (++counter % 100_000 == 0)
+					logger.debug("Finished processing " + counter + " node pairs (logsum lookup size: " + logsum.size() + ")");
 				double[] logsumData = new double[segmentWidth];
 				for (int i = 0; i < logsumData.length; i++)
 					logsumData[i] = Double.parseDouble(lineData[segmentIndex[i]]);
@@ -159,6 +164,7 @@ public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment> {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+		logger.info("Finished processing " + counter + " node pairs (logsum lookup size: " + logsum.size() + ") in " + ((System.currentTimeMillis() - startTime) / 60000.0) + " minutes");
 	}
 	
 	private double[] getLogsums(int rowId, int columnId) {

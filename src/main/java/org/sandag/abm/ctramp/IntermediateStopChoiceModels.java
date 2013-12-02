@@ -2394,8 +2394,6 @@ public class IntermediateStopChoiceModels
 
             int altMgra = finalSample[i];
             mcDmuObject.getDmuIndexValues().setDestZone(altMgra);
-
-            mcDmuObject.setBikeLogsum(bls,s.getTour(),s.getTour().getPersonObject(),s.getOrig(),altMgra,s.isInboundStop());
             
             // set distances to/from stop anchor points to stop location alternative.
             ikDistance[i] = distanceFromStopOrigToAllMgras[altMgra];
@@ -3326,8 +3324,8 @@ public class IntermediateStopChoiceModels
         mcDmuObject.setTripPeriod(s.getStopPeriod());
 
         double reimbursePct = mcDmuObject.getPersonObject().getParkingReimbursement();
-        mcDmuObject.setReimburseProportion(reimbursePct);
-
+        mcDmuObject.setReimburseProportion( reimbursePct );
+        
     }
 
     /**
@@ -3680,8 +3678,6 @@ public class IntermediateStopChoiceModels
 
         int altMgra = s.getDest();
         mcDmuObject.getDmuIndexValues().setDestZone(altMgra);
-
-        mcDmuObject.setBikeLogsum(bls,s.getTour(),s.getTour().getPersonObject(),s.getOrig(),altMgra,s.isInboundStop());
         
         // set the mode choice attributes for the sample location
         mcDmuObject.setDestDuDen(mgraManager.getDuDenValue(altMgra));
