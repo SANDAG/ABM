@@ -675,8 +675,6 @@ public class SubtourDepartureAndDurationTime
         mcDmuObject.setWorkTourObject(workTour);
         mcDmuObject.setDmuIndexValues(household.getHhId(), household.getHhMgra(),
                 t.getTourOrigMgra(), t.getTourDestMgra(), household.getDebugChoiceModels());
-
-        mcDmuObject.setBikeLogsum(bls,t,person);
         
 
         mcDmuObject.setPTazTerminalTime(tazs.getOriginTazTerminalTime(mgraManager.getTaz(t
@@ -797,7 +795,7 @@ public class SubtourDepartureAndDurationTime
         /*        
          */
         ModelStructure modelStructure = new SandagModelStructure();
-        SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure);
+        SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure,propertyMap);
 
         MgraDataManager mgraManager = MgraDataManager.getInstance(propertyMap);
         TazDataManager tazManager = TazDataManager.getInstance(propertyMap);

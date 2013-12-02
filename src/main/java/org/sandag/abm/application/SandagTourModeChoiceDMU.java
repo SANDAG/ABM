@@ -5,9 +5,27 @@ import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.TourModeChoiceDMU;
 
+import org.sandag.abm.ctramp.BikeLogsum;
+import org.sandag.abm.ctramp.BikeLogsumSegment;
+import org.sandag.abm.ctramp.Household;
+import org.sandag.abm.ctramp.Person;
+import org.sandag.abm.ctramp.Tour;
+import org.sandag.abm.ctramp.TourModeChoiceDMU;
+import org.sandag.abm.ctramp.ModelStructure;
+
+
 public class SandagTourModeChoiceDMU
         extends TourModeChoiceDMU
 {
+    
+	private int setPersonHhTourCounter = 0;
+	private BikeLogsum bls;
+    protected double inboundFemaleBikeLogsum;
+    protected double outboundFemaleBikeLogsum;
+    protected double inboundMaleBikeLogsum;
+    protected double outboundMaleBikeLogsum;
+    protected double femaleInParty;
+    protected double maleInParty;
 
     public SandagTourModeChoiceDMU(ModelStructure modelStructure, Logger aLogger)
     {
@@ -119,8 +137,109 @@ public class SandagTourModeChoiceDMU
     {
         return getNmBikeTimeIn();
     }
+    
+    
+    public void setBikeLogsum(BikeLogsum bls) 
+    {
+    	this.bls = bls;
+    }
+    
+    public void setPersonObject(Person person) 
+    {
+    	super.setPersonObject(person);
+    	checkSetPersonHhTour();
+    }
 
-    private void setupMethodIndexMap()
+    public void setHouseholdObject(Household hh) 
+    {
+    	super.setHouseholdObject(hh);
+    	checkSetPersonHhTour();
+    }
+
+    public void setTourObject(Tour tour) 
+    {
+    	super.setTourObject(tour);
+    	checkSetPersonHhTour();
+    }
+    
+    private void checkSetPersonHhTour() 
+    {
+    	setPersonHhTourCounter = (setPersonHhTourCounter+1) % 3;
+    	if (setPersonHhTourCounter == 0) {
+    		setParty(person,tour,hh);
+    		setBikeLogsum();
+    	}
+    }
+	
+	public double getFemaleInParty() 
+	{
+		return femaleInParty;
+	}
+	
+	public double getMaleInParty() 
+	{
+		return maleInParty;
+	}
+	
+	public void setParty(Person person, Tour tour, Household hh) 
+	{
+        if (person != null) {
+        	femaleInParty = person.getPersonIsFemale();
+        	maleInParty = femaleInParty == 0 ? 1 : 0;
+        } else {
+        	for (int participant : tour.getPersonNumArray()) {
+        		femaleInParty = 0;
+        		maleInParty = 0;
+        		if (hh.getPerson(participant).getPersonIsFemale() == 1)
+        			femaleInParty = 1;
+        		else
+        			maleInParty = 1;
+        	}
+        }
+	}
+    
+    public double getInboundFemaleBikeLogsum() 
+    {
+		return inboundFemaleBikeLogsum;
+	}
+    
+    public double getOutboundFemaleBikeLogsum() 
+    {
+		return outboundFemaleBikeLogsum;
+	}
+    
+    public double getInboundMaleBikeLogsum() 
+    {
+		return inboundMaleBikeLogsum;
+	}
+    
+    public double getOutboundMaleBikeLogsum() 
+    {
+		return outboundMaleBikeLogsum;
+	}
+
+
+	private void setBikeLogsum(double inboundFemaleBikeLogsum, double outboundFemaleBikeLogsum,
+			                   double inboundMaleBikeLogsum  , double outboundMaleBikeLogsum) 
+	{
+		this.inboundFemaleBikeLogsum = inboundFemaleBikeLogsum;
+		this.outboundFemaleBikeLogsum = outboundFemaleBikeLogsum;
+		this.inboundMaleBikeLogsum = inboundMaleBikeLogsum;
+		this.outboundMaleBikeLogsum = outboundMaleBikeLogsum;
+	}
+	
+	private void setBikeLogsum() 
+	{
+		int origin = tour.getTourOrigMgra();
+		int dest = tour.getTourDestMgra();
+		boolean mandatory = tour.getTourPrimaryPurposeIndex() <= 3;
+		setBikeLogsum(bls.getValue(new BikeLogsumSegment(true,mandatory,true),origin,dest),
+				      bls.getValue(new BikeLogsumSegment(true,mandatory,false),origin,dest),
+				      bls.getValue(new BikeLogsumSegment(false,mandatory,true),origin,dest),
+			          bls.getValue(new BikeLogsumSegment(false,mandatory,false),origin,dest));
+	}
+
+  	private void setupMethodIndexMap()
     {
         methodIndexMap = new HashMap<String, Integer>();
 
@@ -461,6 +580,13 @@ public class SandagTourModeChoiceDMU
         methodIndexMap.put("getDtw_cr_fare_in", 397);
         methodIndexMap.put("getDtw_cr_xfers_out", 398);
         methodIndexMap.put("getDtw_cr_xfers_in", 399);
+        
+        methodIndexMap.put("getFemaleInParty", 400);
+        methodIndexMap.put("getMaleInParty", 401);
+        methodIndexMap.put("getInboundFemaleBikeLogsum", 402);
+        methodIndexMap.put("getOutboundFemaleBikeLogsum", 403);
+        methodIndexMap.put("getInboundMaleBikeLogsum", 404);
+        methodIndexMap.put("getOutboundMaleBikeLogsum", 405);
 
         CreateReverseMap();
     }

@@ -381,8 +381,6 @@ public class NonMandatoryDestChoiceModel
                     mcDmuObject.setPersonObject( p );
                     mcDmuObject.setTourObject( tour );
                     mcDmuObject.setDmuIndexValues( hh.getHhId(), homeTaz, origMgra, 0, hh.getDebugChoiceModels() );
-
-                    mcDmuObject.setBikeLogsum(bls,tour,p);
                     
                     // update the DC dmuObject for this person
                     dcDmuObject.setHouseholdObject(hh);
@@ -471,8 +469,6 @@ public class NonMandatoryDestChoiceModel
                 mcDmuObject.setPersonObject( null );
                 mcDmuObject.setTourObject( tour );
                 mcDmuObject.setDmuIndexValues( hh.getHhId(), homeTaz, origMgra, 0, hh.getDebugChoiceModels() );
-
-                mcDmuObject.setBikeLogsum(bls,tour);
                 
                 // update the DC dmuObject for this person
                 dcDmuObject.setHouseholdObject(hh);
@@ -960,7 +956,6 @@ public class NonMandatoryDestChoiceModel
         mcDmuObject.setATazTerminalTime(tazs.getDestinationTazTerminalTime(mgraManager
                 .getTaz(sampleDestMgra)));
 
-        mcDmuObject.setBikeLogsum(bls,t,person);
 
     }
 
@@ -1181,7 +1176,7 @@ public class NonMandatoryDestChoiceModel
         mdm.setMatrixDataServerObject(ms);
 
         ModelStructure modelStructure = new SandagModelStructure();
-        SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure);
+        SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure,propertyMap);
 
         MgraDataManager mgraManager = MgraDataManager.getInstance(propertyMap);
         TazDataManager tazManager = TazDataManager.getInstance(propertyMap);
