@@ -34,7 +34,7 @@ Macro "truck model"(properties, iteration)
        ok = RunMacro("truck-tripgen",properties)
        if !ok then goto quit
     end
-
+/*
     // Build lhdn congested skims
     RunMacro("HwycadLog",{"TruckModel.rsc: truckmodel","hwy skim,(lhdn)"})
     ok = RunMacro("hwy skim",{"lhdn"})
@@ -64,7 +64,7 @@ Macro "truck model"(properties, iteration)
     RunMacro("HwycadLog",{"TruckModel.rsc: truckmodel","hwy skim,(hhdt)"})     
     ok = RunMacro("hwy skim",{"hhdt"}) 
     if !ok then goto quit
-  
+ */ 
     // Distribute daily truck trips and split them by time period
     RunMacro("HwycadLog",{"TruckModel.rsc: truckmodel","trkDistribution,(properties)"})      
     ok = RunMacro("trkDistribution",properties)  
@@ -329,7 +329,7 @@ Creates households by taz and employment by taz files to use in the truck trip g
  
 Inputs:
    sandag.properties
-   input\mgra13_based_input${year}.csv
+   input\mgra13_based_input2050.csv
 
 Outputs:
    output\empByTaz.csv
@@ -338,7 +338,7 @@ Outputs:
 **********************************************************************************************************/
 Macro "Create hh and emp by taz"
     shared path, inputDir, outputDir, mxzone      
-    mgraDataFile      = "mgra13_based_input${year}.csv"
+    mgraDataFile      = "mgra13_based_input2050.csv"
     empbytaz          = "empByTaz.csv"
     hhbytaz           = "hhByTaz.csv"
     
@@ -1021,23 +1021,17 @@ Macro "trkBalanceOneType" (type)
     RunMacro("TCB Init")
     
     Opts = null
-    Opts.Input.[Data Set]  = {outputDir+"\\gmTruckDataIISP.csv"}
-    Opts.Input.[Data View] = {outputDir+"\\gmTruckDataIISP.csv"}
-    Opts.Input.[V1 Holding Sets] = {, }
-    Opts.Input.[V2 Holding Sets] = {, }
+    Opts.Input.[Data View Set] = {outputDir+"\\gmTruckDataIISP.csv", "gmTruckDataIISP"}
     Opts.Field.[Vector 1] = {"[gmTruckDataIISP]." + type + "_Prod"}
     Opts.Field.[Vector 2] = {"[gmTruckDataIISP]." + type + "_Attr"}
-    Opts.Global.Pairs = 1
-    Opts.Global.[Holding Method] = {3, 3}
-    Opts.Global.[Percent Weight] = {50, 50}
-    Opts.Global.[Sum Weight] = {100, 100}
-    Opts.Global.[V1 Options] = {1, 1}
-    Opts.Global.[V2 Options] = {1, 1}
+    Opts.Global.[Holding Method] = {"Weighted Sum"}
+    Opts.Global.[Percent Weight] = {50}
+    Opts.Global.[Sum Weight] = {100}
     Opts.Global.[Store Type] = 1
     Opts.Output.[Output Table] = outputDir+"\\gmTruckDataBal_" + type + ".bin"
     
     RunMacro("HwycadLog",{"TruckModel.rsc: trkBalanceOneType", "Balance "+type})
-    ok=RunMacro("TCB Run Procedure", 1, "Balance", Opts)
+    ok=RunMacro("TCB Run Procedure", "Balance", Opts, &Ret)
 EndMacro
 
 
