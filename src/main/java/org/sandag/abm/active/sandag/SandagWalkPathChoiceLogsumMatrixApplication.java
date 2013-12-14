@@ -3,6 +3,7 @@ package org.sandag.abm.active.sandag;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.*;
 import org.sandag.abm.active.AbstractPathChoiceLogsumMatrixApplication;
 import org.sandag.abm.active.Network;
@@ -64,36 +65,93 @@ public class SandagWalkPathChoiceLogsumMatrixApplication extends AbstractPathCho
         configurations.add(new SandagWalkMgraMgraPathAlternativeListGenerationConfiguration(propertyMap,network));
         configurations.add(new SandagWalkMgraTapPathAlternativeListGenerationConfiguration(propertyMap,network));
         configurations.add(new SandagWalkTapMgraPathAlternativeListGenerationConfiguration(propertyMap,network));
-        String[] fileProperties = new String[] {"active.logsum.matrix.file.walk.mgra","active.logsum.matrix.file.walk.mgraToTap","active.logsum.matrix.file.walk.tapToMgra"};
+        
+        List<Map<NodePair<SandagBikeNode>,double[]>> allMatrices = new ArrayList<>();
+        
+        DecimalFormat formatter = new DecimalFormat("#.##");
         
         for(int i=0; i<configurations.size(); i++)  {
             PathAlternativeListGenerationConfiguration<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> configuration  = configurations.get(i);
-            String filename = configuration.getOutputDirectory() + propertyMap.get(fileProperties[i]);
             application = new SandagWalkPathChoiceLogsumMatrixApplication(configuration);
-            
-            new File(configuration.getOutputDirectory()).mkdirs();
-            
             Map<NodePair<SandagBikeNode>,double[]> logsums = application.calculateMarketSegmentLogsums();
-            Map<Integer,Integer> originCentroids = configuration.getInverseOriginZonalCentroidIdMap();
-            Map<Integer,Integer> destinationCentroids = configuration.getInverseDestinationZonalCentroidIdMap();
-            
-            try
-            {
-                FileWriter writer = new FileWriter(new File(filename));
-                writer.write("i, j, value\n");
-                for (NodePair<SandagBikeNode> od : logsums.keySet()) {
-                    writer.write(originCentroids.get(od.getFromNode().getId()) + ", " + destinationCentroids.get(od.getToNode().getId()) + ", " + Arrays.toString(logsums.get(od)).substring(1).replaceFirst("]", "") + "\n" );
-                }
-                writer.flush();
-                writer.close();  
-            } catch (IOException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            allMatrices.add(logsums);
+        }
+        
+        int asymmPairCount = 0;
+        
+        for ( NodePair<SandagBikeNode> mgraTapPair : allMatrices.get(1).keySet() ) {
+            NodePair<SandagBikeNode> tapMgraPair = new NodePair<SandagBikeNode>(mgraTapPair.getToNode(),mgraTapPair.getFromNode());
+            if ( ! allMatrices.get(2).containsKey(tapMgraPair) ) {
+                allMatrices.get(2).put(tapMgraPair, allMatrices.get(1).get(mgraTapPair));
+                asymmPairCount++;
             }
+        }
+        
+        for ( NodePair<SandagBikeNode> tapMgraPair : allMatrices.get(2).keySet() ) {
+            NodePair<SandagBikeNode> mgraTapPair = new NodePair<SandagBikeNode>(tapMgraPair.getToNode(),tapMgraPair.getFromNode());
+            if ( ! allMatrices.get(1).containsKey(mgraTapPair) ) {
+                allMatrices.get(1).put(mgraTapPair, allMatrices.get(2).get(tapMgraPair));
+                asymmPairCount++;
+            }
+        }
+        
+        new File(configurations.get(0).getOutputDirectory()).mkdirs();
+        
+        System.out.println("Boarding or alighting times defaulted to transpose for " + asymmPairCount + " mgra tap pairs with missing asymmetrical information");
             
+        String filename = configurations.get(0).getOutputDirectory() + "/" + propertyMap.get("active.logsum.matrix.file.walk.mgra");
+            
+        Map<Integer,Integer> originCentroids = configurations.get(0).getInverseOriginZonalCentroidIdMap();
+        Map<Integer,Integer> destinationCentroids = configurations.get(0).getInverseDestinationZonalCentroidIdMap();
+            
+        try
+        {
+            FileWriter writer = new FileWriter(new File(filename));
+            writer.write("i, j, value\n");
+            for (NodePair<SandagBikeNode> od : allMatrices.get(0).keySet()) {
+                double[] values = allMatrices.get(0).get(od);
+                writer.write(originCentroids.get(od.getFromNode().getId()) + ", " + destinationCentroids.get(od.getToNode().getId()));
+                for (double v : values) {
+                    writer.write(", " + formatter.format(v));
+                }
+                writer.write("\n");
+            }
+            writer.flush();
+            writer.close();  
+        } catch (IOException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
 
+        filename = configurations.get(1).getOutputDirectory() + "/" + propertyMap.get("active.logsum.matrix.file.walk.mgratap");
+        originCentroids = configurations.get(1).getInverseOriginZonalCentroidIdMap();
+        destinationCentroids = configurations.get(1).getInverseDestinationZonalCentroidIdMap();
+        
+        try
+        {
+            FileWriter writer = new FileWriter(new File(filename));
+            writer.write("mgra, tap, boarding, alighting\n");
+            for (NodePair<SandagBikeNode> od : allMatrices.get(1).keySet()) {
+                NodePair<SandagBikeNode> doPair = new NodePair<>(od.getToNode(), od.getFromNode());
+                double[] mgraTapValues = allMatrices.get(1).get(od);
+                double[] tapMgraValues = allMatrices.get(2).get(doPair);
+                writer.write(originCentroids.get(od.getFromNode().getId()) + ", " + destinationCentroids.get(od.getToNode().getId()));
+                for (double v : mgraTapValues) {
+                    writer.write(", " + formatter.format(v));
+                }
+                for (double v : tapMgraValues) {
+                    writer.write(", " + formatter.format(v));
+                }
+                writer.write("\n");
+            }
+            writer.flush();
+            writer.close();  
+        } catch (IOException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
     
 }

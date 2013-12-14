@@ -20,7 +20,7 @@ public class SandagBikeTazPathAlternativeListGenerationConfiguration extends San
     public SandagBikeTazPathAlternativeListGenerationConfiguration(Map<String,String> propertyMap, Network<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> network)
     {
         super(propertyMap, network);
-        this.PROPERTIES_MAXDIST_ZONE = "active.maxdist.taz";
+        this.PROPERTIES_MAXDIST_ZONE = "active.maxdist.bike.taz";
     }
     
     protected void createZonalCentroidIdMap()
