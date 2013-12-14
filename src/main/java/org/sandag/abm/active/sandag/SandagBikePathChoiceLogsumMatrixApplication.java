@@ -21,6 +21,7 @@ import org.sandag.abm.ctramp.BikeLogsum;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Person;
 import org.sandag.abm.ctramp.Tour;
+import java.text.DecimalFormat;
 
 import com.pb.common.util.ResourceUtil;
 
@@ -90,10 +91,16 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
         configurationOutputMap.put(new SandagBikeMgraPathAlternativeListGenerationConfiguration(propertyMap,network),
                                    propertyMap.get(BikeLogsum.BIKE_LOGSUM_MGRA_FILE_PROPERTY));
 
-        for (PathAlternativeListGenerationConfiguration<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> configuration : configurationOutputMap.keySet()) {
-        	Path outputDirectorty = Paths.get(configuration.getOutputDirectory()); 
-            Path outputFile = outputDirectorty.resolve(configurationOutputMap.get(configuration));
-            SandagBikePathChoiceLogsumMatrixApplication application = new SandagBikePathChoiceLogsumMatrixApplication(configuration,propertyMap);
+        configurations.add(new SandagBikeTazPathAlternativeListGenerationConfiguration(propertyMap, network));
+        configurations.add(new SandagBikeMgraPathAlternativeListGenerationConfiguration(propertyMap, network));
+        String[] fileProperties = new String[] {"active.logsum.matrix.file.bike.taz", "active.logsum.matrix.file.bike.mgra"};
+
+        DecimalFormat formatter = new DecimalFormat("#.###");
+        
+        for(int i=0; i<configurations.size(); i++)  {
+            PathAlternativeListGenerationConfiguration<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> configuration  = configurations.get(i);
+            String filename = configuration.getOutputDirectory() + "/" + propertyMap.get(fileProperties[i]);
+            application = new SandagBikePathChoiceLogsumMatrixApplication(configuration,propertyMap);
             
             try {
             	Files.createDirectories(outputDirectorty);
@@ -104,21 +111,25 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
             Map<NodePair<SandagBikeNode>,double[]> logsums = application.calculateMarketSegmentLogsums();
             Map<Integer,Integer> centroids = configuration.getInverseOriginZonalCentroidIdMap();
             
-            try (PrintWriter writer = new PrintWriter(outputFile.toFile())) {
-            	StringBuilder sb = new StringBuilder("i,j");
-            	for (String segment : MARKET_SEGMENT_NAMES)
-            		sb.append(",").append(segment);
-            	writer.println(sb.toString());
-            	for (NodePair<SandagBikeNode> od : logsums.keySet()) {
-            		sb = new StringBuilder();
-            		sb.append(od.getFromNode().getId()).append(",").append(od.getToNode().getId());
-            		for (double logsum : logsums.get(od))
-            			sb.append(",").append(logsum);
-            		writer.println(sb.toString());
-            	}
-            } catch (IOException e) {
-            	throw new RuntimeException(e);
-			}
+            try
+            {
+                FileWriter writer = new FileWriter(new File(filename));
+                writer.write("i, j, " + Arrays.toString(MARKET_SEGMENT_NAMES).substring(1).replaceFirst("]", "") + "\n");
+                for (NodePair<SandagBikeNode> od : logsums.keySet()) {
+                    double[] values = logsums.get(od); 
+                    writer.write(centroids.get(od.getFromNode().getId()) + ", " + centroids.get(od.getToNode().getId()));
+                    for (double v : values) {
+                        writer.write(", " + formatter.format(v));
+                    }
+                    writer.write("\n");
+                }
+                writer.flush();
+                writer.close();  
+            } catch (IOException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
             
         }
 
