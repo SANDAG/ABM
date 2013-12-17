@@ -63,8 +63,8 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
 
     public Map<NodePair<N>,double[]> calculateMarketSegmentLogsums()
     {      
-        System.out.println("Generating path alternative lists...");
-        System.out.println("Writing to " + outputDir);
+        logger.info("Generating path alternative lists...");
+        logger.info("Writing to " + outputDir);
         Map<NodePair<N>,double[]> logsums = new ConcurrentHashMap<>();
         startTime = System.currentTimeMillis();
         int threadCount = Runtime.getRuntime().availableProcessors();
@@ -96,8 +96,8 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
         for (int o : nearbyZonalDistanceMap.keySet() ) {
             totalPairs += nearbyZonalDistanceMap.get(o).size();
         }
-        System.out.println("Total OD pairs: " + totalPairs);
-        System.out.println("Total insufficient sample pairs: " + insufficientSamplePairs.size());
+        logger.info("  Total OD pairs: " + totalPairs);
+        logger.info("  Total insufficient sample pairs: " + insufficientSamplePairs.size());
         
         return logsums;
     }
