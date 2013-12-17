@@ -136,7 +136,7 @@ public class TransitWalkAccessUEC
             pPos++;
 
             // Set DMU values
-            float pWalkTime = mgraManager.getMgraToTapWalkTime(pMgra, pPos);
+            float pWalkTime = mgraManager.getMgraToTapWalkBoardTime(pMgra, pPos);
             dmu.setMgraTapWalkTime(pWalkTime);
 
             int aPos = -1;
@@ -146,7 +146,7 @@ public class TransitWalkAccessUEC
                 aPos++;
 
                 // Set DMU values
-                float aWalkTime = mgraManager.getMgraToTapWalkTime(aMgra, aPos);
+                float aWalkTime = mgraManager.getMgraToTapWalkAlightTime(aMgra, aPos);
                 dmu.setTapMgraWalkTime(aWalkTime);
 
                 double[] results = calculateUtilitiesForTapPair(pTap, aTap, writeCalculations);
@@ -244,7 +244,7 @@ public class TransitWalkAccessUEC
     public double calculateWalkAccessUtilityForMgra(int mgra, int tapPosition, boolean trace)
     {
 
-        float walkTime = mgraManager.getMgraToTapWalkTime(mgra, tapPosition);
+        float walkTime = mgraManager.getMgraToTapWalkAlightTime(mgra, tapPosition);
         dmu.setMgraTapWalkTime(walkTime);
         dmu.setTapMgraWalkTime(0.0f);
 

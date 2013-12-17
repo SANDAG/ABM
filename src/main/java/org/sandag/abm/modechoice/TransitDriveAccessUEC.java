@@ -153,7 +153,7 @@ public class TransitDriveAccessUEC
                 {
                     aPos++;
 
-                    float aWalkTime = mgraManager.getMgraToTapWalkTime(aMgra, aPos);
+                    float aWalkTime = mgraManager.getMgraToTapWalkAlightTime(aMgra, aPos);
 
                     // Set DMU values
                     dmu.setTapMgraWalkTime(aWalkTime);
@@ -247,7 +247,7 @@ public class TransitDriveAccessUEC
             pPos++; // used to know where we are in time/dist arrays for taps
 
             // Set DMU values
-            float pWalkTime = mgraManager.getMgraToTapWalkTime(pMgra, pPos);
+            float pWalkTime = mgraManager.getMgraToTapWalkAlightTime(pMgra, pPos);
             dmu.setTapMgraWalkTime(pWalkTime);
 
             int aPos = -1;

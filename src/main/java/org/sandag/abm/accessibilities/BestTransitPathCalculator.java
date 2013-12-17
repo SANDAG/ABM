@@ -245,7 +245,7 @@ public class BestTransitPathCalculator
 
                 if (tap == pTap)
                 {
-                    accTime = mgraMgr.getMgraToTapWalkTime(pMgra, pPos);
+                    accTime = mgraMgr.getMgraToTapWalkBoardTime(pMgra, pPos);
                     break;
                 }
             }
@@ -322,7 +322,7 @@ public class BestTransitPathCalculator
 
                 if (tap == aTap)
                 {
-                    egrTime = mgraMgr.getMgraToTapWalkTime(aMgra, aPos);
+                    egrTime = mgraMgr.getMgraToTapWalkAlightTime(aMgra, aPos);
                     break;
                 }
             }
@@ -807,7 +807,7 @@ public class BestTransitPathCalculator
     private void setWalkAccessUtility(int pMgra, int pPos, int pTap, boolean myTrace,
             Logger myLogger)
     {
-        pWalkTime = mgraManager.getMgraToTapWalkTime(pMgra, pPos);
+        pWalkTime = mgraManager.getMgraToTapWalkBoardTime(pMgra, pPos);
         if (storedWalkAccessUtils[pMgra][pTap] == null)
         {
             walkDmu.setMgraTapWalkTime(pWalkTime);
@@ -845,7 +845,7 @@ public class BestTransitPathCalculator
     private void setWalkEgressUtility(int aTap, int aMgra, int aPos, boolean myTrace,
             Logger myLogger)
     {
-        aWalkTime = mgraManager.getMgraToTapWalkTime(aMgra, aPos);
+        aWalkTime = mgraManager.getMgraToTapWalkAlightTime(aMgra, aPos);
         if (storedWalkEgressUtils[aTap][aMgra] == null)
         {
             walkDmu.setTapMgraWalkTime(aWalkTime);

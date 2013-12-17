@@ -1,8 +1,10 @@
 package org.sandag.abm.modechoice;
 
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,10 +13,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
@@ -211,80 +215,49 @@ public final class MgraDataManager
         File mgraWlkTapCorresFile = new File(Util.getStringValueFromPropertyMap(rbMap,
                 "scenario.path")
                 + Util.getStringValueFromPropertyMap(rbMap, "mgra.wlkacc.taps.and.distance.file"));
-        ArrayList<Integer>[] mgraWlkTapList = new ArrayList[maxMgra + 1];
-        ArrayList<Integer>[] mgraWlkTapDistList = new ArrayList[maxMgra + 1];
+        gotta fix this filename
+        Map<Integer,Map<Integer,int[]>> mgraWlkTapList = new HashMap<>(); //mgra -> tap -> [board dist,alight dist]
         String s;
-        int mgra;
-        int tap;
-        int dist;
-        StringTokenizer st;
-        try
-        {
-            BufferedReader br = new BufferedReader(new FileReader(mgraWlkTapCorresFile));
-
+        try ( BufferedReader br = new BufferedReader(new FileReader(mgraWlkTapCorresFile)))
+        { 
             // read the first data file line containing column names
-            // s = br.readLine();
-
+            s = br.readLine();
+                
             // read the data records
             while ((s = br.readLine()) != null)
             {
-                st = new StringTokenizer(s, " ");
-                // st = new StringTokenizer(s, ", ");
-                mgra = Integer.parseInt(st.nextToken());
-                tap = Integer.parseInt(st.nextToken());
+            	StringTokenizer st = new StringTokenizer(s, ",");
+                int mgra = Integer.parseInt(st.nextToken());
+                int tap = Integer.parseInt(st.nextToken());
                 if (tap > maxTap) maxTap = tap;
-                dist = (int) (Float.parseFloat(st.nextToken()) + 0.5);
-                if (mgraWlkTapList[mgra] == null)
-                {
-                    mgraWlkTapList[mgra] = new ArrayList<Integer>();
-                    mgraWlkTapList[mgra].add(tap);
-
-                    mgraWlkTapDistList[mgra] = new ArrayList<Integer>();
-                    mgraWlkTapDistList[mgra].add(dist);
-                } else
-                {
-                    mgraWlkTapList[mgra].add(tap);
-                    mgraWlkTapDistList[mgra].add(dist);
-                }
+                float boardTime = Float.parseFloat(st.nextToken());
+                float alightTime = Float.parseFloat(st.nextToken());
+                int boardDist = Math.round(boardTime / Constants.walkMinutesPerFoot + 0.5f);
+                int alightDist = Math.round(boardTime / Constants.walkMinutesPerFoot + 0.5f);
+                if (!mgraWlkTapList.containsKey(mgra))
+                	mgraWlkTapList.put(mgra,new HashMap<Integer,int[]>());
+                mgraWlkTapList.get(mgra).put(tap,new int[] {boardDist,alightDist});
             }
-            br.close();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        }catch (IOException e) {
+			logger.error(e);
+			throw new RuntimeException(e);
+		} 
 
         // now go thru the array of ArrayLists and convert the lists to arrays
         // and
         // store in the class variable mgraWlkTapsDistArrays.
-        mgraWlkTapsDistArray = new int[maxMgra + 1][2][];
-        for (int i = 0; i < mgraWlkTapList.length; i++)
-        { // elements in the
-          // array of
-          // arraylists
-            ArrayList<Integer> aMgraTapList = mgraWlkTapList[i]; // get the Tap
-            // ArrayList
-            ArrayList<Integer> aMgraDistList = mgraWlkTapDistList[i]; // get the
-            // Distance
-            // ArrayList
-            if (aMgraTapList != null)
-            { // if the list isn't null
-                mgraWlkTapsDistArray[i][0] = new int[aMgraTapList.size()]; // initialize
-                // the
-                // class
-                // variable
-                mgraWlkTapsDistArray[i][1] = new int[aMgraDistList.size()]; // both
-                // arrays
-                // should
-                // be the
-                // same
-                // size
-                for (int j = 0; j < aMgraTapList.size(); j++)
-                {
-                    mgraWlkTapsDistArray[i][0][j] = (Integer) aMgraTapList.get(j);
-                    mgraWlkTapsDistArray[i][1][j] = (Integer) aMgraDistList.get(j);
-                }
-                nMgrasWithWlkTaps++;
-            }
+        mgraWlkTapsDistArray = new int[maxMgra + 1][3][];
+        nMgrasWithWlkTaps = mgraWlkTapList.size();
+        for (int mgra : mgraWlkTapList.keySet()) {
+        	Map<Integer,int[]> wlkTapList = mgraWlkTapList.get(mgra);
+        	mgraWlkTapsDistArray[mgra][0] = new int[wlkTapList.size()];
+        	int counter = 0;
+        	for (int tap : new TreeSet<Integer>(wlkTapList.keySet())) { //get the taps in ascending order - not sure if this matters, but it is cleaner
+        		int[] dists = wlkTapList.get(tap);
+        		mgraWlkTapsDistArray[mgra][0][counter] = tap;
+        		mgraWlkTapsDistArray[mgra][1][counter] = dists[0];
+        		mgraWlkTapsDistArray[mgra][2][counter] = dists[1];
+        	}
         }
     }
 
@@ -299,25 +272,22 @@ public final class MgraDataManager
     {
         File mgraWlkDistFile = new File(Util.getStringValueFromPropertyMap(rbMap, "scenario.path")
                 + Util.getStringValueFromPropertyMap(rbMap, "mgra.walkdistance.file"));
+        gotta fix this filename
         oMgraWalkDistance = new HashMap[maxMgra + 1];
         dMgraWalkDistance = new HashMap[maxMgra + 1];
         String s;
-        int oMgra, dMgra;
-        int dist;
-        StringTokenizer st;
-        try
+        try (BufferedReader br = new BufferedReader(new FileReader(mgraWlkDistFile)))
         {
-            BufferedReader br = new BufferedReader(new FileReader(mgraWlkDistFile));
             while ((s = br.readLine()) != null)
             {
-                st = new StringTokenizer(s, " ");
+                StringTokenizer st = new StringTokenizer(s, " ");
 
                 // skip lines if zone, number of mgra-pairs exists in file
                 if (st.countTokens() < 3) continue;
 
-                oMgra = Integer.parseInt(st.nextToken());
-                dMgra = Integer.parseInt(st.nextToken());
-                dist = Integer.parseInt(st.nextToken());
+                int oMgra = Integer.parseInt(st.nextToken());
+                int dMgra = Integer.parseInt(st.nextToken());
+                int dist =  Math.round(Float.parseFloat(st.nextToken()) / Constants.walkMinutesPerFoot + 0.5f);
 
                 if (oMgraWalkDistance[oMgra] == null)
                 {
@@ -337,11 +307,10 @@ public final class MgraDataManager
                     dMgraWalkDistance[dMgra].put(oMgra, dist);
                 }
             }
-            br.close();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        } catch (IOException e) {
+			logger.error(e);
+			throw new RuntimeException(e);
+		} 
 
     }
 
@@ -424,10 +393,34 @@ public final class MgraDataManager
      *            The position of the TAP in the MGRA array (0+)
      * @return The walk distance in feet.
      */
-    public float getMgraToTapWalkDist(int mgra, int pos)
+    public float getMgraToTapWalkBoardDist(int mgra, int pos)
     {
-        return mgraWlkTapsDistArray[mgra][1][pos]; // [1] = distance
+        return mgraWlkTapsDistArray[mgra][1][pos];
     }
+
+    /**
+     * Get the walk alight distance from a TAP to an MGRA.
+     * 
+     * @param mgra The number of the destination MGRA.
+     * @param pos The position of the TAP in the MGRA array (0+)
+     * @return The walk distance in feet.
+     */
+    public float getMgraToTapWalkAlightDist(int mgra, int pos)
+    {
+        return mgraWlkTapsDistArray[mgra][2][pos];
+    }
+
+//    /**
+//     * Get the walk distance from an MGRA to a TAP.
+//     * 
+//     * @param mgra The number of the destination MGRA.
+//     * @param pos The position of the TAP in the MGRA array (0+)
+//     * @return The walk distance in feet.
+//     */
+//    public float getMgraToTapWalkDist(int mgra, int pos)
+//    {
+//        return mgraWlkTapsDistArray[mgra][1][pos]; // [1] = distance
+//    }
 
     /**
      * Get the position of the tap in the mgra walk tap array.
@@ -457,7 +450,7 @@ public final class MgraDataManager
     }
 
     /**
-     * Get the walk time from an MGRA to a TAP.
+     * Get the walk board time from an MGRA to a TAP.
      * 
      * @param mgra
      *            The number of the destination MGRA.
@@ -465,14 +458,38 @@ public final class MgraDataManager
      *            The position of the TAP in the MGRA array (0+)
      * @return The walk time in minutes.
      */
-    public float getMgraToTapWalkTime(int mgra, int pos)
+    public float getMgraToTapWalkBoardTime(int mgra, int pos)
     {
         return ((float) mgraWlkTapsDistArray[mgra][1][pos]) * Constants.walkMinutesPerFoot;
     }
 
     /**
-     * Get the walk distance from an MGRA to an MGRA. Return 0 if not within
-     * walking distance.
+     * Get the walk alight time from a TAP to an MGRA.
+     * 
+     * @param mgra The number of the destination MGRA.
+     * @param pos The position of the TAP in the MGRA array (0+)
+     * @return The walk time in minutes.
+     */
+    public float getMgraToTapWalkAlightTime(int mgra, int pos)
+    {
+        return ((float) mgraWlkTapsDistArray[mgra][2][pos]) * Constants.walkMinutesPerFoot;
+    }
+
+//    /**
+//     * Get the walk time from an MGRA to a TAP.
+//     * 
+//     * @param mgra The number of the destination MGRA.
+//     * @param pos The position of the TAP in the MGRA array (0+)
+//     * @return The walk time in minutes.
+//     */
+//    public float getMgraToTapWalkTime(int mgra, int pos)
+//    {
+//        return ((float) mgraWlkTapsDistArray[mgra][1][pos]) * Constants.walkMinutesPerFoot;
+//    }
+
+    /**
+     * Get the walk distance from an MGRA to an MGRA. Return 0 if not within walking
+     * distance.
      * 
      * @param oMgra
      *            The number of the production/origin MGRA.
