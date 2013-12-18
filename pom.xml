@@ -51,7 +51,7 @@
                 <java.32.port>1190</java.32.port>
                 <MAPANDRUN>e:\remoteExecution\mapAndRun.bat</MAPANDRUN>
                 <workpath>d:\\projects\\sandag\\series13</workpath>
-                <TRANSCAD_PATH>C:\Progra~2\TransCAD50</TRANSCAD_PATH>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
             </properties>
         </profile>
         <profile>
@@ -73,7 +73,7 @@
                 <java.32.port>1190</java.32.port>
                 <MAPANDRUN>e:\remoteExecution\mapAndRun.bat</MAPANDRUN>
                 <workpath>d:\\projects\\sandag\\series13</workpath>
-                <TRANSCAD_PATH>C:\Progra~2\TransCAD</TRANSCAD_PATH>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
             </properties>
         </profile>
         <profile>
@@ -95,7 +95,7 @@
                 <java.32.port>1190</java.32.port>
                 <MAPANDRUN>c:\ABM\remoteExecution\mapAndRun.bat</MAPANDRUN>
                 <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>
-                <TRANSCAD_PATH>C:\Progra~2\TransCAD50</TRANSCAD_PATH>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
             </properties>
         </profile>        
         <profile>
