@@ -55,6 +55,9 @@ Macro "Build transit skims"
    ok = RunMacro("Skim transit networks")  
    if !ok then goto quit
   
+   ok= RunMacro("zero null ivt time")
+   if !ok then goto quit
+
    ok= RunMacro("Process transit skims") 
    if !ok then goto quit
 
@@ -205,6 +208,40 @@ Macro "Special transit skims" (arr)
       RunMacro("close all")
       Return(ok)
 EndMacro
+
+/***************************************************************************************************************************
+This macro puts zeros in the null cells for the walk to local bus in-vehicle time skim for all time periods.
+Reason is b/c the Process transit skims will not work properly for cells with null values.
+
+****************************************************************************************************************************/
+Macro "zero null ivt time"
+  
+  
+     shared path, outputDir       
+  
+   periods = {"_EA","_AM","_MD","_PM","_EV"}
+
+      for i=1 to periods.length do
+                        
+         //open matrix
+         fileNameSkim = outputDir + "\\impprem"+periods[i]+".mtx"
+         m = OpenMatrix(fileNameSkim,)
+         // Calculate zeros into null of local ivt matrix
+          Opts = null
+          Opts.Input.[Matrix Currency]    = {fileNameSkim, "*TM (Local)", "RCIndex", "RCIndex"}
+          Opts.Global.Method              = 11
+          Opts.Global.[Cell Range]        = 2
+          Opts.Global.[Expression Text]   = "if [*TM (Local)]=null then 0 else [*TM (Local)]"
+          Opts.Global.[Force Missing]     = "Yes"
+          ok = RunMacro("TCB Run Operation", "Fill Matrices", Opts)
+          if !ok then goto quit
+      end
+   quit:
+      Return(1 )
+
+
+EndMacro
+
 /***********************************************************************************************************************************
  Extract Main Mode from Transit Skims
 
