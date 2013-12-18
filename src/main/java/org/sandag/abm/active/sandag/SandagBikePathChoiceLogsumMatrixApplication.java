@@ -91,9 +91,10 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
         configurationOutputMap.put(new SandagBikeMgraPathAlternativeListGenerationConfiguration(propertyMap,network),
                                    propertyMap.get(BikeLogsum.BIKE_LOGSUM_MGRA_FILE_PROPERTY));
 
-        configurations.add(new SandagBikeTazPathAlternativeListGenerationConfiguration(propertyMap, network));
-        configurations.add(new SandagBikeMgraPathAlternativeListGenerationConfiguration(propertyMap, network));
-        String[] fileProperties = new String[] {"active.logsum.matrix.file.bike.taz", "active.logsum.matrix.file.bike.mgra"};
+        for (PathAlternativeListGenerationConfiguration<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> configuration : configurationOutputMap.keySet()) {
+        	Path outputDirectory = Paths.get(configuration.getOutputDirectory()); 
+            Path outputFile = outputDirectory.resolve(configurationOutputMap.get(configuration));
+            SandagBikePathChoiceLogsumMatrixApplication application = new SandagBikePathChoiceLogsumMatrixApplication(configuration,propertyMap);
 
         DecimalFormat formatter = new DecimalFormat("#.###");
         
@@ -103,7 +104,7 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
             application = new SandagBikePathChoiceLogsumMatrixApplication(configuration,propertyMap);
             
             try {
-            	Files.createDirectories(outputDirectorty);
+            	Files.createDirectories(outputDirectory);
             } catch (IOException e) {
             	throw new RuntimeException(e);
             }

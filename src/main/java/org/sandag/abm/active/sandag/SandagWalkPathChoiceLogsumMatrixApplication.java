@@ -3,20 +3,34 @@ package org.sandag.abm.active.sandag;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.*;
+
+import org.apache.log4j.Logger;
 import org.sandag.abm.active.AbstractPathChoiceLogsumMatrixApplication;
 import org.sandag.abm.active.Network;
 import org.sandag.abm.active.NodePair;
 import org.sandag.abm.active.PathAlternativeList;
 import org.sandag.abm.active.PathAlternativeListGenerationConfiguration;
 import org.sandag.abm.application.SandagModelStructure;
+import org.sandag.abm.ctramp.BikeLogsum;
 import org.sandag.abm.ctramp.Person;
 import org.sandag.abm.ctramp.Tour;
 
+import com.pb.common.util.ResourceUtil;
+
 public class SandagWalkPathChoiceLogsumMatrixApplication extends AbstractPathChoiceLogsumMatrixApplication<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal>
 {
-    
+	private static final Logger logger = Logger.getLogger(SandagWalkPathChoiceLogsumMatrixApplication.class);
+	
+	public static final String WALK_LOGSUM_SKIM_MGRA_MGRA_FILE_PROPERTY = "active.logsum.matrix.file.walk.mgra";
+	public static final String WALK_LOGSUM_SKIM_MGRA_TAP_FILE_PROPERTY = "active.logsum.matrix.file.walk.mgratap";
+	
+
     private PathAlternativeListGenerationConfiguration<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> configuration;
     
     public SandagWalkPathChoiceLogsumMatrixApplication(PathAlternativeListGenerationConfiguration<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> configuration)
@@ -44,114 +58,111 @@ public class SandagWalkPathChoiceLogsumMatrixApplication extends AbstractPathCho
         return new double[] {-utility};    
     }
     
+    
     public static void main(String ... args) {
-        String RESOURCE_BUNDLE_NAME = "sandag_abm_active_test";
-        Map<String,String> propertyMap = new HashMap<String,String>();
-        SandagBikeNetworkFactory factory;
-        Network<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> network;
-        List<PathAlternativeListGenerationConfiguration<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal>> configurations = new ArrayList<>();
-        SandagWalkPathChoiceLogsumMatrixApplication application;
-        
-        ResourceBundle rb = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME);
-        propertyMap = new HashMap<>();
-        Enumeration<String> keys = rb.getKeys();
-        while (keys.hasMoreElements()) {
-            String key = keys.nextElement();
-            propertyMap.put(key, rb.getString(key));
-        }
-        factory = new SandagBikeNetworkFactory(propertyMap);
-        network = factory.createNetwork();
+    	if (args.length == 0) {
+    		logger.error( String.format("no properties file base name (without .properties extension) was specified as an argument.") );
+    		return;
+    	}
+    	
+    	logger.info("Building walk skims");
+//    	String RESOURCE_BUNDLE_NAME = "sandag_abm_active_test";
+        @SuppressWarnings("unchecked") //this is ok - the map will be String->String
+        Map<String,String> propertyMap = (Map<String,String>) ResourceUtil.getResourceBundleAsHashMap (args[0]);
+      
+        SandagBikeNetworkFactory factory = new SandagBikeNetworkFactory(propertyMap);
+        Network<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> network = factory.createNetwork();
 
-        configurations.add(new SandagWalkMgraMgraPathAlternativeListGenerationConfiguration(propertyMap,network));
-        configurations.add(new SandagWalkMgraTapPathAlternativeListGenerationConfiguration(propertyMap,network));
-        configurations.add(new SandagWalkTapMgraPathAlternativeListGenerationConfiguration(propertyMap,network));
+        DecimalFormat formatter = new DecimalFormat("#.###");
         
-        List<Map<NodePair<SandagBikeNode>,double[]>> allMatrices = new ArrayList<>();
+        logger.info("Generating mgra->mgra walk skims");
+        //mgra->mgra
+        PathAlternativeListGenerationConfiguration<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> configuration =
+        		new SandagWalkMgraMgraPathAlternativeListGenerationConfiguration(propertyMap,network);
+        SandagWalkPathChoiceLogsumMatrixApplication application = new SandagWalkPathChoiceLogsumMatrixApplication(configuration); 
+        Map<NodePair<SandagBikeNode>,double[]> logsums = application.calculateMarketSegmentLogsums();
         
-        DecimalFormat formatter = new DecimalFormat("#.##");
+        Path outputDirectory = Paths.get(configuration.getOutputDirectory()); 
+        Path outputFile = outputDirectory.resolve(propertyMap.get(WALK_LOGSUM_SKIM_MGRA_MGRA_FILE_PROPERTY));
         
-        for(int i=0; i<configurations.size(); i++)  {
-            PathAlternativeListGenerationConfiguration<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> configuration  = configurations.get(i);
-            application = new SandagWalkPathChoiceLogsumMatrixApplication(configuration);
-            Map<NodePair<SandagBikeNode>,double[]> logsums = application.calculateMarketSegmentLogsums();
-            allMatrices.add(logsums);
+        try {
+        	Files.createDirectories(outputDirectory);
+        } catch (IOException e) {
+        	throw new RuntimeException(e);
+        }
+            
+        Map<Integer,Integer> originCentroids = configuration.getInverseOriginZonalCentroidIdMap();
+        Map<Integer,Integer> destinationCentroids = configuration.getInverseDestinationZonalCentroidIdMap();
+
+        try (PrintWriter writer = new PrintWriter(outputFile.toFile())) {
+        	writer.println("i,j,value");
+        	StringBuilder sb;
+        	for (NodePair<SandagBikeNode> od : logsums.keySet()) {
+        		sb = new StringBuilder();
+        		sb.append(originCentroids.get(od.getFromNode().getId())).append(",");
+        		sb.append(destinationCentroids.get(od.getToNode().getId())).append(",");
+        		sb.append(formatter.format(logsums.get(od)[0])); //only one value here
+        		writer.println(sb.toString());
+        	}
+        } catch (IOException e) {
+        	throw new RuntimeException(e);
         }
         
-        int asymmPairCount = 0;
         
-        for ( NodePair<SandagBikeNode> mgraTapPair : allMatrices.get(1).keySet() ) {
+        logger.info("Generating mgra->tap walk skims");
+        //mgra->tap
+        configuration = new SandagWalkMgraTapPathAlternativeListGenerationConfiguration(propertyMap,network);
+        application = new SandagWalkPathChoiceLogsumMatrixApplication(configuration); 
+        Map<NodePair<SandagBikeNode>,double[]> mgraTapLogsums = application.calculateMarketSegmentLogsums();
+        
+        //for later - get from the first configuration
+        outputDirectory = Paths.get(configuration.getOutputDirectory()); 
+        outputFile = outputDirectory.resolve(propertyMap.get(WALK_LOGSUM_SKIM_MGRA_TAP_FILE_PROPERTY));
+        originCentroids = configuration.getInverseOriginZonalCentroidIdMap();
+        destinationCentroids = configuration.getInverseDestinationZonalCentroidIdMap();
+        
+        //tap->mgra
+        configuration = new SandagWalkTapMgraPathAlternativeListGenerationConfiguration(propertyMap,network);
+        application = new SandagWalkPathChoiceLogsumMatrixApplication(configuration); 
+        Map<NodePair<SandagBikeNode>,double[]> tapMgraLogsums = application.calculateMarketSegmentLogsums();
+        
+        //resolve if not a pair
+        int initialSize = mgraTapLogsums.size() + tapMgraLogsums.size();
+        
+        for (NodePair<SandagBikeNode> mgraTapPair : mgraTapLogsums.keySet()) {
             NodePair<SandagBikeNode> tapMgraPair = new NodePair<SandagBikeNode>(mgraTapPair.getToNode(),mgraTapPair.getFromNode());
-            if ( ! allMatrices.get(2).containsKey(tapMgraPair) ) {
-                allMatrices.get(2).put(tapMgraPair, allMatrices.get(1).get(mgraTapPair));
-                asymmPairCount++;
-            }
+            if (!tapMgraLogsums.containsKey(tapMgraPair))
+            	tapMgraLogsums.put(tapMgraPair,mgraTapLogsums.get(mgraTapPair));
         }
         
-        for ( NodePair<SandagBikeNode> tapMgraPair : allMatrices.get(2).keySet() ) {
+        for (NodePair<SandagBikeNode> tapMgraPair : tapMgraLogsums.keySet()) {
             NodePair<SandagBikeNode> mgraTapPair = new NodePair<SandagBikeNode>(tapMgraPair.getToNode(),tapMgraPair.getFromNode());
-            if ( ! allMatrices.get(1).containsKey(mgraTapPair) ) {
-                allMatrices.get(1).put(mgraTapPair, allMatrices.get(2).get(tapMgraPair));
-                asymmPairCount++;
-            }
+            if (!mgraTapLogsums.containsKey(mgraTapPair))
+            	mgraTapLogsums.put(mgraTapPair,tapMgraLogsums.get(tapMgraPair));
         }
+        int asymmPairCount = initialSize - (mgraTapLogsums.size() + tapMgraLogsums.size());
+        if (asymmPairCount > 0)
+        	logger.info("Boarding or alighting times defaulted to transpose for " + asymmPairCount + " mgra tap pairs with missing asymmetrical information");
         
-        new File(configurations.get(0).getOutputDirectory()).mkdirs();
-        
-        System.out.println("Boarding or alighting times defaulted to transpose for " + asymmPairCount + " mgra tap pairs with missing asymmetrical information");
-            
-        String filename = configurations.get(0).getOutputDirectory() + "/" + propertyMap.get("active.logsum.matrix.file.walk.mgra");
-            
-        Map<Integer,Integer> originCentroids = configurations.get(0).getInverseOriginZonalCentroidIdMap();
-        Map<Integer,Integer> destinationCentroids = configurations.get(0).getInverseDestinationZonalCentroidIdMap();
-            
-        try
-        {
-            FileWriter writer = new FileWriter(new File(filename));
-            writer.write("i, j, value\n");
-            for (NodePair<SandagBikeNode> od : allMatrices.get(0).keySet()) {
-                double[] values = allMatrices.get(0).get(od);
-                writer.write(originCentroids.get(od.getFromNode().getId()) + ", " + destinationCentroids.get(od.getToNode().getId()));
-                for (double v : values) {
-                    writer.write(", " + formatter.format(v));
-                }
-                writer.write("\n");
-            }
-            writer.flush();
-            writer.close();  
-        } catch (IOException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        try {
+        	Files.createDirectories(outputDirectory);
+        } catch (IOException e) {
+        	throw new RuntimeException(e);
         }
 
-        filename = configurations.get(1).getOutputDirectory() + "/" + propertyMap.get("active.logsum.matrix.file.walk.mgratap");
-        originCentroids = configurations.get(1).getInverseOriginZonalCentroidIdMap();
-        destinationCentroids = configurations.get(1).getInverseDestinationZonalCentroidIdMap();
-        
-        try
-        {
-            FileWriter writer = new FileWriter(new File(filename));
-            writer.write("mgra, tap, boarding, alighting\n");
-            for (NodePair<SandagBikeNode> od : allMatrices.get(1).keySet()) {
-                NodePair<SandagBikeNode> doPair = new NodePair<>(od.getToNode(), od.getFromNode());
-                double[] mgraTapValues = allMatrices.get(1).get(od);
-                double[] tapMgraValues = allMatrices.get(2).get(doPair);
-                writer.write(originCentroids.get(od.getFromNode().getId()) + ", " + destinationCentroids.get(od.getToNode().getId()));
-                for (double v : mgraTapValues) {
-                    writer.write(", " + formatter.format(v));
-                }
-                for (double v : tapMgraValues) {
-                    writer.write(", " + formatter.format(v));
-                }
-                writer.write("\n");
-            }
-            writer.flush();
-            writer.close();  
-        } catch (IOException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        try (PrintWriter writer = new PrintWriter(outputFile.toFile())) {
+        	writer.println("mgra,tap,boarding,alighting");
+        	StringBuilder sb;
+        	for (NodePair<SandagBikeNode> od : mgraTapLogsums.keySet()) {
+        		sb = new StringBuilder();
+        		sb.append(originCentroids.get(od.getFromNode().getId())).append(",");
+        		sb.append(destinationCentroids.get(od.getToNode().getId())).append(",");
+        		sb.append(formatter.format(mgraTapLogsums.get(od)[0])).append(","); //only one value here
+        		sb.append(formatter.format(tapMgraLogsums.get(new NodePair<>(od.getToNode(),od.getFromNode()))[0])); //only one value here
+        		writer.println(sb.toString());
+        	}
+        } catch (IOException e) {
+        	throw new RuntimeException(e);
         }
     }
-    
 }
