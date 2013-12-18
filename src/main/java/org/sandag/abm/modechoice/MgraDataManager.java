@@ -1,6 +1,7 @@
 package org.sandag.abm.modechoice;
 
 
+import org.sandag.abm.active.sandag.SandagWalkPathAlternativeListGenerationConfiguration;
 import org.sandag.abm.active.sandag.SandagWalkPathChoiceLogsumMatrixApplication;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
@@ -217,7 +218,7 @@ public final class MgraDataManager
      */
     public void readMgraWlkTaps(HashMap<String, String> rbMap)
     {
-        File mgraWlkTapTimeFile = new File(rbMap.get("scenario.path"),
+        File mgraWlkTapTimeFile = new File(rbMap.get(SandagWalkPathAlternativeListGenerationConfiguration.PROPERTIES_OUTPUT),
         		rbMap.get(SandagWalkPathChoiceLogsumMatrixApplication.WALK_LOGSUM_SKIM_MGRA_TAP_FILE_PROPERTY));
         Map<Integer,Map<Integer,int[]>> mgraWlkTapList = new HashMap<>(); //mgra -> tap -> [board dist,alight dist]
         String s;
@@ -236,7 +237,7 @@ public final class MgraDataManager
                 float boardTime = Float.parseFloat(st.nextToken());
                 float alightTime = Float.parseFloat(st.nextToken());
                 int boardDist = Math.round(boardTime / Constants.walkMinutesPerFoot + 0.5f);
-                int alightDist = Math.round(boardTime / Constants.walkMinutesPerFoot + 0.5f);
+                int alightDist = Math.round(alightTime / Constants.walkMinutesPerFoot + 0.5f);
                 if (!mgraWlkTapList.containsKey(mgra))
                 	mgraWlkTapList.put(mgra,new HashMap<Integer,int[]>());
                 mgraWlkTapList.get(mgra).put(tap,new int[] {boardDist,alightDist});
@@ -254,6 +255,8 @@ public final class MgraDataManager
         for (int mgra : mgraWlkTapList.keySet()) {
         	Map<Integer,int[]> wlkTapList = mgraWlkTapList.get(mgra);
         	mgraWlkTapsDistArray[mgra][0] = new int[wlkTapList.size()];
+        	mgraWlkTapsDistArray[mgra][1] = new int[wlkTapList.size()];
+        	mgraWlkTapsDistArray[mgra][2] = new int[wlkTapList.size()];
         	int counter = 0;
         	for (int tap : new TreeSet<Integer>(wlkTapList.keySet())) { //get the taps in ascending order - not sure if this matters, but it is cleaner
         		int[] dists = wlkTapList.get(tap);
@@ -273,7 +276,7 @@ public final class MgraDataManager
      */
     public void readMgraWlkDist(HashMap<String, String> rbMap)
     {
-        File mgraWlkTimeFile = new File(rbMap.get("scenario.path"),
+        File mgraWlkTimeFile = new File(rbMap.get(SandagWalkPathAlternativeListGenerationConfiguration.PROPERTIES_OUTPUT),
         		rbMap.get(SandagWalkPathChoiceLogsumMatrixApplication.WALK_LOGSUM_SKIM_MGRA_MGRA_FILE_PROPERTY));
         oMgraWalkDistance = new HashMap[maxMgra + 1];
         dMgraWalkDistance = new HashMap[maxMgra + 1];
