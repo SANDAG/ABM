@@ -42,7 +42,7 @@ Macro "Commercial Vehicle Generation"
    tazCommTripFile   = "tazCommVeh.csv"
    
    writeMgraData = false
-   calibrationFactor = 1.75
+   calibrationFactor = 1.4
    
        
    // read in the mgra data in CSV format
