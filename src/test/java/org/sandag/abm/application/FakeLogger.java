@@ -1,4 +1,4 @@
-package test.org.sandag.abm.application;
+package org.sandag.abm.application;
 
 import org.apache.log4j.Logger;
 
