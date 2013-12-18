@@ -239,7 +239,8 @@ public abstract class ModelStructure
         stopLocUecIndexMap = new HashMap<String, Integer>();
         tripModeChoiceUecIndexMap = new HashMap<String, Integer>();
 
-        // create a mapping between primary purpose names and purpose indices
+        // create a mapping between primary purpose 
+        // names and purpose indices
         createPrimaryPurposeMappings();
 
         createIndexTimePeriodMap();

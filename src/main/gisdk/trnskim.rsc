@@ -55,6 +55,9 @@ Macro "Build transit skims"
    ok = RunMacro("Skim transit networks")  
    if !ok then goto quit
   
+   ok= RunMacro("zero null ivt time")
+   if !ok then goto quit
+
    ok= RunMacro("Process transit skims") 
    if !ok then goto quit
 
@@ -205,6 +208,40 @@ Macro "Special transit skims" (arr)
       RunMacro("close all")
       Return(ok)
 EndMacro
+
+/***************************************************************************************************************************
+This macro puts zeros in the null cells for the walk to local bus in-vehicle time skim for all time periods.
+Reason is b/c the Process transit skims will not work properly for cells with null values.
+
+****************************************************************************************************************************/
+Macro "zero null ivt time"
+  
+  
+     shared path, outputDir       
+  
+   periods = {"_EA","_AM","_MD","_PM","_EV"}
+
+      for i=1 to periods.length do
+                        
+         //open matrix
+         fileNameSkim = outputDir + "\\impprem"+periods[i]+".mtx"
+         m = OpenMatrix(fileNameSkim,)
+         // Calculate zeros into null of local ivt matrix
+          Opts = null
+          Opts.Input.[Matrix Currency]    = {fileNameSkim, "*TM (Local)", "RCIndex", "RCIndex"}
+          Opts.Global.Method              = 11
+          Opts.Global.[Cell Range]        = 2
+          Opts.Global.[Expression Text]   = "if [*TM (Local)]=null then 0 else [*TM (Local)]"
+          Opts.Global.[Force Missing]     = "Yes"
+          ok = RunMacro("TCB Run Operation", "Fill Matrices", Opts)
+          if !ok then goto quit
+      end
+   quit:
+      Return(1 )
+
+
+EndMacro
+
 /***********************************************************************************************************************************
  Extract Main Mode from Transit Skims
 
@@ -632,7 +669,7 @@ Macro "Create rail net"
    trnets = {"cr.tnw","lr.tnw"}
 
    // Build 4(2?) Transit Networks
-   for i = 1 to 2 do
+   for i = 1 to trnets.length do
       Opts = null
       Opts.Input.[Transit RS] = rte_file
       Opts.Input.[RS Set] = {db_rte_lyr, rte_lyr,sets[i],query_strs[i]}
@@ -677,44 +714,87 @@ Macro "Create rail net"
    xwaitwts = {mode_vw+".wt_xwtpk", mode_vw+".wt_xwtpk"}
    modeused={mode_vw+".crmode",mode_vw+".lrmode"}
 
-  for i = 1 to 2 do
+  for i = 1 to trnets.length do
      Opts = null
      Opts.Input.[Transit RS] = rte_file
      Opts.Input.[Transit Network] = outputDir+"\\"+trnets[i]
      Opts.Input.[Mode Table] = {mode_tb}
       //  Opts.Input.[Mode Cost Table] = {xfer_tb}
+     //Opts.Input.[Fare Currency] = {inputDir+"\\fare.mtx", "coaster fare", , }    
      Opts.Input.[Centroid Set] = {db_node_lyr,node_lyr, "Selection", "Select * where ID<"+i2s(mxtap)}
-     Opts.Field.[Link Impedance] = impds[i]
-      //  Opts.Field.[Route Headway] = headways[i]
+     Opts.Field.[Link Impedance] = "*TM"
+     Opts.Field.[Route Headway] = headways[i]
      Opts.Field.[Route Fare] = "Fare"
+     Opts.Field.[Stop Zone ID] = "farezone"
+     Opts.Field.[Mode Fare Type] = mode_vw+".faretype"
+     Opts.Field.[Mode Fare Core] = mode_vw+".farefield"
+     Opts.Field.[Mode Fare Weight] = farewts[i]
+     Opts.Field.[Mode Xfer Time] = mode_vw+".xferpentm"
+     Opts.Field.[Mode Xfer Weight] = mode_vw+".wtxfertm"
+     Opts.Field.[Mode Impedance] = trntime[i]   //impedance by transit mode
      Opts.Field.[Mode Imp Weight] = impwts[i]
      Opts.Field.[Mode IWait Weight] = iwtwts[i]
      Opts.Field.[Mode XWait Weight] = xwaitwts[i]
-     Opts.Field.[Mode Dwell Weight] = impwts[i]
-     Opts.Field.[Mode Dwell Time] = mode_vw+".dwelltime"
-     Opts.Field.[Mode Used] = modeused[i]
+     Opts.Field.[Mode Dwell Weight] = impwts[i]       
+     Opts.Field.[Mode Dwell On Time] = mode_vw+".dwelltime"      
+     Opts.Field.[Mode Used] = modeused[j]
      Opts.Field.[Mode Access] = mode_vw+".mode_acces"
-     Opts.Field.[Mode Egress] = mode_vw+".mode_egres"    
-     Opts.Global.[Global Fare Value] = 2.25 
-     Opts.Global.[On Dwell]=0    
-     Opts.Global.[Global Imp Weight] = 1
-     Opts.Global.[Global Xfer Weight] = 1
-     Opts.Global.[Global Wait Weight] = 2
-     Opts.Global.[Global dwell Weight] = 1
-     Opts.Global.[Global Headway] = 15
+     Opts.Field.[Mode Egress] = mode_vw+".mode_egres"
+     Opts.Field.[Inter-Mode Xfer From] =xferf_vw+".from"
+     Opts.Field.[Inter-Mode Xfer To] = xferf_vw+".to"
+     Opts.Field.[Inter-Mode Xfer Stop] = xferf_vw+".stop"
+     Opts.Field.[Inter-Mode Xfer Proh] = xferf_vw+".prohibitio"
+     Opts.Field.[Inter-Mode Xfer Time] =  xferf_vw+".xfer_penal"
+     Opts.Field.[Inter-Mode Xfer Fare] =  xferf_vw+".fare"
+     Opts.Field.[Inter-Mode Xfer Wait] =  xferf_vw+".wait_time"   
+     Opts.Global.[Class Names] = {"Class 1"}
+     Opts.Global.[Class Description] = {"Class 1"}
+     Opts.Global.[current class] = "Class 1"
+     Opts.Global.[Global Fare Type] = "Flat"
+     Opts.Global.[Global Fare Value] = 2.25
      Opts.Global.[Global Xfer Fare] = 0
+     Opts.Global.[Global Fare Core] = "coaster fare"
+     Opts.Global.[Global Fare Weight] = 1
+     Opts.Global.[Global Imp Weight] = 1
+     Opts.Global.[Global Init Weight] = 1
+     Opts.Global.[Global Xfer Weight] = 1
+     Opts.Global.[Global IWait Weight] = 2
+     Opts.Global.[Global XWait Weight] = 2
+     Opts.Global.[Global Dwell Weight] = 1
+     Opts.Global.[Global Dwell On Time] = 0
+     Opts.Global.[Global Dwell Off Time] = 0
+     Opts.Global.[Global Headway] = 30
+     Opts.Global.[Global Init Time] = 0
      Opts.Global.[Global Xfer Time] = 10
+     Opts.Global.[Global Max IWait] = 60
+     Opts.Global.[Global Min IWait] = 2
+     Opts.Global.[Global Max XWait] = 60
+     Opts.Global.[Global Min XWait] = 2
+     Opts.Global.[Global Layover Time] = 5
      Opts.Global.[Global Max WACC Path] = 20
      Opts.Global.[Global Max Access] = 30
      Opts.Global.[Global Max Egress] = 30
+     Opts.Global.[Global Max Transfer] = 20
      Opts.Global.[Global Max Imp] = 180
-     Opts.Global.[Value of Time] = 0.35
-     Opts.Global.[Walk Weight] = 1.5
+     Opts.Global.[Value of Time] = vot[i]
+     Opts.Global.[Max Xfer Number] = 3
+     Opts.Global.[Max Trip Time] = 999
+     Opts.Global.[Walk Weight] = 1.8
+     Opts.Global.[Zonal Fare Method] = 1
+     Opts.Global.[Interarrival Para] = 0.5
      Opts.Global.[Path Threshold] = 0
-     Opts.Global.[Max Xfer Number] = 3    
-     Opts.Flag.[Fare System] = 1 //flat fare
      Opts.Flag.[Use All Walk Path] = "No"
      Opts.Flag.[Use Mode] = "Yes"
+     Opts.Flag.[Use Mode Cost] = "Yes"
+     Opts.Flag.[Combine By Mode] = "Yes"
+     Opts.Flag.[Fare By Mode] = "No"
+     Opts.Flag.[M2M Fare Method] = 2
+     Opts.Flag.[Fare System] = 3
+     Opts.Flag.[Use Park and Ride] = "No"
+     Opts.Flag.[Use Egress Park and Ride] = "No"
+     Opts.Flag.[Use P&R Walk Access] = "No"
+     Opts.Flag.[Use P&R Walk Egress] = "No"
+     Opts.Flag.[Use Parking Capacity] = "No"
      RunMacro("HwycadLog",{"createtrnnet.rsc: create rail net","Transit Network Setting PF: "+trnets[i]})    
      ok = RunMacro("TCB Run Operation", i, "Transit Network Setting PF", Opts)
      if !ok then goto quit
@@ -859,67 +939,91 @@ Macro "Create transit networks"
    faresys={3, 1} //3, mixed fare, 1, flat fare
    
    
-   //transit network settings
+   //transit network settings in TransCAD 6.0 R2
    for i = 1 to periods.length do
       for j = 1 to modes.length do   
-         Opts = null
-         Opts.Input.[Transit RS] = rte_file
-         Opts.Input.[Transit Network] = outputDir+"\\"+modes[j]+periods[i]+".tnw"
-         Opts.Input.[Mode Table] = {mode_tb}
-         
-         // add timed transfers to premium peak networks (?)
-         if blnxfer=1 and timexfer_per[i] ="YES" and timexfer_mod[j]="YES" then Opts.Input.[Xfer Wait Table] = {timexfer_tb}
-         
-         Opts.Input.[Mode Cost Table] = {modexfer_tb}
-         Opts.Input.[Centroid Set] = {db_node_lyr,node_lyr, "Selection", "Select * where ID<"+i2s(mxtap)}
-         Opts.Field.[Link Impedance] = "*TM"
-         Opts.Field.[Route Headway] = headways[i]
-         Opts.Field.[Route Fare] = "Fare"
-         Opts.Field.[Mode Impedance] = trntime[i]   //impedance by transit mode
-         Opts.Field.[Mode Imp Weight] = impwts[i]
-         Opts.Field.[Mode IWait Weight] = iwtwts[i]
-         Opts.Field.[Mode XWait Weight] = xwaitwts[i]
-         Opts.Field.[Mode Dwell Weight] = impwts[i]
-         Opts.Field.[Mode Dwell Time] = mode_vw+".dwelltime"
-         Opts.Field.[Mode Used] = modeused[j]
-         Opts.Field.[Mode Access] = mode_vw+".mode_acces"
-         Opts.Field.[Mode Egress] = mode_vw+".mode_egres"
-         Opts.Field.[Mode Fare Type] = mode_vw+".faretype"
-         Opts.Field.[Mode Fare Core] = mode_vw+".farefield"
-         Opts.Field.[Mode Fare Weight] = farewts[i]
-        Opts.Field.[Mode Xfer Time] = mode_vw+".xferpentm"
-        Opts.Field.[Mode Xfer Weight] = mode_vw+".wtxfertm"
-      //  Opts.Field.[Mode Fare] = mode_vw+".fare"
-         Opts.Field.[Inter-Mode Xfer From] =xferf_vw+".from"
-         Opts.Field.[Inter-Mode Xfer To] = xferf_vw+".to"
-         Opts.Field.[Inter-Mode Xfer Stop] = xferf_vw+".stop"
-         Opts.Field.[Inter-Mode Xfer Proh] = xferf_vw+".prohibitio"
-         Opts.Field.[Inter-Mode Xfer Time] =  xferf_vw+".xfer_penal"
-         Opts.Field.[Inter-Mode Xfer Fare] =  xferf_vw+".fare"
-         Opts.Field.[Inter-Mode Xfer Wait] =  xferf_vw+".wait_time"
-         Opts.Field.[Stop Zone ID] = "farezone"
-         Opts.Global.[Global Fare Value] = 2.25 
-         Opts.Global.[On Dwell]=0    
-         Opts.Global.[Global Imp Weight] = 1
-         Opts.Global.[Global Xfer Weight] = 1
-         Opts.Global.[Global Wait Weight] = 2
-         Opts.Global.[Global dwell Weight] = 1
-         Opts.Global.[Global Headway] = 30
-         Opts.Global.[Global Xfer Fare] = 0
-         Opts.Global.[Global Xfer Time] = 10
-         Opts.Global.[Global Max WACC Path] = 20
-         Opts.Global.[Global Max Access] = 30
-         Opts.Global.[Global Max Egress] = 30
-         Opts.Global.[Global Max Imp] = 180
-         Opts.Input.[Fare Currency] = {inputDir+"\\fare.mtx", "coaster fare", , }  
-         Opts.Global.[Value of Time] = vot[i]
-         Opts.Global.[Walk Weight] = wt_walk[i]
-         Opts.Global.[Path Threshold] = 0
-         Opts.Global.[Max Xfer Number] = 3 
-         Opts.Flag.[Fare System] = faresys[j] //flat fare  
-         Opts.Flag.[Use All Walk Path] = "No"
-         Opts.Flag.[Use Mode] = "Yes"
-         Opts.Flag.[Use Mode Cost] = "Yes"    
+            Opts = null
+            Opts.Input.[Transit RS] = rte_file
+            Opts.Input.[Transit Network] = outputDir+"\\"+modes[j]+periods[i]+".tnw"
+            Opts.Input.[Mode Table] = {mode_tb}
+            Opts.Input.[Mode Cost Table] = {modexfer_tb}
+            Opts.Input.[Fare Currency] = {inputDir+"\\fare.mtx", "coaster fare", , }    
+            // add timed transfers to premium peak networks (?)
+            if blnxfer=1 and timexfer_per[i] ="YES" and timexfer_mod[j]="YES" then Opts.Input.[Xfer Wait Table] = {timexfer_tb}
+            Opts.Input.[Centroid Set] = {db_node_lyr,node_lyr, "Selection", "Select * where ID<"+i2s(mxtap)}
+            Opts.Field.[Link Impedance] = "*TM"
+	    Opts.Field.[Route Headway] = headways[i]
+	    Opts.Field.[Route Fare] = "Fare"
+	    Opts.Field.[Stop Zone ID] = "farezone"
+	    Opts.Field.[Mode Fare Type] = mode_vw+".faretype"
+	    Opts.Field.[Mode Fare Core] = mode_vw+".farefield"
+	    Opts.Field.[Mode Fare Weight] = farewts[i]
+	    Opts.Field.[Mode Xfer Time] = mode_vw+".xferpentm"
+	    Opts.Field.[Mode Xfer Weight] = mode_vw+".wtxfertm"
+	    Opts.Field.[Mode Impedance] = trntime[i]   //impedance by transit mode
+	    Opts.Field.[Mode Imp Weight] = impwts[i]
+	    Opts.Field.[Mode IWait Weight] = iwtwts[i]
+	    Opts.Field.[Mode XWait Weight] = xwaitwts[i]
+	    Opts.Field.[Mode Dwell Weight] = impwts[i]       
+	    Opts.Field.[Mode Dwell On Time] = mode_vw+".dwelltime"      
+	    Opts.Field.[Mode Used] = modeused[j]
+	    Opts.Field.[Mode Access] = mode_vw+".mode_acces"
+	    Opts.Field.[Mode Egress] = mode_vw+".mode_egres"
+	    Opts.Field.[Inter-Mode Xfer From] =xferf_vw+".from"
+	    Opts.Field.[Inter-Mode Xfer To] = xferf_vw+".to"
+	    Opts.Field.[Inter-Mode Xfer Stop] = xferf_vw+".stop"
+	    Opts.Field.[Inter-Mode Xfer Proh] = xferf_vw+".prohibitio"
+	    Opts.Field.[Inter-Mode Xfer Time] =  xferf_vw+".xfer_penal"
+	    Opts.Field.[Inter-Mode Xfer Fare] =  xferf_vw+".fare"
+	    Opts.Field.[Inter-Mode Xfer Wait] =  xferf_vw+".wait_time"   
+	    Opts.Global.[Class Names] = {"Class 1"}
+	    Opts.Global.[Class Description] = {"Class 1"}
+	    Opts.Global.[current class] = "Class 1"
+	    Opts.Global.[Global Fare Type] = "Flat"
+	    Opts.Global.[Global Fare Value] = 2.25
+	    Opts.Global.[Global Xfer Fare] = 0
+	    Opts.Global.[Global Fare Core] = "coaster fare"
+	    Opts.Global.[Global Fare Weight] = 1
+	    Opts.Global.[Global Imp Weight] = 1
+	    Opts.Global.[Global Init Weight] = 1
+	    Opts.Global.[Global Xfer Weight] = 1
+	    Opts.Global.[Global IWait Weight] = 2
+	    Opts.Global.[Global XWait Weight] = 2
+	    Opts.Global.[Global Dwell Weight] = 1
+	    Opts.Global.[Global Dwell On Time] = 0
+	    Opts.Global.[Global Dwell Off Time] = 0
+	    Opts.Global.[Global Headway] = 30
+	    Opts.Global.[Global Init Time] = 0
+	    Opts.Global.[Global Xfer Time] = 10
+	    Opts.Global.[Global Max IWait] = 60
+	    Opts.Global.[Global Min IWait] = 2
+	    Opts.Global.[Global Max XWait] = 60
+	    Opts.Global.[Global Min XWait] = 2
+	    Opts.Global.[Global Layover Time] = 5
+	    Opts.Global.[Global Max WACC Path] = 20
+	    Opts.Global.[Global Max Access] = 30
+	    Opts.Global.[Global Max Egress] = 30
+	    Opts.Global.[Global Max Transfer] = 20
+	    Opts.Global.[Global Max Imp] = 180
+	    Opts.Global.[Value of Time] = vot[i]
+	    Opts.Global.[Max Xfer Number] = 3
+	    Opts.Global.[Max Trip Time] = 999
+	    Opts.Global.[Walk Weight] = 1.8
+	    Opts.Global.[Zonal Fare Method] = 1
+	    Opts.Global.[Interarrival Para] = 0.5
+	    Opts.Global.[Path Threshold] = 0
+	    Opts.Flag.[Use All Walk Path] = "No"
+	    Opts.Flag.[Use Mode] = "Yes"
+	    Opts.Flag.[Use Mode Cost] = "Yes"
+	    Opts.Flag.[Combine By Mode] = "Yes"
+	    Opts.Flag.[Fare By Mode] = "No"
+	    Opts.Flag.[M2M Fare Method] = 2
+	    Opts.Flag.[Fare System] = 3
+	    Opts.Flag.[Use Park and Ride] = "No"
+	    Opts.Flag.[Use Egress Park and Ride] = "No"
+	    Opts.Flag.[Use P&R Walk Access] = "No"
+	    Opts.Flag.[Use P&R Walk Egress] = "No"
+	    Opts.Flag.[Use Parking Capacity] = "No" 
          ok = RunMacro("TCB Run Operation", i, "Transit Network Setting PF", Opts)
          if !ok then goto quit
       end

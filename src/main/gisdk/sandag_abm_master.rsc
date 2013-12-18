@@ -6,8 +6,7 @@ Macro "Run SANDAG ABM"
  
    // Stop residual Java processes on nodes
    runString = path+"\\bin\\stopABM.cmd"
-   ok = RunMacro("TCB Run Command", 1, "Stop Nodes", runString)
-   if !ok then goto quit  
+   ok = RunMacro("TCB Run Command", 1, "Stop Nodes", runString) 
 
    sample_rate = { 0.2, 0.5, 1.0 }
    max_iterations=sample_rate.length    //number of feedback loops
@@ -75,7 +74,7 @@ Macro "Run SANDAG ABM"
       // Start matrix manager locally
       runString = path+"\\bin\\runMtxMgr.cmd "+drive+" "+path_no_drive
       ok = RunMacro("TCB Run Command", 1, "Start matrix manager", runString)
-      if !ok then goto quit  
+      if !ok then goto quit 
 	
       // Start  JPPF driver 
       runString = path+"\\bin\\runDriver.cmd "+drive+" "+path_no_drive
@@ -101,6 +100,28 @@ Macro "Run SANDAG ABM"
       RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Build transit skims"})
       ok = RunMacro("TCB Run Macro", 1, "Build transit skims",{}) 
       if !ok then goto quit
+
+      // First move some trip matrices so model will crash if ctramp model doesn't produced csv/mtx files for assignment
+      if (iteration > 1) then do
+         fromDir = outputDir
+         toDir = outputDir+"\\iter"+String(iteration-1)
+         //check for directory of output
+         if GetDirectoryInfo(toDir, "Directory")=null then do
+                CreateDirectory( toDir)   
+         end
+         status = RunProgram("cmd.exe /c copy "+fromDir+"\\auto*.mtx "+toDir+"\\auto*.mtx",)
+         status = RunProgram("cmd.exe /c copy "+fromDir+"\\tran*.mtx "+toDir+"\\tran*.mtx",)
+         status = RunProgram("cmd.exe /c copy "+fromDir+"\\nmot*.mtx "+toDir+"\\nmot*.mtx",)
+         status = RunProgram("cmd.exe /c copy "+fromDir+"\\othr*.mtx "+toDir+"\\othr*.mtx",)
+         status = RunProgram("cmd.exe /c copy "+fromDir+"\\trip*.mtx "+toDir+"\\trip*.mtx",)
+ 
+         status = RunProgram("cmd.exe /c del "+fromDir+"\\auto*.mtx",)
+         status = RunProgram("cmd.exe /c del "+fromDir+"\\tran*.mtx",)
+         status = RunProgram("cmd.exe /c del "+fromDir+"\\nmot*.mtx",)
+         status = RunProgram("cmd.exe /c del "+fromDir+"\\othr*.mtx",)
+         status = RunProgram("cmd.exe /c del "+fromDir+"\\trip*.mtx",)
+        
+      end
 
       // Run CT-RAMP, airport model, visitor model, cross-border model, internal-external model
       runString = path+"\\bin\\runSandagAbm.cmd "+drive+" "+path_forward_slash +" "+r2s(sample_rate[iteration])+" "+i2s(iteration)
@@ -170,7 +191,13 @@ Macro "Run SANDAG ABM"
     RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Create LUZ Skims"})
    ok = RunMacro("TCB Run Macro", 1, "Create LUZ Skims",{}) 
    if !ok then goto quit
-	
+
+   // copy final trip tables from output to input folder as warm start trip tables for next runs
+   CopyFile(outputDir+"\\trip_EA.mtx", inputDir+"\\trip_EA.mtx")
+   CopyFile(outputDir+"\\trip_AM.mtx", inputDir+"\\trip_AM.mtx")
+   CopyFile(outputDir+"\\trip_MD.mtx", inputDir+"\\trip_MD.mtx")
+   CopyFile(outputDir+"\\trip_PM.mtx", inputDir+"\\trip_PM.mtx")
+   CopyFile(outputDir+"\\trip_EV.mtx", inputDir+"\\trip_EV.mtx")
 
    RunMacro("TCB Closing", ok, "False")
    return(1)

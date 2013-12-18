@@ -1,8 +1,8 @@
 ${workpath}\\${year}\\gisdk\\sandag_abm_master.rsc
 ${workpath}\\${year}\\gisdk\\parameter.rsc
 ${workpath}\\${year}\\gisdk\\SandagCommon.rsc
-${workpath}\\${year}\gisdk\\createhwynet.rsc  
-${workpath}\\${year}\\gisdk\\hwyassign.rsc  
+${workpath}\\${year}\\gisdk\\createhwynet.rsc  
+${workpath}\\${year}\\gisdk\\hwyassign_sellink.rsc  
 ${workpath}\\${year}\\gisdk\\hwyskim.rsc
 ${workpath}\\${year}\\gisdk\\createtrnroutes.rsc 
 ${workpath}\\${year}\\gisdk\\trnskim.rsc 
