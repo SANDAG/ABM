@@ -101,6 +101,28 @@ Macro "Run SANDAG ABM"
       ok = RunMacro("TCB Run Macro", 1, "Build transit skims",{}) 
       if !ok then goto quit
 
+      // First move some trip matrices so model will crash if ctramp model doesn't produced csv/mtx files for assignment
+      if (iteration > 1) then do
+         fromDir = outputDir
+         toDir = outputDir+"\\iter"+String(iteration-1)
+         //check for directory of output
+         if GetDirectoryInfo(toDir, "Directory")=null then do
+                CreateDirectory( toDir)   
+         end
+         status = RunProgram("cmd.exe /c copy "+fromDir+"\\auto*.mtx "+toDir+"\\auto*.mtx",)
+         status = RunProgram("cmd.exe /c copy "+fromDir+"\\tran*.mtx "+toDir+"\\tran*.mtx",)
+         status = RunProgram("cmd.exe /c copy "+fromDir+"\\nmot*.mtx "+toDir+"\\nmot*.mtx",)
+         status = RunProgram("cmd.exe /c copy "+fromDir+"\\othr*.mtx "+toDir+"\\othr*.mtx",)
+         status = RunProgram("cmd.exe /c copy "+fromDir+"\\trip*.mtx "+toDir+"\\trip*.mtx",)
+ 
+         status = RunProgram("cmd.exe /c del "+fromDir+"\\auto*.mtx",)
+         status = RunProgram("cmd.exe /c del "+fromDir+"\\tran*.mtx",)
+         status = RunProgram("cmd.exe /c del "+fromDir+"\\nmot*.mtx",)
+         status = RunProgram("cmd.exe /c del "+fromDir+"\\othr*.mtx",)
+         status = RunProgram("cmd.exe /c del "+fromDir+"\\trip*.mtx",)
+        
+      end
+
       // Run CT-RAMP, airport model, visitor model, cross-border model, internal-external model
       runString = path+"\\bin\\runSandagAbm.cmd "+drive+" "+path_forward_slash +" "+r2s(sample_rate[iteration])+" "+i2s(iteration)
       RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run CT-RAMP, airport model, visitor model, cross-border model, internal-external model"+" "+runString})
