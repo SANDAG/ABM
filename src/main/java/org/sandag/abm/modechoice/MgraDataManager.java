@@ -1,6 +1,11 @@
 package org.sandag.abm.modechoice;
 
 
+import org.sandag.abm.active.sandag.SandagWalkPathChoiceLogsumMatrixApplication;
+import org.sandag.abm.ctramp.CtrampApplication;
+import org.sandag.abm.ctramp.Util;
+import org.sandag.abm.modechoice.Modes.AccessMode;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -212,13 +217,11 @@ public final class MgraDataManager
      */
     public void readMgraWlkTaps(HashMap<String, String> rbMap)
     {
-        File mgraWlkTapCorresFile = new File(Util.getStringValueFromPropertyMap(rbMap,
-                "scenario.path")
-                + Util.getStringValueFromPropertyMap(rbMap, "mgra.wlkacc.taps.and.distance.file"));
-        gotta fix this filename
+        File mgraWlkTapTimeFile = new File(rbMap.get("scenario.path"),
+        		rbMap.get(SandagWalkPathChoiceLogsumMatrixApplication.WALK_LOGSUM_SKIM_MGRA_TAP_FILE_PROPERTY));
         Map<Integer,Map<Integer,int[]>> mgraWlkTapList = new HashMap<>(); //mgra -> tap -> [board dist,alight dist]
         String s;
-        try ( BufferedReader br = new BufferedReader(new FileReader(mgraWlkTapCorresFile)))
+        try ( BufferedReader br = new BufferedReader(new FileReader(mgraWlkTapTimeFile)))
         { 
             // read the first data file line containing column names
             s = br.readLine();
@@ -270,13 +273,12 @@ public final class MgraDataManager
      */
     public void readMgraWlkDist(HashMap<String, String> rbMap)
     {
-        File mgraWlkDistFile = new File(Util.getStringValueFromPropertyMap(rbMap, "scenario.path")
-                + Util.getStringValueFromPropertyMap(rbMap, "mgra.walkdistance.file"));
-        gotta fix this filename
+        File mgraWlkTimeFile = new File(rbMap.get("scenario.path"),
+        		rbMap.get(SandagWalkPathChoiceLogsumMatrixApplication.WALK_LOGSUM_SKIM_MGRA_MGRA_FILE_PROPERTY));
         oMgraWalkDistance = new HashMap[maxMgra + 1];
         dMgraWalkDistance = new HashMap[maxMgra + 1];
         String s;
-        try (BufferedReader br = new BufferedReader(new FileReader(mgraWlkDistFile)))
+        try (BufferedReader br = new BufferedReader(new FileReader(mgraWlkTimeFile)))
         {
             while ((s = br.readLine()) != null)
             {
@@ -410,6 +412,7 @@ public final class MgraDataManager
         return mgraWlkTapsDistArray[mgra][2][pos];
     }
 
+    
 //    /**
 //     * Get the walk distance from an MGRA to a TAP.
 //     * 
@@ -475,17 +478,18 @@ public final class MgraDataManager
         return ((float) mgraWlkTapsDistArray[mgra][2][pos]) * Constants.walkMinutesPerFoot;
     }
 
-//    /**
-//     * Get the walk time from an MGRA to a TAP.
-//     * 
-//     * @param mgra The number of the destination MGRA.
-//     * @param pos The position of the TAP in the MGRA array (0+)
-//     * @return The walk time in minutes.
-//     */
-//    public float getMgraToTapWalkTime(int mgra, int pos)
-//    {
-//        return ((float) mgraWlkTapsDistArray[mgra][1][pos]) * Constants.walkMinutesPerFoot;
-//    }
+    //todo: delete this method: currently retained for compatibility (namely: abm_reports)
+    /**
+     * Get the walk time from an MGRA to a TAP.
+     * 
+     * @param mgra The number of the destination MGRA.
+     * @param pos The position of the TAP in the MGRA array (0+)
+     * @return The walk time in minutes.
+     */
+    public float getMgraToTapWalkTime(int mgra, int pos)
+    {
+        return ((float) mgraWlkTapsDistArray[mgra][1][pos]) * Constants.walkMinutesPerFoot;
+    }
 
     /**
      * Get the walk distance from an MGRA to an MGRA. Return 0 if not within walking
