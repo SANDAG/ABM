@@ -34,7 +34,7 @@ Macro "truck model"(properties, iteration)
        ok = RunMacro("truck-tripgen",properties)
        if !ok then goto quit
     end
-/*
+
     // Build lhdn congested skims
     RunMacro("HwycadLog",{"TruckModel.rsc: truckmodel","hwy skim,(lhdn)"})
     ok = RunMacro("hwy skim",{"lhdn"})
@@ -64,7 +64,7 @@ Macro "truck model"(properties, iteration)
     RunMacro("HwycadLog",{"TruckModel.rsc: truckmodel","hwy skim,(hhdt)"})     
     ok = RunMacro("hwy skim",{"hhdt"}) 
     if !ok then goto quit
- */ 
+  
     // Distribute daily truck trips and split them by time period
     RunMacro("HwycadLog",{"TruckModel.rsc: truckmodel","trkDistribution,(properties)"})      
     ok = RunMacro("trkDistribution",properties)  
