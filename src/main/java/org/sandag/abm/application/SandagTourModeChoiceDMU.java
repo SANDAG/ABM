@@ -1,6 +1,8 @@
 package org.sandag.abm.application;
 
 import java.util.HashMap;
+
+import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.TourModeChoiceDMU;
 
@@ -8,9 +10,9 @@ public class SandagTourModeChoiceDMU
         extends TourModeChoiceDMU
 {
 
-    public SandagTourModeChoiceDMU(ModelStructure modelStructure)
+    public SandagTourModeChoiceDMU(ModelStructure modelStructure, Logger aLogger)
     {
-        super(modelStructure);
+        super(modelStructure, aLogger);
         setupMethodIndexMap();
     }
 

@@ -97,7 +97,7 @@ public class SandagCtrampDmuFactory
 
     public TourModeChoiceDMU getModeChoiceDMU()
     {
-        return new SandagTourModeChoiceDMU(modelStructure);
+        return new SandagTourModeChoiceDMU(modelStructure, null);
     }
 
     public IndividualMandatoryTourFrequencyDMU getIndividualMandatoryTourFrequencyDMU()
