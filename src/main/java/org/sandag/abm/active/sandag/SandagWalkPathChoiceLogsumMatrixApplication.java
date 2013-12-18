@@ -97,7 +97,7 @@ public class SandagWalkPathChoiceLogsumMatrixApplication extends AbstractPathCho
         try (PrintWriter writer = new PrintWriter(outputFile.toFile())) {
         	writer.println("i,j,value");
         	StringBuilder sb;
-        	for (NodePair<SandagBikeNode> od : logsums.keySet()) {
+        	for (NodePair<SandagBikeNode> od : new TreeSet<>(logsums.keySet())) { //sort them so the output "looks nice"
         		sb = new StringBuilder();
         		sb.append(originCentroids.get(od.getFromNode().getId())).append(",");
         		sb.append(destinationCentroids.get(od.getToNode().getId())).append(",");
@@ -153,7 +153,7 @@ public class SandagWalkPathChoiceLogsumMatrixApplication extends AbstractPathCho
         try (PrintWriter writer = new PrintWriter(outputFile.toFile())) {
         	writer.println("mgra,tap,boarding,alighting");
         	StringBuilder sb;
-        	for (NodePair<SandagBikeNode> od : mgraTapLogsums.keySet()) {
+        	for (NodePair<SandagBikeNode> od : new TreeSet<>(mgraTapLogsums.keySet())) { //sort them so the output "looks nice"
         		sb = new StringBuilder();
         		sb.append(originCentroids.get(od.getFromNode().getId())).append(",");
         		sb.append(destinationCentroids.get(od.getToNode().getId())).append(",");

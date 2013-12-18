@@ -224,50 +224,50 @@ public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment> {
 		}
 	}
 	
-	public static void main(String ... args) {
-		Map<String,String> testRb = new HashMap<>();
-		
-		long time = System.currentTimeMillis();
-		testRb.put(BIKE_LOGSUM_OUTPUT_PROPERTY,"D:/projects/sandag/output_test");
-		testRb.put(BIKE_LOGSUM_MGRA_FILE_PROPERTY,"bikeMgraLogsum.csv");
-		testRb.put(BIKE_LOGSUM_TAZ_FILE_PROPERTY,"bikeTazLogsum.csv");
-		//testRb.put(BIKE_LOGSUM_NODE_PAIR_COUNT_PROPERTY,"100000000");
-		testRb.put(CtrampApplication.PROPERTIES_PROJECT_DIRECTORY,"D:/projects/sandag/abm_reporting/abm_shell");
-		testRb.put(MgraDataManager.PROPERTIES_MGRA_DATA_FILE,"input/mgra12_based_input08_rev.csv");
-		BikeLogsum logsum = BikeLogsum.getBikeLogsum(testRb);
-		System.out.println("total minutes to load: " + ((System.currentTimeMillis() - time) / 60000.0));
-		
-		int origin = 3668;
-		int destination = 9707;
-		boolean[] bs = {true,false};
-		for (boolean mandatory : bs) {
-			for (boolean female : bs) {
-				for (boolean inbound : bs) {
-					BikeLogsumSegment bls = new BikeLogsumSegment(female,mandatory,inbound);
-					System.out.println("origin " + origin + ", destination " + destination + ", " + bls + ": " + logsum.getValue(bls,origin,destination));
-				}
-			}
-		}
-		origin = 10649;
-		destination = 10291;
-		for (boolean mandatory : bs) {
-			for (boolean female : bs) {
-				for (boolean inbound : bs) {
-					BikeLogsumSegment bls = new BikeLogsumSegment(female,mandatory,inbound);
-					System.out.println("origin " + origin + ", destination " + destination + ", " + bls + ": " + logsum.getValue(bls,origin,destination));
-				}
-			}
-		}
-		origin = 1;
-		destination = 9707;
-		for (boolean mandatory : bs) {
-			for (boolean female : bs) {
-				for (boolean inbound : bs) {
-					BikeLogsumSegment bls = new BikeLogsumSegment(female,mandatory,inbound);
-					System.out.println("origin " + origin + ", destination " + destination + ", " + bls + ": " + logsum.getValue(bls,origin,destination));
-				}
-			}
-		}
-	}
+//	public static void main(String ... args) {
+//		Map<String,String> testRb = new HashMap<>();
+//		
+//		long time = System.currentTimeMillis();
+//		testRb.put(BIKE_LOGSUM_OUTPUT_PROPERTY,"D:/projects/sandag/output_test");
+//		testRb.put(BIKE_LOGSUM_MGRA_FILE_PROPERTY,"bikeMgraLogsum.csv");
+//		testRb.put(BIKE_LOGSUM_TAZ_FILE_PROPERTY,"bikeTazLogsum.csv");
+//		//testRb.put(BIKE_LOGSUM_NODE_PAIR_COUNT_PROPERTY,"100000000");
+//		testRb.put(CtrampApplication.PROPERTIES_PROJECT_DIRECTORY,"D:/projects/sandag/abm_reporting/abm_shell");
+//		testRb.put(MgraDataManager.PROPERTIES_MGRA_DATA_FILE,"input/mgra12_based_input08_rev.csv");
+//		BikeLogsum logsum = BikeLogsum.getBikeLogsum(testRb);
+//		System.out.println("total minutes to load: " + ((System.currentTimeMillis() - time) / 60000.0));
+//		
+//		int origin = 3668;
+//		int destination = 9707;
+//		boolean[] bs = {true,false};
+//		for (boolean mandatory : bs) {
+//			for (boolean female : bs) {
+//				for (boolean inbound : bs) {
+//					BikeLogsumSegment bls = new BikeLogsumSegment(female,mandatory,inbound);
+//					System.out.println("origin " + origin + ", destination " + destination + ", " + bls + ": " + logsum.getValue(bls,origin,destination));
+//				}
+//			}
+//		}
+//		origin = 10649;
+//		destination = 10291;
+//		for (boolean mandatory : bs) {
+//			for (boolean female : bs) {
+//				for (boolean inbound : bs) {
+//					BikeLogsumSegment bls = new BikeLogsumSegment(female,mandatory,inbound);
+//					System.out.println("origin " + origin + ", destination " + destination + ", " + bls + ": " + logsum.getValue(bls,origin,destination));
+//				}
+//			}
+//		}
+//		origin = 1;
+//		destination = 9707;
+//		for (boolean mandatory : bs) {
+//			for (boolean female : bs) {
+//				for (boolean inbound : bs) {
+//					BikeLogsumSegment bls = new BikeLogsumSegment(female,mandatory,inbound);
+//					System.out.println("origin " + origin + ", destination " + destination + ", " + bls + ": " + logsum.getValue(bls,origin,destination));
+//				}
+//			}
+//		}
+//	}
 
 }

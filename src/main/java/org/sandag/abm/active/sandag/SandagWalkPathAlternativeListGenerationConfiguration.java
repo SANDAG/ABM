@@ -5,11 +5,12 @@ import org.sandag.abm.active.*;
 
 public abstract class SandagWalkPathAlternativeListGenerationConfiguration implements PathAlternativeListGenerationConfiguration<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal>
 {
+    public static final String PROPERTIES_SAMPLE_MAXCOST = "active.sample.maxcost";
+    public static final String PROPERTIES_OUTPUT = "active.output.walk";
+    public static final String PROPERTIES_TRACE_ORIGINS = "active.trace.origins";
+    
     protected Map<String,String> propertyMap;
     protected PropertyParser propertyParser;
-    protected final String PROPERTIES_SAMPLE_MAXCOST = "active.sample.maxcost";
-    protected final String PROPERTIES_OUTPUT = "active.output.walk";
-    protected final String PROPERTIES_TRACE_ORIGINS = "active.trace.origins";
     
     protected String PROPERTIES_MAXDIST_ZONE;
     
