@@ -119,7 +119,7 @@ public final class SubtourTodEstimationMcLogsumsAppender
         String mcUecFile = rbMap.get(PROPERTIES_UEC_TOUR_MODE_CHOICE);
         mcUecFile = uecPath + mcUecFile;
 
-        SandagAppendMcLogsumDMU mcDmuObject = new SandagAppendMcLogsumDMU(modelStructure);
+        SandagAppendMcLogsumDMU mcDmuObject = new SandagAppendMcLogsumDMU(modelStructure, null);
 
         ChoiceModelApplication[] mcModel = new ChoiceModelApplication[5 + 1];
         mcModel[WORK_CATEGORY] = new ChoiceModelApplication(mcUecFile, WORK_SHEET, 0, rbMap,
