@@ -270,12 +270,8 @@ public class TourModeChoiceModel
         mcDmuObject.setDmuIndexValues(household.getHhId(), tour.getTourDestMgra(),
                 tour.getTourOrigMgra(), tour.getTourDestMgra(), household.getDebugChoiceModels());
         
-        
-    }    
-
         return getModeChoiceLogsum(mcDmuObject, tour, modelLogger, choiceModelDescription,
                 decisionMakerLabel);
-
     }
 
     public double getModeChoiceLogsum(TourModeChoiceDMU mcDmuObject, Tour tour, Logger modelLogger,
