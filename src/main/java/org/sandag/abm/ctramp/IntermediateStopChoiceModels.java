@@ -1807,6 +1807,7 @@ public class IntermediateStopChoiceModels
             if (numAvailableAlternatives == 0)
             {
                 logger.error("no available locations - empty sample.");
+                logger.error("best tap pair which is empty: " +  Arrays.deepToString(s.isInboundStop() ? tour.getBestWtwTapPairsIn() : tour.getBestWtwTapPairsOut()));
                 throw new RuntimeException();
             }
         }
@@ -2110,6 +2111,7 @@ public class IntermediateStopChoiceModels
             if (numAvailableAlternatives == 0)
             {
                 logger.error("no available locations - empty sample.");
+                logger.error("best tap pair which is empty: " +  Arrays.deepToString(s.isInboundStop() ? tour.getBestWtwTapPairsIn() : tour.getBestWtwTapPairsOut()));
                 throw new RuntimeException();
             }
         }
