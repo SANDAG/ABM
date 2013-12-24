@@ -263,6 +263,7 @@ public final class MgraDataManager
         		mgraWlkTapsDistArray[mgra][0][counter] = tap;
         		mgraWlkTapsDistArray[mgra][1][counter] = dists[0];
         		mgraWlkTapsDistArray[mgra][2][counter] = dists[1];
+                counter++;
         	}
         }
     }
