@@ -1,48 +1,49 @@
 package org.sandag.abm.active;
 
-public abstract class SimpleEdge implements Edge
+import java.util.Objects;
+
+public class SimpleEdge<N extends Node> implements Edge<N>
 {
-    private int fromId, toId;
-
-    public int getFromId()
-    {
-        return fromId;
-    }
-
-    public void setFromId(int fromId)
-    {
-        this.fromId = fromId;
-    }
-
-    public int getToId()
-    {
-        return toId;
-    }
-
-    public void setToId(int toId)
-    {
-        this.toId = toId;
+    private final N fromNode;
+    private final N toNode;
+    
+    public SimpleEdge(N fromNode, N toNode) {
+    	this.fromNode = fromNode;
+    	this.toNode = toNode;
     }
 
     @Override
-    public int hashCode()
+    public N getFromNode()
     {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + fromId;
-        result = prime * result + toId;
-        return result;
+        return fromNode;
     }
 
     @Override
-    public boolean equals(Object obj)
+    public N getToNode()
     {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        SimpleEdge other = (SimpleEdge) obj;
-        if (fromId != other.fromId) return false;
-        if (toId != other.toId) return false;
-        return true;
+        return toNode;
+    }
+    
+    @Override
+    public int compareTo(Edge<N> o)
+    {
+        int fromResult = this.fromNode.compareTo(o.getFromNode());
+        int toResult = this.toNode.compareTo(o.getToNode());
+        return fromResult + ( (fromResult == 0) ? 1 : 0 ) * toResult;
+    }
+    
+    @Override
+    public int hashCode() 
+    {
+    	return Objects.hash(fromNode,toNode);
+    }
+    
+    @Override
+    public boolean equals(Object o) 
+    {
+    	if ((o == null) || !(o instanceof Edge))
+    		return false;
+    	Edge<?> other = (Edge<?>) o;
+    	return fromNode.equals(other.getFromNode()) && toNode.equals(other.getToNode());
     }
 }

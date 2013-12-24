@@ -98,12 +98,6 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
 
             Map<Integer,Integer> origins = configuration.getInverseOriginZonalCentroidIdMap(); 
             Map<Integer,Integer> dests = configuration.getInverseDestinationZonalCentroidIdMap();
-        DecimalFormat formatter = new DecimalFormat("#.###");
-        
-        for(int i=0; i<configurations.size(); i++)  {
-            PathAlternativeListGenerationConfiguration<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> configuration  = configurations.get(i);
-            String filename = configuration.getOutputDirectory() + "/" + propertyMap.get(fileProperties[i]);
-            application = new SandagBikePathChoiceLogsumMatrixApplication(configuration,propertyMap);
             
             try {
             	Files.createDirectories(outputDirectory);
@@ -114,27 +108,7 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
             Map<NodePair<SandagBikeNode>,double[]> logsums = application.calculateMarketSegmentLogsums();
             Map<Integer,Integer> centroids = configuration.getInverseOriginZonalCentroidIdMap();
             
-            try
-            {
-                FileWriter writer = new FileWriter(new File(filename));
-                writer.write("i, j, " + Arrays.toString(MARKET_SEGMENT_NAMES).substring(1).replaceFirst("]", "") + "\n");
-                for (NodePair<SandagBikeNode> od : logsums.keySet()) {
-                    double[] values = logsums.get(od); 
-                    writer.write(centroids.get(od.getFromNode().getId()) + ", " + centroids.get(od.getToNode().getId()));
-                    for (double v : values) {
-                        writer.write(", " + formatter.format(v));
-                    }
-                    writer.write("\n");
-                }
-                writer.flush();
-                writer.close();  
-            } catch (IOException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            
-        }
+            DecimalFormat formatter = new DecimalFormat("#.###");
 
             try (PrintWriter writer = new PrintWriter(outputFile.toFile())) {
             	StringBuilder sb = new StringBuilder("i,j");
@@ -153,5 +127,4 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
 			}
         }
     }
-    
 }

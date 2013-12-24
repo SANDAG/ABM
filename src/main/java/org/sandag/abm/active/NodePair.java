@@ -2,41 +2,39 @@ package org.sandag.abm.active;
 
 import java.util.Objects;
 
-public class NodePair implements Comparable<NodePair>{
-	private final Node originNode;
-	private final Node destinationNode;
+public class NodePair<N extends Node> implements Comparable<NodePair<N>>{
+	private final N fromNode;
+	private final N toNode;
 	
-	public NodePair(Node originNode, Node destinationNode) {
-		this.originNode = originNode;
-		this.destinationNode = destinationNode;
+	public NodePair(N fromNode, N toNode) {
+		this.fromNode = fromNode;
+		this.toNode = toNode;
 	}
 	
-	public int compareTo(NodePair other) {
-		int c = originNode.compareTo(other.originNode);
+	public int compareTo(NodePair<N> other) {
+		int c = fromNode.compareTo(other.fromNode);
 		if (c == 0)
-			c = destinationNode.compareTo(other.destinationNode);
+			c = toNode.compareTo(other.toNode);
 		return c;
 	}
 	
-	public Node getOriginNode() {
-		return originNode;
+	public N getFromNode() {
+		return fromNode;
 	}
 	
-	public Node getDestinationNode() {
-		return destinationNode;
+	public N getToNode() {
+		return toNode;
 	}
 	
 	public boolean equals(Object other) {
-		if (other == null)
+		if ((other == null) || (!(other instanceof NodePair)))
 			return false;
-		if (!(other instanceof NodePair))
-			return false;
-		NodePair np = (NodePair) other;
-		return (originNode.equals(np.originNode)) && (destinationNode.equals(np.destinationNode));
+		NodePair<?> np = (NodePair<?>) other;
+		return (fromNode.equals(np.fromNode)) && (toNode.equals(np.toNode));
 	}
 	
 	public int hashCode() {
-		return Objects.hash(originNode,destinationNode);
+		return Objects.hash(fromNode,toNode);
 	}
 	
 	public String toString() {

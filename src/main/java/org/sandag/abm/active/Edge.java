@@ -1,9 +1,7 @@
 package org.sandag.abm.active;
 
-public interface Edge
+public interface Edge<N extends Node> extends Comparable<Edge<N>>
 {
-    int getFromId();
-    int getToId();
-    void setFromId(int id);
-    void setToId(int id);
+    N getFromNode();
+    N getToNode();
 }
