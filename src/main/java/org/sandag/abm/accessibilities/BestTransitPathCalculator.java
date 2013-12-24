@@ -905,6 +905,38 @@ public class BestTransitPathCalculator
             boolean myTrace, Logger myLogger)
     {
 
+        // allocate space for the pTap if necessary
+        if (storedDepartPeriodTapTapUtils[accEgr][period] == null)
+        {
+            synchronized (storedDepartPeriodTapTapUtils[accEgr]) {
+                if (storedDepartPeriodTapTapUtils[accEgr][period] == null) {
+                    storedDepartPeriodTapTapUtils[accEgr][period] = new double[maxTap + 1][][];
+                }
+            }
+            if (storedDepartPeriodTapTapUtils[accEgr][period] == null)
+            {
+                logger.error("error allocating array of length " + (maxTap + 1)
+                        + " for storedDepartPeriodTapTapUtils[accEgr][period].");
+                throw new RuntimeException();
+            }
+        }
+
+        // allocate space for the aTap if necessary
+        if (storedDepartPeriodTapTapUtils[accEgr][period][pTap] == null)
+        {
+            synchronized (storedDepartPeriodTapTapUtils[accEgr][period]) {
+                if (storedDepartPeriodTapTapUtils[accEgr][period][pTap] == null) {
+                    storedDepartPeriodTapTapUtils[accEgr][period][pTap] = new double[maxTap + 1][];
+                }
+            }
+            if (storedDepartPeriodTapTapUtils[accEgr][period][pTap] == null)
+            {
+                logger.error("error allocating array of length " + (maxTap + 1)
+                        + " for storedDepartPeriodTapTapUtils[accEgr][period][pTap].");
+                throw new RuntimeException();
+            }
+        }
+
         // calculate the tap-tap utilities if they haven't already been.
         if (storedTapToTapUtils[accEgr][period][pTap][aTap] == null)
         {

@@ -96,6 +96,8 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
             Path outputFile = outputDirectory.resolve(configurationOutputMap.get(configuration));
             SandagBikePathChoiceLogsumMatrixApplication application = new SandagBikePathChoiceLogsumMatrixApplication(configuration,propertyMap);
 
+            Map<Integer,Integer> origins = configuration.getInverseOriginZonalCentroidIdMap(); 
+            Map<Integer,Integer> dests = configuration.getInverseDestinationZonalCentroidIdMap();
         DecimalFormat formatter = new DecimalFormat("#.###");
         
         for(int i=0; i<configurations.size(); i++)  {
@@ -134,6 +136,22 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
             
         }
 
+            try (PrintWriter writer = new PrintWriter(outputFile.toFile())) {
+            	StringBuilder sb = new StringBuilder("i,j");
+            	for (String segment : MARKET_SEGMENT_NAMES)
+            		sb.append(",").append(segment);
+            	writer.println(sb.toString());
+            	for (NodePair<SandagBikeNode> od : logsums.keySet()) {
+            		sb = new StringBuilder();
+            		sb.append(origins.get(od.getFromNode().getId())).append(",").append(dests.get(od.getToNode().getId()));
+            		for (double logsum : logsums.get(od))
+            			sb.append(",").append(formatter.format(logsum));
+            		writer.println(sb.toString());
+            	}
+            } catch (IOException e) {
+            	throw new RuntimeException(e);
+			}
+        }
     }
     
 }

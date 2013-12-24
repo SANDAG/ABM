@@ -284,12 +284,11 @@ public final class MgraDataManager
         String s;
         try (BufferedReader br = new BufferedReader(new FileReader(mgraWlkTimeFile)))
         {
+            br.readLine(); //skip first line (header)
+
             while ((s = br.readLine()) != null)
             {
-                StringTokenizer st = new StringTokenizer(s, " ");
-
-                // skip lines if zone, number of mgra-pairs exists in file
-                if (st.countTokens() < 3) continue;
+                StringTokenizer st = new StringTokenizer(s, ",");
 
                 int oMgra = Integer.parseInt(st.nextToken());
                 int dMgra = Integer.parseInt(st.nextToken());
