@@ -13,8 +13,10 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.Util;
+
 import com.pb.common.util.ResourceUtil;
 
 public final class TapDataManager
@@ -22,7 +24,8 @@ public final class TapDataManager
 {
 
     protected transient Logger    logger = Logger.getLogger(TapDataManager.class);
-    private static TapDataManager instance;
+    private static volatile TapDataManager instance = null;
+    private static final Object LOCK = new Object();
 
     // tapID, [tapNum, lotId, ??, taz][list of values]
     private float[][][]           tapParkingInfo;
@@ -264,11 +267,14 @@ public final class TapDataManager
 
     public static TapDataManager getInstance(HashMap<String, String> rbMap)
     {
-        if (instance == null)
-        {
-            instance = new TapDataManager(rbMap);
-            return instance;
-        } else return instance;
+    	if (instance == null) {
+    		synchronized (LOCK) {
+				if (instance == null) {
+					instance = new TapDataManager(rbMap);
+				}
+			}
+    	}
+    	return instance;
     }
 
     public float[][][] getTapParkingInfo()

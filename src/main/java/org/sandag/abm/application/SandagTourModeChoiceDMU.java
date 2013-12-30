@@ -185,9 +185,9 @@ public class SandagTourModeChoiceDMU
         	femaleInParty = person.getPersonIsFemale();
         	maleInParty = femaleInParty == 0 ? 1 : 0;
         } else {
+    		femaleInParty = 0;
+    		maleInParty = 0;
         	for (int participant : tour.getPersonNumArray()) {
-        		femaleInParty = 0;
-        		maleInParty = 0;
         		if (hh.getPerson(participant).getPersonIsFemale() == 1)
         			femaleInParty = 1;
         		else
