@@ -702,18 +702,18 @@ public class CtrampApplication
 
             aggAcc.calculateDCUtilitiesDistributed(propertyMap);
 
-            // release the memory used to store the access-tap, tap-egress, and
-            // tap-tap utilities while calculating accessibilities for the
-            // client program
-            HashMap<String, String> rbMap = ResourceUtil
-                    .changeResourceBundleIntoHashMap(resourceBundle);
-            StoredUtilityData.getInstance(MgraDataManager.getInstance(rbMap).getMaxMgra(),
-                    MgraDataManager.getInstance(rbMap).getMaxTap(),
-                    TazDataManager.getInstance(rbMap).getMaxTaz(),
-                    BestTransitPathCalculator.NUM_ACC_EGR, BestTransitPathCalculator.NUM_PERIODS)
-                    .deallocateArrays();
-
-            MatrixDataManager.getInstance().clearData();
+//            // release the memory used to store the access-tap, tap-egress, and
+//            // tap-tap utilities while calculating accessibilities for the
+//            // client program
+//            HashMap<String, String> rbMap = ResourceUtil
+//                    .changeResourceBundleIntoHashMap(resourceBundle);
+//            StoredUtilityData.getInstance(MgraDataManager.getInstance(rbMap).getMaxMgra(),
+//                    MgraDataManager.getInstance(rbMap).getMaxTap(),
+//                    TazDataManager.getInstance(rbMap).getMaxTaz(),
+//                    BestTransitPathCalculator.NUM_ACC_EGR, BestTransitPathCalculator.NUM_PERIODS)
+//                    .deallocateArrays();
+//
+//            MatrixDataManager.getInstance().clearData();
         }
 
     }
