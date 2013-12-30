@@ -231,9 +231,9 @@ public class SandagTourModeChoiceDMU
 		int origin = tour.getTourOrigMgra();
 		int dest = tour.getTourDestMgra();
 		boolean mandatory = tour.getTourPrimaryPurposeIndex() <= 3;
-		setBikeLogsum(bls.getValue(new BikeLogsumSegment(true,mandatory,true),origin,dest),
+		setBikeLogsum(bls.getValue(new BikeLogsumSegment(true,mandatory,true),dest,origin),
 				      bls.getValue(new BikeLogsumSegment(true,mandatory,false),origin,dest),
-				      bls.getValue(new BikeLogsumSegment(false,mandatory,true),origin,dest),
+				      bls.getValue(new BikeLogsumSegment(false,mandatory,true),dest,origin),
 			          bls.getValue(new BikeLogsumSegment(false,mandatory,false),origin,dest));
 	}
 
