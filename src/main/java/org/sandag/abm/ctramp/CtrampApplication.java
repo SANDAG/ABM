@@ -704,20 +704,34 @@ public class CtrampApplication
 
             aggAcc.calculateDCUtilitiesDistributed(propertyMap);
 
-//            // release the memory used to store the access-tap, tap-egress, and
-//            // tap-tap utilities while calculating accessibilities for the
-//            // client program
-//            HashMap<String, String> rbMap = ResourceUtil
-//                    .changeResourceBundleIntoHashMap(resourceBundle);
-//            StoredUtilityData.getInstance(MgraDataManager.getInstance(rbMap).getMaxMgra(),
-//                    MgraDataManager.getInstance(rbMap).getMaxTap(),
-//                    TazDataManager.getInstance(rbMap).getMaxTaz(),
-//                    BestTransitPathCalculator.NUM_ACC_EGR, BestTransitPathCalculator.NUM_PERIODS)
-//                    .deallocateArrays();
-//
-//            MatrixDataManager.getInstance().clearData();
+            if (isJppfRunningDistributed()) {
+	            // release the memory used to store the access-tap, tap-egress, and
+	            // tap-tap utilities while calculating accessibilities for the
+	            // client program
+	            // don't do this if we are running jppf in local mode
+	            HashMap<String, String> rbMap = ResourceUtil
+	                    .changeResourceBundleIntoHashMap(resourceBundle);
+	            StoredUtilityData.getInstance(MgraDataManager.getInstance(rbMap).getMaxMgra(),
+	                    MgraDataManager.getInstance(rbMap).getMaxTap(),
+	                    TazDataManager.getInstance(rbMap).getMaxTaz(),
+	                    BestTransitPathCalculator.NUM_ACC_EGR, BestTransitPathCalculator.NUM_PERIODS)
+	                    .deallocateArrays();
+	
+	            MatrixDataManager.getInstance().clearData();
+            }
         }
 
+    }
+    
+    private boolean isJppfRunningDistributed() {
+    	//note: this assumes that the jppf config file is being entered in through a system property, and that it is a property file
+    	String jppfConfigFile = System.getProperty("jppf.config");
+    	ResourceBundle jppfConfig = ResourceUtil.getResourceBundle(jppfConfigFile.replace(".properties",""));
+    	try {
+    		return !jppfConfig.getString("jppf.local.execution.enabled").equalsIgnoreCase("true");
+    	} catch (MissingResourceException e) {
+    		return false;
+    	}
     }
 
     /*
