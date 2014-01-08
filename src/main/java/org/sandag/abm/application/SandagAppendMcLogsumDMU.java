@@ -712,7 +712,7 @@ public class SandagAppendMcLogsumDMU
                 returnValue = workTourModeIsBike;
                 break;
             case 12:
-                returnValue = tourCategorySubtour;
+            	returnValue = workTourModeIsHOV;
                 break;
             case 14:
                 returnValue = pTazTerminalTime;
