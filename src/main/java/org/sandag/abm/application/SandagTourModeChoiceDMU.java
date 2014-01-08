@@ -1,5 +1,7 @@
 package org.sandag.abm.application;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
@@ -463,11 +465,31 @@ public class SandagTourModeChoiceDMU
         methodIndexMap.put("getDtw_cr_xfers_out", 398);
         methodIndexMap.put("getDtw_cr_xfers_in", 399);
 
+        CreateReverseMap();
     }
 
     public double getValueForIndex(int variableIndex, int arrayIndex)
     {
-
+    	if (variableIndex < 100)
+    	{
+			try {
+				Method method = SandagTourModeChoiceDMU.class.getMethod(reverseMethodIndexMap.get(variableIndex));
+				Object o = method.invoke(this);
+				if (o instanceof Double)
+					return (double)o;
+				else if (o instanceof Float)
+					return ((Float)o).doubleValue(); 
+				else if (o instanceof Integer)
+					return ((Integer)o).doubleValue();
+			} catch (IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException
+					| SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+    	
+    	
         double returnValue = -1;
 
         switch (variableIndex)
