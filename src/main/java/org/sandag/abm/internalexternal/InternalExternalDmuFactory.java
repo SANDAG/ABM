@@ -35,6 +35,6 @@ public class InternalExternalDmuFactory
 
     public InternalExternalTripModeChoiceDMU getInternalExternalTripModeChoiceDMU()
     {
-        return new InternalExternalTripModeChoiceDMU(internalExternalModelStructure);
+        return new InternalExternalTripModeChoiceDMU(internalExternalModelStructure, null);
     }
 }
