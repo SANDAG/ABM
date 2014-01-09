@@ -35,7 +35,7 @@ public class CrossBorderDmuFactory
 
     public CrossBorderTripModeChoiceDMU getCrossBorderTripModeChoiceDMU()
     {
-        return new CrossBorderTripModeChoiceDMU(crossBorderModelStructure);
+        return new CrossBorderTripModeChoiceDMU(crossBorderModelStructure, null);
     }
 
     public CrossBorderStationDestChoiceDMU getCrossBorderStationChoiceDMU()
