@@ -30,6 +30,6 @@ public class AirportDmuFactory
 
     public AirportModelDMU getAirportModelDMU()
     {
-        return new AirportModelDMU();
+        return new AirportModelDMU(null);
     }
 }

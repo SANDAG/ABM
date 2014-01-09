@@ -140,15 +140,19 @@ public class AirportModelDMU
     private double                            transitLogsum;
 
     protected double[][][]                    transitSkim                   = new double[NUM_ACC_EGR][NUM_LOC_PREM][NUM_SKIMS];
-
-    /**
-     * Default constructor.
-     */
-    public AirportModelDMU()
+    
+    protected Logger _logger = null;
+    
+    public AirportModelDMU(Logger logger)
     {
-        dmuIndex = new IndexValues();
+    	dmuIndex = new IndexValues();
         setupMethodIndexMap();
-
+        if (logger == null)
+        {
+        	_logger = Logger.getLogger(AirportModelDMU.class);
+        }
+        else
+        	_logger = logger;
     }
 
     /**
@@ -739,8 +743,7 @@ public class AirportModelDMU
                 else return getTransitSkim(WTD, CR, XFERS);
 
             default:
-                Logger logger = Logger.getLogger(AirportModelDMU.class);
-                logger.error("method number = " + variableIndex + " not found");
+                _logger.error("method number = " + variableIndex + " not found");
                 throw new RuntimeException("method number = " + variableIndex + " not found");
         }
     }
