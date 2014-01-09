@@ -31,7 +31,7 @@ public class SpecialEventDmuFactory
 
     public SpecialEventTripModeChoiceDMU getSpecialEventTripModeChoiceDMU()
     {
-        return new SpecialEventTripModeChoiceDMU(sandagModelStructure);
+        return new SpecialEventTripModeChoiceDMU(sandagModelStructure, null);
     }
 
     public SpecialEventOriginChoiceDMU getSpecialEventOriginChoiceDMU()
