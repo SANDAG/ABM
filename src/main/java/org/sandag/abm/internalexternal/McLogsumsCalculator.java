@@ -186,7 +186,7 @@ public class McLogsumsCalculator
 
         setNmTripMcDmuAttributes(mcDmuObject, origMgra, destMgra, departPeriod, debug);
          
-         mcDmuObject.setBikeLogsum(bls.getValue(new BikeLogsumSegment(tour.getFemale() == 1,false,trip.isInbound()),origMgra,destMgra));
+         mcDmuObject.setBikeLogsum(bls.getLogsum(new BikeLogsumSegment(tour.getFemale() == 1,false,trip.isInbound()),origMgra,destMgra));
 
         int[][] bestTapPairs = null;
 
@@ -208,7 +208,7 @@ public class McLogsumsCalculator
 
         setDtwTripMcDmuAttributes(mcDmuObject, origMgra, destMgra, departPeriod, null, debug);
 
-        mcDmuObject.setBikeLogsum(bls.getValue(new BikeLogsumSegment(tour.getFemale() == 1,false,trip.isInbound()),origMgra,origMgra));
+        mcDmuObject.setBikeLogsum(bls.getLogsum(new BikeLogsumSegment(tour.getFemale() == 1,false,trip.isInbound()),origMgra,origMgra));
     }
 
     private void setNmTripMcDmuAttributes(InternalExternalTripModeChoiceDMU tripMcDmuObject,

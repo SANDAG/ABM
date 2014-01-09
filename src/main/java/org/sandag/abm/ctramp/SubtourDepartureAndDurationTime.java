@@ -78,8 +78,6 @@ public class SubtourDepartureAndDurationTime
     private int[]                           subtourNumForWorkTours       = new int[2];
 
     private int                             noAltChoice                  = 1;
-    
-    private BikeLogsum bls;
 
     private long                            mcTime;
 
@@ -122,8 +120,6 @@ public class SubtourDepartureAndDurationTime
         tourPurposeNames[0] = modelStructure.AT_WORK_BUSINESS_PURPOSE_NAME;
         tourPurposeNames[1] = modelStructure.AT_WORK_EAT_PURPOSE_NAME;
         tourPurposeNames[2] = modelStructure.AT_WORK_MAINT_PURPOSE_NAME;
-        
-        bls = BikeLogsum.getBikeLogsum(propertyMap);
 
         // create the array of tod model indices
         int[] uecSheetIndices = new int[tourPurposeNames.length];

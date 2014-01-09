@@ -85,8 +85,6 @@ public class TourModeChoiceModel
 
     private MgraDataManager mgraManager;
     
-    private BikeLogsum bls;
-    
     public TourModeChoiceModel(HashMap<String, String> propertyMap, ModelStructure myModelStructure,
             String myTourCategory, CtrampDmuFactoryIf dmuFactory, McLogsumsCalculator myLogsumHelper)
     {
@@ -103,8 +101,6 @@ public class TourModeChoiceModel
         setupModeChoiceModelApplicationArray(propertyMap, tourCategory);
 
         mgraManager = MgraDataManager.getInstance(); 
-        
-        bls = BikeLogsum.getBikeLogsum(propertyMap);
     }
 
     public AutoAndNonMotorizedSkimsCalculator getAnmSkimCalculator()

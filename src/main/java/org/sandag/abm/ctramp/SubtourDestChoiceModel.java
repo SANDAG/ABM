@@ -124,7 +124,6 @@ public class SubtourDestChoiceModel
     private boolean                              useNewSoaMethod;
 
     private int                                  soaSampleSize;
-    private BikeLogsum bls;
 
     private long                                 soaRunTime;
 
@@ -152,8 +151,6 @@ public class SubtourDestChoiceModel
 
         mgraManager = MgraDataManager.getInstance();
         tazs = TazDataManager.getInstance();  
-        
-        bls = BikeLogsum.getBikeLogsum(propertyMap);
 
         soaSampleSize = Util.getIntegerValueFromPropertyMap(propertyMap,
                 PROPERTIES_DC_SOA_NON_MAND_SAMPLE_SIZE_KEY);

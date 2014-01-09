@@ -33,10 +33,7 @@ public class BikeLogsumSegment {
 	}
 	
 	private int formSegmentId(boolean isFemale, boolean mandatory, boolean inbound) {
-		//powers of 2 make a unique identifier
-		return (isFemale ? 1 : 0) + 
-			   (mandatory ? 2 : 0) + 
-			   ((mandatory && inbound) ? 2 : 0); //this last one is 2 not 4 because mandatory is a requirement
+		return 0; //only one segment now, but leaving in this structure in case it is needed in the future
 	}
 	
 	/**
@@ -54,7 +51,7 @@ public class BikeLogsumSegment {
 	 * @return the number of unique segments provided by this class.
 	 */
 	public static int segmentWidth() {
-		return 6;
+		return 1;
 	}
 	
 	/**

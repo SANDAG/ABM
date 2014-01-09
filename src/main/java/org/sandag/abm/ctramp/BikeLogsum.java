@@ -129,7 +129,8 @@ public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment> {
 		
 		int segmentWidth = BikeLogsumSegment.segmentWidth();
 		try (BufferedReader reader = new BufferedReader(new FileReader(logsumFile))) {
-			int[] segmentIndex = new int[segmentWidth];
+			int logsumIndex = -1;
+			int timeIndex = -1;
 			boolean first = true;
 
 			String line;
@@ -140,25 +141,26 @@ public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment> {
 				if (first) {
 					for (int i = 2; i < (2 + segmentWidth); i++) { //first two are for row and column
 						String columnName = lineData[i].toLowerCase();
-						boolean isFemale = columnName.contains("female");
-						boolean mandatory = columnName.contains("mandatory");
-						boolean inbound = columnName.contains("inbound");
-						segmentIndex[new BikeLogsumSegment(isFemale,mandatory,inbound).getSegmentId()] = i;
+						if (columnName.contains("logsum"))
+							logsumIndex = i;
+						if (columnName.contains("time"))
+							timeIndex = i;
 					}
 					first = false;
 					continue;
 				}
 				if (++counter % 100_000 == 0)
 					logger.debug("Finished processing " + counter + " node pairs (logsum lookup size: " + logsum.size() + ")");
-				double[] logsumData = new double[segmentWidth];
-				for (int i = 0; i < logsumData.length; i++)
-					logsumData[i] = Double.parseDouble(lineData[segmentIndex[i]]);
+				//if we ever bring back segmented logsums, then this will be a bit more complicated
+				// the basic idea is all logsums first, then times (in same order) so lookups are straightforward
+				// without having to replicate the hashmap, which is a big data structure
+				double[] data = new double[] {Double.parseDouble(lineData[logsumIndex]),Double.parseDouble(lineData[logsumIndex])};
 
 				int fromZone = Integer.parseInt(lineData[0]);
 				int toZone = Integer.parseInt(lineData[1]);
 				int indexFactor = taz ? -1 : 1;
 				MatrixLookup ml = new MatrixLookup(indexFactor*Integer.parseInt(lineData[0]),indexFactor*Integer.parseInt(lineData[1]));
-			    logsum.put(ml,logsumData);
+			    logsum.put(ml,data);
 			    	
 			}
 		} catch (IOException e) {
@@ -180,27 +182,13 @@ public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment> {
 		return logsums == null ? -999 : logsums[segment.getSegmentId()];
 	}
 	
-	/**
-	 * Get the logsum value when full segmentation is not possible. This method collects all of the logsums corresponding to the provided segments, 
-	 * and then averages them.
-	 * 
-	 * @param rowId
-	 *        The row id.
-	 *        
-	 * @param columnId
-	 *        The column id.
-	 *        
-	 * @param segments
-	 *        The segments to get the logsum for. 
-	 * 
-	 * @return the matrix value at <code>(rowId,columnId)</code>, averaged across all of the segments specified by {@code segments}.
-	 */
-	public double getMultiSegmentLogsum(int rowId, int columnId, BikeLogsumSegment ... segments) {
+	public double getLogsum(BikeLogsumSegment segment, int rowId, int columnId) {
+		return getValue(segment,rowId,columnId);
+	}
+	
+	public double getTime(BikeLogsumSegment segment, int rowId, int columnId) {
 		double[] logsums = getLogsums(rowId,columnId);
-		double logsum = 0.0;
-		for (BikeLogsumSegment segment : segments)
-			logsum += logsums[segment.getSegmentId()];
-		return logsum / segments.length;
+		return logsums == null ? Double.POSITIVE_INFINITY : logsums[segment.getSegmentId()+segment.segmentWidth()];
 	}
 	
 	private class MatrixLookup {
@@ -223,51 +211,5 @@ public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment> {
 			return row + 37*column;
 		}
 	}
-	
-//	public static void main(String ... args) {
-//		Map<String,String> testRb = new HashMap<>();
-//		
-//		long time = System.currentTimeMillis();
-//		testRb.put(BIKE_LOGSUM_OUTPUT_PROPERTY,"D:/projects/sandag/output_test");
-//		testRb.put(BIKE_LOGSUM_MGRA_FILE_PROPERTY,"bikeMgraLogsum.csv");
-//		testRb.put(BIKE_LOGSUM_TAZ_FILE_PROPERTY,"bikeTazLogsum.csv");
-//		//testRb.put(BIKE_LOGSUM_NODE_PAIR_COUNT_PROPERTY,"100000000");
-//		testRb.put(CtrampApplication.PROPERTIES_PROJECT_DIRECTORY,"D:/projects/sandag/abm_reporting/abm_shell");
-//		testRb.put(MgraDataManager.PROPERTIES_MGRA_DATA_FILE,"input/mgra12_based_input08_rev.csv");
-//		BikeLogsum logsum = BikeLogsum.getBikeLogsum(testRb);
-//		System.out.println("total minutes to load: " + ((System.currentTimeMillis() - time) / 60000.0));
-//		
-//		int origin = 3668;
-//		int destination = 9707;
-//		boolean[] bs = {true,false};
-//		for (boolean mandatory : bs) {
-//			for (boolean female : bs) {
-//				for (boolean inbound : bs) {
-//					BikeLogsumSegment bls = new BikeLogsumSegment(female,mandatory,inbound);
-//					System.out.println("origin " + origin + ", destination " + destination + ", " + bls + ": " + logsum.getValue(bls,origin,destination));
-//				}
-//			}
-//		}
-//		origin = 10649;
-//		destination = 10291;
-//		for (boolean mandatory : bs) {
-//			for (boolean female : bs) {
-//				for (boolean inbound : bs) {
-//					BikeLogsumSegment bls = new BikeLogsumSegment(female,mandatory,inbound);
-//					System.out.println("origin " + origin + ", destination " + destination + ", " + bls + ": " + logsum.getValue(bls,origin,destination));
-//				}
-//			}
-//		}
-//		origin = 1;
-//		destination = 9707;
-//		for (boolean mandatory : bs) {
-//			for (boolean female : bs) {
-//				for (boolean inbound : bs) {
-//					BikeLogsumSegment bls = new BikeLogsumSegment(female,mandatory,inbound);
-//					System.out.println("origin " + origin + ", destination " + destination + ", " + bls + ": " + logsum.getValue(bls,origin,destination));
-//				}
-//			}
-//		}
-//	}
 
 }

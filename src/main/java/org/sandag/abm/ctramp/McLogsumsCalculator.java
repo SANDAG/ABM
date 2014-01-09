@@ -107,8 +107,6 @@ public class McLogsumsCalculator
     private int                                setTourMcLogsumDmuAttributesTotalTime = 0;
     private int                                setTripMcLogsumDmuAttributesTotalTime = 0;
 
-    private BikeLogsum bls;
-
     
     public McLogsumsCalculator()
     {
@@ -129,7 +127,6 @@ public class McLogsumsCalculator
 
     public void setupSkimCalculators(HashMap<String, String> rbMap)
     {
-    	bls = BikeLogsum.getBikeLogsum(rbMap);
     	
         bestPathUEC = new BestTransitPathCalculator(rbMap);
 
