@@ -137,7 +137,7 @@ public class SandagCtrampDmuFactory
 
     public TripModeChoiceDMU getTripModeChoiceDMU()
     {
-        return new SandagTripModeChoiceDMU(modelStructure);
+        return new SandagTripModeChoiceDMU(modelStructure, null);
     }
 
     public ParkingChoiceDMU getParkingChoiceDMU()

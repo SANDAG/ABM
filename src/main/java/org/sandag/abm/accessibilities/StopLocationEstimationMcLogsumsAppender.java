@@ -153,7 +153,7 @@ public final class StopLocationEstimationMcLogsumsAppender
         String mcUecFile = rbMap.get(PROPERTIES_UEC_TRIP_MODE_CHOICE);
         mcUecFile = uecPath + mcUecFile;
 
-        SandagTripModeChoiceDMU mcDmuObject = new SandagTripModeChoiceDMU(modelStructure);
+        SandagTripModeChoiceDMU mcDmuObject = new SandagTripModeChoiceDMU(modelStructure, null);
 
         ChoiceModelApplication[] mcModel = new ChoiceModelApplication[5 + 1];
         mcModel[WORK_CATEGORY] = new ChoiceModelApplication(mcUecFile, WORK_SHEET, 0, rbMap,
