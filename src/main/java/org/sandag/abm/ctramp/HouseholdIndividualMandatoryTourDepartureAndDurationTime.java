@@ -56,8 +56,6 @@ public class HouseholdIndividualMandatoryTourDepartureAndDurationTime
 
     private TazDataManager                  tazs;
     private MgraDataManager                 mgraManager;
-
-    private BikeLogsum bls;
     
     private ChoiceModelApplication          workTourChoiceModel;
     private ChoiceModelApplication          schoolTourChoiceModel;
@@ -151,8 +149,6 @@ public class HouseholdIndividualMandatoryTourDepartureAndDurationTime
         needToComputeLogsum = new boolean[numLogsumIndices];
 
         modeChoiceLogsums = new double[numLogsumIndices];
-        
-        bls = BikeLogsum.getBikeLogsum(propertyMap);
 
     }
 

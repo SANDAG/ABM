@@ -86,8 +86,6 @@ public class NonMandatoryTourDepartureAndDurationTime
 
     private boolean[]                       needToComputeLogsum;
     private double[]                        modeChoiceLogsums;
-    
-    private BikeLogsum bls;
 
     private int                             noAltChoice                   = 1;
 
@@ -127,8 +125,6 @@ public class NonMandatoryTourDepartureAndDurationTime
         int numLogsumIndices = modelStructure.getSkimPeriodCombinationIndices().length;
         needToComputeLogsum = new boolean[numLogsumIndices];
         modeChoiceLogsums = new double[numLogsumIndices];
-        
-        bls = BikeLogsum.getBikeLogsum(propertyMap);
 
         // create the array of tod model indices
         int[] uecSheetIndices = new int[TOUR_PURPOSE_NAMES.length];

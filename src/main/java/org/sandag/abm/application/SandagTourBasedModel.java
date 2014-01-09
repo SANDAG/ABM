@@ -7,7 +7,6 @@ import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.CtrampApplication;
 
-import org.sandag.abm.ctramp.BikeLogsum;
 import org.sandag.abm.ctramp.HouseholdDataManager;
 import org.sandag.abm.ctramp.HouseholdDataManagerIf;
 import org.sandag.abm.ctramp.HouseholdDataManagerRmi;

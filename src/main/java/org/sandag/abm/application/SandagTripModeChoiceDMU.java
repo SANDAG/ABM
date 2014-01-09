@@ -248,8 +248,8 @@ public class SandagTripModeChoiceDMU
 	
 	public void setBikeLogsum(int origin, int dest, boolean inbound) {
 		boolean mandatory = tour.getTourPrimaryPurposeIndex() <= 3;
-		femaleBikeLogsum = bls.getValue(new BikeLogsumSegment(true,mandatory,inbound),origin,dest);
-		maleBikeLogsum = bls.getValue(new BikeLogsumSegment(false,mandatory,inbound),origin,dest);
+		femaleBikeLogsum = bls.getLogsum(new BikeLogsumSegment(true,mandatory,inbound),origin,dest);
+		maleBikeLogsum = bls.getLogsum(new BikeLogsumSegment(false,mandatory,inbound),origin,dest);
 	}
     
     public double getFemaleBikeLogsum() {

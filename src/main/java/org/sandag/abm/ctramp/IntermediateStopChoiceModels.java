@@ -248,8 +248,7 @@ public class IntermediateStopChoiceModels
 
     private StopDepartArrivePeriodModel        stopTodModel;
 
-    private int                                availAltsToLog                                      = 55;                                                  // set
-    private BikeLogsum bls;
+    private int                                availAltsToLog                                      = 55;    
                                                                                                                                                            // larger
                                                                                                                                                            // than
                                                                                                                                                            // number
@@ -323,8 +322,6 @@ public class IntermediateStopChoiceModels
 
         setupStopLocationChoiceModels(propertyMap, dmuFactory);
         setupParkingLocationModel(propertyMap, dmuFactory);
-        
-        bls = BikeLogsum.getBikeLogsum(propertyMap);
     }
 
     private void setupStopLocationChoiceModels(HashMap<String, String> propertyMap,

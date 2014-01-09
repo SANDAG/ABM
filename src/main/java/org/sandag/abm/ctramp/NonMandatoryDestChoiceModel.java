@@ -156,7 +156,6 @@ public class NonMandatoryDestChoiceModel
     private int                                  soaSampleSize;
 
     private long                                 soaRunTime;
-    private final BikeLogsum bls;
 
     public NonMandatoryDestChoiceModel(HashMap<String, String> propertyMap,
             ModelStructure myModelStructure, BuildAccessibilities myAggAcc,
@@ -181,8 +180,6 @@ public class NonMandatoryDestChoiceModel
 
         if (useNewSoaMethod)
             dcSoaTwoStageObject = new DestChoiceTwoStageModel(propertyMap, soaSampleSize);
-
-        bls = BikeLogsum.getBikeLogsum(propertyMap);
 
         // create an array of ChoiceModelApplication objects for each choice
         // purpose
