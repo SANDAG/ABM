@@ -1,29 +1,31 @@
-package org.sandag.abm.crossborder;
+package org.sandag.abm.internalexternal;
 
 import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.sandag.abm.application.FakeLogger;
+import org.sandag.abm.crossborder.CrossBorderModelStructure;
+import org.sandag.abm.crossborder.CrossBorderTripModeChoiceDMU;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
 
-public class CrossBorderTripModeChoiceDMUTest {
+public class InternalExternalTripModeChoiceDMUTest {
 
 	public double error = .0001;
 
 	@Test
 	public void testCrossBorderTripModeChoiceDMU() {
 		Logger logger = new FakeLogger();
-		CrossBorderModelStructure structure = new CrossBorderModelStructure();
-		CrossBorderTripModeChoiceDMU dmu = new CrossBorderTripModeChoiceDMU(
+		InternalExternalModelStructure structure = new InternalExternalModelStructure();
+		InternalExternalTripModeChoiceDMU dmu = new InternalExternalTripModeChoiceDMU(
 				structure, logger);
 	}
 
 	@Test
 	public void testGetValueForIndexBasic() {
 		Logger logger = new FakeLogger();
-		CrossBorderModelStructure structure = new CrossBorderModelStructure();
-		CrossBorderTripModeChoiceDMU dmu = new CrossBorderTripModeChoiceDMU(
+		InternalExternalModelStructure structure = new InternalExternalModelStructure();
+		InternalExternalTripModeChoiceDMU dmu = new InternalExternalTripModeChoiceDMU(
 				structure, logger);
 
 		int tourDepartPeriod = 1;
@@ -40,11 +42,6 @@ public class CrossBorderTripModeChoiceDMUTest {
 		dmu.setTripPeriod(tripPeriod);
 		value = dmu.getValueForIndex(2, 0);
 		Assert.assertEquals(tripPeriod, (int) value);
-
-		int workTour = 4;
-		dmu.setWorkTour(workTour);
-		value = dmu.getValueForIndex(4, 0);
-		Assert.assertEquals(workTour, (int) value);
 
 		int outboundStops = 5;
 		dmu.setOutboundStops(outboundStops);
@@ -66,65 +63,40 @@ public class CrossBorderTripModeChoiceDMUTest {
 		value = dmu.getValueForIndex(8, 0);
 		Assert.assertEquals(lastTrip, (int) value);
 
-		int tourModeIsDA = 9;
-		dmu.setTourModeIsDA(tourModeIsDA);
+		int income = 9;
+		dmu.setIncome(income);
 		value = dmu.getValueForIndex(9, 0);
-		Assert.assertEquals(tourModeIsDA, (int) value);
+		Assert.assertEquals(income, (int) value);
 
-		int tourModeIsS2 = 10;
-		dmu.setTourModeIsS2(tourModeIsS2);
+		int female = 10;
+		dmu.setFemale(female);
 		value = dmu.getValueForIndex(10, 0);
-		Assert.assertEquals(tourModeIsS2, (int) value);
+		Assert.assertEquals(female, (int) value);
 
-		int tourModeIsS3 = 11;
-		dmu.setTourModeIsS3(tourModeIsS3);
+		int autos = 11;
+		dmu.setAutos(autos);
 		value = dmu.getValueForIndex(11, 0);
-		Assert.assertEquals(tourModeIsS3, (int) value);
+		Assert.assertEquals(autos, (int) value);
 
-		int tourModeIsWalk = 12;
-		dmu.setTourModeIsWalk(tourModeIsWalk);
+		int hhSize = 12;
+		dmu.setHhSize(hhSize);
 		value = dmu.getValueForIndex(12, 0);
-		Assert.assertEquals(tourModeIsWalk, (int) value);
+		Assert.assertEquals(hhSize, (int) value);
 
-		int tourCrossingIsSentri = 13;
-		dmu.setTourCrossingIsSentri(tourCrossingIsSentri);
+		int age = 13;
+		dmu.setAge(age);
 		value = dmu.getValueForIndex(13, 0);
-		Assert.assertEquals(tourCrossingIsSentri, (int) value);
+		Assert.assertEquals(age, (int) value);
 
-		int hourlyParkingCostTourDest = 14;
-		dmu.setHourlyParkingCostTourDest(hourlyParkingCostTourDest);
-		value = dmu.getValueForIndex(14, 0);
-		Assert.assertEquals(hourlyParkingCostTourDest, (int) value);
-
-		int dailyParkingCostTourDest = 15;
-		dmu.setDailyParkingCostTourDest(dailyParkingCostTourDest);
-		value = dmu.getValueForIndex(15, 0);
-		Assert.assertEquals(dailyParkingCostTourDest, (int) value);
-
-		int monthlyParkingCostTourDest = 16;
-		dmu.setMonthlyParkingCostTourDest(monthlyParkingCostTourDest);
-		value = dmu.getValueForIndex(16, 0);
-		Assert.assertEquals(monthlyParkingCostTourDest, (int) value);
-
-		int tripOrigIsTourDest = 17;
+		int tripOrigIsTourDest = 14;
 		dmu.setTripOrigIsTourDest(tripOrigIsTourDest);
-		value = dmu.getValueForIndex(17, 0);
+		value = dmu.getValueForIndex(23, 0);
 		Assert.assertEquals(tripOrigIsTourDest, (int) value);
 
-		int tripDestIsTourDest = 18;
+		int tripDestIsTourDest = 15;
 		dmu.setTripDestIsTourDest(tripDestIsTourDest);
-		value = dmu.getValueForIndex(18, 0);
+		value = dmu.getValueForIndex(24, 0);
 		Assert.assertEquals(tripDestIsTourDest, (int) value);
-
-		int hourlyParkingCostTripOrig = 19;
-		dmu.setHourlyParkingCostTripOrig(hourlyParkingCostTripOrig);
-		value = dmu.getValueForIndex(19, 0);
-		Assert.assertEquals(hourlyParkingCostTripOrig, (int) value);
-
-		int hourlyParkingCostTripDest = 20;
-		dmu.setHourlyParkingCostTripDest(hourlyParkingCostTripDest);
-		value = dmu.getValueForIndex(20, 0);
-		Assert.assertEquals(hourlyParkingCostTripDest, (int) value);
 
 		double nmWalkTime = 17.1;
 		dmu.setNonMotorizedWalkTime(nmWalkTime);
@@ -140,8 +112,8 @@ public class CrossBorderTripModeChoiceDMUTest {
 	@Test
 	public void testGetValueForIndexTAZ() {
 		Logger logger = new FakeLogger();
-		CrossBorderModelStructure structure = new CrossBorderModelStructure();
-		CrossBorderTripModeChoiceDMU dmu = new CrossBorderTripModeChoiceDMU(
+		InternalExternalModelStructure structure = new InternalExternalModelStructure();
+		InternalExternalTripModeChoiceDMU dmu = new InternalExternalTripModeChoiceDMU(
 				structure, logger);
 		// dmu.setTransitSkim(accEgr, lbPrem, skimIndex, value);
 		int offset = 100;
@@ -196,8 +168,8 @@ public class CrossBorderTripModeChoiceDMUTest {
 	@Test
 	public void testGetValueForIndexTAZComplex() {
 		Logger logger = new FakeLogger();
-		CrossBorderModelStructure structure = new CrossBorderModelStructure();
-		CrossBorderTripModeChoiceDMU dmu = new CrossBorderTripModeChoiceDMU(
+		InternalExternalModelStructure structure = new InternalExternalModelStructure();
+		InternalExternalTripModeChoiceDMU dmu = new InternalExternalTripModeChoiceDMU(
 				structure, logger);
 		int offset = 150;
 		for (int d = 0; d < 2; d++) {
@@ -207,7 +179,7 @@ public class CrossBorderTripModeChoiceDMUTest {
 				dmu.outboundHalfTourDirection = 0;
 			}
 			for (int x = 0; x < 55; x++) {
-				// System.out.println(x);
+				System.out.println(x);
 
 				int[] p1Values = { McLogsumsCalculator.DTW,
 						McLogsumsCalculator.WTD };
@@ -279,7 +251,7 @@ public class CrossBorderTripModeChoiceDMUTest {
 	}
 
 	private void TestTazParams(int p1, int p2, int p3, int i, int offset,
-			CrossBorderTripModeChoiceDMU dmu) {
+			InternalExternalTripModeChoiceDMU dmu) {
 		double value = dmu.getValueForIndex(i + offset, 0);
 		double expected = ((double) (i + 1)) / 100;
 		Assert.assertEquals(expected, value);
@@ -287,7 +259,7 @@ public class CrossBorderTripModeChoiceDMUTest {
 	}
 
 	private void TestTazParamsExpected(int i, int offset,
-			CrossBorderTripModeChoiceDMU dmu, double expected) {
+			InternalExternalTripModeChoiceDMU dmu, double expected) {
 		double value = dmu.getValueForIndex(i + offset, 0);
 		Assert.assertEquals(expected, value);
 
