@@ -11,27 +11,11 @@ Macro "Run SANDAG ABM"
    sample_rate = { 0.2, 0.5, 1.0 }
    max_iterations=sample_rate.length    //number of feedback loops
   
-   cpulist={1,2,3,4}
-   selink_flag=0   //add by JXu on Nov 29, 2006
-   selinkqry_file="\\selectlink_query.txt"   //add by JXu on Nov 29, 2006
-   turn_flag=0
-   turn_file="\\nodes.txt"
-   NumofCPU=1
-   saveIntfile=0
-   tab_indx=2
-   TAB1=1
-   TAB2=2
-
    path = "${workpath}\\${year}"
    mgraDataFile      = "mgra13_based_input${year}.csv"
 
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","*********Model Run Starting************"})
-   
-   saveIntfile=0
-   RunCodes=null
-   code=0
-   newsetup = 0  
-   
+      
    path_parts = SplitPath(path)
    path_no_drive = path_parts[2]+path_parts[3]
    drive=path_parts[1]  
