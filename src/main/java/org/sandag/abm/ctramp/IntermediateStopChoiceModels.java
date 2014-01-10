@@ -459,6 +459,8 @@ public class IntermediateStopChoiceModels
 
         setupTripDepartTimeModel(propertyMap, dmuFactory);
 
+        for (int i = 0; i < 38; i++)
+            ;
         loggerSeparator += "-";
 
     }
