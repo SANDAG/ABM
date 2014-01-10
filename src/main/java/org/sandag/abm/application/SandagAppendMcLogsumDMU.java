@@ -1,8 +1,11 @@
 package org.sandag.abm.application;
 
 import java.util.HashMap;
+
+import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.TourModeChoiceDMU;
+
 import com.pb.common.calculator.IndexValues;
 
 public class SandagAppendMcLogsumDMU
@@ -26,9 +29,9 @@ public class SandagAppendMcLogsumDMU
     private int workTourModeIsBike;
     private int tourCategorySubtour;
 
-    public SandagAppendMcLogsumDMU(ModelStructure modelStructure)
+    public SandagAppendMcLogsumDMU(ModelStructure modelStructure, Logger aLogger)
     {
-        super(modelStructure);
+        super(modelStructure, aLogger);
         setupMethodIndexMap();
     }
 
@@ -709,7 +712,7 @@ public class SandagAppendMcLogsumDMU
                 returnValue = workTourModeIsBike;
                 break;
             case 12:
-                returnValue = tourCategorySubtour;
+            	returnValue = workTourModeIsHOV;
                 break;
             case 14:
                 returnValue = pTazTerminalTime;

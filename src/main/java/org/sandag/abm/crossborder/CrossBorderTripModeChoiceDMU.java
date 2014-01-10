@@ -11,7 +11,7 @@ public class CrossBorderTripModeChoiceDMU
         implements Serializable, VariableTable
 {
 
-    protected transient Logger         logger       = Logger.getLogger("crossBorderModel");
+    protected transient Logger         logger       = null;
 
     protected static final int         LB           = McLogsumsCalculator.LB;
     protected static final int         EB           = McLogsumsCalculator.EB;
@@ -73,8 +73,13 @@ public class CrossBorderTripModeChoiceDMU
     protected double[][][]             transitSkim;
     protected int                      outboundHalfTourDirection;
 
-    public CrossBorderTripModeChoiceDMU(CrossBorderModelStructure modelStructure)
+    public CrossBorderTripModeChoiceDMU(CrossBorderModelStructure modelStructure, Logger aLogger)
     {
+    	if ( aLogger == null )
+    	{
+    		aLogger = Logger.getLogger("crossBorderModel");
+    	}
+    	logger = aLogger;
         setupMethodIndexMap();
         dmuIndex = new IndexValues();
         transitSkim = new double[McLogsumsCalculator.NUM_ACC_EGR][McLogsumsCalculator.NUM_LOC_PREM][McLogsumsCalculator.NUM_SKIMS];

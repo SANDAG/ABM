@@ -199,6 +199,16 @@ Macro "Run SANDAG ABM"
    CopyFile(outputDir+"\\trip_PM.mtx", inputDir+"\\trip_PM.mtx")
    CopyFile(outputDir+"\\trip_EV.mtx", inputDir+"\\trip_EV.mtx")
 
+   // delete trip table files in iteration sub folder.  
+   for iteration = 1 to max_iterations-1 do  
+      toDir = outputDir+"\\iter"+String(iteration-1)    
+      status = RunProgram("cmd.exe /c del "+toDir+"\\auto*.mtx",)
+      status = RunProgram("cmd.exe /c del "+toDir+"\\tran*.mtx",)
+      status = RunProgram("cmd.exe /c del "+toDir+"\\nmot*.mtx",)
+      status = RunProgram("cmd.exe /c del "+toDir+"\\othr*.mtx",)
+      status = RunProgram("cmd.exe /c del "+toDir+"\\trip*.mtx",)    
+   end
+
    RunMacro("TCB Closing", ok, "False")
    return(1)
    quit:

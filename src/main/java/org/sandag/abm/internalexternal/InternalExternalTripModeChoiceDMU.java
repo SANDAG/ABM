@@ -11,7 +11,7 @@ public class InternalExternalTripModeChoiceDMU
         implements Serializable, VariableTable
 {
 
-    protected transient Logger         logger       = Logger.getLogger("internalExternalModel");
+    protected transient Logger         logger       = null;
 
     protected static final int         LB           = McLogsumsCalculator.LB;
     protected static final int         EB           = McLogsumsCalculator.EB;
@@ -68,8 +68,13 @@ public class InternalExternalTripModeChoiceDMU
     protected double[][][]             transitSkim;
     protected int                      outboundHalfTourDirection;
 
-    public InternalExternalTripModeChoiceDMU(InternalExternalModelStructure modelStructure)
+    public InternalExternalTripModeChoiceDMU(InternalExternalModelStructure modelStructure, Logger aLogger)
     {
+    	if (aLogger == null)
+    	{
+    		aLogger = Logger.getLogger("internalExternalModel");
+    	}
+    	logger = aLogger;
         setupMethodIndexMap();
         dmuIndex = new IndexValues();
         transitSkim = new double[McLogsumsCalculator.NUM_ACC_EGR][McLogsumsCalculator.NUM_LOC_PREM][McLogsumsCalculator.NUM_SKIMS];

@@ -30,7 +30,7 @@ public class VisitorDmuFactory
 
     public VisitorTourModeChoiceDMU getVisitorTourModeChoiceDMU()
     {
-        return new VisitorTourModeChoiceDMU(visitorModelStructure);
+        return new VisitorTourModeChoiceDMU(visitorModelStructure, null);
     }
 
     public VisitorTourDestChoiceDMU getVisitorTourDestChoiceDMU()
@@ -45,6 +45,6 @@ public class VisitorDmuFactory
 
     public VisitorTripModeChoiceDMU getVisitorTripModeChoiceDMU()
     {
-        return new VisitorTripModeChoiceDMU(visitorModelStructure);
+        return new VisitorTripModeChoiceDMU(visitorModelStructure, null);
     }
 }

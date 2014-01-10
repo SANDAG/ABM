@@ -12,7 +12,7 @@ public class SpecialEventTripModeChoiceDMU
         implements Serializable, VariableTable
 {
 
-    protected transient Logger         logger       = Logger.getLogger("specialEventModel");
+    protected transient Logger         logger       = null;
 
     protected static final int         LB           = McLogsumsCalculator.LB;
     protected static final int         EB           = McLogsumsCalculator.EB;
@@ -63,8 +63,12 @@ public class SpecialEventTripModeChoiceDMU
     protected double[][][]             transitSkim;
     protected int                      outboundHalfTourDirection;
 
-    public SpecialEventTripModeChoiceDMU(SandagModelStructure modelStructure)
+    public SpecialEventTripModeChoiceDMU(SandagModelStructure modelStructure, Logger aLogger)
     {
+    	if (aLogger == null){
+    		aLogger = Logger.getLogger("specialEventModel");
+    	}
+    	logger = aLogger;
         setupMethodIndexMap();
         dmuIndex = new IndexValues();
         transitSkim = new double[McLogsumsCalculator.NUM_ACC_EGR][McLogsumsCalculator.NUM_LOC_PREM][McLogsumsCalculator.NUM_SKIMS];

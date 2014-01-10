@@ -10,7 +10,7 @@ public class TourModeChoiceDMU
         implements Serializable, VariableTable
 {
 
-    protected transient Logger         logger       = Logger.getLogger(TourModeChoiceDMU.class);
+    protected transient Logger         logger       = null;
 
     protected static final int         LB           = McLogsumsCalculator.LB;
     protected static final int         EB           = McLogsumsCalculator.EB;
@@ -75,8 +75,11 @@ public class TourModeChoiceDMU
 
     protected double[][][][]           transitSkim;
 
-    public TourModeChoiceDMU(ModelStructure modelStructure)
+    public TourModeChoiceDMU(ModelStructure modelStructure, Logger aLogger)
     {
+    	logger = aLogger;
+    	if ( logger == null )
+    		logger = Logger.getLogger(TourModeChoiceDMU.class);
         this.modelStructure = modelStructure;
         dmuIndex = new IndexValues();
 
@@ -239,7 +242,7 @@ public class TourModeChoiceDMU
         transitSkim[accEgr][lbPrem][skimIndex][dir] = value;
     }
 
-    protected double getTransitSkim(int accEgr, int lbPrem, int skimIndex, int dir)
+    public double getTransitSkim(int accEgr, int lbPrem, int skimIndex, int dir)
     {
         return transitSkim[accEgr][lbPrem][skimIndex][dir];
     }
