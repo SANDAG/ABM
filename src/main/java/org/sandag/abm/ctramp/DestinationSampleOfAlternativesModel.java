@@ -204,7 +204,7 @@ public class DestinationSampleOfAlternativesModel
         // every work/school location choice,
         // or the tour's origin taz is different from the currentOrigTaz, reset
         // the currentOrigTaz and clear the stored probabilities.
-        if (tour != null && tour.getTourCategory() == ModelStructure.AT_WORK_CATEGORY)
+        if (tour != null && tour.getTourCategory().equals(ModelStructure.AT_WORK_CATEGORY))
         {
 
             if (ALWAYS_COMPUTE_PROBABILITIES || origMgra != currentWorkMgra)
@@ -300,7 +300,7 @@ public class DestinationSampleOfAlternativesModel
             rnCount++;
 
             int chosenAlt = -1;
-            if (tour != null && tour.getTourCategory() == ModelStructure.AT_WORK_CATEGORY) chosenAlt = Util
+            if (tour != null && tour.getTourCategory().equals(ModelStructure.AT_WORK_CATEGORY)) chosenAlt = Util
                     .binarySearchDouble(subtourCumProbabilitiesCache[segmentIndex], rn) + 1;
             else chosenAlt = Util.binarySearchDouble(cumProbabilitiesCache[segmentIndex], rn) + 1;
 
@@ -355,7 +355,7 @@ public class DestinationSampleOfAlternativesModel
             int freq = altListFreq[k];
 
             double prob = 0;
-            if (tour != null && tour.getTourCategory() == ModelStructure.AT_WORK_CATEGORY) prob = subtourProbabilitiesCache[segmentIndex][alt - 1];
+            if (tour != null && tour.getTourCategory().equals(ModelStructure.AT_WORK_CATEGORY)) prob = subtourProbabilitiesCache[segmentIndex][alt - 1];
             else prob = probabilitiesCache[segmentIndex][alt - 1];
 
             sample[k + 1] = alt;
@@ -501,7 +501,7 @@ public class DestinationSampleOfAlternativesModel
         // assigned before the probabilitiesCache
         // are assigned, which indicates cumProbabilitiesCache[][] values are
         // ready to be used.
-        if (tour != null && tour.getTourCategory() == ModelStructure.AT_WORK_CATEGORY)
+        if (tour != null && tour.getTourCategory().equals(ModelStructure.AT_WORK_CATEGORY))
         {
 
             subtourCumProbabilitiesCache[segmentIndex] = Arrays.copyOf(
