@@ -454,6 +454,7 @@ public class SpecialEventTripModeChoiceDMU
                 break;
             case 4:
                 returnValue = getParkingTime();
+                break;
             case 5:
                 returnValue = getTripOrigIsTourDest();
                 break;
