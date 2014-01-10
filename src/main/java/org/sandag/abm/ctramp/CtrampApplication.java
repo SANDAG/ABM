@@ -677,8 +677,6 @@ public class CtrampApplication
 
         aggAcc = BuildAccessibilities.getInstance();
         aggAcc.setupBuildAccessibilities(propertyMap, calculateLandUseAccessibilities);
-        if (calculateLandUseAccessibilities)
-        ;
         aggAcc.setCalculatedLandUseAccessibilities();
 
         aggAcc.calculateSizeTerms();
