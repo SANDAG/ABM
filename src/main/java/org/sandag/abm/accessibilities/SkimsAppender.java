@@ -109,7 +109,7 @@ public final class SkimsAppender
         PrintWriter[] outStreamObsTod = new PrintWriter[SKIM_PERIOD_LABELS.length];
         PrintWriter[] outStreamHisTod = new PrintWriter[SKIM_PERIOD_LABELS.length];
 
-        if (outputFileNameObs != "" || outputFileNameHis != "")
+        if (!outputFileNameObs.isEmpty() || !outputFileNameHis.isEmpty())
         {
 
             anm = new AutoAndNonMotorizedSkimsCalculator(rbMap);
@@ -148,7 +148,7 @@ public final class SkimsAppender
             heading += getTransitSkimsHeaderRecord("dtw", dtw.getLocalSkimNames(),
                     dtw.getPremiumSkimNames());
 
-            if (outputFileNameObs != "")
+            if (!outputFileNameObs.isEmpty())
             {
                 try
                 {
@@ -183,7 +183,7 @@ public final class SkimsAppender
                     outStreamObsTod[i].println("obs" + heading);
             }
 
-            if (outputFileNameHis != "")
+            if (!outputFileNameHis.isEmpty())
             {
                 try
                 {
@@ -224,7 +224,7 @@ public final class SkimsAppender
 
         int[] odt = new int[5];
 
-        if (outputFileNameObs != "")
+        if (!outputFileNameObs.isEmpty())
         {
             TableDataSet obsTds = getOnBoardSurveyTableDataSet(rbMap);
             int[][] obsOdts = getOnBoardSurveyOrigDestTimes(obsTds);
@@ -314,7 +314,7 @@ public final class SkimsAppender
             }
         }
 
-        if (outputFileNameHis != "")
+        if (!outputFileNameHis.isEmpty())
         {
             TableDataSet hisTds = getHomeInterviewSurveyTableDataSet(rbMap);
             int[][] hisOdts = getHomeInterviewSurveyOrigDestTimes(hisTds);
