@@ -3,6 +3,8 @@ package org.sandag.abm.ctramp;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,8 +22,9 @@ import org.sandag.abm.modechoice.MgraDataManager;
  * by -1 to avoid conflicts. To ensure good performance when building the object, a good guess as to the number of node pairs (maz pairs plus taz pairs)
  * can be provided (a default value of 26 million will be used otherwise) via the {@code BIKE_LOGSUM_NODE_PAIR_COUNT_PROPERTY} property.
  */
-public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment> {
-    private Logger logger = Logger.getLogger(BikeLogsum.class);
+public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment>,Serializable {
+	private static final long serialVersionUID = 660793106399818667L;
+	private Logger logger = Logger.getLogger(BikeLogsum.class);
 	
 	public static final String BIKE_LOGSUM_OUTPUT_PROPERTY = "active.output.bike";
 	public static final String BIKE_LOGSUM_MGRA_FILE_PROPERTY = "active.logsum.matrix.file.bike.mgra";
@@ -33,8 +36,8 @@ public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment> {
 	public static final int DEFAULT_BIKE_LOGSUM_NODE_PAIR_COUNT = 26_000_000; //testing found 18_880_631, so this should be good enough to start
 																  
 	
-	private final Map<MatrixLookup,double[]> logsum;
-	private final int[] mgraIndex;
+	private Map<MatrixLookup,double[]> logsum;
+	private int[] mgraIndex;
 	
 	private static volatile BikeLogsum instance = null;
 	
@@ -154,12 +157,12 @@ public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment> {
 				//if we ever bring back segmented logsums, then this will be a bit more complicated
 				// the basic idea is all logsums first, then times (in same order) so lookups are straightforward
 				// without having to replicate the hashmap, which is a big data structure
-				double[] data = new double[] {Double.parseDouble(lineData[logsumIndex]),Double.parseDouble(lineData[logsumIndex])};
+				double[] data = new double[] {Double.parseDouble(lineData[logsumIndex]),Double.parseDouble(lineData[timeIndex])};
 
 				int fromZone = Integer.parseInt(lineData[0]);
 				int toZone = Integer.parseInt(lineData[1]);
 				int indexFactor = taz ? -1 : 1;
-				MatrixLookup ml = new MatrixLookup(indexFactor*Integer.parseInt(lineData[0]),indexFactor*Integer.parseInt(lineData[1]));
+				MatrixLookup ml = new MatrixLookup(indexFactor*fromZone,indexFactor*toZone);
 			    logsum.put(ml,data);
 			    	
 			}
@@ -188,10 +191,11 @@ public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment> {
 	
 	public double getTime(BikeLogsumSegment segment, int rowId, int columnId) {
 		double[] logsums = getLogsums(rowId,columnId);
-		return logsums == null ? Double.POSITIVE_INFINITY : logsums[segment.getSegmentId()+segment.segmentWidth()];
+		return logsums == null ? Double.POSITIVE_INFINITY : logsums[segment.getSegmentId()+BikeLogsumSegment.segmentWidth()];
 	}
 	
-	private class MatrixLookup {
+	private class MatrixLookup implements Serializable {
+		private static final long serialVersionUID = -5048040835197200584L;
 		private final int row;
 		private final int column;
 		
@@ -210,6 +214,27 @@ public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment> {
 		public int hashCode() {
 			return row + 37*column;
 		}
+	}
+	
+	private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+		out.writeObject(logsum);
+		out.writeObject(mgraIndex);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		logsum = (Map<MatrixLookup,double[]>) in.readObject();
+		mgraIndex = (int[]) in.readObject();
+		synchronized (BikeLogsum.class) {
+			//ensures singleton - readResolve will ensure all get this single value
+			//we need to allow the above reading of fields, though, so that deserialization is aligned correctly
+			if (instance == null) 
+				instance = this;
+		}
+	}
+	
+	private Object readResolve() throws ObjectStreamException {
+		return instance; //ensures singelton
 	}
 
 }

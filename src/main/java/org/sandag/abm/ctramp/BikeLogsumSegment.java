@@ -1,5 +1,8 @@
 package org.sandag.abm.ctramp;
 
+import java.io.IOException;
+import java.io.Serializable;
+
 /**
  * The {@code BikeLogsumSegment} class provides a segmentation for bicycle logsums used in the SANDAG model. The segmentation is currently
  * based on three variables:
@@ -13,8 +16,10 @@ package org.sandag.abm.ctramp;
  * This segmentation maps the 6 possible unique combinations into the integer indices 0 through 5, which can then be used as a lookup to a
  * zero-based array or list data structure. 
  */
-public class BikeLogsumSegment {
-	private final int segmentId;
+public class BikeLogsumSegment implements Serializable {
+	private static final long serialVersionUID = -8429882786837391491L;
+	
+	private int segmentId;
 	
 	/**
 	 * Constructor specifying the segment parameters.
@@ -99,6 +104,14 @@ public class BikeLogsumSegment {
 			sb.append(",").append(inbound ? "inbound" : "outbound");
 		sb.append(">");
 		return sb.toString();
+	}
+	
+	private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+		 out.writeInt(segmentId);
+	}
+	
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		segmentId = in.readInt();
 	}
 	
 }
