@@ -366,17 +366,17 @@ public class TourModeChoiceDMU
         return reimburseProportion;
     }
 
-    public double getLsWgtAvgCostM()
+    public double getMonthlyParkingCost()
     {
         return lsWgtAvgCostM;
     }
 
-    public double getLsWgtAvgCostD()
+    public double getDailyParkingCost()
     {
         return lsWgtAvgCostD;
     }
 
-    public double getLsWgtAvgCostH()
+    public double getHourlyParkingCost()
     {
         return lsWgtAvgCostH;
     }

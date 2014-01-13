@@ -350,6 +350,7 @@ public class SandagTourModeChoiceDMUTests {
 		dmu.setHouseholdObject(household);
 
 		for (int x = 0; x < 300; x++) {
+			System.out.println(x);
 			int[] p1Values = { McLogsumsCalculator.WTW,
 					McLogsumsCalculator.WTD, McLogsumsCalculator.DTW };
 			int p1 = p1Values[x / 100];
