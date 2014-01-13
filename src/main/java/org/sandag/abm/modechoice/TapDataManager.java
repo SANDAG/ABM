@@ -10,11 +10,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
+import org.sandag.abm.active.sandag.SandagWalkPathAlternativeListGenerationConfiguration;
+import org.sandag.abm.active.sandag.SandagWalkPathChoiceLogsumMatrixApplication;
 import org.sandag.abm.ctramp.Util;
 
 import com.pb.common.util.ResourceUtil;
@@ -187,55 +190,49 @@ public final class TapDataManager
      */
     public void getTapList(HashMap<String, String> rbMap)
     {
-
-        // read taps from walk file
-        File mgraWlkTapCorresFile = new File(Util.getStringValueFromPropertyMap(rbMap,
-                "scenario.path")
-                + Util.getStringValueFromPropertyMap(rbMap, "mgra.wlkacc.taps.and.distance.file"));
         ArrayList<Integer> tapList = new ArrayList<Integer>();
+    	
+    	File mgraWlkTapTimeFile = new File(rbMap.get(SandagWalkPathAlternativeListGenerationConfiguration.PROPERTIES_OUTPUT),
+        		rbMap.get(SandagWalkPathChoiceLogsumMatrixApplication.WALK_LOGSUM_SKIM_MGRA_TAP_FILE_PROPERTY));
+        Map<Integer,Map<Integer,int[]>> mgraWlkTapList = new HashMap<>(); //mgra -> tap -> [board dist,alight dist]
         String s;
-
-        StringTokenizer st;
-        try
-        {
-            BufferedReader br = new BufferedReader(new FileReader(mgraWlkTapCorresFile));
-
+        try ( BufferedReader br = new BufferedReader(new FileReader(mgraWlkTapTimeFile)))
+        { 
             // read the first data file line containing column names
             s = br.readLine();
-
+                
             // read the data records
             while ((s = br.readLine()) != null)
             {
-                st = new StringTokenizer(s, ", ");
-                st.nextToken();
-                int tap = Integer.parseInt(st.nextToken());
+            	StringTokenizer st = new StringTokenizer(s, ",");
+                int mgra = Integer.parseInt(st.nextToken().trim());
+                int tap = Integer.parseInt(st.nextToken().trim());
                 if (tap > maxTap) maxTap = tap;
                 if (!tapList.contains(tap)) tapList.add(tap);
             }
-            br.close();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        } catch (IOException e) {
+			logger.error(e);
+			throw new RuntimeException(e);
+		} 
 
         // read taps from park-and-ride file
         File tazTdzCorresFile = new File(Util.getStringValueFromPropertyMap(rbMap, "scenario.path")
                 + Util.getStringValueFromPropertyMap(rbMap, "tap.ptype.file"));
 
-        try
+        try (BufferedReader br = new BufferedReader(new FileReader(tazTdzCorresFile)))
         {
-            BufferedReader br = new BufferedReader(new FileReader(tazTdzCorresFile));
+            
             while ((s = br.readLine()) != null)
             {
-                st = new StringTokenizer(s, " ");
+            	StringTokenizer st = new StringTokenizer(s, " ");
                 int tap = Integer.parseInt(st.nextToken()); // tap number
                 if (!tapList.contains(tap)) tapList.add(tap);
             }
             br.close();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        } catch (IOException e) {
+			logger.error(e);
+			throw new RuntimeException(e);
+		}
 
         Collections.sort(tapList);
         // now go thru the array of ArrayLists and convert the lists to arrays
