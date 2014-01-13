@@ -142,7 +142,7 @@ public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment>,Seri
 				for (int i = 0; i < lineData.length; i++)
 					lineData[i] = lineData[i].trim();
 				if (first) {
-					for (int i = 2; i < (2 + segmentWidth); i++) { //first two are for row and column
+					for (int i = 2; i < lineData.length; i++) { //first two are for row and column
 						String columnName = lineData[i].toLowerCase();
 						if (columnName.contains("logsum"))
 							logsumIndex = i;
@@ -194,7 +194,7 @@ public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment>,Seri
 		return logsums == null ? Double.POSITIVE_INFINITY : logsums[segment.getSegmentId()+BikeLogsumSegment.segmentWidth()];
 	}
 	
-	private class MatrixLookup implements Serializable {
+	private static class MatrixLookup implements Serializable {
 		private static final long serialVersionUID = -5048040835197200584L;
 		private final int row;
 		private final int column;
