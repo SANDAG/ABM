@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -155,17 +154,7 @@ public class DataExporter
         return columnName.toUpperCase();
     }
 
-    private void exportData(String tableName, TableDataSet data, String outputFileBase,
-            Map<String, String> outputMapping, Map<String, FieldType> outputTypes,
-            Set<String> primaryKeys)
-    {
-        Map<String, Integer> stringWidths = exportData(data, outputFileBase + ".csv",
-                outputMapping, outputTypes);
-        saveSqlImport(tableName, outputFileBase, outputMapping, outputTypes, primaryKeys,
-                stringWidths);
-    }
-
-    private Map<String, Integer> exportData(TableDataSet data, String outputFileName,
+    private void exportData(TableDataSet data, String outputFileName,
             Map<String, String> outputMapping, Map<String, FieldType> outputTypes)
     {
         int[] outputIndices = new int[outputMapping.size()];
@@ -192,7 +181,7 @@ public class DataExporter
         PrintWriter writer = null;
         try
         {
-            writer = getBufferedPrintWriter(getOutputPath(outputFileName));
+            writer = getBufferedPrintWriter(getOutputPath(outputFileName + ".csv"));
             writer.println(header.toString());
 
             for (int i = 1; i <= data.getRowCount(); i++)
@@ -214,17 +203,6 @@ public class DataExporter
         {
             if (writer != null) writer.close();
         }
-
-        Map<String, Integer> widths = new HashMap<String, Integer>();
-        counter = 0;
-        for (String column : outputMapping.keySet())
-        {
-            if (outputTypes.get(column) == FieldType.STRING)
-                widths.put(column, Math.round(stringWidths[counter] * 1.5f));
-            counter++;
-        }
-
-        return widths;
     }
 
     private TableDataSet exportDataGeneric(String outputFileBase, String filePropertyToken,
@@ -447,80 +425,9 @@ public class DataExporter
         Set<String> pKey = new LinkedHashSet<String>();
         for (String column : primaryKey)
             pKey.add(getPreferredColumnName(column));
-        exportData(outputFileBase.toUpperCase(), table, outputFileBase, fieldMappings, fieldTypes,
-                pKey);
+        exportData(table, outputFileBase, fieldMappings, fieldTypes);
     }
 
-    private String getSqlType(FieldType type, int width)
-    {
-        switch (type)
-        {
-            case INT:
-                return "int";
-            case FLOAT:
-                return "real";
-            case STRING:
-                return "varchar(" + width + ")";
-            case BIT:
-                return "bit";
-            default:
-                throw new IllegalArgumentException("shouldn't be here");
-        }
-    }
-
-    private void saveSqlImport(String tableName, String outputFileBase,
-            Map<String, String> outputMapping, Map<String, FieldType> outputTypes,
-            Set<String> primaryKeys, Map<String, Integer> stringWidths)
-    {
-        String lineSeparator = System.getProperty("line.separator");
-        StringBuilder sql = new StringBuilder();
-        sql.append("CREATE TABLE ").append(tableName).append(" (").append(lineSeparator);
-        for (String column : outputMapping.keySet())
-            sql.append("    ")
-                    .append(column)
-                    .append(" ")
-                    .append(getSqlType(outputTypes.get(column),
-                            stringWidths.containsKey(column) ? stringWidths.get(column) : -1))
-                    .append(",").append(lineSeparator); // null values for
-                                                        // int/reals will be
-                                                        // ignored in widths
-        sql.append("    ").append("CONSTRAINT ").append(tableName).append("_pkey PRIMARY KEY (");
-        boolean first = true;
-        for (String column : primaryKeys)
-        {
-            if (first)
-            {
-                first = false;
-            } else
-            {
-                sql.append(",");
-            }
-            sql.append(column);
-        }
-        sql.append(")").append(lineSeparator).append(")").append(lineSeparator);
-        sql.append(lineSeparator);
-        sql.append("BULK INSERT ").append(tableName).append(" FROM \"")
-                .append(new File(getOutputPath(outputFileBase + ".csv")).getAbsolutePath())
-                .append("\" WITH (").append(lineSeparator);
-        sql.append("    FIELDTERMINATOR=',', FIRSTROW=2, MAXERRORS=0, TABLOCK)").append(
-                lineSeparator);
-        sql.append(lineSeparator);
-
-        PrintWriter writer = null;
-        try
-        {
-            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".sql"));
-            writer.print(sql.toString());
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        } finally
-        {
-            if (writer != null) writer.close();
-        }
-
-    }
-    
     private PrintWriter getBufferedPrintWriter(String fileName) throws IOException
     {
         return new PrintWriter(new BufferedWriter(new FileWriter(fileName)));
@@ -570,8 +477,6 @@ public class DataExporter
             header.append(",").append(column.toLowerCase());
         }
         tripTableWriter.println(header.deleteCharAt(0).toString());
-        saveSqlImport(baseTableName.toUpperCase(), baseTableName, outputMapping, outputTypes,
-                primaryKeys, stringWidths);
     }
 
     private void appendTripData(TableDataSet table, TripStructureDefinition tripStructureDefinition)
@@ -1652,33 +1557,6 @@ public class DataExporter
         {
             if (writer != null) writer.close();
         }
-
-        writer = null;
-        try
-        {
-            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".sql"));
-            String tableName = outputFileBase.toUpperCase();
-            writer.println("CREATE TABLE " + tableName + " (");
-            writer.println("    ORIG_TAZ int,");
-            writer.println("    DEST_TAZ int,");
-            writer.println("    TOD varchar(15),");
-            writer.println("    TRIPS_COMMVEH real,");
-            writer.println("    CONSTRAINT " + outputFileBase
-                    + "_pkey PRIMARY KEY (ORIG_TAZ,DEST_TAZ,TOD)");
-            writer.println(")");
-            writer.println();
-            writer.println("BULK INSERT " + tableName + " FROM \""
-                    + new File(getOutputPath(outputFileBase + ".csv")).getAbsolutePath()
-                    + "\" WITH (");
-            writer.println("    FIELDTERMINATOR=',', FIRSTROW=2, MAXERRORS=0, TABLOCK)");
-            writer.println();
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        } finally
-        {
-            if (writer != null) writer.close();
-        }
     }
 
     private void exportExternalInternalTripData(String outputFileBase)
@@ -1757,35 +1635,6 @@ public class DataExporter
         {
             if (writer != null) writer.close();
         }
-
-        writer = null;
-        try
-        {
-            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".sql"));
-            String tableName = outputFileBase.toUpperCase();
-            writer.println("CREATE TABLE " + tableName + " (");
-            writer.println("    ORIG_TAZ int,");
-            writer.println("    DEST_TAZ int,");
-            writer.println("    TOD varchar(15),");
-            writer.println("    PURPOSE varchar(15),");
-            for (String core : cores)
-                writer.println("    TRIPS_" + core + " real,");
-            writer.println("    CONSTRAINT " + tableName
-                    + "_PKEY PRIMARY KEY (ORIG_TAZ,DEST_TAZ,TOD,PURPOSE)");
-            writer.println(")");
-            writer.println();
-            writer.println("BULK INSERT " + tableName + " FROM \""
-                    + new File(getOutputPath(outputFileBase + ".csv")).getAbsolutePath()
-                    + "\" WITH (");
-            writer.println("    FIELDTERMINATOR=',', FIRSTROW=2, MAXERRORS=0, TABLOCK)");
-            writer.println();
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        } finally
-        {
-            if (writer != null) writer.close();
-        }
     }
 
     private void exportExternalExternalTripData(String outputFileBase)
@@ -1813,31 +1662,6 @@ public class DataExporter
                     writer.println(sb.toString());
                 }
             }
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        } finally
-        {
-            if (writer != null) writer.close();
-        }
-
-        writer = null;
-        try
-        {
-            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".sql"));
-            String tableName = outputFileBase.toUpperCase();
-            writer.println("CREATE TABLE " + tableName + " (");
-            writer.println("    ORIG_TAZ int,");
-            writer.println("    DEST_TAZ int,");
-            writer.println("    TRIPS_EE real,");
-            writer.println("    CONSTRAINT " + tableName + "_PKEY PRIMARY KEY (ORIG_TAZ,DEST_TAZ)");
-            writer.println(")");
-            writer.println();
-            writer.println("BULK INSERT " + tableName + " FROM \""
-                    + new File(getOutputPath(outputFileBase + ".csv")).getAbsolutePath()
-                    + "\" WITH (");
-            writer.println("    FIELDTERMINATOR=',', FIRSTROW=2, MAXERRORS=0, TABLOCK)");
-            writer.println();
         } catch (IOException e)
         {
             throw new RuntimeException(e);
@@ -2001,34 +1825,6 @@ public class DataExporter
         {
             if (writer != null) writer.close();
         }
-
-        writer = null;
-        try
-        {
-            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".sql"));
-            String tableName = outputFileBase.toUpperCase();
-            writer.println("CREATE TABLE " + tableName + " (");
-            writer.println("    ORIG_TAZ int,");
-            writer.println("    DEST_TAZ int,");
-            writer.println("    TOD varchar(15),");
-            for (String column : costColumns)
-                writer.println("    " + column + " real,");
-            writer.println("    CONSTRAINT " + tableName
-                    + "_PKEY PRIMARY KEY (ORIG_TAZ,DEST_TAZ,TOD)");
-            writer.println(")");
-            writer.println();
-            writer.println("BULK INSERT " + tableName + " FROM \""
-                    + new File(getOutputPath(outputFileBase + ".csv")).getAbsolutePath()
-                    + "\" WITH (");
-            writer.println("    FIELDTERMINATOR=',', FIRSTROW=2, MAXERRORS=0, TABLOCK)");
-            writer.println();
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        } finally
-        {
-            if (writer != null) writer.close();
-        }
     }
 
     private Map<String, String> getTransitSkimFileNameMapping()
@@ -2166,34 +1962,6 @@ public class DataExporter
         {
             if (writer != null) writer.close();
         }
-
-        writer = null;
-        try
-        {
-            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".sql"));
-            String tableName = outputFileBase.toUpperCase();
-            writer.println("CREATE TABLE " + tableName + " (");
-            writer.println("    ORIG_TAP int,");
-            writer.println("    DEST_TAP int,");
-            writer.println("    TOD varchar(15),");
-            for (String column : costColumns)
-                writer.println("    " + column + " real,");
-            writer.println("    CONSTRAINT " + tableName
-                    + "_PKEY PRIMARY KEY (ORIG_TAP,DEST_TAP,TOD)");
-            writer.println(")");
-            writer.println();
-            writer.println("BULK INSERT " + tableName + " FROM \""
-                    + new File(getOutputPath(outputFileBase + ".csv")).getAbsolutePath()
-                    + "\" WITH (");
-            writer.println("    FIELDTERMINATOR=',', FIRSTROW=2, MAXERRORS=0, TABLOCK)");
-            writer.println();
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        } finally
-        {
-            if (writer != null) writer.close();
-        }
     }
 
     private void exportDefinitions(String outputFileBase)
@@ -2215,31 +1983,6 @@ public class DataExporter
                 writer.println("mode," + mode + "," + modes.get(mode));
             for (String ejCategory : ejCategories.keySet())
                 writer.println("ej_category," + ejCategory + "," + ejCategories.get(ejCategory));
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        } finally
-        {
-            if (writer != null) writer.close();
-        }
-
-        writer = null;
-        try
-        {
-            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".sql"));
-            String tableName = outputFileBase.toUpperCase();
-            writer.println("CREATE TABLE " + tableName + " (");
-            writer.println("    TYPE varchar(50),");
-            writer.println("    CODE varchar(50),");
-            writer.println("    DESCRIPTION varchar(500),");
-            writer.println("    CONSTRAINT " + tableName + "_PKEY PRIMARY KEY (TYPE,CODE)");
-            writer.println(")");
-            writer.println();
-            writer.println("BULK INSERT " + tableName + " FROM \""
-                    + new File(getOutputPath(outputFileBase + ".csv")).getAbsolutePath()
-                    + "\" WITH (");
-            writer.println("    FIELDTERMINATOR=',', FIRSTROW=2, MAXERRORS=0, TABLOCK)");
-            writer.println();
         } catch (IOException e)
         {
             throw new RuntimeException(e);
@@ -2340,51 +2083,6 @@ public class DataExporter
         {
             if (writer != null) writer.close();
         }
-
-        writer = null;
-        try
-        {
-            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".sql"));
-            String tableName = outputFileBase.toUpperCase();
-            writer.println("CREATE TABLE " + tableName + " (");
-            // emfac2011_mode,sov_gp,sov_pay,sr2_gp,sr2_hov,sr2_pay,sr3_gp,sr3_hov,sr3_pay
-            writer.println("    VEHCODE int,");
-            writer.println("    EMFAC2011_MODE varchar(50),");
-            writer.println("    SOV_GP int,");
-            writer.println("    SOV_PAY int,");
-            writer.println("    SR2_GP int,");
-            writer.println("    SR2_HOV int,");
-            writer.println("    SR2_PAY int,");
-            writer.println("    SR3_GP int,");
-            writer.println("    SR3_HOV int,");
-            writer.println("    SR3_PAY int,");
-            writer.println("    CONSTRAINT " + tableName + "_PKEY PRIMARY KEY (VEHCODE)");
-            writer.println(")");
-            writer.println();
-            writer.println("BULK INSERT " + tableName + " FROM \""
-                    + new File(getOutputPath(outputFileBase + ".csv")).getAbsolutePath()
-                    + "\" WITH (");
-            writer.println("    FIELDTERMINATOR=',', FIRSTROW=2, MAXERRORS=0, TABLOCK)");
-            writer.println();
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        } finally
-        {
-            if (writer != null) writer.close();
-        }
-    }
-
-    private void buildFullSqlImportFile(String databaseName)
-    {
-        List<String> sqlTables = new LinkedList<String>(tables);
-        sqlTables.add("node");
-        sqlTables.add("link");
-        sqlTables.add("route");
-        sqlTables.add("routetap");
-        sqlTables.add("transitflow");
-        new SqlImportFileBuilder().buildImportFile(outputPath, sqlTables, "sql_table_import.sql",
-                databaseName);
     }
 
     private static enum FieldType
@@ -2642,8 +2340,6 @@ public class DataExporter
         {
             if (dataExporter.tripTableWriter != null) dataExporter.tripTableWriter.close();
         }
-
-        dataExporter.buildFullSqlImportFile(databaseSchema);
     }
 
 }
