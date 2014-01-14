@@ -14,6 +14,7 @@ public class SandagBikeMgraPathAlternativeListGenerationConfiguration extends Sa
     {
         super(propertyMap, network);
         this.PROPERTIES_MAXDIST_ZONE = "active.maxdist.bike.mgra";
+        this.PROPERTIES_TRACE_ORIGINS = "active.trace.origins.mgra";
     }
     
     protected void createZonalCentroidIdMap()
@@ -28,4 +29,9 @@ public class SandagBikeMgraPathAlternativeListGenerationConfiguration extends Sa
         }
     }
 
+    @Override
+    public String getOutputDirectory()
+    {
+        return propertyMap.get(PROPERTIES_OUTPUT) + "mgra/";
+    }    
 }

@@ -124,6 +124,30 @@ public class SandagBikePathChoiceDmu implements VariableTable,Serializable {
     	return paths.getTurnsAlt(path-1);
     }
     
+    public double getSignalsAlt(int path) {
+        return paths.getSignalsAlt(path-1);
+    }
+    
+    public double getUnsigLeftFromMajorArtAlt(int path) {
+        return paths.getUnsigLeftFromMajorArtAlt(path-1);
+    }
+    
+    public double getUnsigLeftFromMinorArtAlt(int path) {
+        return paths.getUnsigLeftFromMinorArtAlt(path-1);
+    }
+    
+    public double getUnsigCrossMajorArtAlt(int path) {
+        return paths.getUnsigCrossMajorArtAlt(path-1);
+    }
+    
+    public double getUnsigCrossMinorArtAlt(int path) {
+        return paths.getUnsigCrossMinorArtAlt(path-1);
+    }
+    
+    public double getNetworkCostAlt(int path) {
+        return paths.getNetworkCostAlt(path-1);
+    }
+    
     public IndexValues getDmuIndexValues() {
     	return dmuIndex;
     }
@@ -171,6 +195,13 @@ public class SandagBikePathChoiceDmu implements VariableTable,Serializable {
         methodIndexMap.put("getFemale", 11);
         methodIndexMap.put("getInbound", 12);
         methodIndexMap.put("getTourPurpose", 13);
+        
+        methodIndexMap.put("getSignalsAlt", 14);
+        methodIndexMap.put("getUnsigLeftFromMajorArtAlt", 15);
+        methodIndexMap.put("getUnsigLeftFromMinorArtAlt", 16);
+        methodIndexMap.put("getUnsigCrossMajorArtAlt", 17);
+        methodIndexMap.put("getUnsigCrossMinorArtAlt", 18);
+        methodIndexMap.put("getNetworkCostAlt", 19);
 
     }
 
@@ -191,6 +222,12 @@ public class SandagBikePathChoiceDmu implements VariableTable,Serializable {
             case 11 : return getFemale();
             case 12 : return getInbound();
             case 13 : return getTourPurpose();
+            case 14 : return getSignalsAlt(arrayIndex);
+            case 15 : return getUnsigLeftFromMajorArtAlt(arrayIndex);
+            case 16 : return getUnsigLeftFromMinorArtAlt(arrayIndex);
+            case 17 : return getUnsigCrossMajorArtAlt(arrayIndex);
+            case 18 : return getUnsigCrossMinorArtAlt(arrayIndex);
+            case 19 : return getNetworkCostAlt(arrayIndex);
                 
             default:
                 logger.error("method number = " + variableIndex + " not found");

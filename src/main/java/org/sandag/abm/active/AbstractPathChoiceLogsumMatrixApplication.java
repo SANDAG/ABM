@@ -17,7 +17,7 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
 {
 	private static final Logger logger = Logger.getLogger(AbstractPathChoiceLogsumMatrixApplication.class);
 	
-    PathAlternativeListGenerationConfiguration<N,E,T> configuration;
+    protected PathAlternativeListGenerationConfiguration<N,E,T> configuration;
     Network<N,E,T> network;
     Map<Integer,Map<Integer,Double>> nearbyZonalDistanceMap;
     Map<Integer,Integer> originZonalCentroidIdMap;
@@ -26,8 +26,6 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
     double[] samplePathSizes;
     double[] sampleMinCounts;
     double[] sampleMaxCounts;
-    double[] randomizationSpreads;
-    boolean randomCostSeeded;
     EdgeEvaluator<E> edgeLengthEvaluator;
     EdgeEvaluator<E> edgeCostEvaluator;
     TraversalEvaluator<T> traversalCostEvaluator;
@@ -35,10 +33,12 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
     long startTime;
     String outputDir;
     Set<Integer> traceOrigins;
-    Map<String,String> propertyMap;
+    protected Map<String,String> propertyMap;
+    boolean randomCostSeeded;
+    boolean intrazonalsNeeded;
     
     private static final int ORIGIN_PROGRESS_REPORT_COUNT = 50;
-    private static final double PATHSIZE_PRECISION_TOLERANCE = 0.001;
+    private static final double DOUBLE_PRECISION_TOLERANCE = 0.001;
     
     protected abstract double[] calculateMarketSegmentLogsums(PathAlternativeList<N,E> alternativeList);
     
@@ -52,8 +52,6 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
         this.samplePathSizes = configuration.getSamplePathSizes();
         this.sampleMinCounts = configuration.getSampleMinCounts();
         this.sampleMaxCounts = configuration.getSampleMaxCounts();
-        this.randomizationSpreads = configuration.getRandomizationScales();
-        this.randomCostSeeded = configuration.isRandomCostSeeded();
         this.edgeLengthEvaluator = configuration.getEdgeLengthEvaluator();
         this.edgeCostEvaluator = configuration.getEdgeCostEvaluator();
         this.traversalCostEvaluator = configuration.getTraversalCostEvaluator();
@@ -61,13 +59,15 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
         this.outputDir = configuration.getOutputDirectory();
         this.traceOrigins = configuration.getTraceOrigins();
         this.propertyMap = configuration.getPropertyMap();
+        this.randomCostSeeded = configuration.isRandomCostSeeded();
+        this.intrazonalsNeeded = configuration.isIntrazonalsNeeded();
     }
 
     public Map<NodePair<N>,double[]> calculateMarketSegmentLogsums()
     {      
         logger.info("Generating path alternative lists...");
         logger.info("Writing to " + outputDir);
-        Map<NodePair<N>,double[]> logsums = new ConcurrentHashMap<>();
+        Map<N, ConcurrentHashMap<N, double[]>> logsums = new ConcurrentHashMap<>();
         startTime = System.currentTimeMillis();
         int threadCount = Runtime.getRuntime().availableProcessors();
         ExecutorService executor = Executors.newFixedThreadPool(threadCount); 
@@ -98,10 +98,64 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
         for (int o : nearbyZonalDistanceMap.keySet() ) {
             totalPairs += nearbyZonalDistanceMap.get(o).size();
         }
-        logger.info("  Total OD pairs: " + totalPairs);
-        logger.info("  Total insufficient sample pairs: " + insufficientSamplePairs.size());
+        logger.info("Total OD pairs: " + totalPairs);
         
-        return logsums;
+        int totalInsuffPairs = 0;
+        for (int o : insufficientSamplePairs.keySet()) {
+            totalInsuffPairs += insufficientSamplePairs.get(o).size();
+        }
+        
+        logger.info("Total insufficient sample pairs: " + totalInsuffPairs);
+        
+        if ( intrazonalsNeeded ) {
+        
+            int nSegments = 0;
+            for ( N oNode : logsums.keySet() ) {
+                for ( N dNode : logsums.get(oNode).keySet() ) {
+                    nSegments = logsums.get(oNode).get(dNode).length;
+                    break;
+                }
+            }
+        
+            for (int s=0; s<nSegments; s++) {
+                for ( N oNode : logsums.keySet() )  {
+                    double min = Double.MAX_VALUE;
+                    double max = -Double.MAX_VALUE;
+                    for ( N dNode : logsums.get(oNode).keySet() ) {
+                        if (! dNode.equals(oNode) ) {
+                            double val = logsums.get(oNode).get(dNode)[s];
+                            min = Math.min(min, val);
+                            max = Math.max(max, val);
+                        }
+                    }
+                    
+                    double intrazonalVal;
+                    if ( min < 0 && max <= DOUBLE_PRECISION_TOLERANCE ) {
+                        intrazonalVal = Math.min(max / 2,0);
+                    } else if ( max > 0 && min >= -DOUBLE_PRECISION_TOLERANCE ) {
+                        intrazonalVal = Math.max(min / 2,0);
+                    } else if ( max == 0 && min == 0 ) {
+                        intrazonalVal = 0;
+                    } else {
+                        throw new RuntimeException("Error setting intrazonal logsum value for market segment " + s + " and centroid node id " + oNode.getId() + ": interzonal values both positive and negative");
+                    }
+                
+                    if ( s==0 ) {
+                        logsums.get(oNode).put(oNode,new double[nSegments]);
+                    }
+                    logsums.get(oNode).get(oNode)[s] = intrazonalVal;
+                }
+            }
+        }
+        
+        Map<NodePair<N>,double[]> pairLogsums = new HashMap<>();
+        for ( N oNode : logsums.keySet() )  {
+            for ( N dNode : logsums.get(oNode).keySet() ) {
+                pairLogsums.put(new NodePair<N>(oNode,dNode), logsums.get(oNode).get(dNode));
+            }
+        }
+        
+        return pairLogsums;
     }
     
     private int findFirstIndexGreaterThan(double value, double[] array)
@@ -119,9 +173,9 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
         private final CountDownLatch latch;
 
         private final ConcurrentHashMap<Integer,List<Integer>> insufficientSamplePairs;
-        private final Map<NodePair<N>,double[]> logsums;
+        private final Map<N, ConcurrentHashMap<N, double[]>> logsums;
         
-        private CalculationTask(Queue<Integer> originQueue, AtomicInteger counter, CountDownLatch latch, Map<NodePair<N>,double[]> logsums, ConcurrentHashMap<Integer,List<Integer>> insufficientSamplePairs)
+        private CalculationTask(Queue<Integer> originQueue, AtomicInteger counter, CountDownLatch latch, Map<N, ConcurrentHashMap<N, double[]>> logsums, ConcurrentHashMap<Integer,List<Integer>> insufficientSamplePairs)
         {
             this.originQueue = originQueue;
             this.counter = counter;
@@ -154,7 +208,7 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
                     try {
                         destinationNode = network.getNode(destinationZonalCentroidIdMap.get(destination));
                     } catch (NullPointerException e) {
-                        System.out.println(destinationZonalCentroidIdMap.get(destination));
+                        logger.warn(destinationZonalCentroidIdMap.get(destination));
                     }
                     destinationNodes.add(destinationNode);
                     destinationDistanceMap.put(destinationNode, nearbyZonalDistanceMap.get(origin).get(destination));
@@ -169,12 +223,10 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
             int iterCount = 1;
             while( destinationNodes.size() > 0 ) {
                 
-                double spread = randomizationSpreads[Math.min(iterCount,randomizationSpreads.length-1)];
-
-                if ( randomCostSeeded ) { 
-                    randomizedEdgeCost = new RandomizedEdgeCost(edgeCostEvaluator, edgeLengthEvaluator, spread, Objects.hash(origin,iterCount));
+                if (randomCostSeeded) {                
+                    randomizedEdgeCost = configuration.getRandomizedEdgeCostEvaluator(iterCount, Objects.hash(origin,iterCount) );
                 } else {
-                    randomizedEdgeCost = new RandomizedEdgeCost(edgeCostEvaluator, edgeLengthEvaluator, spread);
+                    randomizedEdgeCost = configuration.getRandomizedEdgeCostEvaluator(iterCount, 0);
                 }
                     
                 shortestPathStrategy = new RepeatedSingleSourceDijkstra<N,E,T>(network, randomizedEdgeCost, traversalCostEvaluator);                    
@@ -186,7 +238,7 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
                     alternativeList.add(result.getShortestPathResult(odPair).getPath());
                     destinationNode = odPair.getToNode();
                     
-                    if ( alternativeList.getSizeMeasureTotal() >= destinationPathSizeMap.get(destinationNode) - PATHSIZE_PRECISION_TOLERANCE && iterCount >= destinationMinCountMap.get(destinationNode) ) {
+                    if ( alternativeList.getSizeMeasureTotal() >= destinationPathSizeMap.get(destinationNode) - DOUBLE_PRECISION_TOLERANCE && iterCount >= destinationMinCountMap.get(destinationNode) ) {
                         destinationNodes.remove(odPair.getToNode());
                         alternativeList.clearPathSizeCalculator();
                     } else if ( iterCount >= destinationMaxCountMap.get(destinationNode) ) {
@@ -212,6 +264,7 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
                 } catch (IOException e) {
                     throw new RuntimeException(e.getMessage());
                 }
+                
             }
             
             for( NodePair<N> odPair : alternativeLists.keySet() )
@@ -281,51 +334,26 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
                 double[] logsumValues;
                 for(NodePair<N> odPair : alternativeLists.keySet()) {
                     
-                    logsumValues = calculateMarketSegmentLogsums(alternativeLists.get(odPair));
-                    logsums.put(odPair,logsumValues);
+                    if ( ! odPair.getFromNode().equals(odPair.getToNode()) ) {
+                    
+                        logsumValues = calculateMarketSegmentLogsums(alternativeLists.get(odPair));
+                        if ( ! logsums.containsKey(odPair.getFromNode()) ) {
+                            logsums.put(odPair.getFromNode(), new ConcurrentHashMap<N, double[]>() );
+                        }
+                        logsums.get(odPair.getFromNode()).put(odPair.getToNode(),logsumValues);
+                    }
                     
                 }
                 
                 int c = counter.addAndGet(1); 
                 if ( ( c % ORIGIN_PROGRESS_REPORT_COUNT ) == 0) {
-                    System.out.println("   done with " + c + " origins, run time: " + ( System.currentTimeMillis() - startTime) / 1000 + " sec.");
+                    logger.info("   done with " + c + " origins, run time: " + ( System.currentTimeMillis() - startTime) / 1000 + " sec.");
                 }
             }
 
             latch.countDown();
         }  
     } 
-
-    private class RandomizedEdgeCost implements EdgeEvaluator<E>
-    {
-        private EdgeEvaluator<E> edgeCostEvaluator;
-        private EdgeEvaluator<E> edgeLengthEvaluator;
-        private Random random;
-        private double spread;
-        
-        public RandomizedEdgeCost(EdgeEvaluator<E> edgeCostEvaluator, EdgeEvaluator<E> edgeLengthEvaluator, double spread)
-        {
-            this.edgeCostEvaluator = edgeCostEvaluator;
-            this.edgeLengthEvaluator = edgeLengthEvaluator;
-            this.spread = spread;
-            random = new Random();
-        }
-        
-        public RandomizedEdgeCost(EdgeEvaluator<E> edgeCostEvaluator, EdgeEvaluator<E> edgeLengthEvaluator, double spread, long seed)
-        {
-            this.edgeCostEvaluator = edgeCostEvaluator;
-            this.edgeLengthEvaluator = edgeLengthEvaluator;
-            this.spread = spread;
-            random = new Random(seed);
-        }
-
-        @Override
-        public double evaluate(E edge)
-        {
-            return edgeCostEvaluator.evaluate(edge) + edgeLengthEvaluator.evaluate(edge) * random.nextDouble() * spread;
-        }
-        
-    }
     
 }
 
