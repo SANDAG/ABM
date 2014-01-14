@@ -1,9 +1,11 @@
 package org.sandag.abm.reporting;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -190,7 +192,7 @@ public class DataExporter
         PrintWriter writer = null;
         try
         {
-            writer = new PrintWriter(getOutputPath(outputFileName));
+            writer = getBufferedPrintWriter(getOutputPath(outputFileName));
             writer.println(header.toString());
 
             for (int i = 1; i <= data.getRowCount(); i++)
@@ -507,7 +509,7 @@ public class DataExporter
         PrintWriter writer = null;
         try
         {
-            writer = new PrintWriter(getOutputPath(outputFileBase + ".sql"));
+            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".sql"));
             writer.print(sql.toString());
         } catch (IOException e)
         {
@@ -518,6 +520,11 @@ public class DataExporter
         }
 
     }
+    
+    private PrintWriter getBufferedPrintWriter(String fileName) throws IOException
+    {
+        return new PrintWriter(new BufferedWriter(new FileWriter(fileName)));
+    }
 
     private volatile PrintWriter tripTableWriter;
 
@@ -527,7 +534,7 @@ public class DataExporter
         addTable(baseTableName);
         try
         {
-            tripTableWriter = new PrintWriter(getOutputPath(baseTableName + ".csv"));
+            tripTableWriter = getBufferedPrintWriter(getOutputPath(baseTableName + ".csv"));
         } catch (IOException e)
         {
             throw new RuntimeException(e);
@@ -718,7 +725,7 @@ public class DataExporter
         try
         {
             reader = new BufferedReader(new FileReader(tempFile));
-            writer = new PrintWriter(file);
+            writer = getBufferedPrintWriter(file);
             String line;
             while ((line = reader.readLine()) != null)
                 writer.println(line.replace(NULL_VALUE, ""));
@@ -1613,7 +1620,7 @@ public class DataExporter
         PrintWriter writer = null;
         try
         {
-            writer = new PrintWriter(getOutputPath(outputFileBase + ".csv"));
+            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".csv"));
 
             StringBuilder sb = new StringBuilder();
             sb.append("ORIG_TAZ,DEST_TAZ,TOD,TRIPS_COMMVEH");
@@ -1649,7 +1656,7 @@ public class DataExporter
         writer = null;
         try
         {
-            writer = new PrintWriter(getOutputPath(outputFileBase + ".sql"));
+            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".sql"));
             String tableName = outputFileBase.toUpperCase();
             writer.println("CREATE TABLE " + tableName + " (");
             writer.println("    ORIG_TAZ int,");
@@ -1689,7 +1696,7 @@ public class DataExporter
         PrintWriter writer = null;
         try
         {
-            writer = new PrintWriter(getOutputPath(outputFileBase + ".csv"));
+            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".csv"));
 
             StringBuilder sb = new StringBuilder();
             sb.append("ORIG_TAZ,DEST_TAZ,TOD,PURPOSE");
@@ -1754,7 +1761,7 @@ public class DataExporter
         writer = null;
         try
         {
-            writer = new PrintWriter(getOutputPath(outputFileBase + ".sql"));
+            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".sql"));
             String tableName = outputFileBase.toUpperCase();
             writer.println("CREATE TABLE " + tableName + " (");
             writer.println("    ORIG_TAZ int,");
@@ -1817,7 +1824,7 @@ public class DataExporter
         writer = null;
         try
         {
-            writer = new PrintWriter(getOutputPath(outputFileBase + ".sql"));
+            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".sql"));
             String tableName = outputFileBase.toUpperCase();
             writer.println("CREATE TABLE " + tableName + " (");
             writer.println("    ORIG_TAZ int,");
@@ -1900,7 +1907,7 @@ public class DataExporter
         List<String> costColumns = new LinkedList<String>();
         try
         {
-            writer = new PrintWriter(getOutputPath(outputFileBase + ".csv"));
+            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".csv"));
 
             Map<String, String> vehicleSkimFiles = getVehicleSkimFileNameMapping();
             Map<String, String[]> vehicleSkimCores = getVehicleSkimFileCoreNameMapping();
@@ -1998,7 +2005,7 @@ public class DataExporter
         writer = null;
         try
         {
-            writer = new PrintWriter(getOutputPath(outputFileBase + ".sql"));
+            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".sql"));
             String tableName = outputFileBase.toUpperCase();
             writer.println("CREATE TABLE " + tableName + " (");
             writer.println("    ORIG_TAZ int,");
@@ -2064,7 +2071,7 @@ public class DataExporter
         List<String> costColumns = new LinkedList<String>();
         try
         {
-            writer = new PrintWriter(getOutputPath(outputFileBase + ".csv"));
+            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".csv"));
 
             Map<String, String> transitSkimFiles = getTransitSkimFileNameMapping();
             Map<String, String[]> transitSkimTimeCores = getTransitSkimFileTimeCoreNameMapping();
@@ -2163,7 +2170,7 @@ public class DataExporter
         writer = null;
         try
         {
-            writer = new PrintWriter(getOutputPath(outputFileBase + ".sql"));
+            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".sql"));
             String tableName = outputFileBase.toUpperCase();
             writer.println("CREATE TABLE " + tableName + " (");
             writer.println("    ORIG_TAP int,");
@@ -2199,7 +2206,7 @@ public class DataExporter
         PrintWriter writer = null;
         try
         {
-            writer = new PrintWriter(getOutputPath(outputFileBase + ".csv"));
+            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".csv"));
             writer.println("type,code,description");
             writer.println("nothing,placeholder,this describes nothing");
             for (String tripPurpose : tripPurposes.keySet())
@@ -2219,7 +2226,7 @@ public class DataExporter
         writer = null;
         try
         {
-            writer = new PrintWriter(getOutputPath(outputFileBase + ".sql"));
+            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".sql"));
             String tableName = outputFileBase.toUpperCase();
             writer.println("CREATE TABLE " + tableName + " (");
             writer.println("    TYPE varchar(50),");
@@ -2273,7 +2280,7 @@ public class DataExporter
         PrintWriter writer = null;
         try
         {
-            writer = new PrintWriter(getOutputPath(outputFileBase + ".csv"));
+            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".csv"));
             writer.println("vehcode,emfac2011_mode,sov_gp,sov_pay,sr2_gp,sr2_hov,sr2_pay,sr3_gp,sr3_hov,sr3_pay");
             writer.println("1,LDA - DSL,1,1,1,1,1,1,1,1");
             writer.println("2,LDA - GAS,1,1,1,1,1,1,1,1");
@@ -2337,7 +2344,7 @@ public class DataExporter
         writer = null;
         try
         {
-            writer = new PrintWriter(getOutputPath(outputFileBase + ".sql"));
+            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".sql"));
             String tableName = outputFileBase.toUpperCase();
             writer.println("CREATE TABLE " + tableName + " (");
             // emfac2011_mode,sov_gp,sov_pay,sr2_gp,sr2_hov,sr2_pay,sr3_gp,sr3_hov,sr3_pay
