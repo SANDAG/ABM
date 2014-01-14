@@ -5,14 +5,14 @@ import org.sandag.abm.active.*;
 
 public abstract class SandagWalkPathAlternativeListGenerationConfiguration implements PathAlternativeListGenerationConfiguration<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal>
 {
-    public static final String PROPERTIES_SAMPLE_MAXCOST = "active.sample.maxcost";
-    public static final String PROPERTIES_OUTPUT = "active.output.walk";
-    public static final String PROPERTIES_TRACE_ORIGINS = "active.trace.origins";
-    
     protected Map<String,String> propertyMap;
     protected PropertyParser propertyParser;
+    protected final String PROPERTIES_SAMPLE_MAXCOST = "active.sample.maxcost";
+    protected final String PROPERTIES_OUTPUT = "active.output.walk";
+    protected final String PROPERTIES_TRACE_EXCLUSIVE = "active.trace.exclusive";
     
     protected String PROPERTIES_MAXDIST_ZONE;
+    protected String PROPERTIES_TRACE_ORIGINS;
     
     protected Map<Integer,Map<Integer,Double>> nearbyZonalDistanceMap;
     protected Map<Integer,Integer> originZonalCentroidIdMap;
@@ -92,12 +92,6 @@ public abstract class SandagWalkPathAlternativeListGenerationConfiguration imple
     }
 
     @Override
-    public double[] getRandomizationScales()
-    {
-        return new double[] {0.0};
-    }
-
-    @Override
     public double[] getSampleDistanceBreaks()
     {
         return new double[] {99.0};
@@ -144,7 +138,8 @@ public abstract class SandagWalkPathAlternativeListGenerationConfiguration imple
             Map<SandagBikeNode,Integer> inverseOriginZonalCentroidIdMap = new HashMap<>();
             Map<SandagBikeNode,Integer> inverseDestinationZonalCentroidIdMap = new HashMap<>();
             SandagBikeNode n;
-            for ( int zone : originZonalCentroidIdMap.keySet() ) {
+            Map<Integer,Integer> relevantOriginZonalCentroidIdMap = getOriginZonalCentroidIdMap();
+            for ( int zone : relevantOriginZonalCentroidIdMap.keySet() ) {
                 n = network.getNode(originZonalCentroidIdMap.get(zone));
                 originNodes.add(n);
                 inverseOriginZonalCentroidIdMap.put(n, zone);
@@ -171,6 +166,22 @@ public abstract class SandagWalkPathAlternativeListGenerationConfiguration imple
     
     @Override
     public Map<Integer, Integer> getOriginZonalCentroidIdMap()
+    {
+        if (originZonalCentroidIdMap == null) {
+            createOriginZonalCentroidIdMap();
+        }
+        
+        if (isTraceExclusive()) {
+            Map<Integer, Integer> m =  new HashMap<>();
+            for (int o : getTraceOrigins()) {
+                m.put(o, originZonalCentroidIdMap.get(o));
+            }
+            return m;
+        }
+        else return originZonalCentroidIdMap;
+    }
+    
+    public Map<Integer, Integer> getOriginZonalCentroidIdMapNonExclusiveOfTrace()
     {
         if (originZonalCentroidIdMap == null) {
             createOriginZonalCentroidIdMap();
@@ -217,5 +228,17 @@ public abstract class SandagWalkPathAlternativeListGenerationConfiguration imple
         }
         return newMap;
     }
+    
+    @Override
+    public boolean isTraceExclusive() {
+        return Boolean.parseBoolean(propertyMap.get(PROPERTIES_TRACE_EXCLUSIVE));
+    }
+    
+    public EdgeEvaluator<SandagBikeEdge> getRandomizedEdgeCostEvaluator(int iter, long seed) {
+        return getEdgeCostEvaluator();
+    }
+    
+    @Override
+    public abstract boolean isIntrazonalsNeeded();
 }
 

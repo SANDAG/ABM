@@ -38,7 +38,7 @@ public class SandagBikeNetworkFactory extends AbstractNetworkFactory<SandagBikeN
     private static final double DISTANCE_CONVERSION_FACTOR = 0.000189;
     private static final double INACCESSIBLE_COST_COEF = 999.0;
     
-    private static final String PROPERTIES_COEF_DISTANCE = "active.coef.distance";
+    private static final String PROPERTIES_COEF_DISTCLA0 = "active.coef.distcla0";
     private static final String PROPERTIES_COEF_DISTCLA1 = "active.coef.distcla1";
     private static final String PROPERTIES_COEF_DISTCLA2 = "active.coef.distcla2";
     private static final String PROPERTIES_COEF_DISTCLA3 = "active.coef.distcla3";
@@ -48,6 +48,13 @@ public class SandagBikeNetworkFactory extends AbstractNetworkFactory<SandagBikeN
     private static final String PROPERTIES_COEF_TURN = "active.coef.turn";
     private static final String PROPERTIES_COEF_DISTANCE_WALK = "active.coef.distance.walk";
     private static final String PROPERTIES_COEF_GAIN_WALK = "active.coef.gain.walk";
+    private static final String PROPERTIES_COEF_DCYCTRAC = "active.coef.dcyctrac";
+    private static final String PROPERTIES_COEF_DBIKBLVD = "active.coef.dbikblvd";
+    private static final String PROPERTIES_COEF_SIGNALS = "active.coef.signals";
+    private static final String PROPERTIES_COEF_UNLFRMA = "active.coef.unlfrma";
+    private static final String PROPERTIES_COEF_UNLFRMI = "active.coef.unlfrmi";
+    private static final String PROPERTIES_COEF_UNTOMA = "active.coef.untoma";
+    private static final String PROPERTIES_COEF_UNTOMI = "active.coef.untomi";
     
     public SandagBikeNetworkFactory(Map<String,String> propertyMap)
     {
@@ -171,12 +178,14 @@ public class SandagBikeNetworkFactory extends AbstractNetworkFactory<SandagBikeN
                 edge.centroidConnector = propertyParser.isIntValueInPropertyList(cf.getInt(edge),PROPERTIES_EDGE_CENTROID_VALUE);
                 edge.distance = edge.distance * (float) DISTANCE_CONVERSION_FACTOR;
                 edge.bikeCost = (double) edge.distance * (
-                                           Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTANCE))
+                                           Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTCLA0)) * ( ( edge.bikeClass < 1 ? 1 : 0 ) + ( edge.bikeClass > 3 ? 1 : 0 ) )
                                          + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTCLA1)) * ( edge.bikeClass == 1 ? 1 : 0 )
-                                         + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTCLA2)) * ( edge.bikeClass == 2 ? 1 : 0 )
-                                         + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTCLA3)) * ( edge.bikeClass == 3 ? 1 : 0 )
+                                         + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTCLA2)) * ( edge.bikeClass == 2 ? 1 : 0 ) * ( edge.cycleTrack ? 0 : 1 )
+                                         + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTCLA3)) * ( edge.bikeClass == 3 ? 1 : 0 ) * ( edge.bikeBlvd ? 0 : 1 )
                                          + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DARTNE2))  * ( edge.bikeClass != 2 && edge.bikeClass != 1 ? 1 : 0 ) * ( ( edge.functionalClass < 5 && edge.functionalClass > 0 ) ? 1 : 0 )
                                          + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DWRONGWY)) * ( edge.bikeClass != 1 ? 1 : 0 ) * ( edge.lanes == 0 ? 1 : 0 )
+                                         + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DCYCTRAC)) * ( edge.cycleTrack ? 1 : 0 )
+                                         + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DBIKBLVD)) * ( edge.bikeBlvd ? 1 : 0 )
                                      )
                                      + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_GAIN)) * edge.gain
                                      + INACCESSIBLE_COST_COEF * ( ( edge.functionalClass < 3 && edge.functionalClass > 0 ) ? 1 : 0 );
@@ -197,8 +206,110 @@ public class SandagBikeNetworkFactory extends AbstractNetworkFactory<SandagBikeN
         	SandagBikeTraversal t = traversalIterator.next();
             t.turnType = calculateTurnType(t,network);
             t.thruCentroid = t.getFromEdge().centroidConnector && t.getToEdge().centroidConnector;
-            t.cost = Double.parseDouble(propertyMap.get(PROPERTIES_COEF_TURN)) * ( ( t.turnType != TurnType.NONE ) ? 1 : 0 ) + INACCESSIBLE_COST_COEF * ( t.thruCentroid ? 1 : 0 );
+            boolean signalized = t.getFromEdge().getToNode().signalized;
+            boolean fromMajorArt = t.getFromEdge().functionalClass <= 3 && t.getFromEdge().functionalClass > 0 && t.getFromEdge().bikeClass != 1;
+            boolean fromMinorArt = t.getFromEdge().functionalClass == 4 && t.getFromEdge().bikeClass != 1;
+            t.signalExclRightAndThruJunction = signalized && t.turnType != TurnType.RIGHT && !isThruJunction(t, network);
+            t.unsigLeftFromMajorArt = !signalized && fromMajorArt && t.turnType == TurnType.LEFT;
+            t.unsigLeftFromMinorArt = !signalized && fromMinorArt && t.turnType == TurnType.LEFT;
+            t.unsigCrossMajorArt = !signalized && isCrossingOfMajorArterial(t, network);
+            t.unsigCrossMinorArt = !signalized && isCrossingOfMinorArterial(t, network);
+            t.cost = Double.parseDouble(propertyMap.get(PROPERTIES_COEF_TURN)) * ( ( t.turnType != TurnType.NONE ) ? 1 : 0 )
+                    + INACCESSIBLE_COST_COEF * ( t.thruCentroid ? 1 : 0 )
+                    + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_SIGNALS)) * ( t.signalExclRightAndThruJunction ? 1 : 0 )
+                    + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_UNLFRMA)) * ( t.unsigLeftFromMajorArt ? 1 : 0 )
+                    + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_UNLFRMI)) * ( t.unsigLeftFromMinorArt ? 1 : 0 )
+                    + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_UNTOMA)) * ( t.unsigCrossMajorArt ? 1 : 0 )
+                    + Double.parseDouble(propertyMap.get(PROPERTIES_COEF_UNTOMI)) * ( t.unsigCrossMinorArt ? 1 : 0 );
         }
+    }
+    
+    private boolean isCrossingOfMajorArterial(SandagBikeTraversal t, Network<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> network) {
+        SandagBikeNode startNode = t.getFromEdge().getFromNode();
+        SandagBikeNode thruNode = t.getFromEdge().getToNode();
+        SandagBikeNode endNode = t.getToEdge().getToNode();
+        
+        if (startNode.centroid || thruNode.centroid || endNode.centroid ) {
+            return false;
+        }
+        
+        SandagBikeEdge edge = t.getToEdge();
+        if (t.turnType == TurnType.LEFT && edge.functionalClass <= 3 && edge.functionalClass > 0 && edge.bikeClass != 1 ) {
+            return true;
+        }
+        
+        if ( t.turnType != TurnType.NONE) {
+            return false;
+        }
+        
+        int majorArtCount = 0;
+        for (SandagBikeNode successor : network.getSuccessors(thruNode) ) {
+            edge = network.getEdge(thruNode,successor);
+            boolean majorArt = edge.functionalClass <= 3 && edge.functionalClass > 0 && edge.bikeClass != 1;
+            if (majorArt && (!(successor.equals(startNode))) && (!(successor.equals(endNode)))) {
+                majorArtCount += 1;
+            }
+        }
+        
+        return majorArtCount >= 2;
+    }
+    
+    private boolean isCrossingOfMinorArterial(SandagBikeTraversal t, Network<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> network) {
+        if ( isCrossingOfMajorArterial(t, network) ) {
+            return false;
+        }
+        
+        SandagBikeNode startNode = t.getFromEdge().getFromNode();
+        SandagBikeNode thruNode = t.getFromEdge().getToNode();
+        SandagBikeNode endNode = t.getToEdge().getToNode();
+        
+        if (startNode.centroid || thruNode.centroid || endNode.centroid ) {
+            return false;
+        }
+        
+        SandagBikeEdge edge = t.getToEdge();
+        if (t.turnType == TurnType.LEFT && edge.functionalClass == 4 && edge.bikeClass != 1 ) {
+            return true;
+        }
+        
+        if ( t.turnType != TurnType.NONE) {
+            return false;
+        }
+        
+        int artCount = 0;
+        for (SandagBikeNode successor : network.getSuccessors(thruNode) ) {
+            edge = network.getEdge(thruNode,successor);
+            boolean art = edge.functionalClass <= 4 && edge.functionalClass > 0 && edge.bikeClass != 1;
+            if (art && (!(successor.equals(startNode))) && (!(successor.equals(endNode)))) {
+                artCount += 1;
+            }
+        }
+                  
+        return artCount >= 2;
+    }
+    
+    private boolean isThruJunction(SandagBikeTraversal t, Network<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> network) {
+        SandagBikeNode startNode = t.getFromEdge().getFromNode();
+        SandagBikeNode thruNode = t.getFromEdge().getToNode();
+        SandagBikeNode endNode = t.getToEdge().getToNode();
+        
+        if (startNode.centroid || thruNode.centroid || endNode.centroid ) {
+            return false;
+        }
+        
+        if ( t.turnType != TurnType.NONE) {
+            return false;
+        }
+        
+        boolean rightTurnExists = false;
+        for (SandagBikeNode successor : network.getSuccessors(thruNode) ) {
+            SandagBikeTraversal traversal = network.getTraversal(t.getFromEdge(),network.getEdge(thruNode,successor));
+            if ((!(successor.equals(startNode))) && (!(successor.equals(endNode)))) {
+                rightTurnExists = traversal.turnType == TurnType.NONE;
+            }
+        }
+        
+        return !rightTurnExists;
     }
     
     private double calculateTraversalAngle(SandagBikeTraversal t)

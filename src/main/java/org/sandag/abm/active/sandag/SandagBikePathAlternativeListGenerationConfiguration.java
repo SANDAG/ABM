@@ -1,24 +1,45 @@
 package org.sandag.abm.active.sandag;
 
 import java.util.*;
-
 import org.sandag.abm.active.*;
 
 public abstract class SandagBikePathAlternativeListGenerationConfiguration implements PathAlternativeListGenerationConfiguration<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal>
 {
+    
+    private static final String PROPERTIES_COEF_DISTCLA0 = "active.coef.distcla0";
+    private static final String PROPERTIES_COEF_DISTCLA1 = "active.coef.distcla1";
+    private static final String PROPERTIES_COEF_DISTCLA2 = "active.coef.distcla2";
+    private static final String PROPERTIES_COEF_DISTCLA3 = "active.coef.distcla3";
+    private static final String PROPERTIES_COEF_DARTNE2  = "active.coef.dartne2";
+    private static final String PROPERTIES_COEF_DWRONGWY = "active.coef.dwrongwy";
+    private static final String PROPERTIES_COEF_GAIN = "active.coef.gain";
+    private static final String PROPERTIES_COEF_TURN = "active.coef.turn";
+    private static final String PROPERTIES_COEF_DISTANCE_WALK = "active.coef.distance.walk";
+    private static final String PROPERTIES_COEF_GAIN_WALK = "active.coef.gain.walk";
+    private static final String PROPERTIES_COEF_DCYCTRAC = "active.coef.dcyctrac";
+    private static final String PROPERTIES_COEF_DBIKBLVD = "active.coef.dbikblvd";
+    private static final String PROPERTIES_COEF_SIGNALS = "active.coef.signals";
+    private static final String PROPERTIES_COEF_UNLFRMA = "active.coef.unlfrma";
+    private static final String PROPERTIES_COEF_UNLFRMI = "active.coef.unlfrmi";
+    private static final String PROPERTIES_COEF_UNTOMA = "active.coef.untoma";
+    private static final String PROPERTIES_COEF_UNTOMI = "active.coef.untomi";
+    private static final double INACCESSIBLE_COST_COEF = 999.0;
+    
     protected Map<String,String> propertyMap;
     protected PropertyParser propertyParser;
     protected final String PROPERTIES_SAMPLE_MAXCOST = "active.sample.maxcost";
-    protected final String PROPERTIES_SAMPLE_RANDOM_SCALES = "active.sample.random.scales";
-    protected final String PROPERTIES_SAMPLE_RANDOM_SEEDED = "active.pathsize.random.seeded";
+    protected final String PROPERTIES_SAMPLE_RANDOM_SEEDED = "active.sample.random.seeded";
     protected final String PROPERTIES_SAMPLE_DISTANCE_BREAKS = "active.sample.distance.breaks";
     protected final String PROPERTIES_SAMPLE_PATHSIZES = "active.sample.pathsizes";
     protected final String PROPERTIES_SAMPLE_COUNT_MIN = "active.sample.count.min";
     protected final String PROPERTIES_SAMPLE_COUNT_MAX = "active.sample.count.max";
     protected final String PROPERTIES_OUTPUT = "active.output.bike";
-    protected final String PROPERTIES_TRACE_ORIGINS = "active.trace.origins";
+    protected final String PROPERTIES_TRACE_EXCLUSIVE = "active.trace.exclusive";
+    protected final String PROPERTIES_RANDOM_SCALE_COEF = "active.sample.random.scale.coef";
+    protected final String PROPERTIES_RANDOM_SCALE_LINK = "active.sample.random.scale.link";
     
     protected String PROPERTIES_MAXDIST_ZONE;
+    protected String PROPERTIES_TRACE_ORIGINS;
     
     protected Map<Integer,Map<Integer,Double>> nearbyZonalDistanceMap;
     protected Map<Integer,Integer> zonalCentroidIdMap;
@@ -101,12 +122,6 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
     }
 
     @Override
-    public double[] getRandomizationScales()
-    {
-        return propertyParser.parseDoublePropertyArray(PROPERTIES_SAMPLE_RANDOM_SCALES);
-    }
-
-    @Override
     public double[] getSampleDistanceBreaks()
     {
         return propertyParser.parseDoublePropertyArray(PROPERTIES_SAMPLE_DISTANCE_BREAKS);
@@ -145,20 +160,29 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
             if ( zonalCentroidIdMap == null ) {
                 createZonalCentroidIdMap();
             }
-            Set<SandagBikeNode> nodes = new HashSet<>();
-            Map<SandagBikeNode,Integer> inverseZonalCentroidMap = new HashMap<>();
+            Set<SandagBikeNode> originNodes = new HashSet<>();
+            Set<SandagBikeNode> destinationNodes = new HashSet<>();
+            Map<SandagBikeNode,Integer> inverseOriginZonalCentroidMap = new HashMap<>();
+            Map<SandagBikeNode,Integer> inverseDestinationZonalCentroidMap = new HashMap<>();
             SandagBikeNode n;
-            for ( int zone : zonalCentroidIdMap.keySet() ) {
+            Map<Integer,Integer> relevantOriginZonalCentroidIdMap = getOriginZonalCentroidIdMap();
+            Map<Integer,Integer> destinationZonalCentroidIdMap = getDestinationZonalCentroidIdMap();
+            for ( int zone : relevantOriginZonalCentroidIdMap.keySet() ) {
                 n = network.getNode(zonalCentroidIdMap.get(zone));
-                nodes.add(n);
-                inverseZonalCentroidMap.put(n, zone);
+                originNodes.add(n);
+                inverseOriginZonalCentroidMap.put(n, zone);
+            }
+            for ( int zone : destinationZonalCentroidIdMap.keySet() ) {
+                n = network.getNode(zonalCentroidIdMap.get(zone));
+                destinationNodes.add(n);
+                inverseDestinationZonalCentroidMap.put(n, zone);
             }
             System.out.println("Calculating nearby Zonal Distance Map");
-            ShortestPathResultSet<SandagBikeNode> resultSet = sps.getShortestPaths(nodes, nodes, Double.parseDouble(propertyMap.get(PROPERTIES_MAXDIST_ZONE)));
+            ShortestPathResultSet<SandagBikeNode> resultSet = sps.getShortestPaths(originNodes, destinationNodes, Double.parseDouble(propertyMap.get(PROPERTIES_MAXDIST_ZONE)));
             int originZone, destinationZone;
             for (NodePair<SandagBikeNode> odPair : resultSet) {
-                    originZone = inverseZonalCentroidMap.get(odPair.getFromNode());
-                    destinationZone = inverseZonalCentroidMap.get(odPair.getToNode());
+                    originZone = inverseOriginZonalCentroidMap.get(odPair.getFromNode());
+                    destinationZone = inverseDestinationZonalCentroidMap.get(odPair.getToNode());
                     if ( ! nearbyZonalDistanceMap.containsKey(originZone) ) {
                         nearbyZonalDistanceMap.put(originZone, new HashMap<Integer,Double>() );
                     }
@@ -175,13 +199,29 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
             createZonalCentroidIdMap();
         }
         
+        if (isTraceExclusive()) {
+            Map<Integer, Integer> m =  new HashMap<>();
+            for (int o : getTraceOrigins()) {
+                m.put(o, zonalCentroidIdMap.get(o));
+            }
+            return m;
+        }
+        else return zonalCentroidIdMap;
+    }
+    
+    public Map<Integer, Integer> getOriginZonalCentroidIdMapNonExclusiveOfTrace()
+    {
+        if (zonalCentroidIdMap == null) {
+            createZonalCentroidIdMap();
+        }
+        
         return zonalCentroidIdMap;
     }
     
     @Override
     public Map<Integer, Integer> getDestinationZonalCentroidIdMap()
     {
-        return getOriginZonalCentroidIdMap();
+        return getOriginZonalCentroidIdMapNonExclusiveOfTrace();
     }
     
     @Override
@@ -202,8 +242,84 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
         return newMap;
     }
     
-    public Map<Integer, Integer> getInverseDestinationZonalCentroidIdMap()
+    public Map<Integer,Integer> getInverseDestinationZonalCentroidIdMap()
     {
-        return getInverseOriginZonalCentroidIdMap();
+        HashMap<Integer,Integer> newMap = new HashMap<>();
+        Map<Integer,Integer> origMap = getDestinationZonalCentroidIdMap();
+        for (Integer d : origMap.keySet()) {
+            newMap.put(origMap.get(d), d);
+        }
+        return newMap;
     }
+    
+    @Override
+    public boolean isTraceExclusive() {
+        return Boolean.parseBoolean(propertyMap.get(PROPERTIES_TRACE_EXCLUSIVE));
+    }
+    
+    private class RandomizedEdgeCostEvaluator implements EdgeEvaluator<SandagBikeEdge>
+    {            
+        long seed;
+        Random random;
+        double cDistCla0, cDistCla1, cDistCla2, cDistCla3, cArtNe2, cWrongWay, cCycTrac, cBikeBlvd, cGain; 
+        
+        public RandomizedEdgeCostEvaluator(long seed) {
+            this.seed = seed;
+            
+            if (isRandomCostSeeded()) {
+                random = new Random(seed);
+            } else {
+                random = new Random();
+            }
+            
+            cDistCla0 = Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTCLA0)) * ( 1 + Double.parseDouble(propertyMap.get(PROPERTIES_RANDOM_SCALE_COEF)) * ( 2 * random.nextDouble() - 1 ) );
+            cDistCla1 = Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTCLA1)) * ( 1 + Double.parseDouble(propertyMap.get(PROPERTIES_RANDOM_SCALE_COEF)) * (2 * random.nextDouble() - 1) );
+            cDistCla2 = Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTCLA2)) * ( 1 + Double.parseDouble(propertyMap.get(PROPERTIES_RANDOM_SCALE_COEF)) * (2 * random.nextDouble() - 1) );
+            cDistCla3 = Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DISTCLA3)) * ( 1 + Double.parseDouble(propertyMap.get(PROPERTIES_RANDOM_SCALE_COEF)) * (2 * random.nextDouble() - 1) );
+            cArtNe2 = Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DARTNE2)) * ( 1 + Double.parseDouble(propertyMap.get(PROPERTIES_RANDOM_SCALE_COEF)) * (2 * random.nextDouble() - 1) );
+            cWrongWay = Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DWRONGWY)) * ( 1 + Double.parseDouble(propertyMap.get(PROPERTIES_RANDOM_SCALE_COEF)) * (2 * random.nextDouble() - 1) );
+            cCycTrac = Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DCYCTRAC)) * ( 1 + Double.parseDouble(propertyMap.get(PROPERTIES_RANDOM_SCALE_COEF)) * (2 * random.nextDouble() - 1) );
+            cBikeBlvd = Double.parseDouble(propertyMap.get(PROPERTIES_COEF_DBIKBLVD)) * ( 1 + Double.parseDouble(propertyMap.get(PROPERTIES_RANDOM_SCALE_COEF)) * (2 * random.nextDouble() - 1) );
+            cGain = Double.parseDouble(propertyMap.get(PROPERTIES_COEF_GAIN)) * ( 1 + Double.parseDouble(propertyMap.get(PROPERTIES_RANDOM_SCALE_COEF)) * (2 * random.nextDouble() - 1) );
+            
+        }
+        
+        public double evaluate(SandagBikeEdge edge) {
+            
+            if (isRandomCostSeeded()) {
+                random = new Random(Objects.hash(seed,edge));
+            } else {
+                random = new Random();
+            }
+
+            return (
+                        edge.distance * (
+                                (
+                                        cDistCla0 * ( ( edge.bikeClass < 1 ? 1 : 0 ) + ( edge.bikeClass > 3 ? 1 : 0 ) )
+                                        + cDistCla1 * ( edge.bikeClass == 1 ? 1 : 0 )
+                                        + cDistCla2 * ( edge.bikeClass == 2 ? 1 : 0 ) * ( edge.cycleTrack ? 0 : 1 )
+                                        + cDistCla3 * ( edge.bikeClass == 3 ? 1 : 0 ) * ( edge.bikeBlvd ? 0 : 1 )
+                                        + cArtNe2  * ( edge.bikeClass != 2 && edge.bikeClass != 1 ? 1 : 0 ) * ( ( edge.functionalClass < 5 && edge.functionalClass > 0 ) ? 1 : 0 )
+                                        + cWrongWay * ( edge.bikeClass != 1 ? 1 : 0 ) * ( edge.lanes == 0 ? 1 : 0 )
+                                        + cCycTrac * ( edge.cycleTrack ? 1 : 0 )
+                                        + cBikeBlvd * ( edge.bikeBlvd ? 1 : 0 )
+                                )
+                         + cGain * edge.gain
+                   ) * ( 1 + Double.parseDouble(propertyMap.get(PROPERTIES_RANDOM_SCALE_LINK)) * (random.nextBoolean() ? 1 : -1) )
+                + INACCESSIBLE_COST_COEF * ( ( edge.functionalClass < 3 && edge.functionalClass > 0 ) ? 1 : 0 )
+            );
+        }
+    }
+    
+    public EdgeEvaluator<SandagBikeEdge> getRandomizedEdgeCostEvaluator(int iter, long seed) {
+        
+        if ( iter == 1 ) {
+            return getEdgeCostEvaluator();
+        } else {
+            return new RandomizedEdgeCostEvaluator(seed);
+        }
+        
+    }
+    
+    public boolean isIntrazonalsNeeded() { return true; }
 }

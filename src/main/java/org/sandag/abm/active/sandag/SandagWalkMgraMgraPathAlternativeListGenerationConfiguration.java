@@ -10,6 +10,7 @@ public class SandagWalkMgraMgraPathAlternativeListGenerationConfiguration extend
     {
         super(propertyMap, network);
         this.PROPERTIES_MAXDIST_ZONE = "active.maxdist.walk.mgra";
+        this.PROPERTIES_TRACE_ORIGINS = "active.trace.origins.mgra";
     }
     
     protected void createOriginZonalCentroidIdMap()
@@ -35,5 +36,7 @@ public class SandagWalkMgraMgraPathAlternativeListGenerationConfiguration extend
             if ( n.mgra > 0 ) { destinationZonalCentroidIdMap.put((int) n.mgra, n.getId()); }
         }
     }
+    
+    public boolean isIntrazonalsNeeded() { return true; }
 
 }

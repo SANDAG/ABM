@@ -21,6 +21,7 @@ public class SandagBikeTazPathAlternativeListGenerationConfiguration extends San
     {
         super(propertyMap, network);
         this.PROPERTIES_MAXDIST_ZONE = "active.maxdist.bike.taz";
+        this.PROPERTIES_TRACE_ORIGINS = "active.trace.origins.taz";
     }
     
     protected void createZonalCentroidIdMap()
@@ -32,6 +33,12 @@ public class SandagBikeTazPathAlternativeListGenerationConfiguration extends San
             n = nodeIterator.next();
             if ( n.taz > 0 ) { zonalCentroidIdMap.put((int) n.taz, n.getId()); }
         }
+    }
+    
+    @Override
+    public String getOutputDirectory()
+    {
+        return propertyMap.get(PROPERTIES_OUTPUT) + "taz/";
     }
 
 }
