@@ -587,11 +587,6 @@
             <version>2013.08.08-ABM</version>
         </dependency>
         <dependency>
-            <groupId>pb</groupId>
-            <artifactId>sawdust</artifactId>
-            <version>unknown</version>
-        </dependency>
-        <dependency>
             <groupId>org.jppf</groupId>
             <artifactId>jppf-client</artifactId>
             <version>2.5</version>
@@ -622,6 +617,27 @@
 			<artifactId>poi</artifactId>
 			<version>3.7</version>
 		</dependency>
+        <dependency>
+            <groupId>pb</groupId>
+            <artifactId>sawdust-datatable</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>pb</groupId>
+            <artifactId>sawdust-property</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>pb</groupId>
+            <artifactId>sawdust-integration-excel</artifactId>
+            <version>2.0</version>
+        </dependency>
     </dependencies>
 
     <distributionManagement>
