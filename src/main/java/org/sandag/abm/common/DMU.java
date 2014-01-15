@@ -4,16 +4,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
-
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
-
 import com.pb.common.calculator.IndexValues;
 
-public abstract class DMU {
-	protected transient Logger         logger       = null;
+public abstract class DMU
+{
+    protected transient Logger         logger       = null;
 
-	protected static final int         LB           = McLogsumsCalculator.LB;
+    protected static final int         LB           = McLogsumsCalculator.LB;
     protected static final int         EB           = McLogsumsCalculator.EB;
     protected static final int         BRT          = McLogsumsCalculator.BRT;
     protected static final int         LR           = McLogsumsCalculator.LR;
@@ -44,50 +43,51 @@ public abstract class DMU {
     protected static final int         NUM_DIR      = McLogsumsCalculator.NUM_DIR;
 
     protected IndexValues              dmuIndex;
-    
-	protected HashMap<String, Integer> methodIndexMap;
+
+    protected HashMap<String, Integer> methodIndexMap;
     protected HashMap<Integer, String> reverseMethodIndexMap;
-    
-    protected void CreateReverseMap() {
-    	reverseMethodIndexMap = new HashMap<Integer, String>();
-		Iterator<String> i = methodIndexMap.keySet().iterator();
-		while (i.hasNext())
-		{
-			String value = i.next();
-			Integer key = methodIndexMap.get(value);
-			reverseMethodIndexMap.put(key, value);
-		}
-		
-	}
-    
-    protected double getValueForIndexLookup(int variableIndex, int arrayIndex) {
-		if (variableIndex < 100)
-    	{
-			try {
-				Method method = this.getClass().getMethod(reverseMethodIndexMap.get(variableIndex));
-				Object o = method.invoke(this);
-				if (o instanceof Double)
-					return (double)o;
-				else if (o instanceof Float)
-					return ((Float)o).doubleValue(); 
-				else if (o instanceof Integer)
-					return ((Integer)o).doubleValue();
-			} catch (IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException | NoSuchMethodException
-					| SecurityException e) {
-				logger.error("method number = " + variableIndex + " not found");
+
+    protected void CreateReverseMap()
+    {
+        reverseMethodIndexMap = new HashMap<Integer, String>();
+        Iterator<String> i = methodIndexMap.keySet().iterator();
+        while (i.hasNext())
+        {
+            String value = i.next();
+            Integer key = methodIndexMap.get(value);
+            reverseMethodIndexMap.put(key, value);
+        }
+
+    }
+
+    protected double getValueForIndexLookup(int variableIndex, int arrayIndex)
+    {
+        if (variableIndex < 100)
+        {
+            try
+            {
+                Method method = this.getClass().getMethod(reverseMethodIndexMap.get(variableIndex));
+                Object o = method.invoke(this);
+                if (o instanceof Double) return (double) o;
+                else if (o instanceof Float) return ((Float) o).doubleValue();
+                else if (o instanceof Integer) return ((Integer) o).doubleValue();
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                    | NoSuchMethodException | SecurityException e)
+            {
+                logger.error("method number = " + variableIndex + " not found");
                 throw new RuntimeException("method number = " + variableIndex + " not found");
-			}
-    	}
-    	
-    	try {
-			return getTransitSkimFromMethodName(reverseMethodIndexMap.get(variableIndex));
-		} catch (Exception e) {
-			logger.error("method number = " + variableIndex + " not found");
+            }
+        }
+
+        try
+        {
+            return getTransitSkimFromMethodName(reverseMethodIndexMap.get(variableIndex));
+        } catch (Exception e)
+        {
+            logger.error("method number = " + variableIndex + " not found");
             throw new RuntimeException("method number = " + variableIndex + " not found");
-		}		
-	}
+        }
+    }
 
-
-	protected abstract double getTransitSkimFromMethodName(String string) throws Exception;
+    protected abstract double getTransitSkimFromMethodName(String string) throws Exception;
 }

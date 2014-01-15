@@ -2,52 +2,51 @@ package org.sandag.abm.crossborder;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
 import org.apache.log4j.Logger;
 import org.sandag.abm.common.DMU;
 import org.sandag.abm.common.OutboundHalfTourDMU;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
-
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 
-public class CrossBorderTripModeChoiceDMU extends OutboundHalfTourDMU
+public class CrossBorderTripModeChoiceDMU
+        extends OutboundHalfTourDMU
         implements Serializable, VariableTable
 {
 
-    protected int                      tourDepartPeriod;
-    protected int                      tourArrivePeriod;
-    protected int                      tripPeriod;
-    protected int                      workTour;
-    protected int                      outboundStops;
-    protected int                      returnStops;
-    protected int                      firstTrip;
-    protected int                      lastTrip;
-    protected int                      tourModeIsDA;
-    protected int                      tourModeIsS2;
-    protected int                      tourModeIsS3;
-    protected int                      tourModeIsWalk;
-    protected int                      tourCrossingIsSentri;
-    protected float                    hourlyParkingCostTourDest;
-    protected float                    dailyParkingCostTourDest;
-    protected float                    monthlyParkingCostTourDest;
-    protected int                      tripOrigIsTourDest;
-    protected int                      tripDestIsTourDest;
-    protected float                    hourlyParkingCostTripOrig;
-    protected float                    hourlyParkingCostTripDest;
+    protected int          tourDepartPeriod;
+    protected int          tourArrivePeriod;
+    protected int          tripPeriod;
+    protected int          workTour;
+    protected int          outboundStops;
+    protected int          returnStops;
+    protected int          firstTrip;
+    protected int          lastTrip;
+    protected int          tourModeIsDA;
+    protected int          tourModeIsS2;
+    protected int          tourModeIsS3;
+    protected int          tourModeIsWalk;
+    protected int          tourCrossingIsSentri;
+    protected float        hourlyParkingCostTourDest;
+    protected float        dailyParkingCostTourDest;
+    protected float        monthlyParkingCostTourDest;
+    protected int          tripOrigIsTourDest;
+    protected int          tripDestIsTourDest;
+    protected float        hourlyParkingCostTripOrig;
+    protected float        hourlyParkingCostTripDest;
 
-    protected double                   nmWalkTime;
-    protected double                   nmBikeTime;
+    protected double       nmWalkTime;
+    protected double       nmBikeTime;
 
-    protected double[][][]             transitSkim;
+    protected double[][][] transitSkim;
 
     public CrossBorderTripModeChoiceDMU(CrossBorderModelStructure modelStructure, Logger aLogger)
     {
-    	if ( aLogger == null )
-    	{
-    		aLogger = Logger.getLogger("crossBorderModel");
-    	}
-    	logger = aLogger;
+        if (aLogger == null)
+        {
+            aLogger = Logger.getLogger("crossBorderModel");
+        }
+        logger = aLogger;
         setupMethodIndexMap();
         dmuIndex = new IndexValues();
         transitSkim = new double[McLogsumsCalculator.NUM_ACC_EGR][McLogsumsCalculator.NUM_LOC_PREM][McLogsumsCalculator.NUM_SKIMS];
@@ -617,7 +616,7 @@ public class CrossBorderTripModeChoiceDMU extends OutboundHalfTourDMU
 
     public double getValueForIndex(int variableIndex, int arrayIndex)
     {
-    	return getValueForIndexLookup(variableIndex, arrayIndex);
+        return getValueForIndexLookup(variableIndex, arrayIndex);
     }
 
     public int getIndexValue(String variableName)
@@ -644,7 +643,5 @@ public class CrossBorderTripModeChoiceDMU extends OutboundHalfTourDMU
     {
         throw new UnsupportedOperationException();
     }
-
-    
 
 }

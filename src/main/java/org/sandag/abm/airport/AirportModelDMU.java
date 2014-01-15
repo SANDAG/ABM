@@ -2,20 +2,18 @@ package org.sandag.abm.airport;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.BestTransitPathCalculator;
 import org.sandag.abm.accessibilities.DriveTransitWalkSkimsCalculator;
 import org.sandag.abm.accessibilities.WalkTransitDriveSkimsCalculator;
 import org.sandag.abm.accessibilities.WalkTransitWalkSkimsCalculator;
 import org.sandag.abm.common.ConditionalDMU;
-import org.sandag.abm.common.DMU;
 import org.sandag.abm.modechoice.Modes;
-
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 
-public class AirportModelDMU extends ConditionalDMU
+public class AirportModelDMU
+        extends ConditionalDMU
         implements Serializable, VariableTable
 {
     protected IndexValues                     dmuIndex;
@@ -143,19 +141,17 @@ public class AirportModelDMU extends ConditionalDMU
     private double                            transitLogsum;
 
     protected double[][][]                    transitSkim                   = new double[NUM_ACC_EGR][NUM_LOC_PREM][NUM_SKIMS];
-    
-    protected Logger _logger = null;
-    
+
+    protected Logger                          _logger                       = null;
+
     public AirportModelDMU(Logger logger)
     {
-    	dmuIndex = new IndexValues();
+        dmuIndex = new IndexValues();
         setupMethodIndexMap();
         if (logger == null)
         {
-        	_logger = Logger.getLogger(AirportModelDMU.class);
-        }
-        else
-        	_logger = logger;
+            _logger = Logger.getLogger(AirportModelDMU.class);
+        } else _logger = logger;
     }
 
     /**
@@ -295,12 +291,10 @@ public class AirportModelDMU extends ConditionalDMU
      */
     public double getValueForIndex(int variableIndex, int arrayIndex)
     {
-    	if (variableIndex == 7)
-    		return getLnDestChoiceSizeTazAlt(arrayIndex);
-    	if (variableIndex == 8)
-    		return getDestZipAlt(arrayIndex);
-    	
-    	return getValueForIndexLookup(variableIndex, arrayIndex);        
+        if (variableIndex == 7) return getLnDestChoiceSizeTazAlt(arrayIndex);
+        if (variableIndex == 8) return getDestZipAlt(arrayIndex);
+
+        return getValueForIndexLookup(variableIndex, arrayIndex);
     }
 
     /**
@@ -1140,13 +1134,13 @@ public class AirportModelDMU extends ConditionalDMU
     {
         throw new UnsupportedOperationException();
     }
-    
-    protected double getTransitSkimFromMethodName(String methodName) throws Exception 
-	{
-    	boolean condition = false;
-    	if (airportParty != null)
-    		condition = (airportParty.getDirection() == AirportModelStructure.DEPARTURE);
-    	return getTranistSkimFromMethodConditional(methodName, condition);    	
-	}
+
+    protected double getTransitSkimFromMethodName(String methodName) throws Exception
+    {
+        boolean condition = false;
+        if (airportParty != null)
+            condition = (airportParty.getDirection() == AirportModelStructure.DEPARTURE);
+        return getTranistSkimFromMethodConditional(methodName, condition);
+    }
 
 }
