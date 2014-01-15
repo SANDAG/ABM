@@ -73,8 +73,8 @@ public class SandagEmfac2011Runner
     private Map<String, Set<Emfac2011VehicleType>> buildAquavisVehicleTypeToEmfacMapping(
             Path vehicleCodeMappingFile)
     {
-        Map<VehicleType, Set<Emfac2011VehicleType>> mapping = new EnumMap<>(VehicleType.class);
-        for (VehicleType type : VehicleType.values())
+        Map<SandagAutoModes, Set<Emfac2011VehicleType>> mapping = new EnumMap<>(SandagAutoModes.class);
+        for (SandagAutoModes type : SandagAutoModes.values())
             mapping.put(type, EnumSet.noneOf(Emfac2011VehicleType.class));
 
         // file has one column =
@@ -89,7 +89,7 @@ public class SandagEmfac2011Runner
         {
             try
             {
-                VehicleType.valueOf(column.toUpperCase());
+                SandagAutoModes.valueOf(column.toUpperCase());
                 vehicleCodeColumns.add(column);
             } catch (IllegalArgumentException e)
             {
@@ -118,14 +118,14 @@ public class SandagEmfac2011Runner
                                                                   // type is
                                                                   // assumed to
                                                                   // be mutable
-                    mapping.get(VehicleType.valueOf(column.toUpperCase()))
+                    mapping.get(SandagAutoModes.valueOf(column.toUpperCase()))
                             .add(emfac2011VehicleType);
                 }
             }
         }
         Emfac2011VehicleType.setMutableTypes(mutableVehicleType);
         Map<String, Set<Emfac2011VehicleType>> finalMapping = new HashMap<>();
-        for (VehicleType type : mapping.keySet())
+        for (SandagAutoModes type : mapping.keySet())
             finalMapping.put(type.name(), mapping.get(type));
         return finalMapping;
     }
