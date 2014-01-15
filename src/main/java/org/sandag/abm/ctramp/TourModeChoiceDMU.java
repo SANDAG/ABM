@@ -2,7 +2,10 @@ package org.sandag.abm.ctramp;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
+
 import org.apache.log4j.Logger;
+
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 
@@ -43,6 +46,7 @@ public class TourModeChoiceDMU
     protected static final int         NUM_DIR      = McLogsumsCalculator.NUM_DIR;
 
     protected HashMap<String, Integer> methodIndexMap;
+    protected HashMap<Integer, String> reverseMethodIndexMap;
     protected IndexValues              dmuIndex;
 
     protected Household                hh;
@@ -362,17 +366,17 @@ public class TourModeChoiceDMU
         return reimburseProportion;
     }
 
-    public double getLsWgtAvgCostM()
+    public double getMonthlyParkingCost()
     {
         return lsWgtAvgCostM;
     }
 
-    public double getLsWgtAvgCostD()
+    public double getDailyParkingCost()
     {
         return lsWgtAvgCostD;
     }
 
-    public double getLsWgtAvgCostH()
+    public double getHourlyParkingCost()
     {
         return lsWgtAvgCostH;
     }
@@ -417,4 +421,15 @@ public class TourModeChoiceDMU
         throw new UnsupportedOperationException();
     }
 
+    protected void CreateReverseMap() {
+    	reverseMethodIndexMap = new HashMap<Integer, String>();
+		Iterator<String> i = methodIndexMap.keySet().iterator();
+		while (i.hasNext())
+		{
+			String value = i.next();
+			Integer key = methodIndexMap.get(value);
+			reverseMethodIndexMap.put(key, value);
+		}
+		
+	}
 }
