@@ -2,19 +2,22 @@ package org.sandag.abm.airport;
 
 import java.io.Serializable;
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.BestTransitPathCalculator;
 import org.sandag.abm.accessibilities.DriveTransitWalkSkimsCalculator;
 import org.sandag.abm.accessibilities.WalkTransitDriveSkimsCalculator;
 import org.sandag.abm.accessibilities.WalkTransitWalkSkimsCalculator;
+import org.sandag.abm.common.ConditionalDMU;
+import org.sandag.abm.common.DMU;
 import org.sandag.abm.modechoice.Modes;
+
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 
-public class AirportModelDMU
+public class AirportModelDMU extends ConditionalDMU
         implements Serializable, VariableTable
 {
-    protected HashMap<String, Integer>        methodIndexMap;
     protected IndexValues                     dmuIndex;
 
     private AirportParty                      airportParty;
@@ -283,7 +286,7 @@ public class AirportModelDMU
         methodIndexMap.put("getDt_cr_WalkAuxTime", 202);
         methodIndexMap.put("getDt_cr_fare", 203);
         methodIndexMap.put("getDt_cr_xfers", 204);
-
+        CreateReverseMap();
     }
 
     /**
@@ -292,460 +295,12 @@ public class AirportModelDMU
      */
     public double getValueForIndex(int variableIndex, int arrayIndex)
     {
-
-        switch (variableIndex)
-        {
-            case 0:
-                return getDirection();
-            case 1:
-                return getPurpose();
-            case 2:
-                return getSize();
-            case 3:
-                return getIncome();
-            case 4:
-                return getDepartTime();
-            case 5:
-                return getNights();
-            case 6:
-                return getOriginMGRA();
-            case 7:
-                return getLnDestChoiceSizeTazAlt(arrayIndex);
-            case 8:
-                return getDestZipAlt(arrayIndex);
-            case 90:
-                return getDriveAloneLogsum();
-            case 91:
-                return getShared2Logsum();
-            case 92:
-                return getShared3Logsum();
-            case 93:
-                return getTransitLogsum();
-
-            case 100:
-                return getTransitSkim(WTW, LB, LB_IVT);
-
-            case 101:
-                return getTransitSkim(WTW, LB, FWAIT);
-
-            case 102:
-                return getTransitSkim(WTW, LB, XWAIT);
-
-            case 103:
-                return getTransitSkim(WTW, LB, ACC);
-
-            case 104:
-                return getTransitSkim(WTW, LB, EGR);
-
-            case 105:
-                return getTransitSkim(WTW, LB, AUX);
-
-            case 106:
-                return getTransitSkim(WTW, LB, FARE);
-
-            case 107:
-                return getTransitSkim(WTW, LB, XFERS);
-
-            case 108:
-                return getTransitSkim(WTW, EB, LB_IVT);
-
-            case 109:
-                return getTransitSkim(WTW, EB, EB_IVT);
-
-            case 110:
-                return getTransitSkim(WTW, EB, FWAIT);
-
-            case 111:
-                return getTransitSkim(WTW, EB, XWAIT);
-
-            case 112:
-                return getTransitSkim(WTW, EB, ACC);
-
-            case 113:
-                return getTransitSkim(WTW, EB, EGR);
-
-            case 114:
-                return getTransitSkim(WTW, EB, AUX);
-
-            case 115:
-                return getTransitSkim(WTW, EB, FARE);
-
-            case 116:
-                return getTransitSkim(WTW, EB, XFERS);
-
-            case 117:
-                return getTransitSkim(WTW, BRT, LB_IVT);
-
-            case 118:
-                return getTransitSkim(WTW, BRT, EB_IVT);
-
-            case 119:
-                return getTransitSkim(WTW, BRT, BRT_IVT);
-
-            case 120:
-                return getTransitSkim(WTW, BRT, FWAIT);
-
-            case 121:
-                return getTransitSkim(WTW, BRT, XWAIT);
-
-            case 122:
-                return getTransitSkim(WTW, BRT, ACC);
-
-            case 123:
-                return getTransitSkim(WTW, BRT, EGR);
-
-            case 124:
-                return getTransitSkim(WTW, BRT, AUX);
-
-            case 125:
-                return getTransitSkim(WTW, BRT, FARE);
-
-            case 126:
-                return getTransitSkim(WTW, BRT, XFERS);
-
-            case 127:
-                return getTransitSkim(WTW, LR, LB_IVT);
-
-            case 128:
-                return getTransitSkim(WTW, LR, EB_IVT);
-
-            case 129:
-                return getTransitSkim(WTW, LR, BRT_IVT);
-
-            case 130:
-                return getTransitSkim(WTW, LR, LR_IVT);
-
-            case 131:
-                return getTransitSkim(WTW, LR, FWAIT);
-
-            case 132:
-                return getTransitSkim(WTW, LR, XWAIT);
-
-            case 133:
-                return getTransitSkim(WTW, LR, ACC);
-
-            case 134:
-                return getTransitSkim(WTW, LR, EGR);
-
-            case 135:
-                return getTransitSkim(WTW, LR, AUX);
-
-            case 136:
-                return getTransitSkim(WTW, LR, FARE);
-
-            case 137:
-                return getTransitSkim(WTW, LR, XFERS);
-
-            case 138:
-                return getTransitSkim(WTW, CR, LB_IVT);
-
-            case 139:
-                return getTransitSkim(WTW, CR, EB_IVT);
-
-            case 140:
-                return getTransitSkim(WTW, CR, BRT_IVT);
-
-            case 141:
-                return getTransitSkim(WTW, CR, LR_IVT);
-
-            case 142:
-                return getTransitSkim(WTW, CR, CR_IVT);
-
-            case 143:
-                return getTransitSkim(WTW, CR, FWAIT);
-
-            case 144:
-                return getTransitSkim(WTW, CR, XWAIT);
-
-            case 145:
-                return getTransitSkim(WTW, CR, ACC);
-
-            case 146:
-                return getTransitSkim(WTW, CR, EGR);
-
-            case 147:
-                return getTransitSkim(WTW, CR, AUX);
-
-            case 148:
-                return getTransitSkim(WTW, CR, FARE);
-
-            case 149:
-                return getTransitSkim(WTW, CR, XFERS);
-
-            case 150:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, LB, LB_IVT);
-                else return getTransitSkim(WTD, LB, LB_IVT);
-
-            case 151:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, LB, FWAIT);
-                else return getTransitSkim(WTD, LB, FWAIT);
-
-            case 152:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, LB, XWAIT);
-                else return getTransitSkim(WTD, LB, XWAIT);
-
-            case 153:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return 0;
-                else return getTransitSkim(WTD, LB, ACC);
-
-            case 154:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, LB, EGR);
-                else return 0;
-
-            case 155:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, LB, ACC);
-                else return getTransitSkim(WTD, LB, EGR);
-
-            case 156:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, LB, AUX);
-                else return getTransitSkim(WTD, LB, AUX);
-
-            case 157:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, LB, FARE);
-                else return getTransitSkim(WTD, LB, FARE);
-
-            case 158:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, LB, XFERS);
-                else return getTransitSkim(WTD, LB, XFERS);
-
-            case 159:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, EB, LB_IVT);
-                else return getTransitSkim(WTD, EB, LB_IVT);
-
-            case 160:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, EB, EB_IVT);
-                else return getTransitSkim(WTD, EB, EB_IVT);
-
-            case 161:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, EB, FWAIT);
-                else return getTransitSkim(WTD, EB, FWAIT);
-
-            case 162:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, EB, XWAIT);
-                else return getTransitSkim(WTD, EB, XWAIT);
-
-            case 163:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return 0;
-                else return getTransitSkim(WTD, EB, ACC);
-
-            case 164:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, EB, EGR);
-                else return 0;
-
-            case 165:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, EB, ACC);
-                else return getTransitSkim(WTD, EB, EGR);
-
-            case 166:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, EB, AUX);
-                else return getTransitSkim(WTD, EB, AUX);
-
-            case 167:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, EB, FARE);
-                else return getTransitSkim(WTD, EB, FARE);
-
-            case 168:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, EB, XFERS);
-                else return getTransitSkim(WTD, EB, XFERS);
-
-            case 169:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, BRT, LB_IVT);
-                else return getTransitSkim(WTD, BRT, LB_IVT);
-
-            case 170:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, BRT, EB_IVT);
-                else return getTransitSkim(WTD, BRT, EB_IVT);
-
-            case 171:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, BRT, BRT_IVT);
-                else return getTransitSkim(WTD, BRT, BRT_IVT);
-
-            case 172:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, BRT, FWAIT);
-                else return getTransitSkim(WTD, BRT, FWAIT);
-
-            case 173:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, BRT, XWAIT);
-                else return getTransitSkim(WTD, BRT, XWAIT);
-
-            case 174:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return 0;
-                else return getTransitSkim(WTD, BRT, ACC);
-
-            case 175:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, BRT, EGR);
-                else return 0;
-
-            case 176:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, BRT, ACC);
-                else return getTransitSkim(WTD, BRT, EGR);
-
-            case 177:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, BRT, AUX);
-                else return getTransitSkim(WTD, BRT, AUX);
-
-            case 178:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, BRT, FARE);
-                else return getTransitSkim(WTD, BRT, FARE);
-
-            case 179:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, BRT, XFERS);
-                else return getTransitSkim(WTD, BRT, XFERS);
-
-            case 180:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, LR, LB_IVT);
-                else return getTransitSkim(WTD, LR, LB_IVT);
-
-            case 181:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, LR, EB_IVT);
-                else return getTransitSkim(WTD, LR, EB_IVT);
-
-            case 182:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, LR, BRT_IVT);
-                else return getTransitSkim(WTD, LR, BRT_IVT);
-
-            case 183:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, LR, LR_IVT);
-                else return getTransitSkim(WTD, LR, LR_IVT);
-
-            case 184:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, LR, FWAIT);
-                else return getTransitSkim(WTD, LR, FWAIT);
-
-            case 185:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, LR, XWAIT);
-                else return getTransitSkim(WTD, LR, XWAIT);
-
-            case 186:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return 0;
-                else return getTransitSkim(WTD, LR, ACC);
-
-            case 187:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, LR, EGR);
-                else return 0;
-
-            case 188:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, LR, ACC);
-                else return getTransitSkim(WTD, LR, EGR);
-
-            case 189:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, LR, AUX);
-                else return getTransitSkim(WTD, LR, AUX);
-
-            case 190:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, LR, FARE);
-                else return getTransitSkim(WTD, LR, FARE);
-
-            case 191:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, LR, XFERS);
-                else return getTransitSkim(WTD, LR, XFERS);
-
-            case 192:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, CR, LB_IVT);
-                else return getTransitSkim(WTD, CR, LB_IVT);
-
-            case 193:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, CR, EB_IVT);
-                else return getTransitSkim(WTD, CR, EB_IVT);
-
-            case 194:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, CR, BRT_IVT);
-                else return getTransitSkim(WTD, CR, BRT_IVT);
-
-            case 195:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, CR, LR_IVT);
-                else return getTransitSkim(WTD, CR, LR_IVT);
-
-            case 196:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, CR, CR_IVT);
-                else return getTransitSkim(WTD, CR, CR_IVT);
-
-            case 197:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, CR, FWAIT);
-                else return getTransitSkim(WTD, CR, FWAIT);
-
-            case 198:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, CR, XWAIT);
-                else return getTransitSkim(WTD, CR, XWAIT);
-
-            case 199:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return 0;
-                else return getTransitSkim(WTD, CR, ACC);
-
-            case 200:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, CR, EGR);
-                else return 0;
-
-            case 201:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, CR, ACC);
-                else return getTransitSkim(WTD, CR, EGR);
-
-            case 202:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, CR, AUX);
-                else return getTransitSkim(WTD, CR, AUX);
-
-            case 203:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, CR, FARE);
-                else return getTransitSkim(WTD, CR, FARE);
-
-            case 204:
-                if (airportParty.getDirection() == AirportModelStructure.DEPARTURE) return getTransitSkim(
-                        DTW, CR, XFERS);
-                else return getTransitSkim(WTD, CR, XFERS);
-
-            default:
-                _logger.error("method number = " + variableIndex + " not found");
-                throw new RuntimeException("method number = " + variableIndex + " not found");
-        }
+    	if (variableIndex == 7)
+    		return getLnDestChoiceSizeTazAlt(arrayIndex);
+    	if (variableIndex == 8)
+    		return getDestZipAlt(arrayIndex);
+    	
+    	return getValueForIndexLookup(variableIndex, arrayIndex);        
     }
 
     /**
@@ -1585,5 +1140,13 @@ public class AirportModelDMU
     {
         throw new UnsupportedOperationException();
     }
+    
+    protected double getTransitSkimFromMethodName(String methodName) throws Exception 
+	{
+    	boolean condition = false;
+    	if (airportParty != null)
+    		condition = (airportParty.getDirection() == AirportModelStructure.DEPARTURE);
+    	return getTranistSkimFromMethodConditional(methodName, condition);    	
+	}
 
 }
