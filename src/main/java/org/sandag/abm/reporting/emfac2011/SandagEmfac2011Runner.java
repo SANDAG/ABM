@@ -45,15 +45,15 @@ public class SandagEmfac2011Runner
     public void runEmfac2011()
     {
         LOGGER.info("Running Emfac2011 for SANDAG");
-        SandagAquavisInputBuilder builder = new SandagAquavisInputBuilder(getProperties());
+        SandagModelDataBuilder builder = new SandagModelDataBuilder(getProperties());
         LOGGER.info("Building Aquavis inputs from SANDAG database schema: "
-                + getProperties().getString(SandagAquavisInputBuilder.SCHEMA_NAME_PROPERTY));
+                + getProperties().getString(SandagModelDataBuilder.SCHEMA_NAME_PROPERTY));
         builder.createAquavisInputs(Emfac2011Properties.AQUAVIS_NETWORK_FILE_PROPERTY,
                 Emfac2011Properties.AQUAVIS_TRIPS_FILE_PROPERTY,
                 Emfac2011Properties.AQUAVIS_INTRAZONAL_FILE_PROPERTY);
         LOGGER.info("Creating Emfac2011/SANDAG vehicle code correspondence");
         builder.writeTableToCsv("EMFACVEHCODE",
-                getProperties().getString(SandagAquavisInputBuilder.SCHEMA_NAME_PROPERTY),
+                getProperties().getString(SandagModelDataBuilder.SCHEMA_NAME_PROPERTY),
                 getProperties().getPath(VEHICLE_CODE_MAPPING_FILE_PROPERTY));
         LOGGER.info("Running Emfac2011 process...");
         // have to call this first because it sets the mutable types, which are

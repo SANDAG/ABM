@@ -29,7 +29,7 @@ import com.pb.sawdust.util.property.PropertyDeluxe;
  * 
  * @author crf Started 12/7/12 11:08 AM
  */
-public class SandagAquavisInputBuilder
+public class SandagModelDataBuilder
 {
 
     public static final String   AQUAVIS_NETWORK_TABLE                       = "aquavis_network";
@@ -52,7 +52,7 @@ public class SandagAquavisInputBuilder
     private final PropertyDeluxe properties;
     private final String         connectionUrl;
 
-    public SandagAquavisInputBuilder(PropertyDeluxe properties)
+    public SandagModelDataBuilder(PropertyDeluxe properties)
     {
         connectionUrl = formConnectionUrl(
                 properties.getString(REPORTS_DATABASE_IPADDRESS_PROPERTY),
