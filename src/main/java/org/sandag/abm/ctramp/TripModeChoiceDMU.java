@@ -122,7 +122,7 @@ public class TripModeChoiceDMU
         this.modelStructure = modelStructure;
         dmuIndex = new IndexValues();
 
-        transitSkim = new double[TourModeChoiceDMU.NUM_ACC_EGR][TourModeChoiceDMU.NUM_LOC_PREM][TourModeChoiceDMU.NUM_SKIMS];
+        transitSkim = new double[TripModeChoiceDMU.NUM_ACC_EGR][TripModeChoiceDMU.NUM_LOC_PREM][TripModeChoiceDMU.NUM_SKIMS];
     }
 
     public void setParkingCostInfo(int[] mgraParkArea, double[] lsWgtAvgCostM,

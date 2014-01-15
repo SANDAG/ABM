@@ -179,7 +179,7 @@ public class InternalExternalTripModeChoiceDMUTest {
 				dmu.outboundHalfTourDirection = 0;
 			}
 			for (int x = 0; x < 55; x++) {
-				System.out.println(x);
+				//System.out.println(x);
 
 				int[] p1Values = { McLogsumsCalculator.DTW,
 						McLogsumsCalculator.WTD };
