@@ -52,9 +52,11 @@ public class SandagEmfac2011Runner
                 Emfac2011Properties.AQUAVIS_TRIPS_FILE_PROPERTY,
                 Emfac2011Properties.AQUAVIS_INTRAZONAL_FILE_PROPERTY);
         LOGGER.info("Creating Emfac2011/SANDAG vehicle code correspondence");
+        /*
         builder.writeTableToCsv("EMFACVEHCODE",
                 getProperties().getString(SandagModelDataBuilder.SCHEMA_NAME_PROPERTY),
                 getProperties().getPath(VEHICLE_CODE_MAPPING_FILE_PROPERTY));
+                */
         LOGGER.info("Running Emfac2011 process...");
         // have to call this first because it sets the mutable types, which are
         // used throughout the EMFAC2011 process

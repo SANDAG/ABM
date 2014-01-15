@@ -80,7 +80,7 @@ public class SandagModelDataBuilder
         String schema = properties.getString(SCHEMA_NAME_PROPERTY);
         detemplifyAndRunScript(properties.getPath(CREATE_AQUAVIS_NETWORK_TEMPLATE_PROPERTY),
                 schema, properties.getString(AQUAVIS_TEMPLATE_SCHEMA_TOKEN_PROPERTY));
-        writeTableToCsv(AQUAVIS_NETWORK_TABLE, schema, outputFile);
+        //writeTableToCsv(AQUAVIS_NETWORK_TABLE, schema, outputFile);
     }
 
     private void createAquavisTrips(Path outputFile)
@@ -88,7 +88,7 @@ public class SandagModelDataBuilder
         String schema = properties.getString(SCHEMA_NAME_PROPERTY);
         detemplifyAndRunScript(properties.getPath(CREATE_AQUAVIS_TRIPS_TEMPLATE_PROPERTY), schema,
                 properties.getString(AQUAVIS_TEMPLATE_SCHEMA_TOKEN_PROPERTY));
-        writeTableToCsv(AQUAVIS_TRIPS_TABLE, schema, outputFile);
+        //writeTableToCsv(AQUAVIS_TRIPS_TABLE, schema, outputFile);
     }
 
     private void createAquavisIntrazonal(Path outputFile)
@@ -96,7 +96,7 @@ public class SandagModelDataBuilder
         String schema = properties.getString(SCHEMA_NAME_PROPERTY);
         detemplifyAndRunScript(properties.getPath(CREATE_AQUAVIS_INTRAZONAL_TEMPLATE_PROPERTY),
                 schema, properties.getString(AQUAVIS_TEMPLATE_SCHEMA_TOKEN_PROPERTY));
-        writeTableToCsv(AQUAVIS_INTRAZONAL_TABLE, schema, outputFile);
+        //writeTableToCsv(AQUAVIS_INTRAZONAL_TABLE, schema, outputFile);
         addExternalIntrazonalData(outputFile.toString(),
                 properties.getString(AQUAVIS_EXTERNAL_INTRAZONAL_TABLE_PROPERTY));
     }
@@ -141,7 +141,7 @@ public class SandagModelDataBuilder
             throw new RuntimeIOException(e);
         }
     }
-
+/*
     public void writeTableToCsv(String table, String schema, Path outputFile)
     { // convenient to use outside of this...
         DelimitedDataFormat formatter = new DelimitedDataFormat(',');
@@ -174,7 +174,7 @@ public class SandagModelDataBuilder
             throw new RuntimeWrappingException(e);
         }
     }
-
+*/
     private String formConnectionUrl(String ipAddress, int port, String databaseName,
             String username, String password, String instance)
     {
