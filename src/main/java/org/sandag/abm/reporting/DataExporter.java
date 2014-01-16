@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1830,7 +1831,7 @@ public class DataExporter
     private Map<String, String> getTransitSkimFileNameMapping()
     {
         Map<String, String> map = new LinkedHashMap<String, String>();
-        map.put("implocl_" + TOD_TOKEN + "o", "LOCAL_TRANSIT");
+        //map.put("implocl_" + TOD_TOKEN + "o", "LOCAL_TRANSIT");
         map.put("impprem_" + TOD_TOKEN + "o", "PREMIUM_TRANSIT");
         return map;
     }
@@ -1840,13 +1841,13 @@ public class DataExporter
         return "Fare";
     }
 
-    private Map<String, String[]> getTransitSkimFileTimeCoreNameMapping()
+    private Map<String, String[]> getTransitSkimFileInVehicleTimeCoreNameMapping()
     { // distance,time,cost
         Map<String, String[]> map = new LinkedHashMap<String, String[]>();
-        map.put("implocl_" + TOD_TOKEN + "o", new String[] {"Total IV Time", "Initial Wait Time",
-                "Transfer Wait Time", "Walk Time"});
+        //map.put("implocl_" + TOD_TOKEN + "o", new String[] {"Total IV Time", "Initial Wait Time",
+        //        "Transfer Wait Time", "Walk Time"});
         map.put("impprem_" + TOD_TOKEN + "o", new String[] {"IVT:CR", "IVT:LR", "IVT:BRT",
-                "IVT:EXP", "IVT:LB", "Initial Wait Time", "Transfer Wait Time", "Walk Time"});
+                "IVT:EXP", "IVT:LB"});//, "Initial Wait Time", "Transfer Wait Time", "Walk Time"});
         return map;
     }
 
@@ -1864,14 +1865,17 @@ public class DataExporter
         Set<Integer> internalZones = new LinkedHashSet<Integer>();
 
         PrintWriter writer = null;
-        List<String> costColumns = new LinkedList<String>();
+        //List<String> costColumns = new LinkedList<String>();
         try
         {
             writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".csv"));
 
             Map<String, String> transitSkimFiles = getTransitSkimFileNameMapping();
-            Map<String, String[]> transitSkimTimeCores = getTransitSkimFileTimeCoreNameMapping();
+            Map<String, String[]> transitSkimTimeCores = getTransitSkimFileInVehicleTimeCoreNameMapping();
             String fareCore = getTransitSkimFileFareCoreName();
+            String initialWaitCore = "Initial Wait Time";
+            String transferTimeCore = "Transfer Wait Time";
+            String walkTimeCore = "Walk Time";
             Set<String> modeNames = new LinkedHashSet<String>();
             for (String n : transitSkimFiles.keySet())
                 modeNames.add(transitSkimFiles.get(n));
@@ -1881,6 +1885,9 @@ public class DataExporter
                 clearMatrixServer();
                 Map<String, Matrix[]> timeMatrix = new LinkedHashMap<String, Matrix[]>();
                 Map<String, Matrix> fareMatrix = new LinkedHashMap<String, Matrix>();
+                Map<String, Matrix> initialMatrix = new LinkedHashMap<String, Matrix>();
+                Map<String, Matrix> transferMatrix = new LinkedHashMap<String, Matrix>();
+                Map<String, Matrix> walkTimeMatrix = new LinkedHashMap<String, Matrix>();
 
                 for (String key : transitSkimFiles.keySet())
                 {
@@ -1894,6 +1901,9 @@ public class DataExporter
                     timeMatrix.put(name, timeMatrices);
                     fareMatrix.put(name,
                             getMatrixFromFile(file, fareCore.replace(TOD_TOKEN, period)));
+                    initialMatrix.put(name, getMatrixFromFile(file, initialWaitCore));
+                    transferMatrix.put(name, getMatrixFromFile(file, transferTimeCore));
+                    walkTimeMatrix.put(name, getMatrixFromFile(file, walkTimeCore));
                     if (internalZones.size() == 0)
                     {
                         boolean f = true;
@@ -1912,11 +1922,18 @@ public class DataExporter
                 // put data into arrays for faster access
                 Matrix[][] orderedTimeData = new Matrix[timeMatrix.size()][];
                 Matrix[] fareData = new Matrix[orderedTimeData.length];
+                Matrix[] initialWaitData = new Matrix[orderedTimeData.length];
+                Matrix[] transferTimeData = new Matrix[orderedTimeData.length];
+                Matrix[] walkTimeData = new Matrix[orderedTimeData.length];
+                
                 int counter = 0;
                 for (String mode : modeNames)
                 {
                     orderedTimeData[counter] = timeMatrix.get(mode);
-                    fareData[counter++] = fareMatrix.get(mode);
+                    fareData[counter] = fareMatrix.get(mode);
+                    initialWaitData[counter] = initialMatrix.get(mode);
+                    transferTimeData[counter] = transferMatrix.get(mode); 
+                    walkTimeData[counter++] =  walkTimeMatrix.get(mode);
                 }
 
                 StringBuilder sb = new StringBuilder();
@@ -1925,14 +1942,17 @@ public class DataExporter
                     sb.append("ORIG_TAP,DEST_TAP,TOD");
                     for (String modeName : modeNames)
                     {
-                        sb.append(",TIME_").append(modeName);
-                        costColumns.add("TIME_" + modeName);
+                        sb.append(",TIME_INIT_WAIT_").append(modeName);
+                        sb.append(",TIME_IVT_TIME_").append(modeName);
+                        sb.append(",TIME_WALK_TIME_").append(modeName);
+                        sb.append(",TIME_TRANSFER_TIME_").append(modeName);
                         sb.append(",FARE_").append(modeName);
-                        costColumns.add("FARE_" + modeName);
                     }
                     writer.println(sb.toString());
                     first = false;
                 }
+                
+                DecimalFormat frmt = new DecimalFormat("#.###");
 
                 for (int i : internalZones)
                 {
@@ -1944,11 +1964,23 @@ public class DataExporter
                         for (int m = 0; m < orderedTimeData.length; m++)
                         {
                             float time = 0.0f;
+                            float initTime = initialWaitData[m].getValueAt(i, j);
                             for (Matrix tm : orderedTimeData[m])
                                 time += tm.getValueAt(i, j);
+                            float walkTime = walkTimeData[m].getValueAt(i, j);
+                            float transferTime = transferTimeData[m].getValueAt(i, j);
                             float fare = fareData[m].getValueAt(i, j);
                             runningTotal += fare + time;
-                            sb.append(",").append(time).append(",").append(fare);
+                            sb.append(",");
+                            sb.append(frmt.format(initTime));
+                            sb.append(",");
+                            sb.append(frmt.format(time));
+                            sb.append(",");
+                            sb.append(frmt.format(walkTime));
+                            sb.append(",");
+                            sb.append(frmt.format(transferTime));
+                            sb.append(",");
+                            sb.append(frmt.format(fare));
                         }
                         if (runningTotal > 0.0f) writer.println(sb.toString());
                     }
