@@ -1,6 +1,5 @@
 package org.sandag.abm.crossborder;
 
-
 public class CrossBorderTrip
 {
 

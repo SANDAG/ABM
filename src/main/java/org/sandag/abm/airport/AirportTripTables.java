@@ -77,7 +77,7 @@ public class AirportTripTables
     // one file per time period
     private int                     numberOfPeriods;
 
-    private String[]                  purposeName           = {"RES_BUS", "RES_PER", "VIS_BUS",
+    private String[]                purposeName             = {"RES_BUS", "RES_PER", "VIS_BUS",
             "VIS_PER"                                       };
     private HashMap<String, String> rbMap;
 

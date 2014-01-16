@@ -17,6 +17,6 @@ public final class Definitions
 
     private Definitions()
     {
-        //Not implemented in utility classes
+        // Not implemented in utility classes
     }
 }

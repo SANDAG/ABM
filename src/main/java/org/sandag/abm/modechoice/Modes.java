@@ -100,10 +100,10 @@ public final class Modes
     {
         SCHOOL_BUS
     }
-    
+
     private Modes()
     {
-        //Not implemented in utility classes
+        // Not implemented in utility classes
     }
 
     public static int getTransitModeIndex(String modeName)

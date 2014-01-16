@@ -45,7 +45,7 @@ import com.pb.common.util.ResourceUtil;
  */
 public class DataExporter
 {
-    private static final Logger logger                      = Logger.getLogger(DataExporter.class);
+    private static final Logger LOGGER                      = Logger.getLogger(DataExporter.class);
 
     private static final String NUMBER_FORMAT_NAME          = "NUMBER";
     private static final String STRING_FORMAT_NAME          = "STRING";
@@ -88,14 +88,14 @@ public class DataExporter
     private void addTable(String table)
     {
         tables.add(table);
-        logger.info("exporting data: " + table);
+        LOGGER.info("exporting data: " + table);
         try
         {
             clearMatrixServer();
         } catch (Throwable e)
         {
             // log it, but swallow it
-            logger.warn("exception caught clearing matrix server: " + e.getMessage());
+            LOGGER.warn("exception caught clearing matrix server: " + e.getMessage());
         }
     }
 
@@ -437,7 +437,7 @@ public class DataExporter
 
     private void initializeMasterTripTable(String baseTableName)
     {
-        logger.info("setting up master trip table: " + baseTableName);
+        LOGGER.info("setting up master trip table: " + baseTableName);
         addTable(baseTableName);
         try
         {
@@ -2212,8 +2212,10 @@ public class DataExporter
         {
             projectFolder = args[0];
             outputFolder = args[1];
-            propertiesFile = ClassLoader.getSystemClassLoader().getResource("sandag_abm.properties").getFile();
-            //propertiesFile = new File("sandag_abm.properties").getAbsolutePath();
+            propertiesFile = ClassLoader.getSystemClassLoader()
+                    .getResource("sandag_abm.properties").getFile();
+            // propertiesFile = new
+            // File("sandag_abm.properties").getAbsolutePath();
             System.out.println(propertiesFile);
             feedbackIteration = Integer.parseInt(args[2]);
             databaseSchema = args[3];
@@ -2265,7 +2267,7 @@ public class DataExporter
             sandagJarUrl = sandagJar.toURI().toURL();
         } catch (MalformedURLException e)
         {
-            logger.error("bad jar url: " + sandagJar.toString());
+            LOGGER.error("bad jar url: " + sandagJar.toString());
             throw new RuntimeException(e);
         }
 
@@ -2277,7 +2279,7 @@ public class DataExporter
             method.invoke(ClassLoader.getSystemClassLoader(), sandagJarUrl);
         } catch (Throwable t)
         {
-            logger.warn("Error, could not add URL to system classloader: "
+            LOGGER.warn("Error, could not add URL to system classloader: "
                     + sandagJarUrl.toString() + "\n\t" + t.getMessage());
         }
 

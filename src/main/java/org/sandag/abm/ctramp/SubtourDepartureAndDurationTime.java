@@ -43,7 +43,7 @@ public class SubtourDepartureAndDurationTime
     private int[]                           todModelIndices;
     private HashMap<String, Integer>        purposeNameIndexMap;
 
-    private static final String[]           dcModelSheetKeys             = {
+    private static final String[]           DC_MODEL_SHEET_KEYS          = {
             TOD_UEC_AT_WORK_MODEL_TARGET, TOD_UEC_AT_WORK_MODEL_TARGET,
             TOD_UEC_AT_WORK_MODEL_TARGET                                 };
 
@@ -128,7 +128,7 @@ public class SubtourDepartureAndDurationTime
         int i = 0;
         for (String purposeName : tourPurposeNames)
         {
-            int uecIndex = Util.getIntegerValueFromPropertyMap(propertyMap, dcModelSheetKeys[i]);
+            int uecIndex = Util.getIntegerValueFromPropertyMap(propertyMap, DC_MODEL_SHEET_KEYS[i]);
             purposeNameIndexMap.put(purposeName, i);
             uecSheetIndices[i] = uecIndex;
             i++;

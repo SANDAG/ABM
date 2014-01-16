@@ -33,6 +33,7 @@ public final class Constants
     // 3
     // mph.
     public static float     bikeMinutesPerFoot = 0.00095f;                                // 5
+
     // minutes
     // per
     // mile
@@ -46,6 +47,6 @@ public final class Constants
 
     private Constants()
     {
-        //Not Implemented
+        // Not Implemented
     }
 }

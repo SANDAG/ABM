@@ -31,12 +31,12 @@ public interface HouseholdDataManagerIf
 
     void setHhArray(Household[] tempHhs, int startIndex);
 
-    void setSchoolDistrictMappings(HashMap<String, Integer> segmentNameIndexMap,
-            int[] mgraGsDist, int[] mgraHsDist, HashMap<Integer, Integer> gsDistSegMap,
+    void setSchoolDistrictMappings(HashMap<String, Integer> segmentNameIndexMap, int[] mgraGsDist,
+            int[] mgraHsDist, HashMap<Integer, Integer> gsDistSegMap,
             HashMap<Integer, Integer> hsDistSegMap);
 
-    void setupHouseholdDataManager(ModelStructure modelStructure,
-            String inputHouseholdFileName, String inputPersonFileName);
+    void setupHouseholdDataManager(ModelStructure modelStructure, String inputHouseholdFileName,
+            String inputPersonFileName);
 
     int[][] getTourPurposePersonsByHomeMgra(String[] purposeList);
 

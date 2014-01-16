@@ -10,7 +10,7 @@ public final class Util
 {
     private Util()
     {
-        //Not implemented in utility classes
+        // Not implemented in utility classes
     }
 
     public static boolean getBooleanValueFromPropertyMap(HashMap<String, String> rbMap, String key)

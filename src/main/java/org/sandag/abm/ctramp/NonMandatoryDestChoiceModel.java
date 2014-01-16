@@ -57,7 +57,7 @@ public class NonMandatoryDestChoiceModel
     private static final String                  PROPERTIES_DC_SOA_VISIT_MODEL_SHEET        = "nmdc.soa.visit.model.page";
     private static final String                  PROPERTIES_DC_SOA_DISCR_MODEL_SHEET        = "nmdc.soa.discr.model.page";
 
-    private static final String[]                tourPurposeNames                           = {
+    private static final String[]                TOUR_PURPOSE_NAMES                         = {
             ModelStructure.ESCORT_PRIMARY_PURPOSE_NAME,
             ModelStructure.SHOPPING_PRIMARY_PURPOSE_NAME,
             ModelStructure.OTH_MAINT_PRIMARY_PURPOSE_NAME,
@@ -67,15 +67,15 @@ public class NonMandatoryDestChoiceModel
 
     // set priority ranking for non-mandatory purposes - include 0 values for 0
     // element and mandatory purposes
-    private static final int[]                   tourPurposePriorities                      = {0,
+    private static final int[]                   TOUR_PURPOSE_PRIORITIES                    = {0,
             0, 0, 0, 1, 3, 2, 6, 4, 5                                                       };
 
-    private static final String[]                dcModelSheetKeys                           = {
+    private static final String[]                DC_MODEL_SHEET_KEYS                        = {
             PROPERTIES_DC_ESCORT_MODEL_SHEET, PROPERTIES_DC_SHOP_MODEL_SHEET,
             PROPERTIES_DC_MAINT_MODEL_SHEET, PROPERTIES_DC_EATOUT_MODEL_SHEET,
             PROPERTIES_DC_VISIT_MODEL_SHEET, PROPERTIES_DC_DISCR_MODEL_SHEET                };
 
-    private static final String[]                dcSoaModelSheetKeys                        = {
+    private static final String[]                DC_SOA_MODEL_SHEET_KEYS                    = {
             PROPERTIES_DC_SOA_ESCORT_MODEL_SHEET, PROPERTIES_DC_SOA_SHOP_MODEL_SHEET,
             PROPERTIES_DC_SOA_MAINT_MODEL_SHEET, PROPERTIES_DC_SOA_EATOUT_MODEL_SHEET,
             PROPERTIES_DC_SOA_VISIT_MODEL_SHEET, PROPERTIES_DC_SOA_DISCR_MODEL_SHEET        };
@@ -93,12 +93,12 @@ public class NonMandatoryDestChoiceModel
     private static final int                     PM                                         = 26;
     private static final int                     EV                                         = 36;
 
-    private static final int[][][]               periodCombinations                         = {
+    private static final int[][][]               PERIOD_COMBINATIONS                        = {
             { {AM, AM}, {MD, MD}, {PM, PM}}, { {MD, MD}, {PM, PM}, {EV, EV}},
             { {AM, MD}, {MD, PM}, {PM, EV}}, { {MD, MD}, {PM, PM}, {EV, EV}},
             { {MD, MD}, {PM, PM}, {EV, EV}}, { {AM, MD}, {MD, PM}, {PM, EV}}                };
 
-    private static final double[][]              periodCombinationCoefficients              = {
+    private static final double[][]              PERIOD_COMBINATION_COEFFICIENTS            = {
             {-1.065820, -0.871051, -1.439514}, {-0.467154, -1.411351, -2.044826},
             {-0.941865, -0.813977, -1.789714}, {-1.007316, -0.968856, -1.365375},
             {-1.081531, -1.121260, -1.093461}, {-1.258919, -1.155085, -0.913773}            };
@@ -122,8 +122,8 @@ public class NonMandatoryDestChoiceModel
 
     private TourModeChoiceModel                  mcModel;
     private DestinationSampleOfAlternativesModel dcSoaModel;
-    private ChoiceModelApplication[]               dcModel;
-    private ChoiceModelApplication[]               dcModel2;
+    private ChoiceModelApplication[]             dcModel;
+    private ChoiceModelApplication[]             dcModel2;
 
     private boolean[]                            dcModel2AltsAvailable;
     private int[]                                dcModel2AltsSample;
@@ -213,17 +213,17 @@ public class NonMandatoryDestChoiceModel
         modeChoiceLogsums = new double[numLogsumIndices];
 
         // create the arrays of dc model and soa model indices
-        int[] uecSheetIndices = new int[tourPurposeNames.length];
-        int[] soaUecSheetIndices = new int[tourPurposeNames.length];
+        int[] uecSheetIndices = new int[TOUR_PURPOSE_NAMES.length];
+        int[] soaUecSheetIndices = new int[TOUR_PURPOSE_NAMES.length];
 
-        purposeNameIndexMap = new HashMap<String, Integer>(tourPurposeNames.length);
+        purposeNameIndexMap = new HashMap<String, Integer>(TOUR_PURPOSE_NAMES.length);
 
         int i = 0;
-        for (String purposeName : tourPurposeNames)
+        for (String purposeName : TOUR_PURPOSE_NAMES)
         {
-            int uecIndex = Util.getIntegerValueFromPropertyMap(propertyMap, dcModelSheetKeys[i]);
+            int uecIndex = Util.getIntegerValueFromPropertyMap(propertyMap, DC_MODEL_SHEET_KEYS[i]);
             int soaUecIndex = Util.getIntegerValueFromPropertyMap(propertyMap,
-                    dcSoaModelSheetKeys[i]);
+                    DC_SOA_MODEL_SHEET_KEYS[i]);
             purposeNameIndexMap.put(purposeName, i);
             uecSheetIndices[i] = uecIndex;
             soaUecSheetIndices[i] = soaUecIndex;
@@ -261,13 +261,13 @@ public class NonMandatoryDestChoiceModel
         double[][] aggAccDcSizeArray = aggAcc.getSizeTerms();
         nonMandatorySegmentNameIndexMap = new HashMap<String, Integer>();
         nonMandatorySizeSegmentNameIndexMap = new HashMap<String, Integer>();
-        for (int k = 0; k < tourPurposeNames.length; k++)
+        for (int k = 0; k < TOUR_PURPOSE_NAMES.length; k++)
         {
-            nonMandatorySegmentNameIndexMap.put(tourPurposeNames[k], k);
-            nonMandatorySizeSegmentNameIndexMap.put(tourPurposeNames[k], sizeSheetIndices[k]);
+            nonMandatorySegmentNameIndexMap.put(TOUR_PURPOSE_NAMES[k], k);
+            nonMandatorySizeSegmentNameIndexMap.put(TOUR_PURPOSE_NAMES[k], sizeSheetIndices[k]);
         }
 
-        dcSizeArray = new double[tourPurposeNames.length][aggAccDcSizeArray.length];
+        dcSizeArray = new double[TOUR_PURPOSE_NAMES.length][aggAccDcSizeArray.length];
         for (i = 0; i < aggAccDcSizeArray.length; i++)
         {
             for (int m : nonMandatorySegmentNameIndexMap.values())
@@ -973,7 +973,7 @@ public class NonMandatoryDestChoiceModel
         int i = 0;
         int tourPurposeIndex = purposeNameIndexMap.get(tour.getTourPurpose());
         double totalExpUtility = 0.0;
-        for (int[] combo : periodCombinations[tourPurposeIndex])
+        for (int[] combo : PERIOD_COMBINATIONS[tourPurposeIndex])
         {
             int startPeriod = combo[0];
             int endPeriod = combo[1];
@@ -1020,7 +1020,7 @@ public class NonMandatoryDestChoiceModel
             }
 
             double expUtil = Math.exp(modeChoiceLogsums[index]
-                    + periodCombinationCoefficients[tourPurposeIndex][i]);
+                    + PERIOD_COMBINATION_COEFFICIENTS[tourPurposeIndex][i]);
             totalExpUtility += expUtil;
 
             if (household.getDebugChoiceModels())
@@ -1038,9 +1038,9 @@ public class NonMandatoryDestChoiceModel
                                 + " MCLS = "
                                 + modeChoiceLogsums[index]
                                 + ", ASC = "
-                                + periodCombinationCoefficients[tourPurposeIndex][i]
+                                + PERIOD_COMBINATION_COEFFICIENTS[tourPurposeIndex][i]
                                 + ", (MCLS + ASC) = "
-                                + (modeChoiceLogsums[index] + periodCombinationCoefficients[tourPurposeIndex][i])
+                                + (modeChoiceLogsums[index] + PERIOD_COMBINATION_COEFFICIENTS[tourPurposeIndex][i])
                                 + ", exp(MCLS + ASC) = " + expUtil + ", cumExpUtility = "
                                 + totalExpUtility);
 
@@ -1070,7 +1070,7 @@ public class NonMandatoryDestChoiceModel
         {
             String purposeName = tour.getTourPurpose();
             int purposeIndex = purposeNameIndexMap.get(purposeName);
-            int purposePriority = tourPurposePriorities[purposeIndex];
+            int purposePriority = TOUR_PURPOSE_PRIORITIES[purposeIndex];
             tourPriorities[i] = purposePriority;
         }
 
@@ -1098,7 +1098,7 @@ public class NonMandatoryDestChoiceModel
         {
             String purposeName = tour.getTourPurpose();
             int purposeIndex = purposeNameIndexMap.get(purposeName);
-            int purposePriority = tourPurposePriorities[purposeIndex];
+            int purposePriority = TOUR_PURPOSE_PRIORITIES[purposeIndex];
             tourPriorities[i] = purposePriority;
         }
 

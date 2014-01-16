@@ -53,10 +53,11 @@ public class SandagEmfac2011Runner
                 Emfac2011Properties.AQUAVIS_INTRAZONAL_FILE_PROPERTY);
         LOGGER.info("Creating Emfac2011/SANDAG vehicle code correspondence");
         /*
-        builder.writeTableToCsv("EMFACVEHCODE",
-                getProperties().getString(SandagModelDataBuilder.SCHEMA_NAME_PROPERTY),
-                getProperties().getPath(VEHICLE_CODE_MAPPING_FILE_PROPERTY));
-                */
+         * builder.writeTableToCsv("EMFACVEHCODE",
+         * getProperties().getString(SandagModelDataBuilder
+         * .SCHEMA_NAME_PROPERTY),
+         * getProperties().getPath(VEHICLE_CODE_MAPPING_FILE_PROPERTY));
+         */
         LOGGER.info("Running Emfac2011 process...");
         // have to call this first because it sets the mutable types, which are
         // used throughout the EMFAC2011 process
@@ -75,7 +76,8 @@ public class SandagEmfac2011Runner
     private Map<String, Set<Emfac2011VehicleType>> buildAquavisVehicleTypeToEmfacMapping(
             Path vehicleCodeMappingFile)
     {
-        Map<SandagAutoModes, Set<Emfac2011VehicleType>> mapping = new EnumMap<>(SandagAutoModes.class);
+        Map<SandagAutoModes, Set<Emfac2011VehicleType>> mapping = new EnumMap<>(
+                SandagAutoModes.class);
         for (SandagAutoModes type : SandagAutoModes.values())
             mapping.put(type, EnumSet.noneOf(Emfac2011VehicleType.class));
 
@@ -120,8 +122,8 @@ public class SandagEmfac2011Runner
                                                                   // type is
                                                                   // assumed to
                                                                   // be mutable
-                    mapping.get(SandagAutoModes.valueOf(column.toUpperCase()))
-                            .add(emfac2011VehicleType);
+                    mapping.get(SandagAutoModes.valueOf(column.toUpperCase())).add(
+                            emfac2011VehicleType);
                 }
             }
         }

@@ -181,7 +181,7 @@ public class SandagModelStructure
     public static final int      SCHOOL_BUS                                                         = 26;
     public static final int      TAXI                                                               = 27;
 
-    public static final String[] modeName                                                           = {
+    public static final String[] MODE_NAME                                                          = {
             "SOV_GP", "SOV_PAY", "SR2_GP", "SR2_HOV", "SR2_PAY", "SR3_GP", "SR3_HOV", "SR3_PAY",
             "WALK", "BIKE", "WLK_LOC", "WLK_EXP", "WLK_BRT", "WLK_LRT", "WLK_CMR", "PNR_LOC",
             "PNR_EXP", "PNR_BRT", "PNR_LRT", "PNR_CMR", "KNR_LOC", "KNR_EXP", "KNR_BRT", "KNR_LRT",
@@ -591,7 +591,7 @@ public class SandagModelStructure
     public String getModeName(int mode)
     {
 
-        return modeName[mode - 1];
+        return MODE_NAME[mode - 1];
 
     }
 

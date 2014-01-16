@@ -1445,7 +1445,7 @@ public class CtrampApplication
 
         // summarize yes/no choice by person type
         int[][] personTypeByIeChoice;
-        personTypeByIeChoice = new int[Person.personTypeNameArray.length][2];
+        personTypeByIeChoice = new int[Person.PERSON_TYPE_NAME_ARRAY.length][2];
 
         ArrayList<int[]> startEndTaskIndicesList = getWriteHouseholdRanges(householdDataManager
                 .getNumHouseholds());
@@ -1491,7 +1491,7 @@ public class CtrampApplication
         for (int i = 0; i < personTypeByIeChoice.length; i++)
         {
             int total = personTypeByIeChoice[i][0] + personTypeByIeChoice[i][1];
-            logger.info(String.format("%-30s  %20d  %20d  %20d", Person.personTypeNameArray[i],
+            logger.info(String.format("%-30s  %20d  %20d  %20d", Person.PERSON_TYPE_NAME_ARRAY[i],
                     personTypeByIeChoice[i][0], personTypeByIeChoice[i][1], total));
             totals[0] += personTypeByIeChoice[i][0];
             totals[1] += personTypeByIeChoice[i][1];
@@ -1540,9 +1540,9 @@ public class CtrampApplication
 
         int[] columnTotals = new int[activityNameArray.length];
 
-        for (int i = 0; i < Person.personTypeNameArray.length; ++i)
+        for (int i = 0; i < Person.PERSON_TYPE_NAME_ARRAY.length; ++i)
         {
-            String personType = Person.personTypeNameArray[i];
+            String personType = Person.PERSON_TYPE_NAME_ARRAY[i];
             String stringToLog = String.format("%-30s", personType);
             int lineTotal = 0;
 
@@ -1642,7 +1642,7 @@ public class CtrampApplication
         String firstHeader = "Person type                   ";
         String secondHeader = "-----------------------------  ";
 
-        String[] choiceResults = HouseholdIndividualMandatoryTourFrequencyModel.choiceResults;
+        String[] choiceResults = HouseholdIndividualMandatoryTourFrequencyModel.CHOICE_RESULTS;
 
         // summarize results
         HashMap<String, int[]> countByPersonType = new HashMap<String, int[]>();
@@ -1735,9 +1735,9 @@ public class CtrampApplication
         int[] columnTotals = new int[choiceResults.length];
 
         int lineTotal = 0;
-        for (int i = 0; i < Person.personTypeNameArray.length; ++i)
+        for (int i = 0; i < Person.PERSON_TYPE_NAME_ARRAY.length; ++i)
         {
-            String personTypeString = Person.personTypeNameArray[i];
+            String personTypeString = Person.PERSON_TYPE_NAME_ARRAY[i];
             String stringToLog = String.format("%-30s", personTypeString);
 
             if (countByPersonType.containsKey(personTypeString))
@@ -2243,9 +2243,9 @@ public class CtrampApplication
         int[] columnTotals = new int[alternativeNames.length];
 
         int lineTotal = 0;
-        for (int i = 0; i < Person.personTypeNameArray.length; ++i)
+        for (int i = 0; i < Person.PERSON_TYPE_NAME_ARRAY.length; ++i)
         {
-            String personTypeString = Person.personTypeNameArray[i];
+            String personTypeString = Person.PERSON_TYPE_NAME_ARRAY[i];
             String stringToLog = String.format("%-28s", personTypeString);
 
             if (awfByPersonType.containsKey(personTypeString))

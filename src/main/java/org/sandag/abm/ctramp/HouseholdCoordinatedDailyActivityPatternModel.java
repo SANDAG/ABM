@@ -62,7 +62,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
     private static final String                MANDATORY_PATTERN                      = Definitions.MANDATORY_PATTERN;
     private static final String                NONMANDATORY_PATTERN                   = Definitions.NONMANDATORY_PATTERN;
     private static final String                HOME_PATTERN                           = Definitions.HOME_PATTERN;
-    private static final String[]              activityNameArray                      = {
+    private static final String[]              ACTIVITY_NAME_ARRAY                    = {
             MANDATORY_PATTERN, NONMANDATORY_PATTERN, HOME_PATTERN                     };
 
     private ModelStructure                     modelStructure;
@@ -308,7 +308,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
             // compute the number of alternatives
             int numberOfAlternatives = 1;
             for (int j = 0; j < hhSize; ++j)
-                numberOfAlternatives *= activityNameArray.length;
+                numberOfAlternatives *= ACTIVITY_NAME_ARRAY.length;
 
             // create a counter for each of the people in the hh
             int[] counterForEachPerson = new int[hhSize];
@@ -325,9 +325,9 @@ public class HouseholdCoordinatedDailyActivityPatternModel
                 int numOutOfHomeActivites = 0;
                 for (int j = 0; j < hhSize; ++j)
                 {
-                    alternativeName += activityNameArray[counterForEachPerson[j]];
-                    if (!activityNameArray[counterForEachPerson[j]].equalsIgnoreCase(HOME_PATTERN))
-                        numOutOfHomeActivites++;
+                    alternativeName += ACTIVITY_NAME_ARRAY[counterForEachPerson[j]];
+                    if (!ACTIVITY_NAME_ARRAY[counterForEachPerson[j]]
+                            .equalsIgnoreCase(HOME_PATTERN)) numOutOfHomeActivites++;
                 }
 
                 // create the alternative and add it to the model
@@ -358,7 +358,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
                 for (int j = 0; j < hhSize; ++j)
                 {
                     counterForEachPerson[j]++;
-                    if (counterForEachPerson[j] == activityNameArray.length) counterForEachPerson[j] = 0;
+                    if (counterForEachPerson[j] == ACTIVITY_NAME_ARRAY.length) counterForEachPerson[j] = 0;
                     else break;
                 }
 
@@ -419,9 +419,9 @@ public class HouseholdCoordinatedDailyActivityPatternModel
                     + householdObject.getHhId());
             String firstHeader = "Utility Segment                 PersonA  PersonB  PersonC";
             String secondHeader = "------------------------------ -------- -------- --------";
-            for (int j = 0; j < activityNameArray.length; ++j)
+            for (int j = 0; j < ACTIVITY_NAME_ARRAY.length; ++j)
             {
-                firstHeader += "    " + activityNameArray[j] + " util";
+                firstHeader += "    " + ACTIVITY_NAME_ARRAY[j] + " util";
                 secondHeader += " ---------";
             }
 
@@ -477,7 +477,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
                 String stringToLog = String.format("%-30s%9d%9s%9s", "OnePerson", (i + 1), "--",
                         "--");
 
-                for (int j = 0; j < activityNameArray.length; ++j)
+                for (int j = 0; j < ACTIVITY_NAME_ARRAY.length; ++j)
                 {
                     stringToLog += String.format("%10.4f", firstPersonUtilities[j]);
                 }
@@ -504,10 +504,10 @@ public class HouseholdCoordinatedDailyActivityPatternModel
                 String altNameForPersonA = altName.substring(i, i + 1);
 
                 // align the utility results with this activity
-                for (int k = 0; k < activityNameArray.length; ++k)
+                for (int k = 0; k < ACTIVITY_NAME_ARRAY.length; ++k)
                 {
 
-                    if (altNameForPersonA.equalsIgnoreCase(activityNameArray[k]))
+                    if (altNameForPersonA.equalsIgnoreCase(ACTIVITY_NAME_ARRAY[k]))
                     {
                         double currentUtility = tempAlt.getUtility();
                         tempAlt.setUtility(currentUtility + firstPersonUtilities[k]);
@@ -545,7 +545,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
                     String stringToLog = String.format("%-30s%9d%9d%9s", "TwoPeople", (i + 1),
                             (j + 1), "--");
 
-                    for (int k = 0; k < activityNameArray.length; ++k)
+                    for (int k = 0; k < ACTIVITY_NAME_ARRAY.length; ++k)
                     {
                         stringToLog += String.format("%10.4f", twoPersonUtilities[k]);
                     }
@@ -573,10 +573,10 @@ public class HouseholdCoordinatedDailyActivityPatternModel
                     String altNameForPersonA = altName.substring(i, i + 1);
                     String altNameForPersonB = altName.substring(j, j + 1);
 
-                    for (int l = 0; l < activityNameArray.length; ++l)
+                    for (int l = 0; l < ACTIVITY_NAME_ARRAY.length; ++l)
                     {
-                        if (altNameForPersonA.equalsIgnoreCase(activityNameArray[l])
-                                && altNameForPersonB.equalsIgnoreCase(activityNameArray[l]))
+                        if (altNameForPersonA.equalsIgnoreCase(ACTIVITY_NAME_ARRAY[l])
+                                && altNameForPersonB.equalsIgnoreCase(ACTIVITY_NAME_ARRAY[l]))
                         {
                             double currentUtility = tempAlt.getUtility();
                             tempAlt.setUtility(currentUtility + twoPersonUtilities[l]);
@@ -616,7 +616,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
                         String stringToLog = String.format("%-30s%9d%9d%9d", "ThreePeople",
                                 (i + 1), (j + 1), (k + 1));
 
-                        for (int l = 0; l < activityNameArray.length; ++l)
+                        for (int l = 0; l < ACTIVITY_NAME_ARRAY.length; ++l)
                         {
                             stringToLog += String.format("%10.4f", threePersonUtilities[l]);
                         }
@@ -649,11 +649,11 @@ public class HouseholdCoordinatedDailyActivityPatternModel
                         String altNameForPersonB = altName.substring(j, j + 1);
                         String altNameForPersonC = altName.substring(k, k + 1);
 
-                        for (int m = 0; m < activityNameArray.length; ++m)
+                        for (int m = 0; m < ACTIVITY_NAME_ARRAY.length; ++m)
                         {
-                            if (altNameForPersonA.equalsIgnoreCase(activityNameArray[m])
-                                    && altNameForPersonB.equalsIgnoreCase(activityNameArray[m])
-                                    && altNameForPersonC.equalsIgnoreCase(activityNameArray[m]))
+                            if (altNameForPersonA.equalsIgnoreCase(ACTIVITY_NAME_ARRAY[m])
+                                    && altNameForPersonB.equalsIgnoreCase(ACTIVITY_NAME_ARRAY[m])
+                                    && altNameForPersonC.equalsIgnoreCase(ACTIVITY_NAME_ARRAY[m]))
                             {
                                 double currentUtility = tempAlt.getUtility();
                                 tempAlt.setUtility(currentUtility + threePersonUtilities[m]);
@@ -677,7 +677,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
 
             String stringToLog = String.format("%-30s%9s%9s%9s", "AllMembers", "--", "--", "--");
 
-            for (int i = 0; i < activityNameArray.length; ++i)
+            for (int i = 0; i < ACTIVITY_NAME_ARRAY.length; ++i)
             {
                 stringToLog += String.format("%10.4f", allMemberInteractionUtilities[i]);
             }
@@ -693,7 +693,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
             Alternative tempAlt = (Alternative) alternativeList.get(i);
             String altName = tempAlt.getName();
 
-            for (int j = 0; j < activityNameArray.length; ++j)
+            for (int j = 0; j < ACTIVITY_NAME_ARRAY.length; ++j)
             {
 
                 boolean samePattern = true;
@@ -702,7 +702,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
 
                     // alternative should have pattern j for each member k
                     String altNameForThisPerson = altName.substring(k, k + 1);
-                    if (altNameForThisPerson.equalsIgnoreCase(activityNameArray[j])) continue;
+                    if (altNameForThisPerson.equalsIgnoreCase(ACTIVITY_NAME_ARRAY[j])) continue;
                     else
                     {
                         samePattern = false;
@@ -973,7 +973,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
                     fixedCumulativeProportions[personType], householdObject.getHhRandom()
                             .nextDouble());
 
-            allMembersPattern += activityNameArray[chosen];
+            allMembersPattern += ACTIVITY_NAME_ARRAY[chosen];
 
         }
 

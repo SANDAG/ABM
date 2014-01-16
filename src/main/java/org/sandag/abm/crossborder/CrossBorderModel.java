@@ -28,7 +28,7 @@ public class CrossBorderModel
     public static final String      RUN_MODEL_CONCURRENT_PROPERTY_KEY   = "crossBorder.run.concurrent";
     public static final String      CONCURRENT_PARALLELISM_PROPERTY_KEY = "crossBorder.concurrent.parallelism";
 
-    private static final Logger     logger                              = Logger.getLogger("crossBorderModel");
+    private static final Logger     LOGGER                              = Logger.getLogger("crossBorderModel");
     private static final Object     INITIALIZATION_LOCK                 = new Object();
 
     private MatrixDataServerRmi     ms;
@@ -66,7 +66,7 @@ public class CrossBorderModel
     }
 
     // global variable used for reporting
-    private static final AtomicInteger tourCounter            = new AtomicInteger(0);
+    private static final AtomicInteger TOUR_COUNTER           = new AtomicInteger(0);
     private final AtomicBoolean        calculatorsInitialized = new AtomicBoolean(false);
 
     /**
@@ -140,8 +140,8 @@ public class CrossBorderModel
             double rand = tour.getRandom();
             if (rand > sampleRate) continue;
 
-            int tourCount = tourCounter.incrementAndGet();
-            if (tourCount % 1000 == 0) logger.info("Processing tour " + tourCount);
+            int tourCount = TOUR_COUNTER.incrementAndGet();
+            if (tourCount % 1000 == 0) LOGGER.info("Processing tour " + tourCount);
 
             if (seek && tour.getID() != traceId) continue;
 
@@ -320,7 +320,7 @@ public class CrossBorderModel
         }
 
         tourManager.writeOutputFile(rbMap);
-        logger.info("Cross Border Model successfully completed!");
+        LOGGER.info("Cross Border Model successfully completed!");
     }
 
     /**
@@ -356,7 +356,7 @@ public class CrossBorderModel
         } catch (RuntimeException e)
         {
             matrixServer.stop32BitMatrixIoServer();
-            logger.error(
+            LOGGER.error(
                     "RuntimeException caught making remote method call to start 32 bit mitrix in remote MatrixDataServer.",
                     e);
         }
@@ -368,7 +368,7 @@ public class CrossBorderModel
             Remote.config(serverAddress, serverPort, null, 0);
         } catch (Exception e)
         {
-            logger.error(String.format(
+            LOGGER.error(String.format(
                     "UnknownHostException. serverAddress = %s, serverPort = %d -- exiting.",
                     serverAddress, serverPort), e);
             matrixServer.stop32BitMatrixIoServer();
@@ -380,7 +380,7 @@ public class CrossBorderModel
             ItemServer.bind(matrixServer, className);
         } catch (RemoteException e)
         {
-            logger.error(String.format(
+            LOGGER.error(String.format(
                     "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",
                     serverAddress, serverPort), e);
             matrixServer.stop32BitMatrixIoServer();
@@ -400,14 +400,14 @@ public class CrossBorderModel
         String propertiesFile = null;
         HashMap<String, String> pMap;
 
-        logger.info(String.format("SANDAG Activity Based Model using CT-RAMP version %s",
+        LOGGER.info(String.format("SANDAG Activity Based Model using CT-RAMP version %s",
                 CtrampApplication.VERSION));
 
-        logger.info(String.format("Running Cross-Border Model"));
+        LOGGER.info(String.format("Running Cross-Border Model"));
 
         if (args.length == 0)
         {
-            logger.error(String
+            LOGGER.error(String
                     .format("no properties file base name (without .properties extension) was specified as an argument."));
             return;
         } else propertiesFile = args[0];
@@ -428,8 +428,8 @@ public class CrossBorderModel
             }
         }
 
-        logger.info(String.format("-sampleRate %.4f.", sampleRate));
-        logger.info("-iteration  " + iteration);
+        LOGGER.info(String.format("-sampleRate %.4f.", sampleRate));
+        LOGGER.info("-iteration  " + iteration);
         CrossBorderModel crossBorderModel = new CrossBorderModel(pMap);
         crossBorderModel.setSampleRate(sampleRate);
 
@@ -498,7 +498,7 @@ public class CrossBorderModel
             {
                 matrixServer.stop32BitMatrixIoServer();
             }
-            logger.error(
+            LOGGER.error(
                     String.format("exception caught running ctramp model components -- exiting."),
                     e);
             throw new RuntimeException();

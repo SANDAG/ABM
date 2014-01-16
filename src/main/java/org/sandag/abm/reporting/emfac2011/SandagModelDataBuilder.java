@@ -72,7 +72,7 @@ public class SandagModelDataBuilder
         String schema = properties.getString(SCHEMA_NAME_PROPERTY);
         detemplifyAndRunScript(properties.getPath(CREATE_AQUAVIS_NETWORK_TEMPLATE_PROPERTY),
                 schema, properties.getString(AQUAVIS_TEMPLATE_SCHEMA_TOKEN_PROPERTY));
-        //writeTableToCsv(AQUAVIS_NETWORK_TABLE, schema, outputFile);
+        // writeTableToCsv(AQUAVIS_NETWORK_TABLE, schema, outputFile);
     }
 
     private void createAquavisTrips(Path outputFile)
@@ -80,7 +80,7 @@ public class SandagModelDataBuilder
         String schema = properties.getString(SCHEMA_NAME_PROPERTY);
         detemplifyAndRunScript(properties.getPath(CREATE_AQUAVIS_TRIPS_TEMPLATE_PROPERTY), schema,
                 properties.getString(AQUAVIS_TEMPLATE_SCHEMA_TOKEN_PROPERTY));
-        //writeTableToCsv(AQUAVIS_TRIPS_TABLE, schema, outputFile);
+        // writeTableToCsv(AQUAVIS_TRIPS_TABLE, schema, outputFile);
     }
 
     private void createAquavisIntrazonal(Path outputFile)
@@ -88,7 +88,7 @@ public class SandagModelDataBuilder
         String schema = properties.getString(SCHEMA_NAME_PROPERTY);
         detemplifyAndRunScript(properties.getPath(CREATE_AQUAVIS_INTRAZONAL_TEMPLATE_PROPERTY),
                 schema, properties.getString(AQUAVIS_TEMPLATE_SCHEMA_TOKEN_PROPERTY));
-        //writeTableToCsv(AQUAVIS_INTRAZONAL_TABLE, schema, outputFile);
+        // writeTableToCsv(AQUAVIS_INTRAZONAL_TABLE, schema, outputFile);
         addExternalIntrazonalData(outputFile.toString(),
                 properties.getString(AQUAVIS_EXTERNAL_INTRAZONAL_TABLE_PROPERTY));
     }
@@ -133,40 +133,27 @@ public class SandagModelDataBuilder
             throw new RuntimeIOException(e);
         }
     }
-/*
-    public void writeTableToCsv(String table, String schema, Path outputFile)
-    { // convenient to use outside of this...
-        DelimitedDataFormat formatter = new DelimitedDataFormat(',');
-        String query = "SELECT * FROM " + schema + "." + table + ";";
-        try (PrintWriter writer = new PrintWriter(outputFile.toFile());
-                Connection connection = getConnection();
-                Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery(query))
-        {
 
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            List<String> header = new LinkedList<>();
-            int columnCount = metaData.getColumnCount();
-            Range range = new Range(1, 1 + columnCount);
-            for (int i : range)
-                header.add(metaData.getColumnName(i));
-            writer.println(formatter.format(header.toArray(new Object[columnCount])));
-            while (resultSet.next())
-            {
-                Object[] data = new Object[columnCount];
-                for (int i : range)
-                    data[i - 1] = resultSet.getObject(i);
-                writer.println(formatter.format(data));
-            }
-        } catch (FileNotFoundException e)
-        {
-            throw new RuntimeIOException(e);
-        } catch (SQLException e)
-        {
-            throw new RuntimeWrappingException(e);
-        }
-    }
-*/
+    /*
+     * public void writeTableToCsv(String table, String schema, Path outputFile)
+     * { // convenient to use outside of this... DelimitedDataFormat formatter =
+     * new DelimitedDataFormat(','); String query = "SELECT * FROM " + schema +
+     * "." + table + ";"; try (PrintWriter writer = new
+     * PrintWriter(outputFile.toFile()); Connection connection =
+     * getConnection(); Statement statement = connection.createStatement();
+     * ResultSet resultSet = statement.executeQuery(query)) {
+     * 
+     * ResultSetMetaData metaData = resultSet.getMetaData(); List<String> header
+     * = new LinkedList<>(); int columnCount = metaData.getColumnCount(); Range
+     * range = new Range(1, 1 + columnCount); for (int i : range)
+     * header.add(metaData.getColumnName(i));
+     * writer.println(formatter.format(header.toArray(new
+     * Object[columnCount]))); while (resultSet.next()) { Object[] data = new
+     * Object[columnCount]; for (int i : range) data[i - 1] =
+     * resultSet.getObject(i); writer.println(formatter.format(data)); } } catch
+     * (FileNotFoundException e) { throw new RuntimeIOException(e); } catch
+     * (SQLException e) { throw new RuntimeWrappingException(e); } }
+     */
     private String formConnectionUrl(String ipAddress, int port, String databaseName,
             String username, String password, String instance)
     {
