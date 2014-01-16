@@ -28,7 +28,6 @@ public class AirportPartyManager
     private double[][]     departureDistribution;
     private double[][]     arrivalDistribution;
 
-    AirportModelStructure  modelStructure;
     SandagModelStructure   sandagStructure;
 
     /**
@@ -41,8 +40,6 @@ public class AirportPartyManager
      */
     public AirportPartyManager(HashMap<String, String> rbMap)
     {
-
-        modelStructure = new AirportModelStructure();
         sandagStructure = new SandagModelStructure();
 
         String directory = Util.getStringValueFromPropertyMap(rbMap, "Project.Directory");
@@ -105,7 +102,7 @@ public class AirportPartyManager
             AirportParty party = new AirportParty(i * 101 + 1000);
 
             // simulate from distributions
-            party.setDirection(modelStructure.DEPARTURE);
+            party.setDirection(AirportModelStructure.DEPARTURE);
             byte purpose = (byte) choosePurpose(party.getRandom());
             byte size = (byte) chooseFromDistribution(purpose, sizeDistribution, party.getRandom());
             byte nights = (byte) chooseFromDistribution(purpose, durationDistribution,
@@ -133,7 +130,7 @@ public class AirportPartyManager
             AirportParty party = new AirportParty(i * 101 + 1000);
 
             // simulate from distributions
-            party.setDirection(modelStructure.ARRIVAL);
+            party.setDirection(AirportModelStructure.ARRIVAL);
             byte purpose = (byte) choosePurpose(party.getRandom());
             byte size = (byte) chooseFromDistribution(purpose, sizeDistribution, party.getRandom());
             byte nights = (byte) chooseFromDistribution(purpose, durationDistribution,
@@ -184,7 +181,7 @@ public class AirportPartyManager
 
         logger.info("End reading the data in file " + fileName);
 
-        int purposes = modelStructure.PURPOSES;
+        int purposes = AirportModelStructure.PURPOSES;
         purposeDistribution = new double[purposes];
 
         double total_prob = 0.0;
@@ -234,7 +231,7 @@ public class AirportPartyManager
         int rows = probabilityTable.getRowCount();
         int cols = probabilityTable.getColumnCount();
 
-        int purposes = modelStructure.PURPOSES;
+        int purposes = AirportModelStructure.PURPOSES;
         // check to make sure that there is one column for each purpose
         if (cols < (purposes + 1))
         {
@@ -383,7 +380,7 @@ public class AirportPartyManager
         if (sandagStructure.getTripModeIsWalkTransit(tripMode)) taps = party
                 .getWtwTapPair(rideMode);
         else if (sandagStructure.getTripModeIsKnrTransit(tripMode))
-            if (party.getDirection() == modelStructure.ARRIVAL) taps = party
+            if (party.getDirection() == AirportModelStructure.ARRIVAL) taps = party
                     .getWtdTapPair(rideMode);
             else taps = party.getDtwTapPair(rideMode);
 

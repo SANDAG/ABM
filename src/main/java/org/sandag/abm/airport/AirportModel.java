@@ -40,10 +40,7 @@ public class AirportModel
      */
     public void runModel()
     {
-
-        AirportModelStructure modelStructure = new AirportModelStructure();
-
-        AirportDmuFactory dmuFactory = new AirportDmuFactory(modelStructure);
+        AirportDmuFactory dmuFactory = new AirportDmuFactory();
 
         AirportPartyManager apm = new AirportPartyManager(rbMap);
 
