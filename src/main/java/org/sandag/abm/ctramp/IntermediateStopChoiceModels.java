@@ -694,73 +694,59 @@ public class IntermediateStopChoiceModels
         boolean gsInHh = hh.getNumGradeSchoolStudents() > 0;
         boolean hsInHh = hh.getNumHighSchoolStudents() > 0;
 
-        // if hh has no preschool, grade school or high school children, set the
-        // array to that specific size term field
         if (!psInHh && !gsInHh && !hsInHh)
         {
+            // if hh has no preschool, grade school or high school children, set
+            // the array to that specific size term field
             lnSlcSizeTermsForEscort = slcSizeTerms[ESCORT_0_STOP_PURPOSE_SOA_SIZE_INDEX];
             soaSample = slcSizeSample[ESCORT_0_STOP_PURPOSE_SOA_SIZE_INDEX];
             soaAvailability = slcSizeAvailable[ESCORT_0_STOP_PURPOSE_SOA_SIZE_INDEX];
-        }
-
-        // if hh has a preschool child and no gs or hs, set the array to that
-        // specific size term field
-        else if (psInHh && !gsInHh && !hsInHh)
+        } else if (psInHh && !gsInHh && !hsInHh)
         {
+            // if hh has a preschool child and no gs or hs, set the array to
+            // that specific size term field
             lnSlcSizeTermsForEscort = slcSizeTerms[ESCORT_PS_STOP_PURPOSE_SOA_SIZE_INDEX];
             soaSample = slcSizeSample[ESCORT_PS_STOP_PURPOSE_SOA_SIZE_INDEX];
             soaAvailability = slcSizeAvailable[ESCORT_PS_STOP_PURPOSE_SOA_SIZE_INDEX];
-        }
-
-        // if hh has a grade school child and no ps or hs, set the array to that
-        // specific size term field
-        else if (!psInHh && gsInHh && !hsInHh)
+        } else if (!psInHh && gsInHh && !hsInHh)
         {
+            // if hh has a grade school child and no ps or hs, set the array to
+            // that specific size term field
             lnSlcSizeTermsForEscort = slcSizeTerms[ESCORT_GS_STOP_PURPOSE_SOA_SIZE_INDEX];
             soaSample = slcSizeSample[ESCORT_GS_STOP_PURPOSE_SOA_SIZE_INDEX];
             soaAvailability = slcSizeAvailable[ESCORT_GS_STOP_PURPOSE_SOA_SIZE_INDEX];
-        }
-
-        // if hh has a high school child and no ps or gs, set the array to that
-        // specific size term field
-        else if (!psInHh && !gsInHh && hsInHh)
+        } else if (!psInHh && !gsInHh && hsInHh)
         {
+            // if hh has a high school child and no ps or gs, set the array to
+            // that specific size term field
             lnSlcSizeTermsForEscort = slcSizeTerms[ESCORT_HS_STOP_PURPOSE_SOA_SIZE_INDEX];
             soaSample = slcSizeSample[ESCORT_HS_STOP_PURPOSE_SOA_SIZE_INDEX];
             soaAvailability = slcSizeAvailable[ESCORT_HS_STOP_PURPOSE_SOA_SIZE_INDEX];
-        }
-
-        // if hh has a preschool and a grade school child and no hs, set the
-        // array to that specific size term field
-        else if (psInHh && gsInHh && !hsInHh)
+        } else if (psInHh && gsInHh && !hsInHh)
         {
+            // if hh has a preschool and a grade school child and no hs, set the
+            // array to that specific size term field
             lnSlcSizeTermsForEscort = slcSizeTerms[ESCORT_PS_GS_STOP_PURPOSE_SOA_SIZE_INDEX];
             soaSample = slcSizeSample[ESCORT_PS_GS_STOP_PURPOSE_SOA_SIZE_INDEX];
             soaAvailability = slcSizeAvailable[ESCORT_PS_GS_STOP_PURPOSE_SOA_SIZE_INDEX];
-        }
-
-        // if hh has a preschool and a high school child and no gs, set the
-        // array to that specific size term field
-        else if (psInHh && !gsInHh && hsInHh)
+        } else if (psInHh && !gsInHh && hsInHh)
         {
+            // if hh has a preschool and a high school child and no gs, set the
+            // array to that specific size term field
             lnSlcSizeTermsForEscort = slcSizeTerms[ESCORT_PS_HS_STOP_PURPOSE_SOA_SIZE_INDEX];
             soaSample = slcSizeSample[ESCORT_PS_HS_STOP_PURPOSE_SOA_SIZE_INDEX];
             soaAvailability = slcSizeAvailable[ESCORT_PS_HS_STOP_PURPOSE_SOA_SIZE_INDEX];
-        }
-
-        // if hh has a grade school and a high school child and no ps, set the
-        // array to that specific size term field
-        else if (!psInHh && gsInHh && hsInHh)
+        } else if (!psInHh && gsInHh && hsInHh)
         {
+            // if hh has a grade school and a high school child and no ps, set
+            // the array to that specific size term field
             lnSlcSizeTermsForEscort = slcSizeTerms[ESCORT_GS_HS_STOP_PURPOSE_SOA_SIZE_INDEX];
             soaSample = slcSizeSample[ESCORT_GS_HS_STOP_PURPOSE_SOA_SIZE_INDEX];
             soaAvailability = slcSizeAvailable[ESCORT_GS_HS_STOP_PURPOSE_SOA_SIZE_INDEX];
-        }
-
-        // if hh has a preschool a grade school and a high school child, set the
-        // array to that specific size term field
-        else if (psInHh && gsInHh && hsInHh)
+        } else if (psInHh && gsInHh && hsInHh)
         {
+            // if hh has a preschool a grade school and a high school child, set
+            // the array to that specific size term field
             lnSlcSizeTermsForEscort = slcSizeTerms[ESCORT_PS_GS_HS_STOP_PURPOSE_SOA_SIZE_INDEX];
             soaSample = slcSizeSample[ESCORT_PS_GS_HS_STOP_PURPOSE_SOA_SIZE_INDEX];
             soaAvailability = slcSizeAvailable[ESCORT_PS_GS_HS_STOP_PURPOSE_SOA_SIZE_INDEX];
@@ -1196,12 +1182,11 @@ public class IntermediateStopChoiceModels
 
             }
 
-        }
-        // create a stop object to hold attributes for orig, dest, mode,
-        // departtime, etc.
-        // for the half-tour with no stops.
-        else
+        } else
         {
+            // create a stop object to hold attributes for orig, dest, mode,
+            // departtime, etc.
+            // for the half-tour with no stops.
 
             // create a Stop object for use in applying trip mode choice for
             // this half tour without stops
@@ -1617,12 +1602,10 @@ public class IntermediateStopChoiceModels
 
             }
 
-        }
-        // create a stop object to hold attributes for orig, dest, mode,
-        // departtime, etc.
-        // for the half-tour with no stops.
-        else
-        {
+        } else
+        { // create a stop object to hold attributes for orig, dest, mode,
+          // departtime, etc.
+          // for the half-tour with no stops.
 
             check = System.nanoTime();
 
@@ -2476,7 +2459,6 @@ public class IntermediateStopChoiceModels
 
                 } else
                 {
-
                     // if the sampled mgra is in the inbound half-tour boarding
                     // tap shed (near tour primary destination)
                     if (sampleMgraInBoardingTapShed[altMgra])
@@ -2511,10 +2493,8 @@ public class IntermediateStopChoiceModels
 
                 }
 
-            }
-            // tour mode is walk-transit
-            else if (modelStructure.getTourModeIsWalkTransit(s.getTour().getTourModeChoice()))
-            {
+            } else if (modelStructure.getTourModeIsWalkTransit(s.getTour().getTourModeChoice()))
+            { // tour mode is walk-transit
 
                 logsumHelper.setWtwTripMcDmuAttributes(mcDmuObject, s.getOrig(), altMgra,
                         s.getStopPeriod(), s.getTour().getPersonObject().getHouseholdObject()
@@ -2646,10 +2626,8 @@ public class IntermediateStopChoiceModels
 
                 }
 
-            }
-            // tour mode is walk-transit
-            else if (modelStructure.getTourModeIsWalkTransit(s.getTour().getTourModeChoice()))
-            {
+            } else if (modelStructure.getTourModeIsWalkTransit(s.getTour().getTourModeChoice()))
+            { // tour mode is walk-transit
 
                 logsumHelper.setWtwTripMcDmuAttributes(mcDmuObject, altMgra, halfTourFinalDest,
                         s.getStopPeriod(), s.getTour().getPersonObject().getHouseholdObject()
@@ -3362,15 +3340,15 @@ public class IntermediateStopChoiceModels
                         {
                             accessible = true;
                             sampleMgraInBoardingTapShed[alt] = true;
-                        }
-                        // if alternative location mgra is accessible by walk to
-                        // any of the best inbound alighting taps, AND it's
-                        // accessible by walk to the tour origin, it's
-                        // available.
-                        else if (mgraManager.getTapIsWalkAccessibleFromMgra(alt, tapPair[1])
+                        } else if (mgraManager.getTapIsWalkAccessibleFromMgra(alt, tapPair[1])
                                 && mgraManager.getMgrasAreWithinWalkDistance(alt,
                                         t.getTourOrigMgra()))
                         {
+                            // if alternative location mgra is accessible by
+                            // walk to
+                            // any of the best inbound alighting taps, AND it's
+                            // accessible by walk to the tour origin, it's
+                            // available.
                             accessible = true;
                             sampleMgraInAlightingTapShed[alt] = true;
                         }
@@ -3385,11 +3363,11 @@ public class IntermediateStopChoiceModels
                         {
                             accessible = true;
                             sampleMgraInBoardingTapShed[alt] = true;
-                        }
-                        // if alternative location mgra is accessible by drive
-                        // to any of the best destination taps it's available.
-                        else if (mgraManager.getTapIsDriveAccessibleFromMgra(alt, tapPair[1]))
+                        } else if (mgraManager.getTapIsDriveAccessibleFromMgra(alt, tapPair[1]))
                         {
+                            // if alternative location mgra is accessible by
+                            // drive to any of the best destination taps
+                            // it's available.
                             accessible = true;
                             sampleMgraInAlightingTapShed[alt] = true;
                         }
@@ -3444,15 +3422,14 @@ public class IntermediateStopChoiceModels
                         {
                             accessible = true;
                             sampleMgraInBoardingTapShed[alt] = true;
-                        }
-                        // if alternative location mgra is accessible by walk to
-                        // any of the best destination taps, AND it's accessible
-                        // by walk to the tour primary destination, it's
-                        // available.
-                        else if (mgraManager.getTapIsWalkAccessibleFromMgra(alt, tapPair[1])
+                        } else if (mgraManager.getTapIsWalkAccessibleFromMgra(alt, tapPair[1])
                                 && mgraManager.getMgrasAreWithinWalkDistance(alt,
                                         t.getTourDestMgra()))
                         {
+                            // if alternative location mgra is accessible by
+                            // walk to any of the best destination taps,
+                            // AND it's accessible by walk to the tour
+                            // primary destination, it's available.
                             accessible = true;
                             sampleMgraInAlightingTapShed[alt] = true;
                         }
@@ -3465,15 +3442,14 @@ public class IntermediateStopChoiceModels
                         {
                             accessible = true;
                             sampleMgraInBoardingTapShed[alt] = true;
-                        }
-                        // if alternative location mgra is accessible by walk to
-                        // any of the best destination taps, AND it's accessible
-                        // by walk to the tour primary destination, it's
-                        // available.
-                        else if (mgraManager.getTapIsWalkAccessibleFromMgra(alt, tapPair[1])
+                        } else if (mgraManager.getTapIsWalkAccessibleFromMgra(alt, tapPair[1])
                                 && mgraManager.getMgrasAreWithinWalkDistance(alt,
                                         t.getTourDestMgra()))
                         {
+                            // if alternative location mgra is accessible by
+                            // walk to any of the best destination taps, AND
+                            // it's accessible by walk to the tour primary
+                            // destination, it's available.
                             accessible = true;
                             sampleMgraInAlightingTapShed[alt] = true;
                         }

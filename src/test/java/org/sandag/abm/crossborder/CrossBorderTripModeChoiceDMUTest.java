@@ -285,9 +285,7 @@ public class CrossBorderTripModeChoiceDMUTest
                 } else if (d == 1 && p3 == McLogsumsCalculator.EGR && !dontChangeP3)
                 {
                     TestTazParamsExpected(x, offset, dmu, 0);
-                }
-
-                else
+                } else
                 {
                     TestTazParams(p1, p2, p3, x, offset, dmu);
                 }

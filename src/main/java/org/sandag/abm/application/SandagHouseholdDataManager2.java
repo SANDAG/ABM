@@ -466,13 +466,12 @@ public class SandagHouseholdDataManager2
                         studentCat = Person.StudentStatus.STUDENT_COLLEGE_OR_HIGHER.ordinal();
                         person.setPersStudentCategory(studentCat);
                         invalidPersonTypeCount1++;
-                    }
-                    // if person is a student of any kind but has full-time
-                    // employment status, reset student category value to
-                    // non-student
-                    else if (studentCat != Person.StudentStatus.NON_STUDENT.ordinal()
+                    } else if (studentCat != Person.StudentStatus.NON_STUDENT.ordinal()
                             && empCat == Person.EmployStatus.FULL_TIME.ordinal())
                     {
+                        // if person is a student of any kind but has full-time
+                        // employment status, reset student category value to
+                        // non-student
                         studentCat = Person.StudentStatus.NON_STUDENT.ordinal();
                         person.setPersStudentCategory(studentCat);
                         invalidPersonTypeCount2++;

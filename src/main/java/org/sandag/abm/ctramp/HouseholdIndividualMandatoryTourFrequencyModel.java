@@ -380,10 +380,10 @@ public class HouseholdIndividualMandatoryTourFrequencyModel
                                 ModelStructure.SCHOOL_PRIMARY_PURPOSE_INDEX);
                     }
 
-                } // mandatory activity if
-                else if (activity.equalsIgnoreCase(MANDATORY_ACTIVITY)
+                } else if (activity.equalsIgnoreCase(MANDATORY_ACTIVITY)
                         && person.getPersonIsPreschoolChild() == 1)
                 {
+                    // mandatory activity if
                     // pre-school child with mandatory activity type is assigned
                     // choice = 3 (1 school tour).
                     choice = 3;

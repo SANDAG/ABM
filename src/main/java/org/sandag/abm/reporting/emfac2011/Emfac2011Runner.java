@@ -139,7 +139,7 @@ public class Emfac2011Runner
 
         try
         {
-            Files.walkFileTree(emfacInstallationDir, Collections.<FileVisitOption> emptySet(), 1,
+            Files.walkFileTree(emfacInstallationDir, Collections.<FileVisitOption>emptySet(), 1,
                     visitor);
         } catch (IOException e)
         {

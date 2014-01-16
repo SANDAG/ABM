@@ -367,9 +367,7 @@ public class MandatoryDestChoiceModel
                 {
                     segmentType = ModelStructure.NOT_ENROLLED_SEGMENT_INDEX;
                 }
-            }
-            // not a student person type
-            else
+            } else // not a student person type
             {
                 p.setSchoolLocationSegmentIndex(-1);
                 p.setSchoolLoc(0);

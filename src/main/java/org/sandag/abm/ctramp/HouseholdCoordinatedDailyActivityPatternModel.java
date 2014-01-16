@@ -218,51 +218,37 @@ public class HouseholdCoordinatedDailyActivityPatternModel
                     stringToLog = String.format("%6s%5s%5s%5s%5s%5s%5s%5s%5s%5s", persNumString,
                             "FT W", pString, bString, bString, bString, bString, bString, bString,
                             bString);
-                }
-
-                else if (personArray[j].getPersonTypeIsPartTimeWorker() == 1)
+                } else if (personArray[j].getPersonTypeIsPartTimeWorker() == 1)
                 {
                     stringToLog = String.format("%6s%5s%5s%5s%5s%5s%5s%5s%5s%5s", persNumString,
                             "PT W", bString, pString, bString, bString, bString, bString, bString,
                             bString);
-                }
-
-                else if (personArray[j].getPersonIsUniversityStudent() == 1)
+                } else if (personArray[j].getPersonIsUniversityStudent() == 1)
                 {
                     stringToLog = String.format("%6s%5s%5s%5s%5s%5s%5s%5s%5s%5s", persNumString,
                             "UNIV", bString, bString, pString, bString, bString, bString, bString,
                             bString);
-                }
-
-                else if (personArray[j].getPersonIsNonWorkingAdultUnder65() == 1)
+                } else if (personArray[j].getPersonIsNonWorkingAdultUnder65() == 1)
                 {
                     stringToLog = String.format("%6s%5s%5s%5s%5s%5s%5s%5s%5s%5s", persNumString,
                             "NONW", bString, bString, bString, pString, bString, bString, bString,
                             bString);
-                }
-
-                else if (personArray[j].getPersonIsNonWorkingAdultOver65() == 1)
+                } else if (personArray[j].getPersonIsNonWorkingAdultOver65() == 1)
                 {
                     stringToLog = String.format("%6s%5s%5s%5s%5s%5s%5s%5s%5s%5s", persNumString,
                             "RETR", bString, bString, bString, bString, pString, bString, bString,
                             bString);
-                }
-
-                else if (personArray[j].getPersonIsStudentDriving() == 1)
+                } else if (personArray[j].getPersonIsStudentDriving() == 1)
                 {
                     stringToLog = String.format("%6s%5s%5s%5s%5s%5s%5s%5s%5s%5s", persNumString,
                             "SCHD", bString, bString, bString, bString, bString, pString, bString,
                             bString);
-                }
-
-                else if (personArray[j].getPersonIsStudentNonDriving() == 1)
+                } else if (personArray[j].getPersonIsStudentNonDriving() == 1)
                 {
                     stringToLog = String.format("%6s%5s%5s%5s%5s%5s%5s%5s%5s%5s", persNumString,
                             "SCHN", bString, bString, bString, bString, bString, bString, pString,
                             bString);
-                }
-
-                else if (personArray[j].getPersonIsPreschoolChild() == 1)
+                } else if (personArray[j].getPersonIsPreschoolChild() == 1)
                 {
                     stringToLog = String.format("%6s%5s%5s%5s%5s%5s%5s%5s%5s%5s", persNumString,
                             "PRES", bString, bString, bString, bString, bString, bString, bString,

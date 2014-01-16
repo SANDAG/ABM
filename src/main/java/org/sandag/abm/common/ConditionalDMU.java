@@ -31,9 +31,8 @@ public abstract class ConditionalDMU
             {
                 var1 = WTD;
             }
-        }
-
-        else throw new Exception("First part of getTransitSkim is invalid with variable " + var1);
+        } else
+            throw new Exception("First part of getTransitSkim is invalid with variable " + var1);
 
         if (part2.equalsIgnoreCase("LB")) var2 = LB;
         else if (part2.equalsIgnoreCase("EB")) var2 = EB;

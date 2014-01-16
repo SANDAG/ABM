@@ -108,7 +108,7 @@ public class Emfac2011InputFileCreator
         // Map<String,List<String>> areas = new
         // HashMap<>(properties.<String,List<String>>getMap(Emfac2011Properties.AREAS_PROPERTY));
         Set<String> areas = new HashMap<>(
-                properties.<String, List<String>> getMap(Emfac2011Properties.AREAS_PROPERTY))
+                properties.<String, List<String>>getMap(Emfac2011Properties.AREAS_PROPERTY))
                 .keySet();
         String season = properties.getString(Emfac2011Properties.SEASON_PROPERTY);
         int year = properties.getInt(Emfac2011Properties.YEAR_PROPERTY);

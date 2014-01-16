@@ -1751,10 +1751,9 @@ public class CtrampApplication
                     columnTotals[j] += countArray[j];
                     lineTotal += countArray[j];
                 } // j
-            } // if key
-            else
+            } else
             {
-
+                // if key
                 // log zeros
                 lineTotal = 0;
                 for (int j = 0; j < choiceResults.length; ++j)
@@ -2260,10 +2259,9 @@ public class CtrampApplication
                     lineTotal += countArray[j];
                 } // j
 
-            } // if key
-            else
+            } else
             {
-
+                // if key
                 // log zeros
                 lineTotal = 0;
                 for (int j = 0; j < alternativeNames.length; ++j)

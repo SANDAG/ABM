@@ -68,7 +68,7 @@ public class AirportModelDMUTest
         value = dmu.getValueForIndex(7, 0);
         Assert.assertEquals(tazAlt, value, error);
 
-        int zips[] = new int[1];
+        int[] zips = new int[1];
         int zip = 6;
         zips[0] = zip;
         dmu.setZips(zips);
@@ -245,9 +245,7 @@ public class AirportModelDMUTest
                 } else if (d == 1 && p3 == McLogsumsCalculator.EGR && !dontChangeP3)
                 {
                     TestTazParamsExpected(x, offset, dmu, 0);
-                }
-
-                else
+                } else
                 {
                     TestTazParams(p1, p2, p3, x, offset, dmu);
                 }

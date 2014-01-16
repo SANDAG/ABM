@@ -132,7 +132,7 @@ public class SandagAppendMcLogsumDMUTest
                 ModelStructure.JOINT_NON_MANDATORY_CATEGORY, primaryIndex);
         t = 1;
         dmu.setTourCategoryJoint(t);
-        ;
+        
         value = dmu.getValueForIndex(8, 0);
         Assert.assertEquals(t, (int) value);
 

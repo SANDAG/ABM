@@ -43,7 +43,6 @@ public final class AirportModelStructure
 
     public AirportModelStructure()
     {
-        // Not Implemented
     }
 
     /**
