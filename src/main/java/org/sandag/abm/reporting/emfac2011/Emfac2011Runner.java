@@ -33,44 +33,6 @@ import com.pb.sawdust.util.exceptions.RuntimeIOException;
  */
 public class Emfac2011Runner
 {
-    public static void main(String... args)
-    {
-        Path baseDir = Paths
-                .get("D:/projects/tahoe/model2/TahoeModel/scenarios/2010_13percent_increase/outputs_summer/emfac");
-        Path networkFile = baseDir.resolve("AQuaVisNet.csv");
-        Path tripsFile = baseDir.resolve("AQuaVisTrips.csv");
-        Path intrazonalFile = baseDir.resolve("AQuaVisIntrazonal.csv");
-
-        Map<String, String> props = new HashMap<>();
-        props.put(Emfac2011Properties.AREA_TYPE_PROPERTY, "Air Basin");
-        props.put(Emfac2011Properties.REGION_NAME_PROPERTY, "Lake Tahoe");
-        props.put(Emfac2011Properties.AREAS_PROPERTY + "(MSLS)",
-                "{El Dorado (LT):[El],Placer (LT):[Pl]}");
-        props.put(Emfac2011Properties.SEASON_PROPERTY, "Summer");
-        props.put(Emfac2011Properties.YEAR_PROPERTY, "2010");
-        props.put(Emfac2011Properties.EMFAC2011_INSTALLATION_DIR_PROPERTY, "C:/EMFAC2011-SG");
-        props.put(Emfac2011Properties.OUTPUT_DIR_PROPERTY, "D:/dump/emfac2011");
-        props.put(Emfac2011Properties.XLS_CONVERTER_PROGRAM_PROPERTY,
-                "D:/code/work/python/excel_converter/excel_converter/excel_converter.exe");
-        props.put(Emfac2011Properties.AQUAVIS_NETWORK_FILE_PROPERTY, networkFile.toString()
-                .replace("\\", "/"));
-        props.put(Emfac2011Properties.AQUAVIS_INTRAZONAL_FILE_PROPERTY, intrazonalFile.toString()
-                .replace("\\", "/"));
-        props.put(Emfac2011Properties.AQUAVIS_TRIPS_FILE_PROPERTY,
-                tripsFile.toString().replace("\\", "/"));
-
-        StringBuilder resource = new StringBuilder();
-        for (String key : props.keySet())
-            resource.append(key).append("=").append(props.get(key))
-                    .append(FileUtil.getLineSeparator());
-        Emfac2011Properties properties = new Emfac2011Properties(resource.toString());
-        for (String key : properties.getKeys())
-            System.out.println(key + " = " + properties.getProperty(key));
-        //
-        // Emfac2011Runner runner = new Emfac2011Runner(resource.toString());
-        // runner.runEmfac2011(new TahoeEmfac2011Data());
-    }
-
     private static final Logger       LOGGER = LoggerFactory.getLogger(Emfac2011Runner.class);
 
     private final Emfac2011Properties properties;
