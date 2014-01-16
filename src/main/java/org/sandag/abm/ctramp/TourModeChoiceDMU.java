@@ -1,12 +1,7 @@
 package org.sandag.abm.ctramp;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Iterator;
 import org.apache.log4j.Logger;
-import org.sandag.abm.application.SandagTourModeChoiceDMU;
 import org.sandag.abm.common.DMU;
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;

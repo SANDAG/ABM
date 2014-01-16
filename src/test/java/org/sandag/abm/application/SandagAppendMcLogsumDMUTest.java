@@ -3,7 +3,6 @@ package org.sandag.abm.application;
 import junit.framework.Assert;
 import org.apache.log4j.Logger;
 import org.junit.Test;
-import org.sandag.abm.application.SandagAppendMcLogsumDMU;
 import org.sandag.abm.ctramp.Household;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
 import org.sandag.abm.ctramp.ModelStructure;

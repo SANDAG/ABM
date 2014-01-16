@@ -3,7 +3,6 @@ package org.sandag.abm.crossborder;
 import java.io.Serializable;
 import java.util.HashMap;
 import org.apache.log4j.Logger;
-import org.sandag.abm.common.DMU;
 import org.sandag.abm.common.OutboundHalfTourDMU;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
 import com.pb.common.calculator.IndexValues;
