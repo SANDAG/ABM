@@ -3128,10 +3128,11 @@ public class IntermediateStopChoiceModels
                 cumProbabilitiesList[j] = 1.0;
 
             double sum = 0;
+            double epsilon = .0000001;
             for (int j = 0; j < probabilitiesList.length; j++)
             {
                 sum += probabilitiesList[j];
-                if (sum != cumProbabilitiesList[j] || sum > 1.0)
+                if (!(Math.abs(sum - cumProbabilitiesList[j]) < epsilon) || sum > 1.0)
                 {
                     badSlcLogger.info("error condition found!  sum=" + sum + ", j=" + j
                             + ", cumProbabilitiesList[j]=" + cumProbabilitiesList[j]);
