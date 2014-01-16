@@ -235,8 +235,8 @@ public class AirportPartyManager
         // check to make sure that there is one column for each purpose
         if (cols < (purposes + 1))
         {
-            logger.fatal("Error:  Number of columns in " + fileName + " is less than " + purposes
-                    + 1);
+            logger.fatal("Error:  Number of columns in " + fileName + " is less than " + (purposes
+                    + 1));
             throw new RuntimeException();
         }
 

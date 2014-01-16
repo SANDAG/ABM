@@ -115,7 +115,8 @@ public final class Util
 
         // if cumProbabilities[cumProbabilities.length-1] is not equal to 1.0,
         // return -1
-        if (cumProbabilities[cumProbabilities.length - 1] != 1.0)
+        double epsilon = .0000001;
+        if (!(Math.abs(cumProbabilities[cumProbabilities.length - 1] - 1.0) < epsilon))
         {
             System.out.println("cumProbabilities[cumProbabilities.length-1] = "
                     + cumProbabilities[cumProbabilities.length - 1] + " must equal 1.0");
