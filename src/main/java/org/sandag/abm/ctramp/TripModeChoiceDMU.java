@@ -2,47 +2,16 @@ package org.sandag.abm.ctramp;
 
 import java.io.Serializable;
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
+import org.sandag.abm.common.OutboundHalfTourDMU;
+
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 
-public class TripModeChoiceDMU
+public class TripModeChoiceDMU extends OutboundHalfTourDMU
         implements Serializable, VariableTable
 {
-
-    protected transient Logger         logger       = null;
-
-    protected static final int         LB           = McLogsumsCalculator.LB;
-    protected static final int         EB           = McLogsumsCalculator.EB;
-    protected static final int         BRT          = McLogsumsCalculator.BRT;
-    protected static final int         LR           = McLogsumsCalculator.LR;
-    protected static final int         CR           = McLogsumsCalculator.CR;
-    protected static final int         NUM_LOC_PREM = McLogsumsCalculator.NUM_LOC_PREM;
-
-    protected static final int         WTW          = McLogsumsCalculator.WTW;
-    protected static final int         WTD          = McLogsumsCalculator.WTD;
-    protected static final int         DTW          = McLogsumsCalculator.DTW;
-    protected static final int         NUM_ACC_EGR  = McLogsumsCalculator.NUM_ACC_EGR;
-
-    protected static final int         LB_IVT       = McLogsumsCalculator.LB_IVT;
-    protected static final int         EB_IVT       = McLogsumsCalculator.EB_IVT;
-    protected static final int         BRT_IVT      = McLogsumsCalculator.BRT_IVT;
-    protected static final int         LR_IVT       = McLogsumsCalculator.LR_IVT;
-    protected static final int         CR_IVT       = McLogsumsCalculator.CR_IVT;
-    protected static final int         ACC          = McLogsumsCalculator.ACC;
-    protected static final int         EGR          = McLogsumsCalculator.EGR;
-    protected static final int         AUX          = McLogsumsCalculator.AUX;
-    protected static final int         FWAIT        = McLogsumsCalculator.FWAIT;
-    protected static final int         XWAIT        = McLogsumsCalculator.XWAIT;
-    protected static final int         FARE         = McLogsumsCalculator.FARE;
-    protected static final int         XFERS        = McLogsumsCalculator.XFERS;
-    protected static final int         NUM_SKIMS    = McLogsumsCalculator.NUM_SKIMS;
-
-    protected static final int         OUT          = McLogsumsCalculator.OUT;
-    protected static final int         IN           = McLogsumsCalculator.IN;
-    protected static final int         NUM_DIR      = McLogsumsCalculator.NUM_DIR;
-
-    protected HashMap<String, Integer> methodIndexMap;
 
     protected Tour                     tour;
     protected Person                   person;
@@ -84,8 +53,6 @@ public class TripModeChoiceDMU
     protected int                      escortTour;
     protected int                      jointTour;
     protected int                      partySize;
-
-    protected int                      outboundHalfTourDirection;
 
     protected int                      tourModeIsDA;
     protected int                      tourModeIsS2;
@@ -595,12 +562,12 @@ public class TripModeChoiceDMU
         return hh.getIncome();
     }
 
-    public double getNmWalkTime()
+    public double getNm_walkTime()
     {
         return nmWalkTime;
     }
 
-    public double getNmBikeTime()
+    public double getNm_bikeTime()
     {
         return nmBikeTime;
     }

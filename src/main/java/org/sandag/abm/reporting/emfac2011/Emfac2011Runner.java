@@ -13,14 +13,22 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.pb.sawdust.io.FileUtil;
+
+import com.pb.sawdust.tabledata.DataRow;
 import com.pb.sawdust.tabledata.DataTable;
+import com.pb.sawdust.tabledata.basic.RowDataTable;
+import com.pb.sawdust.tabledata.read.CsvTableReader;
 import com.pb.sawdust.util.ProcessUtil;
 import com.pb.sawdust.util.exceptions.RuntimeIOException;
 
@@ -30,131 +38,182 @@ import com.pb.sawdust.util.exceptions.RuntimeIOException;
  * user) the EMFAC2011 SG model using those inputs.
  * 
  * @author crf Started 2/9/12 9:17 AM
+ * 
+ *         Wu.Sun@sandag.org combined SandagEmfacRunner with this class cleaned
+ *         some codes 1/16/2014
  */
-public class Emfac2011Runner
-{
-    public static void main(String... args)
-    {
-        Path baseDir = Paths
-                .get("D:/projects/tahoe/model2/TahoeModel/scenarios/2010_13percent_increase/outputs_summer/emfac");
-        Path networkFile = baseDir.resolve("AQuaVisNet.csv");
-        Path tripsFile = baseDir.resolve("AQuaVisTrips.csv");
-        Path intrazonalFile = baseDir.resolve("AQuaVisIntrazonal.csv");
+public class Emfac2011Runner {
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(Emfac2011Runner.class);
 
-        Map<String, String> props = new HashMap<>();
-        props.put(Emfac2011Properties.AREA_TYPE_PROPERTY, "Air Basin");
-        props.put(Emfac2011Properties.REGION_NAME_PROPERTY, "Lake Tahoe");
-        props.put(Emfac2011Properties.AREAS_PROPERTY + "(MSLS)",
-                "{El Dorado (LT):[El],Placer (LT):[Pl]}");
-        props.put(Emfac2011Properties.SEASON_PROPERTY, "Summer");
-        props.put(Emfac2011Properties.YEAR_PROPERTY, "2010");
-        props.put(Emfac2011Properties.EMFAC2011_INSTALLATION_DIR_PROPERTY, "C:/EMFAC2011-SG");
-        props.put(Emfac2011Properties.OUTPUT_DIR_PROPERTY, "D:/dump/emfac2011");
-        props.put(Emfac2011Properties.XLS_CONVERTER_PROGRAM_PROPERTY,
-                "D:/code/work/python/excel_converter/excel_converter/excel_converter.exe");
-        props.put(Emfac2011Properties.AQUAVIS_NETWORK_FILE_PROPERTY, networkFile.toString()
-                .replace("\\", "/"));
-        props.put(Emfac2011Properties.AQUAVIS_INTRAZONAL_FILE_PROPERTY, intrazonalFile.toString()
-                .replace("\\", "/"));
-        props.put(Emfac2011Properties.AQUAVIS_TRIPS_FILE_PROPERTY,
-                tripsFile.toString().replace("\\", "/"));
+	private final Emfac2011Properties properties;
 
-        StringBuilder resource = new StringBuilder();
-        for (String key : props.keySet())
-            resource.append(key).append("=").append(props.get(key))
-                    .append(FileUtil.getLineSeparator());
-        Emfac2011Properties properties = new Emfac2011Properties(resource.toString());
-        for (String key : properties.getKeys())
-            System.out.println(key + " = " + properties.getProperty(key));
-        //
-        // Emfac2011Runner runner = new Emfac2011Runner(resource.toString());
-        // runner.runEmfac2011(new TahoeEmfac2011Data());
-    }
+	/**
+	 * Constructor specifying the resources used to build the properties used
+	 * for the EMFAC2011 SG run.
+	 * 
+	 * @param propertyResource
+	 *            The first properties resource.
+	 * 
+	 * @param additionalResources
+	 *            Any additional properties resources.
+	 */
+	public Emfac2011Runner(String propertyResource,
+			String... additionalResources) {
+		properties = new Emfac2011Properties(propertyResource,
+				additionalResources);
+	}
 
-    private static final Logger       LOGGER = LoggerFactory.getLogger(Emfac2011Runner.class);
+	void runEmfac2011Program() {
+		final Path emfacInstallationDir = Paths
+				.get(properties
+						.getString(Emfac2011Properties.EMFAC2011_INSTALLATION_DIR_PROPERTY));
+		final PathMatcher matcher = FileSystems.getDefault().getPathMatcher(
+				"glob:*.lnk");
+		final List<Path> link = new LinkedList<>();
+		FileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
 
-    private final Emfac2011Properties properties;
+			@Override
+			public FileVisitResult visitFile(Path file,
+					BasicFileAttributes attrs) throws IOException {
+				Path name = file.getFileName();
+				if (name != null && matcher.matches(name)) {
+					link.add(file);
+					return FileVisitResult.TERMINATE;
+				}
+				return FileVisitResult.CONTINUE;
+			}
+		};
 
-    /**
-     * Constructor specifying the resources used to build the properties used
-     * for the EMFAC2011 SG run.
-     * 
-     * @param propertyResource
-     *            The first properties resource.
-     * 
-     * @param additionalResources
-     *            Any additional properties resources.
-     */
-    public Emfac2011Runner(String propertyResource, String... additionalResources)
-    {
-        properties = new Emfac2011Properties(propertyResource, additionalResources);
-    }
+		try {
+			Files.walkFileTree(emfacInstallationDir,
+					Collections.<FileVisitOption> emptySet(), 1, visitor);
+		} catch (IOException e) {
+			throw new RuntimeIOException(e);
+		}
 
-    /**
-     * Run the EMFAC2011 model. This method will process the model results (via
-     * AquaVis outputs), create an adjusted EMFAC2011 input file, and initiate
-     * the EMFAC2011 SG model. Because of the way it is set up, the user must
-     * actually set up and run the EMFAC2011 SG model, but this method will
-     * create a dialog window which will walk the user through the steps
-     * required to do that.
-     * 
-     * @param emfac2011Data
-     *            The {@code Emfac2011Data} instance corresponding to the model
-     *            results/run.
-     */
-    public void runEmfac2011(Emfac2011Data emfac2011Data)
-    {
-        LOGGER.info("Processing aquavis data");
-        DataTable data = emfac2011Data.processAquavisData(properties);
-        LOGGER.info("Creating EMFAC2011 input file");
-        Emfac2011InputFileCreator inputFileCreator = new Emfac2011InputFileCreator();
-        Path inputfile = inputFileCreator.createInputFile(properties, data);
-        LOGGER.info("Initiating EMFAC2011");
-        RunEmfacDialog.createAndShowGUI(inputfile, this);
-        LOGGER.info("EMFAC2011 run (presumably) finished");
-    }
+		if (link.size() == 0)
+			throw new IllegalStateException(
+					"Cannot find Emfac2011 shortcut in " + emfacInstallationDir);
+		ProcessUtil.runProcess(Arrays.asList("cmd", "/c", link.get(0)
+				.toString()));
+	}
 
-    void runEmfac2011Program()
-    {
-        final Path emfacInstallationDir = Paths.get(properties
-                .getString(Emfac2011Properties.EMFAC2011_INSTALLATION_DIR_PROPERTY));
-        final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.lnk");
-        final List<Path> link = new LinkedList<>();
-        FileVisitor<Path> visitor = new SimpleFileVisitor<Path>()
-        {
+	public void runEmfac2011() {
+		LOGGER.info("Running Emfac2011 for SANDAG");
+		processEmfacData();
 
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                    throws IOException
-            {
-                Path name = file.getFileName();
-                if (name != null && matcher.matches(name))
-                {
-                    link.add(file);
-                    return FileVisitResult.TERMINATE;
-                }
-                return FileVisitResult.CONTINUE;
-            }
-        };
+		// have to call this first because it sets the mutable types, which are,
+		// used throughout the EMFAC2011 process
+		final Map<String, Set<Emfac2011VehicleType>> aquavisVehicleTypeToEmfacMapping = buildAquavisVehicleTypeToEmfacMapping(properties
+				.getPath(SandagModelDataBuilder.VEHICLE_CODE_MAPPING_FILE_PROPERTY));
 
-        try
-        {
-            Files.walkFileTree(emfacInstallationDir, Collections.<FileVisitOption>emptySet(), 1,
-                    visitor);
-        } catch (IOException e)
-        {
-            throw new RuntimeIOException(e);
-        }
+		runEmfac2011(new Emfac2011Data() {
+			@Override
+			protected Map<String, Set<Emfac2011VehicleType>> getAquavisVehicleTypeToEmfacTypeMapping() {
+				return aquavisVehicleTypeToEmfacMapping;
+			}
+		});
+	}
 
-        if (link.size() == 0)
-            throw new IllegalStateException("Cannot find Emfac2011 shortcut in "
-                    + emfacInstallationDir);
-        ProcessUtil.runProcess(Arrays.asList("cmd", "/c", link.get(0).toString()));
-    }
+	/**
+	 * Run the EMFAC2011 model. This method will process the model results (via
+	 * AquaVis outputs), create an adjusted EMFAC2011 input file, and initiate
+	 * the EMFAC2011 SG model. Because of the way it is set up, the user must
+	 * actually set up and run the EMFAC2011 SG model, but this method will
+	 * create a dialog window which will walk the user through the steps
+	 * required to do that.
+	 * 
+	 * @param emfac2011Data
+	 *            The {@code Emfac2011Data} instance corresponding to the model
+	 *            results/run.
+	 */
+	public void runEmfac2011(Emfac2011Data emfac2011Data) {
+		LOGGER.info("-----Running Emfac2011 for SANDAG------");
+		LOGGER.info("Processing aquavis data");
+		DataTable data = emfac2011Data.processAquavisData(properties);
+		LOGGER.info("Creating EMFAC2011 input file");
+		Emfac2011InputFileCreator inputFileCreator = new Emfac2011InputFileCreator();
+		Path inputfile = inputFileCreator.createInputFile(properties, data);
+		LOGGER.info("Initiating EMFAC2011");
+		RunEmfacDialog.createAndShowGUI(inputfile, this);
+		LOGGER.info("EMFAC2011 run (presumably) finished");
+	}
 
-    public Emfac2011Properties getProperties()
-    {
-        return properties;
-    }
+	private void processEmfacData() {
+		LOGGER.info("Building Aquavis inputs from SANDAG database schema: "
+				+ properties
+						.getString(SandagModelDataBuilder.SCHEMA_NAME_PROPERTY));
+		SandagModelDataBuilder builder = new SandagModelDataBuilder(properties);
+		builder.createAquavisInputs(
+				Emfac2011Properties.AQUAVIS_NETWORK_FILE_PROPERTY,
+				Emfac2011Properties.AQUAVIS_TRIPS_FILE_PROPERTY,
+				Emfac2011Properties.AQUAVIS_INTRAZONAL_FILE_PROPERTY);
+	}
+
+	private Map<String, Set<Emfac2011VehicleType>> buildAquavisVehicleTypeToEmfacMapping(
+			Path vehicleCodeMappingFile) {
+		Map<SandagAutoModes, Set<Emfac2011VehicleType>> mapping = new EnumMap<>(
+				SandagAutoModes.class);
+		for (SandagAutoModes type : SandagAutoModes.values())
+			mapping.put(type, EnumSet.noneOf(Emfac2011VehicleType.class));
+
+		// file has one column =
+		// VEHICLE_CODE_MAPPING_EMFAC2011_VEHICLE_NAME_COLUMN
+		// the rest have names which, when made uppercase, should match
+		// VehicleType enum
+		DataTable vehicleCodeMapping = new RowDataTable(new CsvTableReader(
+				vehicleCodeMappingFile.toString()));
+		vehicleCodeMapping.setDataCoersion(true);
+		Set<String> vehicleCodeColumns = new LinkedHashSet<>();
+		for (String column : vehicleCodeMapping.getColumnLabels()) {
+			try {
+				SandagAutoModes.valueOf(column.toUpperCase());
+				vehicleCodeColumns.add(column);
+			} catch (IllegalArgumentException e) {
+				// absorb - not a valid type column
+			}
+		}
+		Set<Emfac2011VehicleType> mutableVehicleType = EnumSet
+				.noneOf(Emfac2011VehicleType.class);
+		for (DataRow row : vehicleCodeMapping) {
+			Emfac2011VehicleType emfac2011VehicleType = Emfac2011VehicleType
+					.getVehicleType(row
+							.getCellAsString(SandagModelDataBuilder.VEHICLE_CODE_MAPPING_EMFAC2011_VEHICLE_NAME_COLUMN));
+			// now dynamically setting mutable vehicle types, so we need to not
+			// rely on the defaults
+			// if (!emfac2011VehicleType.isMutableType())
+			// continue; //skip any non-mutable types, as they can't be used
+			for (String column : vehicleCodeColumns) {
+				if (row.getCellAsBoolean(column)) {
+					mutableVehicleType.add(emfac2011VehicleType); // if a
+																	// mapping
+																	// exists,
+																	// then the
+																	// EMFAC
+																	// vehicle
+																	// type is
+																	// assumed
+																	// to
+																	// be
+																	// mutable
+					mapping.get(SandagAutoModes.valueOf(column.toUpperCase()))
+							.add(emfac2011VehicleType);
+				}
+			}
+		}
+		Emfac2011VehicleType.setMutableTypes(mutableVehicleType);
+		Map<String, Set<Emfac2011VehicleType>> finalMapping = new HashMap<>();
+		for (SandagAutoModes type : mapping.keySet())
+			finalMapping.put(type.name(), mapping.get(type));
+		return finalMapping;
+	}
+
+	public static void main(String... args) {
+		new Emfac2011Runner(args[0], Arrays.copyOfRange(args, 1, args.length))
+				.runEmfac2011();
+		// new
+		// SandagEmfac2011Runner("D:\\projects\\sandag\\emfac\\output_example\\sandag_emfac2011.properties").runEmfac2011();
+	}
 
 }

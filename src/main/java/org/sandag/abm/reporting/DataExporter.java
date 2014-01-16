@@ -504,9 +504,10 @@ public class DataExporter
         {
             int row = i + 1;
 
-            boolean inbound = tripStructureDefinition.booleanIndicatorVariables ? table
-                    .getBooleanValueAt(row, tripStructureDefinition.inboundColumn) : table
-                    .getValueAt(row, tripStructureDefinition.inboundColumn) == 1.0;
+            double epsilon = .000001;
+			boolean inbound = tripStructureDefinition.booleanIndicatorVariables ? table
+                    .getBooleanValueAt(row, tripStructureDefinition.inboundColumn) : Math.abs(table
+                    .getValueAt(row, tripStructureDefinition.inboundColumn) - 1.0) < epsilon;
             SkimBuilder.TripAttributes attributes = skimBuilder.getTripAttributes(
                     (int) table.getValueAt(row, tripStructureDefinition.originMgraColumn),
                     (int) table.getValueAt(row, tripStructureDefinition.destMgraColumn),
