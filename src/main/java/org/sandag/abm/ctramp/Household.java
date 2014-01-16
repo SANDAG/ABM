@@ -1004,7 +1004,7 @@ public class Household
             personWindows[k++] = persons[i].getTimeWindows();
 
         int count = 0;
-        
+
         int maxCount = 0;
         // loop over time window intervals
         for (int w = 1; w < personWindows[0].length; w++)

@@ -75,7 +75,7 @@ public class SandagTripTables
     // one file per time period
     private int                     numberOfPeriods;
 
-    private String[]                  purposeName           = {"Work", "University", "School",
+    private String[]                purposeName             = {"Work", "University", "School",
             "Escort", "Shop", "Maintenance", "EatingOut", "Visiting", "Discretionary", "WorkBased"};
 
     // matrices are indexed by modes

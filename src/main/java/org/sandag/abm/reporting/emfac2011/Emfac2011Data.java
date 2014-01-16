@@ -126,7 +126,7 @@ public abstract class Emfac2011Data
         Path tripsFile = Paths.get(properties
                 .getString(Emfac2011Properties.AQUAVIS_TRIPS_FILE_PROPERTY));
         Map<String, List<String>> areas = new HashMap<>(
-                properties.<String, List<String>> getMap(Emfac2011Properties.AREAS_PROPERTY));
+                properties.<String, List<String>>getMap(Emfac2011Properties.AREAS_PROPERTY));
         Map<String, String> districtsToSubareas = new HashMap<>();
         for (String subarea : areas.keySet())
             for (String district : areas.get(subarea))

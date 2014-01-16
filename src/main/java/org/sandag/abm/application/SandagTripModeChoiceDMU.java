@@ -1,11 +1,9 @@
 package org.sandag.abm.application;
 
 import java.util.HashMap;
-
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.TripModeChoiceDMU;
-
 import com.pb.common.calculator.IndexValues;
 
 public class SandagTripModeChoiceDMU

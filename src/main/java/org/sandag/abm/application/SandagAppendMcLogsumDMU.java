@@ -1,13 +1,9 @@
 package org.sandag.abm.application;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
-
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.TourModeChoiceDMU;
-
 import com.pb.common.calculator.IndexValues;
 
 public class SandagAppendMcLogsumDMU
@@ -673,7 +669,7 @@ public class SandagAppendMcLogsumDMU
 
     public double getValueForIndex(int variableIndex, int arrayIndex)
     {
-    	return getValueForIndexLookup(variableIndex, arrayIndex);
+        return getValueForIndexLookup(variableIndex, arrayIndex);
     }
 
 }

@@ -62,7 +62,7 @@ public class TourModeChoiceModel
 
     // A MyChoiceModelApplication object and modeAltsAvailable[] is needed for
     // each purpose
-    private ChoiceModelApplication[]   mcModel;
+    private ChoiceModelApplication[] mcModel;
     private TourModeChoiceDMU        mcDmuObject;
     private McLogsumsCalculator      logsumHelper;
 

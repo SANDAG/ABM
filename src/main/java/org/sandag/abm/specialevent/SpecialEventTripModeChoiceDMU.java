@@ -2,39 +2,39 @@ package org.sandag.abm.specialevent;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
 import org.apache.log4j.Logger;
 import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.common.OutboundHalfTourDMU;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
-
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 
-public class SpecialEventTripModeChoiceDMU extends OutboundHalfTourDMU
+public class SpecialEventTripModeChoiceDMU
+        extends OutboundHalfTourDMU
         implements Serializable, VariableTable
 {
-    protected int                      tourDepartPeriod;
-    protected int                      tourArrivePeriod;
-    protected int                      tripPeriod;
-    protected int                      tripOrigIsTourDest;
-    protected int                      tripDestIsTourDest;
-    protected float                    parkingCost;
-    protected float                    parkingTime;
-    protected int                      income;
-    protected int                      partySize;
+    protected int          tourDepartPeriod;
+    protected int          tourArrivePeriod;
+    protected int          tripPeriod;
+    protected int          tripOrigIsTourDest;
+    protected int          tripDestIsTourDest;
+    protected float        parkingCost;
+    protected float        parkingTime;
+    protected int          income;
+    protected int          partySize;
 
-    protected double                   nmWalkTime;
-    protected double                   nmBikeTime;
+    protected double       nmWalkTime;
+    protected double       nmBikeTime;
 
-    protected double[][][]             transitSkim;
+    protected double[][][] transitSkim;
 
     public SpecialEventTripModeChoiceDMU(SandagModelStructure modelStructure, Logger aLogger)
     {
-    	if (aLogger == null){
-    		aLogger = Logger.getLogger("specialEventModel");
-    	}
-    	logger = aLogger;
+        if (aLogger == null)
+        {
+            aLogger = Logger.getLogger("specialEventModel");
+        }
+        logger = aLogger;
         setupMethodIndexMap();
         dmuIndex = new IndexValues();
         transitSkim = new double[McLogsumsCalculator.NUM_ACC_EGR][McLogsumsCalculator.NUM_LOC_PREM][McLogsumsCalculator.NUM_SKIMS];
@@ -399,13 +399,13 @@ public class SpecialEventTripModeChoiceDMU extends OutboundHalfTourDMU
         methodIndexMap.put("getDt_cr_WalkAuxTime", 202);
         methodIndexMap.put("getDt_cr_fare", 203);
         methodIndexMap.put("getDt_cr_xfers", 204);
-        
+
         CreateReverseMap();
     }
 
     public double getValueForIndex(int variableIndex, int arrayIndex)
     {
-    	return getValueForIndexLookup(variableIndex, arrayIndex);
+        return getValueForIndexLookup(variableIndex, arrayIndex);
     }
 
     public int getIndexValue(String variableName)

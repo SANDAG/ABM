@@ -42,7 +42,7 @@ public class NonMandatoryTourDepartureAndDurationTime
     private static final String             IMTOD_UEC_VISIT_MODEL_TARGET  = "departTime.visit.page";
     private static final String             IMTOD_UEC_DISCR_MODEL_TARGET  = "departTime.discr.page";
 
-    private static final String[]           tourPurposeNames              = {
+    private static final String[]           TOUR_PURPOSE_NAMES            = {
             ModelStructure.ESCORT_PRIMARY_PURPOSE_NAME,
             ModelStructure.SHOPPING_PRIMARY_PURPOSE_NAME,
             ModelStructure.OTH_MAINT_PRIMARY_PURPOSE_NAME,
@@ -50,14 +50,14 @@ public class NonMandatoryTourDepartureAndDurationTime
             ModelStructure.VISITING_PRIMARY_PURPOSE_NAME,
             ModelStructure.OTH_DISCR_PRIMARY_PURPOSE_NAME                 };
 
-    private static final String[]           dcModelSheetKeys              = {
+    private static final String[]           DC_MODEL_SHEET_KEYS           = {
             IMTOD_UEC_ESCORT_MODEL_TARGET, IMTOD_UEC_SHOP_MODEL_TARGET,
             IMTOD_UEC_MAINT_MODEL_TARGET, IMTOD_UEC_EAT_MODEL_TARGET, IMTOD_UEC_VISIT_MODEL_TARGET,
             IMTOD_UEC_DISCR_MODEL_TARGET                                  };
 
     // process non-mandatory tours in order by priority purpose:
     // 4=escort, 6=oth maint, 5=shop, 8=visiting, 9=oth discr, 7=eat out,
-    private static final int[]              tourPurposeIndexOrder         = {4, 6, 5, 8, 9, 7};
+    private static final int[]              TOUR_PURPOSE_INDEX_ORDER      = {4, 6, 5, 8, 9, 7};
 
     private ArrayList<Tour>[]               purposeTourLists;
 
@@ -127,14 +127,14 @@ public class NonMandatoryTourDepartureAndDurationTime
         modeChoiceLogsums = new double[numLogsumIndices];
 
         // create the array of tod model indices
-        int[] uecSheetIndices = new int[tourPurposeNames.length];
+        int[] uecSheetIndices = new int[TOUR_PURPOSE_NAMES.length];
 
-        purposeNameIndexMap = new HashMap<String, Integer>(tourPurposeNames.length);
+        purposeNameIndexMap = new HashMap<String, Integer>(TOUR_PURPOSE_NAMES.length);
 
         int i = 0;
-        for (String purposeName : tourPurposeNames)
+        for (String purposeName : TOUR_PURPOSE_NAMES)
         {
-            int uecIndex = Util.getIntegerValueFromPropertyMap(propertyMap, dcModelSheetKeys[i]);
+            int uecIndex = Util.getIntegerValueFromPropertyMap(propertyMap, DC_MODEL_SHEET_KEYS[i]);
             purposeNameIndexMap.put(purposeName, i);
             uecSheetIndices[i] = uecIndex;
             i++;
@@ -201,14 +201,14 @@ public class NonMandatoryTourDepartureAndDurationTime
         // - tour lists will be processed
         // in priority purpose order.
         int maxPurposeIndex = 0;
-        for (i = 0; i < tourPurposeIndexOrder.length; i++)
-            if (tourPurposeIndexOrder[i] > maxPurposeIndex)
-                maxPurposeIndex = tourPurposeIndexOrder[i];
+        for (i = 0; i < TOUR_PURPOSE_INDEX_ORDER.length; i++)
+            if (TOUR_PURPOSE_INDEX_ORDER[i] > maxPurposeIndex)
+                maxPurposeIndex = TOUR_PURPOSE_INDEX_ORDER[i];
 
         purposeTourLists = new ArrayList[maxPurposeIndex + 1];
-        for (i = 0; i < tourPurposeIndexOrder.length; i++)
+        for (i = 0; i < TOUR_PURPOSE_INDEX_ORDER.length; i++)
         {
-            int index = tourPurposeIndexOrder[i];
+            int index = TOUR_PURPOSE_INDEX_ORDER[i];
             purposeTourLists[index] = new ArrayList<Tour>();
         }
 
@@ -246,10 +246,10 @@ public class NonMandatoryTourDepartureAndDurationTime
             int previouslySelectedDepartPeriod = -1;
             int previouslySelectedArrivePeriod = -1;
 
-            for (int i = 0; i < tourPurposeIndexOrder.length; i++)
+            for (int i = 0; i < TOUR_PURPOSE_INDEX_ORDER.length; i++)
             {
 
-                int tourPurposeIndex = tourPurposeIndexOrder[i];
+                int tourPurposeIndex = TOUR_PURPOSE_INDEX_ORDER[i];
 
                 // process each individual non-mandatory tour from the list
                 int m = -1;
@@ -703,10 +703,10 @@ public class NonMandatoryTourDepartureAndDurationTime
         int previouslySelectedDepartPeriod = -1;
         int previouslySelectedArrivePeriod = -1;
 
-        for (int i = 0; i < tourPurposeIndexOrder.length; i++)
+        for (int i = 0; i < TOUR_PURPOSE_INDEX_ORDER.length; i++)
         {
 
-            int tourPurposeIndex = tourPurposeIndexOrder[i];
+            int tourPurposeIndex = TOUR_PURPOSE_INDEX_ORDER[i];
 
             // process each individual non-mandatory tour from the list
             int m = -1;

@@ -86,9 +86,8 @@ public class VisitorTripModeChoiceDMU
 
     public VisitorTripModeChoiceDMU(VisitorModelStructure modelStructure, Logger aLogger)
     {
-    	if (aLogger == null)
-    		aLogger = Logger.getLogger("visitorModel");
-    	logger = aLogger;
+        if (aLogger == null) aLogger = Logger.getLogger("visitorModel");
+        logger = aLogger;
         setupMethodIndexMap();
         dmuIndex = new IndexValues();
         transitSkim = new double[McLogsumsCalculator.NUM_ACC_EGR][McLogsumsCalculator.NUM_LOC_PREM][McLogsumsCalculator.NUM_SKIMS];

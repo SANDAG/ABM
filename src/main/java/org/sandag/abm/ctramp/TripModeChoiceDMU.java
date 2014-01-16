@@ -83,9 +83,8 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
 
     public TripModeChoiceDMU(ModelStructure modelStructure, Logger aLogger)
     {
-    	if ( aLogger == null )
-    		aLogger = Logger.getLogger(TourModeChoiceDMU.class);
-    	logger = aLogger;
+        if (aLogger == null) aLogger = Logger.getLogger(TourModeChoiceDMU.class);
+        logger = aLogger;
         this.modelStructure = modelStructure;
         dmuIndex = new IndexValues();
 

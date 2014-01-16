@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.MatrixDataServer;
@@ -44,7 +45,7 @@ import com.pb.common.util.ResourceUtil;
  */
 public class DataExporter
 {
-    private static final Logger logger                      = Logger.getLogger(DataExporter.class);
+    private static final Logger LOGGER                      = Logger.getLogger(DataExporter.class);
 
     private static final String NUMBER_FORMAT_NAME          = "NUMBER";
     private static final String STRING_FORMAT_NAME          = "STRING";
@@ -87,14 +88,14 @@ public class DataExporter
     private void addTable(String table)
     {
         tables.add(table);
-        logger.info("exporting data: " + table);
+        LOGGER.info("exporting data: " + table);
         try
         {
             clearMatrixServer();
         } catch (Throwable e)
         {
             // log it, but swallow it
-            logger.warn("exception caught clearing matrix server: " + e.getMessage());
+            LOGGER.warn("exception caught clearing matrix server: " + e.getMessage());
         }
     }
 
@@ -361,7 +362,7 @@ public class DataExporter
 
         if (tripStructureDefinition != null)
         {
-            //appendTripData(table, tripStructureDefinition);
+            appendTripData(table, tripStructureDefinition);
             floatColumns.add("TRIP_TIME");
             floatColumns.add("TRIP_DISTANCE");
             floatColumns.add("TRIP_COST");
@@ -433,6 +434,50 @@ public class DataExporter
     }
 
     private volatile PrintWriter tripTableWriter;
+
+    private void initializeMasterTripTable(String baseTableName)
+    {
+        LOGGER.info("setting up master trip table: " + baseTableName);
+        addTable(baseTableName);
+        try
+        {
+            tripTableWriter = getBufferedPrintWriter(getOutputPath(baseTableName + ".csv"));
+        } catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+        Map<String, String> outputMapping = new LinkedHashMap<String, String>();
+        Map<String, FieldType> outputTypes = new LinkedHashMap<String, FieldType>();
+        Map<String, Integer> stringWidths = new HashMap<String, Integer>();
+        outputTypes.put("ID", FieldType.INT);
+        outputTypes.put("TRIPTYPE", FieldType.STRING);
+        stringWidths.put("TRIPTYPE", 10);
+        outputTypes.put("RECID", FieldType.INT);
+        outputTypes.put("PARTYSIZE", FieldType.INT);
+        outputTypes.put("ORIG_MGRA", FieldType.INT);
+        outputTypes.put("DEST_MGRA", FieldType.INT);
+        outputTypes.put("TRIP_BOARD_TAP", FieldType.INT);
+        outputTypes.put("TRIP_ALIGHT_TAP", FieldType.INT);
+        outputTypes.put("TRIP_BOARD_TAZ", FieldType.INT);
+        outputTypes.put("TRIP_ALIGHT_TAZ", FieldType.INT);
+        outputTypes.put("TRIP_DEPART_TIME", FieldType.INT);
+        outputTypes.put("TRIP_TIME", FieldType.FLOAT);
+        outputTypes.put("TRIP_DISTANCE", FieldType.FLOAT);
+        outputTypes.put("TRIP_COST", FieldType.FLOAT);
+        outputTypes.put("TRIP_PURPOSE_NAME", FieldType.STRING);
+        stringWidths.put("TRIP_PURPOSE_NAME", 30);
+        outputTypes.put("TRIP_MODE_NAME", FieldType.STRING);
+        stringWidths.put("TRIP_MODE_NAME", 20);
+        Set<String> primaryKeys = new HashSet<String>();
+        primaryKeys.add("ID");
+        StringBuilder header = new StringBuilder();
+        for (String column : outputTypes.keySet())
+        {
+            outputMapping.put(column, column);
+            header.append(",").append(column.toLowerCase());
+        }
+        tripTableWriter.println(header.deleteCharAt(0).toString());
+    }
 
     private void appendTripData(TableDataSet table, TripStructureDefinition tripStructureDefinition)
     {
@@ -550,6 +595,30 @@ public class DataExporter
         }
     }
 
+    private void exportAccessibilities(String outputFileBase)
+    {
+        addTable(outputFileBase);
+        Set<String> intColumns = new HashSet<String>(Arrays.asList("mgra"));
+        Set<String> floatColumns = new HashSet<String>();
+        Set<String> stringColumns = new HashSet<String>();
+        Set<String> bitColumns = new HashSet<String>();
+        Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("mgra"));
+        exportDataGeneric(outputFileBase, "acc.output.file", false, null, floatColumns,
+                stringColumns, intColumns, bitColumns, FieldType.FLOAT, primaryKey, null);
+    }
+
+    private void exportMazData(String outputFileBase)
+    {
+        addTable(outputFileBase);
+        Set<String> intColumns = new HashSet<String>(Arrays.asList("mgra", "TAZ", "ZIP09"));
+        Set<String> floatColumns = new HashSet<String>();
+        Set<String> stringColumns = new HashSet<String>();
+        Set<String> bitColumns = new HashSet<String>();
+        Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("mgra"));
+        exportDataGeneric(outputFileBase, "mgra.socec.file", false, null, floatColumns,
+                stringColumns, intColumns, bitColumns, FieldType.FLOAT, primaryKey, null);
+    }
+
     private void nullifyFile(String file)
     {
         String tempFile = file + ".temp";
@@ -588,6 +657,110 @@ public class DataExporter
     public static int    NULL_INT_VALUE   = -98765;
     public static float  NULL_FLOAT_VALUE = NULL_INT_VALUE;
     public static String NULL_VALUE       = "" + NULL_FLOAT_VALUE;
+
+    private void exportTapData(String outputFileBase)
+    {
+        addTable(outputFileBase);
+        Map<String, float[]> ptype = readSpaceDelimitedData(getPath("tap.ptype.file"),
+                Arrays.asList("TAP", "LOTID", "PTYPE", "TAZ", "CAPACITY", "DISTANCE"));
+        Map<String, float[]> pelev = readSpaceDelimitedData(
+                getPath("tap.ptype.file").replace("ptype", "elev"), Arrays.asList("TAP", "ELEV"));
+        float[] taps = ptype.get("TAP");
+        float[] etaps = pelev.get("TAP");
+        ptype.put("ELEV", getPartialData(taps, etaps, pelev.get("ELEV")));
+
+        TableDataSet finalData = new TableDataSet();
+        for (String columnName : ptype.keySet())
+            finalData.appendColumn(ptype.get(columnName), columnName);
+
+        Set<String> intColumns = new HashSet<String>();
+        Set<String> floatColumns = new HashSet<String>();
+        Set<String> stringColumns = new HashSet<String>();
+        Set<String> bitColumns = new HashSet<String>();
+        Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("TAP"));
+        exportDataGeneric(finalData, outputFileBase, floatColumns, stringColumns, intColumns,
+                bitColumns, FieldType.INT, primaryKey, null);
+        nullifyFile(getOutputPath(outputFileBase + ".csv"));
+    }
+
+    private void exportMgraToTapData(String outputFileBase)
+    {
+        addTable(outputFileBase);
+        Map<String, float[]> mgraToTap = readSpaceDelimitedData(
+                getPath("mgra.wlkacc.taps.and.distance.file"),
+                Arrays.asList("MGRA", "TAP", "DISTANCE"));
+        TableDataSet finalData = new TableDataSet();
+        for (String columnName : mgraToTap.keySet())
+            finalData.appendColumn(mgraToTap.get(columnName), columnName);
+
+        Set<String> intColumns = new HashSet<String>();
+        Set<String> floatColumns = new HashSet<String>();
+        Set<String> stringColumns = new HashSet<String>();
+        Set<String> bitColumns = new HashSet<String>();
+        Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("MGRA", "TAP"));
+        exportDataGeneric(finalData, outputFileBase, floatColumns, stringColumns, intColumns,
+                bitColumns, FieldType.INT, primaryKey, null);
+        nullifyFile(getOutputPath(outputFileBase + ".csv"));
+    }
+
+    private void exportMgraToMgraData(String outputFileBase)
+    {
+        addTable(outputFileBase);
+        Map<String, float[]> mgraToMgra = readSpaceDelimitedData(getPath("mgra.walkdistance.file"),
+                Arrays.asList("ORIG_MGRA", "DEST_MGRA", "DISTANCE"));
+
+        Map<String, List<Number>> actualData = new LinkedHashMap<String, List<Number>>();
+        for (String column : Arrays.asList("TAZ", "ORIG_MGRA", "DEST_MGRA", "DISTANCE"))
+            actualData.put(column, new LinkedList<Number>());
+        float[] dcolumn = mgraToMgra.get("DISTANCE");
+        float[] origColumn = mgraToMgra.get("ORIG_MGRA");
+        float[] destColumn = mgraToMgra.get("DEST_MGRA");
+        for (int i = 0; i < dcolumn.length; i++)
+        {
+            int count = 0;
+            if (dcolumn[i] < 0) count = (int) destColumn[i];
+            int taz = (int) origColumn[i];
+            while (count-- > 0)
+            {
+                i++;
+                actualData.get("TAZ").add(taz);
+                actualData.get("ORIG_MGRA").add((int) origColumn[i]);
+                actualData.get("DEST_MGRA").add((int) destColumn[i]);
+                actualData.get("DISTANCE").add(dcolumn[i]);
+            }
+        }
+
+        TableDataSet finalData = new TableDataSet();
+        for (String columnName : actualData.keySet())
+        {
+            Object data;
+            if (columnName.equals("DISTANCE"))
+            {
+                float[] dd = new float[actualData.get(columnName).size()];
+                int counter = 0;
+                for (Number n : actualData.get(columnName))
+                    dd[counter++] = n.floatValue();
+                data = dd;
+            } else
+            {
+                int[] dd = new int[actualData.get(columnName).size()];
+                int counter = 0;
+                for (Number n : actualData.get(columnName))
+                    dd[counter++] = n.intValue();
+                data = dd;
+            }
+            finalData.appendColumn(data, columnName);
+        }
+
+        Set<String> intColumns = new HashSet<String>(Arrays.asList("TAZ", "ORIG_MGRA", "DEST_MGRA"));
+        Set<String> floatColumns = new HashSet<String>(Arrays.asList("DISTANCE"));
+        Set<String> stringColumns = new HashSet<String>();
+        Set<String> bitColumns = new HashSet<String>();
+        Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("ORIG_MGRA", "DEST_MGRA"));
+        exportDataGeneric(finalData, outputFileBase, floatColumns, stringColumns, intColumns,
+                bitColumns, FieldType.INT, primaryKey, null);
+        nullifyFile(getOutputPath(outputFileBase + ".csv"));
+    }
 
     private void exportTazToTapData(String outputFileBase)
     {
@@ -648,6 +821,86 @@ public class DataExporter
         nullifyFile(getOutputPath(outputFileBase + ".csv"));
     }
 
+    private float[] toFloatArray(int[] data)
+    {
+        float[] f = new float[data.length];
+        for (int i = 0; i < f.length; i++)
+            f[i] = data[i];
+        return f;
+    }
+
+    private float[] getPartialData(float[] fullKey, float[] partialKey, float[] partialData)
+    {
+        float[] data = new float[fullKey.length];
+        Arrays.fill(data, NULL_FLOAT_VALUE);
+        int counter = 0;
+        for (float key : fullKey)
+        {
+            for (int i = 0; i < partialKey.length; i++)
+            {
+                if (partialKey[i] == key)
+                {
+                    data[counter] = partialData[i];
+                }
+            }
+            counter++;
+        }
+        return data;
+    }
+
+    private void exportTazData(String outputFileBase)
+    {
+        addTable(outputFileBase);
+        int[] tazs = getTazList();
+        TableDataSet data = new TableDataSet();
+        data.appendColumn(tazs, "TAZ");
+        Map<String, float[]> term = readSpaceDelimitedData(getPath("taz.terminal.time.file"),
+                Arrays.asList("TAZ", "TERM"));
+        Map<String, float[]> park = readSpaceDelimitedData(getPath("taz.parkingtype.file"),
+                Arrays.asList("TAZ", "PARK"));
+        data.appendColumn(getPartialData(toFloatArray(tazs), term.get("TAZ"), term.get("TERM")),
+                "TERM");
+        data.appendColumn(getPartialData(toFloatArray(tazs), park.get("TAZ"), park.get("PARK")),
+                "PARK");
+
+        Set<String> intColumns = new HashSet<String>();
+        Set<String> floatColumns = new HashSet<String>();
+        Set<String> stringColumns = new HashSet<String>();
+        Set<String> bitColumns = new HashSet<String>();
+        Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("TAZ"));
+        exportDataGeneric(data, outputFileBase, floatColumns, stringColumns, intColumns,
+                bitColumns, FieldType.INT, primaryKey, null);
+        nullifyFile(getOutputPath(outputFileBase + ".csv"));
+    }
+
+    private int[] getTazList()
+    {
+        Set<Integer> tazs = new TreeSet<Integer>();
+        TableDataSet mgraData;
+        try
+        {
+            mgraData = new CSVFileReader().readFile(new File(getPath("mgra.socec.file")));
+        } catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+        boolean first = true;
+        for (int taz : mgraData.getColumnAsInt("taz"))
+        {
+            if (first)
+            {
+                first = false;
+                continue;
+            }
+            tazs.add(taz);
+        }
+        int[] finalTazs = new int[tazs.size()];
+        int counter = 0;
+        for (int taz : tazs)
+            finalTazs[counter++] = taz;
+        return finalTazs;
+    }
+
     private Map<String, float[]> readSpaceDelimitedData(String location, List<String> columnNames)
     {
         Map<String, List<Integer>> data = new LinkedHashMap<String, List<Integer>>();
@@ -702,6 +955,282 @@ public class DataExporter
             d.put(columnName, f);
         }
         return d;
+    }
+
+    private void exportHouseholdData(String outputFileBase)
+    {
+        addTable(outputFileBase);
+        String[] formats = {NUMBER_FORMAT_NAME, // hh_id
+                NUMBER_FORMAT_NAME, // home_mgra
+                NUMBER_FORMAT_NAME, // income
+                NUMBER_FORMAT_NAME, // autos
+                NUMBER_FORMAT_NAME, // transponder
+                STRING_FORMAT_NAME, // cdap_pattern
+                NUMBER_FORMAT_NAME, // jtf_choice
+        };
+        Set<String> intColumns = new HashSet<String>();
+        Set<String> floatColumns = new HashSet<String>();
+        Set<String> stringColumns = new HashSet<String>(Arrays.asList("cdap_pattern"));
+        Set<String> bitColumns = new HashSet<String>();
+        Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("hh_id"));
+        exportDataGeneric(outputFileBase, "Results.HouseholdDataFile", true, formats, floatColumns,
+                stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey, null);
+    }
+
+    private void exportPersonData(String outputFileBase)
+    {
+        addTable(outputFileBase);
+        String[] formats = {NUMBER_FORMAT_NAME, // hh_id
+                NUMBER_FORMAT_NAME, // person_id
+                NUMBER_FORMAT_NAME, // person_num
+                NUMBER_FORMAT_NAME, // age
+                STRING_FORMAT_NAME, // gender
+                STRING_FORMAT_NAME, // type
+                NUMBER_FORMAT_NAME, // value_of_time (float)
+                STRING_FORMAT_NAME, // activity_pattern
+                NUMBER_FORMAT_NAME, // imf_choice
+                NUMBER_FORMAT_NAME, // inmf_choice
+                NUMBER_FORMAT_NAME, // fp_choice
+                NUMBER_FORMAT_NAME, // reimb_pct (float)
+                NUMBER_FORMAT_NAME, // ie_choice
+        };
+        Set<String> intColumns = new HashSet<String>();
+        Set<String> floatColumns = new HashSet<String>(Arrays.asList("value_of_time", "reimb_pct"));
+        Set<String> stringColumns = new HashSet<String>(Arrays.asList("gender", "type",
+                "activity_pattern"));
+        Set<String> bitColumns = new HashSet<String>();
+        Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("person_id"));
+        exportDataGeneric(outputFileBase, "Results.PersonDataFile", true, formats, floatColumns,
+                stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey, null);
+    }
+
+    private void exportSyntheticHouseholdData(String outputFileBase)
+    {
+        addTable(outputFileBase);
+        Set<String> intColumns = new HashSet<String>();
+        Set<String> floatColumns = new HashSet<String>();
+        Set<String> stringColumns = new HashSet<String>();
+        Set<String> bitColumns = new HashSet<String>();
+        Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("HHID"));
+        exportDataGeneric(outputFileBase, "PopulationSynthesizer.InputToCTRAMP.HouseholdFile",
+                false, null, floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT,
+                primaryKey, null);
+    }
+
+    private void exportSyntheticPersonData(String outputFileBase)
+    {
+        addTable(outputFileBase);
+        String[] formats = {NUMBER_FORMAT_NAME, // HHID
+                NUMBER_FORMAT_NAME, // PERID
+                NUMBER_FORMAT_NAME, // household_serial_no
+                NUMBER_FORMAT_NAME, // PNUM
+                NUMBER_FORMAT_NAME, // AGE
+                NUMBER_FORMAT_NAME, // SEX
+                NUMBER_FORMAT_NAME, // MILTARY
+                NUMBER_FORMAT_NAME, // PEMPLOY
+                NUMBER_FORMAT_NAME, // PSTUDENT
+                NUMBER_FORMAT_NAME, // PTYPE
+                NUMBER_FORMAT_NAME, // EDUC
+                NUMBER_FORMAT_NAME, // GRADE
+                NUMBER_FORMAT_NAME, // OCCCEN5
+                STRING_FORMAT_NAME, // OCCSOC5
+                NUMBER_FORMAT_NAME, // INDCEN
+                NUMBER_FORMAT_NAME, // WEEKS
+                NUMBER_FORMAT_NAME, // HOURS
+        };
+        Set<String> intColumns = new HashSet<String>();
+        Set<String> floatColumns = new HashSet<String>();
+        Set<String> stringColumns = new HashSet<String>(Arrays.asList("OCCSOC5"));
+        Set<String> bitColumns = new HashSet<String>();
+        Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("PERID"));
+        exportDataGeneric(outputFileBase, "PopulationSynthesizer.InputToCTRAMP.PersonFile", false,
+                formats, floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT,
+                primaryKey, null);
+    }
+
+    private void exportWorkSchoolLocation(String outputFileBase)
+    {
+        addTable(outputFileBase);
+        Set<String> intColumns = new HashSet<String>();
+        Set<String> floatColumns = new HashSet<String>(Arrays.asList("WorkLocationDistance",
+                "WorkLocationLogsum", "SchoolLocation", "SchoolLocationDistance",
+                "SchoolLocationLogsum"));
+        Set<String> stringColumns = new HashSet<String>();
+        Set<String> bitColumns = new HashSet<String>();
+        Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("PERSON_ID"));
+        Map<String, String> overridingNames = new HashMap<String, String>();
+        overridingNames.put("PersonID", "PERSON_ID");
+        exportDataGeneric(outputFileBase, "Results.UsualWorkAndSchoolLocationChoice", true, null,
+                floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
+                overridingNames, null);
+    }
+
+    private void exportIndivToursData(String outputFileBase)
+    {
+        addTable(outputFileBase);
+        String[] formats = {NUMBER_FORMAT_NAME, // hh_id
+                NUMBER_FORMAT_NAME, // person_id
+                NUMBER_FORMAT_NAME, // person_num
+                NUMBER_FORMAT_NAME, // person_type
+                NUMBER_FORMAT_NAME, // tour_id
+                STRING_FORMAT_NAME, // tour_category
+                STRING_FORMAT_NAME, // tour_purpose
+                NUMBER_FORMAT_NAME, // orig_mgra
+                NUMBER_FORMAT_NAME, // dest_mgra
+                NUMBER_FORMAT_NAME, // start_period
+                NUMBER_FORMAT_NAME, // end_period
+                NUMBER_FORMAT_NAME, // tour_mode
+                NUMBER_FORMAT_NAME, // tour_distance
+                NUMBER_FORMAT_NAME, // atWork_freq
+                NUMBER_FORMAT_NAME, // num_ob_stops
+                NUMBER_FORMAT_NAME, // num_ib_stops
+                NUMBER_FORMAT_NAME, // util_1
+                NUMBER_FORMAT_NAME, // util_2
+                NUMBER_FORMAT_NAME, // util_3
+                NUMBER_FORMAT_NAME, // util_4
+                NUMBER_FORMAT_NAME, // util_5
+                NUMBER_FORMAT_NAME, // util_6
+                NUMBER_FORMAT_NAME, // util_7
+                NUMBER_FORMAT_NAME, // util_8
+                NUMBER_FORMAT_NAME, // util_9
+                NUMBER_FORMAT_NAME, // util_10
+                NUMBER_FORMAT_NAME, // util_11
+                NUMBER_FORMAT_NAME, // util_12
+                NUMBER_FORMAT_NAME, // util_13
+                NUMBER_FORMAT_NAME, // util_14
+                NUMBER_FORMAT_NAME, // util_15
+                NUMBER_FORMAT_NAME, // util_16
+                NUMBER_FORMAT_NAME, // util_17
+                NUMBER_FORMAT_NAME, // util_18
+                NUMBER_FORMAT_NAME, // util_19
+                NUMBER_FORMAT_NAME, // util_20
+                NUMBER_FORMAT_NAME, // util_21
+                NUMBER_FORMAT_NAME, // util_22
+                NUMBER_FORMAT_NAME, // util_23
+                NUMBER_FORMAT_NAME, // util_24
+                NUMBER_FORMAT_NAME, // util_25
+                NUMBER_FORMAT_NAME, // util_26
+                NUMBER_FORMAT_NAME, // prob_1
+                NUMBER_FORMAT_NAME, // prob_2
+                NUMBER_FORMAT_NAME, // prob_3
+                NUMBER_FORMAT_NAME, // prob_4
+                NUMBER_FORMAT_NAME, // prob_5
+                NUMBER_FORMAT_NAME, // prob_6
+                NUMBER_FORMAT_NAME, // prob_7
+                NUMBER_FORMAT_NAME, // prob_8
+                NUMBER_FORMAT_NAME, // prob_9
+                NUMBER_FORMAT_NAME, // prob_10
+                NUMBER_FORMAT_NAME, // prob_11
+                NUMBER_FORMAT_NAME, // prob_12
+                NUMBER_FORMAT_NAME, // prob_13
+                NUMBER_FORMAT_NAME, // prob_14
+                NUMBER_FORMAT_NAME, // prob_15
+                NUMBER_FORMAT_NAME, // prob_16
+                NUMBER_FORMAT_NAME, // prob_17
+                NUMBER_FORMAT_NAME, // prob_18
+                NUMBER_FORMAT_NAME, // prob_19
+                NUMBER_FORMAT_NAME, // prob_20
+                NUMBER_FORMAT_NAME, // prob_21
+                NUMBER_FORMAT_NAME, // prob_22
+                NUMBER_FORMAT_NAME, // prob_23
+                NUMBER_FORMAT_NAME, // prob_24
+                NUMBER_FORMAT_NAME, // prob_25
+                NUMBER_FORMAT_NAME // prob_26
+        };
+        Set<String> intColumns = new HashSet<String>(Arrays.asList("hh_id", "person_id",
+                "person_num", "person_type", "tour_id", "orig_mgra", "dest_mgra", "start_period",
+                "end_period", "tour_mode", "atWork_freq", "num_ob_stops", "num_ib_stops"));
+        Set<String> floatColumns = new HashSet<String>();
+        Set<String> stringColumns = new HashSet<String>(Arrays.asList("tour_category",
+                "tour_purpose"));
+        Set<String> bitColumns = new HashSet<String>();
+        Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("hh_id", "person_id",
+                "tour_category", "tour_id", "tour_purpose"));
+        exportDataGeneric(outputFileBase, "Results.IndivTourDataFile", true, formats, floatColumns,
+                stringColumns, intColumns, bitColumns, FieldType.FLOAT, primaryKey, null);
+    }
+
+    private void exportJointToursData(String outputFileBase)
+    {
+        addTable(outputFileBase);
+        String[] formats = {NUMBER_FORMAT_NAME, // hh_id
+                NUMBER_FORMAT_NAME, // tour_id
+                STRING_FORMAT_NAME, // tour_category
+                STRING_FORMAT_NAME, // tour_purpose
+                NUMBER_FORMAT_NAME, // tour_composition
+                STRING_FORMAT_NAME, // tour_participants
+                NUMBER_FORMAT_NAME, // orig_mgra
+                NUMBER_FORMAT_NAME, // dest_mgra
+                NUMBER_FORMAT_NAME, // start_period
+                NUMBER_FORMAT_NAME, // end_period
+                NUMBER_FORMAT_NAME, // tour_mode
+                NUMBER_FORMAT_NAME, // tour_distance
+                NUMBER_FORMAT_NAME, // num_ob_stops
+                NUMBER_FORMAT_NAME, // num_ib_stops
+                NUMBER_FORMAT_NAME, // util_1
+                NUMBER_FORMAT_NAME, // util_2
+                NUMBER_FORMAT_NAME, // util_3
+                NUMBER_FORMAT_NAME, // util_4
+                NUMBER_FORMAT_NAME, // util_5
+                NUMBER_FORMAT_NAME, // util_6
+                NUMBER_FORMAT_NAME, // util_7
+                NUMBER_FORMAT_NAME, // util_8
+                NUMBER_FORMAT_NAME, // util_9
+                NUMBER_FORMAT_NAME, // util_10
+                NUMBER_FORMAT_NAME, // util_11
+                NUMBER_FORMAT_NAME, // util_12
+                NUMBER_FORMAT_NAME, // util_13
+                NUMBER_FORMAT_NAME, // util_14
+                NUMBER_FORMAT_NAME, // util_15
+                NUMBER_FORMAT_NAME, // util_16
+                NUMBER_FORMAT_NAME, // util_17
+                NUMBER_FORMAT_NAME, // util_18
+                NUMBER_FORMAT_NAME, // util_19
+                NUMBER_FORMAT_NAME, // util_20
+                NUMBER_FORMAT_NAME, // util_21
+                NUMBER_FORMAT_NAME, // util_22
+                NUMBER_FORMAT_NAME, // util_23
+                NUMBER_FORMAT_NAME, // util_24
+                NUMBER_FORMAT_NAME, // util_25
+                NUMBER_FORMAT_NAME, // util_26
+                NUMBER_FORMAT_NAME, // prob_1
+                NUMBER_FORMAT_NAME, // prob_2
+                NUMBER_FORMAT_NAME, // prob_3
+                NUMBER_FORMAT_NAME, // prob_4
+                NUMBER_FORMAT_NAME, // prob_5
+                NUMBER_FORMAT_NAME, // prob_6
+                NUMBER_FORMAT_NAME, // prob_7
+                NUMBER_FORMAT_NAME, // prob_8
+                NUMBER_FORMAT_NAME, // prob_9
+                NUMBER_FORMAT_NAME, // prob_10
+                NUMBER_FORMAT_NAME, // prob_11
+                NUMBER_FORMAT_NAME, // prob_12
+                NUMBER_FORMAT_NAME, // prob_13
+                NUMBER_FORMAT_NAME, // prob_14
+                NUMBER_FORMAT_NAME, // prob_15
+                NUMBER_FORMAT_NAME, // prob_16
+                NUMBER_FORMAT_NAME, // prob_17
+                NUMBER_FORMAT_NAME, // prob_18
+                NUMBER_FORMAT_NAME, // prob_19
+                NUMBER_FORMAT_NAME, // prob_20
+                NUMBER_FORMAT_NAME, // prob_21
+                NUMBER_FORMAT_NAME, // prob_22
+                NUMBER_FORMAT_NAME, // prob_23
+                NUMBER_FORMAT_NAME, // prob_24
+                NUMBER_FORMAT_NAME, // prob_25
+                NUMBER_FORMAT_NAME // prob_26
+        };
+        Set<String> intColumns = new HashSet<String>(Arrays.asList("hh_id", "tour_id",
+                "tour_composition", "orig_mgra", "dest_mgra", "start_period", "end_period",
+                "tour_mode", "num_ob_stops", "num_ib_stops"));
+        Set<String> floatColumns = new HashSet<String>();
+        Set<String> stringColumns = new HashSet<String>(Arrays.asList("tour_category",
+                "tour_purpose", "tour_participants"));
+        Set<String> bitColumns = new HashSet<String>();
+        Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("hh_id", "tour_category",
+                "tour_id", "tour_purpose"));
+        exportDataGeneric(outputFileBase, "Results.JointTourDataFile", true, formats, floatColumns,
+                stringColumns, intColumns, bitColumns, FieldType.FLOAT, primaryKey, null);
     }
 
     private void exportIndivTripData(String outputFileBase)
@@ -792,6 +1321,33 @@ public class DataExporter
                 stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey, overridingNames,
                 new TripStructureDefinition(8, 9, 7, 10, 12, 13, 4, 13, "AIRPORT", "HOME",
                         "AIRPORT", 2, false));
+    }
+
+    private void exportCrossBorderTourData(String outputFileBase)
+    {
+        addTable(outputFileBase);
+        String[] formats = {NUMBER_FORMAT_NAME, // id
+                NUMBER_FORMAT_NAME, // purpose
+                STRING_FORMAT_NAME, // sentri
+                NUMBER_FORMAT_NAME, // poe
+                NUMBER_FORMAT_NAME, // departTime
+                NUMBER_FORMAT_NAME, // arriveTime
+                NUMBER_FORMAT_NAME, // originMGRA
+                NUMBER_FORMAT_NAME, // destinationMGRA
+                NUMBER_FORMAT_NAME, // origTaz
+                NUMBER_FORMAT_NAME, // destTaz
+                NUMBER_FORMAT_NAME // tourMode
+        };
+        Set<String> intColumns = new HashSet<String>();
+        Set<String> floatColumns = new HashSet<String>();
+        Set<String> stringColumns = new HashSet<String>();
+        Set<String> bitColumns = new HashSet<String>(Arrays.asList("sentri"));
+        Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("TOURID"));
+        Map<String, String> overridingNames = new HashMap<String, String>();
+        overridingNames.put("id", "TOURID");
+        exportDataGeneric(outputFileBase, "crossBorder.tour.output.file", false, formats,
+                floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
+                overridingNames, null);
     }
 
     private void exportCrossBorderTripData(String outputFileBase)
@@ -1408,6 +1964,58 @@ public class DataExporter
         }
     }
 
+    private void exportDefinitions(String outputFileBase)
+    {
+        addTable(outputFileBase);
+        Map<String, String> tripPurposes = new LinkedHashMap<String, String>();
+        Map<String, String> modes = new LinkedHashMap<String, String>();
+        Map<String, String> ejCategories = new LinkedHashMap<String, String>();
+
+        PrintWriter writer = null;
+        try
+        {
+            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".csv"));
+            writer.println("type,code,description");
+            writer.println("nothing,placeholder,this describes nothing");
+            for (String tripPurpose : tripPurposes.keySet())
+                writer.println("trip_purpose," + tripPurpose + "," + tripPurposes.get(tripPurpose));
+            for (String mode : modes.keySet())
+                writer.println("mode," + mode + "," + modes.get(mode));
+            for (String ejCategory : ejCategories.keySet())
+                writer.println("ej_category," + ejCategory + "," + ejCategories.get(ejCategory));
+        } catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        } finally
+        {
+            if (writer != null) writer.close();
+        }
+    }
+
+    private void exportPnrVehicleData(String outputFileBase)
+    {
+        addTable(outputFileBase);
+        Set<String> intColumns = new HashSet<String>(Arrays.asList("TAP"));
+        Set<String> floatColumns = new HashSet<String>();
+        Set<String> stringColumns = new HashSet<String>();
+        Set<String> bitColumns = new HashSet<String>();
+        Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("TAP"));
+        exportDataGeneric(outputFileBase, "Results.PNRFile", false, null, floatColumns,
+                stringColumns, intColumns, bitColumns, FieldType.FLOAT, primaryKey, null);
+    }
+
+    private void exportCbdVehicleData(String outputFileBase)
+    {
+        addTable(outputFileBase);
+        Set<String> intColumns = new HashSet<String>(Arrays.asList("MGRA"));
+        Set<String> floatColumns = new HashSet<String>();
+        Set<String> stringColumns = new HashSet<String>();
+        Set<String> bitColumns = new HashSet<String>();
+        Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("MGRA"));
+        exportDataGeneric(outputFileBase, "Results.CBDFile", false, null, floatColumns,
+                stringColumns, intColumns, bitColumns, FieldType.FLOAT, primaryKey, null);
+    }
+
     private void exportEmfacVehicleCodes(String outputFileBase)
     {
         addTable(outputFileBase);
@@ -1604,8 +2212,10 @@ public class DataExporter
         {
             projectFolder = args[0];
             outputFolder = args[1];
-            propertiesFile = ClassLoader.getSystemClassLoader().getResource("sandag_abm.properties").getFile();
-            //propertiesFile = new File("sandag_abm.properties").getAbsolutePath();
+            propertiesFile = ClassLoader.getSystemClassLoader()
+                    .getResource("sandag_abm.properties").getFile();
+            // propertiesFile = new
+            // File("sandag_abm.properties").getAbsolutePath();
             System.out.println(propertiesFile);
             feedbackIteration = Integer.parseInt(args[2]);
             databaseSchema = args[3];
@@ -1657,7 +2267,7 @@ public class DataExporter
             sandagJarUrl = sandagJar.toURI().toURL();
         } catch (MalformedURLException e)
         {
-            logger.error("bad jar url: " + sandagJar.toString());
+            LOGGER.error("bad jar url: " + sandagJar.toString());
             throw new RuntimeException(e);
         }
 
@@ -1669,7 +2279,7 @@ public class DataExporter
             method.invoke(ClassLoader.getSystemClassLoader(), sandagJarUrl);
         } catch (Throwable t)
         {
-            logger.warn("Error, could not add URL to system classloader: "
+            LOGGER.warn("Error, could not add URL to system classloader: "
                     + sandagJarUrl.toString() + "\n\t" + t.getMessage());
         }
 
@@ -1678,36 +2288,36 @@ public class DataExporter
 
         try
         {
-            //if (definedTables.contains("trip")) dataExporter.initializeMasterTripTable("trip");
-            //if (definedTables.contains("accessibilities"))
-            //    dataExporter.exportAccessibilities("accessibilities");
-            //if (definedTables.contains("mgra")) dataExporter.exportMazData("mgra");
-            //if (definedTables.contains("taz")) dataExporter.exportTazData("taz");
-            //if (definedTables.contains("tap")) dataExporter.exportTapData("tap");
-            //if (definedTables.contains("mgratotap")) dataExporter.exportMgraToTapData("mgratotap");
-            //if (definedTables.contains("mgratomgra"))
-            //    dataExporter.exportMgraToMgraData("mgratomgra");
+            if (definedTables.contains("trip")) dataExporter.initializeMasterTripTable("trip");
+            if (definedTables.contains("accessibilities"))
+                dataExporter.exportAccessibilities("accessibilities");
+            if (definedTables.contains("mgra")) dataExporter.exportMazData("mgra");
+            if (definedTables.contains("taz")) dataExporter.exportTazData("taz");
+            if (definedTables.contains("tap")) dataExporter.exportTapData("tap");
+            if (definedTables.contains("mgratotap")) dataExporter.exportMgraToTapData("mgratotap");
+            if (definedTables.contains("mgratomgra"))
+                dataExporter.exportMgraToMgraData("mgratomgra");
             if (definedTables.contains("taztotap")) dataExporter.exportTazToTapData("taztotap");
-            //if (definedTables.contains("hhdata")) dataExporter.exportHouseholdData("hhdata");
-            //if (definedTables.contains("persondata")) dataExporter.exportPersonData("persondata");
-            //if (definedTables.contains("wslocation"))
-            //    dataExporter.exportWorkSchoolLocation("wslocation");
-            //if (definedTables.contains("synhh"))
-            //    dataExporter.exportSyntheticHouseholdData("synhh");
-            //if (definedTables.contains("synperson"))
-            //    dataExporter.exportSyntheticPersonData("synperson");
-            //if (definedTables.contains("indivtours"))
-            //    dataExporter.exportIndivToursData("indivtours");
-            //if (definedTables.contains("jointtours"))
-            //    dataExporter.exportJointToursData("jointtours");
+            if (definedTables.contains("hhdata")) dataExporter.exportHouseholdData("hhdata");
+            if (definedTables.contains("persondata")) dataExporter.exportPersonData("persondata");
+            if (definedTables.contains("wslocation"))
+                dataExporter.exportWorkSchoolLocation("wslocation");
+            if (definedTables.contains("synhh"))
+                dataExporter.exportSyntheticHouseholdData("synhh");
+            if (definedTables.contains("synperson"))
+                dataExporter.exportSyntheticPersonData("synperson");
+            if (definedTables.contains("indivtours"))
+                dataExporter.exportIndivToursData("indivtours");
+            if (definedTables.contains("jointtours"))
+                dataExporter.exportJointToursData("jointtours");
             if (definedTables.contains("indivtrips"))
                 dataExporter.exportIndivTripData("indivtrips");
             if (definedTables.contains("jointtrips"))
                 dataExporter.exportJointTripData("jointtrips");
             if (definedTables.contains("airporttrips"))
                 dataExporter.exportAirportTrips("airporttrips");
-            //if (definedTables.contains("cbtours"))
-            //    dataExporter.exportCrossBorderTourData("cbtours");
+            if (definedTables.contains("cbtours"))
+                dataExporter.exportCrossBorderTourData("cbtours");
             if (definedTables.contains("cbtrips"))
                 dataExporter.exportCrossBorderTripData("cbtrips");
             if (definedTables.contains("visitortours") && definedTables.contains("visitortrips"))
@@ -1721,13 +2331,13 @@ public class DataExporter
                 dataExporter.exportExternalInternalTripData("eitrip");
             if (definedTables.contains("tazskim")) dataExporter.exportAutoSkims("tazskim");
             if (definedTables.contains("tapskim")) dataExporter.exportTransitSkims("tapskim");
-            //if (definedTables.contains("definition")) dataExporter.exportDefinitions("definition");
-            //if (definedTables.contains("emfacvehcode"))
-            //    dataExporter.exportEmfacVehicleCodes("emfacvehcode");
-            //if (definedTables.contains("pnrvehicles"))
-            //    dataExporter.exportPnrVehicleData("pnrvehicles");
-            //if (definedTables.contains("cbdvehicles"))
-            //    dataExporter.exportCbdVehicleData("cbdvehicles");
+            if (definedTables.contains("definition")) dataExporter.exportDefinitions("definition");
+            if (definedTables.contains("emfacvehcode"))
+                dataExporter.exportEmfacVehicleCodes("emfacvehcode");
+            if (definedTables.contains("pnrvehicles"))
+                dataExporter.exportPnrVehicleData("pnrvehicles");
+            if (definedTables.contains("cbdvehicles"))
+                dataExporter.exportCbdVehicleData("cbdvehicles");
         } finally
         {
             if (dataExporter.tripTableWriter != null) dataExporter.tripTableWriter.close();

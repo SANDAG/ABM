@@ -8,8 +8,10 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.pb.sawdust.tabledata.DataRow;
 import com.pb.sawdust.tabledata.DataTable;
 import com.pb.sawdust.tabledata.basic.RowDataTable;
@@ -37,10 +39,12 @@ public class SandagEmfac2011Runner
      * @param additionalResources
      *            Any additional properties resources.
      */
+    
     public SandagEmfac2011Runner(String propertyResource, String... additionalResources)
     {
         super(propertyResource, additionalResources);
     }
+    
 
     public void runEmfac2011()
     {
@@ -53,10 +57,11 @@ public class SandagEmfac2011Runner
                 Emfac2011Properties.AQUAVIS_INTRAZONAL_FILE_PROPERTY);
         LOGGER.info("Creating Emfac2011/SANDAG vehicle code correspondence");
         /*
-        builder.writeTableToCsv("EMFACVEHCODE",
-                getProperties().getString(SandagModelDataBuilder.SCHEMA_NAME_PROPERTY),
-                getProperties().getPath(VEHICLE_CODE_MAPPING_FILE_PROPERTY));
-                */
+         * builder.writeTableToCsv("EMFACVEHCODE",
+         * getProperties().getString(SandagModelDataBuilder
+         * .SCHEMA_NAME_PROPERTY),
+         * getProperties().getPath(VEHICLE_CODE_MAPPING_FILE_PROPERTY));
+         */
         LOGGER.info("Running Emfac2011 process...");
         // have to call this first because it sets the mutable types, which are
         // used throughout the EMFAC2011 process
@@ -71,11 +76,36 @@ public class SandagEmfac2011Runner
             }
         });
     }
+    
+    /**
+     * Run the EMFAC2011 model. This method will process the model results (via
+     * AquaVis outputs), create an adjusted EMFAC2011 input file, and initiate
+     * the EMFAC2011 SG model. Because of the way it is set up, the user must
+     * actually set up and run the EMFAC2011 SG model, but this method will
+     * create a dialog window which will walk the user through the steps
+     * required to do that.
+     * 
+     * @param emfac2011Data
+     *            The {@code Emfac2011Data} instance corresponding to the model
+     *            results/run.
+     */
+    public void runEmfac2011(Emfac2011Data emfac2011Data)
+    {
+        LOGGER.info("Processing aquavis data");
+        DataTable data = emfac2011Data.processAquavisData(getProperties());
+        LOGGER.info("Creating EMFAC2011 input file");
+        Emfac2011InputFileCreator inputFileCreator = new Emfac2011InputFileCreator();
+        Path inputfile = inputFileCreator.createInputFile(getProperties(), data);
+        LOGGER.info("Initiating EMFAC2011");
+        RunEmfacDialog.createAndShowGUI(inputfile, this);
+        LOGGER.info("EMFAC2011 run (presumably) finished");
+    }
 
     private Map<String, Set<Emfac2011VehicleType>> buildAquavisVehicleTypeToEmfacMapping(
             Path vehicleCodeMappingFile)
     {
-        Map<SandagAutoModes, Set<Emfac2011VehicleType>> mapping = new EnumMap<>(SandagAutoModes.class);
+        Map<SandagAutoModes, Set<Emfac2011VehicleType>> mapping = new EnumMap<>(
+                SandagAutoModes.class);
         for (SandagAutoModes type : SandagAutoModes.values())
             mapping.put(type, EnumSet.noneOf(Emfac2011VehicleType.class));
 
@@ -120,8 +150,8 @@ public class SandagEmfac2011Runner
                                                                   // type is
                                                                   // assumed to
                                                                   // be mutable
-                    mapping.get(SandagAutoModes.valueOf(column.toUpperCase()))
-                            .add(emfac2011VehicleType);
+                    mapping.get(SandagAutoModes.valueOf(column.toUpperCase())).add(
+                            emfac2011VehicleType);
                 }
             }
         }

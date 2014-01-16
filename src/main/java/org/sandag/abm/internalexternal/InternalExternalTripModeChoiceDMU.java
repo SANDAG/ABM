@@ -2,45 +2,45 @@ package org.sandag.abm.internalexternal;
 
 import java.io.Serializable;
 import java.util.HashMap;
-
 import org.apache.log4j.Logger;
 import org.sandag.abm.common.OutboundHalfTourDMU;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
-
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 
-public class InternalExternalTripModeChoiceDMU extends OutboundHalfTourDMU
+public class InternalExternalTripModeChoiceDMU
+        extends OutboundHalfTourDMU
         implements Serializable, VariableTable
 {
-    protected int                      tourDepartPeriod;
-    protected int                      tourArrivePeriod;
-    protected int                      tripPeriod;
-    protected int                      outboundStops;
-    protected int                      returnStops;
-    protected int                      firstTrip;
-    protected int                      lastTrip;
+    protected int          tourDepartPeriod;
+    protected int          tourArrivePeriod;
+    protected int          tripPeriod;
+    protected int          outboundStops;
+    protected int          returnStops;
+    protected int          firstTrip;
+    protected int          lastTrip;
 
-    protected int                      income;
-    protected int                      female;
-    protected int                      age;
-    protected int                      autos;
-    protected int                      hhSize;
-    protected int                      tripOrigIsTourDest;
-    protected int                      tripDestIsTourDest;
+    protected int          income;
+    protected int          female;
+    protected int          age;
+    protected int          autos;
+    protected int          hhSize;
+    protected int          tripOrigIsTourDest;
+    protected int          tripDestIsTourDest;
 
-    protected double                   nmWalkTime;
-    protected double                   nmBikeTime;
+    protected double       nmWalkTime;
+    protected double       nmBikeTime;
 
-    protected double[][][]             transitSkim;
+    protected double[][][] transitSkim;
 
-    public InternalExternalTripModeChoiceDMU(InternalExternalModelStructure modelStructure, Logger aLogger)
+    public InternalExternalTripModeChoiceDMU(InternalExternalModelStructure modelStructure,
+            Logger aLogger)
     {
-    	if (aLogger == null)
-    	{
-    		aLogger = Logger.getLogger("internalExternalModel");
-    	}
-    	logger = aLogger;
+        if (aLogger == null)
+        {
+            aLogger = Logger.getLogger("internalExternalModel");
+        }
+        logger = aLogger;
         setupMethodIndexMap();
         dmuIndex = new IndexValues();
         transitSkim = new double[McLogsumsCalculator.NUM_ACC_EGR][McLogsumsCalculator.NUM_LOC_PREM][McLogsumsCalculator.NUM_SKIMS];
@@ -474,7 +474,7 @@ public class InternalExternalTripModeChoiceDMU extends OutboundHalfTourDMU
 
     public double getValueForIndex(int variableIndex, int arrayIndex)
     {
-    	return getValueForIndexLookup(variableIndex, arrayIndex);
+        return getValueForIndexLookup(variableIndex, arrayIndex);
     }
 
     public int getIndexValue(String variableName)
@@ -501,5 +501,5 @@ public class InternalExternalTripModeChoiceDMU extends OutboundHalfTourDMU
     {
         throw new UnsupportedOperationException();
     }
-    
+
 }

@@ -18,7 +18,7 @@ import com.pb.common.util.ResourceUtil;
 public class SandagSummitFile
 {
 
-    private static Logger          logger        = Logger.getLogger(SandagSummitFile.class);
+    private static Logger          logger       = Logger.getLogger(SandagSummitFile.class);
 
     private HashMap<Long, Integer> personsOver18;
     private HashMap<Long, Integer> autosOwned;
@@ -30,53 +30,53 @@ public class SandagSummitFile
 
     // Some parameters
     private int                    modes;
-    private int                    upperEA;                                                 // Upper
-                                                                                             // limit
-                                                                                             // on
-                                                                                             // time
-                                                                                             // of
-                                                                                             // day
-                                                                                             // for
-                                                                                             // the
-                                                                                             // Early
-                                                                                             // morning
-                                                                                             // time
-                                                                                             // period
-    private int                    upperAM;                                                 // Upper
-                                                                                             // limit
-                                                                                             // on
-                                                                                             // time
-                                                                                             // of
-                                                                                             // day
-                                                                                             // for
-                                                                                             // the
-                                                                                             // AM
-                                                                                             // peak
-                                                                                             // time
-                                                                                             // period
-    private int                    upperMD;                                                 // Upper
-                                                                                             // limit
-                                                                                             // on
-                                                                                             // time
-                                                                                             // of
-                                                                                             // day
-                                                                                             // for
-                                                                                             // the
-                                                                                             // Midday
-                                                                                             // time
-                                                                                             // period
-    private int                    upperPM;                                                 // Upper
-                                                                                             // limit
-                                                                                             // on
-                                                                                             // time
-                                                                                             // of
-                                                                                             // day
-                                                                                             // for
-                                                                                             // the
-                                                                                             // PM
-                                                                                             // time
-                                                                                             // peak
-                                                                                             // period
+    private int                    upperEA;                                                // Upper
+                                                                                            // limit
+                                                                                            // on
+                                                                                            // time
+                                                                                            // of
+                                                                                            // day
+                                                                                            // for
+                                                                                            // the
+                                                                                            // Early
+                                                                                            // morning
+                                                                                            // time
+                                                                                            // period
+    private int                    upperAM;                                                // Upper
+                                                                                            // limit
+                                                                                            // on
+                                                                                            // time
+                                                                                            // of
+                                                                                            // day
+                                                                                            // for
+                                                                                            // the
+                                                                                            // AM
+                                                                                            // peak
+                                                                                            // time
+                                                                                            // period
+    private int                    upperMD;                                                // Upper
+                                                                                            // limit
+                                                                                            // on
+                                                                                            // time
+                                                                                            // of
+                                                                                            // day
+                                                                                            // for
+                                                                                            // the
+                                                                                            // Midday
+                                                                                            // time
+                                                                                            // period
+    private int                    upperPM;                                                // Upper
+                                                                                            // limit
+                                                                                            // on
+                                                                                            // time
+                                                                                            // of
+                                                                                            // day
+                                                                                            // for
+                                                                                            // the
+                                                                                            // PM
+                                                                                            // time
+                                                                                            // peak
+                                                                                            // period
     private int[]                  walkTransitModes;
     private int[]                  driveTransitModes;
 
@@ -84,7 +84,7 @@ public class SandagSummitFile
     private int[]                  fileNumber;
     private int                    numberOfFiles;
 
-    private static final String[]    purposeName = {"Work", "University", "School", "Escort",
+    private static final String[]  PURPOSE_NAME = {"Work", "University", "School", "Escort",
             "Shop", "Maintenance", "EatingOut", "Visiting", "Discretionary", "WorkBased"};
     private float[]                ivtCoeff;
     private String[]               fileName;
@@ -108,10 +108,10 @@ public class SandagSummitFile
 
         // Find what file to store each purpose in
         numberOfFiles = 0;
-        fileNumber = new int[purposeName.length];
-        for (int i = 0; i < purposeName.length; ++i)
+        fileNumber = new int[PURPOSE_NAME.length];
+        for (int i = 0; i < PURPOSE_NAME.length; ++i)
         {
-            String fileString = "summit.purpose." + purposeName[i];
+            String fileString = "summit.purpose." + PURPOSE_NAME[i];
             fileNumber[i] = Integer.valueOf(rb.getString(fileString)) - 1;
             numberOfFiles = Math.max(fileNumber[i] + 1, numberOfFiles);
         }

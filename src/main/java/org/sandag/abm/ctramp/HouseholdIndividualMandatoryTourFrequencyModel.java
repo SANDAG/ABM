@@ -48,7 +48,7 @@ public class HouseholdIndividualMandatoryTourFrequencyModel
     public static final int                     CHOICE_TWO_SCHOOL        = 4;
     public static final int                     CHOICE_WORK_AND_SCHOOL   = 5;
 
-    public static final String[]                choiceResults            = {"1 Work", "2 Work",
+    public static final String[]                CHOICE_RESULTS           = {"1 Work", "2 Work",
             "1 School", "2 School", "Wrk & Schl", "Worker Works At Home", "Student Works At Home",
             "Worker School At Home", "Student School At Home"            };
 
@@ -313,14 +313,14 @@ public class HouseholdIndividualMandatoryTourFrequencyModel
                         for (int k = 0; k < probabilities.length; ++k)
                         {
                             cumProb += probabilities[k];
-                            String altString = String.format("%-3d %10s", k + 1, choiceResults[k]);
+                            String altString = String.format("%-3d %10s", k + 1, CHOICE_RESULTS[k]);
                             modelLogger.info(String.format("%-15s%18.6e%18.6e%18.6e", altString,
                                     utilities[k], probabilities[k], cumProb));
                         }
 
                         modelLogger.info(" ");
                         String altString = String.format("%-3d %10s", choice,
-                                choiceResults[choice - 1]);
+                                CHOICE_RESULTS[choice - 1]);
                         modelLogger.info(String.format("Choice: %s, with rn=%.8f, randomCount=%d",
                                 altString, rn, randomCount));
 
@@ -380,10 +380,10 @@ public class HouseholdIndividualMandatoryTourFrequencyModel
                                 ModelStructure.SCHOOL_PRIMARY_PURPOSE_INDEX);
                     }
 
-                } // mandatory activity if
-                else if (activity.equalsIgnoreCase(MANDATORY_ACTIVITY)
+                } else if (activity.equalsIgnoreCase(MANDATORY_ACTIVITY)
                         && person.getPersonIsPreschoolChild() == 1)
                 {
+                    // mandatory activity if
                     // pre-school child with mandatory activity type is assigned
                     // choice = 3 (1 school tour).
                     choice = 3;

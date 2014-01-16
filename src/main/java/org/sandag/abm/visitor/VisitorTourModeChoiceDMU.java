@@ -43,9 +43,8 @@ public class VisitorTourModeChoiceDMU extends TourDMU
 
     public VisitorTourModeChoiceDMU(VisitorModelStructure modelStructure, Logger aLogger)
     {
-    	if (aLogger == null)
-    		aLogger = Logger.getLogger(TourModeChoiceDMU.class);
-		logger = aLogger;
+        if (aLogger == null) aLogger = Logger.getLogger(TourModeChoiceDMU.class);
+        logger = aLogger;
         setupMethodIndexMap();
         dmuIndex = new IndexValues();
         transitSkim = new double[McLogsumsCalculator.NUM_ACC_EGR][McLogsumsCalculator.NUM_LOC_PREM][McLogsumsCalculator.NUM_SKIMS][McLogsumsCalculator.NUM_DIR];

@@ -272,9 +272,8 @@ public class DcUtilitiesTaskJppf
             luUtilityList = new ArrayList<float[]>();
 
             accumulatedLandUseLogsums = new float[BuildAccessibilities.NUM_AVG_METHODS][BuildAccessibilities.NUM_PERIODS][BuildAccessibilities.NUM_SUFFICIENCY_SEGMENTS][BuildAccessibilities.MAX_LUZ + 1][BuildAccessibilities.MAX_LUZ + 1];
-            
+
             accumulatedLandUseLogsumsCount = new int[BuildAccessibilities.MAX_LUZ + 1][BuildAccessibilities.MAX_LUZ + 1];
-            
 
         }
 

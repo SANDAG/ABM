@@ -27,7 +27,7 @@ import com.pb.common.calculator.MatrixDataServerIf;
  */
 public class SkimBuilder
 {
-    private static final Logger                      logger                                 = Logger.getLogger(SkimBuilder.class);
+    private static final Logger                      LOGGER                                 = Logger.getLogger(SkimBuilder.class);
 
     private static final int                         WALK_TIME_INDEX                        = 0;
     private static final int                         BIKE_TIME_INDEX                        = 0;
@@ -95,18 +95,18 @@ public class SkimBuilder
 
         BestTransitPathCalculator bestPathUEC = new BestTransitPathCalculator(rbMap);
         wtw = new WalkTransitWalkSkimsCalculator();
-        wtw.setup(rbMap, logger, bestPathUEC);
+        wtw.setup(rbMap, LOGGER, bestPathUEC);
         wtd = new WalkTransitDriveSkimsCalculator();
-        wtd.setup(rbMap, logger, bestPathUEC);
+        wtd.setup(rbMap, LOGGER, bestPathUEC);
         dtw = new DriveTransitWalkSkimsCalculator();
-        dtw.setup(rbMap, logger, bestPathUEC);
+        dtw.setup(rbMap, LOGGER, bestPathUEC);
     }
 
     private void startMatrixServer(Properties properties)
     {
         String serverAddress = (String) properties.get("RunModel.MatrixServerAddress");
         int serverPort = new Integer((String) properties.get("RunModel.MatrixServerPort"));
-        logger.info("connecting to matrix server " + serverAddress + ":" + serverPort);
+        LOGGER.info("connecting to matrix server " + serverAddress + ":" + serverPort);
 
         try
         {
@@ -119,7 +119,7 @@ public class SkimBuilder
 
         } catch (Exception e)
         {
-            logger.error("could not connect to matrix server", e);
+            LOGGER.error("could not connect to matrix server", e);
             throw new RuntimeException(e);
 
         }
@@ -225,7 +225,7 @@ public class SkimBuilder
                     costIndex = -1;
                 }
                 double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, false,
-                        logger);
+                        LOGGER);
                 return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], getCost(
                         costIndex < 0 ? 0.0 : autoSkims[costIndex], autoSkims[distIndex]));
             }
@@ -233,7 +233,7 @@ public class SkimBuilder
             case BIKE:
             {
                 double distance = autoNonMotSkims.getAutoSkims(origin, destination, tod, false,
-                        logger)[DA_DIST_INDEX];
+                        LOGGER)[DA_DIST_INDEX];
                 double speed = modeChoice == TripModeChoice.BIKE ? DEFAULT_BIKE_SPEED
                         : DEFAULT_WALK_SPEED;
                 return new TripAttributes(distance * 60 / speed, distance, 0);
@@ -271,16 +271,16 @@ public class SkimBuilder
                         int atapPosition = mgraManager.getTapPosition(destination, alightTap);
                         if (atapPosition < 0 || btapPosition < 0)
                         {
-                            logger.info("bad tap position for drive access board tap");
-                            logger.info("mc: " + modeChoice);
-                            logger.info("origin: " + origin);
-                            logger.info("dest: " + destination);
-                            logger.info("board tap: " + boardTap);
-                            logger.info("alight tap: " + alightTap);
-                            logger.info("tod: " + tod);
-                            logger.info("inbound: " + inbound);
-                            logger.info("board tap position: " + btapPosition);
-                            logger.info("alight tap position: " + atapPosition);
+                            LOGGER.info("bad tap position for drive access board tap");
+                            LOGGER.info("mc: " + modeChoice);
+                            LOGGER.info("origin: " + origin);
+                            LOGGER.info("dest: " + destination);
+                            LOGGER.info("board tap: " + boardTap);
+                            LOGGER.info("alight tap: " + alightTap);
+                            LOGGER.info("tod: " + tod);
+                            LOGGER.info("inbound: " + inbound);
+                            LOGGER.info("board tap position: " + btapPosition);
+                            LOGGER.info("alight tap position: " + atapPosition);
                         } else
                         {
                             boardAccessTime = tazManager.getTapTime(taz, btapPosition,
@@ -299,18 +299,18 @@ public class SkimBuilder
                             alightTaz = taz;
                         } catch (NullPointerException e)
                         {
-                            logger.info("tap manager can't find taz for alight tap");
-                            logger.info("mc: " + modeChoice);
-                            logger.info("origin: " + origin);
-                            logger.info("dest: " + destination);
-                            logger.info("board tap: " + boardTap);
-                            logger.info("alight tap: " + alightTap);
-                            logger.info("tod: " + tod);
-                            logger.info("inbound: " + inbound);
-                            logger.info("a: " + tapManager.getTapParkingInfo());
-                            logger.info("b: " + tapManager.getTapParkingInfo()[alightTap]);
-                            logger.info("b: " + tapManager.getTapParkingInfo()[alightTap][1]);
-                            logger.info("b: " + tapManager.getTapParkingInfo()[alightTap][1][0]);
+                            LOGGER.info("tap manager can't find taz for alight tap");
+                            LOGGER.info("mc: " + modeChoice);
+                            LOGGER.info("origin: " + origin);
+                            LOGGER.info("dest: " + destination);
+                            LOGGER.info("board tap: " + boardTap);
+                            LOGGER.info("alight tap: " + alightTap);
+                            LOGGER.info("tod: " + tod);
+                            LOGGER.info("inbound: " + inbound);
+                            LOGGER.info("a: " + tapManager.getTapParkingInfo());
+                            LOGGER.info("b: " + tapManager.getTapParkingInfo()[alightTap]);
+                            LOGGER.info("b: " + tapManager.getTapParkingInfo()[alightTap][1]);
+                            LOGGER.info("b: " + tapManager.getTapParkingInfo()[alightTap][1][0]);
                             throw e;
                         }
                         int atapPosition = tazManager.getTapPosition(taz, alightTap,
@@ -319,15 +319,15 @@ public class SkimBuilder
                         if (atapPosition < 0 || btapPosition < 0)
                         {
 
-                            logger.info("mc: " + modeChoice);
-                            logger.info("origin: " + origin);
-                            logger.info("dest: " + destination);
-                            logger.info("board tap: " + boardTap);
-                            logger.info("alight tap: " + alightTap);
-                            logger.info("tod: " + tod);
-                            logger.info("inbound: " + inbound);
-                            logger.info("board tap position: " + btapPosition);
-                            logger.info("alight tap position: " + atapPosition);
+                            LOGGER.info("mc: " + modeChoice);
+                            LOGGER.info("origin: " + origin);
+                            LOGGER.info("dest: " + destination);
+                            LOGGER.info("board tap: " + boardTap);
+                            LOGGER.info("alight tap: " + alightTap);
+                            LOGGER.info("tod: " + tod);
+                            LOGGER.info("inbound: " + inbound);
+                            LOGGER.info("board tap position: " + btapPosition);
+                            LOGGER.info("alight tap position: " + atapPosition);
                         } else
                         {
                             boardAccessTime = mgraManager
@@ -344,16 +344,16 @@ public class SkimBuilder
                     int at = mgraManager.getTapPosition(destination, alightTap);
                     if (bt < 0 || at < 0)
                     {
-                        logger.info("bad tap position: " + bt + "  " + at);
-                        logger.info("mc: " + modeChoice);
-                        logger.info("origin: " + origin);
-                        logger.info("dest: " + destination);
-                        logger.info("board tap: " + boardTap);
-                        logger.info("alight tap: " + alightTap);
-                        logger.info("tod: " + tod);
-                        logger.info("inbound: " + inbound);
-                        logger.info("board tap position: " + bt);
-                        logger.info("alight tap position: " + at);
+                        LOGGER.info("bad tap position: " + bt + "  " + at);
+                        LOGGER.info("mc: " + modeChoice);
+                        LOGGER.info("origin: " + origin);
+                        LOGGER.info("dest: " + destination);
+                        LOGGER.info("board tap: " + boardTap);
+                        LOGGER.info("alight tap: " + alightTap);
+                        LOGGER.info("tod: " + tod);
+                        LOGGER.info("inbound: " + inbound);
+                        LOGGER.info("board tap position: " + bt);
+                        LOGGER.info("alight tap position: " + at);
                     } else
                     {
                         boardAccessTime = mgraManager.getMgraToTapWalkTime(origin, bt);
@@ -398,7 +398,7 @@ public class SkimBuilder
                         : TRANSIT_LOCAL_FIRST_WAIT_TIME_INDEX];
                 time += skims[isPremium ? TRANSIT_PREM_TRANSFER_WAIT_TIME_INDEX
                         : TRANSIT_LOCAL_TRANSFER_WAIT_TIME_INDEX];
-                double dist = autoNonMotSkims.getAutoSkims(origin, destination, tod, false, logger)[DA_DIST_INDEX]; // todo:
+                double dist = autoNonMotSkims.getAutoSkims(origin, destination, tod, false, LOGGER)[DA_DIST_INDEX]; // todo:
                                                                                                                     // is
                                                                                                                     // this
                                                                                                                     // correct

@@ -56,12 +56,12 @@ public class SubtourDestChoiceModel
     private static int[]                         tourPurposeIndices;
 
     // all three subtour purposes use the same DC sheet
-    private static final String[]                dcModelSheetKeys                           = {
+    private static final String[]                DC_MODEL_SHEET_KEYS                        = {
             PROPERTIES_DC_AT_WORK_MODEL_SHEET, PROPERTIES_DC_AT_WORK_MODEL_SHEET,
             PROPERTIES_DC_AT_WORK_MODEL_SHEET                                               };
 
     // all three subtour purposes use the same SOA sheet
-    private static final String[]                dcSoaModelSheetKeys                        = {
+    private static final String[]                DC_SOA_MODEL_SHEET_KEYS                    = {
             PROPERTIES_DC_SOA_AT_WORK_MODEL_SHEET, PROPERTIES_DC_SOA_AT_WORK_MODEL_SHEET,
             PROPERTIES_DC_SOA_AT_WORK_MODEL_SHEET                                           };
 
@@ -77,11 +77,11 @@ public class SubtourDestChoiceModel
     private static final int                     PM                                         = 26;
     private static final int                     EV                                         = 36;
 
-    private static final int[][][]               periodCombinations                         = {
+    private static final int[][][]               PERIOD_COMBINATIONS                        = {
             { {AM, AM}, {MD, MD}, {PM, PM}}, { {AM, AM}, {MD, MD}, {PM, PM}},
             { {AM, AM}, {MD, MD}, {PM, PM}}                                                 };
 
-    private static final double[][]              periodCombinationCoefficients              = {
+    private static final double[][]              PERIOD_COMBINATION_COEFFICIENTS            = {
             {-3.1453, -0.1029, -2.9056}, {-3.1453, -0.1029, -2.9056}, {-3.1453, -0.1029, -2.9056}};
 
     private String                               tourCategory;
@@ -104,8 +104,8 @@ public class SubtourDestChoiceModel
 
     private TourModeChoiceModel                  mcModel;
     private DestinationSampleOfAlternativesModel dcSoaModel;
-    private ChoiceModelApplication[]               dcModel;
-    private ChoiceModelApplication[]               dcModel2;
+    private ChoiceModelApplication[]             dcModel;
+    private ChoiceModelApplication[]             dcModel2;
 
     private boolean[]                            dcModel2AltsAvailable;
     private int[]                                dcModel2AltsSample;
@@ -215,9 +215,9 @@ public class SubtourDestChoiceModel
         int i = 0;
         for (String purposeName : tourPurposeNames)
         {
-            int uecIndex = Util.getIntegerValueFromPropertyMap(propertyMap, dcModelSheetKeys[i]);
+            int uecIndex = Util.getIntegerValueFromPropertyMap(propertyMap, DC_MODEL_SHEET_KEYS[i]);
             int soaUecIndex = Util.getIntegerValueFromPropertyMap(propertyMap,
-                    dcSoaModelSheetKeys[i]);
+                    DC_SOA_MODEL_SHEET_KEYS[i]);
             purposeNameIndexMap.put(purposeName, i);
             uecSheetIndices[i] = uecIndex;
             soaUecSheetIndices[i] = soaUecIndex;
@@ -890,7 +890,7 @@ public class SubtourDestChoiceModel
         int i = 0;
         int tourPurposeIndex = purposeNameIndexMap.get(tour.getSubTourPurpose());
         double totalExpUtility = 0.0;
-        for (int[] combo : periodCombinations[tourPurposeIndex])
+        for (int[] combo : PERIOD_COMBINATIONS[tourPurposeIndex])
         {
             int startPeriod = combo[0];
             int endPeriod = combo[1];
@@ -933,7 +933,7 @@ public class SubtourDestChoiceModel
             }
 
             double expUtil = Math.exp(modeChoiceLogsums[index]
-                    + periodCombinationCoefficients[tourPurposeIndex][i]);
+                    + PERIOD_COMBINATION_COEFFICIENTS[tourPurposeIndex][i]);
             totalExpUtility += expUtil;
 
             if (household.getDebugChoiceModels())
@@ -951,9 +951,9 @@ public class SubtourDestChoiceModel
                                 + " MCLS = "
                                 + modeChoiceLogsums[index]
                                 + ", ASC = "
-                                + periodCombinationCoefficients[tourPurposeIndex][i]
+                                + PERIOD_COMBINATION_COEFFICIENTS[tourPurposeIndex][i]
                                 + ", (MCLS + ASC) = "
-                                + (modeChoiceLogsums[index] + periodCombinationCoefficients[tourPurposeIndex][i])
+                                + (modeChoiceLogsums[index] + PERIOD_COMBINATION_COEFFICIENTS[tourPurposeIndex][i])
                                 + ", exp(MCLS + ASC) = " + expUtil + ", cumExpUtility = "
                                 + totalExpUtility);
 

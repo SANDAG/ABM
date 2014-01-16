@@ -17,17 +17,17 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
-import com.pb.common.newmodel.UtilityExpressionCalculator;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.Modes;
+import org.sandag.abm.modechoice.Modes.AccessMode;
 import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
 import org.sandag.abm.modechoice.TransitDriveAccessDMU;
 import org.sandag.abm.modechoice.TransitWalkAccessDMU;
 import org.sandag.abm.modechoice.TransitWalkAccessUEC;
-import org.sandag.abm.modechoice.Modes.AccessMode;
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
+import com.pb.common.newmodel.UtilityExpressionCalculator;
 import com.pb.common.util.Tracer;
 
 /**

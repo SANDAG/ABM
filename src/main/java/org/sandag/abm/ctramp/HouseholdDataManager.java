@@ -877,11 +877,11 @@ public abstract class HouseholdDataManager
             }
         }
         String headerRow = String.format("%5s\t", "Age\t");
-        for (String empCategory : Person.employmentCategoryNameArray)
+        for (String empCategory : Person.EMPLOYMENT_CATEGORY_NAME_ARRAY)
         {
             headerRow += String.format("%16s\t", empCategory);
         }
-        for (String stuCategory : Person.studentCategoryNameArray)
+        for (String stuCategory : Person.STUDENT_CATEGORY_NAME_ARRAY)
         {
             headerRow += String.format("%16s\t", stuCategory);
         }
@@ -900,14 +900,14 @@ public abstract class HouseholdDataManager
             for (int j = 0; j < ageCategories.length; ++j)
             {
                 row = String.format("%5s\t", ageCategories[j]);
-                for (String empCategory : Person.employmentCategoryNameArray)
+                for (String empCategory : Person.EMPLOYMENT_CATEGORY_NAME_ARRAY)
                 {
                     if (personTypeSummary.containsKey(empCategory))
                     {
                         row += String.format("%16d\t", personTypeSummary.get(empCategory)[j]);
                     } else row += String.format("%16d\t", 0);
                 }
-                for (String stuCategory : Person.studentCategoryNameArray)
+                for (String stuCategory : Person.STUDENT_CATEGORY_NAME_ARRAY)
                 {
                     if (personTypeSummary.containsKey(stuCategory))
                     {

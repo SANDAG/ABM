@@ -21,11 +21,11 @@ public class AirportDmuFactory
         implements AirportDmuFactoryIf, Serializable
 {
 
-    private AirportModelStructure airportModelStructure;
+    //private AirportModelStructure airportModelStructure;
 
-    public AirportDmuFactory(AirportModelStructure modelStructure)
+    public AirportDmuFactory()//AirportModelStructure modelStructure)
     {
-        this.airportModelStructure = modelStructure;
+        //this.airportModelStructure = modelStructure;
     }
 
     public AirportModelDMU getAirportModelDMU()

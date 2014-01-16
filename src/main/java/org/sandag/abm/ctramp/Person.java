@@ -33,7 +33,7 @@ public class Person
     public static final String   PERSON_TYPE_STUDENT_NON_DRIVING_NAME       = "Student of non-driving age";
     public static final String   PERSON_TYPE_PRE_SCHOOL_CHILD_NAME          = "Child too young for school";
 
-    public static final String[] personTypeNameArray                        = {
+    public static final String[] PERSON_TYPE_NAME_ARRAY                     = {
             PERSON_TYPE_FULL_TIME_WORKER_NAME, PERSON_TYPE_PART_TIME_WORKER_NAME,
             PERSON_TYPE_UNIVERSITY_STUDENT_NAME, PERSON_TYPE_NON_WORKER_NAME,
             PERSON_TYPE_RETIRED_NAME, PERSON_TYPE_STUDENT_DRIVING_NAME,
@@ -51,7 +51,7 @@ public class Person
     public static final String   EMPLOYMENT_CATEGORY_NOT_EMPLOYED_NAME      = "Not employed";
     public static final String   EMPLOYMENT_CATEGORY_UNDER_AGE_16_NAME      = "Under age 16";
 
-    public static final String[] employmentCategoryNameArray                = {
+    public static final String[] EMPLOYMENT_CATEGORY_NAME_ARRAY             = {
             EMPLOYMENT_CATEGORY_FULL_TIME_WORKER_NAME, EMPLOYMENT_CATEGORY_PART_TIME_WORKER_NAME,
             EMPLOYMENT_CATEGORY_NOT_EMPLOYED_NAME, EMPLOYMENT_CATEGORY_UNDER_AGE_16_NAME};
 
@@ -59,7 +59,7 @@ public class Person
     public static final String   STUDENT_CATEGORY_COLLEGE_OR_HIGHER_NAME    = "College or higher";
     public static final String   STUDENT_CATEGORY_NOT_STUDENT_NAME          = "Not student";
 
-    public static final String[] studentCategoryNameArray                   = {
+    public static final String[] STUDENT_CATEGORY_NAME_ARRAY                = {
             STUDENT_CATEGORY_GRADE_OR_HIGH_SCHOOL_NAME, STUDENT_CATEGORY_COLLEGE_OR_HIGHER_NAME,
             STUDENT_CATEGORY_NOT_STUDENT_NAME                               };
 
@@ -680,7 +680,7 @@ public class Person
 
     public String getPersonType()
     {
-        return personTypeNameArray[personType - 1];
+        return PERSON_TYPE_NAME_ARRAY[personType - 1];
     }
 
     public void setPersonIsHighSchool(boolean flag)
@@ -740,7 +740,7 @@ public class Person
 
     public String getPersonEmploymentCategory()
     {
-        return employmentCategoryNameArray[persEmploymentCategory - 1];
+        return EMPLOYMENT_CATEGORY_NAME_ARRAY[persEmploymentCategory - 1];
     }
 
     public int getPersonStudentCategoryIndex()
@@ -750,7 +750,7 @@ public class Person
 
     public String getPersonStudentCategory()
     {
-        return studentCategoryNameArray[persStudentCategory - 1];
+        return STUDENT_CATEGORY_NAME_ARRAY[persStudentCategory - 1];
     }
 
     public float getValueOfTime()

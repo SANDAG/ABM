@@ -1,6 +1,5 @@
 package org.sandag.abm.specialevent;
 
-
 public class SpecialEventTrip
 {
 

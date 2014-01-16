@@ -1,6 +1,5 @@
 package org.sandag.abm.airport;
 
-
 public final class AirportModelStructure
 {
 
@@ -41,10 +40,9 @@ public final class AirportModelStructure
     public static final byte     TAXI                = 7;
     public static final byte     SHUTTLE_VAN         = 8;
     public static final byte     TRANSIT             = 9;
-    
-    public AirportModelStructure()
+
+    private AirportModelStructure()
     {
-        //Not Implemented
     }
 
     /**
