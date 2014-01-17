@@ -1446,7 +1446,7 @@ public class DataExporter
                     for (int j : internalZones)
                     {
                         float value = matrixData[counter].getValueAt(i, j);
-                        if (value > 0)
+                        if (value > .00001)
                         {
                             sb = new StringBuilder();
                             sb.append(i).append(",").append(j).append(",").append(period)
@@ -2151,7 +2151,7 @@ public class DataExporter
                         "mgratotap", "mgratomgra", "taztotap", "hhdata", "persondata",
                         "wslocation", "synhh", "synperson", "indivtours", "jointtours",
                         "indivtrips", "jointtrips", "airporttrips", "cbtours", "cbtrips",
-                        "visitortours", "visitortrips", "ietrip", "trucktrip", "eetrip", "eitrip",
+                        "visitortours", "visitortrips", "ietrip", "commtrip", "eetrip", "eitrip",
                         "tazskim", "tapskim", "definition", "emfacvehcode", "pnrvehicles",
                         "cbdvehicles");
             }
@@ -2233,7 +2233,7 @@ public class DataExporter
             dataExporter.exportVisitorData("visitortours", "visitortrips");
         if (definedTables.contains("ietrip"))
             dataExporter.exportInternalExternalTripData("ietrip");
-        if (definedTables.contains("trucktrip")) dataExporter.exportCommVehData("trucktrip");
+        if (definedTables.contains("commtrip")) dataExporter.exportCommVehData("commtrip");
         if (definedTables.contains("eetrip"))
             dataExporter.exportExternalExternalTripData("eetrip");
         if (definedTables.contains("eitrip"))
