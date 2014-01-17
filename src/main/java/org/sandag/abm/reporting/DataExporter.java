@@ -1589,10 +1589,10 @@ public class DataExporter
         map.put("imps3nh_" + TOD_TOKEN, "HOV3_FREE");
         map.put("imphhdt_" + TOD_TOKEN, "TRUCK_HH_TOLL");
         map.put("imphhdn_" + TOD_TOKEN, "TRUCK_HH_FREE");
-        map.put("impmhdt_" + TOD_TOKEN, "TRUCK_MH_TOLL");
-        map.put("impmhdn_" + TOD_TOKEN, "TRUCK_MH_FREE");
-        map.put("implhdt_" + TOD_TOKEN, "TRUCK_LH_TOLL");
-        map.put("implhdn_" + TOD_TOKEN, "TRUCK_LH_FREE");
+        //map.put("impmhdt_" + TOD_TOKEN, "TRUCK_MH_TOLL");
+        //map.put("impmhdn_" + TOD_TOKEN, "TRUCK_MH_FREE");
+        //map.put("implhdt_" + TOD_TOKEN, "TRUCK_LH_TOLL");
+        //map.put("implhdn_" + TOD_TOKEN, "TRUCK_LH_FREE");
         return map;
     }
 
@@ -1615,14 +1615,14 @@ public class DataExporter
                 "*STM_" + TOD_TOKEN + " (Skim)", "hhdt - ITOLL2_" + TOD_TOKEN});
         map.put("imphhdn_" + TOD_TOKEN, new String[] {"Length (Skim)",
                 "*STM_" + TOD_TOKEN + " (Skim)"});
-        map.put("impmhdt_" + TOD_TOKEN, new String[] {"Length (Skim)",
-                "*STM_" + TOD_TOKEN + " (Skim)", "mhdt - ITOLL2_" + TOD_TOKEN});
-        map.put("impmhdn_" + TOD_TOKEN, new String[] {"Length (Skim)",
-                "*STM_" + TOD_TOKEN + " (Skim)"});
-        map.put("implhdt_" + TOD_TOKEN, new String[] {"Length (Skim)",
-                "*STM_" + TOD_TOKEN + " (Skim)", "lhdt - ITOLL2_" + TOD_TOKEN});
-        map.put("implhdn_" + TOD_TOKEN, new String[] {"Length (Skim)",
-                "*STM_" + TOD_TOKEN + " (Skim)"});
+        //map.put("impmhdt_" + TOD_TOKEN, new String[] {"Length (Skim)",
+        //        "*STM_" + TOD_TOKEN + " (Skim)", "mhdt - ITOLL2_" + TOD_TOKEN});
+        //map.put("impmhdn_" + TOD_TOKEN, new String[] {"Length (Skim)",
+        //        "*STM_" + TOD_TOKEN + " (Skim)"});
+        //map.put("implhdt_" + TOD_TOKEN, new String[] {"Length (Skim)",
+        //        "*STM_" + TOD_TOKEN + " (Skim)", "lhdt - ITOLL2_" + TOD_TOKEN});
+        //map.put("implhdn_" + TOD_TOKEN, new String[] {"Length (Skim)",
+        //        "*STM_" + TOD_TOKEN + " (Skim)"});
         return map;
     }
 
