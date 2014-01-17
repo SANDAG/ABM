@@ -1,7 +1,5 @@
 package org.sandag.abm.active.sandag;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -12,14 +10,12 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.active.AbstractPathChoiceLogsumMatrixApplication;
+import org.sandag.abm.active.IntrazonalCalculation;
+import org.sandag.abm.active.IntrazonalCalculations;
 import org.sandag.abm.active.Network;
 import org.sandag.abm.active.NodePair;
 import org.sandag.abm.active.PathAlternativeList;
 import org.sandag.abm.active.PathAlternativeListGenerationConfiguration;
-import org.sandag.abm.application.SandagModelStructure;
-import org.sandag.abm.ctramp.BikeLogsum;
-import org.sandag.abm.ctramp.Person;
-import org.sandag.abm.ctramp.Tour;
 
 import com.pb.common.util.ResourceUtil;
 
@@ -31,7 +27,7 @@ public class SandagWalkPathChoiceLogsumMatrixApplication extends AbstractPathCho
 	public static final String WALK_LOGSUM_SKIM_MGRA_TAP_FILE_PROPERTY = "active.logsum.matrix.file.walk.mgratap";
 	
 
-    private PathAlternativeListGenerationConfiguration<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> configuration;
+    private final PathAlternativeListGenerationConfiguration<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> configuration;
     
     public SandagWalkPathChoiceLogsumMatrixApplication(PathAlternativeListGenerationConfiguration<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> configuration)
     {
@@ -47,15 +43,25 @@ public class SandagWalkPathChoiceLogsumMatrixApplication extends AbstractPathCho
         }
         
         double utility = 0;
+        double distance = 0;
         SandagBikeNode parent = null;
         for (SandagBikeNode n : alternativeList.get(0)) {
             if ( parent != null ) {
-                utility -= configuration.getNetwork().getEdge(parent,n).walkCost;
+                utility += configuration.getNetwork().getEdge(parent,n).walkCost;
+                distance += configuration.getNetwork().getEdge(parent,n).distance;
             }
             parent = n;
         }
-
-        return new double[] {-utility};    
+  
+        return new double[] {utility,distance * configuration.getDefaultMinutesPerMile()}; 
+    }
+    
+    @Override
+    protected List<IntrazonalCalculation<SandagBikeNode>> getMarketSegmentIntrazonalCalculations() {
+    	IntrazonalCalculation<SandagBikeNode> logsumIntrazonalCalculation =
+    		IntrazonalCalculations.<SandagBikeNode>minFactorIntrazonalCalculation(IntrazonalCalculations.simpleFactorizer(0.5,0),1);
+    	//do time then distance
+    	return Arrays.asList(logsumIntrazonalCalculation,logsumIntrazonalCalculation);
     }
     
     
@@ -64,6 +70,7 @@ public class SandagWalkPathChoiceLogsumMatrixApplication extends AbstractPathCho
     		logger.error( String.format("no properties file base name (without .properties extension) was specified as an argument.") );
     		return;
     	}
+    	logger.info("loading property file: " + ClassLoader.getSystemClassLoader().getResource(args[0] + ".properties").getFile().toString());
     	
     	logger.info("Building walk skims");
 //    	String RESOURCE_BUNDLE_NAME = "sandag_abm_active_test";
@@ -95,13 +102,15 @@ public class SandagWalkPathChoiceLogsumMatrixApplication extends AbstractPathCho
         Map<Integer,Integer> destinationCentroids = configuration.getInverseDestinationZonalCentroidIdMap();
 
         try (PrintWriter writer = new PrintWriter(outputFile.toFile())) {
-        	writer.println("i,j,value");
+        	writer.println("i,j,percieved,actual");
         	StringBuilder sb;
         	for (NodePair<SandagBikeNode> od : new TreeSet<>(logsums.keySet())) { //sort them so the output "looks nice"
         		sb = new StringBuilder();
         		sb.append(originCentroids.get(od.getFromNode().getId())).append(",");
         		sb.append(destinationCentroids.get(od.getToNode().getId())).append(",");
-        		sb.append(formatter.format(logsums.get(od)[0])); //only one value here
+                double[] values = logsums.get(od);
+        		sb.append(formatter.format(values[0])).append(","); // percieved time
+                sb.append(formatter.format(values[1])); // actual time
         		writer.println(sb.toString());
         	}
         } catch (IOException e) {
@@ -151,14 +160,18 @@ public class SandagWalkPathChoiceLogsumMatrixApplication extends AbstractPathCho
         }
 
         try (PrintWriter writer = new PrintWriter(outputFile.toFile())) {
-        	writer.println("mgra,tap,boarding,alighting");
+        	writer.println("mgra,tap,boarsingPerceived,boardingActual,alightingPerceived,alightingActual");
         	StringBuilder sb;
         	for (NodePair<SandagBikeNode> od : new TreeSet<>(mgraTapLogsums.keySet())) { //sort them so the output "looks nice"
         		sb = new StringBuilder();
         		sb.append(originCentroids.get(od.getFromNode().getId())).append(",");
         		sb.append(destinationCentroids.get(od.getToNode().getId())).append(",");
-        		sb.append(formatter.format(mgraTapLogsums.get(od)[0])).append(","); //only one value here
-        		sb.append(formatter.format(tapMgraLogsums.get(new NodePair<>(od.getToNode(),od.getFromNode()))[0])); //only one value here
+                double[] boardingValues = mgraTapLogsums.get(od);
+        		sb.append(formatter.format(boardingValues[0])).append(","); // boarding percieved
+                sb.append(formatter.format(boardingValues[1])).append(","); // boarding actual
+                double[] alightingValues = tapMgraLogsums.get(new NodePair<>(od.getToNode(),od.getFromNode()));
+        		sb.append(formatter.format(alightingValues[0])).append(","); // alighting percieved
+                sb.append(formatter.format(alightingValues[1]));             // alighting actual
         		writer.println(sb.toString());
         	}
         } catch (IOException e) {

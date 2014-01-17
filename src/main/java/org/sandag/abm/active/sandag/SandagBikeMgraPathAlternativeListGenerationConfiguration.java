@@ -28,10 +28,4 @@ public class SandagBikeMgraPathAlternativeListGenerationConfiguration extends Sa
             if ( n.mgra > 0 ) { zonalCentroidIdMap.put((int) n.mgra, n.getId()); }
         }
     }
-
-    @Override
-    public String getOutputDirectory()
-    {
-        return propertyMap.get(PROPERTIES_OUTPUT) + "mgra/";
-    }    
 }

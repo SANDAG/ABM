@@ -25,4 +25,5 @@ public interface PathAlternativeListGenerationConfiguration<N extends Node, E ex
     public boolean isTraceExclusive();
     public EdgeEvaluator<E> getRandomizedEdgeCostEvaluator(int iter, long seed);
     public boolean isIntrazonalsNeeded();
+    public double getDefaultMinutesPerMile();
 }

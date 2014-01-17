@@ -5,11 +5,13 @@ import org.sandag.abm.active.*;
 
 public abstract class SandagWalkPathAlternativeListGenerationConfiguration implements PathAlternativeListGenerationConfiguration<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal>
 {
+	public static final String PROPERTIES_SAMPLE_MAXCOST = "active.sample.maxcost";
+    public static final String PROPERTIES_OUTPUT = "active.output.walk";
+    public static final String PROPERTIES_TRACE_EXCLUSIVE = "active.trace.exclusive";
+    public static final String PROPERTIES_WALK_MINUTES_PER_MILE = "active.walk.minutes.per.mile";
+    
     protected Map<String,String> propertyMap;
     protected PropertyParser propertyParser;
-    protected final String PROPERTIES_SAMPLE_MAXCOST = "active.sample.maxcost";
-    protected final String PROPERTIES_OUTPUT = "active.output.walk";
-    protected final String PROPERTIES_TRACE_EXCLUSIVE = "active.trace.exclusive";
     
     protected String PROPERTIES_MAXDIST_ZONE;
     protected String PROPERTIES_TRACE_ORIGINS;
@@ -18,6 +20,7 @@ public abstract class SandagWalkPathAlternativeListGenerationConfiguration imple
     protected Map<Integer,Integer> originZonalCentroidIdMap;
     protected Map<Integer,Integer> destinationZonalCentroidIdMap;
     protected Network<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> network;
+    private final double walkMinutesPerMile;
     
     public SandagWalkPathAlternativeListGenerationConfiguration(Map<String,String> propertyMap, Network<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> network)
     {
@@ -27,6 +30,7 @@ public abstract class SandagWalkPathAlternativeListGenerationConfiguration imple
         this.originZonalCentroidIdMap = null;
         this.destinationZonalCentroidIdMap = null;
         this.network = network;
+        walkMinutesPerMile = Double.parseDouble(propertyMap.get(PROPERTIES_WALK_MINUTES_PER_MILE));
     }
     
     public Set<Integer> getTraceOrigins()
@@ -89,6 +93,11 @@ public abstract class SandagWalkPathAlternativeListGenerationConfiguration imple
     public double getMaxCost()
     {
         return Double.parseDouble(propertyMap.get(PROPERTIES_SAMPLE_MAXCOST));
+    }
+    
+    @Override
+    public double getDefaultMinutesPerMile() {
+    	return walkMinutesPerMile;
     }
 
     @Override
