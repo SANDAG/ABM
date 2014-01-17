@@ -34,11 +34,5 @@ public class SandagBikeTazPathAlternativeListGenerationConfiguration extends San
             if ( n.taz > 0 ) { zonalCentroidIdMap.put((int) n.taz, n.getId()); }
         }
     }
-    
-    @Override
-    public String getOutputDirectory()
-    {
-        return propertyMap.get(PROPERTIES_OUTPUT) + "taz/";
-    }
 
 }

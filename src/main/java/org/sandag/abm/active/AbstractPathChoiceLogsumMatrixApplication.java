@@ -1,8 +1,6 @@
 package org.sandag.abm.active;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -10,8 +8,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.log4j.Logger;
-import org.sandag.abm.active.sandag.SandagBikePathChoiceModel;
 
 public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, E extends Edge<N>, T extends Traversal<E>>
 {
@@ -41,6 +39,7 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
     private static final double DOUBLE_PRECISION_TOLERANCE = 0.001;
     
     protected abstract double[] calculateMarketSegmentLogsums(PathAlternativeList<N,E> alternativeList);
+    protected abstract List<IntrazonalCalculation<N>> getMarketSegmentIntrazonalCalculations();
     
     public AbstractPathChoiceLogsumMatrixApplication(PathAlternativeListGenerationConfiguration<N,E,T> configuration) {
         this.configuration = configuration;
@@ -71,7 +70,17 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
         startTime = System.currentTimeMillis();
         int threadCount = Runtime.getRuntime().availableProcessors();
         ExecutorService executor = Executors.newFixedThreadPool(threadCount); 
-        final Queue<Integer> originQueue = new ConcurrentLinkedQueue<>(originZonalCentroidIdMap.keySet());
+        //final Queue<Integer> originQueue = new ConcurrentLinkedQueue<>(originZonalCentroidIdMap.keySet());
+        
+        int id = -1;
+        for (int oid : originZonalCentroidIdMap.keySet()) {
+        	if (originZonalCentroidIdMap.get(oid) == 200003540) {
+        		id = oid;
+        		break;
+        	}
+        }
+        final Queue<Integer> originQueue = new ConcurrentLinkedQueue<>(Arrays.asList(id));
+        
         final ConcurrentHashMap<Integer,List<Integer>> insufficientSamplePairs = new ConcurrentHashMap<>();
         final CountDownLatch latch = new CountDownLatch(threadCount);
         final AtomicInteger counter = new AtomicInteger();
@@ -108,44 +117,17 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
         logger.info("Total insufficient sample pairs: " + totalInsuffPairs);
         
         if ( intrazonalsNeeded ) {
-        
-            int nSegments = 0;
-            for ( N oNode : logsums.keySet() ) {
-                for ( N dNode : logsums.get(oNode).keySet() ) {
-                    nSegments = logsums.get(oNode).get(dNode).length;
-                    break;
-                }
-            }
-        
-            for (int s=0; s<nSegments; s++) {
-                for ( N oNode : logsums.keySet() )  {
-                    double min = Double.MAX_VALUE;
-                    double max = -Double.MAX_VALUE;
-                    for ( N dNode : logsums.get(oNode).keySet() ) {
-                        if (! dNode.equals(oNode) ) {
-                            double val = logsums.get(oNode).get(dNode)[s];
-                            min = Math.min(min, val);
-                            max = Math.max(max, val);
-                        }
-                    }
-                    
-                    double intrazonalVal;
-                    if ( min < 0 && max <= DOUBLE_PRECISION_TOLERANCE ) {
-                        intrazonalVal = Math.min(max / 2,0);
-                    } else if ( max > 0 && min >= -DOUBLE_PRECISION_TOLERANCE ) {
-                        intrazonalVal = Math.max(min / 2,0);
-                    } else if ( max == 0 && min == 0 ) {
-                        intrazonalVal = 0;
-                    } else {
-                        throw new RuntimeException("Error setting intrazonal logsum value for market segment " + s + " and centroid node id " + oNode.getId() + ": interzonal values both positive and negative");
-                    }
-                
-                    if ( s==0 ) {
-                        logsums.get(oNode).put(oNode,new double[nSegments]);
-                    }
-                    logsums.get(oNode).get(oNode)[s] = intrazonalVal;
-                }
-            }
+        	logger.info("Calculating intrazonals");
+        	List<IntrazonalCalculation<N>> intrazonalCalculations = getMarketSegmentIntrazonalCalculations();
+        	int segments = intrazonalCalculations.size();
+        	for (int segment = 0; segment < segments; segment++) {
+        		for (N origin : logsums.keySet()) {
+        			Map<N,double[]> originLogsums = logsums.get(origin);
+        			if (segment == 0)
+        				originLogsums.put(origin,new double[segments]);
+        			originLogsums.get(origin)[segment] = intrazonalCalculations.get(segment).getIntrazonalValue(origin,originLogsums,segment);
+        		}
+        	}
         }
         
         Map<NodePair<N>,double[]> pairLogsums = new HashMap<>();

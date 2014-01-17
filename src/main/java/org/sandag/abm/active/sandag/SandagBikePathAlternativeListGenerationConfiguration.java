@@ -1,28 +1,31 @@
 package org.sandag.abm.active.sandag;
 
 import java.util.*;
+
 import org.sandag.abm.active.*;
 
 public abstract class SandagBikePathAlternativeListGenerationConfiguration implements PathAlternativeListGenerationConfiguration<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal>
 {
     
-    private static final String PROPERTIES_COEF_DISTCLA0 = "active.coef.distcla0";
-    private static final String PROPERTIES_COEF_DISTCLA1 = "active.coef.distcla1";
-    private static final String PROPERTIES_COEF_DISTCLA2 = "active.coef.distcla2";
-    private static final String PROPERTIES_COEF_DISTCLA3 = "active.coef.distcla3";
-    private static final String PROPERTIES_COEF_DARTNE2  = "active.coef.dartne2";
-    private static final String PROPERTIES_COEF_DWRONGWY = "active.coef.dwrongwy";
-    private static final String PROPERTIES_COEF_GAIN = "active.coef.gain";
-    private static final String PROPERTIES_COEF_TURN = "active.coef.turn";
-    private static final String PROPERTIES_COEF_DISTANCE_WALK = "active.coef.distance.walk";
-    private static final String PROPERTIES_COEF_GAIN_WALK = "active.coef.gain.walk";
-    private static final String PROPERTIES_COEF_DCYCTRAC = "active.coef.dcyctrac";
-    private static final String PROPERTIES_COEF_DBIKBLVD = "active.coef.dbikblvd";
-    private static final String PROPERTIES_COEF_SIGNALS = "active.coef.signals";
-    private static final String PROPERTIES_COEF_UNLFRMA = "active.coef.unlfrma";
-    private static final String PROPERTIES_COEF_UNLFRMI = "active.coef.unlfrmi";
-    private static final String PROPERTIES_COEF_UNTOMA = "active.coef.untoma";
-    private static final String PROPERTIES_COEF_UNTOMI = "active.coef.untomi";
+    public static final String PROPERTIES_COEF_DISTCLA0 = "active.coef.distcla0";
+    public static final String PROPERTIES_COEF_DISTCLA1 = "active.coef.distcla1";
+    public static final String PROPERTIES_COEF_DISTCLA2 = "active.coef.distcla2";
+    public static final String PROPERTIES_COEF_DISTCLA3 = "active.coef.distcla3";
+    public static final String PROPERTIES_COEF_DARTNE2  = "active.coef.dartne2";
+    public static final String PROPERTIES_COEF_DWRONGWY = "active.coef.dwrongwy";
+    public static final String PROPERTIES_COEF_GAIN = "active.coef.gain";
+    public static final String PROPERTIES_COEF_TURN = "active.coef.turn";
+    public static final String PROPERTIES_COEF_DISTANCE_WALK = "active.coef.distance.walk";
+    public static final String PROPERTIES_COEF_GAIN_WALK = "active.coef.gain.walk";
+    public static final String PROPERTIES_COEF_DCYCTRAC = "active.coef.dcyctrac";
+    public static final String PROPERTIES_COEF_DBIKBLVD = "active.coef.dbikblvd";
+    public static final String PROPERTIES_COEF_SIGNALS = "active.coef.signals";
+    public static final String PROPERTIES_COEF_UNLFRMA = "active.coef.unlfrma";
+    public static final String PROPERTIES_COEF_UNLFRMI = "active.coef.unlfrmi";
+    public static final String PROPERTIES_COEF_UNTOMA = "active.coef.untoma";
+    public static final String PROPERTIES_COEF_UNTOMI = "active.coef.untomi";
+    public static final String PROPERTIES_BIKE_MINUTES_PER_MILE = "active.bike.minutes.per.mile";
+    public static final String PROPERTIES_OUTPUT = "active.output.bike";
     private static final double INACCESSIBLE_COST_COEF = 999.0;
     
     protected Map<String,String> propertyMap;
@@ -33,7 +36,6 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
     protected final String PROPERTIES_SAMPLE_PATHSIZES = "active.sample.pathsizes";
     protected final String PROPERTIES_SAMPLE_COUNT_MIN = "active.sample.count.min";
     protected final String PROPERTIES_SAMPLE_COUNT_MAX = "active.sample.count.max";
-    protected final String PROPERTIES_OUTPUT = "active.output.bike";
     protected final String PROPERTIES_TRACE_EXCLUSIVE = "active.trace.exclusive";
     protected final String PROPERTIES_RANDOM_SCALE_COEF = "active.sample.random.scale.coef";
     protected final String PROPERTIES_RANDOM_SCALE_LINK = "active.sample.random.scale.link";
@@ -44,6 +46,7 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
     protected Map<Integer,Map<Integer,Double>> nearbyZonalDistanceMap;
     protected Map<Integer,Integer> zonalCentroidIdMap;
     protected Network<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> network;
+    private final double bikeMinutesPerMile;
     
     public SandagBikePathAlternativeListGenerationConfiguration(Map<String,String> propertyMap, Network<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> network)
     {
@@ -52,6 +55,7 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
         this.nearbyZonalDistanceMap = null;
         this.zonalCentroidIdMap = null;
         this.network = network;
+        bikeMinutesPerMile = Double.parseDouble(propertyMap.get(PROPERTIES_BIKE_MINUTES_PER_MILE));
     }
     
     public Set<Integer> getTraceOrigins()
@@ -119,6 +123,11 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration imple
     public double getMaxCost()
     {
         return Double.parseDouble(propertyMap.get(PROPERTIES_SAMPLE_MAXCOST));
+    }
+    
+    @Override
+    public double getDefaultMinutesPerMile() {
+    	return bikeMinutesPerMile;
     }
 
     @Override
