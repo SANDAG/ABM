@@ -175,7 +175,7 @@ public class SkimBuilder
 
     private TripAttributes getTripAttributesUnknown()
     {
-        return new TripAttributes(-1, -1, -1, -1, -1);
+        return new TripAttributes(-1, -1, -1, -1, -1, -1);
     }
 
     private double getCost(double baseCost, double driveDist)
@@ -388,22 +388,24 @@ public class SkimBuilder
                                 : TRANSIT_LOCAL_IN_VEHICLE_TIME_INDEX];
                         break;
                 }
-                time += skims[isPremium ? TRANSIT_PREM_ACCESS_TIME_INDEX
+                
+                double outVehTime = 0.0;
+                outVehTime += skims[isPremium ? TRANSIT_PREM_ACCESS_TIME_INDEX
                         : TRANSIT_LOCAL_ACCESS_TIME_INDEX];
-                time += skims[isPremium ? TRANSIT_PREM_EGRESS_TIME_INDEX
+                outVehTime += skims[isPremium ? TRANSIT_PREM_EGRESS_TIME_INDEX
                         : TRANSIT_LOCAL_EGRESS_TIME_INDEX];
-                time += skims[isPremium ? TRANSIT_PREM_AUX_WALK_TIME_INDEX
+                outVehTime += skims[isPremium ? TRANSIT_PREM_AUX_WALK_TIME_INDEX
                         : TRANSIT_LOCAL_AUX_WALK_TIME_INDEX];
-                time += skims[isPremium ? TRANSIT_PREM_FIRST_WAIT_TIME_INDEX
+                outVehTime += skims[isPremium ? TRANSIT_PREM_FIRST_WAIT_TIME_INDEX
                         : TRANSIT_LOCAL_FIRST_WAIT_TIME_INDEX];
-                time += skims[isPremium ? TRANSIT_PREM_TRANSFER_WAIT_TIME_INDEX
+                outVehTime += skims[isPremium ? TRANSIT_PREM_TRANSFER_WAIT_TIME_INDEX
                         : TRANSIT_LOCAL_TRANSFER_WAIT_TIME_INDEX];
                 double dist = autoNonMotSkims.getAutoSkims(origin, destination, tod, false, LOGGER)[DA_DIST_INDEX]; // todo:
                                                                                                                     // is
                                                                                                                     // this
                                                                                                                     // correct
                                                                                                                     // enough?
-                return new TripAttributes(time, dist, skims[isPremium ? TRANSIT_PREM_FARE_INDEX
+                return new TripAttributes(time + outVehTime, outVehTime, dist, skims[isPremium ? TRANSIT_PREM_FARE_INDEX
                         : TRANSIT_LOCAL_FARE_INDEX], boardTaz, alightTaz);
             }
             default:
@@ -461,6 +463,7 @@ public class SkimBuilder
     public static class TripAttributes
     {
         private final float tripTime;
+        private final float outVehicleTime;
         private final float tripDistance;
         private final float tripCost;
         private final int   tripBoardTaz;
@@ -480,10 +483,11 @@ public class SkimBuilder
 
         private int tripStartTime;
 
-        public TripAttributes(double tripTime, double tripDistance, double tripCost,
+        public TripAttributes(double tripTime, double outVehicleTime, double tripDistance, double tripCost,
                 int tripBoardTaz, int tripAlightTaz)
         {
             this.tripTime = (float) tripTime;
+            this.outVehicleTime = (float) outVehicleTime;
             this.tripDistance = (float) tripDistance;
             this.tripCost = (float) tripCost;
             this.tripBoardTaz = tripBoardTaz;
@@ -492,7 +496,7 @@ public class SkimBuilder
 
         public TripAttributes(double tripTime, double tripDistance, double tripCost)
         {
-            this(tripTime, tripDistance, tripCost, -1, -1);
+            this(tripTime, 0, tripDistance, tripCost, -1, -1);
         }
 
         public void setTripModeName(String tripModeName)
@@ -503,6 +507,11 @@ public class SkimBuilder
         public float getTripTime()
         {
             return tripTime;
+        }
+        
+        public float getOutVehicleTime()
+        {
+            return outVehicleTime;
         }
 
         public float getTripDistance()

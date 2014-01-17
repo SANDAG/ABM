@@ -365,6 +365,7 @@ public class DataExporter
         {
             appendTripData(table, tripStructureDefinition);
             floatColumns.add("TRIP_TIME");
+            floatColumns.add("OUT_VEHICLE_TIME");
             floatColumns.add("TRIP_DISTANCE");
             floatColumns.add("TRIP_COST");
             stringColumns.add("TRIP_PURPOSE_NAME");
@@ -434,52 +435,6 @@ public class DataExporter
         return new PrintWriter(new BufferedWriter(new FileWriter(fileName)));
     }
 
-    private volatile PrintWriter tripTableWriter;
-
-    private void initializeMasterTripTable(String baseTableName)
-    {
-        LOGGER.info("setting up master trip table: " + baseTableName);
-        addTable(baseTableName);
-        try
-        {
-            tripTableWriter = getBufferedPrintWriter(getOutputPath(baseTableName + ".csv"));
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        }
-        Map<String, String> outputMapping = new LinkedHashMap<String, String>();
-        Map<String, FieldType> outputTypes = new LinkedHashMap<String, FieldType>();
-        Map<String, Integer> stringWidths = new HashMap<String, Integer>();
-        outputTypes.put("ID", FieldType.INT);
-        outputTypes.put("TRIPTYPE", FieldType.STRING);
-        stringWidths.put("TRIPTYPE", 10);
-        outputTypes.put("RECID", FieldType.INT);
-        outputTypes.put("PARTYSIZE", FieldType.INT);
-        outputTypes.put("ORIG_MGRA", FieldType.INT);
-        outputTypes.put("DEST_MGRA", FieldType.INT);
-        outputTypes.put("TRIP_BOARD_TAP", FieldType.INT);
-        outputTypes.put("TRIP_ALIGHT_TAP", FieldType.INT);
-        outputTypes.put("TRIP_BOARD_TAZ", FieldType.INT);
-        outputTypes.put("TRIP_ALIGHT_TAZ", FieldType.INT);
-        outputTypes.put("TRIP_DEPART_TIME", FieldType.INT);
-        outputTypes.put("TRIP_TIME", FieldType.FLOAT);
-        outputTypes.put("TRIP_DISTANCE", FieldType.FLOAT);
-        outputTypes.put("TRIP_COST", FieldType.FLOAT);
-        outputTypes.put("TRIP_PURPOSE_NAME", FieldType.STRING);
-        stringWidths.put("TRIP_PURPOSE_NAME", 30);
-        outputTypes.put("TRIP_MODE_NAME", FieldType.STRING);
-        stringWidths.put("TRIP_MODE_NAME", 20);
-        Set<String> primaryKeys = new HashSet<String>();
-        primaryKeys.add("ID");
-        StringBuilder header = new StringBuilder();
-        for (String column : outputTypes.keySet())
-        {
-            outputMapping.put(column, column);
-            header.append(",").append(column.toLowerCase());
-        }
-        tripTableWriter.println(header.deleteCharAt(0).toString());
-    }
-
     private void appendTripData(TableDataSet table, TripStructureDefinition tripStructureDefinition)
     {
         // id triptype recid partysize orig_mgra dest_mgra trip_board_tap
@@ -489,6 +444,7 @@ public class DataExporter
         // columns to add: trip_time, trip_distance, trip_cost,
         // trip_purpose_name, trip_mode_name, recid
         float[] tripTime = new float[rowCount];
+        float[] outVehTime = new float[rowCount];
         float[] tripDistance = new float[rowCount];
         float[] tripCost = new float[rowCount];
         String[] tripPurpose = new String[rowCount];
@@ -505,7 +461,7 @@ public class DataExporter
             int row = i + 1;
 
             double epsilon = .000001;
-			boolean inbound = tripStructureDefinition.booleanIndicatorVariables ? table
+            boolean inbound = tripStructureDefinition.booleanIndicatorVariables ? table
                     .getBooleanValueAt(row, tripStructureDefinition.inboundColumn) : Math.abs(table
                     .getValueAt(row, tripStructureDefinition.inboundColumn) - 1.0) < epsilon;
             SkimBuilder.TripAttributes attributes = skimBuilder.getTripAttributes(
@@ -516,6 +472,7 @@ public class DataExporter
                     (int) table.getValueAt(row, tripStructureDefinition.alightTapColumn),
                     (int) table.getValueAt(row, tripStructureDefinition.todColumn), inbound);
             tripTime[i] = attributes.getTripTime();
+            outVehTime[i] = attributes.getOutVehicleTime();
             tripDistance[i] = attributes.getTripDistance();
             tripCost[i] = attributes.getTripCost();
             if (hasPurposeColumn)
@@ -535,6 +492,7 @@ public class DataExporter
             tripAlightTaz[i] = attributes.getTripAlightTaz();
         }
         table.appendColumn(tripTime, "TRIP_TIME");
+        table.appendColumn(outVehTime, "OUT_VEHICLE_TIME");
         table.appendColumn(tripDistance, "TRIP_DISTANCE");
         table.appendColumn(tripCost, "TRIP_COST");
         table.appendColumn(tripPurpose, "TRIP_PURPOSE_NAME");
@@ -542,59 +500,6 @@ public class DataExporter
         table.appendColumn(tripId, "RECID");
         table.appendColumn(tripBoardTaz, "TRIP_BOARD_TAZ");
         table.appendColumn(tripAlightTaz, "TRIP_ALIGHT_TAZ");
-        augmentMasterTableWithTrips(table, tripStructureDefinition.tripType, tripDepartTime,
-                tripStructureDefinition, tripTableWriter);
-    }
-
-    private final AtomicInteger masterTripRecordCounter = new AtomicInteger(0);
-
-    private void augmentMasterTableWithTrips(TableDataSet table, String tripType,
-            int[] tripDepartTime, TripStructureDefinition tripStructureDefinition,
-            PrintWriter tripTableWriter)
-    {
-
-        for (int i = 0; i < tripDepartTime.length; i++)
-        {
-            int row = i + 1;
-            // id triptype recid partysize orig_mgra dest_mgra trip_board_tap
-            // trip_alight_tap trip_depart_time trip_time trip_distance
-            // trip_cost trip_purpose_name trip_mode_name
-            StringBuilder line = new StringBuilder();
-            line.append(masterTripRecordCounter.incrementAndGet());
-            line.append(",").append(tripType);
-            line.append(",").append(
-                    getData(table, row, tripStructureDefinition.recIdColumn, FieldType.INT));
-            line.append(",").append(
-                    tripStructureDefinition.partySizeColumn < 0 ? 1 : getData(table, row,
-                            tripStructureDefinition.partySizeColumn, FieldType.INT));
-            line.append(",").append(
-                    getData(table, row, tripStructureDefinition.originMgraColumn, FieldType.INT));
-            line.append(",").append(
-                    getData(table, row, tripStructureDefinition.destMgraColumn, FieldType.INT));
-            line.append(",").append(
-                    getData(table, row, tripStructureDefinition.boardTapColumn, FieldType.INT));
-            line.append(",").append(
-                    getData(table, row, tripStructureDefinition.alightTapColumn, FieldType.INT));
-            line.append(",").append(
-                    getData(table, row, tripStructureDefinition.boardTazColumn, FieldType.INT));
-            line.append(",").append(
-                    getData(table, row, tripStructureDefinition.alightTazColumn, FieldType.INT));
-            line.append(",").append(tripDepartTime[i]);
-            line.append(",").append(
-                    getData(table, row, tripStructureDefinition.tripTimeColumn, FieldType.FLOAT));
-            line.append(",")
-                    .append(getData(table, row, tripStructureDefinition.tripDistanceColumn,
-                            FieldType.FLOAT));
-            line.append(",").append(
-                    getData(table, row, tripStructureDefinition.tripCostColumn, FieldType.FLOAT));
-            line.append(",").append(
-                    getData(table, row, tripStructureDefinition.tripPurposeNameColumn,
-                            FieldType.STRING));
-            line.append(",").append(
-                    getData(table, row, tripStructureDefinition.tripModeNameColumn,
-                            FieldType.STRING));
-            tripTableWriter.println(line.toString());
-        }
     }
 
     private void exportAccessibilities(String outputFileBase)
@@ -1832,7 +1737,7 @@ public class DataExporter
     private Map<String, String> getTransitSkimFileNameMapping()
     {
         Map<String, String> map = new LinkedHashMap<String, String>();
-        //map.put("implocl_" + TOD_TOKEN + "o", "LOCAL_TRANSIT");
+        // map.put("implocl_" + TOD_TOKEN + "o", "LOCAL_TRANSIT");
         map.put("impprem_" + TOD_TOKEN + "o", "PREMIUM_TRANSIT");
         return map;
     }
@@ -1845,10 +1750,12 @@ public class DataExporter
     private Map<String, String[]> getTransitSkimFileInVehicleTimeCoreNameMapping()
     { // distance,time,cost
         Map<String, String[]> map = new LinkedHashMap<String, String[]>();
-        //map.put("implocl_" + TOD_TOKEN + "o", new String[] {"Total IV Time", "Initial Wait Time",
-        //        "Transfer Wait Time", "Walk Time"});
+        // map.put("implocl_" + TOD_TOKEN + "o", new String[] {"Total IV Time",
+        // "Initial Wait Time",
+        // "Transfer Wait Time", "Walk Time"});
         map.put("impprem_" + TOD_TOKEN + "o", new String[] {"IVT:CR", "IVT:LR", "IVT:BRT",
-                "IVT:EXP", "IVT:LB"});//, "Initial Wait Time", "Transfer Wait Time", "Walk Time"});
+                "IVT:EXP", "IVT:LB"});// , "Initial Wait Time",
+                                      // "Transfer Wait Time", "Walk Time"});
         return map;
     }
 
@@ -1866,7 +1773,7 @@ public class DataExporter
         Set<Integer> internalZones = new LinkedHashSet<Integer>();
 
         PrintWriter writer = null;
-        //List<String> costColumns = new LinkedList<String>();
+        // List<String> costColumns = new LinkedList<String>();
         try
         {
             writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".csv"));
@@ -1926,15 +1833,15 @@ public class DataExporter
                 Matrix[] initialWaitData = new Matrix[orderedTimeData.length];
                 Matrix[] transferTimeData = new Matrix[orderedTimeData.length];
                 Matrix[] walkTimeData = new Matrix[orderedTimeData.length];
-                
+
                 int counter = 0;
                 for (String mode : modeNames)
                 {
                     orderedTimeData[counter] = timeMatrix.get(mode);
                     fareData[counter] = fareMatrix.get(mode);
                     initialWaitData[counter] = initialMatrix.get(mode);
-                    transferTimeData[counter] = transferMatrix.get(mode); 
-                    walkTimeData[counter++] =  walkTimeMatrix.get(mode);
+                    transferTimeData[counter] = transferMatrix.get(mode);
+                    walkTimeData[counter++] = walkTimeMatrix.get(mode);
                 }
 
                 StringBuilder sb = new StringBuilder();
@@ -1952,7 +1859,7 @@ public class DataExporter
                     writer.println(sb.toString());
                     first = false;
                 }
-                
+
                 DecimalFormat frmt = new DecimalFormat("#.###");
 
                 for (int i : internalZones)
@@ -2125,8 +2032,6 @@ public class DataExporter
 
     private final class TripStructureDefinition
     {
-        private final int     recIdColumn;
-        private final int     partySizeColumn;
         private final int     originMgraColumn;
         private final int     destMgraColumn;
         private final int     originPurposeColumn;
@@ -2135,32 +2040,22 @@ public class DataExporter
         private final int     modeColumn;
         private final int     boardTapColumn;
         private final int     alightTapColumn;
-        private final int     tripTimeColumn;
-        private final int     tripDistanceColumn;
-        private final int     tripCostColumn;
-        private final int     tripPurposeNameColumn;
-        private final int     tripModeNameColumn;
-        private final int     boardTazColumn;
-        private final int     alightTazColumn;
-        private final String  tripType;
 
         private final String  homeName;
         private final String  destinationName;
         private final int     inboundColumn;
         private final boolean booleanIndicatorVariables;
 
-        // private final int originIsDestinationColumn;
-        // private final int destinationIsDestinationColumn;
 
         private TripStructureDefinition(int originMgraColumn, int destMgraColumn,
                 int originPurposeColumn, int destinationPurposeColumn, int todColumn,
                 int modeColumn, int boardTapColumn, int alightTapColumn, int partySizeColumn,
-                int tripTimeColumn, int tripDistanceColumn, int tripCostColumn,
-                int tripPurposeNameColumn, int tripModeNameColumn, int recIdColumn,
-                int boardTazColumn, int alightTazColumn, String tripType, String homeName,
-                String destinationName, int inboundColumn, boolean booleanIndicatorVariables)
+                int tripTimeColumn, int outVehicleTimeColumn, int tripDistanceColumn,
+                int tripCostColumn, int tripPurposeNameColumn, int tripModeNameColumn,
+                int recIdColumn, int boardTazColumn, int alightTazColumn, String tripType,
+                String homeName, String destinationName, int inboundColumn,
+                boolean booleanIndicatorVariables)
         {
-            this.recIdColumn = recIdColumn;
             this.originMgraColumn = originMgraColumn;
             this.destMgraColumn = destMgraColumn;
             this.originPurposeColumn = originPurposeColumn;
@@ -2169,18 +2064,10 @@ public class DataExporter
             this.modeColumn = modeColumn;
             this.boardTapColumn = boardTapColumn;
             this.alightTapColumn = alightTapColumn;
-            this.partySizeColumn = partySizeColumn;
-            this.tripTimeColumn = tripTimeColumn;
-            this.tripDistanceColumn = tripDistanceColumn;
-            this.tripCostColumn = tripCostColumn;
-            this.tripPurposeNameColumn = tripPurposeNameColumn;
-            this.tripModeNameColumn = tripModeNameColumn;
-            this.tripType = tripType;
             this.homeName = homeName;
             this.destinationName = destinationName;
             this.inboundColumn = inboundColumn;
-            this.boardTazColumn = boardTazColumn;
-            this.alightTazColumn = alightTazColumn;
+            
             this.booleanIndicatorVariables = booleanIndicatorVariables;
         }
 
@@ -2193,8 +2080,8 @@ public class DataExporter
             this(originMgraColumn, destMgraColumn, originPurposeColumn, destinationPurposeColumn,
                     todColumn, modeColumn, boardTapColumn, alightTapColumn, partySizeColumn,
                     columnCount + 1, columnCount + 2, columnCount + 3, columnCount + 4,
-                    columnCount + 5, columnCount + 6, columnCount + 7, columnCount + 8, tripType,
-                    "", "", inboundColumn, booleanIndicatorVariables);
+                    columnCount + 5, columnCount + 6, columnCount + 7, columnCount + 8,
+                    columnCount + 9, tripType, "", "", inboundColumn, booleanIndicatorVariables);
         }
 
         private TripStructureDefinition(int originMgraColumn, int destMgraColumn, int todColumn,
@@ -2205,8 +2092,8 @@ public class DataExporter
             this(originMgraColumn, destMgraColumn, -1, -1, todColumn, modeColumn, boardTapColumn,
                     alightTapColumn, partySizeColumn, columnCount + 1, columnCount + 2,
                     columnCount + 3, columnCount + 4, columnCount + 5, columnCount + 6,
-                    columnCount + 7, columnCount + 8, tripType, homeName, destinationName,
-                    inboundColumn, booleanIndicatorVariables);
+                    columnCount + 7, columnCount + 8, columnCount + 9, tripType, homeName,
+                    destinationName, inboundColumn, booleanIndicatorVariables);
         }
     }
 
@@ -2260,7 +2147,7 @@ public class DataExporter
             } else
             {
                 // add all of the tables
-                definedTables = Arrays.asList("trip", "accessibilities", "mgra", "taz", "tap",
+                definedTables = Arrays.asList("accessibilities", "mgra", "taz", "tap",
                         "mgratotap", "mgratomgra", "taztotap", "hhdata", "persondata",
                         "wslocation", "synhh", "synperson", "indivtours", "jointtours",
                         "indivtrips", "jointtrips", "airporttrips", "cbtours", "cbtrips",
@@ -2269,7 +2156,7 @@ public class DataExporter
                         "cbdvehicles");
             }
             // check for full trips set
-            List<String> tripsSet = Arrays.asList("trip", "indivtrips", "jointtrips",
+            List<String> tripsSet = Arrays.asList("indivtrips", "jointtrips",
                     "airporttrips", "cbtrips", "visitortrips");
             if (!Collections.disjoint(tripsSet, definedTables)
                     && !definedTables.containsAll(tripsSet))
@@ -2319,62 +2206,48 @@ public class DataExporter
         DataExporter dataExporter = new DataExporter(propertiesFile, projectFolder,
                 feedbackIteration, outputFolder);
 
-        try
-        {
-            if (definedTables.contains("trip")) dataExporter.initializeMasterTripTable("trip");
-            if (definedTables.contains("accessibilities"))
-                dataExporter.exportAccessibilities("accessibilities");
-            if (definedTables.contains("mgra")) dataExporter.exportMazData("mgra");
-            if (definedTables.contains("taz")) dataExporter.exportTazData("taz");
-            if (definedTables.contains("tap")) dataExporter.exportTapData("tap");
-            if (definedTables.contains("mgratotap")) dataExporter.exportMgraToTapData("mgratotap");
-            if (definedTables.contains("mgratomgra"))
-                dataExporter.exportMgraToMgraData("mgratomgra");
-            if (definedTables.contains("taztotap")) dataExporter.exportTazToTapData("taztotap");
-            if (definedTables.contains("hhdata")) dataExporter.exportHouseholdData("hhdata");
-            if (definedTables.contains("persondata")) dataExporter.exportPersonData("persondata");
-            if (definedTables.contains("wslocation"))
-                dataExporter.exportWorkSchoolLocation("wslocation");
-            if (definedTables.contains("synhh"))
-                dataExporter.exportSyntheticHouseholdData("synhh");
-            if (definedTables.contains("synperson"))
-                dataExporter.exportSyntheticPersonData("synperson");
-            if (definedTables.contains("indivtours"))
-                dataExporter.exportIndivToursData("indivtours");
-            if (definedTables.contains("jointtours"))
-                dataExporter.exportJointToursData("jointtours");
-            if (definedTables.contains("indivtrips"))
-                dataExporter.exportIndivTripData("indivtrips");
-            if (definedTables.contains("jointtrips"))
-                dataExporter.exportJointTripData("jointtrips");
-            if (definedTables.contains("airporttrips"))
-                dataExporter.exportAirportTrips("airporttrips");
-            if (definedTables.contains("cbtours"))
-                dataExporter.exportCrossBorderTourData("cbtours");
-            if (definedTables.contains("cbtrips"))
-                dataExporter.exportCrossBorderTripData("cbtrips");
-            if (definedTables.contains("visitortours") && definedTables.contains("visitortrips"))
-                dataExporter.exportVisitorData("visitortours", "visitortrips");
-            if (definedTables.contains("ietrip"))
-                dataExporter.exportInternalExternalTripData("ietrip");
-            if (definedTables.contains("trucktrip")) dataExporter.exportCommVehData("trucktrip");
-            if (definedTables.contains("eetrip"))
-                dataExporter.exportExternalExternalTripData("eetrip");
-            if (definedTables.contains("eitrip"))
-                dataExporter.exportExternalInternalTripData("eitrip");
-            if (definedTables.contains("tazskim")) dataExporter.exportAutoSkims("tazskim");
-            if (definedTables.contains("tapskim")) dataExporter.exportTransitSkims("tapskim");
-            if (definedTables.contains("definition")) dataExporter.exportDefinitions("definition");
-            if (definedTables.contains("emfacvehcode"))
-                dataExporter.exportEmfacVehicleCodes("emfacvehcode");
-            if (definedTables.contains("pnrvehicles"))
-                dataExporter.exportPnrVehicleData("pnrvehicles");
-            if (definedTables.contains("cbdvehicles"))
-                dataExporter.exportCbdVehicleData("cbdvehicles");
-        } finally
-        {
-            if (dataExporter.tripTableWriter != null) dataExporter.tripTableWriter.close();
-        }
+        if (definedTables.contains("accessibilities"))
+            dataExporter.exportAccessibilities("accessibilities");
+        if (definedTables.contains("mgra")) dataExporter.exportMazData("mgra");
+        if (definedTables.contains("taz")) dataExporter.exportTazData("taz");
+        if (definedTables.contains("tap")) dataExporter.exportTapData("tap");
+        if (definedTables.contains("mgratotap")) dataExporter.exportMgraToTapData("mgratotap");
+        if (definedTables.contains("mgratomgra")) dataExporter.exportMgraToMgraData("mgratomgra");
+        if (definedTables.contains("taztotap")) dataExporter.exportTazToTapData("taztotap");
+        if (definedTables.contains("hhdata")) dataExporter.exportHouseholdData("hhdata");
+        if (definedTables.contains("persondata")) dataExporter.exportPersonData("persondata");
+        if (definedTables.contains("wslocation"))
+            dataExporter.exportWorkSchoolLocation("wslocation");
+        if (definedTables.contains("synhh")) dataExporter.exportSyntheticHouseholdData("synhh");
+        if (definedTables.contains("synperson"))
+            dataExporter.exportSyntheticPersonData("synperson");
+        if (definedTables.contains("indivtours")) dataExporter.exportIndivToursData("indivtours");
+        if (definedTables.contains("jointtours")) dataExporter.exportJointToursData("jointtours");
+        if (definedTables.contains("indivtrips")) dataExporter.exportIndivTripData("indivtrips");
+        if (definedTables.contains("jointtrips")) dataExporter.exportJointTripData("jointtrips");
+        if (definedTables.contains("airporttrips"))
+            dataExporter.exportAirportTrips("airporttrips");
+        if (definedTables.contains("cbtours")) dataExporter.exportCrossBorderTourData("cbtours");
+        if (definedTables.contains("cbtrips")) dataExporter.exportCrossBorderTripData("cbtrips");
+        if (definedTables.contains("visitortours") && definedTables.contains("visitortrips"))
+            dataExporter.exportVisitorData("visitortours", "visitortrips");
+        if (definedTables.contains("ietrip"))
+            dataExporter.exportInternalExternalTripData("ietrip");
+        if (definedTables.contains("trucktrip")) dataExporter.exportCommVehData("trucktrip");
+        if (definedTables.contains("eetrip"))
+            dataExporter.exportExternalExternalTripData("eetrip");
+        if (definedTables.contains("eitrip"))
+            dataExporter.exportExternalInternalTripData("eitrip");
+        if (definedTables.contains("tazskim")) dataExporter.exportAutoSkims("tazskim");
+        if (definedTables.contains("tapskim")) dataExporter.exportTransitSkims("tapskim");
+        if (definedTables.contains("definition")) dataExporter.exportDefinitions("definition");
+        if (definedTables.contains("emfacvehcode"))
+            dataExporter.exportEmfacVehicleCodes("emfacvehcode");
+        if (definedTables.contains("pnrvehicles"))
+            dataExporter.exportPnrVehicleData("pnrvehicles");
+        if (definedTables.contains("cbdvehicles"))
+            dataExporter.exportCbdVehicleData("cbdvehicles");
+
     }
 
 }
