@@ -70,16 +70,7 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
         startTime = System.currentTimeMillis();
         int threadCount = Runtime.getRuntime().availableProcessors();
         ExecutorService executor = Executors.newFixedThreadPool(threadCount); 
-        //final Queue<Integer> originQueue = new ConcurrentLinkedQueue<>(originZonalCentroidIdMap.keySet());
-        
-        int id = -1;
-        for (int oid : originZonalCentroidIdMap.keySet()) {
-        	if (originZonalCentroidIdMap.get(oid) == 200003540) {
-        		id = oid;
-        		break;
-        	}
-        }
-        final Queue<Integer> originQueue = new ConcurrentLinkedQueue<>(Arrays.asList(id));
+        final Queue<Integer> originQueue = new ConcurrentLinkedQueue<>(originZonalCentroidIdMap.keySet());
         
         final ConcurrentHashMap<Integer,List<Integer>> insufficientSamplePairs = new ConcurrentHashMap<>();
         final CountDownLatch latch = new CountDownLatch(threadCount);

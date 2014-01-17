@@ -1,23 +1,50 @@
 package org.sandag.abm.active;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import org.apache.log4j.Logger;
 
+/**
+ * The {@code IntrazonalCalculations} class provides convenient default implementations of the {IntrazonalCalculation} interface.
+ * 
+ */
 public class IntrazonalCalculations {
 	
 	private static final Logger logger = Logger.getLogger(IntrazonalCalculations.class);
-	
+
+	//this class is more of a static factory provider, so constructor is hidden
 	private IntrazonalCalculations() {}
 	
+	/**
+	 * The {@code Factorizer} interface provides a framework for transforming an input value. It is essentially a function of one
+	 * variable.
+	 */
 	public static interface Factorizer {
+		/**
+		 * Factor, or transform, an input value.
+		 * 
+		 * @param inputValue
+		 *        The input value.
+		 *        
+		 * @return the transformation of {@code inputValue}.
+		 */
 		double factor(double inputValue);
 	}
 	
+	/**
+	 * Get a simple {@code Factorizer} implementation which applies a linear scale and offset. That is, for an input <code>x</code>,
+	 * the function will return the following value:
+	 * <p>
+	 * <code>factor*x + offset</code>
+	 * 
+	 * @param factor
+	 *        The multiplicative factor.
+	 *        
+	 * @param offset
+	 *        The addititive offset.
+	 *        
+	 * @return the factorizer which will linearly scale and offset an input.
+	 */
 	public static Factorizer simpleFactorizer(final double factor, final double offset) {
 		return new Factorizer() {
 			@Override
@@ -27,6 +54,29 @@ public class IntrazonalCalculations {
 		};
 	}
 	
+	/**
+	 * Get a {@code Factorizer} which applies a linear transformation, with different scale and offset for positive and negative input
+	 * values. That is, for an input <code>x</code>, the factorizer function will return the following value
+	 * <p>
+	 * <code>factor*x + offset</code>
+	 * <p>
+	 * where <code>factor</code> and <code>offset</code> may differ according to whether <code>x</code> is positive or negative (if <code>x</code>
+	 * is 0, it is considered positive).
+	 * 
+	 * @param negativeFactor
+	 *        The multiplicative factor for negative input values.
+	 *        
+	 * @param negativeOffset
+	 *        The additivie offset for negative input values.
+	 *        
+	 * @param positiveFactor
+	 *        The multiplicative factor for positive input values.
+	 *        
+	 * @param positiveOffset
+	 *        The additivie offset for positive input values.
+	 *        
+	 * @return the factorizer which will linearly scale and offset an input, using different transoformations based on the input's sign.
+	 */
 	public static Factorizer positiveNegativeFactorizer(final double negativeFactor, final double negativeOffset,
 														final double positiveFactor, final double positiveOffset) {
 		return new Factorizer() {
@@ -39,6 +89,22 @@ public class IntrazonalCalculations {
 		};
 	}
 	
+	/**
+	 * Get an {@code IntrazonalCalculation} which will apply a function to the sum of the largest origin-based logsum values. That is,
+	 * an intrazonal value is calculated by a function (defined by a {@code Factorizer}) which acts on the sum of the largest <code>maxCount</code>
+	 * logsum values whose origin is the intrazonal's zone, where <code>maxCount</code> is set by the call to this function.
+	 * 
+	 * @param <N>
+	 *        The type of the zone nodes.
+	 * 
+	 * @param factorizer
+	 *        The factorizer used to calculate the intrazonal value.
+	 *        
+	 * @param maxCount
+	 *        The number of logsum values to be used in the intrazonal calculation.
+	 *        
+	 * @return an intrazonal calculation which will apply {@code factorizer} to the sum of the largest {@code maxCount} logsum values.
+	 */
 	public static <N extends Node> IntrazonalCalculation<N> maxFactorIntrazonalCalculation(final Factorizer factorizer, final int maxCount) {
 		return new IntrazonalCalculation<N>() {
 			
@@ -50,8 +116,6 @@ public class IntrazonalCalculations {
 				for (N node : logsums.keySet()) {
 					if (!node.equals(originNode)) {
 						double value = logsums.get(node)[logsumIndex];
-//						if (value > 0)
-//							System.out.println("oops: " + node + " " + value);
 						if (initialCount > 0) {
 							maxValues.insert(value);
 							if (--initialCount == 0)
@@ -68,6 +132,23 @@ public class IntrazonalCalculations {
 		};
 	}
 
+	
+	/**
+	 * Get an {@code IntrazonalCalculation} which will apply a function to the sum of the smallest origin-based logsum values. That is,
+	 * an intrazonal value is calculated by a function (defined by a {@code Factorizer}) which acts on the sum of the smallest <code>minCount</code>
+	 * logsum values whose origin is the intrazonal's zone, where <code>minCount</code> is set by the call to this function.
+	 * 
+	 * @param <N>
+	 *        The type of the zone nodes.
+	 *        
+	 * @param factorizer
+	 *        The factorizer used to calculate the intrazonal value.
+	 *        
+	 * @param minCount
+	 *        The number of logsum values to be used in the intrazonal calculation.
+	 *        
+	 * @return an intrazonal calculation which will apply {@code factorizer} to the sum of the smallest {@code minCount} logsum values.
+	 */
 	public static <N extends Node> IntrazonalCalculation<N> minFactorIntrazonalCalculation(final Factorizer factorizer, final int minCount) {
 		return new IntrazonalCalculation<N>() {
 			
@@ -221,33 +302,5 @@ public class IntrazonalCalculations {
 			}
 			return min;
 		}
-	}
-	
-	public static void main(String ... args) {
-		//test the heaps
-		double[] values = {-23,-.3,0,.5,23.2,3234};
-		int[] order = new int[values.length];
-		List<Integer> indices = new ArrayList<>();
-		for (int i = 0; i < values.length; i++)
-			indices.add(i);
-		Random random = new Random();
-		for (int i = 0; i < values.length; i++)
-			order[i] = indices.remove(random.nextInt(indices.size()));
-		System.out.println(Arrays.toString(order));
-		
-		MaxHeap maxHeap = new MaxHeap(6);
-		for (int i : order) 
-			maxHeap.insert(values[i]);
-		System.out.println(Arrays.toString(maxHeap.heap));
-		for (int i = values.length-1; i >= 0; i--) 
-			System.out.println(values[i] + "  :  " + maxHeap.removeMax());
-
-		MinHeap minHeap = new MinHeap(6);
-		for (int i : order) 
-			minHeap.insert(values[i]);
-		System.out.println(Arrays.toString(minHeap.heap));
-		for (int i = 0; i < values.length; i++) 
-			System.out.println(values[i] + "  :  " + minHeap.removeMin());
-		
 	}
 }
