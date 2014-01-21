@@ -105,7 +105,7 @@ public class AirportModelDMUTest
         int offset = 100;
         for (int x = 0; x < 50; x++)
         {
-            System.out.println(x);
+            //System.out.println(x);
 
             int[] p1Values = {McLogsumsCalculator.WTW};
             int p1 = p1Values[x / 100];
