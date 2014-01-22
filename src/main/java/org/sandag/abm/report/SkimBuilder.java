@@ -278,7 +278,7 @@ public class SkimBuilder {
                 alightTaz = mgraManager.getTaz(destination);
                 if (isDrive) {
                     if (!inbound) { //outbound: drive to transit stop at origin, then transit to destination
-                        int taz = tapManager.getTazForTap(boardTap);
+                        int taz = mgraManager.getTaz(origin);
                         boardTaz = taz;
                         int btapPosition = tazManager.getTapPosition(taz,boardTap,Modes.AccessMode.PARK_N_RIDE);
                         int atapPosition = mgraManager.getTapPosition(destination,alightTap);
@@ -302,6 +302,7 @@ public class SkimBuilder {
                         int taz = -1;
                         try {
                             taz = tapManager.getTazForTap(alightTap);
+                            taz = mgraManager.getTaz(destination);
                             alightTaz = taz;
                         } catch (NullPointerException e) {
                             logger.info("tap manager can't find taz for alight tap");
@@ -321,7 +322,7 @@ public class SkimBuilder {
                         int atapPosition = tazManager.getTapPosition(taz,alightTap,Modes.AccessMode.PARK_N_RIDE);
                         int btapPosition = mgraManager.getTapPosition(origin,boardTap);
                         if (atapPosition < 0 || btapPosition < 0) {
-
+                            logger.info("bad tap position for drive access alight tap");
                             logger.info("mc: " + modeChoice);
                             logger.info("origin: " + origin);
                             logger.info("dest: " + destination);
