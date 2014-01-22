@@ -2,6 +2,7 @@ package org.sandag.abm.report;
 
 import com.pb.common.calculator.MatrixDataManager;
 import com.pb.common.calculator.MatrixDataServerIf;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.*;
 import org.sandag.abm.ctramp.MatrixDataServer;
@@ -236,11 +237,24 @@ public class SkimBuilder {
                 double[] autoSkims = autoNonMotSkims.getAutoSkims(origin,destination,tod,false,logger);
                 return new TripAttributes(autoSkims[timeIndex],autoSkims[distIndex],getCost(costIndex < 0 ? 0.0 : autoSkims[costIndex],autoSkims[distIndex]));
             }
-            case WALK :
+            case WALK : {
+            	//first, look in mgra manager, otherwise default to auto skims
+            	double distance = mgraManager.getMgraToMgraWalkDistFrom(origin,destination);
+            	if (distance > 0) {
+            		double time = mgraManager.getMgraToMgraWalkTime(origin,destination);
+            		return new TripAttributes(time,distance,0);
+            	}
+            	distance = autoNonMotSkims.getAutoSkims(origin,destination,tod,false,logger)[DA_DIST_INDEX];
+                return new TripAttributes(distance*60/DEFAULT_WALK_SPEED,distance,0);
+            }
             case BIKE : {
-                double distance = autoNonMotSkims.getAutoSkims(origin,destination,tod,false,logger)[DA_DIST_INDEX];
-                double speed = modeChoice == TripModeChoice.BIKE ? DEFAULT_BIKE_SPEED : DEFAULT_WALK_SPEED;
-                return new TripAttributes(distance*60/speed,distance,0);
+            	double time = mgraManager.getMgraToMgraBikeTime(origin,destination);
+            	if (time > 0) {
+            		double distance = DEFAULT_BIKE_SPEED*60 / time;
+            		return new TripAttributes(time,distance,0);
+            	}
+            	double distance = autoNonMotSkims.getAutoSkims(origin,destination,tod,false,logger)[DA_DIST_INDEX];
+                return new TripAttributes(distance*60/DEFAULT_BIKE_SPEED,distance,0);
             }
             case WALK_LB : 
             case WALK_EB :
@@ -281,7 +295,7 @@ public class SkimBuilder {
                             logger.info("alight tap position: " + atapPosition);
                         } else {
                             boardAccessTime = tazManager.getTapTime(taz,btapPosition,Modes.AccessMode.PARK_N_RIDE);
-                            alightAccessTime = mgraManager.getMgraToTapWalkTime(destination,atapPosition);
+                            alightAccessTime = mgraManager.getMgraToTapWalkAlightTime(destination,atapPosition);
                         }
                         skims = dtw.getDriveTransitWalkSkims(rideModeIndex,boardAccessTime,alightAccessTime,boardTap,alightTap,tod,false);
                     } else { //inbound: transit from origin to destination, then drive
@@ -318,7 +332,7 @@ public class SkimBuilder {
                             logger.info("board tap position: " + btapPosition);
                             logger.info("alight tap position: " + atapPosition);
                         } else {
-                            boardAccessTime = mgraManager.getMgraToTapWalkTime(origin,btapPosition);
+                            boardAccessTime = mgraManager.getMgraToTapWalkBoardTime(origin,btapPosition);
                             alightAccessTime = tazManager.getTapTime(taz,atapPosition,Modes.AccessMode.PARK_N_RIDE);
                         }
                         skims = wtd.getWalkTransitDriveSkims(rideModeIndex,boardAccessTime,alightAccessTime,boardTap,alightTap,tod,false);
@@ -338,8 +352,8 @@ public class SkimBuilder {
                         logger.info("board tap position: " + bt);
                         logger.info("alight tap position: " + at);
                     } else {
-                        boardAccessTime = mgraManager.getMgraToTapWalkTime(origin,bt);
-                        alightAccessTime = mgraManager.getMgraToTapWalkTime(destination,at);
+                        boardAccessTime = mgraManager.getMgraToTapWalkBoardTime(origin,bt);
+                        alightAccessTime = mgraManager.getMgraToTapWalkAlightTime(destination,at);
                     }
                     skims = wtw.getWalkTransitWalkSkims(rideModeIndex,boardAccessTime,alightAccessTime,boardTap,alightTap,tod,false);
                 }
