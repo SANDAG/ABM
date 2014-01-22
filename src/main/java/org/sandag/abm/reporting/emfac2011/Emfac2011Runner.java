@@ -45,8 +45,8 @@ import com.pb.sawdust.util.exceptions.RuntimeIOException;
 public class Emfac2011Runner {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(Emfac2011Runner.class);
-
 	private final Emfac2011Properties properties;
+	private Emfac2011SqlUtil sqlUtil;;
 
 	/**
 	 * Constructor specifying the resources used to build the properties used
@@ -58,10 +58,11 @@ public class Emfac2011Runner {
 	 * @param additionalResources
 	 *            Any additional properties resources.
 	 */
-	public Emfac2011Runner(String propertyResource,
+	public Emfac2011Runner(String scenario, String propertyResource,
 			String... additionalResources) {
 		properties = new Emfac2011Properties(propertyResource,
 				additionalResources);
+		sqlUtil = new Emfac2011SqlUtil(properties);
 	}
 
 	void runEmfac2011Program() {
@@ -99,16 +100,16 @@ public class Emfac2011Runner {
 				.toString()));
 	}
 
-	public void runEmfac2011() {
+	public void runEmfac2011(String scenario) {
 		LOGGER.info("Running Emfac2011 for SANDAG");
-		processEmfacData();
+		createEmfacDataInDB();
 
 		// have to call this first because it sets the mutable types, which are,
 		// used throughout the EMFAC2011 process
 		final Map<String, Set<Emfac2011VehicleType>> aquavisVehicleTypeToEmfacMapping = buildAquavisVehicleTypeToEmfacMapping(properties
-				.getPath(SandagModelDataBuilder.VEHICLE_CODE_MAPPING_FILE_PROPERTY));
+				.getPath(Emfac2011Definitions.VEHICLE_CODE_MAPPING_FILE_PROPERTY));
 
-		runEmfac2011(new Emfac2011Data() {
+		runEmfac2011(scenario, new Emfac2011Data(properties, sqlUtil) {
 			@Override
 			protected Map<String, Set<Emfac2011VehicleType>> getAquavisVehicleTypeToEmfacTypeMapping() {
 				return aquavisVehicleTypeToEmfacMapping;
@@ -128,10 +129,10 @@ public class Emfac2011Runner {
 	 *            The {@code Emfac2011Data} instance corresponding to the model
 	 *            results/run.
 	 */
-	public void runEmfac2011(Emfac2011Data emfac2011Data) {
+	public void runEmfac2011(String scenario, Emfac2011Data emfac2011Data) {
 		LOGGER.info("-----Running Emfac2011 for SANDAG------");
 		LOGGER.info("Processing aquavis data");
-		DataTable data = emfac2011Data.processAquavisData(properties);
+		DataTable data = emfac2011Data.processAquavisData(scenario, properties);
 		LOGGER.info("Creating EMFAC2011 input file");
 		Emfac2011InputFileCreator inputFileCreator = new Emfac2011InputFileCreator();
 		Path inputfile = inputFileCreator.createInputFile(properties, data);
@@ -140,11 +141,11 @@ public class Emfac2011Runner {
 		LOGGER.info("EMFAC2011 run (presumably) finished");
 	}
 
-	private void processEmfacData() {
+	private void createEmfacDataInDB() {
 		LOGGER.info("Building Aquavis inputs from SANDAG database schema: "
 				+ properties
-						.getString(SandagModelDataBuilder.SCHEMA_NAME_PROPERTY));
-		SandagModelDataBuilder builder = new SandagModelDataBuilder(properties);
+						.getString(Emfac2011Definitions.SCHEMA_NAME_PROPERTY));
+		AquavisDataBuilder builder = new AquavisDataBuilder(properties, sqlUtil);
 		builder.createAquavisInputs(
 				Emfac2011Properties.AQUAVIS_NETWORK_FILE_PROPERTY,
 				Emfac2011Properties.AQUAVIS_TRIPS_FILE_PROPERTY,
@@ -179,7 +180,7 @@ public class Emfac2011Runner {
 		for (DataRow row : vehicleCodeMapping) {
 			Emfac2011VehicleType emfac2011VehicleType = Emfac2011VehicleType
 					.getVehicleType(row
-							.getCellAsString(SandagModelDataBuilder.VEHICLE_CODE_MAPPING_EMFAC2011_VEHICLE_NAME_COLUMN));
+							.getCellAsString(Emfac2011Definitions.VEHICLE_CODE_MAPPING_EMFAC2011_VEHICLE_NAME_COLUMN));
 			// now dynamically setting mutable vehicle types, so we need to not
 			// rely on the defaults
 			// if (!emfac2011VehicleType.isMutableType())
@@ -209,11 +210,22 @@ public class Emfac2011Runner {
 		return finalMapping;
 	}
 
+	public Emfac2011Properties getProperties() {
+		return properties;
+	}
+
 	public static void main(String... args) {
-		new Emfac2011Runner(args[0], Arrays.copyOfRange(args, 1, args.length))
-				.runEmfac2011();
-		// new
+		double startTime = System.currentTimeMillis();
+		String scenario = "2010";
+
+		// do work
+		new Emfac2011Runner(scenario, args[0], Arrays.copyOfRange(args, 1,
+				args.length)).runEmfac2011(scenario);
 		// SandagEmfac2011Runner("D:\\projects\\sandag\\emfac\\output_example\\sandag_emfac2011.properties").runEmfac2011();
+		// time stamp
+		LOGGER.info("Completed in: "
+				+ (float) (((System.currentTimeMillis() - startTime) / 1000.0) / 60.0)
+				+ " minutes.");
 	}
 
 }
