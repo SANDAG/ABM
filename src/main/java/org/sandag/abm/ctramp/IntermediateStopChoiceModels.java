@@ -2467,10 +2467,8 @@ public class IntermediateStopChoiceModels
                     if (sampleMgraInAlightingTapShed[altMgra])
                     {
                         logsumHelper.setWalkTransitSkimsUnavailable(mcDmuObject);
-                        logsumHelper.setDtwTripMcDmuAttributesForBestTapPairs(mcDmuObject, s
-                                .getOrig(), altMgra, s.getStopPeriod(), s.getTour()
-                                .getBestDtwTapPairsOut(), s.getTour().getPersonObject()
-                                .getHouseholdObject().getDebugChoiceModels());
+                        logsumHelper.setDtwTripMcDmuAttributes(mcDmuObject,s.getOrig(),altMgra,s.getStopPeriod(),
+                        		s.getTour().getPersonObject().getHouseholdObject().getDebugChoiceModels());
                     }
 
                     // if the trip origin and sampled mgra are in the outbound
@@ -2504,10 +2502,8 @@ public class IntermediateStopChoiceModels
                     if (sampleMgraInAlightingTapShed[altMgra])
                     {
                         logsumHelper.setWalkTransitSkimsUnavailable(mcDmuObject);
-                        logsumHelper.setWtdTripMcDmuAttributesForBestTapPairs(mcDmuObject, s
-                                .getOrig(), altMgra, s.getStopPeriod(), s.getTour()
-                                .getBestWtdTapPairsIn(), s.getTour().getPersonObject()
-                                .getHouseholdObject().getDebugChoiceModels());
+                        logsumHelper.setWtdTripMcDmuAttributes(mcDmuObject,s.getOrig(),altMgra,s.getStopPeriod(),
+                        		s.getTour().getPersonObject().getHouseholdObject().getDebugChoiceModels());
                     }
 
                     // if the trip origin and sampled mgra are in the inbound
@@ -2615,10 +2611,8 @@ public class IntermediateStopChoiceModels
                     if (sampleMgraInBoardingTapShed[altMgra])
                     {
                         logsumHelper.setWalkTransitSkimsUnavailable(mcDmuObject);
-                        logsumHelper.setDtwTripMcDmuAttributesForBestTapPairs(mcDmuObject, altMgra,
-                                halfTourFinalDest, s.getStopPeriod(), s.getTour()
-                                        .getBestDtwTapPairsOut(), s.getTour().getPersonObject()
-                                        .getHouseholdObject().getDebugChoiceModels());
+                        logsumHelper.setDtwTripMcDmuAttributes(mcDmuObject,altMgra,halfTourFinalDest,s.getStopPeriod(),
+                        		s.getTour().getPersonObject().getHouseholdObject().getDebugChoiceModels());
                     }
 
                     // if the trip origin is in the outbound half-tour alighting
@@ -2638,10 +2632,8 @@ public class IntermediateStopChoiceModels
                     if (sampleMgraInBoardingTapShed[altMgra])
                     {
                         logsumHelper.setWalkTransitSkimsUnavailable(mcDmuObject);
-                        logsumHelper.setWtdTripMcDmuAttributesForBestTapPairs(mcDmuObject, altMgra,
-                                halfTourFinalDest, s.getStopPeriod(), s.getTour()
-                                        .getBestWtdTapPairsIn(), s.getTour().getPersonObject()
-                                        .getHouseholdObject().getDebugChoiceModels());
+                        logsumHelper.setWtdTripMcDmuAttributes(mcDmuObject,altMgra,halfTourFinalDest,s.getStopPeriod(),
+                        		s.getTour().getPersonObject().getHouseholdObject().getDebugChoiceModels());
                     }
 
                     // if the trip origin is in the inbound half-tour alighting
