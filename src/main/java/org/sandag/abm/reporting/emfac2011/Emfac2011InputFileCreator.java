@@ -44,8 +44,6 @@ public class Emfac2011InputFileCreator
     private static final Logger LOGGER                                             = LoggerFactory
                                                                                            .getLogger(Emfac2011Data.class);
 
-
-
     /**
      * Create an input file that can be used with the EMFAC2011 SG model. The
      * constructed input file will use the default EMFAC2011

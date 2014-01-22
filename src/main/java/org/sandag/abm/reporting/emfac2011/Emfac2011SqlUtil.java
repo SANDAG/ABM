@@ -21,20 +21,18 @@ import com.pb.sawdust.util.property.PropertyDeluxe;
 public class Emfac2011SqlUtil {
 
 	private final String connectionUrl;
-	private final PropertyDeluxe properties;
 	
 	public Emfac2011SqlUtil(PropertyDeluxe properties) {
 		connectionUrl = formConnectionUrl(
-				properties.getString(Emfac2011Definitions.REPORTS_DATABASE_IPADDRESS_PROPERTY),
-				properties.getInt(Emfac2011Definitions.REPORTS_DATABASE_PORT_PROPERTY),
-				properties.getString(Emfac2011Definitions.REPORTS_DATABASE_NAME_PROPERTY),
-				properties.hasKey(Emfac2011Definitions.REPORTS_DATABASE_USERNAME_PROPERTY) ? properties
-						.getString(Emfac2011Definitions.REPORTS_DATABASE_USERNAME_PROPERTY) : null,
-				properties.hasKey(Emfac2011Definitions.REPORTS_DATABASE_PASSWORD_PROPERTY) ? properties
-						.getString(Emfac2011Definitions.REPORTS_DATABASE_PASSWORD_PROPERTY) : null,
-				properties.hasKey(Emfac2011Definitions.REPORTS_DATABASE_INSTANCE_PROPERTY) ? properties
-						.getString(Emfac2011Definitions.REPORTS_DATABASE_INSTANCE_PROPERTY) : null);
-		this.properties = properties;
+				properties.getString(Emfac2011Properties.REPORTS_DATABASE_IPADDRESS_PROPERTY),
+				properties.getInt(Emfac2011Properties.REPORTS_DATABASE_PORT_PROPERTY),
+				properties.getString(Emfac2011Properties.REPORTS_DATABASE_NAME_PROPERTY),
+				properties.hasKey(Emfac2011Properties.REPORTS_DATABASE_USERNAME_PROPERTY) ? properties
+						.getString(Emfac2011Properties.REPORTS_DATABASE_USERNAME_PROPERTY) : null,
+				properties.hasKey(Emfac2011Properties.REPORTS_DATABASE_PASSWORD_PROPERTY) ? properties
+						.getString(Emfac2011Properties.REPORTS_DATABASE_PASSWORD_PROPERTY) : null,
+				properties.hasKey(Emfac2011Properties.REPORTS_DATABASE_INSTANCE_PROPERTY) ? properties
+						.getString(Emfac2011Properties.REPORTS_DATABASE_INSTANCE_PROPERTY) : null);
 	}
 	
 	public void detemplifyAndRunScript(Path script, String schema,

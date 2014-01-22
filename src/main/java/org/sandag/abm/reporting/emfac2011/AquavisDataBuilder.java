@@ -1,11 +1,9 @@
 package org.sandag.abm.reporting.emfac2011;
 
-import java.nio.file.Path;
 import com.pb.sawdust.tabledata.DataRow;
 import com.pb.sawdust.tabledata.DataTable;
 import com.pb.sawdust.tabledata.basic.RowDataTable;
 import com.pb.sawdust.tabledata.read.CsvTableReader;
-import com.pb.sawdust.tabledata.write.CsvTableWriter;
 import com.pb.sawdust.util.property.PropertyDeluxe;
 
 /**
@@ -24,16 +22,13 @@ public class AquavisDataBuilder {
 		this.properties = properties;
 	}
 
-	public void createAquavisInputs(String aquavisNetworkPathProperty,
-			String aquavisTripsPathProperty,
-			String aquavisIntrazonalPathProperty) {
-		createAquavisNetwork(properties.getPath(aquavisNetworkPathProperty));
-		createAquavisTrips(properties.getPath(aquavisTripsPathProperty));
-		createAquavisIntrazonal(properties
-				.getPath(aquavisIntrazonalPathProperty));
+	public void createAquavisInputs() {
+		createAquavisNetwork();
+		createAquavisTrips();
+		createAquavisIntrazonal(Emfac2011Properties.AQUAVIS_INTRAZONAL_FILE_PROPERTY);
 	}
 
-	private void createAquavisNetwork(Path outputFile) {
+	private void createAquavisNetwork() {
 		String schema = properties
 				.getString(Emfac2011Definitions.SCHEMA_NAME_PROPERTY);
 		sqlUtil.detemplifyAndRunScript(
@@ -42,10 +37,9 @@ public class AquavisDataBuilder {
 				schema,
 				properties
 						.getString(Emfac2011Definitions.AQUAVIS_TEMPLATE_SCHEMA_TOKEN_PROPERTY));
-		// writeTableToCsv(AQUAVIS_NETWORK_TABLE, schema, outputFile);
 	}
 
-	private void createAquavisTrips(Path outputFile) {
+	private void createAquavisTrips() {
 		String schema = properties
 				.getString(Emfac2011Definitions.SCHEMA_NAME_PROPERTY);
 		sqlUtil.detemplifyAndRunScript(
@@ -54,10 +48,9 @@ public class AquavisDataBuilder {
 				schema,
 				properties
 						.getString(Emfac2011Definitions.AQUAVIS_TEMPLATE_SCHEMA_TOKEN_PROPERTY));
-		// writeTableToCsv(AQUAVIS_TRIPS_TABLE, schema, outputFile);
 	}
 
-	private void createAquavisIntrazonal(Path outputFile) {
+	private void createAquavisIntrazonal(String outputFile) {
 		String schema = properties
 				.getString(Emfac2011Definitions.SCHEMA_NAME_PROPERTY);
 		sqlUtil.detemplifyAndRunScript(
@@ -66,7 +59,6 @@ public class AquavisDataBuilder {
 				schema,
 				properties
 						.getString(Emfac2011Definitions.AQUAVIS_TEMPLATE_SCHEMA_TOKEN_PROPERTY));
-		// writeTableToCsv(AQUAVIS_INTRAZONAL_TABLE, schema, outputFile);
 		addExternalIntrazonalData(
 				outputFile.toString(),
 				properties
@@ -81,7 +73,5 @@ public class AquavisDataBuilder {
 				externalIntrazonalTablePath));
 		for (DataRow row : externalTable)
 			table.addRow(row);
-		new CsvTableWriter(intrazonalTablePath).writeTable(table);
 	}
-
 }

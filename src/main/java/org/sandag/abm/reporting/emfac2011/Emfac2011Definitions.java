@@ -7,6 +7,7 @@ package org.sandag.abm.reporting.emfac2011;
  */
 
 public class Emfac2011Definitions {
+    	
 	// Aquavis table names
 	public static final String AQUAVIS_NETWORK_TABLE = "aquavis_network";
 	public static final String AQUAVIS_TRIPS_TABLE = "aquavis_trips";
@@ -35,14 +36,6 @@ public class Emfac2011Definitions {
     public static final String AQUAVIS_TRIPS_TIME_PERIOD_FIELD      = "time_period";
     public static final String AQUAVIS_TRIPS_VEHICLE_CLASS_FIELD    = "vehicle_class";
     public static final String AQUAVIS_TRIPS_TRIPS_FIELD            = "trips";
-    
-    //database definitions
-	public static final String REPORTS_DATABASE_IPADDRESS_PROPERTY = "reports.database.ipaddress";
-	public static final String REPORTS_DATABASE_PORT_PROPERTY = "reports.database.port";
-	public static final String REPORTS_DATABASE_NAME_PROPERTY = "reports.database.name";
-	public static final String REPORTS_DATABASE_USERNAME_PROPERTY = "reports.database.username";
-	public static final String REPORTS_DATABASE_PASSWORD_PROPERTY = "reports.database.password";
-	public static final String REPORTS_DATABASE_INSTANCE_PROPERTY = "reports.database.instance";
 
 	// Aquavis table creation templates
 	public static final String CREATE_AQUAVIS_NETWORK_TEMPLATE_PROPERTY = "aquavis.network.sql.template";
@@ -61,7 +54,7 @@ public class Emfac2011Definitions {
 	public static final String VEHICLE_CODE_MAPPING_FILE_PROPERTY = "emfac.2011.to.sandag.vehicle.code.mapping.file";
 	public static final String VEHICLE_CODE_MAPPING_EMFAC2011_VEHICLE_NAME_COLUMN = "EMFAC2011_MODE";
 
-	// Processed Aquavis Data Table Definitions
+	// Emfac2011 Data Table Definitions
 	public static final String EMFAC_2011_DATA_SUB_AREA_FIELD = "subarea";
 	public static final String EMFAC_2011_DATA_SPEED_FIELD = "speed";
 	public static final String EMFAC_2011_DATA_VEHICLE_TYPE_FIELD = "vehicle_type";

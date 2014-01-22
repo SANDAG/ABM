@@ -33,6 +33,8 @@ import com.pb.sawdust.util.property.PropertyDeluxe;
 public abstract class Emfac2011Data {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(Emfac2011Data.class);
+	private final PropertyDeluxe properties;
+	private Emfac2011SqlUtil sqlUtil = null;
 
 	/**
 	 * Get a mapping from the vehicle types listed in a model's AquaVis results
@@ -51,41 +53,9 @@ public abstract class Emfac2011Data {
 	 */
 	protected abstract Map<String, Set<Emfac2011VehicleType>> getAquavisVehicleTypeToEmfacTypeMapping();
 
-	private final PropertyDeluxe properties;
-	private Emfac2011SqlUtil sqlUtil = null;
-
 	public Emfac2011Data(PropertyDeluxe properties, Emfac2011SqlUtil sqlUtil) {
 		this.sqlUtil = sqlUtil;
 		this.properties = properties;
-	}
-
-	private Map<Emfac2011VehicleType, Map<String, Double>> buildVehicleFractioning(
-			Map<String, Set<Emfac2011VehicleType>> aquavisVehicleTypeToEmfacTypeMapping) {
-		// returns a map which says for every emfac vehicle type, what aquavis
-		// vehicle types should have their vmt added
-		// to it, and by what fraction
-
-		Map<Emfac2011VehicleType, Map<String, Double>> vehicleFractionMap = new EnumMap<>(
-				Emfac2011VehicleType.class);
-		for (Emfac2011VehicleType type : Emfac2011VehicleType
-				.getMutableVehicleTypes())
-			vehicleFractionMap.put(type, new HashMap<String, Double>());
-		for (String aquavisVehicleType : aquavisVehicleTypeToEmfacTypeMapping
-				.keySet()) {
-			double fraction = 1.0 / aquavisVehicleTypeToEmfacTypeMapping.get(
-					aquavisVehicleType).size();
-			for (Emfac2011VehicleType type : aquavisVehicleTypeToEmfacTypeMapping
-					.get(aquavisVehicleType)) {
-				if (!vehicleFractionMap.containsKey(type))
-					throw new IllegalStateException(
-							"Emfac vehicle type is not mutable ("
-									+ type
-									+ ") and should not be component for aquavis type "
-									+ aquavisVehicleType);
-				vehicleFractionMap.get(type).put(aquavisVehicleType, fraction);
-			}
-		}
-		return vehicleFractionMap;
 	}
 
 	public DataTable processAquavisData(String scenario,
@@ -239,6 +209,35 @@ public abstract class Emfac2011Data {
 															// pass
 															// through
 		return outputTable; // unnoticed
+	}
+	
+	private Map<Emfac2011VehicleType, Map<String, Double>> buildVehicleFractioning(
+			Map<String, Set<Emfac2011VehicleType>> aquavisVehicleTypeToEmfacTypeMapping) {
+		// returns a map which says for every emfac vehicle type, what aquavis
+		// vehicle types should have their vmt added
+		// to it, and by what fraction
+
+		Map<Emfac2011VehicleType, Map<String, Double>> vehicleFractionMap = new EnumMap<>(
+				Emfac2011VehicleType.class);
+		for (Emfac2011VehicleType type : Emfac2011VehicleType
+				.getMutableVehicleTypes())
+			vehicleFractionMap.put(type, new HashMap<String, Double>());
+		for (String aquavisVehicleType : aquavisVehicleTypeToEmfacTypeMapping
+				.keySet()) {
+			double fraction = 1.0 / aquavisVehicleTypeToEmfacTypeMapping.get(
+					aquavisVehicleType).size();
+			for (Emfac2011VehicleType type : aquavisVehicleTypeToEmfacTypeMapping
+					.get(aquavisVehicleType)) {
+				if (!vehicleFractionMap.containsKey(type))
+					throw new IllegalStateException(
+							"Emfac vehicle type is not mutable ("
+									+ type
+									+ ") and should not be component for aquavis type "
+									+ aquavisVehicleType);
+				vehicleFractionMap.get(type).put(aquavisVehicleType, fraction);
+			}
+		}
+		return vehicleFractionMap;
 	}
 
 	private HashMap<Integer, Emfac2011AquavisIntrazonal> convertIntrazonal(
