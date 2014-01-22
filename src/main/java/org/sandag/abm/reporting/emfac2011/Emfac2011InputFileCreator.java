@@ -1,6 +1,7 @@
 package org.sandag.abm.reporting.emfac2011;
 
 import static com.pb.sawdust.util.Range.range;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,8 +14,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.pb.sawdust.excel.tabledata.read.ExcelTableReader;
 import com.pb.sawdust.excel.tabledata.write.ExcelTableWriter;
 import com.pb.sawdust.tabledata.DataRow;
@@ -34,53 +37,14 @@ import com.pb.sawdust.util.exceptions.RuntimeIOException;
  * 
  * 
  * @author crf Started 2/7/12 1:48 PM
+ * Modified by Wu.Sun@sandag.org 1/21/2014
  */
 public class Emfac2011InputFileCreator
 {
     private static final Logger LOGGER                                             = LoggerFactory
                                                                                            .getLogger(Emfac2011Data.class);
 
-    public static final String  EMFAC_2011_SCENARIO_TABLE_NAME                     = "Regional_Scenarios";
-    public static final String  EMFAC_2011_SCENARIO_TABLE_GROUP_FIELD              = "Group";
-    public static final String  EMFAC_2011_SCENARIO_TABLE_AREA_TYPE_FIELD          = "Area Type";
-    public static final String  EMFAC_2011_SCENARIO_TABLE_AREA_FIELD               = "Area";
-    public static final String  EMFAC_2011_SCENARIO_TABLE_YEAR_FIELD               = "CalYr";
-    public static final String  EMFAC_2011_SCENARIO_TABLE_SEASON_FIELD             = "Season";
 
-    public static final String  EMFAC_2011_VMT_TABLE_NAME                          = "Scenario_Base_Inputs";
-    public static final String  EMFAC_2011_VMT_TABLE_GROUP_FIELD                   = "Group";
-    public static final String  EMFAC_2011_VMT_TABLE_AREA_FIELD                    = "Area";
-    public static final String  EMFAC_2011_VMT_TABLE_SCENARIO_FIELD                = "Scenario";
-    public static final String  EMFAC_2011_VMT_TABLE_SUB_AREA_FIELD                = "Sub-Area";
-    public static final String  EMFAC_2011_VMT_TABLE_YEAR_FIELD                    = "CalYr";
-    public static final String  EMFAC_2011_VMT_TABLE_SEASON_FIELD                  = "Season";
-    public static final String  EMFAC_2011_VMT_TABLE_TITLE_FIELD                   = "Title";
-    public static final String  EMFAC_2011_VMT_TABLE_VMT_PROFILE_FIELD             = "VMT Profile";
-    public static final String  EMFAC_2011_VMT_TABLE_VMT_BY_VEH_FIELD              = "VMT by Vehicle Category";
-    public static final String  EMFAC_2011_VMT_TABLE_SPEED_PROFILE_FIELD           = "Speed Profile";
-    public static final String  EMFAC_2011_VMT_TABLE_VMT_FIELD                     = "New Total VMT";
-
-    public static final String  EMFAC_2011_VEHICLE_VMT_TABLE_NAME                  = "Scenario_VMT_by_VehCat";
-    public static final String  EMFAC_2011_VEHICLE_VMT_TABLE_GROUP_FIELD           = "Group";
-    public static final String  EMFAC_2011_VEHICLE_VMT_TABLE_AREA_FIELD            = "Area";
-    public static final String  EMFAC_2011_VEHICLE_VMT_TABLE_SCENARIO_FIELD        = "Scenario";
-    public static final String  EMFAC_2011_VEHICLE_VMT_TABLE_SUB_AREA_FIELD        = "Sub-Area";
-    public static final String  EMFAC_2011_VEHICLE_VMT_TABLE_YEAR_FIELD            = "CalYr";
-    public static final String  EMFAC_2011_VEHICLE_VMT_TABLE_SEASON_FIELD          = "Season";
-    public static final String  EMFAC_2011_VEHICLE_VMT_TABLE_TITLE_FIELD           = "Title";
-    public static final String  EMFAC_2011_VEHICLE_VMT_TABLE_VEHICLE_FIELD         = "Veh & Tech";
-    public static final String  EMFAC_2011_VEHICLE_VMT_TABLE_VMT_FIELD             = "New VMT";
-
-    public static final String  EMFAC_2011_SPEED_FRACTION_TABLE_NAME               = "Scenario_Speed_Profiles";
-    public static final String  EMFAC_2011_SPEED_FRACTION_TABLE_GROUP_FIELD        = "Group";
-    public static final String  EMFAC_2011_SPEED_FRACTION_TABLE_AREA_FIELD         = "Area";
-    public static final String  EMFAC_2011_SPEED_FRACTION_TABLE_SCENARIO_FIELD     = "Scenario";
-    public static final String  EMFAC_2011_SPEED_FRACTION_TABLE_SUB_AREA_FIELD     = "Sub-Area";
-    public static final String  EMFAC_2011_SPEED_FRACTION_TABLE_YEAR_FIELD         = "CalYr";
-    public static final String  EMFAC_2011_SPEED_FRACTION_TABLE_SEASON_FIELD       = "Season";
-    public static final String  EMFAC_2011_SPEED_FRACTION_TABLE_TITLE_FIELD        = "Title";
-    public static final String  EMFAC_2011_SPEED_FRACTION_TABLE_VEHICLE_FIELD      = "Veh & Tech";
-    public static final String  EMFAC_2011_SPEED_FRACTION_TABLE_2007_VEHICLE_FIELD = "EMFAC2007 Veh & Tech";
 
     /**
      * Create an input file that can be used with the EMFAC2011 SG model. The
@@ -200,12 +164,12 @@ public class Emfac2011InputFileCreator
 
     private DataTable formScenarioTable(String areaType, String area, int year, String season)
     {
-        TableSchema schema = new TableSchema(EMFAC_2011_SCENARIO_TABLE_NAME);
-        schema.addColumn(EMFAC_2011_SCENARIO_TABLE_GROUP_FIELD, DataType.INT);
-        schema.addColumn(EMFAC_2011_SCENARIO_TABLE_AREA_TYPE_FIELD, DataType.STRING);
-        schema.addColumn(EMFAC_2011_SCENARIO_TABLE_AREA_FIELD, DataType.STRING);
-        schema.addColumn(EMFAC_2011_SCENARIO_TABLE_YEAR_FIELD, DataType.INT);
-        schema.addColumn(EMFAC_2011_SCENARIO_TABLE_SEASON_FIELD, DataType.STRING);
+        TableSchema schema = new TableSchema(Emfac2011Definitions.EMFAC_2011_SCENARIO_TABLE_NAME);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_SCENARIO_TABLE_GROUP_FIELD, DataType.INT);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_SCENARIO_TABLE_AREA_TYPE_FIELD, DataType.STRING);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_SCENARIO_TABLE_AREA_FIELD, DataType.STRING);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_SCENARIO_TABLE_YEAR_FIELD, DataType.INT);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_SCENARIO_TABLE_SEASON_FIELD, DataType.STRING);
         DataTable table = new RowDataTable(schema);
         List<Object> row = new LinkedList<>();
         row.add(1);
@@ -220,18 +184,18 @@ public class Emfac2011InputFileCreator
     private DataTable extractVmtTables(Map<String, DataTable> inputTables, String area, int year,
             String season)
     {
-        TableSchema schema = new TableSchema(EMFAC_2011_VMT_TABLE_NAME);
-        schema.addColumn(EMFAC_2011_VMT_TABLE_GROUP_FIELD, DataType.INT);
-        schema.addColumn(EMFAC_2011_VMT_TABLE_AREA_FIELD, DataType.STRING);
-        schema.addColumn(EMFAC_2011_VMT_TABLE_SCENARIO_FIELD, DataType.INT);
-        schema.addColumn(EMFAC_2011_VMT_TABLE_SUB_AREA_FIELD, DataType.STRING);
-        schema.addColumn(EMFAC_2011_VMT_TABLE_YEAR_FIELD, DataType.INT);
-        schema.addColumn(EMFAC_2011_VMT_TABLE_SEASON_FIELD, DataType.STRING);
-        schema.addColumn(EMFAC_2011_VMT_TABLE_TITLE_FIELD, DataType.STRING);
-        schema.addColumn(EMFAC_2011_VMT_TABLE_VMT_PROFILE_FIELD, DataType.STRING);
-        schema.addColumn(EMFAC_2011_VMT_TABLE_VMT_BY_VEH_FIELD, DataType.STRING);
-        schema.addColumn(EMFAC_2011_VMT_TABLE_SPEED_PROFILE_FIELD, DataType.STRING);
-        schema.addColumn(EMFAC_2011_VMT_TABLE_VMT_FIELD, DataType.DOUBLE);
+        TableSchema schema = new TableSchema(Emfac2011Definitions.EMFAC_2011_VMT_TABLE_NAME);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_VMT_TABLE_GROUP_FIELD, DataType.INT);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_VMT_TABLE_AREA_FIELD, DataType.STRING);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_VMT_TABLE_SCENARIO_FIELD, DataType.INT);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_VMT_TABLE_SUB_AREA_FIELD, DataType.STRING);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_VMT_TABLE_YEAR_FIELD, DataType.INT);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_VMT_TABLE_SEASON_FIELD, DataType.STRING);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_VMT_TABLE_TITLE_FIELD, DataType.STRING);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_VMT_TABLE_VMT_PROFILE_FIELD, DataType.STRING);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_VMT_TABLE_VMT_BY_VEH_FIELD, DataType.STRING);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_VMT_TABLE_SPEED_PROFILE_FIELD, DataType.STRING);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_VMT_TABLE_VMT_FIELD, DataType.DOUBLE);
         DataTable vmtTable = new RowDataTable(schema);
 
         int counter = 1;
@@ -262,16 +226,16 @@ public class Emfac2011InputFileCreator
     private DataTable extractVmtVehicleTables(Map<String, DataTable> inputTables, String area,
             int year, String season)
     {
-        TableSchema schema = new TableSchema(EMFAC_2011_VEHICLE_VMT_TABLE_NAME);
-        schema.addColumn(EMFAC_2011_VEHICLE_VMT_TABLE_GROUP_FIELD, DataType.INT);
-        schema.addColumn(EMFAC_2011_VEHICLE_VMT_TABLE_AREA_FIELD, DataType.STRING);
-        schema.addColumn(EMFAC_2011_VEHICLE_VMT_TABLE_SCENARIO_FIELD, DataType.INT);
-        schema.addColumn(EMFAC_2011_VEHICLE_VMT_TABLE_SUB_AREA_FIELD, DataType.STRING);
-        schema.addColumn(EMFAC_2011_VEHICLE_VMT_TABLE_YEAR_FIELD, DataType.INT);
-        schema.addColumn(EMFAC_2011_VEHICLE_VMT_TABLE_SEASON_FIELD, DataType.STRING);
-        schema.addColumn(EMFAC_2011_VEHICLE_VMT_TABLE_TITLE_FIELD, DataType.STRING);
-        schema.addColumn(EMFAC_2011_VEHICLE_VMT_TABLE_VEHICLE_FIELD, DataType.STRING);
-        schema.addColumn(EMFAC_2011_VEHICLE_VMT_TABLE_VMT_FIELD, DataType.DOUBLE);
+        TableSchema schema = new TableSchema(Emfac2011Definitions.EMFAC_2011_VEHICLE_VMT_TABLE_NAME);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_VEHICLE_VMT_TABLE_GROUP_FIELD, DataType.INT);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_VEHICLE_VMT_TABLE_AREA_FIELD, DataType.STRING);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_VEHICLE_VMT_TABLE_SCENARIO_FIELD, DataType.INT);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_VEHICLE_VMT_TABLE_SUB_AREA_FIELD, DataType.STRING);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_VEHICLE_VMT_TABLE_YEAR_FIELD, DataType.INT);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_VEHICLE_VMT_TABLE_SEASON_FIELD, DataType.STRING);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_VEHICLE_VMT_TABLE_TITLE_FIELD, DataType.STRING);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_VEHICLE_VMT_TABLE_VEHICLE_FIELD, DataType.STRING);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_VEHICLE_VMT_TABLE_VMT_FIELD, DataType.DOUBLE);
         DataTable vehicleVmtTable = new RowDataTable(schema);
 
         int counter = 1;
@@ -304,16 +268,16 @@ public class Emfac2011InputFileCreator
     private DataTable extractVmtSpeedTables(Map<String, DataTable> inputTables, String area,
             int year, String season)
     {
-        TableSchema schema = new TableSchema(EMFAC_2011_SPEED_FRACTION_TABLE_NAME);
-        schema.addColumn(EMFAC_2011_SPEED_FRACTION_TABLE_GROUP_FIELD, DataType.INT);
-        schema.addColumn(EMFAC_2011_SPEED_FRACTION_TABLE_AREA_FIELD, DataType.STRING);
-        schema.addColumn(EMFAC_2011_SPEED_FRACTION_TABLE_SCENARIO_FIELD, DataType.INT);
-        schema.addColumn(EMFAC_2011_SPEED_FRACTION_TABLE_SUB_AREA_FIELD, DataType.STRING);
-        schema.addColumn(EMFAC_2011_SPEED_FRACTION_TABLE_YEAR_FIELD, DataType.INT);
-        schema.addColumn(EMFAC_2011_SPEED_FRACTION_TABLE_SEASON_FIELD, DataType.STRING);
-        schema.addColumn(EMFAC_2011_SPEED_FRACTION_TABLE_TITLE_FIELD, DataType.STRING);
-        schema.addColumn(EMFAC_2011_SPEED_FRACTION_TABLE_VEHICLE_FIELD, DataType.STRING);
-        schema.addColumn(EMFAC_2011_SPEED_FRACTION_TABLE_2007_VEHICLE_FIELD, DataType.STRING);
+        TableSchema schema = new TableSchema(Emfac2011Definitions.EMFAC_2011_SPEED_FRACTION_TABLE_NAME);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_SPEED_FRACTION_TABLE_GROUP_FIELD, DataType.INT);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_SPEED_FRACTION_TABLE_AREA_FIELD, DataType.STRING);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_SPEED_FRACTION_TABLE_SCENARIO_FIELD, DataType.INT);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_SPEED_FRACTION_TABLE_SUB_AREA_FIELD, DataType.STRING);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_SPEED_FRACTION_TABLE_YEAR_FIELD, DataType.INT);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_SPEED_FRACTION_TABLE_SEASON_FIELD, DataType.STRING);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_SPEED_FRACTION_TABLE_TITLE_FIELD, DataType.STRING);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_SPEED_FRACTION_TABLE_VEHICLE_FIELD, DataType.STRING);
+        schema.addColumn(Emfac2011Definitions.EMFAC_2011_SPEED_FRACTION_TABLE_2007_VEHICLE_FIELD, DataType.STRING);
         for (Emfac2011SpeedCategory category : Emfac2011SpeedCategory.values())
             schema.addColumn(category.getName(), DataType.DOUBLE);
         DataTable vmtSpeedTable = new RowDataTable(schema);
@@ -388,20 +352,20 @@ public class Emfac2011InputFileCreator
     private void shiftSpeedFractionTable(DataTable speedVmtTable, DataTable modelData)
     {
         TableIndex<String> index = new BasicTableIndex<>(speedVmtTable,
-                EMFAC_2011_SPEED_FRACTION_TABLE_SUB_AREA_FIELD,
-                EMFAC_2011_SPEED_FRACTION_TABLE_VEHICLE_FIELD);
+        		Emfac2011Definitions.EMFAC_2011_SPEED_FRACTION_TABLE_SUB_AREA_FIELD,
+        		Emfac2011Definitions.EMFAC_2011_SPEED_FRACTION_TABLE_VEHICLE_FIELD);
         index.buildIndex();
 
         for (DataRow row : modelData)
         {
-            String subArea = row.getCellAsString(Emfac2011Data.EMFAC_2011_DATA_SUB_AREA_FIELD);
+            String subArea = row.getCellAsString(Emfac2011Definitions.EMFAC_2011_DATA_SUB_AREA_FIELD);
             String vehicleType = row
-                    .getCellAsString(Emfac2011Data.EMFAC_2011_DATA_VEHICLE_TYPE_FIELD);
+                    .getCellAsString(Emfac2011Definitions.EMFAC_2011_DATA_VEHICLE_TYPE_FIELD);
             String category = Emfac2011SpeedCategory.getTypeForName(
-                    row.getCellAsString(Emfac2011Data.EMFAC_2011_DATA_SPEED_FIELD)).getName();
+                    row.getCellAsString(Emfac2011Definitions.EMFAC_2011_DATA_SPEED_FIELD)).getName();
             speedVmtTable.setCellValue(index.getRowNumbers(subArea, vehicleType).iterator().next(),
                     category,
-                    row.getCellAsDouble(Emfac2011Data.EMFAC_2011_DATA_SPEED_FRACTION_FIELD));
+                    row.getCellAsDouble(Emfac2011Definitions.EMFAC_2011_DATA_SPEED_FRACTION_FIELD));
         }
     }
 
@@ -440,10 +404,10 @@ public class Emfac2011InputFileCreator
 
         for (DataRow row : vehicleVmtTable)
         {
-            String subArea = row.getCellAsString(EMFAC_2011_VEHICLE_VMT_TABLE_SUB_AREA_FIELD);
+            String subArea = row.getCellAsString(Emfac2011Definitions.EMFAC_2011_VEHICLE_VMT_TABLE_SUB_AREA_FIELD);
             Emfac2011VehicleType vehicleType = Emfac2011VehicleType.getVehicleType(row
-                    .getCellAsString(EMFAC_2011_VEHICLE_VMT_TABLE_VEHICLE_FIELD));
-            double vmt = row.getCellAsDouble(EMFAC_2011_VEHICLE_VMT_TABLE_VMT_FIELD);
+                    .getCellAsString(Emfac2011Definitions.EMFAC_2011_VEHICLE_VMT_TABLE_VEHICLE_FIELD));
+            double vmt = row.getCellAsDouble(Emfac2011Definitions.EMFAC_2011_VEHICLE_VMT_TABLE_VMT_FIELD);
             if (mutableVehicleTypes.contains(vehicleType)) emfacMutableVmtByAreaAndVehicleType.get(
                     subArea).put(vehicleType,
                     emfacMutableVmtByAreaAndVehicleType.get(subArea).get(vehicleType) + vmt);
@@ -453,10 +417,10 @@ public class Emfac2011InputFileCreator
 
         for (DataRow row : modelData)
         {
-            String subArea = row.getCellAsString(Emfac2011Data.EMFAC_2011_DATA_SUB_AREA_FIELD);
+            String subArea = row.getCellAsString(Emfac2011Definitions.EMFAC_2011_DATA_SUB_AREA_FIELD);
             Emfac2011VehicleType vehicleType = Emfac2011VehicleType.getVehicleType(row
-                    .getCellAsString(Emfac2011Data.EMFAC_2011_DATA_VEHICLE_TYPE_FIELD));
-            double vmt = row.getCellAsDouble(Emfac2011Data.EMFAC_2011_DATA_VMT_FIELD);
+                    .getCellAsString(Emfac2011Definitions.EMFAC_2011_DATA_VEHICLE_TYPE_FIELD));
+            double vmt = row.getCellAsDouble(Emfac2011Definitions.EMFAC_2011_DATA_VMT_FIELD);
             modelVmtByAreaAndVehicleType.get(subArea).put(vehicleType,
                     modelVmtByAreaAndVehicleType.get(subArea).get(vehicleType) + vmt);
         }
@@ -492,11 +456,11 @@ public class Emfac2011InputFileCreator
         }
 
         // shift overall vmt
-        vmtTable.setPrimaryKey(EMFAC_2011_VMT_TABLE_SUB_AREA_FIELD);
+        vmtTable.setPrimaryKey(Emfac2011Definitions.EMFAC_2011_VMT_TABLE_SUB_AREA_FIELD);
         for (DataRow row : vmtTable)
         {
-            String subArea = row.getCellAsString(EMFAC_2011_VMT_TABLE_SUB_AREA_FIELD);
-            double originalVmt = row.getCellAsDouble(EMFAC_2011_VMT_TABLE_VMT_FIELD);
+            String subArea = row.getCellAsString(Emfac2011Definitions.EMFAC_2011_VMT_TABLE_SUB_AREA_FIELD);
+            double originalVmt = row.getCellAsDouble(Emfac2011Definitions.EMFAC_2011_VMT_TABLE_VMT_FIELD);
             Map<Emfac2011VehicleType, Double> modelVmt = modelVmtByAreaAndVehicleType.get(subArea);
             Map<Emfac2011VehicleType, Double> emfacMutableVmt = emfacMutableVmtByAreaAndVehicleType
                     .get(subArea);
@@ -510,146 +474,30 @@ public class Emfac2011InputFileCreator
                                                                                // old
                                                                                // vmt
             }
-            vmtTable.setCellValueByKey(subArea, EMFAC_2011_VMT_TABLE_VMT_FIELD, originalVmt);
+            vmtTable.setCellValueByKey(subArea, Emfac2011Definitions.EMFAC_2011_VMT_TABLE_VMT_FIELD, originalVmt);
         }
 
         // replace vehicle vmts
         TableIndex<String> index = new BasicTableIndex<>(vehicleVmtTable,
-                EMFAC_2011_VEHICLE_VMT_TABLE_SUB_AREA_FIELD,
-                EMFAC_2011_VEHICLE_VMT_TABLE_VEHICLE_FIELD);
+        		Emfac2011Definitions.EMFAC_2011_VEHICLE_VMT_TABLE_SUB_AREA_FIELD,
+        		Emfac2011Definitions.EMFAC_2011_VEHICLE_VMT_TABLE_VEHICLE_FIELD);
         index.buildIndex();
         for (DataRow row : vehicleVmtTable)
         {
-            String subArea = row.getCellAsString(EMFAC_2011_VEHICLE_VMT_TABLE_SUB_AREA_FIELD);
+            String subArea = row.getCellAsString(Emfac2011Definitions.EMFAC_2011_VEHICLE_VMT_TABLE_SUB_AREA_FIELD);
             Map<Emfac2011VehicleType, Double> modelVmt = modelVmtByAreaAndVehicleType.get(subArea);
             Map<Emfac2011VehicleType, Double> emfacMutableVmt = emfacMutableVmtByAreaAndVehicleType
                     .get(subArea);
             Emfac2011VehicleType vehicleType = Emfac2011VehicleType.getVehicleType(row
-                    .getCellAsString(EMFAC_2011_VEHICLE_VMT_TABLE_VEHICLE_FIELD));
+                    .getCellAsString(Emfac2011Definitions.EMFAC_2011_VEHICLE_VMT_TABLE_VEHICLE_FIELD));
             if (modelVmt.containsKey(vehicleType))
             {
-                double vmt = row.getCellAsDouble(EMFAC_2011_VEHICLE_VMT_TABLE_VMT_FIELD);
+                double vmt = row.getCellAsDouble(Emfac2011Definitions.EMFAC_2011_VEHICLE_VMT_TABLE_VMT_FIELD);
                 if (modelVmtIncludesNonMutableVehicleTypes) vmt = modelVmt.get(vehicleType);
                 else vmt += modelVmt.get(vehicleType) - emfacMutableVmt.get(vehicleType);
                 vehicleVmtTable.setCellValue(index.getRowNumbers(subArea, vehicleType.getName())
-                        .iterator().next(), EMFAC_2011_VEHICLE_VMT_TABLE_VMT_FIELD, vmt);
+                        .iterator().next(), Emfac2011Definitions.EMFAC_2011_VEHICLE_VMT_TABLE_VMT_FIELD, vmt);
             }
         }
     }
-
-    // private void shiftVmtTables_old(DataTable vmtTable, DataTable
-    // vehicleVmtTable, Set<String> areas, DataTable modelData, boolean
-    // preserveEmfacVehicleFractions, boolean
-    // modelVmtIncludesNonMutableVehicleTypes) {
-    // // private void shiftVmtTables(DataTable vmtTable, DataTable
-    // vehicleVmtTable, DataTable modelData, boolean
-    // preserveEmfacVehicleFractions, boolean
-    // modelVmtIncludesNonMutableVehicleTypes, Map<String,List<String>> areas) {
-    // //todo: separate vmts by areas
-    // TableIndex<String> index = new
-    // BasicTableIndex<>(vehicleVmtTable,EMFAC_2011_VEHICLE_VMT_TABLE_VEHICLE_FIELD,EMFAC_2011_VEHICLE_VMT_TABLE_SUB_AREA_FIELD);
-    // index.buildIndex();
-    // Map<String,Double> vmtFractions = new HashMap<>(); //fraction of total
-    // VMT for a given area
-    // Map<String,Double> mutableVmtSum = new HashMap<>(); //total VMT in a
-    // given area which is mutable
-    // Map<String,Double> mutableVmtFraction = new HashMap<>(); //fraction of
-    // VMT for a given area which is mutable
-    //
-    // double fullMutableSum = 0.0;
-    // Map<String,Map<Emfac2011VehicleType,Double>> vehicleVmtAreaFractions =
-    // new HashMap<>();
-    // for (String area : areas) {
-    // double totalMutableSum = 0.0;
-    // double totalSum = 0.0;
-    // Map<Emfac2011VehicleType,Double> vvaf = new
-    // EnumMap<>(Emfac2011VehicleType.class);
-    // Set<Emfac2011VehicleType> mutableVehicles =
-    // Emfac2011VehicleType.getMutableVehicleTypes();
-    // for (Emfac2011VehicleType type : Emfac2011VehicleType.values()) {
-    // if (mutableVehicles.contains(type))
-    // vvaf.put(type,0.0);
-    // if (index.getIndexCount(type.getName(),area) > 0) { //if missing, then
-    // just move on...
-    // for (DataRow row :
-    // vehicleVmtTable.getIndexedRows(index,type.getName(),area)) {
-    // double vmt = row.getCellAsDouble(EMFAC_2011_VEHICLE_VMT_TABLE_VMT_FIELD);
-    // if (!mutableVehicles.contains(type)) {
-    // if (modelVmtIncludesNonMutableVehicleTypes)
-    // totalSum += vmt; //add in non-mutable vmt to proportionalize correctly
-    // continue;
-    // }
-    // totalSum += vmt;
-    // totalMutableSum += vmt;
-    // vvaf.put(type,vvaf.get(type)+vmt);
-    // fullMutableSum += vmt;
-    // }
-    // }
-    // }
-    // vehicleVmtAreaFractions.put(area,vvaf);
-    // mutableVmtFraction.put(area,totalMutableSum/totalSum);
-    // mutableVmtSum.put(area,totalMutableSum);
-    // }
-    //
-    // for (String area : vehicleVmtAreaFractions.keySet()) {
-    // Map<Emfac2011VehicleType,Double> vvaf =
-    // vehicleVmtAreaFractions.get(area);
-    // for (Emfac2011VehicleType vehicleType : vvaf.keySet())
-    // vvaf.put(vehicleType,vvaf.get(vehicleType)/fullMutableSum);
-    // }
-    //
-    // for (String area : vehicleVmtAreaFractions.keySet()) {
-    // Map<Emfac2011VehicleType,Double> vvaf =
-    // vehicleVmtAreaFractions.get(area);
-    // Double fractionSum = 0.0;
-    // for (Emfac2011VehicleType vehicleType : vvaf.keySet())
-    // fractionSum += vvaf.get(vehicleType);
-    // vmtFractions.put(area,fractionSum);
-    // }
-    //
-    // Map<Emfac2011VehicleType,Double> vehicleVmt = new
-    // EnumMap<>(Emfac2011VehicleType.class);
-    // for (Emfac2011VehicleType type :
-    // Emfac2011VehicleType.getMutableVehicleTypes())
-    // vehicleVmt.put(type,0.0);
-    // for (DataRow row : modelData) {
-    // Emfac2011VehicleType type =
-    // Emfac2011VehicleType.getVehicleType(row.getCellAsString(Emfac2011Data.EMFAC_2011_DATA_VEHICLE_TYPE_FIELD));
-    // vehicleVmt.put(type,vehicleVmt.get(type)+row.getCellAsDouble(Emfac2011Data.EMFAC_2011_DATA_VMT_FIELD));
-    // }
-    // double totalVmt = 0.0;
-    // for (Double vmt : vehicleVmt.values())
-    // totalVmt += vmt;
-    //
-    //
-    // //shift overall vmt
-    // int rowCounter = 0;
-    // for (DataRow row : vmtTable) {
-    // String subArea =
-    // row.getCellAsString(EMFAC_2011_VMT_TABLE_SUB_AREA_FIELD);
-    // double shiftedVmt = row.getCellAsDouble(EMFAC_2011_VMT_TABLE_VMT_FIELD) -
-    // mutableVmtSum.get(subArea) +
-    // totalVmt*vmtFractions.get(subArea)*mutableVmtFraction.get(subArea);
-    // //take off mutable VMT from EMFAC, and replace with model sum
-    // vmtTable.setCellValue(rowCounter++,EMFAC_2011_VMT_TABLE_VMT_FIELD,shiftedVmt);
-    // }
-    // //replace vehicle vmts
-    // index = new
-    // BasicTableIndex<>(vehicleVmtTable,EMFAC_2011_VEHICLE_VMT_TABLE_VEHICLE_FIELD);
-    // index.buildIndex();
-    // for (Emfac2011VehicleType type :
-    // Emfac2011VehicleType.getMutableVehicleTypes())
-    // for (int row : index.getRowNumbers(type.getName())) {
-    // String subArea = (String)
-    // vehicleVmtTable.getCellValue(row,EMFAC_2011_VEHICLE_VMT_TABLE_SUB_AREA_FIELD);
-    // Emfac2011VehicleType vehicleType =
-    // Emfac2011VehicleType.getVehicleType((String)
-    // vehicleVmtTable.getCellValue(row,EMFAC_2011_VEHICLE_VMT_TABLE_VEHICLE_FIELD));
-    // double shiftedVmt = (preserveEmfacVehicleFractions ?
-    // vehicleVmtAreaFractions.get(subArea).get(vehicleType)*totalVmt :
-    // vmtFractions.get(subArea)*vehicleVmt.get(vehicleType))*mutableVmtFraction.get(subArea);
-    // vehicleVmtTable.setCellValue(row,EMFAC_2011_VEHICLE_VMT_TABLE_VMT_FIELD,shiftedVmt);
-    // }
-    //
-    // }
 }
