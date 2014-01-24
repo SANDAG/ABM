@@ -58,7 +58,7 @@ public class Emfac2011Runner {
 	 * @param additionalResources
 	 *            Any additional properties resources.
 	 */
-	public Emfac2011Runner(String scenario, String propertyResource,
+	public Emfac2011Runner(String propertyResource,
 			String... additionalResources) {
 		properties = new Emfac2011Properties(propertyResource,
 				additionalResources);
@@ -94,11 +94,10 @@ public class Emfac2011Runner {
 	 *            results/run.
 	 */
 	public void runEmfac2011(String scenario, Emfac2011Data emfac2011Data) {
-		LOGGER.info("Step 1: Building Aquavis inputs from SANDAG database schema: "
-				+ properties
-						.getString(Emfac2011Definitions.SCHEMA_NAME_PROPERTY));
+		LOGGER.info("Step 1: Building Aquavis inputs from scenario: "
+				+ properties.getString(Emfac2011Definitions.SCENARIO_ID));
 		AquavisDataBuilder builder = new AquavisDataBuilder(properties, sqlUtil);
-		builder.createAquavisInputs();		
+		builder.createAquavisInputs();
 		LOGGER.info("Step 2: Processing aquavis data");
 		DataTable data = emfac2011Data.processAquavisData(scenario, properties);
 		LOGGER.info("Step 3: Creating EMFAC2011 input file");
@@ -166,7 +165,7 @@ public class Emfac2011Runner {
 			finalMapping.put(type.name(), mapping.get(type));
 		return finalMapping;
 	}
-	
+
 	void runEmfac2011Program() {
 		final Path emfacInstallationDir = Paths
 				.get(properties
@@ -204,14 +203,13 @@ public class Emfac2011Runner {
 
 	public static void main(String... args) {
 		double startTime = System.currentTimeMillis();
-		String scenario = "2010";
+		String scenario = args[0];
 
 		// do work
-		new Emfac2011Runner(scenario, args[0], Arrays.copyOfRange(args, 1,
-				args.length)).runEmfac2011(scenario);
+		new Emfac2011Runner(args[1], args[2]).runEmfac2011(scenario);
 		// SandagEmfac2011Runner("D:\\projects\\sandag\\emfac\\output_example\\sandag_emfac2011.properties").runEmfac2011();
 		// time stamp
-		LOGGER.info("Completed in: "
+		LOGGER.info("Emfac2011 completed in: "
 				+ (float) (((System.currentTimeMillis() - startTime) / 1000.0) / 60.0)
 				+ " minutes.");
 	}

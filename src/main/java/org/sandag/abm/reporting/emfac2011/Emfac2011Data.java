@@ -1,7 +1,6 @@
 package org.sandag.abm.reporting.emfac2011;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -27,8 +26,7 @@ import com.pb.sawdust.util.property.PropertyDeluxe;
  * it into a data table that is used (by {@link Emfac2011InputFileCreator}) to
  * create an adjusted EMFAC2011 input file.
  * 
- * @author crf Started 2/8/12 9:13 AM
- * Wu.Sun@sandag.org modified 1/21/2014
+ * @author crf Started 2/8/12 9:13 AM Wu.Sun@sandag.org modified 1/21/2014
  */
 public abstract class Emfac2011Data {
 	private static final Logger LOGGER = LoggerFactory
@@ -61,9 +59,10 @@ public abstract class Emfac2011Data {
 	public DataTable processAquavisData(String scenario,
 			Emfac2011Properties properties) {
 
-		ResultSet network = queryNetwork(sqlUtil, scenario);
-		ResultSet trips = queryTrips(sqlUtil, scenario);
-		ResultSet intrazonal = queryIntrazonal(sqlUtil, scenario);
+		ArrayList<ArrayList<String>> network = queryNetwork(sqlUtil, scenario);
+		ArrayList<ArrayList<String>> trips = queryTrips(sqlUtil, scenario);
+		ArrayList<ArrayList<String>> intrazonal = queryIntrazonal(sqlUtil,
+				scenario);
 
 		Map<String, List<String>> areas = new HashMap<>(
 				properties
@@ -75,7 +74,8 @@ public abstract class Emfac2011Data {
 
 		DataTable outputTable = buildEmfacDataTableShell(areas);
 		TableIndex<String> index = new BasicTableIndex<>(outputTable,
-				Emfac2011Definitions.EMFAC_2011_DATA_SPEED_FIELD, Emfac2011Definitions.EMFAC_2011_DATA_SUB_AREA_FIELD,
+				Emfac2011Definitions.EMFAC_2011_DATA_SPEED_FIELD,
+				Emfac2011Definitions.EMFAC_2011_DATA_SUB_AREA_FIELD,
 				Emfac2011Definitions.EMFAC_2011_DATA_VEHICLE_TYPE_FIELD);
 		index.buildIndex();
 
@@ -83,75 +83,73 @@ public abstract class Emfac2011Data {
 		Map<String, Set<Emfac2011VehicleType>> aquavisVehicleTypeToEmfacTypeMapping = getAquavisVehicleTypeToEmfacTypeMapping();
 		Map<Emfac2011VehicleType, Map<String, Double>> vehicleFractions = buildVehicleFractioning(aquavisVehicleTypeToEmfacTypeMapping);
 
-		LOGGER.debug("Aggregating aquavis network VMT data");
-		try {
-			while (network.next()) {
-				double vol = network.getDouble("volume");
-				double len = network.getDouble("length");
-				double speed = network.getDouble("speed");
-				String vehicleType = network.getString("vClass");
-				String district = network.getString("region");
-				if (districtsToSubareas.containsKey(district)) {
-					String subarea = districtsToSubareas.get(district);
-					for (Emfac2011VehicleType emfacVehicle : aquavisVehicleTypeToEmfacTypeMapping
-							.get(vehicleType)) {
-						double fraction = vehicleFractions.get(emfacVehicle)
-								.get(vehicleType);
-						for (int r : index.getRowNumbers(Emfac2011SpeedCategory
-								.getSpeedCategory(speed).getName(), subarea,
-								emfacVehicle.getName()))
-							outputTable.setCellValue(
-									r,
-									Emfac2011Definitions.EMFAC_2011_DATA_VMT_FIELD,
-									(Double) outputTable.getCellValue(r,
-											Emfac2011Definitions.EMFAC_2011_DATA_VMT_FIELD)
-											+ fraction * vol * len);
-					}
+		LOGGER.info("Step 2.1: Aggregating aquavis network VMT data");
+		for (ArrayList<String> row : network) {
+			double len = new Double(row.get(3)).doubleValue();
+			String vehicleType = row.get(6);
+			double speed = new Double(row.get(7)).doubleValue();
+			double vol = new Double(row.get(8)).doubleValue();
+			String district = row.get(9);
+
+			if (districtsToSubareas.containsKey(district)) {
+				String subarea = districtsToSubareas.get(district);
+				for (Emfac2011VehicleType emfacVehicle : aquavisVehicleTypeToEmfacTypeMapping
+						.get(vehicleType)) {
+					double fraction = vehicleFractions.get(emfacVehicle).get(
+							vehicleType);
+					for (int r : index.getRowNumbers(Emfac2011SpeedCategory
+							.getSpeedCategory(speed).getName(), subarea,
+							emfacVehicle.getName()))
+						outputTable
+								.setCellValue(
+										r,
+										Emfac2011Definitions.EMFAC_2011_DATA_VMT_FIELD,
+										(Double) outputTable
+												.getCellValue(
+														r,
+														Emfac2011Definitions.EMFAC_2011_DATA_VMT_FIELD)
+												+ fraction * vol * len);
 				}
 			}
-		} catch (SQLException e) {
-			LOGGER.error("Network VMT aggregation error:" + e.getMessage());
 		}
 
 		// need to collect intrazonal vmt and add it to network vmt - by auto
 		// class
-		LOGGER.debug("Aggregating aquavis intrazonal VMT data");
+		LOGGER.info("Step 2.2: Aggregating aquavis intrazonal VMT data");
 		HashMap<Integer, Emfac2011AquavisIntrazonal> intrazonalMap = convertIntrazonal(intrazonal);
-		try {
-			while (trips.next()) {
-				int zone = trips.getInt("origin");
-				if (zone == trips.getInt("destination")) {
-					String district = (String) intrazonalMap.get(zone)
-							.getRegion();
-					if (districtsToSubareas.containsKey(district)) {
-						String subarea = districtsToSubareas.get(district);
-						double speed = intrazonalMap.get(zone).getSpeed();
-						double vmt = intrazonalMap.get(zone).getDistance()
-								* trips.getInt("trips");
-						String vehicleType = trips.getString("vClass");
-						for (Emfac2011VehicleType emfacVehicle : aquavisVehicleTypeToEmfacTypeMapping
-								.get(vehicleType)) {
-							double fraction = vehicleFractions
-									.get(emfacVehicle).get(vehicleType);
-							for (int r : index.getRowNumbers(
-									Emfac2011SpeedCategory.getSpeedCategory(
-											speed).getName(), subarea,
-									emfacVehicle.getName()))
-								outputTable.setCellValue(
-										r,
-										Emfac2011Definitions.EMFAC_2011_DATA_VMT_FIELD,
-										(Double) outputTable.getCellValue(r,
-												Emfac2011Definitions.EMFAC_2011_DATA_VMT_FIELD)
-												+ fraction * vmt);
-						}
+		for (ArrayList<String> row : trips) {
+			int zone = new Integer(row.get(1)).intValue();
+			int destination = new Integer(row.get(2)).intValue();
+			String vClass = row.get(5);
+			int vol = new Integer(row.get(6)).intValue();
+			if (zone == destination) {
+				String district = (String) intrazonalMap.get(zone).getRegion();
+				if (districtsToSubareas.containsKey(district)) {
+					String subarea = districtsToSubareas.get(district);
+					double speed = intrazonalMap.get(zone).getSpeed();
+					double vmt = intrazonalMap.get(zone).getDistance() * vol;
+					for (Emfac2011VehicleType emfacVehicle : aquavisVehicleTypeToEmfacTypeMapping
+							.get(vClass)) {
+						double fraction = vehicleFractions.get(emfacVehicle)
+								.get(vClass);
+						for (int r : index.getRowNumbers(Emfac2011SpeedCategory
+								.getSpeedCategory(speed).getName(), subarea,
+								emfacVehicle.getName()))
+							outputTable
+									.setCellValue(
+											r,
+											Emfac2011Definitions.EMFAC_2011_DATA_VMT_FIELD,
+											(Double) outputTable
+													.getCellValue(
+															r,
+															Emfac2011Definitions.EMFAC_2011_DATA_VMT_FIELD)
+													+ fraction * vmt);
 					}
 				}
 			}
-		} catch (SQLException e) {
-			LOGGER.error("Intrazonal VMT aggregation error:" + e.getMessage());
 		}
 
-		LOGGER.debug("Building speed fractions");
+		LOGGER.info("Step 2.3: Building speed fractions");
 		// build fractions
 		index = new BasicTableIndex<>(outputTable,
 				Emfac2011Definitions.EMFAC_2011_DATA_SUB_AREA_FIELD,
@@ -164,17 +162,22 @@ public abstract class Emfac2011Data {
 				int count = 0;
 				for (DataRow row : outputTable.getIndexedRows(index, subarea,
 						emfacVehicle.getName())) {
-					sum += row.getCellAsDouble(Emfac2011Definitions.EMFAC_2011_DATA_VMT_FIELD);
+					sum += row
+							.getCellAsDouble(Emfac2011Definitions.EMFAC_2011_DATA_VMT_FIELD);
 					count++;
 				}
 				for (int r : index.getRowNumbers(subarea,
 						emfacVehicle.getName()))
-					outputTable.setCellValue(
-							r,
-							Emfac2011Definitions.EMFAC_2011_DATA_SPEED_FRACTION_FIELD,
-							sum == 0.0 ? 1.0 / count : (Double) outputTable
-									.getCellValue(r, Emfac2011Definitions.EMFAC_2011_DATA_VMT_FIELD)
-									/ sum);
+					outputTable
+							.setCellValue(
+									r,
+									Emfac2011Definitions.EMFAC_2011_DATA_SPEED_FRACTION_FIELD,
+									sum == 0.0 ? 1.0 / count
+											: (Double) outputTable
+													.getCellValue(
+															r,
+															Emfac2011Definitions.EMFAC_2011_DATA_VMT_FIELD)
+													/ sum);
 			}
 		}
 
@@ -184,11 +187,18 @@ public abstract class Emfac2011Data {
 	private DataTable buildEmfacDataTableShell(Map<String, List<String>> areas) {
 		LOGGER.debug("Building EMFAC data table shell");
 		TableSchema schema = new TableSchema("Emfac Data");
-		schema.addColumn(Emfac2011Definitions.EMFAC_2011_DATA_SPEED_FIELD, DataType.STRING);
-		schema.addColumn(Emfac2011Definitions.EMFAC_2011_DATA_SUB_AREA_FIELD, DataType.STRING);
-		schema.addColumn(Emfac2011Definitions.EMFAC_2011_DATA_VEHICLE_TYPE_FIELD, DataType.STRING);
-		schema.addColumn(Emfac2011Definitions.EMFAC_2011_DATA_VMT_FIELD, DataType.DOUBLE);
-		schema.addColumn(Emfac2011Definitions.EMFAC_2011_DATA_SPEED_FRACTION_FIELD, DataType.DOUBLE);
+		schema.addColumn(Emfac2011Definitions.EMFAC_2011_DATA_SPEED_FIELD,
+				DataType.STRING);
+		schema.addColumn(Emfac2011Definitions.EMFAC_2011_DATA_SUB_AREA_FIELD,
+				DataType.STRING);
+		schema.addColumn(
+				Emfac2011Definitions.EMFAC_2011_DATA_VEHICLE_TYPE_FIELD,
+				DataType.STRING);
+		schema.addColumn(Emfac2011Definitions.EMFAC_2011_DATA_VMT_FIELD,
+				DataType.DOUBLE);
+		schema.addColumn(
+				Emfac2011Definitions.EMFAC_2011_DATA_SPEED_FRACTION_FIELD,
+				DataType.DOUBLE);
 		DataTable outputTable = new RowDataTable(schema);
 
 		// first, add rows for everything
@@ -210,7 +220,7 @@ public abstract class Emfac2011Data {
 															// through
 		return outputTable; // unnoticed
 	}
-	
+
 	private Map<Emfac2011VehicleType, Map<String, Double>> buildVehicleFractioning(
 			Map<String, Set<Emfac2011VehicleType>> aquavisVehicleTypeToEmfacTypeMapping) {
 		// returns a map which says for every emfac vehicle type, what aquavis
@@ -241,46 +251,54 @@ public abstract class Emfac2011Data {
 	}
 
 	private HashMap<Integer, Emfac2011AquavisIntrazonal> convertIntrazonal(
-			ResultSet intrazonal) {
+			ArrayList<ArrayList<String>> intrazonal) {
 		HashMap<Integer, Emfac2011AquavisIntrazonal> result = new HashMap<Integer, Emfac2011AquavisIntrazonal>();
-		try {
-			while (intrazonal.next()) {
-				int zone = intrazonal.getInt("zone");
-				Emfac2011AquavisIntrazonal rec = new Emfac2011AquavisIntrazonal();
-				rec.setZone(zone);
-				rec.setDistance(intrazonal.getDouble("distance"));
-				rec.setRegion(intrazonal.getString("region"));
-				rec.setSpeed(intrazonal.getDouble("speed"));
-				rec.setaType(intrazonal.getString("aType"));
-				result.put(zone, rec);
-			}
-		} catch (SQLException e) {
-			LOGGER.error(e.getMessage());
+		for (ArrayList<String> row : intrazonal) {
+			Emfac2011AquavisIntrazonal rec = new Emfac2011AquavisIntrazonal();
+			int zone = new Integer(row.get(1)).intValue();
+			rec.setZone(zone);
+			rec.setDistance(new Double(row.get(2)));
+			rec.setSpeed(new Double(row.get(3)));
+			rec.setRegion(row.get(4));
+			rec.setaType(row.get(5));
+			result.put(zone, rec);
 		}
 		return result;
 	}
 
-	private ResultSet queryNetwork(Emfac2011SqlUtil sqlUtil, String schema) {
-		ResultSet result = sqlUtil.queryAquavisTables(
-				properties.getPath(Emfac2011Definitions.QUERY_AQUAVIS_NETWORK_TEMPLATE_PROPERTY),
-				schema,
-				properties.getString(Emfac2011Definitions.AQUAVIS_TEMPLATE_SCHEMA_TOKEN_PROPERTY));
+	private ArrayList<ArrayList<String>> queryNetwork(Emfac2011SqlUtil sqlUtil,
+			String schema) {
+		ArrayList<ArrayList<String>> result = sqlUtil
+				.queryAquavisTables(
+						properties
+								.getPath(Emfac2011Definitions.QUERY_AQUAVIS_NETWORK_TEMPLATE_PROPERTY),
+						schema,
+						properties
+								.getString(Emfac2011Definitions.AQUAVIS_TEMPLATE_SCENARIOID_TOKEN_PROPERTY));
 		return result;
 	}
 
-	private ResultSet queryTrips(Emfac2011SqlUtil sqlUtil, String schema) {
-		ResultSet result = sqlUtil.queryAquavisTables(
-				properties.getPath(Emfac2011Definitions.QUERY_AQUAVIS_TRIPS_TEMPLATE_PROPERTY),
-				schema,
-				properties.getString(Emfac2011Definitions.AQUAVIS_TEMPLATE_SCHEMA_TOKEN_PROPERTY));
+	private ArrayList<ArrayList<String>> queryTrips(Emfac2011SqlUtil sqlUtil,
+			String schema) {
+		ArrayList<ArrayList<String>> result = sqlUtil
+				.queryAquavisTables(
+						properties
+								.getPath(Emfac2011Definitions.QUERY_AQUAVIS_TRIPS_TEMPLATE_PROPERTY),
+						schema,
+						properties
+								.getString(Emfac2011Definitions.AQUAVIS_TEMPLATE_SCENARIOID_TOKEN_PROPERTY));
 		return result;
 	}
 
-	private ResultSet queryIntrazonal(Emfac2011SqlUtil sqlUtil, String schema) {
-		ResultSet result = sqlUtil.queryAquavisTables(
-				properties.getPath(Emfac2011Definitions.QUERY_AQUAVIS_INTRAZONAL_TEMPLATE_PROPERTY),
-				schema,
-				properties.getString(Emfac2011Definitions.AQUAVIS_TEMPLATE_SCHEMA_TOKEN_PROPERTY));
+	private ArrayList<ArrayList<String>> queryIntrazonal(
+			Emfac2011SqlUtil sqlUtil, String schema) {
+		ArrayList<ArrayList<String>> result = sqlUtil
+				.queryAquavisTables(
+						properties
+								.getPath(Emfac2011Definitions.QUERY_AQUAVIS_INTRAZONAL_TEMPLATE_PROPERTY),
+						schema,
+						properties
+								.getString(Emfac2011Definitions.AQUAVIS_TEMPLATE_SCENARIOID_TOKEN_PROPERTY));
 		return result;
 	}
 }

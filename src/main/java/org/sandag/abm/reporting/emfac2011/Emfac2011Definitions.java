@@ -48,9 +48,11 @@ public class Emfac2011Definitions {
 	public static final String QUERY_AQUAVIS_INTRAZONAL_TEMPLATE_PROPERTY = "aquavis.intrazonal.query.template";
 
 	// inputs, outputs, and tokens
-	public static final String AQUAVIS_TEMPLATE_SCHEMA_TOKEN_PROPERTY = "aquavis.template.schema.token";
+	public static final String AQUAVIS_TEMPLATE_SCENARIOID_TOKEN_PROPERTY= "aquavis.template.scenarioId.token";
+	public static final String SCENARIO_ID = "scenario.id";
+	//public static final String AQUAVIS_TEMPLATE_SCHEMA_TOKEN_PROPERTY = "aquavis.template.schema.token";
+	//public static final String SCHEMA_NAME_PROPERTY = "schema.name";
 	public static final String AQUAVIS_EXTERNAL_INTRAZONAL_TABLE_PROPERTY = "aquavis.external.intrazonal.table";
-	public static final String SCHEMA_NAME_PROPERTY = "schema.name";
 	public static final String VEHICLE_CODE_MAPPING_FILE_PROPERTY = "emfac.2011.to.sandag.vehicle.code.mapping.file";
 	public static final String VEHICLE_CODE_MAPPING_EMFAC2011_VEHICLE_NAME_COLUMN = "EMFAC2011_MODE";
 
