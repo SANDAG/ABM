@@ -53,7 +53,6 @@ public class DataExporter
     private static final String TOD_TOKEN                   = "%TOD%";
 
     private final Properties    properties;
-    // private final String projectPath;
     private final File          projectPathFile;
     private final String        outputPath;
     private final int           feedbackIterationNumber;
@@ -1588,10 +1587,10 @@ public class DataExporter
         map.put("imps3nh_" + TOD_TOKEN, "HOV3_FREE");
         map.put("imphhdt_" + TOD_TOKEN, "TRUCK_HH_TOLL");
         map.put("imphhdn_" + TOD_TOKEN, "TRUCK_HH_FREE");
-        //map.put("impmhdt_" + TOD_TOKEN, "TRUCK_MH_TOLL");
-        //map.put("impmhdn_" + TOD_TOKEN, "TRUCK_MH_FREE");
-        //map.put("implhdt_" + TOD_TOKEN, "TRUCK_LH_TOLL");
-        //map.put("implhdn_" + TOD_TOKEN, "TRUCK_LH_FREE");
+        // map.put("impmhdt_" + TOD_TOKEN, "TRUCK_MH_TOLL");
+        // map.put("impmhdn_" + TOD_TOKEN, "TRUCK_MH_FREE");
+        // map.put("implhdt_" + TOD_TOKEN, "TRUCK_LH_TOLL");
+        // map.put("implhdn_" + TOD_TOKEN, "TRUCK_LH_FREE");
         return map;
     }
 
@@ -1614,14 +1613,14 @@ public class DataExporter
                 "*STM_" + TOD_TOKEN + " (Skim)", "hhdt - ITOLL2_" + TOD_TOKEN});
         map.put("imphhdn_" + TOD_TOKEN, new String[] {"Length (Skim)",
                 "*STM_" + TOD_TOKEN + " (Skim)"});
-        //map.put("impmhdt_" + TOD_TOKEN, new String[] {"Length (Skim)",
-        //        "*STM_" + TOD_TOKEN + " (Skim)", "mhdt - ITOLL2_" + TOD_TOKEN});
-        //map.put("impmhdn_" + TOD_TOKEN, new String[] {"Length (Skim)",
-        //        "*STM_" + TOD_TOKEN + " (Skim)"});
-        //map.put("implhdt_" + TOD_TOKEN, new String[] {"Length (Skim)",
-        //        "*STM_" + TOD_TOKEN + " (Skim)", "lhdt - ITOLL2_" + TOD_TOKEN});
-        //map.put("implhdn_" + TOD_TOKEN, new String[] {"Length (Skim)",
-        //        "*STM_" + TOD_TOKEN + " (Skim)"});
+        // map.put("impmhdt_" + TOD_TOKEN, new String[] {"Length (Skim)",
+        // "*STM_" + TOD_TOKEN + " (Skim)", "mhdt - ITOLL2_" + TOD_TOKEN});
+        // map.put("impmhdn_" + TOD_TOKEN, new String[] {"Length (Skim)",
+        // "*STM_" + TOD_TOKEN + " (Skim)"});
+        // map.put("implhdt_" + TOD_TOKEN, new String[] {"Length (Skim)",
+        // "*STM_" + TOD_TOKEN + " (Skim)", "lhdt - ITOLL2_" + TOD_TOKEN});
+        // map.put("implhdn_" + TOD_TOKEN, new String[] {"Length (Skim)",
+        // "*STM_" + TOD_TOKEN + " (Skim)"});
         return map;
     }
 
@@ -2045,7 +2044,6 @@ public class DataExporter
         private final int     inboundColumn;
         private final boolean booleanIndicatorVariables;
 
-
         private TripStructureDefinition(int originMgraColumn, int destMgraColumn,
                 int originPurposeColumn, int destinationPurposeColumn, int todColumn,
                 int modeColumn, int boardTapColumn, int alightTapColumn, int partySizeColumn,
@@ -2066,7 +2064,7 @@ public class DataExporter
             this.homeName = homeName;
             this.destinationName = destinationName;
             this.inboundColumn = inboundColumn;
-            
+
             this.booleanIndicatorVariables = booleanIndicatorVariables;
         }
 
@@ -2096,7 +2094,7 @@ public class DataExporter
         }
     }
 
-    public static void main(String... args)
+    public static void main(String... args) throws Exception
     {
         String projectFolder;
         String outputFolder;
@@ -2146,17 +2144,16 @@ public class DataExporter
             } else
             {
                 // add all of the tables
-                definedTables = Arrays.asList("accessibilities", "mgra", "taz", "tap",
-                        "mgratotap", "mgratomgra", "taztotap", "hhdata", "persondata",
-                        "wslocation", "synhh", "synperson", "indivtours", "jointtours",
-                        "indivtrips", "jointtrips", "airporttrips", "cbtours", "cbtrips",
-                        "visitortours", "visitortrips", "ietrip", "commtrip", "eetrip", "eitrip",
-                        "tazskim", "tapskim", "definition", "emfacvehcode", "pnrvehicles",
-                        "cbdvehicles");
+                definedTables = Arrays.asList("accessibilities", "mgra", "taz", "tap", "mgratotap",
+                        "mgratomgra", "taztotap", "hhdata", "persondata", "wslocation", "synhh",
+                        "synperson", "indivtours", "jointtours", "indivtrips", "jointtrips",
+                        "airporttrips", "cbtours", "cbtrips", "visitortours", "visitortrips",
+                        "ietrip", "commtrip", "trucktrip", "eetrip", "eitrip", "tazskim",
+                        "tapskim", "definition", "emfacvehcode", "pnrvehicles", "cbdvehicles");
             }
             // check for full trips set
-            List<String> tripsSet = Arrays.asList("indivtrips", "jointtrips",
-                    "airporttrips", "cbtrips", "visitortrips");
+            List<String> tripsSet = Arrays.asList("indivtrips", "jointtrips", "airporttrips",
+                    "cbtrips", "visitortrips");
             if (!Collections.disjoint(tripsSet, definedTables)
                     && !definedTables.containsAll(tripsSet))
                 throw new IllegalArgumentException(
@@ -2233,6 +2230,18 @@ public class DataExporter
         if (definedTables.contains("ietrip"))
             dataExporter.exportInternalExternalTripData("ietrip");
         if (definedTables.contains("commtrip")) dataExporter.exportCommVehData("commtrip");
+        if (definedTables.contains("trucktrip"))
+        {
+            Properties props = new Properties();
+            props.load(new FileInputStream(propertiesFile));
+  
+            String mtxSvrAddr = props.getProperty("RunModel.MatrixServerAddress");
+            int mtxSvrPort = Integer.parseInt(props.getProperty("RunModel.MatrixServerPort"));
+            MatrixServerWrapper mtxSvrWrap = new MatrixServerWrapper(mtxSvrAddr, mtxSvrPort,
+                    projectFolder + "\\output");
+            IExporter truckExporter = new TruckCsvExporter("trucktrip", mtxSvrWrap);
+            truckExporter.export();
+        }
         if (definedTables.contains("eetrip"))
             dataExporter.exportExternalExternalTripData("eetrip");
         if (definedTables.contains("eitrip"))
