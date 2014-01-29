@@ -56,9 +56,9 @@ public abstract class Emfac2011Data {
 		this.properties = properties;
 	}
 
-	public DataTable processAquavisData(String scenario,
-			Emfac2011Properties properties) {
+	public DataTable processAquavisData(Emfac2011Properties properties) {
 
+		String scenario = properties.getString(Emfac2011Properties.SCENARIO_ID);
 		ArrayList<ArrayList<String>> network = queryNetwork(sqlUtil, scenario);
 		ArrayList<ArrayList<String>> trips = queryTrips(sqlUtil, scenario);
 		ArrayList<ArrayList<String>> intrazonal = queryIntrazonal(sqlUtil,
@@ -119,32 +119,29 @@ public abstract class Emfac2011Data {
 		HashMap<Integer, Emfac2011AquavisIntrazonal> intrazonalMap = convertIntrazonal(intrazonal);
 		for (ArrayList<String> row : trips) {
 			int zone = new Integer(row.get(1)).intValue();
-			int destination = new Integer(row.get(2)).intValue();
 			String vClass = row.get(5);
 			int vol = new Integer(row.get(6)).intValue();
-			if (zone == destination) {
-				String district = (String) intrazonalMap.get(zone).getRegion();
-				if (districtsToSubareas.containsKey(district)) {
-					String subarea = districtsToSubareas.get(district);
-					double speed = intrazonalMap.get(zone).getSpeed();
-					double vmt = intrazonalMap.get(zone).getDistance() * vol;
-					for (Emfac2011VehicleType emfacVehicle : aquavisVehicleTypeToEmfacTypeMapping
-							.get(vClass)) {
-						double fraction = vehicleFractions.get(emfacVehicle)
-								.get(vClass);
-						for (int r : index.getRowNumbers(Emfac2011SpeedCategory
-								.getSpeedCategory(speed).getName(), subarea,
-								emfacVehicle.getName()))
-							outputTable
-									.setCellValue(
-											r,
-											Emfac2011Definitions.EMFAC_2011_DATA_VMT_FIELD,
-											(Double) outputTable
-													.getCellValue(
-															r,
-															Emfac2011Definitions.EMFAC_2011_DATA_VMT_FIELD)
-													+ fraction * vmt);
-					}
+			String district = (String) intrazonalMap.get(zone).getRegion();
+			if (districtsToSubareas.containsKey(district)) {
+				String subarea = districtsToSubareas.get(district);
+				double speed = intrazonalMap.get(zone).getSpeed();
+				double vmt = intrazonalMap.get(zone).getDistance() * vol;
+				for (Emfac2011VehicleType emfacVehicle : aquavisVehicleTypeToEmfacTypeMapping
+						.get(vClass)) {
+					double fraction = vehicleFractions.get(emfacVehicle).get(
+							vClass);
+					for (int r : index.getRowNumbers(Emfac2011SpeedCategory
+							.getSpeedCategory(speed).getName(), subarea,
+							emfacVehicle.getName()))
+						outputTable
+								.setCellValue(
+										r,
+										Emfac2011Definitions.EMFAC_2011_DATA_VMT_FIELD,
+										(Double) outputTable
+												.getCellValue(
+														r,
+														Emfac2011Definitions.EMFAC_2011_DATA_VMT_FIELD)
+												+ fraction * vmt);
 				}
 			}
 		}
@@ -271,10 +268,10 @@ public abstract class Emfac2011Data {
 		ArrayList<ArrayList<String>> result = sqlUtil
 				.queryAquavisTables(
 						properties
-								.getPath(Emfac2011Definitions.QUERY_AQUAVIS_NETWORK_TEMPLATE_PROPERTY),
+								.getPath(Emfac2011Properties.QUERY_AQUAVIS_NETWORK_TEMPLATE_PROPERTY),
 						schema,
 						properties
-								.getString(Emfac2011Definitions.AQUAVIS_TEMPLATE_SCENARIOID_TOKEN_PROPERTY));
+								.getString(Emfac2011Properties.AQUAVIS_TEMPLATE_SCENARIOID_TOKEN_PROPERTY));
 		return result;
 	}
 
@@ -283,10 +280,10 @@ public abstract class Emfac2011Data {
 		ArrayList<ArrayList<String>> result = sqlUtil
 				.queryAquavisTables(
 						properties
-								.getPath(Emfac2011Definitions.QUERY_AQUAVIS_TRIPS_TEMPLATE_PROPERTY),
+								.getPath(Emfac2011Properties.QUERY_AQUAVIS_TRIPS_TEMPLATE_PROPERTY),
 						schema,
 						properties
-								.getString(Emfac2011Definitions.AQUAVIS_TEMPLATE_SCENARIOID_TOKEN_PROPERTY));
+								.getString(Emfac2011Properties.AQUAVIS_TEMPLATE_SCENARIOID_TOKEN_PROPERTY));
 		return result;
 	}
 
@@ -295,10 +292,10 @@ public abstract class Emfac2011Data {
 		ArrayList<ArrayList<String>> result = sqlUtil
 				.queryAquavisTables(
 						properties
-								.getPath(Emfac2011Definitions.QUERY_AQUAVIS_INTRAZONAL_TEMPLATE_PROPERTY),
+								.getPath(Emfac2011Properties.QUERY_AQUAVIS_INTRAZONAL_TEMPLATE_PROPERTY),
 						schema,
 						properties
-								.getString(Emfac2011Definitions.AQUAVIS_TEMPLATE_SCENARIOID_TOKEN_PROPERTY));
+								.getString(Emfac2011Properties.AQUAVIS_TEMPLATE_SCENARIOID_TOKEN_PROPERTY));
 		return result;
 	}
 }

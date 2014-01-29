@@ -418,6 +418,7 @@
                                     <filtering>false</filtering>
                                     <includes>
                                         <include>*.exe</include>
+                                        <include>*.dat</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -460,6 +461,40 @@
                                     <includes>
                                         <include>*.xls</include>
                                     </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-sql-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${output.path}/sql</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>sql</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>   
+                    <execution>
+                        <id>copy-input-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${output.path}/input</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>input</directory>
+                                    <filtering>false</filtering>
                                 </resource>
                             </resources>
                         </configuration>
@@ -540,7 +575,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>./</classpathPrefix>
-                            <mainClass>org.sandag.abm.application.SandagTourBasedModel</mainClass>
+								<mainClass>org.sandag.abm.application.SandagTourBasedModel</mainClass>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
                         <manifestEntries>
@@ -683,6 +718,11 @@
             <artifactId>c3p0</artifactId>
             <version>0.9.1.2</version>
         </dependency>
+		<dependency>
+			<groupId>net.sourceforge.jtds</groupId>
+			<artifactId>jtds</artifactId>
+			<version>1.3.0</version>
+		</dependency>
     </dependencies>
 
     <distributionManagement>

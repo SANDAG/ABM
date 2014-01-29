@@ -1,0 +1,12 @@
+SELECT [SCENARIO_ID]
+      ,[from_node]
+      ,[to_node]
+      ,[length]
+      ,[link_class]
+      ,[time_period]
+      ,[vehicle_class]
+      ,[assigned_speed]
+      ,[volume]
+      ,[region]
+  FROM [abm].[aquavis_network]
+  WHERE[SCENARIO_ID] = @@SCENARIO@@

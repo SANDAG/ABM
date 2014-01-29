@@ -58,22 +58,22 @@ public class Emfac2011Runner {
 	 * @param additionalResources
 	 *            Any additional properties resources.
 	 */
-	public Emfac2011Runner(String propertyResource,
-			String... additionalResources) {
-		properties = new Emfac2011Properties(propertyResource,
-				additionalResources);
+	public Emfac2011Runner(String propertyResource) {
+		properties = new Emfac2011Properties(propertyResource);
 		sqlUtil = new Emfac2011SqlUtil(properties);
 	}
 
-	public void runEmfac2011(String scenario) {
+	public void runEmfac2011() {
 		LOGGER.info("***************Running Emfac2011 for SANDAG***********************");
 		LOGGER.info("Step 0: Setting up mutable vehicle types");
 		// have to call this first because it sets the mutable types, which are,
 		// used throughout the EMFAC2011 process
-		final Map<String, Set<Emfac2011VehicleType>> aquavisVehicleTypeToEmfacMapping = buildAquavisVehicleTypeToEmfacMapping(properties
-				.getPath(Emfac2011Definitions.VEHICLE_CODE_MAPPING_FILE_PROPERTY));
+		Path path = Paths
+				.get(properties.getString(Emfac2011Properties.VEHICLE_CODE_MAPPING_FILE_PROPERTY));
 
-		runEmfac2011(scenario, new Emfac2011Data(properties, sqlUtil) {
+		final Map<String, Set<Emfac2011VehicleType>> aquavisVehicleTypeToEmfacMapping = buildAquavisVehicleTypeToEmfacMapping(path);
+
+		runEmfac2011(new Emfac2011Data(properties, sqlUtil) {
 			@Override
 			protected Map<String, Set<Emfac2011VehicleType>> getAquavisVehicleTypeToEmfacTypeMapping() {
 				return aquavisVehicleTypeToEmfacMapping;
@@ -93,18 +93,18 @@ public class Emfac2011Runner {
 	 *            The {@code Emfac2011Data} instance corresponding to the model
 	 *            results/run.
 	 */
-	public void runEmfac2011(String scenario, Emfac2011Data emfac2011Data) {
+	public void runEmfac2011(Emfac2011Data emfac2011Data) {
 		LOGGER.info("Step 1: Building Aquavis inputs from scenario: "
-				+ properties.getString(Emfac2011Definitions.SCENARIO_ID));
+				+ properties.getString(Emfac2011Properties.SCENARIO_ID));
 		AquavisDataBuilder builder = new AquavisDataBuilder(properties, sqlUtil);
 		builder.createAquavisInputs();
 		LOGGER.info("Step 2: Processing aquavis data");
-		DataTable data = emfac2011Data.processAquavisData(scenario, properties);
+		DataTable data = emfac2011Data.processAquavisData(properties);
 		LOGGER.info("Step 3: Creating EMFAC2011 input file");
 		Emfac2011InputFileCreator inputFileCreator = new Emfac2011InputFileCreator();
 		Path inputfile = inputFileCreator.createInputFile(properties, data);
 		LOGGER.info("Step 4: Initiating EMFAC2011");
-		RunEmfacDialog.createAndShowGUI(inputfile, this);
+		RunEmfacDialog.createAndShowGUI(inputfile, this);			
 		LOGGER.info("EMFAC2011 run finished");
 	}
 
@@ -203,11 +203,8 @@ public class Emfac2011Runner {
 
 	public static void main(String... args) {
 		double startTime = System.currentTimeMillis();
-		String scenario = args[0];
-
 		// do work
-		new Emfac2011Runner(args[1], args[2]).runEmfac2011(scenario);
-		// SandagEmfac2011Runner("D:\\projects\\sandag\\emfac\\output_example\\sandag_emfac2011.properties").runEmfac2011();
+		new Emfac2011Runner(args[0]).runEmfac2011();
 		// time stamp
 		LOGGER.info("Emfac2011 completed in: "
 				+ (float) (((System.currentTimeMillis() - startTime) / 1000.0) / 60.0)

@@ -7,12 +7,7 @@ package org.sandag.abm.reporting.emfac2011;
  */
 
 public class Emfac2011Definitions {
-    	
-	// Aquavis table names
-	public static final String AQUAVIS_NETWORK_TABLE = "aquavis_network";
-	public static final String AQUAVIS_TRIPS_TABLE = "aquavis_trips";
-	public static final String AQUAVIS_INTRAZONAL_TABLE = "aquavis_intrazonal";
-	
+   	
 	//Aquavis table content defintions
     public static final String AQUAVIS_NETWORK_FROM_NODE_FIELD      = "from_node";
     public static final String AQUAVIS_NETWORK_TO_NODE_FIELD        = "to_node";
@@ -37,23 +32,6 @@ public class Emfac2011Definitions {
     public static final String AQUAVIS_TRIPS_VEHICLE_CLASS_FIELD    = "vehicle_class";
     public static final String AQUAVIS_TRIPS_TRIPS_FIELD            = "trips";
 
-	// Aquavis table creation templates
-	public static final String CREATE_AQUAVIS_NETWORK_TEMPLATE_PROPERTY = "aquavis.network.sql.template";
-	public static final String CREATE_AQUAVIS_TRIPS_TEMPLATE_PROPERTY = "aquavis.trips.sql.template";
-	public static final String CREATE_AQUAVIS_INTRAZONAL_TEMPLATE_PROPERTY = "aquavis.intrazonal.sql.template";
-
-	// Aquavis table query templates
-	public static final String QUERY_AQUAVIS_NETWORK_TEMPLATE_PROPERTY = "aquavis.network.query.template";
-	public static final String QUERY_AQUAVIS_TRIPS_TEMPLATE_PROPERTY = "aquavis.trips.query.template";
-	public static final String QUERY_AQUAVIS_INTRAZONAL_TEMPLATE_PROPERTY = "aquavis.intrazonal.query.template";
-
-	// inputs, outputs, and tokens
-	public static final String AQUAVIS_TEMPLATE_SCENARIOID_TOKEN_PROPERTY= "aquavis.template.scenarioId.token";
-	public static final String SCENARIO_ID = "scenario.id";
-	//public static final String AQUAVIS_TEMPLATE_SCHEMA_TOKEN_PROPERTY = "aquavis.template.schema.token";
-	//public static final String SCHEMA_NAME_PROPERTY = "schema.name";
-	public static final String AQUAVIS_EXTERNAL_INTRAZONAL_TABLE_PROPERTY = "aquavis.external.intrazonal.table";
-	public static final String VEHICLE_CODE_MAPPING_FILE_PROPERTY = "emfac.2011.to.sandag.vehicle.code.mapping.file";
 	public static final String VEHICLE_CODE_MAPPING_EMFAC2011_VEHICLE_NAME_COLUMN = "EMFAC2011_MODE";
 
 	// Emfac2011 Data Table Definitions

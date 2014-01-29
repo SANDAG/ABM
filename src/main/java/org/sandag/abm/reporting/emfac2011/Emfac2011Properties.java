@@ -1,8 +1,5 @@
 package org.sandag.abm.reporting.emfac2011;
 
-import java.util.Arrays;
-import java.util.Map;
-
 import com.pb.sawdust.util.property.PropertyDeluxe;
 
 /**
@@ -27,7 +24,7 @@ public class Emfac2011Properties
 	public static final String REPORTS_DATABASE_PASSWORD_PROPERTY = "reports.database.password";
 	public static final String REPORTS_DATABASE_INSTANCE_PROPERTY = "reports.database.instance";	
 
-	//SANDAG Emfac2011 properties
+	//San Diego Emfac2011 properties
     public static final String AREA_TYPE_PROPERTY                        = "emfac.2011.area.type";
     public static final String REGION_NAME_PROPERTY                      = "emfac.2011.region.name";
     public static final String AREAS_PROPERTY                            = "emfac.2011.area";
@@ -36,6 +33,22 @@ public class Emfac2011Properties
     public static final String EMFAC2011_INSTALLATION_DIR_PROPERTY       = "emfac.2011.installation.dir";
     public static final String OUTPUT_DIR_PROPERTY                       = "emfac.2011.output.dir";
     public static final String AQUAVIS_INTRAZONAL_FILE_PROPERTY          = "emfac.2011.aquavis.intrazonal";
+    
+	// Aquavis table creation templates
+	public static final String CREATE_AQUAVIS_NETWORK_TEMPLATE_PROPERTY = "aquavis.network.sql.template";
+	public static final String CREATE_AQUAVIS_TRIPS_TEMPLATE_PROPERTY = "aquavis.trips.sql.template";
+	public static final String CREATE_AQUAVIS_INTRAZONAL_TEMPLATE_PROPERTY = "aquavis.intrazonal.sql.template";
+
+	// Aquavis table query templates
+	public static final String QUERY_AQUAVIS_NETWORK_TEMPLATE_PROPERTY = "aquavis.network.query.template";
+	public static final String QUERY_AQUAVIS_TRIPS_TEMPLATE_PROPERTY = "aquavis.trips.query.template";
+	public static final String QUERY_AQUAVIS_INTRAZONAL_TEMPLATE_PROPERTY = "aquavis.intrazonal.query.template";
+
+	// inputs, outputs, and tokens
+	public static final String AQUAVIS_TEMPLATE_SCENARIOID_TOKEN_PROPERTY= "aquavis.template.scenarioId.token";
+	public static final String SCENARIO_ID = "scenario.id";
+	public static final String VEHICLE_CODE_MAPPING_FILE_PROPERTY = "emfac.2011.to.sandag.vehicle.code.mapping.file";
+
     /**
      * The property key for the boolean indicating if the (default) EMFAC
      * vehicle fractions should be preserved in the EMFAC input file (value is
@@ -57,6 +70,7 @@ public class Emfac2011Properties
      * valid format, which can then be used by the rest of the model.
      */
     public static final String XLS_CONVERTER_PROGRAM_PROPERTY            = "emfac.2011.xls.converter.program";
+    
     /**
      * The property key for the location (full path) of the AquaVis output
      * intrazonal file.
@@ -75,25 +89,9 @@ public class Emfac2011Properties
      *             if any of the required properties is missing, or if they are
      *             typed incorrectly.
      */
-    public Emfac2011Properties(String firstResource, String... additionalResources)
+    public Emfac2011Properties(String firstResource)
     {
-        super(firstResource, additionalResources);
-        System.out.println(firstResource);
-        for (String s : additionalResources)
-            System.out.println(s);
-        for (String key : Arrays.asList(AREA_TYPE_PROPERTY, REGION_NAME_PROPERTY, AREAS_PROPERTY,
-                SEASON_PROPERTY, YEAR_PROPERTY, EMFAC2011_INSTALLATION_DIR_PROPERTY,
-                OUTPUT_DIR_PROPERTY, XLS_CONVERTER_PROGRAM_PROPERTY, AQUAVIS_INTRAZONAL_FILE_PROPERTY))
-        {
-            if (!hasKey(key))
-                throw new IllegalArgumentException("Required property not found for key: " + key);
-        }
-        if (!(getProperty(AREAS_PROPERTY) instanceof Map))
-            throw new IllegalArgumentException(
-                    "Property value for "
-                            + AREAS_PROPERTY
-                            + " must be typed as a map between strings and a string list. "
-                            + "Make sure the property entry has \"(MSLS)\" appended to the key, and the map appropriately typed. e.g.:\n\t"
-                            + "emfac.2011.area(LS) = {El Dorado (LT):[El],Placer (LT):[Pl]}");
+        super(firstResource);
+        System.out.println("first property="+firstResource);
     }
 }

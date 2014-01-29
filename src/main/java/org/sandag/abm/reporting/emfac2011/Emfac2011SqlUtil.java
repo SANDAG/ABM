@@ -9,6 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+
+import nl.tudelft.simulation.logger.Logger;
+
 import com.pb.sawdust.util.exceptions.RuntimeIOException;
 import com.pb.sawdust.util.exceptions.RuntimeWrappingException;
 import com.pb.sawdust.util.property.PropertyDeluxe;
@@ -64,6 +67,7 @@ public class Emfac2011SqlUtil {
 		String s = readFile(script).replace(scenarioIdToken, scenarioId);
 		try (Connection connection = getConnection();
 				Statement statement = connection.createStatement()) {
+			System.out.println("query="+s);
 			table = extract(statement.executeQuery(s));
 			connection.close();
 		} catch (SQLException e) {

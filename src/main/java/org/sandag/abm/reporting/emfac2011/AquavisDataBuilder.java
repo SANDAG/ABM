@@ -24,24 +24,24 @@ public class AquavisDataBuilder {
 
 	public void createAquavisInputs() {
 		String scenarioId = properties
-				.getString(Emfac2011Definitions.SCENARIO_ID);
+				.getString(Emfac2011Properties.SCENARIO_ID);
 		String scenarioToken = properties
-				.getString(Emfac2011Definitions.AQUAVIS_TEMPLATE_SCENARIOID_TOKEN_PROPERTY);
+				.getString(Emfac2011Properties.AQUAVIS_TEMPLATE_SCENARIOID_TOKEN_PROPERTY);
 
 		LOGGER.info("Step 1.1: Creating intrazonal Aquavis table...");
 		sqlUtil.detemplifyAndRunScript(
 				properties
-						.getPath(Emfac2011Definitions.CREATE_AQUAVIS_NETWORK_TEMPLATE_PROPERTY),
+						.getPath(Emfac2011Properties.CREATE_AQUAVIS_INTRAZONAL_TEMPLATE_PROPERTY),
 				scenarioId, scenarioToken);
 		LOGGER.info("Step 1.2: Creating network Aquavis table...");
 		sqlUtil.detemplifyAndRunScript(
 				properties
-						.getPath(Emfac2011Definitions.CREATE_AQUAVIS_NETWORK_TEMPLATE_PROPERTY),
+						.getPath(Emfac2011Properties.CREATE_AQUAVIS_NETWORK_TEMPLATE_PROPERTY),
 				scenarioId, scenarioToken);
 		LOGGER.info("Step 1.3: Creating trips Aquavis table...");
 		sqlUtil.detemplifyAndRunScript(
 				properties
-						.getPath(Emfac2011Definitions.CREATE_AQUAVIS_TRIPS_TEMPLATE_PROPERTY),
+						.getPath(Emfac2011Properties.CREATE_AQUAVIS_TRIPS_TEMPLATE_PROPERTY),
 				scenarioId, scenarioToken);
 	}
 }
