@@ -1,20 +1,18 @@
 package org.sandag.abm.reporting.emfac2011;
 
-import java.nio.file.Path;
-import com.pb.sawdust.tabledata.DataRow;
-import com.pb.sawdust.tabledata.DataTable;
-import com.pb.sawdust.tabledata.basic.RowDataTable;
-import com.pb.sawdust.tabledata.read.CsvTableReader;
-import com.pb.sawdust.tabledata.write.CsvTableWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.pb.sawdust.util.property.PropertyDeluxe;
 
 /**
  * The {@code SandagAquavisInputBuilder} ...
  * 
- * @author crf Started 12/7/12 11:08 AM modified by Wu.Sun@sandag.org 1/21/2014
- * Modified by Wu.Sun@sandag.org 1/21/2014
+ * @author Wu.Sun@sandag.org 1/21/2014
  */
 public class AquavisDataBuilder {
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(AquavisDataBuilder.class);
 	private final PropertyDeluxe properties;
 	private Emfac2011SqlUtil sqlUtil = null;
 
@@ -24,64 +22,26 @@ public class AquavisDataBuilder {
 		this.properties = properties;
 	}
 
-	public void createAquavisInputs(String aquavisNetworkPathProperty,
-			String aquavisTripsPathProperty,
-			String aquavisIntrazonalPathProperty) {
-		createAquavisNetwork(properties.getPath(aquavisNetworkPathProperty));
-		createAquavisTrips(properties.getPath(aquavisTripsPathProperty));
-		createAquavisIntrazonal(properties
-				.getPath(aquavisIntrazonalPathProperty));
-	}
+	public void createAquavisInputs() {
+		String scenarioId = properties
+				.getString(Emfac2011Properties.SCENARIO_ID);
+		String scenarioToken = properties
+				.getString(Emfac2011Properties.AQUAVIS_TEMPLATE_SCENARIOID_TOKEN_PROPERTY);
 
-	private void createAquavisNetwork(Path outputFile) {
-		String schema = properties
-				.getString(Emfac2011Definitions.SCHEMA_NAME_PROPERTY);
+		LOGGER.info("Step 1.1: Creating intrazonal Aquavis table...");
 		sqlUtil.detemplifyAndRunScript(
 				properties
-						.getPath(Emfac2011Definitions.CREATE_AQUAVIS_NETWORK_TEMPLATE_PROPERTY),
-				schema,
-				properties
-						.getString(Emfac2011Definitions.AQUAVIS_TEMPLATE_SCHEMA_TOKEN_PROPERTY));
-		// writeTableToCsv(AQUAVIS_NETWORK_TABLE, schema, outputFile);
-	}
-
-	private void createAquavisTrips(Path outputFile) {
-		String schema = properties
-				.getString(Emfac2011Definitions.SCHEMA_NAME_PROPERTY);
+						.getPath(Emfac2011Properties.CREATE_AQUAVIS_INTRAZONAL_TEMPLATE_PROPERTY),
+				scenarioId, scenarioToken);
+		LOGGER.info("Step 1.2: Creating network Aquavis table...");
 		sqlUtil.detemplifyAndRunScript(
 				properties
-						.getPath(Emfac2011Definitions.CREATE_AQUAVIS_TRIPS_TEMPLATE_PROPERTY),
-				schema,
-				properties
-						.getString(Emfac2011Definitions.AQUAVIS_TEMPLATE_SCHEMA_TOKEN_PROPERTY));
-		// writeTableToCsv(AQUAVIS_TRIPS_TABLE, schema, outputFile);
-	}
-
-	private void createAquavisIntrazonal(Path outputFile) {
-		String schema = properties
-				.getString(Emfac2011Definitions.SCHEMA_NAME_PROPERTY);
+						.getPath(Emfac2011Properties.CREATE_AQUAVIS_NETWORK_TEMPLATE_PROPERTY),
+				scenarioId, scenarioToken);
+		LOGGER.info("Step 1.3: Creating trips Aquavis table...");
 		sqlUtil.detemplifyAndRunScript(
 				properties
-						.getPath(Emfac2011Definitions.CREATE_AQUAVIS_INTRAZONAL_TEMPLATE_PROPERTY),
-				schema,
-				properties
-						.getString(Emfac2011Definitions.AQUAVIS_TEMPLATE_SCHEMA_TOKEN_PROPERTY));
-		// writeTableToCsv(AQUAVIS_INTRAZONAL_TABLE, schema, outputFile);
-		addExternalIntrazonalData(
-				outputFile.toString(),
-				properties
-						.getString(Emfac2011Definitions.AQUAVIS_EXTERNAL_INTRAZONAL_TABLE_PROPERTY));
+						.getPath(Emfac2011Properties.CREATE_AQUAVIS_TRIPS_TEMPLATE_PROPERTY),
+				scenarioId, scenarioToken);
 	}
-
-	private void addExternalIntrazonalData(String intrazonalTablePath,
-			String externalIntrazonalTablePath) {
-		DataTable table = new RowDataTable(new CsvTableReader(
-				intrazonalTablePath));
-		DataTable externalTable = new RowDataTable(new CsvTableReader(
-				externalIntrazonalTablePath));
-		for (DataRow row : externalTable)
-			table.addRow(row);
-		new CsvTableWriter(intrazonalTablePath).writeTable(table);
-	}
-
 }
