@@ -20,13 +20,14 @@ public class MatrixServerWrapper
         this.matrixLocation = mtxLocation;
     }
 
-    public Matrix getMatrix(String matrixName, String coreName)
+    public synchronized Matrix getMatrix(String matrixName, String coreName)
     {
         String matrixPath = matrixLocation + File.separator + matrixName + ".mtx";
         DataEntry dataEntry = new DataEntry("matrix", matrixPath + " " + coreName, "transcad",
                 matrixPath, coreName, "", false);
         
         MatrixDataServerIf server = new MatrixDataServerRmi(serverAddress, serverPort, MatrixDataServer.MATRIX_DATA_SERVER_NAME);
+        
         return server.getMatrix(dataEntry);
     }
 }

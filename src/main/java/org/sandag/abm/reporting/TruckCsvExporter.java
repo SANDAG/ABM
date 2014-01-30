@@ -12,8 +12,6 @@ public class TruckCsvExporter
             "hhdt"                                 };
     private static final String[] COLUMN_HEADERS   = {"ORIG", "DEST", "TOD", "CLASS", "TRIPS"};
     public static final CsvRow    POISON_PILL      = new CsvRow(new String[] {"ALL_DONE"});
-    
-    
 
     public TruckCsvExporter(String aBaseFileName, MatrixServerWrapper aMatrixServerWrapper)
     {
@@ -26,8 +24,9 @@ public class TruckCsvExporter
         BlockingQueue<CsvRow> queue = new LinkedBlockingQueue<CsvRow>();
 
         Thread[] threads = new Thread[TOD_TOKENS.length];
-        
-        LOGGER.info("Initializing Truck Writer Thread. Output Location: " + getFile().getAbsoluteFile());
+
+        LOGGER.info("Initializing Truck Writer Thread. Output Location: "
+                + getFile().getAbsoluteFile());
         CsvWriterThread writerThread = new CsvWriterThread(queue, getFile(), COLUMN_HEADERS);
         new Thread(writerThread).start();
 
