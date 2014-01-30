@@ -44,8 +44,6 @@ public class Emfac2011InputFileCreator
     private static final Logger LOGGER                                             = LoggerFactory
                                                                                            .getLogger(Emfac2011Data.class);
 
-
-
     /**
      * Create an input file that can be used with the EMFAC2011 SG model. The
      * constructed input file will use the default EMFAC2011
@@ -75,7 +73,7 @@ public class Emfac2011InputFileCreator
                 properties.<String, List<String>>getMap(Emfac2011Properties.AREAS_PROPERTY))
                 .keySet();
         String season = properties.getString(Emfac2011Properties.SEASON_PROPERTY);
-        int year = properties.getInt(Emfac2011Properties.YEAR_PROPERTY);
+        int year = Math.min(properties.getInt(Emfac2011Properties.YEAR_PROPERTY), 2035);
         String inventoryDir = Paths.get(
                 properties.getString(Emfac2011Properties.EMFAC2011_INSTALLATION_DIR_PROPERTY),
                 "Application Files/Inventory Files").toString();
@@ -159,7 +157,7 @@ public class Emfac2011InputFileCreator
 
     private String formOutputFileName(String region, String season, int year)
     {
-        return region + "-" + season + "-" + year + ".xls";
+        return "EMFAC2011-"+region + "-" + season + "-" + year + ".xls";
     }
 
     private DataTable formScenarioTable(String areaType, String area, int year, String season)

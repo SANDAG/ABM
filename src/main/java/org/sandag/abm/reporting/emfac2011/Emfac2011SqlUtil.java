@@ -8,38 +8,48 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+
+import nl.tudelft.simulation.logger.Logger;
 
 import com.pb.sawdust.util.exceptions.RuntimeIOException;
 import com.pb.sawdust.util.exceptions.RuntimeWrappingException;
 import com.pb.sawdust.util.property.PropertyDeluxe;
+
 /**
- * 
- * @author Wu.Sun@sandag.org 1/21/2014
- *
+ * @author crf Started 2/9/12 9:17 AM
+ * Modified by Wu.Sun@sandag.org 1/21/2014
  */
 
 public class Emfac2011SqlUtil {
 
 	private final String connectionUrl;
-	private final PropertyDeluxe properties;
-	
+
 	public Emfac2011SqlUtil(PropertyDeluxe properties) {
 		connectionUrl = formConnectionUrl(
-				properties.getString(Emfac2011Definitions.REPORTS_DATABASE_IPADDRESS_PROPERTY),
-				properties.getInt(Emfac2011Definitions.REPORTS_DATABASE_PORT_PROPERTY),
-				properties.getString(Emfac2011Definitions.REPORTS_DATABASE_NAME_PROPERTY),
-				properties.hasKey(Emfac2011Definitions.REPORTS_DATABASE_USERNAME_PROPERTY) ? properties
-						.getString(Emfac2011Definitions.REPORTS_DATABASE_USERNAME_PROPERTY) : null,
-				properties.hasKey(Emfac2011Definitions.REPORTS_DATABASE_PASSWORD_PROPERTY) ? properties
-						.getString(Emfac2011Definitions.REPORTS_DATABASE_PASSWORD_PROPERTY) : null,
-				properties.hasKey(Emfac2011Definitions.REPORTS_DATABASE_INSTANCE_PROPERTY) ? properties
-						.getString(Emfac2011Definitions.REPORTS_DATABASE_INSTANCE_PROPERTY) : null);
-		this.properties = properties;
+				properties
+						.getString(Emfac2011Properties.REPORTS_DATABASE_IPADDRESS_PROPERTY),
+				properties
+						.getInt(Emfac2011Properties.REPORTS_DATABASE_PORT_PROPERTY),
+				properties
+						.getString(Emfac2011Properties.REPORTS_DATABASE_NAME_PROPERTY),
+				properties
+						.hasKey(Emfac2011Properties.REPORTS_DATABASE_USERNAME_PROPERTY) ? properties
+						.getString(Emfac2011Properties.REPORTS_DATABASE_USERNAME_PROPERTY)
+						: null,
+				properties
+						.hasKey(Emfac2011Properties.REPORTS_DATABASE_PASSWORD_PROPERTY) ? properties
+						.getString(Emfac2011Properties.REPORTS_DATABASE_PASSWORD_PROPERTY)
+						: null,
+				properties
+						.hasKey(Emfac2011Properties.REPORTS_DATABASE_INSTANCE_PROPERTY) ? properties
+						.getString(Emfac2011Properties.REPORTS_DATABASE_INSTANCE_PROPERTY)
+						: null);
 	}
-	
-	public void detemplifyAndRunScript(Path script, String schema,
-			String schemaToken) {
-		String s = readFile(script).replace(schemaToken, schema);
+
+	public void detemplifyAndRunScript(Path script, String scenarioId,
+			String scenarioIdToken) {
+		String s = readFile(script).replace(scenarioIdToken, scenarioId);
 		try (Connection connection = getConnection();
 				Statement statement = connection.createStatement()) {
 			connection.setAutoCommit(false);
@@ -49,19 +59,42 @@ public class Emfac2011SqlUtil {
 			throw new RuntimeWrappingException(e);
 		}
 	}
-	
-	public ResultSet queryAquavisTables(Path script, String schema,
-			String schemaToken) {
-		ResultSet result=null;
-		String s = readFile(script).replace(schemaToken, schema);
+
+	public ArrayList<ArrayList<String>> queryAquavisTables(Path script,
+			String scenarioId, String scenarioIdToken) {
+		ArrayList<ArrayList<String>> table = null;
+		String s = readFile(script).replace(scenarioIdToken, scenarioId);
 		try (Connection connection = getConnection();
 				Statement statement = connection.createStatement()) {
-			connection.setAutoCommit(false);
-			result=statement.executeQuery(s);
+			System.out.println("query="+s);
+			table = extract(statement.executeQuery(s));
+			connection.close();
 		} catch (SQLException e) {
 			throw new RuntimeWrappingException(e);
 		}
-		return result;
+		return table;
+	}
+
+	private ArrayList<ArrayList<String>> extract(ResultSet resultSet)
+			throws SQLException {
+		ArrayList<ArrayList<String>> table;
+		int columnCount = resultSet.getMetaData().getColumnCount();
+
+		if (resultSet.getType() == ResultSet.TYPE_FORWARD_ONLY)
+			table = new ArrayList<ArrayList<String>>();
+		else {
+			resultSet.last();
+			table = new ArrayList<ArrayList<String>>(resultSet.getRow());
+			resultSet.beforeFirst();
+		}
+
+		for (ArrayList<String> row; resultSet.next(); table.add(row)) {
+			row = new ArrayList<String>(columnCount);
+
+			for (int c = 1; c <= columnCount; ++c)
+				row.add(resultSet.getString(c).intern());
+		}
+		return table;
 	}
 
 	private String readFile(Path file) {
@@ -76,7 +109,7 @@ public class Emfac2011SqlUtil {
 			throw new RuntimeIOException(e);
 		}
 	}
-	
+
 	private String formConnectionUrl(String ipAddress, int port,
 			String databaseName, String username, String password,
 			String instance) {

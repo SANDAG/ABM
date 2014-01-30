@@ -38,9 +38,7 @@ import com.pb.sawdust.util.exceptions.RuntimeIOException;
  * user) the EMFAC2011 SG model using those inputs.
  * 
  * @author crf Started 2/9/12 9:17 AM
- * 
- *         Wu.Sun@sandag.org combined SandagEmfacRunner with this class cleaned
- *         some codes 1/16/2014
+ * Modified by Wu.Sun@sandag.org 1/24/2014
  */
 public class Emfac2011Runner {
 	private static final Logger LOGGER = LoggerFactory
@@ -58,58 +56,22 @@ public class Emfac2011Runner {
 	 * @param additionalResources
 	 *            Any additional properties resources.
 	 */
-	public Emfac2011Runner(String scenario, String propertyResource,
-			String... additionalResources) {
-		properties = new Emfac2011Properties(propertyResource,
-				additionalResources);
+	public Emfac2011Runner(String propertyResource) {
+		properties = new Emfac2011Properties(propertyResource);
 		sqlUtil = new Emfac2011SqlUtil(properties);
 	}
 
-	void runEmfac2011Program() {
-		final Path emfacInstallationDir = Paths
-				.get(properties
-						.getString(Emfac2011Properties.EMFAC2011_INSTALLATION_DIR_PROPERTY));
-		final PathMatcher matcher = FileSystems.getDefault().getPathMatcher(
-				"glob:*.lnk");
-		final List<Path> link = new LinkedList<>();
-		FileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
-
-			@Override
-			public FileVisitResult visitFile(Path file,
-					BasicFileAttributes attrs) throws IOException {
-				Path name = file.getFileName();
-				if (name != null && matcher.matches(name)) {
-					link.add(file);
-					return FileVisitResult.TERMINATE;
-				}
-				return FileVisitResult.CONTINUE;
-			}
-		};
-
-		try {
-			Files.walkFileTree(emfacInstallationDir,
-					Collections.<FileVisitOption> emptySet(), 1, visitor);
-		} catch (IOException e) {
-			throw new RuntimeIOException(e);
-		}
-
-		if (link.size() == 0)
-			throw new IllegalStateException(
-					"Cannot find Emfac2011 shortcut in " + emfacInstallationDir);
-		ProcessUtil.runProcess(Arrays.asList("cmd", "/c", link.get(0)
-				.toString()));
-	}
-
-	public void runEmfac2011(String scenario) {
-		LOGGER.info("Running Emfac2011 for SANDAG");
-		createEmfacDataInDB();
-
+	public void runEmfac2011() {
+		LOGGER.info("***************Running Emfac2011 for SANDAG***********************");
+		LOGGER.info("Step 0: Setting up mutable vehicle types");
 		// have to call this first because it sets the mutable types, which are,
 		// used throughout the EMFAC2011 process
-		final Map<String, Set<Emfac2011VehicleType>> aquavisVehicleTypeToEmfacMapping = buildAquavisVehicleTypeToEmfacMapping(properties
-				.getPath(Emfac2011Definitions.VEHICLE_CODE_MAPPING_FILE_PROPERTY));
+		Path path = Paths
+				.get(properties.getString(Emfac2011Properties.VEHICLE_CODE_MAPPING_FILE_PROPERTY));
 
-		runEmfac2011(scenario, new Emfac2011Data(properties, sqlUtil) {
+		final Map<String, Set<Emfac2011VehicleType>> aquavisVehicleTypeToEmfacMapping = buildAquavisVehicleTypeToEmfacMapping(path);
+
+		runEmfac2011(new Emfac2011Data(properties, sqlUtil) {
 			@Override
 			protected Map<String, Set<Emfac2011VehicleType>> getAquavisVehicleTypeToEmfacTypeMapping() {
 				return aquavisVehicleTypeToEmfacMapping;
@@ -129,27 +91,19 @@ public class Emfac2011Runner {
 	 *            The {@code Emfac2011Data} instance corresponding to the model
 	 *            results/run.
 	 */
-	public void runEmfac2011(String scenario, Emfac2011Data emfac2011Data) {
-		LOGGER.info("-----Running Emfac2011 for SANDAG------");
-		LOGGER.info("Processing aquavis data");
-		DataTable data = emfac2011Data.processAquavisData(scenario, properties);
-		LOGGER.info("Creating EMFAC2011 input file");
+	public void runEmfac2011(Emfac2011Data emfac2011Data) {
+		LOGGER.info("Step 1: Building Aquavis inputs from scenario: "
+				+ properties.getString(Emfac2011Properties.SCENARIO_ID));
+		AquavisDataBuilder builder = new AquavisDataBuilder(properties, sqlUtil);
+		builder.createAquavisInputs();
+		LOGGER.info("Step 2: Processing aquavis data");
+		DataTable data = emfac2011Data.processAquavisData(properties);
+		LOGGER.info("Step 3: Creating EMFAC2011 input file");
 		Emfac2011InputFileCreator inputFileCreator = new Emfac2011InputFileCreator();
 		Path inputfile = inputFileCreator.createInputFile(properties, data);
-		LOGGER.info("Initiating EMFAC2011");
-		RunEmfacDialog.createAndShowGUI(inputfile, this);
-		LOGGER.info("EMFAC2011 run (presumably) finished");
-	}
-
-	private void createEmfacDataInDB() {
-		LOGGER.info("Building Aquavis inputs from SANDAG database schema: "
-				+ properties
-						.getString(Emfac2011Definitions.SCHEMA_NAME_PROPERTY));
-		AquavisDataBuilder builder = new AquavisDataBuilder(properties, sqlUtil);
-		builder.createAquavisInputs(
-				Emfac2011Properties.AQUAVIS_NETWORK_FILE_PROPERTY,
-				Emfac2011Properties.AQUAVIS_TRIPS_FILE_PROPERTY,
-				Emfac2011Properties.AQUAVIS_INTRAZONAL_FILE_PROPERTY);
+		LOGGER.info("Step 4: Initiating EMFAC2011");
+		RunEmfacDialog.createAndShowGUI(inputfile, this);			
+		LOGGER.info("EMFAC2011 run finished");
 	}
 
 	private Map<String, Set<Emfac2011VehicleType>> buildAquavisVehicleTypeToEmfacMapping(
@@ -210,20 +164,47 @@ public class Emfac2011Runner {
 		return finalMapping;
 	}
 
-	public Emfac2011Properties getProperties() {
-		return properties;
+	void runEmfac2011Program() {
+		final Path emfacInstallationDir = Paths
+				.get(properties
+						.getString(Emfac2011Properties.EMFAC2011_INSTALLATION_DIR_PROPERTY));
+		final PathMatcher matcher = FileSystems.getDefault().getPathMatcher(
+				"glob:*.lnk");
+		final List<Path> link = new LinkedList<>();
+		FileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
+
+			@Override
+			public FileVisitResult visitFile(Path file,
+					BasicFileAttributes attrs) throws IOException {
+				Path name = file.getFileName();
+				if (name != null && matcher.matches(name)) {
+					link.add(file);
+					return FileVisitResult.TERMINATE;
+				}
+				return FileVisitResult.CONTINUE;
+			}
+		};
+
+		try {
+			Files.walkFileTree(emfacInstallationDir,
+					Collections.<FileVisitOption> emptySet(), 1, visitor);
+		} catch (IOException e) {
+			throw new RuntimeIOException(e);
+		}
+
+		if (link.size() == 0)
+			throw new IllegalStateException(
+					"Cannot find Emfac2011 shortcut in " + emfacInstallationDir);
+		ProcessUtil.runProcess(Arrays.asList("cmd", "/c", link.get(0)
+				.toString()));
 	}
 
 	public static void main(String... args) {
 		double startTime = System.currentTimeMillis();
-		String scenario = "2010";
-
 		// do work
-		new Emfac2011Runner(scenario, args[0], Arrays.copyOfRange(args, 1,
-				args.length)).runEmfac2011(scenario);
-		// SandagEmfac2011Runner("D:\\projects\\sandag\\emfac\\output_example\\sandag_emfac2011.properties").runEmfac2011();
+		new Emfac2011Runner(args[0]).runEmfac2011();
 		// time stamp
-		LOGGER.info("Completed in: "
+		LOGGER.info("Emfac2011 completed in: "
 				+ (float) (((System.currentTimeMillis() - startTime) / 1000.0) / 60.0)
 				+ " minutes.");
 	}
