@@ -26,7 +26,8 @@ import com.pb.sawdust.util.property.PropertyDeluxe;
  * it into a data table that is used (by {@link Emfac2011InputFileCreator}) to
  * create an adjusted EMFAC2011 input file.
  * 
- * @author crf Started 2/8/12 9:13 AM Wu.Sun@sandag.org modified 1/21/2014
+ * @author crf Started 2/8/12 9:13 AM 
+ * Modified by Wu.Sun@sandag.org 1/21/2014
  */
 public abstract class Emfac2011Data {
 	private static final Logger LOGGER = LoggerFactory

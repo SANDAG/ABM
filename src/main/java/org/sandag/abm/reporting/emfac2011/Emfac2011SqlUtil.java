@@ -17,9 +17,8 @@ import com.pb.sawdust.util.exceptions.RuntimeWrappingException;
 import com.pb.sawdust.util.property.PropertyDeluxe;
 
 /**
- * 
- * @author Wu.Sun@sandag.org 1/21/2014
- * 
+ * @author crf Started 2/9/12 9:17 AM
+ * Modified by Wu.Sun@sandag.org 1/21/2014
  */
 
 public class Emfac2011SqlUtil {
