@@ -12,6 +12,7 @@ import com.pb.sawdust.util.property.PropertyDeluxe;
  * more information).
  * 
  * @author crf Started 2/9/12 8:40 AM
+ * Modified by Wu.Sun@sanag.org 1/28/2014
  */
 public class Emfac2011Properties
         extends PropertyDeluxe

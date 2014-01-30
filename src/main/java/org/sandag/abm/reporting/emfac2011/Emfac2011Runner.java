@@ -38,9 +38,7 @@ import com.pb.sawdust.util.exceptions.RuntimeIOException;
  * user) the EMFAC2011 SG model using those inputs.
  * 
  * @author crf Started 2/9/12 9:17 AM
- * 
- *         Wu.Sun@sandag.org combined SandagEmfacRunner with this class cleaned
- *         some codes 1/16/2014
+ * Modified by Wu.Sun@sandag.org 1/24/2014
  */
 public class Emfac2011Runner {
 	private static final Logger LOGGER = LoggerFactory

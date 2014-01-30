@@ -157,7 +157,7 @@ public class Emfac2011InputFileCreator
 
     private String formOutputFileName(String region, String season, int year)
     {
-        return region + "-" + season + "-" + year + ".xls";
+        return "EMFAC2011-"+region + "-" + season + "-" + year + ".xls";
     }
 
     private DataTable formScenarioTable(String areaType, String area, int year, String season)
