@@ -25,9 +25,15 @@ public class MatrixServerWrapper
         String matrixPath = matrixLocation + File.separator + matrixName + ".mtx";
         DataEntry dataEntry = new DataEntry("matrix", matrixPath + " " + coreName, "transcad",
                 matrixPath, coreName, "", false);
-        
-        MatrixDataServerIf server = new MatrixDataServerRmi(serverAddress, serverPort, MatrixDataServer.MATRIX_DATA_SERVER_NAME);
-        
+
+        MatrixDataServerIf server = new MatrixDataServerRmi(serverAddress, serverPort,
+                MatrixDataServer.MATRIX_DATA_SERVER_NAME);
         return server.getMatrix(dataEntry);
+    }
+    
+    public synchronized void clear()
+    {
+        new MatrixDataServerRmi(serverAddress, serverPort,
+                MatrixDataServer.MATRIX_DATA_SERVER_NAME).clear();
     }
 }

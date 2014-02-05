@@ -2,18 +2,23 @@ package org.sandag.abm.reporting;
 
 import java.text.DecimalFormat;
 import java.util.concurrent.BlockingQueue;
+import org.apache.log4j.Logger;
 import com.pb.common.matrix.Matrix;
 
 public class TruckCsvPublisherThread
         implements Runnable
 {
+    private static final Logger LOGGER                      = Logger.getLogger(TruckCsvPublisherThread.class);
+    
     private BlockingQueue<CsvRow>      queue;
     private MatrixServerWrapper        mtxSvrWrapper;
     private String                     matrixName;
     private String                     tod;
     private String[]                   cores;
 
-    private static final DecimalFormat FORMATTER = new DecimalFormat("#.######");
+    private final double               sizeThreshold = 0.00001;
+
+    private static final DecimalFormat FORMATTER     = new DecimalFormat("#.######");
 
     public TruckCsvPublisherThread(BlockingQueue<CsvRow> aQueue,
             MatrixServerWrapper aMtxSvrWrapper, String aMatrixName, String aTod, String[] theCores)
@@ -31,29 +36,32 @@ public class TruckCsvPublisherThread
         for (String core : cores)
         {
             Matrix matrix = mtxSvrWrapper.getMatrix(matrixName, core);
-            int[] origins = matrix.getExternalNumbers();
-            int[] destinations = matrix.getExternalColumnNumbers();
-
-            for (int origin : origins)
+            try
             {
-                for (int dest : destinations)
-                {
-                    float trips = matrix.getValueAt(origin, dest);
-                    if (trips > 0.00001)
-                    {
-                        CsvRow row = new CsvRow(new String[] {String.valueOf(origin),
-                                String.valueOf(dest), tod, core, FORMATTER.format(trips)});
-                        try
-                        {
-                            queue.put(row);
-                        } catch (InterruptedException e)
-                        {
-                            e.printStackTrace(System.err);
-                        }
-                    }
-                }
+                addRowsToQueue(core, matrix);
+            } catch (InterruptedException e)
+            {
+                LOGGER.fatal(e);
+                throw new RuntimeException(e);
             }
         }
 
+    }
+
+    public void addRowsToQueue(String core, Matrix matrix) throws InterruptedException
+    {
+        for (int origin : matrix.getExternalNumbers())
+        {
+            for (int dest : matrix.getExternalColumnNumbers())
+            {
+                float trips = matrix.getValueAt(origin, dest);
+                if (trips > sizeThreshold)
+                {
+                    CsvRow row = new CsvRow(new String[] {String.valueOf(origin),
+                            String.valueOf(dest), tod, core, FORMATTER.format(trips)});
+                    queue.put(row);
+                }
+            }
+        }
     }
 }

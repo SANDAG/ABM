@@ -8,14 +8,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -24,7 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
 import org.apache.log4j.Logger;
@@ -36,7 +30,6 @@ import com.pb.common.calculator.MatrixDataServerIf;
 import com.pb.common.datafile.CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.matrix.Matrix;
-import com.pb.common.util.ResourceUtil;
 
 /**
  * The {@code DataExporter} ...
@@ -49,7 +42,7 @@ public class DataExporter
 
     private static final String NUMBER_FORMAT_NAME          = "NUMBER";
     private static final String STRING_FORMAT_NAME          = "STRING";
-    public static final String  PROJECT_PATH_PROPERTY_TOKEN = "%project.folder%";
+    private static final String PROJECT_PATH_PROPERTY_TOKEN = "%project.folder%";
     private static final String TOD_TOKEN                   = "%TOD%";
 
     private final Properties    properties;
@@ -59,28 +52,22 @@ public class DataExporter
     private final Set<String>   tables;
     private final String[]      timePeriods                 = ModelStructure.MODEL_PERIOD_LABELS;
 
-    public DataExporter(String propertiesFile, String projectPath, int feedbackIterationNumber,
+    public DataExporter(Properties theProperties, String projectPath, int feedbackIterationNumber,
             String outputPath)
     {
-        projectPath = new File(projectPath).getAbsolutePath().replace("\\", "/");
-        properties = new Properties();
-        try
-        {
-            properties.load(new FileInputStream(propertiesFile));
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        }
+        this.properties = theProperties;
+
         for (Object key : properties.keySet())
         {
             String value = (String) properties.get(key);
             properties.setProperty((String) key,
                     value.replace(PROJECT_PATH_PROPERTY_TOKEN, projectPath));
         }
+
         projectPathFile = new File(projectPath);
-        // this.projectPath = projectPath;
         this.feedbackIterationNumber = feedbackIterationNumber;
         this.outputPath = outputPath;
+
         tables = new LinkedHashSet<String>();
     }
 
@@ -1390,6 +1377,7 @@ public class DataExporter
 
     private Matrix getMatrixFromFile(String matrixPath, String core)
     {
+
         if (!matrixPath.endsWith(".mtx")) matrixPath += ".mtx";
         String path = getPath(matrixPath);
         DataEntry dataEntry = new DataEntry("matrix", path + "  " + core, "transcad", path, core,
@@ -2096,111 +2084,35 @@ public class DataExporter
 
     public static void main(String... args) throws Exception
     {
-        String projectFolder;
-        String outputFolder;
-        String propertiesFile;
-        int feedbackIteration;
-        String databaseSchema;
-        List<String> definedTables;
-        String sandagJarFile = "sandag_abm_pb.jar";
-        String sandagJarFileDir = null;
-        if (args.length == 0)
-        {
-            // assume we can get property file
-            List<String> argList = new LinkedList<String>();
-            ResourceBundle properties = ResourceUtil.getResourceBundle("sandag_data_export");
+        Properties properties = new Properties();
+        properties.load(new FileInputStream("conf/sandag_abm.properties"));
 
-            argList.add(properties.getString("project.folder").trim());
-            argList.add(properties.getString("output.folder").trim());
-            argList.add(properties.getString("feedback.iteration").trim());
-            argList.add(properties.getString("database.schema").trim());
-            if (properties.containsKey("defined.tables"))
-                argList.add(properties.getString("defined.tables").trim());
-            args = argList.toArray(new String[argList.size()]);
+        // String projectFolder =
+        // properties.getProperty("Project.Directory").trim();
+        // String outputFolder = properties.getProperty("report.path").trim();
+        int feedbackIteration = Integer.valueOf(properties.getProperty("Report.iteration").trim());
 
-            if (properties.containsKey("sandag.jar.file"))
-                sandagJarFile = properties.getString("sandag.jar.file").trim();
-            if (properties.containsKey("sandag.jar.file.dir"))
-                sandagJarFileDir = properties.getString("sandag.jar.file.dir").trim();
+        // add all of the tables
+        // definedTables = Arrays.asList("accessibilities", "mgra", "taz",
+        // "tap", "mgratotap",
+        // "mgratomgra", "taztotap", "hhdata", "persondata", "wslocation",
+        // "synhh",
+        // "synperson", "indivtours", "jointtours", "indivtrips", "jointtrips",
+        // "airporttrips", "cbtours", "cbtrips", "visitortours", "visitortrips",
+        // "ietrip", "commtrip", "trucktrip", "eetrip", "eitrip", "tazskim",
+        // "tapskim", "definition", "emfacvehcode", "pnrvehicles",
+        // "cbdvehicles");
 
-        }
+        List<String> definedTables = new ArrayList<String>();
+        for (String table : properties.getProperty("Report.tables").trim().split(","))
+            definedTables.add(table.trim().toLowerCase());
 
-        if (args.length == 4 || args.length == 5)
-        {
-            projectFolder = args[0];
-            outputFolder = args[1];
-            propertiesFile = ClassLoader.getSystemClassLoader()
-                    .getResource("sandag_abm.properties").getFile();
-            // propertiesFile = new
-            // File("sandag_abm.properties").getAbsolutePath();
-            System.out.println(propertiesFile);
-            feedbackIteration = Integer.parseInt(args[2]);
-            databaseSchema = args[3];
-            if (args.length > 4)
-            {
-                definedTables = new ArrayList<String>();
-                for (String table : args[4].split(","))
-                    definedTables.add(table.trim().toLowerCase());
-            } else
-            {
-                // add all of the tables
-                definedTables = Arrays.asList("accessibilities", "mgra", "taz", "tap", "mgratotap",
-                        "mgratomgra", "taztotap", "hhdata", "persondata", "wslocation", "synhh",
-                        "synperson", "indivtours", "jointtours", "indivtrips", "jointtrips",
-                        "airporttrips", "cbtours", "cbtrips", "visitortours", "visitortrips",
-                        "ietrip", "commtrip", "trucktrip", "eetrip", "eitrip", "tazskim",
-                        "tapskim", "definition", "emfacvehcode", "pnrvehicles", "cbdvehicles");
-            }
-            // check for full trips set
-            List<String> tripsSet = Arrays.asList("indivtrips", "jointtrips", "airporttrips",
-                    "cbtrips", "visitortrips");
-            if (!Collections.disjoint(tripsSet, definedTables)
-                    && !definedTables.containsAll(tripsSet))
-                throw new IllegalArgumentException(
-                        "If trips table(s) are included, then all must be included: + "
-                                + tripsSet.toString());
-            // check for visitors
-            List<String> visitorSet = Arrays.asList("visitortours", "visitortrips");
-            if (!Collections.disjoint(visitorSet, definedTables)
-                    && !definedTables.containsAll(visitorSet))
-                throw new IllegalArgumentException(
-                        "If visitor table(s) are included, then all must be included: + "
-                                + tripsSet.toString());
+        String path = ClassLoader.getSystemResource("").getPath();
+        path = path.substring(0, path.length() - 2);
+        String appPath = path.substring(0, path.lastIndexOf("/"));
 
-        } else
-        {
-            throw new IllegalArgumentException(
-                    "Invalid command line: java ... com.pb.sandag.reports.DataExporter project_folder output_folder feedback_iteration database_schema [table_list]");
-        }
-
-        // add sandag jar to class loader
-        if (sandagJarFileDir == null)
-            sandagJarFileDir = new File(projectFolder, "application").getAbsolutePath();
-        File sandagJar = new File(sandagJarFileDir, sandagJarFile);
-        URL sandagJarUrl;
-        try
-        {
-            sandagJarUrl = sandagJar.toURI().toURL();
-        } catch (MalformedURLException e)
-        {
-            LOGGER.error("bad jar url: " + sandagJar.toString());
-            throw new RuntimeException(e);
-        }
-
-        try
-        {
-            Method method = URLClassLoader.class.getDeclaredMethod("addURL",
-                    new Class[] {URL.class});
-            method.setAccessible(true);
-            method.invoke(ClassLoader.getSystemClassLoader(), sandagJarUrl);
-        } catch (Throwable t)
-        {
-            LOGGER.warn("Error, could not add URL to system classloader: "
-                    + sandagJarUrl.toString() + "\n\t" + t.getMessage());
-        }
-
-        DataExporter dataExporter = new DataExporter(propertiesFile, projectFolder,
-                feedbackIteration, outputFolder);
+        DataExporter dataExporter = new DataExporter(properties, appPath, feedbackIteration,
+                appPath + "/report");
 
         if (definedTables.contains("accessibilities"))
             dataExporter.exportAccessibilities("accessibilities");
@@ -2232,14 +2144,11 @@ public class DataExporter
         if (definedTables.contains("commtrip")) dataExporter.exportCommVehData("commtrip");
         if (definedTables.contains("trucktrip"))
         {
-            Properties props = new Properties();
-            props.load(new FileInputStream(propertiesFile));
-  
-            String mtxSvrAddr = props.getProperty("RunModel.MatrixServerAddress");
-            int mtxSvrPort = Integer.parseInt(props.getProperty("RunModel.MatrixServerPort"));
+            String mtxSvrAddr = properties.getProperty("RunModel.MatrixServerAddress");
+            int mtxSvrPort = Integer.parseInt(properties.getProperty("RunModel.MatrixServerPort"));
             MatrixServerWrapper mtxSvrWrap = new MatrixServerWrapper(mtxSvrAddr, mtxSvrPort,
-                    projectFolder + "\\output");
-            IExporter truckExporter = new TruckCsvExporter("trucktrip", mtxSvrWrap);
+                    new File("output").getAbsolutePath());
+            IExporter truckExporter = new TruckCsvExporter(properties, "trucktrip", mtxSvrWrap);
             truckExporter.export();
         }
         if (definedTables.contains("eetrip"))

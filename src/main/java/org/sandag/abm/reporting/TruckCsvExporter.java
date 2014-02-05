@@ -1,6 +1,7 @@
 package org.sandag.abm.reporting;
 
 import java.io.IOException;
+import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -11,16 +12,17 @@ public class TruckCsvExporter
     private static final String[] CORE_NAMES       = {"lhdn", "lhdt", "mhdn", "mhdt", "hhdn",
             "hhdt"                                 };
     private static final String[] COLUMN_HEADERS   = {"ORIG", "DEST", "TOD", "CLASS", "TRIPS"};
-    public static final CsvRow    POISON_PILL      = new CsvRow(new String[] {"ALL_DONE"});
 
-    public TruckCsvExporter(String aBaseFileName, MatrixServerWrapper aMatrixServerWrapper)
+    public TruckCsvExporter(Properties properties, String aBaseFileName,
+            MatrixServerWrapper aMatrixServerWrapper)
     {
-        super(aBaseFileName, aMatrixServerWrapper);
+        super(properties, aBaseFileName, aMatrixServerWrapper);
     }
 
     @Override
     public void export() throws IOException
     {
+        this.getMatrixServerWrapper().clear();
         BlockingQueue<CsvRow> queue = new LinkedBlockingQueue<CsvRow>();
 
         Thread[] threads = new Thread[TOD_TOKENS.length];
@@ -52,6 +54,6 @@ public class TruckCsvExporter
         }
 
         LOGGER.info("Initializing Truck Reader Threads Complete. Issuing Poison Pill to Writer.");
-        queue.add(POISON_PILL);
+        queue.add(CsvWriterThread.POISON_PILL);
     }
 }

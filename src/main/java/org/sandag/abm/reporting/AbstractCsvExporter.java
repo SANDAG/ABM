@@ -1,23 +1,21 @@
 package org.sandag.abm.reporting;
 
 import java.io.File;
-import java.util.ResourceBundle;
+import java.util.Properties;
 import org.apache.log4j.Logger;
-import com.pb.common.util.ResourceUtil;
 
 public abstract class AbstractCsvExporter
         implements IExporter
 {
     private final File                file;
     private final MatrixServerWrapper mtxSvrWrapper;
+    private final String              reportFolder = "report.path";
 
-    protected static final Logger     LOGGER = Logger.getLogger(AbstractCsvExporter.class);
+    protected static final Logger     LOGGER       = Logger.getLogger(AbstractCsvExporter.class);
 
-    public AbstractCsvExporter(String aBaseFileName, MatrixServerWrapper aMatrixServerWrapper)
+    public AbstractCsvExporter(Properties properties, String aBaseFileName, MatrixServerWrapper aMatrixServerWrapper)
     {
-        ResourceBundle properties = ResourceUtil.getResourceBundle("sandag_data_export");
-        String outputFolder = properties.getString("output.folder");
-        this.file = new File(outputFolder, aBaseFileName + ".csv");
+        this.file = new File(properties.getProperty(reportFolder), aBaseFileName + ".csv");
         this.mtxSvrWrapper = aMatrixServerWrapper;
     }
 

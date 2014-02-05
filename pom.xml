@@ -12,7 +12,6 @@
         <output.path>${project.build.directory}/${project.name}/${project.version}/${project.activeProfiles[0].id}/${project.activeProfiles[1].id}</output.path> 
     </properties>
     <profiles>
-        
         <profile>
             <id>local</id>
             <activation>
