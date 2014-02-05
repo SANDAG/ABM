@@ -73,7 +73,8 @@ public class Emfac2011InputFileCreator
                 properties.<String, List<String>>getMap(Emfac2011Properties.AREAS_PROPERTY))
                 .keySet();
         String season = properties.getString(Emfac2011Properties.SEASON_PROPERTY);
-        int year = Math.min(properties.getInt(Emfac2011Properties.YEAR_PROPERTY), 2035);
+        int oriYear=properties.getInt(Emfac2011Properties.YEAR_PROPERTY);
+        int year = Math.min(oriYear, 2035);
         String inventoryDir = Paths.get(
                 properties.getString(Emfac2011Properties.EMFAC2011_INSTALLATION_DIR_PROPERTY),
                 "Application Files/Inventory Files").toString();
@@ -84,7 +85,7 @@ public class Emfac2011InputFileCreator
                 .getBoolean(Emfac2011Properties.PRESERVE_EMFAC_VEHICLE_FRACTIONS_PROPERTY);
         boolean modelVmtIncludesNonMutableVehicleTypes = properties
                 .getBoolean(Emfac2011Properties.MODEL_VMT_INCLUDES_NON_MUTABLES_PROPERTY);
-        return createInputFile(areaType, region, areas, season, year, emfacModelData,
+        return createInputFile(areaType, region, areas, season, year, oriYear, emfacModelData,
                 preserveEmfacVehicleFractions, modelVmtIncludesNonMutableVehicleTypes,
                 inventoryDir, outputDir, converterProgram);
     }
@@ -106,7 +107,7 @@ public class Emfac2011InputFileCreator
     }
 
     private Path createInputFile(String areaType, String region, Set<String> areas, String season,
-            int year, DataTable emfacModelData, boolean preserveEmfacVehicleFractions,
+            int year, int oriYear,DataTable emfacModelData, boolean preserveEmfacVehicleFractions,
             boolean modelVmtIncludesNonMutableVehicleTypes, String inventoryDir, String outputDir,
             String converterProgram)
     {
@@ -127,7 +128,7 @@ public class Emfac2011InputFileCreator
                 throw new RuntimeIOException(e);
             }
         }
-        Path outputFile = Paths.get(outputDir, formOutputFileName(region, season, year));
+        Path outputFile = Paths.get(outputDir, formOutputFileName(region, season, oriYear));
         try
         {
             Files.deleteIfExists(outputFile);
