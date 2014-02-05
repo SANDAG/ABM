@@ -1,6 +1,7 @@
 package org.sandag.abm.reporting;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -48,7 +49,7 @@ public class CsvWriterThreadTest
         } finally
         {
             if (null != reader) reader.close();
-            if (null != testFile) testFile.delete();
+            if (null != testFile) assertTrue(testFile.delete());
         }
     }
 
