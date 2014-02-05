@@ -22,14 +22,12 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import org.apache.log4j.Logger;
-import org.sandag.abm.ctramp.MatrixDataServer;
-import org.sandag.abm.ctramp.MatrixDataServerRmi;
 import org.sandag.abm.ctramp.ModelStructure;
-import com.pb.common.calculator.DataEntry;
-import com.pb.common.calculator.MatrixDataServerIf;
 import com.pb.common.datafile.CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.matrix.Matrix;
+import com.pb.common.matrix.MatrixReader;
+import com.pb.common.matrix.MatrixType;
 
 /**
  * The {@code DataExporter} ...
@@ -87,10 +85,10 @@ public class DataExporter
 
     private void clearMatrixServer()
     {
-        String serverAddress = (String) properties.get("RunModel.MatrixServerAddress");
-        int serverPort = Integer.parseInt((String) properties.get("RunModel.MatrixServerPort"));
-        new MatrixDataServerRmi(serverAddress, serverPort, MatrixDataServer.MATRIX_DATA_SERVER_NAME)
-                .clear();
+        //String serverAddress = (String) properties.get("RunModel.MatrixServerAddress");
+        //int serverPort = Integer.parseInt((String) properties.get("RunModel.MatrixServerPort"));
+        //new MatrixDataServerRmi(serverAddress, serverPort, MatrixDataServer.MATRIX_DATA_SERVER_NAME)
+        //        .clear();
     }
 
     private String getPath(String path)
@@ -1377,22 +1375,12 @@ public class DataExporter
 
     private Matrix getMatrixFromFile(String matrixPath, String core)
     {
-
         if (!matrixPath.endsWith(".mtx")) matrixPath += ".mtx";
         String path = getPath(matrixPath);
-        DataEntry dataEntry = new DataEntry("matrix", path + "  " + core, "transcad", path, core,
-                "", false);
-        try
-        {
-            String serverAddress = (String) properties.get("RunModel.MatrixServerAddress");
-            int serverPort = Integer.parseInt((String) properties.get("RunModel.MatrixServerPort"));
-            MatrixDataServerIf server = new MatrixDataServerRmi(serverAddress, serverPort,
-                    MatrixDataServer.MATRIX_DATA_SERVER_NAME);
-            return server.getMatrix(dataEntry);
-        } catch (Exception e)
-        {
-            throw new RuntimeException(e);
-        }
+
+        MatrixReader mr = MatrixReader.createReader(MatrixType.TRANSCAD, new File(path));
+
+        return mr.readMatrix(core);
     }
 
     private Set<Integer> getExternalZones()
@@ -1403,49 +1391,49 @@ public class DataExporter
         return externalZones;
     }
 
-    private void exportCommVehData(String outputFileBase)
+    private void exportCommVehData(String outputFileBase) throws IOException
     {
         addTable(outputFileBase);
-        Matrix[] matrixData = new Matrix[timePeriods.length];
-        int counter = 0;
-        for (String period : timePeriods)
-            matrixData[counter++] = getMatrixFromFile("output/commVehTODTrips.mtx", period
-                    + " Trips");
         Set<Integer> internalZones = new LinkedHashSet<Integer>();
-        for (int zone : matrixData[0].getExternalColumnNumbers())
-            internalZones.add(zone);
+        DecimalFormat formatter = new DecimalFormat("#.######");
 
-        PrintWriter writer = null;
+        BufferedWriter writer = null;
         try
         {
-            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".csv"));
+            writer = new BufferedWriter(new FileWriter(new File(getOutputPath(outputFileBase
+                    + ".csv"))), 1024 * 1024 * 1024);
 
-            StringBuilder sb = new StringBuilder();
-            sb.append("ORIG_TAZ,DEST_TAZ,TOD,TRIPS_COMMVEH");
-            writer.println(sb.toString());
+            CsvRow headerRow = new CsvRow(new String[] {"ORIG_TAZ", "DEST_TAZ", "TOD",
+                    "TRIPS_COMMVEH"});
+            writer.write(headerRow.getRow());
 
-            counter = 0;
             for (String period : timePeriods)
             {
+                Matrix matrixData = getMatrixFromFile("output/commVehTODTrips.mtx", period
+                        + " Trips");
+
+                // This doesn't make sense
+                if (internalZones.isEmpty()) for (int zone : matrixData.getExternalColumnNumbers())
+                    internalZones.add(zone);
+
                 for (int i : internalZones)
                 {
                     for (int j : internalZones)
                     {
-                        float value = matrixData[counter].getValueAt(i, j);
+                        float value = matrixData.getValueAt(i, j);
                         if (value > .00001)
                         {
-                            sb = new StringBuilder();
-                            sb.append(i).append(",").append(j).append(",").append(period)
-                                    .append(",").append(value);
-                            writer.println(sb.toString());
+                            String[] rowValue = new String[4];
+                            rowValue[0] = String.valueOf(i);
+                            rowValue[1] = String.valueOf(j);
+                            rowValue[2] = period;
+                            rowValue[3] = formatter.format(value);
+                            CsvRow dataRow = new CsvRow(rowValue);
+                            writer.write(dataRow.getRow());
                         }
                     }
                 }
             }
-
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
         } finally
         {
             if (writer != null) writer.close();
@@ -1530,19 +1518,19 @@ public class DataExporter
         }
     }
 
-    private void exportExternalExternalTripData(String outputFileBase)
+    private void exportExternalExternalTripData(String outputFileBase) throws IOException
     {
         addTable(outputFileBase);
         Set<Integer> externalZones = getExternalZones();
 
-        PrintWriter writer = null;
+        BufferedWriter writer = null;
         try
         {
-            writer = new PrintWriter(getOutputPath(outputFileBase + ".csv"));
+            writer = new BufferedWriter(new FileWriter(new File(getOutputPath(outputFileBase
+                    + ".csv"))), 1024 * 1024 * 1024);
 
-            StringBuilder sb = new StringBuilder();
-            sb.append("ORIG_TAZ,DEST_TAZ,TRIPS_EE");
-            writer.println(sb.toString());
+            CsvRow headerRow = new CsvRow(new String[] {"ORIG_TAZ", "DEST_TAZ", "TRIPS_EE"});
+            writer.write(headerRow.getRow());
 
             Matrix m = getMatrixFromFile("output/externalExternalTrips.mtx", "Trips");
 
@@ -1550,14 +1538,14 @@ public class DataExporter
             {
                 for (int d : externalZones)
                 {
-                    sb = new StringBuilder();
-                    sb.append(o).append(",").append(d).append(",").append(m.getValueAt(o, d));
-                    writer.println(sb.toString());
+                    String[] values = new String[3];
+                    values[0] = String.valueOf(o);
+                    values[1] = String.valueOf(d);
+                    values[2] = String.valueOf(m.getValueAt(o, d));
+                    CsvRow dataRow = new CsvRow(values);
+                    writer.write(dataRow.getRow());
                 }
             }
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
         } finally
         {
             if (writer != null) writer.close();
@@ -2144,11 +2132,8 @@ public class DataExporter
         if (definedTables.contains("commtrip")) dataExporter.exportCommVehData("commtrip");
         if (definedTables.contains("trucktrip"))
         {
-            String mtxSvrAddr = properties.getProperty("RunModel.MatrixServerAddress");
-            int mtxSvrPort = Integer.parseInt(properties.getProperty("RunModel.MatrixServerPort"));
-            MatrixServerWrapper mtxSvrWrap = new MatrixServerWrapper(mtxSvrAddr, mtxSvrPort,
-                    new File("output").getAbsolutePath());
-            IExporter truckExporter = new TruckCsvExporter(properties, "trucktrip", mtxSvrWrap);
+            TranscadMatrixDao mtxSvrWrap = new TranscadMatrixDao(properties);
+            IExporter truckExporter = new TruckCsvExporter(properties, mtxSvrWrap, "trucktrip");
             truckExporter.export();
         }
         if (definedTables.contains("eetrip"))

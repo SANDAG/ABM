@@ -13,16 +13,15 @@ public class TruckCsvExporter
             "hhdt"                                 };
     private static final String[] COLUMN_HEADERS   = {"ORIG", "DEST", "TOD", "CLASS", "TRIPS"};
 
-    public TruckCsvExporter(Properties properties, String aBaseFileName,
-            MatrixServerWrapper aMatrixServerWrapper)
+    public TruckCsvExporter(Properties properties, TranscadMatrixDao aMatrixServerWrapper,
+            String aBaseFileName)
     {
-        super(properties, aBaseFileName, aMatrixServerWrapper);
+        super(properties, aMatrixServerWrapper, aBaseFileName);
     }
 
     @Override
     public void export() throws IOException
     {
-        this.getMatrixServerWrapper().clear();
         BlockingQueue<CsvRow> queue = new LinkedBlockingQueue<CsvRow>();
 
         Thread[] threads = new Thread[TOD_TOKENS.length];
@@ -37,7 +36,7 @@ public class TruckCsvExporter
             String matrixName = MATRIX_BASE_NAME.replace(TOD_TOKEN, TOD_TOKENS[i]);
             LOGGER.info("Initializing Truck Reader Thread. Matrix: " + matrixName);
             TruckCsvPublisherThread publisherThread = new TruckCsvPublisherThread(queue,
-                    getMatrixServerWrapper(), matrixName, TOD_TOKENS[i], CORE_NAMES);
+                    getMatrixDao(), matrixName, TOD_TOKENS[i], CORE_NAMES);
             threads[i] = new Thread(publisherThread);
             threads[i].start();
         }

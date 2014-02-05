@@ -11,7 +11,7 @@ public class TruckCsvPublisherThread
     private static final Logger LOGGER                      = Logger.getLogger(TruckCsvPublisherThread.class);
     
     private BlockingQueue<CsvRow>      queue;
-    private MatrixServerWrapper        mtxSvrWrapper;
+    private TranscadMatrixDao        mtxDao;
     private String                     matrixName;
     private String                     tod;
     private String[]                   cores;
@@ -21,10 +21,10 @@ public class TruckCsvPublisherThread
     private static final DecimalFormat FORMATTER     = new DecimalFormat("#.######");
 
     public TruckCsvPublisherThread(BlockingQueue<CsvRow> aQueue,
-            MatrixServerWrapper aMtxSvrWrapper, String aMatrixName, String aTod, String[] theCores)
+            TranscadMatrixDao aMtxDao, String aMatrixName, String aTod, String[] theCores)
     {
         this.queue = aQueue;
-        this.mtxSvrWrapper = aMtxSvrWrapper;
+        this.mtxDao = aMtxDao;
         this.matrixName = aMatrixName;
         this.tod = aTod;
         this.cores = theCores;
@@ -35,7 +35,7 @@ public class TruckCsvPublisherThread
     {
         for (String core : cores)
         {
-            Matrix matrix = mtxSvrWrapper.getMatrix(matrixName, core);
+            Matrix matrix = mtxDao.getMatrix(matrixName, core);
             try
             {
                 addRowsToQueue(core, matrix);

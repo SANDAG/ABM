@@ -7,16 +7,21 @@ import org.apache.log4j.Logger;
 public abstract class AbstractCsvExporter
         implements IExporter
 {
-    private final File                file;
-    private final MatrixServerWrapper mtxSvrWrapper;
-    private final String              reportFolder = "report.path";
+    private final File            file;
+    private final TranscadMatrixDao      matrixDao;
+    private final String          reportFolder = "report.path";
 
-    protected static final Logger     LOGGER       = Logger.getLogger(AbstractCsvExporter.class);
+    protected static final Logger LOGGER       = Logger.getLogger(AbstractCsvExporter.class);
 
-    public AbstractCsvExporter(Properties properties, String aBaseFileName, MatrixServerWrapper aMatrixServerWrapper)
+    public AbstractCsvExporter(Properties properties, TranscadMatrixDao aMatrixDao, String aBaseFileName)
     {
         this.file = new File(properties.getProperty(reportFolder), aBaseFileName + ".csv");
-        this.mtxSvrWrapper = aMatrixServerWrapper;
+        this.matrixDao = aMatrixDao;
+    }
+
+    public TranscadMatrixDao getMatrixDao()
+    {
+        return this.matrixDao;
     }
 
     public File getFile()
@@ -24,8 +29,4 @@ public abstract class AbstractCsvExporter
         return this.file;
     }
 
-    public MatrixServerWrapper getMatrixServerWrapper()
-    {
-        return this.mtxSvrWrapper;
-    }
 }

@@ -82,7 +82,7 @@ public class SkimBuilder
 
         HashMap<String, String> rbMap = new HashMap<String, String>(
                 (Map<String, String>) (Map) properties);
-        startMatrixServer(properties);
+        //startMatrixServer(properties);
         tapManager = TapDataManager.getInstance(rbMap);
         tazManager = TazDataManager.getInstance(rbMap);
         mgraManager = MgraDataManager.getInstance(rbMap);
