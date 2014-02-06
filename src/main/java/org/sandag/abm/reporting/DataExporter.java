@@ -32,7 +32,7 @@ import com.pb.common.matrix.Matrix;
  * 
  * @author crf Started 9/20/12 8:36 AM
  */
-public class DataExporter
+public final class DataExporter
 {
     private static final Logger     LOGGER                      = Logger.getLogger(DataExporter.class);
 

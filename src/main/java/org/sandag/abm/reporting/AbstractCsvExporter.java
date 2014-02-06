@@ -8,18 +8,18 @@ public abstract class AbstractCsvExporter
         implements IExporter
 {
     private final File            file;
-    private final TranscadMatrixDao      matrixDao;
+    private final IMatrixDao      matrixDao;
     private final String          reportFolder = "report.path";
 
     protected static final Logger LOGGER       = Logger.getLogger(AbstractCsvExporter.class);
 
-    public AbstractCsvExporter(Properties properties, TranscadMatrixDao aMatrixDao, String aBaseFileName)
+    public AbstractCsvExporter(Properties properties, IMatrixDao aMatrixDao, String aBaseFileName)
     {
         this.file = new File(properties.getProperty(reportFolder), aBaseFileName + ".csv");
         this.matrixDao = aMatrixDao;
     }
 
-    public TranscadMatrixDao getMatrixDao()
+    public IMatrixDao getMatrixDao()
     {
         return this.matrixDao;
     }

@@ -11,7 +11,7 @@ public class TruckCsvPublisherThread
     private static final Logger LOGGER                      = Logger.getLogger(TruckCsvPublisherThread.class);
     
     private BlockingQueue<CsvRow>      queue;
-    private TranscadMatrixDao        mtxDao;
+    private IMatrixDao        mtxDao;
     private String                     matrixName;
     private String                     tod;
     private String[]                   cores;
@@ -21,7 +21,7 @@ public class TruckCsvPublisherThread
     private static final DecimalFormat FORMATTER     = new DecimalFormat("#.######");
 
     public TruckCsvPublisherThread(BlockingQueue<CsvRow> aQueue,
-            TranscadMatrixDao aMtxDao, String aMatrixName, String aTod, String[] theCores)
+            IMatrixDao aMtxDao, String aMatrixName, String aTod, String[] theCores)
     {
         this.queue = aQueue;
         this.mtxDao = aMtxDao;

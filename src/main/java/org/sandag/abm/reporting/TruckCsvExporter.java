@@ -13,7 +13,7 @@ public class TruckCsvExporter
             "hhdt"                                 };
     private static final String[] COLUMN_HEADERS   = {"ORIG", "DEST", "TOD", "CLASS", "TRIPS"};
 
-    public TruckCsvExporter(Properties properties, TranscadMatrixDao aMatrixServerWrapper,
+    public TruckCsvExporter(Properties properties, IMatrixDao aMatrixServerWrapper,
             String aBaseFileName)
     {
         super(properties, aMatrixServerWrapper, aBaseFileName);

@@ -7,6 +7,7 @@ import com.pb.common.matrix.MatrixReader;
 import com.pb.common.matrix.MatrixType;
 
 public class TranscadMatrixDao
+        implements IMatrixDao
 {
     private final String outputFolderToken = "skims.path";
     private final String matrixLocation;
@@ -16,7 +17,7 @@ public class TranscadMatrixDao
         matrixLocation = properties.getProperty(outputFolderToken);
     }
 
-    public synchronized Matrix getMatrix(String matrixName, String coreName)
+    public Matrix getMatrix(String matrixName, String coreName)
     {
         String matrixPath = matrixLocation + File.separator + matrixName + ".mtx";
 
