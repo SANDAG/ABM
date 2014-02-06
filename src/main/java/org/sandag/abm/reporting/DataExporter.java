@@ -26,8 +26,6 @@ import org.sandag.abm.ctramp.ModelStructure;
 import com.pb.common.datafile.CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.matrix.Matrix;
-import com.pb.common.matrix.MatrixReader;
-import com.pb.common.matrix.MatrixType;
 
 /**
  * The {@code DataExporter} ...
@@ -36,24 +34,26 @@ import com.pb.common.matrix.MatrixType;
  */
 public class DataExporter
 {
-    private static final Logger LOGGER                      = Logger.getLogger(DataExporter.class);
+    private static final Logger     LOGGER                      = Logger.getLogger(DataExporter.class);
 
-    private static final String NUMBER_FORMAT_NAME          = "NUMBER";
-    private static final String STRING_FORMAT_NAME          = "STRING";
-    private static final String PROJECT_PATH_PROPERTY_TOKEN = "%project.folder%";
-    private static final String TOD_TOKEN                   = "%TOD%";
+    private static final String     NUMBER_FORMAT_NAME          = "NUMBER";
+    private static final String     STRING_FORMAT_NAME          = "STRING";
+    private static final String     PROJECT_PATH_PROPERTY_TOKEN = "%project.folder%";
+    private static final String     TOD_TOKEN                   = "%TOD%";
 
-    private final Properties    properties;
-    private final File          projectPathFile;
-    private final String        outputPath;
-    private final int           feedbackIterationNumber;
-    private final Set<String>   tables;
-    private final String[]      timePeriods                 = ModelStructure.MODEL_PERIOD_LABELS;
+    private final Properties        properties;
+    private final TranscadMatrixDao mtxDao;
+    private final File              projectPathFile;
+    private final String            outputPath;
+    private final int               feedbackIterationNumber;
+    private final Set<String>       tables;
+    private final String[]          timePeriods                 = ModelStructure.MODEL_PERIOD_LABELS;
 
-    public DataExporter(Properties theProperties, String projectPath, int feedbackIterationNumber,
-            String outputPath)
+    public DataExporter(Properties theProperties, TranscadMatrixDao aMtxDao, String projectPath,
+            int feedbackIterationNumber, String outputPath)
     {
         this.properties = theProperties;
+        this.mtxDao = aMtxDao;
 
         for (Object key : properties.keySet())
         {
@@ -1357,16 +1357,6 @@ public class DataExporter
                         5, true));
     }
 
-    private Matrix getMatrixFromFile(String matrixPath, String core)
-    {
-        if (!matrixPath.endsWith(".mtx")) matrixPath += ".mtx";
-        String path = getPath(matrixPath);
-
-        MatrixReader mr = MatrixReader.createReader(MatrixType.TRANSCAD, new File(path));
-
-        return mr.readMatrix(core);
-    }
-
     private Set<Integer> getExternalZones()
     {
         Set<Integer> externalZones = new LinkedHashSet<Integer>();
@@ -1393,8 +1383,7 @@ public class DataExporter
 
             for (String period : timePeriods)
             {
-                Matrix matrixData = getMatrixFromFile("output/commVehTODTrips.mtx", period
-                        + " Trips");
+                Matrix matrixData = mtxDao.getMatrix("commVehTODTrips.mtx", period + " Trips");
 
                 // This doesn't make sense
                 if (internalZones.isEmpty()) for (int zone : matrixData.getExternalColumnNumbers())
@@ -1453,8 +1442,8 @@ public class DataExporter
                 {
                     int counter = 0;
                     for (String core : cores)
-                        matrixData[counter++] = getMatrixFromFile(
-                                "output/usSd" + purposeMap.get(purpose) + "_" + period + ".mtx",
+                        matrixData[counter++] = mtxDao.getMatrix(
+                                "usSd" + purposeMap.get(purpose) + "_" + period + ".mtx",
                                 core);
 
                     if (internalZones.size() == 0)
@@ -1516,7 +1505,7 @@ public class DataExporter
             CsvRow headerRow = new CsvRow(new String[] {"ORIG_TAZ", "DEST_TAZ", "TRIPS_EE"});
             writer.write(headerRow.getRow());
 
-            Matrix m = getMatrixFromFile("output/externalExternalTrips.mtx", "Trips");
+            Matrix m = mtxDao.getMatrix("externalExternalTrips.mtx", "Trips");
 
             for (int o : externalZones)
             {
@@ -1603,14 +1592,14 @@ public class DataExporter
                 {
                     String name = vehicleSkimFiles.get(key);
                     String[] cores = vehicleSkimCores.get(key);
-                    String file = "output/" + key.replace(TOD_TOKEN, period);
+                    String file = key.replace(TOD_TOKEN, period);
                     lengthMatrix.put(name,
-                            getMatrixFromFile(file, cores[0].replace(TOD_TOKEN, period)));
+                            mtxDao.getMatrix(file, cores[0].replace(TOD_TOKEN, period)));
                     timeMatrix.put(name,
-                            getMatrixFromFile(file, cores[1].replace(TOD_TOKEN, period)));
+                            mtxDao.getMatrix(file, cores[1].replace(TOD_TOKEN, period)));
                     if (cores.length > 2)
                         fareMatrix.put(name,
-                                getMatrixFromFile(file, cores[2].replace(TOD_TOKEN, period)));
+                                mtxDao.getMatrix(file, cores[2].replace(TOD_TOKEN, period)));
                     if (internalZones.size() == 0)
                     {
                         boolean f = true;
@@ -1742,17 +1731,17 @@ public class DataExporter
                 {
                     String name = transitSkimFiles.get(key);
                     String[] timeCores = transitSkimTimeCores.get(key);
-                    String file = "output/" + key.replace(TOD_TOKEN, period);
+                    String file = key.replace(TOD_TOKEN, period);
                     Matrix[] timeMatrices = new Matrix[timeCores.length];
                     for (int i = 0; i < timeCores.length; i++)
-                        timeMatrices[i] = getMatrixFromFile(file,
+                        timeMatrices[i] = mtxDao.getMatrix(file,
                                 timeCores[i].replace(TOD_TOKEN, period));
                     timeMatrix.put(name, timeMatrices);
                     fareMatrix.put(name,
-                            getMatrixFromFile(file, fareCore.replace(TOD_TOKEN, period)));
-                    initialMatrix.put(name, getMatrixFromFile(file, initialWaitCore));
-                    transferMatrix.put(name, getMatrixFromFile(file, transferTimeCore));
-                    walkTimeMatrix.put(name, getMatrixFromFile(file, walkTimeCore));
+                            mtxDao.getMatrix(file, fareCore.replace(TOD_TOKEN, period)));
+                    initialMatrix.put(name, mtxDao.getMatrix(file, initialWaitCore));
+                    transferMatrix.put(name, mtxDao.getMatrix(file, transferTimeCore));
+                    walkTimeMatrix.put(name, mtxDao.getMatrix(file, walkTimeCore));
                     if (internalZones.size() == 0)
                     {
                         boolean f = true;
@@ -1983,7 +1972,9 @@ public class DataExporter
         path = path.substring(0, path.length() - 2);
         String appPath = path.substring(0, path.lastIndexOf("/"));
 
-        DataExporter dataExporter = new DataExporter(properties, appPath, feedbackIteration,
+        TranscadMatrixDao mtxDao = new TranscadMatrixDao(properties);
+        
+        DataExporter dataExporter = new DataExporter(properties, mtxDao, appPath, feedbackIteration,
                 appPath + "/report");
 
         if (definedTables.contains("accessibilities"))
@@ -2016,8 +2007,8 @@ public class DataExporter
         if (definedTables.contains("commtrip")) dataExporter.exportCommVehData("commtrip");
         if (definedTables.contains("trucktrip"))
         {
-            TranscadMatrixDao mtxSvrWrap = new TranscadMatrixDao(properties);
-            IExporter truckExporter = new TruckCsvExporter(properties, mtxSvrWrap, "trucktrip");
+            
+            IExporter truckExporter = new TruckCsvExporter(properties, mtxDao, "trucktrip");
             truckExporter.export();
         }
         if (definedTables.contains("eetrip"))
