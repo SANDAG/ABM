@@ -82,7 +82,6 @@ public class SkimBuilder
 
         HashMap<String, String> rbMap = new HashMap<String, String>(
                 (Map<String, String>) (Map) properties);
-        //startMatrixServer(properties);
         tapManager = TapDataManager.getInstance(rbMap);
         tazManager = TazDataManager.getInstance(rbMap);
         mgraManager = MgraDataManager.getInstance(rbMap);
@@ -100,30 +99,6 @@ public class SkimBuilder
         wtd.setup(rbMap, LOGGER, bestPathUEC);
         dtw = new DriveTransitWalkSkimsCalculator();
         dtw.setup(rbMap, LOGGER, bestPathUEC);
-    }
-
-    private void startMatrixServer(Properties properties)
-    {
-        String serverAddress = (String) properties.get("RunModel.MatrixServerAddress");
-        int serverPort = new Integer((String) properties.get("RunModel.MatrixServerPort"));
-        LOGGER.info("connecting to matrix server " + serverAddress + ":" + serverPort);
-
-        try
-        {
-
-            MatrixDataManager mdm = MatrixDataManager.getInstance();
-            MatrixDataServerIf ms = new MatrixDataServerRmi(serverAddress, serverPort,
-                    MatrixDataServer.MATRIX_DATA_SERVER_NAME);
-            ms.testRemote(Thread.currentThread().getName());
-            mdm.setMatrixDataServerObject(ms);
-
-        } catch (Exception e)
-        {
-            LOGGER.error("could not connect to matrix server", e);
-            throw new RuntimeException(e);
-
-        }
-
     }
 
     // todo: hard coding these next two lookups because it is convenient, but

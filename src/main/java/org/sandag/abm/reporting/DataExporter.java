@@ -73,22 +73,6 @@ public class DataExporter
     {
         tables.add(table);
         LOGGER.info("exporting data: " + table);
-        try
-        {
-            clearMatrixServer();
-        } catch (Throwable e)
-        {
-            // log it, but swallow it
-            LOGGER.warn("exception caught clearing matrix server: " + e.getMessage());
-        }
-    }
-
-    private void clearMatrixServer()
-    {
-        //String serverAddress = (String) properties.get("RunModel.MatrixServerAddress");
-        //int serverPort = Integer.parseInt((String) properties.get("RunModel.MatrixServerPort"));
-        //new MatrixDataServerRmi(serverAddress, serverPort, MatrixDataServer.MATRIX_DATA_SERVER_NAME)
-        //        .clear();
     }
 
     private String getPath(String path)
@@ -1563,10 +1547,7 @@ public class DataExporter
         map.put("imps3nh_" + TOD_TOKEN, "HOV3_FREE");
         map.put("imphhdt_" + TOD_TOKEN, "TRUCK_HH_TOLL");
         map.put("imphhdn_" + TOD_TOKEN, "TRUCK_HH_FREE");
-        // map.put("impmhdt_" + TOD_TOKEN, "TRUCK_MH_TOLL");
-        // map.put("impmhdn_" + TOD_TOKEN, "TRUCK_MH_FREE");
-        // map.put("implhdt_" + TOD_TOKEN, "TRUCK_LH_TOLL");
-        // map.put("implhdn_" + TOD_TOKEN, "TRUCK_LH_FREE");
+
         return map;
     }
 
@@ -1589,14 +1570,6 @@ public class DataExporter
                 "*STM_" + TOD_TOKEN + " (Skim)", "hhdt - ITOLL2_" + TOD_TOKEN});
         map.put("imphhdn_" + TOD_TOKEN, new String[] {"Length (Skim)",
                 "*STM_" + TOD_TOKEN + " (Skim)"});
-        // map.put("impmhdt_" + TOD_TOKEN, new String[] {"Length (Skim)",
-        // "*STM_" + TOD_TOKEN + " (Skim)", "mhdt - ITOLL2_" + TOD_TOKEN});
-        // map.put("impmhdn_" + TOD_TOKEN, new String[] {"Length (Skim)",
-        // "*STM_" + TOD_TOKEN + " (Skim)"});
-        // map.put("implhdt_" + TOD_TOKEN, new String[] {"Length (Skim)",
-        // "*STM_" + TOD_TOKEN + " (Skim)", "lhdt - ITOLL2_" + TOD_TOKEN});
-        // map.put("implhdn_" + TOD_TOKEN, new String[] {"Length (Skim)",
-        // "*STM_" + TOD_TOKEN + " (Skim)"});
         return map;
     }
 
@@ -1622,7 +1595,6 @@ public class DataExporter
             boolean first = true;
             for (String period : includedTimePeriods)
             {
-                clearMatrixServer();
                 Map<String, Matrix> lengthMatrix = new LinkedHashMap<String, Matrix>();
                 Map<String, Matrix> timeMatrix = new LinkedHashMap<String, Matrix>();
                 Map<String, Matrix> fareMatrix = new LinkedHashMap<String, Matrix>();
@@ -1724,12 +1696,8 @@ public class DataExporter
     private Map<String, String[]> getTransitSkimFileInVehicleTimeCoreNameMapping()
     { // distance,time,cost
         Map<String, String[]> map = new LinkedHashMap<String, String[]>();
-        // map.put("implocl_" + TOD_TOKEN + "o", new String[] {"Total IV Time",
-        // "Initial Wait Time",
-        // "Transfer Wait Time", "Walk Time"});
         map.put("impprem_" + TOD_TOKEN + "o", new String[] {"IVT:CR", "IVT:LR", "IVT:BRT",
-                "IVT:EXP", "IVT:LB"});// , "Initial Wait Time",
-                                      // "Transfer Wait Time", "Walk Time"});
+                "IVT:EXP", "IVT:LB"});
         return map;
     }
 
@@ -1764,7 +1732,6 @@ public class DataExporter
             boolean first = true;
             for (String period : includedTimePeriods)
             {
-                clearMatrixServer();
                 Map<String, Matrix[]> timeMatrix = new LinkedHashMap<String, Matrix[]>();
                 Map<String, Matrix> fareMatrix = new LinkedHashMap<String, Matrix>();
                 Map<String, Matrix> initialMatrix = new LinkedHashMap<String, Matrix>();
@@ -1930,75 +1897,6 @@ public class DataExporter
                 stringColumns, intColumns, bitColumns, FieldType.FLOAT, primaryKey, null);
     }
 
-    private void exportEmfacVehicleCodes(String outputFileBase)
-    {
-        addTable(outputFileBase);
-        // just hard-code this file:
-        PrintWriter writer = null;
-        try
-        {
-            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".csv"));
-            writer.println("vehcode,emfac2011_mode,sov_gp,sov_pay,sr2_gp,sr2_hov,sr2_pay,sr3_gp,sr3_hov,sr3_pay");
-            writer.println("1,LDA - DSL,1,1,1,1,1,1,1,1");
-            writer.println("2,LDA - GAS,1,1,1,1,1,1,1,1");
-            writer.println("3,LDT1 - DSL,1,1,1,1,1,1,1,1");
-            writer.println("4,LDT1 - GAS,1,1,1,1,1,1,1,1");
-            writer.println("5,LDT2 - DSL,1,1,1,1,1,1,1,1");
-            writer.println("6,LDT2 - GAS,1,1,1,1,1,1,1,1");
-            writer.println("7,LHD1 - DSL,0,0,0,0,0,0,0,0");
-            writer.println("8,LHD1 - GAS,0,0,0,0,0,0,0,0");
-            writer.println("9,LHD2 - DSL,0,0,0,0,0,0,0,0");
-            writer.println("10,LHD2 - GAS,0,0,0,0,0,0,0,0");
-            writer.println("11,MCY - GAS,1,1,1,1,1,1,1,1");
-            writer.println("12,MDV - DSL,1,1,1,1,1,1,1,1");
-            writer.println("13,MDV - GAS,1,1,1,1,1,1,1,1");
-            writer.println("14,MH - DSL,1,1,1,1,1,1,1,1");
-            writer.println("15,MH - GAS,1,1,1,1,1,1,1,1");
-            writer.println("16,T6 Ag - DSL,0,0,0,0,0,0,0,0");
-            writer.println("17,T6 CAIRP heavy - DSL,0,0,0,0,0,0,0,0");
-            writer.println("18,T6 CAIRP small - DSL,0,0,0,0,0,0,0,0");
-            writer.println("19,T6 instate construction heavy - DSL,0,0,0,0,0,0,0,0");
-            writer.println("20,T6 instate construction small - DSL,0,0,0,0,0,0,0,0");
-            writer.println("21,T6 instate heavy - DSL,0,0,0,0,0,0,0,0");
-            writer.println("22,T6 instate small - DSL,0,0,0,0,0,0,0,0");
-            writer.println("23,T6 OOS heavy - DSL,0,0,0,0,0,0,0,0");
-            writer.println("24,T6 OOS small - DSL,0,0,0,0,0,0,0,0");
-            writer.println("25,T6 public - DSL,0,0,0,0,0,0,0,0");
-            writer.println("26,T6 utility - DSL,0,0,0,0,0,0,0,0");
-            writer.println("27,T6TS - GAS,0,0,0,0,0,0,0,0");
-            writer.println("28,T7 Ag - DSL,0,0,0,0,0,0,0,0");
-            writer.println("29,T7 CAIRP - DSL,0,0,0,0,0,0,0,0");
-            writer.println("30,T7 CAIRP construction - DSL,0,0,0,0,0,0,0,0");
-            writer.println("31,T7 NNOOS - DSL,0,0,0,0,0,0,0,0");
-            writer.println("32,T7 NOOS - DSL,0,0,0,0,0,0,0,0");
-            writer.println("33,T7 other port - DSL,0,0,0,0,0,0,0,0");
-            writer.println("34,T7 POAK - DSL,0,0,0,0,0,0,0,0");
-            writer.println("35,T7 POLA - DSL,0,0,0,0,0,0,0,0");
-            writer.println("36,T7 public - DSL,0,0,0,0,0,0,0,0");
-            writer.println("37,T7 Single - DSL,0,0,0,0,0,0,0,0");
-            writer.println("38,T7 single construction - DSL,0,0,0,0,0,0,0,0");
-            writer.println("39,T7 SWCV - DSL,0,0,0,0,0,0,0,0");
-            writer.println("40,T7 tractor - DSL,0,0,0,0,0,0,0,0");
-            writer.println("41,T7 tractor construction - DSL,0,0,0,0,0,0,0,0");
-            writer.println("42,T7 utility - DSL,0,0,0,0,0,0,0,0");
-            writer.println("43,T7IS - GAS,0,0,0,0,0,0,0,0");
-            writer.println("44,PTO - DSL,0,0,0,0,0,0,0,0");
-            writer.println("45,SBUS - DSL,0,0,0,0,0,0,0,0");
-            writer.println("46,SBUS - GAS,0,0,0,0,0,0,0,0");
-            writer.println("47,UBUS - DSL,0,0,0,0,0,0,0,0");
-            writer.println("48,UBUS - GAS,0,0,0,0,0,0,0,0");
-            writer.println("49,Motor Coach - DSL,0,0,0,0,0,0,0,0");
-            writer.println("50,OBUS - GAS,0,0,0,0,0,0,0,0");
-            writer.println("51,All Other Buses - DSL,0,0,0,0,0,0,0,0");
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        } finally
-        {
-            if (writer != null) writer.close();
-        }
-    }
-
     private static enum FieldType
     {
         INT, FLOAT, STRING, BIT
@@ -2075,21 +1973,7 @@ public class DataExporter
         Properties properties = new Properties();
         properties.load(new FileInputStream("conf/sandag_abm.properties"));
 
-        // String projectFolder =
-        // properties.getProperty("Project.Directory").trim();
-        // String outputFolder = properties.getProperty("report.path").trim();
         int feedbackIteration = Integer.valueOf(properties.getProperty("Report.iteration").trim());
-
-        // add all of the tables
-        // definedTables = Arrays.asList("accessibilities", "mgra", "taz",
-        // "tap", "mgratotap",
-        // "mgratomgra", "taztotap", "hhdata", "persondata", "wslocation",
-        // "synhh",
-        // "synperson", "indivtours", "jointtours", "indivtrips", "jointtrips",
-        // "airporttrips", "cbtours", "cbtrips", "visitortours", "visitortrips",
-        // "ietrip", "commtrip", "trucktrip", "eetrip", "eitrip", "tazskim",
-        // "tapskim", "definition", "emfacvehcode", "pnrvehicles",
-        // "cbdvehicles");
 
         List<String> definedTables = new ArrayList<String>();
         for (String table : properties.getProperty("Report.tables").trim().split(","))
@@ -2143,8 +2027,6 @@ public class DataExporter
         if (definedTables.contains("tazskim")) dataExporter.exportAutoSkims("tazskim");
         if (definedTables.contains("tapskim")) dataExporter.exportTransitSkims("tapskim");
         if (definedTables.contains("definition")) dataExporter.exportDefinitions("definition");
-        if (definedTables.contains("emfacvehcode"))
-            dataExporter.exportEmfacVehicleCodes("emfacvehcode");
         if (definedTables.contains("pnrvehicles"))
             dataExporter.exportPnrVehicleData("pnrvehicles");
         if (definedTables.contains("cbdvehicles"))
