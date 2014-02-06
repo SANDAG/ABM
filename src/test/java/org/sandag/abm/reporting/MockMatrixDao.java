@@ -7,18 +7,20 @@ public class MockMatrixDao
 {
     public Matrix getMatrix(String matrixName, String coreName)
     {
-        float[][] matrixArray = new float[5][5];
+        Matrix mtx = new Matrix(5,5);
+
+        int[] origins = mtx.getInternalRowNumbers();
+        int[] dests = mtx.getInternalColumnNumbers();
         
-        float counter = 0f;
         
-        for(float[] rows : matrixArray)
+        for (int origin : origins)
         {
-            for(float cells: rows)
+            for (int dest : dests)
             {
-                cells = ++counter; 
+                mtx.setValueAt(origin, dest, (float) (1 + Math.random()));
             }
         }
-        
-        return new Matrix(matrixArray);
+
+        return mtx;
     }
 }
