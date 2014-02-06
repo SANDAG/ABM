@@ -15,3 +15,8 @@ call mvn package -P mustang,2010 -DskipTests
 call mvn package -P mustang,2020 -DskipTests
 call mvn package -P mustang,2035 -DskipTests
 call mvn package -P mustang,2050 -DskipTests
+
+call mvn package -P gaucho,2010 -DskipTests
+call mvn package -P gaucho,2020 -DskipTests
+call mvn package -P gaucho,2035 -DskipTests
+call mvn package -P gaucho,2050 -DskipTests
