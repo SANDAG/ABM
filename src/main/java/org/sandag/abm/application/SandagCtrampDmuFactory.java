@@ -140,7 +140,7 @@ public class SandagCtrampDmuFactory
 
     public StopLocationDMU getStopLocationDMU()
     {
-        return new SandagStopLocationDMU(modelStructure);
+        return new SandagStopLocationDMU(modelStructure,propertyMap);
     }
 
     public TripModeChoiceDMU getTripModeChoiceDMU()
