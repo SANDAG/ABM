@@ -11,8 +11,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.sandag.abm.modechoice.MgraDataManager;
+
+import com.pb.common.util.ResourceUtil;
 
 /**
  * The {@code BikeLogsum} class holds bike logsums for use in the SANDAG model. This class is intended to be used as a singleton, and so the only way to
@@ -24,7 +28,7 @@ import org.sandag.abm.modechoice.MgraDataManager;
  */
 public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment>,Serializable {
 	private static final long serialVersionUID = 660793106399818667L;
-	private Logger logger = Logger.getLogger(BikeLogsum.class);
+	private static Logger logger = Logger.getLogger(BikeLogsum.class);
 	
 	public static final String BIKE_LOGSUM_OUTPUT_PROPERTY = "active.output.bike";
 	public static final String BIKE_LOGSUM_MGRA_FILE_PROPERTY = "active.logsum.matrix.file.bike.mgra";
@@ -235,6 +239,21 @@ public class BikeLogsum implements SegmentedSparseMatrix<BikeLogsumSegment>,Seri
 	
 	private Object readResolve() throws ObjectStreamException {
 		return instance; //ensures singelton
+	}
+	
+	public static void main(String ... args) {
+		org.apache.log4j.BasicConfigurator.configure();
+		LogManager.getRootLogger().setLevel(Level.INFO);
+		logger.info("usage: org.sandag.abm.ctramp.BikeLogsum properties origin_mgra dest_mgra");
+		Map<String,String> properties = ResourceUtil.getResourceBundleAsHashMap(args[0]);
+		int originMgra = Integer.parseInt(args[1]);
+		int destMgra = Integer.parseInt(args[2]);
+		BikeLogsum bls = BikeLogsum.getBikeLogsum(properties);
+
+	    BikeLogsumSegment defaultSegment = new BikeLogsumSegment(true,true,true);
+		double logsum = bls.getLogsum(new BikeLogsumSegment(true,true,true),originMgra,destMgra);
+		double time = bls.getTime(new BikeLogsumSegment(true,true,true),originMgra,destMgra);
+		logger.info(String.format("omgra: %s, dmgra: %s, logsum: %s, time: %s",originMgra,destMgra,logsum,time));
 	}
 
 }
