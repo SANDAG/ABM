@@ -48,7 +48,6 @@
                 <node.1.name>THUNDERBIRD</node.1.name>
                 <node.2.name>BARRACUDA</node.2.name>
                 <java.32.port>1190</java.32.port>
-                <MAPANDRUN>e:\remoteExecution\mapAndRun.bat</MAPANDRUN>
                 <workpath>d:\\projects\\sandag\\series13</workpath>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
             </properties>
@@ -70,7 +69,6 @@
                 <node.1.name>GALAXIE</node.1.name>
                 <node.2.name>COBRA</node.2.name>
                 <java.32.port>1190</java.32.port>
-                <MAPANDRUN>e:\remoteExecution\mapAndRun.bat</MAPANDRUN>
                 <workpath>d:\\projects\\sandag\\series13</workpath>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
             </properties>
@@ -92,7 +90,6 @@
                 <node.1.name>HAWKEYE</node.1.name>
                 <node.2.name>AGGIE</node.2.name>
                 <java.32.port>1190</java.32.port>
-                <MAPANDRUN>c:\ABM\remoteExecution\mapAndRun.bat</MAPANDRUN>
                 <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
             </properties>
@@ -114,7 +111,6 @@
                 <node.1.name>WILDCAT</node.1.name>
                 <node.2.name>NITTANY</node.2.name>
                 <java.32.port>1190</java.32.port>
-                <MAPANDRUN>C:\ABM\mapAndRun.bat</MAPANDRUN>
                 <workpath>d:\\projects\\sandag\\series13</workpath>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>
             </properties>

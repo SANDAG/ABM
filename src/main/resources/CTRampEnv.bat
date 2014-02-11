@@ -18,15 +18,15 @@ set HHMGR_IP=${node.1.ip}
 
 
 rem all nodes need to map the scenario drive, currently mapped as x:
-set MAPDRIVE=x:
-set MAPDRIVEFOLDER=\\${master.node.name}\${map.folder}
+set MAPDRIVE=T:
+set MAPDRIVEFOLDER=\\sandag.org\transdata
 
 rem account settings for remote access using psexec
-set USERNAME=joelf
-set PASSWORD=B@seB@ll!
+set USERNAME=XX
+set PASSWORD=XX
 
 rem location of mapAndRun.bat on remote machines
-set MAPANDRUN=${MAPANDRUN}
+set MAPANDRUN=mapAndRun.bat
 
 rem set location of java
 set JAVA_64_PATH=C:\Progra~1\Java\jre7
