@@ -241,8 +241,8 @@ public class SandagBikePathChoiceLogsumMatrixApplication extends AbstractPathCho
         Map<PathAlternativeListGenerationConfiguration<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal>,String> configurationOutputMap = new LinkedHashMap<>();
         configurationOutputMap.put(new SandagBikeTazPathAlternativeListGenerationConfiguration(propertyMap,network),
         		                   propertyMap.get(BikeLogsum.BIKE_LOGSUM_TAZ_FILE_PROPERTY));
-//        configurationOutputMap.put(new SandagBikeMgraPathAlternativeListGenerationConfiguration(propertyMap,network),
-//                                   propertyMap.get(BikeLogsum.BIKE_LOGSUM_MGRA_FILE_PROPERTY));
+        configurationOutputMap.put(new SandagBikeMgraPathAlternativeListGenerationConfiguration(propertyMap,network),
+                                   propertyMap.get(BikeLogsum.BIKE_LOGSUM_MGRA_FILE_PROPERTY));
 
         for (PathAlternativeListGenerationConfiguration<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> configuration : configurationOutputMap.keySet()) {
         	Path outputDirectory = Paths.get(configuration.getOutputDirectory()); 
