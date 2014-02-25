@@ -101,8 +101,12 @@ public class Emfac2011Runner {
 		LOGGER.info("Step 3: Creating EMFAC2011 input file");
 		Emfac2011InputFileCreator inputFileCreator = new Emfac2011InputFileCreator();
 		Path inputfile = inputFileCreator.createInputFile(properties, data);
-		LOGGER.info("Step 4: Initiating EMFAC2011");
-		RunEmfacDialog.createAndShowGUI(inputfile, this);			
+			if((properties.getString(Emfac2011Properties.EXECUTE_EMFAC)).equalsIgnoreCase("true")){
+			LOGGER.info("Step 4: Initiating EMFAC2011");
+			RunEmfacDialog.createAndShowGUI(inputfile, this);	
+		}else{
+			LOGGER.info("Sipped--Step 4: Initiating EMFAC2011");
+		}
 		LOGGER.info("EMFAC2011 run finished");
 	}
 
