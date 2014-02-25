@@ -578,7 +578,7 @@ public final class MgraDataManager
      */
     public float getMgraToMgraBikeTime(int oMgra, int dMgra)
     {
-    	double time = bls.getLogsum(defaultSegment,oMgra,dMgra);
+    	double time = bls.getTime(defaultSegment,oMgra,dMgra);
     	return (time == Double.POSITIVE_INFINITY) ? 0f : (float) time;
     }
 
