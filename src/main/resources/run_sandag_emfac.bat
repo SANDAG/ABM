@@ -37,4 +37,4 @@ FOR %%X in (%~1) do (set found=%%~$PATH:X)
 IF NOT DEFINED found COPY %MDIR%\code\%~1 c:\Windows\System32\%~1
 GOTO:EOF
 
-rem:END
+:END
