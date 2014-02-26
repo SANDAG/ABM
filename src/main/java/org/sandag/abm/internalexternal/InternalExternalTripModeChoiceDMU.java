@@ -32,10 +32,10 @@ public class InternalExternalTripModeChoiceDMU
     protected double       nmBikeTime;
 
     protected double[][][] transitSkim;
+    protected double bikeLogsum;
 
     public InternalExternalTripModeChoiceDMU(InternalExternalModelStructure modelStructure,
             Logger aLogger)
-    protected double bikeLogsum;
     {
         if (aLogger == null)
         {

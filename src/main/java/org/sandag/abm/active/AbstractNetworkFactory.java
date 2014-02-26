@@ -3,12 +3,11 @@ package org.sandag.abm.active;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.pbworld.sawdust.util.collections.LinkedSetList;
 
 public abstract class AbstractNetworkFactory<N extends Node,E extends Edge<N>,T extends Traversal<E>> extends NetworkFactory<N,E,T> 
 {
@@ -33,7 +32,7 @@ public abstract class AbstractNetworkFactory<N extends Node,E extends Edge<N>,T 
 			predecessors.put(node,new LinkedList<E>());
     	for (E edge : edges) 
     		predecessors.get(edge.getToNode()).add(edge);
-    	Set<T> traversals = new LinkedSetList<>();
+    	Set<T> traversals = new LinkedHashSet<>();
 		for (E toEdge : getEdges()) {
 			for (E fromEdge : predecessors.get(toEdge.getFromNode()))
 				if (!isReversal(fromEdge,toEdge))

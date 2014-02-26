@@ -299,7 +299,7 @@ public class McLogsumsCalculator
         mcDmuIndex.setOriginZone(mgraManager.getTaz(origMgra));
         mcDmuIndex.setDestZone(mgraManager.getTaz(destMgra));
 
-        mcDmuObject.setBikeLogsum(origMgra,destMgra,mcDmuObject.getOuboundHalfTourDirection() == 0);
+        mcDmuObject.setBikeLogsum(origMgra,destMgra,mcDmuObject.getOutboundHalfTourDirection() == 0);
 
         setTripMcLogsumDmuAttributesTotalTime += ( System.currentTimeMillis() - currentTime );
         

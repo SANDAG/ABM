@@ -57,7 +57,6 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
 	}
 
 
-    protected double[][][][] transitSkim;
 	public Household getHouseholdObject() {
 		return hh;
 	}
@@ -70,13 +69,17 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
 		return person;
 	}
 
+	public void setWorkTourObject(Tour tourObject) {
+		workTour = tourObject;
+	}
+
 	public void setTourObject(Tour tourObject) {
 		tour = tourObject;
 	}
-    public void setHouseholdObject(Household hhObject)
-    {
-        hh = hhObject;
-    }
+
+	public Tour getTourObject() {
+		return tour;
+	}
 
 	public int getParkingArea() {
 		return parkingArea;

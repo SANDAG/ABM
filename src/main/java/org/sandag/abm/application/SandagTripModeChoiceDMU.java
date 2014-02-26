@@ -1,10 +1,14 @@
 package org.sandag.abm.application;
 
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.BikeLogsum;
 import org.sandag.abm.ctramp.BikeLogsumSegment;
+import org.sandag.abm.ctramp.Household;
 import org.sandag.abm.ctramp.ModelStructure;
+import org.sandag.abm.ctramp.Person;
+import org.sandag.abm.ctramp.Tour;
 import org.sandag.abm.ctramp.TripModeChoiceDMU;
 
 import com.pb.common.calculator.IndexValues;
