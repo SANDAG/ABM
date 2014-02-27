@@ -44,27 +44,18 @@ public final class DataExporter
     private final Properties        properties;
     private final TranscadMatrixDao mtxDao;
     private final File              projectPathFile;
-    private final String            outputPath;
     private final int               feedbackIterationNumber;
     private final Set<String>       tables;
     private final String[]          timePeriods                 = ModelStructure.MODEL_PERIOD_LABELS;
 
     public DataExporter(Properties theProperties, TranscadMatrixDao aMtxDao, String projectPath,
-            int feedbackIterationNumber, String outputPath)
+            int feedbackIterationNumber)
     {
         this.properties = theProperties;
         this.mtxDao = aMtxDao;
 
-        for (Object key : properties.keySet())
-        {
-            String value = (String) properties.get(key);
-            properties.setProperty((String) key,
-                    value.replace(PROJECT_PATH_PROPERTY_TOKEN, projectPath));
-        }
-
-        projectPathFile = new File(projectPath);
+        projectPathFile = new File(theProperties.getProperty("Project.Directory"));
         this.feedbackIterationNumber = feedbackIterationNumber;
-        this.outputPath = outputPath;
 
         tables = new LinkedHashSet<String>();
     }
@@ -93,7 +84,7 @@ public final class DataExporter
 
     private String getOutputPath(String file)
     {
-        return new File(outputPath, file).getAbsolutePath();
+        return new File(properties.getProperty("report.path"), file).getAbsolutePath();
     }
 
     private String getData(TableDataSet data, int row, int column, FieldType type)
@@ -1442,9 +1433,8 @@ public final class DataExporter
                 {
                     int counter = 0;
                     for (String core : cores)
-                        matrixData[counter++] = mtxDao.getMatrix(
-                                "usSd" + purposeMap.get(purpose) + "_" + period,
-                                core);
+                        matrixData[counter++] = mtxDao.getMatrix("usSd" + purposeMap.get(purpose)
+                                + "_" + period, core);
 
                     if (internalZones.size() == 0)
                     { // only need to form internal zones once
@@ -1972,10 +1962,16 @@ public final class DataExporter
         path = path.substring(0, path.length() - 2);
         String appPath = path.substring(0, path.lastIndexOf("/"));
 
+        for (Object key : properties.keySet())
+        {
+            String value = (String) properties.get(key);
+            properties.setProperty((String) key,
+                    value.replace(PROJECT_PATH_PROPERTY_TOKEN, appPath));
+        }
+
         TranscadMatrixDao mtxDao = new TranscadMatrixDao(properties);
-        
-        DataExporter dataExporter = new DataExporter(properties, mtxDao, appPath, feedbackIteration,
-                appPath + "/report");
+
+        DataExporter dataExporter = new DataExporter(properties, mtxDao, appPath, feedbackIteration);
 
         if (definedTables.contains("accessibilities"))
             dataExporter.exportAccessibilities("accessibilities");
@@ -2007,7 +2003,7 @@ public final class DataExporter
         if (definedTables.contains("commtrip")) dataExporter.exportCommVehData("commtrip");
         if (definedTables.contains("trucktrip"))
         {
-            
+
             IExporter truckExporter = new TruckCsvExporter(properties, mtxDao, "trucktrip");
             truckExporter.export();
         }
