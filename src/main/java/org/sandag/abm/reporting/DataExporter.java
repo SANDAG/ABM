@@ -1383,7 +1383,7 @@ public final class DataExporter
 
             for (String period : timePeriods)
             {
-                Matrix matrixData = mtxDao.getMatrix("commVehTODTrips.mtx", period + " Trips");
+                Matrix matrixData = mtxDao.getMatrix("commVehTODTrips", period + " Trips");
 
                 // This doesn't make sense
                 if (internalZones.isEmpty()) for (int zone : matrixData.getExternalColumnNumbers())
@@ -1443,7 +1443,7 @@ public final class DataExporter
                     int counter = 0;
                     for (String core : cores)
                         matrixData[counter++] = mtxDao.getMatrix(
-                                "usSd" + purposeMap.get(purpose) + "_" + period + ".mtx",
+                                "usSd" + purposeMap.get(purpose) + "_" + period,
                                 core);
 
                     if (internalZones.size() == 0)
