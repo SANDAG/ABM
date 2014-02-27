@@ -23,23 +23,24 @@ SELECT	@@SCENARIO@@ AS SCENARIO_ID
 				WHEN [MODE_ID] = 27 THEN 'SR2_HOV'
 				END AS vehicle_class
 		,COUNT(*) AS trips
-	INTO [abm].[aquavis_trips_temp]
+	INTO [dbo].[aquavis_trips_temp]
 	FROM [abm].[TRIP_MICRO_SIMUL]
 	INNER JOIN [abm].[MGRA] mgra1
 	ON [TRIP_MICRO_SIMUL].[ORIG_MGRA] = mgra1.[MGRA]
 	INNER JOIN [abm].[MGRA] mgra2
 	ON [TRIP_MICRO_SIMUL].[DEST_MGRA] = mgra2.[MGRA]
-	INNER JOIN [dbo].[PERIOD]
+	INNER JOIN [ref].[PERIOD]
 	ON [TRIP_MICRO_SIMUL].[PERIOD_ID] = [PERIOD].[PERIOD_ID]
 	WHERE [TRIP_MICRO_SIMUL].[SCENARIO_ID] = @@SCENARIO@@
 	AND mgra1.[SCENARIO_ID] = @@SCENARIO@@
 	AND mgra2.[SCENARIO_ID] = @@SCENARIO@@ 
 	AND [MODE_ID] IN (1,2,3,4,5,6,7,8,27)
+	AND [mgra1].[TAZ] = [mgra2].[TAZ]
 	GROUP BY [mgra1].[TAZ],[mgra2].[TAZ],DATEPART(hh,[PERIOD_START]),[TOD_ID],[MODE_ID]
 	
 	
 
-INSERT INTO [abm].[aquavis_trips_temp]
+INSERT INTO [dbo].[aquavis_trips_temp]
 SELECT	@@SCENARIO@@
 		,[MGRA].[TAZ] AS origin_zone
 		,[TAP].[TAZ] AS destination_zone
@@ -60,17 +61,17 @@ SELECT	@@SCENARIO@@
 	ON [TRIP_MICRO_SIMUL].[ORIG_MGRA] = [MGRA].[MGRA]
 	INNER JOIN [abm].[TAP]
 	ON [TRIP_MICRO_SIMUL].[TRIP_BOARD_TAP] = [TAP].[TAP]
-	INNER JOIN [dbo].[PERIOD]
+	INNER JOIN [ref].[PERIOD]
 	ON [TRIP_MICRO_SIMUL].[PERIOD_ID] = [PERIOD].[PERIOD_ID]
 	WHERE [TRIP_MICRO_SIMUL].[SCENARIO_ID] = @@SCENARIO@@
 	AND [MGRA].[SCENARIO_ID] = @@SCENARIO@@
 	AND [TAP].[SCENARIO_ID] = @@SCENARIO@@
 	AND [MODE_ID] BETWEEN 16 AND 25
-	AND [MGRA].[TAZ] <> [TAP].[TAZ]
+	AND [MGRA].[TAZ] = [TAP].[TAZ]
 	GROUP BY [MGRA].[TAZ],[TAP].[TAZ],DATEPART(hh,[PERIOD_START]),[TOD_ID],[PARTYSIZE]
 	
 	
-INSERT INTO [abm].[aquavis_trips_temp]
+INSERT INTO [dbo].[aquavis_trips_temp]
 SELECT	@@SCENARIO@@
 		,[TAP].[TAZ] AS origin_zone
 		,[MGRA].[TAZ] AS destination_zone
@@ -91,18 +92,18 @@ SELECT	@@SCENARIO@@
 	ON [TRIP_MICRO_SIMUL].[DEST_MGRA] = [MGRA].[MGRA]
 	INNER JOIN [abm].[TAP]
 	ON [TRIP_MICRO_SIMUL].[TRIP_ALIGHT_TAP] = [TAP].[TAP]
-	INNER JOIN [dbo].[PERIOD]
+	INNER JOIN [ref].[PERIOD]
 	ON [TRIP_MICRO_SIMUL].[PERIOD_ID] = [PERIOD].[PERIOD_ID]
 	WHERE [TRIP_MICRO_SIMUL].[SCENARIO_ID] = @@SCENARIO@@
 	AND [MGRA].[SCENARIO_ID] = @@SCENARIO@@
 	AND [TAP].[SCENARIO_ID] = @@SCENARIO@@
 	AND [MODE_ID] BETWEEN 16 AND 25
-	AND [MGRA].[TAZ] <> [TAP].[TAZ]
+	AND [MGRA].[TAZ] = [TAP].[TAZ]
 	GROUP BY [MGRA].[TAZ],[TAP].[TAZ],DATEPART(hh,[PERIOD_START]),[TOD_ID],[PARTYSIZE]
 	
 	
 	
-INSERT INTO [abm].[aquavis_trips_temp] 
+INSERT INTO [dbo].[aquavis_trips_temp] 
 SELECT	@@SCENARIO@@
 		,[ORIG_TAZ] AS origin_zone
 		,[DEST_TAZ] AS destination_zone
@@ -126,6 +127,7 @@ SELECT	@@SCENARIO@@
 	FROM [abm].[TRIP_AGGREGATE]
 	WHERE [SCENARIO_ID] = @@SCENARIO@@
 	AND [MODEL_TYPE_ID] IN (7,8)
+	AND [ORIG_TAZ]=[DEST_TAZ]
 
 INSERT INTO [abm].[aquavis_trips]
 SELECT	@@SCENARIO@@ AS [SCENARIO_ID]
@@ -135,7 +137,7 @@ SELECT	@@SCENARIO@@ AS [SCENARIO_ID]
 		,[time_period]
 		,[vehicle_class]
 		,SUM([trips]) AS trips
-FROM [abm].[aquavis_trips_temp]
+FROM [dbo].[aquavis_trips_temp]
 WHERE [SCENARIO_ID] = @@SCENARIO@@
 GROUP BY [origin_zone],[destination_zone],[hour],[time_period],[vehicle_class]
 
@@ -152,7 +154,7 @@ INSERT INTO [abm].[aquavis_trips]
 			,time_period
 			,'UBUS' AS vehicle_class
 			,0 AS trips
-    FROM [abm].[aquavis_trips_temp]
+    FROM [dbo].[aquavis_trips_temp]
     WHERE [aquavis_trips_temp].[vehicle_class]='SOV_GP' 
     AND [aquavis_trips_temp].[origin_zone] = [aquavis_trips_temp].[destination_zone]
               
@@ -164,7 +166,7 @@ INSERT INTO [abm].[aquavis_trips]
 			,[time_period]
 			,'LHDN' AS vehicle_class
 			,0 AS trips
-    FROM [abm].[aquavis_trips_temp]
+    FROM [dbo].[aquavis_trips_temp]
     WHERE [aquavis_trips_temp].[vehicle_class]='SOV_GP' 
     AND [aquavis_trips_temp].[origin_zone] = [aquavis_trips_temp].[destination_zone]
               
@@ -176,7 +178,7 @@ INSERT INTO [abm].[aquavis_trips]
 			,[time_period]
 			,'MHDN' AS vehicle_class
 			,0 AS trips
-    FROM [abm].[aquavis_trips_temp]
+    FROM [dbo].[aquavis_trips_temp]
     WHERE [aquavis_trips_temp].[vehicle_class]='SOV_GP' 
     AND [aquavis_trips_temp].[origin_zone] = [aquavis_trips_temp].[destination_zone]
               
@@ -188,7 +190,7 @@ INSERT INTO [abm].[aquavis_trips]
 			,[time_period]
 			,'HHDN' AS vehicle_class
 			,0 AS trips
-    FROM [abm].[aquavis_trips_temp]
+    FROM [dbo].[aquavis_trips_temp]
     WHERE [aquavis_trips_temp].[vehicle_class]='SOV_GP' 
     AND [aquavis_trips_temp].[origin_zone] = [aquavis_trips_temp].[destination_zone]
               
@@ -200,7 +202,7 @@ INSERT INTO [abm].[aquavis_trips]
 			,[time_period]
 			,'LHDT' AS vehicle_class
 			,0 AS trips
-    FROM [abm].[aquavis_trips_temp]
+    FROM [dbo].[aquavis_trips_temp]
     WHERE [aquavis_trips_temp].[vehicle_class]='SOV_GP' 
     AND [aquavis_trips_temp].[origin_zone] = [aquavis_trips_temp].[destination_zone]
               
@@ -212,7 +214,7 @@ INSERT INTO [abm].[aquavis_trips]
 			,[time_period]
 			,'MHDT' AS vehicle_class
 			,0 AS trips
-    FROM [abm].[aquavis_trips_temp]
+    FROM [dbo].[aquavis_trips_temp]
     WHERE [aquavis_trips_temp].[vehicle_class]='SOV_GP' 
     AND [aquavis_trips_temp].[origin_zone] = [aquavis_trips_temp].[destination_zone]
               
@@ -224,12 +226,12 @@ INSERT INTO [abm].[aquavis_trips]
 			,[time_period]
 			,'HHDT' AS vehicle_class
 			,0 AS trips
-    FROM [abm].[aquavis_trips_temp]
+    FROM [dbo].[aquavis_trips_temp]
     WHERE [aquavis_trips_temp].[vehicle_class]='SOV_GP' 
     AND [aquavis_trips_temp].[origin_zone] = [aquavis_trips_temp].[destination_zone]
         
  */    
 
-DROP TABLE [abm].[aquavis_trips_temp]
+DROP TABLE [dbo].[aquavis_trips_temp]
 
 END
