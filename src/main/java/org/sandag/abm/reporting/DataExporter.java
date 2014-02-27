@@ -1505,7 +1505,7 @@ public final class DataExporter
             CsvRow headerRow = new CsvRow(new String[] {"ORIG_TAZ", "DEST_TAZ", "TRIPS_EE"});
             writer.write(headerRow.getRow());
 
-            Matrix m = mtxDao.getMatrix("externalExternalTrips.mtx", "Trips");
+            Matrix m = mtxDao.getMatrix("externalExternalTrips", "Trips");
 
             for (int o : externalZones)
             {
