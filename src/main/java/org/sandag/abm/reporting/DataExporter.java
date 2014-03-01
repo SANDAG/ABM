@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.ModelStructure;
 import com.pb.common.datafile.CSVFileReader;
@@ -1555,23 +1557,19 @@ public final class DataExporter
     private void exportAutoSkims(String outputFileBase)
     {
         addTable(outputFileBase);
-        String[] includedTimePeriods = getTimePeriodsForSkims(); // can't
-                                                                 // include them
-                                                                 // all
+        String[] includedTimePeriods = getTimePeriodsForSkims();
         Set<Integer> internalZones = new LinkedHashSet<Integer>();
 
-        PrintWriter writer = null;
-        List<String> costColumns = new LinkedList<String>();
+        BlockingQueue<CsvRow> queue = new LinkedBlockingQueue<CsvRow>();
         try
         {
-            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".csv"));
-
             Map<String, String> vehicleSkimFiles = getVehicleSkimFileNameMapping();
             Map<String, String[]> vehicleSkimCores = getVehicleSkimFileCoreNameMapping();
             Set<String> modeNames = new LinkedHashSet<String>();
             for (String n : vehicleSkimFiles.keySet())
                 modeNames.add(vehicleSkimFiles.get(n));
             boolean first = true;
+
             for (String period : includedTimePeriods)
             {
                 Map<String, Matrix> lengthMatrix = new LinkedHashMap<String, Matrix>();
@@ -1617,45 +1615,51 @@ public final class DataExporter
                         orderedData[counter++] = fareMatrix.get(mode);
                 }
 
-                StringBuilder sb = new StringBuilder();
                 if (first)
                 {
-                    sb.append("ORIG_TAZ,DEST_TAZ,TOD");
+                    List<String> header = new ArrayList<String>();
+                    header.add("ORIG_TAZ");
+                    header.add("DEST_TAZ");
+                    header.add("TOD");
+
                     for (String modeName : modeNames)
                     {
-                        sb.append(",DIST_").append(modeName);
-                        sb.append(",TIME_").append(modeName);
-                        costColumns.add("DIST_" + modeName);
-                        costColumns.add("TIME_" + modeName);
+                        header.add("DIST_" + modeName);
+                        header.add("TIME_" + modeName);
                         if (fareMatrix.containsKey(modeName))
                         {
-                            sb.append(",COST_").append(modeName);
-                            costColumns.add("COST_" + modeName);
+                            header.add("COST_" + modeName);
                         }
                     }
-                    writer.println(sb.toString());
+
+                    CsvWriterThread writerThread = new CsvWriterThread(queue, new File(
+                            getOutputPath(outputFileBase + ".csv")),
+                            header.toArray(new String[header.size()]));
+                    new Thread(writerThread).start();
                     first = false;
                 }
+
+                int rowSize = 3 + orderedData.length;
 
                 for (int i : internalZones)
                 {
                     for (int j : internalZones)
                     {
-                        sb = new StringBuilder();
-                        sb.append(i).append(",").append(j).append(",").append(period);
+                        String[] values = new String[rowSize];
+                        values[0] = String.valueOf(i);
+                        values[1] = String.valueOf(j);
+                        values[2] = period;
+                        int position = 3;
                         for (Matrix matrix : orderedData)
-                            sb.append(",").append(matrix.getValueAt(i, j));
-                        writer.println(sb.toString());
+                            values[position++] = String.valueOf(matrix.getValueAt(i, j));
+                        queue.add(new CsvRow(values));
                     }
                 }
             }
 
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
         } finally
         {
-            if (writer != null) writer.close();
+            queue.add(CsvWriterThread.POISON_PILL);
         }
     }
 
