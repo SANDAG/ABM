@@ -49,8 +49,6 @@ public final class DataExporter
     private final int               feedbackIterationNumber;
     private final Set<String>       tables;
     private final String[]          timePeriods                 = ModelStructure.MODEL_PERIOD_LABELS;
-    
-    private static final DecimalFormat FORMATTER     = new DecimalFormat("#.####");
 
     public DataExporter(Properties theProperties, TranscadMatrixDao aMtxDao, String projectPath,
             int feedbackIterationNumber)
@@ -1653,7 +1651,7 @@ public final class DataExporter
                         values[2] = period;
                         int position = 3;
                         for (Matrix matrix : orderedData)
-                            values[position++] = FORMATTER.format(matrix.getValueAt(i, j));
+                            values[position++] = String.valueOf(matrix.getValueAt(i, j));
                         queue.add(new CsvRow(values));
                     }
                 }
