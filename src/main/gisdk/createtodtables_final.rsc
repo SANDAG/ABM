@@ -165,69 +165,77 @@ Macro "Create Auto Tables"
       outCurrencies= CreateMatrixCurrencies(outMatrix, , , )
 
       // calculate output matrices
-      outCurrencies.SOV_GP :=  personCurrencies.("SOV_GP"+periods[i])
-                            + airportCurrencies.("SOV_GP"+periods[i]) 
-                            + visitorCurrencies.("SOV_GP"+periods[i]) 
-                            + crossBorderCurrencies.("SOV_GP"+periods[i]) 
-                            + internalExternalCurrencies.("SOV_GP"+periods[i]) 
-                            + externalInternalWrkCurrencies.("DAN")
-                            + externalInternalNonCurrencies.("DAN")
-                            + externalExternalCurrency * externalExternalDiurnalFactors[i] * externalExternalOccupancyFactors[1]
-                            + commVehCurrencies.(commVehMatrices[i]) 
+      outCurrencies.SOV_GP :=Nz(outCurrencies.SOV_GP)
+      outCurrencies.SOV_GP :=  Nz(personCurrencies.("SOV_GP"+periods[i]))
+                            + Nz(airportCurrencies.("SOV_GP"+periods[i])) 
+                            + Nz(visitorCurrencies.("SOV_GP"+periods[i])) 
+                            + Nz(crossBorderCurrencies.("SOV_GP"+periods[i])) 
+                            + Nz(internalExternalCurrencies.("SOV_GP"+periods[i])) 
+                            + Nz(externalInternalWrkCurrencies.("DAN"))
+                            + Nz(externalInternalNonCurrencies.("DAN"))
+                            + Nz(externalExternalCurrency) * externalExternalDiurnalFactors[i] * externalExternalOccupancyFactors[1]
+                            + Nz(commVehCurrencies.(commVehMatrices[i])) 
                        
-      outCurrencies.SOV_PAY := personCurrencies.("SOV_PAY"+periods[i]) 
-                            + airportCurrencies.("SOV_PAY"+periods[i]) 
-                            + visitorCurrencies.("SOV_PAY"+periods[i]) 
-                            + crossBorderCurrencies.("SOV_PAY"+periods[i]) 
-                            + internalExternalCurrencies.("SOV_PAY"+periods[i]) 
-                            + externalInternalWrkCurrencies.("DAT")
-                            + externalInternalNonCurrencies.("DAT")
+      outCurrencies.SOV_PAY :=Nz(outCurrencies.SOV_PAY)
+      outCurrencies.SOV_PAY := Nz(personCurrencies.("SOV_PAY"+periods[i])) 
+                            + Nz(airportCurrencies.("SOV_PAY"+periods[i])) 
+                            + Nz(visitorCurrencies.("SOV_PAY"+periods[i])) 
+                            + Nz(crossBorderCurrencies.("SOV_PAY"+periods[i])) 
+                            + Nz(internalExternalCurrencies.("SOV_PAY"+periods[i])) 
+                            + Nz(externalInternalWrkCurrencies.("DAT"))
+                            + Nz(externalInternalNonCurrencies.("DAT"))
  
-      outCurrencies.SR2_GP := personCurrencies.("SR2_GP"+periods[i]) 
-                            + airportCurrencies.("SR2_GP"+periods[i]) 
-                            + visitorCurrencies.("SR2_GP"+periods[i]) 
-                            + crossBorderCurrencies.("SR2_GP"+periods[i]) 
-                            + internalExternalCurrencies.("SR2_GP"+periods[i]) 
-      
-      outCurrencies.SR2_HOV := personCurrencies.("SR2_HOV"+periods[i]) 
-                            + airportCurrencies.("SR2_HOV"+periods[i]) 
-                            + visitorCurrencies.("SR2_HOV"+periods[i]) 
-                            + crossBorderCurrencies.("SR2_HOV"+periods[i]) 
-                            + internalExternalCurrencies.("SR2_HOV"+periods[i]) 
-                            + externalInternalWrkCurrencies.("S2N")
-                            + externalInternalNonCurrencies.("S2N")
-                            + externalExternalCurrency * externalExternalDiurnalFactors[i] * externalExternalOccupancyFactors[2]
-     
-      outCurrencies.SR2_PAY := personCurrencies.("SR2_PAY"+periods[i]) 
-                            + airportCurrencies.("SR2_PAY"+periods[i]) 
-                            + visitorCurrencies.("SR2_PAY"+periods[i]) 
-                            + crossBorderCurrencies.("SR2_PAY"+periods[i]) 
-                            + internalExternalCurrencies.("SR2_PAY"+periods[i]) 
-                            + externalInternalWrkCurrencies.("S2T")
-                            + externalInternalNonCurrencies.("S2T")
+      outCurrencies.SR2_GP :=Nz(outCurrencies.SR2_GP)
+      outCurrencies.SR2_GP := Nz(personCurrencies.("SR2_GP"+periods[i])) 
+                            + Nz(airportCurrencies.("SR2_GP"+periods[i])) 
+                            + Nz(visitorCurrencies.("SR2_GP"+periods[i])) 
+                            + Nz(crossBorderCurrencies.("SR2_GP"+periods[i])) 
+                            + Nz(internalExternalCurrencies.("SR2_GP"+periods[i])) 
 
-      outCurrencies.SR3_GP := personCurrencies.("SR3_GP"+periods[i]) 
-                            + airportCurrencies.("SR3_GP"+periods[i]) 
-                            + visitorCurrencies.("SR3_GP"+periods[i]) 
-                            + crossBorderCurrencies.("SR3_GP"+periods[i]) 
-                            + internalExternalCurrencies.("SR3_GP"+periods[i]) 
-      
-      outCurrencies.SR3_HOV := personCurrencies.("SR3_HOV"+periods[i]) 
-                            + airportCurrencies.("SR3_HOV"+periods[i]) 
-                            + visitorCurrencies.("SR3_HOV"+periods[i]) 
-                            + crossBorderCurrencies.("SR3_HOV"+periods[i]) 
-                            + internalExternalCurrencies.("SR3_HOV"+periods[i]) 
-                            + externalInternalWrkCurrencies.("S3N")
-                            + externalInternalNonCurrencies.("S3N")
-                            + externalExternalCurrency * externalExternalDiurnalFactors[i] * externalExternalOccupancyFactors[3]
-     
-      outCurrencies.SR3_PAY := personCurrencies.("SR3_PAY"+periods[i]) 
-                            + airportCurrencies.("SR3_PAY"+periods[i]) 
-                            + visitorCurrencies.("SR3_PAY"+periods[i]) 
-                            + crossBorderCurrencies.("SR3_PAY"+periods[i]) 
-                            + internalExternalCurrencies.("SR3_PAY"+periods[i]) 
-                            + externalInternalWrkCurrencies.("S3T")
-                            + externalInternalNonCurrencies.("S3T")
+      outCurrencies.SR2_HOV :=Nz(outCurrencies.SR2_HOV)  
+      outCurrencies.SR2_HOV := Nz(personCurrencies.("SR2_HOV"+periods[i])) 
+                            + Nz(airportCurrencies.("SR2_HOV"+periods[i])) 
+                            + Nz(visitorCurrencies.("SR2_HOV"+periods[i])) 
+                            + Nz(crossBorderCurrencies.("SR2_HOV"+periods[i])) 
+                            + Nz(internalExternalCurrencies.("SR2_HOV"+periods[i])) 
+                            + Nz(externalInternalWrkCurrencies.("S2N"))
+                            + Nz(externalInternalNonCurrencies.("S2N"))
+                            + Nz(externalExternalCurrency) * externalExternalDiurnalFactors[i] * externalExternalOccupancyFactors[2]
+ 
+      outCurrencies.SR2_PAY :=Nz(outCurrencies.SR2_PAY)
+      outCurrencies.SR2_PAY := Nz(personCurrencies.("SR2_PAY"+periods[i])) 
+                            + Nz(airportCurrencies.("SR2_PAY"+periods[i])) 
+                            + Nz(visitorCurrencies.("SR2_PAY"+periods[i])) 
+                            + Nz(crossBorderCurrencies.("SR2_PAY"+periods[i])) 
+                            + Nz(internalExternalCurrencies.("SR2_PAY"+periods[i])) 
+                            + Nz(externalInternalWrkCurrencies.("S2T"))
+                            + Nz(externalInternalNonCurrencies.("S2T"))
+
+      outCurrencies.SR3_GP :=Nz(outCurrencies.SR3_GP)
+      outCurrencies.SR3_GP := Nz(personCurrencies.("SR3_GP"+periods[i])) 
+                            + Nz(airportCurrencies.("SR3_GP"+periods[i]))
+                            + Nz(visitorCurrencies.("SR3_GP"+periods[i])) 
+                            + Nz(crossBorderCurrencies.("SR3_GP"+periods[i])) 
+                            + Nz(internalExternalCurrencies.("SR3_GP"+periods[i])) 
+
+      outCurrencies.SR3_HOV :=Nz(outCurrencies.SR3_HOV) 
+      outCurrencies.SR3_HOV := Nz(personCurrencies.("SR3_HOV"+periods[i])) 
+                            + Nz(airportCurrencies.("SR3_HOV"+periods[i])) 
+                            + Nz(visitorCurrencies.("SR3_HOV"+periods[i])) 
+                            + Nz(crossBorderCurrencies.("SR3_HOV"+periods[i])) 
+                            + Nz(internalExternalCurrencies.("SR3_HOV"+periods[i])) 
+                            + Nz(externalInternalWrkCurrencies.("S3N"))
+                            + Nz(externalInternalNonCurrencies.("S3N"))
+                            + Nz(externalExternalCurrency) * externalExternalDiurnalFactors[i] * externalExternalOccupancyFactors[3]
+
+      outCurrencies.SR3_PAY :=Nz(outCurrencies.SR3_PAY)
+      outCurrencies.SR3_PAY := Nz(personCurrencies.("SR3_PAY"+periods[i])) 
+                            + Nz(airportCurrencies.("SR3_PAY"+periods[i])) 
+                            + Nz(visitorCurrencies.("SR3_PAY"+periods[i])) 
+                            + Nz(crossBorderCurrencies.("SR3_PAY"+periods[i])) 
+                            + Nz(internalExternalCurrencies.("SR3_PAY"+periods[i])) 
+                            + Nz(externalInternalWrkCurrencies.("S3T"))
+                            + Nz(externalInternalNonCurrencies.("S3T"))
      /*
       truckPeriod = truckPeriods[i]
       outCurrencies.lhdn := truckCurrencies[truckPeriod].lhdn * truckFactors[i]
@@ -249,7 +257,9 @@ Macro "Create Auto Tables"
    quit:
       Return(1 )
 
-EndMacro                      
+EndMacro 
+
+                     
 /**************************************************************                                                                          
    CreateTransitTables                                                                                                                        
                                                                                                                                          
