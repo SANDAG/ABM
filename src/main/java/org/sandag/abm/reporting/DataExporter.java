@@ -1682,7 +1682,7 @@ public final class DataExporter
 
     private String[] getTimePeriodsForSkims()
     {
-        return new String[] {"AM", "MD", "PM"};
+        return IExporter.TOD_TOKENS;
     }
 
     private void exportTransitSkims(String outputFileBase)
