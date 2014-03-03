@@ -1692,16 +1692,16 @@ public final class DataExporter
     private void exportTransitSkims(String outputFileBase)
     {
         addTable(outputFileBase);
-        String[] includedTimePeriods = getTimePeriodsForSkims(); // can't
-                                                                 // include them
-                                                                 // all
+        String[] includedTimePeriods = getTimePeriodsForSkims();
+
         Set<Integer> internalZones = new LinkedHashSet<Integer>();
 
-        PrintWriter writer = null;
-        // List<String> costColumns = new LinkedList<String>();
+        // PrintWriter writer = null;
+        BlockingQueue<CsvRow> queue = new LinkedBlockingQueue<CsvRow>();
         try
         {
-            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".csv"));
+            // writer = getBufferedPrintWriter(getOutputPath(outputFileBase +
+            // ".csv"));
 
             Map<String, String> transitSkimFiles = getTransitSkimFileNameMapping();
             Map<String, String[]> transitSkimTimeCores = getTransitSkimFileInVehicleTimeCoreNameMapping();
@@ -1713,6 +1713,7 @@ public final class DataExporter
             for (String n : transitSkimFiles.keySet())
                 modeNames.add(transitSkimFiles.get(n));
             boolean first = true;
+            int numOfColumns = 3 + 5 * modeNames.size();
             for (String period : includedTimePeriods)
             {
                 Map<String, Matrix[]> timeMatrix = new LinkedHashMap<String, Matrix[]>();
@@ -1768,31 +1769,43 @@ public final class DataExporter
                     walkTimeData[counter++] = walkTimeMatrix.get(mode);
                 }
 
-                StringBuilder sb = new StringBuilder();
                 if (first)
                 {
-                    sb.append("ORIG_TAP,DEST_TAP,TOD");
+                    String[] header = new String[numOfColumns];
+
+                    header[0] = "ORIG_TAP";
+                    header[1] = "DEST_TAP";
+                    header[2] = "TOD";
+                    int column = 3;
+
                     for (String modeName : modeNames)
                     {
-                        sb.append(",TIME_INIT_WAIT_").append(modeName);
-                        sb.append(",TIME_IVT_TIME_").append(modeName);
-                        sb.append(",TIME_WALK_TIME_").append(modeName);
-                        sb.append(",TIME_TRANSFER_TIME_").append(modeName);
-                        sb.append(",FARE_").append(modeName);
+                        header[column++] = "TIME_INIT_WAIT_" + modeName;
+                        header[column++] = "TIME_IVT_TIME_" + modeName;
+                        header[column++] = "TIME_WALK_TIME_" + modeName;
+                        header[column++] = "TIME_TRANSFER_TIME_" + modeName;
+                        header[column++] = "FARE_" + modeName;
                     }
-                    writer.println(sb.toString());
+
+                    CsvWriterThread writerThread = new CsvWriterThread(queue, new File(
+                            getOutputPath(outputFileBase + ".csv")), header);
+                    new Thread(writerThread).start();
+
                     first = false;
                 }
-
-                DecimalFormat frmt = new DecimalFormat("#.###");
 
                 for (int i : internalZones)
                 {
                     for (int j : internalZones)
                     {
-                        sb = new StringBuilder();
-                        sb.append(i).append(",").append(j).append(",").append(period);
+                        String[] values = new String[numOfColumns];
+                        values[0] = String.valueOf(i);
+                        values[1] = String.valueOf(j);
+                        values[2] = period;
+
+                        int column = 3;
                         float runningTotal = 0.0f;
+
                         for (int m = 0; m < orderedTimeData.length; m++)
                         {
                             float time = 0.0f;
@@ -1803,28 +1816,20 @@ public final class DataExporter
                             float transferTime = transferTimeData[m].getValueAt(i, j);
                             float fare = fareData[m].getValueAt(i, j);
                             runningTotal += fare + time;
-                            sb.append(",");
-                            sb.append(frmt.format(initTime));
-                            sb.append(",");
-                            sb.append(frmt.format(time));
-                            sb.append(",");
-                            sb.append(frmt.format(walkTime));
-                            sb.append(",");
-                            sb.append(frmt.format(transferTime));
-                            sb.append(",");
-                            sb.append(frmt.format(fare));
+                            values[column++] = String.valueOf(initTime);
+                            values[column++] = String.valueOf(time);
+                            values[column++] = String.valueOf(walkTime);
+                            values[column++] = String.valueOf(transferTime);
+                            values[column++] = String.valueOf(fare);
                         }
-                        if (runningTotal > 0.0f) writer.println(sb.toString());
+                        if (runningTotal > 0.0f) queue.add(new CsvRow(values));
                     }
                 }
             }
 
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
         } finally
         {
-            if (writer != null) writer.close();
+            queue.add(CsvWriterThread.POISON_PILL);
         }
     }
 
