@@ -1651,7 +1651,8 @@ public final class DataExporter
                         values[2] = period;
                         int position = 3;
                         for (Matrix matrix : orderedData)
-                            values[position++] = String.valueOf(matrix.getValueAt(i, j));
+                            values[position++] = DoubleFormatUtil.formatDouble(
+                                    matrix.getValueAt(i, j), 4, 4);
                         queue.add(new CsvRow(values));
                     }
                 }
@@ -1816,11 +1817,11 @@ public final class DataExporter
                             float transferTime = transferTimeData[m].getValueAt(i, j);
                             float fare = fareData[m].getValueAt(i, j);
                             runningTotal += fare + time;
-                            values[column++] = String.valueOf(initTime);
-                            values[column++] = String.valueOf(time);
-                            values[column++] = String.valueOf(walkTime);
-                            values[column++] = String.valueOf(transferTime);
-                            values[column++] = String.valueOf(fare);
+                            values[column++] = DoubleFormatUtil.formatDouble(initTime, 4, 4);
+                            values[column++] = DoubleFormatUtil.formatDouble(time, 4, 4);
+                            values[column++] = DoubleFormatUtil.formatDouble(walkTime, 4, 4);
+                            values[column++] = DoubleFormatUtil.formatDouble(transferTime, 4, 4);
+                            values[column++] = DoubleFormatUtil.formatDouble(fare, 2, 2);
                         }
                         if (runningTotal > 0.0f) queue.add(new CsvRow(values));
                     }
