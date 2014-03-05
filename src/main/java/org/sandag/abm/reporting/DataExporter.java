@@ -120,49 +120,50 @@ public final class DataExporter
     {
         int[] outputIndices = new int[outputMapping.size()];
         FieldType[] outputFieldTypes = new FieldType[outputIndices.length];
-        int[] stringWidths = new int[outputIndices.length];
-        StringBuilder header = new StringBuilder();
-        boolean first = true;
+        String[] header = new String[outputMapping.size()];
+
         int counter = 0;
         for (String column : outputMapping.keySet())
         {
-            if (first)
-            {
-                first = false;
-            } else
-            {
-                header.append(",");
-            }
-            header.append(column);
+            header[counter] = column;
             outputIndices[counter] = data.getColumnPosition(outputMapping.get(column));
-            outputFieldTypes[counter] = outputTypes.get(column);
-            stringWidths[counter++] = 0;
+            outputFieldTypes[counter++] = outputTypes.get(column);
         }
 
-        PrintWriter writer = null;
+        BlockingQueue<CsvRow> queue = new LinkedBlockingQueue<CsvRow>();
+        Thread writerProcess = null;
         try
         {
-            writer = getBufferedPrintWriter(getOutputPath(outputFileName + ".csv"));
-            writer.println(header.toString());
+            CsvWriterThread writerThread = new CsvWriterThread(queue, new File(
+                    getOutputPath(outputFileName + ".csv")), header);
+            writerProcess = new Thread(writerThread);
+            writerProcess.start();
 
             for (int i = 1; i <= data.getRowCount(); i++)
             {
-                StringBuilder line = new StringBuilder();
-                line.append(getData(data, i, outputIndices[0], outputFieldTypes[0]));
+                String[] row = new String[outputMapping.size()];
+                row[0] = getData(data, i, outputIndices[0], outputFieldTypes[0]);
+
                 for (int j = 1; j < outputIndices.length; j++)
                 {
-                    String d = getData(data, i, outputIndices[j], outputFieldTypes[j]);
-                    line.append(",").append(d);
-                    stringWidths[j] = Math.max(stringWidths[j], d.length());
+                    row[j] = getData(data, i, outputIndices[j], outputFieldTypes[j]);
                 }
-                writer.println(line.toString());
+                queue.add(new CsvRow(row));
             }
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
         } finally
         {
-            if (writer != null) writer.close();
+            queue.add(CsvWriterThread.POISON_PILL);
+            if (null != writerProcess)
+            {
+                try
+                {
+                    writerProcess.join();
+                } catch (InterruptedException e)
+                {
+                    LOGGER.error(e);
+                    System.exit(-1);
+                }
+            }
         }
     }
 
@@ -1697,13 +1698,9 @@ public final class DataExporter
 
         Set<Integer> internalZones = new LinkedHashSet<Integer>();
 
-        // PrintWriter writer = null;
         BlockingQueue<CsvRow> queue = new LinkedBlockingQueue<CsvRow>();
         try
         {
-            // writer = getBufferedPrintWriter(getOutputPath(outputFileBase +
-            // ".csv"));
-
             Map<String, String> transitSkimFiles = getTransitSkimFileNameMapping();
             Map<String, String[]> transitSkimTimeCores = getTransitSkimFileInVehicleTimeCoreNameMapping();
             String fareCore = getTransitSkimFileFareCoreName();
