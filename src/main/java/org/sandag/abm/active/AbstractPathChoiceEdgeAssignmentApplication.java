@@ -32,6 +32,7 @@ public abstract class AbstractPathChoiceEdgeAssignmentApplication<N extends Node
     
     public AbstractPathChoiceEdgeAssignmentApplication(PathAlternativeListGenerationConfiguration<N,E,T> configuration) {
         this.configuration = configuration;
+        configuration.getOriginZonalCentroidIdMap();
         this.randomCostSeeded = configuration.isRandomCostSeeded();
         this.maxCost = configuration.getMaxCost();
         this.traversalCostEvaluator = configuration.getTraversalCostEvaluator();
@@ -75,8 +76,6 @@ public abstract class AbstractPathChoiceEdgeAssignmentApplication<N extends Node
         private final AtomicInteger counter;
         private final CountDownLatch latch;
         private final ConcurrentHashMap<E,double[]> volumes;
-        
-        private Network<N,E,T> network;
 
         private CalculationTask(Queue<Integer> tripQueue, AtomicInteger counter, CountDownLatch latch, ConcurrentHashMap<E,double[]> volumes) {
             this.tripQueue = tripQueue;
@@ -104,6 +103,10 @@ public abstract class AbstractPathChoiceEdgeAssignmentApplication<N extends Node
             
             shortestPathStrategy = new RepeatedSingleSourceDijkstra<N,E,T>(network, edgeLengthEvaluator, zeroTraversalEvaluator );
             result = shortestPathStrategy.getShortestPaths(singleOriginNode,singleDestinationNode,Double.MAX_VALUE);
+            if ( result.getShortestPathResult(odPair) == null ) {
+                logger.error("no path found for trip with origin " + getOriginNode(tripId) + " and destination " + getDestinationNode(tripId));
+                return alternativeList;
+            }
             double distance = result.getShortestPathResult(odPair).getCost();
             int distanceIndex = findFirstIndexGreaterThan(distance, sampleDistanceBreaks);
             
@@ -116,7 +119,7 @@ public abstract class AbstractPathChoiceEdgeAssignmentApplication<N extends Node
                 }
                 
                 shortestPathStrategy = new RepeatedSingleSourceDijkstra<N,E,T>(network, randomizedEdgeCost, traversalCostEvaluator);                    
-                result = shortestPathStrategy.getShortestPaths(singleOriginNode,singleDestinationNode,maxCost);
+                result = shortestPathStrategy.getShortestPaths(singleOriginNode,singleDestinationNode,Double.MAX_VALUE);
                 
                 alternativeList.add(result.getShortestPathResult(odPair).getPath());                
             }
@@ -129,16 +132,18 @@ public abstract class AbstractPathChoiceEdgeAssignmentApplication<N extends Node
                 int tripId = tripQueue.poll();
                 PathAlternativeList<N,E> alternativeList =  generateAlternatives(tripId);
                 
-                Map<E,double[]> tripVolumes = assignTrip(tripId, alternativeList);
+                if ( alternativeList.getCount() > 0 ) {
+                    Map<E,double[]> tripVolumes = assignTrip(tripId, alternativeList);
                 
-                for (E edge : tripVolumes.keySet()) {
-                    if ( volumes.containsKey(edge) ) {
-                        double[] values = volumes.get(edge);
-                        for (int i=0; i<values.length; i++)
-                            values[i] += tripVolumes.get(edge)[i];
-                        volumes.put(edge, values);
-                    } else {
-                        volumes.put(edge, tripVolumes.get(edge));
+                    for (E edge : tripVolumes.keySet()) {
+                        if ( volumes.containsKey(edge) ) {
+                            double[] values = volumes.get(edge);
+                            for (int i=0; i<values.length; i++)
+                                values[i] += tripVolumes.get(edge)[i];
+                            volumes.put(edge, values);
+                        } else {
+                            volumes.put(edge, tripVolumes.get(edge));
+                        }
                     }
                 }
             
@@ -147,6 +152,8 @@ public abstract class AbstractPathChoiceEdgeAssignmentApplication<N extends Node
                     System.out.println("   done with " + c + " trips, run time: " + ( System.currentTimeMillis() - startTime) / 1000 + " sec.");
                 }
             }
+            
+            latch.countDown();
         }
     }
     

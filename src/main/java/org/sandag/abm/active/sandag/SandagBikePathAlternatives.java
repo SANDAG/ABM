@@ -57,7 +57,7 @@ public class SandagBikePathAlternatives {
 	                distClass1.set(i, distClass1.get(i) + edge.distance * ( edge.bikeClass == 1 ? 1 : 0 ) );
 	                distClass2.set(i, distClass2.get(i) + edge.distance * ( edge.bikeClass == 2 ? 1 : 0 ) );
 	                distClass3.set(i, distClass3.get(i) + edge.distance * ( edge.bikeClass == 3 ? 1 : 0 ) );
-	                distArtNoLane.set(i, distArtNoLane.get(i) + edge.distance * ( edge.bikeClass != 2 && edge.bikeClass != 1 ? 1 : 0 ) * ( ( edge.functionalClass < 5 && edge.functionalClass > 0 ) ? 1 : 0 ) );
+	                distArtNoLane.set(i, distArtNoLane.get(i) + edge.distance * ( edge.bikeClass != 2 && edge.bikeClass != 1 ? 1 : 0 ) * ( ( edge.functionalClass < 4 && edge.functionalClass > 0 ) ? 1 : 0 ) );
 	                distWrongWay.set(i, distWrongWay.get(i) + edge.distance * ( edge.bikeClass != 1 ? 1 : 0 ) * ( edge.lanes == 0 ? 1 : 0 ) );
 	                distCycTrack.set(i, distCycTrack.get(i) + edge.distance * ( edge.cycleTrack ? 1 : 0 ) );
 	                distBikeBlvd.set(i, distBikeBlvd.get(i) + edge.distance * ( edge.bikeBlvd ? 1 : 0 ) );
