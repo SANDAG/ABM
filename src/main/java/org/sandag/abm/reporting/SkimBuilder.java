@@ -36,10 +36,24 @@ public class SkimBuilder
     private static final int                         DA_TOLL_DIST_INDEX                     = 5;
     private static final int                         DA_TOLL_COST_INDEX                     = 6;
     private static final int                         DA_TOLL_TOLLDIST_INDEX                 = 7;
-    private static final int                         HOV_TIME_INDEX                         = 8;
-    private static final int                         HOV_FF_TIME_INDEX                      = 9;
-    private static final int                         HOV_DIST_INDEX                         = 10;
-    private static final int                         HOV_HOVDIST_INDEX                      = 11;
+    private static final int                         SR2_TIME_INDEX                         = 8;
+    private static final int                         SR2_FF_TIME_INDEX                      = 9;
+    private static final int                         SR2_DIST_INDEX                         = 10;
+    private static final int                         SR2_HOVDIST_INDEX                      = 11;
+    private static final int                         SR2_TOLL_TIME_INDEX                    = 12;
+    private static final int                         SR2_TOLL_FF_TIME_INDEX                 = 13;
+    private static final int                         SR2_TOLL_DIST_INDEX                    = 14;
+    private static final int                         SR2_TOLL_COST_INDEX                    = 15;
+    private static final int                         SR2_TOLL_TOLLDIST_INDEX                = 16;
+    private static final int                         SR3_TIME_INDEX                         = 17;
+    private static final int                         SR3_FF_TIME_INDEX                      = 18;
+    private static final int                         SR3_DIST_INDEX                         = 19;
+    private static final int                         SR3_HOVDIST_INDEX                      = 20;
+    private static final int                         SR3_TOLL_TIME_INDEX                    = 21;
+    private static final int                         SR3_TOLL_FF_TIME_INDEX                 = 22;
+    private static final int                         SR3_TOLL_DIST_INDEX                    = 23;
+    private static final int                         SR3_TOLL_COST_INDEX                    = 24;
+    private static final int                         SR3_TOLL_TOLLDIST_INDEX                = 25;
 
     private static final int                         TRANSIT_LOCAL_ACCESS_TIME_INDEX        = 0;
     private static final int                         TRANSIT_LOCAL_EGRESS_TIME_INDEX        = 1;
@@ -108,9 +122,9 @@ public class SkimBuilder
 
     private final TripModeChoice[] modeChoiceLookup = {TripModeChoice.UNKNOWN,
             TripModeChoice.DRIVE_ALONE_NO_TOLL, TripModeChoice.DRIVE_ALONE_TOLL,
-            TripModeChoice.DRIVE_ALONE_NO_TOLL, TripModeChoice.HOV_NO_TOLL,
-            TripModeChoice.HOV_TOLL, TripModeChoice.DRIVE_ALONE_NO_TOLL,
-            TripModeChoice.HOV_NO_TOLL, TripModeChoice.HOV_TOLL, TripModeChoice.WALK,
+            TripModeChoice.DRIVE_ALONE_NO_TOLL, TripModeChoice.SR2_HOV,
+            TripModeChoice.SR2_TOLL, TripModeChoice.DRIVE_ALONE_NO_TOLL,
+            TripModeChoice.SR3_HOV, TripModeChoice.SR3_TOLL, TripModeChoice.WALK,
             TripModeChoice.BIKE, TripModeChoice.WALK_LB, TripModeChoice.WALK_EB,
             TripModeChoice.WALK_BRT, TripModeChoice.WALK_LRT, TripModeChoice.WALK_CR,
             TripModeChoice.DRIVE_LB, TripModeChoice.DRIVE_EB, TripModeChoice.DRIVE_BRT,
@@ -118,7 +132,6 @@ public class SkimBuilder
             TripModeChoice.DRIVE_EB, TripModeChoice.DRIVE_BRT, TripModeChoice.DRIVE_LRT,
             TripModeChoice.DRIVE_CR, TripModeChoice.DRIVE_ALONE_NO_TOLL,
             TripModeChoice.DRIVE_ALONE_NO_TOLL
-
                                                     };
 
     private int getTod(int tripTimePeriod)
@@ -178,28 +191,42 @@ public class SkimBuilder
             }
             case DRIVE_ALONE_TOLL:
             {
-                if (timeIndex < 0)
-                {
-                    timeIndex = DA_TOLL_TIME_INDEX;
-                    distIndex = DA_TOLL_DIST_INDEX;
-                    costIndex = DA_TOLL_COST_INDEX;
-                }
+                timeIndex = DA_TOLL_TIME_INDEX;
+                distIndex = DA_TOLL_DIST_INDEX;
+                costIndex = DA_TOLL_COST_INDEX;
             }
-            case HOV_NO_TOLL: // todo: is there a separation between hov
-                              // toll/non-toll? what is the cost?
-            case HOV_TOLL:
+            case SR2_HOV: // wu added
             {
-                if (timeIndex < 0)
-                {
-                    timeIndex = HOV_TIME_INDEX;
-                    distIndex = HOV_DIST_INDEX;
-                    costIndex = -1;
-                }
+                timeIndex = SR2_TIME_INDEX;
+                distIndex = SR2_DIST_INDEX;
+                costIndex = -1;
+            }                             
+            case SR2_TOLL: // wu added
+            {
+                timeIndex = SR2_TOLL_TIME_INDEX;
+                distIndex = SR2_TOLL_DIST_INDEX;
+                costIndex = SR2_TOLL_COST_INDEX;
                 double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, false,
                         LOGGER);
                 return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], getCost(
                         costIndex < 0 ? 0.0 : autoSkims[costIndex], autoSkims[distIndex]));
             }
+            case SR3_HOV: // wu added
+            {
+                timeIndex = SR3_TIME_INDEX;
+                distIndex = SR3_DIST_INDEX;
+                costIndex = -1;
+            } 
+			case SR3_TOLL:
+			{
+                timeIndex = SR3_TOLL_TIME_INDEX;
+                distIndex = SR3_TOLL_DIST_INDEX;
+                costIndex = SR3_TOLL_COST_INDEX;
+			    double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, false,
+			          LOGGER);
+			    return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], getCost(
+			          costIndex < 0 ? 0.0 : autoSkims[costIndex], autoSkims[distIndex]));
+			}
             case WALK:
             case BIKE:
             {
@@ -386,8 +413,8 @@ public class SkimBuilder
 
     public static enum TripModeChoice
     {
-        UNKNOWN(), DRIVE_ALONE_NO_TOLL(false), DRIVE_ALONE_TOLL(true), HOV_NO_TOLL(false), HOV_TOLL(
-                true), WALK(), BIKE(), WALK_LB(Modes.getTransitModeIndex("LB"), false, false), WALK_EB(
+        UNKNOWN(), DRIVE_ALONE_NO_TOLL(false), DRIVE_ALONE_TOLL(true), SR2_GP(false), SR2_HOV(false),SR2_TOLL(
+                true), SR3_GP(false), SR3_HOV(false),SR3_TOLL(true),WALK(), BIKE(), WALK_LB(Modes.getTransitModeIndex("LB"), false, false), WALK_EB(
                 Modes.getTransitModeIndex("EB"), true, false), WALK_BRT(Modes
                 .getTransitModeIndex("BRT"), true, false), WALK_LRT(
                 Modes.getTransitModeIndex("LR"), true, false), WALK_CR(Modes

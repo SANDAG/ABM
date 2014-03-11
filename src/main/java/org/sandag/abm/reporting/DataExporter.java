@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.ModelStructure;
 import com.pb.common.datafile.CSVFileReader;
@@ -44,27 +46,18 @@ public final class DataExporter
     private final Properties        properties;
     private final TranscadMatrixDao mtxDao;
     private final File              projectPathFile;
-    private final String            outputPath;
     private final int               feedbackIterationNumber;
     private final Set<String>       tables;
     private final String[]          timePeriods                 = ModelStructure.MODEL_PERIOD_LABELS;
 
     public DataExporter(Properties theProperties, TranscadMatrixDao aMtxDao, String projectPath,
-            int feedbackIterationNumber, String outputPath)
+            int feedbackIterationNumber)
     {
         this.properties = theProperties;
         this.mtxDao = aMtxDao;
 
-        for (Object key : properties.keySet())
-        {
-            String value = (String) properties.get(key);
-            properties.setProperty((String) key,
-                    value.replace(PROJECT_PATH_PROPERTY_TOKEN, projectPath));
-        }
-
-        projectPathFile = new File(projectPath);
+        projectPathFile = new File(theProperties.getProperty("Project.Directory"));
         this.feedbackIterationNumber = feedbackIterationNumber;
-        this.outputPath = outputPath;
 
         tables = new LinkedHashSet<String>();
     }
@@ -93,7 +86,7 @@ public final class DataExporter
 
     private String getOutputPath(String file)
     {
-        return new File(outputPath, file).getAbsolutePath();
+        return new File(properties.getProperty("report.path"), file).getAbsolutePath();
     }
 
     private String getData(TableDataSet data, int row, int column, FieldType type)
@@ -127,49 +120,50 @@ public final class DataExporter
     {
         int[] outputIndices = new int[outputMapping.size()];
         FieldType[] outputFieldTypes = new FieldType[outputIndices.length];
-        int[] stringWidths = new int[outputIndices.length];
-        StringBuilder header = new StringBuilder();
-        boolean first = true;
+        String[] header = new String[outputMapping.size()];
+
         int counter = 0;
         for (String column : outputMapping.keySet())
         {
-            if (first)
-            {
-                first = false;
-            } else
-            {
-                header.append(",");
-            }
-            header.append(column);
+            header[counter] = column;
             outputIndices[counter] = data.getColumnPosition(outputMapping.get(column));
-            outputFieldTypes[counter] = outputTypes.get(column);
-            stringWidths[counter++] = 0;
+            outputFieldTypes[counter++] = outputTypes.get(column);
         }
 
-        PrintWriter writer = null;
+        BlockingQueue<CsvRow> queue = new LinkedBlockingQueue<CsvRow>();
+        Thread writerProcess = null;
         try
         {
-            writer = getBufferedPrintWriter(getOutputPath(outputFileName + ".csv"));
-            writer.println(header.toString());
+            CsvWriterThread writerThread = new CsvWriterThread(queue, new File(
+                    getOutputPath(outputFileName + ".csv")), header);
+            writerProcess = new Thread(writerThread);
+            writerProcess.start();
 
             for (int i = 1; i <= data.getRowCount(); i++)
             {
-                StringBuilder line = new StringBuilder();
-                line.append(getData(data, i, outputIndices[0], outputFieldTypes[0]));
+                String[] row = new String[outputMapping.size()];
+                row[0] = getData(data, i, outputIndices[0], outputFieldTypes[0]);
+
                 for (int j = 1; j < outputIndices.length; j++)
                 {
-                    String d = getData(data, i, outputIndices[j], outputFieldTypes[j]);
-                    line.append(",").append(d);
-                    stringWidths[j] = Math.max(stringWidths[j], d.length());
+                    row[j] = getData(data, i, outputIndices[j], outputFieldTypes[j]);
                 }
-                writer.println(line.toString());
+                queue.add(new CsvRow(row));
             }
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
         } finally
         {
-            if (writer != null) writer.close();
+            queue.add(CsvWriterThread.POISON_PILL);
+            if (null != writerProcess)
+            {
+                try
+                {
+                    writerProcess.join();
+                } catch (InterruptedException e)
+                {
+                    LOGGER.error(e);
+                    System.exit(-1);
+                }
+            }
         }
     }
 
@@ -1383,7 +1377,7 @@ public final class DataExporter
 
             for (String period : timePeriods)
             {
-                Matrix matrixData = mtxDao.getMatrix("commVehTODTrips.mtx", period + " Trips");
+                Matrix matrixData = mtxDao.getMatrix("commVehTODTrips", period + " Trips");
 
                 // This doesn't make sense
                 if (internalZones.isEmpty()) for (int zone : matrixData.getExternalColumnNumbers())
@@ -1442,9 +1436,8 @@ public final class DataExporter
                 {
                     int counter = 0;
                     for (String core : cores)
-                        matrixData[counter++] = mtxDao.getMatrix(
-                                "usSd" + purposeMap.get(purpose) + "_" + period + ".mtx",
-                                core);
+                        matrixData[counter++] = mtxDao.getMatrix("usSd" + purposeMap.get(purpose)
+                                + "_" + period, core);
 
                     if (internalZones.size() == 0)
                     { // only need to form internal zones once
@@ -1505,7 +1498,7 @@ public final class DataExporter
             CsvRow headerRow = new CsvRow(new String[] {"ORIG_TAZ", "DEST_TAZ", "TRIPS_EE"});
             writer.write(headerRow.getRow());
 
-            Matrix m = mtxDao.getMatrix("externalExternalTrips.mtx", "Trips");
+            Matrix m = mtxDao.getMatrix("externalExternalTrips", "Trips");
 
             for (int o : externalZones)
             {
@@ -1565,23 +1558,19 @@ public final class DataExporter
     private void exportAutoSkims(String outputFileBase)
     {
         addTable(outputFileBase);
-        String[] includedTimePeriods = getTimePeriodsForSkims(); // can't
-                                                                 // include them
-                                                                 // all
+        String[] includedTimePeriods = getTimePeriodsForSkims();
         Set<Integer> internalZones = new LinkedHashSet<Integer>();
 
-        PrintWriter writer = null;
-        List<String> costColumns = new LinkedList<String>();
+        BlockingQueue<CsvRow> queue = new LinkedBlockingQueue<CsvRow>();
         try
         {
-            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".csv"));
-
             Map<String, String> vehicleSkimFiles = getVehicleSkimFileNameMapping();
             Map<String, String[]> vehicleSkimCores = getVehicleSkimFileCoreNameMapping();
             Set<String> modeNames = new LinkedHashSet<String>();
             for (String n : vehicleSkimFiles.keySet())
                 modeNames.add(vehicleSkimFiles.get(n));
             boolean first = true;
+
             for (String period : includedTimePeriods)
             {
                 Map<String, Matrix> lengthMatrix = new LinkedHashMap<String, Matrix>();
@@ -1627,45 +1616,52 @@ public final class DataExporter
                         orderedData[counter++] = fareMatrix.get(mode);
                 }
 
-                StringBuilder sb = new StringBuilder();
                 if (first)
                 {
-                    sb.append("ORIG_TAZ,DEST_TAZ,TOD");
+                    List<String> header = new ArrayList<String>();
+                    header.add("ORIG_TAZ");
+                    header.add("DEST_TAZ");
+                    header.add("TOD");
+
                     for (String modeName : modeNames)
                     {
-                        sb.append(",DIST_").append(modeName);
-                        sb.append(",TIME_").append(modeName);
-                        costColumns.add("DIST_" + modeName);
-                        costColumns.add("TIME_" + modeName);
+                        header.add("DIST_" + modeName);
+                        header.add("TIME_" + modeName);
                         if (fareMatrix.containsKey(modeName))
                         {
-                            sb.append(",COST_").append(modeName);
-                            costColumns.add("COST_" + modeName);
+                            header.add("COST_" + modeName);
                         }
                     }
-                    writer.println(sb.toString());
+
+                    CsvWriterThread writerThread = new CsvWriterThread(queue, new File(
+                            getOutputPath(outputFileBase + ".csv")),
+                            header.toArray(new String[header.size()]));
+                    new Thread(writerThread).start();
                     first = false;
                 }
+
+                int rowSize = 3 + orderedData.length;
 
                 for (int i : internalZones)
                 {
                     for (int j : internalZones)
                     {
-                        sb = new StringBuilder();
-                        sb.append(i).append(",").append(j).append(",").append(period);
+                        String[] values = new String[rowSize];
+                        values[0] = String.valueOf(i);
+                        values[1] = String.valueOf(j);
+                        values[2] = period;
+                        int position = 3;
                         for (Matrix matrix : orderedData)
-                            sb.append(",").append(matrix.getValueAt(i, j));
-                        writer.println(sb.toString());
+                            values[position++] = DoubleFormatUtil.formatDouble(
+                                    matrix.getValueAt(i, j), 4, 4);
+                        queue.add(new CsvRow(values));
                     }
                 }
             }
 
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
         } finally
         {
-            if (writer != null) writer.close();
+            queue.add(CsvWriterThread.POISON_PILL);
         }
     }
 
@@ -1692,23 +1688,19 @@ public final class DataExporter
 
     private String[] getTimePeriodsForSkims()
     {
-        return new String[] {"AM", "MD", "PM"};
+        return IExporter.TOD_TOKENS;
     }
 
     private void exportTransitSkims(String outputFileBase)
     {
         addTable(outputFileBase);
-        String[] includedTimePeriods = getTimePeriodsForSkims(); // can't
-                                                                 // include them
-                                                                 // all
+        String[] includedTimePeriods = getTimePeriodsForSkims();
+
         Set<Integer> internalZones = new LinkedHashSet<Integer>();
 
-        PrintWriter writer = null;
-        // List<String> costColumns = new LinkedList<String>();
+        BlockingQueue<CsvRow> queue = new LinkedBlockingQueue<CsvRow>();
         try
         {
-            writer = getBufferedPrintWriter(getOutputPath(outputFileBase + ".csv"));
-
             Map<String, String> transitSkimFiles = getTransitSkimFileNameMapping();
             Map<String, String[]> transitSkimTimeCores = getTransitSkimFileInVehicleTimeCoreNameMapping();
             String fareCore = getTransitSkimFileFareCoreName();
@@ -1719,6 +1711,7 @@ public final class DataExporter
             for (String n : transitSkimFiles.keySet())
                 modeNames.add(transitSkimFiles.get(n));
             boolean first = true;
+            int numOfColumns = 3 + 5 * modeNames.size();
             for (String period : includedTimePeriods)
             {
                 Map<String, Matrix[]> timeMatrix = new LinkedHashMap<String, Matrix[]>();
@@ -1774,31 +1767,43 @@ public final class DataExporter
                     walkTimeData[counter++] = walkTimeMatrix.get(mode);
                 }
 
-                StringBuilder sb = new StringBuilder();
                 if (first)
                 {
-                    sb.append("ORIG_TAP,DEST_TAP,TOD");
+                    String[] header = new String[numOfColumns];
+
+                    header[0] = "ORIG_TAP";
+                    header[1] = "DEST_TAP";
+                    header[2] = "TOD";
+                    int column = 3;
+
                     for (String modeName : modeNames)
                     {
-                        sb.append(",TIME_INIT_WAIT_").append(modeName);
-                        sb.append(",TIME_IVT_TIME_").append(modeName);
-                        sb.append(",TIME_WALK_TIME_").append(modeName);
-                        sb.append(",TIME_TRANSFER_TIME_").append(modeName);
-                        sb.append(",FARE_").append(modeName);
+                        header[column++] = "TIME_INIT_WAIT_" + modeName;
+                        header[column++] = "TIME_IVT_TIME_" + modeName;
+                        header[column++] = "TIME_WALK_TIME_" + modeName;
+                        header[column++] = "TIME_TRANSFER_TIME_" + modeName;
+                        header[column++] = "FARE_" + modeName;
                     }
-                    writer.println(sb.toString());
+
+                    CsvWriterThread writerThread = new CsvWriterThread(queue, new File(
+                            getOutputPath(outputFileBase + ".csv")), header);
+                    new Thread(writerThread).start();
+
                     first = false;
                 }
-
-                DecimalFormat frmt = new DecimalFormat("#.###");
 
                 for (int i : internalZones)
                 {
                     for (int j : internalZones)
                     {
-                        sb = new StringBuilder();
-                        sb.append(i).append(",").append(j).append(",").append(period);
+                        String[] values = new String[numOfColumns];
+                        values[0] = String.valueOf(i);
+                        values[1] = String.valueOf(j);
+                        values[2] = period;
+
+                        int column = 3;
                         float runningTotal = 0.0f;
+
                         for (int m = 0; m < orderedTimeData.length; m++)
                         {
                             float time = 0.0f;
@@ -1809,28 +1814,20 @@ public final class DataExporter
                             float transferTime = transferTimeData[m].getValueAt(i, j);
                             float fare = fareData[m].getValueAt(i, j);
                             runningTotal += fare + time;
-                            sb.append(",");
-                            sb.append(frmt.format(initTime));
-                            sb.append(",");
-                            sb.append(frmt.format(time));
-                            sb.append(",");
-                            sb.append(frmt.format(walkTime));
-                            sb.append(",");
-                            sb.append(frmt.format(transferTime));
-                            sb.append(",");
-                            sb.append(frmt.format(fare));
+                            values[column++] = DoubleFormatUtil.formatDouble(initTime, 4, 4);
+                            values[column++] = DoubleFormatUtil.formatDouble(time, 4, 4);
+                            values[column++] = DoubleFormatUtil.formatDouble(walkTime, 4, 4);
+                            values[column++] = DoubleFormatUtil.formatDouble(transferTime, 4, 4);
+                            values[column++] = DoubleFormatUtil.formatDouble(fare, 2, 2);
                         }
-                        if (runningTotal > 0.0f) writer.println(sb.toString());
+                        if (runningTotal > 0.0f) queue.add(new CsvRow(values));
                     }
                 }
             }
 
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
         } finally
         {
-            if (writer != null) writer.close();
+            queue.add(CsvWriterThread.POISON_PILL);
         }
     }
 
@@ -1972,10 +1969,16 @@ public final class DataExporter
         path = path.substring(0, path.length() - 2);
         String appPath = path.substring(0, path.lastIndexOf("/"));
 
+        for (Object key : properties.keySet())
+        {
+            String value = (String) properties.get(key);
+            properties.setProperty((String) key,
+                    value.replace(PROJECT_PATH_PROPERTY_TOKEN, appPath));
+        }
+
         TranscadMatrixDao mtxDao = new TranscadMatrixDao(properties);
-        
-        DataExporter dataExporter = new DataExporter(properties, mtxDao, appPath, feedbackIteration,
-                appPath + "/report");
+
+        DataExporter dataExporter = new DataExporter(properties, mtxDao, appPath, feedbackIteration);
 
         if (definedTables.contains("accessibilities"))
             dataExporter.exportAccessibilities("accessibilities");
@@ -2007,7 +2010,7 @@ public final class DataExporter
         if (definedTables.contains("commtrip")) dataExporter.exportCommVehData("commtrip");
         if (definedTables.contains("trucktrip"))
         {
-            
+
             IExporter truckExporter = new TruckCsvExporter(properties, mtxDao, "trucktrip");
             truckExporter.export();
         }
