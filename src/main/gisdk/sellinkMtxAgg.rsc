@@ -9,16 +9,15 @@
  
 Macro "Sum Up Select Link Transit Trips"
    shared path_study, path, outputDir
-  // RunMacro("TCB Init")
-  // path_study = "t:\\projects\\sr13\\sdf_projevl\\complete"
-  // path = "t:\\projects\\sr13\\sdf_projevl\\complete\\tran_rpd2"
+   RunMacro("TCB Init")
+ 
+   sum_all = 0
+   sum_sg = 0
+   pct_sg = 0
 
    outputDir = path+"\\output"
    sellink_file = outputDir+"\\trn_sellinkWLK_LRT_EA.mtx"
-   if GetFileInfo(sellink_file) <> null then do  
-	   sum_all = 0
-	   sum_sg = 0
-	   pct_sg = 0
+   if GetFileInfo(sellink_file) <> null then do  	   
 	   periodName = {"_EA", "_AM", "_MD", "_PM", "_EV"}
 	 
 	   matrixCore = {
@@ -42,30 +41,37 @@ Macro "Sum Up Select Link Transit Trips"
 	   in_file = path_study + "\\sg_tap.csv"
            if GetFileInfo(in_file) <> null then do  
 
-	     view = OpenTable("SmartGrowthTap","CSV",{in_file,}, {{"Shared", "True"}})
-	     SetView(view) 
-	     vw_TAP = GetView()
-	     view_set = vw_TAP +"|"
+	   view = OpenTable("SmartGrowthTap","CSV",{in_file,}, {{"Shared", "True"}})
+	   SetView(view) 
+	   vw_TAP = GetView()
+	   view_set = vw_TAP +"|"
 
-	     for per = 1 to periodName.length do
-	        for mat = 1 to matrixCore.length do          
+	   for per = 1 to periodName.length do            
+	        for mat = 1 to matrixCore.length do  
+                 
 	        
 	          sellkmtx =  outputDir+"\\trn_sellink"+matrixCore[mat]+periodName[per]+".mtx"
 	          m = OpenMatrix(sellkmtx,)
 	        
-	          sg_index = CreateMatrixIndex("Sub Area Index", m, "Both",view_set, "sg_tap", "sg_tap" )
-	          
+	          sg_orig_index = CreateMatrixIndex("Smart Growth Orig", m, "Row",view_set, "sg_tap", "sg_tap" )
+	          sg_dest_index = CreateMatrixIndex("Smart Growth Dest", m, "Column",view_set, "sg_tap", "sg_tap" )
+
 	          mc =  CreateMatrixCurrency(m, , , , )   
-	          mc_sg =  CreateMatrixCurrency(m, ,sg_index,sg_index, )      
-		  sum_row = GetMatrixMarginals(mc, "Sum", "row" )
-	          sum_col = GetMatrixMarginals(mc, "Sum", "Column" )
-	          sum_row_sg = GetMatrixMarginals(mc_sg, "Sum", "row" )
-	          sum_col_sg = GetMatrixMarginals(mc_sg, "Sum", "Column" )
-	
-	          sum_all= sum_all + Sum(sum_row) + Sum(sum_col)
-	          sum_sg= sum_sg + Sum(sum_row_sg) + Sum(sum_col_sg)  
+	          mc_sg_orig =  CreateMatrixCurrency(m, ,"Smart Growth Orig","Columns", )      
+                  mc_sg_dest =  CreateMatrixCurrency(m, ,"Rows","Smart Growth Dest", ) 
+                  mc_sg_to_sg = CreateMatrixCurrency(m, ,"Smart Growth Orig","Smart Growth Dest", ) 
+
+		  sum_row = GetMatrixMarginals(mc, "Sum", "row" )	        
+
+	          sum_row_sg_orig = GetMatrixMarginals(mc_sg_orig, "Sum", "row" )	          
+                  sum_row_sg_dest = GetMatrixMarginals(mc_sg_dest, "Sum", "row" )	       
+                  sum_row_sg_to_sg = GetMatrixMarginals(mc_sg_to_sg, "Sum", "row" )
+
+	          sum_all = sum_all + Sum(sum_row) 
+	          sum_sg = sum_sg + Sum(sum_row_sg_orig) + Sum(sum_row_sg_dest) - Sum(sum_row_sg_to_sg)
 	        
-	          DeleteMatrixIndex(m, "Sub Area Index")
+	          DeleteMatrixIndex(m, "Smart Growth Orig")
+                  DeleteMatrixIndex(m, "Smart Growth Dest")
 	         
 	          //close matrix
 		  mc = null
@@ -99,12 +105,9 @@ EndMacro
 
 Macro "Sum Up Select Link Highway Trips"
 
- shared path_study, path, outputDir
    shared path_study, path, outputDir
-   //RunMacro("TCB Init")
-   //path_study = "t:\\projects\\sr13\\sdf_projevl\\complete"
-   //path = "t:\\projects\\sr13\\sdf_projevl\\complete\\hwy01fwy5"
-   
+   RunMacro("TCB Init")
+     
    outputDir = path+"\\output"
    sellink_file = outputDir+"\\select_EA.mtx"
    if GetFileInfo(sellink_file) <> null then do  
@@ -140,38 +143,49 @@ Macro "Sum Up Select Link Highway Trips"
 	       view_set_ind = vw_TAZ_ind +"|"
                
                for per = 1 to periodName.length do    
-	        
+	         
 	           sellkmtx =  outputDir + "\\select" + periodName[per] +".mtx"
  		   m = OpenMatrix(sellkmtx,)
 	       
-	           sg_index = CreateMatrixIndex("SG Index", m, "Both",view_set,"SG_TAZ" , "SG_TAZ" )
-                   ind_index = CreateMatrixIndex("Indian Index", m, "Both",view_set_ind,"Indian_TAZ" , "Indian_TAZ" )
+	           sg_index_orig = CreateMatrixIndex("SG Index Orig", m, "Row",view_set,"SG_TAZ" , "SG_TAZ" )
+                   sg_index_dest = CreateMatrixIndex("SG Index Dest", m, "Column",view_set,"SG_TAZ" , "SG_TAZ" )
+
+                   ind_index_orig = CreateMatrixIndex("Indian Index Orig", m, "Row",view_set_ind,"Indian_TAZ" , "Indian_TAZ" )
+                   ind_index_dest = CreateMatrixIndex("Indian Index Dest", m, "Column",view_set_ind,"Indian_TAZ" , "Indian_TAZ" )
 
 		   mc =  CreateMatrixCurrencies(m, "Rows", "Columns", )   
-		   mc_sg =  CreateMatrixCurrencies(m, sg_index, sg_index,)  	
-                   mc_ind =  CreateMatrixCurrencies(m, ind_index, ind_index,)  	
+		   mc_sg_orig =  CreateMatrixCurrencies(m, "SG Index Orig","Columns",)  	
+                   mc_sg_dest =  CreateMatrixCurrencies(m, "Rows","SG Index Dest",)  	
+                   mc_sg_to_sg = CreateMatrixCurrencies(m, "SG Index Orig","SG Index Dest",)  
+
+                   mc_ind_orig =  CreateMatrixCurrencies(m, "Indian Index Orig","Columns",)  	
+                   mc_ind_dest =  CreateMatrixCurrencies(m, "Rows","Indian Index Dest",)
+                   mc_ind_to_ind =  CreateMatrixCurrencies(m, "Indian Index Orig","Indian Index Dest",)
 
                    // select link assignment trip matrix includes the total trips as the last core
 	           for core = 1 to coreNames.length - 1 do
 			  sum_row = GetMatrixMarginals(mc.(coreNames[core]), "Sum", "row" )
-		          sum_col = GetMatrixMarginals(mc.(coreNames[core]), "Sum", "Column" )
 
-		          sum_row_sg = GetMatrixMarginals(mc_sg.(coreNames[core]), "Sum", "row" )
-		          sum_col_sg = GetMatrixMarginals(mc_sg.(coreNames[core]), "Sum", "Column" )
-		
-                          sum_row_ind = GetMatrixMarginals(mc_ind.(coreNames[core]), "Sum", "row" )
-		          sum_col_ind = GetMatrixMarginals(mc_ind.(coreNames[core]), "Sum", "Column" )
+		          sum_row_sg_orig = GetMatrixMarginals(mc_sg_orig.(coreNames[core]), "Sum", "row" )		         
+                          sum_row_sg_dest = GetMatrixMarginals(mc_sg_dest.(coreNames[core]), "Sum", "row" )
+                          sum_row_sg_to_sg = GetMatrixMarginals(mc_sg_to_sg.(coreNames[core]), "Sum", "row" )
 
-		          sum_all = sum_all + (Sum(sum_row) + Sum(sum_col)) * occupancy[core] 
-		          sum_sg = sum_sg + (Sum(sum_row_sg) + Sum(sum_col_sg)) * occupancy[core]  
-                          sum_ind = sum_ind + (Sum(sum_row_ind) + Sum(sum_col_ind)) * occupancy[core]  
-		         
+                        
+                          sum_row_ind_orig = GetMatrixMarginals(mc_ind_orig.(coreNames[core]), "Sum", "row" )		         
+                          sum_row_ind_dest = GetMatrixMarginals(mc_ind_dest.(coreNames[core]), "Sum", "row" )
+                          sum_row_ind_to_ind = GetMatrixMarginals(mc_ind_to_ind.(coreNames[core]), "Sum", "row" )
+
+		          sum_all = sum_all + Sum(sum_row) * occupancy[core] 
+		          sum_sg = sum_sg + (Sum(sum_row_sg_orig) + Sum(sum_row_sg_dest)) * occupancy[core] - Sum(sum_row_sg_to_sg) * occupancy[core] 
+                          sum_ind = sum_ind + (Sum(sum_row_ind_orig) + Sum(sum_row_ind_dest)) * occupancy[core]  - Sum(sum_row_ind_to_ind) * occupancy[core] 
 		          
 	           end
 
 	          //close matrix
-		    DeleteMatrixIndex(m, "SG Index")
-                    DeleteMatrixIndex(m, "Indian Index")
+		    DeleteMatrixIndex(m, "SG Index Orig")
+                    DeleteMatrixIndex(m, "SG Index Dest")
+                    DeleteMatrixIndex(m, "Indian Index Orig")
+                    DeleteMatrixIndex(m, "Indian Index Dest")
                     mc = null
                     mc_sg = null
                     mc_ind = null
@@ -200,9 +214,10 @@ Macro "Sum Up Select Link Highway Trips"
        end
        else ShowMessage("Missing smart growth TAZ file in " + path_study)
 
- end
+  end
   RunMacro("close all")
   RunMacro("TCB Closing", ok, "False")
   return(1) 
 
 EndMacro
+
