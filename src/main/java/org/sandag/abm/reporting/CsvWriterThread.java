@@ -39,54 +39,6 @@ public class CsvWriterThread
         this.maxBuffer = aMaxBuffer;
     }
 
-    // @Override
-    // public void run()
-    // {
-    // RandomAccessFile raf = null;
-    // try
-    // {
-    // raf = new RandomAccessFile(file, "rw");
-    // FileChannel outChannel = raf.getChannel();
-    // int position = 0;
-    // ByteBuffer buffer = outChannel.map(MapMode.READ_WRITE, position,
-    // MAX_BUFFER);
-    //
-    // CsvRow headerRow = new CsvRow(header);
-    // buffer.put(headerRow.getRow().getBytes(ENCODING));
-    //
-    // CsvRow row = null;
-    // while ((row = queue.take()) != TruckCsvExporter.POISON_PILL)
-    // {
-    // byte[] rowBytes = row.getRow().getBytes(ENCODING);
-    // if ((buffer.position() + rowBytes.length) > buffer.capacity())
-    // {
-    // position += buffer.position();
-    // buffer = outChannel.map(MapMode.READ_WRITE, position, MAX_BUFFER);
-    // }
-    // buffer.put(rowBytes);
-    // }
-    // LOGGER.info("POISON Pill found. Clearing Buffer and Writing Remains.");
-    // position += buffer.position();
-    // buffer = null;
-    // outChannel.truncate(position+1);
-    // } catch (IOException ioe)
-    // {
-    //
-    // } catch (InterruptedException e)
-    // {
-    // } finally
-    // {
-    // if (null != raf) try
-    // {
-    // raf.close();
-    // LOGGER.info("Truck Writer Stream Closed.");
-    // } catch (IOException e)
-    // {
-    // LOGGER.error(e);
-    // }
-    // }
-    // }
-
     @Override
     public void run()
     {
@@ -112,7 +64,7 @@ public class CsvWriterThread
                 }
                 buffer.put(rowBytes);
             }
-            LOGGER.info("POISON Pill found. Clearing Buffer and Writing Remains.");
+            LOGGER.info("End of records found. Clearing Buffer and Writing Remains.");
             buffer.flip();
             outChannel.write(buffer);
         } catch (IOException | InterruptedException e)
@@ -124,7 +76,7 @@ public class CsvWriterThread
             if (null != outStream) try
             {
                 outStream.close();
-                LOGGER.info("Truck Writer Stream Closed.");
+                LOGGER.info("CSV Writer Stream Closed.");
             } catch (IOException e)
             {
                 LOGGER.error(e);
