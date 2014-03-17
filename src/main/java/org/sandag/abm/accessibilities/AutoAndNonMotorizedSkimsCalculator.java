@@ -68,8 +68,22 @@ public class AutoAndNonMotorizedSkimsCalculator
             "S2 NonToll - Time", // 8
             "S2 NonToll - Free Flow Time", // 9
             "S2 NonToll - Distance", // 10
-            "S2 NonToll - Length on HOV Facility" // 11
-                                                                 };
+            "S2 NonToll - Length on HOV Facility", // 11
+            "S2 Toll - Time", // 12
+            "S2 Toll - Free Flow Time", // 13
+            "S2 Toll - Distance", // 14
+            "S2 Toll - Toll Value", // 15
+            "S2 Toll - Length on HOV Facility", // 16
+            "S3 NonToll - Time", // 17
+            "S3 NonToll - Free Flow Time", // 18
+            "S3 NonToll - Distance", // 19
+            "S3 NonToll - Length on HOV Facility", // 20
+            "S3 Toll - Time", // 21
+            "S3 Toll - Free Flow Time", // 22
+            "S3 Toll - Distance", // 23
+            "S3 Toll - Toll Value", // 24
+            "S3 Toll - Length on HOV Facility" // 25
+            };
 
     private static final String[]         NM_SKIM_NAMES          = {"walkTime", "bikeTime"};
     private static final int              NUM_NM_SKIMS           = NM_SKIM_NAMES.length;
