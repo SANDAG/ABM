@@ -188,18 +188,30 @@ public class SkimBuilder
                 timeIndex = DA_TIME_INDEX;
                 distIndex = DA_DIST_INDEX;
                 costIndex = -1;
+			    double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, false,
+				          LOGGER);
+				    return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], getCost(
+				          costIndex < 0 ? 0.0 : autoSkims[costIndex], autoSkims[distIndex]));
             }
             case DRIVE_ALONE_TOLL:
             {
                 timeIndex = DA_TOLL_TIME_INDEX;
                 distIndex = DA_TOLL_DIST_INDEX;
                 costIndex = DA_TOLL_COST_INDEX;
+			    double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, false,
+				          LOGGER);
+				    return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], getCost(
+				          costIndex < 0 ? 0.0 : autoSkims[costIndex], autoSkims[distIndex]));
             }
             case SR2_HOV: // wu added
             {
                 timeIndex = SR2_TIME_INDEX;
                 distIndex = SR2_DIST_INDEX;
                 costIndex = -1;
+			    double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, false,
+				          LOGGER);
+				    return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], getCost(
+				          costIndex < 0 ? 0.0 : autoSkims[costIndex], autoSkims[distIndex]));
             }                             
             case SR2_TOLL: // wu added
             {
@@ -216,6 +228,10 @@ public class SkimBuilder
                 timeIndex = SR3_TIME_INDEX;
                 distIndex = SR3_DIST_INDEX;
                 costIndex = -1;
+			    double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, false,
+				          LOGGER);
+				    return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], getCost(
+				          costIndex < 0 ? 0.0 : autoSkims[costIndex], autoSkims[distIndex]));
             } 
 			case SR3_TOLL:
 			{
