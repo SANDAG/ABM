@@ -367,6 +367,8 @@ public class InternalExternalTripModeChoiceDMU
 
         methodIndexMap.put("getTripOrigIsTourDest", 23);
         methodIndexMap.put("getTripDestIsTourDest", 24);
+        
+        methodIndexMap.put("getBikeLogsum",50);
 
         methodIndexMap.put("getNm_walkTime", 90);
         methodIndexMap.put("getNm_bikeTime", 91);
@@ -477,7 +479,6 @@ public class InternalExternalTripModeChoiceDMU
         methodIndexMap.put("getDt_cr_WalkAuxTime", 202);
         methodIndexMap.put("getDt_cr_fare", 203);
         methodIndexMap.put("getDt_cr_xfers", 204);
-        methodIndexMap.put("getBikeLogsum",205);
         CreateReverseMap();
 
     }

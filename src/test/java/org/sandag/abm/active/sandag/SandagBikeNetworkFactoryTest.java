@@ -7,7 +7,7 @@ import org.sandag.abm.active.*;
 import static org.junit.Assert.*;
 import org.junit.*;
 
-public class SandagBikeNetworkFactoryTest
+@Ignore public class SandagBikeNetworkFactoryTest
 {
     final static String RESOURCE_BUNDLE_NAME = "sandag_abm_active_test";
     Map<String,String> propertyMap = new HashMap<String,String>();
