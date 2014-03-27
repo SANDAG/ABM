@@ -32,6 +32,7 @@ public class InternalExternalTripModeChoiceDMU
     protected double       nmBikeTime;
 
     protected double[][][] transitSkim;
+    protected double bikeLogsum;
 
     public InternalExternalTripModeChoiceDMU(InternalExternalModelStructure modelStructure,
             Logger aLogger)
@@ -333,6 +334,14 @@ public class InternalExternalTripModeChoiceDMU
     {
         return hhSize;
     }
+	
+	public void setBikeLogsum(double bikeLogsum) {
+		this.bikeLogsum = bikeLogsum;
+	}
+	
+	public double getBikeLogsum() {
+		return bikeLogsum;
+	}
 
     public void setHhSize(int hhSize)
     {
@@ -468,6 +477,7 @@ public class InternalExternalTripModeChoiceDMU
         methodIndexMap.put("getDt_cr_WalkAuxTime", 202);
         methodIndexMap.put("getDt_cr_fare", 203);
         methodIndexMap.put("getDt_cr_xfers", 204);
+        methodIndexMap.put("getBikeLogsum",205);
         CreateReverseMap();
 
     }

@@ -90,7 +90,9 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
 
         transitSkim = new double[TripModeChoiceDMU.NUM_ACC_EGR][TripModeChoiceDMU.NUM_LOC_PREM][TripModeChoiceDMU.NUM_SKIMS];
     }
-
+    
+    
+    
     public void setParkingCostInfo(int[] mgraParkArea, double[] lsWgtAvgCostM,
             double[] lsWgtAvgCostD, double[] lsWgtAvgCostH)
     {
@@ -364,7 +366,13 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
     {
         tripDestIsTourDest = value;
     }
-
+    
+    public void setBikeLogsum(int origin, int dest, boolean inbound) {
+    	//do nothing - this is a stub to allow SANDAG to work correctly
+    	// see SandagTripModeChoiceModelDMU for actual implementation
+    }
+    
+    
     public IndexValues getDmuIndexValues()
     {
         return dmuIndex;

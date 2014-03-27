@@ -463,8 +463,8 @@ public class MandatoryAccessibilities
                 }
                 accessibilities[5] = Math.log(walkTransitExpUtilities[bestMode.ordinal()]);
 
-                dmu.setMgraTapWalkTime(mgraManager.getMgraToTapWalkTime(oMgra, oTapPosition));
-                dmu.setTapMgraWalkTime(mgraManager.getMgraToTapWalkTime(dMgra, dTapPosition));
+                dmu.setMgraTapWalkTime(mgraManager.getMgraToTapWalkBoardTime(oMgra, oTapPosition));
+                dmu.setTapMgraWalkTime(mgraManager.getMgraToTapWalkAlightTime(dMgra, dTapPosition));
                 iv.setOriginZone(bestTaps[0]);
                 iv.setDestZone(bestTaps[1]);
                 double[] wlkTransitTimes = bestWalkTransitUEC.solve(iv, dmu, null);
@@ -513,7 +513,7 @@ public class MandatoryAccessibilities
                 dmu.setDriveDistToTap(tazManager.getTapDist(oTaz, oTapPosition,
                         Modes.AccessMode.PARK_N_RIDE));
 
-                dmu.setTapMgraWalkTime(mgraManager.getMgraToTapWalkTime(dMgra, dTapPosition));
+                dmu.setTapMgraWalkTime(mgraManager.getMgraToTapWalkAlightTime(dMgra, dTapPosition));
 
                 iv.setOriginZone(bestTaps[0]);
                 iv.setDestZone(bestTaps[1]);

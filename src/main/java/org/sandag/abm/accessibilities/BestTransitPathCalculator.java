@@ -200,13 +200,20 @@ public class BestTransitPathCalculator
 
         // these arrays are shared by the BestTransitPathCalculator objects
         // created for each hh choice model object
-        storedDataObject = StoredUtilityData.getInstance(maxMgra, maxTap, maxTaz, NUM_ACC_EGR,
-                NUM_PERIODS);
-        storedWalkAccessUtils = storedDataObject.getStoredWalkAccessUtils();
-        storedDriveAccessUtils = storedDataObject.getStoredDriveAccessUtils();
-        storedWalkEgressUtils = storedDataObject.getStoredWalkEgressUtils();
-        storedDriveEgressUtils = storedDataObject.getStoredDriveEgressUtils();
-        storedTapToTapUtils = storedDataObject.getStoredDepartPeriodTapTapUtils();
+        storedDataObject = StoredUtilityData.getInstance(maxMgra, maxTap, maxTaz,
+                NUM_ACC_EGR, NUM_PERIODS);
+        int count = 100; //keep trying to get this until not null
+        while (storedWalkAccessUtils == null) {
+	        storedWalkAccessUtils = storedDataObject.getStoredWalkAccessUtils();
+	        storedDriveAccessUtils = storedDataObject.getStoredDriveAccessUtils();
+	        storedWalkEgressUtils = storedDataObject.getStoredWalkEgressUtils();
+	        storedDriveEgressUtils = storedDataObject.getStoredDriveEgressUtils();
+	        storedTapToTapUtils = storedDataObject.getStoredDepartPeriodTapTapUtils();
+	        if (count-- < 0)
+	        	break;
+        }
+        if (storedWalkAccessUtils == null)
+        	logger.warn("snap: storedWalkAccessUtils is null: " + count + "  " + storedWalkAccessUtils);
 
         // use the walk access UEC to get the number of alternatives for
         // dimensioning
@@ -245,7 +252,7 @@ public class BestTransitPathCalculator
 
                 if (tap == pTap)
                 {
-                    accTime = mgraMgr.getMgraToTapWalkTime(pMgra, pPos);
+                    accTime = mgraMgr.getMgraToTapWalkBoardTime(pMgra, pPos);
                     break;
                 }
             }
@@ -322,7 +329,7 @@ public class BestTransitPathCalculator
 
                 if (tap == aTap)
                 {
-                    egrTime = mgraMgr.getMgraToTapWalkTime(aMgra, aPos);
+                    egrTime = mgraMgr.getMgraToTapWalkAlightTime(aMgra, aPos);
                     break;
                 }
             }
@@ -439,38 +446,29 @@ public class BestTransitPathCalculator
                 // already been computed.
                 setWalkEgressUtility(aTap, aMgra, aPos, writeCalculations, myLogger);
 
-                // if ( aTap == 0 || pTap == 0 || aMgra == 0 || pMgra == 0 ) {
-                // System.out.println( "aTap=" + aTap + "pTap=" + pTap +
-                // "aMgra=" + aMgra + "pMgra=" + pMgra + "period=" + period );
-                // System.out.flush();
-                // System.exit( -1 );
-                // }
-                // else if ( storedWalkAccessUtils[pMgra][pTap] == null ) {
-                // System.out.println( "aTap=" + aTap + "pTap=" + pTap +
-                // "aMgra=" + aMgra + "pMgra=" + pMgra + "period=" + period );
-                // System.out.println(
-                // "storedWalkAccessUtils[pMgra][pTap] == null" );
-                // System.out.flush();
-                // System.exit( -1 );
-                // }
-                // else if ( storedWalkEgressUtils[aTap][aMgra] == null ) {
-                // System.out.println( "aTap=" + aTap + "pTap=" + pTap +
-                // "aMgra=" + aMgra + "pMgra=" + pMgra + "period=" + period );
-                // System.out.println(
-                // "storedWalkEgressUtils[aTap][aMgra] == null" );
-                // System.out.flush();
-                // System.exit( -1 );
-                // }
-                // else if (
-                // storedDepartPeriodTapTapUtils[WTW][period][pTap][aTap] ==
-                // null ) {
-                // System.out.println( "aTap=" + aTap + "pTap=" + pTap +
-                // "aMgra=" + aMgra + "pMgra=" + pMgra + "period=" + period );
-                // System.out.println(
-                // "storedDepartPeriodTapTapUtils[WTW][period][pTap][aTap] == null"
-                // );
-                // System.out.flush();
-                // System.exit( -1 );
+                // if (aTap == 0 || pTap == 0 || aMgra == 0 || pMgra == 0)
+                // {
+                //     logger.error("aTap=" + aTap + "pTap=" + pTap + "aMgra=" + aMgra + "pMgra="
+                //             + pMgra + "period=" + period);
+                //     throw new RuntimeException();
+                // } else if (storedWalkAccessUtils[pMgra][pTap] == null)
+                // {
+                //     logger.error("aTap=" + aTap + "pTap=" + pTap + "aMgra=" + aMgra + "pMgra="
+                //             + pMgra + "period=" + period);
+                //     logger.error("storedWalkAccessUtils[pMgra][pTap] == null");
+                //     throw new RuntimeException();
+                // } else if (storedWalkEgressUtils[aTap][aMgra] == null)
+                // {
+                //     logger.error("aTap=" + aTap + "pTap=" + pTap + "aMgra=" + aMgra + "pMgra="
+                //             + pMgra + "period=" + period);
+                //     logger.error("storedWalkEgressUtils[aTap][aMgra] == null");
+                //     throw new RuntimeException();
+                // } else if (storedDepartPeriodTapTapUtils[WTW][period][pTap][aTap] == null)
+                // {
+                //     logger.error("aTap=" + aTap + "pTap=" + pTap + "aMgra=" + aMgra + "pMgra="
+                //             + pMgra + "period=" + period);
+                //     logger.error("storedDepartPeriodTapTapUtils[WTW][period][pTap][aTap] == null");
+                //     throw new RuntimeException();
                 // }
 
                 // compare the utilities for this TAP pair to previously
@@ -486,11 +484,10 @@ public class BestTransitPathCalculator
                                 + storedWalkEgressUtils[aTap][aMgra][i];
                 } catch (Exception e)
                 {
-                    System.out.println("exception computing combinedUtilities for WTW");
-                    System.out.println("aTap=" + aTap + "pTap=" + pTap + "aMgra=" + aMgra
-                            + "pMgra=" + pMgra + "period=" + period);
-                    System.out.flush();
-                    System.exit(-1);
+                    logger.error("exception computing combinedUtilities for WTW");
+                    logger.error("aTap=" + aTap + "pTap=" + pTap + "aMgra=" + aMgra + "pMgra="
+                            + pMgra + "period=" + period, e);
+                    throw new RuntimeException();
                 }
 
                 comparePaths(combinedUtilities, pTap, aTap, writeCalculations, myLogger);
@@ -591,43 +588,29 @@ public class BestTransitPathCalculator
                     // been computed.
                     setUtilitiesForTapPair(DTW, period, pTap, aTap, writeCalculations, myLogger);
 
-                    // if ( aTap == 0 || pTap == 0 || aMgra == 0 || pMgra == 0 )
+                    // if (aTap == 0 || pTap == 0 || aMgra == 0 || pMgra == 0)
                     // {
-                    // System.out.println( "aTap=" + aTap + ",pTap=" + pTap +
-                    // ",aMgra=" + aMgra + ",pMgra=" + pMgra + ",period=" +
-                    // period );
-                    // System.out.flush();
-                    // System.exit( -1 );
-                    // }
-                    // else if ( storedDriveAccessUtils[pTaz][pTap] == null ) {
-                    // System.out.println( "aTap=" + aTap + ",pTap=" + pTap +
-                    // ",aMgra=" + aMgra + ",pMgra=" + pMgra + ",period=" +
-                    // period );
-                    // System.out.println(
-                    // "storedDriveAccessUtils[pTaz][pTap] == null" );
-                    // System.out.flush();
-                    // System.exit( -1 );
-                    // }
-                    // else if ( storedWalkEgressUtils[aTap][aMgra] == null ) {
-                    // System.out.println( "aTap=" + aTap + ",pTap=" + pTap +
-                    // ",aMgra=" + aMgra + ",pMgra=" + pMgra + ",period=" +
-                    // period );
-                    // System.out.println(
-                    // "storedWalkEgressUtils[aTap][aMgra] == null" );
-                    // System.out.flush();
-                    // System.exit( -1 );
-                    // }
-                    // else if (
-                    // storedDepartPeriodTapTapUtils[DTW][period][pTap][aTap] ==
-                    // null ) {
-                    // System.out.println( "aTap=" + aTap + ",pTap=" + pTap +
-                    // ",aMgra=" + aMgra + ",pMgra=" + pMgra + ",period=" +
-                    // period );
-                    // System.out.println(
-                    // "storedDepartPeriodTapTapUtils[DTW][period][pTap][aTap] == null"
-                    // );
-                    // System.out.flush();
-                    // System.exit( -1 );
+                    //     logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
+                    //             + ",pMgra=" + pMgra + ",period=" + period);
+                    //     throw new RuntimeException();
+                    // } else if (storedDriveAccessUtils[pTaz][pTap] == null)
+                    // {
+                    //     logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
+                    //             + ",pMgra=" + pMgra + ",period=" + period);
+                    //     logger.error("storedDriveAccessUtils[pTaz][pTap] == null");
+                    //     throw new RuntimeException();
+                    // } else if (storedWalkEgressUtils[aTap][aMgra] == null)
+                    // {
+                    //     logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
+                    //             + ",pMgra=" + pMgra + ",period=" + period);
+                    //     logger.error("storedWalkEgressUtils[aTap][aMgra] == null");
+                    //     throw new RuntimeException();
+                    // } else if (storedDepartPeriodTapTapUtils[DTW][period][pTap][aTap] == null)
+                    // {
+                    //     logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
+                    //             + ",pMgra=" + pMgra + ",period=" + period);
+                    //     logger.error("storedDepartPeriodTapTapUtils[DTW][period][pTap][aTap] == null");
+                    //     throw new RuntimeException();
                     // }
 
                     // compare the utilities for this TAP pair to previously
@@ -643,11 +626,10 @@ public class BestTransitPathCalculator
                                     + storedWalkEgressUtils[aTap][aMgra][i];
                     } catch (Exception e)
                     {
-                        System.out.println("exception computing combinedUtilities for DTW");
-                        System.out.println("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
-                                + ",pMgra=" + pMgra + ",period=" + period);
-                        System.out.flush();
-                        System.exit(-1);
+                        logger.error("exception computing combinedUtilities for DTW");
+                        logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
+                                + ",pMgra=" + pMgra + ",period=" + period, e);
+                        throw new RuntimeException();
                     }
 
                     comparePaths(combinedUtilities, pTap, aTap, writeCalculations, myLogger);
@@ -734,43 +716,29 @@ public class BestTransitPathCalculator
                     // been computed.
                     setUtilitiesForTapPair(WTD, period, pTap, aTap, writeCalculations, myLogger);
 
-                    // if ( aTap == 0 || pTap == 0 || aMgra == 0 || pMgra == 0 )
+                    // if (aTap == 0 || pTap == 0 || aMgra == 0 || pMgra == 0)
                     // {
-                    // System.out.println( "aTap=" + aTap + ",pTap=" + pTap +
-                    // ",aMgra=" + aMgra + ",pMgra=" + pMgra + ",period=" +
-                    // period );
-                    // System.out.flush();
-                    // System.exit( -1 );
-                    // }
-                    // else if ( storedWalkAccessUtils[pMgra][pTap] == null ) {
-                    // System.out.println( "aTap=" + aTap + ",pTap=" + pTap +
-                    // ",aMgra=" + aMgra + ",pMgra=" + pMgra + ",period=" +
-                    // period );
-                    // System.out.println(
-                    // "storedWalkAccessUtils[pMgra][pTap] == null" );
-                    // System.out.flush();
-                    // System.exit( -1 );
-                    // }
-                    // else if ( storedDriveEgressUtils[aTap][aTaz] == null ) {
-                    // System.out.println( "aTap=" + aTap + ",pTap=" + pTap +
-                    // ",aMgra=" + aMgra + ",pMgra=" + pMgra + ",period=" +
-                    // period );
-                    // System.out.println(
-                    // "storedDriveEgressUtils[aTap][aTaz] == null" );
-                    // System.out.flush();
-                    // System.exit( -1 );
-                    // }
-                    // else if (
-                    // storedDepartPeriodTapTapUtils[WTD][period][pTap][aTap] ==
-                    // null ) {
-                    // System.out.println( "aTap=" + aTap + ",pTap=" + pTap +
-                    // ",aMgra=" + aMgra + ",pMgra=" + pMgra + ",period=" +
-                    // period );
-                    // System.out.println(
-                    // "storedDepartPeriodTapTapUtils[WTD][period][pTap][aTap] == null"
-                    // );
-                    // System.out.flush();
-                    // System.exit( -1 );
+                    //     logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
+                    //             + ",pMgra=" + pMgra + ",period=" + period);
+                    //     throw new RuntimeException();
+                    // } else if (storedWalkAccessUtils[pMgra][pTap] == null)
+                    // {
+                    //     logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
+                    //             + ",pMgra=" + pMgra + ",period=" + period);
+                    //     logger.error("storedWalkAccessUtils[pMgra][pTap] == null");
+                    //     throw new RuntimeException();
+                    // } else if (storedDriveEgressUtils[aTap][aTaz] == null)
+                    // {
+                    //     logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
+                    //             + ",pMgra=" + pMgra + ",period=" + period);
+                    //     logger.error("storedDriveEgressUtils[aTap][aTaz] == null");
+                    //     throw new RuntimeException();
+                    // } else if (storedDepartPeriodTapTapUtils[WTD][period][pTap][aTap] == null)
+                    // {
+                    //     logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
+                    //             + ",pMgra=" + pMgra + ",period=" + period);
+                    //     logger.error("storedDepartPeriodTapTapUtils[WTD][period][pTap][aTap] == null");
+                    //     throw new RuntimeException();
                     // }
 
                     // compare the utilities for this TAP pair to previously
@@ -786,11 +754,10 @@ public class BestTransitPathCalculator
                                     + storedDriveEgressUtils[aTap][aTaz][i];
                     } catch (Exception e)
                     {
-                        System.out.println("exception computing combinedUtilities for WTD");
-                        System.out.println("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
-                                + ",pMgra=" + pMgra + ",period=" + period);
-                        System.out.flush();
-                        System.exit(-1);
+                        logger.error("exception computing combinedUtilities for WTD");
+                        logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
+                                + ",pMgra=" + pMgra + ",period=" + period, e);
+                        throw new RuntimeException();
                     }
 
                     comparePaths(combinedUtilities, pTap, aTap, writeCalculations, myLogger);
@@ -807,7 +774,8 @@ public class BestTransitPathCalculator
     private void setWalkAccessUtility(int pMgra, int pPos, int pTap, boolean myTrace,
             Logger myLogger)
     {
-        pWalkTime = mgraManager.getMgraToTapWalkTime(pMgra, pPos);
+        pWalkTime = mgraManager.getMgraToTapWalkBoardTime(pMgra, pPos);
+        try {
         if (storedWalkAccessUtils[pMgra][pTap] == null)
         {
             walkDmu.setMgraTapWalkTime(pWalkTime);
@@ -819,6 +787,16 @@ public class BestTransitPathCalculator
                 walkAccessUEC.logAnswersArray(myLogger, "Walk Orig Mgra=" + pMgra + ", to pTap="
                         + pTap + " Utility Piece");
             }
+        }
+        } catch (NullPointerException e) {
+        	logger.fatal("null pointer for pMgra: " + pMgra + ", ptap: " + pTap);
+        	logger.fatal("storedWalkAccessUtils: " + storedDriveAccessUtils);
+        	if (storedWalkAccessUtils != null) {
+        		logger.fatal("storedWalkAccessUtils.length: " + storedWalkAccessUtils.length);
+        		if (storedWalkAccessUtils[0] != null)
+        			logger.fatal("storedWalkAccessUtils[0].length: " + storedWalkAccessUtils[0].length);
+        	}
+        	throw e;
         }
     }
 
@@ -845,7 +823,7 @@ public class BestTransitPathCalculator
     private void setWalkEgressUtility(int aTap, int aMgra, int aPos, boolean myTrace,
             Logger myLogger)
     {
-        aWalkTime = mgraManager.getMgraToTapWalkTime(aMgra, aPos);
+        aWalkTime = mgraManager.getMgraToTapWalkAlightTime(aMgra, aPos);
         if (storedWalkEgressUtils[aTap][aMgra] == null)
         {
             walkDmu.setTapMgraWalkTime(aWalkTime);
@@ -901,8 +879,8 @@ public class BestTransitPathCalculator
      * @return A set of utilities for the Tap-pair, dimensioned by ride mode in @link
      *         <Modes>.
      */
-    private void setUtilitiesForTapPair(int accEgr, int period, int pTap, int aTap,
-            boolean myTrace, Logger myLogger)
+    public void setUtilitiesForTapPair(int accEgr, int period, int pTap, int aTap, boolean myTrace,
+            Logger myLogger)
     {
 
         // calculate the tap-tap utilities if they haven't already been.
@@ -924,17 +902,16 @@ public class BestTransitPathCalculator
             }
 
             // solve
-            storedTapToTapUtils[accEgr][period][pTap][aTap] = tapToTapUEC[period].solve(index,
-                    walkDmu, null);
-            if (storedTapToTapUtils[accEgr][period][pTap][aTap] == null)
+            double[] results = tapToTapUEC[period].solve(index, walkDmu, null);
+            if (results == null)
             {
-                System.out
-                        .println("error calcuating UEC to store results in storedDepartPeriodTapTapUtils[accEgr][period][pTap][aTap].");
-                System.out.println("accEgr=" + accEgr + ",period=" + period + ",pTap=" + pTap
-                        + ",aTap=" + aTap);
-                System.out.flush();
-                System.exit(-1);
+                logger.error("error calcuating UEC to store results in storedDepartPeriodTapTapUtils[accEgr][period][pTap][aTap].");
+                RuntimeException e = new RuntimeException();
+                logger.error("accEgr=" + accEgr + ",period=" + period + ",pTap=" + pTap + ",aTap="
+                        + aTap, e);
+                throw e;
             }
+            storedTapToTapUtils[accEgr][period][pTap][aTap] = results;
 
             // logging
             if (myTrace)

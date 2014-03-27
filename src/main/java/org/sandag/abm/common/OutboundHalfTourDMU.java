@@ -9,4 +9,12 @@ public abstract class OutboundHalfTourDMU
     {
         return getTranistSkimFromMethodConditional(methodName, outboundHalfTourDirection == 1);
     }
+
+    /**
+     * @return the outboundHalfTourDirection
+     */
+    public int getOutboundHalfTourDirection()
+    {
+        return outboundHalfTourDirection;
+    }
 }
