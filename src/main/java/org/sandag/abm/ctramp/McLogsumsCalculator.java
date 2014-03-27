@@ -107,6 +107,7 @@ public class McLogsumsCalculator
     private int                                setTourMcLogsumDmuAttributesTotalTime = 0;
     private int                                setTripMcLogsumDmuAttributesTotalTime = 0;
 
+    
     public McLogsumsCalculator()
     {
         if (mgraManager == null) mgraManager = MgraDataManager.getInstance();
@@ -126,6 +127,7 @@ public class McLogsumsCalculator
 
     public void setupSkimCalculators(HashMap<String, String> rbMap)
     {
+    	
         bestPathUEC = new BestTransitPathCalculator(rbMap);
 
         anm = new AutoAndNonMotorizedSkimsCalculator(rbMap);
@@ -297,12 +299,17 @@ public class McLogsumsCalculator
         mcDmuIndex.setOriginZone(mgraManager.getTaz(origMgra));
         mcDmuIndex.setDestZone(mgraManager.getTaz(destMgra));
 
-        setTripMcLogsumDmuAttributesTotalTime += (System.currentTimeMillis() - currentTime);
+        mcDmuObject.setBikeLogsum(origMgra,destMgra,mcDmuObject.getOutboundHalfTourDirection() == 0);
 
-        mcDmuObject.setPTazTerminalTime(tazManager.getOriginTazTerminalTime(mgraManager
-                .getTaz(origMgra)));
-        mcDmuObject.setATazTerminalTime(tazManager.getDestinationTazTerminalTime(mgraManager
-                .getTaz(destMgra)));
+        setTripMcLogsumDmuAttributesTotalTime += ( System.currentTimeMillis() - currentTime );
+        
+        mcDmuObject.setPTazTerminalTime( tazManager.getOriginTazTerminalTime(mgraManager.getTaz(origMgra)) );
+        mcDmuObject.setATazTerminalTime( tazManager.getDestinationTazTerminalTime(mgraManager.getTaz(destMgra)) );
+
+
+
+
+
 
         mcModel.computeUtilities(mcDmuObject, mcDmuIndex);
         double logsum = mcModel.getLogsum();
@@ -1239,7 +1246,7 @@ public class McLogsumsCalculator
         int i = Modes.getTransitModeIndex("CR");
         if (bestTapPairs[i] != null)
         {
-            double pWalkTime = BestTransitPathCalculator.findDriveTransitAccessTime(origMgra,
+            double pWalkTime = BestTransitPathCalculator.findWalkTransitAccessTime(origMgra,
                     bestTapPairs[i][0]);
             double aWalkTime = BestTransitPathCalculator.findWalkTransitEgressTime(destMgra,
                     bestTapPairs[i][1]);
@@ -1253,7 +1260,7 @@ public class McLogsumsCalculator
         i = Modes.getTransitModeIndex("LR");
         if (bestTapPairs[i] != null)
         {
-            double pWalkTime = BestTransitPathCalculator.findDriveTransitAccessTime(origMgra,
+            double pWalkTime = BestTransitPathCalculator.findWalkTransitAccessTime(origMgra,
                     bestTapPairs[i][0]);
             double aWalkTime = BestTransitPathCalculator.findWalkTransitEgressTime(destMgra,
                     bestTapPairs[i][1]);
@@ -1267,7 +1274,7 @@ public class McLogsumsCalculator
         i = Modes.getTransitModeIndex("BRT");
         if (bestTapPairs[i] != null)
         {
-            double pWalkTime = BestTransitPathCalculator.findDriveTransitAccessTime(origMgra,
+            double pWalkTime = BestTransitPathCalculator.findWalkTransitAccessTime(origMgra,
                     bestTapPairs[i][0]);
             double aWalkTime = BestTransitPathCalculator.findWalkTransitEgressTime(destMgra,
                     bestTapPairs[i][1]);
@@ -1281,7 +1288,7 @@ public class McLogsumsCalculator
         i = Modes.getTransitModeIndex("EB");
         if (bestTapPairs[i] != null)
         {
-            double pWalkTime = BestTransitPathCalculator.findDriveTransitAccessTime(origMgra,
+            double pWalkTime = BestTransitPathCalculator.findWalkTransitAccessTime(origMgra,
                     bestTapPairs[i][0]);
             double aWalkTime = BestTransitPathCalculator.findWalkTransitEgressTime(destMgra,
                     bestTapPairs[i][1]);
@@ -1295,7 +1302,7 @@ public class McLogsumsCalculator
         i = Modes.getTransitModeIndex("LB");
         if (bestTapPairs[i] != null)
         {
-            double pWalkTime = BestTransitPathCalculator.findDriveTransitAccessTime(origMgra,
+            double pWalkTime = BestTransitPathCalculator.findWalkTransitAccessTime(origMgra,
                     bestTapPairs[i][0]);
             double aWalkTime = BestTransitPathCalculator.findWalkTransitEgressTime(destMgra,
                     bestTapPairs[i][1]);
@@ -1344,11 +1351,11 @@ public class McLogsumsCalculator
         int i = Modes.getTransitModeIndex("CR");
         if (bestTapPairs[i] != null)
         {
-            double pWalkTime = BestTransitPathCalculator.findDriveTransitAccessTime(origMgra,
+            double pDriveTime = BestTransitPathCalculator.findDriveTransitAccessTime(origMgra,
                     bestTapPairs[i][0]);
             double aWalkTime = BestTransitPathCalculator.findWalkTransitEgressTime(destMgra,
                     bestTapPairs[i][1]);
-            crSkims = dtw.getDriveTransitWalkSkims(i, pWalkTime, aWalkTime, bestTapPairs[i][0],
+            crSkims = dtw.getDriveTransitWalkSkims(i, pDriveTime, aWalkTime, bestTapPairs[i][0],
                     bestTapPairs[i][1], skimPeriodIndex, loggingEnabled);
         } else
         {
@@ -1358,11 +1365,11 @@ public class McLogsumsCalculator
         i = Modes.getTransitModeIndex("LR");
         if (bestTapPairs[i] != null)
         {
-            double pWalkTime = BestTransitPathCalculator.findDriveTransitAccessTime(origMgra,
+            double pDriveTime = BestTransitPathCalculator.findDriveTransitAccessTime(origMgra,
                     bestTapPairs[i][0]);
             double aWalkTime = BestTransitPathCalculator.findWalkTransitEgressTime(destMgra,
                     bestTapPairs[i][1]);
-            lrSkims = dtw.getDriveTransitWalkSkims(i, pWalkTime, aWalkTime, bestTapPairs[i][0],
+            lrSkims = dtw.getDriveTransitWalkSkims(i, pDriveTime, aWalkTime, bestTapPairs[i][0],
                     bestTapPairs[i][1], skimPeriodIndex, loggingEnabled);
         } else
         {
@@ -1372,11 +1379,11 @@ public class McLogsumsCalculator
         i = Modes.getTransitModeIndex("BRT");
         if (bestTapPairs[i] != null)
         {
-            double pWalkTime = BestTransitPathCalculator.findDriveTransitAccessTime(origMgra,
+            double pDriveTime = BestTransitPathCalculator.findDriveTransitAccessTime(origMgra,
                     bestTapPairs[i][0]);
             double aWalkTime = BestTransitPathCalculator.findWalkTransitEgressTime(destMgra,
                     bestTapPairs[i][1]);
-            brSkims = dtw.getDriveTransitWalkSkims(i, pWalkTime, aWalkTime, bestTapPairs[i][0],
+            brSkims = dtw.getDriveTransitWalkSkims(i, pDriveTime, aWalkTime, bestTapPairs[i][0],
                     bestTapPairs[i][1], skimPeriodIndex, loggingEnabled);
         } else
         {
@@ -1386,11 +1393,11 @@ public class McLogsumsCalculator
         i = Modes.getTransitModeIndex("EB");
         if (bestTapPairs[i] != null)
         {
-            double pWalkTime = BestTransitPathCalculator.findDriveTransitAccessTime(origMgra,
+            double pDriveTime = BestTransitPathCalculator.findDriveTransitAccessTime(origMgra,
                     bestTapPairs[i][0]);
             double aWalkTime = BestTransitPathCalculator.findWalkTransitEgressTime(destMgra,
                     bestTapPairs[i][1]);
-            ebSkims = dtw.getDriveTransitWalkSkims(i, pWalkTime, aWalkTime, bestTapPairs[i][0],
+            ebSkims = dtw.getDriveTransitWalkSkims(i, pDriveTime, aWalkTime, bestTapPairs[i][0],
                     bestTapPairs[i][1], skimPeriodIndex, loggingEnabled);
         } else
         {
@@ -1400,11 +1407,11 @@ public class McLogsumsCalculator
         i = Modes.getTransitModeIndex("LB");
         if (bestTapPairs[i] != null)
         {
-            double pWalkTime = BestTransitPathCalculator.findDriveTransitAccessTime(origMgra,
+            double pDriveTime = BestTransitPathCalculator.findDriveTransitAccessTime(origMgra,
                     bestTapPairs[i][0]);
             double aWalkTime = BestTransitPathCalculator.findWalkTransitEgressTime(destMgra,
                     bestTapPairs[i][1]);
-            lbSkims = dtw.getDriveTransitWalkSkims(i, pWalkTime, aWalkTime, bestTapPairs[i][0],
+            lbSkims = dtw.getDriveTransitWalkSkims(i, pDriveTime, aWalkTime, bestTapPairs[i][0],
                     bestTapPairs[i][1], skimPeriodIndex, loggingEnabled);
         } else
         {
@@ -1448,11 +1455,11 @@ public class McLogsumsCalculator
         int i = Modes.getTransitModeIndex("CR");
         if (bestTapPairs[i] != null)
         {
-            double pWalkTime = BestTransitPathCalculator.findDriveTransitAccessTime(origMgra,
+            double pWalkTime = BestTransitPathCalculator.findWalkTransitAccessTime(origMgra,
                     bestTapPairs[i][0]);
-            double aWalkTime = BestTransitPathCalculator.findWalkTransitEgressTime(destMgra,
+            double aDriveTime = BestTransitPathCalculator.findDriveTransitEgressTime(destMgra,
                     bestTapPairs[i][1]);
-            crSkims = wtd.getWalkTransitDriveSkims(i, pWalkTime, aWalkTime, bestTapPairs[i][0],
+            crSkims = wtd.getWalkTransitDriveSkims(i, pWalkTime, aDriveTime, bestTapPairs[i][0],
                     bestTapPairs[i][1], skimPeriodIndex, loggingEnabled);
         } else
         {
@@ -1462,11 +1469,11 @@ public class McLogsumsCalculator
         i = Modes.getTransitModeIndex("LR");
         if (bestTapPairs[i] != null)
         {
-            double pWalkTime = BestTransitPathCalculator.findDriveTransitAccessTime(origMgra,
+            double pWalkTime = BestTransitPathCalculator.findWalkTransitAccessTime(origMgra,
                     bestTapPairs[i][0]);
-            double aWalkTime = BestTransitPathCalculator.findWalkTransitEgressTime(destMgra,
+            double aDriveTime = BestTransitPathCalculator.findDriveTransitEgressTime(destMgra,
                     bestTapPairs[i][1]);
-            lrSkims = wtd.getWalkTransitDriveSkims(i, pWalkTime, aWalkTime, bestTapPairs[i][0],
+            lrSkims = wtd.getWalkTransitDriveSkims(i, pWalkTime, aDriveTime, bestTapPairs[i][0],
                     bestTapPairs[i][1], skimPeriodIndex, loggingEnabled);
         } else
         {
@@ -1476,11 +1483,11 @@ public class McLogsumsCalculator
         i = Modes.getTransitModeIndex("BRT");
         if (bestTapPairs[i] != null)
         {
-            double pWalkTime = BestTransitPathCalculator.findDriveTransitAccessTime(origMgra,
+            double pWalkTime = BestTransitPathCalculator.findWalkTransitAccessTime(origMgra,
                     bestTapPairs[i][0]);
-            double aWalkTime = BestTransitPathCalculator.findWalkTransitEgressTime(destMgra,
+            double aDriveTime = BestTransitPathCalculator.findDriveTransitEgressTime(destMgra,
                     bestTapPairs[i][1]);
-            brSkims = wtd.getWalkTransitDriveSkims(i, pWalkTime, aWalkTime, bestTapPairs[i][0],
+            brSkims = wtd.getWalkTransitDriveSkims(i, pWalkTime, aDriveTime, bestTapPairs[i][0],
                     bestTapPairs[i][1], skimPeriodIndex, loggingEnabled);
         } else
         {
@@ -1490,11 +1497,11 @@ public class McLogsumsCalculator
         i = Modes.getTransitModeIndex("EB");
         if (bestTapPairs[i] != null)
         {
-            double pWalkTime = BestTransitPathCalculator.findDriveTransitAccessTime(origMgra,
+            double pWalkTime = BestTransitPathCalculator.findWalkTransitAccessTime(origMgra,
                     bestTapPairs[i][0]);
-            double aWalkTime = BestTransitPathCalculator.findWalkTransitEgressTime(destMgra,
+            double aDriveTime = BestTransitPathCalculator.findDriveTransitEgressTime(destMgra,
                     bestTapPairs[i][1]);
-            ebSkims = wtd.getWalkTransitDriveSkims(i, pWalkTime, aWalkTime, bestTapPairs[i][0],
+            ebSkims = wtd.getWalkTransitDriveSkims(i, pWalkTime, aDriveTime, bestTapPairs[i][0],
                     bestTapPairs[i][1], skimPeriodIndex, loggingEnabled);
         } else
         {
@@ -1504,11 +1511,11 @@ public class McLogsumsCalculator
         i = Modes.getTransitModeIndex("LB");
         if (bestTapPairs[i] != null)
         {
-            double pWalkTime = BestTransitPathCalculator.findDriveTransitAccessTime(origMgra,
+            double pWalkTime = BestTransitPathCalculator.findWalkTransitAccessTime(origMgra,
                     bestTapPairs[i][0]);
-            double aWalkTime = BestTransitPathCalculator.findWalkTransitEgressTime(destMgra,
+            double aDriveTime = BestTransitPathCalculator.findDriveTransitEgressTime(destMgra,
                     bestTapPairs[i][1]);
-            lbSkims = wtd.getWalkTransitDriveSkims(i, pWalkTime, aWalkTime, bestTapPairs[i][0],
+            lbSkims = wtd.getWalkTransitDriveSkims(i, pWalkTime, aDriveTime, bestTapPairs[i][0],
                     bestTapPairs[i][1], skimPeriodIndex, loggingEnabled);
         } else
         {

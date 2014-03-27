@@ -56,6 +56,7 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
 		hh = hhObject;
 	}
 
+
 	public Household getHouseholdObject() {
 		return hh;
 	}
@@ -68,12 +69,12 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
 		return person;
 	}
 
-	public void setTourObject(Tour tourObject) {
-		tour = tourObject;
-	}
-
 	public void setWorkTourObject(Tour tourObject) {
 		workTour = tourObject;
+	}
+
+	public void setTourObject(Tour tourObject) {
+		tour = tourObject;
 	}
 
 	public Tour getTourObject() {

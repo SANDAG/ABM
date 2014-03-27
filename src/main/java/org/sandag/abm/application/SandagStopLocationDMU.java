@@ -1,18 +1,45 @@
 package org.sandag.abm.application;
 
 import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
+import org.sandag.abm.ctramp.BikeLogsum;
+import org.sandag.abm.ctramp.BikeLogsumSegment;
+import org.sandag.abm.ctramp.Household;
 import org.sandag.abm.ctramp.ModelStructure;
+import org.sandag.abm.ctramp.Person;
+import org.sandag.abm.ctramp.Stop;
 import org.sandag.abm.ctramp.StopLocationDMU;
+import org.sandag.abm.ctramp.Tour;
 
 public class SandagStopLocationDMU
         extends StopLocationDMU
 {
+	private final BikeLogsum bls;
+	private BikeLogsumSegment segment;
 
-    public SandagStopLocationDMU(ModelStructure modelStructure)
+    public SandagStopLocationDMU(ModelStructure modelStructure, Map<String,String> rbMap)
     {
         super(modelStructure);
+        bls = BikeLogsum.getBikeLogsum(rbMap);
         setupMethodIndexMap();
+    }
+    
+    public void setStopObject(Stop myStop)
+    {
+    	super.setStopObject(myStop);
+    	segment = new BikeLogsumSegment(person.getPersonIsFemale() == 1,tour.getTourPrimaryPurposeIndex() <= 3,stop.isInboundStop());
+    }
+
+    public double getOrigToMgraBikeLogsumAlt(int alt)
+    {
+    	return bls.getLogsum(segment,stop.getOrig(),alt);
+    }
+
+    public double getMgraToDestBikeLogsumAlt(int alt)
+    {
+    	return bls.getLogsum(segment,alt,stop.getDest());
     }
 
     private void setupMethodIndexMap()
@@ -43,6 +70,8 @@ public class SandagStopLocationDMU
         methodIndexMap.put("getSampleMgraAlt", 21);
         methodIndexMap.put("getLnSlcSizeSampleAlt", 22);
         methodIndexMap.put("getIncome", 23);
+        methodIndexMap.put("getOrigToMgraBikeLogsumAlt", 24);
+        methodIndexMap.put("getMgraToDestBikeLogsumAlt", 25);
 
     }
 
@@ -99,6 +128,10 @@ public class SandagStopLocationDMU
                 return getLnSlcSizeSampleAlt(arrayIndex);
             case 23:
                 return getIncomeInDollars();
+            case 24:
+                return getOrigToMgraBikeLogsumAlt(arrayIndex);
+            case 25:
+                return getMgraToDestBikeLogsumAlt(arrayIndex);
 
             default:
                 Logger logger = Logger.getLogger(StopLocationDMU.class);

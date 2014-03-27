@@ -3,8 +3,10 @@ package org.sandag.abm.application;
 import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.CtrampApplication;
+
 import org.sandag.abm.ctramp.HouseholdDataManager;
 import org.sandag.abm.ctramp.HouseholdDataManagerIf;
 import org.sandag.abm.ctramp.HouseholdDataManagerRmi;
@@ -216,7 +218,7 @@ public final class SandagTourBasedModel
             // create a factory object to pass to various model components from
             // which
             // they can create DMU objects
-            SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure);
+            SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure,propertyMap);
 
             // run the models
             ctrampApplication.runModels(householdDataManager, dmuFactory, globalIterationNumber,
