@@ -272,6 +272,13 @@ public class SandagTourModeChoiceDMU
         methodIndexMap.put("getPersonType", 27);
         methodIndexMap.put("getFreeParkingEligibility", 28);
         methodIndexMap.put("getParkingArea", 29);
+        
+        methodIndexMap.put("getFemaleInParty", 50);
+        methodIndexMap.put("getMaleInParty", 51);
+        methodIndexMap.put("getInboundFemaleBikeLogsum", 52);
+        methodIndexMap.put("getOutboundFemaleBikeLogsum", 53);
+        methodIndexMap.put("getInboundMaleBikeLogsum", 54);
+        methodIndexMap.put("getOutboundMaleBikeLogsum", 55);
 
         methodIndexMap.put("getNm_walkTime_out", 90);
         methodIndexMap.put("getNm_walkTime_in", 91);
@@ -580,13 +587,6 @@ public class SandagTourModeChoiceDMU
         methodIndexMap.put("getDtw_cr_fare_in", 397);
         methodIndexMap.put("getDtw_cr_xfers_out", 398);
         methodIndexMap.put("getDtw_cr_xfers_in", 399);
-        
-        methodIndexMap.put("getFemaleInParty", 400);
-        methodIndexMap.put("getMaleInParty", 401);
-        methodIndexMap.put("getInboundFemaleBikeLogsum", 402);
-        methodIndexMap.put("getOutboundFemaleBikeLogsum", 403);
-        methodIndexMap.put("getInboundMaleBikeLogsum", 404);
-        methodIndexMap.put("getOutboundMaleBikeLogsum", 405);
 
         CreateReverseMap();
     }
