@@ -7,12 +7,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.log4j.Logger;
 import org.sandag.abm.active.*;
 import org.sandag.abm.ctramp.*;
-
 import com.pb.common.util.ResourceUtil;
 
 public class SandagBikePathChoiceEdgeAssignmentApplication extends AbstractPathChoiceEdgeAssignmentApplication<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal>
@@ -109,22 +106,14 @@ public class SandagBikePathChoiceEdgeAssignmentApplication extends AbstractPathC
         
         PathAlternativeListGenerationConfiguration<SandagBikeNode,SandagBikeEdge,SandagBikeTraversal> configuration = new SandagBikeMgraPathAlternativeListGenerationConfiguration(propertyMap,network);
         
-        BikeAssignmentTripReader reader = new BikeAssignmentTripReader(propertyMap);
-        List<Stop> stops = reader.createTripList();
+        BikeAssignmentTripReader reader;
+        if (args.length >= 3) {
+            reader =  new BikeAssignmentTripReader(propertyMap,Integer.parseInt(args[2]));
+        } else {
+            reader = new BikeAssignmentTripReader(propertyMap);
+        }
         
-//        Map<Integer,AtomicInteger> tripsByTimePeriod = new TreeMap<>();
-//        for (Stop stop : stops) {
-//        	int period = ModelStructure.getSkimPeriodIndex(stop.getStopPeriod());
-//        	if (!tripsByTimePeriod.containsKey(period))
-//        		tripsByTimePeriod.put(period,new AtomicInteger(0));
-//        	tripsByTimePeriod.get(period).incrementAndGet();
-//        }
-//        logger.info("|------------+------------|");
-//        logger.info(String.format("| %10s | %10s |","period","trips"));
-//        logger.info("|------------+------------|");
-//        for (int period : tripsByTimePeriod.keySet())
-//        	logger.info(String.format("| %10d | %10d |",period,tripsByTimePeriod.get(period).get()));
-//        logger.info("|------------+------------|");
+        List<Stop> stops = reader.createTripList();
         
         Path outputDirectory = Paths.get(configuration.getOutputDirectory());
         Path outputFile = outputDirectory.resolve(propertyMap.get(BIKE_ASSIGNMENT_FILE_PROPERTY));
