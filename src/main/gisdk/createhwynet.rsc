@@ -11,6 +11,7 @@
 //              hwycad.err - error file with error info
 //Oct 08, 2010: Added Lines 164-186, Create a copy of Toll fields
 //Oct 08, 2010: Added Lines 284-287 Build Highway Network with ITOLL fields
+//April 22, 2014: Wu checked all SR125 related changes are included
 //********************************************************************
 
 macro "run create hwy"
@@ -1267,7 +1268,7 @@ macro "create hwynet"
 
    //input file
    db_file = outputDir + "\\hwy.dbd"  
-   d_tp_tb = inputDir + "\\linktypeturnscst.dbf" //turn penalty in cents
+   d_tp_tb = inputDir + "\\linktypeturns.dbf" //turn penalty in cents
    s_tp_tb = outputDir + "\\turns.dbf"
 
    //output files
