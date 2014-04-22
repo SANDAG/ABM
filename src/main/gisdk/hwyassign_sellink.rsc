@@ -239,7 +239,7 @@ else
    num_class=14
    
    class_PCE={1,1,1,1,1,1,1,1,1.3,1.5,2.5,1.3,1.5,2.5}
-   VOT={50,50,50,50,50,50,50,50,50,51,72,50,51,72}
+   VOT={67,67,67,67,67,67,67,67,67,68,89,67,68,89}
 
    //Prepare selection set for turning movement report, by JXu
    if (turn_flag=1 & iteration=4) then do
@@ -337,7 +337,6 @@ else
       Opts.Global.[Iterations]=1000
       Opts.Flag.[Do Share Report] = 1     
       Opts.Output.[Flow Table] = outputDir+"\\"+asign[i]  
-    //  Opts.Output.[Path File] = outputDir+"\\"+ oue_path[i]
       if (turn_flag=1 & iteration=4) then Opts.Input.[Turning Movement Node Set] = {db_node_lyr, node_lyr, "Selection", turn_qry}
       if (turn_flag=1 & iteration=4) then Opts.Flag.[Do Turn Movement] = 1
       if (turn_flag=1 & iteration=4) then Opts.Output.[Movement Table] = outputDir+"\\"+turn[i]
