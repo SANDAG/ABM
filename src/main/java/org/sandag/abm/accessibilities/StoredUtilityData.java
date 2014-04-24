@@ -3,15 +3,16 @@ package org.sandag.abm.accessibilities;
 public final class StoredUtilityData
 {
 
-    private static StoredUtilityData objInstance = null;
+    private static volatile StoredUtilityData objInstance = null;
+    private static final Object LOCK = new Object();
 
     // these arrays are shared by multiple BestTransitPathCalculator objects in
     // a distributed computing environment
-    private double[][][]             storedWalkAccessUtils;
-    private double[][][]             storedDriveAccessUtils;
-    private double[][][]             storedWalkEgressUtils;
-    private double[][][]             storedDriveEgressUtils;
-    private double[][][][][]         storedDepartPeriodTapTapUtils;
+    private volatile double[][][]             storedWalkAccessUtils;
+    private volatile double[][][]             storedDriveAccessUtils;
+    private volatile double[][][]             storedWalkEgressUtils;
+    private volatile double[][][]             storedDriveEgressUtils;
+    private volatile double[][][][][]         storedDepartPeriodTapTapUtils;
 
     private StoredUtilityData()
     {
@@ -20,16 +21,15 @@ public final class StoredUtilityData
     public static synchronized StoredUtilityData getInstance(int maxMgra, int maxTap, int maxTaz,
             int numAccEgrSegments, int numPeriods)
     {
-        if (objInstance == null)
-        {
-            objInstance = new StoredUtilityData();
-            objInstance.setupStoredDataArrays(maxMgra, maxTap, maxTaz, numAccEgrSegments,
-                    numPeriods);
-            return objInstance;
-        } else
-        {
-            return objInstance;
-        }
+        if (objInstance == null) {
+        	synchronized (LOCK) {
+        		if (objInstance == null) { //only one initialization - if two get in here, only one proceeds
+		            objInstance = new StoredUtilityData();
+		            objInstance.setupStoredDataArrays(maxMgra, maxTap, maxTaz, numAccEgrSegments,numPeriods);
+        		}
+        	}
+        } 
+        return objInstance;
     }
 
     private void setupStoredDataArrays(int maxMgra, int maxTap, int maxTaz, int numAccEgrSegments,
