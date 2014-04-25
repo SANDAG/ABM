@@ -128,6 +128,11 @@ Macro "Run SANDAG ABM"
       ok = RunMacro("TCB Run Macro", 1, "Commercial Vehicle Time Of Day",{}) 
       if !ok then goto quit
 
+      //Commercial vehicle toll diversion model
+      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - run commercial vehicle Toll Diversion"})
+      ok = RunMacro("TCB Run Macro", 1, "cv toll diversion model",{}) 
+      if !ok then goto quit
+
       //Run External(U.S.)-Internal Model
       RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - US to SD External Trip Model"})
       ok = RunMacro("TCB Run Macro", 1, "US to SD External Trip Model",{}) 

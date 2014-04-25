@@ -39,12 +39,6 @@ Macro "Hwy skim all"
    ok=RunMacro("hwy skim",{"s3th"}) 
    if !ok then goto quit
 
-   ok=RunMacro("hwy skim",{"hhdn"}) 
-   if !ok then goto quit
-
-   ok=RunMacro("hwy skim",{"hhdt"}) 
-   if !ok then goto quit
-
    ok=RunMacro("hwy skim",{"truck"}) 
    if !ok then goto quit
 
@@ -96,7 +90,7 @@ Macro "Update highway network"
 
    shared path, inputDir, outputDir
    
-   VOT={50,50,50,50,50,50,50,50,50,51,72,50,51,72}
+   VOT={67,67,67,67,67,67,67,67,67,68,89,67,68,89}
 
    // input files
    db_file = outputDir + "\\hwy.dbd"
@@ -106,10 +100,14 @@ Macro "Update highway network"
    db_node_lyr = db_file + "|" + node_lyr
 
    periods = {"_EA", "_AM", "_MD", "_PM", "_EV"}
-   da_vot=50.00
-   s2_vot=50.00
-   s3_vot=50.00
+   da_vot=67.00 // $0.67 cents per minute VOT ($40.2 per hour)
+   s2_vot=67.00
+   s3_vot=67.00
  
+   da_vot=da_vot*60/100   //Convert to dollars per hour VOT so don't have to change gen cost function below
+   s2_vot=s2_vot*60/100
+   s3_vot=s3_vot*60/100
+   
  /*
    aoc_dollarspermile = 0.15
    da_distfactor = 60/(da_vot/aoc_dollarspermile)
@@ -118,9 +116,8 @@ Macro "Update highway network"
  */  
    //Recompute generalized cost using MSA cost in flow table,
    for i = 1 to periods.length do
-       
-      flowTable = outputDir+"\\hwyload_sel"+periods[i]+".bin"
-      if GetFileInfo(flowTable) = null then flowTable = outputDir+"\\hwyload"+periods[i]+".bin"
+    
+      flowTable = outputDir+"\\hwyload"+periods[i]+".bin"
         
       // The Dataview Set is a joined view of the link layer and the flow table, based on link ID
       Opts.Input.[Dataview Set] = {{db_file+"|"+link_lyr, flowTable, {"ID"}, {"ID1"}},"sovtime"+periods[i] }   
