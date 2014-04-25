@@ -59,6 +59,7 @@ Optionally (for select link and turning movements):
 
 SANDAG ABM Version 1.0  
  JEF 2012-03-20 
+ changed linktypeturnscst.dbf to linktypeturns.dbf as Joel suggested.
 *************************************************************************************/
 
 Macro "hwy assignment" (args)
