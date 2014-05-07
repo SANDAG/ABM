@@ -21,15 +21,28 @@ public class BikeAssignmentTripReader
     private static String PROPERTIES_JOINT_TOUR_FILENAME = "Results.JointTourDataFile";
     private static String PROPERTIES_INDIV_TRIP_FILENAME = "Results.IndivTripDataFile";
     private static String PROPERTIES_JOINT_TRIP_FILENAME = "Results.JointTripDataFile";
+    private static String PROPERTIES_PROJECT_DIR="Project.Directory";
     
     public BikeAssignmentTripReader(Map<String,String> propertyMap)
     {
-        this.indivTripFileName = propertyMap.get(PROPERTIES_INDIV_TRIP_FILENAME);
-        this.jointTripFileName = propertyMap.get(PROPERTIES_JOINT_TRIP_FILENAME);
-        this.indivTourFileName = propertyMap.get(PROPERTIES_INDIV_TOUR_FILENAME);
-        this.jointTourFileName = propertyMap.get(PROPERTIES_JOINT_TOUR_FILENAME);
-        this.personFileName = propertyMap.get(PROPERTIES_PERSON_FILENAME);
-        this.hhFileName = propertyMap.get(PROPERTIES_HOUSEHOLD_FILENAME);      
+    	String dir=propertyMap.get(PROPERTIES_PROJECT_DIR);
+        this.indivTripFileName = dir+"/"+propertyMap.get(PROPERTIES_INDIV_TRIP_FILENAME);
+        this.jointTripFileName = dir+"/"+propertyMap.get(PROPERTIES_JOINT_TRIP_FILENAME);
+        this.indivTourFileName = dir+"/"+propertyMap.get(PROPERTIES_INDIV_TOUR_FILENAME);
+        this.jointTourFileName = dir+"/"+propertyMap.get(PROPERTIES_JOINT_TOUR_FILENAME);
+        this.personFileName = dir+"/"+propertyMap.get(PROPERTIES_PERSON_FILENAME);
+        this.hhFileName = dir+"/"+propertyMap.get(PROPERTIES_HOUSEHOLD_FILENAME);      
+    }
+    
+    public BikeAssignmentTripReader(Map<String,String> propertyMap, int iter)
+    {
+    	String dir=propertyMap.get(PROPERTIES_PROJECT_DIR);
+        this.indivTripFileName = dir+"/"+propertyMap.get(PROPERTIES_INDIV_TRIP_FILENAME).substring(0,PROPERTIES_INDIV_TRIP_FILENAME.length()-5) + "_" + iter + ".csv";
+        this.jointTripFileName = dir+"/"+propertyMap.get(PROPERTIES_JOINT_TRIP_FILENAME).substring(0,PROPERTIES_JOINT_TRIP_FILENAME.length()-5) + "_" + iter + ".csv";
+        this.indivTourFileName = dir+"/"+propertyMap.get(PROPERTIES_INDIV_TOUR_FILENAME).substring(0,PROPERTIES_INDIV_TOUR_FILENAME.length()-5) + "_" + iter + ".csv";
+        this.jointTourFileName = dir+"/"+propertyMap.get(PROPERTIES_JOINT_TOUR_FILENAME).substring(0,PROPERTIES_JOINT_TOUR_FILENAME.length()-5) + "_" + iter + ".csv";
+        this.personFileName = dir+"/"+propertyMap.get(PROPERTIES_PERSON_FILENAME);
+        this.hhFileName = dir+"/"+propertyMap.get(PROPERTIES_HOUSEHOLD_FILENAME);      
     }
     
     public List<Stop> createTripList() {
