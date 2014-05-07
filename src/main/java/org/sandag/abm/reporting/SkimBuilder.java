@@ -243,14 +243,25 @@ public class SkimBuilder
 			    return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], getCost(
 			          costIndex < 0 ? 0.0 : autoSkims[costIndex], autoSkims[distIndex]));
 			}
-            case WALK:
+            case WALK: {
+            	//first, look in mgra manager, otherwise default to auto skims
+            	double distance = mgraManager.getMgraToMgraWalkDistFrom(origin,destination);
+            	if (distance > 0) {
+            		double time = mgraManager.getMgraToMgraWalkTime(origin,destination);
+            		return new TripAttributes(time,distance,0);
+            	}
+            	distance = autoNonMotSkims.getAutoSkims(origin,destination,tod,false,LOGGER)[DA_DIST_INDEX];
+                return new TripAttributes(distance*60/DEFAULT_WALK_SPEED,distance,0);
+            }
             case BIKE:
             {
-                double distance = autoNonMotSkims.getAutoSkims(origin, destination, tod, false,
-                        LOGGER)[DA_DIST_INDEX];
-                double speed = modeChoice == TripModeChoice.BIKE ? DEFAULT_BIKE_SPEED
-                        : DEFAULT_WALK_SPEED;
-                return new TripAttributes(distance * 60 / speed, distance, 0);
+                double time = mgraManager.getMgraToMgraBikeTime(origin,destination);
+            	if (time > 0) {
+            		double distance = DEFAULT_BIKE_SPEED*60 / time;
+            		return new TripAttributes(time,distance,0);
+            	}
+            	double distance = autoNonMotSkims.getAutoSkims(origin,destination,tod,false,LOGGER)[DA_DIST_INDEX];
+                return new TripAttributes(distance*60/DEFAULT_BIKE_SPEED,distance,0);
             }
             case WALK_LB:
             case WALK_EB:
