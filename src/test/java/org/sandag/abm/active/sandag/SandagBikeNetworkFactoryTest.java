@@ -9,6 +9,7 @@ import org.junit.*;
 
 @Ignore public class SandagBikeNetworkFactoryTest
 {
+	/*
     final static String RESOURCE_BUNDLE_NAME = "sandag_abm_active_test";
     Map<String,String> propertyMap = new HashMap<String,String>();
     SandagBikeNetworkFactory factory;
@@ -232,4 +233,5 @@ import org.junit.*;
         traversal = network.getTraversal( network.getEdge(network.getNode(start), network.getNode(thru)), network.getEdge(network.getNode(thru), network.getNode(end)));
         assertEquals(TurnType.NONE, traversal.turnType);
     }
+    */
 }

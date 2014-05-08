@@ -111,7 +111,7 @@ Macro "Create Auto Tables"
 	outTableNames = {"SOV_GP", "SOV_PAY", "SR2_GP","SR2_HOV", "SR2_PAY", "SR3_GP","SR3_HOV","SR3_PAY","lhdn","mhdn","hhdn","lhdt","mhdt","hhdt"}
 
    commVehTable = outputDir+"\\commVehTODTrips.mtx"
-   commVehMatrices = {"EA Trips","AM Trips","MD Trips","PM Trips","EV Trips"}
+   commVehMatrices = {"EA NonToll","AM NonToll","MD NonToll","PM NonToll","EV NonToll","EA Toll","AM Toll","MD Toll","PM Toll","EV Toll"}
 
 	// create comm vehicle matrix currencies
    commVehMatrix = OpenMatrix(commVehTable, )                                                               
@@ -184,7 +184,8 @@ Macro "Create Auto Tables"
                             + Nz(internalExternalCurrencies.("SOV_PAY"+periods[i])) 
                             + Nz(externalInternalWrkCurrencies.("DAT"))
                             + Nz(externalInternalNonCurrencies.("DAT"))
- 
+                            + Nz(commVehCurrencies.(commVehMatrices[i+5]))
+
       outCurrencies.SR2_GP :=Nz(outCurrencies.SR2_GP)
       outCurrencies.SR2_GP := Nz(personCurrencies.("SR2_GP"+periods[i])) 
                             + Nz(airportCurrencies.("SR2_GP"+periods[i])) 
