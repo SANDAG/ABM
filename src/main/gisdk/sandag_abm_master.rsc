@@ -186,6 +186,10 @@ Macro "Run SANDAG ABM"
    ok = RunMacro("TCB Run Macro", 1, "ExportSandagData",{}) 
    if !ok then goto quit
 
+   // Start matrix manager locally
+   runString = path+"\\bin\\DataExporter.bat "+drive+" "+path_no_drive
+   ok = RunMacro("TCB Run Command", 1, "Export core ABM data", runString)
+   if !ok then goto quit 
 
    // copy final trip tables from output to input folder as warm start trip tables for next runs
    CopyFile(outputDir+"\\trip_EA.mtx", inputDir+"\\trip_EA.mtx")
