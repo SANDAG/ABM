@@ -181,6 +181,12 @@ Macro "Run SANDAG ABM"
    ok = RunMacro("TCB Run Macro", 1, "Create LUZ Skims",{}) 
    if !ok then goto quit
 
+   //export TransCAD data (networks and trip tables)	
+   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Export TransCAD Data"})
+   ok = RunMacro("TCB Run Macro", 1, "ExportSandagData",{}) 
+   if !ok then goto quit
+
+
    // copy final trip tables from output to input folder as warm start trip tables for next runs
    CopyFile(outputDir+"\\trip_EA.mtx", inputDir+"\\trip_EA.mtx")
    CopyFile(outputDir+"\\trip_AM.mtx", inputDir+"\\trip_AM.mtx")
