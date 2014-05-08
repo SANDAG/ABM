@@ -487,16 +487,26 @@ Macro "hwy skim" (arr)
       if !ok then goto quit
    
       //skim network
+      set = "AllLinks"
+      vw_set = link_lyr + "|" + set
+      SetLayer(link_lyr)
+      n = SelectAll(set) 
       NetOpts = null
       NetOpts.[Link ID] = link_lyr+".ID"
       NetOpts.[Type] = "Enable"
-      NetOpts.[Write to file] = "Yes"
-      ChangeLinkStatus(net,, NetOpts)               // first enable all links
+      ChangeLinkStatus(net,vw_set, NetOpts)               // first enable all links
    
       if excl_qry<>null then do
-         NetOpts.[Type] = "Disable"
-         NetworkEnableDisableLinkByExpression(net, excl_qry, NetOpts)   // then disable selected links
+         set = "toll"
+         vw_set = link_lyr + "|" + set
+         SetLayer(link_lyr)
+         n = SelectByQuery(set, "Several", "Select * where "+excl_qry,) 
+        NetOpts = null
+        NetOpts.[Link ID] = link_lyr+".ID"
+        NetOpts.[Type] = "Disable"
+        ChangeLinkStatus(net,vw_set, NetOpts)               // disable exclusion query
       end
+
       Opts = null
       Opts.Input.Network = net_file
       Opts.Input.[Origin Set]   = {db_node_lyr, node_lyr, "Centroids", "select * where ID <= " + i2s(mxzone)}
