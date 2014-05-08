@@ -36,7 +36,11 @@ Macro "Run SANDAG ABM"
    CopyFile(inputDir+"\\trip_EV.mtx", outputDir+"\\trip_EV.mtx")
       
    RunMacro("parameters")
-	
+
+   // read properties from sandag_abm.properties in /conf folder
+   properties = "\\conf\\sandag_abm.properties"
+   exportData = RunMacro("read properties",properties,"Report.exportData", "S")
+
   // Build highway network
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - run create hwy"})
    ok = RunMacro("TCB Run Macro", 1, "run create hwy",{}) 
@@ -139,7 +143,6 @@ Macro "Run SANDAG ABM"
       if !ok then goto quit
 
       //Run Truck Model
-      properties = "\\conf\\sandag_abm.properties"
       RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - truck model"})
       ok = RunMacro("truck model",properties, iteration)
       if !ok then goto quit   
@@ -181,15 +184,17 @@ Macro "Run SANDAG ABM"
    ok = RunMacro("TCB Run Macro", 1, "Create LUZ Skims",{}) 
    if !ok then goto quit
 
-   //export TransCAD data (networks and trip tables)	
-   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Export TransCAD Data"})
-   ok = RunMacro("TCB Run Macro", 1, "ExportSandagData",{}) 
-   if !ok then goto quit
-
-   // Start matrix manager locally
-   runString = path+"\\bin\\DataExporter.bat "+drive+" "+path_no_drive
-   ok = RunMacro("TCB Run Command", 1, "Export core ABM data", runString)
-   if !ok then goto quit 
+   if exportData = "True" then do
+	   //export TransCAD data (networks and trip tables)	
+	   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Export TransCAD Data"})
+	   ok = RunMacro("TCB Run Macro", 1, "ExportSandagData",{}) 
+	   if !ok then goto quit
+	
+	   // export core ABM data
+	   runString = path+"\\bin\\DataExporter.bat "+drive+" "+path_no_drive
+	   ok = RunMacro("TCB Run Command", 1, "Export core ABM data", runString)
+	   if !ok then goto quit 
+   end
 
    // copy final trip tables from output to input folder as warm start trip tables for next runs
    CopyFile(outputDir+"\\trip_EA.mtx", inputDir+"\\trip_EA.mtx")
