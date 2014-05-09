@@ -11,7 +11,11 @@
 
     <properties>
         <encoding.type>UTF-8</encoding.type> 
-        <output.path>${project.build.directory}/${project.name}/${project.version}/${project.activeProfiles[0].id}/${project.activeProfiles[1].id}</output.path> 
+        <output.path>${project.build.directory}/${project.name}/${project.version}/${project.activeProfiles[0].id}/${project.activeProfiles[1].id}</output.path>
+        <jppf.driver.memory.min>8000m</jppf.driver.memory.min> 
+        <jppf.driver.memory.max>9000m</jppf.driver.memory.max> 
+        <jppf.node.memory.min>50000m</jppf.node.memory.min> 
+        <jppf.node.memory.max>55000m</jppf.node.memory.max> 
     </properties>
     <profiles>
         <profile>

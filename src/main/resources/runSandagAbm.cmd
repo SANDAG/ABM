@@ -10,14 +10,14 @@ cd %PROJECT_DIRECTORY%
 call %PROJECT_DIRECTORY%\bin\CTRampEnv.bat
 
 rem set JVM memory allocations
-set NODE_MEM_MIN=%MEMORY_NODE_MIN%
-set NODE_MEM_MAX=%MEMORY_NODE_MAX%
+set MEMORY_CLIENT_MIN=%MEMORY_CLIENT_MIN%
+set MEMORY_CLIENT_MAX=%MEMORY_CLIENT_MAX%
 set SPMARKET_MEM_MIN=%MEMORY_SPMARKET_MIN%
 set SPMARKET_MEM_MAX=%MEMORY_SPMARKET_MAX%
-set BIKELOGSUM_MEM_MIN=%MEMORY_BIKELOGSUM_MIN%
-set BIKELOGSUM_MEM_MAX=%MEMORY_BIKELOGSUM_MAX%
-set WALKLOGSUM_MEM_MIN=%MEMORY_WALKLOGSUM_MIN%
-set WALKLOGSUM_MEM_MAX=%MEMORY_WALKLOGSUM_MAX%
+remset BIKELOGSUM_MEM_MIN=%MEMORY_BIKELOGSUM_MIN%
+remset BIKELOGSUM_MEM_MAX=%MEMORY_BIKELOGSUM_MAX%
+remset WALKLOGSUM_MEM_MIN=%MEMORY_WALKLOGSUM_MIN%
+remset WALKLOGSUM_MEM_MAX=%MEMORY_WALKLOGSUM_MAX%
 
 rem ### First save the JAVA_PATH environment variable so it s value can be restored at the end.
 set OLDJAVAPATH=%JAVA_PATH%
@@ -52,13 +52,13 @@ rem run ping to add a pause so that hhMgr and mtxMgr have time to fully start
 ping -n 10 %MAIN% > nul
 
 rem build bike logsums/skims
-%JAVA_64_PATH%\bin\java -server -Xmx%BIKELOGSUM_MEM_MAX% -XX:-UseGCOverheadlimit -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.active.sandag.SandagBikePathChoiceLogsumMatrixApplication %PROPERTIES_NAME%
+rem%JAVA_64_PATH%\bin\java -server -Xmx%BIKELOGSUM_MEM_MAX% -XX:-UseGCOverheadlimit -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.active.sandag.SandagBikePathChoiceLogsumMatrixApplication %PROPERTIES_NAME%
 
 rem build walk logsums/skims
-%JAVA_64_PATH%\bin\java -server -Xmx%WALKLOGSUM_MEM_MAX% -XX:-UseGCOverheadlimit -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.active.sandag.SandagWalkPathChoiceLogsumMatrixApplication %PROPERTIES_NAME%
+rem%JAVA_64_PATH%\bin\java -server -Xmx%WALKLOGSUM_MEM_MAX% -XX:-UseGCOverheadlimit -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.active.sandag.SandagWalkPathChoiceLogsumMatrixApplication %PROPERTIES_NAME%
 
 rem ## DISTRIBUTED ##
-%JAVA_64_PATH%\bin\java -showversion -server -Xms%NODE_MEM_MIN% -Xmx%NODE_MEM_MAX% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% -Djppf.config=jppf-clientDistributed.properties org.sandag.abm.application.SandagTourBasedModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% -sampleSeed 1 -luAcc true
+%JAVA_64_PATH%\bin\java -showversion -server -Xms%MEMORY_CLIENT_MIN% -Xmx%MEMORY_CLIENT_MAX%-cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% -Djppf.config=jppf-clientDistributed.properties org.sandag.abm.application.SandagTourBasedModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% -sampleSeed 1 -luAcc true
 
 rem Build trip tables
 %JAVA_64_PATH%\bin\java -server -Xms%SPMARKET_MEM_MIN% -Xmx%SPMARKET_MEM_MAX% -Djava.library.path=%TRANSCAD_PATH% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.application.SandagTripTables %PROPERTIES_NAME%  -iteration %ITERATION% -sampleRate %SAMPLERATE% 
