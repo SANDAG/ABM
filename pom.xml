@@ -1,3 +1,5 @@
+
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -6,7 +8,7 @@
     <artifactId>SANDAG-ABM</artifactId>
     <version>13.1.1-SNAPSHOT</version>
     <name>SANDAG CT-RAMP Activity Based Model</name>
-    
+
     <properties>
         <encoding.type>UTF-8</encoding.type> 
         <output.path>${project.build.directory}/${project.name}/${project.version}/${project.activeProfiles[0].id}/${project.activeProfiles[1].id}</output.path> 
@@ -53,6 +55,27 @@
             </properties>
         </profile>
         <profile>
+            <id>charger_at</id>
+            <properties>
+                <jppf.server.host>172.16.34.51</jppf.server.host>
+                <map.folder>d</map.folder>
+                <jppf.management.host>172.16.34.51</jppf.management.host>
+                <matrix.server.host>172.16.34.51</matrix.server.host>
+                <matrix.server.port>1191</matrix.server.port>
+                <household.server.host>172.16.34.51</household.server.host>
+                <household.server.port>1129</household.server.port>
+                <master.node.ip>172.16.34.51</master.node.ip>
+                <node.1.ip>172.16.34.50</node.1.ip>
+                <node.2.ip>172.16.34.52</node.2.ip>
+                <master.node.name>CHARGER</master.node.name>
+                <node.1.name>THUNDERBIRD</node.1.name>
+                <node.2.name>BARRACUDA</node.2.name>
+                <java.32.port>1190</java.32.port>
+                <workpath>d:\\projects\\sandag\\series13</workpath>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
+            </properties>
+        </profile>        
+        <profile>
             <id>mustang</id>
             <properties>
                 <jppf.server.host>172.16.34.40</jppf.server.host>
@@ -61,6 +84,27 @@
                 <matrix.server.host>172.16.34.40</matrix.server.host>
                 <matrix.server.port>1191</matrix.server.port>
                 <household.server.host>172.16.34.42</household.server.host>
+                <household.server.port>1129</household.server.port>
+                <master.node.ip>172.16.34.40</master.node.ip>
+                <node.1.ip>172.16.34.42</node.1.ip>
+                <node.2.ip>172.16.34.41</node.2.ip>
+                <master.node.name>MUSTANG</master.node.name>
+                <node.1.name>GALAXIE</node.1.name>
+                <node.2.name>COBRA</node.2.name>
+                <java.32.port>1190</java.32.port>
+                <workpath>d:\\projects\\sandag\\series13</workpath>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
+            </properties>
+        </profile>
+        <profile>
+            <id>mustang_at</id>
+            <properties>
+                <jppf.server.host>172.16.34.40</jppf.server.host>
+                <map.folder>MustangD</map.folder>
+                <jppf.management.host>172.16.34.40</jppf.management.host>
+                <matrix.server.host>172.16.34.40</matrix.server.host>
+                <matrix.server.port>1191</matrix.server.port>
+                <household.server.host>172.16.34.40</household.server.host>
                 <household.server.port>1129</household.server.port>
                 <master.node.ip>172.16.34.40</master.node.ip>
                 <node.1.ip>172.16.34.42</node.1.ip>
@@ -93,7 +137,28 @@
                 <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
             </properties>
-        </profile>  
+        </profile>
+        <profile>
+            <id>aztec_at</id>
+            <properties>
+                <jppf.server.host>172.16.34.30</jppf.server.host>
+                <map.folder>c$</map.folder>
+                <jppf.management.host>172.16.34.30</jppf.management.host>
+                <matrix.server.host>172.16.34.30</matrix.server.host>
+                <matrix.server.port>1191</matrix.server.port>
+                <household.server.host>172.16.34.30</household.server.host>
+                <household.server.port>1129</household.server.port>
+                <master.node.ip>172.16.34.30</master.node.ip>
+                <node.1.ip>172.16.34.33</node.1.ip>
+                <node.2.ip>172.16.34.45</node.2.ip>
+                <master.node.name>AZTEC</master.node.name>
+                <node.1.name>HAWKEYE</node.1.name>
+                <node.2.name>AGGIE</node.2.name>
+                <java.32.port>1190</java.32.port>
+                <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
+            </properties>
+        </profile>          
         <profile>
             <id>gaucho</id>
             <properties>
@@ -103,6 +168,29 @@
                 <matrix.server.host>172.16.34.61</matrix.server.host>
                 <matrix.server.port>1191</matrix.server.port>
                 <household.server.host>172.16.34.60</household.server.host>
+                <household.server.port>1129</household.server.port>
+                <master.node.ip>172.16.34.61</master.node.ip>
+                <node.1.ip>172.16.34.60</node.1.ip>
+                <node.2.ip>172.16.34.39</node.2.ip>
+                <master.node.name>GAUCHO</master.node.name>
+                <node.1.name>WILDCAT</node.1.name>
+                <!--
+                <node.2.name>NITTANY</node.2.name>
+                -->
+                <java.32.port>1190</java.32.port>
+                <workpath>d:\\projects\\sandag\\series13</workpath>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>
+            </properties>
+        </profile> 
+        <profile>
+            <id>gaucho_at</id>
+            <properties>
+                <jppf.server.host>172.16.34.61</jppf.server.host>
+                <map.folder>d$</map.folder>
+                <jppf.management.host>172.16.34.61</jppf.management.host>
+                <matrix.server.host>172.16.34.61</matrix.server.host>
+                <matrix.server.port>1191</matrix.server.port>
+                <household.server.host>172.16.34.61</household.server.host>
                 <household.server.port>1129</household.server.port>
                 <master.node.ip>172.16.34.61</master.node.ip>
                 <node.1.ip>172.16.34.60</node.1.ip>
