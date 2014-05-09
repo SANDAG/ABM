@@ -14,8 +14,25 @@ set NODE2=${node.2.name}
 
 rem set IP addresses
 set MAIN_IP=${master.node.ip}
-set HHMGR_IP=${node.1.ip}
+set HHMGR_IP=${household.server.host}
 
+rem JVM memory allocations
+set MEMORY_MTXMGR_MIN=20000m
+set MEMORY_MTXMGR_MAX=20000m
+set MEMORY_HHMGR_MIN=14000m
+set MEMORY_HHMGR_MAX=15000m
+set MEMORY_CLIENT_MIN=14000m
+set MEMORY_CLIENT_MAX=15000m
+set MEMORY_DRIVER_MIN=8000m
+set MEMORY_DRIVER_MAX=9000m
+set MEMORY_NODE_MIN=50000m
+set MEMORY_NODE_MAX=55000m
+set MEMORY_SPMARKET_MIN=30000m
+set MEMORY_SPMARKET_MAX=30000m
+set MEMORY_BIKELOGSUM_MIN=26000m
+set MEMORY_BIKELOGSUM_MAX=26000m
+set MEMORY_WALKLOGSUM_MIN=26000m
+set MEMORY_WALKLOGSUM_MAX=26000m
 
 rem all nodes need to map the scenario drive, currently mapped as x:
 set MAPDRIVE=T:
