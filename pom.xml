@@ -35,7 +35,18 @@
         <dataexport.memory.min>40000m</dataexport.memory.min> 
         <dataexport.memory.max>40000m</dataexport.memory.max> 
         <emfac.memory.min>40000m</emfac.memory.min> 
-        <emfac.memory.max>40000m</emfac.memory.max>         
+        <emfac.memory.max>40000m</emfac.memory.max>  
+        <matrix.server.port>1191</matrix.server.port>  
+        <household.server.port>1129</household.server.port>  
+        <java.32.port>1190</java.32.port>  
+        <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
+        <MAPDRIVE>T:</MAPDRIVE>
+		<MAPDRIVEFOLDER>\\sandag.org\transdata</MAPDRIVEFOLDER>
+		<USERNAME>XX</USERNAME>
+		<PASSWORD>XX</PASSWORD>
+		<MAPANDRUN>mapAndRun.bat</MAPANDRUN>
+		<JAVA_64_PATH>C:\Progra~1\Java\jre7</JAVA_64_PATH>
+		<JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
     </properties>
     <profiles>
         <profile>
@@ -48,13 +59,10 @@
                 <map.folder>e$</map.folder>
                 <jppf.management.host>127.0.0.1</jppf.management.host>
                 <matrix.server.host>127.0.0.1</matrix.server.host>
-                <matrix.server.port>1191</matrix.server.port>
                 <household.server.host>127.0.0.1</household.server.host>
-                <household.server.port>1129</household.server.port>
                 <master.node.ip>127.0.0.1</master.node.ip>
                 <node.1.ip>127.0.0.1</node.1.ip>
                 <node.2.ip>127.0.0.1</node.2.ip>
-                <java.32.port>1190</java.32.port>
             </properties>
         </profile>
         <profile>
@@ -64,18 +72,14 @@
                 <map.folder>d</map.folder>
                 <jppf.management.host>172.16.34.51</jppf.management.host>
                 <matrix.server.host>172.16.34.51</matrix.server.host>
-                <matrix.server.port>1191</matrix.server.port>
                 <household.server.host>172.16.34.50</household.server.host>
-                <household.server.port>1129</household.server.port>
                 <master.node.ip>172.16.34.51</master.node.ip>
                 <node.1.ip>172.16.34.50</node.1.ip>
                 <node.2.ip>172.16.34.52</node.2.ip>
                 <master.node.name>CHARGER</master.node.name>
                 <node.1.name>THUNDERBIRD</node.1.name>
                 <node.2.name>BARRACUDA</node.2.name>
-                <java.32.port>1190</java.32.port>
                 <workpath>d:\\projects\\sandag\\series13</workpath>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
             </properties>
         </profile>
         <profile>
@@ -85,18 +89,14 @@
                 <map.folder>d</map.folder>
                 <jppf.management.host>172.16.34.51</jppf.management.host>
                 <matrix.server.host>172.16.34.51</matrix.server.host>
-                <matrix.server.port>1191</matrix.server.port>
                 <household.server.host>172.16.34.51</household.server.host>
-                <household.server.port>1129</household.server.port>
                 <master.node.ip>172.16.34.51</master.node.ip>
                 <node.1.ip>172.16.34.50</node.1.ip>
                 <node.2.ip>172.16.34.52</node.2.ip>
                 <master.node.name>CHARGER</master.node.name>
                 <node.1.name>THUNDERBIRD</node.1.name>
                 <node.2.name>BARRACUDA</node.2.name>
-                <java.32.port>1190</java.32.port>
                 <workpath>d:\\projects\\sandag\\series13</workpath>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
             </properties>
         </profile>        
         <profile>
@@ -106,18 +106,14 @@
                 <map.folder>MustangD</map.folder>
                 <jppf.management.host>172.16.34.40</jppf.management.host>
                 <matrix.server.host>172.16.34.40</matrix.server.host>
-                <matrix.server.port>1191</matrix.server.port>
                 <household.server.host>172.16.34.42</household.server.host>
-                <household.server.port>1129</household.server.port>
                 <master.node.ip>172.16.34.40</master.node.ip>
                 <node.1.ip>172.16.34.42</node.1.ip>
                 <node.2.ip>172.16.34.41</node.2.ip>
                 <master.node.name>MUSTANG</master.node.name>
                 <node.1.name>GALAXIE</node.1.name>
                 <node.2.name>COBRA</node.2.name>
-                <java.32.port>1190</java.32.port>
                 <workpath>d:\\projects\\sandag\\series13</workpath>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
             </properties>
         </profile>
         <profile>
@@ -127,18 +123,14 @@
                 <map.folder>MustangD</map.folder>
                 <jppf.management.host>172.16.34.40</jppf.management.host>
                 <matrix.server.host>172.16.34.40</matrix.server.host>
-                <matrix.server.port>1191</matrix.server.port>
                 <household.server.host>172.16.34.40</household.server.host>
-                <household.server.port>1129</household.server.port>
                 <master.node.ip>172.16.34.40</master.node.ip>
                 <node.1.ip>172.16.34.42</node.1.ip>
                 <node.2.ip>172.16.34.41</node.2.ip>
                 <master.node.name>MUSTANG</master.node.name>
                 <node.1.name>GALAXIE</node.1.name>
                 <node.2.name>COBRA</node.2.name>
-                <java.32.port>1190</java.32.port>
                 <workpath>d:\\projects\\sandag\\series13</workpath>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
             </properties>
         </profile>
         <profile>
@@ -148,18 +140,14 @@
                 <map.folder>c$</map.folder>
                 <jppf.management.host>172.16.34.30</jppf.management.host>
                 <matrix.server.host>172.16.34.30</matrix.server.host>
-                <matrix.server.port>1191</matrix.server.port>
                 <household.server.host>172.16.34.33</household.server.host>
-                <household.server.port>1129</household.server.port>
                 <master.node.ip>172.16.34.30</master.node.ip>
                 <node.1.ip>172.16.34.33</node.1.ip>
                 <node.2.ip>172.16.34.45</node.2.ip>
                 <master.node.name>AZTEC</master.node.name>
                 <node.1.name>HAWKEYE</node.1.name>
                 <node.2.name>AGGIE</node.2.name>
-                <java.32.port>1190</java.32.port>
                 <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
             </properties>
         </profile>
         <profile>
@@ -169,18 +157,14 @@
                 <map.folder>c$</map.folder>
                 <jppf.management.host>172.16.34.30</jppf.management.host>
                 <matrix.server.host>172.16.34.30</matrix.server.host>
-                <matrix.server.port>1191</matrix.server.port>
                 <household.server.host>172.16.34.30</household.server.host>
-                <household.server.port>1129</household.server.port>
                 <master.node.ip>172.16.34.30</master.node.ip>
                 <node.1.ip>172.16.34.33</node.1.ip>
                 <node.2.ip>172.16.34.45</node.2.ip>
                 <master.node.name>AZTEC</master.node.name>
                 <node.1.name>HAWKEYE</node.1.name>
                 <node.2.name>AGGIE</node.2.name>
-                <java.32.port>1190</java.32.port>
                 <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
             </properties>
         </profile>          
         <profile>
@@ -190,9 +174,7 @@
                 <map.folder>d$</map.folder>
                 <jppf.management.host>172.16.34.61</jppf.management.host>
                 <matrix.server.host>172.16.34.61</matrix.server.host>
-                <matrix.server.port>1191</matrix.server.port>
                 <household.server.host>172.16.34.60</household.server.host>
-                <household.server.port>1129</household.server.port>
                 <master.node.ip>172.16.34.61</master.node.ip>
                 <node.1.ip>172.16.34.60</node.1.ip>
                 <node.2.ip>172.16.34.39</node.2.ip>
@@ -201,9 +183,7 @@
                 <!--
                 <node.2.name>NITTANY</node.2.name>
                 -->
-                <java.32.port>1190</java.32.port>
                 <workpath>d:\\projects\\sandag\\series13</workpath>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>
             </properties>
         </profile> 
         <profile>
@@ -213,9 +193,7 @@
                 <map.folder>d$</map.folder>
                 <jppf.management.host>172.16.34.61</jppf.management.host>
                 <matrix.server.host>172.16.34.61</matrix.server.host>
-                <matrix.server.port>1191</matrix.server.port>
                 <household.server.host>172.16.34.61</household.server.host>
-                <household.server.port>1129</household.server.port>
                 <master.node.ip>172.16.34.61</master.node.ip>
                 <node.1.ip>172.16.34.60</node.1.ip>
                 <node.2.ip>172.16.34.39</node.2.ip>
@@ -224,9 +202,7 @@
                 <!--
                 <node.2.name>NITTANY</node.2.name>
                 -->
-                <java.32.port>1190</java.32.port>
                 <workpath>d:\\projects\\sandag\\series13</workpath>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>
             </properties>
         </profile>         
         <profile>
@@ -234,14 +210,11 @@
             <properties>
                 <jppf.server.host></jppf.server.host>
                 <jppf.management.host></jppf.management.host>
-                <matrix.server.host></matrix.server.host>
                 <matrix.server.port></matrix.server.port>
                 <household.server.host></household.server.host>
-                <household.server.port></household.server.port>
                 <master.node.ip></master.node.ip>
                 <node.1.ip></node.1.ip>
                 <node.2.ip></node.2.ip>
-                <java.32.port></java.32.port>
             </properties>
         </profile>
          <profile>
@@ -269,7 +242,6 @@
                 <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
                 <workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
-                <auto.opterating.maintenance>7.5</auto.opterating.maintenance>
             </properties>
         </profile>
          <profile>

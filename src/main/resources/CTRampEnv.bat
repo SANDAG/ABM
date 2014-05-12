@@ -1,6 +1,5 @@
 rem this file has environment variables for CT-RAMP batch files
 
-
 rem set ports
 set JAVA_32_PORT=${java.32.port}
 set MATRIX_MANAGER_PORT=${matrix.server.port}
@@ -37,18 +36,18 @@ set MEMORY_EMFAC_MIN=${emfac.memory.min}
 set MEMORY_EMFAC_MAX=${emfac.memory.max}
 
 rem all nodes need to map the scenario drive, currently mapped as x:
-set MAPDRIVE=T:
-set MAPDRIVEFOLDER=\\sandag.org\transdata
+set MAPDRIVE=${MAPDRIVE}
+set MAPDRIVEFOLDER=${MAPDRIVEFOLDER}
 
 rem account settings for remote access using psexec
-set USERNAME=XX
-set PASSWORD=XX
+set USERNAME=${USERNAME}
+set PASSWORD=${PASSWORD}
 
 rem location of mapAndRun.bat on remote machines
-set MAPANDRUN=mapAndRun.bat
+set MAPANDRUN=${MAPANDRUN}
 
 rem set location of java
-set JAVA_64_PATH=C:\Progra~1\Java\jre7
-set JAVA_32_PATH=C:\Progra~2\Java\jre7
+set JAVA_64_PATH=${JAVA_64_PATH}
+set JAVA_32_PATH=${JAVA_32_PATH}
 set JAVA_HOME_32=%JAVA_32_PATH%
 set TRANSCAD_PATH=${TRANSCAD_PATH}
