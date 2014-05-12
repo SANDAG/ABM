@@ -40,7 +40,7 @@
         <household.server.port>1129</household.server.port>  
         <java.32.port>1190</java.32.port>  
         <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
-        <MAPDRIVE>x:</MAPDRIVE>
+        <MAPDRIVE>T:</MAPDRIVE>
 		<MAPDRIVEFOLDER>\\sandag.org\transdata</MAPDRIVEFOLDER>
 		<USERNAME>joelf</USERNAME>
 		<PASSWORD>B@seB@ll!</PASSWORD>

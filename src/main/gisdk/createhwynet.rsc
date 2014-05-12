@@ -1467,7 +1467,7 @@ Macro "set aoc"
     aocfile = path+"\\uec\\"+"AutoOperatingCost.xls"    
     tempfile = inputDir+"\\"+"aoc.bin"
     
-    year = ${year}
+    year="${year}"
 
     // workaround to read excel file (using csv makes updates within uecs manual)
     ExportExcel(aocfile, "FFB", tempfile, {"AOC", })
