@@ -12,6 +12,7 @@
     <properties>
         <encoding.type>UTF-8</encoding.type> 
         <output.path>${project.build.directory}/${project.name}/${project.version}/${project.activeProfiles[0].id}/${project.activeProfiles[1].id}</output.path>
+		<AT>False</AT>
         <jppf.driver.memory.min>8000m</jppf.driver.memory.min> 
         <jppf.driver.memory.max>9000m</jppf.driver.memory.max> 
         <jppf.masternode.memory.min>32000m</jppf.masternode.memory.min> 
@@ -47,7 +48,6 @@
 		<MAPANDRUN>mapAndRun.bat</MAPANDRUN>
 		<JAVA_64_PATH>C:\Progra~1\Java\jre7</JAVA_64_PATH>
 		<JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
-		<AT>True</AT>
     </properties>
     <profiles>
         <profile>
