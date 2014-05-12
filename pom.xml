@@ -18,6 +18,24 @@
         <jppf.masternode.memory.max>32000m</jppf.masternode.memory.max> 
         <jppf.slavenode.memory.min>45000m</jppf.slavenode.memory.min> 
         <jppf.slavenode.memory.max>50000m</jppf.slavenode.memory.max> 
+        <mtxmgr.memory.min>20000m</mtxmgr.memory.min> 
+        <mtxmgr.memory.max>20000m</mtxmgr.memory.max> 
+        <hhmgr.memory.min>14000m</hhmgr.memory.min> 
+        <hhmgr.memory.max>15000m</hhmgr.memory.max>         
+        <client.memory.min>14000m</client.memory.min> 
+        <client.memory.max>15000m</client.memory.max>          
+        <spmarket.memory.min>30000m</spmarket.memory.min> 
+        <spmarket.memory.max>30000m</spmarket.memory.max>      
+        <bikelogsum.memory.min>26000m</bikelogsum.memory.min> 
+        <bikelogsum.memory.max>26000m</bikelogsum.memory.max>    
+        <walklogsum.memory.min>26000m</walklogsum.memory.min> 
+        <walklogsum.memory.max>26000m</walklogsum.memory.max>    
+        <bikeroute.memory.min>26000m</bikeroute.memory.min> 
+        <bikeroute.memory.max>26000m</bikeroute.memory.max> 
+        <dataexport.memory.min>40000m</dataexport.memory.min> 
+        <dataexport.memory.max>40000m</dataexport.memory.max> 
+        <emfac.memory.min>40000m</emfac.memory.min> 
+        <emfac.memory.max>40000m</emfac.memory.max>         
     </properties>
     <profiles>
         <profile>

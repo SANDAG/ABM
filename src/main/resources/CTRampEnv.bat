@@ -17,24 +17,24 @@ set MAIN_IP=${master.node.ip}
 set HHMGR_IP=${household.server.host}
 
 rem JVM memory allocations
-set MEMORY_MTXMGR_MIN=20000m
-set MEMORY_MTXMGR_MAX=20000m
-set MEMORY_HHMGR_MIN=14000m
-set MEMORY_HHMGR_MAX=15000m
-set MEMORY_CLIENT_MIN=14000m
-set MEMORY_CLIENT_MAX=15000m
-set MEMORY_SPMARKET_MIN=30000m
-set MEMORY_SPMARKET_MAX=30000m
-set MEMORY_BIKELOGSUM_MIN=26000m
-set MEMORY_BIKELOGSUM_MAX=26000m
-set MEMORY_WALKLOGSUM_MIN=26000m
-set MEMORY_WALKLOGSUM_MAX=26000m
-set MEMORY_BIKEROUTE_MIN=26000m
-set MEMORY_BIKEROUTE_MAX=26000m
-set MEMORY_DATAEXPORT_MIN=40000m
-set MEMORY_DATAEXPORT_MAX=40000m
-set MEMORY_EMFAC_MIN=10000m
-set MEMORY_EMFAC_MAX=10000m
+set MEMORY_MTXMGR_MIN=${mtxmgr.memory.min}
+set MEMORY_MTXMGR_MAX=${mtxmgr.memory.max}
+set MEMORY_HHMGR_MIN=${hhmgr.memory.min}
+set MEMORY_HHMGR_MAX=${hhmgr.memory.max}
+set MEMORY_CLIENT_MIN=${client.memory.min}
+set MEMORY_CLIENT_MAX=${client.memory.max}
+set MEMORY_SPMARKET_MIN=${spmarket.memory.min}
+set MEMORY_SPMARKET_MAX=${spmarket.memory.max}
+set MEMORY_BIKELOGSUM_MIN=${bikelogsum.memory.min}
+set MEMORY_BIKELOGSUM_MAX=${bikelogsum.memory.max}
+set MEMORY_WALKLOGSUM_MIN=${walklogsum.memory.min}
+set MEMORY_WALKLOGSUM_MAX=${walklogsum.memory.max}
+set MEMORY_BIKEROUTE_MIN=${bikeroute.memory.min}
+set MEMORY_BIKEROUTE_MAX=${bikeroute.memory.max}
+set MEMORY_DATAEXPORT_MIN=${dataexport.memory.min}
+set MEMORY_DATAEXPORT_MAX=${dataexport.memory.max}
+set MEMORY_EMFAC_MIN=${emfac.memory.min}
+set MEMORY_EMFAC_MAX=${emfac.memory.max}
 
 rem all nodes need to map the scenario drive, currently mapped as x:
 set MAPDRIVE=T:
