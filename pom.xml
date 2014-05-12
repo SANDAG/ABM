@@ -14,8 +14,10 @@
         <output.path>${project.build.directory}/${project.name}/${project.version}/${project.activeProfiles[0].id}/${project.activeProfiles[1].id}</output.path>
         <jppf.driver.memory.min>8000m</jppf.driver.memory.min> 
         <jppf.driver.memory.max>9000m</jppf.driver.memory.max> 
-        <jppf.node.memory.min>50000m</jppf.node.memory.min> 
-        <jppf.node.memory.max>55000m</jppf.node.memory.max> 
+        <jppf.masternode.memory.min>32000m</jppf.masternode.memory.min> 
+        <jppf.masternode.memory.max>32000m</jppf.masternode.memory.max> 
+        <jppf.slavenode.memory.min>45000m</jppf.slavenode.memory.min> 
+        <jppf.slavenode.memory.max>50000m</jppf.slavenode.memory.max> 
     </properties>
     <profiles>
         <profile>
