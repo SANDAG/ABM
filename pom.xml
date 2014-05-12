@@ -12,7 +12,6 @@
     <properties>
         <encoding.type>UTF-8</encoding.type> 
         <output.path>${project.build.directory}/${project.name}/${project.version}/${project.activeProfiles[0].id}/${project.activeProfiles[1].id}</output.path>
-		<AT>False</AT>
         <jppf.driver.memory.min>8000m</jppf.driver.memory.min> 
         <jppf.driver.memory.max>9000m</jppf.driver.memory.max> 
         <jppf.masternode.memory.min>32000m</jppf.masternode.memory.min> 
@@ -41,10 +40,10 @@
         <household.server.port>1129</household.server.port>  
         <java.32.port>1190</java.32.port>  
         <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
-        <MAPDRIVE>T:</MAPDRIVE>
+        <MAPDRIVE>x:</MAPDRIVE>
 		<MAPDRIVEFOLDER>\\sandag.org\transdata</MAPDRIVEFOLDER>
-		<USERNAME>XX</USERNAME>
-		<PASSWORD>XX</PASSWORD>
+		<USERNAME>joelf</USERNAME>
+		<PASSWORD>B@seB@ll!</PASSWORD>
 		<MAPANDRUN>mapAndRun.bat</MAPANDRUN>
 		<JAVA_64_PATH>C:\Progra~1\Java\jre7</JAVA_64_PATH>
 		<JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
@@ -56,6 +55,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
+                <AT>False</AT>
                 <jppf.server.host>127.0.0.1</jppf.server.host>
                 <map.folder>e$</map.folder>
                 <jppf.management.host>127.0.0.1</jppf.management.host>
@@ -69,6 +69,7 @@
         <profile>
             <id>charger</id>
             <properties>
+                <AT>False</AT>
                 <jppf.server.host>172.16.34.51</jppf.server.host>
                 <map.folder>d</map.folder>
                 <jppf.management.host>172.16.34.51</jppf.management.host>
@@ -86,6 +87,7 @@
         <profile>
             <id>charger_at</id>
             <properties>
+            	<AT>True</AT>
                 <jppf.server.host>172.16.34.51</jppf.server.host>
                 <map.folder>d</map.folder>
                 <jppf.management.host>172.16.34.51</jppf.management.host>
@@ -103,6 +105,7 @@
         <profile>
             <id>mustang</id>
             <properties>
+                <AT>False</AT>
                 <jppf.server.host>172.16.34.40</jppf.server.host>
                 <map.folder>MustangD</map.folder>
                 <jppf.management.host>172.16.34.40</jppf.management.host>
@@ -120,6 +123,7 @@
         <profile>
             <id>mustang_at</id>
             <properties>
+                <AT>True</AT>
                 <jppf.server.host>172.16.34.40</jppf.server.host>
                 <map.folder>MustangD</map.folder>
                 <jppf.management.host>172.16.34.40</jppf.management.host>
@@ -137,6 +141,7 @@
         <profile>
             <id>aztec</id>
             <properties>
+                <AT>False</AT>
                 <jppf.server.host>172.16.34.30</jppf.server.host>
                 <map.folder>c$</map.folder>
                 <jppf.management.host>172.16.34.30</jppf.management.host>
@@ -154,6 +159,7 @@
         <profile>
             <id>aztec_at</id>
             <properties>
+                <AT>True</AT>
                 <jppf.server.host>172.16.34.30</jppf.server.host>
                 <map.folder>c$</map.folder>
                 <jppf.management.host>172.16.34.30</jppf.management.host>
@@ -171,6 +177,7 @@
         <profile>
             <id>gaucho</id>
             <properties>
+                <AT>False</AT>
                 <jppf.server.host>172.16.34.61</jppf.server.host>
                 <map.folder>d$</map.folder>
                 <jppf.management.host>172.16.34.61</jppf.management.host>
@@ -190,6 +197,7 @@
         <profile>
             <id>gaucho_at</id>
             <properties>
+                <AT>True</AT>
                 <jppf.server.host>172.16.34.61</jppf.server.host>
                 <map.folder>d$</map.folder>
                 <jppf.management.host>172.16.34.61</jppf.management.host>
@@ -209,6 +217,7 @@
         <profile>
             <id>sdsc-cluster</id>
             <properties>
+                <AT>False</AT>
                 <jppf.server.host></jppf.server.host>
                 <jppf.management.host></jppf.management.host>
                 <matrix.server.port></matrix.server.port>
