@@ -27,19 +27,19 @@ Macro "Run SANDAG ABM"
  
    SetLogFileName(path+"\\logFiles\\tclog.xml")
    SetReportFileName(path+"\\logFiles\\tcreport.xml")
-   
+    
+   RunMacro("parameters")
+
+   // read properties from sandag_abm.properties in /conf folder
+   properties = "\\conf\\sandag_abm.properties"
+   exportData = RunMacro("read properties",properties,"Report.exportData", "S")
+
    // copy initial trip tables from input to output folder
    CopyFile(inputDir+"\\trip_EA.mtx", outputDir+"\\trip_EA.mtx")
    CopyFile(inputDir+"\\trip_AM.mtx", outputDir+"\\trip_AM.mtx")
    CopyFile(inputDir+"\\trip_MD.mtx", outputDir+"\\trip_MD.mtx")
    CopyFile(inputDir+"\\trip_PM.mtx", outputDir+"\\trip_PM.mtx")
    CopyFile(inputDir+"\\trip_EV.mtx", outputDir+"\\trip_EV.mtx")
-      
-   RunMacro("parameters")
-
-   // read properties from sandag_abm.properties in /conf folder
-   properties = "\\conf\\sandag_abm.properties"
-   exportData = RunMacro("read properties",properties,"Report.exportData", "S")
 
   // Build highway network
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - run create hwy"})
