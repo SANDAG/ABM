@@ -13,7 +13,7 @@ call %PATH_NO_DRIVE%\bin\CTRampEnv.bat
 %PATH_NO_DRIVE%\bin\pskill \\%NODE2%  java
 
 rem Start HH Manager on node1
-set PROGRAMSTRING=%PATH_NO_DRIVE%\bin\runHhMgr_1129.cmd %MAPDRIVE% %PATH_NO_DRIVE%
+set PROGRAMSTRING=%PATH_NO_DRIVE%\bin\runHhMgr.cmd %MAPDRIVE% %PATH_NO_DRIVE%
 start %PATH_NO_DRIVE%\bin\psExec \\%NODE1% -s -c -f %PATH_NO_DRIVE%\bin\%MAPANDRUN% %MAPDRIVE% %MAPDRIVEFOLDER% %PASSWORD% %USERNAME% %PATH_NO_DRIVE% %PROGRAMSTRING% 
 
 rem Start remote worker nodes: SANDAG02
