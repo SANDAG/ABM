@@ -34,8 +34,8 @@
         <bikeroute.memory.max>26000m</bikeroute.memory.max> 
         <dataexport.memory.min>40000m</dataexport.memory.min> 
         <dataexport.memory.max>40000m</dataexport.memory.max> 
-        <emfac.memory.min>40000m</emfac.memory.min> 
-        <emfac.memory.max>40000m</emfac.memory.max>  
+        <emfac.memory.min>10000m</emfac.memory.min> 
+        <emfac.memory.max>10000m</emfac.memory.max>  
         <matrix.server.port>1191</matrix.server.port>  
         <household.server.port>1129</household.server.port>  
         <java.32.port>1190</java.32.port>  
@@ -47,6 +47,7 @@
 		<MAPANDRUN>mapAndRun.bat</MAPANDRUN>
 		<JAVA_64_PATH>C:\Progra~1\Java\jre7</JAVA_64_PATH>
 		<JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
+		<workpath>t:\\data\\ABM_AT</workpath>
     </properties>
     <profiles>
         <profile>
@@ -81,7 +82,9 @@
                 <master.node.name>CHARGER</master.node.name>
                 <node.1.name>THUNDERBIRD</node.1.name>
                 <node.2.name>BARRACUDA</node.2.name>
+                <!--  
                 <workpath>d:\\projects\\sandag\\series13</workpath>
+                -->
             </properties>
         </profile>
         <profile>
@@ -99,7 +102,9 @@
                 <master.node.name>CHARGER</master.node.name>
                 <node.1.name>THUNDERBIRD</node.1.name>
                 <node.2.name>BARRACUDA</node.2.name>
+                <!-- 
                 <workpath>d:\\projects\\sandag\\series13</workpath>
+                -->
             </properties>
         </profile>        
         <profile>
@@ -117,7 +122,9 @@
                 <master.node.name>MUSTANG</master.node.name>
                 <node.1.name>GALAXIE</node.1.name>
                 <node.2.name>COBRA</node.2.name>
+                <!-- 
                 <workpath>d:\\projects\\sandag\\series13</workpath>
+                -->
             </properties>
         </profile>
         <profile>
@@ -135,7 +142,9 @@
                 <master.node.name>MUSTANG</master.node.name>
                 <node.1.name>GALAXIE</node.1.name>
                 <node.2.name>COBRA</node.2.name>
+                <!--  
                 <workpath>d:\\projects\\sandag\\series13</workpath>
+                -->
             </properties>
         </profile>
         <profile>
@@ -153,7 +162,9 @@
                 <master.node.name>AZTEC</master.node.name>
                 <node.1.name>HAWKEYE</node.1.name>
                 <node.2.name>AGGIE</node.2.name>
+                <!--  
                 <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>
+                -->
             </properties>
         </profile>
         <profile>
@@ -171,7 +182,9 @@
                 <master.node.name>AZTEC</master.node.name>
                 <node.1.name>HAWKEYE</node.1.name>
                 <node.2.name>AGGIE</node.2.name>
+                <!--  
                 <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>
+                -->
             </properties>
         </profile>          
         <profile>
@@ -190,8 +203,8 @@
                 <node.1.name>WILDCAT</node.1.name>
                 <!--
                 <node.2.name>NITTANY</node.2.name>
-                -->
                 <workpath>d:\\projects\\sandag\\series13</workpath>
+                -->
             </properties>
         </profile> 
         <profile>
@@ -210,8 +223,8 @@
                 <node.1.name>WILDCAT</node.1.name>
                 <!--
                 <node.2.name>NITTANY</node.2.name>
-                -->
                 <workpath>d:\\projects\\sandag\\series13</workpath>
+                -->
             </properties>
         </profile>         
         <profile>
