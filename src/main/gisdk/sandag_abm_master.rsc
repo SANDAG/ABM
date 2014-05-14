@@ -196,14 +196,7 @@ Macro "Run SANDAG ABM"
 	   if !ok then goto quit 
    end
 
-   // copy final trip tables from output to input folder as warm start trip tables for next runs
-   CopyFile(outputDir+"\\trip_EA.mtx", inputDir+"\\trip_EA.mtx")
-   CopyFile(outputDir+"\\trip_AM.mtx", inputDir+"\\trip_AM.mtx")
-   CopyFile(outputDir+"\\trip_MD.mtx", inputDir+"\\trip_MD.mtx")
-   CopyFile(outputDir+"\\trip_PM.mtx", inputDir+"\\trip_PM.mtx")
-   CopyFile(outputDir+"\\trip_EV.mtx", inputDir+"\\trip_EV.mtx")
-
-   // delete trip table files in iteration sub folder.  
+   // delete trip table files in iteration sub folder if model finishes without crashing 
    for iteration = 1 to max_iterations-1 do  
       toDir = outputDir+"\\iter"+String(iteration-1)    
       status = RunProgram("cmd.exe /c del "+toDir+"\\auto*.mtx",)
