@@ -50,6 +50,7 @@ Macro "Run SANDAG ABM"
    skipFinalTransitSkimming = RunMacro("read properties",properties,"RunModel.skipFinalTransitSkimming", "S")
    skipLUZSkimCreation = RunMacro("read properties",properties,"RunModel.skipLUZSkimCreation", "S")
    skipDataExport = RunMacro("read properties",properties,"RunModel.skipDataExport", "S")
+   skipDataLoadRequest = RunMacro("read properties",properties,"RunModel.skipDataLoadRequest", "S")
    skipDeleteIntermediateFiles = RunMacro("read properties",properties,"RunModel.skipDeleteIntermediateFiles", "S")
 
    // copy initial trip tables from input to output folder
@@ -241,6 +242,13 @@ Macro "Run SANDAG ABM"
 	
 	   // export core ABM data
 	   runString = path+"\\bin\\DataExporter.bat "+drive+" "+path_no_drive
+	   ok = RunMacro("TCB Run Command", 1, "Export core ABM data", runString)
+	   if !ok then goto quit 
+   end
+
+   //request data load after model run finish successfully	
+   if skipDataLoadRequest = "false" then do	
+	   runString = path+"\\bin\\DataLoadRequest.bat "+drive+"\\"+path_no_drive+" "+max_iterations
 	   ok = RunMacro("TCB Run Command", 1, "Export core ABM data", runString)
 	   if !ok then goto quit 
    end

@@ -566,10 +566,12 @@
                             <resources>
                                 <resource>
                                     <directory>input</directory>
-                                    <filtering>true</filtering>
+                                    <filtering>false</filtering>
+                                    <!--
                                     <includes>
                                         <include>*.xls</include>
                                     </includes>
+                                    -->
                                 </resource>
                             </resources>
                         </configuration>
