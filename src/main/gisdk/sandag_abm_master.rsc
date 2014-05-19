@@ -113,7 +113,7 @@ Macro "Run SANDAG ABM"
       end
 	
       // Skim transit network 
-      if skipTranSkimming = "false" then do
+      if skipTransitSkimming = "false" then do
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Build transit skims"})
 	      ok = RunMacro("TCB Run Macro", 1, "Build transit skims",{}) 
 	      if !ok then goto quit

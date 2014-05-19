@@ -51,11 +51,13 @@ set PATH=%JAVA_PATH%\bin;%OLDPATH%
 rem run ping to add a pause so that hhMgr and mtxMgr have time to fully start
 ping -n 10 %MAIN% > nul
 
+cd .%PROJECT_DIRECTORY%
+
 rem build bike logsums/skims
-rem%JAVA_64_PATH%\bin\java -server -Xmx%BIKELOGSUM_MEM_MAX% -XX:-UseGCOverheadlimit -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.active.sandag.SandagBikePathChoiceLogsumMatrixApplication %PROPERTIES_NAME%
+rem %JAVA_64_PATH%\bin\java -server -Xmx%BIKELOGSUM_MEM_MAX% -XX:-UseGCOverheadlimit -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.active.sandag.SandagBikePathChoiceLogsumMatrixApplication %PROPERTIES_NAME%
 
 rem build walk logsums/skims
-rem%JAVA_64_PATH%\bin\java -server -Xmx%WALKLOGSUM_MEM_MAX% -XX:-UseGCOverheadlimit -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.active.sandag.SandagWalkPathChoiceLogsumMatrixApplication %PROPERTIES_NAME%
+rem %JAVA_64_PATH%\bin\java -server -Xmx%WALKLOGSUM_MEM_MAX% -XX:-UseGCOverheadlimit -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.active.sandag.SandagWalkPathChoiceLogsumMatrixApplication %PROPERTIES_NAME%
 
 rem ## DISTRIBUTED ##
 %JAVA_64_PATH%\bin\java -showversion -server -Xms%MEMORY_CLIENT_MIN% -Xmx%MEMORY_CLIENT_MAX% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% -Djppf.config=jppf-clientDistributed.properties org.sandag.abm.application.SandagTourBasedModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% -sampleSeed 1 -luAcc true
