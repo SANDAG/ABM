@@ -148,38 +148,38 @@ else
 
    
    for i = 1 to periods.length do
-      // drive-alone toll exclusion set
-      excl_dat[i]={db_link_lyr, link_lyr, "dat", "Select * where !((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)"} 
+        // drive-alone toll exclusion set
+      excl_dat[i]={db_link_lyr, link_lyr, "dat", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&ITRUCK<5)"} 
       
       // shared-2 non-toll HOV exclusion set
-      excl_s2nh[i]={db_link_lyr, link_lyr, "s2nh", "Select * where !(ihov=1|(ihov=2&abln"+periods[i]+"<9)|ifc>7)"}
+      excl_s2nh[i]={db_link_lyr, link_lyr, "s2nh", "Select * where !((ihov=1|(ihov=2&abln"+periods[i]+" <9)|ifc>7)&ITRUCK<5)"}
    
       // shared-2 toll HOV exclusion set
-      excl_s2th[i]={db_link_lyr, link_lyr, "s2th", "Select * where !((ihov=1|(ihov=2&abln"+periods[i]+"<9)|ihov=4|(ihov=3&itoll"+periods[i]+">0&abln"+periods[i]+"<9))|ifc>7)"}
+      excl_s2th[i]={db_link_lyr, link_lyr, "s2th", "Select * where !(((ihov=1|(ihov=2&abln"+periods[i]+"<9)|ihov=4|(ihov=3&itoll"+periods[i]+">0&abln"+periods[i]+"<9))|ifc>7)&ITRUCK<5)"}
    
       // shared=3+ non-toll non-HOV exclusion set
-      excl_s3nh[i]={db_link_lyr, link_lyr, "s3nh", "Select * where !(ihov=1|((ihov=2|ihov=3)&abln"+periods[i]+"<9)|ifc>7)"}
+      excl_s3nh[i]={db_link_lyr, link_lyr, "s3nh", "Select * where !((ihov=1|((ihov=2|ihov=3)&abln"+periods[i]+"<9)|ifc>7)& ITRUCK<5)"}
    
       // shared=3+ toll HOV exclusion set
-      excl_s3th[i]={db_link_lyr, link_lyr, "s3th", "Select * where abln"+periods[i]+"=9"}
+      excl_s3th[i]={db_link_lyr, link_lyr, "s3th", "Select * where abln"+periods[i]+"=9|ITRUCK>4"}
    
       // light-heavy truck non-toll exclusion set
-      excl_lhdn[i]={db_link_lyr, link_lyr, "lhdn", "Select * where !(ihov=1)"}
+      excl_lhdn[i]={db_link_lyr, link_lyr, "lhdn", "Select * where !((ihov=1|ifc>7)&(ITRUCK<4|ITRUCK=7))"}
   
       // medium-heavy truck non-toll exclusion set
-      excl_mhdn[i]={db_link_lyr, link_lyr, "mhdn", "Select * where !(ihov=1)"}
+      excl_mhdn[i]={db_link_lyr, link_lyr, "mhdn", "Select * where !((ihov=1|ifc>7)&(ITRUCK<3|ITRUCK>5))"}
       
       // heavy-heavy truck non-toll exclusion set
-      excl_hhdn[i]={db_link_lyr, link_lyr, "hhdn", "Select * where !(ihov=1)"}
+      excl_hhdn[i]={db_link_lyr, link_lyr, "hhdn", "Select * where !((ihov=1|ifc>7)&(ITRUCK=1|ITRUCK>4))"}
    
       // light-heavy truck toll exclusion set
-      excl_lhdt[i]={db_link_lyr, link_lyr, "lhd", "Select * where !((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)"}
+      excl_lhdt[i]={db_link_lyr, link_lyr, "lhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7) & (ITRUCK<4|ITRUCK=7))"}
  
       // medium-heavy truck toll exclusion set
-      excl_mhdt[i]={db_link_lyr, link_lyr, "mhd", "Select * where !((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)"}
+      excl_mhdt[i]={db_link_lyr, link_lyr, "mhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&(ITRUCK<3|ITRUCK>5))"}
    
       // heavy-heavy truck toll exclusion set
-      excl_hhdt[i]={db_link_lyr, link_lyr, "hhd", "Select * where !((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)"}
+      excl_hhdt[i]={db_link_lyr, link_lyr, "hhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&(ITRUCK=1|ITRUCK>4))"}
    
    end
 
