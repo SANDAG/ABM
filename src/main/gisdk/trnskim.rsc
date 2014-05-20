@@ -45,17 +45,7 @@ EndMacro
 Macro "Build transit skims"
 
    shared path,inputDir, outputDir, mxtap
- 
-/*
-   // for testing
-   path = "c:\\projects\\sandag\\series12\\base2008_5_period"
-   inputDir = "c:\\projects\\sandag\\series12\\base2008_5_period\\input"                                                                        
-   outputDir = "c:\\projects\\sandag\\series12\\base2008_5_period\\output"                                                                        
-   mxtap=2500
-   RunMacro("TCB Init")     
-   // end testing
-*/
- 
+  
    ok = RunMacro("Update transit time fields")  
    if !ok then goto quit  
    

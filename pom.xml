@@ -41,12 +41,12 @@
         <java.32.port>1190</java.32.port>  
         <MAPDRIVE>X:</MAPDRIVE>
 		<MAPDRIVEFOLDER>\\sandag.org\transdata</MAPDRIVEFOLDER>
-		<USERNAME>XX</USERNAME>
-		<PASSWORD>XX</PASSWORD>
+		<USERNAME>joelf</USERNAME>
+		<PASSWORD>B@seB@ll!</PASSWORD>
 		<MAPANDRUN>mapAndRun.bat</MAPANDRUN>
 		<JAVA_64_PATH>C:\Progra~1\Java\jre7</JAVA_64_PATH>
 		<JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
-		<workpath>t:\\data\\ABM_AT</workpath>
+		<tworkpath>t:\\data\\ABM_AT</tworkpath>
     </properties>
     <profiles>
         <profile>
@@ -81,7 +81,8 @@
                 <master.node.name>CHARGER</master.node.name>
                 <node.1.name>THUNDERBIRD</node.1.name>
                 <node.2.name>BARRACUDA</node.2.name>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH> 
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
+                <workpath>d:\\projects\\sandag\\series13</workpath>                
             </properties>
         </profile>
         <profile>
@@ -100,6 +101,7 @@
                 <node.1.name>THUNDERBIRD</node.1.name>
                 <node.2.name>BARRACUDA</node.2.name>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH> 
+                <workpath>d:\\projects\\sandag\\series13</workpath>
             </properties>
         </profile>        
         <profile>
@@ -118,6 +120,7 @@
                 <node.1.name>GALAXIE</node.1.name>
                 <node.2.name>COBRA</node.2.name>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH> 
+                <workpath>d:\\projects\\sandag\\series13</workpath>
             </properties>
         </profile>
         <profile>
@@ -135,7 +138,8 @@
                 <master.node.name>MUSTANG</master.node.name>
                 <node.1.name>GALAXIE</node.1.name>
                 <node.2.name>COBRA</node.2.name>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH> 
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
+                <workpath>d:\\projects\\sandag\\series13</workpath>
             </properties>
         </profile>
         <profile>
@@ -154,6 +158,7 @@
                 <node.1.name>HAWKEYE</node.1.name>
                 <node.2.name>AGGIE</node.2.name>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
+                <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>                
             </properties>
         </profile>
         <profile>
@@ -172,6 +177,7 @@
                 <node.1.name>HAWKEYE</node.1.name>
                 <node.2.name>AGGIE</node.2.name>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
+                <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>                
             </properties>
         </profile>          
         <profile>
@@ -190,6 +196,7 @@
                 <node.1.name>WILDCAT</node.1.name>
                 <node.2.name>NITTANY</node.2.name>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
+                <workpath>d:\\projects\\sandag\\series13</workpath>                
             </properties>
         </profile> 
         <profile>
@@ -208,6 +215,7 @@
                 <node.1.name>WILDCAT</node.1.name>
                 <node.2.name>NITTANY</node.2.name>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
+                <workpath>d:\\projects\\sandag\\series13</workpath>                
             </properties>
         </profile>         
         <profile>
