@@ -2,7 +2,7 @@ Macro "Run SANDAG ABM"
   
    RunMacro("TCB Init")
 
-   shared path, inputDir, outputDir, inputTruckDir, mxzone, mxtap, mgraDataFile,mxext,mxlink,mxrte
+   shared path, inputDir, outputDir, inputTruckDir, mxzone, mxtap, mxext,mxlink,mxrte
  
    // Stop residual Java processes on nodes
    runString = path+"\\bin\\stopABM.cmd"
@@ -12,7 +12,6 @@ Macro "Run SANDAG ABM"
    max_iterations=sample_rate.length    //number of feedback loops
   
    path = "${workpath}\\${year}"
-   mgraDataFile      = "mgra13_based_input${year}.csv"
 
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","*********Model Run Starting************"})
       

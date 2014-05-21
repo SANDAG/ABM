@@ -37,10 +37,10 @@ set MEMORY_EMFAC_MAX=${emfac.memory.max}
 
 rem all nodes need to map the scenario drive, currently mapped as x:
 set MAPDRIVE=${MAPDRIVE}
-set MAPDRIVEFOLDER=\\${master.node.name}\${map.folder}
+rem set MAPDRIVEFOLDER=\\${master.node.name}\${map.folder}
 rem uncomment next line if use T drive as data folder.  
 rem !!!Note: much slower than a local data folder!!!
-rem set MAPDRIVEFOLDER=${MAPDRIVEFOLDER}
+set MAPDRIVEFOLDER=${MAPDRIVEFOLDER}
 
 rem account settings for remote access using psexec
 set USERNAME=${USERNAME}

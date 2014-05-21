@@ -36,7 +36,7 @@ Macro "Commercial Vehicle Generation"
       scenarioDirectory = "d:\\projects\\SANDAG\\AB_Model\\commercial_vehicles"
 */   
    
-   shared path, inputDir, outputDir, mgraDataFile       
+   shared path, inputDir, outputDir       
    
    mgraCommTripFile  = "mgraCommVeh.csv"
    tazCommTripFile   = "tazCommVeh.csv"
@@ -46,7 +46,7 @@ Macro "Commercial Vehicle Generation"
    
        
    // read in the mgra data in CSV format
-   mgraView = OpenTable("MGRA View", "CSV", {inputDir+"\\"+mgraDataFile}, {{"Shared", "True"}})
+   mgraView = OpenTable("MGRA View", "CSV", {inputDir+"\\mgra13_based_input${year}.csv"}, {{"Shared", "True"}})
    
    mgra                            = GetDataVector(mgraView+"|", "mgra", {{"Sort Order", {{"mgra", "Ascending"}}}} )
    taz                             = GetDataVector(mgraView+"|", "TAZ", {{"Sort Order", {{"mgra", "Ascending"}}}} )

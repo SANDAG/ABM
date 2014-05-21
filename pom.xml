@@ -12,12 +12,13 @@
     <properties>
         <encoding.type>UTF-8</encoding.type> 
         <output.path>${project.build.directory}/${project.name}/${project.version}/${project.activeProfiles[0].id}/${project.activeProfiles[1].id}</output.path>
+        <study.root>${project.build.directory}/${project.name}/${project.version}/${project.activeProfiles[0].id}</study.root>
         <jppf.driver.memory.min>1000m</jppf.driver.memory.min> 
         <jppf.driver.memory.max>9000m</jppf.driver.memory.max> 
-        <jppf.masternode.memory.min>32000m</jppf.masternode.memory.min> 
-        <jppf.masternode.memory.max>32000m</jppf.masternode.memory.max> 
-        <jppf.slavenode.memory.min>45000m</jppf.slavenode.memory.min> 
-        <jppf.slavenode.memory.max>50000m</jppf.slavenode.memory.max> 
+        <jppf.headnode.memory.min>32000m</jppf.headnode.memory.min> 
+        <jppf.headnode.memory.max>32000m</jppf.headnode.memory.max> 
+        <jppf.workernode.memory.min>45000m</jppf.workernode.memory.min> 
+        <jppf.workernode.memory.max>50000m</jppf.workernode.memory.max> 
         <mtxmgr.memory.min>20000m</mtxmgr.memory.min> 
         <mtxmgr.memory.max>20000m</mtxmgr.memory.max> 
         <hhmgr.memory.min>1000m</hhmgr.memory.min> 
@@ -46,7 +47,7 @@
 		<MAPANDRUN>mapAndRun.bat</MAPANDRUN>
 		<JAVA_64_PATH>C:\Progra~1\Java\jre7</JAVA_64_PATH>
 		<JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
-		<tworkpath>t:\\data\\ABM_AT</tworkpath>
+		<workpath>T:\data\ABM_AT</workpath>
     </properties>
     <profiles>
         <profile>
@@ -82,7 +83,9 @@
                 <node.1.name>THUNDERBIRD</node.1.name>
                 <node.2.name>BARRACUDA</node.2.name>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
-                <workpath>d:\\projects\\sandag\\series13</workpath>                
+                <!-- 
+                <workpath>d:\\projects\\sandag\\series13</workpath>   
+                -->             
             </properties>
         </profile>
         <profile>
@@ -101,7 +104,9 @@
                 <node.1.name>THUNDERBIRD</node.1.name>
                 <node.2.name>BARRACUDA</node.2.name>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH> 
+                <!--
                 <workpath>d:\\projects\\sandag\\series13</workpath>
+                -->
             </properties>
         </profile>        
         <profile>
@@ -120,7 +125,9 @@
                 <node.1.name>GALAXIE</node.1.name>
                 <node.2.name>COBRA</node.2.name>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH> 
+                <!--
                 <workpath>d:\\projects\\sandag\\series13</workpath>
+                -->
             </properties>
         </profile>
         <profile>
@@ -139,7 +146,9 @@
                 <node.1.name>GALAXIE</node.1.name>
                 <node.2.name>COBRA</node.2.name>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
+                <!-- 
                 <workpath>d:\\projects\\sandag\\series13</workpath>
+                -->
             </properties>
         </profile>
         <profile>
@@ -158,7 +167,9 @@
                 <node.1.name>HAWKEYE</node.1.name>
                 <node.2.name>AGGIE</node.2.name>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
-                <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>                
+                <!--  
+                <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>   
+                -->             
             </properties>
         </profile>
         <profile>
@@ -177,7 +188,9 @@
                 <node.1.name>HAWKEYE</node.1.name>
                 <node.2.name>AGGIE</node.2.name>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
-                <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>                
+                <!--  
+                <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>  
+                -->              
             </properties>
         </profile>          
         <profile>
@@ -196,7 +209,9 @@
                 <node.1.name>WILDCAT</node.1.name>
                 <node.2.name>NITTANY</node.2.name>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
-                <workpath>d:\\projects\\sandag\\series13</workpath>                
+                <!--  
+                <workpath>d:\\projects\\sandag\\series13</workpath>  
+                -->              
             </properties>
         </profile> 
         <profile>
@@ -215,7 +230,9 @@
                 <node.1.name>WILDCAT</node.1.name>
                 <node.2.name>NITTANY</node.2.name>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
-                <workpath>d:\\projects\\sandag\\series13</workpath>                
+                <!-- 
+                <workpath>d:\\projects\\sandag\\series13</workpath>    
+                -->            
             </properties>
         </profile>         
         <profile>
@@ -302,8 +319,8 @@
                 <acc.uec.file>Accessibilities2020.xls</acc.uec.file>
                 <utility.bestTransitPath.uec.file>BestTransitPathUtility2020.xls</utility.bestTransitPath.uec.file>             
                 <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs_2050.csv</PopulationSynthesizer.OccupCodes> 
-                <workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
-                <schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
+                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
@@ -326,8 +343,8 @@
                 <acc.uec.file>Accessibilities2035.xls</acc.uec.file>
                 <utility.bestTransitPath.uec.file>BestTransitPathUtility2035.xls</utility.bestTransitPath.uec.file>
                 <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs_2050.csv</PopulationSynthesizer.OccupCodes> 
-                <workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
-                <schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
+                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
@@ -432,7 +449,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <encoding>${encoding.type}</encoding>
+                            <encoding>${encoding.type}</encoding> 
                             <outputDirectory>${output.path}/application</outputDirectory>
                             <overWriteReleases>false</overWriteReleases>
                             <overWriteSnapshots>false</overWriteSnapshots>
@@ -470,11 +487,34 @@
                         </goals>
                         <configuration>
                             <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${study.root}/gisdk</outputDirectory>
+                            <!--  
                             <outputDirectory>${output.path}/gisdk</outputDirectory>
+                            -->
                             <resources>
                                 <resource>
                                     <directory>src/main/gisdk</directory>
                                     <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-txt-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${study.root}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>scen_name.txt</include>
+                                    </includes>
                                 </resource>
                             </resources>
                         </configuration>
@@ -689,7 +729,7 @@
                         <exclude>**/*.properties</exclude>
                         <exclude>*.xml</exclude>
                     </excludes>
-                    <outputDirectory>${output.path}/application</outputDirectory>
+                    <outputDirectory>${output.path}/application</outputDirectory>                  
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
