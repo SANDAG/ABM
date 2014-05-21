@@ -240,7 +240,7 @@ Macro "Run SANDAG ABM"
 	   if !ok then goto quit
 	
 	   // export core ABM data
-	   runString = path+"\\bin\\DataExporter.bat "+drive+" "+path_no_drive
+	   runString = path+"\\bin\\DataExporter.bat"
 	   ok = RunMacro("TCB Run Command", 1, "Export core ABM data", runString)
 	   if !ok then goto quit 
    end

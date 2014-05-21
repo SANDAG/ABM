@@ -1966,7 +1966,7 @@ public final class DataExporter
             definedTables.add(table.trim().toLowerCase());
 
         String path = ClassLoader.getSystemResource("").getPath();
-        path = path.substring(0, path.length() - 2);
+        path = path.substring(1, path.length() - 2);
         String appPath = path.substring(0, path.lastIndexOf("/"));
 
         for (Object key : properties.keySet())
