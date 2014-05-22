@@ -5,4 +5,8 @@ set PROJECT_DIRECTORY=%2
 cd %PROJECT_DIRECTORY%
 call %PROJECT_DIRECTORY%\bin\CTRampEnv.bat
 
-%JAVA_64_PATH%\bin\java -Xms40000m -Xmx40000m -cp application/*;conf/;%TRANSCAD_PATH%/GISDK/Matrices/* org.sandag.abm.reporting.DataExporter
+rem JVM memory allocation
+remset MEMORY_DATAEXPORT_MIN=%MEMORY_DATAEXPORT_MIN%
+remset MEMORY_DATAEXPORT_MAX=%MEMORY_DATAEXPORT_MAX%
+
+%JAVA_64_PATH%\bin\java -Xms%MEMORY_DATAEXPORT_MIN% -Xmx%MEMORY_DATAEXPORT_MAX% -cp application/*;conf/;%TRANSCAD_PATH%/GISDK/Matrices/* org.sandag.abm.reporting.DataExporter

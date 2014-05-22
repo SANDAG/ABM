@@ -9,6 +9,10 @@ cd %PROJECT_DIRECTORY%
 
 call %PROJECT_DIRECTORY%\bin\CTRampEnv.bat
 
+rem JVM allocations
+set MEMORY_HHMGR_MIN=%MEMORY_HHMGR_MIN%
+set MEMORY_HHMGR_MAX=%MEMORY_HHMGR_MAX%
+
 rem Running on SAG02
 set HOST_IP_ADDRESS=%HHMGR_IP%
 
@@ -40,7 +44,7 @@ set PATH=%JAVA_64_PATH%\bin;%OLDPATH%
 
 
 rem ### Change current directory to RUNTIME, and issue the java command to run the model.
-start %JAVA_64_PATH%/bin/java -server -Xms20000m -Xmx20000m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j_hh.xml org.sandag.abm.application.SandagHouseholdDataManager2 -hostname %HOST_IP_ADDRESS% -port %HOST_PORT%
+start %JAVA_64_PATH%/bin/java -server -Xms%MEMORY_HHMGR_MIN% -Xmx%MEMORY_HHMGR_MAX% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j_hh.xml org.sandag.abm.application.SandagHouseholdDataManager2 -hostname %HOST_IP_ADDRESS% -port %HOST_PORT%
 rem java -Xdebug -Xrunjdwp:transport=dt_socket,address=1044,server=y,suspend=y -server -Xmx12000m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j_hh.xml org.sandag.abm.application.SandagHouseholdDataManager2 -hostname %HOST_IP_ADDRESS%
  
 rem ### restore saved environment variable values, and change back to original current directory

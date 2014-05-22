@@ -7,6 +7,11 @@ set PROJECT_DIRECTORY=%2
 cd %PROJECT_DIRECTORY%
 call %PROJECT_DIRECTORY%\bin\CTRampEnv.bat
 
+rem JVM memory allocation
+set BIKELOGSUM_MEM_MIN=%MEMORY_BIKELOGSUM_MIN%
+set BIKELOGSUM_MEM_MAX=%MEMORY_BIKELOGSUM_MAX%
+set WALKLOGSUM_MEM_MIN=%MEMORY_WALKLOGSUM_MIN%
+set WALKLOGSUM_MEM_MAX=%MEMORY_WALKLOGSUM_MAX%
 
 rem ### First save the JAVA_PATH environment variable so it s value can be restored at the end.
 set OLDJAVAPATH=%JAVA_PATH%
@@ -41,11 +46,11 @@ rem run ping to add a pause so that hhMgr and mtxMgr have time to fully start
 ping -n 10 %MAIN_IP% > nul
 
 rem   rem build bike logsums
-%JAVA_64_PATH%\bin\java -showversion -server -Xmx25g -XX:-UseGCOverheadLimit -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.active.sandag.SandagBikePathChoiceLogsumMatrixApplication %PROPERTIES_NAME%
+%JAVA_64_PATH%\bin\java -showversion -server -Xmx%MEMORY_BIKELOGSUM_MAX% -XX:-UseGCOverheadLimit -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.active.sandag.SandagBikePathChoiceLogsumMatrixApplication %PROPERTIES_NAME%
 if ERRORLEVEL 1 goto DONE
 
 rem   rem build walk skims
-%JAVA_64_PATH%\bin\java -showversion -server -Xmx25g -XX:-UseGCOverheadLimit -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.active.sandag.SandagWalkPathChoiceLogsumMatrixApplication %PROPERTIES_NAME%
+%JAVA_64_PATH%\bin\java -showversion -server -Xmx%MEMORY_WALKLOGSUM_MAX%  -XX:-UseGCOverheadLimit -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.active.sandag.SandagWalkPathChoiceLogsumMatrixApplication %PROPERTIES_NAME%
 if ERRORLEVEL 1 goto DONE
 
 :done

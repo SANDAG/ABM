@@ -4,7 +4,7 @@ dBox "Run ABM" title: "SANDAG ABM"
   shared path, path_study
   shared scr
 
-  path_study="T:\\projects\\sr13\\sdf_projevl\\complete"
+  path_study="${workpath}"
   scen_namefile = "\\scen_name.txt"
   scen_info = GetFileInfo(path_study + scen_namefile)
   if scen_info<>null then do

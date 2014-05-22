@@ -19,7 +19,7 @@ set OLDCLASSPATH=%CLASSPATH%
 set CLASSPATH=%CONFIG%;%RUNTIME%;%LIB_JAR_PATH%;
 
 rem run bike assignment
-java -showversion -server -Xmx25g -XX:-UseGCOverheadLimit -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.active.sandag.SandagBikePathChoiceEdgeAssignmentApplication %PROPERTIES_NAME% %SAMPLERATE% %ITERATION%
+java -showversion -server -Xmx%MEMORY_BIKEROUTE_MAX% -XX:-UseGCOverheadLimit -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.active.sandag.SandagBikePathChoiceEdgeAssignmentApplication %PROPERTIES_NAME% %SAMPLERATE% %ITERATION%
 if ERRORLEVEL 1 goto DONE
 
 :done
