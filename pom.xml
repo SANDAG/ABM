@@ -6,7 +6,7 @@
 
     <groupId>org.sandag</groupId>
     <artifactId>SANDAG-ABM</artifactId>
-    <version>13.1.1-SNAPSHOT</version>
+    <version>13.2.1-SNAPSHOT</version>
     <name>SANDAG CT-RAMP Activity Based Model</name>
 
     <properties>
@@ -42,8 +42,8 @@
         <java.32.port>1190</java.32.port>  
         <MAPDRIVE>X:</MAPDRIVE>
 		<MAPDRIVEFOLDER>\\sandag.org\transdata</MAPDRIVEFOLDER>
-		<USERNAME>joelf</USERNAME>
-		<PASSWORD>B@seB@ll!</PASSWORD>
+		<USERNAME>XX</USERNAME>
+		<PASSWORD>XX</PASSWORD>
 		<MAPANDRUN>mapAndRun.bat</MAPANDRUN>
 		<JAVA_64_PATH>C:\Progra~1\Java\jre7</JAVA_64_PATH>
 		<JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
