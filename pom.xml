@@ -40,7 +40,7 @@
         <matrix.server.port>1191</matrix.server.port>  
         <household.server.port>1129</household.server.port>  
         <java.32.port>1190</java.32.port>  
-        <MAPDRIVE>X:</MAPDRIVE>
+        <MAPDRIVE>T:</MAPDRIVE>
 		<MAPDRIVEFOLDER>\\sandag.org\transdata</MAPDRIVEFOLDER>
 		<USERNAME>XX</USERNAME>
 		<PASSWORD>XX</PASSWORD>
