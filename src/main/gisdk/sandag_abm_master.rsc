@@ -32,6 +32,7 @@ Macro "Run SANDAG ABM"
    // read properties from sandag_abm.properties in /conf folder
    properties = "\\conf\\sandag_abm.properties"   
    skipCopyWarmupTripTables = RunMacro("read properties",properties,"RunModel.skipCopyWarmupTripTables", "S")
+   skipCopyBikeLogsum = RunMacro("read properties",properties,"RunModel.skipCopyBikeLogsum", "S")
    skipBuildHwyNetwork = RunMacro("read properties",properties,"RunModel.skipBuildHwyNetwork", "S")
    skipBuildTransitNetwork= RunMacro("read properties",properties,"RunModel.skipBuildTransitNetwork", "S")
    startFromIteration = s2i(RunMacro("read properties",properties,"RunModel.startFromIteration", "S"))
@@ -59,6 +60,12 @@ Macro "Run SANDAG ABM"
 	   CopyFile(inputDir+"\\trip_MD.mtx", outputDir+"\\trip_MD.mtx")
 	   CopyFile(inputDir+"\\trip_PM.mtx", outputDir+"\\trip_PM.mtx")
 	   CopyFile(inputDir+"\\trip_EV.mtx", outputDir+"\\trip_EV.mtx")
+   end
+
+   // copy bike logsums from input to output folder
+   if skipCopyBikeLogsum = "false" then do
+	   CopyFile(inputDir+"\\bikeMgraLogsum.csv", outputDir+"\\bikeMgraLogsum.csv")
+	   CopyFile(inputDir+"\\bikeTazLogsum.csv", outputDir+"\\bikeTazLogsum.csv")
    end
 
   // Build highway network
