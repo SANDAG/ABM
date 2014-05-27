@@ -33,6 +33,7 @@ Macro "Run SANDAG ABM"
    properties = "\\conf\\sandag_abm.properties"   
    skipCopyWarmupTripTables = RunMacro("read properties",properties,"RunModel.skipCopyWarmupTripTables", "S")
    skipCopyBikeLogsum = RunMacro("read properties",properties,"RunModel.skipCopyBikeLogsum", "S")
+   skipWalkImpedance= RunMacro("read properties",properties,"RunModel.skipWalkImpedance", "S")
    skipBuildHwyNetwork = RunMacro("read properties",properties,"RunModel.skipBuildHwyNetwork", "S")
    skipBuildTransitNetwork= RunMacro("read properties",properties,"RunModel.skipBuildTransitNetwork", "S")
    startFromIteration = s2i(RunMacro("read properties",properties,"RunModel.startFromIteration", "S"))

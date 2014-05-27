@@ -491,6 +491,13 @@ public class StopFrequencyModel
         Household hh = tour.getPersonObject().getHouseholdObject();
         int tourDepartPeriod = tour.getTourDepartPeriod();
         int tourArrivePeriod = tour.getTourArrivePeriod();
+        
+        //if not time slot can be allocated, then set time period to last one
+        if(tourDepartPeriod==-1||tourArrivePeriod==1){
+        	tourDepartPeriod=40;
+        	tourArrivePeriod=40;
+        	logger.info("set departure and arrival period to 40.");
+        }
         int tourPrimaryPurposeIndex = tour.getTourPrimaryPurposeIndex();
         String tourPrimaryPurpose = tourPrimaryPurposeIndexNameMap.get(tourPrimaryPurposeIndex);
         String personType = tour.getPersonObject().getPersonType();
