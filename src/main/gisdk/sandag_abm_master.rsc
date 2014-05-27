@@ -68,6 +68,12 @@ Macro "Run SANDAG ABM"
 	   CopyFile(inputDir+"\\bikeTazLogsum.csv", outputDir+"\\bikeTazLogsum.csv")
    end
 
+   // copy walk impedance from input to output folder
+   if skipWalkImpedance = "false" then do
+	   CopyFile(inputDir+"\\walkMgraEquivMinutes.csv", outputDir+"\\walkMgraEquivMinutes.csv")
+	   CopyFile(inputDir+"\\walkMgraTapEquivMinutes.csv", outputDir+"\\walkMgraTapEquivMinutes.csv")
+   end
+
   // Build highway network
    if skipBuildHwyNetwork = "false" then do
 	   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - run create hwy"})
