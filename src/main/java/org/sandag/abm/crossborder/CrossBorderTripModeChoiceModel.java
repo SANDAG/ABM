@@ -124,14 +124,17 @@ public class CrossBorderTripModeChoiceModel
      */
     public void chooseMode(CrossBorderTour tour, CrossBorderTrip trip)
     {
-
         computeUtilities(tour, trip);
 
         double rand = tour.getRandom();
-        int mode = tripModeChoiceModel.getChoiceResult(rand);
-
-        trip.setTripMode(mode);
-
+        try{
+        	int mode = tripModeChoiceModel.getChoiceResult(rand); 
+        	trip.setTripMode(mode);
+        }catch(Exception e){
+        	logger.info("rand="+rand);
+        	tour.logTourObject(logger, 100);
+        	logger.error(e.getMessage());
+        }
     }
 
     /**
