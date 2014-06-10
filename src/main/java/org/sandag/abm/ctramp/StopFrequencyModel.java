@@ -492,12 +492,9 @@ public class StopFrequencyModel
         int tourDepartPeriod = tour.getTourDepartPeriod();
         int tourArrivePeriod = tour.getTourArrivePeriod();
         
-        //if not time slot can be allocated, then set time period to last one
-        if(tourDepartPeriod==-1||tourArrivePeriod==1){
-        	tourDepartPeriod=40;
-        	tourArrivePeriod=40;
-        	logger.info("set departure and arrival period to 40.");
-        }
+        //log out tour details if invalid tour departure and arrival time periods are found
+        if(tourDepartPeriod==-1||tourArrivePeriod==-1) tour.logTourObject(logger, 100);
+        
         int tourPrimaryPurposeIndex = tour.getTourPrimaryPurposeIndex();
         String tourPrimaryPurpose = tourPrimaryPurposeIndexNameMap.get(tourPrimaryPurposeIndex);
         String personType = tour.getPersonObject().getPersonType();
