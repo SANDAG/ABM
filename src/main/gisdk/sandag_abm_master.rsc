@@ -4,10 +4,6 @@ Macro "Run SANDAG ABM"
 
    shared path, inputDir, outputDir, inputTruckDir, mxzone, mxtap, mxext,mxlink,mxrte
  
-   // Stop residual Java processes on nodes
-   runString = path+"\\bin\\stopABM.cmd"
-   ok = RunMacro("TCB Run Command", 1, "Stop Nodes", runString) 
-
    sample_rate = { 0.2, 0.5, 1.0 }
    max_iterations=sample_rate.length    //number of feedback loops
   
@@ -36,6 +32,7 @@ Macro "Run SANDAG ABM"
    skipWalkImpedance= RunMacro("read properties",properties,"RunModel.skipWalkImpedance", "S")
    skipBuildHwyNetwork = RunMacro("read properties",properties,"RunModel.skipBuildHwyNetwork", "S")
    skipBuildTransitNetwork= RunMacro("read properties",properties,"RunModel.skipBuildTransitNetwork", "S")
+   skipATLogsums= RunMacro("read properties",properties,"RunModel.skipATLogsums", "S")
    startFromIteration = s2i(RunMacro("read properties",properties,"RunModel.startFromIteration", "S"))
    skipHighwayAssignment = RunMacro("read properties",properties,"RunModel.skipHighwayAssignment", "S")
    skipHighwaySkimming = RunMacro("read properties",properties,"RunModel.skipHighwaySkimming", "S")
@@ -91,6 +88,14 @@ Macro "Run SANDAG ABM"
 	   // Factor headways
 	   ok = RunMacro("TCB Run Macro", 1, "update headways",{})
 	   if !ok then goto quit
+   end
+
+   // Run create AT logsums and walk impedances
+   if skipATLogsums = "false" then do
+	  runString = path+"\\bin\\runSandagBikeWalkLogsums.cmd "+drive+" "+path_forward_slash
+	  RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run create AT logsums and walk impedances"+" "+runString})
+	  ok = RunMacro("TCB Run Command", 1, "Run AT-Logsums", runString)
+	  if !ok then goto quit  
    end
 
    //Looping
