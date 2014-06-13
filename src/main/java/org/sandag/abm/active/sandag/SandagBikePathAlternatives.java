@@ -9,7 +9,7 @@ public class SandagBikePathAlternatives
 {
     private final PathAlternativeList<SandagBikeNode, SandagBikeEdge>    pathAlternativeList;
     private List<Double>                                                 distance, distClass1,
-            distClass2, distClass3, distArtNoLane, distWrongWay, distCycTrack, distBikeBlvd, gain,
+            distClass2, distClass3, distArtNoLane, distWrongWay, distCycTrack, distBikeBlvd, distScenic, gain,
             turns, signals, unlfrma, unlfrmi, untoma, untomi, netCost;
     private Network<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> network;
 
@@ -33,6 +33,7 @@ public class SandagBikePathAlternatives
         distWrongWay = new ArrayList<>();
         distCycTrack = new ArrayList<>();
         distBikeBlvd = new ArrayList<>();
+        distScenic = new ArrayList<>();
         gain = new ArrayList<>();
         turns = new ArrayList<>();
         signals = new ArrayList<>();
@@ -52,6 +53,7 @@ public class SandagBikePathAlternatives
             distWrongWay.add(0.0);
             distCycTrack.add(0.0);
             distBikeBlvd.add(0.0);
+            distScenic.add(0.0);
             gain.add(0.0);
             turns.add(0.0);
             signals.add(0.0);
@@ -82,6 +84,8 @@ public class SandagBikePathAlternatives
                             * (edge.cycleTrack ? 1 : 0));
                     distBikeBlvd.set(i, distBikeBlvd.get(i) + edge.distance
                             * (edge.bikeBlvd ? 1 : 0));
+                    distScenic.set(i, distScenic.get(i) + edge.distance
+                            * edge.scenicIndex);
                     gain.set(i, gain.get(i) + edge.gain);
                     netCost.set(i, netCost.get(i) + edge.bikeCost);
                     if (grandparent != null)
@@ -148,6 +152,11 @@ public class SandagBikePathAlternatives
     public double getDistanceWrongWayAlt(int path)
     {
         return distWrongWay.get(path);
+    }
+    
+    public double getDistanceScenicAlt(int path)
+    {
+        return distScenic.get(path);
     }
 
     public double getGainAlt(int path)

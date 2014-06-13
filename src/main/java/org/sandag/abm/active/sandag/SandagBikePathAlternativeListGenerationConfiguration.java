@@ -38,6 +38,7 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration
     public static final String                                             PROPERTIES_COEF_UNLFRMI           = "active.coef.unlfrmi";
     public static final String                                             PROPERTIES_COEF_UNTOMA            = "active.coef.untoma";
     public static final String                                             PROPERTIES_COEF_UNTOMI            = "active.coef.untomi";
+    public static final String                                             PROPERTIES_COEF_NONSCENIC            = "active.coef.nonscenic";
     public static final String                                             PROPERTIES_BIKE_MINUTES_PER_MILE  = "active.bike.minutes.per.mile";
     public static final String                                             PROPERTIES_OUTPUT                 = "active.output.bike";
     private static final double                                            INACCESSIBLE_COST_COEF            = 999.0;
@@ -326,7 +327,7 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration
         long   seed;
         Random random;
         double cDistCla0, cDistCla1, cDistCla2, cDistCla3, cArtNe2, cWrongWay, cCycTrac, cBikeBlvd,
-                cGain;
+                cGain, cNonScenic;
 
         public RandomizedEdgeCostEvaluator(long seed)
         {
@@ -367,6 +368,9 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration
             cGain = Double.parseDouble(propertyMap.get(PROPERTIES_COEF_GAIN))
                     * (1 + Double.parseDouble(propertyMap.get(PROPERTIES_RANDOM_SCALE_COEF))
                             * (2 * random.nextDouble() - 1));
+            cNonScenic = Double.parseDouble(propertyMap.get(PROPERTIES_COEF_NONSCENIC))
+                    * (1 + Double.parseDouble(propertyMap.get(PROPERTIES_RANDOM_SCALE_COEF))
+                            * (2 * random.nextDouble() - 1));
 
         }
 
@@ -390,10 +394,13 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration
                             * ((edge.functionalClass < 5 && edge.functionalClass > 0) ? 1 : 0)
                             + cWrongWay * (edge.bikeClass != 1 ? 1 : 0) * (edge.lanes == 0 ? 1 : 0)
                             + cCycTrac * (edge.cycleTrack ? 1 : 0) + cBikeBlvd
-                            * (edge.bikeBlvd ? 1 : 0)) + cGain * edge.gain)
+                            * (edge.bikeBlvd ? 1 : 0)) + cNonScenic * (1-edge.scenicIndex)
+                       )
+                       + cGain * edge.gain
+                    )
                     * (1 + Double.parseDouble(propertyMap.get(PROPERTIES_RANDOM_SCALE_LINK))
                             * (random.nextBoolean() ? 1 : -1)) + INACCESSIBLE_COST_COEF
-                    * ((edge.functionalClass < 3 && edge.functionalClass > 0) ? 1 : 0));
+                    * ((edge.functionalClass < 3 && edge.functionalClass > 0) ? 1 : 0);
         }
     }
 

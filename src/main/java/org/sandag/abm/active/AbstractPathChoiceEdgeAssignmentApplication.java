@@ -59,7 +59,7 @@ public abstract class AbstractPathChoiceEdgeAssignmentApplication<N extends Node
         logger.info("Assigning trips...");
         logger.info("Writing to " + outputDir);
         ConcurrentHashMap<E, double[]> volumes = new ConcurrentHashMap<>();
-        int threadCount = Runtime.getRuntime().availableProcessors();
+        int threadCount = Runtime.getRuntime().availableProcessors() -1;
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
         final Queue<Integer> tripQueue = new ConcurrentLinkedQueue<>(tripNums);
         final CountDownLatch latch = new CountDownLatch(threadCount);
