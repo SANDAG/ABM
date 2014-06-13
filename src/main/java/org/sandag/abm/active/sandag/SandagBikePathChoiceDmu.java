@@ -131,6 +131,11 @@ public class SandagBikePathChoiceDmu
     {
         return paths.getDistanceWrongWayAlt(path - 1);
     }
+    
+    public double getDistanceScenicAlt(int path)
+    {
+        return paths.getDistanceScenicAlt(path - 1);
+    }
 
     public double getGainAlt(int path)
     {
@@ -233,6 +238,7 @@ public class SandagBikePathChoiceDmu
         methodIndexMap.put("getUnsigCrossMajorArtAlt", 17);
         methodIndexMap.put("getUnsigCrossMinorArtAlt", 18);
         methodIndexMap.put("getNetworkCostAlt", 19);
+        methodIndexMap.put("getDistanceScenicAlt", 20);
 
     }
 
@@ -280,6 +286,8 @@ public class SandagBikePathChoiceDmu
                 return getUnsigCrossMinorArtAlt(arrayIndex);
             case 19:
                 return getNetworkCostAlt(arrayIndex);
+            case 20:
+                return getDistanceScenicAlt(arrayIndex);   
 
             default:
                 logger.error("method number = " + variableIndex + " not found");
