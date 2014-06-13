@@ -35,6 +35,9 @@ set MEMORY_DATAEXPORT_MAX=${dataexport.memory.max}
 set MEMORY_EMFAC_MIN=${emfac.memory.min}
 set MEMORY_EMFAC_MAX=${emfac.memory.max}
 
+rem set main property file name
+set PROPERTIES_NAME=sandag_abm
+
 rem all nodes need to map the scenario drive, currently mapped as x:
 set MAPDRIVE=${MAPDRIVE}
 rem set MAPDRIVEFOLDER=\\${master.node.name}\${map.folder}
