@@ -80,6 +80,9 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
     protected boolean                  walkModeAllowedForDriveTransit;
 
     protected double[][][]             transitSkim;
+    
+    protected int originMgra;
+    protected int destMgra;
 
     public TripModeChoiceDMU(ModelStructure modelStructure, Logger aLogger)
     {
@@ -602,12 +605,12 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
 
     public double getHourlyParkingCostTripOrig()
     {
-        return lsWgtAvgCostH[dmuIndex.getOriginZone()];
+        return lsWgtAvgCostH[originMgra];
     }
 
     public double getHourlyParkingCostTripDest()
     {
-        return lsWgtAvgCostH[dmuIndex.getDestZone()];
+        return lsWgtAvgCostH[destMgra];
     }
 
     public int getTripOrigIsTourDest()
@@ -618,6 +621,14 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
     public int getTripDestIsTourDest()
     {
         return tripDestIsTourDest;
+    }
+    
+    public void setOriginMgra( int value ) {
+        originMgra = value; 
+    }
+    
+    public void setDestMgra( int value ) {
+        destMgra = value; 
     }
 
     public int getFreeOnsite()
