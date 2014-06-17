@@ -265,6 +265,8 @@ public class TourModeChoiceModel
         mcDmuObject.setTourObject(tour);
         mcDmuObject.setDmuIndexValues(household.getHhId(), tour.getTourDestMgra(),
                 tour.getTourOrigMgra(), tour.getTourDestMgra(), household.getDebugChoiceModels());
+        mcDmuObject.setOriginMgra(tour.getTourOrigMgra());
+        mcDmuObject.setDestMgra(tour.getTourDestMgra());
         
         return getModeChoiceLogsum(mcDmuObject, tour, modelLogger, choiceModelDescription,
                 decisionMakerLabel);
@@ -395,7 +397,9 @@ public class TourModeChoiceModel
         mcDmuIndex.setOriginZone(mgraManager.getTaz(tour.getTourOrigMgra()));
         mcDmuIndex.setDestZone(mgraManager.getTaz(tour.getTourDestMgra()));
         mcDmuIndex.setZoneIndex(tour.getTourDestMgra());
-
+        mcDmuObject.setOriginMgra(tour.getTourOrigMgra());
+        mcDmuObject.setDestMgra(tour.getTourDestMgra());
+        
         mcModel[modelIndex].computeUtilities(mcDmuObject, mcDmuIndex);
 
         mcDmuIndex.setOriginZone(tour.getTourOrigMgra());

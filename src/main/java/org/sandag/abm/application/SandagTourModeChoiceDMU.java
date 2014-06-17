@@ -587,6 +587,9 @@ public class SandagTourModeChoiceDMU
         methodIndexMap.put("getDtw_cr_fare_in", 397);
         methodIndexMap.put("getDtw_cr_xfers_out", 398);
         methodIndexMap.put("getDtw_cr_xfers_in", 399);
+        
+        methodIndexMap.put("getOriginMgra", 401);
+        methodIndexMap.put("getDestMgra", 402);
 
         CreateReverseMap();
     }
