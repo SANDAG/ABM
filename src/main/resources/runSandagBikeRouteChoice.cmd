@@ -18,8 +18,11 @@ rem ### Define the CLASSPATH environment variable for the classpath needed in th
 set OLDCLASSPATH=%CLASSPATH%
 set CLASSPATH=%CONFIG%;%RUNTIME%;%LIB_JAR_PATH%;
 
+%PROJECT_DRIVE%
+cd %PROJECT_DRIVE%/%PROJECT_DIRECTORY%
+
 rem run bike assignment
-java -showversion -server -Xmx%MEMORY_BIKEROUTE_MAX% -XX:-UseGCOverheadLimit -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.active.sandag.SandagBikePathChoiceEdgeAssignmentApplication %PROPERTIES_NAME% %SAMPLERATE% %ITERATION%
+%JAVA_64_PATH%\bin\java -showversion -server -Xmx%MEMORY_BIKEROUTE_MAX% -XX:-UseGCOverheadLimit -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.active.sandag.SandagBikePathChoiceEdgeAssignmentApplication %PROPERTIES_NAME% %SAMPLERATE% %ITERATION%
 if ERRORLEVEL 1 goto DONE
 
 :done
