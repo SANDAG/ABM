@@ -323,11 +323,11 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
     destMgra = value; 
   }
     
-  public void getOriginMgra() {
+  public int getOriginMgra() {
     return originMgra;
   }
     
-  public void getDestMgra() {
+  public int getDestMgra() {
     return destMgra; 
   }
 
