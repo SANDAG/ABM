@@ -44,6 +44,8 @@ rem   rem build walk skims
 if ERRORLEVEL 1 goto DONE
 
 :done
-rem kill java tasks
-taskkill /F /IM java.exe
+rem ### restore saved environment variable values, and change back to original current directory
+set JAVA_PATH=%OLDJAVAPATH%
+set PATH=%OLDPATH%
+
 
