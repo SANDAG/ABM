@@ -30,15 +30,22 @@ rem ### Change the PATH environment variable so that JAVA_HOME is listed first i
 rem ### Doing this ensures that the JAVA_HOME path we defined above is the on that gets used in case other java paths are in PATH.
 set PATH=%TRANSCAD_PATH%;%JAVA_PATH%\bin;%OLDPATH%
 
+%PROJECT_DRIVE%
+cd %PROJECT_DRIVE%/%PROJECT_DIRECTORY%
+
 rem   rem build bike logsums
 %JAVA_64_PATH%\bin\java -showversion -server -Xmx%MEMORY_BIKELOGSUM_MAX% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.active.sandag.SandagBikePathChoiceLogsumMatrixApplication %PROPERTIES_NAME%
 if ERRORLEVEL 1 goto DONE
+
+cd %PROJECT_DRIVE%/%PROJECT_DIRECTORY%
 
 rem   rem build walk skims
 %JAVA_64_PATH%\bin\java -showversion -server -Xmx%MEMORY_WALKLOGSUM_MAX% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.active.sandag.SandagWalkPathChoiceLogsumMatrixApplication %PROPERTIES_NAME%
 if ERRORLEVEL 1 goto DONE
 
 :done
-rem kill java tasks
-taskkill /F /IM java.exe
+rem ### restore saved environment variable values, and change back to original current directory
+set JAVA_PATH=%OLDJAVAPATH%
+set PATH=%OLDPATH%
+
 

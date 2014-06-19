@@ -259,14 +259,14 @@ Macro "Run SANDAG ABM"
 	   if !ok then goto quit
 	
 	   // export core ABM data
-	   runString = path+"\\bin\\DataExporter.bat"
+           runString = path+"\\bin\\DataExporter.bat "+drive+" "+path_no_drive
 	   ok = RunMacro("TCB Run Command", 1, "Export core ABM data", runString)
 	   if !ok then goto quit 
    end
 
    //request data load after model run finish successfully	
    if skipDataLoadRequest = "false" then do	
-	   runString = path+"\\bin\\DataLoadRequest.bat "+drive+"\\"+path_no_drive+" "+max_iterations
+	   runString = path+"\\bin\\DataLoadRequest.bat "+drive+path_no_drive+" "+String(max_iterations)
 	   ok = RunMacro("TCB Run Command", 1, "Export core ABM data", runString)
 	   if !ok then goto quit 
    end
