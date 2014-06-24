@@ -284,6 +284,10 @@ public class SandagTourModeChoiceDMU
         methodIndexMap.put("getNm_walkTime_in", 91);
         methodIndexMap.put("getNm_bikeTime_out", 92);
         methodIndexMap.put("getNm_bikeTime_in", 93);
+        
+        methodIndexMap.put("getOriginMgra", 96);
+        methodIndexMap.put("getDestMgra", 97);
+
 
         methodIndexMap.put("getWtw_lb_LB_ivt_out", 100);
         methodIndexMap.put("getWtw_lb_LB_ivt_in", 101);
@@ -588,8 +592,6 @@ public class SandagTourModeChoiceDMU
         methodIndexMap.put("getDtw_cr_xfers_out", 398);
         methodIndexMap.put("getDtw_cr_xfers_in", 399);
         
-        methodIndexMap.put("getOriginMgra", 401);
-        methodIndexMap.put("getDestMgra", 402);
 
         CreateReverseMap();
     }

@@ -322,6 +322,9 @@ public class SandagTripModeChoiceDMU
         
         methodIndexMap.put("getNm_walkTime", 90);
         methodIndexMap.put("getNm_bikeTime", 91);
+        
+        methodIndexMap.put("getOriginMgra", 93);
+        methodIndexMap.put("getDestMgra", 94);
 
         methodIndexMap.put("getWtw_lb_LB_ivt", 100);
         methodIndexMap.put("getWtw_lb_fwait", 101);

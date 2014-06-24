@@ -39,10 +39,11 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
 	protected double nmBikeTimeOut;
 	protected double nmBikeTimeIn;
 
+	protected int originMgra;
+    protected int destMgra;
+	  
 	protected double[][][][] transitSkim;
 	
-	protected int originMgra;
-  protected int destMgra;
 
 	public TourModeChoiceDMU(ModelStructure modelStructure, Logger aLogger) {
 		logger = aLogger;

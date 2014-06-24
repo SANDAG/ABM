@@ -79,10 +79,12 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
     protected boolean                  autoModeRequiredForDriveTransit;
     protected boolean                  walkModeAllowedForDriveTransit;
 
+	protected int originMgra;
+    protected int destMgra;
+
     protected double[][][]             transitSkim;
     
-    protected int originMgra;
-    protected int destMgra;
+ 
 
     public TripModeChoiceDMU(ModelStructure modelStructure, Logger aLogger)
     {
@@ -651,6 +653,22 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
     {
         return aTazTerminalTime;
     }
+
+    /**
+ 	 * @return the originMgra
+ 	 */
+ 	public int getOriginMgra() {
+ 		return originMgra;
+ 	}
+
+
+
+ 	/**
+ 	 * @return the destMgra
+ 	 */
+ 	public int getDestMgra() {
+ 		return destMgra;
+ 	}
 
     public int getIndexValue(String variableName)
     {
