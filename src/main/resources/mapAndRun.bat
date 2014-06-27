@@ -27,7 +27,7 @@ SHIFT
 SHIFT
 SET TEN=%1
 
-net use %ONE% %TWO% %THREE% /user:%FOUR% /persistent:yes
+net use %ONE% %TWO% /persistent:yes
 %ONE%
 cd %FIVE%
 call %SIX% %SEVEN% %EIGHT% %NINE% %TEN%
