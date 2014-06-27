@@ -31,21 +31,16 @@ Macro "ExportSandagData"
     output_hwyload_file = RunMacro("FormPath",{reportDir,"hwyload_"})
 
     external_zones = {"1","2","3","4","5","6","7","8","9","10","11","12"}
-/*
-    trn_sellink_file = outputDir+"\\trn_sellinkWLK_LRT_EA.mtx"
-    if GetFileInfo(trn_sellink_file) <> null then RunMacro("Sum Up Select Link Transit Trips") 	
-*/
+
     RunMacro("ExportNetworkToCsv",network_file,output_network_file)   
     RunMacro("ExportHwyloadtoCSV",input_hwyload_file,output_hwyload_file)    
-
     RunMacro("ExportBintoCSV",input_route_file, output_route_file) 
     RunMacro("ExportBintoCSV",input_stop_file, output_stop_file) 
     RunMacro("ExportTransitTablesToCsv",outputDir,RunMacro("BuildOnOffOptions"),output_transit_onoff_file)
     RunMacro("ExportTransitTablesToCsv",outputDir,RunMacro("BuildTransitFlowOptions"),output_transit_flow_file)
     RunMacro("ExportTransitTablesToCsv",outputDir,RunMacro("BuildAggFlowOptions"),output_transit_aggflow_file)
   
-    RunMacro("close all")
-    RunMacro("TCB Closing", ok, "False")
-    return(1)    
+    RunMacro("G30 File Close All")
+    return(1)   
 
 EndMacro

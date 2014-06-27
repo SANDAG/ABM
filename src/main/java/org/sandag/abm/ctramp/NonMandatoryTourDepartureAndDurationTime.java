@@ -1140,6 +1140,9 @@ public class NonMandatoryTourDepartureAndDurationTime
                 .getTourOrigMgra())));
         mcDmuObject.setATazTerminalTime(tazs.getDestinationTazTerminalTime(mgraManager.getTaz(t
                 .getTourDestMgra())));
+                
+        mcDmuObject.setOriginMgra(t.getTourOrigMgra());
+        mcDmuObject.setDestMgra(t.getTourDestMgra());
 
     }
 

@@ -175,7 +175,7 @@ public class SandagBikePathChoiceEdgeAssignmentApplication
 
         try (PrintWriter writer = new PrintWriter(outputFile.toFile()))
         {
-            StringBuilder sb = new StringBuilder("a,b");
+            StringBuilder sb = new StringBuilder("roadsegid,from,to");
             for (String segment : TIME_PERIOD_LABELS)
                 sb.append(",").append(segment);
             writer.println(sb.toString());
@@ -184,7 +184,7 @@ public class SandagBikePathChoiceEdgeAssignmentApplication
             {
                 SandagBikeEdge edge = edgeIterator.next();
                 sb = new StringBuilder();
-                sb.append(edge.getFromNode().getId()).append(",").append(edge.getToNode().getId());
+                sb.append(edge.roadsegid).append(",").append(edge.getFromNode().getId()).append(",").append(edge.getToNode().getId());
                 if (volumes.containsKey(edge))
                 {
                     for (double value : volumes.get(edge))

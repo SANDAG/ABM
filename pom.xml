@@ -6,7 +6,7 @@
 
     <groupId>org.sandag</groupId>
     <artifactId>SANDAG-ABM</artifactId>
-    <version>13.2.0</version>
+    <version>13.2.1-SNAPSHOT</version>
     <name>SANDAG CT-RAMP Activity Based Model</name>
 
     <properties>
@@ -318,7 +318,7 @@
                 <airport.mc.uec.file>AirportModeChoice2020.xls</airport.mc.uec.file>
                 <acc.uec.file>Accessibilities2020.xls</acc.uec.file>
                 <utility.bestTransitPath.uec.file>BestTransitPathUtility2020.xls</utility.bestTransitPath.uec.file>             
-                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs_2050.csv</PopulationSynthesizer.OccupCodes> 
+                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
             </properties>
@@ -342,7 +342,7 @@
                 <airport.mc.uec.file>AirportModeChoice2035.xls</airport.mc.uec.file>
                 <acc.uec.file>Accessibilities2035.xls</acc.uec.file>
                 <utility.bestTransitPath.uec.file>BestTransitPathUtility2035.xls</utility.bestTransitPath.uec.file>
-                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs_2050.csv</PopulationSynthesizer.OccupCodes> 
+                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
             </properties>
@@ -366,7 +366,7 @@
                 <airport.mc.uec.file>AirportModeChoice2050.xls</airport.mc.uec.file>
                 <acc.uec.file>Accessibilities2050.xls</acc.uec.file>
                 <utility.bestTransitPath.uec.file>BestTransitPathUtility2050.xls</utility.bestTransitPath.uec.file>
-                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs_2050.csv</PopulationSynthesizer.OccupCodes> 
+                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
             </properties>
@@ -473,7 +473,7 @@
                             <outputDirectory>${output.path}/uec</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>UECs</directory>
+                                    <directory>uec</directory>
                                     <filtering>false</filtering>
                                 </resource>
                             </resources>

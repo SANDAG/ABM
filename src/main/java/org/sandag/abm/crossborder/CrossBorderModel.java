@@ -309,6 +309,7 @@ public class CrossBorderModel
                 .valueOf(Util.getStringValueFromPropertyMap(rbMap,
                         CONCURRENT_PARALLELISM_PROPERTY_KEY)) : Runtime.getRuntime()
                 .availableProcessors();
+                
         if (concurrent)
         { // use fork-join
             CrossBorderModelAction action = new CrossBorderModelAction(rbMap, tours);

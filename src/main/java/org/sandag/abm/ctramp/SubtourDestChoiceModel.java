@@ -370,6 +370,7 @@ public class SubtourDestChoiceModel
                     mcDmuObject.setTourObject(tour);
                     mcDmuObject.setDmuIndexValues(hh.getHhId(), homeMgra, origMgra, 0,
                             hh.getDebugChoiceModels());
+                    mcDmuObject.setOriginMgra(origMgra);
 
                     // update the DC dmuObject for this person
                     dcDmuObject.setHouseholdObject(hh);
@@ -861,6 +862,9 @@ public class SubtourDestChoiceModel
                 .getTourOrigMgra())));
         mcDmuObject.setATazTerminalTime(tazs.getDestinationTazTerminalTime(mgraManager
                 .getTaz(sampleDestMgra)));
+        
+        mcDmuObject.setOriginMgra(t.getTourOrigMgra());
+        mcDmuObject.setDestMgra(t.getTourDestMgra());
 
     }
 

@@ -50,6 +50,7 @@ public class SandagWalkPathChoiceLogsumMatrixApplication
 
         double utility = 0;
         double distance = 0;
+        double gain = 0;
         SandagBikeNode parent = null;
         for (SandagBikeNode n : alternativeList.get(0))
         {
@@ -57,21 +58,22 @@ public class SandagWalkPathChoiceLogsumMatrixApplication
             {
                 utility += configuration.getNetwork().getEdge(parent, n).walkCost;
                 distance += configuration.getNetwork().getEdge(parent, n).distance;
+                gain += configuration.getNetwork().getEdge(parent,n).gain;
             }
             parent = n;
         }
 
-        return new double[] {utility, distance * configuration.getDefaultMinutesPerMile()};
+        return new double[] {utility, distance * configuration.getDefaultMinutesPerMile(),gain};
     }
 
     @Override
     protected List<IntrazonalCalculation<SandagBikeNode>> getMarketSegmentIntrazonalCalculations()
     {
-        IntrazonalCalculation<SandagBikeNode> logsumIntrazonalCalculation = IntrazonalCalculations
+        IntrazonalCalculation<SandagBikeNode> intrazonalCalculation = IntrazonalCalculations
                 .<SandagBikeNode>minFactorIntrazonalCalculation(
                         IntrazonalCalculations.simpleFactorizer(0.5, 0), 1);
-        // do time then distance
-        return Arrays.asList(logsumIntrazonalCalculation, logsumIntrazonalCalculation);
+        // do time then distance then gain
+        return Arrays.asList(intrazonalCalculation, intrazonalCalculation, intrazonalCalculation);
     }
 
     public static void main(String... args)
@@ -126,7 +128,7 @@ public class SandagWalkPathChoiceLogsumMatrixApplication
 
         try (PrintWriter writer = new PrintWriter(outputFile.toFile()))
         {
-            writer.println("i,j,percieved,actual");
+            writer.println("i,j,percieved,actual,gain");
             StringBuilder sb;
             for (NodePair<SandagBikeNode> od : new TreeSet<>(logsums.keySet()))
             { // sort them so the output "looks nice"
@@ -136,7 +138,8 @@ public class SandagWalkPathChoiceLogsumMatrixApplication
                 double[] values = logsums.get(od);
                 sb.append(formatter.format(values[0])).append(","); // percieved
                                                                     // time
-                sb.append(formatter.format(values[1])); // actual time
+                sb.append(formatter.format(values[1])).append(","); // actual time
+                sb.append(formatter.format(values[2])); //gain
                 writer.println(sb.toString());
             }
         } catch (IOException e)
@@ -199,7 +202,7 @@ public class SandagWalkPathChoiceLogsumMatrixApplication
 
         try (PrintWriter writer = new PrintWriter(outputFile.toFile()))
         {
-            writer.println("mgra,tap,boarsingPerceived,boardingActual,alightingPerceived,alightingActual");
+            writer.println("mgra,tap,boardingPerceived,boardingActual,alightingPerceived,alightingActual,boardingGain,alightingGain");
             StringBuilder sb;
             for (NodePair<SandagBikeNode> od : new TreeSet<>(mgraTapLogsums.keySet()))
             { // sort them so the output "looks nice"
@@ -215,8 +218,10 @@ public class SandagWalkPathChoiceLogsumMatrixApplication
                         .getFromNode()));
                 sb.append(formatter.format(alightingValues[0])).append(","); // alighting
                                                                              // percieved
-                sb.append(formatter.format(alightingValues[1])); // alighting
+                sb.append(formatter.format(alightingValues[1])).append(","); // alighting
                                                                  // actual
+                sb.append(formatter.format(boardingValues[2])).append(","); // boarding gain
+                sb.append(formatter.format(alightingValues[2])); // alighting gain
                 writer.println(sb.toString());
             }
         } catch (IOException e)
