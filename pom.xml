@@ -6,7 +6,7 @@
 
     <groupId>org.sandag</groupId>
     <artifactId>SANDAG-ABM</artifactId>
-    <version>13.2.1-SNAPSHOT</version>
+    <version>13.2.0</version>
     <name>SANDAG CT-RAMP Activity Based Model</name>
 
     <properties>
