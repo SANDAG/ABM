@@ -29,10 +29,11 @@ Macro "Run SANDAG ABM"
    properties = "\\conf\\sandag_abm.properties"   
    skipCopyWarmupTripTables = RunMacro("read properties",properties,"RunModel.skipCopyWarmupTripTables", "S")
    skipCopyBikeLogsum = RunMacro("read properties",properties,"RunModel.skipCopyBikeLogsum", "S")
-   skipWalkImpedance= RunMacro("read properties",properties,"RunModel.skipWalkImpedance", "S")
+   skipCopyWalkImpedance= RunMacro("read properties",properties,"RunModel.skipCopyWalkImpedance", "S")
    skipBuildHwyNetwork = RunMacro("read properties",properties,"RunModel.skipBuildHwyNetwork", "S")
    skipBuildTransitNetwork= RunMacro("read properties",properties,"RunModel.skipBuildTransitNetwork", "S")
-   skipATLogsums= RunMacro("read properties",properties,"RunModel.skipATLogsums", "S")
+   skipWalkLogsums= RunMacro("read properties",properties,"RunModel.skipWalkLogsums", "S")
+   skipBikeLogsums= RunMacro("read properties",properties,"RunModel.skipBikeLogsums", "S")
    startFromIteration = s2i(RunMacro("read properties",properties,"RunModel.startFromIteration", "S"))
    skipHighwayAssignment = RunMacro("read properties",properties,"RunModel.skipHighwayAssignment", "S")
    skipHighwaySkimming = RunMacro("read properties",properties,"RunModel.skipHighwaySkimming", "S")
@@ -51,9 +52,17 @@ Macro "Run SANDAG ABM"
    skipDataLoadRequest = RunMacro("read properties",properties,"RunModel.skipDataLoadRequest", "S")
    skipDeleteIntermediateFiles = RunMacro("read properties",properties,"RunModel.skipDeleteIntermediateFiles", "S")
    
-   // Run create AT logsums and walk impedances
-   if skipATLogsums = "false" then do
-	  runString = path+"\\bin\\runSandagBikeWalkLogsums.cmd "+drive+" "+path_forward_slash
+   // Run create walk logsums (walk impedance between mgra pairs and between mgra and tap)
+   if skipWalkLogsums = "false" then do
+	  runString = path+"\\bin\\runSandagWalkLogsums.cmd "+drive+" "+path_forward_slash
+	  RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run create AT logsums and walk impedances"+" "+runString})
+	  ok = RunMacro("TCB Run Command", 1, "Run AT-Logsums", runString)
+	  if !ok then goto quit  
+   end
+
+   // Run create bike logsums   
+   if skipBikeLogsums = "false" then do
+	  runString = path+"\\bin\\runSandagBikeLogsums.cmd "+drive+" "+path_forward_slash
 	  RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run create AT logsums and walk impedances"+" "+runString})
 	  ok = RunMacro("TCB Run Command", 1, "Run AT-Logsums", runString)
 	  if !ok then goto quit  
@@ -75,7 +84,7 @@ Macro "Run SANDAG ABM"
    end
 
    // copy walk impedance from input to output folder
-   if skipWalkImpedance = "false" then do
+   if skipCopyWalkImpedance = "false" then do
 	   CopyFile(inputDir+"\\walkMgraEquivMinutes.csv", outputDir+"\\walkMgraEquivMinutes.csv")
 	   CopyFile(inputDir+"\\walkMgraTapEquivMinutes.csv", outputDir+"\\walkMgraTapEquivMinutes.csv")
    end
