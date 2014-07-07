@@ -250,10 +250,10 @@ public final class MgraDataManager
                 float boardTimeActual = Float.parseFloat(st.nextToken().trim());
                 float alightTimePercieved = Float.parseFloat(st.nextToken().trim());
                 float alightTimeActual = Float.parseFloat(st.nextToken().trim());
-                int boardDistPercieved = Math.round(boardTimePercieved / Constants.walkMinutesPerFoot + 0.5f);
-                int alightDistPercieved = Math.round(alightTimePercieved / Constants.walkMinutesPerFoot + 0.5f);
-                int boardDistActual = Math.round(boardTimeActual / Constants.walkMinutesPerFoot + 0.5f);
-                int alightDistActual = Math.round(alightTimeActual / Constants.walkMinutesPerFoot + 0.5f);
+                int boardDistPercieved = Math.round(boardTimePercieved / Constants.walkMinutesPerMile + 0.5f);
+                int alightDistPercieved = Math.round(alightTimePercieved / Constants.walkMinutesPerMile + 0.5f);
+                int boardDistActual = Math.round(boardTimeActual / Constants.walkMinutesPerMile + 0.5f);
+                int alightDistActual = Math.round(alightTimeActual / Constants.walkMinutesPerMile + 0.5f);
                 if (!mgraWlkTapList.containsKey(mgra))
                 	mgraWlkTapList.put(mgra,new HashMap<Integer,int[]>());
                 mgraWlkTapList.get(mgra).put(tap,new int[] {boardDistPercieved,alightDistPercieved,boardDistActual,alightDistActual});
@@ -312,8 +312,8 @@ public final class MgraDataManager
 
                 int oMgra = Integer.parseInt(st.nextToken().trim());
                 int dMgra = Integer.parseInt(st.nextToken().trim());
-                int perceivedDist =  Math.round(Float.parseFloat(st.nextToken().trim()) / Constants.walkMinutesPerFoot + 0.5f);
-                int actualDist =  Math.round(Float.parseFloat(st.nextToken().trim()) / Constants.walkMinutesPerFoot + 0.5f);
+                int perceivedDist =  Math.round(Float.parseFloat(st.nextToken().trim()) / Constants.walkMinutesPerMile + 0.5f);
+                int actualDist =  Math.round(Float.parseFloat(st.nextToken().trim()) / Constants.walkMinutesPerMile + 0.5f);
 
                 int[] distArray = {perceivedDist,actualDist};
                 if (oMgraWalkDistance[oMgra] == null) 
@@ -412,7 +412,7 @@ public final class MgraDataManager
      */
     public float getMgraToTapWalkBoardDist(int mgra, int pos)
     {
-        return mgraWlkTapsDistArray[mgra][1][pos];
+        return mgraWlkTapsDistArray[mgra][1][pos] * (int) Constants.feetPerMile;
     }
 
     /**
@@ -424,7 +424,7 @@ public final class MgraDataManager
      */
     public float getMgraToTapWalkAlightDist(int mgra, int pos)
     {
-        return mgraWlkTapsDistArray[mgra][2][pos];
+        return mgraWlkTapsDistArray[mgra][2][pos]  * (int) Constants.feetPerMile;
     }
 
     
@@ -478,7 +478,7 @@ public final class MgraDataManager
      */
     public float getMgraToTapWalkBoardTime(int mgra, int pos)
     {
-        return ((float) mgraWlkTapsDistArray[mgra][1][pos]) * Constants.walkMinutesPerFoot;
+        return ((float) mgraWlkTapsDistArray[mgra][1][pos]) * Constants.walkMinutesPerMile;
     }
 
     /**
@@ -490,7 +490,7 @@ public final class MgraDataManager
      */
     public float getMgraToTapWalkAlightTime(int mgra, int pos)
     {
-        return ((float) mgraWlkTapsDistArray[mgra][2][pos]) * Constants.walkMinutesPerFoot;
+        return ((float) mgraWlkTapsDistArray[mgra][2][pos]) * Constants.walkMinutesPerMile;
     }
 
     //todo: delete this method: currently retained for compatibility (namely: abm_reports)
@@ -503,7 +503,7 @@ public final class MgraDataManager
      */
     public float getMgraToTapWalkTime(int mgra, int pos)
     {
-        return ((float) mgraWlkTapsDistArray[mgra][1][pos]) * Constants.walkMinutesPerFoot;
+        return ((float) mgraWlkTapsDistArray[mgra][1][pos]) * Constants.walkMinutesPerMile;
     }
 
     /**
@@ -521,7 +521,7 @@ public final class MgraDataManager
 
         if (oMgraWalkDistance[oMgra] == null) return 0;
         else if (oMgraWalkDistance[oMgra].containsKey(dMgra))
-            return oMgraWalkDistance[oMgra].get(dMgra)[0];
+            return oMgraWalkDistance[oMgra].get(dMgra)[0] * (int) Constants.feetPerMile;
 
         return 0;
     }
@@ -541,7 +541,7 @@ public final class MgraDataManager
 
         if (dMgraWalkDistance[dMgra] == null) return 0;
         else if (dMgraWalkDistance[dMgra].containsKey(oMgra))
-            return dMgraWalkDistance[dMgra].get(oMgra)[0];
+            return dMgraWalkDistance[dMgra].get(oMgra)[0] * (int) Constants.feetPerMile;
 
         return 0;
     }
@@ -561,7 +561,7 @@ public final class MgraDataManager
 
         if (oMgraWalkDistance[oMgra] == null) return 0f;
         else if (oMgraWalkDistance[oMgra].containsKey(dMgra))
-            return ((float) oMgraWalkDistance[oMgra].get(dMgra)[0]) * Constants.walkMinutesPerFoot;
+            return ((float) oMgraWalkDistance[oMgra].get(dMgra)[0]) * Constants.walkMinutesPerMile;
 
         return 0f;
     }
