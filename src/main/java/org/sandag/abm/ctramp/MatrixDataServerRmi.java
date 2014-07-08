@@ -1,6 +1,7 @@
 package org.sandag.abm.ctramp;
 
 import java.io.Serializable;
+
 import com.pb.common.calculator.DataEntry;
 import com.pb.common.calculator.MatrixDataServerIf;
 import com.pb.common.matrix.Matrix;
@@ -83,5 +84,15 @@ public class MatrixDataServerRmi
         Object[] objArray = {};
         return (String) remote.method("testRemote", objArray);
     }
+
+    /**
+     * This method is included in the Interface this class implements, but is not used anywhere by the SANDAG model.
+     * It is included hear to satisfy the interface only.
+     */
+	@Override
+	public void writeMatrixFile(String fileName, Matrix[] m) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
