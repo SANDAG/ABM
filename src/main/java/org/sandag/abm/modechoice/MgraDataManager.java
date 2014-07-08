@@ -250,10 +250,10 @@ public final class MgraDataManager
                 float boardTimeActual = Float.parseFloat(st.nextToken().trim());
                 float alightTimePercieved = Float.parseFloat(st.nextToken().trim());
                 float alightTimeActual = Float.parseFloat(st.nextToken().trim());
-                int boardDistPercieved = Math.round(boardTimePercieved / Constants.walkMinutesPerMile + 0.5f);
-                int alightDistPercieved = Math.round(alightTimePercieved / Constants.walkMinutesPerMile + 0.5f);
-                int boardDistActual = Math.round(boardTimeActual / Constants.walkMinutesPerMile + 0.5f);
-                int alightDistActual = Math.round(alightTimeActual / Constants.walkMinutesPerMile + 0.5f);
+                int boardDistPercieved = Math.round(boardTimePercieved / Constants.walkMinutesPerMile * Constants.feetPerMile);
+                int alightDistPercieved = Math.round(alightTimePercieved / Constants.walkMinutesPerMile  * Constants.feetPerMile);
+                int boardDistActual = Math.round(boardTimeActual / Constants.walkMinutesPerMile  * Constants.feetPerMile);
+                int alightDistActual = Math.round(alightTimeActual / Constants.walkMinutesPerMile  * Constants.feetPerMile);
                 if (!mgraWlkTapList.containsKey(mgra))
                 	mgraWlkTapList.put(mgra,new HashMap<Integer,int[]>());
                 mgraWlkTapList.get(mgra).put(tap,new int[] {boardDistPercieved,alightDistPercieved,boardDistActual,alightDistActual});
@@ -289,7 +289,7 @@ public final class MgraDataManager
     }
 
     /**
-     * Read the walk-transit taps for mgras.
+     * Read the walk-transit taps for mgras. Store distances in feet.
      * 
      * @param rb
      *            ResourceBundle with scenario.path and mgra.walkdistance.file
@@ -312,8 +312,8 @@ public final class MgraDataManager
 
                 int oMgra = Integer.parseInt(st.nextToken().trim());
                 int dMgra = Integer.parseInt(st.nextToken().trim());
-                int perceivedDist =  Math.round(Float.parseFloat(st.nextToken().trim()) / Constants.walkMinutesPerMile + 0.5f);
-                int actualDist =  Math.round(Float.parseFloat(st.nextToken().trim()) / Constants.walkMinutesPerMile + 0.5f);
+                int perceivedDist =  Math.round(Float.parseFloat(st.nextToken().trim()) / Constants.walkMinutesPerMile * Constants.feetPerMile);
+                int actualDist =  Math.round(Float.parseFloat(st.nextToken().trim()) / Constants.walkMinutesPerMile * Constants.feetPerMile);
 
                 int[] distArray = {perceivedDist,actualDist};
                 if (oMgraWalkDistance[oMgra] == null) 
@@ -412,7 +412,7 @@ public final class MgraDataManager
      */
     public float getMgraToTapWalkBoardDist(int mgra, int pos)
     {
-        return mgraWlkTapsDistArray[mgra][1][pos] * (int) Constants.feetPerMile;
+        return mgraWlkTapsDistArray[mgra][1][pos];
     }
 
     /**
@@ -424,7 +424,7 @@ public final class MgraDataManager
      */
     public float getMgraToTapWalkAlightDist(int mgra, int pos)
     {
-        return mgraWlkTapsDistArray[mgra][2][pos]  * (int) Constants.feetPerMile;
+        return mgraWlkTapsDistArray[mgra][2][pos];
     }
 
     
@@ -478,7 +478,9 @@ public final class MgraDataManager
      */
     public float getMgraToTapWalkBoardTime(int mgra, int pos)
     {
-        return ((float) mgraWlkTapsDistArray[mgra][1][pos]) * Constants.walkMinutesPerMile;
+    	float distanceInFeet = (float) mgraWlkTapsDistArray[mgra][1][pos];
+    	float time = distanceInFeet/Constants.feetPerMile * Constants.walkMinutesPerMile;
+        return time;
     }
 
     /**
@@ -490,7 +492,9 @@ public final class MgraDataManager
      */
     public float getMgraToTapWalkAlightTime(int mgra, int pos)
     {
-        return ((float) mgraWlkTapsDistArray[mgra][2][pos]) * Constants.walkMinutesPerMile;
+    	float distanceInFeet = (float) mgraWlkTapsDistArray[mgra][2][pos];
+    	float time = distanceInFeet/Constants.feetPerMile * Constants.walkMinutesPerMile;
+        return time;
     }
 
     //todo: delete this method: currently retained for compatibility (namely: abm_reports)
@@ -503,7 +507,9 @@ public final class MgraDataManager
      */
     public float getMgraToTapWalkTime(int mgra, int pos)
     {
-        return ((float) mgraWlkTapsDistArray[mgra][1][pos]) * Constants.walkMinutesPerMile;
+    	float distanceInFeet = (float) mgraWlkTapsDistArray[mgra][1][pos];
+    	float time = distanceInFeet/Constants.feetPerMile * Constants.walkMinutesPerMile;
+        return time;
     }
 
     /**
@@ -521,7 +527,7 @@ public final class MgraDataManager
 
         if (oMgraWalkDistance[oMgra] == null) return 0;
         else if (oMgraWalkDistance[oMgra].containsKey(dMgra))
-            return oMgraWalkDistance[oMgra].get(dMgra)[0] * (int) Constants.feetPerMile;
+            return oMgraWalkDistance[oMgra].get(dMgra)[0];
 
         return 0;
     }
@@ -541,7 +547,7 @@ public final class MgraDataManager
 
         if (dMgraWalkDistance[dMgra] == null) return 0;
         else if (dMgraWalkDistance[dMgra].containsKey(oMgra))
-            return dMgraWalkDistance[dMgra].get(oMgra)[0] * (int) Constants.feetPerMile;
+            return dMgraWalkDistance[dMgra].get(oMgra)[0];
 
         return 0;
     }
@@ -560,9 +566,11 @@ public final class MgraDataManager
     {
 
         if (oMgraWalkDistance[oMgra] == null) return 0f;
-        else if (oMgraWalkDistance[oMgra].containsKey(dMgra))
-            return ((float) oMgraWalkDistance[oMgra].get(dMgra)[0]) * Constants.walkMinutesPerMile;
-
+        else if (oMgraWalkDistance[oMgra].containsKey(dMgra)){
+        	float distanceInFeet = (float) oMgraWalkDistance[oMgra].get(dMgra)[0];
+        	float time = distanceInFeet/Constants.feetPerMile * Constants.walkMinutesPerMile;
+        	return time;
+        }
         return 0f;
     }
 
