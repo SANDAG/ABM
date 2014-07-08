@@ -77,6 +77,8 @@ public class SkimBuilder
     private static final int                         TRANSIT_PREM_FARE_INDEX                = 10;
     private static final int                         TRANSIT_MAIN_MODE_INDEX                = 11;
     private static final int                         TRANSIT_PREM_XFERS_INDEX               = 12;
+    
+    private static final double                      FEET_IN_MILE                           = 5280.0;
 
     private final TapDataManager                     tapManager;
     private final TazDataManager                     tazManager;
@@ -244,7 +246,7 @@ public class SkimBuilder
             case WALK:
             {
                 // first, look in mgra manager, otherwise default to auto skims
-                double distance = mgraManager.getMgraToMgraWalkDistFrom(origin, destination);
+                double distance = mgraManager.getMgraToMgraWalkDistFrom(origin, destination) / FEET_IN_MILE;
                 if (distance > 0)
                 {
                     double time = mgraManager.getMgraToMgraWalkTime(origin, destination);
