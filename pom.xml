@@ -778,7 +778,7 @@
         <dependency>
             <groupId>pb</groupId>
             <artifactId>common-base</artifactId>
-            <version>2014.06.27-ABM</version>
+            <version>2014.07.09-ABM</version>
         </dependency>
         <dependency>
             <groupId>org.jppf</groupId>
