@@ -187,6 +187,12 @@ public class IntermediateStopChoiceModels
 
     private double[]                           distanceFromStopOrigToAllMgras;
     private double[]                           distanceToFinalDestFromAllMgras;
+    
+	private final BikeLogsum bls;
+	private BikeLogsumSegment segment;
+
+    private double[]                           bikeLogsumFromStopOrigToAllMgras;
+    private double[]                           bikeLogsumToFinalDestFromAllMgras;
 
     private double[][]                         mcCumProbsSegmentIk;
     private double[][]                         mcCumProbsSegmentKj;
@@ -322,6 +328,9 @@ public class IntermediateStopChoiceModels
 
         setupStopLocationChoiceModels(propertyMap, dmuFactory);
         setupParkingLocationModel(propertyMap, dmuFactory);
+        
+        bls = BikeLogsum.getBikeLogsum(propertyMap);
+
     }
 
     private void setupStopLocationChoiceModels(HashMap<String, String> propertyMap,
@@ -455,6 +464,9 @@ public class IntermediateStopChoiceModels
 
         distanceFromStopOrigToAllMgras = new double[mgraManager.getMaxMgra() + 1];
         distanceToFinalDestFromAllMgras = new double[mgraManager.getMaxMgra() + 1];
+
+        bikeLogsumFromStopOrigToAllMgras = new double[mgraManager.getMaxMgra() + 1];
+        bikeLogsumToFinalDestFromAllMgras = new double[mgraManager.getMaxMgra() + 1];
 
         tourOrigToAllMgraDistances = new double[mgraManager.getMaxMgra() + 1];
         tourDestToAllMgraDistances = new double[mgraManager.getMaxMgra() + 1];
@@ -1500,38 +1512,40 @@ public class IntermediateStopChoiceModels
                     // location choice.
                     stop.setDest(destMgra);
 
-                    if (tour.getTourCategory().equalsIgnoreCase(
+                    if (household.getDebugChoiceModels())
+                    	{
+                    	if (tour.getTourCategory().equalsIgnoreCase(
                             ModelStructure.JOINT_NON_MANDATORY_CATEGORY))
-                    {
-                        smcLogger
+                    	{
+                    		smcLogger
                                 .info("Monte Carlo selection for determining Mode Choice from KJ Probabilities for "
                                         + (stop.isInboundStop() ? "INBOUND" : "OUTBOUND")
                                         + " joint tour stop.");
-                        smcLogger.info("HHID=" + household.getHhId() + ", persNum=" + "N/A"
+                    		smcLogger.info("HHID=" + household.getHhId() + ", persNum=" + "N/A"
                                 + ", tourPurpose=" + tour.getTourPrimaryPurpose() + ", tourId="
                                 + tour.getTourId() + ", tourMode=" + tour.getTourModeChoice());
-                        smcLogger.info("StopID=End of "
+                    		smcLogger.info("StopID=End of "
                                 + (stop.isInboundStop() ? "INBOUND" : "OUTBOUND")
                                 + " half-tour, stopPurpose=" + stop.getDestPurpose()
                                 + ", stopDepart=" + stop.getStopPeriod() + ", stopOrig="
                                 + stop.getOrig() + ", stopDest=" + stop.getDest());
-                    } else
-                    {
-                        smcLogger
+                    	} else
+                    	{
+                    		smcLogger
                                 .info("Monte Carlo selection for determining Mode Choice from KJ Probabilities for "
                                         + (stop.isInboundStop() ? "INBOUND" : "OUTBOUND")
                                         + " stop.");
-                        smcLogger.info("HHID=" + household.getHhId() + ", persNum="
+                    		smcLogger.info("HHID=" + household.getHhId() + ", persNum="
                                 + person.getPersonNum() + ", tourPurpose="
                                 + tour.getTourPrimaryPurpose() + ", tourId=" + tour.getTourId()
                                 + ", tourMode=" + tour.getTourModeChoice());
-                        smcLogger.info("StopID=End of "
+                    		smcLogger.info("StopID=End of "
                                 + (stop.isInboundStop() ? "INBOUND" : "OUTBOUND")
                                 + " half-tour, stopPurpose=" + stop.getDestPurpose()
                                 + ", stopDepart=" + stop.getStopPeriod() + ", stopOrig="
                                 + stop.getOrig() + ", stopDest=" + stop.getDest());
+                    	}
                     }
-
                     check = System.nanoTime();
                     modeAlt = selectModeFromProbabilities(stop,
                             mcCumProbsSegmentKj[oldSelectedIndex]);
@@ -1772,6 +1786,22 @@ public class IntermediateStopChoiceModels
                 modelStructure.getTourModeIsSovOrHov(tour.getTourModeChoice()));
         stopLocDmuObj.setDistancesFromOrigMgra(distanceFromStopOrigToAllMgras);
 
+        
+        // bike logsums from origin to all destinations
+        if(modelStructure.getTourModeIsBike(tour.getTourModeChoice())){
+        
+            Arrays.fill(bikeLogsumFromStopOrigToAllMgras, 0);
+        	segment = new BikeLogsumSegment(person.getPersonIsFemale() == 1,tour.getTourPrimaryPurposeIndex() <= 3,s.isInboundStop());
+
+            for (int dMgra = 1; dMgra <= mgraManager.getMaxMgra(); dMgra++)
+            {
+            	bikeLogsumFromStopOrigToAllMgras[dMgra] = bls.getLogsum(segment,s.getOrig(),dMgra);
+            }
+            stopLocDmuObj.setBikeLogsumsFromOrigMgra(bikeLogsumFromStopOrigToAllMgras);
+        }
+        
+        
+        
         // if tour mode is transit, set availablity of location alternatives
         // based on transit accessibility relative to best transit TAP pair for
         // tour
@@ -1798,11 +1828,31 @@ public class IntermediateStopChoiceModels
             anm.getDistancesToMgra(tour.getTourOrigMgra(), distanceToFinalDestFromAllMgras,
                     modelStructure.getTourModeIsSovOrHov(tour.getTourModeChoice()));
             stopLocDmuObj.setDistancesToDestMgra(distanceToFinalDestFromAllMgras);
+            
 
             // set the distance from the stop origin to the final half-tour
             // destination
             stopLocDmuObj
                     .setOrigDestDistance(distanceFromStopOrigToAllMgras[tour.getTourOrigMgra()]);
+
+        
+            // bike logsums from all MGRAs back to tour origin
+            if(modelStructure.getTourModeIsBike(tour.getTourModeChoice())){
+            
+                Arrays.fill(bikeLogsumToFinalDestFromAllMgras, 0);
+            	segment = new BikeLogsumSegment(person.getPersonIsFemale() == 1,tour.getTourPrimaryPurposeIndex() <= 3,s.isInboundStop());
+
+                for (int oMgra = 1; oMgra <= mgraManager.getMaxMgra(); oMgra++)
+                {
+                	bikeLogsumToFinalDestFromAllMgras[oMgra] = bls.getLogsum(segment,oMgra,tour.getTourOrigMgra());
+                }
+                stopLocDmuObj.setBikeLogsumsToDestMgra(bikeLogsumToFinalDestFromAllMgras);
+            }
+
+        
+        
+        
+        
         } else
         {
             // if outbound, final half-tour destination is the tour destination
@@ -1814,6 +1864,23 @@ public class IntermediateStopChoiceModels
             // destination
             stopLocDmuObj
                     .setOrigDestDistance(distanceFromStopOrigToAllMgras[tour.getTourDestMgra()]);
+      
+            // bike logsums from all MGRAs back to tour origin
+            if(modelStructure.getTourModeIsBike(tour.getTourModeChoice())){
+            
+                Arrays.fill(bikeLogsumToFinalDestFromAllMgras, 0);
+            	segment = new BikeLogsumSegment(person.getPersonIsFemale() == 1,tour.getTourPrimaryPurposeIndex() <= 3,s.isInboundStop());
+
+                for (int oMgra = 1; oMgra <= mgraManager.getMaxMgra(); oMgra++)
+                {
+                	bikeLogsumToFinalDestFromAllMgras[oMgra] = bls.getLogsum(segment,oMgra,tour.getTourDestMgra());
+                }
+                stopLocDmuObj.setBikeLogsumsToDestMgra(bikeLogsumToFinalDestFromAllMgras);
+            }
+            
+
+        
+        
         }
 
         if (useNewSoaMethod)
@@ -2076,6 +2143,20 @@ public class IntermediateStopChoiceModels
                 modelStructure.getTourModeIsSovOrHov(tour.getTourModeChoice()));
         stopLocDmuObj.setDistancesFromOrigMgra(distanceFromStopOrigToAllMgras);
 
+        
+        // bike logsums from origin to all destinations
+        if(modelStructure.getTourModeIsBike(tour.getTourModeChoice())){
+        
+            Arrays.fill(bikeLogsumFromStopOrigToAllMgras, 0);
+        	segment = new BikeLogsumSegment(person.getPersonIsFemale() == 1,tour.getTourPrimaryPurposeIndex() <= 3,s.isInboundStop());
+
+            for (int dMgra = 1; dMgra <= mgraManager.getMaxMgra(); dMgra++)
+            {
+            	bikeLogsumFromStopOrigToAllMgras[dMgra] = bls.getLogsum(segment,s.getOrig(),dMgra);
+            }
+            stopLocDmuObj.setBikeLogsumsFromOrigMgra(bikeLogsumFromStopOrigToAllMgras);
+        }
+
         // if tour mode is transit, set availablity of location alternatives
         // based on transit accessibility relative to best transit TAP pair for
         // tour
@@ -2107,6 +2188,21 @@ public class IntermediateStopChoiceModels
             // destination
             stopLocDmuObj
                     .setOrigDestDistance(distanceFromStopOrigToAllMgras[tour.getTourOrigMgra()]);
+
+            // bike logsums from all MGRAs back to tour origin
+            if(modelStructure.getTourModeIsBike(tour.getTourModeChoice())){
+            
+                Arrays.fill(bikeLogsumToFinalDestFromAllMgras, 0);
+            	segment = new BikeLogsumSegment(person.getPersonIsFemale() == 1,tour.getTourPrimaryPurposeIndex() <= 3,s.isInboundStop());
+
+                for (int oMgra = 1; oMgra <= mgraManager.getMaxMgra(); oMgra++)
+                {
+                	bikeLogsumToFinalDestFromAllMgras[oMgra] = bls.getLogsum(segment,oMgra,tour.getTourOrigMgra());
+                }
+                stopLocDmuObj.setBikeLogsumsToDestMgra(bikeLogsumToFinalDestFromAllMgras);
+            }
+
+        
         } else
         {
             // if outbound, final half-tour destination is the tour destination
@@ -2118,6 +2214,21 @@ public class IntermediateStopChoiceModels
             // destination
             stopLocDmuObj
                     .setOrigDestDistance(distanceFromStopOrigToAllMgras[tour.getTourDestMgra()]);
+
+            // bike logsums from all MGRAs back to tour origin
+            if(modelStructure.getTourModeIsBike(tour.getTourModeChoice())){
+            
+                Arrays.fill(bikeLogsumToFinalDestFromAllMgras, 0);
+            	segment = new BikeLogsumSegment(person.getPersonIsFemale() == 1,tour.getTourPrimaryPurposeIndex() <= 3,s.isInboundStop());
+
+                for (int oMgra = 1; oMgra <= mgraManager.getMaxMgra(); oMgra++)
+                {
+                	bikeLogsumToFinalDestFromAllMgras[oMgra] = bls.getLogsum(segment,oMgra,tour.getTourDestMgra());
+                }
+                stopLocDmuObj.setBikeLogsumsToDestMgra(bikeLogsumToFinalDestFromAllMgras);
+            }
+
+        
         }
 
         long check = System.nanoTime();
@@ -2545,11 +2656,13 @@ public class IntermediateStopChoiceModels
                                                 .getNumOutboundStops() - 1, s.getOrig(), altMgra));
 
                 mcDmuObject.getDmuIndexValues().setDebug(true);
+                mcDmuObject.getHouseholdObject().setDebugChoiceModels(true);
                 mcDmuObject.getDmuIndexValues().setHHIndex(
                         s.getTour().getPersonObject().getHouseholdObject().getHhId());
                 ikSegment = logsumHelper.calculateTripMcLogsum(s.getOrig(), altMgra,
                         s.getStopPeriod(), mcModel, mcDmuObject, slcLogger);
                 mcDmuObject.getDmuIndexValues().setDebug(false);
+                mcDmuObject.getHouseholdObject().setDebugChoiceModels(false);
 
             }
 
@@ -2676,11 +2789,13 @@ public class IntermediateStopChoiceModels
                                         halfTourFinalDest));
 
                 mcDmuObject.getDmuIndexValues().setDebug(true);
+                mcDmuObject.getHouseholdObject().setDebugChoiceModels(true);
                 mcDmuObject.getDmuIndexValues().setHHIndex(
                         s.getTour().getPersonObject().getHouseholdObject().getHhId());
                 kjSegment = logsumHelper.calculateTripMcLogsum(altMgra, halfTourFinalDest,
                         s.getStopPeriod(), mcModel, mcDmuObject, slcLogger);
                 mcDmuObject.getDmuIndexValues().setDebug(false);
+                mcDmuObject.getHouseholdObject().setDebugChoiceModels(false);
             }
 
             // store the mode choice probabilities for the segment

@@ -208,7 +208,6 @@ public class McLogsumsCalculator
 
         setDtwTripMcDmuAttributes(mcDmuObject, origMgra, destMgra, departPeriod, null, debug);
 
-        mcDmuObject.setBikeLogsum(bls.getLogsum(new BikeLogsumSegment(tour.getFemale() == 1,false,trip.isInbound()),origMgra,origMgra));
     }
 
     private void setNmTripMcDmuAttributes(InternalExternalTripModeChoiceDMU tripMcDmuObject,
