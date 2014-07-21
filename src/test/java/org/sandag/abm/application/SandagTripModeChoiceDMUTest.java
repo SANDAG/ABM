@@ -247,6 +247,9 @@ public class SandagTripModeChoiceDMUTest {
 
 		dmu.setDmuIndexValues(1, 1, 1, 2, false);
 
+		dmu.setOriginMgra(1);
+		dmu.setDestMgra(2);
+		
 		int originHourlyParkingCost = 42;
 		lsWgtAvgCostH[1] = originHourlyParkingCost;
 		value = dmu.getValueForIndex(42, 0);

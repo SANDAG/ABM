@@ -16,33 +16,20 @@ import org.sandag.abm.ctramp.Tour;
 public class SandagStopLocationDMU
         extends StopLocationDMU
 {
-	private final BikeLogsum bls;
-	private BikeLogsumSegment segment;
-
     public SandagStopLocationDMU(ModelStructure modelStructure, Map<String,String> rbMap)
     {
         super(modelStructure);
-        bls = BikeLogsum.getBikeLogsum(rbMap);
-        setupMethodIndexMap();
+         setupMethodIndexMap();
     }
     
     public void setStopObject(Stop myStop)
     {
     	super.setStopObject(myStop);
-    	segment = new BikeLogsumSegment(person.getPersonIsFemale() == 1,tour.getTourPrimaryPurposeIndex() <= 3,stop.isInboundStop());
     }
 
-    public double getOrigToMgraBikeLogsumAlt(int alt)
-    {
-    	return bls.getLogsum(segment,stop.getOrig(),alt);
-    }
+ 
 
-    public double getMgraToDestBikeLogsumAlt(int alt)
-    {
-    	return bls.getLogsum(segment,alt,stop.getDest());
-    }
-
-    private void setupMethodIndexMap()
+	private void setupMethodIndexMap()
     {
         methodIndexMap = new HashMap<String, Integer>();
 

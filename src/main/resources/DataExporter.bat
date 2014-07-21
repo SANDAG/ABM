@@ -3,10 +3,6 @@ set PROJECT_DIRECTORY=%2
 
 %PROJECT_DRIVE%
 cd %PROJECT_DIRECTORY%
-call %PROJECT_DIRECTORY%\bin\CTRampEnv.bat
-
-rem JVM memory allocation
-remset MEMORY_DATAEXPORT_MIN=%MEMORY_DATAEXPORT_MIN%
-remset MEMORY_DATAEXPORT_MAX=%MEMORY_DATAEXPORT_MAX%
+call bin\CTRampEnv.bat
 
 %JAVA_64_PATH%\bin\java -Xms%MEMORY_DATAEXPORT_MIN% -Xmx%MEMORY_DATAEXPORT_MAX% -cp application/*;conf/;%TRANSCAD_PATH%/GISDK/Matrices/* org.sandag.abm.reporting.DataExporter

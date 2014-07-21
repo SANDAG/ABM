@@ -98,7 +98,7 @@ Macro "US to SD External Trip Model"
   
   // create mgra size vectrors
   
-  mgraView = OpenTable("MGRA View", "CSV", {inputDir+"\\"mgra13_based_input${year}.csv"}, {{"Shared", "True"}})
+  mgraView = OpenTable("MGRA View", "CSV", {inputDir+"\\mgra13_based_input${year}.csv"}, {{"Shared", "True"}})
    
   mgra                            = GetDataVector(mgraView+"|", "mgra", {{"Sort Order", {{"mgra", "Ascending"}}}} )
   taz                             = GetDataVector(mgraView+"|", "TAZ", {{"Sort Order", {{"mgra", "Ascending"}}}} )

@@ -83,7 +83,7 @@ public abstract class AbstractPathChoiceLogsumMatrixApplication<N extends Node, 
         logger.info("Writing to " + outputDir);
         Map<N, ConcurrentHashMap<N, double[]>> logsums = new ConcurrentHashMap<>();
         startTime = System.currentTimeMillis();
-        int threadCount = Runtime.getRuntime().availableProcessors();
+        int threadCount = Runtime.getRuntime().availableProcessors() -1;
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
         final Queue<Integer> originQueue = new ConcurrentLinkedQueue<>(
                 originZonalCentroidIdMap.keySet());

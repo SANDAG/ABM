@@ -117,8 +117,10 @@ public class CrossBorderTourTimeOfDayChoiceModel
             {
 
                 // log cumulative probability just in case
+            	/*
                 if (lastPurpose != -99)
                     logger.info("Cumulative probability for purpose " + purpose + " is " + cumProb);
+                    */
                 cumProb = 0;
                 alt = 0;
             }

@@ -146,8 +146,10 @@ public class CrossBorderStopFrequencyModel
             {
 
                 // log cumulative probability just in case
+            	/*
                 logger.info("Cumulative probability for purpose " + purpose + " lower bound "
                         + lowerBound + " is " + cumProb);
+                */
                 cumProb = 0;
             }
 
@@ -168,7 +170,7 @@ public class CrossBorderStopFrequencyModel
         }
 
         logger.info("End calculating stop frequency probability distribution");
-
+/*
         for (int purp = 0; purp < purposes; ++purp)
         {
             for (int a = 0; a < cumProbability[purp].length; ++a)
@@ -178,7 +180,7 @@ public class CrossBorderStopFrequencyModel
                         + cumProbability[purp][a]);
             }
         }
-
+*/
     }
 
     /**

@@ -4,10 +4,6 @@ Macro "Run SANDAG ABM"
 
    shared path, inputDir, outputDir, inputTruckDir, mxzone, mxtap, mxext,mxlink,mxrte
  
-   // Stop residual Java processes on nodes
-   runString = path+"\\bin\\stopABM.cmd"
-   ok = RunMacro("TCB Run Command", 1, "Stop Nodes", runString) 
-
    sample_rate = { 0.2, 0.5, 1.0 }
    max_iterations=sample_rate.length    //number of feedback loops
   
@@ -32,8 +28,12 @@ Macro "Run SANDAG ABM"
    // read properties from sandag_abm.properties in /conf folder
    properties = "\\conf\\sandag_abm.properties"   
    skipCopyWarmupTripTables = RunMacro("read properties",properties,"RunModel.skipCopyWarmupTripTables", "S")
+   skipCopyBikeLogsum = RunMacro("read properties",properties,"RunModel.skipCopyBikeLogsum", "S")
+   skipCopyWalkImpedance= RunMacro("read properties",properties,"RunModel.skipCopyWalkImpedance", "S")
    skipBuildHwyNetwork = RunMacro("read properties",properties,"RunModel.skipBuildHwyNetwork", "S")
    skipBuildTransitNetwork= RunMacro("read properties",properties,"RunModel.skipBuildTransitNetwork", "S")
+   skipWalkLogsums= RunMacro("read properties",properties,"RunModel.skipWalkLogsums", "S")
+   skipBikeLogsums= RunMacro("read properties",properties,"RunModel.skipBikeLogsums", "S")
    startFromIteration = s2i(RunMacro("read properties",properties,"RunModel.startFromIteration", "S"))
    skipHighwayAssignment = RunMacro("read properties",properties,"RunModel.skipHighwayAssignment", "S")
    skipHighwaySkimming = RunMacro("read properties",properties,"RunModel.skipHighwaySkimming", "S")
@@ -51,6 +51,22 @@ Macro "Run SANDAG ABM"
    skipDataExport = RunMacro("read properties",properties,"RunModel.skipDataExport", "S")
    skipDataLoadRequest = RunMacro("read properties",properties,"RunModel.skipDataLoadRequest", "S")
    skipDeleteIntermediateFiles = RunMacro("read properties",properties,"RunModel.skipDeleteIntermediateFiles", "S")
+   
+   // Run create walk logsums (walk impedance between mgra pairs and between mgra and tap)
+   if skipWalkLogsums = "false" then do
+	  runString = path+"\\bin\\runSandagWalkLogsums.cmd "+drive+" "+path_forward_slash
+	  RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run create AT logsums and walk impedances"+" "+runString})
+	  ok = RunMacro("TCB Run Command", 1, "Run AT-Logsums", runString)
+	  if !ok then goto quit  
+   end
+
+   // Run create bike logsums   
+   if skipBikeLogsums = "false" then do
+	  runString = path+"\\bin\\runSandagBikeLogsums.cmd "+drive+" "+path_forward_slash
+	  RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run create AT logsums and walk impedances"+" "+runString})
+	  ok = RunMacro("TCB Run Command", 1, "Run AT-Logsums", runString)
+	  if !ok then goto quit  
+   end
 
    // copy initial trip tables from input to output folder
    if skipCopyWarmupTripTables = "false" then do
@@ -59,6 +75,18 @@ Macro "Run SANDAG ABM"
 	   CopyFile(inputDir+"\\trip_MD.mtx", outputDir+"\\trip_MD.mtx")
 	   CopyFile(inputDir+"\\trip_PM.mtx", outputDir+"\\trip_PM.mtx")
 	   CopyFile(inputDir+"\\trip_EV.mtx", outputDir+"\\trip_EV.mtx")
+   end
+
+   // copy bike logsums from input to output folder
+   if skipCopyBikeLogsum = "false" then do
+	   CopyFile(inputDir+"\\bikeMgraLogsum.csv", outputDir+"\\bikeMgraLogsum.csv")
+	   CopyFile(inputDir+"\\bikeTazLogsum.csv", outputDir+"\\bikeTazLogsum.csv")
+   end
+
+   // copy walk impedance from input to output folder
+   if skipCopyWalkImpedance = "false" then do
+	   CopyFile(inputDir+"\\walkMgraEquivMinutes.csv", outputDir+"\\walkMgraEquivMinutes.csv")
+	   CopyFile(inputDir+"\\walkMgraTapEquivMinutes.csv", outputDir+"\\walkMgraTapEquivMinutes.csv")
    end
 
   // Build highway network
@@ -240,15 +268,15 @@ Macro "Run SANDAG ABM"
 	   if !ok then goto quit
 	
 	   // export core ABM data
-	   runString = path+"\\bin\\DataExporter.bat"
+           runString = path+"\\bin\\DataExporter.bat "+drive+" "+path_no_drive
 	   ok = RunMacro("TCB Run Command", 1, "Export core ABM data", runString)
 	   if !ok then goto quit 
    end
 
    //request data load after model run finish successfully	
    if skipDataLoadRequest = "false" then do	
-	   runString = path+"\\bin\\DataLoadRequest.bat "+drive+"\\"+path_no_drive+" "+max_iterations
-	   ok = RunMacro("TCB Run Command", 1, "Export core ABM data", runString)
+	   runString = path+"\\bin\\DataLoadRequest.bat "+drive+path_no_drive+" "+String(max_iterations)
+	   ok = RunMacro("TCB Run Command", 1, "Data load request", runString)
 	   if !ok then goto quit 
    end
 
