@@ -204,6 +204,9 @@ public class McLogsumsCalculator
         mcDmuObject.setReimburseProportion(reimbursePct);
 
         mcDmuObject.setParkingArea(parkingArea[destMgra]);
+        
+        mcDmuObject.setOriginMgra(origMgra);
+        mcDmuObject.setDestMgra(destMgra);
 
     }
 
@@ -223,7 +226,9 @@ public class McLogsumsCalculator
         int tourDestTaz = mgraManager.getTaz(destMgra);
         mcDmuIndex.setOriginZone(tourOrigTaz);
         mcDmuIndex.setDestZone(tourDestTaz);
-
+        mcDmuObject.setOriginMgra(origMgra);
+        mcDmuObject.setDestMgra(destMgra);
+        
         mcModel.computeUtilities(mcDmuObject, mcDmuIndex);
         double logsum = mcModel.getLogsum();
 
@@ -298,7 +303,9 @@ public class McLogsumsCalculator
         IndexValues mcDmuIndex = mcDmuObject.getDmuIndexValues();
         mcDmuIndex.setOriginZone(mgraManager.getTaz(origMgra));
         mcDmuIndex.setDestZone(mgraManager.getTaz(destMgra));
-
+        mcDmuObject.setOriginMgra(origMgra);
+        mcDmuObject.setDestMgra(destMgra);
+        
         mcDmuObject.setBikeLogsum(origMgra,destMgra,mcDmuObject.getOutboundHalfTourDirection() == 0);
 
         setTripMcLogsumDmuAttributesTotalTime += ( System.currentTimeMillis() - currentTime );

@@ -79,7 +79,12 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
     protected boolean                  autoModeRequiredForDriveTransit;
     protected boolean                  walkModeAllowedForDriveTransit;
 
+	protected int originMgra;
+    protected int destMgra;
+
     protected double[][][]             transitSkim;
+    
+ 
 
     public TripModeChoiceDMU(ModelStructure modelStructure, Logger aLogger)
     {
@@ -602,12 +607,12 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
 
     public double getHourlyParkingCostTripOrig()
     {
-        return lsWgtAvgCostH[dmuIndex.getOriginZone()];
+        return lsWgtAvgCostH[originMgra];
     }
 
     public double getHourlyParkingCostTripDest()
     {
-        return lsWgtAvgCostH[dmuIndex.getDestZone()];
+        return lsWgtAvgCostH[destMgra];
     }
 
     public int getTripOrigIsTourDest()
@@ -618,6 +623,14 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
     public int getTripDestIsTourDest()
     {
         return tripDestIsTourDest;
+    }
+    
+    public void setOriginMgra( int value ) {
+        originMgra = value; 
+    }
+    
+    public void setDestMgra( int value ) {
+        destMgra = value; 
     }
 
     public int getFreeOnsite()
@@ -640,6 +653,22 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
     {
         return aTazTerminalTime;
     }
+
+    /**
+ 	 * @return the originMgra
+ 	 */
+ 	public int getOriginMgra() {
+ 		return originMgra;
+ 	}
+
+
+
+ 	/**
+ 	 * @return the destMgra
+ 	 */
+ 	public int getDestMgra() {
+ 		return destMgra;
+ 	}
 
     public int getIndexValue(String variableName)
     {

@@ -378,6 +378,7 @@ public class NonMandatoryDestChoiceModel
                     mcDmuObject.setPersonObject( p );
                     mcDmuObject.setTourObject( tour );
                     mcDmuObject.setDmuIndexValues( hh.getHhId(), homeTaz, origMgra, 0, hh.getDebugChoiceModels() );
+                    mcDmuObject.setOriginMgra(origMgra);
                     
                     // update the DC dmuObject for this person
                     dcDmuObject.setHouseholdObject(hh);
@@ -466,6 +467,7 @@ public class NonMandatoryDestChoiceModel
                 mcDmuObject.setPersonObject( null );
                 mcDmuObject.setTourObject( tour );
                 mcDmuObject.setDmuIndexValues( hh.getHhId(), homeTaz, origMgra, 0, hh.getDebugChoiceModels() );
+                mcDmuObject.setOriginMgra(origMgra);
                 
                 // update the DC dmuObject for this person
                 dcDmuObject.setHouseholdObject(hh);
@@ -952,7 +954,8 @@ public class NonMandatoryDestChoiceModel
                 .getTourOrigMgra())));
         mcDmuObject.setATazTerminalTime(tazs.getDestinationTazTerminalTime(mgraManager
                 .getTaz(sampleDestMgra)));
-
+        mcDmuObject.setOriginMgra(t.getTourOrigMgra());
+        mcDmuObject.setDestMgra(t.getTourDestMgra());
 
     }
 
