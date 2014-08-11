@@ -2,10 +2,13 @@ package org.sandag.abm.ctramp;
 
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
+
 import com.pb.common.calculator.DataEntry;
 import com.pb.common.calculator.MatrixDataServerIf;
 import com.pb.common.matrix.Matrix;
@@ -309,5 +312,15 @@ public class MatrixDataServer
                 serverAddress, serverPort));
 
     }
+
+    /**
+     * This method is included in the Interface this class implements, but is not used anywhere by the SANDAG model.
+     * It is included hear to satisfy the interface only.
+     */
+	@Override
+	public void writeMatrixFile(String fileName, Matrix[] m) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

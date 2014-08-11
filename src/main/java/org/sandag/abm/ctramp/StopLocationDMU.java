@@ -38,6 +38,11 @@ public class StopLocationDMU
     protected double[]                 distancesToDestMgra;
     protected double[]                 distancesToTourDestMgra;
     protected double[]                 logSizeTerms;
+    
+    protected double[]                 bikeLogsumsFromOrigMgra;
+    protected double[]                 bikeLogsumsToDestMgra;
+
+
 
     // these arrays are dimensioned to the maximum number of alternatives in the
     // sample
@@ -162,6 +167,20 @@ public class StopLocationDMU
     }
 
     /**
+	 * @param bikeLogsumsFromOrigMgra the bikeLogsumsFromOrigMgra to set
+	 */
+	public void setBikeLogsumsFromOrigMgra(double[] bikeLogsumsFromOrigMgra) {
+		this.bikeLogsumsFromOrigMgra = bikeLogsumsFromOrigMgra;
+	}
+
+	/**
+	 * @param bikeLogsumsToDestMgra the bikeLogsumsToDestMgra to set
+	 */
+	public void setBikeLogsumsToDestMgra(double[] bikeLogsumsToDestMgra) {
+		this.bikeLogsumsToDestMgra = bikeLogsumsToDestMgra;
+	}
+
+	/**
      * set the OD distance value from the stop origin MGRA to the final
      * destination MGRA of the stop.
      * 
@@ -320,6 +339,18 @@ public class StopLocationDMU
         return distancesToTourDestMgra[alt];
     }
 
+    public double getOrigToMgraBikeLogsumAlt(int alt)
+    {
+    	return bikeLogsumsFromOrigMgra[alt];
+    }
+
+    public double getMgraToDestBikeLogsumAlt(int alt)
+    {
+    	return bikeLogsumsToDestMgra[alt];
+    }
+
+	
+	
     public double getOdDistance()
     {
         return origDestDistance;

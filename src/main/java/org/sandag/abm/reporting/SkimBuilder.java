@@ -77,6 +77,8 @@ public class SkimBuilder
     private static final int                         TRANSIT_PREM_FARE_INDEX                = 10;
     private static final int                         TRANSIT_MAIN_MODE_INDEX                = 11;
     private static final int                         TRANSIT_PREM_XFERS_INDEX               = 12;
+    
+    private static final double                      FEET_IN_MILE                           = 5280.0;
 
     private final TapDataManager                     tapManager;
     private final TazDataManager                     tazManager;
@@ -122,17 +124,15 @@ public class SkimBuilder
 
     private final TripModeChoice[] modeChoiceLookup = {TripModeChoice.UNKNOWN,
             TripModeChoice.DRIVE_ALONE_NO_TOLL, TripModeChoice.DRIVE_ALONE_TOLL,
-            TripModeChoice.DRIVE_ALONE_NO_TOLL, TripModeChoice.SR2_HOV,
-            TripModeChoice.SR2_TOLL, TripModeChoice.DRIVE_ALONE_NO_TOLL,
-            TripModeChoice.SR3_HOV, TripModeChoice.SR3_TOLL, TripModeChoice.WALK,
-            TripModeChoice.BIKE, TripModeChoice.WALK_LB, TripModeChoice.WALK_EB,
-            TripModeChoice.WALK_BRT, TripModeChoice.WALK_LRT, TripModeChoice.WALK_CR,
+            TripModeChoice.DRIVE_ALONE_NO_TOLL, TripModeChoice.SR2_HOV, TripModeChoice.SR2_TOLL,
+            TripModeChoice.DRIVE_ALONE_NO_TOLL, TripModeChoice.SR3_HOV, TripModeChoice.SR3_TOLL,
+            TripModeChoice.WALK, TripModeChoice.BIKE, TripModeChoice.WALK_LB,
+            TripModeChoice.WALK_EB, TripModeChoice.WALK_BRT, TripModeChoice.WALK_LRT,
+            TripModeChoice.WALK_CR, TripModeChoice.DRIVE_LB, TripModeChoice.DRIVE_EB,
+            TripModeChoice.DRIVE_BRT, TripModeChoice.DRIVE_LRT, TripModeChoice.DRIVE_CR,
             TripModeChoice.DRIVE_LB, TripModeChoice.DRIVE_EB, TripModeChoice.DRIVE_BRT,
-            TripModeChoice.DRIVE_LRT, TripModeChoice.DRIVE_CR, TripModeChoice.DRIVE_LB,
-            TripModeChoice.DRIVE_EB, TripModeChoice.DRIVE_BRT, TripModeChoice.DRIVE_LRT,
-            TripModeChoice.DRIVE_CR, TripModeChoice.DRIVE_ALONE_NO_TOLL,
-            TripModeChoice.DRIVE_ALONE_NO_TOLL
-                                                    };
+            TripModeChoice.DRIVE_LRT, TripModeChoice.DRIVE_CR, TripModeChoice.DRIVE_ALONE_NO_TOLL,
+            TripModeChoice.DRIVE_ALONE_NO_TOLL      };
 
     private int getTod(int tripTimePeriod)
     {
@@ -188,31 +188,31 @@ public class SkimBuilder
                 timeIndex = DA_TIME_INDEX;
                 distIndex = DA_DIST_INDEX;
                 costIndex = -1;
-			    double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, false,
-				          LOGGER);
-				    return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], getCost(
-				          costIndex < 0 ? 0.0 : autoSkims[costIndex], autoSkims[distIndex]));
+                double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, false,
+                        LOGGER);
+                return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], getCost(
+                        costIndex < 0 ? 0.0 : autoSkims[costIndex], autoSkims[distIndex]));
             }
             case DRIVE_ALONE_TOLL:
             {
                 timeIndex = DA_TOLL_TIME_INDEX;
                 distIndex = DA_TOLL_DIST_INDEX;
                 costIndex = DA_TOLL_COST_INDEX;
-			    double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, false,
-				          LOGGER);
-				    return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], getCost(
-				          costIndex < 0 ? 0.0 : autoSkims[costIndex], autoSkims[distIndex]));
+                double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, false,
+                        LOGGER);
+                return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], getCost(
+                        costIndex < 0 ? 0.0 : autoSkims[costIndex], autoSkims[distIndex]));
             }
             case SR2_HOV: // wu added
             {
                 timeIndex = SR2_TIME_INDEX;
                 distIndex = SR2_DIST_INDEX;
                 costIndex = -1;
-			    double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, false,
-				          LOGGER);
-				    return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], getCost(
-				          costIndex < 0 ? 0.0 : autoSkims[costIndex], autoSkims[distIndex]));
-            }                             
+                double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, false,
+                        LOGGER);
+                return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], getCost(
+                        costIndex < 0 ? 0.0 : autoSkims[costIndex], autoSkims[distIndex]));
+            }
             case SR2_TOLL: // wu added
             {
                 timeIndex = SR2_TOLL_TIME_INDEX;
@@ -228,40 +228,44 @@ public class SkimBuilder
                 timeIndex = SR3_TIME_INDEX;
                 distIndex = SR3_DIST_INDEX;
                 costIndex = -1;
-			    double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, false,
-				          LOGGER);
-				    return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], getCost(
-				          costIndex < 0 ? 0.0 : autoSkims[costIndex], autoSkims[distIndex]));
-            } 
-			case SR3_TOLL:
-			{
+                double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, false,
+                        LOGGER);
+                return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], getCost(
+                        costIndex < 0 ? 0.0 : autoSkims[costIndex], autoSkims[distIndex]));
+            }
+            case SR3_TOLL:
+            {
                 timeIndex = SR3_TOLL_TIME_INDEX;
                 distIndex = SR3_TOLL_DIST_INDEX;
                 costIndex = SR3_TOLL_COST_INDEX;
-			    double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, false,
-			          LOGGER);
-			    return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], getCost(
-			          costIndex < 0 ? 0.0 : autoSkims[costIndex], autoSkims[distIndex]));
-			}
-            case WALK: {
-            	//first, look in mgra manager, otherwise default to auto skims
-            	double distance = mgraManager.getMgraToMgraWalkDistFrom(origin,destination);
-            	if (distance > 0) {
-            		double time = mgraManager.getMgraToMgraWalkTime(origin,destination);
-            		return new TripAttributes(time,distance,0);
-            	}
-            	distance = autoNonMotSkims.getAutoSkims(origin,destination,tod,false,LOGGER)[DA_DIST_INDEX];
-                return new TripAttributes(distance*60/DEFAULT_WALK_SPEED,distance,0);
+                double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, false,
+                        LOGGER);
+                return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], getCost(
+                        costIndex < 0 ? 0.0 : autoSkims[costIndex], autoSkims[distIndex]));
+            }
+            case WALK:
+            {
+                // first, look in mgra manager, otherwise default to auto skims
+                double distance = mgraManager.getMgraToMgraWalkDistFrom(origin, destination) / FEET_IN_MILE;
+                if (distance > 0)
+                {
+                    double time = mgraManager.getMgraToMgraWalkTime(origin, destination);
+                    return new TripAttributes(time, distance, 0);
+                }
+                distance = autoNonMotSkims.getAutoSkims(origin, destination, tod, false, LOGGER)[DA_DIST_INDEX];
+                return new TripAttributes(distance * 60 / DEFAULT_WALK_SPEED, distance, 0);
             }
             case BIKE:
             {
-                double time = mgraManager.getMgraToMgraBikeTime(origin,destination);
-            	if (time > 0) {
-            		double distance = DEFAULT_BIKE_SPEED*60 / time;
-            		return new TripAttributes(time,distance,0);
-            	}
-            	double distance = autoNonMotSkims.getAutoSkims(origin,destination,tod,false,LOGGER)[DA_DIST_INDEX];
-                return new TripAttributes(distance*60/DEFAULT_BIKE_SPEED,distance,0);
+                double time = mgraManager.getMgraToMgraBikeTime(origin, destination);
+                if (time > 0)
+                {
+                    double distance = time * DEFAULT_BIKE_SPEED / 60;
+                    return new TripAttributes(time, distance, 0);
+                }
+                double distance = autoNonMotSkims.getAutoSkims(origin, destination, tod, false,
+                        LOGGER)[DA_DIST_INDEX];
+                return new TripAttributes(distance * 60 / DEFAULT_BIKE_SPEED, distance, 0);
             }
             case WALK_LB:
             case WALK_EB:
@@ -413,7 +417,7 @@ public class SkimBuilder
                                 : TRANSIT_LOCAL_IN_VEHICLE_TIME_INDEX];
                         break;
                 }
-                
+
                 double outVehTime = 0.0;
                 outVehTime += skims[isPremium ? TRANSIT_PREM_ACCESS_TIME_INDEX
                         : TRANSIT_LOCAL_ACCESS_TIME_INDEX];
@@ -430,8 +434,9 @@ public class SkimBuilder
                                                                                                                     // this
                                                                                                                     // correct
                                                                                                                     // enough?
-                return new TripAttributes(time + outVehTime, outVehTime, dist, skims[isPremium ? TRANSIT_PREM_FARE_INDEX
-                        : TRANSIT_LOCAL_FARE_INDEX], boardTaz, alightTaz);
+                return new TripAttributes(time + outVehTime, outVehTime, dist,
+                        skims[isPremium ? TRANSIT_PREM_FARE_INDEX : TRANSIT_LOCAL_FARE_INDEX],
+                        boardTaz, alightTaz);
             }
             default:
                 throw new IllegalStateException("Should not be here: " + modeChoice);
@@ -440,10 +445,10 @@ public class SkimBuilder
 
     public static enum TripModeChoice
     {
-        UNKNOWN(), DRIVE_ALONE_NO_TOLL(false), DRIVE_ALONE_TOLL(true), SR2_GP(false), SR2_HOV(false),SR2_TOLL(
-                true), SR3_GP(false), SR3_HOV(false),SR3_TOLL(true),WALK(), BIKE(), WALK_LB(Modes.getTransitModeIndex("LB"), false, false), WALK_EB(
-                Modes.getTransitModeIndex("EB"), true, false), WALK_BRT(Modes
-                .getTransitModeIndex("BRT"), true, false), WALK_LRT(
+        UNKNOWN(), DRIVE_ALONE_NO_TOLL(false), DRIVE_ALONE_TOLL(true), SR2_GP(false), SR2_HOV(false), SR2_TOLL(
+                true), SR3_GP(false), SR3_HOV(false), SR3_TOLL(true), WALK(), BIKE(), WALK_LB(Modes
+                .getTransitModeIndex("LB"), false, false), WALK_EB(Modes.getTransitModeIndex("EB"),
+                true, false), WALK_BRT(Modes.getTransitModeIndex("BRT"), true, false), WALK_LRT(
                 Modes.getTransitModeIndex("LR"), true, false), WALK_CR(Modes
                 .getTransitModeIndex("CR"), true, false), DRIVE_LB(Modes.getTransitModeIndex("LB"),
                 false, true), DRIVE_EB(Modes.getTransitModeIndex("EB"), true, true), DRIVE_BRT(
@@ -508,8 +513,8 @@ public class SkimBuilder
 
         private int tripStartTime;
 
-        public TripAttributes(double tripTime, double outVehicleTime, double tripDistance, double tripCost,
-                int tripBoardTaz, int tripAlightTaz)
+        public TripAttributes(double tripTime, double outVehicleTime, double tripDistance,
+                double tripCost, int tripBoardTaz, int tripAlightTaz)
         {
             this.tripTime = (float) tripTime;
             this.outVehicleTime = (float) outVehicleTime;
@@ -533,7 +538,7 @@ public class SkimBuilder
         {
             return tripTime;
         }
-        
+
         public float getOutVehicleTime()
         {
             return outVehicleTime;
