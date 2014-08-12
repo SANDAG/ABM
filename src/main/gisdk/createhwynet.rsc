@@ -11,6 +11,7 @@
 //              hwycad.err - error file with error info
 //Oct 08, 2010: Added Lines 164-186, Create a copy of Toll fields
 //Oct 08, 2010: Added Lines 284-287 Build Highway Network with ITOLL fields
+//April 22, 2014: Wu checked all SR125 related changes are included
 //********************************************************************
 
 macro "run create hwy"
@@ -19,7 +20,7 @@ macro "run create hwy"
    RunMacro("HwycadLog",{"createhwynet.rsc: run create hwy","import highway layer"}) 
    ok=RunMacro("import highway layer") 
    if !ok then goto quit
-   
+
    RunMacro("HwycadLog",{"createhwynet.rsc: run create hwy","fill oneway streets"})
    ok=RunMacro("fill oneway streets") 
    if !ok then goto quit
@@ -162,7 +163,7 @@ macro "import highway layer"
 endMacro
 
 /**********************************************************************************************************
-   fill oneway street with dir field, and calculate toll fields
+   fill oneway street with dir field, and calculate toll fields and change AOC and add reliability factor
   
    Inputs
       output\hwy.dbd         
@@ -183,7 +184,9 @@ macro "fill oneway streets"
    shared path, inputDir, outputDir
    ok=0
  
-   RunMacro("close all")    
+   RunMacro("close all")
+   
+   aoc = RunMacro("set aoc")
 
 //  fpr=openfile(path+"\\hwycad.log","a")
 //  mytime=GetDateAndTime() 
@@ -207,7 +210,45 @@ macro "fill oneway streets"
    ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
    if !ok then goto quit
    
+   //CHANGE SR125 TOLL SPEED TO 70MPH (ISPD=70) DELETE THIS SECTION AFTER TESTING
+      Opts = null
+      Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr}
+      Opts.Global.Fields = {"ISPD"}
+      Opts.Global.Method = "Formula"
+      Opts.Global.Parameter = "if ihov=4 and IFC=1 then 70 else ISPD"
+      ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
+      if !ok then goto quit
  
+
+  // Create RELIABILITY OF FACILITY (TOLL) field
+   vw = GetView()
+   strct = GetTableStructure(vw)
+   for i = 1 to strct.length do
+      strct[i] = strct[i] + {strct[i][1]}
+   end
+   strct = strct + {{"relifac", "Real", 10, 2, "True", , , , , , , null}}
+
+   ModifyTable(view1, strct)
+
+   //change reliability field for SR125 to 0.65, and all other facilities are 0
+      Opts = null
+      Opts.Input.[View Set] = {db_link_lyr, link_lyr}
+      Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr}
+      Opts.Global.Fields = {"relifac"}
+      Opts.Global.Method = "Formula"
+      Opts.Global.Parameter = "if ihov=4  & ifc=1 then 0.65 else 1"
+      ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
+      if !ok then goto quit  
+
+   //change AOC to appropriate value for year and cents per mile in COST field and add reliability factor to COST calc.
+      Opts = null
+      Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr}
+      Opts.Global.Fields = {"COST"}
+      Opts.Global.Method = "Formula"
+      Opts.Global.Parameter = "Length * "+R2S(aoc)+" * relifac"
+      ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
+      if !ok then goto quit
+
    // Create copy of ITOLL fields to preserved original settings
    vw = GetView()
    strct = GetTableStructure(vw)
@@ -349,7 +390,7 @@ macro "fill oneway streets"
       ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
       if !ok then goto quit
    end
-   
+
    RunMacro("close all")    
    
    ok=1
@@ -357,6 +398,7 @@ macro "fill oneway streets"
       return(ok)     
 EndMacro
 
+ 
 /**********************************************************************************************************
    add link attributes for tod periods
   
@@ -1226,7 +1268,7 @@ macro "create hwynet"
 
    //input file
    db_file = outputDir + "\\hwy.dbd"  
-   d_tp_tb = inputDir + "\\linktypeturnscst.dbf" //turn penalty in cents
+   d_tp_tb = inputDir + "\\linktypeturns.dbf" //turn penalty in cents
    s_tp_tb = outputDir + "\\turns.dbf"
 
    //output files
@@ -1413,6 +1455,39 @@ macro "create hwynet"
    quit: 
       //if fpr<>null then closefile(fpr)
       return(ok)
-endMacro                
+endMacro
 
-                
+/*  Utility macro to look up auto operating costs for year. 
+    File names / directory structure are hard-coded.
+*/
+Macro "set aoc"
+    shared path, inputDir
+    
+    properties = "\\conf\\"+"sandag_abm.properties"
+    aocfile = path+"\\uec\\"+"AutoOperatingCost.xls"    
+    tempfile = inputDir+"\\"+"aoc.bin"
+    
+    year="${year}"
+
+    // workaround to read excel file (using csv makes updates within uecs manual)
+    ExportExcel(aocfile, "FFB", tempfile, {"AOC", })
+    OpenTable("aoc", "FFB", {tempfile, })
+    
+    // open view then get aoc by year index
+    view = Opentable("aoc", "FFB", {tempfile})
+    v = GetDataVectors(view+"|", {"Year", "Total Auto Operating Cost"}, )
+    
+    for k=1 to v[1].length do
+        y = position(I2S(v[1][k]),year)
+        if y = 1 then
+            aoc = v[2][k]
+            aoc = Round(aoc,2)
+    end
+    
+    // delete temporary files
+    CloseView(view)
+    DeleteFile(tempfile)
+    DeleteFile(Substitute(tempfile, ".bin", ".dcb", ))
+    
+    return(aoc)  
+EndMacro 

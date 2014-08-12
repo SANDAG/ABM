@@ -15,8 +15,6 @@
         </layout>        
     </appender>
 
-
-
     <appender name="FILE" class="org.apache.log4j.FileAppender">
         <param name="File" value="./logFiles/event.log"/>
         <param name="Append" value="true"/>
@@ -32,7 +30,6 @@
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
         </layout>        
     </appender>
-
 
 <!--
     <appender name="TRACE-FILE" class="org.apache.log4j.FileAppender">
@@ -52,7 +49,6 @@
         </layout>        
     </appender>
 
-
     <appender name="UWSL-FILE" class="org.apache.log4j.FileAppender">
         <param name="File" value="./logFiles/event-uwsl-converge.log"/>
         <param name="Append" value="false"/>
@@ -61,7 +57,6 @@
         </layout>        
     </appender>
 
-
     <appender name="AO-FILE" class="org.apache.log4j.FileAppender">
         <param name="File" value="./logFiles/event-ao.log"/>
         <param name="Append" value="true"/>
@@ -69,7 +64,6 @@
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
         </layout>        
     </appender>
-
 
     <appender name="FP-FILE" class="org.apache.log4j.FileAppender">
         <param name="File" value="./logFiles/event-fp.log"/>
@@ -87,7 +81,6 @@
         </layout>        
     </appender>
 
-
     <appender name="CDAP-FILE" class="org.apache.log4j.FileAppender">
         <param name="File" value="./logFiles/event-cdap.log"/>
         <param name="Append" value="false"/>
@@ -96,7 +89,6 @@
         </layout>        
     </appender>
 
-
     <appender name="CDAP-UEC-FILE" class="org.apache.log4j.FileAppender">
         <param name="File" value="./logFiles/event-cdap-uec.log"/>
         <param name="Append" value="false"/>
@@ -104,7 +96,6 @@
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
         </layout>        
     </appender>
-
 
     <appender name="CDAP-LOGSUM-FILE" class="org.apache.log4j.FileAppender">
         <param name="File" value="./logFiles/event-cdap-logsum.log"/>
@@ -138,7 +129,6 @@
         </layout>        
     </appender>
 
-
     <appender name="TourDCNonMan-FILE" class="org.apache.log4j.FileAppender">
         <param name="File" value="./logFiles/event-tourDcNonMan.log"/>
         <param name="Append" value="false"/>
@@ -146,7 +136,6 @@
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
         </layout>        
     </appender>
-
 
     <appender name="TourMCMan-FILE" class="org.apache.log4j.FileAppender">
         <param name="File" value="./logFiles/event-tourMcMan.log"/>
@@ -156,7 +145,6 @@
         </layout>        
     </appender>
 
-
     <appender name="TourMCNonMan-FILE" class="org.apache.log4j.FileAppender">
         <param name="File" value="./logFiles/event-tourMcNonMan.log"/>
         <param name="Append" value="false"/>
@@ -164,7 +152,6 @@
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
         </layout>        
     </appender>
-
 
     <appender name="TOD-FILE" class="org.apache.log4j.FileAppender">
         <param name="File" value="./logFiles/event-tod.log"/>
@@ -174,7 +161,6 @@
         </layout>        
     </appender>
 
-
     <appender name="TOD-LOGSUM-FILE" class="org.apache.log4j.FileAppender">
         <param name="File" value="./logFiles/event-nonManTodLogsum.log"/>
         <param name="Append" value="false"/>
@@ -182,7 +168,6 @@
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
         </layout>        
     </appender>
-
 
     <appender name="TourFreq-FILE" class="org.apache.log4j.FileAppender">
         <param name="File" value="./logFiles/event-TourFreq.log"/>
@@ -192,7 +177,6 @@
         </layout>        
     </appender>
 
-
     <appender name="StopFreq-FILE" class="org.apache.log4j.FileAppender">
         <param name="File" value="./logFiles/event-StopFreq.log"/>
         <param name="Append" value="false"/>
@@ -200,7 +184,6 @@
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
         </layout>        
     </appender>
-
 
     <appender name="StopSoa-FILE" class="org.apache.log4j.FileAppender">
         <param name="File" value="./logFiles/event-StopSoa.log"/>
@@ -210,7 +193,6 @@
         </layout>        
     </appender>
 
-
     <appender name="StopLoc-FILE" class="org.apache.log4j.FileAppender">
         <param name="File" value="./logFiles/event-StopLoc.log"/>
         <param name="Append" value="false"/>
@@ -219,7 +201,6 @@
         </layout>        
     </appender>
 
-
     <appender name="ParkLoc-FILE" class="org.apache.log4j.FileAppender">
         <param name="File" value="./logFiles/event-ParkLoc.log"/>
         <param name="Append" value="false"/>
@@ -227,7 +208,6 @@
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
         </layout>        
     </appender>
-
 
     <appender name="TripMC-FILE" class="org.apache.log4j.FileAppender">
         <param name="File" value="./logFiles/event-tripMc.log"/>
@@ -279,7 +259,6 @@
     </appender>
 
 
-
 <!-- utility calculation trace logger statements will be sent to TRACE-FILE -->
 <!--
     <logger name="trace" additivity="false">
@@ -287,8 +266,6 @@
         <appender-ref ref="TRACE-FILE"/>
     </logger>
 -->
-
-
 
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="cmDebug" additivity="false">
@@ -302,17 +279,10 @@
         <appender-ref ref="BAD-SLC-FILE"/>
     </logger>
 
-
-
-
-
-
-
     <logger name="converge" additivity="false">
         <level value="info"/>
         <appender-ref ref="UWSL-FILE"/>
     </logger>
-
 
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="ao" additivity="false">
@@ -320,13 +290,11 @@
         <appender-ref ref="AO-FILE"/>
     </logger>
 
-
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="fp" additivity="false">
         <level value="info"/>
         <appender-ref ref="FP-FILE"/>
     </logger>
-
 
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="tp" additivity="false">
@@ -334,15 +302,11 @@
         <appender-ref ref="TP-FILE"/>
     </logger>
 
-
-
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="cdap" additivity="false">
         <level value="info"/>
         <appender-ref ref="CDAP-FILE"/>
     </logger>
-
-
 
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="cdap_uec" additivity="false">
@@ -350,15 +314,11 @@
         <appender-ref ref="CDAP-UEC-FILE"/>
     </logger>
 
-
-
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="cdap_logsum" additivity="false">
         <level value="info"/>
         <appender-ref ref="CDAP-LOGSUM-FILE"/>
     </logger>
-
-
 
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="soaTwoStageProbsLogger" additivity="false">
@@ -366,14 +326,11 @@
         <appender-ref ref="TourDCSoaDist-FILE"/>
     </logger>
 
-
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="tourDcSoa" additivity="false">
         <level value="info"/>
         <appender-ref ref="TourDCSoa-FILE"/>
     </logger>
-
-
 
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="tourDcMan" additivity="false">
@@ -381,15 +338,11 @@
         <appender-ref ref="TourDCMan-FILE"/>
     </logger>
 
-
-
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="tourDcNonMan" additivity="false">
         <level value="info"/>
         <appender-ref ref="TourDCNonMan-FILE"/>
     </logger>
-
-
 
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="tourMcMan" additivity="false">
@@ -397,15 +350,11 @@
         <appender-ref ref="TourMCMan-FILE"/>
     </logger>
 
-
-
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="tourMcNonMan" additivity="false">
         <level value="info"/>
         <appender-ref ref="TourMCNonMan-FILE"/>
     </logger>
-
-
 
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="todLogger" additivity="false">
@@ -413,14 +362,11 @@
         <appender-ref ref="TOD-FILE"/>
     </logger>
 
-
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="todMcLogsum" additivity="false">
         <level value="info"/>
         <appender-ref ref="TOD-LOGSUM-FILE"/>
     </logger>
-
-
 
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="tourFreq" additivity="false">
@@ -428,15 +374,11 @@
         <appender-ref ref="TourFreq-FILE"/>
     </logger>
 
-
-
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="stopFreqLog" additivity="false">
         <level value="info"/>
         <appender-ref ref="StopFreq-FILE"/>
     </logger>
-
-
 
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="slcSoaLogger" additivity="false">
@@ -444,15 +386,11 @@
         <appender-ref ref="StopSoa-FILE"/>
     </logger>
 
-
-
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="slcLogger" additivity="false">
         <level value="info"/>
         <appender-ref ref="StopLoc-FILE"/>
     </logger>
-
-
 
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="parkLocLog" additivity="false">
@@ -460,15 +398,11 @@
         <appender-ref ref="ParkLoc-FILE"/>
     </logger>
 
-
-
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="tripMcLog" additivity="false">
         <level value="info"/>
         <appender-ref ref="TripMC-FILE"/>
     </logger>
-
-
 
 <!-- choice model debug logger statements will be sent to DEBUG-FILE-2 -->
     <logger name="tripDepartLog" additivity="false">
@@ -499,7 +433,6 @@
         <level value="info"/>
         <appender-ref ref="VisitorModel-FILE"/>
     </logger>
-
 
 <!-- The default logger will log info level to both CONSOLE and FILE -->
     <root>

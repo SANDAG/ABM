@@ -32,6 +32,7 @@ public class InternalExternalTripModeChoiceDMU
     protected double       nmBikeTime;
 
     protected double[][][] transitSkim;
+    protected double bikeLogsum;
 
     public InternalExternalTripModeChoiceDMU(InternalExternalModelStructure modelStructure,
             Logger aLogger)
@@ -333,6 +334,14 @@ public class InternalExternalTripModeChoiceDMU
     {
         return hhSize;
     }
+	
+	public void setBikeLogsum(double bikeLogsum) {
+		this.bikeLogsum = bikeLogsum;
+	}
+	
+	public double getBikeLogsum() {
+		return bikeLogsum;
+	}
 
     public void setHhSize(int hhSize)
     {
@@ -358,6 +367,8 @@ public class InternalExternalTripModeChoiceDMU
 
         methodIndexMap.put("getTripOrigIsTourDest", 23);
         methodIndexMap.put("getTripDestIsTourDest", 24);
+        
+        methodIndexMap.put("getBikeLogsum",50);
 
         methodIndexMap.put("getNm_walkTime", 90);
         methodIndexMap.put("getNm_bikeTime", 91);

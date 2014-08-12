@@ -1,15 +1,53 @@
+
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.sandag</groupId>
     <artifactId>SANDAG-ABM</artifactId>
-    <version>13.1.0</version>
+    <version>13.2.0</version>
     <name>SANDAG CT-RAMP Activity Based Model</name>
-    
+
     <properties>
         <encoding.type>UTF-8</encoding.type> 
-        <output.path>${project.build.directory}/${project.name}/${project.version}/${project.activeProfiles[0].id}/${project.activeProfiles[1].id}</output.path> 
+        <output.path>${project.build.directory}/${project.name}/${project.version}/${project.activeProfiles[0].id}/${project.activeProfiles[1].id}</output.path>
+        <study.root>${project.build.directory}/${project.name}/${project.version}/${project.activeProfiles[0].id}</study.root>
+        <jppf.driver.memory.min>1000m</jppf.driver.memory.min> 
+        <jppf.driver.memory.max>9000m</jppf.driver.memory.max> 
+        <jppf.headnode.memory.min>32000m</jppf.headnode.memory.min> 
+        <jppf.headnode.memory.max>32000m</jppf.headnode.memory.max> 
+        <jppf.workernode.memory.min>45000m</jppf.workernode.memory.min> 
+        <jppf.workernode.memory.max>50000m</jppf.workernode.memory.max> 
+        <mtxmgr.memory.min>20000m</mtxmgr.memory.min> 
+        <mtxmgr.memory.max>20000m</mtxmgr.memory.max> 
+        <hhmgr.memory.min>1000m</hhmgr.memory.min> 
+        <hhmgr.memory.max>12000m</hhmgr.memory.max>         
+        <client.memory.min>30000m</client.memory.min> 
+        <client.memory.max>30000m</client.memory.max>          
+        <spmarket.memory.min>30000m</spmarket.memory.min> 
+        <spmarket.memory.max>30000m</spmarket.memory.max>      
+        <bikelogsum.memory.min>26000m</bikelogsum.memory.min> 
+        <bikelogsum.memory.max>26000m</bikelogsum.memory.max>    
+        <walklogsum.memory.min>26000m</walklogsum.memory.min> 
+        <walklogsum.memory.max>26000m</walklogsum.memory.max>    
+        <bikeroute.memory.min>26000m</bikeroute.memory.min> 
+        <bikeroute.memory.max>26000m</bikeroute.memory.max> 
+        <dataexport.memory.min>30000m</dataexport.memory.min> 
+        <dataexport.memory.max>30000m</dataexport.memory.max> 
+        <emfac.memory.min>10000m</emfac.memory.min> 
+        <emfac.memory.max>10000m</emfac.memory.max>  
+        <matrix.server.port>1191</matrix.server.port>  
+        <household.server.port>1129</household.server.port>  
+        <java.32.port>1190</java.32.port>  
+        <MAPDRIVE>T:</MAPDRIVE>
+		<MAPDRIVEFOLDER>\\sandag.org\transdata</MAPDRIVEFOLDER>
+		<USERNAME>XX</USERNAME>
+		<PASSWORD>XX</PASSWORD>
+		<MAPANDRUN>mapAndRun.bat</MAPANDRUN>
+		<JAVA_64_PATH>C:\Progra~1\Java\jre7</JAVA_64_PATH>
+		<JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
+		<workpath>T:\data\ABM_AT</workpath>
     </properties>
     <profiles>
         <profile>
@@ -18,118 +56,196 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
+                <AT>False</AT>
                 <jppf.server.host>127.0.0.1</jppf.server.host>
                 <map.folder>e$</map.folder>
                 <jppf.management.host>127.0.0.1</jppf.management.host>
                 <matrix.server.host>127.0.0.1</matrix.server.host>
-                <matrix.server.port>1191</matrix.server.port>
                 <household.server.host>127.0.0.1</household.server.host>
-                <household.server.port>1129</household.server.port>
                 <master.node.ip>127.0.0.1</master.node.ip>
                 <node.1.ip>127.0.0.1</node.1.ip>
                 <node.2.ip>127.0.0.1</node.2.ip>
-                <java.32.port>1190</java.32.port>
             </properties>
         </profile>
         <profile>
             <id>charger</id>
             <properties>
+                <AT>False</AT>
                 <jppf.server.host>172.16.34.51</jppf.server.host>
                 <map.folder>d</map.folder>
                 <jppf.management.host>172.16.34.51</jppf.management.host>
                 <matrix.server.host>172.16.34.51</matrix.server.host>
-                <matrix.server.port>1191</matrix.server.port>
                 <household.server.host>172.16.34.50</household.server.host>
-                <household.server.port>1129</household.server.port>
                 <master.node.ip>172.16.34.51</master.node.ip>
                 <node.1.ip>172.16.34.50</node.1.ip>
                 <node.2.ip>172.16.34.52</node.2.ip>
                 <master.node.name>CHARGER</master.node.name>
                 <node.1.name>THUNDERBIRD</node.1.name>
                 <node.2.name>BARRACUDA</node.2.name>
-                <java.32.port>1190</java.32.port>
-                <workpath>d:\\projects\\sandag\\series13</workpath>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
+                <!-- 
+                <workpath>d:\\projects\\sandag\\series13</workpath>   
+                -->             
             </properties>
         </profile>
         <profile>
+            <id>charger_at</id>
+            <properties>
+            	<AT>True</AT>
+                <jppf.server.host>172.16.34.51</jppf.server.host>
+                <map.folder>d</map.folder>
+                <jppf.management.host>172.16.34.51</jppf.management.host>
+                <matrix.server.host>172.16.34.51</matrix.server.host>
+                <household.server.host>172.16.34.51</household.server.host>
+                <master.node.ip>172.16.34.51</master.node.ip>
+                <node.1.ip>172.16.34.50</node.1.ip>
+                <node.2.ip>172.16.34.52</node.2.ip>
+                <master.node.name>CHARGER</master.node.name>
+                <node.1.name>THUNDERBIRD</node.1.name>
+                <node.2.name>BARRACUDA</node.2.name>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH> 
+                <!--
+                <workpath>d:\\projects\\sandag\\series13</workpath>
+                -->
+            </properties>
+        </profile>        
+        <profile>
             <id>mustang</id>
             <properties>
+                <AT>False</AT>
                 <jppf.server.host>172.16.34.40</jppf.server.host>
                 <map.folder>MustangD</map.folder>
                 <jppf.management.host>172.16.34.40</jppf.management.host>
                 <matrix.server.host>172.16.34.40</matrix.server.host>
-                <matrix.server.port>1191</matrix.server.port>
                 <household.server.host>172.16.34.42</household.server.host>
-                <household.server.port>1129</household.server.port>
                 <master.node.ip>172.16.34.40</master.node.ip>
                 <node.1.ip>172.16.34.42</node.1.ip>
                 <node.2.ip>172.16.34.41</node.2.ip>
                 <master.node.name>MUSTANG</master.node.name>
                 <node.1.name>GALAXIE</node.1.name>
                 <node.2.name>COBRA</node.2.name>
-                <java.32.port>1190</java.32.port>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH> 
+                <!--
                 <workpath>d:\\projects\\sandag\\series13</workpath>
+                -->
+            </properties>
+        </profile>
+        <profile>
+            <id>mustang_at</id>
+            <properties>
+                <AT>True</AT>
+                <jppf.server.host>172.16.34.40</jppf.server.host>
+                <map.folder>MustangD</map.folder>
+                <jppf.management.host>172.16.34.40</jppf.management.host>
+                <matrix.server.host>172.16.34.40</matrix.server.host>
+                <household.server.host>172.16.34.40</household.server.host>
+                <master.node.ip>172.16.34.40</master.node.ip>
+                <node.1.ip>172.16.34.42</node.1.ip>
+                <node.2.ip>172.16.34.41</node.2.ip>
+                <master.node.name>MUSTANG</master.node.name>
+                <node.1.name>GALAXIE</node.1.name>
+                <node.2.name>COBRA</node.2.name>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
+                <!-- 
+                <workpath>d:\\projects\\sandag\\series13</workpath>
+                -->
             </properties>
         </profile>
         <profile>
             <id>aztec</id>
             <properties>
+                <AT>False</AT>
                 <jppf.server.host>172.16.34.30</jppf.server.host>
                 <map.folder>c$</map.folder>
                 <jppf.management.host>172.16.34.30</jppf.management.host>
                 <matrix.server.host>172.16.34.30</matrix.server.host>
-                <matrix.server.port>1191</matrix.server.port>
                 <household.server.host>172.16.34.33</household.server.host>
-                <household.server.port>1129</household.server.port>
                 <master.node.ip>172.16.34.30</master.node.ip>
                 <node.1.ip>172.16.34.33</node.1.ip>
                 <node.2.ip>172.16.34.45</node.2.ip>
                 <master.node.name>AZTEC</master.node.name>
                 <node.1.name>HAWKEYE</node.1.name>
                 <node.2.name>AGGIE</node.2.name>
-                <java.32.port>1190</java.32.port>
-                <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
+                <!--  
+                <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>   
+                -->             
             </properties>
-        </profile>  
+        </profile>
+        <profile>
+            <id>aztec_at</id>
+            <properties>
+                <AT>True</AT>
+                <jppf.server.host>172.16.34.30</jppf.server.host>
+                <map.folder>c$</map.folder>
+                <jppf.management.host>172.16.34.30</jppf.management.host>
+                <matrix.server.host>172.16.34.30</matrix.server.host>
+                <household.server.host>172.16.34.30</household.server.host>
+                <master.node.ip>172.16.34.30</master.node.ip>
+                <node.1.ip>172.16.34.33</node.1.ip>
+                <node.2.ip>172.16.34.45</node.2.ip>
+                <master.node.name>AZTEC</master.node.name>
+                <node.1.name>HAWKEYE</node.1.name>
+                <node.2.name>AGGIE</node.2.name>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
+                <!--  
+                <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>  
+                -->              
+            </properties>
+        </profile>          
         <profile>
             <id>gaucho</id>
             <properties>
+                <AT>False</AT>
                 <jppf.server.host>172.16.34.61</jppf.server.host>
                 <map.folder>d$</map.folder>
                 <jppf.management.host>172.16.34.61</jppf.management.host>
                 <matrix.server.host>172.16.34.61</matrix.server.host>
-                <matrix.server.port>1191</matrix.server.port>
                 <household.server.host>172.16.34.60</household.server.host>
-                <household.server.port>1129</household.server.port>
                 <master.node.ip>172.16.34.61</master.node.ip>
                 <node.1.ip>172.16.34.60</node.1.ip>
                 <node.2.ip>172.16.34.39</node.2.ip>
                 <master.node.name>GAUCHO</master.node.name>
                 <node.1.name>WILDCAT</node.1.name>
-                <!--
                 <node.2.name>NITTANY</node.2.name>
-                -->
-                <java.32.port>1190</java.32.port>
-                <workpath>d:\\projects\\sandag\\series13</workpath>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
+                <!--  
+                <workpath>d:\\projects\\sandag\\series13</workpath>  
+                -->              
+            </properties>
+        </profile> 
+        <profile>
+            <id>gaucho_at</id>
+            <properties>
+                <AT>True</AT>
+                <jppf.server.host>172.16.34.61</jppf.server.host>
+                <map.folder>d$</map.folder>
+                <jppf.management.host>172.16.34.61</jppf.management.host>
+                <matrix.server.host>172.16.34.61</matrix.server.host>
+                <household.server.host>172.16.34.61</household.server.host>
+                <master.node.ip>172.16.34.61</master.node.ip>
+                <node.1.ip>172.16.34.60</node.1.ip>
+                <node.2.ip>172.16.34.39</node.2.ip>
+                <master.node.name>GAUCHO</master.node.name>
+                <node.1.name>WILDCAT</node.1.name>
+                <node.2.name>NITTANY</node.2.name>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
+                <!-- 
+                <workpath>d:\\projects\\sandag\\series13</workpath>    
+                -->            
             </properties>
         </profile>         
         <profile>
             <id>sdsc-cluster</id>
             <properties>
+                <AT>False</AT>
                 <jppf.server.host></jppf.server.host>
                 <jppf.management.host></jppf.management.host>
-                <matrix.server.host></matrix.server.host>
                 <matrix.server.port></matrix.server.port>
                 <household.server.host></household.server.host>
-                <household.server.port></household.server.port>
                 <master.node.ip></master.node.ip>
                 <node.1.ip></node.1.ip>
                 <node.2.ip></node.2.ip>
-                <java.32.port></java.32.port>
             </properties>
         </profile>
          <profile>
@@ -157,7 +273,6 @@
                 <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
                 <workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
-                <auto.opterating.maintenance>7.5</auto.opterating.maintenance>
             </properties>
         </profile>
          <profile>
@@ -180,8 +295,8 @@
                 <acc.uec.file>Accessibilities2010.xls</acc.uec.file>
                 <utility.bestTransitPath.uec.file>BestTransitPathUtility2010.xls</utility.bestTransitPath.uec.file>
                 <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
-                <workShadowPricing.iteration>ShadowPricingOutput_work_20.csv</workShadowPricing.iteration>
-                <schoolShadowPricing.iteration>ShadowPricingOutput_school_20.csv</schoolShadowPricing.iteration>
+                <workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
@@ -203,9 +318,9 @@
                 <airport.mc.uec.file>AirportModeChoice2020.xls</airport.mc.uec.file>
                 <acc.uec.file>Accessibilities2020.xls</acc.uec.file>
                 <utility.bestTransitPath.uec.file>BestTransitPathUtility2020.xls</utility.bestTransitPath.uec.file>             
-                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs_2050.csv</PopulationSynthesizer.OccupCodes> 
-                <workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
-                <schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
+                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
+                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
@@ -227,9 +342,9 @@
                 <airport.mc.uec.file>AirportModeChoice2035.xls</airport.mc.uec.file>
                 <acc.uec.file>Accessibilities2035.xls</acc.uec.file>
                 <utility.bestTransitPath.uec.file>BestTransitPathUtility2035.xls</utility.bestTransitPath.uec.file>
-                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs_2050.csv</PopulationSynthesizer.OccupCodes> 
-                <workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
-                <schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
+                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
+                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
@@ -251,7 +366,7 @@
                 <airport.mc.uec.file>AirportModeChoice2050.xls</airport.mc.uec.file>
                 <acc.uec.file>Accessibilities2050.xls</acc.uec.file>
                 <utility.bestTransitPath.uec.file>BestTransitPathUtility2050.xls</utility.bestTransitPath.uec.file>
-                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs_2050.csv</PopulationSynthesizer.OccupCodes> 
+                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
             </properties>
@@ -334,7 +449,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <encoding>${encoding.type}</encoding>
+                            <encoding>${encoding.type}</encoding> 
                             <outputDirectory>${output.path}/application</outputDirectory>
                             <overWriteReleases>false</overWriteReleases>
                             <overWriteSnapshots>false</overWriteSnapshots>
@@ -358,7 +473,7 @@
                             <outputDirectory>${output.path}/uec</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>UECs</directory>
+                                    <directory>uec</directory>
                                     <filtering>false</filtering>
                                 </resource>
                             </resources>
@@ -372,11 +487,34 @@
                         </goals>
                         <configuration>
                             <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${study.root}/gisdk</outputDirectory>
+                            <!--  
                             <outputDirectory>${output.path}/gisdk</outputDirectory>
+                            -->
                             <resources>
                                 <resource>
                                     <directory>src/main/gisdk</directory>
                                     <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-txt-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${study.root}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>scen_name.txt</include>
+                                    </includes>
                                 </resource>
                             </resources>
                         </configuration>
@@ -476,10 +614,12 @@
                             <resources>
                                 <resource>
                                     <directory>input</directory>
-                                    <filtering>true</filtering>
+                                    <filtering>false</filtering>
+                                    <!--
                                     <includes>
                                         <include>*.xls</include>
                                     </includes>
+                                    -->
                                 </resource>
                             </resources>
                         </configuration>
@@ -589,7 +729,7 @@
                         <exclude>**/*.properties</exclude>
                         <exclude>*.xml</exclude>
                     </excludes>
-                    <outputDirectory>${output.path}/application</outputDirectory>
+                    <outputDirectory>${output.path}/application</outputDirectory>                  
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
@@ -638,7 +778,7 @@
         <dependency>
             <groupId>pb</groupId>
             <artifactId>common-base</artifactId>
-            <version>2013.08.08-ABM</version>
+            <version>2014.07.09-ABM</version>
         </dependency>
         <dependency>
             <groupId>org.jppf</groupId>

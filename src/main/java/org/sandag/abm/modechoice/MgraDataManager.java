@@ -1,8 +1,18 @@
 package org.sandag.abm.modechoice;
 
+
+import org.sandag.abm.active.sandag.SandagWalkPathAlternativeListGenerationConfiguration;
+import org.sandag.abm.active.sandag.SandagWalkPathChoiceLogsumMatrixApplication;
+import org.sandag.abm.ctramp.BikeLogsum;
+import org.sandag.abm.ctramp.BikeLogsumSegment;
+import org.sandag.abm.ctramp.CtrampApplication;
+import org.sandag.abm.ctramp.Util;
+import org.sandag.abm.modechoice.Modes.AccessMode;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,14 +21,17 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.Modes.AccessMode;
+
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.util.ResourceUtil;
@@ -98,12 +111,20 @@ public final class MgraDataManager
     // An array of Hashmaps dimensioned by origin mgra, with distance in feet,
     // in a ragged
     // array (no key for mgra means no other mgras in walk distance)
-    private HashMap<Integer, Integer>[] oMgraWalkDistance;
+    //first element of distance array is percieved distance,
+    // the second is actual distance
+    private HashMap<Integer,int[]>[] oMgraWalkDistance;
 
     // An array of Hashmaps dimensioned by destination mgra, with distance in
     // feet, in a ragged
     // array (no key for mgra means no other mgras in walk distance)
-    private HashMap<Integer, Integer>[] dMgraWalkDistance;
+    //first element of distance array is percieved distance,
+    // the second is actual distance
+    private HashMap<Integer,int[]>[] dMgraWalkDistance;
+    
+    private BikeLogsum bls;
+    //segment doesn't matter as it is now just a passthrough
+    private BikeLogsumSegment defaultSegment = new BikeLogsumSegment(true,true,true);
 
     // An array dimensioned to maxMgra of ragged arrays of lists of TAPs
     // accessible by driving
@@ -147,6 +168,7 @@ public final class MgraDataManager
         readMgraTableData(rbMap);
         readMgraWlkTaps(rbMap);
         readMgraWlkDist(rbMap);
+        bls = BikeLogsum.getBikeLogsum(rbMap);
 
         // pre-process the list of TAPS reachable by drive access for each MGRA
         mapDriveAccessTapsToMgras(TazDataManager.getInstance(rbMap));
@@ -208,88 +230,66 @@ public final class MgraDataManager
      */
     public void readMgraWlkTaps(HashMap<String, String> rbMap)
     {
-        File mgraWlkTapCorresFile = new File(Util.getStringValueFromPropertyMap(rbMap,
-                "scenario.path")
-                + Util.getStringValueFromPropertyMap(rbMap, "mgra.wlkacc.taps.and.distance.file"));
-        ArrayList<Integer>[] mgraWlkTapList = new ArrayList[maxMgra + 1];
-        ArrayList<Integer>[] mgraWlkTapDistList = new ArrayList[maxMgra + 1];
+        File mgraWlkTapTimeFile = new File(rbMap.get(SandagWalkPathAlternativeListGenerationConfiguration.PROPERTIES_OUTPUT),
+        		rbMap.get(SandagWalkPathChoiceLogsumMatrixApplication.WALK_LOGSUM_SKIM_MGRA_TAP_FILE_PROPERTY));
+        Map<Integer,Map<Integer,int[]>> mgraWlkTapList = new HashMap<>(); //mgra -> tap -> [board dist,alight dist]
         String s;
-        int mgra;
-        int tap;
-        int dist;
-        StringTokenizer st;
-        try
-        {
-            BufferedReader br = new BufferedReader(new FileReader(mgraWlkTapCorresFile));
-
+        try ( BufferedReader br = new BufferedReader(new FileReader(mgraWlkTapTimeFile)))
+        { 
             // read the first data file line containing column names
-            // s = br.readLine();
-
+            s = br.readLine();
+                
             // read the data records
             while ((s = br.readLine()) != null)
             {
-                st = new StringTokenizer(s, " ");
-                // st = new StringTokenizer(s, ", ");
-                mgra = Integer.parseInt(st.nextToken());
-                tap = Integer.parseInt(st.nextToken());
+            	StringTokenizer st = new StringTokenizer(s, ",");
+                int mgra = Integer.parseInt(st.nextToken().trim());
+                int tap = Integer.parseInt(st.nextToken().trim());
                 if (tap > maxTap) maxTap = tap;
-                dist = (int) (Float.parseFloat(st.nextToken()) + 0.5);
-                if (mgraWlkTapList[mgra] == null)
-                {
-                    mgraWlkTapList[mgra] = new ArrayList<Integer>();
-                    mgraWlkTapList[mgra].add(tap);
-
-                    mgraWlkTapDistList[mgra] = new ArrayList<Integer>();
-                    mgraWlkTapDistList[mgra].add(dist);
-                } else
-                {
-                    mgraWlkTapList[mgra].add(tap);
-                    mgraWlkTapDistList[mgra].add(dist);
-                }
+                float boardTimePercieved = Float.parseFloat(st.nextToken().trim());
+                float boardTimeActual = Float.parseFloat(st.nextToken().trim());
+                float alightTimePercieved = Float.parseFloat(st.nextToken().trim());
+                float alightTimeActual = Float.parseFloat(st.nextToken().trim());
+                int boardDistPercieved = Math.round(boardTimePercieved / Constants.walkMinutesPerMile * Constants.feetPerMile);
+                int alightDistPercieved = Math.round(alightTimePercieved / Constants.walkMinutesPerMile  * Constants.feetPerMile);
+                int boardDistActual = Math.round(boardTimeActual / Constants.walkMinutesPerMile  * Constants.feetPerMile);
+                int alightDistActual = Math.round(alightTimeActual / Constants.walkMinutesPerMile  * Constants.feetPerMile);
+                if (!mgraWlkTapList.containsKey(mgra))
+                	mgraWlkTapList.put(mgra,new HashMap<Integer,int[]>());
+                mgraWlkTapList.get(mgra).put(tap,new int[] {boardDistPercieved,alightDistPercieved,boardDistActual,alightDistActual});
             }
-            br.close();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        }catch (IOException e) {
+			logger.error(e);
+			throw new RuntimeException(e);
+		} 
 
         // now go thru the array of ArrayLists and convert the lists to arrays
         // and
         // store in the class variable mgraWlkTapsDistArrays.
-        mgraWlkTapsDistArray = new int[maxMgra + 1][2][];
-        for (int i = 0; i < mgraWlkTapList.length; i++)
-        { // elements in the
-          // array of
-          // arraylists
-            ArrayList<Integer> aMgraTapList = mgraWlkTapList[i]; // get the Tap
-            // ArrayList
-            ArrayList<Integer> aMgraDistList = mgraWlkTapDistList[i]; // get the
-            // Distance
-            // ArrayList
-            if (aMgraTapList != null)
-            { // if the list isn't null
-                mgraWlkTapsDistArray[i][0] = new int[aMgraTapList.size()]; // initialize
-                // the
-                // class
-                // variable
-                mgraWlkTapsDistArray[i][1] = new int[aMgraDistList.size()]; // both
-                // arrays
-                // should
-                // be the
-                // same
-                // size
-                for (int j = 0; j < aMgraTapList.size(); j++)
-                {
-                    mgraWlkTapsDistArray[i][0][j] = (Integer) aMgraTapList.get(j);
-                    mgraWlkTapsDistArray[i][1][j] = (Integer) aMgraDistList.get(j);
-                }
-                nMgrasWithWlkTaps++;
-            }
+        mgraWlkTapsDistArray = new int[maxMgra + 1][5][];
+        nMgrasWithWlkTaps = mgraWlkTapList.size();
+        for (int mgra : mgraWlkTapList.keySet()) {
+        	Map<Integer,int[]> wlkTapList = mgraWlkTapList.get(mgra);
+        	mgraWlkTapsDistArray[mgra][0] = new int[wlkTapList.size()];
+        	mgraWlkTapsDistArray[mgra][1] = new int[wlkTapList.size()];
+        	mgraWlkTapsDistArray[mgra][2] = new int[wlkTapList.size()];
+        	mgraWlkTapsDistArray[mgra][3] = new int[wlkTapList.size()];
+        	mgraWlkTapsDistArray[mgra][4] = new int[wlkTapList.size()];
+        	int counter = 0;
+        	for (int tap : new TreeSet<Integer>(wlkTapList.keySet())) { //get the taps in ascending order - not sure if this matters, but it is cleaner
+        		int[] dists = wlkTapList.get(tap);
+        		mgraWlkTapsDistArray[mgra][0][counter] = tap;
+        		mgraWlkTapsDistArray[mgra][1][counter] = dists[0];
+        		mgraWlkTapsDistArray[mgra][2][counter] = dists[1];
+        		mgraWlkTapsDistArray[mgra][3][counter] = dists[2];
+        		mgraWlkTapsDistArray[mgra][4][counter] = dists[3];
+                counter++;
+        	}
         }
     }
 
     /**
-     * Read the walk-transit taps for mgras.
+     * Read the walk-transit taps for mgras. Store distances in feet.
      * 
      * @param rb
      *            ResourceBundle with scenario.path and mgra.walkdistance.file
@@ -297,51 +297,37 @@ public final class MgraDataManager
      */
     public void readMgraWlkDist(HashMap<String, String> rbMap)
     {
-        File mgraWlkDistFile = new File(Util.getStringValueFromPropertyMap(rbMap, "scenario.path")
-                + Util.getStringValueFromPropertyMap(rbMap, "mgra.walkdistance.file"));
+        File mgraWlkTimeFile = new File(rbMap.get(SandagWalkPathAlternativeListGenerationConfiguration.PROPERTIES_OUTPUT),
+        		rbMap.get(SandagWalkPathChoiceLogsumMatrixApplication.WALK_LOGSUM_SKIM_MGRA_MGRA_FILE_PROPERTY));
         oMgraWalkDistance = new HashMap[maxMgra + 1];
         dMgraWalkDistance = new HashMap[maxMgra + 1];
         String s;
-        int oMgra, dMgra;
-        int dist;
-        StringTokenizer st;
-        try
+        try (BufferedReader br = new BufferedReader(new FileReader(mgraWlkTimeFile)))
         {
-            BufferedReader br = new BufferedReader(new FileReader(mgraWlkDistFile));
+            br.readLine(); //skip first line (header)
+
             while ((s = br.readLine()) != null)
             {
-                st = new StringTokenizer(s, " ");
+                StringTokenizer st = new StringTokenizer(s, ",");
 
-                // skip lines if zone, number of mgra-pairs exists in file
-                if (st.countTokens() < 3) continue;
+                int oMgra = Integer.parseInt(st.nextToken().trim());
+                int dMgra = Integer.parseInt(st.nextToken().trim());
+                int perceivedDist =  Math.round(Float.parseFloat(st.nextToken().trim()) / Constants.walkMinutesPerMile * Constants.feetPerMile);
+                int actualDist =  Math.round(Float.parseFloat(st.nextToken().trim()) / Constants.walkMinutesPerMile * Constants.feetPerMile);
 
-                oMgra = Integer.parseInt(st.nextToken());
-                dMgra = Integer.parseInt(st.nextToken());
-                dist = Integer.parseInt(st.nextToken());
-
-                if (oMgraWalkDistance[oMgra] == null)
-                {
-                    oMgraWalkDistance[oMgra] = new HashMap<Integer, Integer>();
-                    oMgraWalkDistance[oMgra].put(dMgra, dist);
-                } else
-                {
-                    oMgraWalkDistance[oMgra].put(dMgra, dist);
-                }
-
-                if (dMgraWalkDistance[dMgra] == null)
-                {
-                    dMgraWalkDistance[dMgra] = new HashMap<Integer, Integer>();
-                    dMgraWalkDistance[dMgra].put(oMgra, dist);
-                } else
-                {
-                    dMgraWalkDistance[dMgra].put(oMgra, dist);
-                }
+                int[] distArray = {perceivedDist,actualDist};
+                if (oMgraWalkDistance[oMgra] == null) 
+                    oMgraWalkDistance[oMgra] = new HashMap<Integer,int[]>();
+                oMgraWalkDistance[oMgra].put(dMgra,new int[] {perceivedDist,actualDist});
+                
+                if (dMgraWalkDistance[dMgra] == null) 
+                	dMgraWalkDistance[dMgra] = new HashMap<Integer,int[]>();
+            	dMgraWalkDistance[dMgra].put(oMgra,new int[] {perceivedDist,actualDist});
             }
-            br.close();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        } catch (IOException e) {
+			logger.error(e);
+			throw new RuntimeException(e);
+		} 
 
     }
 
@@ -424,10 +410,35 @@ public final class MgraDataManager
      *            The position of the TAP in the MGRA array (0+)
      * @return The walk distance in feet.
      */
-    public float getMgraToTapWalkDist(int mgra, int pos)
+    public float getMgraToTapWalkBoardDist(int mgra, int pos)
     {
-        return mgraWlkTapsDistArray[mgra][1][pos]; // [1] = distance
+        return mgraWlkTapsDistArray[mgra][1][pos];
     }
+
+    /**
+     * Get the walk alight distance from a TAP to an MGRA.
+     * 
+     * @param mgra The number of the destination MGRA.
+     * @param pos The position of the TAP in the MGRA array (0+)
+     * @return The walk distance in feet.
+     */
+    public float getMgraToTapWalkAlightDist(int mgra, int pos)
+    {
+        return mgraWlkTapsDistArray[mgra][2][pos];
+    }
+
+    
+//    /**
+//     * Get the walk distance from an MGRA to a TAP.
+//     * 
+//     * @param mgra The number of the destination MGRA.
+//     * @param pos The position of the TAP in the MGRA array (0+)
+//     * @return The walk distance in feet.
+//     */
+//    public float getMgraToTapWalkDist(int mgra, int pos)
+//    {
+//        return mgraWlkTapsDistArray[mgra][1][pos]; // [1] = distance
+//    }
 
     /**
      * Get the position of the tap in the mgra walk tap array.
@@ -457,7 +468,7 @@ public final class MgraDataManager
     }
 
     /**
-     * Get the walk time from an MGRA to a TAP.
+     * Get the walk board time from an MGRA to a TAP.
      * 
      * @param mgra
      *            The number of the destination MGRA.
@@ -465,14 +476,45 @@ public final class MgraDataManager
      *            The position of the TAP in the MGRA array (0+)
      * @return The walk time in minutes.
      */
-    public float getMgraToTapWalkTime(int mgra, int pos)
+    public float getMgraToTapWalkBoardTime(int mgra, int pos)
     {
-        return ((float) mgraWlkTapsDistArray[mgra][1][pos]) * Constants.walkMinutesPerFoot;
+    	float distanceInFeet = (float) mgraWlkTapsDistArray[mgra][1][pos];
+    	float time = distanceInFeet/Constants.feetPerMile * Constants.walkMinutesPerMile;
+        return time;
     }
 
     /**
-     * Get the walk distance from an MGRA to an MGRA. Return 0 if not within
-     * walking distance.
+     * Get the walk alight time from a TAP to an MGRA.
+     * 
+     * @param mgra The number of the destination MGRA.
+     * @param pos The position of the TAP in the MGRA array (0+)
+     * @return The walk time in minutes.
+     */
+    public float getMgraToTapWalkAlightTime(int mgra, int pos)
+    {
+    	float distanceInFeet = (float) mgraWlkTapsDistArray[mgra][2][pos];
+    	float time = distanceInFeet/Constants.feetPerMile * Constants.walkMinutesPerMile;
+        return time;
+    }
+
+    //todo: delete this method: currently retained for compatibility (namely: abm_reports)
+    /**
+     * Get the walk time from an MGRA to a TAP.
+     * 
+     * @param mgra The number of the destination MGRA.
+     * @param pos The position of the TAP in the MGRA array (0+)
+     * @return The walk time in minutes.
+     */
+    public float getMgraToTapWalkTime(int mgra, int pos)
+    {
+    	float distanceInFeet = (float) mgraWlkTapsDistArray[mgra][1][pos];
+    	float time = distanceInFeet/Constants.feetPerMile * Constants.walkMinutesPerMile;
+        return time;
+    }
+
+    /**
+     * Get the walk distance from an MGRA to an MGRA. Return 0 if not within walking
+     * distance.
      * 
      * @param oMgra
      *            The number of the production/origin MGRA.
@@ -485,7 +527,7 @@ public final class MgraDataManager
 
         if (oMgraWalkDistance[oMgra] == null) return 0;
         else if (oMgraWalkDistance[oMgra].containsKey(dMgra))
-            return oMgraWalkDistance[oMgra].get(dMgra);
+            return oMgraWalkDistance[oMgra].get(dMgra)[0];
 
         return 0;
     }
@@ -505,7 +547,7 @@ public final class MgraDataManager
 
         if (dMgraWalkDistance[dMgra] == null) return 0;
         else if (dMgraWalkDistance[dMgra].containsKey(oMgra))
-            return dMgraWalkDistance[dMgra].get(oMgra);
+            return dMgraWalkDistance[dMgra].get(oMgra)[0];
 
         return 0;
     }
@@ -524,9 +566,11 @@ public final class MgraDataManager
     {
 
         if (oMgraWalkDistance[oMgra] == null) return 0f;
-        else if (oMgraWalkDistance[oMgra].containsKey(dMgra))
-            return ((float) oMgraWalkDistance[oMgra].get(dMgra)) * Constants.walkMinutesPerFoot;
-
+        else if (oMgraWalkDistance[oMgra].containsKey(dMgra)){
+        	float distanceInFeet = (float) oMgraWalkDistance[oMgra].get(dMgra)[0];
+        	float time = distanceInFeet/Constants.feetPerMile * Constants.walkMinutesPerMile;
+        	return time;
+        }
         return 0f;
     }
 
@@ -542,12 +586,8 @@ public final class MgraDataManager
      */
     public float getMgraToMgraBikeTime(int oMgra, int dMgra)
     {
-
-        if (oMgraWalkDistance[oMgra] == null) return 0f;
-        else if (oMgraWalkDistance[oMgra].containsKey(dMgra))
-            return ((float) oMgraWalkDistance[oMgra].get(dMgra)) * Constants.bikeMinutesPerFoot;
-
-        return 0f;
+    	double time = bls.getTime(defaultSegment,oMgra,dMgra);
+    	return (time == Double.POSITIVE_INFINITY) ? 0f : (float) time;
     }
 
     /**

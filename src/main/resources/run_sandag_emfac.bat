@@ -26,7 +26,7 @@ SET PATH=%PATH%;%JDIR%
 
 set JAVA_64_PATH=C:\Progra~1\Java\jre7
 echo %JAVA_64_PATH%\bin\java -Xmx10000m -cp "%CP%" org.sandag.abm.reporting.emfac2011.Emfac2011Runner "%MDIRF%/config/sandag_emfac2011.properties" "@@model.dir=%MDIRF%/"
-%JAVA_64_PATH%\bin\java -Xmx10000m -cp "%CP%" org.sandag.abm.reporting.emfac2011.Emfac2011Runner "%MDIRF%/conf/sandag_abm.properties" "@@model.dir=%MDIRF%/"
+%JAVA_64_PATH%\bin\java -Xmx%MEMORY_EMFAC_MAX%-cp "%CP%" org.sandag.abm.reporting.emfac2011.Emfac2011Runner "%MDIRF%/conf/sandag_abm.properties" "@@model.dir=%MDIRF%/"
 SET PATH=%OLD_PATH%
 
 GOTO END
@@ -35,6 +35,6 @@ GOTO END
 SET found=
 FOR %%X in (%~1) do (set found=%%~$PATH:X)
 IF NOT DEFINED found COPY %MDIR%\code\%~1 c:\Windows\System32\%~1
-GOTO:EOF
+GOTO:END
 
-rem:END
+:END

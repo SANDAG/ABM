@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
+
 import org.sandag.abm.accessibilities.BuildAccessibilities;
 import org.sandag.abm.accessibilities.MandatoryAccessibilitiesCalculator;
 import org.sandag.abm.accessibilities.NonTransitUtilities;
@@ -670,11 +671,15 @@ public class SubtourDepartureAndDurationTime
         mcDmuObject.setWorkTourObject(workTour);
         mcDmuObject.setDmuIndexValues(household.getHhId(), household.getHhMgra(),
                 t.getTourOrigMgra(), t.getTourDestMgra(), household.getDebugChoiceModels());
+        
 
         mcDmuObject.setPTazTerminalTime(tazs.getOriginTazTerminalTime(mgraManager.getTaz(t
                 .getTourOrigMgra())));
         mcDmuObject.setATazTerminalTime(tazs.getDestinationTazTerminalTime(mgraManager.getTaz(t
                 .getTourDestMgra())));
+        
+        mcDmuObject.setOriginMgra(t.getTourOrigMgra());
+        mcDmuObject.setDestMgra(t.getTourDestMgra());
 
     }
 
@@ -789,7 +794,7 @@ public class SubtourDepartureAndDurationTime
         /*        
          */
         ModelStructure modelStructure = new SandagModelStructure();
-        SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure);
+        SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure,propertyMap);
 
         MgraDataManager mgraManager = MgraDataManager.getInstance(propertyMap);
         TazDataManager tazManager = TazDataManager.getInstance(propertyMap);

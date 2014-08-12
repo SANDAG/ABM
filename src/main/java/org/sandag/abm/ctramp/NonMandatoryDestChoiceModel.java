@@ -7,23 +7,36 @@ import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.util.Random;
 import java.util.ResourceBundle;
+
+import com.pb.common.calculator.MatrixDataServerIf;
+import com.pb.common.calculator.MatrixDataManager;
+import com.pb.common.calculator.VariableTable;
+import com.pb.common.datafile.OLD_CSVFileReader;
+import com.pb.common.datafile.TableDataSet;
+import com.pb.common.matrix.MatrixType;
+import com.pb.common.util.IndexSort;
+import com.pb.common.util.ResourceUtil;
+import com.pb.common.newmodel.ChoiceModelApplication;
 import org.apache.log4j.Logger;
+
 import org.sandag.abm.accessibilities.BuildAccessibilities;
 import org.sandag.abm.accessibilities.MandatoryAccessibilitiesCalculator;
 import org.sandag.abm.accessibilities.NonTransitUtilities;
 import org.sandag.abm.application.SandagCtrampDmuFactory;
 import org.sandag.abm.application.SandagHouseholdDataManager;
 import org.sandag.abm.application.SandagModelStructure;
+import org.sandag.abm.ctramp.CtrampDmuFactoryIf;
+import org.sandag.abm.ctramp.DcSoaDMU;
+import org.sandag.abm.ctramp.DestChoiceDMU;
+import org.sandag.abm.ctramp.Household;
+import org.sandag.abm.ctramp.Person;
+import org.sandag.abm.ctramp.Tour;
+import org.sandag.abm.ctramp.DestinationSampleOfAlternativesModel;
+import org.sandag.abm.ctramp.TourModeChoiceDMU;
+import org.sandag.abm.ctramp.TourModeChoiceModel;
+import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
-import com.pb.common.calculator.MatrixDataManager;
-import com.pb.common.calculator.MatrixDataServerIf;
-import com.pb.common.calculator.VariableTable;
-import com.pb.common.matrix.MatrixType;
-import com.pb.common.newmodel.ChoiceModelApplication;
-import com.pb.common.util.IndexSort;
-import com.pb.common.util.ResourceUtil;
-
 public class NonMandatoryDestChoiceModel
         implements Serializable
 {
@@ -361,12 +374,12 @@ public class NonMandatoryDestChoiceModel
                     int origMgra = tour.getTourOrigMgra();
 
                     // update the MC dmuObject for this person
-                    mcDmuObject.setHouseholdObject(hh);
-                    mcDmuObject.setPersonObject(p);
-                    mcDmuObject.setTourObject(tour);
-                    mcDmuObject.setDmuIndexValues(hh.getHhId(), homeTaz, origMgra, 0,
-                            hh.getDebugChoiceModels());
-
+                    mcDmuObject.setHouseholdObject( hh );
+                    mcDmuObject.setPersonObject( p );
+                    mcDmuObject.setTourObject( tour );
+                    mcDmuObject.setDmuIndexValues( hh.getHhId(), homeTaz, origMgra, 0, hh.getDebugChoiceModels() );
+                    mcDmuObject.setOriginMgra(origMgra);
+                    
                     // update the DC dmuObject for this person
                     dcDmuObject.setHouseholdObject(hh);
                     dcDmuObject.setPersonObject(p);
@@ -450,12 +463,12 @@ public class NonMandatoryDestChoiceModel
                 int origMgra = tour.getTourOrigMgra();
 
                 // update the MC dmuObject for this person
-                mcDmuObject.setHouseholdObject(hh);
-                mcDmuObject.setPersonObject(null);
-                mcDmuObject.setTourObject(tour);
-                mcDmuObject.setDmuIndexValues(hh.getHhId(), homeTaz, origMgra, 0,
-                        hh.getDebugChoiceModels());
-
+                mcDmuObject.setHouseholdObject( hh );
+                mcDmuObject.setPersonObject( null );
+                mcDmuObject.setTourObject( tour );
+                mcDmuObject.setDmuIndexValues( hh.getHhId(), homeTaz, origMgra, 0, hh.getDebugChoiceModels() );
+                mcDmuObject.setOriginMgra(origMgra);
+                
                 // update the DC dmuObject for this person
                 dcDmuObject.setHouseholdObject(hh);
                 dcDmuObject.setPersonObject(null);
@@ -941,6 +954,8 @@ public class NonMandatoryDestChoiceModel
                 .getTourOrigMgra())));
         mcDmuObject.setATazTerminalTime(tazs.getDestinationTazTerminalTime(mgraManager
                 .getTaz(sampleDestMgra)));
+        mcDmuObject.setOriginMgra(t.getTourOrigMgra());
+        mcDmuObject.setDestMgra(t.getTourDestMgra());
 
     }
 
@@ -1161,7 +1176,7 @@ public class NonMandatoryDestChoiceModel
         mdm.setMatrixDataServerObject(ms);
 
         ModelStructure modelStructure = new SandagModelStructure();
-        SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure);
+        SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure,propertyMap);
 
         MgraDataManager mgraManager = MgraDataManager.getInstance(propertyMap);
         TazDataManager tazManager = TazDataManager.getInstance(propertyMap);

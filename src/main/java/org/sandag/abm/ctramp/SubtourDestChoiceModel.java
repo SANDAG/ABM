@@ -8,6 +8,7 @@ import java.util.MissingResourceException;
 import java.util.Random;
 import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
+
 import org.sandag.abm.accessibilities.BuildAccessibilities;
 import org.sandag.abm.accessibilities.MandatoryAccessibilitiesCalculator;
 import org.sandag.abm.accessibilities.NonTransitUtilities;
@@ -149,7 +150,7 @@ public class SubtourDestChoiceModel
         logger.info(String.format("creating %s subtour dest choice mode instance", tourCategory));
 
         mgraManager = MgraDataManager.getInstance();
-        tazs = TazDataManager.getInstance();
+        tazs = TazDataManager.getInstance();  
 
         soaSampleSize = Util.getIntegerValueFromPropertyMap(propertyMap,
                 PROPERTIES_DC_SOA_NON_MAND_SAMPLE_SIZE_KEY);
@@ -369,6 +370,7 @@ public class SubtourDestChoiceModel
                     mcDmuObject.setTourObject(tour);
                     mcDmuObject.setDmuIndexValues(hh.getHhId(), homeMgra, origMgra, 0,
                             hh.getDebugChoiceModels());
+                    mcDmuObject.setOriginMgra(origMgra);
 
                     // update the DC dmuObject for this person
                     dcDmuObject.setHouseholdObject(hh);
@@ -854,11 +856,15 @@ public class SubtourDestChoiceModel
         mcDmuObject.setWorkTourObject(workTour);
         mcDmuObject.setDmuIndexValues(household.getHhId(), household.getHhMgra(),
                 t.getTourOrigMgra(), sampleDestMgra, household.getDebugChoiceModels());
+        
 
         mcDmuObject.setPTazTerminalTime(tazs.getOriginTazTerminalTime(mgraManager.getTaz(t
                 .getTourOrigMgra())));
         mcDmuObject.setATazTerminalTime(tazs.getDestinationTazTerminalTime(mgraManager
                 .getTaz(sampleDestMgra)));
+        
+        mcDmuObject.setOriginMgra(t.getTourOrigMgra());
+        mcDmuObject.setDestMgra(t.getTourDestMgra());
 
     }
 
@@ -1024,7 +1030,7 @@ public class SubtourDestChoiceModel
          *         
          */
         ModelStructure modelStructure = new SandagModelStructure();
-        SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure);
+        SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure,propertyMap);
 
         BuildAccessibilities aggAcc = BuildAccessibilities.getInstance();
         if (!aggAcc.getAccessibilitiesAreBuilt())

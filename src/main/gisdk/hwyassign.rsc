@@ -59,22 +59,14 @@ Optionally (for select link and turning movements):
 
 SANDAG ABM Version 1.0  
  JEF 2012-03-20 
+ changed linktypeturnscst.dbf to linktypeturns.dbf as Joel suggested.
 *************************************************************************************/
 
 Macro "hwy assignment" (args)
 
    Shared path, inputDir, outputDir, mxzone
 
-/*   
-   // for testing
-   iteration = 1
-   turn_flag = 0
-   path = "c:\\projects\\sandag\\series12\\base2008"
-   inputDir = path + "\\input"                                                                        
-   outputDir = path +  "\\output"                                                                        
-   RunMacro("TCB Init")     
-   // end testing
- */  
+ 
    turn_file="\\nodes.txt"
    turn_flag=0
    NumofCPU = 8
@@ -105,11 +97,41 @@ Macro "hwy assignment" (args)
    net_file= outputDir+"\\hwy.net"
 
    trip={"Trip_EA.mtx","Trip_AM.mtx","Trip_MD.mtx","Trip_PM.mtx","Trip_EV.mtx"}
-   asign={"hwyload_EA.bin","hwyload_AM.bin","hwyload_MD.bin","hwyload_PM.bin","hwyload_EV.bin"}
    turn={"turns_EA.bin","turns_AM.bin","turns_MD.bin","turns_PM.bin","turns_EV.bin"}
    selectlink_mtx={"select_EA.mtx","select_AM.mtx","select_MD.mtx","select_PM.mtx","select_EV.mtx"}  //added for select link analysis by JXu
-
-   {node_lyr, link_lyr} = RunMacro("TCB Add DB Layers", db_file)
+   selinkqry_file="selectlink_query.txt"
+   if GetFileInfo(inputDir + "\\"+ selinkqry_file) <> null then do	//select link analysis is only available in stage II
+        selink_flag =1
+        fptr_from = OpenFile(inputDir + "\\"+selinkqry_file, "r")
+    	tmp_qry=readarray(fptr_from)
+    	index =1
+  	selinkqry_name=null
+    	selink_qry=null
+    	subs=null
+    	while index <=ArrayLength(tmp_qry) do
+    	    if left(trim(tmp_qry[index]),1)!="*" then do
+    	        subs=ParseString(trim(tmp_qry[index]),",")
+    	    	if subs!=null then do
+    	            query=subs[3]
+    	            if ArrayLength(subs)>3 then do
+    	                for i=4 to ArrayLength(subs) do
+    	                    query=query+" "+subs[2]+" "+subs[i]
+    	                end
+    	            end    	       	    
+    	            selinkqry_name=selinkqry_name+{subs[1]}
+    	            selink_qry=selink_qry+{query}
+    	    	end
+    	    end
+    	    index = index + 1
+        end
+    end
+if selink_flag = 1 & iteration = 4 then do
+   asign = {"hwyload_sel_EA.bin","hwyload_sel_AM.bin","hwyload_sel_MD.bin","hwyload_sel_PM.bin","hwyload_sel_EV.bin"}
+end
+else 
+  asign = {"hwyload_EA.bin","hwyload_AM.bin","hwyload_MD.bin","hwyload_PM.bin","hwyload_EV.bin"}
+  oue_path = {"oue_path_EA.obt", "oue_path_AM.obt","oue_path_MD.obt","oue_path_PM.obt","oue_path_EV.obt"}
+  {node_lyr, link_lyr} = RunMacro("TCB Add DB Layers", db_file)
    ok = (node_lyr <> null && link_lyr <> null)
    if !ok then goto quit
    db_link_lyr=db_file+"|"+link_lyr
@@ -126,38 +148,38 @@ Macro "hwy assignment" (args)
 
    
    for i = 1 to periods.length do
-      // drive-alone toll exclusion set
-      excl_dat[i]={db_link_lyr, link_lyr, "dat", "Select * where !((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)"} 
+        // drive-alone toll exclusion set
+      excl_dat[i]={db_link_lyr, link_lyr, "dat", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&ITRUCK<5)"} 
       
       // shared-2 non-toll HOV exclusion set
-      excl_s2nh[i]={db_link_lyr, link_lyr, "s2nh", "Select * where !(ihov=1|(ihov=2&abln"+periods[i]+"<9)|ifc>7)"}
+      excl_s2nh[i]={db_link_lyr, link_lyr, "s2nh", "Select * where !((ihov=1|(ihov=2&abln"+periods[i]+" <9)|ifc>7)&ITRUCK<5)"}
    
       // shared-2 toll HOV exclusion set
-      excl_s2th[i]={db_link_lyr, link_lyr, "s2th", "Select * where !((ihov=1|(ihov=2&abln"+periods[i]+"<9)|ihov=4|(ihov=3&itoll"+periods[i]+">0&abln"+periods[i]+"<9))|ifc>7)"}
+      excl_s2th[i]={db_link_lyr, link_lyr, "s2th", "Select * where !(((ihov=1|(ihov=2&abln"+periods[i]+"<9)|ihov=4|(ihov=3&itoll"+periods[i]+">0&abln"+periods[i]+"<9))|ifc>7)&ITRUCK<5)"}
    
       // shared=3+ non-toll non-HOV exclusion set
-      excl_s3nh[i]={db_link_lyr, link_lyr, "s3nh", "Select * where !(ihov=1|((ihov=2|ihov=3)&abln"+periods[i]+"<9)|ifc>7)"}
+      excl_s3nh[i]={db_link_lyr, link_lyr, "s3nh", "Select * where !((ihov=1|((ihov=2|ihov=3)&abln"+periods[i]+"<9)|ifc>7)& ITRUCK<5)"}
    
       // shared=3+ toll HOV exclusion set
-      excl_s3th[i]={db_link_lyr, link_lyr, "s3th", "Select * where abln"+periods[i]+"=9"}
+      excl_s3th[i]={db_link_lyr, link_lyr, "s3th", "Select * where abln"+periods[i]+"=9|ITRUCK>4"}
    
       // light-heavy truck non-toll exclusion set
-      excl_lhdn[i]={db_link_lyr, link_lyr, "lhdn", "Select * where !(ihov=1)"}
+      excl_lhdn[i]={db_link_lyr, link_lyr, "lhdn", "Select * where !((ihov=1|ifc>7)&(ITRUCK<4|ITRUCK=7))"}
   
       // medium-heavy truck non-toll exclusion set
-      excl_mhdn[i]={db_link_lyr, link_lyr, "mhdn", "Select * where !(ihov=1)"}
+      excl_mhdn[i]={db_link_lyr, link_lyr, "mhdn", "Select * where !((ihov=1|ifc>7)&(ITRUCK<3|ITRUCK>5))"}
       
       // heavy-heavy truck non-toll exclusion set
-      excl_hhdn[i]={db_link_lyr, link_lyr, "hhdn", "Select * where !(ihov=1)"}
+      excl_hhdn[i]={db_link_lyr, link_lyr, "hhdn", "Select * where !((ihov=1|ifc>7)&(ITRUCK=1|ITRUCK>4))"}
    
       // light-heavy truck toll exclusion set
-      excl_lhdt[i]={db_link_lyr, link_lyr, "lhd", "Select * where !((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)"}
+      excl_lhdt[i]={db_link_lyr, link_lyr, "lhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7) & (ITRUCK<4|ITRUCK=7))"}
  
       // medium-heavy truck toll exclusion set
-      excl_mhdt[i]={db_link_lyr, link_lyr, "mhd", "Select * where !((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)"}
+      excl_mhdt[i]={db_link_lyr, link_lyr, "mhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&(ITRUCK<3|ITRUCK>5))"}
    
       // heavy-heavy truck toll exclusion set
-      excl_hhdt[i]={db_link_lyr, link_lyr, "hhd", "Select * where !((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)"}
+      excl_hhdt[i]={db_link_lyr, link_lyr, "hhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&(ITRUCK=1|ITRUCK>4))"}
    
    end
 
@@ -218,7 +240,7 @@ Macro "hwy assignment" (args)
    num_class=14
    
    class_PCE={1,1,1,1,1,1,1,1,1.3,1.5,2.5,1.3,1.5,2.5}
-   VOT={50,50,50,50,50,50,50,50,50,51,72,50,51,72}
+   VOT={67,67,67,67,67,67,67,67,67,68,89,67,68,89}
 
    //Prepare selection set for turning movement report, by JXu
    if (turn_flag=1 & iteration=4) then do
@@ -295,7 +317,7 @@ Macro "hwy assignment" (args)
 
       //settings for highway assignment
       Opts = null
-    //  Opts.Global.[Force Threads] = NumofCPU
+      Opts.Global.[Force Threads] = 2
       Opts.Input.Database = db_file
       Opts.Input.Network = net_file
 
@@ -308,20 +330,28 @@ Macro "hwy assignment" (args)
       Opts.Global.[Class PCEs] = class_PCE
       Opts.Global.[Class VOIs] = VOT
       Opts.Global.[Load Method] = "NCFW" 
-      if (Opts.Global.[Load Method] = "NCFW") then Opts.Global.[N Conjugate] = 2
+      Opts.Global.[N Conjugate] = 2
+      Opts.Global.[Loading Multiplier] = 1     
       Opts.Global.Convergence = 0.0005
       Opts.Global.[Cost Function File] = "tucson_vdf_rev.vdf"
       Opts.Global.[VDF Defaults] = {, , ,1.5 ,1 , 0.4 , 0.15, 4, 0.15, 4, 0 }
       Opts.Global.[Iterations]=1000
-      Opts.Flag.[Do Share Report] = 1
-      Opts.Output.[Flow Table] = outputDir+"\\"+asign[i]
-      if (turn_flag=1 & iteration=3) then Opts.Input.[Turning Movement Node Set] = {db_node_lyr, node_lyr, "Selection", turn_qry}
-      if (turn_flag=1 & iteration=3) then Opts.Flag.[Do Turn Movement] = 1
-      if (turn_flag=1 & iteration=3) then Opts.Output.[Movement Table] = outputDir+"\\"+turn[i]
+      Opts.Flag.[Do Share Report] = 1     
+      Opts.Output.[Flow Table] = outputDir+"\\"+asign[i]  
+      if (turn_flag=1 & iteration=4) then Opts.Input.[Turning Movement Node Set] = {db_node_lyr, node_lyr, "Selection", turn_qry}
+      if (turn_flag=1 & iteration=4) then Opts.Flag.[Do Turn Movement] = 1
+      if (turn_flag=1 & iteration=4) then Opts.Output.[Movement Table] = outputDir+"\\"+turn[i]
       Opts.Field.[MSA Flow] = "_MSAFlow" + periods[i]
       Opts.Field.[MSA Cost] = "_MSACost" + periods[i]
       Opts.Global.[MSA Iteration] = iteration
-      RunMacro("HwycadLog",{"hwyassignstdz_cgt.rsc: hwy assignment","MMA: "+asign[i]}) 
+      if (selink_flag = 1 & iteration = 4) then do
+            Opts.Global.[Critical Queries] = selink_qry
+            Opts.Global.[Critical Set names] = selinkqry_name
+            Opts.Output.[Critical Matrix].Label = "Select Link Matrix"
+            Opts.Output.[Critical Matrix].Compression = 1
+            Opts.Output.[Critical Matrix].[File Name] = outputDir +"\\"+selectlink_mtx[i]
+     	end
+      RunMacro("HwycadLog",{"hwyassign.rsc: hwy assignment","MMA: "+asign[i]}) 
       ok = RunMacro("TCB Run Procedure", i, "MMA", Opts)
       if !ok then goto quit
    end  

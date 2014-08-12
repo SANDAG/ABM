@@ -39,7 +39,11 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
 	protected double nmBikeTimeOut;
 	protected double nmBikeTimeIn;
 
+	protected int originMgra;
+    protected int destMgra;
+	  
 	protected double[][][][] transitSkim;
+	
 
 	public TourModeChoiceDMU(ModelStructure modelStructure, Logger aLogger) {
 		logger = aLogger;
@@ -56,6 +60,7 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
 		hh = hhObject;
 	}
 
+
 	public Household getHouseholdObject() {
 		return hh;
 	}
@@ -68,12 +73,12 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
 		return person;
 	}
 
-	public void setTourObject(Tour tourObject) {
-		tour = tourObject;
-	}
-
 	public void setWorkTourObject(Tour tourObject) {
 		workTour = tourObject;
+	}
+
+	public void setTourObject(Tour tourObject) {
+		tour = tourObject;
 	}
 
 	public Tour getTourObject() {
@@ -310,6 +315,22 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
 	public double getATazTerminalTime() {
 		return aTazTerminalTime;
 	}
+	
+	public void setOriginMgra( int value ) {
+    originMgra = value; 
+  }
+    
+  public void setDestMgra( int value ) {
+    destMgra = value; 
+  }
+    
+  public int getOriginMgra() {
+    return originMgra;
+  }
+    
+  public int getDestMgra() {
+    return destMgra; 
+  }
 
 	public int getIndexValue(String variableName) {
 		return methodIndexMap.get(variableName);

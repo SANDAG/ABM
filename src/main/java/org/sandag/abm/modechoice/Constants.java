@@ -21,7 +21,7 @@ public final class Constants
     public static float[][] parkingCost        = { {0.0f, 50.0f, 200.0f, 300.0f, 400.0f},
             {0.0f, 50.0f, 125.0f, 200.0f, 400.0f}, {0.0f, 50.0f, 100.0f, 200.0f, 400.0f}};
 
-    public static float     walkMinutesPerFoot = 0.0038f;                                 // 20
+    public static float     walkMinutesPerMile = 20.0f;                                 // 20
     // minutes
     // per
     // mile
@@ -32,7 +32,7 @@ public final class Constants
     // or
     // 3
     // mph.
-    public static float     bikeMinutesPerFoot = 0.00095f;                                // 5
+    public static float     bikeMinutesPerMile = 5.0f;                                // 5
 
     // minutes
     // per
@@ -45,6 +45,8 @@ public final class Constants
     // 12
     // mph.
 
+    public static float feetPerMile = 5280.0f;
+    
     private Constants()
     {
         // Not Implemented

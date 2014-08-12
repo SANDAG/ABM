@@ -49,6 +49,9 @@ public class Emfac2011Properties
 	public static final String AQUAVIS_TEMPLATE_SCENARIOID_TOKEN_PROPERTY= "aquavis.template.scenarioId.token";
 	public static final String SCENARIO_ID = "scenario.id";
 	public static final String VEHICLE_CODE_MAPPING_FILE_PROPERTY = "emfac.2011.to.sandag.vehicle.code.mapping.file";
+	
+	// switch if EMFAC is executed
+	public static final String EXECUTE_EMFAC="execute.emfac";
 
     /**
      * The property key for the boolean indicating if the (default) EMFAC

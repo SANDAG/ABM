@@ -1133,11 +1133,16 @@ public class NonMandatoryTourDepartureAndDurationTime
         mcDmuObject.setTourObject(t);
         mcDmuObject.setDmuIndexValues(household.getHhId(), t.getTourOrigMgra(),
                 t.getTourOrigMgra(), t.getTourDestMgra(), household.getDebugChoiceModels());
+        
+        
 
         mcDmuObject.setPTazTerminalTime(tazs.getOriginTazTerminalTime(mgraManager.getTaz(t
                 .getTourOrigMgra())));
         mcDmuObject.setATazTerminalTime(tazs.getDestinationTazTerminalTime(mgraManager.getTaz(t
                 .getTourDestMgra())));
+                
+        mcDmuObject.setOriginMgra(t.getTourOrigMgra());
+        mcDmuObject.setDestMgra(t.getTourDestMgra());
 
     }
 
@@ -1301,7 +1306,7 @@ public class NonMandatoryTourDepartureAndDurationTime
         mdm.setMatrixDataServerObject(ms);
 
         ModelStructure modelStructure = new SandagModelStructure();
-        SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure);
+        SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure,propertyMap);
 
         MgraDataManager mgraManager = MgraDataManager.getInstance(propertyMap);
         TazDataManager tazManager = TazDataManager.getInstance(propertyMap);

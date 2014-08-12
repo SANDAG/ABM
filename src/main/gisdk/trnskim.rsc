@@ -28,20 +28,24 @@ history
    1/25/05      rewrite the script using moduels
       4/14/09         ZOU changed it to 3tod         
 ********************************************************************************/
+Macro "Create transit network"
+
+   shared path,inputDir, outputDir, mxtap
+   ok=RunMacro("Create transit networks") 
+     if !ok then goto quit
+   Return(1)
+   
+   quit:
+      Return(0) 
+EndMacro
+
+/***********************************************************************************
+*******************************************************************/
+
 Macro "Build transit skims"
 
    shared path,inputDir, outputDir, mxtap
- 
-/*
-   // for testing
-   path = "c:\\projects\\sandag\\series12\\base2008_5_period"
-   inputDir = "c:\\projects\\sandag\\series12\\base2008_5_period\\input"                                                                        
-   outputDir = "c:\\projects\\sandag\\series12\\base2008_5_period\\output"                                                                        
-   mxtap=2500
-   RunMacro("TCB Init")     
-   // end testing
-*/
- 
+  
    ok = RunMacro("Update transit time fields")  
    if !ok then goto quit  
    
@@ -126,7 +130,7 @@ Macro "Skim transit networks"
          Opts.Output.[Skim Matrix].Label = "Skim Matrix ("+modes[j]+periods[i]+")"
          Opts.Output.[Skim Matrix].Compression = 0 //uncompressed
          Opts.Output.[Skim Matrix].[File Name] = outputDir+"\\imp"+modes[j]+periods[i]+".mtx"
-         Opts.Output.[TPS Table] = outputDir+"\\"+modes[j]+periods[i]+".tps"
+       //  Opts.Output.[TPS Table] = outputDir+"\\"+modes[j]+periods[i]+".tps"
          ok = RunMacro("TCB Run Procedure", i, "Transit Skim PF", Opts)
          
          if !ok then goto quit
@@ -592,8 +596,8 @@ Macro "Update transit time fields"
                                                                            
    //Recompute generalized cost using MSA cost in flow table, for links with MSA cost (so that transit only links aren't overwritten with null)
    for i = 1 to periods.length do
-    
-      flowTable = outputDir+"\\hwyload"+periods[i]+".bin"
+      flowTable = outputDir+"\\hwyload_sel"+periods[i]+".bin"
+      if GetFileInfo(flowTable) = null then flowTable = outputDir+"\\hwyload"+periods[i]+".bin"     
         
       // The Dataview Set is a joined view of the link layer and the flow table, based on link ID
       Opts.Input.[Dataview Set] = {{db_file+"|"+link_lyr, flowTable, {"ID"}, {"ID1"}},"AB time"+periods[i] }   
