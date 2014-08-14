@@ -56,7 +56,7 @@ Macro "ExportNetworkToCsv" (network_file,output_file_base)
     network_layer = AddLayerToWorkspace("network_line_layer",network_file,line_layer)
     SetLayer(network_layer)
     view = GetView()
-    ExportView(view+"|","CSV",output_file_base+".csv",,{{"CSV Header", "True"}})
+    ExportView(view+"|","CSV",output_file_base+".csv",,{{"CSV Header", "True"},{"Force Numeric Type", "double"}})
     CloseView(view)
   
 EndMacro
@@ -121,7 +121,7 @@ Macro "ExportHwyloadtoCSV"(input_file_base, output_file_base)
 			"BA_Flow_hhdt",
 			"AB_Flow",
 			"BA_Flow"},
-                     {{"CSV Header", "True"}})
+                     {{"CSV Header", "True"},{"Force Numeric Type", "double"}})
 	  CloseView(view)
   end
   ok=1
