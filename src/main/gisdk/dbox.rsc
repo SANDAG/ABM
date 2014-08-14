@@ -170,21 +170,7 @@ enditem
        enditem
 
 	   
- button "Run Assignment" same, 7.5, 16 do
-       hideDbox()
-       RunMacro("TCB Init")
-       for sc = 1 to scen_num.length do
-           path = scr[ scen_num[sc] ]
-  	     ok = RunMacro("Run Assignment") 	
-        if !ok then goto exit 
-       end
-       exit:
-       showdbox()   
-       RunMacro("TCB Closing", run_ok, "False")
-       enditem	   
-	   
-   
- button "Export Data" same, 9, 16 do
+ button "Export Data" same, 7.5, 16 do
        hideDbox()
        RunMacro("TCB Init")
        for sc = 1 to scen_num.length do
@@ -197,7 +183,7 @@ enditem
        RunMacro("TCB Closing", run_ok, "False")
        enditem	   
 	  
- button "Sum Transit Sellink" same, 10.5, 16 do
+ button "Sum Transit Sellink" same, 9, 16 do
        hideDbox()
        RunMacro("TCB Init")
        for sc = 1 to scen_num.length do
@@ -210,7 +196,7 @@ enditem
        RunMacro("TCB Closing", run_ok, "False")
        enditem	   
 
-  button "Sum Hwy Sellink" same, 12, 16 do
+  button "Sum Hwy Sellink" same, 10.5, 16 do
        hideDbox()
        RunMacro("TCB Init")
        for sc = 1 to scen_num.length do

@@ -478,7 +478,7 @@ Macro "ExportBintoCSV"(input_file_base, output_file_base)
 
   view = OpenTable("Binary Table","FFB",{input_file_base+".bin",}, {{"Shared", "True"}})
   SetView(view)
-  ExportView(view+"|", "CSV", output_file_base+".csv",,{{"CSV Header", "True"}})
+  ExportView(view+"|", "CSV", output_file_base+".csv",,{{"CSV Header", "True"}, {"Force Numeric Type", "double"}})
   CloseView(view)
   ok=1
   quit:

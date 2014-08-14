@@ -521,7 +521,7 @@ EndMacro
 Macro "Create EE & EI Trips"
   
   
-     shared path, inputDir, outputDir       
+     shared path, inputDir, outputDir, inputTruckDir, mxzone, mxtap, mxext,mxlink,mxrte    
   
 	//inputs                                                                                                                              
 	amMatrixName = "trptollam2.mtx"                                                                                                 
@@ -550,9 +550,9 @@ Macro "Create EE & EI Trips"
 	end
 	
 	//create an array of internal zone ids
-	dim zones[4670]
+	dim zones[mxzone]
 	for i = 1 to zones.length do
-	   zones[i]=i2s(i+12)
+	   zones[i]=i2s(i+mxext)
 	end
 	// create the output matrices, copying the matrix structure of the input matrices.  Then rename the matrices.
 	dim outMatrices[outMatrixNames.length]
