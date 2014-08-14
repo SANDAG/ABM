@@ -596,8 +596,7 @@ Macro "Update transit time fields"
                                                                            
    //Recompute generalized cost using MSA cost in flow table, for links with MSA cost (so that transit only links aren't overwritten with null)
    for i = 1 to periods.length do
-      flowTable = outputDir+"\\hwyload_sel"+periods[i]+".bin"
-      if GetFileInfo(flowTable) = null then flowTable = outputDir+"\\hwyload"+periods[i]+".bin"     
+      flowTable = outputDir+"\\hwyload"+periods[i]+".bin"     
         
       // The Dataview Set is a joined view of the link layer and the flow table, based on link ID
       Opts.Input.[Dataview Set] = {{db_file+"|"+link_lyr, flowTable, {"ID"}, {"ID1"}},"AB time"+periods[i] }   

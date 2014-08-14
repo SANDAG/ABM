@@ -125,10 +125,7 @@ Macro "hwy assignment" (args)
     	    index = index + 1
         end
     end
-if selink_flag = 1 & iteration = 4 then do
-   asign = {"hwyload_sel_EA.bin","hwyload_sel_AM.bin","hwyload_sel_MD.bin","hwyload_sel_PM.bin","hwyload_sel_EV.bin"}
-end
-else 
+
   asign = {"hwyload_EA.bin","hwyload_AM.bin","hwyload_MD.bin","hwyload_PM.bin","hwyload_EV.bin"}
   oue_path = {"oue_path_EA.obt", "oue_path_AM.obt","oue_path_MD.obt","oue_path_PM.obt","oue_path_EV.obt"}
   {node_lyr, link_lyr} = RunMacro("TCB Add DB Layers", db_file)
