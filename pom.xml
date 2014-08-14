@@ -265,6 +265,7 @@
                 <tripModeChoice.uec.file>TripModeChoice2010.xls</tripModeChoice.uec.file>
                 <internalExternal.trip.mc.uec.file>InternalExternalTripModeChoice2010.xls</internalExternal.trip.mc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice2010.xls</crossBorder.trip.mc.uec.file>
+                <cdap.uec.file>CoordinatedDailyActivityPattern2010.xls</cdap.uec.file>
                 <visitor.mc.uec.file>VisitorTourModeChoice2010.xls</visitor.mc.uec.file>
                 <visitor.trip.mc.uec.file>VisitorTripModeChoice2010.xls</visitor.trip.mc.uec.file>
                 <airport.mc.uec.file>AirportModeChoice2010.xls</airport.mc.uec.file>
@@ -289,6 +290,7 @@
                 <tripModeChoice.uec.file>TripModeChoice2010.xls</tripModeChoice.uec.file>
                 <internalExternal.trip.mc.uec.file>InternalExternalTripModeChoice2010.xls</internalExternal.trip.mc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice2010.xls</crossBorder.trip.mc.uec.file>
+                <cdap.uec.file>CoordinatedDailyActivityPattern2010.xls</cdap.uec.file>
                 <visitor.mc.uec.file>VisitorTourModeChoice2010.xls</visitor.mc.uec.file>
                 <visitor.trip.mc.uec.file>VisitorTripModeChoice2010.xls</visitor.trip.mc.uec.file>
                 <airport.mc.uec.file>AirportModeChoice2010.xls</airport.mc.uec.file>
@@ -313,6 +315,7 @@
                 <tripModeChoice.uec.file>TripModeChoice2020.xls</tripModeChoice.uec.file>
                 <internalExternal.trip.mc.uec.file>InternalExternalTripModeChoice2020.xls</internalExternal.trip.mc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice2020.xls</crossBorder.trip.mc.uec.file>
+                <cdap.uec.file>CoordinatedDailyActivityPattern2020.xls</cdap.uec.file>
                 <visitor.mc.uec.file>VisitorTourModeChoice2020.xls</visitor.mc.uec.file>
                 <visitor.trip.mc.uec.file>VisitorTripModeChoice2020.xls</visitor.trip.mc.uec.file>
                 <airport.mc.uec.file>AirportModeChoice2020.xls</airport.mc.uec.file>
@@ -337,6 +340,7 @@
                 <tripModeChoice.uec.file>TripModeChoice2035.xls</tripModeChoice.uec.file>
                 <internalExternal.trip.mc.uec.file>InternalExternalTripModeChoice2035.xls</internalExternal.trip.mc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice2035.xls</crossBorder.trip.mc.uec.file>
+                <cdap.uec.file>CoordinatedDailyActivityPattern2035.xls</cdap.uec.file>
                 <visitor.mc.uec.file>VisitorTourModeChoice2035.xls</visitor.mc.uec.file>
                 <visitor.trip.mc.uec.file>VisitorTripModeChoice2035.xls</visitor.trip.mc.uec.file>
                 <airport.mc.uec.file>AirportModeChoice2035.xls</airport.mc.uec.file>
@@ -361,6 +365,7 @@
                 <tripModeChoice.uec.file>TripModeChoice2050.xls</tripModeChoice.uec.file>
                 <internalExternal.trip.mc.uec.file>InternalExternalTripModeChoice2050.xls</internalExternal.trip.mc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice2050.xls</crossBorder.trip.mc.uec.file>
+                <cdap.uec.file>CoordinatedDailyActivityPattern2050.xls</cdap.uec.file>
                 <visitor.mc.uec.file>VisitorTourModeChoice2050.xls</visitor.mc.uec.file>
                 <visitor.trip.mc.uec.file>VisitorTripModeChoice2050.xls</visitor.trip.mc.uec.file>
                 <airport.mc.uec.file>AirportModeChoice2050.xls</airport.mc.uec.file>
@@ -487,10 +492,10 @@
                         </goals>
                         <configuration>
                             <encoding>${encoding.type}</encoding>
+                            <!-- 
                             <outputDirectory>${study.root}/gisdk</outputDirectory>
-                            <!--  
-                            <outputDirectory>${output.path}/gisdk</outputDirectory>
                             -->
+                            <outputDirectory>${output.path}/gisdk</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/gisdk</directory>
