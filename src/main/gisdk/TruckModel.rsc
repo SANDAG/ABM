@@ -27,8 +27,12 @@ Steps:
 Macro "truck model"(properties, iteration)
     shared path, inputDir, outputDir, inputTruckDir
     
+   // read properties from sandag_abm.properties in /conf folder
+   properties = "\\conf\\sandag_abm.properties"   
+   startFromIteration = s2i(RunMacro("read properties",properties,"RunModel.startFromIteration", "S"))
+    
     // Generate trips and free-flow truck skims for the first iteration
-    if (iteration =1) then do  
+    if (iteration = startFromIteration) then do  
        // Generate daily truck trips
        RunMacro("HwycadLog",{"TruckModel.rsc: truckmodel","truck-tripgen"})
        ok = RunMacro("truck-tripgen",properties)
