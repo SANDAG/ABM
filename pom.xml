@@ -47,7 +47,7 @@
 		<MAPANDRUN>mapAndRun.bat</MAPANDRUN>
 		<JAVA_64_PATH>C:\Progra~1\Java\jre7</JAVA_64_PATH>
 		<JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
-		<workpath>T:\data\ABM_AT</workpath>
+		<workpath>T:\\projects\\sr13\\sdf_scenevl_r3\\${year}</workpath>
     </properties>
     <profiles>
         <profile>
