@@ -916,6 +916,8 @@ CREATE TABLE
 		[am_headway] decimal(5,2),
 		[pm_headway] decimal(5,2),
 		[op_headway] decimal(5,2),
+		[nt_headway] decimal(5,2),
+		[nt_hour] tinyint,
 		[config] int,
 		[fare] decimal(4,2),
 		[shape] geometry,

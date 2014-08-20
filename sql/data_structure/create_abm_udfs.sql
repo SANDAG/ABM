@@ -880,39 +880,39 @@ DROP TABLE [abm_staging].[trip_agg_drop];
 
 
 -- Normal delete statements for foreign keyed tables, order matters due to foreign key constraints
-DELETE FROM [abm].[tour_cb]
-WHERE [scenario_id] = @scenario_id
-DELETE FROM [abm].[tour_ij]
-WHERE [scenario_id] = @scenario_id
-DELETE FROM [abm].[tour_vis]
-WHERE [scenario_id] = @scenario_id
 DELETE FROM [abm].[hwy_flow]
 WHERE [scenario_id] = @scenario_id
-DELETE FROM [abm].[hwy_link_ab_tod]
-WHERE [scenario_id] = @scenario_id
-DELETE FROM [abm].[hwy_link_ab]
-WHERE [scenario_id] = @scenario_id
-DELETE FROM [abm].[hwy_link_tod]
-WHERE [scenario_id] = @scenario_id
-DELETE FROM [abm].[hwy_link]
+DELETE FROM [abm].[tour_cb]
 WHERE [scenario_id] = @scenario_id
 DELETE FROM [abm].[bike_link_ab]
 WHERE [scenario_id] = @scenario_id
-DELETE FROM [abm].[bike_link]
+DELETE FROM [abm].[tour_ij]
 WHERE [scenario_id] = @scenario_id
 DELETE FROM [abm].[lu_person]
 WHERE [scenario_id] = @scenario_id
+DELETE FROM [abm].[tour_vis]
+WHERE [scenario_id] = @scenario_id
+DELETE FROM [abm].[hwy_link_ab_tod]
+WHERE [scenario_id] = @scenario_id
 DELETE FROM [abm].[lu_hh]
 WHERE [scenario_id] = @scenario_id
-DELETE FROM [abm].[lu_mgra_input]
+DELETE FROM [abm].[bike_link]
 WHERE [scenario_id] = @scenario_id
 DELETE FROM [abm].[transit_stop]
+WHERE [scenario_id] = @scenario_id
+DELETE FROM [abm].[hwy_link_ab]
 WHERE [scenario_id] = @scenario_id
 DELETE FROM [abm].[transit_route]
 WHERE [scenario_id] = @scenario_id
 DELETE FROM [abm].[transit_tap]
 WHERE [scenario_id] = @scenario_id
+DELETE FROM [abm].[hwy_link_tod]
+WHERE [scenario_id] = @scenario_id
 DELETE FROM [abm].[transit_link]
+WHERE [scenario_id] = @scenario_id
+DELETE FROM [abm].[lu_mgra_input]
+WHERE [scenario_id] = @scenario_id
+DELETE FROM [abm].[hwy_link]
 WHERE [scenario_id] = @scenario_id
 
 

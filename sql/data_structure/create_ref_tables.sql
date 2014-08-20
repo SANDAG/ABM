@@ -95,7 +95,7 @@ BEGIN
 CREATE TABLE 
 	[ref].[at_func_class] (
 		[at_func_class_id] smallint,
-		[at_func_class_desc] varchar(50),
+		[at_func_class_desc] varchar(100),
 		CONSTRAINT pk_atfuncclass PRIMARY KEY ([at_func_class_id])
 	) 
 ON 
@@ -107,7 +107,7 @@ INSERT INTO
 	[ref].[at_func_class]
 VALUES	
 	(-1,'P - Paper Streets and Q - Undocumented'),
-	(0, NULL),
+	(0,'Pedestrian/bikeway, Recreational Parkway, Class I Bicycle Path'),
 	(1,'Interstate'),
 	(2,'Other Freeway and Expressway'),
 	(3,'Other Principal Arterial'),
@@ -116,7 +116,7 @@ VALUES
 	(6,'Minor Collector'),
 	(7,'Local'),
 	(10,'Centroid Connector'),
-	(11,NULL);
+	(11,'TAP Connector');
 
 END
 
@@ -128,7 +128,7 @@ BEGIN
 CREATE TABLE 
 	[ref].[bike_class] (
 		[bike_class_id] tinyint,
-		[bike_class_desc] varchar(50),
+		[bike_class_desc] varchar(100),
 		CONSTRAINT pk_bikeclass PRIMARY KEY ([bike_class_id])
 	) 
 ON 
@@ -139,12 +139,12 @@ WITH
 INSERT INTO 
 	[ref].[bike_class]
 VALUES	
-	(0,NULL),
+	(0,'Other suggested routes, Ferry, and Freeway shoulder'),
 	(1,'Off-street path'),
 	(2,'On-street lane'),
 	(3,'On-street signed route'),
 	(10,'Centroid Connector'),
-	(11, NULL);
+	(11,'TAP Connector');
 
 END
 
