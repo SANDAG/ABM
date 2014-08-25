@@ -8,7 +8,7 @@ GO
 
 -- abm data tables
 EXECUTE [db_meta].[add_xp] 'abm.at_skims', 'SUBSYSTEM', 'AT'
-EXECUTE [db_meta].[add_xp] 'abm.at_skims', 'MS_Description', 'Bike MGRA and TAZ skims in AT model'
+EXECUTE [db_meta].[add_xp] 'abm.at_skims', 'MS_Description', 'Walk and Bike skims in AT model'
 
 EXECUTE [db_meta].[add_xp] 'abm.bike_flow', 'SUBSYSTEM', 'AT'
 EXECUTE [db_meta].[add_xp] 'abm.bike_flow', 'MS_Description', 'Bike volumes by roadsegid, ab, and time period'
@@ -176,7 +176,7 @@ EXECUTE [db_meta].[add_xp] 'ref.pemploy', 'SUBSYSTEM', 'REFERENCE'
 EXECUTE [db_meta].[add_xp] 'ref.pemploy', 'MS_Description', 'create_synhh_synperson.sql in popsyn database and PUMS Data Dictionary'
 
 EXECUTE [db_meta].[add_xp] 'ref.poe', 'SUBSYSTEM', 'REFERENCE'
-EXECUTE [db_meta].[add_xp] 'ref.poe', 'MS_Description', 'Hardcoded in Java.'
+EXECUTE [db_meta].[add_xp] 'ref.poe', 'MS_Description', 'Hardcoded in Java and uec\CrossBorderDestinationChoiceSoaAlternatives2040.csv'
 
 EXECUTE [db_meta].[add_xp] 'ref.pstudent', 'SUBSYSTEM', 'REFERENCE'
 EXECUTE [db_meta].[add_xp] 'ref.pstudent', 'MS_Description', 'create_synhh_synperson.sql in popsyn database and PUMS Data Dictionary'

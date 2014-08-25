@@ -615,6 +615,9 @@ CREATE TABLE
 	[ref].[poe] (
 		[poe_id] tinyint,
 		[poe_desc] varchar(20),
+		[mgra_13_entry] smallint,
+		[mgra_13_return] smallint,
+		[taz_13] smallint,
 		CONSTRAINT pk_poe PRIMARY KEY ([poe_id])
 	) 
 ON 
@@ -625,11 +628,11 @@ WITH
 INSERT INTO 
 	[ref].[poe]
 VALUES	
-	(0,'San Ysidro'),
-	(1,'Otay Mesa'),
-	(2,'Tecate'),
-	(3,'Otay Mesa East'),
-	(4,'Jacumba');
+	(0,'San Ysidro',7090,7090,1),
+	(1,'Otay Mesa',7066,7066,2),
+	(2,'Tecate',21895,21895,4),
+	(3,'Otay Mesa East',7123,7123,3),
+	(4,'Jacumba',22094,22094,5);
 
 END
 
