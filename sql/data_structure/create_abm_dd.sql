@@ -244,7 +244,6 @@ EXECUTE [db_meta].[add_xp] 'abm.bike_link.bike2sep', 'MS_Description', ''
 EXECUTE [db_meta].[add_xp] 'abm.bike_link.bike3blvd', 'MS_Description', ''
 EXECUTE [db_meta].[add_xp] 'abm.bike_link.speed', 'MS_Description', ''
 EXECUTE [db_meta].[add_xp] 'abm.bike_link.parkarea', 'MS_Description', ''
-EXECUTE [db_meta].[add_xp] 'abm.bike_link.seaview', 'MS_Description', ''
 EXECUTE [db_meta].[add_xp] 'abm.bike_link.scenicldx', 'MS_Description', ''
 EXECUTE [db_meta].[add_xp] 'abm.bike_link.shape', 'MS_Description', 'Line geometry'
 

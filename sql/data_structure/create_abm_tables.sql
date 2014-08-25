@@ -47,7 +47,6 @@ CREATE TABLE
 		[bike3blvd] tinyint,
 		[speed] smallint,
 		[parkarea] decimal(13,6),
-		[seaview] tinyint,
 		[scenicldx] decimal(11,9),
 		[shape] geometry,
 		CONSTRAINT pk_bikelink PRIMARY KEY ([scenario_id],[roadsegid]),
