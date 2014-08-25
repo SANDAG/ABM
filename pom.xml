@@ -48,6 +48,8 @@
 		<JAVA_64_PATH>C:\Progra~1\Java\jre7</JAVA_64_PATH>
 		<JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
 		<workpath>T:\data\ABM_AT</workpath>
+		<database_server>pele</database_server>
+		<database_name>abm_sd_ver2</database_name>
     </properties>
     <profiles>
         <profile>
@@ -641,7 +643,7 @@
                             <resources>
                                 <resource>
                                     <directory>sql</directory>
-                                    <filtering>false</filtering>
+                                    <filtering>true</filtering>
                                 </resource>
                             </resources>
                         </configuration>

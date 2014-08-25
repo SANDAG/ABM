@@ -1,12 +1,12 @@
 @echo off
 
 rem create_abm_database.sql, create_schemas.sql, create_ref_tables.sql, create_abm_tables.sql, create_abm_foreign_keys.sql, create_db_meta.sql
-rem create_abm_dd.sql, create_abm_udfs.sql, create_emfac.sql, create_data_load.sql NOT DONE-create_weave.sql, NOT DONE-create_rtp_2015.sql
+rem create_abm_dd.sql, create_abm_udfs.sql, create_emfac.sql, create_data_load.sql
 rem update_schema_change_log.sql
 
 
-set db_server=
-set db_name=
+set db_server=${database_server}
+set db_name=${database_name}
 set log_path=
 set db_path=
 set script_path=
