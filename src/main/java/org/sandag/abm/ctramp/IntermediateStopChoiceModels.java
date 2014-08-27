@@ -1949,12 +1949,12 @@ public class IntermediateStopChoiceModels
         {
             chosen = slcModelArray[slcModelIndex].getChoiceResult(rn);
             selectedIndex = chosen;
+        }else{	        
+	        //wu's tempory fix to set chosen stop alternative to origin mgra if no alternative is available-8/27/2014        
+	        //instead of this method, seems selectDestinationWithTiming(Stop s) is called (similar change made there too)
+	        //tempory fix is put in here just in case.
+	        chosen=tour.getTourOrigMgra();
         }
-        
-        //wu's tempory fix to set chosen stop alternative to origin mgra if no alternative is available-8/27/2014        
-        //instead of this method, seems selectDestinationWithTiming(Stop s) is called (similar change made there too)
-        //tempory fix is put in here just in case.
-        chosen=tour.getTourOrigMgra();
 
         // write choice model alternative info to log file
         if (household.getDebugChoiceModels() || chosen < 0)
@@ -2316,10 +2316,10 @@ public class IntermediateStopChoiceModels
         {
             selectedIndex = slcModelArray[slcModelIndex].getChoiceResult(rn);
             chosen = finalSample[selectedIndex];
+        }else{        
+	       //wu's tempory fix to set chosen stop alternative to origin mgra if no alternative is available-8/27/2014 
+	        chosen=tour.getTourOrigMgra();
         }
-        
-       //wu's tempory fix to set chosen stop alternative to origin mgra if no alternative is available-8/27/2014 
-        chosen=tour.getTourOrigMgra();
 
         // write choice model alternative info to log file
         if (household.getDebugChoiceModels() || chosen < 0)
