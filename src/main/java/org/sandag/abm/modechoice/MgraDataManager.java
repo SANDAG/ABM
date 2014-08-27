@@ -527,7 +527,11 @@ public final class MgraDataManager
 
         if (oMgraWalkDistance[oMgra] == null) return 0;
         else if (oMgraWalkDistance[oMgra].containsKey(dMgra))
-            return oMgraWalkDistance[oMgra].get(dMgra)[0];
+            //return oMgraWalkDistance[oMgra].get(dMgra)[0];
+        	
+        	//wu's temporary fix to use actual time instead of perceived time
+        	//so that it won't cause conflict with the 60 min max walk time
+            return oMgraWalkDistance[oMgra].get(dMgra)[1];
 
         return 0;
     }
@@ -547,7 +551,11 @@ public final class MgraDataManager
 
         if (dMgraWalkDistance[dMgra] == null) return 0;
         else if (dMgraWalkDistance[dMgra].containsKey(oMgra))
-            return dMgraWalkDistance[dMgra].get(oMgra)[0];
+            //return dMgraWalkDistance[dMgra].get(oMgra)[0];
+        
+    	//wu's temporary fix to use actual time instead of perceived time
+    	//so that it won't cause conflict with the 60 min max walk time
+        	return dMgraWalkDistance[dMgra].get(oMgra)[1];
 
         return 0;
     }
@@ -567,7 +575,10 @@ public final class MgraDataManager
 
         if (oMgraWalkDistance[oMgra] == null) return 0f;
         else if (oMgraWalkDistance[oMgra].containsKey(dMgra)){
-        	float distanceInFeet = (float) oMgraWalkDistance[oMgra].get(dMgra)[0];
+        	//wu's temporary fix to use actual time instead of perceived time
+        	//so that it won't cause conflict with the 60 min max walk time
+        	//float distanceInFeet = (float) oMgraWalkDistance[oMgra].get(dMgra)[0];
+        	float distanceInFeet = (float) oMgraWalkDistance[oMgra].get(dMgra)[1];        	
         	float time = distanceInFeet/Constants.feetPerMile * Constants.walkMinutesPerMile;
         	return time;
         }
