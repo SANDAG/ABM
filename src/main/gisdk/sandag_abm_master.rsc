@@ -35,14 +35,14 @@ Macro "Run SANDAG ABM"
    skipWalkLogsums= RunMacro("read properties",properties,"RunModel.skipWalkLogsums", "S")
    skipBikeLogsums= RunMacro("read properties",properties,"RunModel.skipBikeLogsums", "S")
    startFromIteration = s2i(RunMacro("read properties",properties,"RunModel.startFromIteration", "S"))
-   skipHighwayAssignment = RunMacro("read properties",properties,"RunModel.skipHighwayAssignment", "S")
-   skipHighwaySkimming = RunMacro("read properties",properties,"RunModel.skipHighwaySkimming", "S")
-   skipTransitSkimming = RunMacro("read properties",properties,"RunModel.skipTransitSkimming", "S")
-   skipCoreABM = RunMacro("read properties",properties,"RunModel.skipCoreABM", "S")
-   skipCTM = RunMacro("read properties",properties,"RunModel.skipCTM", "S")
-   skipEI = RunMacro("read properties",properties,"RunModel.skipEI", "S")
-   skipTruck = RunMacro("read properties",properties,"RunModel.skipTruck", "S")
-   skipTripTableCreation = RunMacro("read properties",properties,"RunModel.skipTripTableCreation", "S")
+   skipHighwayAssignment = RunMacro("read properties array",properties,"RunModel.skipHighwayAssignment", "S")
+   skipHighwaySkimming = RunMacro("read properties array",properties,"RunModel.skipHighwaySkimming", "S")
+   skipTransitSkimming = RunMacro("read properties array",properties,"RunModel.skipTransitSkimming", "S")
+   skipCoreABM = RunMacro("read properties array",properties,"RunModel.skipCoreABM", "S")
+   skipCTM = RunMacro("read properties array",properties,"RunModel.skipCTM", "S")
+   skipEI = RunMacro("read properties array",properties,"RunModel.skipEI", "S")
+   skipTruck = RunMacro("read properties array",properties,"RunModel.skipTruck", "S")
+   skipTripTableCreation = RunMacro("read properties array",properties,"RunModel.skipTripTableCreation", "S")
    skipFinalHighwayAssignment = RunMacro("read properties",properties,"RunModel.skipFinalHighwayAssignment", "S")
    skipFinalTransitAssignment = RunMacro("read properties",properties,"RunModel.skipFinalTransitAssignment", "S")
    skipFinalHighwaySkimming = RunMacro("read properties",properties,"RunModel.skipFinalHighwaySkimming", "S")
@@ -126,21 +126,21 @@ Macro "Run SANDAG ABM"
       if !ok then goto quit  
 
       // Run highway assignment 
-      if skipHighwayAssignment = "false" then do
+      if skipHighwayAssignment[iteration] = "false" then do
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - hwy assignment"})
 	      ok = RunMacro("TCB Run Macro", 1, "hwy assignment",{iteration}) 
 	      if !ok then goto quit
       end
    
       // Skim highway network
-      if skipHighwaySkimming = "false" then do
+      if skipHighwaySkimming[iteration] = "false" then do
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Hwy skim all"})
 	      ok = RunMacro("TCB Run Macro", 1, "Hwy skim all",{}) 
 	      if !ok then goto quit
       end
 	
       // Skim transit network 
-      if skipTransitSkimming = "false" then do
+      if skipTransitSkimming[iteration] = "false" then do
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Build transit skims"})
 	      ok = RunMacro("TCB Run Macro", 1, "Build transit skims",{}) 
 	      if !ok then goto quit
@@ -169,14 +169,14 @@ Macro "Run SANDAG ABM"
       end
 
       // Run CT-RAMP, airport model, visitor model, cross-border model, internal-external model
-      if skipCoreABM = "false" then do
+      if skipCoreABM[iteration] = "false" then do
 	      runString = path+"\\bin\\runSandagAbm.cmd "+drive+" "+path_forward_slash +" "+r2s(sample_rate[iteration])+" "+i2s(iteration)
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run CT-RAMP, airport model, visitor model, cross-border model, internal-external model"+" "+runString})
 	      ok = RunMacro("TCB Run Command", 1, "Run CT-RAMP", runString)
 	      if !ok then goto quit  
       end
  
-      if skipCTM = "false" then do
+      if skipCTM[iteration] = "false" then do
 	     //Commercial vehicle trip generation
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - run commercial vehicle generation"})
 	      ok = RunMacro("TCB Run Macro", 1, "Commercial Vehicle Generation",{}) 
@@ -199,21 +199,21 @@ Macro "Run SANDAG ABM"
       end
 
       //Run External(U.S.)-Internal Model
-      if skipEI = "false" then do
+      if skipEI[iteration] = "false" then do
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - US to SD External Trip Model"})
 	      ok = RunMacro("TCB Run Macro", 1, "US to SD External Trip Model",{}) 
 	      if !ok then goto quit
       end
 
       //Run Truck Model
-      if skipTruck = "false" then do
+      if skipTruck[iteration] = "false" then do
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - truck model"})
 	      ok = RunMacro("truck model",properties, iteration)
 	      if !ok then goto quit
       end   
 
       //Construct trip tables
-      if skipTripTableCreation = "false" then do
+      if skipTripTableCreation[iteration] = "false" then do
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Create Auto Tables"})
 	      ok = RunMacro("TCB Run Macro", 1, "Create Auto Tables",{}) 
 	      if !ok then goto quit

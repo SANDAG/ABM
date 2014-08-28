@@ -61,6 +61,16 @@ Macro "read properties"(file,key,ctype)
   Return(keyval)
 EndMacro
 
+Macro "read properties array"(file,key,ctype)
+  //this Macro is to read an array property,index is 1-based.
+  shared path, path_study
+
+  pStr=RunMacro("read properties",file,key,ctype)
+  pStr=trim(pStr)
+  pArray=ParseString(pStr, ",")                                                          
+  Return(pArray)
+EndMacro
+
 Macro "Export Matrix to CSV" (path,filename,corename,filenameout)
     m = OpenMatrix(path+"\\"+filename, "True")
     mc = CreateMatrixCurrency(m,corename,,,)
