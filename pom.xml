@@ -712,7 +712,7 @@
                             <outputDirectory>${output.path}/input</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>input</directory>
+                                    <directory>input/{year}</directory>
                                     <excludes>
                                         <exclude>*.*</exclude>
                                     </excludes>
