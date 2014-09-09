@@ -1263,3 +1263,232 @@ GO
 EXECUTE [db_meta].[add_xp] 'abm.sp_del_files', 'SUBSYSTEM', 'ABM'
 EXECUTE [db_meta].[add_xp] 'abm.sp_del_files', 'MS_Description', 'Stored procedure to wipe data, merge partition function, and delete files associated with a scenario'
 GO
+
+
+
+
+
+/* Create trip_micro_simul view */
+IF  EXISTS (SELECT * FROM sys.views WHERE object_id = OBJECT_ID(N'[abm].[trip_micro_simul]'))
+DROP VIEW [abm].[trip_micro_simul]
+GO
+
+CREATE VIEW [abm].[trip_micro_simul] AS
+SELECT
+	[scenario_id]
+    ,[model_type_id]
+    ,NULL AS [tour_id]
+    ,[trip_id]
+    ,[geography_type_id]
+    ,[orig]
+    ,[dest]
+    ,[time_resolution_id]
+    ,[time_period_id]
+    ,[mode_id]
+    ,[purpose_id]
+    ,[inbound]
+    ,[party_size]
+    ,[trip_board_tap]
+    ,[trip_alight_tap]
+    ,[trip_time]
+    ,[out_vehicle_time]
+    ,[trip_distance]
+    ,[trip_cost]
+    ,[ap_income_cat_id]
+    ,[nights]
+    ,[ap_arrival_mode_id]
+    ,NULL AS [parking_zone]
+FROM 
+	[abm].[trip_ap]
+UNION ALL
+SELECT
+	[scenario_id]
+    ,[model_type_id]
+    ,[tour_id]
+    ,[trip_id]
+    ,[geography_type_id]
+    ,[orig]
+    ,[dest]
+    ,[time_resolution_id]
+    ,[time_period_id]
+    ,[mode_id]
+    ,[purpose_id]
+    ,[inbound]
+    ,[party_size]
+    ,[trip_board_tap]
+    ,[trip_alight_tap]
+    ,[trip_time]
+    ,[out_vehicle_time]
+    ,[trip_distance]
+    ,[trip_cost]
+    ,NULL AS [ap_income_cat_id]
+    ,NULL AS [nights]
+    ,NULL AS [ap_arrival_mode_id]
+    ,NULL AS [parking_zone]
+FROM 
+	[abm].[trip_cb]
+UNION ALL
+SELECT
+	[scenario_id]
+    ,[model_type_id]
+    ,NULL AS [tour_id]
+    ,[trip_id]
+    ,[geography_type_id]
+    ,[orig]
+    ,[dest]
+    ,[time_resolution_id]
+    ,[time_period_id]
+    ,[mode_id]
+    ,[purpose_id]
+    ,[inbound]
+    ,[party_size]
+    ,[trip_board_tap]
+    ,[trip_alight_tap]
+    ,[trip_time]
+    ,[out_vehicle_time]
+    ,[trip_distance]
+    ,[trip_cost]
+    ,NULL AS [ap_income_cat_id]
+    ,NULL AS [nights]
+    ,NULL AS [ap_arrival_mode_id]
+    ,NULL AS [parking_zone]
+FROM 
+	[abm].[trip_ie]
+UNION ALL
+SELECT
+	[scenario_id]
+    ,[model_type_id]
+    ,[tour_id]
+    ,[trip_id]
+    ,[geography_type_id]
+    ,[orig]
+    ,[dest]
+    ,[time_resolution_id]
+    ,[time_period_id]
+    ,[mode_id]
+    ,[purpose_id]
+    ,[inbound]
+    ,[party_size]
+    ,[trip_board_tap]
+    ,[trip_alight_tap]
+    ,[trip_time]
+    ,[out_vehicle_time]
+    ,[trip_distance]
+    ,[trip_cost]
+    ,NULL AS [ap_income_cat_id]
+    ,NULL AS [nights]
+    ,NULL AS [ap_arrival_mode_id]
+    ,[parking_zone]
+FROM 
+	[abm].[trip_ij]
+UNION ALL
+SELECT
+	[scenario_id]
+    ,[model_type_id]
+    ,[tour_id]
+    ,[trip_id]
+    ,[geography_type_id]
+    ,[orig]
+    ,[dest]
+    ,[time_resolution_id]
+    ,[time_period_id]
+    ,[mode_id]
+    ,[purpose_id]
+    ,[inbound]
+    ,[party_size]
+    ,[trip_board_tap]
+    ,[trip_alight_tap]
+    ,[trip_time]
+    ,[out_vehicle_time]
+    ,[trip_distance]
+    ,[trip_cost]
+    ,NULL AS [ap_income_cat_id]
+    ,NULL AS [nights]
+    ,NULL AS [ap_arrival_mode_id]
+    ,NULL AS [parking_zone]
+FROM 
+	[abm].[trip_vis]
+GO
+
+-- Add metadata for [abm].[trip_micro_simul]
+EXECUTE [db_meta].[add_xp] 'abm.trip_micro_simul', 'SUBSYSTEM', 'ABM'
+EXECUTE [db_meta].[add_xp] 'abm.trip_micro_simul', 'MS_Description', 'View that combines all the micro simualted trip tables.'
+GO
+
+
+
+
+/* Create tour_micro_simul view */
+IF  EXISTS (SELECT * FROM sys.views WHERE object_id = OBJECT_ID(N'[abm].[tour_micro_simul]'))
+DROP VIEW [abm].[tour_micro_simul]
+GO
+
+CREATE VIEW [abm].[tour_micro_simul] AS
+SELECT 
+	[scenario_id]
+    ,[model_type_id]
+    ,[tour_id]
+    ,NULL AS [tour_cat_id]
+    ,[purpose_id]
+    ,[geography_type_id]
+    ,[orig]
+    ,[dest]
+    ,[time_resolution_id]
+    ,[start_period_id]
+    ,[end_period_id]
+    ,NULL AS [mode_id]
+    ,[crossing_mode_id]
+    ,[sentri]
+    ,[poe_id]
+    ,NULL AS [auto_available]
+    ,NULL AS [hh_income_cat_id]
+FROM 
+	[abm].[tour_cb]
+UNION ALL
+SELECT 
+	[scenario_id]
+    ,[model_type_id]
+    ,[tour_id]
+    ,[tour_cat_id]
+    ,[purpose_id]
+    ,[geography_type_id]
+    ,[orig]
+    ,[dest]
+    ,[time_resolution_id]
+    ,[start_period_id]
+    ,[end_period_id]
+    ,[mode_id]
+    ,NULL AS [crossing_mode_id]
+    ,NULL AS [sentri]
+    ,NULL AS [poe_id]
+    ,NULL AS [auto_available]
+    ,NULL AS [hh_income_cat_id]
+FROM 
+	[abm].[tour_ij]
+UNION ALL
+SELECT 
+	[scenario_id]
+    ,[model_type_id]
+    ,[tour_id]
+    ,[tour_cat_id]
+    ,[purpose_id]
+    ,[geography_type_id]
+    ,[orig]
+    ,[dest]
+    ,[time_resolution_id]
+    ,[start_period_id]
+    ,[end_period_id]
+    ,[mode_id]
+    ,NULL AS [crossing_mode_id]
+    ,NULL AS [sentri]
+    ,NULL AS [poe_id]
+    ,[auto_available]
+    ,[hh_income_cat_id]
+FROM 
+	[abm].[tour_vis]
+GO
+
+-- Add metadata for [abm].[tour_micro_simul]
+EXECUTE [db_meta].[add_xp] 'abm.tour_micro_simul', 'SUBSYSTEM', 'ABM'
+EXECUTE [db_meta].[add_xp] 'abm.tour_micro_simul', 'MS_Description', 'View that combines all the micro simualted tour tables.'
+GO
