@@ -1263,3 +1263,54 @@ GO
 EXECUTE [db_meta].[add_xp] 'abm.sp_del_files', 'SUBSYSTEM', 'ABM'
 EXECUTE [db_meta].[add_xp] 'abm.sp_del_files', 'MS_Description', 'Stored procedure to wipe data, merge partition function, and delete files associated with a scenario'
 GO
+
+
+
+
+/* Create MGRA-TAZ xref table */
+IF OBJECT_ID('ref.mgra13_xref_taz13','U') IS NOT NULL
+DROP TABLE [ref].[mgra13_xref_taz13]
+GO
+
+CREATE TABLE [ref].[mgra13_xref_taz13](
+	[mgra13] smallint,
+	[taz13] smallint,
+	CONSTRAINT pk_mgra13xreftaz13 PRIMARY KEY ([mgra13])
+	) 
+ON 
+	[ref_fg]
+GO
+
+with mgra_layer AS (
+SELECT
+	[zone] AS mgra
+	,[centroid] AS mgra_centroid
+FROM
+	[ref].[geography_zone]
+WHERE
+	[geography_type_id] = 90
+),
+taz_layer AS (
+SELECT
+	[zone] as taz
+	,[shape] AS taz_shape
+FROM
+	[ref].[geography_zone]
+WHERE
+	[geography_type_id] = 34
+)
+INSERT INTO [ref].[mgra13_xref_taz13]
+SELECT
+	mgra
+	,taz
+FROM
+	mgra_layer
+	,taz_layer
+WHERE
+	mgra_centroid.STWithin(taz_shape) = 1
+GO
+
+-- Add metadata for [ref].[mgra13_xref_taz13]
+EXECUTE [db_meta].[add_xp] 'ref.mgra13_xref_taz13', 'SUBSYSTEM', 'REFERENCE'
+EXECUTE [db_meta].[add_xp] 'ref.mgra13_xref_taz13', 'MS_Description', 'Cross reference table of the TAZ13 that contains the given MGRA13s centroid'
+GO

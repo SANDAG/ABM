@@ -246,6 +246,7 @@ CREATE TABLE
 		[geography_type_id] tinyint,
 		[zone] smallint,
 		[shape] geometry,
+		[centroid] geometry,
 		CONSTRAINT pk_geo PRIMARY KEY ([geography_type_id],[zone]),
 		CONSTRAINT fk_geo_geotype FOREIGN KEY ([geography_type_id]) REFERENCES [ref].[geography_type]([geography_type_id])
 	) 
@@ -259,6 +260,7 @@ SELECT
 	90
 	,[MGRA]
 	,[Shape]
+	,[Shape].STCentroid()
 FROM 
 	OPENQUERY([pila\sdgintdb],'SELECT [MGRA], [Shape] FROM [lis].[gis].[MGRA13]')
 INSERT INTO	[ref].[geography_zone]
@@ -266,6 +268,7 @@ SELECT
 	34
 	,[TAZ]
 	,[Shape]
+	,[Shape].STCentroid()
 FROM 
 	OPENQUERY([pila\sdgintdb],'SELECT [TAZ], [Shape] FROM [lis].[gis].[TAZ13]')
 			
