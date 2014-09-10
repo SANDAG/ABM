@@ -94,8 +94,8 @@ EXECUTE [db_meta].[add_xp] 'abm.transit_stop', 'MS_Description', 'Transit stop i
 EXECUTE [db_meta].[add_xp] 'abm.transit_tap', 'SUBSYSTEM', 'TRANSIT'
 EXECUTE [db_meta].[add_xp] 'abm.transit_tap', 'MS_Description', 'TAP input network'
 
-EXECUTE [db_meta].[add_xp] 'abm.transit_tap_skim', 'SUBSYSTEM', 'TRANSIT'
-EXECUTE [db_meta].[add_xp] 'abm.transit_tap_skim', 'MS_Description', 'TAP skims for premium modes by time period'
+EXECUTE [db_meta].[add_xp] 'abm.transit_tap_skims', 'SUBSYSTEM', 'TRANSIT'
+EXECUTE [db_meta].[add_xp] 'abm.transit_tap_skims', 'MS_Description', 'TAP skims for premium modes by time period'
 
 EXECUTE [db_meta].[add_xp] 'abm.transit_tap_walk', 'SUBSYSTEM', 'TRANSIT'
 EXECUTE [db_meta].[add_xp] 'abm.transit_tap_walk', 'MS_Description', 'TAP walk access'
