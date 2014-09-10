@@ -1117,8 +1117,8 @@ INSERT INTO
 	[ref].[unit_type]
 VALUES	
 	(0,'Household'),
-	(1,'Institutional Group Quarters'),
-	(2,'Non-Institutional Group Quarters');	
+	(1,'Non-Institutional Group Quarterss'),
+	(2,'Institutional Group Quarters');	
 
 END	
 
