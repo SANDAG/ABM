@@ -39,6 +39,7 @@ Macro "Run SANDAG ABM"
    skipHighwaySkimming = RunMacro("read properties array",properties,"RunModel.skipHighwaySkimming", "S")
    skipTransitSkimming = RunMacro("read properties array",properties,"RunModel.skipTransitSkimming", "S")
    skipCoreABM = RunMacro("read properties array",properties,"RunModel.skipCoreABM", "S")
+   skipOtherSimulateModel = RunMacro("read properties array",properties,"RunModel.skipOtherSimulateModel", "S")
    skipCTM = RunMacro("read properties array",properties,"RunModel.skipCTM", "S")
    skipEI = RunMacro("read properties array",properties,"RunModel.skipEI", "S")
    skipTruck = RunMacro("read properties array",properties,"RunModel.skipTruck", "S")
@@ -168,13 +169,22 @@ Macro "Run SANDAG ABM"
         
       end
 
-      // Run CT-RAMP, airport model, visitor model, cross-border model, internal-external model
+      // Run CT-RAMP model
       if skipCoreABM[iteration] = "false" then do
 	      runString = path+"\\bin\\runSandagAbm.cmd "+drive+" "+path_forward_slash +" "+r2s(sample_rate[iteration])+" "+i2s(iteration)
-	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run CT-RAMP, airport model, visitor model, cross-border model, internal-external model"+" "+runString})
+	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run CT-RAMP"+" "+runString})
 	      ok = RunMacro("TCB Run Command", 1, "Run CT-RAMP", runString)
 	      if !ok then goto quit  
       end
+ 
+      // Run airport model, visitor model, cross-border model, internal-external model
+      if skipOtherSimulateModel[iteration] = "false" then do
+	      runString = path+"\\bin\\runSandagAbm_otherModel.cmd "+drive+" "+path_forward_slash +" "+r2s(sample_rate[iteration])+" "+i2s(iteration)
+	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run airport model, visitor model, cross-border model"+" "+runString})
+	      ok = RunMacro("TCB Run Command", 1, "Run CT-RAMP", runString)
+	      if !ok then goto quit  
+      end
+
  
       if skipCTM[iteration] = "false" then do
 	     //Commercial vehicle trip generation
@@ -236,7 +246,7 @@ Macro "Run SANDAG ABM"
 	 
 	   //Run final and only transit assignment
 	   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Assign Transit"})
-	   ok = RunMacro("TCB Run Macro", 1, "Assign Transit",{}) 
+	   ok = RunMacro("TCB Run Macro", 1, "Assign Transit",{4}) 
 	   if !ok then goto quit
    end
 
