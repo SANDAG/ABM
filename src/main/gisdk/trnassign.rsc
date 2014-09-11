@@ -18,7 +18,7 @@ Transit Assignment
     
 *********************************************************************************/
 
-Macro "Assign Transit"
+Macro "Assign Transit" (args)
 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
   shared path,inputDir, outputDir, mxtap
@@ -32,7 +32,8 @@ Macro "Assign Transit"
    RunMacro("TCB Init")     
    // end testing
 */
- 
+
+iteration = args[1]
 rt_file=outputDir + "\\transitrt.rts"
 
 periodName = {"_EA", "_AM", "_MD", "_PM", "_EV"}
@@ -57,11 +58,14 @@ matrixCore = {
    network={"locl","prem","prem","prem","prem","locl","prem","prem","prem","prem","locl","prem","prem","prem","prem"}
    dim onOffTables[matrixCore.length * periodName.length]
 
+  selinkqry = inputDir + "\\"+"sellink_transit.qry"
+  if GetFileInfo(selinkqry) <> null then  sellink_flag = 1 //select link analysis is only for last iteration (4)
+       
    i = 0
    
    for per = 1 to periodName.length do
      for mat = 1 to matrixCore.length do
-     
+  
         i = i + 1     
      
         networkFile = outputDir+"\\"+network[mat]+periodName[per]+".tnw"
@@ -70,31 +74,35 @@ matrixCore = {
         flowFile =    outputDir+"\\flow"+matrixCore[mat]+periodName[per]+".bin"
         walkFile =    outputDir+"\\ntl"+matrixCore[mat]+periodName[per]+".bin"
         onOffFile =   outputDir+"\\ono"+matrixCore[mat]+periodName[per]+".bin"
-        aggFile =  outputDir+"\\agg"+matrixCore[mat]+periodName[per]+".bin"
-        onOffTables[i] = onOffFile
+        aggFile =     outputDir+"\\agg"+matrixCore[mat]+periodName[per]+".bin"
+        if sellink_flag = 1 & iteration = 4 then sellkmtx =  outputDir+"\\trn_sellink"+matrixCore[mat]+periodName[per]+".mtx"
 
    
         // STEP 1: Transit Assignment
         Opts = null
         Opts.Input.[Transit RS] = rt_file
         Opts.Input.Network = networkFile
-        Opts.Input.[OD Matrix Currency] = {matrixFile,matrixName,,}   
-      //Opts.Input.[Critical Set] = {"T:\\2030\\ver1\\mscal2\\transitrtS.DBD|Stops", "Stops", "Selection", "Select * where ID=8226 or id = 8339"} 
+        Opts.Input.[OD Matrix Currency] = {matrixFile,matrixName,,}  
+
         Opts.Output.[Flow Table] = flowFile
         Opts.Output.[Walk Flow Table] = walkFile
         Opts.Output.[OnOff Table] = onOffFile
         Opts.Output.[Aggre Table] = aggFile
         Opts.Flag.[Do Maximum Fare] = 1 //added for 4.8 build 401
-   
-      //Opts.Output.[Critical Matrix].Label = "Critical Matrix"
-      //Opts.Output.[Critical Matrix].[File Name] = path+"\\"+sellkmtx[i]
+        if sellink_flag = 1 & iteration = 4 then do
+                Opts.Flag.critFlag = 1
+	        Opts.Global.[Critical Query File] = selinkqry
+	        Opts.Output.[Critical Matrix].Label = "Critical Matrix"
+	        Opts.Output.[Critical Matrix].[File Name] = sellkmtx
+        end 
        RunMacro("HwycadLog",{"trassigns.rsc: transit assigns","Transit Assignment PF: "+matrixCore[mat]+periodName[per]})
        ok = RunMacro("TCB Run Procedure", (per*100+mat), "Transit Assignment PF", Opts)
-       //ok = RunMacro("TCB Run Procedure", i, "Transit Assign Max Fare", Opts)
-      
+           
        if !ok then goto quit    	
      end
    end
+
+
 
    quit:
     RunMacro("close all")
