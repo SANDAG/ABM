@@ -186,10 +186,11 @@ macro "fill oneway streets"
  
    RunMacro("close all")
    
-   aoc = RunMacro("set aoc")
-
-//  fpr=openfile(path+"\\hwycad.log","a")
-//  mytime=GetDateAndTime() 
+   //aoc = RunMacro("set aoc")
+   properties = "\\conf\\sandag_abm.properties"   
+   aoc_f = RunMacro("read properties",properties,"aoc.fuel", "S")
+   aoc_m = RunMacro("read properties",properties,"aoc.maintenance", "S")
+   aoc=S2R(aoc_f)+S2R(aoc_m)
 
    db_file=outputDir+"\\hwy.dbd"
 
@@ -198,8 +199,6 @@ macro "fill oneway streets"
    if !ok then goto quit
    db_link_lyr = db_file + "|" + link_lyr
 
-//  writeline(fpr,mytime+", fill one way streets")
-//  closefile(fpr)
   
   //oneway streets, dir = 1
    Opts = null
@@ -1459,7 +1458,9 @@ endMacro
 
 /*  Utility macro to look up auto operating costs for year. 
     File names / directory structure are hard-coded.
+    This Macro is obsolete.  AOC is passed in from property file now.
 */
+/*
 Macro "set aoc"
     shared path, inputDir
     
@@ -1491,3 +1492,4 @@ Macro "set aoc"
     
     return(aoc)  
 EndMacro 
+*/
