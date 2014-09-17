@@ -263,17 +263,7 @@
                 <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
-                <tourModeChoice.uec.file>TourModeChoice2010.xls</tourModeChoice.uec.file>
-                <tripModeChoice.uec.file>TripModeChoice2010.xls</tripModeChoice.uec.file>
-                <internalExternal.trip.mc.uec.file>InternalExternalTripModeChoice2010.xls</internalExternal.trip.mc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice2010.xls</crossBorder.trip.mc.uec.file>
-                <cdap.uec.file>CoordinatedDailyActivityPattern2010.xls</cdap.uec.file>
-                <visitor.mc.uec.file>VisitorTourModeChoice2010.xls</visitor.mc.uec.file>
-                <visitor.trip.mc.uec.file>VisitorTripModeChoice2010.xls</visitor.trip.mc.uec.file>
-                <airport.mc.uec.file>AirportModeChoice2010.xls</airport.mc.uec.file>
-                <acc.uec.file>Accessibilities2010.xls</acc.uec.file>
-                <utility.bestTransitPath.uec.file>BestTransitPathUtility2010.xls</utility.bestTransitPath.uec.file>             
-                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
+                <cdap.uec.file>CoordinatedDailyActivityPattern2010.xls</cdap.uec.file>             
                 <workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
             </properties>
@@ -288,19 +278,11 @@
                 <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
-                <tourModeChoice.uec.file>TourModeChoice2010.xls</tourModeChoice.uec.file>
-                <tripModeChoice.uec.file>TripModeChoice2010.xls</tripModeChoice.uec.file>
-                <internalExternal.trip.mc.uec.file>InternalExternalTripModeChoice2010.xls</internalExternal.trip.mc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice2010.xls</crossBorder.trip.mc.uec.file>
                 <cdap.uec.file>CoordinatedDailyActivityPattern2010.xls</cdap.uec.file>
-                <visitor.mc.uec.file>VisitorTourModeChoice2010.xls</visitor.mc.uec.file>
-                <visitor.trip.mc.uec.file>VisitorTripModeChoice2010.xls</visitor.trip.mc.uec.file>
-                <airport.mc.uec.file>AirportModeChoice2010.xls</airport.mc.uec.file>
-                <acc.uec.file>Accessibilities2010.xls</acc.uec.file>
-                <utility.bestTransitPath.uec.file>BestTransitPathUtility2010.xls</utility.bestTransitPath.uec.file>
-                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
                 <workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
+                <aoc.fuel>13.5</aoc.fuel>
+                <aoc.maintenance>6.3</aoc.maintenance>
             </properties>
         </profile>
         <profile>
@@ -313,19 +295,11 @@
                 <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
-                <tourModeChoice.uec.file>TourModeChoice2020.xls</tourModeChoice.uec.file>
-                <tripModeChoice.uec.file>TripModeChoice2020.xls</tripModeChoice.uec.file>
-                <internalExternal.trip.mc.uec.file>InternalExternalTripModeChoice2020.xls</internalExternal.trip.mc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice2020.xls</crossBorder.trip.mc.uec.file>
-                <cdap.uec.file>CoordinatedDailyActivityPattern2020.xls</cdap.uec.file>
-                <visitor.mc.uec.file>VisitorTourModeChoice2020.xls</visitor.mc.uec.file>
-                <visitor.trip.mc.uec.file>VisitorTripModeChoice2020.xls</visitor.trip.mc.uec.file>
-                <airport.mc.uec.file>AirportModeChoice2020.xls</airport.mc.uec.file>
-                <acc.uec.file>Accessibilities2020.xls</acc.uec.file>
-                <utility.bestTransitPath.uec.file>BestTransitPathUtility2020.xls</utility.bestTransitPath.uec.file>             
-                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
+                <cdap.uec.file>CoordinatedDailyActivityPattern2020.xls</cdap.uec.file>            
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
+                <aoc.fuel>17.1</aoc.fuel>
+                <aoc.maintenance>6.9</aoc.maintenance>
             </properties>
         </profile>
         <profile>
@@ -338,19 +312,11 @@
                 <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
-                <tourModeChoice.uec.file>TourModeChoice2035.xls</tourModeChoice.uec.file>
-                <tripModeChoice.uec.file>TripModeChoice2035.xls</tripModeChoice.uec.file>
-                <internalExternal.trip.mc.uec.file>InternalExternalTripModeChoice2035.xls</internalExternal.trip.mc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice2035.xls</crossBorder.trip.mc.uec.file>
                 <cdap.uec.file>CoordinatedDailyActivityPattern2035.xls</cdap.uec.file>
-                <visitor.mc.uec.file>VisitorTourModeChoice2035.xls</visitor.mc.uec.file>
-                <visitor.trip.mc.uec.file>VisitorTripModeChoice2035.xls</visitor.trip.mc.uec.file>
-                <airport.mc.uec.file>AirportModeChoice2035.xls</airport.mc.uec.file>
-                <acc.uec.file>Accessibilities2035.xls</acc.uec.file>
-                <utility.bestTransitPath.uec.file>BestTransitPathUtility2035.xls</utility.bestTransitPath.uec.file>
-                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
+                <aoc.fuel>17.9</aoc.fuel>
+                <aoc.maintenance>8.8</aoc.maintenance>
             </properties>
         </profile>
         <profile>
@@ -363,19 +329,11 @@
                 <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2040.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2040.xls</crossBorder.dc.uec.file>
-                <tourModeChoice.uec.file>TourModeChoice2050.xls</tourModeChoice.uec.file>
-                <tripModeChoice.uec.file>TripModeChoice2050.xls</tripModeChoice.uec.file>
-                <internalExternal.trip.mc.uec.file>InternalExternalTripModeChoice2050.xls</internalExternal.trip.mc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice2050.xls</crossBorder.trip.mc.uec.file>
                 <cdap.uec.file>CoordinatedDailyActivityPattern2050.xls</cdap.uec.file>
-                <visitor.mc.uec.file>VisitorTourModeChoice2050.xls</visitor.mc.uec.file>
-                <visitor.trip.mc.uec.file>VisitorTripModeChoice2050.xls</visitor.trip.mc.uec.file>
-                <airport.mc.uec.file>AirportModeChoice2050.xls</airport.mc.uec.file>
-                <acc.uec.file>Accessibilities2050.xls</acc.uec.file>
-                <utility.bestTransitPath.uec.file>BestTransitPathUtility2050.xls</utility.bestTransitPath.uec.file>
-                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
+                <aoc.fuel>20.1</aoc.fuel>
+                <aoc.maintenance>8.8</aoc.maintenance>
             </properties>
         </profile>
         <profile>
