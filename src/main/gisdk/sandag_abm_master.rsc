@@ -2,7 +2,7 @@ Macro "Run SANDAG ABM"
   
    RunMacro("TCB Init")
 
-   shared path, inputDir, outputDir, inputTruckDir, mxzone, mxtap, mxext,mxlink,mxrte
+   shared path, inputDir, outputDir, inputTruckDir, mxzone, mxtap, mxext,mxlink,mxrte,scenarioYear
  
    sample_rate = { 0.2, 0.5, 1.0 }
    max_iterations=sample_rate.length    //number of feedback loops
@@ -26,7 +26,8 @@ Macro "Run SANDAG ABM"
    RunMacro("parameters")
 
    // read properties from sandag_abm.properties in /conf folder
-   properties = "\\conf\\sandag_abm.properties"   
+   properties = "\\conf\\sandag_abm.properties"  
+   scenarioYear = RunMacro("read properties",properties,"scenarioYear", "S")
    skipCopyWarmupTripTables = RunMacro("read properties",properties,"RunModel.skipCopyWarmupTripTables", "S")
    skipCopyBikeLogsum = RunMacro("read properties",properties,"RunModel.skipCopyBikeLogsum", "S")
    skipCopyWalkImpedance= RunMacro("read properties",properties,"RunModel.skipCopyWalkImpedance", "S")
