@@ -186,11 +186,10 @@ macro "fill oneway streets"
  
    RunMacro("close all")
    
-   //aoc = RunMacro("set aoc")
-   properties = "\\conf\\sandag_abm.properties"   
-   aoc_f = RunMacro("read properties",properties,"aoc.fuel", "S")
-   aoc_m = RunMacro("read properties",properties,"aoc.maintenance", "S")
-   aoc=S2R(aoc_f)+S2R(aoc_m)
+   aoc = RunMacro("set aoc")
+
+//  fpr=openfile(path+"\\hwycad.log","a")
+//  mytime=GetDateAndTime() 
 
    db_file=outputDir+"\\hwy.dbd"
 
@@ -199,6 +198,8 @@ macro "fill oneway streets"
    if !ok then goto quit
    db_link_lyr = db_file + "|" + link_lyr
 
+//  writeline(fpr,mytime+", fill one way streets")
+//  closefile(fpr)
   
   //oneway streets, dir = 1
    Opts = null
@@ -796,20 +797,22 @@ Cycle length matrix
       Intersecting Link                     
 Approach Link            2                3                4           5                6                7            8                   9
 IFC   Description       Prime Arterial   Major Arterial   Collector   Local Collector  Rural Collector   Local Road   Freeway connector  Local Ramp
-2     Prime Arterial     2.0              1.5               1.5         1.5            1.5               1.5           1.5                1.5
-3     Major Arterial     1.5              1.5               1.0         1.0            1.0               1.0           1.0                1.0
-4     Collector          1.5              1.0               1.0         1.0            1.0               1.0           1.0                1.0
-5     Local Collector    1.5              1.0               1.0         1.0            1.0               1.0           1.0                1.0
-6     Rural Collector    1.5              1.0               1.0         1.0            1.0               1.0           1.0                1.0
-7     Local Road         1.5              1.0               1.0         1.0            1.0               1.0           1.0                1.0
-8     Freeway connector  1.5              1.0               1.0         1.0            1.0               1.0           1.0                1.0
-9     Local Ramp         1.5              1.0               1.0         1.0            1.0               1.0           1.0                1.0
+2     Prime Arterial     2.5              2               2           2                2                 2             2                  2
+3     Major Arterial     2                2               2           2                2                 2             2                  2
+4     Collector          2                2               1.5         1.5              1.5               1.5           1.5                1.5
+5     Local Collector    2                1.5             1.25        1.25             1.25              1.25          1.25               1.25
+6     Rural Collector    2                1.5             1.25        1.25             1.25              1.25          1.25               1.25
+7     Local Road         2                1.5             1.25        1.25             1.25              1.25          1.25               1.25
+8     Freeway connector  2                1.5             1.25        1.25             1.25              1.25          1.25               1.25
+9     Local Ramp         2                1.5             1.25        1.25             1.25              1.25          1.25               1.25
 
 Ramp with meter (abcnt = 4 or 5)    
-   Cycle length = 0.5
-   GC ratio 0.5 
+   Cycle length = 2.5
+   GC ratio 0.42 (adjusted down from 0.5 for yellow)
 
-Stop controlled intersection (
+Stop controlled intersection
+   Cycle length =1.25
+   GC ratio 0.42 (adjusted down from 0.5 for yellow)
 
 *************************************************************************************************/
 Macro "Code VDF fields"
@@ -947,24 +950,24 @@ Macro "Code VDF fields"
          // Set AB fields for links whose end node is this node and are coded in the A->B direction
 			if (ends_at_node_AB_direction = 1) then do
       
-            //defaults are 1.0 minute cycle length and 1.0 progression factor
-            c_len = 1.0
+            //defaults are 1.25 minute cycle length and 1.0 progression factor
+            c_len = 1.25
             p_factor = 1.0
                
             //set up the cycle length for AB direction if there is a gc ratio and more than 2 links 
             if (link_lyr.[ABGC]<>0 and signal > 0) then do 
             
                if (link_lyr.[IFC] = 2) then do
-                  if (min_lc = 2)      then c_len = 2.0       //Prime arterial & Prime arterial
-                  else                      c_len = 1.5       //Prime arterial & anything lower
+                  if (min_lc = 2)      then c_len = 2.5       //Prime arterial & Prime arterial
+                  else                      c_len = 2.0       //Prime arterial & anything lower
                end
                else if (link_lyr.[IFC] = 3) then do
-                  if (max_lc > 3)      then c_len = 1.0       //Major arterial & anything lower than a Major arterial
-                  else                      c_len = 1.5       //Major arterial & Prime arterial or Major arterial
+                  if (max_lc > 3)      then c_len = 2.0       //Major arterial & anything lower than a Major arterial
+                  else                      c_len = 2.0       //Major arterial & Prime arterial or Major arterial
                end
                else if (link_lyr.[IFC] > 3) then do
-                  if (max_lc > 2)      then c_len = 1.0       //Anything lower than a Major arterial & anything lower than a Prime arterial 
-                  else                      c_len = 1.5       //Anything lower than a Major arterial & Prime arterial
+                  if (max_lc > 2)      then c_len = 1.5       //Anything lower than a Major arterial & anything lower than a Prime arterial 
+                  else                      c_len = 2.0       //Anything lower than a Major arterial & Prime arterial
                end
                               
                //update attributes                  
@@ -986,20 +989,20 @@ Macro "Code VDF fields"
 
                //defaults are 0.4 gc ratio, 1.0 minute cycle length and 1.0 progression factor
                gc_ratio = 0.4
-               c_len = 1.0
+               c_len = 1.25
                p_factor = 1.0
                   
                if (link_lyr.[IFC] = 2) then do
-                  if (min_lc = 2)      then c_len = 2.0       //Prime arterial & Prime arterial
-                  else                      c_len = 1.5       //Prime arterial & anything lower
+                  if (min_lc = 2)      then c_len = 2.5       //Prime arterial & Prime arterial
+                  else                      c_len = 2.0       //Prime arterial & anything lower
                end
                else if (link_lyr.[IFC] = 3) then do
-                  if (max_lc > 3)      then c_len = 1.0       //Major arterial & anything lower than a Major arterial
-                  else                      c_len = 1.5       //Major arterial & Prime arterial or Major arterial
+                  if (max_lc > 3)      then c_len = 2.0       //Major arterial & anything lower than a Major arterial
+                  else                      c_len = 2.0       //Major arterial & Prime arterial or Major arterial
                end
                else if (link_lyr.[IFC] > 3) then do
-                  if (max_lc > 2)      then c_len = 1.0       //Anything lower than a Major arterial & anything lower than a Prime arterial 
-                  else                      c_len = 1.5       //Anything lower than a Major arterial & Prime arterial
+                  if (max_lc > 2)      then c_len = 1.5       //Anything lower than a Major arterial & anything lower than a Prime arterial 
+                  else                      c_len = 2.0       //Anything lower than a Major arterial & Prime arterial
                end
               
                //update attributes                  
@@ -1014,29 +1017,29 @@ Macro "Code VDF fields"
 
          //code metered ramps AB Direction
          if(ends_at_node_AB_direction = 1 and (link_lyr.[ABCNT]= 4 or link_lyr.[ABCNT] = 5)) then do
-            link_lyr.[AB_Cycle] = 2.0
-            link_lyr.[AB_GCRatio] = 0.5
+            link_lyr.[AB_Cycle] = 2.5
+            link_lyr.[AB_GCRatio] = 0.42
             link_lyr.[AB_PF] = 1.0
          end
          
           //code metered ramps BA Direction
          if(ends_at_node_BA_direction = 1 and (link_lyr.[BACNT]= 4 or link_lyr.[BACNT] = 5)) then do
-            link_lyr.[BA_Cycle] = 2.0
-            link_lyr.[BA_GCRatio] = 0.5
+            link_lyr.[BA_Cycle] = 2.5
+            link_lyr.[BA_GCRatio] = 0.42
             link_lyr.[BA_PF] = 1.0
          end
 
         //code stops AB Direction
          if(ends_at_node_AB_direction = 1 and (link_lyr.[ABCNT]= 2 or link_lyr.[ABCNT] = 3)) then do
-            link_lyr.[AB_Cycle] = 0.5
-            link_lyr.[AB_GCRatio] = 0.5
+            link_lyr.[AB_Cycle] = 1.25
+            link_lyr.[AB_GCRatio] = 0.42
             link_lyr.[AB_PF] = 1.0
          end         
          
          //code stops BA Direction
          if(ends_at_node_BA_direction = 1 and (link_lyr.[ABCNT]= 2 or link_lyr.[ABCNT] = 3)) then do
-            link_lyr.[BA_Cycle] = 0.5
-            link_lyr.[BA_GCRatio] = 0.5
+            link_lyr.[BA_Cycle] = 1.25
+            link_lyr.[BA_GCRatio] = 0.42
             link_lyr.[BA_PF] = 1.0
          end         
          
@@ -1048,7 +1051,7 @@ Macro "Code VDF fields"
    // set alpha1 and beta1 fields, which are based upon free-flow speed to match POSTLOAD loaded time factors
    lwr_bound  = {  " 0",  "25",  "30",  "35",  "40",  "45",  "50",  "55",  "60",  "65",  "70",  "75"}   
    upr_bound  = {  "24",  "29",  "34",  "39",  "44",  "49",  "54",  "59",  "64",  "69",  "74",  "99"}  
-   alpha1     = {"0.90","0.90","0.90","0.90","0.90","0.90","0.90","0.90","0.90","0.90","0.90","0.90"}  
+   alpha1     = {"1.1","1.1","1.1","1.1","1.1","1.1","1.1","1.1","1.1","1.1","1.1","1.1"}  
    beta1      = {   "4",   "4",   "4",   "4",   "4",   "4",   "4",   "4",   "4",   "4"  , "4",   "4"}  
 
 
@@ -1084,10 +1087,10 @@ Macro "Code VDF fields"
    end 
 
    //set alpha2 and beta2 fields (note that signalized intersections and stop-controlled intersections have same parameters, only meters vary)
-   alpha2_default = "0.15"
-   beta2_default = "3.75"
+   alpha2_default = "2.0"
+   beta2_default = "0.75"
    alpha2_meter = "2.5"
-   beta2_meter = "2.25"
+   beta2_meter = "3.0"
       
    Opts = null
    Opts.Input.[View Set] = {db_link_lyr, link_lyr}
@@ -1458,9 +1461,7 @@ endMacro
 
 /*  Utility macro to look up auto operating costs for year. 
     File names / directory structure are hard-coded.
-    This Macro is obsolete.  AOC is passed in from property file now.
 */
-/*
 Macro "set aoc"
     shared path, inputDir
     
@@ -1468,7 +1469,7 @@ Macro "set aoc"
     aocfile = path+"\\uec\\"+"AutoOperatingCost.xls"    
     tempfile = inputDir+"\\"+"aoc.bin"
     
-    year="${year}"
+    year="2010"
 
     // workaround to read excel file (using csv makes updates within uecs manual)
     ExportExcel(aocfile, "FFB", tempfile, {"AOC", })
@@ -1492,4 +1493,3 @@ Macro "set aoc"
     
     return(aoc)  
 EndMacro 
-*/
