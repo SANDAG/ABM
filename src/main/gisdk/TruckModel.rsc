@@ -333,7 +333,7 @@ Creates households by taz and employment by taz files to use in the truck trip g
  
 Inputs:
    sandag.properties
-   input\mgra13_based_input${year}.csv
+   input\mgra13_based_input2012.csv
 
 Outputs:
    output\empByTaz.csv
@@ -341,8 +341,8 @@ Outputs:
     
 **********************************************************************************************************/
 Macro "Create hh and emp by taz"
-    shared path, inputDir, outputDir, mxzone      
-    mgraDataFile      = "mgra13_based_input${year}.csv"
+    shared path, inputDir, outputDir, mxzone  , scenarioYear    
+    mgraDataFile      = "mgra13_based_input"+scenarioYear+".csv"
     empbytaz          = "empByTaz.csv"
     hhbytaz           = "hhByTaz.csv"
     
