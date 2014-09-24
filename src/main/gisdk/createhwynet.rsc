@@ -987,7 +987,7 @@ Macro "Code VDF fields"
             // Only code links with an existing GC ratio (indicating a signalized intersection) 
             if (link_lyr.[BAGC]<>0 and signal > 0) then do 
 
-               //defaults are 0.4 gc ratio, 1.0 minute cycle length and 1.0 progression factor
+               //defaults are 0.4 gc ratio, 1.25 minute cycle length and 1.0 progression factor
                gc_ratio = 0.4
                c_len = 1.25
                p_factor = 1.0
@@ -1037,7 +1037,7 @@ Macro "Code VDF fields"
          end         
          
          //code stops BA Direction
-         if(ends_at_node_BA_direction = 1 and (link_lyr.[ABCNT]= 2 or link_lyr.[ABCNT] = 3)) then do
+         if(ends_at_node_BA_direction = 1 and (link_lyr.[BACNT]= 2 or link_lyr.[BACNT] = 3)) then do
             link_lyr.[BA_Cycle] = 1.25
             link_lyr.[BA_GCRatio] = 0.42
             link_lyr.[BA_PF] = 1.0
@@ -1053,10 +1053,6 @@ Macro "Code VDF fields"
    upr_bound  = {  "24",  "29",  "34",  "39",  "44",  "49",  "54",  "59",  "64",  "69",  "74",  "99"}  
    alpha1     = {"1.1","1.1","1.1","1.1","1.1","1.1","1.1","1.1","1.1","1.1","1.1","1.1"}  
    beta1      = {   "4",   "4",   "4",   "4",   "4",   "4",   "4",   "4",   "4",   "4"  , "4",   "4"}  
-
-
-//   alpha1     = {"0.10","0.10","0.15","0.20","0.20","0.20","0.20","0.20","0.25","0.30","0.30","0.35"}  
-//   beta1      = {   "5",   "5",   "5",   "5",   "6",   "6",   "7",   "7",   "8",   "8"  , "9",   "9"}  
 
    for j = 1 to lwr_bound.length do
    
@@ -1087,10 +1083,10 @@ Macro "Code VDF fields"
    end 
 
    //set alpha2 and beta2 fields (note that signalized intersections and stop-controlled intersections have same parameters, only meters vary)
-   alpha2_default = "2.0"
-   beta2_default = "0.75"
-   alpha2_meter = "2.5"
-   beta2_meter = "3.0"
+   alpha2_default = "4.5"
+   beta2_default = "2.0"
+   alpha2_meter = "6.0"
+   beta2_meter = "2.0"
       
    Opts = null
    Opts.Input.[View Set] = {db_link_lyr, link_lyr}
