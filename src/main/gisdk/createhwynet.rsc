@@ -186,10 +186,10 @@ macro "fill oneway streets"
  
    RunMacro("close all")
    
-   aoc = RunMacro("set aoc")
-
-//  fpr=openfile(path+"\\hwycad.log","a")
-//  mytime=GetDateAndTime() 
+   properties = "\\conf\\sandag_abm.properties"   
+   aoc_f = RunMacro("read properties",properties,"aoc.fuel", "S")
+   aoc_m = RunMacro("read properties",properties,"aoc.maintenance", "S")
+   aoc=S2R(aoc_f)+S2R(aoc_m)
 
    db_file=outputDir+"\\hwy.dbd"
 
@@ -1454,38 +1454,3 @@ macro "create hwynet"
       //if fpr<>null then closefile(fpr)
       return(ok)
 endMacro
-
-/*  Utility macro to look up auto operating costs for year. 
-    File names / directory structure are hard-coded.
-*/
-Macro "set aoc"
-    shared path, inputDir
-    
-    properties = "\\conf\\"+"sandag_abm.properties"
-    aocfile = path+"\\uec\\"+"AutoOperatingCost.xls"    
-    tempfile = inputDir+"\\"+"aoc.bin"
-    
-    year="2010"
-
-    // workaround to read excel file (using csv makes updates within uecs manual)
-    ExportExcel(aocfile, "FFB", tempfile, {"AOC", })
-    OpenTable("aoc", "FFB", {tempfile, })
-    
-    // open view then get aoc by year index
-    view = Opentable("aoc", "FFB", {tempfile})
-    v = GetDataVectors(view+"|", {"Year", "Total Auto Operating Cost"}, )
-    
-    for k=1 to v[1].length do
-        y = position(I2S(v[1][k]),year)
-        if y = 1 then
-            aoc = v[2][k]
-            aoc = Round(aoc,2)
-    end
-    
-    // delete temporary files
-    CloseView(view)
-    DeleteFile(tempfile)
-    DeleteFile(Substitute(tempfile, ".bin", ".dcb", ))
-    
-    return(aoc)  
-EndMacro 
