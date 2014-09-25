@@ -108,7 +108,7 @@ END
 	ALTER INDEX [pk_hwylinktod] ON [abm].[hwy_link_tod] REORGANIZE PARTITION = @dest_partition
 	ALTER INDEX [pk_hwyskims] ON [abm].[hwy_skims] REORGANIZE PARTITION = @dest_partition
 	ALTER INDEX [pk_luhh] ON [abm].[lu_hh] REORGANIZE PARTITION = @dest_partition
-	ALTER INDEX [ix_lu_hh_zone] ON [abm].[lu_hh] REORGANIZE PARTITION = @dest_partition
+	ALTER INDEX [ix_luhh_zone] ON [abm].[lu_hh] REORGANIZE PARTITION = @dest_partition
 	ALTER INDEX [pk_lumgrainput] ON [abm].[lu_mgra_input] REORGANIZE PARTITION = @dest_partition
 	ALTER INDEX [pk_luperson] ON [abm].[lu_person] REORGANIZE PARTITION = @dest_partition
 	ALTER INDEX [pk_lupersonfp] ON [abm].[lu_person_fp] REORGANIZE PARTITION = @dest_partition
