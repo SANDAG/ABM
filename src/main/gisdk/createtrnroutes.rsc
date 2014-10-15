@@ -10,15 +10,7 @@ c*******************************************************************************
 
 Macro "Create all transit"
    shared path, inputDir, outputDir, mxtap
- 
-    /* for testing
-   path = "d:\\projects\\sandag\\ab_model\\application\\series12\\base2008"
-   inputDir = "d:\\projects\\sandag\\ab_model\\application\\series12\\base2008\\input"                                                                        
-   outputDir = "d:\\projects\\sandag\\ab_model\\application\\series12\\base2008\\output"                                                                        
-   mxtap=2500
-   RunMacro("TCB Init")     
-   */ 
-   
+    
    ok=RunMacro("Import transit layer",{})
    if !ok then goto quit
 

@@ -149,7 +149,7 @@ Macro "Run SANDAG ABM"
       end
 
       // First move some trip matrices so model will crash if ctramp model doesn't produced csv/mtx files for assignment
-      if (iteration > 1) then do
+      if (iteration > startFromIteration) then do
          fromDir = outputDir
          toDir = outputDir+"\\iter"+String(iteration-1)
          //check for directory of output
