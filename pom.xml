@@ -8,37 +8,37 @@
     <version>version_14_2_0</version>
     <name>SANDAG CT-RAMP Activity Based Model</name>
     <properties>
-        <encoding.type>UTF-8</encoding.type> 
+        <encoding.type>UTF-8</encoding.type>
         <release.root>${project.build.directory}/${project.name}/${project.version}</release.root>
-        <jppf.driver.memory.min>1000m</jppf.driver.memory.min> 
-        <jppf.driver.memory.max>9000m</jppf.driver.memory.max> 
-        <jppf.headnode.memory.min>32000m</jppf.headnode.memory.min> 
-        <jppf.headnode.memory.max>32000m</jppf.headnode.memory.max> 
-        <jppf.workernode.memory.min>70000m</jppf.workernode.memory.min> 
-        <jppf.workernode.memory.max>120000m</jppf.workernode.memory.max> 
-        <mtxmgr.memory.min>60000m</mtxmgr.memory.min> 
-        <mtxmgr.memory.max>70000m</mtxmgr.memory.max> 
-        <hhmgr.memory.min>1000m</hhmgr.memory.min> 
-        <hhmgr.memory.max>20000m</hhmgr.memory.max>         
-        <client.memory.min>30000m</client.memory.min> 
-        <client.memory.max>80000m</client.memory.max>          
-        <spmarket.memory.min>30000m</spmarket.memory.min> 
-        <spmarket.memory.max>180000m</spmarket.memory.max>      
-        <bikelogsum.memory.min>26000m</bikelogsum.memory.min> 
-        <bikelogsum.memory.max>50000m</bikelogsum.memory.max>    
-        <walklogsum.memory.min>26000m</walklogsum.memory.min> 
-        <walklogsum.memory.max>50000m</walklogsum.memory.max>    
-        <bikeroute.memory.min>26000m</bikeroute.memory.min> 
-        <bikeroute.memory.max>50000m</bikeroute.memory.max> 
-        <dataexport.memory.min>30000m</dataexport.memory.min> 
-        <dataexport.memory.max>140000m</dataexport.memory.max> 
-        <emfac.memory.min>10000m</emfac.memory.min> 
-        <emfac.memory.max>15000m</emfac.memory.max>  
-        <validate.memory.min>10000m</validate.memory.min> 
-        <validate.memory.max>15000m</validate.memory.max>  
-        <matrix.server.port>1191</matrix.server.port>  
-        <household.server.port>1129</household.server.port>  
-        <java.32.port>1190</java.32.port>  
+        <jppf.driver.memory.min>1000m</jppf.driver.memory.min>
+        <jppf.driver.memory.max>9000m</jppf.driver.memory.max>
+        <jppf.headnode.memory.min>32000m</jppf.headnode.memory.min>
+        <jppf.headnode.memory.max>32000m</jppf.headnode.memory.max>
+        <jppf.workernode.memory.min>70000m</jppf.workernode.memory.min>
+        <jppf.workernode.memory.max>120000m</jppf.workernode.memory.max>
+        <mtxmgr.memory.min>60000m</mtxmgr.memory.min>
+        <mtxmgr.memory.max>70000m</mtxmgr.memory.max>
+        <hhmgr.memory.min>1000m</hhmgr.memory.min>
+        <hhmgr.memory.max>20000m</hhmgr.memory.max>
+        <client.memory.min>30000m</client.memory.min>
+        <client.memory.max>80000m</client.memory.max>
+        <spmarket.memory.min>30000m</spmarket.memory.min>
+        <spmarket.memory.max>180000m</spmarket.memory.max>
+        <bikelogsum.memory.min>26000m</bikelogsum.memory.min>
+        <bikelogsum.memory.max>50000m</bikelogsum.memory.max>
+        <walklogsum.memory.min>26000m</walklogsum.memory.min>
+        <walklogsum.memory.max>50000m</walklogsum.memory.max>
+        <bikeroute.memory.min>26000m</bikeroute.memory.min>
+        <bikeroute.memory.max>50000m</bikeroute.memory.max>
+        <dataexport.memory.min>30000m</dataexport.memory.min>
+        <dataexport.memory.max>140000m</dataexport.memory.max>
+        <emfac.memory.min>10000m</emfac.memory.min>
+        <emfac.memory.max>15000m</emfac.memory.max>
+        <validate.memory.min>10000m</validate.memory.min>
+        <validate.memory.max>15000m</validate.memory.max>
+        <matrix.server.port>1191</matrix.server.port>
+        <household.server.port>1129</household.server.port>
+        <java.32.port>1190</java.32.port>
         <MAPDRIVE>T:</MAPDRIVE>
         <MAPDRIVEFOLDER>\\sandag.org\transdata</MAPDRIVEFOLDER>
         <USERNAME>XX</USERNAME>
@@ -62,110 +62,110 @@
             </activation>
             <properties>
                 <year>2016</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives.csv</crossborder.dc.soa.alts.file>    
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives.csv</crossborder.dc.soa.alts.file>
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice.xls</tourdest.uec.file>
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice.xls</crossBorder.tour.mc.uec.file>                  
+                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice.xls</crossBorder.tour.mc.uec.file>
             </properties>
         </profile>
         <profile>
             <id>2020</id>
             <properties>
                 <year>2020</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>    
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2020.xls</tourdest.uec.file>
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file>               
+                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file>
             </properties>
         </profile>
         <profile>
             <id>2025</id>
             <properties>
                 <year>2025</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2025.csv</crossborder.dc.soa.alts.file>    
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2025.csv</crossborder.dc.soa.alts.file>
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2025.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2025.xls</tourdest.uec.file>
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2025.xls</crossBorder.tour.mc.uec.file>                       
+                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2025.xls</crossBorder.tour.mc.uec.file>
             </properties>
         </profile>
         <profile>
             <id>2025nb</id>
             <properties>
                 <year>2025</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>    
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2025.xls</tourdest.uec.file>
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file>                       
+                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file>
             </properties>
         </profile>
         <profile>
             <id>2030</id>
             <properties>
                 <year>2030</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2025.csv</crossborder.dc.soa.alts.file>    
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2025.csv</crossborder.dc.soa.alts.file>
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2025.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2025.xls</tourdest.uec.file>  
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2025.xls</crossBorder.tour.mc.uec.file>                     
+                <tourdest.uec.file>TourDestinationChoice2025.xls</tourdest.uec.file>
+                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2025.xls</crossBorder.tour.mc.uec.file>
             </properties>
         </profile>
         <profile>
             <id>2035</id>
             <properties>
                 <year>2035</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2035.csv</crossborder.dc.soa.alts.file>    
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2035.csv</crossborder.dc.soa.alts.file>
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2035.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2035.xls</tourdest.uec.file>      
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2035.xls</crossBorder.tour.mc.uec.file>    
+                <tourdest.uec.file>TourDestinationChoice2035.xls</tourdest.uec.file>
+                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2035.xls</crossBorder.tour.mc.uec.file>
             </properties>
         </profile>
         <profile>
             <id>2035nb</id>
             <properties>
                 <year>2035</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>    
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2035.xls</tourdest.uec.file>      
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file>    
+                <tourdest.uec.file>TourDestinationChoice2035.xls</tourdest.uec.file>
+                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file>
             </properties>
         </profile>
         <profile>
             <id>2040</id>
             <properties>
                 <year>2040</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2050.csv</crossborder.dc.soa.alts.file>    
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2050.csv</crossborder.dc.soa.alts.file>
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2050.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2050.xls</tourdest.uec.file>  
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2050.xls</crossBorder.tour.mc.uec.file>        
+                <tourdest.uec.file>TourDestinationChoice2050.xls</tourdest.uec.file>
+                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2050.xls</crossBorder.tour.mc.uec.file>
             </properties>
         </profile>
         <profile>
             <id>2050</id>
             <properties>
                 <year>2050</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2050.csv</crossborder.dc.soa.alts.file>    
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2050.csv</crossborder.dc.soa.alts.file>
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2050.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2050.xls</tourdest.uec.file>   
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2050.xls</crossBorder.tour.mc.uec.file>       
+                <tourdest.uec.file>TourDestinationChoice2050.xls</tourdest.uec.file>
+                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2050.xls</crossBorder.tour.mc.uec.file>
             </properties>
         </profile>
         <profile>
             <id>2050nb</id>
             <properties>
                 <year>2050</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>    
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2050_OME.xls</tourdest.uec.file>   
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file>       
+                <tourdest.uec.file>TourDestinationChoice2050_OME.xls</tourdest.uec.file>
+                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file>
             </properties>
         </profile>
         <profile>
@@ -263,7 +263,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <encoding>${encoding.type}</encoding> 
+                            <encoding>${encoding.type}</encoding>
                             <outputDirectory>${release.root}/common/application</outputDirectory>
                             <overWriteReleases>false</overWriteReleases>
                             <overWriteSnapshots>false</overWriteSnapshots>
@@ -298,7 +298,7 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>                  
+                    </execution>
                     <execution>
                         <id>copy-uec-resources</id>
                         <phase>package</phase>
@@ -331,7 +331,7 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution> 
+                    </execution>
                     <execution>
                         <id>copy-distribution-resources</id>
                         <phase>package</phase>
@@ -368,8 +368,8 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution> 
-                    <!--                
+                    </execution>
+                    <!--
                     <execution>
                         <id>copy-txt-resources</id>
                         <phase>package</phase>
@@ -516,7 +516,7 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>   
+                    </execution>
                     <!--
                     <execution>
                         <id>copy-validation-resources</id>
@@ -532,13 +532,13 @@
                                     <directory>validation</directory>
                                     <filtering>false</filtering>
                                     <includes>
-                                        <include>*.*</include>          
+                                        <include>*.*</include>
                                     </includes>
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>   
-                    -->                                          
+                    </execution>
+                    -->
                     <execution>
                         <id>copy-sql-resources</id>
                         <phase>package</phase>
@@ -555,7 +555,7 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution> 
+                    </execution>
                     <execution>
                         <id>copy-visualizer-resources</id>
                         <phase>package</phase>
@@ -572,7 +572,7 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>  
+                    </execution>
                     <execution>
                         <id>copy-visualizer-scripts</id>
                         <phase>package</phase>
@@ -589,7 +589,7 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>                                                       
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -604,7 +604,7 @@
                         <exclude>**/*.properties</exclude>
                         <exclude>*.xml</exclude>
                     </excludes>
-                    <outputDirectory>${release.root}/common/application</outputDirectory>                  
+                    <outputDirectory>${release.root}/common/application</outputDirectory>
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
