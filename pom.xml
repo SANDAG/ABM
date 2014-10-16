@@ -174,6 +174,27 @@
                 -->             
             </properties>
         </profile>
+         <profile>
+            <id>sag03_at</id>
+            <properties>
+                <AT>True</AT>
+                <jppf.server.host>10.70.192.70</jppf.server.host>
+                <map.folder>Y</map.folder>
+                <jppf.management.host>10.70.192.70</jppf.management.host>
+                <matrix.server.host>10.70.192.70</matrix.server.host>
+                <household.server.host>10.70.192.78</household.server.host>
+                <master.node.ip>10.70.192.70</master.node.ip>
+                <node.1.ip>10.70.192.78</node.1.ip>
+                <node.2.ip>10.70.192.37</node.2.ip>
+                <master.node.name>W-AMPDX-D-SAG03</master.node.name>
+                <node.1.name>W-AMPDX-D-SAG01</node.1.name>
+                <node.2.name>W-AMPDX-D-SAG02</node.2.name>
+                <TRANSCAD_PATH>C:\Progra~1\TransC~1.0</TRANSCAD_PATH> 
+                <!--  
+                <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>   
+                -->             
+            </properties>
+        </profile>
         <profile>
             <id>aztec_at</id>
             <properties>
