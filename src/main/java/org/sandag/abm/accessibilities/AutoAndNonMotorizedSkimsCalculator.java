@@ -522,8 +522,13 @@ public class AutoAndNonMotorizedSkimsCalculator
 
                 // get distances, in feet, and convert to miles
                 for (int wMgra : walkMgras)
-                    distances[wMgra] = mgraManager.getMgraToMgraWalkDistFrom(origMgra, wMgra) / 5280.0;
-
+                	distances[wMgra] = mgraManager.getMgraToMgraWalkDistFrom(origMgra, wMgra);
+                /*
+                Wu's note: below is a bug.  The new AT mgra-mgra walk file has walk time in minutes, 
+                then converted to mile.  Unlike the straight line based old mgra-mgra file, 
+                there is no need to convert from feet to mile.
+                */
+                //distances[wMgra] = mgraManager.getMgraToMgraWalkDistFrom(origMgra, wMgra) / 5280.0;
             }
 
         }
