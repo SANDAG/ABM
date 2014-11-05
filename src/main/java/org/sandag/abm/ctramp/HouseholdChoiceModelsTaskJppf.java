@@ -95,6 +95,9 @@ public class HouseholdChoiceModelsTaskJppf
                 HouseholdDataManager.DEBUG_HHS_ONLY_KEY);
 
         if (runWithTiming) hhModel.zeroTimes();
+        
+        hhModel.resetLocationChoiceCurrentOrigMgra();
+
         for (int i = 0; i < householdArray.length; i++)
         {
 

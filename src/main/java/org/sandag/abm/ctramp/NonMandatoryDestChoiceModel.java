@@ -338,6 +338,11 @@ public class NonMandatoryDestChoiceModel
         mgraDistanceArray = new double[mgraManager.getMaxMgra() + 1];
     }
 
+    
+    public void resetCurrentOrigMgra() {
+    	dcSoaModel.resetCurrentOrigMgra();
+    }
+
     public void applyIndivModel(Household hh)
     {
 

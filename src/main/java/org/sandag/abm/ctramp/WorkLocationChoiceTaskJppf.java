@@ -121,6 +121,8 @@ public class WorkLocationChoiceTaskJppf
             boolean runDebugHouseholdsOnly = Util.getBooleanValueFromPropertyMap(propertyMap,
                     HouseholdDataManager.DEBUG_HHS_ONLY_KEY);
 
+            dcModel.resetCurrentOrigMgra();
+           
             for (i = 0; i < householdArray.length; i++)
             {
                 // for debugging only - process only household objects specified
