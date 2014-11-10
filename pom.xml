@@ -267,6 +267,8 @@
                 <cdap.uec.file>CoordinatedDailyActivityPattern2010.xls</cdap.uec.file>             
                 <workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
+                <aoc.fuel>13.5</aoc.fuel>
+                <aoc.maintenance>6.3</aoc.maintenance>
             </properties>
         </profile>
          <profile>
@@ -301,8 +303,8 @@
                 <cdap.uec.file>CoordinatedDailyActivityPattern2015.xls</cdap.uec.file>            
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
-                <aoc.fuel>15.3</aoc.fuel>
-                <aoc.maintenance>6.6</aoc.maintenance>
+                <aoc.fuel>19.5</aoc.fuel>
+                <aoc.maintenance>6.2</aoc.maintenance>
             </properties>
         </profile>
         <profile>
@@ -337,7 +339,7 @@
                 <cdap.uec.file>CoordinatedDailyActivityPattern2025.xls</cdap.uec.file>                
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
-                <aoc.fuel>17.4</aoc.fuel>
+                <aoc.fuel>16.7</aoc.fuel>
                 <aoc.maintenance>7.5</aoc.maintenance>
             </properties>
         </profile>
@@ -373,7 +375,7 @@
                 <cdap.uec.file>CoordinatedDailyActivityPattern2040.xls</cdap.uec.file>
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
-                <aoc.fuel>18.6</aoc.fuel>
+                <aoc.fuel>19.4</aoc.fuel>
                 <aoc.maintenance>8.8</aoc.maintenance>
             </properties>
         </profile>
