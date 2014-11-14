@@ -2,14 +2,17 @@ package org.sandag.abm.airport;
 
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
+
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.application.SandagModelStructure;
+import org.sandag.abm.crossborder.CrossBorderTripTables;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.MatrixDataServer;
 import org.sandag.abm.ctramp.MatrixDataServerRmi;
@@ -17,6 +20,7 @@ import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.matrix.Matrix;
@@ -91,8 +95,17 @@ public class AirportTripTables
     private SandagModelStructure    modelStructure;
 
     private MatrixDataServerRmi     ms;
+    private float                   sampleRate              = 1;
 
-    public AirportTripTables(HashMap<String, String> rbMap)
+    public float getSampleRate() {
+		return sampleRate;
+	}
+
+	public void setSampleRate(float sampleRate) {
+		this.sampleRate = sampleRate;
+	}
+
+	public AirportTripTables(HashMap<String, String> rbMap)
     {
 
         this.rbMap = rbMap;
@@ -328,10 +341,10 @@ public class AirportTripTables
 
             // party size is a variable in output file. it is used for transit
             // trips (person trips)
-            float personTrips = (float) tripData.getValueAt(i, "size");
+            float personTrips = (float) tripData.getValueAt(i, "size")/sampleRate;
 
             // all auto trips are 1 per party
-            float vehicleTrips = 1.0f;
+            float vehicleTrips = 1.0f/sampleRate;
 
             // Store in matrix
             int mode = modeIndex[tripMode];
@@ -538,7 +551,26 @@ public class AirportTripTables
 
         pMap = ResourceUtil.getResourceBundleAsHashMap(propertiesFile);
         AirportTripTables tripTables = new AirportTripTables(pMap);
+        
+        float sampleRate = 1.0f;
+        int iteration = 1;
 
+        for (int i = 1; i < args.length; ++i)
+        {
+            if (args[i].equalsIgnoreCase("-sampleRate"))
+            {
+                sampleRate = Float.parseFloat(args[i + 1]);
+            }
+            if (args[i].equalsIgnoreCase("-iteration"))
+            {
+                iteration = Integer.parseInt(args[i + 1]);
+            }
+        }
+        
+        logger.info("Airport Model Trip Table:"+String.format("-sampleRate %.4f.", sampleRate)+"-iteration  " + iteration);
+        
+        tripTables.setSampleRate(sampleRate);
+                
         String matrixServerAddress = "";
         int serverPort = 0;
         try
