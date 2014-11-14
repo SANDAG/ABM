@@ -2,9 +2,11 @@ package org.sandag.abm.internalexternal;
 
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
+
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.MissingResourceException;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.ctramp.CtrampApplication;
@@ -13,6 +15,7 @@ import org.sandag.abm.ctramp.MatrixDataServerRmi;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+
 import com.pb.common.calculator.MatrixDataManager;
 import com.pb.common.matrix.MatrixType;
 import com.pb.common.util.ResourceUtil;
@@ -34,6 +37,7 @@ public class InternalExternalModel
     private boolean                 seek;
     private int                     traceId;
 
+    private static float sampleRate=0;
     private int                     iteration                      = 1;
 
     /**
@@ -218,13 +222,17 @@ public class InternalExternalModel
 
         for (int i = 1; i < args.length; ++i)
         {
+            if (args[i].equalsIgnoreCase("-sampleRate"))
+            {
+                sampleRate = Float.parseFloat(args[i + 1]);
+            }
             if (args[i].equalsIgnoreCase("-iteration"))
             {
                 iteration = Integer.parseInt(args[i + 1]);
             }
         }
 
-        logger.info("-iteration  " + iteration);
+        logger.info("IE Model:"+String.format("-sampleRate %.4f.", sampleRate)+"-iteration  " + iteration);
         InternalExternalModel internalExternalModel = new InternalExternalModel(pMap);
         internalExternalModel.setIteration(iteration);
 

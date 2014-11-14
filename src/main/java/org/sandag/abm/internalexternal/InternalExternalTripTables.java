@@ -2,12 +2,14 @@ package org.sandag.abm.internalexternal;
 
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
+
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.CtrampApplication;
@@ -17,6 +19,7 @@ import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.matrix.Matrix;
@@ -91,6 +94,7 @@ public class InternalExternalTripTables
 
     private MatrixDataServerRmi     ms;
     private float                   sampleRate              = 1;
+    private static int iteration=1;
 
     /**
      * @return the sampleRate
@@ -549,9 +553,13 @@ public class InternalExternalTripTables
             {
                 sampleRate = Float.parseFloat(args[i + 1]);
             }
+            if (args[i].equalsIgnoreCase("-iteration"))
+            {
+                iteration = Integer.parseInt(args[i + 1]);
+            }
         }
 
-        logger.info(String.format("-sampleRate %.4f.", sampleRate));
+        logger.info("IE Model Trip Table:"+String.format("-sampleRate %.4f.", sampleRate)+"-iteration  " + iteration);
         tripTables.setSampleRate(sampleRate);
 
         String matrixServerAddress = "";

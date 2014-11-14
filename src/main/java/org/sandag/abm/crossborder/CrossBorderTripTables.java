@@ -561,8 +561,7 @@ public class CrossBorderTripTables
             }
         }
 
-        logger.info(String.format("-sampleRate %.4f.", sampleRate));
-        logger.info("-iteration  " + iteration);
+        logger.info("Crossborder Model Trip Table:"+String.format("-sampleRate %.4f.", sampleRate)+"-iteration  " + iteration);
         tripTables.setSampleRate(sampleRate);
 
         String matrixServerAddress = "";
