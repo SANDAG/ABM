@@ -48,10 +48,10 @@ rem Build trip tables
 %JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -Djava.library.path=%TRANSCAD_PATH% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.application.SandagTripTables %PROPERTIES_NAME%  -iteration %ITERATION% -sampleRate %SAMPLERATE% 
 
 rem Internal-external model
-%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.internalexternal.InternalExternalModel %PROPERTIES_NAME% -iteration %ITERATION%  
+%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.internalexternal.InternalExternalModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE%
 
 rem Build internal-external model trip tables
-%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -Djava.library.path=%TRANSCAD_PATH% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.internalexternal.InternalExternalTripTables %PROPERTIES_NAME% -sampleRate %SAMPLERATE%
+%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -Djava.library.path=%TRANSCAD_PATH% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.internalexternal.InternalExternalTripTables %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE%
 
 rem kill java tasks
 rem taskkill /F /IM java.exe

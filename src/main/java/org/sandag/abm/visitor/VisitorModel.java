@@ -2,9 +2,11 @@ package org.sandag.abm.visitor;
 
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
+
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.MissingResourceException;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.ctramp.CtrampApplication;
@@ -13,6 +15,7 @@ import org.sandag.abm.ctramp.MatrixDataServerRmi;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+
 import com.pb.common.calculator.MatrixDataManager;
 import com.pb.common.matrix.MatrixType;
 import com.pb.common.util.ResourceUtil;
@@ -34,6 +37,7 @@ public class VisitorModel
     private boolean                 seek;
     private int                     traceId;
     private double                  sampleRate                     = 1;
+    private static int iteration=1;
 
     /**
      * Constructor
@@ -306,8 +310,12 @@ public class VisitorModel
             {
                 sampleRate = Float.parseFloat(args[i + 1]);
             }
+            if (args[i].equalsIgnoreCase("-iteration"))
+            {
+                iteration = Integer.parseInt(args[i + 1]);
+            }
         }
-        logger.info(String.format("-sampleRate %.4f.", sampleRate));
+        logger.info("Visitor Model:"+String.format("-sampleRate %.4f.", sampleRate)+"-iteration  " + iteration);
         visitorModel.setSampleRate(sampleRate);
 
         String matrixServerAddress = "";

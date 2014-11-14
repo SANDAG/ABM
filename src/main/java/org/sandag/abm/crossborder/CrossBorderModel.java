@@ -429,8 +429,7 @@ public class CrossBorderModel
             }
         }
 
-        LOGGER.info(String.format("-sampleRate %.4f.", sampleRate));
-        LOGGER.info("-iteration  " + iteration);
+        LOGGER.info("Crossborder Model:"+String.format("-sampleRate %.4f.", sampleRate)+"-iteration  " + iteration);
         CrossBorderModel crossBorderModel = new CrossBorderModel(pMap);
         crossBorderModel.setSampleRate(sampleRate);
 

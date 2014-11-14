@@ -2,14 +2,17 @@ package org.sandag.abm.airport;
 
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
+
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.MissingResourceException;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.MatrixDataServer;
 import org.sandag.abm.ctramp.MatrixDataServerRmi;
 import org.sandag.abm.ctramp.Util;
+
 import com.pb.common.calculator.MatrixDataManager;
 import com.pb.common.matrix.MatrixType;
 import com.pb.common.util.ResourceUtil;
@@ -23,16 +26,18 @@ public class AirportModel
     private MatrixDataServerRmi     ms;
     private static Logger           logger                         = Logger.getLogger("airportModel");
     private HashMap<String, String> rbMap;
+    private static float sampleRate;
+    private static int iteration;
 
-    /**
+	/**
      * Constructor
      * 
      * @param rbMap
      */
-    public AirportModel(HashMap<String, String> rbMap)
+    public AirportModel(HashMap<String, String> rbMap, float aSampleRate)
     {
         this.rbMap = rbMap;
-
+        this.sampleRate=aSampleRate;
     }
 
     /**
@@ -42,7 +47,7 @@ public class AirportModel
     {
         AirportDmuFactory dmuFactory = new AirportDmuFactory();
 
-        AirportPartyManager apm = new AirportPartyManager(rbMap);
+        AirportPartyManager apm = new AirportPartyManager(rbMap, sampleRate);
 
         apm.generateAirportParties();
         AirportParty[] parties = apm.getParties();
@@ -132,10 +137,26 @@ public class AirportModel
             logger.error(String
                     .format("no properties file base name (without .properties extension) was specified as an argument."));
             return;
-        } else propertiesFile = args[0];
+        } else {
+        	propertiesFile = args[0];
+
+	        for (int i = 1; i < args.length; ++i)
+	        {
+	            if (args[i].equalsIgnoreCase("-sampleRate"))
+	            {
+	                sampleRate = Float.parseFloat(args[i + 1]);
+	            }
+	            if (args[i].equalsIgnoreCase("-iteration"))
+	            {
+	                iteration = Integer.parseInt(args[i + 1]);
+	            }
+	        }
+        }
+        
+        logger.info("Airport Model:"+String.format("-sampleRate %.4f.", sampleRate)+"-iteration  " + iteration);
 
         pMap = ResourceUtil.getResourceBundleAsHashMap(propertiesFile);
-        AirportModel airportModel = new AirportModel(pMap);
+        AirportModel airportModel = new AirportModel(pMap, sampleRate);
 
         String matrixServerAddress = "";
         int serverPort = 0;
