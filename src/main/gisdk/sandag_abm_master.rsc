@@ -172,7 +172,7 @@ Macro "Run SANDAG ABM"
 
       // Run CT-RAMP model
       if skipCoreABM[iteration] = "false" then do
-	      runString = path+"\\bin\\runSandagAbm.cmd "+drive+" "+path_forward_slash +" "+r2s(sample_rate[iteration])+" "+i2s(iteration)
+	      runString = path+"\\bin\\runSandagAbm_SDRM.cmd "+drive+" "+path_forward_slash +" "+r2s(sample_rate[iteration])+" "+i2s(iteration)
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run CT-RAMP"+" "+runString})
 	      ok = RunMacro("TCB Run Command", 1, "Run CT-RAMP", runString)
 	      if !ok then goto quit  
@@ -180,7 +180,7 @@ Macro "Run SANDAG ABM"
  
       // Run airport model, visitor model, cross-border model, internal-external model
       if skipOtherSimulateModel[iteration] = "false" then do
-	      runString = path+"\\bin\\runSandagAbm_otherModel.cmd "+drive+" "+path_forward_slash +" "+r2s(sample_rate[iteration])+" "+i2s(iteration)
+	      runString = path+"\\bin\\runSandagAbm_SMM.cmd "+drive+" "+path_forward_slash +" "+r2s(sample_rate[iteration])+" "+i2s(iteration)
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run airport model, visitor model, cross-border model"+" "+runString})
 	      ok = RunMacro("TCB Run Command", 1, "Run CT-RAMP", runString)
 	      if !ok then goto quit  
