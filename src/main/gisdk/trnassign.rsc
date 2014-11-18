@@ -23,16 +23,6 @@ Macro "Assign Transit" (args)
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
   shared path,inputDir, outputDir, mxtap
  
- /*
-    // for testing
-   path = "d:\\projects\\sandag\\ab_model\\application\\series12\\base2008"
-   inputDir = "d:\\projects\\sandag\\ab_model\\application\\series12\\base2008\\input"                                                                        
-   outputDir = "d:\\projects\\sandag\\ab_model\\application\\series12\\base2008\\output"                                                                        
-   mxtap=2500
-   RunMacro("TCB Init")     
-   // end testing
-*/
-
 iteration = args[1]
 rt_file=outputDir + "\\transitrt.rts"
 
@@ -102,7 +92,11 @@ matrixCore = {
      end
    end
 
-
+   collapseOnOffByRoute = RunMacro("read properties",properties,"RunModel.collapseOnOffByRoute", "S")
+   if collapseOnOffByRoute = "false" then do
+	   ok = RunMacro("Collapse OnOffs By Route", onOffTables, rt_file)
+	   if !ret_value then goto quit
+   end
 
    quit:
     RunMacro("close all")
