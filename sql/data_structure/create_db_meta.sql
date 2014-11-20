@@ -12,7 +12,7 @@ EXEC ('CREATE SCHEMA [db_meta]')
 
 EXEC sys.sp_addextendedproperty 
     @name = 'MS_Description'
-   ,@value = 'Schema for metadata utilities'
+   ,@value = 'schema for metadata utilities'
    ,@level0type = 'SCHEMA'
    ,@level0name = 'db_meta'
    ,@level1type = NULL
@@ -90,7 +90,7 @@ GO
 
 EXEC sys.sp_addextendedproperty 
 	@name = 'MS_Description'
-	,@value = 'Return XP-friendly object types'
+	,@value = 'return xp friendly object types'
 	,@level0type = 'SCHEMA'
 	,@level0name = 'db_meta'
 	,@level1type = 'FUNCTION'
@@ -100,7 +100,7 @@ EXEC sys.sp_addextendedproperty
 GO
 EXEC sys.sp_addextendedproperty 
 	@name = 'SUBSYSTEM'
-	,@value = 'META'
+	,@value = 'meta'
 	,@level0type = 'SCHEMA'
 	,@level0name = 'db_meta'
 	,@level1type = 'FUNCTION'
@@ -202,11 +202,11 @@ BEGIN
 END
 GO
 
-EXEC db_meta.add_xp 'db_meta.update_xp', 'MS_Description', 'Procedure to make sys.extended_properties easier to use'
+EXEC db_meta.add_xp 'db_meta.update_xp', 'MS_Description', 'procedure to make sys.extended_properties easier to use'
 GO
-EXEC db_meta.update_xp 'db_meta.update_xp', 'MS_Description', 'Procedure to make sys.extended_properties easier to update'
+EXEC db_meta.update_xp 'db_meta.update_xp', 'MS_Description', 'procedure to make sys.extended_properties easier to update'
 GO
-EXEC db_meta.add_xp 'db_meta.update_xp', 'SUBSYSTEM', 'META'
+EXEC db_meta.add_xp 'db_meta.update_xp', 'SUBSYSTEM', 'meta'
 GO
 
 
@@ -248,13 +248,13 @@ BEGIN
 END
 GO
 
-EXEC db_meta.add_xp 'db_meta.drop_xp', 'MS_Description', 'Procedure to make sys.extended_properties easier to use'
+EXEC db_meta.add_xp 'db_meta.drop_xp', 'MS_Description', 'procedure to make sys.extended_properties easier to use'
 GO
 EXEC db_meta.drop_xp 'db_meta.drop_xp', 'MS_Description'
 GO
-EXEC db_meta.add_xp 'db_meta.drop_xp', 'MS_Description', 'Procedure to make sys.extended_properties easier to drop'
+EXEC db_meta.add_xp 'db_meta.drop_xp', 'MS_Description', 'procedure to make sys.extended_properties easier to drop'
 GO
-EXEC db_meta.add_xp 'db_meta.drop_xp', 'SUBSYSTEM', 'META'
+EXEC db_meta.add_xp 'db_meta.drop_xp', 'SUBSYSTEM', 'meta'
 GO
 
 
@@ -311,9 +311,9 @@ CREATE VIEW db_meta.data_dictionary AS
 		AND c.column_id = xp.minor_id
 		
 GO
-EXEC db_meta.add_xp 'db_meta.data_dictionary', 'MS_Description', 'View to see extended properties of database objects'
+EXEC db_meta.add_xp 'db_meta.data_dictionary', 'MS_Description', 'view to see extended properties of database objects'
 GO
-EXEC db_meta.add_xp 'db_meta.data_dictionary', 'SUBSYSTEM', 'META'
+EXEC db_meta.add_xp 'db_meta.data_dictionary', 'SUBSYSTEM', 'meta'
 GO
 
 
@@ -338,7 +338,7 @@ GO
 
 
 -- Add metadata to schema change log
-EXEC db_meta.add_xp 'db_meta.schema_change_log', 'MS_Description', 'Database version and changes tracking table'
+EXEC db_meta.add_xp 'db_meta.schema_change_log', 'MS_Description', 'database version and changes tracking table'
 GO
-EXEC db_meta.add_xp 'db_meta.schema_change_log', 'SUBSYSTEM', 'META'
+EXEC db_meta.add_xp 'db_meta.schema_change_log', 'SUBSYSTEM', 'meta'
 GO

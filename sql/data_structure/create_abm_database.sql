@@ -11,10 +11,10 @@ GO
 CREATE DATABASE $(db_name) ON  PRIMARY 
 ( NAME = N'$(db_name)_primary', FILENAME = $(mdf) , SIZE = 5GB , MAXSIZE = 5GB , FILEGROWTH = 0)
  LOG ON 
-( NAME = N'$(db_name)_log', FILENAME = $(ldf) , SIZE = 20GB , MAXSIZE = 20GB , FILEGROWTH = 0 )
+( NAME = N'$(db_name)_log', FILENAME = $(ldf) , SIZE = 25GB , MAXSIZE = 25GB , FILEGROWTH = 0 )
 GO
 
-ALTER DATABASE $(db_name) SET COMPATIBILITY_LEVEL = 100
+ALTER DATABASE $(db_name) SET COMPATIBILITY_LEVEL = 120
 GO
 
 IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
@@ -41,7 +41,7 @@ GO
 ALTER DATABASE $(db_name) SET AUTO_CLOSE OFF 
 GO
 
-ALTER DATABASE $(db_name) SET AUTO_CREATE_STATISTICS ON 
+ALTER DATABASE $(db_name) SET AUTO_CREATE_STATISTICS ON (INCREMENTAL = ON) -- incremental statistics are very important for the abm database
 GO
 
 ALTER DATABASE $(db_name) SET AUTO_SHRINK OFF 
@@ -116,9 +116,10 @@ USE $(db_name);
 
 -- Step 1. Add filegroups
 -- Scenario 0 is placeholder for merges/splits
--- All scenarios have filegroup size at 30GB
+-- All scenarios have filegroup size at 45GB
 IF NOT EXISTS (SELECT name FROM sys.filegroups WHERE name = N'scenario_fg_1')
 BEGIN
+
 ALTER DATABASE 
 	$(db_name)
 ADD FILEGROUP 
@@ -128,14 +129,41 @@ ALTER DATABASE
 	$(db_name)
 ADD FILE
 (
-	NAME = scenario_file_1,
-	FILENAME = $(scen_file_string),
-	SIZE = 30GB,
-	MAXSIZE = 30GB,
+	NAME = scenario_file_1_1,
+	FILENAME = $(scen_file_string_1),
+	SIZE = 15GB,
+	MAXSIZE = 15GB,
 	FILEGROWTH = 0
 	)
 TO 
 	FILEGROUP scenario_fg_1;
+
+ALTER DATABASE 
+	$(db_name)
+ADD FILE
+(
+	NAME = scenario_file_1_2,
+	FILENAME = $(scen_file_string_2),
+	SIZE = 15GB,
+	MAXSIZE = 15GB,
+	FILEGROWTH = 0
+	)
+TO 
+	FILEGROUP scenario_fg_1;
+
+ALTER DATABASE 
+	$(db_name)
+ADD FILE
+(
+	NAME = scenario_file_1_3,
+	FILENAME = $(scen_file_string_3),
+	SIZE = 15GB,
+	MAXSIZE = 15GB,
+	FILEGROWTH = 0
+	)
+TO 
+	FILEGROUP scenario_fg_1;
+
 END
 
 

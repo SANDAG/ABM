@@ -31,8 +31,8 @@ def dbf_to_csv(dbf_fn, csv_fn, cols_wanted):
         
 # For testing
 # scenarioFolder = "T:\\projects\\sr13\\sdf_scenevl_r3\\2012_mustang"
-scenarioFolder = str.replace(sys.argv[1], "\\", "\\\\")
-
+# scenarioFolder = str.replace(sys.argv[1], "\\", "\\\\")
+scenarioFolder = sys.argv[1]
 
 # Remove already created coverages if they exist
 # using shutil since arcpy delete doesn't remove info folder
@@ -45,7 +45,12 @@ if os.path.exists(scenarioFolder + "\\info"):
 
 
 # Move to scenario folder
-env.workspace= scenarioFolder
+env.workspace = scenarioFolder
+
+
+# Create hwy and transit coverages from e00 files
+arcpy.ImportFromE00_conversion("\\input\\trcov.e00",scenarioFolder,"trcov")
+arcpy.ImportFromE00_conversion("\\input\\hwycov.e00",scenarioFolder,"hwycov")
 
 
 # Remove already created shape files if they exist
@@ -59,11 +64,6 @@ if arcpy.Exists("trlink.shp"):
     arcpy.Delete_management("trlink.shp")
 if arcpy.Exists("hwylink.shp"):
     arcpy.Delete_management("hwylink.shp")
-
-
-# Create hwy and transit coverages from e00 files
-arcpy.ImportFromE00_conversion("\\input\\trcov.e00",scenarioFolder,"trcov")
-arcpy.ImportFromE00_conversion("\\input\\hwycov.e00",scenarioFolder,"hwycov")
 
 
 # Create necessary shape files from hwy and transit coverages
@@ -80,7 +80,7 @@ out_bike_net = scenarioFolder + "\\input\\SANDAG_Bike_Net.csv"
 col_bike_net = ["ROADSEGID", "RD20FULL", "A", "B", "DISTANCE", "AB_GAIN",
                 "BA_GAIN", "ABBIKECLAS", "BABIKECLAS", "AB_LANES",
                 "BA_LANES", "FUNC_CLASS", "BIKE2SEP", "BIKE3BLVD",
-                "SPEED", "PARKAREA", "SCENICIDX"]
+                "SPEED", "SCENICIDX"]
 dbf_to_csv(in_bike_net, out_bike_net, col_bike_net)
 
 
@@ -90,3 +90,4 @@ in_bike_node = scenarioFolder + "\\input\\SANDAG_Bike_Node.dbf"
 out_bike_node = scenarioFolder + "\\input\\SANDAG_Bike_Node.csv"
 col_bike_node = ["NODELEV_ID", "SIGNAL"]
 dbf_to_csv(in_bike_node, out_bike_node, col_bike_node)
+
