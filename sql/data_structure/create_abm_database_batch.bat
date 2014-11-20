@@ -13,7 +13,7 @@ set script_path=
 
 
 echo Creating %db_name% on %db_server% at %db_path%
-sqlcmd -S %db_server% -i %script_path%create_abm_database.sql -E -C -v db_name=%db_name% db_name_string="N'%db_name%'" mdf="N'%db_path%%db_name%_primary.mdf'" ldf="N'%log_path%%db_name%_log.ldf'" scen_file_string="N'%db_path%scenario_file_1.ndf'" ref_file_string="N'%db_path%ref_file.ndf'"
+sqlcmd -S %db_server% -i %script_path%create_abm_database.sql -E -C -v db_name=%db_name% db_name_string="N'%db_name%'" mdf="N'%db_path%%db_name%_primary.mdf'" ldf="N'%log_path%%db_name%_log.ldf'" scen_file_string_1="N'%db_path%scenario_file_1_1.ndf'" scen_file_string_2="N'%db_path%scenario_file_1_2.ndf'" scen_file_string_3="N'%db_path%scenario_file_1_3.ndf'" ref_file_string="N'%db_path%ref_file.ndf'"
 if not errorlevel 1 goto next1
 echo == An error occurred creating %db_name% on %db_server%
 exit /B
@@ -92,7 +92,13 @@ exit /B
 
 :next10
 
+echo Creating rtp_2015 schema and objects
+sqlcmd -S %db_server% -d %db_name% -i %script_path%create_rtp_2015.sql -E -C
+if not errorlevel 1 goto next11
+echo == An error occurred creating rtp_2015 objects for %db_name% on %db_server%
+exit /B
 
+:next11
 
 
 

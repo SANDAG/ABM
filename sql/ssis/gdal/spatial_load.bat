@@ -1,3 +1,5 @@
-SET GDAL_DATA=.\data
+SET GDAL_PATH=%1
 
-bin\ogr2ogr -overwrite -gt 5000 -select %1 -a_srs EPSG:2230 -f MSSQLSpatial "MSSQL:server=${database_server};database=${database_name};trusted_connection=yes" %2 -nln %3 -lco OVERWRITE=YES -lco GEOM_NAME=geom -lco LAUNDER=YES -lco SCHEMA=abm_staging
+SET GDAL_DATA=%GDAL_PATH%\data
+
+%GDAL_PATH%\bin\ogr2ogr -overwrite -gt 5000 -sql %2 -a_srs EPSG:2230 -f MSSQLSpatial "MSSQL:server=%3;database=%4;trusted_connection=yes" %5 -nln %6 -lco OVERWRITE=YES -lco GEOM_NAME=geom -lco LAUNDER=YES -lco SCHEMA=abm_staging
