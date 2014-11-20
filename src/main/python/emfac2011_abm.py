@@ -1,4 +1,5 @@
 import imp
+import pyodbc
 import sys
 try:
     imp.find_module('_mssql')
@@ -35,7 +36,9 @@ total_vmt = 0
 
 
 seasons = ['ANNUAL', 'SUMMER', 'WINTER']
-conn = _mssql.connect(server='pele', user='emfac', password='3mf@c', database='abm_sd')
+#conn = _mssql.connect(server='pele', user='emfac', password='3mf@c', database='abm_sd')
+conn = pyodbc.connect(driver='{SQL Server}', server='sql2014a8', database='abm_13_2_3',trusted_connection='yes')
+cursor = conn.cursor()
 
 print 'Creating the EMFAC 2011 User Defined Input Workbook and Worksheets'
 book = Workbook()
@@ -56,11 +59,12 @@ sheet_reg_scen.write(0,4,'Season')
 
 #Get Scenario Year
 print 'Retrieving the scenario year'
-yearQuery = 'SELECT s.SCENARIO_DESC as sName, s.SCENARIO_YEAR AS fileYear, CASE WHEN s.SCENARIO_YEAR > 2035 THEN 2035 ELSE s.SCENARIO_YEAR END as YR FROM abm.SCENARIO s WHERE SCENARIO_ID = %d'
-row = conn.execute_row(yearQuery, scenario_id)
-year = row['YR']
-fileYear = row['fileYear'] #different from year if 2036 and beyond scenario
-scenarioName = row['sName']
+yearQuery = 'SELECT s.SCENARIO_DESC as sName, s.SCENARIO_YEAR AS fileYear, CASE WHEN s.SCENARIO_YEAR > 2035 THEN 2035 ELSE s.SCENARIO_YEAR END as YR FROM ref.scenario s WHERE SCENARIO_ID = ?'
+cursor.execute(yearQuery, scenario_id)
+row = cursor.fetchone()
+year = row.YR
+fileYear = row.fileYear #different from year if 2036 and beyond scenario
+scenarioName = row.sName
 print 'Writing rows for Regional_Scenarios worksheet'
 for idx, season in enumerate(seasons):
     sheet_reg_scen.row(idx + 1).write(0, idx+1)
@@ -86,23 +90,24 @@ sheet_scen_vmt.write(0,8,'New VMT')
 counter = 1
 for idx, season in enumerate(seasons):
     print 'Querying VMT records for ' + season
-    query = 'SELECT * FROM [abm_sd].[ref].[FN_EMFAC_2011_VMT] (%(scenario)s,%(group)s,%(season_name)s)'
-    row = conn.execute_query(query, { 'scenario': scenario_id, 'group': idx+1, 'season_name':season})
+    query = 'SELECT * FROM [emfac].[FN_EMFAC_2011_VMT] (?,?,?)'
+    cursor.execute(query,   scenario_id, idx+1, season)
+    rows = cursor.fetchall()
     
     print 'Writing rows for Scenario_VMT_by_VehCat worksheet: ' + season
-    for row in conn:
-        sheet_scen_vmt.row(counter).write(0, row['Group'])
-        sheet_scen_vmt.row(counter).write(1, row['Area'])
-        sheet_scen_vmt.row(counter).write(2, row['Scenario'])
-        sheet_scen_vmt.row(counter).write(3, row['Sub-Area'])
-        sheet_scen_vmt.row(counter).write(4, row['CalYr'])
-        sheet_scen_vmt.row(counter).write(5, row['Season'])
-        sheet_scen_vmt.row(counter).write(6, row['Title'])
-        sheet_scen_vmt.row(counter).write(7, row['Veh & Tech'])
-        sheet_scen_vmt.row(counter).write(8, row['New VMT'])
+    for row in rows:
+        sheet_scen_vmt.row(counter).write(0, row.Group)
+        sheet_scen_vmt.row(counter).write(1, row.Area)
+        sheet_scen_vmt.row(counter).write(2, row.Scenario)
+        sheet_scen_vmt.row(counter).write(3, row[3])
+        sheet_scen_vmt.row(counter).write(4, row.CalYr)
+        sheet_scen_vmt.row(counter).write(5, row.Season)
+        sheet_scen_vmt.row(counter).write(6, row.Title)
+        sheet_scen_vmt.row(counter).write(7, row[7])
+        sheet_scen_vmt.row(counter).write(8, row[8])
+	counter += 1
         if idx == 0:
-            total_vmt += row['New VMT']
-        counter += 1
+            total_vmt += row[8]      
 
 #Write Column Headers for Scenario Base Inputs Sheet
 print 'Writing header row for Scenario_Base_Inputs worksheet'
@@ -160,35 +165,36 @@ sheet_scen_speed.write(0,22,'70MPH')
 
 counter = 1
 for idx, season in enumerate(seasons):
-    query = 'SELECT * FROM [abm_sd].[ref].[FN_EMFAC_2011_VMT_SPEED] (%(scenario)s,%(group)s,%(season_name)s)'
+    query = 'SELECT * FROM emfac.FN_EMFAC_2011_VMT_SPEED (?,?,?)'
     print 'Querying VMT Speed records for ' + season
-    row = conn.execute_query(query, { 'scenario': scenario_id, 'group': idx+1, 'season_name':season})
+    cursor.execute(query, scenario_id, idx+1, season)
+    rows = cursor.fetchall()
     
     print 'Writing rows for Scenario_Speed_Profiles worksheet: ' + season
-    for row in conn:
-        sheet_scen_speed.row(counter).write(0,row['Group'])
-        sheet_scen_speed.row(counter).write(1,row['Area'])
-        sheet_scen_speed.row(counter).write(2,row['Scenario'])
-        sheet_scen_speed.row(counter).write(3,row['Sub-Area'])
-        sheet_scen_speed.row(counter).write(4,row['CalYr'])
-        sheet_scen_speed.row(counter).write(5,row['Season'])
-        sheet_scen_speed.row(counter).write(6,row['Title'])
-        sheet_scen_speed.row(counter).write(7,row['Veh & Tech'])
+    for row in rows:
+        sheet_scen_speed.row(counter).write(0,row.Group)
+        sheet_scen_speed.row(counter).write(1,row.Area)
+        sheet_scen_speed.row(counter).write(2,row.Scenario)
+        sheet_scen_speed.row(counter).write(3,row[3])
+        sheet_scen_speed.row(counter).write(4,row.CalYr)
+        sheet_scen_speed.row(counter).write(5,row.Season)
+        sheet_scen_speed.row(counter).write(6,row.Title)
+        sheet_scen_speed.row(counter).write(7,row[7])
         #sheet_scen_speed.row(counter).write(8,row['']) #EMFAC2007 Codes
-        sheet_scen_speed.row(counter).write(9,row['5MPH'])
-        sheet_scen_speed.row(counter).write(10,row['10MPH'])
-        sheet_scen_speed.row(counter).write(11,row['15MPH'])
-        sheet_scen_speed.row(counter).write(12,row['20MPH'])
-        sheet_scen_speed.row(counter).write(13,row['25MPH'])
-        sheet_scen_speed.row(counter).write(14,row['30MPH'])
-        sheet_scen_speed.row(counter).write(15,row['35MPH'])
-        sheet_scen_speed.row(counter).write(16,row['40MPH'])
-        sheet_scen_speed.row(counter).write(17,row['45MPH'])
-        sheet_scen_speed.row(counter).write(18,row['50MPH'])
-        sheet_scen_speed.row(counter).write(19,row['55MPH'])
-        sheet_scen_speed.row(counter).write(20,row['60MPH'])
-        sheet_scen_speed.row(counter).write(21,row['65MPH'])
-        sheet_scen_speed.row(counter).write(22,row['70MPH'])
+        sheet_scen_speed.row(counter).write(9,row[8])
+        sheet_scen_speed.row(counter).write(10,row[9])
+        sheet_scen_speed.row(counter).write(11,row[10])
+        sheet_scen_speed.row(counter).write(12,row[11])
+        sheet_scen_speed.row(counter).write(13,row[12])
+        sheet_scen_speed.row(counter).write(14,row[13])
+        sheet_scen_speed.row(counter).write(15,row[14])
+        sheet_scen_speed.row(counter).write(16,row[15])
+        sheet_scen_speed.row(counter).write(17,row[16])
+        sheet_scen_speed.row(counter).write(18,row[17])
+        sheet_scen_speed.row(counter).write(19,row[18])
+        sheet_scen_speed.row(counter).write(20,row[19])
+        sheet_scen_speed.row(counter).write(21,row[20])
+        sheet_scen_speed.row(counter).write(22,row[21])
         counter += 1
 outLocation = saveLocation + '\EMFAC2011-SANDAG-'+str(scenarioName)+'-'+str(fileYear)+'.xls'
 print 'Saving worksheet to ' + outLocation
