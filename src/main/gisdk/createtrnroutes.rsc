@@ -29,6 +29,9 @@ Macro "Create all transit"
    ok=RunMacro("update preload fields")
    if !ok then goto quit
  
+   ok = RunMacro("TCB Run Macro", 1, "update headways",{})
+   if !ok then goto quit
+
    RunMacro("close all")
  
    ok=1
