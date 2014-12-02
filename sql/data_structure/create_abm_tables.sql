@@ -15,8 +15,8 @@ CREATE TABLE
 		[time_period_id] int NOT NULL,
     	[skim_id] tinyint NOT NULL,
     	[value] decimal(8,4) NOT NULL,
-		CONSTRAINT pk_atskims PRIMARY KEY([scenario_id],[at_skims_id]),
-		CONSTRAINT ixuq_atskims UNIQUE ([scenario_id],[orig_geography_zone_id],[dest_geography_zone_id],[mode_id],[time_period_id],[skim_id]),
+		CONSTRAINT pk_atskims PRIMARY KEY([scenario_id],[at_skims_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_atskims UNIQUE ([scenario_id],[orig_geography_zone_id],[dest_geography_zone_id],[mode_id],[time_period_id],[skim_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_atskims_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_atskims_period FOREIGN KEY ([time_period_id]) REFERENCES [ref].[time_period] ([time_period_id]),
 		CONSTRAINT fk_atskims_orig FOREIGN KEY ([orig_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
@@ -43,8 +43,8 @@ CREATE TABLE
 		[bike_link_ab_id] int NOT NULL,
 		[time_period_id] int NOT NULL,
 		[flow] decimal(8,4) NOT NULL,
-		CONSTRAINT pk_bikeflow PRIMARY KEY ([scenario_id],[bike_flow_id]),
-		CONSTRAINT ixuq_bikeflow UNIQUE ([scenario_id],[bike_link_ab_id],[time_period_id]),
+		CONSTRAINT pk_bikeflow PRIMARY KEY ([scenario_id],[bike_flow_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_bikeflow UNIQUE ([scenario_id],[bike_link_ab_id],[time_period_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_bikeflow_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_bikeflow_period FOREIGN KEY ([time_period_id]) REFERENCES [ref].[time_period] ([time_period_id])
 	)
@@ -72,8 +72,8 @@ CREATE TABLE
 		[speed] smallint NOT NULL,
 		[scenicldx] decimal(11,9) NOT NULL,
 		[shape] geometry NULL,
-		CONSTRAINT pk_bikelink PRIMARY KEY ([scenario_id],[bike_link_id]),
-		CONSTRAINT ixuq_bikelink UNIQUE ([scenario_id],[roadsegid]),
+		CONSTRAINT pk_bikelink PRIMARY KEY ([scenario_id],[bike_link_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_bikelink UNIQUE ([scenario_id],[roadsegid]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_bikelink_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_bikelink_atfuncclass FOREIGN KEY  ([at_func_class_id]) REFERENCES [ref].[at_func_class]([at_func_class_id])
 	)
@@ -102,8 +102,8 @@ CREATE TABLE
 		[bike_class_id] tinyint NOT NULL,
 		[lanes] tinyint NOT NULL,
 		[signal] tinyint NOT NULL,
-		CONSTRAINT pk_bikelinkab PRIMARY KEY ([scenario_id],[bike_link_ab_id]),
-		CONSTRAINT ixuq_bikelinkab UNIQUE ([scenario_id],[bike_link_id],[ab]),
+		CONSTRAINT pk_bikelinkab PRIMARY KEY ([scenario_id],[bike_link_ab_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_bikelinkab UNIQUE ([scenario_id],[bike_link_id],[ab]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_bikelinkab_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_bikelinkab_bikeclass FOREIGN KEY ([bike_class_id]) REFERENCES [ref].[bike_class]([bike_class_id])
 	)
@@ -126,8 +126,8 @@ CREATE TABLE
 		[geography_zone_id] int NOT NULL,
 		[time_period_id] int NOT NULL,
 		[vehicles] decimal(10,6) NOT NULL,
-		CONSTRAINT pk_cbdvehicles PRIMARY KEY ([scenario_id],[cbd_vehicles_id]),
-		CONSTRAINT ixuq_cbdvehicles UNIQUE ([scenario_id],[geography_zone_id],[time_period_id]),
+		CONSTRAINT pk_cbdvehicles PRIMARY KEY ([scenario_id],[cbd_vehicles_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_cbdvehicles UNIQUE ([scenario_id],[geography_zone_id],[time_period_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_cbdvehicles_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_cbdvehicles_period FOREIGN KEY ([time_period_id]) REFERENCES [ref].[time_period] ([time_period_id]),
 		CONSTRAINT fk_cbdvehicles_zone FOREIGN KEY ([geography_zone_id]) REFERENCES [ref].[geography_zone]([geography_zone_id])
@@ -159,8 +159,8 @@ CREATE TABLE
 		[msa_flow] decimal(12,6) NOT NULL,
 		[msa_time] decimal(10,6) NOT NULL,
 		[flow] decimal(12,6) NOT NULL,
-		CONSTRAINT pk_hwyflow PRIMARY KEY ([scenario_id],[hwy_flow_id]),
-		CONSTRAINT ixuq_hwyflow UNIQUE ([scenario_id],[hwy_link_ab_tod_id]),
+		CONSTRAINT pk_hwyflow PRIMARY KEY ([scenario_id],[hwy_flow_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_hwyflow UNIQUE ([scenario_id],[hwy_link_ab_tod_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_hwyflow_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id])
 	) 
 ON 
@@ -182,8 +182,8 @@ CREATE TABLE
 		[hwy_flow_id] int NOT NULL,
 		[mode_id] tinyint NOT NULL,
 		[flow] decimal(12,6) NOT NULL,
-		CONSTRAINT pk_hwyflowmode PRIMARY KEY ([scenario_id],[hwy_flow_mode_id]),
-		CONSTRAINT ixuq_hwyflowmode UNIQUE ([scenario_id],[hwy_flow_id],[mode_id]),
+		CONSTRAINT pk_hwyflowmode PRIMARY KEY ([scenario_id],[hwy_flow_mode_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_hwyflowmode UNIQUE ([scenario_id],[hwy_flow_id],[mode_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_hwyflowmode_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_hwyflowmode_mode FOREIGN KEY ([mode_id]) REFERENCES [ref].[mode]([mode_id])
 	) 
@@ -224,8 +224,8 @@ CREATE TABLE
 		[iway] tinyint NOT NULL,
 		[imed] tinyint NOT NULL,
 		[shape] geometry NULL,
-		CONSTRAINT pk_hwylink PRIMARY KEY ([scenario_id],[hwy_link_id]),
-		CONSTRAINT ixuq_hwylink UNIQUE ([scenario_id],[hwycov_id]),
+		CONSTRAINT pk_hwylink PRIMARY KEY ([scenario_id],[hwy_link_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_hwylink UNIQUE ([scenario_id],[hwycov_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_hwylink_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id])
 	) 
 ON 
@@ -253,8 +253,8 @@ CREATE TABLE
 		[au] tinyint NOT NULL,
 		[pct] tinyint NOT NULL,
 		[cnt] tinyint NOT NULL,
-		CONSTRAINT pk_hwylinkab PRIMARY KEY ([scenario_id],[hwy_link_ab_id]),
-		CONSTRAINT ixuq_hwylinkab UNIQUE ([scenario_id],[hwy_link_id],[ab]),
+		CONSTRAINT pk_hwylinkab PRIMARY KEY ([scenario_id],[hwy_link_ab_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_hwylinkab UNIQUE ([scenario_id],[hwy_link_id],[ab]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_hwylinkab_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id])
 	) 
 ON 
@@ -283,8 +283,8 @@ CREATE TABLE
 		[stm] decimal(12,6) NOT NULL,
 		[htm] decimal(12,6) NOT NULL,
 		[preload] decimal(12,6) NOT NULL,
-		CONSTRAINT pk_hwylinkabtod PRIMARY KEY ([scenario_id],[hwy_link_ab_tod_id]),
-		CONSTRAINT ixuq_hwylinkabtod UNIQUE ([scenario_id],[hwy_link_ab_id],[hwy_link_tod_id]),
+		CONSTRAINT pk_hwylinkabtod PRIMARY KEY ([scenario_id],[hwy_link_ab_tod_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_hwylinkabtod UNIQUE ([scenario_id],[hwy_link_ab_id],[hwy_link_tod_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_hwylinkabtod_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id])
 	) 
 ON 
@@ -310,8 +310,8 @@ CREATE TABLE
 		[itoll4] decimal(12,6) NOT NULL,
 		[itoll5] decimal(12,6) NOT NULL,
 		[itoll] decimal(12,6) NOT NULL,
-		CONSTRAINT pk_hwylinktod PRIMARY KEY ([scenario_id],[hwy_link_tod_id]),
-		CONSTRAINT ixuq_hwylinktod UNIQUE ([scenario_id],[hwy_link_id],[time_period_id]),
+		CONSTRAINT pk_hwylinktod PRIMARY KEY ([scenario_id],[hwy_link_tod_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_hwylinktod UNIQUE ([scenario_id],[hwy_link_id],[time_period_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_hwylinktod_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_hwylinktod_period FOREIGN KEY ([time_period_id]) REFERENCES [ref].[time_period] ([time_period_id]) 
 	) 
@@ -354,8 +354,8 @@ CREATE TABLE
    		[cost_truck_toll] decimal(4,2) NOT NULL,
     	[dist_truck_free] decimal(12,6) NOT NULL,
     	[time_truck_free] decimal(12,6) NOT NULL,
-		CONSTRAINT pk_hwyskims PRIMARY KEY ([scenario_id],[hwy_skims_id]),
-		CONSTRAINT ixuq_hwyskims UNIQUE ([scenario_id],[orig_geography_zone_id],[dest_geography_zone_id],[time_period_id]),
+		CONSTRAINT pk_hwyskims PRIMARY KEY ([scenario_id],[hwy_skims_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_hwyskims UNIQUE ([scenario_id],[orig_geography_zone_id],[dest_geography_zone_id],[time_period_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_hwyskims_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_hwyskims_period FOREIGN KEY ([time_period_id]) REFERENCES [ref].[time_period] ([time_period_id]),
 		CONSTRAINT fk_hwyskims_orig FOREIGN KEY ([orig_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
@@ -389,8 +389,8 @@ CREATE TABLE
 		[transponder] tinyint NULL,
 		[poverty] decimal(6,3) NULL,
 		[version] smallint NOT NULL,
-		CONSTRAINT pk_luhh PRIMARY KEY ([scenario_id],[lu_hh_id]),
-		CONSTRAINT ixuq_luhh UNIQUE ([scenario_id],[hh_id]),
+		CONSTRAINT pk_luhh PRIMARY KEY ([scenario_id],[lu_hh_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_luhh UNIQUE ([scenario_id],[hh_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_luhh_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_luhh_hhincomecat FOREIGN KEY ([hh_income_cat_id]) REFERENCES [ref].[hh_income_cat]([hh_income_cat_id]),
 		CONSTRAINT fk_luhh_unittype FOREIGN KEY ([unit_type_id]) REFERENCES [ref].[unit_type]([unit_type_id]),
@@ -512,8 +512,8 @@ CREATE TABLE
 		[truckregiontype] tinyint NOT NULL,
 		[district27] tinyint NOT NULL,
 		[milestocoast] decimal(12,9) NOT NULL,
-		CONSTRAINT pk_lumgrainput PRIMARY KEY ([scenario_id],[lu_mgra_input_id]),
-		CONSTRAINT ixuq_lumgrainput UNIQUE ([scenario_id],[geography_zone_id]),
+		CONSTRAINT pk_lumgrainput PRIMARY KEY ([scenario_id],[lu_mgra_input_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_lumgrainput UNIQUE ([scenario_id],[geography_zone_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_lumgrainput_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_lumgrainput_zone FOREIGN KEY ([geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id])
 	) 
@@ -553,8 +553,8 @@ CREATE TABLE
 		[activity_pattern_id] tinyint NOT NULL,
 		[ie_choice] tinyint NOT NULL,
 		[version] smallint NOT NULL,
-		CONSTRAINT pk_luperson PRIMARY KEY ([scenario_id],[lu_person_id]),
-		CONSTRAINT ixuq_luperson UNIQUE ([scenario_id],[lu_hh_id],[pnum]),
+		CONSTRAINT pk_luperson PRIMARY KEY ([scenario_id],[lu_person_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_luperson UNIQUE ([scenario_id],[lu_hh_id],[pnum]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_luperson_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_luperson_sex FOREIGN KEY ([sex_id]) REFERENCES [ref].[sex] ([sex_id]),
 		CONSTRAINT fk_luperson_military FOREIGN KEY ([military_id]) REFERENCES [ref].[military] ([military_id]),
@@ -587,8 +587,8 @@ CREATE TABLE
 		[lu_person_id] int NOT NULL,
 		[fp_choice_id] tinyint NOT NULL,
 		[reimb_pct] decimal(8,6) NULL,
-		CONSTRAINT pk_lupersonfp PRIMARY KEY ([scenario_id],[lu_person_fp_id]),
-		CONSTRAINT ixuq_lupersonfp UNIQUE ([scenario_id],[lu_person_id]),
+		CONSTRAINT pk_lupersonfp PRIMARY KEY ([scenario_id],[lu_person_fp_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_lupersonfp UNIQUE ([scenario_id],[lu_person_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_lupersonfp_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_lupersonfp_fpchoice FOREIGN KEY ([fp_choice_id]) REFERENCES [ref].[fp_choice] ([fp_choice_id])
 	) 
@@ -611,8 +611,8 @@ CREATE TABLE
 		[lu_person_id] int NOT NULL,
 		[loc_choice_segment_id] int NOT NULL,
 		[geography_zone_id] int NOT NULL,
-		CONSTRAINT pk_lupersonlc PRIMARY KEY ([scenario_id],[lu_person_lc_id]),
-		CONSTRAINT ixuq_lupersonlc UNIQUE ([scenario_id],[lu_person_id],[loc_choice_segment_id]),
+		CONSTRAINT pk_lupersonlc PRIMARY KEY ([scenario_id],[lu_person_lc_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_lupersonlc UNIQUE ([scenario_id],[lu_person_id],[loc_choice_segment_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_lupersonlc_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_lupersonlc_segment FOREIGN KEY ([loc_choice_segment_id]) REFERENCES [ref].[loc_choice_segment] ([loc_choice_segment_id]),
 		CONSTRAINT fk_lupersonlc_zone FOREIGN KEY ([geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id])
@@ -643,8 +643,8 @@ CREATE TABLE
 		[crossing_mode_id] tinyint NOT NULL,
 		[sentri] tinyint NOT NULL,
 		[poe_id] tinyint NOT NULL,
-		CONSTRAINT pk_tourcb PRIMARY KEY ([scenario_id],[tour_cb_id]),
-		CONSTRAINT ixuq_tourcb UNIQUE ([scenario_id],[model_type_id],[tour_id]),
+		CONSTRAINT pk_tourcb PRIMARY KEY ([scenario_id],[tour_cb_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_tourcb UNIQUE ([scenario_id],[model_type_id],[tour_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_tourcb_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_tourcb_model FOREIGN KEY ([model_type_id]) REFERENCES [ref].[model_type]([model_type_id]),
 		CONSTRAINT fk_tourcb_purpose FOREIGN KEY ([purpose_id]) REFERENCES [ref].[purpose]([purpose_id]),
@@ -680,8 +680,8 @@ CREATE TABLE
 		[start_time_period_id] int NOT NULL,
 		[end_time_period_id] int NOT NULL,
 		[mode_id] tinyint NOT NULL,
-		CONSTRAINT pk_tourij PRIMARY KEY ([scenario_id],[tour_ij_id]),
-		CONSTRAINT ixuq_tourij UNIQUE ([scenario_id],[model_type_id],[tour_id]),
+		CONSTRAINT pk_tourij PRIMARY KEY ([scenario_id],[tour_ij_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_tourij UNIQUE ([scenario_id],[model_type_id],[tour_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_tourij_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_tourij_model FOREIGN KEY ([model_type_id]) REFERENCES [ref].[model_type]([model_type_id]),
 		CONSTRAINT fk_tourij_tourcat FOREIGN KEY ([tour_cat_id]) REFERENCES [ref].[tour_cat]([tour_cat_id]),
@@ -710,8 +710,8 @@ CREATE TABLE
 		[tour_ij_person_id] int IDENTITY(1,1) NOT NULL,
 		[tour_ij_id] int NOT NULL,
 		[lu_person_id] int NOT NULL,
-		CONSTRAINT pk_tourijperson PRIMARY KEY ([scenario_id],[tour_ij_person_id]),
-		CONSTRAINT ixuq_tourijperson UNIQUE ([scenario_id], [tour_ij_id], [lu_person_id]),
+		CONSTRAINT pk_tourijperson PRIMARY KEY ([scenario_id],[tour_ij_person_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_tourijperson UNIQUE ([scenario_id], [tour_ij_id], [lu_person_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_tourijperson_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id])
 	) 
 ON 
@@ -741,8 +741,8 @@ CREATE TABLE
 		[mode_id] tinyint NOT NULL,
 		[auto_available] tinyint NOT NULL,
 		[hh_income_cat_id] tinyint NOT NULL,
-		CONSTRAINT pk_tour_vis PRIMARY KEY ([scenario_id],[tour_vis_id]),
-		CONSTRAINT ixuq_tourvis UNIQUE ([scenario_id],[model_type_id],[tour_id]),
+		CONSTRAINT pk_tour_vis PRIMARY KEY ([scenario_id],[tour_vis_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_tourvis UNIQUE ([scenario_id],[model_type_id],[tour_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_tourvis_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_tourvis_model FOREIGN KEY ([model_type_id]) REFERENCES [ref].[model_type]([model_type_id]),
 		CONSTRAINT fk_tourvis_tourcat FOREIGN KEY ([tour_cat_id]) REFERENCES [ref].[tour_cat]([tour_cat_id]),
@@ -781,8 +781,8 @@ CREATE TABLE
 		[access_walk_flow] smallint NOT NULL,	
 		[xfer_walk_flow] smallint NOT NULL,	
 		[egress_walk_flow] smallint NOT NULL,
-		CONSTRAINT pk_transitaggflow PRIMARY KEY ([scenario_id],[transit_aggflow_id]),
-		CONSTRAINT ixuq_transitaggflow UNIQUE ([scenario_id],[transit_link_id],[ab],[time_period_id],[transit_mode_id],[transit_access_mode_id]),
+		CONSTRAINT pk_transitaggflow PRIMARY KEY ([scenario_id],[transit_aggflow_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_transitaggflow UNIQUE ([scenario_id],[transit_link_id],[ab],[time_period_id],[transit_mode_id],[transit_access_mode_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_transitaggflow_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_transitaggflow_period FOREIGN KEY ([time_period_id]) REFERENCES [ref].[time_period]([time_period_id]),
 		CONSTRAINT fk_transitaggflow_transitmode FOREIGN KEY ([transit_mode_id]) REFERENCES [ref].[transit_mode]([transit_mode_id]),
@@ -815,8 +815,8 @@ CREATE TABLE
 		[baseivtt] decimal(9,6) NOT NULL,
 		[cost] decimal(9,6) NOT NULL,
 		[transit_flow] smallint NOT NULL,
-		CONSTRAINT pk_transitflow PRIMARY KEY ([scenario_id],[transit_flow_id]),
-		CONSTRAINT ixuq_transitflow UNIQUE ([scenario_id],[transit_route_id],[from_transit_stop_id],[to_transit_stop_id],[time_period_id],[transit_mode_id],[transit_access_mode_id]),
+		CONSTRAINT pk_transitflow PRIMARY KEY ([scenario_id],[transit_flow_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_transitflow UNIQUE ([scenario_id],[transit_route_id],[from_transit_stop_id],[to_transit_stop_id],[time_period_id],[transit_mode_id],[transit_access_mode_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_transitflow_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_transitflow_period FOREIGN KEY ([time_period_id]) REFERENCES [ref].[time_period]([time_period_id]),
 		CONSTRAINT fk_transitflow_transitmode FOREIGN KEY ([transit_mode_id]) REFERENCES [ref].[transit_mode]([transit_mode_id]),
@@ -840,8 +840,8 @@ CREATE TABLE
 		[transit_link_id] int IDENTITY(1,1) NOT NULL,
 		[trcov_id] int NOT NULL,
 		[shape] geometry NULL,
-		CONSTRAINT pk_transitlink PRIMARY KEY ([scenario_id],[transit_link_id]),
-		CONSTRAINT ixuq_transitlink UNIQUE ([scenario_id],[trcov_id]),
+		CONSTRAINT pk_transitlink PRIMARY KEY ([scenario_id],[transit_link_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_transitlink UNIQUE ([scenario_id],[trcov_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_transitlink_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id])
 	) 
 ON 
@@ -873,8 +873,8 @@ CREATE TABLE
 		[direct_transfer_off] decimal(11,6) NOT NULL,
 		[walk_transfer_off] decimal(11,6) NOT NULL,
 		[egress_off] decimal(11,6) NOT NULL,
-		CONSTRAINT pk_transitonoff PRIMARY KEY ([scenario_id],[transit_onoff_id]),
-		CONSTRAINT ixuq_transitonoff UNIQUE ([scenario_id],[transit_route_id],[transit_stop_id],[time_period_id],[transit_mode_id],[transit_access_mode_id]),
+		CONSTRAINT pk_transitonoff PRIMARY KEY ([scenario_id],[transit_onoff_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_transitonoff UNIQUE ([scenario_id],[transit_route_id],[transit_stop_id],[time_period_id],[transit_mode_id],[transit_access_mode_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_transitonoff_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_transitonoff_period FOREIGN KEY ([time_period_id]) REFERENCES [ref].[time_period]([time_period_id]),
 		CONSTRAINT fk_transitonoff_transitmode FOREIGN KEY ([transit_mode_id]) REFERENCES [ref].[transit_mode] ([transit_mode_id]),
@@ -903,8 +903,8 @@ CREATE TABLE
 		[capacity] smallint NOT NULL,
 		[distance] smallint NOT NULL,
 		[vehicles] smallint NOT NULL,
-		CONSTRAINT pk_transitpnr PRIMARY KEY ([scenario_id],[transit_pnr_id]),
-		CONSTRAINT ixuq_transitpnr UNIQUE ([scenario_id],[transit_tap_id],[lot_id],[time_period_id]),
+		CONSTRAINT pk_transitpnr PRIMARY KEY ([scenario_id],[transit_pnr_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_transitpnr UNIQUE ([scenario_id],[transit_tap_id],[lot_id],[time_period_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_transitpnr_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_transitpnr_period FOREIGN KEY ([time_period_id]) REFERENCES [ref].[time_period]([time_period_id])
 	) 
@@ -934,8 +934,8 @@ CREATE TABLE
 		[config] int NOT NULL,
 		[fare] decimal(4,2) NOT NULL,
 		[shape] geometry NULL,
-		CONSTRAINT pk_transitroute PRIMARY KEY ([scenario_id],[transit_route_id]),
-		CONSTRAINT ixuq_transitroute UNIQUE ([scenario_id],[route_id]),
+		CONSTRAINT pk_transitroute PRIMARY KEY ([scenario_id],[transit_route_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_transitroute UNIQUE ([scenario_id],[route_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_transitroute_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_transitroute_transitmode FOREIGN KEY ([transit_mode_id]) REFERENCES [ref].[transit_mode]([transit_mode_id])
 	) 
@@ -963,8 +963,8 @@ CREATE TABLE
 		[fare_zone] smallint NOT NULL,
 		[stop_name] VARCHAR(50) NOT NULL,
 		[shape] geometry NULL,
-		CONSTRAINT pk_transitstop PRIMARY KEY ([scenario_id],[transit_stop_id]),
-		CONSTRAINT ixuq_transitstop UNIQUE ([scenario_id],[stop_id]),
+		CONSTRAINT pk_transitstop PRIMARY KEY ([scenario_id],[transit_stop_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_transitstop UNIQUE ([scenario_id],[stop_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_transitstop_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id])
 	) 
 ON 
@@ -985,8 +985,8 @@ CREATE TABLE
 		[transit_tap_id] int IDENTITY(1,1) NOT NULL,
 		[tap] smallint NOT NULL,
 		[shape] geometry NULL,
-		CONSTRAINT pk_transittap PRIMARY KEY ([scenario_id],[transit_tap_id]),
-		CONSTRAINT ixuq_transittap UNIQUE ([scenario_id],[tap]),
+		CONSTRAINT pk_transittap PRIMARY KEY ([scenario_id],[transit_tap_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_transittap UNIQUE ([scenario_id],[tap]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_transittap_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id])
 	) 
 ON 
@@ -1013,8 +1013,8 @@ CREATE TABLE
 		[walk_time_premium] decimal(6,3) NOT NULL,
 		[transfer_time_premium] decimal(6,3) NOT NULL,
 		[fare_premium] decimal(4,2) NOT NULL,
-		CONSTRAINT pk_transittapskims PRIMARY KEY ([scenario_id],[transit_tap_skims_id]),
-		CONSTRAINT ixuq_transittapskims UNIQUE ([scenario_id],[orig_transit_tap_id],[dest_transit_tap_id],[time_period_id]),
+		CONSTRAINT pk_transittapskims PRIMARY KEY ([scenario_id],[transit_tap_skims_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_transittapskims UNIQUE ([scenario_id],[orig_transit_tap_id],[dest_transit_tap_id],[time_period_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_transittapskims_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_transittapskims_period FOREIGN KEY ([time_period_id]) REFERENCES [ref].[time_period]([time_period_id])
 	) 
@@ -1042,8 +1042,8 @@ CREATE TABLE
 		[time_alighting_actual] decimal(6,3) NOT NULL,
 		[gain_boarding] decimal(8,4) NOT NULL,
 		[gain_alighting] decimal(8,4) NOT NULL,
-		CONSTRAINT pk_transittapwalk PRIMARY KEY ([scenario_id],[transit_tap_walk_id]),
-		CONSTRAINT ixuq_transittapwalk UNIQUE ([scenario_id],[geography_zone_id],[transit_tap_id]),
+		CONSTRAINT pk_transittapwalk PRIMARY KEY ([scenario_id],[transit_tap_walk_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_transittapwalk UNIQUE ([scenario_id],[geography_zone_id],[transit_tap_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_transittapwalk_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_transittapwalk_zone FOREIGN KEY ([geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id])
 	) 
@@ -1081,8 +1081,8 @@ CREATE TABLE
 		[ap_income_cat_id] tinyint NOT NULL,
 		[nights] tinyint NOT NULL,
 		[ap_arrival_mode_id] tinyint NOT NULL,
-		CONSTRAINT pk_tripap PRIMARY KEY ([scenario_id],[trip_ap_id]),
-		CONSTRAINT ixuq_tripap UNIQUE ([scenario_id],[model_type_id],[trip_id]),
+		CONSTRAINT pk_tripap PRIMARY KEY ([scenario_id],[trip_ap_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_tripap UNIQUE ([scenario_id],[model_type_id],[trip_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_tripap_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_tripap_model FOREIGN KEY ([model_type_id]) REFERENCES [ref].[model_type]([model_type_id]),
 		CONSTRAINT fk_tripap_orig FOREIGN KEY ([orig_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
@@ -1116,8 +1116,8 @@ CREATE TABLE
 		[purpose_id] int NOT NULL,
 		[mode_id] tinyint NOT NULL,
 		[trips] decimal(20,16) NOT NULL,
-		CONSTRAINT pk_tripagg PRIMARY KEY ([scenario_id],[trip_agg_id]),
-		CONSTRAINT ixuq_tripagg UNIQUE ([scenario_id],[model_type_id],[orig_geography_zone_id],[dest_geography_zone_id],[time_period_id],[purpose_id],[mode_id]),
+		CONSTRAINT pk_tripagg PRIMARY KEY ([scenario_id],[trip_agg_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_tripagg UNIQUE ([scenario_id],[model_type_id],[orig_geography_zone_id],[dest_geography_zone_id],[time_period_id],[purpose_id],[mode_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_tripagg_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_tripagg_model FOREIGN KEY ([model_type_id]) REFERENCES [ref].[model_type]([model_type_id]),
 		CONSTRAINT fk_tripagg_purpose FOREIGN KEY ([purpose_id]) REFERENCES [ref].[purpose]([purpose_id]),
@@ -1157,8 +1157,8 @@ CREATE TABLE
 		[out_vehicle_time] decimal(11,6) NOT NULL,
 		[trip_distance] decimal(14,10) NOT NULL,
 		[trip_cost] decimal(4,2) NOT NULL,
-		CONSTRAINT pk_tripcb PRIMARY KEY ([scenario_id],[trip_cb_id]),
-		CONSTRAINT ixuq_tripcb UNIQUE ([scenario_id],[tour_cb_id],[trip_id]),
+		CONSTRAINT pk_tripcb PRIMARY KEY ([scenario_id],[trip_cb_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_tripcb UNIQUE ([scenario_id],[tour_cb_id],[trip_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_tripcb_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_tripcb_orig FOREIGN KEY ([orig_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
 		CONSTRAINT fk_tripcb_dest FOREIGN KEY ([dest_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
@@ -1197,8 +1197,8 @@ CREATE TABLE
 		[out_vehicle_time] decimal(11,6) NOT NULL,
 		[trip_distance] decimal(14,10) NOT NULL,
 		[trip_cost] decimal(4,2) NOT NULL,
-		CONSTRAINT pk_tripie PRIMARY KEY ([scenario_id],[trip_ie_id]),
-		CONSTRAINT ixuq_tripie UNIQUE ([scenario_id],[model_type_id],[trip_id]),
+		CONSTRAINT pk_tripie PRIMARY KEY ([scenario_id],[trip_ie_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_tripie UNIQUE ([scenario_id],[model_type_id],[trip_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_tripie_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_tripie_model FOREIGN KEY ([model_type_id]) REFERENCES [ref].[model_type]([model_type_id]),
 		CONSTRAINT fk_tripie_orig FOREIGN KEY ([orig_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
@@ -1239,8 +1239,8 @@ CREATE TABLE
 		[trip_distance] decimal(14,10) NOT NULL,
 		[trip_cost] decimal(4,2) NOT NULL,
 		[parking_geography_zone_id] int NULL,
-		CONSTRAINT pk_tripij PRIMARY KEY ([scenario_id],[trip_ij_id]),
-		CONSTRAINT ixuq_tripij UNIQUE ([scenario_id],[tour_ij_id],[trip_id]),
+		CONSTRAINT pk_tripij PRIMARY KEY ([scenario_id],[trip_ij_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_tripij UNIQUE ([scenario_id],[tour_ij_id],[trip_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_tripij_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_tripij_orig FOREIGN KEY ([orig_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
 		CONSTRAINT fk_tripij_dest FOREIGN KEY ([dest_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
@@ -1280,8 +1280,8 @@ CREATE TABLE
 		[out_vehicle_time] decimal(11,6) NOT NULL,
 		[trip_distance] decimal(14,10) NOT NULL,
 		[trip_cost] decimal(4,2) NOT NULL,
-		CONSTRAINT pk_tripvis PRIMARY KEY ([scenario_id],[trip_vis_id]),
-		CONSTRAINT ixuq_tripvis UNIQUE ([scenario_id],[tour_vis_id],[trip_id]),
+		CONSTRAINT pk_tripvis PRIMARY KEY ([scenario_id],[trip_vis_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_tripvis UNIQUE ([scenario_id],[tour_vis_id],[trip_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_tripvis_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_tripvis_orig FOREIGN KEY ([orig_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
 		CONSTRAINT fk_tripvis_dest FOREIGN KEY ([dest_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
