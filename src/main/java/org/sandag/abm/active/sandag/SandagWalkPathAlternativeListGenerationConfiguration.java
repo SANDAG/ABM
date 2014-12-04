@@ -302,4 +302,9 @@ public abstract class SandagWalkPathAlternativeListGenerationConfiguration
 
     @Override
     public abstract boolean isIntrazonalsNeeded();
+    
+    public boolean isAssignmentPathOutputNeeded()
+    {
+        return false;
+    }
 }

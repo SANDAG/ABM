@@ -48,4 +48,5 @@ public interface PathAlternativeListGenerationConfiguration<N extends Node, E ex
     public boolean isIntrazonalsNeeded();
 
     public double getDefaultMinutesPerMile();
+    
 }

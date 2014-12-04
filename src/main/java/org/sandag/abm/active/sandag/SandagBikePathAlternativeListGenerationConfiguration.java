@@ -54,6 +54,8 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration
     protected final String                                                 PROPERTIES_TRACE_EXCLUSIVE        = "active.trace.exclusive";
     protected final String                                                 PROPERTIES_RANDOM_SCALE_COEF      = "active.sample.random.scale.coef";
     protected final String                                                 PROPERTIES_RANDOM_SCALE_LINK      = "active.sample.random.scale.link";
+    
+    protected final String                                                 PROPERTIES_TRACE_OUTPUTASSIGNMENTPATHS       = "active.trace.outputassignmentpaths";
 
     protected String                                                       PROPERTIES_MAXDIST_ZONE;
     protected String                                                       PROPERTIES_TRACE_ORIGINS;
@@ -420,5 +422,10 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration
     public boolean isIntrazonalsNeeded()
     {
         return true;
+    }
+    
+    public boolean isAssignmentPathOutputNeeded()
+    {
+        return Boolean.parseBoolean(propertyMap.get(PROPERTIES_TRACE_OUTPUTASSIGNMENTPATHS));
     }
 }
