@@ -25,6 +25,7 @@ CREATE TABLE [data_load].[scenario_load_request] (
 	[scenario_desc] [varchar](50) NOT NULL,
 	[path] [varchar](200) NOT NULL,
 	[iteration] [tinyint] NOT NULL,
+	[sample_rate] [decimal](6,4) NOT NULL,
 	[user_name] [varchar](50) NOT NULL,
 	[date_requested] [smalldatetime] NOT NULL,
 	[loading] [bit] NULL,
@@ -50,7 +51,7 @@ DROP PROCEDURE [data_load].[sp_request]
 GO
 
 CREATE PROCEDURE [data_load].[sp_request] 
-	@year smallint, @path nvarchar(200), @iteration tinyint
+	@year smallint, @path nvarchar(200), @iteration tinyint, @sample_rate decimal(6,4) = 1
 AS
 
 DECLARE @desc nvarchar(50)
@@ -59,7 +60,7 @@ SET @desc = (SELECT REVERSE(SUBSTRING(REVERSE(@path), 0, CHARINDEX('\',REVERSE(@
 SET @network_path = REPLACE(LOWER(@path), 't:', '\\hana\transdata')
 
 INSERT INTO [data_load].[scenario_load_request]
-VALUES (@year, @desc, @network_path, @iteration, SYSTEM_USER, GETDATE(), 0, NULL)
+VALUES (@year, @desc, @network_path, @iteration, @sample_rate, SYSTEM_USER, GETDATE(), 0, NULL)
 GO
 
 

@@ -286,7 +286,7 @@ Macro "Run SANDAG ABM"
 
    //request data load after model run finish successfully	
    if skipDataLoadRequest = "false" then do	
-	   runString = path+"\\bin\\DataLoadRequest.bat "+drive+path_no_drive+" "+String(max_iterations)
+	   runString = path+"\\bin\\DataLoadRequest.bat "+drive+path_no_drive+" "+String(max_iterations)+" "+String(sample_rate[max_iterations])
 	   ok = RunMacro("TCB Run Command", 1, "Data load request", runString)
 	   if !ok then goto quit 
    end
