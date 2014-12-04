@@ -249,7 +249,7 @@ CREATE TABLE
 		[shape] geometry NOT NULL,
 		[centroid] geometry NOT NULL,
 		CONSTRAINT pk_geo PRIMARY KEY ([geography_zone_id]),
-		CONSTRAINT ixuq_geo UNIQUE ([geography_type_id],[zone]),
+		CONSTRAINT ixuq_geo UNIQUE ([geography_type_id],[zone]) WITH (DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_geo_geotype FOREIGN KEY ([geography_type_id]) REFERENCES [ref].[geography_type]([geography_type_id])
 	) 
 ON 
@@ -415,7 +415,7 @@ CREATE TABLE
 		[loc_choice_segment_number] tinyint NOT NULL,
 		[loc_choice_segment_desc] varchar(55) NOT NULL,
 		CONSTRAINT pk_lcsegment PRIMARY KEY ([loc_choice_segment_id]),
-		CONSTRAINT ixuq_lcsegment UNIQUE ([loc_choice_id],[loc_choice_segment_number]),
+		CONSTRAINT ixuq_lcsegment UNIQUE ([loc_choice_id],[loc_choice_segment_number]) WITH (DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_lcsegment_lc FOREIGN KEY ([loc_choice_id]) REFERENCES [ref].[loc_choice] ([loc_choice_id]) 
 	) 
 ON 
@@ -818,7 +818,7 @@ CREATE TABLE
 		[purpose_number] tinyint NOT NULL,
 		[purpose_desc] varchar(20) NOT NULL,
 		CONSTRAINT pk_purpose PRIMARY KEY ([purpose_id]),
-		CONSTRAINT ixuq_purpose UNIQUE ([model_type_id],[purpose_number]),
+		CONSTRAINT ixuq_purpose UNIQUE ([model_type_id],[purpose_number]) WITH (DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_purpose_model FOREIGN KEY ([model_type_id]) REFERENCES [ref].[model_type] ([model_type_id])
 	) 
 ON 
@@ -1018,7 +1018,7 @@ CREATE TABLE
 		[time_period_start] time(0),
 		[time_period_end] time(0)
 		CONSTRAINT pk_timeperiod PRIMARY KEY ([time_period_id]),
-		CONSTRAINT ixuq_timeperiod UNIQUE ([time_resolution_id],[time_period_number]),
+		CONSTRAINT ixuq_timeperiod UNIQUE ([time_resolution_id],[time_period_number]) WITH (DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_timeperiod_res FOREIGN KEY ([time_resolution_id]) REFERENCES [ref].[time_resolution] ([time_resolution_id])
 	) 
 ON 

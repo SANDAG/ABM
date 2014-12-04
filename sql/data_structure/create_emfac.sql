@@ -34,7 +34,7 @@ CREATE TABLE [emfac].[emfac_default_speed_vmt](
 	[speed_bin] [int] NOT NULL,
 	[vmt] [float] NOT NULL,
 	CONSTRAINT [pk_emfac_default_speed_vmt] PRIMARY KEY CLUSTERED ([emfac_default_speed_vmt_id]),
-	CONSTRAINT [ixuq_emfac_default_speed_vmt] UNIQUE ([emfac_vehicle_class_id],[year],[speed_bin])
+	CONSTRAINT [ixuq_emfac_default_speed_vmt] UNIQUE ([emfac_vehicle_class_id],[year],[speed_bin]) WITH (DATA_COMPRESSION = PAGE)
 	) 
 ON 
 	[ref_fg]
@@ -785,7 +785,7 @@ CREATE TABLE [emfac].[emfac_vehicle_map](
 	[year] [int] NOT NULL,
 	[value] [float] NOT NULL,
 	CONSTRAINT [pk_emfac_vehicle_map] PRIMARY KEY ([emfac_vehicle_map_id]),	
-	CONSTRAINT [ixuq_emfac_vehicle_map] UNIQUE ([sandag_vehicle_class_id],[emfac_vehicle_class_id],[year]),
+	CONSTRAINT [ixuq_emfac_vehicle_map] UNIQUE ([sandag_vehicle_class_id],[emfac_vehicle_class_id],[year]) WITH (DATA_COMPRESSION = PAGE),
 	CONSTRAINT [fk_emfac_vehicle_map_emfac_vehicle_class] FOREIGN KEY ([emfac_vehicle_class_id]) REFERENCES [emfac].[emfac_vehicle_class] ([emfac_vehicle_class_id]),
 	CONSTRAINT [fk_emfac_vehicle_map_sandag_vehicle_class] FOREIGN KEY ([sandag_vehicle_class_id]) REFERENCES [emfac].[sandag_vehicle_class] ([sandag_vehicle_class_id])
 	) 
