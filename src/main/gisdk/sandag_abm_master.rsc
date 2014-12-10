@@ -103,10 +103,6 @@ Macro "Run SANDAG ABM"
 	   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - run create all transit"})
 	   ok = RunMacro("TCB Run Macro", 1, "Create all transit",{}) 
 	   if !ok then goto quit
-
-	   // Factor headways
-	   ok = RunMacro("TCB Run Macro", 1, "update headways",{})
-	   if !ok then goto quit
    end
 
    //Looping
