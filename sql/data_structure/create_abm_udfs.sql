@@ -1042,7 +1042,6 @@ CREATE TABLE
 		[mode_id] tinyint NOT NULL,
 		[trips] decimal(20,16) NOT NULL,
 		CONSTRAINT pk_tripagg_drop PRIMARY KEY ([scenario_id],[trip_agg_id]),
-		CONSTRAINT ixuq_tripagg_drop UNIQUE ([scenario_id],[model_type_id],[orig_geography_zone_id],[dest_geography_zone_id],[time_period_id],[purpose_id],[mode_id]),
 		CONSTRAINT fk_tripagg_scenario_drop FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_tripagg_model_drop FOREIGN KEY ([model_type_id]) REFERENCES [ref].[model_type]([model_type_id]),
 		CONSTRAINT fk_tripagg_purpose_drop FOREIGN KEY ([purpose_id]) REFERENCES [ref].[PURPOSE]([purpose_id]),
@@ -1052,6 +1051,27 @@ CREATE TABLE
 		CONSTRAINT fk_tripagg_dest_drop FOREIGN KEY ([dest_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id])
 	) ON ' + @filegroupname + N'
 WITH (DATA_COMPRESSION = PAGE);'
+EXECUTE sp_executesql @SQL
+
+SET @SQL =
+N'
+CREATE UNIQUE NONCLUSTERED INDEX 
+	[ixuq_tripagg_drop] 
+ON 
+	[abm_staging].[trip_agg_drop]
+	(
+		[scenario_id] ASC,
+		[model_type_id] ASC,
+		[orig_geography_zone_id] ASC,
+		[dest_geography_zone_id] ASC,
+		[time_period_id] ASC,
+		[purpose_id] ASC,
+		[mode_id] ASC
+	)
+INCLUDE 
+	([trips]) 
+WITH 
+	(DATA_COMPRESSION = PAGE);'
 EXECUTE sp_executesql @SQL
 
 SET @SQL =

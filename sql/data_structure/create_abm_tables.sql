@@ -1117,7 +1117,6 @@ CREATE TABLE
 		[mode_id] tinyint NOT NULL,
 		[trips] decimal(20,16) NOT NULL,
 		CONSTRAINT pk_tripagg PRIMARY KEY ([scenario_id],[trip_agg_id]) WITH (STATISTICS_INCREMENTAL = ON),
-		CONSTRAINT ixuq_tripagg UNIQUE ([scenario_id],[model_type_id],[orig_geography_zone_id],[dest_geography_zone_id],[time_period_id],[purpose_id],[mode_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_tripagg_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_tripagg_model FOREIGN KEY ([model_type_id]) REFERENCES [ref].[model_type]([model_type_id]),
 		CONSTRAINT fk_tripagg_purpose FOREIGN KEY ([purpose_id]) REFERENCES [ref].[purpose]([purpose_id]),
@@ -1130,6 +1129,25 @@ ON
 	scenario_scheme ([scenario_id])
 WITH 
 	(DATA_COMPRESSION = PAGE);
+
+
+CREATE UNIQUE NONCLUSTERED INDEX 
+	[ixuq_tripagg] 
+ON 
+	[abm].[trip_agg]
+	(
+		[scenario_id] ASC,
+		[model_type_id] ASC,
+		[orig_geography_zone_id] ASC,
+		[dest_geography_zone_id] ASC,
+		[time_period_id] ASC,
+		[purpose_id] ASC,
+		[mode_id] ASC
+	)
+INCLUDE 
+	([trips]) 
+WITH 
+	(DATA_COMPRESSION = PAGE, SORT_IN_TEMPDB = ON, STATISTICS_INCREMENTAL = ON);
 
 END	
 
