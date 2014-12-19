@@ -1453,11 +1453,11 @@ GO
 
 
 /* Create trip_micro_simul view */
-IF  EXISTS (SELECT * FROM sys.views WHERE object_id = OBJECT_ID(N'[abm].[trip_micro_simul]'))
-DROP VIEW [abm].[trip_micro_simul]
+IF  EXISTS (SELECT * FROM sys.views WHERE object_id = OBJECT_ID(N'[abm].[vi_trip_micro_simul]'))
+DROP VIEW [abm].[vi_trip_micro_simul]
 GO
 
-CREATE VIEW [abm].[trip_micro_simul] AS
+CREATE VIEW [abm].[vi_trip_micro_simul] AS
 SELECT
 	[scenario_id]
 	,[trip_ap_id] AS [surrogate_trip_id]
@@ -1609,20 +1609,20 @@ ON
 	AND [trip_vis].[tour_vis_id] = [tour_vis].[tour_vis_id]
 GO
 
--- Add metadata for [abm].[trip_micro_simul]
-EXECUTE [db_meta].[add_xp] 'abm.trip_micro_simul', 'SUBSYSTEM', 'trips_tours'
-EXECUTE [db_meta].[add_xp] 'abm.trip_micro_simul', 'MS_Description', 'view that combines all the micro simulated trip tables'
+-- Add metadata for [abm].[vi_trip_micro_simul]
+EXECUTE [db_meta].[add_xp] 'abm.vi_trip_micro_simul', 'SUBSYSTEM', 'trips_tours'
+EXECUTE [db_meta].[add_xp] 'abm.vi_trip_micro_simul', 'MS_Description', 'view that combines all the micro simulated trip tables'
 GO
 
 
 
 
 /* Create tour_micro_simul view */
-IF  EXISTS (SELECT * FROM sys.views WHERE object_id = OBJECT_ID(N'[abm].[tour_micro_simul]'))
-DROP VIEW [abm].[tour_micro_simul]
+IF  EXISTS (SELECT * FROM sys.views WHERE object_id = OBJECT_ID(N'[abm].[vi_tour_micro_simul]'))
+DROP VIEW [abm].[vi_tour_micro_simul]
 GO
 
-CREATE VIEW [abm].[tour_micro_simul] AS
+CREATE VIEW [abm].[vi_tour_micro_simul] AS
 SELECT 
 	[scenario_id]
 	,[tour_cb_id] AS [surrogate_tour_id]
@@ -1684,7 +1684,7 @@ FROM
 	[abm].[tour_vis]
 GO
 
--- Add metadata for [abm].[tour_micro_simul]
-EXECUTE [db_meta].[add_xp] 'abm.tour_micro_simul', 'SUBSYSTEM', 'trips_tours'
-EXECUTE [db_meta].[add_xp] 'abm.tour_micro_simul', 'MS_Description', 'view that combines all the micro simulated tour tables'
+-- Add metadata for [abm].[vi_tour_micro_simul]
+EXECUTE [db_meta].[add_xp] 'abm.vi_tour_micro_simul', 'SUBSYSTEM', 'trips_tours'
+EXECUTE [db_meta].[add_xp] 'abm.vi_tour_micro_simul', 'MS_Description', 'view that combines all the micro simulated tour tables'
 GO

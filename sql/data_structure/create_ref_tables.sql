@@ -917,6 +917,7 @@ CREATE TABLE
 		[scenario_desc] varchar(50) NOT NULL,
 		[path] varchar(200) NOT NULL,
 		[iteration] tinyint NOT NULL,
+		[sample_rate] decimal(6,4) NOT NULL,
 		[user_name] varchar(100) NOT NULL,
 		[date_loaded] smalldatetime,
 		[complete] bit,

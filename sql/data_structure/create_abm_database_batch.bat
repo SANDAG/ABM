@@ -5,8 +5,8 @@ rem create_abm_dd.sql, create_abm_udfs.sql, create_emfac.sql, create_data_load.s
 rem update_schema_change_log.sql
 
 
-set db_server=${database_server}
-set db_name=${database_name}
+set db_server=sql2014a8
+set db_name=abm_13_2_3
 set log_path=
 set db_path=
 set script_path=
