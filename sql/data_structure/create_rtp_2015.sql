@@ -3381,6 +3381,8 @@ FROM (
 ORDER BY
 	[low_inc]
 	,[mode_category]
+
+OPTION(RECOMPILE)
 END
 
 ELSE IF @minority = 1
@@ -3425,6 +3427,8 @@ FROM (
 ORDER BY
 	[minority]
 	,[mode_category]
+
+OPTION(RECOMPILE)
 END
 
 ELSE IF @senior = 1
@@ -3469,6 +3473,8 @@ FROM (
 ORDER BY
 	[senior]
 	,[mode_category]
+
+OPTION(RECOMPILE)
 END
 
 ELSE IF @coc = 1
@@ -3517,6 +3523,8 @@ FROM (
 ORDER BY
 	[coc]
 	,[mode_category]
+
+OPTION(RECOMPILE)
 END
 
 ELSE
@@ -3555,6 +3563,8 @@ FROM (
 	) tt2
 ORDER BY
 	[mode_category]
+
+OPTION(RECOMPILE)
 END
 GO
 
