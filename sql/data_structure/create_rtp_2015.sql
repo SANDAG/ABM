@@ -1017,12 +1017,16 @@ SELECT
 	[lu_person].[scenario_id]
 	,[geography_type_id]
 	,[zone]
-    ,SUM(CASE   WHEN ISNULL([age], 0) >= 75 THEN 1 ELSE 0 END) AS pop_senior
-    ,SUM(CASE   WHEN ISNULL([race_id], 0) > 1  OR ISNULL([hisp_id], 1) > 1 THEN 1 ELSE 0 END) AS pop_minority
-    ,SUM(CASE   WHEN ISNULL([poverty], 99) <= 2 THEN 1 ELSE 0 END) AS pop_low_inc
-    ,COUNT(*) AS tot_pop
+    ,SUM(CASE   WHEN [age] >= 75 THEN ISNULL(1 / NULLIF([sample_rate], 0), 0) ELSE 0 END) AS pop_senior
+    ,SUM(CASE   WHEN [race_id] > 1  OR [hisp_id] > 1 THEN ISNULL(1 / NULLIF([sample_rate], 0), 0) ELSE 0 END) AS pop_minority
+    ,SUM(CASE   WHEN ISNULL([poverty], 99) <= 2 THEN ISNULL(1 / NULLIF([sample_rate], 0), 0) ELSE 0 END) AS pop_low_inc
+    ,SUM(ISNULL(1 / NULLIF([sample_rate], 0), 0)) AS tot_pop
 FROM  
       [abm].[lu_person]
+INNER JOIN
+	[ref].[scenario]
+ON
+	[lu_person].[scenario_id] = [scenario].[scenario_id]
 INNER JOIN 
       [abm].[lu_hh]
 ON 
@@ -1034,6 +1038,7 @@ ON
 	[lu_hh].[geography_zone_id] = [geography_zone].[geography_zone_id]
 WHERE 
 	[lu_person].[scenario_id] = @scenario_id
+	AND [lu_hh].[scenario_id] = @scenario_id
 GROUP BY 
 	[lu_person].[scenario_id]
 	,[geography_type_id]
@@ -1078,10 +1083,10 @@ SELECT
 	,[lu_hh].[lu_hh_id]
 	,MAX([hh_income]) AS [hh_income] -- same across all records when grouped by hh_id
     ,MAX(CASE WHEN ISNULL([poverty], 99) <= 2 THEN 1 ELSE 0 END) AS p_lowinc   
-	,MAX(CASE WHEN ISNULL([race_id], 0) > 1 OR ISNULL([hisp_id], 1) > 1 THEN 1 ELSE 0 END) AS p_minority
+	,MAX(CASE WHEN [race_id] > 1 OR [hisp_id] > 1 THEN 1 ELSE 0 END) AS p_minority
 	,MAX(CASE WHEN [age] >= 75  THEN 1 ELSE 0 END) AS p_senior	
-	,MAX(CASE WHEN ISNULL([poverty], 99) <= 2 OR ISNULL([race_id], 0) > 1 OR ISNULL([hisp_id], 1) > 1 OR [age] >= 75 THEN 1 ELSE 0 END) AS coc_pop
-	,MAX(CASE WHEN ISNULL([poverty], 99) > 2 AND ISNULL([race_id], 0) = 1 AND ISNULL([hisp_id], 1) = 1 AND [age] < 75 THEN 1 ELSE 0 END) AS non_coc_pop
+	,MAX(CASE WHEN ISNULL([poverty], 99) <= 2 OR [race_id] > 1 OR [hisp_id] > 1 OR [age] >= 75 THEN 1 ELSE 0 END) AS coc_pop
+	,MAX(CASE WHEN ISNULL([poverty], 99) > 2 AND [race_id] = 1 AND [hisp_id] = 1 AND [age] < 75 THEN 1 ELSE 0 END) AS non_coc_pop
 FROM 
 	[abm].[lu_hh] 
 INNER JOIN 
@@ -1219,8 +1224,8 @@ SELECT
 	,p_minority
 	,p_senior
 	,coc_pop
-	,non_coc_pop		
-	,[hh_income]	
+	,non_coc_pop
+	,[hh_income]
     --for household income = 0, set percent of transportation cost to 0
 	,CASE	WHEN [hh_income] = 0 THEN 0.0 
 			--Cap the anual percent of transportation cost at 100% if exceeding 100%
@@ -1316,7 +1321,7 @@ SELECT
 	,(CASE	WHEN ISNULL([poverty], 99) <= 2 THEN 1 
 			ELSE 0 
 			END) AS low_inc 
-	,(CASE	WHEN ISNULL([race_id], 0) > 1 OR ISNULL([hisp_id], 1) > 1 THEN 1 
+	,(CASE	WHEN [race_id] > 1 OR [hisp_id] > 1 THEN 1 
 			ELSE 0 
 			END) AS minority
 	,(CASE	WHEN [age] >= 75 THEN 1 
@@ -1457,7 +1462,7 @@ ON
 	)
 
 SELECT
-	[scenario_id]
+	raw_work_trips.[scenario_id]
 	,raw_work_trips.[tour_ij_id]
 	,low_inc
 	,minority
@@ -1707,7 +1712,7 @@ SELECT
     ,dest.[tap]
     ,[time_resolution_id]
     ,[time_period_number]
-    ,ISNULL([ivt_premium], 0) + ISNULL([walk_time_premium], 0) + ISNULL([transfer_time_premium], 0) AS transit_travel_time
+    ,[ivt_premium] + [walk_time_premium] + [transfer_time_premium] AS transit_travel_time
 FROM 
 	[abm].[transit_tap_skims]
 INNER JOIN
@@ -1756,19 +1761,23 @@ AS
 	Description: Generates non-motorized miles traveled for PM 3a/b
 */
 
+-- scenario sample rate
+DECLARE @sample_rate decimal(6,4)
+SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id)
+
 SELECT 
 	@scenario_id AS [scenario_id]
-	 ,SUM(CASE	WHEN [mode_id] = 9 THEN [party_size] * [trip_distance] 
+	 ,SUM(CASE	WHEN [mode_id] = 9 THEN ISNULL([party_size] * [trip_distance], 0)
 				ELSE 0
-				END) AS pmt
-	 ,SUM(CASE	WHEN [mode_id] = 10 THEN [party_size] * [trip_distance] 
+				END) / @sample_rate AS pmt
+	 ,SUM(CASE	WHEN [mode_id] = 10 THEN ISNULL([party_size] * [trip_distance], 0)
 				ELSE 0 
-				END) bmt
+				END) / @sample_rate AS bmt
 FROM 
-	[abm].[trip_micro_simul] -- view
+	[abm].[vi_trip_micro_simul] -- view
 WHERE 
-	[scenario_id] = @scenario_id
-	AND [mode_id] BETWEEN 9 AND 10
+	[vi_trip_micro_simul].[scenario_id] = @scenario_id
+	AND [mode_id] BETWEEN 9 AND 10	
 GO
 
 -- Add metadata for [rtp_2015].[sp_pmt_bmt]
@@ -2156,13 +2165,17 @@ CREATE PROCEDURE [rtp_2015].[sp_work_from_home]
 	@scenario_id smallint
 AS
 
+-- scenario sample rate
+DECLARE @sample_rate decimal(6,4)
+SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id)
+
 -- total full and part time workers
 DECLARE @tot_workers float
 SET @tot_workers = (SELECT COUNT(*) AS workers FROM [abm].[lu_person] WHERE [pemploy_id] BETWEEN 1 AND 2 AND [scenario_id] = @scenario_id)
 
 SELECT
 	@scenario_id AS [scenario_id]
-	,COUNT(*) AS home_workers
+	,COUNT(*) / @sample_rate AS total_home_workers
 	,COUNT(*) / @tot_workers AS share_of_workers
 FROM
 	[abm].[lu_person_lc]
@@ -2171,7 +2184,7 @@ INNER JOIN
 ON
 	[lu_person_lc].[loc_choice_segment_id] = [loc_choice_segment].[loc_choice_segment_id]
 WHERE
-	[scenario_id] = @scenario_id
+	[lu_person_lc].[scenario_id] = @scenario_id
 	AND [loc_choice_id] = 1 -- work location choice model result
 	AND [loc_choice_segment_number] = 99 -- work from home choice
 GO
@@ -2268,16 +2281,20 @@ AS
 	Description: Evaluation Criteria Active Transportation 1, Total person trips across bike,walk,walk/pnr/knr transit modes
 */
 
+-- scenario sample rate
+DECLARE @sample_rate decimal(6,4)
+SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id)
+
 SELECT 
-	[scenario_id]
-	,SUM([party_size]) AS person_trips
+	[trip_ij].[scenario_id]
+	,SUM([party_size]) / @sample_rate AS person_trips
 FROM 
 	[abm].[trip_ij] --individual and joint models only
 WHERE 
-	[scenario_id] = @scenario_id
+	[trip_ij].[scenario_id] = @scenario_id
 	AND [mode_id] BETWEEN 9 AND 25 -- no taxi,school bus, includes KNR and PNR
 GROUP BY
-	[scenario_id]
+	[trip_ij].[scenario_id]
 GO
 
 -- Add metadata for [rtp_2015].[sp_eval_at_1]
@@ -2428,63 +2445,65 @@ AS
 	Description: Evaluation Criteria Highway 1A, Total person hours spent travelling
 */
 
+-- scenario sample rate
+DECLARE @sample_rate decimal(6,4)
+SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id)
+
 IF @all_models = 0
 BEGIN
 	SELECT	
-		[scenario_id]
-		,ISNULL(SUM([party_size] * [trip_time] / 60.0), 0) AS person_hour
+		@scenario_id AS scenario_id
+		,SUM(([party_size] * [trip_time]) / 60.0) / @sample_rate AS person_hour
 	FROM 
 		[abm].[trip_ij] -- individual and joint models only, over all modes, includes access time and individual time components
 	WHERE 
-		[scenario_id] = @scenario_id
-	GROUP BY
-		[scenario_id]
+		[trip_ij].[scenario_id] = @scenario_id
 END
 ELSE
 BEGIN
 	with ap AS (
 	SELECT	
-		ISNULL(SUM([party_size] * [trip_time] / 60.0), 0) AS person_hour
+		SUM(ISNULL(([party_size] * [trip_time]) / 60.0, 0)) / @sample_rate AS person_hour
 	FROM 
 		[abm].[trip_ap]
 	WHERE 
-		[scenario_id] = @scenario_id
+		[trip_ap].[scenario_id] = @scenario_id
 		),
 	cb AS (
 	SELECT	
-		ISNULL(SUM([party_size] * [trip_time] / 60.0), 0) AS person_hour
+		SUM(([party_size] * [trip_time]) / 60.0) / @sample_rate AS person_hour
 	FROM 
 		[abm].[trip_cb]
 	WHERE 
-		[scenario_id] = @scenario_id
+		[trip_cb].[scenario_id] = @scenario_id
 		),
 	ie AS (
 	SELECT	
-		ISNULL(SUM([party_size] * [trip_time] / 60.0), 0) AS person_hour
+		SUM(([party_size] * [trip_time]) / 60.0) / @sample_rate AS person_hour
 	FROM 
 		[abm].[trip_ie]
 	WHERE 
-		[scenario_id] = @scenario_id
+		[trip_ie].[scenario_id] = @scenario_id
 		),
 	ij AS (
 	SELECT	
-		ISNULL(SUM([party_size] * [trip_time] / 60.0), 0) AS person_hour
+		SUM(([party_size] * [trip_time]) / 60.0) / @sample_rate AS person_hour
 	FROM 
 		[abm].[trip_ij]
 	WHERE 
-		[scenario_id] = @scenario_id
+		[trip_ij].[scenario_id] = @scenario_id
 		),
 	vis AS (
 	SELECT	
-		ISNULL(SUM([party_size] * [trip_time] / 60.0), 0) AS person_hour
+		SUM(([party_size] * [trip_time]) / 60.0) / @sample_rate AS person_hour
 	FROM 
 		[abm].[trip_vis]
 	WHERE 
-		[scenario_id] = @scenario_id
+		[trip_vis].[scenario_id] = @scenario_id
 		)
 	SELECT
 		@scenario_id AS scenario_id
-		,SUM(ap.person_hour + cb.person_hour + ie.person_hour + ij.person_hour + vis.person_hour) AS person_hour
+		,SUM(ISNULL(ap.person_hour, 0) + ISNULL(cb.person_hour, 0) + ISNULL(ie.person_hour, 0) + ISNULL(ij.person_hour, 0) + ISNULL(vis.person_hour, 0)) AS person_hour
 	FROM
 		ap, cb, ie, ij, vis
 END
@@ -2512,9 +2531,13 @@ AS
 	Description: Evaluation Criteria Highway 1B, Total person hours spent travelling by LIM
 */
 
+-- scenario sample rate
+DECLARE @sample_rate decimal(6,4)
+SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id)
+
 SELECT	
 	@scenario_id AS [scenario_id]
-	,SUM(ISNULL([trip_time], 0) / 60.0) AS person_hour_coc
+	,SUM([trip_time] / 60.0) / @sample_rate AS person_hour_coc
 FROM 
 	[abm].[trip_ij]
 INNER JOIN
@@ -2543,7 +2566,7 @@ WHERE
 	AND [tour_ij_person].[scenario_id] = @scenario_id
 	AND [lu_person].[scenario_id] = @scenario_id
 	AND [lu_hh].[scenario_id] = @scenario_id
-	AND ([age] >= 75 OR ISNULL([race_id], 0) > 1 OR ISNULL([poverty], 99) <= 2 OR ISNULL([hisp_id], 1) > 1) -- LIM
+	AND ([age] >= 75 OR [race_id] > 1 OR ISNULL([poverty], 99) <= 2 OR [hisp_id] > 1) -- LIM
 GO
 
 -- Add metadata for [rtp_2015].[sp_eval_hwy_1b]
@@ -2649,13 +2672,17 @@ AS
 	Description: Evaluation Criteria Highway 8, Person hours across bike/walk modes and access/egress from transit walk time
 */
 
+-- scenario sample rate
+DECLARE @sample_rate decimal(6,4)
+SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id);
+
 -- Walk/Bike mode
 -- Data exporter was appending wrong skims to walk/bike, java not using input file to find pairs
 -- The original fix threw out pairs not in the walk threshold and used distance from MGRATOMGRA
 -- Since fixed skim issue so this may not match older numbers
 with walk_bike AS (
 SELECT 
-	SUM([party_size] * [trip_time] / 60) AS walk_bike_time
+	SUM(([party_size] * [trip_time]) / 60) / @sample_rate AS walk_bike_time
 FROM 
 	[abm].[trip_ij] -- individual and joint models only
 WHERE 
@@ -2665,18 +2692,18 @@ WHERE
 --walk to transit access/egress time
 walk_transit AS (
 SELECT
-	SUM([party_size] * CAST(ISNULL(tap1.[time_boarding_actual], 0) AS float)) / 60 +
-	SUM([party_size] * CAST(ISNULL(tap2.[time_alighting_actual], 0) AS float)) / 60 AS walk_transit_time
+	(SUM(ISNULL([party_size] * CAST(tap1.[time_boarding_actual] AS float) / 60, 0)) +
+	SUM(ISNULL([party_size] * CAST(tap2.[time_alighting_actual] AS float) / 60, 0))) / @sample_rate AS walk_transit_time
 FROM 
 	[abm].[trip_ij] -- individual and joint models only
 LEFT OUTER JOIN 
-	[abm].[transit_tap_walk] tap1 
+	[abm].[transit_tap_walk] AS tap1 
 ON 
 	[trip_ij].[scenario_id] = tap1.[scenario_id]
 	AND [trip_ij].[orig_geography_zone_id] = tap1.[geography_zone_id]
 	AND [trip_ij].[board_transit_tap_id] = tap1.[transit_tap_id]
 LEFT OUTER JOIN 
-	[abm].[transit_tap_walk] tap2
+	[abm].[transit_tap_walk] AS tap2
 ON 
 	[trip_ij].[scenario_id] = tap2.[scenario_id]
 	AND [trip_ij].[dest_geography_zone_id] = tap2.[geography_zone_id]
@@ -2688,10 +2715,10 @@ WHERE
 -- knr/pnr egress time 
 knr_pnr_egress AS (
 SELECT	
-	SUM(CASE	WHEN [inbound] = 1 THEN [party_size] * CAST(ISNULL(tap1.[time_boarding_actual], 0) AS float) / 60
-				WHEN [inbound] = 0 THEN [party_size] * CAST(ISNULL(tap2.[time_alighting_actual], 0) AS float) / 60
+	SUM(CASE	WHEN [inbound] = 1 THEN ISNULL([party_size] * CAST(tap1.[time_boarding_actual] AS float) / 60, 0)
+				WHEN [inbound] = 0 THEN ISNULL([party_size] * CAST(tap2.[time_alighting_actual] AS float) / 60, 0)
 				END
-				) AS knr_pnr_egress_time
+				) / @sample_rate AS knr_pnr_egress_time
 FROM 
 	[abm].[trip_ij] -- individual and joint models only
 LEFT OUTER JOIN 
@@ -2886,69 +2913,71 @@ AS
 	Description: Evaluation Criteria Transit 2, Total person trips across the walk/pnr/knr transit modes
 */
 
+-- scenario sample rate
+DECLARE @sample_rate decimal(6,4)
+SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id)
+
 IF @all_models = 0
 BEGIN
 	SELECT	
-		[scenario_id]
-		,ISNULL(SUM([party_size]), 0) AS person_trips
+		@scenario_id AS scenario_id
+		,SUM(ISNULL([party_size], 0)) / @sample_rate AS person_trips
 	FROM 
 		[abm].[trip_ij] -- individual and joint models only
 	WHERE 
-		[scenario_id] = @scenario_id
+		[trip_ij].[scenario_id] = @scenario_id
 		AND [mode_id] BETWEEN 11 AND 25 -- just transit modes
-	GROUP BY
-		[scenario_id]
 END
 ELSE
 BEGIN
 	with ap AS (
 	SELECT	
-		ISNULL(SUM([party_size]), 0) AS person_trips
+		SUM(ISNULL([party_size], 0)) / @sample_rate AS person_trips
 	FROM 
 		[abm].[trip_ap]
 	WHERE 
-		[scenario_id] = @scenario_id
+		[trip_ap].[scenario_id] = @scenario_id
 		AND [mode_id] BETWEEN 11 AND 25 -- just transit modes
 		),
 	cb AS (
 	SELECT	
-		ISNULL(SUM([party_size]), 0) AS person_trips
+		SUM(ISNULL([party_size], 0)) / @sample_rate AS person_trips
 	FROM 
 		[abm].[trip_cb]
 	WHERE 
-		[scenario_id] = @scenario_id
+		[trip_cb].[scenario_id] = @scenario_id
 		AND [mode_id] BETWEEN 11 AND 25 -- just transit modes
 		),
 	ie AS (
 	SELECT	
-		ISNULL(SUM([party_size]), 0) AS person_trips
+		SUM(ISNULL([party_size], 0)) / @sample_rate AS person_trips
 	FROM 
 		[abm].[trip_ie]
 	WHERE 
-		[scenario_id] = @scenario_id
+		[trip_ie].[scenario_id] = @scenario_id
 		AND [mode_id] BETWEEN 11 AND 25 -- just transit modes
 		),
 	ij AS (
 	SELECT	
-		ISNULL(SUM([party_size]), 0) AS person_trips
+		SUM(ISNULL([party_size], 0)) / @sample_rate AS person_trips
 	FROM 
 		[abm].[trip_ij]
 	WHERE 
-		[scenario_id] = @scenario_id
+		[trip_ij].[scenario_id] = @scenario_id
 		AND [mode_id] BETWEEN 11 AND 25 -- just transit modes
 		),
 	vis AS (
 	SELECT	
-		ISNULL(SUM([party_size]), 0) AS person_trips
+		SUM(ISNULL([party_size], 0)) / @sample_rate AS person_trips
 	FROM 
 		[abm].[trip_vis]
 	WHERE 
-		[scenario_id] = @scenario_id
+		[trip_vis].[scenario_id] = @scenario_id
 		AND [mode_id] BETWEEN 11 AND 25 -- just transit modes
 		)
 	SELECT
 		@scenario_id AS scenario_id
-		,SUM(ap.person_trips + cb.person_trips + ie.person_trips + ij.person_trips + vis.person_trips) AS person_trips
+		,SUM(ISNULL(ap.person_trips, 0) + ISNULL(cb.person_trips, 0) + ISNULL(ie.person_trips, 0) + ISNULL(ij.person_trips, 0) + ISNULL(vis.person_trips, 0)) AS person_trips
 	FROM
 		ap, cb, ie, ij, vis
 END
@@ -3097,12 +3126,17 @@ AS
 	Description: Evaluation Criteria Transit 8A, Total person trips across the walk/pnr/knr transit modes and the work, school, university purposes
 */
 
+-- scenario sample rate
+DECLARE @sample_rate decimal(6,4)
+SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id)
+
 SELECT
 	@scenario_id AS scenario_id
-	,COUNT(*) AS person_trips -- works because individual model only
+	,COUNT(*) / @sample_rate AS person_trips -- works because individual model only
 FROM (
-	SELECT 
-		[trip_ij].[tour_ij_id]
+	SELECT
+		[trip_ij].[scenario_id] 
+		,[trip_ij].[tour_ij_id]
 		,[inbound]
 	FROM 
 		[abm].[trip_ij]
@@ -3119,7 +3153,8 @@ FROM (
 		AND [trip_ij].[mode_id] BETWEEN 11 AND 25 -- Only want transit trips
 		AND [tour_ij].[mode_id] BETWEEN 11 AND 25 -- Only want transit tours
 	GROUP BY
-		[trip_ij].[tour_ij_id]
+		[trip_ij].[scenario_id] 
+		,[trip_ij].[tour_ij_id]
 		,[inbound]
 	) tt
 GO
@@ -3146,12 +3181,17 @@ AS
 	Description: Evaluation Criteria Transit 8C, Total LIM person trips across the walk/pnr/knr transit modes and the work, school, university purposes
 */
 
+-- scenario sample rate
+DECLARE @sample_rate decimal(6,4)
+SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id)
+
 SELECT
 	@scenario_id AS scenario_id
-	,COUNT(*) AS coc_person_trips -- works because individual model only
+	,COUNT(*) / @sample_rate AS coc_person_trips -- works because individual model only
 FROM (
 	SELECT 
-		[trip_ij].[tour_ij_id]
+		[trip_ij].[scenario_id]
+		,[trip_ij].[tour_ij_id]
 		,[inbound]
 	FROM 
 		[abm].[trip_ij]
@@ -3175,7 +3215,6 @@ FROM (
 	ON 
 		[lu_person].[scenario_id] = [lu_hh].[scenario_id]
 		AND [lu_person].[lu_hh_id] = [lu_hh].[lu_hh_id]
-	
 	WHERE
 		[trip_ij].[scenario_id] = @scenario_id
 		AND [tour_ij].[scenario_id] = @scenario_id
@@ -3186,9 +3225,10 @@ FROM (
 		AND [tour_ij].[tour_cat_id] = 0 -- Mandatory tours (work and school)
 		AND [trip_ij].[mode_id] BETWEEN 11 AND 25 -- Only want transit trips
 		AND [tour_ij].[mode_id] BETWEEN 11 AND 25 -- Only want transit tours
-		AND ([age] >= 75 OR ISNULL([race_id], 0) > 1 OR ISNULL([poverty], 99) <= 2 OR ISNULL([hisp_id], 1) > 1) -- LIM
+		AND ([age] >= 75 OR ISNULL([race_id], 0) > 1 OR ISNULL([poverty], 99) <= 2 OR ISNULL([hisp_id], 0) > 1) -- LIM
 	GROUP BY
-		[trip_ij].[tour_ij_id]
+		[trip_ij].[scenario_id]
+		,[trip_ij].[tour_ij_id]
 		,[inbound]
 	) tt
 GO
@@ -3215,6 +3255,10 @@ AS
 	Description: Evaluation Criteria Transit 8E, Total person trips across the walk/pnr/knr transit modes with a destination MGRA whose centroid lies within an indian reservation
 */
 
+-- scenario sample rate
+DECLARE @sample_rate decimal(6,4)
+SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id);
+
 with xref AS (
 	SELECT  
 		[mgra]
@@ -3230,7 +3274,7 @@ with xref AS (
 			)
 SELECT 
 	@scenario_id AS scenario_id
-	,SUM([party_size]) AS person_trips
+	,SUM(ISNULL([party_size], 0)) / @sample_rate AS person_trips
 FROM 
 	[abm].[trip_ij] -- individual and joint models only
 INNER JOIN
@@ -3250,7 +3294,7 @@ LEFT OUTER JOIN
 ON 
 	dest_geography.[zone] = x2.[mgra]
 WHERE 
-	[scenario_id] = @scenario_id
+	[trip_ij].[scenario_id] = @scenario_id
 	AND orig_geography.[geography_type_id] = 90 -- assumes trip_ij uses mgra13
 	AND dest_geography.[geography_type_id] = 90 -- assumes trip_ij uses mgra13
 	AND (x1.[mgra] > 0 OR x2.[mgra] > 0)
@@ -3291,6 +3335,10 @@ BEGIN
 	RETURN
 END
 
+-- scenario sample rate
+DECLARE @sample_rate decimal(6,4)
+SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id);
+
 IF @low_income = 1
 BEGIN
 SELECT
@@ -3300,7 +3348,7 @@ SELECT
 	,avg_tour_time
 	,avg_tour_distance
 	,avg_tour_trips
-	,tours
+	,tours / @sample_rate AS tours
 	,ISNULL(CAST(tours AS float) / NULLIF(SUM(CASE WHEN [mode_category] IS NOT NULL AND [low_inc] IS NOT NULL THEN tours ELSE 0 END) OVER (PARTITION BY [low_inc]), 0), 1) AS mode_share
 FROM (
 	SELECT
@@ -3344,7 +3392,7 @@ SELECT
 	,avg_tour_time
 	,avg_tour_distance
 	,avg_tour_trips
-	,tours
+	,tours / @sample_rate AS tours
 	,ISNULL(CAST(tours AS float) / NULLIF(SUM(CASE WHEN [mode_category] IS NOT NULL AND [minority] IS NOT NULL THEN tours ELSE 0 END) OVER (PARTITION BY [minority]), 0), 1) AS mode_share
 FROM (
 	SELECT
@@ -3388,7 +3436,7 @@ SELECT
 	,avg_tour_time
 	,avg_tour_distance
 	,avg_tour_trips
-	,tours
+	,tours / @sample_rate AS tours
 	,ISNULL(CAST(tours AS float) / NULLIF(SUM(CASE WHEN [mode_category] IS NOT NULL AND [senior] IS NOT NULL THEN tours ELSE 0 END) OVER (PARTITION BY [senior]), 0), 1) AS mode_share
 FROM (
 	SELECT
@@ -3432,7 +3480,7 @@ SELECT
 	,avg_tour_time
 	,avg_tour_distance
 	,avg_tour_trips
-	,tours
+	,tours / @sample_rate AS tours
 	,ISNULL(CAST(tours AS float) / NULLIF(SUM(CASE WHEN [mode_category] IS NOT NULL AND [coc] IS NOT NULL THEN tours ELSE 0 END) OVER (PARTITION BY [coc]), 0), 1) AS mode_share
 FROM (
 	SELECT
@@ -3479,7 +3527,7 @@ SELECT
 	,avg_tour_time
 	,avg_tour_distance
 	,avg_tour_trips
-	,tours
+	,tours / @sample_rate AS tours
 	,CAST(tours AS float) / SUM(CASE WHEN [mode_category] IS NOT NULL THEN tours ELSE 0 END) OVER () AS mode_share
 FROM (
 	SELECT
@@ -3535,9 +3583,19 @@ AS
 											by total synthetic population
 */
 
+-- scenario sample rate
+DECLARE @sample_rate decimal(6,4)
+SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id)
+
 /* Get total synthetic population */
-DECLARE @pop int
-SET @pop = (SELECT COUNT(*) FROM [abm].[lu_person] WHERE [scenario_id] = @scenario_id)
+DECLARE @pop float
+SET @pop = (SELECT 
+				COUNT(*) / @sample_rate
+			FROM 
+				[abm].[lu_person] 
+			WHERE 
+				[lu_person].[scenario_id] = @scenario_id
+			)
 
 SELECT 
 	[hwy_flow].[scenario_id]
@@ -3582,42 +3640,44 @@ CREATE PROCEDURE [rtp_2015].[sp_pm_2a]
 	,@peak_period bit = 0
 AS
 
-DECLARE @simulTrips int
+DECLARE @simulTrips float
 
 -- peak period assumes all micro simulated trips are operating on abm half hour period
 IF @peak_period = 1
 BEGIN
 /* Get total number of micro-simulated person trips */
 SET @simulTrips = (SELECT 
-						SUM([party_size]) 
+						SUM(ISNULL([party_size], 0))
 					FROM 
-						[abm].[trip_micro_simul] 
+						[abm].[vi_trip_micro_simul] 
 					INNER JOIN
 						[ref].[time_period]
 					ON
-						[trip_micro_simul].[time_period_id] = [time_period].[time_period_id]
+						[vi_trip_micro_simul].[time_period_id] = [time_period].[time_period_id]
 					WHERE 
-						[scenario_id] = @scenario_id 
+						[vi_trip_micro_simul].[scenario_id] = @scenario_id 
 						AND [mode_id] > 0 -- no airport passing through trips
 						AND [time_resolution_id] = 2 -- abm half hour period
 						AND ([time_period_number] BETWEEN 4 AND 9 -- AM peak period
-							OR [time_period_number] BETWEEN 23 AND 29)); -- PM peak period
+							OR [time_period_number] BETWEEN 23 AND 29) -- PM peak period
+					)
+
 SELECT
 	@scenario_id AS [scenario_id]
-	,1.0 * SUM(CASE WHEN [mode_id] BETWEEN 1 AND 2 THEN [party_size] ELSE 0 END) / @simulTrips AS drive_alone
-	,1.0 * SUM(CASE WHEN [mode_id] BETWEEN 3 AND 8 THEN [party_size] ELSE 0 END) / @simulTrips AS sr
-	,1.0 * SUM(CASE WHEN [mode_id] BETWEEN 11 AND 25 THEN [party_size] ELSE 0 END) / @simulTrips AS transit
-	,1.0 * SUM(CASE WHEN [mode_id] = 9 THEN [party_size] ELSE 0 END) / @simulTrips AS walk
-	,1.0 * SUM(CASE WHEN [mode_id] = 10 THEN [party_size] ELSE 0 END) / @simulTrips AS bike
-	,1.0 * SUM(CASE WHEN [mode_id] BETWEEN 26 AND 27 THEN [party_size] ELSE 0 END) / @simulTrips AS bus_taxi
+	,SUM(CASE WHEN [mode_id] BETWEEN 1 AND 2 THEN ISNULL([party_size], 0) ELSE 0 END) / @simulTrips AS drive_alone
+	,SUM(CASE WHEN [mode_id] BETWEEN 3 AND 8 THEN ISNULL([party_size], 0) ELSE 0 END) / @simulTrips AS sr
+	,SUM(CASE WHEN [mode_id] BETWEEN 11 AND 25 THEN ISNULL([party_size], 0) ELSE 0 END) / @simulTrips AS transit
+	,SUM(CASE WHEN [mode_id] = 9 THEN ISNULL([party_size], 0) ELSE 0 END) / @simulTrips AS walk
+	,SUM(CASE WHEN [mode_id] = 10 THEN ISNULL([party_size], 0) ELSE 0 END) / @simulTrips AS bike
+	,SUM(CASE WHEN [mode_id] BETWEEN 26 AND 27 THEN ISNULL([party_size], 0) ELSE 0 END) / @simulTrips AS bus_taxi
 FROM
-	[abm].[trip_micro_simul] -- view
+	[abm].[vi_trip_micro_simul] -- view
 INNER JOIN
 	[ref].[time_period]
 ON
-	[trip_micro_simul].[time_period_id] = [time_period].[time_period_id]
+	[vi_trip_micro_simul].[time_period_id] = [time_period].[time_period_id]
 WHERE
-	[scenario_id] = @scenario_id 
+	[vi_trip_micro_simul].[scenario_id] = @scenario_id 
 	AND [mode_id] > 0 -- no airport passing through trips
 	AND [time_resolution_id] = 2 -- abm half hour period
 	AND ([time_period_number] BETWEEN 4 AND 9 -- AM peak period
@@ -3628,24 +3688,29 @@ ELSE
 BEGIN
 /* Get total number of micro-simulated person trips */
 SET @simulTrips = (SELECT 
-						SUM([party_size]) 
+						SUM(ISNULL([party_size], 0)) 
 					FROM 
-						[abm].[trip_micro_simul] 
+						[abm].[vi_trip_micro_simul] 
+					INNER JOIN
+						[ref].[scenario]
+					ON
+						[vi_trip_micro_simul].[scenario_id] = [scenario].[scenario_id]
 					WHERE 
-						[scenario_id] = @scenario_id 
+						[vi_trip_micro_simul].[scenario_id] = @scenario_id 
 						AND [mode_id] > 0) -- no airport passing through trips
+
 SELECT
 	@scenario_id AS [scenario_id]
-	,1.0 * SUM(CASE WHEN [mode_id] BETWEEN 1 AND 2 THEN [party_size] ELSE 0 END) / @simulTrips AS drive_alone
-	,1.0 * SUM(CASE WHEN [mode_id] BETWEEN 3 AND 8 THEN [party_size] ELSE 0 END) / @simulTrips AS sr
-	,1.0 * SUM(CASE WHEN [mode_id] BETWEEN 11 AND 25 THEN [party_size] ELSE 0 END) / @simulTrips AS transit
-	,1.0 * SUM(CASE WHEN [mode_id] = 9 THEN [party_size] ELSE 0 END) / @simulTrips AS walk
-	,1.0 * SUM(CASE WHEN [mode_id] = 10 THEN [party_size] ELSE 0 END) / @simulTrips AS bike
-	,1.0 * SUM(CASE WHEN [mode_id] BETWEEN 26 AND 27 THEN [party_size] ELSE 0 END) / @simulTrips AS bus_taxi
+	,SUM(CASE WHEN [mode_id] BETWEEN 1 AND 2 THEN ISNULL([party_size], 0) ELSE 0 END) / @simulTrips AS drive_alone
+	,SUM(CASE WHEN [mode_id] BETWEEN 3 AND 8 THEN ISNULL([party_size], 0) ELSE 0 END) / @simulTrips AS sr
+	,SUM(CASE WHEN [mode_id] BETWEEN 11 AND 25 THEN ISNULL([party_size], 0) ELSE 0 END) / @simulTrips AS transit
+	,SUM(CASE WHEN [mode_id] = 9 THEN ISNULL([party_size], 0) ELSE 0 END) / @simulTrips AS walk
+	,SUM(CASE WHEN [mode_id] = 10 THEN ISNULL([party_size], 0) ELSE 0 END) / @simulTrips AS bike
+	,SUM(CASE WHEN [mode_id] BETWEEN 26 AND 27 THEN ISNULL([party_size], 0) ELSE 0 END) / @simulTrips AS bus_taxi
 FROM
-	[abm].[trip_micro_simul] -- view
+	[abm].[vi_trip_micro_simul] -- view
 WHERE
-	[scenario_id] = @scenario_id 
+	[vi_trip_micro_simul].[scenario_id] = @scenario_id 
 	AND [mode_id] > 0 -- no airport passing through trips
 END
 GO
@@ -3691,8 +3756,6 @@ WHERE
 	AND [hwy_skims].[scenario_id] = @scenario_id
 	AND [model_type_id] IN (6,9) -- truck and commercial vehicle models
 	-- filter on taz13 freight_distribute_hub, assumes TAZ geography
-	AND ([trip_agg].[orig_geography_zone_id] IN (select [geography_zone_id] FROM [rtp_2015].[taz13_freight_distribute_hub]) OR [trip_agg].[orig_geography_zone_id] BETWEEN 1 AND 12
-		OR [trip_agg].[dest_geography_zone_id] IN (select [geography_zone_id] FROM [rtp_2015].[taz13_freight_distribute_hub]) OR [trip_agg].[dest_geography_zone_id] BETWEEN 1 AND 12)
 	AND ([hwy_skims].[orig_geography_zone_id] IN (select [geography_zone_id] FROM [rtp_2015].[taz13_freight_distribute_hub]) OR [hwy_skims].[orig_geography_zone_id] BETWEEN 1 AND 12
 		OR [hwy_skims].[dest_geography_zone_id] IN (select [geography_zone_id] FROM [rtp_2015].[taz13_freight_distribute_hub]) OR [hwy_skims].[dest_geography_zone_id] BETWEEN 1 AND 12)
 GO
@@ -3818,6 +3881,10 @@ AS
 											Average travel time of micro-simulated trips with origin or destination MGRAs whose centroids are within the tribal lands
 */
 
+-- scenario sample rate
+DECLARE @sample_rate decimal(6,4)
+SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id);
+
 -- assumes micro-simulated trips are mgra series 13 based
 with xref AS (
 	SELECT  
@@ -3829,18 +3896,18 @@ with xref AS (
 )
 SELECT 
 	@scenario_id AS [scenario_id]
-	,SUM([party_size] * [trip_time]) / SUM([party_size]) avg_travel_time
-	,SUM([party_size]) trips
+	,SUM(ISNULL([party_size] * [trip_time], 0)) / SUM(ISNULL([party_size], 0)) AS avg_travel_time
+	,SUM(ISNULL([party_size], 0)) / @sample_rate AS trips
 FROM 
-	[abm].[trip_micro_simul] -- all micro-simulated trips view
+	[abm].[vi_trip_micro_simul] -- all micro-simulated trips view
 INNER JOIN
 	[ref].[geography_zone] AS orig_geography
 ON
-	[trip_micro_simul].[orig_geography_zone_id] = orig_geography.[geography_zone_id]
+	[vi_trip_micro_simul].[orig_geography_zone_id] = orig_geography.[geography_zone_id]
 INNER JOIN
 	[ref].[geography_zone] AS dest_geography
 ON
-	[trip_micro_simul].[dest_geography_zone_id] = dest_geography.[geography_zone_id]
+	[vi_trip_micro_simul].[dest_geography_zone_id] = dest_geography.[geography_zone_id]
 LEFT OUTER JOIN 
 	xref x1 
 ON 
@@ -3850,9 +3917,9 @@ LEFT OUTER JOIN
 ON 
 	dest_geography.[zone] = x2.[mgra]
 WHERE 
-	[scenario_id] = @scenario_id
-	AND orig_geography.[geography_type_id] = 90 -- assumes trip_micro_simul uses mgra13
-	AND dest_geography.[geography_type_id] = 90 -- assumes trip_micro_simul uses mgra13
+	[vi_trip_micro_simul].[scenario_id] = @scenario_id
+	AND orig_geography.[geography_type_id] = 90 -- assumes vi_trip_micro_simul uses mgra13
+	AND dest_geography.[geography_type_id] = 90 -- assumes vi_trip_micro_simul uses mgra13
 	AND (x1.[mgra] > 0 OR x2.[mgra] > 0)
 GO
 
@@ -3879,6 +3946,10 @@ AS
 											Average travel time of micro-simulated trips with origin or destination MGRAs correspond to the POE of external zone 1 to 5
 */
 
+-- scenario sample rate
+DECLARE @sample_rate decimal(6,4)
+SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id)
+
 -- assumes cross border model O-Ds are series 13 mgra
 -- a trip from one poe mgra to another would take the origin poe as the poe of note
 SELECT
@@ -3887,7 +3958,7 @@ SELECT
 					ELSE orig_poe.[poe_desc]
 					END, 'total') AS [poe_desc]
 	,SUM([party_size] * [trip_time]) / SUM([party_size]) AS avg_travel_time
-	,SUM([party_size]) AS trips
+	,SUM([party_size]) / @sample_rate AS trips
 FROM
 	[abm].[trip_cb] -- just cross border model trips
 LEFT OUTER JOIN
@@ -3899,7 +3970,7 @@ LEFT OUTER JOIN
 ON
 	[trip_cb].[dest_geography_zone_id] = dest_poe.[mgra_return_geography_zone_id]
 WHERE
-	[scenario_id] = @scenario_id
+	[trip_cb].[scenario_id] = @scenario_id
 	AND ([trip_cb].[orig_geography_zone_id] IN (SELECT [mgra_entry_geography_zone_id] FROM [ref].[poe])
 		OR [trip_cb].[dest_geography_zone_id] IN (SELECT [mgra_return_geography_zone_id] FROM [ref].[poe]))
 GROUP BY
@@ -3988,6 +4059,10 @@ AS
 											Average travel time of micro-simulated trips with origin or destination MGRAs whose centroids are within the military bases/installations
 */
 
+-- scenario sample rate
+DECLARE @sample_rate decimal(6,4)
+SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id);
+
 with xref AS (
 	SELECT  
 		[mgra]
@@ -4003,18 +4078,18 @@ with xref AS (
 )
 SELECT 
 	@scenario_id AS [scenario_id]
-	,SUM([party_size] * [trip_time]) / SUM([party_size]) AS avg_travel_time
-	,SUM([party_size]) AS trips
+	,SUM(ISNULL([party_size] * [trip_time], 0)) / SUM(ISNULL([party_size], 0)) AS avg_travel_time
+	,SUM(ISNULL([party_size], 0)) / @sample_rate AS trips
 FROM 
-	[abm].[trip_micro_simul] -- view
+	[abm].[vi_trip_micro_simul] -- view
 INNER JOIN
 	[ref].[geography_zone] AS orig_geography
 ON
-	[trip_micro_simul].[orig_geography_zone_id] = orig_geography.[geography_zone_id]
+	[vi_trip_micro_simul].[orig_geography_zone_id] = orig_geography.[geography_zone_id]
 INNER JOIN
 	[ref].[geography_zone] AS dest_geography
 ON
-	[trip_micro_simul].[dest_geography_zone_id] = dest_geography.[geography_zone_id]
+	[vi_trip_micro_simul].[dest_geography_zone_id] = dest_geography.[geography_zone_id]
 LEFT OUTER JOIN 
 	xref x1 
 ON 
@@ -4024,9 +4099,9 @@ LEFT OUTER JOIN
 ON 
 	dest_geography.[zone] = x2.[mgra]
 WHERE 
-	[scenario_id] = @scenario_id
-	AND orig_geography.[geography_type_id] = 90 -- assumes trip_micro_simul uses mgra13
-	AND dest_geography.[geography_type_id] = 90 -- assumes trip_micro_simul uses mgra13
+	[vi_trip_micro_simul].[scenario_id] = @scenario_id
+	AND orig_geography.[geography_type_id] = 90 -- assumes vi_trip_micro_simul uses mgra13
+	AND dest_geography.[geography_type_id] = 90 -- assumes vi_trip_micro_simul uses mgra13
 	AND (x1.[mgra] > 0 OR x2.[mgra] > 0)
 GO
 
@@ -4053,11 +4128,15 @@ AS
 	Description: PM 7d, 
 */
 
+-- scenario sample rate
+DECLARE @sample_rate decimal(6,4)
+SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id);
+
 SELECT 
       @scenario_id AS [scenario_id]
       ,ISNULL([mode_category], 'total') AS [mode_category]
       ,AVG([tour_distance]) as avg_tour_distance 
-      ,COUNT(*) as trips
+      ,COUNT(*) / @sample_rate as trips
 
 FROM (
       SELECT 
@@ -4104,13 +4183,17 @@ AS
 											Same as project evaluation criteria HWY 8 but in minutes instead of hours, change made in final select
 */
 
+-- scenario sample rate
+DECLARE @sample_rate decimal(6,4)
+SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id);
+
 -- Walk/Bike mode
 -- Data exporter was appending wrong skims to walk/bike, java not using input file to find pairs
 -- The original fix threw out pairs not in the walk threshold and used distance from MGRATOMGRA
 -- So this may not match older scenarios
 with walk_bike AS (
 SELECT 
-	SUM([party_size] * [trip_time] / 60) AS walk_bike_time
+	SUM(([party_size] * [trip_time]) / 60) / @sample_rate AS walk_bike_time
 FROM 
 	[abm].[trip_ij] -- individual and joint models only
 WHERE 
@@ -4120,8 +4203,8 @@ WHERE
 --walk to transit access/egress time
 walk_transit AS (
 SELECT
-	SUM([party_size] * CAST(ISNULL(tap1.[time_boarding_actual], 0) AS float)) / 60 +
-	SUM([party_size] * CAST(ISNULL(tap2.[time_alighting_actual], 0) AS float)) / 60 AS walk_transit_time
+	(SUM(ISNULL([party_size] * CAST(tap1.[time_boarding_actual] AS float) / 60, 0)) +
+	SUM(ISNULL([party_size] * CAST(tap2.[time_alighting_actual] AS float) / 60, 0))) / @sample_rate AS walk_transit_time
 FROM 
 	[abm].[trip_ij] -- individual and joint models only
 LEFT OUTER JOIN 
@@ -4143,10 +4226,10 @@ WHERE
 -- knr/pnr egress time 
 kpnr_egress AS (
 SELECT	
-	SUM(CASE	WHEN [inbound] = 1 THEN [party_size] * CAST(ISNULL(tap1.[time_boarding_actual], 0) AS float) / 60
-				WHEN [inbound] = 0 THEN [party_size] * CAST(ISNULL(tap2.[time_alighting_actual], 0) AS float) / 60
+	SUM(CASE	WHEN [inbound] = 1 THEN ISNULL([party_size] * CAST(tap1.[time_boarding_actual] AS float) / 60, 0)
+				WHEN [inbound] = 0 THEN ISNULL([party_size] * CAST(tap2.[time_alighting_actual] AS float) / 60, 0)
 				END
-				) AS kpnr_egress_time
+				) / @sample_rate AS knr_pnr_egress_time
 FROM 
 	[abm].[trip_ij] -- individual and joint models only
 LEFT OUTER JOIN 
@@ -4167,10 +4250,10 @@ WHERE
 	)
 SELECT	
 	@scenario_id AS scenario_id
-	,walk_bike_time * 60 AS walk_bike_time
-	,walk_transit_time * 60 AS walk_transit_time
-	,kpnr_egress_time * 60 AS kpnr_egress_time
-	,(ISNULL(walk_bike_time, 0)+ISNULL(walk_transit_time, 0)+ISNULL(kpnr_egress_time, 0)) * 60 AS total
+	,ISNULL(walk_bike_time, 0) * 60 AS walk_bike_time
+	,ISNULL(walk_transit_time, 0) * 60 AS walk_transit_time
+	,ISNULL(knr_pnr_egress_time, 0) * 60 AS knr_pnr_egress_time
+	,(ISNULL(walk_bike_time, 0) + ISNULL(walk_transit_time, 0) + ISNULL(knr_pnr_egress_time, 0)) * 60 AS total
 FROM 
 	walk_bike, walk_transit, kpnr_egress
 GO
@@ -4203,7 +4286,7 @@ AS
 -- So this may not match older scenarios
 with walk_bike AS (
 SELECT	
-	[trip_ij].[scenario_id]
+	@scenario_id AS scenario_id
 	,[lu_person_id]
 	,SUM([trip_time]) AS walk_bike_time
 FROM 
@@ -4218,27 +4301,25 @@ WHERE
 	AND [tour_ij_person].[scenario_id] = @scenario_id
 	AND [mode_id] BETWEEN 9 AND 10 -- walk, bike modes
 GROUP BY 
-	[trip_ij].[scenario_id]
-	,[lu_person_id]
+	[lu_person_id]
 	),
 	
 --walk to transit access/egress time
 walk_transit AS (
 SELECT	
-	[trip_ij].[scenario_id]
+	@scenario_id AS scenario_id
 	,[lu_person_id]
-	,SUM(CAST(ISNULL(tap1.[time_boarding_actual], 0) AS float) +
-			CAST(ISNULL(tap2.[time_alighting_actual], 0) AS float)) AS walk_transit_time
+	,SUM(ISNULL((CAST(tap1.[time_boarding_actual] AS float) + CAST(tap2.[time_alighting_actual] AS float)), 0)) AS walk_transit_time
 FROM 
 	[abm].[trip_ij] -- individual and joint models only
 LEFT OUTER JOIN 
-	[abm].[transit_tap_walk] tap1 
+	[abm].[transit_tap_walk] AS tap1 
 ON 
 	[trip_ij].[scenario_id] = tap1.[scenario_id]
 	AND [trip_ij].[orig_geography_zone_id] = tap1.[geography_zone_id]
 	AND [trip_ij].[board_transit_tap_id] = tap1.[transit_tap_id]
 LEFT OUTER JOIN 
-	[abm].[transit_tap_walk] tap2
+	[abm].[transit_tap_walk] AS tap2
 ON 
 	[trip_ij].[scenario_id] = tap2.[scenario_id]
 	AND [trip_ij].[dest_geography_zone_id] = tap2.[geography_zone_id] 
@@ -4260,10 +4341,10 @@ GROUP BY
 -- knr/pnr egress time 
 kpnr_egress AS (
 SELECT	
-	[trip_ij].[scenario_id]
+	@scenario_id AS scenario_id
 	,[lu_person_id]
-	,SUM(CASE	WHEN [inbound] = 1 THEN [party_size] * CAST(ISNULL(tap1.[time_boarding_actual], 0) AS float)
-				WHEN [inbound] = 0 THEN [party_size] * CAST(ISNULL(tap2.[time_alighting_actual], 0) AS float)
+	,SUM(CASE	WHEN [inbound] = 1 THEN ISNULL([party_size] * CAST(tap1.[time_boarding_actual] AS float), 0)
+				WHEN [inbound] = 0 THEN ISNULL([party_size] * CAST(tap2.[time_alighting_actual] AS float), 0)
 				END
 				) AS kpnr_egress_time
 FROM 
@@ -4473,19 +4554,23 @@ GROUP BY
 -- and output results
 SELECT
 	total_pop.scenario_id, 
-	pop_of_interest.tot_pop, 
+	ISNULL(pop_of_interest.tot_pop / NULLIF([sample_rate], 0), 0) AS tot_pop, 
 	1.0* pop_of_interest.tot_pop / total_pop.tot_pop as pct_pop, 
-	pop_of_interest.pop_lowInc, 
+	ISNULL(pop_of_interest.pop_lowInc / NULLIF([sample_rate], 0), 0) AS pop_lowInc, 
 	1.0 * pop_of_interest.pop_lowInc / total_pop.pop_lowInc as pct_lowinc, 
 	1.0 * pop_of_interest.pop_nonlowInc / total_pop.pop_nonlowInc as pct_nonlowinc, 
-	pop_of_interest.pop_minority, 
+	ISNULL(pop_of_interest.pop_minority / NULLIF([sample_rate], 0), 0) AS pop_minority, 
 	1.0 * pop_of_interest.pop_minority / total_pop.pop_minority as pct_minor, 
 	1.0 * pop_of_interest.pop_nonminority / total_pop.pop_nonminority as pct_nonminor, 
-	pop_of_interest.pop_senior, 
+	ISNULL(pop_of_interest.pop_senior / NULLIF([sample_rate], 0), 0) AS pop_senior, 
 	1.0 * pop_of_interest.pop_senior / total_pop.pop_senior as pct_senior, 
 	1.0 * pop_of_interest.pop_nonsenior / total_pop.pop_nonsenior as pct_nonsenior 
 FROM 
 	total_pop
+INNER JOIN
+	[ref].[scenario]
+ON
+	total_pop.[scenario_id] = [scenario].[scenario_id]
 INNER JOIN 
 	pop_of_interest 
 ON 
