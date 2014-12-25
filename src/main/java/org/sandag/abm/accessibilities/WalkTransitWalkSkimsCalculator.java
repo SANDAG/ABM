@@ -299,12 +299,12 @@ public class WalkTransitWalkSkimsCalculator
             // store them
             if (storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap] == null)
             {
-                
+            	storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap] = new double[NUM_PREMIUM_SKIMS];
                 double[] results = walkPremiumWalkSkimUECs[departPeriod].solve(iv, dmu, null);
                 if (debug)
                     walkPremiumWalkSkimUECs[departPeriod].logAnswersArray(logger,
                             "Walk Tap-Tap Premium Skims");
-                storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap] = results;
+                System.arraycopy(results, 0, storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap], 0, results.length);
             }
 
             // copy values stored in storedDepartPeriodTapTapSkims to returned array.  
@@ -332,11 +332,13 @@ public class WalkTransitWalkSkimsCalculator
             // them
             if (storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap] == null)
             {
+            	storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap] = new double[NUM_LOCAL_SKIMS];
                 double[] results = walkLocalWalkSkimUECs[departPeriod].solve(iv, dmu, null);
                 if (debug)
                     walkLocalWalkSkimUECs[departPeriod].logAnswersArray(logger,
                             "Walk Tap-Tap Local Skims");
-                storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap] = results;
+                System.arraycopy(results, 0, storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap], 0, results.length);
+
             }
 
    

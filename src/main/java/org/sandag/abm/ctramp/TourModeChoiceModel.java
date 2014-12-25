@@ -28,7 +28,7 @@ public class TourModeChoiceModel
     public static final String       NON_MANDATORY_MODEL_INDICATOR          = "Non-Mandatory";
     public static final String       AT_WORK_SUBTOUR_MODEL_INDICATOR        = ModelStructure.AT_WORK_CATEGORY;
 
-    public static final boolean      DEBUG_BEST_PATHS                       = false;
+    public static final boolean      DEBUG_BEST_PATHS                       = true;
 
     protected static final int       LB                                     = McLogsumsCalculator.LB;
     protected static final int       EB                                     = McLogsumsCalculator.EB;
@@ -389,7 +389,7 @@ public class TourModeChoiceModel
 
         logsumHelper.setTourMcDmuAttributes(mcDmuObject, tour.getTourOrigMgra(),
                 tour.getTourDestMgra(), tour.getTourDepartPeriod(), tour.getTourArrivePeriod(),
-                (mcDmuObject.getDmuIndexValues().getDebug() && DEBUG_BEST_PATHS));
+                (household.getDebugChoiceModels() && DEBUG_BEST_PATHS));
 
         // mode choice UEC references highway skim matrices directly, so set
         // index orig/dest to O/D TAZs.

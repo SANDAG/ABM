@@ -308,11 +308,14 @@ public class DriveTransitWalkSkimsCalculator
             // them
             if (storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap] == null)
             {
+            	storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap] = new double[NUM_PREMIUM_SKIMS];
+
                 double[] results = drivePremiumWalkSkimUECs[departPeriod].solve(iv, dmu, null);
                 if (debug)
                     drivePremiumWalkSkimUECs[departPeriod].logAnswersArray(primaryLogger,
                             "Drive-Premium-Walk Skims");
-               storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap] = results;
+                System.arraycopy(results, 0, storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap], 0, results.length);
+
             }
 
             try
@@ -353,12 +356,13 @@ public class DriveTransitWalkSkimsCalculator
             // them
             if (storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap] == null)
             {
-               
+            	storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap] = new double[NUM_LOCAL_SKIMS];
+
                 double[] results = driveLocalWalkSkimUECs[departPeriod].solve(iv, dmu, null);
                 if (debug)
                     driveLocalWalkSkimUECs[departPeriod].logAnswersArray(primaryLogger,
                             "Drive-Local-Walk Skims");
-                storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap] = results;
+                System.arraycopy(results, 0, storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap], 0, results.length);
               }
 
             // copy values stored in storedDepartPeriodTapTapSkims to returned array.  

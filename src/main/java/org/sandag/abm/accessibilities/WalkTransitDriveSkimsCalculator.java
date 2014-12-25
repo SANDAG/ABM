@@ -298,12 +298,14 @@ public class WalkTransitDriveSkimsCalculator
             // them
             if (storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap] == null)
             {
+            	storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap] = new double[NUM_PREMIUM_SKIMS];
+
                 double[] results = walkPremiumDriveSkimUECs[departPeriod].solve(iv, dmu, null);
                 if (debug)
                     walkPremiumDriveSkimUECs[departPeriod].logAnswersArray(logger,
                             "Walk-Premium-Drive Skims");
-                storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap] = results;
-  
+                System.arraycopy(results, 0, storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap], 0, results.length);
+
             }
 
             // copy values stored in storedDepartPeriodTapTapSkims to returned array.  
@@ -329,11 +331,13 @@ public class WalkTransitDriveSkimsCalculator
             // store them
             if (storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap] == null)
             {
+            	storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap] = new double[NUM_LOCAL_SKIMS];
+
                 double[] results = walkLocalDriveSkimUECs[departPeriod].solve(iv, dmu, null);
                 if (debug)
                     walkLocalDriveSkimUECs[departPeriod].logAnswersArray(logger,
                             "Walk-Local-Drive Skims");
-                storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap] = results;
+                System.arraycopy(results, 0, storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap], 0, results.length);
             }
             // copy values stored in storedDepartPeriodTapTapSkims to returned array.  Don't need to copy acc/egr time/dist values; they'll always get replaced in the returned array.
             System.arraycopy(storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap], 0, skimResultsLocal, 0, 
