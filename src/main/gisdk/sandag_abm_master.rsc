@@ -2,7 +2,7 @@ Macro "Run SANDAG ABM"
   
    RunMacro("TCB Init")
 
-   shared path, inputDir, outputDir, inputTruckDir, mxzone, mxtap, mxext,mxlink,mxrte
+   shared path, inputDir, outputDir, inputTruckDir, mxzone, mxtap, mxext,mxlink,mxrte,scenarioYear
  
    sample_rate = { 0.2, 0.5, 1.0 }
    max_iterations=sample_rate.length    //number of feedback loops
@@ -26,7 +26,8 @@ Macro "Run SANDAG ABM"
    RunMacro("parameters")
 
    // read properties from sandag_abm.properties in /conf folder
-   properties = "\\conf\\sandag_abm.properties"   
+   properties = "\\conf\\sandag_abm.properties"  
+   scenarioYear = RunMacro("read properties",properties,"scenarioYear", "S")
    skipCopyWarmupTripTables = RunMacro("read properties",properties,"RunModel.skipCopyWarmupTripTables", "S")
    skipCopyBikeLogsum = RunMacro("read properties",properties,"RunModel.skipCopyBikeLogsum", "S")
    skipCopyWalkImpedance= RunMacro("read properties",properties,"RunModel.skipCopyWalkImpedance", "S")
@@ -39,6 +40,7 @@ Macro "Run SANDAG ABM"
    skipHighwaySkimming = RunMacro("read properties array",properties,"RunModel.skipHighwaySkimming", "S")
    skipTransitSkimming = RunMacro("read properties array",properties,"RunModel.skipTransitSkimming", "S")
    skipCoreABM = RunMacro("read properties array",properties,"RunModel.skipCoreABM", "S")
+   skipOtherSimulateModel = RunMacro("read properties array",properties,"RunModel.skipOtherSimulateModel", "S")
    skipCTM = RunMacro("read properties array",properties,"RunModel.skipCTM", "S")
    skipEI = RunMacro("read properties array",properties,"RunModel.skipEI", "S")
    skipTruck = RunMacro("read properties array",properties,"RunModel.skipTruck", "S")
@@ -101,10 +103,6 @@ Macro "Run SANDAG ABM"
 	   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - run create all transit"})
 	   ok = RunMacro("TCB Run Macro", 1, "Create all transit",{}) 
 	   if !ok then goto quit
-
-	   // Factor headways
-	   ok = RunMacro("TCB Run Macro", 1, "update headways",{})
-	   if !ok then goto quit
    end
 
    //Looping
@@ -147,7 +145,7 @@ Macro "Run SANDAG ABM"
       end
 
       // First move some trip matrices so model will crash if ctramp model doesn't produced csv/mtx files for assignment
-      if (iteration > 1) then do
+      if (iteration > startFromIteration) then do
          fromDir = outputDir
          toDir = outputDir+"\\iter"+String(iteration-1)
          //check for directory of output
@@ -168,13 +166,22 @@ Macro "Run SANDAG ABM"
         
       end
 
-      // Run CT-RAMP, airport model, visitor model, cross-border model, internal-external model
+      // Run CT-RAMP model
       if skipCoreABM[iteration] = "false" then do
-	      runString = path+"\\bin\\runSandagAbm.cmd "+drive+" "+path_forward_slash +" "+r2s(sample_rate[iteration])+" "+i2s(iteration)
-	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run CT-RAMP, airport model, visitor model, cross-border model, internal-external model"+" "+runString})
+	      runString = path+"\\bin\\runSandagAbm_SDRM.cmd "+drive+" "+path_forward_slash +" "+r2s(sample_rate[iteration])+" "+i2s(iteration)
+	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run CT-RAMP"+" "+runString})
 	      ok = RunMacro("TCB Run Command", 1, "Run CT-RAMP", runString)
 	      if !ok then goto quit  
       end
+ 
+      // Run airport model, visitor model, cross-border model, internal-external model
+      if skipOtherSimulateModel[iteration] = "false" then do
+	      runString = path+"\\bin\\runSandagAbm_SMM.cmd "+drive+" "+path_forward_slash +" "+r2s(sample_rate[iteration])+" "+i2s(iteration)
+	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run airport model, visitor model, cross-border model"+" "+runString})
+	      ok = RunMacro("TCB Run Command", 1, "Run CT-RAMP", runString)
+	      if !ok then goto quit  
+      end
+
  
       if skipCTM[iteration] = "false" then do
 	     //Commercial vehicle trip generation
@@ -236,7 +243,7 @@ Macro "Run SANDAG ABM"
 	 
 	   //Run final and only transit assignment
 	   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Assign Transit"})
-	   ok = RunMacro("TCB Run Macro", 1, "Assign Transit",{}) 
+	   ok = RunMacro("TCB Run Macro", 1, "Assign Transit",{4}) 
 	   if !ok then goto quit
    end
 
@@ -275,7 +282,7 @@ Macro "Run SANDAG ABM"
 
    //request data load after model run finish successfully	
    if skipDataLoadRequest = "false" then do	
-	   runString = path+"\\bin\\DataLoadRequest.bat "+drive+path_no_drive+" "+String(max_iterations)
+	   runString = path+"\\bin\\DataLoadRequest.bat "+drive+path_no_drive+" "+String(max_iterations)+" "+String(sample_rate[max_iterations])
 	   ok = RunMacro("TCB Run Command", 1, "Data load request", runString)
 	   if !ok then goto quit 
    end

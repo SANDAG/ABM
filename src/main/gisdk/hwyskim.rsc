@@ -619,7 +619,7 @@ Macro "hwy skim" (arr)
          Opts.Global.Factor = 0.5
          Opts.Global.Neighbors = 3
          Opts.Global.Operation = 1
-
+         Opts.Global.[Treat Missing] = 2
          Opts.Input.[Matrix Currency] = {outputDir + "\\"+skimmat,mtxcore[j], , }
          RunMacro("HwycadLog",{"hwyskim.rsc: hwy skim","Intrazonal: "+skimmat+"; "+mtxcore[j]})
          ok = RunMacro("TCB Run Procedure", j, "Intrazonal", Opts)

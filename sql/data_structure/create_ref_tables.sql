@@ -7,8 +7,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[activity_pattern] (
-		[activity_pattern_id] tinyint,
-		[activity_pattern_desc] varchar(15),
+		[activity_pattern_id] tinyint NOT NULL,
+		[activity_pattern_desc] varchar(15) NOT NULL,
 		CONSTRAINT pk_actpattern PRIMARY KEY ([activity_pattern_id])
 	) 
 ON 
@@ -32,8 +32,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[ap_arrival_mode] (
-		[ap_arrival_mode_id] tinyint,
-		[ap_arrival_mode_desc] varchar(40),
+		[ap_arrival_mode_id] tinyint NOT NULL,
+		[ap_arrival_mode_desc] varchar(40) NOT NULL,
 		CONSTRAINT pk_aparrivalmode PRIMARY KEY ([ap_arrival_mode_id])
 	) 
 ON 
@@ -64,8 +64,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[ap_income_cat] (
-		[ap_income_cat_id] tinyint,
-		[ap_income_cat_desc] varchar(10),
+		[ap_income_cat_id] tinyint NOT NULL,
+		[ap_income_cat_desc] varchar(10) NOT NULL,
 		CONSTRAINT pk_apincomecat PRIMARY KEY ([ap_income_cat_id])
 	) 
 ON 
@@ -94,8 +94,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[at_func_class] (
-		[at_func_class_id] smallint,
-		[at_func_class_desc] varchar(100),
+		[at_func_class_id] smallint NOT NULL,
+		[at_func_class_desc] varchar(100) NOT NULL,
 		CONSTRAINT pk_atfuncclass PRIMARY KEY ([at_func_class_id])
 	) 
 ON 
@@ -127,8 +127,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[bike_class] (
-		[bike_class_id] tinyint,
-		[bike_class_desc] varchar(100),
+		[bike_class_id] tinyint NOT NULL,
+		[bike_class_desc] varchar(100) NOT NULL,
 		CONSTRAINT pk_bikeclass PRIMARY KEY ([bike_class_id])
 	) 
 ON 
@@ -155,8 +155,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[educ] (
-		[educ_id] tinyint,
-		[educ_desc] varchar(100),
+		[educ_id] tinyint NOT NULL,
+		[educ_desc] varchar(100) NOT NULL,
 		CONSTRAINT pk_educ PRIMARY KEY ([educ_id])
 	) 
 ON 
@@ -194,8 +194,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[fp_choice] (
-		[fp_choice_id] tinyint,
-		[fp_choice_desc] varchar(10),
+		[fp_choice_id] tinyint NOT NULL,
+		[fp_choice_desc] varchar(10) NOT NULL,
 		CONSTRAINT pk_fpchoice PRIMARY KEY ([fp_choice_id])
 	) 
 ON 
@@ -219,8 +219,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[geography_type] (
-		[geography_type_id] tinyint,
-		[geography_type_desc] varchar(50),
+		[geography_type_id] tinyint NOT NULL,
+		[geography_type_desc] varchar(50) NOT NULL,
 		CONSTRAINT pk_geographytype PRIMARY KEY ([geography_type_id])
 	) 
 ON 
@@ -230,9 +230,9 @@ WITH
 	
 INSERT INTO 
 	[ref].[geography_type]
-VALUES	
-	(90,'MGRA Series 13'),
-	(34,'TAZ Series 13');
+VALUES
+	(34,'TAZ Series 13'),	
+	(90,'MGRA Series 13');
 			
 END
 
@@ -243,10 +243,13 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[geography_zone] (
-		[geography_type_id] tinyint,
-		[zone] smallint,
-		[shape] geometry,
-		CONSTRAINT pk_geo PRIMARY KEY ([geography_type_id],[zone]),
+		[geography_zone_id] int IDENTITY(1,1) NOT NULL,
+		[geography_type_id] tinyint NOT NULL,
+		[zone] smallint NOT NULL,
+		[shape] geometry NOT NULL,
+		[centroid] geometry NOT NULL,
+		CONSTRAINT pk_geo PRIMARY KEY ([geography_zone_id]),
+		CONSTRAINT ixuq_geo UNIQUE ([geography_type_id],[zone]) WITH (DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_geo_geotype FOREIGN KEY ([geography_type_id]) REFERENCES [ref].[geography_type]([geography_type_id])
 	) 
 ON 
@@ -259,6 +262,7 @@ SELECT
 	90
 	,[MGRA]
 	,[Shape]
+	,[Shape].STCentroid()
 FROM 
 	OPENQUERY([pila\sdgintdb],'SELECT [MGRA], [Shape] FROM [lis].[gis].[MGRA13]')
 INSERT INTO	[ref].[geography_zone]
@@ -266,6 +270,7 @@ SELECT
 	34
 	,[TAZ]
 	,[Shape]
+	,[Shape].STCentroid()
 FROM 
 	OPENQUERY([pila\sdgintdb],'SELECT [TAZ], [Shape] FROM [lis].[gis].[TAZ13]')
 			
@@ -278,8 +283,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[grade] (
-		[grade_id] tinyint,
-		[grade_desc] varchar(50),
+		[grade_id] tinyint NOT NULL,
+		[grade_desc] varchar(50) NOT NULL,
 		CONSTRAINT pk_grade PRIMARY KEY ([grade_id])
 	) 
 ON 
@@ -308,8 +313,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[hisp] (
-		[hisp_id] tinyint,
-		[hisp_desc] varchar(35),
+		[hisp_id] tinyint NOT NULL,
+		[hisp_desc] varchar(35) NOT NULL,
 		CONSTRAINT pk_hisp PRIMARY KEY ([hisp_id])
 	) 
 ON 
@@ -354,8 +359,8 @@ IF OBJECT_ID('ref.hh_income_cat','U') IS NULL
 BEGIN
 CREATE TABLE 
 	[ref].[hh_income_cat] (
-		[hh_income_cat_id] tinyint,
-		[hh_income_cat_desc] varchar(10),
+		[hh_income_cat_id] tinyint NOT NULL,
+		[hh_income_cat_desc] varchar(10) NOT NULL,
 		CONSTRAINT pk_hhincomecat PRIMARY KEY ([hh_income_cat_id])
 	) 
 ON 
@@ -381,8 +386,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[loc_choice] (
-		[loc_choice_id] tinyint,
-		[loc_choice_desc] varchar(50),
+		[loc_choice_id] tinyint NOT NULL,
+		[loc_choice_desc] varchar(50) NOT NULL,
 		CONSTRAINT pk_lc PRIMARY KEY ([loc_choice_id])
 	) 
 ON 
@@ -405,10 +410,12 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[loc_choice_segment] (
-		[loc_choice_id] tinyint,
-		[loc_choice_segment_id] tinyint,
-		[loc_choice_segment_desc] varchar(55),
-		CONSTRAINT pk_lcsegment PRIMARY KEY ([loc_choice_id],[loc_choice_segment_id]),
+		[loc_choice_segment_id] int IDENTITY(1,1) NOT NULL,
+		[loc_choice_id] tinyint NOT NULL,
+		[loc_choice_segment_number] tinyint NOT NULL,
+		[loc_choice_segment_desc] varchar(55) NOT NULL,
+		CONSTRAINT pk_lcsegment PRIMARY KEY ([loc_choice_segment_id]),
+		CONSTRAINT ixuq_lcsegment UNIQUE ([loc_choice_id],[loc_choice_segment_number]) WITH (DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_lcsegment_lc FOREIGN KEY ([loc_choice_id]) REFERENCES [ref].[loc_choice] ([loc_choice_id]) 
 	) 
 ON 
@@ -494,8 +501,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[military] (
-		[military_id] tinyint,
-		[military_desc] varchar(50),
+		[military_id] tinyint NOT NULL,
+		[military_desc] varchar(50) NOT NULL,
 		CONSTRAINT pk_military PRIMARY KEY ([military_id])
 	) 
 ON 
@@ -515,14 +522,52 @@ VALUES
 END
 
 
+
+/* Create MGRA-TAZ xref table */
+IF OBJECT_ID('ref.mgra13_xref_taz13','U') IS NULL
+BEGIN
+
+CREATE TABLE [ref].[mgra13_xref_taz13](
+	[mgra_geography_zone_id] int NOT NULL,
+	[taz_geography_zone_id] int NOT NULL,
+	CONSTRAINT pk_mgra13xreftaz13 PRIMARY KEY ([mgra_geography_zone_id]),
+	CONSTRAINT fk_mgra13xreftaz13_mgra FOREIGN KEY ([mgra_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
+	CONSTRAINT fk_mgra13xreftaz13_taz FOREIGN KEY ([taz_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id])
+	) 
+ON 
+	[ref_fg]
+WITH
+	(DATA_COMPRESSION = PAGE);
+
+INSERT INTO	
+	[ref].[mgra13_xref_taz13]
+SELECT
+	mgra_zone.[geography_zone_id]
+	,taz_zone.[geography_zone_id]
+FROM 
+	OPENQUERY([pila\sdgintdb],'SELECT [mgra], [taz13] FROM [data_cafe].[dbo].[xref_mgra_sr13]') AS xref
+INNER JOIN
+	[ref].[geography_zone] AS mgra_zone
+ON
+	mgra_zone.[geography_type_id] = 90
+	AND xref.[mgra] = mgra_zone.[zone]
+INNER JOIN
+	[ref].[geography_zone] AS taz_zone
+ON
+	taz_zone.[geography_type_id] = 34
+	AND xref.[taz13] = taz_zone.[zone]
+	
+END
+
+
 -- Create mode table
 IF OBJECT_ID('ref.mode','U') IS NULL
 BEGIN
 
 CREATE TABLE 
 	[ref].[mode] (
-		[mode_id] tinyint,
-		[mode_desc] varchar(40),
+		[mode_id] tinyint NOT NULL,
+		[mode_desc] varchar(40) NOT NULL,
 		CONSTRAINT pk_mode PRIMARY KEY ([mode_id])
 	) 
 ON 
@@ -581,8 +626,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[model_type] (
-		[model_type_id] tinyint,
-		[model_type_desc] varchar(25),
+		[model_type_id] tinyint NOT NULL,
+		[model_type_desc] varchar(25) NOT NULL,
 		CONSTRAINT pk_modeltype PRIMARY KEY ([model_type_id])
 	) 
 ON 
@@ -612,28 +657,69 @@ IF OBJECT_ID('ref.poe','U') IS NULL
 BEGIN
 
 CREATE TABLE 
+	#tt (
+		[poe_id] tinyint NOT NULL,
+		[poe_desc] varchar(20) NOT NULL,
+		[mgra_13_entry] smallint NOT NULL,
+		[mgra_13_return] smallint NOT NULL,
+		[taz_13] smallint NOT NULL
+	)
+
+INSERT INTO 
+	#tt
+VALUES
+	(0,'San Ysidro',7090,7090,1),
+	(1,'Otay Mesa',7066,7066,2),
+	(2,'Tecate',21895,21895,4),
+	(3,'Otay Mesa East',7123,7123,3),
+	(4,'Jacumba',22094,22094,5)
+
+CREATE TABLE 
 	[ref].[poe] (
-		[poe_id] tinyint,
-		[poe_desc] varchar(20),
-		[mgra_13_entry] smallint,
-		[mgra_13_return] smallint,
-		[taz_13] smallint,
-		CONSTRAINT pk_poe PRIMARY KEY ([poe_id])
+		[poe_id] tinyint NOT NULL,
+		[poe_desc] varchar(20) NOT NULL,
+		[mgra_entry_geography_zone_id] int NOT NULL,
+		[mgra_return_geography_zone_id] int NOT NULL,
+		[taz_geography_zone_id] int NOT NULL,
+		CONSTRAINT pk_poe PRIMARY KEY ([poe_id]),
+		CONSTRAINT fk_poe_mgraentry FOREIGN KEY ([mgra_entry_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
+		CONSTRAINT fk_poe_mgrareturn FOREIGN KEY ([mgra_return_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
+		CONSTRAINT fk_poe_taz FOREIGN KEY ([taz_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id])
 	) 
 ON 
 	[ref_fg]
 WITH 
 	(DATA_COMPRESSION = PAGE);
 
-INSERT INTO 
+INSERT INTO
 	[ref].[poe]
-VALUES	
-	(0,'San Ysidro',7090,7090,1),
-	(1,'Otay Mesa',7066,7066,2),
-	(2,'Tecate',21895,21895,4),
-	(3,'Otay Mesa East',7123,7123,3),
-	(4,'Jacumba',22094,22094,5);
+SELECT
+	[poe_id]
+	,[poe_desc]
+	,mgra_entry.[geography_zone_id]
+	,mgra_return.[geography_zone_id]
+	,taz.[geography_zone_id]
+FROM
+	#tt
+INNER JOIN
+	[ref].[geography_zone] AS mgra_entry
+ON
+	mgra_entry.[geography_type_id] = 90
+	AND #tt.[mgra_13_entry] = mgra_entry.[zone]
+INNER JOIN
+	[ref].[geography_zone] AS mgra_return
+ON
+	mgra_return.[geography_type_id] = 90
+	AND #tt.[mgra_13_return] = mgra_return.[zone]
+INNER JOIN
+	[ref].[geography_zone] AS taz
+ON
+	taz.[geography_type_id] = 34
+	AND #tt.[taz_13] = taz.[zone]
 
+DROP TABLE 
+	#tt
+	
 END
 
 
@@ -643,8 +729,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[pemploy] (
-		[pemploy_id] tinyint,
-		[pemploy_desc] varchar(35),
+		[pemploy_id] tinyint NOT NULL,
+		[pemploy_desc] varchar(35) NOT NULL,
 		CONSTRAINT pk_pemploy PRIMARY KEY ([pemploy_id])
 	) 
 ON 
@@ -669,11 +755,11 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[ptype] (
-		[ptype_id] tinyint,
-		[ptype_desc] varchar(25),
-		[age_range] varchar(10),
-		[work_status] varchar(20),
-		[school_status] varchar(20),
+		[ptype_id] tinyint NOT NULL,
+		[ptype_desc] varchar(25) NOT NULL,
+		[age_range] varchar(10) NOT NULL,
+		[work_status] varchar(20) NOT NULL,
+		[school_status] varchar(20) NOT NULL,
 		CONSTRAINT pk_ptype PRIMARY KEY ([ptype_id])
 	) 
 ON 
@@ -702,8 +788,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[pstudent] (
-		[pstudent_id] tinyint,
-		[pstudent_desc] varchar(40),
+		[pstudent_id] tinyint NOT NULL,
+		[pstudent_desc] varchar(40) NOT NULL,
 		CONSTRAINT pk_pstudent PRIMARY KEY ([pstudent_id])
 	) 
 ON 
@@ -727,10 +813,12 @@ BEGIN
 
 CREATE TABLE
 	[ref].[purpose] (
-		[model_type_id] tinyint,
-		[purpose_id] tinyint,
-		[purpose_desc] varchar(20),
-		CONSTRAINT pk_purpose PRIMARY KEY ([model_type_id],[purpose_id]),
+		[purpose_id] int IDENTITY(1,1) NOT NULL,
+		[model_type_id] tinyint NOT NULL,
+		[purpose_number] tinyint NOT NULL,
+		[purpose_desc] varchar(20) NOT NULL,
+		CONSTRAINT pk_purpose PRIMARY KEY ([purpose_id]),
+		CONSTRAINT ixuq_purpose UNIQUE ([model_type_id],[purpose_number]) WITH (DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_purpose_model FOREIGN KEY ([model_type_id]) REFERENCES [ref].[model_type] ([model_type_id])
 	) 
 ON 
@@ -793,8 +881,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[race] (
-		[race_id] tinyint,
-		[race_desc] varchar(150),
+		[race_id] tinyint NOT NULL,
+		[race_desc] varchar(150) NOT NULL,
 		CONSTRAINT pk_race PRIMARY KEY ([race_id])
 	) 
 ON 
@@ -824,13 +912,15 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[scenario] (
-		[scenario_id] smallint,
-		[scenario_year] smallint,
-		[scenario_desc] varchar(50),
-		[path] varchar(200),
-		[user_name] varchar(100),
+		[scenario_id] smallint NOT NULL,
+		[scenario_year] smallint NOT NULL,
+		[scenario_desc] varchar(50) NOT NULL,
+		[path] varchar(200) NOT NULL,
+		[iteration] tinyint NOT NULL,
+		[sample_rate] decimal(6,4) NOT NULL,
+		[user_name] varchar(100) NOT NULL,
 		[date_loaded] smalldatetime,
-		[complete] tinyint,
+		[complete] bit,
 		CONSTRAINT pk_scenario PRIMARY KEY ([scenario_id])
 	) 
 ON 
@@ -847,8 +937,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[sex] (
-		[sex_id] tinyint,
-		[sex_desc] varchar(10),
+		[sex_id] tinyint NOT NULL,
+		[sex_desc] varchar(10) NOT NULL,
 		CONSTRAINT pk_sex PRIMARY KEY ([sex_id])
 	)
 ON 
@@ -871,8 +961,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[skim] (
-		[skim_id] tinyint,
-		[skim_desc] varchar(20),
+		[skim_id] tinyint NOT NULL,
+		[skim_desc] varchar(20) NOT NULL,
 		CONSTRAINT pk_skim PRIMARY KEY ([skim_id])
 	)
 ON 
@@ -898,8 +988,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[time_resolution] (
-		[time_resolution_id] tinyint,
-		[time_resolution_desc] varchar(50)
+		[time_resolution_id] tinyint NOT NULL,
+		[time_resolution_desc] varchar(50) NOT NULL,
 		CONSTRAINT pk_timeresolution PRIMARY KEY ([time_resolution_id])
 	) 
 ON 
@@ -923,11 +1013,13 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[time_period] (
-		[time_resolution_id] tinyint,
-		[time_period_id] tinyint,
+		[time_period_id] int IDENTITY(1,1) NOT NULL,
+		[time_resolution_id] tinyint NOT NULL,
+		[time_period_number] tinyint NOT NULL,
 		[time_period_start] time(0),
 		[time_period_end] time(0)
-		CONSTRAINT pk_timeperiod PRIMARY KEY ([time_resolution_id],[time_period_id]),
+		CONSTRAINT pk_timeperiod PRIMARY KEY ([time_period_id]),
+		CONSTRAINT ixuq_timeperiod UNIQUE ([time_resolution_id],[time_period_number]) WITH (DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_timeperiod_res FOREIGN KEY ([time_resolution_id]) REFERENCES [ref].[time_resolution] ([time_resolution_id])
 	) 
 ON 
@@ -995,8 +1087,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[tour_cat] (
-		[tour_cat_id] tinyint,
-		[tour_cat_desc] varchar(35),
+		[tour_cat_id] tinyint NOT NULL,
+		[tour_cat_desc] varchar(35) NOT NULL,
 		CONSTRAINT pk_tourcat PRIMARY KEY ([tour_cat_id])
 	) 
 ON 
@@ -1022,8 +1114,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[transit_access_mode] (
-		[transit_access_mode_id] tinyint,
-		[transit_access_mode_desc] varchar(25),
+		[transit_access_mode_id] tinyint NOT NULL,
+		[transit_access_mode_desc] varchar(25) NOT NULL,
 		CONSTRAINT pk_transitaccessmode PRIMARY KEY ([transit_access_mode_id])
 	)
 ON 
@@ -1047,8 +1139,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[transit_mode] (
-		[transit_mode_id] tinyint,
-		[transit_mode_desc] varchar(25),
+		[transit_mode_id] tinyint NOT NULL,
+		[transit_mode_desc] varchar(25) NOT NULL,
 		CONSTRAINT pk_transitmode PRIMARY KEY ([transit_mode_id])
 	) 
 ON 
@@ -1076,8 +1168,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[unit_type] (
-		[unit_type_id] tinyint,
-		[unit_type_desc] varchar(40),
+		[unit_type_id] tinyint NOT NULL,
+		[unit_type_desc] varchar(40) NOT NULL,
 		CONSTRAINT pk_unittype PRIMARY KEY ([unit_type_id])
 	) 
 ON 
@@ -1089,8 +1181,8 @@ INSERT INTO
 	[ref].[unit_type]
 VALUES	
 	(0,'Household'),
-	(1,'Institutional Group Quarters'),
-	(2,'Non-Institutional Group Quarters');	
+	(1,'Non-Institutional Group Quarterss'),
+	(2,'Institutional Group Quarters');	
 
 END	
 
@@ -1101,8 +1193,8 @@ BEGIN
 
 CREATE TABLE 
 	[ref].[weeks_worked] (
-		[weeks_worked_id] tinyint,
-		[weeks_worked_desc] varchar(100),
+		[weeks_worked_id] tinyint NOT NULL,
+		[weeks_worked_desc] varchar(100) NOT NULL,
 		CONSTRAINT pk_weeks PRIMARY KEY ([weeks_worked_id])
 	) 
 ON 
@@ -1122,7 +1214,6 @@ VALUES
 	(6,'13 weeks or less');
 
 END
-	
 		
 		
 

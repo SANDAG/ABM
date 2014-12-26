@@ -1,1 +1,1 @@
-C:\Python27\ArcGIS10.1\python.exe %1 %2
+python %1 %2
