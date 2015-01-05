@@ -4387,28 +4387,30 @@ GROUP BY
 
 SELECT	
 	@scenario_id AS [scenario_id]
+	,sum(ISNULL(walk_bike_time, 0) + ISNULL(walk_transit_time, 0) + ISNULL(kpnr_egress_time, 0)) AS at_time
 	,1.0* SUM(CASE	WHEN ISNULL(walk_bike_time, 0) + ISNULL(walk_transit_time, 0) + ISNULL(kpnr_egress_time, 0) > 20 THEN 1
 					ELSE 0
 					END) / COUNT(*) AS pct_pop
+	,COUNT(*) AS pop_at			
 FROM 
-	[abm].[tour_ij_person]
+	[abm].[lu_person]
 LEFT OUTER JOIN 
 	walk_bike
 ON 
-	[tour_ij_person].[scenario_id] = walk_bike.[scenario_id]
-	AND [tour_ij_person].[lu_person_id] = walk_bike.[lu_person_id]
+	[lu_person].[scenario_id] = walk_bike.[scenario_id]
+	AND [lu_person].[lu_person_id] = walk_bike.[lu_person_id]
 LEFT OUTER JOIN 
 	walk_transit
 ON 
-	[tour_ij_person].[scenario_id] = walk_transit.[scenario_id]
-	AND [tour_ij_person].[lu_person_id] = walk_transit.[lu_person_id]
+	[lu_person].[scenario_id] = walk_transit.[scenario_id]
+	AND [lu_person].[lu_person_id] = walk_transit.[lu_person_id]
 LEFT OUTER JOIN 
 	kpnr_egress
 ON 
-	[tour_ij_person].[scenario_id] = kpnr_egress.[scenario_id]
-	AND [tour_ij_person].[lu_person_id] = kpnr_egress.[lu_person_id]
+	[lu_person].[scenario_id] = kpnr_egress.[scenario_id]
+	AND [lu_person].[lu_person_id] = kpnr_egress.[lu_person_id]
 WHERE 
-	[tour_ij_person].[scenario_id] = @scenario_id
+	[lu_person].[scenario_id] = @scenario_id
 GO
 
 -- Add metadata for [rtp_2015].[sp_pm_7f]
