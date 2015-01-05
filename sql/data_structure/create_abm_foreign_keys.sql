@@ -254,14 +254,14 @@ CREATE NONCLUSTERED INDEX
 ON
 	[abm].[transit_stop] ([scenario_id],[transit_route_id])
 WITH
-	(DATA_COMPRESSION = PAGE);
+	(STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE);
 
 CREATE NONCLUSTERED INDEX
 	ix_transitstop_link
 ON
 	[abm].[transit_stop] ([scenario_id],[transit_link_id])
 WITH
-	(DATA_COMPRESSION = PAGE);
+	(STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE);
 		
 	
 -- TRANSIT_TAP_SKIMS
@@ -324,14 +324,14 @@ CREATE NONCLUSTERED INDEX
 ON
 	[abm].[trip_ap] ([scenario_id],[board_transit_tap_id])
 WITH
-	(DATA_COMPRESSION = PAGE);
+	(STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE);
 
 CREATE NONCLUSTERED INDEX
 	ix_tripap_alighttap
 ON
 	[abm].[trip_ap] ([scenario_id],[alight_transit_tap_id])
 WITH
-	(DATA_COMPRESSION = PAGE);
+	(STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE);
 	
 	
 -- TRIP_CB
@@ -370,14 +370,14 @@ CREATE NONCLUSTERED INDEX
 ON
 	[abm].[trip_cb] ([scenario_id],[board_transit_tap_id])
 WITH
-	(DATA_COMPRESSION = PAGE);
+	(STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE);
 
 CREATE NONCLUSTERED INDEX
 	ix_tripcb_alighttap
 ON
 	[abm].[trip_cb] ([scenario_id],[alight_transit_tap_id])
 WITH
-	(DATA_COMPRESSION = PAGE);
+	(STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE);
 
 
 -- TRIP_IE
@@ -406,14 +406,14 @@ CREATE NONCLUSTERED INDEX
 ON
 	[abm].[trip_ie] ([scenario_id],[board_transit_tap_id])
 WITH
-	(DATA_COMPRESSION = PAGE);
+	(STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE);
 
 CREATE NONCLUSTERED INDEX
 	ix_tripie_alighttap
 ON
 	[abm].[trip_ie] ([scenario_id],[alight_transit_tap_id])
 WITH
-	(DATA_COMPRESSION = PAGE);
+	(STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE);
 	
 
 -- TRIP_IJ
@@ -452,14 +452,14 @@ CREATE NONCLUSTERED INDEX
 ON
 	[abm].[trip_ij] ([scenario_id],[board_transit_tap_id])
 WITH
-	(DATA_COMPRESSION = PAGE);
+	(STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE);
 
 CREATE NONCLUSTERED INDEX
 	ix_tripij_alighttap
 ON
 	[abm].[trip_ij] ([scenario_id],[alight_transit_tap_id])
 WITH
-	(DATA_COMPRESSION = PAGE);
+	(STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE);
 	
 	
 -- TRIP_VIS
@@ -498,11 +498,11 @@ CREATE NONCLUSTERED INDEX
 ON
 	[abm].[trip_vis] ([scenario_id],[board_transit_tap_id])
 WITH
-	(DATA_COMPRESSION = PAGE);
+	(STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE);
 
 CREATE NONCLUSTERED INDEX
 	ix_tripvis_alighttap
 ON
 	[abm].[trip_vis] ([scenario_id],[alight_transit_tap_id])
 WITH
-	(DATA_COMPRESSION = PAGE);
+	(STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE);
