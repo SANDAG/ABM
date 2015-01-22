@@ -690,11 +690,6 @@ public class HouseholdChoiceModels
 
     }
 
-    public void resetLocationChoiceCurrentOrigMgra() {
-    	nmlcModel.resetCurrentOrigMgra();
-    	awlcModel.resetCurrentOrigMgra();
-    }
-
     private void checkRestartModel(Household hhObject)
     {
 

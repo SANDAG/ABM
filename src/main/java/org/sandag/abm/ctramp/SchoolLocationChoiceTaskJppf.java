@@ -128,8 +128,6 @@ public class SchoolLocationChoiceTaskJppf
 
             boolean runDebugHouseholdsOnly = Util.getBooleanValueFromPropertyMap(propertyMap,
                     HouseholdDataManager.DEBUG_HHS_ONLY_KEY);
-            
-            dcModel.resetCurrentOrigMgra();
 
             for (i = 0; i < householdArray.length; i++)
             {
