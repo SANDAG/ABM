@@ -181,10 +181,6 @@ public class MandatoryDestChoiceModel
 
     }
 
-    public void resetCurrentOrigMgra() {
-    	dcSoaModel.resetCurrentOrigMgra();
-    }
-    
     public void applyWorkLocationChoice(Household hh)
     {
 

@@ -318,11 +318,6 @@ public class SubtourDestChoiceModel
 
     }
 
-    public void resetCurrentOrigMgra() {
-    	dcSoaModel.resetCurrentOrigMgra();
-    }
-
-    
     public void applyModel(Household hh)
     {
 

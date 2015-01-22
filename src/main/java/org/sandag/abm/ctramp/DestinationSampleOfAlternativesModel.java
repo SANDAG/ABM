@@ -185,16 +185,6 @@ public class DestinationSampleOfAlternativesModel
     {
         return numberOfSoaChoiceAlternatives;
     }
-    
-    /**
-     * This method gets called by each task before any household is processed so that probabilities 
-     * will always be recomputed for the first household.
-     */
-    public void resetCurrentOrigMgra() {
-    	currentWorkMgra = -1;
-    	currentOrigMgra = -1;
-    }
-
 
     public void computeDestinationSampleOfAlternatives(DcSoaDMU dcSoaDmuObject, Tour tour,
             Person person, String segmentName, int segmentIndex, int origMgra)
@@ -208,17 +198,6 @@ public class DestinationSampleOfAlternativesModel
         int[] altListFreq;
         HashMap<Integer, Integer> altFreqMap = new HashMap<Integer, Integer>();
 
-        // if the origMgra of the current tour is different than the "currentOrigMgra" value, 
-        // the cached sampling probabilities for all segments
-        // need to be recomputed, so set them to null to cause that to happen.
-        if ( ALWAYS_COMPUTE_PROBABILITIES || origMgra != currentOrigMgra ) {
-            for ( int i=0; i < probabilitiesCache.length; i++ ) {
-                probabilitiesCache[i] = null;  
-                cumProbabilitiesCache[i] = null; 
-            }
-            currentOrigMgra = origMgra;
-        }
-        
         int modelIndex = dcSoaModelIndices[segmentIndex];
 
         // if the flag is set to compute sample of alternative probabilities for
@@ -242,9 +221,13 @@ public class DestinationSampleOfAlternativesModel
 
             }
 
-            // If the sample of alternatives choice probabilities have not been computed for the current origin mgra (work mgra) and segment, compute them.
-            if ( subtourProbabilitiesCache[segmentIndex] == null ) {
-                computeSampleOfAlternativesChoiceProbabilities( dcSoaDmuObject, tour, person, segmentName, segmentIndex, origMgra, destsAvailable[segmentIndex], destsSample[segmentIndex]);
+            // If the sample of alternatives choice probabilities have not been
+            // computed for the current origin mgra
+            // and segment specified, compute them.
+            if (subtourProbabilitiesCache[segmentIndex] == null)
+            {
+                computeSampleOfAlternativesChoiceProbabilities(dcSoaDmuObject, tour, person,
+                        segmentName, segmentIndex, origMgra);
                 soaProbabilitiesCalculationCount++;
             }
 
@@ -259,19 +242,44 @@ public class DestinationSampleOfAlternativesModel
             probabilitiesCache[segmentIndex] = null;
             cumProbabilitiesCache[segmentIndex] = null;
 
-            computeSampleOfAlternativesChoiceProbabilities( dcSoaDmuObject, tour, person, segmentName, segmentIndex, origMgra, escortAvailable, escortSample);
+            destsAvailable[segmentIndex] = escortAvailable;
+            destsSample[segmentIndex] = escortSample;
+
+            currentOrigMgra = origMgra;
+
+            computeSampleOfAlternativesChoiceProbabilities(dcSoaDmuObject, tour, person,
+                    segmentName, segmentIndex, origMgra);
             soaProbabilitiesCalculationCount++;
 
         } else
         {
-            // If the sample of alternatives choice probabilities have not been computed for the current origin mgra and purpose, compute them.
-            if ( probabilitiesCache[segmentIndex] == null ) {
-                computeSampleOfAlternativesChoiceProbabilities( dcSoaDmuObject, tour, person, segmentName, segmentIndex, origMgra, destsAvailable[segmentIndex], destsSample[segmentIndex]);
+
+            if (ALWAYS_COMPUTE_PROBABILITIES || origMgra != currentOrigMgra)
+            {
+
+                // clear the probabilities stored for the current origin mgra,
+                // for each DC segment
+                for (int i = 0; i < probabilitiesCache.length; i++)
+                {
+                    probabilitiesCache[i] = null;
+                    cumProbabilitiesCache[i] = null;
+                }
+                currentOrigMgra = origMgra;
+
+            }
+
+            // If the sample of alternatives choice probabilities have not been
+            // computed for the current origin taz
+            // and purpose specified, compute them.
+            if (probabilitiesCache[segmentIndex] == null)
+            {
+                computeSampleOfAlternativesChoiceProbabilities(dcSoaDmuObject, tour, person,
+                        segmentName, segmentIndex, origMgra);
                 soaProbabilitiesCalculationCount++;
             }
 
         }
-  
+
         Household hhObj = person.getHouseholdObject();
         Random hhRandom = hhObj.getHhRandom();
         int rnCount = hhObj.getHhRandomCount();
@@ -390,9 +398,8 @@ public class DestinationSampleOfAlternativesModel
      * @param distances
      *            array frpm origin MGRA to all MGRAs
      */
-    private void computeSampleOfAlternativesChoiceProbabilities(DcSoaDMU dcSoaDmuObject,
-            Tour tour, Person person, String segmentName, int segmentIndex, int origMgra,
-            boolean[] destsAvailableArray, int[] destsSampleArray)
+    private void computeSampleOfAlternativesChoiceProbabilities(DcSoaDMU dcSoaDmuObject, Tour tour,
+            Person person, String segmentName, int segmentIndex, int origMgra)
     {
 
         Household hhObj = person.getHouseholdObject();
@@ -452,7 +459,8 @@ public class DestinationSampleOfAlternativesModel
         try
         {
             choiceModel[choiceModelIndex].computeUtilities(dcSoaDmuObject,
-                    dcSoaDmuObject.getDmuIndexValues(),destsAvailableArray, destsSampleArray);
+                    dcSoaDmuObject.getDmuIndexValues(), destsAvailable[segmentIndex],
+                    destsSample[segmentIndex]);
         } catch (Exception e)
         {
             logger.error("exception caught in DC SOA model for:");
@@ -485,36 +493,25 @@ public class DestinationSampleOfAlternativesModel
                     debugAlts);
         }
 
-        
-
-        if ( tour != null &&  tour.getTourCategory() == ModelStructure.AT_WORK_CATEGORY ) {
-            
-            double[] tempProbs = choiceModel[choiceModelIndex].getProbabilities();
-            double[] tempCumProbs = choiceModel[choiceModelIndex].getCumulativeProbabilities();
-            
-            subtourProbabilitiesCache[segmentIndex] = new double[tempProbs.length];
-            subtourCumProbabilitiesCache[segmentIndex] = new double[tempProbs.length];
-
-            for (int j = 0; j < tempProbs.length; j++)
+        // the following order of assignment is important in mult-threaded
+        // context.
+        // probabilitiesCache[][] is a trigger variable - if it is not null for
+        // any thread, the cumProbabilitiesCache[][] values
+        // are used immediately, so the cumProbabilitiesCache values must be
+        // assigned before the probabilitiesCache
+        // are assigned, which indicates cumProbabilitiesCache[][] values are
+        // ready to be used.
+        if (tour != null && tour.getTourCategory().equals(ModelStructure.AT_WORK_CATEGORY))
         {
-                subtourProbabilitiesCache[segmentIndex][j] = tempProbs[j];
-                subtourCumProbabilitiesCache[segmentIndex][j] = tempCumProbs[j];
-            }
 
-        }
-        else {
-
-            double[] tempProbs = choiceModel[choiceModelIndex].getProbabilities();
-            double[] tempCumProbs = choiceModel[choiceModelIndex].getCumulativeProbabilities();
-            
-            probabilitiesCache[segmentIndex] = new double[tempProbs.length];
-            cumProbabilitiesCache[segmentIndex] = new double[tempProbs.length];
-
-            for (int j = 0; j < tempProbs.length; j++)
+            subtourCumProbabilitiesCache[segmentIndex] = Arrays.copyOf(
+                    choiceModel[choiceModelIndex].getCumulativeProbabilities(),
+                    choiceModel[choiceModelIndex].getNumberOfAlternatives());
+            subtourProbabilitiesCache[segmentIndex] = Arrays.copyOf(
+                    choiceModel[choiceModelIndex].getProbabilities(),
+                    choiceModel[choiceModelIndex].getNumberOfAlternatives());
+        } else
         {
-                probabilitiesCache[segmentIndex][j] = tempProbs[j];
-                cumProbabilitiesCache[segmentIndex][j] = tempCumProbs[j];
-            }
 
             cumProbabilitiesCache[segmentIndex] = Arrays.copyOf(
                     choiceModel[choiceModelIndex].getCumulativeProbabilities(),
