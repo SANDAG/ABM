@@ -90,7 +90,7 @@ sheet_scen_vmt.write(0,8,'New VMT')
 counter = 1
 for idx, season in enumerate(seasons):
     print 'Querying VMT records for ' + season
-    query = 'SELECT * FROM [emfac].[FN_EMFAC_2011_VMT] (?,?,?)'
+    query = 'SELECT * FROM [emfac].[FN_EMFAC_2011_VMT] (?,?,?) order by [Veh & Tech]'
     cursor.execute(query,   scenario_id, idx+1, season)
     rows = cursor.fetchall()
     
@@ -165,7 +165,7 @@ sheet_scen_speed.write(0,22,'70MPH')
 
 counter = 1
 for idx, season in enumerate(seasons):
-    query = 'SELECT * FROM emfac.FN_EMFAC_2011_VMT_SPEED (?,?,?)'
+    query = 'SELECT * FROM emfac.FN_EMFAC_2011_VMT_SPEED (?,?,?) order by [Veh & Tech]'
     print 'Querying VMT Speed records for ' + season
     cursor.execute(query, scenario_id, idx+1, season)
     rows = cursor.fetchall()
