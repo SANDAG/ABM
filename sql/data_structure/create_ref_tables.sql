@@ -231,7 +231,9 @@ WITH
 INSERT INTO 
 	[ref].[geography_type]
 VALUES
+	(4, 'Region, Year 2008'),
 	(34,'TAZ Series 13'),	
+	(69, 'U.S. Census Public Use Microdata Areas, Year 2000'),
 	(90,'MGRA Series 13');
 			
 END
@@ -259,20 +261,23 @@ WITH
 
 INSERT INTO	[ref].[geography_zone]
 SELECT 
-	90
-	,[MGRA]
-	,[Shape]
-	,[Shape].STCentroid()
+	[geo_type_id]
+	,[zone]
+	,[shape]
+	,[centroid]
 FROM 
-	OPENQUERY([pila\sdgintdb],'SELECT [MGRA], [Shape] FROM [lis].[gis].[MGRA13]')
-INSERT INTO	[ref].[geography_zone]
-SELECT 
-	34
-	,[TAZ]
-	,[Shape]
-	,[Shape].STCentroid()
-FROM 
-	OPENQUERY([pila\sdgintdb],'SELECT [TAZ], [Shape] FROM [lis].[gis].[TAZ13]')
+	OPENQUERY([pila\sdgintdb],'	SELECT 
+									[geo_type_id]
+									,[zone]
+									,[shape]
+									,[centroid]
+								FROM
+									[data_cafe].[dbo].[geography_zone] 
+								WHERE 
+									[geo_type_id] IN (4, 34, 69, 90) 
+								ORDER BY 
+									[geo_type_id], [zone]'
+								)
 			
 END
 
