@@ -51,7 +51,7 @@ year = row.YR
 fileYear = row.fileYear #different from year if 2051 and beyond scenario
 scenarioName = row.sName
 
-print 'Creating the EMFAC 2011 User Defined Input Workbook and Worksheets'
+print 'Creating the EMFAC 2014 User Defined Input Workbook and Worksheets'
 book = Workbook()
 sheet_settings = book.active
 sheet_settings.title = 'Settings'
