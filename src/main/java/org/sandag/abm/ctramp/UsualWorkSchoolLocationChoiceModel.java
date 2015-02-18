@@ -256,6 +256,8 @@ public class UsualWorkSchoolLocationChoiceModel
             {
                 JPPFJob job = new JPPFJob();
                 job.setName("Work Location Choice Job");
+                job.getSLA().setMaxTaskResubmits(10);
+                job.getSLA().setApplyMaxResubmitsUponNodeError(false);
 
                 ArrayList<int[]> startEndTaskIndicesList = getTaskHouseholdRanges(householdDataManager
                         .getNumHouseholds());
