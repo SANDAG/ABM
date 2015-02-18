@@ -59,12 +59,12 @@ public class HouseholdChoiceModelsTaskJppf
 
             DataProvider dataProvider = getDataProvider();
 
-            propertyMap = (HashMap<String, String>) dataProvider.getValue("propertyMap");
-            ms = (MatrixDataServerIf) dataProvider.getValue("ms");
-            hhDataManager = (HouseholdDataManagerIf) dataProvider.getValue("hhDataManager");
-            modelStructure = (ModelStructure) dataProvider.getValue("modelStructure");
-            dmuFactory = (CtrampDmuFactoryIf) dataProvider.getValue("dmuFactory");
-            restartModelString = (String) dataProvider.getValue("restartModelString");
+            propertyMap = (HashMap<String, String>) dataProvider.getParameter("propertyMap");
+            ms = (MatrixDataServerIf) dataProvider.getParameter("ms");
+            hhDataManager = (HouseholdDataManagerIf) dataProvider.getParameter("hhDataManager");
+            modelStructure = (ModelStructure) dataProvider.getParameter("modelStructure");
+            dmuFactory = (CtrampDmuFactoryIf) dataProvider.getParameter("dmuFactory");
+            restartModelString = (String) dataProvider.getParameter("restartModelString");
 
         } catch (Exception e)
         {
