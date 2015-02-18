@@ -3,12 +3,12 @@ package org.sandag.abm.ctramp;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import org.apache.log4j.Logger;
-import org.jppf.server.protocol.JPPFTask;
+import org.jppf.node.protocol.AbstractTask;
 import org.jppf.task.storage.DataProvider;
 import com.pb.common.calculator.MatrixDataServerIf;
 
 public class HouseholdChoiceModelsTaskJppf
-        extends JPPFTask
+        extends AbstractTask<String>
 {
 
     private transient HashMap<String, String> propertyMap;

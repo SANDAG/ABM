@@ -3,12 +3,12 @@ package org.sandag.abm.ctramp;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
-import org.jppf.server.protocol.JPPFTask;
+import org.jppf.node.protocol.AbstractTask;
 import org.jppf.task.storage.DataProvider;
 import com.pb.common.calculator.MatrixDataServerIf;
 
 public class WorkLocationChoiceTaskJppf
-        extends JPPFTask
+        extends AbstractTask<String>
 {
 
     private static String                     VERSION   = "Task.1.0.3";
