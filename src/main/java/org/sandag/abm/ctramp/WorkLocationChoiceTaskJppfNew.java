@@ -129,6 +129,12 @@ public class WorkLocationChoiceTaskJppfNew
                     continue;
 
                 dcModel.applyWorkLocationChoice(householdArray[i]);
+                
+                if (!validateHouseholds(householdArray))
+                {
+                    System.out.println("");
+                    setResubmit(true);
+                }
             }
 
             hhDataManager.setHhArray(householdArray, startIndex);
@@ -172,6 +178,12 @@ public class WorkLocationChoiceTaskJppfNew
     public String getId()
     {
         return Integer.toString(taskIndex);
+    }
+    
+    public boolean validateHouseholds(Household[] householdArray)
+    {
+        //TODO: THIS IS WHERE THE HOUSEHOLD VALIDATION LOGIC GOES
+        return true;
     }
 
     private void clearClassAttributes()
