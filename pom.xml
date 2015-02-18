@@ -6,7 +6,7 @@
 
     <groupId>org.sandag</groupId>
     <artifactId>SANDAG-ABM</artifactId>
-    <version>13.2.2</version>
+    <version>13.2.3-SNAPSHOT</version>
     <name>SANDAG CT-RAMP Activity Based Model</name>
 
     <properties>
@@ -826,16 +826,6 @@
             <version>2014.07.09-ABM</version>
         </dependency>
         <dependency>
-            <groupId>org.jppf</groupId>
-            <artifactId>jppf-client</artifactId>
-            <version>2.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jppf</groupId>
-            <artifactId>jppf-server</artifactId>
-            <version>2.5</version>
-        </dependency>
-        <dependency>
             <groupId>ca.umontreal.iro</groupId>
             <artifactId>ssj</artifactId>
             <version>2.5</version>
@@ -892,6 +882,16 @@
 			<artifactId>jtds</artifactId>
 			<version>1.3.0</version>
 		</dependency>
+		<dependency>
+		    <groupId>org.jppf</groupId>
+		    <artifactId>jppf-client</artifactId>
+		    <version>4.2.5</version>
+		</dependency>
+        <dependency>
+            <groupId>org.jppf</groupId>
+            <artifactId>jppf-server</artifactId>
+            <version>4.2.5</version>
+        </dependency>
     </dependencies>
 
     <distributionManagement>
