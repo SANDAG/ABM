@@ -3011,19 +3011,30 @@ AS
  --Total Passenger Miles
 with pass_miles AS (
 SELECT  
-	SUM([transit_flow] * ([to_mp]-[from_mp])) AS total_passenger_miles
+       [config] / 1000 AS [route_number]
+       ,[transit_route].[transit_mode_id]
+       ,SUM([transit_flow] * ([to_mp]-[from_mp])) AS total_passenger_miles
 FROM 
-	[abm].[transit_flow]
+       [abm].[transit_flow]
 INNER JOIN
-	[ref].[time_period]
+       [abm].[transit_route]
 ON
-	[transit_flow].[time_period_id] = [time_period].[time_period_id]
+       [transit_flow].[scenario_id] = [transit_route].[scenario_id]
+       AND [transit_flow].[transit_route_id] = [transit_route].[transit_route_id]
+INNER JOIN
+       [ref].[time_period]
+ON
+       [transit_flow].[time_period_id] = [time_period].[time_period_id]
 WHERE 
-	[scenario_id] = @scenario_id
-	AND [time_resolution_id] = 1
-	AND [time_period_number] BETWEEN 2 AND 4 -- day time
-	),
-	
+       [transit_flow].[scenario_id] = @scenario_id
+       AND [transit_route].[scenario_id] = @scenario_id
+       AND [time_resolution_id] = 1
+       AND [time_period_number] BETWEEN 2 AND 4 -- day time
+GROUP BY
+       [config] / 1000
+       ,[transit_route].[transit_mode_id]
+       ),
+       
 --if daily, need to get the night hour column added to trrt.bin file.
 --seat capacity by route type-------------
 --Heavy Rail 130/car (5 car trains)
@@ -3031,52 +3042,90 @@ WHERE
 --SPRINTER 136/car (2 car trains) 
 --Circulator 29/vehicle        -> mode 10 San Marcos Shuttle, Super loop
 --Bus 37/vehicle               -> mode 7, 9, 10 & streetcar (mode 5, route 551-559 + 565)
---Bus Rapid Transit 53/vehicle -> mode 6
+--Bus Rapid Transit 53/vehicle, Limited Express -> mode 6 and mode 8
 
 --Total Seat Miles
 seat_miles AS (
 SELECT 
-	SUM(capacity * (frequency_tod_2 + frequency_tod_3 + frequency_tod_4) * route_mile) AS total_seat_miles
+       [config] / 1000 AS [route_number]
+       ,[transit_mode_id]
+       ,SUM(capacity * (frequency_tod_2 + frequency_tod_3 + frequency_tod_4) * route_mile) AS total_seat_miles
 FROM (
-	SELECT	
-		route_mile
-		,ISNULL(180 / NULLIF([am_headway], 0), 0) AS frequency_tod_2
-		,ISNULL(390 / NULLIF([op_headway], 0) ,0) AS frequency_tod_3
-		,ISNULL(210 / NULLIF([pm_headway], 0), 0) AS frequency_tod_4
-		,CASE	WHEN [transit_mode_id] = 4 THEN 130 * 5 --coaster and heavy rail
-				WHEN [transit_mode_id] = 5 AND [config]/1000 > 500 AND [config]/1000 < 551  THEN 64 * 3 --trolley
-				WHEN [transit_mode_id] = 5 AND [config]/1000 = 399 THEN 136 * 2 --sprinter
-				WHEN [transit_mode_id] = 5 AND (([config] / 1000 >= 551 AND [config] / 1000 <= 559) OR [config] / 1000 = 565) THEN 37 --streetcar
-				WHEN [transit_mode_id] = 6 THEN 53 --BRT 
-				WHEN [transit_mode_id] IN (7, 9, 10) THEN 37 --bus
-				ELSE 0
-				END AS capacity
-	FROM 
-		[abm].[transit_route]
-	INNER JOIN (
-		SELECT	
-			[scenario_id]
-			,[transit_route_id]
-			,MAX([to_mp]) as route_mile  --route mile
-		FROM 
-			[abm].[transit_flow]
-		WHERE 
-			[scenario_id] = @scenario_id
-		GROUP BY 
-			[scenario_id]
-			,[transit_route_id]
-			) rte_mile 
-	ON 
-		[transit_route].[scenario_id] = rte_mile.[scenario_id]
-		AND [transit_route].[transit_route_id] = rte_mile.[transit_route_id]
-	WHERE 
-		[transit_route].[scenario_id] = @scenario_id) tt
-		)
-SELECT	
-	@scenario_id AS scenario_id
-	,total_passenger_miles / total_seat_miles AS passenger_over_seat_miles
+       SELECT 
+              [config]
+              ,[transit_route].[transit_mode_id]
+              ,route_mile
+              ,ISNULL(180 / NULLIF([am_headway], 0), 0) AS frequency_tod_2
+              ,ISNULL(390 / NULLIF([op_headway], 0) ,0) AS frequency_tod_3
+              ,ISNULL(210 / NULLIF([pm_headway], 0), 0) AS frequency_tod_4
+              ,CASE  WHEN [transit_mode_id] = 4 THEN 130 * 5 --coaster and heavy rail
+                           WHEN [transit_mode_id] = 5 AND [config]/1000 > 500 AND [config]/1000 < 551  THEN 64 * 3 --trolley
+                           WHEN [transit_mode_id] = 5 AND [config]/1000 = 399 THEN 136 * 2 --sprinter
+                           WHEN [transit_mode_id] = 5 AND (([config] / 1000 >= 551 AND [config] / 1000 <= 559) OR [config] / 1000 = 565) THEN 37 --streetcar
+                           WHEN [transit_mode_id] = 6 OR [transit_mode_id] = 8 THEN 53 --BRT 
+                           WHEN [transit_mode_id] IN (7, 9, 10) THEN 37 --bus
+                           ELSE 0
+                           END AS capacity
+       FROM 
+              [abm].[transit_route]
+       INNER JOIN (
+              SELECT 
+                     [scenario_id]
+                     ,[transit_route_id]
+                     ,MAX([to_mp]) as route_mile  --route mile
+              FROM 
+                     [abm].[transit_flow]
+              WHERE 
+                     [scenario_id] = @scenario_id
+              GROUP BY 
+                     [scenario_id]
+                     ,[transit_route_id]
+                     ) rte_mile 
+       ON 
+              [transit_route].[scenario_id] = rte_mile.[scenario_id]
+              AND [transit_route].[transit_route_id] = rte_mile.[transit_route_id]
+       WHERE 
+              [transit_route].[scenario_id] = @scenario_id
+       ) AS tt
+GROUP BY
+       [config] / 1000
+       ,[transit_mode_id]
+)
+SELECT 
+       @scenario_id AS [scenario_id]
+       ,pass_miles.[route_number]
+       ,pass_miles.[transit_mode_id]
+       ,total_passenger_miles
+       ,total_seat_miles
+       ,ISNULL(total_passenger_miles / NULLIF(total_seat_miles, 0), 0) AS passenger_over_seat_miles
 FROM 
-	pass_miles, seat_miles
+       pass_miles
+INNER JOIN
+       seat_miles
+ON
+       pass_miles.[route_number] = seat_miles.[route_number]
+       AND pass_miles.[transit_mode_id] = seat_miles.[transit_mode_id]
+
+UNION ALL
+
+SELECT 
+       @scenario_id AS [scenario_id]
+       ,NULL
+       ,NULL
+       ,SUM(total_passenger_miles) AS total_passenger_miles
+       ,SUM(total_seat_miles) AS total_passenger_miles
+       ,ISNULL(SUM(total_passenger_miles) / NULLIF(SUM(total_seat_miles), 0), 0) AS passenger_over_seat_miles
+FROM 
+       pass_miles
+INNER JOIN
+       seat_miles
+ON
+       pass_miles.[route_number] = seat_miles.[route_number]
+       AND pass_miles.[transit_mode_id] = seat_miles.[transit_mode_id]
+ORDER BY
+       [route_number]
+       ,[transit_mode_id]
+
 GO
 
 -- Add metadata for [rtp_2015].[sp_eval_transit_4]
