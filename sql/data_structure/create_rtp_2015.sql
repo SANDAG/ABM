@@ -1937,89 +1937,166 @@ CREATE PROCEDURE [rtp_2015].[sp_transit_vmt_vht_summary]
 	@scenario_id smallint
 AS
 
-/*	Author: Ziying Ouyang 
-	Date: Revised 9/18/2014
-	Description: summarize total vehicle minutes traveled by tod
-	,hourly number of vehicle by tod
-*/
+/*	Author: Ziying Ouyang, Gregor Schroeder */
 
 SELECT
-	@scenario_id AS [scenario_id]
-	,[transit_mode_id]
-	,SUM(miles * ISNULL(frequency, 0)) AS vehicle_miles_travel
-	,SUM((dwell_time + total_linktime) * ISNULL(frequency, 0)) AS vehicle_minutes_travel
+       @scenario_id AS [scenario_id]
+       ,ISNULL(CAST([route] AS NVARCHAR), 'Total') AS [route]
+       ,ISNULL(CAST([config] AS NVARCHAR), 'Total') AS [config]
+       ,ISNULL(CAST([dir] AS NVARCHAR), 'Total') AS [dir]
+       ,SUM(ISNULL([vehicle_miles_travel_ea], 0)) AS [vehicle_miles_travel_ea]
+       ,SUM(ISNULL([vehicle_minutes_travel_ea], 0)) AS [vehicle_minutes_travel_ea]
+       ,SUM(ISNULL([hourly_num_of_vehicle_ea], 0)) AS [hourly_num_of_vehicle_ea]
+       ,SUM(ISNULL([vehicle_miles_travel_am], 0)) AS [vehicle_miles_travel_am]
+       ,SUM(ISNULL([vehicle_minutes_travel_am], 0)) AS [vehicle_minutes_travel_am]
+       ,SUM(ISNULL([hourly_num_of_vehicle_am], 0)) AS [hourly_num_of_vehicle_am]
+       ,SUM(ISNULL([vehicle_miles_travel_md], 0)) AS [vehicle_miles_travel_md]
+       ,SUM(ISNULL([vehicle_minutes_travel_md], 0)) AS [vehicle_minutes_travel_md]
+       ,SUM(ISNULL([hourly_num_of_vehicle_md], 0)) AS [hourly_num_of_vehicle_md]
+       ,SUM(ISNULL([vehicle_miles_travel_pm], 0)) AS [vehicle_miles_travel_pm]
+       ,SUM(ISNULL([vehicle_minutes_travel_pm], 0)) AS [vehicle_minutes_travel_pm]
+       ,SUM(ISNULL([hourly_num_of_vehicle_pm], 0)) AS [hourly_num_of_vehicle_pm]
+       ,SUM(ISNULL([vehicle_miles_travel_ev], 0)) AS [vehicle_miles_travel_ev]
+       ,SUM(ISNULL([vehicle_minutes_travel_ev], 0)) AS [vehicle_minutes_travel_ev]
+       ,SUM(ISNULL([hourly_num_of_vehicle_ev], 0)) AS [hourly_num_of_vehicle_ev]
 FROM (
-	-- transit flow aggregation joined to transit route
-	SELECT
-		tt1.[scenario_id]
-		,[transit_route].[transit_mode_id]
-		,miles
-		,total_linktime
-		,CASE	WHEN [transit_mode_id] = 10 THEN (number_stops - 1) * 0.3 
-				WHEN [transit_mode_id] BETWEEN 6 AND 9 THEN (number_stops - 1) * 0.5
-				ELSE 0 
-				END AS dwell_time
-		,CASE	WHEN [time_period_number] = 2 THEN ISNULL(180 / NULLIF([am_headway], 0) ,0) 
-				WHEN [time_period_number] = 3 THEN ISNULL(390 / NULLIF([op_headway], 0) ,0) 
-				WHEN [time_period_number] = 4 THEN ISNULL(210 / NULLIF([pm_headway], 0) ,0) 
-				WHEN [time_period_number] = 5 AND ISNULL([nt_hour], 0) > 1 THEN ISNULL(([nt_hour] - 1) * 60 / NULLIF([nt_headway], 0) ,0) 
-				END AS frequency
-		,CASE	WHEN [time_period_number] = 2 THEN [am_headway]
-				WHEN [time_period_number] = 3 THEN [op_headway]
-				WHEN [time_period_number] = 4 THEN [pm_headway]
-				WHEN [time_period_number] = 5 THEN [nt_headway]
-				END AS headway
-	FROM (
-		-- transit flow aggregation to scenario, route, time
-		SELECT
-			[transit_flow].[scenario_id]
-			,[transit_flow].[transit_route_id]
-			,[time_resolution_id]
-			,[time_period_number]
-			,MAX([to_mp]) AS miles
-			,SUM([baseivtt]) AS total_linktime
-			,(MAX(to_stop_table.stop_id)- MIN(from_stop_table.stop_id))  + 1 AS number_stops
-		FROM
-			[abm].[transit_flow]
-		INNER JOIN
-			[abm].[transit_stop] AS from_stop_table
-		ON
-			[transit_flow].[from_transit_stop_id] = from_stop_table.[transit_stop_id]
-		INNER JOIN
-			[abm].[transit_stop] AS to_stop_table
-		ON
-			[transit_flow].[to_transit_stop_id] = to_stop_table.[transit_stop_id]
-		INNER JOIN
-			[ref].[time_period]
-		ON
-			[transit_flow].[time_period_id] = [time_period].[time_period_id]
-		WHERE
-			[transit_flow].[scenario_id] = @scenario_id
-			AND from_stop_table.[scenario_id] = @scenario_id
-			AND to_stop_table.[scenario_id] = @scenario_id
-			AND [time_resolution_id] = 1
-			AND [time_period_number] BETWEEN 1 AND 5
-			AND [transit_flow].[transit_mode_id] = 5
-			AND [transit_flow].[transit_access_mode_id] = 1
-		GROUP BY
-			[transit_flow].[scenario_id]
-			,[transit_flow].[transit_route_id]
-			,[time_resolution_id]
-			,[time_period_number]) tt1
-	INNER JOIN
-		[abm].[transit_route]
-	ON
-		tt1.[scenario_id] = [transit_route].[scenario_id]
-		AND tt1.[transit_route_id] = [transit_route].[transit_route_id]
-	WHERE
-		[transit_route].[scenario_id] = @scenario_id
-		) tt2
-WHERE 
-	ISNULL(headway, 0) > 0 
+       SELECT
+              [transit_mode_id]
+              ,[route]
+              ,[config]
+              ,[dir]
+              ,metric + '_' + CASE WHEN [time_period_number] = 1 THEN 'ea'
+                                                       WHEN [time_period_number] = 2 THEN 'am'
+                                                       WHEN [time_period_number] = 3 THEN 'md'
+                                                       WHEN [time_period_number] = 4 THEN 'pm'
+                                                       WHEN [time_period_number] = 5 THEN 'ev'
+                                                       END AS [metric]
+              ,[value]
+       FROM (
+              SELECT
+                           [transit_mode_id]
+                           ,[route]
+                           ,[config]
+                           ,[dir]
+                           ,[time_period_number]
+                           ,CAST(SUM([miles] * ISNULL([frequency], 0)) AS decimal(11,6)) AS [vehicle_miles_travel]
+                           ,CAST(SUM(([dwell_time] + [total_linktime]) * ISNULL([frequency], 0)) AS decimal(11,6)) AS [vehicle_minutes_travel]
+                           ,CAST(SUM(CASE     WHEN ISNULL([headway], 0) > 0 THEN CEILING(([dwell_time] + [total_linktime]) / [headway])
+                                                              ELSE 0 
+                                                              END) AS decimal(11,6)) AS [hourly_num_of_vehicle]
+              FROM (
+                           -- transit flow aggregation joined to transit route
+                           SELECT
+                                         tt1.[scenario_id]
+                                         ,[transit_route].[transit_mode_id]
+                                         ,[config] / 1000 AS [route]
+                                         ,RIGHT(CAST([config] AS NVARCHAR), 2) AS [config]
+                                         ,LEFT(RIGHT(CAST([config] AS NVARCHAR), 3), 1) AS [dir]
+                                         ,[time_period_number]
+                                         ,miles
+                                         ,total_linktime
+                                         ,CASE  WHEN [transit_mode_id] = 10 THEN (number_stops - 1) * 0.3 
+                                                              WHEN [transit_mode_id] BETWEEN 6 AND 9 THEN (number_stops - 1) * 0.5
+                                                              ELSE 0 
+                                                              END AS dwell_time
+                                         ,CASE  WHEN [time_period_number] = 2 THEN ISNULL(180 / NULLIF([am_headway], 0) ,0) 
+                                                              WHEN [time_period_number] = 3 THEN ISNULL(390 / NULLIF([op_headway], 0) ,0) 
+                                                              WHEN [time_period_number] = 4 THEN ISNULL(210 / NULLIF([pm_headway], 0) ,0) 
+                                                              WHEN [time_period_number] = 5 AND ISNULL([nt_hour], 0) > 1 THEN ISNULL(([nt_hour] - 1) * 60 / NULLIF([nt_headway], 0) ,0) 
+                                                              END AS frequency
+                                         ,CASE  WHEN [time_period_number] = 2 THEN [am_headway]
+                                                              WHEN [time_period_number] = 3 THEN [op_headway]
+                                                              WHEN [time_period_number] = 4 THEN [pm_headway]
+                                                              WHEN [time_period_number] = 5 THEN [nt_headway]
+                                                              END AS headway
+                           FROM (
+                                         -- transit flow aggregation to scenario, route, time
+                                         SELECT
+                                                [transit_flow].[scenario_id]
+                                                ,[transit_flow].[transit_route_id]
+                                                ,[time_resolution_id]
+                                                ,[time_period_number]
+                                                ,MAX([to_mp]) AS miles
+                                                ,SUM([baseivtt]) AS total_linktime
+                                                ,(MAX(to_stop_table.stop_id)- MIN(from_stop_table.stop_id))  + 1 AS number_stops
+                                         FROM
+                                                [abm].[transit_flow]
+                                         INNER JOIN
+                                                [abm].[transit_stop] AS from_stop_table
+                                         ON
+                                                [transit_flow].[from_transit_stop_id] = from_stop_table.[transit_stop_id]
+                                         INNER JOIN
+                                                [abm].[transit_stop] AS to_stop_table
+                                         ON
+                                                [transit_flow].[to_transit_stop_id] = to_stop_table.[transit_stop_id]
+                                         INNER JOIN
+                                                [ref].[time_period]
+                                         ON
+                                                [transit_flow].[time_period_id] = [time_period].[time_period_id]
+                                         WHERE
+                                                [transit_flow].[scenario_id] = @scenario_id
+                                                AND from_stop_table.[scenario_id] = @scenario_id
+                                                AND to_stop_table.[scenario_id] = @scenario_id
+                                                AND [time_resolution_id] = 1
+                                                AND [time_period_number] BETWEEN 1 AND 5
+                                                AND [transit_flow].[transit_mode_id] = 5
+                                                AND [transit_flow].[transit_access_mode_id] = 1
+                                         GROUP BY
+                                                [transit_flow].[scenario_id]
+                                                ,[transit_flow].[transit_route_id]
+                                                ,[time_resolution_id]
+                                                ,[time_period_number]) tt1
+                           INNER JOIN
+                                         [abm].[transit_route]
+                            ON
+                                         tt1.[scenario_id] = [transit_route].[scenario_id]
+                                         AND tt1.[transit_route_id] = [transit_route].[transit_route_id]
+                           WHERE
+                                         [transit_route].[scenario_id] = @scenario_id
+                                         ) tt2
+              WHERE 
+                           ISNULL(headway, 0) > 0 
+              GROUP BY
+                           [transit_mode_id]
+                           ,[route]
+                           ,[config]
+                           ,[dir]
+                           ,[time_period_number]
+       ) AS base
+       UNPIVOT
+       (
+              [value] 
+              FOR [metric] IN ([vehicle_miles_travel], [vehicle_minutes_travel], [hourly_num_of_vehicle])
+       ) as unpv
+) AS unpv_base
+PIVOT
+(
+       SUM([value])
+       FOR [metric] IN ([vehicle_miles_travel_ea]
+                                  ,[vehicle_minutes_travel_ea]
+                                  ,[hourly_num_of_vehicle_ea]
+                                  ,[vehicle_miles_travel_am]
+                                  ,[vehicle_minutes_travel_am]
+                                  ,[hourly_num_of_vehicle_am]
+                                  ,[vehicle_miles_travel_md]
+                                  ,[vehicle_minutes_travel_md]
+                                  ,[hourly_num_of_vehicle_md]
+                                  ,[vehicle_miles_travel_pm]
+                                  ,[vehicle_minutes_travel_pm]
+                                  ,[hourly_num_of_vehicle_pm]
+                                  ,[vehicle_miles_travel_ev]
+                                  ,[vehicle_minutes_travel_ev]
+                                  ,[hourly_num_of_vehicle_ev])
+) AS pv
 GROUP BY
-	[transit_mode_id]
+       [route]
+       ,[config]
+       ,[dir]
+WITH ROLLUP
 ORDER BY
-	[transit_mode_id]
+       [route]
+       ,[config]
+       ,[dir]
 GO
 
 -- Add metadata for [rtp_2015].[sp_transit_vmt_vht_summary]
