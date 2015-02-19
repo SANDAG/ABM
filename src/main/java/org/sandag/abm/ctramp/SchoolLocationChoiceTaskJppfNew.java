@@ -143,7 +143,11 @@ public class SchoolLocationChoiceTaskJppfNew
 
             hhDataManager.setHhArray(householdArray, startIndex);
             
+<<<<<<< HEAD
             if(!HouseholdValidator.validateHouseholds(householdArray))
+=======
+            if(!HouseholdValidator.validateMandatoryDestinationChoices(householdArray, "school"))
+>>>>>>> (ABM-592) Add household validator to check work and school loction
             {
                 setResubmit(true);
             }
