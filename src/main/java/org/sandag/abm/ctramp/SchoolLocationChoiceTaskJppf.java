@@ -142,7 +142,7 @@ public class SchoolLocationChoiceTaskJppf
 
             hhDataManager.setHhArray(householdArray, startIndex);
             
-            if(validateHouseholds(householdArray))
+            if(!HouseholdValidator.validateHouseholds(householdArray))
             {
                 setResubmit(true);
             }
@@ -186,11 +186,4 @@ public class SchoolLocationChoiceTaskJppf
     {
         return Integer.toString(taskIndex);
     }
-    
-    public boolean validateHouseholds(Household[] householdArray)
-    {
-        //TODO: THIS IS WHERE THE HOUSEHOLD VALIDATION LOGIC GOES
-        return true;
-    }
-
 }
