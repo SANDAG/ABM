@@ -47,6 +47,7 @@
 		<MAPANDRUN>mapAndRun.bat</MAPANDRUN>
 		<JAVA_64_PATH>C:\Progra~1\Java\jre7</JAVA_64_PATH>
 		<JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
+		<PYTHON_PATH>C:\Anaconda</PYTHON_PATH>
 		<workpath>T:\projects\sr13\sdf_scenevl_r3</workpath>
 		<database_server>sql2014a8</database_server>
 		<database_name>abm_13_2_3</database_name>
@@ -525,6 +526,23 @@
                             </resources>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>copy-python-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${output.path}/python</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/python</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>                   
                     <execution>
                         <id>copy-txt-resources</id>
                         <phase>package</phase>
