@@ -18,7 +18,7 @@ import _mssql
 from openpyxl import Workbook
 from openpyxl.datavalidation import DataValidation, ValidationType
 
-usage = 'Correct Usage: emfac2011_abm.py <Scenario ID> <Season: Annual | Summer | Winter> <SB 375: On | Off> <Output Path>'
+usage = 'Correct Usage: emfac2014_abm.py <Scenario ID> <Season: Annual | Summer | Winter> <SB 375: On | Off> <Output Path>'
 
 if len(sys.argv) != 5:
     print usage

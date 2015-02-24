@@ -1255,7 +1255,7 @@ public abstract class HouseholdDataManager
                     if (person.getPersonIsWorker() == 1)
                     {
 
-                        destMgra = person.getPersonWorkLocationZone();
+                        destMgra = person.getWorkLocation();
 
                         if (destMgra != ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR)
                         {
@@ -1309,7 +1309,7 @@ public abstract class HouseholdDataManager
                     if (person.getPersonIsWorker() == 1)
                     {
 
-                        destMgra = person.getPersonWorkLocationZone();
+                        destMgra = person.getWorkLocation();
 
                         if (destMgra == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR)
                         {
@@ -1616,7 +1616,7 @@ public abstract class HouseholdDataManager
                         } else if (fieldName.equalsIgnoreCase("workLocation"))
                         {
                             workLocation = Integer.parseInt(fieldValue);
-                            person.setWorkLoc(workLocation);
+                            person.setWorkLocation(workLocation);
                         } else if (fieldName.equalsIgnoreCase("WorkLocationDistance"))
                         {
                             float distance = Float.parseFloat(fieldValue);

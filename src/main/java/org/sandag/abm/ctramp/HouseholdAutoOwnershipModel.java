@@ -114,7 +114,7 @@ public class HouseholdAutoOwnershipModel
                 if (persons[i].getPersonIsWorker() == 1)
                 {
 
-                    int workMgra = persons[i].getUsualWorkLocation();
+                    int workMgra = persons[i].getWorkLocation();
                     if (workMgra != ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR)
                     {
 

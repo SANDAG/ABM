@@ -655,7 +655,7 @@ public class UsualWorkSchoolLocationChoiceModel
                         int schoolSegmentIndex = person.getSchoolLocationSegmentIndex();
                         int workSegmentIndex = person.getWorkLocationSegmentIndex();
 
-                        int workLocation = person.getUsualWorkLocation();
+                        int workLocation = person.getWorkLocation();
                         int schoolLocation = person.getUsualSchoolLocation();
 
                         // write data record

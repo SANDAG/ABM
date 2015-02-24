@@ -1408,7 +1408,7 @@ public class CtrampApplication
                 Person[] persons = household.getPersons();
                 for (int p = 1; p < persons.length; p++)
                 {
-                    int workLocation = persons[p].getUsualWorkLocation();
+                    int workLocation = persons[p].getWorkLocation();
                     if (workLocation > 0
                             && workLocation != ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR)
                     {
@@ -1696,13 +1696,13 @@ public class CtrampApplication
                             // extra at home categories
                             if (personArray[j].getPersonEmploymentCategoryIndex() < Person.EmployStatus.NOT_EMPLOYED
                                     .ordinal()
-                                    && personArray[j].getPersonWorkLocationZone() == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR) choice = 5 + 1;
+                                    && personArray[j].getWorkLocation() == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR) choice = 5 + 1;
                             else if (personArray[j].getPersonEmploymentCategoryIndex() < Person.EmployStatus.NOT_EMPLOYED
                                     .ordinal()
                                     && personArray[j].getPersonSchoolLocationZone() == ModelStructure.NOT_ENROLLED_SEGMENT_INDEX) choice = 5 + 2;
                             else if (personArray[j].getPersonIsStudent() < Person.EmployStatus.NOT_EMPLOYED
                                     .ordinal()
-                                    && personArray[j].getPersonWorkLocationZone() == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR) choice = 5 + 3;
+                                    && personArray[j].getWorkLocation() == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR) choice = 5 + 3;
                             else if (personArray[j].getPersonIsStudent() < Person.EmployStatus.NOT_EMPLOYED
                                     .ordinal()
                                     && personArray[j].getPersonSchoolLocationZone() == ModelStructure.NOT_ENROLLED_SEGMENT_INDEX)

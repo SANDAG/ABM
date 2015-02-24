@@ -105,7 +105,7 @@ public class ParkingProvisionModel
         for (int i = 1; i < person.length; i++)
         {
 
-            int workLoc = person[i].getUsualWorkLocation();
+            int workLoc = person[i].getWorkLocation();
             if (workLoc == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR)
             {
 
@@ -150,24 +150,24 @@ public class ParkingProvisionModel
         Household hhObj = personObj.getHouseholdObject();
         fpDmuObject.setPersonObject(personObj);
 
-        fpDmuObject.setMgraParkArea(mgraParkArea[personObj.getUsualWorkLocation()]);
-        fpDmuObject.setNumFreeHours(numfreehrs[personObj.getUsualWorkLocation()]);
-        fpDmuObject.setLsWgtAvgCostM(lsWgtAvgCostM[personObj.getUsualWorkLocation()]);
-        fpDmuObject.setLsWgtAvgCostD(lsWgtAvgCostD[personObj.getUsualWorkLocation()]);
-        fpDmuObject.setLsWgtAvgCostH(lsWgtAvgCostH[personObj.getUsualWorkLocation()]);
-        fpDmuObject.setMStallsOth(mstallsoth[personObj.getUsualWorkLocation()]);
-        fpDmuObject.setMStallsSam(mstallssam[personObj.getUsualWorkLocation()]);
-        fpDmuObject.setMParkCost(mparkcost[personObj.getUsualWorkLocation()]);
-        fpDmuObject.setDStallsSam(dstallssam[personObj.getUsualWorkLocation()]);
-        fpDmuObject.setDStallsOth(dstallsoth[personObj.getUsualWorkLocation()]);
-        fpDmuObject.setDParkCost(dparkcost[personObj.getUsualWorkLocation()]);
-        fpDmuObject.setHStallsOth(hstallsoth[personObj.getUsualWorkLocation()]);
-        fpDmuObject.setHStallsSam(hstallssam[personObj.getUsualWorkLocation()]);
-        fpDmuObject.setHParkCost(hparkcost[personObj.getUsualWorkLocation()]);
+        fpDmuObject.setMgraParkArea(mgraParkArea[personObj.getWorkLocation()]);
+        fpDmuObject.setNumFreeHours(numfreehrs[personObj.getWorkLocation()]);
+        fpDmuObject.setLsWgtAvgCostM(lsWgtAvgCostM[personObj.getWorkLocation()]);
+        fpDmuObject.setLsWgtAvgCostD(lsWgtAvgCostD[personObj.getWorkLocation()]);
+        fpDmuObject.setLsWgtAvgCostH(lsWgtAvgCostH[personObj.getWorkLocation()]);
+        fpDmuObject.setMStallsOth(mstallsoth[personObj.getWorkLocation()]);
+        fpDmuObject.setMStallsSam(mstallssam[personObj.getWorkLocation()]);
+        fpDmuObject.setMParkCost(mparkcost[personObj.getWorkLocation()]);
+        fpDmuObject.setDStallsSam(dstallssam[personObj.getWorkLocation()]);
+        fpDmuObject.setDStallsOth(dstallsoth[personObj.getWorkLocation()]);
+        fpDmuObject.setDParkCost(dparkcost[personObj.getWorkLocation()]);
+        fpDmuObject.setHStallsOth(hstallsoth[personObj.getWorkLocation()]);
+        fpDmuObject.setHStallsSam(hstallssam[personObj.getWorkLocation()]);
+        fpDmuObject.setHParkCost(hparkcost[personObj.getWorkLocation()]);
 
         // set the zone and dest attributes to the person's work location
-        fpDmuObject.setDmuIndexValues(hhObj.getHhId(), personObj.getUsualWorkLocation(),
-                hhObj.getHhTaz(), personObj.getUsualWorkLocation());
+        fpDmuObject.setDmuIndexValues(hhObj.getHhId(), personObj.getWorkLocation(),
+                hhObj.getHhTaz(), personObj.getWorkLocation());
 
         // compute utilities and choose auto ownership alternative.
         fpModel.computeUtilities(fpDmuObject, fpDmuObject.getDmuIndexValues());

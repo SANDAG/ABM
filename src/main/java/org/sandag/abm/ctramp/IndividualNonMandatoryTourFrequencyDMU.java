@@ -215,7 +215,7 @@ public class IndividualNonMandatoryTourFrequencyDMU
     public int getWorksAtHome()
     {
         if (person.getPersonIsWorker() == 1
-                && person.getUsualWorkLocation() == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR) return 1;
+                && person.getWorkLocation() == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR) return 1;
         else return 0;
     }
 
