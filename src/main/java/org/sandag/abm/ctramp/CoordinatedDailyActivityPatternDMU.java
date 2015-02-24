@@ -270,14 +270,14 @@ public class CoordinatedDailyActivityPatternDMU
 
     public int getUsualWorkLocationIsHomeA()
     {
-        if (personA.getUsualWorkLocation() == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR) return 1;
+        if (personA.getWorkLocation() == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR) return 1;
         else return 0;
     }
 
     public int getNoUsualWorkLocationA()
     {
-        if (personA.getUsualWorkLocation() > 0
-                && personA.getUsualWorkLocation() != ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR) return 0;
+        if (personA.getWorkLocation() > 0
+                && personA.getWorkLocation() != ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR) return 0;
         else return 1;
     }
 

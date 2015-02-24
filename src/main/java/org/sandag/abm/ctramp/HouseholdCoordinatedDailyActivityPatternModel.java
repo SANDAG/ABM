@@ -437,7 +437,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
             // set the person level dmu variables
             cdapDmuObject.setPersonA(personA);
 
-            int workMgra = personA.getPersonWorkLocationZone();
+            int workMgra = personA.getWorkLocation();
             if (workMgra > 0 && workMgra != ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR) cdapDmuObject
                     .setWorkLocationModeChoiceLogsumA(personA.getWorkLocationLogsum());
             else cdapDmuObject.setWorkLocationModeChoiceLogsumA(0.0);
@@ -1404,7 +1404,7 @@ public class HouseholdCoordinatedDailyActivityPatternModel
 
     public int getWorkLocationForThisCdapPerson(int cdapPersonNumber)
     {
-        int loc = cdapPersonArray[cdapPersonNumber].getUsualWorkLocation();
+        int loc = cdapPersonArray[cdapPersonNumber].getWorkLocation();
         if (loc > 0 && loc != ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR) return loc;
         else return 0;
     }

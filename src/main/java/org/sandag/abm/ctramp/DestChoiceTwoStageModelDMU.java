@@ -320,7 +320,7 @@ public abstract class DestChoiceTwoStageModelDMU
 
     protected int getWorkTaz()
     {
-        return person.getUsualWorkLocation();
+        return person.getWorkLocation();
     }
 
     protected int getWorkTourModeIsSOV()
