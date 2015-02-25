@@ -132,11 +132,7 @@ public class WorkLocationChoiceTaskJppfNew
 
                 dcModel.applyWorkLocationChoice(householdArray[i]);
                 
-<<<<<<< HEAD
-                if(!HouseholdValidator.validateHouseholds(householdArray))
-=======
                 if(!HouseholdValidator.validateMandatoryDestinationChoices(householdArray, "work"))
->>>>>>> (ABM-592) Add household validator to check work and school loction
                 {
                     setResubmit(true);
                 }

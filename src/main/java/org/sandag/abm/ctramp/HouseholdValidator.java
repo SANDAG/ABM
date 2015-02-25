@@ -24,7 +24,6 @@ public class HouseholdValidator
                         + p.getWorkLocationSegmentIndex() + " resubmitting job......");
                 break;
             }
->>>>>>> (ABM-592) Add household validator to check work and school loction
         }
         return result;
     }
