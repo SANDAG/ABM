@@ -11,6 +11,6 @@ call %PROJECT_DRIVE%\%PROJECT_DIRECTORY%\bin\CTRampEnv.bat
 
 cd %PROJECT_DRIVE%\%PROJECT_DIRECTORY%\python
 
-%PYTHON_PATH%\python emfac2014_abm.py %SCENARIO% Annual %SB375% %PROJECT_DRIVE%\%PROJECT_DIRECTORY%\output
-%PYTHON_PATH%\python emfac2014_abm.py %SCENARIO% Summer %SB375% %PROJECT_DRIVE%\%PROJECT_DIRECTORY%\output
-%PYTHON_PATH%\python emfac2014_abm.py %SCENARIO% Winter %SB375% %PROJECT_DRIVE%\%PROJECT_DIRECTORY%\output
+python.exe emfac2014_abm.py %SCENARIO% Annual %SB375% %PROJECT_DRIVE%\%PROJECT_DIRECTORY%\output
+python.exe emfac2014_abm.py %SCENARIO% Summer %SB375% %PROJECT_DRIVE%\%PROJECT_DIRECTORY%\output
+python.exe emfac2014_abm.py %SCENARIO% Winter %SB375% %PROJECT_DRIVE%\%PROJECT_DIRECTORY%\output
