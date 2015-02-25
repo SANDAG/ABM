@@ -334,7 +334,7 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
                     modelIndex = personTypeIndexToModelIndexMap.get(person.getPersonTypeNumber());
                     personTypeString = person.getPersonType();
 
-                    int workMgra = person.getUsualWorkLocation();
+                    int workMgra = person.getWorkLocation();
                     double accessibility = 0.0;
                     if (workMgra > 0 && workMgra != ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR)
                     {

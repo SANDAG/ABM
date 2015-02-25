@@ -15,7 +15,7 @@ import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
 import org.jppf.client.JPPFClient;
 import org.jppf.client.JPPFJob;
-import org.jppf.server.protocol.JPPFTask;
+import org.jppf.node.protocol.Task;
 import org.jppf.task.storage.DataProvider;
 import org.jppf.task.storage.MemoryMapDataProvider;
 import org.sandag.abm.accessibilities.BuildAccessibilities;
@@ -255,25 +255,27 @@ public class UsualWorkSchoolLocationChoiceModel
             try
             {
                 JPPFJob job = new JPPFJob();
-                job.setId("Work Location Choice Job");
+                job.setName("Work Location Choice Job");
+                job.getSLA().setMaxTaskResubmits(10);
+                job.getSLA().setApplyMaxResubmitsUponNodeError(false);
 
                 ArrayList<int[]> startEndTaskIndicesList = getTaskHouseholdRanges(householdDataManager
                         .getNumHouseholds());
 
                 DataProvider dataProvider = new MemoryMapDataProvider();
-                dataProvider.setValue("propertyMap", propertyMap);
-                dataProvider.setValue("ms", ms);
-                dataProvider.setValue("hhDataManager", householdDataManager);
-                dataProvider.setValue("modelStructure", modelStructure);
-                dataProvider.setValue("uecIndices", WORK_LOC_SEGMENT_TO_UEC_SHEET_INDEX);
-                dataProvider.setValue("soaUecIndices", WORK_LOC_SOA_SEGMENT_TO_UEC_SHEET_INDEX);
-                dataProvider.setValue("tourCategory", ModelStructure.MANDATORY_CATEGORY);
-                dataProvider.setValue("dcSizeObj", workerDcSizeObj);
-                dataProvider.setValue("dcUecFileName", workLocUecFileName);
-                dataProvider.setValue("soaUecFileName", soaUecFileName);
-                dataProvider.setValue("soaSampleSize", soaWorkSampleSize);
-                dataProvider.setValue("dmuFactory", dmuFactory);
-                dataProvider.setValue("restartModelString", restartModelString);
+                dataProvider.setParameter("propertyMap", propertyMap);
+                dataProvider.setParameter("ms", ms);
+                dataProvider.setParameter("hhDataManager", householdDataManager);
+                dataProvider.setParameter("modelStructure", modelStructure);
+                dataProvider.setParameter("uecIndices", WORK_LOC_SEGMENT_TO_UEC_SHEET_INDEX);
+                dataProvider.setParameter("soaUecIndices", WORK_LOC_SOA_SEGMENT_TO_UEC_SHEET_INDEX);
+                dataProvider.setParameter("tourCategory", ModelStructure.MANDATORY_CATEGORY);
+                dataProvider.setParameter("dcSizeObj", workerDcSizeObj);
+                dataProvider.setParameter("dcUecFileName", workLocUecFileName);
+                dataProvider.setParameter("soaUecFileName", soaUecFileName);
+                dataProvider.setParameter("soaSampleSize", soaWorkSampleSize);
+                dataProvider.setParameter("dmuFactory", dmuFactory);
+                dataProvider.setParameter("restartModelString", restartModelString);
 
                 job.setDataProvider(dataProvider);
 
@@ -291,21 +293,21 @@ public class UsualWorkSchoolLocationChoiceModel
                     {
                         myTaskNew = new WorkLocationChoiceTaskJppfNew(taskIndex, startIndex,
                                 endIndex, iter);
-                        job.addTask(myTaskNew);
+                        job.add(myTaskNew);
                     } else
                     {
                         myTask = new WorkLocationChoiceTaskJppf(taskIndex, startIndex, endIndex,
                                 iter);
-                        job.addTask(myTask);
+                        job.add(myTask);
                     }
                     taskIndex++;
                 }
 
                 logger.info("Usual work location choice model submitting tasks to jppf job");
-                List<JPPFTask> results = jppfClient.submit(job);
-                for (JPPFTask task : results)
+                List<Task<?>> results = jppfClient.submitJob(job);
+                for (Task<?> task : results)
                 {
-                    if (task.getException() != null) throw task.getException();
+                    if (task.getThrowable() != null) throw new Exception(task.getThrowable());
 
                     try
                     {
@@ -429,42 +431,34 @@ public class UsualWorkSchoolLocationChoiceModel
                     currentIter++;
                 }
             }
-        // String restartFlag = propertyMap.get(
-        // CtrampApplication.PROPERTIES_RESTART_WITH_HOUSEHOLD_SERVER );
-        // if ( restartFlag == null )
-        // restartFlag = "none";
-        // if ( restartFlag.equalsIgnoreCase("none") )
-        // currentIter = 0;
-
+       
         long initTime = System.currentTimeMillis();
 
         // shadow pricing iterations
         for (int iter = 0; iter < schoolDcSizeObj.getMaxShadowPriceIterations(); iter++)
         {
-
-            // logger.info( String.format( "Size of Household[] in bytes = %d.",
-            // householdDataManager.getBytesUsedByHouseholdArray() ) );
-
             try
             {
                 JPPFJob job = new JPPFJob();
-                job.setId("School Location Choice Job");
+                job.setName("School Location Choice Job");
+                job.getSLA().setMaxTaskResubmits(10);
+                job.getSLA().setApplyMaxResubmitsUponNodeError(false);
 
                 ArrayList<int[]> startEndTaskIndicesList = getTaskHouseholdRanges(householdDataManager
                         .getNumHouseholds());
 
                 DataProvider dataProvider = new MemoryMapDataProvider();
-                dataProvider.setValue("propertyMap", propertyMap);
-                dataProvider.setValue("ms", ms);
-                dataProvider.setValue("hhDataManager", householdDataManager);
-                dataProvider.setValue("modelStructure", modelStructure);
-                dataProvider.setValue("tourCategory", ModelStructure.MANDATORY_CATEGORY);
-                dataProvider.setValue("dcSizeObj", schoolDcSizeObj);
-                dataProvider.setValue("dcUecFileName", schoolLocUecFileName);
-                dataProvider.setValue("soaUecFileName", soaUecFileName);
-                dataProvider.setValue("soaSampleSize", soaSchoolSampleSize);
-                dataProvider.setValue("dmuFactory", dmuFactory);
-                dataProvider.setValue("restartModelString", restartModelString);
+                dataProvider.setParameter("propertyMap", propertyMap);
+                dataProvider.setParameter("ms", ms);
+                dataProvider.setParameter("hhDataManager", householdDataManager);
+                dataProvider.setParameter("modelStructure", modelStructure);
+                dataProvider.setParameter("tourCategory", ModelStructure.MANDATORY_CATEGORY);
+                dataProvider.setParameter("dcSizeObj", schoolDcSizeObj);
+                dataProvider.setParameter("dcUecFileName", schoolLocUecFileName);
+                dataProvider.setParameter("soaUecFileName", soaUecFileName);
+                dataProvider.setParameter("soaSampleSize", soaSchoolSampleSize);
+                dataProvider.setParameter("dmuFactory", dmuFactory);
+                dataProvider.setParameter("restartModelString", restartModelString);
 
                 job.setDataProvider(dataProvider);
 
@@ -482,20 +476,20 @@ public class UsualWorkSchoolLocationChoiceModel
                     {
                         myTaskNew = new SchoolLocationChoiceTaskJppfNew(taskIndex, startIndex,
                                 endIndex, iter);
-                        job.addTask(myTaskNew);
+                        job.add(myTaskNew);
                     } else
                     {
                         myTask = new SchoolLocationChoiceTaskJppf(taskIndex, startIndex, endIndex,
                                 iter);
-                        job.addTask(myTask);
+                        job.add(myTask);
                     }
                     taskIndex++;
                 }
 
-                List<JPPFTask> results = jppfClient.submit(job);
-                for (JPPFTask task : results)
+                List<Task<?>> results = jppfClient.submitJob(job);
+                for (Task<?> task : results)
                 {
-                    if (task.getException() != null) throw task.getException();
+                    if (task.getThrowable() != null) throw new Exception(task.getThrowable());
 
                     try
                     {
@@ -661,7 +655,7 @@ public class UsualWorkSchoolLocationChoiceModel
                         int schoolSegmentIndex = person.getSchoolLocationSegmentIndex();
                         int workSegmentIndex = person.getWorkLocationSegmentIndex();
 
-                        int workLocation = person.getUsualWorkLocation();
+                        int workLocation = person.getWorkLocation();
                         int schoolLocation = person.getUsualSchoolLocation();
 
                         // write data record
