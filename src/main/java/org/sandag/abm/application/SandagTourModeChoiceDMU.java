@@ -17,7 +17,7 @@ import org.sandag.abm.ctramp.ModelStructure;
 public class SandagTourModeChoiceDMU
         extends TourModeChoiceDMU
 {
-    
+
 	private int setPersonHhTourCounter = 0;
 	private BikeLogsum bls;
     protected double inboundFemaleBikeLogsum;
@@ -137,32 +137,32 @@ public class SandagTourModeChoiceDMU
     {
         return getNmBikeTimeIn();
     }
-    
-    
-    public void setBikeLogsum(BikeLogsum bls) 
+
+
+    public void setBikeLogsum(BikeLogsum bls)
     {
     	this.bls = bls;
     }
-    
-    public void setPersonObject(Person person) 
+
+    public void setPersonObject(Person person)
     {
     	super.setPersonObject(person);
     	checkSetPersonHhTour();
     }
 
-    public void setHouseholdObject(Household hh) 
+    public void setHouseholdObject(Household hh)
     {
     	super.setHouseholdObject(hh);
     	checkSetPersonHhTour();
     }
 
-    public void setTourObject(Tour tour) 
+    public void setTourObject(Tour tour)
     {
     	super.setTourObject(tour);
     	checkSetPersonHhTour();
     }
-    
-    private void checkSetPersonHhTour() 
+
+    private void checkSetPersonHhTour()
     {
     	setPersonHhTourCounter = (setPersonHhTourCounter+1) % 3;
     	if (setPersonHhTourCounter == 0) {
@@ -170,18 +170,18 @@ public class SandagTourModeChoiceDMU
     		setBikeLogsum();
     	}
     }
-	
-	public double getFemaleInParty() 
+
+	public double getFemaleInParty()
 	{
 		return femaleInParty;
 	}
-	
-	public double getMaleInParty() 
+
+	public double getMaleInParty()
 	{
 		return maleInParty;
 	}
-	
-	public void setParty(Person person, Tour tour, Household hh) 
+
+	public void setParty(Person person, Tour tour, Household hh)
 	{
         if (person != null) {
         	femaleInParty = person.getPersonIsFemale();
@@ -197,38 +197,38 @@ public class SandagTourModeChoiceDMU
         	}
         }
 	}
-    
-    public double getInboundFemaleBikeLogsum() 
+
+    public double getInboundFemaleBikeLogsum()
     {
 		return inboundFemaleBikeLogsum;
 	}
-    
-    public double getOutboundFemaleBikeLogsum() 
+
+    public double getOutboundFemaleBikeLogsum()
     {
 		return outboundFemaleBikeLogsum;
 	}
-    
-    public double getInboundMaleBikeLogsum() 
+
+    public double getInboundMaleBikeLogsum()
     {
 		return inboundMaleBikeLogsum;
 	}
-    
-    public double getOutboundMaleBikeLogsum() 
+
+    public double getOutboundMaleBikeLogsum()
     {
 		return outboundMaleBikeLogsum;
 	}
 
 
 	private void setBikeLogsum(double inboundFemaleBikeLogsum, double outboundFemaleBikeLogsum,
-			                   double inboundMaleBikeLogsum  , double outboundMaleBikeLogsum) 
+			                   double inboundMaleBikeLogsum  , double outboundMaleBikeLogsum)
 	{
 		this.inboundFemaleBikeLogsum = inboundFemaleBikeLogsum;
 		this.outboundFemaleBikeLogsum = outboundFemaleBikeLogsum;
 		this.inboundMaleBikeLogsum = inboundMaleBikeLogsum;
 		this.outboundMaleBikeLogsum = outboundMaleBikeLogsum;
 	}
-	
-	private void setBikeLogsum() 
+
+	private void setBikeLogsum()
 	{
 		int origin = tour.getTourOrigMgra();
 		int dest = tour.getTourDestMgra();
@@ -272,12 +272,12 @@ public class SandagTourModeChoiceDMU
         methodIndexMap.put("getPersonType", 27);
         methodIndexMap.put("getFreeParkingEligibility", 28);
         methodIndexMap.put("getParkingArea", 29);
-        
+
         methodIndexMap.put("getWorkTimeFactor", 30);
         methodIndexMap.put("getNonWorkTimeFactor", 31);
         methodIndexMap.put("getJointTourTimeFactor", 32);
         methodIndexMap.put("getTransponderOwnership", 33);
-        
+
         methodIndexMap.put("getFemaleInParty", 50);
         methodIndexMap.put("getMaleInParty", 51);
         methodIndexMap.put("getInboundFemaleBikeLogsum", 52);
@@ -291,7 +291,7 @@ public class SandagTourModeChoiceDMU
         methodIndexMap.put("getWalkSetLogSum", 59);
         methodIndexMap.put("getPnrSetLogSum", 60);
         methodIndexMap.put("getKnrSetLogSum", 61);
-                
+
         methodIndexMap.put( "getOrigTaxiWaitTime", 70 );
         methodIndexMap.put( "getDestTaxiWaitTime", 71 );
         methodIndexMap.put( "getOrigSingleTNCWaitTime", 72 );
@@ -304,11 +304,11 @@ public class SandagTourModeChoiceDMU
         methodIndexMap.put("getNm_walkTime_in", 91);
         methodIndexMap.put("getNm_bikeTime_out", 92);
         methodIndexMap.put("getNm_bikeTime_in", 93);
-        
+
         methodIndexMap.put("getOriginMgra", 96);
         methodIndexMap.put("getDestMgra", 97);
-        
-        
+
+
 
 
     }
@@ -420,7 +420,7 @@ public class SandagTourModeChoiceDMU
             case 33:
             	returnValue = getTransponderOwnership();
             	break;
-            case 50:    
+            case 50:
             	returnValue = getFemaleInParty();
                 break;
             case 51:
@@ -444,7 +444,7 @@ public class SandagTourModeChoiceDMU
             case 57:
             	returnValue = getCostCoeff();
             	break;
-            case 58:    
+            case 58:
             	returnValue = getIncomeInDollars();
             	break;
             case 59:
@@ -456,7 +456,7 @@ public class SandagTourModeChoiceDMU
             case 61:
                 returnValue = getTransitLogSum(WTD, true) + getTransitLogSum(DTW, false);
                 break;
- 
+
             case 70: return getOrigTaxiWaitTime();
             case 71: return getDestTaxiWaitTime();
             case 72: return getOrigSingleTNCWaitTime();
@@ -465,14 +465,14 @@ public class SandagTourModeChoiceDMU
             case 75: return getDestSharedTNCWaitTime();
             case 76: return getUseOwnedAV();
 
- 
- 
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
+
+
             case 90:
                 returnValue = getNmWalkTimeOut();
                 break;
@@ -484,7 +484,7 @@ public class SandagTourModeChoiceDMU
                 break;
             case 93:
                 returnValue = getNmBikeTimeIn();
-                break;   
+                break;
             case 96:
             	returnValue = getOriginMgra();
                 break;

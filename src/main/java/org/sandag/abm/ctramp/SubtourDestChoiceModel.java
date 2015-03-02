@@ -150,7 +150,7 @@ public class SubtourDestChoiceModel
         logger.info(String.format("creating %s subtour dest choice mode instance", tourCategory));
 
         mgraManager = MgraDataManager.getInstance();
-        tazs = TazDataManager.getInstance();  
+        tazs = TazDataManager.getInstance();
 
         soaSampleSize = Util.getIntegerValueFromPropertyMap(propertyMap,
                 PROPERTIES_DC_SOA_NON_MAND_SAMPLE_SIZE_KEY);
@@ -428,7 +428,7 @@ public class SubtourDestChoiceModel
     }
 
     /**
-     * 
+     *
      * @return chosen mgra.
      */
     private int selectLocationFromSampleOfAlternatives(Tour tour, DestChoiceDMU dcDmuObject,
@@ -549,7 +549,7 @@ public class SubtourDestChoiceModel
                 destAltsAvailable, destAltsSample);
 
         tour.setTourDestinationLogsum(logsum);
-        
+
         Random hhRandom = household.getHhRandom();
         int randomCount = household.getHhRandomCount();
         double rn = hhRandom.nextDouble();
@@ -648,7 +648,7 @@ public class SubtourDestChoiceModel
     }
 
     /**
-     * 
+     *
      * @return chosen mgra.
      */
     private int selectLocationFromTwoStageSampleOfAlternatives(Tour tour,
@@ -760,7 +760,7 @@ public class SubtourDestChoiceModel
         float modelLogsum = (float) dcModel2[m].computeUtilities(dcDistSoaDmuObject, dcDistSoaDmuObject.getDmuIndexValues(),
                 dcModel2AltsAvailable, dcModel2AltsSample);
         tour.setTourDestinationLogsum(modelLogsum);
-        
+
 
         Random hhRandom = household.getHhRandom();
         int randomCount = household.getHhRandomCount();
@@ -860,13 +860,13 @@ public class SubtourDestChoiceModel
         mcDmuObject.setWorkTourObject(workTour);
         mcDmuObject.setDmuIndexValues(household.getHhId(), household.getHhMgra(),
                 t.getTourOrigMgra(), sampleDestMgra, household.getDebugChoiceModels());
-        
+
 
         mcDmuObject.setPTazTerminalTime(tazs.getOriginTazTerminalTime(mgraManager.getTaz(t
                 .getTourOrigMgra())));
         mcDmuObject.setATazTerminalTime(tazs.getDestinationTazTerminalTime(mgraManager
                 .getTaz(sampleDestMgra)));
-        
+
         mcDmuObject.setOriginMgra(t.getTourOrigMgra());
         mcDmuObject.setDestMgra(t.getTourDestMgra());
 
@@ -1030,7 +1030,7 @@ public class SubtourDestChoiceModel
         TazDataManager tazManager = TazDataManager.getInstance(propertyMap);
 
         /*
-         *         
+         *
          */
         ModelStructure modelStructure = new SandagModelStructure();
         SandagCtrampDmuFactory dmuFactory = new SandagCtrampDmuFactory(modelStructure,propertyMap);
@@ -1156,14 +1156,14 @@ public class SubtourDestChoiceModel
         /**
          * used this block of code to test for typos and implemented dmu methods
          * in the TOD choice UECs
-         * 
+         *
          * String uecFileDirectory = propertyMap.get(
          * CtrampApplication.PROPERTIES_UEC_PATH );
-         * 
+         *
          * ModelStructure modelStructure = new SandagModelStructure();
          * SandagCtrampDmuFactory dmuFactory = new
          * SandagCtrampDmuFactory(modelStructure);
-         * 
+         *
          * String dcUecFileName = propertyMap.get( PROPERTIES_DC_UEC_FILE );
          * DestChoiceDMU dcDmuObject = dmuFactory.getDestChoiceDMU(); File
          * uecFile = new File(uecFileDirectory + dcUecFileName);
@@ -1171,7 +1171,7 @@ public class SubtourDestChoiceModel
          * UtilityExpressionCalculator(uecFile, 13, 0, propertyMap,
          * (VariableTable) dcDmuObject);
          * System.out.println("Subtour destination choice UEC passed");
-         * 
+         *
          * String soaUecFileName = propertyMap.get( PROPERTIES_DC_SOA_UEC_FILE
          * ); DcSoaDMU dcSoaDmuObject = dmuFactory.getDcSoaDMU(); uecFile = new
          * File(uecFileDirectory + soaUecFileName); uec = new

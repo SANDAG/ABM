@@ -287,6 +287,12 @@ public class HouseholdDataManagerRmi
         Object[] objArray = {};
         remote.method("resetInmtodRandom", objArray);
     }
+    
+    public void resetTdRandom()
+    {
+        Object[] objArray = {};
+        remote.method("resetTdRandom", objArray);
+    }
 
     public void resetStfRandom()
     {

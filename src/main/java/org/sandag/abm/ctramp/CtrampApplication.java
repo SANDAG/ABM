@@ -85,6 +85,7 @@ public class CtrampApplication
     public static final String                         PROPERTIES_RUN_INDIV_NON_MANDATORY_LOCATION_CHOICE        = "RunModel.IndividualNonMandatoryTourLocationChoice";
     public static final String                         PROPERTIES_RUN_INDIV_NON_MANDATORY_TOUR_MODE_CHOICE       = "RunModel.IndividualNonMandatoryTourModeChoice";
     public static final String                         PROPERTIES_RUN_INDIV_NON_MANDATORY_TOUR_DEP_TIME_AND_DUR  = "RunModel.IndividualNonMandatoryTourDepartureTimeAndDuration";
+    public static final String						   PROPERTIES_RUN_TOUR_DRIVER                                = "RunModel.TourDriver";
     public static final String                         PROPERTIES_RUN_STOP_FREQUENCY                             = "RunModel.StopFrequency";
     public static final String                         PROPERTIES_RUN_STOP_LOCATION                              = "RunModel.StopLocation";
 
@@ -483,6 +484,8 @@ public class CtrampApplication
                 PROPERTIES_RUN_JOINT_TOUR_FREQ);
         boolean runIndivNonManTourFrequencyModel = ResourceUtil.getBooleanProperty(resourceBundle,
                 PROPERTIES_RUN_INDIV_NON_MANDATORY_TOUR_FREQ);
+        boolean runTourDriverModel = ResourceUtil.getBooleanProperty(resourceBundle, 
+        		PROPERTIES_RUN_TOUR_DRIVER);
         boolean runAtWorkSubTourFrequencyModel = ResourceUtil.getBooleanProperty(resourceBundle,
                 PROPERTIES_RUN_AT_WORK_SUBTOUR_FREQ);
         boolean runStopFrequencyModel = ResourceUtil.getBooleanProperty(resourceBundle,
@@ -492,7 +495,7 @@ public class CtrampApplication
                 || runInternalExternalTripChoiceModel
                 || runCoordinatedDailyActivityPatternChoiceModel || runMandatoryTourFreqChoiceModel
                 || runIndivNonManTourFrequencyModel || runAtWorkSubTourFrequencyModel
-                || runStopFrequencyModel)
+                || runTourDriverModel || runStopFrequencyModel)
         {
 
             // We're resetting the random number sequence used by pre-AO for the
@@ -550,6 +553,11 @@ public class CtrampApplication
             {
                 if (logResults) logAtWorkSubtourFreqResults(householdDataManager);
             }
+            
+            //if (runTourDriverModel)
+            //{
+            //	if (logResults) logTourDriverResults(householdDataManager);
+            //}
 
             if (runStopFrequencyModel)
             {
@@ -1084,6 +1092,12 @@ public class CtrampApplication
                             // }
                             // }
                             // }
+                            boolean runTourDriverModel = ResourceUtil.getBooleanProperty(
+                                    resourceBundle, PROPERTIES_RUN_TOUR_DRIVER);
+                            if (runTourDriverModel)
+                            {
+                                householdDataManager.resetTdRandom();
+                            }
                         }
                     }
                 }

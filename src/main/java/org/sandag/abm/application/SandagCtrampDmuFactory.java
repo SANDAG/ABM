@@ -37,6 +37,7 @@ import org.sandag.abm.ctramp.TourDepartureTimeAndDurationDMU;
 import org.sandag.abm.ctramp.TourModeChoiceDMU;
 import org.sandag.abm.ctramp.TransponderChoiceDMU;
 import org.sandag.abm.ctramp.TripModeChoiceDMU;
+import org.sandag.abm.ctramp.TourDriverDMU;
 
 /**
  * ArcCtrampDmuFactory is a class that ...
@@ -144,6 +145,11 @@ public class SandagCtrampDmuFactory
         return new SandagStopFrequencyDMU(modelStructure);
     }
 
+    public TourDriverDMU getTourDriverDMU() 
+    {
+    	return new SandagTourDriverDMU(modelStructure);
+    }
+    
     public StopLocationDMU getStopLocationDMU()
     {
         return new SandagStopLocationDMU(modelStructure,propertyMap);

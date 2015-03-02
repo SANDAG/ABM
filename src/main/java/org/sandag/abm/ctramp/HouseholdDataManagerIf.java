@@ -91,6 +91,8 @@ public interface HouseholdDataManagerIf
     void resetInmtlRandom();
 
     void resetInmtodRandom();
+    
+    void resetTdRandom();
 
     void resetStfRandom();
 

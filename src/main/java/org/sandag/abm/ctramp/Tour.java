@@ -36,13 +36,13 @@ public class Tour
     private int                   tourMode;
     private int                   subtourFreqChoice;
     private int                   tourParkMgra;
-    
+
     private float                 timeOfDayLogsum;
     private float                 tourModeLogsum;
     private float                 subtourFreqLogsum;
     private float                 tourDestinationLogsum;
     private float                 stopFreqLogsum;
-    
+
 
     private int                   tourPrimaryPurposeIndex;
 
@@ -52,24 +52,24 @@ public class Tour
     private int                   stopFreqChoice;
     private Stop[]                outboundStops;
     private Stop[]                inboundStops;
-   
+
     private ArrayList<Float>      outboundStopDestinationLogsums;
     private ArrayList<Float>      inboundStopDestinationLogsums;
 
     //Dimension N-path by 3 - 0=btap, 1=atap, 2=skim set , 3=utility
     private double[][]   bestWtwTapPairsOut;
-   
+
 
     private double[][]   bestWtwTapPairsIn;
     private double[][]   bestWtdTapPairsOut;
     private double[][]   bestWtdTapPairsIn;
     private double[][]   bestDtwTapPairsOut;
     private double[][]   bestDtwTapPairsIn;
-    
+
     private int       choosenTransitPathIn;
 
     private int       choosenTransitPathOut;
-    
+
     private boolean   useOwnedAV;
 
     private double valueOfTime;
@@ -87,7 +87,7 @@ public class Tour
         this.tourId = tourId;
         tourCategory = ModelStructure.MANDATORY_CATEGORY;
         tourPrimaryPurposeIndex = primaryIndex;
-        
+
         outboundStopDestinationLogsums = new ArrayList<Float>();
         inboundStopDestinationLogsums = new ArrayList<Float>();
    }
@@ -208,6 +208,11 @@ public class Tour
         return tourMode;
     }
 
+    public int getTourDriver()
+    {
+    	return tourDriver;
+    }
+
     public void setTourId(int id)
     {
         tourId = id;
@@ -246,6 +251,11 @@ public class Tour
     public void setTourModeChoice(int modeIndex)
     {
         tourMode = modeIndex;
+    }
+
+    public void setTourDriver(int driver)
+    {
+    	tourDriver = driver;
     }
 
     public void setTourParkMgra(int parkMgra)
@@ -368,7 +378,7 @@ public class Tour
      * without stops can be distinguished in the output trip files from turs
      * that have stops. Trips for these tours come from stop objects with ids in
      * the range 0,...,3.
-     * 
+     *
      * @param origPurp
      *            is "home" or "work" (for at-work subtours) if outbound, or the
      *            primary tour purpose if inbound
@@ -519,7 +529,7 @@ public class Tour
                     tempString += ", " + i + "[" + "none" + "," + "none" + "," + "none" + "]";
                 else
                     tempString += ", " + i + "[" + bestWtwTapPairsOut[i][0] + "," + bestWtwTapPairsOut[i][1] + "," + bestWtwTapPairsOut[0][2] + "]";
-                        
+
             tempString += ", choosenTransitPathOut: " + choosenTransitPathOut;
         }
         logger.info(tempString);
@@ -537,7 +547,7 @@ public class Tour
                     tempString += ", " + 0 + "[" + "none" + "," + "none" + "," + "none" + "]";
                 else
                     tempString += ", " + i + "[" + bestWtwTapPairsIn[i][0] + "," + bestWtwTapPairsIn[i][1] + "," + bestWtwTapPairsIn[0][2] + "]";
-            
+
             tempString += ", choosenTransitPathIn: " + choosenTransitPathIn;
         }
         logger.info(tempString);
@@ -555,7 +565,7 @@ public class Tour
                     tempString += ", " + i + "[" + "none" + "," + "none" + "," + "none" + "]";
                 else
                     tempString += ", " + i + "[" + bestWtdTapPairsOut[i][0] + "," + bestWtdTapPairsOut[i][1] + "," + bestWtdTapPairsOut[0][2] + "]";
-            
+
             tempString += ", choosenTransitPathOut: " + choosenTransitPathOut;
         }
         logger.info(tempString);
@@ -573,7 +583,7 @@ public class Tour
                     tempString += ", " + 0 + "[" + "none" + "," + "none" + "," + "none" + "]";
                 else
                     tempString += ", " + i + "[" + bestWtdTapPairsIn[i][0] + "," + bestWtdTapPairsIn[i][1] + "," + bestWtdTapPairsIn[0][2] + "]";
-            
+
             tempString += ", choosenTransitPathIn: " + choosenTransitPathIn;
         }
         logger.info(tempString);
@@ -591,7 +601,7 @@ public class Tour
                     tempString += ", " + i + "[" + "none" + "," + "none" + "," + "none" + "]";
                 else
                     tempString += ", " + i + "[" + bestDtwTapPairsOut[i][0] + "," + bestDtwTapPairsOut[i][1] + "," + bestDtwTapPairsOut[0][2] + "]";
-            
+
             tempString += ", choosenTransitPathOut: " + choosenTransitPathOut;
         }
         logger.info(tempString);
@@ -609,7 +619,7 @@ public class Tour
                     tempString += ", " + 0 + "[" + "none" + "," + "none" + "," + "none" + "]";
                 else
                     tempString += ", " + i + "[" + bestDtwTapPairsIn[i][0] + "," + bestDtwTapPairsIn[i][1] + "," + bestDtwTapPairsIn[0][2] + "]";
-            
+
             tempString += ", choosenTransitPathIn: " + choosenTransitPathIn;
         }
         logger.info(tempString);
@@ -832,7 +842,7 @@ public class Tour
 	public ArrayList<Float> getInboundStopDestinationLogsums(){
 		return inboundStopDestinationLogsums;
 	}
-	
+
 	public void addOutboundStopDestinationLogsum(float logsum){
 		outboundStopDestinationLogsums.add(logsum);
 	}
@@ -840,7 +850,7 @@ public class Tour
 	public void addInboundStopDestinationLogsum(float logsum){
 		inboundStopDestinationLogsums.add(logsum);
 	}
-	
+
 	public boolean getUseOwnedAV() {
 		return useOwnedAV;
 	}

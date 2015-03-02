@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 
-public class TripModeChoiceDMU 
+public class TripModeChoiceDMU
         implements Serializable, VariableTable
 {
 
@@ -18,13 +18,13 @@ public class TripModeChoiceDMU
     protected static final int                WTD = McLogsumsCalculator.WTD;
     protected static final int                DTW = McLogsumsCalculator.DTW;
     protected static final int                NUM_ACC_EGR = McLogsumsCalculator.NUM_ACC_EGR;
-    
+
     protected static final int                OUT = McLogsumsCalculator.OUT;
     protected static final int                IN = McLogsumsCalculator.IN;
     protected static final int                NUM_DIR = McLogsumsCalculator.NUM_DIR;
-    
+
     protected HashMap<String, Integer> methodIndexMap;
-    
+
     protected Tour                     tour;
     protected Person                   person;
     protected Household                hh;
@@ -70,7 +70,7 @@ public class TripModeChoiceDMU
     protected float waitTimeTaxi;
     protected float waitTimeSingleTNC;
     protected float waitTimeSharedTNC;
-    
+
     protected int                      tourModeIsDA;
     protected int                      tourModeIsS2;
     protected int                      tourModeIsS3;
@@ -111,12 +111,12 @@ public class TripModeChoiceDMU
     {
         this.modelStructure = modelStructure;
         dmuIndex = new IndexValues();
-        
+
         transitLogSum = new double[McLogsumsCalculator.NUM_ACC_EGR];
     }
-    
-    
-    
+
+
+
     public void setParkingCostInfo(int[] mgraParkArea, double[] lsWgtAvgCostM,
             double[] lsWgtAvgCostD, double[] lsWgtAvgCostH)
     {
@@ -158,7 +158,7 @@ public class TripModeChoiceDMU
 
     /**
      * Set this index values for this tour mode choice DMU object.
-     * 
+     *
      * @param hhIndex
      *            is the DMU household index
      * @param zoneIndex
@@ -390,13 +390,13 @@ public class TripModeChoiceDMU
     {
         tripDestIsTourDest = value;
     }
-    
+
     public void setBikeLogsum(int origin, int dest, boolean inbound) {
     	//do nothing - this is a stub to allow SANDAG to work correctly
     	// see SandagTripModeChoiceModelDMU for actual implementation
     }
-    
-    
+
+
     public IndexValues getDmuIndexValues()
     {
         return dmuIndex;
@@ -490,7 +490,7 @@ public class TripModeChoiceDMU
         boolean tourModeIsKnr = modelStructure.getTourModeIsKnr(tour.getTourModeChoice());
         return tourModeIsKnr ? 1 : 0;
     }
-    
+
     public void setTransitLogSum(int accEgr, double value){
     	transitLogSum[accEgr] = value;
     }
@@ -640,13 +640,13 @@ public class TripModeChoiceDMU
     {
         return tripDestIsTourDest;
     }
-    
+
     public void setOriginMgra( int value ) {
-        originMgra = value; 
+        originMgra = value;
     }
-    
+
     public void setDestMgra( int value ) {
-        destMgra = value; 
+        destMgra = value;
     }
 
     public int getFreeOnsite()
@@ -663,15 +663,15 @@ public class TripModeChoiceDMU
 	public double getWorkTimeFactor() {
 		return person.getTimeFactorWork();
 	}
-	
+
 	public double getNonWorkTimeFactor(){
 		return person.getTimeFactorNonWork();
 	}
-	
+
 	/**
 	 * Iterate through persons on tour and return non-work time factor
 	 * for oldest person. If the person array is null then return 1.0.
-	 * 
+	 *
 	 * @return Time factor for oldest person on joint tour.
 	 */
 	public double getJointTourTimeFactor() {
@@ -687,7 +687,7 @@ public class TripModeChoiceDMU
 	    }
 		if(oldestPerson != null)
 			return oldestPerson.getTimeFactorNonWork();
-		
+
 		return 1.0;
 	}
 
@@ -714,7 +714,7 @@ public class TripModeChoiceDMU
  	public int getDestMgra() {
  		return destMgra;
  	}
- 	
+
     public boolean isInbound() {
 		return inbound;
 	}
@@ -727,8 +727,8 @@ public class TripModeChoiceDMU
 	public void setInbound(boolean inbound) {
 		this.inbound = inbound;
 	}
-	
-	 /** 
+
+	 /**
 	   * 1 if household owns transponder, else 0
 	   * @return 1 if household owns transponder, else 0
 	   */
@@ -767,10 +767,10 @@ public class TripModeChoiceDMU
     }
 
    public int getUseOwnedAV(){
-    	
+
     	if(tour==null)
     		return 0;
-    	
+
     	return (tour.getUseOwnedAV() ? 1: 0);
     }
 
@@ -800,7 +800,7 @@ public class TripModeChoiceDMU
 	public void setWaitTimeSharedTNC(float waitTimeSharedTNC) {
 		this.waitTimeSharedTNC = waitTimeSharedTNC;
 	}
-	
+
 	public int getIndexValue(String variableName)
     {
         return methodIndexMap.get(variableName);

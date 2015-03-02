@@ -61,6 +61,7 @@ public class HouseholdChoiceModels
     private boolean                                                  runIndividualNonMandatoryTourLocationChoiceModel;
     private boolean                                                  runIndividualNonMandatoryTourModeChoiceModel;
     private boolean                                                  runIndividualNonMandatoryTourDepartureTimeAndDurationModel;
+    private boolean													 runTourDriverModel;
     private boolean                                                  runStopFrequencyModel;
     private boolean                                                  runStopLocationModel;
 
@@ -88,6 +89,7 @@ public class HouseholdChoiceModels
     private SubtourDestChoiceModel                                   awlcModel;
     private SubtourDepartureAndDurationTime                          awtodModel;
     private IntermediateStopChoiceModels                             stlmcModel;
+    private TourDriverModel                                          tdModel;
 
     private long                                                     aoTime;
     private long                                                     fpTime;
@@ -111,6 +113,7 @@ public class HouseholdChoiceModels
     private long                                                     awtdcSoaTime;
     private long                                                     awtodTime;
     private long                                                     awtmcTime;
+    private long                                                     tdTime;
     private long                                                     stfTime;
     private long                                                     stdtmTime;
     private long[]                                                   returnPartialTimes                  = new long[IntermediateStopChoiceModels.NUM_CPU_TIME_VALUES];
@@ -193,6 +196,8 @@ public class HouseholdChoiceModels
         runIndividualNonMandatoryTourDepartureTimeAndDurationModel = Boolean
                 .parseBoolean(propertyMap
                         .get(CtrampApplication.PROPERTIES_RUN_INDIV_NON_MANDATORY_TOUR_DEP_TIME_AND_DUR));
+        runTourDriverModel = Boolean.parseBoolean(propertyMap
+        		.get(CtrampApplication.PROPERTIES_RUN_TOUR_DRIVER));
         runStopFrequencyModel = Boolean.parseBoolean(propertyMap
                 .get(CtrampApplication.PROPERTIES_RUN_STOP_FREQUENCY));
         runStopLocationModel = Boolean.parseBoolean(propertyMap
@@ -359,6 +364,13 @@ public class HouseholdChoiceModels
                 if (measureObjectSizes)
                     logger.info("AWTOD size:      " + ObjectUtil.sizeOf(awtodModel));
             }
+            
+            if (runTourDriverModel)
+            {
+            	tdModel = new TourDriverModel(propertyMap, modelStructure, dmuFactory);
+            	if (measureObjectSizes)
+            		logger.info("TD size:      " + ObjectUtil.sizeOf(tdModel));
+            }
 
             if (runStopFrequencyModel)
             {
@@ -453,6 +465,8 @@ public class HouseholdChoiceModels
 
             if (runAtWorkSubtourDepartureTimeAndDurationModel && awtodModel != null)
                 lastModel += " awtod";
+            
+            if (runTourDriverModel && tdModel != null) lastModel += "td";
 
             if (runStopFrequencyModel && stfModel != null) lastModel += " stf";
 
@@ -533,6 +547,8 @@ public class HouseholdChoiceModels
 
         if (runAtWorkSubtourDepartureTimeAndDurationModel)
             awtodModel.applyModel(hhObject, runAtWorkSubtourModeChoiceModel);
+        
+        if (runTourDriverModel) tdModel.applyModel(hhObject);
 
         if (runStopFrequencyModel) stfModel.applyModel(hhObject);
 
@@ -721,6 +737,13 @@ public class HouseholdChoiceModels
             awtmcTime += mcTime;
         }
 
+        if (runTourDriverModel)
+        {
+        	long check = System.nanoTime();
+        	tdModel.applyModel(hhObject);
+        	tdTime += (System.nanoTime() - check);
+        }
+        
         if (runStopFrequencyModel)
         {
             long check = System.nanoTime();
@@ -812,6 +835,7 @@ public class HouseholdChoiceModels
         awtdcSoaTime = 0;
         awtodTime = 0;
         awtmcTime = 0;
+        tdTime = 0;
         stfTime = 0;
         stdtmTime = 0;
 
@@ -825,7 +849,7 @@ public class HouseholdChoiceModels
 
     public long[] getTimes()
     {
-        long[] returnTimes = new long[23];
+        long[] returnTimes = new long[24];
         returnTimes[0] = aoTime;
         returnTimes[1] = fpTime;
         returnTimes[2] = ieTime;
@@ -847,8 +871,9 @@ public class HouseholdChoiceModels
         returnTimes[18] = awtdcTime;
         returnTimes[19] = awtodTime;
         returnTimes[20] = awtmcTime;
-        returnTimes[21] = stfTime;
-        returnTimes[22] = stdtmTime;
+        returnTimes[21] = tdTime;
+        returnTimes[22] = stfTime;
+        returnTimes[23] = stdtmTime;
         return returnTimes;
     }
 

@@ -310,6 +310,7 @@ public class SandagTripModeChoiceDMU
         methodIndexMap.put("getMaleInParty", 51);
         methodIndexMap.put("getFemaleBikeLogsum", 52);
         methodIndexMap.put("getMaleBikeLogsum", 53);
+        methodIndexMap.put("getPersonIsTourDriver",54);
         
         methodIndexMap.put("getTransponderOwnership", 54);
         methodIndexMap.put("getWorkTimeFactor", 55);

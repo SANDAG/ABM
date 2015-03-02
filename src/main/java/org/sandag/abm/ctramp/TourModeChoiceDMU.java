@@ -10,14 +10,14 @@ import com.pb.common.calculator.VariableTable;
 
 public class TourModeChoiceDMU implements Serializable,
 		VariableTable {
-	
+
     protected transient Logger             logger = Logger.getLogger(TourModeChoiceDMU.class);
 
     public static final int                WTW = McLogsumsCalculator.WTW;
     public static final int                WTD = McLogsumsCalculator.WTD;
     public static final int                DTW = McLogsumsCalculator.DTW;
     protected static final int             NUM_ACC_EGR = McLogsumsCalculator.NUM_ACC_EGR;
-        
+
     protected static final int             OUT = McLogsumsCalculator.OUT;
     protected static final int             IN = McLogsumsCalculator.IN;
     protected static final int             NUM_DIR = McLogsumsCalculator.NUM_DIR;
@@ -30,7 +30,7 @@ public class TourModeChoiceDMU implements Serializable,
     protected float destSingleTNCWaitTime;
     protected float origSharedTNCWaitTime;
     protected float destSharedTNCWaitTime;
- 
+
 
 	protected Household hh;
 	protected Tour tour;
@@ -62,17 +62,17 @@ public class TourModeChoiceDMU implements Serializable,
 
 	protected int originMgra;
     protected int destMgra;
-    
+
     protected double ivtCoeff;
     protected double costCoeff;
-	  
+
     protected double[][]                 transitLogSum;
-	
+
 
 	public TourModeChoiceDMU(ModelStructure modelStructure, Logger aLogger) {
 	        this.modelStructure = modelStructure;
 	        dmuIndex = new IndexValues();
-	        
+
 	        //accEgr by in/outbound
 	        transitLogSum = new double[NUM_ACC_EGR][NUM_DIR];
 
@@ -117,7 +117,7 @@ public class TourModeChoiceDMU implements Serializable,
 
 	/**
 	 * Set this index values for this tour mode choice DMU object.
-	 * 
+	 *
 	 * @param hhIndex
 	 *            is the DMU household index
 	 * @param zoneIndex
@@ -281,7 +281,7 @@ public class TourModeChoiceDMU implements Serializable,
 		return hh.getIncomeInDollars();
 	}
 
-	
+
 	public void setNmWalkTimeOut(double nmWalkTime) {
 		nmWalkTimeOut = nmWalkTime;
 	}
@@ -313,19 +313,19 @@ public class TourModeChoiceDMU implements Serializable,
 	public double getNmBikeTimeIn() {
 		return nmBikeTimeIn;
 	}
-	
+
 	public double getWorkTimeFactor() {
 		return person.getTimeFactorWork();
 	}
-	
+
 	public double getNonWorkTimeFactor(){
 		return person.getTimeFactorNonWork();
 	}
-	
+
 	/**
 	 * Iterate through persons on tour and return non-work time factor
 	 * for oldest person. If the person array is null then return 1.0.
-	 * 
+	 *
 	 * @return Time factor for oldest person on joint tour.
 	 */
 	public double getJointTourTimeFactor() {
@@ -341,7 +341,7 @@ public class TourModeChoiceDMU implements Serializable,
 	    }
 		if(oldestPerson != null)
 			return oldestPerson.getTimeFactorNonWork();
-		
+
 		return 1.0;
 	}
 
@@ -373,23 +373,23 @@ public class TourModeChoiceDMU implements Serializable,
 	public double getATazTerminalTime() {
 		return aTazTerminalTime;
 	}
-	
+
 	public void setOriginMgra( int value ) {
-    originMgra = value; 
+    originMgra = value;
   }
-    
+
   public void setDestMgra( int value ) {
-    destMgra = value; 
+    destMgra = value;
   }
-    
+
   public int getOriginMgra() {
     return originMgra;
   }
-    
+
   public int getDestMgra() {
-    return destMgra; 
+    return destMgra;
   }
-  
+
   /**
    * 1 if household owns transponder, else 0
    * @return 1 if household owns transponder, else 0
@@ -438,10 +438,10 @@ public void setCostCoeff(double costCoeff) {
 		throw new UnsupportedOperationException();
 	}
     public int getUseOwnedAV(){
-    	
+
     	if(tour==null)
     		return 0;
-    	
+
     	return (tour.getUseOwnedAV() ? 1: 0);
     }
 
@@ -518,6 +518,5 @@ public void setCostCoeff(double costCoeff) {
 	}
 
 
-    
-}
 
+}

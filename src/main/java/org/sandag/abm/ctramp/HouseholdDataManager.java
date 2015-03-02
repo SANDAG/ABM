@@ -30,7 +30,7 @@ import com.pb.common.util.SeededRandom;
 
 /**
  * @author Jim Hicks
- * 
+ *
  *         Class for managing household and person object data read from
  *         synthetic population files.
  */
@@ -52,7 +52,7 @@ public abstract class HouseholdDataManager
     public static final String        READ_UWSL_RESULTS_FILENAME                              = "read.uwsl.filename";
     public static final String        READ_PRE_AO_RESULTS_FILE                                = "read.pre.ao.results";
     public static final String        READ_PRE_AO_RESULTS_FILENAME                            = "read.pre.ao.filename";
-    
+
     public static final String   PROPERTIES_DISTRIBUTED_TIME = "distributedTimeCoefficients";
 
 
@@ -83,10 +83,10 @@ public abstract class HouseholdDataManager
     public static final String        PERSON_OCCCEN1_FIELD_NAME                               = "OCCCEN1";
     public static final String        PERSON_SOC_FIELD_NAME                                   = "OCCSOC5";
     public static final String        PERSON_INDCEN_FIELD_NAME                                = "INDCEN";
-    
+
     public static final String        PERSON_TIMEFACTOR_WORK_FIELD_NAME                       = "timeFactorWork";
     public static final String        PERSON_TIMEFACTOR_NONWORK_FIELD_NAME                    = "timeFactorNonWork";
-  
+
     public static final String        PROPERTIES_HOUSEHOLD_TRACE_LIST                         = "Debug.Trace.HouseholdIdList";
     public static final String        DEBUG_HHS_ONLY_KEY                                      = "Process.Debug.HHs.Only";
 
@@ -145,7 +145,7 @@ public abstract class HouseholdDataManager
 
     protected double[]                percentHhsIncome100Kplus;
     protected double[]                percentHhsMultipleAutos;
-    
+
     protected boolean 				readTimeFactors;
     public HouseholdDataManager()
     {
@@ -188,7 +188,7 @@ public abstract class HouseholdDataManager
 
     public void readPopulationFiles(String inputHouseholdFileName, String inputPersonFileName)
     {
-    	
+
         TimeCoefficientDistributions timeDistributions = new TimeCoefficientDistributions();
         timeDistributions.createTimeDistributions(propertyMap);
         timeDistributions.appendTimeDistributionsOnPersonFile(propertyMap);
@@ -265,9 +265,9 @@ public abstract class HouseholdDataManager
         	readTimeFactors = Boolean.valueOf(readTimeFactorsString);
         	logger.info("Distributed time coefficients = "+Boolean.toString(readTimeFactors));
         }
-     
 
-        
+
+
     }
 
     public void setPropertyFileValues(HashMap<String, String> propertyMap)
@@ -293,7 +293,7 @@ public abstract class HouseholdDataManager
         propertyValue = propertyMap.get(CtrampApplication.PROPERTIES_SCHEDULING_FIRST_TIME_PERIOD);
         if (propertyValue == null) firstPeriod = 0;
         else firstPeriod = Integer.parseInt(propertyValue);
-        
+
         //check if we want to read distributed time factors from the person file
         String readTimeFactorsString = propertyMap.get(PROPERTIES_DISTRIBUTED_TIME);
         if (readTimeFactorsString != null)
@@ -694,7 +694,7 @@ public abstract class HouseholdDataManager
     /**
      * Sets the sample rate used to run the model for a portion of the
      * households.
-     * 
+     *
      * @param sampleRate
      *            , proportion of total households for which to run the model
      *            [0.0, 1.0].
@@ -730,7 +730,7 @@ public abstract class HouseholdDataManager
     /**
      * return the array of Household objects holding the synthetic population
      * and choice model outcomes.
-     * 
+     *
      * @return hhs
      */
     public Household[] getHhArray()
@@ -764,7 +764,7 @@ public abstract class HouseholdDataManager
     /**
      * return the number of household objects read from the synthetic
      * population.
-     * 
+     *
      * @return
      */
     public int getNumHouseholds()
