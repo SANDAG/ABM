@@ -257,6 +257,14 @@
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
         </layout>        
     </appender>
+	
+    <appender name="PostprocessModel-FILE" class="org.apache.log4j.FileAppender">
+        <param name="File" value="./logFiles/event-postprocessModel.log"/>
+        <param name="Append" value="true"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
+        </layout>        
+    </appender>
 
 
 <!-- utility calculation trace logger statements will be sent to TRACE-FILE -->
@@ -432,6 +440,12 @@
     <logger name="visitorModel" additivity="false">
         <level value="info"/>
         <appender-ref ref="VisitorModel-FILE"/>
+    </logger>
+
+<!-- dta postprocessing model -->
+    <logger name="postprocessModel" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="PostprocessModel-FILE"/>
     </logger>
 
 <!-- The default logger will log info level to both CONSOLE and FILE -->
