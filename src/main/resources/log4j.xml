@@ -3,7 +3,7 @@
 <!--
  A simple configuration file for the Log4j logging classes. Basic FILE and CONSOLE
  Appenders are created. Also, debug logger output is sent to a separate DEBUG-FILE.
- 
+
 -->
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
@@ -11,7 +11,7 @@
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
 
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="FILE" class="org.apache.log4j.FileAppender">
@@ -19,7 +19,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="BAD-SLC-FILE" class="org.apache.log4j.FileAppender">
@@ -27,7 +27,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
 <!--
@@ -36,7 +36,7 @@
         <param name="Append" value="false"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 -->
 
@@ -45,7 +45,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="UWSL-FILE" class="org.apache.log4j.FileAppender">
@@ -53,7 +53,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="AO-FILE" class="org.apache.log4j.FileAppender">
@@ -61,7 +61,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="FP-FILE" class="org.apache.log4j.FileAppender">
@@ -69,7 +69,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="TP-FILE" class="org.apache.log4j.FileAppender">
@@ -77,7 +77,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="CDAP-FILE" class="org.apache.log4j.FileAppender">
@@ -85,7 +85,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="CDAP-UEC-FILE" class="org.apache.log4j.FileAppender">
@@ -93,7 +93,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="CDAP-LOGSUM-FILE" class="org.apache.log4j.FileAppender">
@@ -101,7 +101,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="TourDCSoaDist-FILE" class="org.apache.log4j.FileAppender">
@@ -109,7 +109,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="TourDCSoa-FILE" class="org.apache.log4j.FileAppender">
@@ -117,7 +117,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="TourDCMan-FILE" class="org.apache.log4j.FileAppender">
@@ -125,7 +125,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="TourDCNonMan-FILE" class="org.apache.log4j.FileAppender">
@@ -133,7 +133,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="TourMCMan-FILE" class="org.apache.log4j.FileAppender">
@@ -141,7 +141,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="TourMCNonMan-FILE" class="org.apache.log4j.FileAppender">
@@ -149,7 +149,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="TOD-FILE" class="org.apache.log4j.FileAppender">
@@ -157,7 +157,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="TOD-LOGSUM-FILE" class="org.apache.log4j.FileAppender">
@@ -165,7 +165,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="TourFreq-FILE" class="org.apache.log4j.FileAppender">
@@ -173,7 +173,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="StopFreq-FILE" class="org.apache.log4j.FileAppender">
@@ -181,7 +181,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="StopSoa-FILE" class="org.apache.log4j.FileAppender">
@@ -189,7 +189,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="StopLoc-FILE" class="org.apache.log4j.FileAppender">
@@ -197,7 +197,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="ParkLoc-FILE" class="org.apache.log4j.FileAppender">
@@ -205,7 +205,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="TripMC-FILE" class="org.apache.log4j.FileAppender">
@@ -213,7 +213,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
 
@@ -222,7 +222,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="TripTables-FILE" class="org.apache.log4j.FileAppender">
@@ -230,7 +230,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
     <appender name="AirportModel-FILE" class="org.apache.log4j.FileAppender">
@@ -238,15 +238,15 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
-    
+
    <appender name="CrossBorderModel-FILE" class="org.apache.log4j.FileAppender">
         <param name="File" value="./logFiles/event-crossborderModel.log"/>
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
        <appender name="VisitorModel-FILE" class="org.apache.log4j.FileAppender">
@@ -254,7 +254,7 @@
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss:SSS}, %p, %m%n"/>
-        </layout>        
+        </layout>
     </appender>
 
 
@@ -439,5 +439,5 @@
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </root>
-        
+
 </log4j:configuration>

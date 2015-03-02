@@ -25,13 +25,13 @@ public class dtaTrip implements Serializable {
     private int driver;
     private double expansionFactor;
 
-    	
-       
+
+
     /**
     * Default constructor; nothing initialized.
     */
     public dtaTrip(){
-        	
+
     }
     /**
      * Initialize a trip will zero values for all fields
@@ -56,7 +56,7 @@ public class dtaTrip implements Serializable {
        	this.dtaPeriod=0;
        	this.driver=-1;
        	this.expansionFactor=1.0;
-        			
+
     }
     /**
      * @return the household id
@@ -93,7 +93,7 @@ public class dtaTrip implements Serializable {
      */
     public void setTourId(int tourid) {
     	this.tourid = tourid;
-    }                         
+    }
     /**
      * @return the id
      */
@@ -106,7 +106,7 @@ public class dtaTrip implements Serializable {
    	public void setId(int id) {
    		this.id = id;
    	}
-   	
+
    	/**
    	 * @return the originTaz
    	 */
@@ -131,7 +131,7 @@ public class dtaTrip implements Serializable {
    	public void setDestinationTaz(int destinationTaz) {
    		this.destinationTaz = destinationTaz;
    	}
-   	
+
    	/**
    	 * @return the originMGRA
    	 */
@@ -156,7 +156,7 @@ public class dtaTrip implements Serializable {
    	public void setDestinationMGRA(int destinationMGRA) {
    		this.destinationMGRA = destinationMGRA;
    	}
-   	
+
    	/**
    	 * @return the originNode
    	 */
@@ -202,7 +202,7 @@ public class dtaTrip implements Serializable {
    				setVehicleOccupancy(3);
    			}
    			if(mode==8){
-   				setTollEligible(1);   				
+   				setTollEligible(1);
    			}
    		}
    		if(mode>8 && mode<11){
@@ -236,7 +236,7 @@ public class dtaTrip implements Serializable {
    	public void setTourDriver(int tourDriver) {
    		this.driver = tourDriver;
    	}
-   	
+
    	/**
    	 * @return the vehicleType
    	 */
@@ -279,14 +279,14 @@ public class dtaTrip implements Serializable {
    	public String getMarketSegment() {
    		return marketSegment;
    	}
-   	
+
    	/**
    	 * @param marketSegment the marketSegment to set
    	 */
    	public void setMarketSegment(String marketSegment){
    		this.marketSegment = marketSegment;
    	}
-    	
+
    	/**
    	 * @return the broad time period
    	 */
@@ -340,7 +340,7 @@ public class dtaTrip implements Serializable {
 
     /**
      * Write the trip
-     * 
+     *
      * @param writer
      */
     public void writeTrip(PrintWriter writer){
@@ -367,20 +367,20 @@ public class dtaTrip implements Serializable {
        	   );
        	writer.print(record);
     }
-        
+
     /**
      * Write a header record
-     * 
+     *
      * @param writer
      */
     /**
      * Write a header record
-     * 
+     *
      * @param writer
      */
     public void writeHeader(PrintWriter writer){
     	String header = "hh_id,person_id,tour_id,trip_id,originTaz,destinationTaz,originMGRA,destinationMGRA,originNode,destinationNode,vehicleType,vehicleOccupancy,tollEligibility,marketSegment,detailedPeriod,broadPeriod,dtaPeriod,driver,expansionFactor";
     	writer.print(header);
     }
-        
+
 }

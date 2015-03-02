@@ -28,57 +28,57 @@ public class PostprocessModel {
 	private static final String PROPERTIES_HOUSEHOLD_TRACE_LIST   = "dta.postprocessing.debug.HouseholdIds";
 	private static final String PROPERTIES_ORIGIN_TRACE_LIST      = "dta.postprocessing.debug.OriginZones";
 
-    
+
     private HashMap<String,String> rbMap;
     public HashSet<Integer>        householdTraceSet;
     public HashSet<Integer>        originTraceSet;
-    	
+
 	public String outputsPath;
 	public String disaggTODPath;
 	public String todType;
 	public String outputFile;
-	
+
 	public String inputFile;
 	public String marketSegment;
 	public double SampleRate;
-	
+
 	public PrintWriter tripWriter;
 
     private static Logger           logger                         = Logger.getLogger("postprocessModel");
 
-	
+
 	/**
 	 * Default constructor.
 	 */
 	public PostprocessModel(HashMap<String,String> rbMap, String timeType, double sampleRate, String inputFile, String marketSegment){
-		
+
 		this.rbMap = rbMap;
 		this.SampleRate = sampleRate;
 		this.inputFile = inputFile;
 		this.marketSegment = marketSegment;
 		this.todType = timeType;
-	
+
  	}
-	
-		
+
+
 	public void runModel(){
-		
+
 		disaggTODPath = Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_DISAGGPATHTOD);
 		outputFile = disaggTODPath + Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_TRIPOUT);
 		outputsPath = Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_OUTPUTSPATH);
 		outputFile = outputsPath + Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_TRIPOUT);
-		
+
 		setDebugHouseholdsFromPropertyMap();
-		setDebugOrigZonesFromPropertyMap();	
-				
+		setDebugOrigZonesFromPropertyMap();
+
 		logger.info("Trip file being written to "+outputFile);
 		// Write the trip header to the output file
 		boolean fileExists = new File(outputFile).isFile();
-		
+
 		FileWriter writer;
-							
+
 		if(fileExists){
-			logger.info("Output file already exists.  New data will be appended.");	
+			logger.info("Output file already exists.  New data will be appended.");
 	        try {
 				writer = new FileWriter(new File(outputFile), true);
 				tripWriter = new PrintWriter(new BufferedWriter(writer));
@@ -98,9 +98,9 @@ public class PostprocessModel {
 	            throw new RuntimeException(e);
 			}
 			dtaTrip Trip = new dtaTrip();
-			Trip.writeHeader(tripWriter);	
+			Trip.writeHeader(tripWriter);
 		}
-						
+
 		if(todType.equalsIgnoreCase("broad")){
 			logger.info("Processing Broad TOD Model");
 			TableDataSet broadFiles = TableDataSet.readFile(disaggTODPath+inputFile);
@@ -115,18 +115,18 @@ public class PostprocessModel {
 				int toll = (int) broadFiles.getValueAt(i+1, "Toll");
 				broadTODProcessing broadModel = new broadTODProcessing(rbMap, SampleRate, inputFile, marketSeg, originTraceSet, tripWriter);
 				broadModel.createBroadTODTrips(outputsPath+inputFileName,marketSeg,matrixName,tod,vehType,occ,toll);
-			}			
+			}
 		}
-		
+
 		if(todType.equalsIgnoreCase("detailed")){
 			logger.info("Processing Detailed TOD Model: "+marketSegment);
 			detailedTODProcessing detailModel = new detailedTODProcessing(rbMap, SampleRate, inputFile, marketSegment, householdTraceSet, originTraceSet, tripWriter);
 			detailModel.createDetailedTODTrips(outputsPath+inputFile, marketSegment, rbMap);
 		}
-		
+
 		tripWriter.close();
 	}
-    
+
 	/**
 	 * Set the HashSet for debugging households, which contains the IDs of the households to debug.
 	 */
@@ -149,7 +149,7 @@ public class PostprocessModel {
         }
 
     }
-    
+
 	/**
 	 * Set the HashSet for debugging households, which contains the IDs of the households to debug.
 	 */
@@ -172,29 +172,29 @@ public class PostprocessModel {
         }
 
     }
-    
+
 	/**
 	 * Check if this is a trace household.
-	 * 
+	 *
 	 * @param householdId
 	 * @return  True if a trace household, else false
 	 */
 	public boolean isTraceHousehold(int householdId){
-		
+
 		return householdTraceSet.contains(householdId);
-			
+
 	}
-	
+
 	/**
 	 * Check if this is a trace origin.
-	 * 
+	 *
 	 * @param householdId
 	 * @return  True if a trace household, else false
 	 */
 	public boolean isTraceOrigin(int origTAZ){
-		
+
 		return originTraceSet.contains(origTAZ);
-			
+
 	}
 
     /**
@@ -208,7 +208,7 @@ public class PostprocessModel {
         String inputFile = null;
         String marketSegment = null;
         double sampleRate = 1.0;
-		
+
 		if (args.length == 0) {
 			logger.error( String.format("no properties file base name (without .properties extension) was specified as an argument.") );
 	        return;
@@ -230,18 +230,16 @@ public class PostprocessModel {
 			}
 		}
         pMap = ResourceUtil.getResourceBundleAsHashMap(propertiesFile);
-        
+
 		logger.info("Running SANDAG Trip TOD Disaggregation Model");
-        
+
 		logger.info("todType = "+todType);
         logger.info("Sample Rate = "+sampleRate);
         logger.info("Input File = "+inputFile);
         logger.info("Market Segment = "+marketSegment);
-        	
+
         PostprocessModel postprocessingModel = new PostprocessModel(pMap,todType,sampleRate,inputFile,marketSegment);
-        postprocessingModel.runModel();	
+        postprocessingModel.runModel();
 	}
 
 }
-
-
