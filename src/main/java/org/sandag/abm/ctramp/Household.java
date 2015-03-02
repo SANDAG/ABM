@@ -53,6 +53,7 @@ public class Household
     private int                       inmtfRandomCount;
     private int                       inmtlRandomCount;
     private int                       inmtodRandomCount;
+    private int 					  tdRandomCount;
     private int                       stfRandomCount;
     private int                       stlRandomCount;
 
@@ -199,6 +200,11 @@ public class Household
         inmtodRandomCount = count;
     }
 
+    public void setTdRandomCount(int count)
+    {	
+    	tdRandomCount = count;
+    }
+    
     public void setStfRandomCount(int count)
     {
         stfRandomCount = count;
@@ -641,6 +647,11 @@ public class Household
     public int getStfRandomCount()
     {
         return stfRandomCount;
+    }
+    
+    public int getTdRandomCount()
+    {
+        return tdRandomCount;
     }
 
     public int getStlRandomCount()

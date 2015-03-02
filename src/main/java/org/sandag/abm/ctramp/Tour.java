@@ -34,6 +34,7 @@ public class Tour
     private int                   tourMode;
     private int                   subtourFreqChoice;
     private int                   tourParkMgra;
+    private int					  tourDriver;
 
     private int                   tourPrimaryPurposeIndex;
 
@@ -173,6 +174,11 @@ public class Tour
     public int getTourModeChoice()
     {
         return tourMode;
+    }  
+    
+    public int getTourDriver()
+    {
+    	return tourDriver;
     }
 
     public void setTourId(int id)
@@ -213,6 +219,11 @@ public class Tour
     public void setTourModeChoice(int modeIndex)
     {
         tourMode = modeIndex;
+    }
+    
+    public void setTourDriver(int driver)
+    {
+    	tourDriver = driver;
     }
 
     public void setTourParkMgra(int parkMgra)

@@ -377,6 +377,7 @@ public class HouseholdDataWriter
         data.add("atWork_freq");
         data.add("num_ob_stops");
         data.add("num_ib_stops");
+        data.add("driver");
 
         if (saveUtilsProbsFlag)
         {
@@ -414,6 +415,7 @@ public class HouseholdDataWriter
         data.add("tour_distance");
         data.add("num_ob_stops");
         data.add("num_ib_stops");
+        data.add("driver");
 
         if (saveUtilsProbsFlag)
         {
@@ -453,6 +455,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.INTEGER);
 
         if (saveUtilsProbsFlag)
         {
@@ -486,6 +489,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.REAL);
+        data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
 
@@ -526,7 +530,8 @@ public class HouseholdDataWriter
         data.add(string(t.getSubtourFreqChoice()));
         data.add(string(t.getNumOutboundStops() == 0 ? 0 : t.getNumOutboundStops() - 1));
         data.add(string(t.getNumInboundStops() == 0 ? 0 : t.getNumInboundStops() - 1));
-
+        data.add(string(t.getTourDriver()));
+        
         if (saveUtilsProbsFlag)
         {
             int numModeAlts = modelStructure.getMaxTourModeIndex();
@@ -567,7 +572,8 @@ public class HouseholdDataWriter
         data.add(string(calculateDistancesForAllMgras(t.getTourOrigMgra(), t.getTourDestMgra())));
         data.add(string(t.getNumOutboundStops() == 0 ? 0 : t.getNumOutboundStops() - 1));
         data.add(string(t.getNumInboundStops() == 0 ? 0 : t.getNumInboundStops() - 1));
-
+        data.add(string(t.getTourDriver()));
+        
         if (saveUtilsProbsFlag)
         {
             int numModeAlts = modelStructure.getMaxTourModeIndex();
@@ -643,6 +649,7 @@ public class HouseholdDataWriter
         data.add("trip_board_tap");
         data.add("trip_alight_tap");
         data.add("tour_mode");
+        data.add("driver");
         return data;
     }
 
@@ -665,6 +672,7 @@ public class HouseholdDataWriter
         data.add("trip_board_tap");
         data.add("trip_alight_tap");
         data.add("tour_mode");
+        data.add("driver");
         return data;
     }
 
@@ -688,6 +696,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.INTEGER);
         return data;
     }
 
@@ -701,6 +710,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.TEXT);
         data.add(SqliteDataTypes.TEXT);
         data.add(SqliteDataTypes.TEXT);
+        data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
@@ -791,6 +801,7 @@ public class HouseholdDataWriter
         data.add(string(s.getBoardTap()));
         data.add(string(s.getAlightTap()));
         data.add(string(t.getTourModeChoice()));
+        data.add(string(t.getTourDriver()));
 
         return data;
     }
@@ -878,6 +889,7 @@ public class HouseholdDataWriter
         data.add(string(s.getBoardTap()));
         data.add(string(s.getAlightTap()));
         data.add(string(t.getTourModeChoice()));
+        data.add(string(t.getTourDriver()));
 
         return data;
     }
@@ -925,6 +937,7 @@ public class HouseholdDataWriter
         data.add(string(inbound ? t.getTourArrivePeriod() : t.getTourDepartPeriod()));
         data.add(string(t.getTourModeChoice()));
         data.add(string(t.getTourModeChoice()));
+        data.add(string(t.getTourDriver()));
 
         return data;
     }
@@ -985,6 +998,7 @@ public class HouseholdDataWriter
 
         data.add(string(participants.length));
         data.add(string(t.getTourModeChoice()));
+        data.add(string(t.getTourDriver()));
 
         return data;
     }

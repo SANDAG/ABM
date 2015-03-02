@@ -239,6 +239,19 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
 			returnValue = participants.length;
 		return returnValue;
 	}
+	
+	public int getAnyPersonAge16Plus() {
+		int anyAge16Plus = 0;
+		int[] participants = tour.getPersonNumArray();
+		if (participants != null){
+			for (int i=0; i< participants.length; i++){
+				if (hh.getPerson(participants[i]).getAge() > 15){
+					anyAge16Plus = 1;
+				}
+			}
+		}
+		return anyAge16Plus;
+	}
 
 	public int getHhSize() {
 		return hh.getHhSize();

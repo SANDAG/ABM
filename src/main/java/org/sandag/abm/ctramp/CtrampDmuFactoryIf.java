@@ -37,6 +37,8 @@ public interface CtrampDmuFactoryIf
 
     IndividualNonMandatoryTourFrequencyDMU getIndividualNonMandatoryTourFrequencyDMU();
 
+    TourDriverDMU getTourDriverDMU();
+    
     StopFrequencyDMU getStopFrequencyDMU();
 
     StopLocationDMU getStopLocationDMU();

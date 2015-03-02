@@ -606,6 +606,22 @@ public abstract class HouseholdDataManager
         }
     }
 
+    public void resetTdRandom() {
+
+        for (int i = 0; i < hhs.length; i++)
+        {
+            // get the current count prior to stop location model from the
+            // Household
+            // object.
+            // this value was set at the end of stop frequency model step.
+            int tdCount = hhs[i].getAwtodRandomCount();
+
+            // draw stfCount random numbers
+            resetRandom(hhs[i], tdCount);
+        }
+
+    }
+    
     public void resetStfRandom()
     {
         for (int i = 0; i < hhs.length; i++)
@@ -616,7 +632,7 @@ public abstract class HouseholdDataManager
             // this value was set at the end of At-work Subtour Time-of-day and
             // mode
             // choice model step.
-            int stfCount = hhs[i].getAwtodRandomCount();
+            int stfCount = hhs[i].getTdRandomCount();
 
             // draw stfCount random numbers
             resetRandom(hhs[i], stfCount);

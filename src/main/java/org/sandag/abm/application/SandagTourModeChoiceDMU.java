@@ -197,7 +197,20 @@ public class SandagTourModeChoiceDMU
         	}
         }
 	}
-    
+        
+    public int getAnyPersonAge16Plus() {
+    	int anyAge16Plus = 0;
+    	int[] participants = tour.getPersonNumArray();
+    	if ( participants != null ) {
+    		for ( int i=0; i < participants.length; i++ ) {
+    			if (hh.getPerson(participants[i]).getAge() > 15) { 
+    				anyAge16Plus = 1;
+    			}
+    		}
+    	}
+        return anyAge16Plus;
+    }
+	
     public double getInboundFemaleBikeLogsum() 
     {
 		return inboundFemaleBikeLogsum;
@@ -279,6 +292,7 @@ public class SandagTourModeChoiceDMU
         methodIndexMap.put("getOutboundFemaleBikeLogsum", 53);
         methodIndexMap.put("getInboundMaleBikeLogsum", 54);
         methodIndexMap.put("getOutboundMaleBikeLogsum", 55);
+        methodIndexMap.put("getAnyPersonAge16Plus", 56);
 
         methodIndexMap.put("getNm_walkTime_out", 90);
         methodIndexMap.put("getNm_walkTime_in", 91);

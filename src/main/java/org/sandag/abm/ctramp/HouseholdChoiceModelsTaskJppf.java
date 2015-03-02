@@ -159,7 +159,7 @@ public class HouseholdChoiceModelsTaskJppf
 
         String[] label1 = {"AO", "FP", "IE", "CDAP", "IMTF", "IMTOD", "IMMC", "JTF", "JTDC",
                 "JTTOD", "JTMC", "INMTF", "INMTDCSOA", "INMTDCTOT", "INMTTOD", "INMTMC", "AWTF",
-                "AWTDCSOA", "AWTDCTOT", "AWTTOD", "AWTMC", "STF", "STDTM"};
+                "AWTDCSOA", "AWTDCTOT", "AWTTOD", "AWTMC", "TD", "STF", "STDTM"};
 
         logger.info("Household choice model component runtimes (in milliseconds) for task: "
                 + taskIndex + ", modelIndex: " + modelIndex + ", startIndex: " + startIndex

@@ -482,6 +482,11 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
         boolean tourModeIsKnr = modelStructure.getTourModeIsKnr(tour.getTourModeChoice());
         return tourModeIsKnr ? 1 : 0;
     }
+    
+ 	public int getPersonIsTourDriver() 
+ 	{
+    	return person.getPersonNum() == tour.getTourDriver() ? 1 : 0 ;
+    }
 
     public double getODUDen()
     {
