@@ -166,8 +166,8 @@ EXECUTE [db_meta].[add_xp] 'ref.loc_choice_segment', 'MS_Description', 'uec\Acce
 EXECUTE [db_meta].[add_xp] 'ref.military', 'SUBSYSTEM', 'reference'
 EXECUTE [db_meta].[add_xp] 'ref.military', 'MS_Description', 'create_synhh_synperson.sql in popsyn database and pums data dictionary'
 
-EXECUTE [db_meta].[add_xp] 'ref.mgra13_xref_taz13', 'SUBSYSTEM', 'reference'
-EXECUTE [db_meta].[add_xp] 'ref.mgra13_xref_taz13', 'MS_Description', 'xref table of the taz13 that contains the given mgra13s centroid'
+EXECUTE [db_meta].[add_xp] 'ref.mgra13_xref', 'SUBSYSTEM', 'reference'
+EXECUTE [db_meta].[add_xp] 'ref.mgra13_xref', 'MS_Description', 'xref table for series 13 MGRAs'
 
 EXECUTE [db_meta].[add_xp] 'ref.mode', 'SUBSYSTEM', 'reference'
 EXECUTE [db_meta].[add_xp] 'ref.mode', 'MS_Description', 'modes, cross border tours are odd uec\CrossBordertourmodeChoice.xls alternatives, airport trips have a "Passing Through mode" that does not contribute to regional travel'

@@ -233,7 +233,7 @@ INSERT INTO
 VALUES
 	(4, 'Region, Year 2008'),
 	(34,'TAZ Series 13'),
-	(64, 'Land Use Zones 13'),
+	(64, 'Land Use Zones Series 13'),
 	(69, 'U.S. Census Public Use Microdata Areas, Year 2000'),
 	(90,'MGRA Series 13');
 			
@@ -529,16 +529,18 @@ END
 
 
 
-/* Create MGRA-TAZ xref table */
-IF OBJECT_ID('ref.mgra13_xref_taz13','U') IS NULL
+/* Create Series 13 xref table */
+IF OBJECT_ID('ref.mgra13_xref','U') IS NULL
 BEGIN
 
-CREATE TABLE [ref].[mgra13_xref_taz13](
-	[mgra_geography_zone_id] int NOT NULL,
-	[taz_geography_zone_id] int NOT NULL,
-	CONSTRAINT pk_mgra13xreftaz13 PRIMARY KEY ([mgra_geography_zone_id]),
-	CONSTRAINT fk_mgra13xreftaz13_mgra FOREIGN KEY ([mgra_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
-	CONSTRAINT fk_mgra13xreftaz13_taz FOREIGN KEY ([taz_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id])
+CREATE TABLE [ref].[mgra13_xref](
+	[mgra13_geography_zone_id] int NOT NULL,
+	[taz13_geography_zone_id] int NOT NULL,
+	[luz13_geography_zone_id] int NOT NULL,
+	CONSTRAINT pk_mgra13xref PRIMARY KEY ([mgra13_geography_zone_id]),
+	CONSTRAINT fk_mgra13xref_mgra13 FOREIGN KEY ([mgra13_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
+	CONSTRAINT fk_mgra13xref_taz13 FOREIGN KEY ([taz13_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
+	CONSTRAINT fk_mgra13xref_luz13 FOREIGN KEY ([luz13_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id])
 	) 
 ON 
 	[ref_fg]
@@ -546,22 +548,28 @@ WITH
 	(DATA_COMPRESSION = PAGE);
 
 INSERT INTO	
-	[ref].[mgra13_xref_taz13]
+	[ref].[mgra13_xref]
 SELECT
-	mgra_zone.[geography_zone_id]
-	,taz_zone.[geography_zone_id]
+	mgra13_zone.[geography_zone_id]
+	,taz13_zone.[geography_zone_id]
+	,luz13_zone.[geography_zone_id]
 FROM 
-	OPENQUERY([pila\sdgintdb],'SELECT [mgra], [taz13] FROM [data_cafe].[dbo].[xref_mgra_sr13]') AS xref
+	OPENQUERY([pila\sdgintdb],'SELECT [mgra], [taz13], [luz] FROM [data_cafe].[dbo].[xref_mgra_sr13]') AS xref
 INNER JOIN
-	[ref].[geography_zone] AS mgra_zone
+	[ref].[geography_zone] AS mgra13_zone
 ON
-	mgra_zone.[geography_type_id] = 90
-	AND xref.[mgra] = mgra_zone.[zone]
+	mgra13_zone.[geography_type_id] = 90
+	AND xref.[mgra] = mgra13_zone.[zone]
 INNER JOIN
-	[ref].[geography_zone] AS taz_zone
+	[ref].[geography_zone] AS taz13_zone
 ON
-	taz_zone.[geography_type_id] = 34
-	AND xref.[taz13] = taz_zone.[zone]
+	taz13_zone.[geography_type_id] = 34
+	AND xref.[taz13] = taz13_zone.[zone]
+INNER JOIN
+	[ref].[geography_zone] AS luz13_zone
+ON
+	luz13_zone.[geography_type_id] = 64
+	AND xref.[luz] = luz13_zone.[zone]
 	
 END
 
