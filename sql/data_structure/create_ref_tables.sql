@@ -232,7 +232,8 @@ INSERT INTO
 	[ref].[geography_type]
 VALUES
 	(4, 'Region, Year 2008'),
-	(34,'TAZ Series 13'),	
+	(34,'TAZ Series 13'),
+	(64, 'Land Use Zones 13'),
 	(69, 'U.S. Census Public Use Microdata Areas, Year 2000'),
 	(90,'MGRA Series 13');
 			
@@ -274,7 +275,7 @@ FROM
 								FROM
 									[data_cafe].[dbo].[geography_zone] 
 								WHERE 
-									[geo_type_id] IN (4, 34, 69, 90) 
+									[geo_type_id] IN (4, 34, 64, 69, 90) 
 								ORDER BY 
 									[geo_type_id], [zone]'
 								)
