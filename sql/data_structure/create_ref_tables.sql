@@ -529,7 +529,7 @@ END
 
 
 
-/* Create Series 13 xref table */
+/* Create Series 13 mgra xref table */
 IF OBJECT_ID('ref.mgra13_xref','U') IS NULL
 BEGIN
 
@@ -993,6 +993,43 @@ VALUES
 	(4,'Time Perceived'),
 	(5,'Gain');
 			
+END
+
+
+/* Create Series 13 xref table */
+IF OBJECT_ID('ref.taz13_xref','U') IS NULL
+BEGIN
+
+CREATE TABLE [ref].[taz13_xref](
+	[taz13_geography_zone_id] int NOT NULL,
+	[luz13_geography_zone_id] int NOT NULL,
+	CONSTRAINT pk_taz13xref PRIMARY KEY ([taz13_geography_zone_id]),
+	CONSTRAINT fk_taz13xref_taz13 FOREIGN KEY ([taz13_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
+	CONSTRAINT fk_taz13xref_luz13 FOREIGN KEY ([luz13_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id])
+	) 
+ON 
+	[ref_fg]
+WITH
+	(DATA_COMPRESSION = PAGE);
+
+INSERT INTO	
+	[ref].[taz13_xref]
+SELECT
+	taz13_zone.[geography_zone_id]
+	,luz13_zone.[geography_zone_id]
+FROM 
+	OPENQUERY([pila\sdgintdb],'SELECT [source_zone_id],[target_zone_id] FROM [data_cafe].[dbo].[geography_xref] WHERE [source_geo_type] = 34 AND [target_geo_type] = 64') AS xref
+INNER JOIN
+	[ref].[geography_zone] AS taz13_zone
+ON
+	taz13_zone.[geography_type_id] = 34
+	AND xref.[source_zone_id] = taz13_zone.[zone]
+INNER JOIN
+	[ref].[geography_zone] AS luz13_zone
+ON
+	luz13_zone.[geography_type_id] = 64
+	AND xref.[target_zone_id] = luz13_zone.[zone]
+	
 END
 
 
