@@ -193,6 +193,9 @@ EXECUTE [db_meta].[add_xp] 'ref.purpose', 'MS_Description', 'assigned in SSIS lo
 EXECUTE [db_meta].[add_xp] 'ref.race', 'SUBSYSTEM', 'reference'
 EXECUTE [db_meta].[add_xp] 'ref.race', 'MS_Description', 'pums data dictionary'
 
+EXECUTE [db_meta].[add_xp] 'ref.taz13_xref', 'SUBSYSTEM', 'reference'
+EXECUTE [db_meta].[add_xp] 'ref.taz13_xref', 'MS_Description', 'xref table for series 13 TAZs'
+
 EXECUTE [db_meta].[add_xp] 'ref.scenario', 'SUBSYSTEM', 'reference'
 EXECUTE [db_meta].[add_xp] 'ref.scenario', 'MS_Description', 'loaded scenarios in the database'
 
