@@ -67,7 +67,7 @@ matrixCore = {
         aggFile =     outputDir+"\\agg"+matrixCore[mat]+periodName[per]+".bin"
         if sellink_flag = 1 & iteration = 4 then sellkmtx =  outputDir+"\\trn_sellink"+matrixCore[mat]+periodName[per]+".mtx"
 
-   
+       
         // STEP 1: Transit Assignment
         Opts = null
         Opts.Input.[Transit RS] = rt_file
@@ -88,14 +88,16 @@ matrixCore = {
        RunMacro("HwycadLog",{"trassigns.rsc: transit assigns","Transit Assignment PF: "+matrixCore[mat]+periodName[per]})
        ok = RunMacro("TCB Run Procedure", (per*100+mat), "Transit Assignment PF", Opts)
            
-       if !ok then goto quit    	
+       if !ok then goto quit    
+	
      end
    end
-
+   
+   properties = "\\conf\\sandag_abm.properties" 
    collapseOnOffByRoute = RunMacro("read properties",properties,"RunModel.collapseOnOffByRoute", "S")
    if collapseOnOffByRoute = "false" then do
 	   ok = RunMacro("Collapse OnOffs By Route", onOffTables, rt_file)
-	   if !ret_value then goto quit
+	   if !ok then goto quit
    end
 
    quit:
