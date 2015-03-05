@@ -537,10 +537,12 @@ CREATE TABLE [ref].[mgra13_xref](
 	[mgra13_geography_zone_id] int NOT NULL,
 	[taz13_geography_zone_id] int NOT NULL,
 	[luz13_geography_zone_id] int NOT NULL,
+	[region_geography_zone_id] int NOT NULL,
 	CONSTRAINT pk_mgra13xref PRIMARY KEY ([mgra13_geography_zone_id]),
 	CONSTRAINT fk_mgra13xref_mgra13 FOREIGN KEY ([mgra13_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
 	CONSTRAINT fk_mgra13xref_taz13 FOREIGN KEY ([taz13_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
-	CONSTRAINT fk_mgra13xref_luz13 FOREIGN KEY ([luz13_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id])
+	CONSTRAINT fk_mgra13xref_luz13 FOREIGN KEY ([luz13_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
+	CONSTRAINT fk_mgra13xref_region FOREIGN KEY ([region_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id])
 	) 
 ON 
 	[ref_fg]
@@ -553,8 +555,9 @@ SELECT
 	mgra13_zone.[geography_zone_id]
 	,taz13_zone.[geography_zone_id]
 	,luz13_zone.[geography_zone_id]
+	,region_zone.[geography_zone_id]
 FROM 
-	OPENQUERY([pila\sdgintdb],'SELECT [mgra], [taz13], [luz] FROM [data_cafe].[dbo].[xref_mgra_sr13]') AS xref
+	OPENQUERY([pila\sdgintdb],'SELECT [mgra], [taz13], [luz], [region] FROM [data_cafe].[dbo].[xref_mgra_sr13]') AS xref
 INNER JOIN
 	[ref].[geography_zone] AS mgra13_zone
 ON
@@ -570,6 +573,11 @@ INNER JOIN
 ON
 	luz13_zone.[geography_type_id] = 64
 	AND xref.[luz] = luz13_zone.[zone]
+INNER JOIN
+	[ref].[geography_zone] AS region_zone
+ON
+	region_zone.[geography_type_id] = 4
+	AND xref.[region] = region_zone.[zone]
 	
 END
 
