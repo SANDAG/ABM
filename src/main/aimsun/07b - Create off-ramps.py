@@ -1,17 +1,19 @@
 def getPropertyValue(propertyKey):
 	value = ""
 	preferences = model.getPreferences()
-	filePath = str(preferences.getValue("CT-RAMP:PropertyFile"))
+	projectFolder = str(GKSystem.getSystem().convertVariablePath(preferences.getValue("CT-RAMP:ProjectFolder"), model))
+	filePath = "%s/conf/sandag_abm.properties" % projectFolder
 	file = open(filePath, "r")
 	for line in file.readlines():
 		if not line[0] == "#":
 			tokens = line.rstrip("\n").split("=")
 			if tokens[0].strip() == propertyKey:
-				value = tokens[1].strip()
+				value = tokens[1].strip().replace("%project.folder%", projectFolder)
 	file.close()
 	return value
 
-defaultRampLength = double(getPropertyValue("aimsun.gis.defaultRampLength"))
+ftToM = float(getPropertyValue("aimsun.gis.ftToM"))
+defaultRampLength = float(getPropertyValue("aimsun.gis.defaultRampLength")) * ftToM
 sectionType = model.getType("GKSection")
 for section in model.getCatalog().getObjectsByType(sectionType).itervalues():
 	if str(section.getRoadType().getName()) == "On/Off Ramp" and section.length3D() > 50:
@@ -37,8 +39,10 @@ for section in model.getCatalog().getObjectsByType(sectionType).itervalues():
 									# It's an entry lateral
 									proceed = False
 									offset = rightmostLane.getFinalOffset()
-									cutPos = offset + 5
-									if cutPos + 15 <= fromSection.length3D():
+									#cutPos = offset + 5
+									cutPos = fromSection.length3D() / 2
+									#if cutPos + 15 <= fromSection.length3D():
+									if cutPos + 15 <= fromSection.length3D() and cutPos > offset + 15:
 										cmd = fromSection.getCutCmd(fromSection.getExtremePointAtPos(cutPos, False), fromSection.getExtremePointAtPos(cutPos, True), True)
 										cmd.doit()
 										cmd.setDone(True)
@@ -68,8 +72,10 @@ for section in model.getCatalog().getObjectsByType(sectionType).itervalues():
 									# It's an entry lateral
 									proceed = False
 									offset = rightmostLane.getFinalOffset()
-									cutPos = offset + 5
-									if cutPos + 15 <= fromSection.length3D():
+									#cutPos = offset + 5
+									cutPos = fromSection.length3D() / 2
+									#if cutPos + 15 <= fromSection.length3D():
+									if cutPos + 15 <= fromSection.length3D() and cutPos > offset + 15:
 										cmd = fromSection.getCutCmd(fromSection.getExtremePointAtPos(cutPos, False), fromSection.getExtremePointAtPos(cutPos, True), True)
 										cmd.doit()
 										cmd.setDone(True)

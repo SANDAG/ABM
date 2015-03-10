@@ -10,17 +10,23 @@ sectionType = model.getType("GKSection")
 for section in model.getCatalog().getObjectsByType(sectionType).itervalues():
 	maxlanes = 0
 	origin = section.getOrigin()
-	if origin != None:
+	if origin != None and str(origin.getExternalId()) > "":
 		if section.getDataValueInt(aNodeAtt) == int(str(origin.getExternalId())):
 			maxlanes = max(section.getDataValueInt(ablnoAtt), section.getDataValueInt(ablnaAtt), section.getDataValueInt(ablnpAtt))
 		else:
 			maxlanes = max(section.getDataValueInt(balnoAtt), section.getDataValueInt(balnaAtt), section.getDataValueInt(balnpAtt))
 	else:
 		destination = section.getDestination()
-		if destination != None:
+		if destination != None and str(destination.getExternalId()) > "":
 			if section.getDataValueInt(aNodeAtt) == int(str(destination.getExternalId())):
-				capacity = max(section.getDataValueInt(balnoAtt), section.getDataValueInt(balnaAtt), section.getDataValueInt(balnpAtt))
+				maxlanes = max(section.getDataValueInt(balnoAtt), section.getDataValueInt(balnaAtt), section.getDataValueInt(balnpAtt))
 			else:
-				capacity = max(section.getDataValueInt(ablnoAtt), section.getDataValueInt(ablnaAtt), section.getDataValueInt(ablnpAtt))
+				maxlanes = max(section.getDataValueInt(ablnoAtt), section.getDataValueInt(ablnaAtt), section.getDataValueInt(ablnpAtt))
 	if maxlanes > section.getNbFullLanes():
-		print "Section %i: lanes %i, max %i" % (section.getId(), section.getNbFullLanes(), maxlanes)
+		#print "Section %i (%s): lanes %i, max %i" % (section.getId(), section.getExternalId(), section.getNbFullLanes(), maxlanes)
+		cmd = GKSectionChangeNbLanesCmd()
+		cmd.setData(section, len(section.getLanes())+(maxlanes - section.getNbFullLanes()))
+		model.getCommander().addCommand(cmd)
+print "Done!"
+		
+			
