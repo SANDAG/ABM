@@ -1871,7 +1871,7 @@ SELECT
 	,SUM(CASE WHEN [mode_id] BETWEEN 32 AND 37 THEN [hwy_flow_mode].[flow] ELSE 0 END) AS [truck_flow]
 	,SUM([hwy_flow_mode].[flow]) AS [flow]
 	,SUM(CASE	WHEN [mode_id] BETWEEN 1 AND 2 THEN [hwy_flow_mode].[flow]
-				WHEN [mode_id] BETWEEN 3 AND 4 THEN [hwy_flow_mode].[flow] * 2
+				WHEN [mode_id] BETWEEN 3 AND 5 THEN [hwy_flow_mode].[flow] * 2
 				WHEN [mode_id] BETWEEN 6 AND 8 THEN [hwy_flow_mode].[flow] * 3.34
 				WHEN [mode_id] BETWEEN 32 AND 37 THEN [hwy_flow_mode].[flow]
 				ELSE 0 END) AS [person_flow]
