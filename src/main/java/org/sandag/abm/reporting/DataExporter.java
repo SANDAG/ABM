@@ -574,8 +574,12 @@ public final class DataExporter
     private void exportMgraToMgraData(String outputFileBase)
     {
         addTable(outputFileBase);
-        Map<String, float[]> mgraToMgra = readSpaceDelimitedData(getPath("mgra.walkdistance.file"),
+        //wu modified to get the updated walk distance between MGRAs
+        String walkdistanceFile=PROJECT_PATH_PROPERTY_TOKEN+"\\input\\"+properties.getProperty("active.logsum.matrix.file.walk.mgra");
+        Map<String, float[]> mgraToMgra = readSpaceDelimitedData(walkdistanceFile,
                 Arrays.asList("ORIG_MGRA", "DEST_MGRA", "DISTANCE"));
+        //Map<String, float[]> mgraToMgra = readSpaceDelimitedData(getPath("mgra.walkdistance.file"),
+         //       Arrays.asList("ORIG_MGRA", "DEST_MGRA", "DISTANCE"));
 
         Map<String, List<Number>> actualData = new LinkedHashMap<String, List<Number>>();
         for (String column : Arrays.asList("TAZ", "ORIG_MGRA", "DEST_MGRA", "DISTANCE"))
