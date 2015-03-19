@@ -292,7 +292,6 @@ public final class MgraDataManager
      * Read the walk-transit taps for mgras. Store distances in feet.
      * 
      * @param rb
-     *            ResourceBundle with scenario.path and mgra.walkdistance.file
      *            property.
      */
     public void readMgraWlkDist(HashMap<String, String> rbMap)

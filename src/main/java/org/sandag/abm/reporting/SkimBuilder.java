@@ -392,30 +392,13 @@ public class SkimBuilder
                             alightAccessTime, boardTap, alightTap, tod, false);
                 }
 
+                //Wu modified to get the correct in vehicle time
                 double time = 0.0;
-                switch (modeChoice)
-                {
-                    case DRIVE_CR:
-                    case WALK_CR:
-                        time += skims[TRANSIT_PREM_CR_TIME_INDEX];
-                        break;
-                    case DRIVE_LRT:
-                    case WALK_LRT:
-                        time += skims[TRANSIT_PREM_LRT_TIME_INDEX];
-                        break;
-                    case DRIVE_BRT:
-                    case WALK_BRT:
-                        time += skims[TRANSIT_PREM_BRT_TIME_INDEX];
-                        break;
-                    case DRIVE_EB:
-                    case WALK_EB:
-                        time += skims[TRANSIT_PREM_EXPRESS_BUS_TIME_INDEX];
-                        break;
-                    case DRIVE_LB:
-                    case WALK_LB:
-                        time += skims[isPremium ? TRANSIT_PREM_LOCAL_BUS_TIME_INDEX
-                                : TRANSIT_LOCAL_IN_VEHICLE_TIME_INDEX];
-                        break;
+                if(isPremium){
+                    time += skims[TRANSIT_PREM_LOCAL_BUS_TIME_INDEX]+skims[TRANSIT_PREM_CR_TIME_INDEX]+skims[TRANSIT_PREM_LRT_TIME_INDEX]+skims[TRANSIT_PREM_BRT_TIME_INDEX]+skims[TRANSIT_PREM_EXPRESS_BUS_TIME_INDEX];               	
+                }else{
+                	time += skims[TRANSIT_LOCAL_IN_VEHICLE_TIME_INDEX];
+                	
                 }
 
                 double outVehTime = 0.0;
@@ -432,8 +415,7 @@ public class SkimBuilder
                 double dist = autoNonMotSkims.getAutoSkims(origin, destination, tod, false, LOGGER)[DA_DIST_INDEX]; // todo:
                                                                                                                     // is
                                                                                                                     // this
-                                                                                                                    // correct
-                                                                                                                    // enough?
+                                                                                                                    // correct                                                                                                             // enough?
                 return new TripAttributes(time + outVehTime, outVehTime, dist,
                         skims[isPremium ? TRANSIT_PREM_FARE_INDEX : TRANSIT_LOCAL_FARE_INDEX],
                         boardTaz, alightTaz);
