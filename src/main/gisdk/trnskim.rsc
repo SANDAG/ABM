@@ -526,8 +526,7 @@ Macro "set main mode"(inMatrixCurrency,outMatrixCurrency,dwlTimeIndex,ivtStartIn
 
     //set total ivt time to outMatrix
     for i=ivtStartIndex to ivtEndIndex do
-   //outMatrixCurrency[i]:=Nz(outMatrixCurrency[i])
-   outMatrixCurrency[ivtSumIndex]:=outMatrixCurrency[ivtSumIndex]+outMatrixCurrency[i]
+   outMatrixCurrency[ivtSumIndex]:=outMatrixCurrency[ivtSumIndex]+Nz(outMatrixCurrency[i])
    end
 
     //set main mode to outMatrix using an expression
