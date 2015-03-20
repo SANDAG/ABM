@@ -59,9 +59,10 @@ Macro "Build transit skims"
    ok = RunMacro("Skim transit networks")  
    if !ok then goto quit
   
+  /*
    ok= RunMacro("zero null ivt time")
    if !ok then goto quit
-
+*/
    ok= RunMacro("Process transit skims") 
    if !ok then goto quit
 
@@ -484,14 +485,14 @@ Macro "transit aggregate skims"(inMatrixCurrency,outMatrixCurrency,inOutCoreLook
          aggCounter=aggCounter+1
          aggIndices=aggLookUp[aggCounter]
          for j=1 to aggIndices.length do
-            name = inMatrixCurrency[aggIndices[j]].Core  
-            expr = "if ["+ name + "] = null then 0.0 else [" + name +"]"
-            EvaluateMatrixExpression(inMatrixCurrency[aggIndices[j]], expr, , , )
-            outMatrixCurrency[i]:=outMatrixCurrency[i]+inMatrixCurrency[aggIndices[j]]
+            //name = inMatrixCurrency[aggIndices[j]].Core  
+            //expr = "if ["+ name + "] = null then 0.0 else [" + name +"]"
+            //EvaluateMatrixExpression(inMatrixCurrency[aggIndices[j]], expr, , , )
+            outMatrixCurrency[i]:=outMatrixCurrency[i]+Nz(inMatrixCurrency[aggIndices[j]])
             end
          end
       else do
-         outMatrixCurrency[i]:=inMatrixCurrency[lookupIndex]         
+         outMatrixCurrency[i]:=Nz(inMatrixCurrency[lookupIndex])      
          end
      end       
 
@@ -525,8 +526,7 @@ Macro "set main mode"(inMatrixCurrency,outMatrixCurrency,dwlTimeIndex,ivtStartIn
 
     //set total ivt time to outMatrix
     for i=ivtStartIndex to ivtEndIndex do
-   //zero out null cells before sum, this is IMPORTANT!!!
-   outMatrixCurrency[i]:=Nz(outMatrixCurrency[i])
+   //outMatrixCurrency[i]:=Nz(outMatrixCurrency[i])
    outMatrixCurrency[ivtSumIndex]:=outMatrixCurrency[ivtSumIndex]+outMatrixCurrency[i]
    end
 
