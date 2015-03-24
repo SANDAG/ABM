@@ -4213,7 +4213,7 @@ BEGIN
 		,'SANDAG' AS [Area]
 		,1 AS [Scenario]
 		,'San Diego (SD)' AS [Sub-Area]
-		,@SCENARIO_ID as [CalYr]
+		,@SCENARIO_YEAR as [CalYr]
 		,@LOC_SEASON AS [Season]
 		,'Group #1 (SANDAG), Scenario #1 - San Diego (SD) ' + cast(@SCENARIO_YEAR as varchar(4)) + ' ' + @LOC_SEASON as [Title]
 		,EMFAC_VEHICLE_CLASS AS [Veh & Tech]
@@ -4243,7 +4243,7 @@ BEGIN
 	PIVOT
 		(SUM(CLASS_VMT_PCT) FOR SPEED_BIN IN ([0], [5], [10], [15],[20],[25],[30],[35],[40],[45],[50],[55],[60],[65],[70],[75],[80])) as pvmt
 	
-	RETURN 
+RETURN
 END
 GO
 
