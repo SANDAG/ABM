@@ -749,8 +749,8 @@ VALUES
 	(16,'T6 Ag - DSL','2011','1.1'),
 	(17,'T6 CAIRP heavy - DSL','2011','1.1'),
 	(18,'T6 CAIRP small - DSL','2011','1.1'),
-	(19,'T6 instate construction heavy ','2011','1.1'),
-	(20,'T6 instate construction small ','2011','1.1'),
+	(19,'T6 instate construction heavy - DSL','2011','1.1'),
+	(20,'6 instate construction small - DSL','2011','1.1'),
 	(21,'T6 instate heavy - DSL','2011','1.1'),
 	(22,'T6 instate small - DSL','2011','1.1'),
 	(23,'T6 OOS heavy - DSL','2011','1.1'),
@@ -4213,7 +4213,7 @@ BEGIN
 		,'SANDAG' AS [Area]
 		,1 AS [Scenario]
 		,'San Diego (SD)' AS [Sub-Area]
-		,@SCENARIO_ID as [CalYr]
+		,@SCENARIO_YEAR as [CalYr]
 		,@LOC_SEASON AS [Season]
 		,'Group #1 (SANDAG), Scenario #1 - San Diego (SD) ' + cast(@SCENARIO_YEAR as varchar(4)) + ' ' + @LOC_SEASON as [Title]
 		,EMFAC_VEHICLE_CLASS AS [Veh & Tech]
@@ -4243,7 +4243,7 @@ BEGIN
 	PIVOT
 		(SUM(CLASS_VMT_PCT) FOR SPEED_BIN IN ([0], [5], [10], [15],[20],[25],[30],[35],[40],[45],[50],[55],[60],[65],[70],[75],[80])) as pvmt
 	
-	RETURN 
+RETURN
 END
 GO
 
