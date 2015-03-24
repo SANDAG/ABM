@@ -143,10 +143,10 @@ public class SchoolLocationChoiceTaskJppfNew
 
             hhDataManager.setHhArray(householdArray, startIndex);
             
-            if(!HouseholdValidator.validateMandatoryDestinationChoices(householdArray, "school"))
-            {
-                setResubmit(true);
-            }
+//            if(!HouseholdValidator.validateMandatoryDestinationChoices(householdArray, "school"))
+//            {
+//                setResubmit(true);
+//            }
 
         } catch (Exception e)
         {

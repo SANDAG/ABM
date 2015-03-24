@@ -132,10 +132,10 @@ public class WorkLocationChoiceTaskJppf
 
             hhDataManager.setHhArray(householdArray, startIndex);
             
-            if(!HouseholdValidator.validateMandatoryDestinationChoices(householdArray, "work"))
-            {
-                setResubmit(true);
-            }
+//            if(!HouseholdValidator.validateMandatoryDestinationChoices(householdArray, "work"))
+//            {
+//                setResubmit(true);
+//            }
 
         } catch (Exception e)
         {
