@@ -18,7 +18,7 @@ def readFile(fileName):
 	file.readline() # Skip header
 	for line in file.readlines():
 		fields = line.rstrip("\n").split(",")
-		lane = int(fields[1])
+		lane = int(fields[1])-1
 		start = QTime(int(fields[2][0:2]),int(fields[2][2:4]),0)
 		duration = GKTimeDuration(0,0,0).addSecs(3600 * float(fields[3]))
 		items.append((fields[0].strip(), lane, start, duration))
