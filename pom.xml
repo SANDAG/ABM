@@ -113,42 +113,42 @@
             </properties>
         </profile>        
         <profile>
-            <id>mustang</id>
+            <id>wildcat</id>
             <properties>
                 <AT>False</AT>
-                <jppf.server.host>172.16.34.40</jppf.server.host>
-                <map.folder>MustangD</map.folder>
-                <jppf.management.host>172.16.34.40</jppf.management.host>
-                <matrix.server.host>172.16.34.40</matrix.server.host>
+                <jppf.server.host>172.16.34.60</jppf.server.host>
+                <map.folder>d$</map.folder>
+                <jppf.management.host>172.16.34.60</jppf.management.host>
+                <matrix.server.host>172.16.34.60</matrix.server.host>
                 <household.server.host>172.16.34.42</household.server.host>
-                <master.node.ip>172.16.34.40</master.node.ip>
+                <master.node.ip>172.16.34.60</master.node.ip>
                 <node.1.ip>172.16.34.42</node.1.ip>
                 <node.2.ip>172.16.34.41</node.2.ip>
-                <master.node.name>MUSTANG</master.node.name>
+                <master.node.name>WILDCAT</master.node.name>
                 <node.1.name>GALAXIE</node.1.name>
                 <node.2.name>COBRA</node.2.name>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH> 
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
                 <!--
                 <workpath>d:\\projects\\sandag\\series13</workpath>
                 -->
             </properties>
         </profile>
         <profile>
-            <id>mustang_at</id>
+            <id>wildcat_at</id>
             <properties>
                 <AT>True</AT>
-                <jppf.server.host>172.16.34.40</jppf.server.host>
-                <map.folder>MustangD</map.folder>
-                <jppf.management.host>172.16.34.40</jppf.management.host>
-                <matrix.server.host>172.16.34.40</matrix.server.host>
-                <household.server.host>172.16.34.40</household.server.host>
-                <master.node.ip>172.16.34.40</master.node.ip>
+                <jppf.server.host>172.16.34.60</jppf.server.host>
+                <map.folder>d$</map.folder>
+                <jppf.management.host>172.16.34.60</jppf.management.host>
+                <matrix.server.host>172.16.34.60</matrix.server.host>
+                <household.server.host>172.16.34.60</household.server.host>
+                <master.node.ip>172.16.34.60</master.node.ip>
                 <node.1.ip>172.16.34.42</node.1.ip>
                 <node.2.ip>172.16.34.41</node.2.ip>
-                <master.node.name>MUSTANG</master.node.name>
+                <master.node.name>WILDCAT</master.node.name>
                 <node.1.name>GALAXIE</node.1.name>
                 <node.2.name>COBRA</node.2.name>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>
                 <!-- 
                 <workpath>d:\\projects\\sandag\\series13</workpath>
                 -->
@@ -204,17 +204,18 @@
                 <map.folder>d$</map.folder>
                 <jppf.management.host>172.16.34.61</jppf.management.host>
                 <matrix.server.host>172.16.34.61</matrix.server.host>
-                <household.server.host>172.16.34.60</household.server.host>
+                <household.server.host>172.16.34.40</household.server.host>
                 <master.node.ip>172.16.34.61</master.node.ip>
-                <node.1.ip>172.16.34.60</node.1.ip>
+                <node.1.ip>172.16.34.40</node.1.ip>
                 <node.2.ip>172.16.34.39</node.2.ip>
                 <master.node.name>GAUCHO</master.node.name>
-                <node.1.name>WILDCAT</node.1.name>
+                <node.1.name>MUSTANG</node.1.name>
                 <node.2.name>NITTANY</node.2.name>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
                 <!--  
                 <workpath>d:\\projects\\sandag\\series13</workpath>  
-                -->              
+                -->    
+                                          
             </properties>
         </profile> 
         <profile>
@@ -227,10 +228,10 @@
                 <matrix.server.host>172.16.34.61</matrix.server.host>
                 <household.server.host>172.16.34.61</household.server.host>
                 <master.node.ip>172.16.34.61</master.node.ip>
-                <node.1.ip>172.16.34.60</node.1.ip>
+                <node.1.ip>172.16.34.40</node.1.ip>
                 <node.2.ip>172.16.34.39</node.2.ip>
                 <master.node.name>GAUCHO</master.node.name>
-                <node.1.name>WILDCAT</node.1.name>
+                <node.1.name>MUSTANG</node.1.name>
                 <node.2.name>NITTANY</node.2.name>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
                 <!-- 
@@ -685,64 +686,7 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>   
-                    <execution>
-                        <id>create-logFiles</id>
-                        <!-- here the phase you need -->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${output.path}/logFiles</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>input</directory>
-                                    <excludes>
-                                        <exclude>*.*</exclude>
-                                    </excludes>
-                                </resource>
-                            </resources>
-                        </configuration>            
-                    </execution>   
-                    <execution>
-                        <id>create-output</id>
-                        <!-- here the phase you need -->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${output.path}/output</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>input</directory>
-                                    <excludes>
-                                        <exclude>*.*</exclude>
-                                    </excludes>
-                                </resource>
-                            </resources>
-                        </configuration>            
-                    </execution> 
-                    <execution>
-                        <id>create-input</id>
-                        <!-- here the phase you need -->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${output.path}/input</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>input</directory>
-                                    <excludes>
-                                        <exclude>*.*</exclude>
-                                    </excludes>
-                                </resource>
-                            </resources>
-                        </configuration>            
-                    </execution>                               
+                    </execution>                                                 
                 </executions>
             </plugin>
             <plugin>
