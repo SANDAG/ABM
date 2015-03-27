@@ -127,7 +127,7 @@
                 <master.node.name>WILDCAT</master.node.name>
                 <node.1.name>GALAXIE</node.1.name>
                 <node.2.name>COBRA</node.2.name>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH> 
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
                 <!--
                 <workpath>d:\\projects\\sandag\\series13</workpath>
                 -->
@@ -148,7 +148,7 @@
                 <master.node.name>WILDCAT</master.node.name>
                 <node.1.name>GALAXIE</node.1.name>
                 <node.2.name>COBRA</node.2.name>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>
                 <!-- 
                 <workpath>d:\\projects\\sandag\\series13</workpath>
                 -->
@@ -686,64 +686,7 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>   
-                    <execution>
-                        <id>create-logFiles</id>
-                        <!-- here the phase you need -->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${output.path}/logFiles</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>input</directory>
-                                    <excludes>
-                                        <exclude>*.*</exclude>
-                                    </excludes>
-                                </resource>
-                            </resources>
-                        </configuration>            
-                    </execution>   
-                    <execution>
-                        <id>create-output</id>
-                        <!-- here the phase you need -->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${output.path}/output</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>input</directory>
-                                    <excludes>
-                                        <exclude>*.*</exclude>
-                                    </excludes>
-                                </resource>
-                            </resources>
-                        </configuration>            
-                    </execution> 
-                    <execution>
-                        <id>create-input</id>
-                        <!-- here the phase you need -->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${output.path}/input</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>input</directory>
-                                    <excludes>
-                                        <exclude>*.*</exclude>
-                                    </excludes>
-                                </resource>
-                            </resources>
-                        </configuration>            
-                    </execution>                               
+                    </execution>                                                 
                 </executions>
             </plugin>
             <plugin>
