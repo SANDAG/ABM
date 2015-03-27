@@ -479,4 +479,4 @@ for section in sections.itervalues():
 		cancelled = task.stepTask(step)
 task.end()
 GKGUISystem.getGUISystem().getActiveGui().invalidateViews()
-print "Done!"
+print "Done! Create pocket lanes"

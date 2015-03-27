@@ -130,4 +130,4 @@ for (mgraId, nodeEids) in mgras.iteritems():
 task.end()
 GKGUISystem.getGUISystem().getActiveGui().invalidateViews()
 model.getCommander().addCommand( None )
-print "Done!"
+print "Done! Create MGRAs"

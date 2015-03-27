@@ -6,4 +6,4 @@ for section in model.getCatalog().getObjectsByType(sectionType).itervalues():
 	if type == 12:
 		for lane in section.getLanes():
 			lane.setLaneType(transitOnly)
-print "Done!"
+print "Done! Set transit only links"

@@ -47,4 +47,4 @@ for section in model.getCatalog().getObjectsByType(sectionType).itervalues():
 	section.setCapacity(capacity / 24.0) # convert to hourly capacity
 	section.setUserDefinedCost2(intersectionCapacity / 24.0) # convert to hourly capacity
 	section.setUserDefinedCost3(intersectionFfTime)
-print "Done!"
+print "Done! Set 24h capacity"
