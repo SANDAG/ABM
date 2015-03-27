@@ -53,18 +53,27 @@ Macro "Run SANDAG ABM"
    skipDataExport = RunMacro("read properties",properties,"RunModel.skipDataExport", "S")
    skipDataLoadRequest = RunMacro("read properties",properties,"RunModel.skipDataLoadRequest", "S")
    skipDeleteIntermediateFiles = RunMacro("read properties",properties,"RunModel.skipDeleteIntermediateFiles", "S")
-   
-   // Run create walk logsums (walk impedance between mgra pairs and between mgra and tap)
-   if skipWalkLogsums = "false" then do
+ 
+ 
+   // copy bike logsums from input to output folder
+   if skipCopyBikeLogsum = "false" then do
+	   CopyFile(inputDir+"\\bikeMgraLogsum.csv", outputDir+"\\bikeMgraLogsum.csv")
+	   CopyFile(inputDir+"\\bikeTazLogsum.csv", outputDir+"\\bikeTazLogsum.csv")
+       end
+   else do
 	  runString = path+"\\bin\\runSandagWalkLogsums.cmd "+drive+" "+path_forward_slash
 	  RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run create AT logsums and walk impedances"+" "+runString})
 	  ok = RunMacro("TCB Run Command", 1, "Run AT-Logsums", runString)
 	  if !ok then goto quit  
    end
-
-   // Run create bike logsums   
-   if skipBikeLogsums = "false" then do
-	  runString = path+"\\bin\\runSandagBikeLogsums.cmd "+drive+" "+path_forward_slash
+   
+   // copy walk impedance from input to output folder
+   if skipCopyWalkImpedance = "false" then do
+	   CopyFile(inputDir+"\\walkMgraEquivMinutes.csv", outputDir+"\\walkMgraEquivMinutes.csv")
+	   CopyFile(inputDir+"\\walkMgraTapEquivMinutes.csv", outputDir+"\\walkMgraTapEquivMinutes.csv")
+      end
+   else do
+   	  runString = path+"\\bin\\runSandagBikeLogsums.cmd "+drive+" "+path_forward_slash
 	  RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run create AT logsums and walk impedances"+" "+runString})
 	  ok = RunMacro("TCB Run Command", 1, "Run AT-Logsums", runString)
 	  if !ok then goto quit  
@@ -77,18 +86,6 @@ Macro "Run SANDAG ABM"
 	   CopyFile(inputDir+"\\trip_MD.mtx", outputDir+"\\trip_MD.mtx")
 	   CopyFile(inputDir+"\\trip_PM.mtx", outputDir+"\\trip_PM.mtx")
 	   CopyFile(inputDir+"\\trip_EV.mtx", outputDir+"\\trip_EV.mtx")
-   end
-
-   // copy bike logsums from input to output folder
-   if skipCopyBikeLogsum = "false" then do
-	   CopyFile(inputDir+"\\bikeMgraLogsum.csv", outputDir+"\\bikeMgraLogsum.csv")
-	   CopyFile(inputDir+"\\bikeTazLogsum.csv", outputDir+"\\bikeTazLogsum.csv")
-   end
-
-   // copy walk impedance from input to output folder
-   if skipCopyWalkImpedance = "false" then do
-	   CopyFile(inputDir+"\\walkMgraEquivMinutes.csv", outputDir+"\\walkMgraEquivMinutes.csv")
-	   CopyFile(inputDir+"\\walkMgraTapEquivMinutes.csv", outputDir+"\\walkMgraTapEquivMinutes.csv")
    end
 
   // Build highway network
