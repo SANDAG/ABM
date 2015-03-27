@@ -15,4 +15,4 @@ for section in model.getCatalog().getObjectsByType(sectionType).itervalues():
 	elif lane == 4:
 		for lane in section.getLanes():
 			lane.setLaneType(toll)
-print "Done!"
+print "Done! Set HOV lanes"

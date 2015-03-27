@@ -27,4 +27,4 @@ for section in model.getCatalog().getObjectsByType(sectionType).itervalues():
 	elif lane == 7:
 		for lane in section.getLanes():
 			lane.setLaneType(lhdtMhdtHhdtOnly)
-print "Done!"
+print "Done! Set truck prohibitions"

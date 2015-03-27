@@ -27,6 +27,6 @@ for section in model.getCatalog().getObjectsByType(sectionType).itervalues():
 		cmd = GKSectionChangeNbLanesCmd()
 		cmd.setData(section, len(section.getLanes())+(maxlanes - section.getNbFullLanes()))
 		model.getCommander().addCommand(cmd)
-print "Done!"
+print "Done! Check reversible lanes"
 		
 			

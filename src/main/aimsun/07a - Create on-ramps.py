@@ -109,4 +109,4 @@ for section in model.getCatalog().getObjectsByType(sectionType).itervalues():
 									mturn.updatePath(True)
 
 GKGUISystem.getGUISystem().getActiveGui().invalidateViews()
-print "Done!"
+print "Done! Create on-ramps"

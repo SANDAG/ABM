@@ -60,4 +60,4 @@ for (sectId, lane, start, duration) in closures:
 		condition.addChange(closure)
 	else:
 		model.getLog().addError("Section %s not found!" % sectId)
-print "Done!"
+print "Done! Create lane closures"

@@ -41,4 +41,4 @@ for section in model.getCatalog().getObjectsByType(type).itervalues():
 	if str(section.getDataValueInt(bNodeAtt)) in tags:
 		section.setDataValue(batt, QVariant(tags[str(section.getDataValueInt(bNodeAtt))]))
 
-print "Done!"
+print "Done! Import TRCOV_ID"

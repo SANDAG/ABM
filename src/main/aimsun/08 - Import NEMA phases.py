@@ -313,4 +313,4 @@ for (eid, data) in phases.iteritems():
 				model.getLog().addError("No NEMA phase for approach %s to node %s!" % (sectionEid, eid))
 	else:
 		model.getLog().addError("Node %s not found!" % eid)
-print "Done!"
+print "Done! Import NEMA phases"
