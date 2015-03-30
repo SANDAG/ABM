@@ -95,7 +95,7 @@ matrixCore = {
    
    properties = "\\conf\\sandag_abm.properties" 
    collapseOnOffByRoute = RunMacro("read properties",properties,"RunModel.collapseOnOffByRoute", "S")
-   if collapseOnOffByRoute = "false" then do
+   if collapseOnOffByRoute = "true" then do
 	   ok = RunMacro("Collapse OnOffs By Route", onOffTables, rt_file)
 	   if !ok then goto quit
    end
