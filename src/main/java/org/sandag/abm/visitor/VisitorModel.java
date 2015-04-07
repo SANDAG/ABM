@@ -6,9 +6,17 @@ import gnu.cajo.utils.ItemServer;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.MissingResourceException;
+<<<<<<< HEAD
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+=======
+>>>>>>> refs/heads/develop
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
+import org.sandag.abm.visitor.McLogsumsCalculator;
+import org.sandag.abm.crossborder.CrossBorderTripModeChoiceModel;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.MatrixDataServer;
 import org.sandag.abm.ctramp.MatrixDataServerRmi;
@@ -19,15 +27,21 @@ import org.sandag.abm.modechoice.TazDataManager;
 import com.pb.common.calculator.MatrixDataManager;
 import com.pb.common.matrix.MatrixType;
 import com.pb.common.util.ResourceUtil;
+import com.pb.sawdust.util.concurrent.DnCRecursiveAction;
+
 
 public class VisitorModel
 {
 
     public static final int         MATRIX_DATA_SERVER_PORT        = 1171;
     public static final int         MATRIX_DATA_SERVER_PORT_OFFSET = 0;
+    public static final String      RUN_MODEL_CONCURRENT_PROPERTY_KEY   = "visitor.run.concurrent";
+    public static final String      CONCURRENT_PARALLELISM_PROPERTY_KEY = "visitor.concurrent.parallelism";
 
     private MatrixDataServerRmi     ms;
     private static Logger           logger                         = Logger.getLogger("visitorModel");
+    private static final Object     INITIALIZATION_LOCK                 = new Object();
+    
     private HashMap<String, String> rbMap;
     private McLogsumsCalculator     logsumsCalculator;
     private AutoTazSkimsCalculator  tazDistanceCalculator;
@@ -47,52 +61,68 @@ public class VisitorModel
     public VisitorModel(HashMap<String, String> rbMap)
     {
         this.rbMap = rbMap;
-        mgraManager = MgraDataManager.getInstance(rbMap);
-        tazManager = TazDataManager.getInstance(rbMap);
+        synchronized (INITIALIZATION_LOCK)
+        { // lock to make sure only one of
+          // these actually initializes
+          // things so we don't cross
+          // threads
+            mgraManager = MgraDataManager.getInstance(rbMap);
+            tazManager = TazDataManager.getInstance(rbMap);
+        }
 
         seek = new Boolean(Util.getStringValueFromPropertyMap(rbMap, "visitor.seek"));
         traceId = new Integer(Util.getStringValueFromPropertyMap(rbMap, "visitor.trace"));
 
     }
+    
+    // global variable used for reporting
+    private static final AtomicInteger TOUR_COUNTER           = new AtomicInteger(0);
+    private final AtomicBoolean        calculatorsInitialized = new AtomicBoolean(false);
 
     /**
      * Run visitor model.
      */
-    public void runModel()
-    {
+    private void runModel(VisitorTour[] tours, int start, int end){
 
-        VisitorModelStructure modelStructure = new VisitorModelStructure();
+
+		VisitorModelStructure modelStructure = new VisitorModelStructure();
 
         VisitorDmuFactoryIf dmuFactory = new VisitorDmuFactory(modelStructure);
-
-        VisitorTourManager tourManager = new VisitorTourManager(rbMap);
-
-        tourManager.generateVisitorTours();
-        VisitorTour[] tours = tourManager.getTours();
-
-        tazDistanceCalculator = new AutoTazSkimsCalculator(rbMap);
-        tazDistanceCalculator.computeTazDistanceArrays();
-        logsumsCalculator = new McLogsumsCalculator();
-        logsumsCalculator.setupSkimCalculators(rbMap);
+        
+        if (!calculatorsInitialized.get())
+        {
+            // only let one thread in to initialize
+            synchronized (calculatorsInitialized)
+            {
+                // if still not initialized, then this is the first in so do the
+                // initialization (otherwise skip)
+                if (!calculatorsInitialized.get())
+                {
+                    tazDistanceCalculator = new AutoTazSkimsCalculator(rbMap);
+                    tazDistanceCalculator.computeTazDistanceArrays();
+                    logsumsCalculator = new McLogsumsCalculator();
+                    logsumsCalculator.setupSkimCalculators(rbMap);
+                    calculatorsInitialized.set(true);
+                }
+            }
+        }
+        
         logsumsCalculator.setTazDistanceSkimArrays(
                 tazDistanceCalculator.getStoredFromTazToAllTazsDistanceSkims(),
                 tazDistanceCalculator.getStoredToTazFromAllTazsDistanceSkims());
 
         VisitorTourTimeOfDayChoiceModel todChoiceModel = new VisitorTourTimeOfDayChoiceModel(rbMap);
-        VisitorTourDestChoiceModel destChoiceModel = new VisitorTourDestChoiceModel(rbMap,
-                modelStructure, dmuFactory, logsumsCalculator);
+        VisitorTourDestChoiceModel destChoiceModel = new VisitorTourDestChoiceModel(rbMap, modelStructure, dmuFactory, logsumsCalculator);
         VisitorTourModeChoiceModel tourModeChoiceModel = destChoiceModel.getTourModeChoiceModel();
+        //VisitorTripModeChoiceModel tripModeChoiceModel = tourModeChoiceModel.getTripModeChoiceModel();
         destChoiceModel.calculateSizeTerms(dmuFactory);
         destChoiceModel.calculateTazProbabilities(dmuFactory);
 
         VisitorStopFrequencyModel stopFrequencyModel = new VisitorStopFrequencyModel(rbMap);
         VisitorStopPurposeModel stopPurposeModel = new VisitorStopPurposeModel(rbMap);
-        VisitorStopTimeOfDayChoiceModel stopTodChoiceModel = new VisitorStopTimeOfDayChoiceModel(
-                rbMap);
-        VisitorStopLocationChoiceModel stopLocationChoiceModel = new VisitorStopLocationChoiceModel(
-                rbMap, modelStructure, dmuFactory, logsumsCalculator);
-        VisitorTripModeChoiceModel tripModeChoiceModel = new VisitorTripModeChoiceModel(rbMap,
-                modelStructure, dmuFactory, logsumsCalculator);
+        VisitorStopTimeOfDayChoiceModel stopTodChoiceModel = new VisitorStopTimeOfDayChoiceModel(rbMap);
+        VisitorStopLocationChoiceModel stopLocationChoiceModel = new VisitorStopLocationChoiceModel(rbMap, modelStructure, dmuFactory, logsumsCalculator);
+        VisitorTripModeChoiceModel tripModeChoiceModel = new VisitorTripModeChoiceModel(rbMap, modelStructure, dmuFactory, logsumsCalculator);
         double[][] mgraSizeTerms = destChoiceModel.getMgraSizeTerms();
         double[][] tazSizeTerms = destChoiceModel.getTazSizeTerms();
         double[][][] mgraProbabilities = destChoiceModel.getMgraProbabilities();
@@ -102,16 +132,16 @@ public class VisitorModel
         stopLocationChoiceModel.setTripModeChoiceModel(tripModeChoiceModel);
 
         // Run models for array of tours
-        for (int i = 0; i < tours.length; ++i)
+        for (int i = start; i < end; i++)
         {
-
             VisitorTour tour = tours[i];
 
             // sample tours
             double rand = tour.getRandom();
             if (rand > sampleRate) continue;
-
-            if (i < 10 || i % 1000 == 0) logger.info("Processing tour " + (i + 1));
+            
+            int tourCount = TOUR_COUNTER.incrementAndGet();
+            if (tourCount % 1000 == 0) logger.info("Processing tour " + tourCount);
 
             if (seek && tour.getID() != traceId) continue;
 
@@ -130,19 +160,19 @@ public class VisitorModel
             if (outboundStops > 0)
             {
                 VisitorStop[] stops = tour.getOutboundStops();
-                for (int j = 0; j < stops.length; ++j)
+                for (VisitorStop stop : stops)
                 {
-                    stopTodChoiceModel.chooseTOD(tour, stops[j]);
-                    stopLocationChoiceModel.chooseStopLocation(tour, stops[j]);
+                    stopTodChoiceModel.chooseTOD(tour, stop);
+                    stopLocationChoiceModel.chooseStopLocation(tour, stop);
                 }
             }
             if (inboundStops > 0)
             {
                 VisitorStop[] stops = tour.getInboundStops();
-                for (int j = 0; j < stops.length; ++j)
+                for (VisitorStop stop : stops)
                 {
-                    stopTodChoiceModel.chooseTOD(tour, stops[j]);
-                    stopLocationChoiceModel.chooseStopLocation(tour, stops[j]);
+                    stopTodChoiceModel.chooseTOD(tour, stop);
+                    stopLocationChoiceModel.chooseStopLocation(tour, stop);
                 }
             }
 
@@ -154,10 +184,10 @@ public class VisitorModel
             if (outboundStops > 0)
             {
                 VisitorStop[] stops = tour.getOutboundStops();
-                for (int j = 0; j < stops.length; ++j)
+                for (VisitorStop stop : stops)
                 {
                     // generate a trip to the stop and choose a mode for it
-                    trips[tripNumber] = new VisitorTrip(tour, stops[j], true);
+                    trips[tripNumber] = new VisitorTrip(tour, stop, true);
                     tripModeChoiceModel.chooseMode(tour, trips[tripNumber]);
                     ++tripNumber;
                 }
@@ -179,10 +209,10 @@ public class VisitorModel
             if (inboundStops > 0)
             {
                 VisitorStop[] stops = tour.getInboundStops();
-                for (int j = 0; j < stops.length; ++j)
+                for (VisitorStop stop : stops)
                 {
                     // generate a trip to the stop and choose a mode for it
-                    trips[tripNumber] = new VisitorTrip(tour, stops[j], true);
+                    trips[tripNumber] = new VisitorTrip(tour, stop, true);
                     tripModeChoiceModel.chooseMode(tour, trips[tripNumber]);
                     ++tripNumber;
                 }
@@ -204,11 +234,6 @@ public class VisitorModel
             tour.setTrips(trips);
 
         }
-
-        tourManager.writeOutputFile(rbMap);
-
-        logger.info("Visitor Model successfully completed!");
-
     }
 
     private MatrixDataServerRmi startMatrixServerProcess(String serverAddress, int serverPort,
@@ -277,6 +302,93 @@ public class VisitorModel
     public void setSampleRate(double sampleRate)
     {
         this.sampleRate = sampleRate;
+    }
+    
+	/**
+     * This class is the divide-and-conquer action (void return task) for
+     * running the visitor model using the fork-join framework. The
+     * divisible problem is an array of tours, and the actual work is the
+     * {@link VisitorModel#runModel(VisitorTour[],int,int)} method,
+     * applied to a section of the array.
+     */
+    private class VisitorModelAction
+            extends DnCRecursiveAction
+    {
+        private final HashMap<String, String> rbMap;
+        private final VisitorTour[]       tours;
+
+        private VisitorModelAction(HashMap<String, String> rbMap, VisitorTour[] tours)
+        {
+            super(0, tours.length);
+            this.rbMap = rbMap;
+            this.tours = tours;
+        }
+
+        private VisitorModelAction(HashMap<String, String> rbMap, VisitorTour[] tours,
+                long start, long length, DnCRecursiveAction next)
+        {
+            super(start, length, next);
+            this.rbMap = rbMap;
+            this.tours = tours;
+        }
+
+        @Override
+        protected void computeAction(long start, long length)
+        {
+            runModel(tours, (int) start, (int) (start + length));
+        }
+
+        @Override
+        protected DnCRecursiveAction getNextAction(long start, long length, DnCRecursiveAction next)
+        {
+            return new VisitorModelAction(rbMap, tours, start, length, next);
+        }
+
+        @Override
+        protected boolean continueDividing(long length)
+        {
+            // if there are 3 extra tasks queued up, then start executing
+            // if there are 1000 or less tours to process, then start executing
+            // otherwise, keep dividing to build up tasks for the threads to
+            // process
+            return getSurplusQueuedTaskCount() < 3 && length > 5000;
+        }
+    }
+    
+	 /**
+     * Run visitor model.
+     */
+    public void runModel()
+    {
+		VisitorTourManager tourManager = new VisitorTourManager(rbMap);
+	    tourManager.generateVisitorTours();
+		VisitorTour[] tours = tourManager.getTours();
+
+        // get new keys to see if we want to run in concurrent mode, and the
+        // parallelism
+        // (defaults to single threaded and parallelism = # of processors)
+        // note that concurrent can use up memory very quickly, so setting the
+        // parallelism might be prudent
+        boolean concurrent = rbMap.containsKey(RUN_MODEL_CONCURRENT_PROPERTY_KEY)
+                && Boolean.valueOf(Util.getStringValueFromPropertyMap(rbMap,
+                        RUN_MODEL_CONCURRENT_PROPERTY_KEY));
+        int parallelism = rbMap.containsKey(CONCURRENT_PARALLELISM_PROPERTY_KEY) ? Integer
+                .valueOf(Util.getStringValueFromPropertyMap(rbMap,
+                        CONCURRENT_PARALLELISM_PROPERTY_KEY)) : Runtime.getRuntime()
+                .availableProcessors();
+                
+        if (concurrent)
+        { // use fork-join
+            VisitorModelAction action = new VisitorModelAction(rbMap, tours);
+            new ForkJoinPool(parallelism).execute(action);
+            action.getResult(); // wait for finish
+        } else
+        { // single-threaded: call the model runner in this thread
+            runModel(tours, 0, tours.length);
+        }
+
+        tourManager.writeOutputFile(rbMap);
+        logger.info("Visitor Model successfully completed!");
     }
 
     /**

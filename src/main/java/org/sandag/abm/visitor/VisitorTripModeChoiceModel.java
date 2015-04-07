@@ -1,12 +1,14 @@
 package org.sandag.abm.visitor;
 
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoAndNonMotorizedSkimsCalculator;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.newmodel.ChoiceModelApplication;
 
@@ -126,11 +128,16 @@ public class VisitorTripModeChoiceModel
     {
 
         computeUtilities(tour, trip);
-
+        
         double rand = tour.getRandom();
-        int mode = tripModeChoiceModel.getChoiceResult(rand);
-
-        trip.setTripMode(mode);
+        try{
+        	int mode = tripModeChoiceModel.getChoiceResult(rand); 
+        	trip.setTripMode(mode);
+        }catch(Exception e){
+        	logger.info("rand="+rand);
+        	tour.logTourObject(logger, 100);
+        	logger.error(e.getMessage());
+        }
 
     }
 
