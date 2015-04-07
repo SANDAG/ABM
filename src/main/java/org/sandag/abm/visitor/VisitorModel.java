@@ -6,12 +6,9 @@ import gnu.cajo.utils.ItemServer;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.MissingResourceException;
-<<<<<<< HEAD
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-=======
->>>>>>> refs/heads/develop
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
