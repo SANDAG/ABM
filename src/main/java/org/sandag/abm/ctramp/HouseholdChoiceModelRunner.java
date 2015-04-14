@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.jppf.client.JPPFClient;
 import org.jppf.client.JPPFJob;
-import org.jppf.node.protocol.Task;
+import org.jppf.server.protocol.JPPFTask;
 import org.jppf.task.storage.DataProvider;
 import org.jppf.task.storage.MemoryMapDataProvider;
 import com.pb.common.calculator.MatrixDataServerIf;
@@ -106,7 +106,6 @@ public class HouseholdChoiceModelRunner
      * @param client
      *            is a JPPFClient object which is used to establish a connection
      *            to a computing node, submit tasks, and receive results.
-     * @throws Throwable 
      */
     private void submitTasks()
     {
@@ -126,15 +125,15 @@ public class HouseholdChoiceModelRunner
         {
 
             JPPFJob job = new JPPFJob();
-            job.setName("Household Choice Job");
+            job.setId("Household Choice Job");
 
             DataProvider dataProvider = new MemoryMapDataProvider();
-            dataProvider.setParameter("propertyMap", propertyMap);
-            dataProvider.setParameter("ms", ms);
-            dataProvider.setParameter("hhDataManager", hhDataManager);
-            dataProvider.setParameter("modelStructure", modelStructure);
-            dataProvider.setParameter("dmuFactory", dmuFactory);
-            dataProvider.setParameter("restartModelString", restartModelString);
+            dataProvider.setValue("propertyMap", propertyMap);
+            dataProvider.setValue("ms", ms);
+            dataProvider.setValue("hhDataManager", hhDataManager);
+            dataProvider.setValue("modelStructure", modelStructure);
+            dataProvider.setValue("dmuFactory", dmuFactory);
+            dataProvider.setValue("restartModelString", restartModelString);
             job.setDataProvider(dataProvider);
 
             ArrayList<int[]> startEndTaskIndicesList = getTaskHouseholdRanges(hhDataManager
@@ -150,14 +149,14 @@ public class HouseholdChoiceModelRunner
 
                 HouseholdChoiceModelsTaskJppf task = new HouseholdChoiceModelsTaskJppf(taskIndex,
                         startIndex, endIndex);
-                job.add(task);
+                job.addTask(task);
                 taskIndex++;
             }
 
-            List<Task<?>> results = jppfClient.submitJob(job);
-            for (Task<?> task : results)
+            List<JPPFTask> results = jppfClient.submit(job);
+            for (JPPFTask task : results)
             {
-                if (task.getThrowable() != null) throw new Exception(task.getThrowable());
+                if (task.getException() != null) throw task.getException();
 
                 try
                 {
