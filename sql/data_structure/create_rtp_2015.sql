@@ -994,6 +994,61 @@ GO
 
 
 
+-- Function to return number of boardings and alightings at three different aggregations
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2015].[boarding_route_mode_node]') AND type in (N'FN', N'IF', N'TF', N'FS', N'FT'))
+DROP FUNCTION [rtp_2015].[boarding_route_mode_node]
+GO
+
+CREATE FUNCTION [rtp_2015].[boarding_route_mode_node] (
+	@scenario_id smallint
+	)
+RETURNS TABLE
+AS
+
+/*	Author: Gregor Schroeder, Ziying Ouyang
+	Date: 3/27/2015
+*/
+
+RETURN
+(
+SELECT
+       [config] / 1000 AS [route]
+       ,[transit_onoff].[transit_mode_id]
+       ,[near_node]
+       ,SUM([boardings]) AS [ons]
+       ,SUM([alightings]) AS [offs]
+FROM
+       [abm].[transit_onoff]
+INNER JOIN
+       [abm].[transit_route]
+ON
+       [transit_onoff].[scenario_id] = [transit_route].[scenario_id]
+       AND [transit_onoff].[transit_route_id] = [transit_route].[transit_route_id]
+INNER JOIN
+       [abm].[transit_stop]
+ON
+       [transit_onoff].[scenario_id] = [transit_stop].[scenario_id]
+       AND [transit_onoff].[transit_stop_id] = [transit_stop].[transit_stop_id]
+WHERE
+       [transit_onoff].[scenario_id] = @scenario_id
+       AND [transit_route].[scenario_id] = @scenario_id
+       AND [transit_stop].[scenario_id] = @scenario_id
+GROUP BY GROUPING SETS (
+       [config] / 1000
+       ,[transit_onoff].[transit_mode_id]
+       ,[near_node]
+       )
+)
+GO
+
+-- Add metadata for [rtp_2015].[boarding_route_mode_node]
+EXECUTE [db_meta].[add_xp] 'rtp_2015.boarding_route_mode_node', 'SUBSYSTEM', 'rtp_2015'
+EXECUTE [db_meta].[add_xp] 'rtp_2015.boarding_route_mode_node', 'MS_Description', 'function to return boardings and alightings at three different aggregations by route by transit_mode_id and by near_node'
+GO
+
+
+
+
 -- Create function for community of concern population by household geography zone
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2015].[fn_coc_pop_zone]') AND type in (N'FN', N'IF', N'TF', N'FS', N'FT'))
 DROP FUNCTION [rtp_2015].[fn_coc_pop_zone]
@@ -1050,6 +1105,80 @@ GO
 -- Add metadata for [rtp_2015].[fn_coc_pop_zone]
 EXECUTE [db_meta].[add_xp] 'rtp_2015.fn_coc_pop_zone', 'SUBSYSTEM', 'rtp_2015'
 EXECUTE [db_meta].[add_xp] 'rtp_2015.fn_coc_pop_zone', 'MS_Description', 'coc population by household geography zone'
+GO
+
+
+
+
+-- Function to return number onboard by route, stop, tod
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2015].[onboard_route_stop_tod]') AND type in (N'FN', N'IF', N'TF', N'FS', N'FT'))
+DROP FUNCTION [rtp_2015].[onboard_route_stop_tod]
+GO
+
+CREATE FUNCTION [rtp_2015].[onboard_route_stop_tod] (
+	@scenario_id smallint
+	)
+RETURNS TABLE
+AS
+
+/*	Author: Gregor Schroeder, Ziying Ouyang
+	Date: 3/27/2015
+*/
+
+RETURN
+(
+SELECT
+       [route_id]
+       ,[time_period_number]
+       ,[stop_id]
+       ,[stop_name]
+       ,[boardings]
+       ,[alightings]
+       ,SUM([boardings] - [alightings]) OVER (ORDER BY [route_id]
+                                                                                         ,[time_period_number]
+                                                                                         ,[stop_id]
+                                                                                         ,[stop_name]) AS [onboard]
+FROM (
+       SELECT
+              [route_id]
+              ,[time_period_number]
+              ,[stop_id]
+              ,[stop_name]
+              ,SUM([boardings]) AS [boardings]
+              ,SUM([alightings]) AS [alightings]
+       FROM
+              [abm].[transit_onoff]
+       INNER JOIN
+              [abm].[transit_stop]
+       ON
+              [transit_onoff].[scenario_id] = [transit_stop].[scenario_id]
+              AND [transit_onoff].[transit_stop_id] = [transit_stop].[transit_stop_id]
+       INNER JOIN
+              [abm].[transit_route]
+       ON
+              [transit_onoff].[scenario_id] = [transit_stop].[scenario_id]
+              AND [transit_onoff].[transit_route_id] = [transit_route].[transit_route_id]
+       INNER JOIN
+              [ref].[time_period]
+       ON
+              [transit_onoff].[time_period_id] = [time_period].[time_period_id]
+       WHERE
+              [transit_onoff].[scenario_id] = @scenario_id
+              AND [transit_stop].[scenario_id] = @scenario_id
+              AND [transit_route].[scenario_id] = @scenario_id
+              AND [boardings] + [alightings] > 0
+       GROUP BY
+              [route_id]
+              ,[time_period_number]
+              ,[stop_id]
+              ,[stop_name]
+       ) tt
+)
+GO
+
+-- Add metadata for [rtp_2015].[onboard_route_stop_tod]
+EXECUTE [db_meta].[add_xp] 'rtp_2015.onboard_route_stop_tod', 'SUBSYSTEM', 'rtp_2015'
+EXECUTE [db_meta].[add_xp] 'rtp_2015.onboard_route_stop_tod', 'MS_Description', 'function to return boardings, alightings, and number onboard by route, stop, and time of day'
 GO
 
 
@@ -2237,6 +2366,67 @@ GO
 -- Add metadata for [rtp_2015].[sp_transit_vmt_vht_summary_by_route_tod]
 EXECUTE [db_meta].[add_xp] 'rtp_2015.sp_transit_vmt_vht_summary_by_route_tod', 'SUBSYSTEM', 'rtp_2015'
 EXECUTE [db_meta].[add_xp] 'rtp_2015.sp_transit_vmt_vht_summary_by_route_tod', 'MS_Description', 'transit vmt and vht summary by route and time period'
+GO
+
+
+
+
+-- Create stored procedure for transit average vehicle load
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2015].[transit_avg_vehicle_load]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [rtp_2015].[transit_avg_vehicle_load]
+GO
+
+CREATE PROCEDURE [rtp_2015].[transit_avg_vehicle_load]
+	@scenario_id smallint
+AS
+
+/*	Author: Ziying Ouyang and Gregor Schroeder
+	Date: 3/27/2015
+*/
+
+SELECT
+	[route_id]
+	,[time_period_number]
+	,[max_onboard]
+	,[frequency]
+	,[max_onboard] / [frequency] AS [avg_vehicle_load]
+FROM (
+		SELECT
+			[transit_route].[route_id]
+			,[time_period_number]
+			,[max_onboard]
+			,CASE	WHEN [time_period_number] = 1 THEN ISNULL(180 / NULLIF([op_headway], 0), 0)
+					WHEN [time_period_number] = 2 THEN ISNULL(180 / NULLIF([am_headway], 0), 0)
+					WHEN [time_period_number] = 3 THEN ISNULL(390 / NULLIF([op_headway], 0), 0)
+					WHEN [time_period_number] = 4 THEN ISNULL(210 / NULLIF([pm_headway], 0), 0)
+					WHEN [time_period_number] = 5 THEN ISNULL(480 / NULLIF([op_headway], 0), 0)
+					END AS [frequency]
+		FROM
+			[abm].[transit_route]
+		INNER JOIN (
+			SELECT
+				[route_id]
+				,[time_period_number]
+				,MAX([onboard]) AS [max_onboard]
+			FROM
+				[rtp_2015].[onboard_route_stop_tod](@scenario_id)
+			GROUP BY
+				[route_id]
+				,[time_period_number]
+			) AS [onboard]
+		ON
+			[transit_route].[route_id] = [onboard].[route_id]
+		WHERE
+			[transit_route].[scenario_id] = @scenario_id
+	) [tt]
+ORDER BY
+	[route_id]
+	,[time_period_number]
+GO
+
+-- Add metadata for [rtp_2015].[transit_avg_vehicle_load]
+EXECUTE [db_meta].[add_xp] 'rtp_2015.transit_avg_vehicle_load', 'SUBSYSTEM', 'rtp_2015'
+EXECUTE [db_meta].[add_xp] 'rtp_2015.transit_avg_vehicle_load', 'MS_Description', 'gets average vehicle load for transit by route and time period'
 GO
 
 
