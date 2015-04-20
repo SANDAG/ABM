@@ -31,10 +31,10 @@ Macro "Run SANDAG ABM"
    skipCopyWarmupTripTables = RunMacro("read properties",properties,"RunModel.skipCopyWarmupTripTables", "S")
    skipCopyBikeLogsum = RunMacro("read properties",properties,"RunModel.skipCopyBikeLogsum", "S")
    skipCopyWalkImpedance= RunMacro("read properties",properties,"RunModel.skipCopyWalkImpedance", "S")
+   skipWalkLogsums= RunMacro("read properties",properties,"RunModel.skipWalkLogsums", "S")
+   skipBikeLogsums= RunMacro("read properties",properties,"RunModel.skipBikeLogsums", "S")   
    skipBuildHwyNetwork = RunMacro("read properties",properties,"RunModel.skipBuildHwyNetwork", "S")
    skipBuildTransitNetwork= RunMacro("read properties",properties,"RunModel.skipBuildTransitNetwork", "S")
-   //skipWalkLogsums= RunMacro("read properties",properties,"RunModel.skipWalkLogsums", "S")
-   //skipBikeLogsums= RunMacro("read properties",properties,"RunModel.skipBikeLogsums", "S")
    startFromIteration = s2i(RunMacro("read properties",properties,"RunModel.startFromIteration", "S"))
    skipHighwayAssignment = RunMacro("read properties array",properties,"RunModel.skipHighwayAssignment", "S")
    skipHighwaySkimming = RunMacro("read properties array",properties,"RunModel.skipHighwaySkimming", "S")
@@ -59,9 +59,9 @@ Macro "Run SANDAG ABM"
    if skipCopyBikeLogsum = "false" then do
 	   CopyFile(inputDir+"\\bikeMgraLogsum.csv", outputDir+"\\bikeMgraLogsum.csv")
 	   CopyFile(inputDir+"\\bikeTazLogsum.csv", outputDir+"\\bikeTazLogsum.csv")
-       end
-   else do
-	  runString = path+"\\bin\\runSandagWalkLogsums.cmd "+drive+" "+path_forward_slash
+   end
+   if skipBikeLogsums = "false" then do
+   	  runString = path+"\\bin\\runSandagBikeLogsums.cmd "+drive+" "+path_forward_slash
 	  RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run create AT logsums and walk impedances"+" "+runString})
 	  ok = RunMacro("TCB Run Command", 1, "Run AT-Logsums", runString)
 	  if !ok then goto quit  
@@ -71,9 +71,9 @@ Macro "Run SANDAG ABM"
    if skipCopyWalkImpedance = "false" then do
 	   CopyFile(inputDir+"\\walkMgraEquivMinutes.csv", outputDir+"\\walkMgraEquivMinutes.csv")
 	   CopyFile(inputDir+"\\walkMgraTapEquivMinutes.csv", outputDir+"\\walkMgraTapEquivMinutes.csv")
-      end
-   else do
-   	  runString = path+"\\bin\\runSandagBikeLogsums.cmd "+drive+" "+path_forward_slash
+   end
+   if skipWalkLogsums = "false" then do
+	  runString = path+"\\bin\\runSandagWalkLogsums.cmd "+drive+" "+path_forward_slash
 	  RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run create AT logsums and walk impedances"+" "+runString})
 	  ok = RunMacro("TCB Run Command", 1, "Run AT-Logsums", runString)
 	  if !ok then goto quit  
