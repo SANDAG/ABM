@@ -3,10 +3,8 @@ package org.sandag.abm.ctramp;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
-
 import org.jppf.node.protocol.AbstractTask;
-import org.jppf.task.storage.DataProvider;
-
+import org.jppf.node.protocol.DataProvider;
 import com.pb.common.calculator.MatrixDataServerIf;
 
 public class WorkLocationChoiceTaskJppfNew
@@ -131,11 +129,6 @@ public class WorkLocationChoiceTaskJppfNew
                     continue;
 
                 dcModel.applyWorkLocationChoice(householdArray[i]);
-                
-//                if(!HouseholdValidator.validateMandatoryDestinationChoices(householdArray, "work"))
-//                {
-//                    setResubmit(true);
-//                }
             }
 
             hhDataManager.setHhArray(householdArray, startIndex);

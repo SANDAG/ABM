@@ -6,9 +6,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.jppf.client.JPPFClient;
 import org.jppf.client.JPPFJob;
+import org.jppf.node.protocol.DataProvider;
+import org.jppf.node.protocol.MemoryMapDataProvider;
 import org.jppf.node.protocol.Task;
-import org.jppf.task.storage.DataProvider;
-import org.jppf.task.storage.MemoryMapDataProvider;
 import com.pb.common.calculator.MatrixDataServerIf;
 
 public class HouseholdChoiceModelRunner
@@ -106,7 +106,6 @@ public class HouseholdChoiceModelRunner
      * @param client
      *            is a JPPFClient object which is used to establish a connection
      *            to a computing node, submit tasks, and receive results.
-     * @throws Throwable 
      */
     private void submitTasks()
     {

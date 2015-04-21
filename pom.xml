@@ -50,7 +50,7 @@
 		<workpath>T:\projects\sr13\sdf_scenevl_r3</workpath>
 		<database_server>sql2014a8</database_server>
 		<database_name>abm_13_2_3</database_name>
-        <jppf_version>4.2.5</jppf_version>
+        <jppf_version>5.0.1</jppf_version>
     </properties>
     <profiles>
         <profile>

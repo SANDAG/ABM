@@ -4,7 +4,8 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import org.apache.log4j.Logger;
 import org.jppf.node.protocol.AbstractTask;
-import org.jppf.task.storage.DataProvider;
+import org.jppf.node.protocol.DataProvider;
+import org.jppf.node.protocol.JPPFTask;
 import com.pb.common.calculator.MatrixDataServerIf;
 
 public class HouseholdChoiceModelsTaskJppf

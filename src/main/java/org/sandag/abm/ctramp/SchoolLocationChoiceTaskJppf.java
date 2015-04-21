@@ -3,10 +3,8 @@ package org.sandag.abm.ctramp;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
-
 import org.jppf.node.protocol.AbstractTask;
-import org.jppf.task.storage.DataProvider;
-
+import org.jppf.node.protocol.DataProvider;
 import com.pb.common.calculator.MatrixDataServerIf;
 
 public class SchoolLocationChoiceTaskJppf
@@ -141,11 +139,6 @@ public class SchoolLocationChoiceTaskJppf
             }
 
             hhDataManager.setHhArray(householdArray, startIndex);
-            
-//            if(!HouseholdValidator.validateMandatoryDestinationChoices(householdArray, "school"))
-//            {
-//                setResubmit(true);
-//            }
 
         } catch (Exception e)
         {
@@ -186,4 +179,5 @@ public class SchoolLocationChoiceTaskJppf
     {
         return Integer.toString(taskIndex);
     }
+
 }

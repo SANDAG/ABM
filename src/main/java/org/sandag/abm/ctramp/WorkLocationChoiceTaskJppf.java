@@ -4,7 +4,7 @@ import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
 import org.jppf.node.protocol.AbstractTask;
-import org.jppf.task.storage.DataProvider;
+import org.jppf.node.protocol.DataProvider;
 import com.pb.common.calculator.MatrixDataServerIf;
 
 public class WorkLocationChoiceTaskJppf
@@ -131,11 +131,6 @@ public class WorkLocationChoiceTaskJppf
             }
 
             hhDataManager.setHhArray(householdArray, startIndex);
-            
-//            if(!HouseholdValidator.validateMandatoryDestinationChoices(householdArray, "work"))
-//            {
-//                setResubmit(true);
-//            }
 
         } catch (Exception e)
         {
@@ -176,5 +171,5 @@ public class WorkLocationChoiceTaskJppf
     {
         return Integer.toString(taskIndex);
     }
-    
+
 }

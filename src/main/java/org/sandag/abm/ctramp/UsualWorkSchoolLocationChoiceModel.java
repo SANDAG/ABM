@@ -15,9 +15,10 @@ import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
 import org.jppf.client.JPPFClient;
 import org.jppf.client.JPPFJob;
+import org.jppf.node.protocol.DataProvider;
+import org.jppf.node.protocol.JPPFTask;
+import org.jppf.node.protocol.MemoryMapDataProvider;
 import org.jppf.node.protocol.Task;
-import org.jppf.task.storage.DataProvider;
-import org.jppf.task.storage.MemoryMapDataProvider;
 import org.sandag.abm.accessibilities.BuildAccessibilities;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
@@ -256,8 +257,6 @@ public class UsualWorkSchoolLocationChoiceModel
             {
                 JPPFJob job = new JPPFJob();
                 job.setName("Work Location Choice Job");
-                job.getSLA().setMaxTaskResubmits(10);
-                job.getSLA().setApplyMaxResubmitsUponNodeError(false);
 
                 ArrayList<int[]> startEndTaskIndicesList = getTaskHouseholdRanges(householdDataManager
                         .getNumHouseholds());
@@ -307,7 +306,7 @@ public class UsualWorkSchoolLocationChoiceModel
                 List<Task<?>> results = jppfClient.submitJob(job);
                 for (Task<?> task : results)
                 {
-                    if (task.getThrowable() != null) throw new Exception(task.getThrowable());
+                    if (task.getException() != null) throw task.getException();
 
                     try
                     {
@@ -431,18 +430,26 @@ public class UsualWorkSchoolLocationChoiceModel
                     currentIter++;
                 }
             }
-       
+        // String restartFlag = propertyMap.get(
+        // CtrampApplication.PROPERTIES_RESTART_WITH_HOUSEHOLD_SERVER );
+        // if ( restartFlag == null )
+        // restartFlag = "none";
+        // if ( restartFlag.equalsIgnoreCase("none") )
+        // currentIter = 0;
+
         long initTime = System.currentTimeMillis();
 
         // shadow pricing iterations
         for (int iter = 0; iter < schoolDcSizeObj.getMaxShadowPriceIterations(); iter++)
         {
+
+            // logger.info( String.format( "Size of Household[] in bytes = %d.",
+            // householdDataManager.getBytesUsedByHouseholdArray() ) );
+
             try
             {
                 JPPFJob job = new JPPFJob();
                 job.setName("School Location Choice Job");
-                job.getSLA().setMaxTaskResubmits(10);
-                job.getSLA().setApplyMaxResubmitsUponNodeError(false);
 
                 ArrayList<int[]> startEndTaskIndicesList = getTaskHouseholdRanges(householdDataManager
                         .getNumHouseholds());
@@ -489,7 +496,7 @@ public class UsualWorkSchoolLocationChoiceModel
                 List<Task<?>> results = jppfClient.submitJob(job);
                 for (Task<?> task : results)
                 {
-                    if (task.getThrowable() != null) throw new Exception(task.getThrowable());
+                    if (task.getException() != null) throw task.getException();
 
                     try
                     {
