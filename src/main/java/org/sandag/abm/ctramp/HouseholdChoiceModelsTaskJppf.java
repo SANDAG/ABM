@@ -3,12 +3,13 @@ package org.sandag.abm.ctramp;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import org.apache.log4j.Logger;
-import org.jppf.server.protocol.JPPFTask;
-import org.jppf.task.storage.DataProvider;
+import org.jppf.node.protocol.AbstractTask;
+import org.jppf.node.protocol.DataProvider;
+import org.jppf.node.protocol.JPPFTask;
 import com.pb.common.calculator.MatrixDataServerIf;
 
 public class HouseholdChoiceModelsTaskJppf
-        extends JPPFTask
+        extends AbstractTask<String>
 {
 
     private transient HashMap<String, String> propertyMap;
@@ -59,12 +60,12 @@ public class HouseholdChoiceModelsTaskJppf
 
             DataProvider dataProvider = getDataProvider();
 
-            propertyMap = (HashMap<String, String>) dataProvider.getValue("propertyMap");
-            ms = (MatrixDataServerIf) dataProvider.getValue("ms");
-            hhDataManager = (HouseholdDataManagerIf) dataProvider.getValue("hhDataManager");
-            modelStructure = (ModelStructure) dataProvider.getValue("modelStructure");
-            dmuFactory = (CtrampDmuFactoryIf) dataProvider.getValue("dmuFactory");
-            restartModelString = (String) dataProvider.getValue("restartModelString");
+            propertyMap = (HashMap<String, String>) dataProvider.getParameter("propertyMap");
+            ms = (MatrixDataServerIf) dataProvider.getParameter("ms");
+            hhDataManager = (HouseholdDataManagerIf) dataProvider.getParameter("hhDataManager");
+            modelStructure = (ModelStructure) dataProvider.getParameter("modelStructure");
+            dmuFactory = (CtrampDmuFactoryIf) dataProvider.getParameter("dmuFactory");
+            restartModelString = (String) dataProvider.getParameter("restartModelString");
 
         } catch (Exception e)
         {

@@ -38,7 +38,7 @@ public class AirportPartyManager
      * @param resourceFile
      *            Property file.
      */
-    public AirportPartyManager(HashMap<String, String> rbMap)
+    public AirportPartyManager(HashMap<String, String> rbMap, float sampleRate)
     {
         sandagStructure = new SandagModelStructure();
 
@@ -76,7 +76,7 @@ public class AirportPartyManager
 
         float directPassengers = (enplanements - connectingPassengers) / annualFactor;
         int totalParties = (int) (directPassengers / averageSize) * 2;
-        parties = new AirportParty[totalParties];
+        parties = new AirportParty[(int)(totalParties*sampleRate)];
 
         logger.info("Total airport parties: " + totalParties);
     }
@@ -386,7 +386,7 @@ public class AirportPartyManager
 
         return taps;
     }
-
+/*
     public static void main(String[] args)
     {
 
@@ -415,4 +415,5 @@ public class AirportPartyManager
         logger.info("Airport Model successfully completed!");
 
     }
+*/
 }

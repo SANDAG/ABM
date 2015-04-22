@@ -243,12 +243,12 @@ public class IndividualMandatoryTourFrequencyDMU
 
     public int getUsualWorkLocation()
     {
-        return person.getUsualWorkLocation();
+        return person.getWorkLocation();
     }
 
     public int getWorkAtHome()
     {
-        return person.getPersonWorkLocationZone() == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR ? 1
+        return person.getWorkLocation() == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR ? 1
                 : 0;
     }
 

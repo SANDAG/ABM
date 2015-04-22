@@ -579,7 +579,7 @@ public class AutoAndNonMotorizedSkimsCalculator
                 // get distances from destMgra since this is the direction of
                 // distances read from the data file
                 for (int wMgra : walkMgras)
-                    distances[wMgra] = mgraManager.getMgraToMgraWalkDistTo(destMgra, wMgra) / 5280.0;
+                    distances[wMgra] = mgraManager.getMgraToMgraWalkDistTo(wMgra, destMgra) / 5280.0;
 
             }
 

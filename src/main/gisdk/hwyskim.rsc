@@ -90,7 +90,9 @@ Macro "Update highway network"
 
    shared path, inputDir, outputDir
    
+/* WSU commented out; not used in script
    VOT={67,67,67,67,67,67,67,67,67,68,89,67,68,89}
+*/
 
    // input files
    db_file = outputDir + "\\hwy.dbd"
@@ -108,12 +110,6 @@ Macro "Update highway network"
    s2_vot=s2_vot*60/100
    s3_vot=s3_vot*60/100
    
- /*
-   aoc_dollarspermile = 0.15
-   da_distfactor = 60/(da_vot/aoc_dollarspermile)
-   s2_distfactor = 60/(s2_vot/aoc_dollarspermile)
-   s3_distfactor = 60/(s3_vot/aoc_dollarspermile) 
- */  
    //Recompute generalized cost using MSA cost in flow table,
    for i = 1 to periods.length do
     
@@ -150,8 +146,8 @@ Macro "Update highway network"
       Opts.Input.[Dataview Set] = {{db_file+"|"+link_lyr, flowTable, {"ID"}, {"ID1"}},"s2join"+periods[i] }   
       Opts.Global.Fields = {"ABH2CST"+periods[i],"BAH2CST"+periods[i]}                                // the field to fill
       Opts.Global.Method = "Formula"                                                                  // the fill method
-      Opts.Global.Parameter = {"AB_MSA_Cost + ((ITOLL3"+periods[i]+"/100)/"+String(s2_vot)+"*60)"  ,
-                               "BA_MSA_Cost + ((ITOLL3"+periods[i]+"/100)/"+String(s2_vot)+"*60)"  }   
+      Opts.Global.Parameter = {"if (IHOV=3 or IHOV=4) then (AB_MSA_Cost + ((ITOLL3"+periods[i]+"/100)/"+String(s2_vot)+"*60)) else AB_MSA_Cost"  ,
+                               "if (IHOV=3 or IHOV=4) then (BA_MSA_Cost + ((ITOLL3"+periods[i]+"/100)/"+String(s2_vot)+"*60)) else BA_MSA_Cost"  }   
       ret_value = RunMacro("TCB Run Operation", "Fill Dataview", Opts, &Ret)
       if !ret_value then goto quit
       
@@ -159,8 +155,8 @@ Macro "Update highway network"
       Opts.Input.[Dataview Set] = {{db_file+"|"+link_lyr, flowTable, {"ID"}, {"ID1"}},"s3join"+periods[i] }   
       Opts.Global.Fields = {"ABH3CST"+periods[i],"BAH3CST"+periods[i]}                                // the field to fill
       Opts.Global.Method = "Formula"                                                                  // the fill method
-      Opts.Global.Parameter = {"AB_MSA_Cost + ((ITOLL3"+periods[i]+"/100)/"+String(s3_vot)+"*60)"  ,
-                               "BA_MSA_Cost + ((ITOLL3"+periods[i]+"/100)/"+String(s3_vot)+"*60)"  }   
+      Opts.Global.Parameter = {"if IHOV=4 then (AB_MSA_Cost + ((ITOLL3"+periods[i]+"/100)/"+String(s3_vot)+"*60)) else AB_MSA_Cost"  ,
+                               "if IHOV=4 then (BA_MSA_Cost + ((ITOLL3"+periods[i]+"/100)/"+String(s3_vot)+"*60)) else BA_MSA_Cost"  }   
       ret_value = RunMacro("TCB Run Operation", "Fill Dataview", Opts, &Ret)
       if !ret_value then goto quit
        
@@ -263,7 +259,9 @@ Macro "hwy skim" (arr)
    mode=arr[1]
    dim skimbyset1[3],skimbyset2[3]
 
+/*WSU commented out; not used in script.
    VOT={50,50,50,50,50,50,50,50,50,51,72,50,51,72}
+*/
 
    // input files
    db_file = outputDir + "\\hwy.dbd"
@@ -621,7 +619,7 @@ Macro "hwy skim" (arr)
          Opts.Global.Factor = 0.5
          Opts.Global.Neighbors = 3
          Opts.Global.Operation = 1
-
+         Opts.Global.[Treat Missing] = 2
          Opts.Input.[Matrix Currency] = {outputDir + "\\"+skimmat,mtxcore[j], , }
          RunMacro("HwycadLog",{"hwyskim.rsc: hwy skim","Intrazonal: "+skimmat+"; "+mtxcore[j]})
          ok = RunMacro("TCB Run Procedure", j, "Intrazonal", Opts)

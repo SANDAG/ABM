@@ -26,6 +26,7 @@
  
      	5-2013 wsu fixed indexing bug
  	7-2013 jef reduced truck rate for military employment to 0.3
+ 	8-2014 wsu reduced truck rate for military employment to 0.15
  
 **************************************************************/
 Macro "Commercial Vehicle Generation" 
@@ -36,7 +37,7 @@ Macro "Commercial Vehicle Generation"
       scenarioDirectory = "d:\\projects\\SANDAG\\AB_Model\\commercial_vehicles"
 */   
    
-   shared path, inputDir, outputDir       
+   shared path, inputDir, outputDir ,scenarioYear      
    
    mgraCommTripFile  = "mgraCommVeh.csv"
    tazCommTripFile   = "tazCommVeh.csv"
@@ -46,7 +47,7 @@ Macro "Commercial Vehicle Generation"
    
        
    // read in the mgra data in CSV format
-   mgraView = OpenTable("MGRA View", "CSV", {inputDir+"\\mgra13_based_input${year}.csv"}, {{"Shared", "True"}})
+   mgraView = OpenTable("MGRA View", "CSV", {inputDir+"\\mgra13_based_input"+scenarioYear+".csv"}, {{"Shared", "True"}})
    
    mgra                            = GetDataVector(mgraView+"|", "mgra", {{"Sort Order", {{"mgra", "Ascending"}}}} )
    taz                             = GetDataVector(mgraView+"|", "TAZ", {{"Sort Order", {{"mgra", "Ascending"}}}} )
@@ -94,7 +95,7 @@ Macro "Commercial Vehicle Generation"
    
    verySmallP = calibrationFactor * (0.95409 * RETEMPN + 0.54333 * FPSEMPN + 0.50769 * HEREMPN + 
                               0.63558 * OTHEMPN + 1.10181 * AGREMPN + 0.81576 * MWTEMPN +
-                              0.30000 * MILITARY +
+                              0.15000 * MILITARY +
                               0.1 * TOTHH)
    verySmallA = verySmallP
    

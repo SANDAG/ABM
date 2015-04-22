@@ -305,7 +305,7 @@ public abstract class DestChoiceDMU
 
     protected int getWorkTaz()
     {
-        return person.getUsualWorkLocation();
+        return person.getWorkLocation();
     }
 
     protected int getWorkTourModeIsSOV()

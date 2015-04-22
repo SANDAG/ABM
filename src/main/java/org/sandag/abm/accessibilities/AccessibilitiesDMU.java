@@ -11,6 +11,7 @@ public class AccessibilitiesDMU
         implements Serializable, VariableTable
 {
 
+	
     protected transient Logger         logger = Logger.getLogger(AccessibilitiesDMU.class);
 
     protected HashMap<String, Integer> methodIndexMap;

@@ -11,7 +11,7 @@ call %PROJECT_DIRECTORY%\bin\CTRampEnv.bat
 rem ############  PARAMETERS  ############
 
 rem ############  JPPF DRIVER  ############
-set JPPF_LIB=%PROJECT_DIRECTORY%\application\jppf-server-2.5.jar;%PROJECT_DIRECTORY%\application\jppf-common-2.5.jar;%PROJECT_DIRECTORY%\application\jppf-common-node-2.5.jar;%PROJECT_DIRECTORY%\application\crowbar-unknown.jar
+set JPPF_LIB=%PROJECT_DIRECTORY%\application\*
 set CLASSPATH=%PROJECT_DIRECTORY%\conf;%JPPF_LIB%
 
 start %JAVA_64_PATH%\bin\java -server -Xmx16m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j-driver.properties -Djppf.config=jppf-driver.properties org.jppf.server.DriverLauncher

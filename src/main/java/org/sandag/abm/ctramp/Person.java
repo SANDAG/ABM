@@ -82,7 +82,7 @@ public class Person
     // individual value-of-time in $/hr
     private float                persValueOfTime;
 
-    private int                  workLoc;
+    private int                  workLocation;
     private int                  workLocSegmentIndex;
     private float                workLocDistance;
     private float                workLocLogsum;
@@ -395,9 +395,9 @@ public class Person
         persValueOfTime = vot;
     }
 
-    public void setWorkLoc(int loc)
+    public void setWorkLocation(int aWorkLocationMgra)
     {
-        workLoc = loc;
+        workLocation = aWorkLocationMgra;
     }
 
     public void setWorkLocDistance(float distance)
@@ -498,9 +498,9 @@ public class Person
 
             tempTour.setTourOrigMgra(hhObj.getHhMgra());
 
-            if (workLoc == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR) tempTour
+            if (workLocation == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR) tempTour
                     .setTourDestMgra(hhObj.getHhMgra());
-            else tempTour.setTourDestMgra(workLoc);
+            else tempTour.setTourDestMgra(workLocation);
 
             tempTour.setTourPurpose(tourPurpose);
 
@@ -758,9 +758,9 @@ public class Person
         return persValueOfTime;
     }
 
-    public int getPersonWorkLocationZone()
+    public int getWorkLocation()
     {
-        return workLoc;
+        return workLocation;
     }
 
     public int getPersonSchoolLocationZone()
@@ -786,11 +786,6 @@ public class Person
     public String getCdapActivity()
     {
         return cdapActivity;
-    }
-
-    public int getUsualWorkLocation()
-    {
-        return workLoc;
     }
 
     public float getWorkLocationDistance()
@@ -1616,7 +1611,7 @@ public class Person
         Household.logHelper(logger, "persEmploymentCategory: ", persEmploymentCategory, totalChars);
         Household.logHelper(logger, "persStudentCategory: ", persStudentCategory, totalChars);
         Household.logHelper(logger, "personType: ", personType, totalChars);
-        Household.logHelper(logger, "workLoc: ", workLoc, totalChars);
+        Household.logHelper(logger, "workLoc: ", workLocation, totalChars);
         Household.logHelper(logger, "schoolLoc: ", schoolLoc, totalChars);
         Household.logHelper(logger, "workLocSegmentIndex: ", workLocSegmentIndex, totalChars);
         Household.logHelper(logger, "schoolLocSegmentIndex: ", schoolLocSegmentIndex, totalChars);
@@ -1771,7 +1766,7 @@ public class Person
         Household.logHelper(logger, "persEmploymentCategory: ", persEmploymentCategory, totalChars);
         Household.logHelper(logger, "persStudentCategory: ", persStudentCategory, totalChars);
         Household.logHelper(logger, "personType: ", personType, totalChars);
-        Household.logHelper(logger, "workLoc: ", workLoc, totalChars);
+        Household.logHelper(logger, "workLoc: ", workLocation, totalChars);
         Household.logHelper(logger, "schoolLoc: ", schoolLoc, totalChars);
         Household.logHelper(logger, "workLocSegmentIndex: ", workLocSegmentIndex, totalChars);
         Household.logHelper(logger, "schoolLocSegmentIndex: ", schoolLocSegmentIndex, totalChars);

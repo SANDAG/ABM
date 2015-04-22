@@ -59,9 +59,10 @@ Macro "Build transit skims"
    ok = RunMacro("Skim transit networks")  
    if !ok then goto quit
   
+  /*
    ok= RunMacro("zero null ivt time")
    if !ok then goto quit
-
+*/
    ok= RunMacro("Process transit skims") 
    if !ok then goto quit
 
@@ -149,8 +150,6 @@ Inputs:
    input\mode5tod.dbf
    output\transit.dbd
    
-   
-
 ***********************************************************************************/
 Macro "Special transit skims" (arr)
   
@@ -214,36 +213,35 @@ Macro "Special transit skims" (arr)
 EndMacro
 
 /***************************************************************************************************************************
-This macro puts zeros in the null cells for the walk to local bus in-vehicle time skim for all time periods.
-Reason is b/c the Process transit skims will not work properly for cells with null values.
-
+This macro puts zeros in the null cells for unprocessed transit skims: premium and local modes
+3/19/2015 Wu modified to zero out all ivts
 ****************************************************************************************************************************/
 Macro "zero null ivt time"
   
-  
-     shared path, outputDir       
-  
+     shared path, outputDir   
    periods = {"_EA","_AM","_MD","_PM","_EV"}
 
       for i=1 to periods.length do
                         
          //open matrix
-         fileNameSkim = outputDir + "\\impprem"+periods[i]+".mtx"
-         m = OpenMatrix(fileNameSkim,)
-         // Calculate zeros into null of local ivt matrix
-          Opts = null
-          Opts.Input.[Matrix Currency]    = {fileNameSkim, "*TM (Local)", "RCIndex", "RCIndex"}
-          Opts.Global.Method              = 11
-          Opts.Global.[Cell Range]        = 2
-          Opts.Global.[Expression Text]   = "if [*TM (Local)]=null then 0 else [*TM (Local)]"
-          Opts.Global.[Force Missing]     = "Yes"
-          ok = RunMacro("TCB Run Operation", "Fill Matrices", Opts)
-          if !ok then goto quit
+         fileNameSkimP = outputDir + "\\impprem"+periods[i]+".mtx"
+         mp = OpenMatrix(fileNameSkimP,)
+         currsp= CreateMatrixCurrencies(mp, , , )
+	 currsp.("*TM (Local)"):=Nz(currsp.("*TM (Local)"))
+	 currsp.("*TM (Commuter Rail)"):=Nz(currsp.("*TM (Commuter Rail)"))
+	 currsp.("*TM (Light Rail)"):=Nz(currsp.("*TM (Light Rail)"))
+	 currsp.("*TM (Regional BRT (Yello)"):=Nz(currsp.("*TM (Regional BRT (Yello)"))
+	 currsp.("*TM (Regional BRT (Red))"):=Nz(currsp.("*TM (Regional BRT (Red))"))
+	 currsp.("*TM (Limited Express)"):=Nz(currsp.("*TM (Limited Express)"))
+	 currsp.("*TM (Express)"):=Nz(currsp.("*TM (Express)"))
+
+         fileNameSkimL = outputDir + "\\implocl"+periods[i]+".mtx"
+         ml = OpenMatrix(fileNameSkimL,)
+         currsl= CreateMatrixCurrencies(ml, , , )
+	 currsl.("In-Vehicle Time"):=Nz(currsl.("In-Vehicle Time"))
       end
    quit:
-      Return(1 )
-
-
+      Return(1)
 EndMacro
 
 /***********************************************************************************************************************************
@@ -327,10 +325,9 @@ EndMacro
 ***********************************************************************************************************************************/
 Macro "Process transit skims"
    shared path,inputDir, outputDir
-   
+
    periods = {"_EA","_AM","_MD","_PM","_EV"}
    modes = {"prem","locl"}
-
 
    //output core names, by mode
    outMatrixCores={{"Fare","Initial Wait Time","Transfer Wait Time","Walk Time", "Number of Transfers", "Length:CR",
@@ -373,8 +370,8 @@ Macro "Process transit skims"
    //evaluation expression for coding main mode, by mode
    //Note: if no main mode coding is necessary, leave null
    expr={{"if(([IVT:LB]/ [IVT:Sum]) >0.5) then 8 else if [IVT:Sum]=null then 0 else if ([IVT:EXP]> [IVT:CR] & [IVT:EXP]> [IVT:LR] & [IVT:EXP]> [IVT:BRT] & [IVT:EXP]> [IVT:LB]) then 7 else if ([IVT:BRT]> [IVT:CR] & [IVT:BRT]> [IVT:LR] ) then 6",
-          "if ([Main Mode]=null & [IVT:LR]> [IVT:CR]) then 5 else if([Main Mode]=null) then 4 else [Main Mode]"},
-         }
+          "if ([Main Mode]=null & [IVT:LR]> [IVT:CR]) then 5 else if([Main Mode]=null) then 4 else [Main Mode]"},}
+
 
    //--------------------------------------------------
    //This section aggregates matrices, allocates dwell time, and extracts main mode
@@ -464,6 +461,7 @@ Macro "set output matrix currencies" (dir, inMatrixCurrency, trnOutSkim, outMatr
     dim outMatrixCurrency[numCoresOut]
     for i=1 to numCoresOut do
    outMatrixCurrency[i] = CreateMatrixCurrency(outMatrix, outMatrixCores[i], null, null, )
+   outMatrixCurrency[i]:=0.0
       end
 
     //return outMatrixCurrency
@@ -487,14 +485,14 @@ Macro "transit aggregate skims"(inMatrixCurrency,outMatrixCurrency,inOutCoreLook
          aggCounter=aggCounter+1
          aggIndices=aggLookUp[aggCounter]
          for j=1 to aggIndices.length do
-            name = inMatrixCurrency[aggIndices[j]].Core  
-            expr = "if ["+ name + "] = null then 0.0 else [" + name +"]"
-            EvaluateMatrixExpression(inMatrixCurrency[aggIndices[j]], expr, , , )
-            outMatrixCurrency[i]:=outMatrixCurrency[i]+inMatrixCurrency[aggIndices[j]]
+            //name = inMatrixCurrency[aggIndices[j]].Core  
+            //expr = "if ["+ name + "] = null then 0.0 else [" + name +"]"
+            //EvaluateMatrixExpression(inMatrixCurrency[aggIndices[j]], expr, , , )
+            outMatrixCurrency[i]:=outMatrixCurrency[i]+Nz(inMatrixCurrency[aggIndices[j]])
             end
          end
       else do
-         outMatrixCurrency[i]:=inMatrixCurrency[lookupIndex]         
+         outMatrixCurrency[i]:=Nz(inMatrixCurrency[lookupIndex])      
          end
      end       
 
@@ -528,7 +526,7 @@ Macro "set main mode"(inMatrixCurrency,outMatrixCurrency,dwlTimeIndex,ivtStartIn
 
     //set total ivt time to outMatrix
     for i=ivtStartIndex to ivtEndIndex do
-   outMatrixCurrency[ivtSumIndex]:=outMatrixCurrency[ivtSumIndex]+outMatrixCurrency[i]
+   outMatrixCurrency[ivtSumIndex]:=outMatrixCurrency[ivtSumIndex]+Nz(outMatrixCurrency[i])
    end
 
     //set main mode to outMatrix using an expression
@@ -596,8 +594,7 @@ Macro "Update transit time fields"
                                                                            
    //Recompute generalized cost using MSA cost in flow table, for links with MSA cost (so that transit only links aren't overwritten with null)
    for i = 1 to periods.length do
-      flowTable = outputDir+"\\hwyload_sel"+periods[i]+".bin"
-      if GetFileInfo(flowTable) = null then flowTable = outputDir+"\\hwyload"+periods[i]+".bin"     
+      flowTable = outputDir+"\\hwyload"+periods[i]+".bin"     
         
       // The Dataview Set is a joined view of the link layer and the flow table, based on link ID
       Opts.Input.[Dataview Set] = {{db_file+"|"+link_lyr, flowTable, {"ID"}, {"ID1"}},"AB time"+periods[i] }   

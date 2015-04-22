@@ -12,11 +12,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.log4j.Logger;
 import org.sandag.abm.active.AbstractPathChoiceEdgeAssignmentApplication;
 import org.sandag.abm.active.Network;
 import org.sandag.abm.active.PathAlternativeList;
-import org.sandag.abm.active.PathAlternativeListGenerationConfiguration;
 import org.sandag.abm.ctramp.Stop;
 import org.sandag.abm.ctramp.Tour;
 import com.pb.common.util.ResourceUtil;
@@ -35,9 +35,34 @@ public class SandagBikePathChoiceEdgeAssignmentApplication
             99                                                                   };
 
     private ThreadLocal<SandagBikePathChoiceModel> model;
+    private Map<Integer,PathData> storedPathData;
 
+    private class PathData {
+        PathAlternativeList<SandagBikeNode, SandagBikeEdge> pal;
+        int tripNum;
+        int householdId;
+        int tourId;
+        int stopId;
+        int inbound;
+        double[] probs;
+        
+        public PathData(PathAlternativeList<SandagBikeNode, SandagBikeEdge> pal, int tripNum,
+                int householdId, int tourId, int stopId, int inbound, double[] probs)
+        {
+            this.pal = pal;
+            this.tripNum = tripNum;
+            this.householdId = householdId;
+            this.tourId = tourId;
+            this.stopId = stopId;
+            this.inbound = inbound;
+            this.probs = probs;
+        } 
+    }
+    
+    SandagBikePathAlternativeListGenerationConfiguration configuration;
+    
     public SandagBikePathChoiceEdgeAssignmentApplication(
-            PathAlternativeListGenerationConfiguration<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> configuration,
+            SandagBikePathAlternativeListGenerationConfiguration configuration,
             List<Stop> stops, final Map<String, String> propertyMap)
     {
         super(configuration);
@@ -50,6 +75,8 @@ public class SandagBikePathChoiceEdgeAssignmentApplication
                 return new SandagBikePathChoiceModel((HashMap<String, String>) propertyMap);
             }
         };
+        storedPathData = new ConcurrentHashMap<>();
+        this.configuration = configuration;
     }
 
     @Override
@@ -93,6 +120,11 @@ public class SandagBikePathChoiceEdgeAssignmentApplication
             }
         }
 
+        if ( this.configuration.isAssignmentPathOutputNeeded() ) {
+            PathData pd = new PathData(alternativeList,tripNum,tour.getHhId(),tour.getTourId(),stop.isInboundStop() ? 1 : 0,stop.getStopId(),probs);
+            storedPathData.put(tripNum, pd);
+        }
+        
         return volumes;
     }
 
@@ -140,7 +172,7 @@ public class SandagBikePathChoiceEdgeAssignmentApplication
         Network<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> network = factory
                 .createNetwork();
 
-        PathAlternativeListGenerationConfiguration<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> configuration = new SandagBikeMgraPathAlternativeListGenerationConfiguration(
+        SandagBikePathAlternativeListGenerationConfiguration configuration = new SandagBikeMgraPathAlternativeListGenerationConfiguration(
                 propertyMap, network);
 
         BikeAssignmentTripReader reader;
@@ -200,6 +232,49 @@ public class SandagBikePathChoiceEdgeAssignmentApplication
         {
             logger.fatal(e);
             throw new RuntimeException(e);
+        }
+        
+        if ( configuration.isAssignmentPathOutputNeeded() ) {
+        
+            Path probFile = outputDirectory.resolve("bikeAssignmentDisaggregatePathProbabilities.csv");
+        
+            try (PrintWriter writer = new PrintWriter(probFile.toFile()))
+            {
+                writer.println("tripid,hhid,tourid,stopid,inbound,pathid,prob");
+                for (PathData pd : application.storedPathData.values()) {
+                    for (int i=0;i<pd.pal.getCount();i++) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(pd.tripNum).append(",").append(pd.householdId).append(",").append(pd.tourId).append(",").append(pd.stopId).append(",").append(pd.inbound).append(",").append(i).append(",").append(pd.probs[i]);
+                        writer.println(sb);
+                    }
+                }
+            } catch (IOException e)
+            {
+                logger.fatal(e);
+                throw new RuntimeException(e);
+            }
+            
+            Path pathFile = outputDirectory.resolve("bikeAssignmentDisaggregatePathNodes.csv");
+            
+            try (PrintWriter writer = new PrintWriter(pathFile.toFile()))
+            {
+                writer.println("tripid,pathid,nodeno,nodeid");
+                for (PathData pd : application.storedPathData.values()) {
+                    for (int i=0;i<pd.pal.getCount();i++) {
+                        int j=0;
+                        for (SandagBikeNode n : pd.pal.get(i)) {
+                            StringBuilder sb = new StringBuilder();
+                            sb.append(pd.tripNum).append(",").append(i).append(",").append(j).append(",").append(n.getId());
+                            writer.println(sb);
+                            j=j+1;
+                        }
+                    }
+                }
+            } catch (IOException e)
+            {
+                logger.fatal(e);
+                throw new RuntimeException(e);
+            }
         }
 
     }

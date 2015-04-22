@@ -3,12 +3,12 @@ package org.sandag.abm.ctramp;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
-import org.jppf.server.protocol.JPPFTask;
-import org.jppf.task.storage.DataProvider;
+import org.jppf.node.protocol.AbstractTask;
+import org.jppf.node.protocol.DataProvider;
 import com.pb.common.calculator.MatrixDataServerIf;
 
 public class SchoolLocationChoiceTaskJppf
-        extends JPPFTask
+        extends AbstractTask<String>
 {
 
     private static String                     VERSION   = "Task.1.0.3";
@@ -65,17 +65,17 @@ public class SchoolLocationChoiceTaskJppf
         {
             DataProvider dataProvider = getDataProvider();
 
-            this.propertyMap = (HashMap<String, String>) dataProvider.getValue("propertyMap");
-            this.ms = (MatrixDataServerIf) dataProvider.getValue("ms");
-            this.hhDataManager = (HouseholdDataManagerIf) dataProvider.getValue("hhDataManager");
-            this.modelStructure = (ModelStructure) dataProvider.getValue("modelStructure");
-            this.tourCategory = (String) dataProvider.getValue("tourCategory");
-            this.dcSizeObj = (DestChoiceSize) dataProvider.getValue("dcSizeObj");
-            this.dcUecFileName = (String) dataProvider.getValue("dcUecFileName");
-            this.soaUecFileName = (String) dataProvider.getValue("soaUecFileName");
-            this.soaSampleSize = (Integer) dataProvider.getValue("soaSampleSize");
-            this.dmuFactory = (CtrampDmuFactoryIf) dataProvider.getValue("dmuFactory");
-            this.restartModelString = (String) dataProvider.getValue("restartModelString");
+            this.propertyMap = (HashMap<String, String>) dataProvider.getParameter("propertyMap");
+            this.ms = (MatrixDataServerIf) dataProvider.getParameter("ms");
+            this.hhDataManager = (HouseholdDataManagerIf) dataProvider.getParameter("hhDataManager");
+            this.modelStructure = (ModelStructure) dataProvider.getParameter("modelStructure");
+            this.tourCategory = (String) dataProvider.getParameter("tourCategory");
+            this.dcSizeObj = (DestChoiceSize) dataProvider.getParameter("dcSizeObj");
+            this.dcUecFileName = (String) dataProvider.getParameter("dcUecFileName");
+            this.soaUecFileName = (String) dataProvider.getParameter("soaUecFileName");
+            this.soaSampleSize = (Integer) dataProvider.getParameter("soaSampleSize");
+            this.dmuFactory = (CtrampDmuFactoryIf) dataProvider.getParameter("dmuFactory");
+            this.restartModelString = (String) dataProvider.getParameter("restartModelString");
 
         } catch (Exception e)
         {

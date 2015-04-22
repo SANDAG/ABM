@@ -6,9 +6,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.jppf.client.JPPFClient;
 import org.jppf.client.JPPFJob;
-import org.jppf.server.protocol.JPPFTask;
-import org.jppf.task.storage.DataProvider;
-import org.jppf.task.storage.MemoryMapDataProvider;
+import org.jppf.node.protocol.DataProvider;
+import org.jppf.node.protocol.MemoryMapDataProvider;
+import org.jppf.node.protocol.Task;
 import com.pb.common.calculator.MatrixDataServerIf;
 
 public class HouseholdChoiceModelRunner
@@ -125,15 +125,15 @@ public class HouseholdChoiceModelRunner
         {
 
             JPPFJob job = new JPPFJob();
-            job.setId("Household Choice Job");
+            job.setName("Household Choice Job");
 
             DataProvider dataProvider = new MemoryMapDataProvider();
-            dataProvider.setValue("propertyMap", propertyMap);
-            dataProvider.setValue("ms", ms);
-            dataProvider.setValue("hhDataManager", hhDataManager);
-            dataProvider.setValue("modelStructure", modelStructure);
-            dataProvider.setValue("dmuFactory", dmuFactory);
-            dataProvider.setValue("restartModelString", restartModelString);
+            dataProvider.setParameter("propertyMap", propertyMap);
+            dataProvider.setParameter("ms", ms);
+            dataProvider.setParameter("hhDataManager", hhDataManager);
+            dataProvider.setParameter("modelStructure", modelStructure);
+            dataProvider.setParameter("dmuFactory", dmuFactory);
+            dataProvider.setParameter("restartModelString", restartModelString);
             job.setDataProvider(dataProvider);
 
             ArrayList<int[]> startEndTaskIndicesList = getTaskHouseholdRanges(hhDataManager
@@ -149,14 +149,14 @@ public class HouseholdChoiceModelRunner
 
                 HouseholdChoiceModelsTaskJppf task = new HouseholdChoiceModelsTaskJppf(taskIndex,
                         startIndex, endIndex);
-                job.addTask(task);
+                job.add(task);
                 taskIndex++;
             }
 
-            List<JPPFTask> results = jppfClient.submit(job);
-            for (JPPFTask task : results)
+            List<Task<?>> results = jppfClient.submitJob(job);
+            for (Task<?> task : results)
             {
-                if (task.getException() != null) throw task.getException();
+                if (task.getThrowable() != null) throw new Exception(task.getThrowable());
 
                 try
                 {

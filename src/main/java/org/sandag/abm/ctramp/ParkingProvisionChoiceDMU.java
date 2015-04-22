@@ -220,7 +220,7 @@ public class ParkingProvisionChoiceDMU
 
     public int getWorkLocMgra()
     {
-        return person.getPersonWorkLocationZone();
+        return person.getWorkLocation();
     }
 
     public int getIndexValue(String variableName)

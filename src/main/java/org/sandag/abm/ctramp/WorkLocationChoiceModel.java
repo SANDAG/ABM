@@ -200,7 +200,7 @@ public class WorkLocationChoiceModel
             if (p.getPersonIsWorker() != 1)
             {
                 p.setWorkLocationSegmentIndex(-1);
-                p.setWorkLoc(0);
+                p.setWorkLocation(0);
                 p.setWorkLocDistance(0);
                 p.setWorkLocLogsum(-999);
                 continue;
@@ -212,7 +212,7 @@ public class WorkLocationChoiceModel
             if (worksAtHomeChoice == ModelStructure.WORKS_AT_HOME_ALTERNATUVE_INDEX)
             {
                 p.setWorkLocationSegmentIndex(ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR);
-                p.setWorkLoc(ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR);
+                p.setWorkLocation(ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR);
                 p.setWorkLocDistance(0);
                 p.setWorkLocLogsum(-999);
                 continue;
@@ -274,7 +274,7 @@ public class WorkLocationChoiceModel
                 throw new RuntimeException();
             }
 
-            p.setWorkLoc((int) results[0]);
+            p.setWorkLocation((int) results[0]);
             p.setWorkLocDistance((float) results[1]);
             p.setWorkLocLogsum((float) results[2]);
 

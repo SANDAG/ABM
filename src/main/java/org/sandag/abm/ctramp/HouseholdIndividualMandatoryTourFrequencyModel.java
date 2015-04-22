@@ -218,7 +218,7 @@ public class HouseholdIndividualMandatoryTourFrequencyModel
                     if (person.getPersonIsWorker() == 1)
                     {
 
-                        int workMgra = person.getUsualWorkLocation();
+                        int workMgra = person.getWorkLocation();
                         if (workMgra != ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR)
                         {
 
@@ -263,7 +263,7 @@ public class HouseholdIndividualMandatoryTourFrequencyModel
                         {
                             // no school location; skip the rest if no work
                             // location.
-                            int workMgra = person.getUsualWorkLocation();
+                            int workMgra = person.getWorkLocation();
                             if (workMgra <= 0
                                     || workMgra == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR)
                                 continue;
