@@ -40,13 +40,16 @@
         <household.server.port>1129</household.server.port>  
         <java.32.port>1190</java.32.port>  
         <MAPDRIVE>T:</MAPDRIVE>
-		<MAPDRIVEFOLDER>\\sandag.org\transdata</MAPDRIVEFOLDER>
-		<USERNAME>XX</USERNAME>
-		<PASSWORD>XX</PASSWORD>
-		<MAPANDRUN>mapAndRun.bat</MAPANDRUN>
-		<JAVA_64_PATH>C:\Progra~1\Java\jre7</JAVA_64_PATH>
-		<JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
-		<workpath>T:\data\ABM_AT</workpath>
+        <MAPDRIVEFOLDER>\\sandag.org\transdata</MAPDRIVEFOLDER>
+        <USERNAME>XX</USERNAME>
+        <PASSWORD>XX</PASSWORD>
+        <MAPANDRUN>mapAndRun.bat</MAPANDRUN>
+        <JAVA_64_PATH>C:\Progra~1\Java\jre7</JAVA_64_PATH>
+        <JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
+        <workpath>T:\projects\sr13\sdf_scenevl_r3</workpath>
+        <database_server>sql2014a8</database_server>
+        <database_name>abm_13_2_3</database_name>
+        <jppf_version>5.0.1</jppf_version>
     </properties>
     <profiles>
         <profile>
@@ -90,7 +93,7 @@
         <profile>
             <id>charger_at</id>
             <properties>
-            	<AT>True</AT>
+                <AT>True</AT>
                 <jppf.server.host>172.16.34.51</jppf.server.host>
                 <map.folder>d</map.folder>
                 <jppf.management.host>172.16.34.51</jppf.management.host>
@@ -109,42 +112,42 @@
             </properties>
         </profile>        
         <profile>
-            <id>mustang</id>
+            <id>wildcat</id>
             <properties>
                 <AT>False</AT>
-                <jppf.server.host>172.16.34.40</jppf.server.host>
-                <map.folder>MustangD</map.folder>
-                <jppf.management.host>172.16.34.40</jppf.management.host>
-                <matrix.server.host>172.16.34.40</matrix.server.host>
+                <jppf.server.host>172.16.34.60</jppf.server.host>
+                <map.folder>d$</map.folder>
+                <jppf.management.host>172.16.34.60</jppf.management.host>
+                <matrix.server.host>172.16.34.60</matrix.server.host>
                 <household.server.host>172.16.34.42</household.server.host>
-                <master.node.ip>172.16.34.40</master.node.ip>
+                <master.node.ip>172.16.34.60</master.node.ip>
                 <node.1.ip>172.16.34.42</node.1.ip>
                 <node.2.ip>172.16.34.41</node.2.ip>
-                <master.node.name>MUSTANG</master.node.name>
+                <master.node.name>WILDCAT</master.node.name>
                 <node.1.name>GALAXIE</node.1.name>
                 <node.2.name>COBRA</node.2.name>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH> 
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
                 <!--
                 <workpath>d:\\projects\\sandag\\series13</workpath>
                 -->
             </properties>
         </profile>
         <profile>
-            <id>mustang_at</id>
+            <id>wildcat_at</id>
             <properties>
                 <AT>True</AT>
-                <jppf.server.host>172.16.34.40</jppf.server.host>
-                <map.folder>MustangD</map.folder>
-                <jppf.management.host>172.16.34.40</jppf.management.host>
-                <matrix.server.host>172.16.34.40</matrix.server.host>
-                <household.server.host>172.16.34.40</household.server.host>
-                <master.node.ip>172.16.34.40</master.node.ip>
+                <jppf.server.host>172.16.34.60</jppf.server.host>
+                <map.folder>d$</map.folder>
+                <jppf.management.host>172.16.34.60</jppf.management.host>
+                <matrix.server.host>172.16.34.60</matrix.server.host>
+                <household.server.host>172.16.34.60</household.server.host>
+                <master.node.ip>172.16.34.60</master.node.ip>
                 <node.1.ip>172.16.34.42</node.1.ip>
                 <node.2.ip>172.16.34.41</node.2.ip>
-                <master.node.name>MUSTANG</master.node.name>
+                <master.node.name>WILDCAT</master.node.name>
                 <node.1.name>GALAXIE</node.1.name>
                 <node.2.name>COBRA</node.2.name>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>
                 <!-- 
                 <workpath>d:\\projects\\sandag\\series13</workpath>
                 -->
@@ -200,17 +203,18 @@
                 <map.folder>d$</map.folder>
                 <jppf.management.host>172.16.34.61</jppf.management.host>
                 <matrix.server.host>172.16.34.61</matrix.server.host>
-                <household.server.host>172.16.34.60</household.server.host>
+                <household.server.host>172.16.34.40</household.server.host>
                 <master.node.ip>172.16.34.61</master.node.ip>
-                <node.1.ip>172.16.34.60</node.1.ip>
+                <node.1.ip>172.16.34.40</node.1.ip>
                 <node.2.ip>172.16.34.39</node.2.ip>
                 <master.node.name>GAUCHO</master.node.name>
-                <node.1.name>WILDCAT</node.1.name>
+                <node.1.name>MUSTANG</node.1.name>
                 <node.2.name>NITTANY</node.2.name>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
                 <!--  
                 <workpath>d:\\projects\\sandag\\series13</workpath>  
-                -->              
+                -->    
+                                          
             </properties>
         </profile> 
         <profile>
@@ -223,10 +227,10 @@
                 <matrix.server.host>172.16.34.61</matrix.server.host>
                 <household.server.host>172.16.34.61</household.server.host>
                 <master.node.ip>172.16.34.61</master.node.ip>
-                <node.1.ip>172.16.34.60</node.1.ip>
+                <node.1.ip>172.16.34.40</node.1.ip>
                 <node.2.ip>172.16.34.39</node.2.ip>
                 <master.node.name>GAUCHO</master.node.name>
-                <node.1.name>WILDCAT</node.1.name>
+                <node.1.name>MUSTANG</node.1.name>
                 <node.2.name>NITTANY</node.2.name>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
                 <!-- 
@@ -260,18 +264,12 @@
                 <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
-                <tourModeChoice.uec.file>TourModeChoice2010.xls</tourModeChoice.uec.file>
-                <tripModeChoice.uec.file>TripModeChoice2010.xls</tripModeChoice.uec.file>
-                <internalExternal.trip.mc.uec.file>InternalExternalTripModeChoice2010.xls</internalExternal.trip.mc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice2010.xls</crossBorder.trip.mc.uec.file>
-                <visitor.mc.uec.file>VisitorTourModeChoice2010.xls</visitor.mc.uec.file>
-                <visitor.trip.mc.uec.file>VisitorTripModeChoice2010.xls</visitor.trip.mc.uec.file>
-                <airport.mc.uec.file>AirportModeChoice2010.xls</airport.mc.uec.file>
-                <acc.uec.file>Accessibilities2010.xls</acc.uec.file>
-                <utility.bestTransitPath.uec.file>BestTransitPathUtility2010.xls</utility.bestTransitPath.uec.file>             
-                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
+                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
+                <cdap.uec.file>CoordinatedDailyActivityPattern2010.xls</cdap.uec.file>             
                 <workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
+                <aoc.fuel>13.5</aoc.fuel>
+                <aoc.maintenance>6.3</aoc.maintenance>
             </properties>
         </profile>
          <profile>
@@ -282,20 +280,32 @@
                 <airport.enplanements>11673771</airport.enplanements>
                 <airport.connecting>473027</airport.connecting>
                 <airport.airportMgra>2997</airport.airportMgra>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>  
+                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>  
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
-                <tourModeChoice.uec.file>TourModeChoice2010.xls</tourModeChoice.uec.file>
-                <tripModeChoice.uec.file>TripModeChoice2010.xls</tripModeChoice.uec.file>
-                <internalExternal.trip.mc.uec.file>InternalExternalTripModeChoice2010.xls</internalExternal.trip.mc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice2010.xls</crossBorder.trip.mc.uec.file>
-                <visitor.mc.uec.file>VisitorTourModeChoice2010.xls</visitor.mc.uec.file>
-                <visitor.trip.mc.uec.file>VisitorTripModeChoice2010.xls</visitor.trip.mc.uec.file>
-                <airport.mc.uec.file>AirportModeChoice2010.xls</airport.mc.uec.file>
-                <acc.uec.file>Accessibilities2010.xls</acc.uec.file>
-                <utility.bestTransitPath.uec.file>BestTransitPathUtility2010.xls</utility.bestTransitPath.uec.file>
-                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
+                <cdap.uec.file>CoordinatedDailyActivityPattern2010.xls</cdap.uec.file>
                 <workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
+                <aoc.fuel>13.5</aoc.fuel>
+                <aoc.maintenance>6.3</aoc.maintenance>
+            </properties>
+        </profile>
+        <profile>
+            <id>2015</id>
+            <properties>
+                <year>2015</year>
+                <crossBorder.tours>100160</crossBorder.tours>
+                <airport.enplanements>12223382</airport.enplanements>
+                <airport.connecting>495297</airport.connecting>
+                <airport.airportMgra>2997</airport.airportMgra>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
+                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
+                <cdap.uec.file>CoordinatedDailyActivityPattern2015.xls</cdap.uec.file>            
+                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
+                <aoc.fuel>19.5</aoc.fuel>
+                <aoc.maintenance>6.2</aoc.maintenance>
             </properties>
         </profile>
         <profile>
@@ -303,23 +313,35 @@
             <properties>
                 <year>2020</year>
                 <crossBorder.tours>106316</crossBorder.tours>
-                <airport.enplanements>13268804</airport.enplanements>
-                <airport.connecting>537658</airport.connecting>
+                <airport.enplanements>13005045</airport.enplanements>
+                <airport.connecting>526971</airport.connecting>
                 <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
-                <tourModeChoice.uec.file>TourModeChoice2020.xls</tourModeChoice.uec.file>
-                <tripModeChoice.uec.file>TripModeChoice2020.xls</tripModeChoice.uec.file>
-                <internalExternal.trip.mc.uec.file>InternalExternalTripModeChoice2020.xls</internalExternal.trip.mc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice2020.xls</crossBorder.trip.mc.uec.file>
-                <visitor.mc.uec.file>VisitorTourModeChoice2020.xls</visitor.mc.uec.file>
-                <visitor.trip.mc.uec.file>VisitorTripModeChoice2020.xls</visitor.trip.mc.uec.file>
-                <airport.mc.uec.file>AirportModeChoice2020.xls</airport.mc.uec.file>
-                <acc.uec.file>Accessibilities2020.xls</acc.uec.file>
-                <utility.bestTransitPath.uec.file>BestTransitPathUtility2020.xls</utility.bestTransitPath.uec.file>             
-                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
+                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
+                <cdap.uec.file>CoordinatedDailyActivityPattern2020.xls</cdap.uec.file>            
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
+                <aoc.fuel>17.1</aoc.fuel>
+                <aoc.maintenance>6.9</aoc.maintenance>
+            </properties>
+        </profile>
+        <profile>
+            <id>2025</id>
+            <properties>
+                <year>2025</year>
+                <crossBorder.tours>112850</crossBorder.tours>
+                <airport.enplanements>13252427</airport.enplanements>
+                <airport.connecting>536995</airport.connecting>
+                <airport.airportMgra>2997</airport.airportMgra>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
+                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
+                <cdap.uec.file>CoordinatedDailyActivityPattern2025.xls</cdap.uec.file>                
+                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
+                <aoc.fuel>16.7</aoc.fuel>
+                <aoc.maintenance>7.5</aoc.maintenance>
             </properties>
         </profile>
         <profile>
@@ -327,23 +349,35 @@
             <properties>
                 <year>2035</year>
                 <crossBorder.tours>127147</crossBorder.tours>
-                <airport.enplanements>16612756</airport.enplanements>
-                <airport.connecting>673157</airport.connecting>
+                <airport.enplanements>14325217</airport.enplanements>
+                <airport.connecting>580465</airport.connecting>
                 <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
-                <tourModeChoice.uec.file>TourModeChoice2035.xls</tourModeChoice.uec.file>
-                <tripModeChoice.uec.file>TripModeChoice2035.xls</tripModeChoice.uec.file>
-                <internalExternal.trip.mc.uec.file>InternalExternalTripModeChoice2035.xls</internalExternal.trip.mc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice2035.xls</crossBorder.trip.mc.uec.file>
-                <visitor.mc.uec.file>VisitorTourModeChoice2035.xls</visitor.mc.uec.file>
-                <visitor.trip.mc.uec.file>VisitorTripModeChoice2035.xls</visitor.trip.mc.uec.file>
-                <airport.mc.uec.file>AirportModeChoice2035.xls</airport.mc.uec.file>
-                <acc.uec.file>Accessibilities2035.xls</acc.uec.file>
-                <utility.bestTransitPath.uec.file>BestTransitPathUtility2035.xls</utility.bestTransitPath.uec.file>
-                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
+                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
+                <cdap.uec.file>CoordinatedDailyActivityPattern2035.xls</cdap.uec.file>
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
+                <aoc.fuel>17.9</aoc.fuel>
+                <aoc.maintenance>8.8</aoc.maintenance>
+            </properties>
+        </profile>
+        <profile>
+            <id>2040</id>
+            <properties>
+                <year>2040</year>
+                <crossBorder.tours>134961</crossBorder.tours>
+                <airport.enplanements>14442527</airport.enplanements>
+                <airport.connecting>585218</airport.connecting>
+                <airport.airportMgra>2997</airport.airportMgra>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2040.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2040.xls</crossBorder.dc.uec.file>
+                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
+                <cdap.uec.file>CoordinatedDailyActivityPattern2040.xls</cdap.uec.file>
+                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
+                <aoc.fuel>19.4</aoc.fuel>
+                <aoc.maintenance>8.8</aoc.maintenance>
             </properties>
         </profile>
         <profile>
@@ -351,23 +385,17 @@
             <properties>
                 <year>2050</year>
                 <crossBorder.tours>152059</crossBorder.tours>
-                <airport.enplanements>22263450</airport.enplanements>
-                <airport.connecting>902126</airport.connecting>
+                <airport.enplanements>15333527</airport.enplanements>
+                <airport.connecting>621322</airport.connecting>
                 <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2040.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2040.xls</crossBorder.dc.uec.file>
-                <tourModeChoice.uec.file>TourModeChoice2050.xls</tourModeChoice.uec.file>
-                <tripModeChoice.uec.file>TripModeChoice2050.xls</tripModeChoice.uec.file>
-                <internalExternal.trip.mc.uec.file>InternalExternalTripModeChoice2050.xls</internalExternal.trip.mc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice2050.xls</crossBorder.trip.mc.uec.file>
-                <visitor.mc.uec.file>VisitorTourModeChoice2050.xls</visitor.mc.uec.file>
-                <visitor.trip.mc.uec.file>VisitorTripModeChoice2050.xls</visitor.trip.mc.uec.file>
-                <airport.mc.uec.file>AirportModeChoice2050.xls</airport.mc.uec.file>
-                <acc.uec.file>Accessibilities2050.xls</acc.uec.file>
-                <utility.bestTransitPath.uec.file>BestTransitPathUtility2050.xls</utility.bestTransitPath.uec.file>
-                <PopulationSynthesizer.OccupCodes>pecas_occ_occsoc_acs.csv</PopulationSynthesizer.OccupCodes> 
+                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
+                <cdap.uec.file>CoordinatedDailyActivityPattern2050.xls</cdap.uec.file>
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
+                <aoc.fuel>20.1</aoc.fuel>
+                <aoc.maintenance>8.8</aoc.maintenance>
             </properties>
         </profile>
         <profile>
@@ -460,6 +488,9 @@
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.6</version>
+                  <configuration>
+                    <includeEmptyDirs>true</includeEmptyDirs>
+                </configuration>
                 <executions>
                     <execution>
                         <id>copy-uec-resources</id>
@@ -486,10 +517,10 @@
                         </goals>
                         <configuration>
                             <encoding>${encoding.type}</encoding>
+                            <!-- 
                             <outputDirectory>${study.root}/gisdk</outputDirectory>
-                            <!--  
-                            <outputDirectory>${output.path}/gisdk</outputDirectory>
                             -->
+                            <outputDirectory>${output.path}/gisdk</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/gisdk</directory>
@@ -498,6 +529,23 @@
                             </resources>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>copy-python-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${output.path}/python</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/python</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>                   
                     <execution>
                         <id>copy-txt-resources</id>
                         <phase>package</phase>
@@ -555,6 +603,7 @@
                                     <includes>
                                         <include>**/*.bat</include>
                                         <include>*.cmd</include>
+                                        <include>*.py</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -600,7 +649,41 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>   
+                    </execution> 
+                    <execution>
+                        <id>copy-logFiles-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${output.path}/logFiles</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>logFiles</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>    
+                    <execution>
+                        <id>copy-output-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${output.path}/output</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>output</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>                                    
                     <execution>
                         <id>copy-report-resources</id>
                         <phase>package</phase>
@@ -612,34 +695,12 @@
                             <outputDirectory>${output.path}/report</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>input</directory>
+                                    <directory>report</directory>
                                     <filtering>false</filtering>
-                                    <!--
-                                    <includes>
-                                        <include>*.xls</include>
-                                    </includes>
-                                    -->
                                 </resource>
                             </resources>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>copy-sql-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${output.path}/sql</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>sql</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>   
                     <execution>
                         <id>copy-input-resources</id>
                         <phase>package</phase>
@@ -656,64 +717,24 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>    
+                    </execution>                    
                     <execution>
-                        <id>create-logFiles</id>
-                        <!-- here the phase you need -->
+                        <id>copy-sql-resources</id>
                         <phase>package</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${output.path}/logFiles</outputDirectory>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${output.path}/sql</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>input</directory>
-                                    <excludes>
-                                        <exclude>*.*</exclude>
-                                    </excludes>
+                                    <directory>sql</directory>
+                                    <filtering>true</filtering>
                                 </resource>
                             </resources>
-                        </configuration>            
-                    </execution>   
-                    <execution>
-                        <id>create-output</id>
-                        <!-- here the phase you need -->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${output.path}/output</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>input</directory>
-                                    <excludes>
-                                        <exclude>*.*</exclude>
-                                    </excludes>
-                                </resource>
-                            </resources>
-                        </configuration>            
-                    </execution> 
-                    <execution>
-                        <id>create-input</id>
-                        <!-- here the phase you need -->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${output.path}/input</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>input</directory>
-                                    <excludes>
-                                        <exclude>*.*</exclude>
-                                    </excludes>
-                                </resource>
-                            </resources>
-                        </configuration>            
-                    </execution>                               
+                        </configuration>
+                    </execution>                                                 
                 </executions>
             </plugin>
             <plugin>
@@ -733,7 +754,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>./</classpathPrefix>
-								<mainClass>org.sandag.abm.application.SandagTourBasedModel</mainClass>
+                                <mainClass>org.sandag.abm.application.SandagTourBasedModel</mainClass>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
                         <manifestEntries>
@@ -780,16 +801,6 @@
             <version>2014.07.09-ABM</version>
         </dependency>
         <dependency>
-            <groupId>org.jppf</groupId>
-            <artifactId>jppf-client</artifactId>
-            <version>2.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jppf</groupId>
-            <artifactId>jppf-server</artifactId>
-            <version>2.5</version>
-        </dependency>
-        <dependency>
             <groupId>ca.umontreal.iro</groupId>
             <artifactId>ssj</artifactId>
             <version>2.5</version>
@@ -806,10 +817,10 @@
             <version>2.4</version>
         </dependency>
         <dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi</artifactId>
-			<version>3.7</version>
-		</dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.7</version>
+        </dependency>
         <dependency>
             <groupId>pb</groupId>
             <artifactId>sawdust-datatable</artifactId>
@@ -841,11 +852,21 @@
             <artifactId>c3p0</artifactId>
             <version>0.9.1.2</version>
         </dependency>
-		<dependency>
-			<groupId>net.sourceforge.jtds</groupId>
-			<artifactId>jtds</artifactId>
-			<version>1.3.0</version>
-		</dependency>
+        <dependency>
+            <groupId>net.sourceforge.jtds</groupId>
+            <artifactId>jtds</artifactId>
+            <version>1.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jppf</groupId>
+            <artifactId>jppf-client</artifactId>
+            <version>${jppf_version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jppf</groupId>
+            <artifactId>jppf-server</artifactId>
+            <version>${jppf_version}</version>
+        </dependency>
     </dependencies>
 
     <distributionManagement>
