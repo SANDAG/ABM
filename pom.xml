@@ -8,7 +8,6 @@
     <artifactId>SANDAG-ABM</artifactId>
     <version>13.2.4-SNAPSHOT</version>
     <name>SANDAG CT-RAMP Activity Based Model</name>
-
     <properties>
         <encoding.type>UTF-8</encoding.type> 
         <output.path>${project.build.directory}/${project.name}/${project.version}/${project.activeProfiles[0].id}/${project.activeProfiles[1].id}</output.path>
