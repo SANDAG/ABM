@@ -489,6 +489,9 @@
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.6</version>
+                  <configuration>
+    				<includeEmptyDirs>true</includeEmptyDirs>
+  				</configuration>
                 <executions>
                     <execution>
                         <id>copy-uec-resources</id>
@@ -647,7 +650,41 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>   
+                    </execution> 
+                    <execution>
+                        <id>copy-logFiles-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${output.path}/logFiles</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>logFiles</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>    
+                    <execution>
+                        <id>copy-output-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${output.path}/output</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>output</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>                                    
                     <execution>
                         <id>copy-report-resources</id>
                         <phase>package</phase>
@@ -659,17 +696,29 @@
                             <outputDirectory>${output.path}/report</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>input</directory>
+                                    <directory>report</directory>
                                     <filtering>false</filtering>
-                                    <!--
-                                    <includes>
-                                        <include>*.xls</include>
-                                    </includes>
-                                    -->
                                 </resource>
                             </resources>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>copy-input-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${output.path}/input</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>input</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>                    
                     <execution>
                         <id>copy-sql-resources</id>
                         <phase>package</phase>
