@@ -37,11 +37,19 @@ def createCondition(start, duration):
 	folder.append(newCondition)
 	return newCondition
 
-def createClosure(section, lane):
+def createLaneClosure(section, lane):
 	closure = GKSystem.getSystem().newObject("GKLaneClosingChange", model)
 	closure.setSection(section)
 	closure.setFromLane(lane)
 	closure.setToLane(lane)
+	return closure
+
+def createTurnClosure(turn):
+	localEffectAtt = model.getColumn("GKTurningClosingChange::localEffect")
+	closure = GKSystem.getSystem().newObject("GKTurningClosingChange", model)
+	closure.setFromSection(turn.getOrigin())
+	closure.setToSection(turn.getDestination())
+	closure.setDataValue(localEffectAtt, QVariant(False))
 	return closure
 
 print "Creating lane closures..."
@@ -57,8 +65,15 @@ for (sectId, lane, start, duration) in closures:
 		else:
 			condition = createCondition(start, duration)
 			conditions[key] = condition
-		closure = createClosure(section, lane)
-		condition.addChange(closure)
+		if section.getNbFullLanes() > 1:
+			closure = createLaneClosure(section, lane)
+			condition.addChange(closure)
+		else:
+			origin = section.getOrigin()
+			if origin != None:
+				for turn in origin.getToTurnings(section):
+					closure = createTurnClosure(turn)
+					condition.addChange(closure)
 	else:
 		model.getLog().addError("Section %s not found!" % sectId)
 print "Lane closures created!"
