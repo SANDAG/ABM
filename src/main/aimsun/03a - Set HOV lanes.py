@@ -1,3 +1,5 @@
+print "Setting HOV lanes..."
+
 hov2 = model.getCatalog().find(136477)
 hov3 = model.getCatalog().find(136478)
 toll = model.getCatalog().find(136488)
@@ -15,4 +17,5 @@ for section in model.getCatalog().getObjectsByType(sectionType).itervalues():
 	elif lane == 4:
 		for lane in section.getLanes():
 			lane.setLaneType(toll)
-print "Done! Set HOV lanes"
+
+print "HOV lanes set!"

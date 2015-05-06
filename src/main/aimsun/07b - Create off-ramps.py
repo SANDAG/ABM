@@ -12,6 +12,27 @@ def getPropertyValue(propertyKey):
 	file.close()
 	return value
 
+def getNbAuxLanes(section):
+	aux = 0
+	aNodeAtt = model.getColumn("GKSection::AN")
+	abAuxAtt = model.getColumn("GKSection::ABAU")
+	baAuxAtt = model.getColumn("GKSection::BAAU")
+	origin = section.getOrigin()
+	if origin != None and str(origin.getExternalId()) > "":
+		if section.getDataValueInt(aNodeAtt) == int(str(origin.getExternalId())):
+			aux = section.getDataValueInt(abAuxAtt)
+		else:
+			aux = section.getDataValueInt(baAuxAtt)
+	else:
+		destination = section.getDestination()
+		if destination != None and str(destination.getExternalId()) > "":
+			if section.getDataValueInt(aNodeAtt) == int(str(destination.getExternalId())):
+				aux = section.getDataValueInt(baAuxAtt)
+			else:
+				aux = section.getDataValueInt(abAuxAtt)
+	return aux
+
+print "Creating off-ramps..."
 ftToM = float(getPropertyValue("aimsun.gis.ftToM"))
 defaultRampLength = float(getPropertyValue("aimsun.gis.defaultRampLength")) * ftToM
 sectionType = model.getType("GKSection")
@@ -28,14 +49,16 @@ for section in model.getCatalog().getObjectsByType(sectionType).itervalues():
 						if str(mturn.getDestination().getRoadType().getName()) == "Freeway":
 							refSection = mturn.getDestination()
 					if refSection != None:
-						lane = GKSectionLane()
-						lane.setOffsets(- min(defaultRampLength, fromSection.length3D()-5), 0.0)
+						aux = getNbAuxLanes(fromSection)
+						if aux == 0:
+							lane = GKSectionLane()
+							lane.setOffsets(- min(defaultRampLength, fromSection.length3D()-5), 0.0)
 						pocketCreated = False
 						if refSection.getPoints().isPointAtRightArea(refPoint):
 							if fromSection.getLane(fromSection.getExitLanes()[1]).isFullLane():
 								rightmostLane = fromSection.getLanes()[len(fromSection.getLanes()) - 1]
 								proceed = True
-								if not rightmostLane.isFullLane():
+								if not rightmostLane.isFullLane() and aux == 0:
 									# It's an entry lateral
 									proceed = False
 									offset = rightmostLane.getFinalOffset()
@@ -50,7 +73,8 @@ for section in model.getCatalog().getObjectsByType(sectionType).itervalues():
 										proceed = True
 										lane.setOffsets(- min(defaultRampLength, fromSection.length3D()-5), 0.0)
 								if proceed:
-									fromSection.addLane(lane)
+									if aux == 0:
+										fromSection.addLane(lane)
 									points = fromSection.getPoints().getParallelPolyline(GK.eRoadRight, fromSection.getLaneWidth()/2.0)
 									turn.setOriginLanes(max(fromSection.getExitLanes()[0], fromSection.getExitLanes()[1] - section.getNbLanesAtPos(0) + 1), fromSection.getExitLanes()[1])
 									startPoint = section.getPoints()[0]
@@ -68,7 +92,7 @@ for section in model.getCatalog().getObjectsByType(sectionType).itervalues():
 							if fromSection.getLane(fromSection.getExitLanes()[0]).isFullLane():
 								leftmostLane = fromSection.getLanes()[0]
 								proceed = True
-								if not leftmostLane.isFullLane():
+								if not leftmostLane.isFullLane() and aux == 0:
 									# It's an entry lateral
 									proceed = False
 									offset = rightmostLane.getFinalOffset()
@@ -83,7 +107,8 @@ for section in model.getCatalog().getObjectsByType(sectionType).itervalues():
 										proceed = True
 										lane.setOffsets(- min(defaultRampLength, fromSection.length3D()-5), 0.0)
 								if proceed:
-									fromSection.addLane(lane, 0)
+									if aux == 0:
+										fromSection.addLane(lane, 0)
 									points = fromSection.getPoints().getParallelPolyline(GK.eRoadLeft, fromSection.getLaneWidth()/2.0)
 									for mturn in fromNode.getTurnings():
 										mturn.setOriginLanes(mturn.getOriginFromLane() + 1, mturn.getOriginToLane() + 1)
@@ -113,4 +138,4 @@ for section in model.getCatalog().getObjectsByType(sectionType).itervalues():
 									mturn.updatePath(True)
 
 GKGUISystem.getGUISystem().getActiveGui().invalidateViews()
-print "Done! Create off-ramps"
+print "Off-ramps created!"

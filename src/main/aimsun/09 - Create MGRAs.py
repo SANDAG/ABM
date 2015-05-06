@@ -30,7 +30,7 @@ def mapNodes():
 	for node in model.getCatalog().getObjectsByType(nodeType).itervalues():
 		id = str(node.getExternalId())
 		if id != "":
-			nodes[id] = node	
+			nodes[id] = node
 	return nodes
 
 def mapSections():
@@ -80,6 +80,7 @@ def createConnection(centroid, object, direction):
 	connection.setConnectionType(direction)
 	centroid.addConnection(connection)
 
+print "Creating MGRAs..."
 fileName = getPropertyValue("aimsun.gis.mgraTagFile")
 centroidConfiguration = createCentroidConfiguration("MGRAs")
 mgras = readFile(fileName)
@@ -130,4 +131,4 @@ for (mgraId, nodeEids) in mgras.iteritems():
 task.end()
 GKGUISystem.getGUISystem().getActiveGui().invalidateViews()
 model.getCommander().addCommand( None )
-print "Done! Create MGRAs"
+print "MGRAs created!"

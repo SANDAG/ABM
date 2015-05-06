@@ -1,3 +1,5 @@
+print "Setting 24h capacity..."
+
 sectionType = model.getType("GKSection")
 amABCapacityAtt = model.getColumn("GKSection::ABCPA") # 3-hour capacity
 amBACapacityAtt = model.getColumn("GKSection::BACPA") # 3-hour capacity
@@ -47,4 +49,5 @@ for section in model.getCatalog().getObjectsByType(sectionType).itervalues():
 	section.setCapacity(capacity / 24.0) # convert to hourly capacity
 	section.setUserDefinedCost2(intersectionCapacity / 24.0) # convert to hourly capacity
 	section.setUserDefinedCost3(intersectionFfTime)
-print "Done! Set 24h capacity"
+
+print "24h capacity set!"

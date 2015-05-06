@@ -44,6 +44,7 @@ def createClosure(section, lane):
 	closure.setToLane(lane)
 	return closure
 
+print "Creating lane closures..."
 fileName = getPropertyValue("aimsun.gis.todFile")
 closures = readFile(fileName)
 conditions = dict()
@@ -60,4 +61,4 @@ for (sectId, lane, start, duration) in closures:
 		condition.addChange(closure)
 	else:
 		model.getLog().addError("Section %s not found!" % sectId)
-print "Done! Create lane closures"
+print "Lane closures created!"

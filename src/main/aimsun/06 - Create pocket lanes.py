@@ -130,7 +130,10 @@ def addTurningBay(section, side, length):
 		else:
 			extremeLane = section.getLane(len(section.getLanes()) - 1) # rightmost lane
 		if not extremeLane.isFullLane():
-			cutPos = section.length3D() - length - 2
+			if extremeLane.isAnExitLateral():
+				cutPos = section.length3D() - length / 2 + extremeLane.getInitialOffset() / 2
+			else: # entrance lateral
+				cutPos = section.length3D() / 2 - length / 2 + extremeLane.getFinalOffset() / 2
 			if ( ( extremeLane.isAnExitLateral() and cutPos > section.length3D() + extremeLane.getInitialOffset() + 2 ) or ( extremeLane.isAnEntryLateral() and cutPos > extremeLane.getFinalOffset() + 2 ) ):
 				section = cut(section, cutPos)
 				if side == "left":
@@ -163,7 +166,7 @@ def convertNumLanes(numLl, numTl, numRl):
         numLl = 0
     elif numLl == 7: # This shouldn't happen
         numLl = 1
-        
+
     if numRl == 9: # Shared
         sharedRight = True
         numRl = 0
@@ -209,8 +212,10 @@ def convertNumLanes(numLl, numTl, numRl):
             if sharedRight:
                 numStr = 1
                 numTl -= 1
-            
+
     return(numLl, numTl, numRl, numStl, numStr, numSlr, numStlr)
+
+print "Configuring intersection approaches..."
 
 defaultBayLength = float(getPropertyValue("aimsun.gis.defaultBayLength"))
 ftToM = float(getPropertyValue("aimsun.gis.ftToM"))
@@ -252,6 +257,8 @@ abUtAtt = model.getColumn("GKSection::ABUT")
 abNtorAtt = model.getColumn("GKSection::ABNTOR")
 baUtAtt = model.getColumn("GKSection::BAUT")
 baNtorAtt = model.getColumn("GKSection:BANTOR")
+abControlAtt = model.getColumn("GKSection::ABCNT")
+baControlAtt = model.getColumn("GKSection::BACNT")
 
 sectionType = model.getType("GKSection")
 sections = model.getCatalog().getObjectsByType(sectionType)
@@ -266,7 +273,7 @@ for section in sections.itervalues():
 		toNodeExtId = str(section.getDestination().getExternalId())
 		# Get attribute values
 		origin = section.getOrigin()
-		if origin != None:
+		if origin != None and str(origin.getExternalId()) > "":
 			if section.getDataValueInt(aNodeAtt) == int(str(origin.getExternalId())):
 				numLl = section.getDataValueInt(abLlAtt)
 				numTl = section.getDataValueInt(abTlAtt)
@@ -286,6 +293,7 @@ for section in sections.itervalues():
 				rt = section.getDataValueInt(abRlBAtt)
 				ut = section.getDataValueInt(abUtAtt)
 				ntor = section.getDataValueInt(abNtorAtt)
+				control = section.getDataValueInt(abControlAtt)
 			else:
 				numLl = section.getDataValueInt(baLlAtt)
 				numTl = section.getDataValueInt(baTlAtt)
@@ -305,9 +313,10 @@ for section in sections.itervalues():
 				rt = section.getDataValueInt(baRlBAtt)
 				ut = section.getDataValueInt(baUtAtt)
 				ntor = section.getDataValueInt(baNtorAtt)
+				control = section.getDataValueInt(baControlAtt)
 		else:
 			destination = section.getDestination()
-			if destination != None:
+			if destination != None and str(destination.getExternalId()) > "":
 				if section.getDataValueInt(aNodeAtt) == int(str(destination.getExternalId())):
 					numLl = section.getDataValueInt(baLlAtt)
 					numTl = section.getDataValueInt(baTlAtt)
@@ -327,6 +336,7 @@ for section in sections.itervalues():
 					rt = section.getDataValueInt(baRlBAtt)
 					ut = section.getDataValueInt(baUtAtt)
 					ntor = section.getDataValueInt(baNtorAtt)
+					control = section.getDataValueInt(baControlAtt)
 				else:
 					numLl = section.getDataValueInt(abLlAtt)
 					numTl = section.getDataValueInt(abTlAtt)
@@ -346,6 +356,7 @@ for section in sections.itervalues():
 					rt = section.getDataValueInt(abRlBAtt)
 					ut = section.getDataValueInt(abUtAtt)
 					ntor = section.getDataValueInt(abNtorAtt)
+					control = section.getDataValueInt(abControlAtt)
 
 		error = False
 		leftTbLengths = list()
@@ -424,6 +435,10 @@ for section in sections.itervalues():
 						leftTurn.setOriginLanes(currLane, currLane + numLl + numStlr + numStl + numSlr - 1)
 						leftTurn.updatePath(True)
 						leftTurn.curve()
+						if control == 2 or control == 3: # all-way or two-way stop
+							leftTurn.setWarningIndicator(GKTurning.eStop)
+						elif control == 1: # signalised
+							leftTurn.setWarningIndicator(GKTurning.eGiveway) # in case it is permitted instead of protected
 					else: # banned left
 						#print "Error at approach %s to node %s: left turn exists, but no turn lanes specified" % (section.getExternalId(), toNodeExtId)
 						cmd = leftTurn.getDelCmd()
@@ -440,6 +455,8 @@ for section in sections.itervalues():
 						throughTurn.setOriginLanes(currLane, currLane + numTl + numStlr + numStl + numStr - 1)
 						throughTurn.updatePath(True)
 						throughTurn.curve()
+						if control == 2 or control == 3: # all-way or two-way stop
+							throughTurn.setWarningIndicator(GKTurning.eStop)
 					else: # banned through
 						#print "Error at approach %s to node %s: through turn exists, but no turn lanes specified" % (section.getExternalId(), toNodeExtId)
 						cmd = throughTurn.getDelCmd()
@@ -456,7 +473,9 @@ for section in sections.itervalues():
 						rightTurn.setOriginLanes(currLane, currLane + numRl + numStlr + numStr + numSlr - 1)
 						rightTurn.updatePath(True)
 						rightTurn.curve()
-						if not ntor:
+						if control == 2 or control == 3: # all-way or two-way stop
+							rightTurn.setWarningIndicator(GKTurning.eStop)
+						elif control == 1 and not ntor: # Signalised intersection without no turn on red
 							rightTurn.setWarningIndicator(GKTurning.eRTOR)
 					else: # banned right
 						#print "Error at approach %s to node %s: right turn exists, but no turn lanes specified" % (section.getExternalId(), toNodeExtId)
@@ -475,8 +494,10 @@ for section in sections.itervalues():
 						uTurn.updatePath(True)
 						uTurn.curve()
 						section.getDestination().addTurning(uTurn, True)
+		section.increaseTick()
 		step += 1
 		cancelled = task.stepTask(step)
 task.end()
 GKGUISystem.getGUISystem().getActiveGui().invalidateViews()
-print "Done! Create pocket lanes"
+
+print "Intersection approaches configured!"
