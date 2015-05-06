@@ -1,0 +1,984 @@
+Skip to content
+ This repository
+Explore
+Gist
+Blog
+Help
+alsuprm alsuprm
+ 
+27  Unwatch 
+  Star 3
+ Fork 3SANDAG/ABM
+ tree: f0e630f096  ABM/src/main/resources/sandag_abm.properties
+jfdmanjfdman on Oct 16, 2014 Initial commit of Aimsun network import scripts (DTA-124)
+4 contributors wusun2Clint Danielsjeffnhoodjfdman
+938 lines (753 sloc)  33.201 kb RawBlameHistory  
+#sandag properties file
+#############################################################################################################################################################################
+#
+# RUN MODEL COMPONENT PROPERTIES:  CONTROL COMPONENTS RUN IN MODEL
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+RunModel.skipCopyWarmupTripTables = false
+RunModel.skipCopyBikeLogsum = false
+RunModel.skipCopyWalkImpedance = false
+RunModel.skipBuildHwyNetwork = false
+RunModel.skipBuildTransitNetwork = false
+RunModel.skipWalkLogsums = false
+RunModel.skipBikeLogsums = false
+
+# start looping
+# set startFromIteration to 4 if only want 
+# to run final hwy and transit steps
+RunModel.startFromIteration = 1
+RunModel.skipHighwayAssignment = false,false,false
+RunModel.skipHighwaySkimming = false,false,false
+RunModel.skipTransitSkimming = false,false,false
+RunModel.skipCoreABM = false,false,false
+RunModel.skipCTM = false,false,false
+RunModel.skipEI = false,false,false
+RunModel.skipTruck = false,false,false
+RunModel.skipTripTableCreation = false,false,false
+# end looping
+
+RunModel.skipFinalHighwayAssignment = false
+RunModel.skipFinalTransitAssignment = false
+RunModel.skipFinalHighwaySkimming = false
+RunModel.skipFinalTransitSkimming = false
+RunModel.skipLUZSkimCreation = true
+RunModel.skipDataExport = false
+RunModel.skipDataLoadRequest = false
+RunModel.skipDeleteIntermediateFiles = false
+
+#############################################################################################################################################################################
+#
+# LOGGING PROPERTIES: USE FOR TRACING HOUSEHOLDS OR AGENTS THROUGH SIMULATION.
+#
+#  Note that the way that logging works right now, the trace zones also have to be valid transit stops or the code will crash.  Check the skims to make sure they exist.
+#  Turn off trace debugging in routine model runs to speed things up (comment out Debug.Trace.HouseholdIdList)
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# Resident models
+
+Trace      = false
+Trace.otaz = 1638
+Trace.dtaz = 2447
+Seek       = false
+Process.Debug.HHs.Only = false
+Debug.Trace.HouseholdIdList=
+
+# Internal-External models
+
+internalExternal.seek = false
+internalExternal.trace = 1
+
+# Cross-Border models
+
+crossBorder.seek = false
+crossBorder.trace = 12
+
+# Visitor models
+
+visitor.seek = false
+visitor.trace = 742
+
+RunModel.LogResults = true
+
+#############################################################################################################################################################################
+#
+# CLUSTER PROPERTIES: MODIFY WHEN CHANGING CLUSTER CONFIGURATION OR MOVING TO NEW CLUSTER.
+#
+# Need to set the matrix server address\port and the household server address\port
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+RunModel.MatrixServerAddress=${matrix.server.host}
+RunModel.MatrixServerPort=${matrix.server.port}
+
+RunModel.HouseholdServerAddress=${household.server.host}
+RunModel.HouseholdServerPort=${household.server.port}
+
+# Cross border model is run using Java 7 Fork\Join Framework.  Parallelism controls number of simultaneous threads.  Can increase if more processors.
+
+crossBorder.run.concurrent = true
+#crossBorder.concurrent.parallelism = 8
+
+#############################################################################################################################################################################
+#
+# SCENARIO PROPERTIES: MODIFY WHEN RUNNING NEW SCENARIO, IF NECESSARY
+#
+#   - MGRA data file name may change
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# MGRA data file: this token is referred to in many UECs
+
+mgra.socec.file = input/mgra13_based_input${year}.csv
+
+# Cross border model settings:  Number of tours, share of tours that are SENTRI. 
+
+crossBorder.tours =${crossBorder.tours}
+crossBorder.sentriShare = 0.1826
+
+# Visitor model settings: occupancy rates for hotels, households and share of each that are business visitors
+
+visitor.hotel.occupancyRate = 0.7
+visitor.household.occupancyRate = 0.018
+
+visitor.hotel.businessPercent = 0.3
+visitor.household.businessPercent = 0.04
+
+# Airport model settings: enplanements, connecting passengers, average party size, MGRA that the airport is in
+
+airport.enplanements =${airport.enplanements}
+airport.connecting   =${airport.connecting}
+airport.annualizationFactor = 365
+airport.averageSize = 1.7
+airport.airportMgra =${airport.airportMgra}
+
+# Truck model settings: 
+
+truck.FFyear     =${year}
+
+#############################################################################################################################################################################
+#
+# MODEL RUN PROPERTIES:  CONTROL STEPS RUN IN MODEL
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+   
+#RunModel.RestartWithHhServer = uwsl
+RunModel.RestartWithHhServer = none
+#RunModel.RestartWithHhServer = ao
+#RunModel.RestartWithHhServer = stf
+
+
+# Model Component run flags
+RunModel.PreAutoOwnership = true
+RunModel.UsualWorkAndSchoolLocationChoice = true
+RunModel.AutoOwnership = true
+RunModel.TransponderChoice = true
+RunModel.FreeParking = true
+RunModel.CoordinatedDailyActivityPattern = true
+RunModel.IndividualMandatoryTourFrequency = true
+RunModel.MandatoryTourModeChoice = true
+RunModel.MandatoryTourDepartureTimeAndDuration = true
+RunModel.JointTourFrequency = true
+RunModel.JointTourLocationChoice = true
+RunModel.JointTourDepartureTimeAndDuration = true
+RunModel.JointTourModeChoice = true
+RunModel.IndividualNonMandatoryTourFrequency = true
+RunModel.IndividualNonMandatoryTourLocationChoice = true
+RunModel.IndividualNonMandatoryTourDepartureTimeAndDuration = true
+RunModel.IndividualNonMandatoryTourModeChoice = true
+RunModel.AtWorkSubTourFrequency = true
+RunModel.AtWorkSubTourLocationChoice = true
+RunModel.AtWorkSubTourDepartureTimeAndDuration = true
+RunModel.AtWorkSubTourModeChoice = true
+RunModel.TourDriver = true
+RunModel.StopFrequency =true
+RunModel.StopLocation = true
+
+RunModel.Clear.MatrixMgr.At.Start=false
+
+
+Model.Random.Seed = 1
+
+#
+# Set to true if you want to read hte accessibilities from an input file instead of calculating them prior to running CTRAMP
+#
+acc.read.input.file = false
+
+uwsl.run.workLocChoice = true
+uwsl.run.schoolLocChoice = true
+uwsl.write.results = true
+
+# Setting shadow price files to null will reset prices to 0.  If running new land-use scenario, set files to null and set maximum iterations to 20.
+# Then copy shadow price output file to input directory, set maximum iterations to 1 and use for any further run with the same land-use file.
+
+UsualWorkLocationChoice.ShadowPrice.Input.File = input/${workShadowPricing.iteration}
+UsualSchoolLocationChoice.ShadowPrice.Input.File = input/${schoolShadowPricing.iteration}
+
+uwsl.ShadowPricing.Work.MaximumIterations = 1
+uwsl.ShadowPricing.School.MaximumIterations = 1
+uwsl.ShadowPricing.OutputFile = output/ShadowPricingOutput.csv
+
+
+#############################################################################################################################################################################
+#
+# FIXED PROPERTIES:  DO NOT CHANGE
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+Project.Directory = %project.folder%/
+
+# Input path prefix
+generic.path = %project.folder%/input/
+scenario.path = %project.folder%/
+skims.path = %project.folder%/output/
+uec.path = %project.folder%/uec/
+report.path = %project.folder%/report/
+
+# UECs for accessibilities
+acc.uec.file = %project.folder%/uec/${acc.uec.file}
+acc.data.page = 0
+acc.transit.offpeak.page = 1
+acc.transit.peak.page = 2
+acc.transit.walkaccess.page = 3
+acc.transit.driveaccess.page = 4
+acc.sov.offpeak.page = 5
+acc.sov.peak.page = 6
+acc.hov.offpeak.page = 7
+acc.hov.peak.page = 8
+acc.nonmotorized.page = 9
+acc.constants.page = 10
+acc.sizeTerm.page = 11
+acc.schoolSizeTerm.page = 12
+acc.workerSizeTerm.page = 13
+acc.dcUtility.uec.file = %project.folder%/uec/Accessibilities_DC.xls
+acc.dcUtility.data.page = 0
+acc.dcUtility.page = 1
+
+# calculate accessibilities
+acc.output.file = input/accessibilities.csv
+
+lu.acc.dcUtility.uec.file = %project.folder%/uec/Accessibilities_LU_DC.xls
+lu.acc.dcUtility.data.page = 0
+lu.acc.dcUtility.page = 1
+lu.accessibility.alts.file = Acc_LU_alts.csv
+
+lu.acc.output.file = output/luAccessibilities.csv
+lu.acc.mc.logsums.output.file = output/luLogsums.csv
+
+# set either or both averaging methods to be used to write LU accessibilities files
+# also requires command line parameter "-luAcc true" and acc.read.input.file = false
+lu.acc.simple.averaging.method = true
+lu.acc.logit.averaging.method = true
+
+accessibility.alts.file = Acc_alts.csv
+
+
+#UEC for Mandatory accessibilities
+acc.mandatory.uec.file = %project.folder%/uec/MandatoryAccess.xls
+acc.mandatory.data.page = 0
+acc.mandatory.auto.page = 1
+acc.mandatory.autoLogsum.page = 2
+acc.mandatory.bestWalkTransit.page = 3
+acc.mandatory.bestDriveTransit.page = 4
+acc.mandatory.transitLogsum.page = 5
+
+PopulationSynthesizer.InputToCTRAMP.HouseholdFile = input/households.csv
+PopulationSynthesizer.InputToCTRAMP.PersonFile    = input/persons.csv
+
+PopulationSynthesizer.OccupCodes    = input/${PopulationSynthesizer.OccupCodes}
+PopulationSynthesizer.IndustryCodes = input/activity_code_indcen_acs.csv
+
+#
+# The military industry ranges are used to recode military occupation.  This is 
+# necessary because military workers identify themselves as non-military occupations.
+# The models need to be consistent with PECAS, where all military workers are in
+# the military occupation category 56.
+PopulationSynthesizer.MilitaryIndustryRange=9670,9870
+
+
+#Scenario-specific data files
+mgra.wlkacc.taps.and.distance.file = input/mgra_tap_walk.prn
+taz.driveaccess.taps.file = input/accessam.prp
+tap.ptype.file = input/tap.ptype
+mgra.walkdistance.file = input/mgra_mgra_walk.prn
+taz.parkingtype.file = input/zone.park
+taz.terminal.time.file = input/zone.term
+taz.prod.terminal.time.file = input/zone.pterm
+tap.skim.file=implbop2o_cgt.mtx
+
+
+
+Results.WriteDataToFiles= true
+Results.HouseholdDataFile = output/householdData.csv
+Results.PersonDataFile    = output/personData.csv
+Results.IndivTourDataFile = output/indivTourData.csv
+Results.JointTourDataFile = output/jointTourData.csv
+Results.IndivTripDataFile = output/indivTripData.csv
+Results.JointTripDataFile = output/jointTripData.csv
+Results.CBDFile = output/cbdParking.csv
+Results.PNRFile = output/pnrParking.csv
+Results.WriteDataToDatabase = false
+Results.HouseholdTable = household_data
+Results.PersonTable    = person_data
+Results.IndivTourTable = indiv_tour_data
+Results.JointTourTable = joint_tour_data
+Results.IndivTripTable = indiv_trip_data
+Results.JointTripTable = joint_trip_data
+Results.AutoTripMatrix = output/autoTrips
+Results.TranTripMatrix = output/tranTrips
+Results.NMotTripMatrix = output/nmotTrips
+Results.OthrTripMatrix = output/othrTrips
+Results.PNRFile = output/PNRByTAP_Vehicles.csv
+Results.CBDFile = output/CBDByMGRA_Vehicles.csv
+Results.MatrixType = TRANSCAD
+
+TourModeChoice.Save.UtilsAndProbs = true
+
+
+#distributed.task.packet.size  = 50
+distributed.task.packet.size  = 200
+
+
+
+uwsl.use.new.soa = false
+nmdc.use.new.soa = false
+slc.use.new.soa = false
+
+
+
+Results.AutoOwnership=output/aoResults.csv
+read.pre.ao.results=false
+read.pre.ao.filename=output/aoResults_pre.csv
+
+Results.UsualWorkAndSchoolLocationChoice=output/wsLocResults.csv
+read.uwsl.results=false
+read.uwsl.filename=output/wsLocResults_1.csv
+
+
+# Model Component UEC file definitions
+ao.uec.file = AutoOwnership.xls
+ao.data.page = 0
+ao.model.page = 1
+
+uwsl.dc.uec.file = TourDestinationChoice.xls
+uwsl.dc2.uec.file = TourDestinationChoice2.xls
+uwsl.soa.uec.file = DestinationChoiceAlternativeSample.xls
+uwsl.soa.alts.file = DestinationChoiceAlternatives.csv
+uwsl.work.soa.SampleSize = 30
+uwsl.school.soa.SampleSize = 30
+
+
+# The UEC file for work purposes includes TAZ Size in the expressions
+work.soa.uec.file = TourDcSoaDistance.xls
+work.soa.uec.data = 0
+work.soa.uec.model = 1
+
+# The UEC file for school purposes does not include TAZ Size in the expressions
+# so that the utilities can be stored as exponentiated distance utility matrices
+# for univ, hs, gs, and ps, and then multiplied by the various school segment
+# size terms for each of these 4 groups of school segments.
+univ.soa.uec.file = TourDcSoaDistanceNoSchoolSize.xls
+univ.soa.uec.data = 0
+univ.soa.uec.model = 1
+
+hs.soa.uec.file = TourDcSoaDistanceNoSchoolSize.xls
+hs.soa.uec.data = 0
+hs.soa.uec.model = 2
+
+gs.soa.uec.file = TourDcSoaDistanceNoSchoolSize.xls
+gs.soa.uec.data = 0
+gs.soa.uec.model = 3
+
+ps.soa.uec.file = TourDcSoaDistanceNoSchoolSize.xls
+ps.soa.uec.data = 0
+ps.soa.uec.model = 4
+
+
+tc.choice.avgtts.file = input/temporaryStaticInputs.csv
+tc.uec.file = TransponderOwnership.xls
+tc.data.page = 0
+tc.model.page = 1
+
+fp.uec.file = ParkingProvision.xls
+fp.data.page = 0
+fp.model.page = 1
+
+cdap.uec.file = ${cdap.uec.file}
+cdap.data.page = 0
+cdap.one.person.page = 1
+cdap.two.person.page = 2
+cdap.three.person.page = 3
+cdap.all.person.page = 4
+cdap.joint.page = 5
+
+imtf.uec.file = MandatoryTourFrequency.xls
+imtf.data.page = 0
+imtf.model.page = 1
+
+nonSchool.soa.uec.file = TourDcSoaDistance.xls
+escort.soa.uec.data = 0
+escort.soa.uec.model = 2
+other.nonman.soa.uec.data = 0
+other.nonman.soa.uec.model = 3
+atwork.soa.uec.data = 0
+atwork.soa.uec.model = 4
+
+soa.taz.dist.alts.file = SoaTazDistAlts.csv
+
+nmdc.dist.alts.file = NonMandatoryTlcAlternatives.csv
+nmdc.soa.alts.file = DestinationChoiceAlternatives.csv
+nmdc.soa.SampleSize = 30
+
+
+nmdc.uec.file2 = TourDestinationChoice2.xls
+nmdc.uec.file = TourDestinationChoice.xls
+nmdc.data.page = 0
+nmdc.escort.model.page = 7
+nmdc.shop.model.page = 8
+nmdc.maint.model.page = 9
+nmdc.eat.model.page = 10
+nmdc.visit.model.page = 11
+nmdc.discr.model.page = 12
+nmdc.atwork.model.page = 13
+
+nmdc.soa.uec.file = DestinationChoiceAlternativeSample.xls
+nmdc.soa.data.page = 0
+nmdc.soa.escort.model.page = 6
+nmdc.soa.shop.model.page = 7
+nmdc.soa.maint.model.page = 7
+nmdc.soa.eat.model.page = 7
+nmdc.soa.visit.model.page = 7
+nmdc.soa.discr.model.page = 7
+nmdc.soa.atwork.model.page = 8
+
+tourModeChoice.uec.file =${tourModeChoice.uec.file}
+tourModeChoice.maint.model.page = 4
+tourModeChoice.discr.model.page = 5
+tourModeChoice.atwork.model.page = 6
+
+departTime.uec.file = TourDepartureAndDuration.xls
+departTime.data.page = 0
+departTime.work.page = 1
+departTime.univ.page = 2
+departTime.school.page = 3
+departTime.escort.page = 4
+departTime.shop.page = 5
+departTime.maint.page = 6
+departTime.eat.page = 7
+departTime.visit.page = 8
+departTime.discr.page = 9
+departTime.atwork.page = 10
+departTime.alts.file = DepartureTimeAndDurationAlternatives.csv
+
+
+jtfcp.uec.file = JointTourFrequency.xls
+jtfcp.alternatives.file = JointAlternatives.csv
+jtfcp.data.page = 0
+jtfcp.freq.comp.page = 1
+jtfcp.participate.page = 2
+
+inmtf.uec.file = NonMandatoryIndividualTourFrequency.xls
+inmtf.FrequencyExtension.ProbabilityFile = IndividualNonMandatoryTourFrequencyExtensionProbabilities_p1.csv
+IndividualNonMandatoryTourFrequency.AlternativesList.InputFile = IndividualNonMandatoryTourFrequencyAlternatives.csv
+inmtf.data.page = 0
+inmtf.perstype1.page = 1
+inmtf.perstype2.page = 2
+inmtf.perstype3.page = 3
+inmtf.perstype4.page = 4
+inmtf.perstype5.page = 5
+inmtf.perstype6.page = 6
+inmtf.perstype7.page = 7
+inmtf.perstype8.page = 8
+
+
+awtf.uec.file = AtWorkSubtourFrequency.xls
+awtf.data.page = 0
+awtf.model.page = 1
+
+td.uec.file = TourDriver.xls
+td.data.page = 0
+td.model.page = 1
+
+stf.uec.file = StopFrequency.xls
+stf.purposeLookup.proportions = StopPurposeLookupProportions.csv
+stf.data.page = 0
+stf.work.page = 1
+stf.univ.page = 2
+stf.school.page = 3
+stf.escort.page = 4
+stf.shop.page = 5
+stf.maint.page = 6
+stf.eat.page = 7
+stf.visit.page = 8
+stf.discr.page = 9
+stf.subtour.page = 10
+
+
+slc.uec.file = StopLocationChoice.xls
+slc.uec.data.page = 0
+slc.mandatory.uec.model.page = 1
+slc.maintenance.uec.model.page = 2
+slc.discretionary.uec.model.page = 3
+slc.alts.file = SlcAlternatives.csv
+
+slc.soa.uec.file = SlcSoaSize.xls
+slc.soa.alts.file = DestinationChoiceAlternatives.csv
+
+auto.slc.soa.distance.uec.file = SlcSoaDistanceUtility.xls
+auto.slc.soa.distance.data.page = 0
+auto.slc.soa.distance.model.page = 1
+
+slc.soa.size.uec.file = SlcSoaSize.xls
+slc.soa.size.uec.data.page = 0
+slc.soa.size.uec.model.page = 1
+
+stop.depart.arrive.proportions = StopDepartArriveProportions.csv
+
+tripModeChoice.uec.file =${tripModeChoice.uec.file}
+
+plc.uec.file = ParkLocationChoice.xls
+plc.uec.data.page = 0
+plc.uec.model.page = 1
+
+plc.alts.corresp.file = ParkLocationAlts.csv
+plc.alts.file = ParkLocationSampleAlts.csv
+
+mgra.avg.cost.output.file = output/mgraParkingCost.csv
+
+mgra.avg.cost.dist.coeff.work = -8.6
+mgra.avg.cost.dist.coeff.other = -4.9
+
+park.cost.reimb.mean = -0.05
+park.cost.reimb.std.dev = 0.54
+
+
+utility.bestTransitPath.uec.file =${utility.bestTransitPath.uec.file}
+utility.bestTransitPath.data.page = 0
+utility.bestTransitPath.tapToTap.ea.page = 1
+utility.bestTransitPath.tapToTap.am.page = 2
+utility.bestTransitPath.tapToTap.md.page = 3
+utility.bestTransitPath.tapToTap.pm.page = 4
+utility.bestTransitPath.tapToTap.ev.page = 5
+utility.bestTransitPath.walkAccess.page = 6
+utility.bestTransitPath.driveAccess.page = 7
+utility.bestTransitPath.walkEgress.page = 8
+utility.bestTransitPath.driveEgress.page = 9
+
+skims.auto.uec.file = AutoSkims.xls
+skims.auto.data.page = 0
+skims.auto.ea.page = 1
+skims.auto.am.page = 2
+skims.auto.md.page = 3
+skims.auto.pm.page = 4
+skims.auto.ev.page = 5
+
+taz.distance.uec.file = tazDistance.xls
+taz.distance.data.page = 0
+taz.od.distance.ea.page = 1
+taz.od.distance.am.page = 2
+taz.od.distance.md.page = 3
+taz.od.distance.pm.page = 4
+taz.od.distance.ev.page = 5
+
+skim.walk.transit.walk.uec.file = WalkTransitWalkSkims.xls
+skim.walk.transit.walk.data.page = 0
+skim.walk.local.walk.ea.page = 1
+skim.walk.local.walk.am.page = 3
+skim.walk.local.walk.md.page = 5
+skim.walk.local.walk.pm.page = 7
+skim.walk.local.walk.ev.page = 9
+skim.walk.premium.walk.ea.page = 2
+skim.walk.premium.walk.am.page = 4
+skim.walk.premium.walk.md.page = 6
+skim.walk.premium.walk.pm.page = 8
+skim.walk.premium.walk.ev.page = 10
+
+skim.walk.transit.drive.uec.file = WalkTransitDriveSkims.xls
+skim.walk.transit.drive.data.page = 0
+skim.walk.local.drive.ea.page = 1
+skim.walk.local.drive.am.page = 3
+skim.walk.local.drive.md.page = 5
+skim.walk.local.drive.pm.page = 7
+skim.walk.local.drive.ev.page = 9
+skim.walk.premium.drive.ea.page = 2
+skim.walk.premium.drive.am.page = 4
+skim.walk.premium.drive.md.page = 6
+skim.walk.premium.drive.pm.page = 8
+skim.walk.premium.drive.ev.page = 10
+
+skim.drive.transit.walk.uec.file = DriveTransitWalkSkims.xls
+skim.drive.transit.walk.data.page = 0
+skim.drive.local.walk.ea.page = 1
+skim.drive.local.walk.am.page = 3
+skim.drive.local.walk.md.page = 5
+skim.drive.local.walk.pm.page = 7
+skim.drive.local.walk.ev.page = 9
+skim.drive.premium.walk.ea.page = 2
+skim.drive.premium.walk.am.page = 4
+skim.drive.premium.walk.md.page = 6
+skim.drive.premium.walk.pm.page = 8
+skim.drive.premium.walk.ev.page = 10
+
+
+#####################################################################################
+# IE Model Settings (run as part of CT-RAMP)
+#####################################################################################
+
+RunModel.InternalExternal = true
+
+ie.uec.file = InternalExternalTripChoice.xls
+ie.data.page = 0
+ie.model.page = 1
+ie.logsum.distance.coeff = -0.05
+external.tazs = 1,2,3,4,5,6,7,8,9,10,11,12
+
+
+internalExternal.dc.uec.file = InternalExternalDestinationChoice.xls
+internalExternal.dc.uec.data.page = 0
+internalExternal.dc.uec.model.page = 1
+internalExternal.dc.uec.alts.file = InternalExternalDestinationChoiceAlternatives.csv
+
+internalExternal.tour.tod.file = input/internalExternal_tourTOD.csv
+
+internalExternal.trip.mc.uec.file =${internalExternal.trip.mc.uec.file}
+internalExternal.trip.mc.data.page = 0
+internalExternal.trip.mc.model.page = 1
+
+internalExternal.trip.output.file = output/internalExternalTrips.csv
+
+internalExternal.results.autoTripMatrix = output/autoInternalExternalTrips
+internalExternal.results.nMotTripMatrix = output/nmotInternalExternalTrips
+internalExternal.results.tranTripMatrix = output/tranInternalExternalTrips
+internalExternal.results.othrTripMatrix = output/othrInternalExternalTrips
+
+#####################################################################################
+# Cross-Border Model Settings
+#####################################################################################
+
+
+crossBorder.purpose.nonsentri.file = input/crossBorder_tourPurpose_nonSENTRI.csv
+crossBorder.purpose.sentri.file = input/crossBorder_tourPurpose_SENTRI.csv
+
+crossBorder.tour.tod.file = input/crossBorder_tourEntryAndReturn.csv
+
+crossBorder.dc.soa.uec.file = CrossBorderDestinationChoiceSample.xls
+crossBorder.dc.soa.data.page = 0
+crossBorder.dc.soa.model.page = 1
+crossBorder.dc.soa.size.page = 2
+crossborder.dc.soa.alts.file =${crossborder.dc.soa.alts.file}
+        
+crossBorder.dc.uec.file =${crossBorder.dc.uec.file}
+crossBorder.dc.data.page = 0
+crossBorder.dc.model.page = 1
+crossborder.dc.alts.file = CrossBorderDestinationChoiceAlternatives.csv
+
+crossBorder.dc.colonia.file = input/crossBorder_supercolonia.csv
+crossBorder.dc.colonia.distance.parameter = -0.19
+crossBorder.dc.soa.sampleRate = 30
+
+crossBorder.tour.mc.uec.file = CrossBorderTourModeChoice.xls
+crossBorder.tour.mc.data.page = 0
+crossBorder.tour.mc.mandatory.model.page = 1
+crossBorder.tour.mc.nonmandatory.model.page = 2
+crossBorder.poe.waittime.file = input/crossBorder_pointOfEntryWaitTime.csv
+
+crossBorder.trip.mc.uec.file =${crossBorder.trip.mc.uec.file}
+crossBorder.trip.mc.data.page = 0
+crossBorder.trip.mc.model.page = 1
+
+crossBorder.stop.frequency.file = input/crossBorder_stopFrequency.csv
+crossBorder.stop.purpose.file = input/crossBorder_stopPurpose.csv
+
+crossBorder.slc.soa.uec.file = CrossBorderStopLocationChoiceSample.xls
+crossBorder.slc.soa.data.page = 0
+crossBorder.slc.soa.model.page = 1
+crossBorder.slc.soa.alts.file = SoaTazDistAlts.csv
+
+crossBorder.slc.uec.file = CrossBorderStopLocationChoice.xls
+crossBorder.slc.data.page = 0
+crossBorder.slc.model.page = 1
+ 
+crossBorder.stop.outbound.duration.file = input/crossBorder_outboundStopDuration.csv
+crossBorder.stop.inbound.duration.file = input/crossBorder_inboundStopDuration.csv
+
+crossBorder.tour.output.file = output/crossBorderTours.csv
+crossBorder.trip.output.file = output/crossBorderTrips.csv
+
+crossBorder.results.autoTripMatrix = output/autoCrossBorderTrips
+crossBorder.results.nMotTripMatrix = output/nmotCrossBorderTrips
+crossBorder.results.tranTripMatrix = output/tranCrossBorderTrips
+crossBorder.results.othrTripMatrix = output/othrCrossBorderTrips
+
+
+
+#####################################################################################
+# Visitor Model Settings
+#####################################################################################
+
+
+
+visitor.business.tour.file = input/visitor_businessFrequency.csv
+visitor.personal.tour.file = input/visitor_personalFrequency.csv
+
+visitor.partySize.file = input/visitor_partySize.csv
+visitor.autoAvailable.file = input/visitor_autoAvailable.csv
+visitor.income.file = input/visitor_income.csv
+
+visitor.dc.soa.uec.file = VisitorDestinationChoiceSample.xls
+visitor.dc.soa.data.page = 0
+visitor.dc.soa.work.page = 1
+visitor.dc.soa.recreate.page = 2
+visitor.dc.soa.dining.page = 3
+visitor.dc.soa.size.page = 4
+visitor.dc.soa.alts.file = SoaTazDistAlts.csv
+
+visitor.dc.uec.file = VisitorDestinationChoice.xls
+visitor.dc.data.page = 0
+visitor.dc.work.page = 1
+visitor.dc.recreate.page = 2
+visitor.dc.dining.page = 3
+
+visitor.tour.tod.file = input/visitor_tourTOD.csv
+
+visitor.mc.uec.file =${visitor.mc.uec.file}
+visitor.mc.data.page = 0
+visitor.mc.model.page =  1
+
+visitor.stop.frequency.file = input/visitor_stopFrequency.csv
+visitor.stop.purpose.file = input/visitor_stopPurpose.csv
+visitor.stop.outbound.duration.file = input/visitor_outboundStopDuration.csv
+visitor.stop.inbound.duration.file = input/visitor_inboundStopDuration.csv
+
+visitor.slc.soa.uec.file = VisitorStopLocationChoiceSample.xls
+visitor.slc.soa.data.page = 0
+visitor.slc.soa.model.page = 1
+
+visitor.slc.uec.file = VisitorStopLocationChoice.xls
+visitor.slc.data.page = 0
+visitor.slc.model.page = 1
+        
+visitor.trip.mc.uec.file =${visitor.trip.mc.uec.file}
+visitor.trip.mc.data.page = 0
+visitor.trip.mc.model.page = 1
+
+visitor.tour.output.file = output/visitorTours.csv
+visitor.trip.output.file = output/visitorTrips.csv
+
+visitor.results.autoTripMatrix = output/autoVisitorTrips
+visitor.results.nMotTripMatrix = output/nmotVisitorTrips
+visitor.results.tranTripMatrix = output/tranVisitorTrips
+visitor.results.othrTripMatrix = output/othrVisitorTrips
+
+
+# These settings are for building an estimation file, not used for main visitor model code
+visitor.uec.file = VisitorSize.xls
+visitor.uec.data.page = 0
+visitor.uec.sizeTerms.page = 1
+
+#####################################################################################
+# Airport Model Settings
+#####################################################################################
+airport.purpose.file = input/airport_purpose.csv
+airport.size.file = input/airport_party.csv
+airport.duration.file  = input/airport_nights.csv
+airport.income.file = input/airport_income.csv
+airport.departureTime.file = input/airport_departure.csv
+airport.arrivalTime.file = input/airport_arrival.csv
+airport.output.file = output/airport_out.csv
+airport.results.matrixType = TRANSCAD
+
+airport.dc.uec.file =  AirportDestinationChoice.xls 
+airport.dc.data.page = 0
+airport.dc.size.page =  5
+airport.dc.segment1.page = 1
+airport.dc.segment2.page = 2
+airport.dc.segment3.page = 3
+airport.dc.segment4.page = 4
+
+airport.mc.uec.file =${airport.mc.uec.file}
+airport.mc.data.page = 0
+airport.mc.da.page =  1
+airport.mc.s2.page = 2
+airport.mc.s3.page = 3
+airport.mc.transit.page = 4
+airport.mc.accessMode.page = 5
+
+airport.results.autoTripMatrix = output/autoAirportTrips
+airport.results.nMotTripMatrix = output/nmotAirportTrips
+airport.results.tranTripMatrix = output/tranAirportTrips
+airport.results.othrTripMatrix = output/othrAirportTrips
+
+#####################################################################################
+# SUMMIT Settings
+#####################################################################################
+summit.output.directory = output/
+# Purposes (which correspond to SUMMIT files) are as follows:
+summit.purpose.Work = 1
+summit.purpose.University = 2
+summit.purpose.School = 3
+summit.purpose.Escort = 4
+summit.purpose.Shop = 4
+summit.purpose.Maintenance = 4
+summit.purpose.EatingOut = 5
+summit.purpose.Visiting = 5
+summit.purpose.Discretionary = 5
+summit.purpose.WorkBased = 6
+ 
+summit.filename.1 = Work
+summit.filename.2 = University
+summit.filename.3 = School
+summit.filename.4 = Maintenance
+summit.filename.5 = Discretionary
+summit.filename.6 = Workbased
+
+summit.ivt.file.1 = -0.016
+summit.ivt.file.2 = -0.016
+summit.ivt.file.3 = -0.010
+summit.ivt.file.4 = -0.017
+summit.ivt.file.5 = -0.015
+summit.ivt.file.6 = -0.032
+
+summit.modes = 26
+# 1=wt,2=dt         1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26
+summit.mode.array = 0,0,0,0,0,0,0,0,0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0
+
+summit.upperEA = 3
+summit.upperAM = 9
+summit.upperMD = 22
+summit.upperPM = 29
+
+#####################################################################################
+# Trip Table Settings
+#####################################################################################
+
+# occupancies needed for trip table creation
+occ3plus.purpose.Work =          3.34
+occ3plus.purpose.University =    3.34
+occ3plus.purpose.School =        3.34
+occ3plus.purpose.Escort =        3.34
+occ3plus.purpose.Shop =          3.34
+occ3plus.purpose.Maintenance =   3.34
+occ3plus.purpose.EatingOut =     3.34 
+occ3plus.purpose.Visiting =      3.34
+occ3plus.purpose.Discretionary = 3.34
+occ3plus.purpose.WorkBased =     3.34
+
+#####################################################################################
+# Truck Model Settings
+#####################################################################################
+truck.DFyear     = 2008,2010,2012,2015,2020,2025,2030,2035,2040,2045,2050
+truck.luOverRide = "False"
+
+#################################################################
+# Report Section
+#################################################################
+Report.exportData=True
+Report.iteration=3
+#Report.tables = taztotap,indivtrips,jointtrips,airporttrips,cbtrips,visitortours,visitortrips,ietrip,commtrip,eetrip,eitrip,tazskim,tapskim,trucktrip
+Report.tables = taztotap,indivtrips,jointtrips,airporttrips,cbtrips,visitortours,visitortrips,ietrip,commtrip,eetrip,eitrip,tazskim,tapskim,trucktrip
+
+#################################################################
+# Bike/Walk Path/Logsum settings
+# updated 4/2/2014 wsu
+#################################################################
+active.node.file = %project.folder%/input/SANDAG_Bike_NODE.dbf
+active.node.id = NodeLev_ID
+active.node.fieldnames = mgra,taz,x,y,tap,signalized
+active.node.columns = MGRA,TAZ,XCOORD,YCOORD,TAP,Signal
+active.edge.file = %project.folder%/input/SANDAG_Bike_NET.dbf
+active.edge.anode = A
+active.edge.bnode = B
+active.edge.directional = false 
+active.edge.fieldnames = functionalClass,distance,gain,bikeClass,lanes,cycleTrack,bikeBlvd,roadsegid
+active.edge.columns.ab = Func_Class,Distance,AB_Gain,ABBikeClas,AB_Lanes,Bike2Sep,Bike3Blvd,ROADSEGID
+active.edge.columns.ba = Func_Class,Distance,BA_Gain,BABikeClas,BA_Lanes,Bike2Sep,Bike3Blvd,ROADSEGID
+active.edge.centroid.field = functionalClass
+active.edge.centroid.value = 10
+active.edge.autospermitted.field = functionalClass
+active.edge.autospermitted.values = 1, 2, 3, 4, 5, 6, 7
+# distance bins for control of path sampling
+active.sample.distance.breaks = 99
+# minimum path sizes of alternative lists for each distance bin
+active.sample.pathsizes =       2
+# minimum count of samples for each distance bin
+active.sample.count.min =         10
+# maximum count of samples for each distance bin
+active.sample.count.max =         100
+# scale of random cost for each sampling iteration where random cost = cost + scale * unif(0,1) * distance
+active.sample.random.scale.coef = 0.5
+active.sample.random.scale.link = 0.7
+active.sample.random.seeded = true
+active.sample.maxcost = 998
+active.maxdist.bike.taz = 20.0
+active.maxdist.bike.mgra = 2.0
+active.maxdist.walk.mgra = 3.0
+active.maxdist.walk.tap = 1.0
+active.output.bike = %project.folder%/output/
+active.output.walk = %project.folder%/output/
+active.coef.distcla0 =  0.858
+active.coef.distcla1 =  0.348
+active.coef.distcla2 =  0.544
+active.coef.distcla3 =  0.773
+active.coef.dartne2  =  1.050
+active.coef.dwrongwy =  3.445
+active.coef.dcyctrac =  0.424
+active.coef.dbikblvd =  0.343
+active.coef.nonscenic = 0.300
+active.coef.gain     =  0.015
+active.coef.turn     =  0.083
+active.coef.signals  =  0.040
+active.coef.unlfrma  =  0.360
+active.coef.unlfrmi  =  0.150
+active.coef.untoma   =  0.480
+active.coef.untomi   =  0.100
+active.coef.distance.walk = 20.0
+active.coef.gain.walk = 0.034
+
+active.walk.minutes.per.mile = 20
+active.bike.minutes.per.mile = 6
+
+#active.trace.origins.taz = 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500
+#active.trace.origins.mgra = 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000, 17000, 18000, 19000, 20000
+#active.trace.origins.tap = 1, 3, 5, 7, 8, 9, 15
+#active.trace.exclusive =  false
+#active.debug.origin = 200003500
+#active.debug.destination = 200003601
+
+path.choice.uec.spreadsheet = %project.folder%/uec/BikeTripPathChoice.xls
+path.choice.uec.model.sheet = 1
+path.choice.uec.data.sheet = 0
+path.choice.max.path.count = 200
+btpc.alts.file = bike_path_alts.csv
+active.logsum.matrix.file.bike.taz = bikeTazLogsum.csv
+active.logsum.matrix.file.bike.mgra = bikeMgraLogsum.csv
+active.logsum.matrix.file.walk.mgra = walkMgraEquivMinutes.csv
+active.logsum.matrix.file.walk.mgratap = walkMgraTapEquivMinutes.csv
+
+active.bike.write.derived.network = true
+active.bike.derived.network.edges = derivedBikeEdges.csv
+active.bike.derived.network.nodes = derivedBikeNodes.csv
+active.bike.derived.network.traversals = derivedBikeTraversals.csv
+
+active.assignment.file.bike = bikeAssignmentResults.csv
+
+#####################################################################################
+# Aimsun Settings
+#####################################################################################
+
+aimsun.gis.turnPenaltyFile = S:/Projects/SANDAG DTA/turns.csv
+aimsun.gis.deleteBannedTurns = True
+aimsun.gis.defaultBayLength = 20
+aimsun.gis.defaultRampLength = 100
+Status API Training Shop Blog About
+© 2015 GitHub, Inc. Terms Privacy Security Contact
+
+#################################################################
+# DTA Post-processing settings
+# updated 2/5/2015 rma
+#################################################################
+
+dta.postprocessing.outputs.path = %project.folder%/output/
+dta.postprocessing.disaggregateTOD.path = %project.folder%/tod_Disaggregation/
+dta.postprocessing.disaggregateZone.path = %project.folder%/spatial_Disaggregation/
+dta.postprocessing.disaggregateNode.path = %project.folder%/spatial_Disaggregation/
+
+dta.postprocessing.RandomSeed = 1004831
+dta.postprocessing.DetailedTODFile = DetailedTODFactors.csv
+dta.postprocessing.BroadTODFile = BroadTODFactors.csv
+
+dta.postprocessing.ZoneFile = MGRAFactors.csv
+dta.postprocessing.NodeFile = NodeFactors.csv
+
+dta.postprocessing.outputs.TripFile = dtaTripsOut.csv
+
+
+
+
+dta.postprocessing.debug.HouseholdIds = -1
+dta.postprocessing.debug.OriginZones = -1
+dta.postprocessing.RunModel = true
