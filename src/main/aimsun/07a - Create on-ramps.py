@@ -38,20 +38,21 @@ def getSections(node):
 	rampSection = None
 	mainDownSection = None
 	mainUpSection = None
-	for section in node.getEntranceSections():
-		inLanes += section.getNbLanesAtPos(section.length3D())
-		if str(section.getRoadType().getName()) == "On/Off Ramp" and section.length3D() > 50: # exclude HOV ramps
-			if rampSection == None:
-				rampSection = section
-			else:
-				if mainUpSection == None:
-					mainUpSection = section
-		elif str(section.getRoadType().getName()) == "Freeway":
-			mainUpSection = section
-	for section in node.getExitSections():
-		outLanes += section.getNbLanesAtPos(0)
-		if str(section.getRoadType().getName()) == "Freeway":
-			mainDownSection = section
+	if node.getNumEntranceSections() == 2 and node.getNumExitSections() == 1:
+		for section in node.getEntranceSections():
+			inLanes += section.getNbLanesAtPos(section.length3D())
+			if str(section.getRoadType().getName()) == "On/Off Ramp" and section.length3D() > 50: # exclude HOV ramps
+				if rampSection == None:
+					rampSection = section
+				else:
+					if mainUpSection == None:
+						mainUpSection = section
+			elif str(section.getRoadType().getName()) == "Freeway":
+				mainUpSection = section
+		for section in node.getExitSections():
+			outLanes += section.getNbLanesAtPos(0)
+			if str(section.getRoadType().getName()) == "Freeway":
+				mainDownSection = section
 	return (rampSection, mainDownSection, mainUpSection, inLanes, outLanes)
 
 def cutIfNeeded(section, minimumRampLength, minimumResidualSectionLength, right):
@@ -100,15 +101,20 @@ def offsetRampEndpoint(rampSection, mainSection, right):
 	rampPoint.z = newPos.z
 	rampSection.increaseTick()
 
-def arrangeTurnLanes(section):
+def arrangeTurnLanes(section, inLanes, outLanes):
 	minLane = section.getEntryLanes()[0]
 	currLane = section.getEntryLanes()[1]
+	turn = None
 	for turn in section.getOrigin().getToTurningsOrderedFromRightToLeft(section):
 		turnLanes = turn.getOriginToLane() - turn.getOriginFromLane() + 1
 		turn.setDestinationLanes(max(minLane, currLane - turnLanes + 1), currLane)
 		turn.updatePath(True)
 		turn.curve()
 		currLane = max(minLane, currLane - turnLanes)
+	if outLanes > inLanes: # extend the leftmost turn to cover all destination lanes
+		turn.setDestinationLanes(turn.getDestinationFromLane() - (outLanes - inLanes), turn.getDestinationToLane())
+		turn.updatePath(True)
+		turn.curve()
 
 print "Creating on-ramps..."
 ftToM = float(getPropertyValue("aimsun.gis.ftToM"))
@@ -134,7 +140,7 @@ for node in model.getCatalog().getObjectsByType(type).itervalues():
 					createAccelerationLane(mainDownSection, GKSection.eLeftIn, defaultRampLength, minimumResidualSectionLength)
 					outLanes += 1
 			offsetRampEndpoint(rampSection, mainUpSection, False)
-		arrangeTurnLanes(mainDownSection)
+		arrangeTurnLanes(mainDownSection, inLanes, outLanes)
 
 GKGUISystem.getGUISystem().getActiveGui().invalidateViews()
 print "On-ramps created!"

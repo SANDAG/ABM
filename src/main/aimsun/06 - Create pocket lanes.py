@@ -419,58 +419,21 @@ for section in sections.itervalues():
 			for lenTb in rightTbLengths:
 				if lenTb not in tbLengths:
 					tbLengths.append(lenTb)
+			error = False
 			for lenTb in sorted(tbLengths, reverse = True):
-				if lenTb in leftTbLengths:
+				if not error and lenTb in leftTbLengths:
 					(error, section) = addTurningBay(section, "left", lenTb * ftToM)
-				if lenTb in rightTbLengths:
+				if not error and lenTb in rightTbLengths:
 					(error, section) = addTurningBay(section, "right", lenTb * ftToM)
 			if not error:
 				# Assign turns to lanes
-				currLane = 0
-				leftTurn = getTurn(section, lt)
-				#if leftTurn == None:
-				#	leftTurn = getLeftTurn(section)
-				if leftTurn != None:
-					if numLl + numStlr + numStl + numSlr > 0:
-						leftTurn.setOriginLanes(currLane, currLane + numLl + numStlr + numStl + numSlr - 1)
-						leftTurn.updatePath(True)
-						leftTurn.curve()
-						if control == 2 or control == 3: # all-way or two-way stop
-							leftTurn.setWarningIndicator(GKTurning.eStop)
-						elif control == 1: # signalised
-							leftTurn.setWarningIndicator(GKTurning.eGiveway) # in case it is permitted instead of protected
-					else: # banned left
-						#print "Error at approach %s to node %s: left turn exists, but no turn lanes specified" % (section.getExternalId(), toNodeExtId)
-						cmd = leftTurn.getDelCmd()
-						model.getCommander().addCommand(cmd)
-				else:
-					if numLl + numStlr + numStl + numSlr > 0:
-						print "Warning at approach %s to node %s: left turn lanes specified, but the turn doesn't exist" % (section.getExternalId(), toNodeExtId)
-				currLane += numLl
-				throughTurn = getTurn(section, tt)
-				#if throughTurn == None:
-				#	throughTurn = getThroughTurn(section)
-				if throughTurn != None:
-					if numTl + numStlr + numStl + numStr > 0:
-						throughTurn.setOriginLanes(currLane, currLane + numTl + numStlr + numStl + numStr - 1)
-						throughTurn.updatePath(True)
-						throughTurn.curve()
-						if control == 2 or control == 3: # all-way or two-way stop
-							throughTurn.setWarningIndicator(GKTurning.eStop)
-					else: # banned through
-						#print "Error at approach %s to node %s: through turn exists, but no turn lanes specified" % (section.getExternalId(), toNodeExtId)
-						cmd = throughTurn.getDelCmd()
-						model.getCommander().addCommand(cmd)
-				else:
-					if numTl + numStlr + numStl + numStr > 0:
-						print "Warning at approach %s to node %s: through lanes specified, but the turn doesn't exist" % (section.getExternalId(), toNodeExtId)
-				currLane += numStl + numTl
+				currLane = section.getExitLanes()[1]
 				rightTurn = getTurn(section, rt)
 				#if rightTurn == None:
 				#	rightTurn = getRightTurn(section)
 				if rightTurn != None:
 					if numRl + numStlr + numStr + numSlr > 0:
-						rightTurn.setOriginLanes(currLane, currLane + numRl + numStlr + numStr + numSlr - 1)
+						rightTurn.setOriginLanes(currLane - numRl - numStlr - numStr - numSlr + 1, currLane)
 						rightTurn.updatePath(True)
 						rightTurn.curve()
 						if control == 2 or control == 3: # all-way or two-way stop
@@ -484,6 +447,47 @@ for section in sections.itervalues():
 				else:
 					if numRl + numStlr + numStr + numSlr > 0:
 						print "Warning at approach %s to node %s: right turn lanes specified, but the turn doesn't exist" % (section.getExternalId(), toNodeExtId)
+				currLane -= numRl
+
+				throughTurn = getTurn(section, tt)
+				#if throughTurn == None:
+				#	throughTurn = getThroughTurn(section)
+				if throughTurn != None:
+					if numTl + numStlr + numStl + numStr > 0:
+						throughTurn.setOriginLanes(currLane - numTl - numStlr - numStl - numStr + 1, currLane)
+						throughTurn.updatePath(True)
+						throughTurn.curve()
+						if control == 2 or control == 3: # all-way or two-way stop
+							throughTurn.setWarningIndicator(GKTurning.eStop)
+					else: # banned through
+						#print "Error at approach %s to node %s: through turn exists, but no turn lanes specified" % (section.getExternalId(), toNodeExtId)
+						cmd = throughTurn.getDelCmd()
+						model.getCommander().addCommand(cmd)
+				else:
+					if numTl + numStlr + numStl + numStr > 0:
+						print "Warning at approach %s to node %s: through lanes specified, but the turn doesn't exist" % (section.getExternalId(), toNodeExtId)
+				currLane -= numStr + numTl
+
+				leftTurn = getTurn(section, lt)
+				#if leftTurn == None:
+				#	leftTurn = getLeftTurn(section)
+				if leftTurn != None:
+					if numLl + numStlr + numStl + numSlr > 0:
+						leftTurn.setOriginLanes(currLane - numLl - numStlr - numStl - numSlr + 1, currLane)
+						leftTurn.updatePath(True)
+						leftTurn.curve()
+						if control == 2 or control == 3: # all-way or two-way stop
+							leftTurn.setWarningIndicator(GKTurning.eStop)
+						elif control == 1: # signalised
+							leftTurn.setWarningIndicator(GKTurning.eGiveway) # in case it is permitted instead of protected
+					else: # banned left
+						#print "Error at approach %s to node %s: left turn exists, but no turn lanes specified" % (section.getExternalId(), toNodeExtId)
+						cmd = leftTurn.getDelCmd()
+						model.getCommander().addCommand(cmd)
+				else:
+					if numLl + numStlr + numStl + numSlr > 0:
+						print "Warning at approach %s to node %s: left turn lanes specified, but the turn doesn't exist" % (section.getExternalId(), toNodeExtId)
+
 				if ut:
 					toSection = getOppositeSection(section)
 					if toSection != None:
