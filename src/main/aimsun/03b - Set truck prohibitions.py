@@ -1,3 +1,5 @@
+print "Setting turn prohibitions..."
+
 hhdtExcluded = model.getCatalog().find(136539)
 mhdtHhdtExcluded = model.getCatalog().find(136543)
 lhdtMhdtHhdtExcluded = model.getCatalog().find(136541)
@@ -27,4 +29,5 @@ for section in model.getCatalog().getObjectsByType(sectionType).itervalues():
 	elif lane == 7:
 		for lane in section.getLanes():
 			lane.setLaneType(lhdtMhdtHhdtOnly)
-print "Done!"
+
+print "Turn prohibitions set!"

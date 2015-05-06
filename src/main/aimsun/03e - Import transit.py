@@ -142,6 +142,36 @@ def createStop(eid, name, section):
 	model.getGeoModel().add(section.getLayer(), stop)
 	return stop
 
+def createTurn(node, fromSection, toSection):
+	if node == None:
+		node = GKSystem.getSystem().newObject("GKNode", model)
+		model.getGeoModel().add(fromSection.getLayer(), node)
+		aNodeAtt = model.getColumn("GKSection::AN")
+		bNodeAtt = model.getColumn("GKSection::BN")
+		origin = fromSection.getOrigin()
+		if origin != None and str(origin.getExternalId()) > "":
+			if section.getDataValueInt(aNodeAtt) == int(str(origin.getExternalId())):
+				eid = section.getDataValueInt(bNodeAtt)
+			else:
+				eid = section.getDataValueInt(aNodeAtt)
+		else:
+			destination = toSection.getDestination()
+			if destination != None and str(destination.getExternalId()) > "":
+				if section.getDataValueInt(aNodeAtt) == int(str(destination.getExternalId())):
+					eid = toSection.getDataValueInt(bNodeAtt)
+				else:
+					eid = toSection.getDataValueInt(aNodeAtt)
+		node.setExternalId(str(eid))
+	turn = GKSystem.getSystem().newObject("GKTurning", model)
+	turn.setConnection(fromSection, toSection)
+	turn.setOriginLanes(fromSection.getExitLanes()[0], fromSection.getExitLanes()[0])
+	turn.setDestinationLanes(toSection.getEntryLanes()[0], toSection.getEntryLanes()[0])
+	turn.updatePath(True)
+	turn.curve()
+	node.addTurning(turn, True)
+
+print "Importing transit..."
+
 stopFileName = getPropertyValue("aimsun.gis.trstopFile")
 linkFileName = getPropertyValue("aimsun.gis.trlinkFile")
 routeFileName = getPropertyValue("aimsun.gis.trrtFile")
@@ -150,6 +180,7 @@ links = readLinkFile(linkFileName)
 routes = readRouteFile(routeFileName)
 linkMapDirection = mapLinksDirection()
 linkMapEndnode = mapLinksEndnode()
+ifcAtt = model.getColumn("GKSection::IFC")
 for route in routes.itervalues():
 	# 4 = Commuter Rail Line
 	# 5 = Light Rail Transit (LRT) or Streetcar Line
@@ -163,7 +194,26 @@ for route in routes.itervalues():
 		sections = list()
 		for link in links[route.id]:
 			if (link.link, link.direction) in linkMapDirection:
-				sections.append(linkMapDirection[(link.link, link.direction)])
+				section = linkMapDirection[(link.link, link.direction)]
+				if len(sections) > 0: # Check continuity
+					previousSection = sections[len(sections)-1]
+					node = section.getOrigin()
+					if node != None:
+						if not node.existTurning(previousSection, section):
+							if previousSection.getDestination() == node and (section.getDataValueInt(ifcAtt) == 12 or previousSection.getDataValueInt(ifcAtt) == 12):
+								createTurn(node, previousSection, section)
+								model.getLog().addInfo("U-turn created between sections %s and %s when processing route %s (%s)!" % (previousSection.getExternalId(), section.getExternalId(), route.id, route.name))
+							else:
+								model.getLog().addError("Route %s (%s) broken between sections %s and %s!" % (route.id, route.name, previousSection.getExternalId(), section.getExternalId()))
+					else:
+						if previousSection.getExternalId() == section.getExternalId() and (section.getDataValueInt(ifcAtt) == 12 or previousSection.getDataValueInt(ifcAtt) == 12):
+							createTurn(None, previousSection, section)
+							model.getLog().addInfo("U-turn created between sections %s and %s when processing route %s (%s)!" % (previousSection.getExternalId(), section.getExternalId(), route.id, route.name))
+						else:
+							model.getLog().addError("Unconnected section %s when processing route %s (%s)!" % (section.getExternalId(), route.id, route.name))
+				sections.append(section)
+			else:
+				model.getLog().addError("Link %s direction %s not found when processing route %s (%s)!" % (link.link, link.direction, route.id, route.name))
 		newStops = list()
 		for stop in stops[route.id]:
 			if (stop.link, stop.node) in linkMapEndnode:
@@ -212,4 +262,4 @@ for route in routes.itervalues():
 		timeTable.addSchedule(schedule)
 		line.addTimeTable(timeTable)
 
-print "Done!"
+print "Transit imported!"
