@@ -32,114 +32,109 @@ def getNbAuxLanes(section):
 				aux = section.getDataValueInt(abAuxAtt)
 	return aux
 
+def getSections(node):
+	inLanes = 0
+	outLanes = 0
+	rampSection = None
+	mainDownSection = None
+	mainUpSection = None
+	for section in node.getEntranceSections():
+		inLanes += section.getNbLanesAtPos(section.length3D())
+		if str(section.getRoadType().getName()) == "On/Off Ramp" and section.length3D() > 50: # exclude HOV ramps
+			if rampSection == None:
+				rampSection = section
+			else:
+				if mainUpSection == None:
+					mainUpSection = section
+		elif str(section.getRoadType().getName()) == "Freeway":
+			mainUpSection = section
+	for section in node.getExitSections():
+		outLanes += section.getNbLanesAtPos(0)
+		if str(section.getRoadType().getName()) == "Freeway":
+			mainDownSection = section
+	return (rampSection, mainDownSection, mainUpSection, inLanes, outLanes)
+
+def cutIfNeeded(section, minimumRampLength, minimumResidualSectionLength, right):
+	global model
+	canCreateLane = True
+	if right:
+		extremeLane = section.getLanes()[len(section.getLanes()) - 1]
+	else:
+		extremeLane = section.getLanes()[0]
+	if not extremeLane.isFullLane(): # downstream section has an exit lateral -> cut
+		cutPos = min(section.length3D() / 2, section.length3D() + extremeLane.getInitialOffset() - minimumResidualSectionLength) # offset of exit lateral is negative from end
+		if cutPos >= minimumRampLength + minimumResidualSectionLength: # check if the section can be cut
+			cmd = section.getCutCmd(section.getExtremePointAtPos(cutPos, False), section.getExtremePointAtPos(cutPos, True), True)
+			#cmd.commandToBeDone()
+			#cmd.doit()
+			#cmd.commandDone()
+			#cmd.setDone(True)
+			model.getCommander().addCommand(cmd)
+		else:
+			canCreateLane = False
+			model.getLog().addWarning("No space to add on-ramp to section %s!" % section.getExternalId())
+	return canCreateLane
+
+def createAccelerationLane(section, side, defaultRampLength, minimumResidualSectionLength):
+	rampLength = min(defaultRampLength, section.length3D() - minimumResidualSectionLength)
+	if rampLength < defaultRampLength:
+		model.getLog().addWarning("Acceleration lane at section %s shorter than the default length!" % section.getExternalId())
+	#lane = GKSectionLane()
+	#lane.setOffsets(0.0, rampLength)
+	#section.addLane(lane)
+	cmd = GKSectionLateralNewCmd()
+	cmd.setData(section, side, rampLength)
+	#cmd.commandToBeDone()
+	#cmd.doit()
+	#cmd.commandDone()
+	#cmd.setDone(True)
+	model.getCommander().addCommand(cmd)
+
+def offsetRampEndpoint(rampSection, mainSection, right):
+	rampPoint = rampSection.getPoint(len(rampSection.getPoints())-1)
+	mainPoint = mainSection.getPoint(len(mainSection.getPoints())-1)
+	newPos = GKPoint()
+	mainPoint.pointAtDistance(mainSection.getExtremePointAtPos(mainSection.length3D(), right), (mainSection.getLaneWidth() * mainSection.getNbLanesAtPos(mainSection.length3D()) + rampSection.getLaneWidth() * rampSection.getNbLanesAtPos(rampSection.length3D())) / 2.0, newPos)
+	rampPoint.x = newPos.x
+	rampPoint.y = newPos.y
+	rampPoint.z = newPos.z
+	rampSection.increaseTick()
+
+def arrangeTurnLanes(section):
+	minLane = section.getEntryLanes()[0]
+	currLane = section.getEntryLanes()[1]
+	for turn in section.getOrigin().getToTurningsOrderedFromRightToLeft(section):
+		turnLanes = turn.getOriginToLane() - turn.getOriginFromLane() + 1
+		turn.setDestinationLanes(max(minLane, currLane - turnLanes + 1), currLane)
+		turn.updatePath(True)
+		turn.curve()
+		currLane = max(minLane, currLane - turnLanes)
+
 print "Creating on-ramps..."
 ftToM = float(getPropertyValue("aimsun.gis.ftToM"))
-defaultRampLength = float(getPropertyValue("aimsun.gis.defaultRampLength")) * ftToM
-sectionType = model.getType("GKSection")
-for section in model.getCatalog().getObjectsByType(sectionType).itervalues():
-	if str(section.getRoadType().getName()) == "On/Off Ramp" and section.length3D() > 50:
-		toNode = section.getDestination()
-		if toNode != None:
-			for turn in toNode.getFromTurnings(section):
-				toSection = turn.getDestination()
-				if str(toSection.getRoadType().getName()) == "Freeway":
-					refPoint = section.getPoints()[len(section.getPoints())-2]
-					refSection = None
-					for mturn in toNode.getToTurnings(toSection):
-						if str(mturn.getOrigin().getRoadType().getName()) == "Freeway":
-							refSection = mturn.getOrigin()
-					if refSection != None:
-						aux = getNbAuxLanes(toSection)
-						lane = GKSectionLane()
-						if aux == 0:
-							lane.setOffsets(0.0, min(defaultRampLength, toSection.length3D()-5))
-						pocketCreated = False
-						if refSection.getPoints().isPointAtRightArea(refPoint):
-							if toSection.getLane(toSection.getEntryLanes()[1]).isFullLane():
-								position = len(toSection.getLanes())
-								rightmostLane = toSection.getLanes()[len(toSection.getLanes()) - 1]
-								proceed = True
-								if not rightmostLane.isFullLane():
-									# It's an exit lateral
-									if aux > 0:
-										position -= 1
-									else:
-										proceed = False
-										offset = - rightmostLane.getInitialOffset()
-										#cutPos = toSection.length3D() - offset - 5
-										cutPos = toSection.length3D() / 2
-										#if cutPos > 15:
-										if cutPos > 15 and cutPos > toSection.length3D() - offset - 15:
-											cmd = toSection.getCutCmd(toSection.getExtremePointAtPos(cutPos, False), toSection.getExtremePointAtPos(cutPos, True), True)
-											cmd.doit()
-											cmd.setDone(True)
-											proceed = True
-											lane.setOffsets(0.0, min(defaultRampLength, toSection.length3D()-5))
-											position = len(toSection.getLanes())
-								if proceed:
-									toSection.addLane(lane, position)
-									points = toSection.getPoints().getParallelPolyline(GK.eRoadRight, toSection.getLaneWidth()/2.0)
-									turn.setDestinationLanes(max(toSection.getEntryLanes()[0], toSection.getEntryLanes()[1] - section.getNbLanesAtPos(section.length3D()) + 1), toSection.getEntryLanes()[1])
-									endPoint = section.getPoints()[len(section.getPoints())-1]
-									refEndPoint = refSection.getPoints()[len(refSection.getPoints())-1]
-									newPos = GKPoint()
-									refEndPoint.pointAtDistance(refSection.getExtremePointAtPos(refSection.length3D(), True), (refSection.getLaneWidth() * refSection.getNbLanesAtPos(refSection.length3D()) + section.getLaneWidth() * section.getNbLanesAtPos(section.length3D())) / 2.0, newPos)
-									endPoint.x = newPos.x
-									endPoint.y = newPos.y
-									endPoint.z = newPos.z
-									section.increaseTick()
-									pocketCreated = True
-								else:
-									print "No space to add on-ramp to section %s" % toSection.getId()
-						else:
-							if toSection.getLane(toSection.getEntryLanes()[0]).isFullLane():
-								position = 0
-								leftmostLane = toSection.getLanes()[0]
-								proceed = True
-								if not leftmostLane.isFullLane():
-									# It's an exit lateral
-									if aux > 0:
-										position += 1
-									else:
-										proceed = False
-										offset = - leftmostLane.getInitialOffset()
-										#cutPos = toSection.length3D() - offset - 5
-										cutPos = toSection.length3D() / 2
-										#if cutPos > 15:
-										if cutPos > 15 and cutPos > toSection.length3D() - offset - 15:
-											cmd = toSection.getCutCmd(toSection.getExtremePointAtPos(cutPos, False), toSection.getExtremePointAtPos(cutPos, True), True)
-											cmd.doit()
-											cmd.setDone(True)
-											proceed = True
-											lane.setOffsets(0.0, min(defaultRampLength, toSection.length3D()-5))
-								if proceed:
-									toSection.addLane(lane, position)
-									points = toSection.getPoints().getParallelPolyline(GK.eRoadLeft, toSection.getLaneWidth()/2.0)
-									for mturn in toNode.getToTurningsOrderedFromLeftToRight(toSection):
-										mturn.setDestinationLanes(mturn.getDestinationFromLane() + 1, mturn.getDestinationToLane() + 1)
-									if toSection.getDestination() != None:
-										for mturn in toSection.getDestination().getFromTurnings(toSection):
-											if aux == 0:
-												mturn.setOriginLanes(mturn.getOriginFromLane() + 1, mturn.getOriginToLane() + 1)
-									turn.setDestinationLanes(toSection.getEntryLanes()[0], min(toSection.getEntryLanes()[1], toSection.getEntryLanes()[0] + section.getNbLanesAtPos(0)-1))
-									endPoint = section.getPoints()[len(section.getPoints())-1]
-									refEndPoint = refSection.getPoints()[len(refSection.getPoints())-1]
-									newPos = GKPoint()
-									refEndPoint.pointAtDistance(refSection.getExtremePointAtPos(refSection.length3D(), False), (refSection.getLaneWidth() * refSection.getNbLanesAtPos(refSection.length3D()) + section.getLaneWidth() * section.getNbLanesAtPos(section.length3D())) / 2.0, newPos)
-									endPoint.x = newPos.x
-									endPoint.y = newPos.y
-									endPoint.z = newPos.z
-									section.increaseTick()
-									pocketCreated = True
-						if pocketCreated:
-							delta = GKPoint(points[0].x - toSection.getPoints()[0].x, points[0].y - toSection.getPoints()[0].y, points[0].z - toSection.getPoints()[0].z)
-							toSection.translate(delta)
-							toSection.increaseTick()
-							for mturn in toNode.getTurnings():
-								mturn.updatePath(True)
-							if toSection.getDestination() != None:
-								for mturn in toSection.getDestination().getTurnings():
-									mturn.updatePath(True)
+defaultRampLength = float(getPropertyValue("aimsun.gis.defaultRampLength")) * ftToM # m
+minimumRampLength = 15 # m
+minimumResidualSectionLength = 15 # m
+type = model.getType("GKNode")
+for node in model.getCatalog().getObjectsByType(type).itervalues():
+	(rampSection, mainDownSection, mainUpSection, inLanes, outLanes) = getSections(node)
+	if rampSection != None and mainDownSection != None and mainUpSection != None:
+		refPoint = rampSection.getPoint(len(rampSection.getPoints()) - 2)
+		if mainUpSection.getPoints().isPointAtRightArea(refPoint): # ramp enters from right
+			if inLanes > outLanes and mainDownSection.getLane(mainDownSection.getEntryLanes()[1]).isFullLane(): # add an acceleration lane if needed and if one is not already present
+				canCreateLane = cutIfNeeded(mainDownSection, minimumRampLength, minimumResidualSectionLength, True)
+				if canCreateLane:
+					createAccelerationLane(mainDownSection, GKSection.eRightIn, defaultRampLength, minimumResidualSectionLength)
+					outLanes += 1
+			offsetRampEndpoint(rampSection, mainUpSection, True)
+		else: # ramp enters from left
+			if inLanes > outLanes and mainDownSection.getLane(mainDownSection.getEntryLanes()[0]).isFullLane(): # add an acceleration lane
+				canCreateLane = cutIfNeeded(mainDownSection, minimumRampLength, minimumResidualSectionLength, False)
+				if canCreateLane:
+					createAccelerationLane(mainDownSection, GKSection.eLeftIn, defaultRampLength, minimumResidualSectionLength)
+					outLanes += 1
+			offsetRampEndpoint(rampSection, mainUpSection, False)
+		arrangeTurnLanes(mainDownSection)
 
 GKGUISystem.getGUISystem().getActiveGui().invalidateViews()
 print "On-ramps created!"
