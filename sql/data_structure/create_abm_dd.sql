@@ -121,6 +121,9 @@ GO
 
 
 -- ref data tables
+EXECUTE [db_meta].[add_xp] 'ref.abm_half_hour_xref_abm_5_tod', 'SUBSYSTEM', 'reference'
+EXECUTE [db_meta].[add_xp] 'ref.abm_half_hour_xref_abm_5_tod', 'MS_Description', 'abm half hour period xref to abm 5 time of day period'
+
 EXECUTE [db_meta].[add_xp] 'ref.activity_pattern', 'SUBSYSTEM', 'reference'
 EXECUTE [db_meta].[add_xp] 'ref.activity_pattern', 'MS_Description', 'coordinated daily activity pattern'
 
