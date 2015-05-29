@@ -2642,24 +2642,24 @@ public class IntermediateStopChoiceModels
 
                 if (s.isInboundStop()) slcLogger
                         .error(String
-                                .format("HH=%d, PersonNum=%d, PersonType=%s, TourPurpose=%s, TourMode=%d, TourId=%d, StopPurpose=%s, StopDirection=%s, StopId=%d, NumIBStops=%d, StopOrig=%d, AltStopLoc=%d",
+                                .format("HH=%d, PersonNum=%d, PersonType=%s, TourPurpose=%s, TourMode=%d, TourId=%d, TourOrigMGRA=%d, TourDestMGRA=%d, StopPurpose=%s, StopDirection=%s, StopId=%d, NumIBStops=%d, StopOrig=%d, AltStopLoc=%d",
                                         s.getTour().getPersonObject().getHouseholdObject()
                                                 .getHhId(), s.getTour().getPersonObject()
                                                 .getPersonNum(), s.getTour().getPersonObject()
                                                 .getPersonType(), s.getTour().getTourPurpose(), s
                                                 .getTour().getTourModeChoice(), s.getTour()
-                                                .getTourId(), s.getDestPurpose(), "inbound", (s
+                                                .getTourId(), s.getTour().getTourOrigMgra(),s.getTour().getTourDestMgra(),s.getDestPurpose(), "inbound", (s
                                                 .getStopId() + 1),
                                         s.getTour().getNumInboundStops() - 1, s.getOrig(), altMgra));
                 else slcLogger
                         .error(String
-                                .format("HH=%d, PersonNum=%d, PersonType=%s, TourPurpose=%s, TourMode=%d, TourId=%d, StopPurpose=%s, StopDirection=%s, StopId=%d, NumOBStops=%d, StopOrig=%d, AltStopLoc=%d",
+                                .format("HH=%d, PersonNum=%d, PersonType=%s, TourPurpose=%s, TourMode=%d, TourId=%d,TourOrigMGRA=%d,TourDestMGRA=%d,StopPurpose=%s, StopDirection=%s, StopId=%d, NumOBStops=%d, StopOrig=%d, AltStopLoc=%d",
                                         s.getTour().getPersonObject().getHouseholdObject()
                                                 .getHhId(), s.getTour().getPersonObject()
                                                 .getPersonNum(), s.getTour().getPersonObject()
                                                 .getPersonType(), s.getTour().getTourPurpose(), s
                                                 .getTour().getTourModeChoice(), s.getTour()
-                                                .getTourId(), s.getDestPurpose(), "outbound", (s
+                                                .getTourId(),s.getTour().getTourOrigMgra(),s.getTour().getTourDestMgra(),s.getDestPurpose(), "outbound", (s
                                                 .getStopId() + 1), s.getTour()
                                                 .getNumOutboundStops() - 1, s.getOrig(), altMgra));
 
@@ -2773,25 +2773,25 @@ public class IntermediateStopChoiceModels
 
                 if (s.isInboundStop()) slcLogger
                         .error(String
-                                .format("HH=%d, PersonNum=%d, PersonType=%s, TourPurpose=%s, TourMode=%d, TourId=%d, StopPurpose=%s, StopDirection=%s, StopId=%d, NumIBStops=%d, AltStopLoc=%d, HalfTourDest=%d",
+                                .format("HH=%d, PersonNum=%d, PersonType=%s, TourPurpose=%s, TourMode=%d, TourId=%d, TourOrigMGRA=%d,TourDestMGRA=%d,StopPurpose=%s, StopDirection=%s, StopId=%d, NumIBStops=%d, AltStopLoc=%d, HalfTourDest=%d",
                                         s.getTour().getPersonObject().getHouseholdObject()
                                                 .getHhId(), s.getTour().getPersonObject()
                                                 .getPersonNum(), s.getTour().getPersonObject()
                                                 .getPersonType(), s.getTour().getTourPurpose(), s
                                                 .getTour().getTourModeChoice(), s.getTour()
-                                                .getTourId(), s.getDestPurpose(), "inbound", (s
+                                                .getTourId(), s.getTour().getTourOrigMgra(),s.getTour().getTourDestMgra(),s.getDestPurpose(), "inbound", (s
                                                 .getStopId() + 1),
                                         s.getTour().getNumInboundStops() - 1, altMgra,
                                         halfTourFinalDest));
                 else slcLogger
                         .error(String
-                                .format("HH=%d, PersonNum=%d, PersonType=%s, TourPurpose=%s, TourMode=%d, TourId=%d, StopPurpose=%s, StopDirection=%s, StopId=%d, NumOBStops=%d, AltStopLoc=%d, HalfTourDest=%d",
+                                .format("HH=%d, PersonNum=%d, PersonType=%s, TourPurpose=%s, TourMode=%d, TourId=%d, TourOrigMGRA=%d,TourDestMGRA=%d,StopPurpose=%s, StopDirection=%s, StopId=%d, NumOBStops=%d, AltStopLoc=%d, HalfTourDest=%d",
                                         s.getTour().getPersonObject().getHouseholdObject()
                                                 .getHhId(), s.getTour().getPersonObject()
                                                 .getPersonNum(), s.getTour().getPersonObject()
                                                 .getPersonType(), s.getTour().getTourPurpose(), s
                                                 .getTour().getTourModeChoice(), s.getTour()
-                                                .getTourId(), s.getDestPurpose(), "outbound", (s
+                                                .getTourId(), s.getTour().getTourOrigMgra(),s.getTour().getTourDestMgra(),s.getDestPurpose(), "outbound", (s
                                                 .getStopId() + 1), s.getTour()
                                                 .getNumOutboundStops() - 1, altMgra,
                                         halfTourFinalDest));
