@@ -53,7 +53,7 @@ Macro "Run SANDAG ABM"
    skipDataExport = RunMacro("read properties",properties,"RunModel.skipDataExport", "S")
    skipDataLoadRequest = RunMacro("read properties",properties,"RunModel.skipDataLoadRequest", "S")
    skipDeleteIntermediateFiles = RunMacro("read properties",properties,"RunModel.skipDeleteIntermediateFiles", "S")
- 
+   precision = RunMacro("read properties",properties,"RunModel.MatrixPrecision", "S")
  
    // copy bike logsums from input to output folder
    if skipCopyBikeLogsum = "false" then do
@@ -200,6 +200,10 @@ Macro "Run SANDAG ABM"
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - run commercial vehicle Toll Diversion"})
 	      ok = RunMacro("TCB Run Macro", 1, "cv toll diversion model",{}) 
 	      if !ok then goto quit
+
+    	      // reduce commerical travel matrix precisions    
+    	      RunMacro("HwycadLog",{"sandag_abm_master.rsc","reduce matrix precision for commVehTODTrips.mtx"})
+    	      RunMacro("reduce matrix precision",outputDir,"commVehTODTrips.mtx", precision)
       end
 
       //Run External(U.S.)-Internal Model
@@ -207,6 +211,14 @@ Macro "Run SANDAG ABM"
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - US to SD External Trip Model"})
 	      ok = RunMacro("TCB Run Macro", 1, "US to SD External Trip Model",{}) 
 	      if !ok then goto quit
+
+    	     // reduce EI matrix precisions    
+
+    	     m={"usSdWrk_EA.mtx","usSdWrk_AM.mtx","usSdWrk_MD.mtx","usSdWrk_PM.mtx","usSdWrk_EV.mtx","usSdNon_EA.mtx","usSdNon_AM.mtx","usSdNon_MD.mtx","usSdNon_PM.mtx","usSdNon_EV.mtx"}
+    	     for i = 1 to m.length do
+    		RunMacro("HwycadLog",{"sandag_abm_master.rsc","reduce precision for:"+m[i]})
+    		RunMacro("reduce matrix precision",outputDir,m[i], precision)
+    	     end
       end
 
       //Run Truck Model
@@ -214,13 +226,24 @@ Macro "Run SANDAG ABM"
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - truck model"})
 	      ok = RunMacro("truck model",properties, iteration)
 	      if !ok then goto quit
-      end   
+ 
+    	     // reduce truck matrix precisions    
+    	     m={"dailyDistributionMatricesTruckEA.mtx","dailyDistributionMatricesTruckAM.mtx","dailyDistributionMatricesTruckMD.mtx","dailyDistributionMatricesTruckPM.mtx","dailyDistributionMatricesTruckEV.mtx"}
+    	     for i = 1 to m.length do
+    		RunMacro("HwycadLog",{"sandag_abm_master.rsc","reduce precision for:"+m[i]})
+    		RunMacro("reduce matrix precision",outputDir,m[i], precision)
+    	     end
+     end   
 
       //Construct trip tables
       if skipTripTableCreation[iteration] = "false" then do
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Create Auto Tables"})
 	      ok = RunMacro("TCB Run Macro", 1, "Create Auto Tables",{}) 
 	      if !ok then goto quit
+
+    	      // reduce EE matrix precisions    
+    	      RunMacro("HwycadLog",{"sandag_abm_master.rsc","reduce matrix precision for externalExternalTrips.mtx"})
+    	      RunMacro("reduce matrix precision",outputDir,"externalExternalTrips.mtx", precision)
       end
 
    end
