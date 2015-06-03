@@ -52,7 +52,7 @@ matrixCore = {
   if GetFileInfo(selinkqry) <> null then  sellink_flag = 1 //select link analysis is only for last iteration (4)
        
    i = 0
-   
+   k = 1
    for per = 1 to periodName.length do
      for mat = 1 to matrixCore.length do
   
@@ -65,6 +65,10 @@ matrixCore = {
         walkFile =    outputDir+"\\ntl"+matrixCore[mat]+periodName[per]+".bin"
         onOffFile =   outputDir+"\\ono"+matrixCore[mat]+periodName[per]+".bin"
         aggFile =     outputDir+"\\agg"+matrixCore[mat]+periodName[per]+".bin"
+
+        onOffTables[k] = onOffFile
+        k = k +1
+
         if sellink_flag = 1 & iteration = 4 then sellkmtx =  outputDir+"\\trn_sellink"+matrixCore[mat]+periodName[per]+".mtx"
 
        
@@ -96,7 +100,7 @@ matrixCore = {
    properties = "\\conf\\sandag_abm.properties" 
    collapseOnOffByRoute = RunMacro("read properties",properties,"RunModel.collapseOnOffByRoute", "S")
    if collapseOnOffByRoute = "true" then do
-	   ok = RunMacro("Collapse OnOffs By Route", onOffFile, rt_file)
+	   ok = RunMacro("Collapse OnOffs By Route", onOffTables, rt_file)
 	   if !ok then goto quit
    end
 
