@@ -486,7 +486,7 @@ public final class TazDataManager
                       // together
                         tapId = Float.parseFloat(s1.substring(0, 5));
                         tapTime = Float.parseFloat(s1.substring(5, 10));
-                        tapDist = Float.parseFloat(s1.substring(10, s1.length()));
+                        tapDist = Float.parseFloat(s1.substring(10, 15));
                     } else
                     {
                         tapId = Float.parseFloat(st1.nextToken());
