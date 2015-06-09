@@ -1013,7 +1013,7 @@ RETURN
 (
 SELECT
        [config] / 1000 AS [route]
-       ,[transit_onoff].[transit_mode_id]
+       ,[transit_route].[transit_mode_id]
        ,[near_node]
        ,SUM([boardings]) AS [ons]
        ,SUM([alightings]) AS [offs]
@@ -1035,7 +1035,7 @@ WHERE
        AND [transit_stop].[scenario_id] = @scenario_id
 GROUP BY GROUPING SETS (
        [config] / 1000
-       ,[transit_onoff].[transit_mode_id]
+       ,[transit_route].[transit_mode_id]
        ,[near_node]
        )
 )
