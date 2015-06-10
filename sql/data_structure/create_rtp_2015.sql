@@ -4918,3 +4918,51 @@ GO
 EXECUTE [db_meta].[add_xp] 'rtp_2015.sp_pm_8ab_auto', 'SUBSYSTEM', 'rtp_2015'
 EXECUTE [db_meta].[add_xp] 'rtp_2015.sp_pm_8ab_auto', 'MS_Description', 'performance metric 8a and 8b for autos using highway skims and mgra-based input file'
 GO
+
+
+
+
+-- Create stored procedure for transit_passenger_miles_route
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2015].[transit_passenger_miles_route]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [rtp_2015].[transit_passenger_miles_route]
+GO
+
+CREATE PROCEDURE [rtp_2015].[transit_passenger_miles_route]
+	@scenario_id smallint
+AS
+BEGIN
+
+SELECT  
+	ISNULL(CAST([config] / 1000 AS nvarchar), 'Total') AS [route_number]
+	,ISNULL(CAST([transit_route].[transit_mode_id] AS nvarchar), 'Total') AS [transit_mode_id]
+	,SUM([transit_flow] * ([to_mp]-[from_mp])) AS total_passenger_miles
+FROM 
+	[abm].[transit_flow]
+INNER JOIN
+	[abm].[transit_route]
+ON
+	[transit_flow].[scenario_id] = [transit_route].[scenario_id]
+	AND [transit_flow].[transit_route_id] = [transit_route].[transit_route_id]
+INNER JOIN
+	[ref].[time_period]
+ON
+	[transit_flow].[time_period_id] = [time_period].[time_period_id]
+WHERE 
+	[transit_flow].[scenario_id] = @scenario_id
+	AND [transit_route].[scenario_id] = @scenario_id
+GROUP BY GROUPING SETS (
+		ROLLUP([transit_route].[transit_mode_id])
+	   ,([config] / 1000, [transit_route].[transit_mode_id])
+       )
+ORDER BY
+	[config] / 1000
+	,[transit_route].[transit_mode_id]
+
+END
+GO
+
+
+-- Add metadata for [rtp_2015].[transit_passenger_miles_route]
+EXECUTE [db_meta].[add_xp] 'rtp_2015.transit_passenger_miles_route', 'SUBSYSTEM', 'rtp_2015'
+EXECUTE [db_meta].[add_xp] 'rtp_2015.transit_passenger_miles_route', 'MS_Description', 'transit passenger miles by route'
+GO
