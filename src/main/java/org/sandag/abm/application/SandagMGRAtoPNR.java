@@ -213,9 +213,7 @@ public class SandagMGRAtoPNR {
 		}
 	}
 	
-	/*The file is organized into two sections for each TAZ. The first section is a TAZ 
-	 * and the number of TAPs with PNR lots that are auto accessible from the TAZ. 
-	 * The second section is the TAP, travel time (min) *100, distance (mile) *100 and mode.
+	/*The file has five columns: TAZ, TAP, travel time (min) *100, distance (mile) *100 and mode.
 	 */
 	public void writeResults(String filename) throws IOException{
 		BufferedWriter writer = null;
@@ -230,12 +228,13 @@ public class SandagMGRAtoPNR {
 			    	continue;
 			    
 			    if(bestTapsMap.get(currTAZ).size() > 0){
-				    writer.write(String.format("%5s", (int)(currTAZ)) + " " + String.format("%5s", (int)(bestTapsMap.get(currTAZ).size())) + "\n");
+				    //NEW CSV FORMAT (tabular: TAZ, TAP, TIME, DIST, MODE)
 				    for(int k = 0; k < bestTapsMap.get(currTAZ).size(); k++){
-				    	writer.write(	String.format("%5s", (int)(bestTapsMap.get(currTAZ).get(k)[0])) + " " + 
-				    					String.format("%5s", (int)(bestTapsMap.get(currTAZ).get(k)[1]*100.0)) + " " + 
-				    					String.format("%5s", (int)(bestTapsMap.get(currTAZ).get(k)[2]*100.0)) + " " +
-				    					String.format("%2s", (int)(bestTapsMap.get(currTAZ).get(k)[3])) + "\n");
+				    	writer.write(	(int)(currTAZ) + "," + 
+				    					(int)(bestTapsMap.get(currTAZ).get(k)[0]) + "," + 
+				    					(double)(bestTapsMap.get(currTAZ).get(k)[1]) + "," + 
+				    					(double)(bestTapsMap.get(currTAZ).get(k)[2]) + "," +
+				    					(int)(bestTapsMap.get(currTAZ).get(k)[3]) + "\n");
 				    }
 			    }
 			}

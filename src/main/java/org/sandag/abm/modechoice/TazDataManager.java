@@ -458,47 +458,75 @@ public final class TazDataManager
         String s, s1;
         StringTokenizer st, st1;
         int taz;
-        int nTaps;
-        float tapId;
+        int tapId;
         float tapTime;
         float tapDist;
+        
+        //Shove into hash at first, then decompose into float array
+        HashMap< Integer, HashMap<Integer, float[] >> tazTapMap = new HashMap<Integer, HashMap<Integer, float[] >>();
+        
         try
         {
             BufferedReader br = new BufferedReader(new FileReader(tdzDATapFile));
             while ((s = br.readLine()) != null)
             {
-                st = new StringTokenizer(s, " ");
-                if (st.countTokens() != 2) System.out.println(s);
+                st = new StringTokenizer(s, ",");
+                
                 taz = Integer.parseInt(st.nextToken());
-                nTaps = Integer.parseInt(st.nextToken());
+                tapId = Integer.parseInt(st.nextToken());
+                tapTime = Float.parseFloat(st.nextToken());
+                tapDist = Float.parseFloat(st.nextToken());
+                
+                if(tazTapMap.get(taz) != null){
+                	
+                	HashMap< Integer, float[] > tapVals = tazTapMap.get(taz);
+                	if(tapVals.get(tapId) != null){
+                		//something wrong, since there should only be unique taps for a taz
+                        throw new RuntimeException("There should not be any duplicate TAPs for a TAZ");
+                	}else{
+                    	float[] timeDist = new float[2];
+                    	timeDist[0] = tapTime;
+                    	timeDist[1] = tapDist;
+                    	tapVals.put(tapId, timeDist);
+                	}
+                	
+                }else{
+                	HashMap< Integer, float[] > tapVals = new HashMap<Integer, float[] >();
+                	float[] timeDist = new float[2];
+                	timeDist[0] = tapTime;
+                	timeDist[1] = tapDist;
+                	tapVals.put(tapId, timeDist);
+                	tazTapMap.put(taz, tapVals);
+                }
+            }
+            
+            Iterator it = tazTapMap.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry)it.next();
+                taz = (int) pair.getKey();
+                HashMap< Integer, float[] > tapVals = tazTapMap.get(taz);
+                int nTaps = tapVals.keySet().size();
+                
                 tazParkNRideTaps[taz][0] = new float[nTaps];
                 tazParkNRideTaps[taz][1] = new float[nTaps];
                 tazParkNRideTaps[taz][2] = new float[nTaps];
                 tazKissNRideTaps[taz][0] = new float[nTaps];
                 tazKissNRideTaps[taz][1] = new float[nTaps];
                 tazKissNRideTaps[taz][2] = new float[nTaps];
-                for (int i = 0; i < nTaps; i++)
-                {
-                    s1 = br.readLine();
-                    st1 = new StringTokenizer(s1, " ");
-                    if (st1.countTokens() != 3)
-                    { // some of the lines run
-                      // together
-                        tapId = Float.parseFloat(s1.substring(0, 5));
-                        tapTime = Float.parseFloat(s1.substring(5, 10));
-                        tapDist = Float.parseFloat(s1.substring(10, 15));
-                    } else
-                    {
-                        tapId = Float.parseFloat(st1.nextToken());
-                        tapTime = Float.parseFloat(st1.nextToken());
-                        tapDist = Float.parseFloat(st1.nextToken());
-                    }
+                
+                Iterator it2 = tapVals.entrySet().iterator();
+                int i = 0;
+                while (it2.hasNext()) {
+                	Map.Entry pair2 = (Map.Entry)it2.next();
+                	tapId = (int) pair2.getKey();
+                	float[] vals = (float[]) pair2.getValue();
                     tazParkNRideTaps[taz][0][i] = tapId;
-                    tazParkNRideTaps[taz][1][i] = tapTime;
-                    tazParkNRideTaps[taz][2][i] = tapDist;
+                    tazParkNRideTaps[taz][1][i] = vals[0];
+                    tazParkNRideTaps[taz][2][i] = vals[1];
                     tazKissNRideTaps[taz][0][i] = tapId;
-                    tazKissNRideTaps[taz][1][i] = tapTime;
-                    tazKissNRideTaps[taz][2][i] = tapDist;
+                    tazKissNRideTaps[taz][1][i] = vals[0];
+                    tazKissNRideTaps[taz][2][i] = vals[1];
+                    i++;
                 }
             }
 
@@ -771,9 +799,9 @@ public final class TazDataManager
         switch (aMode)
         {
             case PARK_N_RIDE:
-                return (tazParkNRideTaps[taz][1][pos] * 0.01f);
+                return (tazParkNRideTaps[taz][1][pos]);
             case KISS_N_RIDE:
-                return (tazKissNRideTaps[taz][1][pos] * 0.01f);
+                return (tazKissNRideTaps[taz][1][pos]);
             default:
                 throw new RuntimeException(
                         "Error trying to get ParkRideOrKissRideTaps for invalid access mode: "
@@ -798,9 +826,9 @@ public final class TazDataManager
         switch (aMode)
         {
             case PARK_N_RIDE:
-                return (tazParkNRideTaps[taz][2][pos] * 0.01f);
+                return (tazParkNRideTaps[taz][2][pos]);
             case KISS_N_RIDE:
-                return (tazKissNRideTaps[taz][2][pos] * 0.01f);
+                return (tazKissNRideTaps[taz][2][pos]);
             default:
                 throw new RuntimeException(
                         "Error trying to get ParkRideOrKissRideTaps for invalid access mode: "
