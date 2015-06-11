@@ -54,6 +54,10 @@ Macro "Run SANDAG ABM"
    skipDataLoadRequest = RunMacro("read properties",properties,"RunModel.skipDataLoadRequest", "S")
    skipDeleteIntermediateFiles = RunMacro("read properties",properties,"RunModel.skipDeleteIntermediateFiles", "S")
    precision = RunMacro("read properties",properties,"RunModel.MatrixPrecision", "S")
+   minSpaceOnC=RunMacro("read properties",properties,"RunModel.minSpaceOnC", "S")
+
+   //check free space on C drive
+   runString = path+"\\bin\\checkFreeSpaceOnC.bat "+minSpaceOnC
  
    // copy bike logsums from input to output folder
    if skipCopyBikeLogsum = "false" then do
