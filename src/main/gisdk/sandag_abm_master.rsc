@@ -58,7 +58,9 @@ Macro "Run SANDAG ABM"
 
    //check free space on C drive
    runString = path+"\\bin\\checkFreeSpaceOnC.bat "+minSpaceOnC
- 
+   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Checking if there is enough space on C drive: "+" "+runString})
+   ok = RunMacro("TCB Run Command", 1, "Check space on C drive", runString)
+
    // copy bike logsums from input to output folder
    if skipCopyBikeLogsum = "false" then do
 	   CopyFile(inputDir+"\\bikeMgraLogsum.csv", outputDir+"\\bikeMgraLogsum.csv")
@@ -98,6 +100,11 @@ Macro "Run SANDAG ABM"
 	   ok = RunMacro("TCB Run Macro", 1, "run create hwy",{}) 
 	   if !ok then goto quit
    end
+
+   // Create drive to transit access file
+   runString = path+"\\bin\\CreateD2TAccessFile.bat "+drive+" "+path_no_drive
+   ok = RunMacro("TCB Run Command", 1, "Export core ABM data", runString)
+   if !ok then goto quit 
 
    // Create transit routes
    if skipBuildTransitNetwork = "false" then do
