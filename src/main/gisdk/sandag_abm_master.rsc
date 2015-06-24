@@ -101,11 +101,6 @@ Macro "Run SANDAG ABM"
 	   if !ok then goto quit
    end
 
-   // Create drive to transit access file
-   runString = path+"\\bin\\CreateD2TAccessFile.bat "+drive+" "+path_no_drive
-   ok = RunMacro("TCB Run Command", 1, "Export core ABM data", runString)
-   if !ok then goto quit 
-
    // Create transit routes
    if skipBuildTransitNetwork = "false" then do
 	   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - run create all transit"})
@@ -144,6 +139,11 @@ Macro "Run SANDAG ABM"
 	      ok = RunMacro("TCB Run Macro", 1, "Hwy skim all",{}) 
 	      if !ok then goto quit
       end
+
+      // Create drive to transit access file
+      runString = path+"\\bin\\CreateD2TAccessFile.bat "+drive+" "+path_no_drive
+      ok = RunMacro("TCB Run Command", 1, "Creating drive to transit access file", runString)
+      if !ok then goto quit 
 	
       // Skim transit network 
       if skipTransitSkimming[iteration] = "false" then do
