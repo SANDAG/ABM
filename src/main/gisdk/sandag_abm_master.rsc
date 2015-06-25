@@ -141,7 +141,7 @@ Macro "Run SANDAG ABM"
       end
 
       // Create drive to transit access file
-      runString = path+"\\bin\\CreateD2TAccessFile.bat "+drive+" "+path_no_drive
+      runString = path+"\\bin\\CreateD2TAccessFile.bat "+drive+" "+path_forward_slash
       ok = RunMacro("TCB Run Command", 1, "Creating drive to transit access file", runString)
       if !ok then goto quit 
 	
