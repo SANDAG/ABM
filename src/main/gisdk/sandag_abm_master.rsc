@@ -111,20 +111,22 @@ Macro "Run SANDAG ABM"
    //Looping
    for iteration = startFromIteration to max_iterations do        
 
-      // Start matrix manager locally
-      runString = path+"\\bin\\runMtxMgr.cmd "+drive+" "+path_no_drive
-      ok = RunMacro("TCB Run Command", 1, "Start matrix manager", runString)
-      if !ok then goto quit 
+      if skipCoreABM[iteration] = "false" or skipOtherSimulateModel[iteration] = "false" then do
+	      // Start matrix manager locally
+	      runString = path+"\\bin\\runMtxMgr.cmd "+drive+" "+path_no_drive
+	      ok = RunMacro("TCB Run Command", 1, "Start matrix manager", runString)
+	      if !ok then goto quit 
+		
+	      // Start  JPPF driver 
+	      runString = path+"\\bin\\runDriver.cmd "+drive+" "+path_no_drive
+	      ok = RunMacro("TCB Run Command", 1, "Start JPPF Driver", runString)
+	      if !ok then goto quit  
 	
-      // Start  JPPF driver 
-      runString = path+"\\bin\\runDriver.cmd "+drive+" "+path_no_drive
-      ok = RunMacro("TCB Run Command", 1, "Start JPPF Driver", runString)
-      if !ok then goto quit  
-
-      // Start HH Manager, and worker nodes
-      runString = path+"\\bin\\StartHHAndNodes.cmd "+drive+" "+path_no_drive
-      ok = RunMacro("TCB Run Command", 1, "Start HH Manager, JPPF Driver, and nodes", runString)
-      if !ok then goto quit  
+	      // Start HH Manager, and worker nodes
+	      runString = path+"\\bin\\StartHHAndNodes.cmd "+drive+" "+path_no_drive
+	      ok = RunMacro("TCB Run Command", 1, "Start HH Manager, JPPF Driver, and nodes", runString)
+	      if !ok then goto quit  
+      end
 
       // Run highway assignment 
       if skipHighwayAssignment[iteration] = "false" then do
@@ -138,13 +140,13 @@ Macro "Run SANDAG ABM"
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Hwy skim all"})
 	      ok = RunMacro("TCB Run Macro", 1, "Hwy skim all",{}) 
 	      if !ok then goto quit
-      end
-
+ 
       // Create drive to transit access file
       runString = path+"\\bin\\CreateD2TAccessFile.bat "+drive+" "+path_forward_slash
       ok = RunMacro("TCB Run Command", 1, "Creating drive to transit access file", runString)
       if !ok then goto quit 
-	
+     end
+
       // Skim transit network 
       if skipTransitSkimming[iteration] = "false" then do
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Build transit skims"})
