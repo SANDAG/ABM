@@ -20,6 +20,7 @@ public class InternalExternalTour
     private int                    autos;
     private int                    age;
     private int                    female;
+    private double					nonWorkTimeFactor;
 
     // private InternalExternalStop[] outboundStops;
     // private InternalExternalStop[] inboundStops;
@@ -275,7 +276,15 @@ public class InternalExternalTour
 		this.pnum = pnum;
 	}
 
-    public void logTourObject(Logger logger, int totalChars)
+    public double getNonWorkTimeFactor() {
+		return nonWorkTimeFactor;
+	}
+
+	public void setNonWorkTimeFactor(double nonWorkTimeFactor) {
+		this.nonWorkTimeFactor = nonWorkTimeFactor;
+	}
+
+	public void logTourObject(Logger logger, int totalChars)
     {
 
         Household.logHelper(logger, "tourId: ", ID, totalChars);
@@ -283,6 +292,6 @@ public class InternalExternalTour
         Household.logHelper(logger, "tourDestMgra: ", destinationMGRA, totalChars);
         Household.logHelper(logger, "tourDepartPeriod: ", departTime, totalChars);
         Household.logHelper(logger, "tourArrivePeriod: ", arriveTime, totalChars);
-
+       
     }
 }

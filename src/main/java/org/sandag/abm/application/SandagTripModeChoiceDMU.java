@@ -22,6 +22,7 @@ public class SandagTripModeChoiceDMU
     protected double maleBikeLogsum;
     protected double femaleInParty;
     protected double maleInParty;
+     
     public SandagTripModeChoiceDMU(ModelStructure modelStructure, Logger aLogger)
     {
         super(modelStructure, aLogger);
@@ -319,6 +320,13 @@ public class SandagTripModeChoiceDMU
         methodIndexMap.put("getMaleInParty", 51);
         methodIndexMap.put("getFemaleBikeLogsum", 52);
         methodIndexMap.put("getMaleBikeLogsum", 53);
+        
+        methodIndexMap.put("getWorkTimeFactor", 55);
+        methodIndexMap.put("getNonWorkTimeFactor", 56);
+        methodIndexMap.put("getJointTourTimeFactor", 57);
+        
+        methodIndexMap.put("getInbound",58);
+
         
         methodIndexMap.put("getNm_walkTime", 90);
         methodIndexMap.put("getNm_bikeTime", 91);

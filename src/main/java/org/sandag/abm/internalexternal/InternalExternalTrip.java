@@ -35,6 +35,8 @@ public class InternalExternalTrip
     private int[][] bestWtwTapPairs;
     private int[][] bestWtdTapPairs;
     private int[][] bestDtwTapPairs;
+    
+    private double valueOfTime;
 
     /**
      * Default constructor; nothing initialized.
@@ -360,5 +362,13 @@ public class InternalExternalTrip
     {
         return destinationTaz;
     }
+
+	public double getValueOfTime() {
+		return valueOfTime;
+	}
+
+	public void setValueOfTime(double valueOfTime) {
+		this.valueOfTime = valueOfTime;
+	}
 
 }

@@ -41,6 +41,8 @@ public class SpecialEventTour
 
     private static final String[] RIDE_MODE_LABELS = {"CR", "LRT", "BRT", "EB", "LB"};
 
+    private float valueOfTime;
+    
     /**
      * Public constructor.
      * 
@@ -335,7 +337,15 @@ public class SpecialEventTour
         return arriveTime;
     }
 
-    public void logTourObject(Logger logger, int totalChars)
+    public float getValueOfTime() {
+		return valueOfTime;
+	}
+
+	public void setValueOfTime(float valueOfTime) {
+		this.valueOfTime = valueOfTime;
+	}
+
+	public void logTourObject(Logger logger, int totalChars)
     {
 
         Household.logHelper(logger, "tourId: ", ID, totalChars);

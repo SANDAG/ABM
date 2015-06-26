@@ -2,12 +2,15 @@ package org.sandag.abm.visitor;
 
 import java.io.Serializable;
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
+
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.newmodel.ChoiceModelApplication;
+import com.pb.common.newmodel.UtilityExpressionCalculator;
 
 public class VisitorTourModeChoiceModel
         implements Serializable
@@ -246,6 +249,15 @@ public class VisitorTourModeChoiceModel
                 tour.setBestDtwTapPairsOut(logsumsCalculator.getBestDtwTapsOut());
                 tour.setBestDtwTapPairsIn(logsumsCalculator.getBestDtwTapsIn());
             }
+            
+            //value of time; lookup vot from the UEC
+            UtilityExpressionCalculator uec = mcModel.getUEC();
+            int votIndex = uec.lookupVariableIndex("vot");
+            float vot = (float) uec.getValueForIndex(votIndex);
+        
+            tour.setValueOfTime(vot);
+ 
+
 
         } else
         {

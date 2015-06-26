@@ -2,6 +2,7 @@ package org.sandag.abm.application;
 
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -10,9 +11,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+
 import org.sandag.abm.ctramp.Household;
 import org.sandag.abm.ctramp.HouseholdDataManager;
 import org.sandag.abm.ctramp.Person;
+
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.util.IndexSort;
@@ -37,6 +40,7 @@ public class SandagHouseholdDataManager2
     public static final String PROPERTIES_INDUSTRY_CODES          = "PopulationSynthesizer.IndustryCodes";
     public static final String PROPERTIES_MILITARY_INDUSTRY_RANGE = "PopulationSynthesizer.MilitaryIndustryRange";
 
+    
     private int                militaryIndustryLow;
     private int                militaryIndustryHigh;
 
@@ -492,6 +496,17 @@ public class SandagHouseholdDataManager2
 
                     }
                     fieldCount++;
+                    
+                    double timeFactorWork = 1.0;
+                    double timeFactorNonWork = 1.0;
+                    if(readTimeFactors){
+                    	timeFactorWork = (double) personTable.getValueAt(p,
+                                 personTable.getColumnPosition(PERSON_TIMEFACTOR_WORK_FIELD_NAME));
+                       	timeFactorNonWork = (double) personTable.getValueAt(p,
+                                personTable.getColumnPosition(PERSON_TIMEFACTOR_NONWORK_FIELD_NAME));
+                    }
+                    person.setTimeFactorWork(timeFactorWork);
+                    person.setTimeFactorNonWork(timeFactorNonWork);
 
                 }
 

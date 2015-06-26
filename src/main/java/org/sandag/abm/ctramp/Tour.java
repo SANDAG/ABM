@@ -50,6 +50,8 @@ public class Tour
     private int[][]               bestWtdTapPairsIn;
     private int[][]               bestDtwTapPairsOut;
     private int[][]               bestDtwTapPairsIn;
+    
+    private double valueOfTime;
 
     private static final String[] RIDE_MODE_LABELS = {"CR", "LRT", "BRT", "EB", "LB"};
 
@@ -699,5 +701,13 @@ public class Tour
     {
         return bestDtwTapPairsIn;
     }
+
+	public double getValueOfTime() {
+		return valueOfTime;
+	}
+
+	public void setValueOfTime(double valueOfTime) {
+		this.valueOfTime = valueOfTime;
+	}
 
 }

@@ -71,6 +71,8 @@ public final class TripSkimsAppender
 
     private MatrixDataServerIf        ms;
     private BestTransitPathCalculator bestPathUEC;
+    
+    private static final float defaultVOT = 15.0f;
 
     private TripSkimsAppender()
     {
@@ -201,7 +203,7 @@ public final class TripSkimsAppender
 
         outStream.print(String.format("%d,%d,%d,%d,%d", sequence, odt[3], odt[0], odt[1], odt[2]));
 
-        double[] skims = anm.getAutoSkims(odt[0], odt[1], odt[2], loggingEnabled, autoLogger);
+        double[] skims = anm.getAutoSkims(odt[0], odt[1], odt[2], defaultVOT, loggingEnabled, autoLogger);
         if (loggingEnabled)
             anm.logReturnedSkims(odt[0], odt[1], odt[2], skims, "auto", autoLogger);
 

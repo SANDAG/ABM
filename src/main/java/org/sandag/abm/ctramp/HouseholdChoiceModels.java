@@ -224,7 +224,7 @@ public class HouseholdChoiceModels
 
             if (runInternalExternalModel)
             {
-                ieModel = new InternalExternalTripChoiceModel(propertyMap, dmuFactory);
+                ieModel = new InternalExternalTripChoiceModel(propertyMap, modelStructure,dmuFactory);
                 if (measureObjectSizes)
                     logger.info("IE size:       " + ObjectUtil.sizeOf(ieModel));
             }
