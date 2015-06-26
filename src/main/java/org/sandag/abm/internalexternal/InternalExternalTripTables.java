@@ -246,13 +246,14 @@ public class InternalExternalTripTables
            			}
            		}
            	}
+           	}
         }
-    }
     /**
      * Return the value of time bin 0 through 2 based on the thresholds provided in the property map
      * @param valueOfTime
      * @return value of time bin 0 through 2
      */
+    public int getValueOfTimeBin(float valueOfTime){
     public int getValueOfTimeBin(float valueOfTime){
     	
     	if(valueOfTime<valueOfTimeThresholdLow)
@@ -480,12 +481,22 @@ public class InternalExternalTripTables
         			end[i][j] = "_" + per + ".mtx";
         	}
         }
-
+        
         for (int i = 0; i < 4; ++i)
         {
         	for(int j = 0; j < votBins[i];++j){
         		try
         		{
+        			if (ms != null) ms.writeMatrixFile(fileName[i]+end[i][j], matrix[i][j], mt);
+        			else writeMatrixFile(fileName[i]+end[i][j], matrix[i][j]);
+        		} catch (Exception e)
+        		{
+        			logger.error("exception caught writing " + mt.toString() + " matrix file = "
+                        + fileName[i] +end[i][j] + ", for mode index = " + i, e);
+        			throw new RuntimeException();
+        		}
+        	}
+        }
         			if (ms != null) ms.writeMatrixFile(fileName[i]+end[i][j], matrix[i][j], mt);
         			else writeMatrixFile(fileName[i]+end[i][j], matrix[i][j]);
         		} catch (Exception e)

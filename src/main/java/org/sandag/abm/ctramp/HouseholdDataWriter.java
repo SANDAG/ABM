@@ -1096,7 +1096,7 @@ public class HouseholdDataWriter
         
         if(writeLogsums)
         	data.add(string(s.getModeLogsum()));
-
+        
         return data;
     }
 

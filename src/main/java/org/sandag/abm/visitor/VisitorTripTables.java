@@ -418,6 +418,21 @@ public class VisitorTripTables
     }
 
     /**
+     * Return the value of time bin 0 through 2 based on the thresholds provided in the property map
+     * @param valueOfTime
+     * @return value of time bin 0 through 2
+     */
+    public int getValueOfTimeBin(float valueOfTime){
+    	
+    	if(valueOfTime<valueOfTimeThresholdLow)
+    		return 0;
+    	else if (valueOfTime<valueOfTimeThresholdMed)
+    		return 1;
+    	else
+    		return 2;
+    }
+
+    /**
      * Get the output trip table file names from the properties file, and write
      * trip tables for all modes for the given time period.
      * 
