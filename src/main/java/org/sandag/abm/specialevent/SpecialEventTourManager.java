@@ -211,7 +211,7 @@ public class SpecialEventTourManager
             throw new RuntimeException();
         }
         String tourHeaderString = new String(
-                "id,eventNumber,eventType,income,partySize,departTime,arriveTime,originMGRA,destinationMGRA,tourMode\n");
+                "id,eventNumber,eventType,income,partySize,departTime,arriveTime,originMGRA,destinationMGRA,tourMode,valueOfTime\n");
         tourWriter.print(tourHeaderString);
 
         PrintWriter tripWriter = null;
@@ -224,7 +224,7 @@ public class SpecialEventTourManager
             throw new RuntimeException();
         }
         String tripHeaderString = new String(
-                "tourID,tripID,originMGRA,destinationMGRA,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,boardingTap,alightingTap");
+                "tourID,tripID,originMGRA,destinationMGRA,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,boardingTap,alightingTap,valueOfTime");
 
         // Iterate through the array, printing records to the file
         for (int i = 0; i < tours.length; ++i)
@@ -276,7 +276,8 @@ public class SpecialEventTourManager
         String record = new String(tour.getID() + "," + tour.getEventNumber() + ","
                 + tour.getEventType() + "," + tour.getIncome() + "," + tour.getPartySize() + ","
                 + tour.getDepartTime() + "," + tour.getArriveTime() + "," + tour.getOriginMGRA()
-                + "," + tour.getDestinationMGRA() + "," + tour.getTourMode() + "\n");
+                + "," + tour.getDestinationMGRA() + "," + tour.getTourMode() + ","
+                + String.format("%9.2f",tour.getValueOfTime()) + "\n");
         writer.print(record);
 
     }
@@ -298,7 +299,9 @@ public class SpecialEventTourManager
         String record = new String(tour.getID() + "," + tripNumber + "," + trip.getOriginMgra()
                 + "," + trip.getDestinationMgra() + "," + trip.isInbound() + ","
                 + trip.isOriginIsTourDestination() + "," + trip.isDestinationIsTourDestination()
-                + "," + trip.getPeriod() + "," + trip.getTripMode() + "," + taps[0] + "," + taps[1]);
+                + "," + trip.getPeriod() + "," + trip.getTripMode() + "," + taps[0] + "," + taps[1] +","
+                + String.format("%9.2f",tour.getValueOfTime()) + "\n");
+
 
         if (saveUtilsAndProbs)
         {

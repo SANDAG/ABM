@@ -1,6 +1,7 @@
 package org.sandag.abm.airport;
 
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.BestTransitPathCalculator;
 import org.sandag.abm.accessibilities.DriveTransitWalkSkimsCalculator;
@@ -10,8 +11,10 @@ import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.newmodel.ChoiceModelApplication;
+import com.pb.common.newmodel.UtilityExpressionCalculator;
 import com.pb.common.util.Tracer;
 
 public class AirportModeChoiceModel
@@ -241,6 +244,8 @@ public class AirportModeChoiceModel
         int tripMode = 0;
         int occupancy = AirportModelStructure.getOccupancy(accessMode, party.getSize());
         double randomNumber = party.getRandom();
+        
+        float valueOfTime = 0;
 
         if (accessMode != AirportModelStructure.TRANSIT)
         {
@@ -248,22 +253,47 @@ public class AirportModeChoiceModel
             {
                 int choice = driveAloneModel.getChoiceResult(randomNumber);
                 tripMode = choice;
+               
+                //following gets vot from UEC
+                UtilityExpressionCalculator uec = driveAloneModel.getUEC();
+                int votIndex = uec.lookupVariableIndex("vot");
+                valueOfTime = (float) uec.getValueForIndex(votIndex);
+
             } else if (occupancy == 2)
             {
                 int choice = shared2Model.getChoiceResult(randomNumber);
                 tripMode = choice + 2;
+
+                //following gets vot from UEC
+                UtilityExpressionCalculator uec = shared2Model.getUEC();
+                int votIndex = uec.lookupVariableIndex("vot");
+                valueOfTime = (float) uec.getValueForIndex(votIndex);
+
             } else if (occupancy > 2)
             {
                 int choice = shared3Model.getChoiceResult(randomNumber);
                 tripMode = choice + 3 + 2;
+                
+                //following gets vot from UEC
+                UtilityExpressionCalculator uec = shared3Model.getUEC();
+                int votIndex = uec.lookupVariableIndex("vot");
+                valueOfTime = (float) uec.getValueForIndex(votIndex);
+
             }
         } else
         {
             int choice = transitModel.getChoiceResult(randomNumber);
             if (choice <= 5) tripMode = choice + 10;
             else tripMode = choice + 15;
+            
+            //following gets vot from UEC
+            UtilityExpressionCalculator uec = transitModel.getUEC();
+            int votIndex = uec.lookupVariableIndex("vot");
+            valueOfTime = (float) uec.getValueForIndex(votIndex);
+
         }
         party.setMode((byte) tripMode);
+        party.setValueOfTime(valueOfTime);
     }
 
     /**

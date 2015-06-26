@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.application.SandagTourBasedModel;
 import org.sandag.abm.ctramp.CtrampApplication;
+import org.sandag.abm.ctramp.TimeCoefficientDistributions;
 import org.sandag.abm.ctramp.Util;
 
 import com.pb.common.datafile.OLD_CSVFileReader;
@@ -34,6 +35,10 @@ public class CrossBorderTourManager
     SandagModelStructure      sandagStructure;
     private boolean           seek;
     private int               traceId;
+    
+    TimeCoefficientDistributions timeDistributions;
+    
+    boolean distributedTimeCoefficients = false;
 
     /**
      * Constructor. Reads properties file and opens/stores all probability
@@ -72,6 +77,12 @@ public class CrossBorderTourManager
         seek = new Boolean(Util.getStringValueFromPropertyMap(rbMap, "crossBorder.seek"));
         traceId = new Integer(Util.getStringValueFromPropertyMap(rbMap, "crossBorder.trace"));
 
+        distributedTimeCoefficients = new Boolean(Util.getStringValueFromPropertyMap(rbMap, "distributedTimeCoefficients"));
+        
+        if(distributedTimeCoefficients) {
+        	timeDistributions = new TimeCoefficientDistributions();
+        	timeDistributions.createTimeDistributions(rbMap);
+        }
     }
 
     /**
@@ -106,7 +117,20 @@ public class CrossBorderTourManager
                 int purpose = choosePurpose(tour.getRandom(), nonSentriPurposeDistribution);
                 tour.setPurpose((byte) purpose);
             }
-
+            
+            //set time factors
+            double workTimeFactor = 1.0;
+            double nonWorkTimeFactor = 1.0;
+            
+            if(distributedTimeCoefficients){
+            	double rnum = tour.getRandom();
+            	workTimeFactor = timeDistributions.sampleFromWorkDistribution(rnum);
+            	nonWorkTimeFactor = timeDistributions.sampleFromNonWorkDistribution(rnum);
+            
+            }
+            tour.setWorkTimeFactor((float)workTimeFactor);
+            tour.setNonWorkTimeFactor((float)nonWorkTimeFactor);
+            
         }
     }
 
@@ -199,7 +223,7 @@ public class CrossBorderTourManager
             throw new RuntimeException();
         }
         String tourHeaderString = new String(
-                "id,purpose,sentri,poe,departTime,arriveTime,originMGRA,destinationMGRA,originTAZ,destinationTAZ,tourMode\n");
+                "id,purpose,sentri,poe,departTime,arriveTime,originMGRA,destinationMGRA,originTAZ,destinationTAZ,tourMode,workTimeFactor,nonWorkTimeFactor,valueOfTime\n");
         tourWriter.print(tourHeaderString);
 
         PrintWriter tripWriter = null;
@@ -212,7 +236,7 @@ public class CrossBorderTourManager
             throw new RuntimeException();
         }
         String tripHeaderString = new String(
-                "tourID,tripID,originPurp,destPurp,originMGRA,destinationMGRA,originTAZ,destinationTAZ,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,boardingTap,alightingTap\n");
+                "tourID,tripID,originPurp,destPurp,originMGRA,destinationMGRA,originTAZ,destinationTAZ,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,boardingTap,alightingTap,workTimeFactor,nonWorkTimeFactor,valueOfTime\n");
         tripWriter.print(tripHeaderString);
 
         // Iterate through the array, printing records to the file
@@ -252,7 +276,10 @@ public class CrossBorderTourManager
                 + tour.isSentriAvailable() + "," + tour.getPoe() + "," + tour.getDepartTime() + ","
                 + tour.getArriveTime() + "," + tour.getOriginMGRA() + ","
                 + tour.getDestinationMGRA() + "," + tour.getOriginTAZ() + ","
-                + tour.getDestinationTAZ() + "," + tour.getTourMode() + "\n");
+                + tour.getDestinationTAZ() + "," + tour.getTourMode() + ","
+                + String.format("%9.2f",tour.getWorkTimeFactor()) + "," 
+                + String.format("%9.2f",tour.getNonWorkTimeFactor()) + ","
+                + String.format("%9.2f", tour.getValueOfTime()) +"\n");
         writer.print(record);
 
     }
@@ -276,8 +303,10 @@ public class CrossBorderTourManager
                 + trip.getDestinationMgra() + "," + trip.getOriginTAZ() + ","
                 + trip.getDestinationTAZ() + "," + trip.isInbound() + ","
                 + trip.isOriginIsTourDestination() + "," + trip.isDestinationIsTourDestination()
-                + "," + trip.getPeriod() + "," + trip.getTripMode() + "," + taps[0] + "," + taps[1]
-                + "\n");
+                + "," + trip.getPeriod() + "," + trip.getTripMode() + "," + taps[0] + "," + taps[1] + "," 
+                        + String.format("%9.2f",tour.getWorkTimeFactor()) + "," 
+                        + String.format("%9.2f",tour.getNonWorkTimeFactor()) + ","
+                        + String.format("%9.2f", tour.getValueOfTime()) +"\n");
         writer.print(record);
     }
 

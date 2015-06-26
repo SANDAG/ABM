@@ -21,9 +21,12 @@ import com.pb.common.util.ResourceUtil;
 public class InternalExternalTourManager
 {
 
-    private static Logger          logger = Logger.getLogger(SandagTourBasedModel.class);
+    private static Logger          logger = Logger.getLogger("internalExternalModel");
 
     private InternalExternalTour[] tours;
+    public static final String   PROPERTIES_DISTRIBUTED_TIME = "distributedTimeCoefficients";
+    protected boolean 				readTimeFactors;
+    public static final String        PERSON_TIMEFACTOR_NONWORK_FIELD_NAME                    = "timeFactorNonWork";
 
     InternalExternalModelStructure modelStructure;
 
@@ -86,6 +89,13 @@ public class InternalExternalTourManager
         traceId = new Integer(Util.getStringValueFromPropertyMap(rbMap, "internalExternal.trace"));
 
         random = new MersenneTwister(1000001);
+        //check if we want to read distributed time factors from the person file
+        String readTimeFactorsString = rbMap.get(PROPERTIES_DISTRIBUTED_TIME);
+        if (readTimeFactorsString != null)
+        {
+        	readTimeFactors = Boolean.valueOf(readTimeFactorsString);
+        	logger.info("Distributed time coefficients = "+Boolean.toString(readTimeFactors));
+        }
 
     }
 
@@ -233,7 +243,14 @@ public class InternalExternalTourManager
 
                 if (gender.equals("f")) tour.setFemale(1);
                 else tour.setFemale(0);
-
+               
+                double timeFactorNonWork = 1.0;
+                if(readTimeFactors){
+                   	timeFactorNonWork = (double) personData.getValueAt(i,
+                            personData.getColumnPosition(PERSON_TIMEFACTOR_NONWORK_FIELD_NAME));
+                }
+                tour.setNonWorkTimeFactor(timeFactorNonWork);              
+                           
                 tourList.add(tour);
 
                 ++tourCount;
@@ -279,7 +296,7 @@ public class InternalExternalTourManager
             throw new RuntimeException();
         }
         String tripHeaderString = new String(
-                "hhID,pnum,personID,tourID,originMGRA,destinationMGRA,originTAZ,destinationTAZ,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,boardingTap,alightingTap\n");
+                "hhID,pnum,personID,tourID,originMGRA,destinationMGRA,originTAZ,destinationTAZ,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,boardingTap,alightingTap,valueOfTime\n");
         tripWriter.print(tripHeaderString);
 
         for (int i = 0; i < tours.length; ++i)
@@ -310,7 +327,8 @@ public class InternalExternalTourManager
                 + trip.getOriginTaz() + "," + trip.getDestinationTaz() + "," + trip.isInbound()
                 + "," + trip.isOriginIsTourDestination() + ","
                 + trip.isDestinationIsTourDestination() + "," + trip.getPeriod() + ","
-                + trip.getTripMode() + "," + taps[0] + "," + taps[1] + "\n");
+                + trip.getTripMode() + "," + taps[0] + "," + taps[1] + ","
+                +String.format("%9.2f",trip.getValueOfTime()) + "\n");
         writer.print(record);
     }
 

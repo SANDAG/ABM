@@ -25,6 +25,8 @@ public class AirportParty
     private int             destinationMGRA;
     private byte            mode;
     private byte            arrivalMode;
+    
+    private float           valueOfTime;
 
     // best tap pairs for transit path; dimensioned by ride mode, then boarding
     // (0) and alighting (1)
@@ -341,5 +343,13 @@ public class AirportParty
     {
         this.destinationMGRA = destinationMGRA;
     }
+
+	public float getValueOfTime() {
+		return valueOfTime;
+	}
+
+	public void setValueOfTime(float valueOfTime) {
+		this.valueOfTime = valueOfTime;
+	}
 
 }

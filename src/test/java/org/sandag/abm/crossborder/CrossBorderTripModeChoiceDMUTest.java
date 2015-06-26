@@ -125,7 +125,17 @@ public class CrossBorderTripModeChoiceDMUTest
         dmu.setHourlyParkingCostTripDest(hourlyParkingCostTripDest);
         value = dmu.getValueForIndex(20, 0);
         Assert.assertEquals(hourlyParkingCostTripDest, (int) value);
-
+        
+        float workTimeFactor = 3.1f;
+        dmu.setWorkTimeFactor(workTimeFactor);
+        value = dmu.getValueForIndex(50, 0);
+        Assert.assertEquals(workTimeFactor, (float) value);
+       
+        float nonWorkTimeFactor = 2.1f;
+        dmu.setNonWorkTimeFactor(nonWorkTimeFactor);
+        value = dmu.getValueForIndex(51, 0);
+        Assert.assertEquals(nonWorkTimeFactor, (float) value);
+              
         double nmWalkTime = 17.1;
         dmu.setNonMotorizedWalkTime(nmWalkTime);
         value = dmu.getValueForIndex(90, 0);

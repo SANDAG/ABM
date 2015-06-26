@@ -31,7 +31,7 @@ import com.pb.common.util.ResourceUtil;
 public class VisitorTripTables
 {
 
-    private static Logger           logger                  = Logger.getLogger(SandagTourBasedModel.class);
+    private static Logger           logger                  = Logger.getLogger("tripTables");
     public static final int         MATRIX_DATA_SERVER_PORT = 1171;
 
     private TableDataSet            tripData;
@@ -83,8 +83,8 @@ public class VisitorTripTables
 
     private HashMap<String, String> rbMap;
 
-    // matrices are indexed by modes
-    private Matrix[][]              matrix;
+    // matrices are indexed by modes, vot bins, submodes
+    private Matrix[][][]              matrix;
 
     private ResourceBundle          rb;
     private MgraDataManager         mgraManager;
@@ -95,6 +95,12 @@ public class VisitorTripTables
     private MatrixDataServerRmi     ms;
     private float                   sampleRate;
     private static int iteration=1;
+    private static final String VOT_THRESHOLD_LOW = "valueOfTime.threshold.low";
+    private static final String VOT_THRESHOLD_MED = "valueOfTime.threshold.med";
+    private float valueOfTimeThresholdLow = 0;
+    private float valueOfTimeThresholdMed = 0;
+    //value of time bins by mode group
+    int[] votBins = {3,1,1,1};
 
     public VisitorTripTables(HashMap<String, String> rbMap)
     {
@@ -139,6 +145,9 @@ public class VisitorTripTables
                 ++othrModes;
             }
         }
+        //value of time thresholds
+        valueOfTimeThresholdLow = new Float(rbMap.get(VOT_THRESHOLD_LOW));
+        valueOfTimeThresholdMed = new Float(rbMap.get(VOT_THRESHOLD_MED));
     }
 
     /**
@@ -172,50 +181,54 @@ public class VisitorTripTables
         // All matrices will be dimensioned by TAZs except for transit, which is
         // dimensioned by TAPs
         int numberOfModes = 4;
-        matrix = new Matrix[numberOfModes][];
+        matrix = new Matrix[numberOfModes][][];
         for (int i = 0; i < numberOfModes; ++i)
         {
 
             String modeName;
 
-            if (i == 0)
-            {
-                matrix[i] = new Matrix[autoModes];
-                for (int j = 0; j < autoModes; ++j)
-                {
-                    modeName = modelStructure.getModeName(j + 1);
-                    matrix[i][j] = new Matrix(modeName + "_" + periodName, "", maxTaz, maxTaz);
-                    matrix[i][j].setExternalNumbers(tazIndex);
-                }
-            } else if (i == 1)
-            {
-                matrix[i] = new Matrix[nmotModes];
-                for (int j = 0; j < nmotModes; ++j)
-                {
-                    modeName = modelStructure.getModeName(j + 1 + autoModes);
-                    matrix[i][j] = new Matrix(modeName + "_" + periodName, "", maxTaz, maxTaz);
-                    matrix[i][j].setExternalNumbers(tazIndex);
-                }
-            } else if (i == 2)
-            {
-                matrix[i] = new Matrix[tranModes];
-                for (int j = 0; j < tranModes; ++j)
-                {
-                    modeName = modelStructure.getModeName(j + 1 + autoModes + nmotModes);
-                    matrix[i][j] = new Matrix(modeName + "_" + periodName, "", taps, taps);
-                    matrix[i][j].setExternalNumbers(tapIndex);
-                }
-            } else
-            {
-                matrix[i] = new Matrix[othrModes];
-                for (int j = 0; j < othrModes; ++j)
-                {
-                    modeName = modelStructure
-                            .getModeName(j + 1 + autoModes + nmotModes + tranModes);
-                    matrix[i][j] = new Matrix(modeName + "_" + periodName, "", maxTaz, maxTaz);
-                    matrix[i][j].setExternalNumbers(tazIndex);
-                }
-            }
+            matrix[i] = new Matrix[votBins[i]][];
+            
+        	for(int j = 0; j< votBins[i];++j){
+        		if (i == 0)
+        		{
+        			matrix[i][j] = new Matrix[autoModes];
+        			for (int k = 0; k < autoModes; ++k)
+        			{
+        				modeName = modelStructure.getModeName(k + 1);
+        				matrix[i][j][k] = new Matrix(modeName + "_" + periodName, "", maxTaz, maxTaz);
+        				matrix[i][j][k].setExternalNumbers(tazIndex);
+        			}
+        		} else if (i == 1)
+        		{
+        			matrix[i][j] = new Matrix[nmotModes];
+        			for (int k = 0; k < nmotModes; ++k)
+        			{
+        				modeName = modelStructure.getModeName(k + 1 + autoModes);
+        				matrix[i][j][k] = new Matrix(modeName + "_" + periodName, "", maxTaz, maxTaz);
+        				matrix[i][j][k].setExternalNumbers(tazIndex);
+        			}
+        		} else if (i == 2)
+        		{
+        			matrix[i][j] = new Matrix[tranModes];
+        			for (int k = 0; k < tranModes; ++k)
+        			{
+        				modeName = modelStructure.getModeName(k + 1 + autoModes + nmotModes);
+        				matrix[i][j][k] = new Matrix(modeName + "_" + periodName, "", taps, taps);
+        				matrix[i][j][k].setExternalNumbers(tapIndex);
+        			}
+        		} else
+        		{
+        			matrix[i][j] = new Matrix[othrModes];
+        			for (int k = 0; k < othrModes; ++k)
+        			{
+        				modeName = modelStructure
+                            .getModeName(k + 1 + autoModes + nmotModes + tranModes);
+        				matrix[i][j][k] = new Matrix(modeName + "_" + periodName, "", maxTaz, maxTaz);
+        				matrix[i][j][k].setExternalNumbers(tazIndex);
+        			}
+        		}
+        	}
         }
     }
 
@@ -292,6 +305,7 @@ public class VisitorTripTables
     {
 
         logger.info("Begin processing trips for period " + timePeriod);
+        int valueOfTimeCol = tripData.getColumnPosition("valueOfTime");
 
         // iterate through the trip data and save trips in arrays
         for (int i = 1; i <= tripData.getRowCount(); ++i)
@@ -302,6 +316,9 @@ public class VisitorTripTables
             int departTime = (int) tripData.getValueAt(i, "period");
             int period = modelStructure.getModelPeriodIndex(departTime);
             if (period != timePeriod) continue;
+
+            //value of time
+            float valueOfTime = tripData.getValueAt(i,valueOfTimeCol);
 
             int originMGRA = (int) tripData.getValueAt(i, "originMGRA");
             int destinationMGRA = (int) tripData.getValueAt(i, "destinationMGRA");
@@ -336,21 +353,25 @@ public class VisitorTripTables
             // Store in matrix
             int mode = modeIndex[tripMode];
             int mat = matrixIndex[tripMode];
+            int votBin=0;
+            if(votBins[mode]>1)
+            	votBin = getValueOfTimeBin(valueOfTime);
+
             if (mode == 0)
             {
-                float value = matrix[mode][mat].getValueAt(originTAZ, destinationTAZ);
-                matrix[mode][mat].setValueAt(originTAZ, destinationTAZ, (value + vehicleTrips));
+                float value = matrix[mode][votBin][mat].getValueAt(originTAZ, destinationTAZ);
+                matrix[mode][votBin][mat].setValueAt(originTAZ, destinationTAZ, (value + vehicleTrips));
             } else if (mode == 1)
             {
-                float value = matrix[mode][mat].getValueAt(originTAZ, destinationTAZ);
-                matrix[mode][mat].setValueAt(originTAZ, destinationTAZ, (value + personTrips));
+                float value = matrix[mode][votBin][mat].getValueAt(originTAZ, destinationTAZ);
+                matrix[mode][votBin][mat].setValueAt(originTAZ, destinationTAZ, (value + personTrips));
             } else if (mode == 2)
             {
 
                 if (boardTap == 0 || alightTap == 0) continue;
 
-                float value = matrix[mode][mat].getValueAt(boardTap, alightTap);
-                matrix[mode][mat].setValueAt(boardTap, alightTap, (value + personTrips));
+                float value = matrix[mode][votBin][mat].getValueAt(boardTap, alightTap);
+                matrix[mode][votBin][mat].setValueAt(boardTap, alightTap, (value + personTrips));
 
                 // Store PNR transit trips in SOV free mode skim (mode 0 mat 0)
                 if (modelStructure.getTourModeIsDriveTransit(tripMode))
@@ -360,25 +381,40 @@ public class VisitorTripTables
                     if (inbound)
                     { // from origin to lot (boarding tap)
                         int PNRTAZ = tapManager.getTazForTap(boardTap);
-                        value = matrix[0][0].getValueAt(originTAZ, PNRTAZ);
-                        matrix[0][0].setValueAt(originTAZ, PNRTAZ, (value + vehicleTrips));
+                        value = matrix[0][votBin][0].getValueAt(originTAZ, PNRTAZ);
+                        matrix[0][votBin][0].setValueAt(originTAZ, PNRTAZ, (value + vehicleTrips));
 
                     } else
                     { // from lot (alighting tap) to destination
                         int PNRTAZ = tapManager.getTazForTap(alightTap);
-                        value = matrix[0][0].getValueAt(PNRTAZ, destinationTAZ);
-                        matrix[0][0].setValueAt(PNRTAZ, destinationTAZ, (value + vehicleTrips));
+                        value = matrix[0][votBin][0].getValueAt(PNRTAZ, destinationTAZ);
+                        matrix[0][votBin][0].setValueAt(PNRTAZ, destinationTAZ, (value + vehicleTrips));
                     }
 
                 }
             } else
             {
-                float value = matrix[mode][mat].getValueAt(originTAZ, destinationTAZ);
-                matrix[mode][mat].setValueAt(originTAZ, destinationTAZ, (value + personTrips));
+                float value = matrix[mode][votBin][mat].getValueAt(originTAZ, destinationTAZ);
+                matrix[mode][votBin][mat].setValueAt(originTAZ, destinationTAZ, (value + personTrips));
             }
 
             //logger.info("End creating trip tables for period " + timePeriod);
         }
+    }
+
+    /**
+     * Return the value of time bin 0 through 2 based on the thresholds provided in the property map
+     * @param valueOfTime
+     * @return value of time bin 0 through 2
+     */
+    public int getValueOfTimeBin(float valueOfTime){
+    	
+    	if(valueOfTime<valueOfTimeThresholdLow)
+    		return 0;
+    	else if (valueOfTime<valueOfTimeThresholdMed)
+    		return 1;
+    	else
+    		return 2;
     }
 
     /**
@@ -394,20 +430,44 @@ public class VisitorTripTables
 
         String directory = Util.getStringValueFromPropertyMap(rbMap, "scenario.path");
         String per = modelStructure.getModelPeriodLabel(period);
-        String end = "_" + per + ".mtx";
+        String[][] end = new String[4][];
         String[] fileName = new String[4];
 
         fileName[0] = directory
-                + Util.getStringValueFromPropertyMap(rbMap, "visitor.results.autoTripMatrix") + end;
+                + Util.getStringValueFromPropertyMap(rbMap, "visitor.results.autoTripMatrix");
         fileName[1] = directory
-                + Util.getStringValueFromPropertyMap(rbMap, "visitor.results.nMotTripMatrix") + end;
+                + Util.getStringValueFromPropertyMap(rbMap, "visitor.results.nMotTripMatrix");
         fileName[2] = directory
-                + Util.getStringValueFromPropertyMap(rbMap, "visitor.results.tranTripMatrix") + end;
+                + Util.getStringValueFromPropertyMap(rbMap, "visitor.results.tranTripMatrix");
         fileName[3] = directory
-                + Util.getStringValueFromPropertyMap(rbMap, "visitor.results.othrTripMatrix") + end;
+                + Util.getStringValueFromPropertyMap(rbMap, "visitor.results.othrTripMatrix");
 
-        for (int i = 0; i < 4; ++i)
-            ms.writeMatrixFile(fileName[i], matrix[i], mt);
+        //the end of the name depends on whether there are multiple vot bins or not
+        String[] votBinName = {"low","med","high"};
+        
+        for(int i = 0; i<4;++i){
+        	end[i] = new String[votBins[i]];
+        	for(int j = 0; j < votBins[i];++j){
+        		if(votBins[i]>1)
+        			end[i][j] = "_" + per + "_"+ votBinName[j]+ ".mtx";
+        		else
+        			end[i][j] = "_" + per + ".mtx";
+        	}
+        }
+        for (int i = 0; i < 4; ++i){
+           	for(int j = 0; j < votBins[i];++j){
+        		try
+        		{
+        			if (ms != null) ms.writeMatrixFile(fileName[i]+end[i][j], matrix[i][j], mt);
+        			else writeMatrixFile(fileName[i]+end[i][j], matrix[i][j]);
+        		} catch (Exception e)
+        		{
+        			logger.error("exception caught writing " + mt.toString() + " matrix file = "
+                        + fileName[i] +end[i][j] + ", for mode index = " + i, e);
+        			throw new RuntimeException();
+        		}
+        	}
+        }
 
     }
 

@@ -545,8 +545,12 @@ public class McLogsumsAppender
 
                 mcDmuObject.setATazTerminalTime(tazs.getDestinationTazTerminalTime(mgraManager
                         .getTaz(sampleMgra)));
-
-            }
+                
+                if(odt[DIRECTION]==INBOUND_DIRCETION_CODE)
+                	mcDmuObject.setInbound(true);
+                else
+                	mcDmuObject.setInbound(false);
+       }
 
             // mcModel might be null in the case where an estimation file record
             // contains multiple purposes and the logsums are not desired for
@@ -598,7 +602,7 @@ public class McLogsumsAppender
                 mcDmuObject.getDmuIndexValues().setDebug(true);
             }
 
-            if ((odt[DIRECTION] == INBOUND_DIRCETION_CODE))
+           if ((odt[DIRECTION] == INBOUND_DIRCETION_CODE))
             {
                 logsumHelper.setWtdTripMcDmuAttributes(mcDmuObject, origMgra, sampleMgra,
                         departPeriod, mcDmuObject.getDmuIndexValues().getDebug());

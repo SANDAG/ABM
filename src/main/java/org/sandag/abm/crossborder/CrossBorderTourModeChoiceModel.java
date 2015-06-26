@@ -343,7 +343,7 @@ public class CrossBorderTourModeChoiceModel
     }
 
     /**
-     * Use to choose tour mode and set result in tour object.
+     * Use to choose tour mode and set result in tour object. Also set value of time in tour object.
      * 
      * @param tour
      *            The crossborder tour
@@ -353,6 +353,9 @@ public class CrossBorderTourModeChoiceModel
 
         byte tourMode = (byte) getModeChoice(tour);
         tour.setTourMode(tourMode);
+        
+        float valueOfTime = tripModeChoiceModel.getValueOfTime(tourMode);
+        tour.setValueOfTime(valueOfTime);
     }
 
     /**
