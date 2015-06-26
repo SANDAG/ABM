@@ -1,14 +1,17 @@
 package org.sandag.abm.internalexternal;
 
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoAndNonMotorizedSkimsCalculator;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.newmodel.ChoiceModelApplication;
+import com.pb.common.newmodel.UtilityExpressionCalculator;
 
 public class InternalExternalTripModeChoiceModel
 {
@@ -124,6 +127,24 @@ public class InternalExternalTripModeChoiceModel
         int mode = tripModeChoiceModel.getChoiceResult(rand);
 
         trip.setTripMode(mode);
+        
+        //value of time; lookup vot, votS2, or votS3 from the UEC depending on chosen mode
+        UtilityExpressionCalculator uec = tripModeChoiceModel.getUEC();
+        
+        double vot = 0.0;
+        
+        if(modelStructure.getTourModeIsS2(mode)){
+            int votIndex = uec.lookupVariableIndex("votS2");
+            vot = uec.getValueForIndex(votIndex);
+        }else if (modelStructure.getTourModeIsS3(mode)){
+            int votIndex = uec.lookupVariableIndex("votS3");
+            vot = uec.getValueForIndex(votIndex);
+        }else{
+            int votIndex = uec.lookupVariableIndex("vot");
+            vot = uec.getValueForIndex(votIndex);
+        }
+        trip.setValueOfTime(vot);
+
 
     }
 
@@ -150,7 +171,9 @@ public class InternalExternalTripModeChoiceModel
         dmu.setIncome(tour.getIncome());
         dmu.setAge(tour.getAge());
         dmu.setFemale(tour.getFemale());
-
+        
+        dmu.setNonWorkTimeFactor(tour.getNonWorkTimeFactor());
+        
         // set the dmu skim attributes (which involves setting the best wtw
         // taps, since the tour taps are null
         logsumHelper.setTripMcDmuSkimAttributes(tour, trip, dmu);

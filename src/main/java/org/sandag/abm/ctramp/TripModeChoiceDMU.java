@@ -79,6 +79,8 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
     protected boolean                  autoModeRequiredForDriveTransit;
     protected boolean                  walkModeAllowedForDriveTransit;
 
+    protected boolean inbound;
+
 	protected int originMgra;
     protected int destMgra;
 
@@ -644,7 +646,38 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
         return person.getPersonTypeNumber();
     }
 
-    public double getPTazTerminalTime()
+	public double getWorkTimeFactor() {
+		return person.getTimeFactorWork();
+	}
+	
+	public double getNonWorkTimeFactor(){
+		return person.getTimeFactorNonWork();
+	}
+	
+	/**
+	 * Iterate through persons on tour and return non-work time factor
+	 * for oldest person. If the person array is null then return 1.0.
+	 * 
+	 * @return Time factor for oldest person on joint tour.
+	 */
+	public double getJointTourTimeFactor() {
+		int[] personNumArray = tour.getPersonNumArray();
+		int oldestAge = -999;
+		Person oldestPerson = null;
+		for (int num : personNumArray){
+			Person p = 	hh.getPerson(num);
+			if(p.getAge() > oldestAge){
+				oldestPerson = p;
+				oldestAge = p.getAge();
+			}
+	    }
+		if(oldestPerson != null)
+			return oldestPerson.getTimeFactorNonWork();
+		
+		return 1.0;
+	}
+
+	public double getPTazTerminalTime()
     {
         return pTazTerminalTime;
     }
@@ -670,7 +703,22 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
  		return destMgra;
  	}
 
-    public int getIndexValue(String variableName)
+    public boolean isInbound() {
+		return inbound;
+	}
+
+    public int getInbound() {
+ 		return inbound ? 1 : 0 ;
+ 	}
+
+
+	public void setInbound(boolean inbound) {
+		this.inbound = inbound;
+	}
+
+
+
+	public int getIndexValue(String variableName)
     {
         return methodIndexMap.get(variableName);
     }

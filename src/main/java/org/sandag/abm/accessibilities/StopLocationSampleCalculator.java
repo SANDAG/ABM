@@ -91,6 +91,8 @@ public final class StopLocationSampleCalculator
     private static final int    AUTO_DIST_SKIM_INDEX                  = 2;
 
     private McLogsumsCalculator logsumHelper;
+    
+    private static final float defaultVOT = 15.0f;
 
     public StopLocationSampleCalculator(HashMap<String, String> rbMap)
     {
@@ -219,13 +221,13 @@ public final class StopLocationSampleCalculator
             int departPeriod = odtSet[TRIP_PERIOD]; // depart period
             int skimPeriodIndex = modelStructure.getSkimPeriodIndex(departPeriod) + 1; // depart
                                                                                        // skim
-                                                                                       // period
+     
             double odDist = logsumHelper.getAnmSkimCalculator().getAutoSkims(origMgra, destMgra,
-                    skimPeriodIndex, false, logger)[AUTO_DIST_SKIM_INDEX];
+                    skimPeriodIndex, defaultVOT, false, logger)[AUTO_DIST_SKIM_INDEX];
             double osDist = logsumHelper.getAnmSkimCalculator().getAutoSkims(origMgra, mgra,
-                    skimPeriodIndex, false, logger)[AUTO_DIST_SKIM_INDEX];
+                    skimPeriodIndex, defaultVOT, false, logger)[AUTO_DIST_SKIM_INDEX];
             double sdDist = logsumHelper.getAnmSkimCalculator().getAutoSkims(mgra, destMgra,
-                    skimPeriodIndex, false, logger)[AUTO_DIST_SKIM_INDEX];
+                    skimPeriodIndex, defaultVOT, false, logger)[AUTO_DIST_SKIM_INDEX];
             double distance = osDist + sdDist - odDist;
             int availability = 1;
 

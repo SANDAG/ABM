@@ -273,6 +273,10 @@ public class SandagTourModeChoiceDMU
         methodIndexMap.put("getFreeParkingEligibility", 28);
         methodIndexMap.put("getParkingArea", 29);
         
+        methodIndexMap.put("getWorkTimeFactor", 30);
+        methodIndexMap.put("getNonWorkTimeFactor", 31);
+        methodIndexMap.put("getJointTourTimeFactor", 32);
+              
         methodIndexMap.put("getFemaleInParty", 50);
         methodIndexMap.put("getMaleInParty", 51);
         methodIndexMap.put("getInboundFemaleBikeLogsum", 52);

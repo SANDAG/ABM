@@ -171,8 +171,7 @@ public class MandatoryDestChoiceModel
                         .format("exception caught setting up DC ChoiceModelApplication[%d] for modelIndex=%d of %d models",
                                 i, modelIndex, modelIndexMap.size()));
                 logger.fatal("Exception caught:", e);
-                logger.fatal("calling System.exit(-1) to terminate.");
-                System.exit(-1);
+                throw new RuntimeException();
             }
 
         }

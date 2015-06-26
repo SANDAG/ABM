@@ -401,7 +401,7 @@ public class VisitorTourManager
             throw new RuntimeException();
         }
         String tourHeaderString = new String(
-                "id,segment,purpose,autoAvailable,partySize,income,departTime,arriveTime,originMGRA,destinationMGRA,tourMode,outboundStops,inboundStops\n");
+                "id,segment,purpose,autoAvailable,partySize,income,departTime,arriveTime,originMGRA,destinationMGRA,tourMode,outboundStops,inboundStops,valueOfTime\n");
         tourWriter.print(tourHeaderString);
 
         PrintWriter tripWriter = null;
@@ -414,7 +414,7 @@ public class VisitorTourManager
             throw new RuntimeException();
         }
         String tripHeaderString = new String(
-                "tourID,tripID,originPurp,destPurp,originMGRA,destinationMGRA,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,boardingTap,alightingTap\n");
+                "tourID,tripID,originPurp,destPurp,originMGRA,destinationMGRA,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,boardingTap,alightingTap,valueOfTime\n");
         tripWriter.print(tripHeaderString);
 
         // Iterate through the array, printing records to the file
@@ -454,7 +454,8 @@ public class VisitorTourManager
                 + "," + tour.getAutoAvailable() + "," + tour.getNumberOfParticipants() + ","
                 + tour.getIncome() + "," + tour.getDepartTime() + "," + tour.getArriveTime() + ","
                 + tour.getOriginMGRA() + "," + tour.getDestinationMGRA() + "," + tour.getTourMode()
-                + "," + tour.getNumberOutboundStops() + "," + tour.getNumberInboundStops() + "\n");
+                + "," + tour.getNumberOutboundStops() + "," + tour.getNumberInboundStops() 
+                + "," + String.format("%9.2f",tour.getValueOfTime())+ "\n");
         writer.print(record);
 
     }
@@ -477,7 +478,7 @@ public class VisitorTourManager
                 + trip.getDestinationMgra() + "," + trip.isInbound() + ","
                 + trip.isOriginIsTourDestination() + "," + trip.isDestinationIsTourDestination()
                 + "," + trip.getPeriod() + "," + trip.getTripMode() + "," + taps[0] + "," + taps[1]
-                + "\n");
+                + "," + String.format("%9.2f",tour.getValueOfTime())+ "\n");
         writer.print(record);
     }
 

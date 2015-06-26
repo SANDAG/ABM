@@ -42,6 +42,10 @@ public class CrossBorderTour
     private int[][]               bestWtdTapPairsIn;
     private int[][]               bestDtwTapPairsOut;
     private int[][]               bestDtwTapPairsIn;
+    
+    private float                workTimeFactor;
+    private float                nonWorkTimeFactor;
+    private float                valueOfTime;
 
     private static final String[] RIDE_MODE_LABELS = {"CR", "LRT", "BRT", "EB", "LB"};
 
@@ -378,7 +382,31 @@ public class CrossBorderTour
         return arriveTime;
     }
 
-    public void logTourObject(Logger logger, int totalChars)
+    public double getWorkTimeFactor() {
+		return workTimeFactor;
+	}
+
+	public void setWorkTimeFactor(float workTimeFactor) {
+		this.workTimeFactor = workTimeFactor;
+	}
+
+	public double getNonWorkTimeFactor() {
+		return nonWorkTimeFactor;
+	}
+
+	public void setNonWorkTimeFactor(float nonWorkTimeFactor) {
+		this.nonWorkTimeFactor = nonWorkTimeFactor;
+	}
+
+	public float getValueOfTime() {
+		return valueOfTime;
+	}
+
+	public void setValueOfTime(float valueOfTime) {
+		this.valueOfTime = valueOfTime;
+	}
+
+	public void logTourObject(Logger logger, int totalChars)
     {
 
         Household.logHelper(logger, "tourId: ", ID, totalChars);

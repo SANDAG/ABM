@@ -3367,6 +3367,8 @@ public class IntermediateStopChoiceModels
         mcDmuObject.setTripOrigIsTourDest(s.isInboundStop() && s.getStopId() == 0 ? 1 : 0);
         mcDmuObject.setTripDestIsTourDest(!s.isInboundStop()
                 && ((s.getStopId() + 1) == (t.getNumOutboundStops() - 1)) ? 1 : 0);
+        
+        mcDmuObject.setInbound(s.isInboundStop());
 
         mcDmuObject.setFirstTrip(0);
         mcDmuObject.setLastTrip(0);

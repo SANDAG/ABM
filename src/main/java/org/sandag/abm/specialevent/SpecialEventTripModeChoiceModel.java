@@ -1,6 +1,7 @@
 package org.sandag.abm.specialevent;
 
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoAndNonMotorizedSkimsCalculator;
 import org.sandag.abm.ctramp.CtrampApplication;
@@ -8,9 +9,11 @@ import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.newmodel.ChoiceModelApplication;
+import com.pb.common.newmodel.UtilityExpressionCalculator;
 
 public class SpecialEventTripModeChoiceModel
 {
@@ -131,6 +134,24 @@ public class SpecialEventTripModeChoiceModel
         int mode = tripModeChoiceModel.getChoiceResult(rand);
 
         trip.setTripMode(mode);
+        
+        //value of time; lookup vot, votS2, or votS3 from the UEC depending on chosen mode
+        UtilityExpressionCalculator uec = tripModeChoiceModel.getUEC();
+        
+        float vot = 0.0f;
+        
+        if(modelStructure.getTourModeIsS2(mode)){
+            int votIndex = uec.lookupVariableIndex("votS2");
+            vot = (float) uec.getValueForIndex(votIndex);
+        }else if (modelStructure.getTourModeIsS3(mode)){
+            int votIndex = uec.lookupVariableIndex("votS3");
+            vot = (float) uec.getValueForIndex(votIndex);
+        }else{
+            int votIndex = uec.lookupVariableIndex("vot");
+            vot = (float) uec.getValueForIndex(votIndex);
+        }
+        tour.setValueOfTime(vot);
+
 
         if (tour.getDebugChoiceModels())
         {

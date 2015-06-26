@@ -47,9 +47,10 @@ public class AutoAndNonMotorizedSkimsCalculator
     private UtilityExpressionCalculator[] autoSkimUECs;
     private IndexValues                   iv;
 
-    // The simple auto skims UEC does not use any DMU variables
+    //  A simple DMU with no variables
     private VariableTable                 dmu                    = null;
-
+    private AutoSkimsDMU				  autoSkimsDMU = null;
+    
     private MgraDataManager               mgraManager;
 
     private static final String[]         AUTO_SKIM_NAMES        = {"DA_NT_Time", "DA_NT_FFTime",
@@ -135,17 +136,18 @@ public class AutoAndNonMotorizedSkimsCalculator
         int autoSkimEvPage = Util.getIntegerValueFromPropertyMap(rbMap, "skims.auto.ev.page");
 
         File uecFile = new File(uecFileName);
+        autoSkimsDMU = new AutoSkimsDMU();
         autoSkimUECs = new UtilityExpressionCalculator[NUM_PERIODS];
         autoSkimUECs[EA] = new UtilityExpressionCalculator(uecFile, autoSkimEaPage, dataPage,
-                rbMap, dmu);
+                rbMap, autoSkimsDMU);
         autoSkimUECs[AM] = new UtilityExpressionCalculator(uecFile, autoSkimAmPage, dataPage,
-                rbMap, dmu);
+                rbMap, autoSkimsDMU);
         autoSkimUECs[MD] = new UtilityExpressionCalculator(uecFile, autoSkimMdPage, dataPage,
-                rbMap, dmu);
+                rbMap, autoSkimsDMU);
         autoSkimUECs[PM] = new UtilityExpressionCalculator(uecFile, autoSkimPmPage, dataPage,
-                rbMap, dmu);
+                rbMap, autoSkimsDMU);
         autoSkimUECs[EV] = new UtilityExpressionCalculator(uecFile, autoSkimEvPage, dataPage,
-                rbMap, dmu);
+                rbMap, autoSkimsDMU);
         iv = new IndexValues();
 
         mgraManager = MgraDataManager.getInstance();
@@ -170,11 +172,11 @@ public class AutoAndNonMotorizedSkimsCalculator
      * @param workMgra
      *            Destination MGRA
      * @param departPeriod
-     *            Departure skim period index - 1 = AM period, 2 = PM period, 3
-     *            = OffPeak period.
+     *            Departure skim period index (currently 1-5)
+     * @param vot Value-of-time ($/hr)
      * @return Array of 9 skim values for the MGRA pair and departure period
      */
-    public double[] getAutoSkims(int origMgra, int destMgra, int departPeriod, boolean debug,
+    public double[] getAutoSkims(int origMgra, int destMgra, int departPeriod, float vot, boolean debug,
             Logger logger)
     {
 
@@ -207,6 +209,8 @@ public class AutoAndNonMotorizedSkimsCalculator
 
             iv.setOriginZone(oTaz);
             iv.setDestZone(dTaz);
+            
+            autoSkimsDMU.setVOT(vot);
 
             // use the UEC to return skim values for the orign/destination TAZs
             // associated with the MGRAs

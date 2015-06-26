@@ -488,9 +488,10 @@
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.6</version>
-                  <configuration>
+ <!--                   <configuration>
                     <includeEmptyDirs>true</includeEmptyDirs>
                 </configuration>
+ -->
                 <executions>
                     <execution>
                         <id>copy-uec-resources</id>
@@ -798,7 +799,7 @@
         <dependency>
             <groupId>pb</groupId>
             <artifactId>common-base</artifactId>
-            <version>2014.07.09-ABM</version>
+            <version>2015.05.23-ABM</version>
         </dependency>
         <dependency>
             <groupId>ca.umontreal.iro</groupId>

@@ -329,7 +329,7 @@ public class AirportPartyManager
             throw new RuntimeException();
         }
         String headerString = new String(
-                "id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,tripMode,arrivalMode,boardingTAP,alightingTAP\n");
+                "id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,tripMode,arrivalMode,boardingTAP,alightingTAP,valueOfTime\n");
         writer.print(headerString);
 
         // Iterate through the array, printing records to the file
@@ -343,7 +343,8 @@ public class AirportPartyManager
                     + parties[i].getIncome() + "," + parties[i].getNights() + ","
                     + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
                     + parties[i].getDestinationMGRA() + "," + parties[i].getMode() + ","
-                    + parties[i].getArrivalMode() + "," + taps[0] + "," + taps[1] + "\n");
+                    + parties[i].getArrivalMode() + "," + taps[0] + "," + taps[1] + "," 
+                    + String.format("%9.2f", parties[i].getValueOfTime()) + "\n");
             writer.print(record);
         }
         writer.close();
