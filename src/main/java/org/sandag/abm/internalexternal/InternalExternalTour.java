@@ -11,6 +11,8 @@ public class InternalExternalTour
 
     private MersenneTwister        random;
     private int                    ID;
+	private int hhID;
+    private int personID;
 
     // following variables set from household and person objects
     private int                    income;
@@ -247,6 +249,22 @@ public class InternalExternalTour
     {
         this.female = female;
     }
+    
+    public int getHhID() {
+		return hhID;
+	}
+
+	public void setHhID(int hhID) {
+		this.hhID = hhID;
+	}
+
+	public int getPersonID() {
+		return personID;
+	}
+
+	public void setPersonID(int personID) {
+		this.personID = personID;
+	}
 
     public void logTourObject(Logger logger, int totalChars)
     {

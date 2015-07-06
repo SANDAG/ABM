@@ -212,6 +212,10 @@ public class InternalExternalTourManager
                 // get the household for the person
                 long ID = (long) personData.getValueAt(i, "hh_id");
                 HouseholdClass hh = householdData.get(ID);
+                tour.setHhID((int)ID);
+                
+                int pID = (int) personData.getValueAt(i, "person_id");
+                tour.setPersonID(pID);
 
                 int age = (int) personData.getValueAt(i, "age");
                 String gender = (String) personData.getStringValueAt(i, "gender");
@@ -269,14 +273,14 @@ public class InternalExternalTourManager
             throw new RuntimeException();
         }
         String tripHeaderString = new String(
-                "originMGRA,destinationMGRA,originTAZ,destinationTAZ,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,boardingTap,alightingTap\n");
+                "hhID,personID,tourID,originMGRA,destinationMGRA,originTAZ,destinationTAZ,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,boardingTap,alightingTap\n");
         tripWriter.print(tripHeaderString);
 
         for (int i = 0; i < tours.length; ++i)
         {
             InternalExternalTrip[] trips = tours[i].getTrips();
             for (int j = 0; j < trips.length; ++j)
-                writeTrip(trips[j], tripWriter);
+                writeTrip(tours[i].getHhID(), tours[i].getPersonID(), tours[i].getID(), trips[j], tripWriter);
         }
 
         tripWriter.close();
@@ -291,12 +295,12 @@ public class InternalExternalTourManager
      * @param tripNumber
      * @param writer
      */
-    private void writeTrip(InternalExternalTrip trip, PrintWriter writer)
+    private void writeTrip(int hhID, int personID, int tourID, InternalExternalTrip trip, PrintWriter writer)
     {
 
         int[] taps = getTapPair(trip);
 
-        String record = new String(trip.getOriginMgra() + "," + trip.getDestinationMgra() + ","
+        String record = new String(hhID+","+personID+","+tourID+","+trip.getOriginMgra() + "," + trip.getDestinationMgra() + ","
                 + trip.getOriginTaz() + "," + trip.getDestinationTaz() + "," + trip.isInbound()
                 + "," + trip.isOriginIsTourDestination() + ","
                 + trip.isDestinationIsTourDestination() + "," + trip.getPeriod() + ","
