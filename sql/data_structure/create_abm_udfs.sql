@@ -901,6 +901,7 @@ CREATE TABLE
 		[transit_pnr_id] int IDENTITY(1,1) NOT NULL,
 		[transit_tap_id] int NOT NULL,
 		[lot_id] smallint NOT NULL,
+		[geography_zone_id] int NULL,
 		[time_period_id] int NOT NULL,
 		[parking_type_id] tinyint NOT NULL,
 		[capacity] smallint NOT NULL,
@@ -910,6 +911,7 @@ CREATE TABLE
 		CONSTRAINT ixuq_transitpnr_drop UNIQUE ([scenario_id],[transit_tap_id],[lot_id],[time_period_id]),
 		CONSTRAINT fk_transitpnr_scenario_drop FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
 		CONSTRAINT fk_transitpnr_period_drop FOREIGN KEY ([time_period_id]) REFERENCES [ref].[time_period]([time_period_id]),
+		CONSTRAINT fk_transitpnr_zone_drop FOREIGN KEY ([geography_zone_id]) REFERENCES [ref].[geography_zone]([geography_zone_id]),
 		CONSTRAINT fk_transitpnr_tap_drop FOREIGN KEY ([scenario_id],[transit_tap_id]) REFERENCES [abm].[transit_tap] ([scenario_id],[transit_tap_id])
 	) ON ' + @filegroupname + N'
 WITH (DATA_COMPRESSION = PAGE);'

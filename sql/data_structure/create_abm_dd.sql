@@ -622,6 +622,7 @@ EXECUTE [db_meta].[add_xp] 'abm.transit_pnr.scenario_id', 'MS_Description', 'sce
 EXECUTE [db_meta].[add_xp] 'abm.transit_pnr.transit_pnr_id', 'MS_Description', 'transit_pnr surrogate key'
 EXECUTE [db_meta].[add_xp] 'abm.transit_pnr.transit_tap_id', 'MS_Description', 'transit_tap surrogate key'
 EXECUTE [db_meta].[add_xp] 'abm.transit_pnr.lot_id', 'MS_Description', 'lot ID in tap.ptype input file'
+EXECUTE [db_meta].[add_xp] 'abm.transit_pnr.geography_zone_id', 'MS_Description', 'geography_zone surrogate key, taz where lot is located'
 EXECUTE [db_meta].[add_xp] 'abm.transit_pnr.time_period_id', 'MS_Description', 'time period surrogate key'
 EXECUTE [db_meta].[add_xp] 'abm.transit_pnr.parking_type_id', 'MS_Description', ''
 EXECUTE [db_meta].[add_xp] 'abm.transit_pnr.capacity', 'MS_Description', 'number of stalls in the parking lot'
