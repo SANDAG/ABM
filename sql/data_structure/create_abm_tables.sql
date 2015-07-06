@@ -898,6 +898,7 @@ CREATE TABLE
 		[transit_pnr_id] int IDENTITY(1,1) NOT NULL,
 		[transit_tap_id] int NOT NULL,
 		[lot_id] smallint NOT NULL,
+		[geography_zone_id] int NULL,
 		[time_period_id] int NOT NULL,
 		[parking_type_id] tinyint NOT NULL,
 		[capacity] smallint NOT NULL,
@@ -906,7 +907,8 @@ CREATE TABLE
 		CONSTRAINT pk_transitpnr PRIMARY KEY ([scenario_id],[transit_pnr_id]) WITH (STATISTICS_INCREMENTAL = ON),
 		CONSTRAINT ixuq_transitpnr UNIQUE ([scenario_id],[transit_tap_id],[lot_id],[time_period_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_transitpnr_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
-		CONSTRAINT fk_transitpnr_period FOREIGN KEY ([time_period_id]) REFERENCES [ref].[time_period]([time_period_id])
+		CONSTRAINT fk_transitpnr_period FOREIGN KEY ([time_period_id]) REFERENCES [ref].[time_period]([time_period_id]),
+		CONSTRAINT fk_transitpnr_zone FOREIGN KEY ([geography_zone_id]) REFERENCES [ref].[geography_zone]([geography_zone_id])
 	) 
 ON 
 	scenario_scheme ([scenario_id])
