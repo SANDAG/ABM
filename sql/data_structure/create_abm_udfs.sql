@@ -1173,8 +1173,7 @@ CREATE TABLE
 	[abm_staging].[trip_ie_drop] (
 		[scenario_id] smallint NOT NULL,
 		[trip_ie_id] int IDENTITY(1,1) NOT NULL,
-		[model_type_id] tinyint NOT NULL,
-		[trip_id] int NOT NULL,
+		[tour_ie_id] int NULL,
 		[orig_geography_zone_id] int NOT NULL,
 		[dest_geography_zone_id] int NOT NULL,
 		[time_period_id] int NOT NULL,
@@ -1189,14 +1188,13 @@ CREATE TABLE
 		[trip_distance] decimal(14,10) NOT NULL,
 		[trip_cost] decimal(4,2) NOT NULL,
 		CONSTRAINT pk_tripie_drop PRIMARY KEY ([scenario_id],[trip_ie_id]),
-		CONSTRAINT ixuq_tripie_drop UNIQUE ([scenario_id],[model_type_id],[trip_id]),
 		CONSTRAINT fk_tripie_scenario_drop FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
-		CONSTRAINT fk_tripie_model_drop FOREIGN KEY ([model_type_id]) REFERENCES [ref].[MODEL_TYPE]([model_type_id]),
 		CONSTRAINT fk_tripie_orig_drop FOREIGN KEY ([orig_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
 		CONSTRAINT fk_tripie_dest_drop FOREIGN KEY ([dest_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
 		CONSTRAINT fk_tripie_period_drop FOREIGN KEY ([time_period_id]) REFERENCES [ref].[time_period]([time_period_id]),
 		CONSTRAINT fk_tripie_mode_drop FOREIGN KEY ([mode_id]) REFERENCES [ref].[mode]([mode_id]),
 		CONSTRAINT fk_tripie_purpose_drop FOREIGN KEY ([purpose_id]) REFERENCES [ref].[purpose]([purpose_id]),
+		CONSTRAINT fk_tripie_tour_drop FOREIGN KEY ([scenario_id],[tour_ie_id]) REFERENCES [abm].[tour_ie] ([scenario_id],[tour_ie_id]),
 		CONSTRAINT fk_tripie_boardtap_drop FOREIGN KEY ([scenario_id],[board_transit_tap_id]) REFERENCES [abm].[transit_tap] ([scenario_id],[transit_tap_id]),
 		CONSTRAINT fk_tripie_alighttap_drop FOREIGN KEY ([scenario_id],[alight_transit_tap_id]) REFERENCES [abm].[transit_tap] ([scenario_id],[transit_tap_id])
 	) ON ' + @filegroupname + N'
@@ -1580,10 +1578,10 @@ UNION ALL
 SELECT
 	[scenario_id]
 	,[trip_ie_id] AS [surrogate_trip_id]
-	,NULL AS [surrogate_tour_id]
-    ,[model_type_id]
+	,[tour_ie_id] AS [surrogate_tour_id]
+    ,NULL AS [model_type_id]
     ,NULL AS [tour_id]
-    ,[trip_id]
+    ,NULL AS [trip_id]
     ,[orig_geography_zone_id]
     ,[dest_geography_zone_id]
     ,[time_period_id]

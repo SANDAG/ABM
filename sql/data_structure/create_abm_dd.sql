@@ -750,8 +750,7 @@ EXECUTE [db_meta].[add_xp] 'abm.trip_cb.trip_cost', 'MS_Description', 'trip cost
 
 EXECUTE [db_meta].[add_xp] 'abm.trip_ie.scenario_id', 'MS_Description', 'scenario identifier'
 EXECUTE [db_meta].[add_xp] 'abm.trip_ie.trip_ie_id', 'MS_Description', 'trip_ie surrogate key'
-EXECUTE [db_meta].[add_xp] 'abm.trip_ie.model_type_id', 'MS_Description', 'model identifier'
-EXECUTE [db_meta].[add_xp] 'abm.trip_ie.trip_id', 'MS_Description', 'trip identifier'
+EXECUTE [db_meta].[add_xp] 'abm.trip_ie.tour_ie_id', 'MS_Description', 'tour_ie surrogate key'
 EXECUTE [db_meta].[add_xp] 'abm.trip_ie.orig_geography_zone_id', 'MS_Description', 'origin geography_zone surrogate key'
 EXECUTE [db_meta].[add_xp] 'abm.trip_ie.dest_geography_zone_id', 'MS_Description', 'destination geography_zone surrogate key'
 EXECUTE [db_meta].[add_xp] 'abm.trip_ie.time_period_id', 'MS_Description', 'time period surrogate key'

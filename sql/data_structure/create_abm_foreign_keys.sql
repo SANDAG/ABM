@@ -406,6 +406,16 @@ WITH
 ALTER TABLE
 	[abm].[trip_ie]
 WITH CHECK ADD CONSTRAINT
+	fk_tripie_tour
+FOREIGN KEY
+	([scenario_id],[tour_ie_id])
+REFERENCES
+	[abm].[tour_ij]
+	([scenario_id],[tour_ie_id])
+	
+ALTER TABLE
+	[abm].[trip_ie]
+WITH CHECK ADD CONSTRAINT
 	fk_tripie_boardtap
 FOREIGN KEY
 	([scenario_id],[board_transit_tap_id])
