@@ -128,6 +128,28 @@ REFERENCES
 	([scenario_id],[lu_person_id])
 
 
+-- TOUR_IE_PERSON
+ALTER TABLE
+	[abm].[tour_ie_person]
+WITH CHECK ADD CONSTRAINT
+	fk_tourieperson_tourie
+FOREIGN KEY
+	([scenario_id],[tour_ie_id])
+REFERENCES
+	[abm].[tour_ie]
+	([scenario_id],[tour_ie_id])
+	
+ALTER TABLE
+	[abm].[tour_ie_person]
+WITH CHECK ADD CONSTRAINT
+	fk_tourieperson_person
+FOREIGN KEY
+	([scenario_id],[lu_person_id])
+REFERENCES
+	[abm].[lu_person]
+	([scenario_id],[lu_person_id])
+	
+	
 -- TOUR_IJ_PERSON
 ALTER TABLE
 	[abm].[tour_ij_person]

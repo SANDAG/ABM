@@ -113,6 +113,8 @@ END
 	ALTER INDEX ALL ON [abm].[lu_person_fp] REORGANIZE PARTITION = @dest_partition
 	ALTER INDEX ALL ON [abm].[lu_person_lc] REORGANIZE PARTITION = @dest_partition
 	ALTER INDEX ALL ON [abm].[tour_cb] REORGANIZE PARTITION = @dest_partition
+	ALTER INDEX ALL ON [abm].[tour_ie] REORGANIZE PARTITION = @dest_partition
+	ALTER INDEX ALL ON [abm].[tour_ie_person] REORGANIZE PARTITION = @dest_partition
 	ALTER INDEX ALL ON [abm].[tour_ij] REORGANIZE PARTITION = @dest_partition
 	ALTER INDEX ALL ON [abm].[tour_ij_person] REORGANIZE PARTITION = @dest_partition
 	ALTER INDEX ALL ON [abm].[tour_vis] REORGANIZE PARTITION = @dest_partition
@@ -328,6 +330,20 @@ IF OBJECT_ID('abm_staging.tour_cb_' + CAST(@scenario_id AS nvarchar(5)),'U') IS 
 BEGIN
 	SET @SQL =
 		N'DROP TABLE abm_staging.tour_cb_' + CAST(@scenario_id AS nvarchar(5))
+	EXEC sp_executesql @SQL
+END
+
+IF OBJECT_ID('abm_staging.tour_ie_' + CAST(@scenario_id AS nvarchar(5)),'U') IS NOT NULL
+BEGIN
+	SET @SQL =
+		N'DROP TABLE abm_staging.tour_ie_' + CAST(@scenario_id AS nvarchar(5))
+	EXEC sp_executesql @SQL
+END
+
+IF OBJECT_ID('abm_staging.tour_ie_person_' + CAST(@scenario_id AS nvarchar(5)),'U') IS NOT NULL
+BEGIN
+	SET @SQL =
+		N'DROP TABLE abm_staging.tour_ie_person_' + CAST(@scenario_id AS nvarchar(5))
 	EXEC sp_executesql @SQL
 END
 
@@ -774,6 +790,24 @@ CREATE TABLE
 		CONSTRAINT fk_lupersonlc_segment_drop FOREIGN KEY ([loc_choice_segment_id]) REFERENCES [ref].[loc_choice_segment] ([loc_choice_segment_id]),
 		CONSTRAINT fk_lupersonlc_zone_drop FOREIGN KEY ([geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
 		CONSTRAINT fk_lupersonlc_luperson_drop FOREIGN KEY ([scenario_id],[lu_person_id]) REFERENCES [abm].[lu_person] ([scenario_id],[lu_person_id])
+	) ON ' + @filegroupname + N'
+WITH (DATA_COMPRESSION = PAGE);'
+EXECUTE sp_executesql @SQL
+
+SET @SQL =
+N'IF OBJECT_ID(''abm_staging.tour_ie_person_drop'',''U'') IS NOT NULL
+DROP TABLE [abm_staging].[tour_ie_person_drop]
+
+CREATE TABLE 
+	[abm_staging].[tour_ie_person_drop] (
+		[scenario_id] smallint NOT NULL,
+		[tour_ie_person_id] int IDENTITY(1,1) NOT NULL,
+		[tour_ie_id] int NOT NULL,
+		[lu_person_id] int NOT NULL,
+		CONSTRAINT pk_tourieperson_drop PRIMARY KEY ([scenario_id],[tour_ie_person_id]),
+		CONSTRAINT ixuq_tourieperson_drop UNIQUE ([scenario_id], [tour_ie_id], [lu_person_id]),
+		CONSTRAINT fk_tourieperson_scenario_drop FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
+		CONSTRAINT fk_tourieperson_tourij_drop FOREIGN KEY ([scenario_id],[tour_ie_id]) REFERENCES [abm].[tour_ie] ([scenario_id],[tour_ie_id])
 	) ON ' + @filegroupname + N'
 WITH (DATA_COMPRESSION = PAGE);'
 EXECUTE sp_executesql @SQL
@@ -1308,6 +1342,8 @@ ALTER TABLE [abm].[lu_person_fp] SWITCH PARTITION @drop_partition TO [abm_stagin
 DROP TABLE [abm_staging].[lu_person_fp_drop];
 ALTER TABLE [abm].[lu_person_lc] SWITCH PARTITION @drop_partition TO [abm_staging].[lu_person_lc_drop]
 DROP TABLE [abm_staging].[lu_person_lc_drop];
+ALTER TABLE [abm].[tour_ie_person] SWITCH PARTITION @drop_partition TO [abm_staging].[tour_ie_person_drop]
+DROP TABLE [abm_staging].[tour_ie_person_drop];
 ALTER TABLE [abm].[tour_ij_person] SWITCH PARTITION @drop_partition TO [abm_staging].[tour_ij_person_drop]
 DROP TABLE [abm_staging].[tour_ij_person_drop];
 ALTER TABLE [abm].[bike_flow] SWITCH PARTITION @drop_partition TO [abm_staging].[bike_flow_drop]
@@ -1350,6 +1386,8 @@ WHERE [scenario_id] = @scenario_id
 DELETE FROM [abm].[tour_cb]
 WHERE [scenario_id] = @scenario_id
 DELETE FROM [abm].[bike_link_ab]
+WHERE [scenario_id] = @scenario_id
+DELETE FROM [abm].[tour_ie]
 WHERE [scenario_id] = @scenario_id
 DELETE FROM [abm].[tour_ij]
 WHERE [scenario_id] = @scenario_id
@@ -1664,6 +1702,26 @@ SELECT
     ,NULL AS [hh_income_cat_id]
 FROM 
 	[abm].[tour_cb]
+UNION ALL
+SELECT 
+	[scenario_id]
+	,[tour_ie_id] AS [surrogate_tour_id]
+    ,[model_type_id]
+    ,NULL AS [tour_id]
+    ,NULL AS [tour_cat_id]
+    ,NULL AS [purpose_id]
+    ,[orig_geography_zone_id]
+    ,[dest_geography_zone_id]
+    ,[start_time_period_id]
+    ,[end_time_period_id]
+    ,NULL AS [mode_id]
+    ,NULL AS [crossing_mode_id]
+    ,NULL AS [sentri]
+    ,NULL AS [poe_id]
+    ,NULL AS [auto_available]
+    ,NULL AS [hh_income_cat_id]
+FROM 
+	[abm].[tour_ie]
 UNION ALL
 SELECT 
 	[scenario_id]
