@@ -1324,7 +1324,11 @@ public final class DataExporter
     private void exportInternalExternalTripData(String outputFileBase)
     {
         addTable(outputFileBase);
-        String[] formats = {NUMBER_FORMAT_NAME, // originMGRA
+        String[] formats = {
+        		NUMBER_FORMAT_NAME, // hh_id
+                NUMBER_FORMAT_NAME, // person_id
+                NUMBER_FORMAT_NAME, // tour_id
+        		NUMBER_FORMAT_NAME, // originMGRA
                 NUMBER_FORMAT_NAME, // destinationMGRA
                 NUMBER_FORMAT_NAME, // originTAZ
                 NUMBER_FORMAT_NAME, // destinationTAZ
@@ -1344,8 +1348,8 @@ public final class DataExporter
         Set<String> primaryKey = new LinkedHashSet<String>();
         exportDataGeneric(outputFileBase, "internalExternal.trip.output.file", false, formats,
                 floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
-                new TripStructureDefinition(1, 2, 8, 9, 10, 11, -1, 11, "IE", "HOME", "EXTERNAL",
-                        5, true));
+                new TripStructureDefinition(4, 5, 11, 12, 13, 14, -1, 14, "IE", "HOME", "EXTERNAL",
+                        8, true));   
     }
 
     private Set<Integer> getExternalZones()
@@ -1976,7 +1980,6 @@ public final class DataExporter
         TranscadMatrixDao mtxDao = new TranscadMatrixDao(properties);
 
         DataExporter dataExporter = new DataExporter(properties, mtxDao, appPath, feedbackIteration);
-
         if (definedTables.contains("accessibilities"))
             dataExporter.exportAccessibilities("accessibilities");
         if (definedTables.contains("mgra")) dataExporter.exportMazData("mgra");
@@ -2022,7 +2025,6 @@ public final class DataExporter
             dataExporter.exportPnrVehicleData("pnrvehicles");
         if (definedTables.contains("cbdvehicles"))
             dataExporter.exportCbdVehicleData("cbdvehicles");
-
     }
 
 }
