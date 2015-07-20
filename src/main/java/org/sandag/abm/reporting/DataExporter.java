@@ -1326,6 +1326,7 @@ public final class DataExporter
         addTable(outputFileBase);
         String[] formats = {
         		NUMBER_FORMAT_NAME, // hh_id
+        		NUMBER_FORMAT_NAME, // pnum
                 NUMBER_FORMAT_NAME, // person_id
                 NUMBER_FORMAT_NAME, // tour_id
         		NUMBER_FORMAT_NAME, // originMGRA
@@ -1348,8 +1349,8 @@ public final class DataExporter
         Set<String> primaryKey = new LinkedHashSet<String>();
         exportDataGeneric(outputFileBase, "internalExternal.trip.output.file", false, formats,
                 floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
-                new TripStructureDefinition(4, 5, 11, 12, 13, 14, -1, 14, "IE", "HOME", "EXTERNAL",
-                        8, true));   
+                new TripStructureDefinition(5, 6, 12, 13, 14, 15, -1, 15, "IE", "HOME", "EXTERNAL",
+                        9, true));   
     }
 
     private Set<Integer> getExternalZones()

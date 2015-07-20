@@ -13,8 +13,9 @@ public class InternalExternalTour
     private int                    ID;
 	private int hhID;
     private int personID;
+    private int pnum;
 
-    // following variables set from household and person objects
+	// following variables set from household and person objects
     private int                    income;
     private int                    autos;
     private int                    age;
@@ -264,6 +265,14 @@ public class InternalExternalTour
 
 	public void setPersonID(int personID) {
 		this.personID = personID;
+	}
+	
+    public int getPnum() {
+		return pnum;
+	}
+
+	public void setPnum(int pnum) {
+		this.pnum = pnum;
 	}
 
     public void logTourObject(Logger logger, int totalChars)
