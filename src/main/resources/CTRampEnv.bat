@@ -5,6 +5,9 @@ set JAVA_32_PORT=${java.32.port}
 set MATRIX_MANAGER_PORT=${matrix.server.port}
 set HH_MANAGER_PORT=${household.server.port}
 
+rem set single node index
+set SNODE=${snode}
+
 rem set machine names
 set MAIN=${master.node.name}
 set NODE1=${node.1.name}

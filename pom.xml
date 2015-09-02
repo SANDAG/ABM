@@ -46,27 +46,24 @@
         <MAPANDRUN>mapAndRun.bat</MAPANDRUN>
         <JAVA_64_PATH>C:\Progra~1\Java\jre7</JAVA_64_PATH>
         <JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
-        <workpath>T:\projects\sr13\sdf_scenevl_r3</workpath>
+        <workpath>T:\projects\sr13\sdf_final</workpath>
         <database_server>sql2014a8</database_server>
         <database_name>abm_13_2_3</database_name>
         <jppf_version>5.0.1</jppf_version>
+        <snode>true</snode>
     </properties>
     <profiles>
         <profile>
             <id>local</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
-                <AT>False</AT>
+                <AT>True</AT>
                 <jppf.server.host>127.0.0.1</jppf.server.host>
-                <map.folder>e$</map.folder>
                 <jppf.management.host>127.0.0.1</jppf.management.host>
                 <matrix.server.host>127.0.0.1</matrix.server.host>
                 <household.server.host>127.0.0.1</household.server.host>
                 <master.node.ip>127.0.0.1</master.node.ip>
-                <node.1.ip>127.0.0.1</node.1.ip>
-                <node.2.ip>127.0.0.1</node.2.ip>
+                <local.execution.threads>38</local.execution.threads>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
             </properties>
         </profile>
         <profile>
@@ -82,12 +79,12 @@
                 <node.1.ip>172.16.34.50</node.1.ip>
                 <node.2.ip>172.16.34.52</node.2.ip>
                 <master.node.name>CHARGER</master.node.name>
+                <master.execution.threads>12</master.execution.threads>
                 <node.1.name>THUNDERBIRD</node.1.name>
+                <node.1.execution.threads>14</node.1.execution.threads>
                 <node.2.name>BARRACUDA</node.2.name>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
-                <!-- 
-                <workpath>d:\\projects\\sandag\\series13</workpath>   
-                -->             
+                <node.2.execution.threads>14</node.2.execution.threads>                
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>           
             </properties>
         </profile>
         <profile>
@@ -103,12 +100,12 @@
                 <node.1.ip>172.16.34.50</node.1.ip>
                 <node.2.ip>172.16.34.52</node.2.ip>
                 <master.node.name>CHARGER</master.node.name>
+                <master.execution.threads>12</master.execution.threads>
                 <node.1.name>THUNDERBIRD</node.1.name>
+                <node.1.execution.threads>14</node.1.execution.threads>
                 <node.2.name>BARRACUDA</node.2.name>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH> 
-                <!--
-                <workpath>d:\\projects\\sandag\\series13</workpath>
-                -->
+                <node.2.execution.threads>14</node.2.execution.threads>                
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>   
             </properties>
         </profile>        
         <profile>
@@ -124,12 +121,12 @@
                 <node.1.ip>172.16.34.42</node.1.ip>
                 <node.2.ip>172.16.34.41</node.2.ip>
                 <master.node.name>WILDCAT</master.node.name>
+                <master.execution.threads>28</master.execution.threads>
                 <node.1.name>GALAXIE</node.1.name>
+                <node.1.execution.threads>22</node.1.execution.threads>
                 <node.2.name>COBRA</node.2.name>
+                <node.2.execution.threads>22</node.2.execution.threads>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
-                <!--
-                <workpath>d:\\projects\\sandag\\series13</workpath>
-                -->
             </properties>
         </profile>
         <profile>
@@ -143,14 +140,14 @@
                 <household.server.host>172.16.34.60</household.server.host>
                 <master.node.ip>172.16.34.60</master.node.ip>
                 <node.1.ip>172.16.34.42</node.1.ip>
-                <node.2.ip>172.16.34.41</node.2.ip>
+                <no"src/main/resources/CTRampEnv.bat"de.2.ip>172.16.34.41</node.2.ip>
                 <master.node.name>WILDCAT</master.node.name>
+                <master.execution.threads>28</master.execution.threads>
                 <node.1.name>GALAXIE</node.1.name>
+                <node.1.execution.threads>22</node.1.execution.threads>
                 <node.2.name>COBRA</node.2.name>
+                <node.2.execution.threads>22</node.2.execution.threads>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>
-                <!-- 
-                <workpath>d:\\projects\\sandag\\series13</workpath>
-                -->
             </properties>
         </profile>
         <profile>
@@ -166,12 +163,12 @@
                 <node.1.ip>172.16.34.33</node.1.ip>
                 <node.2.ip>172.16.34.45</node.2.ip>
                 <master.node.name>AZTEC</master.node.name>
+                <master.execution.threads>28</master.execution.threads>
                 <node.1.name>HAWKEYE</node.1.name>
+                <node.1.execution.threads>30</node.1.execution.threads>
                 <node.2.name>AGGIE</node.2.name>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
-                <!--  
-                <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>   
-                -->             
+                <node.2.execution.threads>22</node.2.execution.threads>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>             
             </properties>
         </profile>
         <profile>
@@ -187,12 +184,12 @@
                 <node.1.ip>172.16.34.33</node.1.ip>
                 <node.2.ip>172.16.34.45</node.2.ip>
                 <master.node.name>AZTEC</master.node.name>
+                <master.execution.threads>28</master.execution.threads>
                 <node.1.name>HAWKEYE</node.1.name>
+                <node.1.execution.threads>30</node.1.execution.threads>
                 <node.2.name>AGGIE</node.2.name>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
-                <!--  
-                <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>  
-                -->              
+                <node.2.execution.threads>22</node.2.execution.threads>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>               
             </properties>
         </profile>          
         <profile>
@@ -208,13 +205,12 @@
                 <node.1.ip>172.16.34.40</node.1.ip>
                 <node.2.ip>172.16.34.39</node.2.ip>
                 <master.node.name>GAUCHO</master.node.name>
+                <master.execution.threads>28</master.execution.threads>
                 <node.1.name>MUSTANG</node.1.name>
+                <node.1.execution.threads>22</node.1.execution.threads>
                 <node.2.name>NITTANY</node.2.name>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
-                <!--  
-                <workpath>d:\\projects\\sandag\\series13</workpath>  
-                -->    
-                                          
+                <node.2.execution.threads>22</node.2.execution.threads>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>                     
             </properties>
         </profile> 
         <profile>
@@ -230,12 +226,12 @@
                 <node.1.ip>172.16.34.40</node.1.ip>
                 <node.2.ip>172.16.34.39</node.2.ip>
                 <master.node.name>GAUCHO</master.node.name>
+                <master.execution.threads>28</master.execution.threads>
                 <node.1.name>MUSTANG</node.1.name>
+                <node.1.execution.threads>22</node.1.execution.threads>
                 <node.2.name>NITTANY</node.2.name>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
-                <!-- 
-                <workpath>d:\\projects\\sandag\\series13</workpath>    
-                -->            
+                <node.2.execution.threads>22</node.2.execution.threads>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>             
             </properties>
         </profile>         
         <profile>

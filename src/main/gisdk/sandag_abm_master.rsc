@@ -28,6 +28,7 @@ Macro "Run SANDAG ABM"
    // read properties from sandag_abm.properties in /conf folder
    properties = "\\conf\\sandag_abm.properties"  
    scenarioYear = RunMacro("read properties",properties,"scenarioYear", "S")
+   singleNode = RunMacro("read properties",properties,"RunModel.SNODE", "S")
    skipCopyWarmupTripTables = RunMacro("read properties",properties,"RunModel.skipCopyWarmupTripTables", "S")
    skipCopyBikeLogsum = RunMacro("read properties",properties,"RunModel.skipCopyBikeLogsum", "S")
    skipCopyWalkImpedance= RunMacro("read properties",properties,"RunModel.skipCopyWalkImpedance", "S")
@@ -118,9 +119,11 @@ Macro "Run SANDAG ABM"
 	      if !ok then goto quit 
 		
 	      // Start  JPPF driver 
-	      runString = path+"\\bin\\runDriver.cmd "+drive+" "+path_no_drive
-	      ok = RunMacro("TCB Run Command", 1, "Start JPPF Driver", runString)
-	      if !ok then goto quit  
+	      if singleNode = "false"
+	      		runString = path+"\\bin\\runDriver.cmd "+drive+" "+path_no_drive
+	      		ok = RunMacro("TCB Run Command", 1, "Start JPPF Driver", runString)
+	      		if !ok then goto quit 
+	      end 
 	
 	      // Start HH Manager, and worker nodes
 	      runString = path+"\\bin\\StartHHAndNodes.cmd "+drive+" "+path_no_drive
