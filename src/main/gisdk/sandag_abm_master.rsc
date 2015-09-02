@@ -119,7 +119,7 @@ Macro "Run SANDAG ABM"
 	      if !ok then goto quit 
 		
 	      // Start  JPPF driver 
-	      if singleNode = "false"
+	      if singleNode = "false" then do
 	      		runString = path+"\\bin\\runDriver.cmd "+drive+" "+path_no_drive
 	      		ok = RunMacro("TCB Run Command", 1, "Start JPPF Driver", runString)
 	      		if !ok then goto quit 
