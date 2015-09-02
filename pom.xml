@@ -140,7 +140,7 @@
                 <household.server.host>172.16.34.60</household.server.host>
                 <master.node.ip>172.16.34.60</master.node.ip>
                 <node.1.ip>172.16.34.42</node.1.ip>
-                <no"src/main/resources/CTRampEnv.bat"de.2.ip>172.16.34.41</node.2.ip>
+                <node.2.ip>172.16.34.41</node.2.ip>
                 <master.node.name>WILDCAT</master.node.name>
                 <master.execution.threads>28</master.execution.threads>
                 <node.1.name>GALAXIE</node.1.name>
