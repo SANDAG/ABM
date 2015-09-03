@@ -937,10 +937,11 @@ CREATE TABLE
 		[scenario_id] smallint NOT NULL,
 		[scenario_year] smallint NOT NULL,
 		[scenario_desc] varchar(50) NOT NULL,
-		[path] varchar(200) NOT NULL,
+		[path] nvarchar(200) NOT NULL,
 		[iteration] tinyint NOT NULL,
 		[sample_rate] decimal(6,4) NOT NULL,
-		[user_name] varchar(100) NOT NULL,
+		[abm_version] nvarchar(50) NOT NULL,
+		[user_name] nvarchar(100) NOT NULL,
 		[date_loaded] smalldatetime,
 		[complete] bit,
 		CONSTRAINT pk_scenario PRIMARY KEY ([scenario_id])

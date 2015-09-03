@@ -18,4 +18,5 @@ ${workpath}\\${year}\\gisdk\\TruckModel.rsc
 ${workpath}\\${year}\\gisdk\\create_LUZ_Skims.rsc 
 ${workpath}\\${year}\\gisdk\\sandag_abm_outputs.rsc 
 ${workpath}\\${year}\\gisdk\\exportTCData.rsc 
-${workpath}\\${year}\\gisdk\\Utilities.rsc 
+${workpath}\\${year}\\gisdk\\Utilities.rsc
+${workpath}\\${year}\\gisdk\\matrixPrecisionReduction.rsc 

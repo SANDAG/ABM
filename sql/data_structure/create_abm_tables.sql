@@ -663,6 +663,57 @@ WITH
 END
 
 
+-- TOUR_IE
+IF OBJECT_ID('abm.tour_ie','U') IS NULL
+BEGIN
+	
+CREATE TABLE 
+	[abm].[tour_ie] (
+		[scenario_id] smallint NOT NULL,
+		[tour_ie_id] int IDENTITY(1,1) NOT NULL,
+		[model_type_id] tinyint NOT NULL,
+		[orig_geography_zone_id] int NOT NULL,
+		[dest_geography_zone_id] int NOT NULL,
+		[start_time_period_id] int NOT NULL,
+		[end_time_period_id] int NOT NULL,
+		CONSTRAINT pk_tourie PRIMARY KEY ([scenario_id],[tour_ie_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT fk_tourie_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
+		CONSTRAINT fk_tourie_model FOREIGN KEY ([model_type_id]) REFERENCES [ref].[model_type]([model_type_id]),
+		CONSTRAINT fk_tourie_startperiod FOREIGN KEY ([start_time_period_id]) REFERENCES [ref].[time_period]([time_period_id]),
+		CONSTRAINT fk_tourie_endperiod FOREIGN KEY ([end_time_period_id]) REFERENCES [ref].[time_period]([time_period_id]),
+		CONSTRAINT fk_tourie_orig FOREIGN KEY ([orig_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
+		CONSTRAINT fk_tourie_dest FOREIGN KEY ([dest_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id])
+	) 
+ON 
+	scenario_scheme ([scenario_id])
+WITH 
+	(DATA_COMPRESSION = PAGE);
+
+END	
+
+
+-- TOUR_IE_PERSON
+IF OBJECT_ID('abm.tour_ie_person','U') IS NULL
+BEGIN
+
+CREATE TABLE 
+	[abm].[tour_ie_person] (
+		[scenario_id] smallint NOT NULL,
+		[tour_ie_person_id] int IDENTITY(1,1) NOT NULL,
+		[tour_ie_id] int NOT NULL,
+		[lu_person_id] int NOT NULL,
+		CONSTRAINT pk_tourieperson PRIMARY KEY ([scenario_id],[tour_ie_person_id]) WITH (STATISTICS_INCREMENTAL = ON),
+		CONSTRAINT ixuq_tourieperson UNIQUE ([scenario_id], [tour_ie_id], [lu_person_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
+		CONSTRAINT fk_tourieperson_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id])
+	) 
+ON 
+	scenario_scheme ([scenario_id])
+WITH 
+	(DATA_COMPRESSION = PAGE);
+
+END	
+
+
 -- TOUR_IJ
 IF OBJECT_ID('abm.tour_ij','U') IS NULL
 BEGIN
@@ -898,6 +949,7 @@ CREATE TABLE
 		[transit_pnr_id] int IDENTITY(1,1) NOT NULL,
 		[transit_tap_id] int NOT NULL,
 		[lot_id] smallint NOT NULL,
+		[geography_zone_id] int NULL,
 		[time_period_id] int NOT NULL,
 		[parking_type_id] tinyint NOT NULL,
 		[capacity] smallint NOT NULL,
@@ -906,7 +958,8 @@ CREATE TABLE
 		CONSTRAINT pk_transitpnr PRIMARY KEY ([scenario_id],[transit_pnr_id]) WITH (STATISTICS_INCREMENTAL = ON),
 		CONSTRAINT ixuq_transitpnr UNIQUE ([scenario_id],[transit_tap_id],[lot_id],[time_period_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_transitpnr_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
-		CONSTRAINT fk_transitpnr_period FOREIGN KEY ([time_period_id]) REFERENCES [ref].[time_period]([time_period_id])
+		CONSTRAINT fk_transitpnr_period FOREIGN KEY ([time_period_id]) REFERENCES [ref].[time_period]([time_period_id]),
+		CONSTRAINT fk_transitpnr_zone FOREIGN KEY ([geography_zone_id]) REFERENCES [ref].[geography_zone]([geography_zone_id])
 	) 
 ON 
 	scenario_scheme ([scenario_id])
@@ -1200,8 +1253,7 @@ CREATE TABLE
 	[abm].[trip_ie] (
 		[scenario_id] smallint NOT NULL,
 		[trip_ie_id] int IDENTITY(1,1) NOT NULL,
-		[model_type_id] tinyint NOT NULL,
-		[trip_id] int NOT NULL,
+		[tour_ie_id] int NULL,
 		[orig_geography_zone_id] int NOT NULL,
 		[dest_geography_zone_id] int NOT NULL,
 		[time_period_id] int NOT NULL,
@@ -1216,9 +1268,7 @@ CREATE TABLE
 		[trip_distance] decimal(14,10) NOT NULL,
 		[trip_cost] decimal(4,2) NOT NULL,
 		CONSTRAINT pk_tripie PRIMARY KEY ([scenario_id],[trip_ie_id]) WITH (STATISTICS_INCREMENTAL = ON),
-		CONSTRAINT ixuq_tripie UNIQUE ([scenario_id],[model_type_id],[trip_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_tripie_scenario FOREIGN KEY ([scenario_id]) REFERENCES [ref].[scenario] ([scenario_id]),
-		CONSTRAINT fk_tripie_model FOREIGN KEY ([model_type_id]) REFERENCES [ref].[model_type]([model_type_id]),
 		CONSTRAINT fk_tripie_orig FOREIGN KEY ([orig_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
 		CONSTRAINT fk_tripie_dest FOREIGN KEY ([dest_geography_zone_id]) REFERENCES [ref].[geography_zone] ([geography_zone_id]),
 		CONSTRAINT fk_tripie_period FOREIGN KEY ([time_period_id]) REFERENCES [ref].[time_period]([time_period_id]),
