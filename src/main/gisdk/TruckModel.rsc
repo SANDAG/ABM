@@ -14,6 +14,9 @@ Modifications:
     
     2) Modified to integrate with SANDAG ABM
        Amar Sarvepalli, sarvepalli@pbworld.com, 09/06/12
+       
+    3) Modified to remove truck skimming; added truck skims to hwyskim_vot.rsc
+       JEF joel.freedman@rsginc.com, 5/10/2015
 
 Steps: 
     1) Generates standard truck trip and special (military) truck trips
@@ -22,6 +25,8 @@ Steps:
     4) Applies truck toll diversion model with free-flow toll and non-toll skims
     
     Note: truck trip generation and free-flow skims are run only for the first iteration
+    
+    
 
 **********************************************************************************************************/
 Macro "truck model"(properties, iteration)
@@ -38,37 +43,7 @@ Macro "truck model"(properties, iteration)
        ok = RunMacro("truck-tripgen",properties)
        if !ok then goto quit
     end
-
-    // Build lhdn congested skims
-    RunMacro("HwycadLog",{"TruckModel.rsc: truckmodel","hwy skim,(lhdn)"})
-    ok = RunMacro("hwy skim",{"lhdn"})
-    if !ok then goto quit
-      
-    // Build mhdn congested skims
-    RunMacro("HwycadLog",{"TruckModel.rsc: truckmodel","hwy skim,(mhdn)"})
-    ok = RunMacro("hwy skim",{"mhdn"}) 
-    if !ok then goto quit
-      
-    // Build hhdn congested skims
-    RunMacro("HwycadLog",{"TruckModel.rsc: truckmodel","hwy skim,(hhdn)"})  
-    ok = RunMacro("hwy skim",{"hhdn"}) 
-    if !ok then goto quit
-      
-    // Build lhdt congested skims 
-    RunMacro("HwycadLog",{"TruckModel.rsc: truckmodel","hwy skim,(lhdt)"})  
-    ok = RunMacro("hwy skim",{"lhdt"}) 
-    if !ok then goto quit
-      
-    // Build mhdt congested skims
-    RunMacro("HwycadLog",{"TruckModel.rsc: truckmodel","hwy skim,(mhdt)"})  
-    ok = RunMacro("hwy skim",{"mhdt"}) 
-    if !ok then goto quit      
-      
-    // Build hhdt congested skims 
-    RunMacro("HwycadLog",{"TruckModel.rsc: truckmodel","hwy skim,(hhdt)"})     
-    ok = RunMacro("hwy skim",{"hhdt"}) 
-    if !ok then goto quit
-  
+ 
     // Distribute daily truck trips and split them by time period
     RunMacro("HwycadLog",{"TruckModel.rsc: truckmodel","trkDistribution,(properties)"})      
     ok = RunMacro("trkDistribution",properties)  

@@ -323,10 +323,10 @@ GO
 
 CREATE TABLE [db_meta].[schema_change_log] (
 	[id] [smallint] IDENTITY(1,1) NOT NULL,
-	[major_release_no] [varchar](2) NOT NULL,
-	[minor_release_no] [varchar](2) NOT NULL,
-	[pont_release_no] [varchar](4) NOT NULL,
-	[script_name] [varchar](50) NOT NULL,
+	[major_release_no] [nvarchar](2) NOT NULL,
+	[minor_release_no] [nvarchar](2) NOT NULL,
+	[pont_release_no] [nvarchar](4) NOT NULL,
+	[desc] [nvarchar](100) NOT NULL,
 	[date_applied] [datetime] NOT NULL,
 	CONSTRAINT [pk_schema_change_log] PRIMARY KEY CLUSTERED ([id])
 	) 

@@ -937,10 +937,11 @@ CREATE TABLE
 		[scenario_id] smallint NOT NULL,
 		[scenario_year] smallint NOT NULL,
 		[scenario_desc] varchar(50) NOT NULL,
-		[path] varchar(200) NOT NULL,
+		[path] nvarchar(200) NOT NULL,
 		[iteration] tinyint NOT NULL,
 		[sample_rate] decimal(6,4) NOT NULL,
-		[user_name] varchar(100) NOT NULL,
+		[abm_version] nvarchar(50) NOT NULL,
+		[user_name] nvarchar(100) NOT NULL,
 		[date_loaded] smalldatetime,
 		[complete] bit,
 		CONSTRAINT pk_scenario PRIMARY KEY ([scenario_id])
@@ -1274,7 +1275,110 @@ VALUES
 
 END
 		
-		
+
+-- Create abm_half_hour_xref_abm_5_tod table
+IF OBJECT_ID('ref.abm_half_hour_xref_abm_5_tod','U') IS NULL
+BEGIN
+
+CREATE TABLE 
+	[ref].[abm_half_hour_xref_abm_5_tod] (
+		[abm_half_hour_time_period_id] int NOT NULL,
+		[abm_5_tod_time_period_id] int NOT NULL,
+		CONSTRAINT pk_abmhalfhourxrefabm5tod PRIMARY KEY ([abm_half_hour_time_period_id])
+	) 
+ON 
+	[ref_fg]
+WITH 
+	(DATA_COMPRESSION = PAGE);
+	
+INSERT INTO 
+	[ref].[abm_half_hour_xref_abm_5_tod]
+SELECT DISTINCT
+	[child_time].[time_period_id] AS [abm_half_hour_time_period_id]
+	,[parent_time].[time_period_id] AS [abm_5_tod_time_period_id]
+FROM ( -- if a time period wraps around the day split it into two records
+		SELECT
+		[time_period_id]
+		,[time_resolution_id]
+		,[time_period_number]
+		,[time_period_start]
+		,[time_period_end]
+	FROM
+		[ref].[time_period]
+	WHERE
+		[time_period_start] <= [time_period_end]
+		AND [time_resolution_id] = 2
+	UNION ALL
+	SELECT
+		[time_period_id]
+		,[time_resolution_id]
+		,[time_period_number]
+		,[time_period_start]
+		,'23:59:59' AS [time_period_end]
+	FROM
+		[ref].[time_period]
+	WHERE
+		[time_period_start] > [time_period_end]
+		AND [time_resolution_id] = 2
+	UNION ALL
+	SELECT
+		[time_period_id]
+		,[time_resolution_id]
+		,[time_period_number]
+		,'00:00:00' AS [time_period_start]
+		,[time_period_end]
+	FROM
+		[ref].[time_period]
+	WHERE
+		[time_period_start] > [time_period_end]
+		AND [time_resolution_id] = 2
+	) AS [child_time]
+INNER JOIN ( -- if a time period wraps around the day split it into two records
+	SELECT
+		[time_period_id]
+		,[time_resolution_id]
+		,[time_period_number]
+		,[time_period_start]
+		,[time_period_end]
+	FROM
+		[ref].[time_period]
+	WHERE
+		[time_period_start] <= [time_period_end]
+		AND [time_resolution_id] = 1
+	UNION ALL
+	SELECT
+		[time_period_id]
+		,[time_resolution_id]
+		,[time_period_number]
+		,[time_period_start]
+		,'23:59:59' AS [time_period_end]
+	FROM
+		[ref].[time_period]
+	WHERE
+		[time_period_start] > [time_period_end]
+		AND [time_resolution_id] = 1
+	UNION ALL
+	SELECT
+		[time_period_id]
+		,[time_resolution_id]
+		,[time_period_number]
+		,'00:00:00' AS [time_period_start]
+		,[time_period_end]
+	FROM
+		[ref].[time_period]
+	WHERE
+		[time_period_start] > [time_period_end]
+		AND [time_resolution_id] = 1
+	) AS [parent_time]
+ON
+	[child_time].[time_resolution_id] = 2
+	AND [parent_time].[time_resolution_id] = 1
+	AND (
+			([child_time].[time_period_start] BETWEEN [parent_time].[time_period_start] AND [parent_time].[time_period_end]
+			AND [child_time].[time_period_end] BETWEEN [parent_time].[time_period_start] AND [parent_time].[time_period_end])
+		)
+
+END		
 
 
 
