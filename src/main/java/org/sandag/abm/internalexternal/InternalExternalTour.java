@@ -11,8 +11,11 @@ public class InternalExternalTour
 
     private MersenneTwister        random;
     private int                    ID;
+	private int hhID;
+    private int personID;
+    private int pnum;
 
-    // following variables set from household and person objects
+	// following variables set from household and person objects
     private int                    income;
     private int                    autos;
     private int                    age;
@@ -248,6 +251,30 @@ public class InternalExternalTour
     {
         this.female = female;
     }
+    
+    public int getHhID() {
+		return hhID;
+	}
+
+	public void setHhID(int hhID) {
+		this.hhID = hhID;
+	}
+
+	public int getPersonID() {
+		return personID;
+	}
+
+	public void setPersonID(int personID) {
+		this.personID = personID;
+	}
+	
+    public int getPnum() {
+		return pnum;
+	}
+
+	public void setPnum(int pnum) {
+		this.pnum = pnum;
+	}
 
     public double getNonWorkTimeFactor() {
 		return nonWorkTimeFactor;

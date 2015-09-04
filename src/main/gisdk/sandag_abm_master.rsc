@@ -6,6 +6,8 @@ Macro "Run SANDAG ABM"
  
    sample_rate = { 0.2, 0.5, 1.0 }
    max_iterations=sample_rate.length    //number of feedback loops
+   skimByVOT = "true"
+   assignByVOT = "true"
   
    path = "${workpath}\\${year}"
 
@@ -53,8 +55,14 @@ Macro "Run SANDAG ABM"
    skipDataExport = RunMacro("read properties",properties,"RunModel.skipDataExport", "S")
    skipDataLoadRequest = RunMacro("read properties",properties,"RunModel.skipDataLoadRequest", "S")
    skipDeleteIntermediateFiles = RunMacro("read properties",properties,"RunModel.skipDeleteIntermediateFiles", "S")
- 
- 
+   precision = RunMacro("read properties",properties,"RunModel.MatrixPrecision", "S")
+   minSpaceOnC=RunMacro("read properties",properties,"RunModel.minSpaceOnC", "S")
+
+   //check free space on C drive
+   runString = path+"\\bin\\checkFreeSpaceOnC.bat "+minSpaceOnC
+   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Checking if there is enough space on C drive: "+" "+runString})
+   ok = RunMacro("TCB Run Command", 1, "Check space on C drive", runString)
+
    // copy bike logsums from input to output folder
    if skipCopyBikeLogsum = "false" then do
 	   CopyFile(inputDir+"\\bikeMgraLogsum.csv", outputDir+"\\bikeMgraLogsum.csv")
@@ -105,35 +113,42 @@ Macro "Run SANDAG ABM"
    //Looping
    for iteration = startFromIteration to max_iterations do        
 
-      // Start matrix manager locally
-      runString = path+"\\bin\\runMtxMgr.cmd "+drive+" "+path_no_drive
-      ok = RunMacro("TCB Run Command", 1, "Start matrix manager", runString)
-      if !ok then goto quit 
+      if skipCoreABM[iteration] = "false" or skipOtherSimulateModel[iteration] = "false" then do
+	      // Start matrix manager locally
+	      runString = path+"\\bin\\runMtxMgr.cmd "+drive+" "+path_no_drive
+	      ok = RunMacro("TCB Run Command", 1, "Start matrix manager", runString)
+	      if !ok then goto quit 
+		
+	      // Start  JPPF driver 
+	      runString = path+"\\bin\\runDriver.cmd "+drive+" "+path_no_drive
+	      ok = RunMacro("TCB Run Command", 1, "Start JPPF Driver", runString)
+	      if !ok then goto quit  
 	
-      // Start  JPPF driver 
-      runString = path+"\\bin\\runDriver.cmd "+drive+" "+path_no_drive
-      ok = RunMacro("TCB Run Command", 1, "Start JPPF Driver", runString)
-      if !ok then goto quit  
-
-      // Start HH Manager, and worker nodes
-      runString = path+"\\bin\\StartHHAndNodes.cmd "+drive+" "+path_no_drive
-      ok = RunMacro("TCB Run Command", 1, "Start HH Manager, JPPF Driver, and nodes", runString)
-      if !ok then goto quit  
+	      // Start HH Manager, and worker nodes
+	      runString = path+"\\bin\\StartHHAndNodes.cmd "+drive+" "+path_no_drive
+	      ok = RunMacro("TCB Run Command", 1, "Start HH Manager, JPPF Driver, and nodes", runString)
+	      if !ok then goto quit  
+      end
 
       // Run highway assignment 
       if skipHighwayAssignment[iteration] = "false" then do
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - hwy assignment"})
-	      ok = RunMacro("TCB Run Macro", 1, "hwy assignment",{iteration}) 
+	      ok = RunMacro("TCB Run Macro", 1, "hwy assignment",{iteration, assignByVOT}) 
 	      if !ok then goto quit
       end
    
       // Skim highway network
       if skipHighwaySkimming[iteration] = "false" then do
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Hwy skim all"})
-	      ok = RunMacro("TCB Run Macro", 1, "Hwy skim all",{}) 
+	      ok = RunMacro("TCB Run Macro", 1, "Hwy skim all",{skimByVOT}) 
 	      if !ok then goto quit
-      end
-	
+ 
+      // Create drive to transit access file
+      runString = path+"\\bin\\CreateD2TAccessFile.bat "+drive+" "+path_forward_slash
+      ok = RunMacro("TCB Run Command", 1, "Creating drive to transit access file", runString)
+      if !ok then goto quit 
+     end
+
       // Skim transit network 
       if skipTransitSkimming[iteration] = "false" then do
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Build transit skims"})
@@ -200,6 +215,10 @@ Macro "Run SANDAG ABM"
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - run commercial vehicle Toll Diversion"})
 	      ok = RunMacro("TCB Run Macro", 1, "cv toll diversion model",{}) 
 	      if !ok then goto quit
+
+    	      // reduce commerical travel matrix precisions    
+    	      RunMacro("HwycadLog",{"sandag_abm_master.rsc","reduce matrix precision for commVehTODTrips.mtx"})
+    	      RunMacro("reduce matrix precision",outputDir,"commVehTODTrips.mtx", precision)
       end
 
       //Run External(U.S.)-Internal Model
@@ -207,6 +226,14 @@ Macro "Run SANDAG ABM"
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - US to SD External Trip Model"})
 	      ok = RunMacro("TCB Run Macro", 1, "US to SD External Trip Model",{}) 
 	      if !ok then goto quit
+
+    	     // reduce EI matrix precisions    
+
+    	     m={"usSdWrk_EA.mtx","usSdWrk_AM.mtx","usSdWrk_MD.mtx","usSdWrk_PM.mtx","usSdWrk_EV.mtx","usSdNon_EA.mtx","usSdNon_AM.mtx","usSdNon_MD.mtx","usSdNon_PM.mtx","usSdNon_EV.mtx"}
+    	     for i = 1 to m.length do
+    		RunMacro("HwycadLog",{"sandag_abm_master.rsc","reduce precision for:"+m[i]})
+    		RunMacro("reduce matrix precision",outputDir,m[i], precision)
+    	     end
       end
 
       //Run Truck Model
@@ -214,13 +241,24 @@ Macro "Run SANDAG ABM"
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - truck model"})
 	      ok = RunMacro("truck model",properties, iteration)
 	      if !ok then goto quit
-      end   
+ 
+    	     // reduce truck matrix precisions    
+    	     m={"dailyDistributionMatricesTruckEA.mtx","dailyDistributionMatricesTruckAM.mtx","dailyDistributionMatricesTruckMD.mtx","dailyDistributionMatricesTruckPM.mtx","dailyDistributionMatricesTruckEV.mtx"}
+    	     for i = 1 to m.length do
+    		RunMacro("HwycadLog",{"sandag_abm_master.rsc","reduce precision for:"+m[i]})
+    		RunMacro("reduce matrix precision",outputDir,m[i], precision)
+    	     end
+     end   
 
       //Construct trip tables
       if skipTripTableCreation[iteration] = "false" then do
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Create Auto Tables"})
 	      ok = RunMacro("TCB Run Macro", 1, "Create Auto Tables",{}) 
 	      if !ok then goto quit
+
+    	      // reduce EE matrix precisions    
+    	      RunMacro("HwycadLog",{"sandag_abm_master.rsc","reduce matrix precision for externalExternalTrips.mtx"})
+    	      RunMacro("reduce matrix precision",outputDir,"externalExternalTrips.mtx", precision)
       end
 
    end

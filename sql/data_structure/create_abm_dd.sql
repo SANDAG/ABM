@@ -61,6 +61,12 @@ EXECUTE [db_meta].[add_xp] 'abm.lu_person_lc', 'MS_Description', 'abm person loc
 EXECUTE [db_meta].[add_xp] 'abm.tour_cb', 'SUBSYSTEM', 'trips_tours'
 EXECUTE [db_meta].[add_xp] 'abm.tour_cb', 'MS_Description', 'cross border model tour list'
 
+EXECUTE [db_meta].[add_xp] 'abm.tour_ie', 'SUBSYSTEM', 'trips_tours'
+EXECUTE [db_meta].[add_xp] 'abm.tour_ie', 'MS_Description', 'internal-external model tour list'
+
+EXECUTE [db_meta].[add_xp] 'abm.tour_ie_person', 'SUBSYSTEM', 'trips_tours'
+EXECUTE [db_meta].[add_xp] 'abm.tour_ie_person', 'MS_Description', 'internal-external model tour persons list'
+
 EXECUTE [db_meta].[add_xp] 'abm.tour_ij', 'SUBSYSTEM', 'trips_tours'
 EXECUTE [db_meta].[add_xp] 'abm.tour_ij', 'MS_Description', 'individual and joint models tour list'
 
@@ -121,6 +127,9 @@ GO
 
 
 -- ref data tables
+EXECUTE [db_meta].[add_xp] 'ref.abm_half_hour_xref_abm_5_tod', 'SUBSYSTEM', 'reference'
+EXECUTE [db_meta].[add_xp] 'ref.abm_half_hour_xref_abm_5_tod', 'MS_Description', 'abm half hour period xref to abm 5 time of day period'
+
 EXECUTE [db_meta].[add_xp] 'ref.activity_pattern', 'SUBSYSTEM', 'reference'
 EXECUTE [db_meta].[add_xp] 'ref.activity_pattern', 'MS_Description', 'coordinated daily activity pattern'
 
@@ -538,6 +547,19 @@ EXECUTE [db_meta].[add_xp] 'abm.tour_cb.crossing_mode_id', 'MS_Description', 'bo
 EXECUTE [db_meta].[add_xp] 'abm.tour_cb.sentri', 'MS_Description', 'indicator if sentri is available'
 EXECUTE [db_meta].[add_xp] 'abm.tour_cb.poe_id', 'MS_Description', 'border crossing port of entry identifier'
 
+EXECUTE [db_meta].[add_xp] 'abm.tour_ie.scenario_id', 'MS_Description', 'scenario identifier'
+EXECUTE [db_meta].[add_xp] 'abm.tour_ie.tour_ie_id', 'MS_Description', 'tour_ie surrogate key'
+EXECUTE [db_meta].[add_xp] 'abm.tour_ie.model_type_id', 'MS_Description', 'model identifier'
+EXECUTE [db_meta].[add_xp] 'abm.tour_ie.orig_geography_zone_id', 'MS_Description', 'origin geography_zone surrogate key'
+EXECUTE [db_meta].[add_xp] 'abm.tour_ie.dest_geography_zone_id', 'MS_Description', 'destination geography_zone surrogate key'
+EXECUTE [db_meta].[add_xp] 'abm.tour_ie.start_time_period_id', 'MS_Description', 'start time_period surrogate key'
+EXECUTE [db_meta].[add_xp] 'abm.tour_ie.end_time_period_id', 'MS_Description', 'end time_period surrogate key'
+
+EXECUTE [db_meta].[add_xp] 'abm.tour_ie_person.scenario_id', 'MS_Description', 'scenario identifier'
+EXECUTE [db_meta].[add_xp] 'abm.tour_ie_person.tour_ie_person_id', 'MS_Description', 'tour_ie_person_id surrogate key'
+EXECUTE [db_meta].[add_xp] 'abm.tour_ie_person.tour_ie_id', 'MS_Description', 'tour_ie surrogate key'
+EXECUTE [db_meta].[add_xp] 'abm.tour_ie_person.lu_person_id', 'MS_Description', 'lu_person surrogate key'
+
 EXECUTE [db_meta].[add_xp] 'abm.tour_ij.scenario_id', 'MS_Description', 'scenario identifier'
 EXECUTE [db_meta].[add_xp] 'abm.tour_ij.tour_ij_id', 'MS_Description', 'tour_ij surrogate key'
 EXECUTE [db_meta].[add_xp] 'abm.tour_ij.model_type_id', 'MS_Description', 'model identifier'
@@ -622,6 +644,7 @@ EXECUTE [db_meta].[add_xp] 'abm.transit_pnr.scenario_id', 'MS_Description', 'sce
 EXECUTE [db_meta].[add_xp] 'abm.transit_pnr.transit_pnr_id', 'MS_Description', 'transit_pnr surrogate key'
 EXECUTE [db_meta].[add_xp] 'abm.transit_pnr.transit_tap_id', 'MS_Description', 'transit_tap surrogate key'
 EXECUTE [db_meta].[add_xp] 'abm.transit_pnr.lot_id', 'MS_Description', 'lot ID in tap.ptype input file'
+EXECUTE [db_meta].[add_xp] 'abm.transit_pnr.geography_zone_id', 'MS_Description', 'geography_zone surrogate key, taz where lot is located'
 EXECUTE [db_meta].[add_xp] 'abm.transit_pnr.time_period_id', 'MS_Description', 'time period surrogate key'
 EXECUTE [db_meta].[add_xp] 'abm.transit_pnr.parking_type_id', 'MS_Description', ''
 EXECUTE [db_meta].[add_xp] 'abm.transit_pnr.capacity', 'MS_Description', 'number of stalls in the parking lot'
@@ -730,8 +753,7 @@ EXECUTE [db_meta].[add_xp] 'abm.trip_cb.trip_cost', 'MS_Description', 'trip cost
 
 EXECUTE [db_meta].[add_xp] 'abm.trip_ie.scenario_id', 'MS_Description', 'scenario identifier'
 EXECUTE [db_meta].[add_xp] 'abm.trip_ie.trip_ie_id', 'MS_Description', 'trip_ie surrogate key'
-EXECUTE [db_meta].[add_xp] 'abm.trip_ie.model_type_id', 'MS_Description', 'model identifier'
-EXECUTE [db_meta].[add_xp] 'abm.trip_ie.trip_id', 'MS_Description', 'trip identifier'
+EXECUTE [db_meta].[add_xp] 'abm.trip_ie.tour_ie_id', 'MS_Description', 'tour_ie surrogate key'
 EXECUTE [db_meta].[add_xp] 'abm.trip_ie.orig_geography_zone_id', 'MS_Description', 'origin geography_zone surrogate key'
 EXECUTE [db_meta].[add_xp] 'abm.trip_ie.dest_geography_zone_id', 'MS_Description', 'destination geography_zone surrogate key'
 EXECUTE [db_meta].[add_xp] 'abm.trip_ie.time_period_id', 'MS_Description', 'time period surrogate key'

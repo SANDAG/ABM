@@ -329,7 +329,9 @@ Macro "US to SD External Trip Model"
   	  currIndex = (periodIdx - 1) * 3 + occupIdx
   	  
   	  //wrkProb is work toll probability
-  	  wrkProb := exp(ivtCoef * ( tollTimeCurrencies[ currIndex] - freeTimeCurrencies[ currIndex ] + mod(tollCostCurrencies[ currIndex ],10000) / votWork  ) - 3.39) 
+  	  wrkProb := if tollCostCurrencies[currIndex]>1000 then exp(ivtCoef * ( tollTimeCurrencies[ currIndex] - freeTimeCurrencies[ currIndex ] + mod(tollCostCurrencies[ currIndex ],10000) / votWork  ) - 3.39) else
+  	   exp(ivtCoef * ( tollTimeCurrencies[ currIndex] - freeTimeCurrencies[ currIndex ] + tollCostCurrencies[ currIndex ] / votWork  ) - 3.39) 
+  	  
   	  wrkProb := if tollCostCurrencies[ currIndex ] > 0 then wrkProb else 0
   	  wrkProb := wrkProb / ( 1 + wrkProb )     
   	  	

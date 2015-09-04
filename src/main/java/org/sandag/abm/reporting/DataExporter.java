@@ -640,27 +640,25 @@ public final class DataExporter
     {
         addTable(outputFileBase);
         Map<String, float[]> tazToTap = readSpaceDelimitedData(
-                getPath("taz.driveaccess.taps.file"), Arrays.asList("A", "B", "C"));
+                getPath("taz.driveaccess.taps.file"), Arrays.asList("TAZ", "TAP", "TIME", "DISTANCE", "MODE"));
 
         Map<String, List<Number>> actualData = new LinkedHashMap<String, List<Number>>();
-        for (String column : Arrays.asList("TAZ", "TAP", "TIME", "DISTANCE"))
+        for (String column : Arrays.asList("TAZ", "TAP", "TIME", "DISTANCE", "MODE"))
             actualData.put(column, new LinkedList<Number>());
-        float[] nullOrDistance = tazToTap.get("C");
-        float[] origTazOrDestTap = tazToTap.get("A");
-        float[] countOrTime = tazToTap.get("B");
-        for (int i = 0; i < nullOrDistance.length; i++)
+        
+        float[] taz = tazToTap.get("TAZ");
+        float[] tap = tazToTap.get("TAP");
+        float[] time = tazToTap.get("TIME");
+        float[] dist = tazToTap.get("DISTANCE");
+        float[] mode = tazToTap.get("MODE");
+        
+        for (int i = 0; i < taz.length; i++)
         {
-            int count = 0;
-            if (nullOrDistance[i] < 0) count = (int) countOrTime[i];
-            int taz = (int) origTazOrDestTap[i];
-            while (count-- > 0)
-            {
-                i++;
-                actualData.get("TAZ").add(taz);
-                actualData.get("TAP").add((int) origTazOrDestTap[i]);
-                actualData.get("TIME").add(countOrTime[i]);
-                actualData.get("DISTANCE").add(nullOrDistance[i]);
-            }
+        	actualData.get("TAZ").add((int) taz[i]);
+            actualData.get("TAP").add((int) tap[i]);
+            actualData.get("TIME").add(time[i]);
+            actualData.get("DISTANCE").add(dist[i]);
+            actualData.get("MODE").add(mode[i]);
         }
 
         TableDataSet finalData = new TableDataSet();
@@ -777,9 +775,9 @@ public final class DataExporter
 
     private Map<String, float[]> readSpaceDelimitedData(String location, List<String> columnNames)
     {
-        Map<String, List<Integer>> data = new LinkedHashMap<String, List<Integer>>();
+        Map<String, List<Float>> data = new LinkedHashMap<String, List<Float>>();
         for (String columnName : columnNames)
-            data.put(columnName, new LinkedList<Integer>());
+            data.put(columnName, new LinkedList<Float>());
         BufferedReader reader = null;
         try
         {
@@ -787,16 +785,16 @@ public final class DataExporter
             String line;
             while ((line = reader.readLine()) != null)
             {
-                String[] d = line.trim().split("\\s+");
+                String[] d = line.trim().split(",");
                 int counter = 0;
                 for (String columnName : columnNames)
                 {
                     if (counter < d.length)
                     {
-                        data.get(columnName).add(Integer.parseInt(d[counter++]));
+                        data.get(columnName).add(Float.parseFloat(d[counter++]));
                     } else
                     {
-                        data.get(columnName).add(NULL_INT_VALUE); // if missing
+                        data.get(columnName).add(NULL_FLOAT_VALUE); // if missing
                                                                   // entry/entries,
                                                                   // then put in
                                                                   // null value
@@ -824,7 +822,7 @@ public final class DataExporter
         {
             float[] f = new float[data.get(columnName).size()];
             int counter = 0;
-            for (Integer i : data.get(columnName))
+            for (Float i : data.get(columnName))
                 f[counter++] = i;
             d.put(columnName, f);
         }
@@ -1348,7 +1346,12 @@ public final class DataExporter
     private void exportInternalExternalTripData(String outputFileBase)
     {
         addTable(outputFileBase);
-        String[] formats = {NUMBER_FORMAT_NAME, // originMGRA
+        String[] formats = {
+        		NUMBER_FORMAT_NAME, // hh_id
+        		NUMBER_FORMAT_NAME, // pnum
+                NUMBER_FORMAT_NAME, // person_id
+                NUMBER_FORMAT_NAME, // tour_id
+        		NUMBER_FORMAT_NAME, // originMGRA
                 NUMBER_FORMAT_NAME, // destinationMGRA
                 NUMBER_FORMAT_NAME, // originTAZ
                 NUMBER_FORMAT_NAME, // destinationTAZ
@@ -1369,8 +1372,8 @@ public final class DataExporter
         Set<String> primaryKey = new LinkedHashSet<String>();
         exportDataGeneric(outputFileBase, "internalExternal.trip.output.file", false, formats,
                 floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
-                new TripStructureDefinition(1, 2, 8, 9, 10, 11, -1, 11, "IE", "HOME", "EXTERNAL",
-                        5, true, 12));
+                new TripStructureDefinition(5, 6, 12, 13, 14, 15, -1, 15, "IE", "HOME", "EXTERNAL",
+                        9, true,16));   
     }
 
     private Set<Integer> getExternalZones()
@@ -2003,7 +2006,6 @@ public final class DataExporter
         TranscadMatrixDao mtxDao = new TranscadMatrixDao(properties);
 
         DataExporter dataExporter = new DataExporter(properties, mtxDao, appPath, feedbackIteration);
-
         if (definedTables.contains("accessibilities"))
             dataExporter.exportAccessibilities("accessibilities");
         if (definedTables.contains("mgra")) dataExporter.exportMazData("mgra");
@@ -2049,7 +2051,6 @@ public final class DataExporter
             dataExporter.exportPnrVehicleData("pnrvehicles");
         if (definedTables.contains("cbdvehicles"))
             dataExporter.exportCbdVehicleData("cbdvehicles");
-
     }
 
 }
