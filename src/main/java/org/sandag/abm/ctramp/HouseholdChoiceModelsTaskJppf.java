@@ -2,10 +2,12 @@ package org.sandag.abm.ctramp;
 
 import java.net.UnknownHostException;
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.jppf.node.protocol.AbstractTask;
 import org.jppf.node.protocol.DataProvider;
 import org.jppf.node.protocol.JPPFTask;
+
 import com.pb.common.calculator.MatrixDataServerIf;
 
 public class HouseholdChoiceModelsTaskJppf
@@ -26,14 +28,13 @@ public class HouseholdChoiceModelsTaskJppf
     private int                               maxAlts;
 
     private boolean                           runWithTiming;
+    private boolean logResults=false;
 
     public HouseholdChoiceModelsTaskJppf(int taskIndex, int startIndex, int endIndex)
     {
-
         this.startIndex = startIndex;
         this.endIndex = endIndex;
         this.taskIndex = taskIndex;
-
         runWithTiming = true;
     }
 
@@ -61,6 +62,8 @@ public class HouseholdChoiceModelsTaskJppf
             DataProvider dataProvider = getDataProvider();
 
             propertyMap = (HashMap<String, String>) dataProvider.getParameter("propertyMap");
+            logResults = Util.getStringValueFromPropertyMap(propertyMap, "RunModel.LogResults")
+                    .equalsIgnoreCase("true");
             ms = (MatrixDataServerIf) dataProvider.getParameter("ms");
             hhDataManager = (HouseholdDataManagerIf) dataProvider.getParameter("hhDataManager");
             modelStructure = (ModelStructure) dataProvider.getParameter("modelStructure");
@@ -139,9 +142,11 @@ public class HouseholdChoiceModelsTaskJppf
 
         setup5 = (System.nanoTime() - startTime) / 1000000;
 
-        logger.info("task=" + taskIndex + ", setup=" + setup1 + ", getHhs=" + (setup2 - setup1)
-                + ", processHhs=" + (setup3 - setup2) + ", putHhs=" + (setup4 - setup3)
-                + ", return model=" + (setup5 - setup4) + ".");
+        if(logResults){
+	        logger.info("task=" + taskIndex + ", setup=" + setup1 + ", getHhs=" + (setup2 - setup1)
+	                + ", processHhs=" + (setup3 - setup2) + ", putHhs=" + (setup4 - setup3)
+	                + ", return model=" + (setup5 - setup4) + ".");
+        }
 
         if (runWithTiming)
             logModelComponentTimes(componentTimes, partialStopTimes, logger,

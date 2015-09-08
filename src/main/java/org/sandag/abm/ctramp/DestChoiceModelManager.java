@@ -5,11 +5,13 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.accessibilities.BuildAccessibilities;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+
 import com.pb.common.calculator.MatrixDataManager;
 import com.pb.common.calculator.MatrixDataServerIf;
 
@@ -94,6 +96,7 @@ public class DestChoiceModelManager
 
     private int                                          completedHouseholdsWork;
     private int                                          completedHouseholdsSchool;
+    private boolean logResults=false;
 
     private DestChoiceModelManager()
     {
@@ -148,6 +151,9 @@ public class DestChoiceModelManager
         this.soaSampleSize = soaSampleSize;
         this.dmuFactory = dmuFactory;
 
+        logResults = Util.getStringValueFromPropertyMap(propertyMap, "RunModel.LogResults")
+                .equalsIgnoreCase("true");
+        
         mgraManager = MgraDataManager.getInstance(propertyMap);
         tdm = TazDataManager.getInstance(propertyMap);
         maxTaz = tdm.getMaxTaz();
@@ -229,10 +235,12 @@ public class DestChoiceModelManager
     {
         modelQueueWorkLoc.add(dcModel);
         completedHouseholdsWork += (endIndex - startIndex + 1);
-        logger.info(String
-                .format("returned workLocationChoice[%d,%d] to workQueueLoc, task=%d, thread=%s, completedHouseholds=%d.",
-                        currentIteration, dcModel.getModelIndex(), taskIndex, Thread
-                                .currentThread().getName(), completedHouseholdsWork));
+        if(logResults){
+	        logger.info(String
+	                .format("returned workLocationChoice[%d,%d] to workQueueLoc, task=%d, thread=%s, completedHouseholds=%d.",
+	                        currentIteration, dcModel.getModelIndex(), taskIndex, Thread
+	                                .currentThread().getName(), completedHouseholdsWork));
+        }
     }
 
     public synchronized void returnDcWorkModelObject(MandatoryDestChoiceModel dcModel,
@@ -240,10 +248,12 @@ public class DestChoiceModelManager
     {
         modelQueueWork.add(dcModel);
         completedHouseholdsWork += (endIndex - startIndex + 1);
-        logger.info(String
-                .format("returned dcModelWork[%d,%d] to workQueue, task=%d, thread=%s, completedHouseholds=%d.",
-                        currentIteration, dcModel.getModelIndex(), taskIndex, Thread
-                                .currentThread().getName(), completedHouseholdsWork));
+        if(logResults){
+	        logger.info(String
+	                .format("returned dcModelWork[%d,%d] to workQueue, task=%d, thread=%s, completedHouseholds=%d.",
+	                        currentIteration, dcModel.getModelIndex(), taskIndex, Thread
+	                                .currentThread().getName(), completedHouseholdsWork));
+        }
     }
 
     public synchronized void returnSchoolLocModelObject(SchoolLocationChoiceModel dcModel,
@@ -251,10 +261,12 @@ public class DestChoiceModelManager
     {
         modelQueueSchoolLoc.add(dcModel);
         completedHouseholdsSchool += (endIndex - startIndex + 1);
-        logger.info(String
-                .format("returned schoolLocationChoice[%d,%d] to schoolQueueLoc, task=%d, thread=%s, completedHouseholds=%d.",
-                        currentIteration, dcModel.getModelIndex(), taskIndex, Thread
-                                .currentThread().getName(), completedHouseholdsSchool));
+        if(logResults){
+	        logger.info(String
+	                .format("returned schoolLocationChoice[%d,%d] to schoolQueueLoc, task=%d, thread=%s, completedHouseholds=%d.",
+	                        currentIteration, dcModel.getModelIndex(), taskIndex, Thread
+	                                .currentThread().getName(), completedHouseholdsSchool));
+        }
     }
 
     public synchronized void returnDcSchoolModelObject(MandatoryDestChoiceModel dcModel,
@@ -262,10 +274,12 @@ public class DestChoiceModelManager
     {
         modelQueueSchool.add(dcModel);
         completedHouseholdsSchool += (endIndex - startIndex + 1);
-        logger.info(String
-                .format("returned dcModelSchool[%d,%d] to schoolQueue, task=%d, thread=%s, completedHouseholds=%d.",
-                        currentIteration, dcModel.getModelIndex(), taskIndex, Thread
-                                .currentThread().getName(), completedHouseholdsSchool));
+        if(logResults){
+	        logger.info(String
+	                .format("returned dcModelSchool[%d,%d] to schoolQueue, task=%d, thread=%s, completedHouseholds=%d.",
+	                        currentIteration, dcModel.getModelIndex(), taskIndex, Thread
+	                                .currentThread().getName(), completedHouseholdsSchool));
+        }
     }
 
     public synchronized WorkLocationChoiceModel getWorkLocModelObject(int taskIndex, int iteration,
@@ -302,10 +316,12 @@ public class DestChoiceModelManager
             dcModel = modelQueueWorkLoc.remove();
             dcModel.setDcSizeObject(dcSizeObj);
 
-            logger.info(String.format(
-                    "removed workLocationChoice[%d,%d] from workQueueLoc, task=%d, thread=%s.",
-                    currentIteration, dcModel.getModelIndex(), taskIndex, Thread.currentThread()
-                            .getName()));
+            if(logResults){
+	            logger.info(String.format(
+	                    "removed workLocationChoice[%d,%d] from workQueueLoc, task=%d, thread=%s.",
+	                    currentIteration, dcModel.getModelIndex(), taskIndex, Thread.currentThread()
+	                            .getName()));
+            }
 
         } else
         {
@@ -384,10 +400,12 @@ public class DestChoiceModelManager
             dcModel = modelQueueWork.remove();
             dcModel.setDcSizeObject(dcSizeObj);
 
-            logger.info(String.format(
-                    "removed dcModelWork[%d,%d] from workQueue, task=%d, thread=%s.",
-                    currentIteration, dcModel.getModelIndex(), taskIndex, Thread.currentThread()
-                            .getName()));
+            if(logResults){
+	            logger.info(String.format(
+	                    "removed dcModelWork[%d,%d] from workQueue, task=%d, thread=%s.",
+	                    currentIteration, dcModel.getModelIndex(), taskIndex, Thread.currentThread()
+	                            .getName()));
+            }
 
         } else
         {
@@ -494,11 +512,12 @@ public class DestChoiceModelManager
 
             dcModel = modelQueueSchoolLoc.remove();
             dcModel.setDcSizeObject(dcSizeObj);
-
-            logger.info(String.format(
-                    "removed schoolLocationChoice[%d,%d] from schoolQueueLoc, task=%d, thread=%s.",
-                    currentIteration, dcModel.getModelIndex(), taskIndex, Thread.currentThread()
-                            .getName()));
+            if(logResults){
+	            logger.info(String.format(
+	                    "removed schoolLocationChoice[%d,%d] from schoolQueueLoc, task=%d, thread=%s.",
+	                    currentIteration, dcModel.getModelIndex(), taskIndex, Thread.currentThread()
+	                            .getName()));
+            }
 
         } else
         {
@@ -702,11 +721,12 @@ public class DestChoiceModelManager
 
             dcModel = modelQueueSchool.remove();
             dcModel.setDcSizeObject(dcSizeObj);
-
-            logger.info(String.format(
-                    "removed dcModelSchool[%d,%d] from schoolQueue, task=%d, thread=%s.",
-                    currentIteration, dcModel.getModelIndex(), taskIndex, Thread.currentThread()
-                            .getName()));
+            if(logResults){
+	            logger.info(String.format(
+	                    "removed dcModelSchool[%d,%d] from schoolQueue, task=%d, thread=%s.",
+	                    currentIteration, dcModel.getModelIndex(), taskIndex, Thread.currentThread()
+	                            .getName()));
+            }
 
         } else
         {

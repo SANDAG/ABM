@@ -223,6 +223,7 @@ public final class BuildAccessibilities
     private int                         maxMgra;
 
     private boolean                     accessibilitiesBuilt                      = false;
+    private boolean logResults=false;
 
     private BuildAccessibilities()
     {
@@ -247,6 +248,9 @@ public final class BuildAccessibilities
     {
 
         this.calculateLuAccessibilities = calculateLuAccessibilities;
+        
+        logResults = Util.getStringValueFromPropertyMap(rbMap, "RunModel.LogResults")
+                .equalsIgnoreCase("true");
 
         Runtime runtime = Runtime.getRuntime();
         if (numThreads < 0)
@@ -343,48 +347,6 @@ public final class BuildAccessibilities
 
     }
 
-    /**
-     * Build utility components for SOV,HOV,Walk, and Walk-Transit modes.
-     * 
-     * @param rb
-     *            Resourcebundle with appropriate keys.
-     */
-    // public void buildAccessibilityComponents(HashMap<String, String> rbMap)
-    // {
-    //
-    // boolean logObjectSize = false;
-    //
-    // if (ntUtilities == null)
-    // {
-    // ntUtilities = new NonTransitUtilities(rbMap);
-    // //ntUtilities.buildUtilities();
-    //
-    // if (logObjectSize)
-    // logger.info( "ntUtilities size:     " + ObjectUtil.sizeOf(ntUtilities) );
-    //
-    // }
-    //
-    // if (transitUtilities == null)
-    // {
-    // transitUtilities = new TransitUtilities(rbMap);
-    // transitUtilities.calculateUtilityComponents();
-    //
-    // if (logObjectSize)
-    // {
-    // try
-    // {
-    // logger.info("transitUtilities size:     "
-    // + ObjectUtil.checkObjectSize(transitUtilities));
-    // } catch (IOException e1)
-    // {
-    // // TODO Auto-generated catch block
-    // e1.printStackTrace();
-    // }
-    // }
-    //
-    // }
-    //
-    // }
 
     // This method is only called if the main ABM command line argument for
     // calculating land use accessibilities is true
@@ -844,10 +806,8 @@ public final class BuildAccessibilities
 
     public void readAccessibilityTableFromFile(String accFileName)
     {
-
         accessibilitiesTableObject = new AccessibilitiesTable(accFileName);
         logger.info("accessibilities table read from file.");
-
     }
 
     public boolean getAccessibilitiesAreBuilt()
@@ -914,7 +874,7 @@ public final class BuildAccessibilities
                 int task = (Integer) resultBundle.get(0);
                 int start = (Integer) resultBundle.get(1);
                 int end = (Integer) resultBundle.get(2);
-                logger.info(String.format("returned TASK: %d, start=%d, end=%d.", task, start, end));
+                if (logResults) logger.info(String.format("returned TASK: %d, start=%d, end=%d.", task, start, end));
                 float[][] taskAccessibilities = (float[][]) resultBundle.get(3);
                 for (int i = 0; i < taskAccessibilities.length; i++)
                 {
