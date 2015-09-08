@@ -28,6 +28,7 @@ goto :end
 :snode
 rem Start HH Manager on master node
 call %PATH_NO_DRIVE%\bin\runHhMgr.cmd %PROJECT_DRIVE% %PATH_NO_DRIVE%
+call %PATH_NO_DRIVE%\bin\runSandag01.cmd %PROJECT_DRIVE% %PATH_NO_DRIVE%
 
 :end
 
