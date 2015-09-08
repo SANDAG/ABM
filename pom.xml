@@ -61,7 +61,7 @@
                 <matrix.server.host>127.0.0.1</matrix.server.host>
                 <household.server.host>127.0.0.1</household.server.host>
                 <master.node.ip>127.0.0.1</master.node.ip>               
-                <local.execution.threads>38</local.execution.threads>
+                <local.execution.threads>36</local.execution.threads>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
             </properties>
         </profile>
