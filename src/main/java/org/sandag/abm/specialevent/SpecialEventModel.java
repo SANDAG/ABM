@@ -2,20 +2,24 @@ package org.sandag.abm.specialevent;
 
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
+
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.MissingResourceException;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.application.SandagModelStructure;
+import org.sandag.abm.application.SandagTourBasedModel;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.MatrixDataServer;
 import org.sandag.abm.ctramp.MatrixDataServerRmi;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+
 import com.pb.common.calculator.MatrixDataManager;
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
@@ -38,7 +42,7 @@ public final class SpecialEventModel
     public static final int         MATRIX_DATA_SERVER_PORT_OFFSET = 0;
 
     private MatrixDataServerRmi     ms;
-    private static Logger           logger                         = Logger.getLogger("specialEventModel");
+    private static Logger           logger                         = Logger.getLogger(SandagTourBasedModel.class);
     private HashMap<String, String> rbMap;
     private McLogsumsCalculator     logsumsCalculator;
     private AutoTazSkimsCalculator  tazDistanceCalculator;

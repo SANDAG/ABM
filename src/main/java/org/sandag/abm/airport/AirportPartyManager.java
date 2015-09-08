@@ -17,7 +17,7 @@ import com.pb.common.util.ResourceUtil;
 public class AirportPartyManager
 {
 
-    private static Logger  logger = Logger.getLogger("airportModel");
+    private static Logger  logger = Logger.getLogger("SandagTourBasedModel.class");
 
     private AirportParty[] parties;
 

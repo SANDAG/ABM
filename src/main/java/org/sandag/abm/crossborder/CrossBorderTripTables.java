@@ -2,14 +2,17 @@ package org.sandag.abm.crossborder;
 
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
+
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.application.SandagModelStructure;
+import org.sandag.abm.application.SandagTourBasedModel;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.MatrixDataServer;
 import org.sandag.abm.ctramp.MatrixDataServerRmi;
@@ -17,6 +20,7 @@ import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.matrix.Matrix;
@@ -27,7 +31,7 @@ import com.pb.common.util.ResourceUtil;
 public class CrossBorderTripTables
 {
 
-    private static Logger           logger                  = Logger.getLogger("tripTables");
+    private static Logger           logger                  = Logger.getLogger(SandagTourBasedModel.class);
     public static final int         MATRIX_DATA_SERVER_PORT = 1171;
 
     private TableDataSet            tripData;

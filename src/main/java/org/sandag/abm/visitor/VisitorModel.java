@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
+import org.sandag.abm.application.SandagTourBasedModel;
 import org.sandag.abm.visitor.McLogsumsCalculator;
 import org.sandag.abm.crossborder.CrossBorderTripModeChoiceModel;
 import org.sandag.abm.ctramp.CtrampApplication;
@@ -36,7 +37,7 @@ public class VisitorModel
     public static final String      CONCURRENT_PARALLELISM_PROPERTY_KEY = "visitor.concurrent.parallelism";
 
     private MatrixDataServerRmi     ms;
-    private static Logger           logger                         = Logger.getLogger("visitorModel");
+    private static Logger           logger                         = Logger.getLogger(SandagTourBasedModel.class);
     private static final Object     INITIALIZATION_LOCK                 = new Object();
     
     private HashMap<String, String> rbMap;

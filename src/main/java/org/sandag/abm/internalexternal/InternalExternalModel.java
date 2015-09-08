@@ -9,6 +9,7 @@ import java.util.MissingResourceException;
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
+import org.sandag.abm.application.SandagTourBasedModel;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.MatrixDataServer;
 import org.sandag.abm.ctramp.MatrixDataServerRmi;
@@ -27,7 +28,7 @@ public class InternalExternalModel
     public static final int         MATRIX_DATA_SERVER_PORT_OFFSET = 0;
 
     private MatrixDataServerRmi     ms;
-    private static Logger           logger                         = Logger.getLogger("internalExternalModel");
+    private static Logger           logger                         = Logger.getLogger(SandagTourBasedModel.class);
     private HashMap<String, String> rbMap;
     private McLogsumsCalculator     logsumsCalculator;
     private AutoTazSkimsCalculator  tazDistanceCalculator;

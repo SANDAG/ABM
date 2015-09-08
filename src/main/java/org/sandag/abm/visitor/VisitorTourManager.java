@@ -7,10 +7,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.application.SandagModelStructure;
+import org.sandag.abm.application.SandagTourBasedModel;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
+
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.math.MersenneTwister;
@@ -19,7 +22,7 @@ import com.pb.common.util.ResourceUtil;
 public class VisitorTourManager
 {
 
-    private static Logger   logger = Logger.getLogger("visitorModel");
+    private static Logger   logger = Logger.getLogger(SandagTourBasedModel.class);
 
     private VisitorTour[]   tours;
 
