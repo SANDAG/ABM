@@ -50,12 +50,12 @@
         <database_server>sql2014a8</database_server>
         <database_name>abm_13_2_3</database_name>
         <jppf_version>5.0.1</jppf_version>
-        <snode>true</snode>
     </properties>
     <profiles>
         <profile>
             <id>local</id>
             <properties>
+                <snode>true</snode>
                 <jppf.server.host>127.0.0.1</jppf.server.host>
                 <jppf.management.host>127.0.0.1</jppf.management.host>
                 <matrix.server.host>127.0.0.1</matrix.server.host>
@@ -68,6 +68,7 @@
         <profile>
             <id>aztec</id>
             <properties>
+                <snode>false</snode>
                 <jppf.server.host>172.16.34.30</jppf.server.host>
                 <map.folder>c$</map.folder>
                 <jppf.management.host>172.16.34.30</jppf.management.host>
@@ -91,6 +92,7 @@
         <profile>
             <id>gaucho</id>
             <properties>
+                <snode>false</snode>
                 <jppf.server.host>172.16.34.61</jppf.server.host>
                 <map.folder>d$</map.folder>
                 <jppf.management.host>172.16.34.61</jppf.management.host>
@@ -111,6 +113,7 @@
         <profile>
             <id>wildcat</id>
             <properties>
+                <snode>false</snode>
                 <jppf.server.host>172.16.34.60</jppf.server.host>
                 <map.folder>d$</map.folder>
                 <jppf.management.host>172.16.34.60</jppf.management.host>
