@@ -66,46 +66,6 @@
             </properties>
         </profile>
         <profile>
-            <id>charger</id>
-            <properties>
-                <jppf.server.host>172.16.34.51</jppf.server.host>
-                <map.folder>d</map.folder>
-                <jppf.management.host>172.16.34.51</jppf.management.host>
-                <matrix.server.host>172.16.34.51</matrix.server.host>
-                <household.server.host>172.16.34.51</household.server.host>
-                <master.node.ip>172.16.34.51</master.node.ip>
-                <node.1.ip>172.16.34.50</node.1.ip>
-                <node.2.ip>172.16.34.52</node.2.ip>
-                <master.node.name>CHARGER</master.node.name>
-                <master.execution.threads>12</master.execution.threads>
-                <node.1.name>THUNDERBIRD</node.1.name>
-                <node.1.execution.threads>14</node.1.execution.threads>
-                <node.2.name>BARRACUDA</node.2.name>
-                <node.2.execution.threads>14</node.2.execution.threads>                
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>   
-            </properties>
-        </profile>        
-        <profile>
-            <id>wildcat</id>
-            <properties>
-                <jppf.server.host>172.16.34.60</jppf.server.host>
-                <map.folder>d$</map.folder>
-                <jppf.management.host>172.16.34.60</jppf.management.host>
-                <matrix.server.host>172.16.34.60</matrix.server.host>
-                <household.server.host>172.16.34.60</household.server.host>
-                <master.node.ip>172.16.34.60</master.node.ip>
-                <node.1.ip>172.16.34.42</node.1.ip>
-                <node.2.ip>172.16.34.41</node.2.ip>
-                <master.node.name>WILDCAT</master.node.name>
-                <master.execution.threads>28</master.execution.threads>
-                <node.1.name>GALAXIE</node.1.name>
-                <node.1.execution.threads>22</node.1.execution.threads>
-                <node.2.name>COBRA</node.2.name>
-                <node.2.execution.threads>22</node.2.execution.threads>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>
-            </properties>
-        </profile>
-        <profile>
             <id>aztec</id>
             <properties>
                 <jppf.server.host>172.16.34.30</jppf.server.host>
@@ -116,12 +76,15 @@
                 <master.node.ip>172.16.34.30</master.node.ip>
                 <node.1.ip>172.16.34.33</node.1.ip>
                 <node.2.ip>172.16.34.45</node.2.ip>
+                <node.3.ip>172.16.34.51</node.3.ip>
                 <master.node.name>AZTEC</master.node.name>
                 <master.execution.threads>28</master.execution.threads>
                 <node.1.name>HAWKEYE</node.1.name>
                 <node.1.execution.threads>30</node.1.execution.threads>
                 <node.2.name>AGGIE</node.2.name>
                 <node.2.execution.threads>22</node.2.execution.threads>
+                <node.3.name>CHARGER</node.3.name>
+                <node.3.execution.threads>14</node.3.execution.threads>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>               
             </properties>
         </profile>          
@@ -143,6 +106,26 @@
                 <node.2.name>NITTANY</node.2.name>
                 <node.2.execution.threads>22</node.2.execution.threads>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>             
+            </properties>
+        </profile>       
+        <profile>
+            <id>wildcat</id>
+            <properties>
+                <jppf.server.host>172.16.34.60</jppf.server.host>
+                <map.folder>d$</map.folder>
+                <jppf.management.host>172.16.34.60</jppf.management.host>
+                <matrix.server.host>172.16.34.60</matrix.server.host>
+                <household.server.host>172.16.34.60</household.server.host>
+                <master.node.ip>172.16.34.60</master.node.ip>
+                <node.1.ip>172.16.34.42</node.1.ip>
+                <node.2.ip>172.16.34.41</node.2.ip>
+                <master.node.name>WILDCAT</master.node.name>
+                <master.execution.threads>28</master.execution.threads>
+                <node.1.name>GALAXIE</node.1.name>
+                <node.1.execution.threads>22</node.1.execution.threads>
+                <node.2.name>COBRA</node.2.name>
+                <node.2.execution.threads>22</node.2.execution.threads>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>
             </properties>
         </profile>         
         <profile>
