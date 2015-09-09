@@ -440,7 +440,7 @@ public class SandagTripTables
         for (int i = 1; i <= tripData.getRowCount(); ++i)
         {
 
-            if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
+            //if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
 
             int departTime = (int) tripData.getValueAt(i, "stop_period");
             int period = modelStructure.getModelPeriodIndex(departTime);
@@ -554,7 +554,7 @@ public class SandagTripTables
                 matrix[mode][mat].setValueAt(originTAZ, destinationTAZ, (value + personTrips));
             }
         }
-        logger.info("End creating trip tables for period " + timePeriod);
+        //logger.info("End creating trip tables for period " + timePeriod);
     }
 
     /**

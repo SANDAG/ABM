@@ -357,7 +357,7 @@ public class SandagSummitFile
         for (int i = 1; i <= tourData.getRowCount(); ++i)
         {
 
-            if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
+            //if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
 
             String tourPurpose = tourData.getStringValueAt(i, "tour_purpose");
             int tableNumber = calculateSummitTable(tourPurpose);
