@@ -53,15 +53,34 @@
     </properties>
     <profiles>
         <profile>
-            <id>local</id>
+            <id>scarlett</id>
             <properties>
                 <snode>true</snode>
                 <jppf.server.host>127.0.0.1</jppf.server.host>
                 <jppf.management.host>127.0.0.1</jppf.management.host>
                 <matrix.server.host>127.0.0.1</matrix.server.host>
                 <household.server.host>127.0.0.1</household.server.host>
-                <master.node.ip>127.0.0.1</master.node.ip>               
-                <local.execution.threads>36</local.execution.threads>
+                <master.node.ip>127.0.0.1</master.node.ip>  
+                <master.node.name>SCARLETT</master.node.name>             
+                <master.execution.threads>18</master.execution.threads>
+                <node.1.name>SCARLETT</node.1.name>
+                <node.1.execution.threads>18</node.1.execution.threads>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
+            </properties>
+        </profile>
+        <profile>
+            <id>highlander</id>
+            <properties>
+                <snode>true</snode>
+                <jppf.server.host>127.0.0.1</jppf.server.host>
+                <jppf.management.host>127.0.0.1</jppf.management.host>
+                <matrix.server.host>127.0.0.1</matrix.server.host>
+                <household.server.host>127.0.0.1</household.server.host>
+                <master.node.ip>127.0.0.1</master.node.ip>  
+                <master.node.name>HIGHLANDER</master.node.name>             
+                <master.execution.threads>32</master.execution.threads>
+                <node.1.name>HIGHLANDER</node.1.name>
+                <node.1.execution.threads>32</node.1.execution.threads>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
             </properties>
         </profile>

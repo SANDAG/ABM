@@ -9,12 +9,11 @@ net session /delete /Y
 
 call %PATH_NO_DRIVE%\bin\CTRampEnv.bat
 
-%PATH_NO_DRIVE%\bin\pskill \\%MAIN%  java
+If %SNODE%==true goto :snode
+
 %PATH_NO_DRIVE%\bin\pskill \\%NODE1%  java
 %PATH_NO_DRIVE%\bin\pskill \\%NODE2%  java
 %PATH_NO_DRIVE%\bin\pskill \\%NODE3%  java
-
-If %SNODE%==true goto :snode
 
 rem Start HH Manager on master node
 call %PATH_NO_DRIVE%\bin\runHhMgr.cmd %PROJECT_DRIVE% %PATH_NO_DRIVE%

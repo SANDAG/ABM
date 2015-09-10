@@ -316,7 +316,7 @@ public class CrossBorderTripTables
         for (int i = 1; i <= tripData.getRowCount(); ++i)
         {
 
-            if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
+            //if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
 
             // originMGRA destinationMGRA originIsTourDestination
             // destinationIsTourDestination period tripMode boardingTap
@@ -406,7 +406,7 @@ public class CrossBorderTripTables
                 matrix[mode][mat].setValueAt(originTAZ, destinationTAZ, (value + personTrips));
             }
 
-            logger.info("End creating trip tables for period " + timePeriod);
+            //logger.info("End creating trip tables for period " + timePeriod);
         }
     }
 

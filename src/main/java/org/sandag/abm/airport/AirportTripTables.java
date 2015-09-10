@@ -307,7 +307,7 @@ public class AirportTripTables
         for (int i = 1; i <= tripData.getRowCount(); ++i)
         {
 
-            if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
+            //if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
 
             int purpose = (int) tripData.getValueAt(i, "purpose");
 
