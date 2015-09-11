@@ -94,17 +94,10 @@ public final class TazDataManager
         // fields from it for setting TAZ correspondence.
         readMgraTableData(rbMap);
         setTazMgraCorrespondence();
-
-        // readTazDistrictCorrespondence(rbMap);
         readTazTerminalTimeCorrespondence(rbMap);
-        // readTazProductionTerminalTimeCorrespondence(rbMap);
-        // readZonePMSA(rbMap);
-        // readZoneCMSA(rbMap);
-        // readZoneAvrZoneCorrespondence(rbMap);
-        // readTAZParkingTypeCorrespondence(rbMap);
         readPnRTapsInfo(rbMap);
 
-        printTazStats();
+        //printTazStats();
     }
 
     /**
@@ -560,36 +553,7 @@ public final class TazDataManager
 
         logger.info("Number of TAZs: " + tazSet.size());
         logger.info("Max TAZ: " + maxTaz);
-
         logger.info("Number of TAZs with MGRAs: " + nTazsWithMgras);
-        // logger.info("Number of MGRAs in TAZ 13 (should be 42): " +
-        // tazMgraArray[13].length);
-
-        // logger.info("SuperDistrict for TAZ 2282 (should be 5): " +
-        // tazSuperDistrict[2282]);
-        // logger.info("Location for TAZ 4605 (should be 2): " +
-        // tazAreaType[42]);
-        // logger.info("Location for TAZ 1 (should be 3): " + tazAreaType[1]);
-        // logger.info("Parking Type for TAZ 2234 (should be 2): " +
-        // tazParkingType[2234]);
-
-        // logger.info("PMSA for taz 4179 (should be 2):  " + pmsa[4179]);
-        // logger.info("CMSA for taz 4604 (should be 4):  " + cmsa[4604]);
-        // logger.info("Destination Terminal time for TAZ 3773(should be 0): "
-        // + tazDestinationTerminalTime[3773]);
-        // logger.info("Destination Terminal time for TAZ 3876 (should be 4): "
-        // + tazDestinationTerminalTime[3876]);
-        // logger.info("Origin terminal time for TAZ 2067 (should be 2.0): "
-        // + tazOriginTerminalTime[2067]);
-        // logger.info("Origin terminal time for TAZ 3262 (should be 0.4): "
-        // + tazOriginTerminalTime[3262]);
-
-        /*
-         * System.out.println(
-         * "Drive Access taps for TAZ 70 (should be 259, 337 and 338): " ); for
-         * (int i = 0; i<tazParkNRideTaps[70][0].length; i++) {
-         * System.out.println("\t" + tazParkNRideTaps[70][0][i]); }
-         */
     }
 
     /**

@@ -120,7 +120,7 @@ Macro "Run SANDAG ABM"
 	      // Start  JPPF driver 
 	      runString = path+"\\bin\\runDriver.cmd "+drive+" "+path_no_drive
 	      ok = RunMacro("TCB Run Command", 1, "Start JPPF Driver", runString)
-	      if !ok then goto quit  
+	      if !ok then goto quit 
 	
 	      // Start HH Manager, and worker nodes
 	      runString = path+"\\bin\\StartHHAndNodes.cmd "+drive+" "+path_no_drive

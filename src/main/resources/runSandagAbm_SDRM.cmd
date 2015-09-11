@@ -41,7 +41,7 @@ ping -n 10 %MAIN% > nul
 
 cd .%PROJECT_DIRECTORY%
 
-rem ## DISTRIBUTED ##
+rem ## works for both single node and distributed settings; modified jppf-clientDistrubuted.properties to handle both single and distributed settings##
 %JAVA_64_PATH%\bin\java -showversion -server -Xms%MEMORY_CLIENT_MIN% -Xmx%MEMORY_CLIENT_MAX% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% -Djppf.config=jppf-clientDistributed.properties org.sandag.abm.application.SandagTourBasedModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% -sampleSeed 1 -luAcc true
 
 rem Build trip tables
