@@ -53,7 +53,7 @@
     </properties>
     <profiles>
         <profile>
-            <id>scarlett</id>
+            <id>local</id>
             <properties>
                 <snode>true</snode>
                 <jppf.server.host>127.0.0.1</jppf.server.host>
@@ -61,26 +61,10 @@
                 <matrix.server.host>127.0.0.1</matrix.server.host>
                 <household.server.host>127.0.0.1</household.server.host>
                 <master.node.ip>127.0.0.1</master.node.ip>  
-                <master.node.name>SCARLETT</master.node.name>             
+                <master.node.name>localhost</master.node.name>             
                 <master.execution.threads>18</master.execution.threads>
-                <node.1.name>SCARLETT</node.1.name>
+                <node.1.name>localhost</node.1.name>
                 <node.1.execution.threads>18</node.1.execution.threads>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
-            </properties>
-        </profile>
-        <profile>
-            <id>highlander</id>
-            <properties>
-                <snode>true</snode>
-                <jppf.server.host>127.0.0.1</jppf.server.host>
-                <jppf.management.host>127.0.0.1</jppf.management.host>
-                <matrix.server.host>127.0.0.1</matrix.server.host>
-                <household.server.host>127.0.0.1</household.server.host>
-                <master.node.ip>127.0.0.1</master.node.ip>  
-                <master.node.name>HIGHLANDER</master.node.name>             
-                <master.execution.threads>32</master.execution.threads>
-                <node.1.name>HIGHLANDER</node.1.name>
-                <node.1.execution.threads>32</node.1.execution.threads>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
             </properties>
         </profile>
@@ -98,13 +82,13 @@
                 <node.2.ip>172.16.34.45</node.2.ip>
                 <node.3.ip>172.16.34.51</node.3.ip>
                 <master.node.name>AZTEC</master.node.name>
-                <master.execution.threads>28</master.execution.threads>
+                <master.execution.threads>14</master.execution.threads>
                 <node.1.name>HAWKEYE</node.1.name>
-                <node.1.execution.threads>30</node.1.execution.threads>
+                <node.1.execution.threads>15</node.1.execution.threads>
                 <node.2.name>AGGIE</node.2.name>
-                <node.2.execution.threads>22</node.2.execution.threads>
+                <node.2.execution.threads>12</node.2.execution.threads>
                 <node.3.name>CHARGER</node.3.name>
-                <node.3.execution.threads>14</node.3.execution.threads>
+                <node.3.execution.threads>8</node.3.execution.threads>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>               
             </properties>
         </profile>          
@@ -121,11 +105,11 @@
                 <node.1.ip>172.16.34.40</node.1.ip>
                 <node.2.ip>172.16.34.39</node.2.ip>
                 <master.node.name>GAUCHO</master.node.name>
-                <master.execution.threads>28</master.execution.threads>
+                <master.execution.threads>14</master.execution.threads>
                 <node.1.name>MUSTANG</node.1.name>
-                <node.1.execution.threads>22</node.1.execution.threads>
+                <node.1.execution.threads>12</node.1.execution.threads>
                 <node.2.name>NITTANY</node.2.name>
-                <node.2.execution.threads>22</node.2.execution.threads>
+                <node.2.execution.threads>12</node.2.execution.threads>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>             
             </properties>
         </profile>       
@@ -142,11 +126,11 @@
                 <node.1.ip>172.16.34.42</node.1.ip>
                 <node.2.ip>172.16.34.41</node.2.ip>
                 <master.node.name>WILDCAT</master.node.name>
-                <master.execution.threads>28</master.execution.threads>
+                <master.execution.threads>14</master.execution.threads>
                 <node.1.name>GALAXIE</node.1.name>
-                <node.1.execution.threads>22</node.1.execution.threads>
+                <node.1.execution.threads>12</node.1.execution.threads>
                 <node.2.name>COBRA</node.2.name>
-                <node.2.execution.threads>22</node.2.execution.threads>
+                <node.2.execution.threads>12</node.2.execution.threads>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>
             </properties>
         </profile>         
