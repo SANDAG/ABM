@@ -51,13 +51,12 @@ public final class SandagTourBasedModel
      *            activity based travel demand model.
      */
     private SandagTourBasedModel(ResourceBundle aRb, HashMap<String, String> aPropertyMap,
-            int aGlobalIterationNumber, float aIterationSampleRate, int aSampleSeed,
-            boolean aCalculateLandUseAccessibilities)
+            int aGlobalIterationNumber, float aIterationSampleRate, boolean aCalculateLandUseAccessibilities)
     {
         rb = aRb;
         globalIterationNumber = aGlobalIterationNumber;
         iterationSampleRate = aIterationSampleRate;
-        sampleSeed = aSampleSeed;
+        sampleSeed = Integer.parseInt(rb.getString("Model.Random.Seed"));
         calculateLandUseAccessibilities = aCalculateLandUseAccessibilities;
     }
 
@@ -242,7 +241,7 @@ public final class SandagTourBasedModel
         long startTime = System.currentTimeMillis();
         int globalIterationNumber = -1;
         float iterationSampleRate = -1.0f;
-        int sampleSeed = -1;
+        //int sampleSeed = -1;
         boolean calculateLandUseAccessibilities = false;
 
         ResourceBundle rb = null;
@@ -277,12 +276,14 @@ public final class SandagTourBasedModel
                     logger.info(String.format("-sampleRate %.4f.", iterationSampleRate));
                 }
 
+                /*
                 if (args[i].equalsIgnoreCase("-sampleSeed"))
                 {
                     sampleSeed = Integer.parseInt(args[i + 1]);
                     logger.info(String.format("-sampleSeed %d.", sampleSeed));
                 }
-
+                 */
+                
                 if (args[i].equalsIgnoreCase("-luAcc"))
                 {
                     calculateLandUseAccessibilities = Boolean.parseBoolean(args[i + 1]);
@@ -305,18 +306,20 @@ public final class SandagTourBasedModel
                         iterationSampleRate));
             }
 
+            /*
             if (sampleSeed < 0)
             {
                 sampleSeed = DEFAULT_SAMPLE_SEED;
                 logger.info(String
                         .format("no -sampleSeed flag, default value %d used.", sampleSeed));
             }
+            */
 
         }
 
         // create an instance of this class for main() to use.
         SandagTourBasedModel mainObject = new SandagTourBasedModel(rb, pMap, globalIterationNumber,
-                iterationSampleRate, sampleSeed, calculateLandUseAccessibilities);
+                iterationSampleRate, calculateLandUseAccessibilities);
 
         // run tour based models
         try
