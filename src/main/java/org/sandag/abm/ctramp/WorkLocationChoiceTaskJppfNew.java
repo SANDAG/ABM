@@ -130,7 +130,7 @@ public class WorkLocationChoiceTaskJppfNew
 
                 if(!dcModel.applyWorkLocationChoice(householdArray[i])){
                 	i=0;
-                	String restartMsg="Works in this batch HH batch didn't get valid work location. REPROCESSING batch, startIndex:"+startIndex+" endIndex="+endIndex;
+                	String restartMsg="A Worker in this HH batch didn't get valid work location. REPROCESSING HH batch, startIndex:"+startIndex+" endIndex="+endIndex;
                 	setResult(restartMsg);
                 	System.out.println(restartMsg);
                 }
