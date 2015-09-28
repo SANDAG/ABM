@@ -7,7 +7,7 @@ Macro "Run SANDAG ABM"
    sample_rate = { 0.2, 0.5, 1.0 }
    max_iterations=sample_rate.length    //number of feedback loops
   
-   path = "${workpath}\\${year}"
+   path = "${workpath}"
 
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","*********Model Run Starting************"})
       

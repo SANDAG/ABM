@@ -12,6 +12,7 @@
         <encoding.type>UTF-8</encoding.type> 
         <output.path>${project.build.directory}/${project.name}/${project.version}/${project.activeProfiles[0].id}/${project.activeProfiles[1].id}</output.path>
         <study.root>${project.build.directory}/${project.name}/${project.version}/${project.activeProfiles[0].id}</study.root>
+        <release.root>${project.build.directory}/${project.name}/${project.version}</release.root>
         <jppf.driver.memory.min>1000m</jppf.driver.memory.min> 
         <jppf.driver.memory.max>9000m</jppf.driver.memory.max> 
         <jppf.headnode.memory.min>32000m</jppf.headnode.memory.min> 
@@ -46,7 +47,7 @@
         <MAPANDRUN>mapAndRun.bat</MAPANDRUN>
         <JAVA_64_PATH>C:\Progra~1\Java\jre7</JAVA_64_PATH>
         <JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
-        <workpath>T:\projects\sr13\sdf_final</workpath>
+        <workpath>WORKPATH</workpath>
         <database_server>sql2014a8</database_server>
         <database_name>abm_13_2_3</database_name>
         <jppf_version>5.0.1</jppf_version>
@@ -501,6 +502,31 @@
                                         <include>*.cmd</include>
                                         <include>*.py</include>
                                     </includes>
+                                    <excludes>
+                                        <exclude>create_scenario.cmd</exclude>
+                                        <exclude>BatchSubstitute.bat</exclude>
+                                    </excludes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-create-scenario-bat</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${release.root}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>create_scenario.cmd</include>
+                                        <include>BatchSubstitute.bat</include>
+                                    </includes>
                                 </resource>
                             </resources>
                         </configuration>
@@ -525,7 +551,6 @@
                             </resources>
                         </configuration>
                     </execution>
-  
                     <execution>
                         <id>copy-inputtruck-resources</id>
                         <phase>package</phase>
@@ -545,75 +570,7 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution> 
-                    <execution>
-                        <id>copy-logFiles-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${output.path}/logFiles</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>logFiles</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>    
-                    <execution>
-                        <id>copy-output-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${output.path}/output</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>output</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>                                    
-                    <execution>
-                        <id>copy-report-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${output.path}/report</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>report</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-input-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${output.path}/input</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>input</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>                    
+                    </execution>                                                
                     <execution>
                         <id>copy-sql-resources</id>
                         <phase>package</phase>
