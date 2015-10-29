@@ -23,7 +23,7 @@ CREATE TABLE
 	[rtp_2015].[screenline] (
 		[screenline_id] tinyint NOT NULL,
 		[screenline_desc] nvarchar(50) NOT NULL,
-		[shape] geometry NOT NULL,
+		[shape] geography NOT NULL,
 		CONSTRAINT pk_screenline PRIMARY KEY ([screenline_id])
 	) 
 ON 
