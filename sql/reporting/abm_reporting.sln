@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "abm_reporting", "abm_reporting.rptproj", "{FE174731-04FD-4EEF-9393-64A3D7DDFEA9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Default = Debug|Default
+		DebugLocal|Default = DebugLocal|Default
+		Release|Default = Release|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FE174731-04FD-4EEF-9393-64A3D7DDFEA9}.Debug|Default.ActiveCfg = Debug
+		{FE174731-04FD-4EEF-9393-64A3D7DDFEA9}.Debug|Default.Build.0 = Debug
+		{FE174731-04FD-4EEF-9393-64A3D7DDFEA9}.Debug|Default.Deploy.0 = Debug
+		{FE174731-04FD-4EEF-9393-64A3D7DDFEA9}.DebugLocal|Default.ActiveCfg = DebugLocal
+		{FE174731-04FD-4EEF-9393-64A3D7DDFEA9}.DebugLocal|Default.Build.0 = DebugLocal
+		{FE174731-04FD-4EEF-9393-64A3D7DDFEA9}.Release|Default.ActiveCfg = Release
+		{FE174731-04FD-4EEF-9393-64A3D7DDFEA9}.Release|Default.Build.0 = Release
+		{FE174731-04FD-4EEF-9393-64A3D7DDFEA9}.Release|Default.Deploy.0 = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

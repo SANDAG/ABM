@@ -20,3 +20,14 @@ target/
 /target
 /target
 /target
+sql/reporting/bin/Debug/build.obj
+sql/reporting/bin/Debug/route_boardings_by_access.rdl
+sql/reporting/bin/Debug/route_boardings_by_access_chart.rdl
+sql/reporting/bin/Debug/rt_revenue_passenger_miles.rdl
+sql/reporting/bin/Debug/simple_on_off_report.rdl
+sql/reporting/bin/Debug/sql2014a8_abm_13_2_3.rds
+sql/reporting/bin/Debug/transit_config.rdl
+sql/reporting/bin/Debug/transit_route.rdl
+sql/reporting/bin/Debug/transit_route_map.rdl
+.rdl.data
+*.rdl.data
