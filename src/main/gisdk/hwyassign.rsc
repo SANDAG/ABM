@@ -68,7 +68,6 @@ Macro "hwy assignment" (args)
 
  
    turn_file="\\nodes.txt"
-   turn_flag=0
    NumofCPU = 8
    iteration = args[1]
    
@@ -99,32 +98,9 @@ Macro "hwy assignment" (args)
    trip={"Trip_EA.mtx","Trip_AM.mtx","Trip_MD.mtx","Trip_PM.mtx","Trip_EV.mtx"}
    turn={"turns_EA.bin","turns_AM.bin","turns_MD.bin","turns_PM.bin","turns_EV.bin"}
    selectlink_mtx={"select_EA.mtx","select_AM.mtx","select_MD.mtx","select_PM.mtx","select_EV.mtx"}  //added for select link analysis by JXu
-   selinkqry_file="selectlink_query.txt"
-   if GetFileInfo(inputDir + "\\"+ selinkqry_file) <> null then do	//select link analysis is only available in stage II
-        selink_flag =1
-        fptr_from = OpenFile(inputDir + "\\"+selinkqry_file, "r")
-    	tmp_qry=readarray(fptr_from)
-    	index =1
-  	selinkqry_name=null
-    	selink_qry=null
-    	subs=null
-    	while index <=ArrayLength(tmp_qry) do
-    	    if left(trim(tmp_qry[index]),1)!="*" then do
-    	        subs=ParseString(trim(tmp_qry[index]),",")
-    	    	if subs!=null then do
-    	            query=subs[3]
-    	            if ArrayLength(subs)>3 then do
-    	                for i=4 to ArrayLength(subs) do
-    	                    query=query+" "+subs[2]+" "+subs[i]
-    	                end
-    	            end    	       	    
-    	            selinkqry_name=selinkqry_name+{subs[1]}
-    	            selink_qry=selink_qry+{query}
-    	    	end
-    	    end
-    	    index = index + 1
-        end
-    end
+   selinkqry_file="selectlink_query.qry"
+   if GetFileInfo(inputDir + "\\"+ selinkqry_file) <> null then selink_flag =1
+
 
   asign = {"hwyload_EA.bin","hwyload_AM.bin","hwyload_MD.bin","hwyload_PM.bin","hwyload_EV.bin"}
   oue_path = {"oue_path_EA.obt", "oue_path_AM.obt","oue_path_MD.obt","oue_path_PM.obt","oue_path_EV.obt"}
@@ -240,8 +216,8 @@ Macro "hwy assignment" (args)
    VOT={67,67,67,67,67,67,67,67,67,68,89,67,68,89}
 
    //Prepare selection set for turning movement report, by JXu
-   if (turn_flag=1 & iteration=4) then do
-      if GetFileInfo(inputDir+turn_file)!=null then do
+   if (GetFileInfo(inputDir+turn_file)!=null & iteration=4) then do
+      
          fptr_turn = OpenFile(inputDir + turn_file,"r")
          tmp_qry=readarray(fptr_turn)
          turn_qry=null
@@ -257,26 +233,12 @@ Macro "hwy assignment" (args)
                end
                index=index+1
             end
+            turn_flag=1
             closefile(fptr_turn)
-         end
-      else turn_qry = "select * where temp=1"
-      if GetFileInfo(path+"\\turn.err")!=null then do
-         ok=RunMacro("SDdeletefile",{path+"\\turn.err"}) 
-         if !ok then goto quit
+            
       end
 
-      tmpset = "turn"
-      vw_set = node_lyr + "|" + tmpset 
-      SetLayer(node_lyr)
-      n = SelectByQuery(tmpset , "Several", turn_qry,)
-      if n = 0 then do
-         showmessage("Warning!!! No intersections selected for turning movement.")
-         fp_tmp = OpenFile(path + "\\turn.err","w")
-         WriteArray(fp_tmp,{"No intersections have been selected for turning movement."})
-         closefile(fp_tmp)
-         return(1)
-      end
-   end
+     
 
   
    //set hwy.net with turn penalty of time in minutes
@@ -342,8 +304,7 @@ Macro "hwy assignment" (args)
       Opts.Field.[MSA Cost] = "_MSACost" + periods[i]
       Opts.Global.[MSA Iteration] = iteration
       if (selink_flag = 1 & iteration = 4) then do
-            Opts.Global.[Critical Queries] = selink_qry
-            Opts.Global.[Critical Set names] = selinkqry_name
+            Opts.Global.[Critical Query File] = inputDir + "\\"+selinkqry_file
             Opts.Output.[Critical Matrix].Label = "Select Link Matrix"
             Opts.Output.[Critical Matrix].Compression = 1
             Opts.Output.[Critical Matrix].[File Name] = outputDir +"\\"+selectlink_mtx[i]
