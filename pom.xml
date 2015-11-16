@@ -6,7 +6,7 @@
 
     <groupId>org.sandag</groupId>
     <artifactId>SANDAG-ABM</artifactId>
-    <version>13.2.5-SNAPSHOT</version>
+    <version>13.2.6-SNAPSHOT</version>
     <name>SANDAG CT-RAMP Activity Based Model</name>
     <properties>
         <encoding.type>UTF-8</encoding.type> 
@@ -504,6 +504,7 @@
                                     </includes>
                                     <excludes>
                                         <exclude>create_scenario.cmd</exclude>
+                                        <exclude>copy_networks.cmd</exclude>
                                         <exclude>BatchSubstitute.bat</exclude>
                                     </excludes>
                                 </resource>
@@ -525,6 +526,7 @@
                                     <filtering>true</filtering>
                                     <includes>
                                         <include>create_scenario.cmd</include>
+                                        <include>copy_networks.cmd</include>
                                         <include>BatchSubstitute.bat</include>
                                     </includes>
                                 </resource>
