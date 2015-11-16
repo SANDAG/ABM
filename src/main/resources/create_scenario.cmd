@@ -7,6 +7,7 @@ if "%3"=="" goto usage
 set SCENARIO_FOLDER=%1
 set YEAR=%2
 set CLUSTER=%3
+set NETWORKDIR=%4
 
 @echo creating scenario folders
 set FOLDERS=input application bin conf gisdk input_truck logFiles output python report sql uec
@@ -21,15 +22,15 @@ set SNODES=highlander scarlett
 for %%i in (%SNODES%) do (
 if %%i==%3 set RELEASE_DIR=local)
 
-@echo \%RELEASE_DIR%\%YEAR%\application\
+@echo \%RELEASE_DIR%\%YEAR%\conf\
 
-xcopy /Y .\%RELEASE_DIR%\%YEAR%\application\"*.*" %SCENARIO_FOLDER%\application
-xcopy /Y .\%RELEASE_DIR%\%YEAR%\input_truck\"*.*" %SCENARIO_FOLDER%\input_truck
-xcopy /Y/E .\%RELEASE_DIR%\%YEAR%\python\"*.*" %SCENARIO_FOLDER%\python
-xcopy /Y/E .\%RELEASE_DIR%\%YEAR%\sql\"*.*" %SCENARIO_FOLDER%\sql
-xcopy /Y .\%RELEASE_DIR%\%YEAR%\uec\"*.*" %SCENARIO_FOLDER%\uec
+xcopy /Y .\common\application\"*.*" %SCENARIO_FOLDER%\application
+xcopy /Y .\common\input_truck\"*.*" %SCENARIO_FOLDER%\input_truck
+xcopy /Y/E .\common\python\"*.*" %SCENARIO_FOLDER%\python
+xcopy /Y/E .\common\sql\"*.*" %SCENARIO_FOLDER%\sql
+xcopy /Y .\common\uec\"*.*" %SCENARIO_FOLDER%\uec
+xcopy /Y .\common\gisdk\"*.*" %SCENARIO_FOLDER%\gisdk
 xcopy /Y .\%RELEASE_DIR%\%YEAR%\conf\"*.*" %SCENARIO_FOLDER%\conf
-xcopy /Y .\%RELEASE_DIR%\%YEAR%\gisdk\"*.*" %SCENARIO_FOLDER%\gisdk
 xcopy /Y .\%RELEASE_DIR%\%YEAR%\bin\"*.*" %SCENARIO_FOLDER%\bin
 
 @echo copy year specific folders
@@ -44,5 +45,10 @@ call BatchSubstitute.bat WORKPATH %SCENARIO_FOLDER2% %SCENARIO_FOLDER%\gisdk\san
 del %SCENARIO_FOLDER%\gisdk\sandag_abm_generic.lst
 del %SCENARIO_FOLDER%\gisdk\sandag_abm_master_generic.rsc
 
+@echo copy network inputs
+call copy_networks.cmd %NETWORKDIR% %SCENARIO_FOLDER%\input
+
 :usage
-@echo Usage: %0 ^<scenario_folder^> ^<year^> ^<cluster^>
+
+@echo Usage: %0 ^<scenario_folder^> ^<year^> ^<cluster^> ^<network^>
+@echo If 4th parameter is empty, default network inputs in standard release are used
