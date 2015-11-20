@@ -174,10 +174,10 @@ Macro "trkStdTripGen" (strFyear,intFyear,arrInterimYear,properties)
     // If data is not available then interpolate from closest available years
     if booInterimYear = 2 then do 
        // Copy prev and next year data files to output directory
-       ok=RunMacro("SDcopyfile",{inputDir+"\hhByTaz"+I2S(prevYear)+".csv",outputDir+"\\hhByTaz_prev.csv"})
-       ok=RunMacro("SDcopyfile",{inputDir+"\hhByTaz"+I2S(nextYear)+".csv",outputDir+"\\hhByTaz_next.csv"}) 
-       ok=RunMacro("SDcopyfile",{inputDir+"\empByTaz"+I2S(prevYear)+".csv",outputDir+"\\empByTaz_prev.csv"})
-       ok=RunMacro("SDcopyfile",{inputDir+"\empByTaz"+I2S(nextYear)+".csv",outputDir+"\\empByTaz_next.csv"}) 
+       ok=RunMacro("SDcopyfile",{inputDir+"\\hhByTaz"+I2S(prevYear)+".csv",outputDir+"\\hhByTaz_prev.csv"})
+       ok=RunMacro("SDcopyfile",{inputDir+"\\hhByTaz"+I2S(nextYear)+".csv",outputDir+"\\hhByTaz_next.csv"}) 
+       ok=RunMacro("SDcopyfile",{inputDir+"\\empByTaz"+I2S(prevYear)+".csv",outputDir+"\\empByTaz_prev.csv"})
+       ok=RunMacro("SDcopyfile",{inputDir+"\\empByTaz"+I2S(nextYear)+".csv",outputDir+"\\empByTaz_next.csv"}) 
        
        // Interpolate data from prev and next years
        ok=RunMacro("Interpolate",{"hhByTaz_prev.csv","hhByTaz_next.csv","hhByTaz.csv",intFyear,prevYear,nextYear}) 
