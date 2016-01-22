@@ -97,6 +97,13 @@ public class Person
     private int                  freeParkingAvailable;
     private int                  internalExternalTripChoice                 = 1;
     private double               reimbursePercent;
+    
+    private float                worksFromHomeLogsum;
+    private float                parkingProvisionLogsum;
+	private float                ieLogsum;
+    private float                cdapLogsum;
+    private float                imtfLogsum;
+    private float                inmtfLogsum;
      
     private String               cdapActivity;
     private int                  imtfChoice;
@@ -1604,7 +1611,56 @@ public class Person
 
     }
 
-    public void logPersonObject(Logger logger, int totalChars)
+    public float getParkingProvisionLogsum() {
+		return parkingProvisionLogsum;
+	}
+
+	public void setParkingProvisionLogsum(float parkingProvisionLogsum) {
+		this.parkingProvisionLogsum = parkingProvisionLogsum;
+	}
+
+	public float getIeLogsum() {
+		return ieLogsum;
+	}
+
+	public void setIeLogsum(float ieLogsum) {
+		this.ieLogsum = ieLogsum;
+	}
+
+	public float getCdapLogsum() {
+		return cdapLogsum;
+	}
+
+	public void setCdapLogsum(float cdapLogsum) {
+		this.cdapLogsum = cdapLogsum;
+	}
+
+
+    public float getImtfLogsum() {
+		return imtfLogsum;
+	}
+
+	public void setImtfLogsum(float imtfLogsum) {
+		this.imtfLogsum = imtfLogsum;
+	}
+
+	public float getInmtfLogsum() {
+		return inmtfLogsum;
+	}
+
+	public void setInmtfLogsum(float inmtfLogsum) {
+		this.inmtfLogsum = inmtfLogsum;
+	}
+
+	public float getWorksFromHomeLogsum() {
+		return worksFromHomeLogsum;
+	}
+
+	public void setWorksFromHomeLogsum(float worksFromHomeLogsum) {
+		this.worksFromHomeLogsum = worksFromHomeLogsum;
+	}
+
+	public void logPersonObject(Logger logger, int totalChars)
     {
 
         Household.logHelper(logger, "persNum: ", persNum, totalChars);

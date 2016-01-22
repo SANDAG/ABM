@@ -1,6 +1,8 @@
 package org.sandag.abm.ctramp;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+
 import org.apache.log4j.Logger;
 
 public class Tour
@@ -34,6 +36,13 @@ public class Tour
     private int                   tourMode;
     private int                   subtourFreqChoice;
     private int                   tourParkMgra;
+    
+    private float                 timeOfDayLogsum;
+    private float                 tourModeLogsum;
+    private float                 subtourFreqLogsum;
+    private float                 tourDestinationLogsum;
+    private float                 stopFreqLogsum;
+    
 
     private int                   tourPrimaryPurposeIndex;
 
@@ -43,6 +52,10 @@ public class Tour
     private int                   stopFreqChoice;
     private Stop[]                outboundStops;
     private Stop[]                inboundStops;
+    
+    private ArrayList<Float>      outboundStopDestinationLogsums;
+    private ArrayList<Float>      inboundStopDestinationLogsums;
+   
 
     private int[][]               bestWtwTapPairsOut;
     private int[][]               bestWtwTapPairsIn;
@@ -63,7 +76,10 @@ public class Tour
         this.tourId = tourId;
         tourCategory = ModelStructure.MANDATORY_CATEGORY;
         tourPrimaryPurposeIndex = primaryIndex;
-    }
+        
+        outboundStopDestinationLogsums = new ArrayList<Float>();
+        inboundStopDestinationLogsums = new ArrayList<Float>();
+   }
 
     // this constructor used for joint tour creation
     public Tour(Household hhObj, String tourPurpose, String category, int primaryIndex)
@@ -72,6 +88,8 @@ public class Tour
         this.tourPurpose = tourPurpose;
         tourCategory = category;
         tourPrimaryPurposeIndex = primaryIndex;
+        outboundStopDestinationLogsums = new ArrayList<Float>();
+        inboundStopDestinationLogsums = new ArrayList<Float>();
     }
 
     // this constructor used for individual non-mandatory or at-work subtour
@@ -85,6 +103,8 @@ public class Tour
         this.tourPurpose = tourPurpose;
         tourCategory = category;
         tourPrimaryPurposeIndex = primaryIndex;
+        outboundStopDestinationLogsums = new ArrayList<Float>();
+        inboundStopDestinationLogsums = new ArrayList<Float>();
     }
 
     public Person getPersonObject()
@@ -710,4 +730,59 @@ public class Tour
 		this.valueOfTime = valueOfTime;
 	}
 
+	public float getTimeOfDayLogsum() {
+		return timeOfDayLogsum;
+	}
+
+	public void setTimeOfDayLogsum(float timeOfDayLogsum) {
+		this.timeOfDayLogsum = timeOfDayLogsum;
+	}
+
+	public float getTourModeLogsum() {
+		return tourModeLogsum;
+	}
+
+	public void setTourModeLogsum(float tourModeLogsum) {
+		this.tourModeLogsum = tourModeLogsum;
+	}
+
+	public float getSubtourFreqLogsum() {
+		return subtourFreqLogsum;
+	}
+
+	public void setSubtourFreqLogsum(float subtourFreqLogsum) {
+		this.subtourFreqLogsum = subtourFreqLogsum;
+	}
+
+	public float getTourDestinationLogsum() {
+		return tourDestinationLogsum;
+	}
+
+	public void setTourDestinationLogsum(float tourDestinationLogsum) {
+		this.tourDestinationLogsum = tourDestinationLogsum;
+	}
+
+	public float getStopFreqLogsum() {
+		return stopFreqLogsum;
+	}
+
+	public void setStopFreqLogsum(float stopFreqLogsum) {
+		this.stopFreqLogsum = stopFreqLogsum;
+	}
+
+	public ArrayList<Float> getOutboundStopDestinationLogsums(){
+		return outboundStopDestinationLogsums;
+	}
+	public ArrayList<Float> getInboundStopDestinationLogsums(){
+		return inboundStopDestinationLogsums;
+	}
+	
+	public void addOutboundStopDestinationLogsum(float logsum){
+		outboundStopDestinationLogsums.add(logsum);
+	}
+
+	public void addInboundStopDestinationLogsum(float logsum){
+		inboundStopDestinationLogsums.add(logsum);
+	}
+	
 }

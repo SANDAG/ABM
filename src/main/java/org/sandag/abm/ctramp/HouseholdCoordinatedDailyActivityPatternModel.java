@@ -476,7 +476,8 @@ public class HouseholdCoordinatedDailyActivityPatternModel
 
             } // debug trace
 
-            // align the one person utilities with the alternatives for person i
+            // align the one person utilities with the alternatives for person i and calculate their individual logsum
+            float individualLogsum = 0;
             for (int j = 0; j < alternativeList.size(); ++j)
             {
 
@@ -497,10 +498,14 @@ public class HouseholdCoordinatedDailyActivityPatternModel
                     {
                         double currentUtility = tempAlt.getUtility();
                         tempAlt.setUtility(currentUtility + firstPersonUtilities[k]);
+                        individualLogsum += Math.exp(firstPersonUtilities[k]);
                     }
                 } // k
 
             } // j
+            
+            individualLogsum = (float) Math.log(individualLogsum);
+            personA.setCdapLogsum(individualLogsum);
 
             // loop through all possible person Bs
             for (int j = 0; j < modelHhSize; ++j)
@@ -812,7 +817,8 @@ public class HouseholdCoordinatedDailyActivityPatternModel
             workingLogitModel.setDebug(true);
             workingLogitModel.writeUtilityHeader();
         }
-        workingLogitModel.getUtility();
+        float logsum = (float) workingLogitModel.getUtility();
+        householdObject.setCdapLogsum(logsum);
 
         // compute the probabilities, logging debug if need be
         if (householdObject.getDebugChoiceModels())

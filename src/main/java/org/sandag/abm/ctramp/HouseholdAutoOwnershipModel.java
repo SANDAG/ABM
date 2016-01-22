@@ -195,8 +195,9 @@ public class HouseholdAutoOwnershipModel
         }
 
         // compute utilities and choose auto ownership alternative.
-        aoModel.computeUtilities(aoDmuObject, aoDmuObject.getDmuIndexValues());
+        float logsum = (float) aoModel.computeUtilities(aoDmuObject, aoDmuObject.getDmuIndexValues());
 
+        hhObj.setAutoOwnershipLogsum(logsum);
         Random hhRandom = hhObj.getHhRandom();
         int randomCount = hhObj.getHhRandomCount();
         double rn = hhRandom.nextDouble();
