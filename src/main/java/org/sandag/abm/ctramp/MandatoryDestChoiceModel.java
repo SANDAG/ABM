@@ -720,8 +720,9 @@ public class MandatoryDestChoiceModel
         }
 
         // compute destination choice proportions and choose alternative
-        worksAtHomeModel.computeUtilities(dcDmuObject, dcDmuObject.getDmuIndexValues());
-
+        float logsum = (float) worksAtHomeModel.computeUtilities(dcDmuObject, dcDmuObject.getDmuIndexValues());
+        person.setWorksFromHomeLogsum(logsum);
+        
         Random hhRandom = household.getHhRandom();
         int randomCount = household.getHhRandomCount();
         double rn = hhRandom.nextDouble();
