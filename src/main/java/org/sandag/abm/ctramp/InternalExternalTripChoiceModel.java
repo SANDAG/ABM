@@ -75,8 +75,9 @@ public class InternalExternalTripChoiceModel
             double randomNumber = hhRandom.nextDouble();
 
             // compute utilities and choose alternative.
-            ieModel.computeUtilities(ieDmuObject, ieDmuObject.getDmuIndexValues());
-
+            float logsum = (float) ieModel.computeUtilities(ieDmuObject, ieDmuObject.getDmuIndexValues());
+            person[i].setIeLogsum(logsum); 
+            
             // if the choice model has at least one available alternative, make
             // choice.
             int chosenAlt;

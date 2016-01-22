@@ -130,6 +130,8 @@ public abstract class ModelStructure
     public static final int                             OTH_DISCR_PRIMARY_PURPOSE_INDEX   = 9;
     public static final int                             WORK_BASED_PRIMARY_PURPOSE_INDEX  = 10;
     public static final int                             NUM_PRIMARY_PURPOSES              = 10;
+    
+    public static final int                             MAX_STOPS_PER_DIRECTION           = 4;
 
     public String                                       WORK_PURPOSE_NAME;
     public String                                       UNIVERSITY_PURPOSE_NAME;

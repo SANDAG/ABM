@@ -642,9 +642,11 @@ public class NonMandatoryDestChoiceModel
         }
 
         // compute destination choice proportions and choose alternative
-        dcModel[m].computeUtilities(dcDmuObject, dcDmuObject.getDmuIndexValues(),
+        float modelLogsum = (float) dcModel[m].computeUtilities(dcDmuObject, dcDmuObject.getDmuIndexValues(),
                 destAltsAvailable, destAltsSample);
 
+        tour.setTourDestinationLogsum(modelLogsum);
+        
         Random hhRandom = household.getHhRandom();
         int randomCount = household.getHhRandomCount();
         double rn = hhRandom.nextDouble();
@@ -852,9 +854,11 @@ public class NonMandatoryDestChoiceModel
         }
 
         // compute destination choice proportions and choose alternative
-        dcModel2[m].computeUtilities(dcDistSoaDmuObject, dcDistSoaDmuObject.getDmuIndexValues(),
+        float logsum = (float) dcModel2[m].computeUtilities(dcDistSoaDmuObject, dcDistSoaDmuObject.getDmuIndexValues(),
                 dcModel2AltsAvailable, dcModel2AltsSample);
 
+        tour.setTourDestinationLogsum(logsum);
+        
         Random hhRandom = household.getHhRandom();
         int randomCount = household.getHhRandomCount();
         double rn = hhRandom.nextDouble();

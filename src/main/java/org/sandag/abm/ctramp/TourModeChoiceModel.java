@@ -402,7 +402,8 @@ public class TourModeChoiceModel
         mcDmuObject.setOriginMgra(tour.getTourOrigMgra());
         mcDmuObject.setDestMgra(tour.getTourDestMgra());
         
-        mcModel[modelIndex].computeUtilities(mcDmuObject, mcDmuIndex);
+        float logsum = (float) mcModel[modelIndex].computeUtilities(mcDmuObject, mcDmuIndex);
+        tour.setTourModeLogsum(logsum);
 
         mcDmuIndex.setOriginZone(tour.getTourOrigMgra());
         mcDmuIndex.setDestZone(tour.getTourDestMgra());

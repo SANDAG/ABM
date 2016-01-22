@@ -170,8 +170,9 @@ public class ParkingProvisionModel
                 hhObj.getHhTaz(), personObj.getWorkLocation());
 
         // compute utilities and choose auto ownership alternative.
-        fpModel.computeUtilities(fpDmuObject, fpDmuObject.getDmuIndexValues());
-
+        float logsum = (float) fpModel.computeUtilities(fpDmuObject, fpDmuObject.getDmuIndexValues());
+        personObj.setParkingProvisionLogsum(logsum);
+        
         // if the choice model has at least one available alternative, make
         // choice.
         int chosenAlt;

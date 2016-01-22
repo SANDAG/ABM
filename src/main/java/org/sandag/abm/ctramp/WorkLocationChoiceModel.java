@@ -510,8 +510,9 @@ public class WorkLocationChoiceModel
         }
 
         // compute destination choice proportions and choose alternative
-        worksAtHomeModel.computeUtilities(dcTwoStageDmuObject,
+        float logsum = (float) worksAtHomeModel.computeUtilities(dcTwoStageDmuObject,
                 dcTwoStageDmuObject.getDmuIndexValues());
+        person.setWorksFromHomeLogsum(logsum);
 
         Random hhRandom = household.getHhRandom();
         int randomCount = household.getHhRandomCount();
