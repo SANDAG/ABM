@@ -203,6 +203,8 @@ public class SandagModelStructure
             "2_eat_business"                                                                        };
 
     public static final int      MIN_DRIVING_AGE                                                    = 16;
+    
+    public static final int      MAX_STOPS_PER_DIRECTION                                            = 4;
 
     public SandagModelStructure()
     {
@@ -1377,4 +1379,9 @@ public class SandagModelStructure
         return returnValue;
     }
 
+    public int getMaxStopsPerDirection(){
+    	
+    	return MAX_STOPS_PER_DIRECTION;
+    }
+    
 }

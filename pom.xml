@@ -799,7 +799,7 @@
         <dependency>
             <groupId>pb</groupId>
             <artifactId>common-base</artifactId>
-            <version>2015.05.23-ABM</version>
+            <version>2016.01.17-ABM</version>
         </dependency>
         <dependency>
             <groupId>ca.umontreal.iro</groupId>

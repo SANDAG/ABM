@@ -545,9 +545,11 @@ public class SubtourDestChoiceModel
         }
 
         // compute destination choice proportions and choose alternative
-        dcModel[m].computeUtilities(dcDmuObject, dcDmuObject.getDmuIndexValues(),
+        float logsum = (float) dcModel[m].computeUtilities(dcDmuObject, dcDmuObject.getDmuIndexValues(),
                 destAltsAvailable, destAltsSample);
 
+        tour.setTourDestinationLogsum(logsum);
+        
         Random hhRandom = household.getHhRandom();
         int randomCount = household.getHhRandomCount();
         double rn = hhRandom.nextDouble();
@@ -755,8 +757,10 @@ public class SubtourDestChoiceModel
         }
 
         // compute destination choice proportions and choose alternative
-        dcModel2[m].computeUtilities(dcDistSoaDmuObject, dcDistSoaDmuObject.getDmuIndexValues(),
+        float modelLogsum = (float) dcModel2[m].computeUtilities(dcDistSoaDmuObject, dcDistSoaDmuObject.getDmuIndexValues(),
                 dcModel2AltsAvailable, dcModel2AltsSample);
+        tour.setTourDestinationLogsum(modelLogsum);
+        
 
         Random hhRandom = household.getHhRandom();
         int randomCount = household.getHhRandomCount();

@@ -200,9 +200,10 @@ public class HouseholdAtWorkSubtourFrequencyModel
                         household.logTourObject(loggingHeader, modelLogger, person, workTour);
                     }
 
-                    choiceModelApplication.computeUtilities(dmuObject, index, availabilityArray,
+                    float logsum = (float) choiceModelApplication.computeUtilities(dmuObject, index, availabilityArray,
                             sampleArray);
 
+                    workTour.setSubtourFreqLogsum(logsum);
                     // get the random number from the household
                     Random random = household.getHhRandom();
                     int randomCount = household.getHhRandomCount();

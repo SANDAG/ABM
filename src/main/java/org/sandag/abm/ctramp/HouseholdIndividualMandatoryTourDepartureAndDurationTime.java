@@ -507,10 +507,11 @@ public class HouseholdIndividualMandatoryTourDepartureAndDurationTime
             {
                 household.logTourObject(loggingHeader, modelLogger, person, t);
             }
-
+            
+            float logsum=0; 
             try
             {
-                workTourChoiceModel.computeUtilities(imtodDmuObject,
+                logsum = (float) workTourChoiceModel.computeUtilities(imtodDmuObject,
                         imtodDmuObject.getIndexValues(), departureTimeChoiceAvailability,
                         workTourDepartureTimeChoiceSample);
             } catch (Exception e)
@@ -518,6 +519,7 @@ public class HouseholdIndividualMandatoryTourDepartureAndDurationTime
                 logger.error("exception caught computing work tour TOD choice utilities.");
                 throw new RuntimeException();
             }
+            t.setTimeOfDayLogsum(logsum);
 
             Random hhRandom = imtodDmuObject.getDmuHouseholdObject().getHhRandom();
             int randomCount = household.getHhRandomCount();
@@ -1007,9 +1009,10 @@ public class HouseholdIndividualMandatoryTourDepartureAndDurationTime
                 household.logTourObject(loggingHeader, modelLogger, person, t);
             }
 
-            schoolTourChoiceModel.computeUtilities(imtodDmuObject, imtodDmuObject.getIndexValues(),
+            float logsum = (float) schoolTourChoiceModel.computeUtilities(imtodDmuObject, imtodDmuObject.getIndexValues(),
                     departureTimeChoiceAvailability, schoolTourDepartureTimeChoiceSample);
-
+            t.setTimeOfDayLogsum(logsum);
+            
             Random hhRandom = imtodDmuObject.getDmuHouseholdObject().getHhRandom();
             int randomCount = household.getHhRandomCount();
             double rn = hhRandom.nextDouble();
@@ -1432,9 +1435,10 @@ public class HouseholdIndividualMandatoryTourDepartureAndDurationTime
                 household.logTourObject(loggingHeader, modelLogger, person, t);
             }
 
-            univTourChoiceModel.computeUtilities(imtodDmuObject, imtodDmuObject.getIndexValues(),
+            float logsum = (float) univTourChoiceModel.computeUtilities(imtodDmuObject, imtodDmuObject.getIndexValues(),
                     departureTimeChoiceAvailability, schoolTourDepartureTimeChoiceSample);
-
+            t.setTimeOfDayLogsum(logsum);
+            
             Random hhRandom = imtodDmuObject.getDmuHouseholdObject().getHhRandom();
             int randomCount = household.getHhRandomCount();
             double rn = hhRandom.nextDouble();
