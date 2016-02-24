@@ -38,7 +38,6 @@ if sb375 not in {'On', 'Off'}:
     
 saveLocation = sys.argv[4]
 
-#conn = _mssql.connect(server='pele', user='emfac', password='3mf@c', database='abm_sd')
 conn = pyodbc.connect(driver='{SQL Server}', server='sql2014a8', database='abm_13_2_3',trusted_connection='yes')
 cursor = conn.cursor()
 
