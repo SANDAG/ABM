@@ -17,3 +17,5 @@ target/
 /target
 sql/reporting/bin
 *.rdl.data
+src/main/python/.idea/
+src/main/python/dbconfig.yml
