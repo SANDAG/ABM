@@ -323,7 +323,7 @@ public class InternalExternalTourManager
         int[] taps = getTapPair(trip);
 
         String record = new String(hhID+","+pnum+","+personID+","+tourID+","+trip.getOriginMgra() + "," + trip.getDestinationMgra() + ","
-                + trip.getOriginTaz() + "," + trip.getDestinationTaz() + "," + trip.isInbound()
+                 + trip.getOriginTaz() + "," + trip.getDestinationTaz() + "," + trip.isInbound()
                 + "," + trip.isOriginIsTourDestination() + ","
                 + trip.isDestinationIsTourDestination() + "," + trip.getPeriod() + ","
                 + trip.getTripMode() + "," + taps[0] + "," + taps[1] + ","

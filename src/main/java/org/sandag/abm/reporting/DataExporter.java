@@ -1373,7 +1373,7 @@ public final class DataExporter
         exportDataGeneric(outputFileBase, "internalExternal.trip.output.file", false, formats,
                 floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
                 new TripStructureDefinition(5, 6, 12, 13, 14, 15, -1, 15, "IE", "HOME", "EXTERNAL",
-                        9, true, 12));   
+                        9, true,16));   
     }
 
     private Set<Integer> getExternalZones()

@@ -188,6 +188,11 @@ public abstract class HouseholdDataManager
 
     public void readPopulationFiles(String inputHouseholdFileName, String inputPersonFileName)
     {
+    	
+        TimeCoefficientDistributions timeDistributions = new TimeCoefficientDistributions();
+        timeDistributions.createTimeDistributions(propertyMap);
+        timeDistributions.appendTimeDistributionsOnPersonFile(propertyMap);
+
         // read synthetic population files
         readHouseholdData(inputHouseholdFileName);
 

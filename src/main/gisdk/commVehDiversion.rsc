@@ -22,8 +22,8 @@ Macro "cv toll diversion model"
        fileNameCV = outputDir + "\\commVehTODTrips.mtx"
        m = OpenMatrix(fileNameCV,)
        
-          nontollmtx=outputDir+"\\impda"+"n_"+periodName[period]+".mtx"   // non-toll drive alone skims 
-          tollmtx=outputDir+"\\impda"+"t_"+periodName[period]+".mtx"      // toll drive alone skims 
+          nontollmtx=outputDir+"\\impcv"+"n_"+periodName[period]+".mtx"   // non-toll commercial vehicle skims 
+          tollmtx=outputDir+"\\impcv"+"t_"+periodName[period]+".mtx"      // toll commercial vehicle skims 
           OpenMatrix(nontollmtx,)
           OpenMatrix(tollmtx,)
                    
@@ -33,9 +33,7 @@ Macro "cv toll diversion model"
           
           // Diversion curve (time is in minutes, cost is in cents)
           // First scale the toll cost since the cost is scaled for SR125
-          tollCost = "if([Output Matrix:1].[dat_"+periodName[period]+" - ITOLL_"+periodName[period]+"]>10000) then [Output Matrix:1].[dat_"+
-                        periodName[period]+" - ITOLL_"+periodName[period]+"] - round([Output Matrix:1].[dat_"+periodName[period]+
-                        " - ITOLL_"+periodName[period]+"]/10000,0)*10000 else [Output Matrix:1].[dat_"+periodName[period]+" - ITOLL_"+
+          tollCost = "[Output Matrix:1].[cvt - ITOLL2_"+
                         periodName[period]+"]"
           utility = "(([Output Matrix].[*STM_"+periodName[period]+" (Skim)] - [Output Matrix:1].[*STM_"+periodName[period]+" (Skim)]) - " + 
                       String(vot) + " * " + tollCost + " * " + String(cvTollFactor) + " ) / " + String(nest_param)
@@ -45,7 +43,7 @@ Macro "cv toll diversion model"
           // Calculate toll matrix
           Opts = null
           Opts.Input.[Matrix Currency]    = {fileNameCV, periodName[period]+ " Toll", "Row ID's", "Col ID's"}
-          Opts.Input.[Formula Currencies] = {{nontollmtx, "*SCST_"+periodName[period], "Origin", "Destination"}, {tollmtx, "*SCST_"+periodName[period], "Origin", "Destination"}}
+          Opts.Input.[Formula Currencies] = {{nontollmtx, "*CVCST_"+periodName[period], "Origin", "Destination"}, {tollmtx, "*CVCST_"+periodName[period], "Origin", "Destination"}}
           Opts.Global.Method              = 11
           Opts.Global.[Cell Range]        = 2
           Opts.Global.[Expression Text]   = "[" + periodName[period] + " Trips] * " + expression
