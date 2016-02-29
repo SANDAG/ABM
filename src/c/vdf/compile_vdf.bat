@@ -4,6 +4,8 @@ set PATH=%PATH%;%vs_path%\vc;%vs_path%\bin
 
 call vcvarsall.bat x64
 
-CL /nologo /Gr /LD /O2 /Fe../../shrp.vdf SHRP.c user32.lib
 
+rem CL /nologo /Gr /LD /O2 /Fe../../shrp.vdf SHRP.c user32.lib
+rem for debug use: 
+CL /nologo /Gr /LD /Zi /Od /Fe../../shrp.vdf SHRP.c user32.lib
 set PATH=%OLDPATH%
