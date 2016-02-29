@@ -214,7 +214,7 @@ public class AutoAndNonMotorizedSkimsCalculator
 
             // use the UEC to return skim values for the orign/destination TAZs
             // associated with the MGRAs
-            autoSkims = autoSkimUEC.solve(iv, dmu, null);
+            autoSkims = autoSkimUEC.solve(iv, autoSkimsDMU, null);
             if (debug)
                 autoSkimUEC.logAnswersArray(logger, String.format(
                         "autoSkimUEC:  oMgra=%d, dMgra=%d, period=%d", origMgra, destMgra,

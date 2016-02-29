@@ -8,7 +8,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class TruckCsvExporter
         extends AbstractCsvExporter
 {
-    private static final String   MATRIX_BASE_NAME = "Trip_" + TOD_TOKEN;
+    private static final String   MATRIX_BASE_NAME = "dailyDistributionMatricesTruck" + TOD_TOKEN;
     private static final String[] CORE_NAMES       = {"lhdn", "lhdt", "mhdn", "mhdt", "hhdn",
             "hhdt"                                 };
     private static final String[] COLUMN_HEADERS   = {"ORIG", "DEST", "TOD", "CLASS", "TRIPS"};
