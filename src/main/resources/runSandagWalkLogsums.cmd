@@ -4,7 +4,7 @@ set PROJECT_DRIVE=%1
 set PROJECT_DIRECTORY=%2
 
 %PROJECT_DRIVE%
-cd %PROJECT_DIRECTORY%
+cd %PROJECT_DRIVE%/%PROJECT_DIRECTORY%
 call %PROJECT_DIRECTORY%\bin\CTRampEnv.bat
 
 rem ### First save the JAVA_PATH environment variable so it s value can be restored at the end.

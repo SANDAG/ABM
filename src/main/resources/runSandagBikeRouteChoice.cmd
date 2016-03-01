@@ -7,7 +7,7 @@ set ITERATION=%4
 set PROPERTIES_NAME=sandag_abm
 
 %PROJECT_DRIVE%
-cd %PROJECT_DIRECTORY%
+cd %PROJECT_DRIVE%/%PROJECT_DIRECTORY%
 call %PROJECT_DIRECTORY%\bin\CTRampEnv.bat
 
 rem ### Name the project directory.  This directory will hava data and runtime subdirectories

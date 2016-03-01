@@ -6,7 +6,7 @@ set SAMPLERATE=%3
 set ITERATION=%4
 
 %PROJECT_DRIVE%
-cd %PROJECT_DIRECTORY%
+cd %PROJECT_DRIVE%/%PROJECT_DIRECTORY%
 call %PROJECT_DIRECTORY%\bin\CTRampEnv.bat
 
 rem ### First save the JAVA_PATH environment variable so it s value can be restored at the end.
@@ -39,7 +39,7 @@ set PATH=%JAVA_PATH%\bin;%OLDPATH%
 rem run ping to add a pause so that hhMgr and mtxMgr have time to fully start
 ping -n 10 %MAIN% > nul
 
-cd .%PROJECT_DIRECTORY%
+cd %PROJECT_DRIVE%/%PROJECT_DIRECTORY%
 
 rem Airport model
 %JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.airport.AirportModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% 

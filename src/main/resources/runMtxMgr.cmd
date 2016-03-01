@@ -5,7 +5,7 @@ set PROJECT_DIRECTORY=%2
 
 
 %PROJECT_DRIVE%
-cd %PROJECT_DIRECTORY%
+cd %PROJECT_DRIVE%/%PROJECT_DIRECTORY%
 
 rem call ctramp properties
 call %PROJECT_DIRECTORY%\bin\CTRampEnv.bat
