@@ -111,7 +111,7 @@ Macro "hwy assignment" (args)
    db_node_lyr=db_file+"|"+node_lyr
    
    // drive-alone non-toll exclusion set
-   excl_dan={db_link_lyr, link_lyr, "dan", "Select * where !(ihov = 1)"}
+   excl_dan={db_link_lyr, link_lyr, "dan", "Select * where !((ihov=1|ifc>7)&ITRUCK<5)"}
    
    // shared-2 non-toll non-HOV exclusion set 
    excl_s2nn=excl_dan
@@ -131,7 +131,7 @@ Macro "hwy assignment" (args)
       excl_s2th[i]={db_link_lyr, link_lyr, "s2th", "Select * where !(((ihov=1|(ihov=2&abln"+periods[i]+"<9)|ihov=4|(ihov=3&itoll"+periods[i]+">0&abln"+periods[i]+"<9))|ifc>7)&ITRUCK<5)"}
    
       // shared=3+ non-toll non-HOV exclusion set
-      excl_s3nh[i]={db_link_lyr, link_lyr, "s3nh", "Select * where !((ihov=1|((ihov=2|ihov=3)&abln"+periods[i]+"<9)|ifc>7)& ITRUCK<5)"}
+      excl_s3nh[i]={db_link_lyr, link_lyr, "s3nh", "Select * where !((ihov=1|((ihov=2|ihov=3)&abln"+periods[i]+"<9)|ifc>7)&ITRUCK<5)"}
    
       // shared=3+ toll HOV exclusion set
       excl_s3th[i]={db_link_lyr, link_lyr, "s3th", "Select * where abln"+periods[i]+"=9|ITRUCK>4"}
@@ -146,7 +146,7 @@ Macro "hwy assignment" (args)
       excl_hhdn[i]={db_link_lyr, link_lyr, "hhdn", "Select * where !((ihov=1|ifc>7)&(ITRUCK=1|ITRUCK>4))"}
    
       // light-heavy truck toll exclusion set
-      excl_lhdt[i]={db_link_lyr, link_lyr, "lhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7) & (ITRUCK<4|ITRUCK=7))"}
+      excl_lhdt[i]={db_link_lyr, link_lyr, "lhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&(ITRUCK<4|ITRUCK=7))"}
  
       // medium-heavy truck toll exclusion set
       excl_mhdt[i]={db_link_lyr, link_lyr, "mhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&(ITRUCK<3|ITRUCK>5))"}
@@ -162,7 +162,7 @@ Macro "hwy assignment" (args)
    vw_set = link_lyr + "|" + set
    SetLayer(link_lyr)
    for i = 1 to periods.length do
-      n = SelectByQuery(set, "Several","Select * where !((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)",)
+      n = SelectByQuery(set, "Several","Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&ITRUCK<5)",)
       if n = 0 then excl_dat[i]=null
    end
           
@@ -170,7 +170,7 @@ Macro "hwy assignment" (args)
    vw_set = link_lyr + "|" + set
    SetLayer(link_lyr)
    for i = 1 to periods.length do
-      n = SelectByQuery(set, "Several","Select * where !(ihov=1|(ihov=2&abln"+periods[i]+"<9)|ifc>7)",)
+      n = SelectByQuery(set, "Several","Select * where !((ihov=1|(ihov=2&abln"+periods[i]+"<9)|ifc>7)&ITRUCK<5)",)
       if n = 0 then excl_s2nh[i]=null 
    end
           
@@ -178,7 +178,7 @@ Macro "hwy assignment" (args)
    vw_set = link_lyr + "|" + set
    SetLayer(link_lyr)
    for i = 1 to periods.length do
-      n = SelectByQuery(set, "Several", "Select * where !((ihov=1|(ihov=2&abln"+periods[i]+"<9)|ihov=4|(ihov=3&itoll"+periods[i]+">0&abln"+periods[i]+"<9))|ifc>7)",)
+      n = SelectByQuery(set, "Several", "Select * where !(((ihov=1|(ihov=2&abln"+periods[i]+"<9)|ihov=4|(ihov=3&itoll"+periods[i]+">0&abln"+periods[i]+"<9))|ifc>7)&ITRUCK<5)",)
       if n = 0 then excl_s2th[i]=null   
    end  
       
@@ -186,7 +186,7 @@ Macro "hwy assignment" (args)
    vw_set = link_lyr + "|" + set
    SetLayer(link_lyr)
    for i = 1 to periods.length do
-      n = SelectByQuery(set, "Several","Select * where !(ihov=1|((ihov=2|ihov=3)&abln"+periods[i]+"<9)|ifc>7)",)
+      n = SelectByQuery(set, "Several","Select * where !((ihov=1|((ihov=2|ihov=3)&abln"+periods[i]+"<9)|ifc>7)&ITRUCK<5)",)
       if n = 0 then excl_s3nh[i]=null 
    end         
    
@@ -194,7 +194,7 @@ Macro "hwy assignment" (args)
    vw_set = link_lyr + "|" + set
    SetLayer(link_lyr)
    for i = 1 to periods.length do
-      n = SelectByQuery(set, "Several", "Select * where abln"+periods[i]+"=9",)
+      n = SelectByQuery(set, "Several", "Select * where abln"+periods[i]+"=9|ITRUCK>4",)
       if n = 0 then excl_s3th[i]=null   
    end                                                                    
    
