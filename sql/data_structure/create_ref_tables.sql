@@ -249,8 +249,8 @@ CREATE TABLE
 		[geography_zone_id] int IDENTITY(1,1) NOT NULL,
 		[geography_type_id] tinyint NOT NULL,
 		[zone] smallint NOT NULL,
-		[shape] geometry NOT NULL,
-		[centroid] geometry NOT NULL,
+		[shape] geography NOT NULL,
+		[centroid] geography NOT NULL,
 		CONSTRAINT pk_geo PRIMARY KEY ([geography_zone_id]),
 		CONSTRAINT ixuq_geo UNIQUE ([geography_type_id],[zone]) WITH (DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_geo_geotype FOREIGN KEY ([geography_type_id]) REFERENCES [ref].[geography_type]([geography_type_id])

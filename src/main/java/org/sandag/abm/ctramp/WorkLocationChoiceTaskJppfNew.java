@@ -128,7 +128,12 @@ public class WorkLocationChoiceTaskJppfNew
                 // if ( householdArray[i].getHhTaz() % 200 != 0 )
                     continue;
 
-                dcModel.applyWorkLocationChoice(householdArray[i]);
+                if(!dcModel.applyWorkLocationChoice(householdArray[i])){
+                	i=0;
+                	String restartMsg="A Worker in this HH batch didn't get valid work location. REPROCESSING HH batch, startIndex:"+startIndex+" endIndex="+endIndex;
+                	setResult(restartMsg);
+                	System.out.println(restartMsg);
+                }
             }
 
             hhDataManager.setHhArray(householdArray, startIndex);

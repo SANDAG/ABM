@@ -2,20 +2,24 @@ package org.sandag.abm.crossborder;
 
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
+
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
+import org.sandag.abm.application.SandagTourBasedModel;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.MatrixDataServer;
 import org.sandag.abm.ctramp.MatrixDataServerRmi;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+
 import com.pb.common.calculator.MatrixDataManager;
 import com.pb.common.matrix.MatrixType;
 import com.pb.common.util.ResourceUtil;
@@ -28,7 +32,7 @@ public class CrossBorderModel
     public static final String      RUN_MODEL_CONCURRENT_PROPERTY_KEY   = "crossBorder.run.concurrent";
     public static final String      CONCURRENT_PARALLELISM_PROPERTY_KEY = "crossBorder.concurrent.parallelism";
 
-    private static final Logger     LOGGER                              = Logger.getLogger("crossBorderModel");
+    private static final Logger     LOGGER                              = Logger.getLogger(SandagTourBasedModel.class);
     private static final Object     INITIALIZATION_LOCK                 = new Object();
 
     private MatrixDataServerRmi     ms;

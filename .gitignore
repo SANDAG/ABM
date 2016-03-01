@@ -15,8 +15,5 @@ target/
 /bin
 .pydevproject
 /target
-/target
-/target
-/target
-/target
-/target
+sql/reporting/bin
+*.rdl.data

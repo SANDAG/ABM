@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.accessibilities.BuildAccessibilities;
@@ -16,6 +17,7 @@ import org.sandag.abm.accessibilities.NonTransitUtilities;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
 import org.sandag.abm.modechoice.TransitWalkAccessUEC;
+
 import com.pb.common.calculator.MatrixDataManager;
 import com.pb.common.calculator.MatrixDataServerIf;
 import com.pb.common.datafile.OLD_CSVFileReader;
@@ -87,6 +89,7 @@ public final class HouseholdChoiceModelsManager
     private AutoTazSkimsCalculator              tazDistanceCalculator;
 
     private boolean                             useNewSoaMethod;
+    private boolean logResults=false;
 
     private HouseholdChoiceModelsManager()
     {
@@ -134,6 +137,9 @@ public final class HouseholdChoiceModelsManager
         this.modelStructure = modelStructure;
         this.dmuFactory = dmuFactory;
 
+        logResults = Util.getStringValueFromPropertyMap(propertyMap, "RunModel.LogResults")
+                .equalsIgnoreCase("true");
+        
         mgraManager = MgraDataManager.getInstance(propertyMap);
         maxMgra = mgraManager.getMaxMgra();
 
@@ -247,19 +253,24 @@ public final class HouseholdChoiceModelsManager
                     pctHighIncome, pctMultipleAutos, avgtts, transpDist, pctDetour,
                     nonMandatoryTazDistProbs, nonMandatorySizeProbs, subTourTazDistProbs,
                     subTourSizeProbs, distanceToCordonsLogsums);
-
-            message = String.format("created hhChoiceModels=%d, task=%d, thread=%s.", modelIndex,
+            if(logResults){
+            		message = String.format("created hhChoiceModels=%d, task=%d, thread=%s.", modelIndex,
                     taskIndex, Thread.currentThread().getName());
+		            logger.info(message);
+		            logger.info("");
+            }
 
         } else
         {
             hhChoiceModels = modelQueue.remove();
-            message = String.format("removed hhChoiceModels=%d from queue, task=%d, thread=%s.",
-                    hhChoiceModels.getModelIndex(), taskIndex, Thread.currentThread().getName());
+            if(logResults){
+	            	message = String.format("removed hhChoiceModels=%d from queue, task=%d, thread=%s.",
+	                    hhChoiceModels.getModelIndex(), taskIndex, Thread.currentThread().getName());
+		            logger.info(message);
+		            logger.info("");
+            }
         }
-        logger.info(message);
-        logger.info("");
-
+        
         return hhChoiceModels;
 
     }
@@ -275,9 +286,11 @@ public final class HouseholdChoiceModelsManager
     {
         modelQueue.add(hhModels);
         completedHouseholds += (endIndex - startIndex + 1);
-        logger.info("returned hhChoiceModels=" + hhModels.getModelIndex() + " to queue: thread="
-                + Thread.currentThread().getName() + ", completedHouseholds=" + completedHouseholds
-                + ".");
+        if(logResults){
+	        logger.info("returned hhChoiceModels=" + hhModels.getModelIndex() + " to queue: thread="
+	                + Thread.currentThread().getName() + ", completedHouseholds=" + completedHouseholds
+	                + ".");
+        }
     }
 
     public synchronized void clearHhModels()

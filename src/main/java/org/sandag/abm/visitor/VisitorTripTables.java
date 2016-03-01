@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.application.SandagModelStructure;
+import org.sandag.abm.application.SandagTourBasedModel;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.MatrixDataServer;
 import org.sandag.abm.ctramp.MatrixDataServerRmi;
@@ -30,7 +31,7 @@ import com.pb.common.util.ResourceUtil;
 public class VisitorTripTables
 {
 
-    private static Logger           logger                  = Logger.getLogger("tripTables");
+    private static Logger           logger                  = Logger.getLogger(SandagTourBasedModel.class);
     public static final int         MATRIX_DATA_SERVER_PORT = 1171;
 
     private TableDataSet            tripData;
@@ -296,7 +297,7 @@ public class VisitorTripTables
         for (int i = 1; i <= tripData.getRowCount(); ++i)
         {
 
-            if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
+            //if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
 
             int departTime = (int) tripData.getValueAt(i, "period");
             int period = modelStructure.getModelPeriodIndex(departTime);
@@ -376,7 +377,7 @@ public class VisitorTripTables
                 matrix[mode][mat].setValueAt(originTAZ, destinationTAZ, (value + personTrips));
             }
 
-            logger.info("End creating trip tables for period " + timePeriod);
+            //logger.info("End creating trip tables for period " + timePeriod);
         }
     }
 

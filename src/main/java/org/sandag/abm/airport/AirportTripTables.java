@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.application.SandagModelStructure;
+import org.sandag.abm.application.SandagTourBasedModel;
 import org.sandag.abm.crossborder.CrossBorderTripTables;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.MatrixDataServer;
@@ -31,7 +32,7 @@ import com.pb.common.util.ResourceUtil;
 public class AirportTripTables
 {
 
-    private static Logger           logger                  = Logger.getLogger("tripTables");
+    private static Logger           logger                  = Logger.getLogger(SandagTourBasedModel.class);
     public static final int         MATRIX_DATA_SERVER_PORT = 1171;
 
     private TableDataSet            tripData;
@@ -306,7 +307,7 @@ public class AirportTripTables
         for (int i = 1; i <= tripData.getRowCount(); ++i)
         {
 
-            if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
+            //if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
 
             int purpose = (int) tripData.getValueAt(i, "purpose");
 

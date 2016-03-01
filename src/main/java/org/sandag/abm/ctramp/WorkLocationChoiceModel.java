@@ -171,8 +171,9 @@ public class WorkLocationChoiceModel
 
     }
 
-    public void applyWorkLocationChoice(Household hh)
+    public boolean applyWorkLocationChoice(Household hh)
     {
+    	boolean result=true;
 
         if (hh.getDebugChoiceModels())
         {
@@ -260,7 +261,7 @@ public class WorkLocationChoiceModel
                 // get the work location alternative chosen from the sample
                 results = selectLocationFromSampleOfAlternatives("work", -1, p, occupSegmentName,
                         occupSegmentIndex, tourNum++, homeMgraSizeArray, mgraDistanceArray);
-
+                
                 soaRunTime += dcTwoStageModelObject.getSoaRunTime();
 
             } catch (RuntimeException e)
@@ -277,8 +278,15 @@ public class WorkLocationChoiceModel
             p.setWorkLocation((int) results[0]);
             p.setWorkLocDistance((float) results[1]);
             p.setWorkLocLogsum((float) results[2]);
+            
+            if(p.getWorkLocationSegmentIndex()>-1 && p.getWorkLocation()==0){
+            	logger.error("***********************************************************************************************************************************");
+            	logger.error("!!!!!!!Worker in worksegmetn "+p.getWorkLocationSegmentIndex()+" can't find a work location!!!!!  RESTART Work location choice!!!!");
+            	result=false;
+            }
 
         }
+        return result;
 
     }
 
@@ -291,7 +299,7 @@ public class WorkLocationChoiceModel
             int segmentTypeIndex, Person person, String segmentName, int sizeSegmentIndex,
             int tourNum, double[] homeMgraSizeArray, double[] homeMgraDistanceArray)
     {
-
+    	
         // set tour origin taz/subzone and start/end times for calculating mode
         // choice logsum
         Logger modelLogger = dcManLogger;
@@ -317,6 +325,15 @@ public class WorkLocationChoiceModel
         // set sample of alternatives correction factors used in destination
         // choice utility for the sampled alternatives.
         dcTwoStageDmuObject.setDcSoaCorrections(sampleCorrectionFactors);
+        
+        /*
+        String log1="HHID="+person.getHouseholdObject().getHhId()+" HomeMGRA="+person.getHouseholdObject().getHhMgra()+" PersonID="+person.getPersonId()+" PersonType="+person.getPersonType()+" EmploymentCateogry="+person.getPersonEmploymentCategory();
+        String log2="segmentType="+segmentType+" setmentTypeIndex="+segmentTypeIndex+" segmentName="+segmentName+" sizeSegmentIndex="+sizeSegmentIndex+" numUniqueAlts="+numUniqueAlts;
+        modelLogger.error(log1);
+        modelLogger.error(log2);
+        System.out.println(log1);
+        System.out.println(log2);
+        */
 
         // for the destination mgras in the sample, compute mc logsums and save
         // in dmuObject.
@@ -325,9 +342,14 @@ public class WorkLocationChoiceModel
         // sample alternative to true. 1, respectively.
         for (int i = 0; i < numUniqueAlts; i++)
         {
+        	
+        	//String log4="sample "+i+" in "+numUniqueAlts+" unique alternatives";
 
             int destMgra = finalSample[i];
             dcModelSampleValues[i] = finalSample[i];
+            
+            //modelLogger.error("finalSample="+finalSample[i]);
+            //System.out.println("finalSample="+finalSample[i]);
 
             // set logsum value in DC dmuObject for the logsum index, sampled
             // zone and subzone.
@@ -336,6 +358,13 @@ public class WorkLocationChoiceModel
 
             sampleAlternativeLogsums[i] = logsum;
             sampleAlternativeDistances[i] = homeMgraDistanceArray[finalSample[i]];
+            
+            /*
+            modelLogger.error("sampleAlternativeLogsums="+sampleAlternativeLogsums[i]);
+            System.out.println("sampleAlternativeLogsums="+sampleAlternativeLogsums[i]);
+            modelLogger.error("sampleAlternativeDiscances="+sampleAlternativeDistances[i]);
+            System.out.println("sampleAlternativeDiscances="+sampleAlternativeDistances[i]);
+            */        
 
             // set availaibility and sample values for the purpose, dcAlt.
             dcModelAltsAvailable[i + 1] = true;
@@ -353,7 +382,6 @@ public class WorkLocationChoiceModel
         String loggingHeader = "";
         if (household.getDebugChoiceModels())
         {
-
             // null tour means the DC is a mandatory usual location choice
             choiceModelDescription = String.format(
                     "Usual %s Location Choice Model for: Segment=%s", segmentType, segmentName);
@@ -388,11 +416,23 @@ public class WorkLocationChoiceModel
         int chosen = -1;
         if (locationChoiceModel.getAvailabilityCount() > 0)
         {
+        	/*
+        	modelLogger.error("availabilitycount>0");
+        	System.out.println("availabilitycount>0");
+        	*/
             try
             {
                 chosen = locationChoiceModel.getChoiceResult(rn);
+                /*
+                modelLogger.error("chosen="+chosen);
+                System.out.println("chosen="+chosen);
+                */
             } catch (Exception e)
             {
+            	/*
+            	modelLogger.error("failed computing chosen");
+            	System.out.println("Failed computing chosen");
+            	*/
             }
         } else
         {
@@ -401,9 +441,16 @@ public class WorkLocationChoiceModel
                             dcTwoStageDmuObject.getHouseholdObject().getHhId(), dcTwoStageDmuObject
                                     .getPersonObject().getPersonNum(), segmentName));
         }
+        
+        /*
+        String log3="HHID="+person.getHouseholdObject().getHhId()+" HomeMGRA="+person.getHouseholdObject().getHhMgra()+" PersonID="+person.getPersonId()+" PersonType="+person.getPersonType()+" EmploymentCateogry="+person.getPersonEmploymentCategory()+" chosen="+chosen;
+        System.out.println(log3);
+        modelLogger.error(log3);
+        */
+        
 
-        if (household.getDebugChoiceModels() || chosen <= 0)
-        {
+       if (household.getDebugChoiceModels() || chosen <= 0)
+       {
 
             double[] utilities = locationChoiceModel.getUtilities();
             double[] probabilities = locationChoiceModel.getProbabilities();
@@ -453,7 +500,7 @@ public class WorkLocationChoiceModel
                 throw new RuntimeException();
             }
 
-        }
+       }
 
         double[] returnArray = new double[3];
 

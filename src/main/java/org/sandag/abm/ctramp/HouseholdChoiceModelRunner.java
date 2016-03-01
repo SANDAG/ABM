@@ -3,12 +3,14 @@ package org.sandag.abm.ctramp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.jppf.client.JPPFClient;
 import org.jppf.client.JPPFJob;
 import org.jppf.node.protocol.DataProvider;
 import org.jppf.node.protocol.MemoryMapDataProvider;
 import org.jppf.node.protocol.Task;
+
 import com.pb.common.calculator.MatrixDataServerIf;
 
 public class HouseholdChoiceModelRunner
@@ -36,6 +38,7 @@ public class HouseholdChoiceModelRunner
     private CtrampDmuFactoryIf      dmuFactory;
 
     private JPPFClient              jppfClient;
+    private boolean logResults=false;
 
     // The number of initialization packets are the number of "small" packets
     // submited at the beginning of a
@@ -82,7 +85,9 @@ public class HouseholdChoiceModelRunner
         propertyValue = propertyMap.get(PROPERTIES_INITIALIZATION_PACKET_SIZE);
         if (propertyValue == null) INITIALIZATION_PACKET_SIZE = 0;
         else INITIALIZATION_PACKET_SIZE = Integer.parseInt(propertyValue);
-
+        
+        logResults = Util.getStringValueFromPropertyMap(propertyMap, "RunModel.LogResults")
+                .equalsIgnoreCase("true");
     }
 
     /**
@@ -160,9 +165,11 @@ public class HouseholdChoiceModelRunner
 
                 try
                 {
-                    logger.info(String.format("HH TASK: %s returned: %s, maxAlts: %d.",
-                            task.getId(), (String) task.getResult(),
-                            ((HouseholdChoiceModelsTaskJppf) task).getMaxAlts()));
+                	if(logResults){
+	                    logger.info(String.format("HH TASK: %s returned: %s, maxAlts: %d.",
+	                            task.getId(), (String) task.getResult(),
+	                            ((HouseholdChoiceModelsTaskJppf) task).getMaxAlts()));
+                	}
                 } catch (Exception e)
                 {
                     logger.error(

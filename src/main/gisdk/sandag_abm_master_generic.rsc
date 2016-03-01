@@ -7,7 +7,7 @@ Macro "Run SANDAG ABM"
    sample_rate = { 0.2, 0.5, 1.0 }
    max_iterations=sample_rate.length    //number of feedback loops
   
-   path = "${workpath}\\${year}"
+   path = "${workpath}"
 
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","*********Model Run Starting************"})
       
@@ -120,7 +120,7 @@ Macro "Run SANDAG ABM"
 	      // Start  JPPF driver 
 	      runString = path+"\\bin\\runDriver.cmd "+drive+" "+path_no_drive
 	      ok = RunMacro("TCB Run Command", 1, "Start JPPF Driver", runString)
-	      if !ok then goto quit  
+	      if !ok then goto quit 
 	
 	      // Start HH Manager, and worker nodes
 	      runString = path+"\\bin\\StartHHAndNodes.cmd "+drive+" "+path_no_drive

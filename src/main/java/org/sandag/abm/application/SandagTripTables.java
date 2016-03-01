@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.MatrixDataServer;
@@ -12,6 +13,7 @@ import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.matrix.Matrix;
@@ -23,7 +25,7 @@ import com.pb.common.util.ResourceUtil;
 public class SandagTripTables
 {
 
-    private static Logger           logger                  = Logger.getLogger("tripTables");
+    private static Logger           logger                  = Logger.getLogger(SandagTourBasedModel.class);
 
     public static final int         MATRIX_DATA_SERVER_PORT = 1171;
 
@@ -438,7 +440,7 @@ public class SandagTripTables
         for (int i = 1; i <= tripData.getRowCount(); ++i)
         {
 
-            if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
+            //if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
 
             int departTime = (int) tripData.getValueAt(i, "stop_period");
             int period = modelStructure.getModelPeriodIndex(departTime);
@@ -552,7 +554,7 @@ public class SandagTripTables
                 matrix[mode][mat].setValueAt(originTAZ, destinationTAZ, (value + personTrips));
             }
         }
-        logger.info("End creating trip tables for period " + timePeriod);
+        //logger.info("End creating trip tables for period " + timePeriod);
     }
 
     /**

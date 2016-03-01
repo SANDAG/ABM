@@ -6,12 +6,13 @@
 
     <groupId>org.sandag</groupId>
     <artifactId>SANDAG-ABM</artifactId>
-    <version>13.2.4</version>
+    <version>13.2.5</version>
     <name>SANDAG CT-RAMP Activity Based Model</name>
     <properties>
         <encoding.type>UTF-8</encoding.type> 
         <output.path>${project.build.directory}/${project.name}/${project.version}/${project.activeProfiles[0].id}/${project.activeProfiles[1].id}</output.path>
         <study.root>${project.build.directory}/${project.name}/${project.version}/${project.activeProfiles[0].id}</study.root>
+        <release.root>${project.build.directory}/${project.name}/${project.version}</release.root>
         <jppf.driver.memory.min>1000m</jppf.driver.memory.min> 
         <jppf.driver.memory.max>9000m</jppf.driver.memory.max> 
         <jppf.headnode.memory.min>32000m</jppf.headnode.memory.min> 
@@ -46,7 +47,7 @@
         <MAPANDRUN>mapAndRun.bat</MAPANDRUN>
         <JAVA_64_PATH>C:\Progra~1\Java\jre7</JAVA_64_PATH>
         <JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
-        <workpath>T:\projects\sr13\sdf_scenevl_r3</workpath>
+        <workpath>WORKPATH</workpath>
         <database_server>sql2014a8</database_server>
         <database_name>abm_13_2_3</database_name>
         <jppf_version>5.0.1</jppf_version>
@@ -54,130 +55,24 @@
     <profiles>
         <profile>
             <id>local</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
-                <AT>False</AT>
+                <snode>true</snode>
                 <jppf.server.host>127.0.0.1</jppf.server.host>
-                <map.folder>e$</map.folder>
                 <jppf.management.host>127.0.0.1</jppf.management.host>
                 <matrix.server.host>127.0.0.1</matrix.server.host>
                 <household.server.host>127.0.0.1</household.server.host>
-                <master.node.ip>127.0.0.1</master.node.ip>
-                <node.1.ip>127.0.0.1</node.1.ip>
-                <node.2.ip>127.0.0.1</node.2.ip>
-            </properties>
-        </profile>
-        <profile>
-            <id>charger</id>
-            <properties>
-                <AT>False</AT>
-                <jppf.server.host>172.16.34.51</jppf.server.host>
-                <map.folder>d</map.folder>
-                <jppf.management.host>172.16.34.51</jppf.management.host>
-                <matrix.server.host>172.16.34.51</matrix.server.host>
-                <household.server.host>172.16.34.50</household.server.host>
-                <master.node.ip>172.16.34.51</master.node.ip>
-                <node.1.ip>172.16.34.50</node.1.ip>
-                <node.2.ip>172.16.34.52</node.2.ip>
-                <master.node.name>CHARGER</master.node.name>
-                <node.1.name>THUNDERBIRD</node.1.name>
-                <node.2.name>BARRACUDA</node.2.name>
+                <master.node.ip>127.0.0.1</master.node.ip>  
+                <master.node.name>localhost</master.node.name>             
+                <master.execution.threads>18</master.execution.threads>
+                <node.1.name>localhost</node.1.name>
+                <node.1.execution.threads>18</node.1.execution.threads>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
-                <!-- 
-                <workpath>d:\\projects\\sandag\\series13</workpath>   
-                -->             
-            </properties>
-        </profile>
-        <profile>
-            <id>charger_at</id>
-            <properties>
-                <AT>True</AT>
-                <jppf.server.host>172.16.34.51</jppf.server.host>
-                <map.folder>d</map.folder>
-                <jppf.management.host>172.16.34.51</jppf.management.host>
-                <matrix.server.host>172.16.34.51</matrix.server.host>
-                <household.server.host>172.16.34.51</household.server.host>
-                <master.node.ip>172.16.34.51</master.node.ip>
-                <node.1.ip>172.16.34.50</node.1.ip>
-                <node.2.ip>172.16.34.52</node.2.ip>
-                <master.node.name>CHARGER</master.node.name>
-                <node.1.name>THUNDERBIRD</node.1.name>
-                <node.2.name>BARRACUDA</node.2.name>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH> 
-                <!--
-                <workpath>d:\\projects\\sandag\\series13</workpath>
-                -->
-            </properties>
-        </profile>        
-        <profile>
-            <id>wildcat</id>
-            <properties>
-                <AT>False</AT>
-                <jppf.server.host>172.16.34.60</jppf.server.host>
-                <map.folder>d$</map.folder>
-                <jppf.management.host>172.16.34.60</jppf.management.host>
-                <matrix.server.host>172.16.34.60</matrix.server.host>
-                <household.server.host>172.16.34.42</household.server.host>
-                <master.node.ip>172.16.34.60</master.node.ip>
-                <node.1.ip>172.16.34.42</node.1.ip>
-                <node.2.ip>172.16.34.41</node.2.ip>
-                <master.node.name>WILDCAT</master.node.name>
-                <node.1.name>GALAXIE</node.1.name>
-                <node.2.name>COBRA</node.2.name>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
-                <!--
-                <workpath>d:\\projects\\sandag\\series13</workpath>
-                -->
-            </properties>
-        </profile>
-        <profile>
-            <id>wildcat_at</id>
-            <properties>
-                <AT>True</AT>
-                <jppf.server.host>172.16.34.60</jppf.server.host>
-                <map.folder>d$</map.folder>
-                <jppf.management.host>172.16.34.60</jppf.management.host>
-                <matrix.server.host>172.16.34.60</matrix.server.host>
-                <household.server.host>172.16.34.60</household.server.host>
-                <master.node.ip>172.16.34.60</master.node.ip>
-                <node.1.ip>172.16.34.42</node.1.ip>
-                <node.2.ip>172.16.34.41</node.2.ip>
-                <master.node.name>WILDCAT</master.node.name>
-                <node.1.name>GALAXIE</node.1.name>
-                <node.2.name>COBRA</node.2.name>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>
-                <!-- 
-                <workpath>d:\\projects\\sandag\\series13</workpath>
-                -->
             </properties>
         </profile>
         <profile>
             <id>aztec</id>
             <properties>
-                <AT>False</AT>
-                <jppf.server.host>172.16.34.30</jppf.server.host>
-                <map.folder>c$</map.folder>
-                <jppf.management.host>172.16.34.30</jppf.management.host>
-                <matrix.server.host>172.16.34.30</matrix.server.host>
-                <household.server.host>172.16.34.33</household.server.host>
-                <master.node.ip>172.16.34.30</master.node.ip>
-                <node.1.ip>172.16.34.33</node.1.ip>
-                <node.2.ip>172.16.34.45</node.2.ip>
-                <master.node.name>AZTEC</master.node.name>
-                <node.1.name>HAWKEYE</node.1.name>
-                <node.2.name>AGGIE</node.2.name>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
-                <!--  
-                <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>   
-                -->             
-            </properties>
-        </profile>
-        <profile>
-            <id>aztec_at</id>
-            <properties>
-                <AT>True</AT>
+                <snode>false</snode>
                 <jppf.server.host>172.16.34.30</jppf.server.host>
                 <map.folder>c$</map.folder>
                 <jppf.management.host>172.16.34.30</jppf.management.host>
@@ -186,41 +81,22 @@
                 <master.node.ip>172.16.34.30</master.node.ip>
                 <node.1.ip>172.16.34.33</node.1.ip>
                 <node.2.ip>172.16.34.45</node.2.ip>
+                <node.3.ip>172.16.34.51</node.3.ip>
                 <master.node.name>AZTEC</master.node.name>
+                <master.execution.threads>14</master.execution.threads>
                 <node.1.name>HAWKEYE</node.1.name>
+                <node.1.execution.threads>15</node.1.execution.threads>
                 <node.2.name>AGGIE</node.2.name>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
-                <!--  
-                <workpath>c:\\ABM\\projects\\sandag\\series13</workpath>  
-                -->              
+                <node.2.execution.threads>12</node.2.execution.threads>
+                <node.3.name>CHARGER</node.3.name>
+                <node.3.execution.threads>8</node.3.execution.threads>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>               
             </properties>
         </profile>          
         <profile>
             <id>gaucho</id>
             <properties>
-                <AT>False</AT>
-                <jppf.server.host>172.16.34.61</jppf.server.host>
-                <map.folder>d$</map.folder>
-                <jppf.management.host>172.16.34.61</jppf.management.host>
-                <matrix.server.host>172.16.34.61</matrix.server.host>
-                <household.server.host>172.16.34.40</household.server.host>
-                <master.node.ip>172.16.34.61</master.node.ip>
-                <node.1.ip>172.16.34.40</node.1.ip>
-                <node.2.ip>172.16.34.39</node.2.ip>
-                <master.node.name>GAUCHO</master.node.name>
-                <node.1.name>MUSTANG</node.1.name>
-                <node.2.name>NITTANY</node.2.name>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
-                <!--  
-                <workpath>d:\\projects\\sandag\\series13</workpath>  
-                -->    
-                                          
-            </properties>
-        </profile> 
-        <profile>
-            <id>gaucho_at</id>
-            <properties>
-                <AT>True</AT>
+                <snode>false</snode>
                 <jppf.server.host>172.16.34.61</jppf.server.host>
                 <map.folder>d$</map.folder>
                 <jppf.management.host>172.16.34.61</jppf.management.host>
@@ -230,12 +106,33 @@
                 <node.1.ip>172.16.34.40</node.1.ip>
                 <node.2.ip>172.16.34.39</node.2.ip>
                 <master.node.name>GAUCHO</master.node.name>
+                <master.execution.threads>14</master.execution.threads>
                 <node.1.name>MUSTANG</node.1.name>
+                <node.1.execution.threads>12</node.1.execution.threads>
                 <node.2.name>NITTANY</node.2.name>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH> 
-                <!-- 
-                <workpath>d:\\projects\\sandag\\series13</workpath>    
-                -->            
+                <node.2.execution.threads>12</node.2.execution.threads>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>             
+            </properties>
+        </profile>       
+        <profile>
+            <id>wildcat</id>
+            <properties>
+                <snode>false</snode>
+                <jppf.server.host>172.16.34.60</jppf.server.host>
+                <map.folder>d$</map.folder>
+                <jppf.management.host>172.16.34.60</jppf.management.host>
+                <matrix.server.host>172.16.34.60</matrix.server.host>
+                <household.server.host>172.16.34.60</household.server.host>
+                <master.node.ip>172.16.34.60</master.node.ip>
+                <node.1.ip>172.16.34.42</node.1.ip>
+                <node.2.ip>172.16.34.41</node.2.ip>
+                <master.node.name>WILDCAT</master.node.name>
+                <master.execution.threads>14</master.execution.threads>
+                <node.1.name>GALAXIE</node.1.name>
+                <node.1.execution.threads>12</node.1.execution.threads>
+                <node.2.name>COBRA</node.2.name>
+                <node.2.execution.threads>12</node.2.execution.threads>
+                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>
             </properties>
         </profile>         
         <profile>
@@ -265,7 +162,7 @@
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <cdap.uec.file>CoordinatedDailyActivityPattern2010.xls</cdap.uec.file>             
+                <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>                
                 <workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
                 <aoc.fuel>13.5</aoc.fuel>
@@ -283,7 +180,7 @@
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>  
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>  
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
-                <cdap.uec.file>CoordinatedDailyActivityPattern2010.xls</cdap.uec.file>
+                <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>     
                 <workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
                 <aoc.fuel>13.5</aoc.fuel>
@@ -301,7 +198,7 @@
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <cdap.uec.file>CoordinatedDailyActivityPattern2015.xls</cdap.uec.file>            
+                <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>              
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
                 <aoc.fuel>19.5</aoc.fuel>
@@ -319,7 +216,7 @@
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
-                <cdap.uec.file>CoordinatedDailyActivityPattern2020.xls</cdap.uec.file>            
+                <tourdest.uec.file>TourDestinationChoice2020.xls</tourdest.uec.file>           
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
                 <aoc.fuel>17.1</aoc.fuel>
@@ -337,7 +234,7 @@
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
-                <cdap.uec.file>CoordinatedDailyActivityPattern2025.xls</cdap.uec.file>                
+                <tourdest.uec.file>TourDestinationChoice2020.xls</tourdest.uec.file>                   
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
                 <aoc.fuel>16.7</aoc.fuel>
@@ -355,7 +252,7 @@
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
-                <cdap.uec.file>CoordinatedDailyActivityPattern2035.xls</cdap.uec.file>
+                <tourdest.uec.file>TourDestinationChoice2035.xls</tourdest.uec.file>      
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
                 <aoc.fuel>17.9</aoc.fuel>
@@ -373,7 +270,7 @@
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2040.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2040.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
-                <cdap.uec.file>CoordinatedDailyActivityPattern2040.xls</cdap.uec.file>
+                <tourdest.uec.file>TourDestinationChoice2035.xls</tourdest.uec.file>      
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
                 <aoc.fuel>19.4</aoc.fuel>
@@ -391,7 +288,7 @@
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2040.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2040.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
-                <cdap.uec.file>CoordinatedDailyActivityPattern2050.xls</cdap.uec.file>
+                <tourdest.uec.file>TourDestinationChoice2050.xls</tourdest.uec.file>      
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
                 <aoc.fuel>20.1</aoc.fuel>
@@ -477,7 +374,7 @@
                         </goals>
                         <configuration>
                             <encoding>${encoding.type}</encoding> 
-                            <outputDirectory>${output.path}/application</outputDirectory>
+                            <outputDirectory>${release.root}/common/application</outputDirectory>
                             <overWriteReleases>false</overWriteReleases>
                             <overWriteSnapshots>false</overWriteSnapshots>
                             <overWriteIfNewer>true</overWriteIfNewer>
@@ -500,7 +397,7 @@
                         </goals>
                         <configuration>
                             <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${output.path}/uec</outputDirectory>
+                            <outputDirectory>${release.root}/common/uec</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>uec</directory>
@@ -520,7 +417,7 @@
                             <!-- 
                             <outputDirectory>${study.root}/gisdk</outputDirectory>
                             -->
-                            <outputDirectory>${output.path}/gisdk</outputDirectory>
+                            <outputDirectory>${release.root}/common/gisdk</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/gisdk</directory>
@@ -537,7 +434,7 @@
                         </goals>
                         <configuration>
                             <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${output.path}/python</outputDirectory>
+                            <outputDirectory>${release.root}/common/python</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/python</directory>
@@ -605,6 +502,33 @@
                                         <include>*.cmd</include>
                                         <include>*.py</include>
                                     </includes>
+                                    <excludes>
+                                        <exclude>create_scenario.cmd</exclude>
+                                        <exclude>copy_networks.cmd</exclude>
+                                        <exclude>BatchSubstitute.bat</exclude>
+                                    </excludes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-create-scenario-bat</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${release.root}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>create_scenario.cmd</include>
+                                        <include>copy_networks.cmd</include>
+                                        <include>BatchSubstitute.bat</include>
+                                    </includes>
                                 </resource>
                             </resources>
                         </configuration>
@@ -629,7 +553,6 @@
                             </resources>
                         </configuration>
                     </execution>
-  
                     <execution>
                         <id>copy-inputtruck-resources</id>
                         <phase>package</phase>
@@ -638,7 +561,7 @@
                         </goals>
                         <configuration>
                             <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${output.path}/input_truck</outputDirectory>
+                            <outputDirectory>${release.root}/common/input_truck</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>input_truck</directory>
@@ -649,75 +572,7 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution> 
-                    <execution>
-                        <id>copy-logFiles-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${output.path}/logFiles</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>logFiles</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>    
-                    <execution>
-                        <id>copy-output-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${output.path}/output</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>output</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>                                    
-                    <execution>
-                        <id>copy-report-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${output.path}/report</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>report</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-input-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${output.path}/input</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>input</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>                    
+                    </execution>                                                
                     <execution>
                         <id>copy-sql-resources</id>
                         <phase>package</phase>
@@ -726,7 +581,7 @@
                         </goals>
                         <configuration>
                             <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${output.path}/sql</outputDirectory>
+                            <outputDirectory>${release.root}/common/sql</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>sql</directory>
@@ -749,7 +604,7 @@
                         <exclude>**/*.properties</exclude>
                         <exclude>*.xml</exclude>
                     </excludes>
-                    <outputDirectory>${output.path}/application</outputDirectory>                  
+                    <outputDirectory>${release.root}/common/application</outputDirectory>                  
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
