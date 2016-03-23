@@ -171,9 +171,8 @@ public class WorkLocationChoiceModel
 
     }
 
-    public boolean applyWorkLocationChoice(Household hh)
+    public void applyWorkLocationChoice(Household hh)
     {
-    	boolean result=true;
 
         if (hh.getDebugChoiceModels())
         {
@@ -261,7 +260,7 @@ public class WorkLocationChoiceModel
                 // get the work location alternative chosen from the sample
                 results = selectLocationFromSampleOfAlternatives("work", -1, p, occupSegmentName,
                         occupSegmentIndex, tourNum++, homeMgraSizeArray, mgraDistanceArray);
-                
+
                 soaRunTime += dcTwoStageModelObject.getSoaRunTime();
 
             } catch (RuntimeException e)
@@ -278,15 +277,8 @@ public class WorkLocationChoiceModel
             p.setWorkLocation((int) results[0]);
             p.setWorkLocDistance((float) results[1]);
             p.setWorkLocLogsum((float) results[2]);
-            
-            if(p.getWorkLocationSegmentIndex()>-1 && p.getWorkLocation()==0){
-            	logger.error("***********************************************************************************************************************************");
-            	logger.error("!!!!!!!Worker in worksegmetn "+p.getWorkLocationSegmentIndex()+" can't find a work location!!!!!  RESTART Work location choice!!!!");
-            	result=false;
-            }
 
         }
-        return result;
 
     }
 
@@ -299,7 +291,7 @@ public class WorkLocationChoiceModel
             int segmentTypeIndex, Person person, String segmentName, int sizeSegmentIndex,
             int tourNum, double[] homeMgraSizeArray, double[] homeMgraDistanceArray)
     {
-    	
+
         // set tour origin taz/subzone and start/end times for calculating mode
         // choice logsum
         Logger modelLogger = dcManLogger;
@@ -361,6 +353,7 @@ public class WorkLocationChoiceModel
         String loggingHeader = "";
         if (household.getDebugChoiceModels())
         {
+
             // null tour means the DC is a mandatory usual location choice
             choiceModelDescription = String.format(
                     "Usual %s Location Choice Model for: Segment=%s", segmentType, segmentName);
@@ -460,7 +453,7 @@ public class WorkLocationChoiceModel
                 throw new RuntimeException();
             }
 
-       }
+        }
 
         double[] returnArray = new double[3];
 

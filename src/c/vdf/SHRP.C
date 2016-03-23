@@ -11,6 +11,7 @@
 #include <windows.h>
 #include "vdfdll.h"
 //#include "stdafx.h"
+static short TimeOnlyFlag = 0;
 
 typedef enum field_
 {
@@ -47,30 +48,30 @@ typedef enum field_
 #define sqr(x) ((x) * (x))
 #endif
 
-static int          local_status = TC_OKAY;
-static int          *_platform_tc_status = &local_status;
-static double       BigReal = flt_max;
+//static int          local_status = TC_OKAY;
+//static int          *_platform_tc_status = &local_status;
+//static double       BigReal = flt_max;
 static float        Threshold = 0.;
-static VDF_FLAGS    flags;
+//static VDF_FLAGS    flags;
 
 // for reliability thresholds
-static float LOS_C_THRESHOLD = 0.7;
-static float LOS_D_THRESHOLD = 0.8;
-static float LOS_E_THRESHOLD = 0.9;
-static float LOS_FL_THRESHOLD = 1.0;
-static float LOS_FH_THRESHOLD = 1.2;
+static double LOS_C_THRESHOLD = 0.7;
+static double LOS_D_THRESHOLD = 0.8;
+static double LOS_E_THRESHOLD = 0.9;
+static double LOS_FL_THRESHOLD = 1.0;
+static double LOS_FH_THRESHOLD = 1.2;
 
 // Set parameter values and valid bounds
 static char *fieldname[N_FIELDS - 2] = { "Time", "Segment Capacity", "Intersection Capacity", "Cycle", "PF (Progression Factor)", "GC (g/c ratio)",
-"Alpha1 for Segment", "Beta1 for Segment", "Alpha2 for Junction", "Beta2 for Junction", "Preload", "LOS C reliability factor", "LOS D reliability factor", "LOS E reliability factor",
-"LOS F.low reliability factor", "LOS F.high reliability factor", "Static link reliability factor", "Length" };
-static short Required[N_FIELDS - 2] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1 };
+"Alpha1 for Segment", "Beta1 for Segment", "Alpha2 for Junction", "Beta2 for Junction", "LOS C reliability factor", "LOS D reliability factor", "LOS E reliability factor",
+"LOS F.low reliability factor", "LOS F.high reliability factor", "Static link reliability factor", "Length", "Preload" };
+static short Required[N_FIELDS - 2] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 };
 static short CheckBounds[N_FIELDS - 2] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
-static float LowerBound[N_FIELDS - 2] = { 0, 1, 0, 0, 0.2, 0, 0, 0, 0, 0, -99, -99, -99, -99, -99, -99, 0 };
-static float UpperBound[N_FIELDS - 2] = { flt_max, flt_max, flt_max, 200, 2, 1, 300, 300, 300, 300, flt_max, flt_max, flt_max, flt_max, flt_max, flt_max, flt_max, flt_max };
+static float LowerBound[N_FIELDS - 2] = { 0, 1, 0, 0, 0.2, 0, 0, 0, 0, 0, -99, -99, -99, -99, -99, -99, 0, 0 };
+static float UpperBound[N_FIELDS - 2] = { flt_max, flt_max, flt_max, 200, 2, 1, 300, 300, 300, flt_max, flt_max, flt_max, flt_max, flt_max, flt_max, flt_max, flt_max, flt_max };
 
 // Include common VDF functions and preprocessir Utility
-//#include "VDF_Include.c"
+#include "VDF_Include.c"
 
 //
 // VDF Include file with common functions
@@ -78,6 +79,7 @@ static float UpperBound[N_FIELDS - 2] = { flt_max, flt_max, flt_max, 200, 2, 1, 
 // Caliper Corporation 2007
 //
 //
+/* JL May not need these functions 
 
 void  DLLEXPORT  InitVDFDLL(int *ptc_status)
 {
@@ -171,6 +173,7 @@ Exit:
 	return(*_platform_tc_status = status);
 
 }
+/*JL End of functions to delete? */
 
 short  DLLEXPORT  VDF_GetDefaults(double *d)
 {
@@ -184,7 +187,6 @@ short  DLLEXPORT  VDF_GetDefaults(double *d)
 	d[BETA1] = 1.9;
 	d[ALPHA2] = 2.0;
 	d[BETA2] = 2.4;
-	d[PRELOAD] = 0.;
 	d[LOS_C_FACTOR] = 0.;
 	d[LOS_D_FACTOR] = 0.;
 	d[LOS_E_FACTOR] = 0.;
@@ -192,15 +194,15 @@ short  DLLEXPORT  VDF_GetDefaults(double *d)
 	d[LOS_F_HIGH_FACTOR] = 0.;
 	d[STAT_RELIABILITY] = 0.;
 	d[LENGTH] = 0.;
+	d[PRELOAD] = 0.;
 
-
-	return *_platform_tc_status = TC_OKAY;
+	return (TC_OKAY);
 }
 
 short  DLLEXPORT  VDF_GetLabel(char *label)
 {
 	strncpy(label, "SANDAG SHRPC04 link-junction-reliability VDF", VDF_LABELSIZE);
-	return *_platform_tc_status = TC_OKAY;
+	return TC_OKAY;
 }
 
 /**
@@ -267,19 +269,19 @@ static double ReliabilityFactor(double Flow, long link, float **Cost)
 
 			//beta * v\c ratio of link - the v\c threshold + 0.01
 			if (ratio_s >= LOS_C_THRESHOLD)
-				reliabilityFactor = Cost[LOS_C_FACTOR][link] * ratio_s - LOS_C_THRESHOLD + 0.01;
+				reliabilityFactor = Cost[LOS_C_FACTOR][link] * (ratio_s - LOS_C_THRESHOLD + 0.01);
 			if (ratio_s >= LOS_D_THRESHOLD)
-				reliabilityFactor += Cost[LOS_D_FACTOR][link] * ratio_s - LOS_D_THRESHOLD + 0.01;
+				reliabilityFactor += Cost[LOS_D_FACTOR][link] * (ratio_s - LOS_D_THRESHOLD + 0.01);
 			if (ratio_s >= LOS_E_THRESHOLD)
-				reliabilityFactor += Cost[LOS_E_FACTOR][link] * ratio_s - LOS_E_THRESHOLD + 0.01;
+				reliabilityFactor += Cost[LOS_E_FACTOR][link] * (ratio_s - LOS_E_THRESHOLD + 0.01);
 			if (ratio_s >= LOS_FL_THRESHOLD)
-				reliabilityFactor += Cost[LOS_F_LOW_FACTOR][link] * ratio_s - LOS_FL_THRESHOLD + 0.01;
+				reliabilityFactor += Cost[LOS_F_LOW_FACTOR][link] * (ratio_s - LOS_FL_THRESHOLD + 0.01);
 			if (ratio_s >= LOS_FH_THRESHOLD)
-				reliabilityFactor += Cost[LOS_F_HIGH_FACTOR][link] * ratio_s - LOS_FH_THRESHOLD + 0.01;
+				reliabilityFactor += Cost[LOS_F_HIGH_FACTOR][link] * (ratio_s - LOS_FH_THRESHOLD + 0.01);
 
 			//fixed reliability is stored at the link level, and must be added to the result of the above v\c-based factor, and the result is multiplied by link length
-			reliabilityFactor = max(reliabilityFactor,0);
-			reliabilityFactor = (reliabilityFactor + Cost[STAT_RELIABILITY][link]) * Cost[LENGTH][link];
+			reliabilityFactor = max(reliabilityFactor,(double)0.0);
+			reliabilityFactor = (reliabilityFactor + (double) Cost[STAT_RELIABILITY][link]) * (double) Cost[LENGTH][link];
 
 		}
 	}
@@ -317,6 +319,20 @@ static double SumVOCReliabilityFactors(double Flow, long link, float **Cost)
 	return max(reliabilityFactor,0);
 }
 
+static double get_link_cost(double flow, long link, float **Cost)
+{
+    double val, reliability;
+	//the mid-link and intersection time-related penalty
+	val = TucsonVDF(flow, link, Cost);
+    if (TimeOnlyFlag==0 && val != dbl_miss)
+        {
+	    //the reliability factor to apply to time
+	    reliability = ReliabilityFactor(flow, link, Cost);
+	    //the total penalty
+	    val += reliability * val;
+        }
+	return(val);
+}
 
 double  DLLEXPORT  VDFValue(double *FlowVal, long *link, float **Cost, short *DisabledLinks) //get the VDF value for each individual network link
 {
@@ -327,22 +343,15 @@ double  DLLEXPORT  VDFValue(double *FlowVal, long *link, float **Cost, short *Di
 	if (DisabledLinks[*link])
 		return(flt_max);
 
-	//the mid-link and intersection time-related penalty
-	vdf = TucsonVDF(*FlowVal, *link, Cost);
-
-	//the reliability factor to apply to time
-	reliability = ReliabilityFactor(*FlowVal, *link, Cost);
-
-	//the total penalty
-	val = vdf + reliability * vdf;
-
-	return(val);
+    val = get_link_cost(*FlowVal, *link, Cost);
+             
+    return(val);
 }
+
 
 void  DLLEXPORT  VDFValues(double *Flow, float **Cost, long *links, short *DisabledLinks) //get the VDF value for a group of network links
 {
 	long  link;
-	float vdf, reliability;
 
 	*_platform_tc_status = TC_OKAY;
 	Threshold = 0.;
@@ -358,12 +367,7 @@ void  DLLEXPORT  VDFValues(double *Flow, float **Cost, long *links, short *Disab
 			continue;
 		}
 
-
-		vdf = (float)TucsonVDF(Flow[link], link, Cost);
-
-		reliability = (float)ReliabilityFactor(Flow[link], link, Cost);
-
-		Cost[CURRENT][link] = vdf + reliability * vdf;
+		Cost[CURRENT][link] = (float)get_link_cost(Flow[link], link, Cost);
 
 		if (Cost[CURRENT][link] < Cost[T0][link])
 		{
@@ -379,37 +383,13 @@ void  DLLEXPORT  VDFValues(double *Flow, float **Cost, long *links, short *Disab
 // reporting purposes and for speed calculations
 void  DLLEXPORT  VDFTimeOnly(double *Flow, float **Cost, long *links, short *DisabledLinks)
 {
-	long  link;
-	float vdf, reliability;
-
-	*_platform_tc_status = TC_OKAY;
-	Threshold = 0.;
-
-	for (link = 0; link < *links; link++)
-	{
-		if (DisabledLinks[link])
-			continue;
-
-		if (Cost[T0][link] == flt_miss) //no link travel time
-		{
-			Cost[CURRENT][link] = flt_miss; //travel time after the VPR adjustment is same as before, invalid
-			continue;
-		}
-
-
-		vdf = (float)TucsonVDF(Flow[link], link, Cost);
-
-		Cost[CURRENT][link] = vdf;
-
-		if (Cost[CURRENT][link] < Cost[T0][link])
-		{
-			*_platform_tc_status = TC_INVINPUT;
-			Cost[CURRENT][link] = Cost[T0][link];//make the input is invalid, current travel time is same as the previous one
-		}
-
-		Threshold = max(Threshold, Cost[CURRENT][link]);
-	}
+    TimeOnlyFlag = 1;
+    VDFValues(Flow, Cost, links, DisabledLinks);        
+    TimeOnlyFlag = 0;
 }
+
+/* JL do not need this 
+
 
 short  DLLEXPORT  VDF_Preprocess(float **Cost, long *links, void *defaults, short *Unused1, short *Unused2)
 {
@@ -424,6 +404,8 @@ short  DLLEXPORT  VDF_Preprocess(float **Cost, long *links, void *defaults, shor
 
 	return(*_platform_tc_status = s);
 }
+ JL end of deleted code */
+
 /**
 Calculate the derivative of the vdf for a given reliability factor and link function as:
 (r (2 a b f c^(-b) x^b+d e (g-1)^2 p y n^(-e) x^e))/(2 x)
@@ -515,7 +497,7 @@ double  DLLEXPORT  VDF_Derivative(double *FlowVal, long *link, float **Cost, sho
 }
 
 
-
+/*
 
 double  DLLEXPORT  VDF_Integral(double *FlowVal, long *link, float **Cost, short *DisabledLinks)
 {
@@ -550,3 +532,4 @@ double  DLLEXPORT  VDF_Integral(double *FlowVal, long *link, float **Cost, short
 	}
 }
 
+*/

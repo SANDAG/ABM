@@ -6,6 +6,8 @@ Macro "Run SANDAG ABM"
  
    sample_rate = { 0.2, 0.5, 1.0 }
    max_iterations=sample_rate.length    //number of feedback loops
+   skimByVOT = "true"
+   assignByVOT = "true"
   
    path = "${workpath}"
 
@@ -131,14 +133,14 @@ Macro "Run SANDAG ABM"
       // Run highway assignment 
       if skipHighwayAssignment[iteration] = "false" then do
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - hwy assignment"})
-	      ok = RunMacro("TCB Run Macro", 1, "hwy assignment",{iteration}) 
+	      ok = RunMacro("TCB Run Macro", 1, "hwy assignment",{iteration, assignByVOT}) 
 	      if !ok then goto quit
       end
    
       // Skim highway network
       if skipHighwaySkimming[iteration] = "false" then do
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Hwy skim all"})
-	      ok = RunMacro("TCB Run Macro", 1, "Hwy skim all",{}) 
+	      ok = RunMacro("TCB Run Macro", 1, "Hwy skim all",{skimByVOT}) 
 	      if !ok then goto quit
  
       // Create drive to transit access file
@@ -264,7 +266,7 @@ Macro "Run SANDAG ABM"
   // Run final highway assignment
    if skipFinalHighwayAssignment = "false" then do
 	   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - hwy assignment"})
-	   ok = RunMacro("TCB Run Macro", 1, "hwy assignment",{4}) 
+	   ok = RunMacro("TCB Run Macro", 1, "hwy assignment",{4,assignByVOT}) 
 	   if !ok then goto quit
    end
 

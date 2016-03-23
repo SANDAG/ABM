@@ -12,7 +12,6 @@ import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.application.SandagModelStructure;
-import org.sandag.abm.application.SandagTourBasedModel;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.MatrixDataServer;
 import org.sandag.abm.ctramp.MatrixDataServerRmi;
@@ -246,14 +245,13 @@ public class InternalExternalTripTables
            			}
            		}
            	}
-           	}
         }
+    }
     /**
      * Return the value of time bin 0 through 2 based on the thresholds provided in the property map
      * @param valueOfTime
      * @return value of time bin 0 through 2
      */
-    public int getValueOfTimeBin(float valueOfTime){
     public int getValueOfTimeBin(float valueOfTime){
     	
     	if(valueOfTime<valueOfTimeThresholdLow)
@@ -342,7 +340,7 @@ public class InternalExternalTripTables
         for (int i = 1; i <= tripData.getRowCount(); ++i)
         {
 
-            //if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
+            if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
 
             int departTime = (int) tripData.getValueAt(i, "period");
             int period = modelStructure.getModelPeriodIndex(departTime);
@@ -436,7 +434,7 @@ public class InternalExternalTripTables
                 matrix[mode][votBin][mat].setValueAt(originTAZ, destinationTAZ, (value + personTrips));
             }
 
-            //logger.info("End creating trip tables for period " + timePeriod);
+            logger.info("End creating trip tables for period " + timePeriod);
         }
     }
 
@@ -481,22 +479,12 @@ public class InternalExternalTripTables
         			end[i][j] = "_" + per + ".mtx";
         	}
         }
-        
+
         for (int i = 0; i < 4; ++i)
         {
         	for(int j = 0; j < votBins[i];++j){
         		try
         		{
-        			if (ms != null) ms.writeMatrixFile(fileName[i]+end[i][j], matrix[i][j], mt);
-        			else writeMatrixFile(fileName[i]+end[i][j], matrix[i][j]);
-        		} catch (Exception e)
-        		{
-        			logger.error("exception caught writing " + mt.toString() + " matrix file = "
-                        + fileName[i] +end[i][j] + ", for mode index = " + i, e);
-        			throw new RuntimeException();
-        		}
-        	}
-        }
         			if (ms != null) ms.writeMatrixFile(fileName[i]+end[i][j], matrix[i][j], mt);
         			else writeMatrixFile(fileName[i]+end[i][j], matrix[i][j]);
         		} catch (Exception e)

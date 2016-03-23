@@ -12,7 +12,6 @@ import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.application.SandagModelStructure;
-import org.sandag.abm.application.SandagTourBasedModel;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.MatrixDataServer;
 import org.sandag.abm.ctramp.MatrixDataServerRmi;
@@ -331,7 +330,7 @@ public class CrossBorderTripTables
         for (int i = 1; i <= tripData.getRowCount(); ++i)
         {
 
-            //if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
+            if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
 
             // originMGRA destinationMGRA originIsTourDestination
             // destinationIsTourDestination period tripMode boardingTap
@@ -429,26 +428,11 @@ public class CrossBorderTripTables
                 matrix[mode][votBin][mat].setValueAt(originTAZ, destinationTAZ, (value + personTrips));
             }
 
-            //logger.info("End creating trip tables for period " + timePeriod);
+            logger.info("End creating trip tables for period " + timePeriod);
         }
     }
 
     /**
-     * Return the value of time bin 0 through 2 based on the thresholds provided in the property map
-     * @param valueOfTime
-     * @return value of time bin 0 through 2
-     */
-    public int getValueOfTimeBin(float valueOfTime){
-    	
-    	if(valueOfTime<valueOfTimeThresholdLow)
-    		return 0;
-    	else if (valueOfTime<valueOfTimeThresholdMed)
-    		return 1;
-    	else
-    		return 2;
-    }
-
-   /**
      * Return the value of time bin 0 through 2 based on the thresholds provided in the property map
      * @param valueOfTime
      * @return value of time bin 0 through 2

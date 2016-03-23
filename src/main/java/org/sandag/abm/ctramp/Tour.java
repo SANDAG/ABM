@@ -730,14 +730,6 @@ public class Tour
 		this.valueOfTime = valueOfTime;
 	}
 
-	public double getValueOfTime() {
-		return valueOfTime;
-	}
-
-	public void setValueOfTime(double valueOfTime) {
-		this.valueOfTime = valueOfTime;
-	}
-
 	public float getTimeOfDayLogsum() {
 		return timeOfDayLogsum;
 	}
