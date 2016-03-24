@@ -11,9 +11,11 @@
 package org.sandag.abm.accessibilities;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
@@ -25,6 +27,7 @@ import org.sandag.abm.modechoice.TazDataManager;
 import org.sandag.abm.modechoice.TransitDriveAccessDMU;
 import org.sandag.abm.modechoice.TransitWalkAccessDMU;
 import org.sandag.abm.modechoice.TransitWalkAccessUEC;
+
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.newmodel.UtilityExpressionCalculator;
@@ -500,6 +503,92 @@ public class BestTransitPathCalculator
         }
     }
 
+    
+    /**
+     * This method writes the utilities for all TAP-pairs for each ride mode.
+     * It cycles through walk TAPs at the origin end (associated with the origin
+     * MGRA) and alighting TAPs at the destination end (associated with the
+     * destination MGRA) and calculates a utility for every available ride mode
+     * for each TAP pair and writes the result to the outwriter.
+     * 
+     *  The results written will be as follows:
+     *    label,WTW,period,pTap,aTap,mode,combinedUtilities[mode]
+     * 
+     * @param period The time period (AM, PM, Off)
+     * @param pMgra
+     *            The origin/production MGRA.
+     * @param aMgra
+     *            The destination/attraction MGRA.
+     * @param myLogger A logger for logging problems
+     * @param outwriter A printwriter for writing results
+     * @param label A label for the record.
+     */
+    public void writeAllWalkTransitWalkTaps(int period, int pMgra, int aMgra, Logger myLogger, PrintWriter outwriter, String label)
+    {
+
+        clearBestArrays(Double.NEGATIVE_INFINITY);
+
+        int[] pMgraSet = mgraManager.getMgraWlkTapsDistArray()[pMgra][0];
+        int[] aMgraSet = mgraManager.getMgraWlkTapsDistArray()[aMgra][0];
+
+        if (pMgraSet == null || aMgraSet == null)
+        {
+            return;
+        }
+
+        int pPos = -1;
+        for (int pTap : pMgraSet)
+        {
+            // used to know where we are in time/dist arrays for taps
+            pPos++;
+
+            // Set the pMgra to pTap walk access utility values, if they haven't
+            // already been computed.
+            setWalkAccessUtility(pMgra, pPos, pTap, false, myLogger);
+
+            int aPos = -1;
+            for (int aTap : aMgraSet)
+            {
+                // used to know where we are in time/dist arrays for taps
+                aPos++;
+
+                // set the pTap to aTap utility values, if they haven't already
+                // been computed.
+                setUtilitiesForTapPair(WTW, period, pTap, aTap, false, myLogger);
+
+                // Set the aTap to aMgra walk egress utility values, if they
+                // haven't already been computed.
+                setWalkEgressUtility(aTap, aMgra, aPos, false, myLogger);
+
+                // write the utilities for each ride mode 
+                try
+                {
+                    for (int i = 0; i < combinedUtilities.length; i++){
+                        combinedUtilities[i] = storedWalkAccessUtils[pMgra][pTap][i]
+                                + storedTapToTapUtils[WTW][period][pTap][aTap][i]
+                                + storedWalkEgressUtils[aTap][aMgra][i];
+                        
+                        if(combinedUtilities[i]>-500){
+                        	outwriter.print(label);
+                        	outwriter.format(",%d,%d,%d,%d,%d,%9.4f\n",WTW,period,pTap,aTap,i,combinedUtilities[i]);
+                        }
+                    }
+                } catch (Exception e)
+                {
+                    logger.error("exception computing combinedUtilities for WTW");
+                    logger.error("aTap=" + aTap + "pTap=" + pTap + "aMgra=" + aMgra + "pMgra="
+                            + pMgra + "period=" + period, e);
+                    throw new RuntimeException();
+                }
+
+               
+
+            }
+        }
+       
+    }
+
+
     /**
      * This method finds the best TAP-pairs for each ride mode. It cycles
      * through drive access TAPs at the origin end (associated with the origin
@@ -644,6 +733,102 @@ public class BestTransitPathCalculator
     }
 
     /**
+     * This method writes all TAP-pairs for each ride mode. It cycles
+     * through drive access TAPs at the origin end (associated with the origin
+     * MGRA) and alighting TAPs at the destination end (associated with the
+     * destination MGRA) and calculates a utility for every available ride mode
+     * for each TAP pair. 
+     *  The results written will be as follows:
+     *  
+     *    label,DTW,period,pTap,aTap,mode,combinedUtilities[mode]
+     * 
+     * @param period The time period (AM, PM, Off)
+     * @param pMgra
+     *            The origin/production MGRA.
+     * @param aMgra
+     *            The destination/attraction MGRA.
+     * @param myLogger A logger for logging problems
+     * @param outwriter A printwriter for writing results
+     * @param label A label for the record.
+     * 
+     */
+    public void writeAllDriveTransitWalkTaps(int period, int pMgra, int aMgra,
+            Logger myLogger, PrintWriter outwriter, String label)
+    {
+
+         clearBestArrays(Double.NEGATIVE_INFINITY);
+
+        Modes.AccessMode accMode = AccessMode.PARK_N_RIDE;
+
+        int pTaz = mgraManager.getTaz(pMgra);
+ 
+        if (tazManager.getParkRideOrKissRideTapsForZone(pTaz, accMode) == null
+                || mgraManager.getMgraWlkTapsDistArray()[aMgra][0] == null)
+        {
+            return;
+        }
+
+        float[][][] tapParkingInfo = tapManager.getTapParkingInfo();
+
+        int pPos = -1;
+        int[] pTapArray = tazManager.getParkRideOrKissRideTapsForZone(pTaz, accMode);
+        for (int pTap : pTapArray)
+        {
+            pPos++; // used to know where we are in time/dist arrays for taps
+
+            // Set the pTaz to pTap drive access utility values, if they haven't
+            // already been computed.
+            setDriveAccessUtility(pTaz, pPos, pTap, accMode, false, myLogger);
+
+            int lotID = (int) tapParkingInfo[pTap][0][0]; // lot ID
+            float lotCapacity = tapParkingInfo[pTap][2][0]; // lot capacity
+
+            if ((accMode == AccessMode.PARK_N_RIDE && tapManager.getLotUse(lotID) < lotCapacity)
+                    || (accMode == AccessMode.KISS_N_RIDE))
+            {
+
+                int aPos = -1;
+                for (int aTap : mgraManager.getMgraWlkTapsDistArray()[aMgra][0])
+                {
+                    aPos++;
+
+                    // Set the aTap to aMgra walk egress utility values, if they
+                    // haven't already been computed.
+                    setWalkEgressUtility(aTap, aMgra, aPos, false, myLogger);
+
+          
+                    // set the pTap to aTap utility values, if they haven't
+                    // already been computed.
+                    setUtilitiesForTapPair(DTW, period, pTap, aTap, false, myLogger);
+
+                    // compare the utilities for this TAP pair to previously
+                    // calculated utilities for each ride mode and store the TAP numbers if
+                    // this TAP pair is the best.
+                    try
+                    {
+                        for (int i = 0; i < combinedUtilities.length; i++){
+                            combinedUtilities[i] = storedDriveAccessUtils[pTaz][pTap][i]
+                                    + storedTapToTapUtils[DTW][period][pTap][aTap][i]
+                                    + storedWalkEgressUtils[aTap][aMgra][i];
+                            if(combinedUtilities[i]>-500){
+                            	outwriter.print(label);
+                            	outwriter.format(",%d,%d,%d,%d,%d,%9.4f\n",DTW,period,pTap,aTap,i,combinedUtilities[i]);
+                            }
+                        }
+                    } catch (Exception e)
+                    {
+                        logger.error("exception computing combinedUtilities for DTW");
+                        logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
+                                + ",pMgra=" + pMgra + ",period=" + period, e);
+                        throw new RuntimeException();
+                    }
+
+                }
+            }
+           
+        }
+    }
+    /**
      * This method finds the best TAP-pairs for each ride mode. It cycles
      * through drive access TAPs at the origin end (associated with the origin
      * MGRA) and alighting TAPs at the destination end (associated with the
@@ -768,6 +953,102 @@ public class BestTransitPathCalculator
             {
                 logBestUtilities(myLogger);
             }
+        }
+    }
+
+    /**
+     * This method finds the best TAP-pairs for each ride mode. It cycles
+     * through drive access TAPs at the origin end (associated with the origin
+     * MGRA) and alighting TAPs at the destination end (associated with the
+     * destination MGRA) and calculates a utility for every available ride mode
+     * for each TAP pair.      
+     *  The results written will be as follows:
+     *  
+     *    label,WTD,period,pTap,aTap,mode,combinedUtilities[mode]
+     * 
+     * @param period The time period (AM, PM, Off)
+     * @param pMgra
+     *            The origin/production MGRA.
+     * @param aMgra
+     *            The destination/attraction MGRA.
+     * @param myLogger A logger for logging problems
+     * @param outwriter A printwriter for writing results
+     * @param label A label for the record.
+
+     * 
+     */
+    public void writeAllWalkTransitDriveTaps(int period, int pMgra, int aMgra,
+            Logger myLogger, PrintWriter outwriter, String label)
+    {
+
+        clearBestArrays(Double.NEGATIVE_INFINITY);
+
+        Modes.AccessMode accMode = AccessMode.PARK_N_RIDE;
+
+        int aTaz = mgraManager.getTaz(aMgra);
+
+        if (mgraManager.getMgraWlkTapsDistArray()[pMgra][0] == null
+                || tazManager.getParkRideOrKissRideTapsForZone(aTaz, accMode) == null)
+        {
+            return;
+        }
+
+        int pPos = -1;
+        for (int pTap : mgraManager.getMgraWlkTapsDistArray()[pMgra][0])
+        {
+            pPos++; // used to know where we are in time/dist arrays for taps
+
+            // Set the pMgra to pTap walk access utility values, if they haven't
+            // already been computed.
+            setWalkAccessUtility(pMgra, pPos, pTap, false, myLogger);
+
+            int aPos = -1;
+            for (int aTap : tazManager.getParkRideOrKissRideTapsForZone(aTaz, accMode))
+            {
+                aPos++;
+
+                int lotID = (int) tapManager.getTapParkingInfo()[aTap][0][0]; // lot
+                // ID
+                float lotCapacity = tapManager.getTapParkingInfo()[aTap][2][0]; // lot
+                // capacity
+                if ((accMode == AccessMode.PARK_N_RIDE && tapManager.getLotUse(lotID) < lotCapacity)
+                        || (accMode == AccessMode.KISS_N_RIDE))
+                {
+
+                    // Set the pTaz to pTap drive access utility values, if they
+                    // haven't already been computed.
+                    setDriveEgressUtility(aTap, aTaz, aPos, accMode, false, myLogger);
+
+                    // set the pTap to aTap utility values, if they haven't
+                    // already
+                    // been computed.
+                    setUtilitiesForTapPair(WTD, period, pTap, aTap, false, myLogger);
+
+                    // compare the utilities for this TAP pair to previously
+                    // calculated utilities for each ride mode and store the TAP numbers if
+                    // this TAP pair is the best.
+                    try
+                    {
+                        for (int i = 0; i < combinedUtilities.length; i++){
+                            combinedUtilities[i] = storedWalkAccessUtils[pMgra][pTap][i]
+                                    + storedTapToTapUtils[WTD][period][pTap][aTap][i]
+                                    + storedDriveEgressUtils[aTap][aTaz][i];
+                            if(combinedUtilities[i]>-500){
+                            	outwriter.print(label);
+                            	outwriter.format(",%d,%d,%d,%d,%d,%9.4f\n",WTD,period,pTap,aTap,i,combinedUtilities[i]);
+                            }
+                        }
+                    } catch (Exception e)
+                    {
+                        logger.error("exception computing combinedUtilities for WTD");
+                        logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
+                                + ",pMgra=" + pMgra + ",period=" + period, e);
+                        throw new RuntimeException();
+                    }
+
+                }
+            }
+        
         }
     }
 
