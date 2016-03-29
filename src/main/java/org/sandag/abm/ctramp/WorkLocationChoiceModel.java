@@ -171,8 +171,9 @@ public class WorkLocationChoiceModel
 
     }
 
-    public void applyWorkLocationChoice(Household hh)
+    public boolean applyWorkLocationChoice(Household hh)
     {
+    	boolean result=true;
 
         if (hh.getDebugChoiceModels())
         {
@@ -260,7 +261,7 @@ public class WorkLocationChoiceModel
                 // get the work location alternative chosen from the sample
                 results = selectLocationFromSampleOfAlternatives("work", -1, p, occupSegmentName,
                         occupSegmentIndex, tourNum++, homeMgraSizeArray, mgraDistanceArray);
-
+                
                 soaRunTime += dcTwoStageModelObject.getSoaRunTime();
 
             } catch (RuntimeException e)
@@ -277,11 +278,17 @@ public class WorkLocationChoiceModel
             p.setWorkLocation((int) results[0]);
             p.setWorkLocDistance((float) results[1]);
             p.setWorkLocLogsum((float) results[2]);
+            
+            if(p.getWorkLocationSegmentIndex()>-1 && p.getWorkLocation()==0){
+            	logger.error("***********************************************************************************************************************************");
+            	logger.error("!!!!!!!Worker in worksegmetn "+p.getWorkLocationSegmentIndex()+" can't find a work location!!!!!  RESTART Work location choice!!!!");
+            	result=false;
+            }
 
         }
+        return result;
 
     }
-
     /**
      * 
      * @return an array with chosen mgra, distance to chosen mgra, and logsum to
