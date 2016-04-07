@@ -36,9 +36,9 @@ Macro "Commercial Vehicle Distribution"
    */
    
    tazCommTripFile = "tazCommVeh.csv"
-   amMatrixName = "impdan_AM.mtx"
+   amMatrixName = "impcvn_AM.mtx"
    amTableName = "*STM_AM (Skim)"
-   mdMatrixName = "impdan_MD.mtx"
+   mdMatrixName = "impcvn_MD.mtx"
    mdTableName = "*STM_MD (Skim)"
    
    frictionTable = "commVehFF.csv"
