@@ -79,8 +79,6 @@ public class SandagDcSoaDMU
                 return getHomeMgraHighSchoolDistrict();
             case 16:
                 return getUniversityEnrollmentDestAlt(arrayIndex);
-            case 17:
-                return getHomeMgra();
             default:
                 logger.error("method number = " + variableIndex + " not found");
                 throw new RuntimeException("method number = " + variableIndex + " not found");
