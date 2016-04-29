@@ -31,21 +31,14 @@
 **************************************************************/
 Macro "Commercial Vehicle Generation" 
 
-/*
-    RunMacro("TCB Init")
-
-      scenarioDirectory = "d:\\projects\\SANDAG\\AB_Model\\commercial_vehicles"
-*/   
-   
-   shared path, inputDir, outputDir ,scenarioYear      
+     shared path, inputDir, outputDir ,scenarioYear      
    
    mgraCommTripFile  = "mgraCommVeh.csv"
    tazCommTripFile   = "tazCommVeh.csv"
    
-   writeMgraData = false
+   writeMgraData = true
    calibrationFactor = 1.4
-   
-       
+          
    // read in the mgra data in CSV format
    mgraView = OpenTable("MGRA View", "CSV", {inputDir+"\\mgra13_based_input"+scenarioYear+".csv"}, {{"Shared", "True"}})
    
@@ -98,7 +91,34 @@ Macro "Commercial Vehicle Generation"
                               0.15000 * MILITARY +
                               0.1 * TOTHH)
    verySmallA = verySmallP
+
    
+   // Wu added this section for military CTM trips adjustment to match military gate counts
+   properties = "\\conf\\sandag_abm.properties"  
+   militaryCtmAdjustment = RunMacro("read properties",properties,"RunModel.militaryCtmAdjustment", "S")
+   if militaryCtmAdjustment  = "true" then do
+	   mgraView_m = OpenTable("Military MGRA View", "CSV", {inputDir+"\\cvm_military_adjustment.csv"}, {{"Shared", "True"}})
+	   //base_id                          = GetDataVector(mgraView_m+"|", "ID", {{"Sort Order", {{"mgra", "Ascending"}}}} )
+	   //base_name                        = GetDataVector(mgraView_m+"|", "base", {{"Sort Order", {{"mgra", "Ascending"}}}} )
+	   //taz_m                            = GetDataVector(mgraView_m+"|", "TAZ", {{"Sort Order", {{"mgra", "Ascending"}}}} )
+	   //mgra_m                           = GetDataVector(mgraView_m+"|", "mgra", {{"Sort Order", {{"mgra", "Ascending"}}}} )
+	   base_id                          = GetDataVector(mgraView_m+"|", "ID",)
+	   base_name                        = GetDataVector(mgraView_m+"|", "base",)
+	   taz_m                            = GetDataVector(mgraView_m+"|", "TAZ",)
+	   mgra_m                           = GetDataVector(mgraView_m+"|", "mgra",)
+	   scale                            = GetDataVector(mgraView_m+"|", "scale", {{"Type", {{"scale", "Float"}}}} )
+	
+	  //scale verySmallP and verySmallA: why is his called verySmallP and verySmallA???
+	   for i = 1 to mgra.length do
+	   	for j = 1 to mgra_m.length do
+		      if mgra[i] = mgra_m[j] then do
+			verySmallP[i]=verySmallP[i]*scale[j]
+			verySmallA[i]=verySmallA[i]*scale[j]
+		      end 
+	        end
+	   end	
+   end	
+
    if writeMgraData = true then do
       //create a table with the mgra trips
       truckTripsMgra = CreateTable("truckTripsMgra",outputDir+"\\"+mgraCommTripFile, "CSV",  {
