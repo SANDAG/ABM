@@ -88,8 +88,6 @@
                 <node.1.execution.threads>15</node.1.execution.threads>
                 <node.2.name>AGGIE</node.2.name>
                 <node.2.execution.threads>12</node.2.execution.threads>
-                <node.3.name>CHARGER</node.3.name>
-                <node.3.execution.threads>8</node.3.execution.threads>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>               
             </properties>
         </profile>          
@@ -107,10 +105,10 @@
                 <node.2.ip>172.16.34.39</node.2.ip>
                 <master.node.name>GAUCHO</master.node.name>
                 <master.execution.threads>14</master.execution.threads>
-                <node.1.name>MUSTANG</node.1.name>
+                <node.1.name>NITTANY</node.1.name>
                 <node.1.execution.threads>12</node.1.execution.threads>
-                <node.2.name>NITTANY</node.2.name>
-                <node.2.execution.threads>12</node.2.execution.threads>
+                <node.2.name>CHARGER</node.2.name>
+                <node.2.execution.threads>8</node.2.execution.threads>
                 <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>             
             </properties>
         </profile>       
