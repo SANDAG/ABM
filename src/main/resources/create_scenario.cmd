@@ -18,7 +18,7 @@ md %SCENARIO_FOLDER%\%%i)
 set RELEASE_DIR=%CLUSTER%
 @echo RELEASE_DIR=%CLUSTER%
 
-set SNODES=highlander scarlett
+set SNODES=highlander scarlett monty jayhawk mustang
 for %%i in (%SNODES%) do (
 if %%i==%3 set RELEASE_DIR=local)
 
