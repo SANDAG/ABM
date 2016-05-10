@@ -6,7 +6,7 @@ set SAMPLERATE=%3
 set ITERATION=%4
 
 %PROJECT_DRIVE%
-cd %PROJECT_DRIVE%/%PROJECT_DIRECTORY%
+cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 call %PROJECT_DIRECTORY%\bin\CTRampEnv.bat
 
 rem ### First save the JAVA_PATH environment variable so it s value can be restored at the end.
@@ -39,7 +39,7 @@ set PATH=%JAVA_PATH%\bin;%OLDPATH%
 rem run ping to add a pause so that hhMgr and mtxMgr have time to fully start
 ping -n 10 %MAIN% > nul
 
-cd %PROJECT_DRIVE%/%PROJECT_DIRECTORY%
+cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 
 rem ## works for both single node and distributed settings; modified jppf-clientDistrubuted.properties to handle both single and distributed settings##
 %JAVA_64_PATH%\bin\java -showversion -server -Xms%MEMORY_CLIENT_MIN% -Xmx%MEMORY_CLIENT_MAX% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% -Djppf.config=jppf-clientDistributed.properties org.sandag.abm.application.SandagTourBasedModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% -sampleSeed %SEED% -luAcc true

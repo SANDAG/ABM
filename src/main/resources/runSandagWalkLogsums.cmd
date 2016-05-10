@@ -4,7 +4,7 @@ set PROJECT_DRIVE=%1
 set PROJECT_DIRECTORY=%2
 
 %PROJECT_DRIVE%
-cd %PROJECT_DRIVE%/%PROJECT_DIRECTORY%
+cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 call %PROJECT_DIRECTORY%\bin\CTRampEnv.bat
 
 rem ### First save the JAVA_PATH environment variable so it s value can be restored at the end.
@@ -31,7 +31,7 @@ rem ### Doing this ensures that the JAVA_HOME path we defined above is the on th
 set PATH=%TRANSCAD_PATH%;%JAVA_PATH%\bin;%OLDPATH%
 
 %PROJECT_DRIVE%
-cd %PROJECT_DRIVE%/%PROJECT_DIRECTORY%
+cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 
 rem   rem build walk skims
 %JAVA_64_PATH%\bin\java -showversion -server -Xmx%MEMORY_WALKLOGSUM_MAX% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.active.sandag.SandagWalkPathChoiceLogsumMatrixApplication %PROPERTIES_NAME%

@@ -7,7 +7,7 @@ set ITERATION=%4
 set PROPERTIES_NAME=sandag_abm
 
 %PROJECT_DRIVE%
-cd %PROJECT_DRIVE%/%PROJECT_DIRECTORY%
+cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 call %PROJECT_DIRECTORY%\bin\CTRampEnv.bat
 
 rem ### Name the project directory.  This directory will hava data and runtime subdirectories
@@ -23,7 +23,7 @@ set OLDCLASSPATH=%CLASSPATH%
 set CLASSPATH=%CONFIG%;%RUNTIME%;%LIB_JAR_PATH%;
 
 %PROJECT_DRIVE%
-cd %PROJECT_DRIVE%/%PROJECT_DIRECTORY%
+cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 
 rem run bike assignment
 %JAVA_64_PATH%\bin\java -showversion -server -Xmx%MEMORY_BIKEROUTE_MAX% -XX:-UseGCOverheadLimit -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.active.sandag.SandagBikePathChoiceEdgeAssignmentApplication %PROPERTIES_NAME% %SAMPLERATE% %ITERATION%

@@ -7,10 +7,10 @@ set PROJECT_DIRECTORY=%2
 set SCENARIO=%3
 set SB375=%4
 
-call %PROJECT_DRIVE%\%PROJECT_DIRECTORY%\bin\CTRampEnv.bat
+call %PROJECT_DRIVE%%PROJECT_DIRECTORY%\bin\CTRampEnv.bat
 
-cd %PROJECT_DRIVE%\%PROJECT_DIRECTORY%\python
+cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%\python
 
-python.exe emfac2014_abm.py %SCENARIO% Annual %SB375% %PROJECT_DRIVE%\%PROJECT_DIRECTORY%\output
-python.exe emfac2014_abm.py %SCENARIO% Summer %SB375% %PROJECT_DRIVE%\%PROJECT_DIRECTORY%\output
-python.exe emfac2014_abm.py %SCENARIO% Winter %SB375% %PROJECT_DRIVE%\%PROJECT_DIRECTORY%\output
+python.exe emfac2014_abm.py %SCENARIO% Annual %SB375% %PROJECT_DRIVE%%PROJECT_DIRECTORY%\output
+python.exe emfac2014_abm.py %SCENARIO% Summer %SB375% %PROJECT_DRIVE%%PROJECT_DIRECTORY%\output
+python.exe emfac2014_abm.py %SCENARIO% Winter %SB375% %PROJECT_DRIVE%%PROJECT_DIRECTORY%\output
