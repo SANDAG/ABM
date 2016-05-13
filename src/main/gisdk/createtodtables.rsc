@@ -23,6 +23,11 @@ Macro "Create Auto Tables"
    
    periods={"_EA","_AM","_MD","_PM","_EV"}
    
+   //VOT bins for non resident models, 1->3
+   votBinEE = 3
+   votBinExternalInternal = 3
+   votBinCommercialVehicles=3
+   
  /*  
    truckTables = {
       inputDir+"\\dailyDistributionMatricesTruckam.mtx",
@@ -68,47 +73,117 @@ Macro "Create Auto Tables"
   	
 	
    	internalExternalTables = {
-      outputDir+"\\autoInternalExternalTrips_EA.mtx",
-      outputDir+"\\autoInternalExternalTrips_AM.mtx",
-      outputDir+"\\autoInternalExternalTrips_MD.mtx",
-      outputDir+"\\autoInternalExternalTrips_PM.mtx",
-      outputDir+"\\autoInternalExternalTrips_EV.mtx"}
-
-   	
+   		{
+      outputDir+"\\autoInternalExternalTrips_EA_low.mtx",
+      outputDir+"\\autoInternalExternalTrips_AM_low.mtx",
+      outputDir+"\\autoInternalExternalTrips_MD_low.mtx",
+      outputDir+"\\autoInternalExternalTrips_PM_low.mtx",
+      outputDir+"\\autoInternalExternalTrips_EV_low.mtx"},
+   		{
+      outputDir+"\\autoInternalExternalTrips_EA_med.mtx",
+      outputDir+"\\autoInternalExternalTrips_AM_med.mtx",
+      outputDir+"\\autoInternalExternalTrips_MD_med.mtx",
+      outputDir+"\\autoInternalExternalTrips_PM_med.mtx",
+      outputDir+"\\autoInternalExternalTrips_EV_med.mtx"
+     },
+   		{
+      outputDir+"\\autoInternalExternalTrips_EA_high.mtx",
+      outputDir+"\\autoInternalExternalTrips_AM_high.mtx",
+      outputDir+"\\autoInternalExternalTrips_MD_high.mtx",
+      outputDir+"\\autoInternalExternalTrips_PM_high.mtx",
+      outputDir+"\\autoInternalExternalTrips_EV_high.mtx"
+     }
+  }   	
    	visitorTables = {
-      outputDir+"\\autoVisitorTrips_EA.mtx",
-      outputDir+"\\autoVisitorTrips_AM.mtx",
-      outputDir+"\\autoVisitorTrips_MD.mtx",
-      outputDir+"\\autoVisitorTrips_PM.mtx",
-      outputDir+"\\autoVisitorTrips_EV.mtx"}
-  		
+      {
+      	outputDir+"\\autoVisitorTrips_EA_low.mtx",
+        outputDir+"\\autoVisitorTrips_AM_low.mtx",
+        outputDir+"\\autoVisitorTrips_MD_low.mtx",
+        outputDir+"\\autoVisitorTrips_PM_low.mtx",
+        outputDir+"\\autoVisitorTrips_EV_low.mtx"},
+     {
+      	outputDir+"\\autoVisitorTrips_EA_med.mtx",
+        outputDir+"\\autoVisitorTrips_AM_med.mtx",
+        outputDir+"\\autoVisitorTrips_MD_med.mtx",
+        outputDir+"\\autoVisitorTrips_PM_med.mtx",
+        outputDir+"\\autoVisitorTrips_EV_med.mtx"},
+     {
+      	outputDir+"\\autoVisitorTrips_EA_high.mtx",
+        outputDir+"\\autoVisitorTrips_AM_high.mtx",
+        outputDir+"\\autoVisitorTrips_MD_high.mtx",
+        outputDir+"\\autoVisitorTrips_PM_high.mtx",
+        outputDir+"\\autoVisitorTrips_EV_high.mtx"}
+    }  		
    	crossBorderTables = {
-      outputDir+"\\autoCrossBorderTrips_EA.mtx",
-      outputDir+"\\autoCrossBorderTrips_AM.mtx",
-      outputDir+"\\autoCrossBorderTrips_MD.mtx",
-      outputDir+"\\autoCrossBorderTrips_PM.mtx",
-      outputDir+"\\autoCrossBorderTrips_EV.mtx"}
- 
+   		{
+      outputDir+"\\autoCrossBorderTrips_EA_low.mtx",
+      outputDir+"\\autoCrossBorderTrips_AM_low.mtx",
+      outputDir+"\\autoCrossBorderTrips_MD_low.mtx",
+      outputDir+"\\autoCrossBorderTrips_PM_low.mtx",
+      outputDir+"\\autoCrossBorderTrips_EV_low.mtx"},
+  		{
+      outputDir+"\\autoCrossBorderTrips_EA_med.mtx",
+      outputDir+"\\autoCrossBorderTrips_AM_med.mtx",
+      outputDir+"\\autoCrossBorderTrips_MD_med.mtx",
+      outputDir+"\\autoCrossBorderTrips_PM_med.mtx",
+      outputDir+"\\autoCrossBorderTrips_EV_med.mtx"},
+  		{
+      outputDir+"\\autoCrossBorderTrips_EA_high.mtx",
+      outputDir+"\\autoCrossBorderTrips_AM_high.mtx",
+      outputDir+"\\autoCrossBorderTrips_MD_high.mtx",
+      outputDir+"\\autoCrossBorderTrips_PM_high.mtx",
+      outputDir+"\\autoCrossBorderTrips_EV_high.mtx"}
+    }    
+        
    airportTables = {
-      outputDir+"\\autoAirportTrips_EA.mtx",
-      outputDir+"\\autoAirportTrips_AM.mtx",
-      outputDir+"\\autoAirportTrips_MD.mtx",
-      outputDir+"\\autoAirportTrips_PM.mtx",
-      outputDir+"\\autoAirportTrips_EV.mtx"}
-      
+      {
+      outputDir+"\\autoAirportTrips_EA_low.mtx",
+      outputDir+"\\autoAirportTrips_AM_low.mtx",
+      outputDir+"\\autoAirportTrips_MD_low.mtx",
+      outputDir+"\\autoAirportTrips_PM_low.mtx",
+      outputDir+"\\autoAirportTrips_EV_low.mtx"},
+     {
+     	outputDir+"\\autoAirportTrips_EA_med.mtx",
+      outputDir+"\\autoAirportTrips_AM_med.mtx",
+      outputDir+"\\autoAirportTrips_MD_med.mtx",
+      outputDir+"\\autoAirportTrips_PM_med.mtx",
+      outputDir+"\\autoAirportTrips_EV_med.mtx"},
+     {
+     	outputDir+"\\autoAirportTrips_EA_high.mtx",
+      outputDir+"\\autoAirportTrips_AM_high.mtx",
+      outputDir+"\\autoAirportTrips_MD_high.mtx",
+      outputDir+"\\autoAirportTrips_PM_high.mtx",
+      outputDir+"\\autoAirportTrips_EV_high.mtx"}
+    }
    personTables = {
-      outputDir+"\\autoTrips_EA.mtx",
-      outputDir+"\\autoTrips_AM.mtx",
-      outputDir+"\\autoTrips_MD.mtx",
-      outputDir+"\\autoTrips_PM.mtx",
-      outputDir+"\\autoTrips_EV.mtx"}
-
+      {
+      outputDir+"\\autoTrips_EA_low.mtx",
+      outputDir+"\\autoTrips_AM_low.mtx",
+      outputDir+"\\autoTrips_MD_low.mtx",
+      outputDir+"\\autoTrips_PM_low.mtx",
+      outputDir+"\\autoTrips_EV_low.mtx"},
+      {
+      outputDir+"\\autoTrips_EA_med.mtx",
+      outputDir+"\\autoTrips_AM_med.mtx",
+      outputDir+"\\autoTrips_MD_med.mtx",
+      outputDir+"\\autoTrips_PM_med.mtx",
+      outputDir+"\\autoTrips_EV_med.mtx"},
+      {
+      outputDir+"\\autoTrips_EA_high.mtx",
+      outputDir+"\\autoTrips_AM_high.mtx",
+      outputDir+"\\autoTrips_MD_high.mtx",
+      outputDir+"\\autoTrips_PM_high.mtx",
+      outputDir+"\\autoTrips_EV_high.mtx"}
+   }
    //the following table names have the period appended 
    CTRampMatrices = {"SOV_GP","SOV_PAY","SR2_GP","SR2_HOV","SR2_PAY","SR3_GP","SR3_HOV","SR3_PAY"}   
 
 	//output files                                                                                                                             
-	outMatrixNames = {"Trip_EA.mtx", "Trip_AM.mtx", "Trip_MD.mtx", "Trip_PM.mtx", "Trip_EV.mtx"}                                                                                                   
-	outTableNames = {"SOV_GP", "SOV_PAY", "SR2_GP","SR2_HOV", "SR2_PAY", "SR3_GP","SR3_HOV","SR3_PAY","lhdn","mhdn","hhdn","lhdt","mhdt","hhdt"}
+	outMatrixNames = {"Trip"+periods[1]+"_VOT.mtx", "Trip"+periods[2]+"_VOT.mtx", "Trip"+periods[3]+"_VOT.mtx", "Trip"+periods[4]+"_VOT.mtx", "Trip"+periods[5]+"_VOT.mtx"}                                                                                                   
+	outTableNames = {"SOV_GP_LOW", "SOV_PAY_LOW", "SR2_GP_LOW","SR2_HOV_LOW", "SR2_PAY_LOW", "SR3_GP_LOW","SR3_HOV_LOW","SR3_PAY_LOW",
+		               "SOV_GP_MED", "SOV_PAY_MED", "SR2_GP_MED","SR2_HOV_MED", "SR2_PAY_MED", "SR3_GP_MED","SR3_HOV_MED","SR3_PAY_MED",
+		               "SOV_GP_HIGH", "SOV_PAY_HIGH", "SR2_GP_HIGH","SR2_HOV_HIGH", "SR2_PAY_HIGH", "SR3_GP_HIGH","SR3_HOV_HIGH","SR3_PAY_HIGH",
+		               "lhdn","mhdn","hhdn","lhdt","mhdt","hhdt"}
 
    commVehTable = outputDir+"\\commVehTODTrips.mtx"
    commVehMatrices = {"EA NonToll","AM NonToll","MD NonToll","PM NonToll","EV NonToll","EA Toll","AM Toll","MD Toll","PM Toll","EV Toll"}
@@ -121,30 +196,66 @@ Macro "Create Auto Tables"
    for i = 1 to periods.length do
 
       //open person trip matrix currencies
-      personMatrix = OpenMatrix(personTables[i], )                                                               
-      personCurrencies = CreateMatrixCurrencies(personMatrix, , , )
+      personMatrixLow = OpenMatrix(personTables[1][i], )                                                               
+      personCurrenciesLow = CreateMatrixCurrencies(personMatrixLow, , , )
+        
+      personMatrixMed = OpenMatrix(personTables[2][i], )                                                               
+      personCurrenciesMed = CreateMatrixCurrencies(personMatrixMed, , , )
+    
+      personMatrixHigh = OpenMatrix(personTables[3][i], )                                                               
+      personCurrenciesHigh = CreateMatrixCurrencies(personMatrixHigh, , , )
       
- 	   dim curr_array[CTRampMatrices.length]
-	   for j = 1 to CTRampMatrices.length do
-         curr_array[j] = CreateMatrixCurrency(personMatrix, CTRampMatrices[j]+periods[i], ,, )
+      totalOutMatrices = CTRampMatrices.length * 3
+        
+      counter = 0
+ 	    dim curr_array[totalOutMatrices]
+	    for j = 1 to totalOutMatrices do
+	      counter = counter + 1
+        curr_array[j] = CreateMatrixCurrency(personMatrixLow, CTRampMatrices[counter]+periods[i], ,, )
+	      if counter = CTRampMatrices.length then counter=0
+	   
 	   end
 
+     //open internal-external matrix currencies
+      internalExternalMatrixLow = OpenMatrix(internalExternalTables[1][i], )                                                               
+	    internalExternalCurrenciesLow = CreateMatrixCurrencies(internalExternalMatrixLow, , , )
+
+     internalExternalMatrixMed = OpenMatrix(internalExternalTables[2][i], )                                                               
+	    internalExternalCurrenciesMed = CreateMatrixCurrencies(internalExternalMatrixMed, , , )
+
+     internalExternalMatrixHigh = OpenMatrix(internalExternalTables[3][i], )                                                               
+	    internalExternalCurrenciesHigh = CreateMatrixCurrencies(internalExternalMatrixHigh, , , )
 
      //open airport matrix currencies
-      airportMatrix = OpenMatrix(airportTables[i], )                                                               
-	    airportCurrencies = CreateMatrixCurrencies(airportMatrix, , , )
+      airportMatrixLow = OpenMatrix(airportTables[1][i], )                                                               
+	    airportCurrenciesLow = CreateMatrixCurrencies(airportMatrixLow, , , )
+
+      airportMatrixMed = OpenMatrix(airportTables[2][i], )                                                               
+	    airportCurrenciesMed = CreateMatrixCurrencies(airportMatrixMed, , , )
+
+      airportMatrixHigh = OpenMatrix(airportTables[3][i], )                                                               
+	    airportCurrenciesHigh = CreateMatrixCurrencies(airportMatrixHigh, , , )
 
      //open visitor matrix currencies
-      visitorMatrix = OpenMatrix(visitorTables[i], )                                                               
-	    visitorCurrencies = CreateMatrixCurrencies(visitorMatrix, , , )
+      visitorMatrixLow = OpenMatrix(visitorTables[1][i], )                                                               
+	    visitorCurrenciesLow = CreateMatrixCurrencies(visitorMatrixLow, , , )
+
+      visitorMatrixMed = OpenMatrix(visitorTables[2][i], )                                                               
+	    visitorCurrenciesMed = CreateMatrixCurrencies(visitorMatrixMed, , , )
+
+      visitorMatrixHigh = OpenMatrix(visitorTables[3][i], )                                                               
+	    visitorCurrenciesHigh = CreateMatrixCurrencies(visitorMatrixHigh, , , )
 
      //open cross border matrix currencies
-      crossBorderMatrix = OpenMatrix(crossBorderTables[i], )                                                               
-	    crossBorderCurrencies = CreateMatrixCurrencies(crossBorderMatrix, , , )
+      crossBorderMatrixLow = OpenMatrix(crossBorderTables[1][i], )                                                               
+	    crossBorderCurrenciesLow = CreateMatrixCurrencies(crossBorderMatrixLow, , , )
 
-     //open internal-external matrix currencies
-      internalExternalMatrix = OpenMatrix(internalExternalTables[i], )                                                               
-	    internalExternalCurrencies = CreateMatrixCurrencies(internalExternalMatrix, , , )
+      crossBorderMatrixMed = OpenMatrix(crossBorderTables[2][i], )                                                               
+	    crossBorderCurrenciesMed = CreateMatrixCurrencies(crossBorderMatrixMed, , , )
+
+      crossBorderMatrixHigh = OpenMatrix(crossBorderTables[3][i], )                                                               
+	    crossBorderCurrenciesHigh = CreateMatrixCurrencies(crossBorderMatrixHigh, , , )
+
   
      //open external-internal work matrix currencies
       externalInternalWrkMatrix = OpenMatrix(externalInternalTables[1]+periods[i]+".mtx", ) 
@@ -164,90 +275,233 @@ Macro "Create Auto Tables"
       
       outCurrencies= CreateMatrixCurrencies(outMatrix, , , )
 
+//LOW VOT
       // calculate output matrices
-      outCurrencies.SOV_GP :=Nz(outCurrencies.SOV_GP)
-      outCurrencies.SOV_GP :=  Nz(personCurrencies.("SOV_GP"+periods[i]))
-                            + Nz(airportCurrencies.("SOV_GP"+periods[i])) 
-                            + Nz(visitorCurrencies.("SOV_GP"+periods[i])) 
-                            + Nz(crossBorderCurrencies.("SOV_GP"+periods[i])) 
-                            + Nz(internalExternalCurrencies.("SOV_GP"+periods[i])) 
-                            + Nz(externalInternalWrkCurrencies.("DAN"))
-                            + Nz(externalInternalNonCurrencies.("DAN"))
-                            + Nz(externalExternalCurrency) * externalExternalDiurnalFactors[i] * externalExternalOccupancyFactors[1]
-                            + Nz(commVehCurrencies.(commVehMatrices[i])) 
+      outCurrencies.SOV_GP_LOW :=Nz(outCurrencies.SOV_GP_LOW)
+      outCurrencies.SOV_GP_LOW :=  Nz(personCurrenciesLow.("SOV_GP"+periods[i]))
+                                 + Nz(internalExternalCurrenciesLow.("SOV_GP"+periods[i]))
+                                 + Nz(crossBorderCurrenciesLow.("SOV_GP"+periods[i]))  
+                                 + Nz(airportCurrenciesLow.("SOV_GP"+periods[i]))
+                                 + Nz(visitorCurrenciesLow.("SOV_GP"+periods[i])) 
+                           
+      if votBinExternalInternal=1 then outCurrencies.SOV_GP_LOW := outCurrencies.SOV_GP_LOW + Nz(externalInternalWrkCurrencies.("DAN")) + Nz(externalInternalNonCurrencies.("DAN"))
+      if votBinExternalExternal=1 then outCurrencies.SOV_GP_LOW := outCurrencies.SOV_GP_LOW + (Nz(externalExternalCurrency) * externalExternalDiurnalFactors[i] * externalExternalOccupancyFactors[1])
+      if votBinCommercialVehicles=1 then outCurrencies.SOV_GP_LOW := outCurrencies.SOV_GP_LOW + Nz(commVehCurrencies.(commVehMatrices[i])) 
                        
-      outCurrencies.SOV_PAY :=Nz(outCurrencies.SOV_PAY)
-      outCurrencies.SOV_PAY := Nz(personCurrencies.("SOV_PAY"+periods[i])) 
-                            + Nz(airportCurrencies.("SOV_PAY"+periods[i])) 
-                            + Nz(visitorCurrencies.("SOV_PAY"+periods[i])) 
-                            + Nz(crossBorderCurrencies.("SOV_PAY"+periods[i])) 
-                            + Nz(internalExternalCurrencies.("SOV_PAY"+periods[i])) 
-                            + Nz(externalInternalWrkCurrencies.("DAT"))
-                            + Nz(externalInternalNonCurrencies.("DAT"))
-                            + Nz(commVehCurrencies.(commVehMatrices[i+5]))
+      outCurrencies.SOV_PAY_LOW :=Nz(outCurrencies.SOV_PAY_LOW)
+      outCurrencies.SOV_PAY_LOW := Nz(personCurrenciesLow.("SOV_PAY"+periods[i])) 
+                            + Nz(internalExternalCurrenciesLow.("SOV_PAY"+periods[i])) 
+                            + Nz(crossBorderCurrenciesLow.("SOV_PAY"+periods[i]))   
+                            + Nz(airportCurrenciesLow.("SOV_PAY"+periods[i]))
+                            + Nz(visitorCurrenciesLow.("SOV_PAY"+periods[i]))
+    
+      if votBinExternalInternal=1 then outCurrencies.SOV_PAY_LOW := outCurrencies.SOV_PAY_LOW + Nz(externalInternalWrkCurrencies.("DAT")) + Nz(externalInternalNonCurrencies.("DAT"))
+      if votBinCommercialVehicles=1 then outCurrencies.SOV_PAY_LOW := outCurrencies.SOV_PAY_LOW + Nz(commVehCurrencies.(commVehMatrices[i+5]))
 
-      outCurrencies.SR2_GP :=Nz(outCurrencies.SR2_GP)
-      outCurrencies.SR2_GP := Nz(personCurrencies.("SR2_GP"+periods[i])) 
-                            + Nz(airportCurrencies.("SR2_GP"+periods[i])) 
-                            + Nz(visitorCurrencies.("SR2_GP"+periods[i])) 
-                            + Nz(crossBorderCurrencies.("SR2_GP"+periods[i])) 
-                            + Nz(internalExternalCurrencies.("SR2_GP"+periods[i])) 
-
-      outCurrencies.SR2_HOV :=Nz(outCurrencies.SR2_HOV)  
-      outCurrencies.SR2_HOV := Nz(personCurrencies.("SR2_HOV"+periods[i])) 
-                            + Nz(airportCurrencies.("SR2_HOV"+periods[i])) 
-                            + Nz(visitorCurrencies.("SR2_HOV"+periods[i])) 
-                            + Nz(crossBorderCurrencies.("SR2_HOV"+periods[i])) 
-                            + Nz(internalExternalCurrencies.("SR2_HOV"+periods[i])) 
-                            + Nz(externalInternalWrkCurrencies.("S2N"))
-                            + Nz(externalInternalNonCurrencies.("S2N"))
-                            + Nz(externalExternalCurrency) * externalExternalDiurnalFactors[i] * externalExternalOccupancyFactors[2]
+      outCurrencies.SR2_GP_LOW :=Nz(outCurrencies.SR2_GP_LOW)
+      outCurrencies.SR2_GP_LOW := Nz(personCurrenciesLow.("SR2_GP"+periods[i])) 
+                            + Nz(internalExternalCurrenciesLow.("SR2_GP"+periods[i])) 
+                            + Nz(crossBorderCurrenciesLow.("SR2_GP"+periods[i]))   
+                            + Nz(airportCurrenciesLow.("SR2_GP"+periods[i])) 
+                            + Nz(visitorCurrenciesLow.("SR2_GP"+periods[i])) 
+                              
+      outCurrencies.SR2_HOV_LOW :=Nz(outCurrencies.SR2_HOV_LOW)  
+      outCurrencies.SR2_HOV_LOW := Nz(personCurrenciesLow.("SR2_HOV"+periods[i])) 
+                            + Nz(internalExternalCurrenciesLow.("SR2_HOV"+periods[i])) 
+                            + Nz(crossBorderCurrenciesLow.("SR2_HOV"+periods[i]))                           
+                            + Nz(airportCurrenciesLow.("SR2_HOV"+periods[i])) 
+                            + Nz(visitorCurrenciesLow.("SR2_HOV"+periods[i])) 
+                        
+     if votBinExternalInternal=1 then outCurrencies.SR2_HOV_LOW := outCurrencies.SR2_HOV_LOW  + Nz(externalInternalWrkCurrencies.("S2N")) + Nz(externalInternalNonCurrencies.("S2N"))
+     if votBinExternalExternal=1 then outCurrencies.SR2_HOV_LOW := outCurrencies.SR2_HOV_LOW + Nz(externalExternalCurrency) * externalExternalDiurnalFactors[i] * externalExternalOccupancyFactors[2]
  
-      outCurrencies.SR2_PAY :=Nz(outCurrencies.SR2_PAY)
-      outCurrencies.SR2_PAY := Nz(personCurrencies.("SR2_PAY"+periods[i])) 
-                            + Nz(airportCurrencies.("SR2_PAY"+periods[i])) 
-                            + Nz(visitorCurrencies.("SR2_PAY"+periods[i])) 
-                            + Nz(crossBorderCurrencies.("SR2_PAY"+periods[i])) 
-                            + Nz(internalExternalCurrencies.("SR2_PAY"+periods[i])) 
-                            + Nz(externalInternalWrkCurrencies.("S2T"))
-                            + Nz(externalInternalNonCurrencies.("S2T"))
+      outCurrencies.SR2_PAY_LOW :=Nz(outCurrencies.SR2_PAY_LOW)
+      outCurrencies.SR2_PAY_LOW := Nz(personCurrenciesLow.("SR2_PAY"+periods[i])) 
+                           + Nz(internalExternalCurrenciesLow.("SR2_PAY"+periods[i])) 
+                           + Nz(crossBorderCurrenciesLow.("SR2_PAY"+periods[i]))     
+                           + Nz(airportCurrenciesLow.("SR2_PAY"+periods[i])) 
+                           + Nz(visitorCurrenciesLow.("SR2_PAY"+periods[i])) 
 
-      outCurrencies.SR3_GP :=Nz(outCurrencies.SR3_GP)
-      outCurrencies.SR3_GP := Nz(personCurrencies.("SR3_GP"+periods[i])) 
-                            + Nz(airportCurrencies.("SR3_GP"+periods[i]))
-                            + Nz(visitorCurrencies.("SR3_GP"+periods[i])) 
-                            + Nz(crossBorderCurrencies.("SR3_GP"+periods[i])) 
-                            + Nz(internalExternalCurrencies.("SR3_GP"+periods[i])) 
+      if votBinExternalInternal=1 then outCurrencies.SR2_PAY_LOW := outCurrencies.SR2_PAY_LOW + Nz(externalInternalWrkCurrencies.("S2T"))   + Nz(externalInternalNonCurrencies.("S2T"))
 
-      outCurrencies.SR3_HOV :=Nz(outCurrencies.SR3_HOV) 
-      outCurrencies.SR3_HOV := Nz(personCurrencies.("SR3_HOV"+periods[i])) 
-                            + Nz(airportCurrencies.("SR3_HOV"+periods[i])) 
-                            + Nz(visitorCurrencies.("SR3_HOV"+periods[i])) 
-                            + Nz(crossBorderCurrencies.("SR3_HOV"+periods[i])) 
-                            + Nz(internalExternalCurrencies.("SR3_HOV"+periods[i])) 
-                            + Nz(externalInternalWrkCurrencies.("S3N"))
-                            + Nz(externalInternalNonCurrencies.("S3N"))
-                            + Nz(externalExternalCurrency) * externalExternalDiurnalFactors[i] * externalExternalOccupancyFactors[3]
+      outCurrencies.SR3_GP_LOW :=Nz(outCurrencies.SR3_GP_LOW)
+      outCurrencies.SR3_GP_LOW := Nz(personCurrenciesLow.("SR3_GP"+periods[i])) 
+                            + Nz(internalExternalCurrenciesLow.("SR3_GP"+periods[i])) 
+                            + Nz(crossBorderCurrenciesLow.("SR3_GP"+periods[i]))      
+                            + Nz(airportCurrenciesLow.("SR3_GP"+periods[i])) 
+                            + Nz(visitorCurrenciesLow.("SR3_GP"+periods[i])) 
 
-      outCurrencies.SR3_PAY :=Nz(outCurrencies.SR3_PAY)
-      outCurrencies.SR3_PAY := Nz(personCurrencies.("SR3_PAY"+periods[i])) 
-                            + Nz(airportCurrencies.("SR3_PAY"+periods[i])) 
-                            + Nz(visitorCurrencies.("SR3_PAY"+periods[i])) 
-                            + Nz(crossBorderCurrencies.("SR3_PAY"+periods[i])) 
-                            + Nz(internalExternalCurrencies.("SR3_PAY"+periods[i])) 
-                            + Nz(externalInternalWrkCurrencies.("S3T"))
-                            + Nz(externalInternalNonCurrencies.("S3T"))
-     /*
-      truckPeriod = truckPeriods[i]
-      outCurrencies.lhdn := truckCurrencies[truckPeriod].lhdn * truckFactors[i]
-      outCurrencies.mhdn := truckCurrencies[truckPeriod].mhdn * truckFactors[i]
-      outCurrencies.hhdn := truckCurrencies[truckPeriod].hhdn * truckFactors[i]
-      outCurrencies.lhdt := truckCurrencies[truckPeriod].lhdt * truckFactors[i]
-      outCurrencies.mhdt := truckCurrencies[truckPeriod].mhdt * truckFactors[i]
-      outCurrencies.hhdt := truckCurrencies[truckPeriod].hhdt * truckFactors[i]
-      */
+      outCurrencies.SR3_HOV_LOW :=Nz(outCurrencies.SR3_HOV_LOW) 
+      outCurrencies.SR3_HOV_LOW := Nz(personCurrenciesLow.("SR3_HOV"+periods[i])) 
+                            + Nz(internalExternalCurrenciesLow.("SR3_HOV"+periods[i])) 
+                            + Nz(crossBorderCurrenciesLow.("SR3_HOV"+periods[i]))     
+                            + Nz(airportCurrenciesLow.("SR3_HOV"+periods[i])) 
+                            + Nz(visitorCurrenciesLow.("SR3_HOV"+periods[i]))
+      
+      if votBinExternalInternal=1 then outCurrencies.SR3_HOV_LOW := outCurrencies.SR3_HOV_LOW  + Nz(externalInternalWrkCurrencies.("S3N")) + Nz(externalInternalNonCurrencies.("S3N"))
+      if votBinExternalExternal=1 then outCurrencies.SR3_HOV_LOW := outCurrencies.SR3_HOV_LOW + Nz(externalExternalCurrency) * externalExternalDiurnalFactors[i] * externalExternalOccupancyFactors[3]
 
-	  outCurrencies.lhdn := truckCurrencies[i].lhdn
+      outCurrencies.SR3_PAY_LOW :=Nz(outCurrencies.SR3_PAY_LOW)
+      outCurrencies.SR3_PAY_LOW := Nz(personCurrenciesLow.("SR3_PAY"+periods[i])) 
+                              + Nz(internalExternalCurrenciesLow.("SR3_PAY"+periods[i])) 
+                              + Nz(crossBorderCurrenciesLow.("SR3_PAY"+periods[i])) 
+                              + Nz(airportCurrenciesLow.("SR3_PAY"+periods[i]))   
+                              + Nz(visitorCurrenciesLow.("SR3_PAY"+periods[i])) 
+
+       if votBinExternalInternal=1 then outCurrencies.SR3_PAY_LOW := outCurrencies.SR3_PAY_LOW  + Nz(externalInternalWrkCurrencies.("S3T"))   + Nz(externalInternalNonCurrencies.("S3T"))
+    
+//MED VOT
+      // calculate output matrices
+      outCurrencies.SOV_GP_MED :=Nz(outCurrencies.SOV_GP_MED)
+      outCurrencies.SOV_GP_MED :=  Nz(personCurrenciesMed.("SOV_GP"+periods[i]))
+                                 + Nz(internalExternalCurrenciesMed.("SOV_GP"+periods[i])) 
+                                 + Nz(crossBorderCurrenciesMed.("SOV_GP"+periods[i])) 
+                                 + Nz(airportCurrenciesMed.("SOV_GP"+periods[i])) 
+                                 + Nz(visitorCurrenciesMed.("SOV_GP"+periods[i])) 
+     
+      if votBinExternalInternal=2 then outCurrencies.SOV_GP_MED := outCurrencies.SOV_GP_MED + Nz(externalInternalWrkCurrencies.("DAN")) + Nz(externalInternalNonCurrencies.("DAN"))
+      if votBinExternalExternal=2 then outCurrencies.SOV_GP_MED := outCurrencies.SOV_GP_MED + (Nz(externalExternalCurrency) * externalExternalDiurnalFactors[i] * externalExternalOccupancyFactors[1])
+      if votBinCommercialVehicles=2 then outCurrencies.SOV_GP_MED := outCurrencies.SOV_GP_MED + Nz(commVehCurrencies.(commVehMatrices[i])) 
+                       
+      outCurrencies.SOV_PAY_MED :=Nz(outCurrencies.SOV_PAY_MED)
+      outCurrencies.SOV_PAY_MED := Nz(personCurrenciesMed.("SOV_PAY"+periods[i])) 
+                            + Nz(internalExternalCurrenciesMed.("SOV_PAY"+periods[i])) 
+                            + Nz(crossBorderCurrenciesMed.("SOV_PAY"+periods[i]))       
+                            + Nz(airportCurrenciesMed.("SOV_PAY"+periods[i])) 
+                            + Nz(visitorCurrenciesMed.("SOV_PAY"+periods[i])) 
+ 
+      if votBinExternalInternal=2 then outCurrencies.SOV_PAY_MED := outCurrencies.SOV_PAY_MED + Nz(externalInternalWrkCurrencies.("DAT")) + Nz(externalInternalNonCurrencies.("DAT"))
+      if votBinCommercialVehicles=2 then outCurrencies.SOV_PAY_MED := outCurrencies.SOV_PAY_MED + Nz(commVehCurrencies.(commVehMatrices[i+5]))
+
+      outCurrencies.SR2_GP_MED :=Nz(outCurrencies.SR2_GP_MED)
+      outCurrencies.SR2_GP_MED := Nz(personCurrenciesMed.("SR2_GP"+periods[i])) 
+                            + Nz(internalExternalCurrenciesMed.("SR2_GP"+periods[i])) 
+                            + Nz(crossBorderCurrenciesMed.("SR2_GP"+periods[i]))    
+                            + Nz(airportCurrenciesMed.("SR2_GP"+periods[i]))
+                            + Nz(visitorCurrenciesMed.("SR2_GP"+periods[i]))
+ 
+      outCurrencies.SR2_HOV_MED :=Nz(outCurrencies.SR2_HOV_MED)  
+      outCurrencies.SR2_HOV_MED := Nz(personCurrenciesMed.("SR2_HOV"+periods[i])) 
+                            + Nz(internalExternalCurrenciesMed.("SR2_HOV"+periods[i])) 
+                            + Nz(crossBorderCurrenciesMed.("SR2_HOV"+periods[i]))    
+                            + Nz(airportCurrenciesMed.("SR2_HOV"+periods[i])) 
+                            + Nz(visitorCurrenciesMed.("SR2_HOV"+periods[i])) 
+                        
+     if votBinExternalInternal=2 then outCurrencies.SR2_HOV_MED := outCurrencies.SR2_HOV_MED  + Nz(externalInternalWrkCurrencies.("S2N")) + Nz(externalInternalNonCurrencies.("S2N"))
+     if votBinExternalExternal=2 then outCurrencies.SR2_HOV_MED := outCurrencies.SR2_HOV_MED + Nz(externalExternalCurrency) * externalExternalDiurnalFactors[i] * externalExternalOccupancyFactors[2]
+ 
+      outCurrencies.SR2_PAY_MED :=Nz(outCurrencies.SR2_PAY_MED)
+      outCurrencies.SR2_PAY_MED := Nz(personCurrenciesMed.("SR2_PAY"+periods[i])) 
+                           + Nz(internalExternalCurrenciesMed.("SR2_PAY"+periods[i])) 
+                           + Nz(crossBorderCurrenciesMed.("SR2_PAY"+periods[i]))        
+                           + Nz(airportCurrenciesMed.("SR2_PAY"+periods[i])) 
+                           + Nz(visitorCurrenciesMed.("SR2_PAY"+periods[i]))         
+ 
+      if votBinExternalInternal=2 then outCurrencies.SR2_PAY_MED := outCurrencies.SR2_PAY_MED + Nz(externalInternalWrkCurrencies.("S2T"))   + Nz(externalInternalNonCurrencies.("S2T"))
+
+      outCurrencies.SR3_GP_MED :=Nz(outCurrencies.SR3_GP_MED)
+      outCurrencies.SR3_GP_MED := Nz(personCurrenciesMed.("SR3_GP"+periods[i])) 
+                            + Nz(internalExternalCurrenciesMed.("SR3_GP"+periods[i])) 
+                            + Nz(crossBorderCurrenciesMed.("SR3_GP"+periods[i]))       
+                             + Nz(airportCurrenciesMed.("SR3_GP"+periods[i])) 
+                             + Nz(visitorCurrenciesMed.("SR3_GP"+periods[i])) 
+      
+      outCurrencies.SR3_HOV_MED :=Nz(outCurrencies.SR3_HOV_MED) 
+      outCurrencies.SR3_HOV_MED := Nz(personCurrenciesMed.("SR3_HOV"+periods[i])) 
+                            + Nz(internalExternalCurrenciesMed.("SR3_HOV"+periods[i])) 
+                            + Nz(crossBorderCurrenciesMed.("SR3_HOV"+periods[i]))     
+                            + Nz(airportCurrenciesMed.("SR3_HOV"+periods[i]))  
+                            + Nz(visitorCurrenciesMed.("SR3_HOV"+periods[i])) 
+     
+      if votBinExternalInternal=2 then outCurrencies.SR3_HOV_MED := outCurrencies.SR3_HOV_MED  + Nz(externalInternalWrkCurrencies.("S3N")) + Nz(externalInternalNonCurrencies.("S3N"))
+      if votBinExternalExternal=2 then outCurrencies.SR3_HOV_MED := outCurrencies.SR3_HOV_MED + Nz(externalExternalCurrency) * externalExternalDiurnalFactors[i] * externalExternalOccupancyFactors[3]
+
+      outCurrencies.SR3_PAY_MED :=Nz(outCurrencies.SR3_PAY_MED)
+      outCurrencies.SR3_PAY_MED := Nz(personCurrenciesMed.("SR3_PAY"+periods[i])) 
+                              + Nz(internalExternalCurrenciesMed.("SR3_PAY"+periods[i])) 
+                              + Nz(crossBorderCurrenciesMed.("SR3_PAY"+periods[i]))    
+                              + Nz(airportCurrenciesMed.("SR3_PAY"+periods[i]))  
+                              + Nz(visitorCurrenciesMed.("SR3_PAY"+periods[i]))
+
+      if votBinExternalInternal=2 then outCurrencies.SR3_PAY_MED := outCurrencies.SR3_PAY_MED  + Nz(externalInternalWrkCurrencies.("S3T"))   + Nz(externalInternalNonCurrencies.("S3T"))
+
+//HIGH VOT
+      // calculate output matrices
+      outCurrencies.SOV_GP_HIGH :=Nz(outCurrencies.SOV_GP_HIGH)
+      outCurrencies.SOV_GP_HIGH :=  Nz(personCurrenciesHigh.("SOV_GP"+periods[i]))
+                                 + Nz(internalExternalCurrenciesHigh.("SOV_GP"+periods[i])) 
+                                 + Nz(crossBorderCurrenciesHigh.("SOV_GP"+periods[i]))   
+                                  + Nz(airportCurrenciesHigh.("SOV_GP"+periods[i])) 
+                                  + Nz(visitorCurrenciesHigh.("SOV_GP"+periods[i])) 
+                           
+      if votBinExternalInternal=3 then outCurrencies.SOV_GP_HIGH := outCurrencies.SOV_GP_HIGH + Nz(externalInternalWrkCurrencies.("DAN")) + Nz(externalInternalNonCurrencies.("DAN"))
+      if votBinExternalExternal=3 then outCurrencies.SOV_GP_HIGH := outCurrencies.SOV_GP_HIGH + (Nz(externalExternalCurrency) * externalExternalDiurnalFactors[i] * externalExternalOccupancyFactors[1])
+      if votBinCommercialVehicles=3 then outCurrencies.SOV_GP_HIGH := outCurrencies.SOV_GP_HIGH + Nz(commVehCurrencies.(commVehMatrices[i])) 
+                       
+      outCurrencies.SOV_PAY_HIGH :=Nz(outCurrencies.SOV_PAY_HIGH)
+      outCurrencies.SOV_PAY_HIGH := Nz(personCurrenciesHigh.("SOV_PAY"+periods[i])) 
+                            + Nz(internalExternalCurrenciesHigh.("SOV_PAY"+periods[i])) 
+                            + Nz(crossBorderCurrenciesHigh.("SOV_PAY"+periods[i]))       
+                            + Nz(airportCurrenciesHigh.("SOV_PAY"+periods[i])) 
+                            + Nz(visitorCurrenciesHigh.("SOV_PAY"+periods[i])) 
+ 
+      if votBinExternalInternal=3 then outCurrencies.SOV_PAY_HIGH := outCurrencies.SOV_PAY_HIGH + Nz(externalInternalWrkCurrencies.("DAT")) + Nz(externalInternalNonCurrencies.("DAT"))
+      if votBinCommercialVehicles=3 then outCurrencies.SOV_PAY_HIGH := outCurrencies.SOV_PAY_HIGH + Nz(commVehCurrencies.(commVehMatrices[i+5]))
+
+      outCurrencies.SR2_GP_HIGH :=Nz(outCurrencies.SR2_GP_HIGH)
+      outCurrencies.SR2_GP_HIGH := Nz(personCurrenciesHigh.("SR2_GP"+periods[i])) 
+                            + Nz(internalExternalCurrenciesHigh.("SR2_GP"+periods[i])) 
+                            + Nz(crossBorderCurrenciesHigh.("SR2_GP"+periods[i]))    
+                            + Nz(airportCurrenciesHigh.("SR2_GP"+periods[i])) 
+                            + Nz(visitorCurrenciesHigh.("SR2_GP"+periods[i])) 
+ 
+      outCurrencies.SR2_HOV_HIGH :=Nz(outCurrencies.SR2_HOV_HIGH)  
+      outCurrencies.SR2_HOV_HIGH := Nz(personCurrenciesHigh.("SR2_HOV"+periods[i])) 
+                            + Nz(internalExternalCurrenciesHigh.("SR2_HOV"+periods[i])) 
+                            + Nz(crossBorderCurrenciesHigh.("SR2_HOV"+periods[i]))   
+                            + Nz(airportCurrenciesHigh.("SR2_HOV"+periods[i])) 
+                            + Nz(visitorCurrenciesHigh.("SR2_HOV"+periods[i])) 
+                        
+     if votBinExternalInternal=3 then outCurrencies.SR2_HOV_HIGH := outCurrencies.SR2_HOV_HIGH  + Nz(externalInternalWrkCurrencies.("S2N")) + Nz(externalInternalNonCurrencies.("S2N"))
+     if votBinExternalExternal=3 then outCurrencies.SR2_HOV_HIGH := outCurrencies.SR2_HOV_HIGH + Nz(externalExternalCurrency) * externalExternalDiurnalFactors[i] * externalExternalOccupancyFactors[2]
+ 
+      outCurrencies.SR2_PAY_HIGH :=Nz(outCurrencies.SR2_PAY_HIGH)
+      outCurrencies.SR2_PAY_HIGH := Nz(personCurrenciesHigh.("SR2_PAY"+periods[i])) 
+                           + Nz(internalExternalCurrenciesHigh.("SR2_PAY"+periods[i])) 
+                           + Nz(crossBorderCurrenciesHigh.("SR2_PAY"+periods[i]))    
+                           + Nz(airportCurrenciesHigh.("SR2_PAY"+periods[i])) 
+                           + Nz(visitorCurrenciesHigh.("SR2_PAY"+periods[i])) 
+   
+      if votBinExternalInternal=3 then outCurrencies.SR2_PAY_HIGH := outCurrencies.SR2_PAY_HIGH + Nz(externalInternalWrkCurrencies.("S2T"))   + Nz(externalInternalNonCurrencies.("S2T"))
+
+      outCurrencies.SR3_GP_HIGH :=Nz(outCurrencies.SR3_GP_HIGH)
+      outCurrencies.SR3_GP_HIGH := Nz(personCurrenciesHigh.("SR3_GP"+periods[i])) 
+                            + Nz(internalExternalCurrenciesHigh.("SR3_GP"+periods[i])) 
+                            + Nz(crossBorderCurrenciesHigh.("SR3_GP"+periods[i])) 
+                            + Nz(airportCurrencies.("SR3_GP"+periods[i])) 
+                            + Nz(visitorCurrencies.("SR3_GP"+periods[i]))
+                             
+      outCurrencies.SR3_HOV_HIGH :=Nz(outCurrencies.SR3_HOV_HIGH) 
+      outCurrencies.SR3_HOV_HIGH := Nz(personCurrenciesHigh.("SR3_HOV"+periods[i])) 
+                            + Nz(internalExternalCurrenciesHigh.("SR3_HOV"+periods[i])) 
+                            + Nz(crossBorderCurrenciesHigh.("SR3_HOV"+periods[i]))  
+                            + Nz(airportCurrenciesHigh.("SR3_HOV"+periods[i]))  
+                            + Nz(visitorCurrenciesHigh.("SR3_HOV"+periods[i])) 
+   
+   
+      if votBinExternalInternal=3 then outCurrencies.SR3_HOV_HIGH := outCurrencies.SR3_HOV_HIGH  + Nz(externalInternalWrkCurrencies.("S3N")) + Nz(externalInternalNonCurrencies.("S3N"))
+      if votBinExternalExternal=3 then outCurrencies.SR3_HOV_HIGH := outCurrencies.SR3_HOV_HIGH + Nz(externalExternalCurrency) * externalExternalDiurnalFactors[i] * externalExternalOccupancyFactors[3]
+
+      outCurrencies.SR3_PAY_HIGH :=Nz(outCurrencies.SR3_PAY_HIGH)
+      outCurrencies.SR3_PAY_HIGH := Nz(personCurrenciesHigh.("SR3_PAY"+periods[i])) 
+                              + Nz(internalExternalCurrenciesHigh.("SR3_PAY"+periods[i])) 
+                              + Nz(crossBorderCurrenciesHigh.("SR3_PAY"+periods[i]))   
+                              + Nz(airportCurrenciesHigh.("SR3_PAY"+periods[i]))   
+                              + Nz(visitorCurrenciesHigh.("SR3_PAY"+periods[i])) 
+
+      if votBinExternalInternal=3 then outCurrencies.SR3_PAY_HIGH := outCurrencies.SR3_PAY_HIGH  + Nz(externalInternalWrkCurrencies.("S3T"))   + Nz(externalInternalNonCurrencies.("S3T"))
+   
+      outCurrencies.lhdn := truckCurrencies[i].lhdn
       outCurrencies.mhdn := truckCurrencies[i].mhdn
       outCurrencies.hhdn := truckCurrencies[i].hhdn
       outCurrencies.lhdt := truckCurrencies[i].lhdt
