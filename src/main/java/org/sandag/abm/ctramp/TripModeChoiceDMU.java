@@ -715,6 +715,15 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
 	public void setInbound(boolean inbound) {
 		this.inbound = inbound;
 	}
+	
+	 /** 
+	   * 1 if household owns transponder, else 0
+	   * @return 1 if household owns transponder, else 0
+	   */
+	  public int getTransponderOwnership(){
+		  return hh.getTpChoice();
+	  }
+
 
 
 
