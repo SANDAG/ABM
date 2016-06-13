@@ -331,6 +331,13 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
   public int getDestMgra() {
     return destMgra; 
   }
+  
+  /**
+   * 1 if household owns transponder, else 0
+   */
+  public int getTransponderOwnership(){
+	  return hh.getTpChoice();
+  }
 
 	public int getIndexValue(String variableName) {
 		return methodIndexMap.get(variableName);
