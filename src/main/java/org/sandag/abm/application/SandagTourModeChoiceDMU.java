@@ -273,6 +273,8 @@ public class SandagTourModeChoiceDMU
         methodIndexMap.put("getFreeParkingEligibility", 28);
         methodIndexMap.put("getParkingArea", 29);
         
+        methodIndexMap.put("getTransponderOwnership", 30);
+        
         methodIndexMap.put("getFemaleInParty", 50);
         methodIndexMap.put("getMaleInParty", 51);
         methodIndexMap.put("getInboundFemaleBikeLogsum", 52);

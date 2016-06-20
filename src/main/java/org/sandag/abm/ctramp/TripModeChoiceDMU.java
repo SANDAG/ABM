@@ -661,13 +661,18 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
  		return originMgra;
  	}
 
-
-
  	/**
  	 * @return the destMgra
  	 */
  	public int getDestMgra() {
  		return destMgra;
+ 	}
+ 	
+ 	/**
+ 	 * 1 if household owns transponder, else 0
+ 	 */
+ 	public int getTransponderOwnership(){
+ 		return hh.getTpChoice();
  	}
 
     public int getIndexValue(String variableName)
