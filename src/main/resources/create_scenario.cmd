@@ -48,7 +48,24 @@ del %SCENARIO_FOLDER%\gisdk\sandag_abm_master_generic.rsc
 @echo copy network inputs
 call copy_networks.cmd %NETWORKDIR% %SCENARIO_FOLDER%\input
 
+@echo off & setlocal
+set t=%SCENARIO_FOLDER%
+for /f "tokens=1,2 delims=:" %%a in ("%t%") do (
+   set x=%%a
+   set y=%%b
+   )
+
+@echo check AT and Transit networks consistency
+
+@echo call %SCENARIO_FOLDER%\bin\checkAtTransitNetworkConsistency.cmd %x%: %y%
+call %SCENARIO_FOLDER%\bin\checkAtTransitNetworkConsistency.cmd %x%: %y%
+@echo -----------------------------------------------------------------
+@echo If error message logged out in DOS window, CHECK your SANDAG_Bike_Node.dbf and tapcov.dbf.
+@echo If you used default inputs, check in release/input;
+@echo otherwise, check in the network folder you provided %NETWORKDIR%.
+@echo -----------------------------------------------------------------
+
 :usage
 
-@echo Usage: %0 ^<scenario_folder^> ^<year^> ^<cluster^> ^<network^>
+@echo Usage: %0 ^<scenario_folder^> ^<year^> ^<local/(aztec,gaucho,wildcat)^> ^<network^>
 @echo If 4th parameter is empty, default network inputs in standard release are used
