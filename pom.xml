@@ -756,6 +756,11 @@
             <artifactId>jppf-server</artifactId>
             <version>${jppf_version}</version>
         </dependency>
+        <dependency>
+	    <groupId>com.linuxense</groupId>
+	    	<artifactId>javadbf</artifactId>
+	    <version>0.4.0</version>
+</dependency>
     </dependencies>
 
     <distributionManagement>
