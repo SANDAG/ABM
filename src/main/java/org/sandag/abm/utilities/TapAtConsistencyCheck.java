@@ -33,24 +33,29 @@ public class TapAtConsistencyCheck {
 	private float yThreshold;
 	private String message;
     
-	public TapAtConsistencyCheck(ResourceBundle aRb){
+	public TapAtConsistencyCheck(ResourceBundle aRb, String folder){
 		xThreshold=Float.parseFloat(aRb.getString("AtTransitConsistency.xThreshold"));
 		yThreshold=Float.parseFloat(aRb.getString("AtTransitConsistency.yThreshold"));
-		readAtTaps();
-		readTranTaps();
+		readAtTaps(folder);
+		readTranTaps(folder);
 	}
 	
-	public void validate(){
+	public boolean validate(){
+		boolean result=false;
 		message=compareMap(atMap,tranMap);
+		if(message.equalsIgnoreCase("OK")){
+			result=true;
+		}
+		return result;
 	}
 
 	
-	private void readAtTaps(){
+	private void readAtTaps(String folder){
 		atMap=new HashMap<Integer,ArrayList<Float>>();
 	    Object [] atTapObjects;
 
 	    try {
-		    InputStream  inputStream  = new FileInputStream("T:\\projects\\sr13\\develop\\military_aztec\\input\\SANDAG_Bike_Node.dbf"); 
+		    InputStream  inputStream  = new FileInputStream(folder+"\\SANDAG_Bike_Node.dbf"); 
 		    DBFReader atTapReader = new DBFReader( inputStream); 
 			while( (atTapObjects = atTapReader.nextRecord()) != null) {
 	            double tap_at = (double)atTapObjects[3];
@@ -73,12 +78,12 @@ public class TapAtConsistencyCheck {
 	    }
 	}
 	
-	private void readTranTaps(){
+	private void readTranTaps(String folder){
 		tranMap=new HashMap<Integer,ArrayList<Double>>();
 	    Object [] tranTapObjects;
 
 	    try {
-		    InputStream  inputStream  = new FileInputStream("T:\\projects\\sr13\\develop\\military_aztec\\input\\tapcov.dbf"); 
+		    InputStream  inputStream  = new FileInputStream(folder+"\\tapcov.dbf"); 
 		    DBFReader tranTapReader = new DBFReader( inputStream); 
 			while( (tranTapObjects = tranTapReader.nextRecord()) != null) {
 	            double tap_tran = (double)tranTapObjects[16];	            
@@ -101,14 +106,16 @@ public class TapAtConsistencyCheck {
 	 
 public String compareMap(HashMap<Integer, ArrayList<Float>> map1, HashMap<Integer, ArrayList<Double>> map2) {
 
-	String message=null;
+	String message="OK";
 	
     if (map1.size()==0){
-    	message=new ErrorLogging().getAtError("AT4");   	
+    	message=new ErrorLogging().getAtError("AT4");   
+    	return message; 
     }
     	
     if (map2.size()==0){
-    	message=new ErrorLogging().getAtError("AT5");   	
+    	message=new ErrorLogging().getAtError("AT5");   
+    	return message; 
     }
 
     for (Integer ch1 : map1.keySet()) {
@@ -117,42 +124,33 @@ public String compareMap(HashMap<Integer, ArrayList<Float>> map1, HashMap<Intege
     	
     	if(map2.get(ch1)==null||map2.get(ch1)==null){
     		message=new ErrorLogging().getAtError("AT1")+"(in SANDAG_Bike_Node.dbf "+"TAP="+ch1+" x_at="+x1+" y_at="+y1+")";
-    		System.out.println(message);
-    		break;    		
+			logger.fatal(message);		
     	}else{
 	    	Double x2=map2.get(ch1).get(0);
 	    	Double y2=map2.get(ch1).get(1);
-	    	System.out.println("TAP="+ch1+" x_at="+x1+" y_at="+y1+" x_tran="+x2+" y_tran="+y2);
+	    	//System.out.println("TAP="+ch1+" x_at="+x1+" y_at="+y1+" x_tran="+x2+" y_tran="+y2);
 	    	if((Math.abs(x1-x2)>xThreshold)&&(Math.abs(y1-y2)>yThreshold)){
 	    		message=new ErrorLogging().getAtError("AT3")+"("+"TAP="+ch1+" x_at="+x1+" y_at="+y1+" x_tran="+x2+" y_tran="+y2+")";
-	    		System.out.println(message);
-	    		break;
-	    	}else{
-	    		message="OK";
+				logger.fatal(message);
 	    	}
     	}
     	
     }
     
     for (Integer ch2 : map2.keySet()) {
-
     	Double x2=map2.get(ch2).get(0);
     	Double y2=map2.get(ch2).get(1);
     	
     	if(map1.get(ch2)==null||map1.get(ch2)==null){
     		message=new ErrorLogging().getAtError("AT2")+"(in tapcov.dbf "+"TAP="+ch2+" x_tran="+x2+" y_tran="+y2+")";
-    		System.out.println(message);
-    		break;    		
+			logger.fatal(message); 		
     	}else{
         	Float x1=map1.get(ch2).get(0);
         	Float y1=map1.get(ch2).get(1);
-	    	System.out.println("TAP="+ch2+" x_at="+x1+" y_at="+y1+" x_tran="+x2+" y_tran="+y2);
+	    	//System.out.println("TAP="+ch2+" x_at="+x1+" y_at="+y1+" x_tran="+x2+" y_tran="+y2);
 	    	if((Math.abs(x1-x2)>xThreshold)&&(Math.abs(y1-y2)>yThreshold)){
 	    		message=new ErrorLogging().getAtError("AT3")+"("+"TAP="+ch2+" x_at="+x1+" y_at="+y1+" x_tran="+x2+" y_tran="+y2+")";
-	    		System.out.println(message);
-	    		break;
-	    	}else{
-	    		message="OK";
+				logger.fatal(message);
 	    	}
     	}
     }
@@ -172,11 +170,10 @@ public String compareMap(HashMap<Integer, ArrayList<Float>> map1, HashMap<Intege
         } else
         {
             rb = ResourceBundle.getBundle(args[0]);
-            TapAtConsistencyCheck mainObject = new TapAtConsistencyCheck(rb);
-            mainObject.validate();
-            if(!mainObject.message.equalsIgnoreCase("OK")){
+            TapAtConsistencyCheck mainObject = new TapAtConsistencyCheck(rb, args[1]);
+            if(!mainObject.validate()){
             	logger.fatal(mainObject.message);
-            	System.exit(-1);
+            	System.exit(-1);            	
             }
         }
     }

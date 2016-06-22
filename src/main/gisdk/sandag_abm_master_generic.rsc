@@ -61,6 +61,16 @@ Macro "Run SANDAG ABM"
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Checking if there is enough space on C drive: "+" "+runString})
    ok = RunMacro("TCB Run Command", 1, "Check space on C drive", runString)
 
+   //check AT and Transit networks consistency
+   runString = path+"\\bin\\checkAtTransitNetworkConsistency.cmd "+drive+" "+path_forward_slash
+   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Checking if AT and Transit Networks are consistent: "+" "+runString})
+   RunProgram(runString, )
+   ok=RunMacro("find String","\\logFiles\\AtTransitCheck_event.log","FATAL")
+   if !ok then  do
+   	RunMacro("HwycadLog",{"sandag_abm_master.rsc:","AT and Transit network consistency chekcing failed! Open AtTransitCheck_event.log for details."})
+	goto quit  
+   end
+
    // copy bike logsums from input to output folder
    if skipCopyBikeLogsum = "false" then do
 	   CopyFile(inputDir+"\\bikeMgraLogsum.csv", outputDir+"\\bikeMgraLogsum.csv")

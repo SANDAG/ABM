@@ -2,6 +2,7 @@
 //****************************************************************
 //Common Macros
 //
+//Find a string in a text file
 //read properties
 //Export Matrix to CSV
 //Export Matrix
@@ -23,6 +24,32 @@
 //FileCheckDelete
 //****************************************************************
 //****************************************************************
+Macro "find String"(file,key)
+//file a string in a text file
+//file--text file name; key--string to be found in text file
+//return 0 is string found, otherwise return 1
+//wsu 6-20-2014
+  shared path, path_study
+  result=1
+
+// Get file name
+  dif2=GetDirectoryInfo(path+"\\"+file, "file")     
+  if dif2.length>0  then do //use scenario file
+    fptr=openfile(path+"\\"+file,"r")               
+  end    
+  else do //use study file from data directory
+    fptr=openfile(path_study+"\\data\\"+file,"r")   
+  end
+
+  while not FileAtEOF(fptr) do
+     pos = PositionFrom(,ReadLine(fptr),key)
+     if pos>0 then do
+        result=0
+     end
+  end
+  CloseFile(fptr)
+  Return(result)
+EndMacro
 
 Macro "read properties"(file,key,ctype)
   //ctype as string - Character Type - Valid "I" or anything else
