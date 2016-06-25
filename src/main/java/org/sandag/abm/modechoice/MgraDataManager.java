@@ -195,7 +195,14 @@ public final class MgraDataManager
 
         printMgraStats();
     }
-
+    
+    private MgraDataManager(HashMap<String, String> rbMap, boolean dtaPostProcess)
+    {
+        System.out.println("I'm the MgraDataManager");
+        readMgraTableData(rbMap);
+    }
+    
+    
     /**
      * Get a static instance of the Mgra data manager. Creates one if it is not
      * initialized.
@@ -210,6 +217,16 @@ public final class MgraDataManager
         if (instance == null)
         {
             instance = new MgraDataManager(rbMap);
+            return instance;
+        } else return instance;
+    }
+    
+    // using this constructor to just read the mgra data  for dta post processing - AshishK
+    public static MgraDataManager getInstance(HashMap<String, String> rbMap, boolean dtaPostProcess)
+    {
+        if (instance == null)
+        {
+            instance = new MgraDataManager(rbMap, dtaPostProcess);
             return instance;
         } else return instance;
     }

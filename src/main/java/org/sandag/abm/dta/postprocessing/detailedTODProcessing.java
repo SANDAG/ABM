@@ -89,7 +89,7 @@ public class detailedTODProcessing {
 
 		spatialDisaggregationModel = new spatialDisaggregationModel(rbMap);
 
-		mgraManager = MgraDataManager.getInstance(rbMap);
+		mgraManager = MgraDataManager.getInstance(rbMap, true);
         //autoNonMotSkims = new AutoAndNonMotorizedSkimsCalculator(rbMap);
 
 		outputsPath = Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_OUTPUTSPATH);
