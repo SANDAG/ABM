@@ -220,6 +220,9 @@ public class dtaTrip implements Serializable {
    			setVehicleOccupancy(1);
    			setTollEligible(0);
    		}
+   		if(mode==26){
+   			setVehicleType("SchoolBus");
+   		}
    	}
    	/**
    	 * @return the person number of the driver

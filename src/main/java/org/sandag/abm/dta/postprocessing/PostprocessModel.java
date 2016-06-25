@@ -121,7 +121,7 @@ public class PostprocessModel {
 		if(todType.equalsIgnoreCase("detailed")){
 			logger.info("Processing Detailed TOD Model: "+marketSegment);
 			detailedTODProcessing detailModel = new detailedTODProcessing(rbMap, SampleRate, inputFile, marketSegment, householdTraceSet, originTraceSet, tripWriter);
-			detailModel.createDetailedTODTrips(outputsPath+inputFile, marketSegment);
+			detailModel.createDetailedTODTrips(outputsPath+inputFile, marketSegment, rbMap);
 		}
 		
 		tripWriter.close();

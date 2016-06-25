@@ -14,6 +14,7 @@ import com.pb.common.matrix.Matrix;
 import com.pb.common.matrix.MatrixReader;
 
 import org.sandag.abm.accessibilities.AutoAndNonMotorizedSkimsCalculator;
+import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.dta.postprocessing.dtaTrip;
 import org.sandag.abm.dta.postprocessing.PostprocessModel;
@@ -37,12 +38,13 @@ public class detailedTODProcessing {
     public static final int                             PM_SKIM_PERIOD_INDEX              = 3;
     public static final int                             EV_SKIM_PERIOD_INDEX              = 4;
 
+    public Matrix[] skimMatrix; 
     
     private HashMap<String,String>  rbMap;
     private HashSet<Integer>        householdTraceSet;
     private HashSet<Integer>        originTraceSet;
     private MgraDataManager         mgraManager;
-    private final AutoAndNonMotorizedSkimsCalculator autoNonMotSkims;
+    //private final AutoAndNonMotorizedSkimsCalculator autoNonMotSkims;
 	private MersenneTwister random;
 	private long randomSeed;
     
@@ -87,8 +89,8 @@ public class detailedTODProcessing {
 		
 		spatialDisaggregationModel = new spatialDisaggregationModel(rbMap);
 		
-		mgraManager = MgraDataManager.getInstance(rbMap);
-        autoNonMotSkims = new AutoAndNonMotorizedSkimsCalculator(rbMap);
+		mgraManager = MgraDataManager.getInstance(rbMap, true);
+        //autoNonMotSkims = new AutoAndNonMotorizedSkimsCalculator(rbMap);
 	
 		outputsPath = Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_OUTPUTSPATH);
 
@@ -112,13 +114,25 @@ public class detailedTODProcessing {
 		randomSeed = Util.getIntegerValueFromPropertyMap(rbMap, PROPERTIES_RANDOMSEED);
 		random = new MersenneTwister();
 		random.setSeed(randomSeed);
+		
+		// read skims - AshishK
+		String skimPath = Util.getStringValueFromPropertyMap(rbMap, "skims.path");
+	    String skimPrefix = Util.getStringValueFromPropertyMap(rbMap, "da.no.toll.skims.prefix");
+	    skimMatrix = new Matrix[ModelStructure.MODEL_PERIOD_LABELS.length];
+	    
+	    for(int p=0; p<ModelStructure.MODEL_PERIOD_LABELS.length; p++){
+	    	String skimFileName = skimPath + skimPrefix + ModelStructure.MODEL_PERIOD_LABELS[p] + ".mtx";
+	    	String matName = "*STM_" + ModelStructure.SKIM_PERIOD_STRINGS[p] + " (Skim)";
+	    	skimMatrix[p] = MatrixReader.readMatrix(new File(skimFileName), matName);
+	    }
+		
  	}
 	
 		
 	/**
 	 * Create trip record from and disaggregate tod for detailed tod files
 	 */
-	public void createDetailedTODTrips(String inputFile, String marketSegment){
+	public void createDetailedTODTrips(String inputFile, String marketSegment, HashMap<String,String> rbMap){
 		
 		TableDataSet tripRecords = TableDataSet.readFile(inputFile);
 		int numRecords = tripRecords.getRowCount();
@@ -150,7 +164,6 @@ public class detailedTODProcessing {
 			addSOVTrip = false;
 			int mode=0;
 			double occ=1.0;
-			
 			expansionFactor = 1.0/sampleRate;
 			double fractionalTrips = 1.0;
 			// Use mode to determine number of trips to create
@@ -163,23 +176,32 @@ public class detailedTODProcessing {
 			
 			if (tripRecords.containsColumn("tripMode")){
 				mode = (int) tripRecords.getValueAt(i+1, "tripMode");
+				if (mode>=16 && mode<26){
+					addSOVTrip=true;
+				}
 			}
+
+			
 			if(mode==-99){
 				continue;
 			}
-			if((mode>=3 && mode<=5)||mode==27){
-   				occ=2.0;}
-			else if(mode>=6 && mode<=8){
-   				occ=3.0;}
-
-			if(marketSegment.equalsIgnoreCase("CrossBorderTrips")||marketSegment.equalsIgnoreCase("InternalExternalTrips")){
-				if(occ==3.0){
-					occ=3.5;
+			
+			if(marketSegment.equalsIgnoreCase("IndividualTrips")||marketSegment.equalsIgnoreCase("CrossBorderTrips")||marketSegment.equalsIgnoreCase("InternalExternalTrips")){
+				if((mode>=3 && mode<=5)||mode==27){
+	   				occ=2.0;
 				}
+				
+	   			if(mode>=6 && mode<=8){
+	   				if(marketSegment.equalsIgnoreCase("IndividualTrips"))
+	   					occ = 3.34;
+	   				else
+	   					occ = 3.50;
+	   			}
+				
 				expansionFactor = expansionFactor/occ;
 				fractionalTrips = fractionalTrips/occ;
 			}
-											
+			
 			//Initialize trip record values
 			int hhid=0;
 			int persid=0;
@@ -204,40 +226,6 @@ public class detailedTODProcessing {
 			if (tripRecords.containsColumn("tourID")){
 				tourid = (int) tripRecords.getValueAt(i+1, "tourID");
 			}
-			
-			//Calculate number of trips to generate from the record (at a tour level where possible)
-			
-			if (tourid!=touridLast || persid!=persidLast || hhid!=hhidLast || (tourid==0 && hhid==0)){
-				tripExp = (int) Math.floor(expansionFactor);
-				double tripsFrac = expansionFactor - tripExp;
-				double rn = random.nextDouble();
-				if (rn<tripsFrac)
-					tripExp += 1; 
-				rn = random.nextDouble();
-				if (rn>fractionalTrips)
-					tripExp += 0;
-			}else if(fractionalTrips<1.0 && mode==modeLast){
-				double rn = random.nextDouble();
-				if (rn>fractionalTrips)
-					tripExp += 0;			
-			}else if((fractionalTrips<1.0 && mode!=modeLast) || (fractionalTrips==1.0 && modeLast>=3 && modeLast<=8)){
-				tripExp = (int) Math.floor(expansionFactor);
-				double tripsFrac = expansionFactor - tripExp;
-				double rn = random.nextDouble();
-				if (rn<tripsFrac)
-					tripExp += 1; 
-				rn = random.nextDouble();
-				if (rn>fractionalTrips)
-					tripExp += 0;			
-			}
-			
-			
-			tripExp = (int) Math.floor(expansionFactor);
-			double tripsFrac = expansionFactor - tripExp;
-			double rn = random.nextDouble();
-			if (rn<tripsFrac)
-				tripExp += 1; 
-					
 			if (tripRecords.containsColumn("stop_id")){
 				tripid = (int) tripRecords.getValueAt(i+1, "stop_id");
 			}
@@ -273,14 +261,12 @@ public class detailedTODProcessing {
 			}else{
 				destTAZ = mgraManager.getTaz(destMGRA);
 			}
-			
 			if (tripRecords.containsColumn("arrivalMode")){
 				int arriveMode = (int) tripRecords.getValueAt(i+1, "arrivalMode");
 				if((occ>1 && arriveMode==5)||(mode>=16 && mode<26)){
 					addSOVTrip = true;
 				}
 			}
-			
 			if (tripRecords.containsColumn("driver")){
 				tourDriver = (int) tripRecords.getValueAt(i+1, "driver");
 			}
@@ -298,12 +284,35 @@ public class detailedTODProcessing {
 			if(period==0)
 				period=1;
 			
+			//Calculate number of trips to generate from the record (at a tour level where possible)
+			
+			if (tourid!=touridLast || persid!=persidLast || hhid!=hhidLast || (tourid==0 && hhid==0)){
+				tripExp = (int) Math.floor(expansionFactor);
+				double tripsFrac = expansionFactor - tripExp;
+				double rn = random.nextDouble();
+				if (rn<tripsFrac)
+					tripExp += 1; 
+				rn = random.nextDouble();
+				if (rn>fractionalTrips)
+					tripExp += 0;
+			}else if(fractionalTrips<1.0 && mode==modeLast){
+				double rn = random.nextDouble();
+				if (rn>fractionalTrips)
+					tripExp += 0;			
+			}else if((fractionalTrips<1.0 && mode!=modeLast) || (fractionalTrips==1.0 && modeLast>=3 && modeLast<=8)){
+				tripExp = (int) Math.floor(expansionFactor);
+				double tripsFrac = expansionFactor - tripExp;
+				double rn = random.nextDouble();
+				if (rn<tripsFrac)
+					tripExp += 1; 
+				rn = random.nextDouble();
+				if (rn>fractionalTrips)
+					tripExp += 0;			
+			}
+			
+			//logger.info("expansionFactor " + expansionFactor  + ", fractionalTrips " + fractionalTrips + ", tripExp " + tripExp);
 			// Reset the dtaTimes array
 			Arrays.fill(dtaTimes,0);
-								
-			if (((mode>=3 && mode<=8)||mode==27) && marketSegment.equalsIgnoreCase("IndividualTrips") && tourDriver==-1){
-				tripExp = 0;
-			}
 			
 			// Create a number of integer trip instances based on the expansion factor		
 			for (int k=0; k<tripExp; k++){
@@ -324,17 +333,6 @@ public class detailedTODProcessing {
 				Trip.setExpansionFactor(1.0);
 				Trip.setTourDriver(tourDriver);
 				
-				
-				// Choose a disaggregate tod
-				/*
-				if(hhid==hhidLast && persid==persidLast && tourid==touridLast && period==periodLast && !(hhid==0 && tourid==0)){
-					offset = dtaTimesPrev[k];
-					scheduleCount += 1;
-				}else{
-					offset = 0;
-				}
-				*/
-				
 				offset = 0;
 				debug = isTraceHousehold(Trip.getHHId())||isTraceOrigin(Trip.getOriginTaz());
 				
@@ -348,18 +346,9 @@ public class detailedTODProcessing {
 					logger.info("Trip period = "+Trip.getDetailedPeriod());
 					logger.info("Period     dtaPeriod     Prob     cumProb     randomNumber");
 				}
-				/*
-				boolean reasonableTime = false;
-				while (reasonableTime == false){
-					dtaTimes[k] = todDisaggregationModel.calculateDisaggregateTOD(period, detailTODMap, detailProbabilities,debug);
-					if (dtaTimes[k]>=offset){
-						reasonableTime = true;
-					}
-				}
-				*/
+
 				dtaTimes[k] = todDisaggregationModel.calculateDisaggregateTOD(period, detailTODMap, detailProbabilities,debug);		
 							
-				
 				// Choose nodes for the trip origin and destination					
 				int origNode = spatialDisaggregationModel.selectNodeFromMGRA(Trip.getOriginMGRA(), nodeMap, mgraNodeMap, nodeProbabilities, debug);
 				int destNode = spatialDisaggregationModel.selectNodeFromMGRA(Trip.getDestinationMGRA(), nodeMap, mgraNodeMap, nodeProbabilities, debug);
@@ -423,7 +412,6 @@ public class detailedTODProcessing {
 			dtaTimesPrev = dtaTimes.clone();
 		}	
 		logger.info("Market "+marketSegment+" wrote out "+tripsCount+" total trips.");
-		//logger.info("Market "+marketSegment+" required schedule consistency code for "+scheduleCount+" trips.");
 	}
 	
 	/**
@@ -451,10 +439,14 @@ public class detailedTODProcessing {
 			tod = EV_SKIM_PERIOD_INDEX;
 		}
 
-		double[] autoSkims = autoNonMotSkims.getAutoSkims(tripOrig, tripDest, tod, false,
-                logger);
+		//dtaPeriod = todDisaggregationModel.calculateDisaggregateTOD(period, detailTODMap, detailProbabilities,debug);
 		
-		double travTime = autoSkims[DA_TIME_INDEX];
+		//double[] autoSkims = autoNonMotSkims.getAutoSkims(tripOrig, tripDest, tod, false, logger);
+		//double travTime = autoSkims[DA_TIME_INDEX];
+		
+		//changed the code to directly read the values from skim matrices - AshishK
+		double travTime = skimMatrix[tod].getValueAt(origTAZ, destTAZ);
+		
 		int travPer = (int) Math.ceil(travTime/5.0);
 		
 		if (direction==1){
@@ -463,7 +455,13 @@ public class detailedTODProcessing {
 			dtaPeriod = dtaPer - (travPer + 2);
 		}
 		
-		//dtaPeriod = todDisaggregationModel.calculateDisaggregateTOD(period, detailTODMap, detailProbabilities,debug);
+		// limit the dta period between 1 and 288 - AshishK
+		if(dtaPeriod < 1) {
+			dtaPeriod = 1;
+		}
+		if(dtaPeriod > detailProbabilities.length) {
+			dtaPeriod = detailProbabilities.length;
+		}		
 		
 		int origNode = spatialDisaggregationModel.selectNodeFromMGRA(tripOrig, nodeMap, mgraNodeMap, nodeProbabilities, debug);
 		int destNode = spatialDisaggregationModel.selectNodeFromMGRA(tripDest, nodeMap, mgraNodeMap, nodeProbabilities, debug);
