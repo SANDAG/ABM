@@ -128,7 +128,6 @@ public String compareMap(HashMap<Integer, ArrayList<Float>> map1, HashMap<Intege
     	}else{
 	    	Double x2=map2.get(ch1).get(0);
 	    	Double y2=map2.get(ch1).get(1);
-	    	//System.out.println("TAP="+ch1+" x_at="+x1+" y_at="+y1+" x_tran="+x2+" y_tran="+y2);
 	    	if((Math.abs(x1-x2)>xThreshold)&&(Math.abs(y1-y2)>yThreshold)){
 	    		message=new ErrorLogging().getAtError("AT3")+"("+"TAP="+ch1+" x_at="+x1+" y_at="+y1+" x_tran="+x2+" y_tran="+y2+")";
 				logger.fatal(message);

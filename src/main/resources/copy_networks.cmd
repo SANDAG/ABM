@@ -8,6 +8,10 @@ set FILE_LIST=hwycov.e00 turns.csv trcov.e00 trlink.bin trrt.bin trstop.bin trrt
 @echo %FILE_LIST%
 
 for %%i in (%FILE_LIST%) do (
+@echo Deleting %2\%%i
+del %2\%%i)
+
+for %%i in (%FILE_LIST%) do (
 @echo Copying %1\%%i
 copy /Y %1\%%i %2)
 
