@@ -22,7 +22,7 @@ class CreateScenarioGUI(Tkinter.Frame):
             self.year="2012"
             optionList1=["2012", "2015", "2020", "2050"]
             option1=Tkinter.OptionMenu(body,var,*optionList1,command=self.setyear)
-            option1.config(width=35)
+            option1.config(width=50)
             option1.grid(row=0, column=1)
 
             Tkinter.Label(body, text=u"Cluster").grid(row=1)
@@ -30,17 +30,17 @@ class CreateScenarioGUI(Tkinter.Frame):
             self.cluster="local"
             optionList2=["local", "aztec", "gaucho", "wildcat"]
             option2=Tkinter.OptionMenu(body,var,*optionList2, command=self.setcluster)
-            option2.config(width=35)
+            option2.config(width=50)
             option2.grid(row=1, column=1)
 
             Tkinter.Label(body, text=u"Scenario Folder").grid(row=2)
-            self.scenariopath = Tkinter.Entry(body, width=30)
+            self.scenariopath = Tkinter.Entry(body, width=50)
             self.scenariopath.grid(row=2, column=1, sticky=sticky)
             button = Tkinter.Button(body, text=u"...",width=4,command=self.get_scenariopath)
             button.grid(row=2, column=2)
 
             Tkinter.Label(body, text=u"Network Folder").grid(row=3)
-            self.networkpath = Tkinter.Entry(body, width=30)
+            self.networkpath = Tkinter.Entry(body, width=50)
             self.networkpath.grid(row=3, column=1, sticky=sticky)
             button = Tkinter.Button(body, text=u"...",width=4,command=self.get_networkpath)
             button.grid(row=3, column=2)
