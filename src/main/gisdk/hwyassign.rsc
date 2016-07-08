@@ -73,6 +73,8 @@ Macro "hwy assignment" (args)
    iteration = args[1]
    assignByVOT= args[2]
    
+   // for debug
+
    periods = {"_EA","_AM","_MD","_PM","_EV"}
    
    RunMacro("close all") 
@@ -147,7 +149,8 @@ Macro "hwy assignment" (args)
    
    for i = 1 to periods.length do
         // drive-alone toll exclusion set
-      excl_dat[i]={db_link_lyr, link_lyr, "dat", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&ITRUCK<5)"} 
+      //excl_dat[i]={db_link_lyr, link_lyr, "dat", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&ITRUCK<5)"}
+	  excl_dat[i]={db_link_lyr, link_lyr, "dat", "Select * where !((ihov=1|ihov=4|((ihov=2|ihov=3)&abln"+periods[i]+"<9)|ifc>7)& ITRUCK<5)"}	  
       
       // shared-2 non-toll HOV exclusion set
       excl_s2nh[i]={db_link_lyr, link_lyr, "s2nh", "Select * where !((ihov=1|(ihov=2&abln"+periods[i]+" <9)|ifc>7)&ITRUCK<5)"}
@@ -171,13 +174,16 @@ Macro "hwy assignment" (args)
       excl_hhdn[i]={db_link_lyr, link_lyr, "hhdn", "Select * where !((ihov=1|ifc>7)&(ITRUCK=1|ITRUCK>4))"}
    
       // light-heavy truck toll exclusion set
-      excl_lhdt[i]={db_link_lyr, link_lyr, "lhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7) & (ITRUCK<4|ITRUCK=7))"}
+      //excl_lhdt[i]={db_link_lyr, link_lyr, "lhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7) & (ITRUCK<4|ITRUCK=7))"}
+	  excl_lhdt[i]={db_link_lyr, link_lyr, "lhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(abln"+periods[i]+"<9)))|ifc>7) & (ITRUCK<4|ITRUCK=7))"}
  
       // medium-heavy truck toll exclusion set
-      excl_mhdt[i]={db_link_lyr, link_lyr, "mhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&(ITRUCK<3|ITRUCK>5))"}
+      //excl_mhdt[i]={db_link_lyr, link_lyr, "mhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&(ITRUCK<3|ITRUCK>5))"}
+	  excl_mhdt[i]={db_link_lyr, link_lyr, "mhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(abln"+periods[i]+"<9)))|ifc>7)&(ITRUCK<3|ITRUCK>5))"}
    
       // heavy-heavy truck toll exclusion set
-      excl_hhdt[i]={db_link_lyr, link_lyr, "hhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&(ITRUCK=1|ITRUCK>4))"}
+      //excl_hhdt[i]={db_link_lyr, link_lyr, "hhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&(ITRUCK=1|ITRUCK>4))"}
+	  excl_hhdt[i]={db_link_lyr, link_lyr, "hhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(abln"+periods[i]+"<9)))|ifc>7)&(ITRUCK=1|ITRUCK>4))"}
    
    end
 
@@ -187,7 +193,8 @@ Macro "hwy assignment" (args)
    vw_set = link_lyr + "|" + set
    SetLayer(link_lyr)
    for i = 1 to periods.length do
-      n = SelectByQuery(set, "Several","Select * where !((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)",)
+      //n = SelectByQuery(set, "Several","Select * where !((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)",)
+	  n = SelectByQuery(set, "Several","Select * where !((ihov=1|ihov=4|((ihov=2|ihov=3)&abln"+periods[i]+"<9)|ifc>7)& ITRUCK<5)",)
       if n = 0 then excl_dat[i]=null
    end
           
@@ -235,14 +242,15 @@ Macro "hwy assignment" (args)
        toll_fld2[i]= {"COST","ITOLL3"+periods[i],"COST","COST","ITOLL3"+periods[i],"COST","COST","ITOLL3"+periods[i],"COST","COST","COST","ITOLL3"+periods[i],"ITOLL4"+periods[i],"ITOLL5"+periods[i]}
      end
    end
-   else do 
+   else do
+
    	// for VOT assignment, explode the passenger modes 1 through 8 to 1 through 24. First 8 low vot, next 8 med vot, final 8 high vot. Then 6 truck classes for total 30 classes.    
      trip={"Trip"+periods[1]+"_VOT.mtx", "Trip"+periods[2]+"_VOT.mtx", "Trip"+periods[3]+"_VOT.mtx", "Trip"+periods[4]+"_VOT.mtx", "Trip"+periods[5]+"_VOT.mtx"}
      num_class=30
      vehclass={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30}
      class_PCE={1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1.3,1.5,2.5,1.3,1.5,2.5}
      VOT={16.6,16.6,16.6,16.6,16.6,16.6,16.6,16.6,33.3,33.3,33.3,33.3,33.3,33.3,33.3,33.3,100,100,100,100,100,100,100,100,67,68,89,67,68,89} //assuming $10/hr, $20/hr, and $60/hr as max of each range
- 
+	
      for i = 1 to periods.length do
        excl_qry[i]={
          excl_dan,excl_dat[i],excl_s2nn,excl_s2nh[i],excl_s2th[i],excl_s3nn,excl_s3nh[i],excl_s3th[i],
@@ -348,7 +356,7 @@ Macro "hwy assignment" (args)
 
       //settings for highway assignment
       Opts = null
-     // Opts.Global.[Force Threads] = 2
+      Opts.Global.[Force Threads] = 2
       Opts.Input.Database = db_file
       Opts.Input.Network = net_file
 
@@ -363,8 +371,7 @@ Macro "hwy assignment" (args)
       Opts.Global.[Load Method] = "NCFW" 
       Opts.Global.[N Conjugate] = 2
       Opts.Global.[Loading Multiplier] = 1     
-      //Opts.Global.Convergence = 0.0005
-      Opts.Global.Convergence = 0.05
+      Opts.Global.Convergence = 0.0005
       Opts.Global.[Cost Function File] = vdf_file
       Opts.Global.[VDF Defaults] = vdf_defaults
       Opts.Global.[Iterations]=1000

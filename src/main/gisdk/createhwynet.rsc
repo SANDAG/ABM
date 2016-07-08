@@ -18,14 +18,21 @@
 macro "run create hwy"
    shared path,inputDir,outputDir,mxzone
 
+/* exported highway layer is copied manually to the output folder (I15 SB toll entry/exit links are modified by RSG)
+
    RunMacro("HwycadLog",{"createhwynet.rsc: run create hwy","import highway layer"}) 
    ok=RunMacro("import highway layer") 
    if !ok then goto quit
+*/
 
+   //RunMacro("HwycadLog",{"createhwynet.rsc: run create hwy","copy highway database"}) 
+   ok=RunMacro("copy database") 
+   if !ok then goto quit
+   
    RunMacro("HwycadLog",{"createhwynet.rsc: run create hwy","fill oneway streets"})
    ok=RunMacro("fill oneway streets") 
    if !ok then goto quit
-   
+  
    RunMacro("HwycadLog",{"createhwynet.rsc: run create hwy","add TOD attributes"})
    ok=RunMacro("add TOD attributes") 
    if !ok then goto quit
@@ -171,6 +178,27 @@ macro "import highway layer"
   	   return(ok)
 endMacro
 
+/*
+copies database (hwy.dbd) and turns file (TURNS.DBF)
+
+this is required after edits made to the transcad highway database for I15 SB managed lane links
+
+*/
+
+macro "copy database"
+	shared path, inputDir, outputDir
+	
+	hwy_db_in = inputDir + "\\hwy.dbd"
+	hwy_db_out = outputDir + "\\hwy.dbd"
+	
+	/// copye highway database
+	CopyDatabase(hwy_db_in, hwy_db_out)
+	
+	// copy turns file
+	CopyFile(inputDir+"\\TURNS.DBF", outputDir+"\\TURNS.DBF")
+
+endMacro
+
 /**********************************************************************************************************
    fill oneway street with dir field, and calculate toll fields and change AOC and add reliability factor
   
@@ -216,7 +244,8 @@ macro "fill oneway streets"
 
 //  writeline(fpr,mytime+", fill one way streets")
 //  closefile(fpr)
-  
+
+/*  
   //oneway streets, dir = 1
    Opts = null
    Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr, "Selection", "Select * where iway = 1"}
@@ -225,7 +254,7 @@ macro "fill oneway streets"
    Opts.Global.Parameter = {1}
    ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
    if !ok then goto quit
-   
+*/   
    //CHANGE SR125 TOLL SPEED TO 70MPH (ISPD=70) DELETE THIS SECTION AFTER TESTING
       Opts = null
       Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr}
@@ -273,27 +302,49 @@ macro "fill oneway streets"
    for i = 1 to strct.length do
       strct[i] = strct[i] + {strct[i][1]}
    end
-   strct = strct + {{"ITOLL2_EA", "Integer", 4, 0, "True", , , , , , , null}}
-   strct = strct + {{"ITOLL2_AM", "Integer", 4, 0, "True", , , , , , , null}}
-   strct = strct + {{"ITOLL2_MD", "Integer", 4, 0, "True", , , , , , , null}}
-   strct = strct + {{"ITOLL2_PM", "Integer", 4, 0, "True", , , , , , , null}}
-   strct = strct + {{"ITOLL2_EV", "Integer", 4, 0, "True", , , , , , , null}}
+	 
+	// changed field types to real (for I15 tolls) - by nagendra.dhakar@rsginc.com
+   strct = strct + {{"ITOLL2_EA", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"ITOLL2_AM", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"ITOLL2_MD", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"ITOLL2_PM", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"ITOLL2_EV", "Real", 14, 6, "True", , , , , , , null}}
 
    ModifyTable(view1, strct)
 
    tollfld={{"ITOLL2_EA"},{"ITOLL2_AM"},{"ITOLL2_MD"},{"ITOLL2_PM"},{"ITOLL2_EV"}}  
    tollfld_flg={{"ITOLLO"},{"ITOLLA"},{"ITOLLO"},{"ITOLLP"},{"ITOLLO"}}               //note - change this once e00 file contains fields for each of 5 periods
-   for i=1 to tollfld.length do
+   
+	 // set SR125 tolls
+	 for i=1 to tollfld.length do
       Opts = null
       Opts.Input.[View Set] = {db_link_lyr, link_lyr}
-      Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr}
+      Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr} 
       Opts.Global.Fields = tollfld[i]
       Opts.Global.Method = "Formula"
       Opts.Global.Parameter = tollfld_flg[i]
       ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
       if !ok then goto quit
    end   
-
+	 
+	 // clear I15 tolls from previous step
+	 // set other link tolls to 0 - creates a problem in skimming if left to null
+	 // added by nagendra.dhakar@rsginc.com
+	 for i=1 to tollfld.length do
+      Opts = null
+      Opts.Input.[View Set] = {db_link_lyr, link_lyr}
+      Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr, "Selection", "Select *where ihov=2"}     
+      Opts.Global.Fields = tollfld[i]
+      Opts.Global.Method = "Value"
+      Opts.Global.Parameter = {0}
+      ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
+      if !ok then goto quit
+   end      
+   
+   
+		// set I15 tolls - added by nagendra.dhakar@rsginc.com
+		RunMacro("set I15 tolls", link_lyr, tollfld)
+	 
    // Create ITOLL3 fields with ITOLL2A and COST
    vw = GetView()
    strct = GetTableStructure(vw)
@@ -393,11 +444,14 @@ macro "fill oneway streets"
 
    //adding $100 to toll fields to flag toll values from manage lane toll values in skim matrix
    tollfld={{"ITOLL_EA"},{"ITOLL_AM"},{"ITOLL_MD"},{"ITOLL_PM"},{"ITOLL_EV"}}
-   tollfld_flg={{"if ihov=4 then ITOLLO+10000 else ITOLLO"},
-                {"if ihov=4 then ITOLLA+10000 else ITOLLA"},
-                {"if ihov=4 then ITOLLO+10000 else ITOLLO"},
-                {"if ihov=4 then ITOLLP+10000 else ITOLLP"},
-                {"if ihov=4 then ITOLLO+10000 else ITOLLO"}}  //note - change this once e00 file contains fields for each of 5 periods
+   tollfld_flg={{"if ihov=4 then ITOLL2_EA+10000 else ITOLL2_EA"},
+                {"if ihov=4 then ITOLL2_AM+10000 else ITOLL2_AM"},
+                {"if ihov=4 then ITOLL2_MD+10000 else ITOLL2_MD"},
+                {"if ihov=4 then ITOLL2_PM+10000 else ITOLL2_PM"},
+                {"if ihov=4 then ITOLL2_EV+10000 else ITOLL2_EV"}}  //note - change this once e00 file contains fields for each of 5 periods
+				
+				// modified by nagendra.dhakar@rsginc.com to calculate every toll field from itoll2, which are set to the tolls fields in tcoved 
+								
    for i=1 to tollfld.length do
       Opts = null
       Opts.Input.[View Set] = {db_link_lyr, link_lyr}
@@ -414,6 +468,96 @@ macro "fill oneway streets"
    ok=1
    quit: 
       return(ok)     
+EndMacro
+
+/*********************************************************************************************************
+add i-15 tolls by direction and period
+
+	link ids and corresponding tolls are inputs
+	toll values are coded by link ids
+	tolls are determined by gate-to-gate toll optimization, solved using excel solver
+	tolls from two methods are used
+		-traversed links (NB PM and SB AM)
+		-entry and exit links (remaining)
+
+by: nagendra.dhakar@rsginc.com
+**********************************************************************************************************/
+
+Macro "set I15 tolls" (lyr, toll_fields)
+	shared path, inputDir, outputDir
+	
+	direction = {"NB","SB"}
+	periods={"EA","AM","MD","PM","EV"}
+	
+	toll_links = {}
+	tolls = {}
+	
+	// NB toll links and corresponding tolls
+	toll_links.NB = {}
+
+	toll_links.NB.traverse = {29716,460,526,23044,459,463,512,464,469,470,510,29368,9808}
+	toll_links.NB.entryexit = {31143,29472,52505,52507,52508,475,34231,52511,52512,34229,34228,38793,29765,29766,52513,29764,26766}
+	
+	tolls.NB = {}
+	
+	tolls.NB.traverse = {}
+	tolls.NB.entryexit = {}
+	
+	// tolls are in cents
+	tolls.NB.entryexit.EA = {35.00,35.00,35.00,35.00,35.00,15.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00}
+	tolls.NB.entryexit.AM = {45.05,42.43,31.54,30.00,30.00,20.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,17.41,32.59,32.59,32.59}
+	tolls.NB.entryexit.MD = {69.91,73.91,70.42,66.12,51.61,0.00,26.88,25.00,25.00,25.00,12.07,37.93,47.51,3.35,46.65,60.66,65.74}
+	tolls.NB.traverse.PM = {21.83,31.11,50.00,55.34,113.23,50.00,50.00,50.00,50.00,50.00,50.00,50.00,0.00}
+	tolls.NB.entryexit.EV = {41.73,36.26,32.01,30.00,30.00,20.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,17.77,32.23,32.23,32.23}
+	
+	// SB toll links and corresponding tolls
+	toll_links.SB = {}
+/*	
+	// old network
+	toll_links.SB.traverse = {12193,25749,29442,23128,515,31204,520,22275,524,525,553,528,29415}
+	toll_links.SB.entryexit = {52514,38796,29768,38794,29763,52510,52509,52506,52510,34227,34233,29407,26398,29767,34226,34232,29471,52515}
+*/	
+	// new network
+	toll_links.SB.traverse = {12193,25749,52567,23128,515,31204,52569,52550,524,525,52555,52559,52561,52565}
+	toll_links.SB.entryexit = {52568,52570,29768,38794,29763,52560,52562,52566,52556,34227,34233,29407,26398,52571,52572,29767,52575,52576,52574,34226,34232,29471,52573}
+	
+	tolls.SB = {}
+	
+	tolls.SB.traverse = {}
+	tolls.SB.entryexit = {}
+/*	
+	// old network
+	tolls.SB.entryexit.EA = {26.69,25.54,26.96,25.54,39.23,25.54,24.46,25.54,25.54,25.54,24.46,24.46,36.30,23.31,24.46,24.46,28.04,0.00}
+	tolls.SB.traverse.AM = {0.00,50.00,50.00,89.82,50.00,50.00,63.74,0.00,0.11,76.40,38.80,63.58,83.28}
+	tolls.SB.entryexit.MD = {26.39,25.00,25.00,25.00,35.00,25.47,22.74,27.26,25.47,25.00,24.53,25.00,35.61,23.61,25.00,25.00,32.65,0.00}
+	tolls.SB.entryexit.PM = {25.00,25.00,25.00,25.00,35.00,25.00,24.34,25.66,25.00,25.00,25.00,25.00,35.00,25.00,25.00,25.00,26.69,0.00}
+	tolls.SB.entryexit.EV = {25.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,35.00,25.00,25.00,25.00,25.00,0.00}	
+*/	
+	// new network
+	tolls.SB.traverse.AM = {0.00,59.74,50.00,80.42,50.00,50.00,69.24,0.00,3.18,50.00,50.17,19.06,50.00,84.26}
+	tolls.SB.entryexit.EA = {25.00,25.00,25.00,25.00,35.00,7.29,7.29,7.29,17.30,25.00,17.30,17.30,35.00,15.00,25.00,25.00,32.70,42.71,32.70,25.00,25.00,42.71,25.00}
+	tolls.SB.entryexit.MD = {32.80,25.00,25.00,25.00,32.80,11.43,11.43,10.65,18.85,25.00,18.85,18.85,32.80,17.20,25.00,17.20,31.15,38.57,31.15,25.00,25.00,39.35,25.00}
+	tolls.SB.entryexit.PM = {27.78,25.00,25.00,25.00,35.00,12.67,12.67,12.67,19.36,25.00,19.36,19.36,35.00,15.00,25.00,22.22,30.64,37.33,30.64,25.00,25.00,37.33,25.00}
+	tolls.SB.entryexit.EV = {29.12,25.00,25.00,25.00,35.00,13.14,13.14,13.14,21.56,25.00,21.56,21.56,35.00,15.00,25.00,20.88,28.44,36.86,28.44,25.00,25.00,36.86,25.00}
+	
+	for dir=1 to 2 do
+		for per=1 to periods.length do
+			// locate record
+			
+			if (direction[dir]="NB" and periods[per] = "PM") or (direction[dir]="SB" and periods[per] = "AM") then method = "traverse"
+			else method = "entryexit"
+			
+			links_array = toll_links.(direction[dir]).(method)
+			tolls_array = tolls.(direction[dir]).(method).(periods[per])		
+			
+			// set toll values
+			for i=1 to links_array.length do
+				record_handle = LocateRecord (lyr+"|", "ID", {links_array[i]},{{"Exact", "True"}})
+				SetRecordValues(lyr, record_handle, {{toll_fields[per][1],tolls_array[i]}})
+			end
+		end
+	end
+
 EndMacro
 
 /**********************************************************************************************************
@@ -828,7 +972,8 @@ EndMacro
 		
 	Outputs:
 		output\hwy.dbd (modified)
-      
+ 
+by: nagendra.dhakar@rsginc.com 
 **********************************************************************************************************/
 Macro "add reliability fields"
 
@@ -1951,6 +2096,8 @@ input:
 	
 output:
 	output\\MajorInterchangeDistance.csv
+	
+by: nagendra.dhakar@rsginc.com
 *************************************************************************************/
 Macro "DistanceToInterchange"
    shared path, inputDir, outputDir

@@ -81,13 +81,14 @@ Macro "Hwy skim all" (args)
 
    end
    else do
-   
-     vot_bins = {"low", "med", "high"}
+
+    vot_bins = {"low", "med", "high"}
                   //  da,   s2,   s3,   lh,   mh,   hh,   cv}
      vot_by_bin = {{16.6, 16.6, 16.6, 67.0, 68.0, 89.0, 67.0},
                    {33.3, 33.3, 33.3, 67.0, 68.0, 89.0, 67.0},
                    { 100,  100,  100, 67.0, 68.0, 89.0, 67.0}
                   }
+				  
      for i = 1 to vot_bins.length do
      
        ok=RunMacro("Update highway network", vot_by_bin[i])
@@ -110,7 +111,8 @@ Macro "Hwy skim all" (args)
 
        ok=RunMacro("hwy skim",{"s3th",vot_bins[i]}) 
        if !ok then goto quit
-			 
+
+/*	   
 			 // reliability for time periods (15-mins)
 			 for tod=1 to 96 do
 				
@@ -135,9 +137,9 @@ Macro "Hwy skim all" (args)
 				 end
 
 			 end
-     
+ */    
      end
-/*
+
      // don't skim commercial vehicles or trucks by vot
      ok=RunMacro("hwy skim",{"cvn",})
      if !ok then goto quit
@@ -165,8 +167,8 @@ Macro "Hwy skim all" (args)
     
      ok=RunMacro("hwy skim",{"truck",}) 
      if !ok then goto quit
-*/
-   end   
+
+	 end   
 
    return(1)
    
@@ -761,7 +763,8 @@ Macro "hwy skim" (args)
          CostFld = "*SCST"+periods[i]                                // minimizing cost field
          SkimVar1 = "*STM"+periods[i]                                // first skim varaible (in addition to LENGTH)
 
-         excl_qry = "!(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&ITRUCK<5)"
+         //excl_qry = "!(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&ITRUCK<5)"
+		 excl_qry = "!(((ihov=1|ihov=4|((ihov=2|ihov=3)&(abln"+periods[i]+"<9)))|ifc>7)&ITRUCK<5)"
          set = mode
          vw_set = link_lyr + "|" + set
          SetLayer(link_lyr)
@@ -772,7 +775,8 @@ Macro "hwy skim" (args)
          set = "datdst"+periods[i]
          vw_set = link_lyr + "|" + set
          SetLayer(link_lyr)
-         n = SelectByQuery(set, "Several", "Select * where ((ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))&ITRUCK<5)",)
+         //n = SelectByQuery(set, "Several", "Select * where ((ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))&ITRUCK<5)",)
+		 n = SelectByQuery(set, "Several", "Select * where ((ihov=4|((ihov=2|ihov=3)&(abln"+periods[i]+"<9)))&ITRUCK<5)",)
          if n > 0 then skimbyset1={vw_set, {"Length"}}
    
          // skimbyset2 = cost
