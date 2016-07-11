@@ -20,13 +20,13 @@
         <jppf.workernode.memory.min>45000m</jppf.workernode.memory.min> 
         <jppf.workernode.memory.max>50000m</jppf.workernode.memory.max> 
         <mtxmgr.memory.min>20000m</mtxmgr.memory.min> 
-        <mtxmgr.memory.max>20000m</mtxmgr.memory.max> 
+        <mtxmgr.memory.max>60000m</mtxmgr.memory.max> 
         <hhmgr.memory.min>1000m</hhmgr.memory.min> 
-        <hhmgr.memory.max>12000m</hhmgr.memory.max>         
+        <hhmgr.memory.max>15000m</hhmgr.memory.max>         
         <client.memory.min>30000m</client.memory.min> 
-        <client.memory.max>30000m</client.memory.max>          
+        <client.memory.max>60000m</client.memory.max>          
         <spmarket.memory.min>30000m</spmarket.memory.min> 
-        <spmarket.memory.max>30000m</spmarket.memory.max>      
+        <spmarket.memory.max>60000m</spmarket.memory.max>      
         <bikelogsum.memory.min>26000m</bikelogsum.memory.min> 
         <bikelogsum.memory.max>26000m</bikelogsum.memory.max>    
         <walklogsum.memory.min>26000m</walklogsum.memory.min> 
@@ -722,6 +722,23 @@
             <groupId>org.jppf</groupId>
             <artifactId>jppf-server</artifactId>
             <version>${jppf_version}</version>
+        </dependency>
+        <dependency>
+         <groupId>osplanning</groupId>
+        	<artifactId>omx</artifactId>
+			<version>0.2.3</version>
+		</dependency>
+	    <dependency>	
+		  <groupId>hdf</groupId>
+            <artifactId>jhi</artifactId>
+            <version>5.0</version>
+            <type>dll</type>
+        </dependency>
+        <dependency>
+          <groupId>hdf</groupId>
+            <artifactId>jhi</artifactId>
+            <version>4.0</version>
+            <type>dll</type>
         </dependency>
     </dependencies>
 
