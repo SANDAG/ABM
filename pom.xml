@@ -468,6 +468,22 @@
                         </goals>
                         <configuration>
                             <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${release.root}/dist</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/python/pythonGUI/dist</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution> 
+                    <execution>
+                        <id>copy-distribution-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
                             <outputDirectory>${release.root}/common/python</outputDirectory>
                             <resources>
                                 <resource>
@@ -476,7 +492,7 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>                   
+                    </execution>                    
                     <execution>
                         <id>copy-txt-resources</id>
                         <phase>package</phase>
@@ -766,9 +782,20 @@
         	<artifactId>omx</artifactId>
 			<version>0.2.3</version>
 		</dependency>
+	    <dependency>	
+		  <groupId>hdf</groupId>
+            <artifactId>jhi</artifactId>
+            <version>5.0</version>
+            <type>dll</type>
+        </dependency>
+        <dependency>
+          <groupId>hdf</groupId>
+            <artifactId>jhi</artifactId>
+            <version>4.0</version>
+            <type>dll</type>
+        </dependency>
 	</dependencies>
 	
-
     <distributionManagement>
         <snapshotRepository>
             <id>nexus-snapshots</id>
