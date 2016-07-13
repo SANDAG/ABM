@@ -37,7 +37,9 @@ public class TapAtConsistencyCheck {
 		xThreshold=Float.parseFloat(aRb.getString("AtTransitConsistency.xThreshold"));
 		yThreshold=Float.parseFloat(aRb.getString("AtTransitConsistency.yThreshold"));
 		readAtTaps(folder);
+		logger.info("Finished reading TAPs in AT network.");
 		readTranTaps(folder);
+		logger.info("Finished reading TAPs in transit network.");
 	}
 	
 	public boolean validate(){
@@ -109,12 +111,14 @@ public String compareMap(HashMap<Integer, ArrayList<Float>> map1, HashMap<Intege
 	String message="OK";
 	
     if (map1.size()==0){
-    	message=new ErrorLogging().getAtError("AT4");   
+    	message=new ErrorLogging().getAtError("AT4"); 
+    	logger.fatal(message);
     	return message; 
     }
     	
     if (map2.size()==0){
-    	message=new ErrorLogging().getAtError("AT5");   
+    	message=new ErrorLogging().getAtError("AT5");  
+    	logger.fatal(message);
     	return message; 
     }
 

@@ -34,6 +34,7 @@ xcopy /Y .\%RELEASE_DIR%\%YEAR%\conf\"*.*" %SCENARIO_FOLDER%\conf
 xcopy /Y .\%RELEASE_DIR%\%YEAR%\bin\"*.*" %SCENARIO_FOLDER%\bin
 
 @echo copy year specific folders
+del %SCENARIO_FOLDER%\input /q
 xcopy /Y .\input\%YEAR%\"*.*" %SCENARIO_FOLDER%\input
 
 @echo replace \ with \\
