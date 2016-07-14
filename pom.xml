@@ -468,7 +468,7 @@
                         </goals>
                         <configuration>
                             <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${release.root}/dist</outputDirectory>
+                            <outputDirectory>${project.build.directory}/${project.name}/dist</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/python/pythonGUI/dist</directory>
