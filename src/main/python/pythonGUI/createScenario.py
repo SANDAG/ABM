@@ -18,33 +18,41 @@ class CreateScenarioGUI(Tkinter.Frame):
             sticky = Tkconstants.E + Tkconstants.W
             body.grid_columnconfigure(1, weight=2)
 
-            Tkinter.Label(body, text=u"Year", font=("Helvetica", 8, 'bold')).grid(row=0)
+            Tkinter.Label(body, text=u"Version", font=("Helvetica", 8, 'bold')).grid(row=0)
+            var = StringVar(root)
+            self.version="version_13_3_0"
+            optionList1=["version_13_3_0", "version_13_3_1_SNAPSHOT"]
+            option1=Tkinter.OptionMenu(body,var,*optionList1,command=self.setversion)
+            option1.config(width=50)
+            option1.grid(row=0, column=1)
+
+            Tkinter.Label(body, text=u"Year", font=("Helvetica", 8, 'bold')).grid(row=1)
             var = StringVar(root)
             self.year="2012"
             optionList1=["2012", "2014", "2016", "2017", "2020", "2025", "2030", "2035", "2040", "2050"]
             option1=Tkinter.OptionMenu(body,var,*optionList1,command=self.setyear)
             option1.config(width=50)
-            option1.grid(row=0, column=1)
+            option1.grid(row=1, column=1)
 
-            Tkinter.Label(body, text=u"Cluster", font=("Helvetica", 8, 'bold')).grid(row=1)
+            Tkinter.Label(body, text=u"Cluster", font=("Helvetica", 8, 'bold')).grid(row=2)
             var = StringVar(root)
             self.cluster="local"
             optionList2=["local", "aztec", "gaucho", "wildcat"]
             option2=Tkinter.OptionMenu(body,var,*optionList2, command=self.setcluster)
             option2.config(width=50)
-            option2.grid(row=1, column=1)
+            option2.grid(row=2, column=1)
 
-            Tkinter.Label(body, text=u"Scenario Folder", font=("Helvetica", 8, 'bold')).grid(row=2)
+            Tkinter.Label(body, text=u"Scenario Folder", font=("Helvetica", 8, 'bold')).grid(row=3)
             self.scenariopath = Tkinter.Entry(body, width=40)
-            self.scenariopath.grid(row=2, column=1, sticky=sticky)
+            self.scenariopath.grid(row=3, column=1, sticky=sticky)
             button = Tkinter.Button(body, text=u"...",width=4,command=self.get_scenariopath)
-            button.grid(row=2, column=2)
-
-            Tkinter.Label(body, text=u"Network Folder",font=("Helvetica", 8, 'bold')).grid(row=3)
-            self.networkpath = Tkinter.Entry(body, width=40)
-            self.networkpath.grid(row=3, column=1, sticky=sticky)
-            button = Tkinter.Button(body, text=u"...",width=4,command=self.get_networkpath)
             button.grid(row=3, column=2)
+
+            Tkinter.Label(body, text=u"Network Folder",font=("Helvetica", 8, 'bold')).grid(row=4)
+            self.networkpath = Tkinter.Entry(body, width=40)
+            self.networkpath.grid(row=4, column=1, sticky=sticky)
+            button = Tkinter.Button(body, text=u"...",width=4,command=self.get_networkpath)
+            button.grid(row=4, column=2)
 
             """
             Wu's Note: inputs, including default network files, always copied from standard release; disallow input folder browsing for now.
@@ -74,9 +82,15 @@ class CreateScenarioGUI(Tkinter.Frame):
             button.pack(side=Tkconstants.RIGHT)
 
         #set default input and network paths based on selected year
+        def setversion(self,value):
+            #!!!!!change as needed
+            self.version=value
+            return
+
+        #set default input and network paths based on selected year
         def setyear(self,value):
             #!!!!!change as needed
-            self.defaultpath='T:\\ABM\\release\\ABM\\version_13_3_0\\input\\'+value
+            self.defaultpath='T:\\ABM\\release\\ABM\\'+self.version+'\\input\\'+value
             self.scenariopath.delete(0, Tkconstants.END)
             self.scenariopath.insert(0, "T:\\projects\\sr13")
             #self.inputpath.delete(0, Tkconstants.END)
@@ -143,8 +157,7 @@ class CreateScenarioGUI(Tkinter.Frame):
             commandstr=u"create_scenario.cmd "+self.scenariopath.get()+" "+self.year+" "+self.cluster+" "+self.networkpath.get()
             #commandstr=u"create_scenario.cmd t:\\abm\\test3 2012 aztec"
             print commandstr
-            #!!!!!Change as needed
-            os.chdir('T:/ABM/release/ABM/version_13_3_0/')
+            os.chdir('T:/ABM/release/ABM/'+self.version+'/')
             os.system(commandstr)
             if findStringInFile.find(self.scenariopath.get()+'\\LogFiles\\'+'AtTransitCheck_event.log', 'FATAL'):
                 self.popup=Tkinter.Tk()
