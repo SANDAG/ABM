@@ -65,7 +65,9 @@ SANDAG ABM Version 1.0
 Macro "hwy assignment" (args)
 
    Shared path, inputDir, outputDir, mxzone
-
+   
+   properties = "\\conf\\sandag_abm.properties"  
+   convergence = RunMacro("read properties",properties,"convergence", "S")
  
    turn_file="\\nodes.txt"
    NumofCPU = 8
@@ -291,7 +293,7 @@ Macro "hwy assignment" (args)
       Opts.Global.[Load Method] = "NCFW" 
       Opts.Global.[N Conjugate] = 2
       Opts.Global.[Loading Multiplier] = 1     
-      Opts.Global.Convergence = 0.0005
+      Opts.Global.Convergence = s2r(convergence)
       Opts.Global.[Cost Function File] = "tucson_vdf_rev.vdf"
       Opts.Global.[VDF Defaults] = {, , ,1.5 ,1 , 0.4 , 0.15, 4, 0.15, 4, 0 }
       Opts.Global.[Iterations]=1000
