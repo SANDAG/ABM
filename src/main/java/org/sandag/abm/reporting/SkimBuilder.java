@@ -206,6 +206,14 @@ public class SkimBuilder
                 costIndex = DA_TOLL_COST_INDEX;
                 double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
                         LOGGER);
+                
+                //if IVT for toll is zero, get non-toll skim
+                if(autoSkims[timeIndex]==0){
+                	timeIndex = DA_TIME_INDEX;
+                    distIndex = DA_DIST_INDEX;
+                    costIndex=-1;
+                    return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost);
+                }
                 return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost, autoSkims[costIndex]);
             }
             case SR2_HOV: // wu added
@@ -215,6 +223,13 @@ public class SkimBuilder
                 costIndex = -1;
                 double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
                         LOGGER);
+                //if IVT for HOV is zero, get non-HOV skim
+                if(autoSkims[timeIndex]==0){
+                	timeIndex = DA_TIME_INDEX;
+                    distIndex = DA_DIST_INDEX;
+                    costIndex=-1;
+                    return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost);
+                }
                 return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost);
                             }
             case SR2_TOLL: // wu added
@@ -224,6 +239,13 @@ public class SkimBuilder
                 costIndex = SR2_TOLL_COST_INDEX;
                 double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
                         LOGGER);
+                //if IVT for toll is zero, get non-toll skim
+                if(autoSkims[timeIndex]==0){
+                	timeIndex = SR2_TIME_INDEX;
+                    distIndex = SR2_DIST_INDEX;
+                    costIndex=-1;
+                    return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost);
+                }
                 return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost, autoSkims[costIndex]);
                             }
             case SR3_HOV: // wu added
@@ -233,6 +255,13 @@ public class SkimBuilder
                 costIndex = -1;
                 double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
                         LOGGER);
+                //if IVT for HOV is zero, get non-HOV skim
+                if(autoSkims[timeIndex]==0){
+                	timeIndex = DA_TIME_INDEX;
+                    distIndex = DA_DIST_INDEX;
+                    costIndex=-1;
+                    return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost);
+                }
                 return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost);
             }
             case SR3_TOLL:
@@ -242,6 +271,13 @@ public class SkimBuilder
                 costIndex = SR3_TOLL_COST_INDEX;
                 double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
                         LOGGER);
+                //if IVT for toll is zero, get non-toll skim
+                if(autoSkims[timeIndex]==0){
+                	timeIndex = SR3_TIME_INDEX;
+                    distIndex = SR3_DIST_INDEX;
+                    costIndex=-1;
+                    return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost);
+                }
                 return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost, autoSkims[costIndex]);
             }
             case WALK:
