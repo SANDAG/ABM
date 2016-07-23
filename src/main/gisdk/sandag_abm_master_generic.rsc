@@ -4,7 +4,8 @@ Macro "Run SANDAG ABM"
 
    shared path, inputDir, outputDir, inputTruckDir, mxzone, mxtap, mxext,mxlink,mxrte,scenarioYear
    
-   path = "${workpath}"
+   //path setting removed; path set in gui.rsc
+   //path = "${workpath}"
 
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","*********Model Run Starting************"})
       

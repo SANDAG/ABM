@@ -1,4 +1,5 @@
 ${workpath}\\gisdk\\dbox.rsc
+${workpath}\\gisdk\\gui.rsc
 ${workpath}\\gisdk\\sandag_abm_master.rsc
 ${workpath}\\gisdk\\parameter.rsc
 ${workpath}\\gisdk\\SandagCommon.rsc

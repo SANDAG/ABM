@@ -1,12 +1,13 @@
 __author__ = 'wsu'
-#Wu.Sun@sandag.org 7-12-2016
+#Wu.Sun@sandag.org 7-22-2016
 import Tkinter
 import Tkconstants
 import tkFileDialog
 import os
-from tkinter import *
+from Tkinter import *
 from PIL import Image,ImageTk
-import findStringInFile
+import stringFinder
+import popupMsg
 
 class CreateScenarioGUI(Tkinter.Frame):
         def __init__(self, root):
@@ -21,26 +22,26 @@ class CreateScenarioGUI(Tkinter.Frame):
             Tkinter.Label(body, text=u"Version", font=("Helvetica", 8, 'bold')).grid(row=0)
             var = StringVar(root)
             self.version="version_13_3_0"
-            optionList1=["version_13_3_0", "version_13_3_1_SNAPSHOT"]
-            option1=Tkinter.OptionMenu(body,var,*optionList1,command=self.setversion)
-            option1.config(width=50)
-            option1.grid(row=0, column=1)
+            optionList=["version_13_3_0", "version_13_3_1_SNAPSHOT"]
+            option=Tkinter.OptionMenu(body,var,*optionList,command=self.setversion)
+            option.config(width=50)
+            option.grid(row=0, column=1)
 
             Tkinter.Label(body, text=u"Year", font=("Helvetica", 8, 'bold')).grid(row=1)
             var = StringVar(root)
             self.year="2012"
-            optionList1=["2012", "2014", "2016", "2017", "2020", "2025", "2030", "2035", "2040", "2050"]
-            option1=Tkinter.OptionMenu(body,var,*optionList1,command=self.setyear)
-            option1.config(width=50)
-            option1.grid(row=1, column=1)
+            optionList=["2012", "2014", "2016", "2017", "2020", "2025", "2030", "2035", "2040", "2050"]
+            option=Tkinter.OptionMenu(body,var,*optionList,command=self.setyear)
+            option.config(width=50)
+            option.grid(row=1, column=1)
 
             Tkinter.Label(body, text=u"Cluster", font=("Helvetica", 8, 'bold')).grid(row=2)
             var = StringVar(root)
             self.cluster="local"
-            optionList2=["local", "aztec", "gaucho", "wildcat"]
-            option2=Tkinter.OptionMenu(body,var,*optionList2, command=self.setcluster)
-            option2.config(width=50)
-            option2.grid(row=2, column=1)
+            optionList=["local", "aztec", "gaucho", "wildcat"]
+            option=Tkinter.OptionMenu(body,var,*optionList, command=self.setcluster)
+            option.config(width=50)
+            option.grid(row=2, column=1)
 
             Tkinter.Label(body, text=u"Scenario Folder", font=("Helvetica", 8, 'bold')).grid(row=3)
             self.scenariopath = Tkinter.Entry(body, width=40)
@@ -53,25 +54,6 @@ class CreateScenarioGUI(Tkinter.Frame):
             self.networkpath.grid(row=4, column=1, sticky=sticky)
             button = Tkinter.Button(body, text=u"...",width=4,command=self.get_networkpath)
             button.grid(row=4, column=2)
-
-            """
-            Wu's Note: inputs, including default network files, always copied from standard release; disallow input folder browsing for now.
-            Tkinter.Label(body, text=u"Input Folder").grid(row=4)
-            self.inputpath = Tkinter.Entry(body, width=30)
-            self.inputpath.grid(row=4, column=1, sticky=sticky)
-            button = Tkinter.Button(body, text=u"...",width=4,command=self.get_inputpath)
-            button.grid(row=4, column=2)
-            """
-
-            """
-            Wu's Note: image seems like depend on Python version; hard to implement when users' Python versions are different
-            image = Image.open("SANDAG_logo.jpg")
-            photo = ImageTk.PhotoImage(image)
-            label = Label(image=photo)
-            label.image = photo # keep a reference!
-            label.pack()
-            label.grid(row=5,column=1)
-            """
 
             buttons = Tkinter.Frame(self)
             buttons.pack()
@@ -136,65 +118,57 @@ class CreateScenarioGUI(Tkinter.Frame):
 
         #check scenario path validity
         def checkPath(self):
+            self.popup=Tkinter.Tk()
             if os.path.exists(self.scenariopath.get()):
-                self.popup=Tkinter.Tk()
-                self.popupmsg("Selected scenario folder already exists! Proceeding will overwrite existing files!",2)
+                popupMsg.popupmsg(self,"Selected scenario folder already exists! Proceeding will overwrite existing files!",2)
             elif not self.scenariopath.get():
-                self.popup=Tkinter.Tk()
-                self.popupmsg("Scenario is empty!",1)
+                popupMsg.popupmsg(self,"Scenario is empty!",1)
             else:
-                self.executeBath()
+                self.executeBatch()
             return
 
+        """
         #close popup window and run batch
         def letsgo(self):
             self.popup.destroy()
             self.executeBath()
             return
+        """
 
         #run batch
-        def executeBath(self):
+        def executeBatch(self):
+            self.popup.destroy()
             commandstr=u"create_scenario.cmd "+self.scenariopath.get()+" "+self.year+" "+self.cluster+" "+self.networkpath.get()
             #commandstr=u"create_scenario.cmd t:\\abm\\test3 2012 aztec"
             print commandstr
             os.chdir('T:/ABM/release/ABM/'+self.version+'/')
             os.system(commandstr)
-            if findStringInFile.find(self.scenariopath.get()+'\\LogFiles\\'+'AtTransitCheck_event.log', 'FATAL'):
-                self.popup=Tkinter.Tk()
-                self.popupmsg("Fatal Error: inconsistency between AT and Transit networks!"+"  Error info logged to "+ self.scenariopath.get()+"\\LogFiles\\"+"AtTransitCheck_event.log",1)
-            return
+            self.popup=Tkinter.Tk()
+            popupMsg.popupmsg(self,"You have successfully created the scenario!",1)
 
-        #popup window for path validity checking
+            """
+            if stringFinder.find(self.scenariopath.get()+'\\LogFiles\\'+'AtTransitCheck_event.log', 'FATAL'):
+                self.popup=Tkinter.Tk()
+                self.popupmsg(self,"Fatal Error: inconsistency between AT and Transit networks!"+"  Error info logged to "+ self.scenariopath.get()+"\\LogFiles\\"+"AtTransitCheck_event.log",1)
+            else:
+                self.popup=Tkinter.Tk()
+                self.popupmsg(self,"You have successfully created the scenario!",1)
+            """
+
+            return
+        """
         def popupmsg(self,msg,numButtons):
-            self.popup.wm_title("!!!WARNING!!!")
+            self.popup.wm_title("STATUS")
             label = Tkinter.Label(self.popup, text=msg)
             label.pack(side="top", fill="x", pady=10)
             popbuttons = Tkinter.Frame(self.popup)
             popbuttons.pack()
-            B1 = Tkinter.Button(popbuttons, text="Proceed", command =self.letsgo)
-            B2 = Tkinter.Button(popbuttons, text="Abandon", command = self.popup.destroy)
+            B1 = Tkinter.Button(popbuttons, text="Proceed", command =self.executeBatch)
+            B2 = Tkinter.Button(popbuttons, text="Quit", command = self.popup.destroy)
             if numButtons>1:
                 B1.pack(side=Tkconstants.LEFT)
             B2.pack(side=Tkconstants.RIGHT)
             Tkinter.Frame(popbuttons, width=10).pack(side=Tkconstants.LEFT)
-
-        #set input path; network path is deafult to the same location as input path
-        """
-        Wu's Note: inputs, including default network files, always copied from standard release; disallow input folder browsing for now.
-        def get_inputpath(self):
-            self.dir_opt = options = {}
-            options['initialdir'] = self.defaultpath
-            options['mustexist'] = False
-            options['parent'] = root
-            options['title'] = 'This is a title'
-            inputpath = tkFileDialog.askdirectory(**self.dir_opt)
-            if inputpath:
-                inputpath = os.path.normpath(inputpath)
-                self.inputpath.delete(0, Tkconstants.END)
-                self.inputpath.insert(0, inputpath)
-                self.networkpath.delete(0, Tkconstants.END)
-                self.networkpath.insert(0, inputpath)
-            return
         """
 
 root = Tkinter.Tk()
