@@ -19,3 +19,9 @@ sql/reporting/bin
 *.rdl.data
 src/main/python/.idea/
 src/main/python/dbconfig.yml
+.idea/
+build/
+dist/
+src/main/python/pythonGUI/.idea/
+src/main/python/pythonGUI/*.pyc
+src/main/resources/build/
