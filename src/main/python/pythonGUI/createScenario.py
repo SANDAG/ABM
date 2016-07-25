@@ -6,7 +6,6 @@ import tkFileDialog
 import os
 from Tkinter import *
 from PIL import Image,ImageTk
-import stringFinder
 import popupMsg
 
 class CreateScenarioGUI(Tkinter.Frame):
@@ -65,13 +64,11 @@ class CreateScenarioGUI(Tkinter.Frame):
 
         #set default input and network paths based on selected year
         def setversion(self,value):
-            #!!!!!change as needed
             self.version=value
             return
 
         #set default input and network paths based on selected year
         def setyear(self,value):
-            #!!!!!change as needed
             self.defaultpath='T:\\ABM\\release\\ABM\\'+self.version+'\\input\\'+value
             self.scenariopath.delete(0, Tkconstants.END)
             self.scenariopath.insert(0, "T:\\projects\\sr13")
@@ -127,49 +124,16 @@ class CreateScenarioGUI(Tkinter.Frame):
                 self.executeBatch()
             return
 
-        """
-        #close popup window and run batch
-        def letsgo(self):
-            self.popup.destroy()
-            self.executeBath()
-            return
-        """
-
         #run batch
         def executeBatch(self):
             self.popup.destroy()
             commandstr=u"create_scenario.cmd "+self.scenariopath.get()+" "+self.year+" "+self.cluster+" "+self.networkpath.get()
-            #commandstr=u"create_scenario.cmd t:\\abm\\test3 2012 aztec"
             print commandstr
             os.chdir('T:/ABM/release/ABM/'+self.version+'/')
             os.system(commandstr)
             self.popup=Tkinter.Tk()
             popupMsg.popupmsg(self,"You have successfully created the scenario!",1)
-
-            """
-            if stringFinder.find(self.scenariopath.get()+'\\LogFiles\\'+'AtTransitCheck_event.log', 'FATAL'):
-                self.popup=Tkinter.Tk()
-                self.popupmsg(self,"Fatal Error: inconsistency between AT and Transit networks!"+"  Error info logged to "+ self.scenariopath.get()+"\\LogFiles\\"+"AtTransitCheck_event.log",1)
-            else:
-                self.popup=Tkinter.Tk()
-                self.popupmsg(self,"You have successfully created the scenario!",1)
-            """
-
             return
-        """
-        def popupmsg(self,msg,numButtons):
-            self.popup.wm_title("STATUS")
-            label = Tkinter.Label(self.popup, text=msg)
-            label.pack(side="top", fill="x", pady=10)
-            popbuttons = Tkinter.Frame(self.popup)
-            popbuttons.pack()
-            B1 = Tkinter.Button(popbuttons, text="Proceed", command =self.executeBatch)
-            B2 = Tkinter.Button(popbuttons, text="Quit", command = self.popup.destroy)
-            if numButtons>1:
-                B1.pack(side=Tkconstants.LEFT)
-            B2.pack(side=Tkconstants.RIGHT)
-            Tkinter.Frame(popbuttons, width=10).pack(side=Tkconstants.LEFT)
-        """
 
 root = Tkinter.Tk()
 root.resizable(True, False)
