@@ -14,7 +14,7 @@ import popupMsg
 class ParametersGUI(Tkinter.Frame):
         def __init__(self, root):
             Tkinter.Frame.__init__(self, root, border=5)
-            self.status = Tkinter.Label(self, text=u"SANDAG ABM Parameter Editor", font=("Helvetica", 12, 'bold'))
+            self.status = Tkinter.Label(self, text=u"ABM Parameter Editor", font=("Helvetica", 12, 'bold'))
             self.status.pack(fill=Tkconstants.X, expand=1)
             body = Tkinter.Frame(self)
             body.pack(fill=Tkconstants.X, expand=1)
@@ -24,7 +24,7 @@ class ParametersGUI(Tkinter.Frame):
             #section labels
             sectionLabels=(u"Model Initial Start Options",u"Network Building Options",u"Final Assignment Options:",u"Data Loading Options:")
             #radio button lables
-            rbLabels=(u"Copy warm start trip tables:",u"Copy bike AT access files:",u"Copy walk AT access files:",u"Create bike AT access files:",
+            rbLabels=(u"Copy warm start trip0 tables:",u"Copy bike AT access files:",u"Copy walk AT access files:",u"Create bike AT access files:",
                       u"Create walk AT access files:",u"Build highway network:",u"Build transit network:",u"Run highway assignment:",
                       u"Run highway skimming:",u"Run transit assignment:",u"Run transit skimming:",u"Export results to CSVs:",u"Load results to database:")
             #properties
@@ -242,5 +242,9 @@ class ParametersGUI(Tkinter.Frame):
 root = Tkinter.Tk()
 root.resizable(True, False)
 root.minsize(370, 0)
+logo = Tkinter.PhotoImage(file=r"SANDAG_logo.gif")
+w=Label(root, image=logo, width=200)
+w.pack(side='top', fill='both', expand='yes')
 ParametersGUI(root).pack(fill=Tkconstants.X, expand=1, anchor=W)
+
 root.mainloop()

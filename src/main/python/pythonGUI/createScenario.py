@@ -138,6 +138,9 @@ class CreateScenarioGUI(Tkinter.Frame):
 root = Tkinter.Tk()
 root.resizable(True, False)
 root.minsize(370, 0)
+logo = Tkinter.PhotoImage(file=r"SANDAG_logo.gif")
+w=Label(root, image=logo, width=200)
+w.pack(side='top', fill='both', expand='yes')
 CreateScenarioGUI(root).pack(fill=Tkconstants.X, expand=1)
 root.mainloop()
 
