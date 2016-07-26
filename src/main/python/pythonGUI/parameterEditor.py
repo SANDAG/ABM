@@ -126,6 +126,10 @@ class ParametersGUI(Tkinter.Frame):
             self.samplerates=value.get()
 
         def setDefaultProperties(self):
+            self.runtimeFile=sys.argv[1]+"\\conf\\sandag_abm.properties"
+            self.standardFile=sys.argv[1]+"\\conf\\sandag_abm_standard.properties"
+            self.populateProperties()
+            """
             for i in range(self.pNum):
                 if i<3 or i>6:
                     self.yButton[i].select()
@@ -133,6 +137,7 @@ class ParametersGUI(Tkinter.Frame):
                 else:
                     self.yButton[i].deselect()
                     self.nButton[i].select()
+            """
 
         def setATButtons(self):
             #disable create bike and walk logsums if 'copy' is chosen
@@ -242,7 +247,7 @@ class ParametersGUI(Tkinter.Frame):
 root = Tkinter.Tk()
 root.resizable(True, False)
 root.minsize(370, 0)
-logo = Tkinter.PhotoImage(file=r"SANDAG_logo.gif")
+logo = Tkinter.PhotoImage(file=r"T:\ABM\release\ABM\SANDAG_logo.gif")
 w=Label(root, image=logo, width=200)
 w.pack(side='top', fill='both', expand='yes')
 ParametersGUI(root).pack(fill=Tkconstants.X, expand=1, anchor=W)
