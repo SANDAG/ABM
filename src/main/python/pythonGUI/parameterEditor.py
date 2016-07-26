@@ -24,7 +24,7 @@ class ParametersGUI(Tkinter.Frame):
             #section labels
             sectionLabels=(u"Model Initial Start Options",u"Network Building Options",u"Final Assignment Options:",u"Data Loading Options:")
             #radio button lables
-            rbLabels=(u"Copy warm start trip0 tables:",u"Copy bike AT access files:",u"Copy walk AT access files:",u"Create bike AT access files:",
+            rbLabels=(u"Copy warm start trip tables:",u"Copy bike AT access files:",u"Copy walk AT access files:",u"Create bike AT access files:",
                       u"Create walk AT access files:",u"Build highway network:",u"Build transit network:",u"Run highway assignment:",
                       u"Run highway skimming:",u"Run transit assignment:",u"Run transit skimming:",u"Export results to CSVs:",u"Load results to database:")
             #properties
