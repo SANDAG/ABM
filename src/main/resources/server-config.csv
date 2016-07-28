@@ -1,0 +1,9 @@
+ActualIP,ModelIP,ServerName,SNODE,MAIN,NODE1,NODE2,NODE3,TRANSCAD_PATH,THREADM,THREADN1,THREADN2,THREADN3
+172.16.34.31,127.0.0.1,monty,true,localhost,localhost,${node.2.name},${node.3.name},C:\\Progra~1\\TRANSC~1.0,18,18,${node.2.execution.threads},${node.3.execution.threads}
+172.16.34.205,127.0.0.1,jayhawk,true,localhost,localhost,${node.2.name},${node.3.name},C:\\Progra~1\\TRANSC~1.0,18,18,${node.2.execution.threads},${node.3.execution.threads}
+172.16.34.202,127.0.0.1,mustang,true,localhost,localhost,${node.2.name},${node.3.name},C:\\Progra~1\\TRANSC~1.0,18,18,${node.2.execution.threads},${node.3.execution.threads}
+172.16.34.47,127.0.0.1,highlander,true,localhost,localhost,${node.2.name},${node.3.name},C:\\Progra~1\\TRANSC~1.0,18,18,${node.2.execution.threads},${node.3.execution.threads}
+172.16.34.36,127.0.0.1,scarlett,true,localhost,localhost,${node.2.name},${node.3.name},C:\\Progra~1\\TRANSC~1.0,18,18,${node.2.execution.threads},${node.3.execution.threads}
+172.16.34.30,172.16.34.30,aztec,false,AZTEC,HAWKEYE,AGGIE,${node.3.name},C:\\Progra~1\\TRANSC~1,14,15,12,${node.3.execution.threads}
+172.16.34.60,172.16.34.60,wildcat,false,WILDCAT,GALAXIE,COBRA,${node.3.name},C:\\Progra~1\\TRANSC~1,14,12,12,${node.3.execution.threads}
+172.16.34.61,172.16.34.61,gaucho,false,GAUCHO,NITTANY,CHARGER,${node.3.name},C:\\Progra~1\\TRANSC~1,14,12,8,${node.3.execution.threads}
