@@ -5,7 +5,7 @@
       <Name>Development</Name>
       <Options>
         <ServerName>sql2014a8</ServerName>
-        <PathOnServer>/SSISDB/load_abm_13_2_3/abm_load</PathOnServer>
+        <PathOnServer>/SSISDB/load_abm_13_2_3/abm_load_test</PathOnServer>
         <Run64BitRuntime>true</Run64BitRuntime>
         <UserIDs />
         <UserPasswords />
