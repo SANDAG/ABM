@@ -27,3 +27,4 @@ src/main/python/pythonGUI/*.pyc
 src/main/resources/build/
 sql/ssis/abm_load/abm_load/bin/
 sql/ssis/abm_load/abm_load/obj/
+src/main/python/reporting/abm_reports*/*
