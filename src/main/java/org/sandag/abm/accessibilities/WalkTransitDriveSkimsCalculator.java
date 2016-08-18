@@ -284,42 +284,26 @@ public class WalkTransitDriveSkimsCalculator
                 storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap] = new double[maxTap + 1][];
             }
 
-            // if the destTap skims are not already stored, calculate them and
-            // store
-            // them
+            // if the destTap skims are not already stored, calculate them and store them
             if (storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap] == null)
             {
-                double[] results = walkPremiumDriveSkimUECs[departPeriod].solve(iv, dmu, null);
+            	storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap] = walkPremiumDriveSkimUECs[departPeriod].solve(iv, dmu, null);
                 if (debug)
-                    walkPremiumDriveSkimUECs[departPeriod].logAnswersArray(logger,
-                            "Walk-Premium-Drive Skims");
-                storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap] = results;
+                    walkPremiumDriveSkimUECs[departPeriod].logAnswersArray(logger, "Walk-Premium-Drive Skims");
             }
 
-            try
-            {
-                storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap][ACCESS_TIME_INDEX] = pWalkTime;
-            } catch (Exception e)
-            {
-                logger.error("departPeriod=" + departPeriod + ", origTap=" + origTap + ", destTap="
-                        + destTap + ", pWalkTime=" + pWalkTime);
-                logger.error(
-                        "exception setting walk-transit-drive premium walk access time in stored array.",
-                        e);
-            }
+            // these arrays get skim values copied into them from the shared storedDepartPeriodTapTapSkims array
+            double[] skimResultsPremium = new double[walkPremiumDriveSkimUECs[AM].getNumberOfAlternatives() + 2];
 
-            try
-            {
-                storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap][EGRESS_TIME_INDEX] = aDriveTime;
-            } catch (Exception e)
-            {
-                logger.error("departPeriod=" + departPeriod + ", origTap=" + origTap + ", destTap="
-                        + destTap + ", aDriveTime=" + aDriveTime);
-                logger.error(
-                        "exception setting walk-transit-drive premium drive egress time in stored array.",
-                        e);
-            }
-            return storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap];
+            // copy values stored in storedDepartPeriodTapTapSkims to returned array.  Don't need to copy acc/egr time values; they'll always get replaced in the returned array.
+            System.arraycopy(storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap], 0, skimResultsPremium, 0, storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap].length);
+            
+            // replace acc/egr time values in results array returned
+            skimResultsPremium[ACCESS_TIME_INDEX] = pWalkTime;
+            skimResultsPremium[EGRESS_TIME_INDEX] = aDriveTime;
+
+            return skimResultsPremium;
+        
         } else
         {
             // allocate space for the origin tap if it hasn't been allocated
@@ -329,42 +313,26 @@ public class WalkTransitDriveSkimsCalculator
                 storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap] = new double[maxTap + 1][];
             }
 
-            // if the destTap skims are not already stored, calculate them and
-            // store
-            // them
+            // if the destTap skims are not already stored, calculate them and store them
             if (storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap] == null)
             {
-                double[] results = walkLocalDriveSkimUECs[departPeriod].solve(iv, dmu, null);
+            	storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap] = walkLocalDriveSkimUECs[departPeriod].solve(iv, dmu, null);
                 if (debug)
-                    walkLocalDriveSkimUECs[departPeriod].logAnswersArray(logger,
-                            "Walk-Local-Drive Skims");
-                storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap] = results;
+                    walkLocalDriveSkimUECs[departPeriod].logAnswersArray(logger, "Walk-Local-Drive Skims");
             }
 
-            try
-            {
-                storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap][ACCESS_TIME_INDEX] = pWalkTime;
-            } catch (Exception e)
-            {
-                logger.error("departPeriod=" + departPeriod + ", origTap=" + origTap + ", destTap="
-                        + destTap + ", pWalkTime=" + pWalkTime);
-                logger.error(
-                        "exception setting walk-transit-drive local walk access time in stored array.",
-                        e);
-            }
+            // these arrays get skim values copied into them from the shared storedDepartPeriodTapTapSkims array
+            double[] skimResultsLocal = new double[walkLocalDriveSkimUECs[AM].getNumberOfAlternatives() + 2];
 
-            try
-            {
-                storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap][EGRESS_TIME_INDEX] = aDriveTime;
-            } catch (Exception e)
-            {
-                logger.error("departPeriod=" + departPeriod + ", origTap=" + origTap + ", destTap="
-                        + destTap + ", aDriveTime=" + aDriveTime);
-                logger.error(
-                        "exception setting walk-transit-drive local drive egress time in stored array.",
-                        e);
-            }
-            return storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap];
+            // copy values stored in storedDepartPeriodTapTapSkims to returned array.  Don't need to copy acc/egr time values; they'll always get replaced in the returned array.
+            System.arraycopy(storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap], 0, skimResultsLocal, 0, storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap].length);
+            
+            // replace acc/egr time values in results array returned
+            skimResultsLocal[ACCESS_TIME_INDEX] = pWalkTime;
+            skimResultsLocal[EGRESS_TIME_INDEX] = aDriveTime;
+
+            return skimResultsLocal;
+            
         }
 
     }
