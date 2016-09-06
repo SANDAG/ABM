@@ -56,6 +56,17 @@ Macro "Run SANDAG ABM"
    precision = RunMacro("read properties",properties,"RunModel.MatrixPrecision", "S")
    minSpaceOnC=RunMacro("read properties",properties,"RunModel.minSpaceOnC", "S")
 
+  // Swap Server Configurations
+   runString = path+"\\bin\\serverswap.bat "+drive+" "+path_no_drive+" "+path_forward_slash
+   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Server Config Swap: "+" "+runString})
+   ok = RunMacro("TCB Run Command", 1, "Run ServerSwap", runString)
+   if !ok then goto quit
+   ok=RunMacro("find String","\\logFiles\\serverswap.log","FATAL")
+   if !ok then  do
+     RunMacro("HwycadLog",{"sandag_abm_master.rsc:","ServerSwap failed! Open logFiles/serverswap.err for details."})
+     goto quit  
+   end
+
    //check free space on C drive
    runString = path+"\\bin\\checkFreeSpaceOnC.bat "+minSpaceOnC
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Checking if there is enough space on C drive: "+" "+runString})
