@@ -55,7 +55,13 @@ public class SkimBuilder
     private static final int                         SR3_TOLL_DIST_INDEX                    = 23;
     private static final int                         SR3_TOLL_COST_INDEX                    = 24;
     private static final int                         SR3_TOLL_TOLLDIST_INDEX                = 25;
-
+    private static final int                         DA_STD_INDEX                           = 26;
+    private static final int                         DA_TOLL_STD_INDEX                      = 27;
+    private static final int                         SR2_STD_INDEX                          = 28;
+    private static final int                         SR2_TOLL_STD_INDEX                     = 29;
+    private static final int                         SR3_STD_INDEX                          = 30;
+    private static final int                         SR3_TOLL_STD_INDEX                     = 31;
+    
     private static final int                         TRANSIT_LOCAL_ACCESS_TIME_INDEX        = 0;
     private static final int                         TRANSIT_LOCAL_EGRESS_TIME_INDEX        = 1;
     private static final int                         TRANSIT_LOCAL_AUX_WALK_TIME_INDEX      = 2;
@@ -171,7 +177,7 @@ public class SkimBuilder
 
     private TripAttributes getTripAttributesUnknown()
     {
-        return new TripAttributes(0,0,0,0,0,0,0,0,0,0,-1,-1,0);
+        return new TripAttributes(0,0,0,0,0,0,0,0,0,0,0,-1,-1,0);
     }
 
     private final float DEFAULT_BIKE_SPEED = 12;
@@ -183,6 +189,7 @@ public class SkimBuilder
         int timeIndex = -1;
         int distIndex = -1;
         int costIndex = -1;
+        int stdIndex  = -1;
 
         int rideModeIndex = modeChoice.getRideModeIndex();
 
@@ -195,90 +202,86 @@ public class SkimBuilder
                 timeIndex = DA_TIME_INDEX;
                 distIndex = DA_DIST_INDEX;
                 costIndex = -1;
+                stdIndex  = DA_STD_INDEX;
                 double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
                         LOGGER);
-                return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost);
+                return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost, autoSkims[stdIndex]);
             }
             case DRIVE_ALONE_TOLL:
             {
                 timeIndex = DA_TOLL_TIME_INDEX;
                 distIndex = DA_TOLL_DIST_INDEX;
                 costIndex = DA_TOLL_COST_INDEX;
-                double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
+                stdIndex  = DA_TOLL_STD_INDEX;
+               double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
                         LOGGER);
                 
                 //if IVT for toll is zero, get non-toll skim
                 if(autoSkims[timeIndex]==0){
-                	timeIndex = DA_TIME_INDEX;
-                    distIndex = DA_DIST_INDEX;
-                    costIndex=-1;
-                    return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost);
+                    getTripAttributes(TripModeChoice.DRIVE_ALONE_NO_TOLL, origin,
+                            destination, boardTap,  alightTap,  tod,  inbound,  vot);
                 }
-                return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost, autoSkims[costIndex]);
+                return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost, autoSkims[stdIndex], autoSkims[costIndex]);
             }
             case SR2_HOV: // wu added
             {
                 timeIndex = SR2_TIME_INDEX;
                 distIndex = SR2_DIST_INDEX;
                 costIndex = -1;
+                stdIndex  = SR2_STD_INDEX;               
                 double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
                         LOGGER);
-                //if IVT for HOV is zero, get non-HOV skim
+                //if IVT for HOV is zero, get non-toll skim
                 if(autoSkims[timeIndex]==0){
-                	timeIndex = DA_TIME_INDEX;
-                    distIndex = DA_DIST_INDEX;
-                    costIndex=-1;
-                    return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost);
+                    getTripAttributes(TripModeChoice.DRIVE_ALONE_NO_TOLL, origin,
+                            destination, boardTap,  alightTap,  tod,  inbound,  vot);
                 }
-                return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost);
+                return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost, autoSkims[stdIndex]);
                             }
             case SR2_TOLL: // wu added
             {
                 timeIndex = SR2_TOLL_TIME_INDEX;
                 distIndex = SR2_TOLL_DIST_INDEX;
                 costIndex = SR2_TOLL_COST_INDEX;
+                stdIndex  = SR2_TOLL_STD_INDEX;
                 double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
                         LOGGER);
-                //if IVT for toll is zero, get non-toll skim
+                //if IVT for toll is zero, get non-toll HOV skim
                 if(autoSkims[timeIndex]==0){
-                	timeIndex = SR2_TIME_INDEX;
-                    distIndex = SR2_DIST_INDEX;
-                    costIndex=-1;
-                    return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost);
+                    getTripAttributes(TripModeChoice.SR2_HOV, origin,
+                            destination, boardTap,  alightTap,  tod,  inbound,  vot);
                 }
-                return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost, autoSkims[costIndex]);
+                return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost, autoSkims[stdIndex], autoSkims[costIndex]);
                             }
             case SR3_HOV: // wu added
             {
                 timeIndex = SR3_TIME_INDEX;
                 distIndex = SR3_DIST_INDEX;
                 costIndex = -1;
+                stdIndex  = SR2_STD_INDEX;
                 double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
                         LOGGER);
                 //if IVT for HOV is zero, get non-HOV skim
                 if(autoSkims[timeIndex]==0){
-                	timeIndex = DA_TIME_INDEX;
-                    distIndex = DA_DIST_INDEX;
-                    costIndex=-1;
-                    return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost);
+                    getTripAttributes(TripModeChoice.DRIVE_ALONE_NO_TOLL, origin,
+                            destination, boardTap,  alightTap,  tod,  inbound,  vot);
                 }
-                return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost);
+                return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost, autoSkims[stdIndex]);
             }
             case SR3_TOLL:
             {
                 timeIndex = SR3_TOLL_TIME_INDEX;
                 distIndex = SR3_TOLL_DIST_INDEX;
                 costIndex = SR3_TOLL_COST_INDEX;
+                stdIndex  = SR3_TOLL_STD_INDEX;
                 double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
                         LOGGER);
-                //if IVT for toll is zero, get non-toll skim
+                //if IVT for toll is zero, get non-toll HOV skim
                 if(autoSkims[timeIndex]==0){
-                	timeIndex = SR3_TIME_INDEX;
-                    distIndex = SR3_DIST_INDEX;
-                    costIndex=-1;
-                    return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost);
+                    getTripAttributes(TripModeChoice.SR3_HOV, origin,
+                            destination, boardTap,  alightTap,  tod,  inbound,  vot);
                 }
-                return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost, autoSkims[costIndex]);
+                return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost, autoSkims[stdIndex], autoSkims[costIndex]);
             }
             case WALK:
             {
@@ -292,7 +295,7 @@ public class SkimBuilder
                 	distance = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false, LOGGER)[DA_DIST_INDEX];
                 	time = distance * 60 / DEFAULT_WALK_SPEED;
                 }
-                return new TripAttributes(0, 0, 0, 0, 0, 0, 0, time, 0, distance, -1, -1, 0);
+                return new TripAttributes(0, 0, 0, 0, 0, 0, 0, 0, time, 0, distance, -1, -1, 0);
             }
             case BIKE:
             {
@@ -307,7 +310,7 @@ public class SkimBuilder
                         LOGGER)[DA_DIST_INDEX];
                 	time = distance * 60 / DEFAULT_BIKE_SPEED;
                 }
-                return new TripAttributes(0, 0, 0, 0, 0, 0, 0, 0, time, distance, -1, -1, 0);
+                return new TripAttributes(0, 0, 0, 0, 0, 0, 0, 0, 0, time, distance, -1, -1, 0);
             }
             case WALK_LB:
             case WALK_EB:
@@ -463,7 +466,7 @@ public class SkimBuilder
                 double dist = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot, false, LOGGER)[DA_DIST_INDEX]; 
             
                 //assuming 35 mph drive speed for transit access
-                return new TripAttributes(driveTime, driveTime/60*35*autoOperatingCost, 0,  transitInVehicleTime, 
+                return new TripAttributes(driveTime, driveTime/60*35*autoOperatingCost, 0, 0,  transitInVehicleTime, 
                 		waitTime, walkTime, transitFare, 0, 0, dist, boardTaz, alightTaz, vot);
             }
             default:
@@ -522,6 +525,7 @@ public class SkimBuilder
     {
         private final float autoInVehicleTime;
         private final float autoOperatingCost;
+        private final float autoStandardDeviationTime;
         private final float autoTollCost;
         private final float transitInVehicleTime;
         private final float transitWaitTime;
@@ -548,12 +552,13 @@ public class SkimBuilder
 
         private int tripStartTime;
 
-        public TripAttributes(double autoInVehicleTime, double autoOperatingCost, double autoTollCost, double transitInVehicleTime, 
+        public TripAttributes(double autoInVehicleTime, double autoOperatingCost, double autoStandardDeviationTime, double autoTollCost, double transitInVehicleTime, 
         		double transitWaitTime, double transitWalkTime, double transitFare, double walkModeTime, double bikeModeTime, double tripDistance,
         		int tripBoardTaz, int tripAlightTaz, float valueOfTime)
         {
             this.autoInVehicleTime = (float) autoInVehicleTime;
             this.autoOperatingCost = (float)  autoOperatingCost;
+            this.autoStandardDeviationTime = (float) autoStandardDeviationTime;
             this.autoTollCost = (float) autoTollCost;
             this.transitInVehicleTime = (float) transitInVehicleTime;
             this.transitWaitTime = (float) transitWaitTime;
@@ -574,9 +579,9 @@ public class SkimBuilder
          * @param tripDistance
          * @param autoOperatingCost
          */
-        public TripAttributes(double autoInVehicleTime, double tripDistance, double autoOperatingCost)
+        public TripAttributes(double autoInVehicleTime, double tripDistance, double autoOperatingCost, double stdDevTime)
         {
-            this(autoInVehicleTime, autoOperatingCost, 0,0,0,0,0,0,0,tripDistance,-1,-1,0);
+            this(autoInVehicleTime, autoOperatingCost, stdDevTime, 0,0,0,0,0,0,0,tripDistance,-1,-1,0);
         }
 
         /**
@@ -587,9 +592,9 @@ public class SkimBuilder
          * @param autoOperatingCost
          * @param tollCost
          */
-        public TripAttributes(double autoInVehicleTime, double tripDistance, double autoOperatingCost, double tollCost)
+        public TripAttributes(double autoInVehicleTime, double tripDistance, double autoOperatingCost, double stdDevTime, double tollCost)
         {
-            this(autoInVehicleTime, autoOperatingCost, tollCost,0,0,0,0,0,0,tripDistance,-1,-1,0);
+            this(autoInVehicleTime, autoOperatingCost, stdDevTime, tollCost,0,0,0,0,0,0,tripDistance,-1,-1,0);
         }
        
          
@@ -605,6 +610,10 @@ public class SkimBuilder
 
 		public float getAutoOperatingCost() {
 			return autoOperatingCost;
+		}
+
+		public float getAutoStandardDeviationTime() {
+			return autoStandardDeviationTime;
 		}
 
 		public float getAutoTollCost() {

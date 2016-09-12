@@ -83,7 +83,14 @@ public class AutoAndNonMotorizedSkimsCalculator
             "S3 Toll - Free Flow Time", // 22
             "S3 Toll - Distance", // 23
             "S3 Toll - Toll Value", // 24
-            "S3 Toll - Length on HOV Facility" // 25
+            "S3 Toll - Length on HOV Facility", // 25
+            "DA NonToll - Std Dev Time", // 26
+            "DA Toll - Std Dev Time", // 27
+            "S2 NonToll - Std Dev Time", //28
+            "S2 Toll - Std Dev Time", //29
+            "S3 NonToll - Std Dev Time", //30
+            "S3 Toll - Std Dev Time" //31
+            
             };
 
     private static final String[]         NM_SKIM_NAMES          = {"walkTime", "bikeTime"};
