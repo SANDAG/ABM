@@ -42,7 +42,6 @@ set SCENARIO_FOLDER2=%SCENARIO_FOLDER:\=\\%
 
 @echo subsitute strings in GISDK
 call BatchSubstitute.bat WORKPATH %SCENARIO_FOLDER2% %SCENARIO_FOLDER%\gisdk\sandag_abm_generic.lst>%SCENARIO_FOLDER%\gisdk\sandag_abm.lst
-call BatchSubstitute.bat WORKPATH %SCENARIO_FOLDER2% %SCENARIO_FOLDER%\gisdk\sandag_abm_master_generic.rsc>%SCENARIO_FOLDER%\gisdk\sandag_abm_master.rsc
 call BatchSubstitute.bat WORKPATH %SCENARIO_FOLDER2% %SCENARIO_FOLDER%\gisdk\gui_generic.rsc>%SCENARIO_FOLDER%\gisdk\gui.rsc
 del %SCENARIO_FOLDER%\gisdk\sandag_abm_generic.lst
 del %SCENARIO_FOLDER%\gisdk\sandag_abm_master_generic.rsc
