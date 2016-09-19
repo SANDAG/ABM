@@ -1,5 +1,5 @@
 e:
-cd \apps\ABM
+cd \apps\ABM2
 
 call mvn package -P aztec,2010 -DskipTests
 call mvn package -P aztec,2012 -DskipTests
