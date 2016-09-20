@@ -129,7 +129,7 @@ class CreateScenarioGUI(Tkinter.Frame):
         #run batch
         def executeBatch(self):
             self.popup.destroy()
-            commandstr=u"create_scenario.cmd "+self.scenariopath.get()+" "+self.year+" "+self.cluster+" "+self.networkpath.get()
+            commandstr=u"create_scenario.cmd "+self.scenariopath.get()+" "+self.year+" "+self.networkpath.get()
             print commandstr
             os.chdir('T:/ABM/release/ABM/'+self.version+'/')
             os.system(commandstr)

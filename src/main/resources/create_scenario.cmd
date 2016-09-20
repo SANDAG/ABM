@@ -6,23 +6,12 @@ if "%3"=="" goto usage
 
 set SCENARIO_FOLDER=%1
 set YEAR=%2
-set CLUSTER=%3
-set NETWORKDIR=%4
+set NETWORKDIR=%3
 
 @echo creating scenario folders
 set FOLDERS=input application bin conf gisdk input_truck logFiles output python report sql uec
 for %%i in (%FOLDERS%) do (
 md %SCENARIO_FOLDER%\%%i)
-
-@echo checking if single node
-set RELEASE_DIR=%CLUSTER%
-@echo RELEASE_DIR=%CLUSTER%
-
-set SNODES=local
-for %%i in (%SNODES%) do (
-if %%i==%3 set RELEASE_DIR=local)
-
-@echo \%RELEASE_DIR%\%YEAR%\conf\
 
 xcopy /Y .\common\application\"*.*" %SCENARIO_FOLDER%\application
 xcopy /Y .\common\input_truck\"*.*" %SCENARIO_FOLDER%\input_truck
@@ -30,8 +19,9 @@ xcopy /Y/E .\common\python\"*.*" %SCENARIO_FOLDER%\python
 xcopy /Y/E .\common\sql\"*.*" %SCENARIO_FOLDER%\sql
 xcopy /Y .\common\uec\"*.*" %SCENARIO_FOLDER%\uec
 xcopy /Y .\common\gisdk\"*.*" %SCENARIO_FOLDER%\gisdk
-xcopy /Y .\%RELEASE_DIR%\%YEAR%\conf\"*.*" %SCENARIO_FOLDER%\conf
-xcopy /Y .\%RELEASE_DIR%\%YEAR%\bin\"*.*" %SCENARIO_FOLDER%\bin
+xcopy /Y .\common\bin\"*.*" %SCENARIO_FOLDER%\bin
+xcopy /Y .\conf\%YEAR%\"*.*" %SCENARIO_FOLDER%\conf
+xcopy /Y .\"*.txt" %SCENARIO_FOLDER%
 
 @echo copy year specific folders
 del %SCENARIO_FOLDER%\input /q
@@ -69,5 +59,5 @@ rem @echo -----------------------------------------------------------------
 
 :usage
 
-@echo Usage: %0 ^<scenario_folder^> ^<year^> ^<local/(aztec,gaucho,wildcat)^> ^<network^>
-@echo If 4th parameter is empty, default network inputs in standard release are used
+@echo Usage: %0 ^<scenario_folder^> ^<year^> ^<network^>
+@echo If 3rd parameter is empty, default network inputs in standard release are used
