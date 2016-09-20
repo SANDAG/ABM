@@ -6,12 +6,10 @@
 
     <groupId>org.sandag</groupId>
     <artifactId>SANDAG-ABM</artifactId>
-    <version>13.3.0-SNAPSHOT</version>
+    <version>version_13_3_0</version>
     <name>SANDAG CT-RAMP Activity Based Model</name>
     <properties>
         <encoding.type>UTF-8</encoding.type> 
-        <output.path>${project.build.directory}/${project.name}/${project.version}/${project.activeProfiles[0].id}/${project.activeProfiles[1].id}</output.path>
-        <study.root>${project.build.directory}/${project.name}/${project.version}/${project.activeProfiles[0].id}</study.root>
         <release.root>${project.build.directory}/${project.name}/${project.version}</release.root>
         <jppf.driver.memory.min>1000m</jppf.driver.memory.min> 
         <jppf.driver.memory.max>9000m</jppf.driver.memory.max> 
@@ -53,99 +51,6 @@
         <jppf_version>5.0.1</jppf_version>
     </properties>
     <profiles>
-        <profile>
-            <id>local</id>
-            <properties>
-                <snode>true</snode>
-                <jppf.server.host>127.0.0.1</jppf.server.host>
-                <jppf.management.host>127.0.0.1</jppf.management.host>
-                <matrix.server.host>127.0.0.1</matrix.server.host>
-                <household.server.host>127.0.0.1</household.server.host>
-                <master.node.ip>127.0.0.1</master.node.ip>  
-                <master.node.name>localhost</master.node.name>             
-                <master.execution.threads>18</master.execution.threads>
-                <node.1.name>localhost</node.1.name>
-                <node.1.execution.threads>18</node.1.execution.threads>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1.0</TRANSCAD_PATH>
-            </properties>
-        </profile>
-        <profile>
-            <id>aztec</id>
-            <properties>
-                <snode>false</snode>
-                <jppf.server.host>172.16.34.30</jppf.server.host>
-                <map.folder>c$</map.folder>
-                <jppf.management.host>172.16.34.30</jppf.management.host>
-                <matrix.server.host>172.16.34.30</matrix.server.host>
-                <household.server.host>172.16.34.30</household.server.host>
-                <master.node.ip>172.16.34.30</master.node.ip>
-                <node.1.ip>172.16.34.33</node.1.ip>
-                <node.2.ip>172.16.34.45</node.2.ip>
-                <node.3.ip>172.16.34.51</node.3.ip>
-                <master.node.name>AZTEC</master.node.name>
-                <master.execution.threads>14</master.execution.threads>
-                <node.1.name>HAWKEYE</node.1.name>
-                <node.1.execution.threads>15</node.1.execution.threads>
-                <node.2.name>AGGIE</node.2.name>
-                <node.2.execution.threads>12</node.2.execution.threads>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>               
-            </properties>
-        </profile>          
-        <profile>
-            <id>gaucho</id>
-            <properties>
-                <snode>false</snode>
-                <jppf.server.host>172.16.34.61</jppf.server.host>
-                <map.folder>d$</map.folder>
-                <jppf.management.host>172.16.34.61</jppf.management.host>
-                <matrix.server.host>172.16.34.61</matrix.server.host>
-                <household.server.host>172.16.34.61</household.server.host>
-                <master.node.ip>172.16.34.61</master.node.ip>
-                <node.1.ip>172.16.34.40</node.1.ip>
-                <node.2.ip>172.16.34.39</node.2.ip>
-                <master.node.name>GAUCHO</master.node.name>
-                <master.execution.threads>14</master.execution.threads>
-                <node.1.name>NITTANY</node.1.name>
-                <node.1.execution.threads>12</node.1.execution.threads>
-                <node.2.name>CHARGER</node.2.name>
-                <node.2.execution.threads>8</node.2.execution.threads>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>             
-            </properties>
-        </profile>       
-        <profile>
-            <id>wildcat</id>
-            <properties>
-                <snode>false</snode>
-                <jppf.server.host>172.16.34.60</jppf.server.host>
-                <map.folder>d$</map.folder>
-                <jppf.management.host>172.16.34.60</jppf.management.host>
-                <matrix.server.host>172.16.34.60</matrix.server.host>
-                <household.server.host>172.16.34.60</household.server.host>
-                <master.node.ip>172.16.34.60</master.node.ip>
-                <node.1.ip>172.16.34.42</node.1.ip>
-                <node.2.ip>172.16.34.41</node.2.ip>
-                <master.node.name>WILDCAT</master.node.name>
-                <master.execution.threads>14</master.execution.threads>
-                <node.1.name>GALAXIE</node.1.name>
-                <node.1.execution.threads>12</node.1.execution.threads>
-                <node.2.name>COBRA</node.2.name>
-                <node.2.execution.threads>12</node.2.execution.threads>
-                <TRANSCAD_PATH>C:\Progra~1\TRANSC~1</TRANSCAD_PATH>
-            </properties>
-        </profile>         
-        <profile>
-            <id>sdsc-cluster</id>
-            <properties>
-                <AT>False</AT>
-                <jppf.server.host></jppf.server.host>
-                <jppf.management.host></jppf.management.host>
-                <matrix.server.port></matrix.server.port>
-                <household.server.host></household.server.host>
-                <master.node.ip></master.node.ip>
-                <node.1.ip></node.1.ip>
-                <node.2.ip></node.2.ip>
-            </properties>
-        </profile>
          <profile>
             <id>2010</id>
             <activation>
@@ -501,9 +406,6 @@
                         </goals>
                         <configuration>
                             <encoding>${encoding.type}</encoding>
-                            <!-- 
-                            <outputDirectory>${study.root}/gisdk</outputDirectory>
-                            -->
                             <outputDirectory>${release.root}/common/gisdk</outputDirectory>
                             <resources>
                                 <resource>
@@ -554,7 +456,7 @@
                         </goals>
                         <configuration>
                             <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${study.root}</outputDirectory>
+                            <outputDirectory>${release.root}</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>
@@ -574,7 +476,7 @@
                         </goals>
                         <configuration>
                             <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${output.path}/conf</outputDirectory>
+                            <outputDirectory>${release.root}/conf/${project.activeProfiles[0].id}</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>
@@ -582,6 +484,7 @@
                                     <includes>
                                         <include>**/*.properties</include>
                                         <include>*.xml</include>
+                                        <include>*.csv</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -595,7 +498,7 @@
                         </goals>
                         <configuration>
                             <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${output.path}/bin</outputDirectory>
+                            <outputDirectory>${release.root}/common/bin</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>
@@ -643,7 +546,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${output.path}/bin</outputDirectory>
+                            <outputDirectory>${release.root}/common/bin</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>

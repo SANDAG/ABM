@@ -34,6 +34,7 @@ class CreateScenarioGUI(Tkinter.Frame):
             option.config(width=50)
             option.grid(row=1, column=1)
 
+            """
             Tkinter.Label(body, text=u"Cluster", font=("Helvetica", 8, 'bold')).grid(row=2)
             var = StringVar(root)
             self.cluster="local"
@@ -41,6 +42,7 @@ class CreateScenarioGUI(Tkinter.Frame):
             option=Tkinter.OptionMenu(body,var,*optionList, command=self.setcluster)
             option.config(width=50)
             option.grid(row=2, column=1)
+            """
 
             Tkinter.Label(body, text=u"Scenario Folder", font=("Helvetica", 8, 'bold')).grid(row=3)
             self.scenariopath = Tkinter.Entry(body, width=40)
@@ -127,7 +129,7 @@ class CreateScenarioGUI(Tkinter.Frame):
         #run batch
         def executeBatch(self):
             self.popup.destroy()
-            commandstr=u"create_scenario.cmd "+self.scenariopath.get()+" "+self.year+" "+self.cluster+" "+self.networkpath.get()
+            commandstr=u"create_scenario.cmd "+self.scenariopath.get()+" "+self.year+" "+self.networkpath.get()
             print commandstr
             os.chdir('T:/ABM/release/ABM/'+self.version+'/')
             os.system(commandstr)

@@ -60,7 +60,7 @@ Macro "Run SANDAG ABM"
    if !ok then goto quit
    ok=RunMacro("find String","\\logFiles\\serverswap.log","FATAL")
    if !ok then  do
-     RunMacro("HwycadLog",{"sandag_abm_master.rsc:","ServerSwap failed! Open logFiles/serverswap.err for details."})
+     RunMacro("HwycadLog",{"sandag_abm_master.rsc:","ServerSwap failed! Open logFiles/serverswap.log for details."})
      goto quit  
    end
 
