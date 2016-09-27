@@ -253,6 +253,24 @@
             </properties>
         </profile>
         <profile>
+            <id>2045</id>
+            <properties>
+                <year>2045</year>
+                <crossBorder.tours>135696</crossBorder.tours>
+                <airport.enplanements>14770717</airport.enplanements>
+                <airport.connecting>598517</airport.connecting>
+                <airport.airportMgra>2997</airport.airportMgra>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2040.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2040.xls</crossBorder.dc.uec.file>
+                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
+                <tourdest.uec.file>TourDestinationChoice2035.xls</tourdest.uec.file>      
+                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
+                <aoc.fuel>19.4</aoc.fuel>
+                <aoc.maintenance>8.8</aoc.maintenance>
+            </properties>
+        </profile>
+        <profile>
             <id>2050</id>
             <properties>
                 <year>2050</year>
