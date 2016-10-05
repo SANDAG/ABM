@@ -1,4 +1,4 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
   DTS:refId="Package"
   DTS:CreationDate="7/2/2015 2:59:02 PM"
@@ -7,12 +7,12 @@
   DTS:CreatorName="SANDAGNET\gsc"
   DTS:DTSID="{FDA2F050-9741-4B98-BBB8-85354AEF1A82}"
   DTS:ExecutableType="Microsoft.Package"
-  DTS:LastModifiedProductVersion="13.0.1601.5"
+  DTS:LastModifiedProductVersion="13.0.2164.0"
   DTS:LocaleID="1033"
   DTS:ObjectName="master_package"
   DTS:PackageType="5"
-  DTS:VersionBuild="10"
-  DTS:VersionGUID="{CE732A7D-1F24-4AEA-8EE4-0A77C3BC4B83}">
+  DTS:VersionBuild="11"
+  DTS:VersionGUID="{194814E9-D84A-4693-9BA4-00D0C80D5C04}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:Variables>
@@ -58,7 +58,7 @@
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}"
-          SQLTask:SqlStatementSource="SELECT ISNULL( &#xA;&#x9;(&#xA;&#x9;SELECT TOP 1&#xA;&#x9;&#x9;CASE&#x9;WHEN [abm_version] = 'pre 13.2.4' THEN 1&#xA;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('13.2.4', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('13.2.5', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('13.3.0', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;ELSE 0&#xA;&#x9;&#x9;&#x9;&#x9;END&#xA;&#x9;FROM&#xA;&#x9;&#x9;[data_load].[scenario_load_request]&#xA;&#x9;WHERE&#xA;&#x9;&#x9;[loading] = 0&#xA;&#x9;&#x9;AND [scenario_id] IS NULL&#xA;&#x9;)&#xA;, 0)"
+          SQLTask:SqlStatementSource="  SELECT ISNULL( &#xA;&#x9;(&#xA;&#x9;SELECT TOP 1&#xA;&#x9;&#x9;CASE&#x9;WHEN [abm_version] = 'pre 13.2.4' THEN 1&#xA;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('13.2.4', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('13.2.5', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('13.3.0', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('version_13_3_0', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;ELSE 0&#xA;&#x9;&#x9;&#x9;&#x9;END&#xA;&#x9;FROM&#xA;&#x9;&#x9;[data_load].[scenario_load_request]&#xA;&#x9;WHERE&#xA;&#x9;&#x9;[loading] = 0&#xA;&#x9;&#x9;AND [scenario_id] IS NULL&#xA;&#x9;)&#xA;, 0)"
           SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ResultBinding
             SQLTask:ResultName="0"
