@@ -6,7 +6,7 @@
 
     <groupId>org.sandag</groupId>
     <artifactId>SANDAG-ABM</artifactId>
-    <version>version_13_3_0</version>
+    <version>version_13_3_1_SNAPSHOT</version>
     <name>SANDAG CT-RAMP Activity Based Model</name>
     <properties>
         <encoding.type>UTF-8</encoding.type> 
@@ -58,234 +58,156 @@
             </activation>
             <properties>
                 <year>2010</year>
-                <crossBorder.tours>93409</crossBorder.tours>
-                <airport.enplanements>11441719</airport.enplanements>
-                <airport.connecting>463624</airport.connecting>
-                <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>                
                 <workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
-                <aoc.fuel>13.5</aoc.fuel>
-                <aoc.maintenance>6.3</aoc.maintenance>
             </properties>
         </profile>
          <profile>
             <id>2012</id>
             <properties>
                 <year>2012</year>
-                <crossBorder.tours>96639</crossBorder.tours>
-                <airport.enplanements>11673771</airport.enplanements>
-                <airport.connecting>473027</airport.connecting>
-                <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>  
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>  
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>     
                 <workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
-                <aoc.fuel>13.5</aoc.fuel>
-                <aoc.maintenance>6.3</aoc.maintenance>
             </properties>
         </profile>
         <profile>
             <id>2014</id>
             <properties>
                 <year>2014</year>
-                <crossBorder.tours>105433</crossBorder.tours>
-                <airport.enplanements>12666042</airport.enplanements>
-                <airport.connecting>513234</airport.connecting>
-                <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>              
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
-                <aoc.fuel>12.9</aoc.fuel>
-                <aoc.maintenance>6.3</aoc.maintenance>
             </properties>
         </profile>
         <profile>
             <id>2015</id>
             <properties>
                 <year>2015</year>
-                <crossBorder.tours>100160</crossBorder.tours>
-                <airport.enplanements>12223382</airport.enplanements>
-                <airport.connecting>495297</airport.connecting>
-                <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>              
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
-                <aoc.fuel>19.5</aoc.fuel>
-                <aoc.maintenance>6.2</aoc.maintenance>
             </properties>
         </profile>
         <profile>
             <id>2016</id>
             <properties>
                 <year>2016</year>
-                <crossBorder.tours>101478</crossBorder.tours>
-                <airport.enplanements>12339408</airport.enplanements>
-                <airport.connecting>499999</airport.connecting>
-                <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>              
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
-                <aoc.fuel>15.3</aoc.fuel>
-                <aoc.maintenance>6.6</aoc.maintenance>
             </properties>
         </profile>
         <profile>
             <id>2017</id>
             <properties>
                 <year>2017</year>
-                <crossBorder.tours>101478</crossBorder.tours>
-                <airport.enplanements>12339408</airport.enplanements>
-                <airport.connecting>499999</airport.connecting>
-                <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>              
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
-                <aoc.fuel>15.3</aoc.fuel>
-                <aoc.maintenance>6.6</aoc.maintenance>
             </properties>
         </profile>
         <profile>
             <id>2020</id>
             <properties>
                 <year>2020</year>
-                <crossBorder.tours>106316</crossBorder.tours>
-                <airport.enplanements>13005045</airport.enplanements>
-                <airport.connecting>526971</airport.connecting>
-                <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2020.xls</tourdest.uec.file>           
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
-                <aoc.fuel>17.1</aoc.fuel>
-                <aoc.maintenance>6.9</aoc.maintenance>
             </properties>
         </profile>
         <profile>
             <id>2025</id>
             <properties>
                 <year>2025</year>
-                <crossBorder.tours>112850</crossBorder.tours>
-                <airport.enplanements>13252427</airport.enplanements>
-                <airport.connecting>536995</airport.connecting>
-                <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2020.xls</tourdest.uec.file>                   
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
-                <aoc.fuel>16.7</aoc.fuel>
-                <aoc.maintenance>7.5</aoc.maintenance>
             </properties>
         </profile>
         <profile>
             <id>2030</id>
             <properties>
                 <year>2030</year>
-                <crossBorder.tours>119999</crossBorder.tours>
-                <airport.enplanements>13788822</airport.enplanements>
-                <airport.connecting>558730</airport.connecting>
-                <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2020.xls</tourdest.uec.file>                   
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
-                <aoc.fuel>17.3</aoc.fuel>
-                <aoc.maintenance>8.2</aoc.maintenance>
             </properties>
         </profile>
         <profile>
             <id>2035</id>
             <properties>
                 <year>2035</year>
-                <crossBorder.tours>127147</crossBorder.tours>
-                <airport.enplanements>14325217</airport.enplanements>
-                <airport.connecting>580465</airport.connecting>
-                <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2035.xls</tourdest.uec.file>      
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
-                <aoc.fuel>17.9</aoc.fuel>
-                <aoc.maintenance>8.8</aoc.maintenance>
             </properties>
         </profile>
         <profile>
             <id>2040</id>
             <properties>
                 <year>2040</year>
-                <crossBorder.tours>134961</crossBorder.tours>
-                <airport.enplanements>14442527</airport.enplanements>
-                <airport.connecting>585218</airport.connecting>
-                <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2040.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2040.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2035.xls</tourdest.uec.file>      
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
-                <aoc.fuel>19.4</aoc.fuel>
-                <aoc.maintenance>8.8</aoc.maintenance>
             </properties>
         </profile>
         <profile>
             <id>2045</id>
             <properties>
                 <year>2045</year>
-                <crossBorder.tours>135696</crossBorder.tours>
-                <airport.enplanements>14770717</airport.enplanements>
-                <airport.connecting>598517</airport.connecting>
-                <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2040.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2040.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2035.xls</tourdest.uec.file>      
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
-                <aoc.fuel>19.4</aoc.fuel>
-                <aoc.maintenance>8.8</aoc.maintenance>
             </properties>
         </profile>
         <profile>
             <id>2050</id>
             <properties>
                 <year>2050</year>
-                <crossBorder.tours>152059</crossBorder.tours>
-                <airport.enplanements>15333527</airport.enplanements>
-                <airport.connecting>621322</airport.connecting>
-                <airport.airportMgra>2997</airport.airportMgra>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2040.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2040.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2050.xls</tourdest.uec.file>      
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
-                <aoc.fuel>20.1</aoc.fuel>
-                <aoc.maintenance>8.8</aoc.maintenance>
             </properties>
         </profile>
         <profile>

@@ -63,6 +63,13 @@ Macro "Run SANDAG ABM"
      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","ServerSwap failed! Open logFiles/serverswap.log for details."})
      goto quit  
    end
+   
+   //Update year specific properties
+   runString = path+"\\bin\\updateYearSpecificProps.bat "+drive+" "+path_no_drive+" "+path_forward_slash
+   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Update year specific properties: "+" "+runString})
+   ok = RunMacro("TCB Run Command", 1, "Update Year Specific Properties", runString)
+   if !ok then goto quit
+
 
    //check free space on C drive
    runString = path+"\\bin\\checkFreeSpaceOnC.bat "+minSpaceOnC
