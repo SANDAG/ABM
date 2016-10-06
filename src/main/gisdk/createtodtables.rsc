@@ -1,10 +1,10 @@
 /**************************************************************                                                                          
-   CreateAutoTables                                                                                                                        
+   CreateAutoTables   //modified "externalExternalTripsByYear.csv" input file and code, on 09/16/16, YMA                                                                                                                      
                                                                                                                                          
  Inputs
    input\airportAutoTrips_XX.mtx
    input\autoTrips_XX.mtx
-   input\extTrip_XX.mtx
+   input\extTrip_XX.mtx   
    
    where XX is period = {_EA,_AM,_MD,_PM,_EV}
    
@@ -62,6 +62,7 @@ Macro "Create Auto Tables"
     //create external-external currencies
     externalExternalMatrixName = outputDir + "\\externalExternalTrips.mtx"
     externalExternalMatrix = OpenMatrix(externalExternalMatrixName, )
+
     externalExternalCurrency = CreateMatrixCurrency(externalExternalMatrix,'Trips',,,)
 	  externalExternalDiurnalFactors = { 0.074, 0.137, 0.472, 0.183, 0.133}
     externalExternalOccupancyFactors = {0.43, 0.42, 0.15 }
@@ -593,52 +594,62 @@ Macro "Create EE & EI Trips"
 EndMacro
 /***************************************************************************************************************************
 
-Create external-external trip table
+Create external-external trip table -- modified 09/16/16 YMA 
 
 ****************************************************************************************************************************/
-Macro "Create External-External Trip Matrix"
+
+Macro "Create External-External Trip Matrix" // modified "externalExternalTripsByYear.csv" input and code, 09/14/16 YMA	
    
-   
-   shared path, inputDir, outputDir, mxzone, mxext       
+  shared path, inputDir, outputDir, mxzone, mxext, scenarioYear       
                            
   //TODO:  open external-external matrix here
-   externalExternalFileName = inputDir+"\\externalExternalTrips.csv" 	    
-	 externalExternalMatrixName = outputDir + "\\externalExternalTrips.mtx"
+   //externalExternalFileName = inputDir+"\\externalExternalTrips.csv" // old input file
+     externalExternalFileName = inputDir+"\\externalExternalTripsByYear.csv" 	    
+	externalExternalMatrixName = outputDir + "\\externalExternalTrips.mtx"
 	 
    extExtView = OpenTable("extExt", "CSV", {externalExternalFileName}, {{"Shared", "True"}})
- 
- 
+  
   opts = {}
   opts.Label = "Trips"
   opts.Type = "Float"
-  opts.Tables = {'Trips'}
-  
+  opts.Tables = {"2012","2014","2016","2017","2020","2025","2030","2035","2040","2050"}
   opts.[File Name] = externalExternalMatrixName
+
   extMatrix = CreateMatrixFromScratch(externalExternalMatrixName,mxzone,mxzone,opts)
-  extCurren = CreateMatrixCurrency(extMatrix,'Trips',,,)
+  coreNames = GetMatrixCoreNames(extMatrix )
+  
+  for c = 1 to coreNames.length do
 
-  extCurren :=0
-  	
-   rec = GetFirstRecord(extExtView+"|", {{"originTaz", "Ascending"}}) 
-   while rec <> null do
-   
-       rec_vals = GetRecordValues(extExtView, rec, {"originTaz","destinationTaz","Trips"})
-       
-       originTaz = rec_vals[1][2]
-       destinationTaz = rec_vals[2][2]
-       trips = rec_vals[3][2]
-      
-       SetMatrixValue(extCurren, i2s(originTaz), i2s(destinationTaz), trips)
+        if s2i(coreNames[c]) = s2i(scenarioYear) then do 
+  
+            extCurren  = CreateMatrixCurrency(extMatrix, coreNames[c], , , )
+            extCurren := 0
+  
+            rec = LocateRecord(extExtView+"|","year", {scenarioYear},{{"Exact", "True"}})
 
-    	 rec= GetNextrecord(extExtView+"|",rec ,{{"originTaz", "Ascending"}})
- 
-   end
-
-
+                  while rec <> null do
+                       rec_vals = GetRecordValues(extExtView, rec, {"year","originTaz","destinationTaz","Trips"})
+                       year = rec_vals[1][2]
+                             if year = s2i(scenarioYear) then do
+                                     originTaz = rec_vals[2][2]
+                                     destinationTaz = rec_vals[3][2]
+                                     Trips = rec_vals[4][2]
+                                     SetMatrixValue(extCurren, i2s(originTaz), i2s(destinationTaz), Trips)
+                                     rec= GetNextrecord(extExtView+"|",rec ,{{"year", "Ascending"},{"originTaz", "Ascending"}})
+                             end
+                             else do
+                                  rec=null
+                             end
+                  end
+            SetMatrixCoreName(extMatrix, coreNames[c], "Trips")
+            end
+        else DropMatrixCore(extMatrix,coreNames[c])
+  end
 
 
    RunMacro("close all" )
    quit:
       Return(1 )
 EndMacro
+
 
