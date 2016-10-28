@@ -474,6 +474,7 @@
                                         <include>create_scenario.cmd</include>
                                         <include>copy_networks.cmd</include>
                                         <include>BatchSubstitute.bat</include>
+                                        <include>copy_networkfiles_to_study.cmd</include>
                                     </includes>
                                 </resource>
                             </resources>
