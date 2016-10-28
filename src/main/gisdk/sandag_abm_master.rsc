@@ -2,7 +2,7 @@ Macro "Run SANDAG ABM"
   
    RunMacro("TCB Init")
 
-   shared path, inputDir, outputDir, inputTruckDir, mxzone, mxtap, mxext,mxlink,mxrte,scenarioYear
+   shared path, inputDir, outputDir, inputTruckDir, mxzone, mxtap, mxext,mxlink,mxrte,scenarioYear,version
    
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","*********Model Run Starting************"})
       

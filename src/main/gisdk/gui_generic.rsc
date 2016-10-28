@@ -8,7 +8,7 @@ enditem
 // set model run parameters
 button "Set Model Parameters" 0,0,30, 2 do
   RunMacro("TCB Init")
-  runString = "T:\\ABM\\release\\ABM\\dist\\parameterEditor.exe "+path
+  runString = "T:\\ABM\\release\\ABM\\${version}\\dist\\parameterEditor.exe "+path
   RunMacro("HwycadLog",{"gui.rsc:","Create a scenario"+" "+runString})
   ok = RunMacro("TCB Run Command", 1, "Create a scenario", runString)
 enditem
@@ -16,7 +16,7 @@ enditem
 // check inputs
 button "Check Inputs" 0, 3, 30, 2 do
   RunMacro("TCB Init")
-  runString = "T:\\ABM\\release\\ABM\\dist\\check.bat"
+  runString = "T:\\ABM\\release\\ABM\\${version}\\dist\\check.bat"
   RunMacro("HwycadLog",{"gui.rsc:","Create a scenario"+" "+runString})
   ok = RunMacro("TCB Run Command", 1, "Create a scenario", runString)
 enditem
