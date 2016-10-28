@@ -1,9 +1,10 @@
-Macro "US to SD External Trip Model"
+Macro "US to SD External Trip Model"  //modified the input file and code accordingly, 09/16/16, YMA
 
 	shared path, inputDir, outputDir, mxext, scenarioYear
 
-  controlTotals = "externalInternalControlTotals.csv"
-  
+  //controlTotals = "externalInternalControlTotals.csv"      //old input
+  controlTotals = "externalInternalControlTotalsByYear.csv" //modified on 09/16/16, YMA
+
   controlTotalsView = OpenTable("Control Totals", "CSV", {inputDir+"\\"+controlTotals}, {{"Shared", "True"}})
   mgraView = OpenTable("MGRA View", "CSV",{inputDir+"\\mgra13_based_input"+scenarioYear+".csv"}, {{"Shared", "True"}})
   
@@ -92,9 +93,11 @@ Macro "US to SD External Trip Model"
   											pmDatMC.("dat_PM - itoll_PM"),pmS2thMC.("s2t_PM - itoll_PM"),pmS3thMC.("s3t_PM - itoll_PM"),
   											evDatMC.("dat_EV - itoll_EV"),evS2thMC.("s2t_EV - itoll_EV"),evS3thMC.("s3t_EV - itoll_EV")}									
   
-  controlTaz = GetDataVector(controlTotalsView+"|", "taz", {{"Sort Order", {{"taz", "Ascending"}}}} )
-  controlWrk  = GetDataVector(controlTotalsView+"|", "work", {{"Sort Order", {{"taz", "Ascending"}}}} )
-  controlNon 	= GetDataVector(controlTotalsView+"|", "nonwork", {{"Sort Order", {{"taz", "Ascending"}}}} )
+  controlYear 	= GetDataVector(controlTotalsView+"|", "year", {{"Sort Order", {{"year", "Ascending"}}}} )     
+  controlTaz = GetDataVector(controlTotalsView+"|", "taz", {{"Sort Order", {{"year", "Ascending"},{"taz", "Ascending"}}}} )
+  controlWrk  = GetDataVector(controlTotalsView+"|", "work", {{"Sort Order", {{"year", "Ascending"},{"taz", "Ascending"}}}} )
+  controlNon 	= GetDataVector(controlTotalsView+"|", "nonwork", {{"Sort Order", {{"year", "Ascending"},{"taz", "Ascending"}}}} )
+  
   
   // create mgra size vectrors
   
@@ -226,17 +229,20 @@ Macro "US to SD External Trip Model"
   nonCurrenPA := 0
   	
   // Loop over external zones and set values in output matrix
-  for i=1 to controlTaz.length do
-  	
+  for i=1 to controlTaz.length do                  
+    if controlYear[i] = s2i(scenarioYear) then do       
+	
     wrkTotal = controlWrk[i]
     nonTotal = controlNon[i]
+    
     
     wrkTripVector = wrkTotal * GetMatrixVector(wrkProb,{{"Row", controlTaz[i]}}) 
     nonTripVector = nonTotal * GetMatrixVector(wrkProb,{{"Row", controlTaz[i]}})
     	
     SetMatrixVector(wrkCurrenPA, wrkTripVector, {{"Row",controlTaz[i]}})
     SetMatrixVector(nonCurrenPA, nonTripVector, {{"Row",controlTaz[i]}})
-  
+   
+    end
   end
                
   // Convert PA to OD and Apply Diurnal Factors

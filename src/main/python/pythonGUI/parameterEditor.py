@@ -146,10 +146,10 @@ class ParametersGUI(Tkinter.Frame):
             #disable copy bike and walk logsums if 'create' is chosen
             self.yButton[3].config(command=lambda: self.yButton[1].config(state=DISABLED))
             self.yButton[4].config(command=lambda: self.yButton[2].config(state=DISABLED))
-            #enable create bikea and walk logsums if NOT 'copy' is chosen
+            #enable create bike and walk logsums if NOT 'copy' is chosen
             self.nButton[1].config(command=lambda: self.yButton[3].config(state=ACTIVE))
             self.nButton[2].config(command=lambda: self.yButton[4].config(state=ACTIVE))
-            #enable copy bikea and walk logsums if NOT 'create' is chosen
+            #enable copy bike and walk logsums if NOT 'create' is chosen
             self.nButton[3].config(command=lambda: self.yButton[1].config(state=ACTIVE))
             self.nButton[4].config(command=lambda: self.yButton[2].config(state=ACTIVE))
 
