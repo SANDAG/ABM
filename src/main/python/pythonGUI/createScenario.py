@@ -119,7 +119,7 @@ class CreateScenarioGUI(Tkinter.Frame):
         def checkPath(self):
             self.popup=Tkinter.Tk()
             if os.path.exists(self.scenariopath.get()):
-                popupMsg.popupmsg(self,"Selected scenario folder already exists! Proceeding will overwrite existing files!",2)
+                popupMsg.popupmsg(self,"Selected scenario folder already exists! Proceeding will overwrite existing files!",2,"scenario")
             elif not self.scenariopath.get():
                 popupMsg.popupmsg(self,"Scenario is empty!",1)
             else:
