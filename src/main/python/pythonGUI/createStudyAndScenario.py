@@ -26,7 +26,7 @@ class CreateScenarioGUI(Tkinter.Frame):
             self.yButton=Radiobutton(body, text="Yes", variable=self.buttonVar, value=1, command=self.initStudy)
             self.nButton=Radiobutton(body, text="No", variable=self.buttonVar, value=0,command=self.initStudy)
             Tkinter.Label(body, text=divider, font=("Helvetica", 11, 'bold'), width=50, fg='royal blue').grid(row=0,columnspan=5)
-            Tkinter.Label(body, text=u"Crete an ABM Space", font=("Helvetica", 10, 'bold')).grid(row=1,columnspan=3)
+            Tkinter.Label(body, text=u"Create an ABM Space", font=("Helvetica", 10, 'bold')).grid(row=1,columnspan=3)
             self.yButton.grid(row=2,column=0, columnspan=2)
             self.nButton.grid(row=2,column=1, columnspan=2)
 
@@ -46,7 +46,7 @@ class CreateScenarioGUI(Tkinter.Frame):
             self.studynetworkbutton = Tkinter.Button(body, text=u"...",width=4,command=self.get_studynetworkpath)
             self.studynetworkbutton.grid(row=4, column=2)
 
-            self.copyButton = Tkinter.Button(body, text=u"Copy", font=("Helvetica", 8, 'bold'),width=10, command=self.checkStudyPath)
+            self.copyButton = Tkinter.Button(body, text=u"Create", font=("Helvetica", 8, 'bold'),width=10, command=self.checkStudyPath)
             self.copyButton.grid(row=5,column=0,columnspan=4)
 
             Tkinter.Label(body, text=divider, font=("Helvetica", 11, 'bold'), width=50, fg='royal blue').grid(row=6,columnspan=5)
