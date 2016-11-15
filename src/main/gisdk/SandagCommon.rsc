@@ -166,23 +166,27 @@ Macro "Go GetMatrixCoreNames" (path, matrix)
   return(core_names)
 EndMacro
 
-Macro "Get SL Query #" (path)
-  //Modified from "Prepare queries for select link analysis, by JXu on Nov 29, 2006"
-  selinkqry_file="\\selectlink_query.txt"
+Macro "Get SL Query # from QRY" (path)
+  
+  selinkqry_file="\\selectlink_query.qry"
   fptr_from = OpenFile(path + selinkqry_file, "r")
-  tmp_qry=readarray(fptr_from)
-  index =1
-  query=0
-  selinkqry_name=null
-  selink_qry=null
-  subs=null
-  while index <=ArrayLength(tmp_qry) do
-    if left(trim(tmp_qry[index]),1)!="*" then do
-      query=query+1
-    end
-    index = index + 1
-  end
-  return(query)
+  qry_array = readarray(fptr_from)
+ // query = 0
+  query_list = null  
+
+  for j = 1 to  qry_array.length do
+     line = qry_array[j]
+     p1 = Position(line, "\<name\>")
+     p2 = Position(line, "\<\/name\>")
+     if p1 > 0 & p2 > 0 then do
+        start = p1 + 6
+        name_len = p2 - start
+        name = Substring(line, start, name_len)
+        query_list = query_list + {name}
+     end
+ //    if Position(qry_array[j], "\<name\>") >0 then query = query + 1
+  end 
+  return(query_list)
 EndMacro
 
 Macro "close all"
