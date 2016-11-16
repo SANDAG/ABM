@@ -25,6 +25,7 @@ xcopy /Y .\common\gisdk\"*.*" %SCENARIO_FOLDER%\gisdk
 xcopy /Y .\common\bin\"*.*" %SCENARIO_FOLDER%\bin
 xcopy /Y .\conf\%YEAR%\"*.*" %SCENARIO_FOLDER%\conf
 xcopy /Y .\"*.txt" %SCENARIO_FOLDER%
+xcopy /Y .\common\output\"*.*" %SCENARIO_FOLDER%\output
 
 @echo copy year specific folders
 del %SCENARIO_FOLDER%\input /q

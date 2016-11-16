@@ -38,6 +38,8 @@ set MEMORY_DATAEXPORT_MIN=${dataexport.memory.min}
 set MEMORY_DATAEXPORT_MAX=${dataexport.memory.max}
 set MEMORY_EMFAC_MIN=${emfac.memory.min}
 set MEMORY_EMFAC_MAX=${emfac.memory.max}
+set MEMORY_VALIDATE_MIN=${validate.memory.min}
+set MEMORY_VALIDATE_MAX=${validate.memory.max}
 
 rem set main property file name
 set PROPERTIES_NAME=sandag_abm
