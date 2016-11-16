@@ -1,4 +1,4 @@
-package com.pb.sandag.validation;
+package org.sandag.abm.validation;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -130,7 +130,8 @@ public class MainApplication {
 		System.out.println();
 	}
 
-	public static void writeHighwayDataToExcel(String input_file_name, String sheet_to_modify, List<String> data, int scenario) throws IOException {
+	//Wu modified to allow writing out files to a different location other than input file location
+	public static void writeHighwayDataToExcel(String input_file_name, String sheet_to_modify, List<String> data, int scenario, String outputDir) throws IOException {
 		try {
 			InputStream input_file = new FileInputStream(new File(input_file_name));
 			XSSFWorkbook wb = new XSSFWorkbook(input_file);
@@ -212,7 +213,7 @@ public class MainApplication {
 			//forming output file name 
 			String name = input_file_name.substring(0, input_file_name.lastIndexOf("."));
 			String ext = input_file_name.substring(input_file_name.lastIndexOf(".") + 1);
-			String output_file_name = name + "_s" + String.valueOf(scenario) + "." + ext;
+			String output_file_name = outputDir+name + "_s" + String.valueOf(scenario) + "." + ext;
 
 			//writing out revised excel file
 			System.out.println("Writing highway data to excel file : " + output_file_name);
@@ -395,6 +396,9 @@ public class MainApplication {
 		ResourceBundle rb = ResourceBundle.getBundle( args[0] );
 
 		int scenario = Integer.valueOf(args[1]);
+		
+		//Wu modified to allow writing out files to a different location other than input file location		
+		String outputDir=args[2];
 
 		String sheet_to_modify = null;
 
@@ -403,12 +407,12 @@ public class MainApplication {
 		// revise summary by class workbook
 		String summary_by_class_file = rb.getString("highway.summary.class.template");
 		sheet_to_modify = rb.getString("sheet.to.modify.highway.summary");
-		writeHighwayDataToExcel(summary_by_class_file, sheet_to_modify, flow_data, scenario);
+		writeHighwayDataToExcel(summary_by_class_file, sheet_to_modify, flow_data, scenario,outputDir);
 
 		// revise summary by corridor workbook
 		String summary_by_corridor_file = rb.getString("highway.summary.corridor.template");
 		sheet_to_modify = rb.getString("sheet.to.modify.highway.summary");
-		writeHighwayDataToExcel(summary_by_corridor_file, sheet_to_modify, flow_data, scenario);
+		writeHighwayDataToExcel(summary_by_corridor_file, sheet_to_modify, flow_data, scenario, outputDir);
 
 		// revise transit validation workbook
 		String transit_validation_file = rb.getString("transit.validation.template");
@@ -417,7 +421,7 @@ public class MainApplication {
 		String name = transit_validation_file.substring(0, transit_validation_file.lastIndexOf("."));
 		String ext = transit_validation_file.substring(transit_validation_file.lastIndexOf(".") + 1);
 		String output_file_name = name + "_s" + String.valueOf(scenario) + "." + ext;
-		String transit_output_file = output_file_name;
+		String transit_output_file =outputDir+output_file_name;
 
 		List<String> boarding_by_route_data = getTransitBoardingByRouteData(scenario, rb);
 		sheet_to_modify = rb.getString("sheet.to.modify.transit.boarding.route");

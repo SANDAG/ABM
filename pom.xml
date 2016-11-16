@@ -35,6 +35,8 @@
         <dataexport.memory.max>30000m</dataexport.memory.max> 
         <emfac.memory.min>10000m</emfac.memory.min> 
         <emfac.memory.max>10000m</emfac.memory.max>  
+        <validate.memory.min>10000m</validate.memory.min> 
+        <validate.memory.max>10000m</validate.memory.max>  
         <matrix.server.port>1191</matrix.server.port>  
         <household.server.port>1129</household.server.port>  
         <java.32.port>1190</java.32.port>  
@@ -519,7 +521,27 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>                                                
+                    </execution>  
+                    <execution>
+                        <id>copy-validation-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${release.root}/validation</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>validation</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>*.*</include>          
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>                                               
                     <execution>
                         <id>copy-sql-resources</id>
                         <phase>package</phase>
@@ -621,8 +643,28 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>3.7</version>
+            <version>3.15</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml-schemas</artifactId>
+            <version>3.15</version>
+        </dependency>
+        <dependency>
+        <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.15</version>
+        </dependency>
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-collections4</artifactId>
+		    <version>4.1</version>
+		</dependency>
+		<dependency>
+		    <groupId>dom4j</groupId>
+		    <artifactId>dom4j</artifactId>
+		    <version>1.6</version>
+		</dependency>
         <dependency>
             <groupId>pb</groupId>
             <artifactId>sawdust-datatable</artifactId>
@@ -649,6 +691,11 @@
             <artifactId>sql-jdbc-4</artifactId>
             <version>3.0</version>
         </dependency>
+		<dependency>
+		    <groupId>org.apache.xmlbeans</groupId>
+		    <artifactId>xmlbeans</artifactId>
+		    <version>2.6.0</version>
+		</dependency>
         <dependency>
             <groupId>c3p0</groupId>
             <artifactId>c3p0</artifactId>
