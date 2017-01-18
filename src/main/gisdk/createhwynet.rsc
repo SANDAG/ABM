@@ -25,7 +25,7 @@ macro "run create hwy"
    if !ok then goto quit
 */
 
-   //RunMacro("HwycadLog",{"createhwynet.rsc: run create hwy","copy highway database"}) 
+   RunMacro("HwycadLog",{"createhwynet.rsc: run create hwy","copy highway database"}) 
    ok=RunMacro("copy database") 
    if !ok then goto quit
    
@@ -196,6 +196,9 @@ macro "copy database"
 	
 	// copy turns file
 	CopyFile(inputDir+"\\TURNS.DBF", outputDir+"\\TURNS.DBF")
+	
+	ok=1
+	return(ok)
 
 endMacro
 
