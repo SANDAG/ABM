@@ -281,7 +281,7 @@ static double ReliabilityFactor(double Flow, long link, float **Cost)
 
 			//fixed reliability is stored at the link level, and must be added to the result of the above v\c-based factor, and the result is multiplied by link length
 			reliabilityFactor = max(reliabilityFactor,(double)0.0);
-			reliabilityFactor = (reliabilityFactor + (double) Cost[STAT_RELIABILITY][link]) * (double) Cost[LENGTH][link];
+			reliabilityFactor = (reliabilityFactor + (double) Cost[STAT_RELIABILITY][link]) ;
 
 		}
 	}
