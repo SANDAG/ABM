@@ -56,7 +56,7 @@ class CreateScenarioGUI(Tkinter.Frame):
 
             Tkinter.Label(body, text=u"Version", font=("Helvetica", 8, 'bold')).grid(row=8)
             var = StringVar(root)
-            self.version="version_13_3_1_SNAPSHOT_test"
+            self.version="version_13_3_1_SNAPSHOT"
             optionList=["version_13_3_0", "version_13_3_1_SNAPSHOT"]
             option=Tkinter.OptionMenu(body,var,*optionList,command=self.setversion)
             option.config(width=50)
@@ -87,7 +87,7 @@ class CreateScenarioGUI(Tkinter.Frame):
 
             #validation section
             Tkinter.Label(body, text=divider, font=("Helvetica", 11, 'bold'), width=50, fg='royal blue').grid(row=13,columnspan=5)
-            Tkinter.Label(body, text=u"Validate a Scenario", font=("Helvetica", 10, 'bold')).grid(row=14,columnspan=3)
+            Tkinter.Label(body, text=u"Validate a 2012 Base Year Scenario", font=("Helvetica", 10, 'bold')).grid(row=14,columnspan=3)
             self.vbuttonVar= IntVar(root)
             self.vyButton=Radiobutton(body, text="Yes", variable=self.vbuttonVar, value=1, command=self.initValidation)
             self.vnButton=Radiobutton(body, text="No", variable=self.vbuttonVar, value=0,command=self.initValidation)
