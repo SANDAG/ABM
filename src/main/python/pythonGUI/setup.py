@@ -6,3 +6,4 @@ setup(windows=['./src/main/python/pythonGUI/parameterEditor.py'])
 setup(windows=['./src/main/python/pythonGUI/createStudyAndScenario.py'])
 setup(windows=['./src/main/python/pythonGUI/validatorGUI.py'])
 
+
