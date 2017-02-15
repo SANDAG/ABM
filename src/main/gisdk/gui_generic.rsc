@@ -13,16 +13,8 @@ button "Set Model Parameters" 0,0,30, 2 do
   ok = RunMacro("TCB Run Command", 1, "Create a scenario", runString)
 enditem
 
-// check inputs
-button "Check Inputs" 0, 3, 30, 2 do
-  RunMacro("TCB Init")
-  runString = "T:\\ABM\\release\\ABM\\${version}\\dist\\check.bat"
-  RunMacro("HwycadLog",{"gui.rsc:","Create a scenario"+" "+runString})
-  ok = RunMacro("TCB Run Command", 1, "Create a scenario", runString)
-enditem
-
 // run model
-button "Run Model" 0, 6, 30, 2 do
+button "Run Model" 0, 3, 30, 2 do
        //hideDbox()
        RunMacro("TCB Init")
        RunMacro("getpathdirectory")
@@ -38,7 +30,7 @@ button "Run Model" 0, 6, 30, 2 do
 enditem
 
 //exit
-button "Quit" 0, 9, 30, 2 do
+button "Quit" 0, 6, 30, 2 do
   RunMacro("G30 File Close All")
   Return()
 enditem
