@@ -2,6 +2,5 @@ set PROJECT_DRIVE=%1
 set PROJECT_DIRECTORY=%2
 
 %PROJECT_DRIVE%
-set "SCEN_DIR=%PROJECT_DRIVE%%PROJECT_DIRECTORY%"
-
-python.exe %SCEN_DIR%\python\parameterUpdate.py -p %SCEN_DIR%
+cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%\python
+python.exe parameterUpdate.py
