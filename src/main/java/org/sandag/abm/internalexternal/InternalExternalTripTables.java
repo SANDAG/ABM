@@ -534,7 +534,7 @@ public class InternalExternalTripTables
         String propertiesFile = null;
 
         logger.info(String.format(
-                "SANDAG Visitor Model Trip Table Generation Program using CT-RAMP version %s",
+                "SANDAG IE Model Trip Table Generation Program using CT-RAMP version %s",
                 CtrampApplication.VERSION));
 
         if (args.length == 0)

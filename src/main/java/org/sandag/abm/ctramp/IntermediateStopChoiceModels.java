@@ -2664,7 +2664,10 @@ public class IntermediateStopChoiceModels
                                                 .getNumOutboundStops() - 1, s.getOrig(), altMgra));
 
                 mcDmuObject.getDmuIndexValues().setDebug(true);
+                mcDmuObject.getHouseholdObject().setDebugChoiceModels(false);
+                /* suppress log: Wu
                 mcDmuObject.getHouseholdObject().setDebugChoiceModels(true);
+                */
                 mcDmuObject.getDmuIndexValues().setHHIndex(
                         s.getTour().getPersonObject().getHouseholdObject().getHhId());
                 ikSegment = logsumHelper.calculateTripMcLogsum(s.getOrig(), altMgra,
@@ -2795,9 +2798,12 @@ public class IntermediateStopChoiceModels
                                                 .getStopId() + 1), s.getTour()
                                                 .getNumOutboundStops() - 1, altMgra,
                                         halfTourFinalDest));
-
+                
                 mcDmuObject.getDmuIndexValues().setDebug(true);
+                mcDmuObject.getHouseholdObject().setDebugChoiceModels(false);
+                /* suppress log: Wu
                 mcDmuObject.getHouseholdObject().setDebugChoiceModels(true);
+                */
                 mcDmuObject.getDmuIndexValues().setHHIndex(
                         s.getTour().getPersonObject().getHouseholdObject().getHhId());
                 kjSegment = logsumHelper.calculateTripMcLogsum(altMgra, halfTourFinalDest,
