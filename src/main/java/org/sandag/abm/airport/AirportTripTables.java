@@ -412,7 +412,7 @@ public class AirportTripTables
                 float value = matrix[mode][mat].getValueAt(destinationTAZ, originTAZ);
                 matrix[mode][mat].setValueAt(destinationTAZ, originTAZ, (value + vehicleTrips));
             }
-            logger.info("End creating trip tables for period " + timePeriod);
+            //logger.info("End creating trip tables for period " + timePeriod);
         }
     }
 
