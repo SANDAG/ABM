@@ -20,7 +20,7 @@ class CreateScenarioGUI(Tkinter.Frame):
             divider=u"_"*120
             self.releaseDir='T:\\ABM\\release\\ABM'
             self.defaultScenarioDir="T:\\projects\\sr13"
-            self.defaultNetworkDir="T:\\projects\\sr13\\version13_3_0\\network_build"
+            self.defaultNetworkDir="T:\\projects\\sr13\\version13_3_1\\network_build"
 
             self.buttonVar= IntVar(root)
             self.yButton=Radiobutton(body, text="Yes", variable=self.buttonVar, value=1, command=self.initStudy)
