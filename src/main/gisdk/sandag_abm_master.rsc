@@ -260,18 +260,21 @@ Macro "Run SANDAG ABM"
       end
 
       //Run Truck Model
-      if skipTruck[iteration] = "false" then do
-	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - truck model"})
-	      ok = RunMacro("truck model",properties, iteration)
-	      if !ok then goto quit
- 
-    	     // reduce truck matrix precisions    
-    	     m={"dailyDistributionMatricesTruckEA.mtx","dailyDistributionMatricesTruckAM.mtx","dailyDistributionMatricesTruckMD.mtx","dailyDistributionMatricesTruckPM.mtx","dailyDistributionMatricesTruckEV.mtx"}
-    	     for i = 1 to m.length do
-    		RunMacro("HwycadLog",{"sandag_abm_master.rsc","reduce precision for:"+m[i]})
-    		RunMacro("reduce matrix precision",outputDir,m[i], precision)
-    	     end
-     end   
+      //Only run truck model if this iteration is the start iteration (not necessarily the 1st iteration)  @WSU 2-22-2017
+      if iteration = startFromIteration then do
+	      if skipTruck[iteration] = "false" then do
+		      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - truck model"})
+		      ok = RunMacro("truck model",properties, iteration)
+		      if !ok then goto quit
+	 
+	    	     // reduce truck matrix precisions    
+	    	     m={"dailyDistributionMatricesTruckEA.mtx","dailyDistributionMatricesTruckAM.mtx","dailyDistributionMatricesTruckMD.mtx","dailyDistributionMatricesTruckPM.mtx","dailyDistributionMatricesTruckEV.mtx"}
+	    	     for i = 1 to m.length do
+	    		RunMacro("HwycadLog",{"sandag_abm_master.rsc","reduce precision for:"+m[i]})
+	    		RunMacro("reduce matrix precision",outputDir,m[i], precision)
+	    	     end
+	     end 
+     end  
 
       //Construct trip tables
       if skipTripTableCreation[iteration] = "false" then do
