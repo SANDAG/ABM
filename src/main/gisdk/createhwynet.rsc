@@ -800,11 +800,11 @@ IFC   Description       Prime Arterial   Major Arterial   Collector   Local Coll
 2     Prime Arterial     2.5              2               2           2                2                 2             2                  2
 3     Major Arterial     2                2               2           2                2                 2             2                  2
 4     Collector          2                2               1.5         1.5              1.5               1.5           1.5                1.5
-5     Local Collector    2                1.5             1.25        1.25             1.25              1.25          1.25               1.25
-6     Rural Collector    2                1.5             1.25        1.25             1.25              1.25          1.25               1.25
-7     Local Road         2                1.5             1.25        1.25             1.25              1.25          1.25               1.25
-8     Freeway connector  2                1.5             1.25        1.25             1.25              1.25          1.25               1.25
-9     Local Ramp         2                1.5             1.25        1.25             1.25              1.25          1.25               1.25
+5     Local Collector    2                2               1.5         1.25             1.25              1.25          1.25               1.25
+6     Rural Collector    2                2               1.5         1.25             1.25              1.25          1.25               1.25
+7     Local Road         2                2               1.5         1.25             1.25              1.25          1.25               1.25
+8     Freeway connector  2                2               1.5         1.25             1.25              1.25          1.25               1.25
+9     Local Ramp         2                2               1.5         1.25             1.25              1.25          1.25               1.25
 
 Ramp with meter (abcnt = 4 or 5)    
    Cycle length = 2.5
@@ -958,16 +958,21 @@ Macro "Code VDF fields"
             if (link_lyr.[ABGC]<>0 and signal > 0) then do 
             
                if (link_lyr.[IFC] = 2) then do
-                  if (min_lc = 2)      then c_len = 2.5       //Prime arterial & Prime arterial
+                  if (max_lc = 2)      then c_len = 2.5       //Prime arterial & Prime arterial
                   else                      c_len = 2.0       //Prime arterial & anything lower
                end
                else if (link_lyr.[IFC] = 3) then do
                   if (max_lc > 3)      then c_len = 2.0       //Major arterial & anything lower than a Major arterial
                   else                      c_len = 2.0       //Major arterial & Prime arterial or Major arterial
                end
-               else if (link_lyr.[IFC] > 3) then do
-                  if (max_lc > 2)      then c_len = 1.5       //Anything lower than a Major arterial & anything lower than a Prime arterial 
-                  else                      c_len = 2.0       //Anything lower than a Major arterial & Prime arterial
+               else if (link_lyr.[IFC] = 4) then do
+                  if (min_lc < 4)      then c_len = 2.0       //Anything lower than a Major arterial & Prime arterial 
+                  else                      c_len = 1.5       //Anything lower than a Major arterial & anything lower than a Prime arterial
+               end
+               else if (link_lyr.[IFC] > 4) then do
+                  if (min_lc < 4)      then c_len = 2.0
+                  if (min_lc = 4)      then c_len = 1.5
+                  if (min_lc > 4)      then c_len = 1.25
                end
                               
                //update attributes                  
@@ -993,16 +998,21 @@ Macro "Code VDF fields"
                p_factor = 1.0
                   
                if (link_lyr.[IFC] = 2) then do
-                  if (min_lc = 2)      then c_len = 2.5       //Prime arterial & Prime arterial
+                  if (max_lc = 2)      then c_len = 2.5       //Prime arterial & Prime arterial
                   else                      c_len = 2.0       //Prime arterial & anything lower
                end
                else if (link_lyr.[IFC] = 3) then do
                   if (max_lc > 3)      then c_len = 2.0       //Major arterial & anything lower than a Major arterial
                   else                      c_len = 2.0       //Major arterial & Prime arterial or Major arterial
                end
-               else if (link_lyr.[IFC] > 3) then do
-                  if (max_lc > 2)      then c_len = 1.5       //Anything lower than a Major arterial & anything lower than a Prime arterial 
-                  else                      c_len = 2.0       //Anything lower than a Major arterial & Prime arterial
+               else if (link_lyr.[IFC] = 4) then do
+                  if (min_lc < 4)      then c_len = 2.0       //Anything lower than a Major arterial & Prime arterial 
+                  else                      c_len = 1.5       //Anything lower than a Major arterial & anything lower than a Prime arterial
+               end
+               else if (link_lyr.[IFC] > 4) then do
+                  if (min_lc < 4)      then c_len = 2.0
+                  if (min_lc = 4)      then c_len = 1.5
+                  if (min_lc > 4)      then c_len = 1.25
                end
               
                //update attributes                  
