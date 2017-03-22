@@ -151,32 +151,6 @@ Macro "Add transit time fields"
   
    // Add fields to the output table
    new_struct = strct + {
-                {"ABLOCTIME_EA", "real", 14, 6, "False",,,,,,, null},
-                {"BALOCTIME_EA", "real", 14, 6, "False",,,,,,, null},
-                {"ABPRETIME_EA", "real", 14, 6, "False",,,,,,, null},
-                {"BAPRETIME_EA", "real", 14, 6, "False",,,,,,, null},
-                {"ABLOCTIME_AM", "real", 14, 6, "False",,,,,,, null},
-                {"BALOCTIME_AM", "real", 14, 6, "False",,,,,,, null},
-                {"ABPRETIME_AM", "real", 14, 6, "False",,,,,,, null},
-                {"BAPRETIME_AM", "real", 14, 6, "False",,,,,,, null},
-                {"ABLOCTIME_MD", "real", 14, 6, "False",,,,,,, null},
-                {"BALOCTIME_MD", "real", 14, 6, "False",,,,,,, null},
-                {"ABPRETIME_MD", "real", 14, 6, "False",,,,,,, null},
-                {"BAPRETIME_MD", "real", 14, 6, "False",,,,,,, null},
-                {"ABLOCTIME_PM", "real", 14, 6, "False",,,,,,, null},
-                {"BALOCTIME_PM", "real", 14, 6, "False",,,,,,, null},
-                {"ABPRETIME_PM", "real", 14, 6, "False",,,,,,, null},
-                {"BAPRETIME_PM", "real", 14, 6, "False",,,,,,, null},
-                {"ABLOCTIME_EV", "real", 14, 6, "False",,,,,,, null},
-                {"BALOCTIME_EV", "real", 14, 6, "False",,,,,,, null},
-                {"ABPRETIME_EV", "real", 14, 6, "False",,,,,,, null},
-                {"BAPRETIME_EV", "real", 14, 6, "False",,,,,,, null}}
-
-   // Modify table structure
-   ModifyTable(vw, new_struct)
-
-   // Add fields to the output table
-   new_struct = new_struct + {
                 {"ABTM_EA", "real", 14, 6, "False",,,,,,, null},
                 {"BATM_EA", "real", 14, 6, "False",,,,,,, null},
                 {"ABTM_AM", "real", 14, 6, "False",,,,,,, null},
