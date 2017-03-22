@@ -1311,11 +1311,11 @@ macro "create hwynet"
         {"IFC", link_lyr+".IFC", link_lyr+".IFC"}, 
         {"IHOV", link_lyr+".IHOV", link_lyr+".IHOV"},
         {"COST", link_lyr+".COST", link_lyr+".COST"},
-        {"ABLN_EA",   link_lyr + ".ABLN_EA",   link_lyr + ".ABLN_EA"},
-        {"ABLN_AM",   link_lyr + ".ABLN_AM",   link_lyr + ".ABLN_AM"},
-        {"ABLN_MD",   link_lyr + ".ABLN_MD",   link_lyr + ".ABLN_MD"},
-        {"ABLN_PM",   link_lyr + ".ABLN_PM",   link_lyr + ".ABLN_PM"},
-        {"ABLN_EV",   link_lyr + ".ABLN_EV",   link_lyr + ".ABLN_EV"},
+        {"*LN_EA",   link_lyr + ".ABLN_EA",   link_lyr + ".BALN_EA"},
+        {"*LN_AM",   link_lyr + ".ABLN_AM",   link_lyr + ".BALN_AM"},
+        {"*LN_MD",   link_lyr + ".ABLN_MD",   link_lyr + ".BALN_MD"},
+        {"*LN_PM",   link_lyr + ".ABLN_PM",   link_lyr + ".BALN_PM"},
+        {"*LN_EV",   link_lyr + ".ABLN_EV",   link_lyr + ".BALN_EV"},
         {"ITOLL_EA",  link_lyr + ".ITOLL_EA",  link_lyr + ".ITOLL_EA"},  // Oct-08-2010, added to include toll+cost
         {"ITOLL_AM",  link_lyr + ".ITOLL_AM",  link_lyr + ".ITOLL_AM"},  // Oct-08-2010, added to include toll+cost
         {"ITOLL_MD",  link_lyr + ".ITOLL_MD",  link_lyr + ".ITOLL_MD"},  // Oct-08-2010, added to include toll+cost  
@@ -1444,6 +1444,7 @@ macro "create hwynet"
    Opts.Input.Database = db_file
    Opts.Input.Network = net_file
    Opts.Input.[Centroids Set] = {db_node_lyr, node_lyr, "Selection", "select * where ID <="+i2s(mxzone)}
+   Opts.Global.[Spc Turn Pen Method] = 3
    Opts.Input.[Def Turn Pen Table] = {d_tp_tb}
    Opts.Input.[Spc Turn Pen Table] = {s_tp_tb}
    Opts.Field.[Link type] = "IFC"
