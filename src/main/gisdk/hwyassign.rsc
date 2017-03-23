@@ -251,6 +251,7 @@ Macro "hwy assignment" (args)
     Opts.Input.Network = net_file
     Opts.Input.[Toll Set] = {db_link_lyr, link_lyr}
     Opts.Input.[Centroids Set] = {db_node_lyr, node_lyr, "Selection", "select * where ID <="+i2s(mxzone)}
+    Opts.Global.[Spc Turn Pen Method] = 3
     Opts.Input.[Def Turn Pen Table] = {d_tp_tb}
     Opts.Input.[Spc Turn Pen Table] = {s_tp_tb}
     Opts.Field.[Link type] = "IFC"
