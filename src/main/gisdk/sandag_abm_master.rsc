@@ -192,16 +192,20 @@ Macro "Run SANDAG ABM"
          status = RunProgram("cmd.exe /c copy "+fromDir+"\\nmot*.mtx "+toDir+"\\nmot*.mtx",)
          status = RunProgram("cmd.exe /c copy "+fromDir+"\\othr*.mtx "+toDir+"\\othr*.mtx",)
          status = RunProgram("cmd.exe /c copy "+fromDir+"\\trip*.mtx "+toDir+"\\trip*.mtx",)
-         status = RunProgram("cmd.exe /c copy "+fromDir+"\\*Trips.csv "+toDir+"\\*Trips.csv",)
-         status = RunProgram("cmd.exe /c copy "+fromDir+"\\*airport_out.csv "+toDir+"\\*airport_out.csv",)
+         status = RunProgram("cmd.exe /c copy "+fromDir+"\\internalExternalTrips.csv "+toDir+"\\internalExternalTrips.csv",)
+         status = RunProgram("cmd.exe /c copy "+fromDir+"\\airport_out.csv "+toDir+"\\airport_out.csv",)
+         status = RunProgram("cmd.exe /c copy "+fromDir+"\\crossBorderTrips.csv "+toDir+"\\crossBorderTrips.csv",)       
+         status = RunProgram("cmd.exe /c copy "+fromDir+"\\visitorTrips.csv "+toDir+"\\visitorTrips.csv",)  
 
          status = RunProgram("cmd.exe /c del "+fromDir+"\\auto*.mtx",)
          status = RunProgram("cmd.exe /c del "+fromDir+"\\tran*.mtx",)
          status = RunProgram("cmd.exe /c del "+fromDir+"\\nmot*.mtx",)
          status = RunProgram("cmd.exe /c del "+fromDir+"\\othr*.mtx",)
          status = RunProgram("cmd.exe /c del "+fromDir+"\\trip*.mtx",)
-         status = RunProgram("cmd.exe /c del "+fromDir+"\\*Trips.csv",)
-         status = RunProgram("cmd.exe /c del "+fromDir+"\\*airport_out.csv",)
+         status = RunProgram("cmd.exe /c del "+fromDir+"\\internalExternalTrips.csv",)
+         status = RunProgram("cmd.exe /c del "+fromDir+"\\airport_out.csv",)
+         status = RunProgram("cmd.exe /c del "+fromDir+"\\crossBorderTrips.csv",)
+         status = RunProgram("cmd.exe /c del "+fromDir+"\\visitorTrips.csv",)
         
       end
 
