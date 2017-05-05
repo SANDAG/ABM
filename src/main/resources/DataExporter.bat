@@ -6,4 +6,4 @@ cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 call bin\CTRampEnv.bat
 set JAR_LOCATION=%PROJECT_DIRECTORY%/application
 
-%JAVA_64_PATH%\bin\java -Xms%MEMORY_DATAEXPORT_MIN% -Xmx%MEMORY_DATAEXPORT_MAX% -cp application/*;conf/;%TRANSCAD_PATH%/GISDK/Matrices/* -Djava.library.path=%JAR_LOCATION% org.sandag.abm.reporting.DataExporter
+%JAVA_64_PATH%\bin\java -Xms%MEMORY_DATAEXPORT_MIN% -Xmx%MEMORY_DATAEXPORT_MAX% -cp application/*;conf/ -Djava.library.path=%JAR_LOCATION% org.sandag.abm.reporting.DataExporter

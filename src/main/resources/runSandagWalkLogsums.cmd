@@ -21,14 +21,14 @@ set JAR_LOCATION=%PROJECT_DIRECTORY%/application
 set LIB_JAR_PATH=%JAR_LOCATION%\*
 
 rem ### Define the CLASSPATH environment variable for the classpath needed in this model run.
-set CLASSPATH=%TRANSCAD_PATH%/GISDK/Matrices/TranscadMatrix.jar;%CONFIG%;%RUNTIME%;%LIB_JAR_PATH%;
+set CLASSPATH=%CONFIG%;%RUNTIME%;%LIB_JAR_PATH%;
 
 rem ### Save the name of the PATH environment variable, so it can be restored at the end of the model run.
 set OLDPATH=%PATH%
 
 rem ### Change the PATH environment variable so that JAVA_HOME is listed first in the PATH.
 rem ### Doing this ensures that the JAVA_HOME path we defined above is the on that gets used in case other java paths are in PATH.
-set PATH=%TRANSCAD_PATH%;%JAVA_PATH%\bin;%OLDPATH%
+set PATH=%JAVA_PATH%\bin;%OLDPATH%
 
 %PROJECT_DRIVE%
 cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%

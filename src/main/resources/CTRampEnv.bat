@@ -1,7 +1,6 @@
 rem this file has environment variables for CT-RAMP batch files
 
 rem set ports
-set JAVA_32_PORT=${java.32.port}
 set MATRIX_MANAGER_PORT=${matrix.server.port}
 set HH_MANAGER_PORT=${household.server.port}
 
@@ -60,6 +59,3 @@ set MAPANDRUN=${MAPANDRUN}
 
 rem set location of java
 set JAVA_64_PATH=${JAVA_64_PATH}
-set JAVA_32_PATH=${JAVA_32_PATH}
-set JAVA_HOME_32=%JAVA_32_PATH%
-set TRANSCAD_PATH=${TRANSCAD_PATH}
