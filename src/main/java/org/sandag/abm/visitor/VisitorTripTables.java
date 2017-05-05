@@ -449,21 +449,8 @@ public class VisitorTripTables
     {
 
         String className = MatrixDataServer.MATRIX_DATA_SERVER_NAME;
-
         MatrixDataServerRmi matrixServer = new MatrixDataServerRmi(serverAddress, serverPort,
                 MatrixDataServer.MATRIX_DATA_SERVER_NAME);
-
-        try
-        {
-            // create the concrete data server object
-            matrixServer.start32BitMatrixIoServer(mt);
-        } catch (RuntimeException e)
-        {
-            matrixServer.stop32BitMatrixIoServer();
-            logger.error(
-                    "RuntimeException caught making remote method call to start 32 bit mitrix in remote MatrixDataServer.",
-                    e);
-        }
 
         // bind this concrete object with the cajo library objects for managing
         // RMI
@@ -475,7 +462,6 @@ public class VisitorTripTables
             logger.error(String.format(
                     "UnknownHostException. serverAddress = %s, serverPort = %d -- exiting.",
                     serverAddress, serverPort), e);
-            matrixServer.stop32BitMatrixIoServer();
             throw new RuntimeException();
         }
 
@@ -487,7 +473,6 @@ public class VisitorTripTables
             logger.error(String.format(
                     "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",
                     serverAddress, serverPort), e);
-            matrixServer.stop32BitMatrixIoServer();
             throw new RuntimeException();
         }
 
@@ -580,7 +565,6 @@ public class VisitorTripTables
                     tripTables.ms = new MatrixDataServerRmi(matrixServerAddress, serverPort,
                             MatrixDataServer.MATRIX_DATA_SERVER_NAME);
                     tripTables.ms.testRemote("VisitorTripTables");
-                    tripTables.ms.start32BitMatrixIoServer(mt, "VisitorTripTables");
 
                     // mdm = MatrixDataManager.getInstance();
                     // mdm.setMatrixDataServerObject(ms);
@@ -591,10 +575,6 @@ public class VisitorTripTables
         } catch (Exception e)
         {
 
-            if (matrixServerAddress.equalsIgnoreCase("localhost"))
-            {
-                matrixServer.stop32BitMatrixIoServer();
-            }
             logger.error(
                     String.format("exception caught running ctramp model components -- exiting."),
                     e);
@@ -604,17 +584,6 @@ public class VisitorTripTables
 
         tripTables.createTripTables(mt);
 
-        // if a separate process for running matrix data mnager was started,
-        // we're
-        // done with it, so close it.
-        if (matrixServerAddress.equalsIgnoreCase("localhost"))
-        {
-            matrixServer.stop32BitMatrixIoServer();
-        } else
-        {
-            if (!matrixServerAddress.equalsIgnoreCase("none"))
-                tripTables.ms.stop32BitMatrixIoServer("VisitorTripTables");
-        }
     }
 
     /**

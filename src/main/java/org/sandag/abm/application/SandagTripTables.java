@@ -34,39 +34,7 @@ public class SandagTripTables
 
     // Some parameters
     private int[]                   modeIndex;                                                      // an
-                                                                                                     // index
-                                                                                                     // array,
-                                                                                                     // dimensioned
-                                                                                                     // by
-                                                                                                     // number
-                                                                                                     // of
-                                                                                                     // total
-                                                                                                     // modes,
-                                                                                                     // returns
-                                                                                                     // 0=auto
-                                                                                                     // modes,
-                                                                                                     // 1=non-motor,
-                                                                                                     // 2=transit,
-                                                                                                     // 3=
-                                                                                                     // other
     private int[]                   matrixIndex;                                                    // an
-                                                                                                     // index
-                                                                                                     // array,
-                                                                                                     // dimensioned
-                                                                                                     // by
-                                                                                                     // number
-                                                                                                     // of
-                                                                                                     // modes,
-                                                                                                     // returns
-                                                                                                     // the
-                                                                                                     // element
-                                                                                                     // of
-                                                                                                     // the
-                                                                                                     // matrix
-                                                                                                     // array
-                                                                                                     // to
-                                                                                                     // store
-                                                                                                     // value
 
     // array modes: AUTO, NON-MOTORIZED, TRANSIT, OTHER
     private int                     autoModes               = 0;
@@ -89,31 +57,12 @@ public class SandagTripTables
     private TapDataManager          tapManager;
     private SandagModelStructure    modelStructure;
 
-    private float[][]               CBDVehicles;                                                    // an
-                                                                                                     // array
-                                                                                                     // of
-                                                                                                     // parked
-                                                                                                     // vehicles
-                                                                                                     // in
-                                                                                                     // MGRAS
-                                                                                                     // by
-                                                                                                     // period
+    private float[][]               CBDVehicles;                                                    // an                                                                                                 // period
     private float[][]               PNRVehicles;                                                    // an
-                                                                                                     // array
-                                                                                                     // of
-                                                                                                     // parked
-                                                                                                     // vehicles
-                                                                                                     // at
-                                                                                                     // TAPs
-                                                                                                     // by
-                                                                                                     // period
-
     private float                   sampleRate;
     private int                     iteration;
-
     private MatrixType              mt;
     private MatrixDataServerRmi     ms;
-    private static MatrixIO32BitJvm ioVm32Bit               = null;
 
     private String[]                indivColumns            = {"stop_period", "orig_mgra",
             "dest_mgra", "trip_mode", "inbound", "trip_board_tap", "trip_alight_tap",
@@ -124,17 +73,7 @@ public class SandagTripTables
             "parking_mgra", "tour_purpose", "num_participants"};
 
     private HashMap<String, Float>  averageOcc3Plus;                                                // a
-                                                                                                     // HashMap
-                                                                                                     // of
-                                                                                                     // average
-                                                                                                     // occupancies
-                                                                                                     // for
-                                                                                                     // 3+
-                                                                                                     // vehicles
-                                                                                                     // by
-                                                                                                     // tour
-                                                                                                     // purpose
-
+                                                                                                     // HashMap                                                                                                 // purpose
     /**
      * Constructor.
      * 
@@ -326,6 +265,9 @@ public class SandagTripTables
         jointTripFile = removeFileExtension(jointTripFile) + iterationString + jntExtension;
         jointTripData = openTripFile(directory + jointTripFile, jointColumns);
 
+	    // connect to matrix server
+        connectToMatrixServer();
+        
         // Iterate through periods so that we don't have to keep
         // trip tables for all periods in memory.
         for (int i = 0; i < numberOfPeriods; ++i)
@@ -623,40 +565,19 @@ public class SandagTripTables
         writer.writeMatrices(names, m);
     }
 
-    /**
-     * Start a 32-bit matrix server to write matrices.
-     * 
-     * @param mType
-     *            Matrix type
-     */
-    private void start32BitMatrixIoServer(MatrixType mType)
+	/**
+	 * Connect to matrix server
+	 */
+    private void connectToMatrixServer()
     {
-
-        // start the matrix I/O server process
-        ioVm32Bit = MatrixIO32BitJvm.getInstance();
-        ioVm32Bit.setSizeInMegaBytes(1024);
-        ioVm32Bit.startJVM32();
-
-        // establish that matrix reader and writer classes will use the RMI
-        // versions
-        ioVm32Bit.startMatrixDataServer(mType);
-        logger.info("matrix data server 32 bit process started.");
-
-    }
-
-    /**
-     * Stop the 32-bit matrix server.
-     */
-    private void stop32BitMatrixIoServer()
-    {
-
-        // stop the matrix I/O server process
-        ioVm32Bit.stopMatrixDataServer();
-
-        // close the JVM in which the RMI reader/writer classes were running
-        ioVm32Bit.stopJVM32();
-        logger.info("matrix data server 32 bit process stopped.");
-
+    	
+		// get matrix server address and port
+		String matrixServerAddress = Util.getStringValueFromPropertyMap(rbMap, "RunModel.MatrixServerAddress");
+		int serverPort = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap, "RunModel.MatrixServerPort"));
+		
+		ms = new MatrixDataServerRmi(matrixServerAddress, serverPort, MatrixDataServer.MATRIX_DATA_SERVER_NAME);
+		ms.testRemote(Thread.currentThread().getName());
+        logger.info("connected to matrix data server");
     }
 
     /**
@@ -790,106 +711,7 @@ public class SandagTripTables
         this.iteration = iteration;
     }
 
-    /**
-     * Helper method for establishing connection to the matrix server. If "none"
-     * was specified, default server is started on localhost. Otherwise, a
-     * server at the IP address and port specified is assumed to be running, and
-     * this code will start the server and stop it when finished.
-     * 
-     * @param pMap
-     *            is the proprty file HashMap
-     */
-    private void setupMatrixServer(HashMap<String, String> pMap)
-    {
 
-        String matrixServerAddress = "";
-        int serverPort = 0;
-        try
-        {
-            // get matrix server address. if "none" is specified, no server will
-            // be
-            // started, and matrix io will ocurr within the current process.
-            matrixServerAddress = Util.getStringValueFromPropertyMap(pMap,
-                    "RunModel.MatrixServerAddress");
-            try
-            {
-                // get matrix server port.
-                serverPort = Util.getIntegerValueFromPropertyMap(pMap, "RunModel.MatrixServerPort");
-            } catch (RuntimeException e)
-            {
-                serverPort = MATRIX_DATA_SERVER_PORT;
-            }
-        } catch (RuntimeException e)
-        {
-            matrixServerAddress = "localhost";
-            serverPort = MATRIX_DATA_SERVER_PORT;
-        }
-
-        String matrixTypeName = Util.getStringValueFromPropertyMap(pMap, "Results.MatrixType");
-        mt = MatrixType.lookUpMatrixType(matrixTypeName);
-
-        try
-        {
-
-            if (!matrixServerAddress.equalsIgnoreCase("none"))
-            {
-
-                if (matrixServerAddress.equalsIgnoreCase("localhost"))
-                {
-
-                    try
-                    {
-                        // create the concrete data server object
-                        start32BitMatrixIoServer(mt);
-                    } catch (RuntimeException e)
-                    {
-                        logger.error(
-                                "RuntimeException caught starting 64 bit matrix server on localhost -- exiting.",
-                                e);
-                        stop32BitMatrixIoServer();
-                    }
-
-                } else
-                {
-                    try
-                    {
-                        // create the RMI data server object
-                        ms = new MatrixDataServerRmi(matrixServerAddress, serverPort,
-                                MatrixDataServer.MATRIX_DATA_SERVER_NAME);
-                        ms.testRemote("SandagTripTables");
-                        ms.start32BitMatrixIoServer(mt, "SandagTripTables");
-                    } catch (RuntimeException e)
-                    {
-                        logger.error("RuntimeException caught starting matrix server: "
-                                + matrixServerAddress + ":" + serverPort
-                                + " from RMI object -- exiting.", e);
-                        throw new RuntimeException();
-                    }
-                }
-
-            }
-
-        } catch (Exception e)
-        {
-
-            if (!matrixServerAddress.equalsIgnoreCase("localhost"))
-            {
-                ms.stop32BitMatrixIoServer();
-            } else
-            {
-                stop32BitMatrixIoServer();
-            }
-
-            logger.error(String.format("exception caught setting up matrix server -- exiting."), e);
-            throw new RuntimeException();
-
-        }
-
-    }
-
-    /**
-     * @param args
-     */
     public static void main(String[] args)
     {
 
@@ -898,8 +720,6 @@ public class SandagTripTables
 
         logger.info(String.format("SANDAG Trip Table Generation Program using CT-RAMP version %s",
                 CtrampApplication.VERSION));
-
-        logger.info(String.format("Building trip tables"));
 
         if (args.length == 0)
         {
@@ -929,19 +749,9 @@ public class SandagTripTables
         logger.info("-iteration  " + iteration);
 
         SandagTripTables tripTables = new SandagTripTables(pMap, sampleRate, iteration);
-
-        tripTables.setupMatrixServer(pMap);
-
+        String matrixTypeName = Util.getStringValueFromPropertyMap(pMap, "Results.MatrixType");
+        tripTables.mt = MatrixType.lookUpMatrixType(matrixTypeName);        
         tripTables.createTripTables(tripTables.mt);
-
-        // We're done with the matrix server conection, so close it
-        if (tripTables.ms == null)
-        {
-            tripTables.stop32BitMatrixIoServer();
-        } else
-        {
-            tripTables.ms.stop32BitMatrixIoServer("SandagTripTables");
-        }
 
     }
 

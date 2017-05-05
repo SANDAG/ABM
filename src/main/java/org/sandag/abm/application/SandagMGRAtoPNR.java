@@ -26,7 +26,7 @@ import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
 import org.sandag.abm.reporting.CsvRow;
 import org.sandag.abm.reporting.DataExporter;
-import org.sandag.abm.reporting.TranscadMatrixDao;
+import org.sandag.abm.reporting.OMXMatrixDao;
 
 import com.pb.common.matrix.Matrix;
 import com.pb.common.matrix.MatrixReader;
@@ -57,7 +57,7 @@ public class SandagMGRAtoPNR {
     private Matrix timeMtx;
     
     private final Properties        properties;
-    private final TranscadMatrixDao mtxDao;
+    private final OMXMatrixDao mtxDao;
 	
     private static final String FORMAL_PREMIUM 		= "taps.formal.premium.maxDist";	//8.0f;
 	private static final String FORMAL_EXPRESS 		= "taps.formal.express.maxDist";	//8.0f;
@@ -89,7 +89,7 @@ public class SandagMGRAtoPNR {
     
     private static final String     PROJECT_PATH_PROPERTY_TOKEN = "%project.folder%";
     
-    public SandagMGRAtoPNR(Properties theProperties, TranscadMatrixDao aMtxDao, String projectPath, HashMap<String, String> rbMap)
+    public SandagMGRAtoPNR(Properties theProperties, OMXMatrixDao aMtxDao, String projectPath, HashMap<String, String> rbMap)
     {
         this.properties = theProperties;
         this.mtxDao = aMtxDao;
@@ -277,7 +277,7 @@ public class SandagMGRAtoPNR {
 			 properties.setProperty((String) key, value.replace(PROJECT_PATH_PROPERTY_TOKEN, appPath));
 		 }
 
-		 TranscadMatrixDao mtxDao = new TranscadMatrixDao(properties);
+		 OMXMatrixDao mtxDao = new OMXMatrixDao(properties);
 		 pMap = ResourceUtil.getResourceBundleAsHashMap(propertiesFile);
 		 SandagMGRAtoPNR accessWriter = new SandagMGRAtoPNR(properties, mtxDao, appPath, pMap);   
 		 accessWriter.nearestTAPs();

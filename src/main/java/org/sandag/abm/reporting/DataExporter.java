@@ -44,13 +44,13 @@ public final class DataExporter
     private static final String     TOD_TOKEN                   = "%TOD%";
 
     private final Properties        properties;
-    private final TranscadMatrixDao mtxDao;
+    private final OMXMatrixDao mtxDao;
     private final File              projectPathFile;
     private final int               feedbackIterationNumber;
     private final Set<String>       tables;
     private final String[]          timePeriods                 = ModelStructure.MODEL_PERIOD_LABELS;
 
-    public DataExporter(Properties theProperties, TranscadMatrixDao aMtxDao, String projectPath,
+    public DataExporter(Properties theProperties, OMXMatrixDao aMtxDao, String projectPath,
             int feedbackIterationNumber)
     {
         this.properties = theProperties;
@@ -1978,7 +1978,7 @@ public final class DataExporter
                     value.replace(PROJECT_PATH_PROPERTY_TOKEN, appPath));
         }
 
-        TranscadMatrixDao mtxDao = new TranscadMatrixDao(properties);
+        OMXMatrixDao mtxDao = new OMXMatrixDao(properties);
 
         DataExporter dataExporter = new DataExporter(properties, mtxDao, appPath, feedbackIteration);
         if (definedTables.contains("accessibilities"))

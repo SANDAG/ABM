@@ -35,7 +35,7 @@ set PATH=%TRANSCAD_PATH%
 rem IF THERE ARE PROBLEMS CONNECTING TO THE 32-BIT MATRIX SERVER, TRY SHORTENING THE PATH!!
 
 rem java -Dname=p%2 -Xdebug -Xrunjdwp:transport=dt_socket,address=1049,server=y,suspend=y -server -Xms8000m -Xmx8000m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j_mtx.xml -DJAVA_HOME_32=%JAVA_32_PATH% -DJAVA_32_PORT=1170 org.sandag.abm.ctramp.MatrixDataServer -hostname %HOST_IP_ADDRESS% -port %HOST_MATRIX_PORT% -label "SANDAG Matrix Sever"
-start %JAVA_64_PATH%\bin\java -server -Dname=p%JAVA_32_PORT% -Xms%MEMORY_MTXMGR_MIN% -Xmx%MEMORY_MTXMGR_MAX% -Dlog4j.configuration=log4j_mtx.xml -DJAVA_HOME_32=%JAVA_64_PATH% -DJAVA_32_PORT=%JAVA_32_PORT% org.sandag.abm.ctramp.MatrixDataServer -hostname %HOST_IP_ADDRESS% -port %MATRIX_MANAGER_PORT% -ram 1500 -label "SANDAG Matrix Server"
+start %JAVA_64_PATH%\bin\java -server -Dname=p%JAVA_32_PORT% -Xms%MEMORY_MTXMGR_MIN% -Xmx%MEMORY_MTXMGR_MAX% -Dlog4j.configuration=log4j_mtx.xml -DJAVA_HOME_32=%JAVA_64_PATH% -DJAVA_32_PORT=%JAVA_32_PORT% -Djava.library.path=%JAR_LOCATION% org.sandag.abm.ctramp.MatrixDataServer -hostname %HOST_IP_ADDRESS% -port %MATRIX_MANAGER_PORT% -ram 1500 -label "SANDAG Matrix Server"
 
 set CLASSPATH=%OLDCLASSPATH%
 set PATH=%OLDPATH%

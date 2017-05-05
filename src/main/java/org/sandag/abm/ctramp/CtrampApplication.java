@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import org.sandag.abm.accessibilities.StoredUtilityData;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
 import com.pb.common.calculator.MatrixDataManager;
+import com.pb.common.calculator.MatrixDataServerIf;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.datafile.DataFile;
 import com.pb.common.datafile.DataReader;
@@ -35,6 +37,9 @@ import com.pb.common.util.ResourceUtil;
 // import
 // org.sandag.abm.ctramp.HouseholdDataWriter;
 // import org.sandag.abm.ctramp.IndividualMandatoryTourFrequencyModel;
+
+import gnu.cajo.invoke.Remote;
+import gnu.cajo.utils.ItemServer;
 
 // 1.0.1 - 09/21/09 - starting point for SANDAG AB model implementation - AO
 // model
@@ -147,8 +152,8 @@ public class CtrampApplication
     private ResourceBundle                             resourceBundle;
     private HashMap<String, String>                    propertyMap;
 
-    private MatrixIO32BitJvm                           ioVm32Bit;
-    private MatrixDataServerRmi                        ms;
+    private MatrixDataServerIf                         ms;
+    private MatrixDataManager                          mdm;
 
     private ModelStructure                             modelStructure;
     protected String                                   projectDirectory;
@@ -209,7 +214,8 @@ public class CtrampApplication
                         "RunModel.MatrixServerPort");
             } catch (RuntimeException e)
             {
-                serverPort = MATRIX_DATA_SERVER_PORT;
+                // if no matrix server address entry is found, leave undefined --
+                // it's eithe not needed or show could create an error.
             }
         } catch (RuntimeException e)
         {
@@ -217,96 +223,62 @@ public class CtrampApplication
             serverPort = MATRIX_DATA_SERVER_PORT;
         }
 
-        String matrixTypeName = Util.getStringValueFromPropertyMap(propertyMap,
-                "Results.MatrixType");
-        MatrixType mt = MatrixType.lookUpMatrixType(matrixTypeName);
+        MatrixDataServer matrixServer = null;
 
-        if (mt != MatrixType.BINARY)
+        try
         {
 
-            try
+            if (!matrixServerAddress.equalsIgnoreCase("none"))
             {
+
                 if (matrixServerAddress.equalsIgnoreCase("localhost"))
                 {
-
-                    try
-                    {
-                        // create the concrete data server object
-                        start32BitMatrixIoServer(mt);
-                    } catch (RuntimeException e)
-                    {
-                        logger.error("RuntimeException caught starting 32 bit Matrix IO Process.",
-                                e);
-                        stop32BitMatrixIoServer();
-                    }
-
+                    matrixServer = startMatrixServerProcess(matrixServerAddress, serverPort);
+                    ms = matrixServer;
                 } else
                 {
-
-                    ms = new MatrixDataServerRmi(matrixServerAddress, serverPort,
-                            MatrixDataServer.MATRIX_DATA_SERVER_NAME);
+                    ms = new MatrixDataServerRmi(matrixServerAddress, serverPort, MatrixDataServer.MATRIX_DATA_SERVER_NAME);
                     ms.testRemote(Thread.currentThread().getName());
-                    ms.start32BitMatrixIoServer(mt);
-
-                    MatrixDataManager mdm = MatrixDataManager.getInstance();
+                    
+                    mdm = MatrixDataManager.getInstance();
                     mdm.setMatrixDataServerObject(ms);
-
                 }
-
-            } catch (Exception e)
-            {
-
-                if (mt != MatrixType.BINARY)
-                {
-                    stop32BitMatrixIoServer();
-                } else
-                {
-                    ms.stop32BitMatrixIoServer();
-                }
-
-                logger.error(
-                        String.format("exception caught starting MatrixDataServer -- exiting."), e);
-                throw new RuntimeException();
 
             }
 
-            // get the property that indicates if the MatrixDataServer should be
-            // cleared.
-            // default is to clear the manager
-            boolean clearMatrixMgr = true;
-            try
-            {
-                clearMatrixMgr = Util.getBooleanValueFromPropertyMap(propertyMap,
-                        PROPERTIES_CLEAR_MATRIX_MANAGER_ON_START);
-            } catch (RuntimeException e)
-            {
-                // catch the RuntimeExcption that's thrown if the property key
-                // is not found in the properties file.
-                // no need to anything - the boolean clearMatrixMgr was
-                // initialized to the default action.
-            }
+        } catch (Exception e)
+        {
 
-            // if the property to clear matrices is true and a remote
-            // MatrixDataServer is being used, clear the matrices.
-            // if matrices are being read directly into the current process, no
-            // need to clear.
-            if (clearMatrixMgr && !matrixServerAddress.equalsIgnoreCase("localhost")) ms.clear();
+            logger.error(String
+                    .format("exception caught running ctramp model components -- exiting."), e);
+            throw new RuntimeException();
 
         }
+
+        // get the property that indicates if the MatrixDataServer should be
+        // cleared.
+        // default is to clear the manager
+        boolean clearMatrixMgr = true;
+        try
+        {
+            clearMatrixMgr = Util.getBooleanValueFromPropertyMap(propertyMap,
+                    PROPERTIES_CLEAR_MATRIX_MANAGER_ON_START);
+        } catch (RuntimeException e)
+        {
+            // catch the RuntimeExcption that's thrown if the property key
+            // is not found in the properties file.
+            // no need to anything - the boolean clearMatrixMgr was
+            // initialized to the default action.
+        }
+
+        // if the property to clear matrices is true and a remote
+        // MatrixDataServer is being used, clear the matrices.
+        // if matrices are being read directly into the current process, no
+        // need to clear.
+        if (clearMatrixMgr && !matrixServerAddress.equalsIgnoreCase("localhost")) ms.clear();
 
         // run core activity based model for the specified iteration
         runModelSequence(globalIterationNumber, householdDataManager, dmuFactory);
-
-        // if a separate process for running matrix data mnager was started,
-        // we're
-        // done with it, so close it.
-        if (matrixServerAddress.equalsIgnoreCase("localhost"))
-        {
-            stop32BitMatrixIoServer();
-        } else if (ms != null)
-        {
-            ms.stop32BitMatrixIoServer();
-        }
 
     }
 
@@ -902,42 +874,39 @@ public class CtrampApplication
         return projectDirectory;
     }
 
-    /**
-     * Start a 32-bit matrix server to write matrices.
-     * 
-     * @param mType
-     *            Matrix type
-     */
-    private void start32BitMatrixIoServer(MatrixType mType)
+    private MatrixDataServer startMatrixServerProcess(String serverAddress, int serverPort)
     {
 
-        // start the matrix I/O server process
-        ioVm32Bit = MatrixIO32BitJvm.getInstance();
-        ioVm32Bit.setSizeInMegaBytes(1024);
-        ioVm32Bit.startJVM32();
+        String className = MatrixDataServer.MATRIX_DATA_SERVER_NAME;
+        MatrixDataServer matrixServer = new MatrixDataServer();
 
-        // establish that matrix reader and writer classes will use the RMI
-        // versions
-        ioVm32Bit.startMatrixDataServer(mType);
-        logger.info("matrix data server 32 bit process started.");
+        // bind this concrete object with the cajo library objects for managing RMI
+        try
+        {
+            Remote.config(serverAddress, serverPort, null, 0);
+        } catch (Exception e)
+        {
+            logger.error(String.format(
+                    "UnknownHostException. serverAddress = %s, serverPort = %d -- exiting.",
+                    serverAddress, serverPort), e);
+            throw new RuntimeException();
+        }
+
+        try
+        {
+            ItemServer.bind(matrixServer, className);
+        } catch (RemoteException e)
+        {
+            logger.error(String.format(
+                    "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",
+                    serverAddress, serverPort), e);
+            throw new RuntimeException();
+        }
+
+        return matrixServer;
 
     }
-
-    /**
-     * Stop the 32-bit matrix server.
-     */
-    private void stop32BitMatrixIoServer()
-    {
-
-        // stop the matrix I/O server process
-        ioVm32Bit.stopMatrixDataServer();
-
-        // close the JVM in which the RMI reader/writer classes were running
-        ioVm32Bit.stopJVM32();
-        logger.info("matrix data server 32 bit process stopped.");
-
-    }
-
+    
     public void restartModels(HouseholdDataManagerIf householdDataManager)
     {
 

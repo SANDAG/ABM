@@ -147,21 +147,8 @@ public class InternalExternalModel
     {
 
         String className = MatrixDataServer.MATRIX_DATA_SERVER_NAME;
-
         MatrixDataServerRmi matrixServer = new MatrixDataServerRmi(serverAddress, serverPort,
                 MatrixDataServer.MATRIX_DATA_SERVER_NAME);
-
-        try
-        {
-            // create the concrete data server object
-            matrixServer.start32BitMatrixIoServer(mt);
-        } catch (RuntimeException e)
-        {
-            matrixServer.stop32BitMatrixIoServer();
-            logger.error(
-                    "RuntimeException caught making remote method call to start 32 bit mitrix in remote MatrixDataServer.",
-                    e);
-        }
 
         // bind this concrete object with the cajo library objects for managing
         // RMI
@@ -173,7 +160,6 @@ public class InternalExternalModel
             logger.error(String.format(
                     "UnknownHostException. serverAddress = %s, serverPort = %d -- exiting.",
                     serverAddress, serverPort), e);
-            matrixServer.stop32BitMatrixIoServer();
             throw new RuntimeException();
         }
 
@@ -185,7 +171,6 @@ public class InternalExternalModel
             logger.error(String.format(
                     "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",
                     serverAddress, serverPort), e);
-            matrixServer.stop32BitMatrixIoServer();
             throw new RuntimeException();
         }
 
@@ -285,7 +270,6 @@ public class InternalExternalModel
                     internalExternalModel.ms = new MatrixDataServerRmi(matrixServerAddress,
                             serverPort, MatrixDataServer.MATRIX_DATA_SERVER_NAME);
                     internalExternalModel.ms.testRemote("InternalExternalModel");
-                    internalExternalModel.ms.start32BitMatrixIoServer(mt, "InternalExternalModel");
 
                     // these methods need to be called to set the matrix data
                     // manager in the matrix data server
@@ -298,10 +282,6 @@ public class InternalExternalModel
         } catch (Exception e)
         {
 
-            if (matrixServerAddress.equalsIgnoreCase("localhost"))
-            {
-                matrixServer.stop32BitMatrixIoServer();
-            }
             logger.error(
                     String.format("exception caught running ctramp model components -- exiting."),
                     e);
@@ -310,19 +290,7 @@ public class InternalExternalModel
         }
 
         internalExternalModel.runModel();
-
-        // if a separate process for running matrix data mnager was started,
-        // we're
-        // done with it, so close it.
-        if (matrixServerAddress.equalsIgnoreCase("localhost"))
-        {
-            matrixServer.stop32BitMatrixIoServer();
-        } else
-        {
-            if (!matrixServerAddress.equalsIgnoreCase("none"))
-                internalExternalModel.ms.stop32BitMatrixIoServer("InternalExternalModel");
-        }
-
+        
     }
 
 }

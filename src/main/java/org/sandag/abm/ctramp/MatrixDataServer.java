@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 import com.pb.common.calculator.DataEntry;
 import com.pb.common.calculator.MatrixDataServerIf;
 import com.pb.common.matrix.Matrix;
-import com.pb.common.matrix.MatrixIO32BitJvm;
 import com.pb.common.matrix.MatrixReader;
 import com.pb.common.matrix.MatrixType;
 import com.pb.common.matrix.MatrixWriter;
@@ -31,7 +30,7 @@ public class MatrixDataServer
 
     private Object                     objectLock;
 
-    private static final String        VERSION                    = "2.2";
+    private static final String        VERSION                    = "2.3_OMX_Only";
 
     // These are used if the server is started manually by running this class's
     // main(). If so, these must be defined consistently with
@@ -44,21 +43,13 @@ public class MatrixDataServer
                                                                           .getCanonicalName();
     private static final String        MATRIX_DATA_SERVER_LABEL   = "matrix server";
 
-    private MatrixIO32BitJvm           ioVm32Bit                  = null;
-
     private HashMap<String, DataEntry> matrixEntryMap;
     private HashMap<String, Matrix>    matrixMap;
-
-    private int                        ramFor32BitProcess;
 
     public MatrixDataServer()
     {
 
-        // start the 32 bit JVM used specifically for running matrix io classes
-        ioVm32Bit = MatrixIO32BitJvm.getInstance();
-
-        // create the HashMap objects to keep track of matrix data read by the
-        // server
+        // create the HashMap objects to keep track of matrix data read by the server
         matrixEntryMap = new HashMap<String, DataEntry>();
         matrixMap = new HashMap<String, Matrix>();
 
@@ -101,37 +92,13 @@ public class MatrixDataServer
                 matrix = matrixMap.get(name);
             } else
             {
+                
+            	//create 64bit matrix reader
                 String fileName = matrixEntry.fileName;
-                if (matrixEntry.format.equalsIgnoreCase("emme2"))
-                {
-                    MatrixReader mr = MatrixReader.createReader(MatrixType.EMME2,
-                            new File(fileName));
-                    matrix = mr.readMatrix(matrixEntry.matrixName);
-                } else if (matrixEntry.format.equalsIgnoreCase("binary"))
-                {
-                    MatrixReader mr = MatrixReader.createReader(MatrixType.BINARY, new File(
-                            fileName));
-                    matrix = mr.readMatrix();
-                } else if (matrixEntry.format.equalsIgnoreCase("zip")
-                        || matrixEntry.format.equalsIgnoreCase("zmx"))
-                {
-                    MatrixReader mr = MatrixReader.createReader(MatrixType.ZIP, new File(fileName));
-                    matrix = mr.readMatrix();
-                } else if (matrixEntry.format.equalsIgnoreCase("tpplus"))
-                {
-                    MatrixReader mr = MatrixReader.createReader(MatrixType.TPPLUS, new File(
-                            fileName));
-                    matrix = mr.readMatrix(matrixEntry.matrixName);
-                } else if (matrixEntry.format.equalsIgnoreCase("transcad"))
-                {
-                    MatrixReader mr = MatrixReader.createReader(MatrixType.TRANSCAD, new File(
-                            fileName));
-                    matrix = mr.readMatrix(matrixEntry.matrixName);
-                } else
-                {
-                    throw new RuntimeException("unsupported matrix type: " + matrixEntry.format);
-                }
-
+                MatrixReader mr = MatrixReader.createReader(MatrixType.OMX, new File(fileName));
+                matrix = mr.readMatrix(matrixEntry.matrixName);
+                System.out.println("Read " + matrixEntry.matrixName + " as " + name + " from " + fileName);
+                
                 // Use token name from control file for matrix name (not name
                 // from underlying matrix)
                 matrix.setName(matrixEntry.name);
@@ -153,23 +120,34 @@ public class MatrixDataServer
      * @param m
      *            An array of matrices
      */
-    public void writeMatrixFile(String fileName, Matrix[] m, MatrixType mt)
+    public void writeMatrixFile(String fileName, Matrix[] m)
     {
 
-        // auto trips
         File outFile = new File(fileName);
-        MatrixWriter writer = MatrixWriter.createWriter(mt, outFile);
+        MatrixWriter writer = MatrixWriter.createWriter(MatrixType.OMX, outFile);
         String[] names = new String[m.length];
 
         for (int i = 0; i < m.length; i++)
         {
             names[i] = m[i].getName();
-            // writer.writeMatrix( names[i], m[i] );
         }
 
         writer.writeMatrices(names, m);
     }
 
+    /**
+     * Utility method to write a set of matrices to disk.
+     * 
+     * @param fileName
+     *            The file name to write to.
+     * @param m
+     *            An array of matrices
+     */
+    public void writeMatrixFile(String fileName, Matrix[] m, MatrixType mt)
+    {
+    	writeMatrixFile(fileName, m);
+    }
+    
     public void clear()
     {
         if (matrixMap != null)
@@ -191,80 +169,10 @@ public class MatrixDataServer
         }
     }
 
-    public void start32BitMatrixIoServer(MatrixType mType)
-    {
-
-        // start the matrix I/O server process
-        ioVm32Bit.setSizeInMegaBytes(ramFor32BitProcess);
-        ioVm32Bit.startJVM32();
-
-        // establish that matrix reader and writer classes will use the RMI
-        // versions
-        // for TPPLUS format matrices
-        ioVm32Bit.startMatrixDataServer(mType);
-        logger.info("matrix data server 32 bit process started.");
-
-    }
-
-    public void start32BitMatrixIoServer(MatrixType mType, String label)
-    {
-
-        // start the matrix I/O server process
-        ioVm32Bit.setSizeInMegaBytes(ramFor32BitProcess);
-        ioVm32Bit.startJVM32();
-
-        // establish that matrix reader and writer classes will use the RMI
-        // versions
-        // for TPPLUS format matrices
-        ioVm32Bit.startMatrixDataServer(mType);
-        logger.info("matrix data server 32 bit process initialized by " + label + ".");
-
-    }
-
-    public void stop32BitMatrixIoServer()
-    {
-
-        // stop the matrix I/O server process
-        ioVm32Bit.stopMatrixDataServer();
-
-        // close the JVM in which the RMI reader/writer classes were running
-        ioVm32Bit.stopJVM32();
-        logger.info("matrix data server 32 bit process stopped.");
-
-    }
-
-    public void stop32BitMatrixIoServer(String label)
-    {
-
-        // stop the matrix I/O server process
-        ioVm32Bit.stopMatrixDataServer();
-
-        // close the JVM in which the RMI reader/writer classes were running
-        ioVm32Bit.stopJVM32();
-        logger.info("matrix data server 32 bit process released by " + label + ".");
-
-    }
-
-    public void setRam(int ram)
-    {
-        ramFor32BitProcess = ram;
-    }
-
-    // private static void usage( String[] args ) {
-    // logger.error( String.format( "improper arguments." ) );
-    // if (args.length == 0 ) {
-    // logger.error( String.format( "no properties file specified." ) );
-    // logger.error( String.format(
-    // "a properties file base name (without .properties extension) must be specified as the first argument."
-    // ) );
-    // }
-    // else if (args.length >= 1 ) {
-    // logger.error( String.format( "improper properties file specified." ) );
-    // logger.error( String.format(
-    // "a properties file base name (without .properties extension) must be specified as the first argument."
-    // ) );
-    // }
-    // }
+    //Empty methods to maintain compatibility
+    public void start32BitMatrixIoServer(MatrixType mType) {}
+    public void stop32BitMatrixIoServer() {}
+    public void setRam(int ram) {}
 
     public static void main(String[] args) throws Exception
     {
@@ -284,24 +192,8 @@ public class MatrixDataServer
         }
 
         MatrixDataServer matrixServer = new MatrixDataServer();
-        matrixServer.setRam(ram);
 
-        try
-        {
-
-            // create the concrete data server object
-            matrixServer.start32BitMatrixIoServer(MatrixType.TRANSCAD);
-
-        } catch (RuntimeException e)
-        {
-            matrixServer.stop32BitMatrixIoServer();
-            System.out
-                    .println("RuntimeException caught in com.pb.models.ctramp.MatrixDataServer.main() -- exiting.");
-            e.printStackTrace();
-        }
-
-        // bind this concrete object with the cajo library objects for managing
-        // RMI
+        // bind this concrete object with the cajo library objects for managing RMI
         Remote.config(serverAddress, serverPort, null, 0);
         ItemServer.bind(matrixServer, className);
 
@@ -312,15 +204,5 @@ public class MatrixDataServer
                 serverAddress, serverPort));
 
     }
-
-    /**
-     * This method is included in the Interface this class implements, but is not used anywhere by the SANDAG model.
-     * It is included hear to satisfy the interface only.
-     */
-	@Override
-	public void writeMatrixFile(String fileName, Matrix[] m) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }
