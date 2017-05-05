@@ -237,7 +237,7 @@ Macro "US to SD External Trip Model"  //modified the input file and code accordi
     
     
     wrkTripVector = wrkTotal * GetMatrixVector(wrkProb,{{"Row", controlTaz[i]}}) 
-    nonTripVector = nonTotal * GetMatrixVector(wrkProb,{{"Row", controlTaz[i]}})
+    nonTripVector = nonTotal * GetMatrixVector(nonProb,{{"Row", controlTaz[i]}})
     	
     SetMatrixVector(wrkCurrenPA, wrkTripVector, {{"Row",controlTaz[i]}})
     SetMatrixVector(nonCurrenPA, nonTripVector, {{"Row",controlTaz[i]}})
