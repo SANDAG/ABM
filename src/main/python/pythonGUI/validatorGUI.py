@@ -1,5 +1,6 @@
 __author__ = 'wsu'
 #Wu.Sun@sandag.org 2-10-2017
+#wsu updated 5/2/2017 for release 13.3.2
 import Tkinter
 import Tkconstants
 import tkFileDialog
@@ -17,7 +18,7 @@ class CreateScenarioGUI(Tkinter.Frame):
             sticky = Tkconstants.E + Tkconstants.W
             body.grid_columnconfigure(1, weight=2)
 
-            self.version="version_13_3_1"
+            self.version="version_13_3_2"
 
             #divider line
             divider=u"_"*120
