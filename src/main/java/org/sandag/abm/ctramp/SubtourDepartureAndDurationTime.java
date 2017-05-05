@@ -786,7 +786,6 @@ public class SubtourDepartureAndDurationTime
         MatrixDataServerIf ms = new MatrixDataServerRmi(matrixServerAddress,
                 Integer.parseInt(matrixServerPort), MatrixDataServer.MATRIX_DATA_SERVER_NAME);
         ms.testRemote(Thread.currentThread().getName());
-        ms.start32BitMatrixIoServer(MatrixType.TRANSCAD);
 
         MatrixDataManager mdm = MatrixDataManager.getInstance();
         mdm.setMatrixDataServerObject(ms);
@@ -949,8 +948,6 @@ public class SubtourDepartureAndDurationTime
          * (VariableTable) todDmuObject);
          * System.out.println("Subtour departure and duration UEC passed");
          */
-
-        ms.stop32BitMatrixIoServer();
 
     }
 

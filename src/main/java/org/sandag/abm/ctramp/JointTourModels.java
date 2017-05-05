@@ -852,7 +852,6 @@ public class JointTourModels
         MatrixDataServerIf ms = new MatrixDataServerRmi(matrixServerAddress,
                 Integer.parseInt(matrixServerPort), MatrixDataServer.MATRIX_DATA_SERVER_NAME);
         ms.testRemote(Thread.currentThread().getName());
-        ms.start32BitMatrixIoServer(MatrixType.TRANSCAD);
 
         MatrixDataManager mdm = MatrixDataManager.getInstance();
         mdm.setMatrixDataServerObject(ms);
@@ -909,8 +908,6 @@ public class JointTourModels
          * (VariableTable)dmuObject);
          * System.out.println("Joint tour participation choice UEC passed.");
          */
-
-        ms.stop32BitMatrixIoServer();
 
     }
 

@@ -563,16 +563,6 @@ public class MandatoryAccessibilities
     }
 
     /**
-     * Stop the matrix server
-     */
-    public void stopMatrixServer()
-    {
-        logger.info("Stopping matrix server");
-        matrixServer.stop32BitMatrixIoServer();
-
-    }
-
-    /**
      * Start the matrix server
      * 
      * @param rb
@@ -588,19 +578,6 @@ public class MandatoryAccessibilities
 
         matrixServer = new MatrixDataServer();
 
-        try
-        {
-
-            // create the concrete data server object
-            matrixServer.start32BitMatrixIoServer(MatrixType.TRANSCAD);
-        } catch (RuntimeException e)
-        {
-            matrixServer.stop32BitMatrixIoServer();
-            logger.error(
-                    "RuntimeException caught in com.pb.sandag.accessibilities.main() -- exiting.",
-                    e);
-        }
-
         // bind this concrete object with the cajo library objects for managing
         // RMI
         try
@@ -611,7 +588,6 @@ public class MandatoryAccessibilities
             logger.error(String.format(
                     "UnknownHostException. serverAddress = %s, serverPort = %d -- exiting.",
                     serverAddress, serverPort), e);
-            matrixServer.stop32BitMatrixIoServer();
             throw new RuntimeException();
         }
 
@@ -623,7 +599,6 @@ public class MandatoryAccessibilities
             logger.error(String.format(
                     "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",
                     serverAddress, serverPort), e);
-            matrixServer.stop32BitMatrixIoServer();
             throw new RuntimeException();
         }
 
@@ -643,8 +618,6 @@ public class MandatoryAccessibilities
         ma.readData(rbMap);
         ma.buildAccessibilityComponents(rbMap);
         ma.calculateMandatoryAccessibilities(rbMap);
-
-        if (ma.os64bit) ma.stopMatrixServer();
 
     }
 

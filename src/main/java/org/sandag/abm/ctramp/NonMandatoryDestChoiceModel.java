@@ -1170,7 +1170,6 @@ public class NonMandatoryDestChoiceModel
         MatrixDataServerIf ms = new MatrixDataServerRmi(matrixServerAddress,
                 Integer.parseInt(matrixServerPort), MatrixDataServer.MATRIX_DATA_SERVER_NAME);
         ms.testRemote(Thread.currentThread().getName());
-        ms.start32BitMatrixIoServer(MatrixType.TRANSCAD);
 
         MatrixDataManager mdm = MatrixDataManager.getInstance();
         mdm.setMatrixDataServerObject(ms);
@@ -1299,8 +1298,6 @@ public class NonMandatoryDestChoiceModel
 
         testObject.applyIndivModel(hh[0]);
         testObject.applyJointModel(hh[0]);
-
-        ms.stop32BitMatrixIoServer();
 
     }
 

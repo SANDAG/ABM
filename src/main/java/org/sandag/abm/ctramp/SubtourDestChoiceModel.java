@@ -1018,7 +1018,6 @@ public class SubtourDestChoiceModel
         MatrixDataServerIf ms = new MatrixDataServerRmi(matrixServerAddress,
                 Integer.parseInt(matrixServerPort), MatrixDataServer.MATRIX_DATA_SERVER_NAME);
         ms.testRemote(Thread.currentThread().getName());
-        ms.start32BitMatrixIoServer(MatrixType.TRANSCAD);
 
         MatrixDataManager mdm = MatrixDataManager.getInstance();
         mdm.setMatrixDataServerObject(ms);
@@ -1175,8 +1174,6 @@ public class SubtourDestChoiceModel
          * (VariableTable) dcSoaDmuObject);
          * System.out.println("Subtour destination choice SOA UEC passed");
          */
-
-        ms.stop32BitMatrixIoServer();
 
     }
 

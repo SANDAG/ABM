@@ -19,7 +19,6 @@ import com.pb.common.calculator.MatrixDataManager;
 import com.pb.common.calculator.MatrixDataServerIf;
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
-import com.pb.common.matrix.MatrixIO32BitJvm;
 import com.pb.common.matrix.MatrixType;
 import com.pb.common.util.ResourceUtil;
 
@@ -464,8 +463,6 @@ public final class XBorderSkimsAppender
             System.exit(-1);
         }
 
-        MatrixIO32BitJvm ioVm32Bit = null;
-
         try
         {
 
@@ -504,18 +501,7 @@ public final class XBorderSkimsAppender
                     e.printStackTrace();
                     throw new RuntimeException();
                 }
-            } else
-            {
-                System.out.println("starting matrix data server in a 32 bit process.");
-                // start the 32 bit JVM used specifically for running matrix io
-                // classes
-                ioVm32Bit = MatrixIO32BitJvm.getInstance();
-                ioVm32Bit.startJVM32();
-
-                // establish that matrix reader and writer classes will use the
-                // RMI versions for TRANSCAD format matrices
-                ioVm32Bit.startMatrixDataServer(MatrixType.TRANSCAD);
-            }
+            } 
 
             TazDataManager tazs = TazDataManager.getInstance(propertyMap);
             MgraDataManager mgraManager = MgraDataManager.getInstance(propertyMap);
@@ -525,36 +511,8 @@ public final class XBorderSkimsAppender
             XBorderSkimsAppender appender = new XBorderSkimsAppender();
             appender.runSkimsAppender(rb);
 
-            if (ms == null)
-            {
-                // establish that matrix reader and writer classes will not use
-                // the RMI versions any longer.
-                // local matrix i/o, as specified by setting types, is now the
-                // default again.
-                ioVm32Bit.stopMatrixDataServer();
-
-                // close the JVM in which the RMI reader/writer classes were
-                // running
-                ioVm32Bit.stopJVM32();
-                System.out.println("matrix data server 32 bit process stopped.");
-            } else
-            {
-                ms.stop32BitMatrixIoServer();
-                System.out.println("matrix data server 32 bit process stopped.");
-            }
-
         } catch (RuntimeException e)
         {
-
-            // establish that matrix reader and writer classes will not use the
-            // RMI versions any longer.
-            // local matrix i/o, as specified by setting types, is now the
-            // default again.
-            ioVm32Bit.stopMatrixDataServer();
-
-            // close the JVM in which the RMI reader/writer classes were running
-            ioVm32Bit.stopJVM32();
-            System.out.println("matrix data server 32 bit process stopped.");
 
             e.printStackTrace();
 

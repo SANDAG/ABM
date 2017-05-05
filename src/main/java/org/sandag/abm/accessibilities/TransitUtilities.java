@@ -691,19 +691,6 @@ public class TransitUtilities
 
             matrixServer = new MatrixDataServer();
 
-            try
-            {
-
-                // create the concrete data server object
-                matrixServer.start32BitMatrixIoServer(MatrixType.TRANSCAD);
-            } catch (RuntimeException e)
-            {
-                matrixServer.stop32BitMatrixIoServer();
-                System.out
-                        .println("RuntimeException caught in com.pb.sandag.accessibilities.main() -- exiting.");
-                e.printStackTrace();
-            }
-
             // bind this concrete object with the cajo library objects for
             // managing
             // RMI
@@ -716,7 +703,6 @@ public class TransitUtilities
                         "UnknownHostException. serverAddress = %s, serverPort = %d -- exiting.",
                         serverAddress, serverPort));
                 e.printStackTrace();
-                matrixServer.stop32BitMatrixIoServer();
                 throw new RuntimeException();
             }
 
@@ -729,7 +715,6 @@ public class TransitUtilities
                         "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",
                         serverAddress, serverPort));
                 e.printStackTrace();
-                matrixServer.stop32BitMatrixIoServer();
                 throw new RuntimeException();
             }
         }
@@ -737,11 +722,6 @@ public class TransitUtilities
         TransitUtilities wtu = new TransitUtilities(
                 ResourceUtil.changeResourceBundleIntoHashMap(rb));
         wtu.calculateUtilityComponents();
-
-        if (os64bit)
-        {
-            matrixServer.stop32BitMatrixIoServer();
-        }
-
+        
     }
 }
