@@ -1333,8 +1333,7 @@ Macro "splitIntoTimeOfDay" (period)
        mc = CreateMatrixCurrency(mat, mode[i], "Rows", "Columns", )
        rows = {"1", "2", "3", "4", "5"}
        operation = {"Multiply", borderCorrection[period]}
-       ok = FillMatrix(mc, rows, null, operation, )
-       if !ok then goto quit
+       FillMatrix(mc, rows, null, operation, )
     end
 
     run_ok=1
