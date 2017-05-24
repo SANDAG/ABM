@@ -5,9 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import org.sandag.abm.active.*;
 import static org.junit.Assert.*;
-import org.junit.*;
+import org.junit.Ignore;
 
-@Ignore public class SandagBikeNetworkFactoryTest
+public class SandagBikeNetworkFactoryTest
 {
 	/*
     final static String RESOURCE_BUNDLE_NAME = "sandag_abm_active_test";
