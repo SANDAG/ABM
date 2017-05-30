@@ -5,7 +5,7 @@
 #//// San Diego Association of Governments and partner agencies.            ///
 #//// This copyright notice must be preserved.                              ///
 #////                                                                       ///
-#//// import_from_tcoved.py                                                 ///
+#//// import_network.py                                                     ///
 #////                                                                       ///
 #////                                                                       ///
 #////                                                                       ///
@@ -18,20 +18,22 @@ import inro.emme.datatable as _dt
 import inro.emme.network as _network
 from inro.emme.core.exception import Error as _NetworkError
 
-from osgeo import ogr as _ogr
 from itertools import izip as _izip
-import traceback as _traceback
 from collections import defaultdict as _defaultdict, OrderedDict
-import traceback as _traceback
+from contextlib import contextmanager as _context
 import dbflib as _dbflib
-import os
 from copy import deepcopy as _copy
-from math import ceil as _ceiling
+import json as _json
 
+from math import ceil as _ceiling
+import numpy as _np
 import heapq as _heapq
 
+import traceback as _traceback
+import os
 
-class ImportTCOVED(_m.Tool()):
+
+class ImportNetwork(_m.Tool()):
 
     source = _m.Attribute(unicode)
     traffic_scenario_id = _m.Attribute(int)
@@ -40,17 +42,31 @@ class ImportTCOVED(_m.Tool()):
     overwrite = _m.Attribute(bool)
     description = _m.Attribute(unicode)
     save_data_tables = _m.Attribute(bool)
+    data_table_name = _m.Attribute(unicode)
+    coaster_node_ids = _m.Attribute(unicode)
 
     tool_run_msg = ""
 
+    @_m.method(return_type=_m.UnicodeType)
+    def tool_run_msg_status(self):
+        return self.tool_run_msg
+
     def __init__(self):
         self._log = []
+        self._error = []
+        self.overwrite = False
+        self.description = ""
+        self.coaster_node_ids = """{"sorrento_valley": 6866}"""
+        self.data_table_name = ""
 
     def page(self):
         pb = _m.ToolPageBuilder(self)
-        pb.title = "Import from TCOVED"
+        pb.title = "Import network"
         pb.description = """
-        Create an Emme network from the TCOVED format files.<br>
+        Create an Emme network from the E00 and associated files 
+        generated from TCOVED. 
+        The timed transfer is stored in a data table with the suffix "_timed_xfers".
+        <br>
         <div style="text-align:left">
         The following files are used:
         <br>
@@ -62,11 +78,12 @@ class ImportTCOVED(_m.Tool()):
                 <li>trrt.csv</li>
                 <li>trlink.csv</li>
                 <li>trstop.csv</li>
+                <li>timexfer.csv</li>
                 <li>MODE5TOD.dbf</li>
             </ul>
         </div>
         """
-        pb.branding_text = "- SANDAG - Network"
+        pb.branding_text = "- SANDAG - Import"
 
         if self.tool_run_msg != "":
             pb.tool_run_status(self.tool_run_msg_status)
@@ -78,51 +95,52 @@ class ImportTCOVED(_m.Tool()):
         pb.add_text_box("transit_scenario_id", size=6, title="Scenario ID for transit (optional):")
         pb.add_text_box("merged_scenario_id", size=6, title="Scenario ID for merged network:")
         pb.add_text_box("description", size=80, title="Scenario description:")
+        pb.add_text_box("coaster_node_ids", multi_line=True,  title="Coaster node IDs:", 
+            note="The AN / BN fields for corresponding stations in the trcov.e00 file. "
+                 "Used to initialize the coaster fares. "
+                 "Defaults are for the 2012 base network.")
 
         pb.add_checkbox("save_data_tables", title=" ", label="Save reference data tables of TCOVED data")
-        pb.add_checkbox("overwrite", title=" ", label="Overwrite existing scenarios")
+        pb.add_text_box("data_table_name", size=80, title="Name for data tables:",
+            note="Prefix name to use for all saved data tables")
+        pb.add_checkbox("overwrite", title=" ", label="Overwrite existing scenarios and data tables")
 
         return pb.render()
 
     def run(self):
         self.tool_run_msg = ""
         try:
-            self.execute()
+            with self.setup():
+                self.execute()
+            run_msg = "Network import complete"
             if self._error:
-                run_msg = "Network import completed with %s errors. See logbook for details" % len(self._error)
-            else:
-                run_msg = "Network import complete"
-
+                run_msg += " with %s errors. See logbook for details" % len(self._error)
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
         except Exception as error:
             self.tool_run_msg = _m.PageBuilder.format_exception(
                 error, _traceback.format_exc(error))
             raise
-        finally:            
-            self.log_report()
 
-    @_m.method(return_type=_m.UnicodeType)
-    def tool_run_msg_status(self):
-        return self.tool_run_msg
-
-    def __call__(self, source, traffic_scenario_id, transit_scenario_id, merged_scenario_id, 
-                 description, save_data_tables, overwrite):
+    def __call__(self, source, 
+                 traffic_scenario_id=None, transit_scenario_id=None, merged_scenario_id=None, 
+                 description="", coaster_node_ids=None, save_data_tables=False, 
+                 data_table_name="", overwrite=False):
+        # TODO: should take a particular emmebank as input
         self.source = source
         self.traffic_scenario_id = traffic_scenario_id
-        self.transit_scenario_id = transit_scenario_id 
+        self.transit_scenario_id = transit_scenario_id
         self.merged_scenario_id = merged_scenario_id 
         self.description = description
+        self.coaster_node_ids = coaster_node_ids
         self.save_data_tables = save_data_tables
+        self.data_table_name = data_table_name
         self.overwrite = overwrite
 
-        try:
+        with self.setup():
             self.execute()
-        finally:            
-            self.log_report()
 
-    def execute(self):
-        create_scenario = _m.Modeller().tool(
-            "inro.emme.data.scenario.create_scenario")
+    @_context
+    def setup(self):
         self._log = []
         self._error = []
         attributes = OrderedDict([
@@ -132,10 +150,23 @@ class ImportTCOVED(_m.Tool()):
             ("transit_scenario_id ", self.transit_scenario_id),
             ("merged_scenario_id ", self.merged_scenario_id),
             ("description", self.description),
+            ("coaster_node_ids", self.coaster_node_ids),
             ("save_data_tables", self.save_data_tables),
+            ("data_table_name", self.data_table_name),
             ("overwrite", self.overwrite),
         ])
+        self._log = [{
+            "content": attributes.items(), 
+            "type": "table", "header": ["name", "value"],
+            "title": "Input attribute values"
+        }]
+        with _m.logbook_trace("Import from TCOVED", attributes=attributes):
+            try:
+                yield
+            finally:            
+                self.log_report()
 
+    def execute(self):
         traffic_attr_map = {
             "LINK": OrderedDict([
                 ("HWYCOV-ID", ("@tcov_id",             "TWO_WAY", "EXTRA", "SANDAG-assigned link ID")),
@@ -188,21 +219,22 @@ class ImportTCOVED(_m.Tool()):
                 ("@cost_operating", ("@cost_operating","DERIVED", "EXTRA",    "Fuel and maintenance cost")),
             ])
         }
-        time_period_attrs = {
-            "@toll_flag":         "toll plus 10000 ln_rsct=4",
-            "@cost_auto":         "toll + cost autos",
-            "@cost_hov":          "toll (non-mngd) + cost HOV",
-            "@cost_med_truck":    "toll + cost medium trucks",
-            "@cost_hvy_truck":    "toll + cost heavy trucks",
-            "@cycle":             "cycle length (minutes)",
-            "@green_to_cycle":    "green to cycle ratio",
-            "@capacity_link":     "mid-link capacity",
-            "@capacity_inter":    "approach capacity",
-            "@toll":              "toll cost (cent)",
-            "@lane":              "number of lanes",
-            "@time_link":         "link time in minutes",
-            "@time_inter":        "intersection delay time",
-        }
+        time_period_attrs = OrderedDict([
+            #("@toll_flag",         "toll plus 10000 ln_rsct=4"),
+            # Toll flag no longer used
+            ("@cost_auto",         "toll + cost autos"),
+            ("@cost_hov",          "toll (non-mngd) + cost HOV"),
+            ("@cost_med_truck",    "toll + cost medium trucks"),
+            ("@cost_hvy_truck",    "toll + cost heavy trucks"),
+            ("@cycle",             "cycle length (minutes)"),
+            ("@green_to_cycle",    "green to cycle ratio"),
+            ("@capacity_link",     "mid-link capacity"),
+            ("@capacity_inter",    "approach capacity"),
+            ("@toll",              "toll cost (cent)"),
+            ("@lane",              "number of lanes"),
+            ("@time_link",         "link time in minutes"),
+            ("@time_inter",        "intersection delay time"),
+        ])
         time_name = {
             "_ea": "Early AM ", "_am": "AM Peak ", "_md": "Mid-day ", "_pm": "PM Peak ", "_ev": "Evening "
         }
@@ -229,12 +261,12 @@ class ImportTCOVED(_m.Tool()):
                 ("IHOV",      ("@lane_restriction_tr",  "TWO_WAY", "EXTRA", "Link operation type")),
                 ("ISPD",      ("@speed_posted_tr_l",    "TWO_WAY", "EXTRA", "Posted speed limit (mph)")),
                 ("IMED",      ("@median",               "TWO_WAY", "EXTRA", "Median type")),
-                ("TMO",       ("time_link_op",          "ONE_WAY", "INTERNAL", "Expanded to EA, MD and EV")),
-                ("TMEA",      ("@time_link_ea",         "DERIVED", "EXTRA", "Early AM link time in minutes")),
-                ("TMA",       ("@time_link_am",         "ONE_WAY", "EXTRA", "AM Peak link time in minutes")),
-                ("TMMD",      ("@time_link_md",         "DERIVED", "EXTRA", "Mid-day link time in minutes")),
-                ("TMP",       ("@time_link_pm",         "ONE_WAY", "EXTRA", "PM Peak link time in minutes")),
-                ("TMEV",      ("@time_link_ev",         "DERIVED", "EXTRA", "Evening link time in minutes")),
+                ("TMO",       ("trtime_link_op",          "ONE_WAY", "INTERNAL", "Expanded to EA, MD and EV")),
+                ("TMEA",      ("@trtime_link_ea",       "DERIVED", "EXTRA", "Early AM transit link time in minutes")),
+                ("TMA",       ("@trtime_link_am",       "ONE_WAY", "EXTRA", "AM Peak transit link time in minutes")),
+                ("TMMD",      ("@trtime_link_md",       "DERIVED", "EXTRA", "Mid-day transit link time in minutes")),
+                ("TMP",       ("@trtime_link_pm",       "ONE_WAY", "EXTRA", "PM Peak transit link time in minutes")),
+                ("TMEV",      ("@trtime_link_ev",       "DERIVED", "EXTRA", "Evening transit link time in minutes")),
                 ("MINMODE",   ("@mode_hierarchy",       "TWO_WAY", "EXTRA", "Transit mode type")),
             ]),
             "TRANSIT_LINE": OrderedDict([
@@ -253,6 +285,7 @@ class ImportTCOVED(_m.Tool()):
                 ("Fare",           ("@fare",              "TRRT",     "EXTRA",    "Boarding fare ($)")),
                 ("@fare_bus",      ("@fare_bus",          "DERIVED",  "EXTRA",    "Boaring fare bus only (0-cost LRT)")),
                 ("@transfer_penalty",("@transfer_penalty","DERIVED",  "EXTRA",    "Transfer penalty (min)")),
+                ("Route_ID",       ("route_id",           "TRRT",     "INTERNAL", "")),
                 ("Night_Hours",    ("@night_hours",       "TRRT",     "EXTRA",    "Night hours")),
                 ("Config",         ("@config",            "TRRT",     "EXTRA",    "Config ID (same as route name)")),
             ]),
@@ -266,126 +299,135 @@ class ImportTCOVED(_m.Tool()):
             ])
         }
 
-        with _m.logbook_trace("Import from TCOVED", attributes=attributes):
-            self._log.append({"content": attributes.items(), 
-                "type": "table", "header": ["name", "value"],
-                "title": "Input attribute values"})
+        create_scenario = _m.Modeller().tool(
+            "inro.emme.data.scenario.create_scenario")
+       
+        file_names = [
+            "hwycov.e00", "LINKTYPETURNS.DBF", "turns.csv",
+            "trcov.e00", "trrt.csv", "trlink.csv", "trstop.csv", 
+            "timexfer.csv", "MODE5TOD.dbf"]
+        for name in file_names:
+            file_path = os.path.join(self.source, name)
+            if not os.path.exists(file_path):
+                raise Exception("missing file '%s' in directory %s" % (name, self.source))
 
-            if self.traffic_scenario_id:
-                traffic_scenario = create_scenario(self.traffic_scenario_id, self.description + " Traffic", overwrite=self.overwrite)
-            if self.transit_scenario_id:
-                transit_scenario = create_scenario(self.transit_scenario_id, self.description + " Transit", overwrite=self.overwrite)
-            if self.merged_scenario_id:
-                scenario = create_scenario(self.merged_scenario_id, self.description, overwrite=self.overwrite)
+        if self.traffic_scenario_id:
+            traffic_scenario = create_scenario(self.traffic_scenario_id, self.description + " Traffic", overwrite=self.overwrite)
+        if self.transit_scenario_id:
+            transit_scenario = create_scenario(self.transit_scenario_id, self.description + " Transit", overwrite=self.overwrite)
+        if self.merged_scenario_id:
+            scenario = create_scenario(self.merged_scenario_id, self.description, overwrite=self.overwrite)
 
-            if self.traffic_scenario_id or self.merged_scenario_id:
+        if self.traffic_scenario_id or self.merged_scenario_id:
+            self._log.append({
+                "content": [[k] + list(v) for k, v in traffic_attr_map["LINK"].iteritems()], 
+                "type": "table", 
+                "header": ["TCOVED", "Emme", "Source", "Type", "Description"],
+                "title": "Traffic link attributes", "disclosure": True
+            })
+            traffic_network = _network.Network()
+            self.create_traffic_base(traffic_network, traffic_attr_map)
+            self.create_turns(traffic_network)
+            self.calc_traffic_attributes(traffic_network)
+
+        for elem_type, mapping in traffic_attr_map.iteritems():
+            for name, tcoved_type, emme_type, desc in mapping.values():
+                if emme_type == "INTERNAL" and (self.traffic_scenario_id or self.merged_scenario_id):
+                    traffic_network.delete_attribute(elem_type, name)
+                if self.traffic_scenario_id:
+                    if emme_type == "EXTRA":
+                        xatt = traffic_scenario.create_extra_attribute(elem_type, name)
+                        xatt.description =  desc
+                    elif emme_type == "STRING":
+                        traffic_scenario.create_network_field(elem_type, name, 'STRING', description=desc)
+                if self.merged_scenario_id:
+                    if emme_type == "EXTRA":
+                        xatt = scenario.create_extra_attribute(elem_type, name)
+                        xatt.description = desc
+                    elif emme_type == "STRING":
+                        scenario.create_network_field(elem_type, name, 'STRING', description=desc)
+        if self.traffic_scenario_id:
+            traffic_scenario.publish_network(traffic_network)
+
+        if self.transit_scenario_id or self.merged_scenario_id:
+            for elem_type, attrs in transit_attr_map.iteritems():
+                log_content = [[k] + list(v) for k, v in attrs.iteritems()]
                 self._log.append({
-                    "content": [[k] + list(v) for k, v in traffic_attr_map["LINK"].iteritems()], 
+                    "content": log_content, 
                     "type": "table", 
                     "header": ["TCOVED", "Emme", "Source", "Type", "Description"],
-                    "title": "Traffic link attributes", "disclosure": True
+                    "title": "Transit %s attributes" % elem_type.lower().replace("_", " "),
+                    "disclosure": True
                 })
-                traffic_network = _network.Network()
-                self.create_traffic_base(traffic_network, traffic_attr_map)
-                self.create_turns(traffic_network)
-                self.calc_traffic_attributes(traffic_network)
-
-            if self.traffic_scenario_id:
-                for elem_type, mapping in traffic_attr_map.iteritems():
-                    for name, tcoved_type, emme_type, desc in mapping.values():
-                        if emme_type == "EXTRA":
-                            xatt = traffic_scenario.create_extra_attribute(elem_type, name)
+            transit_network = _network.Network()
+            self.create_transit_base(transit_network, transit_attr_map)
+            self.create_transit_lines(transit_network, transit_attr_map)
+            self.calc_transit_attributes(transit_network)
+        
+        for elem_type, mapping in transit_attr_map.iteritems():
+            for name, tcoved_type, emme_type, desc in mapping.values():                    
+                if emme_type == "INTERNAL"and (self.transit_scenario_id or self.merged_scenario_id):
+                    transit_network.delete_attribute(elem_type, name)
+                if self.transit_scenario_id:
+                    if emme_type == "EXTRA":
+                        xatt = transit_scenario.create_extra_attribute(elem_type, name)
+                        xatt.description = desc
+                    elif emme_type == "STRING":
+                        transit_scenario.create_network_field(elem_type, name, 'STRING', description=desc)
+                if self.merged_scenario_id:
+                    if emme_type == "EXTRA":
+                        if not scenario.extra_attribute(name):
+                            xatt = scenario.create_extra_attribute(elem_type, name)
                             xatt.description = desc
-                        elif emme_type == "STRING":
-                            traffic_scenario.create_network_field(elem_type, name, 'STRING', description=desc)
-                        elif emme_type == "INTERNAL":
-                            traffic_network.delete_attribute(elem_type, name)
-                traffic_scenario.publish_network(traffic_network)
+                    elif emme_type == "STRING":
+                        if not scenario.network_field(elem_type, name):
+                            scenario.create_network_field(elem_type, name, 'STRING', description=desc)
+        if self.transit_scenario_id:
+            transit_scenario.publish_network(transit_network)
 
-            if self.transit_scenario_id or self.merged_scenario_id:
-                for elem_type, attrs in transit_attr_map.iteritems():
-                    log_content = [[k] + list(v) for k, v in attrs.iteritems()]
-                    self._log.append({
-                        "content": log_content, 
-                        "type": "table", 
-                        "header": ["TCOVED", "Emme", "Source", "Type", "Description"],
-                        "title": "Transit %s attributes" % elem_type.lower().replace("_", " "),
-                        "disclosure": True
-                    })
-                transit_network = _network.Network()
-                self.create_transit_base(transit_network, transit_attr_map)
-                self.create_transit_lines(transit_network, transit_attr_map)
-                self.calc_transit_attributes(transit_network)
-            if self.transit_scenario_id:
-                for elem_type, mapping in transit_attr_map.iteritems():
-                    for name, tcoved_type, emme_type, desc in mapping.values():
-                        if emme_type == "EXTRA":
-                            xatt = transit_scenario.create_extra_attribute(elem_type, name)
-                            xatt.description = desc
-                        elif emme_type == "STRING":
-                            transit_scenario.create_network_field(elem_type, name, 'STRING', description=desc)
-                        elif emme_type == "INTERNAL":
-                            transit_network.delete_attribute(elem_type, name)
-                transit_scenario.publish_network(transit_network, resolve_attributes=True)
+        if self.merged_scenario_id:
+            self.add_transit_to_traffic(traffic_network, transit_network)
+            scenario.publish_network(traffic_network)
 
-            if self.merged_scenario_id:
-                self.add_transit_to_traffic(traffic_network, transit_network)
-                for attr in traffic_scenario.extra_attributes():
-                    if not scenario.extra_attribute(attr.name):
-                        new_attr = scenario.create_extra_attribute(attr.type, attr.name)
-                        new_attr.description = attr.description
-                for attr in transit_scenario.extra_attributes():
-                    if not scenario.extra_attribute(attr.name):
-                        new_attr = scenario.create_extra_attribute(attr.type, attr.name)
-                        new_attr.description = attr.description
-                for attr in traffic_scenario.network_fields():
-                    if not scenario.network_field(attr.type, attr.name):
-                        scenario.create_network_field(attr.type, attr.name, attr.atype, attr.description)
-                for attr in transit_scenario.network_fields():
-                    if not scenario.network_field(attr.type, attr.name):
-                        scenario.create_network_field(attr.type, attr.name, attr.atype, attr.description)
-
-                scenario.publish_network(traffic_network)
-
-                self.set_functions(scenario)
+        self.set_functions(scenario)
 
     def create_traffic_base(self, network, attr_map):
         self._log.append({"type": "header", "content": "Import traffic base network from hwycov.e00"})
-        hwy_data = DataTableProc("ARC", os.path.join(self.source, "hwycov.e00"))
+        utils = _m.Modeller().module("sandag.utilities.general")
+        hwy_data = utils.DataTableProc("ARC", os.path.join(self.source, "hwycov.e00"))
 
         if self.save_data_tables:
-            hwy_data.save("tcoved-hwycov", self.overwrite)
+            hwy_data.save("%s-hwycov" % self.data_table_name, self.overwrite)
 
         # Create Modes
         dummy_auto = network.create_mode("AUTO", "d")
         hov2 = network.create_mode("AUX_AUTO", "h")
+        hov2_toll = network.create_mode("AUX_AUTO", "H")
         hov3 = network.create_mode("AUX_AUTO", "i")
+        hov3_toll = network.create_mode("AUX_AUTO", "I")
         sov = network.create_mode("AUX_AUTO", "s")
+        sov_toll = network.create_mode("AUX_AUTO", "S")
         heavy_trk = network.create_mode("AUX_AUTO", "v")
+        heavy_trk_toll = network.create_mode("AUX_AUTO", "V")
         medium_trk = network.create_mode("AUX_AUTO", "m")
+        medium_trk_toll = network.create_mode("AUX_AUTO", "M")
         light_trk = network.create_mode("AUX_AUTO", "t")
+        light_trk_toll = network.create_mode("AUX_AUTO", "T")
 
-        dummy_auto.description = "auto dummy"
+        dummy_auto.description = "dummy auto"
         sov.description = "SOV"
         hov2.description = "HOV2"
         hov3.description = "HOV3+"
-        light_trk.description = "Light Trk"
-        medium_trk.description = "Medium Trk"
-        heavy_trk.description = "Heavy Trk"
+        light_trk.description = "TRKL"
+        medium_trk.description = "TRKM"
+        heavy_trk.description = "TRKH"
 
-        hov2_toll = network.create_mode("AUX_AUTO", "H")
-        hov3_toll = network.create_mode("AUX_AUTO", "I")
-        sov_toll = network.create_mode("AUX_AUTO", "S")
-        heavy_trk_toll = network.create_mode("AUX_AUTO", "V")
-        medium_trk_toll = network.create_mode("AUX_AUTO", "M")
-        light_trk_toll = network.create_mode("AUX_AUTO", "T")
-
-        sov_toll.description = "SOV toll"
-        hov2_toll.description = "HOV2 toll"
-        hov3_toll.description = "HOV3+ toll"
-        light_trk_toll.description = "LgtTrkToll"
-        medium_trk_toll.description = "MedTrktoll"
-        heavy_trk_toll.description = "HvyTrktoll"
+        sov_toll.description = "SOV TOLL"
+        hov2_toll.description = "HOV2 TOLL"
+        hov3_toll.description = "HOV3+ TOLL"
+        light_trk_toll.description = "TRKL TOLL"
+        medium_trk_toll.description = "TRKM TOLL"
+        heavy_trk_toll.description = "TRKH TOLL"
 
         is_centroid = lambda arc, node : (arc["IFC"] == 10)  and (node == "AN")
 
@@ -443,10 +485,11 @@ class ImportTCOVED(_m.Tool()):
             
     def create_transit_base(self, network, attr_map):
         self._log.append({"type": "header", "content": "Import transit base network from trcov.e00"})
+        utils = _m.Modeller().module("sandag.utilities.general")
         transit_data = DataTableProc("ARC", os.path.join(self.source, "trcov.e00"))
 
         if self.save_data_tables:
-            transit_data.save("tcoved-trcov", self.overwrite)
+            transit_data.save("%s_trcov" % self.data_table_name, self.overwrite)
 
         # aux mode speed is always 3 (miles/hr)
         access = network.create_mode("AUX_TRANSIT", "a")
@@ -455,20 +498,22 @@ class ImportTCOVED(_m.Tool()):
 
         bus = network.create_mode("TRANSIT", "b")
         express_bus = network.create_mode("TRANSIT", "e")
-        premium_bus = network.create_mode("TRANSIT", "p")
-        brt = network.create_mode("TRANSIT", "r")
+        ltdexp_bus = network.create_mode("TRANSIT", "p")
+        brt_red = network.create_mode("TRANSIT", "r")
+        brt_yellow = network.create_mode("TRANSIT", "y")
         lrt = network.create_mode("TRANSIT", "l")
         coaster_rail = network.create_mode("TRANSIT", "c")
 
-        access.description = "access"
-        transfer.description = "transfer"
-        walk.description = "walk"
-        bus.description = "local bus"            # (vehicle type 100, PCE=3.0)
-        express_bus.description = "expr bus"     # (vehicle type 90 , PCE=3.0)
-        premium_bus.description = "prem bus"     # (vehicle type 80 , PCE=3.0)
-        lrt.description = "trolley"              # (vehicle type 50)
-        brt.description = "BRT"                  # (vehicle type 60 and 70 , PCE=3.0)
-        coaster_rail.description = "coaster"     # (vehicle type 40)
+        access.description = "Access"
+        transfer.description = "Transfer"
+        walk.description = "Walk"
+        bus.description = "BUS"                  # (vehicle type 100, PCE=3.0)
+        express_bus.description = "EXP BUS"      # (vehicle type 90 , PCE=3.0)
+        ltdexp_bus.description = "LTDEXP BUS"    # (vehicle type 80 , PCE=3.0)
+        lrt.description = "LRT"                  # (vehicle type 50)
+        brt_yellow.description = "BRT YEL"       # (vehicle type 60 , PCE=3.0)
+        brt_red.description = "BRT RED"          # (vehicle type 70 , PCE=3.0)
+        coaster_rail.description = "CMR"         # (vehicle type 40)
 
         access.speed = 3
         transfer.speed = 3
@@ -478,16 +523,16 @@ class ImportTCOVED(_m.Tool()):
         is_centroid = lambda arc, node: (int(arc["MINMODE"]) == 3) and (node == "BN")
 
         mode_setting = {
-            1:  set([transfer]),                        # 1  = special transfer walk links between certain nearby stops
-            2:  set([walk]),                            # 2  = walk links in the downtown area
-            3:  set([access]),                          # 3  = the special TAP connectors
-            4:  set([coaster_rail]),                    # 4  = Coaster Rail Line
-            5:  set([lrt]),                             # 5  = Light Rail Transit (LRT) Line
-            6:  set([brt]),                             # 6  = Yellow Car Bus Rapid Transit (BRT)
-            7:  set([brt]),                             # 7  = Red Car Bus Rapid Transit (BRT)
-            8:  set([premium_bus, express_bus, bus]),   # 8  = Limited Express Bus
-            9:  set([premium_bus, express_bus, bus]),   # 9  = Express Bus
-            10: set([premium_bus, express_bus, bus]),   # 10 = Local Bus
+            1:  set([transfer]),                                 # 1  = special transfer walk links between certain nearby stops
+            2:  set([walk]),                                     # 2  = walk links in the downtown area
+            3:  set([access]),                                   # 3  = the special TAP connectors
+            4:  set([coaster_rail]),                             # 4  = Coaster Rail Line
+            5:  set([lrt]),                                      # 5  = Light Rail Transit (LRT) Line
+            6:  set([brt_yellow, ltdexp_bus, express_bus, bus]), # 6  = Yellow Car Bus Rapid Transit (BRT)
+            7:  set([brt_red, ltdexp_bus, express_bus, bus]),    # 7  = Red Car Bus Rapid Transit (BRT)
+            8:  set([ltdexp_bus, express_bus, bus]),             # 8  = Limited Express Bus
+            9:  set([ltdexp_bus, express_bus, bus]),             # 9  = Express Bus
+            10: set([ltdexp_bus, express_bus, bus]),             # 10 = Local Bus
         }
         def define_modes(arc):
             return mode_setting[arc["MINMODE"]]
@@ -513,8 +558,11 @@ class ImportTCOVED(_m.Tool()):
                 reverse_link["@tcov_id"] = -1*link["@tcov_id"]
                 reverse_link.vertices = list(reversed(link.vertices))
 
+        def epsilon_compare(a, b, epsilon): 
+            return abs((a - b) / (a if abs(a) > 1 else 1)) <= epsilon
+
         for arc in transit_data:
-            # possible TODO: snap walk nodes to nearby node if not matched and within distance ...
+            # possible improvement: snap walk nodes to nearby node if not matched and within distance
             if arc_filter(arc):
                 continue
 
@@ -524,14 +572,14 @@ class ImportTCOVED(_m.Tool()):
             j_node = get_node(network, arc['BN'], coordinates[-1], False)
             modes = define_modes(arc)
             link = network.link(i_node, j_node)
+            split_link_case = False
             if link:
-                # OPTIONAL: log duplicate transfer links
                 link.modes |= modes
             else:
-                # TODO: this section does not cover all of the cases
+                # Note: additional cases of "tunnel" walk links could be 
+                #       considered to optimize network matching
                 # check if this a special "split" link case where 
                 # we do not need to add a "tunnel" walk link
-                split_link_case = False
                 for link1 in i_node.outgoing_links():
                     if split_link_case:
                         break
@@ -593,7 +641,7 @@ class ImportTCOVED(_m.Tool()):
                 self._log.append({"type": "text",
                     "content": "Duplicate link between AN %s and BN %s. Link IDs %s and %s." % 
                     (arc["AN"], arc["BN"], existing_link[emme_id_name], arc[arc_id_name])})
-                network.split_link(i_node, j_node, new_node_id)
+                self._split_link(network, i_node, j_node, new_node_id)
                 new_node_id += 1
                 split_link += 1
 
@@ -615,12 +663,16 @@ class ImportTCOVED(_m.Tool()):
 
     def create_transit_lines(self, network, attr_map):
         self._log.append({"type": "header", "content": "Import transit lines"})
+        utils = _m.Modeller().module("sandag.utilities.general")
         # Route_ID,Route_Name,Mode,AM_Headway,PM_Headway,OP_Headway,Night_Headway,Night_Hours,Config,Fare
         transit_line_data = DataTableProc("trrt", os.path.join(self.source, "trrt.csv"))
         # Route_ID,Link_ID,Direction
         transit_link_data = DataTableProc("trlink", os.path.join(self.source, "trlink.csv"))
         # Stop_ID,Route_ID,Link_ID,Pass_Count,Milepost,Longitude, Latitude,HwyNode,TrnNode,FareZone,StopName
         transit_stop_data = DataTableProc("trstop", os.path.join(self.source, "trstop.csv"))
+        # From_line,To_line,Board_stop,Wait_time
+        # Note: Board_stop is not used
+        timed_xfer_data = DataTableProc("timexfer", os.path.join(self.source, "timexfer.csv"))
 
         mode_properties = DataTableProc("MODE5TOD", os.path.join(self.source, "MODE5TOD.dbf"))
         mode_details = {}
@@ -628,16 +680,14 @@ class ImportTCOVED(_m.Tool()):
             mode_details[record["MODE_ID"]] = record
         
         if self.save_data_tables:
-            transit_link_data.save("tcoved-trlink", self.overwrite)
-            transit_line_data.save("tcoved-trrt", self.overwrite)
-            transit_stop_data.save("tcoved-trstop", self.overwrite)
-            mode_properties.save("tcoved-MODE5TOD", self.overwrite)
+            transit_link_data.save("%s_trlink" % self.data_table_name, self.overwrite)
+            transit_line_data.save("%s_trrt" % self.data_table_name, self.overwrite)
+            transit_stop_data.save("%s_trstop" % self.data_table_name, self.overwrite)
+            mode_properties.save("%s_MODE5TOD" % self.data_table_name, self.overwrite)
       
-        # TODO: capacities
-        # TODO: default speed
         coaster = network.create_transit_vehicle(40, 'c')       # 4  coaster
         trolley = network.create_transit_vehicle(50, 'l')       # 5  sprinter/trolley
-        brt_yellow  = network.create_transit_vehicle(60, 'r')   # 6 BRT yellow line (future line)
+        brt_yellow  = network.create_transit_vehicle(60, 'y')   # 6 BRT yellow line (future line)
         brt_red = network.create_transit_vehicle(70, 'r')       # 7 BRT red line (future line)
         premium_bus = network.create_transit_vehicle(80, 'p')   # 8  prem express
         express_bus = network.create_transit_vehicle(90, 'e')   # 9  regular express
@@ -648,6 +698,15 @@ class ImportTCOVED(_m.Tool()):
         premium_bus.auto_equivalent = 3.0
         express_bus.auto_equivalent = 3.0
         local_bus.auto_equivalent = 3.0
+
+        # Capacities - for reference / post-assignment analysis
+        coaster.seated_capacity, coaster.total_capacity = 7 * 142, 7 * 276
+        trolley.seated_capacity, trolley.total_capacity = 4 * 64, 4 * 200
+        brt_yellow.seated_capacity, brt_yellow.total_capacity = 32, 70
+        brt_red.seated_capacity, brt_red.total_capacity = 32, 70
+        premium_bus.seated_capacity, premium_bus.total_capacity = 32, 70
+        express_bus.seated_capacity, express_bus.total_capacity = 32, 70
+        local_bus.seated_capacity, local_bus.total_capacity = 32, 70
 
         trrt_attrs = []
         mode5tod_attrs = []
@@ -693,49 +752,62 @@ class ImportTCOVED(_m.Tool()):
                 
         transit_lines = {}
         for record in transit_line_data:
-            route = transit_routes[int(record["Route_ID"])]
-            vehicle_type = int(record["Mode"]) * 10
-            mode = network.transit_vehicle(vehicle_type).mode
-            prev_link = route[0]
-            itinerary = [prev_link] 
-            for link in route[1:]:
-                if prev_link.j_node != link.i_node:  # filling in the missing gap
-                    msg = "Transit line %s : Links not adjacent, shortest path interpolation used (%s and %s)" % (
-                        record["Route_ID"], prev_link["@tcov_id"], link["@tcov_id"])
-                    self._log.append({"type": "text", "content": msg})
-                    itinerary.extend(find_path(prev_link, link, mode))
-                itinerary.append(link)        
-                prev_link = link
-
-            node_itinerary = [itinerary[0].i_node] +  [l.j_node for l in itinerary]
             try:
-                tl = network.create_transit_line(
-                    record["Route_Name"].strip(), vehicle_type, node_itinerary)
-            except:
-                msg = "Transit line %s : missing mode added to at least one link" % (
-                    record["Route_ID"])
+                route = transit_routes[int(record["Route_ID"])]
+                vehicle_type = int(record["Mode"]) * 10
+                mode = network.transit_vehicle(vehicle_type).mode
+                prev_link = route[0]
+                itinerary = [prev_link] 
+                for link in route[1:]:
+                    if prev_link.j_node != link.i_node:  # filling in the missing gap
+                        msg = "line %s : Links not adjacent, shortest path interpolation used (%s and %s)" % (
+                            record["Route_ID"], prev_link["@tcov_id"], link["@tcov_id"])
+                        log_record = {"type": "text", "content": msg}
+                        self._log.append(log_record)
+                        sub_path = find_path(prev_link, link, mode)
+                        itinerary.extend(sub_path)
+                        log_record["content"] = log_record["content"] + " through %s links" % (len(sub_path))
+                    itinerary.append(link)        
+                    prev_link = link
+
+                node_itinerary = [itinerary[0].i_node] +  [l.j_node for l in itinerary]
+                try:
+                    tline = network.create_transit_line(
+                        record["Route_Name"].strip(), vehicle_type, node_itinerary)
+                except:
+                    msg = "Transit line %s : missing mode added to at least one link" % (
+                        record["Route_ID"])
+                    self._log.append({"type": "text", "content": msg})
+                    for link in itinerary:
+                        link.modes |= set([mode])
+                    tline = network.create_transit_line(
+                        record["Route_Name"].strip(), vehicle_type, node_itinerary)
+
+                for field, attr in trrt_attrs:
+                    tline[attr] = float(record[field])
+
+                line_details = mode_details[int(record["Mode"])]
+                for field, attr in mode5tod_attrs:
+                    tline[attr] = line_details[field]
+                #"XFERPENTM": "Transfer penalty time: "
+                #"WTXFERTM":  "Transfer perception:"
+                # NOTE: an additional transfer penality perception factor of 5.0 is included
+                #       in assignment
+                tline["@transfer_penalty"] = line_details["XFERPENTM"] * line_details["WTXFERTM"]
+                tline.layover_time = 5
+
+                transit_lines[int(record["Route_ID"])] = tline
+                for segment in tline.segments():
+                    segment.allow_boardings = False
+                    segment.allow_alightings = False
+                    segment.transit_time_func = 2  
+                    # ft2 = ul2 -> copied @trtime_link_XX
+                    # segments on links matched to auto network (with auto mode) are changed to ft1 = timau
+            except Exception as error:
+                msg = "Transit line %s: %s" % (record["Route_ID"], error)
                 self._log.append({"type": "text", "content": msg})
-                for link in itinerary:
-                    link.modes |= set([mode])
-                tl = network.create_transit_line(
-                    record["Route_Name"].strip(), vehicle_type, node_itinerary)
-
-            for field, attr in trrt_attrs:
-                tl[attr] = float(record[field])
-
-            line_details = mode_details[int(record["Mode"])]
-            for field, attr in mode5tod_attrs:
-                tl[attr] = line_details[field]
-            #"XFERPENTM": "Transfer penalty time: 5 minutes"
-            #"WTXFERTM":  "Transfer perception: 1 minute"
-            tl["@transfer_penalty"] = line_details["XFERPENTM"] * line_details["WTXFERTM"]
-            tl.layover_time = 5
-
-            transit_lines[int(record["Route_ID"])] = tl
-            for segment in tl.segments():
-                segment.allow_boardings = False
-                segment.allow_alightings = False
-                segment.transit_time_func = 1
+                self._error.append("Transit route import: line %s not created" % record["Route_ID"])
+                
 
         line_stops = _defaultdict(lambda: [])
         for record in transit_stop_data:
@@ -752,8 +824,10 @@ class ImportTCOVED(_m.Tool()):
                     seg_float_attr_map.append([field, attr])
 
         for line_id, stops in line_stops.iteritems():
-            line = transit_lines[line_id]
-            itinerary = line.segments(include_hidden=True)
+            tline = transit_lines.get(line_id)
+            if not tline:
+                continue
+            itinerary = tline.segments(include_hidden=True)
             segment = itinerary.next()
             tcov_id = abs(segment.link["@tcov_id"])
             for stop in stops:
@@ -771,24 +845,46 @@ class ImportTCOVED(_m.Tool()):
                     segment = itinerary.next()
                 else:
                     self._log.append(
-                        {"type": "text", "content": "Line %s: could not find stop with Link ID %s" % (line_id, link_id)})
+                        {"type": "text", 
+                        "content": "Line %s: could not find stop with Link ID %s" % (line_id, link_id)})
                     continue
                 segment.allow_boardings = True
                 segment.allow_alightings = True
-                segment.dwell_time = line.default_dwell_time
+                segment.dwell_time = tline.default_dwell_time
                 for field, attr in seg_string_attr_map:
                     segment[attr] = stop[field]
                 for field, attr in seg_float_attr_map:
                     segment[attr] = float(stop[field])
+        # Normalizing the case of the headers as different examples have been seen
+        norm_data = []
+        for record in timed_xfer_data:
+            norm_record = {}
+            for key, val in record.iteritems():
+                norm_record[key.lower()] = val
+            norm_data.append(norm_record)
+
+        from_line, to_line, wait_time = [], [], []
+        for record in norm_data:
+            from_line.append(transit_lines[int(record["from_line"])].id)
+            to_line.append(transit_lines[int(record["to_line"])].id)
+            wait_time.append(float(record["wait_time"]))
+        timed_xfer = _dt.Data()
+        timed_xfer.add_attribute(_dt.Attribute("from_line", _np.array(from_line).astype("O")))
+        timed_xfer.add_attribute(_dt.Attribute("to_line", _np.array(to_line).astype("O")))
+        timed_xfer.add_attribute(_dt.Attribute("wait_time", _np.array(wait_time)))
+        # Creates and saves the new table
+        DataTableProc("%s_timed_xfer" % self.data_table_name, data=timed_xfer)
 
     def calc_transit_attributes(self, network):
         self._log.append({"type": "header", "content": "Calculate derived transit attributes"})
         # - TM by 5 TOD periods copied from TM for 3 time periods
-        # NOTE: the initial values of @time_link_## will be updated 
-        #       with the traffic assignment results
+        # NOTE: the values of @trtime_link_## are only used for 
+        #       separate guideway.
+        #       Links shared with the traffic network use the 
+        #       assignment results in timau
         for link in network.links():
             for time in ["_ea", "_md", "_ev"]:
-                link["@time_link" + time] = link["time_link_op"]
+                link["@trtime_link" + time] = link["trtime_link_op"]
             if link.type == 0:  # walk only links have IFC ==0 
                 link.type = 99
 
@@ -807,30 +903,34 @@ class ImportTCOVED(_m.Tool()):
                     seg.i_node["@coaster_fare_node"] = 4.0
             if line.mode != lrt_mode:
                 line["@fare_bus"] = line["@fare"]
-
-        # TODO: expose this definition - node IDs could change
-        old_town = 15326
-        sorrento_valley = 6866
-        solana_beach = 6041
-        network.node(sorrento_valley)["@coaster_fare_node"] = 4.5
-
-        for seg in network.link(old_town, sorrento_valley).segments():
-            seg["@coaster_fare_seg"] = 1.0
-        for seg in network.link(solana_beach, sorrento_valley).segments():
-            seg["@coaster_fare_seg"] = 1.0
-        for seg in network.link(sorrento_valley, old_town).segments():
-            seg["@coaster_fare_seg"] = 0.5
-        for seg in network.link(sorrento_valley, solana_beach).segments():
-            seg["@coaster_fare_seg"] = 0.5
+        try:
+            coaster_node_ids = self.coaster_node_ids
+            if coaster_node_ids:
+                if isinstance(coaster_node_ids, basestring):
+                    coaster_node_ids = _json.loads(coaster_node_ids)
+                sorrento_valley = coaster_node_ids["sorrento_valley"]
+                sorrento_valley = network.node(sorrento_valley)
+                sorrento_valley["@coaster_fare_node"] = 4.5
+                for link in sorrento_valley.incoming_links():
+                    for seg in link.segments():
+                        seg["@coaster_fare_seg"] = 1.0
+                for link in sorrento_valley.outgoing_links():
+                    for seg in link.segments():
+                        seg["@coaster_fare_seg"] = 0.5
+        except Exception as error:
+            msg = unicode(error) + _traceback.format_exc(error)
+            self._log.append({"type": "text", 
+                "content": "Coaster fare calculation error: " + msg.replace("\n", "<br>")})
+            self._error.append("Coaster fare calculation error: " + unicode(error))
 
         for c in network.centroids():
             c["@tap_id"] = c.number
-
         return
 
     def create_turns(self, network):
         self._log.append({"type": "header", "content": "Import turns and turn restrictions"})
         self._log.append({"type": "text", "content": "Process LINKTYPETURNS.DBF for turn prohibited by type"})
+        utils = _m.Modeller().module("sandag.utilities.general")
         # Process LINKTYPETURNS.DBF for turn prohibited by type
         f = _dbflib.open(os.path.join(self.source, "LINKTYPETURNS.DBF"), 'r')
         link_type_turns = _defaultdict(lambda: {})
@@ -864,7 +964,7 @@ class ImportTCOVED(_m.Tool()):
         self._log.append({"type": "text", "content": "Process turns.csv for turn prohibited by ID"})
         turn_data = DataTableProc("turns", os.path.join(self.source, "turns.csv"))
         if self.save_data_tables:
-            turn_data.save("tcoved-turns", self.overwrite)
+            turn_data.save("%s-turns"  % self.data_table_name, self.overwrite)
         links = dict((link["@tcov_id"], link) for link in network.links())
 
         # Process turns.csv for prohibited turns from_id, to_id, penalty
@@ -907,12 +1007,13 @@ class ImportTCOVED(_m.Tool()):
     def calc_traffic_attributes(self, network):
         self._log.append({"type": "header", "content": "Calculate derived traffic attributes"})
         # "COST":       "@cost_operating"
-        # "ITOLL":      "@toll_flag"            # ITOLL  - Toll + 100 *[0,1] if managed lane (I-15 tolls) 
-        # "ITOLL2":     "@toll"                 # ITOLL2 - Toll
-        # "ITOLL3":     "@cost_auto"            # ITOLL3 - Toll + AOC
+        # "ITOLL":      "@toll_flag"       # ITOLL  - Toll + 100 *[0,1] if managed lane (I-15 tolls) 
+        #               Note: toll_flag is no longer used
+        # "ITOLL2":     "@toll"            # ITOLL2 - Toll
+        # "ITOLL3":     "@cost_auto"       # ITOLL3 - Toll + AOC
         #               "@cost_hov"
-        # "ITOLL4":     "@cost_med_truck"       # ITOLL4 - Toll * 1.03 + AOC
-        # "ITOLL5":     "@cost_hvy_truck"       # ITOLL5 - Toll * 2.33 + AOC
+        # "ITOLL4":     "@cost_med_truck"  # ITOLL4 - Toll * 1.03 + AOC
+        # "ITOLL5":     "@cost_hvy_truck"  # ITOLL5 - Toll * 2.33 + AOC
         # TODO: read from properties file
         aoc_f = 13.5          # properties["aoc.fuel"]
         aoc_m = 6.3           # properties["aoc.maintenance"]
@@ -962,7 +1063,7 @@ class ImportTCOVED(_m.Tool()):
                 link["@cost_med_truck" + time] = 1.03 * link["@toll" + time] + link["@cost_operating"]
                 link["@cost_hvy_truck" + time] = 2.33 * link["@toll" + time] + link["@cost_operating"]
                 # adding $100 to toll fields to flag toll values from managed lane
-                link["@toll_flag" + time] = link["@toll" + time] + (10000 if link["@lane_restriction"] == 4 else 0)
+                #link["@toll_flag" + time] = link["@toll" + time] + (10000 * (link["@lane_restriction"] == 4))
  
         # Cycle length matrix
         #       Intersecting Link                     
@@ -1045,8 +1146,8 @@ class ImportTCOVED(_m.Tool()):
                 # NOTE: the vdf is sub-optimal for this
                 #       possible future improvment: implement this TOD difference as part of the assignment tool.
                 for time in ["_ea", "_md", "_ev"]:
-                    link["@cycle" + time] = link["cycle"]
-                    link["@green_to_cycle" + time] = link["green_to_cycle"]
+                    link["@cycle" + time] = 0
+                    link["@green_to_cycle" + time] = 0
 
         network.delete_attribute("LINK", "green_to_cycle")
         network.delete_attribute("LINK", "cycle")
@@ -1070,8 +1171,6 @@ class ImportTCOVED(_m.Tool()):
                 if not attr in hwy_network.attributes(elem_type):
                     new_attr = hwy_network.create_attribute(elem_type, attr)
 
-        # TODO: additional reporting on merging and statistics
-        #report = _defaultdict(lambda: 0)
         hwy_link_index = dict((l["@tcov_id"], l) for l in hwy_network.links())
         hwy_node_position_index = dict(((n.x, n.y), n) for n in hwy_network.nodes())
         hwy_node_index = dict()
@@ -1087,18 +1186,15 @@ class ImportTCOVED(_m.Tool()):
                     hwy_link = None
             else:
                 hwy_link = hwy_link_index.get(tcov_id)
-            if not hwy_link:        
-                #report["not_match"] += 1
-                #report[tr_link.modes] += 1
+            if not hwy_link:
                 not_matched_links.append(tr_link)
             else:
-                #report["match"] += 1
                 hwy_node_index[tr_link.i_node] = hwy_link.i_node
                 hwy_node_index[tr_link.j_node] = hwy_link.j_node
                 hwy_link.modes |= tr_link.modes
 
         new_node_id = max(n.number for n in hwy_network.nodes())
-        new_node_id = _ceiling(new_node_id / 10000.0) * 10000
+        new_node_id = int(_ceiling(new_node_id / 10000.0) * 10000)
         bus_mode = tr_network.mode("b")
 
         def get_node(src_node, new_node_id):
@@ -1110,19 +1206,32 @@ class ImportTCOVED(_m.Tool()):
                     new_node_id += 1
                     for attr in tr_network.attributes("NODE"):
                         node[attr] = src_node[attr]
-                    # possible TODO: snap walk nodes to nearby node if not matched and within distance
                 hwy_node_index[src_node] = node
             return node, new_node_id
 
         for tr_link in not_matched_links:
             i_node, new_node_id = get_node(tr_link.i_node, new_node_id)
             j_node, new_node_id = get_node(tr_link.j_node, new_node_id)
+            # check for duplicate but different links 
+            # (e.g. for reserved transit lanes along arterials)
+            ex_link = hwy_network.link(i_node, j_node)
+            if ex_link:
+                self._log.append({
+                    "type": "text",
+                    "content": "Traffic link split due to duplicate link in traffic/transit merge. "
+                               "Traffic link ID %s, transit link ID %s, new Emme node ID %s." % 
+                               (ex_link["@tcov_id"], tr_link["@tcov_id"], new_node_id)
+                })
+                self._split_link(hwy_network, i_node, j_node, new_node_id)
+                new_node_id += 1
+                
             link = hwy_network.create_link(i_node, j_node, tr_link.modes)
             hwy_link_index[tr_link["@tcov_id"]] = link
             for attr in tr_network.attributes("LINK"):
                 link[attr] = tr_link[attr]
             link.vertices = tr_link.vertices
 
+        # Create transit lines and copy segment data
         for tr_line in tr_network.transit_lines():
             itinerary = []
             for seg in tr_line.segments(True):
@@ -1133,6 +1242,46 @@ class ImportTCOVED(_m.Tool()):
             for tr_seg, hwy_seg in _izip(tr_line.segments(True), hwy_line.segments(True)):
                 for attr in hwy_network.attributes("TRANSIT_SEGMENT"):
                     hwy_seg[attr] = tr_seg[attr]
+
+        # Change ttf from ft2 (fixed speed) to ft1 (congested auto time)
+        auto_mode = hwy_network.mode("d")
+        for hwy_link in hwy_network.links():
+            if auto_mode in hwy_link.modes:
+                for seg in hwy_link.segments():
+                    seg.transit_time_func = 1
+
+    def _split_link(self, network, i_node, j_node, new_node_id):
+        # Attribute types to maintain consistency for correspondance with incoming / outgoing link data
+        periods = ["ea", "am", "md", "pm", "ev"]
+        approach_attrs = ["@traffic_control", "@turn_thru", "@turn_right", "@turn_left",
+                          "@lane_auxiliary", "@green_to_cycle_init"]
+        for p_attr in ["@green_to_cycle_", "@time_inter_", "@cycle_"]:
+            approach_attrs.extend([p_attr + p for p in periods])
+        capacity_inter = ["@capacity_inter_" + p for p in periods]
+        cost_attrs = ["@cost_operating"]
+        for p_attr in ["@cost_med_truck_", "@cost_hvy_truck_", "@cost_hov_", "@cost_auto_", 
+                       "@time_link_", "@trtime_link_", "@toll_"]:
+            cost_attrs.extend([p_attr + p for p in periods])
+        approach_attrs = [a for a in approach_attrs if a in network.attributes("LINK")]
+        capacity_inter = [a for a in capacity_inter if a in network.attributes("LINK")]
+        cost_attrs = [a for a in cost_attrs if a in network.attributes("LINK")]
+
+        new_node = network.split_link(i_node, j_node, new_node_id)
+
+        # Correct attributes on the split links
+        for link in new_node.incoming_links():
+            link["#name_to"] = ""
+            for attr in approach_attrs:
+                link[attr] = 0
+            for attr in capacity_inter:
+                link[attr] = 999999
+            for attr in cost_attrs:
+                link[attr] = 0.5 * link[attr]
+            link.volume_delay_func = 10
+        for link in new_node.outgoing_links():
+            link["#name_from"] = ""
+            for attr in cost_attrs:
+                link[attr] = 0.5 * link[attr]
 
     @_m.logbook_trace("Set database functions (VDF, TPF and TTF)")
     def set_functions(self, scenario):
@@ -1147,47 +1296,48 @@ class ImportTCOVED(_m.Tool()):
                 emmebank.delete_function(function)
 
         # Freeway fd10
-        create_function("fd10", "el1 * (1.0 + 0.8 * ( (volau + volad) / el2 ) ** 4.0)")       
+        create_function("fd10", "ul1 * (1.0 + 0.8 * ( (volau + volad) / ul3 ) ** 4.0)")       
         create_function(
-            "fd20",  # Local collector and lower intersection and stop controlled approaches  fd20
-            "el1 * (1.0 + 0.8 * ( (volau + volad) / el2 ) ** 4.0) +"
-            "1.25 / 2 * (1-ul1) ** 2 * (1.0 + 4.5 * ( (volau + volad) / el3 ) ** 2.0)")
+            "fd20",  # Local collector and lower intersection and stop controlled approaches
+            "ul1 * (1.0 + 0.8 * ( (volau + volad) / ul3 ) ** 4.0) +"
+            "1.25 / 2 * (1-el1) ** 2 * (1.0 + 4.5 * ( (volau + volad) / el3 ) ** 2.0)")
         create_function(
-            "fd21",  # Collector intersection approaches fd21
-            "el1 * (1.0 + 0.8 * ( (volau + volad) / el2 ) ** 4.0) +"
-            "1.5/ 2 * (1-ul1) ** 2 * (1.0 + 4.5 * ( (volau + volad) / el3 ) ** 2.0)")
+            "fd21",  # Collector intersection approaches
+            "ul1 * (1.0 + 0.8 * ( (volau + volad) / ul3 ) ** 4.0) +"
+            "1.5/ 2 * (1-el1) ** 2 * (1.0 + 4.5 * ( (volau + volad) / el3 ) ** 2.0)")
         create_function(
-            "fd22",  # Major arterial and major or prime arterial intersection approaches fd22
-            "el1 * (1.0 + 0.8 * ( (volau + volad) / el2 ) ** 4.0) +"            
-            "2.0 / 2 * (1-ul1) ** 2 * (1.0 + 4.5 * ( (volau + volad) / el3 ) ** 2.0)")
+            "fd22",  # Major arterial and major or prime arterial intersection approaches
+            "ul1 * (1.0 + 0.8 * ( (volau + volad) / ul3 ) ** 4.0) +"            
+            "2.0 / 2 * (1-el1) ** 2 * (1.0 + 4.5 * ( (volau + volad) / el3 ) ** 2.0)")
         create_function(
             "fd23",  # Primary arterial intersection approaches
-            "el1 * (1.0 + 0.8 * ( (volau + volad) / el2 ) ** 4.0) +"
-            "2.5/ 2 * (1-ul1) ** 2 * (1.0 + 4.5 * ( (volau + volad) / el3 ) ** 2.0)")
+            "ul1 * (1.0 + 0.8 * ( (volau + volad) / ul3 ) ** 4.0) +"
+            "2.5/ 2 * (1-el1) ** 2 * (1.0 + 4.5 * ( (volau + volad) / el3 ) ** 2.0)")
         create_function(
             "fd24",  # Metered ramps
-            "el1 * (1.0 + 0.8 * ( (volau + volad) / el2 ) ** 4.0) +"
-            "2.5/ 2 * (1-ul1) ** 2 * (1.0 + 6.5 * ( (volau + volad) / el3 ) ** 2.0)")
+            "ul1 * (1.0 + 0.8 * ( (volau + volad) / ul3 ) ** 4.0) +"
+            "2.5/ 2 * (1-el1) ** 2 * (1.0 + 6.5 * ( (volau + volad) / el3 ) ** 2.0)")
 
         set_extra_function_params(
-            el1="@time_mid_link_am", el2="@capacity_md_link_am", el3="@capacity_inter_am")
+            el1="@green_to_cycle", el2="@volau", el3="@capacity_inter_am")
 
         create_function("fp1", "up1")  # fixed cost turns stored in turn data 1 (up1)
 
-        # buses in mixed traffic, use fixed time, copied from @time_link_##
-        create_function("ft1", "ul2")  
-        # fixed guideway systems according to vehicle speed (not used at the moment)
-        create_function("ft2", "60 * length / speed")  
-        # special 0-cost segments for prohibition to walk to different stop from centroid 
+        # buses in mixed traffic, use auto time
+        create_function("ft1", "timau")  
+        # fixed speed for separate guideway operations
+        create_function("ft2", "ul2")  
+        # special 0-cost segments for prohibition of walk to different stop from centroid 
         create_function("ft3", "0")  
-
+        # fixed guideway systems according to vehicle speed (not used at the moment)
+        create_function("ft4", "60 * length / speed")  
 
     def log_report(self):
         report = _m.PageBuilder(title="Import from TCOVED files report")
         try:
             if self._error:
-                report.add_html("Errors detected during import: %s" % len(self._error))
-                error_msg = ["<ul>"]
+                report.add_html("<div style='margin-left:10px'>Errors detected during import: %s</div>" % len(self._error))
+                error_msg = ["<ul style='margin-left:10px'>"]
                 for error in self._error:
                     error_msg.append("<li>%s</li>"  % error)
                 error_msg.append("</ul>")
@@ -1195,13 +1345,14 @@ class ImportTCOVED(_m.Tool()):
             else:
                 report.add_html("No errors detected during import")
 
+            # TODO: add title
             for item in self._log:
                 if item["type"] == "text":
-                    report.add_html("<div style='margin-left:10px'>%s</div>" % item["content"])
+                    report.add_html("<div style='margin-left:20px'>%s</div>" % item["content"])
                 elif item["type"] == "header":
-                    report.add_html("<h3>%s</h3>" % item["content"])
+                    report.add_html("<h3 style='margin-left:10px'>%s</h3>" % item["content"])
                 elif item["type"] == "table":
-                    table_msg = ["<div style='margin-left:10px'><table>", "<h3>%s</h3>" % item["title"]]
+                    table_msg = ["<div style='margin-left:20px'><table>", "<h3>%s</h3>" % item["title"]]
                     if "header" in item:
                         table_msg.append("<tr>")
                         for label in item["header"]:
@@ -1224,53 +1375,6 @@ class ImportTCOVED(_m.Tool()):
         _m.logbook_write("Import from TCOVED report", report.render())
 
 
-class DataTableProc(object):
-
-    def __init__(self, table_name, path=None):
-        if path:
-            source = _dt.DataSource(path)
-            layer = source.layer(table_name)
-            self._data = layer.get_data()
-        else:
-            modeller = _m.Modeller()
-            desktop = modeller.desktop
-            project = desktop.project
-            dt_db = project.data_tables()
-            table = dt_db.table(table_name)
-            self._data = table.get_data()
-        self._load_data()
-
-    def _load_data(self):
-        data = self._data
-        self._values = [a.values for a in data.attributes()]
-        self._attr_names = [a.name for a in data.attributes()]
-        self._index = dict((k, i) for i,k in enumerate(self._attr_names))
-        if "geometry" in self._attr_names:
-            geo_coords = []
-            attr = data.attribute("geometry")
-            for record in attr.values:
-                geo_obj = _ogr.CreateGeometryFromWkt(record.text)
-                geo_coords.append(geo_obj.GetPoints())
-            self._values.append(geo_coords)
-            self._attr_names.append("geo_coordinates")
-
-    def __iter__(self):
-        values, attr_names = self._values, self._attr_names
-        return (dict(_izip(attr_names, record))
-                for record in _izip(*values))
-
-    def save(self, name, overwrite=False):
-        desktop = _m.Modeller().desktop
-        dt_db = desktop.project.data_tables()        
-        if overwrite and dt_db.table(name):
-            dt_db.delete_table(name)
-        dt_db.create_table(name, self._data)
-
-    def values(self, name):
-        index = self._index[name]
-        return self._values[index]
-
-
 def get_node(network, number, coordinates, is_centroid):
     node = network.node(number)
     if not node:
@@ -1280,13 +1384,13 @@ def get_node(network, number, coordinates, is_centroid):
 
 
 # shortest path interpolation
-def find_path(origin_link, dest_link, mode):
+def find_path(orig_link, dest_link, mode):
     visited = set([])
     visited_add = visited.add
     back_links = {}
     heap = []
 
-    for link in origin_link.j_node.outgoing_links():
+    for link in orig_link.j_node.outgoing_links():
         if mode in link.modes:
             back_links[link] = None
             _heapq.heappush(heap, (link["length"], link))
@@ -1312,7 +1416,9 @@ def find_path(origin_link, dest_link, mode):
     except IndexError:
         pass  # IndexError if heap is empty
     if not link_found:
-        raise Exception("No path between link %s and link %s on mode '%s'" % (origin_link, dest_link, mode))
+        raise NoPathException(
+            "no path found between links with trcov_id %s and %s (Emme IDs %s and %s)" % (
+            orig_link["@tcov_id"], dest_link["@tcov_id"], orig_link, dest_link))
     
     prev_link = back_links[dest_link]
     route = []
@@ -1320,6 +1426,10 @@ def find_path(origin_link, dest_link, mode):
         route.append(prev_link)
         prev_link = back_links[prev_link]
     return list(reversed(route))
+
+
+class NoPathException(Exception):
+    pass
 
 
 def revised_headway(headway):
@@ -1351,7 +1461,3 @@ def revised_headway(headway):
         rev_headway = part_1_headway + part_2_headway + part_3_headway + part_4_headway
             
     return rev_headway
-
-
-def epsilon_compare(a, b, epsilon): 
-    return abs((a - b) / (a if abs(a) > 1 else 1)) <= epsilon
