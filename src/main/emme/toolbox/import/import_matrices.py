@@ -12,6 +12,8 @@
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
 
+TOOLBOX_ORDER = 11
+
 
 import inro.modeller as _m
 import traceback as _traceback
@@ -57,7 +59,9 @@ class ImportMatrices(_m.Tool()):
             raise
 
     @_m.logbook_trace("Import matrices", save_arguments=True)
-    def __call__(self, omx_file, demand_type, period, scenario):
+    def __call__(self, omx_file, demand_type, period, scenario, convert_truck_to_pce=None):
+        self.__call__.logbook_cursor.write("Import %s matrices for period %s" % (demand_type, period))
+        
         demand_types = ["AUTO", "TRUCK", "TRANSIT"]
         if demand_type not in demand_types:
             raise Exception("Invalid demand_type, must be one of %s" % demand_types)
@@ -107,3 +111,25 @@ class ImportMatrices(_m.Tool()):
 
         matrices = dict((k, v % period) for k, v in matrices.iteritems())
         import_from_omx(file_path=omx_file, matrices=matrices, scenario=scenario)
+
+        if demand_type == "TRUCK" and convert_truck_to_pce:
+            self.convert_to_pce(scenario)
+
+    @_m.logbook_trace('Convert truck vehicle demand to PCE')
+    def convert_to_pce(self, scenario):
+        matrix_calc = _m.Modeller().tool(
+            'inro.emme.matrix_calculation.matrix_calculator')
+        # Calculate PCEs for trucks
+        periods = ["EA", "AM", "MD", "PM", "EV"]
+        mat_trucks = ['TRKHGP', 'TRKHTOLL', 'TRKLGP', 'TRKLTOLL', 'TRKMGP', 'TRKMTOLL']
+        pce_values = [2.5,      2.5,        1.3,      1.3,        1.5,      1.5]
+        for period in periods:
+            with _m.logbook_trace("Period %s" % period):
+                for name, pce in zip(mat_trucks, pce_values):
+                    demand_name = "%s_%s" % (period, name)
+                    mat_spec = {
+                        "expression": '(mf"%s" * %s).max.0' % (demand_name, pce), 
+                        "result": 'mf"%s"' % demand_name,
+                        "type": "MATRIX_CALCULATION"
+                    }
+                    matrix_calc(mat_spec, scenario)

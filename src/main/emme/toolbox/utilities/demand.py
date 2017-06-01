@@ -12,6 +12,8 @@
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
 
+TOOLBOX_ORDER = 101
+
 
 import inro.emme.datatable as _dt
 import inro.modeller as _m
@@ -21,8 +23,6 @@ import pandas as pd
 import numpy as np
 import os
 
-
-_PROJECT_PATH = r'C:/dev'
 
 class Utils(_m.Tool()):
 
@@ -111,7 +111,7 @@ def add_missing_zones(df, scenario):
     ext_df = pd.DataFrame()
     for c in df.columns:
         ext_df[c] = np.zeros(num_missing)
-    ext_df['taz'] = np.array(missing_zones)
+    ext_df['taz'] = np.array(list(missing_zones))
     df = pd.concat([df, ext_df])
     df = df.sort('taz', ascending=True)
     return df
@@ -180,12 +180,6 @@ class Properties(object):
                 return caster(value)
             except ValueError:
                 pass
-        # TODO: parse list
-        # # TODO: this is mixed up in the output, store the backing string and convert on key get
-        # if isinstance(value, basestring) and '%project.folder%' in value:
-        #     return value.replace('%project.folder%', _PROJECT_PATH)
-        # # TODO - process the reference to another value in the string:
-        # #      - example: mgra.socec.file = input/mgra13_based_input${year}.csv
         return value
 
     def _write_properties(self, path):

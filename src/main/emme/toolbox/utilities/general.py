@@ -12,6 +12,9 @@
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
 
+TOOLBOX_ORDER = 102
+
+
 import inro.modeller as _m
 import inro.emme.datatable as _dt
 from osgeo import ogr as _ogr
@@ -229,7 +232,7 @@ def temp_functions(emmebank):
                 exp = func.expression
                 if "volau" in exp:
                     exp = exp.replace("volau", "el2")
-                    change_function(func, exp)
+                    change_function(func, exp, emmebank)
     try:
         yield
     finally:
@@ -239,7 +242,7 @@ def temp_functions(emmebank):
                     exp = func.expression
                     if "el2" in exp:
                         exp = exp.replace("el2", "volau")
-                        change_function(func, exp)
+                        change_function(func, exp, emmebank)
 
                         
 class DataTableProc(object):

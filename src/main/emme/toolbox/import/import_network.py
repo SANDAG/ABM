@@ -5,12 +5,14 @@
 #//// San Diego Association of Governments and partner agencies.            ///
 #//// This copyright notice must be preserved.                              ///
 #////                                                                       ///
-#//// import_network.py                                                     ///
+#//// import/import_network.py                                              ///
 #////                                                                       ///
 #////                                                                       ///
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+
+TOOLBOX_ORDER = 10
 
 
 import inro.modeller as _m
@@ -486,7 +488,7 @@ class ImportNetwork(_m.Tool()):
     def create_transit_base(self, network, attr_map):
         self._log.append({"type": "header", "content": "Import transit base network from trcov.e00"})
         utils = _m.Modeller().module("sandag.utilities.general")
-        transit_data = DataTableProc("ARC", os.path.join(self.source, "trcov.e00"))
+        transit_data = utils.DataTableProc("ARC", os.path.join(self.source, "trcov.e00"))
 
         if self.save_data_tables:
             transit_data.save("%s_trcov" % self.data_table_name, self.overwrite)
@@ -665,16 +667,16 @@ class ImportNetwork(_m.Tool()):
         self._log.append({"type": "header", "content": "Import transit lines"})
         utils = _m.Modeller().module("sandag.utilities.general")
         # Route_ID,Route_Name,Mode,AM_Headway,PM_Headway,OP_Headway,Night_Headway,Night_Hours,Config,Fare
-        transit_line_data = DataTableProc("trrt", os.path.join(self.source, "trrt.csv"))
+        transit_line_data = utils.DataTableProc("trrt", os.path.join(self.source, "trrt.csv"))
         # Route_ID,Link_ID,Direction
-        transit_link_data = DataTableProc("trlink", os.path.join(self.source, "trlink.csv"))
+        transit_link_data = utils.DataTableProc("trlink", os.path.join(self.source, "trlink.csv"))
         # Stop_ID,Route_ID,Link_ID,Pass_Count,Milepost,Longitude, Latitude,HwyNode,TrnNode,FareZone,StopName
-        transit_stop_data = DataTableProc("trstop", os.path.join(self.source, "trstop.csv"))
+        transit_stop_data = utils.DataTableProc("trstop", os.path.join(self.source, "trstop.csv"))
         # From_line,To_line,Board_stop,Wait_time
         # Note: Board_stop is not used
-        timed_xfer_data = DataTableProc("timexfer", os.path.join(self.source, "timexfer.csv"))
+        timed_xfer_data = utils.DataTableProc("timexfer", os.path.join(self.source, "timexfer.csv"))
 
-        mode_properties = DataTableProc("MODE5TOD", os.path.join(self.source, "MODE5TOD.dbf"))
+        mode_properties = utils.DataTableProc("MODE5TOD", os.path.join(self.source, "MODE5TOD.dbf"))
         mode_details = {}
         for record in mode_properties:
             mode_details[record["MODE_ID"]] = record
@@ -873,7 +875,7 @@ class ImportNetwork(_m.Tool()):
         timed_xfer.add_attribute(_dt.Attribute("to_line", _np.array(to_line).astype("O")))
         timed_xfer.add_attribute(_dt.Attribute("wait_time", _np.array(wait_time)))
         # Creates and saves the new table
-        DataTableProc("%s_timed_xfer" % self.data_table_name, data=timed_xfer)
+        utils.DataTableProc("%s_timed_xfer" % self.data_table_name, data=timed_xfer)
 
     def calc_transit_attributes(self, network):
         self._log.append({"type": "header", "content": "Calculate derived transit attributes"})
@@ -962,7 +964,7 @@ class ImportNetwork(_m.Tool()):
                             turn.data1 = record["UTURN"]
 
         self._log.append({"type": "text", "content": "Process turns.csv for turn prohibited by ID"})
-        turn_data = DataTableProc("turns", os.path.join(self.source, "turns.csv"))
+        turn_data = utils.DataTableProc("turns", os.path.join(self.source, "turns.csv"))
         if self.save_data_tables:
             turn_data.save("%s-turns"  % self.data_table_name, self.overwrite)
         links = dict((link["@tcov_id"], link) for link in network.links())
@@ -1290,7 +1292,7 @@ class ImportNetwork(_m.Tool()):
         set_extra_function_params = _m.Modeller().tool(
             "inro.emme.traffic_assignment.set_extra_function_parameters")
         emmebank = _m.Modeller().emmebank
-        for f_id in ["fd10", "fd20", "fd21", "fd22", "fd23", "fd24", "fp1", "ft1", "ft2", "ft3"]:
+        for f_id in ["fd10", "fd20", "fd21", "fd22", "fd23", "fd24", "fp1", "ft1", "ft2", "ft3", "ft4"]:
             function = emmebank.function(f_id)
             if function:
                 emmebank.delete_function(function)

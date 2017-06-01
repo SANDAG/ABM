@@ -12,6 +12,8 @@
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
 
+TOOLBOX_ORDER = 20
+
 
 import inro.modeller as _m
 import inro.emme.core.exception as _except
@@ -187,7 +189,7 @@ Assign traffic demand for the selected time period."""
                 el1 = "@green_to_cycle"
                 el2 = "@volau"              # for skim only
                 el3 = "@capacity_inter"       
-                set_extra_function_para(el1, el2, el3)
+                set_extra_function_para(el1, el2, el3, emmebank=emmebank)
 
                 # set green to cycle to el1=@green_to_cycle for VDF
                 att_name = "@green_to_cycle_%s" % p
@@ -227,8 +229,8 @@ Assign traffic demand for the selected time period."""
 
             with _m.logbook_trace("Per-class flow attributes"):
                 for traffic_class in classes:
-                    demand = "%s_%s" % (period, traffic_class["name"])
-                    demand = demand + "_PCE" if 'TRK' in traffic_class["name"] else demand            
+                    demand = 'mf"%s_%s"' % (period, traffic_class["name"])
+                    #demand = demand + "_PCE" if 'TRK' in traffic_class["name"] else demand            
                     link_cost = "%s_%s" % (traffic_class["cost"], p) if traffic_class["cost"] else "@cost_operating"
 
                     att_name = "@%s" % (traffic_class["name"].lower())
@@ -240,7 +242,7 @@ Assign traffic demand for the selected time period."""
 
                     class_spec = {
                         "mode": traffic_class["mode"],
-                        "demand": 'mf"%s"' % demand,
+                        "demand": demand,
                         "generalized_cost": {
                             "link_costs": link_cost, "perception_factor": 1.0 / traffic_class["VOT"]
                         },
@@ -275,7 +277,7 @@ Assign traffic demand for the selected time period."""
                 gen_truck_mode = 'D'
                 classes.append({ 
                     "name": 'TRK', "mode": gen_truck_mode, "PCE": 1, "VOT": 67., "cost": '',
-                    "skim": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST"]
+                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST"]
                 })
             analysis_link = {
                 "TIME":     "@timau", 
@@ -392,7 +394,7 @@ Assign traffic demand for the selected time period."""
                                     matrix_calc(mat_spec, scenario, num_processors=num_processors)
                                     expression = "(p.eq.q) * 0.5 * %s + (p.ne.q) * %s" % (mo_intra.id, name)
                                 else:
-                                    expression = "(p.eq.q) * (-99999999.0) + (p.ne.q) * %s" % (matrix.id)
+                                    expression = "(p.eq.q) * (-99999999.0) + (p.ne.q) * %s" % (name)
                                 mat_spec = {
                                     "expression": expression, 
                                     "result": name,
@@ -456,7 +458,7 @@ Assign traffic demand for the selected time period."""
                     with _m.logbook_trace("Cleanup for generic truck skim"):
                         change_link_modes(modes=[truck_mode], action="DELETE",
                                           selection="all", scenario=scenario)
-                        delete_mode(mode=truck_mode)
+                        delete_mode(mode=truck_mode, scenario=scenario)
      
     @_m.method(return_type=unicode)
     def tool_run_msg_status(self):

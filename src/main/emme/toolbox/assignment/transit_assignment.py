@@ -12,6 +12,8 @@
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
 
+TOOLBOX_ORDER = 21
+
 
 import os
 import sys
@@ -40,16 +42,16 @@ class TransitAssignment(_m.Tool()):
 
     tool_run_msg = ""
 
-    @property
-    def current_scenario(self):
-        return _m.Modeller().scenario
+    @_m.method(return_type=unicode)
+    def tool_run_msg_status(self):
+        return self.tool_run_msg
 
     def __init__(self):
         self.skims_only = False
         self.transfer_limit = False
         self.timed_xfers_table = None
-        self.base_scenario = self.current_scenario
-        self.scenario_id = self.current_scenario.number + 200
+        self.base_scenario = _m.Modeller().scenario
+        self.scenario_id = self.base_scenario.number + 200
         self.scenario_title = ""
         self.overwrite = False
         self._max_processors = _multiprocessing.cpu_count()
@@ -205,7 +207,7 @@ class TransitAssignment(_m.Tool()):
                     seg["@transfer_penalty_s"] = seg.line["@transfer_penalty"]
 
                 self.taps_to_centroids(network)
-                if timed_transfers_with_walk:
+                if timed_xfers_table:
                     self.timed_transfers(network, timed_transfers_with_walk, period)
                 self.connect_circle_lines(network)
                 self.duplicate_tap_adajcent_stops(network, params["headway"])
@@ -435,7 +437,7 @@ class TransitAssignment(_m.Tool()):
                            "+ 1.0 * ({0}_XFERS.max.0) "
                            "+ 1.8 * {0}_TOTALWALK").format(name),
         }
-        matrix_calc(spec, scenario=scenario)#, num_processors=num_processors)
+        matrix_calc(spec, scenario=scenario, num_processors=num_processors)
 
 
     @_m.logbook_trace("Extract skims for all modes", save_arguments=True)
@@ -481,7 +483,7 @@ class TransitAssignment(_m.Tool()):
                            "+ 1.0 *({0}_XFERS.max.0) "
                            "+ 1.8 * {0}_TOTALWALK").format(name),
         }
-        matrix_calc(spec, scenario=scenario)#, num_processors=num_processors)
+        matrix_calc(spec, scenario=scenario, num_processors=num_processors)
 
     def _run_skims(self, name, class_name, period, matrices, num_processors, scenario):
         modeller = _m.Modeller()        
@@ -518,7 +520,7 @@ class TransitAssignment(_m.Tool()):
                         "actual_aux_transit_times": 'mf"%s_TOTALWALK"' % name,
                     },
                 }
-                matrix_results(spec, class_name=class_name, scenario=scenario)#, num_processors=num_processors)
+                matrix_results(spec, class_name=class_name, scenario=scenario, num_processors=num_processors)
 
             # convert number of boardings to number of transfers
             # subtrack transfers to the same line at layover points
@@ -573,7 +575,7 @@ class TransitAssignment(_m.Tool()):
                 },
                 "type": "EXTENDED_TRANSIT_PATH_ANALYSIS"
             }
-            path_analysis(path_spec, class_name=class_name, scenario=scenario)#, num_processors=num_processors)        
+            path_analysis(path_spec, class_name=class_name, scenario=scenario, num_processors=num_processors)        
             spec = {
                 "type": "MATRIX_CALCULATION", 
                 "constraint": None,
@@ -593,7 +595,7 @@ class TransitAssignment(_m.Tool()):
                 },
                 "type": "EXTENDED_TRANSIT_PATH_ANALYSIS"
             }
-            path_analysis(path_spec, class_name=class_name, scenario=scenario)#, num_processors=num_processors)
+            path_analysis(path_spec, class_name=class_name, scenario=scenario, num_processors=num_processors)
             spec = {
                 "type": "MATRIX_CALCULATION", 
                 "constraint": None,
@@ -646,7 +648,7 @@ class TransitAssignment(_m.Tool()):
                     },
                     "type": "EXTENDED_TRANSIT_STRATEGY_ANALYSIS"
                 }
-                strategy_analysis(spec, class_name=class_name, scenario=scenario)#, num_processors=num_processors)
+                strategy_analysis(spec, class_name=class_name, scenario=scenario, num_processors=num_processors)
 
                 if name.endswith("ALL"):
                     strat_analysis_spec = {
@@ -682,7 +684,7 @@ class TransitAssignment(_m.Tool()):
                         network_calc(network_calc_spec, scenario=scenario)
                         strat_analysis_spec["results"]["strategy_values"] = '%s_%s' % (name, m_name)
                         strategy_analysis(strat_analysis_spec, class_name=class_name, 
-                                          scenario=scenario)#, num_processors=num_processors)
+                                          scenario=scenario, num_processors=num_processors)
         return
 
     @_m.logbook_trace("Convert TAP nodes to centroids")
@@ -968,8 +970,3 @@ class TransitAssignment(_m.Tool()):
     def _get_node_id(self):
         self._new_node_id += 1
         return self._new_node_id
-
-
-    @_m.method(return_type=unicode)
-    def tool_run_msg_status(self):
-        return self.tool_run_msg

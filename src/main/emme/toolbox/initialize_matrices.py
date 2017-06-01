@@ -5,19 +5,18 @@
 #//// San Diego Association of Governments and partner agencies.            ///
 #//// This copyright notice must be preserved.                              ///
 #////                                                                       ///
-#//// initialize.py                                                         ///
+#//// initialize_matrices.py                                                ///
 #////                                                                       ///
 #////                                                                       ///
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
 
+TOOLBOX_ORDER = 1
+
 
 import inro.modeller as _m
 import traceback as _traceback
-
-
-TOOLBOX_ORDER = 1
 
 
 class Initialize(_m.Tool()):
@@ -107,20 +106,21 @@ class Initialize(_m.Tool()):
             ( 6, "HOV3GP",    "HOV3+ GP-only demand"),
             ( 7, "HOV3HOV",   "HOV3+ HOV-lane demand"),
             ( 8, "HOV3TOLL",  "HOV3+ toll demand"),
-            ( 9, "TRKHGP",    "Truck Heavy GP-only demand"),
-            (10, "TRKHTOLL",  "Truck Heavy toll demand"),
-            (11, "TRKLGP",    "Truck Light GP-only demand"),
-            (12, "TRKLTOLL",  "Truck Light toll demand"),
-            (13, "TRKMGP",    "Truck Medium GP-only demand"),
-            (14, "TRKMTOLL",  "Truck Medium toll demand"),
+            ( 9, "TRKHGP",    "Truck Heavy GP-only PCE demand"),
+            (10, "TRKHTOLL",  "Truck Heavy toll PCE demand"),
+            (11, "TRKLGP",    "Truck Light GP-only PCE demand"),
+            (12, "TRKLTOLL",  "Truck Light toll PCE demand"),
+            (13, "TRKMGP",    "Truck Medium GP-only PCE demand"),
+            (14, "TRKMTOLL",  "Truck Medium toll PCE demand"),
         ]
         index_start = 100
         period_index = {"EA": 0, "AM": 20, "MD": 40, "PM": 60, "EV": 80}
         for period in self.periods:
             p_index = period_index[period]
-            for num, m_name, m_desc in matrices:
-                ident = "mf%s" % (index_start + p_index + num)
-                self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
+            with _m.logbook_trace("For period %s" % period):
+                for num, m_name, m_desc in matrices:
+                    ident = "mf%s" % (index_start + p_index + num)
+                    self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
         self.create_matrix("ms1", "zero", "zero")
 
     @_m.logbook_trace("Transit demand matrices")
@@ -137,12 +137,13 @@ class Initialize(_m.Tool()):
         period_index = {"EA": 0, "AM": 15, "MD": 30, "PM": 45, "EV": 60}
         for period in self.periods:
             p_index = period_index[period]
-            for a_name, a_index in access_index:
-                for num, m_name, m_desc in matrices:
-                    ident = "mf%s" % (index_start + p_index + a_index + num)
-                    name = "%s_%s%s" % (period, a_name, m_name)
-                    desc = "%s %s access %s" % (period, a_name, m_desc)
-                    self.create_matrix(ident, name, desc)
+            with _m.logbook_trace("For period %s" % period):
+                for a_name, a_index in access_index:
+                    for num, m_name, m_desc in matrices:
+                        ident = "mf%s" % (index_start + p_index + a_index + num)
+                        name = "%s_%s%s" % (period, a_name, m_name)
+                        desc = "%s %s access %s" % (period, a_name, m_desc)
+                        self.create_matrix(ident, name, desc)
 
     @_m.logbook_trace("Traffic skim matrices")
     def traffic_skims(self):
@@ -203,9 +204,10 @@ class Initialize(_m.Tool()):
         period_index = {"EA": 0, "AM": 50, "MD": 100, "PM": 150, "EV": 200}
         for period in self.periods:
             p_index = period_index[period]
-            for num, m_name, m_desc in matrices:
-                ident = "mf%s" % (index_start + p_index + num)
-                self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
+            with _m.logbook_trace("For period %s" % period):
+                for num, m_name, m_desc in matrices:
+                    ident = "mf%s" % (index_start + p_index + num)
+                    self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
 
         if "MD" in self.periods:
             # TODO: we may not need all of these skims - only the TIME one is used
@@ -258,9 +260,10 @@ class Initialize(_m.Tool()):
         period_index = {"EA": 0, "AM": 32, "MD": 64, "PM": 96, "EV": 128}
         for period in self.periods:
             p_index = period_index[period]
-            for num, m_name, m_desc in matrices:
-                ident = "mf%s" % (index_start + p_index + num)
-                self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
+            with _m.logbook_trace("For period %s" % period):
+                for num, m_name, m_desc in matrices:
+                    ident = "mf%s" % (index_start + p_index + num)
+                    self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
 
     @_m.logbook_trace("Truck sub-model matrices")
     def truck_model(self):
@@ -303,9 +306,10 @@ class Initialize(_m.Tool()):
         period_index = {"EA": 0, "AM": 3, "MD": 6, "PM": 9, "EV": 12}
         for period in self.periods:
             p_index = period_index[period]
-            for num, m_name, m_desc in matrices:
-                ident = 'mf%s' % (index_start + p_index + num)
-                self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
+            with _m.logbook_trace("For period %s" % period):
+                for num, m_name, m_desc in matrices:
+                    ident = 'mf%s' % (index_start + p_index + num)
+                    self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
 
     @_m.logbook_trace("Commercial vehicle sub-model matrices")
     def commercial_vehicle_model(self):
@@ -327,9 +331,10 @@ class Initialize(_m.Tool()):
         period_index = {"EA": 0, "AM": 3, "MD": 6, "PM": 9, "EV": 12}
         for period in self.periods:
             p_index = period_index[period]
-            for num, m_name, m_desc in matrices:
-                ident = 'mf%s' % (index_start + p_index + num)
-                self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
+            with _m.logbook_trace("For period %s" % period):
+                for num, m_name, m_desc in matrices:
+                    ident = 'mf%s' % (index_start + p_index + num)
+                    self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
 
     @_m.logbook_trace("External-internal sub-model matrices")
     def external_internal_model(self):
@@ -338,41 +343,43 @@ class Initialize(_m.Tool()):
             ( 2, 'HOV2TOLL_EIWORK', 'US to SD HOV2 Work TOLL demand'),
             ( 3, 'HOV3TOLL_EIWORK', 'US to SD HOV3 Work TOLL demand'),
             ( 4, 'SOVGP_EIWORK',  'US to SD SOV Work GP demand'),
-            ( 5, 'HOV2GP_EIWORK', 'US to SD HOV2 Work GP demand'),
-            ( 6, 'HOV3GP_EIWORK', 'US to SD HOV3 Work GP demand'),
+            ( 5, 'HOV2HOV_EIWORK', 'US to SD HOV2 Work HOV demand'),
+            ( 6, 'HOV3HOV_EIWORK', 'US to SD HOV3 Work HOV demand'),
             ( 7, 'SOVTOLL_EINONWORK',  'US to SD SOV Non-Work TOLL demand'),
             ( 8, 'HOV2TOLL_EINONWORK', 'US to SD HOV2 Non-Work TOLL demand'),
             ( 9, 'HOV3TOLL_EINONWORK', 'US to SD HOV3 Non-Work TOLL demand'),
             (10, 'SOVGP_EINONWORK',  'US to SD SOV Non-Work GP demand'),
-            (11, 'HOV2GP_EINONWORK', 'US to SD HOV2 Non-Work GP demand'),
-            (12, 'HOV3GP_EINONWORK', 'US to SD HOV3 Non-Work GP demand'),
+            (11, 'HOV2HOV_EINONWORK', 'US to SD HOV2 Non-Work HOV demand'),
+            (12, 'HOV3HOV_EINONWORK', 'US to SD HOV3 Non-Work HOV demand'),
         ]
         index_start = 775
-        period_index = {"EA": 0, "AM": 3, "MD": 6, "PM": 9, "EV": 12}
+        period_index = {"EA": 0, "AM": 12, "MD": 24, "PM": 36, "EV": 48}
         for period in self.periods:
             p_index = period_index[period]
-            for num, m_name, m_desc in matrices:
-                ident = 'mf%s' % (index_start + p_index + num)
-                self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
+            with _m.logbook_trace("For period %s" % period):
+                for num, m_name, m_desc in matrices:
+                    ident = 'mf%s' % (index_start + p_index + num)
+                    self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
 
 
     @_m.logbook_trace("External-external sub-model matrices")
     def external_external_model(self):
         self.create_matrix(
-            "mf791", "ALL_TOTAL_EETRIPS", 
+            "mf836", "ALL_TOTAL_EETRIPS", 
             "All periods Total for all modes external-external trips")
         matrices = [
             ( 1, 'SOVGP_EETRIPS',    'SOVGP external-external demand'),
             ( 2, 'HOV2HOV_EETRIPS',  'HOV2HOV external-external demand'),
             ( 3, 'HOV3HOV_EETRIPS',  'HOV3HOV external-external demand'),
         ]
-        index_start = 791
+        index_start = 837
         period_index = {"EA": 0, "AM": 3, "MD": 6, "PM": 9, "EV": 12}
         for period in self.periods:
             p_index = period_index[period]
-            for num, m_name, m_desc in matrices:
-                ident = 'mf%s' % (index_start + p_index + num)
-                self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
+            with _m.logbook_trace("For period %s" % period):
+                for num, m_name, m_desc in matrices:
+                    ident = 'mf%s' % (index_start + p_index + num)
+                    self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
 
     def create_matrix(self, ident, name, desc):
         if self._debug:

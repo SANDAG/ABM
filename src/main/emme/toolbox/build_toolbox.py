@@ -7,19 +7,14 @@
 #////                                                                       ///
 #//// build_toolbox.py                                                      ///
 #////                                                                       ///
-#////     Generates an MTBX (Emme Modeller Toolbox), based on the structure ///  
+#////     Generates an mtbx (Emme Modeller Toolbox), based on the structure ///  
 #////     of the Python source tree.                                        ///
 #////                                                                       ///
 #////     Usage: build_toolbox.py [-s source_folder] [-p toolbox_path]      ///
-#////                             [-t toolbox_title] [-n toolbox_namespace] ///
 #////                                                                       ///
 #////         [-p toolbox_path]: Specifies the name of the MTBX file.       ///
 #////              If omitted,defaults to the name of the source            ///
 #////              folder + '.mtbx'.                                        ///
-#////         [-t toolbox_title]: The title of the MTBX file. If omitted,   ///
-#////             defaults to the name of the source folder capitalized.    ///
-#////         [-n toolbox_namespace]: The namespace for the toolbox.        ///
-#////             If omitted, defaults to the name of the source folder.    ///
 #////         [-s source_folder]: The location of the source code folder.   ///
 #////             If omitted, defaults to the working directory.            ///
 #////                                                                       ///
@@ -29,13 +24,9 @@
 
 import os
 import re
-import imp
 from datetime import datetime
 import subprocess
 import sqlite3.dbapi2 as sqllib
-
-import inro.emme.desktop.app as _app
-import inro.modeller as _m
 
 
 def check_namespace(ns):
@@ -53,7 +44,8 @@ class BaseNode(object):
     def __init__(self, namespace, title):
         check_namespace(namespace)
         self.namespace = namespace 
-        self.title = title       
+        self.title = title
+        self.element_id = None
         self.parent = None
         self.root = None
         self.children = []
@@ -66,23 +58,25 @@ class BaseNode(object):
     def add_tool(self, script_path, namespace):
         try:
             node = ToolNode(namespace, script_path, parent=self)
+            self.children.append(node)
+            with open(script_path, 'r') as f:
+                for line in f:
+                    if line.startswith("TOOLBOX_ORDER"):
+                        node.order = int(line.split("=")[1])
+                    if line.startswith("TOOLBOX_TITLE"):
+                        title = line.split("=")[1].strip()
+                        node.title = title[1:-1]  # exclude first and last quotes
         except Exception, e:
             print script_path, namespace
             print type(e), str(e)
             return None
-        self.children.append(node)
-        _tool_mod = imp.load_source(namespace, script_path)
-        node.order = getattr(_tool_mod, "TOOLBOX_ORDER", None)
-        title = getattr(_tool_mod, "TOOLBOX_TITLE", None)
-        if title:
-            node.title = title
         return node
 
-    def sort(self):
+    def set_toolbox_order(self):
+        self.element_id = self.root.next_id()
         self.children.sort(key=lambda x: x.order)
         for child in self.children:
-            if isinstance(child, FolderNode):
-                child.sort()
+            child.set_toolbox_order()
 
 
 class ElementTree(BaseNode):
@@ -90,7 +84,6 @@ class ElementTree(BaseNode):
     def __init__(self, namespace, title):
         super(ElementTree, self).__init__(namespace, title)
         self.next_element_id = 0
-        self.element_id = self.next_id()
         self.begin = str(datetime.now())
         self.version = "Emme %s" % get_emme_version()
         self.root = self
@@ -107,7 +100,7 @@ class FolderNode(BaseNode):
         super(FolderNode, self).__init__(namespace, title)
         self.parent = parent
         self.root = parent.root
-        self.element_id = self.root.next_id()
+        self.element_id = None
 
     @property
     def order(self):
@@ -122,15 +115,18 @@ class ToolNode():
         check_namespace(namespace)
         self.namespace = namespace
         self.title = namespace.replace("_", " ").capitalize()
-        self.script = script_path + ".py"
+        self.script = script_path
 
         self.root = parent.root
         self.parent = parent
-        self.element_id = self.root.next_id()
+        self.element_id = None
 
         self.code = ''
         self.extension = '.py'
         self.order = None
+        
+    def set_toolbox_order(self):
+        self.element_id = self.root.next_id()
 
 class MTBXDatabase():    
     FORMAT_MAGIC_NUMBER = 'B8C224F6_7C94_4E6F_8C2C_5CC06F145271'
@@ -314,10 +310,10 @@ def build_toolbox(toolbox_file, source_folder, title, namespace):
     print ""
     
     print "Loading toolbox structure"
-    tree = ElementTree(title, namespace)
+    tree = ElementTree(namespace, title)
     explore_source_folder(source_folder, tree)
+    tree.set_toolbox_order()
     print "Done. Found %s elements." % (tree.next_element_id)
-    tree.sort()
     
     print ""
     print "Building MTBX file."
@@ -351,24 +347,20 @@ def explore_source_folder(root_folder_path, parent_node):
 
 if __name__ == "__main__":
     '''
-    Usage: build_toolbox.py [-p toolbox_path] [-t toolbox_title] [-n toolbox_namespace] [-s source_folder]
+    Usage: build_toolbox.py [-p toolbox_path] [-s source_folder]
     '''
-    desktop = _app.connect(port=4242)
-    modeller = _m.Modeller(desktop)
     
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--src', help= "Path to the source code folder. Default is the working folder.")
     parser.add_argument('-p', '--path', help= "Output file path. Default is 'folder_name.mtbx' in the source code folder.")
-    parser.add_argument('-t', '--title', help= "Title of the Toolbox. Default is 'Folder name' for the source code.")
-    parser.add_argument('-n', '--namespace', help= "The initial namespace. Default is 'folder_name' for the source code.")
     
     args = parser.parse_args()
 
     source_folder = args.src or os.path.dirname(os.path.abspath(__file__))
     folder_name = os.path.split(source_folder)[1]
-    title = args.title or folder_name.capitalize().replace("_", " ")
     toolbox_file = args.path or folder_name + ".mtbx"
-    namespace = args.namespace or folder_name
+    title = "SANDAG toolbox"
+    namespace = "sandag"
     
     build_toolbox(toolbox_file, source_folder, title, namespace)
