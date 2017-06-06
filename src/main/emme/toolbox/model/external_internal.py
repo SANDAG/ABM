@@ -69,7 +69,7 @@ class ExternalInternal(_m.Tool()):
         utils = _m.Modeller().module('sandag.utilities.demand')
 
         props = utils.Properties(
-            os.path.join(input_directory, "sandag_abm.properties"))
+            os.path.join(os.path.dirname(input_directory), "conf", "sandag_abm.properties"))
 
         # Load data
         control_totals = pd.read_csv(

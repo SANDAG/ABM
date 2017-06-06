@@ -19,9 +19,6 @@ import inro.modeller as _m
 import inro.emme.datatable as _dt
 from osgeo import ogr as _ogr
 from contextlib import contextmanager as _context
-from copy import deepcopy as _copy
-import numpy as _numpy
-import multiprocessing as _processors
 from itertools import izip as _izip
 import re as _re
 import os
@@ -43,121 +40,6 @@ class UtilityTool(_m.Tool()):
 
     def run(self):
         pass
-
-
-def create_matrices(matrices_to_create, scenario):
-    create_matrix = _m.Modeller().tool(
-        "inro.emme.data.matrix.create_matrix")
-    for params in matrices_to_create:
-        if len(params) == 4:
-            ident, name, desc, default = params
-        else:
-            ident, name, desc = params
-            default = 0
-        create_matrix(ident, name, desc, default, scenario=scenario, overwrite=True)
-
-class MatrixCalculator(object):
-    def __init__(self, scenario, num_processors=0):
-        self._scenario = scenario
-        self._matrix_calc = _m.Modeller().tool(
-            "inro.emme.matrix_calculation.matrix_calculator")
-        self._specs = []
-        self._last_report = None
-        self.num_processors = num_processors
-
-    @property
-    def num_processors(self):
-        return self._num_processors
-
-    @num_processors.setter
-    def num_processors(self, value):
-        if isinstance(value, basestring):
-            if value == "max":
-                self._num_processors = _processors.cpu_count()
-            else:
-                result = _re.split("^max[\s]*-[\s]*", value)
-                self._num_processors = max(_processors.cpu_count() - int(result[1]), 1)
-        else:
-            self._num_processors = value
-
-    @property
-    def last_report(self):
-        return _copy(self._last_report)
-
-    @_context
-    def trace_run(self, name):
-        with _m.logbook_trace(name):
-            yield
-            self.run()
-
-    def add(self, result, expression, constraint=None, aggregation=None):
-        spec = self._format_spec(result, expression, constraint, aggregation)
-        self._specs.append(spec)
-
-    def _format_spec(self, result, expression, constraint, aggregation):
-        spec = {
-            "result": result,
-            "expression": expression,
-            "type": "MATRIX_CALCULATION"
-        }
-        if constraint is not None:
-            if isinstance(constraint, (list, tuple)):
-                # specified as list of by_value inputs
-                constraint = {
-                    "by_value": {
-                        "od_values": constraint[0],
-                        "interval_min": constraint[1],
-                        "interval_max": constraint[2],
-                        "condition": constraint[3]
-                    }
-                }
-            elif "od_values" in constraint:
-                # specified as the by_value sub-dictionary only
-                constraint = {"by_value": constraint}
-            # By zone constraints
-            elif ("destinations" in constraint or "origins" in constraint):
-                # specified as the by_zone sub-dictionary only
-                constraint = {"by_zone": constraint}
-            # otherwise, specified as a regular full constraint dictionary
-            if "by_value" in constraint:
-                # cast the inputs to the correct values
-                constraint["by_value"]["od_values"] = \
-                    str(constraint["by_value"]["od_values"])
-                constraint["by_value"]["condition"] = \
-                    constraint["by_value"]["condition"].upper()
-            spec["constraint"] = constraint
-
-            #Add None for missing key values if needed
-            if "by_value" not in constraint:
-                constraint["by_value"] = None
-            if "by_zone" not in constraint:
-                constraint["by_zone"] = None
-
-        else:
-            spec["constraint"] = None
-
-        if aggregation is not None:
-            if isinstance(aggregation, basestring):
-                aggregation = {"origins": aggregation}
-            spec["aggregation"] = aggregation
-        else:
-            spec["aggregation"] = None
-        return spec
-
-    def add_spec(self, spec):
-        self._specs.append(spec)
-
-    def run(self):
-        specs, self._specs = self._specs, []
-        report = self._matrix_calc(specs, scenario=self._scenario,
-                                   num_processors=self._num_processors)
-        self._last_report = report
-        return report
-
-    def run_single(self, result, expression, constraint=None, aggregation=None):
-        spec = self._format_spec(result, expression, constraint, aggregation)
-        return self._matrix_calc(spec, scenario=self._scenario,
-                                 num_processors=self._num_processors)
 
 
 class NetworkCalculator(object):

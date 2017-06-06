@@ -15,27 +15,33 @@
 TOOLBOX_ORDER = 21
 
 
-import os
-import sys
-import math
 import inro.modeller as _m
 import inro.emme.core.exception as _except
 import traceback as _traceback
-import multiprocessing as _multiprocessing
 from copy import deepcopy as _copy
 from collections import defaultdict as _defaultdict
 import contextlib as _context
+
+import os
+import sys
+import math
+
+
+gen_utils = _m.Modeller().module("sandag.utilities.general")
+dem_utils = _m.Modeller().module("sandag.utilities.demand")
 
 
 class TransitAssignment(_m.Tool()):
 
     period = _m.Attribute(unicode)
+
+    scenario_id = _m.Attribute(int)
+    transit_database =  _m.Attribute(_m.InstanceType)
+    base_scenario =  _m.Attribute(_m.InstanceType)
+
     skims_only = _m.Attribute(bool)
     transfer_limit = _m.Attribute(bool)
     timed_xfers_table = _m.Attribute(unicode)
-
-    base_scenario =  _m.Attribute(_m.InstanceType)
-    scenario_id = _m.Attribute(int)
     scenario_title = _m.Attribute(unicode)
     overwrite = _m.Attribute(bool)
     num_processors = _m.Attribute(str)
@@ -54,7 +60,6 @@ class TransitAssignment(_m.Tool()):
         self.scenario_id = self.base_scenario.number + 200
         self.scenario_title = ""
         self.overwrite = False
-        self._max_processors = _multiprocessing.cpu_count()
         self.num_processors = "MAX-1"
         self._dt_db = _m.Modeller().desktop.project.data_tables()
         
@@ -72,33 +77,34 @@ class TransitAssignment(_m.Tool()):
                    ("PM", "PM peak"),
                    ("EV", "Evening")]
         pb.add_select("period", options, title="Period:")
+
+        pb.add_select_scenario("base_scenario", 
+            title="Base scenario (with traffic and transit data):", allow_none=True,
+            note="With period traffic results from main (traffic assignment) database")
+        pb.add_select_database("transit_database", 
+            title="Transit database:", allow_none=True)
+        pb.add_text_box("scenario_id", title="ID for transit assignment scenario:")
+        pb.add_text_box("scenario_title", title="Scenario title:", size=80)
+
         pb.add_checkbox("skims_only", title=" ", label="Only run assignments for skim matrices")
         pb.add_checkbox("transfer_limit", title=" ", label="Apply 3-transfer limit")        
         options = [(None, "")] + [(table.name, table.name) for table in self._dt_db.tables()]
         pb.add_select("timed_xfers_table", options, title="Timed transfer data table:",
-            note="Only used with AM peak period assignment.")
+            note="Normally used only with AM peak period assignment.")
 
-        pb.add_select_scenario("base_scenario", 
-            title="Base scenario (traffic and transit data):", allow_none=True)
-
-        pb.add_text_box("scenario_id", title="ID for transit assignment scenario:")
-        pb.add_text_box("scenario_title", title="Scenario title:", size=80)
+        dem_utils.add_select_processors("num_processors", pb, self)
         pb.add_checkbox("overwrite", title=" ", label="Overwrite existing scenario")
-
-        options = [("MAX-1", "Maximum available - 1"), ("MAX", "Maximum available")]
-        options.extend([(n, "%s processors" % n) for n in range(1, self._max_processors + 1) ])
-        pb.add_select("num_processors", options, title="Number of processors:")
 
         return pb.render()
 
     def run(self):
         self.tool_run_msg = ""
         try:
-            emmebank = _m.Modeller().emmebank
+            emmebank = self.transit_database.core_emmebank
             results = self(
-                self.period, self.scenario_id, emmebank, self.base_scenario,
+                self.period, self.base_scenario, emmebank, self.scenario_id, self.scenario_title, 
                 self.skims_only, self.transfer_limit, self.timed_xfers_table,
-                self.scenario_title, self.overwrite, self.num_processors)
+                self.num_processors, self.overwrite)
             run_msg = "Transit assignment completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -106,11 +112,10 @@ class TransitAssignment(_m.Tool()):
                 error, _traceback.format_exc(error))
             raise
 
-    def __call__(self, period, scenario_id, emmebank, base_scenario=None,
+    def __call__(self, period, base_scenario, emmebank, scenario_id, scenario_title="", 
                  skims_only=False, transfer_limit=False, timed_xfers_table=None,
-                 scenario_title="", overwrite=False, num_processors="MAX-1"):
+                 num_processors="MAX-1", overwrite=False):
         modeller = _m.Modeller()
-        utils = modeller.module("sandag.utilities.general")
         attrs = {
             "period": period, 
             "scenario_id": scenario_id, 
@@ -130,15 +135,10 @@ class TransitAssignment(_m.Tool()):
             if not period in periods:
                 raise Exception(
                     'period: unknown value - specify one of %s' % periods)
-            if num_processors == "MAX":
-                num_processors = self._max_processors
-            elif num_processors == "MAX-1":
-                num_processors = max(self._max_processors - 1, 1)
-            elif num_processors:
-                num_processors = int(num_processors)
+            num_processors = dem_utils.parse_num_processors(num_processors)
 
             if timed_xfers_table:
-                timed_transfers_with_walk = list(utils.DataTableProc(timed_xfers_table))
+                timed_transfers_with_walk = list(gen_utils.DataTableProc(timed_xfers_table))
 
             perception_parameters = {
                 "EA": {
@@ -378,7 +378,7 @@ class TransitAssignment(_m.Tool()):
             }, 
             "connector_to_connector_path_prohibition": None, 
             "od_results": {"total_impedance": None},
-            "performance_settings": {"number_of_processors": num_processors}
+            #"performance_settings": {"number_of_processors": num_processors}
         }
 
         add_volumes = False
@@ -409,24 +409,9 @@ class TransitAssignment(_m.Tool()):
         modeller = _m.Modeller()
         matrix_calc = modeller.tool(
             "inro.emme.matrix_calculation.matrix_calculator")  
-        matrices = [
-            ( 0, "%s_BUS_GENCOST" % period,   "%s Bus: total impedance" % period), 
-            ( 1, "%s_BUS_FIRSTWAIT" % period, "%s Bus: first wait time" % period), 
-            ( 2, "%s_BUS_XFERWAIT" % period,  "%s Bus: transfer wait time" % period), 
-            ( 3, "%s_BUS_TOTALWAIT" % period, "%s Bus: total wait time" % period), 
-            ( 4, "%s_BUS_FARE" % period,      "%s Bus: fare" % period), 
-            ( 5, "%s_BUS_XFERS" % period,     "%s Bus: num transfers" % period), 
-            ( 6, "%s_BUS_ACCWALK" % period,   "%s Bus: access walk time" % period), 
-            ( 7, "%s_BUS_XFERWALK" % period,  "%s Bus: transfer walk time" % period), 
-            ( 8, "%s_BUS_EGRWALK" % period,   "%s Bus: egress walk time" % period), 
-            ( 9, "%s_BUS_TOTALWALK" % period, "%s Bus: total walk time" % period), 
-            (10, "%s_BUS_TOTALIVTT" % period, "%s Bus: in-vehicle time" % period), 
-            (11, "%s_BUS_DWELLTIME" % period, "%s Bus: dwell time" % period), 
-            (32, "%s_BUS_IMPEDANCE" % period, "%s Bus: calculated impdenace" % period),
-        ]
         name = "%s_BUS" % period
         class_name = "%s_WLKBUS" % period
-        self._run_skims(name, class_name, period, matrices, num_processors, scenario)
+        self._run_skims(name, class_name, period, num_processors, scenario)
         spec = {
             "type": "MATRIX_CALCULATION", 
             "constraint": None,
@@ -446,32 +431,9 @@ class TransitAssignment(_m.Tool()):
         matrix_calc = modeller.tool(
             "inro.emme.matrix_calculation.matrix_calculator") 
 
-        matrices = [
-            (12, "%s_ALL_GENCOST" % period,    "%s All modes: total impedance" % period), 
-            (13, "%s_ALL_FIRSTWAIT" % period,  "%s All modes: first wait time" % period), 
-            (14, "%s_ALL_XFERWAIT" % period,   "%s All modes: transfer wait time" % period), 
-            (15, "%s_ALL_TOTALWAIT" % period,  "%s All modes: total wait time" % period), 
-            (16, "%s_ALL_FARE" % period,       "%s All modes: fare" % period), 
-            (17, "%s_ALL_XFERS" % period,      "%s All modes: num transfers" % period), 
-            (18, "%s_ALL_ACCWALK" % period,    "%s All modes: access walk time" % period), 
-            (19, "%s_ALL_XFERWALK" % period,   "%s All modes: transfer walk time" % period), 
-            (20, "%s_ALL_EGRWALK" % period,    "%s All modes: egress walk time" % period), 
-            (21, "%s_ALL_TOTALWALK" % period,  "%s All modes: total walk time" % period), 
-            (22, "%s_ALL_TOTALIVTT" % period,  "%s All modes: in-vehicle time" % period), 
-            (23, "%s_ALL_DWELLTIME" % period,  "%s All modes: dwell time" % period), 
-            (24, "%s_ALL_BUSIVTT" % period,    "%s All modes: local bus in-vehicle time" % period),
-            (25, "%s_ALL_LRTIVTT" % period,    "%s All modes: LRT in-vehicle time" % period),
-            (27, "%s_ALL_CMRIVTT" % period,    "%s All modes: Rail in-vehicle time" % period),
-            (28, "%s_ALL_EXPIVTT" % period,    "%s All modes: Express in-vehicle time" % period),
-            (29, "%s_ALL_LTDEXPIVTT" % period, "%s All modes: Ltd exp bus in-vehicle time" % period),
-            (30, "%s_ALL_BRTREDIVTT" % period, "%s All modes: BRT red in-vehicle time" % period),
-            (31, "%s_ALL_BRTYELIVTT" % period, "%s All modes: BRT yellow in-vehicle time" % period),
-            (33, "%s_ALL_IMPEDANCE" % period,  "%s All modes: calculated impdenace" % period),
-        ]
-
         name = "%s_ALL" % period
         class_name = "%s_WLKLRT" % period        
-        self._run_skims(name, class_name, period, matrices, num_processors, scenario)
+        self._run_skims(name, class_name, period, num_processors, scenario)
 
         spec = {
             "type": "MATRIX_CALCULATION", 
@@ -485,9 +447,8 @@ class TransitAssignment(_m.Tool()):
         }
         matrix_calc(spec, scenario=scenario, num_processors=num_processors)
 
-    def _run_skims(self, name, class_name, period, matrices, num_processors, scenario):
-        modeller = _m.Modeller()        
-        utils = modeller.module("sandag.utilities.general")
+    def _run_skims(self, name, class_name, period, num_processors, scenario):
+        modeller = _m.Modeller()
         emmebank = scenario.emmebank
         matrix_calc = modeller.tool(
             "inro.emme.matrix_calculation.matrix_calculator")    
@@ -500,7 +461,7 @@ class TransitAssignment(_m.Tool()):
         strategy_analysis = modeller.tool(
             "inro.emme.transit_assignment.extended.strategy_based_analysis")
 
-        with utils.temp_matrices(emmebank, "FULL", 2) as matrices:
+        with gen_utils.temp_matrices(emmebank, "FULL", 2) as matrices:
             matrices[0].name = "TEMP_IN_VEHICLE_COST"
             matrices[1].name = "TEMP_LAYOVER_BOARD"
 
@@ -629,7 +590,7 @@ class TransitAssignment(_m.Tool()):
             matrix_calc(spec, scenario=scenario, num_processors=num_processors)
 
         with _m.logbook_trace("In-vehicle time breakdown - dwell time and by main mode(s)"):
-            with utils.temp_attrs(scenario, "TRANSIT_SEGMENT", ["@dwt_for_analysis", "@tm_for_analysis"]):
+            with gen_utils.temp_attrs(scenario, "TRANSIT_SEGMENT", ["@dwt_for_analysis", "@tm_for_analysis"]):
                 values = scenario.get_attribute_values(
                     "TRANSIT_SEGMENT", ["dwell_time"])
                 scenario.set_attribute_values(

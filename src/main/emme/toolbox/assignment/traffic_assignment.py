@@ -18,10 +18,12 @@ TOOLBOX_ORDER = 20
 import inro.modeller as _m
 import inro.emme.core.exception as _except
 import traceback as _traceback
-
-import multiprocessing as _multiprocessing
 from contextlib import contextmanager as _context
 import os
+
+
+gen_utils = _m.Modeller().module("sandag.utilities.general")
+dem_utils = _m.Modeller().module("sandag.utilities.demand")
 
 
 class TrafficAssignment(_m.Tool()):
@@ -36,7 +38,6 @@ class TrafficAssignment(_m.Tool()):
     def __init__(self):
         self.relative_gap = 0.0005
         self.max_iterations = 100
-        self._max_processors = _multiprocessing.cpu_count()
         self.num_processors = "MAX-1"
         version = os.environ.get("EMMEPATH", "")
         self._version = version[-5:] if version else ""
@@ -60,11 +61,7 @@ Assign traffic demand for the selected time period."""
 
         pb.add_text_box("relative_gap", title="Relative gap:")
         pb.add_text_box("max_iterations", title="Max iterations:")
-
-        options = [("MAX-1", "Maximum available - 1"), ("MAX", "Maximum available")]
-        options.extend([(n, "%s processors" % n) for n in range(1, self._max_processors + 1) ])
-        pb.add_select("num_processors", options, title="Number of processors:")
-
+        dem_utils.add_select_processors("num_processors", pb, self)
         return pb.render()
 
     def run(self):
@@ -80,17 +77,6 @@ Assign traffic demand for the selected time period."""
             raise
 
     def __call__(self, period, relative_gap, max_iterations, num_processors, scenario):
-        periods = ["EA", "AM", "MD", "PM", "EV"]
-        if not period in periods:
-            raise _except.ArgumentError(
-                'period: unknown value - specify one of %s' % periods)
-        if num_processors == "MAX":
-            num_processors = self._max_processors
-        elif num_processors == "MAX-1":
-            num_processors = max(self._max_processors - 1, 1)
-        elif num_processors:
-            num_processors = int(num_processors)
-
         attrs = {
             "period": period, 
             "relative_gap": relative_gap, 
@@ -100,9 +86,14 @@ Assign traffic demand for the selected time period."""
             "self": self
         }
         with _m.logbook_trace("Traffic assignment for period %s" % period, attributes=attrs):
+            periods = ["EA", "AM", "MD", "PM", "EV"]
+            if not period in periods:
+                raise _except.ArgumentError(
+                    'period: unknown value - specify one of %s' % periods)
+            num_processors = dem_utils.parse_num_processors(num_processors)
             classes = [
                 {   # 0
-                    "name": 'SOVGP', "mode": 's', "PCE": 1, "VOT": 67., "cost": '',                
+                    "name": 'SOVGP', "mode": 's', "PCE": 1, "VOT": 67., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST"]
                 },                      
                 {   # 1
@@ -175,8 +166,7 @@ Assign traffic demand for the selected time period."""
             "inro.emme.matrix_calculation.matrix_calculator")    
         traffic_assign = modeller.tool(
             "inro.emme.traffic_assignment.sola_traffic_assignment")
-        utils = modeller.module("sandag.utilities.general")
-        net_calc = utils.NetworkCalculator(scenario)
+        net_calc = gen_utils.NetworkCalculator(scenario)
         
         p = period.lower()
         assign_spec = self.base_assignment_spec(relative_gap, max_iterations, num_processors)
@@ -267,8 +257,7 @@ Assign traffic demand for the selected time period."""
             "inro.emme.matrix_calculation.matrix_calculator")    
         traffic_assign = modeller.tool(
             "inro.emme.traffic_assignment.sola_traffic_assignment")
-        utils = modeller.module("sandag.utilities.general")
-        net_calc = utils.NetworkCalculator(scenario)
+        net_calc = gen_utils.NetworkCalculator(scenario)
         emmebank = scenario.emmebank
         p = period.lower()
 
@@ -369,7 +358,7 @@ Assign traffic demand for the selected time period."""
         
             # compute diagnal value for TIME and DIST
             with _m.logbook_trace("Compute diagnal values for period %s" % period):
-                with utils.temp_matrices(emmebank, "ORIGIN") as (mo_intra,):
+                with gen_utils.temp_matrices(emmebank, "ORIGIN") as (mo_intra,):
                     mo_intra.name = "temp"
                     for traffic_class in classes:
                         class_name = traffic_class["name"]
@@ -425,7 +414,6 @@ Assign traffic demand for the selected time period."""
     @_context
     def setup_skims(self, period, scenario):
         modeller = _m.Modeller()
-        utils = modeller.module("sandag.utilities.general")
         emmebank = scenario.emmebank
         with _m.logbook_trace("Extract skims for period %s" % period):
             if period == "MD":
@@ -449,9 +437,9 @@ Assign traffic demand for the selected time period."""
                     "LINK": ["auto_volume", "additional_volume", "auto_time"],
                     "TURN": ["auto_volume", "additional_volume", "auto_time"],
                 }
-                with utils.backup_and_restore(scenario, attrs):
+                with gen_utils.backup_and_restore(scenario, attrs):
                     # temp_functions converts to skim-type VDFs
-                    with utils.temp_functions(emmebank):
+                    with gen_utils.temp_functions(emmebank):
                         yield
             finally:
                 if period == "MD":

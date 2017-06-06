@@ -80,7 +80,7 @@ class TruckGeneration(_m.Tool()):
         utils = _m.Modeller().module('sandag.utilities.demand')
 
         self._properties = utils.Properties(
-            os.path.join(input_directory, "sandag_abm.properties"))
+            os.path.join(os.path.dirname(input_directory), "conf", "sandag_abm.properties"))
         base_trucks_PA = self.truck_standard_generation()
         special_trucks_PA = self.special_truck_generation(base_trucks_PA)
         trucks_PA = self.balance_truck_PA(special_trucks_PA)

@@ -22,10 +22,15 @@ import os
 import inro.modeller as _m
 
 
+gen_utils = _m.Modeller().module('sandag.utilities.general')
+dem_utils = _m.Modeller().module('sandag.utilities.demand')
+
+
 class TruckModel(_m.Tool()):
 
     input_directory = _m.Attribute(str)
     demand_as_pce = _m.Attribute(bool)
+    num_processors = _m.Attribute(str)
 
     tool_run_msg = ""
 
@@ -37,6 +42,7 @@ class TruckModel(_m.Tool()):
         project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
         self.input_directory = os.path.join(os.path.dirname(project_dir), "input")
         self.demand_as_pce = True
+        self.num_processors = "MAX-1"
 
     def page(self):
         pb = _m.ToolPageBuilder(self)
@@ -59,13 +65,14 @@ class TruckModel(_m.Tool()):
                            title='Select input directory')
         pb.add_checkbox('demand_as_pce', title = " ", label="Convert demand matrices to PCE",
             note="Note: assignment demand matrices must be in PCE")
+        dem_utils.add_select_processors("num_processors", pb, self)
         return pb.render()
 
     def run(self):
         self.tool_run_msg = ""
         try:
             scenario = _m.Modeller().scenario
-            self(self.input_directory, self.demand_as_pce, scenario)
+            self(self.input_directory, self.demand_as_pce, self.num_processors, scenario)
             run_msg = "Truck trip distribution complete."
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
         except Exception as error:
@@ -74,24 +81,24 @@ class TruckModel(_m.Tool()):
             raise
 
     @_m.logbook_trace('Truck distribution')
-    def __call__(self, input_directory, demand_as_pce, scenario):
+    def __call__(self, input_directory, demand_as_pce, num_processors, scenario):
         self.input_directory = input_directory
         self.demand_as_pce = demand_as_pce
         self.scenario = scenario
-        utils = _m.Modeller().module('sandag.utilities.demand')
+        self.num_processors = num_processors
 
-        props = utils.Properties(
-            os.path.join(input_directory, "sandag_abm.properties"))
+        props = dem_utils.Properties(
+            os.path.join(os.path.dirname(input_directory), "conf", "sandag_abm.properties"))
 
         with _m.logbook_trace('Daily demand matrices'):
-            c_list = [0.045, 0.03, 0.03, 0.03, 0.03]
+            coefficents = [0.045, 0.03, 0.03, 0.03, 0.03]
             truck_list = ['L', 'M', 'H', 'IE', 'EI']
             # distribution based on the "generic" truck MD time only
             time_skim = _m.Modeller().emmebank.matrix('mf"MD_TRK_TIME"')
-            for t, c in zip(truck_list, c_list):
-                with _m.logbook_trace('Create %s daily demand matrix' % t):
-                    self.calc_friction_factors(t, time_skim, c)
-                    self.matrix_balancing(t)
+            for truck_type, coeff in zip(truck_list, coefficents):
+                with _m.logbook_trace('Create %s daily demand matrix' % truck_type):
+                    self.calc_friction_factors(truck_type, time_skim, coeff)
+                    self.matrix_balancing(truck_type)
 
         self.split_external_demand()
         self.split_into_time_of_day()
@@ -106,78 +113,37 @@ class TruckModel(_m.Tool()):
                 for p in ['EA', 'AM', 'MD', 'PM', 'EV']:
                     matrices.append('mf%s_TRK%sGP' % (p, t))
                     matrices.append('mf%s_TRK%sTOLL' % (p, t))
-            utils.reduce_matrix_precision(matrices, precision)
+            dem_utils.reduce_matrix_precision(matrices, precision, num_processors, scenario)
 
     @_m.logbook_trace('Create friction factors matrix')
-    def calc_friction_factors(self, truck_type, impedance, c):
-        matrix_calc = _m.Modeller().tool(
-           'inro.emme.matrix_calculation.matrix_calculator')
-        spec = {
-            "expression": 'exp(-%s*%s)' % (c, impedance.named_id),
-            "result": 'mfTRK%s_FRICTION' % truck_type,
-            "type": "MATRIX_CALCULATION"
-        }
-        matrix_calc(spec, self.scenario)
+    def calc_friction_factors(self, truck_type, impedance, coeff):
+        matrix_calc = dem_utils.MatrixCalculator(self.scenario, self.num_processors)
+        matrix_calc.run_single('mfTRK%s_FRICTION' % truck_type,
+            'exp(-%s*%s)' % (coeff, impedance.named_id))
         return 
 
     def matrix_balancing(self, truck_type):
-        gen_utils = _m.Modeller().module('sandag.utilities.general')
+        matrix_calc = dem_utils.MatrixCalculator(self.scenario, self.num_processors)
+        emmebank = self.scenario.emmebank
         with _m.logbook_trace('Matrix balancing for %s' % truck_type):
-            matrix_calc = _m.Modeller().tool(
-                'inro.emme.matrix_calculation.matrix_calculator')
-            scenario = self.scenario
-            eb = scenario.emmebank
-
             if truck_type == 'IE':
-                with gen_utils.temp_matrices(eb, "DESTINATION") as (temp_md,):
+                with gen_utils.temp_matrices(emmebank, "DESTINATION") as (temp_md,):
                     temp_md.name = 'TRKIE_ROWTOTAL'
-                    spec = {
-                        "expression": 'mf"TRK%s_FRICTION"' % truck_type,
-                        "type": "MATRIX_CALCULATION",
-                        "result": 'md"TRKIE_ROWTOTAL"',
-                        "aggregation": {"origins": "+", "destinations": None}
-                    }
-                    matrix_calc(spec, scenario)
-                    spec = {
-                        "expression": 'mf"TRK%s_FRICTION" * md"TRKIE_ATTR" / md"TRKIE_ROWTOTAL"' % truck_type,
-                        "result": 'mf"TRK%s_DEMAND"' % truck_type,
-                        "constraint": {
-                            "by_value": {
-                                "interval_min": 0,
-                                "interval_max": 0,
-                                "condition": "EXCLUDE",
-                                "od_values": 'md"TRKIE_ROWTOTAL"'
-                            }
-                        },
-                        "type": "MATRIX_CALCULATION"
-                    }
-                    matrix_calc(spec, scenario)
+                    matrix_calc.add('md"TRKIE_ROWTOTAL"', 'mf"TRKIE_FRICTION"', aggregation={"origins": "+", "destinations": None})
+                    matrix_calc.add('mf"TRKIE_DEMAND"', 'mf"TRKIE_FRICTION" * md"TRKIE_ATTR" / md"TRKIE_ROWTOTAL"', 
+                        constraint=['md"TRKIE_ROWTOTAL"', 0, 0, "EXCLUDE"])
+                    matrix_calc.run()
 
             elif truck_type == 'EI':
-                with gen_utils.temp_matrices(eb, "ORIGIN") as (temp_mo,):
+                with gen_utils.temp_matrices(emmebank, "ORIGIN") as (temp_mo,):
                     temp_mo.name = 'TRKEI_COLTOTAL'
-                    spec = {
-                        "expression": 'mf"TRK%s_FRICTION"' % truck_type,
-                        "result": 'mo"TRKEI_COLTOTAL"',
-                        "aggregation": {"origins": None, "destinations": "+"},
-                        "type": "MATRIX_CALCULATION"
-                    }
-                    matrix_calc(spec, scenario)
-                    spec = {
-                        "expression": 'mf"TRK%s_FRICTION" * mo"TRKEI_PROD" / mo"TRKEI_COLTOTAL"' % truck_type,
-                        "result": 'mf"TRK%s_DEMAND"' % truck_type,
-                        "constraint": {
-                            "by_value": {
-                                "interval_min": 0,
-                                "interval_max": 0,
-                                "condition": "EXCLUDE",
-                                "od_values": 'mo"TRKEI_COLTOTAL"'
-                            }
-                        },
-                        "type": "MATRIX_CALCULATION"
-                    }
-                    matrix_calc(spec, scenario)
+                    matrix_calc.add('mo"TRKEI_COLTOTAL"', 'mf"TRKEI_FRICTION"', aggregation={"origins": None, "destinations": "+"})
+                    matrix_calc.add('mf"TRKEI_DEMAND"', 'mf"TRKEI_FRICTION" * mo"TRKEI_PROD" / mo"TRKEI_COLTOTAL"', 
+                        constraint=['mo"TRKEI_COLTOTAL"', 0, 0, "EXCLUDE"])
+                    matrix_calc.run()
             else:
+                matrix_balancing = _m.Modeller().tool(
+                    'inro.emme.matrix_calculation.matrix_balancing')
                 spec = {
                     "type": "MATRIX_BALANCING",
                     "od_values_to_balance": 'mf"TRK%s_FRICTION"' % truck_type,
@@ -189,43 +155,24 @@ class TruckModel(_m.Tool()):
                     "max_iterations": 100,
                     "max_relative_error": 0.01
                 }
-
-                matrix_balancing = _m.Modeller().tool(
-                    'inro.emme.matrix_calculation.matrix_balancing')
-
-                matrix_balancing(spec, scenario)
+                matrix_balancing(spec, self.scenario)
 
     @_m.logbook_trace('Split cross-regional demand by truck type')
     def split_external_demand(self):
-        matrix_calc = _m.Modeller().tool(
-            'inro.emme.matrix_calculation.matrix_calculator')
-        scenario = self.scenario
-        eb = scenario.emmebank
+        matrix_calc = dem_utils.MatrixCalculator(self.scenario, self.num_processors)
 
         truck_types = ['L', 'M', 'H']
         truck_share = [0.307, 0.155, 0.538]
         for t_type, share in zip(truck_types, truck_share):
-            spec = {
-                'expression': 'mf"TRK%s_DEMAND" + %s * (mf"TRKEI_DEMAND" + mf"TRKIE_DEMAND" + mf"TRKEE_DEMAND")' % (t_type, share),
-                'result': 'mf"TRK%s_DEMAND"' % (t_type),
-                'type': 'MATRIX_CALCULATION'
-            }
-            matrix_calc(spec, scenario)
+            matrix_calc.add('mf"TRK%s_DEMAND"' % (t_type),
+                'mf"TRK%s_DEMAND" + %s * (mf"TRKEI_DEMAND" + mf"TRKIE_DEMAND" + mf"TRKEE_DEMAND")' % (t_type, share))
             # Set intrazonal truck trips to 0
-            spec = {
-                'expression': 'mf"TRK%s_DEMAND" * (p.ne.q)' % (t_type),
-                'result': 'mf"TRK%s_DEMAND"' % (t_type),
-                'type': 'MATRIX_CALCULATION'
-            }
-            matrix_calc(spec, scenario)
+            matrix_calc.add('mf"TRK%s_DEMAND"' % (t_type), 'mf"TRK%s_DEMAND" * (p.ne.q)' % (t_type))
+            matrix_calc.run()
 
     @_m.logbook_trace('Distribute daily demand into time of day')
     def split_into_time_of_day(self):
-        matrix_calc = _m.Modeller().tool(
-            'inro.emme.matrix_calculation.matrix_calculator')
-        scenario = self.scenario
-        eb = scenario.emmebank
-
+        matrix_calc = dem_utils.MatrixCalculator(self.scenario, self.num_processors)
         periods = ['EA', 'AM', 'MD', 'PM', 'EV']
         time_share = [0.1018, 0.1698, 0.4284, 0.1543, 0.1457]
         border_time_share = [0.0188, 0.1812, 0.4629, 0.2310, 0.1061]
@@ -236,49 +183,18 @@ class TruckModel(_m.Tool()):
 
         for period, share, border_corr in zip(periods, time_share, border_correction):
             for t in truck_types:
-                with _m.logbook_trace('Calculate %s demand matrix for %s' % (period, truck_names[t])):
-                    spec = {
-                        'expression': 'mf"TRK%s_DEMAND"' % (t),
-                        'result': '%s_TRK%s' % (period, t),
-                        'type': 'MATRIX_CALCULATION'
-                    }
-                    matrix_calc(spec, scenario)
-                    spec = {
-                        'expression': '%s_TRK%s * %s' % (period, t, share),
-                        'result': '%s_TRK%s' % (period, t),
-                        'type': 'MATRIX_CALCULATION'
-                    }
-                    matrix_calc(spec, scenario)
-                    spec = {
-                        'expression': 'mf%s_TRK%s * %s' % (period, t, border_corr),
-                        'result': '%s_TRK%s' % (period, t),
-                        "constraint": {
-                            "by_zone": {
-                                "origins": "1-5",
-                                "destinations": "1-9999"
-                            }
-                        },
-                        'type': 'MATRIX_CALCULATION'
-                    }
-                    matrix_calc(spec, scenario)
-                    spec = {
-                        'expression': 'mf%s_TRK%s * %s' % (period, t, border_corr),
-                        'result': '%s_TRK%s' % (period, t),
-                        "constraint": {
-                            "by_zone": {
-                                "origins": "1-9999",
-                                "destinations": "1-5"
-                            }
-                        },
-                        'type': 'MATRIX_CALCULATION'
-                    }
-                    matrix_calc(spec, scenario)
+                with matrix_calc.trace_run('Calculate %s demand matrix for %s' % (period, truck_names[t])):
+                    tod_demand = 'mf"%s_TRK%s"' % (period, t)
+                    matrix_calc.add(tod_demand, 'mf"TRK%s_DEMAND"' % (t))
+                    matrix_calc.add(tod_demand, '%s_TRK%s * %s' % (period, t, share))
+                    matrix_calc.add(tod_demand, 'mf%s_TRK%s * %s' % (period, t, border_corr),
+                        {"origins": "1-5", "destinations": "1-9999"})
+                    matrix_calc.add(tod_demand, 'mf%s_TRK%s * %s' % (period, t, border_corr),
+                        {"origins": "1-9999", "destinations": "1-5"})
 
     @_m.logbook_trace('Toll diversion')
     def toll_diversion(self):
-        scenario = self.scenario
-        matrix_calc = _m.Modeller().tool(
-            'inro.emme.matrix_calculation.matrix_calculator')
+        matrix_calc = dem_utils.MatrixCalculator(self.scenario, self.num_processors)
         nest_factor = 10
         vot = 0.02 # cent/min
         periods = ['EA', 'AM', 'MD', 'PM', 'EV']
@@ -287,7 +203,7 @@ class TruckModel(_m.Tool()):
 
         for period in periods:
             for truck, toll_factor in zip(truck_types, truck_toll_factors):
-                with _m.logbook_trace('Toll diversion for period %s, truck type %s' % (period, truck) ):
+                with matrix_calc.trace_run('Toll diversion for period %s, truck type %s' % (period, truck) ):
                     # Define the utility expression
                     utility = """
                     (
@@ -302,64 +218,26 @@ class TruckModel(_m.Tool()):
                         't_fact': toll_factor,
                         'n_fact': nest_factor
                     }
-
                     # If there is no toll probability of using toll is 0
-                    spec = {
-                        'expression': '0',
-                        'result': 'mf"%s_TRK%sTOLL"' % (period, truck),
-                        'type': 'MATRIX_CALCULATION'
-                    }
-                    matrix_calc(spec, scenario)
-
+                    matrix_calc.add('mf"%s_TRK%sTOLL"' % (period, truck), '0')
                     # If there is a non-zero toll value compute the share of
                     # toll-available passengers using the utility expression defined earlier
-                    spec = {
-                        'expression': 'mf"%(p)s_TRK%(t)s" * (1/(1 + exp(- %(u)s)))' % {
-                            'p': period,
-                            't': truck,
-                            'u': utility
-                        },
-                        'result': 'mf"%s_TRK%sTOLL"' % (period, truck),
-                        "constraint": {
-                            "by_value": {
-                                "interval_min": 0,
-                                "interval_max": 0,
-                                "condition": "EXCLUDE",
-                                "od_values": 'mf"%s_TRK%sTOLL_TOLLCOST"' % (period, truck)
-                            },
-                            "by_zone": None
-                        },
-                        'type': 'MATRIX_CALCULATION'
-                    }
-                    matrix_calc(spec, scenario)
-
-                    # Compute the truck demand for non toll roads.
-                    spec = {
-                        "expression": 'mf"%(p)s_TRK%(t)s" - mf"%(p)s_TRK%(t)sTOLL"' % {
-                            'p': period,
-                            't': truck
-                        },
-                        "result": 'mf"%s_TRK%sGP"' % (period, truck),
-                        "type": "MATRIX_CALCULATION"
-                    }
-                    matrix_calc(spec, scenario)
+                    matrix_calc.add('mf"%s_TRK%sTOLL"' % (period, truck),
+                        'mf"%(p)s_TRK%(t)s" * (1/(1 + exp(- %(u)s)))' % {'p': period, 't': truck, 'u': utility},
+                        ['mf"%s_TRK%sTOLL_TOLLCOST"' % (period, truck), 0, 0 , "EXCLUDE"])
+                    # Compute the truck demand for non toll 
+                    matrix_calc.add('mf"%s_TRK%sGP"' % (period, truck),
+                        'mf"%(p)s_TRK%(t)s" - mf"%(p)s_TRK%(t)sTOLL"' % {'p': period, 't': truck})
 
     @_m.logbook_trace('Convert truck vehicle demand to PCE')
     def convert_to_pce(self):
-        scenario = self.scenario
-        matrix_calc = _m.Modeller().tool(
-            'inro.emme.matrix_calculation.matrix_calculator')
+        matrix_calc = dem_utils.MatrixCalculator(self.scenario, self.num_processors)
         # Calculate PCEs for trucks
         periods = ["EA", "AM", "MD", "PM", "EV"]
         mat_trucks = ['TRKHGP', 'TRKHTOLL', 'TRKLGP', 'TRKLTOLL', 'TRKMGP', 'TRKMTOLL']
         pce_values = [2.5,      2.5,        1.3,      1.3,        1.5,      1.5]
         for period in periods:
-            with _m.logbook_trace("Period %s" % period):
+            with matrix_calc.trace_run("Period %s" % period):
                 for name, pce in zip(mat_trucks, pce_values):
-                    demand_name = "%s_%s" % (period, name)
-                    mat_spec = {
-                        "expression": '(mf"%s" * %s).max.0' % (demand_name, pce), 
-                        "result": 'mf"%s"' % demand_name,
-                        "type": "MATRIX_CALCULATION"
-                    }
-                    matrix_calc(mat_spec, scenario)
+                    demand_name = 'mf"%s_%s"' % (period, name)
+                    matrix_calc.add(demand_name, '(%s * %s).max.0' % (demand_name, pce))

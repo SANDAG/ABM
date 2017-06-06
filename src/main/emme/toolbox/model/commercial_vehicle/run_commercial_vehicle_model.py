@@ -23,6 +23,7 @@ import os
 class CommercialVehicleModel(_m.Tool()):
 
     input_directory = _m.Attribute(str)
+    run_generation = _m.Attribute(bool)
 
     tool_run_msg = ""
 

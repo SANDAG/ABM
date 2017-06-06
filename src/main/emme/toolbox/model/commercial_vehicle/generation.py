@@ -99,7 +99,7 @@ class CommercialVehicleDistribution(_m.Tool()):
     def __call__(self, input_directory, scenario):        
         utils = _m.Modeller().module('sandag.utilities.demand')
         emmebank = scenario.emmebank
-        props = utils.Properties(os.path.join(input_directory, "sandag_abm.properties"))
+        props = utils.Properties(os.path.join(os.path.dirname(input_directory), "conf", "sandag_abm.properties"))
 
         mgra = pd.read_csv(
             os.path.join(input_directory, 'mgra13_based_input2012.csv'))

@@ -114,13 +114,14 @@ class MasterRun(_m.Tool()):
 
         input_directory = os.path.join(main_directory, "input")
         input_truck_directory = os.path.join(main_directory, "input_truck")
+        conf_directory = os.path.join(main_directory, "conf")
         output_directory = os.path.join(main_directory, "output")
 
         self.set_active(main_emmebank)
         
         modeller.refresh_tools()        
         utils = _m.Modeller().module('sandag.utilities.demand')
-        props = utils.Properties(os.path.join(input_directory, "sandag_abm.properties"))
+        props = utils.Properties(os.path.join(conf_directory, "sandag_abm.properties"))
 
         copy_scenario = modeller.tool("inro.emme.data.scenario.copy_scenario")
         import_network = modeller.tool("sandag.import.import_network")
@@ -143,76 +144,83 @@ class MasterRun(_m.Tool()):
             coaster_node_ids="""{"sorrento_valley": 6866}""",
             data_table_name="2012",
             overwrite=True)
-        base_scenario = main_emmebank.scenario(scenario_id)
-        data_explorer.replace_primary_scenario(base_scenario)
+        with _m.logbook_trace("Initialize matrices and import demand for traffic"):
+            base_scenario = main_emmebank.scenario(scenario_id)
+            desktop.refresh_data()
+            data_explorer.replace_primary_scenario(base_scenario)
 
-        periods = ["EA", "AM", "MD", "PM", "EV"]
-        initialize(["traffic_demand",
-                    "traffic_skims",
-                    "truck_model",
-                    "external_internal_model",
-                    "external_external_model",
-                    "commercial_vehicle_model"], 
-                   periods,
-                   base_scenario)
-        for period in periods:
-            omx_file = os.path.join(input_directory, "trip_%s.omx" % period)
-            import_demand(omx_file, "AUTO", period, base_scenario)
-            import_demand(omx_file, "TRUCK", period, base_scenario)
+            periods = ["EA", "AM", "MD", "PM", "EV"]
+            initialize(["traffic_demand",
+                        "traffic_skims",
+                        "truck_model",
+                        "external_internal_model",
+                        "external_external_model",
+                        "commercial_vehicle_model"], 
+                       periods,
+                       base_scenario)
+            for period in periods:
+                omx_file = os.path.join(input_directory, "trip_%s.omx" % period)
+                import_demand(omx_file, "AUTO", period, base_scenario)
+                import_demand(omx_file, "TRUCK", period, base_scenario, convert_truck_to_pce=True)
 
-        transit_scenario = self.create_transit_database(base_scenario)
-        # TODO: the special transit scenario should be unnecessary with CT-Ramp output
-        # TODO: initial import of transit demand is not needed in full run
-        self.modify_zone_scenario(transit_scenario)
-        data_explorer.replace_primary_scenario(transit_scenario)
-        initialize(["transit_demand", "transit_skims"], periods, transit_scenario)
-        for period in periods:
-            omx_file = os.path.join(input_directory, "tranTotalTrips_%s.omx" % period)        
-            import_demand(omx_file, "TRANSIT", period, transit_scenario)
+        with _m.logbook_trace("Initialize matrices for transit"):
+            transit_scenario = self.create_transit_database(base_scenario)
+            # TODO: the special transit scenario should be unnecessary with CT-Ramp output
+            # TODO: initial import of transit demand is not needed in full run
+            self.modify_zone_scenario(transit_scenario)
+            transit_emmebank = _eb.Emmebank(os.path.join(project_path, "Database_transit", "emmebank"))
+            transit_scenario = transit_emmebank.scenario(1)
+            self.set_active(transit_emmebank)
+            data_explorer.replace_primary_scenario(transit_scenario)
+            initialize(["transit_demand", "transit_skims"], periods, transit_scenario)
+            # for period in periods:
+                # omx_file = os.path.join(input_directory, "tranTotalTrips_%s.omx" % period)        
+                # import_demand(omx_file, "TRANSIT", period, transit_scenario)
 
-        self.set_active(main_emmebank)
+        with _m.logbook_trace("Traffic assignments"):
+            self.set_active(main_emmebank)
+            relative_gap = props["convergence"]
+            max_iterations = 100  # TODO: double check max iterations - the hwyassign.rsc uses 1000 ....
+            for number, period in enumerate(periods, start=base_scenario.number + 1):
+                title = "%s- %s assign" % (base_scenario.title, period)
+                period_scenario = copy_scenario(base_scenario, number, title, overwrite=True)
+                traffic_assign(period, relative_gap, max_iterations, num_processors, period_scenario)
+                # TODO: previously separated "cars" and "trucks", may need to revert
+                omx_file = os.path.join(output_directory, "traffic_skims_%s.omx" % period)   
+                export_traffic_skims(period, omx_file, base_scenario)
 
-        traffic_assign._skim_classes_separately = True
-        relative_gap = props["convergence"]
-        max_iterations = 1000  # TODO: double check max iterations - the hwyassign.rsc uses 1000 ....
-        for number, period in enumerate(periods, start=base_scenario.number + 10):
-            title = "%s- %s assign" % (base_scenario.title, period)
-            period_scenario = copy_scenario(base_scenario, number, title, overwrite=True)
-            traffic_assign(period, relative_gap, max_iterations, num_processors, period_scenario)
+        with _m.logbook_trace("Transit assignments"):
+            self.set_active(transit_scenario.emmebank)
+            for number, period in enumerate(periods, start=base_scenario.number + 1):
+                src_period_scenario = main_emmebank.scenario(number)
+                transit_assign(
+                    period=period,
+                    base_scenario=src_period_scenario,
+                    emmebank=transit_scenario.emmebank, 
+                    scenario_id=src_period_scenario.id, 
+                    scenario_title="%s- %s transit assign" % (base_scenario.title, period),
+                    skims_only=True,
+                    timed_xfers_table="2012_timed_xfer" if period == "AM" else None, 
+                    num_processors=num_processors,
+                    overwrite=True)
+            omx_file = os.path.join(output_directory, "transit_skims.omx")   
+            export_transit_skims(omx_file, transit_scenario)
 
-            #TODO: previously separated "cars" and "trucks", may need to revert
-            omx_file = os.path.join(output_directory, "traffic_skims_%s.omx" % period)   
-            export_traffic_skims(period, omx_file, base_scenario)
-
-        self.set_active(transit_scenario.emmebank)
-        for number, period in enumerate(periods, start=base_scenario.number + 10):
-            src_period_scenario = main_emmebank.scenario(number)
-            transit_assign(
-                period=period,
-                scenario_id=src_period_scenario.id, 
-                emmebank=transit_scenario.emmebank, 
-                base_scenario=src_period_scenario,
-                timed_xfers_table="2012_timed_xfer" if period == "AM" else None,
-                scenario_title="%s- %s transit assign" % (base_scenario.title, period),
-                overwrite=True, 
-                num_processors=num_processors)
-
-        omx_file = os.path.join(output_directory, "transit_skims.omx")   
-        export_transit_skims(omx_file, transit_scenario)
-
-        self.set_active(main_emmebank)
-        run_generation = True
-        external_zones = "1-12"
-        run_truck(run_generation, input_directory, input_truck_directory, base_scenario)
-        run_commercial_veh(run_generation, input_directory, base_scenario)
-        external_internal(input_directory, base_scenario)
-        external_external(input_directory, external_zones, base_scenario)
-        add_demand(base_scenario)
+        with _m.logbook_trace("Aggregate demand models"):
+            self.set_active(main_emmebank)
+            run_generation = True
+            external_zones = "1-12"
+            run_truck(run_generation, input_directory, input_truck_directory, num_processors, base_scenario)
+            run_commercial_veh(run_generation, input_directory, base_scenario)
+            external_internal(input_directory, base_scenario)
+            external_external(input_directory, external_zones, base_scenario)
+            add_demand(external_zones, num_processors, base_scenario)
 
     def create_transit_database(self, base_scenario):
         desktop = _m.Modeller().desktop
         data_explorer = desktop.data_explorer()
         project_dir = os.path.dirname(desktop.project.path)
+        base_emmebank = base_scenario.emmebank
 
         base_network = base_scenario.get_network()
         zone_network = _network.Network()
@@ -230,18 +238,23 @@ class MasterRun(_m.Tool()):
             shutil.rmtree(transit_db_dir)
         os.mkdir(transit_db_dir)
 
-        dimensions = base_scenario.emmebank.dimensions
+        dimensions = base_emmebank.dimensions
         dimensions["centroids"] = len(list(zone_network.centroids()))
         dimensions["scenarios"] = 7
-        transit_eb = _eb.create(transit_db_path, dimensions)
-        transit_eb.title = "Transit DB " + base_scenario.emmebank.title[:65]
-        zone_scenario = transit_eb.create_scenario(1)
+        transit_emmebank = _eb.create(transit_db_path, dimensions)
+        transit_emmebank.title = "Transit " + base_emmebank.title[:65]
+        zone_scenario = transit_emmebank.create_scenario(1)
         zone_scenario.title = "Scenario with transit zones only"
         zone_scenario.publish_network(zone_network)
+        
+        for function in base_emmebank.functions():
+            transit_emmebank.create_function(function.id, function.expression)
+        transit_emmebank.coord_unit_length = base_emmebank.coord_unit_length
 
-        transit_db_ref = self.set_active(transit_eb)
+        transit_db_ref = self.set_active(transit_emmebank)
         if not transit_db_ref:
-            transit_db_ref = data_explorer.add_database(transit_eb.path)
+            transit_db_ref = data_explorer.add_database(transit_emmebank.path)
+            transit_db_ref.open()
         return zone_scenario
                 
     def modify_zone_scenario(self, zone_scenario):

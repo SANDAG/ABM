@@ -5,7 +5,7 @@
 #//// San Diego Association of Governments and partner agencies.            ///
 #//// This copyright notice must be preserved.                              ///
 #////                                                                       ///
-#//// run_truck_model.py                                                    ///
+#//// truck/run_truck_model.py                                              ///
 #////                                                                       ///
 #////                                                                       ///
 #////                                                                       ///
@@ -20,11 +20,16 @@ import traceback as _traceback
 import os
 
 
+dem_utils = _m.Modeller().module("sandag.utilities.demand")
+
+
 class TruckModel(_m.Tool()):
 
     input_directory = _m.Attribute(str)
     input_truck_directory = _m.Attribute(str)
     run_generation = _m.Attribute(bool)
+    num_processors = _m.Attribute(str)
+
 
     tool_run_msg = ""
 
@@ -37,6 +42,7 @@ class TruckModel(_m.Tool()):
         project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
         self.input_directory = os.path.join(os.path.dirname(project_dir), "input")
         self.input_truck_directory = os.path.join(os.path.dirname(project_dir), "input_truck")
+        self.num_processors = "MAX-1"
 
     def page(self):
         # Equivalent to TruckModel.rsc
@@ -61,6 +67,7 @@ class TruckModel(_m.Tool()):
                            title='Select input directory')
         pb.add_select_file('input_truck_directory', 'directory',
                            title='Select truck input directory')
+        dem_utils.add_select_processors("num_processors", pb, self)
 
         return pb.render()
 
@@ -68,7 +75,7 @@ class TruckModel(_m.Tool()):
         self.tool_run_msg = ""
         try:
             scenario = _m.Modeller().scenario
-            self(self.run_generation, self.input_directory, self.input_truck_directory, scenario)
+            self(self.run_generation, self.input_directory, self.input_truck_directory, self.num_processors, scenario)
             run_msg = "Tool complete"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
         except Exception as error:
@@ -77,11 +84,11 @@ class TruckModel(_m.Tool()):
             raise
 
     @_m.logbook_trace('Truck model', save_arguments=True)
-    def __call__(self, run_generation, input_directory, input_truck_directory, scenario):
+    def __call__(self, run_generation, input_directory, input_truck_directory, num_processors, scenario):
         generation = _m.Modeller().tool('sandag.model.truck.generation')
         distribution = _m.Modeller().tool('sandag.model.truck.distribution')
 
         if run_generation:
             generation(input_directory, input_truck_directory, scenario)
         demand_as_pce = True
-        distribution(input_directory, demand_as_pce, scenario)
+        distribution(input_directory, demand_as_pce, num_processors, scenario)
