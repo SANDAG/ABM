@@ -20,7 +20,7 @@ Macro "Hwy skim all"
 
    ok=RunMacro("Update highway network",)
    if !ok then goto quit
-      
+     
    ok=RunMacro("hwy skim",{"dant"}) 
    if !ok then goto quit
 
@@ -102,7 +102,7 @@ Macro "Update highway network"
    db_node_lyr = db_file + "|" + node_lyr
 
    periods = {"_EA", "_AM", "_MD", "_PM", "_EV"}
-   da_vot=67.00 // $0.67 cents per minute VOT ($40.2 per hour)
+   da_vot=67.00 // $0.67 per minute VOT ($40.2 per hour)
    s2_vot=67.00
    s3_vot=67.00
  
@@ -146,8 +146,8 @@ Macro "Update highway network"
       Opts.Input.[Dataview Set] = {{db_file+"|"+link_lyr, flowTable, {"ID"}, {"ID1"}},"s2join"+periods[i] }   
       Opts.Global.Fields = {"ABH2CST"+periods[i],"BAH2CST"+periods[i]}                                // the field to fill
       Opts.Global.Method = "Formula"                                                                  // the fill method
-      Opts.Global.Parameter = {"if (IHOV=3 or IHOV=4) then (AB_MSA_Cost + ((ITOLL3"+periods[i]+"/100)/"+String(s2_vot)+"*60)) else AB_MSA_Cost"  ,
-                               "if (IHOV=3 or IHOV=4) then (BA_MSA_Cost + ((ITOLL3"+periods[i]+"/100)/"+String(s2_vot)+"*60)) else BA_MSA_Cost"  }   
+      Opts.Global.Parameter = {"if (IHOV=3 or IHOV=4) then (AB_MSA_Cost + ((ITOLL3"+periods[i]+"/100)/"+String(s2_vot)+"*60)) else (AB_MSA_Cost + ((COST/100)/"+String(s2_vot)+"*60))"  ,
+                               "if (IHOV=3 or IHOV=4) then (BA_MSA_Cost + ((ITOLL3"+periods[i]+"/100)/"+String(s2_vot)+"*60)) else (BA_MSA_Cost + ((COST/100)/"+String(s2_vot)+"*60))"  }   
       ret_value = RunMacro("TCB Run Operation", "Fill Dataview", Opts, &Ret)
       if !ret_value then goto quit
       
@@ -155,8 +155,8 @@ Macro "Update highway network"
       Opts.Input.[Dataview Set] = {{db_file+"|"+link_lyr, flowTable, {"ID"}, {"ID1"}},"s3join"+periods[i] }   
       Opts.Global.Fields = {"ABH3CST"+periods[i],"BAH3CST"+periods[i]}                                // the field to fill
       Opts.Global.Method = "Formula"                                                                  // the fill method
-      Opts.Global.Parameter = {"if IHOV=4 then (AB_MSA_Cost + ((ITOLL3"+periods[i]+"/100)/"+String(s3_vot)+"*60)) else AB_MSA_Cost"  ,
-                               "if IHOV=4 then (BA_MSA_Cost + ((ITOLL3"+periods[i]+"/100)/"+String(s3_vot)+"*60)) else BA_MSA_Cost"  }   
+      Opts.Global.Parameter = {"if IHOV=4 then (AB_MSA_Cost + ((ITOLL3"+periods[i]+"/100)/"+String(s3_vot)+"*60)) else (AB_MSA_Cost + ((COST/100)/"+String(s3_vot)+"*60))"  ,
+                               "if IHOV=4 then (BA_MSA_Cost + ((ITOLL3"+periods[i]+"/100)/"+String(s3_vot)+"*60)) else (BA_MSA_Cost + ((COST/100)/"+String(s3_vot)+"*60)) "  }   
       ret_value = RunMacro("TCB Run Operation", "Fill Dataview", Opts, &Ret)
       if !ret_value then goto quit
        
