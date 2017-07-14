@@ -20,7 +20,10 @@ import traceback as _traceback
 import os
 
 
-class CommercialVehicleModel(_m.Tool()):
+gen_utils = _m.Modeller().module("sandag.utilities.general")
+
+
+class CommercialVehicleModel(_m.Tool(), gen_utils.Snapshot):
 
     input_directory = _m.Attribute(str)
     run_generation = _m.Attribute(bool)
@@ -35,6 +38,7 @@ class CommercialVehicleModel(_m.Tool()):
         self.run_generation = True
         project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
         self.input_directory = os.path.join(os.path.dirname(project_dir), "input")
+        self.attributes = ["input_directory", "run_generation"]
 
     def page(self):
         pb = _m.ToolPageBuilder(self)
@@ -72,6 +76,8 @@ class CommercialVehicleModel(_m.Tool()):
 
     @_m.logbook_trace('Commercial vehicle model', save_arguments=True)
     def __call__(self, run_generation, input_directory, scenario):
+        attributes = {"run_generation": run_generation, "input_directory": input_directory}
+        gen_utils.log_snapshot("Commercial vehicle model", str(self), attributes)
         generation = _m.Modeller().tool(
             'sandag.model.commercial_vehicle.generation')
         distribution = _m.Modeller().tool(

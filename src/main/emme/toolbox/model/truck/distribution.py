@@ -26,7 +26,7 @@ gen_utils = _m.Modeller().module('sandag.utilities.general')
 dem_utils = _m.Modeller().module('sandag.utilities.demand')
 
 
-class TruckModel(_m.Tool()):
+class TruckModel(_m.Tool(), gen_utils.Snapshot):
 
     input_directory = _m.Attribute(str)
     demand_as_pce = _m.Attribute(bool)
@@ -43,6 +43,7 @@ class TruckModel(_m.Tool()):
         self.input_directory = os.path.join(os.path.dirname(project_dir), "input")
         self.demand_as_pce = True
         self.num_processors = "MAX-1"
+        self.attributes = ["input_directory", "demand_as_pce", "num_processors"]
 
     def page(self):
         pb = _m.ToolPageBuilder(self)
@@ -82,6 +83,11 @@ class TruckModel(_m.Tool()):
 
     @_m.logbook_trace('Truck distribution')
     def __call__(self, input_directory, demand_as_pce, num_processors, scenario):
+        attributes = {
+            "input_directory": input_directory,
+            "demand_as_pce": demand_as_pce, "num_processors": num_processors
+        }
+        gen_utils.log_snapshot("Truck distribution", str(self), attributes)
         self.input_directory = input_directory
         self.demand_as_pce = demand_as_pce
         self.scenario = scenario

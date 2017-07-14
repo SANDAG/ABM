@@ -5,7 +5,7 @@
 #//// San Diego Association of Governments and partner agencies.            ///
 #//// This copyright notice must be preserved.                              ///
 #////                                                                       ///
-#//// import/import_matrices.py                                             ///
+#//// import/import_seed_demand.py                                          ///
 #////                                                                       ///
 #////                                                                       ///
 #////                                                                       ///
@@ -19,12 +19,14 @@ import inro.modeller as _m
 import traceback as _traceback
 
 
-class ImportMatrices(_m.Tool()):
+gen_utils = _m.Modeller().module("sandag.utilities.general")
+
+
+class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
 
     omx_file = _m.Attribute(unicode)
     demand_type = _m.Attribute(str)
     period = _m.Attribute(str)
-    num_processors = _m.Attribute(str)
     tool_run_msg = ""
 
     @_m.method(return_type=_m.UnicodeType)
@@ -32,39 +34,29 @@ class ImportMatrices(_m.Tool()):
         return self.tool_run_msg
 
     def __init__(self):
-        project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
-        self.input_directory = os.path.join(os.path.dirname(project_dir), "input")
-        self.convert_truck_to_pce = True
-        self.num_processors = "MAX-1"
+        self.attributes = ["omx_file", "demand_type", "periods"]
         
     def page(self):
         pb = _m.ToolPageBuilder(self)
         pb.title = "Import demand matrices"
-        pb.description = """."""
+        pb.description = """Imports the seed demand matrices."""
         pb.branding_text = "- SANDAG - Import"
         if self.tool_run_msg != "":
             pb.tool_run_status(self.tool_run_msg_status)
 
-        pb.add_select_file('omx_file', 'file', title='Select input OMX file')
-        
-        options = [(x, x) for x in ["EA", "AM", "MD", "PM", "EV"]]
-        pb.add_select("period", keyvalues=options, title="Select corresponding period")
-        
+        pb.add_select_file('omx_file', 'file',
+                           title='Select input OMX file')
         options = [(x, x) for x in ["AUTO", "TRUCK", "TRANSIT"]]
         pb.add_select("demand_type", keyvalues=options, title="Select corresponding demand type")
-        
-        pb.add_checkbox('convert_truck_to_pce', title = " ", label="Convert demand matrices to PCE",
-            note="Note: assignment demand matrices must be in PCE")
-            
-        dem_utils.add_select_processors("num_processors", pb, self)
+        options = [(x, x) for x in ["EA", "AM", "MD", "PM", "EV"]]
+        pb.add_select("period", keyvalues=options, title="Select corresponding period")
         return pb.render()
 
     def run(self):
         self.tool_run_msg = ""
         try:
             scenario = _m.Modeller().scenario
-            self(self.omx_file, self.demand_type, self.period, 
-                 scenario, self.num_processors, self.convert_truck_to_pce)
+            self(self.omx_file, self.demand_type, self.period, scenario)
             run_msg = "Tool completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -72,9 +64,17 @@ class ImportMatrices(_m.Tool()):
                 error, _traceback.format_exc(error))
             raise
 
-    def __call__(self, omx_file, demand_type, period, scenario,
-                 num_processors=None, convert_truck_to_pce=None):
-        with _m.logbook_trace("Import %s matrices for period %s" % (demand_type, period)):
+    def __call__(self, omx_file, demand_type, period, scenario, convert_truck_to_pce=None):
+        attributes = {
+            "omx_file": omx_file, 
+            "demand_type": demand_type, 
+            "period": period, 
+            "scenario": scenario.id, 
+            "convert_truck_to_pce": convert_truck_to_pce,
+            "self": str(self)
+        }
+        with _m.logbook_trace("Import %s matrices for period %s" % (demand_type, period), attributes=attributes):
+            gen_utils.log_snapshot("Import matrices", str(self), attributes)
             demand_types = ["AUTO", "TRUCK", "TRANSIT"]
             if demand_type not in demand_types:
                 raise Exception("Invalid demand_type, must be one of %s" % demand_types)
@@ -84,6 +84,7 @@ class ImportMatrices(_m.Tool()):
 
             import_from_omx = _m.Modeller().tool(
                 "inro.emme.data.matrix.import_from_omx")
+
             if demand_type == "AUTO":
                 matrices = {
                     'SOV_GP':   'mf"%s_SOVGP"',
@@ -102,6 +103,7 @@ class ImportMatrices(_m.Tool()):
                     'lhdt':     'mf"%s_TRKLTOLL"',
                     'mhdn':     'mf"%s_TRKMGP"',
                     'mhdt':     'mf"%s_TRKMTOLL"'}
+
             if demand_type == "TRANSIT":
                 matrices = {
                     'WLK_LOC':  'mf"%s_WLKBUS"',
@@ -119,18 +121,28 @@ class ImportMatrices(_m.Tool()):
                     'KNR_CMR':  'mf"%s_KNRCMR"',
                     'KNR_EXP':  'mf"%s_KNREXP"',
                     'KNR_BRT':  'mf"%s_KNRBRT"'}
+
             matrices = dict((k, v % period) for k, v in matrices.iteritems())
             import_from_omx(file_path=omx_file, matrices=matrices, scenario=scenario)
-            
-            if demand_type == "TRUCK" and convert_truck_to_pce:
-                self.convert_to_pce(scenario, period, num_processors)
+
+            if demand_type == "TRUCK" :
+                self.convert_truck(scenario, period, convert_truck_to_pce)
 
     @_m.logbook_trace('Convert truck vehicle demand to PCE')
-    def convert_to_pce(self, scenario, period, num_processors):
-        matrix_calc = dem_utils.MatrixCalculator(scenario, num_processors)
+    def convert_truck(self, scenario, period, convert_truck_to_pce):
+        matrix_calc = _m.Modeller().tool(
+            'inro.emme.matrix_calculation.matrix_calculator')
         # Calculate PCEs for trucks
-        mat_trucks = ['TRKHGP',   'TRKHTOLL', 'TRKLGP',   'TRKLTOLL', 'TRKMGP',   'TRKMTOLL']
-        pce_values = [2.5,        2.5,        1.3,        1.3,        1.5,        1.5]
+        mat_trucks = ['TRKHGP', 'TRKHTOLL', 'TRKLGP', 'TRKLTOLL', 'TRKMGP', 'TRKMTOLL']
+        if convert_truck_to_pce:
+            pce_values = [2.5,      2.5,        1.3,      1.3,        1.5,      1.5]
+        else:
+            pce_values = [1.0,      1.0,        1.0,      1.0,        1.0,      1.0]
         for name, pce in zip(mat_trucks, pce_values):
-            matrix_calc.add(demand_name, '(%s * %s).max.0' % (demand_name, pce))
-        matrix_calc.run()
+            demand_name = "%s_%s" % (period, name)
+            mat_spec = {
+                "expression": '(mf"%s" * %s).max.0' % (demand_name, pce), 
+                "result": 'mf"%s"' % demand_name,
+                "type": "MATRIX_CALCULATION"
+            }
+            matrix_calc(mat_spec, scenario)

@@ -22,7 +22,10 @@ import traceback as _traceback
 import os
 
 
-class ExternalInternal(_m.Tool()):
+gen_utils = _m.Modeller().module("sandag.utilities.general")
+
+
+class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
     input_directory = _m.Attribute(str)
 
     tool_run_msg = ""
@@ -34,6 +37,7 @@ class ExternalInternal(_m.Tool()):
     def __init__(self):
         project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
         self.input_directory = os.path.join(os.path.dirname(project_dir), "input")
+        self.attributes = ["input_directory"]
 
     def page(self):
         pb = _m.ToolPageBuilder(self)
@@ -62,6 +66,8 @@ class ExternalInternal(_m.Tool()):
 
     @_m.logbook_trace('External-internal model', save_arguments=True)
     def __call__(self, input_directory, scenario):
+        attributes = {"input_directory": input_directory}
+        gen_utils.log_snapshot("External-internal model", str(self), attributes)
         np.seterr(divide='ignore', invalid='ignore')
 
         emmebank = scenario.emmebank

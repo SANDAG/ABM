@@ -12,14 +12,16 @@
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
 
-TOOLBOX_ORDER = 1
+TOOLBOX_ORDER = 111
 
 
 import inro.modeller as _m
 import traceback as _traceback
 
+gen_utils = _m.Modeller().module("sandag.utilities.general")
 
-class Initialize(_m.Tool()):
+
+class Initialize(_m.Tool(), gen_utils.Snapshot):
 
     components = _m.Attribute(_m.ListType)
     periods = _m.Attribute(_m.ListType)
@@ -40,8 +42,8 @@ class Initialize(_m.Tool()):
         self._all_periods = ['EA', 'AM', 'MD', 'PM', 'EV']
         self.components = self._all_components[:]
         self.periods = self._all_periods[:]
+        self.attributes = ["components", "periods"]
         self._debug = False
-
 
     def page(self):
         pb = _m.ToolPageBuilder(self)
@@ -71,8 +73,11 @@ class Initialize(_m.Tool()):
                 error, _traceback.format_exc(error))
             raise
 
-    @_m.logbook_trace("Initialize matrices")
+    @_m.logbook_trace("Initialize matrices", save_arguments=True)
     def __call__(self, components, periods, scenario):
+        attributes = {"components": components, "periods": periods}
+        gen_utils.log_snapshot("Initialize matrices", str(self), attributes)
+
         self.scenario = scenario
         self._create_matrix_tool = _m.Modeller().tool(
             "inro.emme.data.matrix.create_matrix")

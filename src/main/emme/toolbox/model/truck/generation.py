@@ -22,7 +22,10 @@ import pandas as pd
 import os
 
 
-class TruckGeneration(_m.Tool()):
+gen_utils = _m.Modeller().module("sandag.utilities.general")
+
+
+class TruckGeneration(_m.Tool(), gen_utils.Snapshot):
 
     input_directory = _m.Attribute(str)
     input_truck_directory = _m.Attribute(str)
@@ -37,6 +40,7 @@ class TruckGeneration(_m.Tool()):
         project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
         self.input_directory = os.path.join(os.path.dirname(project_dir), "input")
         self.input_truck_directory = os.path.join(os.path.dirname(project_dir), "input_truck")
+        self.attributes = ["input_directory", "input_truck_directory"]
         self._properties = None
 
     def page(self):
@@ -74,6 +78,8 @@ class TruckGeneration(_m.Tool()):
 
     @_m.logbook_trace('Truck generation')
     def __call__(self, input_directory, input_truck_directory, scenario):
+        attributes = {"input_directory": input_directory, "input_truck_directory": input_truck_directory}
+        gen_utils.log_snapshot("Truck generation", str(self), attributes)
         self.input_directory = input_directory
         self.input_truck_directory = input_truck_directory
         self.scenario = scenario

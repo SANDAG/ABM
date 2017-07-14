@@ -22,7 +22,10 @@ import traceback as _traceback
 import os
 
 
-class ExternalExternal(_m.Tool()):
+gen_utils = _m.Modeller().module("sandag.utilities.general")
+
+
+class ExternalExternal(_m.Tool(), gen_utils.Snapshot):
     input_directory = _m.Attribute(unicode)
     external_zones = _m.Attribute(str)
 
@@ -36,6 +39,7 @@ class ExternalExternal(_m.Tool()):
         project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
         self.input_directory = os.path.join(os.path.dirname(project_dir), "input")
         self.external_zones = "1-12"
+        self.attributes = ["external_zones", "num_processors"]
 
     def page(self):
         pb = _m.ToolPageBuilder(self)
@@ -65,6 +69,8 @@ class ExternalExternal(_m.Tool()):
 
     @_m.logbook_trace('External-external model', save_arguments=True)
     def __call__(self, input_directory, external_zones, scenario):
+        attributes = {"external_zones": external_zones, "input_directory": input_directory}
+        gen_utils.log_snapshot("External-external model", str(self), attributes)
         emmebank = scenario.emmebank
         matrix_calc = _m.Modeller().tool(
             "inro.emme.matrix_calculation.matrix_calculator")
