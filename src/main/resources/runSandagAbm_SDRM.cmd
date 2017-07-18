@@ -54,7 +54,7 @@ rem Build internal-external model trip tables
 %JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.internalexternal.InternalExternalTripTables %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE%
 
 rem kill java tasks
-rem taskkill /F /IM java.exe
+taskkill /F /IM java.exe
 
 rem ### restore saved environment variable values, and change back to original current directory
 set JAVA_PATH=%OLDJAVAPATH%
