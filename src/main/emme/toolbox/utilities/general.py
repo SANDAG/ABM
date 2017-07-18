@@ -17,10 +17,13 @@ TOOLBOX_ORDER = 102
 
 import inro.modeller as _m
 import inro.emme.datatable as _dt
+import omx as _omx
 from osgeo import ogr as _ogr
 from contextlib import contextmanager as _context
 from itertools import izip as _izip
+import traceback as _traceback
 import re as _re
+import json as _json
 import os
 
 
@@ -174,3 +177,92 @@ class DataTableProc(object):
     def values(self, name):
         index = self._index[name]
         return self._values[index]
+
+
+class Snapshot(object):
+    def __getitem__(self, key):
+        return getattr(self, key)
+
+    def __setitem__(self, key, value):
+        setattr(self, key, value)
+
+    def to_snapshot(self):
+        try:
+            attributes = getattr(self, "attributes", [])
+            snapshot = {}
+            for name in attributes:
+                snapshot[name] = unicode(self[name])
+            return _json.dumps(snapshot)
+        except Exception:
+            return "{}"
+
+    def from_snapshot(self, snapshot):
+        try:
+            snapshot = _json.loads(snapshot)
+            attributes = getattr(self, "attributes", [])
+            for name in attributes:
+                self[name] = snapshot[name]
+        except Exception, error:
+            self.tool_run_msg = _m.PageBuilder.format_exception(
+                error, _traceback.format_exc(error), False)
+        return self
+
+    def get_state(self):
+        attributes = getattr(self, "attributes", [])
+        state = {}
+        for name in attributes:
+            try:
+                state[name] = self[name]
+            except _m.AttributeError, error:
+                state[name] = unicode(error)
+        return state
+
+
+def log_snapshot(name, namespace, snapshot):
+    try:
+        _m.logbook_snapshot(name=name, comment="", namespace=namespace,
+                            value=_json.dumps(snapshot))
+    except Exception as error:
+        print error
+        
+        
+@_m.logbook_trace(name="Export matrices to OMX", save_arguments=True)
+def export_to_omx(matrices, export_file, scenario, omx_key="ID_NAME"):
+    
+    emmebank = scenario.emmebank
+    matrices = [emmebank.matrix(m) for m in matrices]
+
+    text_encoding = emmebank.text_encoding
+    if omx_key == "ID_NAME":
+        generate_key = lambda m: "%s_%s" % (
+            m.id.encode(text_encoding), m.name.encode(text_encoding))
+    elif omx_key == "NAME":
+        generate_key = lambda m: m.name.encode(text_encoding)
+    elif omx_key == "ID":
+        generate_key = lambda m: m.id.encode(text_encoding)
+
+    omx_file = _omx.openFile(export_file, 'w')
+    try:
+        n_matrices = len(matrices)
+        for matrix in matrices:
+            numpy_array = matrix.get_numpy_data(scenario.id)
+            if matrix.type == "DESTINATION":  # (1,n_zones)
+                n_zones = len(scenario.zone_numbers)
+                numpy_array = _numpy.resize(numpy_array, (1, n_zones))
+            if matrix.type == "ORIGIN":
+                n_zones = len(scenario.zone_numbers)
+                numpy_array = _numpy.resize(numpy_array, (n_zones, 1))
+            key = generate_key(matrix)
+            omx_file[key] = numpy_array.astype(dtype="float64", copy=False)
+            omx_file[key].attrs.description = \
+                matrix.description.encode(text_encoding)
+            omx_file[key].attrs.source = "Emme"
+
+        try:
+            omx_file.createMapping('zone_number', scenario.zone_numbers)
+        except LookupError:
+            pass
+
+    finally:
+        omx_file.close()
+    return

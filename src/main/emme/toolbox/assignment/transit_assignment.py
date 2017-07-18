@@ -31,7 +31,7 @@ gen_utils = _m.Modeller().module("sandag.utilities.general")
 dem_utils = _m.Modeller().module("sandag.utilities.demand")
 
 
-class TransitAssignment(_m.Tool()):
+class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
 
     period = _m.Attribute(unicode)
 
@@ -61,8 +61,21 @@ class TransitAssignment(_m.Tool()):
         self.scenario_title = ""
         self.overwrite = False
         self.num_processors = "MAX-1"
+        self.attributes = [
+            "period", "scenario_id", "transit_database", "base_scenario", 
+            "skims_only", "transfer_limit", "timed_xfers_table", 
+            "scenario_title", "overwrite", "num_processors"]
         self._dt_db = _m.Modeller().desktop.project.data_tables()
         
+    def from_snapshot(self, snapshot):
+        super(TransitAssignment, self).from_snapshot(snapshot)
+        # custom from_snapshot to load scenario and database objects
+        self.base_scenario = _m.Modeller().emmebank.scenario(self.base_scenario)
+        project_databases = dict([
+            (d.path, d) for d in _m.Modeller().desktop.project.databases])
+        self.transit_database = project_databases.get(self.transit_database, self.transit_database)
+        return self
+
     def page(self):
         pb = _m.ToolPageBuilder(self)
         pb.title = "Transit assignment"
@@ -100,9 +113,9 @@ class TransitAssignment(_m.Tool()):
     def run(self):
         self.tool_run_msg = ""
         try:
-            emmebank = self.transit_database.core_emmebank
+            transit_emmebank = self.transit_database.core_emmebank
             results = self(
-                self.period, self.base_scenario, emmebank, self.scenario_id, self.scenario_title, 
+                self.period, self.base_scenario, transit_emmebank, self.scenario_id, self.scenario_title, 
                 self.skims_only, self.transfer_limit, self.timed_xfers_table,
                 self.num_processors, self.overwrite)
             run_msg = "Transit assignment completed"
@@ -119,16 +132,18 @@ class TransitAssignment(_m.Tool()):
         attrs = {
             "period": period, 
             "scenario_id": scenario_id, 
-            "emmebank": emmebank, 
-            "base_scenario": base_scenario, 
+            "emmebank": emmebank.path, 
+            "base_scenario": base_scenario.id, 
             "skims_only": skims_only, 
             "transfer_limit": transfer_limit, 
             "timed_xfers_table": timed_xfers_table,
             "scenario_title": scenario_title, 
             "overwrite": overwrite,
-            "num_processors": num_processors
+            "num_processors": num_processors, 
+            "self": str(self)
         }
         with _m.logbook_trace("Transit assignment for period %s" % period, attributes=attrs):
+            gen_utils.log_snapshot("Transit assignment", str(self), attrs)
             copy_scenario = modeller.tool(
                 "inro.emme.data.scenario.copy_scenario")
             periods = ["EA", "AM", "MD", "PM", "EV"]
@@ -683,8 +698,6 @@ class TransitAssignment(_m.Tool()):
         walk_mode =  network.mode("w")
 
         # Mark TAP adjacent stops and split TAP connectors
-        new_node_id = max(n.number for n in network.nodes())
-        new_node_id = math.ceil(new_node_id / 10000.0) * 10000
         for centroid in network.centroids():
             out_links = list(centroid.outgoing_links())
             in_links = list(centroid.incoming_links())
@@ -778,20 +791,23 @@ class TransitAssignment(_m.Tool()):
 
     @_m.logbook_trace("Add timed-transfer links", save_arguments=True)
     def timed_transfers(self, network, timed_transfers_with_walk, period):
+        no_walk_link_error = "no walk link from line %s to %s"
+        node_not_found_error = "node %s not found in itinerary for line %s"
+
         def find_walk_link(from_line, to_line):
             to_nodes = set([s.i_node for s in to_line.segments(True)])
             for seg in from_line.segments(True):
                 for link in seg.i_node.outgoing_links():
                     if link.j_node in to_nodes:
                         return link
-            raise Exception("no walk link from line %s to %s" % (from_line, to_line))
+            raise Exception(no_walk_link_error % (from_line, to_line))
             
         def link_on_line(line, node):
             node = network.node(node)
             for seg in line.segments():
                 if seg.i_node == node:
                     return seg.link
-            raise Exception(node_not_found_error % (node, from_line))
+            raise Exception(node_not_found_error % (node, line))
 
         # Group parallel transfers together (same pair of alighting-boarding nodes)
         walk_transfers = _defaultdict(lambda: {"from_lines": [], "to_lines": [], "walk_link": None})

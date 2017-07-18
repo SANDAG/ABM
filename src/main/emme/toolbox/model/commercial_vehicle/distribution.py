@@ -34,10 +34,10 @@ import os
 import numpy as np
 
 
-utils = _m.Modeller().module('sandag.utilities.demand')
+gen_utils = _m.Modeller().module("sandag.utilities.general")
 
 
-class CommercialVehicleDistribution(_m.Tool()):
+class CommercialVehicleDistribution(_m.Tool(), gen_utils.Snapshot):
 
     input_directory = _m.Attribute(str)
 
@@ -50,6 +50,7 @@ class CommercialVehicleDistribution(_m.Tool()):
     def __init__(self):
         project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
         self.input_directory = os.path.join(os.path.dirname(project_dir), "input")
+        self.attributes = ["input_directory"]
 
     def page(self):
         # Equivalent to commVehDist.rsc
@@ -111,6 +112,8 @@ class CommercialVehicleDistribution(_m.Tool()):
 
     @_m.logbook_trace('Commercial vehicle distribution')
     def __call__(self, input_directory, scenario):
+        attributes = {"input_directory": input_directory}
+        gen_utils.log_snapshot("Commercial vehicle distribution", str(self), attributes)
         self.calc_blended_skims(scenario)
         self.calc_friction_matrix(input_directory, scenario)
         self.balance_matrix(scenario)

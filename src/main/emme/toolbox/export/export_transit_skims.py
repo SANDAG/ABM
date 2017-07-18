@@ -20,10 +20,16 @@ import traceback as _traceback
 import os
 
 
-class ExportSkims(_m.Tool()):
+gen_utils = _m.Modeller().module("sandag.utilities.general")
+
+
+class ExportSkims(_m.Tool(), gen_utils.Snapshot):
     omx_file = _m.Attribute(unicode)
 
     tool_run_msg = ""
+
+    def __init__(self):
+        self.attributes = ["omx_file"]
 
     @_m.method(return_type=_m.UnicodeType)
     def tool_run_msg_status(self):
@@ -57,8 +63,11 @@ class ExportSkims(_m.Tool()):
 
     @_m.logbook_trace("Export transit skims to OMX", save_arguments=True)
     def __call__(self, omx_file, scenario):
-        export_to_omx = _m.Modeller().tool(
-            "inro.emme.data.matrix.export_to_omx")
+        attributes = {"omx_file": omx_file}
+        gen_utils.log_snapshot("Export transit skims to OMX", str(self), attributes)
+        # export_to_omx = _m.Modeller().tool(
+            # "inro.emme.data.matrix.export_to_omx")
+        export_to_omx = gen_utils.export_to_omx
 
         matrices = []
         for period in ["EA", "AM", "MD", "PM", "EV"]:
@@ -66,7 +75,6 @@ class ExportSkims(_m.Tool()):
                 matrices.append(period + "_" + name)
         export_to_omx(matrices=matrices, 
                       export_file=omx_file,
-                      append_to_file=False, 
                       scenario=scenario,
                       omx_key="NAME")
 

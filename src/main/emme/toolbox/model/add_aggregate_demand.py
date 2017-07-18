@@ -21,9 +21,10 @@ import os
 
 
 dem_utils = _m.Modeller().module('sandag.utilities.demand')
+gen_utils = _m.Modeller().module("sandag.utilities.general")
 
 
-class AddAggregateDemand(_m.Tool()):
+class AddAggregateDemand(_m.Tool(), gen_utils.Snapshot):
 
     external_zones = _m.Attribute(str)
     num_processors = _m.Attribute(str)
@@ -36,6 +37,7 @@ class AddAggregateDemand(_m.Tool()):
     def __init__(self):
         self.external_zones = "1-12"
         self.num_processors = "MAX-1"
+        self.attributes = ["external_zones", "num_processors"]
 
     def page(self):
         pb = _m.ToolPageBuilder(self)
@@ -71,6 +73,8 @@ class AddAggregateDemand(_m.Tool()):
 
     @_m.logbook_trace('Add aggregate demand', save_arguments=True)
     def __call__(self, external_zones, num_processors, scenario):
+        attributes = {"external_zones": external_zones, "num_processors": num_processors}
+        gen_utils.log_snapshot("Add aggregate demand", str(self), attributes)
         matrix_calc = dem_utils.MatrixCalculator(scenario, num_processors)
         periods = ["EA", "AM", "MD", "PM", "EV"]
         with matrix_calc.trace_run("Add commercial vehicle trips to auto demand"):

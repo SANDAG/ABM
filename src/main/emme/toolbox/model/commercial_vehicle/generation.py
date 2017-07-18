@@ -23,7 +23,11 @@ import pandas as pd
 import os
 
 
-class CommercialVehicleDistribution(_m.Tool()):
+dem_utils = _m.Modeller().module('sandag.utilities.demand')
+gen_utils = _m.Modeller().module("sandag.utilities.general")
+
+
+class CommercialVehicleDistribution(_m.Tool(), gen_utils.Snapshot):
 
     input_directory = _m.Attribute(str)
 
@@ -36,6 +40,7 @@ class CommercialVehicleDistribution(_m.Tool()):
     def __init__(self):
         project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
         self.input_directory = os.path.join(os.path.dirname(project_dir), "input")
+        self.attributes = ["input_directory"]
 
     def page(self):
         # Equivalent to commVehGen.rsc
@@ -96,10 +101,11 @@ class CommercialVehicleDistribution(_m.Tool()):
             raise
 
     @_m.logbook_trace('Commercial vehicle generation')
-    def __call__(self, input_directory, scenario):        
-        utils = _m.Modeller().module('sandag.utilities.demand')
+    def __call__(self, input_directory, scenario):
+        attributes = {"input_directory": input_directory}
+        gen_utils.log_snapshot("Commercial vehicle generation", str(self), attributes)
         emmebank = scenario.emmebank
-        props = utils.Properties(os.path.join(os.path.dirname(input_directory), "conf", "sandag_abm.properties"))
+        props = dem_utils.Properties(os.path.join(os.path.dirname(input_directory), "conf", "sandag_abm.properties"))
 
         mgra = pd.read_csv(
             os.path.join(input_directory, 'mgra13_based_input2012.csv'))
@@ -140,7 +146,7 @@ class CommercialVehicleDistribution(_m.Tool()):
 
         taz = mgra.groupby('taz').sum()
         taz.reset_index(inplace=True)
-        taz = utils.add_missing_zones(taz, scenario)
+        taz = dem_utils.add_missing_zones(taz, scenario)
         taz.sort('taz', inplace=True)
 
         prod = emmebank.matrix('moCOMMVEH_PROD')

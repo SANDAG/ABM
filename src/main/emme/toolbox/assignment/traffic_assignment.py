@@ -19,6 +19,8 @@ import inro.modeller as _m
 import inro.emme.core.exception as _except
 import traceback as _traceback
 from contextlib import contextmanager as _context
+import numpy
+import array
 import os
 
 
@@ -26,9 +28,10 @@ gen_utils = _m.Modeller().module("sandag.utilities.general")
 dem_utils = _m.Modeller().module("sandag.utilities.demand")
 
 
-class TrafficAssignment(_m.Tool()):
+class TrafficAssignment(_m.Tool(), gen_utils.Snapshot):
 
     period = _m.Attribute(unicode)
+    msa_iteration = _m.Attribute(int)
     relative_gap = _m.Attribute(float)
     max_iterations = _m.Attribute(int)
     num_processors = _m.Attribute(str)
@@ -36,9 +39,11 @@ class TrafficAssignment(_m.Tool()):
     tool_run_msg = ""
 
     def __init__(self):
+        self.msa_iteration = 1
         self.relative_gap = 0.0005
         self.max_iterations = 100
         self.num_processors = "MAX-1"
+        self.attributes = ["period", "msa_iteration", "relative_gap", "max_iterations", "num_processors"]
         version = os.environ.get("EMMEPATH", "")
         self._version = version[-5:] if version else ""
         self._skim_classes_separately = False  # Used for debugging only
@@ -58,6 +63,7 @@ Assign traffic demand for the selected time period."""
                    ("PM","PM peak"),
                    ("EV","Evening")]
         pb.add_select("period", options, title="Period:")
+        pb.add_text_box("msa_iteration", title="MSA iteration:", note="If >1 will apply MSA to flows.")
 
         pb.add_text_box("relative_gap", title="Relative gap:")
         pb.add_text_box("max_iterations", title="Max iterations:")
@@ -68,7 +74,8 @@ Assign traffic demand for the selected time period."""
         self.tool_run_msg = ""
         try:
             scenario = _m.Modeller().scenario
-            results = self(self.period, self.relative_gap, self.max_iterations, self.num_processors, scenario)
+            results = self(self.period, self.msa_iteration, self.relative_gap, self.max_iterations, 
+                           self.num_processors, scenario)
             run_msg = "Traffic assignment completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -76,16 +83,18 @@ Assign traffic demand for the selected time period."""
                 error, _traceback.format_exc(error))
             raise
 
-    def __call__(self, period, relative_gap, max_iterations, num_processors, scenario):
+    def __call__(self, period, msa_iteration, relative_gap, max_iterations, num_processors, scenario):
         attrs = {
             "period": period, 
+            "msa_interation": msa_iteration,
             "relative_gap": relative_gap, 
             "max_iterations": max_iterations, 
             "num_processors": num_processors, 
-            "scenario": scenario,
-            "self": self
+            "scenario": scenario.id,
+            "self": str(self)
         }
         with _m.logbook_trace("Traffic assignment for period %s" % period, attributes=attrs):
+            gen_utils.log_snapshot("Traffic assignment", str(self), attrs)
             periods = ["EA", "AM", "MD", "PM", "EV"]
             if not period in periods:
                 raise _except.ArgumentError(
@@ -149,7 +158,45 @@ Assign traffic demand for the selected time period."""
                     "skims": ["GENCOST", "TIME", "DIST",  "TOLLCOST"]
                 }                
             ]
+
+            if period == "MD" and (msa_iteration == 1 or not scenario.mode('D')):
+                self.prepare_midday_generic_truck(scenario)
+
+            if msa_iteration > 1:
+                # Link and turn flows
+                link_attrs = ["auto_volume"]
+                turn_attrs = ["auto_volume"]
+                for traffic_class in classes:
+                    link_attrs.append("@%s" % (traffic_class["name"].lower()))
+                    turn_attrs.append("@p%s" % (traffic_class["name"].lower()))
+                msa_link_flows = scenario.get_attribute_values("LINK", link_attrs)[1:]
+                msa_turn_flows = scenario.get_attribute_values("TURN", turn_attrs)[1:]
+
             self.run_assignment(period, relative_gap, max_iterations, num_processors, scenario, classes)
+
+            if msa_iteration > 1:
+                link_flows = scenario.get_attribute_values("LINK", link_attrs)
+                values = [link_flows.pop(0)]
+                for msa_array, flow_array in zip(msa_link_flows, link_flows):
+                    msa_vals = numpy.frombuffer(msa_array, dtype='float32')
+                    flow_vals = numpy.frombuffer(flow_array, dtype='float32')
+                    result = msa_vals + (1 / msa_iteration) * (flow_vals - msa_vals)
+                    result_array = array.array('f')
+                    result_array.fromstring(result.tostring())
+                    values.append(result_array)
+                scenario.set_attribute_values("LINK", link_attrs, values)
+
+                turn_flows = scenario.get_attribute_values("TURN", turn_attrs)
+                values = [turn_flows.pop(0)]
+                for msa_array, flow_array in zip(msa_turn_flows, turn_flows):
+                    msa_vals = numpy.frombuffer(msa_array, dtype='float32')
+                    flow_vals = numpy.frombuffer(flow_array, dtype='float32')
+                    result = msa_vals + (1 / msa_iteration) * (flow_vals - msa_vals)
+                    result_array = array.array('f')
+                    result_array.fromstring(result.tostring())
+                    values.append(result_array)
+                scenario.set_attribute_values("TURN", turn_attrs, values)
+
             self.run_skims(period, num_processors, scenario, classes)
 
     def run_assignment(self, period, relative_gap, max_iterations, num_processors, scenario, classes):     
@@ -158,8 +205,6 @@ Assign traffic demand for the selected time period."""
         modeller = _m.Modeller()
         set_extra_function_para = modeller.tool(
             "inro.emme.traffic_assignment.set_extra_function_parameters")
-        create_matrix = modeller.tool(
-            "inro.emme.data.matrix.create_matrix")
         create_attribute = modeller.tool(
             "inro.emme.data.extra_attribute.create_extra_attribute")
         matrix_calc = modeller.tool(
@@ -177,7 +222,7 @@ Assign traffic demand for the selected time period."""
                 # ul2 = transig flow -> volad
                 # ul3 = @capacity_link
                 el1 = "@green_to_cycle"
-                el2 = "@volau"              # for skim only
+                el2 = "@auto_volume"              # for skim only
                 el3 = "@capacity_inter"       
                 set_extra_function_para(el1, el2, el3, emmebank=emmebank)
 
@@ -219,8 +264,7 @@ Assign traffic demand for the selected time period."""
 
             with _m.logbook_trace("Per-class flow attributes"):
                 for traffic_class in classes:
-                    demand = 'mf"%s_%s"' % (period, traffic_class["name"])
-                    #demand = demand + "_PCE" if 'TRK' in traffic_class["name"] else demand            
+                    demand = 'mf"%s_%s"' % (period, traffic_class["name"]) 
                     link_cost = "%s_%s" % (traffic_class["cost"], p) if traffic_class["cost"] else "@cost_operating"
 
                     att_name = "@%s" % (traffic_class["name"].lower())
@@ -249,12 +293,10 @@ Assign traffic demand for the selected time period."""
 
     def run_skims(self, period, num_processors, scenario, classes):
         modeller = _m.Modeller()
-        create_matrix = modeller.tool(
-            "inro.emme.data.matrix.create_matrix")
         create_attribute = modeller.tool(
             "inro.emme.data.extra_attribute.create_extra_attribute")
-        matrix_calc = modeller.tool(
-            "inro.emme.matrix_calculation.matrix_calculator")    
+        # matrix_calc = modeller.tool(
+        #     "inro.emme.matrix_calculation.matrix_calculator")    
         traffic_assign = modeller.tool(
             "inro.emme.traffic_assignment.sola_traffic_assignment")
         net_calc = gen_utils.NetworkCalculator(scenario)
@@ -269,14 +311,14 @@ Assign traffic demand for the selected time period."""
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST"]
                 })
             analysis_link = {
-                "TIME":     "@timau", 
+                "TIME":     "@auto_time", 
                 "DIST":     "length", 
                 "HOVDIST":  "@hovdist", 
                 "TOLLCOST": "@tollcost",
                 "MLCOST":   "@mlcost",
                 "TOLLDIST": "@tolldist"
             }
-            analysis_turn = {"TIME": "@ptimau"}
+            analysis_turn = {"TIME": "@auto_time_turn"}
             with _m.logbook_trace("Link attributes for skims"):
                 create_attribute("LINK", "@hovdist", "distance for HOV", 0, overwrite=True, scenario=scenario)
                 create_attribute("LINK", "@tollcost", "Toll cost in cents", 0, overwrite=True, scenario=scenario)
@@ -290,15 +332,21 @@ Assign traffic demand for the selected time period."""
                 net_calc("@tolldist", "length", {"link": "not @toll_%s=0.0" % p})
                 # TODO (optional): use temporary link attributes ?
                 # link volume in @volau
-                create_attribute("LINK", "@volau", "traffic link volume (volau)", 
+                create_attribute("LINK", "@auto_volume", "traffic link volume (volau)", 
                                   0, overwrite=True, scenario=scenario)
-                create_attribute("LINK", "@timau", "traffic link time (timau)", 
+                create_attribute("LINK", "@auto_time", "traffic link time (timau)", 
                                   0, overwrite=True, scenario=scenario)
-                create_attribute("TURN", "@ptimau", "traffic turn time (ptimau)", 
+                create_attribute("TURN", "@auto_time_turn", "traffic turn time (ptimau)", 
                                   0, overwrite=True, scenario=scenario)
-                net_calc("@volau", "volau", {"link": "modes=d"})
-                net_calc("@timau", "timau", {"link": "modes=d"})
-                net_calc("@ptimau", "ptimau*(ptimau.gt.0)",
+                net_calc("@auto_volume", "volau", {"link": "modes=d"})
+
+                for function in emmebank.functions():
+                    if function.type == "VOLUME_DELAY":
+                        expression = function.expression
+                        for exfpar in ["el1", "el2", "el3"]:
+                            expression = expression.replace(exfpar, getattr(emmebank.extra_function_parameters, exfpar))
+                        net_calc("@auto_time", expression, {"link": "vdf=%s" % function.id[2:]})
+                net_calc("@auto_time_turn", "ptimau*(ptimau.gt.0)",
                          {"incoming_link": "all", "outgoing_link": "all"})
 
             skim_spec = self.base_assignment_spec(0, 0, num_processors)        
@@ -358,40 +406,19 @@ Assign traffic demand for the selected time period."""
         
             # compute diagnal value for TIME and DIST
             with _m.logbook_trace("Compute diagnal values for period %s" % period):
-                with gen_utils.temp_matrices(emmebank, "ORIGIN") as (mo_intra,):
-                    mo_intra.name = "temp"
-                    for traffic_class in classes:
-                        class_name = traffic_class["name"]
-                        skims = traffic_class["skims"]
-                        with _m.logbook_trace("Class %s" % class_name):
-                            for skim_type in skims:
-                                name = 'mf"%s_%s_%s"' % (period, class_name, skim_type)
-                                if skim_type == "TIME" or skim_type == "DIST":
-                                    mo_intra.description = "temp intra zonal, %s" % name
-                                    mo_intra.initialize(0)
-                                    mat_spec = {
-                                        "expression": name,
-                                        "result": mo_intra.id,
-                                        "constraint": {
-                                            "by_value": {
-                                                "od_values": name, "interval_min": 0, "interval_max": 0, "condition": "EXCLUDE"
-                                            },
-                                        },
-                                        "aggregation": {"destinations": ".min."},
-                                        "type": "MATRIX_CALCULATION"
-                                    }
-                                    matrix_calc(mat_spec, scenario, num_processors=num_processors)
-                                    expression = "(p.eq.q) * 0.5 * %s + (p.ne.q) * %s" % (mo_intra.id, name)
-                                else:
-                                    expression = "(p.eq.q) * (-99999999.0) + (p.ne.q) * %s" % (name)
-                                mat_spec = {
-                                    "expression": expression, 
-                                    "result": name,
-                                    "constraint": {"by_value": None, "by_zone": None},
-                                    "aggregation": {"origins": None, "destinations": None},
-                                    "type": "MATRIX_CALCULATION"
-                                }
-                                matrix_calc(mat_spec, scenario, num_processors=num_processors)
+                for traffic_class in classes:
+                    class_name = traffic_class["name"]
+                    skims = traffic_class["skims"]
+                    with _m.logbook_trace("Class %s" % class_name):
+                        for skim_type in skims:
+                            name = 'mf"%s_%s_%s"' % (period, class_name, skim_type)
+                            matrix = emmebank.matrix(name)
+                            data = matrix.get_numpy_data(scenario)
+                            if skim_type == "TIME" or skim_type == "DIST":
+                                data[numpy.diag_indices_from(data)] = 0.5 * numpy.nanmin(data, 1)
+                            else:
+                                numpy.fill_diagonal(data, -99999999.0)
+                            matrix.set_numpy_data(data, scenario)
         return
 
     def base_assignment_spec(self, relative_gap, max_iterations, num_processors):
@@ -413,40 +440,29 @@ Assign traffic demand for the selected time period."""
 
     @_context
     def setup_skims(self, period, scenario):
-        modeller = _m.Modeller()
         emmebank = scenario.emmebank
         with _m.logbook_trace("Extract skims for period %s" % period):
-            if period == "MD":
-                gen_truck_mode = 'D'
-                create_mode = modeller.tool(
-                    "inro.emme.data.network.mode.create_mode")
-                delete_mode = modeller.tool(
-                    "inro.emme.data.network.mode.delete_mode")
-                change_link_modes = modeller.tool(
-                    "inro.emme.data.network.base.change_link_modes")
+            # temp_functions converts to skim-type VDFs
+            with gen_utils.temp_functions(emmebank):
+                yield
 
-                with _m.logbook_trace("Preparation for generic truck skim"):
-                    truck_mode = scenario.mode(gen_truck_mode)
-                    if not truck_mode:
-                        truck_mode = create_mode(mode_type="AUX_AUTO", mode_id=gen_truck_mode,
-                                         mode_description="all trucks", scenario=scenario)
-                    change_link_modes(modes=[truck_mode], action="ADD",
-                                      selection="modes=vVmMtT", scenario=scenario)
-            try:
-                attrs = {
-                    "LINK": ["auto_volume", "additional_volume", "auto_time"],
-                    "TURN": ["auto_volume", "additional_volume", "auto_time"],
-                }
-                with gen_utils.backup_and_restore(scenario, attrs):
-                    # temp_functions converts to skim-type VDFs
-                    with gen_utils.temp_functions(emmebank):
-                        yield
-            finally:
-                if period == "MD":
-                    with _m.logbook_trace("Cleanup for generic truck skim"):
-                        change_link_modes(modes=[truck_mode], action="DELETE",
-                                          selection="all", scenario=scenario)
-                        delete_mode(mode=truck_mode, scenario=scenario)
+    def prepare_midday_generic_truck(self, scenario):
+        modeller = _m.Modeller()
+        create_mode = modeller.tool(
+            "inro.emme.data.network.mode.create_mode")
+        delete_mode = modeller.tool(
+            "inro.emme.data.network.mode.delete_mode")
+        change_link_modes = modeller.tool(
+            "inro.emme.data.network.base.change_link_modes")
+        with _m.logbook_trace("Preparation for generic truck skim"):
+            gen_truck_mode = 'D'
+            truck_mode = scenario.mode(gen_truck_mode)
+            if not truck_mode:
+                truck_mode = create_mode(
+                    mode_type="AUX_AUTO", mode_id=gen_truck_mode,
+                    mode_description="all trucks", scenario=scenario)
+            change_link_modes(modes=[truck_mode], action="ADD",
+                              selection="modes=vVmMtT", scenario=scenario)
      
     @_m.method(return_type=unicode)
     def tool_run_msg_status(self):

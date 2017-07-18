@@ -35,7 +35,10 @@ import traceback as _traceback
 import os
 
 
-class ImportNetwork(_m.Tool()):
+gen_utils = _m.Modeller().module("sandag.utilities.general")
+
+
+class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
     source = _m.Attribute(unicode)
     traffic_scenario_id = _m.Attribute(int)
@@ -45,7 +48,6 @@ class ImportNetwork(_m.Tool()):
     description = _m.Attribute(unicode)
     save_data_tables = _m.Attribute(bool)
     data_table_name = _m.Attribute(unicode)
-    coaster_node_ids = _m.Attribute(unicode)
 
     tool_run_msg = ""
 
@@ -58,8 +60,10 @@ class ImportNetwork(_m.Tool()):
         self._error = []
         self.overwrite = False
         self.description = ""
-        self.coaster_node_ids = """{"sorrento_valley": 6866}"""
         self.data_table_name = ""
+        self.attributes = [
+            "source", "traffic_scenario_id", "transit_scenario_id", "merged_scenario_id", 
+            "overwrite", "description", "save_data_tables", "data_table_name"]
 
     def page(self):
         pb = _m.ToolPageBuilder(self)
@@ -97,11 +101,6 @@ class ImportNetwork(_m.Tool()):
         pb.add_text_box("transit_scenario_id", size=6, title="Scenario ID for transit (optional):")
         pb.add_text_box("merged_scenario_id", size=6, title="Scenario ID for merged network:")
         pb.add_text_box("description", size=80, title="Scenario description:")
-        pb.add_text_box("coaster_node_ids", multi_line=True,  title="Coaster node IDs:", 
-            note="The AN / BN fields for corresponding stations in the trcov.e00 file. "
-                 "Used to initialize the coaster fares. "
-                 "Defaults are for the 2012 base network.")
-
         pb.add_checkbox("save_data_tables", title=" ", label="Save reference data tables of TCOVED data")
         pb.add_text_box("data_table_name", size=80, title="Name for data tables:",
             note="Prefix name to use for all saved data tables")
@@ -125,7 +124,7 @@ class ImportNetwork(_m.Tool()):
 
     def __call__(self, source, 
                  traffic_scenario_id=None, transit_scenario_id=None, merged_scenario_id=None, 
-                 description="", coaster_node_ids=None, save_data_tables=False, 
+                 description="", save_data_tables=False, 
                  data_table_name="", overwrite=False):
         # TODO: should take a particular emmebank as input
         self.source = source
@@ -133,7 +132,6 @@ class ImportNetwork(_m.Tool()):
         self.transit_scenario_id = transit_scenario_id
         self.merged_scenario_id = merged_scenario_id 
         self.description = description
-        self.coaster_node_ids = coaster_node_ids
         self.save_data_tables = save_data_tables
         self.data_table_name = data_table_name
         self.overwrite = overwrite
@@ -146,13 +144,12 @@ class ImportNetwork(_m.Tool()):
         self._log = []
         self._error = []
         attributes = OrderedDict([
-            ("self", self),
+            ("self", str(self)),
             ("source", self.source),
             ("traffic_scenario_id", self.traffic_scenario_id),
             ("transit_scenario_id ", self.transit_scenario_id),
             ("merged_scenario_id ", self.merged_scenario_id),
             ("description", self.description),
-            ("coaster_node_ids", self.coaster_node_ids),
             ("save_data_tables", self.save_data_tables),
             ("data_table_name", self.data_table_name),
             ("overwrite", self.overwrite),
@@ -163,6 +160,7 @@ class ImportNetwork(_m.Tool()):
             "title": "Input attribute values"
         }]
         with _m.logbook_trace("Import from TCOVED", attributes=attributes):
+            gen_utils.log_snapshot("Import from TCOVED", str(self), attributes)
             try:
                 yield
             finally:            
@@ -897,28 +895,33 @@ class ImportNetwork(_m.Tool()):
                 line["@headway_rev_" + period] = revised_headway(line["@headway_" + period])
 
         lrt_mode = network.mode("l")
+        # setting of node and segment costs to recreate the coaster zone fares
         coaster_mode = network.mode("c")
+        sorrento_valley_segs = []
         for line in network.transit_lines():
             if line.mode == coaster_mode:
                 line["@fare"] = 0
                 for seg in line.segments(True):
                     seg.i_node["@coaster_fare_node"] = 4.0
+                    if "SORRENTO" in seg["#stop_name"] :
+                        sorrento_valley_segs.append(seg)
+            # Setting for free-transfers for LRT only
             if line.mode != lrt_mode:
                 line["@fare_bus"] = line["@fare"]
         try:
-            coaster_node_ids = self.coaster_node_ids
-            if coaster_node_ids:
-                if isinstance(coaster_node_ids, basestring):
-                    coaster_node_ids = _json.loads(coaster_node_ids)
-                sorrento_valley = coaster_node_ids["sorrento_valley"]
-                sorrento_valley = network.node(sorrento_valley)
-                sorrento_valley["@coaster_fare_node"] = 4.5
-                for link in sorrento_valley.incoming_links():
-                    for seg in link.segments():
-                        seg["@coaster_fare_seg"] = 1.0
-                for link in sorrento_valley.outgoing_links():
-                    for seg in link.segments():
-                        seg["@coaster_fare_seg"] = 0.5
+            if sorrento_valley_segs:
+                raise Exception("Could not locate SORRENTO in #stop_name for any coaster line segment. Coaster fare not set.")
+            sorrento_valley = set([seg.i_node for seg in sorrento_valley_segs])
+            if len(sorrento_valley) > 1: 
+                raise Exception("Multiple differnt i-nodes found with SORRENTO in #stop_name for coaster line segment. Coaster fare not set.")
+            sorrento_valley = sorrento_valley.pop() 
+            sorrento_valley["@coaster_fare_node"] = 4.5
+            for link in sorrento_valley.incoming_links():
+                for seg in link.segments():
+                    seg["@coaster_fare_seg"] = 1.0
+            for link in sorrento_valley.outgoing_links():
+                for seg in link.segments():
+                    seg["@coaster_fare_seg"] = 0.5
         except Exception as error:
             msg = unicode(error) + _traceback.format_exc(error)
             self._log.append({"type": "text", 

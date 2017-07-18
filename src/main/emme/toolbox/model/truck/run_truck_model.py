@@ -21,15 +21,15 @@ import os
 
 
 dem_utils = _m.Modeller().module("sandag.utilities.demand")
+gen_utils = _m.Modeller().module("sandag.utilities.general")
 
 
-class TruckModel(_m.Tool()):
+class TruckModel(_m.Tool(), gen_utils.Snapshot):
 
     input_directory = _m.Attribute(str)
     input_truck_directory = _m.Attribute(str)
     run_generation = _m.Attribute(bool)
     num_processors = _m.Attribute(str)
-
 
     tool_run_msg = ""
 
@@ -43,6 +43,7 @@ class TruckModel(_m.Tool()):
         self.input_directory = os.path.join(os.path.dirname(project_dir), "input")
         self.input_truck_directory = os.path.join(os.path.dirname(project_dir), "input_truck")
         self.num_processors = "MAX-1"
+        self.attributes = ["input_directory", "input_truck_directory", "run_generation", "num_processors"]
 
     def page(self):
         # Equivalent to TruckModel.rsc
@@ -85,6 +86,12 @@ class TruckModel(_m.Tool()):
 
     @_m.logbook_trace('Truck model', save_arguments=True)
     def __call__(self, run_generation, input_directory, input_truck_directory, num_processors, scenario):
+        attributes = {
+            "input_directory": input_directory, "input_truck_directory": input_truck_directory,
+            "run_generation": run_generation, "num_processors": num_processors
+        }
+        gen_utils.log_snapshot("Truck model", str(self), attributes)
+
         generation = _m.Modeller().tool('sandag.model.truck.generation')
         distribution = _m.Modeller().tool('sandag.model.truck.distribution')
 

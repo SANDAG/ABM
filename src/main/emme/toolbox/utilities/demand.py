@@ -387,3 +387,4 @@ class Properties(object):
 
     def __unicode__(self):
         return unicode(repr(self._prop))
+        
