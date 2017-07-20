@@ -93,6 +93,7 @@ Assign traffic demand for the selected time period."""
             "scenario": scenario.id,
             "self": str(self)
         }
+        self._stats = {}
         with _m.logbook_trace("Traffic assignment for period %s" % period, attributes=attrs):
             gen_utils.log_snapshot("Traffic assignment", str(self), attrs)
             periods = ["EA", "AM", "MD", "PM", "EV"]
@@ -198,6 +199,7 @@ Assign traffic demand for the selected time period."""
                 scenario.set_attribute_values("TURN", turn_attrs, values)
 
             self.run_skims(period, num_processors, scenario, classes)
+            self.report(period, scenario)
 
     def run_assignment(self, period, relative_gap, max_iterations, num_processors, scenario, classes):     
         emmebank = scenario.emmebank
@@ -320,10 +322,14 @@ Assign traffic demand for the selected time period."""
             }
             analysis_turn = {"TIME": "@auto_time_turn"}
             with _m.logbook_trace("Link attributes for skims"):
-                create_attribute("LINK", "@hovdist", "distance for HOV", 0, overwrite=True, scenario=scenario)
-                create_attribute("LINK", "@tollcost", "Toll cost in cents", 0, overwrite=True, scenario=scenario)
-                create_attribute("LINK", "@mlcost", "Manage lane cost in cents", 0, overwrite=True, scenario=scenario)
-                create_attribute("LINK", "@tolldist", "Toll distance", 0, overwrite=True, scenario=scenario)
+                create_attribute("LINK", "@hovdist", "distance for HOV", 
+                                 0, overwrite=True, scenario=scenario)
+                create_attribute("LINK", "@tollcost", "Toll cost in cents", 
+                                 0, overwrite=True, scenario=scenario)
+                create_attribute("LINK", "@mlcost", "Manage lane cost in cents", 
+                                 0, overwrite=True, scenario=scenario)
+                create_attribute("LINK", "@tolldist", "Toll distance", 
+                                 0, overwrite=True, scenario=scenario)
 
                 net_calc("@hovdist", "length", {"link": "@lane_restriction=2,3"})
                 net_calc("@tollcost", "@toll_%s" % p, {"link": "modes=d"})
@@ -402,23 +408,27 @@ Assign traffic demand for the selected time period."""
                     skim_spec["classes"] = [kls]
                     traffic_assign(skim_spec, scenario)   
             else:
-                traffic_assign(skim_spec, scenario)   
+                traffic_assign(skim_spec, scenario)
         
             # compute diagnal value for TIME and DIST
             with _m.logbook_trace("Compute diagnal values for period %s" % period):
+                num_cells = len(scenario.zone_numbers) ** 2
                 for traffic_class in classes:
                     class_name = traffic_class["name"]
                     skims = traffic_class["skims"]
                     with _m.logbook_trace("Class %s" % class_name):
                         for skim_type in skims:
-                            name = 'mf"%s_%s_%s"' % (period, class_name, skim_type)
+                            name = '%s_%s_%s' % (period, class_name, skim_type)
                             matrix = emmebank.matrix(name)
                             data = matrix.get_numpy_data(scenario)
                             if skim_type == "TIME" or skim_type == "DIST":
+                                numpy.fill_diagonal(data, 999999999.0)
                                 data[numpy.diag_indices_from(data)] = 0.5 * numpy.nanmin(data, 1)
                             else:
                                 numpy.fill_diagonal(data, -99999999.0)
                             matrix.set_numpy_data(data, scenario)
+                            data = numpy.ma.masked_outside(data, -9999999, 9999999, copy=False)
+                            self._stats[name] = (name, data.min(), data.max(), data.mean(), data.sum(), num_cells-data.count())
         return
 
     def base_assignment_spec(self, relative_gap, max_iterations, num_processors):
@@ -444,7 +454,9 @@ Assign traffic demand for the selected time period."""
         with _m.logbook_trace("Extract skims for period %s" % period):
             # temp_functions converts to skim-type VDFs
             with gen_utils.temp_functions(emmebank):
-                yield
+                backup_attributes = {"LINK": ["auto_volume", "auto_time", "additional_volume"]}
+                with gen_utils.backup_and_restore(scenario, backup_attributes):
+                    yield
 
     def prepare_midday_generic_truck(self, scenario):
         modeller = _m.Modeller()
@@ -464,6 +476,79 @@ Assign traffic demand for the selected time period."""
             change_link_modes(modes=[truck_mode], action="ADD",
                               selection="modes=vVmMtT", scenario=scenario)
      
+    def report(self, period, scenario):
+        emmebank = scenario.emmebank
+        text = ['<div class="preformat">']
+        matrices = [
+            "SOVGP_GENCOST",
+            "SOVGP_TIME",
+            "SOVGP_DIST",
+            "SOVTOLL_GENCOST",
+            "SOVTOLL_TIME",
+            "SOVTOLL_DIST",
+            "SOVTOLL_MLCOST",
+            "SOVTOLL_TOLLCOST",
+            "SOVTOLL_TOLLDIST",
+            "HOV2HOV_GENCOST",
+            "HOV2HOV_TIME",
+            "HOV2HOV_DIST",
+            "HOV2HOV_HOVDIST",
+            "HOV2TOLL_GENCOST",
+            "HOV2TOLL_TIME",
+            "HOV2TOLL_DIST",
+            "HOV2TOLL_MLCOST",
+            "HOV2TOLL_TOLLCOST",
+            "HOV2TOLL_TOLLDIST",
+            "HOV3HOV_GENCOST",
+            "HOV3HOV_TIME",
+            "HOV3HOV_DIST",
+            "HOV3HOV_HOVDIST",
+            "HOV3TOLL_GENCOST",
+            "HOV3TOLL_TIME",
+            "HOV3TOLL_DIST",
+            "HOV3TOLL_MLCOST",
+            "HOV3TOLL_TOLLCOST",
+            "HOV3TOLL_TOLLDIST",
+            "TRKHGP_GENCOST",
+            "TRKHGP_TIME",
+            "TRKHGP_DIST",
+            "TRKHTOLL_GENCOST",
+            "TRKHTOLL_TIME",
+            "TRKHTOLL_DIST",
+            "TRKHTOLL_TOLLCOST",
+            "TRKLGP_GENCOST",
+            "TRKLGP_TIME",
+            "TRKLGP_DIST",
+            "TRKLTOLL_GENCOST",
+            "TRKLTOLL_TIME",
+            "TRKLTOLL_DIST",
+            "TRKLTOLL_TOLLCOST",
+            "TRKMGP_GENCOST",
+            "TRKMGP_TIME",
+            "TRKMGP_DIST",
+            "TRKMTOLL_GENCOST",
+            "TRKMTOLL_TIME",
+            "TRKMTOLL_DIST",
+            "TRKMTOLL_TOLLCOST",
+        ]
+        num_cells = len(scenario.zone_numbers) ** 2
+        text.append("Number of O-D pairs: %s. Values outside -9999999, 9999999 are masked in summaries.<br>" % num_cells)
+        text.append("%-25s %9s %9s %9s %13s %9s" % ("name", "min", "max", "mean", "sum", "mask num"))
+        for name in matrices:
+            name = period + "_" + name
+            matrix = emmebank.matrix(name)
+            stats = self._stats.get(name)
+            if stats is None:
+                data = matrix.get_numpy_data(scenario)
+                data = numpy.ma.masked_outside(data, -9999999, 9999999, copy=False)
+                stats = (name, data.min(), data.max(), data.mean(), data.sum(), num_cells-data.count())
+            text.append("%-25s %9.4g %9.4g %9.4g %13.7g %9d" % stats)
+        text.append("</div>")
+        title = 'Traffic impedance summary for period %s' % period
+        report = _m.PageBuilder(title)
+        report.wrap_html('Matrix details', "<br>".join(text))
+        _m.logbook_write(title, report.render())
+
     @_m.method(return_type=unicode)
     def tool_run_msg_status(self):
         return self.tool_run_msg

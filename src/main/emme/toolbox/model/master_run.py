@@ -101,6 +101,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
         init_matrices = modeller.tool("sandag.initialize_matrices")
         import_demand  = modeller.tool("sandag.import.import_seed_demand")
         traffic_assign  = modeller.tool("sandag.assignment.traffic_assignment")
+        build_transit_scen  = modeller.tool("sandag.assignment.build_transit_scenario")
         transit_assign  = modeller.tool("sandag.assignment.transit_assignment")
         run_truck = modeller.tool("sandag.model.truck.run_truck_model")
         run_commercial_veh = modeller.tool("sandag.model.commercial_vehicle.run_commercial_vehicle_model")
@@ -215,13 +216,16 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
                 transit_scenario = init_transit_db(base_scenario)
                 transit_emmebank = transit_scenario.emmebank
                 init_matrices(["transit_demand", "transit_skims"], periods, transit_scenario)
-                transit_zone_scenario = copy_scenario(
-                    transit_scenario, transit_scenario.number + 10, "", overwrite=True)
-                self.modify_zone_scenario(transit_zone_scenario)
+                # TODO: verify that walk skim process is generating full TAZ
+                #transit_zone_scenario = copy_scenario(
+                #    transit_scenario, transit_scenario.number + 10, "", overwrite=True)
+                #self.modify_zone_scenario(transit_zone_scenario)
+                transit_zone_scenario = transit_scenario
             else:
                 transit_emmebank = _eb.Emmebank(join(main_directory, "emme_project", "Database_transit", "emmebank"))
                 transit_scenario = transit_emmebank.scenario(base_scenario.number)
-                transit_zone_scenario = transit_emmebank.scenario(transit_scenario.number + 10)
+                #transit_zone_scenario = transit_emmebank.scenario(transit_scenario.number + 10)
+                transit_zone_scenario = transit_scenario
             
             if not skipCopyWarmupTripTables:
                 for period in periods:
@@ -245,19 +249,16 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
                     with _m.logbook_trace("Traffic assignment and skims"):
                         #self.set_active(main_emmebank)
                         relative_gap = props["convergence"]
-                        max_iterations = 1000
+                        max_assign_iterations = 1000
                         for number, period in period_ids:
-                            title = "%s- %s assign" % (base_scenario.title, period)
-                            period_scenario = copy_scenario(base_scenario, number, title, overwrite=True)
+                            period_scenario = main_emmebank.scenario(number)
                             traffic_assign(
                                 period, 
                                 msa_iteration, 
                                 relative_gap, 
-                                max_iterations, 
+                                max_assign_iterations, 
                                 num_processors, 
                                 period_scenario)
-                            self.report_traffic(period, base_scenario)
-                                
                             omx_file = join(output_dir, "traffic_skims_%s.omx" % period)   
                             export_traffic_skims(period, omx_file, base_scenario)
                     self.run_proc("CreateD2TAccessFile.bat", [drive, path_forward_slash],
@@ -271,17 +272,14 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
                         for number, period in period_ids:
                             src_period_scenario = main_emmebank.scenario(number)
                             timed_xfers = "%s_timed_xfer" % scenarioYear if period == "AM" else None
-                            transit_assign(
-                                period=period,
-                                base_scenario=src_period_scenario,
-                                emmebank=transit_emmebank, 
+                            transit_assign_scen = build_transit_scen(
+                                period=period, base_scenario=src_period_scenario, transit_emmebank=transit_emmebank, 
                                 scenario_id=src_period_scenario.id, 
-                                scenario_title="%s- %s transit assign" % (base_scenario.title, period),
-                                skims_only=True,
-                                timed_xfers_table=timed_xfers,
-                                num_processors=num_processors,
-                                overwrite=True)
-                            self.report_transit(period, transit_scenario)
+                                scenario_title="%s- %s transit assign" % (base_scenario.title, period), 
+                                timed_xfers_table=timed_xfers, overwrite=True)
+                            transit_assign(
+                                period=period, scenario=transit_assign_scen,
+                                skims_only=True, transfer_limit=False, num_processors=num_processors)
 
                         omx_file = os.path.join(output_dir, "transit_skims.omx")   
                         export_transit_skims(omx_file, transit_scenario)
@@ -294,16 +292,17 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
                          "trip*.mtx", "*Trips.csv", "*airport_out.csv"],
                         output_dir, join(output_dir, "iter%s" % (msa_iteration)))
 
-                if not skipOtherSimulateModel[iteration]:
-                    self.run_proc(
-                        "runSandagAbm_SMM.cmd", 
-                        [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
-                        "Java-Run airport model, visitor model, cross-border model", capture_output=True)
                 if not skipCoreABM[iteration]:
                     self.run_proc(
                         "runSandagAbm_SDRM.cmd", 
                         [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
                         "Java-Run CT-RAMP", capture_output=True)
+                if not skipOtherSimulateModel[iteration]:
+                    self.run_proc(
+                        "runSandagAbm_SMM.cmd", 
+                        [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
+                        "Java-Run airport model, visitor model, cross-border model", capture_output=True)
+                        
                 if not skipCTM[iteration]:
                     run_generation = (msa_iteration == startFromIteration)
                     run_commercial_veh(run_generation, input_dir, base_scenario)
@@ -325,37 +324,34 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
                     import_auto_demand(output_dir, external_zones, num_processors, base_scenario)
 
         if not skipFinalHighwayAssignment or not skipFinalHighwaySkimming:
-            #self.set_active(main_emmebank)
-            relative_gap = props["convergence"]
-            max_iterations = 1000  
-            # TODO: double check msa implementation for final iteration (expect is the same as other iterations)
-            for number, period in period_ids:
-                period_scenario = main_emmebank.scenario(number)
-                traffic_assign(period, msa_iteration, relative_gap, max_iterations, num_processors, period_scenario)
-                self.report_traffic(period, base_scenario)
-                if not skipFinalHighwaySkimming:
-                    omx_file = os.path.join(output_directory, "traffic_skims_%s.omx" % period)
-                    export_traffic_skims(period, omx_file, base_scenario)
+            with _m.logbook_trace("Final traffic assignments"):
+                #self.set_active(main_emmebank)
+                relative_gap = props["convergence"]
+                max_assign_iterations = 1000  
+                for number, period in period_ids:
+                    period_scenario = main_emmebank.scenario(number)
+                    traffic_assign(period, msa_iteration, relative_gap, max_assign_iterations, num_processors, period_scenario)
+                    if not skipFinalHighwaySkimming:
+                        omx_file = os.path.join(output_dir, "traffic_skims_%s.omx" % period)
+                        export_traffic_skims(period, omx_file, base_scenario)
 
         import_transit_demand(output_dir, transit_zone_scenario)
         if not skipFinalTransitAssignment or not skipFinalTransitSkimming:
-            #self.set_active(transit_scenario.emmebank)
-            for number, period in period_ids:
-                src_period_scenario = main_emmebank.scenario(number)
-                timed_xfers = "%s_timed_xfer" % scenarioYear if period == "AM" else None
-                transit_assign(
-                    period=period,
-                    scenario_id=src_period_scenario.id, 
-                    emmebank=transit_emmebank, 
-                    base_scenario=src_period_scenario,
-                    timed_xfers_table=timed_xfers,
-                    scenario_title="%s- %s transit assign" % (base_scenario.title, period),
-                    overwrite=True,
-                    num_processors=num_processors)
-            self.report_transit(period, transit_scenario)
-            if not skipFinalTransitSkimming:
-                omx_file = os.path.join(output_directory, "transit_skims.omx")   
-                export_transit_skims(omx_file, transit_scenario)
+            with _m.logbook_trace("Final transit assignments"):
+                #self.set_active(transit_scenario.emmebank)
+                for number, period in period_ids:
+                    src_period_scenario = main_emmebank.scenario(number)
+                    timed_xfers = "%s_timed_xfer" % scenarioYear if period == "AM" else None
+                    transit_assign_scen = build_transit_scen(
+                        period=period, base_scenario=src_period_scenario, transit_emmebank=transit_emmebank, 
+                        scenario_id=src_period_scenario.id, scenario_title="%s- %s transit assign" % (base_scenario.title, period), 
+                        timed_xfers_table=timed_xfers, overwrite=True)
+                    transit_assign(
+                        period=period, scenario=transit_assign_scen,
+                        skims_only=False, transfer_limit=False, num_processors=num_processors)
+                if not skipFinalTransitSkimming:
+                    omx_file = os.path.join(output_dir, "transit_skims.omx")   
+                    export_transit_skims(omx_file, transit_scenario)
 
         if not skipDataExport:
             # TODO: create data export to CSV tool
@@ -369,10 +365,10 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
 
         # delete trip table files in iteration sub folder if model finishes without crashing
         if not skipDeleteIntermediateFiles:
-            for iteration in range(startFromIteration, max_iterations + 1):
+            for msa_iteration in range(startFromIteration, end_iteration + 1):
                 self.delete_files(
                     ["auto*.omx", "tran*.omx", "nmot*.omx", "othr*.omx", "trip*.omx"],
-                    join(output_dir, "iter%s" % (iteration)))
+                    join(output_dir, "iter%s" % (msa_iteration)))
 
     def run_proc(self, name, arguments, log_message, capture_output=False):
         path = join(self._path, "bin", name)
@@ -418,17 +414,20 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
                 _shutil.copy(from_file, to_dir)
 
     def move_files(self, file_names, from_dir, to_dir):
-        with _m.logbook_trace("Move files %s" % ", ".join(file_names)):
-            if not os.path.exists(to_dir):
-                os.mkdir(to_dir)
-            for file_name in file_names:
-                from_file = join(from_dir, file_name)
-                all_files = _glob.glob(from_file)
-                for path in all_files:
-                    dst_file = join(to_dir, os.path.basename(path))
-                    if os.path.exists(dst_file):
-                        os.remove(dst_file)
-                    _shutil.move(path, to_dir)
+        try:
+            with _m.logbook_trace("Move files %s" % ", ".join(file_names)):
+                if not os.path.exists(to_dir):
+                    os.mkdir(to_dir)
+                for file_name in file_names:
+                    from_file = join(from_dir, file_name)
+                    all_files = _glob.glob(from_file)
+                    for path in all_files:
+                        dst_file = join(to_dir, os.path.basename(path))
+                        if os.path.exists(dst_file):
+                            os.remove(dst_file)
+                        _shutil.move(path, to_dir)
+        except:
+            pass
 
     def delete_files(self, file_names, directory):
         with _m.logbook_trace("Delete files %s" % ", ".join(file_names)):
@@ -467,120 +466,4 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
         zone_scenario.publish_network(network)
         return
         
-    def report_traffic(self, period, scenario):
-        import numpy
-        emmebank = scenario.emmebank
-        text = ['<div class="preformat">']
-        matrices = [
-            "SOVGP_GENCOST",
-            "SOVGP_TIME",
-            "SOVGP_DIST",
-            "SOVTOLL_GENCOST",
-            "SOVTOLL_TIME",
-            "SOVTOLL_DIST",
-            "SOVTOLL_MLCOST",
-            "SOVTOLL_TOLLCOST",
-            "SOVTOLL_TOLLDIST",
-            "HOV2HOV_GENCOST",
-            "HOV2HOV_TIME",
-            "HOV2HOV_DIST",
-            "HOV2HOV_HOVDIST",
-            "HOV2TOLL_GENCOST",
-            "HOV2TOLL_TIME",
-            "HOV2TOLL_DIST",
-            "HOV2TOLL_MLCOST",
-            "HOV2TOLL_TOLLCOST",
-            "HOV2TOLL_TOLLDIST",
-            "HOV3HOV_GENCOST",
-            "HOV3HOV_TIME",
-            "HOV3HOV_DIST",
-            "HOV3HOV_HOVDIST",
-            "HOV3TOLL_GENCOST",
-            "HOV3TOLL_TIME",
-            "HOV3TOLL_DIST",
-            "HOV3TOLL_MLCOST",
-            "HOV3TOLL_TOLLCOST",
-            "HOV3TOLL_TOLLDIST",
-            "TRKHGP_GENCOST",
-            "TRKHGP_TIME",
-            "TRKHGP_DIST",
-            "TRKHTOLL_GENCOST",
-            "TRKHTOLL_TIME",
-            "TRKHTOLL_DIST",
-            "TRKHTOLL_TOLLCOST",
-            "TRKLGP_GENCOST",
-            "TRKLGP_TIME",
-            "TRKLGP_DIST",
-            "TRKLTOLL_GENCOST",
-            "TRKLTOLL_TIME",
-            "TRKLTOLL_DIST",
-            "TRKLTOLL_TOLLCOST",
-            "TRKMGP_GENCOST",
-            "TRKMGP_TIME",
-            "TRKMGP_DIST",
-            "TRKMTOLL_GENCOST",
-            "TRKMTOLL_TIME",
-            "TRKMTOLL_DIST",
-            "TRKMTOLL_TOLLCOST",
-        ]
-        text.append("%-25s %9s %9s %9s %9s" % ("name", "sum()", "min()", "max()", "mean()"))
-        for name in matrices:
-            matrix = emmebank.matrix(period + "_" + name)
-            data = matrix.get_numpy_data(scenario)
-            data = numpy.ma.masked_greater(data, 9999999)
-            text.append("%-25s %9.5g %9.4g %9.4g %9.4g" % (name, data.sum(), data.min(), data.max(), data.mean()))
-        text.append("</div>")
-        title = 'Traffic impedance summary for period %s' % period
-        report = _m.PageBuilder(title)
-        report.wrap_html('Matrix details', "<br>".join(text))
-        _m.logbook_write(title, report.render())
     
-    def report_transit(self, period, scenario):
-        import numpy
-        emmebank = scenario.emmebank
-        text = ['<div class="preformat">']
-        matrices = [
-            "BUS_GENCOST", 
-            "BUS_TOTALWAIT",
-            "BUS_TOTALWALK",  
-            "BUS_TOTALIVTT",
-            "BUS_DWELLTIME",   
-            "BUS_FIRSTWAIT",
-            "BUS_XFERWAIT",
-            "BUS_FARE",      
-            "BUS_XFERS",     
-            "BUS_ACCWALK",     
-            "BUS_XFERWALK", 
-            "BUS_EGRWALK",     
-            "ALL_GENCOST",  
-            "ALL_TOTALWAIT",
-            "ALL_TOTALWALK",
-            "ALL_TOTALIVTT",
-            "ALL_FIRSTWAIT",
-            "ALL_XFERWAIT",
-            "ALL_FARE",      
-            "ALL_XFERS",     
-            "ALL_ACCWALK",     
-            "ALL_XFERWALK", 
-            "ALL_EGRWALK",     
-            "ALL_DWELLTIME",     
-            "ALL_BUSIVTT", 
-            "ALL_LRTIVTT",       
-            "ALL_CMRIVTT",      
-            "ALL_EXPIVTT",   
-            "ALL_LTDEXPIVTT",   
-            #"ALL_BRTREDIVTT",   
-            #"ALL_BRTYELIVTT",
-        ]
-        text.append("%-25s %9s %9s %9s %9s" % ("name", "sum()", "min()", "max()", "mean()"))
-        for name in matrices:
-            matrix = emmebank.matrix(period + "_" + name)
-            data = matrix.get_numpy_data(scenario)
-            data = numpy.ma.masked_greater(data, 9999999)
-            text.append("%-25s %9.5g %9.4g %9.4g %9.4g" % (name, data.sum(), data.min(), data.max(), data.mean()))
-                
-        text.append("</div>")
-        title = 'Transit impedance summary for period %s' % period
-        report = _m.PageBuilder(title)
-        report.wrap_html('Matrix details', "<br>".join(text))
-        _m.logbook_write(title, report.render())

@@ -13,8 +13,7 @@
 #////     Usage: build_toolbox.py [-s source_folder] [-p toolbox_path]      ///
 #////                                                                       ///
 #////         [-p toolbox_path]: Specifies the name of the MTBX file.       ///
-#////              If omitted,defaults to the name of the source            ///
-#////              folder + '.mtbx'.                                        ///
+#////              If omitted,defaults to "sandag_toolbox.mtbx"             ///
 #////         [-s source_folder]: The location of the source code folder.   ///
 #////             If omitted, defaults to the working directory.            ///
 #////                                                                       ///
@@ -27,6 +26,10 @@ import re
 from datetime import datetime
 import subprocess
 import sqlite3.dbapi2 as sqllib
+import py_compile
+import base64
+import pickle
+import ucslib
 
 
 def check_namespace(ns):
@@ -72,6 +75,10 @@ class BaseNode(object):
             return None
         return node
 
+    def consolidate(self):
+        for child in self.children:
+            child.consolidate()
+
     def set_toolbox_order(self):
         self.element_id = self.root.next_id()
         self.children.sort(key=lambda x: x.order)
@@ -108,23 +115,35 @@ class FolderNode(BaseNode):
         if child_order:
             return min(child_order)
         return None
-    
+
+
 class ToolNode():
     
     def __init__(self, namespace, script_path, parent):
         check_namespace(namespace)
         self.namespace = namespace
         self.title = namespace.replace("_", " ").capitalize()
-        self.script = script_path
 
         self.root = parent.root
         self.parent = parent
         self.element_id = None
-
-        self.code = ''
-        self.extension = '.py'
         self.order = None
         
+        self.script = script_path
+        self.extension = '.py'
+        self.code = ''
+            
+    def consolidate(self):
+        script_path = self.script
+        py_compile.compile(script_path)
+        with open(script_path + ".pyc", 'rb') as f:
+            compiled_binary = f.read()
+        os.remove(script_path + ".pyc")
+        code = base64.b64encode(pickle.dumps(compiled_binary))
+        self.code = ucslib.transform(code)
+        self.script = ''
+        self.extension = '.pyc'
+
     def set_toolbox_order(self):
         self.element_id = self.root.next_id()
 
@@ -295,10 +314,9 @@ class MTBXDatabase():
             self.db.execute(sql, (node.element_id, key, val))
         
         self.db.commit()
-#---
-#---MAIN METHOD
 
-def build_toolbox(toolbox_file, source_folder, title, namespace):
+
+def build_toolbox(toolbox_file, source_folder, title, namespace, consolidate):
     print "------------------------"
     print " Build Toolbox Utility"
     print "------------------------"
@@ -314,13 +332,16 @@ def build_toolbox(toolbox_file, source_folder, title, namespace):
     explore_source_folder(source_folder, tree)
     tree.set_toolbox_order()
     print "Done. Found %s elements." % (tree.next_element_id)
+    if consolidate:
+        tree.consolidate()
     
     print ""
     print "Building MTBX file."
     mtbx = MTBXDatabase(toolbox_file, title)
     mtbx.populate_tables_from_tree(tree)
     print "Done."
-    
+
+
 def explore_source_folder(root_folder_path, parent_node):
     folders = []
     files = []
@@ -345,22 +366,31 @@ def explore_source_folder(root_folder_path, parent_node):
         script_path = os.path.join(root_folder_path, filename + ext)
         parent_node.add_tool(script_path, namespace=filename)    
 
+
 if __name__ == "__main__":
     '''
-    Usage: build_toolbox.py [-p toolbox_path] [-s source_folder]
+    Usage: build_toolbox.py [-p toolbox_path] [-s source_folder] [-l] [-c]
     '''
     
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--src', help= "Path to the source code folder. Default is the working folder.")
-    parser.add_argument('-p', '--path', help= "Output file path. Default is 'folder_name.mtbx' in the source code folder.")
+    parser.add_argument('-p', '--path', help= "Output file path. Default is 'sandag_toolbox.mtbx' in the source code folder.")
+    parser.add_argument('-l', '--link', help= "Link the python source files from their current location (instead of consolidate (compile) the toolbox).", action= 'store_true')
+    parser.add_argument('-c', '--consolidate', help= "Consolidate (compile) the toolbox (default option).", action= 'store_true')
     
     args = parser.parse_args()
 
     source_folder = args.src or os.path.dirname(os.path.abspath(__file__))
     folder_name = os.path.split(source_folder)[1]
-    toolbox_file = args.path or folder_name + ".mtbx"
+    toolbox_file = args.path or "sandag_toolbox.mtbx"
     title = "SANDAG toolbox"
     namespace = "sandag"
+    consolidate = args.consolidate
+    link = args.link
+    if consolidate and link:
+        raise Exception("-l and -c (--link and --consolidate) are mutually exclusive options")
+    if not consolidate and not link:
+        consolidate = True  # default if neither is specified
     
-    build_toolbox(toolbox_file, source_folder, title, namespace)
+    build_toolbox(toolbox_file, source_folder, title, namespace, consolidate)

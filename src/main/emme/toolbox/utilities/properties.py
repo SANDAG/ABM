@@ -142,7 +142,7 @@ class PropertiesTool(_m.Tool()):
 
         skip_startup_items = [
             ("skipBuildNetwork",        "Skip build of highway and transit network"),
-            ("skipCopyWarmupTripTables","Skip copy of warmup trip tables"),
+            ("skipCopyWarmupTripTables","Skip import of warmup trip tables"),
             ("skipCopyBikeLogsum",      "Skip copy of bike logsum"),
             ("skipCopyWalkImpedance",   "Skip copy of walk impedance"),
             ("skipWalkLogsums",         "Skip walk logsums"),

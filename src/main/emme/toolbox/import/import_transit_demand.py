@@ -17,6 +17,7 @@ TOOLBOX_ORDER = 63
 
 import inro.modeller as _m
 import traceback as _traceback
+import numpy
 import omx as _omx
 import os
 
@@ -66,15 +67,13 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
             pb.tool_run_status(self.tool_run_msg_status)
         pb.add_select_file('output_dir', 'directory',
                            title='Select output directory')
-        pb.add_text_box("external_zones", title="External zones:")
-        dem_utils.add_select_processors("num_processors", pb, self)
         return pb.render()
 
     def run(self):
         self.tool_run_msg = ""
         try:
             scenario = _m.Modeller().scenario
-            self(self.output_dir, self.external_zones, self.num_processors, scenario)
+            self(self.output_dir, scenario)
             run_msg = "Tool completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
         except Exception as error:
@@ -82,7 +81,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                 error, _traceback.format_exc(error))
             raise
 
-    @_m.logbook_trace("Sum demand", save_arguments=True)
+    @_m.logbook_trace("Create TOD transit trip tables", save_arguments=True)
     def __call__(self, output_dir, scenario):
         attributes = {"output_dir": output_dir}
         gen_utils.log_snapshot("Sum demand", str(self), attributes)
@@ -108,22 +107,33 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                         "PNRBUS","PNREXP","PNRBRT","PNRLRT","PNRCMR",
                         "KNRBUS","KNREXP","KNRBRT","KNRLRT","KNRCMR"
                     ]
-                    file_modes = [
+                    omx_modes = [
                         "WLK_LOC","WLK_EXP","WLK_BRT","WLK_LRT","WLK_CMR",
                         "PNR_LOC","PNR_EXP","PNR_BRT","PNR_LRT","PNR_CMR",
                         "KNR_LOC","KNR_EXP","KNR_BRT","KNR_LRT","KNR_CMR"
                     ]
-                    file_modes = [m + "_" + period for m in file_modes]
-                    for mode, file_mode in zip(modes, file_modes):
+                    modes = [period + "_" + m for m in modes]
+                    omx_modes = [m + "_" + period for m in omx_modes]
+                    for mode, omx_mode in zip(modes, omx_modes):
                         with _m.logbook_trace("Import for mode %s" % mode):
-                            # TODO, optional: log matrix statistics ...
-                            matrix = emmebank.matrix("mf%s_%s" % (period, mode))
-                            total_ct_ramp_trips = (person[period][file_mode].read()
-                                                   + cross_border[period][file_mode].read()
-                                                   + airport[period][file_mode].read()
-                                                   + visitor[period][file_mode].read()
-                                                   + internal_external[period][file_mode].read())
+                            matrix = emmebank.matrix("mf%s" % mode)                            
+                            visitor_demand = visitor[period][omx_mode].read()
+                            cross_border_demand = cross_border[period][omx_mode].read()
+                            airport_demand = airport[period][omx_mode].read()
+                            person_demand = person[period][omx_mode].read()
+                            internal_external_demand = internal_external[period][omx_mode].read()
+                            
+                            total_ct_ramp_trips = (visitor_demand + cross_border_demand + airport_demand + person_demand + internal_external_demand)
                             matrix.set_numpy_data(total_ct_ramp_trips, self.scenario)
+                            
+                            self.report([
+                                ("person_demand", person_demand), 
+                                ("internal_external_demand", internal_external_demand), 
+                                ("cross_border_demand", cross_border_demand),
+                                ("airport_demand", airport_demand), 
+                                ("visitor_demand", visitor_demand), 
+                                ("total_ct_ramp_trips", total_ct_ramp_trips)
+                            ])
         finally:
             for period in periods:
                 person[period].close()
@@ -140,3 +150,18 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
             file_path = os.path.join(directory, file_name + "_" + period + ".mtx")
             matrix_tables[period] = _omx.openFile(file_path, 'r')
         return matrix_tables
+
+    def report(self, matrices):
+        emmebank = self.scenario.emmebank
+        text = ['<div class="preformat">']
+        num_cells = len(self.scenario.zone_numbers) ** 2
+        text.append("Number of O-D pairs: %s. <br>" % num_cells)
+        text.append("%-25s %9s %9s %9s %13s" % ("name", "min", "max", "mean", "sum"))
+        for name, data in matrices:
+            stats = (name, data.min(), data.max(), data.mean(), data.sum())
+            text.append("%-25s %9.4g %9.4g %9.4g %13.7g" % stats)
+        text.append("</div>")
+        title = 'Transit demand summary'
+        report = _m.PageBuilder(title)
+        report.wrap_html('Matrix details', "<br>".join(text))
+        _m.logbook_write(title, report.render())

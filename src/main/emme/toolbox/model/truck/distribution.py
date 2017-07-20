@@ -85,7 +85,8 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
     def __call__(self, input_directory, demand_as_pce, num_processors, scenario):
         attributes = {
             "input_directory": input_directory,
-            "demand_as_pce": demand_as_pce, "num_processors": num_processors
+            "demand_as_pce": demand_as_pce, 
+            "num_processors": num_processors
         }
         gen_utils.log_snapshot("Truck distribution", str(self), attributes)
         self.input_directory = input_directory
@@ -100,7 +101,7 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
             coefficents = [0.045, 0.03, 0.03, 0.03, 0.03]
             truck_list = ['L', 'M', 'H', 'IE', 'EI']
             # distribution based on the "generic" truck MD time only
-            time_skim = _m.Modeller().emmebank.matrix('mf"MD_TRK_TIME"')
+            time_skim = scenario.emmebank.matrix('mf"MD_TRK_TIME"')
             for truck_type, coeff in zip(truck_list, coefficents):
                 with _m.logbook_trace('Create %s daily demand matrix' % truck_type):
                     self.calc_friction_factors(truck_type, time_skim, coeff)

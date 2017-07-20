@@ -17,6 +17,7 @@ TOOLBOX_ORDER = 63
 
 import inro.modeller as _m
 import traceback as _traceback
+import numpy
 import omx as _omx
 import os
 
@@ -90,7 +91,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                 error, _traceback.format_exc(error))
             raise
 
-    @_m.logbook_trace("Sum demand", save_arguments=True)
+    @_m.logbook_trace("Create TOD auto trip tables", save_arguments=True)
     def __call__(self, output_dir, external_zones, num_processors, scenario):
         attributes = {
             "output_dir": output_dir, 
@@ -118,18 +119,30 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
             for period in periods:
                 with _m.logbook_trace("Period %s" % period):
                     modes =      ["SOVGP",  "SOVTOLL", "HOV2GP", "HOV2HOV", "HOV2TOLL", "HOV3GP", "HOV3HOV", "HOV3TOLL"]
-                    file_modes = ["SOV_GP", "SOV_PAY", "SR2_GP", "SR2_HOV", "SR2_PAY",  "SR3_GP", "SR3_HOV", "SR3_PAY"]
-                    file_modes = [m + "_" + period for m in file_modes]
-                    for mode, file_mode in zip(modes, file_modes):
+                    omx_modes = ["SOV_GP", "SOV_PAY", "SR2_GP", "SR2_HOV", "SR2_PAY",  "SR3_GP", "SR3_HOV", "SR3_PAY"]
+                    modes = [period + "_" + m for m in modes]
+                    omx_modes = [m + "_" + period for m in omx_modes]
+                    for mode, omx_mode in zip(modes, omx_modes):
                         with _m.logbook_trace("Import for mode %s" % mode):
-                            # TODO, optional: log matrix statistics ... this may be slow
-                            matrix = emmebank.matrix("mf%s_%s" % (period, mode))
-                            total_ct_ramp_trips = (visitor[period][file_mode].read()
-                                                   + cross_border[period][file_mode].read()
-                                                   + airport[period][file_mode].read()
-                                                   + person[period][file_mode].read()
-                                                   + internal_external[period][file_mode].read())
+                            matrix = emmebank.matrix("mf%s" % mode)
+                            visitor_demand = visitor[period][omx_mode].read()
+                            cross_border_demand = cross_border[period][omx_mode].read()
+                            airport_demand = airport[period][omx_mode].read()
+                            person_demand = person[period][omx_mode].read()
+                            internal_external_demand = internal_external[period][omx_mode].read()
+                            
+                            total_ct_ramp_trips = (visitor_demand + cross_border_demand + airport_demand + person_demand + internal_external_demand)
                             matrix.set_numpy_data(total_ct_ramp_trips, self.scenario)
+                            
+                            self.report([
+                                ("person_demand", person_demand), 
+                                ("internal_external_demand", internal_external_demand), 
+                                ("cross_border_demand", cross_border_demand),
+                                ("airport_demand", airport_demand), 
+                                ("visitor_demand", visitor_demand), 
+                                ("total_ct_ramp_trips", total_ct_ramp_trips)
+                            ])
+                                
         finally:
             for period in periods:
                 person[period].close()
@@ -173,3 +186,18 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
             file_path = os.path.join(directory, file_name + "_" + period + ".mtx")
             matrix_tables[period] = _omx.openFile(file_path, 'r')
         return matrix_tables
+
+    def report(self, matrices):
+        emmebank = self.scenario.emmebank
+        text = ['<div class="preformat">']
+        num_cells = len(self.scenario.zone_numbers) ** 2
+        text.append("Number of O-D pairs: %s. <br>" % num_cells)
+        text.append("%-25s %9s %9s %9s %13s" % ("name", "min", "max", "mean", "sum"))
+        for name, data in matrices:
+            stats = (name, data.min(), data.max(), data.mean(), data.sum())
+            text.append("%-25s %9.4g %9.4g %9.4g %13.7g" % stats)
+        text.append("</div>")
+        title = 'Traffic demand summary'
+        report = _m.PageBuilder(title)
+        report.wrap_html('Matrix details', "<br>".join(text))
+        _m.logbook_write(title, report.render())

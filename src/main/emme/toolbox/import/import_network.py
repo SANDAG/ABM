@@ -159,8 +159,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             "type": "table", "header": ["name", "value"],
             "title": "Input attribute values"
         }]
-        with _m.logbook_trace("Import from TCOVED", attributes=attributes):
-            gen_utils.log_snapshot("Import from TCOVED", str(self), attributes)
+        with _m.logbook_trace("Import network (TCOVED)", attributes=attributes):
+            gen_utils.log_snapshot("Import network (TCOVED)", str(self), attributes)
             try:
                 yield
             finally:            
@@ -482,6 +482,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         self._create_base_net(
             hwy_data, network, mode_callback=define_modes, centroid_callback=is_centroid, 
             arc_id_name="HWYCOV-ID", link_attr_map=attr_map["LINK"])
+        self._log.append({"type": "text", "content": "Import traffic base network complete"})
             
     def create_transit_base(self, network, attr_map):
         self._log.append({"type": "header", "content": "Import transit base network from trcov.e00"})
@@ -602,6 +603,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                         link.vertices = coordinates[1:-1]
             if not split_link_case:
                 set_reverse_link(link, modes)
+        self._log.append({"type": "text", "content": "Import transit base network complete"})
 
     def _create_base_net(self, data, network, mode_callback, centroid_callback, arc_id_name, link_attr_map, arc_filter=None):
         forward_attr_map = {}
@@ -794,6 +796,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 # NOTE: an additional transfer penality perception factor of 5.0 is included
                 #       in assignment
                 tline["@transfer_penalty"] = line_details["XFERPENTM"] * line_details["WTXFERTM"]
+                tline.headway = tline["@headway_am"] if tline["@headway_am"] > 0 else 999
                 tline.layover_time = 5
 
                 transit_lines[int(record["Route_ID"])] = tline
@@ -874,6 +877,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         timed_xfer.add_attribute(_dt.Attribute("wait_time", _np.array(wait_time)))
         # Creates and saves the new table
         utils.DataTableProc("%s_timed_xfer" % self.data_table_name, data=timed_xfer)
+        self._log.append({"type": "text", "content": "Import transit lines complete"})
 
     def calc_transit_attributes(self, network):
         self._log.append({"type": "header", "content": "Calculate derived transit attributes"})
@@ -903,17 +907,17 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 line["@fare"] = 0
                 for seg in line.segments(True):
                     seg.i_node["@coaster_fare_node"] = 4.0
-                    if "SORRENTO" in seg["#stop_name"] :
+                    if "SORRENTO" in seg["#stop_name"] and "COASTER" in seg["#stop_name"]:
                         sorrento_valley_segs.append(seg)
             # Setting for free-transfers for LRT only
             if line.mode != lrt_mode:
                 line["@fare_bus"] = line["@fare"]
         try:
-            if sorrento_valley_segs:
-                raise Exception("Could not locate SORRENTO in #stop_name for any coaster line segment. Coaster fare not set.")
+            if not sorrento_valley_segs:
+                raise Exception("Could not locate SORRENTO and COASTER in #stop_name for any coaster line segment. Coaster fare not set.")
             sorrento_valley = set([seg.i_node for seg in sorrento_valley_segs])
             if len(sorrento_valley) > 1: 
-                raise Exception("Multiple differnt i-nodes found with SORRENTO in #stop_name for coaster line segment. Coaster fare not set.")
+                raise Exception("Multiple different i-nodes found with SORRENTO and COASTER in #stop_name for coaster line segment. Coaster fare not set.")
             sorrento_valley = sorrento_valley.pop() 
             sorrento_valley["@coaster_fare_node"] = 4.5
             for link in sorrento_valley.incoming_links():
@@ -930,6 +934,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         for c in network.centroids():
             c["@tap_id"] = c.number
+        self._log.append({"type": "text", "content": "Calculate derived transit attributes complete"})
         return
 
     def create_turns(self, network):
@@ -1008,6 +1013,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             else:
                 turn.penalty_func = 1
                 turn.data1 = float(record["penalty"])
+        self._log.append({"type": "text", "content": "Import turns and turn restrictions complete"})
 
     def calc_traffic_attributes(self, network):
         self._log.append({"type": "header", "content": "Calculate derived traffic attributes"})
@@ -1156,6 +1162,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         network.delete_attribute("LINK", "green_to_cycle")
         network.delete_attribute("LINK", "cycle")
+        self._log.append({"type": "text", "content": "Calculate derived traffic attributes complete"})
         return
 
     def add_transit_to_traffic(self, hwy_network, tr_network):
@@ -1254,6 +1261,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             if auto_mode in hwy_link.modes:
                 for seg in hwy_link.segments():
                     seg.transit_time_func = 1
+        self._log.append({"type": "text", "content": "Merge transit network to traffic network complete"})
 
     def _split_link(self, network, i_node, j_node, new_node_id):
         # Attribute types to maintain consistency for correspondance with incoming / outgoing link data
@@ -1338,7 +1346,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         create_function("ft4", "60 * length / speed")  
 
     def log_report(self):
-        report = _m.PageBuilder(title="Import from TCOVED files report")
+        report = _m.PageBuilder(title="Import network from TCOVED files report")
         try:
             if self._error:
                 report.add_html("<div style='margin-left:10px'>Errors detected during import: %s</div>" % len(self._error))
@@ -1350,7 +1358,6 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             else:
                 report.add_html("No errors detected during import")
 
-            # TODO: add title
             for item in self._log:
                 if item["type"] == "text":
                     report.add_html("<div style='margin-left:20px'>%s</div>" % item["content"])
@@ -1377,7 +1384,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             report.add_html(unicode(error))
             report.add_html(_traceback.format_exc(error))
 
-        _m.logbook_write("Import from TCOVED report", report.render())
+        _m.logbook_write("Import network report", report.render())
 
 
 def get_node(network, number, coordinates, is_centroid):
