@@ -225,20 +225,24 @@ class PropertiesTool(_m.Tool()):
         $("#startFromIteration").bind('change', function()    {
             $(this).commit();
             var iter = $(this).val();
-            if (iter == 1)  {
-                for (i = 0; i < init_names.length; i++)
-                    $("#" + init_names[i]).prop('disabled', false);
-            } else  {
-                for (i = 0; i < init_names.length; i++)
-                    $("#" + init_names[i]).prop('disabled', true);
-            }
+            //if (iter == 1)  {
+            //    for (i = 0; i < init_names.length; i++)
+            //        $("#" + init_names[i]).prop('disabled', false);
+            //} else  {
+            //    for (i = 0; i < init_names.length; i++)
+            //        $("#" + init_names[i]).prop('disabled', true);
+            //}
             for (j = 1; j < iter; j++)
                 for (i = 0; i < iter_names.length; i++) { 
-                    $("#" + iter_names[i] + "_" + j.toString()).prop('disabled', true);
+                    var jq_obj = $("#" + iter_names[i] + "_" + j.toString());
+                    jq_obj.prop('disabled', true);
+                    jq_obj.value(true);
             }
             for (j = iter; j <= 3; j++)
                 for (i = 0; i < iter_names.length; i++) { 
-                    $("#" + iter_names[i] + "_" + j.toString()).prop('disabled', false);
+                    var jq_obj = $("#" + iter_names[i] + "_" + j.toString());
+                    jq_obj.prop('disabled', false);
+                    jq_obj.value(false);
             }
         }).trigger('change');
 

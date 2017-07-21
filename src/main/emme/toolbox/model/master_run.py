@@ -68,7 +68,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
     def run(self):
         self.tool_run_msg = ""
         try:
-            self(self.main_directory, self.scenario_id, self.scenario_desc)
+            self(self.main_directory, self.scenario_id, self.scenario_desc, self.num_processors)
             run_msg = "Tool complete"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
         except Exception as error:
@@ -216,16 +216,9 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
                 transit_scenario = init_transit_db(base_scenario)
                 transit_emmebank = transit_scenario.emmebank
                 init_matrices(["transit_demand", "transit_skims"], periods, transit_scenario)
-                # TODO: verify that walk skim process is generating full TAZ
-                #transit_zone_scenario = copy_scenario(
-                #    transit_scenario, transit_scenario.number + 10, "", overwrite=True)
-                #self.modify_zone_scenario(transit_zone_scenario)
-                transit_zone_scenario = transit_scenario
             else:
                 transit_emmebank = _eb.Emmebank(join(main_directory, "emme_project", "Database_transit", "emmebank"))
                 transit_scenario = transit_emmebank.scenario(base_scenario.number)
-                #transit_zone_scenario = transit_emmebank.scenario(transit_scenario.number + 10)
-                transit_zone_scenario = transit_scenario
             
             if not skipCopyWarmupTripTables:
                 for period in periods:
@@ -247,7 +240,6 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
                     # run traffic assignment
                     # export traffic skims
                     with _m.logbook_trace("Traffic assignment and skims"):
-                        #self.set_active(main_emmebank)
                         relative_gap = props["convergence"]
                         max_assign_iterations = 1000
                         for number, period in period_ids:
@@ -268,7 +260,6 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
                     # run transit assignment
                     # export transit skims
                     with _m.logbook_trace("Transit assignments and skims"):
-                        #self.set_active(transit_scenario.emmebank)                    
                         for number, period in period_ids:
                             src_period_scenario = main_emmebank.scenario(number)
                             timed_xfers = "%s_timed_xfer" % scenarioYear if period == "AM" else None
@@ -325,7 +316,6 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
 
         if not skipFinalHighwayAssignment or not skipFinalHighwaySkimming:
             with _m.logbook_trace("Final traffic assignments"):
-                #self.set_active(main_emmebank)
                 relative_gap = props["convergence"]
                 max_assign_iterations = 1000  
                 for number, period in period_ids:
@@ -335,10 +325,9 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
                         omx_file = os.path.join(output_dir, "traffic_skims_%s.omx" % period)
                         export_traffic_skims(period, omx_file, base_scenario)
 
-        import_transit_demand(output_dir, transit_zone_scenario)
         if not skipFinalTransitAssignment or not skipFinalTransitSkimming:
+            import_transit_demand(output_dir, transit_scenario)
             with _m.logbook_trace("Final transit assignments"):
-                #self.set_active(transit_scenario.emmebank)
                 for number, period in period_ids:
                     src_period_scenario = main_emmebank.scenario(number)
                     timed_xfers = "%s_timed_xfer" % scenarioYear if period == "AM" else None

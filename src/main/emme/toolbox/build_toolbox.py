@@ -26,10 +26,8 @@ import re
 from datetime import datetime
 import subprocess
 import sqlite3.dbapi2 as sqllib
-import py_compile
 import base64
 import pickle
-import ucslib
 
 
 def check_namespace(ns):
@@ -41,6 +39,13 @@ def get_emme_version():
     emme_process = subprocess.Popen(['Emme', '-V'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output = emme_process.communicate()[0]
     return output.split(',')[0]
+
+
+def usc_transform(value):
+    try:
+        return unicode(value)
+    except Exception:
+        return unicode(str(value), encoding="raw-unicode-escape")
 
 
 class BaseNode(object):
@@ -134,15 +139,12 @@ class ToolNode():
         self.code = ''
             
     def consolidate(self):
-        script_path = self.script
-        py_compile.compile(script_path)
-        with open(script_path + ".pyc", 'rb') as f:
-            compiled_binary = f.read()
-        os.remove(script_path + ".pyc")
-        code = base64.b64encode(pickle.dumps(compiled_binary))
-        self.code = ucslib.transform(code)
+        with open(self.script, 'r') as f:
+            code = f.read()
+        self.code = usc_transform(base64.b64encode(pickle.dumps(code)))
         self.script = ''
-        self.extension = '.pyc'
+        
+
 
     def set_toolbox_order(self):
         self.element_id = self.root.next_id()
@@ -333,13 +335,15 @@ def build_toolbox(toolbox_file, source_folder, title, namespace, consolidate):
     tree.set_toolbox_order()
     print "Done. Found %s elements." % (tree.next_element_id)
     if consolidate:
+        print "Consolidating code..."
         tree.consolidate()
+        print "Consolidate done"
     
     print ""
-    print "Building MTBX file."
+    print "Building MTBX file..."
     mtbx = MTBXDatabase(toolbox_file, title)
     mtbx.populate_tables_from_tree(tree)
-    print "Done."
+    print "Build MTBX file done."
 
 
 def explore_source_folder(root_folder_path, parent_node):
