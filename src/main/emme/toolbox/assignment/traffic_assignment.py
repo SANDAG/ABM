@@ -35,6 +35,7 @@ class TrafficAssignment(_m.Tool(), gen_utils.Snapshot):
     relative_gap = _m.Attribute(float)
     max_iterations = _m.Attribute(int)
     num_processors = _m.Attribute(str)
+    select_link = _m.Attribute(unicode)
 
     tool_run_msg = ""
 
@@ -68,6 +69,8 @@ Assign traffic demand for the selected time period."""
         pb.add_text_box("relative_gap", title="Relative gap:")
         pb.add_text_box("max_iterations", title="Max iterations:")
         dem_utils.add_select_processors("num_processors", pb, self)
+        pb.add_text_box("select_link", title="Select link expression:", 
+            note="Use any Emme selection expression to identify the link(s) of interest.")
         return pb.render()
 
     def run(self):
@@ -75,7 +78,7 @@ Assign traffic demand for the selected time period."""
         try:
             scenario = _m.Modeller().scenario
             results = self(self.period, self.msa_iteration, self.relative_gap, self.max_iterations, 
-                           self.num_processors, scenario)
+                           self.num_processors, scenario, self.select_link)
             run_msg = "Traffic assignment completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -83,7 +86,7 @@ Assign traffic demand for the selected time period."""
                 error, _traceback.format_exc(error))
             raise
 
-    def __call__(self, period, msa_iteration, relative_gap, max_iterations, num_processors, scenario):
+    def __call__(self, period, msa_iteration, relative_gap, max_iterations, num_processors, scenario, select_link=None):
         attrs = {
             "period": period, 
             "msa_interation": msa_iteration,
@@ -91,6 +94,7 @@ Assign traffic demand for the selected time period."""
             "max_iterations": max_iterations, 
             "num_processors": num_processors, 
             "scenario": scenario.id,
+            "select_link": select_link,
             "self": str(self)
         }
         self._stats = {}
@@ -173,7 +177,7 @@ Assign traffic demand for the selected time period."""
                 msa_link_flows = scenario.get_attribute_values("LINK", link_attrs)[1:]
                 msa_turn_flows = scenario.get_attribute_values("TURN", turn_attrs)[1:]
 
-            self.run_assignment(period, relative_gap, max_iterations, num_processors, scenario, classes)
+            self.run_assignment(period, relative_gap, max_iterations, num_processors, scenario, classes, select_link)
 
             if msa_iteration > 1:
                 link_flows = scenario.get_attribute_values("LINK", link_attrs)
@@ -198,10 +202,10 @@ Assign traffic demand for the selected time period."""
                     values.append(result_array)
                 scenario.set_attribute_values("TURN", turn_attrs, values)
 
-            self.run_skims(period, num_processors, scenario, classes)
+            #self.run_skims(period, num_processors, scenario, classes)
             self.report(period, scenario)
 
-    def run_assignment(self, period, relative_gap, max_iterations, num_processors, scenario, classes):     
+    def run_assignment(self, period, relative_gap, max_iterations, num_processors, scenario, classes, select_link):
         emmebank = scenario.emmebank
 
         modeller = _m.Modeller()
@@ -209,6 +213,8 @@ Assign traffic demand for the selected time period."""
             "inro.emme.traffic_assignment.set_extra_function_parameters")
         create_attribute = modeller.tool(
             "inro.emme.data.extra_attribute.create_extra_attribute")
+        create_matrix = modeller.tool(
+            "inro.emme.data.matrix.create_matrix")
         matrix_calc = modeller.tool(
             "inro.emme.matrix_calculation.matrix_calculator")    
         traffic_assign = modeller.tool(
@@ -270,10 +276,10 @@ Assign traffic demand for the selected time period."""
                     link_cost = "%s_%s" % (traffic_class["cost"], p) if traffic_class["cost"] else "@cost_operating"
 
                     att_name = "@%s" % (traffic_class["name"].lower())
-                    att_des = "%s, %s, link volume"% (traffic_class["name"], period)
+                    att_des = "%s %s link volume" % (period, traffic_class["name"])
                     link_flow = create_attribute("LINK", att_name, att_des, 0, overwrite=True, scenario=scenario)
                     att_name = "@p%s" % (traffic_class["name"].lower())
-                    att_des = "%s, %s, turn volume"% (traffic_class["name"], period)
+                    att_des = "%s %s turn volume" % (period, traffic_class["name"])
                     turn_flow = create_attribute("TURN", att_name, att_des, 0, overwrite=True, scenario=scenario)
 
                     class_spec = {
@@ -288,9 +294,48 @@ Assign traffic demand for the selected time period."""
                         }
                     }
                     assign_spec["classes"].append(class_spec)
+            if select_link:
+                with _m.logbook_trace("Prepare for select link analysis"):
+                    slink = create_attribute("LINK", "@slink", "selected link", 0, overwrite=True, scenario=scenario)
+                    net_calc(slink, "1", select_link)
+                    with _m.logbook_trace("Initialize result matrices and extra attributes"):
+                        ident = 860
+                        for traffic_class, class_spec in zip(classes, assign_spec["classes"]):
+                            att_name = "@sel_%s" % (traffic_class["name"].lower())
+                            att_des = "%s %s selected link volume"% (period, traffic_class["name"])
+                            link_flow = create_attribute("LINK", att_name, att_des, 0, overwrite=True, scenario=scenario)
+                            att_name = "@psel_%s" % (traffic_class["name"].lower())
+                            att_des = "%s %s selected turn volume" % (period, traffic_class["name"])
+                            turn_flow = create_attribute("TURN", att_name, att_des, 0, overwrite=True, scenario=scenario)
+                            
+                            # TODO: centralize to initialize_matrices (OPEN QUESTION)
+                            name = "%s_%s_SELDEM" % (period, traffic_class["name"])
+                            desc = "Selected demand for %s %s" % (period, traffic_class["name"])
+                            seldem = create_matrix("mf%s" % ident, name, desc, scenario=scenario, overwrite=True)
+                            ident += 1
 
+                            # add select link analysis 
+                            class_spec["path_analyses"] = [
+                                {
+                                    "link_component": "@slink",
+                                    "turn_component": None,
+                                    "operator": ".max.",
+                                    "selection_threshold": { "lower": 1, "upper": 1},
+                                    "path_to_od_composition": {
+                                        "considered_paths": "SELECTED",
+                                        "multiply_path_proportions_by": {"analyzed_demand": true, "path_value": false}
+                                    },
+                                    "analyzed_demand": None,
+                                    "results": {
+                                        "selected_link_volumes": link_flow.id,
+                                        "selected_turn_volumes": turn_flow.id,
+                                        "od_values": seldem.name
+                                    }
+                                }
+                            ]
+                    
         # Run assignment
-        traffic_assign(assign_spec, scenario)
+        traffic_assign(assign_spec, scenario, chart_log_interval=2)
         return
 
     def run_skims(self, period, num_processors, scenario, classes):

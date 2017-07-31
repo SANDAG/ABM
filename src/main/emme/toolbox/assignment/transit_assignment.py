@@ -193,7 +193,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                     "transition_rules": [{"mode": "b", "next_journey_level": 2}, ],
                     "boarding_time": transfer_penalty, 
                     "waiting_time": transfer_wait,
-                    "boarding_cost": {"global": {"penalty": 0.0, "perception_factor": 1.0}},
+                    "boarding_cost": {"global": {"penalty": "transfer_fare1", "perception_factor": params["fare"]}},
                 },
                 {
                     "description": "boarded-2", 
@@ -253,7 +253,15 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 {
                     "description": "boarded-1", 
                     "destinations_reachable": True, 
-                    "transition_rules": [{"mode": "b", "next_journey_level": 1}, ],
+                    "transition_rules": [{"mode": "b", "next_journey_level": 2}, ],
+                    "boarding_time": transfer_penalty, 
+                    "waiting_time": transfer_wait,
+                    "boarding_cost": {"global": {"penalty": "transfer_fare1", "perception_factor": params["fare"]}},
+                },
+                {
+                    "description": "boarded-2", 
+                    "destinations_reachable": True, 
+                    "transition_rules": [{"mode": "b", "next_journey_level": 2}, ],
                     "boarding_time": transfer_penalty, 
                     "waiting_time": transfer_wait,
                     "boarding_cost": {"global": {"penalty": 0.0, "perception_factor": 1.0}},

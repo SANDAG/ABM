@@ -97,8 +97,8 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
         # transit_skims:            561 to 720
         # truck_model:              730 to 756
         # commercial_vehicle_model: 757 to 774
-        # external_internal_model:  775 to 790
-        # external_external_model:  791 to 806
+        # external_internal_model:  775 to 835
+        # external_external_model:  837 to 853
 
     @_m.logbook_trace("Traffic demand matrices")
     def traffic_demand(self):

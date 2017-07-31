@@ -79,9 +79,9 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
         attributes = {"base_scenario": base_scenario.id}
         gen_utils.log_snapshot("Initialize transit database", str(self), attributes)
         create_function = _m.Modeller().tool("inro.emme.data.function.create_function")
-        desktop = _m.Modeller().desktop
-        data_explorer = desktop.data_explorer()
-        project_dir = os.path.dirname(desktop.project.path)
+        
+        base_eb = base_scenario.emmebank
+        project_dir = os.path.dirname(os.path.dirname(base_eb.path))
 
         base_network = base_scenario.get_network()
         zone_network = _network.Network()
@@ -100,18 +100,25 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
             time.sleep(10)  # wait 10 seconds - avoid potential race condition to remove the file in Windows
         os.mkdir(transit_db_dir)
 
-        dimensions = base_scenario.emmebank.dimensions
+        dimensions = base_eb.dimensions
         dimensions["centroids"] = len(list(zone_network.centroids()))
         dimensions["scenarios"] = 10
         transit_eb = _eb.create(transit_db_path, dimensions)
-        transit_eb.title = "Transit DB " + base_scenario.emmebank.title[:65]
+        transit_eb.title = base_eb.title[:65] + "-transit"
+        transit_eb.coord_unit_length = base_eb.coord_unit_length
+        transit_eb.unit_of_length = base_eb.unit_of_length
+        transit_eb.unit_of_cost = base_eb.unit_of_cost
+        transit_eb.unit_of_energy = base_eb.unit_of_energy
+        transit_eb.use_engineering_notation = base_eb.use_engineering_notation
+        transit_eb.node_number_digits = base_eb.node_number_digits
+        
         zone_scenario = transit_eb.create_scenario(base_scenario.number)
         zone_scenario.title = "Scenario with transit zones only"
         zone_scenario.publish_network(zone_network)
         for function in base_scenario.emmebank.functions():
             create_function(function.id, function.expression, transit_eb)
 
-        self.add_database(transit_eb)
+        #self.add_database(transit_eb)
         return zone_scenario
 
     def add_database(self, emmebank):

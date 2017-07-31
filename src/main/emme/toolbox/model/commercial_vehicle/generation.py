@@ -49,7 +49,7 @@ class CommercialVehicleDistribution(_m.Tool(), gen_utils.Snapshot):
         pb.description = """
 <div style="text-align:left">
     Calculate commerical vehicle productions and attractions
-    based on mgra13_based_input2012.csv.
+    based on mgra13_based_inputYYYY.csv.
     The very small truck generation model is based on the Phoenix 
     four-tire truck model documented in the TMIP Quick Response Freight Manual. 
 
@@ -106,9 +106,9 @@ class CommercialVehicleDistribution(_m.Tool(), gen_utils.Snapshot):
         gen_utils.log_snapshot("Commercial vehicle generation", str(self), attributes)
         emmebank = scenario.emmebank
         props = dem_utils.Properties(os.path.join(os.path.dirname(input_directory), "conf", "sandag_abm.properties"))
-
+        year = props['scenarioYear']
         mgra = pd.read_csv(
-            os.path.join(input_directory, 'mgra13_based_input2012.csv'))
+            os.path.join(input_directory, 'mgra13_based_input%s.csv' % year))
 
         calibration = 1.4
 

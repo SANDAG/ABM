@@ -234,15 +234,11 @@ class PropertiesTool(_m.Tool()):
             //}
             for (j = 1; j < iter; j++)
                 for (i = 0; i < iter_names.length; i++) { 
-                    var jq_obj = $("#" + iter_names[i] + "_" + j.toString());
-                    jq_obj.prop('disabled', true);
-                    jq_obj.value(true);
+                    $("#" + iter_names[i] + "_" + j.toString()).prop('disabled', true);
             }
             for (j = iter; j <= 3; j++)
                 for (i = 0; i < iter_names.length; i++) { 
-                    var jq_obj = $("#" + iter_names[i] + "_" + j.toString());
-                    jq_obj.prop('disabled', false);
-                    jq_obj.value(false);
+                    $("#" + iter_names[i] + "_" + j.toString()).prop('disabled', false);
             }
         }).trigger('change');
 

@@ -909,6 +909,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     seg.i_node["@coaster_fare_node"] = 4.0
                     if "SORRENTO" in seg["#stop_name"] and "COASTER" in seg["#stop_name"]:
                         sorrento_valley_segs.append(seg)
+            # TODO: move to build_transit scenario step instead ...
             # Setting for free-transfers for LRT only
             if line.mode != lrt_mode:
                 line["@fare_bus"] = line["@fare"]
