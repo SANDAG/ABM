@@ -103,7 +103,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 self.period, base_scenario, transit_emmebank,
                 self.scenario_id, self.scenario_title, 
                 self.timed_xfers_table, self.overwrite)
-            run_msg = "Transit assignment completed"
+            run_msg = "Transit scenario created"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
             self.tool_run_msg = _m.PageBuilder.format_exception(
@@ -171,7 +171,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                     raise Exception("scenario_id: scenario %s already exists" % scenario_id)
 
             scenario = transit_emmebank.create_scenario(scenario_id)
-            scenario.title = scenario_title
+            scenario.title = scenario_title[:80]
             scenario.has_traffic_results = base_scenario.has_traffic_results
             scenario.has_transit_results = base_scenario.has_transit_results
             for attr in sorted(base_scenario.extra_attributes(), key=lambda x: x._id):
@@ -182,8 +182,10 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             network = base_scenario.get_network()
             new_attrs = [
                 ("TRANSIT_LINE", "@xfer_from_bus", "Fare for first xfer from bus"), 
-                ("TRANSIT_LINE", "@xfer_to_premium", "Fare for xfer to premium"), 
+                ("TRANSIT_LINE", "@xfer_from_day", "Fare for xfer from daypass/trolley"), 
                 ("TRANSIT_LINE", "@xfer_from_premium", "Fare for first xfer from premium"), 
+                ("TRANSIT_LINE", "@xfer_from_coaster", "Fare for first xfer from coaster"), 
+                ("TRANSIT_LINE", "@xfer_regional_pass", "0-fare for regional pass"),  
                 ("TRANSIT_SEGMENT", "@headway_seg", "Headway adj for special xfers"), 
                 ("TRANSIT_SEGMENT", "@transfer_penalty_s", "Xfer pen adj for special xfers"),
                 ("TRANSIT_SEGMENT", "@layover_board", "Boarding cost adj for special xfers")]
@@ -196,6 +198,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             coaster_mode = network.mode("c")
             bus_mode = network.mode("b")
             prem_mode = network.mode("p")
+            lrt_mode = network.mode("l")
             for line in list(network.transit_lines()):
                 # remove the "unavailable" lines in this period
                 if line[params["headway"]] == 0:
@@ -207,14 +210,19 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 # set the fare increments for transfer combinations with day pass / regional pass
                 if line.mode == bus_mode and line["@fare"] > 1.00:
                     line["@xfer_from_bus"] = min(max(2.50 - line["@fare"], 0), 0.75)
-                if line.mode == prem_mode:
-                    line["@xfer_from_bus"] = 4.0  # increment from bus to premium (either 1.75 and 2.25 bus fare)
-                    line["@xfer_to_premium"] = 3.5  # increment from trolley / half day pass to half regional pass
+                elif line.mode in [ prem_mode, coaster_mode ]:
+                    line["@xfer_from_bus"] = 4.0    # increment from bus to regional (either 1.75 and 2.25 bus fare)
+                    line["@xfer_from_day"] = 3.5    # increment from trolley / half day pass to half regional pass
+                elif line.id.startswith("399"):
+                    line["@xfer_from_bus"] = 0.75
+                else:  # lrt, express and brt (red and yellow)
+                    line["@xfer_from_bus"] = 0.25
                 if line["@fare"] > 0.0:
                     line["@xfer_from_premium"] = 1.0
-            for seg in network.transit_segments():
-                seg["@headway_seg"] = seg.line[params["headway"]]
-                seg["@transfer_penalty_s"] = seg.line["@transfer_penalty"]
+                    line["@xfer_from_coaster"] = 0.75
+            for segment in network.transit_segments():
+                segment["@headway_seg"] = segment.line[params["headway"]]
+                segment["@transfer_penalty_s"] = segment.line["@transfer_penalty"]
 
             self.taps_to_centroids(network)
             if timed_xfers_table:
@@ -474,7 +482,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                     (xfer_node, start_node, 1): {
                         "allow_boardings": True, "allow_alightings": True, 
                         "@headway_seg": 0.01, "dwell_time": 0, "transit_time_func": 3,
-                        "@transfer_penalty_s": 0,
+                        "@transfer_penalty_s": 0, #"@xfer_from_bus": 0,
                         "@layover_board": 1
                     },
                     (xfer_node, None, 1): {

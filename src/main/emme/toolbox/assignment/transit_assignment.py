@@ -37,7 +37,6 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
     period = _m.Attribute(unicode)
     scenario =  _m.Attribute(_m.InstanceType)
     skims_only = _m.Attribute(bool)
-    transfer_limit = _m.Attribute(bool)
     num_processors = _m.Attribute(str)
 
     tool_run_msg = ""
@@ -48,11 +47,10 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
 
     def __init__(self):
         self.skims_only = False
-        self.transfer_limit = False
         self.scenario = _m.Modeller().scenario
         self.num_processors = "MAX-1"
         self.attributes = [
-            "period", "scenario", "skims_only", "transfer_limit",  "num_processors"]
+            "period", "scenario", "skims_only",  "num_processors"]
         self._dt_db = _m.Modeller().desktop.project.data_tables()
         
     def from_snapshot(self, snapshot):
@@ -80,7 +78,6 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             title="Transit assignment scenario:")
 
         pb.add_checkbox("skims_only", title=" ", label="Only run assignments for skim matrices")
-        pb.add_checkbox("transfer_limit", title=" ", label="Apply 3-transfer limit")
 
         dem_utils.add_select_processors("num_processors", pb, self)
 
@@ -90,7 +87,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         self.tool_run_msg = ""
         try:
             results = self(
-                self.period, self.scenario, self.skims_only, self.transfer_limit, self.num_processors)
+                self.period, self.scenario, self.skims_only, self.num_processors)
             run_msg = "Transit assignment completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -98,21 +95,18 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 error, _traceback.format_exc(error))
             raise
 
-    def __call__(self, period, scenario, skims_only=False, transfer_limit=False, num_processors="MAX-1"):
+    def __call__(self, period, scenario, skims_only=False, num_processors="MAX-1"):
         modeller = _m.Modeller()
         attrs = {
-            "period": period, 
-            "scenario": scenario.id, 
-            "emmebank": scenario.emmebank.path, 
-            "skims_only": skims_only, 
-            "transfer_limit": transfer_limit, 
-            "num_processors": num_processors, 
+            "period": period,
+            "scenario": scenario.id,
+            "emmebank": scenario.emmebank.path,
+            "skims_only": skims_only,
+            "num_processors": num_processors,
             "self": str(self)
         }
         with _m.logbook_trace("Transit assignment for period %s" % period, attributes=attrs):
             gen_utils.log_snapshot("Transit assignment", str(self), attrs)
-            copy_scenario = modeller.tool(
-                "inro.emme.data.scenario.copy_scenario")
             periods = ["EA", "AM", "MD", "PM", "EV"]
             if not period in periods:
                 raise Exception(
@@ -156,130 +150,152 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 if line.mode == coaster_mode:
                     coaster_fare_percep = line[params["fare"]]
 
-            self.run_assignment(period, skims_only, scenario, num_processors, params, coaster_fare_percep, transfer_limit)
+            self.run_assignment(period, skims_only, scenario, num_processors, params, coaster_fare_percep)
 
             self.skims_local_bus(period, num_processors, scenario)
             self.skims_all_modes(period, num_processors, scenario)
             self.report(period, scenario)
 
     @_m.logbook_trace("Transit assignment slices by access mode and main mode", save_arguments=True)
-    def run_assignment(self, period, skims_only, scenario, num_processors, params, coaster_fare_percep, transfer_limit):
+    def run_assignment(self, period, skims_only, scenario, num_processors, params, coaster_fare_percep):
         modeller = _m.Modeller()
         assign_transit = modeller.tool(
             "inro.emme.transit_assignment.extended_transit_assignment")
 
         all_modes = ["b", "c", "e", "l", "r", "p", "y", "a", "w", "x"]
         local_bus_modes = ["b", "a", "w", "x"]
-        transfer_penalty = {"on_segments": {"penalty": "@transfer_penalty_s", "perception_factor": 5}}
+        #transfer_penalty = {"on_segments": {"penalty": "@transfer_penalty_s", "perception_factor": 5}}
+        transfer_penalty = {"on_lines": {"penalty": "@transfer_penalty", "perception_factor": 5}}
         transfer_wait = {
             "effective_headways": "@headway_seg", 
             "headway_fraction": 0.5, 
             "perception_factor": params["xfer_wait"], 
             "spread_factor": 1.0
         }
-        if transfer_limit:
-            local_bus_journey_levels = [
-                {
-                    "description": "base", 
-                    "destinations_reachable": False, 
-                    "transition_rules": [{"mode": "b", "next_journey_level": 1}, ],
-                    "boarding_cost": None,
-                    "boarding_time": None,
-                    "waiting_time": None,
-                }, 
-                {
-                    "description": "boarded-1", 
-                    "destinations_reachable": True, 
-                    "transition_rules": [{"mode": "b", "next_journey_level": 2}, ],
-                    "boarding_time": transfer_penalty, 
-                    "waiting_time": transfer_wait,
-                    "boarding_cost": {"global": {"penalty": "transfer_fare1", "perception_factor": params["fare"]}},
-                },
-                {
-                    "description": "boarded-2", 
-                    "destinations_reachable": True, 
-                    "transition_rules": [{"mode": "b", "next_journey_level": 3}, ], 
-                    "boarding_time": transfer_penalty, 
-                    "waiting_time": transfer_wait,
-                    "boarding_cost": {"global": {"penalty": 0.0, "perception_factor": 1.0}},
-                },
-                {
-                    "description": "boarded-3", 
-                    "destinations_reachable": True, 
-                    "transition_rules": [{"mode": "b", "next_journey_level": 4}, ], 
-                    "boarding_time": transfer_penalty, 
-                    "waiting_time": transfer_wait,
-                    "boarding_cost": {"global": {"penalty": 0.0, "perception_factor": 1.0}},
-                },
-                {
-                    "description": "boarded-4", 
-                    "destinations_reachable": True, 
-                    "transition_rules": [{"mode": "b", "next_journey_level": 5}, ], 
-                    "boarding_time": transfer_penalty, 
-                    "waiting_time": transfer_wait,
-                    "boarding_cost": {"global": {"penalty": 0.0, "perception_factor": 1.0}},
-                },
-                {
-                    "description": "boarded-5", 
-                    "destinations_reachable": False,
-                    "transition_rules": [{"mode": "b", "next_journey_level": 5}, ], 
-                    "boarding_time": transfer_penalty, 
-                    "waiting_time": transfer_wait,
-                    "boarding_cost": {"global": {"penalty": 0.0, "perception_factor": 1.0}},
-                }
-            ]
-            all_modes_journey_levels = _copy(local_bus_journey_levels)
-            for i, level in enumerate(all_modes_journey_levels):
-                next_level = i + 1 if i < 5 else i
-                level["transition_rules"] = [
-                    {"mode": "b", "next_journey_level": next_level}, 
-                    {"mode": "c", "next_journey_level": next_level}, 
-                    {"mode": "e", "next_journey_level": next_level}, 
-                    {"mode": "l", "next_journey_level": next_level}, 
-                    {"mode": "p", "next_journey_level": next_level}, 
-                    {"mode": "r", "next_journey_level": next_level}, 
-                    {"mode": "y", "next_journey_level": next_level}
-                ]
-        else:
-            local_bus_journey_levels = [
-                {
-                    "description": "base", 
-                    "destinations_reachable": False, 
-                    "transition_rules": [{"mode": "b", "next_journey_level": 1}, ],
-                    "boarding_cost": None,
-                    "boarding_time": None,
-                    "waiting_time": None,
-                }, 
-                {
-                    "description": "boarded-1", 
-                    "destinations_reachable": True, 
-                    "transition_rules": [{"mode": "b", "next_journey_level": 2}, ],
-                    "boarding_time": transfer_penalty, 
-                    "waiting_time": transfer_wait,
-                    "boarding_cost": {"global": {"penalty": "transfer_fare1", "perception_factor": params["fare"]}},
-                },
-                {
-                    "description": "boarded-2", 
-                    "destinations_reachable": True, 
-                    "transition_rules": [{"mode": "b", "next_journey_level": 2}, ],
-                    "boarding_time": transfer_penalty, 
-                    "waiting_time": transfer_wait,
-                    "boarding_cost": {"global": {"penalty": 0.0, "perception_factor": 1.0}},
-                }
-            ]
-
-            all_modes_journey_levels = _copy(local_bus_journey_levels)
-            for i, level in enumerate(all_modes_journey_levels):
-                next_level = 1
-                level["transition_rules"] = [
-                    {"mode": "b", "next_journey_level": next_level}, 
-                    {"mode": "c", "next_journey_level": next_level}, 
-                    {"mode": "e", "next_journey_level": next_level}, 
-                    {"mode": "l", "next_journey_level": next_level}, 
-                    {"mode": "p", "next_journey_level": next_level}, 
-                    {"mode": "r", "next_journey_level": next_level}, 
-                    {"mode": "y", "next_journey_level": next_level}
-                ]
+        local_bus_journey_levels = [
+            {
+                "description": "base", 
+                "destinations_reachable": False, 
+                "transition_rules": [{"mode": "b", "next_journey_level": 1}, ],
+                "boarding_time": None, 
+                "waiting_time": None,
+                "boarding_cost": None, 
+            }, 
+            {
+                "description": "boarded_bus", 
+                "destinations_reachable": True, 
+                "transition_rules": [{"mode": "b", "next_journey_level": 2}, ],
+                "boarding_time": transfer_penalty, 
+                "waiting_time": transfer_wait,
+                "boarding_cost": {"on_lines": {"penalty": "@xfer_from_bus", "perception_factor": params["fare"]}},
+            },
+            {
+                "description": "day_pass", 
+                "destinations_reachable": True, 
+                "transition_rules": [{"mode": "b", "next_journey_level": 2}, ],
+                "boarding_time": transfer_penalty, 
+                "waiting_time": transfer_wait,
+                "boarding_cost": {"on_lines": {"penalty": "@xfer_regional_pass", "perception_factor": params["fare"]}},
+            }
+        ]
+        all_modes_journey_levels = [
+            {
+                "description": "base", 
+                "destinations_reachable": False, 
+                "transition_rules": [
+                    {"mode": "b", "next_journey_level": 1}, 
+                    {"mode": "l", "next_journey_level": 2}, 
+                    {"mode": "e", "next_journey_level": 2}, 
+                    {"mode": "r", "next_journey_level": 2}, 
+                    {"mode": "y", "next_journey_level": 2},
+                    {"mode": "p", "next_journey_level": 3}, 
+                    {"mode": "c", "next_journey_level": 4}, 
+                ],
+                "boarding_time": None, 
+                "waiting_time": None,
+                "boarding_cost": None,
+            }, 
+            {
+                "description": "boarded_bus", 
+                "destinations_reachable": True, 
+                "transition_rules": [
+                    {"mode": "b", "next_journey_level": 2}, 
+                    {"mode": "l", "next_journey_level": 2}, 
+                    {"mode": "e", "next_journey_level": 2}, 
+                    {"mode": "r", "next_journey_level": 2}, 
+                    {"mode": "y", "next_journey_level": 2},
+                    {"mode": "p", "next_journey_level": 5}, 
+                    {"mode": "c", "next_journey_level": 5}, 
+                ],
+                "boarding_time": transfer_penalty, 
+                "waiting_time": transfer_wait,
+                "boarding_cost": {"on_lines": {"penalty": "@xfer_from_bus", "perception_factor": params["fare"]}},
+            },
+            {
+                "description": "day_pass", 
+                "destinations_reachable": True, 
+                "transition_rules": [
+                    {"mode": "b", "next_journey_level": 2}, 
+                    {"mode": "l", "next_journey_level": 2}, 
+                    {"mode": "e", "next_journey_level": 2}, 
+                    {"mode": "r", "next_journey_level": 2}, 
+                    {"mode": "y", "next_journey_level": 2},
+                    {"mode": "p", "next_journey_level": 5}, 
+                    {"mode": "c", "next_journey_level": 5}, 
+                ],
+                "boarding_time": transfer_penalty, 
+                "waiting_time": transfer_wait,
+                "boarding_cost": {"on_lines": {"penalty": "@xfer_from_day", "perception_factor": params["fare"]}},
+            },
+            {
+                "description": "boarded_premium", 
+                "destinations_reachable": True, 
+                "transition_rules": [
+                    {"mode": "b", "next_journey_level": 5}, 
+                    {"mode": "l", "next_journey_level": 5}, 
+                    {"mode": "e", "next_journey_level": 5}, 
+                    {"mode": "r", "next_journey_level": 5}, 
+                    {"mode": "y", "next_journey_level": 5},
+                    {"mode": "p", "next_journey_level": 5}, 
+                    {"mode": "c", "next_journey_level": 5}, 
+                ],
+                "boarding_time": transfer_penalty, 
+                "waiting_time": transfer_wait,
+                "boarding_cost": {"on_lines": {"penalty": "@xfer_from_premium", "perception_factor": params["fare"]}},
+            },
+            {
+                "description": "boarded_coaster", 
+                "destinations_reachable": True, 
+                "transition_rules": [
+                    {"mode": "b", "next_journey_level": 5}, 
+                    {"mode": "l", "next_journey_level": 5}, 
+                    {"mode": "e", "next_journey_level": 5}, 
+                    {"mode": "r", "next_journey_level": 5}, 
+                    {"mode": "y", "next_journey_level": 5},
+                    {"mode": "p", "next_journey_level": 5}, 
+                    {"mode": "c", "next_journey_level": 5}, 
+                ],
+                "boarding_time": transfer_penalty, 
+                "waiting_time": transfer_wait,
+                "boarding_cost": {"on_lines": {"penalty": "@xfer_from_coaster", "perception_factor": params["fare"]}},
+            },
+            {
+                "description": "regional_pass", 
+                "destinations_reachable": True, 
+                "transition_rules": [
+                    {"mode": "b", "next_journey_level": 5}, 
+                    {"mode": "l", "next_journey_level": 5}, 
+                    {"mode": "e", "next_journey_level": 5}, 
+                    {"mode": "r", "next_journey_level": 5}, 
+                    {"mode": "y", "next_journey_level": 5},
+                    {"mode": "p", "next_journey_level": 5}, 
+                    {"mode": "c", "next_journey_level": 5}, 
+                ],
+                "boarding_time": transfer_penalty, 
+                "waiting_time": transfer_wait,
+                "boarding_cost":  {"on_lines": {"penalty": "@xfer_regional_pass", "perception_factor": params["fare"]}},
+            }
+        ]
 
         base_spec = {
             "type": "EXTENDED_TRANSIT_ASSIGNMENT",
@@ -294,10 +310,10 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "at_nodes": {"penalty": "@coaster_fare_node", "perception_factor": coaster_fare_percep}, 
                 "on_lines": {"penalty": "@fare", "perception_factor": params["fare"]}, 
             }, 
+            "boarding_time": {"global": {"penalty": 0, "perception_factor": 1}}, 
             "in_vehicle_cost": {"penalty": "@coaster_fare_seg", "perception_factor": coaster_fare_percep}, 
             "in_vehicle_time": {"perception_factor": params["in_vehicle"]}, 
             "aux_transit_time": {"perception_factor": params["walk"]},     
-            "boarding_time": {"global": {"penalty": 0, "perception_factor": 1}}, 
             "aux_transit_cost": None, 
             "journey_levels": [],
             "flow_distribution_between_lines": {"consider_total_impedance": False}, 
@@ -446,11 +462,12 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 matrix_calc(spec, scenario=scenario, num_processors=num_processors)
 
                 # sum in-vehicle cost and boarding cost to get the fare paid
+                max_fare = 6.0 if name.endswith("ALL") else 2.50
                 spec = {
                     "type": "MATRIX_CALCULATION", 
                     "constraint": None,
                     "result": 'mf"%s_FARE"' % name, 
-                    "expression": '%s_FARE + TEMP_IN_VEHICLE_COST' % name,
+                    "expression": '(%s_FARE + TEMP_IN_VEHICLE_COST).min.%s' % (name, max_fare),
                 }
                 matrix_calc(spec, scenario=scenario, num_processors=num_processors)
 
