@@ -340,6 +340,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             self.create_traffic_base(traffic_network, traffic_attr_map)
             self.create_turns(traffic_network)
             self.calc_traffic_attributes(traffic_network)
+            self.check_zone_access(traffic_network, traffic_network.mode("d"))
 
         for elem_type, mapping in traffic_attr_map.iteritems():
             for name, tcoved_type, emme_type, desc in mapping.values():
