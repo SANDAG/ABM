@@ -228,8 +228,8 @@ def log_snapshot(name, namespace, snapshot):
         
 @_m.logbook_trace(name="Export matrices to OMX", save_arguments=True)
 def export_to_omx(matrices, export_file, scenario, omx_key="ID_NAME"):
-    
     emmebank = scenario.emmebank
+    n_zones = len(scenario.zone_numbers)
     matrices = [emmebank.matrix(m) for m in matrices]
 
     text_encoding = emmebank.text_encoding
@@ -245,19 +245,21 @@ def export_to_omx(matrices, export_file, scenario, omx_key="ID_NAME"):
     try:
         n_matrices = len(matrices)
         for matrix in matrices:
-            numpy_array = matrix.get_numpy_data(scenario.id)
-            if matrix.type == "DESTINATION":  # (1,n_zones)
-                n_zones = len(scenario.zone_numbers)
+            numpy_array = matrix.get_numpy_data(scenario.id).astype(dtype="float64", copy=False)
+            if matrix.type == "DESTINATION":
                 numpy_array = _numpy.resize(numpy_array, (1, n_zones))
-            if matrix.type == "ORIGIN":
-                n_zones = len(scenario.zone_numbers)
+                chunkshape = None
+            elif matrix.type == "ORIGIN":
                 numpy_array = _numpy.resize(numpy_array, (n_zones, 1))
+                chunkshape = None
+            else:
+                chunkshape = (1, numpy_array.shape[0])
             key = generate_key(matrix)
-            omx_file[key] = numpy_array.astype(dtype="float64", copy=False)
-            omx_file[key].attrs.description = \
-                matrix.description.encode(text_encoding)
-            omx_file[key].attrs.source = "Emme"
-
+            attrs = {
+                "description": matrix.description.encode(text_encoding),
+                "source": "Emme"}
+            omx_matrix = omx_file.createMatrix(
+                key, obj=numpy_array, chunkshape=chunkshape, attrs=attrs)
         try:
             omx_file.createMapping('zone_number', scenario.zone_numbers)
         except LookupError:
