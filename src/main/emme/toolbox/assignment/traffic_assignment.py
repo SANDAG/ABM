@@ -36,6 +36,7 @@ class TrafficAssignment(_m.Tool(), gen_utils.Snapshot):
     max_iterations = _m.Attribute(int)
     num_processors = _m.Attribute(str)
     select_link = _m.Attribute(unicode)
+    raise_zero_dist = _m.Attribute(bool)
 
     tool_run_msg = ""
 
@@ -44,7 +45,9 @@ class TrafficAssignment(_m.Tool(), gen_utils.Snapshot):
         self.relative_gap = 0.0005
         self.max_iterations = 100
         self.num_processors = "MAX-1"
-        self.attributes = ["period", "msa_iteration", "relative_gap", "max_iterations", "num_processors"]
+        self.raise_zero_dist = True
+        self.attributes = ["period", "msa_iteration", "relative_gap", "max_iterations", 
+                           "num_processors", "select_link", "raise_zero_dist"]
         version = os.environ.get("EMMEPATH", "")
         self._version = version[-5:] if version else ""
         self._skim_classes_separately = False  # Used for debugging only
@@ -70,7 +73,10 @@ Assign traffic demand for the selected time period."""
         pb.add_text_box("max_iterations", title="Max iterations:")
         dem_utils.add_select_processors("num_processors", pb, self)
         pb.add_text_box("select_link", title="Select link expression:", 
-            note="Use any Emme selection expression to identify the link(s) of interest.")
+            note="Use any Emme selection expression to identify the link(s) of interest.",
+            multi_line=True)
+        pb.add_checkbox("raise_zero_dist", title=" ", label="Raise on zero distance value",
+            note="Check for and raise an exception if a zero value is found in the SOVGP_DIST matrix.")
         return pb.render()
 
     def run(self):
@@ -78,7 +84,7 @@ Assign traffic demand for the selected time period."""
         try:
             scenario = _m.Modeller().scenario
             results = self(self.period, self.msa_iteration, self.relative_gap, self.max_iterations, 
-                           self.num_processors, scenario, self.select_link)
+                           self.num_processors, scenario, self.select_link, self.raise_zero_dist)
             run_msg = "Traffic assignment completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -86,7 +92,8 @@ Assign traffic demand for the selected time period."""
                 error, _traceback.format_exc(error))
             raise
 
-    def __call__(self, period, msa_iteration, relative_gap, max_iterations, num_processors, scenario, select_link=None):
+    def __call__(self, period, msa_iteration, relative_gap, max_iterations, num_processors, scenario, 
+                 select_link=None, raise_zero_dist=True):
         attrs = {
             "period": period, 
             "msa_interation": msa_iteration,
@@ -95,6 +102,7 @@ Assign traffic demand for the selected time period."""
             "num_processors": num_processors, 
             "scenario": scenario.id,
             "select_link": select_link,
+            "raise_zero_dist": raise_zero_dist,
             "self": str(self)
         }
         self._stats = {}
@@ -116,7 +124,7 @@ Assign traffic demand for the selected time period."""
                 },                  
                 {   # 2
                     "name": 'HOV2GP', "mode": 's', "PCE": 1, "VOT": 67., "cost": '',                
-                    "skims": []  # same as SOV_gp
+                    "skims": []  # same as SOV_GP
                 },                    
                 {   # 3
                     "name": 'HOV2HOV', "mode": 'h', "PCE": 1, "VOT": 67., "cost": '',                
@@ -128,7 +136,7 @@ Assign traffic demand for the selected time period."""
                 },                
                 {   # 5 
                     "name": 'HOV3GP', "mode": 's', "PCE": 1, "VOT": 67., "cost": '',                
-                    "skims": []  # same as SOV_gp
+                    "skims": []  # same as SOV_GP
                 },                    
                 {   # 6
                     "name": 'HOV3HOV', "mode": 'i', "PCE": 1, "VOT": 67., "cost": '',                
@@ -202,8 +210,20 @@ Assign traffic demand for the selected time period."""
                     values.append(result_array)
                 scenario.set_attribute_values("TURN", turn_attrs, values)
 
-            #self.run_skims(period, num_processors, scenario, classes)
+            self.run_skims(period, num_processors, scenario, classes)
             self.report(period, scenario)
+
+            # Check that the distance matrix is valid (no disconnected zones)
+            if raise_zero_dist:
+                name = period + "_" + "SOVGP_DIST"
+                dist_stats = self._stats[name]
+                if dist_stats[1] == 0:
+                    zones = scenario.zone_numbers
+                    matrix = scenario.emmebank.matrix(name)
+                    data = matrix.get_numpy_data(scenario)
+                    row, col = numpy.unravel_index(data.argmin(), data.shape)
+                    row, col = zones[row], zones[col]
+                    raise Exception("Disconnected zone error: 0 value found in matrix %s from zone %s to %s" % (name, row, col))
 
     def run_assignment(self, period, relative_gap, max_iterations, num_processors, scenario, classes, select_link):
         emmebank = scenario.emmebank
