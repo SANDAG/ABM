@@ -131,13 +131,3 @@ class ExportSkims(_m.Tool(), gen_utils.Snapshot):
             "TRKMTOLL_TOLLCOST",
         ]
         return matrices
-
-    def _verify_matrices(self, matrices, scenario):
-        import numpy
-        emmbank = scenario.emmebank
-
-        for name in matrices:
-            matrix = emmebank.matrix(name)
-            data = matrix.get_numpy_data(scenario)
-            data = numpy.ma.masked_greater(data, 9999999)
-            print "%-25s %9.3g %9.3g %9.3g %9.3g" % (name, data.sum(), data.min(), data.max(), data.mean())
