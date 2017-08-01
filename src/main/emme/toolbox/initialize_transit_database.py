@@ -79,17 +79,11 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
         attributes = {"base_scenario": base_scenario.id}
         gen_utils.log_snapshot("Initialize transit database", str(self), attributes)
         create_function = _m.Modeller().tool("inro.emme.data.function.create_function")
-        
+        build_transit_scen  = _m.Modeller().tool("sandag.assignment.build_transit_scenario")
+
         base_eb = base_scenario.emmebank
         project_dir = os.path.dirname(os.path.dirname(base_eb.path))
 
-        base_network = base_scenario.get_network()
-        zone_network = _network.Network()
-        for node in base_network.nodes():
-            if node["@tap_id"] > 0:
-                centroid = zone_network.create_node(node["@tap_id"], is_centroid=True)
-                centroid.x = node.x
-                centroid.y = node.y
         transit_db_dir = join(project_dir, "Database_transit")
         transit_db_path = join(transit_db_dir, "emmebank")
         if os.path.exists(transit_db_dir):
@@ -99,9 +93,11 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
             _shutil.rmtree(transit_db_dir)
             time.sleep(10)  # wait 10 seconds - avoid potential race condition to remove the file in Windows
         os.mkdir(transit_db_dir)
-
+        
+        network = base_scenario.get_partial_network(["NODE"], include_attributes=True)
+        num_zones = sum([1 for n in network.nodes() if n["@tap_id"] > 0])
         dimensions = base_eb.dimensions
-        dimensions["centroids"] = len(list(zone_network.centroids()))
+        dimensions["centroids"] = num_zones
         dimensions["scenarios"] = 10
         transit_eb = _eb.create(transit_db_path, dimensions)
         transit_eb.title = base_eb.title[:65] + "-transit"
@@ -112,13 +108,14 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
         transit_eb.use_engineering_notation = base_eb.use_engineering_notation
         transit_eb.node_number_digits = base_eb.node_number_digits
         
-        zone_scenario = transit_eb.create_scenario(base_scenario.number)
-        zone_scenario.title = "Scenario with transit zones only"
-        zone_scenario.publish_network(zone_network)
+        zone_scenario = build_transit_scen(
+            period="AM", base_scenario=base_scenario, transit_emmebank=transit_eb, 
+            scenario_id=base_scenario.id, 
+            scenario_title="%s transit zones" % (base_scenario.title), overwrite=True)
+        
         for function in base_scenario.emmebank.functions():
             create_function(function.id, function.expression, transit_eb)
 
-        #self.add_database(transit_eb)
         return zone_scenario
 
     def add_database(self, emmebank):
