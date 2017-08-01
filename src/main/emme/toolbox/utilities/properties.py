@@ -18,14 +18,10 @@ TOOLBOX_ORDER = 103
 import inro.modeller as _m
 import traceback as _traceback
 from collections import OrderedDict
-#from contextlib import contextmanager as _context
-#from copy import deepcopy as _copy
 import os
 
 
-class PropertiesTool(_m.Tool()):
-
-    properties_path = _m.Attribute(unicode)
+class PropertiesSetter(object):
 
     startFromIteration = _m.Attribute(int)
     sample_rates = _m.Attribute(str)
@@ -59,6 +55,9 @@ class PropertiesTool(_m.Tool()):
     skipEI_1 = _m.Attribute(bool)
     skipEI_2 = _m.Attribute(bool)
     skipEI_3 = _m.Attribute(bool)
+    skipExternalExternal_1 = _m.Attribute(bool)
+    skipExternalExternal_2 = _m.Attribute(bool)
+    skipExternalExternal_3 = _m.Attribute(bool)
     skipTruck_1 = _m.Attribute(bool)
     skipTruck_2 = _m.Attribute(bool)
     skipTruck_3 = _m.Attribute(bool)
@@ -74,14 +73,16 @@ class PropertiesTool(_m.Tool()):
     skipDataLoadRequest = _m.Attribute(bool)
     skipDeleteIntermediateFiles = _m.Attribute(bool)
 
-    state = _m.Attribute(str)
-
     def _get_list_prop(self, name):
         return [getattr(self, name + suffix) for suffix in ["_1", "_2", "_3"]]
 
     def _set_list_prop(self, name, value):
-        for v_sub, suffix in zip(value, ["_1", "_2", "_3"]):
-            setattr(self, name + suffix, v_sub)
+        try:
+            for v_sub, suffix in zip(value, ["_1", "_2", "_3"]):
+                setattr(self, name + suffix, v_sub)
+        except:
+            for suffix in  ["_1", "_2", "_3"]:
+                setattr(self, name + suffix, False)
 
     skipHighwayAssignment = property(
         fget=lambda self: self._get_list_prop("skipHighwayAssignment"),
@@ -101,6 +102,9 @@ class PropertiesTool(_m.Tool()):
     skipEI = property(
         fget=lambda self: self._get_list_prop("skipEI"),
         fset=lambda self, value: self._set_list_prop("skipEI", value))
+    skipExternalExternal = property(
+        fget=lambda self: self._get_list_prop("skipExternalExternal"),
+        fset=lambda self, value: self._set_list_prop("skipExternalExternal", value))
     skipTruck = property(
         fget=lambda self: self._get_list_prop("skipTruck"),
         fset=lambda self, value: self._set_list_prop("skipTruck", value))
@@ -108,37 +112,14 @@ class PropertiesTool(_m.Tool()):
         fget=lambda self: self._get_list_prop("skipTripTableCreation"),
         fset=lambda self, value: self._set_list_prop("skipTripTableCreation", value))
 
-    def __init__(self):
-        project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
-        self.properties_path = os.path.join(
-            os.path.dirname(project_dir), "conf", "sandag_abm.properties")
-        self._properties = None
-        if os.path.exists(self.properties_path):
-            self.load()
-
-    tool_run_msg = ""
-
-    @_m.method(return_type=_m.UnicodeType)
-    def tool_run_msg_status(self):
-        return self.tool_run_msg
-
-    def page(self):
-        pb = _m.ToolPageBuilder(self)
-        pb.title = 'Set properties'
-        pb.description = """Properties setting tool."""
-        pb.branding_text = ' - SANDAG - Utilities'
-
-        pb.add_select_file('properties_path', 'file', title='Path to properties file:')
-
+    def add_properties_interface(self, pb, disclosure=False):
         tool_proxy_tag = pb.tool_proxy_tag
-        pb.wrap_html("", """
-        <div><button id="load_reset" style="width:150px; text-align:center;">
-            Load / Reset
-        </button></div>""")
+        title = "Run model - skip steps"
 
         options = [(1, "Iteration 1"), (2, "Iteration 2"), (3, "Iteration 3"), (4, "Iteration 4")]
         pb.add_text_box('sample_rates', title="Sample rate by iteration:", size=20)
         pb.add_select("startFromIteration", keyvalues=options, title="Start from iteration")
+
 
         skip_startup_items = [
             ("skipBuildNetwork",        "Skip build of highway and transit network"),
@@ -156,6 +137,7 @@ class PropertiesTool(_m.Tool()):
             ("skipOtherSimulateModel",  "Skip other simulation model"),
             ("skipCTM",                 "Skip commercial vehicle sub-model"),
             ("skipEI",                  "Skip external-internal sub-model"),
+            ("skipExternalExternal",    "Skip external-external sub-model"),
             ("skipTruck",               "Skip truck sub-model"),
             ("skipTripTableCreation",   "Skip trip table creation"),
         ]
@@ -172,6 +154,7 @@ class PropertiesTool(_m.Tool()):
         contents = ["""
         <div>
             <table class="skipitems">
+                <tbody>
                 <tr>
                     <th width="250px"></th>
                     <th width="90px">Iteration 1</th>
@@ -179,6 +162,11 @@ class PropertiesTool(_m.Tool()):
                     <th width="90px">Iteration 3</th>
                 </tr>"""]
 
+        if disclosure:
+            contents.insert(0, """
+                <div class="t_block t_element -inro-util-disclosure">
+                    <div class="-inro-util-disclosure-header t_local_title">%s</div>""" % title)
+            title = ""
         checkbox = '<td><input class="-inro-modeller checkbox_entry" type="checkbox" id="%(name)s" data-ref="%(tag)s.%(name)s"></td>'
         for name, label in skip_startup_items:
             contents.append("<tr><td>%s</td>" % label)
@@ -194,44 +182,22 @@ class PropertiesTool(_m.Tool()):
             contents.append(checkbox % {"name": name, "tag": tool_proxy_tag})
 
         contents.append("</tbody></table></div>")
+        if disclosure:
+            contents.append("</div>")
 
-        pb.wrap_html("Run model - skip steps", "".join(contents))
+        pb.wrap_html(title, "".join(contents))
 
         pb.add_html("""
 <script>
     $(document).ready( function ()
     {
         var tool = new inro.modeller.util.Proxy(%(tool_proxy_tag)s) ;
-        var init_names = [
-            "skipBuildNetwork",
-            "skipCopyWarmupTripTables",
-            "skipCopyBikeLogsum",
-            "skipCopyWalkImpedance",
-            "skipWalkLogsums",
-            "skipBikeLogsums",
-            "skipInitialization"
-        ];
-        var iter_names = [
-            "skipHighwayAssignment", 
-            "skipTransitSkimming",   
-            "skipCoreABM",          
-            "skipOtherSimulateModel",
-            "skipCTM",               
-            "skipEI",                
-            "skipTruck",             
-            "skipTripTableCreation"
-        ];
+
+        var iter_names = %(iter_items)s;
 
         $("#startFromIteration").bind('change', function()    {
             $(this).commit();
             var iter = $(this).val();
-            //if (iter == 1)  {
-            //    for (i = 0; i < init_names.length; i++)
-            //        $("#" + init_names[i]).prop('disabled', false);
-            //} else  {
-            //    for (i = 0; i < init_names.length; i++)
-            //        $("#" + init_names[i]).prop('disabled', true);
-            //}
             for (j = 1; j < iter; j++)
                 for (i = 0; i < iter_names.length; i++) { 
                     $("#" + iter_names[i] + "_" + j.toString()).prop('disabled', true);
@@ -241,38 +207,17 @@ class PropertiesTool(_m.Tool()):
                     $("#" + iter_names[i] + "_" + j.toString()).prop('disabled', false);
             }
         }).trigger('change');
-
-        var run_text = $(".-inro-util-execute-button").children().next();
-        run_text.html("Save")
-
-        $("#load_reset").bind('click', function()    {
-            tool.load()
-            $("input:checkbox").each(function() {
-                $(this).prop('checked', tool.get_value($(this).prop('id')) );
-            });
-            $("#startFromIteration").prop('value', tool.startFromIteration);
-            $("#sample_rates").prop('value', tool.sample_rates);
-        });
-
    });
-</script>""" % {"tool_proxy_tag": tool_proxy_tag})
+</script>""" % {"tool_proxy_tag": tool_proxy_tag, 
+                "iter_items": str([x[0] for x in skip_per_iteration_items])})
+        return
 
-        return pb.render()
-
-
-    def run(self):
-        self.tool_run_msg = ""
-        try:
-            self.save()
-            message = "Properties file saved"
-            self.tool_run_msg = _m.PageBuilder.format_info(message, escape=False)
-        except Exception, e:
-            self.tool_run_msg = _m.PageBuilder.format_exception(
-                e, _traceback.format_exc(e))
-            raise
+    @_m.method(return_type=bool, argument_types=(str,))
+    def get_value(self, name):
+        return bool(getattr(self, name))
 
     @_m.method()
-    def load(self):
+    def load_properties(self):
         self._properties = props = Properties(self.properties_path)
 
         self.startFromIteration = props.get("RunModel.startFromIteration")
@@ -292,6 +237,7 @@ class PropertiesTool(_m.Tool()):
         self.skipOtherSimulateModel = props.get("RunModel.skipOtherSimulateModel")
         self.skipCTM = props.get("RunModel.skipCTM")
         self.skipEI = props.get("RunModel.skipEI")
+        self.skipExternalExternal = props.get("RunModel.skipExternalExternal")
         self.skipTruck = props.get("RunModel.skipTruck")
         self.skipTripTableCreation = props.get("RunModel.skipTripTableCreation")
 
@@ -303,11 +249,7 @@ class PropertiesTool(_m.Tool()):
         self.skipDataLoadRequest = props.get("RunModel.skipDataLoadRequest")
         self.skipDeleteIntermediateFiles = props.get("RunModel.skipDeleteIntermediateFiles")
 
-    @_m.method(return_type=bool, argument_types=(str,))
-    def get_value(self, name):
-        return bool(getattr(self, name))
-
-    def save(self):
+    def save_properties(self):
         props = self._properties
         props["RunModel.startFromIteration"] = self.startFromIteration
         props["sample_rates"] = [float(x) for x in self.sample_rates.split(",")]
@@ -326,6 +268,7 @@ class PropertiesTool(_m.Tool()):
         props["RunModel.skipOtherSimulateModel"] = self.skipOtherSimulateModel
         props["RunModel.skipCTM"] = self.skipCTM
         props["RunModel.skipEI"] = self.skipEI
+        props["RunModel.skipExternalExternal"] = self.skipExternalExternal
         props["RunModel.skipTruck"] = self.skipTruck
         props["RunModel.skipTripTableCreation"] = self.skipTripTableCreation
 
@@ -339,12 +282,78 @@ class PropertiesTool(_m.Tool()):
 
         props.save()
 
+
+class PropertiesTool(_m.Tool(), PropertiesSetter):
+
+    properties_path = _m.Attribute(unicode)
+
+    def __init__(self):
+        project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
+        self.properties_path = os.path.join(
+            os.path.dirname(project_dir), "conf", "sandag_abm.properties")
+        self._properties = None
+        if os.path.exists(self.properties_path):
+            self.load_properties()
+
+    tool_run_msg = ""
+
+    @_m.method(return_type=_m.UnicodeType)
+    def tool_run_msg_status(self):
+        return self.tool_run_msg
+
+    def page(self):
+        pb = _m.ToolPageBuilder(self)
+        pb.title = 'Set properties'
+        pb.description = """Properties setting tool."""
+        pb.branding_text = ' - SANDAG - Utilities'
+        tool_proxy_tag = pb.tool_proxy_tag
+
+        pb.add_select_file('properties_path', 'file', title='Path to properties file:')
+
+        pb.wrap_html("", """
+            <div><button id="load_reset" style="width:150px; text-align:center;">
+                Load / Reset
+            </button></div>""")
+
+        pb.add_html("""
+<script>
+    $(document).ready( function ()
+    {
+        var tool = new inro.modeller.util.Proxy(%(tool_proxy_tag)s) ;
+
+        var run_text = $(".-inro-util-execute-button").children().next();
+        run_text.html("Save")
+        
+        $("#load_reset").bind('click', function()    {
+            tool.load_properties()
+            $("input:checkbox").each(function() {
+                $(this).prop('checked', tool.get_value($(this).prop('id')) );
+            });
+            $("#startFromIteration").prop('value', tool.startFromIteration);
+            $("#sample_rates").prop('value', tool.sample_rates);
+        });
+   });
+</script>""" % {"tool_proxy_tag": tool_proxy_tag})
+        self.add_properties_interface(pb)
+        return pb.render()
+
+    def run(self):
+        self.tool_run_msg = ""
+        try:
+            self.save_properties()
+            message = "Properties file saved"
+            self.tool_run_msg = _m.PageBuilder.format_info(message, escape=False)
+        except Exception, e:
+            self.tool_run_msg = _m.PageBuilder.format_exception(
+                e, _traceback.format_exc(e))
+            raise
+
     def __call__(self, file_path):
         return Properties(file_path)
 
 
+# Singleton implementation to avoid re-reading the file in the same process
 _properties_lookup = {}
-
 
 class Properties(object):
 
@@ -353,7 +362,7 @@ class Properties(object):
         if os.path.isdir(path):
             path = os.path.join(path, "sandag_abm.properties")
         properties = _properties_lookup.get(os.path.normcase(path), None)
-        return properties or object.__new__(cls)
+        return properties or object.__new__(cls, *args, **kwargs)
 
     def __init__(self, path="./sandag_abm.properties"):
         if os.path.isdir(path):

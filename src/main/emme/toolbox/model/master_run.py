@@ -31,12 +31,14 @@ join = os.path.join
 
 gen_utils = _m.Modeller().module("sandag.utilities.general")
 dem_utils = _m.Modeller().module("sandag.utilities.demand")
+props_utils = _m.Modeller().module("sandag.utilities.properties")
 
 
-class MasterRun(_m.Tool(), gen_utils.Snapshot):
+class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
     main_directory = _m.Attribute(unicode)
     scenario_id = _m.Attribute(int)
-    scenario_desc = _m.Attribute(unicode)
+    scenario_title = _m.Attribute(unicode)
+    emmebank_title = _m.Attribute(unicode)
     num_processors = _m.Attribute(str)
 
     tool_run_msg = ""
@@ -44,14 +46,17 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
     def __init__(self):
         project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
         self.main_directory = os.path.dirname(project_dir)
+        self.properties_path = os.path.join(
+            os.path.dirname(project_dir), "conf", "sandag_abm.properties")
         self.scenario_id = 100
         self.num_processors = "MAX-1"
-        self.attributes = ["main_directory", "scenario_id", "scenario_desc", "num_processors"]
+        self.attributes = ["main_directory", "scenario_id", "scenario_title", "emmebank_title", "num_processors"]
+        self._properties = None
 
     def page(self):
         pb = _m.ToolPageBuilder(self)
         pb.title = "Master run ABM"
-        pb.description = """  """
+        pb.description = """Runs the SANDAG ABM, assignments, and other demand model tools."""
         pb.branding_text = "- SANDAG - Model"
 
         if self.tool_run_msg != "":
@@ -60,15 +65,27 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
         pb.add_select_file('main_directory','directory',
                            title='Select main ABM directory', note='')
         pb.add_text_box('scenario_id', title="Scenario ID:")
-        pb.add_text_box('scenario_desc', title="Scenario description:", size=80)
+        pb.add_text_box('scenario_title', title="Scenario title:", size=80)
+        pb.add_text_box('emmebank_title', title="Emmebank title:", size=60)
         dem_utils.add_select_processors("num_processors", pb, self)
+        
+        project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
+        properties_path = os.path.join(
+            os.path.dirname(project_dir), "conf", "sandag_abm.properties")
+        if os.path.exists(properties_path):
+            self.load_properties()
+            
+        # defined in properties utilities
+        self.add_properties_interface(pb, disclosure=True)
 
         return pb.render()
 
     def run(self):
         self.tool_run_msg = ""
         try:
-            self(self.main_directory, self.scenario_id, self.scenario_desc, self.num_processors)
+            self.save_properties()
+            self(self.main_directory, self.scenario_id, self.scenario_title, self.emmebank_title,
+                 self.num_processors)
             run_msg = "Tool complete"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
         except Exception as error:
@@ -81,15 +98,12 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
         return self.tool_run_msg
 
     @_m.logbook_trace("Master run model", save_arguments=True)
-    def __call__(self, main_directory, scenario_id, scenario_desc, num_processors):
-        # Global variable from rsc macro:
-        # path, inputDir, outputDir, inputTruckDir, 
-        # mxzone, mxtap, mxext, mxlink, mxrte, scenarioYear
-
+    def __call__(self, main_directory, scenario_id, scenario_title, emmebank_title, num_processors):
         attributes = {
             "main_directory": main_directory, 
             "scenario_id": scenario_id, 
-            "scenario_desc": scenario_desc,
+            "scenario_title": scenario_title,
+            "emmebank_title": emmebank_title,
             "num_processors": num_processors
         }
         gen_utils.log_snapshot("Master run model", str(self), attributes)
@@ -111,6 +125,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
         import_transit_demand = modeller.tool("sandag.import.import_transit_demand")
         export_traffic_skims = modeller.tool("sandag.export.export_traffic_skims")
         export_transit_skims = modeller.tool("sandag.export.export_transit_skims")
+        export_data = modeller.tool("sandag.export.export_to_csv_for_SQL")
 
         utils = modeller.module('sandag.utilities.demand')
         load_properties = modeller.tool('sandag.utilities.properties')
@@ -122,6 +137,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
         input_truck_dir = join(main_directory, "input_truck")
         output_dir = join(main_directory, "output")
         main_emmebank = _eb.Emmebank(join(main_directory, "emme_project", "Database", "emmebank"))
+        main_emmebank.title = emmebank_title
         external_zones = "1-12"
 
         props = load_properties(join(main_directory, "conf", "sandag_abm.properties"))
@@ -149,6 +165,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
         skipOtherSimulateModel = props["RunModel.skipOtherSimulateModel"]
         skipCTM = props["RunModel.skipCTM"]
         skipEI = props["RunModel.skipEI"]
+        skipExternal = props["RunModel.skipExternalExternal"]
         skipTruck = props["RunModel.skipTruck"]
         skipTripTableCreation = props["RunModel.skipTripTableCreation"]
         skipFinalHighwayAssignment = props["RunModel.skipFinalHighwayAssignment"]
@@ -186,26 +203,25 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
             if not skipWalkLogsums:
                 self.run_proc("runSandagWalkLogsums.cmd", [drive, path_forward_slash],
                     "Walk - create AT logsums and impedances")
-            # if not skipCopyWarmupTripTables:
-                # TODO: does this need to be copied? It can be used from the input folder
-                # self.copy_files(["trip_EA.omx", "trip_AM.omx", "trip_MD.omx", "trip_PM.omx", "trip_EV.omx"],
-                                # input_dir, output_dir)
 
             self.set_active(main_emmebank)
             if not skipBuildNetwork:
-                import_network(
+                base_scenario = import_network(
                     source=input_dir,
                     merged_scenario_id=scenario_id, 
-                    description=scenario_desc,
+                    description=scenario_title,
                     data_table_name=str(scenarioYear),
-                    overwrite=True)
-            base_scenario = main_emmebank.scenario(scenario_id)
-
-            if not skipInitialization:
+                    overwrite=True,
+                    emmebank=main_emmebank)
                 # initialize per time-period scenarios
                 for number, period in period_ids:
                     title = "%s- %s assign" % (base_scenario.title, period)
                     copy_scenario(base_scenario, number, title, overwrite=True)
+            else:
+                base_scenario = main_emmebank.scenario(scenario_id)
+            
+
+            if not skipInitialization:
                 # initialize traffic demand, skims, truck, CV, EI, EE matrices
                 traffic_components = [
                     "traffic_demand", "traffic_skims",
@@ -266,16 +282,17 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
                             transit_assign_scen = build_transit_scen(
                                 period=period, base_scenario=src_period_scenario, transit_emmebank=transit_emmebank, 
                                 scenario_id=src_period_scenario.id, 
-                                scenario_title="%s- %s transit assign" % (base_scenario.title, period), 
+                                scenario_title="%s %s transit assign" % (base_scenario.title, period), 
                                 timed_xfers_table=timed_xfers, overwrite=True)
                             transit_assign(
                                 period=period, scenario=transit_assign_scen,
-                                skims_only=True, transfer_limit=False, num_processors=num_processors)
+                                skims_only=True, num_processors=num_processors)
 
                         omx_file = os.path.join(output_dir, "transit_skims.omx")   
                         export_transit_skims(omx_file, transit_scenario)
 
-                # move some trip matrices so run will stop if ctramp model doesn't produced csv/mtx files for assignment
+                # move some trip matrices so run will stop if ctramp model
+                # doesn't produced csv/omx (mtx) files for assignment
                 # TODO: is this needed otherwise? there might be a better approach
                 if (msa_iteration > startFromIteration):
                     self.move_files(
@@ -306,7 +323,8 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
                     if not skipEI[iteration]:
                         external_internal(input_dir, base_scenario)
                     # run EE model
-                    external_external(input_dir, external_zones, base_scenario)
+                    if not skipExternal[iteration]:
+                        external_external(input_dir, external_zones, base_scenario)
 
                 # import demand from all sub-market models from CT-RAMP and
                 #       add CV trips to auto demand
@@ -337,19 +355,18 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
                         timed_xfers_table=timed_xfers, overwrite=True)
                     transit_assign(
                         period=period, scenario=transit_assign_scen,
-                        skims_only=False, transfer_limit=False, num_processors=num_processors)
+                        skims_only=False, num_processors=num_processors)
                 if not skipFinalTransitSkimming:
                     omx_file = os.path.join(output_dir, "transit_skims.omx")   
                     export_transit_skims(omx_file, transit_scenario)
 
         if not skipDataExport:
-            # TODO: create data export to CSV tool
-            # export_data()
+            export_data(main_directory, main_emmebank, transit_emmebank, num_processors)
             # export core ABM data
             self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data")
         if not skipDataLoadRequest:
             self.run_proc("DataLoadRequest.bat", 
-                [drive, path_no_drive, max_iterations, scenarioYear, sample_rate[max_iterations]], 
+                [drive, path_no_drive, end_iteration, scenarioYear, sample_rate[end_iteration]], 
                 "Data load request")
 
         # delete trip table files in iteration sub folder if model finishes without crashing
@@ -441,18 +458,3 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot):
                 db.open()
                 return db
         return None
-
-    def modify_zone_scenario(self, zone_scenario):
-        # generate scenario with zones removed that do not exist in the OMX file for some reason
-        network = zone_scenario.get_network()
-        missing_zones = [
-            7, 28, 37, 38, 42, 44, 54, 93, 145, 353, 728, 729, 737, 
-            767, 820, 844, 1046, 1084, 1158, 1882, 2171, 2478
-        ]
-        for number in missing_zones:
-            network.delete_node(number, cascade=True)
-        zone_scenario.title = "Temp special scenario with 1744 zones"
-        zone_scenario.publish_network(network)
-        return
-        
-    
