@@ -42,7 +42,10 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
     def page(self):
         pb = _m.ToolPageBuilder(self)
         pb.title = "External internal model"
-        pb.description = """"""
+        pb.description = """
+            Control totals are read from externalInternalControlTotalsByYear.csv for
+            the specified year in sandag_abm.properties. If this file does not exist
+            externalInternalControlTotals.csv will be used instead."""
         pb.branding_text = "- SANDAG - Model"
         if self.tool_run_msg != "":
             pb.tool_run_status(self.tool_run_msg_status)
@@ -72,19 +75,30 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
 
         emmebank = scenario.emmebank
         zones = scenario.zone_numbers
-        utils = _m.Modeller().module('sandag.utilities.demand')
-
-        props = utils.Properties(
+        load_properties = modeller.tool('sandag.utilities.properties')
+        props = load_properties(
             os.path.join(os.path.dirname(input_directory), "conf", "sandag_abm.properties"))
 
-        # Load data
-        control_totals = pd.read_csv(
-            os.path.join(input_directory, 'externalInternalControlTotals.csv'))
 
-        year = props['scenarioYear']
+        year = int(props['scenarioYear'])
         mgra = pd.read_csv(
             os.path.join(input_directory, 'mgra13_based_input%s.csv' % year))
 
+        # Load data
+        file_path = os.path.join(
+            input_directory, "externalInternalControlTotalsByYear.csv")
+        if os.path.isfile(file_path):
+            control_totals = pd.read_csv(file_path)
+            control_totals = control_totals[control_totals.year==year]
+            control_totals = control_totals.drop("year", axis=1)
+        else:
+            file_path = os.path.join(
+                input_directory, 'externalInternalControlTotals.csv')
+            if not os.path.isfile(file_path):
+                raise Exception("External-internal model: no file 'externalInternalControlTotals.csv' or 'externalInternalControlTotalsByYear.csv'")
+            control_totals = pd.read_csv(file_path)
+        _m.logbook_write("Control totals read from %s" % file_path)
+        
         # Aggregate purposes
         mgra['emp_blu'] = (mgra.emp_const_non_bldg_prod
                            + mgra.emp_const_non_bldg_office
