@@ -348,12 +348,6 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
 
     @_m.logbook_trace("Extract skims for bus mode", save_arguments=True)
     def skims_local_bus(self, period, num_processors, scenario):
-        # local cost and impedance analysis
-        # access walk time - will be the walk on the connector for most O-D pairs (?)
-        # Dwelling time - requires strategy analysis - don't know if I care
-        # egress walk time - same as access time for nearly all O-D pairs 
-        # fare - may require stategy analysis
-        # transfer walk time - requires path analysis
         modeller = _m.Modeller()
         matrix_calc = modeller.tool(
             "inro.emme.matrix_calculation.matrix_calculator")  
@@ -430,9 +424,30 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                     },
                 }
                 matrix_results(spec, class_name=class_name, scenario=scenario, num_processors=num_processors)
+            with _m.logbook_trace("Distance by mode"):
+                if name.endswith("ALL"):
+                    mode_combinations = [
+                        ("BUS", ["b"]),
+                        ("LRT", ["l"]),
+                        ("CMR", ["c"]),
+                        ("EXP", ["e", "p"]),
+                        ("BRT", ["r", "y"]),
+                    ]
+                else:
+                    mode_combinations = [("", ["b"])]
+
+                for mode_name, modes in mode_combinations:
+                    spec = {
+                        "type": "EXTENDED_TRANSIT_MATRIX_RESULTS",
+                        "by_mode_subset": {
+                            "modes": modes,  
+                            "distance": 'mf"%s_%sDIST"' % (name, mode_name),
+                        },
+                    }
+                    matrix_results(spec, class_name=class_name, scenario=scenario, num_processors=num_processors)
 
             # convert number of boardings to number of transfers
-            # subtrack transfers to the same line at layover points
+            # subtract transfers to the same line at layover points
             with _m.logbook_trace("Number of transfers and total fare"):
                 spec = {
                     "trip_components": {"boarding": "@layover_board"},
@@ -472,7 +487,6 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 matrix_calc(spec, scenario=scenario, num_processors=num_processors)
 
         # walk access time - get distance and convert to time with 3 miles / hr
-
         with _m.logbook_trace("Walk time access, egress and xfer"):
             path_spec = {
                 "portion_of_path": "ORIGIN_TO_INITIAL_BOARDING",
@@ -559,6 +573,19 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                     "type": "EXTENDED_TRANSIT_STRATEGY_ANALYSIS"
                 }
                 strategy_analysis(spec, class_name=class_name, scenario=scenario, num_processors=num_processors)
+                
+                spec = {
+                    "type": "MATRIX_CALCULATION", 
+                    "constraint":{
+                        "by_value": {
+                            "od_values": 'mf"%s_TOTALIVTT"' % name, 
+                            "interval_min": 0, "interval_max": 9999999, 
+                            "condition": "INCLUDE"},
+                    },
+                    "result": 'mf"%s_TOTALIVTT"' % name, 
+                    "expression": '(%s_TOTALIVTT - %s_DWELLTIME).max.0' % (name, name),
+                }
+                matrix_calc(spec, scenario=scenario, num_processors=num_processors)
 
                 if name.endswith("ALL"):
                     strat_analysis_spec = {
