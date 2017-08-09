@@ -45,7 +45,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
     transit_scenario_id = _m.Attribute(int)
     merged_scenario_id = _m.Attribute(int)
     overwrite = _m.Attribute(bool)
-    description = _m.Attribute(unicode)
+    title = _m.Attribute(unicode)
     save_data_tables = _m.Attribute(bool)
     data_table_name = _m.Attribute(unicode)
 
@@ -61,11 +61,11 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
         self.source = os.path.join(os.path.dirname(project_dir), "input")
         self.overwrite = False
-        self.description = ""
+        self.title = ""
         self.data_table_name = ""
         self.attributes = [
             "source", "traffic_scenario_id", "transit_scenario_id", "merged_scenario_id", 
-            "overwrite", "description", "save_data_tables", "data_table_name"]
+            "overwrite", "title", "save_data_tables", "data_table_name"]
 
     def page(self):
         pb = _m.ToolPageBuilder(self)
@@ -102,7 +102,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         pb.add_text_box("traffic_scenario_id", size=6, title="Scenario ID for traffic (optional):")
         pb.add_text_box("transit_scenario_id", size=6, title="Scenario ID for transit (optional):")
         pb.add_text_box("merged_scenario_id", size=6, title="Scenario ID for merged network:")
-        pb.add_text_box("description", size=80, title="Scenario description:")
+        pb.add_text_box("title", size=80, title="Scenario title:")
         pb.add_checkbox("save_data_tables", title=" ", label="Save reference data tables of TCOVED data")
         pb.add_text_box("data_table_name", size=80, title="Name for data tables:",
             note="Prefix name to use for all saved data tables")
@@ -127,14 +127,14 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
     def __call__(self, source, 
                  traffic_scenario_id=None, transit_scenario_id=None, merged_scenario_id=None, 
-                 description="", save_data_tables=False, data_table_name="", overwrite=False,
+                 title="", save_data_tables=False, data_table_name="", overwrite=False,
                  emmebank=None):
 
         self.source = source
         self.traffic_scenario_id = traffic_scenario_id
         self.transit_scenario_id = transit_scenario_id
         self.merged_scenario_id = merged_scenario_id 
-        self.description = description
+        self.title = title
         self.save_data_tables = save_data_tables
         self.data_table_name = data_table_name
         self.overwrite = overwrite
@@ -158,7 +158,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             ("traffic_scenario_id", self.traffic_scenario_id),
             ("transit_scenario_id", self.transit_scenario_id),
             ("merged_scenario_id", self.merged_scenario_id),
-            ("description", self.description),
+            ("title", self.title),
             ("save_data_tables", self.save_data_tables),
             ("data_table_name", self.data_table_name),
             ("overwrite", self.overwrite),
@@ -319,14 +319,20 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             if not os.path.exists(file_path):
                 raise Exception("missing file '%s' in directory %s" % (name, self.source))
 
+        title = self.title
+        if not title:
+            existing_scenario = emmebank.scenario(self.merged_scenario_id)
+            if existing_scenario:
+                title = existing_scenario.title
+
         if self.traffic_scenario_id:
-            traffic_scenario = create_scenario(self.traffic_scenario_id, self.description + " Traffic", 
+            traffic_scenario = create_scenario(self.traffic_scenario_id, title + " Traffic", 
                                                overwrite=self.overwrite, emmebank=self.emmebank)
         if self.transit_scenario_id:
-            transit_scenario = create_scenario(self.transit_scenario_id, self.description + " Transit", 
+            transit_scenario = create_scenario(self.transit_scenario_id, title + " Transit", 
                                                overwrite=self.overwrite, emmebank=self.emmebank)
         if self.merged_scenario_id:
-            scenario = create_scenario(self.merged_scenario_id, self.description, 
+            scenario = create_scenario(self.merged_scenario_id, title, 
                                        overwrite=self.overwrite, emmebank=self.emmebank)
 
         if self.traffic_scenario_id or self.merged_scenario_id:

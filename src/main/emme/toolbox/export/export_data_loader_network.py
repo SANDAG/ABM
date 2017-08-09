@@ -229,7 +229,7 @@ Export network results to csv files for SQL data loader."""
         # Get all the original forward direction links
         links = [link for link in net.links() if link["@tcov_id"] > 0]
 
-        hwylink_atts_file = os.path.join(export_path, "hwylink_attr.csv")
+        hwylink_atts_file = os.path.join(export_path, "hwy_tcad.csv")
         self.export_traffic_to_csv(hwylink_atts_file, hwylink_atts, links, auto_mode)
         # delete result_scenario
         delete_scenario(result_scenario)
@@ -307,7 +307,7 @@ Export network results to csv files for SQL data loader."""
             auto_mode = net.mode(auto_mode_id)
             links = [link for link in net.links() if link["@tcov_id"] > 0]
             # highway link load
-            self.export_traffic_to_csv(os.path.join(export_path, "hwyload_%s_attr.csv" % p), hwyload_atts, links, auto_mode)
+            self.export_traffic_to_csv(os.path.join(export_path, "hwyload_%s.csv" % p), hwyload_atts, links, auto_mode)
 
     def export_traffic_to_csv(self, filename, att_list, links, auto_mode):
         fout = open(filename, 'w')
@@ -411,7 +411,7 @@ Export network results to csv files for SQL data loader."""
         fout_seg.write(",".join(transit_flow_atts))
         fout_seg.write("\n")
 
-        transit_aggregate_flow_file = os.path.join(export_path, "transit_aggregate_flow.csv")
+        transit_aggregate_flow_file = os.path.join(export_path, "transit_aggflow.csv")
         fout_link = open(transit_aggregate_flow_file, 'w')
         fout_link.write(",".join(transit_aggregate_flow_atts))
         fout_link.write("\n")
