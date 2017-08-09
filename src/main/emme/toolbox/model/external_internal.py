@@ -23,6 +23,7 @@ import os
 
 
 gen_utils = _m.Modeller().module("sandag.utilities.general")
+dem_utils = _m.Modeller().module("sandag.utilities.demand")
 
 
 class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
@@ -75,7 +76,7 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
 
         emmebank = scenario.emmebank
         zones = scenario.zone_numbers
-        load_properties = modeller.tool('sandag.utilities.properties')
+        load_properties = _m.Modeller().tool('sandag.utilities.properties')
         props = load_properties(
             os.path.join(os.path.dirname(input_directory), "conf", "sandag_abm.properties"))
 
@@ -156,7 +157,7 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
         # aggregate to TAZ
         taz = mgra[['taz', 'work_size', 'non_work_size']].groupby('taz').sum()
         taz.reset_index(inplace=True)
-        taz = utils.add_missing_zones(taz, scenario)
+        taz = dem_utils.add_missing_zones(taz, scenario)
         taz.sort('taz', ascending=True, inplace=True)
         taz.reset_index(inplace=True, drop=True)
         control_totals = pd.merge(control_totals, taz[['taz']], how='outer')

@@ -82,7 +82,7 @@ class ExternalExternal(_m.Tool(), gen_utils.Snapshot):
         matrix_calc = _m.Modeller().tool(
             "inro.emme.matrix_calculation.matrix_calculator")
 
-        load_properties = modeller.tool('sandag.utilities.properties')
+        load_properties = _m.Modeller().tool('sandag.utilities.properties')
         props = load_properties(
             os.path.join(os.path.dirname(input_directory), "conf", "sandag_abm.properties"))
         year = int(props['scenarioYear'])
