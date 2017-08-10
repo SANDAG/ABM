@@ -25,6 +25,7 @@ import json as _json
 import shutil as _shutil
 import os
 import sys
+import tempfile
 
 join = os.path.join
 
@@ -49,6 +50,8 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         self.properties_path = os.path.join(
             os.path.dirname(project_dir), "conf", "sandag_abm.properties")
         self.scenario_id = 100
+        self.scenario_title = ""
+        self.emmebank_title = ""
         self.num_processors = "MAX-1"
         self.attributes = ["main_directory", "scenario_id", "scenario_title", "emmebank_title", "num_processors"]
         self._properties = None
@@ -125,7 +128,8 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         import_transit_demand = modeller.tool("sandag.import.import_transit_demand")
         export_traffic_skims = modeller.tool("sandag.export.export_traffic_skims")
         export_transit_skims = modeller.tool("sandag.export.export_transit_skims")
-        export_data = modeller.tool("sandag.export.export_to_csv_for_SQL")
+        export_network_data = modeller.tool("sandag.export.export_data_loader_network")
+        export_matrix_data = modeller.tool("sandag.export.export_data_loader_matrices")
 
         utils = modeller.module('sandag.utilities.demand')
         load_properties = modeller.tool('sandag.utilities.properties')
@@ -209,7 +213,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                 base_scenario = import_network(
                     source=input_dir,
                     merged_scenario_id=scenario_id, 
-                    description=scenario_title,
+                    title=scenario_title,
                     data_table_name=str(scenarioYear),
                     overwrite=True,
                     emmebank=main_emmebank)
@@ -293,12 +297,12 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
 
                 # move some trip matrices so run will stop if ctramp model
                 # doesn't produced csv/omx (mtx) files for assignment
-                # TODO: is this needed otherwise? there might be a better approach
+                # Note: is this needed otherwise? there might be a better approach
                 if (msa_iteration > startFromIteration):
                     self.move_files(
                         ["auto*.mtx", "tran*.mtx", "nmot*.mtx", "othr*.mtx", 
                          "trip*.mtx", "*Trips.csv", "*airport_out.csv"],
-                        output_dir, join(output_dir, "iter%s" % (msa_iteration)))
+                        output_dir, join(output_dir, "iter%s" % (iteration)))
 
                 if not skipCoreABM[iteration]:
                     self.run_proc(
@@ -332,6 +336,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                 if not skipTripTableCreation[iteration]:
                     import_auto_demand(output_dir, external_zones, num_processors, base_scenario)
 
+        msa_iteration = len(sample_rate)
         if not skipFinalHighwayAssignment or not skipFinalHighwaySkimming:
             with _m.logbook_trace("Final traffic assignments"):
                 relative_gap = props["convergence"]
@@ -361,7 +366,8 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                     export_transit_skims(omx_file, transit_scenario)
 
         if not skipDataExport:
-            export_data(main_directory, main_emmebank, transit_emmebank, num_processors)
+            export_network_data(main_directory, scenario_id, main_emmebank, transit_emmebank, num_processors)
+            export_matrix_data(output_dir, base_scenario, transit_scenario, num_processors)
             # export core ABM data
             self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data")
         if not skipDataLoadRequest:
@@ -373,7 +379,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         if not skipDeleteIntermediateFiles:
             for msa_iteration in range(startFromIteration, end_iteration + 1):
                 self.delete_files(
-                    ["auto*.omx", "tran*.omx", "nmot*.omx", "othr*.omx", "trip*.omx"],
+                    ["auto*.mtx", "tran*.mtx", "nmot*.mtx", "othr*.mtx", "trip*.mtx"],
                     join(output_dir, "iter%s" % (msa_iteration)))
 
     def run_proc(self, name, arguments, log_message, capture_output=False):
@@ -383,19 +389,30 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         command = path + " " + " ".join([str(x) for x in arguments])
         attrs = {"command": command, "name": name, "arguments": arguments}
         with _m.logbook_trace(log_message, attributes=attrs):
-            if capture_output:
-                report = _m.PageBuilder(title="Process run %s" % name)
-                report.add_html('Command:<br><br><div class="preformat">%s</div><br>Output:<br><br>' % command)
-                try:
-                    output = _subprocess.check_output(command, shell=True)
-                    report.add_html('<div class="preformat">%s</div>' % output)
-                    _m.logbook_write("Process run %s report" % name, report.render())
-                except _subprocess.CalledProcessError as error:
-                    report.add_html('<div class="preformat">%s</div>' % error.output)
-                    _m.logbook_write("Process run %s report" % name, report.render())
-                    raise
-            else:
-                _subprocess.check_call(command, shell=True)
+            report = _m.PageBuilder(title="Process run %s" % name)
+            report.add_html('Command:<br><br><div class="preformat">%s</div><br>' % command)
+            # temporary file to capture output error messages generated by Java
+            err_file_ref, err_file_path = tempfile.mkstemp(suffix='.log')
+            err_file = os.fdopen(err_file_ref, "w")
+            try:
+                if capture_output:
+                    try:
+                        output = _subprocess.check_output(command, stderr=err_file, shell=True)
+                        report.add_html('Output:<br><br><div class="preformat">%s</div>' % output)
+                        _m.logbook_write("Process run %s report" % name, report.render())
+                    except _subprocess.CalledProcessError as error:
+                        report.add_html('Output:<br><br><div class="preformat">%s</div>' % error.output)
+                        raise
+                else:
+                    _subprocess.check_call(command, shell=True, stderr=err_file)
+            finally:
+                err_file.close()
+                with open(err_file_path, 'r') as f:
+                    error_msg = f.read()
+                os.remove(err_file_path)
+                if error_msg:
+                    report.add_html('Error message:<br><br><div class="preformat">%s</div>' % error_msg)
+                _m.logbook_write("Process run %s report" % name, report.render())
 
     @_m.logbook_trace("Check free space on C")
     def check_free_space(self, min_space):
