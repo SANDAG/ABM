@@ -113,6 +113,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
     def run(self):
         self.tool_run_msg = ""
         try:
+            self.emmebank = _m.Modeller().emmebank
             with self.setup():
                 self.execute()
             run_msg = "Network import complete"
@@ -327,12 +328,18 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         if self.traffic_scenario_id:
             traffic_scenario = create_scenario(self.traffic_scenario_id, title + " Traffic", 
                                                overwrite=self.overwrite, emmebank=self.emmebank)
+        else:
+            traffic_scenario = None
         if self.transit_scenario_id:
             transit_scenario = create_scenario(self.transit_scenario_id, title + " Transit", 
                                                overwrite=self.overwrite, emmebank=self.emmebank)
+        else:
+            transit_scenario = None
         if self.merged_scenario_id:
             scenario = create_scenario(self.merged_scenario_id, title, 
                                        overwrite=self.overwrite, emmebank=self.emmebank)
+        else:
+            scenario = traffic_scenario or transit_scenario
 
         if self.traffic_scenario_id or self.merged_scenario_id:
             self._log.append({
