@@ -94,11 +94,11 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
         # traffic_demand:           101 to 200
         # transit_demand:           201 to 275
         # traffic_skims:            301 to 555
-        # transit_skims:            561 to 720
-        # truck_model:              730 to 756
-        # commercial_vehicle_model: 757 to 774
-        # external_internal_model:  775 to 835
-        # external_external_model:  837 to 853
+        # transit_skims:            561 to 744
+        # truck_model:              750 to 
+        # commercial_vehicle_model: 7 to 
+        # external_internal_model:  7 to 800
+        # external_external_model:  860 to 
 
     @_m.logbook_trace("Traffic demand matrices")
     def traffic_demand(self):
@@ -119,9 +119,9 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             (14, "TRKMTOLL",  "Truck Medium toll PCE demand"),
         ]
         index_start = 100
-        period_index = {"EA": 0, "AM": 20, "MD": 40, "PM": 60, "EV": 80}
+        period_offset = {"EA": 0, "AM": 20, "MD": 40, "PM": 60, "EV": 80}
         for period in self.periods:
-            p_index = period_index[period]
+            p_index = period_offset[period]
             with _m.logbook_trace("For period %s" % period):
                 for num, m_name, m_desc in matrices:
                     ident = "mf%s" % (index_start + p_index + num)
@@ -139,9 +139,9 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
         ]
         index_start = 200
         access_index = [("WLK", 0), ("PNR", 5), ("KNR", 10)]
-        period_index = {"EA": 0, "AM": 15, "MD": 30, "PM": 45, "EV": 60}
+        period_offset = {"EA": 0, "AM": 15, "MD": 30, "PM": 45, "EV": 60}
         for period in self.periods:
-            p_index = period_index[period]
+            p_index = period_offset[period]
             with _m.logbook_trace("For period %s" % period):
                 for a_name, a_index in access_index:
                     for num, m_name, m_desc in matrices:
@@ -205,10 +205,10 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             (50, "TRKMTOLL_TOLLCOST", "Truck Medium Toll toll cost $0.01"),
         ]
         index_start = 300
-        period_index = [("EA", 0), ("AM", 50), ("MD", 100), ("PM", 150), ("EV", 200)]
-        period_index = {"EA": 0, "AM": 50, "MD": 100, "PM": 150, "EV": 200}
+        period_offset = [("EA", 0), ("AM", 50), ("MD", 100), ("PM", 150), ("EV", 200)]
+        period_offset = {"EA": 0, "AM": 50, "MD": 100, "PM": 150, "EV": 200}
         for period in self.periods:
-            p_index = period_index[period]
+            p_index = period_offset[period]
             with _m.logbook_trace("For period %s" % period):
                 for num, m_name, m_desc in matrices:
                     ident = "mf%s" % (index_start + p_index + num)
@@ -241,30 +241,37 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             (10, "BUS_TOTALWALK",  "Local bus: total walk time"), 
             (11, "BUS_TOTALIVTT",  "Local bus: in-vehicle time"), 
             (12, "BUS_DWELLTIME",  "Local bus: dwell time"), 
-            (13, "ALL_GENCOST",    "All modes: total impedance"), 
-            (14, "ALL_FIRSTWAIT",  "All modes: first wait time"), 
-            (15, "ALL_XFERWAIT",   "All modes: transfer wait time"), 
-            (16, "ALL_TOTALWAIT",  "All modes: total wait time"), 
-            (17, "ALL_FARE",       "All modes: fare"), 
-            (18, "ALL_XFERS",      "All modes: num transfers"), 
-            (19, "ALL_ACCWALK",    "All modes: access walk time"), 
-            (20, "ALL_XFERWALK",   "All modes: transfer walk time"), 
-            (21, "ALL_EGRWALK",    "All modes: egress walk time"), 
-            (22, "ALL_TOTALWALK",  "All modes: total walk time"), 
-            (23, "ALL_TOTALIVTT",  "All modes: in-vehicle time"), 
-            (24, "ALL_DWELLTIME",  "All modes: dwell time"), 
-            (25, "ALL_BUSIVTT",    "All modes: local bus in-vehicle time"),
+            (13, "BUS_DIST",       "Local bus: IV distance"), 
+            (14, "ALL_GENCOST",    "All modes: total impedance"), 
+            (15, "ALL_FIRSTWAIT",  "All modes: first wait time"), 
+            (16, "ALL_XFERWAIT",   "All modes: transfer wait time"), 
+            (17, "ALL_TOTALWAIT",  "All modes: total wait time"), 
+            (18, "ALL_FARE",       "All modes: fare"), 
+            (19, "ALL_XFERS",      "All modes: num transfers"), 
+            (20, "ALL_ACCWALK",    "All modes: access walk time"), 
+            (21, "ALL_XFERWALK",   "All modes: transfer walk time"), 
+            (22, "ALL_EGRWALK",    "All modes: egress walk time"), 
+            (23, "ALL_TOTALWALK",  "All modes: total walk time"), 
+            (24, "ALL_TOTALIVTT",  "All modes: in-vehicle time"), 
+            (25, "ALL_DWELLTIME",  "All modes: dwell time"), 
+            (26, "ALL_BUSIVTT",    "All modes: local bus in-vehicle time"),
             (27, "ALL_LRTIVTT",    "All modes: LRT in-vehicle time"),
             (28, "ALL_CMRIVTT",    "All modes: Rail in-vehicle time"),
             (29, "ALL_EXPIVTT",    "All modes: Express in-vehicle time"),
             (30, "ALL_LTDEXPIVTT", "All modes: Ltd exp bus in-vehicle time"),
             (31, "ALL_BRTREDIVTT", "All modes: BRT red in-vehicle time"),
             (32, "ALL_BRTYELIVTT", "All modes: BRT yellow in-vehicle time"),
+            (33, "ALL_BUSDIST",    "All modes: Bus IV distance"), 
+            (34, "ALL_LRTDIST",    "All modes: LRT IV distance"), 
+            (35, "ALL_CMRDIST",    "All modes: Rail IV distance"), 
+            (36, "ALL_EXPDIST",    "All modes: Express and Ltd IV distance"), 
+            (37, "ALL_BRTDIST",    "All modes: BRT red and yel IV distance"), 
+            (38, "ALL_MAINMODE",   "All modes: main mode of travel from IVTT"), 
         ]
         index_start = 560
-        period_index = {"EA": 0, "AM": 32, "MD": 64, "PM": 96, "EV": 128}
+        period_offset = {"EA": 0, "AM": 38, "MD": 76, "PM": 114, "EV": 152}
         for period in self.periods:
-            p_index = period_index[period]
+            p_index = period_offset[period]
             with _m.logbook_trace("For period %s" % period):
                 for num, m_name, m_desc in matrices:
                     ident = "mf%s" % (index_start + p_index + num)
@@ -279,7 +286,7 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             ( 4, "TRKEI",   "Truck external-internal"), 
             ( 5, "TRKIE",   "Truck internal-external"), 
         ]
-        index_start = 730
+        index_start = 750
         for num, m_name, m_desc in matrices:
             ident = (index_start + num)
             self.create_matrix('mo%s' % ident, m_name + '_PROD', m_desc + ' production')
@@ -298,7 +305,7 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             (10, "TRKIE_DEMAND",     "Truck internal-external total demand"), 
             (11, "TRKEI_DEMAND",     "Truck external-internal total demand"), 
         ]
-        index_start = 730
+        index_start = 750
         for num, m_name, m_desc in matrices:
             self.create_matrix('mf%s' % (index_start + num), m_name, m_desc)
 
@@ -307,10 +314,10 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             ( 2, "TRKM",    "Medium truck demand"),
             ( 3, "TRKH",    "Heavy truck demand"), 
         ]
-        index_start = 741
-        period_index = {"EA": 0, "AM": 3, "MD": 6, "PM": 9, "EV": 12}
+        index_start = 762
+        period_offset = {"EA": 0, "AM": 3, "MD": 6, "PM": 9, "EV": 12}
         for period in self.periods:
-            p_index = period_index[period]
+            p_index = period_offset[period]
             with _m.logbook_trace("For period %s" % period):
                 for num, m_name, m_desc in matrices:
                     ident = 'mf%s' % (index_start + p_index + num)
@@ -321,9 +328,9 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
         matrices = [
             ('mo757', 'COMMVEH_PROD',         'Commercial vehicle production'),
             ('md757', 'COMMVEH_ATTR',         'Commercial vehicle attraction'),
-            ('mf757', 'COMMVEH_BLENDED_SKIM', 'Commercial vehicle blended skim'),
-            ('mf758', 'COMMVEH_FRICTION',     'Commercial vehicle friction factors'),
-            ('mf759', 'COMMVEH_TOTAL_DEMAND', 'Commercial vehicle total demand all periods'),
+            ('mf778', 'COMMVEH_BLENDED_SKIM', 'Commercial vehicle blended skim'),
+            ('mf779', 'COMMVEH_FRICTION',     'Commercial vehicle friction factors'),
+            ('mf780', 'COMMVEH_TOTAL_DEMAND', 'Commercial vehicle total demand all periods'),
         ]
         for ident, name, desc in matrices:
             self.create_matrix(ident, name, desc)
@@ -332,10 +339,10 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             ( 2, 'COMVEHGP',   'Commerical vehicle Toll demand'),
             ( 3, 'COMVEHTOLL', 'Commerical vehicle GP demand'),
         ]
-        index_start = 759
-        period_index = {"EA": 0, "AM": 3, "MD": 6, "PM": 9, "EV": 12}
+        index_start = 780
+        period_offset = {"EA": 0, "AM": 3, "MD": 6, "PM": 9, "EV": 12}
         for period in self.periods:
-            p_index = period_index[period]
+            p_index = period_offset[period]
             with _m.logbook_trace("For period %s" % period):
                 for num, m_name, m_desc in matrices:
                     ident = 'mf%s' % (index_start + p_index + num)
@@ -357,30 +364,29 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             (11, 'HOV2HOV_EINONWORK', 'US to SD HOV2 Non-Work HOV demand'),
             (12, 'HOV3HOV_EINONWORK', 'US to SD HOV3 Non-Work HOV demand'),
         ]
-        index_start = 775
-        period_index = {"EA": 0, "AM": 12, "MD": 24, "PM": 36, "EV": 48}
+        index_start = 795
+        period_offset = {"EA": 0, "AM": 12, "MD": 24, "PM": 36, "EV": 48}
         for period in self.periods:
-            p_index = period_index[period]
+            p_index = period_offset[period]
             with _m.logbook_trace("For period %s" % period):
                 for num, m_name, m_desc in matrices:
                     ident = 'mf%s' % (index_start + p_index + num)
                     self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
 
-
     @_m.logbook_trace("External-external sub-model matrices")
     def external_external_model(self):
         self.create_matrix(
-            "mf836", "ALL_TOTAL_EETRIPS", 
+            "mf856", "ALL_TOTAL_EETRIPS", 
             "All periods Total for all modes external-external trips")
         matrices = [
             ( 1, 'SOVGP_EETRIPS',    'SOVGP external-external demand'),
             ( 2, 'HOV2HOV_EETRIPS',  'HOV2HOV external-external demand'),
             ( 3, 'HOV3HOV_EETRIPS',  'HOV3HOV external-external demand'),
         ]
-        index_start = 837
-        period_index = {"EA": 0, "AM": 3, "MD": 6, "PM": 9, "EV": 12}
+        index_start = 856
+        period_offset = {"EA": 0, "AM": 3, "MD": 6, "PM": 9, "EV": 12}
         for period in self.periods:
-            p_index = period_index[period]
+            p_index = period_offset[period]
             with _m.logbook_trace("For period %s" % period):
                 for num, m_name, m_desc in matrices:
                     ident = 'mf%s' % (index_start + p_index + num)
