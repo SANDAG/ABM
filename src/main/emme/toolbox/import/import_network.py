@@ -113,7 +113,6 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
     def run(self):
         self.tool_run_msg = ""
         try:
-            self.emmebank = _m.Modeller().emmebank
             with self.setup():
                 self.execute()
             run_msg = "Network import complete"
@@ -293,7 +292,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("DWELLTIME",      ("default_dwell_time", "MODE5TOD", "INTERNAL", "")),
                 ("Fare",           ("@fare",              "TRRT",     "EXTRA",    "Boarding fare ($)")),
                 ("@transfer_penalty",("@transfer_penalty","DERIVED",  "EXTRA",    "Transfer penalty (min)")),
-                ("Route_ID",       ("route_id",           "TRRT",     "INTERNAL", "")),
+                ("Route_ID",       ("@route_id",          "TRRT",     "EXTRA",    "Transit line internal ID")),
                 ("Night_Hours",    ("@night_hours",       "TRRT",     "EXTRA",    "Night hours")),
                 ("Config",         ("@config",            "TRRT",     "EXTRA",    "Config ID (same as route name)")),
             ]),
@@ -321,7 +320,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         title = self.title
         if not title:
-            existing_scenario = emmebank.scenario(self.merged_scenario_id)
+            existing_scenario = self.emmebank.scenario(self.merged_scenario_id)
             if existing_scenario:
                 title = existing_scenario.title
 
