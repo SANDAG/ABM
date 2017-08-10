@@ -20,6 +20,7 @@ import inro.emme.datatable as _dt
 import omx as _omx
 from osgeo import ogr as _ogr
 from contextlib import contextmanager as _context
+from collections import OrderedDict
 from itertools import izip as _izip
 import traceback as _traceback
 import re as _re
@@ -230,7 +231,6 @@ def log_snapshot(name, namespace, snapshot):
 def export_to_omx(matrices, export_file, scenario, omx_key="ID_NAME"):
     emmebank = scenario.emmebank
     n_zones = len(scenario.zone_numbers)
-    matrices = [emmebank.matrix(m) for m in matrices]
 
     text_encoding = emmebank.text_encoding
     if omx_key == "ID_NAME":
@@ -240,12 +240,24 @@ def export_to_omx(matrices, export_file, scenario, omx_key="ID_NAME"):
         generate_key = lambda m: m.name.encode(text_encoding)
     elif omx_key == "ID":
         generate_key = lambda m: m.id.encode(text_encoding)
+    if isinstance(matrices, list):
+        matrices = OrderedDict([(generate_key(emmebank.matrix(m)), m) for m in matrices])
 
     omx_file = _omx.openFile(export_file, 'w')
     try:
         n_matrices = len(matrices)
-        for matrix in matrices:
-            numpy_array = matrix.get_numpy_data(scenario.id).astype(dtype="float64", copy=False)
+        for key, matrix_name in matrices.iteritems():
+            if isinstance(matrix_name, list):
+                matrix = emmebank.matrix(matrix_name[0])
+                numpy_array = matrix.get_numpy_data(scenario.id)
+                for name in matrix_name[1:]:
+                    matrix = emmebank.matrix(name)
+                    numpy_array = numpy_array + matrix.get_numpy_data(scenario.id)
+            else:
+                matrix = emmebank.matrix(matrix_name)
+                numpy_array = matrix.get_numpy_data(scenario.id)
+            numpy_array = numpy_array.astype(dtype="float64", copy=False)
+
             if matrix.type == "DESTINATION":
                 numpy_array = _numpy.resize(numpy_array, (1, n_zones))
                 chunkshape = None
@@ -254,7 +266,6 @@ def export_to_omx(matrices, export_file, scenario, omx_key="ID_NAME"):
                 chunkshape = None
             else:
                 chunkshape = (1, numpy_array.shape[0])
-            key = generate_key(matrix)
             attrs = {
                 "description": matrix.description.encode(text_encoding),
                 "source": "Emme"}
