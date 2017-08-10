@@ -319,9 +319,9 @@ Export network results to csv files for SQL data loader."""
             if not auto_mode in link.modes or (reverse_link and not auto_mode in reverse_link.modes):
                 continue
             key, att = att_list[0]     #link id
-            link_id = link[att]
+            link_id = int(link[att])
             if link_id == 0:
-                link_id = link.i_node.number * 100000 + link.j_node.number
+                link_id = int(link.i_node.number * 100000 + link.j_node.number)
             values = [link_id]
             for key, att in att_list[1:]:
                 # special for highway atts
@@ -525,9 +525,8 @@ Export network results to csv files for SQL data loader."""
                 transit_flow = seg[segment_flow.id]
                 cost = baseivtt = seg.transit_time
                 fout_seg.write(",".join([str(x) for x in [
-                                mode, access_type, tod,
-                                line.id, from_stop, to_stop, centroid, frommp, tomp,
-                                transit_flow, baseivtt, cost]]))
+                                mode, access_type, tod, line["@route_id"], from_stop, to_stop,
+                                centroid, frommp, tomp, transit_flow, baseivtt, cost]]))
                 fout_seg.write("\n")
 
     def output_transit_aggregate_flow(self, mode, access_type, tod, links,
@@ -598,7 +597,7 @@ Export network results to csv files for SQL data loader."""
 
                 egress_off = seg[final_alightings.id]
                 fout_stop.write(",".join([str(x) for x in [
-                                mode, access_type, tod, line.id, stop,
+                                mode, access_type, tod, line["@route_id"], stop,
                                 boardings, alightings, walk_access_on,
                                 direct_xfer_on, walk_xfer_on, direct_xfer_off, walk_xfer_off,
                                 egress_off]]))
