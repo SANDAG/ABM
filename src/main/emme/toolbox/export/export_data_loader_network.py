@@ -119,12 +119,15 @@ Export network results to csv files for SQL data loader."""
 
         auto_mode_id = "d"
         result_scenario_id = base_scenario.number + 6
+        ##cojur, costat, rloop, adtlk, adtvl: attributes not imported, export zero value columns
         hwylink_atts = [
             ("ID", "@tcov_id"),
             ("Length", "length"), ("SPHERE", "@sphere"),
             ("NM", "#name"),
             ("FXNM", "#name_from"), ("TXNM", "#name_to"),
             ("AN", "i"), ("BN", "j"),
+            ("COJUR", "zero"), ("COSTAT", "zero"), ("COLOC", "zero"),
+            ("RLOOP", "zero"), ("ADTLK", "zero"), ("ADTLV", "zero"),
             ("ASPD", "@speed_adjusted"), ("IYR", "@year_open_traffic"),
             ("IPROJ", "@project_code"), ("IJUR", "@jurisdiction_type"),
             ("IFC", "type"), ("IHOV", "@lane_restriction"),
@@ -225,6 +228,7 @@ Export network results to csv files for SQL data loader."""
             copy_attribute(from_attribute_name=src_att, to_attribute_name=dst_att,
                            from_scenario=from_scenario, to_scenario=result_scenario)
         net = result_scenario.get_partial_network(["LINK"], include_attributes=True)
+        net.create_attribute("LINK", "zero", 0)
         auto_mode = net.mode(auto_mode_id)
         # Get all the original forward direction links
         links = [link for link in net.links() if link["@tcov_id"] > 0]
@@ -513,6 +517,7 @@ Export network results to csv files for SQL data loader."""
     def output_transit_flow(self, mode, access_type, tod, lines, segment_flow, fout_seg):
         # output segment data (transit_flow)
         for line in lines:
+            line_id = int(line["@route_id"])
             total_length = 0
             for seg in line.segments():
                 total_length += seg.link.length
@@ -525,7 +530,7 @@ Export network results to csv files for SQL data loader."""
                 transit_flow = seg[segment_flow.id]
                 cost = baseivtt = seg.transit_time
                 fout_seg.write(",".join([str(x) for x in [
-                                mode, access_type, tod, line["@route_id"], from_stop, to_stop,
+                                mode, access_type, tod, line_id, from_stop, to_stop,
                                 centroid, frommp, tomp, transit_flow, baseivtt, cost]]))
                 fout_seg.write("\n")
 
@@ -573,6 +578,7 @@ Export network results to csv files for SQL data loader."""
                              stop_on, stop_off, fout_stop):
         # output stop data (transit_onoff)
         for line in lines:
+            line_id = int(line["@route_id"])
             for seg in line.segments(True):
                 if not (seg.allow_alightings or seg.allow_boardings):
                     continue
@@ -597,7 +603,7 @@ Export network results to csv files for SQL data loader."""
 
                 egress_off = seg[final_alightings.id]
                 fout_stop.write(",".join([str(x) for x in [
-                                mode, access_type, tod, line["@route_id"], stop,
+                                mode, access_type, tod, line_id, stop,
                                 boardings, alightings, walk_access_on,
                                 direct_xfer_on, walk_xfer_on, direct_xfer_off, walk_xfer_off,
                                 egress_off]]))
