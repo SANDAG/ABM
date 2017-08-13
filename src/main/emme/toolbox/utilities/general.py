@@ -20,7 +20,6 @@ import inro.emme.datatable as _dt
 import omx as _omx
 from osgeo import ogr as _ogr
 from contextlib import contextmanager as _context
-from collections import OrderedDict
 from itertools import izip as _izip
 import traceback as _traceback
 import re as _re
@@ -225,57 +224,83 @@ def log_snapshot(name, namespace, snapshot):
                             value=_json.dumps(snapshot))
     except Exception as error:
         print error
-        
-        
-@_m.logbook_trace(name="Export matrices to OMX", save_arguments=True)
-def export_to_omx(matrices, export_file, scenario, omx_key="ID_NAME"):
-    emmebank = scenario.emmebank
-    n_zones = len(scenario.zone_numbers)
 
-    text_encoding = emmebank.text_encoding
-    if omx_key == "ID_NAME":
-        generate_key = lambda m: "%s_%s" % (
-            m.id.encode(text_encoding), m.name.encode(text_encoding))
-    elif omx_key == "NAME":
-        generate_key = lambda m: m.name.encode(text_encoding)
-    elif omx_key == "ID":
-        generate_key = lambda m: m.id.encode(text_encoding)
-    if isinstance(matrices, list):
-        matrices = OrderedDict([(generate_key(emmebank.matrix(m)), m) for m in matrices])
 
-    omx_file = _omx.openFile(export_file, 'w')
-    try:
-        n_matrices = len(matrices)
-        for key, matrix_name in matrices.iteritems():
-            if isinstance(matrix_name, list):
-                matrix = emmebank.matrix(matrix_name[0])
-                numpy_array = matrix.get_numpy_data(scenario.id)
-                for name in matrix_name[1:]:
-                    matrix = emmebank.matrix(name)
-                    numpy_array = numpy_array + matrix.get_numpy_data(scenario.id)
-            else:
-                matrix = emmebank.matrix(matrix_name)
-                numpy_array = matrix.get_numpy_data(scenario.id)
-            numpy_array = numpy_array.astype(dtype="float64", copy=False)
+class ExportOMX(object):
+    def __init__(self, file_path, scenario, omx_key="NAME"):
+        self.file_path = file_path
+        self.scenario = scenario
+        self.emmebank = scenario.emmebank
+        self.omx_key = omx_key
 
-            if matrix.type == "DESTINATION":
-                numpy_array = _numpy.resize(numpy_array, (1, n_zones))
-                chunkshape = None
-            elif matrix.type == "ORIGIN":
-                numpy_array = _numpy.resize(numpy_array, (n_zones, 1))
-                chunkshape = None
-            else:
-                chunkshape = (1, numpy_array.shape[0])
-            attrs = {
-                "description": matrix.description.encode(text_encoding),
-                "source": "Emme"}
-            omx_matrix = omx_file.createMatrix(
-                key, obj=numpy_array, chunkshape=chunkshape, attrs=attrs)
+    @property
+    def omx_key(self):
+        return self._omx_key
+
+    @omx_key.setter
+    def omx_key(self, omx_key):
+        self._omx_key = omx_key
+        text_encoding = self.emmebank.text_encoding
+        if omx_key == "ID_NAME":
+            self.generate_key = lambda m: "%s_%s" % (
+                m.id.encode(text_encoding), m.name.encode(text_encoding))
+        elif omx_key == "NAME":
+            self.generate_key = lambda m: m.name.encode(text_encoding)
+        elif omx_key == "ID":
+            self.generate_key = lambda m: m.id.encode(text_encoding)
+
+    def __enter__(self):
+        self.trace = _m.logbook_trace(name="Export matrices to OMX", 
+            attributes={
+                "file_path": self.file_path, "omx_key": self.omx_key,
+                "scenario": self.scenario, "emmebank": self.emmebank.path})
+        self.trace.__enter__()
+        self.omx_file = _omx.openFile(self.file_path, 'w')
         try:
-            omx_file.createMapping('zone_number', scenario.zone_numbers)
+            self.omx_file.createMapping('zone_number', self.scenario.zone_numbers)
         except LookupError:
             pass
+        return self
 
-    finally:
-        omx_file.close()
-    return
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.omx_file.close()
+        self.trace.__exit__(exc_type, exc_val, exc_tb)
+
+    def write_matrices(self, matrices):
+        if isinstance(matrices, dict):
+            for key, matrix in matrices.iteritems():
+                self.write_matrix(matrix, key)
+        else:
+            for matrix in matrices:
+                self.write_matrix(matrix)
+
+    def write_matrix(self, matrix, key=None):
+        text_encoding = self.emmebank.text_encoding
+        matrix = self.emmebank.matrix(matrix)
+        if key is None:
+            key = self.generate_key(matrix)
+        numpy_array = matrix.get_numpy_data(self.scenario.id)
+        if matrix.type == "DESTINATION":
+            numpy_array = _numpy.resize(numpy_array, (1, n_zones))
+        elif matrix.type == "ORIGIN":
+            numpy_array = _numpy.resize(numpy_array, (n_zones, 1))
+        attrs = {"description": matrix.description.encode(text_encoding)}
+        self.write_array(numpy_array, key, attrs)
+
+    def write_clipped_array(self, numpy_array, key, a_min, a_max=None, attrs={}):
+        if a_max is not None:
+            numpy_array = numpy_array.clip(a_min, a_max)
+        else:
+            numpy_array = numpy_array.clip(a_min)
+        self.write_array(numpy_array, key, attrs)
+
+    def write_array(self, numpy_array, key, attrs={}):
+        shape = numpy_array.shape
+        if len(shape) == 2:
+            chunkshape = (1, shape[0])
+        else:
+            chunkshape = None
+        attrs["source"] = "Emme"
+        numpy_array = numpy_array.astype(dtype="float64", copy=False)
+        omx_matrix = self.omx_file.createMatrix(
+            key, obj=numpy_array, chunkshape=chunkshape, attrs=attrs)

@@ -20,6 +20,7 @@ import inro.emme.database.emmebank as _eb
 import traceback as _traceback
 from collections import OrderedDict
 import os
+import numpy
 import warnings
 import tables
 
@@ -34,7 +35,6 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
     output_dir = _m.Attribute(str)
     base_scenario_id = _m.Attribute(int)
     transit_scenario_id = _m.Attribute(int)
-    num_processors = _m.Attribute(str)
 
     tool_run_msg = ""
 
@@ -43,8 +43,8 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
         self.output_dir = os.path.join(os.path.dirname(project_dir), "output")
         self.base_scenario_id = 100
         self.transit_scenario_id = 100
-        self.num_processors = "MAX-1"
-        self.attributes = ["main_directory", "base_scenario_id", "transit_scenario_id", "num_processors"]
+        self.periods = ["EA", "AM", "MD", "PM", "EV"]
+        self.attributes = ["main_directory", "base_scenario_id", "transit_scenario_id"]
 
     def page(self):
         pb = _m.ToolPageBuilder(self)
@@ -61,9 +61,6 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
 
         pb.add_text_box('base_scenario_id', title="Base scenario ID:", size=10)
         pb.add_text_box('transit_scenario_id', title="Transit scenario ID:", size=10)
-
-        dem_utils.add_select_processors("num_processors", pb, self)
-
         return pb.render()
 
     def run(self):
@@ -75,7 +72,7 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
             base_scenario = base_emmebank.scenario(self.base_scenario_id)
             transit_scenario = transit_emmebank.scenario(self.transit_scenario_id)
             
-            results = self(self.output_dir, base_scenario, transit_scenario, self.num_processors)
+            results = self(self.output_dir, base_scenario, transit_scenario)
             run_msg = "Export completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -84,7 +81,7 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
             raise
             
     @_m.logbook_trace("Export matrices for Data Loader", save_arguments=True)
-    def __call__(self, output_dir, base_scenario, transit_scenario, num_processors):
+    def __call__(self, output_dir, base_scenario, transit_scenario):
         attrs = {
             "output_dir": output_dir,
             "base_scenario_id": base_scenario.id,
@@ -92,48 +89,56 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
             "self": str(self)
         }
         gen_utils.log_snapshot("Export Matrices for Data Loader", str(self), attrs)
-        num_processors = dem_utils.parse_num_processors(num_processors)
-        matrix_calc = _m.Modeller().tool(
-            "inro.emme.matrix_calculation.matrix_calculator")
-        export_to_omx = gen_utils.export_to_omx
-        periods = ["EA", "AM", "MD", "PM", "EV"]
+        self.output_dir = output_dir
+        self.base_scenario = base_scenario
+        self.transit_scenario = transit_scenario
 
-        with _m.logbook_trace("Commercial vehicle demand"):
-            omx_file = os.path.join(output_dir, "commVehTODTrips")
-            base_map = [("Trips", "COMMVEH"), ("NonToll", "COMVEHGP"), ("Toll", "COMVEHTOLL")]
+        self.commercial_vehicle_demand()
+        self.truck_demand()
+        self.external_demand()
+        self.transit_skims()
+        self.traffic_skims()
+
+    @_m.logbook_trace("Export commercial vehicle demand")
+    def commercial_vehicle_demand(self):
+        omx_file = os.path.join(self.output_dir, "commVehTODTrips")
+        name_mapping = [("Trips", "COMMVEH"), ("NonToll", "COMVEHGP"), ("Toll", "COMVEHTOLL")]
+        matrices = OrderedDict()
+        for period in self.periods:
+            for key, name in name_mapping:
+                matrices[period + " " + key] = (period + "_" + name)
+        matrices["OD Trips"] = "COMMVEH_TOTAL_DEMAND"
+        with gen_utils.ExportOMX(omx_file, self.base_scenario) as exporter:
+            exporter.write_matrices(matrices)
+
+    @_m.logbook_trace("Export truck demand")
+    def truck_demand(self):
+        for period in self.periods:
+            omx_file = os.path.join(self.output_dir, "Trip_" + period)
+            name_mapping = [
+                ("lhdn", "TRKLGP"),
+                ("mhdn", "TRKMGP"),
+                ("hhdn", "TRKHGP"),
+                ("lhdt", "TRKLTOLL"),
+                ("mhdt", "TRKMTOLL"),
+                ("hhdt", "TRKHTOLL"),
+            ]
             matrices = OrderedDict()
-            for period in periods:
-                for key, name in base_map:
-                    matrices[period + " " + key] = (period + "_" + name)
-            matrices["OD Trips"] = "COMMVEH_TOTAL_DEMAND"
-            export_to_omx(matrices, omx_file, base_scenario)
+            for key, name in name_mapping:
+                matrices[key] = (period + "_" + name)
+            with gen_utils.ExportOMX(omx_file, self.base_scenario) as exporter:
+                exporter.write_matrices(matrices)
 
-        with _m.logbook_trace("Export truck demand"):
-            for period in periods:
-                omx_file = os.path.join(output_dir, "Trip_" + period)
-                base_map = [
-                    ("lhdn", "TRKLGP"),
-                    ("mhdn", "TRKMGP"),
-                    ("hhdn", "TRKHGP"),
-                    ("lhdt", "TRKLTOLL"),
-                    ("mhdt", "TRKMTOLL"),
-                    ("hhdt", "TRKHTOLL"),
-                ]
-                matrices = OrderedDict()
-                for key, name in base_map:
-                    matrices[key] = (period + "_" + name)
-                export_to_omx(matrices, omx_file, base_scenario)
-
+    def external_demand(self):
         with _m.logbook_trace("Export external-external demand"):
-            omx_file = os.path.join(output_dir, "externalExternalTrips")
-            matrices = {"Trips": "ALL_TOTAL_EETRIPS"}
-            export_to_omx(matrices, omx_file, base_scenario)
-
+            omx_file = os.path.join(self.output_dir, "externalExternalTrips")
+            with gen_utils.ExportOMX(omx_file, self.base_scenario) as exporter:
+                exporter.write_matrices({"Trips": "ALL_TOTAL_EETRIPS"})
         with _m.logbook_trace("Export external-internal demand"):
             for file_name, purpose in [("Wrk", "EIWORK"), ("Non", "EINONWORK")]:
-                for period in periods:
-                    omx_file = os.path.join(output_dir, "usSd" + file_name + "_" + period)
-                    base_map = [
+                for period in self.periods:
+                    omx_file = os.path.join(self.output_dir, "usSd" + file_name + "_" + period)
+                    name_mapping = [
                         ("DAN", "SOVGP"),
                         ("DAT", "SOVTOLL"),
                         ("S2N", "HOV2HOV"),
@@ -142,183 +147,158 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                         ("S3T", "HOV3TOLL"),
                     ]
                     matrices = OrderedDict()
-                    for key, name in base_map:
+                    for key, name in name_mapping:
                         matrices[key] = (period + "_" + name + "_" + purpose)
-                    export_to_omx(matrices, omx_file, base_scenario)
+                    with gen_utils.ExportOMX(omx_file, self.base_scenario) as exporter:
+                        exporter.write_matrices(matrices)
 
-        with _m.logbook_trace("Export transit skims"):
-            base_map = [
-                ("Walk Time", "BUS_TOTALWALK"),
-                ("Total IV Time", ["BUS_TOTALIVTT", "BUS_DWELLTIME"]),
-                ("Initial Wait Time", "BUS_FIRSTWAIT"),
-                ("Transfer Wait Time", "BUS_XFERWAIT"),
-                ("Fare", "BUS_FARE"),
-                ("Number of Transfers", "BUS_XFERS"),
-            ]
-            transit_emmebank = transit_scenario.emmebank
-            for period in periods:
+    @_m.logbook_trace("Export transit skims")
+    def transit_skims(self):
+        name_mapping = [
+            ("Walk Time", "_BUS_TOTALWALK"),
+            ("Initial Wait Time", "_BUS_FIRSTWAIT"),
+            ("Transfer Wait Time", "_BUS_XFERWAIT"),
+            ("Fare", "_BUS_FARE"),
+            ("Number of Transfers", "_BUS_XFERS"),
+        ]
+        transit_emmebank = self.transit_scenario.emmebank
+        for period in self.periods:
+            get_numpy_data = lambda name: transit_emmebank.matrix(period + name).get_numpy_data(self.transit_scenario)
+            omx_file = os.path.join(self.output_dir, "implocl_" + period + "o")
+            with gen_utils.ExportOMX(omx_file, self.transit_scenario) as exporter:
+                # cap  matrices to 999.99 - TODO: double check which matrices are required
+                for key, matrix_name in name_mapping:
+                    numpy_array = get_numpy_data(matrix_name)
+                    exporter.write_clipped_array(numpy_array, key, 0, 999.99)
+                ivtt = get_numpy_data("_BUS_TOTALIVTT")
+                dwell = get_numpy_data("_BUS_DWELLTIME")
+                exporter.write_clipped_array(ivtt+dwell, "Total IV Time", 0, 999.99)
+
+        name_mapping = [
+            ("Walk Time", "_ALL_TOTALWALK"),
+            ("Initial Wait Time", "_ALL_FIRSTWAIT"),
+            ("Transfer Wait Time", "_ALL_XFERWAIT"),
+            ("Fare", "_ALL_FARE"),
+            ("Number of Transfers", "_ALL_XFERS"),
+            ("Length:LB", "_ALL_BUSDIST"),
+            ("Length:LR", "_ALL_LRTDIST"),
+            ("Length:CR", "_ALL_CMRDIST"),
+            ("Length:EXP", "_ALL_EXPDIST"),
+            ("Length:BRT", "_ALL_BRTDIST"),
+        ]
+        for period in self.periods:
+            get_numpy_data = lambda name: transit_emmebank.matrix(period + name).get_numpy_data(self.transit_scenario)
+
+            bus_ivtt = get_numpy_data("_ALL_BUSIVTT")
+            brtred_ivtt = get_numpy_data("_ALL_BRTREDIVTT")
+            brtyel_ivtt = get_numpy_data("_ALL_BRTYELIVTT")
+            exp_ivtt = get_numpy_data("_ALL_EXPIVTT")
+            ltdexp_ivtt = get_numpy_data("_ALL_LTDEXPIVTT")
+            lrt_ivtt = get_numpy_data("_ALL_LRTIVTT")
+            cmr_ivtt = get_numpy_data("_ALL_CMRIVTT")
+            dwell_time = get_numpy_data("_ALL_DWELLTIME")
+            total_ivtt = get_numpy_data("_ALL_TOTALIVTT")
+
+            # Note: this is an approximation, the true dwell time could be skimmed directly                
+            sum_ivtt_dwell_modes = bus_ivtt + brtred_ivtt + brtyel_ivtt + exp_ivtt + ltdexp_ivtt
+            bus_ivtt = bus_ivtt * (1.0 + dwell_time / sum_ivtt_dwell_modes)
+            brtred_ivtt = brtred_ivtt * (1.0 + dwell_time / sum_ivtt_dwell_modes)
+            brtyel_ivtt = brtyel_ivtt * (1.0 + dwell_time / sum_ivtt_dwell_modes)
+            exp_ivtt = exp_ivtt * (1.0 + dwell_time / sum_ivtt_dwell_modes)
+            ltdexp_ivtt = ltdexp_ivtt * (1.0 + dwell_time / sum_ivtt_dwell_modes)
+
+            # Assign main mode of travel by IVTT
+            main_mode_matrix = transit_emmebank.matrix(period + "_ALL_MAINMODE")
+            main_mode_matrix.initialize(0)
+            main_mode = get_numpy_data("_ALL_MAINMODE")
+            max_non_exp_time = lrt_ivtt
+            for a2 in [cmr_ivtt, bus_ivtt, brtred_ivtt, brtyel_ivtt]:
+                max_non_exp_time = numpy.maximum(max_non_exp_time, a2)
+            prem_bus_ivtt = exp_ivtt + ltdexp_ivtt
+            main_mode = numpy.where((main_mode==0) & ((bus_ivtt>0.5*total_ivtt) ), 8, main_mode)
+            main_mode = numpy.where((main_mode==0) & ((exp_ivtt + ltdexp_ivtt)>max_non_exp_time), 7, main_mode)
+            main_mode = numpy.where((main_mode==0) & (lrt_ivtt>cmr_ivtt), 5, main_mode)
+            main_mode = numpy.where((main_mode==0), 4, main_mode)
+            main_mode = main_mode * ((total_ivtt>=0) & (total_ivtt<1000))
+            main_mode_matrix.set_numpy_data(main_mode, self.transit_scenario)
+
+            omx_file = os.path.join(self.output_dir, "impprem_" + period + "o")
+            with gen_utils.ExportOMX(omx_file, self.transit_scenario) as exporter:
+                # cap  matrices to 999.99 - TODO: double check which matrices are required
+                for key, matrix_name in name_mapping:
+                    numpy_array = get_numpy_data(matrix_name)
+                    exporter.write_clipped_array(numpy_array, key, 0, 999.99)
+                exporter.write_clipped_array(total_ivtt+dwell_time, "IVT:Sum", 0, 999.99)
+                exporter.write_clipped_array(bus_ivtt, "IVT:LB", 0, 999.99)
+                exporter.write_clipped_array(lrt_ivtt, "IVT:LR", 0, 999.99)
+                exporter.write_clipped_array(cmr_ivtt, "IVT:CR", 0, 999.99)
+                exporter.write_clipped_array(prem_bus_ivtt, "IVT:EXP", 0, 999.99)
+                exporter.write_clipped_array(brtred_ivtt+brtred_ivtt, "IVT:BRT", 0, 999.99)
+                exporter.write_array(main_mode, "Main Mode")
+                        
+    @_m.logbook_trace("Export traffic skims")
+    def traffic_skims(self):
+        emmebank = self.base_scenario.emmebank
+        get_numpy_data = lambda name: emmebank.matrix(name).get_numpy_data(self.base_scenario)
+        name_mapping = [
+            ("dan", "SOVGP", [
+                ("*SCST_{0}",           "GENCOST"),
+                ("*STM_{0} (Skim)",     "TIME"),
+                ("Length (Skim)",       "DIST")
+            ]),
+            ("dat", "SOVTOLL", [
+                ("*SCST_{0}",           "GENCOST"),
+                ("*STM_{0} (Skim)",     "TIME"),
+                ("Length (Skim)",       "DIST"),
+                ("dat_{0} - itoll_{0}", "TOLLCOST"),
+            ]),
+            ("s2nh", "HOV2HOV", [
+                ("*H2CST_{0}",          "GENCOST"),
+                ("*HTM_{0} (Skim)",     "TIME"),
+                ("Length (Skim)",       "DIST"),
+            ]),
+            ("s2th", "HOV2TOLL", [
+                ("*H2CST_{0}",          "GENCOST"),
+                ("*HTM_{0} (Skim)",     "TIME"),
+                ("Length (Skim)",       "DIST"),
+                ("s2t_{0} - itoll_{0}", "TOLLCOST"),
+            ]),
+            ("s3nh", "HOV3HOV", [
+                ("*H3CST_{0}",          "GENCOST"),
+                ("*HTM_{0} (Skim)",     "TIME"),
+                ("Length (Skim)",       "DIST"),
+            ]),
+            ("s3th", "HOV3TOLL", [
+                ("*H3CST_{0}",          "GENCOST"),
+                ("*HTM_{0} (Skim)",     "TIME"),
+                ("Length (Skim)",       "DIST"),
+                ("s3t_{0} - itoll_{0}", "TOLLCOST"),
+            ]),
+            ("hhdn", "TRKHGP", [
+                ("*SCST_{0}",           "GENCOST"),
+                ("*STM_{0} (Skim)",     "TIME"),
+                ("Length (Skim)",       "DIST")
+            ]),
+            ("hhdt", "TRKHTOLL", [
+                ("*SCST_{0}",           "GENCOST"),
+                ("*STM_{0} (Skim)",     "TIME"),
+                ("Length (Skim)",       "DIST"),
+                ("hhdt - ITOLL2_{0}",   "TOLLCOST"),
+            ]),
+        ]
+        for period in self.periods:
+            for file_name, mode, mat_mapping in name_mapping:
+                omx_file = os.path.join(self.output_dir, "imp" + file_name + "_" + period)
                 matrices = OrderedDict()
-                for key, name in base_map:
-                    if isinstance(name, list):
-                        pname = [period + "_" + n for n in name]
-                    else:
-                        pname = period + "_" + name
-                    matrices[key] = pname
-                omx_file = os.path.join(output_dir, "implocl_" + period + "o")
-                export_to_omx(matrices, omx_file, transit_scenario)
-
-            base_map = [
-                ("Walk Time", "ALL_TOTALWALK"),
-                ("IVT:Sum", ["ALL_TOTALIVTT", "ALL_DWELLTIME"]),
-                ("Initial Wait Time", "ALL_FIRSTWAIT"),
-                ("Transfer Wait Time", "ALL_XFERWAIT"),
-                ("Fare", "ALL_FARE"),
-                ("Number of Transfers", "ALL_XFERS"),
-                ("Length:LB", "ALL_BUSDIST"),
-                ("Length:LR", "ALL_LRTDIST"),
-                ("Length:CR", "ALL_CMRDIST"),
-                ("Length:EXP", "ALL_EXPDIST"),
-                ("Length:BRT", "ALL_BRTDIST"),
-                ("IVT:LB", "ALL_BUSIVTT"),
-                ("IVT:LR", "ALL_LRTIVTT"),
-                ("IVT:CR", "ALL_CMRIVTT"),
-                ("IVT:EXP", ["ALL_EXPIVTT", "ALL_LTDEXPIVTT"]),
-                ("IVT:BRT", ["ALL_BRTREDIVTT", "ALL_BRTYELIVTT"]),
-                ("Main Mode", "ALL_MAINMODE"),
-            ]
-
-            for period in periods:
-                dwell_mats = ["BUSIVTT", "BRTREDIVTT", "BRTYELIVTT", "EXPIVTT", "LTDEXPIVTT"]
-                dwell_mats = [period + "_ALL_" + m for m in dwell_mats]
-                backups = dict((m, transit_emmebank.matrix(m).get_data(transit_scenario)) for m in dwell_mats)
-                try:
-                    with _m.logbook_trace("Allocate dwell time"):
-                        # Note: this is an approximation, the true dwell time could be skimmed directly
-                        with gen_utils.temp_matrices(transit_emmebank, "FULL", 1) as matrices:
-                            matrices[0].name = "TEMP_SUM_IVTT"
-                            spec = {
-                                "type": "MATRIX_CALCULATION", "constraint": None,
-                                "result": 'mf"TEMP_SUM_IVTT"', 
-                                "expression": " + ".join(dwell_mats),
-                            }
-                            matrix_calc(spec, scenario=transit_scenario, num_processors=num_processors)
-                            for mat in dwell_mats:
-                                spec = {
-                                    "type": "MATRIX_CALCULATION", "constraint": None,
-                                    "result": 'mf"%s"' % mat, 
-                                    "expression": "{0} * (1.0 + {1}_ALL_DWELLTIME / TEMP_SUM_IVTT)".format(mat, period),
-                                }
-                                matrix_calc(spec, scenario=transit_scenario, num_processors=num_processors)
-                    with _m.logbook_trace("Assign main mode"):
-                        # Assign a main mode of travel by IVTT
-                        # if TOTAL == 0 or TOTAL > 999999: 0 ( -1 used as initial flag and replaced with 0 at end)
-                        # elif BUS > TOTAL * 0.5: 8
-                        # elif EXP > any other one mode CR, LRT, BRT, BUS: 7
-                        # elif LRT > CMR : 5
-                        # else: 4
-                        name = period + "_ALL"
-                        spec = {
-                            "type": "MATRIX_CALCULATION", "constraint": None,
-                            "result": 'mf"%s_MAINMODE"' % name, 
-                            "expression": '-1 * ( ({0}_TOTALIVTT <= 0 ) .or. ({0}_TOTALIVTT > 999999) )'.format(name),
-                        }
-                        matrix_calc(spec, scenario=transit_scenario, num_processors=num_processors)
-                        spec["constraint"] = {
-                            "by_value": {
-                                "od_values": 'mf"%s_MAINMODE"' % name, 
-                                "interval_min": 0, "interval_max": 0,  "condition": "INCLUDE"},
-                        }
-                        spec["expression"] = '8 * ({0}_BUSIVTT > (0.5 * {0}_TOTALIVTT) )'.format(name)
-                        matrix_calc(spec, scenario=transit_scenario, num_processors=num_processors)
-                        spec["expression"] = ('7 * (({0}_EXPIVTT + {0}_LTDEXPIVTT) > '
-                            '({0}_LRTIVTT .max. {0}_CMRIVTT .max. {0}_BUSIVTT .max. ({0}_BRTREDIVTT + {0}_BRTREDIVTT) ) )').format(name)
-                        matrix_calc(spec, scenario=transit_scenario, num_processors=num_processors)
-                        spec["expression"] = '5 * ({0}_LRTIVTT > {0}_CMRIVTT )'.format(name)
-                        matrix_calc(spec, scenario=transit_scenario, num_processors=num_processors)
-                        spec["expression"] = '4'
-                        matrix_calc(spec, scenario=transit_scenario, num_processors=num_processors)
-                        spec = {
-                            "type": "MATRIX_CALCULATION", 
-                            "constraint": {
-                                "by_value": {
-                                    "od_values": 'mf"%s_MAINMODE"' % name, 
-                                    "interval_min": -1, "interval_max": -1,  "condition": "INCLUDE"},
-                            },
-                            "result": 'mf"%s_MAINMODE"' % name, 
-                            "expression": '0',
-                        }
-                        matrix_calc(spec, scenario=transit_scenario, num_processors=num_processors)
-                        
-                    matrices = OrderedDict()
-                    for key, name in base_map:
-                        if isinstance(name, list):
-                            pname = [period + "_" + n for n in name]
-                        else:
-                            pname = period + "_" + name
-                        matrices[key] = pname
-                    omx_file = os.path.join(output_dir, "impprem_" + period + "o")
-                    export_to_omx(matrices, omx_file, transit_scenario)
-                finally:
-                    for name, data in backups.iteritems():
-                        transit_emmebank.matrix(name).set_data(data, transit_scenario)
-                        
-        with _m.logbook_trace("Export traffic skims"):
-            emmebank = base_scenario.emmebank
-            base_mapping = [
-                ("dan", "SOVGP", [
-                    ("*SCST_{0}",           "GENCOST"),
-                    ("*STM_{0} (Skim)",     "TIME"),
-                    ("Length (Skim)",       "DIST")
-                ]),
-                ("dat", "SOVTOLL", [
-                    ("*SCST_{0}",           "GENCOST"),
-                    ("*STM_{0} (Skim)",     "TIME"),
-                    ("Length (Skim)",       "DIST"),
-                    ("dat_{0} - itoll_{0}", "TOLLCOST"),
-                ]),
-                ("s2nh", "HOV2HOV", [
-                    ("*H2CST_{0}",          "GENCOST"),
-                    ("*HTM_{0} (Skim)",     "TIME"),
-                    ("Length (Skim)",       "DIST"),
-                ]),
-                ("s2th", "HOV2TOLL", [
-                    ("*H2CST_{0}",          "GENCOST"),
-                    ("*HTM_{0} (Skim)",     "TIME"),
-                    ("Length (Skim)",       "DIST"),
-                    ("s2t_{0} - itoll_{0}", "TOLLCOST"),
-                ]),
-                ("s3nh", "HOV3HOV", [
-                    ("*H3CST_{0}",          "GENCOST"),
-                    ("*HTM_{0} (Skim)",     "TIME"),
-                    ("Length (Skim)",       "DIST"),
-                ]),
-                ("s3th", "HOV3TOLL", [
-                    ("*H3CST_{0}",          "GENCOST"),
-                    ("*HTM_{0} (Skim)",     "TIME"),
-                    ("Length (Skim)",       "DIST"),
-                    ("s3t_{0} - itoll_{0}", "TOLLCOST"),
-                ]),
-                ("hhdn", "TRKHGP", [
-                    ("*SCST_{0}",           "GENCOST"),
-                    ("*STM_{0} (Skim)",     "TIME"),
-                    ("Length (Skim)",       "DIST")
-                ]),
-                ("hhdt", "TRKHTOLL", [
-                    ("*SCST_{0}",           "GENCOST"),
-                    ("*STM_{0} (Skim)",     "TIME"),
-                    ("Length (Skim)",       "DIST"),
-                    ("hhdt - ITOLL2_{0}",   "TOLLCOST"),
-                ]),
-            ]
-            for period in periods:
-                for file_name, mode, mat_mapping in base_mapping:
-                    omx_file = os.path.join(output_dir, "imp" + file_name + "_" + period)
-                    matrices = OrderedDict()
-                    for key, skim in mat_mapping:
-                        if "{0}" in key:
-                            key = key.format(period)
-                        matrices[key] = (period + "_" + mode + "_" + skim)
-                    export_to_omx(matrices, omx_file, base_scenario)
+                for key, skim in mat_mapping:
+                    if "{0}" in key:
+                        key = key.format(period)
+                    matrices[key] = (period + "_" + mode + "_" + skim)
+                with gen_utils.ExportOMX(omx_file, self.base_scenario) as exporter:
+                    # filter out diagonal -99999999.0 values from GENCOST and TOLLCOST
+                    for key, matrix in matrices.iteritems():
+                        numpy_array = get_numpy_data(matrix)
+                        exporter.write_clipped_array(numpy_array, key, 0)
 
     @_m.method(return_type=unicode)
     def tool_run_msg_status(self):
