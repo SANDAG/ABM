@@ -44,7 +44,7 @@ class ExportSkims(_m.Tool(), gen_utils.Snapshot):
         if self.tool_run_msg != "":
             pb.tool_run_status(self.tool_run_msg_status)
 
-        pb.add_select_file('omx_file', 'file',
+        pb.add_select_file('omx_file', 'save_file',
                            title='Select OMX file')
         options = [(x, x) for x in ["EA", "AM", "MD", "PM", "EV"]]
         pb.add_select("period", keyvalues=options, title="Select corresponding period")
@@ -67,15 +67,9 @@ class ExportSkims(_m.Tool(), gen_utils.Snapshot):
     def __call__(self, period, omx_file, scenario):
         attributes = {"omx_file": omx_file, "period": period}
         gen_utils.log_snapshot("Export traffic skims to OMX", str(self), attributes)
-        # export_to_omx = _m.Modeller().tool(
-            # "inro.emme.data.matrix.export_to_omx")
-        export_to_omx = gen_utils.export_to_omx
-        
         matrices = [period + "_" + name for name in self._skim_names()]
-        export_to_omx(matrices=matrices, 
-                      export_file=omx_file,
-                      scenario=scenario,
-                      omx_key="NAME")
+        with gen_utils.ExportOMX(omx_file, scenario, omx_key="NAME") as exporter:
+            exporter.write_matrices(matrices)
 
     def _skim_names(self):
         matrices = [
