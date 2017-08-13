@@ -43,7 +43,8 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
         self.components = self._all_components[:]
         self.periods = self._all_periods[:]
         self.attributes = ["components", "periods"]
-        self._debug = False
+        self._matrices = {}
+        self._count = {}
 
     def page(self):
         pb = _m.ToolPageBuilder(self)
@@ -73,7 +74,7 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
                 error, _traceback.format_exc(error))
             raise
 
-    @_m.logbook_trace("Initialize matrices", save_arguments=True)
+    @_m.logbook_trace("Create and initialize matrices", save_arguments=True)
     def __call__(self, components, periods, scenario):
         attributes = {"components": components, "periods": periods}
         gen_utils.log_snapshot("Initialize matrices", str(self), attributes)
@@ -85,319 +86,273 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             components = self._all_components[:]
         if periods == "all":
             periods = self._all_periods[:]
-        self.periods = periods
+        
+        self._matrices = dict((name, dict((k, []) for k in self._all_periods + ["ALL"])) for name in self._all_components)
+        self._count = {"ms": 1, "md": 100, "mo": 100, "mf": 100}
 
-        for component in components:
+        for component in self._all_components:
             fcn = getattr(self, component)
             fcn()
+        for component in components:
+            self.create_matrices(component, periods)
 
-        # traffic_demand:           101 to 200
-        # transit_demand:           201 to 275
-        # traffic_skims:            301 to 555
-        # transit_skims:            561 to 744
-        # truck_model:              750 to 
-        # commercial_vehicle_model: 7 to 
-        # external_internal_model:  7 to 800
-        # external_external_model:  860 to 
-
-    @_m.logbook_trace("Traffic demand matrices")
     def traffic_demand(self):
-        matrices = [
-            ( 1, "SOVGP",     "SOV GP-only demand"),
-            ( 2, "SOVTOLL",   "SOV toll demand"),
-            ( 3, "HOV2GP",    "HOV2 GP-only demand"),
-            ( 4, "HOV2HOV",   "HOV2 HOV-lane demand"),
-            ( 5, "HOV2TOLL",  "HOV2 toll demand"),
-            ( 6, "HOV3GP",    "HOV3+ GP-only demand"),
-            ( 7, "HOV3HOV",   "HOV3+ HOV-lane demand"),
-            ( 8, "HOV3TOLL",  "HOV3+ toll demand"),
-            ( 9, "TRKHGP",    "Truck Heavy GP-only PCE demand"),
-            (10, "TRKHTOLL",  "Truck Heavy toll PCE demand"),
-            (11, "TRKLGP",    "Truck Light GP-only PCE demand"),
-            (12, "TRKLTOLL",  "Truck Light toll PCE demand"),
-            (13, "TRKMGP",    "Truck Medium GP-only PCE demand"),
-            (14, "TRKMTOLL",  "Truck Medium toll PCE demand"),
+        tmplt_matrices = [
+            ("SOVGP",     "SOV GP-only demand"),
+            ("SOVTOLL",   "SOV toll demand"),
+            ("HOV2GP",    "HOV2 GP-only demand"),
+            ("HOV2HOV",   "HOV2 HOV-lane demand"),
+            ("HOV2TOLL",  "HOV2 toll demand"),
+            ("HOV3GP",    "HOV3+ GP-only demand"),
+            ("HOV3HOV",   "HOV3+ HOV-lane demand"),
+            ("HOV3TOLL",  "HOV3+ toll demand"),
+            ("TRKHGP",    "Truck Heavy GP-only PCE demand"),
+            ("TRKHTOLL",  "Truck Heavy toll PCE demand"),
+            ("TRKLGP",    "Truck Light GP-only PCE demand"),
+            ("TRKLTOLL",  "Truck Light toll PCE demand"),
+            ("TRKMGP",    "Truck Medium GP-only PCE demand"),
+            ("TRKMTOLL",  "Truck Medium toll PCE demand"),
         ]
-        index_start = 100
-        period_offset = {"EA": 0, "AM": 20, "MD": 40, "PM": 60, "EV": 80}
-        for period in self.periods:
-            p_index = period_offset[period]
-            with _m.logbook_trace("For period %s" % period):
-                for num, m_name, m_desc in matrices:
-                    ident = "mf%s" % (index_start + p_index + num)
-                    self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
-        self.create_matrix("ms1", "zero", "zero")
+        for period in self._all_periods:
+            self.add_matrices("traffic_demand", period,
+                [("mf", period + "_" + name, period + " " + desc) 
+                 for name, desc in tmplt_matrices])
+        self.add_matrices("traffic_demand", "ALL", [("ms", "zero", "zero")])
 
-    @_m.logbook_trace("Transit demand matrices")
     def transit_demand(self):
-        matrices = [
-            ( 1, "BUS",  "local bus demand"),
-            ( 2, "LRT",  "LRT demand"),
-            ( 3, "CMR",  "commuter rail demand"),
-            ( 4, "EXP",  "express / premium bus demand"),
-            ( 5, "BRT",  "BRT demand"),
+        tmplt_matrices = [
+            ("BUS",  "local bus demand"),
+            ("LRT",  "LRT demand"),
+            ("CMR",  "commuter rail demand"),
+            ("EXP",  "express / premium bus demand"),
+            ("BRT",  "BRT demand"),
         ]
-        index_start = 200
-        access_index = [("WLK", 0), ("PNR", 5), ("KNR", 10)]
-        period_offset = {"EA": 0, "AM": 15, "MD": 30, "PM": 45, "EV": 60}
-        for period in self.periods:
-            p_index = period_offset[period]
-            with _m.logbook_trace("For period %s" % period):
-                for a_name, a_index in access_index:
-                    for num, m_name, m_desc in matrices:
-                        ident = "mf%s" % (index_start + p_index + a_index + num)
-                        name = "%s_%s%s" % (period, a_name, m_name)
-                        desc = "%s %s access %s" % (period, a_name, m_desc)
-                        self.create_matrix(ident, name, desc)
+        for period in self._all_periods:
+            for a_name in ["WLK", "PNR", "KNR"]:
+                self.add_matrices("transit_demand", period,
+                    [("mf", "%s_%s%s" % (period, a_name, name), "%s %s access %s" % (period, a_name, desc)) 
+                     for name, desc in tmplt_matrices])
 
-    @_m.logbook_trace("Traffic skim matrices")
     def traffic_skims(self):
-        matrices = [
-            ( 1, "SOVGP_GENCOST",     "SOV GP total generalized cost"),
-            ( 2, "SOVGP_TIME",        "SOV GP travel time"),
-            ( 3, "SOVGP_DIST",        "SOV GP distance"),
-            ( 4, "SOVTOLL_GENCOST",   "SOV Toll total generalized cost"),
-            ( 5, "SOVTOLL_TIME",      "SOV Toll travel time"),
-            ( 6, "SOVTOLL_DIST",      "SOV Toll distance"),
-            ( 7, "SOVTOLL_MLCOST",    "SOV Toll managed lane cost $0.01"),
-            ( 8, "SOVTOLL_TOLLCOST",  "SOV Toll toll cost $0.01"),
-            ( 9, "SOVTOLL_TOLLDIST",  "SOV Toll distance on toll facility"),
-            (10, "HOV2HOV_GENCOST",   "HOV2 HOV total generalized cost"),
-            (11, "HOV2HOV_TIME",      "HOV2 HOV travel time"),
-            (12, "HOV2HOV_DIST",      "HOV2 HOV distance"),
-            (13, "HOV2HOV_HOVDIST",   "HOV2 HOV distance on HOV facility"),
-            (14, "HOV2TOLL_GENCOST",  "HOV2 Toll total generalized cost"),
-            (15, "HOV2TOLL_TIME",     "HOV2 Toll travel time"),
-            (16, "HOV2TOLL_DIST",     "HOV2 Toll distance"),
-            (17, "HOV2TOLL_MLCOST",   "HOV2 Toll managed lane cost $0.01"),
-            (18, "HOV2TOLL_TOLLCOST", "HOV2 Toll toll cost $0.01"),
-            (19, "HOV2TOLL_TOLLDIST", "HOV2 Toll distance on toll facility"),
-            (20, "HOV3HOV_GENCOST",   "HOV3+ HOV total generalized cost"),
-            (21, "HOV3HOV_TIME",      "HOV3+ HOV travel time"),
-            (22, "HOV3HOV_DIST",      "HOV3+ HOV distance"),
-            (23, "HOV3HOV_HOVDIST",   "HOV3+ HOV distance on HOV facility"),
-            (24, "HOV3TOLL_GENCOST",  "HOV3+ Toll total generalized cost"),
-            (25, "HOV3TOLL_TIME",     "HOV3+ Toll travel time"),
-            (26, "HOV3TOLL_DIST",     "HOV3+ Toll distance"),
-            (27, "HOV3TOLL_MLCOST",   "HOV3+ Toll managed lane cost $0.01"),
-            (28, "HOV3TOLL_TOLLCOST", "HOV3+ Toll toll cost $0.01"),
-            (29, "HOV3TOLL_TOLLDIST", "HOV3+ Toll distance on toll facility"),
-            (30, "TRKHGP_GENCOST",    "Truck Heavy GP total generalized cost"),
-            (31, "TRKHGP_TIME",       "Truck Heavy GP travel time"),
-            (32, "TRKHGP_DIST",       "Truck Heavy GP distance"),
-            (33, "TRKHTOLL_GENCOST",  "Truck Heavy Toll total generalized cost"),
-            (34, "TRKHTOLL_TIME",     "Truck Heavy Toll travel time"),
-            (35, "TRKHTOLL_DIST",     "Truck Heavy Toll distance"),
-            (36, "TRKHTOLL_TOLLCOST", "Truck Heavy Toll toll cost $0.01"),
-            (37, "TRKLGP_GENCOST",    "Truck Light GP total generalized cost"),
-            (38, "TRKLGP_TIME",       "Truck Light GP travel time"),
-            (39, "TRKLGP_DIST",       "Truck Light GP distance"),
-            (40, "TRKLTOLL_GENCOST",  "Truck Light Toll total generalized cost"),
-            (41, "TRKLTOLL_TIME",     "Truck Light Toll travel time"),
-            (42, "TRKLTOLL_DIST",     "Truck Light Toll distance"),
-            (43, "TRKLTOLL_TOLLCOST", "Truck Light Toll toll cost $0.01"),
-            (44, "TRKMGP_GENCOST",    "Truck Medium GP total generalized cost"),
-            (45, "TRKMGP_TIME",       "Truck Medium GP travel time"),
-            (46, "TRKMGP_DIST",       "Truck Medium GP distance"),
-            (47, "TRKMTOLL_GENCOST",  "Truck Medium Toll total generalized cost"),
-            (48, "TRKMTOLL_TIME",     "Truck Medium Toll travel time"),
-            (49, "TRKMTOLL_DIST",     "Truck Medium Toll distance"),
-            (50, "TRKMTOLL_TOLLCOST", "Truck Medium Toll toll cost $0.01"),
+        tmplt_matrices = [
+            ("SOVGP_GENCOST",     "SOV GP total generalized cost"),
+            ("SOVGP_TIME",        "SOV GP travel time"),
+            ("SOVGP_DIST",        "SOV GP distance"),
+            ("SOVTOLL_GENCOST",   "SOV Toll total generalized cost"),
+            ("SOVTOLL_TIME",      "SOV Toll travel time"),
+            ("SOVTOLL_DIST",      "SOV Toll distance"),
+            ("SOVTOLL_MLCOST",    "SOV Toll managed lane cost $0.01"),
+            ("SOVTOLL_TOLLCOST",  "SOV Toll toll cost $0.01"),
+            ("SOVTOLL_TOLLDIST",  "SOV Toll distance on toll facility"),
+            ("HOV2HOV_GENCOST",   "HOV2 HOV total generalized cost"),
+            ("HOV2HOV_TIME",      "HOV2 HOV travel time"),
+            ("HOV2HOV_DIST",      "HOV2 HOV distance"),
+            ("HOV2HOV_HOVDIST",   "HOV2 HOV distance on HOV facility"),
+            ("HOV2TOLL_GENCOST",  "HOV2 Toll total generalized cost"),
+            ("HOV2TOLL_TIME",     "HOV2 Toll travel time"),
+            ("HOV2TOLL_DIST",     "HOV2 Toll distance"),
+            ("HOV2TOLL_MLCOST",   "HOV2 Toll managed lane cost $0.01"),
+            ("HOV2TOLL_TOLLCOST", "HOV2 Toll toll cost $0.01"),
+            ("HOV2TOLL_TOLLDIST", "HOV2 Toll distance on toll facility"),
+            ("HOV3HOV_GENCOST",   "HOV3+ HOV total generalized cost"),
+            ("HOV3HOV_TIME",      "HOV3+ HOV travel time"),
+            ("HOV3HOV_DIST",      "HOV3+ HOV distance"),
+            ("HOV3HOV_HOVDIST",   "HOV3+ HOV distance on HOV facility"),
+            ("HOV3TOLL_GENCOST",  "HOV3+ Toll total generalized cost"),
+            ("HOV3TOLL_TIME",     "HOV3+ Toll travel time"),
+            ("HOV3TOLL_DIST",     "HOV3+ Toll distance"),
+            ("HOV3TOLL_MLCOST",   "HOV3+ Toll managed lane cost $0.01"),
+            ("HOV3TOLL_TOLLCOST", "HOV3+ Toll toll cost $0.01"),
+            ("HOV3TOLL_TOLLDIST", "HOV3+ Toll distance on toll facility"),
+            ("TRKHGP_GENCOST",    "Truck Heavy GP total generalized cost"),
+            ("TRKHGP_TIME",       "Truck Heavy GP travel time"),
+            ("TRKHGP_DIST",       "Truck Heavy GP distance"),
+            ("TRKHTOLL_GENCOST",  "Truck Heavy Toll total generalized cost"),
+            ("TRKHTOLL_TIME",     "Truck Heavy Toll travel time"),
+            ("TRKHTOLL_DIST",     "Truck Heavy Toll distance"),
+            ("TRKHTOLL_TOLLCOST", "Truck Heavy Toll toll cost $0.01"),
+            ("TRKLGP_GENCOST",    "Truck Light GP total generalized cost"),
+            ("TRKLGP_TIME",       "Truck Light GP travel time"),
+            ("TRKLGP_DIST",       "Truck Light GP distance"),
+            ("TRKLTOLL_GENCOST",  "Truck Light Toll total generalized cost"),
+            ("TRKLTOLL_TIME",     "Truck Light Toll travel time"),
+            ("TRKLTOLL_DIST",     "Truck Light Toll distance"),
+            ("TRKLTOLL_TOLLCOST", "Truck Light Toll toll cost $0.01"),
+            ("TRKMGP_GENCOST",    "Truck Medium GP total generalized cost"),
+            ("TRKMGP_TIME",       "Truck Medium GP travel time"),
+            ("TRKMGP_DIST",       "Truck Medium GP distance"),
+            ("TRKMTOLL_GENCOST",  "Truck Medium Toll total generalized cost"),
+            ("TRKMTOLL_TIME",     "Truck Medium Toll travel time"),
+            ("TRKMTOLL_DIST",     "Truck Medium Toll distance"),
+            ("TRKMTOLL_TOLLCOST", "Truck Medium Toll toll cost $0.01"),
         ]
-        index_start = 300
-        period_offset = [("EA", 0), ("AM", 50), ("MD", 100), ("PM", 150), ("EV", 200)]
-        period_offset = {"EA": 0, "AM": 50, "MD": 100, "PM": 150, "EV": 200}
-        for period in self.periods:
-            p_index = period_offset[period]
-            with _m.logbook_trace("For period %s" % period):
-                for num, m_name, m_desc in matrices:
-                    ident = "mf%s" % (index_start + p_index + num)
-                    self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
+        for period in self._all_periods:
+            self.add_matrices("traffic_skims", period,
+                [("mf", period + "_" + name, period + " " + desc) 
+                 for name, desc in tmplt_matrices])
 
-        if "MD" in self.periods:
-            # TODO: we may not need all of these skims - only the TIME one is used
-            matrices = [
-                (551, "MD_TRK_GENCOST",  "MD Truck generic total generalized cost"),
-                (552, "MD_TRK_TIME",     "MD Truck generic travel time"),
-                (553, "MD_TRK_DIST",     "MD Truck generic distance"),
-                (554, "MD_TRK_MLCOST",   "MD Truck generic managed lane cost $0.01"),
-                (555, "MD_TRK_TOLLCOST", "MD Truck generic toll cost $0.01"),
-            ]
-            for num, m_name, m_desc in matrices:
-                self.create_matrix("mf%s" % num, m_name, m_desc)
+        tmplt_matrices = [
+            ("MD_TRK_GENCOST",  "MD Truck generic total generalized cost"),
+            ("MD_TRK_TIME",     "MD Truck generic travel time"),
+            ("MD_TRK_DIST",     "MD Truck generic distance"),
+            ("MD_TRK_MLCOST",   "MD Truck generic managed lane cost $0.01"),
+            ("MD_TRK_TOLLCOST", "MD Truck generic toll cost $0.01"),
+        ]
+        self.add_matrices("traffic_skims", "MD",
+            [("mf", name, desc) for name, desc in tmplt_matrices])
 
-    @_m.logbook_trace("Transit skim matrices")
     def transit_skims(self):
-        matrices = [
-            ( 1, "BUS_GENCOST",    "Local bus: total impedance"), 
-            ( 2, "BUS_FIRSTWAIT",  "Local bus: first wait time"), 
-            ( 3, "BUS_XFERWAIT",   "Local bus: transfer wait time"), 
-            ( 4, "BUS_TOTALWAIT",  "Local bus: total wait time"), 
-            ( 5, "BUS_FARE",       "Local bus: fare"), 
-            ( 6, "BUS_XFERS",      "Local bus: num transfers"), 
-            ( 7, "BUS_ACCWALK",    "Local bus: access walk time"), 
-            ( 8, "BUS_XFERWALK",   "Local bus: transfer walk time"), 
-            ( 9, "BUS_EGRWALK",    "Local bus: egress walk time"), 
-            (10, "BUS_TOTALWALK",  "Local bus: total walk time"), 
-            (11, "BUS_TOTALIVTT",  "Local bus: in-vehicle time"), 
-            (12, "BUS_DWELLTIME",  "Local bus: dwell time"), 
-            (13, "BUS_DIST",       "Local bus: IV distance"), 
-            (14, "ALL_GENCOST",    "All modes: total impedance"), 
-            (15, "ALL_FIRSTWAIT",  "All modes: first wait time"), 
-            (16, "ALL_XFERWAIT",   "All modes: transfer wait time"), 
-            (17, "ALL_TOTALWAIT",  "All modes: total wait time"), 
-            (18, "ALL_FARE",       "All modes: fare"), 
-            (19, "ALL_XFERS",      "All modes: num transfers"), 
-            (20, "ALL_ACCWALK",    "All modes: access walk time"), 
-            (21, "ALL_XFERWALK",   "All modes: transfer walk time"), 
-            (22, "ALL_EGRWALK",    "All modes: egress walk time"), 
-            (23, "ALL_TOTALWALK",  "All modes: total walk time"), 
-            (24, "ALL_TOTALIVTT",  "All modes: in-vehicle time"), 
-            (25, "ALL_DWELLTIME",  "All modes: dwell time"), 
-            (26, "ALL_BUSIVTT",    "All modes: local bus in-vehicle time"),
-            (27, "ALL_LRTIVTT",    "All modes: LRT in-vehicle time"),
-            (28, "ALL_CMRIVTT",    "All modes: Rail in-vehicle time"),
-            (29, "ALL_EXPIVTT",    "All modes: Express in-vehicle time"),
-            (30, "ALL_LTDEXPIVTT", "All modes: Ltd exp bus in-vehicle time"),
-            (31, "ALL_BRTREDIVTT", "All modes: BRT red in-vehicle time"),
-            (32, "ALL_BRTYELIVTT", "All modes: BRT yellow in-vehicle time"),
-            (33, "ALL_BUSDIST",    "All modes: Bus IV distance"), 
-            (34, "ALL_LRTDIST",    "All modes: LRT IV distance"), 
-            (35, "ALL_CMRDIST",    "All modes: Rail IV distance"), 
-            (36, "ALL_EXPDIST",    "All modes: Express and Ltd IV distance"), 
-            (37, "ALL_BRTDIST",    "All modes: BRT red and yel IV distance"), 
-            (38, "ALL_MAINMODE",   "All modes: main mode of travel from IVTT"), 
+        tmplt_matrices = [
+            ("BUS_GENCOST",    "Local bus: total impedance"), 
+            ("BUS_FIRSTWAIT",  "Local bus: first wait time"), 
+            ("BUS_XFERWAIT",   "Local bus: transfer wait time"), 
+            ("BUS_TOTALWAIT",  "Local bus: total wait time"), 
+            ("BUS_FARE",       "Local bus: fare"), 
+            ("BUS_XFERS",      "Local bus: num transfers"), 
+            ("BUS_ACCWALK",    "Local bus: access walk time"), 
+            ("BUS_XFERWALK",   "Local bus: transfer walk time"), 
+            ("BUS_EGRWALK",    "Local bus: egress walk time"), 
+            ("BUS_TOTALWALK",  "Local bus: total walk time"), 
+            ("BUS_TOTALIVTT",  "Local bus: in-vehicle time"), 
+            ("BUS_DWELLTIME",  "Local bus: dwell time"), 
+            ("BUS_DIST",       "Local bus: IV distance"), 
+            ("ALL_GENCOST",    "All modes: total impedance"), 
+            ("ALL_FIRSTWAIT",  "All modes: first wait time"), 
+            ("ALL_XFERWAIT",   "All modes: transfer wait time"), 
+            ("ALL_TOTALWAIT",  "All modes: total wait time"), 
+            ("ALL_FARE",       "All modes: fare"), 
+            ("ALL_XFERS",      "All modes: num transfers"), 
+            ("ALL_ACCWALK",    "All modes: access walk time"), 
+            ("ALL_XFERWALK",   "All modes: transfer walk time"), 
+            ("ALL_EGRWALK",    "All modes: egress walk time"), 
+            ("ALL_TOTALWALK",  "All modes: total walk time"), 
+            ("ALL_TOTALIVTT",  "All modes: in-vehicle time"), 
+            ("ALL_DWELLTIME",  "All modes: dwell time"), 
+            ("ALL_BUSIVTT",    "All modes: local bus in-vehicle time"),
+            ("ALL_LRTIVTT",    "All modes: LRT in-vehicle time"),
+            ("ALL_CMRIVTT",    "All modes: Rail in-vehicle time"),
+            ("ALL_EXPIVTT",    "All modes: Express in-vehicle time"),
+            ("ALL_LTDEXPIVTT", "All modes: Ltd exp bus in-vehicle time"),
+            ("ALL_BRTREDIVTT", "All modes: BRT red in-vehicle time"),
+            ("ALL_BRTYELIVTT", "All modes: BRT yellow in-vehicle time"),
+            ("ALL_BUSDIST",    "All modes: Bus IV distance"), 
+            ("ALL_LRTDIST",    "All modes: LRT IV distance"), 
+            ("ALL_CMRDIST",    "All modes: Rail IV distance"), 
+            ("ALL_EXPDIST",    "All modes: Express and Ltd IV distance"), 
+            ("ALL_BRTDIST",    "All modes: BRT red and yel IV distance"), 
+            ("ALL_MAINMODE",   "All modes: main mode of travel from IVTT"), 
         ]
-        index_start = 560
-        period_offset = {"EA": 0, "AM": 38, "MD": 76, "PM": 114, "EV": 152}
-        for period in self.periods:
-            p_index = period_offset[period]
-            with _m.logbook_trace("For period %s" % period):
-                for num, m_name, m_desc in matrices:
-                    ident = "mf%s" % (index_start + p_index + num)
-                    self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
+        for period in self._all_periods:
+            self.add_matrices("transit_skims", period,
+                [("mf", period + "_" + name, period + " " + desc) 
+                 for name, desc in tmplt_matrices])
 
-    @_m.logbook_trace("Truck sub-model matrices")
     def truck_model(self):
-        matrices = [
-            ( 1, "TRKL",    "Light truck"), 
-            ( 2, "TRKM",    "Medium truck"), 
-            ( 3, "TRKH",    "Heavy truck"), 
-            ( 4, "TRKEI",   "Truck external-internal"), 
-            ( 5, "TRKIE",   "Truck internal-external"), 
+        tmplt_matrices = [
+            ("TRKL",    "Light truck"), 
+            ("TRKM",    "Medium truck"), 
+            ("TRKH",    "Heavy truck"), 
+            ("TRKEI",   "Truck external-internal"), 
+            ("TRKIE",   "Truck internal-external"), 
         ]
-        index_start = 750
-        for num, m_name, m_desc in matrices:
-            ident = (index_start + num)
-            self.create_matrix('mo%s' % ident, m_name + '_PROD', m_desc + ' production')
-            self.create_matrix('md%s' % ident, m_name + '_ATTR', m_desc + ' attraction')
+        self.add_matrices("truck_model", "ALL",
+                [("mo", name + '_PROD', desc + ' production') 
+                 for name, desc in tmplt_matrices])
+        self.add_matrices("truck_model", "ALL",
+                [("md", name + '_ATTR', desc + ' attraction')
+                 for name, desc in tmplt_matrices])
 
-        matrices = [
-            ( 1, "TRKEE_DEMAND",     "Truck total external-external demand"), 
-            ( 2, "TRKL_FRICTION",    "Light truck friction factors"), 
-            ( 3, "TRKM_FRICTION",    "Medium truck friction factors"), 
-            ( 4, "TRKH_FRICTION",    "Heavy truck friction factors"), 
-            ( 5, "TRKIE_FRICTION",   "Truck internal-external friction factors"), 
-            ( 6, "TRKEI_FRICTION",   "Truck external-internal friction factors"), 
-            ( 7, "TRKL_DEMAND",      "Light truck total demand"), 
-            ( 8, "TRKM_DEMAND",      "Medium truck total demand"), 
-            ( 9, "TRKH_DEMAND",      "Heavy truck total demand"), 
-            (10, "TRKIE_DEMAND",     "Truck internal-external total demand"), 
-            (11, "TRKEI_DEMAND",     "Truck external-internal total demand"), 
+        tmplt_matrices = [
+            ("TRKEE_DEMAND",     "Truck total external-external demand"), 
+            ("TRKL_FRICTION",    "Light truck friction factors"), 
+            ("TRKM_FRICTION",    "Medium truck friction factors"), 
+            ("TRKH_FRICTION",    "Heavy truck friction factors"), 
+            ("TRKIE_FRICTION",   "Truck internal-external friction factors"), 
+            ("TRKEI_FRICTION",   "Truck external-internal friction factors"), 
+            ("TRKL_DEMAND",      "Light truck total demand"), 
+            ("TRKM_DEMAND",      "Medium truck total demand"), 
+            ("TRKH_DEMAND",      "Heavy truck total demand"), 
+            ("TRKIE_DEMAND",     "Truck internal-external total demand"), 
+            ("TRKEI_DEMAND",     "Truck external-internal total demand"), 
         ]
-        index_start = 750
-        for num, m_name, m_desc in matrices:
-            self.create_matrix('mf%s' % (index_start + num), m_name, m_desc)
+        self.add_matrices("truck_model", "ALL",
+                [("mf", name, desc) for name, desc in tmplt_matrices])
 
-        matrices = [
-            ( 1, "TRKL",    "Light truck demand"), 
-            ( 2, "TRKM",    "Medium truck demand"),
-            ( 3, "TRKH",    "Heavy truck demand"), 
+        tmplt_matrices = [
+            ("TRKL",    "Light truck demand"), 
+            ("TRKM",    "Medium truck demand"),
+            ("TRKH",    "Heavy truck demand"), 
         ]
-        index_start = 762
-        period_offset = {"EA": 0, "AM": 3, "MD": 6, "PM": 9, "EV": 12}
-        for period in self.periods:
-            p_index = period_offset[period]
-            with _m.logbook_trace("For period %s" % period):
-                for num, m_name, m_desc in matrices:
-                    ident = 'mf%s' % (index_start + p_index + num)
-                    self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
+        for period in self._all_periods:
+            self.add_matrices("truck_model", period,
+                [("mf", period + "_" + name, period + " " + desc)
+                 for name, desc in tmplt_matrices])
 
-    @_m.logbook_trace("Commercial vehicle sub-model matrices")
     def commercial_vehicle_model(self):
-        matrices = [
-            ('mo757', 'COMMVEH_PROD',         'Commercial vehicle production'),
-            ('md757', 'COMMVEH_ATTR',         'Commercial vehicle attraction'),
-            ('mf778', 'COMMVEH_BLENDED_SKIM', 'Commercial vehicle blended skim'),
-            ('mf779', 'COMMVEH_FRICTION',     'Commercial vehicle friction factors'),
-            ('mf780', 'COMMVEH_TOTAL_DEMAND', 'Commercial vehicle total demand all periods'),
+        tmplt_matrices = [
+            ('mo', 'COMMVEH_PROD',         'Commercial vehicle production'),
+            ('md', 'COMMVEH_ATTR',         'Commercial vehicle attraction'),
+            ('mf', 'COMMVEH_BLENDED_SKIM', 'Commercial vehicle blended skim'),
+            ('mf', 'COMMVEH_FRICTION',     'Commercial vehicle friction factors'),
+            ('mf', 'COMMVEH_TOTAL_DEMAND', 'Commercial vehicle total demand all periods'),
         ]
-        for ident, name, desc in matrices:
-            self.create_matrix(ident, name, desc)
-        matrices = [
-            ( 1, 'COMMVEH',    'Commerical vehicle total demand'),
-            ( 2, 'COMVEHGP',   'Commerical vehicle Toll demand'),
-            ( 3, 'COMVEHTOLL', 'Commerical vehicle GP demand'),
-        ]
-        index_start = 780
-        period_offset = {"EA": 0, "AM": 3, "MD": 6, "PM": 9, "EV": 12}
-        for period in self.periods:
-            p_index = period_offset[period]
-            with _m.logbook_trace("For period %s" % period):
-                for num, m_name, m_desc in matrices:
-                    ident = 'mf%s' % (index_start + p_index + num)
-                    self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
+        self.add_matrices("commercial_vehicle_model", "ALL",
+                [(ident, name, desc) for ident, name, desc in tmplt_matrices])
 
-    @_m.logbook_trace("External-internal sub-model matrices")
+        tmplt_matrices = [
+            ('COMMVEH',    'Commerical vehicle total demand'),
+            ('COMVEHGP',   'Commerical vehicle Toll demand'),
+            ('COMVEHTOLL', 'Commerical vehicle GP demand'),
+        ]
+        for period in self._all_periods:
+            self.add_matrices("commercial_vehicle_model", period,
+                [("mf", period + "_" + name, period + " " + desc)
+                 for name, desc in tmplt_matrices])
+
     def external_internal_model(self):
-        matrices = [
-            ( 1, 'SOVTOLL_EIWORK',  'US to SD SOV Work TOLL demand'),
-            ( 2, 'HOV2TOLL_EIWORK', 'US to SD HOV2 Work TOLL demand'),
-            ( 3, 'HOV3TOLL_EIWORK', 'US to SD HOV3 Work TOLL demand'),
-            ( 4, 'SOVGP_EIWORK',  'US to SD SOV Work GP demand'),
-            ( 5, 'HOV2HOV_EIWORK', 'US to SD HOV2 Work HOV demand'),
-            ( 6, 'HOV3HOV_EIWORK', 'US to SD HOV3 Work HOV demand'),
-            ( 7, 'SOVTOLL_EINONWORK',  'US to SD SOV Non-Work TOLL demand'),
-            ( 8, 'HOV2TOLL_EINONWORK', 'US to SD HOV2 Non-Work TOLL demand'),
-            ( 9, 'HOV3TOLL_EINONWORK', 'US to SD HOV3 Non-Work TOLL demand'),
-            (10, 'SOVGP_EINONWORK',  'US to SD SOV Non-Work GP demand'),
-            (11, 'HOV2HOV_EINONWORK', 'US to SD HOV2 Non-Work HOV demand'),
-            (12, 'HOV3HOV_EINONWORK', 'US to SD HOV3 Non-Work HOV demand'),
+        tmplt_matrices = [
+            ('SOVTOLL_EIWORK',  'US to SD SOV Work TOLL demand'),
+            ('HOV2TOLL_EIWORK', 'US to SD HOV2 Work TOLL demand'),
+            ('HOV3TOLL_EIWORK', 'US to SD HOV3 Work TOLL demand'),
+            ('SOVGP_EIWORK',  'US to SD SOV Work GP demand'),
+            ('HOV2HOV_EIWORK', 'US to SD HOV2 Work HOV demand'),
+            ('HOV3HOV_EIWORK', 'US to SD HOV3 Work HOV demand'),
+            ('SOVTOLL_EINONWORK',  'US to SD SOV Non-Work TOLL demand'),
+            ('HOV2TOLL_EINONWORK', 'US to SD HOV2 Non-Work TOLL demand'),
+            ('HOV3TOLL_EINONWORK', 'US to SD HOV3 Non-Work TOLL demand'),
+            ('SOVGP_EINONWORK',  'US to SD SOV Non-Work GP demand'),
+            ('HOV2HOV_EINONWORK', 'US to SD HOV2 Non-Work HOV demand'),
+            ('HOV3HOV_EINONWORK', 'US to SD HOV3 Non-Work HOV demand'),
         ]
-        index_start = 795
-        period_offset = {"EA": 0, "AM": 12, "MD": 24, "PM": 36, "EV": 48}
-        for period in self.periods:
-            p_index = period_offset[period]
-            with _m.logbook_trace("For period %s" % period):
-                for num, m_name, m_desc in matrices:
-                    ident = 'mf%s' % (index_start + p_index + num)
-                    self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
+        for period in self._all_periods:
+            self.add_matrices("external_internal_model", period,
+                [("mf", period + "_" + name, period + " " + desc)
+                 for name, desc in tmplt_matrices])
 
-    @_m.logbook_trace("External-external sub-model matrices")
     def external_external_model(self):
-        self.create_matrix(
-            "mf856", "ALL_TOTAL_EETRIPS", 
-            "All periods Total for all modes external-external trips")
-        matrices = [
-            ( 1, 'SOVGP_EETRIPS',    'SOVGP external-external demand'),
-            ( 2, 'HOV2HOV_EETRIPS',  'HOV2HOV external-external demand'),
-            ( 3, 'HOV3HOV_EETRIPS',  'HOV3HOV external-external demand'),
+        self.add_matrices("external_external_model", "ALL",
+                [("mf", "ALL_TOTAL_EETRIPS",  "All periods Total for all modes external-external trips")])
+        tmplt_matrices = [
+            ('SOVGP_EETRIPS',    'SOVGP external-external demand'),
+            ('HOV2HOV_EETRIPS',  'HOV2HOV external-external demand'),
+            ('HOV3HOV_EETRIPS',  'HOV3HOV external-external demand'),
         ]
-        index_start = 856
-        period_offset = {"EA": 0, "AM": 3, "MD": 6, "PM": 9, "EV": 12}
-        for period in self.periods:
-            p_index = period_offset[period]
-            with _m.logbook_trace("For period %s" % period):
-                for num, m_name, m_desc in matrices:
-                    ident = 'mf%s' % (index_start + p_index + num)
-                    self.create_matrix(ident, period + "_" + m_name, period + " " + m_desc)
+        for period in self._all_periods:
+            self.add_matrices("external_external_model", period,
+                [("mf", period + "_" + name, period + " " + desc)
+                 for name, desc in tmplt_matrices])
 
-    def create_matrix(self, ident, name, desc):
-        if self._debug:
-            mat = self.scenario.emmebank.matrix(ident)
-            if mat and mat.name != name:
-                raise Exception("Conflicting matrix ID / name %s, %s" % (ident, name))
-        self._create_matrix_tool(ident, name, desc, scenario=self.scenario, overwrite=True)
+    def add_matrices(self, component, period, matrices):        
+        for ident, name, desc in matrices:
+            self._matrices[component][period].append([ident+str(self._count[ident]), name, desc])
+            self._count[ident] += 1
+
+    def create_matrices(self, component, periods):
+        with _m.logbook_trace("Create matrices for component %s" % (component.replace("_", " "))):
+            for period in periods + ["ALL"]:
+                with _m.logbook_trace("For period %s" % (period)):
+                    for ident, name, desc in self._matrices[component][period]:
+                        self._create_matrix_tool(ident, name, desc, scenario=self.scenario, overwrite=True)
 
     @_m.method(return_type=unicode)
     def tool_run_msg_status(self):
