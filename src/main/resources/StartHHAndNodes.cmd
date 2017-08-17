@@ -9,7 +9,7 @@ net session /delete /Y
 
 call %PATH_NO_DRIVE%\bin\CTRampEnv.bat
 
-If %SNODE%==TRUE goto :snode
+If %SNODE%==yes goto :snode
 
 %PATH_NO_DRIVE%\bin\pskill \\%NODE1%  java
 %PATH_NO_DRIVE%\bin\pskill \\%NODE2%  java
