@@ -24,12 +24,10 @@ class ParametersGUI(Tkinter.Frame):
             #section labels
             sectionLabels=(u"Model Initial Start Options",u"Network Building Options",u"Final Assignment Options:",u"Data Loading Options:")
             #radio button lables
-            rbLabels=(u"Copy warm start trip tables:",u"Copy bike AT access files:",u"Copy walk AT access files:",u"Create bike AT access files:",
-                      u"Create walk AT access files:",u"Build highway network:",u"Build transit network:",u"Run highway assignment:",
+            rbLabels=(u"Copy warm start trip tables:",u"Copy bike AT access files:",u"Create bike AT access files:",u"Build highway network:",u"Build transit network:",u"Run highway assignment:",
                       u"Run highway skimming:",u"Run transit assignment:",u"Run transit skimming:",u"Export results to CSVs:",u"Load results to database:")
             #properties
-            self.properties=("RunModel.skipCopyWarmupTripTables","RunModel.skipCopyBikeLogsum","RunModel.skipCopyWalkImpedance","RunModel.skipBikeLogsums",
-                          "RunModel.skipWalkLogsums","RunModel.skipBuildHwyNetwork","RunModel.skipBuildTransitNetwork","RunModel.skipFinalHighwayAssignment",
+            self.properties=("RunModel.skipCopyWarmupTripTables","RunModel.skipCopyBikeLogsum","RunModel.skipBikeLogsums","RunModel.skipBuildHwyNetwork","RunModel.skipBuildTransitNetwork","RunModel.skipFinalHighwayAssignment",
                           "RunModel.skipFinalHighwaySkimming","RunModel.skipFinalTransitAssignment","RunModel.skipFinalTransitSkimming",
                           "RunModel.skipDataExport","RunModel.skipDataLoadRequest")
 
@@ -63,36 +61,36 @@ class ParametersGUI(Tkinter.Frame):
             button.grid(row=0, column=4)
 
             #initial start section
-            for i in range(1,27):
+            for i in range(1,25):
                if i==1: #intial start section header
                   Tkinter.Label(body, text=divider, font=("Helvetica", 10, 'bold'), width=40, fg='royal blue').grid(row=i,columnspan=5)
                   Tkinter.Label(body, text=sectionLabels[0], font=("Helvetica", 10, 'bold'), width=30, fg='royal blue').grid(row=i+1,columnspan=5)
-               elif i>2 and i<8:
+               elif i>2 and i<6:
                    Tkinter.Label(body, text=rbLabels[i-3], font=("Helvetica", 8, 'bold')).grid(row=i)
                    self.yButton[i-3].grid(row=i,column=1)
                    self.nButton[i-3].grid(row=i,column=3)
-               elif i==8: #network building section header
+               elif i==6: #network building section header
                   Tkinter.Label(body, text=divider, font=("Helvetica", 10, 'bold'), width=40, fg='royal blue').grid(row=i,columnspan=5)
                   Tkinter.Label(body, text=sectionLabels[1], font=("Helvetica", 10, 'bold'), width=30, fg='royal blue').grid(row=i+1,columnspan=5)
-               elif i>9 and i<12:
+               elif i>7 and i<10:
                    Tkinter.Label(body, text=rbLabels[i-5], font=("Helvetica", 8, 'bold')).grid(row=i)
                    self.yButton[i-5].grid(row=i,column=1)
                    self.nButton[i-5].grid(row=i,column=3)
-               elif i==12: #final assignment section header
+               elif i==10: #final assignment section header
                   Tkinter.Label(body, text=divider, font=("Helvetica", 10, 'bold'), width=40, fg='royal blue').grid(row=i,columnspan=5)
                   Tkinter.Label(body, text=sectionLabels[2], font=("Helvetica", 10, 'bold'), width=30, fg='royal blue').grid(row=i+1,columnspan=5)
-               elif i>13 and i<18:
+               elif i>11 and i<16:
                    Tkinter.Label(body, text=rbLabels[i-7], font=("Helvetica", 8, 'bold')).grid(row=i)
                    self.yButton[i-7].grid(row=i,column=1)
                    self.nButton[i-7].grid(row=i,column=3)
-               elif i==18: #data load section header
+               elif i==16: #data load section header
                   Tkinter.Label(body, text=divider, font=("Helvetica", 10, 'bold'), width=40, fg='royal blue').grid(row=i,columnspan=5)
                   Tkinter.Label(body, text=sectionLabels[3], font=("Helvetica", 10, 'bold'), width=30, fg='royal blue').grid(row=i+1,columnspan=5)
-               elif i>19 and i<22:
+               elif i>17 and i<20:
                    Tkinter.Label(body, text=rbLabels[i-9], font=("Helvetica", 8, 'bold')).grid(row=i)
                    self.yButton[i-9].grid(row=i,column=1)
                    self.nButton[i-9].grid(row=i,column=3)
-               elif i==22: #iteration section
+               elif i==20: #iteration section
                     Tkinter.Label(body, text=divider, font=("Helvetica", 10, 'bold'), width=40, fg='royal blue').grid(row=i,columnspan=5)
                     Tkinter.Label(body, text=u"Iteration Options", font=("Helvetica", 10, 'bold'), width=30, fg='royal blue').grid(row=i+1,columnspan=5)
                     Tkinter.Label(body, text=u"Start from iteration:", font=("Helvetica", 8, 'bold')).grid(row=i+2)
@@ -103,7 +101,7 @@ class ParametersGUI(Tkinter.Frame):
                     self.button2=Radiobutton(body, text="2", variable=self.var, value=2).grid(row=i+2,column=2)
                     self.button3=Radiobutton(body, text="3", variable=self.var, value=3).grid(row=i+2,column=3)
                     self.button4=Radiobutton(body, text="Skip", variable=self.var, value=4).grid(row=i+2,column=4)
-               elif i==25:
+               elif i==23:
                     Tkinter.Label(body, text=u"Sample rates:", font=("Helvetica", 8, 'bold')).grid(row=i)
                     sv = StringVar(root)
                     sv.set("0.2,0.5,1.0")
@@ -112,7 +110,7 @@ class ParametersGUI(Tkinter.Frame):
                     e = Entry(body, textvariable=sv)
                     e.config(width=15)
                     e.grid(row=i,column=1,columnspan=3)
-               elif i==26:#action buttons
+               elif i==24:#action buttons
                     Tkinter.Label(body, text=u"", width=30).grid(row=i,columnspan=2)
                     buttons = Tkinter.Frame(self)
                     buttons.pack()
@@ -142,16 +140,16 @@ class ParametersGUI(Tkinter.Frame):
         def setATButtons(self):
             #disable create bike and walk logsums if 'copy' is chosen
             self.yButton[1].config(command=lambda: self.yButton[3].config(state=DISABLED))
-            self.yButton[2].config(command=lambda: self.yButton[4].config(state=DISABLED))
+            #self.yButton[2].config(command=lambda: self.yButton[4].config(state=DISABLED))
             #disable copy bike and walk logsums if 'create' is chosen
             self.yButton[3].config(command=lambda: self.yButton[1].config(state=DISABLED))
-            self.yButton[4].config(command=lambda: self.yButton[2].config(state=DISABLED))
+            #self.yButton[4].config(command=lambda: self.yButton[2].config(state=DISABLED))
             #enable create bike and walk logsums if NOT 'copy' is chosen
             self.nButton[1].config(command=lambda: self.yButton[3].config(state=ACTIVE))
-            self.nButton[2].config(command=lambda: self.yButton[4].config(state=ACTIVE))
+            #self.nButton[2].config(command=lambda: self.yButton[4].config(state=ACTIVE))
             #enable copy bike and walk logsums if NOT 'create' is chosen
             self.nButton[3].config(command=lambda: self.yButton[1].config(state=ACTIVE))
-            self.nButton[4].config(command=lambda: self.yButton[2].config(state=ACTIVE))
+            #self.nButton[4].config(command=lambda: self.yButton[2].config(state=ACTIVE))
 
         #set scenario path
         def get_scenariopath(self):
