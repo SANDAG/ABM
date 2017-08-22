@@ -573,7 +573,7 @@
                             <resources>
                                 <resource>
                                     <directory>emme</directory>
-                                    <filtering>false</filtering>
+                                    <filtering>true</filtering>
                                 </resource>
                             </resources>
                         </configuration>
