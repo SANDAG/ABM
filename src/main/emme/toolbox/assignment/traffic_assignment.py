@@ -22,6 +22,7 @@ from contextlib import contextmanager as _context
 import numpy
 import array
 import os
+import json as _json
 
 
 gen_utils = _m.Modeller().module("sandag.utilities.general")
@@ -46,44 +47,189 @@ class TrafficAssignment(_m.Tool(), gen_utils.Snapshot):
         self.max_iterations = 100
         self.num_processors = "MAX-1"
         self.raise_zero_dist = True
-        self.attributes = ["period", "msa_iteration", "relative_gap", "max_iterations", 
+        self.select_link = '[]'
+        self.attributes = ["period", "msa_iteration", "relative_gap", "max_iterations",
                            "num_processors", "select_link", "raise_zero_dist"]
         version = os.environ.get("EMMEPATH", "")
         self._version = version[-5:] if version else ""
         self._skim_classes_separately = False  # Used for debugging only
-        
+
     def page(self):
         pb = _m.ToolPageBuilder(self)
         pb.title = "Traffic assignment"
         pb.description = """
 Assign traffic demand for the selected time period."""
-        pb.branding_text = "- SANDAG - "
+        pb.branding_text = "- SANDAG - Assignment"
         if self.tool_run_msg != "":
             pb.tool_run_status(self.tool_run_msg_status)
 
         options = [("EA","Early AM"),
                    ("AM","AM peak"),
-                   ("MD","Mid-day"), 
+                   ("MD","Mid-day"),
                    ("PM","PM peak"),
                    ("EV","Evening")]
         pb.add_select("period", options, title="Period:")
         pb.add_text_box("msa_iteration", title="MSA iteration:", note="If >1 will apply MSA to flows.")
-
         pb.add_text_box("relative_gap", title="Relative gap:")
         pb.add_text_box("max_iterations", title="Max iterations:")
         dem_utils.add_select_processors("num_processors", pb, self)
-        pb.add_text_box("select_link", title="Select link expression:", 
-            note="Use any Emme selection expression to identify the link(s) of interest.",
-            multi_line=True)
         pb.add_checkbox("raise_zero_dist", title=" ", label="Raise on zero distance value",
             note="Check for and raise an exception if a zero value is found in the SOVGP_DIST matrix.")
+        self._add_select_link_interface(pb)
         return pb.render()
+
+
+    def _add_select_link_interface(self, pb):
+        pb.add_html("""
+<style type="text/css">
+    table.select_link      {
+        border-style: none;
+        border-collapse:collapse;
+        margin: 10px 10px 10px 10px;
+    }
+    table.select_link td   {
+        padding: 2px 5px 0px 5px;
+        font-size: 12px;
+        vertical-align: top;
+    }
+    table.select_link th   {
+        padding: 2px 5px 0px 5px;
+        font-size: 12px;
+        text-align: left;
+        vertical-align: text-top;
+    }
+</style>""")
+        pb.add_text_box("select_link", multi_line=True)
+        pb.wrap_html(title="Select link(s):",
+            body="""
+<table id="ref_select_link" class="select_link">
+    <tr><th width="20px"></th><th width="200px">Expression</th><th width="90px">Result suffix</th><th width="80px">Threshold</th></tr>
+</table>
+<div style="margin-left:20px;"><button type="button" id="add_select_link">Add select link</button></div>
+
+<div class="t_block t_element -inro-util-disclosure">
+    <div class="-inro-util-disclosure-header">
+        Click for help
+    </div>
+    <div>
+        <p>
+            <strong>Expression:</strong> Emme selection expression to identify the link(s) of interest. 
+            Examples and available attributes below.
+        </p>
+        <p>
+            <strong>Result suffix:</strong> the suffix to use in the naming of per-class result 
+            attributes and matrices, up to 6 characters. 
+            Should be unique (existing attributes / matrices will be overwritten).
+        </p>
+        <p>
+            <strong>Threshold:</strong> the minimum number of links which must be encountered 
+            for the path selection. 
+            The default value of 1 indicates an "any" link selection.
+        </p>
+        <p>
+            Expression selection help: use one (or more) selection criteria of the form 
+            <tt>attribute=value</tt> or <tt>attribute=min,max</tt>.
+            Multiple criteria may be combined with 'and' ('&'), 'or' ('|'), and
+            'xor' ('^'). Use 'not' ('!') in front or a criteria to negate it. <br>
+            <a class="-inro-modeller-help-link"
+                data-ref="qthelp://com.inro.emme.modeller_man/doc/html/modeller_man/network_selectors.html">
+                More help on selection expressions
+            </a>
+            <ul>
+                <li>Select by attribute: <tt>@selected_link=1</tt></li>
+                <li>Select link by ID (i node, j node): <tt>link=1066,1422</tt></li>
+                <li>Select TCOVED ID (two links): <tt>@tov_id=4578 or @tcov_id=9203</tt></li>
+                <li>Outgoing connector: <tt>ci=1</tt></li>
+                <li>Incoming connector: <tt>cj=1</tt></li>
+                <li>Links of type 6 and 7: <tt>type=6,7</tt></li>
+            </ul>
+        </p>
+        <p>
+            Result link and turn flows will be saved in extra attributes
+            <tt>@sel_XX_NAME_SUFFIX</tt>, where XX is the period, NAME is 
+            the class name, and SUFFIX is the specified result suffix. 
+            The selected O-D demand will be saved in SELDEM_XX_NAME_SUFFIX.
+        </p>
+    </div>
+</div>
+<div class="t_block t_element -inro-util-disclosure">
+    <div class="-inro-util-disclosure-header">
+        Click for available attributes
+    </div>
+    <div>
+        <div id="link_attributes" class="link_attributes attr"></div>
+    </div>
+</div>""")
+        pb.add_html("""
+<script>
+    $(document).ready( function ()
+    {
+        var tool = new inro.modeller.util.Proxy(%(tool_proxy_tag)s) ;
+
+        window.select_link_label_tmpl = {
+            value: inro.modeller.util.unserialize(tool.select_link),
+            slave_text_field: "#select_link",
+            num_select_link: 0,
+            ready: true,
+            update_text_field: function( ) {
+                if( this.ready)
+                {
+                    var value = inro.modeller.util.serialize(this.value);
+                    $(this.slave_text_field).val(value).trigger('change');
+                }
+                return(true);
+            },
+            add_select_row_ui: function( ) {
+                var num = this.num_select_link;
+                this.num_select_link += 1;
+                var text = '<tr><th>' + num + ':</th>';
+                text += '<td><textarea rows="1" style="width: 200px; max-width: 350px;" id="select_link_expression_' + num + '"' ;
+                text += ' index="' + num + '" name="expression"></textarea></td>';
+                text += '<td><input type="text" size="6" maxlength="6" id="select_link_suffix_' + num + '"' ;
+                text += ' index="' + num + '" name="suffix"></input></td>';
+                text += '<td><input type="text" size="4" id="select_link_threshold_' + num + '"' ;
+                text += ' index="' + num + '" name="threshold"></input></td>';
+                text += '</tr>';
+                $("#ref_select_link").append(text);
+                var select_items = ["expression", "suffix", "threshold"]
+                for (var i = 0; i < select_items.length; i++) { 
+                    var jq_obj = $('#select_link_' + select_items[i] + "_" + num);
+                    jq_obj.val(this.value[num][select_items[i]]);
+                    jq_obj.bind('change', function (){
+                        var index = $(this).attr("index");
+                        var name = $(this).attr("name");
+                        window.select_link_label_tmpl.value[index][name] = $(this).val();
+                        window.select_link_label_tmpl.update_text_field();
+                    });
+                }
+            },
+            init_current_select_row: function( ) {
+                this.value[this.num_select_link] = {"expression": "", "suffix": "", "threshold": 1};
+                this.update_text_field();
+            },
+            preload: function( ) {
+                for (var i = 0; i < this.value.length; i++) { 
+                    this.add_select_row_ui()
+                }
+            }
+        };
+        $("#select_link").parent().parent().hide();
+        window.select_link_label_tmpl.preload();
+        $("#add_select_link").bind('click', function()    {
+            window.select_link_label_tmpl.init_current_select_row();
+            window.select_link_label_tmpl.add_select_row_ui();
+        });
+
+        $("#link_attributes").html(tool.get_link_attributes());
+   });
+</script>""" % {"tool_proxy_tag": pb.tool_proxy_tag, })
+
 
     def run(self):
         self.tool_run_msg = ""
         try:
             scenario = _m.Modeller().scenario
-            results = self(self.period, self.msa_iteration, self.relative_gap, self.max_iterations, 
+            results = self(self.period, self.msa_iteration, self.relative_gap, self.max_iterations,
                            self.num_processors, scenario, self.select_link, self.raise_zero_dist)
             run_msg = "Traffic assignment completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
@@ -92,16 +238,17 @@ Assign traffic demand for the selected time period."""
                 error, _traceback.format_exc(error))
             raise
 
-    def __call__(self, period, msa_iteration, relative_gap, max_iterations, num_processors, scenario, 
-                 select_link=None, raise_zero_dist=True):
+    def __call__(self, period, msa_iteration, relative_gap, max_iterations, num_processors, scenario,
+                 select_link=[], raise_zero_dist=True):
+        select_link = _json.loads(select_link) if isinstance(select_link, basestring) else select_link
         attrs = {
-            "period": period, 
-            "msa_interation": msa_iteration,
-            "relative_gap": relative_gap, 
-            "max_iterations": max_iterations, 
-            "num_processors": num_processors, 
+            "period": period,
+            "msa_iteration": msa_iteration,
+            "relative_gap": relative_gap,
+            "max_iterations": max_iterations,
+            "num_processors": num_processors,
             "scenario": scenario.id,
-            "select_link": select_link,
+            "select_link": _json.dumps(select_link),
             "raise_zero_dist": raise_zero_dist,
             "self": str(self)
         }
@@ -117,59 +264,59 @@ Assign traffic demand for the selected time period."""
                 {   # 0
                     "name": 'SOVGP', "mode": 's', "PCE": 1, "VOT": 67., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST"]
-                },                      
+                },
                 {   # 1
-                    "name": 'SOVTOLL', "mode": 'S', "PCE": 1, "VOT": 67., "cost": '@cost_auto',      
+                    "name": 'SOVTOLL', "mode": 'S', "PCE": 1, "VOT": 67., "cost": '@cost_auto',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST"]
-                },                  
+                },
                 {   # 2
-                    "name": 'HOV2GP', "mode": 's', "PCE": 1, "VOT": 67., "cost": '',                
+                    "name": 'HOV2GP', "mode": 's', "PCE": 1, "VOT": 67., "cost": '',
                     "skims": []  # same as SOV_GP
-                },                    
+                },
                 {   # 3
-                    "name": 'HOV2HOV', "mode": 'h', "PCE": 1, "VOT": 67., "cost": '',                
+                    "name": 'HOV2HOV', "mode": 'h', "PCE": 1, "VOT": 67., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "HOVDIST"]
-                },                  
+                },
                 {   # 4
-                    "name": 'HOV2TOLL', "mode": 'H', "PCE": 1, "VOT": 67., "cost": '@cost_hov',      
+                    "name": 'HOV2TOLL', "mode": 'H', "PCE": 1, "VOT": 67., "cost": '@cost_hov',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST"]
-                },                
-                {   # 5 
-                    "name": 'HOV3GP', "mode": 's', "PCE": 1, "VOT": 67., "cost": '',                
+                },
+                {   # 5
+                    "name": 'HOV3GP', "mode": 's', "PCE": 1, "VOT": 67., "cost": '',
                     "skims": []  # same as SOV_GP
-                },                    
+                },
                 {   # 6
-                    "name": 'HOV3HOV', "mode": 'i', "PCE": 1, "VOT": 67., "cost": '',                
+                    "name": 'HOV3HOV', "mode": 'i', "PCE": 1, "VOT": 67., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "HOVDIST"]
-                },                  
+                },
                 {   # 7
-                    "name": 'HOV3TOLL', "mode": 'I', "PCE": 1, "VOT": 67., "cost": '@cost_hov',      
+                    "name": 'HOV3TOLL', "mode": 'I', "PCE": 1, "VOT": 67., "cost": '@cost_hov',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST"]
-                },                
+                },
                 {   # 8
-                    "name": 'TRKHGP', "mode": 'v', "PCE": 2.5, "VOT": 89., "cost": '',                
+                    "name": 'TRKHGP', "mode": 'v', "PCE": 2.5, "VOT": 89., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST"]
-                },                    
+                },
                 {   # 9
-                    "name": 'TRKHTOLL',  "mode": 'V', "PCE": 2.5, "VOT": 89., "cost": '@cost_hvy_truck', 
+                    "name": 'TRKHTOLL',  "mode": 'V', "PCE": 2.5, "VOT": 89., "cost": '@cost_hvy_truck',
                     "skims": ["GENCOST", "TIME", "DIST", "TOLLCOST"]
-                },                
+                },
                 {   # 10
-                    "name": 'TRKLGP',    "mode": 't', "PCE": 1.3, "VOT": 67., "cost": '',                
+                    "name": 'TRKLGP',    "mode": 't', "PCE": 1.3, "VOT": 67., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST"]
-                },                    
+                },
                 {   # 11
-                    "name": 'TRKLTOLL',  "mode": 'T', "PCE": 1.3, "VOT": 67., "cost": '@cost_auto',      
+                    "name": 'TRKLTOLL',  "mode": 'T', "PCE": 1.3, "VOT": 67., "cost": '@cost_auto',
                     "skims": ["GENCOST", "TIME", "DIST", "TOLLCOST"]
-                },                
+                },
                 {   # 12
-                    "name": 'TRKMGP',   "mode": 'm', "PCE": 1.5, "VOT": 68., "cost": '',                
+                    "name": 'TRKMGP',   "mode": 'm', "PCE": 1.5, "VOT": 68., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST"]
-                },                    
+                },
                 {   # 13
-                    "name": 'TRKMTOLL', "mode": 'M', "PCE": 1.5, "VOT": 68., "cost": '@cost_med_truck', 
+                    "name": 'TRKMTOLL', "mode": 'M', "PCE": 1.5, "VOT": 68., "cost": '@cost_med_truck',
                     "skims": ["GENCOST", "TIME", "DIST",  "TOLLCOST"]
-                }                
+                }
             ]
 
             if period == "MD" and (msa_iteration == 1 or not scenario.mode('D')):
@@ -233,14 +380,10 @@ Assign traffic demand for the selected time period."""
             "inro.emme.traffic_assignment.set_extra_function_parameters")
         create_attribute = modeller.tool(
             "inro.emme.data.extra_attribute.create_extra_attribute")
-        create_matrix = modeller.tool(
-            "inro.emme.data.matrix.create_matrix")
-        matrix_calc = modeller.tool(
-            "inro.emme.matrix_calculation.matrix_calculator")    
         traffic_assign = modeller.tool(
             "inro.emme.traffic_assignment.sola_traffic_assignment")
         net_calc = gen_utils.NetworkCalculator(scenario)
-        
+
         p = period.lower()
         assign_spec = self.base_assignment_spec(relative_gap, max_iterations, num_processors)
         with _m.logbook_trace("Prepare traffic data for period %s" % period):
@@ -251,34 +394,34 @@ Assign traffic demand for the selected time period."""
                 # ul3 = @capacity_link
                 el1 = "@green_to_cycle"
                 el2 = "@auto_volume"              # for skim only
-                el3 = "@capacity_inter"       
+                el3 = "@capacity_inter"
                 set_extra_function_para(el1, el2, el3, emmebank=emmebank)
 
                 # set green to cycle to el1=@green_to_cycle for VDF
                 att_name = "@green_to_cycle_%s" % p
                 att = scenario.extra_attribute(att_name)
                 new_att_name = "@green_to_cycle"
-                create_attribute("LINK", new_att_name, att.description, 
+                create_attribute("LINK", new_att_name, att.description,
                                   0, overwrite=True, scenario=scenario)
                 net_calc(new_att_name, att_name, "modes=d")
                 # set capacity_inter to el3=@capacity_inter for VDF
                 att_name = "@capacity_inter_%s" % p
                 att = scenario.extra_attribute(att_name)
                 new_att_name = "@capacity_inter"
-                create_attribute("LINK", new_att_name, att.description, 
+                create_attribute("LINK", new_att_name, att.description,
                                   0, overwrite=True, scenario=scenario)
                 net_calc(new_att_name, att_name, "modes=d")
                 # set link time
                 net_calc("ul1", "@time_link_%s" % p, "modes=d")
-                net_calc("ul3", "@capacity_link_%s" % p, "modes=d")            
+                net_calc("ul3", "@capacity_link_%s" % p, "modes=d")
                 # set number of lanes (not used in VDF, just for reference)
-                net_calc("lanes", "@lane_%s" % p, "modes=d") 
+                net_calc("lanes", "@lane_%s" % p, "modes=d")
 
             with _m.logbook_trace("Transit line headway and background traffic"):
                 # set headway for the period
-                hdw = {"ea": "@headway_op", 
+                hdw = {"ea": "@headway_op",
                        "am": "@headway_am",
-                       "md": "@headway_op", 
+                       "md": "@headway_op",
                        "pm": "@headway_pm",
                        "ev": "@headway_op"}
                 net_calc("hdw", hdw[p], {"transit_line": "all"})
@@ -286,13 +429,13 @@ Assign traffic demand for the selected time period."""
                 # transit vehicle as background flow with periods
                 period_hours = {'ea': 3, 'am': 3, 'md': 6.5, 'pm': 3.5, 'ev': 5}
                 expression = "60 / (hdw) * vauteq * %s" % (period_hours[p])
-                net_calc("ul2", expression, 
+                net_calc("ul2", expression,
                     selections={"link": "all", "transit_line": "hdw=0.01,9999"},
-                    aggregation="+")  
+                    aggregation="+")
 
             with _m.logbook_trace("Per-class flow attributes"):
                 for traffic_class in classes:
-                    demand = 'mf"%s_%s"' % (period, traffic_class["name"]) 
+                    demand = 'mf"%s_%s"' % (period, traffic_class["name"])
                     link_cost = "%s_%s" % (traffic_class["cost"], p) if traffic_class["cost"] else "@cost_operating"
 
                     att_name = "@%s" % (traffic_class["name"].lower())
@@ -310,50 +453,53 @@ Assign traffic demand for the selected time period."""
                         },
                         "results": {
                             "link_volumes": link_flow.id, "turn_volumes": turn_flow.id,
-                            "od_travel_times": None 
+                            "od_travel_times": None
                         }
                     }
                     assign_spec["classes"].append(class_spec)
             if select_link:
-                with _m.logbook_trace("Prepare for select link analysis"):
-                    slink = create_attribute("LINK", "@slink", "selected link", 0, overwrite=True, scenario=scenario)
-                    net_calc(slink, "1", select_link)
-                    with _m.logbook_trace("Initialize result matrices and extra attributes"):
-                        ident = 860
-                        for traffic_class, class_spec in zip(classes, assign_spec["classes"]):
-                            att_name = "@sel_%s" % (traffic_class["name"].lower())
-                            att_des = "%s %s selected link volume"% (period, traffic_class["name"])
-                            link_flow = create_attribute("LINK", att_name, att_des, 0, overwrite=True, scenario=scenario)
-                            att_name = "@psel_%s" % (traffic_class["name"].lower())
-                            att_des = "%s %s selected turn volume" % (period, traffic_class["name"])
-                            turn_flow = create_attribute("TURN", att_name, att_des, 0, overwrite=True, scenario=scenario)
-                            
-                            # TODO: centralize to initialize_matrices (OPEN QUESTION)
-                            name = "%s_%s_SELDEM" % (period, traffic_class["name"])
-                            desc = "Selected demand for %s %s" % (period, traffic_class["name"])
-                            seldem = create_matrix("mf%s" % ident, name, desc, scenario=scenario, overwrite=True)
-                            ident += 1
+                for class_spec in assign_spec["classes"]:
+                    class_spec["path_analyses"] = []
+                for sub_spec in select_link:
+                    expr = sub_spec["expression"]
+                    suffix = sub_spec["suffix"]
+                    threshold = sub_spec["threshold"]
+                    if not expr and not suffix:
+                        continue
+                    with _m.logbook_trace("Prepare for select link analysis '%s' - %s" % (expr, suffix)):
+                        slink = create_attribute("LINK", "@slink_%s" % suffix, "selected link for %s" % suffix, 0,
+                                                 overwrite=True, scenario=scenario)
+                        net_calc(slink.id, "1", expr)
+                        with _m.logbook_trace("Initialize result matrices and extra attributes"):
+                            for traffic_class, class_spec in zip(classes, assign_spec["classes"]):
+                                att_name = "@sl_%s_%s" % (traffic_class["name"].lower(), suffix)
+                                att_des = "%s %s '%s' sel link flow"% (period, traffic_class["name"], suffix)
+                                link_flow = create_attribute("LINK", att_name, att_des, 0, overwrite=True, scenario=scenario)
+                                att_name = "@psl_%s_%s" % (traffic_class["name"].lower(), suffix)
+                                att_des = "%s %s '%s' sel turn flow" % (period, traffic_class["name"], suffix)
+                                turn_flow = create_attribute("TURN", att_name, att_des, 0, overwrite=True, scenario=scenario)
 
-                            # add select link analysis 
-                            class_spec["path_analyses"] = [
-                                {
-                                    "link_component": "@slink",
+                                name = "SELDEM_%s_%s_%s" % (period, traffic_class["name"], suffix)
+                                desc = "Selected demand for %s %s %s" % (period, traffic_class["name"], suffix)
+                                seldem = dem_utils.create_full_matrix(name, desc, scenario=scenario)
+
+                                # add select link analysis
+                                class_spec["path_analyses"].append({
+                                    "link_component": slink.id,
                                     "turn_component": None,
-                                    "operator": ".max.",
-                                    "selection_threshold": { "lower": 1, "upper": 1},
+                                    "operator": "+",
+                                    "selection_threshold": { "lower": threshold, "upper": 999999},
                                     "path_to_od_composition": {
                                         "considered_paths": "SELECTED",
-                                        "multiply_path_proportions_by": {"analyzed_demand": true, "path_value": false}
+                                        "multiply_path_proportions_by": {"analyzed_demand": True, "path_value": False}
                                     },
                                     "analyzed_demand": None,
                                     "results": {
                                         "selected_link_volumes": link_flow.id,
                                         "selected_turn_volumes": turn_flow.id,
-                                        "od_values": seldem.name
+                                        "od_values": seldem.named_id
                                     }
-                                }
-                            ]
-                    
+                                })
         # Run assignment
         traffic_assign(assign_spec, scenario, chart_log_interval=2)
         return
@@ -362,8 +508,6 @@ Assign traffic demand for the selected time period."""
         modeller = _m.Modeller()
         create_attribute = modeller.tool(
             "inro.emme.data.extra_attribute.create_extra_attribute")
-        # matrix_calc = modeller.tool(
-        #     "inro.emme.matrix_calculation.matrix_calculator")    
         traffic_assign = modeller.tool(
             "inro.emme.traffic_assignment.sola_traffic_assignment")
         net_calc = gen_utils.NetworkCalculator(scenario)
@@ -373,41 +517,41 @@ Assign traffic demand for the selected time period."""
         with self.setup_skims(period, scenario):
             if period == "MD":
                 gen_truck_mode = 'D'
-                classes.append({ 
+                classes.append({
                     "name": 'TRK', "mode": gen_truck_mode, "PCE": 1, "VOT": 67., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST"]
                 })
             analysis_link = {
-                "TIME":     "@auto_time", 
-                "DIST":     "length", 
-                "HOVDIST":  "@hovdist", 
+                "TIME":     "@auto_time",
+                "DIST":     "length",
+                "HOVDIST":  "@hovdist",
                 "TOLLCOST": "@tollcost",
                 "MLCOST":   "@mlcost",
                 "TOLLDIST": "@tolldist"
             }
             analysis_turn = {"TIME": "@auto_time_turn"}
             with _m.logbook_trace("Link attributes for skims"):
-                create_attribute("LINK", "@hovdist", "distance for HOV", 
+                create_attribute("LINK", "@hovdist", "distance for HOV",
                                  0, overwrite=True, scenario=scenario)
-                create_attribute("LINK", "@tollcost", "Toll cost in cents", 
+                create_attribute("LINK", "@tollcost", "Toll cost in cents",
                                  0, overwrite=True, scenario=scenario)
-                create_attribute("LINK", "@mlcost", "Manage lane cost in cents", 
+                create_attribute("LINK", "@mlcost", "Manage lane cost in cents",
                                  0, overwrite=True, scenario=scenario)
-                create_attribute("LINK", "@tolldist", "Toll distance", 
+                create_attribute("LINK", "@tolldist", "Toll distance",
                                  0, overwrite=True, scenario=scenario)
 
                 net_calc("@hovdist", "length", {"link": "@lane_restriction=2,3"})
                 net_calc("@tollcost", "@toll_%s" % p, {"link": "modes=d"})
-                net_calc("@mlcost", "@toll_%s" % p, 
+                net_calc("@mlcost", "@toll_%s" % p,
                     {"link": "not @toll_%s=0.0 and not @lane_restriction=4" % p})
                 net_calc("@tolldist", "length", {"link": "not @toll_%s=0.0" % p})
                 # TODO (optional): use temporary link attributes ?
                 # link volume in @volau
-                create_attribute("LINK", "@auto_volume", "traffic link volume (volau)", 
+                create_attribute("LINK", "@auto_volume", "traffic link volume (volau)",
                                   0, overwrite=True, scenario=scenario)
-                create_attribute("LINK", "@auto_time", "traffic link time (timau)", 
+                create_attribute("LINK", "@auto_time", "traffic link time (timau)",
                                   0, overwrite=True, scenario=scenario)
-                create_attribute("TURN", "@auto_time_turn", "traffic turn time (ptimau)", 
+                create_attribute("TURN", "@auto_time_turn", "traffic turn time (ptimau)",
                                   0, overwrite=True, scenario=scenario)
                 net_calc("@auto_volume", "volau", {"link": "modes=d"})
 
@@ -420,7 +564,7 @@ Assign traffic demand for the selected time period."""
                 net_calc("@auto_time_turn", "ptimau*(ptimau.gt.0)",
                          {"incoming_link": "all", "outgoing_link": "all"})
 
-            skim_spec = self.base_assignment_spec(0, 0, num_processors)        
+            skim_spec = self.base_assignment_spec(0, 0, num_processors)
             for traffic_class in classes:
                 if not traffic_class["skims"]:
                     continue
@@ -438,7 +582,7 @@ Assign traffic demand for the selected time period."""
                         "selection_threshold": {"lower": None, "upper": None},
                         "path_to_od_composition": {
                             "considered_paths": "ALL",
-                            "multiply_path_proportions_by": 
+                            "multiply_path_proportions_by":
                                 {"analyzed_demand": False, "path_value": True}
                         },
                         "results": {
@@ -471,10 +615,10 @@ Assign traffic demand for the selected time period."""
                 skim_classes = skim_spec["classes"][:]
                 for kls in skim_classes:
                     skim_spec["classes"] = [kls]
-                    traffic_assign(skim_spec, scenario)   
+                    traffic_assign(skim_spec, scenario)
             else:
                 traffic_assign(skim_spec, scenario)
-        
+
             # compute diagnal value for TIME and DIST
             with _m.logbook_trace("Compute diagnal values for period %s" % period):
                 num_cells = len(scenario.zone_numbers) ** 2
@@ -503,7 +647,7 @@ Assign traffic demand for the selected time period."""
                 "link_component": "ul2",     # ul2 = transit flow of the period
                 "turn_component": None,
                 "add_transit_vehicles": False
-            },                
+            },
             "classes": [],
             "stopping_criteria": {
                 "max_iterations": max_iterations, "best_relative_gap": 0.0,
@@ -540,7 +684,7 @@ Assign traffic demand for the selected time period."""
                     mode_description="all trucks", scenario=scenario)
             change_link_modes(modes=[truck_mode], action="ADD",
                               selection="modes=vVmMtT", scenario=scenario)
-     
+
     def report(self, period, scenario):
         emmebank = scenario.emmebank
         text = ['<div class="preformat">']
@@ -617,3 +761,8 @@ Assign traffic demand for the selected time period."""
     @_m.method(return_type=unicode)
     def tool_run_msg_status(self):
         return self.tool_run_msg
+
+    @_m.method(return_type=unicode)
+    def get_link_attributes(self):
+        export_utils = _m.Modeller().module("inro.emme.utility.export_utilities")
+        return export_utils.get_link_attributes(_m.Modeller().scenario)
