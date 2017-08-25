@@ -12,7 +12,7 @@
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
 
-TOOLBOX_ORDER = 111
+TOOLBOX_ORDER = 9
 
 
 import inro.modeller as _m
@@ -93,8 +93,10 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
         for component in self._all_components:
             fcn = getattr(self, component)
             fcn()
+        matrices = []
         for component in components:
-            self.create_matrices(component, periods)
+            matrices.extend(self.create_matrices(component, periods))
+        return matrices
 
     def traffic_demand(self):
         tmplt_matrices = [
@@ -349,10 +351,12 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
 
     def create_matrices(self, component, periods):
         with _m.logbook_trace("Create matrices for component %s" % (component.replace("_", " "))):
+            matrices = []
             for period in periods + ["ALL"]:
                 with _m.logbook_trace("For period %s" % (period)):
                     for ident, name, desc in self._matrices[component][period]:
-                        self._create_matrix_tool(ident, name, desc, scenario=self.scenario, overwrite=True)
+                        matrices.append(self._create_matrix_tool(ident, name, desc, scenario=self.scenario, overwrite=True))
+        return matrices
 
     @_m.method(return_type=unicode)
     def tool_run_msg_status(self):
