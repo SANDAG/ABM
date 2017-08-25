@@ -12,11 +12,13 @@
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
 
-TOOLBOX_ORDER = 11
+TOOLBOX_ORDER = 12
 
 
 import inro.modeller as _m
+import inro.emme.matrix as _matrix
 import traceback as _traceback
+import omx as _omx
 
 
 gen_utils = _m.Modeller().module("sandag.utilities.general")
@@ -34,7 +36,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         return self.tool_run_msg
 
     def __init__(self):
-        self.attributes = ["omx_file", "demand_type", "periods"]
+        self.attributes = ["omx_file", "demand_type", "period"]
         
     def page(self):
         pb = _m.ToolPageBuilder(self)
@@ -123,10 +125,28 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     'KNR_BRT':  'mf"%s_KNRBRT"'}
 
             matrices = dict((k, v % period) for k, v in matrices.iteritems())
-            import_from_omx(file_path=omx_file, matrices=matrices, scenario=scenario)
-
-            if demand_type == "TRUCK" :
-                self.convert_truck(scenario, period, convert_truck_to_pce)
+            if demand_type == "TRANSIT":
+                # special custom mapping from subset of TAPs to all TAPs
+                emme_zones = scenario.zone_numbers
+                emmebank = scenario.emmebank
+                omx_file_obj = _omx.openFile(omx_file, 'r')
+                try:
+                    zone_mapping = omx_file_obj.mapping(omx_file_obj.listMappings()[0]).items()
+                    zone_mapping.sort(key=lambda x: x[1])
+                    omx_zones = [x[0] for x in zone_mapping]
+                    for omx_name, emme_name in matrices.iteritems():
+                        omx_data = omx_file_obj[omx_name].read()
+                        matrix_data = _matrix.MatrixData(type='f', indices=[omx_zones, omx_zones])
+                        matrix_data.from_numpy(omx_data)
+                        expanded_matrix_data = matrix_data.expand([emme_zones, emme_zones])
+                        matrix = emmebank.matrix(emme_name)
+                        matrix.set_data(expanded_matrix_data, scenario)
+                finally:
+                    omx_file_obj.close()
+            else:
+                import_from_omx(file_path=omx_file, matrices=matrices, scenario=scenario)
+                if demand_type == "TRUCK" :
+                    self.convert_truck(scenario, period, convert_truck_to_pce)
 
     @_m.logbook_trace('Convert truck vehicle demand to PCE')
     def convert_truck(self, scenario, period, convert_truck_to_pce):
