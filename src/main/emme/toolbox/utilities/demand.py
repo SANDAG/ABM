@@ -257,134 +257,22 @@ def reduce_matrix_precision(matrices, precision, num_processors, scenario):
                 calc.add(mat, "%s * %s / %s" % (mat, sum1.named_id, sum2.named_id))
 
 
-_properties_lookup = {}
-
-
-class Properties(object):
-
-    def __new__(cls, path="./sandag_abm.properties", *args, **kwargs):
-        path = os.path.normpath(os.path.abspath(unicode(path)))
-        if os.path.isdir(path):
-            path = os.path.join(path, "sandag_abm.properties")
-        properties = _properties_lookup.get(os.path.normcase(path), None)
-        return properties or object.__new__(cls)
-
-    def __init__(self, path="./sandag_abm.properties"):
-        if os.path.isdir(path):
-            path = os.path.join(path, "sandag_abm.properties")
-        if hasattr(self, "_created"):
-            # TODO: timestamp check untested
-            if self._timestamp == os.path.getmtime(self._path):
-                return
-        self._path = os.path.normpath(os.path.abspath(path))
-        self._load_properties()
-        self._created = True
-        self._timestamp = os.path.getmtime(self._path)
-        _properties_lookup[os.path.normcase(self._path)] = self        
-
-    def _load_properties(self):
-        # TODO: could generate UI based on properties file contents?
-        self._prop = prop = OrderedDict()
-        self._comments = comments = {}
-        with open(self._path, 'r') as properties:
-            comment = []
-            for line in properties:
-                line = line.strip()
-                if not line or line.startswith('#'):
-                    comment.append(line)
-                    continue
-                key, value = line.split('=')
-                key = key.strip()
-                tokens = value.split(',')
-                if len(tokens) > 1:
-                    value = self._convert_list(tokens)
-                else:
-                    value = self._convert(value)
-                prop[key] = value
-                comments[key], comment = comment, []
-
-    def _convert_list(self, values):
-        converted_values = []
-        for v in values:
-            converted_values.append(self._convert(v))
-        return converted_values
-
-    def _convert(self, value):
-        value = str(value).strip()
-        if value == 'true':
-            return True
-        elif value == 'false':
-            return False
-        for caster in int, float:
-            try:
-                return caster(value)
-            except ValueError:
-                pass
-        return value
-
-    def _write_properties(self, path):
-        # TODO: untested
-        with open(path, 'w') as f:
-            for key, value in self._prop.iteritems():
-                if isinstance(value, bool):
-                    value = "true" if value else "false"
-                elif isinstance(value, list):
-                    value = ",".join(value)
-                comment = self._comments.get(key)
-                if comment:
-                    for line in comment:
-                        f.write(comment)
-                        f.write("\n")
-                f.write("%s = %s\n" % (key, value))
-
-    def __setitem__(self, key, item): 
-        self._prop[key] = item
-
-    def __getitem__(self, key): 
-        return self._prop[key]
-
-    def __repr__(self): 
-        return repr(self._prop)
-
-    def __len__(self): 
-        return len(self._prop)
-
-    def __delitem__(self, key): 
-        del self._prop[key]
-
-    def clear(self):
-        return self._prop.clear()
-
-    def has_key(self, k):
-        return self._prop.has_key(k)
-
-    def pop(self, k, d=None):
-        return self._prop.pop(k, d)
-
-    def update(self, *args, **kwargs):
-        return self._prop.update(*args, **kwargs)
-
-    def keys(self):
-        return self._prop.keys()
-
-    def values(self):
-        return self._prop.values()
-
-    def items(self):
-        return self._prop.items()
-
-    def pop(self, *args):
-        return self._prop.pop(*args)
-
-    def __cmp__(self, dict):
-        return cmp(self._prop, dict)
-
-    def __contains__(self, item):
-        return item in self._prop
-
-    def __iter__(self):
-        return iter(self._prop)
-
-    def __unicode__(self):
-        return unicode(repr(self._prop))
-        
+def create_full_matrix(name, desc, scenario):
+    create_matrix = _m.Modeller().tool(
+        "inro.emme.data.matrix.create_matrix")
+    emmebank = scenario.emmebank
+    matrix = emmebank.matrix(name)
+    if matrix:
+        ident = matrix.id
+    else:
+        used_ids = set([])        
+        for m in emmebank.matrices():
+            if m.prefix == "mf":
+                used_ids.add(int(m.id[2:]))
+        for i in range(900, emmebank.dimensions["full_matrices"]):
+            if i not in used_ids:
+                ident = "mf" + str(i)
+                break
+        else:
+            raise Exception("Not enough available matrix IDs for selected demand. Change database dimensions to increase full matrices.")
+    return create_matrix(ident, name, desc, scenario=scenario, overwrite=True)
