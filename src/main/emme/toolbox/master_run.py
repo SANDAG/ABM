@@ -12,7 +12,7 @@
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
 
-TOOLBOX_ORDER = 31
+TOOLBOX_ORDER = 1
 
 
 import inro.modeller as _m
@@ -367,7 +367,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
 
         if not skipDataExport:
             export_network_data(main_directory, scenario_id, main_emmebank, transit_emmebank, num_processors)
-            export_matrix_data(output_dir, base_scenario, transit_scenario, num_processors)
+            export_matrix_data(output_dir, base_scenario, transit_scenario)
             # export core ABM data
             self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data", capture_output=True)
         if not skipDataLoadRequest:

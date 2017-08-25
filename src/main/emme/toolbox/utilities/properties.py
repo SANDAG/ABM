@@ -123,12 +123,12 @@ class PropertiesSetter(object):
 
         skip_startup_items = [
             ("skipBuildNetwork",        "Skip build of highway and transit network"),
+            ("skipInitialization",      "Skip matrix and transit database initialization"),
             ("skipCopyWarmupTripTables","Skip import of warmup trip tables"),
             ("skipCopyBikeLogsum",      "Skip copy of bike logsum"),
             ("skipCopyWalkImpedance",   "Skip copy of walk impedance"),
             ("skipWalkLogsums",         "Skip walk logsums"),
             ("skipBikeLogsums",         "Skip bike logsums"),
-            ("skipInitialization",      "Skip matrix and transit database initialization")
         ]
         skip_per_iteration_items = [
             ("skipHighwayAssignment",   "Skip highway assignment"),
