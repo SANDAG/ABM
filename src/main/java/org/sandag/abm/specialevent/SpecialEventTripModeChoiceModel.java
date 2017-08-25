@@ -70,7 +70,7 @@ public class SpecialEventTripModeChoiceModel
         logger.info(String.format("setting up Special Event trip mode choice model."));
 
         dmu = dmuFactory.getSpecialEventTripModeChoiceDMU();
-
+        
         int dataPage = new Integer(Util.getStringValueFromPropertyMap(propertyMap,
                 PROPERTIES_UEC_DATA_SHEET));
         int modelPage = new Integer(Util.getStringValueFromPropertyMap(propertyMap,
@@ -79,10 +79,11 @@ public class SpecialEventTripModeChoiceModel
         String uecPath = propertyMap.get(CtrampApplication.PROPERTIES_UEC_PATH);
         String tripModeUecFile = propertyMap.get(PROPERTIES_UEC_FILE);
         tripModeUecFile = uecPath + tripModeUecFile;
+        logger.info(tripModeUecFile);
 
         tripModeChoiceModel = new ChoiceModelApplication(tripModeUecFile, modelPage, dataPage,
                 propertyMap, (VariableTable) dmu);
-
+        logger.info(String.format("Finished setting up Special Event trip mode choice model."));
     }
 
     /**
