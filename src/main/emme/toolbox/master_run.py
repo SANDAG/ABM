@@ -23,11 +23,14 @@ import subprocess as _subprocess
 import ctypes as _ctypes
 import json as _json
 import shutil as _shutil
-import os
+import tempfile as _tempfile
+from copy import deepcopy as _copy
+import time as _time
 import sys
-import tempfile
+import os
 
-join = os.path.join
+_join = os.path.join
+_dir = os.path.dirname
 
 
 gen_utils = _m.Modeller().module("sandag.utilities.general")
@@ -41,19 +44,21 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
     scenario_title = _m.Attribute(unicode)
     emmebank_title = _m.Attribute(unicode)
     num_processors = _m.Attribute(str)
+    select_link = _m.Attribute(unicode)
 
     tool_run_msg = ""
 
     def __init__(self):
-        project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
-        self.main_directory = os.path.dirname(project_dir)
-        self.properties_path = os.path.join(
-            os.path.dirname(project_dir), "conf", "sandag_abm.properties")
+        project_dir = _dir(_m.Modeller().desktop.project.path)
+        self.main_directory = _dir(project_dir)
+        self.properties_path = _join(
+            _dir(project_dir), "conf", "sandag_abm.properties")
         self.scenario_id = 100
         self.scenario_title = ""
         self.emmebank_title = ""
         self.num_processors = "MAX-1"
-        self.attributes = ["main_directory", "scenario_id", "scenario_title", "emmebank_title", "num_processors"]
+        self.select_link = '[]'
+        self.attributes = ["main_directory", "scenario_id", "scenario_title", "emmebank_title", "num_processors", "select_link"]
         self._properties = None
 
     def page(self):
@@ -72,14 +77,16 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         pb.add_text_box('emmebank_title', title="Emmebank title:", size=60)
         dem_utils.add_select_processors("num_processors", pb, self)
         
-        project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
-        properties_path = os.path.join(
-            os.path.dirname(project_dir), "conf", "sandag_abm.properties")
+        project_dir = _dir(_m.Modeller().desktop.project.path)
+        properties_path = _join(
+            _dir(project_dir), "conf", "sandag_abm.properties")
         if os.path.exists(properties_path):
             self.load_properties()
             
         # defined in properties utilities
         self.add_properties_interface(pb, disclosure=True)
+        traffic_assign  = _m.Modeller().tool("sandag.assignment.traffic_assignment")
+        traffic_assign._add_select_link_interface(pb)
 
         return pb.render()
 
@@ -101,13 +108,14 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         return self.tool_run_msg
 
     @_m.logbook_trace("Master run model", save_arguments=True)
-    def __call__(self, main_directory, scenario_id, scenario_title, emmebank_title, num_processors):
+    def __call__(self, main_directory, scenario_id, scenario_title, emmebank_title, num_processors, select_link):
         attributes = {
             "main_directory": main_directory, 
             "scenario_id": scenario_id, 
             "scenario_title": scenario_title,
             "emmebank_title": emmebank_title,
-            "num_processors": num_processors
+            "num_processors": num_processors,
+            "select_link": select_link
         }
         gen_utils.log_snapshot("Master run model", str(self), attributes)
 
@@ -117,7 +125,6 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         init_transit_db = modeller.tool("sandag.initialize.initialize_transit_database")
         init_matrices = modeller.tool("sandag.initialize.initialize_matrices")
         import_demand  = modeller.tool("sandag.import.import_seed_demand")
-        traffic_assign  = modeller.tool("sandag.assignment.traffic_assignment")
         build_transit_scen  = modeller.tool("sandag.assignment.build_transit_scenario")
         transit_assign  = modeller.tool("sandag.assignment.transit_assignment")
         run_truck = modeller.tool("sandag.model.truck.run_truck_model")
@@ -137,14 +144,14 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         self._path = main_directory
         drive, path_no_drive = os.path.splitdrive(main_directory)
         path_forward_slash =  path_no_drive.replace("\\", "/")
-        input_dir = join(main_directory, "input")
-        input_truck_dir = join(main_directory, "input_truck")
-        output_dir = join(main_directory, "output")
-        main_emmebank = _eb.Emmebank(join(main_directory, "emme_project", "Database", "emmebank"))
+        input_dir = _join(main_directory, "input")
+        input_truck_dir = _join(main_directory, "input_truck")
+        output_dir = _join(main_directory, "output")
+        main_emmebank = _eb.Emmebank(_join(main_directory, "emme_project", "Database", "emmebank"))
         main_emmebank.title = emmebank_title
         external_zones = "1-12"
 
-        props = load_properties(join(main_directory, "conf", "sandag_abm.properties"))
+        props = load_properties(_join(main_directory, "conf", "sandag_abm.properties"))
 
         scenarioYear = props["scenarioYear"]
         startFromIteration =  props["RunModel.startFromIteration"]
@@ -181,10 +188,13 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         skipDataLoadRequest = props["RunModel.skipDataLoadRequest"]
         skipDeleteIntermediateFiles = props["RunModel.skipDeleteIntermediateFiles"]
 
+        relative_gap = props["convergence"]
+        max_assign_iterations = 1000
+
         with _m.logbook_trace("Setup and initialization"):
             # Swap Server Configurations
             self.run_proc("serverswap.bat", [drive, path_no_drive, path_forward_slash], "Run ServerSwap")
-            self.check_for_fatal(join(main_directory, "logFiles", "serverswap.log"), 
+            self.check_for_fatal(_join(main_directory, "logFiles", "serverswap.log"), 
                 "ServerSwap failed! Open logFiles/serverswap.log for details.")
             # Update year specific properties
             # Not used in example abm_run, file not available
@@ -193,7 +203,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
             self.check_free_space(minSpaceOnC)
             self.run_proc("checkAtTransitNetworkConsistency.cmd", [drive, path_forward_slash],
                 "Checking if AT and Transit Networks are consistent")
-            self.check_for_fatal(join(main_directory, "logFiles", "AtTransitCheck_event.log"), 
+            self.check_for_fatal(_join(main_directory, "logFiles", "AtTransitCheck_event.log"), 
                 "AT and Transit network consistency checking failed! Open AtTransitCheck_event.log for details.")
 
             if not skipCopyBikeLogsum:
@@ -237,12 +247,12 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                 transit_emmebank = transit_scenario.emmebank
                 init_matrices(["transit_demand", "transit_skims"], periods, transit_scenario)
             else:
-                transit_emmebank = _eb.Emmebank(join(main_directory, "emme_project", "Database_transit", "emmebank"))
+                transit_emmebank = _eb.Emmebank(_join(main_directory, "emme_project", "Database_transit", "emmebank"))
                 transit_scenario = transit_emmebank.scenario(base_scenario.number)
             
             if not skipCopyWarmupTripTables:
                 for period in periods:
-                    omx_file = os.path.join(input_dir, "trip_%s.omx" % period)
+                    omx_file = _join(input_dir, "trip_%s.omx" % period)
                     import_demand(omx_file, "AUTO", period, base_scenario)
                     import_demand(omx_file, "TRUCK", period, base_scenario, convert_truck_to_pce=True)
 
@@ -260,19 +270,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                     # run traffic assignment
                     # export traffic skims
                     with _m.logbook_trace("Traffic assignment and skims"):
-                        relative_gap = props["convergence"]
-                        max_assign_iterations = 1000
-                        for number, period in period_ids:
-                            period_scenario = main_emmebank.scenario(number)
-                            traffic_assign(
-                                period, 
-                                msa_iteration, 
-                                relative_gap, 
-                                max_assign_iterations, 
-                                num_processors, 
-                                period_scenario)
-                            omx_file = join(output_dir, "traffic_skims_%s.omx" % period)   
-                            export_traffic_skims(period, omx_file, base_scenario)
+                        self.run_traffic_assignments(base_scenario, period_ids, msa_iteration, relative_gap, max_assign_iterations, num_processors)
                     self.run_proc("CreateD2TAccessFile.bat", [drive, path_forward_slash],
                                   "Create drive to transit access file", capture_output=True)
 
@@ -292,7 +290,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                                 period=period, scenario=transit_assign_scen,
                                 skims_only=True, num_processors=num_processors)
 
-                        omx_file = os.path.join(output_dir, "transit_skims.omx")   
+                        omx_file = _join(output_dir, "transit_skims.omx")   
                         export_transit_skims(omx_file, transit_scenario)
 
                 # move some trip matrices so run will stop if ctramp model
@@ -302,7 +300,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                     self.move_files(
                         ["auto*.mtx", "tran*.mtx", "nmot*.mtx", "othr*.mtx", 
                          "trip*.mtx", "*Trips.csv", "*airport_out.csv"],
-                        output_dir, join(output_dir, "iter%s" % (iteration)))
+                        output_dir, _join(output_dir, "iter%s" % (iteration)))
 
                 if not skipCoreABM[iteration]:
                     self.run_proc(
@@ -339,14 +337,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         msa_iteration = len(sample_rate)
         if not skipFinalHighwayAssignment or not skipFinalHighwaySkimming:
             with _m.logbook_trace("Final traffic assignments"):
-                relative_gap = props["convergence"]
-                max_assign_iterations = 1000  
-                for number, period in period_ids:
-                    period_scenario = main_emmebank.scenario(number)
-                    traffic_assign(period, msa_iteration, relative_gap, max_assign_iterations, num_processors, period_scenario)
-                    if not skipFinalHighwaySkimming:
-                        omx_file = os.path.join(output_dir, "traffic_skims_%s.omx" % period)
-                        export_traffic_skims(period, omx_file, base_scenario)
+                self.run_traffic_assignments(base_scenario, period_ids, msa_iteration, relative_gap, max_assign_iterations, num_processors, select_link)
 
         if not skipFinalTransitAssignment or not skipFinalTransitSkimming:
             import_transit_demand(output_dir, transit_scenario)
@@ -362,7 +353,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                         period=period, scenario=transit_assign_scen,
                         skims_only=False, num_processors=num_processors)
                 if not skipFinalTransitSkimming:
-                    omx_file = os.path.join(output_dir, "transit_skims.omx")   
+                    omx_file = _join(output_dir, "transit_skims.omx")   
                     export_transit_skims(omx_file, transit_scenario)
 
         if not skipDataExport:
@@ -380,10 +371,52 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
             for msa_iteration in range(startFromIteration, end_iteration + 1):
                 self.delete_files(
                     ["auto*.mtx", "tran*.mtx", "nmot*.mtx", "othr*.mtx", "trip*.mtx"],
-                    join(output_dir, "iter%s" % (msa_iteration)))
+                    _join(output_dir, "iter%s" % (msa_iteration)))
+
+    def run_traffic_assignments(self, base_scenario, period_ids, msa_iteration, relative_gap, max_assign_iterations, num_processors, select_link=None):
+        modeller = _m.Modeller()
+        traffic_assign  = modeller.tool("sandag.assignment.traffic_assignment")
+        output_dir = _join(self._path, "output")
+        main_emmebank = base_scenario.emmebank
+
+        # TODO - read server swap to determine distributed structure
+        #      - also num_processors
+        distributed = False
+        if distributed:
+            scen_map = dict((p,n) for n,p in period_ids)
+            database_path1, skim_names1 = self.setup_remote_database([scen_map["AM"], scen_map["EV"]], ["AM", "EV"], 1)
+            database_path2, skim_names2 = self.setup_remote_database([scen_map["MD"], scen_map["EA"]], ["MD", "EA"], 2)
+            input_args = {
+                "msa_iteration": msa_iteration, 
+                "relative_gap": relative_gap, 
+                "max_assign_iterations": max_assign_iterations, 
+                "num_processors": num_processors, 
+                "select_link": select_link
+            }
+            self.start_assignments("{machine1}", database_path1, ["AM", "EV"], input_args)
+            self.start_assignments("{machine2}", database_path2, ["MD", "EA"], input_args)
+            try:
+                # run PM assignment locally
+                pm_scenario = main_emmebank.scenario(number)
+                traffic_assign("PM", msa_iteration, relative_gap, max_assign_iterations, num_processors, pm_scenario, select_link)
+
+                scenarios = {database_path1: [scenarios["AM"], scenarios["EV"]], database_path2: [scenarios["MD"], scenarios["EA"]]}
+                skim_names = {database_path1: skim_names1, database_path2: skim_names2}
+                self.wait_and_copy([database_path1, database_path2], scenarios, skim_names)
+            except:
+                # taskkill remote processes - TODO: needs machines and may need username and password
+                _subprocess.call("taskkill /F /T /S {machine1} /IM python.exe")
+                _subprocess.call("taskkill /F /T /S {machine2} /IM python.exe")
+                raise
+        else:
+            for number, period in period_ids:
+                period_scenario = main_emmebank.scenario(number)
+                traffic_assign(period, msa_iteration, relative_gap, max_assign_iterations, num_processors, period_scenario, select_link)
+                omx_file = _join(output_dir, "traffic_skims_%s.omx" % period)
+                export_traffic_skims(period, omx_file, base_scenario)
 
     def run_proc(self, name, arguments, log_message, capture_output=False):
-        path = join(self._path, "bin", name)
+        path = _join(self._path, "bin", name)
         if not os.path.exists(path):
             raise Exception("No command / batch file '%s'" % path)
         command = path + " " + " ".join([str(x) for x in arguments])
@@ -393,7 +426,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                 report = _m.PageBuilder(title="Process run %s" % name)
                 report.add_html('Command:<br><br><div class="preformat">%s</div><br>' % command)
                 # temporary file to capture output error messages generated by Java
-                err_file_ref, err_file_path = tempfile.mkstemp(suffix='.log')
+                err_file_ref, err_file_path = _tempfile.mkstemp(suffix='.log')
                 err_file = os.fdopen(err_file_ref, "w")
                 try:
                     output = _subprocess.check_output(command, stderr=err_file, shell=True)
@@ -432,7 +465,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
     def copy_files(self, file_names, from_dir, to_dir):
         with _m.logbook_trace("Copy files %s" % ", ".join(file_names)):
             for file_name in file_names:
-                from_file = join(from_dir, file_name)
+                from_file = _join(from_dir, file_name)
                 _shutil.copy(from_file, to_dir)
 
     def move_files(self, file_names, from_dir, to_dir):
@@ -441,10 +474,10 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                 if not os.path.exists(to_dir):
                     os.mkdir(to_dir)
                 for file_name in file_names:
-                    from_file = join(from_dir, file_name)
+                    from_file = _join(from_dir, file_name)
                     all_files = _glob.glob(from_file)
                     for path in all_files:
-                        dst_file = join(to_dir, os.path.basename(path))
+                        dst_file = _join(to_dir, os.path.basename(path))
                         if os.path.exists(dst_file):
                             os.remove(dst_file)
                         _shutil.move(path, to_dir)
@@ -454,7 +487,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
     def delete_files(self, file_names, directory):
         with _m.logbook_trace("Delete files %s" % ", ".join(file_names)):
             for file_name in file_names:
-                from_file = join(directory, file_name)
+                from_file = _join(directory, file_name)
                 all_files = _glob.glob(from_file)
                 for path in all_files:
                     os.path.remove(from_file, directory)
@@ -474,3 +507,103 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                 db.open()
                 return db
         return None
+
+    def setup_remote_database(self, periods, src_scenarios, remote_num):
+        init_matrices = _m.Modeller().tool("sandag.initialize.initialize_matrices")
+        create_function = _m.Modeller().tool("inro.emme.data.function.create_function")    
+        src_emmebank = src_scenarios[0].emmebank
+        project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
+        remote_db_dir = os.path.join(project_dir, "Database_remote" + str(remote_num))
+        if os.path.exists(remote_db_dir):
+            _shutil.rmtree(remote_db_dir)
+            _time.sleep(1)
+        os.mkdir(remote_db_dir)
+        dimensions = src_emmebank.dimensions
+        dimensions["scenarios"] = len(src_scenarios)
+        remote_emmebank = _eb.create(_join(remote_db_dir, "emmebank"), dimensions)
+        try:
+            remote_emmebank.title = src_emmebank.title
+            remote_emmebank.coord_unit_length = src_emmebank.coord_unit_length
+            remote_emmebank.unit_of_length = src_emmebank.unit_of_length
+            remote_emmebank.unit_of_cost = src_emmebank.unit_of_cost
+            remote_emmebank.unit_of_energy = src_emmebank.unit_of_energy
+            remote_emmebank.use_engineering_notation = src_emmebank.use_engineering_notation
+            remote_emmebank.node_number_digits = src_emmebank.node_number_digits
+
+            for src_scen in src_scenarios:
+                remote_scen = remote_emmebank.create_scenario(src_scen.id)
+                remote_scen.title = src_scen.title
+                for attr in sorted(src_scen.extra_attributes(), key=lambda x: x._id):
+                    dst_attr = remote_scen.create_extra_attribute(attr.type, attr.name, attr.default_value)
+                    dst_attr.description = attr.description
+                for field in src_scen.network_fields():
+                    remote_scen.create_network_field(field.type, field.name, field.atype, field.description)
+                remote_scen.has_traffic_results = src_scen.has_traffic_results
+                remote_scen.has_transit_results = src_scen.has_transit_results
+                remote_scen.publish_network(src_scen.get_network())
+                
+            for function in src_emmebank.functions():
+                create_function(function.id, function.expression, remote_emmebank)
+
+            skim_matrices = init_matrices(["traffic_skims"], periods, remote_scen)
+            skim_matrices = [m.name for m in skim_matrices]
+            demand_matrices = init_matrices(["traffic_demand"], periods, remote_scen)
+            for matrix in demand_matrices:
+                src_matrix = src_emmebank.matrix(matrix.id)
+                if matrix.type == "SCALAR":
+                    matrix.data = src_matrix.data
+                else:
+                    matrix.set_data(src_matrix.get_data(remote_scen.id), remote_scen.id)
+        finally:
+            remote_emmebank.dispose()
+
+        return remote_db_dir, skim_matrices
+
+    def start_assignments(self, machine, database_path, periods, scenarios, input_args):
+        input_args["database_path"] = database_path
+        for period in periods:
+            input_args["period_scenario"] = scenarios[period]
+            input_args["period"] = period
+            with open(_join(database_path, "start_%s" % period), 'w') as f:
+                _json.dump(input_args, f, indent=4)
+
+        script_dir = _join(self._path, "python")
+        bin_dir = _join(self._path, "bin")
+        # TODO - confirm access, may need username and password - these appear to be unused in the "mapAndRun.bat" script
+        # they also use the -s flag: run in System account
+        args = ' {machine} -d "{bin}\\emme_python.bat" "{script_dir}\\remote_run_traffic.py" "{path}"'.format(
+            bin=bin_dir, machine=machine, script_dir=script_dir, path=database_path)
+        self.run_proc('PsExec', args, "Start remote process for traffic assignments %s" % (", ".join(periods)))
+
+    def wait_and_copy(self, database_paths, scenarios, matrices):
+        database_paths = database_paths[:]            
+        wait = True
+        while wait:
+            _time.sleep(5)
+            for path in database_paths[:]:
+                end_path = _join(path, "finish")
+                if os.path.exists(end_path):
+                    database_paths.remove(path)
+                    _time.sleep(2)
+                    self.check_for_fatal(end_path, "error during remote run of traffic assignment, check under log/traffic_assign_XX_remote_log.txt")
+                    self.copy_results(path, scenarios[path], matrices[path])
+            if not database_paths:
+                wait = False
+
+    def copy_results(self, database_path, scenarios, matrices):
+        with _eb.Emmebank(_join(database_path, "emmebank")) as src_emmebank :
+            for scenario in scenarios:
+                src_scenario = src_emmebank.scenario(scenario.id)
+                scenarios.publish_network(src_scenario.get_network())
+            dst_emmebank = scenario.emmebank
+            for matrix_id in matrices:
+                src_matrix = src_emmebank.matrix(matrix_id)
+                dst_matrix = dst_emmebank.matrix(matrix_id)
+                dst_matrix.set_data(src_matrix.get_data(scenario.id), scenario.id)
+        #_time.sleep(2)
+        #_shutil.rmtree(database_path)
+
+    @_m.method(return_type=unicode)
+    def get_link_attributes(self):
+        export_utils = _m.Modeller().module("inro.emme.utility.export_utilities")
+        return export_utils.get_link_attributes(_m.Modeller().scenario)
