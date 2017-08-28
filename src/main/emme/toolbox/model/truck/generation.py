@@ -83,10 +83,10 @@ class TruckGeneration(_m.Tool(), gen_utils.Snapshot):
         self.input_directory = input_directory
         self.input_truck_directory = input_truck_directory
         self.scenario = scenario
-        utils = _m.Modeller().module('sandag.utilities.demand')
-
-        self._properties = utils.Properties(
+        load_properties = _m.Modeller().tool('sandag.utilities.properties')
+        self._properties = load_properties(
             os.path.join(os.path.dirname(input_directory), "conf", "sandag_abm.properties"))
+
         base_trucks_PA = self.truck_standard_generation()
         special_trucks_PA = self.special_truck_generation(base_trucks_PA)
         trucks_PA = self.balance_truck_PA(special_trucks_PA)
