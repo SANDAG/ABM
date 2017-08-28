@@ -149,6 +149,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 # get the coaster fare perception for use in journey levels
                 if line.mode == coaster_mode:
                     coaster_fare_percep = line[params["fare"]]
+                    break
 
             self.run_assignment(period, skims_only, scenario, num_processors, params, coaster_fare_percep)
 
@@ -177,9 +178,14 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "description": "base", 
                 "destinations_reachable": False, 
                 "transition_rules": [{"mode": "b", "next_journey_level": 1}, ],
-                "boarding_time": None, 
-                "waiting_time": None,
-                "boarding_cost": None, 
+                "boarding_time": {"global": {"penalty": 0, "perception_factor": 1}}, 
+                "waiting_time": {
+                    "effective_headways": "@headway_seg", "headway_fraction": 0.5, 
+                    "perception_factor": params["init_wait"], "spread_factor": 1.0
+                },
+                "boarding_cost": {
+                    "on_lines": {"penalty": "@fare", "perception_factor": params["fare"]},
+                }, 
             }, 
             {
                 "description": "boarded_bus", 
@@ -211,9 +217,16 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                     {"mode": "p", "next_journey_level": 3}, 
                     {"mode": "c", "next_journey_level": 4}, 
                 ],
-                "boarding_time": None, 
-                "waiting_time": None,
-                "boarding_cost": None,
+                "boarding_time": {"global": {"penalty": 0, "perception_factor": 1}}, 
+                "waiting_time": {
+                    "effective_headways": "@headway_seg", "headway_fraction": 0.5, 
+                    "perception_factor": params["init_wait"], "spread_factor": 1.0
+                },
+                "boarding_cost": {
+                    "on_lines": {"penalty": "@fare", "perception_factor": params["fare"]}, 
+                    "at_nodes": {"penalty": "@coaster_fare_node", "perception_factor": coaster_fare_percep},
+                    #"on_segments": {"penalty": "@coaster_fare_board", "perception_factor": coaster_fare_percep}, 
+                },
             }, 
             {
                 "description": "boarded_bus", 
@@ -229,7 +242,9 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 ],
                 "boarding_time": transfer_penalty, 
                 "waiting_time": transfer_wait,
-                "boarding_cost": {"on_lines": {"penalty": "@xfer_from_bus", "perception_factor": params["fare"]}},
+                "boarding_cost": {
+                    "on_lines": {"penalty": "@xfer_from_bus", "perception_factor": params["fare"]},
+                },
             },
             {
                 "description": "day_pass", 
@@ -245,7 +260,9 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 ],
                 "boarding_time": transfer_penalty, 
                 "waiting_time": transfer_wait,
-                "boarding_cost": {"on_lines": {"penalty": "@xfer_from_day", "perception_factor": params["fare"]}},
+                "boarding_cost": {
+                    "on_lines": {"penalty": "@xfer_from_day", "perception_factor": params["fare"]},
+                },
             },
             {
                 "description": "boarded_premium", 
@@ -261,7 +278,9 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 ],
                 "boarding_time": transfer_penalty, 
                 "waiting_time": transfer_wait,
-                "boarding_cost": {"on_lines": {"penalty": "@xfer_from_premium", "perception_factor": params["fare"]}},
+                "boarding_cost": {
+                    "on_lines": {"penalty": "@xfer_from_premium", "perception_factor": params["fare"]},
+                },
             },
             {
                 "description": "boarded_coaster", 
@@ -277,7 +296,9 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 ],
                 "boarding_time": transfer_penalty, 
                 "waiting_time": transfer_wait,
-                "boarding_cost": {"on_lines": {"penalty": "@xfer_from_coaster", "perception_factor": params["fare"]}},
+                "boarding_cost": {
+                    "on_lines": {"penalty": "@xfer_from_coaster", "perception_factor": params["fare"]},
+                },
             },
             {
                 "description": "regional_pass", 
@@ -293,7 +314,9 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 ],
                 "boarding_time": transfer_penalty, 
                 "waiting_time": transfer_wait,
-                "boarding_cost":  {"on_lines": {"penalty": "@xfer_regional_pass", "perception_factor": params["fare"]}},
+                "boarding_cost":  {
+                    "on_lines": {"penalty": "@xfer_regional_pass", "perception_factor": params["fare"]},
+                },
             }
         ]
 
@@ -308,9 +331,10 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             # Fare attributes
             "boarding_cost": {
                 "on_lines": {"penalty": "@fare", "perception_factor": params["fare"]}, 
-                "on_segments": {"penalty": "@coaster_fare_board", "perception_factor": coaster_fare_percep}, 
+                "at_nodes": {"penalty": "@coaster_fare_node", "perception_factor": coaster_fare_percep}, 
+                #"on_segments": {"penalty": "@coaster_fare_board", "perception_factor": coaster_fare_percep}, 
             }, 
-            "boarding_time": {"global": {"penalty": 0, "perception_factor": 1}}, 
+            "boarding_time": {"global": {"penalty": 0, "perception_factor": 1}},
             "in_vehicle_cost": {"penalty": "@coaster_fare_inveh", "perception_factor": coaster_fare_percep}, 
             "in_vehicle_time": {"perception_factor": params["in_vehicle"]}, 
             "aux_transit_time": {"perception_factor": params["walk"]},     
@@ -340,6 +364,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 if main_mode == "BUS":
                     spec["modes"] = local_bus_modes
                     spec["journey_levels"] = local_bus_journey_levels
+                    spec["in_vehicle_cost"] = None
                 else:
                     spec["modes"] = all_modes
                     spec["journey_levels"] = all_modes_journey_levels

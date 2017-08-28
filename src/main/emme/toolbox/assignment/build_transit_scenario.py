@@ -188,7 +188,8 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("TRANSIT_LINE", "@xfer_regional_pass", "0-fare for regional pass"),  
                 ("TRANSIT_SEGMENT", "@headway_seg", "Headway adj for special xfers"), 
                 ("TRANSIT_SEGMENT", "@transfer_penalty_s", "Xfer pen adj for special xfers"),
-                ("TRANSIT_SEGMENT", "@layover_board", "Boarding cost adj for special xfers")]
+                ("TRANSIT_SEGMENT", "@layover_board", "Boarding cost adj for special xfers"),
+                ("NODE", "@coaster_fare_node", "Coaster fare boarding costs at nodes")]
             for elem, name, desc in new_attrs:
                 attr = scenario.create_extra_attribute(elem, name)
                 attr.description = desc
@@ -228,7 +229,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             if timed_xfers_table:
                 self.timed_transfers(network, timed_transfers_with_walk, period)
             self.connect_circle_lines(network)
-            self.duplicate_tap_adajcent_stops(network, params["headway"])
+            self.duplicate_tap_adajcent_stops(network)
             # The fixed guideway travel times are stored in "@trtime_link_xx"
             # and copied to data2 (ul2) for the ttf 
             # The congested auto times for mixed traffic are in "timau" 
@@ -236,6 +237,18 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             values = network.get_attribute_values("LINK", [params["fixed_link_time"]])
             network.set_attribute_values("LINK", ["data2"], values)
             scenario.publish_network(network)
+
+            network_calc = _m.Modeller().tool(
+                "inro.emme.network_calculation.network_calculator")
+            network_calc_spec = {
+                "result": "@coaster_fare_node",
+                "expression": "@coaster_fare_board",
+                "selections": {"transit_line": "all", "link": "all"},
+                "aggregation": ".max.",
+                "type": "NETWORK_CALCULATION"
+            }
+            network_calc(network_calc_spec, scenario=scenario)
+            
             return scenario
 
     @_m.logbook_trace("Convert TAP nodes to centroids")
@@ -264,7 +277,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 network.delete_node(node, cascade=True)
 
     @_m.logbook_trace("Duplicate TAP access and transfer access stops")
-    def duplicate_tap_adajcent_stops(self, network, headway):
+    def duplicate_tap_adajcent_stops(self, network):
         # Expand network by duplicating TAP adjacent stops
         network.create_attribute("NODE", "tap_stop", False)
         all_transit_modes = set([network.mode(m) for m in ["b", "e", "p", "r", "y", "l", "c"]])
@@ -347,9 +360,8 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                     access_seg = new_line.segment(index - 2)
                     egress_seg = new_line.segment(index - 1)
                     real_seg = new_line.segment(index)
-                    for seg in access_seg, egress_seg, real_seg:
-                        seg["@headway_seg"] = new_line[headway]
-                        seg["@transfer_penalty_s"] = new_line["@transfer_penalty"]
+                    for k in seg_attributes:
+                        access_seg[k] = egress_seg[k] = real_seg[k]
                     access_seg.allow_boardings = False
                     access_seg.allow_alightings = True
                     access_seg.transit_time_func = 3
@@ -426,6 +438,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 
             for seg in in_link.segments():
                 seg.transit_time_func = 3
+                seg["@coaster_fare_inveh"] = 0
             for seg in out_link.segments():
                 seg.allow_alightings = seg.allow_boardings = False            
                 seg.dwell_time = 0
