@@ -1,5 +1,5 @@
 e:
-cd \apps\ABM2
+cd \apps\emme\ABM
 
 call mvn package -P 2012 -DskipTests
 call mvn package -P 2014 -DskipTests
