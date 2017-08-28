@@ -3,6 +3,7 @@ cd \apps\ABM2
 
 call mvn package -P 2012 -DskipTests
 call mvn package -P 2014 -DskipTests
+call mvn package -P 2015 -DskipTests
 call mvn package -P 2016 -DskipTests
 call mvn package -P 2017 -DskipTests
 call mvn package -P 2020 -DskipTests
