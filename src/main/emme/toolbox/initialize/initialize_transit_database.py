@@ -23,7 +23,7 @@ import shutil as _shutil
 import time
 import os
 
-join = os.path.join
+_join = os.path.join
 
 
 gen_utils = _m.Modeller().module("sandag.utilities.general")
@@ -84,8 +84,8 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
         base_eb = base_scenario.emmebank
         project_dir = os.path.dirname(os.path.dirname(base_eb.path))
 
-        transit_db_dir = join(project_dir, "Database_transit")
-        transit_db_path = join(transit_db_dir, "emmebank")
+        transit_db_dir = _join(project_dir, "Database_transit")
+        transit_db_path = _join(transit_db_dir, "emmebank")
         if os.path.exists(transit_db_dir):
             if os.path.exists(transit_db_path):
                 emmebank = _eb.Emmebank(transit_db_path)
@@ -115,6 +115,8 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
         
         for function in base_scenario.emmebank.functions():
             create_function(function.id, function.expression, transit_eb)
+            
+        self.add_database(transit_eb)
 
         return zone_scenario
 
