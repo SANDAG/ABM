@@ -204,23 +204,25 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
             bus_ivtt = bus_ivtt * (1.0 + dwell_time / sum_ivtt_dwell_modes)
             brtred_ivtt = brtred_ivtt * (1.0 + dwell_time / sum_ivtt_dwell_modes)
             brtyel_ivtt = brtyel_ivtt * (1.0 + dwell_time / sum_ivtt_dwell_modes)
+            brt_ivtt = brtred_ivtt + brtyel_ivtt
             exp_ivtt = exp_ivtt * (1.0 + dwell_time / sum_ivtt_dwell_modes)
             ltdexp_ivtt = ltdexp_ivtt * (1.0 + dwell_time / sum_ivtt_dwell_modes)
+            prem_bus_ivtt = exp_ivtt + ltdexp_ivtt
+            sum_ivtt = total_ivtt + dwell_time
 
             # Assign main mode of travel by IVTT
-            main_mode_matrix = transit_emmebank.matrix(period + "_ALL_MAINMODE")
-            main_mode_matrix.initialize(0)
-            main_mode = get_numpy_data("_ALL_MAINMODE")
-            max_non_exp_time = lrt_ivtt
-            for a2 in [cmr_ivtt, bus_ivtt, brtred_ivtt, brtyel_ivtt]:
-                max_non_exp_time = numpy.maximum(max_non_exp_time, a2)
-            prem_bus_ivtt = exp_ivtt + ltdexp_ivtt
-            main_mode = numpy.where((main_mode==0) & ((bus_ivtt>0.5*total_ivtt) ), 8, main_mode)
-            main_mode = numpy.where((main_mode==0) & ((exp_ivtt + ltdexp_ivtt)>max_non_exp_time), 7, main_mode)
-            main_mode = numpy.where((main_mode==0) & (lrt_ivtt>cmr_ivtt), 5, main_mode)
-            main_mode = numpy.where((main_mode==0), 4, main_mode)
-            main_mode = main_mode * ((total_ivtt>=0) & (total_ivtt<1000))
-            main_mode_matrix.set_numpy_data(main_mode, self.transit_scenario)
+            # main_mode_matrix = transit_emmebank.matrix(period + "_ALL_MAINMODE")
+            # main_mode_matrix.initialize(0)
+            # main_mode = get_numpy_data("_ALL_MAINMODE")
+            # max_non_exp_time = lrt_ivtt
+            # for a2 in [cmr_ivtt, bus_ivtt, brtred_ivtt, brtyel_ivtt]:
+                # max_non_exp_time = numpy.maximum(max_non_exp_time, a2)
+            # main_mode = numpy.where((main_mode==0) & ((bus_ivtt>0.5*total_ivtt) ), 8, main_mode)
+            # main_mode = numpy.where((main_mode==0) & ((exp_ivtt + ltdexp_ivtt)>max_non_exp_time), 7, main_mode)
+            # main_mode = numpy.where((main_mode==0) & (lrt_ivtt>cmr_ivtt), 5, main_mode)
+            # main_mode = numpy.where((main_mode==0), 4, main_mode)
+            # main_mode = main_mode * ((total_ivtt>=0) & (total_ivtt<1000))
+            # main_mode_matrix.set_numpy_data(main_mode, self.transit_scenario)
 
             omx_file = os.path.join(self.output_dir, "impprem_" + period + "o")
             with gen_utils.ExportOMX(omx_file, self.transit_scenario) as exporter:
@@ -228,13 +230,13 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                 for key, matrix_name in name_mapping:
                     numpy_array = get_numpy_data(matrix_name)
                     exporter.write_clipped_array(numpy_array, key, 0, 999.99)
-                exporter.write_clipped_array(total_ivtt+dwell_time, "IVT:Sum", 0, 999.99)
+                exporter.write_clipped_array(sum_ivtt, "IVT:Sum", 0, 999.99)
                 exporter.write_clipped_array(bus_ivtt, "IVT:LB", 0, 999.99)
                 exporter.write_clipped_array(lrt_ivtt, "IVT:LR", 0, 999.99)
                 exporter.write_clipped_array(cmr_ivtt, "IVT:CR", 0, 999.99)
                 exporter.write_clipped_array(prem_bus_ivtt, "IVT:EXP", 0, 999.99)
-                exporter.write_clipped_array(brtred_ivtt+brtred_ivtt, "IVT:BRT", 0, 999.99)
-                exporter.write_array(main_mode, "Main Mode")
+                exporter.write_clipped_array(brt_ivtt, "IVT:BRT", 0, 999.99)
+                # exporter.write_array(main_mode, "Main Mode")
                         
     @_m.logbook_trace("Export traffic skims")
     def traffic_skims(self):
