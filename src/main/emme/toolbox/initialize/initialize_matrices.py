@@ -242,7 +242,7 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             ("ALL_CMRDIST",    "All modes: Rail IV distance"), 
             ("ALL_EXPDIST",    "All modes: Express and Ltd IV distance"), 
             ("ALL_BRTDIST",    "All modes: BRT red and yel IV distance"), 
-            ("ALL_MAINMODE",   "All modes: main mode of travel from IVTT"), 
+            #("ALL_MAINMODE",   "All modes: main mode of travel from IVTT"),
         ]
         for period in self._all_periods:
             self.add_matrices("transit_skims", period,
