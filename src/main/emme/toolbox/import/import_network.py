@@ -12,7 +12,7 @@
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
 
-TOOLBOX_ORDER = 10
+TOOLBOX_ORDER = 11
 
 
 import inro.modeller as _m
@@ -25,7 +25,6 @@ from collections import defaultdict as _defaultdict, OrderedDict
 from contextlib import contextmanager as _context
 import dbflib as _dbflib
 from copy import deepcopy as _copy
-import json as _json
 
 from math import ceil as _ceiling
 import numpy as _np
@@ -33,6 +32,9 @@ import heapq as _heapq
 
 import traceback as _traceback
 import os
+
+_join = os.path.join
+_dir = os.path.dirname
 
 
 gen_utils = _m.Modeller().module("sandag.utilities.general")
@@ -58,8 +60,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
     def __init__(self):
         self._log = []
         self._error = []
-        project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
-        self.source = os.path.join(os.path.dirname(project_dir), "input")
+        project_dir = _dir(_m.Modeller().desktop.project.path)
+        self.source = _join(_dir(project_dir), "input")
         self.overwrite = False
         self.title = ""
         self.data_table_name = ""
@@ -256,7 +258,6 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         transit_attr_map = {
             "NODE": OrderedDict([
                 ("@tap_id",            ("@tap_id",              "DERIVED",  "EXTRA", "Transit-access point ID")),
-                ("@coaster_fare_node", ("@coaster_fare_node",   "DERIVED",  "EXTRA", "Boarding fare for coaster")),
             ]),
             "LINK": OrderedDict([
                 ("TRCOV-ID",  ("@tcov_id",              "TWO_WAY", "EXTRA", "SANDAG-assigned link ID")),
@@ -303,7 +304,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("Milepost",      ("@milepost",      "TRSTOP", "EXTRA", "Distance from start of line")),
                 ("FareZone",      ("@fare_zone",     "TRSTOP", "EXTRA", "Fare zone ID")),
                 ("StopName",      ("#stop_name",     "TRSTOP", "STRING", "Name of stop")),  
-                ("@coaster_fare_seg", ("@coaster_fare_seg",   "DERIVED",  "EXTRA", "Incremental fare for Coaster")),
+                ("@coaster_fare_board", ("@coaster_fare_board",   "DERIVED",  "EXTRA", "Boarding fare for coaster")),
+                ("@coaster_fare_inveh", ("@coaster_fare_inveh",   "DERIVED",  "EXTRA", "Incremental fare for Coaster")),
             ])
         }
 
@@ -315,7 +317,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             "trcov.e00", "trrt.csv", "trlink.csv", "trstop.csv", 
             "timexfer.csv", "MODE5TOD.dbf"]
         for name in file_names:
-            file_path = os.path.join(self.source, name)
+            file_path = _join(self.source, name)
             if not os.path.exists(file_path):
                 raise Exception("missing file '%s' in directory %s" % (name, self.source))
 
@@ -417,7 +419,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
     def create_traffic_base(self, network, attr_map):
         self._log.append({"type": "header", "content": "Import traffic base network from hwycov.e00"})
-        hwy_data = gen_utils.DataTableProc("ARC", os.path.join(self.source, "hwycov.e00"))
+        hwy_data = gen_utils.DataTableProc("ARC", _join(self.source, "hwycov.e00"))
 
         if self.save_data_tables:
             hwy_data.save("%s-hwycov" % self.data_table_name, self.overwrite)
@@ -509,7 +511,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             
     def create_transit_base(self, network, attr_map):
         self._log.append({"type": "header", "content": "Import transit base network from trcov.e00"})
-        transit_data = gen_utils.DataTableProc("ARC", os.path.join(self.source, "trcov.e00"))
+        transit_data = gen_utils.DataTableProc("ARC", _join(self.source, "trcov.e00"))
 
         if self.save_data_tables:
             transit_data.save("%s_trcov" % self.data_table_name, self.overwrite)
@@ -690,16 +692,16 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
     def create_transit_lines(self, network, attr_map):
         self._log.append({"type": "header", "content": "Import transit lines"})
         # Route_ID,Route_Name,Mode,AM_Headway,PM_Headway,OP_Headway,Night_Headway,Night_Hours,Config,Fare
-        transit_line_data = gen_utils.DataTableProc("trrt", os.path.join(self.source, "trrt.csv"))
+        transit_line_data = gen_utils.DataTableProc("trrt", _join(self.source, "trrt.csv"))
         # Route_ID,Link_ID,Direction
-        transit_link_data = gen_utils.DataTableProc("trlink", os.path.join(self.source, "trlink.csv"))
+        transit_link_data = gen_utils.DataTableProc("trlink", _join(self.source, "trlink.csv"))
         # Stop_ID,Route_ID,Link_ID,Pass_Count,Milepost,Longitude, Latitude,HwyNode,TrnNode,FareZone,StopName
-        transit_stop_data = gen_utils.DataTableProc("trstop", os.path.join(self.source, "trstop.csv"))
+        transit_stop_data = gen_utils.DataTableProc("trstop", _join(self.source, "trstop.csv"))
         # From_line,To_line,Board_stop,Wait_time
         # Note: Board_stop is not used
-        timed_xfer_data = gen_utils.DataTableProc("timexfer", os.path.join(self.source, "timexfer.csv"))
+        timed_xfer_data = gen_utils.DataTableProc("timexfer", _join(self.source, "timexfer.csv"))
 
-        mode_properties = gen_utils.DataTableProc("MODE5TOD", os.path.join(self.source, "MODE5TOD.dbf"))
+        mode_properties = gen_utils.DataTableProc("MODE5TOD", _join(self.source, "MODE5TOD.dbf"))
         mode_details = {}
         for record in mode_properties:
             mode_details[record["MODE_ID"]] = record
@@ -934,39 +936,75 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             for period in ["am", "pm", "op"]:
                 line["@headway_rev_" + period] = revised_headway(line["@headway_" + period])
 
-        lrt_mode = network.mode("l")
-        # setting of node and segment costs to recreate the coaster zone fares
-        coaster_mode = network.mode("c")
-        sorrento_valley_segs = []
-        for line in network.transit_lines():
-            if line.mode == coaster_mode:
-                line["@fare"] = 0
-                for seg in line.segments(True):
-                    seg.i_node["@coaster_fare_node"] = 4.0
-                    if "SORRENTO" in seg["#stop_name"] and "COASTER" in seg["#stop_name"]:
-                        sorrento_valley_segs.append(seg)
-        try:
-            if not sorrento_valley_segs:
-                raise Exception("Could not locate SORRENTO and COASTER in #stop_name for any coaster line segment. Coaster fare not set.")
-            sorrento_valley = set([seg.i_node for seg in sorrento_valley_segs])
-            if len(sorrento_valley) > 1: 
-                raise Exception("Multiple different i-nodes found with SORRENTO and COASTER in #stop_name for coaster line segment. Coaster fare not set.")
-            sorrento_valley = sorrento_valley.pop() 
-            sorrento_valley["@coaster_fare_node"] = 4.5
-            for link in sorrento_valley.incoming_links():
-                for seg in link.segments():
-                    seg["@coaster_fare_seg"] = 1.0
-            for link in sorrento_valley.outgoing_links():
-                for seg in link.segments():
-                    seg["@coaster_fare_seg"] = 0.5
-        except Exception as error:
-            msg = unicode(error) + _traceback.format_exc(error)
-            self._log.append({"type": "text", 
-                "content": "Coaster fare calculation error: " + msg.replace("\n", "<br>")})
-            self._error.append("Coaster fare calculation error: " + unicode(error))
-
         for c in network.centroids():
             c["@tap_id"] = c.number
+
+        # Special incremental boarding and in-vehicle fares        
+        # to recreate the coaster zone fares
+        special_fare_path = _join(self.source, "special_fares.txt")
+        if os.path.isfile(special_fare_path):
+            with open(special_fare_path) as fare_file:
+                self._log.append({"type": "text", "content": "Using fare details (for coaster) from special_fares.txt"})
+                special_fares = None
+                yaml_installed = True
+                try:
+                    import yaml
+                    special_fares = yaml.load(fare_file)
+                    self._log.append({"type": "text", "content": yaml.dump(special_fares).replace("\n", "<br>")})
+                except ImportError:
+                    yaml_installed = False
+                except:
+                    pass
+                if special_fares is None:
+                    try:
+                        import json
+                        special_fares = json.load(fare_file)
+                        self._log.append({"type": "text", "content": json.dumps(special_fares, indent=4).replace("\n", "<br>")})
+                    except:
+                        pass
+                if special_fares is None:
+                    msg = "YAML or JSON" if yaml_installed else "JSON (YAML parser not installed)"
+                    raise Exception("special_fares.txt: file could not be parsed as " + msg)
+                
+
+        else:
+            # Default coaster fare for 2012 base year
+            special_fares = {
+                "boarding_cost": {
+                    "base": [
+                        {"line": "398104", "cost" : 4.0}, 
+                        {"line": "398204", "cost" : 4.0}
+                    ],
+                    "stop_increment": [
+                        {"line": "398104", "stop": "SORRENTO VALLEY", "cost": 0.5},
+                        {"line": "398204", "stop": "SORRENTO VALLEY", "cost": 0.5}
+                    ]
+                },
+                "in_vehicle_cost": [
+                    {"line": "398104", "from_stop": "SOLANA BEACH", "cost": 1.0},
+                    {"line": "398104", "from_stop": "SORRENTO VALLEY", "cost": 0.5},
+                    {"line": "398204", "from_stop": "OLD TOWN", "cost": 1.0},
+                    {"line": "398204", "from_stop": "SORRENTO VALLEY", "cost": 0.5}
+                ]
+            }
+            self._log.append({"type": "text", "content": "Using default coaster fare based on 2012 base year setup."})
+        for record in special_fares["boarding_cost"]["base"]:
+            line = network.transit_line(record["line"])
+            line["@fare"] = 0
+            for seg in line.segments():
+                seg["@coaster_fare_board"] = record["cost"]
+        for record in special_fares["boarding_cost"].get("stop_increment", []):
+            line = network.transit_line(record["line"])
+            for seg in line.segments(True):
+                if record["stop"] in seg["#stop_name"]:
+                    seg["@coaster_fare_board"] += record["cost"]
+                    break
+        for record in special_fares["in_vehicle_cost"]:
+            line = network.transit_line(record["line"])
+            for seg in line.segments(True):
+                if record["from_stop"] in seg["#stop_name"]:
+                    seg["@coaster_fare_inveh"] = record["cost"]
+                    break
         self._log.append({"type": "text", "content": "Calculate derived transit attributes complete"})
         return
 
@@ -974,7 +1012,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         self._log.append({"type": "header", "content": "Import turns and turn restrictions"})
         self._log.append({"type": "text", "content": "Process LINKTYPETURNS.DBF for turn prohibited by type"})
         # Process LINKTYPETURNS.DBF for turn prohibited by type
-        f = _dbflib.open(os.path.join(self.source, "LINKTYPETURNS.DBF"), 'r')
+        f = _dbflib.open(_join(self.source, "LINKTYPETURNS.DBF"), 'r')
         link_type_turns = _defaultdict(lambda: {})
         for i in range(f.record_count()):
             record = f.read_record(i)
@@ -1004,7 +1042,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                             turn.data1 = record["UTURN"]
 
         self._log.append({"type": "text", "content": "Process turns.csv for turn prohibited by ID"})
-        turn_data = gen_utils.DataTableProc("turns", os.path.join(self.source, "turns.csv"))
+        turn_data = gen_utils.DataTableProc("turns", _join(self.source, "turns.csv"))
         if self.save_data_tables:
             turn_data.save("%s-turns"  % self.data_table_name, self.overwrite)
         links = dict((link["@tcov_id"], link) for link in network.links())
@@ -1054,9 +1092,10 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         #               "@cost_hov"
         # "ITOLL4":     "@cost_med_truck"  # ITOLL4 - Toll * 1.03 + AOC
         # "ITOLL5":     "@cost_hvy_truck"  # ITOLL5 - Toll * 2.33 + AOC
-        # TODO: read from properties file
-        aoc_f = 13.5          # properties["aoc.fuel"]
-        aoc_m = 6.3           # properties["aoc.maintenance"]
+        load_properties = _m.Modeller().tool('sandag.utilities.properties')
+        props = load_properties(_join(_dir(self.source), "conf", "sandag_abm.properties"))
+        aoc_f = props["aoc.fuel"]
+        aoc_m = props["aoc.maintenance"]
         aoc = aoc_f + aoc_m
         time_periods = ["_ea", "_am", "_md", "_pm", "_ev"]
         src_time_periods = ["_op", "_am", "_op", "_pm", "_op"]

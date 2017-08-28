@@ -307,11 +307,11 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             }, 
             # Fare attributes
             "boarding_cost": {
-                "at_nodes": {"penalty": "@coaster_fare_node", "perception_factor": coaster_fare_percep}, 
                 "on_lines": {"penalty": "@fare", "perception_factor": params["fare"]}, 
+                "on_segments": {"penalty": "@coaster_fare_board", "perception_factor": coaster_fare_percep}, 
             }, 
             "boarding_time": {"global": {"penalty": 0, "perception_factor": 1}}, 
-            "in_vehicle_cost": {"penalty": "@coaster_fare_seg", "perception_factor": coaster_fare_percep}, 
+            "in_vehicle_cost": {"penalty": "@coaster_fare_inveh", "perception_factor": coaster_fare_percep}, 
             "in_vehicle_time": {"perception_factor": params["in_vehicle"]}, 
             "aux_transit_time": {"perception_factor": params["walk"]},     
             "aux_transit_cost": None, 
