@@ -44,7 +44,7 @@ del %SCENARIO_FOLDER%\gisdk\gui_generic.rsc
 @echo copy network inputs
 call copy_networks.cmd %NETWORKDIR% %SCENARIO_FOLDER%\input
 
-@init emme folder
+@echo init emme folder
 call init_emme.cmd %SCENARIO_FOLDER%
 
 rem @echo off & setlocal
