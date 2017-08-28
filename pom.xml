@@ -621,7 +621,7 @@
 	              </execution>
 	            </executions>
 	            <configuration>
-	              <executable>src/main/resources/init_emme.cmd t:/abm/test2</executable>
+	              <executable>src/main/resources/init_emme.cmd</executable>
 	            </configuration>
 	        </plugin>
         </plugins>

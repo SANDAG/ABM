@@ -44,6 +44,9 @@ del %SCENARIO_FOLDER%\gisdk\gui_generic.rsc
 @echo copy network inputs
 call copy_networks.cmd %NETWORKDIR% %SCENARIO_FOLDER%\input
 
+@init emme folder
+call init_emme.cmd %SCENARIO_FOLDER%
+
 rem @echo off & setlocal
 rem set t=%SCENARIO_FOLDER%
 rem for /f "tokens=1,2 delims=:" %%a in ("%t%") do (
