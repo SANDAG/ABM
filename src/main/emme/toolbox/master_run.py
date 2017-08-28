@@ -26,6 +26,7 @@ import shutil as _shutil
 import tempfile as _tempfile
 from copy import deepcopy as _copy
 import time as _time
+import socket as _socket
 import sys
 import os
 
@@ -95,7 +96,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         try:
             self.save_properties()
             self(self.main_directory, self.scenario_id, self.scenario_title, self.emmebank_title,
-                 self.num_processors)
+                 self.num_processors, self.select_link)
             run_msg = "Tool complete"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
         except Exception as error:
@@ -108,7 +109,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         return self.tool_run_msg
 
     @_m.logbook_trace("Master run model", save_arguments=True)
-    def __call__(self, main_directory, scenario_id, scenario_title, emmebank_title, num_processors, select_link):
+    def __call__(self, main_directory, scenario_id, scenario_title, emmebank_title, num_processors, select_link=None):
         attributes = {
             "main_directory": main_directory, 
             "scenario_id": scenario_id, 
@@ -133,7 +134,6 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         external_external = modeller.tool("sandag.model.external_external")
         import_auto_demand = modeller.tool("sandag.import.import_auto_demand")
         import_transit_demand = modeller.tool("sandag.import.import_transit_demand")
-        export_traffic_skims = modeller.tool("sandag.export.export_traffic_skims")
         export_transit_skims = modeller.tool("sandag.export.export_transit_skims")
         export_network_data = modeller.tool("sandag.export.export_data_loader_network")
         export_matrix_data = modeller.tool("sandag.export.export_data_loader_matrices")
@@ -376,37 +376,56 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
     def run_traffic_assignments(self, base_scenario, period_ids, msa_iteration, relative_gap, max_assign_iterations, num_processors, select_link=None):
         modeller = _m.Modeller()
         traffic_assign  = modeller.tool("sandag.assignment.traffic_assignment")
+        export_traffic_skims = modeller.tool("sandag.export.export_traffic_skims")        
         output_dir = _join(self._path, "output")
         main_emmebank = base_scenario.emmebank
 
-        # TODO - read server swap to determine distributed structure
-        #      - also num_processors
-        distributed = False
+        machine_name = _socket.gethostname()
+        with open(_join(self._path, "conf", "server-config.csv")) as f:
+            columns = f.next().split(",")
+            for line in f:
+                values = dict(zip(columns, line.split(",")))        
+                name = values["ServerName"]
+                if name == machine_name:
+                    server_config = values
+                    break
+            else:
+                raise Exception("Current machine name not found in conf\server-config.csv ServerName column")
+        distributed = server_config["SNODE"] == "no"
         if distributed:
+            periods_node1 = ["MD", "EA"]
+            periods_node2 = ["PM", "EV"]
             scen_map = dict((p,n) for n,p in period_ids)
-            database_path1, skim_names1 = self.setup_remote_database([scen_map["AM"], scen_map["EV"]], ["AM", "EV"], 1)
-            database_path2, skim_names2 = self.setup_remote_database([scen_map["MD"], scen_map["EA"]], ["MD", "EA"], 2)
+            database_path1, skim_names1 = self.setup_remote_database([scen_map[p] for p in periods_node1], periods_node1, 1)
+            database_path2, skim_names2 = self.setup_remote_database([scen_map[p] for p in periods_node2], periods_node2, 2)
             input_args = {
                 "msa_iteration": msa_iteration, 
                 "relative_gap": relative_gap, 
                 "max_assign_iterations": max_assign_iterations, 
-                "num_processors": num_processors, 
+                "num_processors": server_config["THREADN1"], 
                 "select_link": select_link
             }
-            self.start_assignments("{machine1}", database_path1, ["AM", "EV"], input_args)
-            self.start_assignments("{machine2}", database_path2, ["MD", "EA"], input_args)
+            self.start_assignments(server_config["NODE2"], database_path1, periods_node1, input_args)
+
+            input_args["num_processors"] = server_config["THREADN2"]
+            self.start_assignments(server_config["NODE3"], database_path2, periods_node2, input_args)
+
             try:
                 # run PM assignment locally
                 pm_scenario = main_emmebank.scenario(number)
                 traffic_assign("PM", msa_iteration, relative_gap, max_assign_iterations, num_processors, pm_scenario, select_link)
+                omx_file = _join(output_dir, "traffic_skims_%s.omx" % "PM")
+                export_traffic_skims("PM", omx_file, base_scenario)
 
-                scenarios = {database_path1: [scenarios["AM"], scenarios["EV"]], database_path2: [scenarios["MD"], scenarios["EA"]]}
+                scenarios = {
+                    database_path1: [scen_map[p] for p in periods_node1], 
+                    database_path2: [scen_map[p] for p in periods_node2]}
                 skim_names = {database_path1: skim_names1, database_path2: skim_names2}
                 self.wait_and_copy([database_path1, database_path2], scenarios, skim_names)
             except:
-                # taskkill remote processes - TODO: needs machines and may need username and password
-                _subprocess.call("taskkill /F /T /S {machine1} /IM python.exe")
-                _subprocess.call("taskkill /F /T /S {machine2} /IM python.exe")
+                # taskkill remote processes - note: may need username and password
+                _subprocess.call("taskkill /F /T /S \\%s /IM python.exe" % server_config["NODE2"])
+                _subprocess.call("taskkill /F /T /S \\%s /IM python.exe" % server_config["NODE3"])
                 raise
         else:
             for number, period in period_ids:
@@ -429,9 +448,8 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                 err_file_ref, err_file_path = _tempfile.mkstemp(suffix='.log')
                 err_file = os.fdopen(err_file_ref, "w")
                 try:
-                    output = _subprocess.check_output(command, stderr=err_file, shell=True)
+                    output = _subprocess.check_output(command, stderr=err_file, cwd=self._path, shell=True)
                     report.add_html('Output:<br><br><div class="preformat">%s</div>' % output)
-                    _m.logbook_write("Process run %s report" % name, report.render())
                 except _subprocess.CalledProcessError as error:
                     report.add_html('Output:<br><br><div class="preformat">%s</div>' % error.output)
                     raise
@@ -441,10 +459,10 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                         error_msg = f.read()
                     os.remove(err_file_path)
                     if error_msg:
-                        report.add_html('Error message:<br><br><div class="preformat">%s</div>' % error_msg)
+                        report.add_html('Error message(s):<br><br><div class="preformat">%s</div>' % error_msg)
                     _m.logbook_write("Process run %s report" % name, report.render())
             else:
-                _subprocess.check_call(command, shell=True)
+                _subprocess.check_call(command, cwd=self._path, shell=True)
 
     @_m.logbook_trace("Check free space on C")
     def check_free_space(self, min_space):
@@ -569,9 +587,9 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
 
         script_dir = _join(self._path, "python")
         bin_dir = _join(self._path, "bin")
-        # TODO - confirm access, may need username and password - these appear to be unused in the "mapAndRun.bat" script
+        # may need username and password - these appear to be unused in the "mapAndRun.bat" script
         # they also use the -s flag: run in System account
-        args = ' {machine} -d "{bin}\\emme_python.bat" "{script_dir}\\remote_run_traffic.py" "{path}"'.format(
+        args = ' \\\\{machine} -d "{bin}\\emme_python.bat" "{script_dir}\\remote_run_traffic.py" "{path}"'.format(
             bin=bin_dir, machine=machine, script_dir=script_dir, path=database_path)
         self.run_proc('PsExec', args, "Start remote process for traffic assignments %s" % (", ".join(periods)))
 
