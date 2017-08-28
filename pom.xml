@@ -391,7 +391,24 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>                    
+                    </execution>
+                    <execution>
+                        <id>copy-emme-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${release.root}/common/python/emme</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/emme</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>                     
                     <execution>
                         <id>copy-txt-resources</id>
                         <phase>package</phase>
@@ -543,7 +560,7 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>                                               
+                    </execution>                                             
                     <execution>
                         <id>copy-sql-resources</id>
                         <phase>package</phase>
@@ -560,24 +577,7 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>      
-                    <execution>
-                        <id>copy-emme-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${release.root}/common/emme</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>emme</directory>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>                                              
+                    </execution>                                                         
                 </executions>
             </plugin>
             <plugin>
@@ -607,6 +607,23 @@
                     </archive>
                 </configuration>
             </plugin>
+            <plugin>
+	            <groupId>org.codehaus.mojo</groupId>
+	            <artifactId>exec-maven-plugin</artifactId>
+	            <version>1.2</version>
+	            <executions>
+	              <execution>
+	                <id>init_emme_project</id>
+	                <phase>package</phase>
+	                <goals>
+	                  <goal>exec</goal>
+	                </goals>
+	              </execution>
+	            </executions>
+	            <configuration>
+	              <executable>src/main/resources/init_emme.cmd t:/abm/test2</executable>
+	            </configuration>
+	        </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -753,7 +770,7 @@
         <dependency>
          <groupId>osplanning</groupId>
         	<artifactId>omx</artifactId>
-			<version>0.2.3</version>
+			<version>8.28.17</version>
 		</dependency>
 	    <dependency>	
 		  <groupId>hdf</groupId>
