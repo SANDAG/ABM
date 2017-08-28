@@ -78,7 +78,7 @@ if __name__ == "__main__":
             with open(_join(database_path, path), 'r') as f:
                 input_args = _json.loads(f.read())
             period = input_args["period"]
-            log_path = _join(_dir(_dir(database_path)), "log", "traffic_assign_%s_remote_log.txt" % period)
+            log_path = _join(_dir(_dir(database_path)), "logFile", "traffic_assign_%s_remote_log.txt" % period)
             with open(log_path, 'w') as f:
                 f.write(_time.strftime("%Y-%m-%d %H:%M:%S"))
                 f.write(" - remote process started and input args read\n")
