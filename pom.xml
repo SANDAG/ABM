@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.sandag</groupId>
     <artifactId>SANDAG-ABM</artifactId>
-    <version>version_13_4_0-SNAPSHOT</version>
+    <version>version_13_3_2</version>
     <name>SANDAG CT-RAMP Activity Based Model</name>
     <properties>
         <encoding.type>UTF-8</encoding.type> 
@@ -83,8 +83,8 @@
             <id>2014</id>
             <properties>
                 <year>2014</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>              
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
@@ -95,8 +95,8 @@
             <id>2015</id>
             <properties>
                 <year>2015</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>              
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
@@ -107,8 +107,8 @@
             <id>2016</id>
             <properties>
                 <year>2016</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>              
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
@@ -119,8 +119,8 @@
             <id>2017</id>
             <properties>
                 <year>2017</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>              
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>

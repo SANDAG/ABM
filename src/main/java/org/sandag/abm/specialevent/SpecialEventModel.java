@@ -52,6 +52,7 @@ public final class SpecialEventModel
     private int                     traceId;
 
     private TableDataSet            eventData;
+    private double                  sampleRate                          = 1;
 
     /**
      * Default Constructor.
@@ -97,6 +98,23 @@ public final class SpecialEventModel
         logger.info("End reading the data in file " + fileName);
         return data;
     }
+    
+    /**
+     * @return the sampleRate
+     */
+    public double getSampleRate()
+    {
+        return sampleRate;
+    }
+
+    /**
+     * @param sampleRate
+     *            the sampleRate to set
+     */
+    public void setSampleRate(double sampleRate)
+    {
+        this.sampleRate = sampleRate;
+    }
 
     /**
      * Run the Event Model.
@@ -135,6 +153,10 @@ public final class SpecialEventModel
         {
 
             SpecialEventTour tour = tours[i];
+            
+            // Wu added for sampling tours
+            double rand = tour.getRandom();
+            if (rand > sampleRate) continue;
 
             if (i < 10 || i % 1000 == 0) logger.info("Processing tour " + (i + 1));
 
@@ -230,6 +252,25 @@ public final class SpecialEventModel
 
         pMap = ResourceUtil.getResourceBundleAsHashMap(propertiesFile);
         SpecialEventModel specialEventModel = new SpecialEventModel(pMap);
+        
+        //Wu added for sampling special event tours based on sample rate
+        float sampleRate = 1.0f;
+        int iteration = 1;
+
+        for (int i = 1; i < args.length; ++i)
+        {
+            if (args[i].equalsIgnoreCase("-sampleRate"))
+            {
+                sampleRate = Float.parseFloat(args[i + 1]);
+            }
+            if (args[i].equalsIgnoreCase("-iteration"))
+            {
+                iteration = Integer.parseInt(args[i + 1]);
+            }
+        }
+        logger.info("Special Event Model:"+String.format("-sampleRate %.4f.", sampleRate)+"-iteration  " + iteration);
+        specialEventModel.setSampleRate(sampleRate);
+        
 
         String matrixServerAddress = "";
         int serverPort = 0;

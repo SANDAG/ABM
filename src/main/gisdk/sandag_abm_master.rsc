@@ -38,6 +38,7 @@ Macro "Run SANDAG ABM"
    skipTransitSkimming = RunMacro("read properties array",properties,"RunModel.skipTransitSkimming", "S")
    skipCoreABM = RunMacro("read properties array",properties,"RunModel.skipCoreABM", "S")
    skipOtherSimulateModel = RunMacro("read properties array",properties,"RunModel.skipOtherSimulateModel", "S")
+   skipSpecialEventModel = RunMacro("read properties array",properties,"RunModel.skipSpecialEventModel", "S")
    skipCTM = RunMacro("read properties array",properties,"RunModel.skipCTM", "S")
    skipEI = RunMacro("read properties array",properties,"RunModel.skipEI", "S")
    skipTruck = RunMacro("read properties array",properties,"RunModel.skipTruck", "S")
@@ -136,7 +137,7 @@ Macro "Run SANDAG ABM"
    //Looping
    for iteration = startFromIteration to max_iterations do        
 
-      if skipCoreABM[iteration] = "false" or skipOtherSimulateModel[iteration] = "false" then do
+      if skipCoreABM[iteration] = "false" or skipOtherSimulateModel[iteration] = "false" or skipSpecialEventModel[iteration] = "false" then do  //Wu modified to add special event model 5/19/2017
 	      // Start matrix manager locally
 	      runString = path+"\\bin\\runMtxMgr.cmd "+drive+" "+path_no_drive
 	      ok = RunMacro("TCB Run Command", 1, "Start matrix manager", runString)
@@ -192,16 +193,20 @@ Macro "Run SANDAG ABM"
          status = RunProgram("cmd.exe /c copy "+fromDir+"\\nmot*.mtx "+toDir+"\\nmot*.mtx",)
          status = RunProgram("cmd.exe /c copy "+fromDir+"\\othr*.mtx "+toDir+"\\othr*.mtx",)
          status = RunProgram("cmd.exe /c copy "+fromDir+"\\trip*.mtx "+toDir+"\\trip*.mtx",)
-         status = RunProgram("cmd.exe /c copy "+fromDir+"\\*Trips.csv "+toDir+"\\*Trips.csv",)
-         status = RunProgram("cmd.exe /c copy "+fromDir+"\\*airport_out.csv "+toDir+"\\*airport_out.csv",)
+         status = RunProgram("cmd.exe /c copy "+fromDir+"\\internalExternalTrips.csv "+toDir+"\\internalExternalTrips.csv",)
+         status = RunProgram("cmd.exe /c copy "+fromDir+"\\airport_out.csv "+toDir+"\\airport_out.csv",)
+         status = RunProgram("cmd.exe /c copy "+fromDir+"\\crossBorderTrips.csv "+toDir+"\\crossBorderTrips.csv",)       
+         status = RunProgram("cmd.exe /c copy "+fromDir+"\\visitorTrips.csv "+toDir+"\\visitorTrips.csv",)  
 
          status = RunProgram("cmd.exe /c del "+fromDir+"\\auto*.mtx",)
          status = RunProgram("cmd.exe /c del "+fromDir+"\\tran*.mtx",)
          status = RunProgram("cmd.exe /c del "+fromDir+"\\nmot*.mtx",)
          status = RunProgram("cmd.exe /c del "+fromDir+"\\othr*.mtx",)
          status = RunProgram("cmd.exe /c del "+fromDir+"\\trip*.mtx",)
-         status = RunProgram("cmd.exe /c del "+fromDir+"\\*Trips.csv",)
-         status = RunProgram("cmd.exe /c del "+fromDir+"\\*airport_out.csv",)
+         status = RunProgram("cmd.exe /c del "+fromDir+"\\internalExternalTrips.csv",)
+         status = RunProgram("cmd.exe /c del "+fromDir+"\\airport_out.csv",)
+         status = RunProgram("cmd.exe /c del "+fromDir+"\\crossBorderTrips.csv",)
+         status = RunProgram("cmd.exe /c del "+fromDir+"\\visitorTrips.csv",)
         
       end
 
@@ -217,6 +222,14 @@ Macro "Run SANDAG ABM"
       if skipOtherSimulateModel[iteration] = "false" then do
 	      runString = path+"\\bin\\runSandagAbm_SMM.cmd "+drive+" "+path_forward_slash +" "+sample_rate[iteration]+" "+i2s(iteration)
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run airport model, visitor model, cross-border model"+" "+runString})
+	      ok = RunMacro("TCB Run Command", 1, "Run CT-RAMP", runString)
+	      if !ok then goto quit  
+      end
+
+      // Run special event model
+      if skipSpecialEventModel[iteration] = "false" then do
+	      runString = path+"\\bin\\runSandagAbm_SEM.cmd "+drive+" "+path_forward_slash +" "+sample_rate[iteration]+" "+i2s(iteration)
+	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run special event model"+" "+runString})
 	      ok = RunMacro("TCB Run Command", 1, "Run CT-RAMP", runString)
 	      if !ok then goto quit  
       end
