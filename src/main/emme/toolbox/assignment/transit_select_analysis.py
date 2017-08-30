@@ -58,12 +58,12 @@ class TransitSelectAnalysis(_m.Tool(), gen_utils.Snapshot):
 
         with pb.section("Trip components for selection:"):
             domains = ["LINK", "NODE", "TRANSIT_SEGMENT", "TRANSIT_LINE"]
-            pb.add_select_extra_attribute("in_vehicle", title="In-vehicle", filter=domains, allow_none=True)
-            pb.add_select_extra_attribute("aux_transit", title="Auxilary transit", filter=domains, allow_none=True)
-            pb.add_select_extra_attribute("initial_boarding", title="Initial boarding", filter=domains, allow_none=True)
-            pb.add_select_extra_attribute("transfer_boarding", title="Transfer boarding", filter=domains, allow_none=True)
-            pb.add_select_extra_attribute("transfer_alighting", title="Transfer alighting", filter=domains, allow_none=True)
-            pb.add_select_extra_attribute("final_alighting", title="Final alighting", filter=domains, allow_none=True)
+            pb.add_select_extra_attribute("in_vehicle", title="In-vehicle", filter=domains, allow_none=True, id=True)
+            pb.add_select_extra_attribute("aux_transit", title="Auxilary transit", filter=domains, allow_none=True, id=True)
+            pb.add_select_extra_attribute("initial_boarding", title="Initial boarding", filter=domains, allow_none=True, id=True)
+            pb.add_select_extra_attribute("transfer_boarding", title="Transfer boarding", filter=domains, allow_none=True, id=True)
+            pb.add_select_extra_attribute("transfer_alighting", title="Transfer alighting", filter=domains, allow_none=True, id=True)
+            pb.add_select_extra_attribute("final_alighting", title="Final alighting", filter=domains, allow_none=True, id=True)
 
         pb.add_text_box("suffix", title="Suffix for results (matrices and attributes):", size=6,
             note="The suffix to use in the naming of per-class result attributes and matrices, up to 6 characters. "
@@ -95,6 +95,7 @@ class TransitSelectAnalysis(_m.Tool(), gen_utils.Snapshot):
             raise
 
     def __call__(self, selection, suffix, threshold, scenario):
+        selection = dict((k, str(v) if v else None) for k, v in selection.iteritems())
         attrs = {
             "selection": selection, 
             "suffix": suffix, 
@@ -102,7 +103,7 @@ class TransitSelectAnalysis(_m.Tool(), gen_utils.Snapshot):
             "scenario": scenario.id
         }
         with _m.logbook_trace("Transit select analysis %s" % suffix, attributes=attrs):
-            attrs.update(dict((k,v) for k,v in attrs["selection"].iteritems()))
+            attrs.update(attrs["selection"])
             gen_utils.log_snapshot("Transit select analysis", str(self), attrs)
 
             path_analysis = _m.Modeller().tool(
