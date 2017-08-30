@@ -90,6 +90,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 <li>trstop.csv</li>
                 <li>timexfer.csv</li>
                 <li>MODE5TOD.dbf</li>
+                <li>special_fares.txt</li>
             </ul>
         </div>
         """
@@ -981,10 +982,10 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     ]
                 },
                 "in_vehicle_cost": [
-                    {"line": "398104", "from_stop": "SOLANA BEACH", "cost": 1.0},
-                    {"line": "398104", "from_stop": "SORRENTO VALLEY", "cost": 0.5},
-                    {"line": "398204", "from_stop": "OLD TOWN", "cost": 1.0},
-                    {"line": "398204", "from_stop": "SORRENTO VALLEY", "cost": 0.5}
+                    {"line": "398104", "from": "SOLANA BEACH", "cost": 1.0},
+                    {"line": "398104", "from": "SORRENTO VALLEY", "cost": 0.5},
+                    {"line": "398204", "from": "OLD TOWN", "cost": 1.0},
+                    {"line": "398204", "from": "SORRENTO VALLEY", "cost": 0.5}
                 ]
             }
             self._log.append({"type": "text", "content": "Using default coaster fare based on 2012 base year setup."})
@@ -1002,7 +1003,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         for record in special_fares["in_vehicle_cost"]:
             line = network.transit_line(record["line"])
             for seg in line.segments(True):
-                if record["from_stop"] in seg["#stop_name"]:
+                if record["from"] in seg["#stop_name"]:
                     seg["@coaster_fare_inveh"] = record["cost"]
                     break
         self._log.append({"type": "text", "content": "Calculate derived transit attributes complete"})
