@@ -499,14 +499,13 @@ Export network results to csv files for SQL data loader."""
                             links = [link for link in net.links() if link["@tcov_id"] > 0]
                             lines = [line for line in net.transit_lines() if line.mode.id in mode_list]
                             
-                            self.output_transit_flow(mode, access_type, tod, lines, segment_flow, fout_seg)
+                            label = ",".join([mode, access_type, tod])
+                            self.output_transit_flow(label, lines, segment_flow, fout_seg)
                             self.output_transit_aggregate_flow(
-                                mode, access_type, tod, links,
-                                link_transit_flow, total_walk_flow, access_walk_flow,
+                               label, links, link_transit_flow, total_walk_flow, access_walk_flow,
                                 xfer_walk_flow, egress_walk_flow, fout_link)
                             self.output_transit_onoff(
-                                mode, access_type, tod, lines, 
-                                total_boardings, total_alightings, initial_boardings,
+                                label, lines, total_boardings, total_alightings, initial_boardings,
                                 xfer_boardings, xfer_alightings, final_alightings,
                                 stop_on, stop_off, fout_stop)
         fout_stop.close()
@@ -514,27 +513,29 @@ Export network results to csv files for SQL data loader."""
         fout_seg.close()
         return
 
-    def output_transit_flow(self, mode, access_type, tod, lines, segment_flow, fout_seg):
+    def output_transit_flow(self, label, lines, segment_flow, fout_seg):
         # output segment data (transit_flow)
+        centroid = "0"
         for line in lines:
             line_id = int(line["@route_id"])
-            total_length = 0
-            for seg in line.segments():
-                total_length += seg.link.length
-            last_link_length = frommp = 0.0
-            for seg in line.segments():
-                from_stop, to_stop, centroid = seg.i_node.id, seg.j_node.id, "0"
-                frommp += last_link_length
-                last_link_length = seg.link.length
-                tomp = total_length - frommp
+            ivtt = from_mp = to_mp = 0
+            segments = iter(line.segments())
+            seg = segments.next()
+            for next_seg in segments:
+                to_mp += seg.link.length
+                ivtt += seg.transit_time
+                if not next_seg.allow_boardings :
+                    continue
                 transit_flow = seg[segment_flow.id]
-                cost = baseivtt = seg.transit_time
                 fout_seg.write(",".join([str(x) for x in [
-                                mode, access_type, tod, line_id, from_stop, to_stop,
-                                centroid, frommp, tomp, transit_flow, baseivtt, cost]]))
+                                label, line_id, seg["@stop_id"], next_seg["@stop_id"],
+                                centroid, from_mp, to_mp, transit_flow, ivtt, ivtt]]))
                 fout_seg.write("\n")
+                seg = next_seg
+                from_mp = to_mp
+                ivtt = 0
 
-    def output_transit_aggregate_flow(self, mode, access_type, tod, links,
+    def output_transit_aggregate_flow(self, label, links,
                                       link_transit_flow, total_walk_flow, access_walk_flow,
                                       xfer_walk_flow, egress_walk_flow, fout_link):
         # output link data (transit_aggregate_flow)
@@ -562,7 +563,7 @@ Export network results to csv files for SQL data loader."""
                 ba_egress_walk_flow = 0.0
 
             fout_link.write(",".join([str(x) for x in [
-                         mode, access_type, tod, link_id,
+                         label, link_id,
                          ab_transit_flow, ba_transit_flow,
                          ab_non_transit_flow, ba_non_transit_flow,
                          ab_total_flow, ba_total_flow,
@@ -572,7 +573,7 @@ Export network results to csv files for SQL data loader."""
                         ]]))
             fout_link.write("\n")
 
-    def output_transit_onoff(self, mode, access_type, tod, lines, 
+    def output_transit_onoff(self, label, lines, 
                              total_boardings, total_alightings, initial_boardings,
                              xfer_boardings, xfer_alightings, final_alightings,
                              stop_on, stop_off, fout_stop):
@@ -582,7 +583,7 @@ Export network results to csv files for SQL data loader."""
             for seg in line.segments(True):
                 if not (seg.allow_alightings or seg.allow_boardings):
                     continue
-                stop = seg.i_node.id
+                i_node = seg.i_node.id
                 boardings = seg[total_boardings.id]
                 alightings = seg[total_alightings.id]
                 walk_access_on = seg[initial_boardings.id]
@@ -590,20 +591,20 @@ Export network results to csv files for SQL data loader."""
                 walk_xfer_on = 0.0
                 direct_xfer_off = seg[xfer_alightings.id]
                 walk_xfer_off = 0.0
-                if stop_on.has_key(stop):
-                    if stop_on[stop].has_key(line.id):
-                        if direct_xfer_on>0:
-                            walk_xfer_on = direct_xfer_on - stop_on[stop][line.id]
-                            direct_xfer_on = stop_on[stop][line.id]
-                if stop_off.has_key(stop):
-                    if stop_off[stop].has_key(line.id):
-                        if direct_xfer_off>0:
-                            walk_xfer_off = direct_xfer_off - stop_off[stop][line.id]
-                            direct_xfer_off = stop_off[stop][line.id]
+                if stop_on.has_key(i_node):
+                    if stop_on[i_node].has_key(line.id):
+                        if direct_xfer_on > 0:
+                            walk_xfer_on = direct_xfer_on - stop_on[i_node][line.id]
+                            direct_xfer_on = stop_on[i_node][line.id]
+                if stop_off.has_key(i_node):
+                    if stop_off[i_node].has_key(line.id):
+                        if direct_xfer_off > 0:
+                            walk_xfer_off = direct_xfer_off - stop_off[i_node][line.id]
+                            direct_xfer_off = stop_off[i_node][line.id]
 
                 egress_off = seg[final_alightings.id]
                 fout_stop.write(",".join([str(x) for x in [
-                                mode, access_type, tod, line_id, stop,
+                                label, line_id, seg["@stop_id"],
                                 boardings, alightings, walk_access_on,
                                 direct_xfer_on, walk_xfer_on, direct_xfer_off, walk_xfer_off,
                                 egress_off]]))
