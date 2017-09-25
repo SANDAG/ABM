@@ -528,7 +528,7 @@ Export network results to csv files for SQL data loader."""
                     continue
                 transit_flow = seg[segment_flow.id]
                 fout_seg.write(",".join([str(x) for x in [
-                                label, line_id, seg["@stop_id"], next_seg["@stop_id"],
+                                label, line_id, int(seg["@stop_id"]), int(next_seg["@stop_id"]),
                                 centroid, from_mp, to_mp, transit_flow, ivtt, ivtt]]))
                 fout_seg.write("\n")
                 seg = next_seg
@@ -604,7 +604,7 @@ Export network results to csv files for SQL data loader."""
 
                 egress_off = seg[final_alightings.id]
                 fout_stop.write(",".join([str(x) for x in [
-                                label, line_id, seg["@stop_id"],
+                                label, line_id, int(seg["@stop_id"]),
                                 boardings, alightings, walk_access_on,
                                 direct_xfer_on, walk_xfer_on, direct_xfer_off, walk_xfer_off,
                                 egress_off]]))
