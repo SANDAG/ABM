@@ -71,6 +71,7 @@ public class CtrampApplication
     public static final String                         PROPERTIES_RUN_DAILY_ACTIVITY_PATTERN                     = "RunModel.CoordinatedDailyActivityPattern";
     public static final String                         PROPERTIES_RUN_INDIV_MANDATORY_TOUR_FREQ                  = "RunModel.IndividualMandatoryTourFrequency";
     public static final String                         PROPERTIES_RUN_MAND_TOUR_DEP_TIME_AND_DUR                 = "RunModel.MandatoryTourDepartureTimeAndDuration";
+    public static final String						             PROPERTIES_RUN_SCHOOL_ESCORT_MODEL                        = "RunModel.SchoolEscortModel";
     public static final String                         PROPERTIES_RUN_MAND_TOUR_MODE_CHOICE                      = "RunModel.MandatoryTourModeChoice";
     public static final String                         PROPERTIES_RUN_AT_WORK_SUBTOUR_FREQ                       = "RunModel.AtWorkSubTourFrequency";
     public static final String                         PROPERTIES_RUN_AT_WORK_SUBTOUR_LOCATION_CHOICE            = "RunModel.AtWorkSubTourLocationChoice";

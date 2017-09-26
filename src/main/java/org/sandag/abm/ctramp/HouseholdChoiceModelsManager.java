@@ -252,7 +252,7 @@ public final class HouseholdChoiceModelsManager
                     propertyMap, modelStructure, dmuFactory, aggAcc, logsumHelper, mandAcc,
                     pctHighIncome, pctMultipleAutos, avgtts, transpDist, pctDetour,
                     nonMandatoryTazDistProbs, nonMandatorySizeProbs, subTourTazDistProbs,
-                    subTourSizeProbs, distanceToCordonsLogsums);
+                    subTourSizeProbs, distanceToCordonsLogsums, tazDistanceCalculator);
             if(logResults){
             		message = String.format("created hhChoiceModels=%d, task=%d, thread=%s.", modelIndex,
                     taskIndex, Thread.currentThread().getName());

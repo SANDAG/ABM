@@ -271,6 +271,8 @@ public class HouseholdDataWriter
         data.add("autos");
         data.add("transponder");
         data.add("cdap_pattern");
+        data.add("out_escort_choice");
+        data.add("inb_escort_choice");       
         data.add("jtf_choice");
         return data;
     }
@@ -285,6 +287,8 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.TEXT);
         data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.INTEGER);
         return data;
     }
 
@@ -297,6 +301,8 @@ public class HouseholdDataWriter
         data.add(string(hh.getAutoOwnershipModelResult()));
         data.add(string(hh.getTpChoice()));
         data.add(string(hh.getCoordinatedDailyActivityPattern()));
+        data.add(string(hh.getOutboundEscortChoice()));
+        data.add(string(hh.getInboundEscortChoice()));
         data.add(string(hh.getJointTourFreqChosenAlt()));
         return data;
     }
@@ -378,6 +384,11 @@ public class HouseholdDataWriter
         data.add("num_ob_stops");
         data.add("num_ib_stops");
 
+        data.add("escort_type_out");
+        data.add("escort_type_in");
+      	data.add("driver_num_out");
+      	data.add("driver_num_in");
+ 
         if (saveUtilsProbsFlag)
         {
             int numModeAlts = modelStructure.getMaxTourModeIndex();
@@ -454,6 +465,11 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
 
+        data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.INTEGER); 
+        
         if (saveUtilsProbsFlag)
         {
             int numModeAlts = modelStructure.getMaxTourModeIndex();
@@ -527,7 +543,12 @@ public class HouseholdDataWriter
         data.add(string(t.getNumOutboundStops() == 0 ? 0 : t.getNumOutboundStops() - 1));
         data.add(string(t.getNumInboundStops() == 0 ? 0 : t.getNumInboundStops() - 1));
 
-        if (saveUtilsProbsFlag)
+        data.add(string(t.getEscortTypeOutbound()));
+        data.add(string(t.getEscortTypeInbound()));
+        data.add(string(t.getDriverPnumOutbound()));
+        data.add(string(t.getDriverPnumInbound()));
+
+       if (saveUtilsProbsFlag)
         {
             int numModeAlts = modelStructure.getMaxTourModeIndex();
             float[] utils = t.getTourModalUtilities();
@@ -643,6 +664,11 @@ public class HouseholdDataWriter
         data.add("trip_board_tap");
         data.add("trip_alight_tap");
         data.add("tour_mode");
+        data.add("driver_pnum");
+        data.add("orig_escort_stoptype");
+        data.add("orig_escortee_pnum");
+        data.add("dest_escort_stoptype");
+        data.add("dest_escortee_pnum");
         return data;
     }
 
@@ -680,6 +706,11 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.TEXT);
         data.add(SqliteDataTypes.TEXT);
         data.add(SqliteDataTypes.TEXT);
+        data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
@@ -804,6 +835,11 @@ public class HouseholdDataWriter
         data.add(string(s.getStopId()));
         data.add(string(s.isInboundStop() ? 1 : 0));
         data.add(string(t.getTourPurpose()));
+        data.add(string(s.isInboundStop() ? t.getDriverPnumInbound() : t.getDriverPnumOutbound()));
+        data.add(string(s.getEscortStopTypeOrig()));
+        data.add(string(s.getEscorteePnumOrig()));
+        data.add(string(s.getEscortStopTypeDest()));
+        data.add(string(s.getEscorteePnumDest()));
 
         if (s.getStopId() == 0)
         {
@@ -922,10 +958,62 @@ public class HouseholdDataWriter
         data.add(string((inbound ? t.getTourDestMgra() : t.getTourOrigMgra())));
         data.add(string((inbound ? t.getTourOrigMgra() : t.getTourDestMgra())));
         data.add(string(t.getTourParkMgra()));
+        data.add(string(0));
         data.add(string(inbound ? t.getTourArrivePeriod() : t.getTourDepartPeriod()));
         data.add(string(t.getTourModeChoice()));
+        data.add(string(inbound ? t.getDriverPnumInbound() : t.getDriverPnumOutbound()));
+        
+  /*      //outbound chauffeured school tour no stops; origin stop type and escortee is zero, dest stop type is dropoff, escortee is pnum.
+        if(!inbound && t.getTourPurpose().equals("School") && t.getDriverPnumOutbound()>0){
+        
+        	data.add(string(0));
+        	data.add(string(0));
+        	data.add(string(ModelStructure.ESCORT_STOP_TYPE_DROPOFF));
+        	data.add(string(t.getPersonObject().getPersonNum()));
+       
+        }else if(inbound && t.getTourPurpose().equals("School") && t.getDriverPnumInbound()>0){
+        	
+        	data.add(string(ModelStructure.ESCORT_STOP_TYPE_PICKUP));
+        	data.add(string(t.getPersonObject().getPersonNum()));
+           	data.add(string(0));
+        	data.add(string(0));
+        }else 
+        */
+        if (!inbound && t.getDriverPnumOutbound()>0){ //outbound
+        	data.add(string(0));                                          //origin = home
+        	data.add(string(0));                                          //origin = home
+           	Stop[] stops = t.getInboundStops();                           //there must be stops in inbound direction
+           	int stopType = stops[0].getEscortStopTypeOrig();              //first inbound stop
+           	int pnum = stops[0].getEscorteePnumOrig();                    //first inbound stop
+           	data.add(string(stopType));                                   //destination
+           	data.add(string(pnum));                                       //destination
+        }else if (inbound && t.getDriverPnumInbound()>0){ //inbound
+           	Stop[] stops = t.getOutboundStops();
+           	int stopType = stops[stops.length-1].getEscortStopTypeOrig(); //last outbound stop
+           	int pnum = stops[stops.length-1].getEscorteePnumOrig();       //last outbound stop
+           	data.add(string(stopType));                                   //origin
+           	data.add(string(pnum));        	                              //origin
+           	data.add(string(0));                                          //destination = home
+        	  data.add(string(0));                                          //destination = home
+        }
+        else{
+        	data.add(string(0));
+        	data.add(string(0));
+        	data.add(string(0));
+        	data.add(string(0));
+        }
+     
         data.add(string(t.getTourModeChoice()));
-
+       	
+        if(true){logger.error("Trying to write a tour as a trip");
+        
+        logger.info("HHID: " +t.getHhId());
+        logger.info("PERSNUM: "+ t.getPersonObject().getPersonNum());
+        logger.info("TOURID: "+t.getTourId());
+        logger.info(inbound ? "inbound" : "outbound");
+        }
+    	
+        
         return data;
     }
 

@@ -29,6 +29,8 @@ public abstract class ModelStructure
     public static final int                             LAST_DEPART_HOUR                  = 24;
     public static final int                             FIRST_TOD_INTERVAL_HOUR           = 430;
     public static final int                             LAST_TOD_INTERVAL_HOUR            = 2400;
+    public static final float                           TOD_INTERVAL_IN_MINUTES           = 30.0f;
+    public static final int                             MAX_TOD_INTERVAL                  = 40;
     protected String[]                                  TOD_INTERVAL_LABELS;
 
     public static final int                             EA_SKIM_PERIOD_INDEX              = 0;
@@ -130,6 +132,20 @@ public abstract class ModelStructure
     public static final int                             OTH_DISCR_PRIMARY_PURPOSE_INDEX   = 9;
     public static final int                             WORK_BASED_PRIMARY_PURPOSE_INDEX  = 10;
     public static final int                             NUM_PRIMARY_PURPOSES              = 10;
+   
+    public static final int    WORK_STOP_PURPOSE_INDEX    = 1;
+    public static final int    UNIV_STOP_PURPOSE_INDEX    = 2;
+    public static final int    ESCORT_STOP_PURPOSE_INDEX  = 4;
+    public static final int    SHOP_STOP_PURPOSE_INDEX    = 5;
+    public static final int    MAINT_STOP_PURPOSE_INDEX   = 6;
+    public static final int    EAT_OUT_STOP_PURPOSE_INDEX = 7;
+    public static final int    VISIT_STOP_PURPOSE_INDEX   = 8;
+    public static final int    DISCR_STOP_PURPOSE_INDEX   = 9;
+    
+    public static final byte   ESCORT_STOP_TYPE_DROPOFF   = 1;
+    public static final byte   ESCORT_STOP_TYPE_PICKUP    = 2;
+    public static final int RIDE_SHARING_TYPE = 1;
+    public static final int PURE_ESCORTING_TYPE = 2;
 
     public String                                       WORK_PURPOSE_NAME;
     public String                                       UNIVERSITY_PURPOSE_NAME;

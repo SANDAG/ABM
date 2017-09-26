@@ -22,12 +22,12 @@ public class AutoTazSkimsCalculator
         implements Serializable
 {
 
-    private static final int              EA          = TransitWalkAccessUEC.EA;
-    private static final int              AM          = TransitWalkAccessUEC.AM;
-    private static final int              MD          = TransitWalkAccessUEC.MD;
-    private static final int              PM          = TransitWalkAccessUEC.PM;
-    private static final int              EV          = TransitWalkAccessUEC.EV;
-    private static final int              NUM_PERIODS = TransitWalkAccessUEC.PERIODS.length;
+	public static final int              EA          = TransitWalkAccessUEC.EA;
+    public static final int              AM          = TransitWalkAccessUEC.AM;
+    public static final int              MD          = TransitWalkAccessUEC.MD;
+    public static final int              PM          = TransitWalkAccessUEC.PM;
+    public static final int              EV          = TransitWalkAccessUEC.EV;
+    public static final int              NUM_PERIODS = TransitWalkAccessUEC.PERIODS.length;
 
     // declare an array of UEC objects, 1 for each time period
     private UtilityExpressionCalculator[] autoDistOD_UECs;

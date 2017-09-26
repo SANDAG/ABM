@@ -51,6 +51,11 @@ public class Tour
     private int[][]               bestDtwTapPairsOut;
     private int[][]               bestDtwTapPairsIn;
 
+    private int escortTypeOutbound;
+    private int escortTypeInbound;
+    private int driverPnumOutbound;
+    private int driverPnumInbound;
+    
     private static final String[] RIDE_MODE_LABELS = {"CR", "LRT", "BRT", "EB", "LB"};
 
     // this constructor used for mandatory tour creation
@@ -346,7 +351,7 @@ public class Tour
      *            is true if the half-tour is inbound, or false if outbound.
      * @return the created Stop object.
      */
-    public Stop createStop(ModelStructure modelStructure, String origPurp, String destPurp,
+    public Stop createStop(String origPurp, String destPurp,
             boolean inbound, boolean subtour)
     {
         Stop stop = null;
@@ -409,6 +414,30 @@ public class Tour
         return returnString;
     }
 
+    public int getEscortTypeOutbound() {
+		return escortTypeOutbound;
+	}
+	public void setEscortTypeOutbound(int escortType) {
+		this.escortTypeOutbound = escortType;
+	}
+	public int getEscortTypeInbound() {
+		return escortTypeInbound;
+	}
+	public void setEscortTypeInbound(int escortType) {
+		this.escortTypeInbound = escortType;
+	}
+	public int getDriverPnumOutbound() {
+		return driverPnumOutbound;
+	}
+	public void setDriverPnumOutbound(int driverPnum) {
+		this.driverPnumOutbound = driverPnum;
+	}
+	public int getDriverPnumInbound() {
+		return driverPnumInbound;
+	}
+	public void setDriverPnumInbound(int driverPnum) {
+		this.driverPnumInbound = driverPnum;
+	}
     public void logTourObject(Logger logger, int totalChars)
     {
 
@@ -435,6 +464,10 @@ public class Tour
         Household.logHelper(logger, "tourDepartPeriod: ", tourDepartPeriod, totalChars);
         Household.logHelper(logger, "tourArrivePeriod: ", tourArrivePeriod, totalChars);
         Household.logHelper(logger, "tourMode: ", tourMode, totalChars);
+        Household.logHelper(logger, "escortTypeOutbound: ", escortTypeOutbound, totalChars);
+        Household.logHelper(logger, "driverPnumOutbound: ", driverPnumOutbound, totalChars);
+        Household.logHelper(logger, "escortTypeInbound: ", escortTypeInbound, totalChars);
+        Household.logHelper(logger, "driverPnumInbound: ", driverPnumInbound, totalChars);
         Household.logHelper(logger, "stopFreqChoice: ", stopFreqChoice, totalChars);
 
         String tempString = String.format("outboundStops[%s]:",
@@ -579,6 +612,9 @@ public class Tour
         Household.logHelper(logger, "tourDestWalkSubzone: ", tourDestWalkSubzone, totalChars);
         Household.logHelper(logger, "tourDepartPeriod: ", tourDepartPeriod, totalChars);
         Household.logHelper(logger, "tourArrivePeriod: ", tourArrivePeriod, totalChars);
+        Household.logHelper(logger, "driverPnumOutbound: ", driverPnumOutbound, totalChars);
+        Household.logHelper(logger, "escortTypeInbound: ", escortTypeInbound, totalChars);
+        Household.logHelper(logger, "driverPnumInbound: ", driverPnumInbound, totalChars);
         Household.logHelper(logger, "tourMode: ", tourMode, totalChars);
         Household.logHelper(logger, "stopFreqChoice: ", stopFreqChoice, totalChars);
 

@@ -32,8 +32,17 @@ public class Person
     public static final String   PERSON_TYPE_STUDENT_DRIVING_NAME           = "Student of driving age";
     public static final String   PERSON_TYPE_STUDENT_NON_DRIVING_NAME       = "Student of non-driving age";
     public static final String   PERSON_TYPE_PRE_SCHOOL_CHILD_NAME          = "Child too young for school";
-
-    public static final String[] PERSON_TYPE_NAME_ARRAY                     = {
+    public static final int   PERSON_TYPE_FULL_TIME_WORKER_INDEX          = 1;
+    public static final int   PERSON_TYPE_PART_TIME_WORKER_INDEX          = 2;
+    public static final int   PERSON_TYPE_UNIVERSITY_STUDENT_INDEX        = 3;
+    public static final int   PERSON_TYPE_NON_WORKER_INDEX                = 4;
+    public static final int   PERSON_TYPE_RETIRED_INDEX                   = 5;
+    public static final int   PERSON_TYPE_STUDENT_DRIVING_INDEX           = 6;
+    public static final int   PERSON_TYPE_STUDENT_NON_DRIVING_INDEX       = 7;
+    public static final int   PERSON_TYPE_PRE_SCHOOL_CHILD_INDEX          = 8;
+    public static final int MALE_INDEX = 1;
+    public static final int FEMALE_INDEX = 2;
+    public static final String[] PERSON_TYPE_NAME_ARRAY                        = {
             PERSON_TYPE_FULL_TIME_WORKER_NAME, PERSON_TYPE_PART_TIME_WORKER_NAME,
             PERSON_TYPE_UNIVERSITY_STUDENT_NAME, PERSON_TYPE_NON_WORKER_NAME,
             PERSON_TYPE_RETIRED_NAME, PERSON_TYPE_STUDENT_DRIVING_NAME,
@@ -1906,4 +1915,20 @@ public class Person
         nul, FT_worker_age_16plus, PT_worker_nonstudent_age_16plus, University_student, Nonworker_nonstudent_age_16_64, Nonworker_nonstudent_age_65plus, Student_age_16_19_not_FT_wrkr_or_univ_stud, Student_age_6_15_schpred, Preschool_under_age_6
     }
 
+    /**
+     * Returns true if this person is an active adult, else returns false. Active adult
+     * is defined as full-time worker, part-time worker, university student, 
+     * non-working adult or retired person who has an activity pattern other than H.
+     * 
+     * @return true if active adult, else false.
+     */
+    public boolean isActiveAdult(){
+    	boolean activeAdult=false;
+    	if((getPersonTypeNumber()==Person.PERSON_TYPE_FULL_TIME_WORKER_INDEX)||(getPersonTypeNumber()==Person.PERSON_TYPE_PART_TIME_WORKER_INDEX)||
+    			(getPersonTypeNumber()==Person.PERSON_TYPE_UNIVERSITY_STUDENT_INDEX)||(getPersonTypeNumber()==Person.PERSON_TYPE_NON_WORKER_INDEX)||
+    			(getPersonTypeNumber()==Person.PERSON_TYPE_RETIRED_INDEX))
+					if(!getCdapActivity().equalsIgnoreCase(ModelStructure.HOME_PATTERN))
+						activeAdult=true;
+    	return activeAdult;
+    }
 }

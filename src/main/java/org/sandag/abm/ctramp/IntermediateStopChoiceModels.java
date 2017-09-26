@@ -840,7 +840,11 @@ public class IntermediateStopChoiceModels
     private void applyForOutboundStops(Tour tour, Person person, Household household)
     {
 
-        Stop[] stops = tour.getOutboundStops();
+    	//don't apply if the outbound direction is escort
+    	if((tour.getEscortTypeOutbound()==ModelStructure.RIDE_SHARING_TYPE)||(tour.getEscortTypeOutbound()==ModelStructure.PURE_ESCORTING_TYPE))
+    		return;
+ 
+    	Stop[] stops = tour.getOutboundStops();
 
         // select trip depart periods for outbound stops
         if (stops != null)
@@ -858,7 +862,11 @@ public class IntermediateStopChoiceModels
     private void applyForOutboundStopsWithTiming(Tour tour, Person person, Household household)
     {
 
-        long check = System.nanoTime();
+    	//don't apply if the outbound direction is escort
+    	if((tour.getEscortTypeOutbound()==ModelStructure.RIDE_SHARING_TYPE)||(tour.getEscortTypeOutbound()==ModelStructure.PURE_ESCORTING_TYPE))
+    		return;
+
+    	long check = System.nanoTime();
 
         Stop[] stops = tour.getOutboundStops();
 
@@ -880,7 +888,11 @@ public class IntermediateStopChoiceModels
     private void applyForInboundStops(Tour tour, Person person, Household household)
     {
 
-        Stop[] stops = tour.getInboundStops();
+    	//don't apply if the inbound direction is escort
+    	if((tour.getEscortTypeInbound()==ModelStructure.RIDE_SHARING_TYPE)||(tour.getEscortTypeInbound()==ModelStructure.PURE_ESCORTING_TYPE))
+    		return;
+
+    	Stop[] stops = tour.getInboundStops();
 
         // select trip arrive periods for inbound stops
         if (stops != null)
@@ -918,7 +930,11 @@ public class IntermediateStopChoiceModels
     private void applyForInboundStopsWithTiming(Tour tour, Person person, Household household)
     {
 
-        long check = System.nanoTime();
+    	//don't apply if the inbound direction is escort
+    	if((tour.getEscortTypeInbound()==ModelStructure.RIDE_SHARING_TYPE)||(tour.getEscortTypeInbound()==ModelStructure.PURE_ESCORTING_TYPE))
+    		return;
+
+    	long check = System.nanoTime();
 
         Stop[] stops = tour.getInboundStops();
 
@@ -1227,7 +1243,7 @@ public class IntermediateStopChoiceModels
             Stop stop = null;
             try
             {
-                stop = tour.createStop(modelStructure, origStopPurpose, destStopPurpose,
+                stop = tour.createStop(origStopPurpose, destStopPurpose,
                         directionIsInbound,
                         tour.getTourCategory().equalsIgnoreCase(ModelStructure.AT_WORK_CATEGORY));
             } catch (Exception e)
@@ -1650,7 +1666,7 @@ public class IntermediateStopChoiceModels
             Stop stop = null;
             try
             {
-                stop = tour.createStop(modelStructure, origStopPurpose, destStopPurpose,
+                stop = tour.createStop(origStopPurpose, destStopPurpose,
                         directionIsInbound,
                         tour.getTourCategory().equalsIgnoreCase(ModelStructure.AT_WORK_CATEGORY));
             } catch (Exception e)

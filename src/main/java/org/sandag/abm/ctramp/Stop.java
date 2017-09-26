@@ -7,6 +7,9 @@ public class Stop
         implements Serializable
 {
 
+	static final byte STOP_TYPE_PICKUP = 1;
+	static final byte STOP_TYPE_DROPOFF = 2;
+	static final byte STOP_TYPE_OTHER = 3;
     int     id;
     int     orig;
     int     dest;
@@ -16,6 +19,10 @@ public class Stop
     int     boardTap;
     int     alightTap;
     boolean inbound;
+    private int escorteePnumOrig;
+    private byte escortStopTypeOrig;
+    private int escorteePnumDest;
+    private byte escortStopTypeDest;
 
     String  origPurpose;
     String  destPurpose;
@@ -94,6 +101,13 @@ public class Stop
         return destPurpose;
     }
 
+    public void setOrigPurpose(String purpose)
+    {
+        origPurpose=purpose;
+    }
+    public void setDestPurpose(String purpose){
+        destPurpose = purpose;
+    }
     public int getStopPurposeIndex()
     {
         return stopPurposeIndex;
@@ -134,6 +148,38 @@ public class Stop
         return id;
     }
 
+    public int getEscorteePnumOrig() {
+		return escorteePnumOrig;
+	}
+
+	public void setEscorteePnumOrig(int escorteePnum) {
+		this.escorteePnumOrig = escorteePnum;
+	}
+
+	public byte getEscortStopTypeOrig() {
+		return escortStopTypeOrig;
+	}
+
+	public void setEscortStopTypeOrig(byte stopType) {
+		this.escortStopTypeOrig = stopType;
+	}
+
+	public int getEscorteePnumDest() {
+		return escorteePnumDest;
+	}
+
+	public void setEscorteePnumDest(int escorteePnum) {
+		this.escorteePnumDest = escorteePnum;
+	}
+
+	public byte getEscortStopTypeDest() {
+		return escortStopTypeDest;
+	}
+	
+public void setEscortStopTypeDest(byte stopType) {
+		this.escortStopTypeDest = stopType;
+	}
+
     public void logStopObject(Logger logger, int totalChars)
     {
 
@@ -148,8 +194,11 @@ public class Stop
         Household.logHelper(logger, "dest: ", dest, totalChars);
         Household.logHelper(logger, "mode: ", mode, totalChars);
         Household.logHelper(logger, "direction: ", inbound ? "inbound" : "outbound", totalChars);
-        Household.logHelper(logger, inbound ? "outbound departPeriod: " : "inbound arrivePeriod: ",
-                stopPeriod, totalChars);
+        Household.logHelper( logger, "stopPeriod: ", stopPeriod, totalChars );
+        Household.logHelper( logger, "orig escort stop type: ",escortStopTypeOrig, totalChars);
+        Household.logHelper( logger, "orig escortee pnum: ",escorteePnumOrig, totalChars);
+        Household.logHelper( logger, "dest escort stop type: ",escortStopTypeDest, totalChars);
+        Household.logHelper( logger, "dest escortee pnum: ",escorteePnumDest, totalChars);
         logger.info(separater);
         logger.info("");
         logger.info("");

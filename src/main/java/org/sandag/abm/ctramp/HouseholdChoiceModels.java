@@ -2,12 +2,15 @@ package org.sandag.abm.ctramp;
 
 import java.util.Arrays;
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AccessibilitiesTable;
+import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.accessibilities.BuildAccessibilities;
 import org.sandag.abm.accessibilities.MandatoryAccessibilitiesCalculator;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+
 import com.pb.common.util.ObjectUtil;
 
 public class HouseholdChoiceModels
@@ -45,6 +48,7 @@ public class HouseholdChoiceModels
     private boolean                                                  runIndividualMandatoryTourFrequencyModel;
     private boolean                                                  runMandatoryTourModeChoiceModel;
     private boolean                                                  runMandatoryTourDepartureTimeAndDurationModel;
+    private boolean												                           runEscortModel;
     private boolean                                                  runAtWorkSubTourFrequencyModel;
     private boolean                                                  runAtWorkSubtourLocationChoiceModel;
     private boolean                                                  runAtWorkSubtourModeChoiceModel;
@@ -69,6 +73,7 @@ public class HouseholdChoiceModels
     private HouseholdCoordinatedDailyActivityPatternModel            cdapModel;
     private HouseholdIndividualMandatoryTourFrequencyModel           imtfModel;
     private HouseholdIndividualNonMandatoryTourFrequencyModel        inmtfModel;
+    private SchoolEscortingModel                                     escortModel;
     private HouseholdAtWorkSubtourFrequencyModel                     awfModel;
     private StopFrequencyModel                                       stfModel;
     private TourModeChoiceModel                                      immcModel;
@@ -86,6 +91,7 @@ public class HouseholdChoiceModels
     private long                                                     fpTime;
     private long                                                     ieTime;
     private long                                                     cdapTime;
+    private long                                                     escortTime;
     private long                                                     imtfTime;
     private long                                                     imtodTime;
     private long                                                     imtmcTime;
@@ -130,7 +136,7 @@ public class HouseholdChoiceModels
             double[] pctHighIncome, double[] pctMultipleAutos, double[] avgtts,
             double[] transpDist, double[] pctDetour, double[][][] nonManSoaDistProbs,
             double[][][] nonManSoaSizeProbs, double[][][] subTourSoaDistProbs,
-            double[][][] subTourSoaSizeProbs, double[] distanceToCordonsLogsums)
+            double[][][] subTourSoaSizeProbs, double[] distanceToCordonsLogsums,AutoTazSkimsCalculator tazDistanceCalculator)
     {
 
         this.modelIndex = modelIndex;
@@ -159,6 +165,7 @@ public class HouseholdChoiceModels
                 .get(CtrampApplication.PROPERTIES_RUN_MAND_TOUR_MODE_CHOICE));
         runMandatoryTourDepartureTimeAndDurationModel = Boolean.parseBoolean(propertyMap
                 .get(CtrampApplication.PROPERTIES_RUN_MAND_TOUR_DEP_TIME_AND_DUR));
+        runEscortModel = Boolean.parseBoolean(propertyMap.get(CtrampApplication.PROPERTIES_RUN_SCHOOL_ESCORT_MODEL));
         runAtWorkSubTourFrequencyModel = Boolean.parseBoolean(propertyMap
                 .get(CtrampApplication.PROPERTIES_RUN_AT_WORK_SUBTOUR_FREQ));
         runAtWorkSubtourLocationChoiceModel = Boolean.parseBoolean(propertyMap
@@ -260,6 +267,12 @@ public class HouseholdChoiceModels
                         immcModel);
                 if (measureObjectSizes)
                     logger.info("IMTOD size:      " + ObjectUtil.sizeOf(imtodModel));
+            }
+
+            if(runEscortModel){
+            	escortModel = new SchoolEscortingModel(propertyMap,mgraManager,tazDistanceCalculator);
+                if ( measureObjectSizes ) logger.info ( "SEM size:      " + ObjectUtil.sizeOf( escortModel ) );
+            	
             }
 
             if (runJointTourFrequencyModel)

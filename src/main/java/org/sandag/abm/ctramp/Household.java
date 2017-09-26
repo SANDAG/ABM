@@ -1,7 +1,10 @@
 package org.sandag.abm.ctramp;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
+
 import org.apache.log4j.Logger;
 
 public class Household
@@ -32,6 +35,9 @@ public class Household
     private int                       imtfModelPattern;
     private String                    jtfModelPattern;
     private int                       tpChoice;
+    private int                       outboundEscortChoice;
+    private int                       inboundEscortChoice;
+
 
     private Random                    hhRandom;
     private int                       randomCount = 0;
@@ -62,6 +68,7 @@ public class Household
 
     private ModelStructure            modelStructure;
 
+    private long seed;
     public Household(ModelStructure modelStructure)
     {
         this.modelStructure = modelStructure;
@@ -905,6 +912,24 @@ public class Household
     }
 
     /**
+     * Iterates through person array, adds up and returns number of children with school tours for preschool children, non-driving age students, and driving age students
+     * @return Number of children with school tours.
+     */
+    public int getNumChildrenWithSchoolTours(){
+    	
+    	int numChildrenWithSchoolTours = 0;
+    	
+    	for(int i=1; i < persons.length;++i){
+    		Person p = persons[i];
+    		if((p.getPersonIsPreschoolChild() == 1) || (p.getPersonIsStudentNonDriving() == 1)|| (p.getPersonIsStudentDriving() == 1)){
+    			if(p.getNumSchoolTours()>0)
+    				++numChildrenWithSchoolTours;
+    		}
+    	}
+    	
+    	return numChildrenWithSchoolTours;
+    }
+   /**
      * joint tour frequency choice is not applied to a household unless it has:
      * 2 or more persons, each with at least one out-of home activity, and at
      * least 1 of the persons not a pre-schooler.
@@ -1090,6 +1115,18 @@ public class Household
 
     }
 
+    public int getOutboundEscortChoice() {
+		return outboundEscortChoice;
+	}
+	public void setOutboundEscortChoice(int outboundEscortChoice) {
+		this.outboundEscortChoice = outboundEscortChoice;
+	}
+	public int getInboundEscortChoice() {
+		return inboundEscortChoice;
+	}
+	public void setInboundEscortChoice(int inboundEscortChoice) {
+		this.inboundEscortChoice = inboundEscortChoice;
+	}
     public void calculateTimeWindowOverlaps()
     {
 
@@ -1420,6 +1457,12 @@ public class Household
 
     }
 
+    public long getSeed() {
+		return seed;
+	}
+	public void setSeed(long seed) {
+		this.seed = seed;
+	}
     public void logHouseholdObject(String titleString, Logger logger)
     {
 
@@ -1446,6 +1489,8 @@ public class Household
         Household.logHelper(logger, "aoModelAutos: ", aoModelAutos, totalChars);
         Household.logHelper(logger, "cdapModelPattern: ", cdapModelPattern, totalChars);
         Household.logHelper(logger, "imtfModelPattern: ", imtfModelPattern, totalChars);
+        Household.logHelper(logger, "outboundEscortChoice: ", outboundEscortChoice, totalChars);
+        Household.logHelper(logger, "inboundEscortChoice: ", inboundEscortChoice, totalChars);
         Household.logHelper(logger, "jtfModelPattern: ", jtfModelPattern, totalChars);
         Household.logHelper(logger, "randomCount: ", randomCount, totalChars);
         if (uwslRandomCountList.size() > 0)
@@ -1580,6 +1625,8 @@ public class Household
         Household.logHelper(logger, "aoModelAutos: ", aoModelAutos, totalChars);
         Household.logHelper(logger, "cdapModelPattern: ", cdapModelPattern, totalChars);
         Household.logHelper(logger, "imtfModelPattern: ", imtfModelPattern, totalChars);
+        Household.logHelper(logger, "outboundEscortChoice: ", outboundEscortChoice, totalChars);
+        Household.logHelper(logger, "inboundEscortChoice: ", inboundEscortChoice, totalChars);
         Household.logHelper(logger, "jtfModelPattern: ", jtfModelPattern, totalChars);
         Household.logHelper(logger, "randomCount: ", randomCount, totalChars);
         if (uwslRandomCountList.size() > 0)
@@ -1656,4 +1703,74 @@ public class Household
         nul, FAMILY_MARRIED, FAMILY_MALE_NO_WIFE, FAMILY_FEMALE_NO_HUSBAND, NON_FAMILY_MALE_ALONE, NON_FAMILY_MALE_NOT_ALONE, NON_FAMILY_FEMALE_ALONE, NON_FAMILY_FEMALE_NOT_ALONE
     }
 
-}
+    /**
+     * Iterate through persons in household grab all adults and add them to an ArrayList of adults. Return the list.
+     * 
+     * @return An ArrayList of adult household members.
+     */
+	public List<Person> getAdultPersons() {
+		
+		List<Person> adultList = new ArrayList<Person>();
+		
+		for(int i = 1; i < persons.length; ++i){
+			Person p = persons[i];
+			if((p.getPersonIsFullTimeWorker()==1)||(p.getPersonIsPartTimeWorker()==1)||(p.getPersonIsNonWorkingAdultUnder65()==1)
+					||(p.getPersonIsUniversityStudent()==1)||(p.getPersonIsNonWorkingAdultOver65()==1))
+				adultList.add(p);
+			
+		}
+		return adultList;
+	}
+    /**
+     * Iterate through persons in household grab all adults and add them to an ArrayList of adults. Return the list.
+     * 
+     * @return An ArrayList of adult household members.
+     */
+	public List<Person> getActiveAdultPersons() {
+		
+		List<Person> adultList = new ArrayList<Person>();
+		
+		for(int i = 1; i < persons.length; ++i){
+			Person p = persons[i];
+			if(p.isActiveAdult())
+				adultList.add(p);
+			
+		}
+		return adultList;
+	}
+
+	/**
+	 * Count and return the number of active adults in the household.
+	 * 
+	 * @return The number of active adults.
+	 */
+	public int getNumberActiveAdults(){
+		
+		int numberActiveAdults=0;
+		for(int i = 1; i < persons.length; ++i){
+			if(persons[i].isActiveAdult())
+				++numberActiveAdults;
+			
+		}
+		return numberActiveAdults;
+	}
+	
+	
+    /**
+     * Iterate through persons in household grab all children and add them to an ArrayList of children. Return the list.
+     * 
+     * @return An ArrayList of adult household members.
+     */
+	public List<Person> getChildPersons() {
+		
+		List<Person> childList = new ArrayList<Person>();
+		
+		for(int i = 1; i < persons.length; ++i){
+			Person p = persons[i];
+			if((p.getPersonIsPreschoolChild()==1)||(p.getPersonIsStudentNonDriving()==1)||(p.getPersonIsStudentDriving()==1))
+				childList.add(p);
+			
+		}
+		return childList;
+	}
+ }

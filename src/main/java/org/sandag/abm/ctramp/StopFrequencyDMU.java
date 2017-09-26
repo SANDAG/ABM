@@ -2,7 +2,9 @@ package org.sandag.abm.ctramp;
 
 import java.io.Serializable;
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
+
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 
@@ -190,6 +192,26 @@ public abstract class StopFrequencyDMU
     }
 
     /**
+     * 
+     * @return 1 if the outbound portion of the tour is escort, in which case stops are already determined, else 0
+     */
+    public int getOutboundIsEscort(){
+    	
+    	return ((tour.getEscortTypeOutbound() == ModelStructure.RIDE_SHARING_TYPE) ||(tour.getEscortTypeOutbound() == ModelStructure.PURE_ESCORTING_TYPE))
+    			? 1 : 0;
+    }
+    
+    /**
+     * 
+     * @return 1 if the inbound portion of the tour is escort, in which case stops are already determined, else 0
+     */
+   public int getInboundIsEscort(){
+    	
+    	return ((tour.getEscortTypeInbound() == ModelStructure.RIDE_SHARING_TYPE) ||(tour.getEscortTypeInbound() == ModelStructure.PURE_ESCORTING_TYPE))
+    			? 1 : 0;
+    }
+
+   /**
      * @return the total number of tours made by this person
      */
     public int getTotalTours()

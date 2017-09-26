@@ -261,7 +261,16 @@ public class NonMandatoryTourDepartureAndDurationTime
                 for (Tour t : purposeTourLists[tourPurposeIndex])
                 {
 
-                    try
+                   	//store the tour depart time and arrival time if it is an escort tour; that way mode choice
+                	//logsums can be calculated for the tour and stored when the actual tour dep/arr period isn't chosen.
+                	int escortTourDepartPeriod=0;
+                	int escortTourArrivePeriod=0;
+                	if(t.getEscortTypeOutbound()>0 || t.getEscortTypeInbound()>0){
+                		escortTourDepartPeriod = t.getTourDepartPeriod();
+                		escortTourArrivePeriod = t.getTourArrivePeriod();
+                		continue;
+                	}
+                	try
                     {
 
                         // get the choice model for the tour purpose

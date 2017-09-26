@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AccessibilitiesTable;
 import org.sandag.abm.modechoice.MgraDataManager;
+
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
@@ -500,7 +502,7 @@ public class StopFrequencyModel
         String personType = tour.getPersonObject().getPersonType();
 
         int numObStops = dmuObject.getNumObStopsAlt(stopFreqChoice);
-        if (numObStops > 0)
+        if ((numObStops > 0) && (tour.getEscortTypeOutbound()!=ModelStructure.RIDE_SHARING_TYPE) && (tour.getEscortTypeOutbound()!=ModelStructure.PURE_ESCORTING_TYPE))
         {
             // get a stop purpose for each outbound stop generated, plus the
             // stop at
@@ -543,7 +545,7 @@ public class StopFrequencyModel
         }
 
         int numIbStops = dmuObject.getNumIbStopsAlt(stopFreqChoice);
-        if (numIbStops > 0)
+        if ((numIbStops > 0) && (tour.getEscortTypeInbound()!=ModelStructure.RIDE_SHARING_TYPE) && (tour.getEscortTypeInbound()!=ModelStructure.PURE_ESCORTING_TYPE))
         {
             // get a stop purpose for each inbound stop generated
             String[] ibStopOrigPurposes = new String[numIbStops + 1];

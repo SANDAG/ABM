@@ -366,7 +366,11 @@ public class NonMandatoryDestChoiceModel
             for (Tour tour : tourList)
             {
 
-                int chosen = -1;
+               	if(tour.getEscortTypeOutbound()==ModelStructure.RIDE_SHARING_TYPE||tour.getEscortTypeOutbound()==ModelStructure.PURE_ESCORTING_TYPE||
+                		tour.getEscortTypeInbound()==ModelStructure.RIDE_SHARING_TYPE||tour.getEscortTypeInbound()==ModelStructure.PURE_ESCORTING_TYPE)
+                		continue;
+
+               	int chosen = -1;
                 try
                 {
 
