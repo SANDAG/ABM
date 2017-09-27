@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.Random;
 
 
+
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.newmodel.ChoiceModelApplication;
+import com.pb.common.newmodel.UtilityExpressionCalculator;
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoAndNonMotorizedSkimsCalculator;
@@ -400,7 +402,8 @@ public class TourModeChoiceModel
         mcDmuObject.setOriginMgra(tour.getTourOrigMgra());
         mcDmuObject.setDestMgra(tour.getTourDestMgra());
         
-        mcModel[modelIndex].computeUtilities(mcDmuObject, mcDmuIndex);
+        float logsum = (float) mcModel[modelIndex].computeUtilities(mcDmuObject, mcDmuIndex);
+        tour.setTourModeLogsum(logsum);
 
         mcDmuIndex.setOriginZone(tour.getTourOrigMgra());
         mcDmuIndex.setDestZone(tour.getTourDestMgra());
@@ -430,6 +433,24 @@ public class TourModeChoiceModel
                 tour.setBestDtwTapPairsOut(logsumHelper.getBestDtwTapsOut());
                 tour.setBestDtwTapPairsIn(logsumHelper.getBestDtwTapsIn());
             }
+            
+            //value of time; lookup vot, votS2, or votS3 from the UEC depending on chosen mode
+            UtilityExpressionCalculator uec = mcModel[modelIndex].getUEC();
+            
+            double vot = 0.0;
+            
+            if(modelStructure.getTourModeIsS2(chosen)){
+                int votIndex = uec.lookupVariableIndex("votS2");
+                vot = uec.getValueForIndex(votIndex);
+            }else if (modelStructure.getTourModeIsS3(chosen)){
+                int votIndex = uec.lookupVariableIndex("votS3");
+                vot = uec.getValueForIndex(votIndex);
+            }else{
+                int votIndex = uec.lookupVariableIndex("vot");
+                vot = uec.getValueForIndex(votIndex);
+            }
+            tour.setValueOfTime(vot);
+            
 
         } else
         {

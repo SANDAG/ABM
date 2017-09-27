@@ -196,6 +196,9 @@ public class IntermediateStopChoiceModels
 
     private double[][]                         mcCumProbsSegmentIk;
     private double[][]                         mcCumProbsSegmentKj;
+    
+    private double[]                           mcLogsumsSegmentIk;
+    private double[]                           mcLogsumsSegmentKj;
 
     private int[][][]                          segmentIkBestTapPairs;
     private int[][][]                          segmentKjBestTapPairs;
@@ -422,7 +425,12 @@ public class IntermediateStopChoiceModels
         // mode choice probability arrays
         mcCumProbsSegmentIk = new double[sampleSize + 1][];
         mcCumProbsSegmentKj = new double[sampleSize + 1][];
-
+        
+        //declare the arrays for storing the stop location choice ik and kj segment
+        //mode choice logsum arrays
+        mcLogsumsSegmentIk = new double[sampleSize + 1];
+        mcLogsumsSegmentKj = new double[sampleSize + 1];
+        
         // decalre the arrays for storing stop location choice ik and kj segment
         // best tap pair arrays
         segmentIkBestTapPairs = new int[sampleSize + 1][][];
@@ -1013,6 +1021,7 @@ public class IntermediateStopChoiceModels
                 int choice = -1;
                 int selectedIndex = -1;
                 int modeAlt = -1;
+                float modeLogsum = 0;
                 // if not the last stop object, make a destination choice and a
                 // mode choice from IK MC probabilities;
                 // otherwise stop dest is set to destMgra, and make a mode
@@ -1048,6 +1057,8 @@ public class IntermediateStopChoiceModels
 
                         modeAlt = selectModeFromProbabilities(stop,
                                 mcCumProbsSegmentIk[selectedIndex]);
+                        modeLogsum = (float) mcLogsumsSegmentIk[selectedIndex];
+                        
                         if (modeAlt < 0)
                         {
                             logger.info("error getting trip mode choice for IK proportions, i=" + i);
@@ -1087,6 +1098,7 @@ public class IntermediateStopChoiceModels
                     }
 
                     stop.setMode(modeAlt);
+                    stop.setModeLogsum(modeLogsum);
 
                     // if the trip is a transit mode, set the boarding and
                     // alighting tap pairs in the stop object based on the ik
@@ -1145,6 +1157,8 @@ public class IntermediateStopChoiceModels
 
                     modeAlt = selectModeFromProbabilities(stop,
                             mcCumProbsSegmentKj[oldSelectedIndex]);
+                    modeLogsum = (float) mcLogsumsSegmentKj[oldSelectedIndex];
+                    
                     if (modeAlt < 0)
                     {
                         logger.error("error getting trip mode choice for KJ proportions, i=" + i);
@@ -1185,6 +1199,7 @@ public class IntermediateStopChoiceModels
                     }
 
                     stop.setMode(modeAlt);
+                    stop.setModeLogsum(modeLogsum);
 
                     // if the last trip is a transit mode, set the boarding and
                     // alighting tap pairs in the stop object based on the kj
@@ -1376,6 +1391,8 @@ public class IntermediateStopChoiceModels
                 int choice = -1;
                 int selectedIndex = -1;
                 int modeAlt = -1;
+                float modeLogsum = 0;
+                
                 // if not the last stop object, make a destination choice and a
                 // mode choice from IK MC probabilities;
                 // otherwise stop dest is set to destMgra, and make a mode
@@ -1439,6 +1456,7 @@ public class IntermediateStopChoiceModels
                         check = System.nanoTime();
                         modeAlt = selectModeFromProbabilities(stop,
                                 mcCumProbsSegmentIk[selectedIndex]);
+                        modeLogsum = (float) mcLogsumsSegmentIk[selectedIndex];
 
                         if (modeAlt < 0)
                         {
@@ -1488,6 +1506,7 @@ public class IntermediateStopChoiceModels
                     }
 
                     stop.setMode(modeAlt);
+                    stop.setModeLogsum(modeLogsum);
 
                     // if the trip is a transit mode, set the boarding and
                     // alighting tap pairs in the stop object based on the ik
@@ -1565,6 +1584,8 @@ public class IntermediateStopChoiceModels
                     check = System.nanoTime();
                     modeAlt = selectModeFromProbabilities(stop,
                             mcCumProbsSegmentKj[oldSelectedIndex]);
+                    modeLogsum = (float) mcLogsumsSegmentKj[oldSelectedIndex];
+
                     if (modeAlt < 0)
                     {
                         logger.error("error getting trip mode choice for KJ proportions, i=" + i);
@@ -1607,6 +1628,7 @@ public class IntermediateStopChoiceModels
                     smcTime += (System.nanoTime() - check);
 
                     stop.setMode(modeAlt);
+                    stop.setModeLogsum(modeLogsum);
 
                     // if the last trip is a transit mode, set the boarding and
                     // alighting tap pairs in the stop object based on the kj
@@ -1950,9 +1972,14 @@ public class IntermediateStopChoiceModels
                 || tour.getTourPrimaryPurposeIndex() == ModelStructure.OTH_MAINT_PRIMARY_PURPOSE_INDEX) slcModelIndex = MAINT_SLC_MODEL_INDEX;
         else slcModelIndex = DISCR_SLC_MODEL_INDEX;
 
-        slcModelArray[slcModelIndex].computeUtilities(stopLocDmuObj,
+        float logsum = (float) slcModelArray[slcModelIndex].computeUtilities(stopLocDmuObj,
                 stopLocDmuObj.getDmuIndexValues(), sampleAvailability, inSample);
 
+        if(s.isInboundStop())
+        	tour.addInboundStopDestinationLogsum(logsum);
+        else
+        	tour.addOutboundStopDestinationLogsum(logsum);
+        
         Random hhRandom = household.getHhRandom();
         int randomCount = household.getHhRandomCount();
         double rn = hhRandom.nextDouble();
@@ -2317,8 +2344,13 @@ public class IntermediateStopChoiceModels
                 || tour.getTourPrimaryPurposeIndex() == ModelStructure.OTH_MAINT_PRIMARY_PURPOSE_INDEX) slcModelIndex = MAINT_SLC_MODEL_INDEX;
         else slcModelIndex = DISCR_SLC_MODEL_INDEX;
 
-        slcModelArray[slcModelIndex].computeUtilities(stopLocDmuObj,
+        float logsum = (float) slcModelArray[slcModelIndex].computeUtilities(stopLocDmuObj,
                 stopLocDmuObj.getDmuIndexValues(), sampleAvailability, inSample);
+        if(s.isInboundStop())
+        	tour.addInboundStopDestinationLogsum(logsum);
+        else
+        	tour.addOutboundStopDestinationLogsum(logsum);
+        
 
         Random hhRandom = household.getHhRandom();
         int randomCount = household.getHhRandomCount();
@@ -2695,6 +2727,9 @@ public class IntermediateStopChoiceModels
 
             // store the mode choice probabilities for the segment
             mcCumProbsSegmentIk[i] = logsumHelper.getStoredSegmentCumulativeProbabilities();
+            
+            // Store the mode choice logsum for the segment
+            mcLogsumsSegmentIk[i] = ikSegment;
 
             // store the best tap pairs for the segment
             segmentIkBestTapPairs[i] = logsumHelper.getBestTripTaps();
@@ -2830,6 +2865,9 @@ public class IntermediateStopChoiceModels
 
             // store the mode choice probabilities for the segment
             mcCumProbsSegmentKj[i] = logsumHelper.getStoredSegmentCumulativeProbabilities();
+            
+            // store the mode choice logsum for the segment
+            mcLogsumsSegmentKj[i] = kjSegment;
 
             // store the best tap pairs for the segment
             segmentKjBestTapPairs[i] = logsumHelper.getBestTripTaps();
@@ -3389,6 +3427,8 @@ public class IntermediateStopChoiceModels
         mcDmuObject.setTripOrigIsTourDest(s.isInboundStop() && s.getStopId() == 0 ? 1 : 0);
         mcDmuObject.setTripDestIsTourDest(!s.isInboundStop()
                 && ((s.getStopId() + 1) == (t.getNumOutboundStops() - 1)) ? 1 : 0);
+        
+        mcDmuObject.setInbound(s.isInboundStop());
 
         mcDmuObject.setFirstTrip(0);
         mcDmuObject.setLastTrip(0);
@@ -3843,6 +3883,8 @@ public class IntermediateStopChoiceModels
         }
         double logsum = logsumHelper.calculateTripMcLogsum(s.getOrig(), altMgra, s.getStopPeriod(),
                 mcModel, mcDmuObject, smcLogger);
+        
+        s.setModeLogsum((float) logsum);
 
         double rn = hh.getHhRandom().nextDouble();
         int randomCount = hh.getHhRandomCount();

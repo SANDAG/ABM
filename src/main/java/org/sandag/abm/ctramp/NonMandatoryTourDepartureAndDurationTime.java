@@ -520,10 +520,12 @@ public class NonMandatoryTourDepartureAndDurationTime
                             todDmuObject
                                     .setDestinationZone(mgraManager.getTaz(t.getTourDestMgra()));
 
-                            todModels[m].computeUtilities(todDmuObject,
+                            float logsum = (float) todModels[m].computeUtilities(todDmuObject,
                                     todDmuObject.getIndexValues(), departureTimeChoiceAvailability,
                                     tourDepartureTimeChoiceSample);
 
+                            t.setTimeOfDayLogsum(logsum);
+                            
                             Random hhRandom = hh.getHhRandom();
                             int randomCount = hh.getHhRandomCount();
                             double rn = hhRandom.nextDouble();
@@ -965,8 +967,9 @@ public class NonMandatoryTourDepartureAndDurationTime
                         todDmuObject.setOriginZone(mgraManager.getTaz(t.getTourOrigMgra()));
                         todDmuObject.setDestinationZone(mgraManager.getTaz(t.getTourDestMgra()));
 
-                        todModels[m].computeUtilities(todDmuObject, todDmuObject.getIndexValues(),
+                        float logsum = (float) todModels[m].computeUtilities(todDmuObject, todDmuObject.getIndexValues(),
                                 departureTimeChoiceAvailability, tourDepartureTimeChoiceSample);
+                        t.setTimeOfDayLogsum(logsum);
 
                         Random hhRandom = hh.getHhRandom();
                         int randomCount = hh.getHhRandomCount();

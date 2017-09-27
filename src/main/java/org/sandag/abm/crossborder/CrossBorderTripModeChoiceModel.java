@@ -1,14 +1,17 @@
 package org.sandag.abm.crossborder;
 
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoAndNonMotorizedSkimsCalculator;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.newmodel.ChoiceModelApplication;
+import com.pb.common.newmodel.UtilityExpressionCalculator;
 
 public class CrossBorderTripModeChoiceModel
 {
@@ -127,14 +130,47 @@ public class CrossBorderTripModeChoiceModel
         computeUtilities(tour, trip);
 
         double rand = tour.getRandom();
+        int mode=0;
         try{
-        	int mode = tripModeChoiceModel.getChoiceResult(rand); 
+            mode = tripModeChoiceModel.getChoiceResult(rand); 
         	trip.setTripMode(mode);
         }catch(Exception e){
         	logger.info("rand="+rand);
         	tour.logTourObject(logger, 100);
         	logger.error(e.getMessage());
         }
+        
+    }
+    
+    /**
+     * This method looks up the value of time from the last call to the UEC and returns
+     * it based on the occupancy of the mode passed in as an argument. this method ensures
+     * that the value of time at a tour level is the same for all trips on the tour (even
+     * though the actual trip level VOT might vary based on the trip occupancy).
+     * 
+     * @param tourMode
+     * @return The value of time
+     */
+    public float getValueOfTime(int mode){
+       
+    	//value of time; lookup vot, votS2, or votS3 from the UEC depending on chosen mode
+        UtilityExpressionCalculator uec = tripModeChoiceModel.getUEC();
+        
+        double vot = 0.0;
+        
+        if(modelStructure.getTourModeIsS2(mode)){
+            int votIndex = uec.lookupVariableIndex("votS2");
+            vot = uec.getValueForIndex(votIndex);
+        }else if (modelStructure.getTourModeIsS3(mode)){
+            int votIndex = uec.lookupVariableIndex("votS3");
+            vot = uec.getValueForIndex(votIndex);
+        }else{
+            int votIndex = uec.lookupVariableIndex("vot");
+            vot = uec.getValueForIndex(votIndex);
+        }
+        return (float) vot;
+
+    	
     }
 
     /**
@@ -159,6 +195,9 @@ public class CrossBorderTripModeChoiceModel
         dmu.setTourDepartPeriod(tour.getDepartTime());
         dmu.setTourArrivePeriod(tour.getArriveTime());
         dmu.setTripPeriod(trip.getPeriod());
+        
+        dmu.setWorkTimeFactor((float)tour.getWorkTimeFactor());
+        dmu.setNonWorkTimeFactor((float)tour.getNonWorkTimeFactor());
 
         // set the dmu skim attributes (which involves setting the best wtw
         // taps, since the tour taps are null

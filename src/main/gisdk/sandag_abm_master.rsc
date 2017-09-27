@@ -4,6 +4,14 @@ Macro "Run SANDAG ABM"
 
    shared path, inputDir, outputDir, inputTruckDir, mxzone, mxtap, mxext,mxlink,mxrte,scenarioYear,version
    
+ 
+   sample_rate = { 0.2, 0.5, 1.0 }
+   max_iterations=sample_rate.length    //number of feedback loops
+   skimByVOT = "true"
+   assignByVOT = "true"
+  
+   path = "${workpath}"
+
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","*********Model Run Starting************"})
       
    path_parts = SplitPath(path)
@@ -113,11 +121,11 @@ Macro "Run SANDAG ABM"
 
    // copy initial trip tables from input to output folder
    if skipCopyWarmupTripTables = "false" then do
-	   CopyFile(inputDir+"\\trip_EA.mtx", outputDir+"\\trip_EA.mtx")
-	   CopyFile(inputDir+"\\trip_AM.mtx", outputDir+"\\trip_AM.mtx")
-	   CopyFile(inputDir+"\\trip_MD.mtx", outputDir+"\\trip_MD.mtx")
-	   CopyFile(inputDir+"\\trip_PM.mtx", outputDir+"\\trip_PM.mtx")
-	   CopyFile(inputDir+"\\trip_EV.mtx", outputDir+"\\trip_EV.mtx")
+	   CopyFile(inputDir+"\\Trip_EA_VOT.mtx", outputDir+"\\Trip_EA_VOT.mtx")
+	   CopyFile(inputDir+"\\Trip_AM_VOT.mtx", outputDir+"\\Trip_AM_VOT.mtx")
+	   CopyFile(inputDir+"\\Trip_MD_VOT.mtx", outputDir+"\\Trip_MD_VOT.mtx")
+	   CopyFile(inputDir+"\\Trip_PM_VOT.mtx", outputDir+"\\Trip_PM_VOT.mtx")
+	   CopyFile(inputDir+"\\Trip_EV_VOT.mtx", outputDir+"\\Trip_EV_VOT.mtx")	   
    end
 
   // Build highway network
@@ -146,34 +154,36 @@ Macro "Run SANDAG ABM"
 	      // Start  JPPF driver 
 	      runString = path+"\\bin\\runDriver.cmd "+drive+" "+path_no_drive
 	      ok = RunMacro("TCB Run Command", 1, "Start JPPF Driver", runString)
-	      if !ok then goto quit 
+	      if !ok then goto quit  
 	
 	      // Start HH Manager, and worker nodes
 	      runString = path+"\\bin\\StartHHAndNodes.cmd "+drive+" "+path_no_drive
 	      ok = RunMacro("TCB Run Command", 1, "Start HH Manager, JPPF Driver, and nodes", runString)
 	      if !ok then goto quit  
       end
-
+      
       // Run highway assignment 
       if skipHighwayAssignment[iteration] = "false" then do
-	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - hwy assignment"})
-	      ok = RunMacro("TCB Run Macro", 1, "hwy assignment",{iteration}) 
+        RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - hwy assignment"})
+	      ok = RunMacro("TCB Run Macro", 1, "hwy assignment",{iteration, assignByVOT}) 
 	      if !ok then goto quit
       end
    
       // Skim highway network
       if skipHighwaySkimming[iteration] = "false" then do
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Hwy skim all"})
-	      ok = RunMacro("TCB Run Macro", 1, "Hwy skim all",{}) 
+	      ok = RunMacro("TCB Run Macro", 1, "Hwy skim all",{skimByVOT}) 
 	      if !ok then goto quit
- 
+			
       // Create drive to transit access file
       runString = path+"\\bin\\CreateD2TAccessFile.bat "+drive+" "+path_forward_slash
+	    
+	    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java - Creating drive to transit access file"})
       ok = RunMacro("TCB Run Command", 1, "Creating drive to transit access file", runString)
       if !ok then goto quit 
      end
-
-      // Skim transit network 
+	
+	     // Skim transit network 
       if skipTransitSkimming[iteration] = "false" then do
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Build transit skims"})
 	      ok = RunMacro("TCB Run Macro", 1, "Build transit skims",{}) 
@@ -198,6 +208,9 @@ Macro "Run SANDAG ABM"
          status = RunProgram("cmd.exe /c copy "+fromDir+"\\crossBorderTrips.csv "+toDir+"\\crossBorderTrips.csv",)       
          status = RunProgram("cmd.exe /c copy "+fromDir+"\\visitorTrips.csv "+toDir+"\\visitorTrips.csv",)  
 
+//         status = RunProgram("cmd.exe /c copy "+fromDir+"\\daily*.mtx "+toDir+"\\daily*.mtx",)
+//         status = RunProgram("cmd.exe /c copy "+fromDir+"\\comm*.mtx "+toDir+"\\comm*.mtx",)
+ 
          status = RunProgram("cmd.exe /c del "+fromDir+"\\auto*.mtx",)
          status = RunProgram("cmd.exe /c del "+fromDir+"\\tran*.mtx",)
          status = RunProgram("cmd.exe /c del "+fromDir+"\\nmot*.mtx",)
@@ -207,9 +220,13 @@ Macro "Run SANDAG ABM"
          status = RunProgram("cmd.exe /c del "+fromDir+"\\airport_out.csv",)
          status = RunProgram("cmd.exe /c del "+fromDir+"\\crossBorderTrips.csv",)
          status = RunProgram("cmd.exe /c del "+fromDir+"\\visitorTrips.csv",)
+
+//		 status = RunProgram("cmd.exe /c del "+fromDir+"\\daily*.mtx",)
+//		 status = RunProgram("cmd.exe /c del "+fromDir+"\\comm*.mtx",)
         
       end
-
+                       
+                        
       // Run CT-RAMP model
       if skipCoreABM[iteration] = "false" then do
 	      runString = path+"\\bin\\runSandagAbm_SDRM.cmd "+drive+" "+path_forward_slash +" "+sample_rate[iteration]+" "+i2s(iteration)
@@ -218,7 +235,8 @@ Macro "Run SANDAG ABM"
 	      if !ok then goto quit  
       end
  
-      // Run airport model, visitor model, cross-border model, internal-external model
+  
+       // Run airport model, visitor model, cross-border model, internal-external model
       if skipOtherSimulateModel[iteration] = "false" then do
 	      runString = path+"\\bin\\runSandagAbm_SMM.cmd "+drive+" "+path_forward_slash +" "+sample_rate[iteration]+" "+i2s(iteration)
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run airport model, visitor model, cross-border model"+" "+runString})
@@ -250,7 +268,7 @@ Macro "Run SANDAG ABM"
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - run commercial vehicle Time Of Day"})
 	      ok = RunMacro("TCB Run Macro", 1, "Commercial Vehicle Time Of Day",{}) 
 	      if !ok then goto quit
-	
+
 	      //Commercial vehicle toll diversion model
 	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - run commercial vehicle Toll Diversion"})
 	      ok = RunMacro("TCB Run Macro", 1, "cv toll diversion model",{}) 
@@ -318,7 +336,7 @@ Macro "Run SANDAG ABM"
   // Run final highway assignment
    if skipFinalHighwayAssignment = "false" then do
 	   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - hwy assignment"})
-	   ok = RunMacro("TCB Run Macro", 1, "hwy assignment",{4}) 
+	   ok = RunMacro("TCB Run Macro", 1, "hwy assignment",{4,assignByVOT}) 
 	   if !ok then goto quit
    end
 

@@ -24,7 +24,7 @@ public class SandagInternalExternalTripChoiceDMU
         methodIndexMap.put("getVehiclesPerHouseholdMember", 1);
         methodIndexMap.put("getHhIncomeInDollars", 2);
         methodIndexMap.put("getAge", 3);
-    }
+     }
 
     public double getValueForIndex(int variableIndex, int arrayIndex)
     {
@@ -39,7 +39,7 @@ public class SandagInternalExternalTripChoiceDMU
                 return getHhIncomeInDollars();
             case 3:
                 return getAge();
-
+      
             default:
                 logger.error("method number = " + variableIndex + " not found");
                 throw new RuntimeException("method number = " + variableIndex + " not found");

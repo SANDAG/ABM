@@ -99,11 +99,21 @@ public class Person
     private int                  schoolLocSegmentIndex;
     private float                schoolLocDistance;
     private float                schoolLocLogsum;
+    
+    private double               timeFactorWork;
+    private double               timeFactorNonWork;
 
     private int                  freeParkingAvailable;
     private int                  internalExternalTripChoice                 = 1;
     private double               reimbursePercent;
-
+    
+    private float                worksFromHomeLogsum;
+    private float                parkingProvisionLogsum;
+	private float                ieLogsum;
+    private float                cdapLogsum;
+    private float                imtfLogsum;
+    private float                inmtfLogsum;
+     
     private String               cdapActivity;
     private int                  imtfChoice;
     private int                  inmtfChoice;
@@ -1610,7 +1620,56 @@ public class Person
 
     }
 
-    public void logPersonObject(Logger logger, int totalChars)
+    public float getParkingProvisionLogsum() {
+		return parkingProvisionLogsum;
+	}
+
+	public void setParkingProvisionLogsum(float parkingProvisionLogsum) {
+		this.parkingProvisionLogsum = parkingProvisionLogsum;
+	}
+
+	public float getIeLogsum() {
+		return ieLogsum;
+	}
+
+	public void setIeLogsum(float ieLogsum) {
+		this.ieLogsum = ieLogsum;
+	}
+
+	public float getCdapLogsum() {
+		return cdapLogsum;
+	}
+
+	public void setCdapLogsum(float cdapLogsum) {
+		this.cdapLogsum = cdapLogsum;
+	}
+
+
+    public float getImtfLogsum() {
+		return imtfLogsum;
+	}
+
+	public void setImtfLogsum(float imtfLogsum) {
+		this.imtfLogsum = imtfLogsum;
+	}
+
+	public float getInmtfLogsum() {
+		return inmtfLogsum;
+	}
+
+	public void setInmtfLogsum(float inmtfLogsum) {
+		this.inmtfLogsum = inmtfLogsum;
+	}
+
+	public float getWorksFromHomeLogsum() {
+		return worksFromHomeLogsum;
+	}
+
+	public void setWorksFromHomeLogsum(float worksFromHomeLogsum) {
+		this.worksFromHomeLogsum = worksFromHomeLogsum;
+	}
+
+	public void logPersonObject(Logger logger, int totalChars)
     {
 
         Household.logHelper(logger, "persNum: ", persNum, totalChars);
@@ -1624,6 +1683,9 @@ public class Person
         Household.logHelper(logger, "schoolLoc: ", schoolLoc, totalChars);
         Household.logHelper(logger, "workLocSegmentIndex: ", workLocSegmentIndex, totalChars);
         Household.logHelper(logger, "schoolLocSegmentIndex: ", schoolLocSegmentIndex, totalChars);
+        
+        Household.logHelper(logger, "timeFactorWork: ",  String.format("%.2f%%",timeFactorWork), totalChars);
+        Household.logHelper(logger, "timeFactorNonWork: ",  String.format("%.2f%%",timeFactorNonWork), totalChars);
         Household.logHelper(logger, "freeParkingAvailable: ", freeParkingAvailable, totalChars);
         Household.logHelper(logger, "reimbursementPct: ",
                 String.format("%.2f%%", (100 * reimbursePercent)), totalChars);
@@ -1900,7 +1962,23 @@ public class Person
 
     }
 
-    public enum EmployStatus
+    public double getTimeFactorWork() {
+		return timeFactorWork;
+	}
+
+	public void setTimeFactorWork(double timeFactorWork) {
+		this.timeFactorWork = timeFactorWork;
+	}
+
+	public double getTimeFactorNonWork() {
+		return timeFactorNonWork;
+	}
+
+	public void setTimeFactorNonWork(double timeFactorNonWork) {
+		this.timeFactorNonWork = timeFactorNonWork;
+	}
+
+	public enum EmployStatus
     {
         nul, FULL_TIME, PART_TIME, NOT_EMPLOYED, UNDER16
     }

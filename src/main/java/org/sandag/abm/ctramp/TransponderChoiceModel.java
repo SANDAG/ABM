@@ -91,8 +91,10 @@ public class TransponderChoiceModel
         double randomNumber = hhRandom.nextDouble();
 
         // compute utilities and choose transponder choice alternative.
-        tpModel.computeUtilities(tpDmuObject, tpDmuObject.getDmuIndexValues());
+        float logsum = (float) tpModel.computeUtilities(tpDmuObject, tpDmuObject.getDmuIndexValues());
 
+        hhObject.setTransponderLogsum(logsum);
+        
         // if the choice model has at least one available alternative, make
         // choice.
         int chosenAlt;

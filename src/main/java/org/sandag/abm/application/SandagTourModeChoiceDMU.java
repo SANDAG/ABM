@@ -273,7 +273,10 @@ public class SandagTourModeChoiceDMU
         methodIndexMap.put("getFreeParkingEligibility", 28);
         methodIndexMap.put("getParkingArea", 29);
         
-        methodIndexMap.put("getTransponderOwnership", 30);
+        methodIndexMap.put("getWorkTimeFactor", 30);
+        methodIndexMap.put("getNonWorkTimeFactor", 31);
+        methodIndexMap.put("getJointTourTimeFactor", 32);
+        methodIndexMap.put("getTransponderOwnership", 33);
         
         methodIndexMap.put("getFemaleInParty", 50);
         methodIndexMap.put("getMaleInParty", 51);
@@ -289,6 +292,7 @@ public class SandagTourModeChoiceDMU
         
         methodIndexMap.put("getOriginMgra", 96);
         methodIndexMap.put("getDestMgra", 97);
+        
 
 
         methodIndexMap.put("getWtw_lb_LB_ivt_out", 100);

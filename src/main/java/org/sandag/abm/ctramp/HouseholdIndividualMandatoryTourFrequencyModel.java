@@ -274,8 +274,9 @@ public class HouseholdIndividualMandatoryTourFrequencyModel
 
                     // compute the utilities
                     IndexValues index = imtfDmuObject.getIndexValues();
-                    choiceModelApplication.computeUtilities(imtfDmuObject, index);
-
+                    float logsum = (float) choiceModelApplication.computeUtilities(imtfDmuObject, index);
+                    person.setImtfLogsum(logsum);
+                    
                     // get the random number from the household
                     Random random = household.getHhRandom();
                     int randomCount = household.getHhRandomCount();

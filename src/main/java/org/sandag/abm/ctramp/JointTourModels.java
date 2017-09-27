@@ -231,8 +231,9 @@ public class JointTourModels
                 modelLogger.info("");
             }
 
-            jointTourFrequencyModel.computeUtilities(dmuObject, index);
-
+            float logsum = (float) jointTourFrequencyModel.computeUtilities(dmuObject, index);
+            household.setJtfLogsum(logsum);
+            	
             // get the random number from the household
             Random random = household.getHhRandom();
             int randomCount = household.getHhRandomCount();

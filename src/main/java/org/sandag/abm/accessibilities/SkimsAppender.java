@@ -221,6 +221,8 @@ public final class SkimsAppender
         loggers[1] = autoLogger;
         loggers[2] = wtdLogger;
         loggers[3] = dtwLogger;
+        
+        float defaultVOT= 15f; //$15 default VOT
 
         int[] odt = new int[5];
 
@@ -259,7 +261,7 @@ public final class SkimsAppender
                 boolean debugFlag = false;
                 if (odt[0] == 25646 && odt[1] == 4319) debugFlag = true;
 
-                writeSkimsToFile(seq, outStreamObs, debugFlag, odt, anm, wtw, wtd, dtw, loggers);
+                writeSkimsToFile(seq, outStreamObs, debugFlag, odt, anm, wtw, wtd, dtw, defaultVOT, loggers);
 
                 // set odt[2] to be each skim priod index (1,2,3) and write a
                 // separate
@@ -267,7 +269,7 @@ public final class SkimsAppender
                 for (int i = 0; i < SKIM_PERIOD_LABELS.length; i++)
                 {
                     odt[2] = i + 1;
-                    writeSkimsToFile(seq, outStreamObsTod[i], false, odt, anm, wtw, wtd, dtw,
+                    writeSkimsToFile(seq, outStreamObsTod[i], false, odt, anm, wtw, wtd, dtw, defaultVOT,
                             loggers);
                 }
 
@@ -283,7 +285,7 @@ public final class SkimsAppender
                 for (int i = 0; i < SKIM_PERIOD_LABELS.length; i++)
                     outStreamObsTod[i].print(",");
 
-                writeSkimsToFile(seq, outStreamObs, debugFlag, odt, anm, wtw, wtd, dtw, loggers);
+                writeSkimsToFile(seq, outStreamObs, debugFlag, odt, anm, wtw, wtd, dtw, defaultVOT, loggers);
 
                 // set odt[2] to be each skim priod index (1,2,3) and write a
                 // separate
@@ -291,7 +293,7 @@ public final class SkimsAppender
                 for (int i = 0; i < SKIM_PERIOD_LABELS.length; i++)
                 {
                     odt[2] = i + 1;
-                    writeSkimsToFile(seq, outStreamObsTod[i], false, odt, anm, wtw, wtd, dtw,
+                    writeSkimsToFile(seq, outStreamObsTod[i], false, odt, anm, wtw, wtd, dtw, defaultVOT,
                             loggers);
                 }
 
@@ -329,7 +331,7 @@ public final class SkimsAppender
                 odt[2] = SURVEY_PERIOD_TO_SKIM_PERIOD[hisOdt[2]]; // depart skim
                                                                   // period
                 // index
-                writeSkimsToFile(seq, outStreamHis, false, odt, anm, wtw, wtd, dtw, loggers);
+                writeSkimsToFile(seq, outStreamHis, false, odt, anm, wtw, wtd, dtw, defaultVOT, loggers);
 
                 // set odt[2] to be each skim priod index (1,2,3) and write a
                 // separate
@@ -337,7 +339,7 @@ public final class SkimsAppender
                 for (int i = 0; i < SKIM_PERIOD_LABELS.length; i++)
                 {
                     odt[2] = i + 1;
-                    writeSkimsToFile(seq, outStreamHisTod[i], false, odt, anm, wtw, wtd, dtw,
+                    writeSkimsToFile(seq, outStreamHisTod[i], false, odt, anm, wtw, wtd, dtw, defaultVOT,
                             loggers);
                 }
 
@@ -353,7 +355,7 @@ public final class SkimsAppender
                 for (int i = 0; i < SKIM_PERIOD_LABELS.length; i++)
                     outStreamHisTod[i].print(",");
 
-                writeSkimsToFile(seq, outStreamHis, false, odt, anm, wtw, wtd, dtw, loggers);
+                writeSkimsToFile(seq, outStreamHis, false, odt, anm, wtw, wtd, dtw, defaultVOT, loggers);
 
                 // set odt[2] to be each skim priod index (1,2,3) and write a
                 // separate
@@ -361,7 +363,7 @@ public final class SkimsAppender
                 for (int i = 0; i < SKIM_PERIOD_LABELS.length; i++)
                 {
                     odt[2] = i + 1;
-                    writeSkimsToFile(seq, outStreamHisTod[i], false, odt, anm, wtw, wtd, dtw,
+                    writeSkimsToFile(seq, outStreamHisTod[i], false, odt, anm, wtw, wtd, dtw, defaultVOT,
                             loggers);
                 }
 
@@ -388,7 +390,7 @@ public final class SkimsAppender
 
     private void writeSkimsToFile(int sequence, PrintWriter outStream, boolean loggingEnabled,
             int[] odt, AutoAndNonMotorizedSkimsCalculator anm, WalkTransitWalkSkimsCalculator wtw,
-            WalkTransitDriveSkimsCalculator wtd, DriveTransitWalkSkimsCalculator dtw,
+            WalkTransitDriveSkimsCalculator wtd, DriveTransitWalkSkimsCalculator dtw, float vot,
             Logger[] loggers)
     {
 
@@ -404,7 +406,7 @@ public final class SkimsAppender
             outStream.print(String.format("%d,%d,%d,%d,%d", sequence, odt[4], odt[0], odt[1],
                     odt[2]));
 
-        double[] skims = anm.getAutoSkims(odt[0], odt[1], odt[2], loggingEnabled, autoLogger);
+        double[] skims = anm.getAutoSkims(odt[0], odt[1], odt[2], vot,loggingEnabled, autoLogger);
         if (loggingEnabled)
             anm.logReturnedSkims(odt[0], odt[1], odt[2], skims, "auto", autoLogger);
 

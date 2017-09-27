@@ -307,7 +307,7 @@ double  DLLEXPORT  VDF_Derivative(double *FlowVal, long *link, float **Cost, sho
 
 	  if(Cost[GC][*link] >0)
 	  {
-      	vc_j = (*FlowVal + Cost[PRELOAD][*link]) / (Cost[INT_CAPACITY][*link]*Cost[GC][*link]);
+      	vc_j = (*FlowVal + Cost[PRELOAD][*link]) / (Cost[INT_CAPACITY][*link]);
       	pow1_j = pow(vc_j, Cost[BETA2][*link] - 1.0);
      	lambda_j = Cost[ALPHA2][*link]  * Cost[BETA2][*link]  * pow1_j * (1.0 / Cost[INT_CAPACITY][*link]);
 

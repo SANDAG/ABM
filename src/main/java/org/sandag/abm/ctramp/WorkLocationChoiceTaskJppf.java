@@ -78,6 +78,7 @@ public class WorkLocationChoiceTaskJppf
         } catch (Exception e)
         {
             e.printStackTrace();
+            throw new RuntimeException();
         }
 
         // get the factory object used to create and recycle dcModel objects.

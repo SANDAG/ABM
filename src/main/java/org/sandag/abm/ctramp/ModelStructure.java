@@ -146,6 +146,8 @@ public abstract class ModelStructure
     public static final byte   ESCORT_STOP_TYPE_PICKUP    = 2;
     public static final int RIDE_SHARING_TYPE = 1;
     public static final int PURE_ESCORTING_TYPE = 2;
+    
+    public static final int                             MAX_STOPS_PER_DIRECTION           = 4;
 
     public String                                       WORK_PURPOSE_NAME;
     public String                                       UNIVERSITY_PURPOSE_NAME;

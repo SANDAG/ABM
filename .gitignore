@@ -17,6 +17,7 @@ target/
 /target
 sql/reporting/bin
 *.rdl.data
+<<<<<<< HEAD
 src/main/python/.idea/
 src/main/python/dbconfig.yml
 .idea/
@@ -32,3 +33,6 @@ src/main/python/reporting/abm_reports*/*
 **/bin/**/*
 *.user
 *.pyc
+=======
+src/main/python/dbconfig.yml
+>>>>>>> remotes/origin/develop_enhancetoll

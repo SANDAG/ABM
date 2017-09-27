@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #ifndef VDFDLL_
 #define VDFDLL_
 
@@ -12,6 +14,25 @@ typedef struct vdf_flags_
 
     long unused[64];
 }VDF_FLAGS;
+
+
+// structure to store VDF related data
+typedef struct _VDFDATA {
+    char    *szVDFName;
+    short   Fortran77;              // if a dll is a FORTRAN dll
+    long    nParameters;
+    long    nConstants;
+    char    **ParameterNames;       // VDF Parameter names
+    char    **LinkFieldNames;       // network field names used for each of the parameters
+    long    *ParameterIndices;
+    float   *DefaultValues;
+    double  *Constants;
+    short   *DisabledLinks;
+    float   *FlatCost;
+    float   **Cost;
+} VDFDATA;
+
+typedef struct _VDFDATA *VDF_DATA;
 
 #define VDF_LABELSIZE 64
   
@@ -45,30 +66,26 @@ typedef struct vdf_flags_
 #define min(a,b)    ((a) < (b) ? (a) : (b))
 #endif
 
+#ifndef HAVE_ROUNDING_FUNCTIONS
 //---------------------------------------------------------------------
 // Casting with rounding, setting missing values appropriately
 //---------------------------------------------------------------------
+static float  D2F(double d) { return d == dbl_miss  || d   > flt_max   || d   <  -flt_max ? flt_miss   : (float)  d; }
+static long   D2L(double d) { return d == dbl_miss  || d+.5> long_max  || d-.5<  long_min ? long_miss  : (long)   (d+(d < 0 ? -.5 : 0.5)); }
+static short  D2S(double d) { return d == dbl_miss  || d+.5> short_max || d-.5< short_min ? short_miss : (short)  (d+(d < 0 ? -.5 : 0.5)); }
 
-static short  __s = 0;
-static long   __l = 0;
-static float  __f = 0;
-static double __d = 0;
+static double F2D(float  f) { return f == flt_miss                                        ? dbl_miss   : (double) f; }
+static long   F2L(float  f) { return f == flt_miss  || f+.5> long_max  || f-.5<  long_min ? long_miss  : (long)   (f+(f < 0 ? -.5 : 0.5)); }
+static short  F2S(float  f) { return f == flt_miss  || f+.5> short_max || f-.5< short_min ? short_miss : (short)  (f+(f < 0 ? -.5 : 0.5)); }
+              
+static double L2D(long   l) { return l == long_miss                                       ? dbl_miss   : (double) l; }
+static float  L2F(long   l) { return l == long_miss                                       ? flt_miss   : (float)  l; }
+static short  L2S(long   l) { return l == long_miss || l   > short_max || l   < short_min ? short_miss : (short)  l; }
 
-#define D2F(f) ((__d = (f)), (__d == dbl_miss  || __d   > flt_max   || __d   <  -flt_max ? flt_miss   : (float)  __d))
-#define D2L(f) ((__d = (f)), (__d == dbl_miss  || __d+.5> long_max  || __d-.5<  long_min ? long_miss  : (long)   (__d+(__d < 0 ? -.5 : 0.5))))
-#define D2S(f) ((__d = (f)), (__d == dbl_miss  || __d+.5> short_max || __d-.5< short_min ? short_miss : (short)  (__d+(__d < 0 ? -.5 : 0.5))))
-
-#define F2D(f) ((__f = (f)), (__f == flt_miss                                            ? dbl_miss   : (double) __f))
-#define F2L(f) ((__f = (f)), (__f == flt_miss  || __f+.5> long_max  || __f-.5<  long_min ? long_miss  : (long)   (__f+(__f < 0 ? -.5 : 0.5))))
-#define F2S(f) ((__f = (f)), (__f == flt_miss  || __f+.5> short_max || __f-.5< short_min ? short_miss : (short)  (__f+(__f < 0 ? -.5 : 0.5))))
-
-#define L2D(n) ((__l = (n)), (__l == long_miss                                           ? dbl_miss   : (double) __l))
-#define L2F(n) ((__l = (n)), (__l == long_miss                                           ? flt_miss   : (float)  __l))
-#define L2S(n) ((__l = (n)), (__l == long_miss || __l   > short_max || __l   < short_min ? short_miss : (short)  __l))
-
-#define S2D(n) ((__s = (n)), (__s == short_miss                                          ? dbl_miss   : (double) __s))
-#define S2F(n) ((__s = (n)), (__s == short_miss                                          ? flt_miss   : (float)  __s))
-#define S2L(n) ((__s = (n)), (__s == short_miss                                          ? long_miss  : (long)   __s))
+static double S2D(short  s) { return s == short_miss                                          ? dbl_miss   : (double) s; }
+static float  S2F(short  s) { return s == short_miss                                          ? flt_miss   : (float)  s; }
+static long   S2L(short  s) { return s == short_miss                                          ? long_miss  : (long)   s; }
+#endif
 
 // _export is an obsolete keyword in MSC. Replaced with DLLEXPORT
 // which is compiler dependent
@@ -80,5 +97,13 @@ static double __d = 0;
 #define DLLEXPORT _export
 #endif
 #endif
+
+#if defined(_MSC_VER) && !defined(_WIN64)
+#define VDF_CALLING_CONV  __fastcall
+#else
+#define VDF_CALLING_CONV
+#endif
+
+
 
 #endif

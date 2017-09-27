@@ -61,6 +61,7 @@ public final class ParkLocationEstimationAppender
 
     private static final double   WALK_SPEED                       = 3.0;                                                   // mph;
 
+    private static final float defaultVOT = 15.0f;
     private MatrixDataServerIf    ms;
 
     public ParkLocationEstimationAppender()
@@ -128,7 +129,7 @@ public final class ParkLocationEstimationAppender
                 int skimPeriodIndex = modelStructure.getSkimPeriodIndex(odtSet[DEPART]) + 1; // depart
                                                                                              // skim
                                                                                              // period
-                double[] autoSkims = anm.getAutoSkims(odtSet[ORIG], odtSet[DEST], skimPeriodIndex,
+                double[] autoSkims = anm.getAutoSkims(odtSet[ORIG], odtSet[DEST], skimPeriodIndex, defaultVOT,
                         (seq == DEBUG_EST_RECORD), logger);
                 aDist = autoSkims[AUTO_DIST_SKIM_INDEX];
                 aTime = autoSkims[AUTO_TIME_SKIM_INDEX];

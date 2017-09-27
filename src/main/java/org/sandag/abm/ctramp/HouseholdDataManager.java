@@ -14,11 +14,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.StringTokenizer;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.BuildAccessibilities;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+
 import umontreal.iro.lecuyer.probdist.LognormalDist;
+
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.util.IndexSort;
@@ -49,6 +52,9 @@ public abstract class HouseholdDataManager
     public static final String        READ_UWSL_RESULTS_FILENAME                              = "read.uwsl.filename";
     public static final String        READ_PRE_AO_RESULTS_FILE                                = "read.pre.ao.results";
     public static final String        READ_PRE_AO_RESULTS_FILENAME                            = "read.pre.ao.filename";
+    
+    public static final String   PROPERTIES_DISTRIBUTED_TIME = "distributedTimeCoefficients";
+
 
     // HHID,household_serial_no,TAZ,MGRA,VEH,PERSONS,HWORKERS,HINCCAT1,HINC,UNITTYPE,HHT,BLDGSZ
     public static final String        HH_ID_FIELD_NAME                                        = "HHID";
@@ -77,7 +83,10 @@ public abstract class HouseholdDataManager
     public static final String        PERSON_OCCCEN1_FIELD_NAME                               = "OCCCEN1";
     public static final String        PERSON_SOC_FIELD_NAME                                   = "OCCSOC5";
     public static final String        PERSON_INDCEN_FIELD_NAME                                = "INDCEN";
-
+    
+    public static final String        PERSON_TIMEFACTOR_WORK_FIELD_NAME                       = "timeFactorWork";
+    public static final String        PERSON_TIMEFACTOR_NONWORK_FIELD_NAME                    = "timeFactorNonWork";
+  
     public static final String        PROPERTIES_HOUSEHOLD_TRACE_LIST                         = "Debug.Trace.HouseholdIdList";
     public static final String        DEBUG_HHS_ONLY_KEY                                      = "Process.Debug.HHs.Only";
 
@@ -95,10 +104,10 @@ public abstract class HouseholdDataManager
     private int[]                     mgraGsDistrict;
     private int[]                     mgraHsDistrict;
 
+    // these are not used for sandag; instead sandag uses distributed time coefficients read in the person file
     protected float                   hhValueOfTimeMultiplierForPersonUnder18;
     protected double                  meanValueOfTimeMultiplierBeforeLogForMu;
     protected double                  valueOfTimeLognormalSigma;
-
     protected float                   minValueOfTime;
     protected float                   maxValueOfTime;
     protected float[]                 meanValueOfTime;
@@ -136,7 +145,8 @@ public abstract class HouseholdDataManager
 
     protected double[]                percentHhsIncome100Kplus;
     protected double[]                percentHhsMultipleAutos;
-
+    
+    protected boolean 				readTimeFactors;
     public HouseholdDataManager()
     {
     }
@@ -178,6 +188,11 @@ public abstract class HouseholdDataManager
 
     public void readPopulationFiles(String inputHouseholdFileName, String inputPersonFileName)
     {
+    	
+        TimeCoefficientDistributions timeDistributions = new TimeCoefficientDistributions();
+        timeDistributions.createTimeDistributions(propertyMap);
+        timeDistributions.appendTimeDistributionsOnPersonFile(propertyMap);
+
         // read synthetic population files
         readHouseholdData(inputHouseholdFileName);
 
@@ -243,6 +258,16 @@ public abstract class HouseholdDataManager
             if (readResults) readWorkSchoolLocationResults();
         }
 
+        //check if we want to read distributed time factors from the person file
+        String readTimeFactorsString = propertyMap.get(PROPERTIES_DISTRIBUTED_TIME);
+        if (readTimeFactorsString != null)
+        {
+        	readTimeFactors = Boolean.valueOf(readTimeFactorsString);
+        	logger.info("Distributed time coefficients = "+Boolean.toString(readTimeFactors));
+        }
+     
+
+        
     }
 
     public void setPropertyFileValues(HashMap<String, String> propertyMap)
@@ -268,6 +293,15 @@ public abstract class HouseholdDataManager
         propertyValue = propertyMap.get(CtrampApplication.PROPERTIES_SCHEDULING_FIRST_TIME_PERIOD);
         if (propertyValue == null) firstPeriod = 0;
         else firstPeriod = Integer.parseInt(propertyValue);
+        
+        //check if we want to read distributed time factors from the person file
+        String readTimeFactorsString = propertyMap.get(PROPERTIES_DISTRIBUTED_TIME);
+        if (readTimeFactorsString != null)
+        {
+        	readTimeFactors = Boolean.valueOf(readTimeFactorsString);
+        	logger.info("Distributed time coefficients = "+Boolean.toString(readTimeFactors));
+        }
+
     }
 
     public int[] getRandomOrderHhIndexArray(int numHhs)

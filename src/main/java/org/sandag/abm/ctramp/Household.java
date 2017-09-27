@@ -25,7 +25,13 @@ public class Household
     private int                       homeTaz;
     private int                       homeMgra;
     private int                       homeWalkSubzone;
-
+    
+    //added for BCA tool
+    private float                     autoOwnershipLogsum;
+    private float                     transponderLogsum;
+    private float                     cdapLogsum;
+    private float                     jtfLogsum;
+    
     private Person[]                  persons;
 
     private Tour[]                    jointTours;
@@ -1457,14 +1463,47 @@ public class Household
 
     }
 
-    public long getSeed() {
+  public long getSeed() {
 		return seed;
 	}
 	public void setSeed(long seed) {
 		this.seed = seed;
 	}
-    public void logHouseholdObject(String titleString, Logger logger)
-    {
+ 
+  public float getAutoOwnershipLogsum() {
+		return autoOwnershipLogsum;
+	}
+
+	public void setAutoOwnershipLogsum(float autoOwnershipLogsum) {
+		this.autoOwnershipLogsum = autoOwnershipLogsum;
+	}
+
+	public float getTransponderLogsum() {
+		return transponderLogsum;
+	}
+
+	public void setTransponderLogsum(float transponderLogsum) {
+		this.transponderLogsum = transponderLogsum;
+	}
+
+	public float getCdapLogsum() {
+		return cdapLogsum;
+	}
+
+	public void setCdapLogsum(float cdapLogsum) {
+		this.cdapLogsum = cdapLogsum;
+	}
+
+	public float getJtfLogsum() {
+		return jtfLogsum;
+	}
+
+	public void setJtfLogsum(float jtfLogsum) {
+		this.jtfLogsum = jtfLogsum;
+	}
+
+	public void logHouseholdObject(String titleString, Logger logger)
+  {
 
         int totalChars = 72;
         String separater = "";

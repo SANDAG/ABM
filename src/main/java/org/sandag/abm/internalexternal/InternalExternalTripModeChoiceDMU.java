@@ -27,6 +27,8 @@ public class InternalExternalTripModeChoiceDMU
     protected int          hhSize;
     protected int          tripOrigIsTourDest;
     protected int          tripDestIsTourDest;
+    
+    protected double 	nonWorkTimeFactor;
 
     protected double       nmWalkTime;
     protected double       nmBikeTime;
@@ -347,7 +349,14 @@ public class InternalExternalTripModeChoiceDMU
     {
         this.hhSize = hhSize;
     }
+    public double getNonWorkTimeFactor(){
+    	return nonWorkTimeFactor;
+    }
 
+    public void setNonWorkTimeFactor(double nonWorkTimeFactor){
+    	this.nonWorkTimeFactor=nonWorkTimeFactor;
+    }
+    
     private void setupMethodIndexMap()
     {
         methodIndexMap = new HashMap<String, Integer>();
@@ -364,6 +373,7 @@ public class InternalExternalTripModeChoiceDMU
         methodIndexMap.put("getAutos", 11);
         methodIndexMap.put("getHhSize", 12);
         methodIndexMap.put("getAge", 13);
+        methodIndexMap.put("getNonWorkTimeFactor", 14);
 
         methodIndexMap.put("getTripOrigIsTourDest", 23);
         methodIndexMap.put("getTripDestIsTourDest", 24);

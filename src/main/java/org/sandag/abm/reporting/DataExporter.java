@@ -23,11 +23,16 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.ModelStructure;
+
 import com.pb.common.datafile.CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.matrix.Matrix;
+import com.pb.common.matrix.MatrixType;
+import com.pb.common.matrix.MatrixWriter;
+import com.pb.common.matrix.OMXMatrixWriter;
 
 /**
  * The {@code DataExporter} ...
@@ -49,7 +54,17 @@ public final class DataExporter
     private final int               feedbackIterationNumber;
     private final Set<String>       tables;
     private final String[]          timePeriods                 = ModelStructure.MODEL_PERIOD_LABELS;
+    private final String 			FUEL_COST_PROPERTY          = "aoc.fuel";
+    private final String 			MAINTENANCE_COST_PROPERTY = "aoc.maintenance";
+    private static final String     WRITE_LOGSUMS_PROPERTY      = "Results.WriteLogsums";
+    private static final String     WRITE_UTILS_PROPERTY        = "TourModeChoice.Save.UtilsAndProbs";
+    
+    private float autoOperatingCost;
 
+    private boolean writeCSV = false;
+    private boolean writeLogsums = false;
+    private boolean writeUtilities = true;
+    
     public DataExporter(Properties theProperties, OMXMatrixDao aMtxDao, String projectPath,
             int feedbackIterationNumber)
     {
@@ -58,7 +73,14 @@ public final class DataExporter
 
         projectPathFile = new File(theProperties.getProperty("Project.Directory"));
         this.feedbackIterationNumber = feedbackIterationNumber;
-
+        
+        float fuelCost = new Float(theProperties.getProperty(FUEL_COST_PROPERTY));
+        float mainCost = new Float(theProperties.getProperty(MAINTENANCE_COST_PROPERTY));
+        writeLogsums = new Boolean(theProperties.getProperty(WRITE_LOGSUMS_PROPERTY));
+        writeUtilities = new Boolean(theProperties.getProperty(WRITE_UTILS_PROPERTY));
+        
+        autoOperatingCost = (fuelCost + mainCost) * 0.01f;
+        
         tables = new LinkedHashSet<String>();
     }
 
@@ -84,6 +106,13 @@ public final class DataExporter
         return path;
     }
 
+    /**
+     * Takes an input file name, returns a java.io.File created in the output directory
+     * with that name.
+     * 
+     * @param The name of the file to create
+     * @return  A new java.io.File in the directory indicated by the report.path property.
+     */
     private String getOutputPath(String file)
     {
         return new File(properties.getProperty("report.path"), file).getAbsolutePath();
@@ -325,10 +354,17 @@ public final class DataExporter
         if (tripStructureDefinition != null)
         {
             appendTripData(table, tripStructureDefinition);
-            floatColumns.add("TRIP_TIME");
-            floatColumns.add("OUT_VEHICLE_TIME");
-            floatColumns.add("TRIP_DISTANCE");
-            floatColumns.add("TRIP_COST");
+            floatColumns.add("AUTO_IVT");
+            floatColumns.add("AUTO_AOC");
+            floatColumns.add("AUTO_STD");
+            floatColumns.add("AUTO_TOLL");
+            floatColumns.add("TRAN_IVT");
+            floatColumns.add("TRAN_WAIT");
+            floatColumns.add("TRAN_WALK");
+            floatColumns.add("TRAN_FARE");
+            floatColumns.add("WALK_TIME");
+            floatColumns.add("BIKE_TIME");
+            floatColumns.add("TRIP_DIST");
             stringColumns.add("TRIP_PURPOSE_NAME");
             stringColumns.add("TRIP_MODE_NAME");
             intColumns.add("RECID");
@@ -396,24 +432,37 @@ public final class DataExporter
         return new PrintWriter(new BufferedWriter(new FileWriter(fileName)));
     }
 
+    /**
+     * Appends trip data to table including skim attributes.
+     * 
+     * @param table
+     * @param tripStructureDefinition
+     */
     private void appendTripData(TableDataSet table, TripStructureDefinition tripStructureDefinition)
     {
         // id triptype recid partysize orig_mgra dest_mgra trip_board_tap
         // trip_alight_tap trip_depart_time trip_time trip_distance trip_cost
-        // trip_purpose_name trip_mode_name
+        // trip_purpose_name trip_mode_name vot
         int rowCount = table.getRowCount();
-        // columns to add: trip_time, trip_distance, trip_cost,
-        // trip_purpose_name, trip_mode_name, recid
-        float[] tripTime = new float[rowCount];
-        float[] outVehTime = new float[rowCount];
+   
+        float[] autoInVehicleTime = new float[rowCount];
+        float[] autoOperatingCost = new float[rowCount];
+        float[] autoStandardDeviation = new float[rowCount];
+        float[] autoTollCost = new float[rowCount];
+        float[] transitInVehicleTime = new float[rowCount];
+        float[] transitWaitTime = new float[rowCount];
+        float[] transitWalkTime = new float[rowCount];
+        float[] transitFare = new float[rowCount];
+        float[] walkModeTime = new float[rowCount];
+        float[] bikeModeTime = new float[rowCount];
         float[] tripDistance = new float[rowCount];
-        float[] tripCost = new float[rowCount];
         String[] tripPurpose = new String[rowCount];
         String[] tripMode = new String[rowCount];
         int[] tripId = new int[rowCount];
         int[] tripDepartTime = new int[rowCount];
         int[] tripBoardTaz = new int[rowCount];
         int[] tripAlightTaz = new int[rowCount];
+        float[] valueOfTime = new float[rowCount];
 
         SkimBuilder skimBuilder = new SkimBuilder(properties);
         boolean hasPurposeColumn = tripStructureDefinition.originPurposeColumn > -1;
@@ -431,11 +480,22 @@ public final class DataExporter
                     (int) table.getValueAt(row, tripStructureDefinition.modeColumn),
                     (int) table.getValueAt(row, tripStructureDefinition.boardTapColumn),
                     (int) table.getValueAt(row, tripStructureDefinition.alightTapColumn),
-                    (int) table.getValueAt(row, tripStructureDefinition.todColumn), inbound);
-            tripTime[i] = attributes.getTripTime();
-            outVehTime[i] = attributes.getOutVehicleTime();
+                    (int) table.getValueAt(row, tripStructureDefinition.todColumn),
+                    inbound,
+                    table.getValueAt(row,tripStructureDefinition.valueOfTimeColumn));
+           
+            autoInVehicleTime[i] = attributes.getAutoInVehicleTime();
+            autoOperatingCost[i] = attributes.getAutoOperatingCost();
+            autoStandardDeviation[i] = attributes.getAutoStandardDeviationTime();
+            autoTollCost[i] = attributes.getAutoTollCost();
+            transitInVehicleTime[i] = attributes.getTransitInVehicleTime();
+            transitWaitTime[i] = attributes.getTransitWaitTime();
+            transitWalkTime[i] = attributes.getTransitWalkTime();
+            transitFare[i] = attributes.getTransitFare();
+            walkModeTime[i] = attributes.getWalkModeTime();
+            bikeModeTime[i] = attributes.getBikeModeTime();
             tripDistance[i] = attributes.getTripDistance();
-            tripCost[i] = attributes.getTripCost();
+            
             if (hasPurposeColumn)
             {
                 tripPurpose[i] = table.getStringValueAt(row,
@@ -451,16 +511,25 @@ public final class DataExporter
             tripDepartTime[i] = attributes.getTripStartTime();
             tripBoardTaz[i] = attributes.getTripBoardTaz();
             tripAlightTaz[i] = attributes.getTripAlightTaz();
+            valueOfTime[i] = attributes.getValueOfTime();
         }
-        table.appendColumn(tripTime, "TRIP_TIME");
-        table.appendColumn(outVehTime, "OUT_VEHICLE_TIME");
-        table.appendColumn(tripDistance, "TRIP_DISTANCE");
-        table.appendColumn(tripCost, "TRIP_COST");
+        table.appendColumn(autoInVehicleTime, "AUTO_IVT");
+        table.appendColumn(autoOperatingCost, "AUTO_AOC");
+        table.appendColumn(autoStandardDeviation, "AUTO_STD");
+        table.appendColumn(autoTollCost, "AUTO_TOLL");
+        table.appendColumn(transitInVehicleTime, "TRAN_IVT");
+        table.appendColumn(transitWaitTime, "TRAN_WAIT");
+        table.appendColumn(transitWalkTime, "TRAN_WALK");
+        table.appendColumn(transitFare, "TRAN_FARE");
+        table.appendColumn(walkModeTime, "WALK_TIME");
+        table.appendColumn(bikeModeTime, "BIKE_TIME");
+        table.appendColumn(tripDistance, "TRIP_DIST");
         table.appendColumn(tripPurpose, "TRIP_PURPOSE_NAME");
         table.appendColumn(tripMode, "TRIP_MODE_NAME");
         table.appendColumn(tripId, "RECID");
         table.appendColumn(tripBoardTaz, "TRIP_BOARD_TAZ");
         table.appendColumn(tripAlightTaz, "TRIP_ALIGHT_TAZ");
+        table.appendColumn(valueOfTime, "VALUE_OF_TIME");
     }
 
     private void exportAccessibilities(String outputFileBase)
@@ -825,16 +894,37 @@ public final class DataExporter
     private void exportHouseholdData(String outputFileBase)
     {
         addTable(outputFileBase);
-        String[] formats = {NUMBER_FORMAT_NAME, // hh_id
-                NUMBER_FORMAT_NAME, // home_mgra
-                NUMBER_FORMAT_NAME, // income
-                NUMBER_FORMAT_NAME, // autos
-                NUMBER_FORMAT_NAME, // transponder
-                STRING_FORMAT_NAME, // cdap_pattern
-                NUMBER_FORMAT_NAME, // jtf_choice
-        };
+        ArrayList<String> formatList = new ArrayList<String>();
+        
+        formatList.add(NUMBER_FORMAT_NAME); // hh_id
+        formatList.add(NUMBER_FORMAT_NAME); // home_mgra
+        formatList.add(NUMBER_FORMAT_NAME); // income
+        formatList.add(NUMBER_FORMAT_NAME); // autos
+        formatList.add(NUMBER_FORMAT_NAME); // transponder
+        formatList.add(STRING_FORMAT_NAME); // cdap_pattern
+        formatList.add(NUMBER_FORMAT_NAME); // jtf_choice
+        
+        
+        if(writeLogsums){
+        	formatList.add(NUMBER_FORMAT_NAME); //aoLogsum	
+        	formatList.add(NUMBER_FORMAT_NAME); //transponderLogsum	
+        	formatList.add(NUMBER_FORMAT_NAME); //cdapLogsum	
+        	formatList.add(NUMBER_FORMAT_NAME); //jtfLogsum
+        }
+        
+        String[] formats = new String[formatList.size()];
+        formats = formatList.toArray(formats);
+        
         Set<String> intColumns = new HashSet<String>();
         Set<String> floatColumns = new HashSet<String>();
+        
+        if(writeLogsums){
+        	floatColumns.add("aoLogsum"); //aoLogsum	
+        	floatColumns.add("transponderLogsum"); //transponderLogsum	
+        	floatColumns.add("cdapLogsum"); //cdapLogsum	
+        	floatColumns.add("jtfLogsum"); //jtfLogsum
+        }
+        
         Set<String> stringColumns = new HashSet<String>(Arrays.asList("cdap_pattern"));
         Set<String> bitColumns = new HashSet<String>();
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("hh_id"));
@@ -845,22 +935,53 @@ public final class DataExporter
     private void exportPersonData(String outputFileBase)
     {
         addTable(outputFileBase);
-        String[] formats = {NUMBER_FORMAT_NAME, // hh_id
-                NUMBER_FORMAT_NAME, // person_id
-                NUMBER_FORMAT_NAME, // person_num
-                NUMBER_FORMAT_NAME, // age
-                STRING_FORMAT_NAME, // gender
-                STRING_FORMAT_NAME, // type
-                NUMBER_FORMAT_NAME, // value_of_time (float)
-                STRING_FORMAT_NAME, // activity_pattern
-                NUMBER_FORMAT_NAME, // imf_choice
-                NUMBER_FORMAT_NAME, // inmf_choice
-                NUMBER_FORMAT_NAME, // fp_choice
-                NUMBER_FORMAT_NAME, // reimb_pct (float)
-                NUMBER_FORMAT_NAME, // ie_choice
-        };
+        
+        ArrayList<String> formatList = new ArrayList<String>();
+        
+        formatList.add(NUMBER_FORMAT_NAME); // hh_id
+        formatList.add(NUMBER_FORMAT_NAME); // person_id
+        formatList.add(NUMBER_FORMAT_NAME); // person_num
+        formatList.add(NUMBER_FORMAT_NAME); // age
+        formatList.add(STRING_FORMAT_NAME); // gender
+        formatList.add(STRING_FORMAT_NAME); // type
+        formatList.add(NUMBER_FORMAT_NAME); // value_of_time (float)
+        formatList.add(STRING_FORMAT_NAME); // activity_pattern
+        formatList.add(NUMBER_FORMAT_NAME); // imf_choice
+        formatList.add(NUMBER_FORMAT_NAME); // inmf_choice
+        formatList.add(NUMBER_FORMAT_NAME); // fp_choice
+        formatList.add(NUMBER_FORMAT_NAME); // reimb_pct (float)
+        formatList.add(NUMBER_FORMAT_NAME); // ie_choice
+        formatList.add(NUMBER_FORMAT_NAME); // timeFactorWork
+        formatList.add(NUMBER_FORMAT_NAME); // timeFactorNonWork
+        
+        if(writeLogsums){
+        	formatList.add(NUMBER_FORMAT_NAME); //wfhLogsum	
+        	formatList.add(NUMBER_FORMAT_NAME); //wlLogsum	
+        	formatList.add(NUMBER_FORMAT_NAME); //slLogsum	
+        	formatList.add(NUMBER_FORMAT_NAME); //fpLogsum	
+        	formatList.add(NUMBER_FORMAT_NAME); //ieLogsum	
+        	formatList.add(NUMBER_FORMAT_NAME); //cdapLogsum	
+        	formatList.add(NUMBER_FORMAT_NAME); //imtfLogsum	
+        	formatList.add(NUMBER_FORMAT_NAME);//inmtfLogsum
+        }
+        
+        String[] formats = new String[formatList.size()];
+        formats = formatList.toArray(formats);
+        
         Set<String> intColumns = new HashSet<String>();
         Set<String> floatColumns = new HashSet<String>(Arrays.asList("value_of_time", "reimb_pct"));
+        
+        if(writeLogsums){
+        	floatColumns.add("wfhLogsum"); //wfhLogsum	
+        	floatColumns.add("wlLogsum"); //wlLogsum	
+        	floatColumns.add("slLogsum"); //slLogsum	
+        	floatColumns.add("fpLogsum"); //fpLogsum	
+        	floatColumns.add("ieLogsum"); //ieLogsum	
+        	floatColumns.add("cdapLogsum"); //cdapLogsum	
+        	floatColumns.add("imtfLogsum"); //imtfLogsum	
+        	floatColumns.add("inmtfLogsum");//inmtfLogsum
+        }
+        
         Set<String> stringColumns = new HashSet<String>(Arrays.asList("gender", "type",
                 "activity_pattern"));
         Set<String> bitColumns = new HashSet<String>();
@@ -933,79 +1054,77 @@ public final class DataExporter
     private void exportIndivToursData(String outputFileBase)
     {
         addTable(outputFileBase);
-        String[] formats = {NUMBER_FORMAT_NAME, // hh_id
-                NUMBER_FORMAT_NAME, // person_id
-                NUMBER_FORMAT_NAME, // person_num
-                NUMBER_FORMAT_NAME, // person_type
-                NUMBER_FORMAT_NAME, // tour_id
-                STRING_FORMAT_NAME, // tour_category
-                STRING_FORMAT_NAME, // tour_purpose
-                NUMBER_FORMAT_NAME, // orig_mgra
-                NUMBER_FORMAT_NAME, // dest_mgra
-                NUMBER_FORMAT_NAME, // start_period
-                NUMBER_FORMAT_NAME, // end_period
-                NUMBER_FORMAT_NAME, // tour_mode
-                NUMBER_FORMAT_NAME, // tour_distance
-                NUMBER_FORMAT_NAME, // atWork_freq
-                NUMBER_FORMAT_NAME, // num_ob_stops
-                NUMBER_FORMAT_NAME, // num_ib_stops
-                NUMBER_FORMAT_NAME, // util_1
-                NUMBER_FORMAT_NAME, // util_2
-                NUMBER_FORMAT_NAME, // util_3
-                NUMBER_FORMAT_NAME, // util_4
-                NUMBER_FORMAT_NAME, // util_5
-                NUMBER_FORMAT_NAME, // util_6
-                NUMBER_FORMAT_NAME, // util_7
-                NUMBER_FORMAT_NAME, // util_8
-                NUMBER_FORMAT_NAME, // util_9
-                NUMBER_FORMAT_NAME, // util_10
-                NUMBER_FORMAT_NAME, // util_11
-                NUMBER_FORMAT_NAME, // util_12
-                NUMBER_FORMAT_NAME, // util_13
-                NUMBER_FORMAT_NAME, // util_14
-                NUMBER_FORMAT_NAME, // util_15
-                NUMBER_FORMAT_NAME, // util_16
-                NUMBER_FORMAT_NAME, // util_17
-                NUMBER_FORMAT_NAME, // util_18
-                NUMBER_FORMAT_NAME, // util_19
-                NUMBER_FORMAT_NAME, // util_20
-                NUMBER_FORMAT_NAME, // util_21
-                NUMBER_FORMAT_NAME, // util_22
-                NUMBER_FORMAT_NAME, // util_23
-                NUMBER_FORMAT_NAME, // util_24
-                NUMBER_FORMAT_NAME, // util_25
-                NUMBER_FORMAT_NAME, // util_26
-                NUMBER_FORMAT_NAME, // prob_1
-                NUMBER_FORMAT_NAME, // prob_2
-                NUMBER_FORMAT_NAME, // prob_3
-                NUMBER_FORMAT_NAME, // prob_4
-                NUMBER_FORMAT_NAME, // prob_5
-                NUMBER_FORMAT_NAME, // prob_6
-                NUMBER_FORMAT_NAME, // prob_7
-                NUMBER_FORMAT_NAME, // prob_8
-                NUMBER_FORMAT_NAME, // prob_9
-                NUMBER_FORMAT_NAME, // prob_10
-                NUMBER_FORMAT_NAME, // prob_11
-                NUMBER_FORMAT_NAME, // prob_12
-                NUMBER_FORMAT_NAME, // prob_13
-                NUMBER_FORMAT_NAME, // prob_14
-                NUMBER_FORMAT_NAME, // prob_15
-                NUMBER_FORMAT_NAME, // prob_16
-                NUMBER_FORMAT_NAME, // prob_17
-                NUMBER_FORMAT_NAME, // prob_18
-                NUMBER_FORMAT_NAME, // prob_19
-                NUMBER_FORMAT_NAME, // prob_20
-                NUMBER_FORMAT_NAME, // prob_21
-                NUMBER_FORMAT_NAME, // prob_22
-                NUMBER_FORMAT_NAME, // prob_23
-                NUMBER_FORMAT_NAME, // prob_24
-                NUMBER_FORMAT_NAME, // prob_25
-                NUMBER_FORMAT_NAME // prob_26
-        };
+        
+        ArrayList<String> formatList = new ArrayList<String>();
+
+        formatList.add(NUMBER_FORMAT_NAME); // hh_id
+        formatList.add(NUMBER_FORMAT_NAME); // person_id
+        formatList.add(NUMBER_FORMAT_NAME); // person_num
+        formatList.add(NUMBER_FORMAT_NAME); // person_type
+        formatList.add(NUMBER_FORMAT_NAME); // tour_id
+        formatList.add(STRING_FORMAT_NAME); // tour_category
+        formatList.add(STRING_FORMAT_NAME); // tour_purpose
+        formatList.add(NUMBER_FORMAT_NAME); // orig_mgra
+        formatList.add(NUMBER_FORMAT_NAME); // dest_mgra
+        formatList.add(NUMBER_FORMAT_NAME); // start_period
+        formatList.add(NUMBER_FORMAT_NAME); // end_period
+        formatList.add(NUMBER_FORMAT_NAME); // tour_mode
+        formatList.add(NUMBER_FORMAT_NAME); // tour_distance
+        formatList.add(NUMBER_FORMAT_NAME); // atWork_freq
+        formatList.add(NUMBER_FORMAT_NAME); // num_ob_stops
+        formatList.add(NUMBER_FORMAT_NAME); // num_ib_stops
+        formatList.add(NUMBER_FORMAT_NAME); // valueOfTime
+        
+        if(writeUtilities){
+        	for(int i=1;i<=26;++i)
+        		formatList.add(NUMBER_FORMAT_NAME); // util_i
+        	for(int i=1;i<=26;++i)
+        		formatList.add(NUMBER_FORMAT_NAME); // prob_i
+        }
+     
+        if(writeLogsums){
+        	formatList.add(NUMBER_FORMAT_NAME); //timeOfDayLogsum	
+        	formatList.add(NUMBER_FORMAT_NAME);//tourModeLogsum	
+        	formatList.add(NUMBER_FORMAT_NAME);//subtourFreqLogsum	
+        	formatList.add(NUMBER_FORMAT_NAME);//tourDestinationLogsum	
+        	formatList.add(NUMBER_FORMAT_NAME);//stopFreqLogsum	
+        
+        	for(int i = 1; i<=4;++i)
+        		formatList.add(NUMBER_FORMAT_NAME);//outStopDCLogsum_i	
+        
+        	for(int i = 1; i<=4;++i)
+        		formatList.add(NUMBER_FORMAT_NAME);//inbStopDCLogsum_i	
+        }
+        
+        String[] formats = new String[formatList.size()];
+        formats = formatList.toArray(formats);
+        
         Set<String> intColumns = new HashSet<String>(Arrays.asList("hh_id", "person_id",
                 "person_num", "person_type", "tour_id", "orig_mgra", "dest_mgra", "start_period",
                 "end_period", "tour_mode", "atWork_freq", "num_ob_stops", "num_ib_stops"));
-        Set<String> floatColumns = new HashSet<String>();
+
+        Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
+        
+        if(writeUtilities){
+        	for(int i=1;i<=26;++i)
+        		floatColumns.add("util_"+i); // util_i
+            for(int i=1;i<=26;++i)
+            	floatColumns.add("prob_"+i); // prob_i
+        }
+        if(writeLogsums){
+        	floatColumns.add("timeOfDayLogsum");
+        	floatColumns.add("tourModeLogsum");
+        	floatColumns.add("subtourFreqLogsum");
+        	floatColumns.add("tourDestinationLogsum");
+        	floatColumns.add("stopFreqLogsum");
+        
+        	for(int i = 1; i<=4;++i)
+        		floatColumns.add("outStopDCLogsum_"+i);//outStopDCLogsum_i	
+        
+        	for(int i = 1; i<=4;++i)
+        		floatColumns.add("inbStopDCLogsum_"+i);//inbStopDCLogsum_i	
+        }
+        
         Set<String> stringColumns = new HashSet<String>(Arrays.asList("tour_category",
                 "tour_purpose"));
         Set<String> bitColumns = new HashSet<String>();
@@ -1018,77 +1137,72 @@ public final class DataExporter
     private void exportJointToursData(String outputFileBase)
     {
         addTable(outputFileBase);
-        String[] formats = {NUMBER_FORMAT_NAME, // hh_id
-                NUMBER_FORMAT_NAME, // tour_id
-                STRING_FORMAT_NAME, // tour_category
-                STRING_FORMAT_NAME, // tour_purpose
-                NUMBER_FORMAT_NAME, // tour_composition
-                STRING_FORMAT_NAME, // tour_participants
-                NUMBER_FORMAT_NAME, // orig_mgra
-                NUMBER_FORMAT_NAME, // dest_mgra
-                NUMBER_FORMAT_NAME, // start_period
-                NUMBER_FORMAT_NAME, // end_period
-                NUMBER_FORMAT_NAME, // tour_mode
-                NUMBER_FORMAT_NAME, // tour_distance
-                NUMBER_FORMAT_NAME, // num_ob_stops
-                NUMBER_FORMAT_NAME, // num_ib_stops
-                NUMBER_FORMAT_NAME, // util_1
-                NUMBER_FORMAT_NAME, // util_2
-                NUMBER_FORMAT_NAME, // util_3
-                NUMBER_FORMAT_NAME, // util_4
-                NUMBER_FORMAT_NAME, // util_5
-                NUMBER_FORMAT_NAME, // util_6
-                NUMBER_FORMAT_NAME, // util_7
-                NUMBER_FORMAT_NAME, // util_8
-                NUMBER_FORMAT_NAME, // util_9
-                NUMBER_FORMAT_NAME, // util_10
-                NUMBER_FORMAT_NAME, // util_11
-                NUMBER_FORMAT_NAME, // util_12
-                NUMBER_FORMAT_NAME, // util_13
-                NUMBER_FORMAT_NAME, // util_14
-                NUMBER_FORMAT_NAME, // util_15
-                NUMBER_FORMAT_NAME, // util_16
-                NUMBER_FORMAT_NAME, // util_17
-                NUMBER_FORMAT_NAME, // util_18
-                NUMBER_FORMAT_NAME, // util_19
-                NUMBER_FORMAT_NAME, // util_20
-                NUMBER_FORMAT_NAME, // util_21
-                NUMBER_FORMAT_NAME, // util_22
-                NUMBER_FORMAT_NAME, // util_23
-                NUMBER_FORMAT_NAME, // util_24
-                NUMBER_FORMAT_NAME, // util_25
-                NUMBER_FORMAT_NAME, // util_26
-                NUMBER_FORMAT_NAME, // prob_1
-                NUMBER_FORMAT_NAME, // prob_2
-                NUMBER_FORMAT_NAME, // prob_3
-                NUMBER_FORMAT_NAME, // prob_4
-                NUMBER_FORMAT_NAME, // prob_5
-                NUMBER_FORMAT_NAME, // prob_6
-                NUMBER_FORMAT_NAME, // prob_7
-                NUMBER_FORMAT_NAME, // prob_8
-                NUMBER_FORMAT_NAME, // prob_9
-                NUMBER_FORMAT_NAME, // prob_10
-                NUMBER_FORMAT_NAME, // prob_11
-                NUMBER_FORMAT_NAME, // prob_12
-                NUMBER_FORMAT_NAME, // prob_13
-                NUMBER_FORMAT_NAME, // prob_14
-                NUMBER_FORMAT_NAME, // prob_15
-                NUMBER_FORMAT_NAME, // prob_16
-                NUMBER_FORMAT_NAME, // prob_17
-                NUMBER_FORMAT_NAME, // prob_18
-                NUMBER_FORMAT_NAME, // prob_19
-                NUMBER_FORMAT_NAME, // prob_20
-                NUMBER_FORMAT_NAME, // prob_21
-                NUMBER_FORMAT_NAME, // prob_22
-                NUMBER_FORMAT_NAME, // prob_23
-                NUMBER_FORMAT_NAME, // prob_24
-                NUMBER_FORMAT_NAME, // prob_25
-                NUMBER_FORMAT_NAME // prob_26
-        };
+        ArrayList<String> formatList = new ArrayList<String>();
+
+        formatList.add(NUMBER_FORMAT_NAME); // hh_id
+        formatList.add(NUMBER_FORMAT_NAME); // tour_id
+        formatList.add(STRING_FORMAT_NAME); // tour_category
+        formatList.add(STRING_FORMAT_NAME); // tour_purpose
+        formatList.add(NUMBER_FORMAT_NAME); // tour_composition
+        formatList.add(STRING_FORMAT_NAME); // tour_participants
+        formatList.add(NUMBER_FORMAT_NAME); // orig_mgra
+        formatList.add(NUMBER_FORMAT_NAME); // dest_mgra
+        formatList.add(NUMBER_FORMAT_NAME); // start_period
+        formatList.add(NUMBER_FORMAT_NAME); // end_period
+        formatList.add(NUMBER_FORMAT_NAME); // tour_mode
+        formatList.add(NUMBER_FORMAT_NAME); // tour_distance
+        formatList.add(NUMBER_FORMAT_NAME); // num_ob_stops
+        formatList.add(NUMBER_FORMAT_NAME); // num_ib_stops
+        formatList.add(NUMBER_FORMAT_NAME); // valueOfTime
+        
+        if(writeUtilities){
+        	for(int i=1;i<=26;++i)
+        		formatList.add(NUMBER_FORMAT_NAME); // util_i
+            for(int i=1;i<=26;++i)
+            	formatList.add(NUMBER_FORMAT_NAME); // prob_i
+        }
+             
+        if(writeLogsums){
+          	formatList.add(NUMBER_FORMAT_NAME); //timeOfDayLogsum	
+          	formatList.add(NUMBER_FORMAT_NAME);//tourModeLogsum	
+           	formatList.add(NUMBER_FORMAT_NAME);//subtourFreqLogsum	
+           	formatList.add(NUMBER_FORMAT_NAME);//tourDestinationLogsum	
+           	formatList.add(NUMBER_FORMAT_NAME);//stopFreqLogsum	
+                
+           	for(int i = 1; i<=4;++i)
+           		formatList.add(NUMBER_FORMAT_NAME);//outStopDCLogsum_i	
+                
+           	for(int i = 1; i<=4;++i)
+           		formatList.add(NUMBER_FORMAT_NAME);//inbStopDCLogsum_i	
+        }
+
+        String[] formats = new String[formatList.size()];
+        formats = formatList.toArray(formats);
+               
         Set<String> intColumns = new HashSet<String>(Arrays.asList("hh_id", "tour_id",
                 "tour_composition", "orig_mgra", "dest_mgra", "start_period", "end_period",
                 "tour_mode", "num_ob_stops", "num_ib_stops"));
-        Set<String> floatColumns = new HashSet<String>();
+        Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
+        
+        if(writeUtilities){
+        	for(int i=1;i<=26;++i)
+        		floatColumns.add("util_"+i); // util_i
+            for(int i=1;i<=26;++i)
+            	floatColumns.add("prob_"+i); // prob_i
+        }
+        if(writeLogsums){
+        	floatColumns.add("timeOfDayLogsum");
+        	floatColumns.add("tourModeLogsum");
+        	floatColumns.add("subtourFreqLogsum");
+        	floatColumns.add("tourDestinationLogsum");
+        	floatColumns.add("stopFreqLogsum");
+        
+        	for(int i = 1; i<=4;++i)
+        		floatColumns.add("outStopDCLogsum_"+i);//outStopDCLogsum_i	
+        
+        	for(int i = 1; i<=4;++i)
+        		floatColumns.add("inbStopDCLogsum_"+i);//inbStopDCLogsum_i	
+        }
         Set<String> stringColumns = new HashSet<String>(Arrays.asList("tour_category",
                 "tour_purpose", "tour_participants"));
         Set<String> bitColumns = new HashSet<String>();
@@ -1101,26 +1215,40 @@ public final class DataExporter
     private void exportIndivTripData(String outputFileBase)
     {
         addTable(outputFileBase);
-        String[] formats = {NUMBER_FORMAT_NAME, // hh_id
-                NUMBER_FORMAT_NAME, // person_id
-                NUMBER_FORMAT_NAME, // person_num
-                NUMBER_FORMAT_NAME, // tour_id
-                NUMBER_FORMAT_NAME, // stop_id
-                NUMBER_FORMAT_NAME, // inbound
-                STRING_FORMAT_NAME, // tour_purpose
-                STRING_FORMAT_NAME, // orig_purpose
-                STRING_FORMAT_NAME, // dest_purpose
-                NUMBER_FORMAT_NAME, // orig_mgra
-                NUMBER_FORMAT_NAME, // dest_mgra
-                NUMBER_FORMAT_NAME, // parking_mgra
-                NUMBER_FORMAT_NAME, // stop_period
-                NUMBER_FORMAT_NAME, // trip_mode
-                NUMBER_FORMAT_NAME, // trip_board_tap
-                NUMBER_FORMAT_NAME, // trip_alight_tap
-                NUMBER_FORMAT_NAME // tour_mode
-        };
+        ArrayList<String> formatList = new ArrayList<String>();
+
+        formatList.add(NUMBER_FORMAT_NAME); // hh_id
+        formatList.add(NUMBER_FORMAT_NAME); // person_id
+        formatList.add(NUMBER_FORMAT_NAME); // person_num
+        formatList.add(NUMBER_FORMAT_NAME); // tour_id
+        formatList.add(NUMBER_FORMAT_NAME); // stop_id
+        formatList.add(NUMBER_FORMAT_NAME); // inbound
+        formatList.add(STRING_FORMAT_NAME); // tour_purpose
+        formatList.add(STRING_FORMAT_NAME); // orig_purpose
+        formatList.add(STRING_FORMAT_NAME); // dest_purpose
+        formatList.add(NUMBER_FORMAT_NAME); // orig_mgra
+        formatList.add(NUMBER_FORMAT_NAME); // dest_mgra
+        formatList.add(NUMBER_FORMAT_NAME); // parking_mgra
+        formatList.add(NUMBER_FORMAT_NAME); // stop_period
+        formatList.add(NUMBER_FORMAT_NAME); // trip_mode
+        formatList.add(NUMBER_FORMAT_NAME); // trip_board_tap
+        formatList.add( NUMBER_FORMAT_NAME); // trip_alight_tap
+        formatList.add(NUMBER_FORMAT_NAME); // tour_mode
+        formatList.add(NUMBER_FORMAT_NAME);  // value of time
+        
+        if(writeLogsums)
+        	formatList.add(NUMBER_FORMAT_NAME);//tripModeLogsum
+
+        String[] formats = new String[formatList.size()];
+        formats = formatList.toArray(formats);
+
         Set<String> intColumns = new HashSet<String>();
-        Set<String> floatColumns = new HashSet<String>();
+         
+        Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
+        
+        if(writeLogsums)
+        	floatColumns = new HashSet<String>(Arrays.asList("valueOfTime","tripModeLogsum"));
+        
         Set<String> stringColumns = new HashSet<String>(Arrays.asList("tour_purpose",
                 "orig_purpose", "dest_purpose"));
         Set<String> bitColumns = new HashSet<String>();
@@ -1137,31 +1265,44 @@ public final class DataExporter
                 bitColumns,
                 FieldType.INT,
                 primaryKey,
-                new TripStructureDefinition(10, 11, 8, 9, 13, 14, 15, 16, -1, 17, "INDIV", 6, false));
+                new TripStructureDefinition(10, 11, 8, 9, 13, 14, 15, 16, -1, 17, "INDIV", 6, false, 18));
     }
 
     private void exportJointTripData(String outputFileBase)
     {
         addTable(outputFileBase);
-        String[] formats = {NUMBER_FORMAT_NAME, // hh_id
-                NUMBER_FORMAT_NAME, // tour_id
-                NUMBER_FORMAT_NAME, // stop_id
-                NUMBER_FORMAT_NAME, // inbound
-                STRING_FORMAT_NAME, // tour_purpose
-                STRING_FORMAT_NAME, // orig_purpose
-                STRING_FORMAT_NAME, // dest_purpose
-                NUMBER_FORMAT_NAME, // orig_mgra
-                NUMBER_FORMAT_NAME, // dest_mgra
-                NUMBER_FORMAT_NAME, // parking_mgra
-                NUMBER_FORMAT_NAME, // stop_period
-                NUMBER_FORMAT_NAME, // trip_mode
-                NUMBER_FORMAT_NAME, // num_participants
-                NUMBER_FORMAT_NAME, // trip_board_tap
-                NUMBER_FORMAT_NAME, // trip_alight_tap
-                NUMBER_FORMAT_NAME // tour_mode
-        };
+        ArrayList<String> formatList = new ArrayList<String>();
+
+        formatList.add(NUMBER_FORMAT_NAME); // hh_id
+        formatList.add(NUMBER_FORMAT_NAME); // tour_id
+        formatList.add(NUMBER_FORMAT_NAME); // stop_id
+        formatList.add(NUMBER_FORMAT_NAME); // inbound
+        formatList.add(STRING_FORMAT_NAME); // tour_purpose
+        formatList.add(STRING_FORMAT_NAME); // orig_purpose
+        formatList.add(STRING_FORMAT_NAME); // dest_purpose
+        formatList.add(NUMBER_FORMAT_NAME); // orig_mgra
+        formatList.add(NUMBER_FORMAT_NAME); // dest_mgra
+        formatList.add(NUMBER_FORMAT_NAME); // parking_mgra
+        formatList.add(NUMBER_FORMAT_NAME); // stop_period
+        formatList.add(NUMBER_FORMAT_NAME); // trip_mode
+        formatList.add(NUMBER_FORMAT_NAME); // num_participants
+        formatList.add(NUMBER_FORMAT_NAME); // trip_board_tap
+        formatList.add(NUMBER_FORMAT_NAME); // trip_alight_tap
+        formatList.add(NUMBER_FORMAT_NAME); // tour_mode
+        formatList.add(NUMBER_FORMAT_NAME);  // value of time
+                
+        if(writeLogsums)
+         	formatList.add(NUMBER_FORMAT_NAME);//tripModeLogsum
+
+        String[] formats = new String[formatList.size()];
+        formats = formatList.toArray(formats);
+
         Set<String> intColumns = new HashSet<String>();
-        Set<String> floatColumns = new HashSet<String>();
+        Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
+        
+        if(writeLogsums)
+        	floatColumns = new HashSet<String>(Arrays.asList("valueOfTime","tripModeLogsum"));
+
         Set<String> stringColumns = new HashSet<String>(Arrays.asList("tour_purpose",
                 "orig_purpose", "dest_purpose"));
         Set<String> bitColumns = new HashSet<String>();
@@ -1169,14 +1310,16 @@ public final class DataExporter
                 "tour_purpose", "inbound", "stop_id"));
         exportDataGeneric(outputFileBase, "Results.JointTripDataFile", true, formats, floatColumns,
                 stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
-                new TripStructureDefinition(8, 9, 6, 7, 11, 12, 14, 15, 13, 16, "JOINT", 4, false));
+                new TripStructureDefinition(8, 9, 6, 7, 11, 12, 14, 15, 13, 16, "JOINT", 4, false, 17));
     }
 
     private void exportAirportTrips(String outputFileBase)
     {
+    	
+    	//id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,tripMode,arrivalMode,boardingTAP,alightingTAP,valueOfTime
         addTable(outputFileBase);
         Set<String> intColumns = new HashSet<String>();
-        Set<String> floatColumns = new HashSet<String>();
+        Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
         Set<String> stringColumns = new HashSet<String>();
         Set<String> bitColumns = new HashSet<String>();
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("id"));
@@ -1185,7 +1328,7 @@ public final class DataExporter
         exportDataGeneric(outputFileBase, "airport.output.file", false, null, floatColumns,
                 stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey, overridingNames,
                 new TripStructureDefinition(8, 9, 7, 10, 12, 13, 4, 13, "AIRPORT", "HOME",
-                        "AIRPORT", 2, false));
+                        "AIRPORT", 2, false, 14));
     }
 
     private void exportCrossBorderTourData(String outputFileBase)
@@ -1201,10 +1344,13 @@ public final class DataExporter
                 NUMBER_FORMAT_NAME, // destinationMGRA
                 NUMBER_FORMAT_NAME, // origTaz
                 NUMBER_FORMAT_NAME, // destTaz
-                NUMBER_FORMAT_NAME // tourMode
+                NUMBER_FORMAT_NAME, // tourMode
+                NUMBER_FORMAT_NAME, // workTimeFactor
+                NUMBER_FORMAT_NAME, // nonWorkTimeFactor
+                NUMBER_FORMAT_NAME  // valueOfTime
         };
         Set<String> intColumns = new HashSet<String>();
-        Set<String> floatColumns = new HashSet<String>();
+        Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
         Set<String> stringColumns = new HashSet<String>();
         Set<String> bitColumns = new HashSet<String>(Arrays.asList("sentri"));
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("TOURID"));
@@ -1233,9 +1379,12 @@ public final class DataExporter
                 NUMBER_FORMAT_NAME, // tripMode
                 NUMBER_FORMAT_NAME, // boardingTap
                 NUMBER_FORMAT_NAME, // alightingTap
-        };
+                NUMBER_FORMAT_NAME, // workTimeFactor
+                NUMBER_FORMAT_NAME, // nonWorkTimeFactor
+                NUMBER_FORMAT_NAME  // valueOfTime
+              };
         Set<String> intColumns = new HashSet<String>();
-        Set<String> floatColumns = new HashSet<String>();
+        Set<String> floatColumns = new HashSet<String>(Arrays.asList("workTimeFactor","nonWorkTimeFactor","valueOfTime"));
         Set<String> stringColumns = new HashSet<String>(Arrays.asList("inbound",
                 "originIsTourDestination", "destinationIsTourDestination"));
         Set<String> bitColumns = new HashSet<String>();
@@ -1245,7 +1394,7 @@ public final class DataExporter
         exportDataGeneric(outputFileBase, "crossBorder.trip.output.file", false, formats,
                 floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
                 overridingNames, new TripStructureDefinition(5, 6, 3, 4, 12, 13, 14, 15, -1, 15,
-                        "CB", 9, true));
+                        "CB", 9, true, 18));
     }
 
     private void exportVisitorData(String outputTourFileBase, String outputTripFileBase)
@@ -1265,7 +1414,7 @@ public final class DataExporter
     {
         addTable(outputFileBase);
         Set<String> intColumns = new HashSet<String>();
-        Set<String> floatColumns = new HashSet<String>();
+        Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
         Set<String> stringColumns = new HashSet<String>();
         Set<String> bitColumns = new HashSet<String>();
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("id", "segment"));
@@ -1292,10 +1441,11 @@ public final class DataExporter
                 NUMBER_FORMAT_NAME, // tripMode
                 NUMBER_FORMAT_NAME, // boardingTap
                 NUMBER_FORMAT_NAME, // alightingTap
+                NUMBER_FORMAT_NAME, // valueOfTime
                 NUMBER_FORMAT_NAME // partySize (added)
         };
         Set<String> intColumns = new HashSet<String>();
-        Set<String> floatColumns = new HashSet<String>();
+        Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
         Set<String> stringColumns = new HashSet<String>(Arrays.asList("inbound",
                 "originIsTourDestination", "destinationIsTourDestination"));
         Set<String> bitColumns = new HashSet<String>();
@@ -1317,7 +1467,7 @@ public final class DataExporter
                 bitColumns,
                 FieldType.INT,
                 primaryKey,
-                new TripStructureDefinition(5, 6, 3, 4, 10, 11, 12, 13, 14, 14, "VISITOR", 7, true),
+                new TripStructureDefinition(5, 6, 3, 4, 10, 11, 12, 13, 15, 15, "VISITOR", 7, true, 14),
                 joinData);
     }
 
@@ -1340,9 +1490,10 @@ public final class DataExporter
                 NUMBER_FORMAT_NAME, // tripMode
                 NUMBER_FORMAT_NAME, // boardingTap
                 NUMBER_FORMAT_NAME, // alightingTap
+                NUMBER_FORMAT_NAME  // value of time
         };
         Set<String> intColumns = new HashSet<String>();
-        Set<String> floatColumns = new HashSet<String>();
+        Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
         Set<String> stringColumns = new HashSet<String>(Arrays.asList("inbound",
                 "originIsTourDestination", "destinationIsTourDestination"));
         Set<String> bitColumns = new HashSet<String>();
@@ -1350,7 +1501,7 @@ public final class DataExporter
         exportDataGeneric(outputFileBase, "internalExternal.trip.output.file", false, formats,
                 floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
                 new TripStructureDefinition(5, 6, 12, 13, 14, 15, -1, 15, "IE", "HOME", "EXTERNAL",
-                        9, true));   
+                        9, true,16));   
     }
 
     private Set<Integer> getExternalZones()
@@ -1361,6 +1512,12 @@ public final class DataExporter
         return externalZones;
     }
 
+    /**
+     * Export commercial vehicle data.
+     * 
+     * @param outputFileBase
+     * @throws IOException
+     */
     private void exportCommVehData(String outputFileBase) throws IOException
     {
         addTable(outputFileBase);
@@ -1409,6 +1566,32 @@ public final class DataExporter
         }
     }
 
+    /**
+    * Export commercial vehicle data to OMX Format.
+    * 
+    * @param outputFileBase
+    * @throws IOException
+    */
+   private void exportCommVehDataToOmx(String outputFileBase) throws IOException
+   {
+	   String[] modes = {"Toll","NonToll"};
+	   
+       addTable(outputFileBase);
+	   for (String period : timePeriods){
+		   
+		   Matrix[] matrices = new Matrix[modes.length];
+		   int counter = 0;
+		   for(String mode : modes){
+
+			   matrices[counter] = mtxDao.getMatrix("commVehTODTrips", period + " " + mode);
+               ++counter;
+           }
+       	File outMatrixFile = new File(getOutputPath("commVeh_" + period + ".omx"));
+   		MatrixWriter matrixWriter = MatrixWriter.createWriter(MatrixType.OMX,outMatrixFile);
+       	matrixWriter.writeMatrices(modes,matrices);
+	   }
+		   
+   }
     private void exportExternalInternalTripData(String outputFileBase)
     {
         addTable(outputFileBase);
@@ -1486,83 +1669,200 @@ public final class DataExporter
         }
     }
 
+    /** 
+     * Export the external-internal trips to OMX format. Collapse out purposes.
+     * @param outputFileBase
+     */
+    private void exportExternalInternalTripDataToOMX(String outputFileBase)
+    {
+        addTable(outputFileBase);
+        String[] cores = {"DAN", "S2N", "S3N", "DAT", "S2T", "S3T"};
+        String[] purposes = {"Wrk","Non"};
+
+        Matrix[] outMatrixData = new Matrix[cores.length];
+
+	    for (String period : timePeriods)
+        {
+        	for(int p = 0; p<purposes.length;++p)
+            {
+        		String inMatrixName = "usSd" + purposes[p] + "_" + period;
+        	
+        		int counter=0;
+            	for (String core : cores){
+            		
+                	Matrix thisMatrix = mtxDao.getMatrix(inMatrixName, core);
+                	
+                	if(p==0){
+                		outMatrixData[counter] = thisMatrix;
+                	}else{
+                		outMatrixData[counter].add(thisMatrix);
+                	}
+                	++counter;
+            	}
+            }
+        	
+        	File outMatrixFile = new File(getOutputPath("usSd_" + period + ".omx"));
+    		MatrixWriter matrixWriter = MatrixWriter.createWriter(MatrixType.OMX,outMatrixFile);
+        	matrixWriter.writeMatrices(cores,outMatrixData);
+    		
+       }
+    }
+   /**
+     * Exports the external-external trip table to a csv file or the OMX matrix (based on the value of writeCSV).
+     * 
+     * @param outputFileBase
+     * @throws IOException
+     */
     private void exportExternalExternalTripData(String outputFileBase) throws IOException
     {
         addTable(outputFileBase);
         Set<Integer> externalZones = getExternalZones();
 
         BufferedWriter writer = null;
+        MatrixWriter matrixWriter = null;
         try
         {
-            writer = new BufferedWriter(new FileWriter(new File(getOutputPath(outputFileBase
+        	if(writeCSV){
+        		writer = new BufferedWriter(new FileWriter(new File(getOutputPath(outputFileBase
                     + ".csv"))), 1024 * 1024 * 1024);
 
-            CsvRow headerRow = new CsvRow(new String[] {"ORIG_TAZ", "DEST_TAZ", "TRIPS_EE"});
-            writer.write(headerRow.getRow());
-
+        		CsvRow headerRow = new CsvRow(new String[] {"ORIG_TAZ", "DEST_TAZ", "TRIPS_EE"});
+        		writer.write(headerRow.getRow());
+        	}else{
+        		matrixWriter = MatrixWriter.createWriter(MatrixType.OMX, new File(getOutputPath(outputFileBase + ".omx")));        	
+        	}
+        	
             Matrix m = mtxDao.getMatrix("externalExternalTrips", "Trips");
 
-            for (int o : externalZones)
-            {
-                for (int d : externalZones)
-                {
-                    String[] values = new String[3];
-                    values[0] = String.valueOf(o);
-                    values[1] = String.valueOf(d);
-                    values[2] = String.valueOf(m.getValueAt(o, d));
-                    CsvRow dataRow = new CsvRow(values);
-                    writer.write(dataRow.getRow());
-                }
+            if(writeCSV){
+            	for (int o : externalZones)
+            	{
+            		for (int d : externalZones)
+            		{
+            			String[] values = new String[3];
+            			values[0] = String.valueOf(o);
+            			values[1] = String.valueOf(d);
+            			values[2] = String.valueOf(m.getValueAt(o, d));
+            			CsvRow dataRow = new CsvRow(values);
+            			writer.write(dataRow.getRow());
+            		}
+            	}
+            }else{
+            	matrixWriter.writeMatrix(m);
             }
-        } finally
-        {
-            if (writer != null) writer.close();
-        }
+         } finally
+         {
+           	if (writer != null) writer.close();
+         }
+            
     }
 
+    /**
+     * Get a map of all vehicle skims for exporting. Includes both auto and truck skims. Auto skims 
+     * are by VOT
+     * 
+     * @return A map of auto skim file names.
+     */
     private Map<String, String> getVehicleSkimFileNameMapping()
     {
         Map<String, String> map = new LinkedHashMap<String, String>();
-        map.put("impdat_" + TOD_TOKEN, "DRIVE_ALONE_TOLL");
-        map.put("impdan_" + TOD_TOKEN, "DRIVE_ALONE_FREE");
-        map.put("imps2th_" + TOD_TOKEN, "HOV2_TOLL");
-        map.put("imps2nh_" + TOD_TOKEN, "HOV2_FREE");
-        map.put("imps3th_" + TOD_TOKEN, "HOV3_TOLL");
-        map.put("imps3nh_" + TOD_TOKEN, "HOV3_FREE");
-        map.put("imphhdt_" + TOD_TOKEN, "TRUCK_HH_TOLL");
-        map.put("imphhdn_" + TOD_TOKEN, "TRUCK_HH_FREE");
+        
+        String[] votBins = {"low","med","high"};
+        
+        for(int i = 1; i< votBins.length;++i){
+        	map.put("impdat_" + TOD_TOKEN + "_"+votBins[i], "DRIVE_ALONE_TOLL_"+votBins[i].toUpperCase());
+        	map.put("impdan_" + TOD_TOKEN + "_"+votBins[i], "DRIVE_ALONE_FREE_"+votBins[i].toUpperCase());
+        	map.put("imps2th_" + TOD_TOKEN + "_"+votBins[i], "HOV2_TOLL_"+votBins[i].toUpperCase());
+        	map.put("imps2nh_" + TOD_TOKEN + "_"+votBins[i], "HOV2_FREE_"+votBins[i].toUpperCase());
+        	map.put("imps3th_" + TOD_TOKEN + "_"+votBins[i], "HOV3_TOLL_"+votBins[i].toUpperCase());
+        	map.put("imps3nh_" + TOD_TOKEN + "_"+votBins[i], "HOV3_FREE_"+votBins[i].toUpperCase());
+        }
+        
+        //commercial vehicle skims
+        map.put("impcvt_" + TOD_TOKEN, "CV_TOLL");
+        map.put("impcvn_" + TOD_TOKEN, "CV_FREE");
+
+        //light-heavy skims
+        map.put("implhdt_" + TOD_TOKEN, "LH_TOLL");
+        map.put("implhdn_" + TOD_TOKEN, "LH_FREE");
+
+        //medium-heavy skims
+        map.put("impmhdt_" + TOD_TOKEN, "MH_TOLL");
+        map.put("impmhdn_" + TOD_TOKEN, "MH_FREE");
+
+        //heavy-heavy skims
+        map.put("imphhdt_" + TOD_TOKEN, "HH_TOLL");
+        map.put("imphhdn_" + TOD_TOKEN, "HH_FREE");
 
         return map;
     }
 
+    /**
+     * Return a map containing a number of elements where key is the name of the skim file and 
+     * value is the name of a matrix core in the skim file. The map includes length and time for 
+     * "free" path skims and length, time and toll for toll skims.
+     * 
+     * @return The map.
+     */
     private Map<String, String[]> getVehicleSkimFileCoreNameMapping()
     { // distance,time,cost
         Map<String, String[]> map = new LinkedHashMap<String, String[]>();
-        map.put("impdat_" + TOD_TOKEN, new String[] {"Length (Skim)",
-                "*STM_" + TOD_TOKEN + " (Skim)", "dat_" + TOD_TOKEN + " - itoll_" + TOD_TOKEN});
-        map.put("impdan_" + TOD_TOKEN, new String[] {"Length (Skim)",
-                "*STM_" + TOD_TOKEN + " (Skim)"});
-        map.put("imps2th_" + TOD_TOKEN, new String[] {"Length (Skim)",
-                "*HTM_" + TOD_TOKEN + " (Skim)", "s2t_" + TOD_TOKEN + " - itoll_" + TOD_TOKEN});
-        map.put("imps2nh_" + TOD_TOKEN, new String[] {"Length (Skim)",
-                "*HTM_" + TOD_TOKEN + " (Skim)"});
-        map.put("imps3th_" + TOD_TOKEN, new String[] {"Length (Skim)",
-                "*HTM_" + TOD_TOKEN + " (Skim)", "s3t_" + TOD_TOKEN + " - itoll_" + TOD_TOKEN});
-        map.put("imps3nh_" + TOD_TOKEN, new String[] {"Length (Skim)",
-                "*HTM_" + TOD_TOKEN + " (Skim)"});
+        
+        String[] votBins = {"low","med","high"};
+        
+        for(int i = 1; i< votBins.length;++i){
+        
+        	map.put("impdat_" + TOD_TOKEN + "_"+votBins[i], new String[] {"Length (Skim)",
+                "*STM_" + TOD_TOKEN + " (Skim)", "dat_" + TOD_TOKEN + " - itoll_" + TOD_TOKEN, "dat - *_TOTREL_"+TOD_TOKEN});
+        	map.put("impdan_" + TOD_TOKEN + "_"+votBins[i], new String[] {"Length (Skim)",
+                "*STM_" + TOD_TOKEN + " (Skim)","dant - *_TOTREL_"+TOD_TOKEN});
+        	map.put("imps2th_" + TOD_TOKEN + "_"+votBins[i], new String[] {"Length (Skim)",
+                "*HTM_" + TOD_TOKEN + " (Skim)", "s2t_" + TOD_TOKEN + " - itoll_" + TOD_TOKEN,"s2th - *_TOTREL_"+TOD_TOKEN});
+        	map.put("imps2nh_" + TOD_TOKEN + "_"+votBins[i], new String[] {"Length (Skim)",
+                "*HTM_" + TOD_TOKEN + " (Skim)","s2nh - *_TOTREL_"+TOD_TOKEN});
+        	map.put("imps3th_" + TOD_TOKEN + "_"+votBins[i], new String[] {"Length (Skim)",
+                "*HTM_" + TOD_TOKEN + " (Skim)", "s3t_" + TOD_TOKEN + " - itoll_" + TOD_TOKEN,"s3th - *_TOTREL_"+TOD_TOKEN});
+        	map.put("imps3nh_" + TOD_TOKEN + "_"+votBins[i], new String[] {"Length (Skim)",
+                "*HTM_" + TOD_TOKEN + " (Skim)","s3nh - *_TOTREL_"+TOD_TOKEN});
+        }
+        
+        map.put("impcvt_" + TOD_TOKEN, new String[] {"Length (Skim)",
+                "*STM_" + TOD_TOKEN + " (Skim)", "cvt - ITOLL2_" + TOD_TOKEN,"cvt - *_TOTREL_"+TOD_TOKEN});
+        map.put("impcvn_" + TOD_TOKEN, new String[] {"Length (Skim)",
+                "*STM_" + TOD_TOKEN + " (Skim)","cvn - *_TOTREL_"+TOD_TOKEN});
+       
+        map.put("implhdt_" + TOD_TOKEN, new String[] {"Length (Skim)",
+                "*STM_" + TOD_TOKEN + " (Skim)", "lhdt - ITOLL2_" + TOD_TOKEN, "lhdt - *_TOTREL_"+TOD_TOKEN});
+        map.put("implhdn_" + TOD_TOKEN, new String[] {"Length (Skim)",
+                "*STM_" + TOD_TOKEN + " (Skim)","lhdn - *_TOTREL_"+TOD_TOKEN});
+
+        map.put("impmhdt_" + TOD_TOKEN, new String[] {"Length (Skim)",
+                "*STM_" + TOD_TOKEN + " (Skim)", "mhdt - ITOLL2_" + TOD_TOKEN, "mhdt - *_TOTREL_"+TOD_TOKEN});
+        map.put("impmhdn_" + TOD_TOKEN, new String[] {"Length (Skim)",
+                "*STM_" + TOD_TOKEN + " (Skim)", "mhdn - *_TOTREL_"+TOD_TOKEN});
+
         map.put("imphhdt_" + TOD_TOKEN, new String[] {"Length (Skim)",
-                "*STM_" + TOD_TOKEN + " (Skim)", "hhdt - ITOLL2_" + TOD_TOKEN});
+                "*STM_" + TOD_TOKEN + " (Skim)", "hhdt - ITOLL2_" + TOD_TOKEN, "hhdt - *_TOTREL_"+TOD_TOKEN});
         map.put("imphhdn_" + TOD_TOKEN, new String[] {"Length (Skim)",
-                "*STM_" + TOD_TOKEN + " (Skim)"});
+                "*STM_" + TOD_TOKEN + " (Skim)", "hhdn - *_TOTREL_"+TOD_TOKEN});
+
         return map;
     }
 
+    /**
+     * Export auto skims to the directory using both csv and omx formats. The CSV file will be 
+     * written if writeCSV is true. Otherwise OMX files will be written. The OMX files will also
+     * contain an auto operating cost matrix.
+     * 
+     * @param outputFileBase The name of output csv file to write to the reports directory.
+     */
     private void exportAutoSkims(String outputFileBase)
     {
         addTable(outputFileBase);
         String[] includedTimePeriods = getTimePeriodsForSkims();
         Set<Integer> internalZones = new LinkedHashSet<Integer>();
 
+        
         BlockingQueue<CsvRow> queue = new LinkedBlockingQueue<CsvRow>();
         try
         {
@@ -1577,90 +1877,124 @@ public final class DataExporter
             {
                 Map<String, Matrix> lengthMatrix = new LinkedHashMap<String, Matrix>();
                 Map<String, Matrix> timeMatrix = new LinkedHashMap<String, Matrix>();
-                Map<String, Matrix> fareMatrix = new LinkedHashMap<String, Matrix>();
+                Map<String, Matrix> tollMatrix = new LinkedHashMap<String, Matrix>();
+                Map<String, Matrix> stdMatrix = new LinkedHashMap<String, Matrix>();
+                
 
+                //iterate through the auto modes
                 for (String key : vehicleSkimCores.keySet())
                 {
                     String name = vehicleSkimFiles.get(key);
                     String[] cores = vehicleSkimCores.get(key);
+                    
+                    //need to replace the TOD token with the period name for matrices to output to OMX
+                    String[] outCores = new String[cores.length+1];
+                    for(int i =0; i < (outCores.length-1);++i)
+                    	outCores[i] = cores[i].replace(TOD_TOKEN, period);
+                    
+                    //add a label for auto operating cost
+                    outCores[outCores.length-1] = "aoc";
+                    
                     String file = key.replace(TOD_TOKEN, period);
-                    lengthMatrix.put(name,
-                            mtxDao.getMatrix(file, cores[0].replace(TOD_TOKEN, period)));
-                    timeMatrix.put(name,
-                            mtxDao.getMatrix(file, cores[1].replace(TOD_TOKEN, period)));
-                    if (cores.length > 2)
-                        fareMatrix.put(name,
-                                mtxDao.getMatrix(file, cores[2].replace(TOD_TOKEN, period)));
-                    if (internalZones.size() == 0)
+                    Matrix length = mtxDao.getMatrix(file, cores[0].replace(TOD_TOKEN, period));
+                    Matrix time = mtxDao.getMatrix(file, cores[1].replace(TOD_TOKEN, period));
+                    Matrix std  = mtxDao.getMatrix(file,cores[2].replace(TOD_TOKEN, period));
+                    Matrix aoc = length.multiply(autoOperatingCost);
+                    
+                    String outputFileName = getOutputPath(name+"_"+period+".omx");
+                    MatrixWriter matrixWriter = MatrixWriter.createWriter(MatrixType.OMX, new File(outputFileName));
+
+                    Matrix[] matrices = new Matrix[cores.length+1];
+                    matrices[0] = length;
+                    matrices[1] = time;
+                    matrices[2] = std;
+                    
+                    lengthMatrix.put(name,length);
+                    timeMatrix.put(name, time);
+                    if (cores.length > 3){
+                    	Matrix cost = mtxDao.getMatrix(file, cores[3].replace(TOD_TOKEN, period));
+                        tollMatrix.put(name,cost);
+                        matrices[3] = cost;
+                        matrices[4] = aoc;
+                    }else
+                    	matrices[3] = aoc;
+                    
+                    
+                    matrixWriter.writeMatrices(outCores, matrices);
+                   
+                    if(writeCSV){
+                    	if (internalZones.size() == 0)
+                    	{
+                    		boolean f = true;
+                    		for (int zone : lengthMatrix.get(name).getExternalColumnNumbers())
+                    		{
+                    			if (f)
+                    			{
+                    				f = false;
+                    				continue;
+                    			}
+                    			internalZones.add(zone);
+                    		}
+                    	}
+                    
+                    	// put data into arrays for faster access
+                    	Matrix[] orderedData = new Matrix[lengthMatrix.size() + timeMatrix.size()
+                    	  + stdMatrix.size() + tollMatrix.size()];
+                    int counter = 0;
+                    for (String mode : modeNames)
                     {
-                        boolean f = true;
-                        for (int zone : lengthMatrix.get(name).getExternalColumnNumbers())
-                        {
-                            if (f)
-                            {
-                                f = false;
-                                continue;
-                            }
-                            internalZones.add(zone);
-                        }
+                    	orderedData[counter++] = lengthMatrix.get(mode);
+                    	orderedData[counter++] = timeMatrix.get(mode);
+                    	orderedData[counter++] = stdMatrix.get(mode);
+                    	if (tollMatrix.containsKey(mode))
+                        orderedData[counter++] = tollMatrix.get(mode);
                     }
-                }
 
-                // put data into arrays for faster access
-                Matrix[] orderedData = new Matrix[lengthMatrix.size() + timeMatrix.size()
-                        + fareMatrix.size()];
-                int counter = 0;
-                for (String mode : modeNames)
-                {
-                    orderedData[counter++] = lengthMatrix.get(mode);
-                    orderedData[counter++] = timeMatrix.get(mode);
-                    if (fareMatrix.containsKey(mode))
-                        orderedData[counter++] = fareMatrix.get(mode);
-                }
-
-                if (first)
-                {
-                    List<String> header = new ArrayList<String>();
-                    header.add("ORIG_TAZ");
-                    header.add("DEST_TAZ");
-                    header.add("TOD");
-
-                    for (String modeName : modeNames)
+                    if (first)
                     {
-                        header.add("DIST_" + modeName);
-                        header.add("TIME_" + modeName);
-                        if (fareMatrix.containsKey(modeName))
-                        {
-                            header.add("COST_" + modeName);
-                        }
-                    }
+                    	List<String> header = new ArrayList<String>();
+                    	header.add("ORIG_TAZ");
+                    	header.add("DEST_TAZ");
+                    	header.add("TOD");
 
-                    CsvWriterThread writerThread = new CsvWriterThread(queue, new File(
+                    	for (String modeName : modeNames)
+                    	{
+                    		header.add("DIST_" + modeName);
+                    		header.add("TIME_" + modeName);
+                    		header.add("STD_TIME_" + modeName);
+                    		if (tollMatrix.containsKey(modeName))
+                    		{
+                    			header.add("COST_" + modeName);
+                    		}
+                    	}
+
+                    	CsvWriterThread writerThread = new CsvWriterThread(queue, new File(
                             getOutputPath(outputFileBase + ".csv")),
                             header.toArray(new String[header.size()]));
-                    new Thread(writerThread).start();
-                    first = false;
-                }
+                    	new Thread(writerThread).start();
+                    	first = false;
+                    }
+                    
+                    int rowSize = 3 + orderedData.length;
 
-                int rowSize = 3 + orderedData.length;
-
-                for (int i : internalZones)
-                {
-                    for (int j : internalZones)
+                    for (int i : internalZones)
                     {
-                        String[] values = new String[rowSize];
-                        values[0] = String.valueOf(i);
-                        values[1] = String.valueOf(j);
-                        values[2] = period;
-                        int position = 3;
-                        for (Matrix matrix : orderedData)
-                            values[position++] = DoubleFormatUtil.formatDouble(
+                    	for (int j : internalZones)
+                    	{
+                    		String[] values = new String[rowSize];
+                    		values[0] = String.valueOf(i);
+                    		values[1] = String.valueOf(j);
+                    		values[2] = period;
+                    		int position = 3;
+                    		for (Matrix matrix : orderedData)
+                    			values[position++] = DoubleFormatUtil.formatDouble(
                                     matrix.getValueAt(i, j), 4, 4);
-                        queue.add(new CsvRow(values));
+                    		queue.add(new CsvRow(values));
+                    	}
                     }
                 }
             }
-
+            }
         } finally
         {
             queue.add(CsvWriterThread.POISON_PILL);
@@ -1693,6 +2027,12 @@ public final class DataExporter
         return IExporter.TOD_TOKENS;
     }
 
+    /**
+     * This method reads the transit skims and exports them to OMX format. It will also write
+     * csv file of skim values if the writeCSVSkims attribute is set to true.
+     * 
+     * @param outputFileBase
+     */
     private void exportTransitSkims(String outputFileBase)
     {
         addTable(outputFileBase);
@@ -1905,6 +2245,7 @@ public final class DataExporter
         private final String  destinationName;
         private final int     inboundColumn;
         private final boolean booleanIndicatorVariables;
+        private final int   valueOfTimeColumn;
 
         private TripStructureDefinition(int originMgraColumn, int destMgraColumn,
                 int originPurposeColumn, int destinationPurposeColumn, int todColumn,
@@ -1913,7 +2254,7 @@ public final class DataExporter
                 int tripCostColumn, int tripPurposeNameColumn, int tripModeNameColumn,
                 int recIdColumn, int boardTazColumn, int alightTazColumn, String tripType,
                 String homeName, String destinationName, int inboundColumn,
-                boolean booleanIndicatorVariables)
+                boolean booleanIndicatorVariables, int valueOfTimeColumn)
         {
             this.originMgraColumn = originMgraColumn;
             this.destMgraColumn = destMgraColumn;
@@ -1928,31 +2269,32 @@ public final class DataExporter
             this.inboundColumn = inboundColumn;
 
             this.booleanIndicatorVariables = booleanIndicatorVariables;
+            this.valueOfTimeColumn = valueOfTimeColumn;
         }
 
         private TripStructureDefinition(int originMgraColumn, int destMgraColumn,
                 int originPurposeColumn, int destinationPurposeColumn, int todColumn,
                 int modeColumn, int boardTapColumn, int alightTapColumn, int partySizeColumn,
                 int columnCount, String tripType, int inboundColumn,
-                boolean booleanIndicatorVariables)
+                boolean booleanIndicatorVariables, int valueOfTimeColumn)
         {
             this(originMgraColumn, destMgraColumn, originPurposeColumn, destinationPurposeColumn,
                     todColumn, modeColumn, boardTapColumn, alightTapColumn, partySizeColumn,
                     columnCount + 1, columnCount + 2, columnCount + 3, columnCount + 4,
                     columnCount + 5, columnCount + 6, columnCount + 7, columnCount + 8,
-                    columnCount + 9, tripType, "", "", inboundColumn, booleanIndicatorVariables);
+                    columnCount + 9, tripType, "", "", inboundColumn, booleanIndicatorVariables, valueOfTimeColumn);
         }
 
         private TripStructureDefinition(int originMgraColumn, int destMgraColumn, int todColumn,
                 int modeColumn, int boardTapColumn, int alightTapColumn, int partySizeColumn,
                 int columnCount, String tripType, String homeName, String destinationName,
-                int inboundColumn, boolean booleanIndicatorVariables)
+                int inboundColumn, boolean booleanIndicatorVariables, int valueOfTimeColumn)
         {
             this(originMgraColumn, destMgraColumn, -1, -1, todColumn, modeColumn, boardTapColumn,
                     alightTapColumn, partySizeColumn, columnCount + 1, columnCount + 2,
                     columnCount + 3, columnCount + 4, columnCount + 5, columnCount + 6,
                     columnCount + 7, columnCount + 8, columnCount + 9, tripType, homeName,
-                    destinationName, inboundColumn, booleanIndicatorVariables);
+                    destinationName, inboundColumn, booleanIndicatorVariables, valueOfTimeColumn);
         }
     }
 
@@ -2008,17 +2350,31 @@ public final class DataExporter
             dataExporter.exportVisitorData("visitortours", "visitortrips");
         if (definedTables.contains("ietrip"))
             dataExporter.exportInternalExternalTripData("ietrip");
-        if (definedTables.contains("commtrip")) dataExporter.exportCommVehData("commtrip");
+        if (definedTables.contains("commtrip")) 
+        	if(dataExporter.writeCSV)
+        		dataExporter.exportCommVehData("commtrip");
+        	else
+        		dataExporter.exportCommVehDataToOmx("commtrip");
+        	
         if (definedTables.contains("trucktrip"))
         {
-
-            IExporter truckExporter = new TruckCsvExporter(properties, mtxDao, "trucktrip");
-            truckExporter.export();
+        	if(dataExporter.writeCSV){
+        		IExporter truckExporter = new TruckCsvExporter(properties, mtxDao, "trucktrip");
+        		truckExporter.export();
+        	}else{
+        		IExporter truckExporter = new TruckOmxExporter(properties, mtxDao, "trucktrip");
+        		truckExporter.export();
+        	}
         }
         if (definedTables.contains("eetrip"))
             dataExporter.exportExternalExternalTripData("eetrip");
+       
         if (definedTables.contains("eitrip"))
-            dataExporter.exportExternalInternalTripData("eitrip");
+        	if(dataExporter.writeCSV)
+        		dataExporter.exportExternalInternalTripData("eitrip");
+        	else
+        		dataExporter.exportExternalInternalTripDataToOMX("eitrip");
+        
         if (definedTables.contains("tazskim")) dataExporter.exportAutoSkims("tazskim");
         if (definedTables.contains("tapskim")) dataExporter.exportTransitSkims("tapskim");
         if (definedTables.contains("definition")) dataExporter.exportDefinitions("definition");

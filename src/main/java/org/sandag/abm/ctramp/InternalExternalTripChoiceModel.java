@@ -3,9 +3,12 @@ package org.sandag.abm.ctramp;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Random;
+
 import org.apache.log4j.Logger;
+
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.newmodel.ChoiceModelApplication;
+import com.pb.common.newmodel.UtilityExpressionCalculator;
 
 public class InternalExternalTripChoiceModel
         implements Serializable
@@ -22,14 +25,17 @@ public class InternalExternalTripChoiceModel
 
     private ChoiceModelApplication        ieModel;
     private InternalExternalTripChoiceDMU ieDmuObject;
+    private ModelStructure           modelStructure;
 
-    public InternalExternalTripChoiceModel(HashMap<String, String> propertyMap,
+    public InternalExternalTripChoiceModel(HashMap<String, String> propertyMap,ModelStructure myModelStructure,
             CtrampDmuFactoryIf dmuFactory)
     {
 
         logger.info("setting up internal-external trip choice model.");
 
-        // locate the IE choice UEC
+
+        modelStructure = myModelStructure;
+          // locate the IE choice UEC
         String uecFileDirectory = propertyMap.get(CtrampApplication.PROPERTIES_UEC_PATH);
         String ieUecFile = uecFileDirectory + propertyMap.get(IE_CONTROL_FILE_TARGET);
 
@@ -69,8 +75,9 @@ public class InternalExternalTripChoiceModel
             double randomNumber = hhRandom.nextDouble();
 
             // compute utilities and choose alternative.
-            ieModel.computeUtilities(ieDmuObject, ieDmuObject.getDmuIndexValues());
-
+            float logsum = (float) ieModel.computeUtilities(ieDmuObject, ieDmuObject.getDmuIndexValues());
+            person[i].setIeLogsum(logsum); 
+            
             // if the choice model has at least one available alternative, make
             // choice.
             int chosenAlt;
@@ -102,6 +109,7 @@ public class InternalExternalTripChoiceModel
             }
 
             person[i].setInternalExternalTripChoiceResult(chosenAlt);
+
 
         }
 

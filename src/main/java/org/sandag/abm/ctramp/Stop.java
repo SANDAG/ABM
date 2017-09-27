@@ -15,6 +15,8 @@ public class Stop
     int     dest;
     int     park;
     int     mode;
+    private float   modeLogsum;
+    
     int     stopPeriod;
     int     boardTap;
     int     alightTap;
@@ -176,11 +178,19 @@ public class Stop
 		return escortStopTypeDest;
 	}
 	
-public void setEscortStopTypeDest(byte stopType) {
+    public void setEscortStopTypeDest(byte stopType) {
 		this.escortStopTypeDest = stopType;
 	}
 
-    public void logStopObject(Logger logger, int totalChars)
+    public float getModeLogsum() {
+		return modeLogsum;
+	}
+
+	public void setModeLogsum(float modeLogsum) {
+		this.modeLogsum = modeLogsum;
+	}
+
+	public void logStopObject(Logger logger, int totalChars)
     {
 
         String separater = "";

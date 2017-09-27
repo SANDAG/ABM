@@ -12,9 +12,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.MandatoryAccessibilitiesDMU;
 import org.sandag.abm.modechoice.MgraDataManager;
+
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.newmodel.UtilityExpressionCalculator;
 
@@ -42,6 +44,8 @@ public class HouseholdDataWriter
     private static final String         PROPERTIES_JOINT_TOUR_TABLE     = "Results.JointTourTable";
     private static final String         PROPERTIES_INDIV_TRIP_TABLE     = "Results.IndivTripTable";
     private static final String         PROPERTIES_JOINT_TRIP_TABLE     = "Results.JointTripTable";
+    
+    private static final String         PROPERTIES_WRITE_LOGSUMS        = "Results.WriteLogsums";
 
     private static final int            NUM_WRITE_PACKETS               = 2000;
 
@@ -53,6 +57,7 @@ public class HouseholdDataWriter
     private String                      stringFormat                    = fileStringFormat;
 
     private boolean                     saveUtilsProbsFlag              = false;
+    private boolean                     writeLogsums                    = false;
 
     private HashMap<String, String>     rbMap;
 
@@ -94,6 +99,9 @@ public class HouseholdDataWriter
         {
             if (saveUtilsProbsString.equalsIgnoreCase("true")) saveUtilsProbsFlag = true;
         }
+        
+        String writeLogsumsString = rbMap.get(PROPERTIES_WRITE_LOGSUMS);
+        writeLogsums = Boolean.valueOf(writeLogsumsString);
 
     }
 
@@ -274,6 +282,14 @@ public class HouseholdDataWriter
         data.add("out_escort_choice");
         data.add("inb_escort_choice");       
         data.add("jtf_choice");
+        
+        if(writeLogsums){
+        	data.add("aoLogsum");
+            data.add("transponderLogsum");
+            data.add("cdapLogsum");
+            data.add("jtfLogsum");
+        }
+        
         return data;
     }
 
@@ -289,6 +305,13 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
+        
+        if(writeLogsums){
+        	data.add(SqliteDataTypes.REAL);
+        	data.add(SqliteDataTypes.REAL);
+        	data.add(SqliteDataTypes.REAL);
+        	data.add(SqliteDataTypes.REAL);
+        }
         return data;
     }
 
@@ -304,6 +327,13 @@ public class HouseholdDataWriter
         data.add(string(hh.getOutboundEscortChoice()));
         data.add(string(hh.getInboundEscortChoice()));
         data.add(string(hh.getJointTourFreqChosenAlt()));
+        
+        if(writeLogsums){
+        	data.add(string(hh.getAutoOwnershipLogsum()));
+            data.add(string(hh.getTransponderLogsum()));
+            data.add(string(hh.getCdapLogsum()));
+            data.add(string(hh.getJtfLogsum()));
+        }
         return data;
     }
 
@@ -323,6 +353,20 @@ public class HouseholdDataWriter
         data.add("fp_choice");
         data.add("reimb_pct");
         data.add("ie_choice");
+        data.add("timeFactorWork");
+        data.add("timeFactorNonWork");
+        
+        if(writeLogsums){
+        	data.add("wfhLogsum");
+        	data.add("wlLogsum");
+        	data.add("slLogsum");
+            data.add("fpLogsum");
+        	data.add("ieLogsum");
+            data.add("cdapLogsum");
+            data.add("imtfLogsum");
+            data.add("inmtfLogsum");
+       }
+
         return data;
     }
 
@@ -342,6 +386,20 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.REAL);
         data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.REAL);
+        data.add(SqliteDataTypes.REAL);
+        
+        if(writeLogsums){
+            data.add(SqliteDataTypes.REAL);
+            data.add(SqliteDataTypes.REAL);
+            data.add(SqliteDataTypes.REAL);
+            data.add(SqliteDataTypes.REAL);
+            data.add(SqliteDataTypes.REAL);
+            data.add(SqliteDataTypes.REAL);
+            data.add(SqliteDataTypes.REAL);
+            data.add(SqliteDataTypes.REAL);
+        	
+        }
         return data;
     }
 
@@ -361,6 +419,20 @@ public class HouseholdDataWriter
         data.add(string(p.getFreeParkingAvailableResult()));
         data.add(string(p.getParkingReimbursement()));
         data.add(string(p.getInternalExternalTripChoiceResult()));
+        data.add(string(p.getTimeFactorWork()));
+        data.add(string(p.getTimeFactorNonWork()));
+        
+        if(writeLogsums){
+        	data.add(string(p.getWorksFromHomeLogsum()));
+          	data.add(string(p.getWorkLocationLogsum()));
+        	data.add(string(p.getSchoolLocationLogsum()));        	
+        	data.add(string(p.getParkingProvisionLogsum()));
+        	data.add(string(p.getIeLogsum()));
+            data.add(string(p.getCdapLogsum()));
+            data.add(string(p.getImtfLogsum()));
+            data.add(string(p.getInmtfLogsum()));
+       	
+        }
         return data;
     }
 
@@ -383,6 +455,7 @@ public class HouseholdDataWriter
         data.add("atWork_freq");
         data.add("num_ob_stops");
         data.add("num_ib_stops");
+        data.add("valueOfTime");
 
         data.add("escort_type_out");
         data.add("escort_type_in");
@@ -402,6 +475,24 @@ public class HouseholdDataWriter
             {
                 String colName = String.format("prob_%d", i);
                 data.add(colName);
+            }
+        }
+        
+        if(writeLogsums){
+            data.add("timeOfDayLogsum");
+            data.add("tourModeLogsum");
+            data.add("subtourFreqLogsum");
+            data.add("tourDestinationLogsum");
+            data.add("stopFreqLogsum");
+
+            int numStopAlts = modelStructure.MAX_STOPS_PER_DIRECTION;
+            for(int i = 1; i<= numStopAlts;++i){
+                String colName = String.format("outStopDCLogsum_%d", i);
+            	data.add(colName);
+            }
+            for(int i = 1; i<= numStopAlts;++i){
+                String colName = String.format("inbStopDCLogsum_%d", i);
+            	data.add(colName);
             }
         }
 
@@ -425,6 +516,7 @@ public class HouseholdDataWriter
         data.add("tour_distance");
         data.add("num_ob_stops");
         data.add("num_ib_stops");
+        data.add("valueOfTime");
 
         if (saveUtilsProbsFlag)
         {
@@ -439,6 +531,23 @@ public class HouseholdDataWriter
             {
                 String colName = String.format("prob_%d", i);
                 data.add(colName);
+            }
+        }
+        if(writeLogsums){
+            data.add("timeOfDayLogsum");
+            data.add("tourModeLogsum");
+            data.add("subtourFreqLogsum");
+            data.add("tourDestinationLogsum");
+            data.add("stopFreqLogsum");
+
+            int numStopAlts = modelStructure.MAX_STOPS_PER_DIRECTION;
+            for(int i = 1; i<= numStopAlts;++i){
+                String colName = String.format("outStopDCLogsum_%d", i);
+            	data.add(colName);
+            }
+            for(int i = 1; i<= numStopAlts;++i){
+                String colName = String.format("inbStopDCLogsum_%d", i);
+            	data.add(colName);
             }
         }
 
@@ -464,6 +573,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.REAL);
 
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
@@ -483,6 +593,22 @@ public class HouseholdDataWriter
                 data.add(SqliteDataTypes.REAL);
             }
         }
+        if(writeLogsums){
+            data.add(SqliteDataTypes.REAL);
+            data.add(SqliteDataTypes.REAL);
+            data.add(SqliteDataTypes.REAL);
+            data.add(SqliteDataTypes.REAL);
+            data.add(SqliteDataTypes.REAL);
+
+            int numStopAlts = modelStructure.MAX_STOPS_PER_DIRECTION;
+            for(int i = 1; i<= numStopAlts;++i){
+                data.add(SqliteDataTypes.REAL);
+            }
+            for(int i = 1; i<= numStopAlts;++i){
+                data.add(SqliteDataTypes.REAL);
+            }
+        }
+
 
         return data;
     }
@@ -504,6 +630,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.REAL);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.REAL);
 
         if (saveUtilsProbsFlag)
         {
@@ -519,6 +646,21 @@ public class HouseholdDataWriter
             }
         }
 
+        if(writeLogsums){
+            data.add(SqliteDataTypes.REAL);
+            data.add(SqliteDataTypes.REAL);
+            data.add(SqliteDataTypes.REAL);
+            data.add(SqliteDataTypes.REAL);
+            data.add(SqliteDataTypes.REAL);
+
+            int numStopAlts = modelStructure.MAX_STOPS_PER_DIRECTION;
+            for(int i = 1; i<= numStopAlts;++i){
+                data.add(SqliteDataTypes.REAL);
+            }
+            for(int i = 1; i<= numStopAlts;++i){
+                data.add(SqliteDataTypes.REAL);
+            }
+        }
         return data;
     }
 
@@ -542,6 +684,7 @@ public class HouseholdDataWriter
         data.add(string(t.getSubtourFreqChoice()));
         data.add(string(t.getNumOutboundStops() == 0 ? 0 : t.getNumOutboundStops() - 1));
         data.add(string(t.getNumInboundStops() == 0 ? 0 : t.getNumInboundStops() - 1));
+        data.add(string(t.getValueOfTime()));
 
         data.add(string(t.getEscortTypeOutbound()));
         data.add(string(t.getEscortTypeInbound()));
@@ -568,6 +711,29 @@ public class HouseholdDataWriter
                 data.add("0.0");
         }
 
+        if(writeLogsums){
+            data.add(string(t.getTimeOfDayLogsum()));
+            data.add(string(t.getTourModeLogsum()));
+            data.add(string(t.getSubtourFreqLogsum()));
+            data.add(string(t.getTourDestinationLogsum()));
+            data.add(string(t.getStopFreqLogsum()));
+
+            int numStopAlts = modelStructure.MAX_STOPS_PER_DIRECTION;
+            ArrayList<Float> outboundStopDCLogsums = t.getOutboundStopDestinationLogsums();
+            for(int i = 0; i<outboundStopDCLogsums.size();++i){
+                data.add(string(outboundStopDCLogsums.get(i)));
+            }
+            for(int i=outboundStopDCLogsums.size();i<numStopAlts;++i)
+                data.add(string(0));
+                        	
+            ArrayList<Float> inboundStopDCLogsums = t.getInboundStopDestinationLogsums();
+            for(int i = 0; i<inboundStopDCLogsums.size();++i){
+                data.add(string(inboundStopDCLogsums.get(i)));
+            }
+            for(int i=inboundStopDCLogsums.size();i<numStopAlts;++i)
+                data.add(string(0));
+        }
+
         return data;
     }
 
@@ -588,6 +754,7 @@ public class HouseholdDataWriter
         data.add(string(calculateDistancesForAllMgras(t.getTourOrigMgra(), t.getTourDestMgra())));
         data.add(string(t.getNumOutboundStops() == 0 ? 0 : t.getNumOutboundStops() - 1));
         data.add(string(t.getNumInboundStops() == 0 ? 0 : t.getNumInboundStops() - 1));
+        data.add(string(t.getValueOfTime()));
 
         if (saveUtilsProbsFlag)
         {
@@ -609,6 +776,28 @@ public class HouseholdDataWriter
                 data.add("0.0");
         }
 
+        if(writeLogsums){
+            data.add(string(t.getTimeOfDayLogsum()));
+            data.add(string(t.getTourModeLogsum()));
+            data.add(string(t.getSubtourFreqLogsum()));
+            data.add(string(t.getTourDestinationLogsum()));
+            data.add(string(t.getStopFreqLogsum()));
+
+            int numStopAlts = modelStructure.MAX_STOPS_PER_DIRECTION;
+            ArrayList<Float> outboundStopDCLogsums = t.getOutboundStopDestinationLogsums();
+            for(int i = 0; i<outboundStopDCLogsums.size();++i){
+                data.add(string(outboundStopDCLogsums.get(i)));
+            }
+            for(int i=outboundStopDCLogsums.size();i<numStopAlts;++i)
+                data.add(string(0));
+                        	
+            ArrayList<Float> inboundStopDCLogsums = t.getInboundStopDestinationLogsums();
+            for(int i = 0; i<inboundStopDCLogsums.size();++i){
+                data.add(string(inboundStopDCLogsums.get(i)));
+            }
+            for(int i=inboundStopDCLogsums.size();i<numStopAlts;++i)
+                data.add(string(0));
+        }
         return data;
     }
 
@@ -669,6 +858,11 @@ public class HouseholdDataWriter
         data.add("orig_escortee_pnum");
         data.add("dest_escort_stoptype");
         data.add("dest_escortee_pnum");
+        data.add("valueOfTime");
+        
+        if(writeLogsums)
+        	data.add("tripModeLogsum");
+        
         return data;
     }
 
@@ -691,6 +885,11 @@ public class HouseholdDataWriter
         data.add("trip_board_tap");
         data.add("trip_alight_tap");
         data.add("tour_mode");
+        data.add("valueOfTime");
+
+        if(writeLogsums)
+        	data.add("tripModeLogsum");
+
         return data;
     }
 
@@ -719,6 +918,11 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.REAL);
+
+        if(writeLogsums)
+        	data.add(SqliteDataTypes.REAL);
+
         return data;
     }
 
@@ -741,6 +945,11 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.REAL);
+
+        if(writeLogsums)
+        	data.add(SqliteDataTypes.REAL);
+        
         return data;
     }
 
@@ -822,7 +1031,12 @@ public class HouseholdDataWriter
         data.add(string(s.getBoardTap()));
         data.add(string(s.getAlightTap()));
         data.add(string(t.getTourModeChoice()));
+        data.add(string(t.getValueOfTime()));
+        
+        if(writeLogsums)
+        	data.add(string(s.getModeLogsum()));
 
+        
         return data;
     }
 
@@ -914,6 +1128,10 @@ public class HouseholdDataWriter
         data.add(string(s.getBoardTap()));
         data.add(string(s.getAlightTap()));
         data.add(string(t.getTourModeChoice()));
+        data.add(string(t.getValueOfTime()));
+        
+        if(writeLogsums)
+        	data.add(string(s.getModeLogsum()));
 
         return data;
     }
@@ -1014,6 +1232,11 @@ public class HouseholdDataWriter
         }
     	
         
+        data.add(string(t.getValueOfTime()));
+        
+        if(writeLogsums)
+        	data.add(string(t.getTourModeLogsum()));
+
         return data;
     }
 
@@ -1073,6 +1296,10 @@ public class HouseholdDataWriter
 
         data.add(string(participants.length));
         data.add(string(t.getTourModeChoice()));
+        data.add(string(t.getValueOfTime()));
+
+        if(writeLogsums)
+        	data.add(string(t.getTourModeLogsum()));
 
         return data;
     }

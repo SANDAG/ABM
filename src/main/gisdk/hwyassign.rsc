@@ -68,11 +68,16 @@ Macro "hwy assignment" (args)
    
    properties = "\\conf\\sandag_abm.properties"  
    convergence = RunMacro("read properties",properties,"convergence", "S")
+   assign_reliability="true"
  
    turn_file="\\nodes.txt"
+   turn_flag=0
    NumofCPU = 8
    iteration = args[1]
+   assignByVOT= args[2]
    
+   // for debug
+
    periods = {"_EA","_AM","_MD","_PM","_EV"}
    
    RunMacro("close all") 
@@ -93,16 +98,39 @@ Macro "hwy assignment" (args)
    alpha2={"*ALPHA2_EA","*ALPHA2_AM","*ALPHA2_MD","*ALPHA2_PM","*ALPHA2_EV"}
    beta2={"*BETA2_EA","*BETA2_AM","*BETA2_MD","*BETA2_PM","*BETA2_EV"}
    preload={"*PRELOAD_EA","*PRELOAD_AM","*PRELOAD_MD","*PRELOAD_PM","*PRELOAD_EV"}
+   statrel={"*STATREL_EA","*STATREL_AM","*STATREL_MD","*STATREL_PM","*STATREL_EV"}
 
    db_file = outputDir + "\\hwy.dbd" 
    net_file= outputDir+"\\hwy.net"
 
-   trip={"Trip_EA.mtx","Trip_AM.mtx","Trip_MD.mtx","Trip_PM.mtx","Trip_EV.mtx"}
    turn={"turns_EA.bin","turns_AM.bin","turns_MD.bin","turns_PM.bin","turns_EV.bin"}
    selectlink_mtx={"select_EA.mtx","select_AM.mtx","select_MD.mtx","select_PM.mtx","select_EV.mtx"}  //added for select link analysis by JXu
-   selinkqry_file="selectlink_query.qry"
-   if GetFileInfo(inputDir + "\\"+ selinkqry_file) <> null then selink_flag =1
-
+   selinkqry_file="selectlink_query.txt"
+   if GetFileInfo(inputDir + "\\"+ selinkqry_file) <> null then do	//select link analysis is only available in stage II
+        selink_flag =1
+        fptr_from = OpenFile(inputDir + "\\"+selinkqry_file, "r")
+    	tmp_qry=readarray(fptr_from)
+    	index =1
+  	  selinkqry_name=null
+    	selink_qry=null
+    	subs=null
+    	while index <=ArrayLength(tmp_qry) do
+    	    if left(trim(tmp_qry[index]),1)!="*" then do
+    	        subs=ParseString(trim(tmp_qry[index]),",")
+    	    	if subs!=null then do
+    	            query=subs[3]
+    	            if ArrayLength(subs)>3 then do
+    	                for i=4 to ArrayLength(subs) do
+    	                    query=query+" "+subs[2]+" "+subs[i]
+    	                end
+    	            end    	       	    
+    	            selinkqry_name=selinkqry_name+{subs[1]}
+    	            selink_qry=selink_qry+{query}
+    	    	end
+    	    end
+    	    index = index + 1
+        end
+    end
 
   asign = {"hwyload_EA.bin","hwyload_AM.bin","hwyload_MD.bin","hwyload_PM.bin","hwyload_EV.bin"}
   oue_path = {"oue_path_EA.obt", "oue_path_AM.obt","oue_path_MD.obt","oue_path_PM.obt","oue_path_EV.obt"}
@@ -124,7 +152,8 @@ Macro "hwy assignment" (args)
    
    for i = 1 to periods.length do
         // drive-alone toll exclusion set
-      excl_dat[i]={db_link_lyr, link_lyr, "dat", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&ITRUCK<5)"} 
+      //excl_dat[i]={db_link_lyr, link_lyr, "dat", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&ITRUCK<5)"}
+	  excl_dat[i]={db_link_lyr, link_lyr, "dat", "Select * where !((ihov=1|ihov=4|((ihov=2|ihov=3)&abln"+periods[i]+"<9)|ifc>7)& ITRUCK<5)"}	  
       
       // shared-2 non-toll HOV exclusion set
       excl_s2nh[i]={db_link_lyr, link_lyr, "s2nh", "Select * where !((ihov=1|(ihov=2&abln"+periods[i]+" <9)|ifc>7)&ITRUCK<5)"}
@@ -148,13 +177,16 @@ Macro "hwy assignment" (args)
       excl_hhdn[i]={db_link_lyr, link_lyr, "hhdn", "Select * where !((ihov=1|ifc>7)&(ITRUCK=1|ITRUCK>4))"}
    
       // light-heavy truck toll exclusion set
-      excl_lhdt[i]={db_link_lyr, link_lyr, "lhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&(ITRUCK<4|ITRUCK=7))"}
+      //excl_lhdt[i]={db_link_lyr, link_lyr, "lhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7) & (ITRUCK<4|ITRUCK=7))"}
+	  excl_lhdt[i]={db_link_lyr, link_lyr, "lhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(abln"+periods[i]+"<9)))|ifc>7) & (ITRUCK<4|ITRUCK=7))"}
  
       // medium-heavy truck toll exclusion set
-      excl_mhdt[i]={db_link_lyr, link_lyr, "mhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&(ITRUCK<3|ITRUCK>5))"}
+      //excl_mhdt[i]={db_link_lyr, link_lyr, "mhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&(ITRUCK<3|ITRUCK>5))"}
+	  excl_mhdt[i]={db_link_lyr, link_lyr, "mhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(abln"+periods[i]+"<9)))|ifc>7)&(ITRUCK<3|ITRUCK>5))"}
    
       // heavy-heavy truck toll exclusion set
-      excl_hhdt[i]={db_link_lyr, link_lyr, "hhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&(ITRUCK=1|ITRUCK>4))"}
+      //excl_hhdt[i]={db_link_lyr, link_lyr, "hhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&(ITRUCK=1|ITRUCK>4))"}
+	  excl_hhdt[i]={db_link_lyr, link_lyr, "hhd", "Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(abln"+periods[i]+"<9)))|ifc>7)&(ITRUCK=1|ITRUCK>4))"}
    
    end
 
@@ -164,7 +196,8 @@ Macro "hwy assignment" (args)
    vw_set = link_lyr + "|" + set
    SetLayer(link_lyr)
    for i = 1 to periods.length do
-      n = SelectByQuery(set, "Several","Select * where !(((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)&ITRUCK<5)",)
+      //n = SelectByQuery(set, "Several","Select * where !((ihov=1|ihov=4|((ihov=2|ihov=3)&(itoll"+periods[i]+">0&abln"+periods[i]+"<9)))|ifc>7)",)
+	  n = SelectByQuery(set, "Several","Select * where !((ihov=1|ihov=4|((ihov=2|ihov=3)&abln"+periods[i]+"<9)|ifc>7)& ITRUCK<5)",)
       if n = 0 then excl_dat[i]=null
    end
           
@@ -199,27 +232,47 @@ Macro "hwy assignment" (args)
       n = SelectByQuery(set, "Several", "Select * where abln"+periods[i]+"=9|ITRUCK>4",)
       if n = 0 then excl_s3th[i]=null   
    end                                                                    
-   
-   for i = 1 to periods.length do
-      // to use 14 classes
-      excl_qry[i]={excl_dan,excl_dat[i],excl_s2nn,excl_s2nh[i],excl_s2th[i],excl_s3nn,excl_s3nh[i],excl_s3th[i],excl_lhdn[i],excl_mhdn[i],excl_hhdn[i],excl_lhdt[i],excl_mhdt[i],excl_hhdt[i]}
+ 
+   if assignByVOT = "false" then do
+     trip={"Trip_EA.mtx","Trip_AM.mtx","Trip_MD.mtx","Trip_PM.mtx","Trip_EV.mtx"}
+     num_class=14
+     vehclass={1,2,3,4,5,6,7,8,9,10,11,12,13,14}
+     class_PCE={1,1,1,1,1,1,1,1,1.3,1.5,2.5,1.3,1.5,2.5}
+     VOT={67,67,67,67,67,67,67,67,67,68,89,67,68,89} // vot is in cents per minute: 67 cents/min = $40.20/hour
+ 
+     for i = 1 to periods.length do
+       excl_qry[i]={excl_dan,excl_dat[i],excl_s2nn,excl_s2nh[i],excl_s2th[i],excl_s3nn,excl_s3nh[i],excl_s3th[i],excl_lhdn[i],excl_mhdn[i],excl_hhdn[i],excl_lhdt[i],excl_mhdt[i],excl_hhdt[i]}
+       toll_fld2[i]= {"COST","ITOLL3"+periods[i],"COST","COST","ITOLL3"+periods[i],"COST","COST","ITOLL3"+periods[i],"COST","COST","COST","ITOLL3"+periods[i],"ITOLL4"+periods[i],"ITOLL5"+periods[i]}
+     end
    end
-     
-   vehclass={1,2,3,4,5,6,7,8,9,10,11,12,13,14}
-   
-   for i = 1 to periods.length do
-      // to use 14 classes  
-      toll_fld2[i]= {"COST","ITOLL3"+periods[i],"COST","COST","ITOLL3"+periods[i],"COST","COST","ITOLL3"+periods[i],"COST","COST","COST","ITOLL3"+periods[i],"ITOLL4"+periods[i],"ITOLL5"+periods[i]}
-   end
-   
-   num_class=14
-   
-   class_PCE={1,1,1,1,1,1,1,1,1.3,1.5,2.5,1.3,1.5,2.5}
-   VOT={67,67,67,67,67,67,67,67,67,68,89,67,68,89}
+   else do
 
+   	// for VOT assignment, explode the passenger modes 1 through 8 to 1 through 24. First 8 low vot, next 8 med vot, final 8 high vot. Then 6 truck classes for total 30 classes.    
+     trip={"Trip"+periods[1]+"_VOT.mtx", "Trip"+periods[2]+"_VOT.mtx", "Trip"+periods[3]+"_VOT.mtx", "Trip"+periods[4]+"_VOT.mtx", "Trip"+periods[5]+"_VOT.mtx"}
+     num_class=30
+     vehclass={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30}
+     class_PCE={1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1.3,1.5,2.5,1.3,1.5,2.5}
+     VOT={16.6,16.6,16.6,16.6,16.6,16.6,16.6,16.6,33.3,33.3,33.3,33.3,33.3,33.3,33.3,33.3,100,100,100,100,100,100,100,100,67,68,89,67,68,89} //assuming $10/hr, $20/hr, and $60/hr as max of each range
+	
+     for i = 1 to periods.length do
+       excl_qry[i]={
+         excl_dan,excl_dat[i],excl_s2nn,excl_s2nh[i],excl_s2th[i],excl_s3nn,excl_s3nh[i],excl_s3th[i],
+         excl_dan,excl_dat[i],excl_s2nn,excl_s2nh[i],excl_s2th[i],excl_s3nn,excl_s3nh[i],excl_s3th[i],
+         excl_dan,excl_dat[i],excl_s2nn,excl_s2nh[i],excl_s2th[i],excl_s3nn,excl_s3nh[i],excl_s3th[i],
+         excl_lhdn[i],excl_mhdn[i],excl_hhdn[i],excl_lhdt[i],excl_mhdt[i],excl_hhdt[i]}
+       toll_fld2[i]= {
+         "COST","ITOLL3"+periods[i],"COST","COST","ITOLL3"+periods[i],"COST","COST","ITOLL3"+periods[i],
+         "COST","ITOLL3"+periods[i],"COST","COST","ITOLL3"+periods[i],"COST","COST","ITOLL3"+periods[i],
+         "COST","ITOLL3"+periods[i],"COST","COST","ITOLL3"+periods[i],"COST","COST","ITOLL3"+periods[i],
+         "COST","COST","COST","ITOLL3"+periods[i],"ITOLL4"+periods[i],"ITOLL5"+periods[i]}
+     end
+   end
+   
+  
+   
    //Prepare selection set for turning movement report, by JXu
-   if (GetFileInfo(inputDir+turn_file)!=null & iteration=4) then do
-      
+   if (turn_flag=1 & iteration=4) then do
+      if GetFileInfo(inputDir+turn_file)!=null then do
          fptr_turn = OpenFile(inputDir + turn_file,"r")
          tmp_qry=readarray(fptr_turn)
          turn_qry=null
@@ -235,14 +288,28 @@ Macro "hwy assignment" (args)
                end
                index=index+1
             end
-            turn_flag=1
             closefile(fptr_turn)
-            
+         end
+      else turn_qry = "select * where temp=1"
+      if GetFileInfo(path+"\\turn.err")!=null then do
+         ok=RunMacro("SDdeletefile",{path+"\\turn.err"}) 
+         if !ok then goto quit
       end
 
-     
-
-  
+      tmpset = "turn"
+      vw_set = node_lyr + "|" + tmpset 
+      SetLayer(node_lyr)
+      n = SelectByQuery(tmpset , "Several", turn_qry,)
+      if n = 0 then do
+         showmessage("Warning!!! No intersections selected for turning movement.")
+         fp_tmp = OpenFile(path + "\\turn.err","w")
+         WriteArray(fp_tmp,{"No intersections have been selected for turning movement."})
+         closefile(fp_tmp)
+         return(1)
+      end
+   end
+   
+   
    //set hwy.net with turn penalty of time in minutes
     d_tp_tb = inputDir + "\\linktypeturns.dbf"
     s_tp_tb = outputDir + "\\turns.dbf"
@@ -262,7 +329,21 @@ Macro "hwy assignment" (args)
     if !ok then goto quit
 
    // STEP 1: MMA
-   for i = 1 to periods.length do   
+    for i = 1 to periods.length do   
+   
+     //set the vdf DLL and vdf field names based on whether reliability is being used or not
+//     if assign_reliability="true" then do
+        vdf_fields = {linkt[i], linkcap[i], xcap[i], cycle[i],pfact[i], gcrat[i], alpha1[i], beta1[i], alpha2[i], beta2[i], 
+     	   "*LOSC_FACT","*LOSD_FACT","*LOSE_FACT", "*LOSFL_FACT", "*LOSFH_FACT", statrel[i], "Length", preload[i]}
+        vdf_file = "shrp.vdf"
+        vdf_defaults={ , , ,1.5 ,1 , 0.4 , 0.15, 4, 0.15, 4, 0, 0, 0, 0, 0, 0, 0, 0 }
+//     end
+/*       else do
+       vdf_fields = {linkt[i], linkcap[i], xcap[i], cycle[i],pfact[i], gcrat[i], alpha1[i], beta1[i], alpha2[i], beta2[i], preload[i]}
+       vdf_file = "tucson_vdf_rev.vdf"
+       vdf_defaults={ , , ,1.5 ,1 , 0.4 , 0.15, 4, 0.15, 4, 0 }
+     end
+  */ 
       net = ReadNetwork(net_file)
       NetOpts = null
       NetOpts.[Link ID] = link_lyr+".ID"
@@ -287,16 +368,16 @@ Macro "hwy assignment" (args)
       Opts.Input.[Exclusion Link Sets] = excl_qry[i]
       Opts.Field.[Vehicle Classes] = vehclass
       Opts.Field.[Fixed Toll Fields] = toll_fld2[i]
-      Opts.Field.[VDF Fld Names] = {linkt[i], linkcap[i], xcap[i], cycle[i],pfact[i], gcrat[i], alpha1[i], beta1[i], alpha2[i], beta2[i], preload[i]}
+      Opts.Field.[VDF Fld Names] = vdf_fields
       Opts.Global.[Number of Classes] = num_class
       Opts.Global.[Class PCEs] = class_PCE
       Opts.Global.[Class VOIs] = VOT
       Opts.Global.[Load Method] = "NCFW" 
       Opts.Global.[N Conjugate] = 2
       Opts.Global.[Loading Multiplier] = 1     
-      Opts.Global.Convergence = s2r(convergence)
-      Opts.Global.[Cost Function File] = "tucson_vdf_rev.vdf"
-      Opts.Global.[VDF Defaults] = {, , ,1.5 ,1 , 0.4 , 0.15, 4, 0.15, 4, 0 }
+      Opts.Global.Convergence = 0.0005
+      Opts.Global.[Cost Function File] = vdf_file
+      Opts.Global.[VDF Defaults] = vdf_defaults
       Opts.Global.[Iterations]=1000
       Opts.Flag.[Do Share Report] = 1     
       Opts.Output.[Flow Table] = outputDir+"\\"+asign[i]  
@@ -305,9 +386,11 @@ Macro "hwy assignment" (args)
       if (turn_flag=1 & iteration=4) then Opts.Output.[Movement Table] = outputDir+"\\"+turn[i]
       Opts.Field.[MSA Flow] = "_MSAFlow" + periods[i]
       Opts.Field.[MSA Cost] = "_MSACost" + periods[i]
+      Opts.Field.[MSA Time] = "_MSATime" + periods[i]
       Opts.Global.[MSA Iteration] = iteration
       if (selink_flag = 1 & iteration = 4) then do
-            Opts.Global.[Critical Query File] = inputDir + "\\"+selinkqry_file
+            Opts.Global.[Critical Queries] = selink_qry
+            Opts.Global.[Critical Set names] = selinkqry_name
             Opts.Output.[Critical Matrix].Label = "Select Link Matrix"
             Opts.Output.[Critical Matrix].Compression = 1
             Opts.Output.[Critical Matrix].[File Name] = outputDir +"\\"+selectlink_mtx[i]
@@ -731,3 +814,83 @@ EndMacro
 
 
 
+Macro "create trip tables by VOT"(args)
+
+        shared path, inputDir, outputDir       
+
+		 inFiles={"Trip_EA.mtx","Trip_AM.mtx","Trip_MD.mtx","Trip_PM.mtx","Trip_EV.mtx"}
+     outFiles={"Trip_EA_VOT.mtx","Trip_AM_VOT.mtx","Trip_MD_VOT.mtx","Trip_PM_VOT.mtx","Trip_EV_VOT.mtx"}
+	   inTableNames = {"SOV_GP", "SOV_PAY", "SR2_GP","SR2_HOV", "SR2_PAY", "SR3_GP","SR3_HOV","SR3_PAY","lhdn","mhdn","hhdn","lhdt","mhdt","hhdt"}
+	   outTableNames = {
+	     "SOV_GP_LOW", "SOV_PAY_LOW", "SR2_GP_LOW","SR2_HOV_LOW", "SR2_PAY_LOW", "SR3_GP_LOW","SR3_HOV_LOW","SR3_PAY_LOW",
+	     "SOV_GP_MED", "SOV_PAY_MED", "SR2_GP_MED","SR2_HOV_MED", "SR2_PAY_MED", "SR3_GP_MED","SR3_HOV_MED","SR3_PAY_MED",
+	     "SOV_GP_HI", "SOV_PAY_HI", "SR2_GP_HI","SR2_HOV_HI", "SR2_PAY_HI", "SR3_GP_HI","SR3_HOV_HI","SR3_PAY_HI",
+	     "lhdn","mhdn","hhdn","lhdt","mhdt","hhdt"}
+
+	    for i = 1 to inFiles.length do
+	      
+	      //open person trip matrix currencies
+        inMatrix = OpenMatrix(outputDir+"\\"+inFiles[i], )                                                               
+        inCurrencies = CreateMatrixCurrencies(inMatrix, , , )
+      
+ 	      dim curr_array[inTableNames.length]
+	      for j = 1 to inTableNames.length do
+          curr_array[j] = CreateMatrixCurrency(inMatrix, inTableNames[j], ,, )
+	      end
+
+      //create output trip table and matrix currencies for this time period
+	    outMatrix = CopyMatrixStructure(curr_array, {{"File Name", outputDir+"\\"+outFiles[i]},                                       
+         {"Label", outFiles[i]},   
+         {"Tables",outTableNames},                                                                                                          
+         {"File Based", "Yes"}})  
+      SetMatrixCoreNames(outMatrix, outTableNames)
+      
+      outCurrencies= CreateMatrixCurrencies(outMatrix, , , )
+
+      // calculate output matrices
+      outCurrencies.SOV_GP_LOW := inCurrencies.SOV_GP * 0.3333333
+      outCurrencies.SOV_GP_MED := inCurrencies.SOV_GP * 0.3333333
+      outCurrencies.SOV_GP_HI  := inCurrencies.SOV_GP * 0.3333333
+
+      outCurrencies.SOV_PAY_LOW := inCurrencies.PAY_GP * 0.3333333
+      outCurrencies.SOV_PAY_MED := inCurrencies.PAY_GP * 0.3333333
+      outCurrencies.SOV_PAY_HI  := inCurrencies.PAY_GP * 0.3333333
+
+      outCurrencies.SR2_GP_LOW := inCurrencies.SR2_GP * 0.3333333
+      outCurrencies.SR2_GP_MED := inCurrencies.SR2_GP * 0.3333333
+      outCurrencies.SR2_GP_HI  := inCurrencies.SR2_GP * 0.3333333
+
+      outCurrencies.SR2_HOV_LOW := inCurrencies.SR2_HOV * 0.3333333
+      outCurrencies.SR2_HOV_MED := inCurrencies.SR2_HOV * 0.3333333
+      outCurrencies.SR2_HOV_HI  := inCurrencies.SR2_HOV * 0.3333333
+
+      outCurrencies.SR2_PAY_LOW := inCurrencies.SR2_PAY * 0.3333333
+      outCurrencies.SR2_PAY_MED := inCurrencies.SR2_PAY * 0.3333333
+      outCurrencies.SR2_PAY_HI  := inCurrencies.SR2_PAY * 0.3333333
+
+      outCurrencies.SR3_GP_LOW := inCurrencies.SR3_GP * 0.3333333
+      outCurrencies.SR3_GP_MED := inCurrencies.SR3_GP * 0.3333333
+      outCurrencies.SR3_GP_HI  := inCurrencies.SR3_GP * 0.3333333
+
+      outCurrencies.SR3_HOV_LOW := inCurrencies.SR3_HOV * 0.3333333
+      outCurrencies.SR3_HOV_MED := inCurrencies.SR3_HOV * 0.3333333
+      outCurrencies.SR3_HOV_HI  := inCurrencies.SR3_HOV * 0.3333333
+
+      outCurrencies.SR3_PAY_LOW := inCurrencies.SR3_PAY * 0.3333333
+      outCurrencies.SR3_PAY_MED := inCurrencies.SR3_PAY * 0.3333333
+      outCurrencies.SR3_PAY_HI  := inCurrencies.SR3_PAY * 0.3333333
+      
+      outCurrencies.lhdn := inCurrencies.lhdn
+      outCurrencies.mhdn := inCurrencies.mhdn
+      outCurrencies.hhdn := inCurrencies.hhdn
+      outCurrencies.lhdt := inCurrencies.lhdt
+      outCurrencies.mhdt := inCurrencies.mhdt
+      outCurrencies.hhdt := inCurrencies.hhdt
+
+	end
+  RunMacro("close all" )
+	   
+	Return(1)
+  quit:
+     Return(0)
+EndMacro

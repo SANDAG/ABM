@@ -12,22 +12,38 @@
 //Oct 08, 2010: Added Lines 164-186, Create a copy of Toll fields
 //Oct 08, 2010: Added Lines 284-287 Build Highway Network with ITOLL fields
 //April 22, 2014: Wu checked all SR125 related changes are included
+//Feb 02, 2016: Added reliability fields
 //********************************************************************
 
 macro "run create hwy"
    shared path,inputDir,outputDir,mxzone
-  
+
+/* exported highway layer is copied manually to the output folder (I15 SB toll entry/exit links are modified by RSG)
+
    RunMacro("HwycadLog",{"createhwynet.rsc: run create hwy","import highway layer"}) 
    ok=RunMacro("import highway layer") 
    if !ok then goto quit
+*/
 
+   RunMacro("HwycadLog",{"createhwynet.rsc: run create hwy","copy highway database"}) 
+   ok=RunMacro("copy database") 
+   if !ok then goto quit
+   
    RunMacro("HwycadLog",{"createhwynet.rsc: run create hwy","fill oneway streets"})
    ok=RunMacro("fill oneway streets") 
    if !ok then goto quit
-   
+  
    RunMacro("HwycadLog",{"createhwynet.rsc: run create hwy","add TOD attributes"})
    ok=RunMacro("add TOD attributes") 
    if !ok then goto quit
+
+   RunMacro("HwycadLog",{"createhwynet.rsc: run create hwy","calculate distance to/from major interchange"})
+   ok=RunMacro("DistanceToInterchange") 
+   if !ok then goto quit	
+	 
+   RunMacro("HwycadLog",{"createhwynet.rsc: run create hwy","add reliability fields"})
+   ok=RunMacro("add reliability fields") 
+   if !ok then goto quit	 
    
    RunMacro("HwycadLog",{"createhwynet.rsc: run create hwy","add preload attributes"})
    ok=RunMacro("add preload attributes") 
@@ -40,7 +56,7 @@ macro "run create hwy"
    RunMacro("HwycadLog",{"createhwynet.rsc: run create hwy","create hwynet"})
    ok=RunMacro("create hwynet")  
    if !ok then goto quit
-   
+  
    quit:
        return(ok)
 EndMacro
@@ -162,6 +178,30 @@ macro "import highway layer"
   	   return(ok)
 endMacro
 
+/*
+copies database (hwy.dbd) and turns file (TURNS.DBF)
+
+this is required after edits made to the transcad highway database for I15 SB managed lane links
+
+*/
+
+macro "copy database"
+	shared path, inputDir, outputDir
+	
+	hwy_db_in = inputDir + "\\hwy.dbd"
+	hwy_db_out = outputDir + "\\hwy.dbd"
+	
+	/// copye highway database
+	CopyDatabase(hwy_db_in, hwy_db_out)
+	
+	// copy turns file
+	CopyFile(inputDir+"\\TURNS.DBF", outputDir+"\\TURNS.DBF")
+	
+	ok=1
+	return(ok)
+
+endMacro
+
 /**********************************************************************************************************
    fill oneway street with dir field, and calculate toll fields and change AOC and add reliability factor
   
@@ -172,11 +212,18 @@ endMacro
       output\hwy.dbd (modified)
       
    Adds fields to link layer (by period: _EA, _AM, _MD, _PM, _EV)
-      ITOLL  - Toll + 100 *[0,1] if managed lane (I-15 tolls) 
+      ITOLL  - Toll + 10000 *[0,1] if SR125 toll lane
       ITOLL2 - Toll
       ITOLL3 - Toll + AOC
       ITOLL4 - Toll * 1.03 + AOC
       ITOLL5 - Toll * 2.33 + AOC
+      
+  Note: Link operation type (IHOV) where:
+                                1 = General purpose
+                                2 = 2+ HOV (Managed lanes if lanes > 1)
+                                3 = 3+ HOV (Managed lanes if lanes > 1)
+                                4 = Toll lanes
+
   
   
 **********************************************************************************************************/
@@ -200,7 +247,8 @@ macro "fill oneway streets"
 
 //  writeline(fpr,mytime+", fill one way streets")
 //  closefile(fpr)
-  
+
+/*  
   //oneway streets, dir = 1
    Opts = null
    Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr, "Selection", "Select * where iway = 1"}
@@ -209,7 +257,7 @@ macro "fill oneway streets"
    Opts.Global.Parameter = {1}
    ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
    if !ok then goto quit
-   
+*/   
    //CHANGE SR125 TOLL SPEED TO 70MPH (ISPD=70) DELETE THIS SECTION AFTER TESTING
       Opts = null
       Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr}
@@ -236,7 +284,9 @@ macro "fill oneway streets"
       Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr}
       Opts.Global.Fields = {"relifac"}
       Opts.Global.Method = "Formula"
-      Opts.Global.Parameter = "if ihov=4  & ifc=1 then 0.65 else 1"
+//      Opts.Global.Parameter = "if ihov=4  & ifc=1 then 0.65 else 1"
+    //since we now have reliability fields, setting all reliability factors to 1
+      Opts.Global.Parameter = "1"
       ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
       if !ok then goto quit  
 
@@ -255,27 +305,49 @@ macro "fill oneway streets"
    for i = 1 to strct.length do
       strct[i] = strct[i] + {strct[i][1]}
    end
-   strct = strct + {{"ITOLL2_EA", "Integer", 4, 0, "True", , , , , , , null}}
-   strct = strct + {{"ITOLL2_AM", "Integer", 4, 0, "True", , , , , , , null}}
-   strct = strct + {{"ITOLL2_MD", "Integer", 4, 0, "True", , , , , , , null}}
-   strct = strct + {{"ITOLL2_PM", "Integer", 4, 0, "True", , , , , , , null}}
-   strct = strct + {{"ITOLL2_EV", "Integer", 4, 0, "True", , , , , , , null}}
+	 
+	// changed field types to real (for I15 tolls) - by nagendra.dhakar@rsginc.com
+   strct = strct + {{"ITOLL2_EA", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"ITOLL2_AM", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"ITOLL2_MD", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"ITOLL2_PM", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"ITOLL2_EV", "Real", 14, 6, "True", , , , , , , null}}
 
    ModifyTable(view1, strct)
 
    tollfld={{"ITOLL2_EA"},{"ITOLL2_AM"},{"ITOLL2_MD"},{"ITOLL2_PM"},{"ITOLL2_EV"}}  
    tollfld_flg={{"ITOLLO"},{"ITOLLA"},{"ITOLLO"},{"ITOLLP"},{"ITOLLO"}}               //note - change this once e00 file contains fields for each of 5 periods
-   for i=1 to tollfld.length do
+   
+	 // set SR125 tolls
+	 for i=1 to tollfld.length do
       Opts = null
       Opts.Input.[View Set] = {db_link_lyr, link_lyr}
-      Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr}
+      Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr} 
       Opts.Global.Fields = tollfld[i]
       Opts.Global.Method = "Formula"
       Opts.Global.Parameter = tollfld_flg[i]
       ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
       if !ok then goto quit
    end   
-
+	 
+	 // clear I15 tolls from previous step
+	 // set other link tolls to 0 - creates a problem in skimming if left to null
+	 // added by nagendra.dhakar@rsginc.com
+	 for i=1 to tollfld.length do
+      Opts = null
+      Opts.Input.[View Set] = {db_link_lyr, link_lyr}
+      Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr, "Selection", "Select *where ihov=2"}     
+      Opts.Global.Fields = tollfld[i]
+      Opts.Global.Method = "Value"
+      Opts.Global.Parameter = {0}
+      ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
+      if !ok then goto quit
+   end      
+   
+   
+		// set I15 tolls - added by nagendra.dhakar@rsginc.com
+		RunMacro("set I15 tolls", link_lyr, tollfld)
+	 
    // Create ITOLL3 fields with ITOLL2A and COST
    vw = GetView()
    strct = GetTableStructure(vw)
@@ -375,11 +447,14 @@ macro "fill oneway streets"
 
    //adding $100 to toll fields to flag toll values from manage lane toll values in skim matrix
    tollfld={{"ITOLL_EA"},{"ITOLL_AM"},{"ITOLL_MD"},{"ITOLL_PM"},{"ITOLL_EV"}}
-   tollfld_flg={{"if ihov=4 then ITOLLO+10000 else ITOLLO"},
-                {"if ihov=4 then ITOLLA+10000 else ITOLLA"},
-                {"if ihov=4 then ITOLLO+10000 else ITOLLO"},
-                {"if ihov=4 then ITOLLP+10000 else ITOLLP"},
-                {"if ihov=4 then ITOLLO+10000 else ITOLLO"}}  //note - change this once e00 file contains fields for each of 5 periods
+   tollfld_flg={{"if ihov=4 then ITOLL2_EA+10000 else ITOLL2_EA"},
+                {"if ihov=4 then ITOLL2_AM+10000 else ITOLL2_AM"},
+                {"if ihov=4 then ITOLL2_MD+10000 else ITOLL2_MD"},
+                {"if ihov=4 then ITOLL2_PM+10000 else ITOLL2_PM"},
+                {"if ihov=4 then ITOLL2_EV+10000 else ITOLL2_EV"}}  //note - change this once e00 file contains fields for each of 5 periods
+				
+				// modified by nagendra.dhakar@rsginc.com to calculate every toll field from itoll2, which are set to the tolls fields in tcoved 
+								
    for i=1 to tollfld.length do
       Opts = null
       Opts.Input.[View Set] = {db_link_lyr, link_lyr}
@@ -398,7 +473,96 @@ macro "fill oneway streets"
       return(ok)     
 EndMacro
 
- 
+/*********************************************************************************************************
+add i-15 tolls by direction and period
+
+	link ids and corresponding tolls are inputs
+	toll values are coded by link ids
+	tolls are determined by gate-to-gate toll optimization, solved using excel solver
+	tolls from two methods are used
+		-traversed links (NB PM and SB AM)
+		-entry and exit links (remaining)
+
+by: nagendra.dhakar@rsginc.com
+**********************************************************************************************************/
+
+Macro "set I15 tolls" (lyr, toll_fields)
+	shared path, inputDir, outputDir
+	
+	direction = {"NB","SB"}
+	periods={"EA","AM","MD","PM","EV"}
+	
+	toll_links = {}
+	tolls = {}
+	
+	// NB toll links and corresponding tolls
+	toll_links.NB = {}
+
+	toll_links.NB.traverse = {29716,460,526,23044,459,463,512,464,469,470,510,29368,9808}
+	toll_links.NB.entryexit = {31143,29472,52505,52507,52508,475,34231,52511,52512,34229,34228,38793,29765,29766,52513,29764,26766}
+	
+	tolls.NB = {}
+	
+	tolls.NB.traverse = {}
+	tolls.NB.entryexit = {}
+	
+	// tolls are in cents
+	tolls.NB.entryexit.EA = {35.00,35.00,35.00,35.00,35.00,15.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00}
+	tolls.NB.entryexit.AM = {45.05,42.43,31.54,30.00,30.00,20.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,17.41,32.59,32.59,32.59}
+	tolls.NB.entryexit.MD = {69.91,73.91,70.42,66.12,51.61,0.00,26.88,25.00,25.00,25.00,12.07,37.93,47.51,3.35,46.65,60.66,65.74}
+	tolls.NB.traverse.PM = {21.83,31.11,50.00,55.34,113.23,50.00,50.00,50.00,50.00,50.00,50.00,50.00,0.00}
+	tolls.NB.entryexit.EV = {41.73,36.26,32.01,30.00,30.00,20.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,17.77,32.23,32.23,32.23}
+	
+	// SB toll links and corresponding tolls
+	toll_links.SB = {}
+/*	
+	// old network
+	toll_links.SB.traverse = {12193,25749,29442,23128,515,31204,520,22275,524,525,553,528,29415}
+	toll_links.SB.entryexit = {52514,38796,29768,38794,29763,52510,52509,52506,52510,34227,34233,29407,26398,29767,34226,34232,29471,52515}
+*/	
+	// new network
+	toll_links.SB.traverse = {12193,25749,52567,23128,515,31204,52569,52550,524,525,52555,52559,52561,52565}
+	toll_links.SB.entryexit = {52568,52570,29768,38794,29763,52560,52562,52566,52556,34227,34233,29407,26398,52571,52572,29767,52575,52576,52574,34226,34232,29471,52573}
+	
+	tolls.SB = {}
+	
+	tolls.SB.traverse = {}
+	tolls.SB.entryexit = {}
+/*	
+	// old network
+	tolls.SB.entryexit.EA = {26.69,25.54,26.96,25.54,39.23,25.54,24.46,25.54,25.54,25.54,24.46,24.46,36.30,23.31,24.46,24.46,28.04,0.00}
+	tolls.SB.traverse.AM = {0.00,50.00,50.00,89.82,50.00,50.00,63.74,0.00,0.11,76.40,38.80,63.58,83.28}
+	tolls.SB.entryexit.MD = {26.39,25.00,25.00,25.00,35.00,25.47,22.74,27.26,25.47,25.00,24.53,25.00,35.61,23.61,25.00,25.00,32.65,0.00}
+	tolls.SB.entryexit.PM = {25.00,25.00,25.00,25.00,35.00,25.00,24.34,25.66,25.00,25.00,25.00,25.00,35.00,25.00,25.00,25.00,26.69,0.00}
+	tolls.SB.entryexit.EV = {25.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,25.00,35.00,25.00,25.00,25.00,25.00,0.00}	
+*/	
+	// new network
+	tolls.SB.traverse.AM = {0.00,59.74,50.00,80.42,50.00,50.00,69.24,0.00,3.18,50.00,50.17,19.06,50.00,84.26}
+	tolls.SB.entryexit.EA = {25.00,25.00,25.00,25.00,35.00,7.29,7.29,7.29,17.30,25.00,17.30,17.30,35.00,15.00,25.00,25.00,32.70,42.71,32.70,25.00,25.00,42.71,25.00}
+	tolls.SB.entryexit.MD = {32.80,25.00,25.00,25.00,32.80,11.43,11.43,10.65,18.85,25.00,18.85,18.85,32.80,17.20,25.00,17.20,31.15,38.57,31.15,25.00,25.00,39.35,25.00}
+	tolls.SB.entryexit.PM = {27.78,25.00,25.00,25.00,35.00,12.67,12.67,12.67,19.36,25.00,19.36,19.36,35.00,15.00,25.00,22.22,30.64,37.33,30.64,25.00,25.00,37.33,25.00}
+	tolls.SB.entryexit.EV = {29.12,25.00,25.00,25.00,35.00,13.14,13.14,13.14,21.56,25.00,21.56,21.56,35.00,15.00,25.00,20.88,28.44,36.86,28.44,25.00,25.00,36.86,25.00}
+	
+	for dir=1 to 2 do
+		for per=1 to periods.length do
+			// locate record
+			
+			if (direction[dir]="NB" and periods[per] = "PM") or (direction[dir]="SB" and periods[per] = "AM") then method = "traverse"
+			else method = "entryexit"
+			
+			links_array = toll_links.(direction[dir]).(method)
+			tolls_array = tolls.(direction[dir]).(method).(periods[per])		
+			
+			// set toll values
+			for i=1 to links_array.length do
+				record_handle = LocateRecord (lyr+"|", "ID", {links_array[i]},{{"Exact", "True"}})
+				SetRecordValues(lyr, record_handle, {{toll_fields[per][1],tolls_array[i]}})
+			end
+		end
+	end
+
+EndMacro
+
 /**********************************************************************************************************
    add link attributes for tod periods
   
@@ -408,8 +572,6 @@ EndMacro
    Outputs:
       output\hwy.dbd (modified)
       
-   
-  
 **********************************************************************************************************/
 Macro "add TOD attributes"
 
@@ -499,14 +661,14 @@ Macro "add TOD attributes"
    strct = strct + {{"BALN_PM", "Real", 14, 6, "True", , , , , , , null}}               
    strct = strct + {{"BALN_EV", "Real", 14, 6, "True", , , , , , , null}}
 
-   // AB Drive-alone non-toll cost
+   // AB Drive-alone cost
    strct = strct + {{"ABSCST_EA", "Real", 14, 6, "True", , , , , , , null}}
    strct = strct + {{"ABSCST_AM", "Real", 14, 6, "True", , , , , , , null}}               
    strct = strct + {{"ABSCST_MD", "Real", 14, 6, "True", , , , , , , null}}
    strct = strct + {{"ABSCST_PM", "Real", 14, 6, "True", , , , , , , null}}               
    strct = strct + {{"ABSCST_EV", "Real", 14, 6, "True", , , , , , , null}}
    
-   // BA Drive-alone non-toll cost
+   // BA Drive-alone cost
    strct = strct + {{"BASCST_EA", "Real", 14, 6, "True", , , , , , , null}}
    strct = strct + {{"BASCST_AM", "Real", 14, 6, "True", , , , , , , null}}               
    strct = strct + {{"BASCST_MD", "Real", 14, 6, "True", , , , , , , null}}
@@ -540,6 +702,62 @@ Macro "add TOD attributes"
    strct = strct + {{"BAH3CST_MD", "Real", 14, 6, "True", , , , , , , null}}
    strct = strct + {{"BAH3CST_PM", "Real", 14, 6, "True", , , , , , , null}}               
    strct = strct + {{"BAH3CST_EV", "Real", 14, 6, "True", , , , , , , null}}
+   
+   // AB Light-Heavy truck cost
+   strct = strct + {{"ABLHCST_EA", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"ABLHCST_AM", "Real", 14, 6, "True", , , , , , , null}}               
+   strct = strct + {{"ABLHCST_MD", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"ABLHCST_PM", "Real", 14, 6, "True", , , , , , , null}}               
+   strct = strct + {{"ABLHCST_EV", "Real", 14, 6, "True", , , , , , , null}}
+   
+   // BA Light-Heavy truck cost
+   strct = strct + {{"BALHCST_EA", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"BALHCST_AM", "Real", 14, 6, "True", , , , , , , null}}               
+   strct = strct + {{"BALHCST_MD", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"BALHCST_PM", "Real", 14, 6, "True", , , , , , , null}}               
+   strct = strct + {{"BALHCST_EV", "Real", 14, 6, "True", , , , , , , null}}
+   
+    // AB Medium-Heavy truck cost
+   strct = strct + {{"ABMHCST_EA", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"ABMHCST_AM", "Real", 14, 6, "True", , , , , , , null}}               
+   strct = strct + {{"ABMHCST_MD", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"ABMHCST_PM", "Real", 14, 6, "True", , , , , , , null}}               
+   strct = strct + {{"ABMHCST_EV", "Real", 14, 6, "True", , , , , , , null}}
+   
+   // BA Medium-Heavy truck cost
+   strct = strct + {{"BAMHCST_EA", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"BAMHCST_AM", "Real", 14, 6, "True", , , , , , , null}}               
+   strct = strct + {{"BAMHCST_MD", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"BAMHCST_PM", "Real", 14, 6, "True", , , , , , , null}}               
+   strct = strct + {{"BAMHCST_EV", "Real", 14, 6, "True", , , , , , , null}}
+
+   // AB Heavy-Heavy truck cost
+   strct = strct + {{"ABHHCST_EA", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"ABHHCST_AM", "Real", 14, 6, "True", , , , , , , null}}               
+   strct = strct + {{"ABHHCST_MD", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"ABHHCST_PM", "Real", 14, 6, "True", , , , , , , null}}               
+   strct = strct + {{"ABHHCST_EV", "Real", 14, 6, "True", , , , , , , null}}
+   
+   // BA Heavy-Heavy truck cost
+   strct = strct + {{"BAHHCST_EA", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"BAHHCST_AM", "Real", 14, 6, "True", , , , , , , null}}               
+   strct = strct + {{"BAHHCST_MD", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"BAHHCST_PM", "Real", 14, 6, "True", , , , , , , null}}               
+   strct = strct + {{"BAHHCST_EV", "Real", 14, 6, "True", , , , , , , null}}
+  
+     // AB Commercial vehicle cost
+   strct = strct + {{"ABCVCST_EA", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"ABCVCST_AM", "Real", 14, 6, "True", , , , , , , null}}               
+   strct = strct + {{"ABCVCST_MD", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"ABCVCST_PM", "Real", 14, 6, "True", , , , , , , null}}               
+   strct = strct + {{"ABCVCST_EV", "Real", 14, 6, "True", , , , , , , null}}
+   
+   // BA Commercial vehicle cost
+   strct = strct + {{"BACVCST_EA", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"BACVCST_AM", "Real", 14, 6, "True", , , , , , , null}}               
+   strct = strct + {{"BACVCST_MD", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"BACVCST_PM", "Real", 14, 6, "True", , , , , , , null}}               
+   strct = strct + {{"BACVCST_EV", "Real", 14, 6, "True", , , , , , , null}}
    
    // AB SOV Time
    strct = strct + {{"ABSTM_EA", "Real", 14, 6, "True", , , , , , , null}}
@@ -581,7 +799,16 @@ Macro "add TOD attributes"
                 {"ABSTM_EA"},{"ABSTM_AM"},{"ABSTM_MD"},{"ABSTM_PM"},{"ABSTM_EV"},  
                 {"BASTM_EA"},{"BASTM_AM"},{"BASTM_MD"},{"BASTM_PM"},{"BASTM_EV"},  
                 {"ABHTM_EA"},{"ABHTM_AM"},{"ABHTM_MD"},{"ABHTM_PM"},{"ABHTM_EV"},  
-                {"BAHTM_EA"},{"BAHTM_AM"},{"BAHTM_MD"},{"BAHTM_PM"},{"BAHTM_EV"}}  
+                {"BAHTM_EA"},{"BAHTM_AM"},{"BAHTM_MD"},{"BAHTM_PM"},{"BAHTM_EV"},
+                {"ABLHCST_EA"},{"ABLHCST_AM"},{"ABLHCST_MD"},{"ABLHCST_PM"},{"ABLHCST_EV"},  
+                {"BALHCST_EA"},{"BALHCST_AM"},{"BALHCST_MD"},{"BALHCST_PM"},{"BALHCST_EV"},  
+                {"ABMHCST_EA"},{"ABMHCST_AM"},{"ABMHCST_MD"},{"ABMHCST_PM"},{"ABMHCST_EV"},  
+                {"BAMHCST_EA"},{"BAMHCST_AM"},{"BAMHCST_MD"},{"BAMHCST_PM"},{"BAMHCST_EV"},  
+                {"ABHHCST_EA"},{"ABHHCST_AM"},{"ABHHCST_MD"},{"ABHHCST_PM"},{"ABHHCST_EV"},  
+                {"BAHHCST_EA"},{"BAHHCST_AM"},{"BAHHCST_MD"},{"BAHHCST_PM"},{"BAHHCST_EV"},  
+                {"ABCVCST_EA"},{"ABCVCST_AM"},{"ABCVCST_MD"},{"ABCVCST_PM"},{"ABCVCST_EV"},  
+                {"BACVCST_EA"},{"BACVCST_AM"},{"BACVCST_MD"},{"BACVCST_PM"},{"BACVCST_EV"} 
+               }  
                 
    // now calculate fields
    for i=1 to tod_fld.length do
@@ -687,6 +914,383 @@ Macro "add TOD attributes"
       if !ok then goto quit
    end 
    
+   RunMacro("close all")    
+   
+   ok=1
+   quit: 
+      return(ok)     
+EndMacro
+
+/**********************************************************************************************************
+	Add link fields for reliability
+	 
+		v/c factor fields:
+			{"ABLOSC_FACT"},{"ABLOSD_FACT"},{"ABLOSE_FACT"},{"ABLOSFL_FACT"},{"ABLOSFH_FACT"},
+			{"BALOSC_FACT"},{"BALOSD_FACT"},{"BALOSE_FACT"},{"BALOSFL_FACT"},{"BALOSFH_FACT"},
+		 
+		static reliability fields:
+			{"ABSTATREL_EA"},{"ABSTATREL_AM"},{"ABSTATREL_MD"},{"ABSTATREL_PM"},{"ABSTATREL_EV"},
+			{"BASTATREL_EA"},{"BASTATREL_AM"},{"BASTATREL_MD"},{"BASTATREL_PM"},{"BASTATREL_EV"}	 
+		 
+		interchange fields - used in static reliability calculations
+			{"INTDIST_UP"},{"INTDIST_DOWN"}
+
+	Regression equations for static reliability:
+
+		static reliability(freeway) = intercept + coeff1*ISPD70 + coeff2*1/MajorUpstream + coeff3*1/MajorDownstream
+		static reliability(arterial) = intercept + coeff1*NumLanesOneLane + coeff2*NumLanesCatTwoLane + coeff3*NumLanesCatThreeLane + coeff4*NumLanesCatFourLanes + coeff5*NumLanesFiveMoreLane +
+																		coeff6*ISPD.CatISPD35Less + coeff7*ISPD.CatISPD35 + coeff8*ISPD.CatISPD40 + coeff9*ISPD.CatISPD45 + coeff1*ISPD.CatISPD50 + coeff10*ISPD.CatISPD50More +
+																		coeff11*ICNT.EstSignal + coeff12*ICNT.EstStop + coeff13*ICNT.EstRailRoad
+
+		Where;
+		ISPD70: 							1 if ISPD=70 else 0 (ISPD is posted speed)
+		MajorUpstream: 				distance to major interchange upstream (miles)
+		MajorDownstream: 			distance to major interchange downstream (miles)
+		NumLanesOneLane: 			1 if lane=1 else 0
+		NumLanesCatTwoLane: 	1 if lane=2 else 0
+		NumLanesCatThreeLane: 1 if lane=3 else 0
+		NumLanesCatFourLanes: 1 if lane=4 else 0
+		NumLanesFiveMoreLane: 1 if lane>=5 else 0
+		ISPD.CatISPD35Less: 	1 if ISPD <35 else 0
+		ISPD.CatISPD35: 			1 if ISPD =35 else 0
+		ISPD.CatISPD40: 			1 if ISPD =40 else 0
+		ISPD.CatISPD45: 			1 if ISPD =45 else 0
+		ISPD.CatISPD50: 			1 if ISPD =50 else 0
+		ISPD.CatISPD50More: 	1 if ISPD >=50 else 0
+		ICNT.EstSignal: 			1 if ICNT=1 else 0 (ICNT is intersection control type); signal-controlled
+		ICNT.EstStop: 				1 if ICNT=2 or ICNT=3 else 0; stop-controlled
+		ICNT.EstRailRoad: 		1 if ICNT>3 else 0; other - railroad etc.
+
+	Steps:
+	1. add new fields
+	2. populate with default values
+	3. calculate v/c factor fields by setting them to estimated coefficients by facility type - freeway and arterial. Ramp and other use arterial coefficients.
+	4. pupulate interchange fields by joining highway database with major interchange distance file (output from distance to interchange macro).
+	5. calculate static reliability fields for freeway
+	6. calculate static reliability fields for arterial, ramp, and other
+
+	Inputs
+		output\hwy.dbd
+		output\MajorInterchangeDistance.csv 
+		
+	Outputs:
+		output\hwy.dbd (modified)
+ 
+by: nagendra.dhakar@rsginc.com 
+**********************************************************************************************************/
+Macro "add reliability fields"
+
+   shared path, inputDir, outputDir
+   ok=0
+ 
+   db_file=outputDir+"\\hwy.dbd"
+
+   {node_lyr, link_lyr} = RunMacro("TCB Add DB Layers", db_file)
+   ok = (node_lyr <> null && link_lyr <> null)
+   if !ok then goto quit
+   db_link_lyr = db_file + "|" + link_lyr
+ 
+   vw = SetView(link_lyr)
+   strct = GetTableStructure(vw)
+   for i = 1 to strct.length do
+      strct[i] = strct[i] + {strct[i][1]}
+   end
+   
+   // **** step 1. add new fields
+   
+   // AB v/c factors 
+   strct = strct + {{"ABLOSC_FACT", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"ABLOSD_FACT", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"ABLOSE_FACT", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"ABLOSFL_FACT", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"ABLOSFH_FACT", "Real", 14, 6, "True", , , , , , , null}}
+ 
+  // BA v/c factors 
+   strct = strct + {{"BALOSC_FACT", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"BALOSD_FACT", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"BALOSE_FACT", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"BALOSFL_FACT", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"BALOSFH_FACT", "Real", 14, 6, "True", , , , , , , null}}
+
+   // AB Static Reliability
+   strct = strct + {{"ABSTATREL_EA", "Real", 14, 6, "True", , , , , , , null}}
+	 strct = strct + {{"ABSTATREL_AM", "Real", 14, 6, "True", , , , , , , null}}
+	 strct = strct + {{"ABSTATREL_MD", "Real", 14, 6, "True", , , , , , , null}}
+	 strct = strct + {{"ABSTATREL_PM", "Real", 14, 6, "True", , , , , , , null}}
+	 strct = strct + {{"ABSTATREL_EV", "Real", 14, 6, "True", , , , , , , null}}
+
+	 // BA Static Reliability
+   strct = strct + {{"BASTATREL_EA", "Real", 14, 6, "True", , , , , , , null}}
+	 strct = strct + {{"BASTATREL_AM", "Real", 14, 6, "True", , , , , , , null}}
+	 strct = strct + {{"BASTATREL_MD", "Real", 14, 6, "True", , , , , , , null}}
+	 strct = strct + {{"BASTATREL_PM", "Real", 14, 6, "True", , , , , , , null}}
+	 strct = strct + {{"BASTATREL_EV", "Real", 14, 6, "True", , , , , , , null}}
+	 
+	 // interchange distance
+   strct = strct + {{"INTDIST_UP", "Real", 14, 6, "True", , , , , , , null}}
+	 strct = strct + {{"INTDIST_DOWN", "Real", 14, 6, "True", , , , , , , null}}
+
+   // AB total reliability 
+   strct = strct + {{"AB_TOTREL_EA", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"AB_TOTREL_AM", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"AB_TOTREL_MD", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"AB_TOTREL_PM", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"AB_TOTREL_EV", "Real", 14, 6, "True", , , , , , , null}}	 
+	 
+	 // BA total reliability
+   strct = strct + {{"BA_TOTREL_EA", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"BA_TOTREL_AM", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"BA_TOTREL_MD", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"BA_TOTREL_PM", "Real", 14, 6, "True", , , , , , , null}}
+   strct = strct + {{"BA_TOTREL_EV", "Real", 14, 6, "True", , , , , , , null}}
+   
+   // reliability fields
+   reliability_fld = {{"ABLOSC_FACT"},{"ABLOSD_FACT"},{"ABLOSE_FACT"},{"ABLOSFL_FACT"},{"ABLOSFH_FACT"},
+						{"BALOSC_FACT"},{"BALOSD_FACT"},{"BALOSE_FACT"},{"BALOSFL_FACT"},{"BALOSFH_FACT"},	 
+						{"ABSTATREL_EA"},{"ABSTATREL_AM"},{"ABSTATREL_MD"},{"ABSTATREL_PM"},{"ABSTATREL_EV"},
+						{"BASTATREL_EA"},{"BASTATREL_AM"},{"BASTATREL_MD"},{"BASTATREL_PM"},{"BASTATREL_EV"},
+						{"AB_TOTREL_EA"},{"AB_TOTREL_AM"},{"AB_TOTREL_MD"},{"AB_TOTREL_PM"},{"AB_TOTREL_EV"},
+						{"BA_TOTREL_EA"},{"BA_TOTREL_AM"},{"BA_TOTREL_MD"},{"BA_TOTREL_PM"},{"BA_TOTREL_EV"}}
+
+	 ModifyTable(view1, strct)
+	 
+   // for debug
+   //RunMacro("TCB Init")
+   
+   // **** step 2. populate with default value of 0
+   for i=1 to reliability_fld.length do
+   
+      calcString = {"0"}
+      
+      Opts = null
+      Opts.Input.[View Set] = {db_link_lyr, link_lyr}
+      Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr}
+      Opts.Global.Fields = reliability_fld[i]
+      Opts.Global.Method = "Formula"
+      Opts.Global.Parameter = calcString
+      ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
+      if !ok then goto quit
+   end 
+   
+   // **** step 3. calculate v/c factor fields
+   
+   los_fld    ={{"ABLOSC_FACT"},{"ABLOSD_FACT"},{"ABLOSE_FACT"},{"ABLOSFL_FACT"},{"ABLOSFH_FACT"},  //BA link time
+								{"BALOSC_FACT"},{"BALOSD_FACT"},{"BALOSE_FACT"},{"BALOSFL_FACT"},{"BALOSFH_FACT"}}  //AB intersection time      
+                
+   factor_freeway     ={"0.2429","0.1705","-0.2278","-0.1983","1.022",             
+												"0.2429","0.1705","-0.2278","-0.1983","1.022"} 
+
+   factor_arterial     ={"0.1561","0.0","0.0","-0.1449","0",             
+												 "0.1561","0.0","0.0","-0.1449","0"}
+
+	facility_type = {"freeway","arterial","ramp","other"} // freeway (IFC=1), arterial (IFC=2,3), ramp (IFC=8,9), other (IFC=4,5,6,7)
+
+	// lower and upper bounds of IFC for respective facility type = {freeway, arterial, ramp, other}											 
+	lwr_bound = {"1","2","8","4"}
+	upr_bound = {"1","3","9","7"}
+	
+   // now calculate v/c factor fields
+	 for fac_type=1 to facility_type.length do
+	 
+		 // set factors (coefficients) for facility type
+		 if fac_type=1 then factor=factor_freeway
+		 else factor=factor_arterial	 
+		
+		 for i=1 to los_fld.length do
+
+				query = "Select * where IFC >= " + lwr_bound[fac_type] + " and IFC <= "+upr_bound[fac_type]
+				
+				Opts = null
+				Opts.Input.[View Set] = {db_link_lyr, link_lyr}
+				Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr, "Selection" , query}
+				Opts.Global.Fields = los_fld[i]
+				Opts.Global.Method = "Formula"
+				Opts.Global.Parameter = factor[i]
+				ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
+				if !ok then goto quit
+		 end
+	 end
+	 
+	 //  **** step 4. populate interchange fields (upstream/downstream distance to major interchange)
+	 
+	 distance_file = outputDir+"\\MajorInterchangeDistance.csv"
+	 distance_fld = {"updistance","downdistance"} 
+
+	// interchange distance fields
+	interchange_fld = {{"INTDIST_UP"},{"INTDIST_DOWN"}}
+
+   // set initial value to 9999
+   for i=1 to interchange_fld.length do
+   
+      calcString = {"9999"}
+      
+      Opts = null
+      Opts.Input.[View Set] = {db_link_lyr, link_lyr}
+      Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr}
+      Opts.Global.Fields = interchange_fld[i]
+      Opts.Global.Method = "Formula"
+      Opts.Global.Parameter = calcString
+      ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
+      if !ok then goto quit
+   end
+	
+	// now set to distances - in miles
+	for i=1 to interchange_fld.length do
+		Opts = null
+		Opts.Input.[Dataview Set] = {{db_link_lyr, distance_file,{"ID"},{"LinkID"}},"JoinedView"}
+		Opts.Global.Fields = interchange_fld[i]
+		Opts.Global.Method = "Formula"
+		Opts.Global.Parameter = distance_fld[i]
+		ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
+		if !ok then goto quit
+	end	
+	 
+    //  **** step 5. calculate static reliability fields for freeway
+
+   	// static reliability(freeway) = intercept + coeff1*ISPD70 + coeff2*1/MajorUpstream + coeff3*1/MajorDownstream
+
+	static_fld = {{"ABSTATREL_EA"},{"ABSTATREL_AM"},{"ABSTATREL_MD"},{"ABSTATREL_PM"},{"ABSTATREL_EV"},
+					{"BASTATREL_EA"},{"BASTATREL_AM"},{"BASTATREL_MD"},{"BASTATREL_PM"},{"BASTATREL_EV"}} 
+	 
+	 // Freeway coefficients
+	 intercept = {"0.1078"}
+	 speed_factor = {"0.01393"} // ISPD70
+	 interchange_factor = {"0.011","0.0005445"} //MajorUpstream.Inverse, MajorDownstream.Inverse
+	 
+	 fac_type=1
+	 factor=factor_freeway
+
+	 for i=1 to static_fld.length do
+			query = "Select * where IFC >= " + lwr_bound[fac_type] + " and IFC <= "+upr_bound[fac_type]
+			
+			// intercept
+			
+			Opts = null
+			Opts.Input.[View Set] = {db_link_lyr, link_lyr}
+			Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr, "Selection" , query}
+			Opts.Global.Fields = static_fld[i]
+			Opts.Global.Method = "Formula"
+			Opts.Global.Parameter = intercept[1]
+			ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
+			if !ok then goto quit					
+			
+			// ISPD - add to intercept
+			calcString = {"if ISPD=70 then " + static_fld[i][1] + "+" +speed_factor[1] + " else " + static_fld[i][1]}
+			
+			Opts = null
+			Opts.Input.[View Set] = {db_link_lyr, link_lyr}
+			Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr, "Selection" , query}
+			Opts.Global.Fields = static_fld[i]
+			Opts.Global.Method = "Formula"
+			Opts.Global.Parameter = calcString
+			ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
+			if !ok then goto quit
+			
+			// Upstream interchange distance - apply inverse and add to intercept and ISPD
+			for j=1 to interchange_factor.length do
+
+				calcString = {"if " + interchange_fld[j][1] + "<>null then " + static_fld[i][1] + "+" +interchange_factor[j]+"*1/"+interchange_fld[j][1] + " else " + static_fld[i][1]}
+				
+				Opts = null
+				Opts.Input.[View Set] = {db_link_lyr, link_lyr}
+				Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr, "Selection" , query}
+				Opts.Global.Fields = static_fld[i]
+				Opts.Global.Method = "Formula"
+				Opts.Global.Parameter = calcString
+				ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
+				if !ok then goto quit
+			end
+			
+	 end
+
+	 //  **** step 6. calculate static reliability fields for arterial, ramp, and other
+	 
+	 // Factors (coefficients)
+	 intercept = {"0.0546552"}
+	 lane_factor = {"0.0","0.0103589","0.0361211","0.0446958","0.0"} //{NumLanesOneLane, NumLanesCatTwoLane, NumLanesCatThreeLane, NumLanesCatFourLanes, NumLanesFiveMoreLane}
+	 speed_factor = {"0.0","0.0075674","0.0091012","0.0080996","-0.0022938","-0.0046211"} //{ISPD.CatISPD35Less (base), ISPD.CatISPD35, ISPD.CatISPD40, ISPD.CatISPD45, ISPD.CatISPD50, ISPD.CatISPD50More}
+	 intersection_factor = {"0.0030973","-0.0063281","0.0127692"} //{ICNT.EstSignal, ICNT.EstStop, ICNT.EstRailRoad}
+	 
+	// lane fields in network
+	lane_fld    ={{"ABLN_EA"},{"ABLN_AM"},{"ABLN_MD"},{"ABLN_PM"},{"ABLN_EV"},  //AB lanes
+                {"BALN_EA"},{"BALN_AM"},{"BALN_MD"},{"BALN_PM"},{"BALN_EV"}}  //BA lanes    
+	
+	// intersection fields in network	
+	intersection_fld = {{"ABCNT"},{"ABCNT"},{"ABCNT"},{"ABCNT"},{"ABCNT"},
+						{"BACNT"},{"BACNT"},{"BACNT"},{"BACNT"},{"BACNT"}}
+	 
+	 // static reliability(arterial) = intercept + coeff1*NumLanesOneLane + coeff2*NumLanesCatTwoLane + coeff3*umLanesCatThreeLane + coeff4*NumLanesCatFourLanes + coeff5*NumLanesFiveMoreLane+
+	 // 							coeff6*ISPD.CatISPD35Less + coeff7*ISPD.CatISPD35 + coeff8*ISPD.CatISPD40 + coeff9*ISPD.CatISPD45 + coeff1*ISPD.CatISPD50 + coeff10*ISPD.CatISPD50More+
+	 // 							coeff11*ICNT.EstSignal + coeff12*ICNT.EstStop + coeff13*ICNT.EstRailRoad
+	 
+	 for fac_type=2 to facility_type.length do
+		
+		// selection query - to identify links with a facility type
+		 query = "Select * where IFC >= " + lwr_bound[fac_type] + " and IFC <= "+upr_bound[fac_type]
+			
+		 for i=1 to static_fld.length do
+				
+				// intercept
+				Opts = null
+				Opts.Input.[View Set] = {db_link_lyr, link_lyr}
+				Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr, "Selection" , query}
+				Opts.Global.Fields = static_fld[i]
+				Opts.Global.Method = "Formula"
+				Opts.Global.Parameter = intercept[1]
+				ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
+				if !ok then goto quit					
+				
+				// NumLanes Factors
+				calcString = {"if " + lane_fld[i][1] + "=1 then "+static_fld[i][1] + "+" +lane_factor[1]+
+											" else if " + lane_fld[i][1] + "=2 then "+static_fld[i][1] + "+" +lane_factor[2]+
+											" else if " + lane_fld[i][1] + "=3 then "+static_fld[i][1] + "+" +lane_factor[3]+
+											" else if " + lane_fld[i][1] + "=4 then "+static_fld[i][1] + "+" +lane_factor[4]+ 
+											" else "+static_fld[i][1] + "+" +lane_factor[5]}
+				
+				Opts = null
+				Opts.Input.[View Set] = {db_link_lyr, link_lyr}
+				Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr, "Selection" , query}
+				Opts.Global.Fields = static_fld[i]
+				Opts.Global.Method = "Formula"
+				Opts.Global.Parameter = calcString
+				ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
+				if !ok then goto quit
+
+				// Speed Factors - 
+				calcString = {"if ISPD<35 then "+static_fld[i][1] + "+" +speed_factor[1]+
+											" else if ISPD=35 then "+static_fld[i][1] + "+" +speed_factor[2]+
+											" else if ISPD=40 then "+static_fld[i][1] + "+" +speed_factor[3]+
+											" else if ISPD=45 then "+static_fld[i][1] + "+" +speed_factor[4]+ 
+											" else if ISPD=50 then "+static_fld[i][1] + "+" +speed_factor[5]+ 
+											" else "+static_fld[i][1] + "+" +speed_factor[6]}
+				
+				Opts = null
+				Opts.Input.[View Set] = {db_link_lyr, link_lyr}
+				Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr, "Selection" , query}
+				Opts.Global.Fields = static_fld[i]
+				Opts.Global.Method = "Formula"
+				Opts.Global.Parameter = calcString
+				ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
+				if !ok then goto quit				
+
+				// Intersection Factors
+				calcString = {"if " + intersection_fld[i][1]+ "=1 then " + static_fld[i][1] + "+" +intersection_factor[1]+
+											" else if " + intersection_fld[i][1]+ "=2 or " + intersection_fld[i][1]+ "=3 then " + static_fld[i][1] + "+" + intersection_factor[2]+
+											" else if " + intersection_fld[i][1]+ ">3 then " + static_fld[i][1] + "+" + intersection_factor[3] +
+											" else " + static_fld[i][1]}
+				
+				Opts = null
+				Opts.Input.[View Set] = {db_link_lyr, link_lyr}
+				Opts.Input.[Dataview Set] = {db_link_lyr, link_lyr, "Selection" , query}
+				Opts.Global.Fields = static_fld[i]
+				Opts.Global.Method = "Formula"
+				Opts.Global.Parameter = calcString
+				ok = RunMacro("TCB Run Operation", 1, "Fill Dataview", Opts)
+				if !ok then goto quit	
+				
+		 end
+	 end	
+
    RunMacro("close all")    
    
    ok=1
@@ -1260,10 +1864,6 @@ output file:  hwy.net - hwy network file
 
 ************************************************************************************/
 
-
-
-
-
 macro "create hwynet"
    shared path, mxzone, inputDir, outputDir    
    ok = 0
@@ -1378,6 +1978,26 @@ macro "create hwynet"
         {"*H3CST_MD", link_lyr+".ABH3CST_MD", link_lyr+".BAH3CST_MD"}, 
         {"*H3CST_PM", link_lyr+".ABH3CST_PM", link_lyr+".BAH3CST_PM"}, 
         {"*H3CST_EV", link_lyr+".ABH3CST_EV", link_lyr+".BAH3CST_EV"}, 
+        {"*LHCST_EA", link_lyr+".ABLHCST_EA", link_lyr+".BALHCST_EA"}, 
+        {"*LHCST_AM", link_lyr+".ABLHCST_AM", link_lyr+".BALHCST_AM"}, 
+        {"*LHCST_MD", link_lyr+".ABLHCST_MD", link_lyr+".BALHCST_MD"}, 
+        {"*LHCST_PM", link_lyr+".ABLHCST_PM", link_lyr+".BALHCST_PM"}, 
+        {"*LHCST_EV", link_lyr+".ABLHCST_EV", link_lyr+".BALHCST_EV"}, 
+        {"*MHCST_EA", link_lyr+".ABMHCST_EA", link_lyr+".BAMHCST_EA"}, 
+        {"*MHCST_AM", link_lyr+".ABMHCST_AM", link_lyr+".BAMHCST_AM"}, 
+        {"*MHCST_MD", link_lyr+".ABMHCST_MD", link_lyr+".BAMHCST_MD"}, 
+        {"*MHCST_PM", link_lyr+".ABMHCST_PM", link_lyr+".BAMHCST_PM"}, 
+        {"*MHCST_EV", link_lyr+".ABMHCST_EV", link_lyr+".BAMHCST_EV"}, 
+        {"*HHCST_EA", link_lyr+".ABHHCST_EA", link_lyr+".BAHHCST_EA"}, 
+        {"*HHCST_AM", link_lyr+".ABHHCST_AM", link_lyr+".BAHHCST_AM"}, 
+        {"*HHCST_MD", link_lyr+".ABHHCST_MD", link_lyr+".BAHHCST_MD"}, 
+        {"*HHCST_PM", link_lyr+".ABHHCST_PM", link_lyr+".BAHHCST_PM"}, 
+        {"*HHCST_EV", link_lyr+".ABHHCST_EV", link_lyr+".BAHHCST_EV"}, 
+        {"*CVCST_EA", link_lyr+".ABCVCST_EA", link_lyr+".BACVCST_EA"}, 
+        {"*CVCST_AM", link_lyr+".ABCVCST_AM", link_lyr+".BACVCST_AM"}, 
+        {"*CVCST_MD", link_lyr+".ABCVCST_MD", link_lyr+".BACVCST_MD"}, 
+        {"*CVCST_PM", link_lyr+".ABCVCST_PM", link_lyr+".BACVCST_PM"}, 
+        {"*CVCST_EV", link_lyr+".ABCVCST_EV", link_lyr+".BACVCST_EV"}, 
         {"*STM_EA", link_lyr+".ABSTM_EA", link_lyr+".BASTM_EA"}, 
         {"*STM_AM", link_lyr+".ABSTM_AM", link_lyr+".BASTM_AM"}, 
         {"*STM_MD", link_lyr+".ABSTM_MD", link_lyr+".BASTM_MD"}, 
@@ -1427,9 +2047,22 @@ macro "create hwynet"
         {"*PRELOAD_AM", link_lyr+".ABPRELOAD_AM", link_lyr+".BAPRELOAD_AM"}, 
         {"*PRELOAD_MD", link_lyr+".ABPRELOAD_MD", link_lyr+".BAPRELOAD_MD"}, 
         {"*PRELOAD_PM", link_lyr+".ABPRELOAD_PM", link_lyr+".BAPRELOAD_PM"}, 
-        {"*PRELOAD_EV", link_lyr+".ABPRELOAD_EV", link_lyr+".BAPRELOAD_EV"}} 
-         
-        
+        {"*PRELOAD_EV", link_lyr+".ABPRELOAD_EV", link_lyr+".BAPRELOAD_EV"},
+				{"*LOSC_FACT", link_lyr+".ABLOSC_FACT", link_lyr+".BALOSC_FACT"},          // added for reliability - 02/02/2016
+				{"*LOSD_FACT", link_lyr+".ABLOSD_FACT", link_lyr+".BALOSD_FACT"},          // added for reliability - 02/02/2016
+				{"*LOSE_FACT", link_lyr+".ABLOSE_FACT", link_lyr+".BALOSE_FACT"},          // added for reliability - 02/02/2016
+				{"*LOSFL_FACT", link_lyr+".ABLOSFL_FACT", link_lyr+".BALOSFL_FACT"},       // added for reliability - 02/02/2016
+				{"*LOSFH_FACT", link_lyr+".ABLOSFH_FACT", link_lyr+".BALOSFH_FACT"},       // added for reliability - 02/02/2016
+				{"*STATREL_EA", link_lyr+".ABSTATREL_EA", link_lyr+".BASTATREL_EA"},       // added for reliability - 02/02/2016
+				{"*STATREL_AM", link_lyr+".ABSTATREL_AM", link_lyr+".BASTATREL_AM"},       // added for reliability - 02/02/2016
+				{"*STATREL_MD", link_lyr+".ABSTATREL_MD", link_lyr+".BASTATREL_MD"},       // added for reliability - 02/02/2016
+				{"*STATREL_PM", link_lyr+".ABSTATREL_PM", link_lyr+".BASTATREL_PM"},       // added for reliability - 02/02/2016
+				{"*STATREL_EV", link_lyr+".ABSTATREL_EV", link_lyr+".BASTATREL_EV"},
+				{"*_TOTREL_EA", link_lyr+".AB_TOTREL_EA", link_lyr+".BA_TOTREL_EA"},
+				{"*_TOTREL_AM", link_lyr+".AB_TOTREL_AM", link_lyr+".BA_TOTREL_AM"},
+				{"*_TOTREL_MD", link_lyr+".AB_TOTREL_MD", link_lyr+".BA_TOTREL_MD"},
+				{"*_TOTREL_PM", link_lyr+".AB_TOTREL_PM", link_lyr+".BA_TOTREL_PM"},
+				{"*_TOTREL_EV", link_lyr+".AB_TOTREL_EV", link_lyr+".BA_TOTREL_EV"}}       // added for reliability - 02/02/2016    
         
    // add two node fields into the network for turning movement purposes, by JXu
    Opts.Global.[Node Options].ID = node_lyr + ".ID"
@@ -1465,3 +2098,412 @@ macro "create hwynet"
       //if fpr<>null then closefile(fpr)
       return(ok)
 endMacro
+/*************************************************************************************
+Calculate upstream and downsstream distances to major interchanges for freeway segments
+
+steps:
+1. identify major interchange nodes
+2. for each freeway segment, calculate upstream and downstream segment
+
+input:
+	output\\hwy.dbd
+	
+output:
+	output\\MajorInterchangeDistance.csv
+	
+by: nagendra.dhakar@rsginc.com
+*************************************************************************************/
+Macro "DistanceToInterchange"
+   shared path, inputDir, outputDir
+	 shared interchanges, freeways, linklayer, nodelayer
+	 
+   ok=0
+	
+	// input highway database
+   db_file=outputDir+"\\hwy.dbd"
+	 hwy_dbd=db_file
+
+	 // output settings
+	 out_file = outputDir+"\\MajorInterchangeDistance.csv"
+
+	// add layers
+	layers = GetDBLayers(hwy_dbd)
+	linklayer=layers[2]
+	nodelayer=layers[1]
+
+	db_linklayer=hwy_dbd+"|"+linklayer
+	db_nodelayer=hwy_dbd+"|"+nodelayer
+
+	info = GetDBInfo(hwy_dbd)
+	temp_map = CreateMap("temp",{{"scope",info[1]}})
+
+	temp_layer = AddLayer(temp_map,linklayer,hwy_dbd,linklayer)
+	temp_layer = AddLayer(temp_map,nodelayer,hwy_dbd,nodelayer)
+
+	// Identify Interchanges
+	SetLayer(linklayer)
+
+	// Major interchange
+	query_ramps = 'Select * where (IFC=8) AND position(NM,"HOV")=0' // Major interchange - HOV access connectors are removed
+	MaxLinks = 50
+
+	on Error  do ShowMessage("The SQL query: (" + query_ramps + ") is not correct.") end
+	VerifyQuery(query_ramps)
+
+	nramps = SelectByQuery("Ramp Set", "Several", query_ramps,)
+
+	query_freeways = "Select * where IFC=1"
+	on Error do ShowMessage("The SQL query: (" + query_freeways + ") is not correct.") end
+	VerifyQuery(query_freeways)
+
+	nfreeways = SelectByQuery("Freeway Set", "Several",query_freeways,)
+
+	// get freeway segments ids, IHOV, ANode BNode
+	freeways = GetDataVectors("Freeway Set", {"ID","IHOV"},)
+
+	// intersect with nodes to select connected nodes
+	SetLayer(nodelayer)
+	nnodes = SelectByLinks("Interchange Set", "Several", "Ramp Set")
+	ninterchanges = SelectByLinks("Interchange Set", "Subset", "Freeway Set")
+
+	// get interchange ids
+	interchanges = GetDataVector("Interchange Set","ID",)
+
+	outfile = OpenFile(out_file, "w")
+	WriteLine(outfile, JoinStrings({"LinkID","Length","updistance","downdistance","ihov","UpLinks","DownLinks"},","))
+
+	on Error goto quit
+	
+	// loop through the freeway segments
+	dim upstreamlinkset[freeways[1].Length,MaxLinks-1], downstreamlinkset[freeways[1].Length,MaxLinks-1]
+
+	CreateProgressBar("Calculating Interchange Distances", "True")
+
+	for i=1 to freeways[1].Length do
+		perc=RealToInt(100*i/freeways[1].Length)
+		
+		UpdateProgressBar("Calculating Interchange Distances for LinkID: " +string(freeways[1][i]), perc)
+		
+		SetLayer(linklayer)
+		linkid = freeways[1][i]
+		ihov = freeways[2][i]
+		
+		query = "Select * where ID="+String(linkid)
+		count = SelectByQuery("Selection", "Several", query,)
+		linklength = GetDataVector("Selection", "Length",)
+		
+		nodes = GetEndPoints(linkid)
+		FromNode=nodes[1]
+		ToNode=nodes[2]
+		
+		// upstream - from node
+		isInterchange = RunMacro("NodeIsInterchange", FromNode)
+			
+		BaseLink = linkid
+		j=1
+		
+		query1="n/a"
+		query2="n/a"
+		upstreamdistance=linklength[1]*0.5
+		downstreamdistance=linklength[1]*0.5
+		numupstreamlinks=0
+		numdownstreamlinks=0
+
+		if (ihov<>2) then do
+			while (isInterchange=0) do
+				SetLayer(nodelayer)
+				links = GetNodeLinks(FromNode)  // links set that meet at the node
+				
+				coordinates_base=GetCoordsFromLinks(linklayer, , {{BaseLink,1}})
+				
+				// find the freeway link that is not the current link
+				upstreamlink = RunMacro("FindNextLink",links,BaseLink)
+				
+				if (upstreamlink <> null) then do
+				
+					coordinates_upstream=GetCoordsFromLinks(linklayer, , {{upstreamlink,1}})
+					opposite = RunMacro("IsOppositeDirection",coordinates_base[1],coordinates_upstream[1]) // 1- true, 0- false
+					
+					if (opposite=0 and j<MaxLinks) then do
+					
+						SetLayer(linklayer)
+						nodes = GetEndPoints(upstreamlink)    // node pairs - from and to nodes
+						FromNode = nodes[1] // ToNode is always going to be the previous node
+						
+						isInterchange = RunMacro("NodeIsInterchange", FromNode)		
+						BaseLink = upstreamlink
+						
+						// if no new freeway link then end the process - happens when freeway connects to other facility type
+						if (j>1 and upstreamlink= linkid) then isInterchange=1
+						else do 
+							upstreamlinkset[i][j] = upstreamlink
+							j=j+1
+						end
+					end
+					else do 
+						isInterchange=1
+						if (j=MaxLinks) then upstreamdistance=99
+					end
+				end
+				else do
+					isInterchange=1
+					if (j=MaxLinks) then upstreamdistance=99
+				end
+				
+			end
+			
+			numupstreamlinks =j-1
+			
+			// calculate upstream distance
+			SetLayer(linklayer)
+			
+			if j>=2 then do
+				query1 = "Select * where ID="+String(upstreamlinkset[i][1])
+				
+				if j>2 then do
+					for iter=2 to numupstreamlinks do
+						query1 = JoinStrings({query1," or ID=",r2s(upstreamlinkset[i][iter])},"")
+					end
+				end
+				
+				count = SelectByQuery("Selection", "Several", query1,)
+				lengths = GetDataVector("Selection", "Length",)
+				upstreamdistance=VectorStatistic(lengths,"Sum",)
+				
+				// add half of the current link length to make the distance from midpoint
+				upstreamdistance = upstreamdistance + (linklength[1]*0.5)
+			end
+
+			
+			// downstream - to node
+			isInterchange = RunMacro("NodeIsInterchange", ToNode)
+			
+			BaseLink = linkid
+			j=1
+			while (isInterchange=0) do
+				SetLayer(nodelayer)
+				links = GetNodeLinks(ToNode)
+				
+				coordinates_base=GetCoordsFromLinks(linklayer, , {{BaseLink,-1}})
+				
+				// find the freeway link that is not the current link
+				downstreamlink = RunMacro("FindNextLink",links,BaseLink)
+				
+				if (downstreamlink <> null) then do
+					coordinates_downstream=GetCoordsFromLinks(linklayer, , {{downstreamlink,-1}})
+					opposite = RunMacro("IsOppositeDirection",coordinates_base[1],coordinates_downstream[1]) // 1- true, 0- false
+					
+					if (opposite=0 and j<MaxLinks) then do
+					
+						SetLayer(linklayer)
+						nodes = GetEndPoints(downstreamlink)
+						ToNode = nodes[2] // FromNode is always going to be the previous node
+						
+						isInterchange = RunMacro("NodeIsInterchange", ToNode)
+						BaseLink = downstreamlink
+
+						// if no new freeway link then end the process - happens when freeway connects to other facility type
+						if (j>1 and downstreamlink=linkid) then isInterchange=1
+						else do 
+							downstreamlinkset[i][j] = downstreamlink
+							j=j+1
+						end
+						
+					end
+					else do 
+						isInterchange=1
+						if (j=MaxLinks) then downstreamdistance=99
+					end
+				end
+				else do
+					isInterchange=1
+					if (j=MaxLinks) then downstreamdistance=99
+				end
+				
+			end	
+			numdownstreamlinks =j-1
+			
+			// calculate downstream distance
+			SetLayer(linklayer)
+			
+			if j>=2 then do
+				query2 = "Select * where ID="+String(downstreamlinkset[i][1])
+				
+				if j>2 then do
+					for iter=2 to numdownstreamlinks do
+						query2 = JoinStrings({query2," or ID=",r2s(downstreamlinkset[i][iter])},"")
+					end
+				end
+				
+				count = SelectByQuery("Selection", "Several", query2,)
+				lengths = GetDataVector("Selection", "Length",)
+				downstreamdistance=VectorStatistic(lengths,"Sum",)
+				
+				// add half of the current link length to make the distance from midpoint
+				downstreamdistance = downstreamdistance + (linklength[1]*0.5)
+				
+			end
+			
+		end
+		
+		else do
+			// HOV segments - set default value of 9999 miles. Distances are not calculated as HOV segments are pretty reliable.
+			upstreamdistance = 9999
+			downstreamdistance = 9999
+			numupstreamlinks = 9999
+			numdownstreamlinks = 9999		
+			
+		end
+		
+		WriteLine(outfile, JoinStrings({i2s(linkid),r2s(linklength[1]),r2s(upstreamdistance),r2s(downstreamdistance),i2s(ihov),i2s(numupstreamlinks),i2s(numdownstreamlinks)},","))
+
+	end
+	
+	CloseFile(outfile)
+
+	DestroyProgressBar()
+	ok=1
+	return(ok)
+
+	quit:
+	showmessage("Error, i: " + string(i) + ", j: " + string(j) + ", linkid: " + string(linkid))
+
+EndMacro
+/*************************************************************************************
+Check if the nodes is an interchange: 0-No, 1- Yes
+**************************************************************************************/
+Macro "NodeIsInterchange" (nodeid)
+	shared interchanges
+
+	isInter = 0
+
+	for i=1 to interchanges.Length do
+		if nodeid=interchanges[i] then isInter = 1
+	end
+
+	return (isInter)
+
+EndMacro
+/*************************************************************************************
+Identify forward links:
+	Identify links that are not the previous link (linkid)
+	Selects the link that is also a freeway and assign that as the next link
+	Assumption: there is only one next freeway link
+**************************************************************************************/	
+Macro "FindNextLink" (linkset,linkid)
+	shared linklayer
+	
+	nextlink = null
+
+	for i=1 to linkset.Length do
+		if linkid <> linkset[i] then do
+			IsFreeway = RunMacro("LinkIsFreeway",linkset[i])
+			if (IsFreeway=1) then do 
+				IsWrongDirection = RunMacro("WrongDirection",linkset[i],linkid)
+				IsHov = RunMacro("LinkIsHov",linkset[i])
+				if (IsHov=0 & IsWrongDirection=0) then nextlink = linkset[i]
+			end
+		end
+	end
+
+	return (nextlink)
+
+EndMacro
+/*************************************************************************************
+Check if the link is in the wrong direction
+**************************************************************************************/
+Macro "WrongDirection" (link,linkid)
+	shared linklayer
+	
+	SetLayer(linklayer)
+	nodes1 = GetEndPoints(linkid)
+	nodes2 = GetEndPoints(link)
+	
+	tonode1 = nodes1[2]    // base link
+	tonode2 = nodes2[2]    // next link
+	
+	// compare ToNode - if they are same then wrong direction
+	if tonode1 = tonode2 then return(1)
+	else return(0)
+
+EndMacro
+
+/*************************************************************************************
+Check if the links is a freeway link: 0-No, 1- Yes
+**************************************************************************************/
+Macro "LinkIsFreeway" (link)
+	shared freeways
+
+	freeway=0
+	for j=1 to freeways[1].Length do
+		if link = freeways[1][j] then freeway=1
+	end
+
+	return (freeway)
+
+EndMacro
+/*************************************************************************************
+Check if link is a HOV segment
+**************************************************************************************/
+Macro "LinkIsHov" (link)
+	shared freeways
+
+	hov=0
+	for j=1 to freeways[1].Length do
+		if link = freeways[1][j] then do
+			if freeways[2][j]=2 then hov=1
+		end
+	end
+
+	return(hov)
+
+EndMacro
+/*************************************************************************************
+Find link direction (coordinates as input)
+**************************************************************************************/
+Macro "GetLinkDirection" (coordinates)
+
+	maxnum = coordinates.length 
+
+	nodeA = coordinates[1]
+	nodeB = coordinates[maxnum]
+
+	deltaX = nodeB.lon-nodeA.lon
+	deltaY = nodeB.lat-nodeA.lat
+
+	if deltaY>0 then slope1 = deltaX/deltaY
+	else slope1 = deltaX
+
+	if deltaX>0 then slope2 = deltaY/deltaX
+	else slope2 = deltaY
+
+	direction = ""
+	if abs(slope1) > abs(slope2) then do
+		//pre_dir = "EW"
+		if deltaX<0 then direction = "WB"
+		else direction = "EB"
+	end
+	else do 
+		//pre_dir = "NS"
+		if deltaY<0 then direction = "SB"
+		else direction = "NB"
+	end
+
+	return(direction)
+
+EndMacro
+/*************************************************************************************
+Check if the two segments (coordinates as input) have opposite direction
+**************************************************************************************/
+Macro "IsOppositeDirection" (coordinates1, coordinates2)
+
+	direction1 = RunMacro("GetLinkDirection",coordinates1)
+	direction2 = RunMacro("GetLinkDirection",coordinates2)
+
+	if direction1="NB" and direction2="SB" then return(1)
+	else if direction2="NB" and direction1="SB" then return(1)
+	else if direction1="EB" and direction2="WB" then return(1)
+	else if direction2="EB" and direction1="WB" then return(1)
+	else return(0)
+
+EndMacro

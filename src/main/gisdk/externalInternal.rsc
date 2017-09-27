@@ -1,103 +1,100 @@
-Macro "US to SD External Trip Model"  //modified the input file and code accordingly, 09/16/16, YMA
+Macro "US to SD External Trip Model"
 
 	shared path, inputDir, outputDir, mxext, scenarioYear
 
-  //controlTotals = "externalInternalControlTotals.csv"      //old input
-  controlTotals = "externalInternalControlTotalsByYear.csv" //modified on 09/16/16, YMA
-
+  controlTotals = "externalInternalControlTotals.csv"
+  
   controlTotalsView = OpenTable("Control Totals", "CSV", {inputDir+"\\"+controlTotals}, {{"Shared", "True"}})
   mgraView = OpenTable("MGRA View", "CSV",{inputDir+"\\mgra13_based_input"+scenarioYear+".csv"}, {{"Shared", "True"}})
   
-  eaDanMatrix = OpenMatrix(outputDir+"\\"+"impdan_EA.mtx", )
+  eaDanMatrix = OpenMatrix(outputDir+"\\"+"impdan_EA_high.mtx", )
   eaDanMC = CreateMatrixCurrencies(eaDanMatrix,,,) 
-  eaDatMatrix = OpenMatrix(outputDir+"\\"+"impdat_EA.mtx", )
+  eaDatMatrix = OpenMatrix(outputDir+"\\"+"impdat_EA_high.mtx", )
   eaDatMC = CreateMatrixCurrencies(eaDatMatrix,,,) 
-  eaS2nhMatrix = OpenMatrix(outputDir+"\\"+"imps2nh_EA.mtx", )
+  eaS2nhMatrix = OpenMatrix(outputDir+"\\"+"imps2nh_EA_high.mtx", )
   eaS2nhMC = CreateMatrixCurrencies(eaS2nhMatrix,,,) 
-  eaS2thMatrix = OpenMatrix(outputDir+"\\"+"imps2th_EA.mtx", )
+  eaS2thMatrix = OpenMatrix(outputDir+"\\"+"imps2th_EA_high.mtx", )
   eaS2thMC = CreateMatrixCurrencies(eaS2thMatrix,,,)
-  eaS3nhMatrix = OpenMatrix(outputDir+"\\"+"imps3nh_EA.mtx", )
+  eaS3nhMatrix = OpenMatrix(outputDir+"\\"+"imps3nh_EA_high.mtx", )
   eaS3nhMC = CreateMatrixCurrencies(eaS3nhMatrix,,,) 
-  eaS3thMatrix = OpenMatrix(outputDir+"\\"+"imps3th_EA.mtx", )
+  eaS3thMatrix = OpenMatrix(outputDir+"\\"+"imps3th_EA_high.mtx", )
   eaS3thMC = CreateMatrixCurrencies(eaS3thMatrix,,,)
   
-  amDanMatrix = OpenMatrix(outputDir+"\\"+"impdan_AM.mtx", )
+  amDanMatrix = OpenMatrix(outputDir+"\\"+"impdan_AM_high.mtx", )
   amDanMC = CreateMatrixCurrencies(amDanMatrix,,,) 
-  amDatMatrix = OpenMatrix(outputDir+"\\"+"impdat_AM.mtx", )
+  amDatMatrix = OpenMatrix(outputDir+"\\"+"impdat_AM_high.mtx", )
   amDatMC = CreateMatrixCurrencies(amDatMatrix,,,) 
-  amS2nhMatrix = OpenMatrix(outputDir+"\\"+"imps2nh_AM.mtx", )
+  amS2nhMatrix = OpenMatrix(outputDir+"\\"+"imps2nh_AM_high.mtx", )
   amS2nhMC = CreateMatrixCurrencies(amS2nhMatrix,,,) 
-  amS2thMatrix = OpenMatrix(outputDir+"\\"+"imps2th_AM.mtx", )
+  amS2thMatrix = OpenMatrix(outputDir+"\\"+"imps2th_AM_high.mtx", )
   amS2thMC = CreateMatrixCurrencies(amS2thMatrix,,,)
-  amS3nhMatrix = OpenMatrix(outputDir+"\\"+"imps3nh_AM.mtx", )
+  amS3nhMatrix = OpenMatrix(outputDir+"\\"+"imps3nh_AM_high.mtx", )
   amS3nhMC = CreateMatrixCurrencies(amS3nhMatrix,,,) 
-  amS3thMatrix = OpenMatrix(outputDir+"\\"+"imps3th_AM.mtx", )
+  amS3thMatrix = OpenMatrix(outputDir+"\\"+"imps3th_AM_high.mtx", )
   amS3thMC = CreateMatrixCurrencies(amS3thMatrix,,,)
   
-  mdDanMatrix = OpenMatrix(outputDir+"\\"+"impdan_MD.mtx", )
+  mdDanMatrix = OpenMatrix(outputDir+"\\"+"impdan_MD_high.mtx", )
   mdDanMC = CreateMatrixCurrencies(mdDanMatrix,,,) 
-  mdDatMatrix = OpenMatrix(outputDir+"\\"+"impdat_MD.mtx", )
+  mdDatMatrix = OpenMatrix(outputDir+"\\"+"impdat_MD_high.mtx", )
   mdDatMC = CreateMatrixCurrencies(mdDatMatrix,,,) 
-  mdS2nhMatrix = OpenMatrix(outputDir+"\\"+"imps2nh_MD.mtx", )
+  mdS2nhMatrix = OpenMatrix(outputDir+"\\"+"imps2nh_MD_high.mtx", )
   mdS2nhMC = CreateMatrixCurrencies(mdS2nhMatrix,,,) 
-  mdS2thMatrix = OpenMatrix(outputDir+"\\"+"imps2th_MD.mtx", )
+  mdS2thMatrix = OpenMatrix(outputDir+"\\"+"imps2th_MD_high.mtx", )
   mdS2thMC = CreateMatrixCurrencies(mdS2thMatrix,,,)
-  mdS3nhMatrix = OpenMatrix(outputDir+"\\"+"imps3nh_MD.mtx", )
+  mdS3nhMatrix = OpenMatrix(outputDir+"\\"+"imps3nh_MD_high.mtx", )
   mdS3nhMC = CreateMatrixCurrencies(mdS3nhMatrix,,,) 
-  mdS3thMatrix = OpenMatrix(outputDir+"\\"+"imps3th_MD.mtx", )
+  mdS3thMatrix = OpenMatrix(outputDir+"\\"+"imps3th_MD_high.mtx", )
   mdS3thMC = CreateMatrixCurrencies(mdS3thMatrix,,,)
   
-  pmDanMatrix = OpenMatrix(outputDir+"\\"+"impdan_PM.mtx", )
+  pmDanMatrix = OpenMatrix(outputDir+"\\"+"impdan_PM_high.mtx", )
   pmDanMC = CreateMatrixCurrencies(pmDanMatrix,,,) 
-  pmDatMatrix = OpenMatrix(outputDir+"\\"+"impdat_PM.mtx", )
+  pmDatMatrix = OpenMatrix(outputDir+"\\"+"impdat_PM_high.mtx", )
   pmDatMC = CreateMatrixCurrencies(pmDatMatrix,,,) 
-  pmS2nhMatrix = OpenMatrix(outputDir+"\\"+"imps2nh_PM.mtx", )
+  pmS2nhMatrix = OpenMatrix(outputDir+"\\"+"imps2nh_PM_high.mtx", )
   pmS2nhMC = CreateMatrixCurrencies(pmS2nhMatrix,,,) 
-  pmS2thMatrix = OpenMatrix(outputDir+"\\"+"imps2th_PM.mtx", )
+  pmS2thMatrix = OpenMatrix(outputDir+"\\"+"imps2th_PM_high.mtx", )
   pmS2thMC = CreateMatrixCurrencies(pmS2thMatrix,,,)
-  pmS3nhMatrix = OpenMatrix(outputDir+"\\"+"imps3nh_PM.mtx", )
+  pmS3nhMatrix = OpenMatrix(outputDir+"\\"+"imps3nh_PM_high.mtx", )
   pmS3nhMC = CreateMatrixCurrencies(pmS3nhMatrix,,,) 
-  pmS3thMatrix = OpenMatrix(outputDir+"\\"+"imps3th_PM.mtx", )
+  pmS3thMatrix = OpenMatrix(outputDir+"\\"+"imps3th_PM_high.mtx", )
   pmS3thMC = CreateMatrixCurrencies(pmS3thMatrix,,,)
   
-  evDanMatrix = OpenMatrix(outputDir+"\\"+"impdan_EV.mtx", )
+  evDanMatrix = OpenMatrix(outputDir+"\\"+"impdan_EV_high.mtx", )
   evDanMC = CreateMatrixCurrencies(evDanMatrix,,,) 
-  evDatMatrix = OpenMatrix(outputDir+"\\"+"impdat_EV.mtx", )
+  evDatMatrix = OpenMatrix(outputDir+"\\"+"impdat_EV_high.mtx", )
   evDatMC = CreateMatrixCurrencies(evDatMatrix,,,) 
-  evS2nhMatrix = OpenMatrix(outputDir+"\\"+"imps2nh_EV.mtx", )
+  evS2nhMatrix = OpenMatrix(outputDir+"\\"+"imps2nh_EV_high.mtx", )
   evS2nhMC = CreateMatrixCurrencies(evS2nhMatrix,,,) 
-  evS2thMatrix = OpenMatrix(outputDir+"\\"+"imps2th_EV.mtx", )
+  evS2thMatrix = OpenMatrix(outputDir+"\\"+"imps2th_EV_high.mtx", )
   evS2thMC = CreateMatrixCurrencies(evS2thMatrix,,,)
-  evS3nhMatrix = OpenMatrix(outputDir+"\\"+"imps3nh_EV.mtx", )
+  evS3nhMatrix = OpenMatrix(outputDir+"\\"+"imps3nh_EV_high.mtx", )
   evS3nhMC = CreateMatrixCurrencies(evS3nhMatrix,,,) 
-  evS3thMatrix = OpenMatrix(outputDir+"\\"+"imps3th_EV.mtx", )
+  evS3thMatrix = OpenMatrix(outputDir+"\\"+"imps3th_EV_high.mtx", )
   evS3thMC = CreateMatrixCurrencies(evS3thMatrix,,,)
   
   freeTimeCurrencies = {eaDanMC.("*STM_EA (Skim)"),eaS2nhMC.("*HTM_EA (Skim)"),eaS3nhMC.("*HTM_EA (Skim)"),
-  			amDanMC.("*STM_AM (Skim)"),amS2nhMC.("*HTM_AM (Skim)"),amS3nhMC.("*HTM_AM (Skim)"),
-  			mdDanMC.("*STM_MD (Skim)"),mdS2nhMC.("*HTM_MD (Skim)"),mdS3nhMC.("*HTM_MD (Skim)"),
-  			pmDanMC.("*STM_PM (Skim)"),pmS2nhMC.("*HTM_PM (Skim)"),pmS3nhMC.("*HTM_PM (Skim)"),
-  			evDanMC.("*STM_EV (Skim)"),evS2nhMC.("*HTM_EV (Skim)"),evS3nhMC.("*HTM_EV (Skim)")}
+  											amDanMC.("*STM_AM (Skim)"),amS2nhMC.("*HTM_AM (Skim)"),amS3nhMC.("*HTM_AM (Skim)"),
+  											mdDanMC.("*STM_MD (Skim)"),mdS2nhMC.("*HTM_MD (Skim)"),mdS3nhMC.("*HTM_MD (Skim)"),
+  											pmDanMC.("*STM_PM (Skim)"),pmS2nhMC.("*HTM_PM (Skim)"),pmS3nhMC.("*HTM_PM (Skim)"),
+  											evDanMC.("*STM_EV (Skim)"),evS2nhMC.("*HTM_EV (Skim)"),evS3nhMC.("*HTM_EV (Skim)")}
   											
   tollTimeCurrencies = {eaDatMC.("*STM_EA (Skim)"),eaS2thMC.("*HTM_EA (Skim)"),eaS3thMC.("*HTM_EA (Skim)"),
-  			amDatMC.("*STM_AM (Skim)"),amS2thMC.("*HTM_AM (Skim)"),amS3thMC.("*HTM_AM (Skim)"),
-  			mdDatMC.("*STM_MD (Skim)"),mdS2thMC.("*HTM_MD (Skim)"),mdS3thMC.("*HTM_MD (Skim)"),
-  			pmDatMC.("*STM_PM (Skim)"),pmS2thMC.("*HTM_PM (Skim)"),pmS3thMC.("*HTM_PM (Skim)"),
-  			evDatMC.("*STM_EV (Skim)"),evS2thMC.("*HTM_EV (Skim)"),evS3thMC.("*HTM_EV (Skim)")}
+  											amDatMC.("*STM_AM (Skim)"),amS2thMC.("*HTM_AM (Skim)"),amS3thMC.("*HTM_AM (Skim)"),
+  											mdDatMC.("*STM_MD (Skim)"),mdS2thMC.("*HTM_MD (Skim)"),mdS3thMC.("*HTM_MD (Skim)"),
+  											pmDatMC.("*STM_PM (Skim)"),pmS2thMC.("*HTM_PM (Skim)"),pmS3thMC.("*HTM_PM (Skim)"),
+  											evDatMC.("*STM_EV (Skim)"),evS2thMC.("*HTM_EV (Skim)"),evS3thMC.("*HTM_EV (Skim)")}
   											                                                                      
   											                                                                      //mod(eaS3thMC.("s3th_EA - itoll_EA"),10000),
   											                                                                      
   tollCostCurrencies = {eaDatMC.("dat_EA - itoll_EA"),eaS2thMC.("s2t_EA - itoll_EA"),eaS3thMC.("s3t_EA - itoll_EA"),
-  			amDatMC.("dat_AM - itoll_AM"),amS2thMC.("s2t_AM - itoll_AM"),amS3thMC.("s3t_AM - itoll_AM"),
-  			mdDatMC.("dat_MD - itoll_MD"),mdS2thMC.("s2t_MD - itoll_MD"),mdS3thMC.("s3t_MD - itoll_MD"),
-  			pmDatMC.("dat_PM - itoll_PM"),pmS2thMC.("s2t_PM - itoll_PM"),pmS3thMC.("s3t_PM - itoll_PM"),
-  			evDatMC.("dat_EV - itoll_EV"),evS2thMC.("s2t_EV - itoll_EV"),evS3thMC.("s3t_EV - itoll_EV")}									
+  											amDatMC.("dat_AM - itoll_AM"),amS2thMC.("s2t_AM - itoll_AM"),amS3thMC.("s3t_AM - itoll_AM"),
+  											mdDatMC.("dat_MD - itoll_MD"),mdS2thMC.("s2t_MD - itoll_MD"),mdS3thMC.("s3t_MD - itoll_MD"),
+  											pmDatMC.("dat_PM - itoll_PM"),pmS2thMC.("s2t_PM - itoll_PM"),pmS3thMC.("s3t_PM - itoll_PM"),
+  											evDatMC.("dat_EV - itoll_EV"),evS2thMC.("s2t_EV - itoll_EV"),evS3thMC.("s3t_EV - itoll_EV")}									
   
-  controlYear 	= GetDataVector(controlTotalsView+"|", "year", {{"Sort Order", {{"year", "Ascending"}}}} )     
-  controlTaz = GetDataVector(controlTotalsView+"|", "taz", {{"Sort Order", {{"year", "Ascending"},{"taz", "Ascending"}}}} )
-  controlWrk  = GetDataVector(controlTotalsView+"|", "work", {{"Sort Order", {{"year", "Ascending"},{"taz", "Ascending"}}}} )
-  controlNon 	= GetDataVector(controlTotalsView+"|", "nonwork", {{"Sort Order", {{"year", "Ascending"},{"taz", "Ascending"}}}} )
-  
+  controlTaz = GetDataVector(controlTotalsView+"|", "taz", {{"Sort Order", {{"taz", "Ascending"}}}} )
+  controlWrk  = GetDataVector(controlTotalsView+"|", "work", {{"Sort Order", {{"taz", "Ascending"}}}} )
+  controlNon 	= GetDataVector(controlTotalsView+"|", "nonwork", {{"Sort Order", {{"taz", "Ascending"}}}} )
   
   // create mgra size vectrors
   
@@ -229,20 +226,17 @@ Macro "US to SD External Trip Model"  //modified the input file and code accordi
   nonCurrenPA := 0
   	
   // Loop over external zones and set values in output matrix
-  for i=1 to controlTaz.length do                  
-    if controlYear[i] = s2i(scenarioYear) then do       
-	
+  for i=1 to controlTaz.length do
+  	
     wrkTotal = controlWrk[i]
     nonTotal = controlNon[i]
     
-    
     wrkTripVector = wrkTotal * GetMatrixVector(wrkProb,{{"Row", controlTaz[i]}}) 
-    nonTripVector = nonTotal * GetMatrixVector(nonProb,{{"Row", controlTaz[i]}})
+    nonTripVector = nonTotal * GetMatrixVector(wrkProb,{{"Row", controlTaz[i]}})
     	
     SetMatrixVector(wrkCurrenPA, wrkTripVector, {{"Row",controlTaz[i]}})
     SetMatrixVector(nonCurrenPA, nonTripVector, {{"Row",controlTaz[i]}})
-   
-    end
+  
   end
                
   // Convert PA to OD and Apply Diurnal Factors
@@ -263,7 +257,45 @@ Macro "US to SD External Trip Model"  //modified the input file and code accordi
 	wrkCurrenAP := 0.5 * wrkCurrenAP
 	nonCurrenAP := 0.5 * nonCurrenAP
     
-  // Apply Occupancy and Diurnal Factors    
+  // Apply Occupancy and Diurnal Factors
+  
+  opts.Tables = {"DAN","S2N","S3N","DAT","S2T","S3T"}
+  
+  opts.[File Name] = outputDir+"\\"+"usSdWrk_EA.mtx"
+  wrkMatrixEA = CreateMatrixFromScratch("wrkMatrixEA",numZones,numZones,opts)
+  wrkCurrenEA = CreateMatrixCurrencies(wrkMatrixEA,,,)
+  opts.[File Name] = outputDir+"\\"+"usSdWrk_AM.mtx"
+  wrkMatrixAM = CreateMatrixFromScratch("wrkMatrixAM",numZones,numZones,opts)
+  wrkCurrenAM = CreateMatrixCurrencies(wrkMatrixAM,,,)
+  opts.[File Name] = outputDir+"\\"+"usSdWrk_MD.mtx"
+  wrkMatrixMD = CreateMatrixFromScratch("wrkMatrixMD",numZones,numZones,opts)
+  wrkCurrenMD = CreateMatrixCurrencies(wrkMatrixMD,,,)
+  opts.[File Name] = outputDir+"\\"+"usSdWrk_PM.mtx"
+  wrkMatrixPM = CreateMatrixFromScratch("wrkMatrixPM",numZones,numZones,opts)
+  wrkCurrenPM = CreateMatrixCurrencies(wrkMatrixPM,,,)
+  opts.[File Name] = outputDir+"\\"+"usSdWrk_EV.mtx"
+  wrkMatrixEV = CreateMatrixFromScratch("wrkMatrixEV",numZones,numZones,opts)
+  wrkCurrenEV = CreateMatrixCurrencies(wrkMatrixEV,,,)
+  
+  opts.[File Name] = outputDir+"\\"+"usSdNon_EA.mtx"
+  nonMatrixEA = CreateMatrixFromScratch("nonMatrixEA",numZones,numZones,opts)
+  nonCurrenEA = CreateMatrixCurrencies(nonMatrixEA,,,)
+  opts.[File Name] = outputDir+"\\"+"usSdNon_AM.mtx"
+  nonMatrixAM = CreateMatrixFromScratch("nonMatrixAM",numZones,numZones,opts)
+  nonCurrenAM = CreateMatrixCurrencies(nonMatrixAM,,,)
+  opts.[File Name] = outputDir+"\\"+"usSdNon_MD.mtx"
+  nonMatrixMD = CreateMatrixFromScratch("nonMatrixMD",numZones,numZones,opts)
+  nonCurrenMD = CreateMatrixCurrencies(nonMatrixMD,,,)
+  opts.[File Name] = outputDir+"\\"+"usSdNon_PM.mtx"
+  nonMatrixPM = CreateMatrixFromScratch("nonMatrixPM",numZones,numZones,opts)
+  nonCurrenPM = CreateMatrixCurrencies(nonMatrixPM,,,)
+  opts.[File Name] = outputDir+"\\"+"usSdNon_EV.mtx"
+  nonMatrixEV = CreateMatrixFromScratch("nonMatrixEV",numZones,numZones,opts)
+  nonCurrenEV = CreateMatrixCurrencies(nonMatrixEV,,,)
+  
+  wrkCurrenAll = {wrkCurrenEA,wrkCurrenAM,wrkCurrenMD,wrkCurrenPM,wrkCurrenEV}
+  nonCurrenAll = {nonCurrenEA,nonCurrenAM,nonCurrenMD,nonCurrenPM,nonCurrenEV}
+  
   wrkDiurnalPA = {0.26,0.26,0.41,0.06,0.02}
   wrkDiurnalAP = {0.08,0.07,0.41,0.42,0.02}
   
@@ -273,24 +305,13 @@ Macro "US to SD External Trip Model"  //modified the input file and code accordi
   wrkOccupancy = {0.58,0.31,0.11}
   nonOccupancy = {0.55,0.29,0.15}
   
-  periods={"_EA","_AM","_MD","_PM","_EV"}
-  opts.Tables = {"DAN","S2N","S3N","DAT","S2T","S3T"}
   matrixNames = {"DAN","S2N","S3N","DAT","S2T","S3T"}
   
   for periodIdx=1 to 5 do
-	
-	    opts.[File Name] = outputDir+"\\"+"usSdWrk" +periods[periodIdx] + ".mtx"
-	    wrkMatrix = CreateMatrixFromScratch("wrkMatrix"+periods[periodIdx],numZones,numZones,opts)
-        wrkCurren = CreateMatrixCurrencies(wrkMatrix,,,)
-
-        opts.[File Name] = outputDir+"\\"+"usSdNon" +periods[periodIdx] + ".mtx"
-        nonMatrix = CreateMatrixFromScratch("nonMatrix"+periods[periodIdx],numZones,numZones,opts)
-        nonCurren = CreateMatrixCurrencies( nonMatrix,,,)
-
   	for occupIdx = 1 to 3 do
   	
-  		wrkCurren.(matrixNames[occupIdx]) := wrkOccupancy[occupIdx] * ( wrkDiurnalPA[periodIdx] * wrkCurrenPA + wrkDiurnalAP[periodIdx] * wrkCurrenAP )
-  		nonCurren.(matrixNames[occupIdx]) := nonOccupancy[occupIdx] * ( nonDiurnalPA[periodIdx] * nonCurrenPA + nonDiurnalAP[periodIdx] * nonCurrenAP )
+  		wrkCurrenAll[periodIdx].(matrixNames[occupIdx]) := wrkOccupancy[occupIdx] * ( wrkDiurnalPA[periodIdx] * wrkCurrenPA + wrkDiurnalAP[periodIdx] * wrkCurrenAP )
+  		nonCurrenAll[periodIdx].(matrixNames[occupIdx]) := nonOccupancy[occupIdx] * ( nonDiurnalPA[periodIdx] * nonCurrenPA + nonDiurnalAP[periodIdx] * nonCurrenAP )
  		
  		end
  	end 
@@ -303,31 +324,27 @@ Macro "US to SD External Trip Model"  //modified the input file and code accordi
   ivtCoef			= -0.03
   
   for periodIdx=1 to 5 do
-
-  	    wrkMatrix = OpenMatrix(outputDir+"\\"+"usSdWrk" +periods[periodIdx] + ".mtx", )
-        wrkCurren = CreateMatrixCurrencies(wrkMatrix,,,)
-
-        nonMatrix = OpenMatrix(outputDir+"\\"+"usSdNon" +periods[periodIdx] + ".mtx", )
-        nonCurren = CreateMatrixCurrencies(nonMatrix,,,)
   	for occupIdx = 1 to 3 do
   	
   	  currIndex = (periodIdx - 1) * 3 + occupIdx
   	  
   	  //wrkProb is work toll probability
-  	  wrkProb := exp(ivtCoef * ( tollTimeCurrencies[ currIndex] - freeTimeCurrencies[ currIndex ] + mod(tollCostCurrencies[ currIndex ],10000) / votWork  ) - 3.39) 
+  	  wrkProb := if tollCostCurrencies[currIndex]>1000 then exp(ivtCoef * ( tollTimeCurrencies[ currIndex] - freeTimeCurrencies[ currIndex ] + mod(tollCostCurrencies[ currIndex ],10000) / votWork  ) - 3.39) else
+  	   exp(ivtCoef * ( tollTimeCurrencies[ currIndex] - freeTimeCurrencies[ currIndex ] + tollCostCurrencies[ currIndex ] / votWork  ) - 3.39) 
+  	  
   	  wrkProb := if tollCostCurrencies[ currIndex ] > 0 then wrkProb else 0
-  	  wrkProb := wrkProb / ( 1 + wrkProb )
+  	  wrkProb := wrkProb / ( 1 + wrkProb )     
+  	  	
    	  
-  	  wrkCurren.(matrixNames[occupIdx+3]) := wrkCurren.(matrixNames[occupIdx]) * wrkProb
-  	  wrkCurren.(matrixNames[occupIdx])   := wrkCurren.(matrixNames[occupIdx]) * (1.0 - wrkProb)	
+  	  wrkCurrenAll[periodIdx].(matrixNames[occupIdx+3]) := wrkCurrenAll[periodIdx].(matrixNames[occupIdx]) * wrkProb
+  	  wrkCurrenAll[periodIdx].(matrixNames[occupIdx])	  := wrkCurrenAll[periodIdx].(matrixNames[occupIdx])	* (1.0 - wrkProb)	
   	  
   	  //nonProb is non-work toll probability
   	  nonProb := exp(ivtCoef * ( tollTimeCurrencies[ currIndex ] - freeTimeCurrencies[ currIndex] + mod(tollCostCurrencies[ currIndex],10000) / votNonwork )- 3.39) 
   	  nonProb := if tollCostCurrencies[ currIndex ] > 0 then nonProb else 0 
   	  nonProb := nonProb / ( 1 + nonProb )
-	  
-  	  nonCurren.(matrixNames[occupIdx+3]) := nonCurren.(matrixNames[occupIdx]) * nonProb
-  	  nonCurren.(matrixNames[occupIdx])   := nonCurren.(matrixNames[occupIdx]) * (1.0 - nonProb)	
+  	  nonCurrenAll[periodIdx].(matrixNames[occupIdx+3]) := nonCurrenAll[periodIdx].(matrixNames[occupIdx]) * nonProb
+  	  nonCurrenAll[periodIdx].(matrixNames[occupIdx])	  := nonCurrenAll[periodIdx].(matrixNames[occupIdx])	* (1.0 - nonProb)	
   	  
  		end
  	end

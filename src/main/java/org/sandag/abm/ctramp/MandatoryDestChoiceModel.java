@@ -171,8 +171,7 @@ public class MandatoryDestChoiceModel
                         .format("exception caught setting up DC ChoiceModelApplication[%d] for modelIndex=%d of %d models",
                                 i, modelIndex, modelIndexMap.size()));
                 logger.fatal("Exception caught:", e);
-                logger.fatal("calling System.exit(-1) to terminate.");
-                System.exit(-1);
+                throw new RuntimeException();
             }
 
         }
@@ -721,8 +720,9 @@ public class MandatoryDestChoiceModel
         }
 
         // compute destination choice proportions and choose alternative
-        worksAtHomeModel.computeUtilities(dcDmuObject, dcDmuObject.getDmuIndexValues());
-
+        float logsum = (float) worksAtHomeModel.computeUtilities(dcDmuObject, dcDmuObject.getDmuIndexValues());
+        person.setWorksFromHomeLogsum(logsum);
+        
         Random hhRandom = household.getHhRandom();
         int randomCount = household.getHhRandomCount();
         double rn = hhRandom.nextDouble();

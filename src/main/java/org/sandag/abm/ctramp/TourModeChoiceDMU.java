@@ -287,6 +287,38 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
 	public double getNmBikeTimeIn() {
 		return nmBikeTimeIn;
 	}
+	
+	public double getWorkTimeFactor() {
+		return person.getTimeFactorWork();
+	}
+	
+	public double getNonWorkTimeFactor(){
+		return person.getTimeFactorNonWork();
+	}
+	
+	/**
+	 * Iterate through persons on tour and return non-work time factor
+	 * for oldest person. If the person array is null then return 1.0.
+	 * 
+	 * @return Time factor for oldest person on joint tour.
+	 */
+	public double getJointTourTimeFactor() {
+		int[] personNumArray = tour.getPersonNumArray();
+		int oldestAge = -999;
+		Person oldestPerson = null;
+		for (int num : personNumArray){
+			Person p = 	hh.getPerson(num);
+			if(p.getAge() > oldestAge){
+				oldestPerson = p;
+				oldestAge = p.getAge();
+			}
+	    }
+		if(oldestPerson != null)
+			return oldestPerson.getTimeFactorNonWork();
+		
+		return 1.0;
+	}
+
 
 	public int getFreeParkingEligibility() {
 		return person.getFreeParkingAvailableResult();
@@ -334,6 +366,7 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
   
   /**
    * 1 if household owns transponder, else 0
+   * @return 1 if household owns transponder, else 0
    */
   public int getTransponderOwnership(){
 	  return hh.getTpChoice();

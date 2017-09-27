@@ -390,9 +390,10 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
 
                     }
 
-                    choiceModelApplication[modelIndex].computeUtilities(dmuObject,
+                    float logsum = (float) choiceModelApplication[modelIndex].computeUtilities(dmuObject,
                             dmuObject.getDmuIndexValues(), availabilityArray, sampleArray);
-
+                    person.setInmtfLogsum(logsum);
+                    
                     // get the random number from the household
                     Random random = household.getHhRandom();
                     int randomCount = household.getHhRandomCount();

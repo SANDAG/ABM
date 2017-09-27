@@ -33,6 +33,8 @@ public class CrossBorderTripModeChoiceDMU
     protected int          tripDestIsTourDest;
     protected float        hourlyParkingCostTripOrig;
     protected float        hourlyParkingCostTripDest;
+    protected float        workTimeFactor;
+    protected float        nonWorkTimeFactor;
 
     protected double       nmWalkTime;
     protected double       nmBikeTime;
@@ -474,7 +476,23 @@ public class CrossBorderTripModeChoiceDMU
         return transitSkim[accEgr][lbPrem][skimIndex];
     }
 
-    private void setupMethodIndexMap()
+    public float getWorkTimeFactor() {
+		return workTimeFactor;
+	}
+
+	public void setWorkTimeFactor(float workTimeFactor) {
+		this.workTimeFactor = workTimeFactor;
+	}
+
+	public float getNonWorkTimeFactor() {
+		return nonWorkTimeFactor;
+	}
+
+	public void setNonWorkTimeFactor(float nonWorkTimeFactor) {
+		this.nonWorkTimeFactor = nonWorkTimeFactor;
+	}
+
+	private void setupMethodIndexMap()
     {
         methodIndexMap = new HashMap<String, Integer>();
 
@@ -499,6 +517,9 @@ public class CrossBorderTripModeChoiceDMU
         methodIndexMap.put("getTripDestIsTourDest", 18);
         methodIndexMap.put("getHourlyParkingCostTripOrig", 19);
         methodIndexMap.put("getHourlyParkingCostTripDest", 20);
+        
+        methodIndexMap.put("getWorkTimeFactor", 50);
+        methodIndexMap.put("getNonWorkTimeFactor", 51);
 
         methodIndexMap.put("getNm_walkTime", 90);
         methodIndexMap.put("getNm_bikeTime", 91);

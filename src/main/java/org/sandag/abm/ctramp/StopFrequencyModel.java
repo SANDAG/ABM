@@ -222,8 +222,9 @@ public class StopFrequencyModel
                             mgraManager.getTaz(tour.getTourDestMgra()));
 
                     // compute the utilities
-                    choiceModelApplication[modelIndex].computeUtilities(dmuObject,
+                    float logsum = (float) choiceModelApplication[modelIndex].computeUtilities(dmuObject,
                             dmuObject.getDmuIndexValues());
+                    tour.setStopFreqLogsum(logsum);
 
                     // get the random number from the household
                     Random random = household.getHhRandom();
@@ -386,8 +387,9 @@ public class StopFrequencyModel
                             mgraManager.getTaz(tour.getTourOrigMgra()),
                             mgraManager.getTaz(tour.getTourDestMgra()));
 
-                    choiceModelApplication[modelIndex].computeUtilities(dmuObject,
+                    float logsum = (float) choiceModelApplication[modelIndex].computeUtilities(dmuObject,
                             dmuObject.getDmuIndexValues());
+                    tour.setStopFreqLogsum(logsum);
 
                     // get the random number from the household
                     Random random = household.getHhRandom();
