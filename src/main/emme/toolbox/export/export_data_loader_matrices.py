@@ -50,8 +50,8 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
         pb = _m.ToolPageBuilder(self)
         pb.title = "Export matrices for Data Loader"
         pb.description = """
-            Export model results to OMX files for export by Data Exporter 
-            to CSV format for load in SQL Data loader."""
+            Export model results to OMX files for use by the Data Exporter 
+            to generate CSV format to be loaded in SQL Data loader."""
         pb.branding_text = "- SANDAG - Export"
         if self.tool_run_msg != "":
             pb.tool_run_status(self.tool_run_msg_status)
@@ -113,21 +113,40 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
 
     @_m.logbook_trace("Export truck demand")
     def truck_demand(self):
+        name_mapping = [
+            ("lhdn", "TRKLGP"),
+            ("mhdn", "TRKMGP"),
+            ("hhdn", "TRKHGP"),
+            ("lhdt", "TRKLTOLL"),
+            ("mhdt", "TRKMTOLL"),
+            ("hhdt", "TRKHTOLL"),
+        ]
         for period in self.periods:
             omx_file = os.path.join(self.output_dir, "Trip_" + period)
-            name_mapping = [
-                ("lhdn", "TRKLGP"),
-                ("mhdn", "TRKMGP"),
-                ("hhdn", "TRKHGP"),
-                ("lhdt", "TRKLTOLL"),
-                ("mhdt", "TRKMTOLL"),
-                ("hhdt", "TRKHTOLL"),
-            ]
             matrices = OrderedDict()
             for key, name in name_mapping:
                 matrices[key] = (period + "_" + name)
             with gen_utils.ExportOMX(omx_file, self.base_scenario) as exporter:
                 exporter.write_matrices(matrices)
+
+        scenario = self.base_scenario
+        emmebank = scenario.emmebank
+        zones = scenario.zone_numbers
+        formater = lambda x: ("%.7f" % x).rstrip('0').rstrip(".")
+        truck_trip_path = os.path.join(os.path.dirname(self.output_dir), "report", "trucktrip.csv")
+        with open(truck_trip_path, 'w') as f:
+            f.write("ORIG,DEST,TOD,CLASS,TRIPS\n")
+            for period in self.periods:
+                for key, name in name_mapping:
+                    matrix_name = (period + "_" + name)
+                    matrix_data = emmebank.matrix(matrix_name).get_data(scenario)
+                    for orig in zones:
+                        for dest in zones:
+                            value = matrix_data.get(orig, dest)
+                            if value == 0: 
+                                continue
+                            f.write(",".join([str(orig), str(dest), period, key, formater(value)]))
+                            f.write("\n")
 
     def external_demand(self):
         with _m.logbook_trace("Export external-external demand"):
@@ -135,17 +154,17 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
             with gen_utils.ExportOMX(omx_file, self.base_scenario) as exporter:
                 exporter.write_matrices({"Trips": "ALL_TOTAL_EETRIPS"})
         with _m.logbook_trace("Export external-internal demand"):
+            name_mapping = [
+                ("DAN", "SOVGP"),
+                ("DAT", "SOVTOLL"),
+                ("S2N", "HOV2HOV"),
+                ("S2T", "HOV2TOLL"),
+                ("S3N", "HOV3HOV"),
+                ("S3T", "HOV3TOLL"),
+            ]
             for file_name, purpose in [("Wrk", "EIWORK"), ("Non", "EINONWORK")]:
                 for period in self.periods:
                     omx_file = os.path.join(self.output_dir, "usSd" + file_name + "_" + period)
-                    name_mapping = [
-                        ("DAN", "SOVGP"),
-                        ("DAT", "SOVTOLL"),
-                        ("S2N", "HOV2HOV"),
-                        ("S2T", "HOV2TOLL"),
-                        ("S3N", "HOV3HOV"),
-                        ("S3T", "HOV3TOLL"),
-                    ]
                     matrices = OrderedDict()
                     for key, name in name_mapping:
                         matrices[key] = (period + "_" + name + "_" + purpose)
