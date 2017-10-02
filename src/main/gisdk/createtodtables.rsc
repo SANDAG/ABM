@@ -612,7 +612,7 @@ Macro "Create External-External Trip Matrix" // modified "externalExternalTripsB
   opts = {}
   opts.Label = "Trips"
   opts.Type = "Float"
-  opts.Tables = {"2012","2014","2016","2017","2020","2025","2030","2035","2040","2050"}
+  opts.Tables = {"2012","2014","2015","2016","2017","2020","2025","2030","2035","2040","2045","2050"}
   opts.[File Name] = externalExternalMatrixName
 
   extMatrix = CreateMatrixFromScratch(externalExternalMatrixName,mxzone,mxzone,opts)

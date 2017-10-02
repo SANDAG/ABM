@@ -50,7 +50,7 @@ class ParametersGUI(Tkinter.Frame):
             self.setDefaultProperties()
 
             #set AT states-activate and deactivate by selections
-            self.setATButtons()
+            #self.setATButtons()
 
             #scenario folder browser
             Tkinter.Label(body, text=u"Scenario Folder", font=("Helvetica", 8, 'bold'),width=15).grid(row=0)
@@ -137,18 +137,18 @@ class ParametersGUI(Tkinter.Frame):
                     self.nButton[i].select()
             """
 
-        def setATButtons(self):
+        #def setATButtons(self):
             #disable create bike and walk logsums if 'copy' is chosen
-            self.yButton[1].config(command=lambda: self.yButton[3].config(state=DISABLED))
+            #self.yButton[1].config(command=lambda: self.yButton[3].config(state=DISABLED))
             #self.yButton[2].config(command=lambda: self.yButton[4].config(state=DISABLED))
             #disable copy bike and walk logsums if 'create' is chosen
-            self.yButton[3].config(command=lambda: self.yButton[1].config(state=DISABLED))
+            #self.yButton[3].config(command=lambda: self.yButton[1].config(state=DISABLED))
             #self.yButton[4].config(command=lambda: self.yButton[2].config(state=DISABLED))
             #enable create bike and walk logsums if NOT 'copy' is chosen
-            self.nButton[1].config(command=lambda: self.yButton[3].config(state=ACTIVE))
+            #self.nButton[1].config(command=lambda: self.yButton[3].config(state=ACTIVE))
             #self.nButton[2].config(command=lambda: self.yButton[4].config(state=ACTIVE))
             #enable copy bike and walk logsums if NOT 'create' is chosen
-            self.nButton[3].config(command=lambda: self.yButton[1].config(state=ACTIVE))
+            #self.nButton[3].config(command=lambda: self.yButton[1].config(state=ACTIVE))
             #self.nButton[4].config(command=lambda: self.yButton[2].config(state=ACTIVE))
 
         #set scenario path
@@ -226,7 +226,7 @@ class ParametersGUI(Tkinter.Frame):
             result=True
             if not os.path.exists(self.runtimeFile):
                 self.popup=Tkinter.Tk()
-                popupMsg.popupmsg(self,self.runtimeFile+" doesn't exist!",1)
+                popupMsg.popupmsg(self,self.runtimeFile+" doesn't exist!",1,1)
                 result=False
             return result
 

@@ -64,7 +64,10 @@ class CreateScenarioGUI(Tkinter.Frame):
             Tkinter.Label(body, text=u"Year", font=("Helvetica", 8, 'bold')).grid(row=9)
             var = StringVar(root)
             self.year="2012"
-            optionList=["2012", "2014", "2015", "2016", "2017", "2020", "2025", "2030", "2035", "2040", "2045", "2050"]
+            # standard release years
+            #optionList=["2012", "2014", "2020", "2025", "2030", "2035", "2040", "2045", "2050"]
+            # development/testing years; un-comment if build testing years
+            optionList=["2015", "2016", "2017"]
             option=Tkinter.OptionMenu(body,var,*optionList,command=self.setyear)
             option.config(width=50)
             option.grid(row=9, column=1)
