@@ -453,6 +453,7 @@
                                         <exclude>create_scenario.cmd</exclude>
                                         <exclude>copy_networks.cmd</exclude>
                                         <exclude>BatchSubstitute.bat</exclude>
+                                        <exclude>init_emme.cmd</exclude>
                                     </excludes>
                                 </resource>
                             </resources>
@@ -476,6 +477,7 @@
                                         <include>copy_networks.cmd</include>
                                         <include>BatchSubstitute.bat</include>
                                         <include>copy_networkfiles_to_study.cmd</include>
+                                        <include>init_emme.cmd</include>
                                     </includes>
                                 </resource>
                             </resources>
