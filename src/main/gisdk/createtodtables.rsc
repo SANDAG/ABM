@@ -23,9 +23,16 @@ Macro "Create Auto Tables"
    
    periods={"_EA","_AM","_MD","_PM","_EV"}
    
-   // read properties from sandag_abm.properties in /conf folder
-   properties = "\\conf\\sandag_abm.properties"  
-   skipSpecialEventModel = RunMacro("read properties",properties,"RunModel.skipSpecialEventModel", "S") 
+ /*  
+   truckTables = {
+      inputDir+"\\dailyDistributionMatricesTruckam.mtx",
+      inputDir+"\\dailyDistributionMatricesTruckop.mtx",
+      inputDir+"\\dailyDistributionMatricesTruckpm.mtx" }
+   
+   truckPeriods = {2, 1, 2, 3, 2}
+   truckFactors = {0.1, 1.0, 0.65, 1.0, 0.25}
+   truckMatrices ={"lhdn","lhdt","mhdn","mhdt","hhdn","hhdt"}
+ */  
  
    truckTables = {
       outputDir+"\\dailyDistributionMatricesTruckEA.mtx",
@@ -97,15 +104,6 @@ Macro "Create Auto Tables"
       outputDir+"\\autoTrips_PM.mtx",
       outputDir+"\\autoTrips_EV.mtx"}
 
-
-   //Wu added for special even trip tables 5/17/2017
-   specialEventTables = {
-      outputDir+"\\autoSpecialEventTrips_EA.mtx",
-      outputDir+"\\autoSpecialEventTrips_AM.mtx",
-      outputDir+"\\autoSpecialEventTrips_MD.mtx",
-      outputDir+"\\autoSpecialEventTrips_PM.mtx",
-      outputDir+"\\autoSpecialEventTrips_EV.mtx"}
-
    //the following table names have the period appended 
    CTRampMatrices = {"SOV_GP","SOV_PAY","SR2_GP","SR2_HOV","SR2_PAY","SR3_GP","SR3_HOV","SR3_PAY"}   
 
@@ -156,10 +154,6 @@ Macro "Create Auto Tables"
      //open external-internal non-work matrix currencies
       externalInternalNonMatrix = OpenMatrix(externalInternalTables[2]+periods[i]+".mtx", ) 
 	    externalInternalNonCurrencies = CreateMatrixCurrencies(externalInternalNonMatrix, , , )
-
-     //open special event matrix currencies; Wu added 5/16/2017
-      specialEventMatrix = OpenMatrix(specialEventables[i], )                                                               
-	    specialEventCurrencies = CreateMatrixCurrencies(specialEventMatrix, , , )
      
           
      //create output trip table and matrix currencies for this time period
@@ -244,20 +238,17 @@ Macro "Create Auto Tables"
                             + Nz(internalExternalCurrencies.("SR3_PAY"+periods[i])) 
                             + Nz(externalInternalWrkCurrencies.("S3T"))
                             + Nz(externalInternalNonCurrencies.("S3T"))
+     /*
+      truckPeriod = truckPeriods[i]
+      outCurrencies.lhdn := truckCurrencies[truckPeriod].lhdn * truckFactors[i]
+      outCurrencies.mhdn := truckCurrencies[truckPeriod].mhdn * truckFactors[i]
+      outCurrencies.hhdn := truckCurrencies[truckPeriod].hhdn * truckFactors[i]
+      outCurrencies.lhdt := truckCurrencies[truckPeriod].lhdt * truckFactors[i]
+      outCurrencies.mhdt := truckCurrencies[truckPeriod].mhdt * truckFactors[i]
+      outCurrencies.hhdt := truckCurrencies[truckPeriod].hhdt * truckFactors[i]
+      */
 
-     //Wu added for special event trip tables 5/16/2017
-     if skipSpecialEventModel = "false" then do
-        outCurrencies.SOV_GP :=outCurrencies.SOV_GP+Nz(specialEventCurrencies.("SOV_GP"+periods[i]))
-        outCurrencies.SOV_PAY :=outCurrencies.SOV_PAY+Nz(specialEventCurrencies.("SOV_PAY"+periods[i]))
-        outCurrencies.SR2_GP :=outCurrencies.SR2_GP+Nz(specialEventCurrencies.("SR2_GP"+periods[i]))
-        outCurrencies.SR2_HOV :=outCurrencies.SR2_HOV+Nz(specialEventCurrencies.("SR2_HOV"+periods[i]))   
-        outCurrencies.SR2_PAY :=outCurrencies.SR2_PAY+Nz(specialEventCurrencies.("SR2_PAY"+periods[i]))
-        outCurrencies.SR3_GP :=outCurrencies.SR3_GP+Nz(specialEventCurrencies.("SR3_GP"+periods[i]))
-        outCurrencies.SR3_HOV :=outCurrencies.SR3_HOV+Nz(specialEventCurrencies.("SR3_HOV"+periods[i])) 
-        outCurrencies.SR3_PAY :=outCurrencies.SR3_PAY+Nz(specialEventCurrencies.("SR3_PAY"+periods[i]))
-     end
-
-      outCurrencies.lhdn := truckCurrencies[i].lhdn
+	  outCurrencies.lhdn := truckCurrencies[i].lhdn
       outCurrencies.mhdn := truckCurrencies[i].mhdn
       outCurrencies.hhdn := truckCurrencies[i].hhdn
       outCurrencies.lhdt := truckCurrencies[i].lhdt
@@ -621,7 +612,7 @@ Macro "Create External-External Trip Matrix" // modified "externalExternalTripsB
   opts = {}
   opts.Label = "Trips"
   opts.Type = "Float"
-  opts.Tables = {"2012","2014","2016","2017","2020","2025","2030","2035","2040","2045","2050"}
+  opts.Tables = {"2012","2014","2015","2016","2017","2020","2025","2030","2035","2040","2045","2050"}
   opts.[File Name] = externalExternalMatrixName
 
   extMatrix = CreateMatrixFromScratch(externalExternalMatrixName,mxzone,mxzone,opts)
