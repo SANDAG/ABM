@@ -27,23 +27,31 @@ dem_utils = _m.Modeller().module("sandag.utilities.demand")
 
 class TransitSelectAnalysis(_m.Tool(), gen_utils.Snapshot):
 
-    in_vehicle = _m.Attribute(_m.InstanceType)
-    aux_transit = _m.Attribute(_m.InstanceType)
-    initial_boarding = _m.Attribute(_m.InstanceType)
-    transfer_boarding = _m.Attribute(_m.InstanceType)
-    transfer_alighting = _m.Attribute(_m.InstanceType)
-    final_alighting = _m.Attribute(_m.InstanceType)
+    in_vehicle = _m.Attribute(str)
+    aux_transit = _m.Attribute(str)
+    initial_boarding = _m.Attribute(str)
+    transfer_boarding = _m.Attribute(str)
+    transfer_alighting = _m.Attribute(str)
+    final_alighting = _m.Attribute(str)
 
     suffix = _m.Attribute(str)
     threshold = _m.Attribute(int)
+    scenario = _m.Attribute(_m.InstanceType)
 
     tool_run_msg = ""
 
     def __init__(self):
         self.threshold = 1
+        self.scenario = _m.Modeller().scenario
         self.attributes = [
             "in_vehicle", "aux_transit", "initial_boarding", "transfer_boarding", 
-            "transfer_alighting", "final_alighting", "suffix", "threshold"]
+            "transfer_alighting", "final_alighting", "suffix", "threshold", "scenario"]
+
+    def from_snapshot(self, snapshot):
+        super(TransitSelectAnalysis, self).from_snapshot(snapshot)
+        # custom from_snapshot to load scenario and database objects
+        self.scenario = _m.Modeller().emmebank.scenario(self.scenario)
+        return self
 
     def page(self):
         pb = _m.ToolPageBuilder(self)
@@ -72,6 +80,8 @@ class TransitSelectAnalysis(_m.Tool(), gen_utils.Snapshot):
             note="The minimum number of links which must be encountered for the path selection. "
                  "The default value of 1 indicates an 'any' link selection.")
 
+        pb.add_select_scenario("scenario", title="Scenario:")
+
         return pb.render()
 
     def run(self):
@@ -85,8 +95,7 @@ class TransitSelectAnalysis(_m.Tool(), gen_utils.Snapshot):
                 "transfer_alighting": self.transfer_alighting,
                 "final_alighting": self.final_alighting,
             }
-            scenario = _m.Modeller().scenario
-            results = self(selection, self.suffix, self.threshold, scenario)
+            results = self(selection, self.suffix, self.threshold, self.scenario)
             run_msg = "Traffic assignment completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -95,7 +104,7 @@ class TransitSelectAnalysis(_m.Tool(), gen_utils.Snapshot):
             raise
 
     def __call__(self, selection, suffix, threshold, scenario):
-        selection = dict((k, str(v) if v else None) for k, v in selection.iteritems())
+        selection = dict((k, str(v) if v else "") for k, v in selection.iteritems())
         attrs = {
             "selection": selection, 
             "suffix": suffix, 

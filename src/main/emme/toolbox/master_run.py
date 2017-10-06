@@ -47,6 +47,8 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
     num_processors = _m.Attribute(str)
     select_link = _m.Attribute(unicode)
 
+    properties_path = _m.Attribute(unicode)
+
     tool_run_msg = ""
 
     def __init__(self):
@@ -67,6 +69,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         pb.title = "Master run ABM"
         pb.description = """Runs the SANDAG ABM, assignments, and other demand model tools."""
         pb.branding_text = "- SANDAG - Model"
+        tool_proxy_tag = pb.tool_proxy_tag
 
         if self.tool_run_msg != "":
             pb.tool_run_status(self.tool_run_msg_status)
@@ -78,14 +81,32 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         pb.add_text_box('emmebank_title', title="Emmebank title:", size=60)
         dem_utils.add_select_processors("num_processors", pb, self)
         
-        project_dir = _dir(_m.Modeller().desktop.project.path)
         properties_path = _join(
-            _dir(project_dir), "conf", "sandag_abm.properties")
+            self.main_directory, "conf", "sandag_abm.properties")
         if os.path.exists(properties_path):
             self.load_properties()
             
         # defined in properties utilities
         self.add_properties_interface(pb, disclosure=True)
+        # redirect properties file after browse of main_directory
+        pb.add_html("""
+<script>
+    $(document).ready( function ()
+    {
+        var tool = new inro.modeller.util.Proxy(%(tool_proxy_tag)s) ;
+        $("#main_directory").bind('change', function()    {
+            var path = $(this).val();
+            tool.properties_path = path + "/conf/sandag_abm.properties";
+            tool.load_properties();
+            $("input:checkbox").each(function() {
+                $(this).prop('checked', tool.get_value($(this).prop('id')) );
+            });
+            $("#startFromIteration").prop('value', tool.startFromIteration);
+            $("#sample_rates").prop('value', tool.sample_rates);
+        });
+   });
+</script>""" % {"tool_proxy_tag": tool_proxy_tag})
+
         traffic_assign  = _m.Modeller().tool("sandag.assignment.traffic_assignment")
         traffic_assign._add_select_link_interface(pb)
 
@@ -190,7 +211,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         skipDeleteIntermediateFiles = props["RunModel.skipDeleteIntermediateFiles"]
 
         relative_gap = props["convergence"]
-        max_assign_iterations = 5 #1000
+        max_assign_iterations = 1000
 
         with _m.logbook_trace("Setup and initialization"):
             # Swap Server Configurations
