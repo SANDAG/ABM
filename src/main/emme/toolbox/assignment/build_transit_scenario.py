@@ -189,7 +189,9 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("TRANSIT_SEGMENT", "@headway_seg", "Headway adj for special xfers"), 
                 ("TRANSIT_SEGMENT", "@transfer_penalty_s", "Xfer pen adj for special xfers"),
                 ("TRANSIT_SEGMENT", "@layover_board", "Boarding cost adj for special xfers"),
-                ("NODE", "@coaster_fare_node", "Coaster fare boarding costs at nodes")]
+                ("NODE", "@coaster_fare_node", "Coaster fare boarding costs at nodes"),
+                ("NODE", "@network_adj", "Model: 1=TAP adj, 2=circle, 3=timedxfer")
+            ]
             for elem, name, desc in new_attrs:
                 attr = scenario.create_extra_attribute(elem, name)
                 attr.description = desc
@@ -306,6 +308,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 if has_adjacent_transfer_links and not has_adjacent_walk_links:
                     length = link.length
                     tap_stop = network.split_link(centroid, real_stop, self._get_node_id(), include_reverse=True)
+                    tap_stop["@network_adj"] = 1
                     real_stop.tap_stop = tap_stop
                     transit_access_link = network.link(real_stop, tap_stop)
                     for link in transit_access_link, transit_access_link.reverse_link:
@@ -428,6 +431,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 length = link.length
                 proportion = min(0.006 / length, 0.2)    
                 new_node = network.split_link(i_node, j_node, node_id, False, proportion)
+                new_node["@network_adj"] = 3
                 in_link = network.link(i_node, new_node)
                 out_link = network.link(new_node, j_node)
                 out_link.length = length
@@ -483,6 +487,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 # Add new node, offset from existing node
                 start_node = line.segment(0).i_node
                 xfer_node = network.create_node(self._get_node_id(), False)
+                xfer_node["@network_adj"] = 2
                 xfer_node.x, xfer_node.y = offset_coords(start_node)        
                 network.create_link(start_node, xfer_node, [line.vehicle.mode])
                 network.create_link(xfer_node, start_node, [line.vehicle.mode])
