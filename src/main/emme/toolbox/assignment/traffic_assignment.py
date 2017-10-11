@@ -544,7 +544,7 @@ Assign traffic demand for the selected time period."""
                 net_calc("@tollcost", "@toll_%s" % p, {"link": "modes=d"})
                 net_calc("@mlcost", "@toll_%s" % p,
                     {"link": "not @toll_%s=0.0 and not @lane_restriction=4" % p})
-                net_calc("@tolldist", "length", {"link": "not @toll_%s=0.0" % p})
+                net_calc("@tolldist", "length", {"link": "not @toll_%s=0.0 or @lane_restriction=4" % p})
                 # TODO (optional): use temporary link attributes ?
                 # link volume in @volau
                 create_attribute("LINK", "@auto_volume", "traffic link volume (volau)",
