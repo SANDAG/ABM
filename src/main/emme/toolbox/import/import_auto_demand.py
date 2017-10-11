@@ -45,6 +45,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         self.output_dir = os.path.join(main_dir, "output")
         self.num_processors = "MAX-1"
         self.attributes = ["external_zones", "output_dir", "num_processors"]
+        self._open_omx_files = []
 
     def page(self):
         pb = _m.ToolPageBuilder(self)
@@ -109,27 +110,27 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
     @_m.logbook_trace("Import CT-RAMP traffic trips from OMX")
     def import_traffic_trips(self):
         emmebank = self.scenario.emmebank
-        person = self.lookup_omx("autoTrips")
-        internal_external = self.lookup_omx("autoInternalExternalTrips")
-        visitor = self.lookup_omx("autoVisitorTrips")
-        cross_border = self.lookup_omx("autoCrossBorderTrips")
-        airport = self.lookup_omx("autoAirportTrips")
-        try:
-            periods = ["EA", "AM", "MD", "PM", "EV"]
-            for period in periods:
-                with _m.logbook_trace("Period %s" % period):
-                    modes =      ["SOVGP",  "SOVTOLL", "HOV2GP", "HOV2HOV", "HOV2TOLL", "HOV3GP", "HOV3HOV", "HOV3TOLL"]
-                    omx_modes = ["SOV_GP", "SOV_PAY", "SR2_GP", "SR2_HOV", "SR2_PAY",  "SR3_GP", "SR3_HOV", "SR3_PAY"]
-                    modes = [period + "_" + m for m in modes]
-                    omx_modes = [m + "_" + period for m in omx_modes]
+        periods = ["EA", "AM", "MD", "PM", "EV"]
+        modes_tmplt =     ["SOVGP",  "SOVTOLL", "HOV2GP", "HOV2HOV", "HOV2TOLL", "HOV3GP", "HOV3HOV", "HOV3TOLL"]
+        omx_modes_tmplt = ["SOV_GP", "SOV_PAY", "SR2_GP", "SR2_HOV", "SR2_PAY",  "SR3_GP", "SR3_HOV", "SR3_PAY"]
+        for period in periods:
+            with _m.logbook_trace("Period %s" % period):
+                try:
+                    person = self.open_omx("autoTrips", period)
+                    internal_external = self.open_omx("autoInternalExternalTrips", period)
+                    visitor = self.open_omx("autoVisitorTrips", period)
+                    cross_border = self.open_omx("autoCrossBorderTrips", period)
+                    airport = self.open_omx("autoAirportTrips", period)
+                    modes = [period + "_" + m for m in modes_tmplt]
+                    omx_modes = [m + "_" + period for m in omx_modes_tmplt]
                     for mode, omx_mode in zip(modes, omx_modes):
                         with _m.logbook_trace("Import for mode %s" % mode):
                             matrix = emmebank.matrix("mf%s" % mode)
-                            visitor_demand = visitor[period][omx_mode].read()
-                            cross_border_demand = cross_border[period][omx_mode].read()
-                            airport_demand = airport[period][omx_mode].read()
-                            person_demand = person[period][omx_mode].read()
-                            internal_external_demand = internal_external[period][omx_mode].read()
+                            visitor_demand = visitor[omx_mode].read()
+                            cross_border_demand = cross_border[omx_mode].read()
+                            airport_demand = airport[omx_mode].read()
+                            person_demand = person[omx_mode].read()
+                            internal_external_demand = internal_external[omx_mode].read()
                             
                             total_ct_ramp_trips = (visitor_demand + cross_border_demand + airport_demand + person_demand + internal_external_demand)
                             matrix.set_numpy_data(total_ct_ramp_trips, self.scenario)
@@ -142,14 +143,8 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                                 ("visitor_demand", visitor_demand), 
                                 ("total_ct_ramp_trips", total_ct_ramp_trips)
                             ])
-                                
-        finally:
-            for period in periods:
-                person[period].close()
-                internal_external[period].close()
-                visitor[period].close()
-                cross_border[period].close()
-                airport[period].close()
+                finally:
+                    self.close_all_omx()
 
     @_m.logbook_trace('Add aggregate demand', save_arguments=True)
     def add_aggregate_demand(self):
@@ -158,7 +153,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         with matrix_calc.trace_run("Add commercial vehicle trips to auto demand"):
             for period in periods:
                 matrix_calc.add("mf%s_SOVGP" % period, "mf%(p)s_SOVGP + mf%(p)s_COMVEHGP " % ({'p': period}))
-                matrix_calc.add("mf%s_SOVTOLL" % period, "mf%(p)s_SOVTOLL + mf%(p)s_COMVEHGP" % ({'p': period}))
+                matrix_calc.add("mf%s_SOVTOLL" % period, "mf%(p)s_SOVTOLL + mf%(p)s_COMVEHTOLL" % ({'p': period}))
 
         with matrix_calc.trace_run("Add external-internal trips to auto demand"):
             modes = ["SOVGP", "SOVTOLL", "HOV2HOV", "HOV2TOLL", "HOV3HOV", "HOV3TOLL"]
@@ -178,14 +173,19 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                         "mf%(p)s_%(m)s + mf%(p)s_%(m)s_EETRIPS" % ({'p': period, 'm': mode}),
                         {"origins": self.external_zones, "destinations": self.external_zones})
 
-    def lookup_omx(self, file_name):
-        directory = self.output_dir
-        periods = ["EA", "AM", "MD", "PM", "EV"]
-        matrix_tables = {}
-        for period in periods:
-            file_path = os.path.join(directory, file_name + "_" + period + ".mtx")
-            matrix_tables[period] = _omx.openFile(file_path, 'r')
-        return matrix_tables
+    def open_omx(self, file_name, period):
+        file_path = os.path.join(self.output_dir, file_name + "_" + period + ".mtx")
+        omx_file = _omx.openFile(file_path, 'r')
+        self._open_omx_files.append(omx_file)
+        return omx_file
+        
+    def close_all_omx(self):
+        while(self._open_omx_files):
+            omx_file = self._open_omx_files.pop()
+            try:
+                omx_file.close()
+            except:
+                pass
 
     def report(self, matrices):
         emmebank = self.scenario.emmebank

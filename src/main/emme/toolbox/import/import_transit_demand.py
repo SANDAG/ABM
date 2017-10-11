@@ -42,6 +42,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         main_dir = os.path.dirname(project_dir)
         self.output_dir = os.path.join(main_dir, "output")
         self.attributes = ["output_dir"]
+        self._open_omx_files = []
 
     def page(self):
         pb = _m.ToolPageBuilder(self)
@@ -93,45 +94,48 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
     def import_transit_trips(self):
         emmebank = self.scenario.emmebank
         emme_zones = self.scenario.zone_numbers
-        person = self.lookup_omx("tranTrips")
-        cross_border = self.lookup_omx("tranCrossBorderTrips")
-        airport = self.lookup_omx("tranAirportTrips")
-        visitor = self.lookup_omx("tranVisitorTrips")
-        internal_external = self.lookup_omx("tranInternalExternalTrips")
-        try:
-            periods = ["EA", "AM", "MD", "PM", "EV"]
-            for period in periods:
-                with _m.logbook_trace("Period %s" % period):
-                    modes =      [
-                        "WLKBUS","WLKEXP","WLKBRT","WLKLRT","WLKCMR",
-                        "PNRBUS","PNREXP","PNRBRT","PNRLRT","PNRCMR",
-                        "KNRBUS","KNREXP","KNRBRT","KNRLRT","KNRCMR"
-                    ]
-                    omx_modes = [
-                        "WLK_LOC","WLK_EXP","WLK_BRT","WLK_LRT","WLK_CMR",
-                        "PNR_LOC","PNR_EXP","PNR_BRT","PNR_LRT","PNR_CMR",
-                        "KNR_LOC","KNR_EXP","KNR_BRT","KNR_LRT","KNR_CMR"
-                    ]
-                    modes = [period + "_" + m for m in modes]
-                    omx_modes = [m + "_" + period for m in omx_modes]
+        periods = ["EA", "AM", "MD", "PM", "EV"]
+        modes_tmplt =      [
+            "WLKBUS","WLKEXP","WLKBRT","WLKLRT","WLKCMR",
+            "PNRBUS","PNREXP","PNRBRT","PNRLRT","PNRCMR",
+            "KNRBUS","KNREXP","KNRBRT","KNRLRT","KNRCMR"
+        ]
+        omx_modes_tmplt = [
+            "WLK_LOC","WLK_EXP","WLK_BRT","WLK_LRT","WLK_CMR",
+            "PNR_LOC","PNR_EXP","PNR_BRT","PNR_LRT","PNR_CMR",
+            "KNR_LOC","KNR_EXP","KNR_BRT","KNR_LRT","KNR_CMR"
+        ]
+        for period in periods:
+            with _m.logbook_trace("Period %s" % period):
+                try:
+                    visitor = self.open_omx("tranVisitorTrips", period)
+                    cross_border = self.open_omx("tranCrossBorderTrips", period)
+                    airport = self.open_omx("tranAirportTrips", period)
+                    person = self.open_omx("tranTrips", period)
+                    internal_external = self.open_omx("tranInternalExternalTrips", period)
+                    modes = [period + "_" + m for m in modes_tmplt]
+                    omx_modes = [m + "_" + period for m in omx_modes_tmplt]
                     for mode, omx_mode in zip(modes, omx_modes):
                         with _m.logbook_trace("Import for mode %s" % mode):
-                            visitor_demand = visitor[period][omx_mode].read()
-                            cross_border_demand = cross_border[period][omx_mode].read()
-                            airport_demand = airport[period][omx_mode].read()
-                            person_demand = person[period][omx_mode].read()
-                            internal_external_demand = internal_external[period][omx_mode].read()
+                            visitor_demand = visitor[omx_mode].read()
+                            cross_border_demand = cross_border[omx_mode].read()
+                            airport_demand = airport[omx_mode].read()
+                            person_demand = person[omx_mode].read()
+                            internal_external_demand = internal_external[omx_mode].read()
                             total_ct_ramp_trips = (visitor_demand + cross_border_demand + airport_demand + person_demand + internal_external_demand)
                             
-                            zone_mapping = person[period].mapping(person[period].listMappings()[0]).items()
+                            zone_mapping = person.mapping(person.listMappings()[0]).items()
                             zone_mapping.sort(key=lambda x: x[1])
                             omx_zones = [x[0] for x in zone_mapping]
-                            matrix_data = _matrix.MatrixData(type='f', indices=[omx_zones, omx_zones])
-                            matrix_data.from_numpy(total_ct_ramp_trips)
-                            expanded_matrix_data = matrix_data.expand([emme_zones, emme_zones])
-                            matrix = emmebank.matrix("mf%s" % mode)
-                            matrix.set_data(expanded_matrix_data, self.scenario)
-                            
+                            if omx_zones == emme_zones:
+                                matrix.set_numpy_data(total_ct_ramp_trips, self.scenario)
+                            else:
+                                matrix_data = _matrix.MatrixData(type='f', indices=[omx_zones, omx_zones])
+                                matrix_data.from_numpy(total_ct_ramp_trips)
+                                expanded_matrix_data = matrix_data.expand([emme_zones, emme_zones])
+                                matrix = emmebank.matrix("mf%s" % mode)
+                                matrix.set_data(expanded_matrix_data, self.scenario)
+
                             self.report([
                                 ("person_demand", person_demand), 
                                 ("internal_external_demand", internal_external_demand), 
@@ -140,22 +144,22 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                                 ("visitor_demand", visitor_demand), 
                                 ("total_ct_ramp_trips", total_ct_ramp_trips)
                             ])
-        finally:
-            for period in periods:
-                person[period].close()
-                airport[period].close()
-                cross_border[period].close()
-                visitor[period].close()
-                internal_external[period].close()
+                finally:
+                    self.close_all_omx()
 
-    def lookup_omx(self, file_name):
-        directory = self.output_dir
-        periods = ["EA", "AM", "MD", "PM", "EV"]
-        matrix_tables = {}
-        for period in periods:
-            file_path = os.path.join(directory, file_name + "_" + period + ".mtx")
-            matrix_tables[period] = _omx.openFile(file_path, 'r')
-        return matrix_tables
+    def open_omx(self, file_name, period):
+        file_path = os.path.join(self.output_dir, file_name + "_" + period + ".mtx")
+        omx_file = _omx.openFile(file_path, 'r')
+        self._open_omx_files.append(omx_file)
+        return omx_file
+
+    def close_all_omx(self):
+        while(self._open_omx_files):
+            omx_file = self._open_omx_files.pop()
+            try:
+                omx_file.close()
+            except:
+                pass
 
     def report(self, matrices):
         emmebank = self.scenario.emmebank
