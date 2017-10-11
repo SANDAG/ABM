@@ -106,7 +106,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         pb.add_text_box("transit_scenario_id", size=6, title="Scenario ID for transit (optional):")
         pb.add_text_box("merged_scenario_id", size=6, title="Scenario ID for merged network:")
         pb.add_text_box("title", size=80, title="Scenario title:")
-        pb.add_checkbox("save_data_tables", title=" ", label="Save reference data tables of TCOVED data")
+        pb.add_checkbox("save_data_tables", title=" ", label="Save reference data tables of file data")
         pb.add_text_box("data_table_name", size=80, title="Name for data tables:",
             note="Prefix name to use for all saved data tables")
         pb.add_checkbox("overwrite", title=" ", label="Overwrite existing scenarios and data tables")
@@ -345,8 +345,13 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             scenario = traffic_scenario or transit_scenario
 
         if self.traffic_scenario_id or self.merged_scenario_id:
+            content = []
+            for k, v in traffic_attr_map["LINK"].iteritems():
+                if v[3] == "DERIVED":
+                    k = "--"
+                content.append([k] + list(v))
             self._log.append({
-                "content": [[k] + list(v) for k, v in traffic_attr_map["LINK"].iteritems()], 
+                "content": content, 
                 "type": "table", 
                 "header": ["TCOVED", "Emme", "Source", "Type", "Description"],
                 "title": "Traffic link attributes", "disclosure": True
@@ -485,21 +490,21 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         }
         modes_HOV2 = set([dummy_auto, hov2, hov3, hov2_toll, hov3_toll])
         modes_HOV3 = set([dummy_auto, hov3, hov3_toll])
-        modes_managed_HOV2 = modes_toll_lanes[4] | modes_HOV2
-        modes_managed_HOV3 = modes_toll_lanes[4] | modes_HOV3
 
 
         def define_modes(arc):
-            if arc["IHOV"] == 1:
+            if arc["IFC"] > 7:
+                 return modes_gp_lanes[arc["ITRUCK"]]
+            elif arc["IHOV"] == 1:
                 return modes_gp_lanes[arc["ITRUCK"]]
             elif arc["IHOV"] == 2:
                 if arc["ITOLLA"] > 0 or arc["IFC"] > 7:  # managed lanes, free for HOV2 and HOV3+, tolls for SOV
-                    return modes_managed_HOV2
+                    return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV2
                 else:
                     return modes_HOV2
             elif arc["IHOV"] == 3:
                 if arc["ITOLLA"] > 0 or arc["IFC"] > 7:  # managed lanes, free for HOV3+, tolls for SOV and HOV2
-                    return modes_managed_HOV3
+                    return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV3
                 else:
                     return modes_HOV3
             else:
@@ -530,9 +535,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         lrt = network.create_mode("TRANSIT", "l")
         coaster_rail = network.create_mode("TRANSIT", "c")
 
-        access.description = "Access"
-        transfer.description = "Transfer"
-        walk.description = "Walk"
+        access.description = "ACCESS"
+        transfer.description = "TRANSFER"
+        walk.description = "WALK"
         bus.description = "BUS"                  # (vehicle type 100, PCE=3.0)
         express_bus.description = "EXP BUS"      # (vehicle type 90 , PCE=3.0)
         ltdexp_bus.description = "LTDEXP BUS"    # (vehicle type 80 , PCE=3.0)
@@ -1427,7 +1432,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         create_function(
             "fd24",  # Metered ramps
             "ul1 * (1.0 + 0.8 * ( (volau + volad) / ul3 ) ** 4.0) +"
-            "2.5/ 2 * (1-el1) ** 2 * (1.0 + 6.5 * ( (volau + volad) / el3 ) ** 2.0)",
+            "2.5/ 2 * (1-el1) ** 2 * (1.0 + 6.0 * ( (volau + volad) / el3 ) ** 2.0)",
             emmebank=emmebank)
 
         set_extra_function_params(
