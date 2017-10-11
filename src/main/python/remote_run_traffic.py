@@ -63,7 +63,7 @@ def run_assignment(database_path, period, msa_iteration, relative_gap, max_assig
         with open(log_path, 'w') as f:
             f.write(_time.strftime("%Y-%m-%d %H:%M:%S"))
             f.write(" - traffic assignment finished, start export to OMX\n")
-        omx_file = join(output_dir, "traffic_skims_%s.omx" % period)   
+        omx_file = _join(output_dir, "traffic_skims_%s.omx" % period)   
         export_traffic_skims(period, omx_file, base_scenario)
 
 
