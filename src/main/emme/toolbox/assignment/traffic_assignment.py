@@ -335,12 +335,13 @@ Assign traffic demand for the selected time period."""
             self.run_assignment(period, relative_gap, max_iterations, num_processors, scenario, classes, select_link)
 
             if msa_iteration > 1:
+                ratio = 1.0 / float(msa_iteration)
                 link_flows = scenario.get_attribute_values("LINK", link_attrs)
                 values = [link_flows.pop(0)]
                 for msa_array, flow_array in zip(msa_link_flows, link_flows):
                     msa_vals = numpy.frombuffer(msa_array, dtype='float32')
                     flow_vals = numpy.frombuffer(flow_array, dtype='float32')
-                    result = msa_vals + (1 / msa_iteration) * (flow_vals - msa_vals)
+                    result = msa_vals + ratio * (flow_vals - msa_vals)
                     result_array = array.array('f')
                     result_array.fromstring(result.tostring())
                     values.append(result_array)
@@ -351,7 +352,7 @@ Assign traffic demand for the selected time period."""
                 for msa_array, flow_array in zip(msa_turn_flows, turn_flows):
                     msa_vals = numpy.frombuffer(msa_array, dtype='float32')
                     flow_vals = numpy.frombuffer(flow_array, dtype='float32')
-                    result = msa_vals + (1 / msa_iteration) * (flow_vals - msa_vals)
+                    result = msa_vals + ratio * (flow_vals - msa_vals)
                     result_array = array.array('f')
                     result_array.fromstring(result.tostring())
                     values.append(result_array)
