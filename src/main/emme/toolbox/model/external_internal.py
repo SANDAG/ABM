@@ -226,32 +226,30 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
                 t_cst_imp = emmebank.matrix('mf%s_%s_TOLLCOST' % (p, toll_mode)).get_numpy_data(scenario)
 
                 # Toll diversion for work purpose
-                # TODO: .mod no longer needed, to confirm
                 wrk_toll_prb = np.exp(
-                    ivt_coef * (t_tm_imp - f_tm_imp + np.mod(t_cst_imp, 10000) / vot_work) - 3.39
+                    ivt_coef * (t_tm_imp - f_tm_imp + t_cst_imp / vot_work) - 3.39
                 )
                 wrk_toll_prb[t_cst_imp <= 0] = 0
                 wrk_toll_prb = wrk_toll_prb / (1 + wrk_toll_prb)
-                work_matrix_toll = wrk_mtx * wrk_toll_prb
-                work_matrix_non_toll = wrk_mtx * (1 - wrk_toll_prb)
+                work_toll = wrk_mtx * wrk_toll_prb
+                work_gp = wrk_mtx * (1 - wrk_toll_prb)
 
                 toll_eiwork = emmebank.matrix('%s_%s_EIWORK' % (p, toll_mode))
-                gp_ei_work = emmebank.matrix('%s_%s_EIWORK' % (p, gp_mode))
-                toll_eiwork.set_numpy_data(work_matrix_toll, scenario)
-                gp_ei_work.set_numpy_data(work_matrix_non_toll, scenario)
+                gp_eiwork = emmebank.matrix('%s_%s_EIWORK' % (p, gp_mode))
+                toll_eiwork.set_numpy_data(work_toll, scenario)
+                gp_eiwork.set_numpy_data(work_gp, scenario)
 
                 # Toll diversion for non work purpose
                 nwrk_toll_prb = np.exp(
-                    ivt_coef * (t_tm_imp - f_tm_imp + np.mod(t_cst_imp, 10000) / vot_non_work) - 3.39
+                    ivt_coef * (t_tm_imp - f_tm_imp + t_cst_imp / vot_non_work) - 3.39
                 )
 
                 nwrk_toll_prb[t_cst_imp <= 0] = 0
                 nwrk_toll_prb = nwrk_toll_prb / (1 + nwrk_toll_prb)
-
-                non_work_toll_matrix = nwrk_mtx * nwrk_toll_prb
-                non_work_gp_matrix = nwrk_mtx * (1 - nwrk_toll_prb)
+                non_work_toll = nwrk_mtx * nwrk_toll_prb
+                non_work_gp = nwrk_mtx * (1 - nwrk_toll_prb)
 
                 toll_einonwork =  emmebank.matrix('%s_%s_EINONWORK' % (p, toll_mode))
                 gp_einonwork = emmebank.matrix('%s_%s_EINONWORK' % (p, gp_mode))
-                toll_einonwork.set_numpy_data(non_work_gp_matrix, scenario)
-                gp_einonwork.set_numpy_data(non_work_toll_matrix, scenario)
+                toll_einonwork.set_numpy_data(non_work_toll, scenario)
+                gp_einonwork.set_numpy_data(non_work_gp, scenario)
