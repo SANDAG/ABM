@@ -102,12 +102,12 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
     @_m.logbook_trace("Export commercial vehicle demand")
     def commercial_vehicle_demand(self):
         omx_file = os.path.join(self.output_dir, "commVehTODTrips")
-        name_mapping = [("Trips", "COMMVEH"), ("NonToll", "COMVEHGP"), ("Toll", "COMVEHTOLL")]
+        name_mapping = [("Trips", "COMVEH"), ("NonToll", "COMVEHGP"), ("Toll", "COMVEHTOLL")]
         matrices = OrderedDict()
         for period in self.periods:
             for key, name in name_mapping:
                 matrices[period + " " + key] = (period + "_" + name)
-        matrices["OD Trips"] = "COMMVEH_TOTAL_DEMAND"
+        matrices["OD Trips"] = "COMVEH_TOTAL_DEMAND"
         with gen_utils.ExportOMX(omx_file, self.base_scenario) as exporter:
             exporter.write_matrices(matrices)
 
