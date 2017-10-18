@@ -222,7 +222,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                     line["@xfer_from_bus"] = 0.25
                 if line["@fare"] > 0.0:
                     line["@xfer_from_premium"] = 1.0
-                    line["@xfer_from_coaster"] = 0.75
+                    line["@xfer_from_coaster"] = 1.25
             for segment in network.transit_segments():
                 segment["@headway_seg"] = segment.line[params["headway"]]
                 segment["@transfer_penalty_s"] = segment.line["@transfer_penalty"]
