@@ -75,7 +75,7 @@ class CommercialVehicleDistribution(_m.Tool(), gen_utils.Snapshot):
         (h) TOTHH, total households.
     </li></ul>
     <br>
-    Output: Trip productions and attractions in matrices 'moCOMMVEH_PROD' and 'mdCOMMVEH_ATTR' respectively.
+    Output: Trip productions and attractions in matrices 'moCOMVEH_PROD' and 'mdCOMVEH_ATTR' respectively.
 </div>
         """
 
@@ -150,8 +150,8 @@ class CommercialVehicleDistribution(_m.Tool(), gen_utils.Snapshot):
         taz = dem_utils.add_missing_zones(taz, scenario)
         taz.sort('taz', inplace=True)
 
-        prod = emmebank.matrix('moCOMMVEH_PROD')
-        attr = emmebank.matrix('mdCOMMVEH_ATTR')
+        prod = emmebank.matrix('moCOMVEH_PROD')
+        attr = emmebank.matrix('mdCOMVEH_ATTR')
         prod.set_numpy_data(taz.PROD.values, scenario)
         attr.set_numpy_data(taz.ATTR.values, scenario)
 

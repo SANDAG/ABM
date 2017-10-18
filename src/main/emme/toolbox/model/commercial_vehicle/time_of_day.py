@@ -45,7 +45,7 @@ class TimeOfDay(_m.Tool()):
     small truck values to better match counts. 
     <p>Input:   A production/attraction format trip table matrix of daily very small truck trips.</p>
     <p>Output: Five, time-of-day-specific trip table matrices for very small trucks,
-       of the form 'mfXX_COMMVEH'. 
+       of the form 'mfXX_COMVEH'. 
     </p>
 </div>"""
         pb.branding_text = "- SANDAG - Model - Commercial vehicle"
@@ -75,8 +75,8 @@ class TimeOfDay(_m.Tool()):
         period_factors = [0.0235, 0.1, 0.5080, 0.1980, 0.1705]
         for p, f in zip(periods, period_factors):
             spec = {
-                "expression": "%s * 0.5 * (mfCOMMVEH_TOTAL_DEMAND + mfCOMMVEH_TOTAL_DEMAND')" % f,
-                "result": "mf%s_COMMVEH" % p,
+                "expression": "%s * 0.5 * (mfCOMVEH_TOTAL_DEMAND + mfCOMVEH_TOTAL_DEMAND')" % f,
+                "result": "mf%s_COMVEH" % p,
                 "constraint": None,
                 "type": "MATRIX_CALCULATION"
             }

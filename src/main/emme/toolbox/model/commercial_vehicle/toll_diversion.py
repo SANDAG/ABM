@@ -37,7 +37,7 @@ class TollDiversion(_m.Tool()):
     The very small truck generation model is based on the Phoenix 
     four-tire truck model documented in the TMIP Quick Response Freight Manual. 
     <br>
-    <p>Input: Time-of-day-specific trip table matrices 'mfXX_COMMVEH'. </p>
+    <p>Input: Time-of-day-specific trip table matrices 'mfXX_COMVEH'. </p>
     <p>Output: Corresponding time-of-day 'mfXX_COMVEHGP' and 'mfXX_COMVEHTOLL'
        trip demand matrices.</p>
 </div>
@@ -88,7 +88,7 @@ class TollDiversion(_m.Tool()):
                                '- %(v)s * mfTOLL_COST_TEMP * %(tf)s) / %(n)s') % params
 
                     spec = {
-                        "expression": "mf%s_COMMVEH / (1 + exp(- %s))" % (p, utility),
+                        "expression": "mf%s_COMVEH / (1 + exp(- %s))" % (p, utility),
                         "result": "mf%s_COMVEHTOLL" % p,
                         "constraint": {
                             "by_value": {
@@ -103,7 +103,7 @@ class TollDiversion(_m.Tool()):
                     matrix_calc(spec, scenario=scenario)
 
                     spec = {
-                        "expression": "mf%(p)s_COMMVEH - mf%(p)s_COMVEHTOLL" % {'p': p},
+                        "expression": "mf%(p)s_COMVEH - mf%(p)s_COMVEHTOLL" % {'p': p},
                         "result": "mf%s_COMVEHGP" % p,
                         "type": "MATRIX_CALCULATION"
                     }

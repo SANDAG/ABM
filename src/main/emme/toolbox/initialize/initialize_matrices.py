@@ -292,17 +292,17 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
 
     def commercial_vehicle_model(self):
         tmplt_matrices = [
-            ('mo', 'COMMVEH_PROD',         'Commercial vehicle production'),
-            ('md', 'COMMVEH_ATTR',         'Commercial vehicle attraction'),
-            ('mf', 'COMMVEH_BLENDED_SKIM', 'Commercial vehicle blended skim'),
-            ('mf', 'COMMVEH_FRICTION',     'Commercial vehicle friction factors'),
-            ('mf', 'COMMVEH_TOTAL_DEMAND', 'Commercial vehicle total demand all periods'),
+            ('mo', 'COMVEH_PROD',         'Commercial vehicle production'),
+            ('md', 'COMVEH_ATTR',         'Commercial vehicle attraction'),
+            ('mf', 'COMVEH_BLENDED_SKIM', 'Commercial vehicle blended skim'),
+            ('mf', 'COMVEH_FRICTION',     'Commercial vehicle friction factors'),
+            ('mf', 'COMVEH_TOTAL_DEMAND', 'Commercial vehicle total demand all periods'),
         ]
         self.add_matrices("commercial_vehicle_model", "ALL",
                 [(ident, name, desc) for ident, name, desc in tmplt_matrices])
 
         tmplt_matrices = [
-            ('COMMVEH',    'Commerical vehicle total demand'),
+            ('COMVEH',    'Commerical vehicle total demand'),
             ('COMVEHGP',   'Commerical vehicle Toll demand'),
             ('COMVEHTOLL', 'Commerical vehicle GP demand'),
         ]

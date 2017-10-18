@@ -73,7 +73,7 @@ class CommercialVehicleDistribution(_m.Tool(), gen_utils.Snapshot):
          and midday period (10 am to 3 pm) 'mfMD_SOVGP_TIME'
          which contain congested travel time (in minutes).
     </li><li>        
-     (2) Trip generation results 'moCOMMVEH_PROD' and 'mdCOMMVEH_ATTR'
+     (2) Trip generation results 'moCOMVEH_PROD' and 'mdCOMVEH_ATTR'
     </li><li>
      (4) A table of friction factors in commVehFF.csv with: 
         <ul><li>
@@ -84,10 +84,10 @@ class CommercialVehicleDistribution(_m.Tool(), gen_utils.Snapshot):
     </li></ul>
     Output: 
     <ul><li>
-        (1) A trip table matrix 'mfCOMMVEH_TOTAL_DEMAND'
+        (1) A trip table matrix 'mfCOMVEH_TOTAL_DEMAND'
             of daily class-specific truck trips for very small trucks. 
     </li><li> 
-        (2) A blended travel time matrix 'mfCOMMVEH_BLENDED_SKIM'
+        (2) A blended travel time matrix 'mfCOMVEH_BLENDED_SKIM'
     </li></ul>
 </div>"""
         pb.branding_text = "- SANDAG - Model - Commercial vehicle"
@@ -124,15 +124,15 @@ class CommercialVehicleDistribution(_m.Tool(), gen_utils.Snapshot):
             'inro.emme.matrix_calculation.matrix_calculator')
         spec = {
             "expression": "0.3333 * mfAM_SOVGP_TIME + 0.6666 * mfMD_SOVGP_TIME",
-            "result": "mfCOMMVEH_BLENDED_SKIM",
+            "result": "mfCOMVEH_BLENDED_SKIM",
             "type": "MATRIX_CALCULATION"
         }
         matrix_calc(spec, scenario=scenario)
 
         # Prevent intrazonal trips
         spec = {
-            "expression": "99999 * (p.eq.q) + mfCOMMVEH_BLENDED_SKIM * (p.ne.q)",
-            "result": "mfCOMMVEH_BLENDED_SKIM",
+            "expression": "99999 * (p.eq.q) + mfCOMVEH_BLENDED_SKIM * (p.ne.q)",
+            "result": "mfCOMVEH_BLENDED_SKIM",
             "type": "MATRIX_CALCULATION"
         }
         matrix_calc(spec, scenario=scenario)
@@ -141,8 +141,8 @@ class CommercialVehicleDistribution(_m.Tool(), gen_utils.Snapshot):
     def calc_friction_matrix(self, input_directory, scenario):
         emmebank = scenario.emmebank
 
-        imp_matrix = emmebank.matrix('mfCOMMVEH_BLENDED_SKIM')
-        friction_matrix = emmebank.matrix('mfCOMMVEH_FRICTION')
+        imp_matrix = emmebank.matrix('mfCOMVEH_BLENDED_SKIM')
+        friction_matrix = emmebank.matrix('mfCOMVEH_FRICTION')
         imp_array = imp_matrix.get_numpy_data(scenario_id=scenario.id)
 
         # create the vector function to bin the impedances and get friction values
@@ -163,11 +163,11 @@ class CommercialVehicleDistribution(_m.Tool(), gen_utils.Snapshot):
             'inro.emme.matrix_calculation.matrix_balancing')
         spec = {
             "type": "MATRIX_BALANCING",
-            "od_values_to_balance": "mfCOMMVEH_FRICTION",
-            "origin_totals": "moCOMMVEH_PROD",
-            "destination_totals": "mdCOMMVEH_ATTR",
+            "od_values_to_balance": "mfCOMVEH_FRICTION",
+            "origin_totals": "moCOMVEH_PROD",
+            "destination_totals": "mdCOMVEH_ATTR",
             "results": {
-                "od_balanced_values": "mfCOMMVEH_TOTAL_DEMAND",
+                "od_balanced_values": "mfCOMVEH_TOTAL_DEMAND",
             },
             "max_iterations": 100,
             "max_relative_error": 0.001
