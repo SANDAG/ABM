@@ -28,6 +28,9 @@ import os
 gen_utils = _m.Modeller().module("sandag.utilities.general")
 dem_utils = _m.Modeller().module("sandag.utilities.demand")
 
+format = lambda x: ("%.7f" % x).rstrip('0').rstrip(".")
+id_format = lambda x: str(int(x))
+
 
 class ExportDataLoaderNetwork(_m.Tool(), gen_utils.Snapshot):
 
@@ -125,7 +128,7 @@ Export network results to csv files for SQL data loader."""
             ("ITRUCK", "@truck_restriction"), ("ISPD", "@speed_posted"),
             ("IWAY", "1/2 way"), ("IMED", "@median"),
             ("ABAU", "@lane_auxiliary"), ("ABCNT", "@traffic_control"),
-            ("BAAU", "@lane_auxiliary"), ("BACNT", "@traffic_control"),
+            ("BAAU", ("@lane_auxiliary", "0")), ("BACNT", ("@traffic_control", "0")),
             ("ITOLL2_EA", "@toll_ea"),
             ("ITOLL2_AM", "@toll_am"),
             ("ITOLL2_MD", "@toll_md"),
@@ -146,84 +149,61 @@ Export network results to csv files for SQL data loader."""
             ("ITOLL5_MD", "@cost_hvy_truck_md"),
             ("ITOLL5_PM", "@cost_hvy_truck_pm"),
             ("ITOLL5_EV", "@cost_hvy_truck_ev"),
-            ("ABCP_EA", "@capacity_link_ea"),   ("BACP_EA", "@capacity_link_ea"),
-            ("ABCP_AM", "@capacity_link_am"),   ("BACP_AM", "@capacity_link_am"),
-            ("ABCP_MD", "@capacity_link_md"),   ("BACP_MD", "@capacity_link_md"),
-            ("ABCP_PM", "@capacity_link_pm"),   ("BACP_PM", "@capacity_link_pm"),
-            ("ABCP_EV", "@capacity_link_ev"),   ("BACP_EV", "@capacity_link_ev"),
-            ("ABCX_EA", "@capacity_inter_ea"),  ("BACX_EA", "@capacity_inter_ea"),
-            ("ABCX_AM", "@capacity_inter_am"),  ("BACX_AM", "@capacity_inter_am"),
-            ("ABCX_MD", "@capacity_inter_md"),  ("BACX_MD", "@capacity_inter_md"),
-            ("ABCX_PM", "@capacity_inter_pm"),  ("BACX_PM", "@capacity_inter_pm"),
-            ("ABCX_EV", "@capacity_inter_ev"),  ("BACX_EV", "@capacity_inter_ev"),
-            ("ABTM_EA", "@time_link_ea"),       ("BATM_EA", "@time_link_ea"),
-            ("ABTM_AM", "@time_link_am"),       ("BATM_AM", "@time_link_am"),
-            ("ABTM_MD", "@time_link_md"),       ("BATM_MD", "@time_link_md"),
-            ("ABTM_PM", "@time_link_pm"),       ("BATM_PM", "@time_link_pm"),
-            ("ABTM_EV", "@time_link_ev"),       ("BATM_EV", "@time_link_ev"),
-            ("ABTX_EA", "@time_inter_ea"),      ("BATX_EA", "@time_inter_ea"),
-            ("ABTX_AM", "@time_inter_am"),      ("BATX_AM", "@time_inter_am"),
-            ("ABTX_MD", "@time_inter_md"),      ("BATX_MD", "@time_inter_md"),
-            ("ABTX_PM", "@time_inter_pm"),      ("BATX_PM", "@time_inter_pm"),
-            ("ABTX_EV", "@time_inter_ev"),      ("BATX_EV", "@time_inter_ev"),
-            ("ABLN_EA", "@lane_ea"),            ("BALN_EA", "@lane_ea"),
-            ("ABLN_AM", "@lane_am"),            ("BALN_AM", "@lane_am"),
-            ("ABLN_MD", "@lane_md"),            ("BALN_MD", "@lane_md"),
-            ("ABLN_PM", "@lane_pm"),            ("BALN_PM", "@lane_pm"),
-            ("ABLN_EV", "@lane_ev"),            ("BALN_EV", "@lane_ev"),
-            ("ABSTM_EA", "@auto_time_ea"),      ("BASTM_EA", "@auto_time_ea"),
-            ("ABSTM_AM", "@auto_time_am"),      ("BASTM_AM", "@auto_time_am"),
-            ("ABSTM_MD", "@auto_time_md"),      ("BASTM_MD", "@auto_time_md"),
-            ("ABSTM_PM", "@auto_time_pm"),      ("BASTM_PM", "@auto_time_pm"),
-            ("ABSTM_EV", "@auto_time_ev"),      ("BASTM_EV", "@auto_time_ev"),
-            ("ABHTM_EA", "@auto_time_ea"),      ("BAHTM_EA", "@auto_time_ea"),
-            ("ABHTM_AM", "@auto_time_am"),      ("BAHTM_AM", "@auto_time_am"),
-            ("ABHTM_MD", "@auto_time_md"),      ("BAHTM_MD", "@auto_time_md"),
-            ("ABHTM_PM", "@auto_time_pm"),      ("BAHTM_PM", "@auto_time_pm"),
-            ("ABHTM_EV", "@auto_time_ev"),      ("BAHTM_EV", "@auto_time_ev"),
-            ("ABPRELOAD_EA", "@volad_ea"),      ("BAPRELOAD_EA", "@volad_ea"),
-            ("ABPRELOAD_AM", "@volad_am"),      ("BAPRELOAD_AM", "@volad_am"),
-            ("ABPRELOAD_MD", "@volad_md"),      ("BAPRELOAD_MD", "@volad_md"),
-            ("ABPRELOAD_PM", "@volad_pm"),      ("BAPRELOAD_PM", "@volad_pm"),
-            ("ABPRELOAD_EV", "@volad_ev"),      ("BAPRELOAD_EV", "@volad_ev")
-        ]
-        hwylink_atts_scenario = [
-            ("ABSTM_EA", "@auto_time_ea"),      ("BASTM_EA", "@auto_time_ea"),
-            ("ABSTM_AM", "@auto_time_am"),      ("BASTM_AM", "@auto_time_am"),
-            ("ABSTM_MD", "@auto_time_md"),      ("BASTM_MD", "@auto_time_md"),
-            ("ABSTM_PM", "@auto_time_pm"),      ("BASTM_PM", "@auto_time_pm"),
-            ("ABSTM_EV", "@auto_time_ev"),      ("BASTM_EV", "@auto_time_ev"),
-            ("ABPRELOAD_EA", "@volad_ea"),      ("BAPRELOAD_EA", "@volad_ea"),
-            ("ABPRELOAD_AM", "@volad_am"),      ("BAPRELOAD_AM", "@volad_am"),
-            ("ABPRELOAD_MD", "@volad_md"),      ("BAPRELOAD_MD", "@volad_md"),
-            ("ABPRELOAD_PM", "@volad_pm"),      ("BAPRELOAD_PM", "@volad_pm"),
-            ("ABPRELOAD_EV", "@volad_ev"),      ("BAPRELOAD_EV", "@volad_ev")
+            ("ABCP_EA", "@capacity_link_ea"),   ("BACP_EA", ("@capacity_link_ea", "999999")),
+            ("ABCP_AM", "@capacity_link_am"),   ("BACP_AM", ("@capacity_link_am", "999999")),
+            ("ABCP_MD", "@capacity_link_md"),   ("BACP_MD", ("@capacity_link_md", "999999")),
+            ("ABCP_PM", "@capacity_link_pm"),   ("BACP_PM", ("@capacity_link_pm", "999999")),
+            ("ABCP_EV", "@capacity_link_ev"),   ("BACP_EV", ("@capacity_link_ev", "999999")),
+            ("ABCX_EA", "@capacity_inter_ea"),  ("BACX_EA", ("@capacity_inter_ea", "999999")),
+            ("ABCX_AM", "@capacity_inter_am"),  ("BACX_AM", ("@capacity_inter_am", "999999")),
+            ("ABCX_MD", "@capacity_inter_md"),  ("BACX_MD", ("@capacity_inter_md", "999999")),
+            ("ABCX_PM", "@capacity_inter_pm"),  ("BACX_PM", ("@capacity_inter_pm", "999999")),
+            ("ABCX_EV", "@capacity_inter_ev"),  ("BACX_EV", ("@capacity_inter_ev", "999999")),
+            ("ABTM_EA", "@time_link_ea"),       ("BATM_EA", ("@time_link_ea", "999")),
+            ("ABTM_AM", "@time_link_am"),       ("BATM_AM", ("@time_link_am", "999")),
+            ("ABTM_MD", "@time_link_md"),       ("BATM_MD", ("@time_link_md", "999")),
+            ("ABTM_PM", "@time_link_pm"),       ("BATM_PM", ("@time_link_pm", "999")),
+            ("ABTM_EV", "@time_link_ev"),       ("BATM_EV", ("@time_link_ev", "999")),
+            ("ABTX_EA", "@time_inter_ea"),      ("BATX_EA", ("@time_inter_ea", "0")),
+            ("ABTX_AM", "@time_inter_am"),      ("BATX_AM", ("@time_inter_am", "0")),
+            ("ABTX_MD", "@time_inter_md"),      ("BATX_MD", ("@time_inter_md", "0")),
+            ("ABTX_PM", "@time_inter_pm"),      ("BATX_PM", ("@time_inter_pm", "0")),
+            ("ABTX_EV", "@time_inter_ev"),      ("BATX_EV", ("@time_inter_ev", "0")),
+            ("ABLN_EA", "@lane_ea"),            ("BALN_EA", ("@lane_ea", "0")),
+            ("ABLN_AM", "@lane_am"),            ("BALN_AM", ("@lane_am", "0")),
+            ("ABLN_MD", "@lane_md"),            ("BALN_MD", ("@lane_md", "0")),
+            ("ABLN_PM", "@lane_pm"),            ("BALN_PM", ("@lane_pm", "0")),
+            ("ABLN_EV", "@lane_ev"),            ("BALN_EV", ("@lane_ev", "0")),
+            ("ABSTM_EA", "@auto_time_ea"),      ("BASTM_EA", ("@auto_time_ea", "")),
+            ("ABSTM_AM", "@auto_time_am"),      ("BASTM_AM", ("@auto_time_am", "")),
+            ("ABSTM_MD", "@auto_time_md"),      ("BASTM_MD", ("@auto_time_md", "")),
+            ("ABSTM_PM", "@auto_time_pm"),      ("BASTM_PM", ("@auto_time_pm", "")),
+            ("ABSTM_EV", "@auto_time_ev"),      ("BASTM_EV", ("@auto_time_ev", "")),
+            ("ABHTM_EA", "@auto_time_ea"),      ("BAHTM_EA", ("@auto_time_ea", "")),
+            ("ABHTM_AM", "@auto_time_am"),      ("BAHTM_AM", ("@auto_time_am", "")),
+            ("ABHTM_MD", "@auto_time_md"),      ("BAHTM_MD", ("@auto_time_md", "")),
+            ("ABHTM_PM", "@auto_time_pm"),      ("BAHTM_PM", ("@auto_time_pm", "")),
+            ("ABHTM_EV", "@auto_time_ev"),      ("BAHTM_EV", ("@auto_time_ev", "")),
+            ("ABPRELOAD_EA", "@volad_ea"),      ("BAPRELOAD_EA", ("@volad_ea", "")),
+            ("ABPRELOAD_AM", "@volad_am"),      ("BAPRELOAD_AM", ("@volad_am", "")),
+            ("ABPRELOAD_MD", "@volad_md"),      ("BAPRELOAD_MD", ("@volad_md", "")),
+            ("ABPRELOAD_PM", "@volad_pm"),      ("BAPRELOAD_PM", ("@volad_pm", "")),
+            ("ABPRELOAD_EV", "@volad_ev"),      ("BAPRELOAD_EV", ("@volad_ev", ""))
         ]
 
         #copy assignment from period scenarios
         network = base_scenario.get_partial_network(["LINK"], include_attributes=True)
         network.create_attribute("LINK", "zero", 0)
-        periods = period_scenario_id.keys()
-        period_attrs = dict((p, ([], [])) for p in periods)
-        for field_name, dst_att in hwylink_atts_scenario:
-            if field_name.startswith("BA"):
-                continue
-            network.create_attribute("LINK", dst_att)
-            period = field_name[-2:]
-            if "auto_time" in dst_att:
-                src_att = "@auto_time"
-            elif "volad" in dst_att:
-                src_att = "additional_volume"
-            else:
-                src_att = dst_att
-            period_attrs[period][0].append(src_att)
-            period_attrs[period][1].append(dst_att)
-                
-        for period, (src_attrs, dst_attrs) in period_attrs.iteritems():
-            from_scenario = traffic_emmebank.scenario(period_scenario_id[period])
+
+        for period, scenario_id in period_scenario_id.iteritems():
+            from_scenario = traffic_emmebank.scenario(scenario_id)
+            src_attrs = ["@auto_time", "additional_volume"]
+            dst_attrs = ["@auto_time_" + period.lower(), "@volad_" + period.lower()]
+            for dst_attr in dst_attrs:
+                network.create_attribute("LINK", dst_attr)
             values = from_scenario.get_attribute_values("LINK", src_attrs)
             network.set_attribute_values("LINK", dst_attrs, values)
-            
+
         hwylink_atts_file = os.path.join(export_path, "hwy_tcad.csv")
         self.export_traffic_to_csv(hwylink_atts_file, hwylink_atts, network)
 
@@ -233,40 +213,42 @@ Export network results to csv files for SQL data loader."""
             "inro.emme.data.extra_attribute.create_extra_attribute")
         net_calculator = _m.Modeller().tool(
             "inro.emme.network_calculation.network_calculator")
-
-        hwyload_atts = [
-            ("ID1", "@tcov_id"),
-            ("AB_Flow_PCE", "@pce_flow"),   ("BA_Flow_PCE", "@pce_flow"), # sum of pce flow
-            ("AB_Time", "@auto_time"),      ("BA_Time", "@auto_time"),  #computed vdf based on pce flow
-            ("AB_VOC", "@voc"),             ("BA_VOC", "@voc"),
-            ("AB_V_Dist_T", "length"),      ("BA_V_Dist_T", "length"),
-            ("AB_VHT", "@vht"),             ("BA_VHT", "@vht"),
-            ("AB_Speed", "@speed"),         ("BA_Speed", "@speed"),
-            ("AB_VDF", "volume_delay_func"),("BA_VDF", "volume_delay_func"),
-            ("AB_MSA_Flow", "@msa_flow"),   ("BA_MSA_Flow", "@msa_flow"),   #
-            ("AB_MSA_Time", "@msa_time"),   ("BA_MSA_Time", "@msa_time"),   #
-            ("AB_Flow_SOV_GP", "@sovgp"),   ("BA_Flow_SOV_GP", "@sovgp"),
-            ("AB_Flow_SOV_PAY", "@sovtoll"),("BA_Flow_SOV_PAY", "@sovtoll"),
-            ("AB_Flow_SR2_GP", "@hov2gp"),  ("BA_Flow_SR2_GP", "@hov2gp"),
-            ("AB_Flow_SR2_HOV", "@hov2hov"),("BA_Flow_SR2_HOV", "@hov2hov"),
-            ("AB_Flow_SR2_PAY", "@hov2toll"), ("BA_Flow_SR2_PAY", "@hov2toll"),
-            ("AB_Flow_SR3_GP", "@hov3gp"),  ("BA_Flow_SR3_GP", "@hov3gp"),
-            ("AB_Flow_SR3_HOV", "@hov3hov"),("BA_Flow_SR3_HOV", "@hov3hov"),
-            ("AB_Flow_SR3_PAY", "@hov3toll"), ("BA_Flow_SR3_PAY", "@hov3toll"),
-            ("AB_Flow_lhdn", "@trklgp"),    ("BA_Flow_lhdn", "@trklgp"),
-            ("AB_Flow_mhdn", "@trkmgp"),    ("BA_Flow_mhdn", "@trkmgp"),
-            ("AB_Flow_hhdn", "@trkhgp"),    ("BA_Flow_hhdn", "@trkhgp"),
-            ("AB_Flow_lhdt", "@trkltoll"),  ("BA_Flow_lhdt", "@trkltoll"),
-            ("AB_Flow_mhdt", "@trkmtoll"),  ("BA_Flow_mhdt", "@trkmtoll"),
-            ("AB_Flow_hhdt", "@trkhtoll"),  ("BA_Flow_hhdt", "@trkhtoll"),
-            ("AB_Flow", "@non_pce_flow"),   ("BA_Flow", "@non_pce_flow")
+        hwyload_atts = [("ID1", "@tcov_id")]
+        dir_atts = [
+            ("AB_Flow_PCE", "@pce_flow"),   # sum of pce flow
+            ("AB_Time", "@auto_time"),      # computed vdf based on pce flow
+            ("AB_VOC", "@voc"),
+            ("AB_V_Dist_T", "length"),
+            ("AB_VHT", "@vht"),
+            ("AB_Speed", "@speed"),
+            ("AB_VDF", "@msa_time"),
+            ("AB_MSA_Flow", "@msa_flow"),
+            ("AB_MSA_Time", "@msa_time"),
+            ("AB_Flow_SOV_GP", "@sovgp"),
+            ("AB_Flow_SOV_PAY", "@sovtoll"),
+            ("AB_Flow_SR2_GP", "@hov2gp"),
+            ("AB_Flow_SR2_HOV", "@hov2hov"),
+            ("AB_Flow_SR2_PAY", "@hov2toll"),
+            ("AB_Flow_SR3_GP", "@hov3gp"),
+            ("AB_Flow_SR3_HOV", "@hov3hov"),
+            ("AB_Flow_SR3_PAY", "@hov3toll"),
+            ("AB_Flow_lhdn", "@trklgp"),
+            ("AB_Flow_mhdn", "@trkmgp"),
+            ("AB_Flow_hhdn", "@trkhgp"),
+            ("AB_Flow_lhdt", "@trkltoll"),
+            ("AB_Flow_mhdt", "@trkmtoll"),
+            ("AB_Flow_hhdt", "@trkhtoll"),
+            ("AB_Flow", "@non_pce_flow"),
         ]
+        for key, attr in dir_atts:
+            hwyload_atts.append((key, attr))
+            hwyload_atts.append((key.replace("AB_", "BA_"), (attr, "")))  # default for BA on one-way links is blank
         for p, scen_id in period_scenario_id.iteritems():
             scenario = traffic_emmebank.scenario(scen_id)
             new_atts = [("@msa_flow", "MSA flow", "@auto_volume"), #updated with vdf on msa flow
                         ("@msa_time", "MSA time", "timau"),  #skim assignment time on msa flow
                         ("@voc", "volume over capacity", "@auto_volume/ul3"),
-                        ("@vht", "vehicle hour traveled", "@auto_volume*timau/60"),
+                        ("@vht", "vehicle hours travelled", "@auto_volume*timau/60"),
                         ("@speed", "link travel speed", "length*60/timau"),
                         ("@pce_flow", "total number of vehicles in Pce",
                                  "@sovgp+@sovtoll+ \
@@ -293,43 +275,40 @@ Export network results to csv files for SQL data loader."""
                         }
                 net_calculator(cal_spec, scenario=scenario)
             file_path = os.path.join(export_path, "hwyload_%s.csv" % p)
-            network = self.get_partial_network(scenario, {"LINK": [a for f,a in hwyload_atts]})
+            network = self.get_partial_network(scenario, {"LINK": [a[1] for a in dir_atts]})
             self.export_traffic_to_csv(file_path, hwyload_atts, network)
 
     def export_traffic_to_csv(self, filename, att_list, network):
-        fout = open(filename, 'w')
-        fout.write(",".join([x[0] for x in att_list]))
-        fout.write("\n")
-        auto_mode = net.mode("d")
-        for link in network.links():
-            if link["@tcov_id"] <= 0:
-                continue  # only the original forward direction links
-            reverse_link = link.reverse_link
-            if not auto_mode in link.modes or (reverse_link and not auto_mode in reverse_link.modes):
-                continue  # auto links only
-            key, att = att_list[0]  # link id
-            link_id = int(link[att])
-            if link_id == 0:
-                link_id = int(link.i_node.number * 100000 + link.j_node.number)
-            values = [link_id]
-            for key, att in att_list[1:]:
-                # special for highway attrs
-                if key == "AN":
-                    values.append(link.i_node.id)
-                elif key == "BN":
-                    values.append(link.j_node.id)
-                elif key == "IWAY":
-                    values.append(2 if reverse_link else 1)
-                # special for highway load
-                elif key.startswith("AB"):
-                    values.append(link[att])
-                elif key.startswith("BA"):
-                    values.append(reverse_link[att] if reverse_link else 0)
-                else:
-                    values.append(link[att])
-            fout.write(",".join([str(x) for x in values]))
+        auto_mode = network.mode("d")
+        # only the original forward direction links and auto links only
+        links = [l for l in network.links() 
+                 if l["@tcov_id"] > 0 and 
+                 (auto_mode in l.modes or (l.reverse_link and auto_mode in l.reverse_link.modes))
+                ]
+        links.sort(key=lambda l: l["@tcov_id"])
+        with open(filename, 'w') as fout:
+            fout.write(",".join(['"%s"' % x[0] for x in att_list]))
             fout.write("\n")
-        fout.close()
+            for link in links:
+                key, att = att_list[0]  # expected to be the link id
+                values = [id_format(link[att])]
+                reverse_link = link.reverse_link
+                for key, att in att_list[1:]:
+                    if key == "AN":
+                        values.append(link.i_node.id)
+                    elif key == "BN":
+                        values.append(link.j_node.id)
+                    elif key == "IWAY":
+                        values.append("2" if reverse_link else "1")
+                    elif key.startswith("BA"):
+                        name, default = att
+                        values.append(format(reverse_link[name]) if reverse_link else default)
+                    elif att.startswith("#"):
+                        values.append(link[att])
+                    else:
+                        values.append(format(link[att]))
+                fout.write(",".join(values))
+                fout.write("\n")
 
     @_m.logbook_trace("Export transit results")
     def export_transit_results(self, export_path, transit_emmebank, period_scenario_id, num_processors):
@@ -359,7 +338,8 @@ Export network results to csv files for SQL data loader."""
             "TOMP",
             "TRANSITFLOW",
             "BASEIVTT",
-            "COST"
+            "COST",
+            "VOC",
         ]
         transit_aggregate_flow_atts = [
             "MODE",
@@ -397,120 +377,123 @@ Export network results to csv files for SQL data loader."""
 
         transit_flow_file = os.path.join(export_path, "transit_flow.csv")
         fout_seg = open(transit_flow_file, 'w')
-        fout_seg.write(",".join(transit_flow_atts))
+        fout_seg.write(",".join(['"%s"' % x for x in transit_flow_atts]))
         fout_seg.write("\n")
 
         transit_aggregate_flow_file = os.path.join(export_path, "transit_aggflow.csv")
         fout_link = open(transit_aggregate_flow_file, 'w')
-        fout_link.write(",".join(transit_aggregate_flow_atts))
+        fout_link.write(",".join(['"%s"' % x for x in transit_aggregate_flow_atts]))
         fout_link.write("\n")
 
         transit_onoff_file = os.path.join(export_path, "transit_onoff.csv")
         fout_stop = open(transit_onoff_file, 'w')
-        fout_stop.write(",".join(transit_onoff_atts))
+        fout_stop.write(",".join(['"%s"' % x for x in transit_onoff_atts]))
         fout_stop.write("\n")
+        try:
+            access_modes = ["WLK", "PNR", "KNR"]
+            main_modes = ["BUS", "LRT", "CMR", "BRT", "EXP"]
+            all_modes = ["b", "c", "e", "l", "r", "p", "y", "a", "w", "x"]
+            local_bus_modes = ["b", "a", "w", "x"]
+            for tod, scen_id in period_scenario_id.iteritems():
+                with _m.logbook_trace("Processing period %s" % tod):
+                    scenario = transit_emmebank.scenario(scen_id)
+                    self.check_network_adj(scenario)
+                    # attributes
+                    total_walk_flow = create_attribute("LINK", "@volax", "total walk flow on links",
+                                0, overwrite=True, scenario=scenario)
+                    segment_flow = create_attribute("TRANSIT_SEGMENT", "@voltr", "transit segment flow",
+                                0, overwrite=True, scenario=scenario)
+                    link_transit_flow = create_attribute("LINK", "@link_voltr", "total transit flow on link",
+                                0, overwrite=True, scenario=scenario)
+                    initial_boardings = create_attribute("TRANSIT_SEGMENT",
+                                "@init_boardings", "transit initial boardings",
+                                0, overwrite=True, scenario=scenario)
+                    xfer_boardings = create_attribute("TRANSIT_SEGMENT",
+                                "@xfer_boardings", "transit transfer boardings",
+                                0, overwrite=True, scenario=scenario)
+                    total_boardings = create_attribute("TRANSIT_SEGMENT",
+                                "@total_boardings", "transit total boardings",
+                                0, overwrite=True, scenario=scenario)
+                    final_alightings = create_attribute("TRANSIT_SEGMENT",
+                                "@final_alightings", "transit final alightings",
+                                0, overwrite=True, scenario=scenario)
+                    xfer_alightings = create_attribute("TRANSIT_SEGMENT",
+                                "@xfer_alightings", "transit transfer alightings",
+                                0, overwrite=True, scenario=scenario)
+                    total_alightings = create_attribute("TRANSIT_SEGMENT",
+                                "@total_alightings", "transit total alightings",
+                                0, overwrite=True, scenario=scenario)
 
-        access_modes = ["WLK", "PNR", "KNR"]
-        main_modes = ["BUS", "LRT", "CMR", "BRT", "EXP"]
-        all_modes = ["b", "c", "e", "l", "r", "p", "y", "a", "w", "x"]
-        local_bus_modes = ["b", "a", "w", "x"]
-        for tod, scen_id in period_scenario_id.iteritems():
-            with _m.logbook_trace("Processing period %s" % tod):
-                scenario = transit_emmebank.scenario(scen_id)
-                self.check_network_adj(scenario)
-                # attributes
-                total_walk_flow = create_attribute("LINK", "@volax", "total walk flow on links",
-                            0, overwrite=True, scenario=scenario)
-                segment_flow = create_attribute("TRANSIT_SEGMENT", "@voltr", "transit segment flow",
-                            0, overwrite=True, scenario=scenario)
-                link_transit_flow = create_attribute("LINK", "@link_voltr", "total transit flow on link",
-                            0, overwrite=True, scenario=scenario)
-                initial_boardings = create_attribute("TRANSIT_SEGMENT",
-                            "@init_boardings", "transit initial boardings",
-                            0, overwrite=True, scenario=scenario)
-                xfer_boardings = create_attribute("TRANSIT_SEGMENT",
-                            "@xfer_boardings", "transit transfer boardings",
-                            0, overwrite=True, scenario=scenario)
-                total_boardings = create_attribute("TRANSIT_SEGMENT",
-                            "@total_boardings", "transit total boardings",
-                            0, overwrite=True, scenario=scenario)
-                final_alightings = create_attribute("TRANSIT_SEGMENT",
-                            "@final_alightings", "transit final alightings",
-                            0, overwrite=True, scenario=scenario)
-                xfer_alightings = create_attribute("TRANSIT_SEGMENT",
-                            "@xfer_alightings", "transit transfer alightings",
-                            0, overwrite=True, scenario=scenario)
-                total_alightings = create_attribute("TRANSIT_SEGMENT",
-                            "@total_alightings", "transit total alightings",
-                            0, overwrite=True, scenario=scenario)
+                    access_walk_flow = create_attribute("LINK",
+                                "@access_walk_flow", "access walks (orig to init board)",
+                                0, overwrite=True, scenario=scenario)
+                    xfer_walk_flow = create_attribute("LINK",
+                                "@xfer_walk_flow", "xfer walks (init board to final alight)",
+                                0, overwrite=True, scenario=scenario)
+                    egress_walk_flow = create_attribute("LINK",
+                                "@egress_walk_flow", "egress walks (final alight to dest)",
+                                0, overwrite=True, scenario=scenario)
 
-                access_walk_flow = create_attribute("LINK",
-                            "@access_walk_flow", "access walks (orig to init board)",
-                            0, overwrite=True, scenario=scenario)
-                xfer_walk_flow = create_attribute("LINK",
-                            "@xfer_walk_flow", "xfer walks (init board to final alight)",
-                            0, overwrite=True, scenario=scenario)
-                egress_walk_flow = create_attribute("LINK",
-                            "@egress_walk_flow", "egress walks (final alight to dest)",
-                            0, overwrite=True, scenario=scenario)
+                    for main_mode in main_modes:
+                        mode = "LOC" if main_mode == "BUS" else main_mode
+                        mode_list = local_bus_modes if main_mode == "BUS" else all_modes
+                        for access_type in access_modes:
+                            with _m.logbook_trace("Main mode %s access mode %s" % (main_mode, access_type)):
+                                class_name = "%s_%s%s" % (tod, access_type, main_mode)
+                                segment_results = {
+                                    "transit_volumes": segment_flow.id,
+                                    "initial_boardings": initial_boardings.id,
+                                    "total_boardings": total_boardings.id,
+                                    "final_alightings": final_alightings.id,
+                                    "total_alightings": total_alightings.id,
+                                    "transfer_boardings": xfer_boardings.id,
+                                    "transfer_alightings": xfer_alightings.id
+                                }
+                                link_results = {
+                                    "total_walk_flow": total_walk_flow.id,
+                                    "link_transit_flow": link_transit_flow.id,
+                                    "access_walk_flow": access_walk_flow.id,
+                                    "xfer_walk_flow": xfer_walk_flow.id,
+                                    "egress_walk_flow": egress_walk_flow.id
+                                }
 
-                for main_mode in main_modes:
-                    mode = "LOC" if main_mode == "BUS" else main_mode
-                    mode_list = local_bus_modes if main_mode == "BUS" else all_modes
-                    for access_type in access_modes:
-                        with _m.logbook_trace("Main mode %s access mode %s" % (main_mode, access_type)):
-                            class_name = "%s_%s%s" % (tod, access_type, main_mode)
-                            segment_results = {
-                                "transit_volumes": segment_flow.id,
-                                "initial_boardings": initial_boardings.id,
-                                "total_boardings": total_boardings.id,
-                                "final_alightings": final_alightings.id,
-                                "total_alightings": total_alightings.id,
-                                "transfer_boardings": xfer_boardings.id,
-                                "transfer_alightings": xfer_alightings.id
-                            }
-                            link_results = {
-                                "total_walk_flow": total_walk_flow.id,
-                                "link_transit_flow": link_transit_flow.id,
-                                "access_walk_flow": access_walk_flow.id,
-                                "xfer_walk_flow": xfer_walk_flow.id,
-                                "egress_walk_flow": egress_walk_flow.id
-                            }
-
-                            self.calc_additional_results(
-                                scenario, class_name, num_processors,
-                                total_walk_flow, segment_results, link_transit_flow,
-                                access_walk_flow, xfer_walk_flow, egress_walk_flow)
-                            attributes = {
-                                "NODE": ["@network_adj"],#, "initial_boardings", "final_alightings"],
-                                "LINK": link_results.values() + ["@tcov_id", "length"],
-                                "TRANSIT_LINE": ["@route_id"],
-                                "TRANSIT_SEGMENT": segment_results.values() + ["@stop_id", "allow_boardings", "allow_alightings"],
-                            }
-                            net = self.get_partial_network(scenario, attributes)
-                            self.collapse_network_adjustments(net, segment_results, link_results)
-                            # ===============================================
-                            # analysis for nodes with/without walk option
-                            if use_node_analysis_to_get_transit_transfers:
-                                stop_on, stop_off = self.transfer_analysis(scenario, class_name, num_processors)
-                            else:
-                                stop_on, stop_off = {}, {}
-                            # ===============================================
-                            links = [link for link in net.links() if link["@tcov_id"] > 0]
-                            lines = [line for line in net.transit_lines() if line.mode.id in mode_list]
-                            
-                            label = ",".join([mode, access_type, tod])
-                            self.output_transit_flow(label, lines, segment_flow.id, fout_seg)
-                            self.output_transit_aggregate_flow(
-                               label, links, link_transit_flow.id, total_walk_flow.id, access_walk_flow.id,
-                                xfer_walk_flow.id, egress_walk_flow.id, fout_link)
-                            self.output_transit_onoff(
-                                label, lines, total_boardings.id, total_alightings.id, initial_boardings.id,
-                                xfer_boardings.id, xfer_alightings.id, final_alightings.id,
-                                stop_on, stop_off, fout_stop)
-        fout_stop.close()
-        fout_link.close()
-        fout_seg.close()
+                                self.calc_additional_results(
+                                    scenario, class_name, num_processors,
+                                    total_walk_flow, segment_results, link_transit_flow,
+                                    access_walk_flow, xfer_walk_flow, egress_walk_flow)
+                                attributes = {
+                                    "NODE": ["@network_adj"],#, "initial_boardings", "final_alightings"],
+                                    "LINK": link_results.values() + ["@tcov_id", "length"],
+                                    "TRANSIT_LINE": ["@route_id"],
+                                    "TRANSIT_SEGMENT": segment_results.values() + ["@stop_id", "allow_boardings", "allow_alightings"],
+                                }
+                                network = self.get_partial_network(scenario, attributes)
+                                self.collapse_network_adjustments(network, segment_results, link_results)
+                                # ===============================================
+                                # analysis for nodes with/without walk option
+                                if use_node_analysis_to_get_transit_transfers:
+                                    stop_on, stop_off = self.transfer_analysis(scenario, class_name, num_processors)
+                                else:
+                                    stop_on, stop_off = {}, {}
+                                # ===============================================
+                                links = [link for link in network.links() if link["@tcov_id"] > 0]
+                                links.sort(key=lambda l: l["@tcov_id"])
+                                lines = [line for line in network.transit_lines() if line.mode.id in mode_list]
+                                lines.sort(key=lambda l: l["@route_id"])
+                                
+                                label = ",".join([mode, access_type, tod])
+                                self.output_transit_flow(label, lines, segment_flow.id, fout_seg)
+                                self.output_transit_aggregate_flow(
+                                   label, links, link_transit_flow.id, total_walk_flow.id, access_walk_flow.id,
+                                    xfer_walk_flow.id, egress_walk_flow.id, fout_link)
+                                self.output_transit_onoff(
+                                    label, lines, total_boardings.id, total_alightings.id, initial_boardings.id,
+                                    xfer_boardings.id, xfer_alightings.id, final_alightings.id,
+                                    stop_on, stop_off, fout_stop)
+        finally:
+            fout_stop.close()
+            fout_link.close()
+            fout_seg.close()
         return
         
     def get_partial_network(self, scenario, attributes):
@@ -524,9 +507,10 @@ Export network results to csv files for SQL data loader."""
 
     def output_transit_flow(self, label, lines, segment_flow, fout_seg):
         # output segment data (transit_flow)
-        centroid = "0"
+        centroid = "0"  # always 0
+        voc = ""  # volume/capacity, not actually used, 
         for line in lines:
-            line_id = int(line["@route_id"])
+            line_id = id_format(line["@route_id"])
             ivtt = from_mp = to_mp = 0
             segments = iter(line.segments())
             seg = segments.next()
@@ -536,9 +520,10 @@ Export network results to csv files for SQL data loader."""
                 if not next_seg.allow_boardings :
                     continue
                 transit_flow = seg[segment_flow]
-                fout_seg.write(",".join([str(x) for x in [
-                                label, line_id, int(seg["@stop_id"]), int(next_seg["@stop_id"]),
-                                centroid, from_mp, to_mp, transit_flow, ivtt, ivtt]]))
+                format_ivtt = format(ivtt)
+                fout_seg.write(",".join([
+                    label, line_id, id_format(seg["@stop_id"]), id_format(next_seg["@stop_id"]), centroid, 
+                    format(from_mp), format(to_mp), format(transit_flow), format_ivtt, format_ivtt, voc]))
                 fout_seg.write("\n")
                 seg = next_seg
                 from_mp = to_mp
@@ -547,9 +532,9 @@ Export network results to csv files for SQL data loader."""
     def output_transit_aggregate_flow(self, label, links,
                                       link_transit_flow, total_walk_flow, access_walk_flow,
                                       xfer_walk_flow, egress_walk_flow, fout_link):
-        # output link data (transit_aggregate_flow)
+        # output link data (transit_aggregate_flow)        
         for link in links:
-            link_id = int(link["@tcov_id"])
+            link_id = id_format(link["@tcov_id"])
             ab_transit_flow = link[link_transit_flow]
             ab_non_transit_flow = link[total_walk_flow]
             ab_total_flow = ab_transit_flow + ab_non_transit_flow
@@ -571,15 +556,14 @@ Export network results to csv files for SQL data loader."""
                 ba_xfer_walk_flow = 0.0
                 ba_egress_walk_flow = 0.0
 
-            fout_link.write(",".join([str(x) for x in [
-                         label, link_id,
-                         ab_transit_flow, ba_transit_flow,
-                         ab_non_transit_flow, ba_non_transit_flow,
-                         ab_total_flow, ba_total_flow,
-                         ab_access_walk_flow, ba_access_walk_flow,
-                         ab_xfer_walk_flow, ba_xfer_walk_flow,
-                         ab_egress_walk_flow, ba_egress_walk_flow
-                        ]]))
+            fout_link.write(",".join(
+                [label, link_id,
+                 format(ab_transit_flow), format(ba_transit_flow),
+                 format(ab_non_transit_flow), format(ba_non_transit_flow),
+                 format(ab_total_flow), format(ba_total_flow),
+                 format(ab_access_walk_flow), format(ba_access_walk_flow),
+                 format(ab_xfer_walk_flow), format(ba_xfer_walk_flow),
+                 format(ab_egress_walk_flow), format(ba_egress_walk_flow)]))
             fout_link.write("\n")
 
     def output_transit_onoff(self, label, lines, 
@@ -588,7 +572,7 @@ Export network results to csv files for SQL data loader."""
                              stop_on, stop_off, fout_stop):
         # output stop data (transit_onoff)
         for line in lines:
-            line_id = int(line["@route_id"])
+            line_id = id_format(line["@route_id"])
             for seg in line.segments(True):
                 if not (seg.allow_alightings or seg.allow_boardings):
                     continue
@@ -611,12 +595,12 @@ Export network results to csv files for SQL data loader."""
                             walk_xfer_off = direct_xfer_off - stop_off[i_node][line.id]
                             direct_xfer_off = stop_off[i_node][line.id]
 
-                egress_off = seg[final_alightings.id]
-                fout_stop.write(",".join([str(x) for x in [
-                                label, line_id, int(seg["@stop_id"]),
-                                boardings, alightings, walk_access_on,
-                                direct_xfer_on, walk_xfer_on, direct_xfer_off, walk_xfer_off,
-                                egress_off]]))
+                egress_off = seg[final_alightings]
+                fout_stop.write(",".join([
+                    label, line_id, id_format(seg["@stop_id"]),
+                    format(boardings), format(alightings), format(walk_access_on),
+                    format(direct_xfer_on), format(walk_xfer_on), format(direct_xfer_off),
+                    format(walk_xfer_off), format(egress_off)]))
                 fout_stop.write("\n")
 
     def check_network_adj(self, scenario):
