@@ -375,7 +375,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                         skims_only=False, num_processors=num_processors)
                 if not skipFinalTransitSkimming:
                     omx_file = _join(output_dir, "transit_skims.omx")   
-                    export_transit_skims(omx_file, transit_scenario)
+                    export_transit_skims(omx_file, transit_scenario, big_to_zero=True)
 
         if not skipDataExport:
             export_network_data(main_directory, scenario_id, main_emmebank, transit_emmebank, num_processors)

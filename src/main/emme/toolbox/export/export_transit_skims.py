@@ -25,11 +25,12 @@ gen_utils = _m.Modeller().module("sandag.utilities.general")
 
 class ExportSkims(_m.Tool(), gen_utils.Snapshot):
     omx_file = _m.Attribute(unicode)
+    big_to_zero = _m.Attribute(bool)
 
     tool_run_msg = ""
 
     def __init__(self):
-        self.attributes = ["omx_file"]
+        self.attributes = ["omx_file", "big_to_zero"]
 
     @_m.method(return_type=_m.UnicodeType)
     def tool_run_msg_status(self):
@@ -45,6 +46,8 @@ class ExportSkims(_m.Tool(), gen_utils.Snapshot):
 
         pb.add_select_file('omx_file', 'save_file',
                            title='Select OMX file')
+        pb.add_checkbox('big_to_zero', label='Replace big values (>10E6) with zero',
+                        title=' ')
 
         return pb.render()
 
@@ -52,7 +55,7 @@ class ExportSkims(_m.Tool(), gen_utils.Snapshot):
         self.tool_run_msg = ""
         try:
             scenario = _m.Modeller().scenario
-            self(self.omx_file, scenario)
+            self(self.omx_file, scenario, self.big_to_zero)
             run_msg = "Tool completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -62,15 +65,22 @@ class ExportSkims(_m.Tool(), gen_utils.Snapshot):
 
 
     @_m.logbook_trace("Export transit skims to OMX", save_arguments=True)
-    def __call__(self, omx_file, scenario):
-        attributes = {"omx_file": omx_file}
+    def __call__(self, omx_file, scenario, big_to_zero=False):
+        attributes = {"omx_file": omx_file, "big_to_zero": big_to_zero}
         gen_utils.log_snapshot("Export transit skims to OMX", str(self), attributes)
+        emmebank = scenario.emmebank
         matrices = []
         for period in ["EA", "AM", "MD", "PM", "EV"]:
             for name in self._skim_names():
-                matrices.append(period + "_" + name)
+                matrices.append(emmebank.matrix(period + "_" + name))
         with gen_utils.ExportOMX(omx_file, scenario, omx_key="NAME") as exporter:
-            exporter.write_matrices(matrices)
+            if big_to_zero:
+                for matrix in matrices:
+                    array = matrix.get_numpy_data(scenario)
+                    array[array>10E6] = 0
+                    exporter.write_array(array, exporter.generate_key(matrix))
+            else:
+                exporter.write_matrices(matrices)
 
     def _skim_names(self):
         matrices = [
