@@ -586,7 +586,7 @@ Assign traffic demand for the selected time period."""
         net_calc = gen_utils.NetworkCalculator(scenario)
         emmebank = scenario.emmebank
         p = period.lower()
-        # ul2 becomes the total flow (volau + volad) in the skim assignment
+        # ul2 is the total flow (volau + volad) in the skim assignment
         with _m.logbook_trace("Calculation of attributes for skims"):
             if period == "MD":
                 gen_truck_mode = 'D'
@@ -629,18 +629,18 @@ Assign traffic demand for the selected time period."""
                 {"link": "not @toll_%s=0.0 and not @lane_restriction=4" % p})
             net_calc("@tolldist", "length", {"link": "not @toll_%s=0.0" % p})
             net_calc("@auto_volume", "volau", {"link": "modes=d"})
-            net_cal("ul2", "volau+volad", {"link": "modes=d"})
+            net_calc("ul2", "volau+volad", {"link": "modes=d"})
             vdfs = [f for f in emmebank.functions() if f.type == "VOLUME_DELAY"]
             exf_pars = emmebank.extra_function_parameters
-            for function in vdf:
+            for function in vdfs:
                 expression = function.expression
                 for exf_par in ["el1", "el2", "el3"]:
                     expression = expression.replace(exf_par, getattr(exf_pars, exf_par))
                 # split function into time component and reliability component
-                time_expr, reliability_expr = expression.split("*(1+el2+")
+                time_expr, reliability_expr = expression.split("*(1+@sta_reliability+")
                 net_calc("@auto_time", time_expr, {"link": "vdf=%s" % function.id[2:]})
-                net_calc("@reliability", "(1+el2+" + reliability_expr, {"link": "vdf=%s" % function.id[2:]})
-            net_calc("@reliability_sq", "@reliability **2", {"link": "modes=d"})
+                net_calc("@reliability", "(@sta_reliability+" + reliability_expr, {"link": "vdf=%s" % function.id[2:]})
+            net_calc("@reliability_sq", "@reliability**2", {"link": "modes=d"})
             net_calc("@auto_time_turn", "ptimau*(ptimau.gt.0)",
                      {"incoming_link": "all", "outgoing_link": "all"})
 
