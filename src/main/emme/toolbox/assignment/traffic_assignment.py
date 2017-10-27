@@ -601,7 +601,7 @@ Assign traffic demand for the selected time period."""
                 "TOLLCOST": "@tollcost",
                 "MLCOST":   "@mlcost",
                 "TOLLDIST": "@tolldist",
-                "REL", "@reliability_sq"
+                "REL": "@reliability_sq"
             }
             analysis_turn = {"TIME": "@auto_time_turn"}
             create_attribute("LINK", "@hovdist", "distance for HOV",

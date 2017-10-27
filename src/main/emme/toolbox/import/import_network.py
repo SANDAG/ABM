@@ -205,10 +205,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("CHO",       ("@capacity_hourly_op",  "ONE_WAY", "EXTRA", "Off-Peak hourly mid-link capacity")),
                 ("CHA",       ("@capacity_hourly_am",  "ONE_WAY", "EXTRA", "AM Peak hourly mid-link capacity")),
                 ("CHP",       ("@capacity_hourly_pm",  "ONE_WAY", "EXTRA", "PM Peak hourly mid-link capacity")),
-                # TODO: Intersection distance for static reliability calculation
-                ("INTDIST_UP",("@intdist_up",          "TWO_WAY", "EXTRA", "Upstream major intersection distance")),
-                ("INTDIST_DOWN",("@intdist_down",      "TWO_WAY", "EXTRA", "Downstream major intersection distance")),
-                # These attribtues are expanded from 3 time periods to 5
+                ("INTDIST_UP",("@intdist_up",          "DERIVED", "INTERNAL", "Upstream major intersection distance")),
+                ("INTDIST_DOWN",("@intdist_down",      "DERIVED", "INTERNAL", "Downstream major intersection distance")),
+                # These attributes are expanded from 3 time periods to 5
                 ("ITOLLO",    ("toll_op",              "TWO_WAY", "INTERNAL", "Expanded to EA, MD and EV")),
                 ("ITOLLA",    ("toll_am",              "TWO_WAY", "INTERNAL", "")),
                 ("ITOLLP",    ("toll_pm",              "TWO_WAY", "INTERNAL", "")),
@@ -1160,16 +1159,15 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             sta_oth_lanefct = {"1Lane": 0.0, "2Lane": 0.0103589, "3Lane": 0.0361211, "4Lane": 0.0446958, "5+Lane": 0.0}
             sta_oth_spdfct =  {"<35mph": 0.0, "35mph": 0.0075674, "40mph": 0.0091012, 
                                "45mph": 0.0080996, "50mph": -0.0022938, ">50mph": -0.0046211}
-            sta_oth_xdelay =  {"Signal": 0.0030973, "Stop": -0.0063281, "RailRoad": 0.0127692 "Nothing": 0.0}
-            
-                  
+            sta_oth_xdelay =  {"Signal": 0.0030973, "Stop": -0.0063281, "RailRoad": 0.0127692, "Nothing": 0.0}
             for time in time_periods:
                 # determine link category
                 # freeway
                 if link["type"] == 1 and link["@lane" + time] > 0:
-                    link["@sta_reliability" + time] =
-                        sta_fwy_intercept + (sta_fwy_spdfact if link["@speed_posted"] == 70 else 0.0) +
-                        sta_fwy_upstream * 1/link["@intdist_up"] + sta_fwy_downstream * 1/link["@intdist_down"]
+                    link["@sta_reliability" + time] = \
+                        sta_fwy_intercept + (sta_fwy_spdfact if link["@speed_posted"] == 70 else 0.0)
+                        #+ \
+                        #sta_fwy_upstream * 1/link["@intdist_up"] + sta_fwy_downstream * 1/link["@intdist_down"]
                 # arterial/ramp/other
                 elif link["type"] <= 9 and link["@lane" + time] > 0:
                     # determine lane category
@@ -1193,10 +1191,10 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                         delayType = "Stop"
                     elif link["@traffic_control"] > 3:
                         delayType = "RailRoad"
-                    else
+                    else:
                         delayType = "Nothing"
                     
-                    link["@sta_reliability" + time] =
+                    link["@sta_reliability" + time] = \
                         sta_oth_intercept + sta_oth_lanefct[laneType] + sta_oth_spdfct[speedType] + sta_oth_xdelay[delayType]
                 else:
                     link["@sta_reliability" + time] = 0.0
@@ -1462,9 +1460,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         reliability_tmplt = (
             "* (1 + el2"
-            "+ ( {factor[LOS_C]} * ( put(get(1).min.1.5) - {threshold[LOS_C]} + 0.01 ) ) * get(1) .gt. {threshold[LOS_C]})"
-            "+ ( {factor[LOS_D]} * ( get(2) - {threshold[LOS_D]} + 0.01 )  ) * (get(1) .gt. {threshold[LOS_D]})"
-            "+ ( {factor[LOS_E]} * ( get(2) - {threshold[LOS_E]} + 0.01 )  ) * (get(1) .gt. {threshold[LOS_E]})"
+            "+ ( {factor[LOS_C]}  * ( put(get(1).min.1.5) - {threshold[LOS_C]} + 0.01 ) ) * (get(1) .gt. {threshold[LOS_C]})"
+            "+ ( {factor[LOS_D]}  * ( get(2) - {threshold[LOS_D]}  + 0.01 )  ) * (get(1) .gt. {threshold[LOS_D]})"
+            "+ ( {factor[LOS_E]}  * ( get(2) - {threshold[LOS_E]}  + 0.01 )  ) * (get(1) .gt. {threshold[LOS_E]})"
             "+ ( {factor[LOS_FL]} * ( get(2) - {threshold[LOS_FL]} + 0.01 )  ) * (get(1) .gt. {threshold[LOS_FL]})"
             "+ ( {factor[LOS_FH]} * ( get(2) - {threshold[LOS_FH]} + 0.01 )  ) * (get(1) .gt. {threshold[LOS_FH]}) )")
         parameters = {

@@ -36,7 +36,7 @@ def init_emme_project(root, title):
         'scalar_matrices': 9999,
         'destination_matrices': 999,
         'origin_matrices': 999,
-        'full_matrices': 999,
+        'full_matrices': 1499,
 
         'scenarios': 10,
         'centroids': 5000,
