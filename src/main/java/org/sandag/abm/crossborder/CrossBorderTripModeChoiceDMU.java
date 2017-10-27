@@ -2,16 +2,27 @@ package org.sandag.abm.crossborder;
 
 import java.io.Serializable;
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
-import org.sandag.abm.common.OutboundHalfTourDMU;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
+
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 
 public class CrossBorderTripModeChoiceDMU
-        extends OutboundHalfTourDMU
         implements Serializable, VariableTable
 {
+	
+    protected transient Logger logger = Logger.getLogger(CrossBorderTripModeChoiceDMU.class);
+
+    protected static final int                WTW = McLogsumsCalculator.WTW;
+    protected static final int                WTD = McLogsumsCalculator.WTD;
+    protected static final int                DTW = McLogsumsCalculator.DTW;
+    protected static final int                NUM_ACC_EGR = McLogsumsCalculator.NUM_ACC_EGR;
+    
+    protected static final int                OUT = McLogsumsCalculator.OUT;
+    protected static final int                IN = McLogsumsCalculator.IN;
+    protected static final int                NUM_DIR = McLogsumsCalculator.NUM_DIR;
 
     protected int          tourDepartPeriod;
     protected int          tourArrivePeriod;
@@ -38,10 +49,18 @@ public class CrossBorderTripModeChoiceDMU
 
     protected double       nmWalkTime;
     protected double       nmBikeTime;
+    protected HashMap<String, Integer> methodIndexMap;
+    protected double ivtCoeff;
+    protected double costCoeff;
+    protected double walkTransitLogsum;
+    protected double pnrTransitLogsum;
+    protected double knrTransitLogsum;
 
-    protected double[][][] transitSkim;
+    protected IndexValues              dmuIndex;
+    protected int outboundHalfTourDirection;
 
-    public CrossBorderTripModeChoiceDMU(CrossBorderModelStructure modelStructure, Logger aLogger)
+
+   public CrossBorderTripModeChoiceDMU(CrossBorderModelStructure modelStructure, Logger aLogger)
     {
         if (aLogger == null)
         {
@@ -50,8 +69,7 @@ public class CrossBorderTripModeChoiceDMU
         logger = aLogger;
         setupMethodIndexMap();
         dmuIndex = new IndexValues();
-        transitSkim = new double[McLogsumsCalculator.NUM_ACC_EGR][McLogsumsCalculator.NUM_LOC_PREM][McLogsumsCalculator.NUM_SKIMS];
-
+  
     }
 
     /**
@@ -466,16 +484,7 @@ public class CrossBorderTripModeChoiceDMU
         return nmBikeTime;
     }
 
-    public void setTransitSkim(int accEgr, int lbPrem, int skimIndex, double value)
-    {
-        transitSkim[accEgr][lbPrem][skimIndex] = value;
-    }
-
-    public double getTransitSkim(int accEgr, int lbPrem, int skimIndex)
-    {
-        return transitSkim[accEgr][lbPrem][skimIndex];
-    }
-
+  
     public float getWorkTimeFactor() {
 		return workTimeFactor;
 	}
@@ -491,6 +500,45 @@ public class CrossBorderTripModeChoiceDMU
 	public void setNonWorkTimeFactor(float nonWorkTimeFactor) {
 		this.nonWorkTimeFactor = nonWorkTimeFactor;
 	}
+
+	public double getIvtCoeff() {
+		return ivtCoeff;
+	}
+
+	public void setIvtCoeff(double ivtCoeff) {
+		this.ivtCoeff = ivtCoeff;
+	}
+
+	public double getCostCoeff() {
+		return costCoeff;
+	}
+
+    public double getWalkTransitLogsum() {
+		return walkTransitLogsum;
+	}
+
+	public void setWalkTransitLogsum(double walkTransitLogsum) {
+		this.walkTransitLogsum = walkTransitLogsum;
+	}
+
+	public double getPnrTransitLogsum() {
+		return pnrTransitLogsum;
+	}
+
+	public void setPnrTransitLogsum(double pnrTransitLogsum) {
+		this.pnrTransitLogsum = pnrTransitLogsum;
+	}
+
+	public double getKnrTransitLogsum() {
+		return knrTransitLogsum;
+	}
+
+	public void setKnrTransitLogsum(double knrTransitLogsum) {
+		this.knrTransitLogsum = knrTransitLogsum;
+	}
+
+
+
 
 	private void setupMethodIndexMap()
     {
@@ -521,122 +569,119 @@ public class CrossBorderTripModeChoiceDMU
         methodIndexMap.put("getWorkTimeFactor", 50);
         methodIndexMap.put("getNonWorkTimeFactor", 51);
 
+        methodIndexMap.put("getIvtCoeff", 60);
+        methodIndexMap.put("getCostCoeff", 61);
+               
+        methodIndexMap.put("getWalkSetLogSum", 62);
+        methodIndexMap.put("getPnrSetLogSum", 63);
+        methodIndexMap.put("getKnrSetLogSum", 64);
+
         methodIndexMap.put("getNm_walkTime", 90);
         methodIndexMap.put("getNm_bikeTime", 91);
 
-        methodIndexMap.put("getWtw_lb_LB_ivt", 100);
-        methodIndexMap.put("getWtw_lb_fwait", 101);
-        methodIndexMap.put("getWtw_lb_xwait", 102);
-        methodIndexMap.put("getWtw_lb_AccTime", 103);
-        methodIndexMap.put("getWtw_lb_EgrTime", 104);
-        methodIndexMap.put("getWtw_lb_WalkAuxTime", 105);
-        methodIndexMap.put("getWtw_lb_fare", 106);
-        methodIndexMap.put("getWtw_lb_xfers", 107);
-        methodIndexMap.put("getWtw_eb_LB_ivt", 108);
-        methodIndexMap.put("getWtw_eb_EB_ivt", 109);
-        methodIndexMap.put("getWtw_eb_fwait", 110);
-        methodIndexMap.put("getWtw_eb_xwait", 111);
-        methodIndexMap.put("getWtw_eb_AccTime", 112);
-        methodIndexMap.put("getWtw_eb_EgrTime", 113);
-        methodIndexMap.put("getWtw_eb_WalkAuxTime", 114);
-        methodIndexMap.put("getWtw_eb_fare", 115);
-        methodIndexMap.put("getWtw_eb_xfers", 116);
-        methodIndexMap.put("getWtw_brt_LB_ivt", 117);
-        methodIndexMap.put("getWtw_brt_EB_ivt", 118);
-        methodIndexMap.put("getWtw_brt_BRT_ivt", 119);
-        methodIndexMap.put("getWtw_brt_fwait", 120);
-        methodIndexMap.put("getWtw_brt_xwait", 121);
-        methodIndexMap.put("getWtw_brt_AccTime", 122);
-        methodIndexMap.put("getWtw_brt_EgrTime", 123);
-        methodIndexMap.put("getWtw_brt_WalkAuxTime", 124);
-        methodIndexMap.put("getWtw_brt_fare", 125);
-        methodIndexMap.put("getWtw_brt_xfers", 126);
-        methodIndexMap.put("getWtw_lr_LB_ivt", 127);
-        methodIndexMap.put("getWtw_lr_EB_ivt", 128);
-        methodIndexMap.put("getWtw_lr_BRT_ivt", 129);
-        methodIndexMap.put("getWtw_lr_LRT_ivt", 130);
-        methodIndexMap.put("getWtw_lr_fwait", 131);
-        methodIndexMap.put("getWtw_lr_xwait", 132);
-        methodIndexMap.put("getWtw_lr_AccTime", 133);
-        methodIndexMap.put("getWtw_lr_EgrTime", 134);
-        methodIndexMap.put("getWtw_lr_WalkAuxTime", 135);
-        methodIndexMap.put("getWtw_lr_fare", 136);
-        methodIndexMap.put("getWtw_lr_xfers", 137);
-        methodIndexMap.put("getWtw_cr_LB_ivt", 138);
-        methodIndexMap.put("getWtw_cr_EB_ivt", 139);
-        methodIndexMap.put("getWtw_cr_BRT_ivt", 140);
-        methodIndexMap.put("getWtw_cr_LRT_ivt", 141);
-        methodIndexMap.put("getWtw_cr_CR_ivt", 142);
-        methodIndexMap.put("getWtw_cr_fwait", 143);
-        methodIndexMap.put("getWtw_cr_xwait", 144);
-        methodIndexMap.put("getWtw_cr_AccTime", 145);
-        methodIndexMap.put("getWtw_cr_EgrTime", 146);
-        methodIndexMap.put("getWtw_cr_WalkAuxTime", 147);
-        methodIndexMap.put("getWtw_cr_fare", 148);
-        methodIndexMap.put("getWtw_cr_xfers", 149);
-
-        methodIndexMap.put("getDt_lb_LB_ivt", 150);
-        methodIndexMap.put("getDt_lb_fwait", 151);
-        methodIndexMap.put("getDt_lb_xwait", 152);
-        methodIndexMap.put("getDt_lb_AccTime", 153);
-        methodIndexMap.put("getDt_lb_EgrTime", 154);
-        methodIndexMap.put("getDt_lb_DrvTime", 155);
-        methodIndexMap.put("getDt_lb_WalkAuxTime", 156);
-        methodIndexMap.put("getDt_lb_fare", 157);
-        methodIndexMap.put("getDt_lb_xfers", 158);
-        methodIndexMap.put("getDt_eb_LB_ivt", 159);
-        methodIndexMap.put("getDt_eb_EB_ivt", 160);
-        methodIndexMap.put("getDt_eb_fwait", 161);
-        methodIndexMap.put("getDt_eb_xwait", 162);
-        methodIndexMap.put("getDt_eb_AccTime", 163);
-        methodIndexMap.put("getDt_eb_EgrTime", 164);
-        methodIndexMap.put("getDt_eb_DrvTime", 165);
-        methodIndexMap.put("getDt_eb_WalkAuxTime", 166);
-        methodIndexMap.put("getDt_eb_fare", 167);
-        methodIndexMap.put("getDt_eb_xfers", 168);
-        methodIndexMap.put("getDt_brt_LB_ivt", 169);
-        methodIndexMap.put("getDt_brt_EB_ivt", 170);
-        methodIndexMap.put("getDt_brt_BRT_ivt", 171);
-        methodIndexMap.put("getDt_brt_fwait", 172);
-        methodIndexMap.put("getDt_brt_xwait", 173);
-        methodIndexMap.put("getDt_brt_AccTime", 174);
-        methodIndexMap.put("getDt_brt_EgrTime", 175);
-        methodIndexMap.put("getDt_brt_DrvTime", 176);
-        methodIndexMap.put("getDt_brt_WalkAuxTime", 177);
-        methodIndexMap.put("getDt_brt_fare", 178);
-        methodIndexMap.put("getDt_brt_xfers", 179);
-        methodIndexMap.put("getDt_lr_LB_ivt", 180);
-        methodIndexMap.put("getDt_lr_EB_ivt", 181);
-        methodIndexMap.put("getDt_lr_BRT_ivt", 182);
-        methodIndexMap.put("getDt_lr_LRT_ivt", 183);
-        methodIndexMap.put("getDt_lr_fwait", 184);
-        methodIndexMap.put("getDt_lr_xwait", 185);
-        methodIndexMap.put("getDt_lr_AccTime", 186);
-        methodIndexMap.put("getDt_lr_EgrTime", 187);
-        methodIndexMap.put("getDt_lr_DrvTime", 188);
-        methodIndexMap.put("getDt_lr_WalkAuxTime", 189);
-        methodIndexMap.put("getDt_lr_fare", 190);
-        methodIndexMap.put("getDt_lr_xfers", 191);
-        methodIndexMap.put("getDt_cr_LB_ivt", 192);
-        methodIndexMap.put("getDt_cr_EB_ivt", 193);
-        methodIndexMap.put("getDt_cr_BRT_ivt", 194);
-        methodIndexMap.put("getDt_cr_LRT_ivt", 195);
-        methodIndexMap.put("getDt_cr_CR_ivt", 196);
-        methodIndexMap.put("getDt_cr_fwait", 197);
-        methodIndexMap.put("getDt_cr_xwait", 198);
-        methodIndexMap.put("getDt_cr_AccTime", 199);
-        methodIndexMap.put("getDt_cr_EgrTime", 200);
-        methodIndexMap.put("getDt_cr_DrvTime", 201);
-        methodIndexMap.put("getDt_cr_WalkAuxTime", 202);
-        methodIndexMap.put("getDt_cr_fare", 203);
-        methodIndexMap.put("getDt_cr_xfers", 204);
-        CreateReverseMap();
-
+       
     }
 
     public double getValueForIndex(int variableIndex, int arrayIndex)
     {
-        return getValueForIndexLookup(variableIndex, arrayIndex);
+
+        double returnValue = -1;
+
+        switch (variableIndex)
+        {
+            case 0:
+                returnValue = getTourDepartPeriod();
+                break;
+            case 1:
+            	returnValue = getTourArrivePeriod();
+                break;
+            case 2:
+            	returnValue = getTripPeriod();
+            	break;
+            case 4:
+            	returnValue = getWorkTour();
+                break;
+            case 5:
+            	returnValue = getOutboundStops();
+                break;
+            case 6:
+            	returnValue = getReturnStops();
+                break;
+            case 7:
+            	returnValue = getFirstTrip();
+                break;
+            case 8:
+            	returnValue = getLastTrip();
+                break;
+            case 9:
+            	returnValue = getTourModeIsDA();
+                break;
+            case 10:
+            	returnValue = getTourModeIsS2();
+                break;
+            case 11:
+            	returnValue = getTourModeIsS3();
+                break;
+            case 12:
+            	returnValue = getTourModeIsWalk();
+                break;
+            case 13:
+            	returnValue = getTourCrossingIsSentri();
+                break;
+            case 14:
+            	returnValue = getHourlyParkingCostTourDest();
+                break;
+            case 15:
+            	returnValue = getDailyParkingCostTourDest();
+                break;
+            case 16:
+            	returnValue = getMonthlyParkingCostTourDest();
+                break;
+            case 17:
+            	returnValue = getTripOrigIsTourDest();
+                break;
+            case 18:
+            	returnValue = getTripDestIsTourDest();
+                break;
+            case 19:
+            	returnValue = getHourlyParkingCostTripOrig();
+                break;
+            case 20:
+            	returnValue = getHourlyParkingCostTripDest();
+                break;
+            case 50:
+            	returnValue = getWorkTimeFactor();
+                break;
+            case 51:
+            	returnValue = getNonWorkTimeFactor();
+            	break;
+            case 60:
+            	returnValue = getIvtCoeff();
+                break;
+            case 61:
+            	returnValue = getCostCoeff();
+                break;
+            case 62:
+                returnValue = getWalkTransitLogsum();
+                break;
+            case 63:
+            	returnValue = getPnrTransitLogsum();
+                break;
+            case 64:
+            	returnValue = getKnrTransitLogsum();
+                break;
+            case 90:
+            	returnValue = getNm_walkTime();
+            	break;
+            case 91:
+            	returnValue = getNm_bikeTime();
+                break;
+            default:
+                logger.error( "method number = " + variableIndex + " not found" );
+                throw new RuntimeException( "method number = " + variableIndex + " not found" );
+        }
+        return returnValue;
+    
     }
 
     public int getIndexValue(String variableName)

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.ResourceBundle;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.MatrixDataServer;
 import org.sandag.abm.ctramp.MatrixDataServerRmi;
@@ -16,6 +17,8 @@ import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.Modes;
 import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+import org.sandag.abm.modechoice.TransitWalkAccessDMU;
+
 import com.pb.common.calculator.MatrixDataManager;
 import com.pb.common.calculator.MatrixDataServerIf;
 import com.pb.common.datafile.OLD_CSVFileReader;
@@ -72,6 +75,8 @@ public final class SkimsAppender
 
     private MatrixDataServerIf        ms;
     private BestTransitPathCalculator bestPathUEC;
+    
+    TransitWalkAccessDMU walkDmu;
 
     private SkimsAppender()
     {
@@ -101,6 +106,8 @@ public final class SkimsAppender
                 "obs.skims.output.file");
         String outputFileNameHis = Util.getStringValueFromPropertyMap(rbMap,
                 "his.skims.output.file");
+        
+        TransitWalkAccessDMU walkDmu = new TransitWalkAccessDMU();
 
         FileWriter writer;
         PrintWriter outStreamObs = null;
@@ -117,13 +124,13 @@ public final class SkimsAppender
             McLogsumsCalculator logsumHelper = new McLogsumsCalculator();
             bestPathUEC = logsumHelper.getBestTransitPathCalculator();
 
-            wtw = new WalkTransitWalkSkimsCalculator();
+            wtw = new WalkTransitWalkSkimsCalculator(rbMap);
             wtw.setup(rbMap, wtwLogger, bestPathUEC);
 
-            wtd = new WalkTransitDriveSkimsCalculator();
+            wtd = new WalkTransitDriveSkimsCalculator(rbMap);
             wtd.setup(rbMap, wtdLogger, bestPathUEC);
 
-            dtw = new DriveTransitWalkSkimsCalculator();
+            dtw = new DriveTransitWalkSkimsCalculator(rbMap);
             dtw.setup(rbMap, dtwLogger, bestPathUEC);
 
             String heading = "Seq,Id";
@@ -131,22 +138,16 @@ public final class SkimsAppender
             heading += ",obOrigMgra,obDestMgra,obPeriod";
             heading += getAutoSkimsHeaderRecord("auto", anm.getAutoSkimNames());
             heading += getNonMotorizedSkimsHeaderRecord("nm", anm.getNmSkimNames());
-            heading += getTransitSkimsHeaderRecord("wtw", wtw.getLocalSkimNames(),
-                    wtw.getPremiumSkimNames());
-            heading += getTransitSkimsHeaderRecord("wtd", wtd.getLocalSkimNames(),
-                    wtd.getPremiumSkimNames());
-            heading += getTransitSkimsHeaderRecord("dtw", dtw.getLocalSkimNames(),
-                    dtw.getPremiumSkimNames());
+            heading += getTransitSkimsHeaderRecord("wtw", wtw.getSkimNames());
+            heading += getTransitSkimsHeaderRecord("wtd", wtd.getSkimNames());
+            heading += getTransitSkimsHeaderRecord("dtw", dtw.getSkimNames());
 
             heading += ",ObsSeq,Id,ibOrigMgra,ibDestMgra,ibPeriod";
             heading += getAutoSkimsHeaderRecord("auto", anm.getAutoSkimNames());
             heading += getNonMotorizedSkimsHeaderRecord("nm", anm.getNmSkimNames());
-            heading += getTransitSkimsHeaderRecord("wtw", wtw.getLocalSkimNames(),
-                    wtw.getPremiumSkimNames());
-            heading += getTransitSkimsHeaderRecord("wtd", wtd.getLocalSkimNames(),
-                    wtd.getPremiumSkimNames());
-            heading += getTransitSkimsHeaderRecord("dtw", dtw.getLocalSkimNames(),
-                    dtw.getPremiumSkimNames());
+            heading += getTransitSkimsHeaderRecord("wtw", wtw.getSkimNames());
+            heading += getTransitSkimsHeaderRecord("wtd", wtd.getSkimNames());
+            heading += getTransitSkimsHeaderRecord("dtw", dtw.getSkimNames());
 
             if (!outputFileNameObs.isEmpty())
             {
@@ -425,8 +426,14 @@ public final class SkimsAppender
             String nmRecord = getAutoSkimsRecord(skims);
             outStream.print(nmRecord);
         }
+        
+        /* TODO: 
+         * Fix the following code
 
-        bestTapPairs = wtw.getBestTapPairs(odt[0], odt[1], odt[2], loggingEnabled, wtwLogger);
+
+        BestTransitPathCalculator bestTransitPathCalculator = wtw.getBestPathUEC();
+        
+        bestTransitPathCalculator.findBestWalkTransitWalkTaps(walkDmu, odt[2], odt[0], odt[1],  loggingEnabled, wtwLogger);
         returnedSkims = new double[bestTapPairs.length][];
         for (int i = 0; i < bestTapPairs.length; i++)
         {
@@ -485,7 +492,7 @@ public final class SkimsAppender
             String dtwRecord = getTransitSkimsRecord(odt, returnedSkims);
             outStream.print(dtwRecord);
         }
-
+         */
     }
 
     /**
@@ -589,8 +596,7 @@ public final class SkimsAppender
      *            second element the dest mgra and third element the departure
      *            period index
      */
-    private String getTransitSkimsHeaderRecord(String transitServiveLabel, String[] localNames,
-            String[] premiumNames)
+    private String getTransitSkimsHeaderRecord(String transitServiceLabel, String[] skimNames)
     {
 
         Modes.TransitMode[] mode = Modes.TransitMode.values();
@@ -599,17 +605,9 @@ public final class SkimsAppender
 
         for (int i = 0; i < mode.length; i++)
         {
-            if (mode[i].isPremiumMode(mode[i]))
-            {
-                for (int j = 0; j < premiumNames.length; j++)
-                    heading += String.format(",%s_%s_%s", transitServiveLabel, mode[i],
-                            premiumNames[j]);
-            } else
-            {
-                for (int j = 0; j < localNames.length; j++)
-                    heading += String.format(",%s_%s_%s", transitServiveLabel, mode[i],
-                            localNames[j]);
-            }
+           for (int j = 0; j < skimNames.length; j++)
+        	   heading += String.format(",%s_%s_%s", transitServiceLabel, mode[i],
+                            skimNames[j]);
         }
 
         return heading;

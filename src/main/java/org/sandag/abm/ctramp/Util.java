@@ -89,7 +89,44 @@ public final class Util
 
     }
 
-    /**
+    public static double[] getDoubleArrayFromPropertyMap(HashMap<String, String> rbMap, String key)
+    {
+
+    	double[] returnArray;
+        String valueList = rbMap.get(key);
+        if (valueList != null)
+        {
+
+            HashSet<Double> valueSet = new HashSet<Double>();
+
+            if (valueSet != null)
+            {
+                StringTokenizer valueTokenizer = new StringTokenizer(valueList, ",");
+                while (valueTokenizer.hasMoreTokens())
+                {
+                    String listValue = valueTokenizer.nextToken();
+                    double doubleValue = Double.parseDouble(listValue.trim());
+                    valueSet.add(doubleValue);
+                }
+            }
+
+            returnArray = new double[valueSet.size()];
+            int i = 0;
+            for (double v : valueSet)
+                returnArray[i++] = v;
+
+        } else
+        {
+            System.out.println("property file key: " + key
+                    + " missing.  No double value can be determined.");
+            throw new RuntimeException();
+        }
+
+        return returnArray;
+
+    }
+
+   /**
      * 
      * @param cumProbabilities
      *            cumulative probabilities array

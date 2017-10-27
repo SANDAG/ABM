@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.MatrixDataServer;
@@ -12,6 +13,7 @@ import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.matrix.Matrix;
@@ -68,11 +70,11 @@ public class SandagTripTables
     private MatrixDataServerRmi     ms;
 
     private String[]                indivColumns            = {"stop_period", "orig_mgra",
-            "dest_mgra", "trip_mode", "inbound", "trip_board_tap", "trip_alight_tap",
+            "dest_mgra", "trip_mode", "inbound", "trip_board_tap", "trip_alight_tap", "set",
             "parking_mgra", "tour_purpose", "valueOfTime"                  };
 
     private String[]                jointColumns            = {"stop_period", "orig_mgra",
-            "dest_mgra", "trip_mode", "inbound", "trip_board_tap", "trip_alight_tap",
+            "dest_mgra", "trip_mode", "inbound", "trip_board_tap", "trip_alight_tap", "set",
             "parking_mgra", "tour_purpose", "num_participants", "valueOfTime"};
 
     private HashMap<String, Float>  averageOcc3Plus;                                                // a
@@ -81,6 +83,9 @@ public class SandagTripTables
     private float valueOfTimeThresholdMed = 0;
     //value of time bins by mode group
     int[] votBins = {3,1,1,1};
+    
+    public int numSkimSets;
+
 
     /**
      * Constructor.
@@ -97,7 +102,8 @@ public class SandagTripTables
     public SandagTripTables(HashMap<String, String> rbMap, float sampleRate, int iteration)
     {
 
-        this.rbMap = rbMap;
+        this.rbMap = rbMap;        
+        numSkimSets = Integer.getInteger(rbMap.get("utility.bestTransitPath.skim.sets"));
 
         tazManager = TazDataManager.getInstance(rbMap);
         tapManager = TapDataManager.getInstance(rbMap);
@@ -233,13 +239,16 @@ public class SandagTripTables
                
                 } else if (i == 2){
                 	
-                	matrix[i][j] = new Matrix[tranModes];
+                	matrix[i][j] = new Matrix[tranModes*numSkimSets];
                 	for (int k = 0; k < tranModes; ++k)
                 	{
-                		modeName = modelStructure.getModeName(k + 1 + autoModes + nmotModes);
-               			matrix[i][j][k] = new Matrix(modeName + "_" + periodName, "", taps, taps);
-               			matrix[i][j][k].setExternalNumbers(tapIndex);
-               		}
+    					for(int l=0;l<numSkimSets;++l){
+    						modeName = modelStructure.getModeName(k+1+autoModes+nmotModes);
+    						String setName = String.valueOf(l+1);
+    						matrix[i][j][(k*numSkimSets)+l] = new Matrix(modeName+"_set"+setName+"_"+periodName,"",taps,taps);
+                  			matrix[i][j][k].setExternalNumbers(tapIndex);
+    					}
+                	}
                 }else{
             
                 	matrix[i][j] = new Matrix[othrModes];
@@ -430,12 +439,14 @@ public class SandagTripTables
             int alightTap = 0;
             int parkingTaz = 0;
             int parkingMGRA = 0;
+            int set=0;
 
             if (modelStructure.getTourModeIsWalkTransit(tripMode)
                     || modelStructure.getTourModeIsDriveTransit(tripMode))
             {
                 boardTap = (int) tripData.getValueAt(i, "trip_board_tap");
                 alightTap = (int) tripData.getValueAt(i, "trip_alight_tap");
+           			set = (int) tripData.getValueAt(i,"set");
             } else
             {
                 parkingMGRA = (int) tripData.getValueAt(i, "parking_mgra");
@@ -503,7 +514,8 @@ public class SandagTripTables
 
                 if (boardTap == 0 || alightTap == 0) continue;
 
-
+        				//store transit trips in matrices
+        				mat = (matrixIndex[tripMode]*numSkimSets)+set;
 
                 float value = matrix[mode][votBin][mat].getValueAt(boardTap, alightTap);
                 matrix[mode][votBin][mat].setValueAt(boardTap, alightTap, (value + personTrips));
@@ -579,14 +591,6 @@ public class SandagTripTables
 
         String[][] end = new String[4][];
         String[] fileName = new String[4];
-
-
-
-
-
-
-
-
 
         fileName[0] = dir + Util.getStringValueFromPropertyMap(rbMap, "Results.AutoTripMatrix");
         fileName[1] = dir + Util.getStringValueFromPropertyMap(rbMap, "Results.NMotTripMatrix");

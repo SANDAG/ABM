@@ -370,9 +370,7 @@ public class StopLocationDMU
 
     public int getTourModeIsWalkTransit()
     {
-        boolean tourModeIsWalkLocal = modelStructure.getTourModeIsWalkLocal(tourModeIndex);
-        boolean tourModeIsWalkPremium = modelStructure.getTourModeIsWalkPremium(tourModeIndex);
-        return tourModeIsWalkLocal || tourModeIsWalkPremium ? 1 : 0;
+        return (modelStructure.getTourModeIsWalkTransit(tourModeIndex) ? 1 : 0);
     }
 
     public int getWalkTransitAvailableAlt(int alt)

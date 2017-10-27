@@ -123,7 +123,7 @@ public class SandagHouseholdDataManager
 
                 int incomeCat = (int) hhTable.getValueAt(r,
                         hhTable.getColumnPosition(HH_INCOME_CATEGORY_FIELD_NAME));
-                hh.setHhIncome(incomeCat);
+                hh.setHhIncomeCategory(incomeCat);
 
                 int incomeInDollars = (int) hhTable.getValueAt(r,
                         hhTable.getColumnPosition(HH_INCOME_DOLLARS_FIELD_NAME));

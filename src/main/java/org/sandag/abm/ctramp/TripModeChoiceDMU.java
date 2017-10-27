@@ -4,15 +4,27 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
-import org.sandag.abm.common.OutboundHalfTourDMU;
 
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 
-public class TripModeChoiceDMU extends OutboundHalfTourDMU
+public class TripModeChoiceDMU 
         implements Serializable, VariableTable
 {
 
+    protected transient Logger logger = Logger.getLogger(TripModeChoiceDMU.class);
+
+    protected static final int                WTW = McLogsumsCalculator.WTW;
+    protected static final int                WTD = McLogsumsCalculator.WTD;
+    protected static final int                DTW = McLogsumsCalculator.DTW;
+    protected static final int                NUM_ACC_EGR = McLogsumsCalculator.NUM_ACC_EGR;
+    
+    protected static final int                OUT = McLogsumsCalculator.OUT;
+    protected static final int                IN = McLogsumsCalculator.IN;
+    protected static final int                NUM_DIR = McLogsumsCalculator.NUM_DIR;
+    
+    protected HashMap<String, Integer> methodIndexMap;
+    
     protected Tour                     tour;
     protected Person                   person;
     protected Household                hh;
@@ -54,6 +66,8 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
     protected int                      jointTour;
     protected int                      partySize;
 
+    protected int outboundHalfTourDirection;
+    
     protected int                      tourModeIsDA;
     protected int                      tourModeIsS2;
     protected int                      tourModeIsS3;
@@ -79,23 +93,23 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
     protected boolean                  autoModeRequiredForDriveTransit;
     protected boolean                  walkModeAllowedForDriveTransit;
 
+    protected double ivtCoeff;
+    protected double costCoeff;
+
+    protected double[] transitLogSum;
+
     protected boolean inbound;
 
 	protected int originMgra;
     protected int destMgra;
 
-    protected double[][][]             transitSkim;
-    
- 
 
     public TripModeChoiceDMU(ModelStructure modelStructure, Logger aLogger)
     {
-        if (aLogger == null) aLogger = Logger.getLogger(TourModeChoiceDMU.class);
-        logger = aLogger;
         this.modelStructure = modelStructure;
         dmuIndex = new IndexValues();
-
-        transitSkim = new double[TripModeChoiceDMU.NUM_ACC_EGR][TripModeChoiceDMU.NUM_LOC_PREM][TripModeChoiceDMU.NUM_SKIMS];
+        
+        transitLogSum = new double[McLogsumsCalculator.NUM_ACC_EGR];
     }
     
     
@@ -236,7 +250,7 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
 
     public void setOutboundHalfTourDirection(int arg)
     {
-        outboundHalfTourDirection = arg;
+        int outboundHalfTourDirection = arg;
     }
 
     public void setDepartPeriod(int period)
@@ -410,16 +424,6 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
         nmBikeTime = bikeTime;
     }
 
-    protected void setTransitSkim(int accEgr, int lbPrem, int skimIndex, double value)
-    {
-        transitSkim[accEgr][lbPrem][skimIndex] = value;
-    }
-
-    protected double getTransitSkim(int accEgr, int lbPrem, int skimIndex)
-    {
-        return transitSkim[accEgr][lbPrem][skimIndex];
-    }
-
     public int getAutoModeAllowedForTripSegment()
     {
         return autoModeRequiredForDriveTransit ? 1 : 0;
@@ -468,8 +472,7 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
 
     public int getTourModeIsWTran()
     {
-        boolean tourModeIsWTran = modelStructure.getTourModeIsWalkLocal(tour.getTourModeChoice())
-                || modelStructure.getTourModeIsWalkPremium(tour.getTourModeChoice());
+        boolean tourModeIsWTran = modelStructure.getTourModeIsWalkTransit(tour.getTourModeChoice());
         return tourModeIsWTran ? 1 : 0;
     }
 
@@ -484,6 +487,15 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
         boolean tourModeIsKnr = modelStructure.getTourModeIsKnr(tour.getTourModeChoice());
         return tourModeIsKnr ? 1 : 0;
     }
+    
+    public void setTransitLogSum(int accEgr, double value){
+    	transitLogSum[accEgr] = value;
+    }
+
+    public double getTransitLogSum(int accEgr){
+        return transitLogSum[accEgr];
+    }
+
 
     public double getODUDen()
     {
@@ -572,9 +584,9 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
         return person.getPersonIsFemale();
     }
 
-    public int getIncome()
+    public int getIncomeCategory()
     {
-        return hh.getIncome();
+        return hh.getIncomeCategory();
     }
 
     public double getNm_walkTime()
@@ -723,6 +735,34 @@ public class TripModeChoiceDMU extends OutboundHalfTourDMU
 	  }
 
 
+
+
+	public double getIvtCoeff() {
+		return ivtCoeff;
+	}
+
+
+
+	public void setIvtCoeff(double ivtCoeff) {
+		this.ivtCoeff = ivtCoeff;
+	}
+
+
+
+	public double getCostCoeff() {
+		return costCoeff;
+	}
+
+
+
+	public void setCostCoeff(double costCoeff) {
+		this.costCoeff = costCoeff;
+	}
+
+    public int getIncomeInDollars()
+    {
+        return hh.getIncomeInDollars();
+    }
 
 
 	public int getIndexValue(String variableName)

@@ -4,7 +4,11 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoAndNonMotorizedSkimsCalculator;
+import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
+import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.CtrampApplication;
+import org.sandag.abm.ctramp.McLogsumsCalculator;
+import org.sandag.abm.ctramp.TripModeChoiceDMU;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
@@ -29,6 +33,10 @@ public class CrossBorderTripModeChoiceModel
     private CrossBorderTripModeChoiceDMU       dmu;
     private ChoiceModelApplication             tripModeChoiceModel;
     double                                     logsum                     = 0;
+    
+    private TripModeChoiceDMU 		 mcDmuObject;
+    private AutoTazSkimsCalculator   tazDistanceCalculator;
+
 
     private static final String                PROPERTIES_UEC_DATA_SHEET  = "crossBorder.trip.mc.data.page";
     private static final String                PROPERTIES_UEC_MODEL_SHEET = "crossBorder.trip.mc.model.page";
@@ -85,6 +93,19 @@ public class CrossBorderTripModeChoiceModel
 
         tripModeChoiceModel = new ChoiceModelApplication(tripModeUecFile, modelPage, dataPage,
                 propertyMap, (VariableTable) dmu);
+        
+        tazDistanceCalculator = new AutoTazSkimsCalculator(propertyMap);
+        tazDistanceCalculator.computeTazDistanceArrays();
+        
+        logsumHelper = new McLogsumsCalculator();
+        logsumHelper.setupSkimCalculators(propertyMap);
+        logsumHelper.setTazDistanceSkimArrays(
+                tazDistanceCalculator.getStoredFromTazToAllTazsDistanceSkims(),
+                tazDistanceCalculator.getStoredToTazFromAllTazsDistanceSkims());
+        
+        SandagModelStructure modelStructure = new SandagModelStructure();
+        mcDmuObject = new TripModeChoiceDMU(modelStructure, logger);
+
 
     }
 
@@ -98,7 +119,7 @@ public class CrossBorderTripModeChoiceModel
     {
 
         setDmuAttributes(tour, trip);
-
+   
         tripModeChoiceModel.computeUtilities(dmu, dmu.getDmuIndexValues());
 
         if (tour.getDebugChoiceModels())
@@ -134,6 +155,21 @@ public class CrossBorderTripModeChoiceModel
         try{
             mode = tripModeChoiceModel.getChoiceResult(rand); 
         	trip.setTripMode(mode);
+        	
+        	if(mode==10){ //walk-transit (TODO: CHANGE THIS)
+            	double[][] bestTapPairs = logsumHelper.getBestWtwTripTaps();
+              	//pick transit path from N-paths
+                float rn = new Double(tour.getRandom()).floatValue();
+            	int pathIndex = logsumHelper.chooseTripPath(rn, bestTapPairs, tour.getDebugChoiceModels(), logger);
+            	int boardTap = (int) bestTapPairs[pathIndex][0];
+            	int alightTap = (int) bestTapPairs[pathIndex][1];
+            	int set = (int) bestTapPairs[pathIndex][2];
+            	trip.setBoardTap(boardTap);
+            	trip.setAlightTap(alightTap);
+            	trip.setSet(set);
+      
+            	 
+        	}
         }catch(Exception e){
         	logger.info("rand="+rand);
         	tour.logTourObject(logger, 100);
@@ -199,9 +235,19 @@ public class CrossBorderTripModeChoiceModel
         dmu.setWorkTimeFactor((float)tour.getWorkTimeFactor());
         dmu.setNonWorkTimeFactor((float)tour.getNonWorkTimeFactor());
 
-        // set the dmu skim attributes (which involves setting the best wtw
-        // taps, since the tour taps are null
-        logsumHelper.setTripMcDmuSkimAttributes(tour, trip, dmu);
+        // set trip mc dmu values for transit logsum (gets replaced below by uec values)
+        double c_ivt = -0.03;
+        double c_cost = - 0.0003; 
+
+        // Solve trip mode level utilities
+        mcDmuObject.setIvtCoeff(c_ivt);
+        mcDmuObject.setCostCoeff(c_cost);
+        double walkTransitLogsum = -999.0;
+   
+        logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, tripOriginMgra, tripDestinationMgra, trip.getPeriod(), tour.getDebugChoiceModels());
+        walkTransitLogsum = mcDmuObject.getTransitLogSum(McLogsumsCalculator.WTW);
+
+    	dmu.setWalkTransitLogsum(walkTransitLogsum);
 
         if (tour.getPurpose() == modelStructure.WORK) dmu.setWorkTour(1);
         else dmu.setWorkTour(0);

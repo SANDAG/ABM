@@ -8,14 +8,19 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
+import org.sandag.abm.modechoice.TransitDriveAccessDMU;
+import org.sandag.abm.modechoice.TransitWalkAccessDMU;
 import org.sandag.abm.modechoice.TransitWalkAccessUEC;
+
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.newmodel.UtilityExpressionCalculator;
 import com.pb.common.util.Tracer;
+
 
 public class DcUtilitiesTaskJppf
         implements Callable<List<Object>>
@@ -282,6 +287,10 @@ public class DcUtilitiesTaskJppf
 
         float[] luUtilityResult = new float[LU_LOGSUM_SEGMENTS.length + 2];
 
+        // DMUs for this UEC
+        TransitWalkAccessDMU walkDmu = new TransitWalkAccessDMU();
+        TransitDriveAccessDMU driveDmu = new TransitDriveAccessDMU();
+        
         // LOOP OVER RANGE OF ORIGIN MGRA
         ArrayList<Integer> mgraValues = mgraManager.getMgras();
         for (int i = startRange; i <= endRange; i++)
@@ -345,34 +354,16 @@ public class DcUtilitiesTaskJppf
                     System.exit(-1);
                 }
 
-                // calculate OP walk-transit exponentiated utility
-                // determine the best transit path, which also stores the best
-                // utilities array and the best mode
-                bestPathCalculator.findBestWalkTransitWalkTaps(TransitWalkAccessUEC.MD, iMgra,
-                        jMgra, false, logger);
-
+                // calculate walk-transit exponentiated utility
+                // determine the best transit path, which also stores the best utilities array and the best mode
+                bestPathCalculator.findBestWalkTransitWalkTaps(walkDmu, TransitWalkAccessUEC.MD, iMgra, jMgra, false, logger);
+                
                 // sum the exponentiated utilities over modes
                 double opWTExpUtility = 0;
-                double[] transitUtilities = bestPathCalculator.getBestUtilities();
-                for (int k = 0; k < transitUtilities.length; k++)
-                {
-                    if (transitUtilities[k] > MIN_EXP_FUNCTION_ARGUMENT)
-                        opWTExpUtility += Math.exp(transitUtilities[k]);
-                }
-
-                // calculate OP drive-transit exponentiated utility
-                // determine the best transit path, which also stores the best
-                // utilities array and the best mode
-                bestPathCalculator.findBestDriveTransitWalkTaps(TransitWalkAccessUEC.MD, iMgra,
-                        jMgra, false, logger);
-
-                // sum the exponentiated utilities over modes
-                double opDTExpUtility = 0;
-                transitUtilities = bestPathCalculator.getBestUtilities();
-                for (int k = 0; k < transitUtilities.length; k++)
-                {
-                    if (transitUtilities[k] > MIN_EXP_FUNCTION_ARGUMENT)
-                        opDTExpUtility += Math.exp(transitUtilities[k]);
+                double[] walkTransitWalkUtilities = bestPathCalculator.getBestUtilities();
+                for (int k=0; k < walkTransitWalkUtilities.length; k++){
+                    if ( walkTransitWalkUtilities[k] > MIN_EXP_FUNCTION_ARGUMENT )
+                        opWTExpUtility += Math.exp(walkTransitWalkUtilities[k]);
                 }
 
                 double pkSovExpUtility = 0;
@@ -394,34 +385,43 @@ public class DcUtilitiesTaskJppf
                     System.exit(-1);
                 }
 
-                // calculate PK walk-transit exponentiated utility
-                // determine the best WTW transit path, which also stores the
-                // best utilities array and the best mode
-                bestPathCalculator.findBestWalkTransitWalkTaps(TransitWalkAccessUEC.AM, iMgra,
-                        jMgra, false, logger);
-
+                // determine the best transit path, which also stores the best utilities array and the best mode
+                bestPathCalculator.findBestWalkTransitWalkTaps(walkDmu, TransitWalkAccessUEC.AM, iMgra, jMgra, false, logger);
+                
                 // sum the exponentiated utilities over modes
                 double pkWTExpUtility = 0;
-                transitUtilities = bestPathCalculator.getBestUtilities();
-                for (int k = 0; k < transitUtilities.length; k++)
-                {
-                    if (transitUtilities[k] > MIN_EXP_FUNCTION_ARGUMENT)
-                        pkWTExpUtility += Math.exp(transitUtilities[k]);
+                walkTransitWalkUtilities = bestPathCalculator.getBestUtilities();
+                for (int k=0; k < walkTransitWalkUtilities.length; k++){
+                    if ( walkTransitWalkUtilities[k] > MIN_EXP_FUNCTION_ARGUMENT )
+                        pkWTExpUtility += Math.exp(walkTransitWalkUtilities[k]);
                 }
-
-                // calculate PK drive-transit exponentiated utility
-                // determine the best DTW transit path, which also stores the
-                // best utilities array and the best mode
-                bestPathCalculator.findBestDriveTransitWalkTaps(TransitWalkAccessUEC.AM, iMgra,
-                        jMgra, false, logger);
-
-                // sum the exponentiated utilities over modes
+                
                 double pkDTExpUtility = 0;
-                transitUtilities = bestPathCalculator.getBestUtilities();
-                for (int k = 0; k < transitUtilities.length; k++)
+                double opDTExpUtility = 0;
+                
+                if (calculateLuAccessibilities)
                 {
-                    if (transitUtilities[k] > MIN_EXP_FUNCTION_ARGUMENT)
-                        pkDTExpUtility += Math.exp(transitUtilities[k]);
+                	
+                    // determine the best transit path, which also stores the best utilities array and the best mode
+                    bestPathCalculator.findBestDriveTransitWalkTaps(walkDmu, driveDmu, TransitWalkAccessUEC.AM, iMgra, jMgra, false, logger);
+               	
+                    // sum the exponentiated utilities over modes
+                    double driveTransitWalkUtilities[] = bestPathCalculator.getBestUtilities();
+                    for (int k=0; k < driveTransitWalkUtilities.length; k++){
+                        if ( driveTransitWalkUtilities[k] > MIN_EXP_FUNCTION_ARGUMENT )
+                            pkDTExpUtility += Math.exp(driveTransitWalkUtilities[k]);
+                    }
+                    
+                    // determine the best transit path, which also stores the best utilities array and the best mode
+                    bestPathCalculator.findBestDriveTransitWalkTaps(walkDmu, driveDmu, TransitWalkAccessUEC.MD, iMgra, jMgra, false, logger);
+               	
+                    // sum the exponentiated utilities over modes
+                    driveTransitWalkUtilities = bestPathCalculator.getBestUtilities();
+                    for (int k=0; k < driveTransitWalkUtilities.length; k++){
+                        if ( driveTransitWalkUtilities[k] > MIN_EXP_FUNCTION_ARGUMENT )
+                            opDTExpUtility += Math.exp(driveTransitWalkUtilities[k]);
+                    }
+                   
                 }
 
                 double nmExpUtility = 0;
@@ -490,7 +490,7 @@ public class DcUtilitiesTaskJppf
                 logsums[13] = Math.log(pkSovExpUtility * expConstants[3][0] + pkHovExpUtility
                         * expConstants[3][1] + pkWTExpUtility * expConstants[3][2] + nmExpUtility
                         * expConstants[3][3]);
-
+                
                 aDmu.setLogsums(logsums);
                 aDmu.setSizeTerms(sizeTerms[jMgra]);
                 // double[] utilities = dcUEC.solve(iv, aDmu, null);

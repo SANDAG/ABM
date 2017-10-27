@@ -495,8 +495,7 @@ public class McLogsumsAppender
         mcDmuObject.setTourModeIsS3(modelStructure.getTourModeIsS3(odt[TOUR_MODE]) ? 1 : 0);
         mcDmuObject.setTourModeIsWalk(modelStructure.getTourModeIsWalk(odt[TOUR_MODE]) ? 1 : 0);
         mcDmuObject.setTourModeIsBike(modelStructure.getTourModeIsBike(odt[TOUR_MODE]) ? 1 : 0);
-        mcDmuObject.setTourModeIsWTran(modelStructure.getTourModeIsWalkLocal(odt[TOUR_MODE])
-                || modelStructure.getTourModeIsWalkPremium(odt[TOUR_MODE]) ? 1 : 0);
+        mcDmuObject.setTourModeIsWTran(modelStructure.getTourModeIsWalkTransit(odt[TOUR_MODE]) ? 1 : 0);
         mcDmuObject.setTourModeIsPnr(modelStructure.getTourModeIsPnr(odt[TOUR_MODE]) ? 1 : 0);
         mcDmuObject.setTourModeIsKnr(modelStructure.getTourModeIsKnr(odt[TOUR_MODE]) ? 1 : 0);
         mcDmuObject.setTourModeIsSchBus(modelStructure.getTourModeIsSchoolBus(odt[TOUR_MODE]) ? 1
@@ -736,8 +735,7 @@ public class McLogsumsAppender
         mcDmuObject.setTourModeIsS3(modelStructure.getTourModeIsS3(odt[TOUR_MODE]) ? 1 : 0);
         mcDmuObject.setTourModeIsWalk(modelStructure.getTourModeIsWalk(odt[TOUR_MODE]) ? 1 : 0);
         mcDmuObject.setTourModeIsBike(modelStructure.getTourModeIsBike(odt[TOUR_MODE]) ? 1 : 0);
-        mcDmuObject.setTourModeIsWTran(modelStructure.getTourModeIsWalkLocal(odt[TOUR_MODE])
-                || modelStructure.getTourModeIsWalkPremium(odt[TOUR_MODE]) ? 1 : 0);
+        mcDmuObject.setTourModeIsWTran(modelStructure.getTourModeIsWalkTransit(odt[TOUR_MODE]) ? 1 : 0);
         mcDmuObject.setTourModeIsPnr(modelStructure.getTourModeIsPnr(odt[TOUR_MODE]) ? 1 : 0);
         mcDmuObject.setTourModeIsKnr(modelStructure.getTourModeIsKnr(odt[TOUR_MODE]) ? 1 : 0);
         mcDmuObject.setTourModeIsSchBus(modelStructure.getTourModeIsSchoolBus(odt[TOUR_MODE]) ? 1
@@ -970,21 +968,6 @@ public class McLogsumsAppender
     public AutoAndNonMotorizedSkimsCalculator getAnmSkimCalculator()
     {
         return logsumHelper.getAnmSkimCalculator();
-    }
-
-    public WalkTransitWalkSkimsCalculator getWtwSkimCalculator()
-    {
-        return logsumHelper.getWtwSkimCalculator();
-    }
-
-    public WalkTransitDriveSkimsCalculator getWtdSkimCalculator()
-    {
-        return logsumHelper.getWtdSkimCalculator();
-    }
-
-    public DriveTransitWalkSkimsCalculator getDtwSkimCalculator()
-    {
-        return logsumHelper.getDtwSkimCalculator();
     }
 
     public void setTazDistanceSkimArrays(double[][][] storedFromTazDistanceSkims,

@@ -14,7 +14,7 @@ public class Household
     private boolean                   debugChoiceModels;
 
     private int                       hhId;
-    private int                       hhIncome;
+    private int                       hhIncomeCategory;
     private int                       hhIncomeInDollars;
     private int                       hhSize;
     private int                       hhType;
@@ -342,9 +342,9 @@ public class Household
 
     }
 
-    public void setHhIncome(int category)
+    public void setHhIncomeCategory(int category)
     {
-        hhIncome = category;
+        hhIncomeCategory = category;
     }
 
     public void setHhIncomeInDollars(int dollars)
@@ -676,9 +676,9 @@ public class Household
         return homeWalkSubzone;
     }
 
-    public int getIncome()
+    public int getIncomeCategory()
     {
-        return hhIncome;
+        return hhIncomeCategory;
     }
 
     public int getIncomeInDollars()
@@ -1517,7 +1517,7 @@ public class Household
         Household.logHelper(logger, "hhId: ", hhId, totalChars);
         Household.logHelper(logger, "debugChoiceModels: ", debugChoiceModels ? "True" : "False",
                 totalChars);
-        Household.logHelper(logger, "hhIncome: ", hhIncome, totalChars);
+        Household.logHelper(logger, "hhIncome: ", hhIncomeCategory, totalChars);
         Household.logHelper(logger, "hhIncomeInDollars: ", hhIncomeInDollars, totalChars);
         Household.logHelper(logger, "hhSize: ", hhSize, totalChars);
         Household.logHelper(logger, "hhType: ", hhType, totalChars);
@@ -1653,7 +1653,7 @@ public class Household
         Household.logHelper(logger, "hhId: ", hhId, totalChars);
         Household.logHelper(logger, "debugChoiceModels: ", debugChoiceModels ? "True" : "False",
                 totalChars);
-        Household.logHelper(logger, "hhIncome: ", hhIncome, totalChars);
+        Household.logHelper(logger, "hhIncome: ", hhIncomeCategory, totalChars);
         Household.logHelper(logger, "hhIncomeInDollars: ", hhIncomeInDollars, totalChars);
         Household.logHelper(logger, "hhSize: ", hhSize, totalChars);
         Household.logHelper(logger, "hhType: ", hhType, totalChars);

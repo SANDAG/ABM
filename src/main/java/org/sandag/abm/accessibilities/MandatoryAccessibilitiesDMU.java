@@ -17,7 +17,7 @@ public class MandatoryAccessibilitiesDMU
     protected double                   hovNestLogsum;
     protected double                   wlkNestLogsum;
     protected double                   drvNestLogsum;
-    protected int                      bestMode;
+    protected int                      bestSet;
     protected float                    mgraTapWalkTime;
     protected float                    tapMgraWalkTime;
     protected float                    driveDistToTap;
@@ -79,14 +79,14 @@ public class MandatoryAccessibilitiesDMU
         this.drvNestLogsum = drvNestLogsum;
     }
 
-    public int getBestMode()
+    public int getBestSet()
     {
-        return bestMode;
+        return bestSet;
     }
 
-    public void setBestMode(int bestMode)
+    public void setBestSet(int bestSet)
     {
-        this.bestMode = bestMode;
+        this.bestSet = bestSet;
     }
 
     public float getMgraTapWalkTime()
@@ -138,7 +138,7 @@ public class MandatoryAccessibilitiesDMU
     {
         methodIndexMap = new HashMap<String, Integer>();
 
-        methodIndexMap.put("getBestMode", 0);
+        methodIndexMap.put("getBestSet", 0);
         methodIndexMap.put("getDriveDistToTap", 1);
         methodIndexMap.put("getDriveTimeToTap", 2);
         methodIndexMap.put("getWlkNestLogsum", 3);
@@ -156,7 +156,7 @@ public class MandatoryAccessibilitiesDMU
         switch (variableIndex)
         {
             case 0:
-                return getBestMode();
+                return getBestSet();
             case 1:
                 return getDriveDistToTap();
             case 2:

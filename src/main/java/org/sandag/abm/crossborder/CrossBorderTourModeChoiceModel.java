@@ -4,10 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.CtrampApplication;
+import org.sandag.abm.ctramp.McLogsumsCalculator;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
+
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
@@ -233,10 +236,6 @@ public class CrossBorderTourModeChoiceModel
         // outbound
         trip.initializeFromTour(tour, true);
 
-        trip.setBestWtwTapPairs(null);
-        trip.setBestWtdTapPairs(null);
-        trip.setBestDtwTapPairs(null);
-
         // DA logsum
         tour.setTourMode(modelStructure.DRIVEALONE);
         double logsumDAOut = tripModeChoiceModel.computeUtilities(tour, trip);
@@ -259,9 +258,6 @@ public class CrossBorderTourModeChoiceModel
 
         // inbound
         trip.initializeFromTour(tour, false);
-        trip.setBestWtwTapPairs(null);
-        trip.setBestWtdTapPairs(null);
-        trip.setBestDtwTapPairs(null);
 
         // DA logsum
         tour.setTourMode(modelStructure.DRIVEALONE);
@@ -411,20 +407,6 @@ public class CrossBorderTourModeChoiceModel
         {
 
             chosen = mcModel[modelIndex].getChoiceResult(rn);
-
-            // best tap pairs were determined and saved in mcDmuObject while
-            // setting dmu skim attributes
-            // if chosen mode is a transit mode, save these tap pairs in the
-            // tour object; if not transit tour attributes remain null.
-            if (modelStructure.getTourModeIsTransit(chosen))
-            {
-                tour.setBestWtwTapPairsOut(logsumsCalculator.getBestWtwTapsOut());
-                tour.setBestWtwTapPairsIn(logsumsCalculator.getBestWtwTapsIn());
-                tour.setBestWtdTapPairsOut(logsumsCalculator.getBestWtdTapsOut());
-                tour.setBestWtdTapPairsIn(logsumsCalculator.getBestWtdTapsIn());
-                tour.setBestDtwTapPairsOut(logsumsCalculator.getBestDtwTapsOut());
-                tour.setBestDtwTapPairsIn(logsumsCalculator.getBestDtwTapsIn());
-            }
 
         } else
         {

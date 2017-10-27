@@ -117,11 +117,11 @@ public class SkimBuilder
                 tazDistanceCalculator.getStoredToTazFromAllTazsDistanceSkims());
 
         BestTransitPathCalculator bestPathUEC = new BestTransitPathCalculator(rbMap);
-        wtw = new WalkTransitWalkSkimsCalculator();
+        wtw = new WalkTransitWalkSkimsCalculator(rbMap);
         wtw.setup(rbMap, LOGGER, bestPathUEC);
-        wtd = new WalkTransitDriveSkimsCalculator();
+        wtd = new WalkTransitDriveSkimsCalculator(rbMap);
         wtd.setup(rbMap, LOGGER, bestPathUEC);
-        dtw = new DriveTransitWalkSkimsCalculator();
+        dtw = new DriveTransitWalkSkimsCalculator(rbMap);
         dtw.setup(rbMap, LOGGER, bestPathUEC);
         
         float fuelCost = new Float(properties.getProperty(FUEL_COST_PROPERTY));

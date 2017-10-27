@@ -16,6 +16,7 @@ import org.sandag.abm.application.SandagTourBasedModel;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.MatrixDataServer;
 import org.sandag.abm.ctramp.MatrixDataServerRmi;
+import org.sandag.abm.ctramp.McLogsumsCalculator;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
@@ -37,7 +38,7 @@ public class CrossBorderModel
 
     private MatrixDataServerRmi     ms;
     private HashMap<String, String> rbMap;
-    private McLogsumsCalculator     logsumsCalculator;
+    private McLogsumsCalculator                logsumsCalculator;
     private AutoTazSkimsCalculator  tazDistanceCalculator;
     private MgraDataManager         mgraManager;
     private TazDataManager          tazManager;

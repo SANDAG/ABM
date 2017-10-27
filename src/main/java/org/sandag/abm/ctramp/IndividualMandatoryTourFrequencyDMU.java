@@ -226,7 +226,7 @@ public class IndividualMandatoryTourFrequencyDMU
 
     public int getIncomeHigherThan50k()
     {
-        if (household.getIncome() > 2) return (1);
+        if (household.getIncomeCategory() > 2) return (1);
         return (0);
     }
 

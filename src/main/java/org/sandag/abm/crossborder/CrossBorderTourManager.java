@@ -236,7 +236,7 @@ public class CrossBorderTourManager
             throw new RuntimeException();
         }
         String tripHeaderString = new String(
-                "tourID,tripID,originPurp,destPurp,originMGRA,destinationMGRA,originTAZ,destinationTAZ,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,boardingTap,alightingTap,workTimeFactor,nonWorkTimeFactor,valueOfTime\n");
+                "tourID,tripID,originPurp,destPurp,originMGRA,destinationMGRA,originTAZ,destinationTAZ,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,boardingTap,alightingTap,set,workTimeFactor,nonWorkTimeFactor,valueOfTime\n");
         tripWriter.print(tripHeaderString);
 
         // Iterate through the array, printing records to the file
@@ -296,46 +296,19 @@ public class CrossBorderTourManager
             PrintWriter writer)
     {
 
-        int[] taps = getTapPair(trip);
-
         String record = new String(tour.getID() + "," + tripNumber + "," + trip.getOriginPurpose()
                 + "," + trip.getDestinationPurpose() + "," + trip.getOriginMgra() + ","
                 + trip.getDestinationMgra() + "," + trip.getOriginTAZ() + ","
                 + trip.getDestinationTAZ() + "," + trip.isInbound() + ","
                 + trip.isOriginIsTourDestination() + "," + trip.isDestinationIsTourDestination()
-                + "," + trip.getPeriod() + "," + trip.getTripMode() + "," + taps[0] + "," + taps[1] + "," 
+                + "," + trip.getPeriod() + "," + trip.getTripMode() + "," 
+                + trip.getBoardTap() + "," + trip.getAlightTap() + "," 
+                + trip.getSet()
                         + String.format("%9.2f",tour.getWorkTimeFactor()) + "," 
                         + String.format("%9.2f",tour.getNonWorkTimeFactor()) + ","
                         + String.format("%9.2f", tour.getValueOfTime()) +"\n");
         writer.print(record);
     }
-
-    /**
-     * A helper method that returns an array containing boarding tap (element 0)
-     * and alighting tap (element 1) for the given trip mode. Returns an array
-     * of zeroes if the trip modes are not transit.
-     * 
-     * @param party
-     *            The trip
-     * @return An array containing boarding TAP and alighting TAP
-     */
-    public int[] getTapPair(CrossBorderTrip trip)
-    {
-
-        int[] taps = new int[2];
-
-        // ride mode will be -1 if not transit
-        int tripMode = trip.getTripMode();
-        int rideMode = sandagStructure.getRideModeIndexForTripMode(tripMode);
-
-        if (sandagStructure.getTripModeIsWalkTransit(tripMode)) taps = trip.getWtwTapPair(rideMode);
-        else if (sandagStructure.getTripModeIsKnrTransit(tripMode))
-            if (trip.isInbound()) taps = trip.getWtdTapPair(rideMode);
-            else taps = trip.getDtwTapPair(rideMode);
-
-        return taps;
-    }
-
     /**
      * @return the parties
      */

@@ -4,7 +4,11 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoAndNonMotorizedSkimsCalculator;
+import org.sandag.abm.airport.AirportModelStructure;
+import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.CtrampApplication;
+import org.sandag.abm.ctramp.McLogsumsCalculator;
+import org.sandag.abm.ctramp.TripModeChoiceDMU;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
@@ -30,6 +34,7 @@ public class InternalExternalTripModeChoiceModel
     private static final String                PROPERTIES_UEC_DATA_SHEET  = "internalExternal.trip.mc.data.page";
     private static final String                PROPERTIES_UEC_MODEL_SHEET = "internalExternal.trip.mc.model.page";
     private static final String                PROPERTIES_UEC_FILE        = "internalExternal.trip.mc.uec.file";
+    private TripModeChoiceDMU 		 mcDmuObject;
 
     /**
      * Constructor.
@@ -48,6 +53,9 @@ public class InternalExternalTripModeChoiceModel
 
         modelStructure = myModelStructure;
         logsumHelper = myLogsumHelper;
+
+        SandagModelStructure modelStructure = new SandagModelStructure();
+        mcDmuObject = new TripModeChoiceDMU(modelStructure, logger);
 
         setupTripModeChoiceModel(propertyMap, dmuFactory);
 
@@ -144,6 +152,32 @@ public class InternalExternalTripModeChoiceModel
             vot = uec.getValueForIndex(votIndex);
         }
         trip.setValueOfTime(vot);
+        
+        
+        if(mode>=9){
+        	double[][] bestTapPairs = null;
+        
+        	if (mode == 9){
+        		bestTapPairs = logsumHelper.getBestWtwTripTaps();
+        	}
+        	else if (mode==10||mode==11){
+        		if (!trip.isInbound())
+        			bestTapPairs = logsumHelper.getBestDtwTripTaps();
+        		else
+        			bestTapPairs = logsumHelper.getBestWtdTripTaps();
+        	}
+        	float rn = new Double(tour.getRandom()).floatValue();
+        	int pathIndex = logsumHelper.chooseTripPath(rn, bestTapPairs, tour.getDebugChoiceModels(), logger);
+        	int boardTap = (int) bestTapPairs[pathIndex][0];
+        	int alightTap = (int) bestTapPairs[pathIndex][1];
+        	int set = (int) bestTapPairs[pathIndex][2];
+        	trip.setBoardTap(boardTap);
+        	trip.setAlightTap(alightTap);
+        	trip.setSet(set);
+        }
+
+        
+        
 
 
     }
@@ -174,9 +208,32 @@ public class InternalExternalTripModeChoiceModel
         
         dmu.setNonWorkTimeFactor(tour.getNonWorkTimeFactor());
         
-        // set the dmu skim attributes (which involves setting the best wtw
-        // taps, since the tour taps are null
-        logsumHelper.setTripMcDmuSkimAttributes(tour, trip, dmu);
+        // set trip mc dmu values for transit logsum (gets replaced below by uec values)
+        double c_ivt = -0.03;
+        double c_cost = - 0.003; 
+
+        // Solve trip mode level utilities
+        mcDmuObject.setIvtCoeff(c_ivt);
+        mcDmuObject.setCostCoeff(c_cost);
+        double walkTransitLogsum = -999.0;
+        double driveTransitLogsum = -999.0;
+   
+        logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, trip.getOriginMgra(), trip.getDestinationMgra(), trip.getPeriod(),tour.getDebugChoiceModels());
+        walkTransitLogsum = mcDmuObject.getTransitLogSum(McLogsumsCalculator.WTW);
+
+    	dmu.setWalkTransitLogsum(walkTransitLogsum);
+        if (!trip.isInbound())
+        {
+            logsumHelper.setDtwTripMcDmuAttributes( mcDmuObject, trip.getOriginMgra(), trip.getDestinationMgra(), trip.getPeriod(), tour.getDebugChoiceModels());
+            driveTransitLogsum = mcDmuObject.getTransitLogSum(McLogsumsCalculator.DTW);
+        } else
+        {
+        	logsumHelper.setWtdTripMcDmuAttributes( mcDmuObject, trip.getOriginMgra(), trip.getDestinationMgra(), trip.getPeriod(), tour.getDebugChoiceModels());
+            driveTransitLogsum = mcDmuObject.getTransitLogSum(McLogsumsCalculator.WTD);
+        }
+
+        dmu.setPnrTransitLogsum(driveTransitLogsum);
+        dmu.setKnrTransitLogsum(driveTransitLogsum);
 
         dmu.setOutboundStops(tour.getNumberInboundStops());
         dmu.setReturnStops(tour.getNumberInboundStops());

@@ -59,7 +59,6 @@ public class AirportModel
         destChoiceModel.chooseOrigins(parties);
 
         AirportModeChoiceModel modeChoiceModel = new AirportModeChoiceModel(rbMap, dmuFactory);
-        modeChoiceModel.initializeBestPathCalculators();
         modeChoiceModel.chooseModes(parties, dmuFactory);
 
         apm.writeOutputFile(rbMap);

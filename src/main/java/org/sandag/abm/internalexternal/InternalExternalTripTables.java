@@ -101,6 +101,9 @@ public class InternalExternalTripTables
     private float valueOfTimeThresholdMed = 0;
     //value of time bins by mode group
     int[] votBins = {3,1,1,1};
+    
+    public int numSkimSets;
+
 
     /**
      * @return the sampleRate
@@ -135,6 +138,9 @@ public class InternalExternalTripTables
         // number of modes
         modeIndex = new int[modelStructure.MAXIMUM_TOUR_MODE_ALT_INDEX + 1];
         matrixIndex = new int[modeIndex.length];
+        
+        numSkimSets = Integer.getInteger(rbMap.get("utility.bestTransitPath.skim.sets"));
+
 
         // set the mode arrays
         for (int i = 1; i < modeIndex.length; ++i)
@@ -226,13 +232,16 @@ public class InternalExternalTripTables
            			}
            		} else if (i == 2)
            		{
-           			matrix[i][j] = new Matrix[tranModes];
-           			for (int k = 0; k < tranModes; ++k)
-           			{
-           				modeName = modelStructure.getModeName(k + 1 + autoModes + nmotModes);
-           				matrix[i][j][k] = new Matrix(modeName + "_" + periodName, "", taps, taps);
-           				matrix[i][j][k].setExternalNumbers(tapIndex);
-           			}
+                	matrix[i][j] = new Matrix[tranModes*numSkimSets];
+                	for (int k = 0; k < tranModes; ++k)
+                	{
+    					for(int l=0;l<numSkimSets;++l){
+    						modeName = modelStructure.getModeName(k+1+autoModes+nmotModes);
+    						String setName = String.valueOf(l+1);
+    						matrix[i][j][(k*numSkimSets)+l] = new Matrix(modeName+"_set"+setName+"_"+periodName,"",taps,taps);
+                  			matrix[i][j][k].setExternalNumbers(tapIndex);
+    					}
+                	}
            		} else
            		{
            			matrix[i][j] = new Matrix[othrModes];
@@ -357,6 +366,8 @@ public class InternalExternalTripTables
             // transit trip - get boarding and alighting tap
             int boardTap = 0;
             int alightTap = 0;
+            int set = 0;
+
             
             //value of time
             float valueOfTime = tripData.getValueAt(i,"valueOfTime");
@@ -366,6 +377,7 @@ public class InternalExternalTripTables
             {
                 boardTap = (int) tripData.getValueAt(i, "boardingTAP");
                 alightTap = (int) tripData.getValueAt(i, "alightingTAP");
+                set = (int) tripData.getValueAt(i, "set");
             }
 
             // scale individual person trips by occupancy for vehicle trips
@@ -406,8 +418,10 @@ public class InternalExternalTripTables
 
                 if (boardTap == 0 || alightTap == 0) continue;
 
-                float value = matrix[mode][votBin][mat].getValueAt(boardTap, alightTap);
-                matrix[mode][votBin][mat].setValueAt(boardTap, alightTap, (value + personTrips));
+           		//store transit trips in matrices
+        		mat = (matrixIndex[tripMode]*numSkimSets)+set;
+        		float value = matrix[mode][votBin][mat].getValueAt(boardTap, alightTap);
+        		matrix[mode][votBin][mat].setValueAt(boardTap, alightTap, (value + personTrips));
 
                 // Store PNR transit trips in SOV free mode skim (mode 0 mat 0)
                 if (modelStructure.getTourModeIsDriveTransit(tripMode))

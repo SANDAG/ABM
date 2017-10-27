@@ -685,7 +685,7 @@ public class CtrampApplication
 	            StoredUtilityData.getInstance(MgraDataManager.getInstance(rbMap).getMaxMgra(),
 	                    MgraDataManager.getInstance(rbMap).getMaxTap(),
 	                    TazDataManager.getInstance(rbMap).getMaxTaz(),
-	                    BestTransitPathCalculator.NUM_ACC_EGR, BestTransitPathCalculator.NUM_PERIODS)
+	                    BestTransitPathCalculator.ACC_EGR, ModelStructure.PERIODCODES)
 	                    .deallocateArrays();
 	
 	            MatrixDataManager.getInstance().clearData();

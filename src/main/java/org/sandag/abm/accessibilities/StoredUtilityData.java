@@ -1,132 +1,133 @@
 package org.sandag.abm.accessibilities;
 
-public final class StoredUtilityData
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
+
+
+public class StoredUtilityData
 {
 
-    private static volatile StoredUtilityData objInstance = null;
-    private static final Object LOCK = new Object();
+    private static StoredUtilityData objInstance = null;
+    public static final float		 default_utility = -999;
 
-    // these arrays are shared by multiple BestTransitPathCalculator objects in
-    // a distributed computing environment
-    private volatile double[][][]             storedWalkAccessUtils;
-    private volatile double[][][]             storedDriveAccessUtils;
-    private volatile double[][][]             storedWalkEgressUtils;
-    private volatile double[][][]             storedDriveEgressUtils;
-    private volatile double[][][][][]         storedDepartPeriodTapTapUtils;
-
-    private StoredUtilityData()
-    {
+    // these arrays are shared by multiple BestTransitPathCalculator objects in a distributed computing environment
+    private float[][] storedWalkAccessUtils;	// dim#1: MGRA id, dim#2: TAP id
+    private float[][] storedDriveAccessUtils; // dim#1: TAZ id, dim#2: TAP id
+    private float[][] storedWalkEgressUtils; 	// dim#1: TAP id, dim#2: MGRA id
+    private float[][] storedDriveEgressUtils; // dim#1: TAP id, dim#2: TAZ id
+    
+    // {0:WTW, 1:WTD, 2:DTW} -> TOD period number -> pTAP*100000+aTAP -> utility
+    private HashMap<Integer,HashMap<Integer,ConcurrentHashMap<Long,float[]>>> storedDepartPeriodTapTapUtils;
+       
+    
+    private StoredUtilityData(){
     }
-
-    public static synchronized StoredUtilityData getInstance(int maxMgra, int maxTap, int maxTaz,
-            int numAccEgrSegments, int numPeriods)
+    
+    public static synchronized StoredUtilityData getInstance( int maxMgra, int maxTap, int maxTaz, int[] accEgrSegments, int[] periods)
     {
         if (objInstance == null) {
-        	synchronized (LOCK) {
-        		if (objInstance == null) { //only one initialization - if two get in here, only one proceeds
-		            objInstance = new StoredUtilityData();
-		            objInstance.setupStoredDataArrays(maxMgra, maxTap, maxTaz, numAccEgrSegments,numPeriods);
-        		}
+            objInstance = new StoredUtilityData();
+            objInstance.setupStoredDataArrays( maxMgra, maxTap, maxTaz, accEgrSegments, periods);
+            return objInstance;
+        }
+        else {
+            return objInstance;
+        }
+    }    
+    
+    private void setupStoredDataArrays( int maxMgra, int maxTap, int maxTaz, int[] accEgrSegments, int[] periods){        
+    	// dimension the arrays
+    	storedWalkAccessUtils = new float[maxMgra + 1][maxTap + 1];
+        storedDriveAccessUtils = new float[maxTaz + 1][maxTap + 1];
+        storedWalkEgressUtils = new float[maxTap + 1][maxMgra + 1];
+        storedDriveEgressUtils = new float[maxTap + 1][maxTaz + 1];
+        // assign default values to array elements
+        for (int i=0; i<=maxMgra; i++)
+        	for (int j=0; j<=maxTap; j++) {
+        		storedWalkAccessUtils[i][j] = default_utility;
+        		storedWalkEgressUtils[j][i] = default_utility;
         	}
-        } 
-        return objInstance;
+        // assign default values to array elements
+        for (int i=0; i<=maxTaz; i++)
+        	for (int j=0; j<=maxTap; j++) {
+        		storedDriveAccessUtils[i][j] = default_utility;
+        		storedDriveEgressUtils[j][i] = default_utility;
+        	}
+        
+        //put into concurrent hashmap
+        storedDepartPeriodTapTapUtils = new HashMap<Integer,HashMap<Integer,ConcurrentHashMap<Long,float[]>>>();
+        for(int i=0; i<accEgrSegments.length; i++) {
+        	storedDepartPeriodTapTapUtils.put(accEgrSegments[i], new HashMap<Integer,ConcurrentHashMap<Long,float[]>>());
+        	for(int j=0; j<periods.length; j++) {
+        		HashMap<Integer,ConcurrentHashMap<Long,float[]>> hm = storedDepartPeriodTapTapUtils.get(accEgrSegments[i]);
+        		hm.put(periods[j], new ConcurrentHashMap<Long,float[]>()); //key method paTapKey below
+        	}
+    	}        
     }
-
-    private void setupStoredDataArrays(int maxMgra, int maxTap, int maxTaz, int numAccEgrSegments,
-            int numPeriods)
-    {
-        storedWalkAccessUtils = new double[maxMgra + 1][maxTap + 1][];
-        storedDriveAccessUtils = new double[maxTaz + 1][maxTap + 1][];
-        storedWalkEgressUtils = new double[maxTap + 1][maxMgra + 1][];
-        storedDriveEgressUtils = new double[maxTap + 1][maxTaz + 1][];
-        storedDepartPeriodTapTapUtils = new double[numAccEgrSegments + 1][numPeriods + 1][maxTap + 1][maxTap + 1][];
-    }
-
-    public double[][][] getStoredWalkAccessUtils()
-    {
+    
+    public float[][] getStoredWalkAccessUtils() {
         return storedWalkAccessUtils;
     }
-
-    public double[][][] getStoredDriveAccessUtils()
-    {
+    
+    public float[][] getStoredDriveAccessUtils() {
         return storedDriveAccessUtils;
     }
-
-    public double[][][] getStoredWalkEgressUtils()
-    {
+    
+    public float[][] getStoredWalkEgressUtils() {
         return storedWalkEgressUtils;
     }
-
-    public double[][][] getStoredDriveEgressUtils()
-    {
+    
+    public float[][]getStoredDriveEgressUtils() {
         return storedDriveEgressUtils;
     }
-
-    public double[][][][][] getStoredDepartPeriodTapTapUtils()
-    {
+    
+    public HashMap<Integer,HashMap<Integer,ConcurrentHashMap<Long,float[]>>> getStoredDepartPeriodTapTapUtils() {
         return storedDepartPeriodTapTapUtils;
     }
-
+    
+    //create p to a hash key - up to 99,999 
+    public long paTapKey(int p, int a) {
+    	return(p * 100000 + a);
+    }
+    
+    //convert double array to float array
+    public float[] d2f(double[] d) {
+    	float[] f = new float[d.length];
+    	for(int i=0; i<d.length; i++) {
+    		f[i] = (float)d[i];
+    	}
+    	return(f);
+    }
+    
     public void deallocateArrays()
     {
 
         for (int i = 0; i < storedWalkAccessUtils.length; i++)
         {
-            for (int j = 0; j < storedWalkAccessUtils[i].length; j++)
-            {
-                storedWalkAccessUtils[i][j] = null;
-            }
-            storedWalkAccessUtils[i] = null;
+         storedWalkAccessUtils[i] = null;
         }
         storedWalkAccessUtils = null;
 
         for (int i = 0; i < storedDriveAccessUtils.length; i++)
         {
-            for (int j = 0; j < storedDriveAccessUtils[i].length; j++)
-            {
-                storedDriveAccessUtils[i][j] = null;
-            }
             storedDriveAccessUtils[i] = null;
         }
         storedDriveAccessUtils = null;
 
         for (int i = 0; i < storedWalkEgressUtils.length; i++)
         {
-            for (int j = 0; j < storedWalkEgressUtils[i].length; j++)
-            {
-                storedWalkEgressUtils[i][j] = null;
-            }
             storedWalkEgressUtils[i] = null;
         }
         storedWalkEgressUtils = null;
 
         for (int i = 0; i < storedDriveEgressUtils.length; i++)
         {
-            for (int j = 0; j < storedDriveEgressUtils[i].length; j++)
-            {
-                storedDriveEgressUtils[i][j] = null;
-            }
             storedDriveEgressUtils[i] = null;
         }
         storedDriveEgressUtils = null;
 
-        for (int i = 0; i < storedDepartPeriodTapTapUtils.length; i++)
-        {
-            for (int j = 0; j < storedDepartPeriodTapTapUtils[i].length; j++)
-            {
-                for (int k = 0; k < storedDepartPeriodTapTapUtils[i][j].length; k++)
-                {
-                    for (int l = 0; l < storedDepartPeriodTapTapUtils[i][j][k].length; l++)
-                    {
-                        storedDepartPeriodTapTapUtils[i][j][k][l] = null;
-                    }
-                    storedDepartPeriodTapTapUtils[i][j][k] = null;
-                }
-                storedDepartPeriodTapTapUtils[i][j] = null;
-            }
-            storedDepartPeriodTapTapUtils[i] = null;
-        }
         storedDepartPeriodTapTapUtils = null;
 
     }
+    
 }

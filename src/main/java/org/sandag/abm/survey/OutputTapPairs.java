@@ -73,11 +73,11 @@ public class OutputTapPairs {
 		
         bestPathCalculator = new BestTransitPathCalculator(propertyMap);
 
-        wtw = new WalkTransitWalkSkimsCalculator();
+        wtw = new WalkTransitWalkSkimsCalculator(propertyMap);
         wtw.setup(propertyMap, logger, bestPathCalculator);
-        wtd = new WalkTransitDriveSkimsCalculator();
+        wtd = new WalkTransitDriveSkimsCalculator(propertyMap);
         wtd.setup(propertyMap, logger, bestPathCalculator);
-        dtw = new DriveTransitWalkSkimsCalculator();
+        dtw = new DriveTransitWalkSkimsCalculator(propertyMap);
         dtw.setup(propertyMap, logger, bestPathCalculator);
         
         readData();

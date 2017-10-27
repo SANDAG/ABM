@@ -21,6 +21,8 @@ public class Stop
     int     boardTap;
     int     alightTap;
     boolean inbound;
+    int     set;
+
     private int escorteePnumOrig;
     private byte escortStopTypeOrig;
     private int escorteePnumDest;
@@ -63,6 +65,11 @@ public class Stop
         this.mode = mode;
     }
 
+    public void setSet(int Skimset)
+    {
+        set = Skimset;
+    }
+    
     public void setBoardTap(int tap)
     {
         boardTap = tap;
@@ -118,6 +125,10 @@ public class Stop
     public int getMode()
     {
         return mode;
+    }
+    public int getSet()
+    {
+        return set;
     }
 
     public int getBoardTap()
@@ -203,6 +214,9 @@ public class Stop
         Household.logHelper(logger, "orig: ", orig, totalChars);
         Household.logHelper(logger, "dest: ", dest, totalChars);
         Household.logHelper(logger, "mode: ", mode, totalChars);
+        Household.logHelper(logger, "boardTap: ", boardTap, totalChars);
+        Household.logHelper(logger, "alightTap: ", alightTap, totalChars);
+        Household.logHelper(logger, "TapSet: ", set, totalChars);
         Household.logHelper(logger, "direction: ", inbound ? "inbound" : "outbound", totalChars);
         Household.logHelper( logger, "stopPeriod: ", stopPeriod, totalChars );
         Household.logHelper( logger, "orig escort stop type: ",escortStopTypeOrig, totalChars);

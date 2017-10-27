@@ -92,15 +92,14 @@ public final class XBorderSkimsAppender
                 tazDistanceCalculator.getStoredToTazFromAllTazsDistanceSkims());
 
         AutoAndNonMotorizedSkimsCalculator anm = logsumHelper.getAnmSkimCalculator();
-        WalkTransitWalkSkimsCalculator wtw = logsumHelper.getWtwSkimCalculator();
+        WalkTransitWalkSkimsCalculator wtw = new WalkTransitWalkSkimsCalculator(rbMap);
 
         String heading = "seq";
 
         heading += ",origMgra,destMgra,departPeriod";
         heading += getAutoSkimsHeaderRecord("auto", anm.getAutoSkimNames());
         heading += getNonMotorizedSkimsHeaderRecord("nm", anm.getNmSkimNames());
-        heading += getTransitSkimsHeaderRecord("wtw", wtw.getLocalSkimNames(),
-                wtw.getPremiumSkimNames());
+        heading += getTransitSkimsHeaderRecord("wtw", wtw.getSkimNames());
 
         try
         {
@@ -194,6 +193,9 @@ public final class XBorderSkimsAppender
         String nmRecord = getAutoSkimsRecord(skims);
         outStream.print(nmRecord);
 
+        /*
+         * TODO: Fix this code
+        
         bestTapPairs = wtw.getBestTapPairs(odt[0], odt[1], odt[2], loggingEnabled, wtwLogger);
         returnedSkims = new double[bestTapPairs.length][];
         for (int i = 0; i < bestTapPairs.length; i++)
@@ -212,7 +214,7 @@ public final class XBorderSkimsAppender
 
         String wtwRecord = getTransitSkimsRecord(odt, returnedSkims);
         outStream.println(wtwRecord);
-
+        */
     }
 
     /**
@@ -316,8 +318,7 @@ public final class XBorderSkimsAppender
      *            second element the dest mgra and third element the departure
      *            period index
      */
-    private String getTransitSkimsHeaderRecord(String transitServiveLabel, String[] localNames,
-            String[] premiumNames)
+    private String getTransitSkimsHeaderRecord(String transitServiveLabel, String[] skimNames)
     {
 
         Modes.TransitMode[] mode = Modes.TransitMode.values();
@@ -326,17 +327,10 @@ public final class XBorderSkimsAppender
 
         for (int i = 0; i < mode.length; i++)
         {
-            if (mode[i].isPremiumMode(mode[i]))
-            {
-                for (int j = 0; j < premiumNames.length; j++)
-                    heading += String.format(",%s_%s_%s", transitServiveLabel, mode[i],
-                            premiumNames[j]);
-            } else
-            {
-                for (int j = 0; j < localNames.length; j++)
-                    heading += String.format(",%s_%s_%s", transitServiveLabel, mode[i],
-                            localNames[j]);
-            }
+        	for (int j = 0; j < skimNames.length; j++)
+        		heading += String.format(",%s_%s_%s", transitServiveLabel, mode[i],
+                            skimNames[j]);
+            
         }
 
         return heading;

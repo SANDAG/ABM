@@ -30,11 +30,9 @@ public class InternalExternalTrip
     private boolean originIsTourDestination;
     private boolean destinationIsTourDestination;
 
-    // best tap pairs for transit path; dimensioned by ride mode, then boarding
-    // (0) and alighting (1)
-    private int[][] bestWtwTapPairs;
-    private int[][] bestWtdTapPairs;
-    private int[][] bestDtwTapPairs;
+ 	private int boardTap;
+ 	private int alightTap;
+ 	private int set;
     
     private double valueOfTime;
 
@@ -168,90 +166,30 @@ public class InternalExternalTrip
     {
         this.tripMode = tripMode;
     }
+    public int getBoardTap() {
+ 		return boardTap;
+ 	}
 
-    /**
-     * @return the bestWtwTapPairs
-     */
-    public int[][] getBestWtwTapPairs()
-    {
-        return bestWtwTapPairs;
-    }
+ 	public void setBoardTap(int boardTap) {
+ 		this.boardTap = boardTap;
+ 	}
 
-    /**
-     * Return an array of boarding and alighting tap for the ride mode
-     * 
-     * @param rideMode
-     * @return
-     */
-    public int[] getWtwTapPair(int rideMode)
-    {
-        return bestWtwTapPairs[rideMode];
-    }
+ 	public int getAlightTap() {
+ 		return alightTap;
+ 	}
 
-    /**
-     * @param bestWtwTapPairs
-     *            the bestWtwTapPairs to set
-     */
-    public void setBestWtwTapPairs(int[][] bestWtwTapPairs)
-    {
-        this.bestWtwTapPairs = bestWtwTapPairs;
-    }
+ 	public void setAlightTap(int alightTap) {
+ 		this.alightTap = alightTap;
+ 	}
 
-    /**
-     * @return the bestWtdTapPairs
-     */
-    public int[][] getBestWtdTapPairs()
-    {
-        return bestWtdTapPairs;
-    }
+ 	public int getSet() {
+ 		return set;
+ 	}
 
-    /**
-     * Return an array of boarding and alighting tap for the ride mode
-     * 
-     * @param rideMode
-     * @return
-     */
-    public int[] getWtdTapPair(int rideMode)
-    {
-        return bestWtdTapPairs[rideMode];
-    }
+ 	public void setSet(int set) {
+ 		this.set = set;
+ 	}
 
-    /**
-     * @param bestWtdTapPairs
-     *            the bestWtdTapPairs to set
-     */
-    public void setBestWtdTapPairs(int[][] bestWtdTapPairs)
-    {
-        this.bestWtdTapPairs = bestWtdTapPairs;
-    }
-
-    /**
-     * @return the bestDtwTapPairs
-     */
-    public int[][] getBestDtwTapPairs()
-    {
-        return bestDtwTapPairs;
-    }
-
-    /**
-     * Return an array of boarding and alighting tap for the ride mode
-     * 
-     * @param rideMode
-     * @return
-     */
-    public int[] getDtwTapPair(int rideMode)
-    {
-        return bestDtwTapPairs[rideMode];
-    }
-
-    /**
-     * @param bestDtwTapPairs
-     *            the bestDtwTapPairs to set
-     */
-    public void setBestDtwTapPairs(int[][] bestDtwTapPairs)
-    {
-        this.bestDtwTapPairs = bestDtwTapPairs;
-    }
 
     /**
      * @return the inbound

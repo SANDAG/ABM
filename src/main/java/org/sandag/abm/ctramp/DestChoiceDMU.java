@@ -212,7 +212,7 @@ public abstract class DestChoiceDMU
 
     protected int getIncome()
     {
-        return hh.getIncome();
+        return hh.getIncomeCategory();
     }
 
     protected int getIncomeInDollars()

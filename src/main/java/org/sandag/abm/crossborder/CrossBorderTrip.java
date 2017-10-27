@@ -17,12 +17,10 @@ public class CrossBorderTrip
     private boolean originIsTourDestination;
     private boolean destinationIsTourDestination;
 
-    // best tap pairs for transit path; dimensioned by ride mode, then boarding
-    // (0) and alighting (1)
-    private int[][] bestWtwTapPairs;
-    private int[][] bestWtdTapPairs;
-    private int[][] bestDtwTapPairs;
-
+    private int boardTap;
+    private int alightTap;
+    private int set;
+    
     /**
      * Default constructor; nothing initialized.
      */
@@ -71,9 +69,6 @@ public class CrossBorderTrip
             this.lastTrip = false;
             this.originIsTourDestination = false;
             this.destinationIsTourDestination = true;
-            this.bestWtwTapPairs = tour.getBestWtwTapPairsOut();
-            this.bestDtwTapPairs = tour.getBestDtwTapPairsOut();
-            this.bestWtdTapPairs = tour.getBestWtdTapPairsOut();
         } else
         {
             this.originMgra = tour.getDestinationMGRA();
@@ -88,10 +83,7 @@ public class CrossBorderTrip
             this.lastTrip = true;
             this.originIsTourDestination = true;
             this.destinationIsTourDestination = false;
-            this.bestWtwTapPairs = tour.getBestWtwTapPairsIn();
-            this.bestDtwTapPairs = tour.getBestDtwTapPairsIn();
-            this.bestWtdTapPairs = tour.getBestWtdTapPairsIn();
-        }
+         }
 
     }
 
@@ -378,90 +370,7 @@ public class CrossBorderTrip
         this.tripMode = tripMode;
     }
 
-    /**
-     * @return the bestWtwTapPairs
-     */
-    public int[][] getBestWtwTapPairs()
-    {
-        return bestWtwTapPairs;
-    }
-
-    /**
-     * Return an array of boarding and alighting tap for the ride mode
-     * 
-     * @param rideMode
-     * @return
-     */
-    public int[] getWtwTapPair(int rideMode)
-    {
-        return bestWtwTapPairs[rideMode];
-    }
-
-    /**
-     * @param bestWtwTapPairs
-     *            the bestWtwTapPairs to set
-     */
-    public void setBestWtwTapPairs(int[][] bestWtwTapPairs)
-    {
-        this.bestWtwTapPairs = bestWtwTapPairs;
-    }
-
-    /**
-     * @return the bestWtdTapPairs
-     */
-    public int[][] getBestWtdTapPairs()
-    {
-        return bestWtdTapPairs;
-    }
-
-    /**
-     * Return an array of boarding and alighting tap for the ride mode
-     * 
-     * @param rideMode
-     * @return
-     */
-    public int[] getWtdTapPair(int rideMode)
-    {
-        return bestWtdTapPairs[rideMode];
-    }
-
-    /**
-     * @param bestWtdTapPairs
-     *            the bestWtdTapPairs to set
-     */
-    public void setBestWtdTapPairs(int[][] bestWtdTapPairs)
-    {
-        this.bestWtdTapPairs = bestWtdTapPairs;
-    }
-
-    /**
-     * @return the bestDtwTapPairs
-     */
-    public int[][] getBestDtwTapPairs()
-    {
-        return bestDtwTapPairs;
-    }
-
-    /**
-     * Return an array of boarding and alighting tap for the ride mode
-     * 
-     * @param rideMode
-     * @return
-     */
-    public int[] getDtwTapPair(int rideMode)
-    {
-        return bestDtwTapPairs[rideMode];
-    }
-
-    /**
-     * @param bestDtwTapPairs
-     *            the bestDtwTapPairs to set
-     */
-    public void setBestDtwTapPairs(int[][] bestDtwTapPairs)
-    {
-        this.bestDtwTapPairs = bestDtwTapPairs;
-    }
-
+ 
     /**
      * @return the inbound
      */
@@ -546,5 +455,29 @@ public class CrossBorderTrip
     {
         this.destinationIsTourDestination = destinationIsTourDestination;
     }
+
+	public int getBoardTap() {
+		return boardTap;
+	}
+
+	public void setBoardTap(int boardTap) {
+		this.boardTap = boardTap;
+	}
+
+	public int getAlightTap() {
+		return alightTap;
+	}
+
+	public void setAlightTap(int alightTap) {
+		this.alightTap = alightTap;
+	}
+
+	public int getSet() {
+		return set;
+	}
+
+	public void setSet(int set) {
+		this.set = set;
+	}
 
 }

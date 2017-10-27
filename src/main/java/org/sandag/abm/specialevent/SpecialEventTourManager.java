@@ -224,7 +224,7 @@ public class SpecialEventTourManager
             throw new RuntimeException();
         }
         String tripHeaderString = new String(
-                "tourID,tripID,originMGRA,destinationMGRA,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,boardingTap,alightingTap,valueOfTime");
+                "tourID,tripID,originMGRA,destinationMGRA,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,boardingTap,alightingTap,set,valueOfTime");
 
         // Iterate through the array, printing records to the file
         for (int i = 0; i < tours.length; ++i)
@@ -294,12 +294,11 @@ public class SpecialEventTourManager
             PrintWriter writer)
     {
 
-        int[] taps = getTapPair(trip);
-
         String record = new String(tour.getID() + "," + tripNumber + "," + trip.getOriginMgra()
                 + "," + trip.getDestinationMgra() + "," + trip.isInbound() + ","
                 + trip.isOriginIsTourDestination() + "," + trip.isDestinationIsTourDestination()
-                + "," + trip.getPeriod() + "," + trip.getTripMode() + "," + taps[0] + "," + taps[1] +","
+                + "," + trip.getPeriod() + "," + trip.getTripMode() + "," 
+                + trip.getBoardTap() + "," + trip.getAlightTap() +"," + trip.getSet()
                 + String.format("%9.2f",tour.getValueOfTime()) + "\n");
 
 
@@ -317,36 +316,6 @@ public class SpecialEventTourManager
         }
         writer.print(record + "\n");
     }
-
-    /**
-     * A helper method that returns an array containing boarding tap (element 0)
-     * and alighting tap (element 1) for the given trip mode. Returns an array
-     * of zeroes if the trip modes are not transit.
-     * 
-     * @param party
-     *            The trip
-     * @return An array containing boarding TAP and alighting TAP
-     */
-    public int[] getTapPair(SpecialEventTrip trip)
-    {
-
-        int[] taps = new int[2];
-
-        // ride mode will be -1 if not transit
-        int tripMode = trip.getTripMode();
-        int rideMode = sandagStructure.getRideModeIndexForTripMode(tripMode);
-
-        if (sandagStructure.getTripModeIsWalkTransit(tripMode)) taps = trip.getWtwTapPair(rideMode);
-        else if (sandagStructure.getTripModeIsPnrTransit(tripMode)) if (trip.isInbound()) taps = trip
-                .getWtdTapPair(rideMode);
-        else taps = trip.getDtwTapPair(rideMode);
-        else if (sandagStructure.getTripModeIsKnrTransit(tripMode))
-            if (trip.isInbound()) taps = trip.getWtdTapPair(rideMode);
-            else taps = trip.getDtwTapPair(rideMode);
-
-        return taps;
-    }
-
     /**
      * get special event tours.
      * 

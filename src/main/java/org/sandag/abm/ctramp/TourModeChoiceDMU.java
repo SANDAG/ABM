@@ -1,15 +1,30 @@
 package org.sandag.abm.ctramp;
 
 import java.io.Serializable;
+import java.util.HashMap;
+
 import org.apache.log4j.Logger;
-import org.sandag.abm.common.TourDMU;
 
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 
-public class TourModeChoiceDMU extends TourDMU implements Serializable,
+public class TourModeChoiceDMU implements Serializable,
 		VariableTable {
-	protected IndexValues dmuIndex;
+	
+    protected transient Logger             logger = Logger.getLogger(TourModeChoiceDMU.class);
+
+    public static final int                WTW = McLogsumsCalculator.WTW;
+    public static final int                WTD = McLogsumsCalculator.WTD;
+    public static final int                DTW = McLogsumsCalculator.DTW;
+    protected static final int             NUM_ACC_EGR = McLogsumsCalculator.NUM_ACC_EGR;
+        
+    protected static final int             OUT = McLogsumsCalculator.OUT;
+    protected static final int             IN = McLogsumsCalculator.IN;
+    protected static final int             NUM_DIR = McLogsumsCalculator.NUM_DIR;
+
+    protected HashMap<String, Integer> methodIndexMap;
+    protected IndexValues              dmuIndex;
+
 
 	protected Household hh;
 	protected Tour tour;
@@ -41,18 +56,19 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
 
 	protected int originMgra;
     protected int destMgra;
+    
+    protected double ivtCoeff;
+    protected double costCoeff;
 	  
-	protected double[][][][] transitSkim;
+    protected double[][]                 transitLogSum;
 	
 
 	public TourModeChoiceDMU(ModelStructure modelStructure, Logger aLogger) {
-		logger = aLogger;
-		if (logger == null)
-			logger = Logger.getLogger(TourModeChoiceDMU.class);
-		this.modelStructure = modelStructure;
-		dmuIndex = new IndexValues();
-
-		transitSkim = new double[McLogsumsCalculator.NUM_ACC_EGR][McLogsumsCalculator.NUM_LOC_PREM][McLogsumsCalculator.NUM_SKIMS][McLogsumsCalculator.NUM_DIR];
+	        this.modelStructure = modelStructure;
+	        dmuIndex = new IndexValues();
+	        
+	        //accEgr by in/outbound
+	        transitLogSum = new double[NUM_ACC_EGR][NUM_DIR];
 
 	}
 
@@ -181,14 +197,13 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
 		dmuIndex.setDestZone(d);
 	}
 
-	public void setTransitSkim(int accEgr, int lbPrem, int skimIndex, int dir,
-			double value) {
-		transitSkim[accEgr][lbPrem][skimIndex][dir] = value;
-	}
+    public void setTransitLogSum(int accEgr, boolean inbound, double value){
+    	transitLogSum[accEgr][inbound == true ? 1 : 0] = value;
+    }
 
-	public double getTransitSkim(int accEgr, int lbPrem, int skimIndex, int dir) {
-		return transitSkim[accEgr][lbPrem][skimIndex][dir];
-	}
+    protected double getTransitLogSum(int accEgr,boolean inbound){
+        return transitLogSum[accEgr][inbound == true ? 1 : 0];
+    }
 
 	public int getWorkTourModeIsSov() {
 		boolean tourModeIsSov = modelStructure.getTourModeIsSov(workTour
@@ -252,10 +267,15 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
 		return person.getAge();
 	}
 
-	public int getIncome() {
-		return hh.getIncome();
+	public int getIncomeCategory() {
+		return hh.getIncomeCategory();
 	}
 
+	public int getIncomeInDollars() {
+		return hh.getIncomeInDollars();
+	}
+
+	
 	public void setNmWalkTimeOut(double nmWalkTime) {
 		nmWalkTimeOut = nmWalkTime;
 	}
@@ -371,6 +391,22 @@ public class TourModeChoiceDMU extends TourDMU implements Serializable,
   public int getTransponderOwnership(){
 	  return hh.getTpChoice();
   }
+
+	public double getIvtCoeff() {
+	return ivtCoeff;
+}
+
+public void setIvtCoeff(double ivtCoeff) {
+	this.ivtCoeff = ivtCoeff;
+}
+
+public double getCostCoeff() {
+	return costCoeff;
+}
+
+public void setCostCoeff(double costCoeff) {
+	this.costCoeff = costCoeff;
+}
 
 	public int getIndexValue(String variableName) {
 		return methodIndexMap.get(variableName);

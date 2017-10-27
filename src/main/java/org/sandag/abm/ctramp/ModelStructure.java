@@ -42,6 +42,9 @@ public abstract class ModelStructure
             EA_SKIM_PERIOD_INDEX, AM_SKIM_PERIOD_INDEX, MD_SKIM_PERIOD_INDEX, PM_SKIM_PERIOD_INDEX,
             EV_SKIM_PERIOD_INDEX                                                          };
 
+    public static final int[]            PERIODCODES = { EA_SKIM_PERIOD_INDEX, AM_SKIM_PERIOD_INDEX, 
+    	MD_SKIM_PERIOD_INDEX, PM_SKIM_PERIOD_INDEX, EV_SKIM_PERIOD_INDEX };
+
     public static final String[]                        SKIM_PERIOD_STRINGS               = {"EA",
             "AM", "MD", "PM", "EV"                                                        };
 
@@ -300,10 +303,6 @@ public abstract class ModelStructure
 
     public abstract boolean getTourModeIsWalk(int tourMode);
 
-    public abstract boolean getTourModeIsWalkLocal(int tourMode);
-
-    public abstract boolean getTourModeIsWalkPremium(int tourMode);
-
     public abstract boolean getTourModeIsTransit(int tourMode);
 
     public abstract boolean getTourModeIsWalkTransit(int tourMode);
@@ -323,8 +322,6 @@ public abstract class ModelStructure
     public abstract boolean getTripModeIsPnrTransit(int tripMode);
 
     public abstract boolean getTripModeIsKnrTransit(int tripMode);
-
-    public abstract int getRideModeIndexForTripMode(int tripMode);
 
     public abstract double[][] getCdap6PlusProps();
 

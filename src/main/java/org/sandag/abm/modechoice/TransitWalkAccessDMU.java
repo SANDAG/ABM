@@ -1,12 +1,11 @@
 /*
- * Copyright 2005 PB Consult Inc. Licensed under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
- * or agreed to in writing, software distributed under the License is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
+ * Copyright 2005 PB Consult Inc. Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You
+ * may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 package org.sandag.abm.modechoice;
 
@@ -16,9 +15,8 @@ import org.apache.log4j.Logger;
 import com.pb.common.calculator.VariableTable;
 
 /**
- * WalkDMU is the Decision-Making Unit class for the Walk-transit choice. The
- * class contains getter and setter methods for the variables used in the
- * WalkPathUEC.
+ * WalkDMU is the Decision-Making Unit class for the Walk-transit choice. The class
+ * contains getter and setter methods for the variables used in the WalkPathUEC.
  * 
  * @author Joel Freedman
  * @version 1.0, March, 2009
@@ -32,9 +30,18 @@ public class TransitWalkAccessDMU
 
     protected HashMap<String, Integer> methodIndexMap;
 
-    double                             tapToMgraWalkTime;
-    double                             mgraToTapWalkTime;
-    double                             escalatorTime;
+    double                              tapToMgraWalkTime;
+    double                              mgraToTapWalkTime;
+    double                              escalatorTime;
+    int 								period;
+    int 								set;
+    
+    //default values for generic application
+    int                                 applicationType = 0;
+    int                                 tourCategoryIsJoint = 0;
+    int                                 personType = 1;
+    float                               ivtCoeff;
+    float                               costCoeff;
 
     public TransitWalkAccessDMU()
     {
@@ -54,8 +61,7 @@ public class TransitWalkAccessDMU
     /**
      * Set the time from the production/origin MGRA to the boarding TAP.
      * 
-     * @param walkTime
-     *            The time from the production/origin MGRA to the boarding TAP.
+     * @param walkTime The time from the production/origin MGRA to the boarding TAP.
      */
     public void setMgraTapWalkTime(double walkTime)
     {
@@ -65,8 +71,7 @@ public class TransitWalkAccessDMU
     /**
      * Get the time from the alighting TAP to the attraction/destination MGRA.
      * 
-     * @return The time from the alighting TAP to the attraction/destination
-     *         MGRA.
+     * @return The time from the alighting TAP to the attraction/destination MGRA.
      */
     public double getTapMgraWalkTime()
     {
@@ -76,8 +81,7 @@ public class TransitWalkAccessDMU
     /**
      * Set the time from the alighting TAP to the attraction/destination MGRA.
      * 
-     * @param walkTime
-     *            The time from the alighting TAP to the attraction/destination
+     * @param walkTime The time from the alighting TAP to the attraction/destination
      *            MGRA.
      */
     public void setTapMgraWalkTime(double walkTime)
@@ -98,19 +102,74 @@ public class TransitWalkAccessDMU
     /**
      * Set the time to get to the platform.
      * 
-     * @param escalatorTime
-     *            The time in minutes.
+     * @param escalatorTime The time in minutes.
      */
     public void setEscalatorTime(double escalatorTime)
     {
         this.escalatorTime = escalatorTime;
     }
+    
+    public void setTOD(int period) {
+    	this.period = period;
+    }
+    
+    public int getTOD() {
+    	return period;
+    }
+    
+    public void setSet(int set) {
+    	this.set = set;
+    }
+    
+    public int getSet() {
+    	return set;
+    }
+    
+    
+    public void setApplicationType(int applicationType) {
+    	this.applicationType = applicationType;
+    }
+    
+    public int getApplicationType() {
+    	return applicationType;
+    }
+    
+    public void setTourCategoryIsJoint(int tourCategoryIsJoint) {
+    	this.tourCategoryIsJoint = tourCategoryIsJoint;
+    }
+    
+    public int getTourCategoryIsJoint() {
+    	return tourCategoryIsJoint;
+    }
+    
+    public void setPersonType(int personType) {
+    	this.personType = personType;
+    }
+    
+    public int getPersonType() {
+    	return personType;
+    }
+    
+    public void setIvtCoeff(float ivtCoeff) {
+    	this.ivtCoeff = ivtCoeff;
+    }
+    
+    public void setCostCoeff(float costCoeff) {
+    	this.costCoeff = costCoeff;
+    }
+    
+    public float getIvtCoeff() {
+    	return ivtCoeff;
+    }
 
+    public float getCostCoeff() {
+    	return costCoeff;
+    }
+    
     /**
      * Log the DMU values.
      * 
-     * @param localLogger
-     *            The logger to use.
+     * @param localLogger The logger to use.
      */
     public void logValues(Logger localLogger)
     {
@@ -121,6 +180,13 @@ public class TransitWalkAccessDMU
         localLogger.info(String.format("MGRA to TAP walk time:    %9.4f", mgraToTapWalkTime));
         localLogger.info(String.format("TAP to MGRA walk time:    %9.4f", tapToMgraWalkTime));
         localLogger.info(String.format("Escalator time:           %9.4f", escalatorTime));
+        localLogger.info(String.format("Period:                   %9s", period));
+        localLogger.info(String.format("Set:                      %9s", set));
+        localLogger.info(String.format("applicationType:          %9s", applicationType));
+        localLogger.info(String.format("tourCategoryIsJoint:      %9s", tourCategoryIsJoint));
+        localLogger.info(String.format("personType:               %9s", personType));
+        localLogger.info(String.format("ivtCoeff  :               %9.4f", ivtCoeff));
+        localLogger.info(String.format("costCoeff  :              %9.4f", costCoeff));
 
     }
 
@@ -131,6 +197,15 @@ public class TransitWalkAccessDMU
         methodIndexMap.put("getEscalatorTime", 0);
         methodIndexMap.put("getMgraTapWalkTime", 1);
         methodIndexMap.put("getTapMgraWalkTime", 2);
+        methodIndexMap.put("getTOD", 3);
+        methodIndexMap.put("getSet", 4);
+        
+        methodIndexMap.put("getApplicationType", 6);
+        methodIndexMap.put("getTourCategoryIsJoint", 7);
+        methodIndexMap.put("getPersonType", 8);
+        methodIndexMap.put("getIvtCoeff", 9);
+        methodIndexMap.put("getCostCoeff", 9);
+               
 
     }
 
@@ -145,6 +220,21 @@ public class TransitWalkAccessDMU
                 return getMgraTapWalkTime();
             case 2:
                 return getTapMgraWalkTime();
+            case 3:
+                return getTOD();
+            case 4:
+                return getSet();
+                
+            case 6:
+                return getApplicationType();
+            case 7:
+                return getTourCategoryIsJoint();
+            case 8:
+                return getPersonType();
+            case 9:
+                return getIvtCoeff();
+            case 10:
+            	return getCostCoeff();
 
             default:
                 logger.error("method number = " + variableIndex + " not found");

@@ -2,6 +2,7 @@ package org.sandag.abm.application;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.modechoice.Modes;
 
@@ -125,29 +126,26 @@ public class SandagModelStructure
     public static final int[]    SOV_ALTS                                                           = {
             1, 2                                                                                    };
     public static final int[]    HOV_ALTS                                                           = {
-            3, 4, 5, 6, 7, 8                                                                        };
+            3, 4, 5, 6                                                                       };
     public static final int[]    HOV2_ALTS                                                          = {
-            3, 4, 5                                                                                 };
+            3, 4                                                                               };
     public static final int[]    HOV3_ALTS                                                          = {
-            6, 7, 8                                                                                 };
-    public static final int[]    WALK_ALTS                                                          = {9};
-    public static final int[]    BIKE_ALTS                                                          = {10};
+            5, 6                                                                                };
+    public static final int[]    WALK_ALTS                                                          = {7};
+    public static final int[]    BIKE_ALTS                                                          = {8};
     public static final int[]    NON_MOTORIZED_ALTS                                                 = {
-            9, 10                                                                                   };
+            7, 8                                                                                  };
     public static final int[]    TRANSIT_ALTS                                                       = {
-            11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25                              };
-    public static final int[]    WALK_LOCAL_ALTS                                                    = {11};
-    public static final int[]    WALK_PREMIUM_ALTS                                                  = {
-            12, 13, 14, 15                                                                          };
+            9, 10, 11                              };
     public static final int[]    WALK_TRANSIT_ALTS                                                  = {
-            11, 12, 13, 14, 15                                                                      };
+            9                                                                     };
     public static final int[]    DRIVE_TRANSIT_ALTS                                                 = {
-            16, 17, 18, 19, 20, 21, 22, 23, 24, 25                                                  };
+            10, 11                                                  };
     public static final int[]    PNR_ALTS                                                           = {
-            16, 17, 18, 19, 20                                                                      };
+            10                                                                      };
     public static final int[]    KNR_ALTS                                                           = {
-            21, 22, 23, 24, 25                                                                      };
-    public static final int[]    SCHOOL_BUS_ALTS                                                    = {26};
+            11                                                                     };
+    public static final int[]    SCHOOL_BUS_ALTS                                                    = {12};
     public static final int[]    TRIP_SOV_ALTS                                                      = {
             1, 2                                                                                    };
     public static final int[]    TRIP_HOV_ALTS                                                      = {
@@ -156,38 +154,18 @@ public class SandagModelStructure
     public static final int[]    PAY_ALTS                                                           = {
             2, 5, 8                                                                                 };
 
-    public static final int[]    OTHER_ALTS                                                         = {26};
+    public static final int[]    OTHER_ALTS                                                         = {12};
 
-    private static final int     WALK                                                               = 9;
-    private static final int     BIKE                                                               = 10;
+    private static final int     WALK                                                               = 7;
+    private static final int     BIKE                                                               = 8;
 
-    public static final int      WALK_LOCAL_BUS                                                     = 11;
-    public static final int      WALK_EXPRESS_BUS                                                   = 12;
-    public static final int      WALK_BRT                                                           = 13;
-    public static final int      WALK_LRT                                                           = 14;
-    public static final int      WALK_COMM_RAIL                                                     = 15;
+    public static final int      SCHOOL_BUS                                                         = 12;
+    public static final int      TAXI                                                               = 13;
 
-    public static final int      PNR_LOCAL_BUS                                                      = 16;
-    public static final int      PNR_EXPRESS_BUS                                                    = 17;
-    public static final int      PNR_BRT                                                            = 18;
-    public static final int      PNR_LRT                                                            = 19;
-    public static final int      PNR_COMM_RAIL                                                      = 20;
+    public static final String[] modeName = {"SOV_GP","SOV_PAY","SR2_NOPAY","SR2_PAY","SR3_NOPAY","SR3_PAY",
+    	"WALK","BIKE","WLK_SET","PNR_SET","KNR_SET","SCHLBUS","TAXI"};
 
-    public static final int      KNR_LOCAL_BUS                                                      = 21;
-    public static final int      KNR_EXPRESS_BUS                                                    = 22;
-    public static final int      KNR_BRT                                                            = 23;
-    public static final int      KNR_LRT                                                            = 24;
-    public static final int      KNR_COMM_RAIL                                                      = 25;
-    public static final int      SCHOOL_BUS                                                         = 26;
-    public static final int      TAXI                                                               = 27;
-
-    public static final String[] MODE_NAME                                                          = {
-            "SOV_GP", "SOV_PAY", "SR2_GP", "SR2_HOV", "SR2_PAY", "SR3_GP", "SR3_HOV", "SR3_PAY",
-            "WALK", "BIKE", "WLK_LOC", "WLK_EXP", "WLK_BRT", "WLK_LRT", "WLK_CMR", "PNR_LOC",
-            "PNR_EXP", "PNR_BRT", "PNR_LRT", "PNR_CMR", "KNR_LOC", "KNR_EXP", "KNR_BRT", "KNR_LRT",
-            "KNR_CMR", "SCHLBUS"                                                                    };
-
-    public static final int      MAXIMUM_TOUR_MODE_ALT_INDEX                                        = 26;
+    public static final int      MAXIMUM_TOUR_MODE_ALT_INDEX                                        = 13;
 
     public final double[][]      CDAP_6_PLUS_PROPORTIONS                                            = {
             {0.0, 0.0, 0.0}, {0.79647, 0.09368, 0.10985}, {0.61678, 0.25757, 0.12565},
@@ -463,34 +441,7 @@ public class SandagModelStructure
         return returnValue;
     }
 
-    public boolean getTourModeIsWalkLocal(int tourMode)
-    {
-        boolean returnValue = false;
-        for (int i = 0; i < WALK_LOCAL_ALTS.length; i++)
-        {
-            if (WALK_LOCAL_ALTS[i] == tourMode)
-            {
-                returnValue = true;
-                break;
-            }
-        }
-        return returnValue;
-    }
-
-    public boolean getTourModeIsWalkPremium(int tourMode)
-    {
-        boolean returnValue = false;
-        for (int i = 0; i < WALK_PREMIUM_ALTS.length; i++)
-        {
-            if (WALK_PREMIUM_ALTS[i] == tourMode)
-            {
-                returnValue = true;
-                break;
-            }
-        }
-        return returnValue;
-    }
-
+ 
     public boolean getTourModeIsTransit(int tourMode)
     {
         boolean returnValue = false;
@@ -507,8 +458,15 @@ public class SandagModelStructure
 
     public boolean getTourModeIsWalkTransit(int tourMode)
     {
-        boolean returnValue = getTourModeIsWalkLocal(tourMode)
-                || getTourModeIsWalkPremium(tourMode);
+    	boolean returnValue = false;
+    	for (int i = 0; i < WALK_TRANSIT_ALTS.length; ++i)
+        {
+            if (WALK_TRANSIT_ALTS[i] == tourMode)
+            {
+            	returnValue = true;
+            	break;
+            }
+        }
         return returnValue;
     }
 
@@ -587,13 +545,13 @@ public class SandagModelStructure
      * Get the name of the mode
      * 
      * @param mode
-     *            The mode index (1-26)
+     *            The mode index 
      * @return The name of the mode
      */
     public String getModeName(int mode)
     {
 
-        return MODE_NAME[mode - 1];
+        return modeName[mode - 1];
 
     }
 
@@ -1258,90 +1216,6 @@ public class SandagModelStructure
         }
 
         return false;
-    }
-
-    public int getRideModeIndexForTripMode(int tripMode)
-    {
-
-        int rideModeIndex = -1;
-
-        if (getTripModeIsWalkTransit(tripMode))
-        {
-            switch (tripMode)
-            {
-                case WALK_LOCAL_BUS:
-                    rideModeIndex = Modes.getTransitModeIndex("LB");
-                    break;
-                case WALK_EXPRESS_BUS:
-                    rideModeIndex = Modes.getTransitModeIndex("EB");
-                    break;
-                case WALK_BRT:
-                    rideModeIndex = Modes.getTransitModeIndex("BRT");
-                    break;
-                case WALK_LRT:
-                    rideModeIndex = Modes.getTransitModeIndex("LR");
-                    break;
-                case WALK_COMM_RAIL:
-                    rideModeIndex = Modes.getTransitModeIndex("CR");
-                    break;
-            }
-        }
-
-        if (rideModeIndex < 0)
-        {
-
-            if (getTripModeIsPnrTransit(tripMode))
-            {
-                switch (tripMode)
-                {
-                    case PNR_LOCAL_BUS:
-                        rideModeIndex = Modes.getTransitModeIndex("LB");
-                        break;
-                    case PNR_EXPRESS_BUS:
-                        rideModeIndex = Modes.getTransitModeIndex("EB");
-                        break;
-                    case PNR_BRT:
-                        rideModeIndex = Modes.getTransitModeIndex("BRT");
-                        break;
-                    case PNR_LRT:
-                        rideModeIndex = Modes.getTransitModeIndex("LR");
-                        break;
-                    case PNR_COMM_RAIL:
-                        rideModeIndex = Modes.getTransitModeIndex("CR");
-                        break;
-                }
-            }
-
-        }
-
-        if (rideModeIndex < 0)
-        {
-
-            if (getTripModeIsKnrTransit(tripMode))
-            {
-                switch (tripMode)
-                {
-                    case KNR_LOCAL_BUS:
-                        rideModeIndex = Modes.getTransitModeIndex("LB");
-                        break;
-                    case KNR_EXPRESS_BUS:
-                        rideModeIndex = Modes.getTransitModeIndex("EB");
-                        break;
-                    case KNR_BRT:
-                        rideModeIndex = Modes.getTransitModeIndex("BRT");
-                        break;
-                    case KNR_LRT:
-                        rideModeIndex = Modes.getTransitModeIndex("LR");
-                        break;
-                    case KNR_COMM_RAIL:
-                        rideModeIndex = Modes.getTransitModeIndex("CR");
-                        break;
-                }
-            }
-
-        }
-
-        return rideModeIndex;
     }
 
     public boolean getTripModeIsNonMotorized(int i)

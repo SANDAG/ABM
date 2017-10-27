@@ -59,6 +59,7 @@ public class SpecialEventTripTables {
     private MatrixDataServerRmi     ms;
     private float                   sampleRate;
     private static int iteration=1;
+    public int numSkimSets;
 
     public SpecialEventTripTables(HashMap<String, String> rbMap)
     {
@@ -72,6 +73,8 @@ public class SpecialEventTripTables {
 
         // Time period limits
         numberOfPeriods = modelStructure.getNumberModelPeriods();
+        
+        numSkimSets = Integer.getInteger(rbMap.get("utility.bestTransitPath.skim.sets"));
 
         // number of modes
         modeIndex = new int[modelStructure.MAXIMUM_TOUR_MODE_ALT_INDEX + 1];
@@ -164,13 +167,16 @@ public class SpecialEventTripTables {
                 }
             } else if (i == 2)
             {
-                matrix[i] = new Matrix[tranModes];
-                for (int j = 0; j < tranModes; ++j)
-                {
-                    modeName = modelStructure.getModeName(j + 1 + autoModes + nmotModes);
-                    matrix[i][j] = new Matrix(modeName + "_" + periodName, "", taps, taps);
-                    matrix[i][j].setExternalNumbers(tapIndex);
-                }
+            	matrix[i] = new Matrix[tranModes*numSkimSets];
+            	for (int k = 0; k < tranModes; ++k)
+            	{
+					for(int l=0;l<numSkimSets;++l){
+						modeName = modelStructure.getModeName(k+1+autoModes+nmotModes);
+						String setName = String.valueOf(l+1);
+						matrix[i][(k*numSkimSets)+l] = new Matrix(modeName+"_set"+setName+"_"+periodName,"",taps,taps);
+              			matrix[i][k].setExternalNumbers(tapIndex);
+					}
+            	}
             } else
             {
                 matrix[i] = new Matrix[othrModes];
@@ -291,13 +297,15 @@ public class SpecialEventTripTables {
             // transit trip - get boarding and alighting tap
             int boardTap = 0;
             int alightTap = 0;
+            int set = 0;
 
             if (modelStructure.getTourModeIsWalkTransit(tripMode)
                     || modelStructure.getTourModeIsDriveTransit(tripMode))
             {
                 boardTap = (int) tripData.getValueAt(i, "boardingTAP");
                 alightTap = (int) tripData.getValueAt(i, "alightingTAP");
-                logger.info("boardTap="+boardTap+" alightTap="+alightTap);
+                set = (int) tripData.getValueAt(originTAZ, "set");
+                logger.info("boardTap="+boardTap+", alightTap="+alightTap+", set="+set);
             }
 
             logger.info("sampleRate="+sampleRate);
@@ -327,8 +335,10 @@ public class SpecialEventTripTables {
 
                 if (boardTap == 0 || alightTap == 0) continue;
 
-                float value = matrix[mode][mat].getValueAt(boardTap, alightTap);
-                matrix[mode][mat].setValueAt(boardTap, alightTap, (value + personTrips));
+           		//store transit trips in matrices
+        		mat = (matrixIndex[tripMode]*numSkimSets)+set;
+        		float value = matrix[mode][mat].getValueAt(boardTap, alightTap);
+        		matrix[mode][mat].setValueAt(boardTap, alightTap, (value + personTrips));
 
                 // Store PNR transit trips in SOV free mode skim (mode 0 mat 0)
                 if (modelStructure.getTourModeIsDriveTransit(tripMode))

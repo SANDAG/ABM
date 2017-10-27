@@ -16,9 +16,9 @@ public final class Modes
 
     public enum AutoMode
     {
-        DRIVE_ALONE_TOLL("dat"), DRIVE_ALONE_NONTOLL("dan"), TWOPLUS_NONTOLL_NONHOV("2+nn"), TWOPLUS_NONTOLL_HOV(
-                "2+nh"), TWOPLUS_TOLL_HOV("2+th"), THREEPLUS_NONTOLL_NONHOV("3+nn"), THREEPLUS_NONTOLL_HOV(
-                "3+nh"), THREEPLUS_TOLL_HOV("3+th");
+        DRIVE_ALONE_TOLL("dat"), DRIVE_ALONE_NONTOLL("dan"), TWO_NONTOLL("2nt"), TWO_TOLL(
+                "2t"), THREEPLUS_NONTOLL("3+nt"), THREEPLUS_TOLL(
+                "3+t");
 
         private final String name;
 

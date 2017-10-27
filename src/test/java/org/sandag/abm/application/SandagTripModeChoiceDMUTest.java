@@ -27,6 +27,27 @@ public class SandagTripModeChoiceDMUTest {
 		SandagTripModeChoiceDMU dmu = new SandagTripModeChoiceDMU(structure,
 				logger);
 
+		Household household = new Household(CreateFakeModelStructure());
+		int tourID = 1;
+		int primaryIndex = 1;
+		int persNum = 1;
+		Person person = new Person(household, persNum,
+				CreateFakeModelStructure());
+		Tour tour = new Tour(person, tourID, primaryIndex);
+		tour.setTourDestMgra(0);
+		tour.setTourModeChoice(9);
+		dmu.setTourObject(tour);
+		dmu.setHouseholdObject(household);
+
+		int[] mgraParkArea = new int[1];
+		double[] lsWgtAvgCostM = new double[3];
+		double[] lsWgtAvgCostD = new double[3];
+		double[] lsWgtAvgCostH = new double[3];
+		dmu.setParkingCostInfo(mgraParkArea, lsWgtAvgCostM, lsWgtAvgCostD,
+				lsWgtAvgCostH);
+		
+		
+		
 		int autos = 1;
 		dmu.setAutos(autos);
 		double value = dmu.getValueForIndex(1, 0);
@@ -97,45 +118,45 @@ public class SandagTripModeChoiceDMUTest {
 		value = dmu.getValueForIndex(14, 0);
 		Assert.assertEquals(lastTrip, (int) value);
 
-		int tourModeIsDA = 15;
-		dmu.setTourModeIsDA(tourModeIsDA);
+		dmu.setTourModeIsDA(1);
+		tour.setTourModeChoice(1);
 		value = dmu.getValueForIndex(15, 0);
-		Assert.assertEquals(tourModeIsDA, (int) value);
+		Assert.assertEquals(1, (int) value);
 
-		int tourModeIsS2 = 16;
-		dmu.setTourModeIsS2(tourModeIsS2);
+		dmu.setTourModeIsS2(1);
+		tour.setTourModeChoice(3);
 		value = dmu.getValueForIndex(16, 0);
-		Assert.assertEquals(tourModeIsS2, (int) value);
+		Assert.assertEquals(1, (int) value);
 
-		int tourModeIsS3 = 17;
-		dmu.setTourModeIsS3(tourModeIsS3);
+		dmu.setTourModeIsS3(1);
+		tour.setTourModeChoice(5);
 		value = dmu.getValueForIndex(17, 0);
-		Assert.assertEquals(tourModeIsS3, (int) value);
+		Assert.assertEquals(1, (int) value);
 
-		int tourModeIsWalk = 18;
-		dmu.setTourModeIsWalk(tourModeIsWalk);
+		dmu.setTourModeIsWalk(1);
+		tour.setTourModeChoice(7);
 		value = dmu.getValueForIndex(18, 0);
-		Assert.assertEquals(tourModeIsWalk, (int) value);
+		Assert.assertEquals(1, (int) value);
 
-		int tourModeIsBike = 19;
-		dmu.setTourModeIsBike(tourModeIsBike);
+		dmu.setTourModeIsBike(1);
+		tour.setTourModeChoice(8);
 		value = dmu.getValueForIndex(19, 0);
-		Assert.assertEquals(tourModeIsBike, (int) value);
+		Assert.assertEquals(1, (int) value);
 
-		int tourModeIsWTran = 20;
-		dmu.setTourModeIsWTran(tourModeIsWTran);
+		dmu.setTourModeIsWTran(1);
+		tour.setTourModeChoice(9);
 		value = dmu.getValueForIndex(20, 0);
-		Assert.assertEquals(tourModeIsWTran, (int) value);
+		Assert.assertEquals(1, (int) value);
 
-		int tourModeIsPnr = 21;
-		dmu.setTourModeIsPnr(tourModeIsPnr);
+		dmu.setTourModeIsPnr(1);
+		tour.setTourModeChoice(10);
 		value = dmu.getValueForIndex(21, 0);
-		Assert.assertEquals(tourModeIsPnr, (int) value);
+		Assert.assertEquals(1, (int) value);
 
-		int tourModeIsKnr = 22;
-		dmu.setTourModeIsKnr(tourModeIsKnr);
+		dmu.setTourModeIsKnr(1);
+		tour.setTourModeChoice(11);
 		value = dmu.getValueForIndex(22, 0);
-		Assert.assertEquals(tourModeIsKnr, (int) value);
+		Assert.assertEquals(1, (int) value);
 
 		int origDuDen = 23;
 		dmu.setOrigDuDen(origDuDen);
@@ -212,24 +233,6 @@ public class SandagTripModeChoiceDMUTest {
 		value = dmu.getValueForIndex(38, 0);
 		Assert.assertEquals(reimburseAmount, (int) value);
 
-		Household household = new Household(CreateFakeModelStructure());
-		int tourID = 1;
-		int primaryIndex = 1;
-		int persNum = 1;
-		Person person = new Person(household, persNum,
-				CreateFakeModelStructure());
-		Tour tour = new Tour(person, tourID, primaryIndex);
-		tour.setTourDestMgra(0);
-		dmu.setTourObject(tour);
-		dmu.setHouseholdObject(household);
-
-		int[] mgraParkArea = new int[1];
-		double[] lsWgtAvgCostM = new double[3];
-		double[] lsWgtAvgCostD = new double[3];
-		double[] lsWgtAvgCostH = new double[3];
-		dmu.setParkingCostInfo(mgraParkArea, lsWgtAvgCostM, lsWgtAvgCostD,
-				lsWgtAvgCostH);
-
 		int monthlyParkingCost = 39;
 		lsWgtAvgCostM[0] = monthlyParkingCost;
 		value = dmu.getValueForIndex(39, 0);
@@ -293,159 +296,7 @@ public class SandagTripModeChoiceDMUTest {
 		Assert.assertEquals(nmBikeTime, value);
 	}
 
-	@Test
-	public void testGetValueForIndexTAZ() {
-		Logger logger = new FakeLogger();
-		ModelStructure structure = CreateFakeModelStructure();
-		SandagTripModeChoiceDMU dmu = new SandagTripModeChoiceDMU(structure,
-				logger);
-		// dmu.setTransitSkim(accEgr, lbPrem, skimIndex, value);
-		int offset = 100;
-		for (int x = 0; x < 50; x++) {
-			// System.out.println(x);
-
-			int[] p1Values = { McLogsumsCalculator.WTW };
-			int p1 = p1Values[x / 100];
-			int[] p2Values = { McLogsumsCalculator.LB, McLogsumsCalculator.EB,
-					McLogsumsCalculator.BRT, McLogsumsCalculator.LR,
-					McLogsumsCalculator.CR };
-			int[] p2Sizes = { 8, 9, 10, 11, 12 };
-			int afterP1Index = x % 100;
-			int p2Index = -1;
-			int p3Finder = 0;
-			int sum = 0;
-			int p3 = -1;
-			int[] pvt = { McLogsumsCalculator.LB_IVT,
-					McLogsumsCalculator.EB_IVT, McLogsumsCalculator.BRT_IVT,
-					McLogsumsCalculator.LR_IVT, McLogsumsCalculator.CR_IVT };
-
-			int[] p3Values = { McLogsumsCalculator.FWAIT,
-					McLogsumsCalculator.XWAIT, McLogsumsCalculator.ACC,
-					McLogsumsCalculator.EGR, McLogsumsCalculator.AUX,
-					McLogsumsCalculator.FARE, McLogsumsCalculator.XFERS };
-
-			for (int y = 0; y < 5; y++) {
-				if (p3 == -1) {
-					p3Finder += 1;
-					if (afterP1Index - sum < p3Finder) {
-						p3 = pvt[(int) ((afterP1Index - sum))];
-					} else {
-						int i = afterP1Index - sum - p3Finder;
-						if (i < p3Values.length) {
-							p3 = p3Values[i];
-						}
-					}
-				}
-
-				sum += p2Sizes[y];
-				if (afterP1Index < sum && p2Index < 0) {
-					p2Index = y;
-				}
-			}
-			int p2 = p2Values[p2Index];
-
-			dmu.setTransitSkim(p1, p2, p3, ((double) (x + 1)) / 100);
-			TestTazParams(p1, p2, p3, x, offset, dmu);
-		}
-	}
-
-	@Test
-	public void testGetValueForIndexTAZComplex() {
-		Logger logger = new FakeLogger();
-		ModelStructure structure = CreateFakeModelStructure();
-		SandagTripModeChoiceDMU dmu = new SandagTripModeChoiceDMU(structure,
-				logger);
-		int offset = 150;
-		for (int d = 0; d < 2; d++) {
-			if (d == 0) {
-				dmu.setOutboundHalfTourDirection(1);
-			} else {
-				dmu.setOutboundHalfTourDirection(0);
-			}
-			for (int x = 0; x < 55; x++) {
-				//System.out.println(x);
-
-				int[] p1Values = { McLogsumsCalculator.DTW,
-						McLogsumsCalculator.WTD };
-				int p1 = p1Values[d];
-				int[] p2Values = { McLogsumsCalculator.LB,
-						McLogsumsCalculator.EB, McLogsumsCalculator.BRT,
-						McLogsumsCalculator.LR, McLogsumsCalculator.CR };
-				int[] p2Sizes = { 9, 10, 11, 12, 13 };
-				int afterP1Index = x % 100;
-				int p2Index = -1;
-				int p3Finder = 0;
-				int sum = 0;
-				int p3 = -1;
-				int[] pvt = { McLogsumsCalculator.LB_IVT,
-						McLogsumsCalculator.EB_IVT,
-						McLogsumsCalculator.BRT_IVT,
-						McLogsumsCalculator.LR_IVT, McLogsumsCalculator.CR_IVT };
-
-				int[] p3Values = { McLogsumsCalculator.FWAIT,
-						McLogsumsCalculator.XWAIT, McLogsumsCalculator.ACC,
-						McLogsumsCalculator.EGR, -2, McLogsumsCalculator.AUX,
-						McLogsumsCalculator.FARE, McLogsumsCalculator.XFERS };
-
-				for (int y = 0; y < 5; y++) {
-					if (p3 == -1) {
-						p3Finder += 1;
-						if (afterP1Index - sum < p3Finder) {
-							p3 = pvt[(int) ((afterP1Index - sum))];
-						} else {
-							int i = afterP1Index - sum - p3Finder;
-							if (i < p3Values.length) {
-								p3 = p3Values[i];
-							}
-						}
-					}
-
-					sum += p2Sizes[y];
-					if (afterP1Index < sum && p2Index < 0) {
-						p2Index = y;
-					}
-				}
-				int p2 = p2Values[p2Index];
-				boolean dontChangeP3 = false;
-				if (p3 == -2) {
-					if (d == 0) {
-						p3 = McLogsumsCalculator.ACC;
-					} else if (d == 1) {
-						p3 = McLogsumsCalculator.EGR;
-					}
-					dontChangeP3 = true;
-				}
-
-				// System.out.println("" + p1 + ", " + p2 + ", " + p3);
-				dmu.setTransitSkim(p1, p2, p3, ((double) (x + 1)) / 100);
-
-				double expected = 0;
-				if (d == 0 && p3 == McLogsumsCalculator.ACC && !dontChangeP3) {
-					TestTazParamsExpected(x, offset, dmu, 0);
-				} else if (d == 1 && p3 == McLogsumsCalculator.EGR
-						&& !dontChangeP3) {
-					TestTazParamsExpected(x, offset, dmu, 0);
-				} else {
-					TestTazParams(p1, p2, p3, x, offset, dmu);
-				}
-			}
-		}
-	}
-
-	private void TestTazParams(int p1, int p2, int p3, int i, int offset,
-			SandagTripModeChoiceDMU dmu) {
-		double value = dmu.getValueForIndex(i + offset, 0);
-		double expected = ((double) (i + 1)) / 100;
-		Assert.assertEquals(expected, value);
-
-	}
-
-	private void TestTazParamsExpected(int i, int offset,
-			SandagTripModeChoiceDMU dmu, double expected) {
-		double value = dmu.getValueForIndex(i + offset, 0);
-		Assert.assertEquals(expected, value);
-
-	}
+	
 
 	@Test(expected = RuntimeException.class)
 	public void testBadIndex() {

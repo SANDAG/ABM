@@ -3,11 +3,16 @@ package org.sandag.abm.airport;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
+import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.accessibilities.BestTransitPathCalculator;
 import org.sandag.abm.accessibilities.DriveTransitWalkSkimsCalculator;
+import org.sandag.abm.accessibilities.McLogsumsAppender;
 import org.sandag.abm.accessibilities.WalkTransitDriveSkimsCalculator;
 import org.sandag.abm.accessibilities.WalkTransitWalkSkimsCalculator;
+import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.CtrampApplication;
+import org.sandag.abm.ctramp.McLogsumsCalculator;
+import org.sandag.abm.ctramp.TripModeChoiceDMU;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
@@ -37,10 +42,9 @@ public class AirportModeChoiceModel
     private boolean                           seek;
     private HashMap<String, String>           rbMap;
 
-    private BestTransitPathCalculator         bestPathUEC;
-    protected WalkTransitWalkSkimsCalculator  wtw;
-    protected WalkTransitDriveSkimsCalculator wtd;
-    protected DriveTransitWalkSkimsCalculator dtw;
+    private McLogsumsCalculator      logsumHelper;
+    private TripModeChoiceDMU 		 mcDmuObject;
+    private AutoTazSkimsCalculator   tazDistanceCalculator;
 
     /**
      * Constructor
@@ -122,29 +126,21 @@ public class AirportModeChoiceModel
             }
         }
         seek = Util.getBooleanValueFromPropertyMap(rbMap, "Seek");
+        
+        tazDistanceCalculator = new AutoTazSkimsCalculator(rbMap);
+        tazDistanceCalculator.computeTazDistanceArrays();
+        
+        logsumHelper = new McLogsumsCalculator();
+        logsumHelper.setupSkimCalculators(rbMap);
+        logsumHelper.setTazDistanceSkimArrays(
+                tazDistanceCalculator.getStoredFromTazToAllTazsDistanceSkims(),
+                tazDistanceCalculator.getStoredToTazFromAllTazsDistanceSkims());
+        
+        SandagModelStructure modelStructure = new SandagModelStructure();
+        mcDmuObject = new TripModeChoiceDMU(modelStructure, logger);
 
     }
 
-    /**
-     * Create new transit skim calculators.
-     */
-    public void initializeBestPathCalculators()
-    {
-
-        logger.info("Initializing Airport Model Best Path Calculators");
-
-        bestPathUEC = new BestTransitPathCalculator(rbMap);
-
-        wtw = new WalkTransitWalkSkimsCalculator();
-        wtw.setup(rbMap, logger, bestPathUEC);
-        wtd = new WalkTransitDriveSkimsCalculator();
-        wtd.setup(rbMap, logger, bestPathUEC);
-        dtw = new DriveTransitWalkSkimsCalculator();
-        dtw.setup(rbMap, logger, bestPathUEC);
-
-        logger.info("Finished Initializing Airport Model Best Path Calculators");
-
-    }
 
     /**
      * Choose airport arrival mode and trip mode for this party. Store results
@@ -163,52 +159,33 @@ public class AirportModeChoiceModel
         int origTaz = mgraManager.getTaz(origMgra);
         int destTaz = mgraManager.getTaz(destMgra);
         int period = party.getDepartTime();
-        int skimPeriod = AirportModelStructure.getSkimPeriodIndex(period) + 1; // The
-                                                                               // skims
-                                                                               // are
-                                                                               // stored
-                                                                               // 1-based...don't
-                                                                               // ask...
-        boolean debug = party.getDebugChoiceModels();
 
-        // calculate best tap pairs for this airport party
-        int[][] walkTransitTapPairs = wtw.getBestTapPairs(origMgra, destMgra, skimPeriod, debug,
-                logger);
-        party.setBestWtwTapPairs(walkTransitTapPairs);
-
-        // drive transit tap pairs depend on direction; departing parties use
-        // drive-transit-walk, else walk-transit-drive is used.
-        int[][] driveTransitTapPairs;
-        if (party.getDirection() == AirportModelStructure.DEPARTURE)
-        {
-            driveTransitTapPairs = dtw.getBestTapPairs(origMgra, destMgra, skimPeriod, debug,
-                    logger);
-            party.setBestDtwTapPairs(driveTransitTapPairs);
-        } else
-        {
-            driveTransitTapPairs = wtd.getBestTapPairs(origMgra, destMgra, skimPeriod, debug,
-                    logger);
-            party.setBestWtdTapPairs(driveTransitTapPairs);
-        }
-
-        // set transit skim values in DMU object
-        dmu.setDmuSkimCalculators(wtw, wtd, dtw);
         boolean inbound = false;
         if (party.getDirection() == AirportModelStructure.ARRIVAL) inbound = true;
 
         dmu.setAirportParty(party);
         dmu.setDmuIndexValues(party.getID(), origTaz, destTaz);
-        dmu.setDmuSkimAttributes(origMgra, destMgra, period, inbound, debug);
+       
+        // set trip mc dmu values for transit logsum (gets replaced below by uec values)
+        double c_ivt = -0.03;
+        double c_cost = - 0.0003; 
 
         // Solve trip mode level utilities
-
+        mcDmuObject.setIvtCoeff(c_ivt);
+        mcDmuObject.setCostCoeff(c_cost);
+        double walkTransitLogsum = -999.0;
+        double driveTransitLogsum = -999.0;
+        
         // if 1-person party, solve for the drive-alone and 2-person logsums
         if (party.getSize() == 1)
         {
             driveAloneModel.computeUtilities(dmu, dmu.getDmuIndex());
             double driveAloneLogsum = driveAloneModel.getLogsum();
             dmu.setDriveAloneLogsum(driveAloneLogsum);
-
+            
+            c_ivt = driveAloneModel.getUEC().lookupVariableIndex("c_ivt");
+            c_cost = driveAloneModel.getUEC().lookupVariableIndex("c_cost");
+ 
             shared2Model.computeUtilities(dmu, dmu.getDmuIndex());
             double shared2Logsum = shared2Model.getLogsum();
             dmu.setShared2Logsum(shared2Logsum);
@@ -223,14 +200,35 @@ public class AirportModeChoiceModel
             shared3Model.computeUtilities(dmu, dmu.getDmuIndex());
             double shared3Logsum = shared3Model.getLogsum();
             dmu.setShared3Logsum(shared3Logsum);
-
+           
+            c_ivt = shared2Model.getUEC().lookupVariableIndex("c_ivt");
+            c_cost = shared2Model.getUEC().lookupVariableIndex("c_cost");
+ 
         } else
         { // if 3+ person party, solve the shared 3+ logsums
             shared3Model.computeUtilities(dmu, dmu.getDmuIndex());
             double shared3Logsum = shared3Model.getLogsum();
             dmu.setShared3Logsum(shared3Logsum);
+ 
+            c_ivt = shared3Model.getUEC().lookupVariableIndex("c_ivt");
+            c_cost = shared3Model.getUEC().lookupVariableIndex("c_cost");
+ }
+        
+        logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, origMgra, destMgra, period, party.getDebugChoiceModels());
+        walkTransitLogsum = mcDmuObject.getTransitLogSum(McLogsumsCalculator.WTW);
+        if (party.getDirection() == AirportModelStructure.DEPARTURE)
+        {
+            logsumHelper.setDtwTripMcDmuAttributes( mcDmuObject, origMgra, destMgra, period, party.getDebugChoiceModels());
+            driveTransitLogsum = mcDmuObject.getTransitLogSum(McLogsumsCalculator.DTW);
+        } else
+        {
+        	logsumHelper.setWtdTripMcDmuAttributes( mcDmuObject, origMgra, destMgra, period, party.getDebugChoiceModels());
+            driveTransitLogsum = mcDmuObject.getTransitLogSum(McLogsumsCalculator.WTD);
         }
-        // always solve for the transit logsum
+      
+        dmu.setWalkTransitLogsum(walkTransitLogsum);
+        dmu.setDriveTransitLogsum(driveTransitLogsum);
+        
         transitModel.computeUtilities(dmu, dmu.getDmuIndex());
         double transitLogsum = transitModel.getLogsum();
         dmu.setTransitLogsum(transitLogsum);
@@ -283,10 +281,30 @@ public class AirportModeChoiceModel
         } else
         {
             int choice = transitModel.getChoiceResult(randomNumber);
-            if (choice <= 5) tripMode = choice + 10;
-            else tripMode = choice + 15;
+            double[][] bestTapPairs;
+            if (choice <= 1){
+            	tripMode = 9; //walk-transit
+            	bestTapPairs = logsumHelper.getBestWtwTripTaps();
+            }
+            else{
+            	tripMode = 11; //knr-transit
+                if (party.getDirection() == AirportModelStructure.DEPARTURE)
+                	bestTapPairs = logsumHelper.getBestDtwTripTaps();
+                else
+                	bestTapPairs = logsumHelper.getBestWtdTripTaps();
+             }
             
-            //following gets vot from UEC
+           	//pick transit path from N-paths
+            float rn = new Double(party.getRandom()).floatValue();
+        	int pathIndex = logsumHelper.chooseTripPath(rn, bestTapPairs, party.getDebugChoiceModels(), logger);
+        	int boardTap = (int) bestTapPairs[pathIndex][0];
+        	int alightTap = (int) bestTapPairs[pathIndex][1];
+        	int set = (int) bestTapPairs[pathIndex][2];
+        	party.setBoardTap(boardTap);
+        	party.setAlightTap(alightTap);
+        	party.setSet(set);
+         	        			
+        	//following gets vot from UEC
             UtilityExpressionCalculator uec = transitModel.getUEC();
             int votIndex = uec.lookupVariableIndex("vot");
             valueOfTime = (float) uec.getValueForIndex(votIndex);
@@ -326,31 +344,5 @@ public class AirportModeChoiceModel
         }
     }
 
-    /**
-     * @param wtw
-     *            the wtw to set
-     */
-    public void setWtw(WalkTransitWalkSkimsCalculator wtw)
-    {
-        this.wtw = wtw;
-    }
-
-    /**
-     * @param wtd
-     *            the wtd to set
-     */
-    public void setWtd(WalkTransitDriveSkimsCalculator wtd)
-    {
-        this.wtd = wtd;
-    }
-
-    /**
-     * @param dtw
-     *            the dtw to set
-     */
-    public void setDtw(DriveTransitWalkSkimsCalculator dtw)
-    {
-        this.dtw = dtw;
-    }
-
+  
 }

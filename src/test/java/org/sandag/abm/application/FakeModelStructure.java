@@ -66,146 +66,116 @@ public class FakeModelStructure
     @Override
     public boolean getTourModeIsSov(int tourMode)
     {
-        return tourMode == 1;
+        return tourMode == 1 || tourMode==2;
     }
 
     @Override
     public boolean getTourModeIsSovOrHov(int tourMode)
     {
-        return tourMode == 3 || tourMode == 1;
+        return (tourMode <=6);
     }
 
     @Override
     public boolean getTourModeIsS2(int tourMode)
     {
         // TODO Auto-generated method stub
-        return false;
+        return tourMode==3||tourMode==4;
     }
 
     @Override
     public boolean getTourModeIsS3(int tourMode)
     {
         // TODO Auto-generated method stub
-        return false;
+        return tourMode==5||tourMode==6;
     }
 
     @Override
     public boolean getTourModeIsHov(int tourMode)
     {
-        return tourMode == 3;
+        return tourMode>2 && tourMode<7;
     }
 
     @Override
     public boolean getTourModeIsNonMotorized(int tourMode)
     {
         // TODO Auto-generated method stub
-        return false;
+        return tourMode==7||tourMode==8;
     }
 
     @Override
     public boolean getTourModeIsBike(int tourMode)
     {
-        return tourMode == 2;
+        return tourMode == 8;
     }
 
     @Override
     public boolean getTourModeIsWalk(int tourMode)
     {
-        // TODO Auto-generated method stub
-        return false;
+        return tourMode==7;
     }
 
-    @Override
-    public boolean getTourModeIsWalkLocal(int tourMode)
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean getTourModeIsWalkPremium(int tourMode)
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
+  
     @Override
     public boolean getTourModeIsTransit(int tourMode)
     {
-        // TODO Auto-generated method stub
-        return false;
+        return tourMode>=9 && tourMode<=11;
     }
 
     @Override
     public boolean getTourModeIsWalkTransit(int tourMode)
     {
-        // TODO Auto-generated method stub
-        return false;
+        return tourMode==9;
     }
 
     @Override
     public boolean getTourModeIsDriveTransit(int tourMode)
     {
-        // TODO Auto-generated method stub
-        return false;
+        return tourMode==10||tourMode==11;
     }
 
     @Override
     public boolean getTourModeIsPnr(int tourMode)
     {
-        // TODO Auto-generated method stub
-        return false;
+        return tourMode==10;
     }
 
     @Override
     public boolean getTourModeIsKnr(int tourMode)
     {
-        // TODO Auto-generated method stub
-        return false;
+        return tourMode==11;
     }
 
     @Override
     public boolean getTourModeIsSchoolBus(int tourMode)
     {
-        // TODO Auto-generated method stub
-        return false;
+        return tourMode==12;
     }
 
     @Override
     public boolean getTripModeIsSovOrHov(int tripMode)
     {
-        // TODO Auto-generated method stub
-        return false;
+        return getTourModeIsSovOrHov(tripMode);
     }
 
     @Override
     public boolean getTripModeIsWalkTransit(int tripMode)
     {
-        // TODO Auto-generated method stub
-        return false;
+        return getTripModeIsWalkTransit(tripMode);
     }
 
     @Override
     public boolean getTripModeIsPnrTransit(int tripMode)
     {
-        // TODO Auto-generated method stub
-        return false;
+        return getTripModeIsPnrTransit(tripMode);
     }
 
     @Override
     public boolean getTripModeIsKnrTransit(int tripMode)
     {
-        // TODO Auto-generated method stub
-        return false;
+        return getTripModeIsKnrTransit(tripMode);
     }
 
-    @Override
-    public int getRideModeIndexForTripMode(int tripMode)
-    {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
+  
     @Override
     public double[][] getCdap6PlusProps()
     {

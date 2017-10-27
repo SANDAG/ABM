@@ -64,17 +64,7 @@ public class SandagTripModeChoiceDMU
         return dmuIndex;
     }
 
-    public void setTransitSkim(int accEgr, int lbPrem, int skimIndex, double value)
-    {
-        transitSkim[accEgr][lbPrem][skimIndex] = value;
-    }
-
-    public double getTransitSkim(int accEgr, int lbPrem, int skimIndex)
-    {
-        return transitSkim[accEgr][lbPrem][skimIndex];
-    }
-
-    public int getEscortTour()
+     public int getEscortTour()
     {
         return escortTour;
     }
@@ -273,7 +263,7 @@ public class SandagTripModeChoiceDMU
         methodIndexMap.put("getAdults", 2);
         methodIndexMap.put("getHhSize", 3);
         methodIndexMap.put("getFemale", 4);
-        methodIndexMap.put("getIncome", 5);
+        methodIndexMap.put("getIncomeCategory", 5);
         methodIndexMap.put("getTimeOutbound", 6);
         methodIndexMap.put("getTimeInbound", 7);
         methodIndexMap.put("getTimeTrip", 8);
@@ -327,127 +317,235 @@ public class SandagTripModeChoiceDMU
         methodIndexMap.put("getJointTourTimeFactor", 57);
         
         methodIndexMap.put("getInbound",58);
-
         
+        methodIndexMap.put("getIncomeInDollars",59);
+        methodIndexMap.put("getIvtCoeff", 60);
+        methodIndexMap.put("getCostCoeff", 61);
+               
+        methodIndexMap.put("getWalkSetLogSum", 62);
+        methodIndexMap.put("getPnrSetLogSum", 63);
+        methodIndexMap.put("getKnrSetLogSum", 64);
+
         methodIndexMap.put("getNm_walkTime", 90);
         methodIndexMap.put("getNm_bikeTime", 91);
         
         methodIndexMap.put("getOriginMgra", 93);
         methodIndexMap.put("getDestMgra", 94);
 
-        methodIndexMap.put("getWtw_lb_LB_ivt", 100);
-        methodIndexMap.put("getWtw_lb_fwait", 101);
-        methodIndexMap.put("getWtw_lb_xwait", 102);
-        methodIndexMap.put("getWtw_lb_AccTime", 103);
-        methodIndexMap.put("getWtw_lb_EgrTime", 104);
-        methodIndexMap.put("getWtw_lb_WalkAuxTime", 105);
-        methodIndexMap.put("getWtw_lb_fare", 106);
-        methodIndexMap.put("getWtw_lb_xfers", 107);
-        methodIndexMap.put("getWtw_eb_LB_ivt", 108);
-        methodIndexMap.put("getWtw_eb_EB_ivt", 109);
-        methodIndexMap.put("getWtw_eb_fwait", 110);
-        methodIndexMap.put("getWtw_eb_xwait", 111);
-        methodIndexMap.put("getWtw_eb_AccTime", 112);
-        methodIndexMap.put("getWtw_eb_EgrTime", 113);
-        methodIndexMap.put("getWtw_eb_WalkAuxTime", 114);
-        methodIndexMap.put("getWtw_eb_fare", 115);
-        methodIndexMap.put("getWtw_eb_xfers", 116);
-        methodIndexMap.put("getWtw_brt_LB_ivt", 117);
-        methodIndexMap.put("getWtw_brt_EB_ivt", 118);
-        methodIndexMap.put("getWtw_brt_BRT_ivt", 119);
-        methodIndexMap.put("getWtw_brt_fwait", 120);
-        methodIndexMap.put("getWtw_brt_xwait", 121);
-        methodIndexMap.put("getWtw_brt_AccTime", 122);
-        methodIndexMap.put("getWtw_brt_EgrTime", 123);
-        methodIndexMap.put("getWtw_brt_WalkAuxTime", 124);
-        methodIndexMap.put("getWtw_brt_fare", 125);
-        methodIndexMap.put("getWtw_brt_xfers", 126);
-        methodIndexMap.put("getWtw_lr_LB_ivt", 127);
-        methodIndexMap.put("getWtw_lr_EB_ivt", 128);
-        methodIndexMap.put("getWtw_lr_BRT_ivt", 129);
-        methodIndexMap.put("getWtw_lr_LRT_ivt", 130);
-        methodIndexMap.put("getWtw_lr_fwait", 131);
-        methodIndexMap.put("getWtw_lr_xwait", 132);
-        methodIndexMap.put("getWtw_lr_AccTime", 133);
-        methodIndexMap.put("getWtw_lr_EgrTime", 134);
-        methodIndexMap.put("getWtw_lr_WalkAuxTime", 135);
-        methodIndexMap.put("getWtw_lr_fare", 136);
-        methodIndexMap.put("getWtw_lr_xfers", 137);
-        methodIndexMap.put("getWtw_cr_LB_ivt", 138);
-        methodIndexMap.put("getWtw_cr_EB_ivt", 139);
-        methodIndexMap.put("getWtw_cr_BRT_ivt", 140);
-        methodIndexMap.put("getWtw_cr_LRT_ivt", 141);
-        methodIndexMap.put("getWtw_cr_CR_ivt", 142);
-        methodIndexMap.put("getWtw_cr_fwait", 143);
-        methodIndexMap.put("getWtw_cr_xwait", 144);
-        methodIndexMap.put("getWtw_cr_AccTime", 145);
-        methodIndexMap.put("getWtw_cr_EgrTime", 146);
-        methodIndexMap.put("getWtw_cr_WalkAuxTime", 147);
-        methodIndexMap.put("getWtw_cr_fare", 148);
-        methodIndexMap.put("getWtw_cr_xfers", 149);
-
-        methodIndexMap.put("getDt_lb_LB_ivt", 150);
-        methodIndexMap.put("getDt_lb_fwait", 151);
-        methodIndexMap.put("getDt_lb_xwait", 152);
-        methodIndexMap.put("getDt_lb_AccTime", 153);
-        methodIndexMap.put("getDt_lb_EgrTime", 154);
-        methodIndexMap.put("getDt_lb_DrvTime", 155);
-        methodIndexMap.put("getDt_lb_WalkAuxTime", 156);
-        methodIndexMap.put("getDt_lb_fare", 157);
-        methodIndexMap.put("getDt_lb_xfers", 158);
-        methodIndexMap.put("getDt_eb_LB_ivt", 159);
-        methodIndexMap.put("getDt_eb_EB_ivt", 160);
-        methodIndexMap.put("getDt_eb_fwait", 161);
-        methodIndexMap.put("getDt_eb_xwait", 162);
-        methodIndexMap.put("getDt_eb_AccTime", 163);
-        methodIndexMap.put("getDt_eb_EgrTime", 164);
-        methodIndexMap.put("getDt_eb_DrvTime", 165);
-        methodIndexMap.put("getDt_eb_WalkAuxTime", 166);
-        methodIndexMap.put("getDt_eb_fare", 167);
-        methodIndexMap.put("getDt_eb_xfers", 168);
-        methodIndexMap.put("getDt_brt_LB_ivt", 169);
-        methodIndexMap.put("getDt_brt_EB_ivt", 170);
-        methodIndexMap.put("getDt_brt_BRT_ivt", 171);
-        methodIndexMap.put("getDt_brt_fwait", 172);
-        methodIndexMap.put("getDt_brt_xwait", 173);
-        methodIndexMap.put("getDt_brt_AccTime", 174);
-        methodIndexMap.put("getDt_brt_EgrTime", 175);
-        methodIndexMap.put("getDt_brt_DrvTime", 176);
-        methodIndexMap.put("getDt_brt_WalkAuxTime", 177);
-        methodIndexMap.put("getDt_brt_fare", 178);
-        methodIndexMap.put("getDt_brt_xfers", 179);
-        methodIndexMap.put("getDt_lr_LB_ivt", 180);
-        methodIndexMap.put("getDt_lr_EB_ivt", 181);
-        methodIndexMap.put("getDt_lr_BRT_ivt", 182);
-        methodIndexMap.put("getDt_lr_LRT_ivt", 183);
-        methodIndexMap.put("getDt_lr_fwait", 184);
-        methodIndexMap.put("getDt_lr_xwait", 185);
-        methodIndexMap.put("getDt_lr_AccTime", 186);
-        methodIndexMap.put("getDt_lr_EgrTime", 187);
-        methodIndexMap.put("getDt_lr_DrvTime", 188);
-        methodIndexMap.put("getDt_lr_WalkAuxTime", 189);
-        methodIndexMap.put("getDt_lr_fare", 190);
-        methodIndexMap.put("getDt_lr_xfers", 191);
-        methodIndexMap.put("getDt_cr_LB_ivt", 192);
-        methodIndexMap.put("getDt_cr_EB_ivt", 193);
-        methodIndexMap.put("getDt_cr_BRT_ivt", 194);
-        methodIndexMap.put("getDt_cr_LRT_ivt", 195);
-        methodIndexMap.put("getDt_cr_CR_ivt", 196);
-        methodIndexMap.put("getDt_cr_fwait", 197);
-        methodIndexMap.put("getDt_cr_xwait", 198);
-        methodIndexMap.put("getDt_cr_AccTime", 199);
-        methodIndexMap.put("getDt_cr_EgrTime", 200);
-        methodIndexMap.put("getDt_cr_DrvTime", 201);
-        methodIndexMap.put("getDt_cr_WalkAuxTime", 202);
-        methodIndexMap.put("getDt_cr_fare", 203);
-        methodIndexMap.put("getDt_cr_xfers", 204);
-
-        CreateReverseMap();
-    }
+   }
 
     public double getValueForIndex(int variableIndex, int arrayIndex)
     {
-    	return getValueForIndexLookup(variableIndex, arrayIndex);
-    }
 
+        double returnValue = -1;
+
+        switch (variableIndex)
+        {
+
+            case 1:
+                returnValue = getAutos();
+                break;
+            case 2:
+                returnValue = getAdults();
+                break;
+            case 3:
+                returnValue = getHhSize();
+                break;
+            case 4:
+                returnValue = getFemale();
+                break;
+            case 5:
+                returnValue = getIncome();
+                break;
+            case 6:
+                returnValue = getTimeOutbound();
+                break;
+            case 7:
+                returnValue = getTimeInbound();
+                break;
+            case 8:
+                returnValue = getTimeTrip();
+                break;
+            case 9:
+                returnValue = getTourCategoryJoint();
+                break;
+            case 10:
+                returnValue = getNumberOfParticipantsInJointTour();
+                break;
+            case 11:
+                returnValue = getOutboundStops();
+                break;
+            case 12:
+                returnValue = getReturnStops();
+                break;
+            case 13:
+                returnValue = getFirstTrip();
+                break;
+            case 14:
+                returnValue = getLastTrip();
+                break;
+            case 15:
+                returnValue = getTourModeIsDA();
+                break;
+            case 16:
+                returnValue = getTourModeIsS2();
+                break;
+            case 17:
+                returnValue = getTourModeIsS3();
+                break;
+            case 18:
+                returnValue = getTourModeIsWalk();
+                break;
+            case 19:
+                returnValue = getTourModeIsBike();
+                break;
+            case 20:
+                returnValue = getTourModeIsWTran();
+                break;
+            case 21:
+                returnValue = getTourModeIsPnr();
+                break;
+            case 22:
+                returnValue = getTourModeIsKnr();
+                break;
+            case 23:
+                returnValue = getODUDen();
+                break;
+            case 24:
+                returnValue = getOEmpDen();
+                break;
+            case 25:
+                returnValue = getOTotInt();
+                break;
+            case 26:
+                returnValue = getDDUDen();
+                break;
+            case 27:
+                returnValue = getDEmpDen();
+                break;
+            case 28:
+                returnValue = getDTotInt();
+                break;
+            case 30:
+                returnValue = getPTazTerminalTime();
+                break;
+            case 31:
+                returnValue = getATazTerminalTime();
+                break;
+            case 32:
+                returnValue = getAge();
+                break;
+            case 33:
+                returnValue = getTourModeIsSchBus();
+                break;
+            case 34:
+                returnValue = getEscortTour();
+                break;
+            case 35:
+                returnValue = getAutoModeAllowedForTripSegment();
+                break;
+            case 36:
+                returnValue = getWalkModeAllowedForTripSegment();
+                break;
+            case 37:
+                returnValue = getSegmentIsIk();
+                break;
+            case 38:
+                returnValue = getReimburseAmount();
+                break;
+            case 39:
+                returnValue = getMonthlyParkingCostTourDest();
+                break;
+            case 40:
+                returnValue = getDailyParkingCostTourDest();
+                break;
+            case 41:
+                returnValue = getHourlyParkingCostTourDest();
+                break;
+            case 42:
+                returnValue = getHourlyParkingCostTripOrig();
+                break;
+            case 43:
+                returnValue = getHourlyParkingCostTripDest();
+                break;
+            case 44:
+                returnValue = getTripOrigIsTourDest();
+                break;
+            case 45:
+                returnValue = getTripDestIsTourDest();
+                break;
+            case 46:
+                returnValue = getFreeOnsite();
+                break;                
+            case 47:
+                returnValue = getPersonType();
+                break;                
+            case 50:
+            	returnValue = getFemaleInParty();
+                break;
+            case 51:
+            	returnValue = getMaleInParty();
+                break;
+            case 52:
+            	returnValue = getFemaleBikeLogsum();
+                break;
+            case 53:
+            	returnValue = getMaleBikeLogsum();
+                break;
+            case 54:
+            	returnValue = getTransponderOwnership();
+                break;
+            case 55:
+            	returnValue = getWorkTimeFactor();
+                break;
+            case 56:
+            	returnValue = getNonWorkTimeFactor();
+                break;
+            case 57:
+            	returnValue = getJointTourTimeFactor();
+                break;
+            case 58:
+            	returnValue = getInbound();
+                break;
+            case 59:
+            	returnValue = getIncomeInDollars();
+                break;
+            case 60:
+            	returnValue = getIvtCoeff();
+                break;
+            case 61:
+            	returnValue = getCostCoeff();
+                break;
+            case 62:
+                returnValue = getTransitLogSum(WTW);
+                break;
+            case 63:
+            	if ( outboundHalfTourDirection == 1 )
+                    returnValue = getTransitLogSum(DTW);
+                else
+                    returnValue = getTransitLogSum(WTD);
+                break;
+            case 64:
+            	if ( outboundHalfTourDirection == 1 )
+                    returnValue = getTransitLogSum(DTW);
+                else
+                    returnValue = getTransitLogSum(WTD);
+                break;
+            case 90:
+            	returnValue = getNm_walkTime();
+            	break;
+            case 91:
+            	returnValue = getNm_bikeTime();
+                break;
+            case 93:
+            	returnValue = getOriginMgra();
+            case 94:
+            	returnValue = getDestMgra();
+                break;
+            default:
+                logger.error( "method number = " + variableIndex + " not found" );
+                throw new RuntimeException( "method number = " + variableIndex + " not found" );
+        }
+        return returnValue;
+    }
 }

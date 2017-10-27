@@ -296,7 +296,7 @@ public class InternalExternalTourManager
             throw new RuntimeException();
         }
         String tripHeaderString = new String(
-                "hhID,pnum,personID,tourID,originMGRA,destinationMGRA,originTAZ,destinationTAZ,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,boardingTap,alightingTap,valueOfTime\n");
+                "hhID,pnum,personID,tourID,originMGRA,destinationMGRA,originTAZ,destinationTAZ,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,boardingTap,alightingTap,set,valueOfTime\n");
         tripWriter.print(tripHeaderString);
 
         for (int i = 0; i < tours.length; ++i)
@@ -321,13 +321,12 @@ public class InternalExternalTourManager
     private void writeTrip(int hhID, int pnum, int personID, int tourID, InternalExternalTrip trip, PrintWriter writer)
     {
 
-        int[] taps = getTapPair(trip);
-
         String record = new String(hhID+","+pnum+","+personID+","+tourID+","+trip.getOriginMgra() + "," + trip.getDestinationMgra() + ","
                  + trip.getOriginTaz() + "," + trip.getDestinationTaz() + "," + trip.isInbound()
                 + "," + trip.isOriginIsTourDestination() + ","
                 + trip.isDestinationIsTourDestination() + "," + trip.getPeriod() + ","
-                + trip.getTripMode() + "," + taps[0] + "," + taps[1] + ","
+                + trip.getTripMode() + "," 
+                + trip.getBoardTap() + "," + trip.getAlightTap() + "," + trip.getSet()
                 +String.format("%9.2f",trip.getValueOfTime()) + "\n");
         writer.print(record);
     }
@@ -338,32 +337,6 @@ public class InternalExternalTourManager
     public InternalExternalTour[] getTours()
     {
         return tours;
-    }
-
-    /**
-     * A helper method that returns an array containing boarding tap (element 0)
-     * and alighting tap (element 1) for the given trip mode. Returns an array
-     * of zeroes if the trip modes are not transit.
-     * 
-     * @param party
-     *            The trip
-     * @return An array containing boarding TAP and alighting TAP
-     */
-    public int[] getTapPair(InternalExternalTrip trip)
-    {
-
-        int[] taps = new int[2];
-
-        // ride mode will be -1 if not transit
-        int tripMode = trip.getTripMode();
-        int rideMode = modelStructure.getRideModeIndexForTripMode(tripMode);
-
-        if (modelStructure.getTripModeIsWalkTransit(tripMode)) taps = trip.getWtwTapPair(rideMode);
-        else if (modelStructure.getTripModeIsKnrTransit(tripMode))
-            if (trip.isInbound()) taps = trip.getWtdTapPair(rideMode);
-            else taps = trip.getDtwTapPair(rideMode);
-
-        return taps;
     }
 
     public static void main(String[] args)

@@ -1,73 +1,82 @@
 /*
- * Copyright 2005 PB Consult Inc. Licensed under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
- * or agreed to in writing, software distributed under the License is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
+ * Copyright 2005 PB Consult Inc. Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You
+ * may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 package org.sandag.abm.accessibilities;
 
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
-import org.sandag.abm.ctramp.CtrampApplication;
-import org.sandag.abm.ctramp.Util;
-import org.sandag.abm.modechoice.MgraDataManager;
-import org.sandag.abm.modechoice.Modes;
-import org.sandag.abm.modechoice.Modes.AccessMode;
+import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
-import org.sandag.abm.modechoice.TransitDriveAccessDMU;
-import org.sandag.abm.modechoice.TransitWalkAccessDMU;
-import org.sandag.abm.modechoice.TransitWalkAccessUEC;
 
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
-import com.pb.common.newmodel.UtilityExpressionCalculator;
 import com.pb.common.util.Tracer;
 
+import org.sandag.abm.ctramp.CtrampApplication;
+import org.sandag.abm.modechoice.MgraDataManager;
+import org.sandag.abm.ctramp.ModelStructure;
+import org.sandag.abm.modechoice.Modes;
+import org.sandag.abm.modechoice.Modes.AccessMode;
+import org.sandag.abm.modechoice.TransitDriveAccessDMU;
+import org.sandag.abm.modechoice.TransitWalkAccessDMU;
+import org.sandag.abm.modechoice.TransitWalkAccessUEC;
+import org.sandag.abm.ctramp.Util;
+
+import com.pb.common.newmodel.UtilityExpressionCalculator;
+import com.pb.common.newmodel.Alternative;
+import com.pb.common.newmodel.ConcreteAlternative;
+import com.pb.common.newmodel.LogitModel;
 /**
  * WalkPathUEC calculates the best walk-transit utilities for a given MGRA pair.
  * 
  * @author Joel Freedman
  * @version 1.0, May 2009
  */
-public class BestTransitPathCalculator
-        implements Serializable
+public class BestTransitPathCalculator implements Serializable
 {
 
-    private transient Logger              logger      = Logger.getLogger("bestPath");
+    private transient Logger                 logger        = Logger.getLogger(BestTransitPathCalculator.class);
 
-    private Object                        lock        = new Object();
+    //TODO: combine APP_TYPE_xxx constants into a enum structure
+    public static final int              APP_TYPE_GENERIC = 0;
+    public static final int              APP_TYPE_TOURMC  = 1;
+    public static final int              APP_TYPE_TRIPMC  = 2;
 
-    private static final int              EA          = TransitWalkAccessUEC.EA;
-    private static final int              AM          = TransitWalkAccessUEC.AM;
-    private static final int              MD          = TransitWalkAccessUEC.MD;
-    private static final int              PM          = TransitWalkAccessUEC.PM;
-    private static final int              EV          = TransitWalkAccessUEC.EV;
-    public static final int               NUM_PERIODS = TransitWalkAccessUEC.PERIODS.length;
+    private static final int              EA                            = TransitWalkAccessUEC.EA;
+    private static final int              AM                            = TransitWalkAccessUEC.AM;
+    private static final int              MD                            = TransitWalkAccessUEC.MD;
+    private static final int              PM                            = TransitWalkAccessUEC.PM;
+    private static final int              EV                            = TransitWalkAccessUEC.EV;
+    public static final int              NUM_PERIODS                   = TransitWalkAccessUEC.PERIODS.length;
 
-    public static final int               WTW         = 1;
-    public static final int               DTW         = 2;
-    public static final int               WTD         = 3;
-    public static final int               NUM_ACC_EGR = 3;
+    public static final int               NA            = -999;
+    public static final int               WTW           = 0;
+    public static final int               WTD           = 1;
+    public static final int               DTW           = 2;
+    public static final int[]             ACC_EGR       = {WTW,WTD,DTW};
+    public static final int               NUM_ACC_EGR   = ACC_EGR.length;
 
     // seek and trace
     private boolean                       trace;
     private int[]                         traceOtaz;
     private int[]                         traceDtaz;
     protected Tracer                      tracer;
-
-    // DMUs for this UEC
-    private TransitWalkAccessDMU          walkDmu     = new TransitWalkAccessDMU();
-    private TransitDriveAccessDMU         driveDmu    = new TransitDriveAccessDMU();
 
     private TazDataManager                tazManager;
     private TapDataManager                tapManager;
@@ -82,47 +91,37 @@ public class BestTransitPathCalculator
     private UtilityExpressionCalculator   walkEgressUEC;
     private UtilityExpressionCalculator   driveAccessUEC;
     private UtilityExpressionCalculator   driveEgressUEC;
-    private UtilityExpressionCalculator[] tapToTapUEC = new UtilityExpressionCalculator[NUM_PERIODS];
+    private UtilityExpressionCalculator   tapToTapUEC;
 
-    // these arrays are shared by the BestTransitPathCalculator objects created
-    // for each hh choice model object
-    private double[][][]                  storedWalkAccessUtils;
-    private double[][][]                  storedDriveAccessUtils;
-    private double[][][]                  storedWalkEgressUtils;
-    private double[][][]                  storedDriveEgressUtils;
-    private double[][][][][]              storedTapToTapUtils;
+    // utility data cache for each transit path segment 
+    private StoredUtilityData storedDataObject; //Encapsulates data shared by the BestTransitPathCalculator objects created for each hh choice model object
+    // note that access/egress utilities are independent of transit skim set 
+    private float[][]                  storedWalkAccessUtils;	// references StoredUtilityData.storedWalkAccessUtils
+    private float[][]                  storedDriveAccessUtils;// references StoredUtilityData.storedDriveAccessUtils
+    private float[][]                  storedWalkEgressUtils;	// references StoredUtilityData.storedWalkEgressUtils
+    private float[][]                  storedDriveEgressUtils;// references StoredUtilityData.storedDriveEgressUtils    
+    private HashMap<Integer,HashMap<Integer,ConcurrentHashMap<Long,float[]>>> storedDepartPeriodTapTapUtils; //references StoredUtilityData.storedDepartPeriodTapTapUtils
 
-    private StoredUtilityData             storedDataObject;
+    private IndexValues                   index         = new IndexValues();
 
-    private double                        pWalkTime;
-    private double                        aWalkTime;
-    private double                        pDriveTime;
-    private double                        aDriveTime;
-
-    private double[]                      combinedUtilities;
-
-    private IndexValues                   index       = new IndexValues();
-
+    // arrays storing information about the n (array length) best paths
     private double[]                      bestUtilities;
+    private double[]                      bestAccessUtilities;
+    private double[]                      bestEgressUtilities;
     private int[]                         bestPTap;
     private int[]                         bestATap;
-
-    private double[]                      bestAccessTime;
-    private double[]                      bestEgressTime;
-
-    private Modes.TransitMode[]           tm;
-
+    private int[]                         bestSet;  //since two of the best paths can be in the same set, need to store set as well   
+    
+    private int numSkimSets;
+    private int numTransitAlts;
+        
     /**
      * Constructor.
      * 
-     * @param rbMap
-     *            HashMap<String, String>
-     * @param UECFileName
-     *            The path/name of the UEC containing the walk-transit model.
-     * @param modelSheet
-     *            The sheet (0-indexed) containing the model specification.
-     * @param dataSheet
-     *            The sheet (0-indexed) containing the data specification.
+     * @param rbMap HashMap<String, String>
+     * @param UECFileName The path/name of the UEC containing the walk-transit model.
+     * @param modelSheet The sheet (0-indexed) containing the model specification.
+     * @param dataSheet The sheet (0-indexed) containing the data specification.
      */
     public BestTransitPathCalculator(HashMap<String, String> rbMap)
     {
@@ -135,7 +134,7 @@ public class BestTransitPathCalculator
         // set up the tracer object
         tracer = Tracer.getTracer();
         tracer.setTrace(trace);
-        if (trace)
+        if ( trace )
         {
             for (int i = 0; i < traceOtaz.length; i++)
             {
@@ -145,20 +144,10 @@ public class BestTransitPathCalculator
                 }
             }
         }
+        
 
-        tm = Modes.TransitMode.values();
-
-        // bestUtility by Transit Ride mode
-        bestUtilities = new double[tm.length];
-        bestPTap = new int[tm.length];
-        bestATap = new int[tm.length];
-        bestAccessTime = new double[tm.length];
-        bestEgressTime = new double[tm.length];
-
-        String uecPath = Util.getStringValueFromPropertyMap(rbMap,
-                CtrampApplication.PROPERTIES_UEC_PATH);
-        String uecFileName = uecPath
-                + Util.getStringValueFromPropertyMap(rbMap, "utility.bestTransitPath.uec.file");
+        String uecPath = Util.getStringValueFromPropertyMap(rbMap,CtrampApplication.PROPERTIES_UEC_PATH);
+        String uecFileName = Paths.get(uecPath,rbMap.get("utility.bestTransitPath.uec.file")).toString();
 
         int dataPage = Util.getIntegerValueFromPropertyMap(rbMap,
                 "utility.bestTransitPath.data.page");
@@ -171,28 +160,16 @@ public class BestTransitPathCalculator
                 "utility.bestTransitPath.walkEgress.page");
         int driveEgressPage = Util.getIntegerValueFromPropertyMap(rbMap,
                 "utility.bestTransitPath.driveEgress.page");
-
-        int[] tapToTapPages = new int[NUM_PERIODS];
-        tapToTapPages[EA] = Util.getIntegerValueFromPropertyMap(rbMap,
-                "utility.bestTransitPath.tapToTap.ea.page");
-        tapToTapPages[AM] = Util.getIntegerValueFromPropertyMap(rbMap,
-                "utility.bestTransitPath.tapToTap.am.page");
-        tapToTapPages[MD] = Util.getIntegerValueFromPropertyMap(rbMap,
-                "utility.bestTransitPath.tapToTap.md.page");
-        tapToTapPages[PM] = Util.getIntegerValueFromPropertyMap(rbMap,
-                "utility.bestTransitPath.tapToTap.pm.page");
-        tapToTapPages[EV] = Util.getIntegerValueFromPropertyMap(rbMap,
-                "utility.bestTransitPath.tapToTap.ev.page");
-
+        int tapToTapPage = Util.getIntegerValueFromPropertyMap( rbMap, 
+        		"utility.bestTransitPath.tapToTap.page" );
+        
         File uecFile = new File(uecFileName);
-        walkAccessUEC = createUEC(uecFile, walkAccessPage, dataPage, rbMap, walkDmu);
-        driveAccessUEC = createUEC(uecFile, driveAccessPage, dataPage, rbMap, driveDmu);
-        walkEgressUEC = createUEC(uecFile, walkEgressPage, dataPage, rbMap, walkDmu);
-        driveEgressUEC = createUEC(uecFile, driveEgressPage, dataPage, rbMap, driveDmu);
-
-        for (int i = 0; i < NUM_PERIODS; i++)
-            tapToTapUEC[i] = createUEC(uecFile, tapToTapPages[i], dataPage, rbMap, walkDmu);
-
+        walkAccessUEC = createUEC(uecFile, walkAccessPage, dataPage, rbMap, new TransitWalkAccessDMU());
+        driveAccessUEC = createUEC(uecFile, driveAccessPage, dataPage, rbMap, new TransitDriveAccessDMU());
+        walkEgressUEC = createUEC(uecFile, walkEgressPage, dataPage, rbMap, new TransitWalkAccessDMU());
+        driveEgressUEC = createUEC(uecFile, driveEgressPage, dataPage, rbMap, new TransitDriveAccessDMU());
+        tapToTapUEC = createUEC(uecFile, tapToTapPage, dataPage, rbMap, new TransitWalkAccessDMU());
+        
         mgraManager = MgraDataManager.getInstance(rbMap);
         tazManager = TazDataManager.getInstance(rbMap);
         tapManager = TapDataManager.getInstance(rbMap);
@@ -201,208 +178,39 @@ public class BestTransitPathCalculator
         maxTap = mgraManager.getMaxTap();
         maxTaz = tazManager.getMaxTaz();
 
-        // these arrays are shared by the BestTransitPathCalculator objects
-        // created for each hh choice model object
-        storedDataObject = StoredUtilityData.getInstance(maxMgra, maxTap, maxTaz,
-                NUM_ACC_EGR, NUM_PERIODS);
-        int count = 100; //keep trying to get this until not null
-        while (storedWalkAccessUtils == null) {
-	        storedWalkAccessUtils = storedDataObject.getStoredWalkAccessUtils();
-	        storedDriveAccessUtils = storedDataObject.getStoredDriveAccessUtils();
-	        storedWalkEgressUtils = storedDataObject.getStoredWalkEgressUtils();
-	        storedDriveEgressUtils = storedDataObject.getStoredDriveEgressUtils();
-	        storedTapToTapUtils = storedDataObject.getStoredDepartPeriodTapTapUtils();
-	        if (count-- < 0)
-	        	break;
-        }
-        if (storedWalkAccessUtils == null)
-        	logger.warn("snap: storedWalkAccessUtils is null: " + count + "  " + storedWalkAccessUtils);
-
-        // use the walk access UEC to get the number of alternatives for
-        // dimensioning
-        // combined utility array.
-        // access, egress, and tap-tap UECs all have same number
-        combinedUtilities = new double[walkAccessUEC.getNumberOfAlternatives()];
-
+        // these arrays are shared by the BestTransitPathCalculator objects created for each hh choice model object
+        storedDataObject = StoredUtilityData.getInstance( maxMgra, maxTap, maxTaz, ACC_EGR, ModelStructure.PERIODCODES);
+        storedWalkAccessUtils = storedDataObject.getStoredWalkAccessUtils();
+        storedDriveAccessUtils = storedDataObject.getStoredDriveAccessUtils();
+        storedWalkEgressUtils = storedDataObject.getStoredWalkEgressUtils();
+        storedDriveEgressUtils = storedDataObject.getStoredDriveEgressUtils();
+        storedDepartPeriodTapTapUtils = storedDataObject.getStoredDepartPeriodTapTapUtils();
+        
+        //setup arrays
+        numSkimSets = Util.getIntegerValueFromPropertyMap( rbMap, "utility.bestTransitPath.skim.sets" );
+        numTransitAlts = Util.getIntegerValueFromPropertyMap( rbMap, "utility.bestTransitPath.alts" );
+        
+        bestUtilities = new double[numTransitAlts];
+        bestPTap = new int[numTransitAlts];
+        bestATap = new int[numTransitAlts];
+        bestSet = new int[numTransitAlts];
     }
+    
+   
 
     /**
-     * find the walk time from the specified mgra to tap.
+     * This is the main method that finds the best N TAP-pairs. It
+     * cycles through walk TAPs at the origin end (associated with the origin MGRA)
+     * and alighting TAPs at the destination end (associated with the destination
+     * MGRA) and calculates a utility for every available alt for each TAP
+     * pair. It stores the N origin and destination TAP that had the best utility.
      * 
-     * @param pMgra
-     * @param pTap
-     * @return
-     */
-    public static double findWalkTransitAccessTime(int pMgra, int pTap)
-    {
-
-        double accTime = -1;
-
-        MgraDataManager mgraMgr = MgraDataManager.getInstance();
-
-        // get taps with walk access from mgra
-        int[] pTapSet = mgraMgr.getMgraWlkTapsDistArray()[pMgra][0];
-
-        if (pTapSet != null)
-        {
-            // loop through tap set until the specified tap is found, then get
-            // walk time from mgraManager
-            int pPos = -1;
-            for (int tap : pTapSet)
-            {
-
-                pPos++;
-
-                if (tap == pTap)
-                {
-                    accTime = mgraMgr.getMgraToTapWalkBoardTime(pMgra, pPos);
-                    break;
-                }
-            }
-        }
-
-        return accTime;
-    }
-
-    /**
-     * find the drive time from the specified taz(mgra) to tap.
-     * 
-     * @param pMgra
-     * @param pTap
-     * @return
-     */
-    public static double findDriveTransitAccessTime(int pMgra, int pTap)
-    {
-
-        double accTime = -1;
-
-        MgraDataManager mgraMgr = MgraDataManager.getInstance();
-        int pTaz = mgraMgr.getTaz(pMgra);
-
-        // get taps with walk access from mgra
-        TazDataManager tazManager = TazDataManager.getInstance();
-        int[] pTapSet = tazManager.getParkRideOrKissRideTapsForZone(pTaz, AccessMode.PARK_N_RIDE);
-
-        if (pTapSet != null)
-        {
-            // loop through tap set until the specified tap is found, then get
-            // walk time from mgraManager
-            int pPos = -1;
-            for (int tap : pTapSet)
-            {
-
-                pPos++;
-
-                if (tap == pTap)
-                {
-                    accTime = tazManager.getTapTime(pTaz, pPos, AccessMode.PARK_N_RIDE);
-                    break;
-                }
-            }
-        }
-
-        return accTime;
-    }
-
-    /**
-     * find the walk time from the specified tap to mgra.
-     * 
-     * @param aTap
-     * @param aMgra
-     * @return
-     */
-    public static double findWalkTransitEgressTime(int aMgra, int aTap)
-    {
-
-        double egrTime = -1;
-
-        // get taps with walk egress to mgra
-        MgraDataManager mgraMgr = MgraDataManager.getInstance();
-        int[] aTapSet = mgraMgr.getMgraWlkTapsDistArray()[aMgra][0];
-
-        if (aTapSet != null)
-        {
-            // loop through tap set until the specified tap is found, then get
-            // walk time from mgraManager
-            int aPos = -1;
-            for (int tap : aTapSet)
-            {
-
-                aPos++;
-
-                if (tap == aTap)
-                {
-                    egrTime = mgraMgr.getMgraToTapWalkAlightTime(aMgra, aPos);
-                    break;
-                }
-            }
-        }
-
-        return egrTime;
-    }
-
-    /**
-     * find the walk time from the specified tap to mgra.
-     * 
-     * @param aTap
-     * @param aMgra
-     * @return
-     */
-    public static double findDriveTransitEgressTime(int aMgra, int aTap)
-    {
-
-        double egrTime = -1;
-
-        MgraDataManager mgraMgr = MgraDataManager.getInstance();
-        int aTaz = mgraMgr.getTaz(aMgra);
-
-        // get taps with walk access from mgra
-        TazDataManager tazManager = TazDataManager.getInstance();
-        int[] aTapSet = tazManager.getParkRideOrKissRideTapsForZone(aTaz, AccessMode.PARK_N_RIDE);
-
-        if (aTapSet != null)
-        {
-            // loop through tap set until the specified tap is found, then get
-            // walk time from mgraManager
-            int aPos = -1;
-            for (int tap : aTapSet)
-            {
-
-                aPos++;
-
-                if (tap == aTap)
-                {
-                    egrTime = tazManager.getTapTime(aTaz, aPos, AccessMode.PARK_N_RIDE);
-                    break;
-                }
-            }
-        }
-
-        return egrTime;
-    }
-
-    /**
-     * This is the main method that finds the best TAP-pairs for each ride mode.
-     * It cycles through walk TAPs at the origin end (associated with the origin
-     * MGRA) and alighting TAPs at the destination end (associated with the
-     * destination MGRA) and calculates a utility for every available ride mode
-     * for each TAP pair. It compares the utility calculated for that TAP-pair
-     * to previously calculated utilities and stores the origin and destination
-     * TAP that had the best utility for each ride mode.
-     * 
-     * @param pMgra
-     *            The origin/production MGRA.
-     * @param aMgra
-     *            The destination/attraction MGRA.
+     * @param pMgra The origin/production MGRA.
+     * @param aMgra The destination/attraction MGRA.
      * 
      */
-    public void findBestWalkTransitWalkTaps(int period, int pMgra, int aMgra, boolean debug,
-            Logger myLogger)
+    public void findBestWalkTransitWalkTaps(TransitWalkAccessDMU walkDmu, int period, int pMgra, int aMgra, boolean debug, Logger myLogger)
     {
-
-        // int dummy=0;
-        // if ( aMgra == 1074 )
-        // dummy = 1;
 
         clearBestArrays(Double.NEGATIVE_INFINITY);
 
@@ -418,91 +226,711 @@ public class BestTransitPathCalculator
         int aTaz = mgraManager.getTaz(aMgra);
 
         boolean writeCalculations = false;
-        if ((tracer.isTraceOn() && tracer.isTraceZonePair(pTaz, aTaz)) || debug)
+        if ((tracer.isTraceOn() && tracer.isTraceZonePair(pTaz, aTaz))|| debug)
         {
             writeCalculations = true;
         }
 
-        int pPos = -1;
+        //create transit path collection
+        ArrayList<TransitPath> paths = new ArrayList<TransitPath>();
+        
         for (int pTap : pMgraSet)
         {
-            // used to know where we are in time/dist arrays for taps
-            pPos++;
 
-            // Set the pMgra to pTap walk access utility values, if they haven't
-            // already been computed.
-            setWalkAccessUtility(pMgra, pPos, pTap, writeCalculations, myLogger);
+            // Calculate the pMgra to pTap walk access utility values
+            float accUtil; 
+            if (storedWalkAccessUtils[pMgra][pTap] == StoredUtilityData.default_utility) {
+    			accUtil = calcWalkAccessUtility(walkDmu, pMgra, pTap, writeCalculations, myLogger);
+    			storedWalkAccessUtils[pMgra][pTap] = accUtil;
+            } else {
+            	accUtil = storedWalkAccessUtils[pMgra][pTap];
+            }
 
-            int aPos = -1;
             for (int aTap : aMgraSet)
             {
-                // used to know where we are in time/dist arrays for taps
-                aPos++;
-
-                // set the pTap to aTap utility values, if they haven't already
-                // been
-                // computed.
-                setUtilitiesForTapPair(WTW, period, pTap, aTap, writeCalculations, myLogger);
-
-                // Set the aTap to aMgra walk egress utility values, if they
-                // haven't
-                // already been computed.
-                setWalkEgressUtility(aTap, aMgra, aPos, writeCalculations, myLogger);
-
-                // if (aTap == 0 || pTap == 0 || aMgra == 0 || pMgra == 0)
-                // {
-                //     logger.error("aTap=" + aTap + "pTap=" + pTap + "aMgra=" + aMgra + "pMgra="
-                //             + pMgra + "period=" + period);
-                //     throw new RuntimeException();
-                // } else if (storedWalkAccessUtils[pMgra][pTap] == null)
-                // {
-                //     logger.error("aTap=" + aTap + "pTap=" + pTap + "aMgra=" + aMgra + "pMgra="
-                //             + pMgra + "period=" + period);
-                //     logger.error("storedWalkAccessUtils[pMgra][pTap] == null");
-                //     throw new RuntimeException();
-                // } else if (storedWalkEgressUtils[aTap][aMgra] == null)
-                // {
-                //     logger.error("aTap=" + aTap + "pTap=" + pTap + "aMgra=" + aMgra + "pMgra="
-                //             + pMgra + "period=" + period);
-                //     logger.error("storedWalkEgressUtils[aTap][aMgra] == null");
-                //     throw new RuntimeException();
-                // } else if (storedDepartPeriodTapTapUtils[WTW][period][pTap][aTap] == null)
-                // {
-                //     logger.error("aTap=" + aTap + "pTap=" + pTap + "aMgra=" + aMgra + "pMgra="
-                //             + pMgra + "period=" + period);
-                //     logger.error("storedDepartPeriodTapTapUtils[WTW][period][pTap][aTap] == null");
-                //     throw new RuntimeException();
-                // }
-
-                // compare the utilities for this TAP pair to previously
-                // calculated
-                // utilities for each ride mode and store the TAP numbers if
-                // this
-                // TAP pair is the best.
-                try
-                {
-                    for (int i = 0; i < combinedUtilities.length; i++)
-                        combinedUtilities[i] = storedWalkAccessUtils[pMgra][pTap][i]
-                                + storedTapToTapUtils[WTW][period][pTap][aTap][i]
-                                + storedWalkEgressUtils[aTap][aMgra][i];
-                } catch (Exception e)
-                {
-                    logger.error("exception computing combinedUtilities for WTW");
-                    logger.error("aTap=" + aTap + "pTap=" + pTap + "aMgra=" + aMgra + "pMgra="
-                            + pMgra + "period=" + period, e);
-                    throw new RuntimeException();
+                
+                // Calculate the aTap to aMgra walk egress utility values
+                float egrUtil;
+                if (storedWalkEgressUtils[aTap][aMgra] == StoredUtilityData.default_utility) {
+                	egrUtil = calcWalkEgressUtility(walkDmu, aTap, aMgra, writeCalculations, myLogger);
+        			storedWalkEgressUtils[aTap][aMgra] = egrUtil;
+                } else {
+                	egrUtil = storedWalkEgressUtils[aTap][aMgra];	
                 }
-
-                comparePaths(combinedUtilities, pTap, aTap, WTW, writeCalculations, myLogger);
-
+                	
+                // Calculate the pTap to aTap utility values
+        		float tapTapUtil[] = new float[numSkimSets];
+        		if(!storedDepartPeriodTapTapUtils.get(WTW).get(period).containsKey(storedDataObject.paTapKey(pTap, aTap))) {
+        			
+        			//loop across number of skim sets  the pTap to aTap utility values 
+        			for (int set=0; set<numSkimSets; set++) {
+	            		tapTapUtil[set] = calcUtilitiesForTapPair(walkDmu, period, pTap, aTap, set, pMgra, aMgra, writeCalculations, myLogger);
+        			}
+        			storedDepartPeriodTapTapUtils.get(WTW).get(period).putIfAbsent(storedDataObject.paTapKey(pTap, aTap), tapTapUtil);
+        		} else {
+	                tapTapUtil = storedDepartPeriodTapTapUtils.get(WTW).get(period).get(storedDataObject.paTapKey(pTap, aTap));
+            	}
+        		
+        		//create path for each skim set
+        		for (int set=0; set<numSkimSets; set++) {
+        			paths.add(new TransitPath(pMgra, aMgra, pTap, aTap, set, WTW, accUtil, tapTapUtil[set], egrUtil));
+            	}
+            
             }
         }
-        if (writeCalculations)
-        {
+        
+        //save N best paths
+        trimPaths(paths);
+        if (writeCalculations) {
             logBestUtilities(myLogger);
         }
     }
 
+    public void findBestDriveTransitWalkTaps(TransitWalkAccessDMU walkDmu, TransitDriveAccessDMU driveDmu, int period, int pMgra, int aMgra, boolean debug, Logger myLogger)
+    {
+
+        clearBestArrays(Double.NEGATIVE_INFINITY);
+
+        Modes.AccessMode accMode = AccessMode.PARK_N_RIDE;
+
+        int pTaz = mgraManager.getTaz(pMgra);
+        int aTaz = mgraManager.getTaz(aMgra);
+
+        if (tazManager.getParkRideOrKissRideTapsForZone(pTaz, accMode) == null
+                || mgraManager.getMgraWlkTapsDistArray()[aMgra][0] == null)
+                    {
+                        return;
+                    }
+
+        boolean writeCalculations = false;
+        if (tracer.isTraceOn() && tracer.isTraceZonePair(pTaz, aTaz) && debug)
+        {
+            writeCalculations = true;
+        }
+        
+        //create transit path collection
+        ArrayList<TransitPath> paths = new ArrayList<TransitPath>();
+
+        float[][][] tapParkingInfo = tapManager.getTapParkingInfo();
+
+        int[] pTapArray = tazManager.getParkRideOrKissRideTapsForZone(pTaz, accMode);
+        for ( int pTap : pTapArray )
+        {
+            // Calculate the pTaz to pTap drive access utility values
+            float accUtil;
+            if (storedDriveAccessUtils[pTaz][pTap] == StoredUtilityData.default_utility) {
+    			accUtil = calcDriveAccessUtility(driveDmu, pMgra, pTaz, pTap, accMode, writeCalculations, myLogger);
+    			storedDriveAccessUtils[pTaz][pTap] = accUtil;
+            } else {
+            	accUtil = storedDriveAccessUtils[pTaz][pTap];
+            }
+            
+            int lotID = (int)tapParkingInfo[pTap][0][0]; // lot ID
+            float lotCapacity = tapParkingInfo[pTap][2][0]; // lot capacity
+            
+            if ((accMode == AccessMode.PARK_N_RIDE && tapManager.getLotUse(lotID) < lotCapacity)
+                    || (accMode == AccessMode.KISS_N_RIDE))
+            {
+
+                for (int aTap : mgraManager.getMgraWlkTapsDistArray()[aMgra][0])
+                {
+                    
+                    // Calculate the aTap to aMgra walk egress utility values
+                    float egrUtil;
+                    if (storedWalkEgressUtils[aTap][aMgra] == StoredUtilityData.default_utility) {
+            			egrUtil = calcWalkEgressUtility(walkDmu, aTap, aMgra, writeCalculations, myLogger);
+            			storedWalkEgressUtils[aTap][aMgra] = egrUtil;
+                    } else {
+                    	egrUtil = storedWalkEgressUtils[aTap][aMgra];	
+                    }
+                                        
+                    // Calculate the pTap to aTap utility values
+            		float tapTapUtil[] = new float[numSkimSets];
+            		if(!storedDepartPeriodTapTapUtils.get(DTW).get(period).containsKey(storedDataObject.paTapKey(pTap, aTap))) {
+            			
+            			//loop across number of skim sets  the pTap to aTap utility values 
+            			for (int set=0; set<numSkimSets; set++) {
+    	            		tapTapUtil[set] = calcUtilitiesForTapPair(walkDmu, period, pTap, aTap, set, pMgra, aMgra, writeCalculations, myLogger);
+            			}
+            			storedDepartPeriodTapTapUtils.get(DTW).get(period).putIfAbsent(storedDataObject.paTapKey(pTap, aTap), tapTapUtil);
+            		} else {
+    	                tapTapUtil = storedDepartPeriodTapTapUtils.get(DTW).get(period).get(storedDataObject.paTapKey(pTap, aTap));
+                	}
+            		
+            		//create path for each skim set
+            		for (int set=0; set<numSkimSets; set++) {
+            			paths.add(new TransitPath(pMgra, aMgra, pTap, aTap, set, DTW, accUtil, tapTapUtil[set], egrUtil));
+                	}
+            		
+                }
+            }
+            
+            //save N best paths
+            trimPaths(paths);
+            if (writeCalculations) {
+                logBestUtilities(myLogger);
+            }
+        }
+    }
+
+    public void findBestWalkTransitDriveTaps(TransitWalkAccessDMU walkDmu, TransitDriveAccessDMU driveDmu, int period, int pMgra, int aMgra, boolean debug, Logger myLogger)
+    {
+
+        clearBestArrays(Double.NEGATIVE_INFINITY);
+
+        Modes.AccessMode accMode = AccessMode.PARK_N_RIDE;
+
+        int pTaz = mgraManager.getTaz(pMgra);
+        int aTaz = mgraManager.getTaz(aMgra);
+
+        if (mgraManager.getMgraWlkTapsDistArray()[pMgra][0] == null
+                || tazManager.getParkRideOrKissRideTapsForZone(aTaz, accMode) == null)
+                    {
+                        return;
+                    }
+
+        boolean writeCalculations = false;
+        if (tracer.isTraceOn() && tracer.isTraceZonePair(pTaz, aTaz) && debug)
+        {
+            writeCalculations = true;
+        }
+
+        //create transit path collection
+        ArrayList<TransitPath> paths = new ArrayList<TransitPath>();
+        
+        for (int pTap : mgraManager.getMgraWlkTapsDistArray()[pMgra][0])
+        {
+            // Calculate the pMgra to pTap walk access utility values
+            float accUtil;
+            if (storedWalkAccessUtils[pMgra][pTap] == StoredUtilityData.default_utility) {
+    			accUtil = calcWalkAccessUtility(walkDmu, pMgra, pTap, writeCalculations, myLogger);
+    			storedWalkAccessUtils[pMgra][pTap] = accUtil;
+            } else {
+            	accUtil = storedWalkAccessUtils[pMgra][pTap];
+            }
+
+            for (int aTap : tazManager.getParkRideOrKissRideTapsForZone(aTaz, accMode))
+            {
+
+                int lotID = (int) tapManager.getTapParkingInfo()[aTap][0][0]; // lot
+                // ID
+                float lotCapacity = tapManager.getTapParkingInfo()[aTap][2][0]; // lot
+                // capacity
+                if ((accMode == AccessMode.PARK_N_RIDE && tapManager.getLotUse(lotID) < lotCapacity)
+                        || (accMode == AccessMode.KISS_N_RIDE))
+                {
+
+                	// Calculate the aTap to aMgra drive egress utility values
+                    float egrUtil;
+                    if (storedDriveEgressUtils[aTap][aTaz] == StoredUtilityData.default_utility) {
+            			egrUtil = calcDriveEgressUtility(driveDmu, aTap, aTaz, aMgra, accMode, writeCalculations, myLogger);
+            			storedDriveEgressUtils[aTap][aTaz] = egrUtil;
+                    } else {
+                    	egrUtil = storedDriveEgressUtils[aTap][aTaz];	
+                    }
+                	
+                    // Calculate the pTap to aTap utility values
+            		float tapTapUtil[] = new float[numSkimSets];
+            		if(!storedDepartPeriodTapTapUtils.get(WTD).get(period).containsKey(storedDataObject.paTapKey(pTap, aTap))) {
+            			
+            			//loop across number of skim sets  the pTap to aTap utility values 
+            			for (int set=0; set<numSkimSets; set++) {
+    	            		tapTapUtil[set] = calcUtilitiesForTapPair(walkDmu, period, pTap, aTap, set, pMgra, aMgra, writeCalculations, myLogger);
+            			}
+            			storedDepartPeriodTapTapUtils.get(WTD).get(period).putIfAbsent(storedDataObject.paTapKey(pTap, aTap), tapTapUtil);
+            		} else {
+    	                tapTapUtil = storedDepartPeriodTapTapUtils.get(WTD).get(period).get(storedDataObject.paTapKey(pTap, aTap));
+                	}
+            		
+            		//create path for each skim set
+            		for (int set=0; set<numSkimSets; set++) {
+            			paths.add(new TransitPath(pMgra, aMgra, pTap, aTap, set, WTD, accUtil, tapTapUtil[set], egrUtil));
+                	}
+   
+                }
+            }
+            
+            //save N best paths
+            trimPaths(paths);
+            if (writeCalculations) {
+                logBestUtilities(myLogger);
+            }
+        }
+    }
+    
+    public float calcWalkAccessUtility(TransitWalkAccessDMU walkDmu, int pMgra, int pTap, boolean myTrace, Logger myLogger)
+    {
+    	int pPos = mgraManager.getTapPosition(pMgra, pTap);
+    	double pWalkTime = mgraManager.getMgraToTapWalkTime(pMgra, pPos);
+        walkDmu.setMgraTapWalkTime(pWalkTime);
+        float util = (float)walkAccessUEC.solve(index, walkDmu, null)[0];
+        
+        // logging
+        if (myTrace && tracer.isTraceZone(mgraManager.getTaz(pMgra))) {
+            walkAccessUEC.logAnswersArray(myLogger, "Walk Orig Mgra=" + pMgra + ", to pTap=" + pTap + " Utility Piece");
+        }
+        
+        return(util);
+        
+    }
+    
+    public float calcDriveAccessUtility(TransitDriveAccessDMU driveDmu, int pMgra, int pTaz, int pTap, AccessMode accMode, boolean myTrace, Logger myLogger)
+    {
+    	int pPos = tazManager.getTapPosition(pTaz, pTap, accMode);
+    	double pDriveTime = tazManager.getTapTime(pTaz, pPos, accMode);
+        driveDmu.setDriveDistToTap(tazManager.getTapDist(pTaz, pPos, accMode));
+        driveDmu.setDriveTimeToTap(pDriveTime);
+        float util = (float)driveAccessUEC.solve(index, driveDmu, null)[0];
+
+        // logging
+        if (myTrace && tracer.isTraceZone(mgraManager.getTaz(pMgra))) {
+        	driveAccessUEC.logAnswersArray(myLogger, "Drive from Orig Taz=" + pTaz + ", to Dest pTap=" + pTap + " Utility Piece");
+        }
+        return(util);
+    }
+    
+    public float calcWalkEgressUtility(TransitWalkAccessDMU walkDmu, int aTap, int aMgra, boolean myTrace, Logger myLogger)
+    {
+    	int aPos = mgraManager.getTapPosition(aMgra, aTap);
+    	double aWalkTime = mgraManager.getMgraToTapWalkTime(aMgra, aPos);        
+        walkDmu.setTapMgraWalkTime(aWalkTime);
+        float util = (float)walkEgressUEC.solve(index, walkDmu, null)[0];
+
+        // logging
+        if (myTrace && tracer.isTraceZone(mgraManager.getTaz(aMgra))) {
+        	walkEgressUEC.logAnswersArray(myLogger, "Walk from Orig aTap=" + aTap + ", to Dest Mgra=" + aMgra + " Utility Piece");
+        }    
+        return(util);
+    }
+    
+    public float calcDriveEgressUtility(TransitDriveAccessDMU driveDmu, int aTap, int aTaz, int aMgra, AccessMode accMode, boolean myTrace, Logger myLogger)
+    {
+    	int aPos = tazManager.getTapPosition(aTaz, aTap, accMode);   
+    	double aDriveTime = tazManager.getTapTime(aTaz, aPos, accMode);
+        driveDmu.setDriveDistToTap(tazManager.getTapDist(aTaz, aPos, accMode));
+        driveDmu.setDriveTimeToTap(aDriveTime);
+        float util = (float)driveEgressUEC.solve(index, driveDmu, null)[0];
+
+        // logging
+        if (myTrace && tracer.isTraceZone(mgraManager.getTaz(aMgra))) {
+            //driveEgressUEC.logAnswersArray(myLogger, "Drive Tap to Dest Taz Utility Piece");
+        	driveEgressUEC.logAnswersArray(myLogger, "Drive from Orig aTap=" + aTap + ", to Dest Taz=" + aTaz + " Utility Piece");
+        }
+        return(util);
+    }
+    
+    public float calcUtilitiesForTapPair(TransitWalkAccessDMU walkDmu, int period, int pTap, int aTap, int set, int origMgra, int destMgra, boolean myTrace, Logger myLogger) {
+   	
+        // set up the index and dmu objects
+        index.setOriginZone(pTap);
+        index.setDestZone(aTap);
+        walkDmu.setTOD(period);
+        walkDmu.setSet(set);
+
+        // solve
+        float util = (float)tapToTapUEC.solve(index, walkDmu, null)[0];  
+        
+        // logging
+        if (myTrace && tracer.isTraceZonePair( mgraManager.getTaz(origMgra),  mgraManager.getTaz(destMgra) )) {
+        	String modeName = SandagModelStructure.modeName[SandagModelStructure.TRANSIT_ALTS[set] - 1];
+            tapToTapUEC.logAnswersArray(myLogger, "Transit Mode: " + modeName + " From Orig pTap=" + pTap + " (Origin MAZ:" + origMgra +") " +  " to Dest aTap=" + aTap + " (Dest MAZ:" + destMgra +") " + " Utility Piece");
+            tapToTapUEC.logResultsArray(myLogger, pTap, aTap);
+        }
+        return(util);
+    }
+
+    
+    /**
+     * Trim the paths calculated for this TAP-pair to the best N.  
+     * Set the bestUtilities[], bestSet[], bestPTap[] and bestATap[]
+     * 
+     * @param ArrayList<TransitPath> paths Collection of paths
+     */
+    public void trimPaths(ArrayList<TransitPath> paths)
+    {
+
+    	//sort paths by total utility in reverse order to get highest utility first
+    	Collections.sort(paths, Collections.reverseOrder());
+    	
+    	//get best N paths
+		int count = 0;
+		for(TransitPath path : paths) {
+			
+			if (path.getTotalUtility() > NA) {
+			
+				//get data
+				bestUtilities[count] = path.getTotalUtility();
+	            bestPTap[count] = path.pTap;
+	            bestATap[count] = path.aTap;
+	            bestSet[count] = path.set;
+	            
+	            count = count + 1;
+				if(count == numTransitAlts) { 
+					break;
+				}
+			}
+		}
+    }
+    
+    public float calcPathUtility(TransitWalkAccessDMU walkDmu, TransitDriveAccessDMU driveDmu, int accEgr, int period, int origMgra, int pTap, int aTap, int destMgra, int set, boolean myTrace, Logger myLogger) {
+    	
+    	float accUtil    =NA;
+        float egrUtil    =NA;
+        float tapTapUtil =NA;
+        
+    	if(accEgr==WTW) {
+    		accUtil = calcWalkAccessUtility(walkDmu, origMgra, pTap, myTrace, myLogger);
+            egrUtil = calcWalkEgressUtility(walkDmu, aTap, destMgra, myTrace, myLogger);
+            tapTapUtil = calcUtilitiesForTapPair(walkDmu, period, pTap, aTap, set, origMgra, destMgra, myTrace, myLogger);
+    	} else if(accEgr==WTD) {
+    		int aTaz = mgraManager.getTaz(destMgra);
+    		AccessMode accMode = AccessMode.PARK_N_RIDE;
+    		accUtil = calcWalkAccessUtility(walkDmu, origMgra, pTap, myTrace, myLogger);
+    		egrUtil = calcDriveEgressUtility(driveDmu, aTap, aTaz, destMgra, accMode, myTrace, myLogger);
+    		tapTapUtil = calcUtilitiesForTapPair(walkDmu, period, pTap, aTap, set, origMgra, destMgra, myTrace, myLogger);
+    	} else if(accEgr==DTW) {
+    		int pTaz = mgraManager.getTaz(origMgra);
+    		AccessMode accMode = AccessMode.PARK_N_RIDE;
+    		accUtil = calcDriveAccessUtility(driveDmu, origMgra, pTaz, pTap, accMode, myTrace, myLogger);
+    		egrUtil = calcWalkEgressUtility(walkDmu, aTap, destMgra, myTrace, myLogger);
+    		tapTapUtil = calcUtilitiesForTapPair(walkDmu, period, pTap, aTap, set, origMgra, destMgra, myTrace, myLogger);
+    	}
+        return(accUtil + tapTapUtil + egrUtil);
+    }
+    
+    /**
+     * Return the array of transit best tap pairs for the given access/egress mode, origin MGRA,
+     * destination MGRA, and departure time period.
+     * 
+     * @param TransitWalkAccessDMU walkDmu
+     * @param TransitDriveAccessDMU driveDmu
+     * @param Modes.AccessMode accMode
+     * @param origMgra Origin MGRA
+     * @param workMgra Destination MGRA
+     * @param departPeriod Departure time period - 1 = AM period, 2 = PM period, 3 =OffPeak period
+     * @param debug boolean flag to indicate if debugging reports should be logged
+     * @param logger Logger to which debugging reports should be logged if debug is true
+     * @return double[][] Array of best tap pair values - rows are N-path, columns are orig tap, dest tap, skim set, utility
+     */
+    public double[][] getBestTapPairs(TransitWalkAccessDMU walkDmu, TransitDriveAccessDMU driveDmu, int accMode, int origMgra, int destMgra, int departPeriod, boolean debug, Logger myLogger)
+    {
+
+        String separator = "";
+        String header = "";
+        if (debug)
+        {
+        	myLogger.info("");
+        	myLogger.info("");
+            header = accMode + " best tap pairs debug info for origMgra=" + origMgra
+                    + ", destMgra=" + destMgra + ", period index=" + departPeriod
+                    + ", period label=" + TransitWalkAccessUEC.PERIODS[departPeriod];
+            for (int i = 0; i < header.length(); i++)
+                separator += "^";
+
+            myLogger.info("");
+            myLogger.info(separator);
+            myLogger.info("Calculating " + header);
+        }
+
+        double[][] bestTaps = null;
+
+        if(accMode==WTW) {
+        	findBestWalkTransitWalkTaps(walkDmu, departPeriod, origMgra, destMgra, debug, myLogger);
+    	} else if(accMode==DTW) {
+    		findBestDriveTransitWalkTaps(walkDmu, driveDmu, departPeriod, origMgra, destMgra, debug, myLogger);
+    	} else if(accMode==WTD) {
+    		findBestWalkTransitDriveTaps(walkDmu, driveDmu, departPeriod, origMgra, destMgra, debug, myLogger);
+    	}
+
+        // get and log the best tap-tap utilities by alt
+        double[] bestUtilities = getBestUtilities();
+        bestTaps = new double[bestUtilities.length][];
+        
+        for (int i = 0; i < bestUtilities.length; i++)
+        {
+            //only initialize tap data if valid; otherwise null array
+        	if (bestUtilities[i] > NA) bestTaps[i] = getBestTaps(i);
+        }
+        
+        // log the best utilities and tap pairs for each alt
+        if (debug)
+        {
+        	myLogger.info("");
+        	myLogger.info(separator);
+        	myLogger.info(header);
+        	myLogger.info("Final Best Utilities:");
+        	myLogger.info("Alt, Alt, Utility, bestITap, bestJTap, bestSet");
+            int availableModeCount = 0;
+            for (int i = 0; i < bestUtilities.length; i++)
+            {
+                if (bestTaps[i] != null) availableModeCount++;
+
+                myLogger.info(i + "," + i + "," + bestUtilities[i] + ","
+                        + (bestTaps[i] == null ? "NA" : bestTaps[i][0]) + ","
+                        + (bestTaps[i] == null ? "NA" : bestTaps[i][1]) + ","
+                        + (bestTaps[i] == null ? "NA" : bestTaps[i][2]));
+            }
+
+            myLogger.info(separator);
+        }
+        return bestTaps;
+    }
+    
+    /**
+     * Calculate utilities for the best tap pairs using person specific attributes.
+     * 
+     * @param double[][] bestTapPairs
+     * @param TransitWalkAccessDMU walkDmu
+     * @param TransitDriveAccessDMU driveDmu
+     * @param Modes.AccessMode accMode
+     * @param origMgra Origin MGRA
+     * @param workMgra Destination MGRA
+     * @param departPeriod Departure time period - 1 = AM period, 2 = PM period, 3 =OffPeak period
+     * @param debug boolean flag to indicate if debugging reports should be logged
+     * @param logger Logger to which debugging reports should be logged if debug is true
+     * @return double[][] Array of best tap pair values - rows are N-path, columns are orig tap, dest tap, skim set, utility
+     */
+    public double[][] calcPersonSpecificUtilities(double[][] bestTapPairs, TransitWalkAccessDMU walkDmu, TransitDriveAccessDMU driveDmu, int accMode, int origMgra, int destMgra, int departPeriod, boolean debug, Logger myLogger)
+    {
+
+        String separator = "";
+        String header = "";
+        if (debug)
+        {
+        	myLogger.info("");
+        	myLogger.info("");
+            header = accMode + " best tap pairs person specific utility info for origMgra=" + origMgra
+                    + ", destMgra=" + destMgra + ", period index=" + departPeriod
+                    + ", period label=" + TransitWalkAccessUEC.PERIODS[departPeriod];
+            for (int i = 0; i < header.length(); i++)
+                separator += "^";
+
+            myLogger.info("");
+            myLogger.info(separator);
+            myLogger.info("Calculating " + header);
+        }
+
+        //re-calculate utilities
+        for (int i = 0; i < bestTapPairs.length; i++) {
+            if (bestTapPairs[i] != null) {
+            	int pTap = (int)bestTapPairs[i][0];
+            	int aTap = (int)bestTapPairs[i][1];
+            	int set  = (int)bestTapPairs[i][2];
+            	double utility =  calcPathUtility(walkDmu, driveDmu, accMode, departPeriod, origMgra, pTap, aTap, destMgra, set, debug, myLogger);
+            	bestTapPairs[i][3] = utility;
+            }
+        }
+        
+        // log the best utilities and tap pairs for each alt
+        if (debug)
+        {
+        	myLogger.info("");
+        	myLogger.info(separator);
+        	myLogger.info(header);
+        	myLogger.info("Final Person Specific Best Utilities:");
+        	myLogger.info("Alt, Alt, Utility, bestITap, bestJTap, bestSet");
+            int availableModeCount = 0;
+            for (int i = 0; i < bestUtilities.length; i++)
+            {
+                if (bestTapPairs[i] != null) availableModeCount++;
+
+                myLogger.info(i + "," + i + "," 
+                        + (bestTapPairs[i] == null ? "NA" : bestTapPairs[i][3]) + ","
+                        + (bestTapPairs[i] == null ? "NA" : bestTapPairs[i][0]) + ","
+                        + (bestTapPairs[i] == null ? "NA" : bestTapPairs[i][1]) + ","
+                        + (bestTapPairs[i] == null ? "NA" : bestTapPairs[i][2]));
+            }
+
+            myLogger.info(separator);
+        }
+        return bestTapPairs;
+    }
+    
+    public LogitModel setupTripLogSum(double[][] bestTapPairs, boolean myTrace, Logger myLogger) {      
+    	
+    	//must size logit model ahead of time
+    	int alts = 0;
+    	for (int i=0; i<bestTapPairs.length; i++) {
+        	if (bestTapPairs[i] != null) {
+        		alts = alts + 1;
+        	}
+    	}
+    	
+    	LogitModel tripNPaths = new LogitModel("trip-paths",0, alts);
+        for (int i=0; i<bestTapPairs.length; i++) {
+        	
+        	if (bestTapPairs[i] != null) {
+        		ConcreteAlternative alt = new ConcreteAlternative(String.valueOf(i),i);
+                alt.setUtility(bestTapPairs[i][3]);
+                tripNPaths.addAlternative(alt);
+        	}
+    		
+        }
+
+        return(tripNPaths);
+    }
+    
+    public float calcTripLogSum(double[][] bestTapPairs, boolean myTrace, Logger myLogger) {      
+    	
+    	LogitModel tripNPaths = setupTripLogSum(bestTapPairs, myTrace, myLogger);
+        return((float)tripNPaths.getUtility());
+    }
+
+    //select best transit path from N-path for trip
+    public int chooseTripPath(float rnum, double[][] bestTapPairs, boolean myTrace, Logger myLogger) {
+    	
+    	LogitModel tripNPaths = setupTripLogSum(bestTapPairs, myTrace, myLogger);
+    	double logSum = tripNPaths.getUtility();
+    	tripNPaths.calculateProbabilities();
+    	Alternative alt = tripNPaths.chooseAlternative(rnum);
+    	if (alt==null) {
+    		myLogger.info("No best taps to pick set from");
+    	}
+    	return alt.getNumber();
+    }
+    
+    /**
+     * Log the best utilities so far to the logger.
+     * 
+     * @param localLogger The logger to use for output.
+     */
+    public void logBestUtilities(Logger localLogger)
+    {
+
+        // create the header
+        String header = String.format("%16s", "Alternative");
+        header += String.format("%14s", "Utility");
+        header += String.format("%14s", "PTap");
+        header += String.format("%14s", "ATap");
+        header += String.format("%14s", "Set");
+
+        localLogger.info("Best Utility and Tap to Tap Pair");
+        localLogger.info(header);
+
+        // log the utilities and tap number for each alternative
+        for (int i=0; i<numTransitAlts; i++)
+        {
+            header = header + String.format("  %16s", i);
+        }
+        for (int i=0; i<numTransitAlts; i++)
+        {
+            String line = String.format("%16s", i);
+            line = line + String.format("  %12.4f", bestUtilities[i]);
+            line = line + String.format("  %12d", bestPTap[i]);
+            line = line + String.format("  %12d", bestATap[i]);
+            line = line + String.format("  %12d", bestSet[i]);
+
+            localLogger.info(line);
+        }
+    }
+
+    public void setTrace(boolean myTrace)
+    {
+        tracer.setTrace(myTrace);
+    }
+
+    /**
+     * Trace calculations for a zone pair.
+     * 
+     * @param itaz
+     * @param jtaz
+     * @return true if zone pair should be traced, otherwise false
+     */
+    public boolean isTraceZonePair(int itaz, int jtaz)
+    {
+        if (tracer.isTraceOn()) {
+            return tracer.isTraceZonePair(itaz, jtaz);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Get the best utilities.
+     * 
+     * @return An array of the best utilities.
+     */
+    public double[] getBestUtilities()
+    {
+        return bestUtilities;
+    }
+
+    /**
+     * Create the UEC for the main transit portion of the utility.
+     * 
+     * @param uecSpreadsheet The .xls workbook with the model specification.
+     * @param modelSheet The sheet with model specifications.
+     * @param dataSheet The sheet with the data specifications.
+     * @param rb A resource bundle with the path to the skims "skims.path"
+     * @param dmu The DMU class for this UEC.
+     */
+    public UtilityExpressionCalculator createUEC(File uecSpreadsheet, int modelSheet,
+            int dataSheet, HashMap<String, String> rbMap, VariableTable dmu)
+    {
+        return new UtilityExpressionCalculator(uecSpreadsheet, modelSheet, dataSheet, rbMap, dmu);
+    }
+
+    /**
+     * Clears the arrays. This method gets called for two different purposes. One is
+     * to compare alternatives based on utilities and the other based on
+     * exponentiated utilities. For this reason, the bestUtilities will be
+     * initialized by the value passed in as an argument set by the calling method.
+     * 
+     * @param initialization value
+     */
+    public void clearBestArrays(double initialValue)
+    {
+        Arrays.fill(bestUtilities, initialValue);
+        Arrays.fill(bestPTap, 0);
+        Arrays.fill(bestATap, 0);
+        Arrays.fill(bestSet, 0);
+    }
+
+    /**
+     * Get the best ptap, atap, and skim set in an array. Only to be called after trimPaths() has been called.
+     * 
+     * @param alt.
+     * @return element 0 = best ptap, element 1 = best atap, element 2 = set, element 3= utility
+     */
+    public double[] getBestTaps(int alt)
+    {
+
+    	double[] bestTaps = new double[4];
+
+        bestTaps[0] = bestPTap[alt];
+        bestTaps[1] = bestATap[alt];
+        bestTaps[2] = bestSet[alt];
+        bestTaps[3] = bestUtilities[alt];
+
+        return bestTaps;
+    }
+
+    /**
+     * Get the best transit alt. Returns null if no transit alt has a valid utility. 
+     * Call only after calling findBestWalkTransitWalkTaps().
+     * 
+     * @return The best transit alt (highest utility), or null if no alt have a valid utility.
+     */
+    public int getBestTransitAlt()
+    {
+
+        int best = -1;
+        double bestUtility = Double.NEGATIVE_INFINITY;
+        for (int i = 0; i < bestUtilities.length; ++i)
+        {
+            if (bestUtilities[i] > bestUtility) {
+            	best = i;
+                bestUtility = bestUtilities[i];
+            }
+        }
+        
+        int returnSet = best;
+        if (best > -1) {
+        	returnSet = best;
+        }
+        return returnSet;
+    }
+ 
     
     /**
      * This method writes the utilities for all TAP-pairs for each ride mode.
@@ -525,6 +953,10 @@ public class BestTransitPathCalculator
      */
     public void writeAllWalkTransitWalkTaps(int period, int pMgra, int aMgra, Logger myLogger, PrintWriter outwriter, String label)
     {
+    	
+    	//TODO: Fix this
+    	
+    	/*
 
         clearBestArrays(Double.NEGATIVE_INFINITY);
 
@@ -585,153 +1017,9 @@ public class BestTransitPathCalculator
 
             }
         }
-       
+       */
     }
-
-
-    /**
-     * This method finds the best TAP-pairs for each ride mode. It cycles
-     * through drive access TAPs at the origin end (associated with the origin
-     * MGRA) and alighting TAPs at the destination end (associated with the
-     * destination MGRA) and calculates a utility for every available ride mode
-     * for each TAP pair. It compares the utility calculated for that TAP-pair
-     * to previously calculated utilities and stores the origin and destination
-     * TAP that had the best utility for each ride mode.
-     * 
-     * @param period
-     *            The departure period ofr which the best path is to be
-     *            determined
-     * @param pMgra
-     *            The origin/production MGRA.
-     * @param aMgra
-     *            The destination/attraction MGRA.
-     * @param debug
-     *            A boolean to be set to true if debug information is desired.
-     * 
-     */
-    public void findBestDriveTransitWalkTaps(int period, int pMgra, int aMgra, boolean debug,
-            Logger myLogger)
-    {
-
-        // int dummy=0;
-        // if ( aMgra == 1074 )
-        // dummy = 1;
-
-        clearBestArrays(Double.NEGATIVE_INFINITY);
-
-        Modes.AccessMode accMode = AccessMode.PARK_N_RIDE;
-
-        int pTaz = mgraManager.getTaz(pMgra);
-        int aTaz = mgraManager.getTaz(aMgra);
-
-        if (tazManager.getParkRideOrKissRideTapsForZone(pTaz, accMode) == null
-                || mgraManager.getMgraWlkTapsDistArray()[aMgra][0] == null)
-        {
-            return;
-        }
-
-        boolean writeCalculations = false;
-        if (tracer.isTraceOn() && tracer.isTraceZonePair(pTaz, aTaz) && debug)
-        {
-            writeCalculations = true;
-        }
-
-        float[][][] tapParkingInfo = tapManager.getTapParkingInfo();
-
-        int pPos = -1;
-        int[] pTapArray = tazManager.getParkRideOrKissRideTapsForZone(pTaz, accMode);
-        for (int pTap : pTapArray)
-        {
-            pPos++; // used to know where we are in time/dist arrays for taps
-
-            // Set the pTaz to pTap drive access utility values, if they haven't
-            // already been computed.
-            setDriveAccessUtility(pTaz, pPos, pTap, accMode, writeCalculations, myLogger);
-
-            int lotID = (int) tapParkingInfo[pTap][0][0]; // lot ID
-            float lotCapacity = tapParkingInfo[pTap][2][0]; // lot capacity
-
-            if ((accMode == AccessMode.PARK_N_RIDE && tapManager.getLotUse(lotID) < lotCapacity)
-                    || (accMode == AccessMode.KISS_N_RIDE))
-            {
-
-                int aPos = -1;
-                for (int aTap : mgraManager.getMgraWlkTapsDistArray()[aMgra][0])
-                {
-                    aPos++;
-
-                    // Set the aTap to aMgra walk egress utility values, if they
-                    // haven't already been computed.
-                    setWalkEgressUtility(aTap, aMgra, aPos, writeCalculations, myLogger);
-
-                    // int dummy=0;
-                    // if ( pMgra==18736 && aMgra==4309 && period==1 ){
-                    // if ( (pTap==839 && aTap==1889) || (pTap==839 &&
-                    // aTap==2151) || (pTap==839 && aTap==1880) ){
-                    // dummy = 1;
-                    // }
-                    // }
-
-                    // set the pTap to aTap utility values, if they haven't
-                    // already
-                    // been computed.
-                    setUtilitiesForTapPair(DTW, period, pTap, aTap, writeCalculations, myLogger);
-
-                    // if (aTap == 0 || pTap == 0 || aMgra == 0 || pMgra == 0)
-                    // {
-                    //     logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
-                    //             + ",pMgra=" + pMgra + ",period=" + period);
-                    //     throw new RuntimeException();
-                    // } else if (storedDriveAccessUtils[pTaz][pTap] == null)
-                    // {
-                    //     logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
-                    //             + ",pMgra=" + pMgra + ",period=" + period);
-                    //     logger.error("storedDriveAccessUtils[pTaz][pTap] == null");
-                    //     throw new RuntimeException();
-                    // } else if (storedWalkEgressUtils[aTap][aMgra] == null)
-                    // {
-                    //     logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
-                    //             + ",pMgra=" + pMgra + ",period=" + period);
-                    //     logger.error("storedWalkEgressUtils[aTap][aMgra] == null");
-                    //     throw new RuntimeException();
-                    // } else if (storedDepartPeriodTapTapUtils[DTW][period][pTap][aTap] == null)
-                    // {
-                    //     logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
-                    //             + ",pMgra=" + pMgra + ",period=" + period);
-                    //     logger.error("storedDepartPeriodTapTapUtils[DTW][period][pTap][aTap] == null");
-                    //     throw new RuntimeException();
-                    // }
-
-                    // compare the utilities for this TAP pair to previously
-                    // calculated
-                    // utilities for each ride mode and store the TAP numbers if
-                    // this
-                    // TAP pair is the best.
-                    try
-                    {
-                        for (int i = 0; i < combinedUtilities.length; i++)
-                            combinedUtilities[i] = storedDriveAccessUtils[pTaz][pTap][i]
-                                    + storedTapToTapUtils[DTW][period][pTap][aTap][i]
-                                    + storedWalkEgressUtils[aTap][aMgra][i];
-                    } catch (Exception e)
-                    {
-                        logger.error("exception computing combinedUtilities for DTW");
-                        logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
-                                + ",pMgra=" + pMgra + ",period=" + period, e);
-                        throw new RuntimeException();
-                    }
-
-                    comparePaths(combinedUtilities, pTap, aTap, DTW, writeCalculations, myLogger);
-
-                }
-            }
-            if (writeCalculations)
-            {
-                logBestUtilities(myLogger);
-            }
-        }
-    }
-
+    
     /**
      * This method writes all TAP-pairs for each ride mode. It cycles
      * through drive access TAPs at the origin end (associated with the origin
@@ -755,6 +1043,10 @@ public class BestTransitPathCalculator
     public void writeAllDriveTransitWalkTaps(int period, int pMgra, int aMgra,
             Logger myLogger, PrintWriter outwriter, String label)
     {
+
+   	// TODO: Fix this
+    	
+    	/*
 
          clearBestArrays(Double.NEGATIVE_INFINITY);
 
@@ -827,135 +1119,9 @@ public class BestTransitPathCalculator
             }
            
         }
+        */
     }
-    /**
-     * This method finds the best TAP-pairs for each ride mode. It cycles
-     * through drive access TAPs at the origin end (associated with the origin
-     * MGRA) and alighting TAPs at the destination end (associated with the
-     * destination MGRA) and calculates a utility for every available ride mode
-     * for each TAP pair. It compares the utility calculated for that TAP-pair
-     * to previously calculated utilities and stores the origin and destination
-     * TAP that had the best utility for each ride mode.
-     * 
-     * @param pTaz
-     *            The origin/production MGRA.
-     * @param aMgra
-     *            The destination/attraction MGRA.
-     * 
-     */
-    public void findBestWalkTransitDriveTaps(int period, int pMgra, int aMgra, boolean debug,
-            Logger myLogger)
-    {
-
-        // int dummy=0;
-        // if ( aMgra == 1074 )
-        // dummy = 1;
-
-        clearBestArrays(Double.NEGATIVE_INFINITY);
-
-        Modes.AccessMode accMode = AccessMode.PARK_N_RIDE;
-
-        int pTaz = mgraManager.getTaz(pMgra);
-        int aTaz = mgraManager.getTaz(aMgra);
-
-        if (mgraManager.getMgraWlkTapsDistArray()[pMgra][0] == null
-                || tazManager.getParkRideOrKissRideTapsForZone(aTaz, accMode) == null)
-        {
-            return;
-        }
-
-        boolean writeCalculations = false;
-        if (tracer.isTraceOn() && tracer.isTraceZonePair(pTaz, aTaz) && debug)
-        {
-            writeCalculations = true;
-        }
-
-        int pPos = -1;
-        for (int pTap : mgraManager.getMgraWlkTapsDistArray()[pMgra][0])
-        {
-            pPos++; // used to know where we are in time/dist arrays for taps
-
-            // Set the pMgra to pTap walk access utility values, if they haven't
-            // already been computed.
-            setWalkAccessUtility(pMgra, pPos, pTap, writeCalculations, myLogger);
-
-            int aPos = -1;
-            for (int aTap : tazManager.getParkRideOrKissRideTapsForZone(aTaz, accMode))
-            {
-                aPos++;
-
-                int lotID = (int) tapManager.getTapParkingInfo()[aTap][0][0]; // lot
-                // ID
-                float lotCapacity = tapManager.getTapParkingInfo()[aTap][2][0]; // lot
-                // capacity
-                if ((accMode == AccessMode.PARK_N_RIDE && tapManager.getLotUse(lotID) < lotCapacity)
-                        || (accMode == AccessMode.KISS_N_RIDE))
-                {
-
-                    // Set the pTaz to pTap drive access utility values, if they
-                    // haven't already been computed.
-                    setDriveEgressUtility(aTap, aTaz, aPos, accMode, writeCalculations, myLogger);
-
-                    // set the pTap to aTap utility values, if they haven't
-                    // already
-                    // been computed.
-                    setUtilitiesForTapPair(WTD, period, pTap, aTap, writeCalculations, myLogger);
-
-                    // if (aTap == 0 || pTap == 0 || aMgra == 0 || pMgra == 0)
-                    // {
-                    //     logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
-                    //             + ",pMgra=" + pMgra + ",period=" + period);
-                    //     throw new RuntimeException();
-                    // } else if (storedWalkAccessUtils[pMgra][pTap] == null)
-                    // {
-                    //     logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
-                    //             + ",pMgra=" + pMgra + ",period=" + period);
-                    //     logger.error("storedWalkAccessUtils[pMgra][pTap] == null");
-                    //     throw new RuntimeException();
-                    // } else if (storedDriveEgressUtils[aTap][aTaz] == null)
-                    // {
-                    //     logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
-                    //             + ",pMgra=" + pMgra + ",period=" + period);
-                    //     logger.error("storedDriveEgressUtils[aTap][aTaz] == null");
-                    //     throw new RuntimeException();
-                    // } else if (storedDepartPeriodTapTapUtils[WTD][period][pTap][aTap] == null)
-                    // {
-                    //     logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
-                    //             + ",pMgra=" + pMgra + ",period=" + period);
-                    //     logger.error("storedDepartPeriodTapTapUtils[WTD][period][pTap][aTap] == null");
-                    //     throw new RuntimeException();
-                    // }
-
-                    // compare the utilities for this TAP pair to previously
-                    // calculated
-                    // utilities for each ride mode and store the TAP numbers if
-                    // this
-                    // TAP pair is the best.
-                    try
-                    {
-                        for (int i = 0; i < combinedUtilities.length; i++)
-                            combinedUtilities[i] = storedWalkAccessUtils[pMgra][pTap][i]
-                                    + storedTapToTapUtils[WTD][period][pTap][aTap][i]
-                                    + storedDriveEgressUtils[aTap][aTaz][i];
-                    } catch (Exception e)
-                    {
-                        logger.error("exception computing combinedUtilities for WTD");
-                        logger.error("aTap=" + aTap + ",pTap=" + pTap + ",aMgra=" + aMgra
-                                + ",pMgra=" + pMgra + ",period=" + period, e);
-                        throw new RuntimeException();
-                    }
-
-                    comparePaths(combinedUtilities, pTap, aTap, WTD, writeCalculations, myLogger);
-
-                }
-            }
-            if (writeCalculations)
-            {
-                logBestUtilities(myLogger);
-            }
-        }
-    }
-
+    
     /**
      * This method finds the best TAP-pairs for each ride mode. It cycles
      * through drive access TAPs at the origin end (associated with the origin
@@ -981,6 +1147,9 @@ public class BestTransitPathCalculator
             Logger myLogger, PrintWriter outwriter, String label)
     {
 
+    	// TODO: Fix this
+    	
+    	/*
         clearBestArrays(Double.NEGATIVE_INFINITY);
 
         Modes.AccessMode accMode = AccessMode.PARK_N_RIDE;
@@ -1050,391 +1219,8 @@ public class BestTransitPathCalculator
             }
         
         }
+        */
     }
 
-    private void setWalkAccessUtility(int pMgra, int pPos, int pTap, boolean myTrace,
-            Logger myLogger)
-    {
-        pWalkTime = mgraManager.getMgraToTapWalkBoardTime(pMgra, pPos);
-        try {
-        if (storedWalkAccessUtils[pMgra][pTap] == null)
-        {
-            walkDmu.setMgraTapWalkTime(pWalkTime);
-            storedWalkAccessUtils[pMgra][pTap] = walkAccessUEC.solve(index, walkDmu, null);
-
-            // logging
-            if (myTrace)
-            {
-                walkAccessUEC.logAnswersArray(myLogger, "Walk Orig Mgra=" + pMgra + ", to pTap="
-                        + pTap + " Utility Piece");
-            }
-        }
-        } catch (NullPointerException e) {
-        	logger.fatal("null pointer for pMgra: " + pMgra + ", ptap: " + pTap);
-        	logger.fatal("storedWalkAccessUtils: " + storedDriveAccessUtils);
-        	if (storedWalkAccessUtils != null) {
-        		logger.fatal("storedWalkAccessUtils.length: " + storedWalkAccessUtils.length);
-        		if (storedWalkAccessUtils[0] != null)
-        			logger.fatal("storedWalkAccessUtils[0].length: " + storedWalkAccessUtils[0].length);
-        	}
-        	throw e;
-        }
-    }
-
-    private void setDriveAccessUtility(int pTaz, int pPos, int pTap, Modes.AccessMode accMode,
-            boolean myTrace, Logger myLogger)
-    {
-        pDriveTime = tazManager.getTapTime(pTaz, pPos, accMode);
-        if (storedDriveAccessUtils[pTaz][pTap] == null)
-        {
-            driveDmu.setDriveDistToTap(tazManager.getTapDist(pTaz, pPos, accMode));
-            driveDmu.setDriveTimeToTap(pDriveTime);
-            driveDmu.setEscalatorTime(tapManager.getEscalatorTime(pTap));
-            storedDriveAccessUtils[pTaz][pTap] = driveAccessUEC.solve(index, driveDmu, null);
-
-            // logging
-            if (myTrace)
-            {
-                driveAccessUEC.logAnswersArray(myLogger, "Drive Orig Taz=" + pTaz + ", to pTap="
-                        + pTap + " Utility Piece");
-            }
-        }
-    }
-
-    private void setWalkEgressUtility(int aTap, int aMgra, int aPos, boolean myTrace,
-            Logger myLogger)
-    {
-        aWalkTime = mgraManager.getMgraToTapWalkAlightTime(aMgra, aPos);
-        if (storedWalkEgressUtils[aTap][aMgra] == null)
-        {
-            walkDmu.setTapMgraWalkTime(aWalkTime);
-            storedWalkEgressUtils[aTap][aMgra] = walkEgressUEC.solve(index, walkDmu, null);
-
-            // logging
-            if (myTrace)
-            {
-                walkEgressUEC.logAnswersArray(myLogger, "Walk aTap=" + aTap + ", from dest mgra="
-                        + aMgra + " Utility Piece");
-            }
-        }
-    }
-
-    private void setDriveEgressUtility(int aTap, int aTaz, int aPos, Modes.AccessMode accMode,
-            boolean myTrace, Logger myLogger)
-    {
-        aDriveTime = tazManager.getTapTime(aTaz, aPos, accMode);
-        if (storedDriveEgressUtils[aTap][aTaz] == null)
-        {
-            driveDmu.setDriveDistToTap(tazManager.getTapDist(aTaz, aPos, accMode));
-            driveDmu.setDriveTimeToTap(aDriveTime);
-            driveDmu.setEscalatorTime(tapManager.getEscalatorTime(aTap));
-            storedDriveEgressUtils[aTap][aTaz] = driveEgressUEC.solve(index, driveDmu, null);
-
-            // logging
-            if (myTrace)
-            {
-                driveEgressUEC.logAnswersArray(myLogger, "Drive Tap to Dest Taz Utility Piece");
-                driveEgressUEC.logAnswersArray(myLogger, "Drive aTap=" + aTap + ", from dest taz="
-                        + aTaz + " Utility Piece");
-            }
-        }
-    }
-
-    /**
-     * This method calculates the utilities for a given Tap pair. It is called
-     * from the method @link {@link #findBestWalkTaps(int, int)}. The walk times
-     * in the dmu must be set separately, or set to 0 for a set of utilities
-     * that are mgra-independent.
-     * 
-     * @param accEgr
-     *            The access\egress mode
-     * @param period
-     *            The skim period (1-initialized)
-     * @param pTap
-     *            The origin/production Tap
-     * @param aTap
-     *            The destination/attraction Tap.
-     * @param myTrace
-     *            True if debug calculations are to be written to the logger for
-     *            this Tap-pair.
-     * @return A set of utilities for the Tap-pair, dimensioned by ride mode in @link
-     *         <Modes>.
-     */
-    public void setUtilitiesForTapPair(int accEgr, int period, int pTap, int aTap, boolean myTrace,
-            Logger myLogger)
-    {
-
-        // calculate the tap-tap utilities if they haven't already been.
-        if (storedTapToTapUtils[accEgr][period][pTap][aTap] == null)
-        {
-
-            // set up the index and dmu objects
-            index.setOriginZone(pTap);
-            index.setDestZone(aTap);
-            // walkDmu.setEscalatorTime(tapManager.getEscalatorTime(pTap));
-
-            // log DMU values
-            if (myTrace)
-            {
-                if (Arrays.binarySearch(tapManager.getTaps(), pTap) > 0
-                        && Arrays.binarySearch(tapManager.getTaps(), aTap) > 0)
-                    tapToTapUEC[period].logDataValues(myLogger, pTap, aTap, 0);
-                walkDmu.logValues(myLogger);
-            }
-
-            // solve
-            double[] results = tapToTapUEC[period].solve(index, walkDmu, null);
-            if (results == null)
-            {
-                logger.error("error calcuating UEC to store results in storedDepartPeriodTapTapUtils[accEgr][period][pTap][aTap].");
-                RuntimeException e = new RuntimeException();
-                logger.error("accEgr=" + accEgr + ",period=" + period + ",pTap=" + pTap + ",aTap="
-                        + aTap, e);
-                throw e;
-            }
-            storedTapToTapUtils[accEgr][period][pTap][aTap] = results;
-
-            // logging
-            if (myTrace)
-            {
-                tapToTapUEC[period].logAnswersArray(myLogger, "pTap=" + pTap + " to aTap=" + aTap
-                        + " Utility Piece");
-                tapToTapUEC[period].logResultsArray(myLogger, pTap, aTap);
-            }
-
-        }
-
-    }
-
-    /**
-     * @return the origin to TAP access time stored for the best TAP-TAP pair.
-     */
-    public double getBestAccessTime(int rideModeIndex)
-    {
-        return bestAccessTime[rideModeIndex];
-    }
-
-    /**
-     * @return the TAP to destination access time stored for the best TAP-TAP
-     *         pair.
-     */
-    public double getBestEgressTime(int rideModeIndex)
-    {
-        return bestEgressTime[rideModeIndex];
-    }
-
-    /**
-     * Compare the paths calculated for this TAP-pair to the paths for
-     * previously- calculated TAP-pairs for each ride mode. If the current path
-     * is the best path, for that ride mode, set the bestUtilities[], bestPTap[]
-     * and bestATap[], bestAccessTime[] and bestEgressTime[] for that ride mode.
-     * 
-     * @param calculatedUtilities
-     *            An array of utilities by ride mode.
-     * @param pTap
-     *            The origin TAP for this set of utilities.
-     * @param aTap
-     *            The destination TAP for this set of utilities.
-     * @param access access/egress indicator
-     */
-    public void comparePaths(double[] calculatedUtilities, int pTap, int aTap, int access, boolean myTrace,
-            Logger myLogger)
-    {
-
-        for (int i = 0; i < bestUtilities.length; i++)
-        {
-
-            if (myTrace)
-            {
-                myLogger.info("Mode " + i + " calculatedUtility " + calculatedUtilities[i]
-                        + ", best utility " + bestUtilities[i]);
-            }
-
-            if (calculatedUtilities[i] > bestUtilities[i] && calculatedUtilities[i] > -999)
-            {
-                bestUtilities[i] = calculatedUtilities[i];
-                bestPTap[i] = pTap;
-                bestATap[i] = aTap;
-
-                if (access == WTW) {
-                  bestAccessTime[i] = pWalkTime;
-                  bestEgressTime[i] = aWalkTime; 
-                } else if (access == DTW) {
-                  bestAccessTime[i] = pDriveTime;
-                  bestEgressTime[i] = aWalkTime;
-                } else if (access == WTD) {
-                  bestAccessTime[i] = pWalkTime;
-                  bestEgressTime[i] = aDriveTime;
-                }
-
-                if (myTrace)
-                {
-                    myLogger.info("Best utility so far for mode " + tm[i] + " pTap " + pTap
-                            + " to aTap " + aTap + " is " + bestUtilities[i]);
-                }
-            }
-        }
-
-    }
-
-    /**
-     * Log the best utilities so far to the logger.
-     * 
-     * @param localLogger
-     *            The logger to use for output.
-     */
-    public void logBestUtilities(Logger localLogger)
-    {
-
-        // use the access UEC to get the number and names of alternatives for
-        // dimensioning combined utility array.
-        // access, egress, and tap-tap UECs all have same set of alternatives.
-        UtilityExpressionCalculator uec = walkAccessUEC;
-
-        // create the header
-        String header = String.format("%16s", "Alternative");
-        header += String.format("%14s", "Utility");
-        header += String.format("%14s", "PTap");
-        header += String.format("%14s", "ATap");
-
-        localLogger.info("Best Utility and Tap to Tap Pair");
-        localLogger.info(header);
-
-        // log the utilities and tap number for each alternative
-        for (String altName : uec.getAlternativeNames())
-        {
-            header = header + String.format("  %16s", altName);
-        }
-        for (String altName : uec.getAlternativeNames())
-        {
-            String line = String.format("%16s", altName);
-            int index = Modes.getTransitModeIndex(altName);
-            line = line + String.format("  %12.4f", bestUtilities[index]);
-            line = line + String.format("  %12d", bestPTap[index]);
-            line = line + String.format("  %12d", bestATap[index]);
-
-            localLogger.info(line);
-        }
-    }
-
-    public void setTrace(boolean myTrace)
-    {
-        tracer.setTrace(myTrace);
-    }
-
-    /**
-     * Trace calculations for a zone pair.
-     * 
-     * @param itaz
-     * @param jtaz
-     * @return true if zone pair should be traced, otherwise false
-     */
-    public boolean isTraceZonePair(int itaz, int jtaz)
-    {
-        if (tracer.isTraceOn())
-        {
-            return tracer.isTraceZonePair(itaz, jtaz);
-        } else
-        {
-            return false;
-        }
-    }
-
-    /**
-     * Get the best utilities.
-     * 
-     * @return An array of the best utilities, dimensioned by ride-mode in @link
-     *         <Modes>.
-     */
-    public double[] getBestUtilities()
-    {
-        return bestUtilities;
-    }
-
-    /**
-     * Create the UEC for the main transit portion of the utility.
-     * 
-     * @param uecSpreadsheet
-     *            The .xls workbook with the model specification.
-     * @param modelSheet
-     *            The sheet with model specifications.
-     * @param dataSheet
-     *            The sheet with the data specifications.
-     * @param rb
-     *            A resource bundle with the path to the skims "skims.path"
-     * @param dmu
-     *            The DMU class for this UEC.
-     */
-    public UtilityExpressionCalculator createUEC(File uecSpreadsheet, int modelSheet,
-            int dataSheet, HashMap<String, String> rbMap, VariableTable dmu)
-    {
-        return new UtilityExpressionCalculator(uecSpreadsheet, modelSheet, dataSheet, rbMap, dmu);
-    }
-
-    /**
-     * Clears the arrays. This method gets called for two different purposes.
-     * One is to compare alternatives based on utilities and the other based on
-     * exponentiated utilities. For this reason, the bestUtilities will be
-     * initialized by the value passed in as an argument set by the calling
-     * method.
-     * 
-     * @param initialization
-     *            value
-     */
-    public void clearBestArrays(double initialValue)
-    {
-        Arrays.fill(bestUtilities, initialValue);
-        Arrays.fill(bestPTap, 0);
-        Arrays.fill(bestATap, 0);
-        Arrays.fill(bestAccessTime, 0);
-        Arrays.fill(bestEgressTime, 0);
-    }
-
-    /**
-     * Get the best ptap and atap in an array. Only to be called after
-     * comparePaths() has been called.
-     * 
-     * @param transitMode
-     *            Mode to look up.
-     * @return element 0 = best ptap, element 1 = best atap
-     */
-    public int[] getBestTaps(Modes.TransitMode transitMode)
-    {
-
-        int[] bestTaps = new int[2];
-
-        bestTaps[0] = bestPTap[transitMode.ordinal()];
-        bestTaps[1] = bestATap[transitMode.ordinal()];
-
-        return bestTaps;
-    }
-
-    /**
-     * Get the best transit mode for a given transit path. Returns null if no
-     * transit mode has a valid utility. Call only after calling
-     * findBestWalkTransitWalkTaps().
-     * 
-     * @return The best transit mode (highest utility), or null if no modes have
-     *         a valid utility.
-     */
-    public Modes.TransitMode getBestTransitMode()
-    {
-
-        int bestMode = -1;
-        double bestUtility = Double.NEGATIVE_INFINITY;
-        for (int i = 0; i < bestUtilities.length; ++i)
-        {
-            if (bestUtilities[i] > bestUtility)
-            {
-                bestMode = i;
-                bestUtility = bestUtilities[i];
-            }
-        }
-
-        Modes.TransitMode returnMode = null;
-        if (bestMode > -1) returnMode = tm[bestMode];
-
-        return returnMode;
-    }
 
 }

@@ -32,32 +32,6 @@ public class TourModeChoiceModel
 
     public static final boolean      DEBUG_BEST_PATHS                       = true;
 
-    protected static final int       LB                                     = McLogsumsCalculator.LB;
-    protected static final int       EB                                     = McLogsumsCalculator.EB;
-    protected static final int       BRT                                    = McLogsumsCalculator.BRT;
-    protected static final int       LR                                     = McLogsumsCalculator.LR;
-    protected static final int       CR                                     = McLogsumsCalculator.CR;
-    protected static final int       NUM_LOC_PREM                           = McLogsumsCalculator.NUM_LOC_PREM;
-
-    protected static final int       WTW                                    = McLogsumsCalculator.WTW;
-    protected static final int       WTD                                    = McLogsumsCalculator.WTD;
-    protected static final int       DTW                                    = McLogsumsCalculator.DTW;
-    protected static final int       NUM_ACC_EGR                            = McLogsumsCalculator.NUM_ACC_EGR;
-
-    protected static final int       LB_IVT                                 = McLogsumsCalculator.LB_IVT;
-    protected static final int       EB_IVT                                 = McLogsumsCalculator.EB_IVT;
-    protected static final int       BRT_IVT                                = McLogsumsCalculator.BRT_IVT;
-    protected static final int       LR_IVT                                 = McLogsumsCalculator.LR_IVT;
-    protected static final int       CR_IVT                                 = McLogsumsCalculator.CR_IVT;
-    protected static final int       ACC                                    = McLogsumsCalculator.ACC;
-    protected static final int       EGR                                    = McLogsumsCalculator.EGR;
-    protected static final int       AUX                                    = McLogsumsCalculator.AUX;
-    protected static final int       FWAIT                                  = McLogsumsCalculator.FWAIT;
-    protected static final int       XWAIT                                  = McLogsumsCalculator.XWAIT;
-    protected static final int       FARE                                   = McLogsumsCalculator.FARE;
-    protected static final int       XFERS                                  = McLogsumsCalculator.XFERS;
-    protected static final int       NUM_SKIMS                              = McLogsumsCalculator.NUM_SKIMS;
-
     protected static final int       OUT                                    = McLogsumsCalculator.OUT;
     protected static final int       IN                                     = McLogsumsCalculator.IN;
     protected static final int       NUM_DIR                                = McLogsumsCalculator.NUM_DIR;
@@ -67,6 +41,11 @@ public class TourModeChoiceModel
     private static final String      PROPERTIES_UEC_MAINT_TOUR_MODE_SHEET   = "tourModeChoice.maint.model.page";
     private static final String      PROPERTIES_UEC_DISCR_TOUR_MODE_SHEET   = "tourModeChoice.discr.model.page";
     private static final String      PROPERTIES_UEC_AT_WORK_TOUR_MODE_SHEET = "tourModeChoice.atwork.model.page";
+    
+    
+    private static final String       PROPERTIES_TOUR_UTILITY_IVT_COEFFS          = "tour.utility.ivt.coeffs";
+    private static final String       PROPERTIES_TOUR_UTILITY_INCOME_COEFFS       = "tour.utility.income.coeffs"; 
+    private static final String       PROPERTIES_TOUR_UTILITY_INCOME_EXPONENTS    = "tour.utility.income.exponents";
 
     // A MyChoiceModelApplication object and modeAltsAvailable[] is needed for
     // each purpose
@@ -84,6 +63,11 @@ public class TourModeChoiceModel
     private String[][]               modeAltNames;
 
     private boolean                  saveUtilsProbsFlag                     = false;
+    
+    // following arrays used to store ivt coefficients, and income coefficients, income exponents to calculate cost coefficient, by tour purpose 
+    double[]                         ivtCoeffs;
+    double[]                         incomeCoeffs;
+    double[]                         incomeExponents;
 
     private MgraDataManager mgraManager;
     
@@ -103,6 +87,12 @@ public class TourModeChoiceModel
         setupModeChoiceModelApplicationArray(propertyMap, tourCategory);
 
         mgraManager = MgraDataManager.getInstance(); 
+        
+        //get the coefficients for ivt and the coefficients to calculate the cost coefficient
+        ivtCoeffs = Util.getDoubleArrayFromPropertyMap(propertyMap, PROPERTIES_TOUR_UTILITY_IVT_COEFFS);
+        incomeCoeffs = Util.getDoubleArrayFromPropertyMap(propertyMap, PROPERTIES_TOUR_UTILITY_INCOME_COEFFS);
+        incomeExponents = Util.getDoubleArrayFromPropertyMap(propertyMap, PROPERTIES_TOUR_UTILITY_INCOME_EXPONENTS);
+
     }
 
     public AutoAndNonMotorizedSkimsCalculator getAnmSkimCalculator()
@@ -254,6 +244,7 @@ public class TourModeChoiceModel
             modeAltNames[i] = mcModel[i].getAlternativeNames();
             i++;
         }
+        
 
     }
 
@@ -281,6 +272,15 @@ public class TourModeChoiceModel
         int modelIndex = purposeModelIndexMap.get(tour.getTourPrimaryPurpose());
 
         Household household = tour.getPersonObject().getHouseholdObject();
+        double income = (double) household.getIncomeInDollars();
+        double ivtCoeff    = ivtCoeffs[modelIndex];
+        double incomeCoeff = incomeCoeffs[modelIndex];
+        double incomeExpon = incomeExponents[modelIndex];
+        double costCoeff = calculateCostCoefficient(income, incomeCoeff,incomeExpon);
+
+        mcDmuObject.setIvtCoeff(ivtCoeff);
+        mcDmuObject.setCostCoeff(costCoeff);
+        
 
         // log headers to traceLogger
         if (household.getDebugChoiceModels())
@@ -314,6 +314,15 @@ public class TourModeChoiceModel
         int modelIndex = purposeModelIndexMap.get(purposeName);
 
         Household household = mcDmuObject.getHouseholdObject();
+        double income = (double) household.getIncomeInDollars();
+        double ivtCoeff    = ivtCoeffs[modelIndex];
+        double incomeCoeff = incomeCoeffs[modelIndex];
+        double incomeExpon = incomeExponents[modelIndex];
+        double costCoeff = calculateCostCoefficient(income, incomeCoeff,incomeExpon);
+
+        mcDmuObject.setIvtCoeff(ivtCoeff);
+        mcDmuObject.setCostCoeff(costCoeff);
+
 
         Logger modelLogger = null;
         if (tourCategory.equalsIgnoreCase(ModelStructure.MANDATORY_CATEGORY)) modelLogger = tourMCManLogger;
@@ -608,6 +617,22 @@ public class TourModeChoiceModel
     {
         int modelIndex = purposeModelIndexMap.get(tourPurposeList[purposeIndex]);
         return modeAltNames[modelIndex];
+    }
+    
+    /**
+     * This method calculates a cost coefficient based on the following formula:
+     * 
+     *   costCoeff = incomeCoeff * 1/(max(income,1000)^incomeExponent)
+     * 
+     * 
+     * @param incomeCoeff
+     * @param incomeExponent
+     * @return A cost coefficent that should be multiplied by cost variables (cents) in tour mode choice
+     */
+    public double calculateCostCoefficient(double income, double incomeCoeff, double incomeExponent){
+    	
+    	return incomeCoeff * 1.0/(Math.pow(Math.max(income,1000.0),incomeExponent));
+    	
     }
 
 }

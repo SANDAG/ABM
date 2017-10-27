@@ -30,17 +30,6 @@ public class SpecialEventTour
     private int                   destinationMGRA;
     private byte                  tourMode;
 
-    // best tap pairs for transit path; dimensioned by ride mode, then boarding
-    // (0) and alighting (1)
-    private int[][]               bestWtwTapPairsOut;
-    private int[][]               bestWtwTapPairsIn;
-    private int[][]               bestWtdTapPairsOut;
-    private int[][]               bestWtdTapPairsIn;
-    private int[][]               bestDtwTapPairsOut;
-    private int[][]               bestDtwTapPairsIn;
-
-    private static final String[] RIDE_MODE_LABELS = {"CR", "LRT", "BRT", "EB", "LB"};
-
     private float valueOfTime;
     
     /**
@@ -228,65 +217,7 @@ public class SpecialEventTour
         this.debugChoiceModels = debugChoiceModels;
     }
 
-    public void setBestWtwTapPairsOut(int[][] tapPairArray)
-    {
-        bestWtwTapPairsOut = tapPairArray;
-    }
-
-    public void setBestWtwTapPairsIn(int[][] tapPairArray)
-    {
-        bestWtwTapPairsIn = tapPairArray;
-    }
-
-    public void setBestWtdTapPairsOut(int[][] tapPairArray)
-    {
-        bestWtdTapPairsOut = tapPairArray;
-    }
-
-    public void setBestWtdTapPairsIn(int[][] tapPairArray)
-    {
-        bestWtdTapPairsIn = tapPairArray;
-    }
-
-    public void setBestDtwTapPairsOut(int[][] tapPairArray)
-    {
-        bestDtwTapPairsOut = tapPairArray;
-    }
-
-    public void setBestDtwTapPairsIn(int[][] tapPairArray)
-    {
-        bestDtwTapPairsIn = tapPairArray;
-    }
-
-    public int[][] getBestWtwTapPairsOut()
-    {
-        return bestWtwTapPairsOut;
-    }
-
-    public int[][] getBestWtwTapPairsIn()
-    {
-        return bestWtwTapPairsIn;
-    }
-
-    public int[][] getBestWtdTapPairsOut()
-    {
-        return bestWtdTapPairsOut;
-    }
-
-    public int[][] getBestWtdTapPairsIn()
-    {
-        return bestWtdTapPairsIn;
-    }
-
-    public int[][] getBestDtwTapPairsOut()
-    {
-        return bestDtwTapPairsOut;
-    }
-
-    public int[][] getBestDtwTapPairsIn()
-    {
-        return bestDtwTapPairsIn;
-    }
+  
 
     /**
      * Get the number of outbound stops
@@ -355,120 +286,6 @@ public class SpecialEventTour
         Household.logHelper(logger, "tourDepartPeriod: ", departTime, totalChars);
         Household.logHelper(logger, "tourArrivePeriod: ", arriveTime, totalChars);
         Household.logHelper(logger, "tourMode: ", tourMode, totalChars);
-        // Household.logHelper(logger, "stopFreqChoice: ", stopFreqChoice,
-        // totalChars);
-
-        String tempString = null;
-        /*
-         * String tempString = String.format("outboundStops[%s]:", outboundStops
-         * == null ? "" : String.valueOf(outboundStops.length));
-         * logger.info(tempString);
-         * 
-         * tempString = String.format("inboundStops[%s]:", inboundStops == null
-         * ? "" : String.valueOf(inboundStops.length)); logger.info(tempString);
-         */
-
-        if (bestWtwTapPairsOut == null)
-        {
-            tempString = "bestWtwTapPairsOut: no tap pairs saved";
-        } else
-        {
-            if (bestWtwTapPairsOut[0] == null) tempString = "bestWtwTapPairsOut: "
-                    + RIDE_MODE_LABELS[0] + "[" + "none" + "," + "none" + "]";
-            else tempString = "bestWtwTapPairsOut: " + RIDE_MODE_LABELS[0] + "["
-                    + bestWtwTapPairsOut[0][0] + "," + bestWtwTapPairsOut[0][1] + "]";
-            for (int i = 1; i < bestWtwTapPairsOut.length; i++)
-                if (bestWtwTapPairsOut[i] == null) tempString += ", " + RIDE_MODE_LABELS[i] + "["
-                        + "none" + "," + "none" + "]";
-                else tempString += ", " + RIDE_MODE_LABELS[i] + "[" + bestWtwTapPairsOut[i][0]
-                        + "," + bestWtwTapPairsOut[i][1] + "]";
-        }
-        logger.info(tempString);
-
-        if (bestWtwTapPairsIn == null)
-        {
-            tempString = "bestWtwTapPairsIn: no tap pairs saved";
-        } else
-        {
-            if (bestWtwTapPairsIn[0] == null) tempString = "bestWtwTapPairsIn: "
-                    + RIDE_MODE_LABELS[0] + "[" + "none" + "," + "none" + "]";
-            else tempString = "bestWtwTapPairsIn: " + RIDE_MODE_LABELS[0] + "["
-                    + bestWtwTapPairsIn[0][0] + "," + bestWtwTapPairsIn[0][1] + "]";
-            for (int i = 1; i < bestWtwTapPairsIn.length; i++)
-                if (bestWtwTapPairsIn[i] == null) tempString += ", " + RIDE_MODE_LABELS[0] + "["
-                        + "none" + "," + "none" + "]";
-                else tempString += ", " + RIDE_MODE_LABELS[i] + "[" + bestWtwTapPairsIn[i][0] + ","
-                        + bestWtwTapPairsIn[i][1] + "]";
-        }
-        logger.info(tempString);
-
-        if (bestWtdTapPairsOut == null)
-        {
-            tempString = "bestWtdTapPairsOut: no tap pairs saved";
-        } else
-        {
-            if (bestWtdTapPairsOut[0] == null) tempString = "bestWtdTapPairsOut: "
-                    + RIDE_MODE_LABELS[0] + "[" + "none" + "," + "none" + "]";
-            else tempString = "bestWtdTapPairsOut: " + RIDE_MODE_LABELS[0] + "["
-                    + bestWtdTapPairsOut[0][0] + "," + bestWtdTapPairsOut[0][1] + "]";
-            for (int i = 1; i < bestWtdTapPairsOut.length; i++)
-                if (bestWtdTapPairsOut[i] == null) tempString += ", " + RIDE_MODE_LABELS[i] + "["
-                        + "none" + "," + "none" + "]";
-                else tempString += ", " + RIDE_MODE_LABELS[i] + "[" + bestWtdTapPairsOut[i][0]
-                        + "," + bestWtdTapPairsOut[i][1] + "]";
-        }
-        logger.info(tempString);
-
-        if (bestWtdTapPairsIn == null)
-        {
-            tempString = "bestWtdTapPairsIn: no tap pairs saved";
-        } else
-        {
-            if (bestWtdTapPairsIn[0] == null) tempString = "bestWtdTapPairsIn: "
-                    + RIDE_MODE_LABELS[0] + "[" + "none" + "," + "none" + "]";
-            else tempString = "bestWtdTapPairsIn: " + RIDE_MODE_LABELS[0] + "["
-                    + bestWtdTapPairsIn[0][0] + "," + bestWtdTapPairsIn[0][1] + "]";
-            for (int i = 1; i < bestWtdTapPairsIn.length; i++)
-                if (bestWtdTapPairsIn[i] == null) tempString += ", " + RIDE_MODE_LABELS[0] + "["
-                        + "none" + "," + "none" + "]";
-                else tempString += ", " + RIDE_MODE_LABELS[i] + "[" + bestWtdTapPairsIn[i][0] + ","
-                        + bestWtdTapPairsIn[i][1] + "]";
-        }
-        logger.info(tempString);
-
-        if (bestDtwTapPairsOut == null)
-        {
-            tempString = "bestDtwTapPairsOut: no tap pairs saved";
-        } else
-        {
-            if (bestDtwTapPairsOut[0] == null) tempString = "bestDtwTapPairsOut: "
-                    + RIDE_MODE_LABELS[0] + "[" + "none" + "," + "none" + "]";
-            else tempString = "bestDtwTapPairsOut: " + RIDE_MODE_LABELS[0] + "["
-                    + bestDtwTapPairsOut[0][0] + "," + bestDtwTapPairsOut[0][1] + "]";
-            for (int i = 1; i < bestDtwTapPairsOut.length; i++)
-                if (bestDtwTapPairsOut[i] == null) tempString += ", " + RIDE_MODE_LABELS[i] + "["
-                        + "none" + "," + "none" + "]";
-                else tempString += ", " + RIDE_MODE_LABELS[i] + "[" + bestDtwTapPairsOut[i][0]
-                        + "," + bestDtwTapPairsOut[i][1] + "]";
-        }
-        logger.info(tempString);
-
-        if (bestDtwTapPairsIn == null)
-        {
-            tempString = "bestDtwTapPairsIn: no tap pairs saved";
-        } else
-        {
-            if (bestDtwTapPairsIn[0] == null) tempString = "bestDtwTapPairsIn: "
-                    + RIDE_MODE_LABELS[0] + "[" + "none" + "," + "none" + "]";
-            else tempString = "bestDtwTapPairsIn: " + RIDE_MODE_LABELS[0] + "["
-                    + bestDtwTapPairsIn[0][0] + "," + bestDtwTapPairsIn[0][1] + "]";
-            for (int i = 1; i < bestDtwTapPairsIn.length; i++)
-                if (bestDtwTapPairsIn[i] == null) tempString += ", " + RIDE_MODE_LABELS[0] + "["
-                        + "none" + "," + "none" + "]";
-                else tempString += ", " + RIDE_MODE_LABELS[i] + "[" + bestDtwTapPairsIn[i][0] + ","
-                        + bestDtwTapPairsIn[i][1] + "]";
-        }
-        logger.info(tempString);
-
+      
     }
 }

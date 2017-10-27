@@ -329,21 +329,20 @@ public class AirportPartyManager
             throw new RuntimeException();
         }
         String headerString = new String(
-                "id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,tripMode,arrivalMode,boardingTAP,alightingTAP,valueOfTime\n");
+                "id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,tripMode,arrivalMode,boardingTAP,alightingTAP,set,valueOfTime\n");
         writer.print(headerString);
 
         // Iterate through the array, printing records to the file
         for (int i = 0; i < parties.length; ++i)
         {
 
-            int[] taps = getTapPair(parties[i]);
-
-            String record = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
+             String record = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
                     + parties[i].getPurpose() + "," + parties[i].getSize() + ","
                     + parties[i].getIncome() + "," + parties[i].getNights() + ","
                     + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
                     + parties[i].getDestinationMGRA() + "," + parties[i].getMode() + ","
-                    + parties[i].getArrivalMode() + "," + taps[0] + "," + taps[1] + "," 
+                    + parties[i].getArrivalMode() + "," + parties[i].getBoardTap() + "," + 
+                    + parties[i].getAlightTap() + "," + parties[i].getSet() 
                     + String.format("%9.2f", parties[i].getValueOfTime()) + "\n");
             writer.print(record);
         }
@@ -359,35 +358,7 @@ public class AirportPartyManager
         return parties;
     }
 
-    /**
-     * A helper method that returns an array containing boarding tap (element 0)
-     * and alighting tap (element 1) for the given trip mode. Returns an array
-     * of zeroes if the trip modes are not transit.
-     * 
-     * @param party
-     *            The airport travel party
-     * @return An array containing boarding TAP and alighting TAP
-     */
-    public int[] getTapPair(AirportParty party)
-    {
-
-        int[] taps = new int[2];
-
-        // ride mode will be -1 if not transit
-        int rideMode = sandagStructure.getRideModeIndexForTripMode(party.getMode());
-
-        int tripMode = party.getMode();
-
-        if (sandagStructure.getTripModeIsWalkTransit(tripMode)) taps = party
-                .getWtwTapPair(rideMode);
-        else if (sandagStructure.getTripModeIsKnrTransit(tripMode))
-            if (party.getDirection() == AirportModelStructure.ARRIVAL) taps = party
-                    .getWtdTapPair(rideMode);
-            else taps = party.getDtwTapPair(rideMode);
-
-        return taps;
-    }
-/*
+  /*
     public static void main(String[] args)
     {
 

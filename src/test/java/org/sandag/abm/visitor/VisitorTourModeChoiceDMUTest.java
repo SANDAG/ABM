@@ -132,77 +132,7 @@ public class VisitorTourModeChoiceDMUTest
 
     }
 
-    @Test
-    public void testGetValueForIndexTAZ()
-    {
-        VisitorModelStructure structure = new VisitorModelStructure();
-        VisitorTourModeChoiceDMU dmu = new VisitorTourModeChoiceDMU(structure, CreateFakeLogger());
-        // dmu.setTransitSkim(accEgr, lbPrem, skimIndex, value);
-        int offset = 100;
-        for (int x = 0; x < 300; x++)
-        {
-            //System.out.println(x);
-            int[] p1Values = {McLogsumsCalculator.WTW, McLogsumsCalculator.WTD,
-                    McLogsumsCalculator.DTW};
-            int p1 = p1Values[x / 100];
-            int[] p2Values = {McLogsumsCalculator.LB, McLogsumsCalculator.EB,
-                    McLogsumsCalculator.BRT, McLogsumsCalculator.LR, McLogsumsCalculator.CR};
-            int[] p2Sizes = {16, 18, 20, 22, 24};
-            int afterP1Index = x % 100;
-            int p2Index = -1;
-            int p3Finder = 0;
-            int sum = 0;
-            int p3 = -1;
-            int[] pvt = {McLogsumsCalculator.LB_IVT, McLogsumsCalculator.EB_IVT,
-                    McLogsumsCalculator.BRT_IVT, McLogsumsCalculator.LR_IVT,
-                    McLogsumsCalculator.CR_IVT};
-
-            int[] p3Values = {McLogsumsCalculator.FWAIT, McLogsumsCalculator.XWAIT,
-                    McLogsumsCalculator.ACC, McLogsumsCalculator.EGR, McLogsumsCalculator.AUX,
-                    McLogsumsCalculator.FARE, McLogsumsCalculator.XFERS};
-
-            for (int y = 0; y < 5; y++)
-            {
-                if (p3 == -1)
-                {
-                    p3Finder += 2;
-                    if (afterP1Index - sum < p3Finder)
-                    {
-                        p3 = pvt[(int) ((afterP1Index - sum) / 2)];
-                    } else
-                    {
-                        int i = afterP1Index - sum - p3Finder;
-                        if (i < p3Values.length * 2)
-                        {
-                            p3 = p3Values[i / 2];
-                        }
-                    }
-                }
-
-                sum += p2Sizes[y];
-                if (afterP1Index < sum && p2Index < 0)
-                {
-                    p2Index = y;
-                }
-            }
-            int p2 = p2Values[p2Index];
-            int[] p4Values = {McLogsumsCalculator.OUT, McLogsumsCalculator.IN};
-            int p4 = p4Values[x % 2];
-
-            dmu.setTransitSkim(p1, p2, p3, p4, ((double) (x + 1)) / 100);
-            TestTazParams(p1, p2, p3, p4, x, offset, dmu);
-        }
-    }
-
-    private void TestTazParams(int p1, int p2, int p3, int p4, int i, int offset,
-            VisitorTourModeChoiceDMU dmu)
-    {
-        double value = dmu.getValueForIndex(i + offset, 0);
-        double expected = ((double) (i + 1)) / 100;
-        Assert.assertEquals(expected, value);
-
-    }
-
+   
     @Test(expected = RuntimeException.class)
     public void testBadIndex()
     {

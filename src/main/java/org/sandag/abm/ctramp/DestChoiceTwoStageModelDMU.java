@@ -227,7 +227,7 @@ public abstract class DestChoiceTwoStageModelDMU
 
     protected int getIncome()
     {
-        return hh.getIncome();
+        return hh.getIncomeCategory();
     }
 
     protected int getIncomeInDollars()

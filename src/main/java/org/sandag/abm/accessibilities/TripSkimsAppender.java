@@ -97,21 +97,18 @@ public final class TripSkimsAppender
         bestPathUEC = logsumHelper.getBestTransitPathCalculator();
 
         AutoAndNonMotorizedSkimsCalculator anm = logsumHelper.getAnmSkimCalculator();
-        WalkTransitWalkSkimsCalculator wtw = logsumHelper.getWtwSkimCalculator();
-        WalkTransitDriveSkimsCalculator wtd = logsumHelper.getWtdSkimCalculator();
-        DriveTransitWalkSkimsCalculator dtw = logsumHelper.getDtwSkimCalculator();
+        WalkTransitWalkSkimsCalculator wtw = new WalkTransitWalkSkimsCalculator(rbMap);
+        WalkTransitDriveSkimsCalculator wtd = new WalkTransitDriveSkimsCalculator(rbMap);
+        DriveTransitWalkSkimsCalculator dtw = new DriveTransitWalkSkimsCalculator(rbMap);
 
         String heading = "seq,sampno";
 
         heading += ",origMgra,destMgra,departPeriod";
         heading += getAutoSkimsHeaderRecord("auto", anm.getAutoSkimNames());
         heading += getNonMotorizedSkimsHeaderRecord("nm", anm.getNmSkimNames());
-        heading += getTransitSkimsHeaderRecord("wtw", wtw.getLocalSkimNames(),
-                wtw.getPremiumSkimNames());
-        heading += getTransitSkimsHeaderRecord("wtd", wtd.getLocalSkimNames(),
-                wtd.getPremiumSkimNames());
-        heading += getTransitSkimsHeaderRecord("dtw", dtw.getLocalSkimNames(),
-                dtw.getPremiumSkimNames());
+        heading += getTransitSkimsHeaderRecord("wtw", wtw.getSkimNames());
+        heading += getTransitSkimsHeaderRecord("wtd", wtd.getSkimNames());
+        heading += getTransitSkimsHeaderRecord("dtw", dtw.getSkimNames());
 
         try
         {
@@ -216,6 +213,9 @@ public final class TripSkimsAppender
         String nmRecord = getAutoSkimsRecord(skims);
         outStream.print(nmRecord);
 
+        /*
+         * TODO: Fix this code
+         
         bestTapPairs = wtw.getBestTapPairs(odt[0], odt[1], odt[2], loggingEnabled, wtwLogger);
         returnedSkims = new double[bestTapPairs.length][];
         for (int i = 0; i < bestTapPairs.length; i++)
@@ -272,7 +272,7 @@ public final class TripSkimsAppender
 
         String dtwRecord = getTransitSkimsRecord(odt, returnedSkims);
         outStream.println(dtwRecord);
-
+    */
     }
 
     /**
@@ -376,8 +376,7 @@ public final class TripSkimsAppender
      *            second element the dest mgra and third element the departure
      *            period index
      */
-    private String getTransitSkimsHeaderRecord(String transitServiveLabel, String[] localNames,
-            String[] premiumNames)
+    private String getTransitSkimsHeaderRecord(String transitServiveLabel, String[] skimNames)
     {
 
         Modes.TransitMode[] mode = Modes.TransitMode.values();
@@ -386,17 +385,10 @@ public final class TripSkimsAppender
 
         for (int i = 0; i < mode.length; i++)
         {
-            if (mode[i].isPremiumMode(mode[i]))
-            {
-                for (int j = 0; j < premiumNames.length; j++)
-                    heading += String.format(",%s_%s_%s", transitServiveLabel, mode[i],
-                            premiumNames[j]);
-            } else
-            {
-                for (int j = 0; j < localNames.length; j++)
-                    heading += String.format(",%s_%s_%s", transitServiveLabel, mode[i],
-                            localNames[j]);
-            }
+        	for (int j = 0; j < skimNames.length; j++)
+        		heading += String.format(",%s_%s_%s", transitServiveLabel, mode[i],
+                            skimNames[j]);
+            
         }
 
         return heading;

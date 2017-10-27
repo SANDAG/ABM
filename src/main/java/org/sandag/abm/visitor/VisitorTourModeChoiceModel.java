@@ -5,9 +5,13 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.CtrampApplication;
+import org.sandag.abm.ctramp.McLogsumsCalculator;
+import org.sandag.abm.ctramp.TourModeChoiceDMU;
+import org.sandag.abm.ctramp.TripModeChoiceDMU;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 
+import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.newmodel.ChoiceModelApplication;
 import com.pb.common.newmodel.UtilityExpressionCalculator;
@@ -20,36 +24,11 @@ public class VisitorTourModeChoiceModel
 
     public static final boolean      DEBUG_BEST_PATHS                = false;
 
-    protected static final int       LB                              = McLogsumsCalculator.LB;
-    protected static final int       EB                              = McLogsumsCalculator.EB;
-    protected static final int       BRT                             = McLogsumsCalculator.BRT;
-    protected static final int       LR                              = McLogsumsCalculator.LR;
-    protected static final int       CR                              = McLogsumsCalculator.CR;
-    protected static final int       NUM_LOC_PREM                    = McLogsumsCalculator.NUM_LOC_PREM;
-
-    protected static final int       WTW                             = McLogsumsCalculator.WTW;
-    protected static final int       WTD                             = McLogsumsCalculator.WTD;
-    protected static final int       DTW                             = McLogsumsCalculator.DTW;
-    protected static final int       NUM_ACC_EGR                     = McLogsumsCalculator.NUM_ACC_EGR;
-
-    protected static final int       LB_IVT                          = McLogsumsCalculator.LB_IVT;
-    protected static final int       EB_IVT                          = McLogsumsCalculator.EB_IVT;
-    protected static final int       BRT_IVT                         = McLogsumsCalculator.BRT_IVT;
-    protected static final int       LR_IVT                          = McLogsumsCalculator.LR_IVT;
-    protected static final int       CR_IVT                          = McLogsumsCalculator.CR_IVT;
-    protected static final int       ACC                             = McLogsumsCalculator.ACC;
-    protected static final int       EGR                             = McLogsumsCalculator.EGR;
-    protected static final int       AUX                             = McLogsumsCalculator.AUX;
-    protected static final int       FWAIT                           = McLogsumsCalculator.FWAIT;
-    protected static final int       XWAIT                           = McLogsumsCalculator.XWAIT;
-    protected static final int       FARE                            = McLogsumsCalculator.FARE;
-    protected static final int       XFERS                           = McLogsumsCalculator.XFERS;
-    protected static final int       NUM_SKIMS                       = McLogsumsCalculator.NUM_SKIMS;
-
-    protected static final int       OUT                             = McLogsumsCalculator.OUT;
-    protected static final int       IN                              = McLogsumsCalculator.IN;
-    protected static final int       NUM_DIR                         = McLogsumsCalculator.NUM_DIR;
     private MgraDataManager          mgraManager;
+
+    protected static final int       OUT                                    = McLogsumsCalculator.OUT;
+    protected static final int       IN                                     = McLogsumsCalculator.IN;
+    protected static final int       NUM_DIR                                = McLogsumsCalculator.NUM_DIR;
 
     private static final String      PROPERTIES_UEC_TOUR_MODE_CHOICE = "visitor.mc.uec.file";
     private static final String      PROPERTIES_UEC_TOUR_DATA_SHEET  = "visitor.mc.data.page";
@@ -57,7 +36,8 @@ public class VisitorTourModeChoiceModel
 
     private ChoiceModelApplication   mcModel;
     private VisitorTourModeChoiceDMU mcDmuObject;
-    private McLogsumsCalculator      logsumsCalculator;
+    private TripModeChoiceDMU        tripDmuObject;
+    private McLogsumsCalculator      logsumHelper;
 
     private VisitorModelStructure    modelStructure;
 
@@ -66,7 +46,8 @@ public class VisitorTourModeChoiceModel
     private String[]                 modeAltNames;
 
     private boolean                  saveUtilsProbsFlag              = false;
-
+    
+  
     /**
      * Constructor.
      * 
@@ -82,8 +63,9 @@ public class VisitorTourModeChoiceModel
 
         mgraManager = MgraDataManager.getInstance(propertyMap);
         modelStructure = myModelStructure;
-        logsumsCalculator = myLogsumHelper;
+        logsumHelper = myLogsumHelper;
 
+        tripDmuObject = new TripModeChoiceDMU(modelStructure,logger);
         mcDmuObject = dmuFactory.getVisitorTourModeChoiceDMU();
         setupModeChoiceModelApplicationArray(propertyMap);
 
@@ -138,9 +120,9 @@ public class VisitorTourModeChoiceModel
             mcModel.choiceModelUtilityTraceLoggerHeading(choiceModelDescription, decisionMakerLabel);
         }
 
-        double logsum = logsumsCalculator.calculateTourMcLogsum(tour.getOriginMGRA(),
-                tour.getDestinationMGRA(), tour.getDepartTime(), tour.getArriveTime(), mcModel,
-                mcDmuObject);
+ 
+        mcModel.computeUtilities(mcDmuObject, mcDmuObject.getDmuIndexValues());
+        double logsum = mcModel.getLogsum();
 
         // write UEC calculation results to separate model specific log file
         if (tour.getDebugChoiceModels())
@@ -177,10 +159,44 @@ public class VisitorTourModeChoiceModel
         mcDmuObject.setAutoAvailable(tour.getAutoAvailable());
         mcDmuObject.setPartySize(tour.getNumberOfParticipants());
         mcDmuObject.setTourPurpose(tour.getPurpose());
-        logsumsCalculator.setTourMcDmuAttributes(mcDmuObject, tour.getOriginMGRA(),
-                tour.getDestinationMGRA(), tour.getDepartTime(), tour.getArriveTime(),
-                tour.getDebugChoiceModels());
+        double ivtCoeff = -0.015;
+        double costCoeff = -0.0017;
+        tripDmuObject.setIvtCoeff(ivtCoeff);
+        tripDmuObject.setCostCoeff(costCoeff);
 
+        double walkTransitLogsumOut = -999.0;
+        double driveTransitLogsumOut = -999.0;
+        double walkTransitLogsumIn = -999.0;
+        double driveTransitLogsumIn = -999.0;
+   
+        // walk-transit out logsum
+        logsumHelper.setWtwTripMcDmuAttributes( tripDmuObject, tour.getOriginMGRA(), tour.getDestinationMGRA(),
+        		tour.getDepartTime(),tour.getDebugChoiceModels());
+        
+        walkTransitLogsumOut = tripDmuObject.getTransitLogSum(McLogsumsCalculator.WTW);
+
+        // walk-transit in logsum
+        logsumHelper.setWtwTripMcDmuAttributes( tripDmuObject,tour.getDestinationMGRA(), tour.getOriginMGRA(), 
+        		tour.getArriveTime(),tour.getDebugChoiceModels());
+        
+        walkTransitLogsumOut = tripDmuObject.getTransitLogSum(McLogsumsCalculator.WTW);
+       
+        //drive-transit out logsum
+        logsumHelper.setDtwTripMcDmuAttributes( tripDmuObject, tour.getOriginMGRA(), tour.getDestinationMGRA(),
+        		tour.getDepartTime(),tour.getDebugChoiceModels());
+
+        driveTransitLogsumOut = tripDmuObject.getTransitLogSum(McLogsumsCalculator.DTW);
+      
+        //drive-transit in logsum
+        logsumHelper.setWtdTripMcDmuAttributes( tripDmuObject, tour.getDestinationMGRA(),tour.getOriginMGRA(), 
+        		tour.getArriveTime(),tour.getDebugChoiceModels());
+
+        driveTransitLogsumIn = tripDmuObject.getTransitLogSum(McLogsumsCalculator.WTD);
+
+        mcDmuObject.setTransitLogSum(McLogsumsCalculator.WTW,false,walkTransitLogsumOut);
+        mcDmuObject.setTransitLogSum(McLogsumsCalculator.WTW,true,walkTransitLogsumIn);
+        mcDmuObject.setTransitLogSum(McLogsumsCalculator.DTW,false,driveTransitLogsumOut);
+        mcDmuObject.setTransitLogSum(McLogsumsCalculator.WTD,true,driveTransitLogsumIn);
     }
 
     /**
@@ -236,20 +252,6 @@ public class VisitorTourModeChoiceModel
 
             chosen = mcModel.getChoiceResult(rn);
 
-            // best tap pairs were determined and saved in mcDmuObject while
-            // setting dmu skim attributes
-            // if chosen mode is a transit mode, save these tap pairs in the
-            // tour object; if not transit tour attributes remain null.
-            if (modelStructure.getTourModeIsTransit(chosen))
-            {
-                tour.setBestWtwTapPairsOut(logsumsCalculator.getBestWtwTapsOut());
-                tour.setBestWtwTapPairsIn(logsumsCalculator.getBestWtwTapsIn());
-                tour.setBestWtdTapPairsOut(logsumsCalculator.getBestWtdTapsOut());
-                tour.setBestWtdTapPairsIn(logsumsCalculator.getBestWtdTapsIn());
-                tour.setBestDtwTapPairsOut(logsumsCalculator.getBestDtwTapsOut());
-                tour.setBestDtwTapPairsIn(logsumsCalculator.getBestDtwTapsIn());
-            }
-            
             //value of time; lookup vot from the UEC
             UtilityExpressionCalculator uec = mcModel.getUEC();
             int votIndex = uec.lookupVariableIndex("vot");
@@ -257,8 +259,6 @@ public class VisitorTourModeChoiceModel
         
             tour.setValueOfTime(vot);
  
-
-
         } else
         {
 
