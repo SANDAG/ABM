@@ -106,29 +106,6 @@ def backup_and_restore(scenario, backup_attributes):
         for elem_type, attributes in backup_attributes.iteritems():
             scenario.set_attribute_values(elem_type, attributes, backup[elem_type])
 
-
-@_context
-def temp_functions(emmebank):    
-    change_function = _m.Modeller().tool(
-        "inro.emme.data.function.change_function")
-    with _m.logbook_trace("Set functions to skim parameter"):
-        for func in emmebank.functions():
-            if func.prefix=="fd":
-                exp = func.expression
-                if "volau" in exp:
-                    exp = exp.replace("volau", "el2")
-                    change_function(func, exp, emmebank)
-    try:
-        yield
-    finally:
-        with _m.logbook_trace("Reset functions to assignment parameter"):
-            for func in emmebank.functions():
-                if func.prefix=="fd":
-                    exp = func.expression
-                    if "el2" in exp:
-                        exp = exp.replace("el2", "volau")
-                        change_function(func, exp, emmebank)
-
                         
 class DataTableProc(object):
 

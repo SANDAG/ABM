@@ -88,15 +88,16 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                 "inro.emme.data.matrix.import_from_omx")
 
             if demand_type == "AUTO":
+                # TODO: add VOT class bins when warm start demand is available
                 matrices = {
-                    'SOV_GP':   'mf"%s_SOVGP"',
-                    'SOV_PAY':  'mf"%s_SOVTOLL"',
-                    'SR2_GP':   'mf"%s_HOV2GP"',
-                    'SR2_HOV':  'mf"%s_HOV2HOV"',
-                    'SR2_PAY':  'mf"%s_HOV2TOLL"',
-                    'SR3_GP':   'mf"%s_HOV3GP"',
-                    'SR3_HOV':  'mf"%s_HOV3HOV"',
-                    'SR3_PAY':  'mf"%s_HOV3TOLL"'}
+                    'SOV_GP':   'mf"%s_SOVGPL"',
+                    'SOV_PAY':  'mf"%s_SOVTOLLL"',
+                    'SR2_GP':   'mf"%s_HOV2GPL"',
+                    'SR2_HOV':  'mf"%s_HOV2HOVL"',
+                    'SR2_PAY':  'mf"%s_HOV2TOLLL"',
+                    'SR3_GP':   'mf"%s_HOV3GPL"',
+                    'SR3_HOV':  'mf"%s_HOV3HOVL"',
+                    'SR3_PAY':  'mf"%s_HOV3TOLLL"'}
             if demand_type == "TRUCK":
                 matrices = {
                     'hhdn':     'mf"%s_TRKHGP"',
@@ -147,6 +148,8 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                 import_from_omx(file_path=omx_file, matrices=matrices, scenario=scenario)
                 if demand_type == "TRUCK" :
                     self.convert_truck(scenario, period, convert_truck_to_pce)
+                else:
+                    self.split_auto_vots(scenario, period)
 
     @_m.logbook_trace('Convert truck vehicle demand to PCE')
     def convert_truck(self, scenario, period, convert_truck_to_pce):
@@ -155,9 +158,9 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         # Calculate PCEs for trucks
         mat_trucks = ['TRKHGP', 'TRKHTOLL', 'TRKLGP', 'TRKLTOLL', 'TRKMGP', 'TRKMTOLL']
         if convert_truck_to_pce:
-            pce_values = [2.5,      2.5,        1.3,      1.3,        1.5,      1.5]
+            pce_values = [2.5, 2.5, 1.3, 1.3, 1.5, 1.5]
         else:
-            pce_values = [1.0,      1.0,        1.0,      1.0,        1.0,      1.0]
+            pce_values = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
         for name, pce in zip(mat_trucks, pce_values):
             demand_name = "%s_%s" % (period, name)
             mat_spec = {
@@ -166,3 +169,19 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                 "type": "MATRIX_CALCULATION"
             }
             matrix_calc(mat_spec, scenario)
+
+    @_m.logbook_trace('Split input auto demand into VOT classes, assume 1/3 each')
+    def split_auto_vots(self, scenario, period):
+        matrix_calc = _m.Modeller().tool(
+            'inro.emme.matrix_calculation.matrix_calculator')
+        traffic_names = [
+            "SOVGP", "SOVTOLL", "HOV2GP", "HOV2HOV", "HOV2TOLL", "HOV3GP", "HOV3HOV", "HOV3TOLL"]
+        for name in traffic_names:
+            for vot in ["H", "M", "L"]:
+                demand_name = "%s_%s%s" % (period, name, vot)
+                mat_spec = {
+                    "expression": '(mf%s_%sL / 3.0)' % (period, name), 
+                    "result": 'mf"%s"' % demand_name,
+                    "type": "MATRIX_CALCULATION"
+                }
+                matrix_calc(mat_spec, scenario)

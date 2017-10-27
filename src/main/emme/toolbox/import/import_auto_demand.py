@@ -124,16 +124,21 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     omx_modes = [m + "_" + period for m in omx_modes]
                     for mode, omx_mode in zip(modes, omx_modes):
                         with _m.logbook_trace("Import for mode %s" % mode):
-                            matrix = emmebank.matrix("mf%s" % mode)
                             visitor_demand = visitor[period][omx_mode].read()
                             cross_border_demand = cross_border[period][omx_mode].read()
                             airport_demand = airport[period][omx_mode].read()
                             person_demand = person[period][omx_mode].read()
                             internal_external_demand = internal_external[period][omx_mode].read()
                             
-                            total_ct_ramp_trips = (visitor_demand + cross_border_demand + airport_demand + person_demand + internal_external_demand)
-                            matrix.set_numpy_data(total_ct_ramp_trips, self.scenario)
+                            # Segment imported demand into 3 equal parts for VOT Low/Med/High
+                            total_ct_ramp_trips = (1./3.)*(visitor_demand + cross_border_demand + airport_demand + person_demand + internal_external_demand)
                             
+                            # Asssign segmented demand into VOT-based demand matrices
+                            vots = ["L", "M", "H"]
+                            for vot in vots:
+                                matrix = emmebank.matrix("mf%s%s" % (mode,vot))
+                                matrix.set_numpy_data(total_ct_ramp_trips, self.scenario)
+                                                                                 
                             self.report([
                                 ("person_demand", person_demand), 
                                 ("internal_external_demand", internal_external_demand), 
@@ -155,17 +160,28 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
     def add_aggregate_demand(self):
         matrix_calc = dem_utils.MatrixCalculator(self.scenario, self.num_processors)
         periods = ["EA", "AM", "MD", "PM", "EV"]
+        vots = ["L", "M", "H"]
         with matrix_calc.trace_run("Add commercial vehicle trips to auto demand"):
             for period in periods:
-                matrix_calc.add("mf%s_SOVGP" % period, "mf%(p)s_SOVGP + mf%(p)s_COMVEHGP " % ({'p': period}))
-                matrix_calc.add("mf%s_SOVTOLL" % period, "mf%(p)s_SOVTOLL + mf%(p)s_COMVEHGP" % ({'p': period}))
+                for vot in vots:
+                    # Segment imported demand into 3 equal parts for VOT Low/Med/High
+                    matrix_calc.add(
+                        "mf%s_SOVGP%s" % (period, vot), 
+                        "mf%(p)s_SOVGP%(v)s + (1.0/3.0)*mf%(p)s_COMVEHGP_import" % ({'p': period, 'v': vot}))
+                    matrix_calc.add(
+                        "mf%s_SOVTOLL%s" % (period, vot), 
+                        "mf%(p)s_SOVTOLL%(v)s + (1.0/3.0)*mf%(p)s_COMVEHTOLL_import" % ({'p': period, 'v': vot}))
 
         with matrix_calc.trace_run("Add external-internal trips to auto demand"):
             modes = ["SOVGP", "SOVTOLL", "HOV2HOV", "HOV2TOLL", "HOV3HOV", "HOV3TOLL"]
             for period in periods:
                 for mode in modes:
-                    matrix_calc.add("mf%s_%s" % (period, mode),
-                         "mf%(p)s_%(m)s + mf%(p)s_%(m)s_EIWORK + mf%(p)s_%(m)s_EINONWORK" % ({'p': period, 'm': mode}))
+                    for vot in vots:
+                        # Segment imported demand into 3 equal parts for VOT Low/Med/High
+                        matrix_calc.add("mf%s_%s%s" % (period, mode, vot),
+                             "mf%(p)s_%(m)s%(v)s "
+                             "+ (1.0/3.0)*mf%(p)s_%(m)s_EIWORK_import "
+                             "+ (1.0/3.0)*mf%(p)s_%(m)s_EINONWORK_import" % ({'p': period, 'm': mode, 'v': vot}))
 
         # External - external faster with single-processor as number of O-D pairs is so small (12 X 12)
         matrix_calc.num_processors = 0
@@ -173,10 +189,12 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
             modes = ["SOVGP", "HOV2HOV", "HOV3HOV"]
             for period in periods:
                 for mode in modes:
-                    matrix_calc.add(
-                        "mf%s_%s" % (period, mode),
-                        "mf%(p)s_%(m)s + mf%(p)s_%(m)s_EETRIPS" % ({'p': period, 'm': mode}),
-                        {"origins": self.external_zones, "destinations": self.external_zones})
+                    for vot in vots:
+                        # Segment imported demand into 3 equal parts for VOT Low/Med/High
+                        matrix_calc.add(
+                            "mf%s_%s%s" % (period, mode, vot),
+                            "mf%(p)s_%(m)s%(v)s + (1.0/3.0)*mf%(p)s_%(m)s_EETRIPS_import" % ({'p': period, 'm': mode, 'v': vot}),
+                            {"origins": self.external_zones, "destinations": self.external_zones})
 
     def lookup_omx(self, file_name):
         directory = self.output_dir

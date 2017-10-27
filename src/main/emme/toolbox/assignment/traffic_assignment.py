@@ -262,58 +262,122 @@ Assign traffic demand for the selected time period."""
             num_processors = dem_utils.parse_num_processors(num_processors)
             classes = [
                 {   # 0
-                    "name": 'SOVGP', "mode": 's', "PCE": 1, "VOT": 67., "cost": '',
-                    "skims": ["GENCOST", "TIME", "DIST"]
+                    "name": 'SOVGPL', "mode": 's', "PCE": 1, "VOT": 16.6, "cost": '',
+                    "skims": ["GENCOST", "TIME", "DIST", "REL"]
                 },
                 {   # 1
-                    "name": 'SOVTOLL', "mode": 'S', "PCE": 1, "VOT": 67., "cost": '@cost_auto',
-                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST"]
+                    "name": 'SOVTOLLL', "mode": 'S', "PCE": 1, "VOT": 16.6, "cost": '@cost_auto',
+                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
                 {   # 2
-                    "name": 'HOV2GP', "mode": 's', "PCE": 1, "VOT": 67., "cost": '',
+                    "name": 'HOV2GPL', "mode": 's', "PCE": 1, "VOT": 16.6, "cost": '',
                     "skims": []  # same as SOV_GP
                 },
                 {   # 3
-                    "name": 'HOV2HOV', "mode": 'h', "PCE": 1, "VOT": 67., "cost": '',
-                    "skims": ["GENCOST", "TIME", "DIST", "HOVDIST"]
+                    "name": 'HOV2HOVL', "mode": 'h', "PCE": 1, "VOT": 16.6, "cost": '',
+                    "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
                 },
                 {   # 4
-                    "name": 'HOV2TOLL', "mode": 'H', "PCE": 1, "VOT": 67., "cost": '@cost_hov',
-                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST"]
+                    "name": 'HOV2TOLLL', "mode": 'H', "PCE": 1, "VOT": 16.6, "cost": '@cost_hov',
+                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
                 {   # 5
-                    "name": 'HOV3GP', "mode": 's', "PCE": 1, "VOT": 67., "cost": '',
+                    "name": 'HOV3GPL', "mode": 's', "PCE": 1, "VOT": 16.6, "cost": '',
                     "skims": []  # same as SOV_GP
                 },
                 {   # 6
-                    "name": 'HOV3HOV', "mode": 'i', "PCE": 1, "VOT": 67., "cost": '',
-                    "skims": ["GENCOST", "TIME", "DIST", "HOVDIST"]
+                    "name": 'HOV3HOVL', "mode": 'i', "PCE": 1, "VOT": 16.6, "cost": '',
+                    "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
                 },
                 {   # 7
-                    "name": 'HOV3TOLL', "mode": 'I', "PCE": 1, "VOT": 67., "cost": '@cost_hov',
-                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST"]
+                    "name": 'HOV3TOLLL', "mode": 'I', "PCE": 1, "VOT": 16.6, "cost": '@cost_hov',
+                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
                 {   # 8
+                    "name": 'SOVGPM', "mode": 's', "PCE": 1, "VOT": 33.3, "cost": '',
+                    "skims": ["GENCOST", "TIME", "DIST", "REL"]
+                },
+                {   # 9
+                    "name": 'SOVTOLLM', "mode": 'S', "PCE": 1, "VOT": 33.3, "cost": '@cost_auto',
+                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
+                },
+                {   # 10
+                    "name": 'HOV2GPM', "mode": 's', "PCE": 1, "VOT": 33.3, "cost": '',
+                    "skims": []  # same as SOV_GP
+                },
+                {   # 11
+                    "name": 'HOV2HOVM', "mode": 'h', "PCE": 1, "VOT": 33.3, "cost": '',
+                    "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
+                },
+                {   # 12
+                    "name": 'HOV2TOLLM', "mode": 'H', "PCE": 1, "VOT": 33.3, "cost": '@cost_hov',
+                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
+                },
+                {   # 13
+                    "name": 'HOV3GPM', "mode": 's', "PCE": 1, "VOT": 33.3, "cost": '',
+                    "skims": []  # same as SOV_GP
+                },
+                {   # 14
+                    "name": 'HOV3HOVM', "mode": 'i', "PCE": 1, "VOT": 33.3, "cost": '',
+                    "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
+                },
+                {   # 15
+                    "name": 'HOV3TOLLM', "mode": 'I', "PCE": 1, "VOT": 33.3, "cost": '@cost_hov',
+                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
+                },
+                {   # 16
+                    "name": 'SOVGPH', "mode": 's', "PCE": 1, "VOT": 100., "cost": '',
+                    "skims": ["GENCOST", "TIME", "DIST", "REL"]
+                },
+                {   # 17
+                    "name": 'SOVTOLLH', "mode": 'S', "PCE": 1, "VOT": 100., "cost": '@cost_auto',
+                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
+                },
+                {   # 18
+                    "name": 'HOV2GPH', "mode": 's', "PCE": 1, "VOT": 100., "cost": '',
+                    "skims": []  # same as SOV_GP
+                },
+                {   # 19
+                    "name": 'HOV2HOVH', "mode": 'h', "PCE": 1, "VOT": 100., "cost": '',
+                    "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
+                },
+                {   # 20
+                    "name": 'HOV2TOLLH', "mode": 'H', "PCE": 1, "VOT": 100., "cost": '@cost_hov',
+                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
+                },
+                {   # 21
+                    "name": 'HOV3GPH', "mode": 's', "PCE": 1, "VOT": 100., "cost": '',
+                    "skims": []  # same as SOV_GP
+                },
+                {   # 22
+                    "name": 'HOV3HOVH', "mode": 'i', "PCE": 1, "VOT": 100., "cost": '',
+                    "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
+                },
+                {   # 23
+                    "name": 'HOV3TOLLH', "mode": 'I', "PCE": 1, "VOT": 100., "cost": '@cost_hov',
+                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
+                },
+                {   # 24
                     "name": 'TRKHGP', "mode": 'v', "PCE": 2.5, "VOT": 89., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST"]
                 },
-                {   # 9
+                {   # 25
                     "name": 'TRKHTOLL',  "mode": 'V', "PCE": 2.5, "VOT": 89., "cost": '@cost_hvy_truck',
                     "skims": ["GENCOST", "TIME", "DIST", "TOLLCOST"]
                 },
-                {   # 10
+                {   # 26
                     "name": 'TRKLGP',    "mode": 't', "PCE": 1.3, "VOT": 67., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST"]
                 },
-                {   # 11
+                {   # 27
                     "name": 'TRKLTOLL',  "mode": 'T', "PCE": 1.3, "VOT": 67., "cost": '@cost_auto',
                     "skims": ["GENCOST", "TIME", "DIST", "TOLLCOST"]
                 },
-                {   # 12
+                {   # 28
                     "name": 'TRKMGP',   "mode": 'm', "PCE": 1.5, "VOT": 68., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST"]
                 },
-                {   # 13
+                {   # 29
                     "name": 'TRKMTOLL', "mode": 'M', "PCE": 1.5, "VOT": 68., "cost": '@cost_med_truck',
                     "skims": ["GENCOST", "TIME", "DIST",  "TOLLCOST"]
                 }
@@ -340,7 +404,7 @@ Assign traffic demand for the selected time period."""
                 for msa_array, flow_array in zip(msa_link_flows, link_flows):
                     msa_vals = numpy.frombuffer(msa_array, dtype='float32')
                     flow_vals = numpy.frombuffer(flow_array, dtype='float32')
-                    result = msa_vals + (1 / msa_iteration) * (flow_vals - msa_vals)
+                    result = msa_vals + (1.0 / msa_iteration) * (flow_vals - msa_vals)
                     result_array = array.array('f')
                     result_array.fromstring(result.tostring())
                     values.append(result_array)
@@ -351,18 +415,19 @@ Assign traffic demand for the selected time period."""
                 for msa_array, flow_array in zip(msa_turn_flows, turn_flows):
                     msa_vals = numpy.frombuffer(msa_array, dtype='float32')
                     flow_vals = numpy.frombuffer(flow_array, dtype='float32')
-                    result = msa_vals + (1 / msa_iteration) * (flow_vals - msa_vals)
+                    result = msa_vals + (1.0 / msa_iteration) * (flow_vals - msa_vals)
                     result_array = array.array('f')
                     result_array.fromstring(result.tostring())
                     values.append(result_array)
                 scenario.set_attribute_values("TURN", turn_attrs, values)
 
             self.run_skims(period, num_processors, scenario, classes)
-            self.report(period, scenario)
+            self.report(period, scenario, classes)
 
             # Check that the distance matrix is valid (no disconnected zones)
+            # Using SOVGPL class as representative
             if raise_zero_dist:
-                name = period + "_" + "SOVGP_DIST"
+                name = "%s_SOVGPL_DIST" % period
                 dist_stats = self._stats[name]
                 if dist_stats[1] == 0:
                     zones = scenario.zone_numbers
@@ -385,15 +450,16 @@ Assign traffic demand for the selected time period."""
         net_calc = gen_utils.NetworkCalculator(scenario)
 
         p = period.lower()
-        assign_spec = self.base_assignment_spec(relative_gap, max_iterations, num_processors)
+        assign_spec = self.base_assignment_spec(
+            relative_gap, max_iterations, num_processors)
         with _m.logbook_trace("Prepare traffic data for period %s" % period):
             with _m.logbook_trace("Input link attributes"):
                 # set extra attributes for the period for VDF
-                # ul1 = @time_link
-                # ul2 = transig flow -> volad
-                # ul3 = @capacity_link
+                # ul1 = @time_link (period)
+                # ul2 = transit flow -> volad (for assignment only)
+                # ul3 = @capacity_link (period)
                 el1 = "@green_to_cycle"
-                el2 = "@auto_volume"              # for skim only
+                el2 = "@sta_reliability"
                 el3 = "@capacity_inter"
                 set_extra_function_para(el1, el2, el3, emmebank=emmebank)
 
@@ -401,6 +467,13 @@ Assign traffic demand for the selected time period."""
                 att_name = "@green_to_cycle_%s" % p
                 att = scenario.extra_attribute(att_name)
                 new_att_name = "@green_to_cycle"
+                create_attribute("LINK", new_att_name, att.description,
+                                  0, overwrite=True, scenario=scenario)
+                net_calc(new_att_name, att_name, "modes=d")
+                # set static reliability to el2=@sta_reliability for VDF
+                att_name = "@sta_reliability_%s" % p
+                att = scenario.extra_attribute(att_name)
+                new_att_name = "@sta_reliability"
                 create_attribute("LINK", new_att_name, att.description,
                                   0, overwrite=True, scenario=scenario)
                 net_calc(new_att_name, att_name, "modes=d")
@@ -513,8 +586,8 @@ Assign traffic demand for the selected time period."""
         net_calc = gen_utils.NetworkCalculator(scenario)
         emmebank = scenario.emmebank
         p = period.lower()
-
-        with self.setup_skims(period, scenario):
+        # ul2 becomes the total flow (volau + volad) in the skim assignment
+        with _m.logbook_trace("Calculation of attributes for skims"):
             if period == "MD":
                 gen_truck_mode = 'D'
                 classes.append({
@@ -527,44 +600,52 @@ Assign traffic demand for the selected time period."""
                 "HOVDIST":  "@hovdist",
                 "TOLLCOST": "@tollcost",
                 "MLCOST":   "@mlcost",
-                "TOLLDIST": "@tolldist"
+                "TOLLDIST": "@tolldist",
+                "REL", "@reliability_sq"
             }
             analysis_turn = {"TIME": "@auto_time_turn"}
-            with _m.logbook_trace("Link attributes for skims"):
-                create_attribute("LINK", "@hovdist", "distance for HOV",
-                                 0, overwrite=True, scenario=scenario)
-                create_attribute("LINK", "@tollcost", "Toll cost in cents",
-                                 0, overwrite=True, scenario=scenario)
-                create_attribute("LINK", "@mlcost", "Manage lane cost in cents",
-                                 0, overwrite=True, scenario=scenario)
-                create_attribute("LINK", "@tolldist", "Toll distance",
-                                 0, overwrite=True, scenario=scenario)
+            create_attribute("LINK", "@hovdist", "distance for HOV",
+                             0, overwrite=True, scenario=scenario)
+            create_attribute("LINK", "@tollcost", "Toll cost in cents",
+                             0, overwrite=True, scenario=scenario)
+            create_attribute("LINK", "@mlcost", "Manage lane cost in cents",
+                             0, overwrite=True, scenario=scenario)
+            create_attribute("LINK", "@tolldist", "Toll distance",
+                             0, overwrite=True, scenario=scenario)
+            create_attribute("LINK", "@reliability", "Reliability factor",
+                             0, overwrite=True, scenario=scenario)
+            create_attribute("LINK", "@reliability_sq", "Reliability factor squared",
+                             0, overwrite=True, scenario=scenario)
+            create_attribute("LINK", "@auto_volume", "traffic link volume (volau)",
+                              0, overwrite=True, scenario=scenario)
+            create_attribute("LINK", "@auto_time", "traffic link time (timau)",
+                              0, overwrite=True, scenario=scenario)
+            create_attribute("TURN", "@auto_time_turn", "traffic turn time (ptimau)",
+                              0, overwrite=True, scenario=scenario)
 
-                net_calc("@hovdist", "length", {"link": "@lane_restriction=2,3"})
-                net_calc("@tollcost", "@toll_%s" % p, {"link": "modes=d"})
-                net_calc("@mlcost", "@toll_%s" % p,
-                    {"link": "not @toll_%s=0.0 and not @lane_restriction=4" % p})
-                net_calc("@tolldist", "length", {"link": "not @toll_%s=0.0" % p})
-                # TODO (optional): use temporary link attributes ?
-                # link volume in @volau
-                create_attribute("LINK", "@auto_volume", "traffic link volume (volau)",
-                                  0, overwrite=True, scenario=scenario)
-                create_attribute("LINK", "@auto_time", "traffic link time (timau)",
-                                  0, overwrite=True, scenario=scenario)
-                create_attribute("TURN", "@auto_time_turn", "traffic turn time (ptimau)",
-                                  0, overwrite=True, scenario=scenario)
-                net_calc("@auto_volume", "volau", {"link": "modes=d"})
+            net_calc("@hovdist", "length", {"link": "@lane_restriction=2,3"})
+            net_calc("@tollcost", "@toll_%s" % p, {"link": "modes=d"})
+            net_calc("@mlcost", "@toll_%s" % p,
+                {"link": "not @toll_%s=0.0 and not @lane_restriction=4" % p})
+            net_calc("@tolldist", "length", {"link": "not @toll_%s=0.0" % p})
+            net_calc("@auto_volume", "volau", {"link": "modes=d"})
+            net_cal("ul2", "volau+volad", {"link": "modes=d"})
+            vdfs = [f for f in emmebank.functions() if f.type == "VOLUME_DELAY"]
+            exf_pars = emmebank.extra_function_parameters
+            for function in vdf:
+                expression = function.expression
+                for exf_par in ["el1", "el2", "el3"]:
+                    expression = expression.replace(exf_par, getattr(exf_pars, exf_par))
+                # split function into time component and reliability component
+                time_expr, reliability_expr = expression.split("*(1+el2+")
+                net_calc("@auto_time", time_expr, {"link": "vdf=%s" % function.id[2:]})
+                net_calc("@reliability", "(1+el2+" + reliability_expr, {"link": "vdf=%s" % function.id[2:]})
+            net_calc("@reliability_sq", "@reliability **2", {"link": "modes=d"})
+            net_calc("@auto_time_turn", "ptimau*(ptimau.gt.0)",
+                     {"incoming_link": "all", "outgoing_link": "all"})
 
-                for function in emmebank.functions():
-                    if function.type == "VOLUME_DELAY":
-                        expression = function.expression
-                        for exfpar in ["el1", "el2", "el3"]:
-                            expression = expression.replace(exfpar, getattr(emmebank.extra_function_parameters, exfpar))
-                        net_calc("@auto_time", expression, {"link": "vdf=%s" % function.id[2:]})
-                net_calc("@auto_time_turn", "ptimau*(ptimau.gt.0)",
-                         {"incoming_link": "all", "outgoing_link": "all"})
-
-            skim_spec = self.base_assignment_spec(0, 0, num_processors)
+        with self.setup_skims(period, scenario):
+            skim_spec = self.base_assignment_spec(0, 0, num_processors, background_traffic=False)
             for traffic_class in classes:
                 if not traffic_class["skims"]:
                     continue
@@ -596,9 +677,8 @@ Assign traffic demand for the selected time period."""
                 else:
                     link_cost = "@cost_operating"
                 skim_spec["classes"].append({
-                    "mode": traffic_class["mode"],
-                    # 0 demand for skim with 0 iteration and fix flow in vdf
-                    "demand": 'ms"zero"',
+                    "mode": traffic_class["mode"],                  
+                    "demand": 'ms"zero"',  # 0 demand for skim with 0 iteration and fix flow in ul2 in vdf
                     "generalized_cost": {
                         "link_costs": link_cost, "perception_factor": 1.0 / traffic_class["VOT"]
                     },
@@ -633,6 +713,8 @@ Assign traffic demand for the selected time period."""
                             if skim_type == "TIME" or skim_type == "DIST":
                                 numpy.fill_diagonal(data, 999999999.0)
                                 data[numpy.diag_indices_from(data)] = 0.5 * numpy.nanmin(data, 1)
+                            elif skim_type == "REL":
+                                data = numpy.sqrt(data)
                             else:
                                 numpy.fill_diagonal(data, -99999999.0)
                             matrix.set_numpy_data(data, scenario)
@@ -640,14 +722,10 @@ Assign traffic demand for the selected time period."""
                             self._stats[name] = (name, data.min(), data.max(), data.mean(), data.sum(), num_cells-data.count())
         return
 
-    def base_assignment_spec(self, relative_gap, max_iterations, num_processors):
+    def base_assignment_spec(self, relative_gap, max_iterations, num_processors, background_traffic=True):
         base_spec = {
             "type": "SOLA_TRAFFIC_ASSIGNMENT",
-            "background_traffic": {
-                "link_component": "ul2",     # ul2 = transit flow of the period
-                "turn_component": None,
-                "add_transit_vehicles": False
-            },
+            "background_traffic": None,
             "classes": [],
             "stopping_criteria": {
                 "max_iterations": max_iterations, "best_relative_gap": 0.0,
@@ -655,6 +733,12 @@ Assign traffic demand for the selected time period."""
             },
             "performance_settings": {"number_of_processors": num_processors},
         }
+        if background_traffic:
+            base_spec["background_traffic"] = {
+                "link_component": "ul2",     # ul2 = transit flow of the period
+                "turn_component": None,
+                "add_transit_vehicles": False
+            }
         return base_spec
 
     @_context
@@ -662,7 +746,7 @@ Assign traffic demand for the selected time period."""
         emmebank = scenario.emmebank
         with _m.logbook_trace("Extract skims for period %s" % period):
             # temp_functions converts to skim-type VDFs
-            with gen_utils.temp_functions(emmebank):
+            with temp_functions(emmebank):
                 backup_attributes = {"LINK": ["auto_volume", "auto_time", "additional_volume"]}
                 with gen_utils.backup_and_restore(scenario, backup_attributes):
                     yield
@@ -685,61 +769,12 @@ Assign traffic demand for the selected time period."""
             change_link_modes(modes=[truck_mode], action="ADD",
                               selection="modes=vVmMtT", scenario=scenario)
 
-    def report(self, period, scenario):
+    def report(self, period, scenario, classes):
         emmebank = scenario.emmebank
         text = ['<div class="preformat">']
-        matrices = [
-            "SOVGP_GENCOST",
-            "SOVGP_TIME",
-            "SOVGP_DIST",
-            "SOVTOLL_GENCOST",
-            "SOVTOLL_TIME",
-            "SOVTOLL_DIST",
-            "SOVTOLL_MLCOST",
-            "SOVTOLL_TOLLCOST",
-            "SOVTOLL_TOLLDIST",
-            "HOV2HOV_GENCOST",
-            "HOV2HOV_TIME",
-            "HOV2HOV_DIST",
-            "HOV2HOV_HOVDIST",
-            "HOV2TOLL_GENCOST",
-            "HOV2TOLL_TIME",
-            "HOV2TOLL_DIST",
-            "HOV2TOLL_MLCOST",
-            "HOV2TOLL_TOLLCOST",
-            "HOV2TOLL_TOLLDIST",
-            "HOV3HOV_GENCOST",
-            "HOV3HOV_TIME",
-            "HOV3HOV_DIST",
-            "HOV3HOV_HOVDIST",
-            "HOV3TOLL_GENCOST",
-            "HOV3TOLL_TIME",
-            "HOV3TOLL_DIST",
-            "HOV3TOLL_MLCOST",
-            "HOV3TOLL_TOLLCOST",
-            "HOV3TOLL_TOLLDIST",
-            "TRKHGP_GENCOST",
-            "TRKHGP_TIME",
-            "TRKHGP_DIST",
-            "TRKHTOLL_GENCOST",
-            "TRKHTOLL_TIME",
-            "TRKHTOLL_DIST",
-            "TRKHTOLL_TOLLCOST",
-            "TRKLGP_GENCOST",
-            "TRKLGP_TIME",
-            "TRKLGP_DIST",
-            "TRKLTOLL_GENCOST",
-            "TRKLTOLL_TIME",
-            "TRKLTOLL_DIST",
-            "TRKLTOLL_TOLLCOST",
-            "TRKMGP_GENCOST",
-            "TRKMGP_TIME",
-            "TRKMGP_DIST",
-            "TRKMTOLL_GENCOST",
-            "TRKMTOLL_TIME",
-            "TRKMTOLL_DIST",
-            "TRKMTOLL_TOLLCOST",
-        ]
+        matrices = []
+        for traffic_class in classes:
+            matrices.extend(["%s_%s" % (traffic_class["name"], s) for s in traffic_class["skims"]])
         num_cells = len(scenario.zone_numbers) ** 2
         text.append("Number of O-D pairs: %s. Values outside -9999999, 9999999 are masked in summaries.<br>" % num_cells)
         text.append("%-25s %9s %9s %9s %13s %9s" % ("name", "min", "max", "mean", "sum", "mask num"))
@@ -766,3 +801,24 @@ Assign traffic demand for the selected time period."""
     def get_link_attributes(self):
         export_utils = _m.Modeller().module("inro.emme.utility.export_utilities")
         return export_utils.get_link_attributes(_m.Modeller().scenario)
+
+
+@_context
+def temp_functions(emmebank):    
+    change_function = _m.Modeller().tool(
+        "inro.emme.data.function.change_function")
+    orig_expression = {}
+    with _m.logbook_trace("Set functions to skim parameter"):
+        for func in emmebank.functions():
+            if func.prefix=="fd":
+                exp = func.expression
+                orig_expression[func] = exp
+                if "volau+volad" in exp:
+                    exp = exp.replace("volau+volad", "ul2")
+                    change_function(func, exp, emmebank)
+    try:
+        yield
+    finally:
+        with _m.logbook_trace("Reset functions to assignment parameters"):
+            for func, expression in orig_expression.iteritems():
+                change_function(func, expression, emmebank)
