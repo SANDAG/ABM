@@ -169,7 +169,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         self._log = [{
             "content": attributes.items(), 
             "type": "table", "header": ["name", "value"],
-            "title": "Input attribute values"
+            "title": "Tool input values"
         }]
         with _m.logbook_trace("Import network (TCOVED)", attributes=attributes):
             gen_utils.log_snapshot("Import network (TCOVED)", str(self), attributes)
@@ -180,6 +180,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
     def execute(self):
         traffic_attr_map = {
+            "NODE": {
+                "interchange": ("@interchange", "DERIVED", "EXTRA", "is interchange node")
+            },
             "LINK": OrderedDict([
                 ("HWYCOV-ID", ("@tcov_id",             "TWO_WAY", "EXTRA", "SANDAG-assigned link ID")),
                 ("SPHERE",    ("@sphere",              "TWO_WAY", "EXTRA", "Jurisdiction sphere of influence")),
@@ -205,8 +208,6 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("CHO",       ("@capacity_hourly_op",  "ONE_WAY", "EXTRA", "Off-Peak hourly mid-link capacity")),
                 ("CHA",       ("@capacity_hourly_am",  "ONE_WAY", "EXTRA", "AM Peak hourly mid-link capacity")),
                 ("CHP",       ("@capacity_hourly_pm",  "ONE_WAY", "EXTRA", "PM Peak hourly mid-link capacity")),
-                ("INTDIST_UP",("@intdist_up",          "DERIVED", "INTERNAL", "Upstream major intersection distance")),
-                ("INTDIST_DOWN",("@intdist_down",      "DERIVED", "INTERNAL", "Downstream major intersection distance")),
                 # These attributes are expanded from 3 time periods to 5
                 ("ITOLLO",    ("toll_op",              "TWO_WAY", "INTERNAL", "Expanded to EA, MD and EV")),
                 ("ITOLLA",    ("toll_am",              "TWO_WAY", "INTERNAL", "")),
@@ -226,16 +227,16 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("TXO",       ("time_inter_op",        "ONE_WAY", "INTERNAL", "Expanded to EA, MD and EV")),
                 ("TXA",       ("time_inter_am",        "ONE_WAY", "INTERNAL", "")),
                 ("TXP",       ("time_inter_pm",        "ONE_WAY", "INTERNAL", "")),
-                # These attributes are used to cross-reference the turn directions
+                # These three attributes are used to cross-reference the turn directions
                 ("TLB",       ("through_link",         "ONE_WAY", "INTERNAL", "")),
                 ("RLB",       ("right_link",           "ONE_WAY", "INTERNAL", "")),
                 ("LLB",       ("left_link",            "ONE_WAY", "INTERNAL", "")),
                 ("@cost_operating", ("@cost_operating","DERIVED", "EXTRA",    "Fuel and maintenance cost")),
+                ("INTDIST_UP",      ("@intdist_up",    "DERIVED", "EXTRA",    "Upstream major intersection distance")),
+                ("INTDIST_DOWN",    ("@intdist_down",  "DERIVED", "EXTRA",    "Downstream major intersection distance")),
             ])
         }
         time_period_attrs = OrderedDict([
-            #("@toll_flag",         "toll plus 10000 ln_rsct=4"),
-            # Toll flag no longer used
             ("@cost_auto",         "toll + cost autos"),
             ("@cost_hov",          "toll (non-mngd) + cost HOV"),
             ("@cost_med_truck",    "toll + cost medium trucks"),
@@ -261,7 +262,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         transit_attr_map = {
             "NODE": OrderedDict([
-                ("@tap_id",            ("@tap_id",              "DERIVED",  "EXTRA", "Transit-access point ID")),
+                ("@tap_id",   ("@tap_id",              "DERIVED",  "EXTRA", "Transit-access point ID")),
             ]),
             "LINK": OrderedDict([
                 ("TRCOV-ID",  ("@tcov_id",              "TWO_WAY", "EXTRA", "SANDAG-assigned link ID")),
@@ -275,7 +276,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("IHOV",      ("@lane_restriction_tr",  "TWO_WAY", "EXTRA", "Link operation type")),
                 ("ISPD",      ("@speed_posted_tr_l",    "TWO_WAY", "EXTRA", "Posted speed limit (mph)")),
                 ("IMED",      ("@median",               "TWO_WAY", "EXTRA", "Median type")),
-                ("TMO",       ("trtime_link_op",          "ONE_WAY", "INTERNAL", "Expanded to EA, MD and EV")),
+                ("TMO",       ("trtime_link_op",        "ONE_WAY", "INTERNAL", "Expanded to EA, MD and EV")),
                 ("TMEA",      ("@trtime_link_ea",       "DERIVED", "EXTRA", "Early AM transit link time in minutes")),
                 ("TMA",       ("@trtime_link_am",       "ONE_WAY", "EXTRA", "AM Peak transit link time in minutes")),
                 ("TMMD",      ("@trtime_link_md",       "DERIVED", "EXTRA", "Mid-day transit link time in minutes")),
@@ -348,12 +349,19 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             scenario = traffic_scenario or transit_scenario
 
         if self.traffic_scenario_id or self.merged_scenario_id:
-            self._log.append({
-                "content": [[k] + list(v) for k, v in traffic_attr_map["LINK"].iteritems()], 
-                "type": "table", 
-                "header": ["TCOVED", "Emme", "Source", "Type", "Description"],
-                "title": "Traffic link attributes", "disclosure": True
-            })
+            for elem_type, attrs in traffic_attr_map.iteritems():
+                log_content = []
+                for k, v in attrs.iteritems():
+                    if v[3] == "DERIVED":
+                        k = "--"
+                    log_content.append([k] + list(v))
+                self._log.append({
+                    "content": log_content, 
+                    "type": "table", 
+                    "header": ["TCOVED", "Emme", "Source", "Type", "Description"],
+                    "title": "Traffic %s attributes" % elem_type.lower().replace("_", " "), 
+                    "disclosure": True
+                })
             traffic_network = _network.Network()
             self.create_traffic_base(traffic_network, traffic_attr_map)
             self.create_turns(traffic_network)
@@ -381,7 +389,11 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         if self.transit_scenario_id or self.merged_scenario_id:
             for elem_type, attrs in transit_attr_map.iteritems():
-                log_content = [[k] + list(v) for k, v in attrs.iteritems()]
+                log_content = []
+                for k, v in attrs.iteritems():
+                    if v[3] == "DERIVED":
+                        k = "--"
+                    log_content.append([k] + list(v))
                 self._log.append({
                     "content": log_content, 
                     "type": "table", 
@@ -427,6 +439,14 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         if self.save_data_tables:
             hwy_data.save("%s-hwycov" % self.data_table_name, self.overwrite)
+
+        for elem_type in "NODE", "TURN":
+            mapping = attr_map.get(elem_type)
+            if not mapping:
+                continue
+            for field, (attr, tcoved_type, emme_type, desc) in mapping.iteritems():
+                default = "" if emme_type == "STRING" else 0
+                network.create_attribute(elem_type, attr, default)
 
         # Create Modes
         dummy_auto = network.create_mode("AUTO", "d")
@@ -568,6 +588,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         arc_filter = lambda arc: (arc["MINMODE"] > 2)
 
+        # first pass to create the main base network for vehicles, xfer links and TAPs
         self._create_base_net(
             transit_data, network, mode_callback=define_modes, centroid_callback=is_centroid, 
             arc_id_name="TRCOV-ID", link_attr_map=attr_map["LINK"], arc_filter=arc_filter)
@@ -830,7 +851,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     tline[attr] = line_details[field]
                 #"XFERPENTM": "Transfer penalty time: "
                 #"WTXFERTM":  "Transfer perception:"
-                # NOTE: an additional transfer penality perception factor of 5.0 is included
+                # NOTE: an additional transfer penalty perception factor of 5.0 is included
                 #       in assignment
                 tline["@transfer_penalty"] = line_details["XFERPENTM"] * line_details["WTXFERTM"]
                 tline.headway = tline["@headway_am"] if tline["@headway_am"] > 0 else 999
@@ -1101,23 +1122,116 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         aoc = aoc_f + aoc_m
         time_periods = ["_ea", "_am", "_md", "_pm", "_ev"]
         src_time_periods = ["_op", "_am", "_op", "_pm", "_op"]
+        mode_d = network.mode('d')
+
+        # Calculate upstream and downstream interchange distance
+        # First, label the intersection nodes as nodes with type 1 links (freeway) and 
+        #        type 8 links (freeway-to-freeway ramp)
+        network.create_attribute("NODE", "is_interchange")
+        interchange_points = []
+        for node in network.nodes():
+            adj_links = list(node.incoming_links()) + list(node.outgoing_links())
+            has_freeway_links = bool(
+                [l for l in adj_links 
+                 if l.type == 1 and mode_d in l.modes])
+            has_ramp_links = bool(
+                [l for l in adj_links 
+                 if l.type == 8 and mode_d in l.modes and not "HOV" in l["#name"]])
+            if has_freeway_links and has_ramp_links:
+                node.is_interchange = True
+                interchange_points.append(node)
+            else:
+                node.is_interchange = False
+        for node in network.nodes():
+            node["@interchange"] = node.is_interchange
+
+        def interchange_distance(orig_link, direction):
+            visited = set([])
+            visited_add = visited.add
+            back_links = {}
+            heap = []
+            if direction == "DOWNSTREAM":
+                get_links = lambda l: l.j_node.outgoing_links()
+                check_far_node = lambda l: l.j_node.is_interchange
+            elif direction == "UPSTREAM":
+                get_links = lambda l: l.i_node.incoming_links()
+                check_far_node = lambda l: l.i_node.is_interchange
+            # Shortest path search for nearest interchange node along freeway
+            for link in get_links(orig_link):   
+                _heapq.heappush(heap, (link["length"], link))
+            interchange_found = False
+            try:
+                while not interchange_found:
+                    link_cost, link = _heapq.heappop(heap)
+                    if link in visited:
+                        continue
+                    visited_add(link)
+                    if check_far_node(link):
+                        interchange_found = True
+                        break
+                    for next_link in get_links(link):
+                        if next_link in visited:
+                            continue
+                        next_cost = link_cost + link["length"]
+                        _heapq.heappush(heap, (next_cost, next_link))
+            except IndexError:
+                # IndexError if heap is empty
+                # case where start / end of highway, dist = 99
+                return 99
+            return orig_link["length"] / 2.0 + link_cost
 
         for link in network.links():
-            # CHANGE SR125 TOLL SPEED TO 70MPH (ISPD=70)
-            # reliability field for SR125 is 0.65, and all other facilities are 1
+            if link.type == 1 and mode_d in link.modes:
+                link["@intdist_down"] = interchange_distance(link, "DOWNSTREAM")
+                link["@intdist_up"] = interchange_distance(link, "UPSTREAM")
+
+        # Static reliability parameters
+        # freeway coefficients
+        freeway_rel = {
+            "intercept": 0.1078,
+            "speed>70": 0.01393,
+            "upstream": 0.011,
+            "downstream": 0.0005445,
+        }
+        # arterial/ramp/other coefficients
+        road_rel = {
+            "intercept": 0.0546552,
+            "lanes": {
+                1: 0.0,
+                2: 0.0103589,
+                3: 0.0361211,
+                4: 0.0446958, 
+                5: 0.0
+            },
+            "speed":  {
+                "<35": 0,
+                35: 0.0075674,
+                40: 0.0091012, 
+                45: 0.0080996, 
+                50: -0.0022938, 
+                ">50": -0.0046211
+            },
+            "control": {
+                0: 0,           # Uncontrolled
+                1: 0.0030973,   # Signal
+                2: -0.0063281,  # Stop
+                3: -0.0063281,  # Stop
+                4: 0.0127692,   # Other, Railway, etc.
+            }
+        }
+        for link in network.links():
+            # Change SR125 toll speed to 70MPH
             if link["@lane_restriction"] == 4 and link.type == 1:
                 link["@speed_posted"] = 70 
-                reliability = 0.65 
-            else:
-                reliability = 1.0
 
-            link["@cost_operating"] = link.length * aoc * reliability
+            link["@cost_operating"] = link.length * aoc
 
-            # Expand off-peak TOD attributes
+            # Expand off-peak TOD attributes, copy peak period attributes
             for time, src_time in zip(time_periods, src_time_periods):
                 link["@lane" + time] = link["lane" + src_time]
                 link["@time_link" + time] = link["time_link" + src_time]
                 link["@time_inter" + time] = link["time_inter" + src_time]
+                link["@toll" + time] = link["toll" + src_time]
 
             factors = [(3.0/12.0), 1.0, (6.5/12.0), (3.5/3.0), (8.0/12.0)]
             for f, time, src_time in zip(factors, time_periods, src_time_periods):
@@ -1130,8 +1244,6 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 else:
                     link["@capacity_inter" + time] = 999999
 
-            for time, src_time in zip(time_periods, src_time_periods):
-                link["@toll" + time] = link["toll" + src_time]
             for time in time_periods:
                 link["@cost_auto" + time] = link["@toll" + time] + link["@cost_operating"]                
                 if link["@lane_restriction"] in [2, 3]:
@@ -1143,61 +1255,31 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     link["@cost_hov" + time] = link["@cost_auto" + time]
                 link["@cost_med_truck" + time] = 1.03 * link["@toll" + time] + link["@cost_operating"]
                 link["@cost_hvy_truck" + time] = 2.33 * link["@toll" + time] + link["@cost_operating"]
-                # adding $100 to toll fields to flag toll values from managed lane
-                #link["@toll_flag" + time] = link["@toll" + time] + (10000 * (link["@lane_restriction"] == 4))
                 
             # calculate static reliability
-            
-            # freeway coefficients
-            sta_fwy_intercept =  0.1078
-            sta_fwy_spdfact =    0.01393
-            sta_fwy_upstream =   0.011
-            sta_fwy_downstream = 0.0005445
-            
-            # arterial/ramp/other coefficients
-            sta_oth_intercept = 0.0546552
-            sta_oth_lanefct = {"1Lane": 0.0, "2Lane": 0.0103589, "3Lane": 0.0361211, "4Lane": 0.0446958, "5+Lane": 0.0}
-            sta_oth_spdfct =  {"<35mph": 0.0, "35mph": 0.0075674, "40mph": 0.0091012, 
-                               "45mph": 0.0080996, "50mph": -0.0022938, ">50mph": -0.0046211}
-            sta_oth_xdelay =  {"Signal": 0.0030973, "Stop": -0.0063281, "RailRoad": 0.0127692, "Nothing": 0.0}
             for time in time_periods:
-                # determine link category
-                # freeway
+                sta_reliability = "@sta_reliability" + time
+                # if freeway apply freeway parameters to this link
                 if link["type"] == 1 and link["@lane" + time] > 0:
-                    link["@sta_reliability" + time] = \
-                        sta_fwy_intercept + (sta_fwy_spdfact if link["@speed_posted"] == 70 else 0.0)
-                        #+ \
-                        #sta_fwy_upstream * 1/link["@intdist_up"] + sta_fwy_downstream * 1/link["@intdist_down"]
-                # arterial/ramp/other
-                elif link["type"] <= 9 and link["@lane" + time] > 0:
-                    # determine lane category
-                    if link["@lane" + time] < 5:
-                        laneType = str(link["@lane" + time]) + "Lane"
-                    else:
-                        laneType = "5+Lane"
-                    
-                    # determine speed category
-                    if link["@speed_posted"] < 35:
-                        speedType = "<35mph"
-                    elif link["@speed_posted"] > 50:
-                        speedType = ">50mph"
-                    else:
-                        speedType = str(link["@speed_posted"]) + "mph"
-                        
-                    # determine intersection type category
-                    if link["@traffic_control"] == 1:
-                        delayType = "Signal"
-                    elif link["@traffic_control"] in [2, 3]:
-                        delayType = "Stop"
-                    elif link["@traffic_control"] > 3:
-                        delayType = "RailRoad"
-                    else:
-                        delayType = "Nothing"
-                    
-                    link["@sta_reliability" + time] = \
-                        sta_oth_intercept + sta_oth_lanefct[laneType] + sta_oth_spdfct[speedType] + sta_oth_xdelay[delayType]
+                    high_speed_factor = freeway_rel["speed>70"] if link["@speed_posted"] >= 70 else 0.0
+                    upstream_factor = freeway_rel["upstream"] * 1 / link["@intdist_up"]
+                    downstream_factor = freeway_rel["downstream"] * 1 / link["@intdist_down"]
+                    link[sta_reliability] = (
+                        freeway_rel["intercept"] + high_speed_factor + upstream_factor + downstream_factor)
+                # arterial/ramp/other apply road parameters
+                elif link["type"] <= 9 and link["@lane" + time] > 0:                    
+                    lane_factor = road_rel["lanes"].get(link["@lane" + time], 0.0)
+                    speed_bin = link["@speed_posted"]
+                    if speed_bin < 35:
+                        speed_bin = "<35"
+                    elif speed_bin > 50:
+                        speed_bin = ">50"
+                    speed_factor = road_rel["speed"][speed_bin]
+                    control_bin = min(max(link["@traffic_control"], 0), 4)
+                    control_factor = road_rel["control"][control_bin]
+                    link[sta_reliability] = road_rel["intercept"] + lane_factor + speed_factor + control_factor
                 else:
-                    link["@sta_reliability" + time] = 0.0
+                    link[sta_reliability] = 0.0
  
         # Cycle length matrix
         #       Intersecting Link                     
@@ -1280,17 +1362,20 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             if not link["@traffic_control"] in [4, 5]:
                 # ramp metering is turned off for the off-peak periods (cycle and green to cycle are 0)
                 # NOTE: the vdf is sub-optimal for this
-                #       possible future improvment: implement this TOD difference as part of the assignment tool.
+                #       possible future improvement: implement this TOD difference as part of the assignment tool.
                 for time in ["_ea", "_md", "_ev"]:
                     link["@cycle" + time] = 0
                     link["@green_to_cycle" + time] = 0
 
         network.delete_attribute("LINK", "green_to_cycle")
         network.delete_attribute("LINK", "cycle")
+        network.delete_attribute("NODE", "is_interchange")
         self._log.append({"type": "text", "content": "Calculate derived traffic attributes complete"})
         return
         
     def check_zone_access(self, network, mode):
+        # Verify that every centroid has at least one available
+        # access and egress connector
         for centroid in network.centroids():
             access = egress = False
             for link in centroid.outgoing_links():
@@ -1453,16 +1538,16 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         set_extra_function_params = _m.Modeller().tool(
             "inro.emme.traffic_assignment.set_extra_function_parameters")
         emmebank = self.emmebank
-        for f_id in ["fd10", "fd20", "fd21", "fd22", "fd23", "fd24", "fp1", "ft1", "ft2", "ft3", "ft4"]:
+        for f_id in ["fd10", "fd11", "fd20", "fd21", "fd22", "fd23", "fd24", "fp1", "ft1", "ft2", "ft3", "ft4"]:
             function = emmebank.function(f_id)
             if function:
                 emmebank.delete_function(function)
 
         reliability_tmplt = (
             "* (1 + el2"
-            "+ ( {factor[LOS_C]}  * ( put(get(1).min.1.5) - {threshold[LOS_C]} + 0.01 ) ) * (get(1) .gt. {threshold[LOS_C]})"
-            "+ ( {factor[LOS_D]}  * ( get(2) - {threshold[LOS_D]}  + 0.01 )  ) * (get(1) .gt. {threshold[LOS_D]})"
-            "+ ( {factor[LOS_E]}  * ( get(2) - {threshold[LOS_E]}  + 0.01 )  ) * (get(1) .gt. {threshold[LOS_E]})"
+            "+ ( {factor[LOS_C]} * ( put(get(1).min.1.5) - {threshold[LOS_C]} + 0.01 ) ) * (get(1) .gt. {threshold[LOS_C]})"
+            "+ ( {factor[LOS_D]} * ( get(2) - {threshold[LOS_D]} + 0.01 )  ) * (get(1) .gt. {threshold[LOS_D]})"
+            "+ ( {factor[LOS_E]} * ( get(2) - {threshold[LOS_E]} + 0.01 )  ) * (get(1) .gt. {threshold[LOS_E]})"
             "+ ( {factor[LOS_FL]} * ( get(2) - {threshold[LOS_FL]} + 0.01 )  ) * (get(1) .gt. {threshold[LOS_FL]})"
             "+ ( {factor[LOS_FH]} * ( get(2) - {threshold[LOS_FH]} + 0.01 )  ) * (get(1) .gt. {threshold[LOS_FH]}) )")
         parameters = {
@@ -1474,7 +1559,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     "LOS_C": 0.7, "LOS_D": 0.8,  "LOS_E": 0.9, "LOS_FL": 1.0, "LOS_FH": 1.2
                 },     
             },
-            "arterial": {
+            "road": {   # for arterials, ramps, collectors, local roads, etc.
                 "factor": {
                     "LOS_C": 0.1561, "LOS_D": 0.0, "LOS_E": 0.0, "LOS_FL": -0.449, "LOS_FH": 0.0
                 },
@@ -1493,37 +1578,37 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         create_function(
             "fd11", 
             "(ul1 * (1.0 + 0.8 * put((volau + volad) / ul3) ** 4.0))"
-            + reliability_tmplt.format(**parameters["arterial"]), 
+            + reliability_tmplt.format(**parameters["road"]), 
             emmebank=emmebank)       
         create_function(
             "fd20",  # Local collector and lower intersection and stop controlled approaches
             "(ul1 * (1.0 + 0.8 * put((volau + volad) / ul3) ** 4.0) +"
             "1.25 / 2 * (1-el1) ** 2 * (1.0 + 4.5 * ( (volau + volad) / el3 ) ** 2.0))"
-            + reliability_tmplt.format(**parameters["arterial"]),
+            + reliability_tmplt.format(**parameters["road"]),
             emmebank=emmebank)
         create_function(
             "fd21",  # Collector intersection approaches
             "(ul1 * (1.0 + 0.8 * put((volau + volad) / ul3) ** 4.0) +"
             "1.5/ 2 * (1-el1) ** 2 * (1.0 + 4.5 * ( (volau + volad) / el3 ) ** 2.0))"
-            + reliability_tmplt.format(**parameters["arterial"]),
+            + reliability_tmplt.format(**parameters["road"]),
             emmebank=emmebank)
         create_function(
             "fd22",  # Major arterial and major or prime arterial intersection approaches
             "(ul1 * (1.0 + 0.8 * put((volau + volad) / ul3) ** 4.0) +"            
             "2.0 / 2 * (1-el1) ** 2 * (1.0 + 4.5 * ( (volau + volad) / el3 ) ** 2.0))"
-            + reliability_tmplt.format(**parameters["arterial"]),
+            + reliability_tmplt.format(**parameters["road"]),
             emmebank=emmebank)
         create_function(
             "fd23",  # Primary arterial intersection approaches
             "(ul1 * (1.0 + 0.8 * put((volau + volad) / ul3) ** 4.0) +"
             "2.5/ 2 * (1-el1) ** 2 * (1.0 + 4.5 * ( (volau + volad) / el3 ) ** 2.0))"
-            + reliability_tmplt.format(**parameters["arterial"]),
+            + reliability_tmplt.format(**parameters["road"]),
             emmebank=emmebank)
         create_function(
             "fd24",  # Metered ramps
             "(ul1 * (1.0 + 0.8 * put((volau + volad) / ul3) ** 4.0) +"
-            "2.5/ 2 * (1-el1) ** 2 * (1.0 + 6.5 * ( (volau + volad) / el3 ) ** 2.0))"
-            + reliability_tmplt.format(**parameters["arterial"]),
+            "2.5/ 2 * (1-el1) ** 2 * (1.0 + 6.0 * ( (volau + volad) / el3 ) ** 2.0))"
+            + reliability_tmplt.format(**parameters["road"]),
             emmebank=emmebank)
 
         set_extra_function_params(
@@ -1611,7 +1696,7 @@ def find_path(orig_link, dest_link, mode):
                 continue
             visited_add(link)
             for outgoing in link.j_node.outgoing_links():
-                if mode not in link.modes:
+                if mode not in outgoing.modes:
                     continue
                 if outgoing in visited:
                     continue
