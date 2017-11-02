@@ -11,6 +11,43 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+#
+#
+# The Traffic assignment tool runs the traffic assignment and skims per 
+# period on the current primary scenario.
+#
+# The traffic assignment is a 14-class assignment with generalized cost on 
+# links and BPR-type volume-delay functions which include capacities on links 
+# and at intersection approaches. The assignment is run using the 
+# fast-converging Second-Order Linear Approximation (SOLA) method in Emme to 
+# a relative gap of 5x10-4. The per-link fixed costs include toll values and 
+# operating costs which vary by class of demand (see Table 6 for the complete 
+# list of classes). Assignment matrices and resulting network flows are always in PCE.
+#
+# Inputs:
+#   period: the time-of-day period, one of EA, AM, MD, PM, EV.
+#   msa_iteration: global iteration number. If greater than 1, existing flow 
+#       values must be present and the resulting flows on links and turns will 
+#       be the weighted average of this assignment and the existing values.
+#   relative_gap: minimum relative stopping criteria.
+#   max_iterations: maximum iterations stopping criteria.
+#   num_processors: number of processors to use for the traffic assignments.
+#   raise_zero_dist: if checked, the distance skim for the SOVGP is checked for 
+#       any zero values, which would indicate a disconnected zone, in which case 
+#       an error is raised and the model run is halted.
+#   select_link: specify one or more select link analysis setups as a list of 
+#       specifications with three keys:
+#       	Expression: selection expression to identify the link(s) of interest. 
+#       	Result suffix: the suffix to use in the naming of per-class result 
+#               attributes and matrices, up to 6 characters.
+#       	Threshold: the minimum number of links which must be encountered 
+#               for the path selection.
+#
+# Matrices:
+#   All traffic demand and skim matrices.
+#   See list of classes under __call__ method, or matrix list under report method.
+#
+
 
 TOOLBOX_ORDER = 20
 
@@ -260,6 +297,7 @@ Assign traffic demand for the selected time period."""
                 raise _except.ArgumentError(
                     'period: unknown value - specify one of %s' % periods)
             num_processors = dem_utils.parse_num_processors(num_processors)
+            # Main list of assignment classes
             classes = [
                 {   # 0
                     "name": 'SOVGP', "mode": 's', "PCE": 1, "VOT": 67., "cost": '',
@@ -391,7 +429,7 @@ Assign traffic demand for the selected time period."""
             with _m.logbook_trace("Input link attributes"):
                 # set extra attributes for the period for VDF
                 # ul1 = @time_link
-                # ul2 = transig flow -> volad
+                # ul2 = transit flow -> volad
                 # ul3 = @capacity_link
                 el1 = "@green_to_cycle"
                 el2 = "@auto_volume"              # for skim only

@@ -11,7 +11,35 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
-
+#
+# 
+# Coordinates the initialization of all matrices.
+# The matrix names are listed for each of the model components / steps,
+# and the matrix IDs are assigned consistently from the set of matrices.
+# In each of the model steps the matrices are only referenced by name,
+# never by ID.
+#
+#
+# Inputs:
+#    components: A list of the model components / steps for which to initialize matrices
+#                One or more of "traffic_demand", "transit_demand", 
+#                "traffic_skims", "transit_skims",  "external_internal_model", 
+#                "external_external_model", "truck_model", "commercial_vehicle_model"
+#    periods: A list of periods for which to initialize matrices, "EA", "AM", "MD", "PM", "EV"
+#    scenario: scenario to use for reference zone system and the emmebank in which 
+#              the matrices will be created. Defaults to the current primary scenario.
+#
+# Script example:
+"""
+    import os
+    import inro.emme.database.emmebank as _eb
+    modeller = inro.modeller.Modeller()
+    main_directory = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
+    main_emmebank = _eb.Emmebank(os.path.join(main_directory, "emme_project", "Database", "emmebank"))
+    base_scenario = main_emmebank.scenario(100)
+    initialize_transit_db = modeller.tool("sandag.model.initialize.initialize_transit_database")
+    initialize_transit_db(base_scenario)
+"""
 TOOLBOX_ORDER = 8
 
 

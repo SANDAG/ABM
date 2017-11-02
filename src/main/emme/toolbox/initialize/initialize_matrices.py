@@ -11,6 +11,46 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+#
+# 
+# Coordinates the initialization of all matrices.
+# The matrix names are listed for each of the model components / steps,
+# and the matrix IDs are assigned consistently from the set of matrices.
+# In each of the model steps the matrices are only referenced by name,
+# never by ID.
+#
+#
+# Inputs:
+#    components: A list of the model components / steps for which to initialize matrices
+#                One or more of "traffic_demand", "transit_demand", 
+#                "traffic_skims", "transit_skims",  "external_internal_model", 
+#                "external_external_model", "truck_model", "commercial_vehicle_model"
+#    periods: A list of periods for which to initialize matrices, "EA", "AM", "MD", "PM", "EV"
+#    scenario: scenario to use for reference zone system and the emmebank in which 
+#              the matrices will be created
+#
+# Script example:
+"""
+    import os
+    import inro.emme.database.emmebank as _eb
+    modeller = inro.modeller.Modeller()
+    main_directory = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
+    main_emmebank = _eb.Emmebank(os.path.join(main_directory, "emme_project", "Database", "emmebank"))
+    transit_emmebank = _eb.Emmebank(os.path.join(main_directory, "emme_project", "Database", "emmebank"))
+    periods = ["EA", "AM", "MD", "PM", "EV"]
+    traffic_components = [
+        "traffic_demand", "traffic_skims", "external_internal_model", 
+        "external_external_model", "truck_model", "commercial_vehicle_model"]
+    transit_components = ["transit_demand", "transit_skims"]
+    base_scenario = main_emmebank.scenario(100)
+    transit_scenario = transit_emmebank.scenario(100)
+    initialize_matrices = modeller.tool("sandag.model.initialize.initialize_matrices")
+    # Create / initialize matrices in the base, traffic emmebank
+    initialize_matrices(traffic_components, periods, base_scenario)
+    # Create / initialize matrices in the transit emmebank
+    initialize_matrices(transit_components, periods, transit_scenario)
+"""
+
 
 TOOLBOX_ORDER = 9
 

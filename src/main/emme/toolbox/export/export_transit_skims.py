@@ -11,6 +11,32 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+#
+# Exports the transit skims for use in the disaggregate demand models (CT-RAMP)
+# and the data loader process.
+# 
+# Note the matrix name mapping from the OMX file names to the Emme database names.
+#
+# Inputs:
+#    omx_file: output directory to read the OMX files from
+#    big_to_zero: replace big values (>10E6) with zero
+#       This is used in the final iteration skim (after the demand models are 
+#       complete) to filter large values from the OMX files which are not 
+#       compatible with the data loader process
+#    scenario: transit scenario to use for reference zone system
+#
+# Script example:
+"""
+    import os
+    modeller = inro.modeller.Modeller()
+    main_directory = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
+    output_dir = os.path.join(main_directory, "output")
+    scenario = modeller.scenario
+    export_transit_skims = modeller.tool("sandag.model.import.export_transit_skims")
+    omx_file_path = os.path.join(output_dir, "transit_skims.omx"
+    export_transit_skims(output_dir, period, scenario)
+"""
+
 
 TOOLBOX_ORDER = 72
 

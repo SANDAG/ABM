@@ -11,6 +11,46 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+#
+# Imports the network from the input network files.
+# 
+#
+# Inputs:
+#    source: path to the location of the input network files
+#    traffic_scenario_id: optional scenario to store the imported network from the traffic files only
+#    transit_scenario_id: optional scenario to store the imported network from the transit files only
+#    merged_scenario_id: scenario to store the combined traffic and transit data from all network files
+#    title: the title to use for the imported scenario
+#    save_data_tables: if checked, create a data table for each reference file for viewing in the Emme Desktop
+#    data_table_name: prefix to use to identify all data tables
+#    overwrite: check to overwrite any existing data tables or scenarios with the same ID or name 
+#    emmebank: the Emme database in which to create the scenario. Default is the current open database
+#
+# Files referenced:
+#    hwycov.e00: base nodes and links for traffic network with traffic attributes in ESRI input exchange format
+#    linktypeturns.dbf: fixed turn travel times by to/from link type (field IFC) pairs
+#    turns.csv: turn bans and fixed costs by link from/to ID (field HWYCOV-ID)
+#    trcov.e00: base nodes and links for transit network in ESRI input exchange format
+#    trrt.csv: transit routes and their attributes
+#    trlink.csv: itineraries for each route as sequence of link IDs (TRCOV-ID field)
+#    trstop.csv: transit stop attributes
+#    timexfer.csv: table of timed transfer pairs of lines
+#    mode5tod.dbf: global (per-mode) transit cost and perception attributes
+#    special_fares.txt: table listing special fares in terms of boarding and incremental in-vehicle costs. 
+#
+#
+# Script example:
+"""
+    import os
+    modeller = inro.modeller.Modeller()
+    main_directory = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
+    source_dir = os.path.join(main_directory, "input")
+    title = "Base 2012 scenario"
+    import_network = modeller.tool("sandag.model.import.import_network")
+    import_network(output_dir, merged_scenario_id=100, title=title,
+        data_table_name="2012_base", overwrite=True)
+"""
+
 
 TOOLBOX_ORDER = 11
 

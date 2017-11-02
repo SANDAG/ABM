@@ -11,6 +11,25 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+#
+#
+# The build transit scenario tool generates a new scenario in the Transit 
+# database (under the Database_transit directory) as a copy of a scenario in 
+# the base (traffic assignment) database. The base traffic scenario should have 
+# valid results from a traffic assignment for the travel times on links to be 
+# available for transit lines in mixed traffic operation. 
+#
+#
+# Inputs:
+#   period: the corresponding period for the scenario
+#   base_scenario_id: the base traffic assignment scenario in the main Emme database
+#   scenario_id: the ID to use for the new scenario in the Transit Emme database
+#   scenario_title: the title for the new scenario
+#   timed_xfers_table: the source data table for the timed transfer line pairs
+#   overwrite: overwrite the scenario if it already exists.
+#
+#
+
 
 TOOLBOX_ORDER = 21
 
@@ -62,7 +81,9 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
     def page(self):
         pb = _m.ToolPageBuilder(self)
         pb.title = "Build transit network"
-        pb.description = """Builds the transit network for the specified period based on existing base (traffic + transit) scenario."""
+        pb.description = """
+            Builds the transit network for the specified period based 
+            on existing base (traffic + transit) scenario."""
         pb.branding_text = "- SANDAG - "
         if self.tool_run_msg != "":
             pb.tool_run_status(self.tool_run_msg_status)
@@ -325,6 +346,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
         line_attributes = network.attributes("TRANSIT_LINE")
         seg_attributes = network.attributes("TRANSIT_SEGMENT")
 
+        # re-route the transit lines through the new TAP-stops
         for line in network.transit_lines():
             # store line and segment data for re-routing
             line_data = dict((k, line[k]) for k in line_attributes)

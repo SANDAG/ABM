@@ -11,6 +11,48 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+#
+# The Master run tool is the primary method to operate the SANDAG 
+# travel demand model. It operates all the model components.
+#
+#   main_directory: Main ABM directory: directory which contains all of the 
+#       ABM scenario data, including this project. The default is the parent 
+#       directory of the current Emme project. 
+#   scenario_id: Scenario ID for the base imported network data. The result 
+#       scenarios are indexed in the next five scenarios by time period.
+#	scenario_title: title to use for the scenario.
+#	emmebank_title: title to use for the Emmebank (Emme database)
+#	num_processors: the number of processors to use for traffic and transit 
+#       assignments and skims, aggregate demand models (where required) and
+#       other parallelized procedures in Emme. Default is Max available – 1.
+#	Properties loaded from conf/sandag_abm.properties:
+#       When using the tool UI, the sandag_abm.properties file is read 
+#       and the values cached and the inputs below are pre-set. When the tool 
+#       is started button is clicked this file is written out with the 
+#       values specified. 
+#       	Sample rate by iteration: three values for the sample rates for each iteration
+#       	Start from iteration: iteration from which to start the model run
+#       	Skip steps: optional checkboxes to skip model steps. 
+#               Note that most steps are dependent upon the results of the previous steps.
+#   Select link: add select link analyses for traffic. 
+#       See the Select link analysis section under the Traffic assignment tool.
+#
+#
+# Script example:
+"""
+import inro.modeller as _m
+import os
+modeller = _m.Modeller()
+desktop = modeller.desktop 
+
+master_run = modeller.tool("sandag.master_run")
+main_directory = os.path.dirname(os.path.dirname(desktop.project_path()))
+scenario_id = 100
+scenario_title = "Base 2015 scenario"
+emmebank_title = "Base 2015 with updated landuse"
+num_processors = "MAX-1"
+master_run(main_directory, scenario_id, scenario_title, emmebank_title, num_processors)
+"""
 
 TOOLBOX_ORDER = 1
 
@@ -291,7 +333,8 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                     # run traffic assignment
                     # export traffic skims
                     with _m.logbook_trace("Traffic assignment and skims"):
-                        self.run_traffic_assignments(base_scenario, period_ids, msa_iteration, relative_gap, max_assign_iterations, num_processors)
+                        self.run_traffic_assignments(
+                            base_scenario, period_ids, msa_iteration, relative_gap, max_assign_iterations, num_processors)
                     self.run_proc("CreateD2TAccessFile.bat", [drive, path_forward_slash],
                                   "Create drive to transit access file", capture_output=True)
 
@@ -358,7 +401,8 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         msa_iteration = len(sample_rate)
         if not skipFinalHighwayAssignment or not skipFinalHighwaySkimming:
             with _m.logbook_trace("Final traffic assignments"):
-                self.run_traffic_assignments(base_scenario, period_ids, msa_iteration, relative_gap, max_assign_iterations, num_processors, select_link)
+                self.run_traffic_assignments(
+                    base_scenario, period_ids, msa_iteration, relative_gap, max_assign_iterations, num_processors, select_link)
 
         if not skipFinalTransitAssignment or not skipFinalTransitSkimming:
             import_transit_demand(output_dir, transit_scenario)

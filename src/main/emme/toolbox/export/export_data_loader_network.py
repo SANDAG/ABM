@@ -11,6 +11,38 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+#
+# Exports the network results to csv file for use by the Java Data export process
+# and the Data loader to the reporting database.
+# 
+#
+# Inputs:
+#    main_directory: main ABM directory
+#    base_scenario_id: scenario ID for the base scenario (same used in the Import network tool)
+#    traffic_emmebank: the base, traffic, Emme database
+#    transit_emmebank: the transit database
+#    num_processors: number of processors to use in the transit analysis calculations 
+#
+# Files created:
+#    report/hwyload_pp.csv
+#    report/hwy_tcad.csv
+#    report/transit_aggflow.csv 
+#    report/transit_flow.csv
+#    report/transit_onoff.csv
+#
+# Script example:
+"""
+    import os
+    import inro.emme.database.emmebank as _eb
+    modeller = inro.modeller.Modeller()
+    main_directory = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
+    main_emmebank = _eb.Emmebank(os.path.join(main_directory, "emme_project", "Database", "emmebank"))
+    transit_emmebank = _eb.Emmebank(os.path.join(main_directory, "emme_project", "Database", "emmebank"))
+    num_processors = "MAX-1"
+    export_data_loader_network = modeller.tool(
+        "sandag.model.export.export_data_loader_network")
+    export_data_loader_network(main_directory, 100, main_emmebank, transit_emmebank, num_processors)
+"""
 
 TOOLBOX_ORDER = 73
 

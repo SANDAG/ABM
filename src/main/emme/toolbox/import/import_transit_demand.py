@@ -11,6 +11,41 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+#
+# Imports the transit demand generated from an iteration of the disaggregate 
+# demand models (CT-RAMP) in preparation for the transit assignment
+# 
+# Note the matrix name mapping from the OMX file names to the Emme database names.
+#
+# Inputs:
+#    output_dir: output directory to read the OMX files from
+#    scenario: transit scenario to use for reference zone system
+#
+# Files referenced:
+#    Note: pp is time period, one of EA, AM, MD, PM, EV
+#    output/tranTrips_pp.omx
+#    output/tranCrossBorderTrips_pp.omx
+#    output/tranAirportTrips_pp.omx
+#    output/tranVisitorTrips_pp.omx
+#    output/tranInternalExternalTrips_pp.omx
+#
+# Matrix results:
+#    Note: pp is time period, one of EA, AM, MD, PM, EV
+#    pp_WLKBUS, pp_WLKLRT, pp_WLKCMR, pp_WLKEXP, pp_WLKBRT, 
+#    pp_PNRBUS, pp_PNRLRT, pp_PNRCMR, pp_PNREXP, pp_PNRBRT, 
+#    pp_KNRBUS, pp_KNRLRT, pp_KNRCMR, pp_KNREXP, pp_KNRBRT
+#
+# Script example:
+"""
+    import os
+    modeller = inro.modeller.Modeller()
+    main_directory = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
+    output_dir = os.path.join(main_directory, "output")
+    scenario = modeller.scenario
+    import_transit_demand = modeller.tool("sandag.model.import.import_transit_demand")
+    import_transit_demand(output_dir, scenario)
+"""
+
 
 TOOLBOX_ORDER = 14
 
@@ -53,11 +88,11 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
     A total of 50 OMX files are expected, for 5 time periods
     EA, AM, MD, PM and EV, times 5 model segments for transit:
     <ul>
-        <li>tranTrips_XX.omx</li>
-        <li>tranCrossBorderTrips_XX.omx</li>
-        <li>tranAirportTrips_XX.omx</li>
-        <li>tranVisitorTrips_XX.omx</li>
-        <li>tranInternalExternalTrips_XX.omx</li>
+        <li>tranTrips_pp.omx</li>
+        <li>tranCrossBorderTrips_pp.omx</li>
+        <li>tranAirportTrips_pp.omx</li>
+        <li>tranVisitorTrips_pp.omx</li>
+        <li>tranInternalExternalTrips_pp.omx</li>
     </ul>
 </div>
         """

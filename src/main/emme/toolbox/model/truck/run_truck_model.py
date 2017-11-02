@@ -11,6 +11,37 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+#
+#
+# Runs the truck model, the generation and distribution tools, in sequence.
+#    1) Generates standard truck trip and special (military) truck trips
+#    2) Generates regional truck trips, IE trips, EI trips and EE trips and 
+#       balances truck trips
+#    3) Distributes trips based on congested skims and splits by time of day
+#    4) Applies truck toll diversion model with toll and non-toll skims
+#
+# Inputs:
+#    run_generation: boolean, if True run generation tool.
+#    input_directory: source directory for most input files, including demographics and trip rates 
+#        (see generation and distribtuion tools)
+#    input_truck_directory: source for special truck files (see generation tool)
+#    num_processors: Number of processors to use, either as a number or "MAX-#" 
+#    scenario: traffic scenario to use for reference zone system
+#
+# Script example:
+"""
+    import os
+    modeller = inro.modeller.Modeller()
+    project_dir = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
+    input_dir = os.path.join(project_dir, "input")
+    input_truck_dir = os.path.join(project_dir, "input_truck")
+    base_scenario = modeller.scenario
+    num_processors = "MAX-1" 
+    run_truck = modeller.tool("sandag.model.truck.run_truck_model")
+    run_truck(True, input_dir, input_truck_dir, num_processors, base_scenario)
+"""
+
+
 
 TOOLBOX_ORDER = 41
 
@@ -51,7 +82,6 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
         pb.title = "Truck model"
         pb.description = """
 <div style="text-align:left">
-
     1) Generates standard truck trip and special (military) truck trips<br>
     2) Gets regional truck trips, IE trips, EI trips and EE trips and balances truck trips<br>
     3) Distributes truck trips with congested skims and splits by time of day<br>

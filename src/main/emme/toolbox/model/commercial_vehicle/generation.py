@@ -11,9 +11,36 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+# 
+# 
+# Runs the commercial vehicle generation step, calculate commercial vehicle 
+# productions and attractions. Linear regression models generate trip ends, 
+# balancing attractions to productions.
+#
+# Inputs:
+#    input_directory: source directory for most input files, including demographics and trip rates
+#    scenario: traffic scenario to use for reference zone system
+#
+# Files referenced:
+#    Note: YEAR is replaced by truck.FFyear in the conf/sandag_abm.properties file 
+#    input/mgra13_based_inputYEAR.csv
+#
+# Matrix results:
+#    moCOMVEH_PROD, mdCOMVEH_ATTR
+#
+# Script example:
+"""
+    import os
+    modeller = inro.modeller.Modeller()
+    project_dir = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
+    input_dir = os.path.join(project_dir, "input")
+    base_scenario = modeller.scenario
+    generation = modeller.tool("sandag.model.commercial_vehicle.generation")
+    generation(input_dir, base_scenario)
+"""
+
 
 TOOLBOX_ORDER = 52
-
 
 
 import inro.modeller as _m
@@ -43,7 +70,6 @@ class CommercialVehicleDistribution(_m.Tool(), gen_utils.Snapshot):
         self.attributes = ["input_directory"]
 
     def page(self):
-        # Equivalent to commVehGen.rsc
         pb = _m.ToolPageBuilder(self)
         pb.title = "Commercial Vehicle Generation"
         pb.description = """
