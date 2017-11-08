@@ -20,19 +20,19 @@
 #       directory of the current Emme project. 
 #   scenario_id: Scenario ID for the base imported network data. The result 
 #       scenarios are indexed in the next five scenarios by time period.
-#	scenario_title: title to use for the scenario.
-#	emmebank_title: title to use for the Emmebank (Emme database)
-#	num_processors: the number of processors to use for traffic and transit 
+#    scenario_title: title to use for the scenario.
+#    emmebank_title: title to use for the Emmebank (Emme database)
+#    num_processors: the number of processors to use for traffic and transit 
 #       assignments and skims, aggregate demand models (where required) and
-#       other parallelized procedures in Emme. Default is Max available – 1.
-#	Properties loaded from conf/sandag_abm.properties:
+#       other parallelized procedures in Emme. Default is Max available - 1.
+#    Properties loaded from conf/sandag_abm.properties:
 #       When using the tool UI, the sandag_abm.properties file is read 
 #       and the values cached and the inputs below are pre-set. When the tool 
 #       is started button is clicked this file is written out with the 
 #       values specified. 
-#       	Sample rate by iteration: three values for the sample rates for each iteration
-#       	Start from iteration: iteration from which to start the model run
-#       	Skip steps: optional checkboxes to skip model steps. 
+#           Sample rate by iteration: three values for the sample rates for each iteration
+#           Start from iteration: iteration from which to start the model run
+#           Skip steps: optional checkboxes to skip model steps. 
 #               Note that most steps are dependent upon the results of the previous steps.
 #   Select link: add select link analyses for traffic. 
 #       See the Select link analysis section under the Traffic assignment tool.

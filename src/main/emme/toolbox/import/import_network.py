@@ -272,8 +272,6 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             ])
         }
         time_period_attrs = OrderedDict([
-            #("@toll_flag",         "toll plus 10000 ln_rsct=4"),
-            # Toll flag no longer used
             ("@cost_auto",         "toll + cost autos"),
             ("@cost_hov",          "toll (non-mngd) + cost HOV"),
             ("@cost_med_truck",    "toll + cost medium trucks"),
