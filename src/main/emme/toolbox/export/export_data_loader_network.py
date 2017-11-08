@@ -60,7 +60,7 @@ import os
 gen_utils = _m.Modeller().module("sandag.utilities.general")
 dem_utils = _m.Modeller().module("sandag.utilities.demand")
 
-format = lambda x: ("%.7f" % x).rstrip('0').rstrip(".")
+format = lambda x: ("%.6f" % x).rstrip('0').rstrip(".")
 id_format = lambda x: str(int(x))
 
 
@@ -145,99 +145,199 @@ Export network results to csv files for SQL data loader."""
 
     @_m.logbook_trace("Export traffic attribute data")
     def export_traffic_attribute(self, base_scenario, export_path, traffic_emmebank, period_scenario_id):
-        ##cojur, costat, rloop, adtlk, adtvl: attributes not imported, export zero value columns
-        hwylink_atts = [
+        # Several column names are legacy from the original network files
+        # and data loader process, and are populated with zeros.
+        # items are ("column name", "attribute name") or ("column name", ("attribute name", default))
+        hwylink_attrs = [
             ("ID", "@tcov_id"),
-            ("Length", "length"), ("SPHERE", "@sphere"),
+            ("Length", "length"), 
+            ("Dir", "is_one_way"),
+            ("hwycov-id:1", "@tcov_id"),
+            ("ID:1", "@tcov_id"),
+            ("Length:1", "length_feet"),
+            ("QID", "zero"),
+            ("CCSTYLE", "zero"),
+            ("UVOL", "zero"),
+            ("AVOL", "zero"),
+            ("TMP1", "zero"),
+            ("TMP2", "zero"),
+            ("PLOT", "zero"),
+            ("SPHERE", "@sphere"),
+            ("RTNO", "zero"),
+            ("LKNO", "zero"),
             ("NM", "#name"),
-            ("FXNM", "#name_from"), ("TXNM", "#name_to"),
-            ("AN", "i"), ("BN", "j"),
-            ("COJUR", "zero"), ("COSTAT", "zero"), ("COLOC", "zero"),
-            ("RLOOP", "zero"), ("ADTLK", "zero"), ("ADTLV", "zero"),
-            ("ASPD", "@speed_adjusted"), ("IYR", "@year_open_traffic"),
-            ("IPROJ", "@project_code"), ("IJUR", "@jurisdiction_type"),
-            ("IFC", "type"), ("IHOV", "@lane_restriction"),
-            ("ITRUCK", "@truck_restriction"), ("ISPD", "@speed_posted"),
-            ("IWAY", "1/2 way"), ("IMED", "@median"),
-            ("ABAU", "@lane_auxiliary"), ("ABCNT", "@traffic_control"),
-            ("BAAU", ("@lane_auxiliary", "0")), ("BACNT", ("@traffic_control", "0")),
-            ("ITOLL2_EA", "@toll_ea"),
-            ("ITOLL2_AM", "@toll_am"),
-            ("ITOLL2_MD", "@toll_md"),
-            ("ITOLL2_PM", "@toll_pm"),
-            ("ITOLL2_EV", "@toll_ev"),
-            ("ITOLL3_EA", "@cost_auto_ea"),
-            ("ITOLL3_AM", "@cost_auto_am"),
-            ("ITOLL3_MD", "@cost_auto_md"),
-            ("ITOLL3_PM", "@cost_auto_pm"),
-            ("ITOLL3_EV", "@cost_auto_ev"),
-            ("ITOLL4_EA", "@cost_med_truck_ea"),
-            ("ITOLL4_AM", "@cost_med_truck_am"),
-            ("ITOLL4_MD", "@cost_med_truck_md"),
-            ("ITOLL4_PM", "@cost_med_truck_pm"),
-            ("ITOLL4_EV", "@cost_med_truck_ev"),
-            ("ITOLL5_EA", "@cost_hvy_truck_ea"),
-            ("ITOLL5_AM", "@cost_hvy_truck_am"),
-            ("ITOLL5_MD", "@cost_hvy_truck_md"),
-            ("ITOLL5_PM", "@cost_hvy_truck_pm"),
-            ("ITOLL5_EV", "@cost_hvy_truck_ev"),
-            ("ABCP_EA", "@capacity_link_ea"),   ("BACP_EA", ("@capacity_link_ea", "999999")),
-            ("ABCP_AM", "@capacity_link_am"),   ("BACP_AM", ("@capacity_link_am", "999999")),
-            ("ABCP_MD", "@capacity_link_md"),   ("BACP_MD", ("@capacity_link_md", "999999")),
-            ("ABCP_PM", "@capacity_link_pm"),   ("BACP_PM", ("@capacity_link_pm", "999999")),
-            ("ABCP_EV", "@capacity_link_ev"),   ("BACP_EV", ("@capacity_link_ev", "999999")),
-            ("ABCX_EA", "@capacity_inter_ea"),  ("BACX_EA", ("@capacity_inter_ea", "999999")),
-            ("ABCX_AM", "@capacity_inter_am"),  ("BACX_AM", ("@capacity_inter_am", "999999")),
-            ("ABCX_MD", "@capacity_inter_md"),  ("BACX_MD", ("@capacity_inter_md", "999999")),
-            ("ABCX_PM", "@capacity_inter_pm"),  ("BACX_PM", ("@capacity_inter_pm", "999999")),
-            ("ABCX_EV", "@capacity_inter_ev"),  ("BACX_EV", ("@capacity_inter_ev", "999999")),
-            ("ABTM_EA", "@time_link_ea"),       ("BATM_EA", ("@time_link_ea", "999")),
-            ("ABTM_AM", "@time_link_am"),       ("BATM_AM", ("@time_link_am", "999")),
-            ("ABTM_MD", "@time_link_md"),       ("BATM_MD", ("@time_link_md", "999")),
-            ("ABTM_PM", "@time_link_pm"),       ("BATM_PM", ("@time_link_pm", "999")),
-            ("ABTM_EV", "@time_link_ev"),       ("BATM_EV", ("@time_link_ev", "999")),
-            ("ABTX_EA", "@time_inter_ea"),      ("BATX_EA", ("@time_inter_ea", "0")),
-            ("ABTX_AM", "@time_inter_am"),      ("BATX_AM", ("@time_inter_am", "0")),
-            ("ABTX_MD", "@time_inter_md"),      ("BATX_MD", ("@time_inter_md", "0")),
-            ("ABTX_PM", "@time_inter_pm"),      ("BATX_PM", ("@time_inter_pm", "0")),
-            ("ABTX_EV", "@time_inter_ev"),      ("BATX_EV", ("@time_inter_ev", "0")),
-            ("ABLN_EA", "@lane_ea"),            ("BALN_EA", ("@lane_ea", "0")),
-            ("ABLN_AM", "@lane_am"),            ("BALN_AM", ("@lane_am", "0")),
-            ("ABLN_MD", "@lane_md"),            ("BALN_MD", ("@lane_md", "0")),
-            ("ABLN_PM", "@lane_pm"),            ("BALN_PM", ("@lane_pm", "0")),
-            ("ABLN_EV", "@lane_ev"),            ("BALN_EV", ("@lane_ev", "0")),
-            ("ABSTM_EA", "@auto_time_ea"),      ("BASTM_EA", ("@auto_time_ea", "")),
-            ("ABSTM_AM", "@auto_time_am"),      ("BASTM_AM", ("@auto_time_am", "")),
-            ("ABSTM_MD", "@auto_time_md"),      ("BASTM_MD", ("@auto_time_md", "")),
-            ("ABSTM_PM", "@auto_time_pm"),      ("BASTM_PM", ("@auto_time_pm", "")),
-            ("ABSTM_EV", "@auto_time_ev"),      ("BASTM_EV", ("@auto_time_ev", "")),
-            ("ABHTM_EA", "@auto_time_ea"),      ("BAHTM_EA", ("@auto_time_ea", "")),
-            ("ABHTM_AM", "@auto_time_am"),      ("BAHTM_AM", ("@auto_time_am", "")),
-            ("ABHTM_MD", "@auto_time_md"),      ("BAHTM_MD", ("@auto_time_md", "")),
-            ("ABHTM_PM", "@auto_time_pm"),      ("BAHTM_PM", ("@auto_time_pm", "")),
-            ("ABHTM_EV", "@auto_time_ev"),      ("BAHTM_EV", ("@auto_time_ev", "")),
-            ("ABPRELOAD_EA", "@volad_ea"),      ("BAPRELOAD_EA", ("@volad_ea", "")),
-            ("ABPRELOAD_AM", "@volad_am"),      ("BAPRELOAD_AM", ("@volad_am", "")),
-            ("ABPRELOAD_MD", "@volad_md"),      ("BAPRELOAD_MD", ("@volad_md", "")),
-            ("ABPRELOAD_PM", "@volad_pm"),      ("BAPRELOAD_PM", ("@volad_pm", "")),
-            ("ABPRELOAD_EV", "@volad_ev"),      ("BAPRELOAD_EV", ("@volad_ev", ""))
+            ("FXNM", "#name_from"), 
+            ("TXNM", "#name_to"),
+            ("AN", "i"), 
+            ("BN", "j"),
+            ("COJUR", "zero"), 
+            ("COSTAT", "zero"), 
+            ("COLOC", "zero"),
+            ("RLOOP", "zero"), 
+            ("ADTLK", "zero"), 
+            ("ADTVL", "zero"),
+            ("PKPCT", "zero"),
+            ("TRPCT", "zero"),
+            ("SECNO", "zero"),
+            ("DIR:1", "zero"),
+            ("FFC", "type"),
+            ("CLASS", "zero"),
+            ("ASPD", "@speed_adjusted"), 
+            ("IYR", "@year_open_traffic"),
+            ("IPROJ", "@project_code"), 
+            ("IJUR", "@jurisdiction_type"),
+            ("IFC", "type"), 
+            ("IHOV", "@lane_restriction"),
+            ("ITRUCK", "@truck_restriction"), 
+            ("ISPD", "@speed_posted"),
+            ("ITSPD", "zero"),
+            ("IWAY", "iway"), 
+            ("IMED", "@median"),
+            ("COST", "@cost_operating"),
+            ("ITOLLO", "@toll_md"),
+            ("ITOLLA", "@toll_am"),
+            ("ITOLLP", "@toll_pm"),
         ]
+        directional_attrs = [
+            ("ABLNO", "@lane_md", "0"),
+            ("ABLNA", "@lane_am", "0"),
+            ("ABLNP", "@lane_pm", "0"),
+            ("ABAU", "@lane_auxiliary", "0"),
+            ("ABPCT", "zero", "0"),
+            ("ABPHF", "zero", "0"),
+            ("ABCNT", "@traffic_control", "0"),
+            ("ABTL", "@turn_thru", "0"),
+            ("ABRL", "@turn_right", "0"),
+            ("ABLL", "@turn_left", "0"),
+            ("ABTLB", "zero", "0"),
+            ("ABRLB", "zero", "0"),
+            ("ABLLB", "zero", "0"),
+            ("ABGC", "@green_to_cycle_init", "0"),
+            ("ABPLC", "per_lane_capacity", "1900"),
+            ("ABCPO", "@capacity_link_md", "999999"),
+            ("ABCPA", "@capacity_link_am", "999999"),
+            ("ABCPP", "@capacity_link_pm", "999999"),
+            ("ABCXO", "@capacity_inter_md", "999999"),
+            ("ABCXA", "@capacity_inter_am", "999999"),
+            ("ABCXP", "@capacity_inter_pm", "999999"),
+            ("ABCHO", "@capacity_hourly_op", "0"),
+            ("ABCHA", "@capacity_hourly_am", "0"),
+            ("ABCHP", "@capacity_hourly_pm", "0"),
+            ("ABTMO", "@time_link_md", "999"),
+            ("ABTMA", "@time_link_am", "999"),
+            ("ABTMP", "@time_link_pm", "999"),
+            ("ABTXO", "@time_inter_md", "0"),
+            ("ABTXA", "@time_inter_am", "0"),
+            ("ABTXP", "@time_inter_pm", "0"),
+            ("ABCST", "zero", "999.999"),
+            ("ABVLA", "zero", "0"),
+            ("ABVLP", "zero", "0"),
+            ("ABLOS", "zero", "0"),
+        ]
+        for key, name, default in directional_attrs:
+            hwylink_attrs.append((key, name))
+        for key, name, default in directional_attrs:
+            hwylink_attrs.append(("BA" + key[2:], (name, default)))
+        hwylink_attrs.append(("relifac", "relifac"))
+        
+        time_period_atts = [
+            ("ITOLL2",    "@toll"),
+            ("ITOLL3",    "@cost_auto"),
+            ("ITOLL4",    "@cost_med_truck"),
+            ("ITOLL5",    "@cost_hvy_truck"),
+            ("ITOLL",     "toll_hov"),
+            ("ABCP",      "@capacity_link", "999999"),
+            ("ABCX",      "@capacity_inter", "999999"),
+            ("ABTM",      "@time_link", "999"),
+            ("ABTX",      "@time_inter", "0"),
+            ("ABLN",      "@lane", "0"),
+            ("ABSCST",    "sov_total_gencost", ""),
+            ("ABH2CST",   "hov_total_gencost", ""),
+            ("ABH3CST",   "hov_total_gencost", ""),
+            ("ABSTM",     "auto_time", ""),
+            ("ABHTM",     "auto_time", ""),
+        ]
+        periods = ["_ea", "_am", "_md", "_pm", "_ev"]
+        for column in time_period_atts:
+            for period in periods:
+                key = column[0] + period.upper()
+                name = column[1] + period
+                hwylink_attrs.append((key, name))
+            if key.startswith("AB"):
+                for period in periods:
+                    key = column[0] + period.upper()
+                    name = column[1] + period
+                    default = column[2]
+                    hwylink_attrs.append(("BA" + key[2:], (name, default)))
+        for period in periods:
+            key = "ABPRELOAD" + period.upper()
+            name = "additional_volume" + period
+            default = "0"
+            hwylink_attrs.append((key, name))
+            hwylink_attrs.append(("BA" + key[2:], (name, default)))
+            
+        vdf_attrs = [
+            ("AB_GCRatio", "@green_to_cycle", ""),
+            ("AB_Cycle", "@cycle", ""),
+            ("AB_PF", "progression_factor", ""),
+            ("ALPHA1", "alpha1", "0.8"),
+            ("BETA1", "beta1", "4"),
+            ("ALPHA2", "alpha2", "4.5"),
+            ("BETA2", "beta2", "2"),
+        ]
+        for key, name, default in vdf_attrs:
+            name = name + "_am" if name.startswith("@") else name
+            hwylink_attrs.append((key, name))
+            if key.startswith("AB"):
+                hwylink_attrs.append(("BA" + key[2:], (name, default)))
+        for period in periods:
+            for key, name, default in vdf_attrs:
+                name = name + period if name.startswith("@") else name
+                default = default or "0"
+                hwylink_attrs.append((key + period.upper(), name))
+                if key.startswith("AB"):
+                    hwylink_attrs.append(("BA" + key[2:] + period.upper(), (name, default)))
+
+        network = base_scenario.get_partial_network(["LINK"], include_attributes=True)
 
         #copy assignment from period scenarios
-        network = base_scenario.get_partial_network(["LINK"], include_attributes=True)
-        network.create_attribute("LINK", "zero", 0)
-
         for period, scenario_id in period_scenario_id.iteritems():
             from_scenario = traffic_emmebank.scenario(scenario_id)
             src_attrs = ["@auto_time", "additional_volume"]
-            dst_attrs = ["@auto_time_" + period.lower(), "@volad_" + period.lower()]
+            dst_attrs = ["auto_time_" + period.lower(), 
+                         "additional_volume_" + period.lower()]
             for dst_attr in dst_attrs:
                 network.create_attribute("LINK", dst_attr)
             values = from_scenario.get_attribute_values("LINK", src_attrs)
             network.set_attribute_values("LINK", dst_attrs, values)
+        # add in and calculate additional columns
+        new_attrs = [
+            ("zero", 0), ("is_one_way", 0), ("iway", 2), ("length_feet", 0), 
+            ("toll_hov", 0), ("per_lane_capacity", 1900),
+            ("progression_factor", 1.0), ("alpha1", 0.8), ("beta1", 4.0), 
+            ("alpha2", 4.5), ("beta2", 2.0), ("relifac", 1.0),
+        ]
+        for name, default in new_attrs:
+            network.create_attribute("LINK", name, default)
+        for period in periods:
+            network.create_attribute("LINK", "toll_hov" + period, 0)
+            network.create_attribute("LINK", "sov_total_gencost" + period, 0)
+            network.create_attribute("LINK", "hov_total_gencost" + period, 0)
+        for link in network.links():
+            link.is_one_way = 1 if link.reverse_link else 0
+            link.iway = 2 if link.reverse_link else 1
+            link.length_feet = link.length * 5280
+            for period in periods:
+                link["toll_hov"  + period] = link["@cost_hov" + period] - link["@cost_operating"]
+                link["sov_total_gencost" + period] = link["auto_time" + period] + link["@cost_auto" + period]
+                link["hov_total_gencost" + period] = link["auto_time" + period] + link["@cost_hov" + period]
+            if link.volume_delay_func == 24:
+                link.alpha2 = 6.0
+            link.per_lane_capacity = max([(link["@capacity_link" + p] / link["@lane" + p]) 
+                                          for p in periods if link["@lane" + p] > 0] + [0])
 
         hwylink_atts_file = os.path.join(export_path, "hwy_tcad.csv")
-        self.export_traffic_to_csv(hwylink_atts_file, hwylink_atts, network)
+        self.export_traffic_to_csv(hwylink_atts_file, hwylink_attrs, network)
 
     @_m.logbook_trace("Export traffic load data by period")
     def export_traffic_load_by_period(self, export_path, traffic_emmebank, period_scenario_id):
@@ -245,7 +345,7 @@ Export network results to csv files for SQL data loader."""
             "inro.emme.data.extra_attribute.create_extra_attribute")
         net_calculator = _m.Modeller().tool(
             "inro.emme.network_calculation.network_calculator")
-        hwyload_atts = [("ID1", "@tcov_id")]
+        hwyload_attrs = [("ID1", "@tcov_id")]
         dir_atts = [
             ("AB_Flow_PCE", "@pce_flow"),   # sum of pce flow
             ("AB_Time", "@auto_time"),      # computed vdf based on pce flow
@@ -273,8 +373,8 @@ Export network results to csv files for SQL data loader."""
             ("AB_Flow", "@non_pce_flow"),
         ]
         for key, attr in dir_atts:
-            hwyload_atts.append((key, attr))
-            hwyload_atts.append((key.replace("AB_", "BA_"), (attr, "")))  # default for BA on one-way links is blank
+            hwyload_attrs.append((key, attr))
+            hwyload_attrs.append((key.replace("AB_", "BA_"), (attr, "")))  # default for BA on one-way links is blank
         for p, scen_id in period_scenario_id.iteritems():
             scenario = traffic_emmebank.scenario(scen_id)
             new_atts = [("@msa_flow", "MSA flow", "@auto_volume"), #updated with vdf on msa flow
@@ -307,8 +407,8 @@ Export network results to csv files for SQL data loader."""
                         }
                 net_calculator(cal_spec, scenario=scenario)
             file_path = os.path.join(export_path, "hwyload_%s.csv" % p)
-            network = self.get_partial_network(scenario, {"LINK": [a[1] for a in dir_atts]})
-            self.export_traffic_to_csv(file_path, hwyload_atts, network)
+            network = self.get_partial_network(scenario, {"LINK": ["@tcov_id"] + [a[1] for a in dir_atts]})
+            self.export_traffic_to_csv(file_path, hwyload_attrs, network)
 
     def export_traffic_to_csv(self, filename, att_list, network):
         auto_mode = network.mode("d")
@@ -330,13 +430,11 @@ Export network results to csv files for SQL data loader."""
                         values.append(link.i_node.id)
                     elif key == "BN":
                         values.append(link.j_node.id)
-                    elif key == "IWAY":
-                        values.append("2" if reverse_link else "1")
                     elif key.startswith("BA"):
                         name, default = att
                         values.append(format(reverse_link[name]) if reverse_link else default)
                     elif att.startswith("#"):
-                        values.append(link[att])
+                        values.append('"%s"' % link[att])
                     else:
                         values.append(format(link[att]))
                 fout.write(",".join(values))
