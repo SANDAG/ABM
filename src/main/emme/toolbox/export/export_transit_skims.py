@@ -42,10 +42,7 @@ class ExportSkims(_m.Tool(), gen_utils.Snapshot):
         pb.branding_text = "- SANDAG - Export"
         if self.tool_run_msg != "":
             pb.tool_run_status(self.tool_run_msg_status)
-
-        pb.add_select_file('omx_file', 'save_file',
-                           title='Select OMX file')
-
+        pb.add_select_file('omx_file', 'save_file', title='Select OMX file')
         return pb.render()
 
     def run(self):
@@ -60,50 +57,12 @@ class ExportSkims(_m.Tool(), gen_utils.Snapshot):
                 error, _traceback.format_exc(error))
             raise
 
-
     @_m.logbook_trace("Export transit skims to OMX", save_arguments=True)
     def __call__(self, omx_file, scenario):
         attributes = {"omx_file": omx_file}
         gen_utils.log_snapshot("Export transit skims to OMX", str(self), attributes)
-        matrices = []
-        for period in ["EA", "AM", "MD", "PM", "EV"]:
-            for name in self._skim_names():
-                matrices.append(period + "_" + name)
+        init_matrices = _m.Modeller().tool("sandag.initialize.initialize_matrices")
+        matrices = init_matrices.get_matrix_names(
+            "transit_skims", ["EA", "AM", "MD", "PM", "EV"])
         with gen_utils.ExportOMX(omx_file, scenario, omx_key="NAME") as exporter:
             exporter.write_matrices(matrices)
-
-    def _skim_names(self):
-        matrices = [
-            "BUS_GENCOST",
-            "BUS_TOTALWAIT",
-            "BUS_TOTALWALK",
-            "BUS_TOTALIVTT",
-            "BUS_DWELLTIME",
-            "BUS_FIRSTWAIT",
-            "BUS_XFERWAIT",
-            "BUS_FARE",
-            "BUS_XFERS",
-            "BUS_ACCWALK",
-            "BUS_XFERWALK",
-            "BUS_EGRWALK",
-            "ALL_GENCOST",
-            "ALL_TOTALWAIT",
-            "ALL_TOTALWALK",
-            "ALL_TOTALIVTT",
-            "ALL_FIRSTWAIT",
-            "ALL_XFERWAIT",
-            "ALL_FARE",
-            "ALL_XFERS",
-            "ALL_ACCWALK",
-            "ALL_XFERWALK",
-            "ALL_EGRWALK",
-            "ALL_DWELLTIME",
-            "ALL_BUSIVTT",
-            "ALL_LRTIVTT",
-            "ALL_CMRIVTT",
-            "ALL_EXPIVTT",
-            "ALL_LTDEXPIVTT",
-            "ALL_BRTREDIVTT",
-            "ALL_BRTYELIVTT",
-        ]
-        return matrices
