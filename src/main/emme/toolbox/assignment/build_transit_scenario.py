@@ -12,6 +12,7 @@
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
 
+
 TOOLBOX_ORDER = 21
 
 
@@ -62,7 +63,9 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
     def page(self):
         pb = _m.ToolPageBuilder(self)
         pb.title = "Build transit network"
-        pb.description = """Builds the transit network for the specified period based on existing base (traffic + transit) scenario."""
+        pb.description = """
+            Builds the transit network for the specified period based 
+            on existing base (traffic + transit) scenario."""
         pb.branding_text = "- SANDAG - "
         if self.tool_run_msg != "":
             pb.tool_run_status(self.tool_run_msg_status)
@@ -135,34 +138,9 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             if timed_xfers_table:
                 timed_transfers_with_walk = list(gen_utils.DataTableProc(timed_xfers_table))
 
-            perception_parameters = {
-                "EA": {
-                    "vot": 0.05, "init_wait": 1.6, "xfer_wait": 2.5, "walk": 1.6, 
-                    "headway": "@headway_rev_op", "fare": "@fare_per_op", "in_vehicle": "@vehicle_per_op",
-                    "fixed_link_time": "@trtime_link_ea"
-                },
-                "AM": {
-                    "vot": 0.10, "init_wait": 1.5, "xfer_wait": 3.0, "walk": 1.8, 
-                    "headway": "@headway_rev_am", "fare": "@fare_per_pk", "in_vehicle": "@vehicle_per_pk",
-                    "fixed_link_time": "@trtime_link_am"
-                },
-                "MD": {
-                    "vot": 0.05, "init_wait": 1.6, "xfer_wait": 2.5, "walk": 1.6, 
-                    "headway": "@headway_rev_op", "fare": "@fare_per_op", "in_vehicle": "@vehicle_per_op",
-                    "fixed_link_time": "@trtime_link_md"
-                },
-                "PM": {
-                    "vot": 0.10, "init_wait": 1.5, "xfer_wait": 3.0, "walk": 1.8, 
-                    "headway": "@headway_rev_pm", "fare": "@fare_per_pk", "in_vehicle": "@vehicle_per_pk",
-                    "fixed_link_time": "@trtime_link_pm"
-                },
-                "EV": {
-                    "vot": 0.05, "init_wait": 1.6, "xfer_wait": 2.5, "walk": 1.6, 
-                    "headway": "@headway_rev_op", "fare": "@fare_per_op", "in_vehicle": "@vehicle_per_op",
-                    "fixed_link_time": "@trtime_link_ev"
-                },
-            }        
-            params = perception_parameters[period]
+            transit_assginment = modeller.tool(
+                "sandag.assignment.transit_assignment")
+            params = transit_assginment.get_perception_parameters(period)
             
             if transit_emmebank.scenario(scenario_id):
                 if overwrite:
@@ -188,7 +166,10 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("TRANSIT_LINE", "@xfer_regional_pass", "0-fare for regional pass"),  
                 ("TRANSIT_SEGMENT", "@headway_seg", "Headway adj for special xfers"), 
                 ("TRANSIT_SEGMENT", "@transfer_penalty_s", "Xfer pen adj for special xfers"),
-                ("TRANSIT_SEGMENT", "@layover_board", "Boarding cost adj for special xfers")]
+                ("TRANSIT_SEGMENT", "@layover_board", "Boarding cost adj for special xfers"),
+                ("NODE", "@coaster_fare_node", "Coaster fare boarding costs at nodes"),
+                ("NODE", "@network_adj", "Model: 1=TAP adj, 2=circle, 3=timedxfer")
+            ]
             for elem, name, desc in new_attrs:
                 attr = scenario.create_extra_attribute(elem, name)
                 attr.description = desc
@@ -219,7 +200,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                     line["@xfer_from_bus"] = 0.25
                 if line["@fare"] > 0.0:
                     line["@xfer_from_premium"] = 1.0
-                    line["@xfer_from_coaster"] = 0.75
+                    line["@xfer_from_coaster"] = 1.25
             for segment in network.transit_segments():
                 segment["@headway_seg"] = segment.line[params["headway"]]
                 segment["@transfer_penalty_s"] = segment.line["@transfer_penalty"]
@@ -228,7 +209,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             if timed_xfers_table:
                 self.timed_transfers(network, timed_transfers_with_walk, period)
             self.connect_circle_lines(network)
-            self.duplicate_tap_adajcent_stops(network, params["headway"])
+            self.duplicate_tap_adajcent_stops(network)
             # The fixed guideway travel times are stored in "@trtime_link_xx"
             # and copied to data2 (ul2) for the ttf 
             # The congested auto times for mixed traffic are in "timau" 
@@ -236,6 +217,18 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             values = network.get_attribute_values("LINK", [params["fixed_link_time"]])
             network.set_attribute_values("LINK", ["data2"], values)
             scenario.publish_network(network)
+
+            network_calc = _m.Modeller().tool(
+                "inro.emme.network_calculation.network_calculator")
+            network_calc_spec = {
+                "result": "@coaster_fare_node",
+                "expression": "@coaster_fare_board",
+                "selections": {"transit_line": "all", "link": "all"},
+                "aggregation": ".max.",
+                "type": "NETWORK_CALCULATION"
+            }
+            network_calc(network_calc_spec, scenario=scenario)
+            
             return scenario
 
     @_m.logbook_trace("Convert TAP nodes to centroids")
@@ -264,7 +257,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 network.delete_node(node, cascade=True)
 
     @_m.logbook_trace("Duplicate TAP access and transfer access stops")
-    def duplicate_tap_adajcent_stops(self, network, headway):
+    def duplicate_tap_adajcent_stops(self, network):
         # Expand network by duplicating TAP adjacent stops
         network.create_attribute("NODE", "tap_stop", False)
         all_transit_modes = set([network.mode(m) for m in ["b", "e", "p", "r", "y", "l", "c"]])
@@ -293,6 +286,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 if has_adjacent_transfer_links and not has_adjacent_walk_links:
                     length = link.length
                     tap_stop = network.split_link(centroid, real_stop, self._get_node_id(), include_reverse=True)
+                    tap_stop["@network_adj"] = 1
                     real_stop.tap_stop = tap_stop
                     transit_access_link = network.link(real_stop, tap_stop)
                     for link in transit_access_link, transit_access_link.reverse_link:
@@ -309,6 +303,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
         line_attributes = network.attributes("TRANSIT_LINE")
         seg_attributes = network.attributes("TRANSIT_SEGMENT")
 
+        # re-route the transit lines through the new TAP-stops
         for line in network.transit_lines():
             # store line and segment data for re-routing
             line_data = dict((k, line[k]) for k in line_attributes)
@@ -347,9 +342,8 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                     access_seg = new_line.segment(index - 2)
                     egress_seg = new_line.segment(index - 1)
                     real_seg = new_line.segment(index)
-                    for seg in access_seg, egress_seg, real_seg:
-                        seg["@headway_seg"] = new_line[headway]
-                        seg["@transfer_penalty_s"] = new_line["@transfer_penalty"]
+                    for k in seg_attributes:
+                        access_seg[k] = egress_seg[k] = real_seg[k]
                     access_seg.allow_boardings = False
                     access_seg.allow_alightings = True
                     access_seg.transit_time_func = 3
@@ -416,6 +410,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 length = link.length
                 proportion = min(0.006 / length, 0.2)    
                 new_node = network.split_link(i_node, j_node, node_id, False, proportion)
+                new_node["@network_adj"] = 3
                 in_link = network.link(i_node, new_node)
                 out_link = network.link(new_node, j_node)
                 out_link.length = length
@@ -426,6 +421,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 
             for seg in in_link.segments():
                 seg.transit_time_func = 3
+                seg["@coaster_fare_inveh"] = 0
             for seg in out_link.segments():
                 seg.allow_alightings = seg.allow_boardings = False            
                 seg.dwell_time = 0
@@ -470,6 +466,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 # Add new node, offset from existing node
                 start_node = line.segment(0).i_node
                 xfer_node = network.create_node(self._get_node_id(), False)
+                xfer_node["@network_adj"] = 2
                 xfer_node.x, xfer_node.y = offset_coords(start_node)        
                 network.create_link(start_node, xfer_node, [line.vehicle.mode])
                 network.create_link(xfer_node, start_node, [line.vehicle.mode])
