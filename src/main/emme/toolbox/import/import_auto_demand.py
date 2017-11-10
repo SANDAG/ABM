@@ -133,12 +133,11 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                             # Segment imported demand into 3 equal parts for VOT Low/Med/High
                             total_ct_ramp_trips = (1./3.)*(visitor_demand + cross_border_demand + airport_demand + person_demand + internal_external_demand)
                             
-                            # Asssign segmented demand into VOT-based demand matrices
+                            # Assign segmented demand into VOT-based demand matrices
                             vots = ["L", "M", "H"]
                             for vot in vots:
                                 matrix = emmebank.matrix("mf%s%s" % (mode,vot))
                                 matrix.set_numpy_data(total_ct_ramp_trips, self.scenario)
-                                                                                 
                             self.report([
                                 ("person_demand", person_demand), 
                                 ("internal_external_demand", internal_external_demand), 
@@ -147,7 +146,6 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                                 ("visitor_demand", visitor_demand), 
                                 ("total_ct_ramp_trips", total_ct_ramp_trips)
                             ])
-                                
         finally:
             for period in periods:
                 person[period].close()

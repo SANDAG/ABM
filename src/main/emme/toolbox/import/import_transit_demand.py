@@ -102,16 +102,8 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
             periods = ["EA", "AM", "MD", "PM", "EV"]
             for period in periods:
                 with _m.logbook_trace("Period %s" % period):
-                    modes =      [
-                        "WLKBUS","WLKEXP","WLKBRT","WLKLRT","WLKCMR",
-                        "PNRBUS","PNREXP","PNRBRT","PNRLRT","PNRCMR",
-                        "KNRBUS","KNREXP","KNRBRT","KNRLRT","KNRCMR"
-                    ]
-                    omx_modes = [
-                        "WLK_LOC","WLK_EXP","WLK_BRT","WLK_LRT","WLK_CMR",
-                        "PNR_LOC","PNR_EXP","PNR_BRT","PNR_LRT","PNR_CMR",
-                        "KNR_LOC","KNR_EXP","KNR_BRT","KNR_LRT","KNR_CMR"
-                    ]
+                    modes =     ["SET1", "SET2", "SET3"]
+                    omx_modes = ["BUS", "ALL", "ALLPEN"]
                     modes = [period + "_" + m for m in modes]
                     omx_modes = [m + "_" + period for m in omx_modes]
                     for mode, omx_mode in zip(modes, omx_modes):
@@ -121,7 +113,9 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                             airport_demand = airport[period][omx_mode].read()
                             person_demand = person[period][omx_mode].read()
                             internal_external_demand = internal_external[period][omx_mode].read()
-                            total_ct_ramp_trips = (visitor_demand + cross_border_demand + airport_demand + person_demand + internal_external_demand)
+                            total_ct_ramp_trips = (
+                                visitor_demand + cross_border_demand + airport_demand 
+                                + person_demand + internal_external_demand)
                             
                             zone_mapping = person[period].mapping(person[period].listMappings()[0]).items()
                             zone_mapping.sort(key=lambda x: x[1])

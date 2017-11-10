@@ -109,21 +109,9 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
 
             if demand_type == "TRANSIT":
                 matrices = {
-                    'WLK_LOC':  'mf"%s_WLKBUS"',
-                    'WLK_LRT':  'mf"%s_WLKLRT"',
-                    'WLK_CMR':  'mf"%s_WLKCMR"',
-                    'WLK_EXP':  'mf"%s_WLKEXP"',
-                    'WLK_BRT':  'mf"%s_WLKBRT"',
-                    'PNR_LOC':  'mf"%s_PNRBUS"',
-                    'PNR_LRT':  'mf"%s_PNRLRT"',
-                    'PNR_CMR':  'mf"%s_PNRCMR"',
-                    'PNR_EXP':  'mf"%s_PNREXP"',
-                    'PNR_BRT':  'mf"%s_PNRBRT"',
-                    'KNR_LOC':  'mf"%s_KNRBUS"',
-                    'KNR_LRT':  'mf"%s_KNRLRT"',
-                    'KNR_CMR':  'mf"%s_KNRCMR"',
-                    'KNR_EXP':  'mf"%s_KNREXP"',
-                    'KNR_BRT':  'mf"%s_KNRBRT"'}
+                    'SET1':  'mf"%s_WLKBUS"',
+                    'SET2':  'mf"%s_WLKLRT"',
+                    'SET3':  'mf"%s_WLKCMR"',}
 
             matrices = dict((k, v % period) for k, v in matrices.iteritems())
             if demand_type == "TRANSIT":
