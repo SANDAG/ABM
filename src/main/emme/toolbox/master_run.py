@@ -158,6 +158,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         export_transit_skims = modeller.tool("sandag.export.export_transit_skims")
         export_network_data = modeller.tool("sandag.export.export_data_loader_network")
         export_matrix_data = modeller.tool("sandag.export.export_data_loader_matrices")
+        export_tap_adjacent_lines = modeller.tool("sandag.export.export_tap_adjacent_lines")
 
         utils = modeller.module('sandag.utilities.demand')
         load_properties = modeller.tool('sandag.utilities.properties')
@@ -248,6 +249,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                     data_table_name=str(scenarioYear),
                     overwrite=True,
                     emmebank=main_emmebank)
+                export_tap_adjacent_lines(_join(output_dir, "tapLines.csv"))
                 # initialize per time-period scenarios
                 for number, period in period_ids:
                     title = "%s- %s assign" % (base_scenario.title, period)
@@ -303,13 +305,10 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                             src_period_scenario = main_emmebank.scenario(number)
                             timed_xfers = "%s_timed_xfer" % scenarioYear if period == "AM" else None
                             transit_assign_scen = build_transit_scen(
-                                period=period, base_scenario=src_period_scenario, transit_emmebank=transit_emmebank, 
-                                scenario_id=src_period_scenario.id, 
+                                period, src_period_scenario, transit_emmebank, src_period_scenario.id, 
                                 scenario_title="%s %s transit assign" % (base_scenario.title, period), 
                                 timed_xfers_table=timed_xfers, overwrite=True)
-                            transit_assign(
-                                period=period, scenario=transit_assign_scen,
-                                skims_only=True, num_processors=num_processors)
+                            transit_assign(period, transit_assign_scen, num_processors)
 
                         omx_file = _join(output_dir, "transit_skims.omx")   
                         export_transit_skims(omx_file, transit_scenario)
@@ -370,9 +369,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                         period=period, base_scenario=src_period_scenario, transit_emmebank=transit_emmebank, 
                         scenario_id=src_period_scenario.id, scenario_title="%s- %s transit assign" % (base_scenario.title, period), 
                         timed_xfers_table=timed_xfers, overwrite=True)
-                    transit_assign(
-                        period=period, scenario=transit_assign_scen,
-                        skims_only=False, num_processors=num_processors)
+                    transit_assign(period, transit_assign_scen, num_processors)
                 if not skipFinalTransitSkimming:
                     omx_file = _join(output_dir, "transit_skims.omx")   
                     export_transit_skims(omx_file, transit_scenario)
