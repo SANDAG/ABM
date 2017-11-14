@@ -106,29 +106,7 @@ public final class Modes
         // Not implemented in utility classes
     }
 
-    public static int getTransitModeIndex(String modeName)
-    {
-        if (modeName.equals("cr") || modeName.equals("CR"))
-            return TransitMode.COMMUTER_RAIL.ordinal();
-        if (modeName.equals("lr") || modeName.equals("LR"))
-            return TransitMode.LIGHT_RAIL.ordinal();
-        if (modeName.equals("brt") || modeName.equals("BRT")) return TransitMode.BRT.ordinal();
-        if (modeName.equals("eb") || modeName.equals("EB"))
-            return TransitMode.EXPRESS_BUS.ordinal();
-        if (modeName.equals("lb") || modeName.equals("LB")) return TransitMode.LOCAL_BUS.ordinal();
-        return -1;
-    }
-
-    public static Boolean getIsPremiumTransit(int modeIndex)
-    {
-        if (modeIndex == TransitMode.COMMUTER_RAIL.ordinal()) return TransitMode.COMMUTER_RAIL.premium;
-        else if (modeIndex == TransitMode.LIGHT_RAIL.ordinal()) return TransitMode.LIGHT_RAIL.premium;
-        else if (modeIndex == TransitMode.BRT.ordinal()) return TransitMode.BRT.premium;
-        else if (modeIndex == TransitMode.EXPRESS_BUS.ordinal()) return TransitMode.EXPRESS_BUS.premium;
-        else if (modeIndex == TransitMode.LOCAL_BUS.ordinal()) return TransitMode.LOCAL_BUS.premium;
-        else return null;
-    }
-
+  
     public static void main(String[] args)
     {
         System.out.println(AutoMode.DRIVE_ALONE_NONTOLL.toString());

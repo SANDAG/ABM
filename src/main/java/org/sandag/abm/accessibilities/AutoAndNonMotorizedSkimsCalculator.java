@@ -7,9 +7,9 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.CtrampApplication;
+import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
-import org.sandag.abm.modechoice.TransitWalkAccessUEC;
 
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
@@ -28,13 +28,13 @@ public class AutoAndNonMotorizedSkimsCalculator
 
     private transient Logger              logger                 = Logger.getLogger(AutoAndNonMotorizedSkimsCalculator.class);
 
-    private static final int              EA                     = TransitWalkAccessUEC.EA;
-    private static final int              AM                     = TransitWalkAccessUEC.AM;
-    private static final int              MD                     = TransitWalkAccessUEC.MD;
-    private static final int              PM                     = TransitWalkAccessUEC.PM;
-    private static final int              EV                     = TransitWalkAccessUEC.EV;
-    private static final String[]         PERIODS                = TransitWalkAccessUEC.PERIODS;
-    private static final int              NUM_PERIODS            = TransitWalkAccessUEC.PERIODS.length;
+    private static final int              EA                            = ModelStructure.EA_SKIM_PERIOD_INDEX;
+    private static final int              AM                            = ModelStructure.AM_SKIM_PERIOD_INDEX;
+    private static final int              MD                            = ModelStructure.MD_SKIM_PERIOD_INDEX;
+    private static final int              PM                            = ModelStructure.PM_SKIM_PERIOD_INDEX;
+    private static final int              EV                            = ModelStructure.EV_SKIM_PERIOD_INDEX;
+    public static final int              NUM_PERIODS                   = ModelStructure.SKIM_PERIOD_INDICES.length;
+    private static final String[]         PERIODS                = ModelStructure.SKIM_PERIOD_STRINGS;
 
     // set the indices used for the non-motorized names array and the return
     // skims

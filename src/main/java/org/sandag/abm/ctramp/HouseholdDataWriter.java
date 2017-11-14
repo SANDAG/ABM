@@ -58,6 +58,8 @@ public class HouseholdDataWriter
 
     private boolean                     saveUtilsProbsFlag              = false;
     private boolean                     writeLogsums                    = false;
+    private int                 setNA                           = -1;
+
 
     private HashMap<String, String>     rbMap;
 
@@ -852,6 +854,7 @@ public class HouseholdDataWriter
         data.add("trip_mode");
         data.add("trip_board_tap");
         data.add("trip_alight_tap");
+        data.add("set");
         data.add("tour_mode");
         data.add("driver_pnum");
         data.add("orig_escort_stoptype");
@@ -884,6 +887,7 @@ public class HouseholdDataWriter
         data.add("num_participants");
         data.add("trip_board_tap");
         data.add("trip_alight_tap");
+        data.add("set");        
         data.add("tour_mode");
         data.add("valueOfTime");
 
@@ -918,6 +922,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.REAL);
 
         if(writeLogsums)
@@ -936,6 +941,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.TEXT);
         data.add(SqliteDataTypes.TEXT);
         data.add(SqliteDataTypes.TEXT);
+        data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
@@ -1030,7 +1036,17 @@ public class HouseholdDataWriter
         data.add(string(s.getMode()));
         data.add(string(s.getBoardTap()));
         data.add(string(s.getAlightTap()));
+        int set = setNA;
+        if(modelStructure.getTripModeIsTransit(s.getMode())) {
+        	set = s.getSet();
+        }
+        data.add(string(set));
         data.add(string(t.getTourModeChoice()));
+        data.add(string(s.isInboundStop() ? t.getDriverPnumInbound() : t.getDriverPnumOutbound()));
+        data.add(string(s.getEscortStopTypeOrig()));
+        data.add(string(s.getEscorteePnumOrig()));
+        data.add(string(s.getEscortStopTypeDest()));
+        data.add(string(s.getEscorteePnumDest()));
         data.add(string(t.getValueOfTime()));
         
         if(writeLogsums)
@@ -1049,11 +1065,6 @@ public class HouseholdDataWriter
         data.add(string(s.getStopId()));
         data.add(string(s.isInboundStop() ? 1 : 0));
         data.add(string(t.getTourPurpose()));
-        data.add(string(s.isInboundStop() ? t.getDriverPnumInbound() : t.getDriverPnumOutbound()));
-        data.add(string(s.getEscortStopTypeOrig()));
-        data.add(string(s.getEscorteePnumOrig()));
-        data.add(string(s.getEscortStopTypeDest()));
-        data.add(string(s.getEscorteePnumDest()));
 
         if (s.getStopId() == 0)
         {
@@ -1127,6 +1138,11 @@ public class HouseholdDataWriter
         data.add(string(participants.length));
         data.add(string(s.getBoardTap()));
         data.add(string(s.getAlightTap()));
+        int set = setNA;
+        if(modelStructure.getTripModeIsTransit(s.getMode())) {
+        	set = s.getSet();
+        }
+        data.add(string(set));
         data.add(string(t.getTourModeChoice()));
         data.add(string(t.getValueOfTime()));
         

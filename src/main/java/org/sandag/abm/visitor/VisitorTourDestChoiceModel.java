@@ -190,8 +190,7 @@ public class VisitorTourDestChoiceModel
         sampleSizeTerms = new double[destModel.length][sampleRate + 1];
         sampleLogsums = new double[sampleRate + 1];
 
-        tourModeChoiceModel = new VisitorTourModeChoiceModel(rbMap, modelStructure, dmuFactory,
-                logsumsCalculator);
+        tourModeChoiceModel = new VisitorTourModeChoiceModel(rbMap, modelStructure, dmuFactory);
 
     }
 

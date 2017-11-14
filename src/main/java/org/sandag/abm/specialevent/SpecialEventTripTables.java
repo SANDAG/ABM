@@ -74,7 +74,7 @@ public class SpecialEventTripTables {
         // Time period limits
         numberOfPeriods = modelStructure.getNumberModelPeriods();
         
-        numSkimSets = Integer.getInteger(rbMap.get("utility.bestTransitPath.skim.sets"));
+        numSkimSets = Util.getIntegerValueFromPropertyMap(rbMap,"utility.bestTransitPath.skim.sets");
 
         // number of modes
         modeIndex = new int[modelStructure.MAXIMUM_TOUR_MODE_ALT_INDEX + 1];
@@ -174,7 +174,7 @@ public class SpecialEventTripTables {
 						modeName = modelStructure.getModeName(k+1+autoModes+nmotModes);
 						String setName = String.valueOf(l+1);
 						matrix[i][(k*numSkimSets)+l] = new Matrix(modeName+"_set"+setName+"_"+periodName,"",taps,taps);
-              			matrix[i][k].setExternalNumbers(tapIndex);
+              			matrix[i][(k*numSkimSets)+l].setExternalNumbers(tapIndex);
 					}
             	}
             } else
@@ -272,16 +272,12 @@ public class SpecialEventTripTables {
             //if (i <= 5 || i % 1000 == 0) logger.info("Reading record " + i);
 
             int departTime = (int) tripData.getValueAt(i, "period");
-            logger.info("departTime= " + timePeriod);
             int period = modelStructure.getModelPeriodIndex(departTime);
-            logger.info("timePeriod= " + timePeriod);
             if (period != timePeriod) continue;
 
             int originMGRA = (int) tripData.getValueAt(i, "originMGRA");
             int destinationMGRA = (int) tripData.getValueAt(i, "destinationMGRA");
             int tripMode = (int) tripData.getValueAt(i, "tripMode");
-            logger.info("originMGRA= " + originMGRA);
-            logger.info("tripMode="+tripMode);
             
 
             // save taxi trips as shared-2
@@ -292,8 +288,7 @@ public class SpecialEventTripTables {
             int originTAZ = mgraManager.getTaz(originMGRA);
             int destinationTAZ = mgraManager.getTaz(destinationMGRA);
             boolean inbound = tripData.getBooleanValueAt(i, "inbound");
-            logger.info("oTAZ="+originTAZ+" dTAZ="+destinationTAZ);
-
+          
             // transit trip - get boarding and alighting tap
             int boardTap = 0;
             int alightTap = 0;
@@ -305,10 +300,8 @@ public class SpecialEventTripTables {
                 boardTap = (int) tripData.getValueAt(i, "boardingTAP");
                 alightTap = (int) tripData.getValueAt(i, "alightingTAP");
                 set = (int) tripData.getValueAt(originTAZ, "set");
-                logger.info("boardTap="+boardTap+", alightTap="+alightTap+", set="+set);
             }
 
-            logger.info("sampleRate="+sampleRate);
             // all person trips are 1 per party (for now)
             float personTrips = 1.0f / sampleRate;
 
@@ -318,9 +311,6 @@ public class SpecialEventTripTables {
             // Store in matrix
             int mode = modeIndex[tripMode];
             int mat = matrixIndex[tripMode];
-            
-            logger.info("mode="+mode);
-            logger.info("mat="+mat);
             
             if (mode == 0)
             {
@@ -345,7 +335,7 @@ public class SpecialEventTripTables {
                 {
 
                     // add the vehicle trip portion to the trip table
-                    if (inbound)
+                    if (!inbound)
                     { // from origin to lot (boarding tap)
                         int PNRTAZ = tapManager.getTazForTap(boardTap);
                         value = matrix[0][0].getValueAt(originTAZ, PNRTAZ);
@@ -438,21 +428,8 @@ public class SpecialEventTripTables {
     {
 
         String className = MatrixDataServer.MATRIX_DATA_SERVER_NAME;
-
         MatrixDataServerRmi matrixServer = new MatrixDataServerRmi(serverAddress, serverPort,
                 MatrixDataServer.MATRIX_DATA_SERVER_NAME);
-
-        try
-        {
-            // create the concrete data server object
-            matrixServer.start32BitMatrixIoServer(mt);
-        } catch (RuntimeException e)
-        {
-            matrixServer.stop32BitMatrixIoServer();
-            logger.error(
-                    "RuntimeException caught making remote method call to start 32 bit mitrix in remote MatrixDataServer.",
-                    e);
-        }
 
         // bind this concrete object with the cajo library objects for managing
         // RMI
@@ -464,7 +441,6 @@ public class SpecialEventTripTables {
             logger.error(String.format(
                     "UnknownHostException. serverAddress = %s, serverPort = %d -- exiting.",
                     serverAddress, serverPort), e);
-            matrixServer.stop32BitMatrixIoServer();
             throw new RuntimeException();
         }
 
@@ -476,13 +452,13 @@ public class SpecialEventTripTables {
             logger.error(String.format(
                     "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",
                     serverAddress, serverPort), e);
-            matrixServer.stop32BitMatrixIoServer();
             throw new RuntimeException();
         }
 
         return matrixServer;
 
     }
+
 
     /**
      * @param args
@@ -569,7 +545,6 @@ public class SpecialEventTripTables {
                     tripTables.ms = new MatrixDataServerRmi(matrixServerAddress, serverPort,
                             MatrixDataServer.MATRIX_DATA_SERVER_NAME);
                     tripTables.ms.testRemote("SpecialEventTripTables");
-                    tripTables.ms.start32BitMatrixIoServer(mt, "SpecialEventTripTables");
 
                     // mdm = MatrixDataManager.getInstance();
                     // mdm.setMatrixDataServerObject(ms);
@@ -580,30 +555,15 @@ public class SpecialEventTripTables {
         } catch (Exception e)
         {
 
-            if (matrixServerAddress.equalsIgnoreCase("localhost"))
-            {
-                matrixServer.stop32BitMatrixIoServer();
-            }
             logger.error(
                     String.format("exception caught running ctramp model components -- exiting."),
                     e);
             throw new RuntimeException();
 
         }
-
+        
         tripTables.createTripTables(mt);
 
-        // if a separate process for running matrix data mnager was started,
-        // we're
-        // done with it, so close it.
-        if (matrixServerAddress.equalsIgnoreCase("localhost"))
-        {
-            matrixServer.stop32BitMatrixIoServer();
-        } else
-        {
-            if (!matrixServerAddress.equalsIgnoreCase("none"))
-                tripTables.ms.stop32BitMatrixIoServer("SpecialEventTripTables");
-        }
     }
 
     /**

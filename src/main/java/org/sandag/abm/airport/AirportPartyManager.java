@@ -342,8 +342,8 @@ public class AirportPartyManager
                     + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
                     + parties[i].getDestinationMGRA() + "," + parties[i].getMode() + ","
                     + parties[i].getArrivalMode() + "," + parties[i].getBoardTap() + "," + 
-                    + parties[i].getAlightTap() + "," + parties[i].getSet() 
-                    + String.format("%9.2f", parties[i].getValueOfTime()) + "\n");
+                    + parties[i].getAlightTap() + "," + parties[i].getSet() + "," + 
+                    String.format("%9.2f", parties[i].getValueOfTime()) + "\n");
             writer.print(record);
         }
         writer.close();

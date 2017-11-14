@@ -212,7 +212,7 @@ public class AirportModeChoiceModel
  
             c_ivt = shared3Model.getUEC().lookupVariableIndex("c_ivt");
             c_cost = shared3Model.getUEC().lookupVariableIndex("c_cost");
- }
+        }
         
         logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, origMgra, destMgra, period, party.getDebugChoiceModels());
         walkTransitLogsum = mcDmuObject.getTransitLogSum(McLogsumsCalculator.WTW);
@@ -270,7 +270,7 @@ public class AirportModeChoiceModel
             } else if (occupancy > 2)
             {
                 int choice = shared3Model.getChoiceResult(randomNumber);
-                tripMode = choice + 3 + 2;
+                tripMode = choice + 2 + 2;
                 
                 //following gets vot from UEC
                 UtilityExpressionCalculator uec = shared3Model.getUEC();
@@ -282,7 +282,7 @@ public class AirportModeChoiceModel
         {
             int choice = transitModel.getChoiceResult(randomNumber);
             double[][] bestTapPairs;
-            if (choice <= 1){
+            if (choice == 1){
             	tripMode = 9; //walk-transit
             	bestTapPairs = logsumHelper.getBestWtwTripTaps();
             }

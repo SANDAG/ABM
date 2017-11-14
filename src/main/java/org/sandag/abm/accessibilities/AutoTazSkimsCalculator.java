@@ -3,10 +3,12 @@ package org.sandag.abm.accessibilities;
 import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
+
 import org.sandag.abm.ctramp.CtrampApplication;
+import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.TazDataManager;
-import org.sandag.abm.modechoice.TransitWalkAccessUEC;
+
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.newmodel.UtilityExpressionCalculator;
@@ -22,12 +24,12 @@ public class AutoTazSkimsCalculator
         implements Serializable
 {
 
-	public static final int              EA          = TransitWalkAccessUEC.EA;
-    public static final int              AM          = TransitWalkAccessUEC.AM;
-    public static final int              MD          = TransitWalkAccessUEC.MD;
-    public static final int              PM          = TransitWalkAccessUEC.PM;
-    public static final int              EV          = TransitWalkAccessUEC.EV;
-    public static final int              NUM_PERIODS = TransitWalkAccessUEC.PERIODS.length;
+    private static final int              EA                            = ModelStructure.EA_SKIM_PERIOD_INDEX;
+    private static final int              AM                            = ModelStructure.AM_SKIM_PERIOD_INDEX;
+    private static final int              MD                            = ModelStructure.MD_SKIM_PERIOD_INDEX;
+    private static final int              PM                            = ModelStructure.PM_SKIM_PERIOD_INDEX;
+    private static final int              EV                            = ModelStructure.EV_SKIM_PERIOD_INDEX;
+     public static final int              NUM_PERIODS                   = ModelStructure.SKIM_PERIOD_INDICES.length;
 
     // declare an array of UEC objects, 1 for each time period
     private UtilityExpressionCalculator[] autoDistOD_UECs;

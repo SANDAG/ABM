@@ -303,7 +303,7 @@ public class CrossBorderTourManager
                 + trip.isOriginIsTourDestination() + "," + trip.isDestinationIsTourDestination()
                 + "," + trip.getPeriod() + "," + trip.getTripMode() + "," 
                 + trip.getBoardTap() + "," + trip.getAlightTap() + "," 
-                + trip.getSet()
+                + trip.getSet() + ","
                         + String.format("%9.2f",tour.getWorkTimeFactor()) + "," 
                         + String.format("%9.2f",tour.getNonWorkTimeFactor()) + ","
                         + String.format("%9.2f", tour.getValueOfTime()) +"\n");

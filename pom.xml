@@ -15,15 +15,15 @@
         <jppf.headnode.memory.min>32000m</jppf.headnode.memory.min> 
         <jppf.headnode.memory.max>32000m</jppf.headnode.memory.max> 
         <jppf.workernode.memory.min>45000m</jppf.workernode.memory.min> 
-        <jppf.workernode.memory.max>50000m</jppf.workernode.memory.max> 
+        <jppf.workernode.memory.max>120000m</jppf.workernode.memory.max> 
         <mtxmgr.memory.min>20000m</mtxmgr.memory.min> 
-        <mtxmgr.memory.max>20000m</mtxmgr.memory.max> 
+        <mtxmgr.memory.max>60000m</mtxmgr.memory.max> 
         <hhmgr.memory.min>1000m</hhmgr.memory.min> 
-        <hhmgr.memory.max>12000m</hhmgr.memory.max>         
+        <hhmgr.memory.max>15000m</hhmgr.memory.max>         
         <client.memory.min>30000m</client.memory.min> 
         <client.memory.max>30000m</client.memory.max>          
         <spmarket.memory.min>30000m</spmarket.memory.min> 
-        <spmarket.memory.max>30000m</spmarket.memory.max>      
+        <spmarket.memory.max>120000m</spmarket.memory.max>      
         <bikelogsum.memory.min>26000m</bikelogsum.memory.min> 
         <bikelogsum.memory.max>26000m</bikelogsum.memory.max>    
         <walklogsum.memory.min>26000m</walklogsum.memory.min> 
@@ -31,7 +31,7 @@
         <bikeroute.memory.min>26000m</bikeroute.memory.min> 
         <bikeroute.memory.max>26000m</bikeroute.memory.max> 
         <dataexport.memory.min>30000m</dataexport.memory.min> 
-        <dataexport.memory.max>30000m</dataexport.memory.max> 
+        <dataexport.memory.max>120000m</dataexport.memory.max> 
         <emfac.memory.min>10000m</emfac.memory.min> 
         <emfac.memory.max>10000m</emfac.memory.max>  
         <validate.memory.min>10000m</validate.memory.min> 

@@ -46,7 +46,9 @@ public final class Constants
     // mph.
 
     public static float feetPerMile = 5280.0f;
-    
+    public static double walkMinutesPerFoot = walkMinutesPerMile/feetPerMile;
+    public static double bikeMinutesPerFoot = bikeMinutesPerMile/feetPerMile;
+
     private Constants()
     {
         // Not Implemented

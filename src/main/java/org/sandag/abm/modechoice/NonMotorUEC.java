@@ -76,6 +76,7 @@ public class NonMotorUEC
             for (int j = 0; j < traceDtaz.length; j++)
             {
                 tracer.traceZonePair(traceOtaz[i], traceDtaz[j]);
+                logger.info("Setting trace zone pair in NonMotorUEC Object for i: "+ traceOtaz[i] + " j: " + traceDtaz[j]);
             }
         }
     }

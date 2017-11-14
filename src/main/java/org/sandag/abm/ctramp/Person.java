@@ -1684,8 +1684,8 @@ public class Person
         Household.logHelper(logger, "workLocSegmentIndex: ", workLocSegmentIndex, totalChars);
         Household.logHelper(logger, "schoolLocSegmentIndex: ", schoolLocSegmentIndex, totalChars);
         
-        Household.logHelper(logger, "timeFactorWork: ",  String.format("%.2f%%",timeFactorWork), totalChars);
-        Household.logHelper(logger, "timeFactorNonWork: ",  String.format("%.2f%%",timeFactorNonWork), totalChars);
+        Household.logHelper(logger, "timeFactorWork: ",  String.format("%.2f",timeFactorWork), totalChars);
+        Household.logHelper(logger, "timeFactorNonWork: ",  String.format("%.2f",timeFactorNonWork), totalChars);
         Household.logHelper(logger, "freeParkingAvailable: ", freeParkingAvailable, totalChars);
         Household.logHelper(logger, "reimbursementPct: ",
                 String.format("%.2f%%", (100 * reimbursePercent)), totalChars);

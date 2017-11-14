@@ -11,8 +11,6 @@ import java.util.MissingResourceException;
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
-import org.sandag.abm.application.SandagTourBasedModel;
-import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.MatrixDataServer;
 import org.sandag.abm.ctramp.MatrixDataServerRmi;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
@@ -44,7 +42,7 @@ public class VisitorTourEstimationFile
     private HashMap<String, String>    rbMap;
     private AutoTazSkimsCalculator     tazDistanceCalculator;
 
-    private static Logger              logger                         = Logger.getLogger(SandagTourBasedModel.class);
+    private static Logger              logger                         = Logger.getLogger(VisitorTourEstimationFile.class);
     private static final int           SAMPLE_SIZE                    = 30;
     private MgraDataManager            mgraManager;
 
@@ -71,8 +69,7 @@ public class VisitorTourEstimationFile
                 tazDistanceCalculator.getStoredFromTazToAllTazsDistanceSkims(),
                 tazDistanceCalculator.getStoredToTazFromAllTazsDistanceSkims());
 
-        tourModeChoiceModel = new VisitorTourModeChoiceModel(rbMap, myModelStructure, dmuFactory,
-                logsumsCalculator);
+        tourModeChoiceModel = new VisitorTourModeChoiceModel(rbMap, myModelStructure, dmuFactory);
 
         // open file
         estimationData = openFile(inputFileName);
@@ -248,7 +245,7 @@ public class VisitorTourEstimationFile
         HashMap<String, String> pMap;
 
         logger.info(String.format("SANDAG Activity Based Model using CT-RAMP version %s",
-                CtrampApplication.VERSION));
+                2.0));
 
         logger.info(String.format("Running Visitor Tour Estimation File Model"));
 

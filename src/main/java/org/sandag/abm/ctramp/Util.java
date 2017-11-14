@@ -1,13 +1,18 @@
 package org.sandag.abm.ctramp;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.StringTokenizer;
+
+import org.apache.log4j.Logger;
 
 public final class Util
         implements Serializable
 {
+    private transient static Logger logger  = Logger.getLogger(Util.class);
+
     private Util()
     {
         // Not implemented in utility classes
@@ -22,7 +27,7 @@ public final class Util
             returnValue = Boolean.parseBoolean(value);
         } else
         {
-            System.out.println("property file key: " + key + " = " + value
+            logger.info("property file key: " + key + " = " + value
                     + " should be either 'true' or 'false'.");
             throw new RuntimeException();
         }
@@ -46,7 +51,7 @@ public final class Util
             return Integer.parseInt(value);
         } else
         {
-            System.out.println("property file key: " + key
+            logger.info("property file key: " + key
                     + " missing.  No integer value can be determined.");
             throw new RuntimeException();
         }
@@ -60,7 +65,7 @@ public final class Util
         if (valueList != null)
         {
 
-            HashSet<Integer> valueSet = new HashSet<Integer>();
+            ArrayList<Integer> valueSet = new ArrayList<Integer>();
 
             if (valueSet != null)
             {
@@ -80,7 +85,7 @@ public final class Util
 
         } else
         {
-            System.out.println("property file key: " + key
+            logger.info("property file key: " + key
                     + " missing.  No integer value can be determined.");
             throw new RuntimeException();
         }
@@ -97,17 +102,14 @@ public final class Util
         if (valueList != null)
         {
 
-            HashSet<Double> valueSet = new HashSet<Double>();
+            ArrayList<Double> valueSet = new ArrayList<Double>();
 
-            if (valueSet != null)
+            StringTokenizer valueTokenizer = new StringTokenizer(valueList, ",");
+            while (valueTokenizer.hasMoreTokens())
             {
-                StringTokenizer valueTokenizer = new StringTokenizer(valueList, ",");
-                while (valueTokenizer.hasMoreTokens())
-                {
-                    String listValue = valueTokenizer.nextToken();
-                    double doubleValue = Double.parseDouble(listValue.trim());
-                    valueSet.add(doubleValue);
-                }
+                 String listValue = valueTokenizer.nextToken();
+                 double doubleValue = Double.parseDouble(listValue.trim());
+                 valueSet.add(doubleValue);
             }
 
             returnArray = new double[valueSet.size()];
@@ -117,7 +119,7 @@ public final class Util
 
         } else
         {
-            System.out.println("property file key: " + key
+            logger.info("property file key: " + key
                     + " missing.  No double value can be determined.");
             throw new RuntimeException();
         }
@@ -201,7 +203,7 @@ public final class Util
 
             if (safetyCount++ > cumProbabilities.length)
             {
-                System.out.println("binary search stuck in the while loop");
+                logger.info("binary search stuck in the while loop");
                 throw new RuntimeException("binary search stuck in the while loop");
             }
 
@@ -234,9 +236,9 @@ public final class Util
         // if entry is outside the allowed range, return -1
         if (entry < cumProbabilityLowerBound || entry >= cumProbabilities[numIndices - 1])
         {
-            System.out.println("entry = " + entry
+            logger.info("entry = " + entry
                     + " is outside of allowable range of cumulative probabilities.");
-            System.out.println("cumProbabilityLowerBound = " + cumProbabilityLowerBound
+            logger.info("cumProbabilityLowerBound = " + cumProbabilityLowerBound
                     + ", cumProbabilities[numIndices-1] = " + cumProbabilities[numIndices - 1]
                     + ", numIndices = " + numIndices);
             return -1;
@@ -283,7 +285,7 @@ public final class Util
 
             if (safetyCount++ > numIndices)
             {
-                System.out.println("binary search stuck in the while loop");
+            	logger.info("binary search stuck in the while loop");
                 throw new RuntimeException("binary search stuck in the while loop");
             }
 

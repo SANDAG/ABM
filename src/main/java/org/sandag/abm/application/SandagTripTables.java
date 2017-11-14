@@ -103,7 +103,7 @@ public class SandagTripTables
     {
 
         this.rbMap = rbMap;        
-        numSkimSets = Integer.getInteger(rbMap.get("utility.bestTransitPath.skim.sets"));
+        numSkimSets = Util.getIntegerValueFromPropertyMap(rbMap,"utility.bestTransitPath.skim.sets");
 
         tazManager = TazDataManager.getInstance(rbMap);
         tapManager = TapDataManager.getInstance(rbMap);
@@ -201,7 +201,6 @@ public class SandagTripTables
         int[] tapIndex = tapManager.getTaps();
         int taps = tapIndex.length - 1;
         
-  
         // Initialize matrices; one for each mode group (auto, non-mot, tran,
         // other) and value of time group
         // All matrices will be dimensioned by TAZs except for transit, which is
@@ -246,7 +245,7 @@ public class SandagTripTables
     						modeName = modelStructure.getModeName(k+1+autoModes+nmotModes);
     						String setName = String.valueOf(l+1);
     						matrix[i][j][(k*numSkimSets)+l] = new Matrix(modeName+"_set"+setName+"_"+periodName,"",taps,taps);
-                  			matrix[i][j][k].setExternalNumbers(tapIndex);
+                  			matrix[i][j][(k*numSkimSets)+l].setExternalNumbers(tapIndex);
     					}
                 	}
                 }else{
@@ -514,11 +513,23 @@ public class SandagTripTables
 
                 if (boardTap == 0 || alightTap == 0) continue;
 
-        				//store transit trips in matrices
-        				mat = (matrixIndex[tripMode]*numSkimSets)+set;
+        		//store transit trips in matrices
+        		mat = (matrixIndex[tripMode]*numSkimSets)+set;
 
-                float value = matrix[mode][votBin][mat].getValueAt(boardTap, alightTap);
-                matrix[mode][votBin][mat].setValueAt(boardTap, alightTap, (value + personTrips));
+        		float value=0;
+        		try{
+        			value = matrix[mode][votBin][mat].getValueAt(boardTap, alightTap);
+        		}catch(Exception e){
+
+        			logger.fatal("Error trying to get transit trips from matrix");
+        			logger.fatal("boardTap,alightTap,set: "+boardTap+","+alightTap+","+set);
+        			logger.fatal("tripMode,mode,votBin,mat: "+tripMode+","+mode+","+votBin+","+mat);
+        			logger.fatal("number of skimsets: "+numSkimSets);
+        			logger.fatal("total board taps in matrix:" + matrix[mode][votBin][mat].getRowCount());
+        			logger.fatal("total alight taps in matrix:" + matrix[mode][votBin][mat].getColumnCount());
+        			throw new RuntimeException(e);
+        		}
+    			matrix[mode][votBin][mat].setValueAt(boardTap, alightTap, (value + personTrips));
 
                 // Store PNR transit trips in SOV free mode skim (mode 0 mat 0)
                 if (modelStructure.getTourModeIsDriveTransit(tripMode))

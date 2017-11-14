@@ -14,7 +14,7 @@ public class VisitorModelStructure
     public static final String[] VISITOR_PURPOSES            = {"WORK", "RECREATE", "DINING"};
 
     // override on max tour mode, since we have taxi in this model.
-    public static final int      MAXIMUM_TOUR_MODE_ALT_INDEX = 27;
+    public static final int      MAXIMUM_TOUR_MODE_ALT_INDEX = 13;
 
     public static final byte     NUMBER_VISITOR_SEGMENTS     = 2;
     public static final byte     BUSINESS                    = 0;
@@ -40,7 +40,7 @@ public class VisitorModelStructure
     public static final int      UPPER_PM                    = 29;
     public static final String[] MODEL_PERIOD_LABELS         = {"EA", "AM", "MD", "PM", "EV"};
 
-    public static final byte     TAXI                        = 27;
+    public static final byte     TAXI                        = 13;
 
     /**
      * Taxi tour mode

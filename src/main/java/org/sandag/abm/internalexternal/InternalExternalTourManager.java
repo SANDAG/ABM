@@ -326,7 +326,7 @@ public class InternalExternalTourManager
                 + "," + trip.isOriginIsTourDestination() + ","
                 + trip.isDestinationIsTourDestination() + "," + trip.getPeriod() + ","
                 + trip.getTripMode() + "," 
-                + trip.getBoardTap() + "," + trip.getAlightTap() + "," + trip.getSet()
+                + trip.getBoardTap() + "," + trip.getAlightTap() + "," + trip.getSet()+ ","
                 +String.format("%9.2f",trip.getValueOfTime()) + "\n");
         writer.print(record);
     }

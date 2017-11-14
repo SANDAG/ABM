@@ -16,7 +16,6 @@ import org.sandag.abm.accessibilities.MandatoryAccessibilitiesCalculator;
 import org.sandag.abm.accessibilities.NonTransitUtilities;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
-import org.sandag.abm.modechoice.TransitWalkAccessUEC;
 
 import com.pb.common.calculator.MatrixDataManager;
 import com.pb.common.calculator.MatrixDataServerIf;
@@ -643,7 +642,7 @@ public final class HouseholdChoiceModelsManager
             double sum = 0;
             for (int j = 0; j < externalTazs.length; j++)
             {
-                double distanceToExternal = periodDistanceMatrices[TransitWalkAccessUEC.MD][i][externalTazs[j]];
+                double distanceToExternal = periodDistanceMatrices[ModelStructure.MD_SKIM_PERIOD_INDEX][i][externalTazs[j]];
                 double iePct = altData.getValueAt(externalTazs[j], ieCol);
                 sum += iePct * MathUtil.exp(coeff * distanceToExternal);
             }

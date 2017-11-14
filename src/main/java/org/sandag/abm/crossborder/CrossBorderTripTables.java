@@ -135,7 +135,7 @@ public class CrossBorderTripTables
         // Time period limits
         numberOfPeriods = modelStructure.getNumberModelPeriods();
         
-        numSkimSets = Integer.getInteger(rbMap.get("utility.bestTransitPath.skim.sets"));
+        numSkimSets = Util.getIntegerValueFromPropertyMap(rbMap,"utility.bestTransitPath.skim.sets");
 
 
         // number of modes
@@ -242,7 +242,7 @@ public class CrossBorderTripTables
     						modeName = modelStructure.getModeName(k+1+autoModes+nmotModes);
     						String setName = String.valueOf(l+1);
     						matrix[i][j][(k*numSkimSets)+l] = new Matrix(modeName+"_set"+setName+"_"+periodName,"",taps,taps);
-                  			matrix[i][j][k].setExternalNumbers(tapIndex);
+                  			matrix[i][j][(k*numSkimSets)+l].setExternalNumbers(tapIndex);
     					}
                 	}
         		} else
@@ -423,7 +423,7 @@ public class CrossBorderTripTables
                     boolean inbound = tripData.getBooleanValueAt(i, "inbound");
 
                     // add the vehicle trip portion to the trip table
-                    if (inbound)
+                    if (!inbound)
                     { // from origin to lot (boarding tap)
                         int PNRTAZ = tapManager.getTazForTap(boardTap);
                         value = matrix[0][votBin][0].getValueAt(originTAZ, PNRTAZ);

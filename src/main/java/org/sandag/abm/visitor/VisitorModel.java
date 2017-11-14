@@ -105,7 +105,8 @@ public class VisitorModel
             }
         }
         
-        logsumsCalculator.setTazDistanceSkimArrays(
+        // this sets by thread, so do it outside of initialization
+       logsumsCalculator.setTazDistanceSkimArrays(
                 tazDistanceCalculator.getStoredFromTazToAllTazsDistanceSkims(),
                 tazDistanceCalculator.getStoredToTazFromAllTazsDistanceSkims());
 
@@ -120,7 +121,7 @@ public class VisitorModel
         VisitorStopPurposeModel stopPurposeModel = new VisitorStopPurposeModel(rbMap);
         VisitorStopTimeOfDayChoiceModel stopTodChoiceModel = new VisitorStopTimeOfDayChoiceModel(rbMap);
         VisitorStopLocationChoiceModel stopLocationChoiceModel = new VisitorStopLocationChoiceModel(rbMap, modelStructure, dmuFactory, logsumsCalculator);
-        VisitorTripModeChoiceModel tripModeChoiceModel = new VisitorTripModeChoiceModel(rbMap, modelStructure, dmuFactory, logsumsCalculator);
+        VisitorTripModeChoiceModel tripModeChoiceModel = new VisitorTripModeChoiceModel(rbMap, modelStructure, dmuFactory);
         double[][] mgraSizeTerms = destChoiceModel.getMgraSizeTerms();
         double[][] tazSizeTerms = destChoiceModel.getTazSizeTerms();
         double[][][] mgraProbabilities = destChoiceModel.getMgraProbabilities();
@@ -143,8 +144,11 @@ public class VisitorModel
 
             if (seek && tour.getID() != traceId) continue;
 
-            if (tour.getID() == traceId) tour.setDebugChoiceModels(true);
-            todChoiceModel.calculateTourTOD(tour);
+            if (tour.getID() == traceId) 
+            	tour.setDebugChoiceModels(true);
+            
+
+           todChoiceModel.calculateTourTOD(tour);
             destChoiceModel.chooseDestination(tour);
             tourModeChoiceModel.chooseTourMode(tour);
 

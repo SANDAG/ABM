@@ -130,7 +130,7 @@ public class AirportTripTables
         // number of modes
         modeIndex = new int[modelStructure.MAXIMUM_TOUR_MODE_ALT_INDEX + 1];
         matrixIndex = new int[modeIndex.length];
-        numSkimSets = Integer.getInteger(rbMap.get("utility.bestTransitPath.skim.sets"));
+        numSkimSets = Util.getIntegerValueFromPropertyMap(rbMap,"utility.bestTransitPath.skim.sets");
 
         // set the mode arrays
         for (int i = 1; i < modeIndex.length; ++i)

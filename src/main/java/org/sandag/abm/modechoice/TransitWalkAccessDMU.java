@@ -38,8 +38,7 @@ public class TransitWalkAccessDMU
     
     //default values for generic application
     int                                 applicationType = 0;
-    int                                 tourCategoryIsJoint = 0;
-    int                                 personType = 1;
+    int                                 personType = 1;     //defaults to full-time worker
     float                               ivtCoeff;
     float                               costCoeff;
 
@@ -134,13 +133,6 @@ public class TransitWalkAccessDMU
     	return applicationType;
     }
     
-    public void setTourCategoryIsJoint(int tourCategoryIsJoint) {
-    	this.tourCategoryIsJoint = tourCategoryIsJoint;
-    }
-    
-    public int getTourCategoryIsJoint() {
-    	return tourCategoryIsJoint;
-    }
     
     public void setPersonType(int personType) {
     	this.personType = personType;
@@ -183,7 +175,6 @@ public class TransitWalkAccessDMU
         localLogger.info(String.format("Period:                   %9s", period));
         localLogger.info(String.format("Set:                      %9s", set));
         localLogger.info(String.format("applicationType:          %9s", applicationType));
-        localLogger.info(String.format("tourCategoryIsJoint:      %9s", tourCategoryIsJoint));
         localLogger.info(String.format("personType:               %9s", personType));
         localLogger.info(String.format("ivtCoeff  :               %9.4f", ivtCoeff));
         localLogger.info(String.format("costCoeff  :              %9.4f", costCoeff));
@@ -201,10 +192,9 @@ public class TransitWalkAccessDMU
         methodIndexMap.put("getSet", 4);
         
         methodIndexMap.put("getApplicationType", 6);
-        methodIndexMap.put("getTourCategoryIsJoint", 7);
         methodIndexMap.put("getPersonType", 8);
         methodIndexMap.put("getIvtCoeff", 9);
-        methodIndexMap.put("getCostCoeff", 9);
+        methodIndexMap.put("getCostCoeff", 10);
                
 
     }
@@ -224,11 +214,8 @@ public class TransitWalkAccessDMU
                 return getTOD();
             case 4:
                 return getSet();
-                
             case 6:
                 return getApplicationType();
-            case 7:
-                return getTourCategoryIsJoint();
             case 8:
                 return getPersonType();
             case 9:

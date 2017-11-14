@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
+import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
 import org.sandag.abm.ctramp.TourModeChoiceDMU;
@@ -46,7 +47,8 @@ public class VisitorTourModeChoiceModel
     private String[]                 modeAltNames;
 
     private boolean                  saveUtilsProbsFlag              = false;
-    
+    private AutoTazSkimsCalculator   tazDistanceCalculator;
+
   
     /**
      * Constructor.
@@ -57,13 +59,19 @@ public class VisitorTourModeChoiceModel
      * @param myLogsumHelper
      */
     public VisitorTourModeChoiceModel(HashMap<String, String> propertyMap,
-            VisitorModelStructure myModelStructure, VisitorDmuFactoryIf dmuFactory,
-            McLogsumsCalculator myLogsumHelper)
+            VisitorModelStructure myModelStructure, VisitorDmuFactoryIf dmuFactory)
     {
 
         mgraManager = MgraDataManager.getInstance(propertyMap);
         modelStructure = myModelStructure;
-        logsumHelper = myLogsumHelper;
+        tazDistanceCalculator = new AutoTazSkimsCalculator(propertyMap);
+        tazDistanceCalculator.computeTazDistanceArrays();
+        
+        logsumHelper = new McLogsumsCalculator();
+        logsumHelper.setupSkimCalculators(propertyMap);
+        logsumHelper.setTazDistanceSkimArrays(
+                tazDistanceCalculator.getStoredFromTazToAllTazsDistanceSkims(),
+                tazDistanceCalculator.getStoredToTazFromAllTazsDistanceSkims());
 
         tripDmuObject = new TripModeChoiceDMU(modelStructure,logger);
         mcDmuObject = dmuFactory.getVisitorTourModeChoiceDMU();

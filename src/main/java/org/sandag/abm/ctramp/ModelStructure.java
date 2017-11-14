@@ -322,6 +322,8 @@ public abstract class ModelStructure
     public abstract boolean getTripModeIsPnrTransit(int tripMode);
 
     public abstract boolean getTripModeIsKnrTransit(int tripMode);
+    
+    public abstract boolean getTripModeIsTransit(int tripMode);
 
     public abstract double[][] getCdap6PlusProps();
 

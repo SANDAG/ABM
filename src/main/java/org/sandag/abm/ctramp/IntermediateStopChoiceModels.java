@@ -1293,6 +1293,7 @@ public class IntermediateStopChoiceModels
             } catch (Exception e)
             {
                 logger.info("exception creating stop.");
+                throw new RuntimeException(e);
             }
 
             // set stop origin and destination mgra, the stop period based on
@@ -2589,8 +2590,15 @@ public class IntermediateStopChoiceModels
         double incomeCoeff = incomeCoeffs[category];
         double incomeExpon = incomeExponents[category];
         double costCoeff = calculateCostCoefficient(income, incomeCoeff,incomeExpon);
-
-        mcDmuObject.setIvtCoeff(ivtCoeff);
+        double timeFactor = 1.0f;
+        if(s.getTour().getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY))
+        	timeFactor = mcDmuObject.getJointTourTimeFactor();
+        else if(s.getTour().getTourPrimaryPurposeIndex()==ModelStructure.WORK_PRIMARY_PURPOSE_INDEX)
+        	timeFactor = mcDmuObject.getWorkTimeFactor();
+        else
+        	timeFactor = mcDmuObject.getNonWorkTimeFactor();
+        
+        mcDmuObject.setIvtCoeff(ivtCoeff * timeFactor);
         mcDmuObject.setCostCoeff(costCoeff);
 
         int halfTourFinalDest = s.isInboundStop() ? s.getTour().getTourOrigMgra() : s.getTour()
@@ -2754,7 +2762,7 @@ public class IntermediateStopChoiceModels
                                                 .getNumOutboundStops() - 1, s.getOrig(), altMgra));
 
                 mcDmuObject.getDmuIndexValues().setDebug(true);
-                mcDmuObject.getHouseholdObject().setDebugChoiceModels(false);
+                mcDmuObject.getHouseholdObject().setDebugChoiceModels(true);
                 /* suppress log: Wu
                 mcDmuObject.getHouseholdObject().setDebugChoiceModels(true);
                 */
@@ -2887,7 +2895,7 @@ public class IntermediateStopChoiceModels
                                         halfTourFinalDest));
                 
                 mcDmuObject.getDmuIndexValues().setDebug(true);
-                mcDmuObject.getHouseholdObject().setDebugChoiceModels(false);
+                mcDmuObject.getHouseholdObject().setDebugChoiceModels(true);
                 /* suppress log: Wu
                 mcDmuObject.getHouseholdObject().setDebugChoiceModels(true);
                 */
@@ -3461,8 +3469,15 @@ public class IntermediateStopChoiceModels
         double incomeCoeff = incomeCoeffs[category];
         double incomeExpon = incomeExponents[category];
         double costCoeff = calculateCostCoefficient(income, incomeCoeff,incomeExpon);
-
-        mcDmuObject.setIvtCoeff(ivtCoeff);
+        double timeFactor = 1.0f;
+        if(t.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY))
+        	timeFactor = mcDmuObject.getJointTourTimeFactor();
+        else if(t.getTourPrimaryPurposeIndex()==ModelStructure.WORK_PRIMARY_PURPOSE_INDEX)
+        	timeFactor = mcDmuObject.getWorkTimeFactor();
+        else
+        	timeFactor = mcDmuObject.getNonWorkTimeFactor();
+        
+        mcDmuObject.setIvtCoeff(ivtCoeff * timeFactor);
         mcDmuObject.setCostCoeff(costCoeff);
 
         int tourMode = t.getTourModeChoice();

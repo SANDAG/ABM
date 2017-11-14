@@ -484,6 +484,15 @@ public class HouseholdChoiceModels
         if (runMandatoryTourDepartureTimeAndDurationModel)
             imtodModel.applyModel(hhObject, runMandatoryTourModeChoiceModel);
 
+        if(runEscortModel){
+         	try {
+				escortModel.applyModel(hhObject);
+			} catch (Exception e) {
+				logger.fatal("Error Attempting to run escort model for household "+hhObject.getHhId());
+				throw new RuntimeException(e);
+			}
+        }
+   		
         if (runJointTourFrequencyModel) jtfModel.applyModel(hhObject);
 
         if (runJointTourLocationChoiceModel) nmlcModel.applyJointModel(hhObject);
@@ -581,6 +590,17 @@ public class HouseholdChoiceModels
             imtodTime += (System.nanoTime() - check - mcTime);
             imtmcTime += mcTime;
         }
+        if(runEscortModel){
+            long check = System.nanoTime();
+        	try {
+				escortModel.applyModel(hhObject);
+			} catch (Exception e) {
+				logger.fatal("Error Attempting to run escort model for household "+hhObject.getHhId());
+				e.printStackTrace();
+			}
+            escortTime += ( System.nanoTime() - check );
+        }       
+
 
         if (runJointTourFrequencyModel)
         {

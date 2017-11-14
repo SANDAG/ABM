@@ -22,7 +22,7 @@ import com.pb.common.calculator.IndexValues;
 public class McLogsumsCalculator implements Serializable
 {
 
-    private transient Logger                autoSkimLogger                   = Logger.getLogger("autoSkim");
+    private transient Logger                autoSkimLogger                   = Logger.getLogger(McLogsumsCalculator.class);
 
     public static final String              PROPERTIES_UEC_TOUR_MODE_CHOICE  = "tourModeChoice.uec.file";
     public static final String              PROPERTIES_UEC_TRIP_MODE_CHOICE  = "tripModeChoice.uec.file";
@@ -327,16 +327,19 @@ public class McLogsumsCalculator implements Serializable
         	
         	//set person specific variables and re-calculate best tap pair utilities
         	walkDmu.setApplicationType(bestPathUEC.APP_TYPE_TOURMC);
-        	walkDmu.setTourCategoryIsJoint(mcDmuObject.getTourCategoryJoint());
-        	walkDmu.setPersonType(mcDmuObject.getTourCategoryJoint()==1 ? walkDmu.getPersonType() : mcDmuObject.getPersonType());
         	walkDmu.setIvtCoeff( (float) mcDmuObject.getIvtCoeff());
         	walkDmu.setCostCoeff( (float) mcDmuObject.getCostCoeff());
         	
         	driveDmu.setApplicationType(bestPathUEC.APP_TYPE_TOURMC);
-        	driveDmu.setTourCategoryIsJoint(mcDmuObject.getTourCategoryJoint());
-        	driveDmu.setPersonType(mcDmuObject.getTourCategoryJoint()==1 ? driveDmu.getPersonType() : mcDmuObject.getPersonType());
         	driveDmu.setIvtCoeff( (float) mcDmuObject.getIvtCoeff());
         	driveDmu.setCostCoeff( (float) mcDmuObject.getCostCoeff());
+
+
+        	//catch issues where the trip mode choice DMU was set up without a household or person object
+        	if(mcDmuObject.getHouseholdObject()!=null){
+        		walkDmu.setPersonType(mcDmuObject.getTourCategoryJoint()==1 ? walkDmu.getPersonType() : mcDmuObject.getPersonType());
+        	   	driveDmu.setPersonType(mcDmuObject.getTourCategoryJoint()==1 ? driveDmu.getPersonType() : mcDmuObject.getPersonType());
+          	}
 
         	bestWtwTapPairsOut = bestPathUEC.calcPersonSpecificUtilities(bestWtwTapPairsOut, walkDmu, driveDmu, WTW, origMgra, destMgra, skimPeriodIndexOut, loggingEnabled, autoSkimLogger);
         	double logsumOut = bestPathUEC.calcTripLogSum(bestWtwTapPairsOut, loggingEnabled, autoSkimLogger);
@@ -358,17 +361,20 @@ public class McLogsumsCalculator implements Serializable
         	
         	//set person specific variables and re-calculate best tap pair utilities
         	walkDmu.setApplicationType(bestPathUEC.APP_TYPE_TOURMC);
-        	walkDmu.setTourCategoryIsJoint(mcDmuObject.getTourCategoryJoint());
-        	walkDmu.setPersonType(mcDmuObject.getTourCategoryJoint()==1 ? walkDmu.getPersonType() : mcDmuObject.getPersonType());
         	walkDmu.setIvtCoeff( (float) mcDmuObject.getIvtCoeff());
         	walkDmu.setCostCoeff( (float) mcDmuObject.getCostCoeff());
         	
         	driveDmu.setApplicationType(bestPathUEC.APP_TYPE_TOURMC);
-        	driveDmu.setTourCategoryIsJoint(mcDmuObject.getTourCategoryJoint());
-        	driveDmu.setPersonType(mcDmuObject.getTourCategoryJoint()==1 ? driveDmu.getPersonType() : mcDmuObject.getPersonType());
         	driveDmu.setIvtCoeff( (float) mcDmuObject.getIvtCoeff());
         	driveDmu.setCostCoeff( (float) mcDmuObject.getCostCoeff());
-        	
+
+
+        	//catch issues where the trip mode choice DMU was set up without a household or person object
+        	if(mcDmuObject.getHouseholdObject()!=null){
+        		walkDmu.setPersonType(mcDmuObject.getTourCategoryJoint()==1 ? walkDmu.getPersonType() : mcDmuObject.getPersonType());
+        	   	driveDmu.setPersonType(mcDmuObject.getTourCategoryJoint()==1 ? driveDmu.getPersonType() : mcDmuObject.getPersonType());
+          	}
+
         	bestWtwTapPairsIn = bestPathUEC.calcPersonSpecificUtilities(bestWtwTapPairsIn, walkDmu, driveDmu, WTW, destMgra, origMgra, skimPeriodIndexIn, loggingEnabled, autoSkimLogger);
         	double logsumIn = bestPathUEC.calcTripLogSum(bestWtwTapPairsIn, loggingEnabled, autoSkimLogger);             
         	mcDmuObject.setTransitLogSum( WTW, true, logsumIn);
@@ -426,18 +432,19 @@ public class McLogsumsCalculator implements Serializable
         	
         	//set person specific variables and re-calculate best tap pair utilities
         	walkDmu.setApplicationType(bestPathUEC.APP_TYPE_TOURMC);
-        	walkDmu.setTourCategoryIsJoint(mcDmuObject.getTourCategoryJoint());
-        	walkDmu.setPersonType(mcDmuObject.getTourCategoryJoint()==1 ? walkDmu.getPersonType() : mcDmuObject.getPersonType());
         	walkDmu.setIvtCoeff( (float) mcDmuObject.getIvtCoeff());
         	walkDmu.setCostCoeff( (float) mcDmuObject.getCostCoeff());
         	
         	driveDmu.setApplicationType(bestPathUEC.APP_TYPE_TOURMC);
-        	driveDmu.setTourCategoryIsJoint(mcDmuObject.getTourCategoryJoint());
-        	driveDmu.setPersonType(mcDmuObject.getTourCategoryJoint()==1 ? driveDmu.getPersonType() : mcDmuObject.getPersonType());
         	driveDmu.setIvtCoeff( (float) mcDmuObject.getIvtCoeff());
         	driveDmu.setCostCoeff( (float) mcDmuObject.getCostCoeff());
         	
-        	bestWtdTapPairsIn = bestPathUEC.calcPersonSpecificUtilities(bestWtdTapPairsIn, walkDmu, driveDmu, WTD, destMgra, origMgra, skimPeriodIndexIn, loggingEnabled, autoSkimLogger);
+           	//catch issues where the trip mode choice DMU was set up without a household or person object
+        	if(mcDmuObject.getHouseholdObject()!=null){
+        		walkDmu.setPersonType(mcDmuObject.getTourCategoryJoint()==1 ? walkDmu.getPersonType() : mcDmuObject.getPersonType());
+        	   	driveDmu.setPersonType(mcDmuObject.getTourCategoryJoint()==1 ? driveDmu.getPersonType() : mcDmuObject.getPersonType());
+          	}
+            bestWtdTapPairsIn = bestPathUEC.calcPersonSpecificUtilities(bestWtdTapPairsIn, walkDmu, driveDmu, WTD, destMgra, origMgra, skimPeriodIndexIn, loggingEnabled, autoSkimLogger);
         	double logsumIn = bestPathUEC.calcTripLogSum(bestWtdTapPairsIn, loggingEnabled, autoSkimLogger);
         	mcDmuObject.setTransitLogSum( WTD, true, logsumIn);
         }
@@ -460,17 +467,19 @@ public class McLogsumsCalculator implements Serializable
         	
         	//set person specific variables and re-calculate best tap pair utilities
         	walkDmu.setApplicationType(bestPathUEC.APP_TYPE_TOURMC);
-        	walkDmu.setTourCategoryIsJoint(mcDmuObject.getTourCategoryJoint());
-        	walkDmu.setPersonType(mcDmuObject.getTourCategoryJoint()==1 ? walkDmu.getPersonType() : mcDmuObject.getPersonType());
         	walkDmu.setIvtCoeff( (float) mcDmuObject.getIvtCoeff());
         	walkDmu.setCostCoeff( (float) mcDmuObject.getCostCoeff());
         	
         	driveDmu.setApplicationType(bestPathUEC.APP_TYPE_TOURMC);
-        	driveDmu.setTourCategoryIsJoint(mcDmuObject.getTourCategoryJoint());
-        	driveDmu.setPersonType(mcDmuObject.getTourCategoryJoint()==1 ? driveDmu.getPersonType() : mcDmuObject.getPersonType());
         	driveDmu.setIvtCoeff( (float) mcDmuObject.getIvtCoeff());
         	driveDmu.setCostCoeff( (float) mcDmuObject.getCostCoeff());
-        	
+      
+        	//catch issues where the trip mode choice DMU was set up without a household or person object
+        	if(mcDmuObject.getHouseholdObject()!=null){
+        		walkDmu.setPersonType(mcDmuObject.getTourCategoryJoint()==1 ? walkDmu.getPersonType() : mcDmuObject.getPersonType());
+        	   	driveDmu.setPersonType(mcDmuObject.getTourCategoryJoint()==1 ? driveDmu.getPersonType() : mcDmuObject.getPersonType());
+          	}
+      	
         	bestDtwTapPairsOut = bestPathUEC.calcPersonSpecificUtilities(bestDtwTapPairsOut, walkDmu, driveDmu, DTW, origMgra, destMgra, skimPeriodIndexOut, loggingEnabled, autoSkimLogger);
         	double logsumOut = bestPathUEC.calcTripLogSum(bestDtwTapPairsOut, loggingEnabled, autoSkimLogger);
         	mcDmuObject.setTransitLogSum( DTW, false, logsumOut);
@@ -596,17 +605,18 @@ public class McLogsumsCalculator implements Serializable
 
         //set person specific variables and re-calculate best tap pair utilities
     	walkDmu.setApplicationType(bestPathUEC.APP_TYPE_TRIPMC);
-    	walkDmu.setTourCategoryIsJoint(tripMcDmuObject.getTourCategoryJoint());
-    	walkDmu.setPersonType(tripMcDmuObject.getTourCategoryJoint()==1 ? walkDmu.getPersonType() : tripMcDmuObject.getPersonType());
-    	walkDmu.setIvtCoeff( (float) tripMcDmuObject.getIvtCoeff());
+     	walkDmu.setIvtCoeff( (float) tripMcDmuObject.getIvtCoeff());
     	walkDmu.setCostCoeff( (float) tripMcDmuObject.getCostCoeff());
     	
     	driveDmu.setApplicationType(bestPathUEC.APP_TYPE_TRIPMC);
-    	driveDmu.setTourCategoryIsJoint(tripMcDmuObject.getTourCategoryJoint());
-    	driveDmu.setPersonType(tripMcDmuObject.getTourCategoryJoint()==1 ? driveDmu.getPersonType() : tripMcDmuObject.getPersonType());
     	driveDmu.setIvtCoeff( (float) tripMcDmuObject.getIvtCoeff());
     	driveDmu.setCostCoeff( (float) tripMcDmuObject.getCostCoeff());
     	
+    	//catch issues where the trip mode choice DMU was set up without a household or person object
+    	if(tripMcDmuObject.getHouseholdObject()!=null){
+    		walkDmu.setPersonType(tripMcDmuObject.getTourCategoryJoint()==1 ? walkDmu.getPersonType() : tripMcDmuObject.getPersonType());
+    	   	driveDmu.setPersonType(tripMcDmuObject.getTourCategoryJoint()==1 ? driveDmu.getPersonType() : tripMcDmuObject.getPersonType());
+      	}
         // calculate logsum
     	bestWtwTripTapPairs = bestPathUEC.calcPersonSpecificUtilities(bestWtwTripTapPairs, walkDmu, driveDmu, WTW, origMgra, destMgra, skimPeriodIndex, loggingEnabled, autoSkimLogger);
         double logsum = bestPathUEC.calcTripLogSum(bestWtwTripTapPairs, loggingEnabled, autoSkimLogger);
@@ -628,17 +638,19 @@ public class McLogsumsCalculator implements Serializable
         
         //set person specific variables and re-calculate best tap pair utilities
         walkDmu.setApplicationType(bestPathUEC.APP_TYPE_TRIPMC);
-    	walkDmu.setTourCategoryIsJoint(tripMcDmuObject.getTourCategoryJoint());
-    	walkDmu.setPersonType(tripMcDmuObject.getTourCategoryJoint()==1 ? walkDmu.getPersonType() : tripMcDmuObject.getPersonType());
     	walkDmu.setIvtCoeff( (float) tripMcDmuObject.getIvtCoeff());
     	walkDmu.setCostCoeff( (float) tripMcDmuObject.getCostCoeff());
     	
     	driveDmu.setApplicationType(bestPathUEC.APP_TYPE_TRIPMC);
-    	driveDmu.setTourCategoryIsJoint(tripMcDmuObject.getTourCategoryJoint());
-    	driveDmu.setPersonType(tripMcDmuObject.getTourCategoryJoint()==1 ? driveDmu.getPersonType() : tripMcDmuObject.getPersonType());
     	driveDmu.setIvtCoeff( (float) tripMcDmuObject.getIvtCoeff());
     	driveDmu.setCostCoeff( (float) tripMcDmuObject.getCostCoeff());
-    	
+  
+    	//catch issues where the trip mode choice DMU was set up without a household or person object
+    	if(tripMcDmuObject.getHouseholdObject()!=null){
+    		walkDmu.setPersonType(tripMcDmuObject.getTourCategoryJoint()==1 ? walkDmu.getPersonType() : tripMcDmuObject.getPersonType());
+    	   	driveDmu.setPersonType(tripMcDmuObject.getTourCategoryJoint()==1 ? driveDmu.getPersonType() : tripMcDmuObject.getPersonType());
+      	}
+  
         // calculate logsum
     	bestWtdTripTapPairs = bestPathUEC.calcPersonSpecificUtilities(bestWtdTripTapPairs, walkDmu, driveDmu, WTD, origMgra, destMgra, skimPeriodIndex, loggingEnabled, autoSkimLogger);
         double logsum = bestPathUEC.calcTripLogSum(bestWtdTripTapPairs, loggingEnabled, autoSkimLogger);
@@ -660,18 +672,19 @@ public class McLogsumsCalculator implements Serializable
        
         //set person specific variables and re-calculate best tap pair utilities
         walkDmu.setApplicationType(bestPathUEC.APP_TYPE_TRIPMC);
-    	walkDmu.setTourCategoryIsJoint(tripMcDmuObject.getTourCategoryJoint());
-    	walkDmu.setPersonType(tripMcDmuObject.getTourCategoryJoint()==1 ? walkDmu.getPersonType() : tripMcDmuObject.getPersonType());
     	walkDmu.setIvtCoeff( (float) tripMcDmuObject.getIvtCoeff());
     	walkDmu.setCostCoeff( (float) tripMcDmuObject.getCostCoeff());
     	
     	driveDmu.setApplicationType(bestPathUEC.APP_TYPE_TRIPMC);
-    	driveDmu.setTourCategoryIsJoint(tripMcDmuObject.getTourCategoryJoint());
-    	driveDmu.setPersonType(tripMcDmuObject.getTourCategoryJoint()==1 ? driveDmu.getPersonType() : tripMcDmuObject.getPersonType());
     	driveDmu.setIvtCoeff( (float) tripMcDmuObject.getIvtCoeff());
     	driveDmu.setCostCoeff( (float) tripMcDmuObject.getCostCoeff());
     	
-        // calculate logsum
+       	//catch issues where the trip mode choice DMU was set up without a household or person object
+    	if(tripMcDmuObject.getHouseholdObject()!=null){
+    		walkDmu.setPersonType(tripMcDmuObject.getTourCategoryJoint()==1 ? walkDmu.getPersonType() : tripMcDmuObject.getPersonType());
+    	   	driveDmu.setPersonType(tripMcDmuObject.getTourCategoryJoint()==1 ? driveDmu.getPersonType() : tripMcDmuObject.getPersonType());
+      	}
+      // calculate logsum
     	bestDtwTripTapPairs = bestPathUEC.calcPersonSpecificUtilities(bestDtwTripTapPairs, walkDmu, driveDmu, DTW, origMgra, destMgra, skimPeriodIndex, loggingEnabled, autoSkimLogger);
         double logsum = bestPathUEC.calcTripLogSum(bestDtwTripTapPairs, loggingEnabled, autoSkimLogger);
         tripMcDmuObject.setTransitLogSum( DTW, logsum);

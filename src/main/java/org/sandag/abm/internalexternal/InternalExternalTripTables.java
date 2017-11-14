@@ -139,7 +139,7 @@ public class InternalExternalTripTables
         modeIndex = new int[modelStructure.MAXIMUM_TOUR_MODE_ALT_INDEX + 1];
         matrixIndex = new int[modeIndex.length];
         
-        numSkimSets = Integer.getInteger(rbMap.get("utility.bestTransitPath.skim.sets"));
+        numSkimSets = Util.getIntegerValueFromPropertyMap(rbMap,"utility.bestTransitPath.skim.sets");
 
 
         // set the mode arrays
@@ -239,7 +239,7 @@ public class InternalExternalTripTables
     						modeName = modelStructure.getModeName(k+1+autoModes+nmotModes);
     						String setName = String.valueOf(l+1);
     						matrix[i][j][(k*numSkimSets)+l] = new Matrix(modeName+"_set"+setName+"_"+periodName,"",taps,taps);
-                  			matrix[i][j][k].setExternalNumbers(tapIndex);
+                  			matrix[i][j][(k*numSkimSets)+l].setExternalNumbers(tapIndex);
     					}
                 	}
            		} else
@@ -428,7 +428,7 @@ public class InternalExternalTripTables
                 {
 
                     // add the vehicle trip portion to the trip table
-                    if (inbound)
+                    if (!inbound)
                     { // from origin to lot (boarding tap)
                         int PNRTAZ = tapManager.getTazForTap(boardTap);
                         value = matrix[0][votBin][0].getValueAt(originTAZ, PNRTAZ);

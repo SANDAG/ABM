@@ -12,10 +12,12 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.Modes.AccessMode;
+
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.util.ResourceUtil;
@@ -801,6 +803,29 @@ public final class TazDataManager
     }
 
     /**
+     * Get the time from the TAZ to the TAP in minutes.
+     * 
+     * @param taz The origin TAZ
+     * @param tap The destination TAP
+     * @param aMode The access model (PNR or KNR)
+     * @return The time in minutes, or -1 if there isn't an access link from the TAZ to the TAP.
+     */
+    public float getTimeToTapFromTaz(int taz, int tap, AccessMode aMode){
+    	
+    	int btapPosition = getTapPosition(taz,tap,aMode);
+    	float time;
+    	
+    	if(btapPosition==-1){
+    		logger.info("Bad tap position for " + (aMode==Modes.AccessMode.PARK_N_RIDE ? "PNR" : "KNR") +" access board tap");
+    		return -1;
+    	}else{
+    		time = getTapTime(taz,btapPosition,Modes.AccessMode.PARK_N_RIDE);
+    	}
+    	
+    	return time;
+    	
+    }
+   /**
      * Returns the max TAZ value
      * 
      * @return the max TAZ value

@@ -539,6 +539,7 @@ public class SandagTripModeChoiceDMU
                 break;
             case 93:
             	returnValue = getOriginMgra();
+            	break;
             case 94:
             	returnValue = getDestMgra();
                 break;

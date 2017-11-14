@@ -314,13 +314,21 @@ public class TourModeChoiceModel
         int modelIndex = purposeModelIndexMap.get(purposeName);
 
         Household household = mcDmuObject.getHouseholdObject();
+        Tour tour = mcDmuObject.getTourObject();
         double income = (double) household.getIncomeInDollars();
         double ivtCoeff    = ivtCoeffs[modelIndex];
         double incomeCoeff = incomeCoeffs[modelIndex];
         double incomeExpon = incomeExponents[modelIndex];
         double costCoeff = calculateCostCoefficient(income, incomeCoeff,incomeExpon);
-
-        mcDmuObject.setIvtCoeff(ivtCoeff);
+        double timeFactor = 1.0f;
+        if(tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY))
+        	timeFactor = mcDmuObject.getJointTourTimeFactor();
+        else if(tour.getTourPrimaryPurposeIndex()==ModelStructure.WORK_PRIMARY_PURPOSE_INDEX)
+        	timeFactor = mcDmuObject.getWorkTimeFactor();
+        else
+        	timeFactor = mcDmuObject.getNonWorkTimeFactor();
+        
+        mcDmuObject.setIvtCoeff(ivtCoeff * timeFactor);
         mcDmuObject.setCostCoeff(costCoeff);
 
 
@@ -333,7 +341,6 @@ public class TourModeChoiceModel
         String loggingHeader = "";
         String separator = "";
 
-        Tour tour = mcDmuObject.getTourObject();
 
         if (household.getDebugChoiceModels())
         {

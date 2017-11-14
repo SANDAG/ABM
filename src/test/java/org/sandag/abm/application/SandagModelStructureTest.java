@@ -11,8 +11,8 @@ public class SandagModelStructureTest
     public void testGetTripModeIsPay()
     {
         assertTrue(SandagModelStructure.getTripModeIsPay(2));
-        assertTrue(SandagModelStructure.getTripModeIsPay(5));
-        assertTrue(SandagModelStructure.getTripModeIsPay(8));
+        assertTrue(SandagModelStructure.getTripModeIsPay(4));
+        assertTrue(SandagModelStructure.getTripModeIsPay(6));
 
         assertFalse(SandagModelStructure.getTripModeIsPay(1));
     }

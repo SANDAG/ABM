@@ -147,7 +147,7 @@ public class SchoolEscortingModel {
 	
 	public static final int DRIVE_ALONE_MODE = 1;
 	public static final int SHARED_RIDE_2_MODE = 3;
-	public static final int SHARED_RIDE_3_MODE = 6;
+	public static final int SHARED_RIDE_3_MODE = 5;
 	
     private Map<Integer,Integer> chauffeurPriorityOutboundMap;
     private Map<Integer,Integer> chauffeurPriorityInboundMap;
@@ -219,7 +219,7 @@ public class SchoolEscortingModel {
 		createChauffeurPriorityInboundMap();
 
 		double[][][] storedFromTazToAllTazsDistanceSkims = tazDistanceCalculator.getStoredFromTazToAllTazsDistanceSkims();
-    	distanceArray = storedFromTazToAllTazsDistanceSkims[tazDistanceCalculator.AM];
+    	distanceArray = storedFromTazToAllTazsDistanceSkims[ModelStructure.AM_SKIM_PERIOD_INDEX];
 		decisionMaker = new SchoolEscortingDmu( mgraDataManager, distanceArray );
 
     	

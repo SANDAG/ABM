@@ -401,43 +401,43 @@ public class SandagTourModeChoiceDMU
                 returnValue = getParkingArea();
                 break;
             case 30:
-                getWorkTimeFactor();
+            	returnValue = getWorkTimeFactor();
                 break;
             case 31:
-            	getNonWorkTimeFactor();
+            	returnValue = getNonWorkTimeFactor();
             	break;
             case 32:
-            	getJointTourTimeFactor();
+            	returnValue = getJointTourTimeFactor();
             	break;
             case 33:
-            	getTransponderOwnership();
+            	returnValue = getTransponderOwnership();
             	break;
             case 50:    
-                getFemaleInParty();
+            	returnValue = getFemaleInParty();
                 break;
             case 51:
-            	getMaleInParty();
+            	returnValue = getMaleInParty();
             	break;
             case 52:
-            	getInboundFemaleBikeLogsum();
+            	returnValue = getInboundFemaleBikeLogsum();
             	break;
             case 53:
-            	getOutboundFemaleBikeLogsum();
+            	returnValue = getOutboundFemaleBikeLogsum();
             	break;
             case 54:
-            	getInboundMaleBikeLogsum();
+            	returnValue = getInboundMaleBikeLogsum();
             	break;
             case 55:
-            	getOutboundMaleBikeLogsum();
+            	returnValue = getOutboundMaleBikeLogsum();
             	break;
             case 56:
-            	getIvtCoeff();
+            	returnValue = getIvtCoeff();
             	break;
             case 57:
-            	getCostCoeff();
+            	returnValue = getCostCoeff();
             	break;
             case 58:    
-            	getIncomeInDollars();
+            	returnValue = getIncomeInDollars();
             	break;
             case 59:
                 returnValue = getTransitLogSum(WTW, true) + getTransitLogSum(WTW, false);
@@ -461,10 +461,10 @@ public class SandagTourModeChoiceDMU
                 returnValue = getNmBikeTimeIn();
                 break;   
             case 96:
-                getOriginMgra();
+            	returnValue = getOriginMgra();
                 break;
             case 97:
-                getDestMgra();
+            	returnValue = getDestMgra();
                 break;
             default:
                 logger.error("method number = " + variableIndex + " not found");

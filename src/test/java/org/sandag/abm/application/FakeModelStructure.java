@@ -158,6 +158,11 @@ public class FakeModelStructure
     }
 
     @Override
+    public boolean getTripModeIsTransit(int tripMode){
+    	return getTripModeIsTransit(tripMode);
+    }
+    
+    @Override
     public boolean getTripModeIsWalkTransit(int tripMode)
     {
         return getTripModeIsWalkTransit(tripMode);

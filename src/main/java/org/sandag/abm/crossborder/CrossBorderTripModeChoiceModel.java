@@ -8,6 +8,7 @@ import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
+import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.TripModeChoiceDMU;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
@@ -25,6 +26,7 @@ public class CrossBorderTripModeChoiceModel
     private AutoAndNonMotorizedSkimsCalculator anm;
     private McLogsumsCalculator                logsumHelper;
     private CrossBorderModelStructure          modelStructure;
+    private SandagModelStructure               sandagModelStructure;
     private TazDataManager                     tazs;
     private MgraDataManager                    mgraManager;
     private double[]                           lsWgtAvgCostM;
@@ -62,6 +64,7 @@ public class CrossBorderTripModeChoiceModel
         lsWgtAvgCostH = mgraManager.getLsWgtAvgCostH();
 
         modelStructure = myModelStructure;
+        sandagModelStructure = new SandagModelStructure();
         logsumHelper = myLogsumHelper;
 
         setupTripModeChoiceModel(propertyMap, dmuFactory);
@@ -156,7 +159,7 @@ public class CrossBorderTripModeChoiceModel
             mode = tripModeChoiceModel.getChoiceResult(rand); 
         	trip.setTripMode(mode);
         	
-        	if(mode==10){ //walk-transit (TODO: CHANGE THIS)
+        	if(sandagModelStructure.getTripModeIsTransit(mode)){ 
             	double[][] bestTapPairs = logsumHelper.getBestWtwTripTaps();
               	//pick transit path from N-paths
                 float rn = new Double(tour.getRandom()).floatValue();

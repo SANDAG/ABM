@@ -298,8 +298,8 @@ public class SpecialEventTourManager
                 + "," + trip.getDestinationMgra() + "," + trip.isInbound() + ","
                 + trip.isOriginIsTourDestination() + "," + trip.isDestinationIsTourDestination()
                 + "," + trip.getPeriod() + "," + trip.getTripMode() + "," 
-                + trip.getBoardTap() + "," + trip.getAlightTap() +"," + trip.getSet()
-                + String.format("%9.2f",tour.getValueOfTime()) + "\n");
+                + trip.getBoardTap() + "," + trip.getAlightTap() +"," + trip.getSet()+ ","
+                + String.format("%9.2f",tour.getValueOfTime()));
 
 
         if (saveUtilsAndProbs)

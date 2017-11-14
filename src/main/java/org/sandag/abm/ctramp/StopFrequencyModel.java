@@ -179,7 +179,7 @@ public class StopFrequencyModel
                 try
                 {
 
-                    tour.clearStopModelResults();
+                    //tour.clearStopModelResults();
 
                     int modelIndex = tourPurposeModelIndexMap
                             .get(tour.getTourPrimaryPurposeIndex());
@@ -344,7 +344,7 @@ public class StopFrequencyModel
                 try
                 {
 
-                    tour.clearStopModelResults();
+                    //tour.clearStopModelResults();
 
                     int modelIndex = tourPurposeModelIndexMap
                             .get(tour.getTourPrimaryPurposeIndex());

@@ -150,6 +150,8 @@ public class VisitorTourTimeOfDayChoiceModel
         int purpose = tour.getPurpose();
         double random = tour.getRandom();
 
+        int depart = -1;
+        int arrive = -1;
         if (tour.getDebugChoiceModels())
         {
             logger.info("Choosing tour time of day for purpose "
@@ -162,13 +164,21 @@ public class VisitorTourTimeOfDayChoiceModel
 
             if (random < cumProbability[purpose][i])
             {
-                int depart = outboundPeriod[purpose][i];
-                int arrive = returnPeriod[purpose][i];
+                depart = outboundPeriod[purpose][i];
+                arrive = returnPeriod[purpose][i];
                 tour.setDepartTime(depart);
                 tour.setArriveTime(arrive);
                 break;
             }
         }
+        if((depart ==-1)||(arrive==-1)){
+        	logger.fatal("Error: did not find outbound or return period for tour");
+        	logger.fatal("Depart period, arrive period = "+depart+","+arrive);
+        	logger.fatal("Random number: "+random);
+        	tour.logTourObject(logger,100);
+        	throw new RuntimeException();
+        }
+        	
 
         if (tour.getDebugChoiceModels())
         {

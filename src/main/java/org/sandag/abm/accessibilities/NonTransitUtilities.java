@@ -117,13 +117,14 @@ public class NonTransitUtilities
                 for (int j = 0; j < traceDtaz.length; j++)
                 {
                     tracer.traceZonePair(traceOtaz[i], traceDtaz[j]);
+                    logger.info("Setting trace zone pair in NonTransitUtilities Object for i: "+ traceOtaz[i] + " j: " + traceDtaz[j]);
                 }
             }
         }
         seek = Util.getBooleanValueFromPropertyMap(rbMap, "Seek");
 
         int maxMgra = mgraManager.getMaxMgra();
-        logger.info("max Mgra " + maxMgra);
+//        logger.info("max Mgra " + maxMgra);
 
         mgraNMotorExpUtilities = new HashMap[NMTPERIODS.length][maxMgra + 1];
 

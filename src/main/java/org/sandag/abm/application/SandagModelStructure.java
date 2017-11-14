@@ -149,10 +149,10 @@ public class SandagModelStructure
     public static final int[]    TRIP_SOV_ALTS                                                      = {
             1, 2                                                                                    };
     public static final int[]    TRIP_HOV_ALTS                                                      = {
-            3, 4, 5, 6, 7, 8                                                                        };
+            3, 4, 5, 6                                                                       };
 
     public static final int[]    PAY_ALTS                                                           = {
-            2, 5, 8                                                                                 };
+            2, 4, 6                                                                                 };
 
     public static final int[]    OTHER_ALTS                                                         = {12};
 
@@ -539,6 +539,18 @@ public class SandagModelStructure
         }
 
         return returnValue;
+    }
+    
+    public boolean getTripModeIsTransit(int tripMode){
+    	
+    	boolean returnValue =  false;
+    	for( int i = 0; i < TRANSIT_ALTS.length;++i )
+    		if(tripMode==TRANSIT_ALTS[i]){
+    			returnValue = true;
+    			break;
+    		}
+    	
+    	return returnValue;
     }
 
     /**

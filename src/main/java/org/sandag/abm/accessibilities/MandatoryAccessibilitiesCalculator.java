@@ -9,13 +9,13 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
+import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
 import org.sandag.abm.modechoice.TransitDriveAccessDMU;
 import org.sandag.abm.modechoice.TransitWalkAccessDMU;
-import org.sandag.abm.modechoice.TransitWalkAccessUEC;
 import org.sandag.abm.modechoice.Modes;
 
 /**
@@ -380,7 +380,7 @@ public class MandatoryAccessibilitiesCalculator
             //////////////////////////////////////////////////////////////////////////
             
             // determine the best transit path, which also stores the best utilities array and the best mode
-            bestPathCalculator.findBestWalkTransitWalkTaps(walkDmu, TransitWalkAccessUEC.AM, oMgra, dMgra, debug, aLogger);
+            bestPathCalculator.findBestWalkTransitWalkTaps(walkDmu, ModelStructure.AM_SKIM_PERIOD_INDEX, oMgra, dMgra, debug, aLogger);
             
             // sum the exponentiated utilities over modes
             double sumWlkExpUtilities = 0;
@@ -453,7 +453,7 @@ public class MandatoryAccessibilitiesCalculator
             //////////////////////////////////////////////////////////////////////////
             
             // determine the best transit path, which also stores the best utilities array and the best mode
-            bestPathCalculator.findBestDriveTransitWalkTaps(walkDmu, driveDmu, TransitWalkAccessUEC.AM, oMgra, dMgra, debug, aLogger);
+            bestPathCalculator.findBestDriveTransitWalkTaps(walkDmu, driveDmu, ModelStructure.AM_SKIM_PERIOD_INDEX, oMgra, dMgra, debug, aLogger);
             
             // sum the exponentiated utilities over modes
             double sumDrvExpUtilities = 0;

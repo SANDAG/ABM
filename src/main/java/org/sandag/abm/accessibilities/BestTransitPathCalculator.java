@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
-import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
 
@@ -35,7 +34,6 @@ import org.sandag.abm.modechoice.Modes;
 import org.sandag.abm.modechoice.Modes.AccessMode;
 import org.sandag.abm.modechoice.TransitDriveAccessDMU;
 import org.sandag.abm.modechoice.TransitWalkAccessDMU;
-import org.sandag.abm.modechoice.TransitWalkAccessUEC;
 import org.sandag.abm.ctramp.Util;
 
 import com.pb.common.newmodel.UtilityExpressionCalculator;
@@ -58,12 +56,12 @@ public class BestTransitPathCalculator implements Serializable
     public static final int              APP_TYPE_TOURMC  = 1;
     public static final int              APP_TYPE_TRIPMC  = 2;
 
-    private static final int              EA                            = TransitWalkAccessUEC.EA;
-    private static final int              AM                            = TransitWalkAccessUEC.AM;
-    private static final int              MD                            = TransitWalkAccessUEC.MD;
-    private static final int              PM                            = TransitWalkAccessUEC.PM;
-    private static final int              EV                            = TransitWalkAccessUEC.EV;
-    public static final int              NUM_PERIODS                   = TransitWalkAccessUEC.PERIODS.length;
+    private static final int              EA                            = ModelStructure.EA_SKIM_PERIOD_INDEX;
+    private static final int              AM                            = ModelStructure.AM_SKIM_PERIOD_INDEX;
+    private static final int              MD                            = ModelStructure.MD_SKIM_PERIOD_INDEX;
+    private static final int              PM                            = ModelStructure.PM_SKIM_PERIOD_INDEX;
+    private static final int              EV                            = ModelStructure.EV_SKIM_PERIOD_INDEX;
+    public static final int              NUM_PERIODS                   = ModelStructure.SKIM_PERIOD_INDICES.length;
 
     public static final int               NA            = -999;
     public static final int               WTW           = 0;
@@ -141,7 +139,7 @@ public class BestTransitPathCalculator implements Serializable
                 for (int j = 0; j < traceDtaz.length; j++)
                 {
                     tracer.traceZonePair(traceOtaz[i], traceDtaz[j]);
-                }
+                 }
             }
         }
         
@@ -194,7 +192,8 @@ public class BestTransitPathCalculator implements Serializable
         bestPTap = new int[numTransitAlts];
         bestATap = new int[numTransitAlts];
         bestSet = new int[numTransitAlts];
-    }
+        
+     }
     
    
 
@@ -303,7 +302,7 @@ public class BestTransitPathCalculator implements Serializable
                     }
 
         boolean writeCalculations = false;
-        if (tracer.isTraceOn() && tracer.isTraceZonePair(pTaz, aTaz) && debug)
+        if ((tracer.isTraceOn() && tracer.isTraceZonePair(pTaz, aTaz)) || debug)
         {
             writeCalculations = true;
         }
@@ -466,7 +465,7 @@ public class BestTransitPathCalculator implements Serializable
         float util = (float)walkAccessUEC.solve(index, walkDmu, null)[0];
         
         // logging
-        if (myTrace && tracer.isTraceZone(mgraManager.getTaz(pMgra))) {
+        if (myTrace) {
             walkAccessUEC.logAnswersArray(myLogger, "Walk Orig Mgra=" + pMgra + ", to pTap=" + pTap + " Utility Piece");
         }
         
@@ -483,7 +482,7 @@ public class BestTransitPathCalculator implements Serializable
         float util = (float)driveAccessUEC.solve(index, driveDmu, null)[0];
 
         // logging
-        if (myTrace && tracer.isTraceZone(mgraManager.getTaz(pMgra))) {
+        if (myTrace) {
         	driveAccessUEC.logAnswersArray(myLogger, "Drive from Orig Taz=" + pTaz + ", to Dest pTap=" + pTap + " Utility Piece");
         }
         return(util);
@@ -497,7 +496,7 @@ public class BestTransitPathCalculator implements Serializable
         float util = (float)walkEgressUEC.solve(index, walkDmu, null)[0];
 
         // logging
-        if (myTrace && tracer.isTraceZone(mgraManager.getTaz(aMgra))) {
+        if (myTrace) {
         	walkEgressUEC.logAnswersArray(myLogger, "Walk from Orig aTap=" + aTap + ", to Dest Mgra=" + aMgra + " Utility Piece");
         }    
         return(util);
@@ -512,7 +511,7 @@ public class BestTransitPathCalculator implements Serializable
         float util = (float)driveEgressUEC.solve(index, driveDmu, null)[0];
 
         // logging
-        if (myTrace && tracer.isTraceZone(mgraManager.getTaz(aMgra))) {
+        if (myTrace) {
             //driveEgressUEC.logAnswersArray(myLogger, "Drive Tap to Dest Taz Utility Piece");
         	driveEgressUEC.logAnswersArray(myLogger, "Drive from Orig aTap=" + aTap + ", to Dest Taz=" + aTaz + " Utility Piece");
         }
@@ -531,9 +530,8 @@ public class BestTransitPathCalculator implements Serializable
         float util = (float)tapToTapUEC.solve(index, walkDmu, null)[0];  
         
         // logging
-        if (myTrace && tracer.isTraceZonePair( mgraManager.getTaz(origMgra),  mgraManager.getTaz(destMgra) )) {
-        	String modeName = SandagModelStructure.modeName[SandagModelStructure.TRANSIT_ALTS[set] - 1];
-            tapToTapUEC.logAnswersArray(myLogger, "Transit Mode: " + modeName + " From Orig pTap=" + pTap + " (Origin MAZ:" + origMgra +") " +  " to Dest aTap=" + aTap + " (Dest MAZ:" + destMgra +") " + " Utility Piece");
+        if (myTrace) {
+        	tapToTapUEC.logAnswersArray(myLogger, "TAP-TAP Utilities From Orig pTap=" + pTap + " (Origin MAZ:" + origMgra +") " +  " to Dest aTap=" + aTap + " (Dest MAZ:" + destMgra +") " + " Utility Piece");
             tapToTapUEC.logResultsArray(myLogger, pTap, aTap);
         }
         return(util);
@@ -621,9 +619,9 @@ public class BestTransitPathCalculator implements Serializable
         {
         	myLogger.info("");
         	myLogger.info("");
-            header = accMode + " best tap pairs debug info for origMgra=" + origMgra
+            header = ACC_EGR[accMode] + " best tap pairs debug info for origMgra=" + origMgra
                     + ", destMgra=" + destMgra + ", period index=" + departPeriod
-                    + ", period label=" + TransitWalkAccessUEC.PERIODS[departPeriod];
+                    + ", period label=" + ModelStructure.SKIM_PERIOD_STRINGS[departPeriod];
             for (int i = 0; i < header.length(); i++)
                 separator += "^";
 
@@ -701,7 +699,7 @@ public class BestTransitPathCalculator implements Serializable
         	myLogger.info("");
             header = accMode + " best tap pairs person specific utility info for origMgra=" + origMgra
                     + ", destMgra=" + destMgra + ", period index=" + departPeriod
-                    + ", period label=" + TransitWalkAccessUEC.PERIODS[departPeriod];
+                    + ", period label=" + ModelStructure.SKIM_PERIOD_STRINGS[departPeriod];
             for (int i = 0; i < header.length(); i++)
                 separator += "^";
 

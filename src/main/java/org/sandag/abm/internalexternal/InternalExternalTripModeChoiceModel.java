@@ -154,13 +154,13 @@ public class InternalExternalTripModeChoiceModel
         trip.setValueOfTime(vot);
         
         
-        if(mode>=9){
+        if(modelStructure.getTripModeIsTransit(mode)){
         	double[][] bestTapPairs = null;
         
-        	if (mode == 9){
+        	if (modelStructure.getTripModeIsWalkTransit(mode)){
         		bestTapPairs = logsumHelper.getBestWtwTripTaps();
         	}
-        	else if (mode==10||mode==11){
+        	else if (modelStructure.getTripModeIsPnrTransit(mode)||modelStructure.getTripModeIsKnrTransit(mode)){
         		if (!trip.isInbound())
         			bestTapPairs = logsumHelper.getBestDtwTripTaps();
         		else
@@ -213,7 +213,7 @@ public class InternalExternalTripModeChoiceModel
         double c_cost = - 0.003; 
 
         // Solve trip mode level utilities
-        mcDmuObject.setIvtCoeff(c_ivt);
+        mcDmuObject.setIvtCoeff(c_ivt * tour.getNonWorkTimeFactor());
         mcDmuObject.setCostCoeff(c_cost);
         double walkTransitLogsum = -999.0;
         double driveTransitLogsum = -999.0;
