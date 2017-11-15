@@ -227,6 +227,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         period_ids = list(enumerate(periods, start=int(scenario_id) + 1))
 
         skipInitialization = props["RunModel.skipInitialization"]
+        deleteAllMatrices = props["RunModel.deleteAllMatrices"]
         skipCopyWarmupTripTables = props["RunModel.skipCopyWarmupTripTables"]
         skipCopyBikeLogsum = props["RunModel.skipCopyBikeLogsum"]
         skipCopyWalkImpedance= props["RunModel.skipCopyWalkImpedance"]
@@ -304,11 +305,12 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                     "traffic_demand", "traffic_skims",
                     "truck_model", "commercial_vehicle_model",
                     "external_internal_model", "external_external_model"]
-                init_matrices(traffic_components, periods, base_scenario)
+                init_matrices(traffic_components, periods, base_scenario, deleteAllMatrices)
                 # import seed auto demand and seed truck demand
                 transit_scenario = init_transit_db(base_scenario)
                 transit_emmebank = transit_scenario.emmebank
-                init_matrices(["transit_demand", "transit_skims"], periods, transit_scenario)
+                transit_components = ["transit_demand", "transit_skims"]
+                init_matrices(transit_components, periods, transit_scenario, deleteAllMatrices)
             else:
                 transit_emmebank = _eb.Emmebank(_join(main_directory, "emme_project", "Database_transit", "emmebank"))
                 transit_scenario = transit_emmebank.scenario(base_scenario.number)

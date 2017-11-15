@@ -61,10 +61,13 @@ import traceback as _traceback
 gen_utils = _m.Modeller().module("sandag.utilities.general")
 
 
+
+
 class Initialize(_m.Tool(), gen_utils.Snapshot):
 
     components = _m.Attribute(_m.ListType)
     periods = _m.Attribute(_m.ListType)
+    delete_all_existing = _m.Attribute(bool)
 
     tool_run_msg = ""
 
@@ -82,7 +85,7 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
         self._all_periods = ['EA', 'AM', 'MD', 'PM', 'EV']
         self.components = self._all_components[:]
         self.periods = self._all_periods[:]
-        self.attributes = ["components", "periods"]
+        self.attributes = ["components", "periods", "delete_all_existing"]
         self._matrices = {}
         self._count = {}
 
@@ -100,13 +103,14 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             title="Select components:")
         pb.add_select("periods", keyvalues=[(k,k) for k in self._all_periods],
             title="Select periods:")
+        pb.add_checkbox("delete_all_existing", label="Delete all existing matrices")
         return pb.render()
 
     def run(self):
         self.tool_run_msg = ""
         try:
             scenario = _m.Modeller().scenario
-            self(self.components, self.periods, scenario)
+            self(self.components, self.periods, scenario, self.delete_all_existing)
             run_msg = "Tool completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -115,8 +119,11 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             raise
 
     @_m.logbook_trace("Create and initialize matrices", save_arguments=True)
-    def __call__(self, components, periods, scenario):
-        attributes = {"components": components, "periods": periods}
+    def __call__(self, components, periods, scenario, delete_all_existing=False):
+        attributes = {
+            "components": components, 
+            "periods": periods, 
+            "delete_all_existing": delete_all_existing}
         gen_utils.log_snapshot("Initialize matrices", str(self), attributes)
 
         self.scenario = scenario
@@ -126,6 +133,10 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             components = self._all_components[:]
         if periods == "all":
             periods = self._all_periods[:]
+        if delete_all_existing:
+            with _m.logbook_trace("Delete all existing matrices"):
+                for matrix in emmebank.matrices():
+                    emmebank.delete_matrix(matrix)
         
         self._matrices = dict((name, dict((k, []) for k in self._all_periods + ["ALL"])) for name in self._all_components)
         self._count = {"ms": 1, "md": 100, "mo": 100, "mf": 100}
@@ -282,7 +293,6 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             ("ALL_CMRDIST",    "All modes: Rail IV distance"), 
             ("ALL_EXPDIST",    "All modes: Express and Ltd IV distance"), 
             ("ALL_BRTDIST",    "All modes: BRT red and yel IV distance"), 
-            #("ALL_MAINMODE",   "All modes: main mode of travel from IVTT"),
         ]
         for period in self._all_periods:
             self.add_matrices("transit_skims", period,
@@ -391,10 +401,15 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
 
     def create_matrices(self, component, periods):
         with _m.logbook_trace("Create matrices for component %s" % (component.replace("_", " "))):
+            emmebank = self.scenario.emmebank
             matrices = []
             for period in periods + ["ALL"]:
                 with _m.logbook_trace("For period %s" % (period)):
                     for ident, name, desc in self._matrices[component][period]:
+                        existing_matrix = emmebank.matrix(name)
+                        if existing_matrix and (existing_matrix.id != ident):
+                            raise Exception("Matrix name conflict '%s', with id %s instead of %s. Delete all matrices first."
+                                % (name, existing_matrix.id, ident))
                         matrices.append(self._create_matrix_tool(ident, name, desc, scenario=self.scenario, overwrite=True))
         return matrices
 

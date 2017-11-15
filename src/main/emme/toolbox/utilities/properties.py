@@ -33,6 +33,7 @@ class PropertiesSetter(object):
     skipWalkLogsums = _m.Attribute(bool)
     skipBikeLogsums = _m.Attribute(bool)
     skipInitialization = _m.Attribute(bool)
+    deleteAllMatrices = _m.Attribute(bool)
 
     skipHighwayAssignment_1 = _m.Attribute(bool)
     skipHighwayAssignment_2 = _m.Attribute(bool)
@@ -124,6 +125,7 @@ class PropertiesSetter(object):
         skip_startup_items = [
             ("skipBuildNetwork",        "Skip build of highway and transit network"),
             ("skipInitialization",      "Skip matrix and transit database initialization"),
+            ("deleteAllMatrices",       "Delete all matrices"),
             ("skipCopyWarmupTripTables","Skip import of warmup trip tables"),
             ("skipCopyBikeLogsum",      "Skip copy of bike logsum"),
             ("skipCopyWalkImpedance",   "Skip copy of walk impedance"),
@@ -249,6 +251,7 @@ class PropertiesSetter(object):
         self.skipBikeLogsums = props.get("RunModel.skipBikeLogsums")
         self.skipBuildNetwork = props.get("RunModel.skipBuildNetwork")
         self.skipInitialization = props.get("RunModel.skipInitialization")
+        self.deleteAllMatrices = props.get("RunModel.deleteAllMatrices")
 
         self.skipHighwayAssignment = props.get("RunModel.skipHighwayAssignment")
         self.skipHighwaySkimming = props.get("RunModel.skipHighwaySkimming")
@@ -279,8 +282,9 @@ class PropertiesSetter(object):
         props["RunModel.skipWalkLogsums"] = self.skipWalkLogsums
         props["RunModel.skipBikeLogsums"] = self.skipBikeLogsums
         props["RunModel.skipBuildNetwork"] = self.skipBuildNetwork
-
         props["RunModel.skipInitialization"] = self.skipInitialization
+        props["RunModel.deleteAllMatrices"] = self.deleteAllMatrices
+        
         props["RunModel.skipHighwayAssignment"] = self.skipHighwayAssignment
         props["RunModel.skipHighwaySkimming"] = self.skipHighwaySkimming
         props["RunModel.skipTransitSkimming"] = self.skipTransitSkimming
