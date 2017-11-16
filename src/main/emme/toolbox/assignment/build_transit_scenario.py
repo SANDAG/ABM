@@ -416,7 +416,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             
         def link_on_line(line, node):
             node = network.node(node)
-            for seg in line.segments():
+            for seg in line.segments(True):
                 if seg.i_node == node:
                     return seg.link
             raise Exception(node_not_found_error % (node, line))
