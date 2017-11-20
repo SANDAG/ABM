@@ -42,6 +42,9 @@ import inro.modeller as _m
 import traceback as _traceback
 
 
+dem_utils = _m.Modeller().module("sandag.utilities.demand")
+
+
 class TimeOfDay(_m.Tool()):
 
     tool_run_msg = ""

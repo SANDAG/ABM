@@ -75,7 +75,7 @@ class CommercialVehicleDistribution(_m.Tool(), gen_utils.Snapshot):
         self.input_directory = os.path.join(os.path.dirname(project_dir), "input")
         self.attributes = ["input_directory"]
 
-    def page(self)
+    def page(self):
         pb = _m.ToolPageBuilder(self)
         pb.title = "Commercial Vehicle Distribution"
         pb.description = """
