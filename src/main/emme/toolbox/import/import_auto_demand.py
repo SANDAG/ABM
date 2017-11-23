@@ -11,6 +11,51 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+# 
+# Imports the auto demand matrices generated from an iteration of the disaggregate 
+# demand models (CT-RAMP) and adds the saved disaggregated demand matrices to 
+# generate the total auto demand in preparation for the auto assignment.
+# 
+# Note the matrix name mapping from the OMX file names to the Emme database names.
+#
+# Inputs:
+#    external_zones: set of external zone IDs as a range "1-12"
+#    output_dir: output directory to read the OMX files from
+#    num_processors: number of processors to use in the matrix calculations 
+#    scenario: traffic scenario to use for reference zone system
+#
+# Files referenced:
+#    Note: pp is time period, one of EA, AM, MD, PM, EV
+#    output/autoInternalExternalTrips_pp.mtx
+#    output/autoVisitorTrips_pp.mtx
+#    output/autoCrossBorderTrips_pp.mtx
+#    output/autoAirportTrips_pp.mtx
+#    output/autoTrips_pp.mtx
+#
+# Matrix inputs:
+#    pp_SOVGP_EIWORK, pp_SOVGP_EINONWORK, pp_SOVTOLL_EIWORK, pp_SOVTOLL_EINONWORK,
+#    pp_HOV2HOV_EIWORK, pp_HOV2HOV_EINONWORK, pp_HOV2TOLL_EIWORK, pp_HOV2TOLL_EINONWORK,
+#    pp_HOV3HOV_EIWORK, pp_HOV3HOV_EINONWORK, pp_HOV3TOLL_EIWORK, pp_HOV3TOLL_EINONWORK
+#    pp_COMVEHGP, pp_COMVEHTOLL
+#    pp_SOVGP_EETRIPS, pp_HOV2HOV_EETRIPS, pp_HOV3HOV_EETRIPS
+#
+# Matrix results:
+#    Note: pp is time period, one of EA, AM, MD, PM, EV
+#    pp_SOVGP, pp_SOVTOLL, pp_HOV2GP, pp_HOV2HOV, pp_HOV2TOLL, pp_HOV3GP, pp_HOV3HOV, pp_HOV3TOLL
+#    pp_TRKHGP, pp_TRKHTOLL, pp_TRKLGP, pp_TRKLTOLL, pp_TRKMGP, pp_TRKMTOLL
+#
+# Script example:
+"""
+    import os
+    modeller = inro.modeller.Modeller()
+    main_directory = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
+    output_dir = os.path.join(main_directory, "output")
+    external_zones = "1-12"
+    num_processors = "MAX-1"
+    base_scenario = modeller.scenario
+    import_auto_demand = modeller.tool("sandag.model.import.import_auto_demand")
+    import_auto_demand(external_zones, output_dir, num_processors, base_scenario)
+"""
 
 TOOLBOX_ORDER = 13
 
@@ -57,11 +102,11 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
     A total of 50 OMX files are expected, for 5 time periods
     EA, AM, MD, PM and EV, times 5 model segments for auto:
     <ul>
-        <li>autoInternalExternalTrips_XX.omx</li>
-        <li>autoVisitorTrips_XX.omx</li>
-        <li>autoCrossBorderTrips_XX.omx</li>
-        <li>autoAirportTrips_XX.omx</li>
-        <li>autoTrips_XX.omx</li>
+        <li>autoInternalExternalTrips_pp.mtx</li>
+        <li>autoVisitorTrips_pp.mtx</li>
+        <li>autoCrossBorderTrips_pp.mtx</li>
+        <li>autoAirportTrips_pp.mtx</li>
+        <li>autoTrips_pp.mtx</li>
     </ul>
     Adds the aggregate demand from the commercial vehicle model, 
     external-external and external-internal to the time-of-day

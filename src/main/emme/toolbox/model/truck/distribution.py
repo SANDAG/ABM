@@ -11,6 +11,58 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+# 
+# 
+# Runs the truck distribution step. Distributes truck trips with congested 
+# skims and splits by time of day.
+# The distribution is based on the mid-day travel time for the "generic" 
+# truck skim "mfMD_TRK_TIME". Applies truck toll diversion model with 
+# toll and non-toll skims.
+#
+# Inputs:
+#    input_directory: source directory for input files
+#    demand_as_pce: boolean, if True the result matrices are adjusted to PCEs instead of 
+#        vehicles (default, and required for traffic assignment)
+#    num_processors: Number of processors to use, either as a number or "MAX-#" 
+#    scenario: traffic scenario to use for reference zone system
+#
+# Files referenced:
+#    Note: YEAR is replaced by truck.FFyear in the conf/sandag_abm.properties file 
+#    input/TruckTripRates.csv
+#    input/mgra13_based_inputYEAR.csv
+#    input/specialGenerators.csv
+#
+# Matrix inputs:
+#    Note: pp is time period, one of EA, AM, MD, PM, EV
+#    moTRKL_PROD, moTRKM_PROD, moTRKH_PROD, moTRKEI_PROD, moTRKIE_PROD
+#    mdTRKL_ATTR, mdTRKM_ATTR, mdTRKH_ATTR, mdTRKEI_ATTR, mdTRKIE_ATTR
+#    mfTRKEE_DEMAND
+#    mfMD_TRK_TIME
+#    mfpp_TRKLGP_TIME, mfpp_TRKLTOLL_TIME, mfpp_TRKLTOLL_TOLLCOST
+#    mfpp_TRKMGP_TIME, mfpp_TRKMTOLL_TIME, mfpp_TRKMTOLL_TOLLCOST
+#    mfpp_TRKHGP_TIME, mfpp_TRKHTOLL_TIME, mfpp_TRKHTOLL_TOLLCOST
+#
+# Matrix intermediates (only used internally):
+#    mfTRKEI_FRICTION, mfTRKIE_FRICTION, mfTRKL_FRICTION, mfTRKM_FRICTION, mfTRKH_FRICTION
+#
+# Matrix results:
+#    Note: pp is time period, one of EA, AM, MD, PM, EV
+#    mfpp_TRKLGP, mfpp_TRKMGP, mfpp_TRKHGP
+#    mfpp_TRKLTOLL, mfpp_TRKMTOLL, mfpp_TRKHTOLL
+#
+# Script example:
+"""
+    import os
+    modeller = inro.modeller.Modeller()
+    main_directory = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
+    input_dir = os.path.join(main_directory, "input")
+    demand_as_pce = True
+    num_processors = "MAX-1" 
+    base_scenario = modeller.scenario
+    distribution = modeller.tool("sandag.model.truck.distribution")
+    distribution(input_dir, demand_as_pce, num_processors, base_scenario)
+"""
+
 
 TOOLBOX_ORDER = 43
 
@@ -54,7 +106,7 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
     The distribuion is based on the mid-day travel time for the "generic" truck 
     skim "mfMD_TRK_TIME".
     <br>
-    Applies truck toll diversion model with free-flow toll and non-toll skims<br>
+    Applies truck toll diversion model with toll and non-toll skims<br>
 </div>
         """
         pb.branding_text = "- SANDAG - Model - Truck"
@@ -116,11 +168,11 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
         with _m.logbook_trace('Reduce matrix precision'):
             precision = props['RunModel.MatrixPrecision']
             matrices = []
-            for t in ['L', 'M', 'H']:
+            for t, pce in [('L', 1.3), ('M', 1.5), ('H', 2.5)]:
                 for p in ['EA', 'AM', 'MD', 'PM', 'EV']:
                     matrices.append('mf%s_TRK%sGP' % (p, t))
                     matrices.append('mf%s_TRK%sTOLL' % (p, t))
-            dem_utils.reduce_matrix_precision(matrices, precision, num_processors, scenario)
+            dem_utils.reduce_matrix_precision(matrices, precision*pce, num_processors, scenario)
 
     @_m.logbook_trace('Create friction factors matrix')
     def calc_friction_factors(self, truck_type, impedance, coeff):

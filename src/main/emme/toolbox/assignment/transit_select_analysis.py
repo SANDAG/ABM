@@ -11,7 +11,30 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
-
+#
+#
+# This tool runs select type network analysis on the results of one or more 
+# transit assignments. It is run as a post-process tool after the assignment
+# tools are complete, using the saved transit strategies. Any number of 
+# analyses can be run without needing to rerun the assignments.  
+#
+#
+# Inputs:
+#   Trip components for selection: pick one or more extra attributes which 
+#       identify the network elements of interest by trip component: 
+#           in_vehicle
+#           aux_transit
+#           initial_boarding
+#           transfer_boarding 
+#           transfer_alighting
+#           final_alighting
+#   Result suffix: the suffix to use in the naming of per-class result 
+#       attributes and matrices, up to 6 characters.
+#   Threshold: the minimum number of elements which must be encountered 
+#       for the path selection. 
+#   Scenario: the scenario to analyse.
+#
+#
 
 TOOLBOX_ORDER = 25
 

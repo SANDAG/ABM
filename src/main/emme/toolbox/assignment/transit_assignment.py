@@ -11,6 +11,29 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+#
+#
+# The Transit assignment tool runs the transit assignment and skims for each 
+# period on the current primary scenario.
+#
+# The Build transit network tool must be run first to prepare the scenario for 
+# assignment. Note that this tool must be run with the Transit database 
+# (under the Database_transit directory) open (as the active database in the 
+# Emme desktop).
+#
+#
+# Inputs:
+#   period: the time-of-day period, one of EA, AM, MD, PM, EV.
+#   scenario: Transit assignment scenario
+#   skims_only: Only run assignment for skim matrices, if True only two assignments 
+#       are run to generate the skim matrices for the BUS and ALL skim classes. 
+#       Otherwise, all 15 assignments are run to generate the total network flows.
+#   num_processors: number of processors to use for the traffic assignments.
+#
+# Matrices:
+#   All transit demand and skim matrices.
+#   See list of matrices under report method.
+#
 
 TOOLBOX_ORDER = 21
 

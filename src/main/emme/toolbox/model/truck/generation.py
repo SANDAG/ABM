@@ -11,6 +11,44 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+# 
+# 
+# Runs the truck generation step. Generates standard truck trip and special (military) truck trips,
+# and generates regional truck trips, IE trips, EI trips and EE trips and balances truck trips.
+#
+# Inputs:
+#    input_directory: source directory for most input files, including demographics and trip rates
+#    input_truck_directory: source for special truck files 
+#    scenario: traffic scenario to use for reference zone system
+#
+# Files referenced:
+#    Note: YEAR is replaced by truck.FFyear in the conf/sandag_abm.properties file 
+#    input/TruckTripRates.csv
+#    input/mgra13_based_inputYEAR.csv
+#    input/specialGenerators.csv
+#    input_truck/regionalIEtripsYEAR.csv
+#    input_truck/regionalEItripsYEAR.csv
+#    input_truck/regionalEEtripsYEAR.csv
+#
+# Matrix results:
+#    moTRKL_PROD, moTRKM_PROD, moTRKH_PROD, moTRKEI_PROD, moTRKIE_PROD
+#    mdTRKL_ATTR, mdTRKM_ATTR, mdTRKH_ATTR, mdTRKEI_ATTR, mdTRKIE_ATTR
+#    mfTRKEE_DEMAND
+#
+# Script example:
+"""
+    import os
+    modeller = inro.modeller.Modeller()
+    project_dir = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
+    input_dir = os.path.join(project_dir, "input")
+    input_truck_dir = os.path.join(project_dir, "input_truck")
+    base_scenario = modeller.scenario
+    generation = modeller.tool("sandag.model.truck.generation")
+    generation(input_dir, input_truck_dir, base_scenario)
+"""
+
+
+
 
 TOOLBOX_ORDER = 42
 
@@ -94,8 +132,6 @@ class TruckGeneration(_m.Tool(), gen_utils.Snapshot):
         self.read_external_external_demand()
         return trucks_PA
 
-    # this assume that demographic information was loaded into datatable
-    # using utils.csv_to_data_table
     def truck_standard_generation(self):
         year = self._properties['truck.FFyear']
 

@@ -11,12 +11,41 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+# 
+# Applies toll and non-toll split to Commercial vehicle time period demand.
+# Uses the travel TIME for GP and TOLL modes as well as the TOLLCOST 
+# by time period.
+#
+# Inputs:
+#    scenario: traffic scenario to use for reference zone system
+#
+# Matrix inputs:
+#    Note: pp is time period, one of EA, AM, MD, PM, EV
+#    mfpp_COMVEH
+#    mfpp_SOVGPM_TIME, mfpp_SOVTOLLM_TIME, mfpp_SOVTOLLM_TOLLCOST
+#
+# Matrix results:
+#    Note: pp is time period, one of EA, AM, MD, PM, EV
+#    mfpp_COMVEHGP, mfpp_COMVEHTOLL
+#
+# Script example:
+"""
+    import os
+    modeller = inro.modeller.Modeller()
+    base_scenario = modeller.scenario
+    toll_diversion = modeller.tool("sandag.model.commercial_vehicle.toll_diversion")
+    toll_diversion(base_scenario)
+"""
 
 TOOLBOX_ORDER = 55
 
 
 import inro.modeller as _m
 import traceback as _traceback
+
+
+gen_utils = _m.Modeller().module('sandag.utilities.general')
+dem_utils = _m.Modeller().module('sandag.utilities.demand')
 
 
 class TollDiversion(_m.Tool()):
@@ -28,7 +57,6 @@ class TollDiversion(_m.Tool()):
         return self.tool_run_msg
 
     def page(self):
-        # Equivalent to commVehDiversion.rsc
         pb = _m.ToolPageBuilder(self)
         pb.title = "Commercial vehicle toll diversion"
         pb.description = """
@@ -36,10 +64,13 @@ class TollDiversion(_m.Tool()):
     Commercial vehicle toll and non-toll (GP) split.  
     The very small truck generation model is based on the Phoenix 
     four-tire truck model documented in the TMIP Quick Response Freight Manual. 
-    <br>
-    <p>Input: Time-of-day-specific trip table matrices 'mfXX_COMMVEH'. </p>
-    <p>Output: Corresponding time-of-day 'mfXX_COMVEHGP' and 'mfXX_COMVEHTOLL'
-       trip demand matrices.</p>
+    <br>    
+    <p>Input: Time-of-day-specific trip table matrices 'mfpp_COMVEH', 
+        and travel time for GP and TOLL modes 'mfpp_SOVGPM_TIME', 'mfpp_SOVTOLLM_TIME', 
+        and toll cost 'mfpp_SOVTOLLM_TOLLCOST' (medium VOT bin).
+    </p>
+    <p>Output: Corresponding time-of-day 'mfpp_COMVEHGP' and 'mfpp_COMVEHTOLL'
+        trip demand matrices.</p>
 </div>
 """
         pb.branding_text = "- SANDAG - Model - Commercial vehicle"
@@ -63,48 +94,24 @@ class TollDiversion(_m.Tool()):
     @_m.logbook_trace('Commercial vehicle toll diversion')
     def __call__(self, scenario):
         emmebank = scenario.emmebank
-        gen_utils = _m.Modeller().module('sandag.utilities.general')
-        matrix_calc = _m.Modeller().tool(
-            'inro.emme.matrix_calculation.matrix_calculator')
+        matrix_calc = dem_utils.MatrixCalculator(scenario, "MAX-1")
+        init_matrix = _m.Modeller().tool(
+            'inro.emme.data.matix.initialize_matrix')
+
+        periods = ['EA', 'AM', 'MD', 'PM', 'EV']
+        init_matrix(["mf%s_COMVEHTOLL" % p for p in periods], scenario=scenario)
 
         nest = 10
         vot = 0.02
         toll_factor = 1
-
-        periods = ['EA', 'AM', 'MD', 'PM', 'EV']
-        with gen_utils.temp_matrices(emmebank, "FULL") as [toll_cost]:
-            toll_cost.name = "TOLL_COST_TEMP"
-            for p in periods:
-                with _m.logbook_trace("Diversion for %s" % p):
-                    spec = {
-                        "expression": 'mf%s_SOVTOLLM_TOLLCOST .mod. 10000' % p,
-                        "result": "mfTOLL_COST_TEMP",
-                        "constraint": None,
-                        "type": "MATRIX_CALCULATION"
-                    }
-                    matrix_calc(spec, scenario=scenario)
-                    params = {'p': p, 'v': vot, 'tf': toll_factor, 'n': nest}
-                    utility = ('(mf%(p)s_SOVGPM_TIME - mf%(p)s_SOVTOLLM_TIME'
-                               '- %(v)s * mfTOLL_COST_TEMP * %(tf)s) / %(n)s') % params
-
-                    spec = {
-                        "expression": "mf%s_COMMVEH / (1 + exp(- %s))" % (p, utility),
-                        "result": "mf%s_COMVEHTOLL" % p,
-                        "constraint": {
-                            "by_value": {
-                                "interval_min": 0,
-                                "interval_max": 0,
-                                "condition": "EXCLUDE",
-                                "od_values": "mfTOLL_COST_TEMP"
-                            },
-                        },
-                        "type": "MATRIX_CALCULATION"
-                    }
-                    matrix_calc(spec, scenario=scenario)
-
-                    spec = {
-                        "expression": "mf%(p)s_COMMVEH - mf%(p)s_COMVEHTOLL" % {'p': p},
-                        "result": "mf%s_COMVEHGP" % p,
-                        "type": "MATRIX_CALCULATION"
-                    }
-                    matrix_calc(spec, scenario=scenario)
+        for p in periods:
+            with matrix_calc.trace_run("Diversion for %s" % p):
+                params = {'p': p, 'v': vot, 'tf': toll_factor, 'n': nest}
+                utility = ('(mf%(p)s_SOVGPM_TIME - mf%(p)s_SOVTOLLM_TIME'
+                           '- %(v)s * mf%(p)s_SOVTOLL_TOLLCOST * %(tf)s) / %(n)s') % params
+                matrix_calc.add(
+                    "mf%s_COMVEHTOLL" % p, 
+                    "mf%s_COMVEH / (1 + exp(- %s))" % (p, utility),
+                    [0, 0, "EXCLUDE", "mf%s_SOVTOLL_TOLLCOST" % p])
+                matrix_calc.add(
+                    "mf%s_COMVEHGP" % p, "mf%(p)s_COMVEH - mf%(p)s_COMVEHTOLL" % {'p': p})

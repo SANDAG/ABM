@@ -143,8 +143,6 @@ class ToolNode():
             code = f.read()
         self.code = usc_transform(base64.b64encode(pickle.dumps(code)))
         self.script = ''
-        
-
 
     def set_toolbox_order(self):
         self.element_id = self.root.next_id()
@@ -296,7 +294,7 @@ class MTBXDatabase():
             id=node.element_id, parent=node.parent.element_id, title=node.title)
         
         sql = """INSERT INTO elements (%s)
-                VALUES (%s);""" %(column_string, value_string)
+                VALUES (%s);""" % (column_string, value_string)
         self.db.execute(sql)
         
         #Insert into the attributes table
@@ -312,7 +310,7 @@ class MTBXDatabase():
             value_string = "{id}, '{name}', '{value!s}'".format(
                 id=node.element_id, name=key, value=val)
             sql = """INSERT INTO attributes (%s)
-                    VALUES (?, ?, ?);""" %column_string
+                    VALUES (?, ?, ?);""" % column_string
             self.db.execute(sql, (node.element_id, key, val))
         
         self.db.commit()

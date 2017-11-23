@@ -11,6 +11,45 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+# 
+# Imports the warm start demand matrices from specified OMX files for auto, truck and transit.
+# 
+# Note the matrix name mapping from the OMX file names to the Emme database names.
+#
+# Inputs:
+#    omx_file: source 
+#    demand_type: The type of demand in the provided OMX file, one of "AUTO", "TRUCK", "TRANSIT".
+#        Used to determine the matrix mapping for the import.
+#    period: The period for which to import the matrices, one of "EA", "AM", "MD", "PM", "EV"
+#    scenario: traffic scenario to use for reference zone system
+#    convert_truck_to_pce: boolean, if True the result matrices are adjusted to PCEs instead of 
+#        vehicles (default, and required for traffic assignment). Only used if the demand_type is TRUCK.
+#
+# Matrix results:
+#    Note: pp is time period, one of EA, AM, MD, PM, EV
+#    For AUTO:
+#       pp_SOVGP, pp_SOVTOLL, pp_HOV2GP, pp_HOV2HOV, pp_HOV2TOLL, pp_HOV3GP, pp_HOV3HOV, pp_HOV3TOLL
+#    For TRUCK:
+#       pp_TRKHGP, pp_TRKHTOLL, pp_TRKLGP, pp_TRKLTOLL, pp_TRKMGP, pp_TRKMTOLL
+#    For TRANSIT:
+#       pp_WLKBUS, pp_WLKLRT, pp_WLKCMR, pp_WLKEXP, pp_WLKBRT, 
+#       pp_PNRBUS, pp_PNRLRT, pp_PNRCMR, pp_PNREXP, pp_PNRBRT, 
+#       pp_KNRBUS, pp_KNRLRT, pp_KNRCMR, pp_KNREXP, pp_KNRBRT
+#
+# Script example:
+"""
+    import os
+    modeller = inro.modeller.Modeller()
+    main_directory = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
+    period = "AM"
+    input_omx_file = os.path.join(main_directory, "input", "trip_%s.omx" % period)
+    demand_type = "TRUCK"
+    demand_as_pce = True
+    base_scenario = modeller.scenario
+    import_seed_demand = modeller.tool("sandag.model.import.import_seed_demand")
+    import_seed_demand(input_omx_file, demand_type, period, demand_as_pce, base_scenario)
+"""
+
 
 TOOLBOX_ORDER = 12
 

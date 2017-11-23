@@ -11,6 +11,35 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+#
+#
+# Runs the commercial vehicle model, the generation, distribution, time-of-day,
+# and toll diversion tools, in sequence.
+#    1) Generates 
+#    2) Generates 
+#    3) Distributes trips based on congested skims 
+#    4) Time-of-day split
+#    5) Applies toll diversion model with toll and non-toll SOV skims 
+#
+#   The very small truck generation model is based on the Phoenix 
+#   four-tire truck model documented in the TMIP Quick Response Freight Manual. 
+#
+# Inputs:
+#    run_generation: boolean, if True run generation tool.
+#    input_directory: source directory for most input files, including demographics and trip rates 
+#        (see generation and distribtuion tools)
+#    scenario: traffic scenario to use for reference zone system
+#
+# Script example:
+"""
+    import os
+    modeller = inro.modeller.Modeller()
+    project_dir = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
+    input_dir = os.path.join(project_dir, "input")
+    base_scenario = modeller.scenario
+    run_truck = modeller.tool("sandag.model.commercial_vehicle.run_commercial_vehicle")
+    run_truck(True, input_dir, base_scenario)
+"""
 
 TOOLBOX_ORDER = 51
 

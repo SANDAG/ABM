@@ -11,7 +11,40 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+# 
+# 
+# Runs the external-external, cross-regional demand model. Imports the total
+# daily demand from file and splits by time-of-day and SOVGP, HOV2HOV, and
+# HOV3HOV classes using fixed factors.
+#
+#
+# Inputs:
+#    input_directory: source directory for input file
+#    external_zones: the set of external zones specified as a range, default is "1-12"
+#    scenario: traffic scenario to use for reference zone system
+#
+# Files referenced:
+#    Note: YEAR is replaced by scenarioYear in the conf/sandag_abm.properties file 
+#    input/mgra13_based_inputYEAR.csv
+#    input/externalInternalControlTotalsByYear.csv
+#    input/externalInternalControlTotals.csv 
+#        (if externalInternalControlTotalsByYear.csv is unavailable)
+#
+# Matrix results:
+#    pp_SOVGP_EETRIPS, pp_HOV2HOV_EETRIPS, pp_HOV3HOV_EETRIPS
+# Script example:
+"""
+    import os
+    modeller = inro.modeller.Modeller()
+    main_directory = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
+    input_dir = os.path.join(main_directory, "input")
+    external_zones = "1-12"
+    base_scenario = modeller.scenario
+    external_external = modeller.tool("sandag.model.external_external")
+    external_external(input_dir, external_zones, base_scenario)
+"""
 
+ 
 TOOLBOX_ORDER = 62
 
 
@@ -47,7 +80,9 @@ class ExternalExternal(_m.Tool(), gen_utils.Snapshot):
         pb.description = """
             Total trips are read from externalExternalTripsByYear.csv for
             the year in sandag_abm.properties. If this file does not exist 
-            externalExternalTrips.csv will be used instead.
+            externalExternalTrips.csv will be used instead. 
+            The total trips are split by time-of-day and traffic class
+            SOVGP, HOV2HOV, and HOV3HOV using fixed factors.
         """
         pb.branding_text = "- SANDAG - Model"
         if self.tool_run_msg != "":

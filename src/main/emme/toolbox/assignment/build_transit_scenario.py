@@ -11,6 +11,25 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+#
+#
+# The build transit scenario tool generates a new scenario in the Transit 
+# database (under the Database_transit directory) as a copy of a scenario in 
+# the base (traffic assignment) database. The base traffic scenario should have 
+# valid results from a traffic assignment for the travel times on links to be 
+# available for transit lines in mixed traffic operation. 
+#
+#
+# Inputs:
+#   period: the corresponding period for the scenario
+#   base_scenario_id: the base traffic assignment scenario in the main Emme database
+#   scenario_id: the ID to use for the new scenario in the Transit Emme database
+#   scenario_title: the title for the new scenario
+#   timed_xfers_table: the source data table for the timed transfer line pairs
+#   overwrite: overwrite the scenario if it already exists.
+#
+#
+
 
 
 TOOLBOX_ORDER = 21

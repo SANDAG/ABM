@@ -11,6 +11,40 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+# 
+# 
+# Runs the external USA to internal demand model. 
+#    1) Work and non-work trip gateway total trips are read from control totals
+#    2) Generates internal trip ends based on relative attractiveness from employment (by category) and households
+#    3) Applies time-of-day and occupancy factors
+#    4) Applies toll diversion model with toll and non-toll skims
+# Control totals are read from externalInternalControlTotalsByYear.csv for
+# the specified year in sandag_abm.properties. If this file does not exist
+# externalInternalControlTotals.csv will be used instead.
+#
+# Inputs:
+#    input_directory: source directory for most input files, including demographics and trip rates
+#    scenario: traffic scenario to use for reference zone system
+#
+# Files referenced:
+#    Note: YEAR is replaced by scenarioYear in the conf/sandag_abm.properties file 
+#    input/mgra13_based_inputYEAR.csv
+#    input/externalInternalControlTotalsByYear.csv
+#    input/externalInternalControlTotals.csv 
+#        (if externalInternalControlTotalsByYear.csv is unavailable)
+#
+# Matrix results:
+#
+# Script example:
+"""
+    import os
+    modeller = inro.modeller.Modeller()
+    main_directory = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
+    input_dir = os.path.join(main_directory, "input")
+    base_scenario = modeller.scenario
+    external_internal = modeller.tool("sandag.model.external_internal")
+    external_internal(input_dir, input_truck_dir, base_scenario)
+"""
 
 TOOLBOX_ORDER = 61
 
@@ -44,6 +78,7 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
         pb = _m.ToolPageBuilder(self)
         pb.title = "External internal model"
         pb.description = """
+            Runs the external USA to internal demand model.
             Control totals are read from externalInternalControlTotalsByYear.csv for
             the specified year in sandag_abm.properties. If this file does not exist
             externalInternalControlTotals.csv will be used instead."""
@@ -80,7 +115,6 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
         props = load_properties(
             os.path.join(os.path.dirname(input_directory), "conf", "sandag_abm.properties"))
 
-
         year = int(props['scenarioYear'])
         mgra = pd.read_csv(
             os.path.join(input_directory, 'mgra13_based_input%s.csv' % year))
@@ -96,7 +130,9 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
             file_path = os.path.join(
                 input_directory, 'externalInternalControlTotals.csv')
             if not os.path.isfile(file_path):
-                raise Exception("External-internal model: no file 'externalInternalControlTotals.csv' or 'externalInternalControlTotalsByYear.csv'")
+                raise Exception(
+                    "External-internal model: no file 'externalInternalControlTotals.csv' "
+                    "or 'externalInternalControlTotalsByYear.csv'")
             control_totals = pd.read_csv(file_path)
         _m.logbook_write("Control totals read from %s" % file_path)
         
