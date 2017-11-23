@@ -29,14 +29,14 @@ def init_emme_project(root, title):
         r"%EMMEPATH%\Coordinate Systems\Projected Coordinate Systems\State Plane"
         r"\NAD 1983 NSRS2007 (US Feet)\NAD 1983 NSRS2007 StatePlane California VI FIPS 0406 (US Feet).prj")
     project.spatial_reference_file = prj_file_path
-    project.initial_view = _ws_types.Box(6083025.0, 6548504.5, 1692844.25, 2034786.875)
+    project.initial_view = _ws_types.Box(6.18187e+06, 1.75917e+06, 6.42519e+06, 1.89371e+06)
 
     project_root = os.path.dirname(project_path)
     dimensions = {
         'scalar_matrices': 9999,
         'destination_matrices': 999,
         'origin_matrices': 999,
-        'full_matrices': 1499,
+        'full_matrices': 1600,
 
         'scenarios': 10,
         'centroids': 5000,
