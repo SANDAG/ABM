@@ -125,7 +125,7 @@ class PropertiesSetter(object):
         skip_startup_items = [
             ("skipBuildNetwork",        "Skip build of highway and transit network"),
             ("skipInitialization",      "Skip matrix and transit database initialization"),
-            ("deleteAllMatrices",       "Delete all matrices"),
+            ("deleteAllMatrices",       "&nbsp;&nbsp;&nbsp;&nbsp;Delete all matrices"),
             ("skipCopyWarmupTripTables","Skip import of warmup trip tables"),
             ("skipCopyBikeLogsum",      "Skip copy of bike logsum"),
             ("skipCopyWalkImpedance",   "Skip copy of walk impedance"),

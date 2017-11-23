@@ -127,6 +127,7 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
         gen_utils.log_snapshot("Initialize matrices", str(self), attributes)
 
         self.scenario = scenario
+        emmebank = scenario.emmebank
         self._create_matrix_tool = _m.Modeller().tool(
             "inro.emme.data.matrix.create_matrix")
         if components == "all":

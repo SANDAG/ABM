@@ -870,7 +870,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     tline[attr] = line_details[field]
                 #"XFERPENTM": "Transfer penalty time: "
                 #"WTXFERTM":  "Transfer perception:"
-                # NOTE: an additional transfer penality perception factor of 5.0 is included
+                # NOTE: an additional transfer penalty perception factor of 5.0 is included
                 #       in assignment
                 tline["@transfer_penalty"] = line_details["XFERPENTM"] * line_details["WTXFERTM"]
                 tline.headway = tline["@headway_am"] if tline["@headway_am"] > 0 else 999
