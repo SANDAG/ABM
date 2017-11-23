@@ -124,7 +124,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             self.run_skims("BUS", period, params, num_processors)
             self.run_skims("ALL", period, params, num_processors)
             self.run_skims("ALLPEN", period, params, num_processors)
-            #self.post_process_skims(period)
+            self.post_process_skims(period)
             self.report(period)
 
     @_context.contextmanager
@@ -141,7 +141,6 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                     yield
                 finally:
                     self._matrix_cache = {}  # clear cache at end of run
-
 
     def get_perception_parameters(self, period):
         perception_parameters = {

@@ -699,8 +699,8 @@ Assign traffic demand for the selected time period."""
             else:
                 traffic_assign(skim_spec, scenario)
 
-            # compute diagnal value for TIME and DIST
-            with _m.logbook_trace("Compute diagnal values for period %s" % period):
+            # compute diagonal value for TIME and DIST
+            with _m.logbook_trace("Compute diagonal values for period %s" % period):
                 num_cells = len(scenario.zone_numbers) ** 2
                 for traffic_class in classes:
                     class_name = traffic_class["name"]
