@@ -249,7 +249,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                     data_table_name=str(scenarioYear),
                     overwrite=True,
                     emmebank=main_emmebank)
-                export_tap_adjacent_lines(_join(output_dir, "tapLines.csv"))
+                export_tap_adjacent_lines(_join(output_dir, "tapLines.csv"), base_scenario)
                 # initialize per time-period scenarios
                 for number, period in period_ids:
                     title = "%s- %s assign" % (base_scenario.title, period)

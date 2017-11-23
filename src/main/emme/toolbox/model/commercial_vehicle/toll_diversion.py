@@ -77,14 +77,14 @@ class TollDiversion(_m.Tool()):
             for p in periods:
                 with _m.logbook_trace("Diversion for %s" % p):
                     spec = {
-                        "expression": 'mf%s_SOVTOLL_TOLLCOST .mod. 10000' % p,
+                        "expression": 'mf%s_SOVTOLLM_TOLLCOST .mod. 10000' % p,
                         "result": "mfTOLL_COST_TEMP",
                         "constraint": None,
                         "type": "MATRIX_CALCULATION"
                     }
                     matrix_calc(spec, scenario=scenario)
                     params = {'p': p, 'v': vot, 'tf': toll_factor, 'n': nest}
-                    utility = ('(mf%(p)s_SOVGP_TIME - mf%(p)s_SOVTOLL_TIME'
+                    utility = ('(mf%(p)s_SOVGPM_TIME - mf%(p)s_SOVTOLLM_TIME'
                                '- %(v)s * mfTOLL_COST_TEMP * %(tf)s) / %(n)s') % params
 
                     spec = {

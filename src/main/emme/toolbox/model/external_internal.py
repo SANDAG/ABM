@@ -208,8 +208,8 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
         vot_non_work = 22.86  # $13.70/hr
         ivt_coef = -0.03
 
-        gp_modes = ["SOVGP", "HOV2HOV", "HOV3HOV"]
-        toll_modes = ["SOVTOLL", "HOV2TOLL", "HOV3TOLL"]
+        gp_modes = ["SOVGPM", "HOV2HOVM", "HOV3HOVM"]
+        toll_modes = ["SOVTOLLM", "HOV2TOLLM", "HOV3TOLLM"]
         periods = ["EA", "AM", "MD", "PM", "EV"]
         for p, w_d_pa, w_d_ap, nw_d_pa, nw_d_ap in zip(
                 periods, work_time_PA_factors, work_time_AP_factors,

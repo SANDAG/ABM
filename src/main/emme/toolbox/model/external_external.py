@@ -89,7 +89,7 @@ class ExternalExternal(_m.Tool(), gen_utils.Snapshot):
 
         periods = ["EA", "AM", "MD", "PM", "EV"]
         time_of_day_factors = [0.074, 0.137, 0.472, 0.183, 0.133]
-        modes = ["SOVGP", "HOV2HOV", "HOV3HOV"]
+        modes = ["SOVGPM", "HOV2HOVM", "HOV3HOVM"]
         mode_factors = [0.43, 0.42, 0.15]
 
         ee_matrix = emmebank.matrix("ALL_TOTAL_EETRIPS")

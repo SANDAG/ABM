@@ -123,7 +123,7 @@ class CommercialVehicleDistribution(_m.Tool(), gen_utils.Snapshot):
         matrix_calc = _m.Modeller().tool(
             'inro.emme.matrix_calculation.matrix_calculator')
         spec = {
-            "expression": "0.3333 * mfAM_SOVGP_TIME + 0.6666 * mfMD_SOVGP_TIME",
+            "expression": "0.3333 * mfAM_SOVGPM_TIME + 0.6666 * mfMD_SOVGPM_TIME",
             "result": "mfCOMMVEH_BLENDED_SKIM",
             "type": "MATRIX_CALCULATION"
         }
