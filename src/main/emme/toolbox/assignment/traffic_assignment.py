@@ -658,8 +658,8 @@ Assign traffic demand for the selected time period."""
             else:
                 traffic_assign(skim_spec, scenario)
 
-            # compute diagnal value for TIME and DIST
-            with _m.logbook_trace("Compute diagnal values for period %s" % period):
+            # compute diagonal value for TIME and DIST
+            with _m.logbook_trace("Compute diagonal values for period %s" % period):
                 num_cells = len(scenario.zone_numbers) ** 2
                 for traffic_class in classes:
                     class_name = traffic_class["name"]
@@ -671,12 +671,13 @@ Assign traffic demand for the selected time period."""
                             data = matrix.get_numpy_data(scenario)
                             if skim_type == "TIME" or skim_type == "DIST":
                                 numpy.fill_diagonal(data, 999999999.0)
-                                data[numpy.diag_indices_from(data)] = 0.5 * numpy.nanmin(data, 1)
+                                data[numpy.diag_indices_from(data)] = 0.5 * numpy.nanmin(data[::,12::], 1)
+                                internal_data = data[12::, 12::]  # Exclude the first 12 zones, external zones
+                                self._stats[name] = (name, internal_data.min(), internal_data.max(), internal_data.mean(), internal_data.sum(), 0)
                             else:
+                                self._stats[name] = (name, data.min(), data.max(), data.mean(), data.sum(), 0)
                                 numpy.fill_diagonal(data, -99999999.0)
                             matrix.set_numpy_data(data, scenario)
-                            data = numpy.ma.masked_outside(data, -9999999, 9999999, copy=False)
-                            self._stats[name] = (name, data.min(), data.max(), data.mean(), data.sum(), num_cells-data.count())
         return
 
     def base_assignment_spec(self, relative_gap, max_iterations, num_processors):
@@ -781,6 +782,7 @@ Assign traffic demand for the selected time period."""
         ]
         num_cells = len(scenario.zone_numbers) ** 2
         text.append("Number of O-D pairs: %s. Values outside -9999999, 9999999 are masked in summaries.<br>" % num_cells)
+        text.append("Time and distance values exclude external zones 1-12.<br>")        
         text.append("%-25s %9s %9s %9s %13s %9s" % ("name", "min", "max", "mean", "sum", "mask num"))
         for name in matrices:
             name = period + "_" + name
