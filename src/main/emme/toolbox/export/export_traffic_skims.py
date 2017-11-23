@@ -65,6 +65,6 @@ class ExportSkims(_m.Tool(), gen_utils.Snapshot):
         attributes = {"omx_file": omx_file, "period": period}
         gen_utils.log_snapshot("Export traffic skims to OMX", str(self), attributes)
         init_matrices = _m.Modeller().tool("sandag.initialize.initialize_matrices")
-        matrices = init_matrices.get_matrix_names("traffic_skims", [period])
+        matrices = init_matrices.get_matrix_names("traffic_skims", [period], scenario)
         with gen_utils.ExportOMX(omx_file, scenario, omx_key="NAME") as exporter:
             exporter.write_matrices(matrices)

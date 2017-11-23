@@ -63,6 +63,6 @@ class ExportSkims(_m.Tool(), gen_utils.Snapshot):
         gen_utils.log_snapshot("Export transit skims to OMX", str(self), attributes)
         init_matrices = _m.Modeller().tool("sandag.initialize.initialize_matrices")
         matrices = init_matrices.get_matrix_names(
-            "transit_skims", ["EA", "AM", "MD", "PM", "EV"])
+            "transit_skims", ["EA", "AM", "MD", "PM", "EV"], scenario)
         with gen_utils.ExportOMX(omx_file, scenario, omx_key="NAME") as exporter:
             exporter.write_matrices(matrices)
