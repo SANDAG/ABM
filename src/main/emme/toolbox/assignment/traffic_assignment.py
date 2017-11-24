@@ -37,10 +37,10 @@
 #       an error is raised and the model run is halted.
 #   select_link: specify one or more select link analysis setups as a list of 
 #       specifications with three keys:
-#       	Expression: selection expression to identify the link(s) of interest. 
-#       	Result suffix: the suffix to use in the naming of per-class result 
+#           Expression: selection expression to identify the link(s) of interest. 
+#           Result suffix: the suffix to use in the naming of per-class result 
 #               attributes and matrices, up to 6 characters.
-#       	Threshold: the minimum number of links which must be encountered 
+#           Threshold: the minimum number of links which must be encountered 
 #               for the path selection.
 #
 # Matrices:
@@ -307,10 +307,10 @@ Assign traffic demand for the selected time period."""
                     "name": 'SOVTOLLL', "mode": 'S', "PCE": 1, "VOT": 16.6, "cost": '@cost_auto',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
-                {   # 2
-                    "name": 'HOV2GPL', "mode": 's', "PCE": 1, "VOT": 16.6, "cost": '',
-                    "skims": []  # same as SOV_GP
-                },
+                # {   # 2
+                    # "name": 'HOV2GPL', "mode": 's', "PCE": 1, "VOT": 16.6, "cost": '',
+                    # "skims": []  # same as SOV_GP
+                # },
                 {   # 3
                     "name": 'HOV2HOVL', "mode": 'h', "PCE": 1, "VOT": 16.6, "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
@@ -319,10 +319,10 @@ Assign traffic demand for the selected time period."""
                     "name": 'HOV2TOLLL', "mode": 'H', "PCE": 1, "VOT": 16.6, "cost": '@cost_hov',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
-                {   # 5
-                    "name": 'HOV3GPL', "mode": 's', "PCE": 1, "VOT": 16.6, "cost": '',
-                    "skims": []  # same as SOV_GP
-                },
+                # {   # 5
+                    # "name": 'HOV3GPL', "mode": 's', "PCE": 1, "VOT": 16.6, "cost": '',
+                    # "skims": []  # same as SOV_GP
+                # },
                 {   # 6
                     "name": 'HOV3HOVL', "mode": 'i', "PCE": 1, "VOT": 16.6, "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
@@ -339,10 +339,10 @@ Assign traffic demand for the selected time period."""
                     "name": 'SOVTOLLM', "mode": 'S', "PCE": 1, "VOT": 33.3, "cost": '@cost_auto',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
-                {   # 10
-                    "name": 'HOV2GPM', "mode": 's', "PCE": 1, "VOT": 33.3, "cost": '',
-                    "skims": []  # same as SOV_GP
-                },
+                # {   # 10
+                    # "name": 'HOV2GPM', "mode": 's', "PCE": 1, "VOT": 33.3, "cost": '',
+                    # "skims": []  # same as SOV_GP
+                # },
                 {   # 11
                     "name": 'HOV2HOVM', "mode": 'h', "PCE": 1, "VOT": 33.3, "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
@@ -351,10 +351,10 @@ Assign traffic demand for the selected time period."""
                     "name": 'HOV2TOLLM', "mode": 'H', "PCE": 1, "VOT": 33.3, "cost": '@cost_hov',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
-                {   # 13
-                    "name": 'HOV3GPM', "mode": 's', "PCE": 1, "VOT": 33.3, "cost": '',
-                    "skims": []  # same as SOV_GP
-                },
+                # {   # 13
+                    # "name": 'HOV3GPM', "mode": 's', "PCE": 1, "VOT": 33.3, "cost": '',
+                    # "skims": []  # same as SOV_GP
+                # },
                 {   # 14
                     "name": 'HOV3HOVM', "mode": 'i', "PCE": 1, "VOT": 33.3, "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
@@ -371,10 +371,10 @@ Assign traffic demand for the selected time period."""
                     "name": 'SOVTOLLH', "mode": 'S', "PCE": 1, "VOT": 100., "cost": '@cost_auto',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
-                {   # 18
-                    "name": 'HOV2GPH', "mode": 's', "PCE": 1, "VOT": 100., "cost": '',
-                    "skims": []  # same as SOV_GP
-                },
+                # {   # 18
+                    # "name": 'HOV2GPH', "mode": 's', "PCE": 1, "VOT": 100., "cost": '',
+                    # "skims": []  # same as SOV_GP
+                # },
                 {   # 19
                     "name": 'HOV2HOVH', "mode": 'h', "PCE": 1, "VOT": 100., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
@@ -383,10 +383,10 @@ Assign traffic demand for the selected time period."""
                     "name": 'HOV2TOLLH', "mode": 'H', "PCE": 1, "VOT": 100., "cost": '@cost_hov',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
-                {   # 21
-                    "name": 'HOV3GPH', "mode": 's', "PCE": 1, "VOT": 100., "cost": '',
-                    "skims": []  # same as SOV_GP
-                },
+                # {   # 21
+                    # "name": 'HOV3GPH', "mode": 's', "PCE": 1, "VOT": 100., "cost": '',
+                    # "skims": []  # same as SOV_GP
+                # },
                 {   # 22
                     "name": 'HOV3HOVH', "mode": 'i', "PCE": 1, "VOT": 100., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
@@ -813,8 +813,11 @@ Assign traffic demand for the selected time period."""
         matrices = []
         for traffic_class in classes:
             matrices.extend(["%s_%s" % (traffic_class["name"], s) for s in traffic_class["skims"]])
-        num_cells = len(scenario.zone_numbers) ** 2
-        text.append("Number of O-D pairs: %s. Values outside -9999999, 9999999 are masked in summaries.<br>" % num_cells)
+        num_zones = len(scenario.zone_numbers)
+        num_cells = num_zones ** 2
+        text.append("""
+            Number of zones: %s. Number of O-D pairs: %s. 
+            Values outside -9999999, 9999999 are masked in summaries.<br>""" % (num_zones, num_cells))
         text.append("%-25s %9s %9s %9s %13s %9s" % ("name", "min", "max", "mean", "sum", "mask num"))
         for name in matrices:
             name = period + "_" + name
