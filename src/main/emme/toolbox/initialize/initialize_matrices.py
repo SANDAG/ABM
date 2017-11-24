@@ -446,9 +446,9 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
                 [(ident, name, desc) for ident, name, desc in tmplt_matrices])
 
         tmplt_matrices = [
-            ('COMMVEH',    'Commerical vehicle total demand'),
-            ('COMVEHGP',   'Commerical vehicle Toll demand'),
-            ('COMVEHTOLL', 'Commerical vehicle GP demand'),
+            ('COMVEH',    'Commerical vehicle total demand'),
+            ('COMVEHGP',   'Commerical vehicle GP demand'),
+            ('COMVEHTOLL', 'Commerical vehicle Toll demand'),
         ]
         for period in self._all_periods:
             self.add_matrices("commercial_vehicle_model", period,

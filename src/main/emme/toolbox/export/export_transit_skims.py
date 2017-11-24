@@ -51,11 +51,13 @@ gen_utils = _m.Modeller().module("sandag.utilities.general")
 
 class ExportSkims(_m.Tool(), gen_utils.Snapshot):
     omx_file = _m.Attribute(unicode)
+    periods = _m.Attribute(unicode)
 
     tool_run_msg = ""
 
     def __init__(self):
         self.attributes = ["omx_file"]
+        self.periods = "EA, AM, MD, PM, EV"
 
     @_m.method(return_type=_m.UnicodeType)
     def tool_run_msg_status(self):
@@ -68,14 +70,16 @@ class ExportSkims(_m.Tool(), gen_utils.Snapshot):
         pb.branding_text = "- SANDAG - Export"
         if self.tool_run_msg != "":
             pb.tool_run_status(self.tool_run_msg_status)
-        pb.add_select_file('omx_file', 'save_file', title='Select OMX file')
+        pb.add_select_file('omx_file', 'save_file', title='Select OMX file')        
+        pb.add_text_box('periods', title="Selected periods:")
         return pb.render()
 
     def run(self):
         self.tool_run_msg = ""
         try:
             scenario = _m.Modeller().scenario
-            self(self.omx_file, scenario)
+            periods = [x.strip() for x in self.periods.split(",")]
+            self(self.omx_file, periods, scenario)
             run_msg = "Tool completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -84,11 +88,11 @@ class ExportSkims(_m.Tool(), gen_utils.Snapshot):
             raise
 
     @_m.logbook_trace("Export transit skims to OMX", save_arguments=True)
-    def __call__(self, omx_file, scenario):
+    def __call__(self, omx_file, periods, scenario):
         attributes = {"omx_file": omx_file}
         gen_utils.log_snapshot("Export transit skims to OMX", str(self), attributes)
         init_matrices = _m.Modeller().tool("sandag.initialize.initialize_matrices")
         matrices = init_matrices.get_matrix_names(
-            "transit_skims", ["EA", "AM", "MD", "PM", "EV"], scenario)
+            "transit_skims", periods, scenario)
         with gen_utils.ExportOMX(omx_file, scenario, omx_key="NAME") as exporter:
             exporter.write_matrices(matrices)

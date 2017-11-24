@@ -172,14 +172,16 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         return self.tool_run_msg
 
     @_m.logbook_trace("Master run model", save_arguments=True)
-    def __call__(self, main_directory, scenario_id, scenario_title, emmebank_title, num_processors, select_link=None):
+    def __call__(self, main_directory, scenario_id, scenario_title, emmebank_title, num_processors, 
+                 select_link=None, periods=["EA", "AM", "MD", "PM", "EV"]):
         attributes = {
             "main_directory": main_directory, 
             "scenario_id": scenario_id, 
             "scenario_title": scenario_title,
             "emmebank_title": emmebank_title,
             "num_processors": num_processors,
-            "select_link": select_link
+            "select_link": select_link,
+            "periods": periods
         }
         gen_utils.log_snapshot("Master run model", str(self), attributes)
 
@@ -224,7 +226,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         minSpaceOnC = props["RunModel.minSpaceOnC"]
         sample_rate = props["sample_rates"]
         end_iteration = len(sample_rate)
-        periods = ["EA", "AM", "MD", "PM", "EV"]
+
         period_ids = list(enumerate(periods, start=int(scenario_id) + 1))
 
         skipInitialization = props["RunModel.skipInitialization"]
@@ -354,7 +356,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                             transit_assign(period, transit_assign_scen, num_processors)
 
                         omx_file = _join(output_dir, "transit_skims.omx")   
-                        export_transit_skims(omx_file, transit_scenario)
+                        export_transit_skims(omx_file, periods, transit_scenario)
 
                 # move some trip matrices so run will stop if ctramp model
                 # doesn't produced csv/omx (mtx) files for assignment
@@ -416,7 +418,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                     transit_assign(period, transit_assign_scen, num_processors)
                 if not skipFinalTransitSkimming:
                     omx_file = _join(output_dir, "transit_skims.omx")   
-                    export_transit_skims(omx_file, transit_scenario)
+                    export_transit_skims(omx_file, periods, transit_scenario)
 
         if not skipDataExport:
             export_network_data(main_directory, scenario_id, main_emmebank, transit_emmebank, num_processors)
