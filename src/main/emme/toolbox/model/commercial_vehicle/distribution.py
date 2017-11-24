@@ -75,7 +75,7 @@ class CommercialVehicleDistribution(_m.Tool(), gen_utils.Snapshot):
         self.input_directory = os.path.join(os.path.dirname(project_dir), "input")
         self.attributes = ["input_directory"]
 
-    def page(self)
+    def page(self):
         pb = _m.ToolPageBuilder(self)
         pb.title = "Commercial Vehicle Distribution"
         pb.description = """
@@ -86,7 +86,7 @@ class CommercialVehicleDistribution(_m.Tool(), gen_utils.Snapshot):
     <br>
     A simple gravity model is used to distribute the truck trips.  
     A blended travel time of 
-    1/3 AM_SOVGP_TIME and 2/3 MD_SOVGP_TIME is used, along with 
+    1/3 AM_SOVGPM_TIME and 2/3 MD_SOVGPM_TIME is used, along with 
     friction factor lookup table stored in commVehFF.csv.
     <br>
     Input:  

@@ -96,22 +96,20 @@ class TollDiversion(_m.Tool()):
         emmebank = scenario.emmebank
         matrix_calc = dem_utils.MatrixCalculator(scenario, "MAX-1")
         init_matrix = _m.Modeller().tool(
-            'inro.emme.data.matix.initialize_matrix')
-
+            'inro.emme.data.matrix.init_matrix')
         periods = ['EA', 'AM', 'MD', 'PM', 'EV']
-        init_matrix(["mf%s_COMVEHTOLL" % p for p in periods], scenario=scenario)
-
         nest = 10
         vot = 0.02
         toll_factor = 1
         for p in periods:
             with matrix_calc.trace_run("Diversion for %s" % p):
+                init_matrix("mf%s_COMVEHTOLL" % p, scenario=scenario)
                 params = {'p': p, 'v': vot, 'tf': toll_factor, 'n': nest}
                 utility = ('(mf%(p)s_SOVGPM_TIME - mf%(p)s_SOVTOLLM_TIME'
-                           '- %(v)s * mf%(p)s_SOVTOLL_TOLLCOST * %(tf)s) / %(n)s') % params
+                           '- %(v)s * mf%(p)s_SOVTOLLM_TOLLCOST * %(tf)s) / %(n)s') % params
                 matrix_calc.add(
                     "mf%s_COMVEHTOLL" % p, 
                     "mf%s_COMVEH / (1 + exp(- %s))" % (p, utility),
-                    [0, 0, "EXCLUDE", "mf%s_SOVTOLL_TOLLCOST" % p])
+                    ["mf%s_SOVTOLLM_TOLLCOST" % p, 0, 0, "EXCLUDE"])
                 matrix_calc.add(
                     "mf%s_COMVEHGP" % p, "mf%(p)s_COMVEH - mf%(p)s_COMVEHTOLL" % {'p': p})

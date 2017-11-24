@@ -131,7 +131,11 @@ class CommercialVehicleDistribution(_m.Tool(), gen_utils.Snapshot):
         attributes = {"input_directory": input_directory}
         gen_utils.log_snapshot("Commercial vehicle generation", str(self), attributes)
         emmebank = scenario.emmebank
-        props = dem_utils.Properties(os.path.join(os.path.dirname(input_directory), "conf", "sandag_abm.properties"))
+        
+        load_properties = _m.Modeller().tool('sandag.utilities.properties')
+        main_directory = os.path.dirname(input_directory)
+        props = load_properties(
+            os.path.join(main_directory, "conf", "sandag_abm.properties"))
         year = props['scenarioYear']
         mgra = pd.read_csv(
             os.path.join(input_directory, 'mgra13_based_input%s.csv' % year))
