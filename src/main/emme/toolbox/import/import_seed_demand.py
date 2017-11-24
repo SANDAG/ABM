@@ -128,6 +128,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
 
             if demand_type == "AUTO":
                 # TODO: add VOT class bins when warm start demand is available
+                # Note: SRX_GP and SRX_HOV will be merged into the same class of demand
                 matrices = {
                     'SOV_GP':   'mf"%s_SOVGPL"',
                     'SOV_PAY':  'mf"%s_SOVTOLLL"',
@@ -201,8 +202,22 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
     def split_auto_vots(self, scenario, period):
         matrix_calc = _m.Modeller().tool(
             'inro.emme.matrix_calculation.matrix_calculator')
+        # SRX_GP and SRX_HOV summed into the same class of demand
+        mat_spec = {
+            "expression": '(%s_HOV2GPL + %s_HOV2HOVL)' % (period, period), 
+            "result": 'mf"%s_HOV2HOVL"' % period,
+            "type": "MATRIX_CALCULATION"
+        }
+        matrix_calc(mat_spec, scenario)
+        mat_spec = {
+            "expression": '(%s_HOV3GPL + %s_HOV3HOVL)' % (period, period), 
+            "result": 'mf"%s_HOV3HOVL"' % period,
+            "type": "MATRIX_CALCULATION"
+        }
+        matrix_calc(mat_spec, scenario)
+        
         traffic_names = [
-            "SOVGP", "SOVTOLL", "HOV2GP", "HOV2HOV", "HOV2TOLL", "HOV3GP", "HOV3HOV", "HOV3TOLL"]
+            "SOVGP", "SOVTOLL", "HOV2HOV", "HOV2TOLL", "HOV3HOV", "HOV3TOLL"]
         for name in traffic_names:
             for vot in ["H", "M", "L"]:
                 demand_name = "%s_%s%s" % (period, name, vot)
