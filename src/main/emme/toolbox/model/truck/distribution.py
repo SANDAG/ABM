@@ -146,7 +146,8 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
         self.scenario = scenario
         self.num_processors = num_processors
 
-        props = dem_utils.Properties(
+        load_properties = _m.Modeller().tool('sandag.utilities.properties')
+        props = load_properties(
             os.path.join(os.path.dirname(input_directory), "conf", "sandag_abm.properties"))
 
         with _m.logbook_trace('Daily demand matrices'):

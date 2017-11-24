@@ -121,9 +121,9 @@ class TruckGeneration(_m.Tool(), gen_utils.Snapshot):
         self.input_directory = input_directory
         self.input_truck_directory = input_truck_directory
         self.scenario = scenario
-        utils = _m.Modeller().module('sandag.utilities.demand')
+        load_properties = _m.Modeller().tool('sandag.utilities.properties')
 
-        self._properties = utils.Properties(
+        self._properties = load_properties(
             os.path.join(os.path.dirname(input_directory), "conf", "sandag_abm.properties"))
         base_trucks_PA = self.truck_standard_generation()
         special_trucks_PA = self.special_truck_generation(base_trucks_PA)
@@ -137,7 +137,7 @@ class TruckGeneration(_m.Tool(), gen_utils.Snapshot):
 
         is_interim_year, prev_year, next_year = self.interim_year_check(year)
         if is_interim_year:
-            # TODO - interpolation for interim year is untested
+            # interpolation for interim year is untested
             raise Exception("tuck_model.generation: interim year interpolation not tested.")
         #     households_taz = self.interpolate_table(
         #         prev_year, year, next_year,
