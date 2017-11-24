@@ -730,34 +730,41 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         for name in comparison_skims:
             primary_skim = self.get_matrix_data(primary + "_" + name)
             secondary_skim = self.get_matrix_data(secondary + "_" + name)
-            results.append(numpy.is_close(primary_skim, secondary_skim, rtol, atol))
+            results.append(numpy.isclose(primary_skim, secondary_skim, rtol, atol))
         mask = results[0] & results[1]
         for result in results[2:]:
             mask = mask & result
+        mask = numpy.logical_not(mask)
+        self._matrix_cache[secondary + "_MASK"] = mask
         for matrix in comparison_skims + other_skims:
             mat_name = secondary + "_" + name
             data = self.get_matrix_data(secondary + "_" + name)
             self.set_matrix_data(mat_name, data*mask)
 
     def get_matrix_data(self, name):
-        matrix = self.scenario.emmebank.matrix(name)
-        data = self._matrix_cache.get(matrix)
-        if not data:
+        data = self._matrix_cache.get(name)
+        if data is None:
+            matrix = self.scenario.emmebank.matrix(name)
             data = matrix.get_numpy_data(self.scenario)
-            self._matrix_cache[matrix] = data
+            self._matrix_cache[name] = data
         return data
 
     def set_matrix_data(self, name, data):
         matrix = self.scenario.emmebank.matrix(name)
-        self._matrix_cache[matrix] = data
+        self._matrix_cache[name] = data
         matrix.set_numpy_data(data)
 
     def report(self, period):
         text = ['<div class="preformat">']
         init_matrices = _m.Modeller().tool("sandag.initialize.initialize_matrices")
         matrices = init_matrices.get_matrix_names("transit_skims", [period], self.scenario)
-        num_cells = len(self.scenario.zone_numbers) ** 2
-        text.append("Number of O-D pairs: %s. Values outside -9999999, 9999999 are masked in summaries.<br>" % num_cells)
+        num_zones = len(self.scenario.zone_numbers)
+        num_cells = num_zones ** 2
+        text.append("""
+            Number of zones: %s. Number of O-D pairs: %s. 
+            Values outside -9999999, 9999999 are masked in summaries.<br>""" % (num_zones, num_cells))
+        text.append("<p>ALLPEN filtered O-D pairs with identical skim values</p>" % self.get_matrix_data(period + "_ALLPEN_MASK").sum())
+        text.append("<p>ALL filtered O-D pairs with identical skim values</p>" % self.get_matrix_data(period + "_ALL_MASK").sum())
         text.append("%-25s %9s %9s %9s %13s %9s" % ("name", "min", "max", "mean", "sum", "mask num"))
         for name in matrices:
             data = self.get_matrix_data(name)
