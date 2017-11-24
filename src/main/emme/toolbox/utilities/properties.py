@@ -33,6 +33,7 @@ class PropertiesSetter(object):
     skipWalkLogsums = _m.Attribute(bool)
     skipBikeLogsums = _m.Attribute(bool)
     skipInitialization = _m.Attribute(bool)
+    deleteAllMatrices = _m.Attribute(bool)
 
     skipHighwayAssignment_1 = _m.Attribute(bool)
     skipHighwayAssignment_2 = _m.Attribute(bool)
@@ -124,6 +125,7 @@ class PropertiesSetter(object):
         skip_startup_items = [
             ("skipBuildNetwork",        "Skip build of highway and transit network"),
             ("skipInitialization",      "Skip matrix and transit database initialization"),
+            ("deleteAllMatrices",       "&nbsp;&nbsp;&nbsp;&nbsp;Delete all matrices"),
             ("skipCopyWarmupTripTables","Skip import of warmup trip tables"),
             ("skipCopyBikeLogsum",      "Skip copy of bike logsum"),
             ("skipCopyWalkImpedance",   "Skip copy of walk impedance"),
@@ -167,21 +169,27 @@ class PropertiesSetter(object):
                 <div class="t_block t_element -inro-util-disclosure">
                     <div class="-inro-util-disclosure-header t_local_title">%s</div>""" % title)
             title = ""
+        
         checkbox = '<td><input class="-inro-modeller checkbox_entry" type="checkbox" id="%(name)s" data-ref="%(tag)s.%(name)s"></td>'
+        checkbox_no_data = '<td><input class="-inro-modeller checkbox_entry" type="checkbox" id="%(name)s"></td>'
+            
         for name, label in skip_startup_items:
             contents.append("<tr><td>%s</td>" % label)
             contents.append(checkbox % {"name": name, "tag": tool_proxy_tag})
             contents.append("<td></td><td></td>")
+        contents.append("</tr><tr><td>Set / reset all</td>")
+        for i in range(1,4):
+            contents.append(checkbox_no_data % {"name": "all" + "_" + str(i)})
         for name, label in skip_per_iteration_items:
-            contents.append("<tr><td>%s</td>" % label)
+            contents.append("</tr><tr><td>&nbsp;&nbsp;&nbsp;&nbsp;%s</td>" % label)
             for i in range(1,4):
                 contents.append(checkbox % {"name": name + "_" + str(i), "tag": tool_proxy_tag})
         for name, label in skip_final_items:
-            contents.append("<tr><td>%s</td>" % label)
+            contents.append("</tr><tr><td>%s</td>" % label)
             contents.append("<td></td><td></td>")
             contents.append(checkbox % {"name": name, "tag": tool_proxy_tag})
 
-        contents.append("</tbody></table></div>")
+        contents.append("</tr></tbody></table></div>")
         if disclosure:
             contents.append("</div>")
 
@@ -195,15 +203,29 @@ class PropertiesSetter(object):
 
         var iter_names = %(iter_items)s;
 
+        for (var j = 1; j <= 3; j++){
+            var number = j.toString();
+            $("#all_" + number)
+                .prop("number", number)
+                .bind('click', function()    {
+                    var state = $(this).prop("checked");
+                    for (var i = 0; i < iter_names.length; i++) { 
+                        $("#" + iter_names[i] + "_" + $(this).prop("number"))
+                            .prop("checked", state)
+                            .trigger('change');
+                    }
+                });
+        }
+        
         $("#startFromIteration").bind('change', function()    {
             $(this).commit();
             var iter = $(this).val();
-            for (j = 1; j < iter; j++)
-                for (i = 0; i < iter_names.length; i++) { 
+            for (var j = 1; j < iter; j++)
+                for (var i = 0; i < iter_names.length; i++) { 
                     $("#" + iter_names[i] + "_" + j.toString()).prop('disabled', true);
             }
-            for (j = iter; j <= 3; j++)
-                for (i = 0; i < iter_names.length; i++) { 
+            for (var j = iter; j <= 3; j++)
+                for (var i = 0; i < iter_names.length; i++) { 
                     $("#" + iter_names[i] + "_" + j.toString()).prop('disabled', false);
             }
         }).trigger('change');
@@ -229,6 +251,7 @@ class PropertiesSetter(object):
         self.skipBikeLogsums = props.get("RunModel.skipBikeLogsums")
         self.skipBuildNetwork = props.get("RunModel.skipBuildNetwork")
         self.skipInitialization = props.get("RunModel.skipInitialization")
+        self.deleteAllMatrices = props.get("RunModel.deleteAllMatrices")
 
         self.skipHighwayAssignment = props.get("RunModel.skipHighwayAssignment")
         self.skipHighwaySkimming = props.get("RunModel.skipHighwaySkimming")
@@ -259,8 +282,9 @@ class PropertiesSetter(object):
         props["RunModel.skipWalkLogsums"] = self.skipWalkLogsums
         props["RunModel.skipBikeLogsums"] = self.skipBikeLogsums
         props["RunModel.skipBuildNetwork"] = self.skipBuildNetwork
-
         props["RunModel.skipInitialization"] = self.skipInitialization
+        props["RunModel.deleteAllMatrices"] = self.deleteAllMatrices
+        
         props["RunModel.skipHighwayAssignment"] = self.skipHighwayAssignment
         props["RunModel.skipHighwaySkimming"] = self.skipHighwaySkimming
         props["RunModel.skipTransitSkimming"] = self.skipTransitSkimming
