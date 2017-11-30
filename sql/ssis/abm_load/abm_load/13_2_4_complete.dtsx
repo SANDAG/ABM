@@ -1,0 +1,302 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="11/14/2017 2:30:15 PM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="SQL2014A8"
+  DTS:CreatorName="SANDAGNET\gsc"
+  DTS:DTSID="{891BB055-FF03-4DBC-9ADD-FDF5B41DABFB}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:FailParentOnFailure="True"
+  DTS:LastModifiedProductVersion="14.0.0800.98"
+  DTS:LocaleID="1033"
+  DTS:MaxErrorCount="0"
+  DTS:ObjectName="13_2_4_complete"
+  DTS:PackageType="5"
+  DTS:VersionBuild="22"
+  DTS:VersionGUID="{15876604-D3EB-44A9-8952-30D894550AFD}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:PackageParameters>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="2"
+      DTS:Description="abm scenario id"
+      DTS:DTSID="{20358688-8600-4530-BC28-EB5AA7948AF7}"
+      DTS:ObjectName="scenario_id"
+      DTS:Required="True">
+      <DTS:Property
+        DTS:DataType="2"
+        DTS:Name="ParameterValue">0</DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:Description="abm scenario model run iteration to be loaded"
+      DTS:DTSID="{159F141E-8D12-4FEB-9E05-AD6AAFCF45A9}"
+      DTS:ObjectName="scenario_iteration"
+      DTS:Required="True">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue"
+        xml:space="preserve"></DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:Description="abm scenario network path"
+      DTS:DTSID="{DE049DC0-7EF2-41A0-82C2-420487620038}"
+      DTS:ObjectName="scenario_path"
+      DTS:Required="True">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue"
+        xml:space="preserve"></DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:Description="abm scenario model run year"
+      DTS:DTSID="{CC03CDCF-3AB1-42AC-96D6-93344A5F6264}"
+      DTS:ObjectName="scenario_year"
+      DTS:Required="True">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue"
+        xml:space="preserve"></DTS:Property>
+    </DTS:PackageParameter>
+  </DTS:PackageParameters>
+  <DTS:Variables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\clean_up_scenario_directory"
+      DTS:CreationName="Microsoft.ExecuteProcess"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute Process Task"
+      DTS:DTSID="{8375458a-6a5c-452d-9857-479aa7054f8b}"
+      DTS:ExecutableType="Microsoft.ExecuteProcess"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="clean_up_scenario_directory"
+      DTS:TaskContact="Execute Process Task;Microsoft Corporation; SQL Server 2012; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:PropertyExpression
+        DTS:Name="Arguments">@[$Project::gdal_path] + "\\scen_clean_up.py" + " " + @[$Package::scenario_path]</DTS:PropertyExpression>
+      <DTS:PropertyExpression
+        DTS:Name="Executable">@[$Project::gdal_path] + "\\run_python.bat"</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <ExecuteProcessData
+          Executable="E:\SSIS_DEV\gdal_test\run_python.bat"
+          Arguments="E:\SSIS_DEV\gdal_test\scen_clean_up.py "
+          WindowStyle="Hidden" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\complete_scenario"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{418e317f-dae3-4108-a211-be3eb2ac1e94}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="complete_scenario"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2012; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}"
+          SQLTask:SqlStatementSource="DECLARE @scenario_id smallint&#xA;SET @scenario_id = ?&#xA;&#xA;UPDATE&#xA; [ref].[scenario]&#xA;SET&#xA; [complete] = 1&#xA; ,[date_loaded] = GETDATE()&#xA;WHERE&#xA; [scenario_id] = @scenario_id&#xA;&#xA;&#xA;DELETE FROM &#xA; [data_load].[scenario_load_request]&#xA;WHERE&#xA; [scenario_id] = @scenario_id" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="$Package::scenario_id"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="131"
+            SQLTask:ParameterSize="16" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Export Loaded HwyCov"
+      DTS:CreationName="Microsoft.ExecuteProcess"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute Process Task"
+      DTS:DTSID="{81e29042-4ba0-4bb7-b368-2548f4f4d962}"
+      DTS:ExecutableType="Microsoft.ExecuteProcess"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="Export Loaded HwyCov"
+      DTS:TaskContact="Execute Process Task;Microsoft Corporation; SQL Server 2012; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:PropertyExpression
+        DTS:Name="Arguments">"E:\\SSIS_DEV\\gdal_test\\export_loaded_shapefile.py " + (DT_STR,4,1252)@[$Package::scenario_id]</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <ExecuteProcessData
+          Executable="C:\Python27\ArcGIS10.1\python.exe"
+          Arguments="E:\SSIS_DEV\gdal_test\export_loaded_shapefile.py 0"
+          WorkingDirectory="E:\SSIS_DEV\gdal_test"
+          WindowStyle="Hidden" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\update_statistics"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{8a41914e-19d3-4cad-9c8e-bdf297d31a89}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="update_statistics"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2014; © 2014 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}"
+          SQLTask:SqlStatementSource="DECLARE @table_name nvarchar(max)&#xA;DECLARE @scenario_id smallint&#xA;DECLARE @partition_number int&#xA;DECLARE @SQL nvarchar(max)&#xA;&#xA;-- Get partition of loaded scenario&#xA;SET @scenario_id = ?&#xA;SET @partition_number = (SELECT $PARTITION.[scenario_partition](@scenario_id))&#xA;&#xA;-- Grab all tables in the abm schema&#xA;DECLARE ssis_update_stats_cursor CURSOR FOR&#xA;SELECT &#xA; '[' + [TABLE_SCHEMA] + '].[' + [TABLE_NAME] + ']' &#xA;FROM &#xA; [information_schema].[tables]&#xA;WHERE &#xA; [TABLE_SCHEMA] = 'abm' &#xA; AND [TABLE_TYPE] = 'BASE TABLE'&#xA;&#xA;-- Update all statistics on each table for the partition&#xA;OPEN ssis_update_stats_cursor&#xA;FETCH NEXT FROM ssis_update_stats_cursor INTO @table_name&#xA;WHILE @@FETCH_STATUS = 0&#xA;BEGIN&#xA; SET @SQL = N'UPDATE STATISTICS ' + @table_name + N'WITH RESAMPLE ON PARTITIONS (' + CAST(@partition_number AS nvarchar) + N')'&#xA; EXECUTE sp_executesql @SQL&#xA;&#xA; FETCH NEXT FROM ssis_update_stats_cursor INTO @table_name&#xA;END&#xA;&#xA;-- Close and empty cursor&#xA;CLOSE ssis_update_stats_cursor&#xA;DEALLOCATE ssis_update_stats_cursor" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="$Package::scenario_id"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="131"
+            SQLTask:ParameterSize="16" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 28]"
+      DTS:CreationName=""
+      DTS:DTSID="{72d7215c-5e1c-4d32-a13f-a3a5ba187388}"
+      DTS:From="Package\complete_scenario"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 28"
+      DTS:To="Package\update_statistics" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 29]"
+      DTS:CreationName=""
+      DTS:DTSID="{6ea62464-355d-4773-be92-15ee744a98c3}"
+      DTS:From="Package\clean_up_scenario_directory"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 29"
+      DTS:To="Package\Export Loaded HwyCov" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 30]"
+      DTS:CreationName=""
+      DTS:DTSID="{1e0e3712-7299-413b-9ff3-1dcf044a85f8}"
+      DTS:From="Package\update_statistics"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 30"
+      DTS:To="Package\clean_up_scenario_directory" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="213,42"
+          Id="Package\clean_up_scenario_directory"
+          TopLeft="60,209" />
+        <NodeLayout
+          Size="167,42"
+          Id="Package\complete_scenario"
+          TopLeft="79,60" />
+        <NodeLayout
+          Size="188,42"
+          Id="Package\Export Loaded HwyCov"
+          TopLeft="72.142857142857,281.64285714286" />
+        <NodeLayout
+          Size="158,42"
+          Id="Package\update_statistics"
+          TopLeft="82,133.5" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 28]"
+          TopLeft="161.75,102">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,31.5"
+              Start="0,0"
+              End="0,24">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,24" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 29]"
+          TopLeft="166.321428571428,251">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,30.6428571428573"
+              Start="0,0"
+              End="0,23.1428571428573">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,23.1428571428573" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 30]"
+          TopLeft="163.75,175.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,33.5"
+              Start="0,0"
+              End="0,26">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,26" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
