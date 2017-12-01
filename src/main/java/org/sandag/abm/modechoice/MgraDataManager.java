@@ -18,7 +18,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -29,6 +31,7 @@ import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
+import com.pb.common.datafile.CSVFileReader;
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.util.ResourceUtil;
@@ -152,6 +155,9 @@ public final class MgraDataManager
     private int[]                       mstallssam;
     private float[]                     mparkcost;
 
+    private TableDataSet tapLinesTable;
+    private HashMap<Integer,String> taplines;
+ 
     /**
      * Constructor.
      * 
@@ -165,6 +171,12 @@ public final class MgraDataManager
         readMgraTableData(rbMap);
         readMgraWlkTaps(rbMap);
         readMgraWlkDist(rbMap);
+        
+        readTapLines(rbMap);
+        trimTapSet();
+
+        
+        
         bls = BikeLogsum.getBikeLogsum(rbMap);
 
         // pre-process the list of TAPS reachable by drive access for each MGRA
@@ -286,7 +298,118 @@ public final class MgraDataManager
     }
 
     /**
-     * Read the walk-transit taps for mgras. Store distances in feet.
+     * read tap lines table (tap, line names served)
+     * @param rbMap
+     */
+    public void readTapLines(HashMap<String, String> rbMap) {
+    	
+    	File tapLinesTableFile = Paths.get(Util.getStringValueFromPropertyMap(rbMap, "scenario.path"),
+                Util.getStringValueFromPropertyMap(rbMap, "maz.tap.tapLines")).toFile();
+        try {
+        	CSVFileReader csvReader = new CSVFileReader();
+        	tapLinesTable = csvReader.readFile( tapLinesTableFile);
+        } catch (IOException e) {
+        	throw new RuntimeException();
+        }
+        
+    	//get tap lines table field names
+        int[] tapLinesTapIds = tapLinesTable.getColumnAsInt("TAP");
+        String[] linesForTap = tapLinesTable.getColumnAsString("LINES");
+        
+        //create lookups
+        taplines = new HashMap<Integer,String>();
+        for(int i=0; i<tapLinesTapIds.length; i++) {
+        	taplines.put(tapLinesTapIds[i], linesForTap[i]);
+        }
+    }
+    
+    /**
+     * trim the near tap set by origin/destination by only including the nearest tap when more than one tap serves the same line.
+     */
+    public void trimTapSet() {
+    	
+    	//mgraWlkTapsDistArray[maz], [2] ([0] = taps, [1]=distances), []
+    	
+	    int mazToTaps = 0;
+	    int trimmedTaps = 0; 
+	    
+        //loop thru mazs	    
+	    for (int i=0; i < mgraWlkTapsDistArray.length; i++) {
+	    	
+	    	//skip mazs with no taps
+	    	if(mgraWlkTapsDistArray[i][0] != null) {
+	    		
+	    		//get taps and distances
+		    	int[] taps = mgraWlkTapsDistArray[i][0];
+		    	int[] distances = mgraWlkTapsDistArray[i][1];
+		    	
+		    	ArrayList<Maz2Tap> maz2TapData = new ArrayList<Maz2Tap>();
+		    	for (int j=0; j <taps.length; j++) {
+		    	
+		    	  //setup data
+	    		  Maz2Tap m2t = new Maz2Tap();
+	    		  m2t.tap = taps[j];
+	    		  m2t.dist = distances[j];
+	    		  if(taplines.containsKey(m2t.tap)) { //else drop tap from list
+	    			  m2t.lines = taplines.get(m2t.tap).split(" ");
+	    		  }  
+	    		  maz2TapData.add(m2t);
+	    		  
+		    	}
+		    	
+		    	//sort by distance and check for new lines
+				Collections.sort(maz2TapData);
+				HashMap<String,String> linesServed = new HashMap<String,String>();
+				for (Maz2Tap m2t : maz2TapData) {
+					
+					//skip if no lines served
+					if(m2t.lines != null) {
+					
+						for (int k=0; k<m2t.lines.length; k++) {
+							if(linesServed.containsKey(m2t.lines[k]) == false) {
+								m2t.servesNewLines = true;
+								linesServed.put(m2t.lines[k], m2t.lines[k]);
+							}
+						}
+					}
+		    	}
+		    	
+				//remove unused taps
+				ArrayList<Integer> tapsToRemove = new ArrayList<Integer>();
+				for (Maz2Tap m2t : maz2TapData) {
+					mazToTaps = mazToTaps + 1;
+					if( m2t.servesNewLines == false) {
+						tapsToRemove.add(m2t.tap);
+						trimmedTaps = trimmedTaps + 1;
+					}
+				}
+				
+				int[] finalTaps = new int[taps.length-tapsToRemove.size()];
+				int[] finalDistances = new int[taps.length-tapsToRemove.size()];
+				
+				int tapCounter = 0;
+				for (int m=0; m<taps.length; m++) {
+					if(!tapsToRemove.contains(taps[m])) {
+						finalTaps[tapCounter] = taps[m];
+						finalDistances[tapCounter] = distances[m];
+						tapCounter = tapCounter + 1;
+					}
+				}
+				
+				//update data structures
+		    	mgraWlkTapsDistArray[i][0] = finalTaps;
+		    	mgraWlkTapsDistArray[i][1] = finalDistances;
+	    		
+	    	}
+	    	
+	    }
+
+	    logger.info("Removed " + trimmedTaps + " of " + mazToTaps + " Maz tap pairs since servesNewLines=false");
+
+    }
+  
+   /**
+     * Read the walk distances for mgras. Store distances in feet.
      * 
      * @param rb
      *            property.
@@ -1368,6 +1491,26 @@ public final class MgraDataManager
     {
         int row = mgraDataTableMgraRowMap.get(mgra);
         return (int) mgraTableDataSet.getValueAt(row, MGRA_HPARKCOST_FIELD);
+    }
+
+    private class Maz2Tap implements Comparable<Maz2Tap>, Serializable
+    {
+        public int maz;
+        public int tap;
+        public double dist;
+        public String[] lines;
+        public boolean servesNewLines = false;
+        
+    	@Override
+    	public int compareTo(Maz2Tap o) {
+		    if ( this.dist < o.dist ) {
+		    	return -1;
+		    } else if (this.dist==o.dist) {
+		    	return 0;
+		    } else {
+		    	return 1;
+		    }
+    	}
     }
 
     public static void main(String[] args)
