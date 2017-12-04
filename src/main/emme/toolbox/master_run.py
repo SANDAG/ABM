@@ -149,6 +149,9 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
    });
 </script>""" % {"tool_proxy_tag": tool_proxy_tag})
 
+        # TODO: optional password input for distributed assignment
+        #pb.add_html('''<input type="password" size="20" id="" name="suffix"></input>''')
+
         traffic_assign  = _m.Modeller().tool("sandag.assignment.traffic_assignment")
         traffic_assign._add_select_link_interface(pb)
 
@@ -246,8 +249,6 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         skipTripTableCreation = props["RunModel.skipTripTableCreation"]
         skipFinalHighwayAssignment = props["RunModel.skipFinalHighwayAssignment"]
         skipFinalTransitAssignment = props["RunModel.skipFinalTransitAssignment"]
-        skipFinalHighwaySkimming = props["RunModel.skipFinalHighwaySkimming"]
-        skipFinalTransitSkimming = props["RunModel.skipFinalTransitSkimming"]
         skipLUZSkimCreation = props["RunModel.skipLUZSkimCreation"]
         skipDataExport = props["RunModel.skipDataExport"]
         skipDataLoadRequest = props["RunModel.skipDataLoadRequest"]
@@ -361,7 +362,6 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
 
                 # move some trip matrices so run will stop if ctramp model
                 # doesn't produced csv/omx (mtx) files for assignment
-                # Note: is this needed otherwise? there might be a better approach
                 if (msa_iteration > startFromIteration):
                     self.move_files(
                         ["auto*.mtx", "tran*.mtx", "nmot*.mtx", "othr*.mtx", 
@@ -401,12 +401,12 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                     import_auto_demand(output_dir, external_zones, num_processors, base_scenario)
 
         msa_iteration = len(sample_rate)
-        if not skipFinalHighwayAssignment or not skipFinalHighwaySkimming:
+        if not skipFinalHighwayAssignment:
             with _m.logbook_trace("Final traffic assignments"):
                 self.run_traffic_assignments(
                     base_scenario, period_ids, msa_iteration, relative_gap, max_assign_iterations, num_processors, select_link)
 
-        if not skipFinalTransitAssignment or not skipFinalTransitSkimming:
+        if not skipFinalTransitAssignment:
             import_transit_demand(output_dir, transit_scenario)
             with _m.logbook_trace("Final transit assignments"):
                 for number, period in period_ids:
@@ -419,9 +419,8 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                     transit_assign(
                         period=period, scenario=transit_assign_scen,
                         skims_only=False, num_processors=num_processors)
-                if not skipFinalTransitSkimming:
-                    omx_file = _join(output_dir, "transit_skims.omx")   
-                    export_transit_skims(omx_file, transit_scenario, big_to_zero=True)
+                omx_file = _join(output_dir, "transit_skims.omx")   
+                export_transit_skims(omx_file, transit_scenario, big_to_zero=True)
 
         if not skipDataExport:
             export_network_data(main_directory, scenario_id, main_emmebank, transit_emmebank, num_processors)
@@ -582,7 +581,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                 from_file = _join(directory, file_name)
                 all_files = _glob.glob(from_file)
                 for path in all_files:
-                    os.path.remove(from_file, directory)
+                    os.remove(from_file, directory)
 
     def check_for_fatal(self, file_name, error_msg):
         with open(file_name, 'r') as f:
@@ -685,7 +684,8 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                 if os.path.exists(end_path):
                     database_paths.remove(path)
                     _time.sleep(2)
-                    self.check_for_fatal(end_path, "error during remote run of traffic assignment, check under log/traffic_assign_XX_remote_log.txt")
+                    self.check_for_fatal(
+                        end_path, "error during remote run of traffic assignment. Check logFiles/traffic_assign_pp_remote.log")
                     self.copy_results(path, scenarios[path], matrices[path])
             if not database_paths:
                 wait = False
