@@ -417,15 +417,16 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                         return link
             raise Exception(no_walk_link_error % (from_line, to_line))
             
-        def link_on_line(line, node):
+        def link_on_line(line, node, near_side_stop):
             node = network.node(node)
-            for seg in line.segments():
-                if seg.i_node == node:
-                    return seg.link, True
-            # if it is the last stop, return the link for the previous segment
-            # and the split becomes a near-side-stop
-            if line.segment(-1).i_node == node:
-                return line.segment(-2).link, False
+            if near_side_stop:
+                for seg in line.segments():
+                    if seg.j_node == node:
+                        return seg.link
+            else:
+                for seg in line.segments():
+                    if seg.i_node == node:
+                        return seg.link
             raise Exception(node_not_found_error % (node, line))
 
         # Group parallel transfers together (same pair of alighting-boarding nodes)
@@ -440,8 +441,8 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 if not to_line:
                     raise Exception("to_line %s does not exist" % transfer["to_line"])
                 walk_link = find_walk_link(from_line, to_line)        
-                from_link, from_far_side_stop = link_on_line(from_line, walk_link.i_node)
-                to_link, _ = link_on_line(to_line, walk_link.j_node)        
+                from_link = link_on_line(from_line, walk_link.i_node, near_side_stop=True)
+                to_link = link_on_line(to_line, walk_link.j_node, near_side_stop=False)
                 walk_transfers[(from_link, to_link)]["from_lines"].append(from_line)
                 walk_transfers[(from_link, to_link)]["to_lines"].append(to_line)
                 walk_transfers[(from_link, to_link)]["walk_link"] = walk_link
@@ -450,7 +451,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 new_message = "Timed transfer[%s]: %s" % (i, error.message)
                 raise type(error), type(error)(new_message), sys.exc_info()[2]
 
-        def split_link(link, node_id, lines, stop_attr, split_links, waits=None, far_side_stop=True):
+        def split_link(link, node_id, lines, stop_attr, split_links, waits=None, near_side_stop=True):
             i_node, j_node = link.i_node, link.j_node
             if link in split_links:
                 new_node = split_links[link]
@@ -459,23 +460,23 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             else:
                 length = link.length
                 proportion = min(0.006 / length, 0.2)
-                if not far_side_stop:
+                if near_side_stop:
                     proportion = 1 - proportion
                 new_node = network.split_link(i_node, j_node, node_id, False, proportion)
                 new_node["@network_adj"] = 3
                 split_links[link] = new_node
                 in_link = network.link(i_node, new_node)
                 out_link = network.link(new_node, j_node)
-                if far_side_stop:
-                    out_link.length = length
-                    in_link.length = 0
-                    for p in ["ea", "am", "md", "pm", "ev"]:
-                        in_link["@time_link_" + p] = 0
-                else:
+                if near_side_stop:
                     out_link.length = 0
                     in_link.length = length
                     for p in ["ea", "am", "md", "pm", "ev"]:
                         out_link["@time_link_" + p] = 0
+                else:
+                    out_link.length = length
+                    in_link.length = 0
+                    for p in ["ea", "am", "md", "pm", "ev"]:
+                        in_link["@time_link_" + p] = 0
                 
             for seg in in_link.segments():
                 seg.transit_time_func = 3
@@ -494,10 +495,10 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
         for (from_link, to_link), transfer in walk_transfers.iteritems():
             new_alight_node = split_link(
                 from_link, self._get_node_id(), transfer["from_lines"], 
-                "allow_alightings", split_links, far_side_stop=from_far_side_stop)
+                "allow_alightings", split_links, near_side_stop=True)
             new_board_node = split_link(
                 to_link, self._get_node_id(), transfer["to_lines"], 
-                "allow_boardings", split_links, waits)
+                "allow_boardings", split_links, waits, near_side_stop=False)
             walk_link = transfer["walk_link"]
             transfer_link = network.create_link(
                 new_alight_node, new_board_node, [network.mode("x")])
