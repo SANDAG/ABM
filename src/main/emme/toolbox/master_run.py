@@ -88,6 +88,8 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
     emmebank_title = _m.Attribute(unicode)
     num_processors = _m.Attribute(str)
     select_link = _m.Attribute(unicode)
+    username = _m.Attribute(unicode)
+    password = _m.Attribute(unicode)
 
     properties_path = _m.Attribute(unicode)
 
@@ -123,6 +125,24 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         pb.add_text_box('emmebank_title', title="Emmebank title:", size=60)
         dem_utils.add_select_processors("num_processors", pb, self)
         
+        # optional username and password input for distributed assignment
+        pb.add_html('''
+<div class="t_element">
+    <div class="t_local_title">Credentials for remote run</div>
+    <div>
+        <strong>Username:</strong>
+        <input type="text" id="username" size="20"
+                class="-inro-modeller"
+                data-ref="%(tool)s.username"></input>
+        <strong>Password:</strong>
+        <input type="password" size="20" id="password"
+                data-ref="%(tool)s.password"></input>
+    </div>
+    <div class="t_after_widget">
+    Note: required for running distributed traffic assignments using PsExec
+    </div>
+</div>''')
+
         properties_path = _join(
             self.main_directory, "conf", "sandag_abm.properties")
         if os.path.exists(properties_path):
@@ -149,9 +169,6 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
    });
 </script>""" % {"tool_proxy_tag": tool_proxy_tag})
 
-        # TODO: optional password input for distributed assignment
-        #pb.add_html('''<input type="password" size="20" id="" name="suffix"></input>''')
-
         traffic_assign  = _m.Modeller().tool("sandag.assignment.traffic_assignment")
         traffic_assign._add_select_link_interface(pb)
 
@@ -162,7 +179,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         try:
             self.save_properties()
             self(self.main_directory, self.scenario_id, self.scenario_title, self.emmebank_title,
-                 self.num_processors, self.select_link)
+                 self.num_processors, self.select_link, self.username, self.password)
             run_msg = "Tool complete"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
         except Exception as error:
@@ -175,14 +192,16 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         return self.tool_run_msg
 
     @_m.logbook_trace("Master run model", save_arguments=True)
-    def __call__(self, main_directory, scenario_id, scenario_title, emmebank_title, num_processors, select_link=None):
+    def __call__(self, main_directory, scenario_id, scenario_title, emmebank_title, num_processors, 
+                 select_link=None, username=None, password=None):
         attributes = {
             "main_directory": main_directory, 
             "scenario_id": scenario_id, 
             "scenario_title": scenario_title,
             "emmebank_title": emmebank_title,
             "num_processors": num_processors,
-            "select_link": select_link
+            "select_link": select_link,
+            "username": username
         }
         gen_utils.log_snapshot("Master run model", str(self), attributes)
 
@@ -207,6 +226,8 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         utils = modeller.module('sandag.utilities.demand')
         load_properties = modeller.tool('sandag.utilities.properties')
 
+        self.username = username
+        self.password = password
         self._path = main_directory
         drive, path_no_drive = os.path.splitdrive(main_directory)
         path_forward_slash =  path_no_drive.replace("\\", "/")
@@ -294,7 +315,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                     emmebank=main_emmebank)
                 # initialize per time-period scenarios
                 for number, period in period_ids:
-                    title = "%s- %s assign" % (base_scenario.title, period)
+                    title = "%s - %s assign" % (base_scenario.title, period)
                     copy_scenario(base_scenario, number, title, overwrite=True)
             else:
                 base_scenario = main_emmebank.scenario(scenario_id)
@@ -414,7 +435,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                     timed_xfers = "%s_timed_xfer" % scenarioYear if period == "AM" else None
                     transit_assign_scen = build_transit_scen(
                         period=period, base_scenario=src_period_scenario, transit_emmebank=transit_emmebank, 
-                        scenario_id=src_period_scenario.id, scenario_title="%s- %s transit assign" % (base_scenario.title, period), 
+                        scenario_id=src_period_scenario.id, scenario_title="%s - %s transit assign" % (base_scenario.title, period), 
                         timed_xfers_table=timed_xfers, overwrite=True)
                     transit_assign(
                         period=period, scenario=transit_assign_scen,
@@ -429,7 +450,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
             self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data", capture_output=True)
         if not skipDataLoadRequest:
             self.run_proc("DataLoadRequest.bat", 
-                [drive, path_no_drive, end_iteration, scenarioYear, sample_rate[end_iteration]], 
+                [drive, path_no_drive, end_iteration, scenarioYear, sample_rate[end_iteration-1]], 
                 "Data load request")
 
         # delete trip table files in iteration sub folder if model finishes without crashing
@@ -494,7 +515,6 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                 skim_names = {database_path1: skim_names1, database_path2: skim_names2}
                 self.wait_and_copy([database_path1, database_path2], scenarios, skim_names)
             except:
-                # taskkill remote processes - note: may need username and password
                 # Note: this will kill ALL python processes - not suitable if servers are being
                 # used for other tasks
                 _subprocess.call("taskkill /F /T /S \\\\%s /IM python.exe" % server_config["NODE2"])
@@ -651,41 +671,48 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
             return remote_db_dir, skim_matrices
 
     def start_assignments(self, machine, database_path, periods, scenarios, input_args):
-        input_args["database_path"] = database_path
-        for period in periods:
-            input_args["period_scenario"] = scenarios[period].id
-            input_args["period"] = period
-            with open(_join(database_path, "start_%s.args" % period), 'w') as f:
-                _json.dump(input_args, f, indent=4)
-
-        script_dir = _join(self._path, "python")
-        bin_dir = _join(self._path, "bin")
-        # may need username and password - these appear to be unused in the "mapAndRun.bat" script
-        # they also use the -s flag: run in System account
-        args = [
-            '\\\\%s' % machine, 
-            '-d "%s\\emme_python.bat"' % bin_dir, 
-            '"%s\\remote_run_traffic.py"' % script_dir, 
-            '"%s"' % database_path
-        ]
-        # PsExec returns the process ID as an error code when run with -d option
-        try:
-            self.run_proc('PsExec.exe', args, "Start remote process for traffic assignments %s" % (", ".join(periods)))
-        except:
-            pass
+        with _m.logbook_trace("Start remote process for traffic assignments %s" % (", ".join(periods))):
+            input_args["database_path"] = database_path
+            end_path = _join(path, "finish")
+            if os.path.exists(end_path):
+                os.remove(end_path)
+            for period in periods:
+                input_args["period_scenario"] = scenarios[period].id
+                input_args["period"] = period
+                with open(_join(database_path, "start_%s.args" % period), 'w') as f:
+                    _json.dump(input_args, f, indent=4)
+            script_dir = _join(self._path, "python")
+            bin_dir = _join(self._path, "bin")
+            input_args = [
+                'start %s\\PsExec.exe' % bin_dir,
+                '-c',
+                '-f',
+                '\\\\%s' % machine,
+                '-u \%s' % self.username,
+                '-p %s' % self.password,
+                "-d",
+                '%s\\emme_python.bat' % bin_dir, 
+                "T:",
+                self._path,
+                '%s\\remote_run_traffic.py' % script_dir, 
+                database_path,
+            ]
+            command = " ".join(input_args)
+            p = _subprocess.Popen(command, shell=True)
 
     def wait_and_copy(self, database_paths, scenarios, matrices):
         database_paths = database_paths[:]            
         wait = True
         while wait:
             _time.sleep(5)
-            for path in database_paths[:]:
+            for path in database_paths:
                 end_path = _join(path, "finish")
                 if os.path.exists(end_path):
                     database_paths.remove(path)
                     _time.sleep(2)
                     self.check_for_fatal(
-                        end_path, "error during remote run of traffic assignment. Check logFiles/traffic_assign_pp_remote.log")
+                        end_path, "error during remote run of traffic assignment. "
+                                  "Check logFiles/traffic_assign_pp_remote.log")
                     self.copy_results(path, scenarios[path], matrices[path])
             if not database_paths:
                 wait = False
