@@ -17,25 +17,25 @@
         <jppf.workernode.memory.min>45000m</jppf.workernode.memory.min> 
         <jppf.workernode.memory.max>120000m</jppf.workernode.memory.max> 
         <mtxmgr.memory.min>20000m</mtxmgr.memory.min> 
-        <mtxmgr.memory.max>60000m</mtxmgr.memory.max> 
+        <mtxmgr.memory.max>80000m</mtxmgr.memory.max> 
         <hhmgr.memory.min>1000m</hhmgr.memory.min> 
-        <hhmgr.memory.max>15000m</hhmgr.memory.max>         
+        <hhmgr.memory.max>20000m</hhmgr.memory.max>         
         <client.memory.min>30000m</client.memory.min> 
         <client.memory.max>30000m</client.memory.max>          
         <spmarket.memory.min>30000m</spmarket.memory.min> 
-        <spmarket.memory.max>120000m</spmarket.memory.max>      
+        <spmarket.memory.max>160000m</spmarket.memory.max>      
         <bikelogsum.memory.min>26000m</bikelogsum.memory.min> 
-        <bikelogsum.memory.max>26000m</bikelogsum.memory.max>    
+        <bikelogsum.memory.max>50000m</bikelogsum.memory.max>    
         <walklogsum.memory.min>26000m</walklogsum.memory.min> 
-        <walklogsum.memory.max>26000m</walklogsum.memory.max>    
+        <walklogsum.memory.max>50000m</walklogsum.memory.max>    
         <bikeroute.memory.min>26000m</bikeroute.memory.min> 
-        <bikeroute.memory.max>26000m</bikeroute.memory.max> 
+        <bikeroute.memory.max>50000m</bikeroute.memory.max> 
         <dataexport.memory.min>30000m</dataexport.memory.min> 
-        <dataexport.memory.max>120000m</dataexport.memory.max> 
+        <dataexport.memory.max>140000m</dataexport.memory.max> 
         <emfac.memory.min>10000m</emfac.memory.min> 
-        <emfac.memory.max>10000m</emfac.memory.max>  
+        <emfac.memory.max>15000m</emfac.memory.max>  
         <validate.memory.min>10000m</validate.memory.min> 
-        <validate.memory.max>10000m</validate.memory.max>  
+        <validate.memory.max>15000m</validate.memory.max>  
         <matrix.server.port>1191</matrix.server.port>  
         <household.server.port>1129</household.server.port>  
         <java.32.port>1190</java.32.port>  
@@ -95,10 +95,10 @@
             <id>2015</id>
             <properties>
                 <year>2015</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>              
+                <tourdest.uec.file>TourDestinationChoice2015.xls</tourdest.uec.file>              
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
             </properties>
@@ -107,10 +107,10 @@
             <id>2016</id>
             <properties>
                 <year>2016</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>              
+                <tourdest.uec.file>TourDestinationChoice2015.xls</tourdest.uec.file>              
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
             </properties>
@@ -119,10 +119,10 @@
             <id>2017</id>
             <properties>
                 <year>2017</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>              
+                <tourdest.uec.file>TourDestinationChoice2015.xls</tourdest.uec.file>              
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
             </properties>
@@ -131,8 +131,8 @@
             <id>2020</id>
             <properties>
                 <year>2020</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2020.xls</tourdest.uec.file>           
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
@@ -143,8 +143,8 @@
             <id>2025</id>
             <properties>
                 <year>2025</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2020.xls</tourdest.uec.file>                   
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
@@ -155,8 +155,8 @@
             <id>2030</id>
             <properties>
                 <year>2030</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2020.xls</tourdest.uec.file>                   
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
@@ -167,8 +167,8 @@
             <id>2035</id>
             <properties>
                 <year>2035</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2035.xls</tourdest.uec.file>      
                 <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>

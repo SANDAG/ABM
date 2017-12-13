@@ -229,7 +229,7 @@ public class AirportTripTables
     						modeName = modelStructure.getModeName(k+1+autoModes+nmotModes);
     						String setName = String.valueOf(l+1);
     						matrix[i][j][(k*numSkimSets)+l] = new Matrix(modeName+"_set"+setName+"_"+periodName,"",taps,taps);
-                  			matrix[i][j][k].setExternalNumbers(tapIndex);
+                  			matrix[i][j][(k*numSkimSets)+l].setExternalNumbers(tapIndex);
     					}
                 	}
        		} else
