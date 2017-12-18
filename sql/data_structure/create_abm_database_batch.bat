@@ -100,7 +100,13 @@ exit /B
 
 :next11
 
+echo Creating database roles
+sqlcmd -S %db_server% -d %db_name% -i %script_path%create_roles.sql -E -C
+if not errorlevel 1 goto next12
+echo == An error occurred creating database roles for %db_name% on %db_server%
+exit /B
 
+:next12
 
 sqlcmd -S %db_server% -d %db_name% -i %script_path%update_schema_change_log.sql -E -C
 
