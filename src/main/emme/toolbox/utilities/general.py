@@ -281,3 +281,35 @@ class ExportOMX(object):
         numpy_array = numpy_array.astype(dtype="float64", copy=False)
         omx_matrix = self.omx_file.createMatrix(
             key, obj=numpy_array, chunkshape=chunkshape, attrs=attrs)
+
+            
+class OMXManager(object):
+    def __init__(self, directory, name_tmplt):
+        self._directory = directory
+        self._name_tmplt = name_tmplt
+        self._omx_files = {}
+        
+    def lookup(self, name_args, key):
+        file_name = self._name_tmplt % name_args
+        omx_file = self._omx_files.get(file_name)
+        if omx_file is None:
+            file_path = os.path.join(self._directory, file_name)
+            omx_file = _omx.openFile(file_path, 'r')
+            self._omx_files[file_name] = omx_file
+        return omx_file[key].read()
+        
+    def zone_list(self, file_name):
+        omx_file = self._omx_files[file_name]
+        mapping_name = omx_file.listMappings()[0]
+        zone_mapping = omx_file.mapping(mapping_name).items()
+        zone_mapping.sort(key=lambda x: x[1])
+        omx_zones = [x[0] for x in zone_mapping]
+        return omx_zones
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        for omx_file in self._omx_files.values():
+            omx_file.close()
+        self._omx_files = {}

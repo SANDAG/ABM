@@ -265,7 +265,7 @@ def create_full_matrix(name, desc, scenario):
     if matrix:
         ident = matrix.id
     else:
-        used_ids = set([])        
+        used_ids = set([])
         for m in emmebank.matrices():
             if m.prefix == "mf":
                 used_ids.add(int(m.id[2:]))
@@ -276,3 +276,19 @@ def create_full_matrix(name, desc, scenario):
         else:
             raise Exception("Not enough available matrix IDs for selected demand. Change database dimensions to increase full matrices.")
     return create_matrix(ident, name, desc, scenario=scenario, overwrite=True)
+
+
+def demand_report(matrices, label, scenario):
+    emmebank = scenario.emmebank
+    text = ['<div class="preformat">']
+    num_cells = len(scenario.zone_numbers) ** 2
+    text.append("Number of O-D pairs: %s. <br>" % num_cells)
+    text.append("%-25s %9s %9s %9s %13s" % ("name", "min", "max", "mean", "sum"))
+    for name, data in matrices:
+        stats = (name, data.min(), data.max(), data.mean(), data.sum())
+        text.append("%-25s %9.4g %9.4g %9.4g %13.7g" % stats)
+    text.append("</div>")
+    title = "Demand summary"
+    report = _m.PageBuilder(title)
+    report.wrap_html('Matrix details', "<br>".join(text))
+    _m.logbook_write(label, report.render())
