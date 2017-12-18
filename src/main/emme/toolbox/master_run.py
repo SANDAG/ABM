@@ -203,6 +203,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         export_network_data = modeller.tool("sandag.export.export_data_loader_network")
         export_matrix_data = modeller.tool("sandag.export.export_data_loader_matrices")
         export_tap_adjacent_lines = modeller.tool("sandag.export.export_tap_adjacent_lines")
+        export_for_commercial_vehicle = modeller.tool("sandag.export.export_for_commercial_vehicle")
 
         utils = modeller.module('sandag.utilities.demand')
         load_properties = modeller.tool('sandag.utilities.properties')
@@ -226,6 +227,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         minSpaceOnC = props["RunModel.minSpaceOnC"]
         sample_rate = props["sample_rates"]
         end_iteration = len(sample_rate)
+        cvm_ScaleFactor = props["cvm.scaleFactor"]
 
         period_ids = list(enumerate(periods, start=int(scenario_id) + 1))
 
@@ -379,8 +381,11 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                         "Java-Run airport model, visitor model, cross-border model", capture_output=True)
                         
                 if not skipCTM[iteration]:
-                    run_generation = (msa_iteration == startFromIteration)
-                    run_commercial_veh(run_generation, input_dir, base_scenario)
+                    export_for_commercial_vehicle(output_dir, base_scenario)
+                    self.run_proc(
+                        "cvm.bat",
+                        [drive, path_no_drive, path_forward_slash, cvm_ScaleFactor[iteration]],
+                        "Commercial vehicle model", capture_output=True)
                 if msa_iteration == startFromIteration:
                     external_zones = "1-12"
                     if not skipTruck[iteration]:

@@ -131,7 +131,6 @@ class ExportForCommercialVehicleModel(_m.Tool(), gen_utils.Snapshot):
         output_matrices = {
             'impldt_MD_Time.txt': skim_mat['MD_SOVTOLLH_TIME'],
             'impldt_MD_Dist.txt': skim_mat['MD_SOVTOLLH_DIST'],
-            #'impMD_ldt_TollDist.txt': skim_mat['MD_SOVTOLLH_TOLLDIST'], may need tolldist ???
         }
         
         # Calculate DU matrices in numpy
