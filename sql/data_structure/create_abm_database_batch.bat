@@ -1,19 +1,16 @@
 @echo off
 
-rem create_abm_database.sql, create_schemas.sql, create_ref_tables.sql, create_abm_tables.sql, create_abm_foreign_keys.sql, create_db_meta.sql
-rem create_abm_dd.sql, create_abm_udfs.sql, create_emfac.sql, create_data_load.sql
-rem update_schema_change_log.sql
-
 
 set db_server=${database_server}
 set db_name=${database_name}
+rem db_path and log_path values must be enclosed in double quotes
 set log_path=
 set db_path=
 set script_path=
 
 
 echo Creating %db_name% on %db_server% at %db_path%
-sqlcmd -S %db_server% -i %script_path%create_abm_database.sql -E -C -v db_name=%db_name% db_name_string="N'%db_name%'" mdf="N'%db_path%%db_name%_primary.mdf'" ldf="N'%log_path%%db_name%_log.ldf'" scen_file_string_1="N'%db_path%scenario_file_1_1.ndf'" scen_file_string_2="N'%db_path%scenario_file_1_2.ndf'" scen_file_string_3="N'%db_path%scenario_file_1_3.ndf'" ref_file_string="N'%db_path%ref_file.ndf'"
+sqlcmd -S %db_server% -i %script_path%create_abm_database.sql -E -C -v db_name=%db_name% db_path=%db_path% log_path=%log_path%
 if not errorlevel 1 goto next1
 echo == An error occurred creating %db_name% on %db_server%
 exit /B

@@ -317,8 +317,8 @@ EXEC db_meta.add_xp 'db_meta.data_dictionary', 'SUBSYSTEM', 'meta'
 GO
 
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[db_meta].[db_version]') AND type in (N'U'))
-DROP TABLE [db_meta].[db_version]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[db_meta].[schema_change_log]') AND type in (N'U'))
+DROP TABLE [db_meta].[schema_change_log]
 GO
 
 CREATE TABLE [db_meta].[schema_change_log] (

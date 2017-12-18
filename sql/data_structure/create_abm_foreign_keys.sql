@@ -410,7 +410,7 @@ WITH CHECK ADD CONSTRAINT
 FOREIGN KEY
 	([scenario_id],[tour_ie_id])
 REFERENCES
-	[abm].[tour_ij]
+	[abm].[tour_ie]
 	([scenario_id],[tour_ie_id])
 	
 ALTER TABLE
