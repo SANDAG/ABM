@@ -2,6 +2,7 @@
 -- allows for data loading
 CREATE ROLE [abm_user]
 GRANT CONNECT TO [abm_user]
+EXEC sp_addrolemember [db_datareader], [abm_user]
 DENY EXECUTE ON OBJECT:: [abm].[sp_shrink_reorg] TO [abm_user]
 DENY EXECUTE ON OBJECT:: [abm].[sp_clear_scen] TO [abm_user]
 DENY EXECUTE ON OBJECT:: [abm].[sp_del_files] TO [abm_user]
