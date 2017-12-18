@@ -150,8 +150,8 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
             if demand_type == "TRANSIT":
                 matrices = {
                     'SET1':  'mf"%s_WLKBUS"',
-                    'SET2':  'mf"%s_WLKLRT"',
-                    'SET3':  'mf"%s_WLKCMR"',}
+                    'SET2':  'mf"%s_WLKALL"',
+                    'SET3':  'mf"%s_WLKALLPEN"',}
 
             matrices = dict((k, v % period) for k, v in matrices.iteritems())
             if demand_type == "TRANSIT":
