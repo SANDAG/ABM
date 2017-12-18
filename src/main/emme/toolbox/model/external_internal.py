@@ -244,8 +244,8 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
         vot_non_work = 22.86  # $13.70/hr
         ivt_coef = -0.03
 
-        gp_modes = ["SOVGPM", "HOV2HOVM", "HOV3HOVM"]
-        toll_modes = ["SOVTOLLM", "HOV2TOLLM", "HOV3TOLLM"]
+        gp_modes = ["SOVGP", "HOV2HOV", "HOV3HOV"]
+        toll_modes = ["SOVTOLL", "HOV2TOLL", "HOV3TOLL"]
         periods = ["EA", "AM", "MD", "PM", "EV"]
         for p, w_d_pa, w_d_ap, nw_d_pa, nw_d_ap in zip(
                 periods, work_time_PA_factors, work_time_AP_factors,
@@ -257,9 +257,9 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
                 nwrk_mtx = nw_o * (nw_d_pa * nwrk_pa_mtx + nw_d_ap * nwrk_ap_mtx)
 
                 # Toll choice split
-                f_tm_imp = emmebank.matrix('mf%s_%s_TIME' % (p, gp_mode)).get_numpy_data(scenario)
-                t_tm_imp = emmebank.matrix('mf%s_%s_TIME' % (p, toll_mode)).get_numpy_data(scenario)
-                t_cst_imp = emmebank.matrix('mf%s_%s_TOLLCOST' % (p, toll_mode)).get_numpy_data(scenario)
+                f_tm_imp = emmebank.matrix('mf%s_%sM_TIME' % (p, gp_mode)).get_numpy_data(scenario)
+                t_tm_imp = emmebank.matrix('mf%s_%sM_TIME' % (p, toll_mode)).get_numpy_data(scenario)
+                t_cst_imp = emmebank.matrix('mf%s_%sM_TOLLCOST' % (p, toll_mode)).get_numpy_data(scenario)
 
                 # Toll diversion for work purpose
                 # TODO: .mod no longer needed, to confirm
