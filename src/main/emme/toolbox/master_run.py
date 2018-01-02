@@ -450,7 +450,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
             self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data", capture_output=True)
         if not skipDataLoadRequest:
             self.run_proc("DataLoadRequest.bat", 
-                [drive, path_no_drive, end_iteration, scenarioYear, sample_rate[end_iteration-1]], 
+                [drive + path_no_drive, end_iteration, scenarioYear, sample_rate[end_iteration-1]], 
                 "Data load request")
 
         # delete trip table files in iteration sub folder if model finishes without crashing
