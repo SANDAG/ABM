@@ -650,7 +650,10 @@ public class CtrampApplication
 
         aggAcc = BuildAccessibilities.getInstance();
         aggAcc.setupBuildAccessibilities(propertyMap, calculateLandUseAccessibilities);
-        aggAcc.setCalculatedLandUseAccessibilities();
+        
+        
+        if(calculateLandUseAccessibilities)
+        	aggAcc.setCalculatedLandUseAccessibilities();
 
         aggAcc.calculateSizeTerms();
         aggAcc.calculateWorkerSizeTerms();

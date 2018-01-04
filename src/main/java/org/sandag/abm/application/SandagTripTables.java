@@ -126,24 +126,33 @@ public class SandagTripTables
                 modeIndex[i] = 0;
                 matrixIndex[i] = autoModes;
                 ++autoModes;
+                logger.info("Tour mode "+i+" is auto");
             } else if (modelStructure.getTourModeIsNonMotorized(i))
             {
                 modeIndex[i] = 1;
                 matrixIndex[i] = nmotModes;
                 ++nmotModes;
+                logger.info("Tour mode "+i+" is non-motorized");
             } else if (modelStructure.getTourModeIsWalkTransit(i)
                     || modelStructure.getTourModeIsDriveTransit(i))
             {
                 modeIndex[i] = 2;
                 matrixIndex[i] = tranModes;
                 ++tranModes;
+                logger.info("Tour mode "+i+" is transit");
             } else
             {
                 modeIndex[i] = 3;
                 matrixIndex[i] = othrModes;
                 ++othrModes;
+                logger.info("Tour mode "+i+" is other");
             }
         }
+        logger.info("Total auto modes          = "+autoModes);
+        logger.info("Total non-motorized modes = "+nmotModes);
+        logger.info("Total transit modes       = "+tranModes);
+        logger.info("Total other modes         = "+othrModes);
+        
         readOccupancies();
         // Initialize arrays (need for all periods, so initialize here)
         CBDVehicles = new float[mgraManager.getMaxMgra() + 1][numberOfPeriods];
@@ -615,9 +624,9 @@ public class SandagTripTables
         	end[i] = new String[votBins[i]];
         	for(int j = 0; j < votBins[i];++j){
         		if(votBins[i]>1)
-        			end[i][j] = "_" + per + "_"+ votBinName[j]+ ".mtx";
+        			end[i][j] = "_" + per + "_"+ votBinName[j]+ ".omx";
         		else
-        			end[i][j] = "_" + per + ".mtx";
+        			end[i][j] = "_" + per + ".omx";
         	}
         }
 
