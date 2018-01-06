@@ -16,7 +16,7 @@
  */
 package org.sandag.cvm.common.skims;
 
-import com.pb.common.datafile.TableDataSet;
+import org.sandag.cvm.common.datafile.TableDataSet;
 import com.pb.common.matrix.Matrix;
 import com.pb.common.matrix.MatrixReader;
 import com.pb.common.matrix.MatrixType;

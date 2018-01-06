@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import org.apache.log4j.Logger;
 
-import com.pb.common.datafile.TableDataSet;
+import org.sandag.cvm.common.datafile.TableDataSet;
 import com.pb.common.matrix.ColumnVector;
 import com.pb.common.matrix.Matrix;
 import com.pb.common.matrix.MatrixException;
@@ -74,7 +74,7 @@ public class MatrixAndTAZTableCache extends MatrixCacheReader {
 				}
 			} catch (MatrixException e2) {
 				logger.fatal("Can't find matrix "+index+" in TAZData nor in skims");
-				throw new MatrixException("Can't find matrix "+index+" in TAZData nor in skims", e2);
+				throw new MatrixException("Can't find matrix "+index+" in TAZData nor in skims");
 			}
 		}
 		return m;

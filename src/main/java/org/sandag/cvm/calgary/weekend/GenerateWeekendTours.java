@@ -26,7 +26,7 @@ import org.sandag.cvm.common.emme2.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
-import com.pb.common.datafile.*;
+import org.sandag.cvm.common.datafile.*;
 import org.apache.log4j.Logger;
 
 public class GenerateWeekendTours {
