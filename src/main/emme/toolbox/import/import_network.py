@@ -46,7 +46,7 @@
     main_directory = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
     source_dir = os.path.join(main_directory, "input")
     title = "Base 2012 scenario"
-    import_network = modeller.tool("sandag.model.import.import_network")
+    import_network = modeller.tool("sandag.import.import_network")
     import_network(output_dir, merged_scenario_id=100, title=title,
         data_table_name="2012_base", overwrite=True)
 """
@@ -211,12 +211,14 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             "type": "table", "header": ["name", "value"],
             "title": "Tool input values"
         }]
-        with _m.logbook_trace("Import network (TCOVED)", attributes=attributes):
-            gen_utils.log_snapshot("Import network (TCOVED)", str(self), attributes)
+        with _m.logbook_trace("Import network", attributes=attributes) as trace:
+            gen_utils.log_snapshot("Import network", str(self), attributes)
             try:
                 yield
-            finally:            
+            finally:
                 self.log_report()
+                #if self._error:
+                #    trace.write("Import network (%s non-fatal errors)" % len(self._error), attributes=attributes)
 
     def execute(self):
         traffic_attr_map = {
@@ -1484,7 +1486,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         new_node_id = int(_ceiling(new_node_id / 10000.0) * 10000)
         bus_mode = tr_network.mode("b")
 
-        def get_node(src_node, new_node_id):
+        def lookup_node(src_node, new_node_id):
             node = hwy_node_index.get(src_node)
             if not node:
                 node = hwy_node_position_index.get((src_node.x, src_node.y))
@@ -1497,8 +1499,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             return node, new_node_id
 
         for tr_link in not_matched_links:
-            i_node, new_node_id = get_node(tr_link.i_node, new_node_id)
-            j_node, new_node_id = get_node(tr_link.j_node, new_node_id)
+            i_node, new_node_id = lookup_node(tr_link.i_node, new_node_id)
+            j_node, new_node_id = lookup_node(tr_link.j_node, new_node_id)
             # check for duplicate but different links 
             # (e.g. for reserved transit lanes along arterials)
             ex_link = hwy_network.link(i_node, j_node)
@@ -1523,7 +1525,13 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             itinerary = []
             for seg in tr_line.segments(True):
                 itinerary.append(hwy_node_index[seg.i_node])
-            hwy_line = hwy_network.create_transit_line(tr_line.id, tr_line.vehicle.id, itinerary)
+            try:
+                hwy_line = hwy_network.create_transit_line(tr_line.id, tr_line.vehicle.id, itinerary)
+            except Exception as error:
+                msg = "Transit line %s, error message %s" % (tr_line.id, error)
+                self._log.append({"type": "text", "content": msg})
+                self._error.append("Error creating transit line in traffic network: line %s not created" % tr_line.id)
+                continue
             for attr in hwy_network.attributes("TRANSIT_LINE"):
                 hwy_line[attr] = tr_line[attr]
             for tr_seg, hwy_seg in _izip(tr_line.segments(True), hwy_line.segments(True)):
