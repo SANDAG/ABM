@@ -540,8 +540,9 @@ Assign traffic demand for the selected time period."""
                 # transit vehicle as background flow with periods
                 period_hours = {'ea': 3, 'am': 3, 'md': 6.5, 'pm': 3.5, 'ev': 5}
                 expression = "60 / (hdw) * vauteq * %s" % (period_hours[p])
+                net_calc("ul2", "0", "modes=d")
                 net_calc("ul2", expression,
-                    selections={"link": "all", "transit_line": "hdw=0.01,9999"},
+                    selections={"link": "all", "transit_line": "hdw=0.02,9999"},
                     aggregation="+")
 
             with _m.logbook_trace("Per-class flow attributes"):
