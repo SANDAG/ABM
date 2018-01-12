@@ -40,8 +40,8 @@
 #    pp_SOVGP_EETRIPS, pp_HOV2HOV_EETRIPS, pp_HOV3HOV_EETRIPS
 #
 # Matrix results:
-#    Note: pp is time period, one of EA, AM, MD, PM, EV, V is one of L, M, H
-#    pp_SOVGPV, pp_SOVTOLLV, pp_HOV2HOVV, pp_HOV2TOLLV, pp_HOV3HOVV, pp_HOV3TOLLV
+#    Note: pp is time period, one of EA, AM, MD, PM, EV, v is one of L, M, H
+#    pp_SOVGPv, pp_SOVTOLLv, pp_HOV2HOVv, pp_HOV2TOLLv, pp_HOV3HOVv, pp_HOV3TOLLv
 #
 # Script example:
 """
@@ -62,6 +62,7 @@ TOOLBOX_ORDER = 13
 import inro.modeller as _m
 import traceback as _traceback
 import csv as _csv
+import pandas as _pandas
 import os
 
 
@@ -154,8 +155,9 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         self.output_dir = output_dir
         self.external_zones = external_zones
         self.num_processors = num_processors
-        #self.import_traffic_trips()
+        self.import_traffic_trips()
         self.import_commercial_vehicle_demand()
+        self.convert_light_trucks_to_pce()
         self.add_aggregate_demand()
 
     @_m.logbook_trace("Import CT-RAMP traffic trips from OMX")
@@ -204,33 +206,58 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
     def import_commercial_vehicle_demand(self):
         scenario = self.scenario
         emmebank = scenario.emmebank
-        name_map = {}
+        mapping = {}
         periods = ["EA", "AM", "MD", "PM", "EV"]
+        # The SOV demand is modified in-place, which was imported 
+        # prior from the CT-RAMP demand
+        # The truck demand in vehicles is copied from separate matrices
         for period in periods:
             for cvm_acc, access_type in [("T", "TOLL"), ("NT", "GP")]:
-                name_map["CVM_%s:L%s" % (period, cvm_acc)] = ("%s_SOV%sH" % (period, access_type), 1.0)
-                name_map["CVM_%s:M%s" % (period, cvm_acc)] = ("%s_TRKM%s" % (period, access_type), 1.5)
-                name_map["CVM_%s:H%s" % (period, cvm_acc)] = ("%s_TRKH%s" % (period, access_type), 2.5)
-        matrices = [(k,emmebank.matrix(v).get_numpy_data(scenario), pce) for k,(v, pce) in name_map.iteritems()]
+                mapping["CVM_%s:L%s" % (period, cvm_acc)] = {
+                    "orig": "%s_SOV%sH" % (period, access_type), 
+                    "dest": "%s_SOV%sH" % (period, access_type), 
+                    "pce": 1.0
+                }
+                mapping["CVM_%s:M%s" % (period, cvm_acc)] = {
+                    "orig": "%s_TRKM%s_VEH" % (period, access_type),
+                    "dest": "%s_TRKM%s" % (period, access_type), 
+                    "pce": 1.5
+                }
+                mapping["CVM_%s:H%s" % (period, cvm_acc)] = {
+                    "orig": "%s_TRKH%s_VEH" % (period, access_type),
+                    "dest": "%s_TRKH%s" % (period, access_type), 
+                    "pce": 2.5
+                }
+        with _m.logbook_trace('Load starting SOV and truck matrices'):
+            for key, value in mapping.iteritems():
+                value["array"] = emmebank.matrix(value["orig"]).get_numpy_data(scenario)
         
-        path = os.path.join(self.output_dir, "TripMatrices.csv")
-        with open(path, 'r') as f:
-            reader = _csv.reader(f)
-            header = reader.next()
-            i_row = header.index("i")
-            j_row = header.index("j")
-            array_index = []
-            for key, array, pce in matrices:
-                array_index.append((array, header.index(key)))
-            for row in reader:
-                p, q = int(row[i_row]) - 1, int(row[j_row]) - 1
-                for array, ref_index in array_index:
-                    array[p][q] += float(row[ref_index])
-        for key, array, pce in matrices:
-            matrix = emmebank.matrix(name_map[key][0])
-            if pce != 1.0:
-                array = array * pce
-            matrix.set_numpy_data(array, scenario)
+        with _m.logbook_trace('Processing CVM from TripMatrices.csv'):
+            path = os.path.join(self.output_dir, "TripMatrices.csv")
+            table = _pandas.read_csv(path)
+            for key, value in mapping.iteritems():
+                cvm_array = table[key].reshape((4996, 4996))
+                value["array"] = value["array"] + cvm_array
+        with _m.logbook_trace('Save SOV matrix and convert CV and truck vehicle demand to PCEs for assignment'):
+            for key, value in mapping.iteritems():
+                matrix = emmebank.matrix(value["dest"])
+                array = value["array"]
+                if value["pce"] != 1.0:
+                    array = array * value["pce"]
+                matrix.set_numpy_data(array, scenario)
+
+    @_m.logbook_trace('Convert light truck vehicle demand to PCEs for assignment')
+    def convert_light_trucks_to_pce(self):
+        matrix_calc = dem_utils.MatrixCalculator(self.scenario, self.num_processors)
+        # Calculate PCEs for trucks
+        periods = ["EA", "AM", "MD", "PM", "EV"]
+        mat_trucks = ['TRKLGP', 'TRKLTOLL']
+        pce_values = [1.3,      1.3]
+        for period in periods:
+            with matrix_calc.trace_run("Period %s" % period):
+                for name, pce in zip(mat_trucks, pce_values):
+                    demand_name = 'mf%s_%s' % (period, name)
+                    matrix_calc.add(demand_name, '(%s_VEH * %s).max.0' % (demand_name, pce))
 
     @_m.logbook_trace('Add aggregate demand')
     def add_aggregate_demand(self):

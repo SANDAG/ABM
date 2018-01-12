@@ -127,5 +127,4 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
 
         if run_generation:
             generation(input_directory, input_truck_directory, scenario)
-        demand_as_pce = True
-        distribution(input_directory, demand_as_pce, num_processors, scenario)
+        distribution(input_directory, num_processors, scenario)

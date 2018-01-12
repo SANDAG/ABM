@@ -21,8 +21,6 @@
 #
 # Inputs:
 #    input_directory: source directory for input files
-#    demand_as_pce: boolean, if True the result matrices are adjusted to PCEs instead of 
-#        vehicles (default, and required for traffic assignment)
 #    num_processors: Number of processors to use, either as a number or "MAX-#" 
 #    scenario: traffic scenario to use for reference zone system
 #
@@ -47,8 +45,8 @@
 #
 # Matrix results:
 #    Note: pp is time period, one of EA, AM, MD, PM, EV
-#    mfpp_TRKLGP, mfpp_TRKMGP, mfpp_TRKHGP
-#    mfpp_TRKLTOLL, mfpp_TRKMTOLL, mfpp_TRKHTOLL
+#    mfpp_TRKLGP_VEH, mfpp_TRKMGP_VEH, mfpp_TRKHGP_VEH
+#    mfpp_TRKLTOLL_VEH, mfpp_TRKMTOLL_VEH, mfpp_TRKHTOLL_VEH
 #
 # Script example:
 """
@@ -56,11 +54,10 @@
     modeller = inro.modeller.Modeller()
     main_directory = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
     input_dir = os.path.join(main_directory, "input")
-    demand_as_pce = True
     num_processors = "MAX-1" 
     base_scenario = modeller.scenario
     distribution = modeller.tool("sandag.model.truck.distribution")
-    distribution(input_dir, demand_as_pce, num_processors, base_scenario)
+    distribution(input_dir, num_processors, base_scenario)
 """
 
 
@@ -81,7 +78,6 @@ dem_utils = _m.Modeller().module('sandag.utilities.demand')
 class TruckModel(_m.Tool(), gen_utils.Snapshot):
 
     input_directory = _m.Attribute(str)
-    demand_as_pce = _m.Attribute(bool)
     num_processors = _m.Attribute(str)
 
     tool_run_msg = ""
@@ -93,9 +89,8 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
     def __init__(self):
         project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
         self.input_directory = os.path.join(os.path.dirname(project_dir), "input")
-        self.demand_as_pce = True
         self.num_processors = "MAX-1"
-        self.attributes = ["input_directory", "demand_as_pce", "num_processors"]
+        self.attributes = ["input_directory", "num_processors"]
 
     def page(self):
         pb = _m.ToolPageBuilder(self)
@@ -103,10 +98,14 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
         pb.description = """ 
 <div style="text-align:left">    
     Distributes truck trips with congested skims and splits by time of day.
-    The distribuion is based on the mid-day travel time for the "generic" truck 
+    The distribution is based on the mid-day travel time for the "generic" truck 
     skim "mfMD_TRK_TIME".
     <br>
-    Applies truck toll diversion model with toll and non-toll skims<br>
+    Applies truck toll diversion model with toll and non-toll skims,
+    and generates truck vehicle trips.
+    <br>
+    Note that the truck vehicle trips must be converted to PCE values by the Import auto
+    demand tool and stored in matrices without the _VEH ending for the auto assignment.
 </div>
         """
         pb.branding_text = "- SANDAG - Model - Truck"
@@ -116,8 +115,6 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
 
         pb.add_select_file('input_directory', 'directory',
                            title='Select input directory')
-        pb.add_checkbox('demand_as_pce', title = " ", label="Convert demand matrices to PCE",
-            note="Note: assignment demand matrices must be in PCE")
         dem_utils.add_select_processors("num_processors", pb, self)
         return pb.render()
 
@@ -125,7 +122,7 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
         self.tool_run_msg = ""
         try:
             scenario = _m.Modeller().scenario
-            self(self.input_directory, self.demand_as_pce, self.num_processors, scenario)
+            self(self.input_directory, self.num_processors, scenario)
             run_msg = "Truck trip distribution complete."
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
         except Exception as error:
@@ -134,15 +131,12 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
             raise
 
     @_m.logbook_trace('Truck distribution')
-    def __call__(self, input_directory, demand_as_pce, num_processors, scenario):
+    def __call__(self, input_directory, num_processors, scenario):
         attributes = {
             "input_directory": input_directory,
-            "demand_as_pce": demand_as_pce, 
             "num_processors": num_processors
         }
         gen_utils.log_snapshot("Truck distribution", str(self), attributes)
-        self.input_directory = input_directory
-        self.demand_as_pce = demand_as_pce
         self.scenario = scenario
         self.num_processors = num_processors
 
@@ -163,16 +157,14 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
         self.split_external_demand()
         self.split_into_time_of_day()
         self.toll_diversion()
-        if self.demand_as_pce:
-            self.convert_to_pce()
 
         with _m.logbook_trace('Reduce matrix precision'):
             precision = props['RunModel.MatrixPrecision']
             matrices = []
             for t, pce in [('L', 1.3), ('M', 1.5), ('H', 2.5)]:
                 for p in ['EA', 'AM', 'MD', 'PM', 'EV']:
-                    matrices.append('mf%s_TRK%sGP' % (p, t))
-                    matrices.append('mf%s_TRK%sTOLL' % (p, t))
+                    matrices.append('mf%s_TRK%sGP_VEH' % (p, t))
+                    matrices.append('mf%s_TRK%sTOLL_VEH' % (p, t))
             dem_utils.reduce_matrix_precision(matrices, precision*pce, num_processors, scenario)
 
     @_m.logbook_trace('Create friction factors matrix')
@@ -279,25 +271,12 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
                         'n_fact': nest_factor
                     }
                     # If there is no toll probability of using toll is 0
-                    matrix_calc.add('mf"%s_TRK%sTOLL"' % (period, truck), '0')
+                    matrix_calc.add('mf"%s_TRK%sTOLL_VEH"' % (period, truck), '0')
                     # If there is a non-zero toll value compute the share of
                     # toll-available passengers using the utility expression defined earlier
-                    matrix_calc.add('mf"%s_TRK%sTOLL"' % (period, truck),
+                    matrix_calc.add('mf"%s_TRK%sTOLL_VEH"' % (period, truck),
                         'mf"%(p)s_TRK%(t)s" * (1/(1 + exp(- %(u)s)))' % {'p': period, 't': truck, 'u': utility},
                         ['mf"%s_TRK%sTOLL_TOLLCOST"' % (period, truck), 0, 0 , "EXCLUDE"])
                     # Compute the truck demand for non toll 
-                    matrix_calc.add('mf"%s_TRK%sGP"' % (period, truck),
-                        'mf"%(p)s_TRK%(t)s" - mf"%(p)s_TRK%(t)sTOLL"' % {'p': period, 't': truck})
-
-    @_m.logbook_trace('Convert truck vehicle demand to PCE')
-    def convert_to_pce(self):
-        matrix_calc = dem_utils.MatrixCalculator(self.scenario, self.num_processors)
-        # Calculate PCEs for trucks
-        periods = ["EA", "AM", "MD", "PM", "EV"]
-        mat_trucks = ['TRKHGP', 'TRKHTOLL', 'TRKLGP', 'TRKLTOLL', 'TRKMGP', 'TRKMTOLL']
-        pce_values = [2.5,      2.5,        1.3,      1.3,        1.5,      1.5]
-        for period in periods:
-            with matrix_calc.trace_run("Period %s" % period):
-                for name, pce in zip(mat_trucks, pce_values):
-                    demand_name = 'mf"%s_%s"' % (period, name)
-                    matrix_calc.add(demand_name, '(%s * %s).max.0' % (demand_name, pce))
+                    matrix_calc.add('mf"%s_TRK%sGP_VEH"' % (period, truck),
+                        '(mf"%(p)s_TRK%(t)s" - mf"%(p)s_TRK%(t)sTOLL_VEH").max.0' % {'p': period, 't': truck})

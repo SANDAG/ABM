@@ -395,9 +395,9 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
 
     def truck_model(self):
         tmplt_matrices = [
-            ("TRKL",    "Light truck"), 
-            ("TRKM",    "Medium truck"), 
-            ("TRKH",    "Heavy truck"), 
+            ("TRKL",    "Truck Light"), 
+            ("TRKM",    "Truck Medium"), 
+            ("TRKH",    "Truck Heavy"), 
             ("TRKEI",   "Truck external-internal"), 
             ("TRKIE",   "Truck internal-external"), 
         ]
@@ -410,14 +410,14 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
 
         tmplt_matrices = [
             ("TRKEE_DEMAND",     "Truck total external-external demand"), 
-            ("TRKL_FRICTION",    "Light truck friction factors"), 
-            ("TRKM_FRICTION",    "Medium truck friction factors"), 
-            ("TRKH_FRICTION",    "Heavy truck friction factors"), 
+            ("TRKL_FRICTION",    "Truck Light friction factors"), 
+            ("TRKM_FRICTION",    "Truck Medium friction factors"), 
+            ("TRKH_FRICTION",    "Truck Heavy friction factors"), 
             ("TRKIE_FRICTION",   "Truck internal-external friction factors"), 
             ("TRKEI_FRICTION",   "Truck external-internal friction factors"), 
-            ("TRKL_DEMAND",      "Light truck total demand"), 
-            ("TRKM_DEMAND",      "Medium truck total demand"), 
-            ("TRKH_DEMAND",      "Heavy truck total demand"), 
+            ("TRKL_DEMAND",      "Truck Light total demand"), 
+            ("TRKM_DEMAND",      "Truck Medium total demand"), 
+            ("TRKH_DEMAND",      "Truck Heavy total demand"), 
             ("TRKIE_DEMAND",     "Truck internal-external total demand"), 
             ("TRKEI_DEMAND",     "Truck external-internal total demand"), 
         ]
@@ -425,9 +425,15 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
                 [("mf", name, desc) for name, desc in tmplt_matrices])
 
         tmplt_matrices = [
-            ("TRKL",    "Light truck demand"), 
-            ("TRKM",    "Medium truck demand"),
-            ("TRKH",    "Heavy truck demand"), 
+            ("TRKL",            "Truck Light demand"), 
+            ("TRKLGP_VEH",      "Truck Light GP-only vehicle demand"),
+            ("TRKLTOLL_VEH",    "Truck Light toll vehicle demand"),
+            ("TRKM",            "Truck Medium demand"),
+            ("TRKMGP_VEH",      "Truck Medium GP-only vehicle demand"),
+            ("TRKMTOLL_VEH",    "Truck Medium toll vehicle demand"),
+            ("TRKH",            "Truck Heavy demand"), 
+            ("TRKHGP_VEH",      "Truck Heavy GP-only vehicle demand"),
+            ("TRKHTOLL_VEH",    "Truck Heavy toll vehicle demand"),
         ]
         for period in self._all_periods:
             self.add_matrices("truck_model", period,
