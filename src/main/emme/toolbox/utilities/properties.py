@@ -38,9 +38,6 @@ class PropertiesSetter(object):
     skipHighwayAssignment_1 = _m.Attribute(bool)
     skipHighwayAssignment_2 = _m.Attribute(bool)
     skipHighwayAssignment_3 = _m.Attribute(bool)
-    skipHighwaySkimming_1 = _m.Attribute(bool)
-    skipHighwaySkimming_2 = _m.Attribute(bool)
-    skipHighwaySkimming_3 = _m.Attribute(bool)
     skipTransitSkimming_1 = _m.Attribute(bool)
     skipTransitSkimming_2 = _m.Attribute(bool)
     skipTransitSkimming_3 = _m.Attribute(bool)
@@ -68,8 +65,6 @@ class PropertiesSetter(object):
 
     skipFinalHighwayAssignment = _m.Attribute(bool)
     skipFinalTransitAssignment = _m.Attribute(bool)
-    skipFinalHighwaySkimming = _m.Attribute(bool)
-    skipFinalTransitSkimming = _m.Attribute(bool)
     skipDataExport = _m.Attribute(bool)
     skipDataLoadRequest = _m.Attribute(bool)
     skipDeleteIntermediateFiles = _m.Attribute(bool)
@@ -133,21 +128,19 @@ class PropertiesSetter(object):
             ("skipBikeLogsums",         "Skip bike logsums"),
         ]
         skip_per_iteration_items = [
-            ("skipHighwayAssignment",   "Skip highway assignment"),
-            ("skipTransitSkimming",     "Skip transit skimming"),
+            ("skipHighwayAssignment",   "Skip highway assignments and skims"),
+            ("skipTransitSkimming",     "Skip transit skims"),
             ("skipCoreABM",             "Skip core ABM"),
             ("skipOtherSimulateModel",  "Skip other simulation model"),
             ("skipCTM",                 "Skip commercial vehicle sub-model"),
+            ("skipTruck",               "Skip truck sub-model"),
             ("skipEI",                  "Skip external-internal sub-model"),
             ("skipExternalExternal",    "Skip external-external sub-model"),
-            ("skipTruck",               "Skip truck sub-model"),
             ("skipTripTableCreation",   "Skip trip table creation"),
         ]
         skip_final_items = [
-            ("skipFinalHighwayAssignment",  "Skip final highway assignments"),
-            ("skipFinalTransitAssignment",  "Skip final transit assignments"),
-            ("skipFinalHighwaySkimming",    "Skip final highway skimming"),
-            ("skipFinalTransitSkimming",    "Skip final transit skimming"),
+            ("skipFinalHighwayAssignment",  "Skip final highway assignments and skims"),
+            ("skipFinalTransitAssignment",  "Skip final transit assignments and skims"),
             ("skipDataExport",              "Skip data export"),
             ("skipDataLoadRequest",         "Skip data load request"),
             ("skipDeleteIntermediateFiles", "Skip delete intermediate files"),
@@ -254,7 +247,6 @@ class PropertiesSetter(object):
         self.deleteAllMatrices = props.get("RunModel.deleteAllMatrices")
 
         self.skipHighwayAssignment = props.get("RunModel.skipHighwayAssignment")
-        self.skipHighwaySkimming = props.get("RunModel.skipHighwaySkimming")
         self.skipTransitSkimming = props.get("RunModel.skipTransitSkimming")
         self.skipCoreABM = props.get("RunModel.skipCoreABM")
         self.skipOtherSimulateModel = props.get("RunModel.skipOtherSimulateModel")
@@ -266,8 +258,6 @@ class PropertiesSetter(object):
 
         self.skipFinalHighwayAssignment = props.get("RunModel.skipFinalHighwayAssignment")
         self.skipFinalTransitAssignment = props.get("RunModel.skipFinalTransitAssignment")
-        self.skipFinalHighwaySkimming = props.get("RunModel.skipFinalHighwaySkimming")
-        self.skipFinalTransitSkimming = props.get("RunModel.skipFinalTransitSkimming")
         self.skipDataExport = props.get("RunModel.skipDataExport")
         self.skipDataLoadRequest = props.get("RunModel.skipDataLoadRequest")
         self.skipDeleteIntermediateFiles = props.get("RunModel.skipDeleteIntermediateFiles")
@@ -286,7 +276,6 @@ class PropertiesSetter(object):
         props["RunModel.deleteAllMatrices"] = self.deleteAllMatrices
         
         props["RunModel.skipHighwayAssignment"] = self.skipHighwayAssignment
-        props["RunModel.skipHighwaySkimming"] = self.skipHighwaySkimming
         props["RunModel.skipTransitSkimming"] = self.skipTransitSkimming
         props["RunModel.skipCoreABM"] = self.skipCoreABM
         props["RunModel.skipOtherSimulateModel"] = self.skipOtherSimulateModel
@@ -298,8 +287,6 @@ class PropertiesSetter(object):
 
         props["RunModel.skipFinalHighwayAssignment"] = self.skipFinalHighwayAssignment
         props["RunModel.skipFinalTransitAssignment"] = self.skipFinalTransitAssignment
-        props["RunModel.skipFinalHighwaySkimming"] = self.skipFinalHighwaySkimming
-        props["RunModel.skipFinalTransitSkimming"] = self.skipFinalTransitSkimming
         props["RunModel.skipDataExport"] = self.skipDataExport
         props["RunModel.skipDataLoadRequest"] = self.skipDataLoadRequest
         props["RunModel.skipDeleteIntermediateFiles"] = self.skipDeleteIntermediateFiles
