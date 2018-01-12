@@ -90,7 +90,7 @@ class ExportForCommercialVehicleModel(_m.Tool(), gen_utils.Snapshot):
                 error, _traceback.format_exc(error))
             raise
 
-    @_m.logbook_trace('Commercial vehicle model', save_arguments=True)
+    @_m.logbook_trace('Export skims for commercial vehicle model', save_arguments=True)
     def __call__(self, output_directory, scenario):
         emmebank = scenario.emmebank
         modes = ['ldn', 'ldt', 'lhdn', 'lhdt', 'mhdn', 'mhdt', 'hhdn', 'hhdt']
