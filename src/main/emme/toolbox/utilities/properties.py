@@ -112,10 +112,31 @@ class PropertiesSetter(object):
         tool_proxy_tag = pb.tool_proxy_tag
         title = "Run model - skip steps"
 
-        options = [(1, "Iteration 1"), (2, "Iteration 2"), (3, "Iteration 3"), (4, "Iteration 4")]
         pb.add_text_box('sample_rates', title="Sample rate by iteration:", size=20)
-        pb.add_select("startFromIteration", keyvalues=options, title="Start from iteration")
 
+        contents = ["""
+        <div>
+            <div class="t_block t_element">
+                <label for="startFromIteration">
+                    <strong>Start from iteration:</strong></label>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <select id="startFromIteration" 
+                    data-ref="parent.%(tool_proxy_tag)s.startFromIteration" 
+                    class="-inro-modeller  no_search"> 
+                    <option value="1">Iteration 1</option>
+                    <option value="2">Iteration 2</option>
+                    <option value="3">Iteration 3</option>
+                    <option value="4">Iteration 4</option>
+                </select>
+            </div>
+            <table class="skipitems">
+                <tbody>
+                <tr>
+                    <th width="250px"></th>
+                    <th width="90px">Iteration 1</th>
+                    <th width="90px">Iteration 2</th>
+                    <th width="90px">Iteration 3</th>
+                </tr>""" % {"tool_proxy_tag": tool_proxy_tag}]
 
         skip_startup_items = [
             ("skipBuildNetwork",        "Skip build of highway and transit network"),
@@ -146,16 +167,6 @@ class PropertiesSetter(object):
             ("skipDeleteIntermediateFiles", "Skip delete intermediate files"),
         ]
 
-        contents = ["""
-        <div>
-            <table class="skipitems">
-                <tbody>
-                <tr>
-                    <th width="250px"></th>
-                    <th width="90px">Iteration 1</th>
-                    <th width="90px">Iteration 2</th>
-                    <th width="90px">Iteration 3</th>
-                </tr>"""]
 
         if disclosure:
             contents.insert(0, """
