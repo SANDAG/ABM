@@ -373,7 +373,7 @@ public class SpecialEventTripTables {
         String directory = Util.getStringValueFromPropertyMap(rbMap, "scenario.path");
         String[] model_period_labels = {"EA", "AM", "MD", "PM", "EV"}; 
         String per = model_period_labels[period];
-        String end = "_" + per + ".mtx";
+        String end = "_" + per + ".omx";
         String[] fileName = new String[4];
 
         fileName[0] = directory

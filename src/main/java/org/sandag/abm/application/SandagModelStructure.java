@@ -165,7 +165,7 @@ public class SandagModelStructure
     public static final String[] modeName = {"SOV_GP","SOV_PAY","SR2_NOPAY","SR2_PAY","SR3_NOPAY","SR3_PAY",
     	"WALK","BIKE","WLK_SET","PNR_SET","KNR_SET","SCHLBUS","TAXI"};
 
-    public static final int      MAXIMUM_TOUR_MODE_ALT_INDEX                                        = 13;
+    public static final int      MAXIMUM_TOUR_MODE_ALT_INDEX                                        = 12;
 
     public final double[][]      CDAP_6_PLUS_PROPORTIONS                                            = {
             {0.0, 0.0, 0.0}, {0.79647, 0.09368, 0.10985}, {0.61678, 0.25757, 0.12565},

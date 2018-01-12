@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
+import org.sandag.abm.application.SandagTourBasedModel;
 
 import com.pb.common.calculator.DataEntry;
 import com.pb.common.calculator.MatrixDataServerIf;
@@ -26,8 +27,8 @@ public class MatrixDataServer
         implements MatrixDataServerIf, Serializable
 {
 
-    protected transient Logger         logger                     = Logger.getLogger(MatrixDataServer.class);
-
+    private static Logger         logger                     = Logger.getLogger(MatrixDataServer.class);
+    
     private Object                     objectLock;
 
     private static final String        VERSION                    = "2.3_OMX_Only";
@@ -97,7 +98,7 @@ public class MatrixDataServer
                 String fileName = matrixEntry.fileName;
                 MatrixReader mr = MatrixReader.createReader(MatrixType.OMX, new File(fileName));
                 matrix = mr.readMatrix(matrixEntry.matrixName);
-                System.out.println("Read " + matrixEntry.matrixName + " as " + name + " from " + fileName);
+                logger.info("Read " + matrixEntry.matrixName + " as " + name + " from " + fileName);
                 
                 // Use token name from control file for matrix name (not name
                 // from underlying matrix)
@@ -198,9 +199,9 @@ public class MatrixDataServer
         ItemServer.bind(matrixServer, className);
 
         // log that the server started
-        System.out.println("server starting on " + (System.getProperty("os.arch"))
+        logger.info("server starting on " + (System.getProperty("os.arch"))
                 + " operating system.");
-        System.out.println(String.format("%s version %s started on: %s:%d", serverLabel, VERSION,
+        logger.info(String.format("%s version %s started on: %s:%d", serverLabel, VERSION,
                 serverAddress, serverPort));
 
     }

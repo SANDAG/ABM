@@ -494,9 +494,9 @@ public class CrossBorderTripTables
         	end[i] = new String[votBins[i]];
         	for(int j = 0; j < votBins[i];++j){
         		if(votBins[i]>1)
-        			end[i][j] = "_" + per + "_"+ votBinName[j]+ ".mtx";
+        			end[i][j] = "_" + per + "_"+ votBinName[j]+ ".omx";
         		else
-        			end[i][j] = "_" + per + ".mtx";
+        			end[i][j] = "_" + per + ".omx";
         	}
         }
         for (int i = 0; i < 4; ++i){
