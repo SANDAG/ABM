@@ -25,8 +25,14 @@ import org.sandag.abm.ctramp.MatrixDataServer;
 import org.sandag.abm.ctramp.MatrixDataServerRmi;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
 import org.sandag.abm.ctramp.Util;
+import org.sandag.abm.modechoice.MgraDataManager;
+import org.sandag.abm.modechoice.Modes;
+import org.sandag.abm.modechoice.TazDataManager;
+import org.sandag.abm.modechoice.TransitDriveAccessDMU;
+import org.sandag.abm.modechoice.TransitWalkAccessDMU;
 
 import com.pb.common.calculator.MatrixDataManager;
+import com.pb.common.calculator.MatrixDataServerIf;
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.matrix.MatrixType;
@@ -52,13 +58,16 @@ public class OutputTapPairs {
     private String inputFile;
     private String outputFile;
     private TableDataSet inputDataTable;
-    
+    private MgraDataManager mgraManager;
+    private TazDataManager tazManager;
+
      protected PrintWriter writer;
     
     
     public OutputTapPairs(HashMap<String, String> propertyMap, String inputFile, String outputFile){
     	this.inputFile = inputFile;
     	this.outputFile = outputFile;
+    	startMatrixServer(propertyMap);
     	initialize(propertyMap);
     }
 
@@ -71,8 +80,10 @@ public class OutputTapPairs {
 		
 		logger.info("Initializing OutputTapPairs");
 		
-        bestPathCalculator = new BestTransitPathCalculator(propertyMap);
+	    mgraManager = MgraDataManager.getInstance(propertyMap);
+	    tazManager = TazDataManager.getInstance(propertyMap);
 
+        bestPathCalculator = new BestTransitPathCalculator(propertyMap);
         wtw = new WalkTransitWalkSkimsCalculator(propertyMap);
         wtw.setup(propertyMap, logger, bestPathCalculator);
         wtd = new WalkTransitDriveSkimsCalculator(propertyMap);
@@ -120,7 +131,8 @@ public class OutputTapPairs {
             throw new RuntimeException();
         }
         String headerString = new String(
-                "id,accessEgressMode,period,pTap,aTap,mainMode,utility\n");
+                "id,npath,accessEgressMode,period,set,boardTap,alightTap,bestUtility,accessTime,egressTime,"
+                + "auxWalkTime,localBusIvt,expressBusIvt,brtIvt,lrtIvt,crIvt,firstWaitTime,trfWaitTime,fare,totalIVT,xfers\n");
         writer.print(headerString);
 
 	}
@@ -130,28 +142,80 @@ public class OutputTapPairs {
 	 */
 	private void run(){
 		
+		TransitWalkAccessDMU walkDmu =  new TransitWalkAccessDMU();
+    	TransitDriveAccessDMU driveDmu  = new TransitDriveAccessDMU();
+    	double[][] bestTaps = null;
+		double[] skims = null;
+		double boardAccessTime;
+		double alightAccessTime;
+
 		//iterate through data and calculate
 		for(int row = 1; row<=inputDataTable.getRowCount();++row ){
 		
-			if((row<=10) || ((row % 100) == 0))
+			if((row<=100) || ((row % 100) == 0))
 				logger.info("Processing input record "+row);
 			
-			String label=inputDataTable.getStringValueAt(row, "ID");
-			int originMaz = (int) inputDataTable.getValueAt(row, "OMAZ");
-			int destinationMaz = (int) inputDataTable.getValueAt(row, "DMAZ");
-			int period = (int) inputDataTable.getValueAt(row, "TIMEPERIOD") - 1; //Input is 1=EA, 2=AM, 3=MD, 4=PM, 5=EV
-			int accessEgressMode = (int) inputDataTable.getValueAt(row, "ACC_EGR_MODE_SEQ"); //1=WTW, 2=DTW, 3=WTD
+			String label=inputDataTable.getStringValueAt(row, "id");
+			int originMaz = (int) inputDataTable.getValueAt(row, "orig_mgra");
+			int destinationMaz = (int) inputDataTable.getValueAt(row, "dest_mgra");
+			int period = (int) inputDataTable.getValueAt(row, "period") - 1; //Input is 1=EA, 2=AM, 3=MD, 4=PM, 5=EV
+			int accessMode = (int) inputDataTable.getValueAt(row, "accessEgress"); //1=WTW, 2=DTW, 3=WTD
+			int inbound = (int) inputDataTable.getValueAt(row, "inbound");
 			
+			int accessEgressMode = -1;
+			if(accessMode ==1) 
+				accessEgressMode=bestPathCalculator.WTW;
+			else if ((accessMode == 2||accessMode==3) && inbound==0)
+				accessEgressMode = bestPathCalculator.DTW;
+			else if ((accessMode == 2||accessMode==3) && inbound==1)
+				accessEgressMode = bestPathCalculator.WTD;
+					
 			if(originMaz==0||destinationMaz==0||period==0||accessEgressMode==0)
 				continue;
 		
-			if(accessEgressMode==1)
-				bestPathCalculator.writeAllWalkTransitWalkTaps(period, originMaz, destinationMaz, logger, writer, label);
-			else if(accessEgressMode==2)
-				bestPathCalculator.writeAllDriveTransitWalkTaps(period, originMaz, destinationMaz, logger, writer, label);
-			else
-				bestPathCalculator.writeAllWalkTransitDriveTaps(period, originMaz, destinationMaz, logger, writer, label);
-	
+			int originTaz = mgraManager.getTaz(originMaz);
+			int destinationTaz = mgraManager.getTaz(destinationMaz);
+
+			bestTaps = bestPathCalculator.getBestTapPairs(walkDmu, driveDmu, accessEgressMode, originMaz, destinationMaz, period, false, logger);
+			double[] bestUtilities = bestPathCalculator.getBestUtilities();
+			
+			//iterate through n-best paths
+	        for (int i = 0; i < bestTaps.length; i++)
+	        {
+	           	if(bestUtilities[i]<-500)
+	           		continue;
+
+	        	writer.print(label);
+	    	
+	        	//write transit TAP pairs and utility
+	        	int boardTap = (int) bestTaps[i][0];
+	        	int alightTap = (int) bestTaps[i][1];
+	        	int set = (int) bestTaps[i][2];
+	        	
+	 	       writer.format(",%d,%d,%d,%d,%d,%d,%9.4f",i,accessMode,period,set,boardTap,alightTap,bestUtilities[i]);			
+	        
+	       // 	System.out.println(label+String.format(",%d,%d,%d,%d,%d,%d,%9.4f",i,accessEgressMode,period,set,boardTap,alightTap,bestUtilities[i]));
+	        	//write skims
+				if(accessEgressMode==bestPathCalculator.WTW){
+                    boardAccessTime = mgraManager.getWalkTimeFromMgraToTap(originMaz,boardTap);
+                    alightAccessTime = mgraManager.getWalkTimeFromMgraToTap(destinationMaz,alightTap);
+					skims = wtw.getWalkTransitWalkSkims(set, boardAccessTime, alightAccessTime, boardTap, alightTap, period, false); 
+				}else if (accessEgressMode==bestPathCalculator.DTW){
+					boardAccessTime = tazManager.getTimeToTapFromTaz(originTaz,boardTap,( accessMode==2? Modes.AccessMode.PARK_N_RIDE : Modes.AccessMode.KISS_N_RIDE));
+                    alightAccessTime = mgraManager.getWalkTimeFromMgraToTap(destinationMaz,alightTap);
+					skims = dtw.getDriveTransitWalkSkims(set, boardAccessTime, alightAccessTime, boardTap, alightTap, period, false); 
+				}else if(accessEgressMode==bestPathCalculator.WTD){
+                    boardAccessTime = mgraManager.getWalkTimeFromMgraToTap(originMaz,boardTap);
+                    alightAccessTime = tazManager.getTimeToTapFromTaz(destinationTaz,alightTap,( accessMode==2? Modes.AccessMode.PARK_N_RIDE : Modes.AccessMode.KISS_N_RIDE));
+                    skims = wtd.getWalkTransitDriveSkims(set, boardAccessTime, alightAccessTime, boardTap, alightTap, period, false); 
+				}
+	        	
+				for(int j=0; j < skims.length; ++j)
+					writer.format(",%9.2f",skims[j]);	
+				
+				writer.format("\n");
+	        }
+	        writer.flush();
 		}
 	}
 	
@@ -256,93 +320,27 @@ public class OutputTapPairs {
         pMap = ResourceUtil.getResourceBundleAsHashMap(propertiesFile);
         OutputTapPairs outputTapPairs = new OutputTapPairs(pMap, inputFile, outputFile);
 
-        String matrixServerAddress = "";
-        int serverPort = 0;
-        try
-        {
-            // get matrix server address. if "none" is specified, no server will
-            // be
-            // started, and matrix io will ocurr within the current process.
-            matrixServerAddress = Util.getStringValueFromPropertyMap(pMap,
-                    "RunModel.MatrixServerAddress");
-            try
-            {
-                // get matrix server port.
-                serverPort = Util.getIntegerValueFromPropertyMap(pMap, "RunModel.MatrixServerPort");
-            } catch (MissingResourceException e)
-            {
-                // if no matrix server address entry is found, leave undefined
-                // --
-                // it's eithe not needed or show could create an error.
-            }
-        } catch (MissingResourceException e)
-        {
-            // if no matrix server address entry is found, set to localhost, and
-            // a
-            // separate matrix io process will be started on localhost.
-            matrixServerAddress = "localhost";
-            serverPort = MATRIX_DATA_SERVER_PORT;
-        }
-
-        MatrixDataServerRmi matrixServer = null;
-        String matrixTypeName = Util.getStringValueFromPropertyMap(pMap, "Results.MatrixType");
-        MatrixType mt = MatrixType.lookUpMatrixType(matrixTypeName);
-
-        try
-        {
-
-            if (!matrixServerAddress.equalsIgnoreCase("none"))
-            {
-
-                if (matrixServerAddress.equalsIgnoreCase("localhost"))
-                {
-                    matrixServer = outputTapPairs.startMatrixServerProcess(matrixServerAddress,
-                            serverPort, mt);
-                    outputTapPairs.ms = matrixServer;
-                } else
-                {
-                	outputTapPairs.ms = new MatrixDataServerRmi(matrixServerAddress, serverPort,
-                            MatrixDataServer.MATRIX_DATA_SERVER_NAME);
-                	outputTapPairs.ms.testRemote("OutputTapPairs");
-                	outputTapPairs.ms.start32BitMatrixIoServer(mt, "OutputTapPairs");
-
-                    // these methods need to be called to set the matrix data
-                    // manager in the matrix data server
-                    MatrixDataManager mdm = MatrixDataManager.getInstance();
-                    mdm.setMatrixDataServerObject(outputTapPairs.ms);
-                }
-
-            }
-
-        } catch (Exception e)
-        {
-
-            if (matrixServerAddress.equalsIgnoreCase("localhost"))
-            {
-                matrixServer.stop32BitMatrixIoServer();
-            }
-            logger.error(
-                    String.format("exception caught running ctramp model components -- exiting."),
-                    e);
-            throw new RuntimeException();
-
-        }
-
         outputTapPairs.run();
-
-        // if a separate process for running matrix data mnager was started,
-        // we're
-        // done with it, so close it.
-        if (matrixServerAddress.equalsIgnoreCase("localhost"))
-        {
-            matrixServer.stop32BitMatrixIoServer();
-        } else
-        {
-            if (!matrixServerAddress.equalsIgnoreCase("none"))
-            	outputTapPairs.ms.stop32BitMatrixIoServer("AirportModel");
-        }
-
     
 	}
+	  private void startMatrixServer(HashMap<String, String> properties) {
+	        String serverAddress = (String) properties.get("RunModel.MatrixServerAddress");
+	        int serverPort = new Integer((String) properties.get("RunModel.MatrixServerPort"));
+	        logger.info("connecting to matrix server " + serverAddress + ":" + serverPort);
+
+	        try{
+
+	            MatrixDataManager mdm = MatrixDataManager.getInstance();
+	            MatrixDataServerIf ms = new MatrixDataServerRmi(serverAddress, serverPort, MatrixDataServer.MATRIX_DATA_SERVER_NAME);
+	            ms.testRemote(Thread.currentThread().getName());
+	            mdm.setMatrixDataServerObject(ms);
+
+	        } catch (Exception e) {
+	            logger.error("could not connect to matrix server", e);
+	            throw new RuntimeException(e);
+
+	        }
+
+	    }
 
 }
