@@ -138,17 +138,33 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             with _m.logbook_trace("Delete all existing matrices"):
                 for matrix in emmebank.matrices():
                     emmebank.delete_matrix(matrix)
-        
-        self._matrices = dict((name, dict((k, []) for k in self._all_periods + ["ALL"])) for name in self._all_components)
-        self._count = {"ms": 1, "md": 100, "mo": 100, "mf": 100}
+
+        self.generate_matrix_list(self.scenario)
+        matrices = []
+        for component in components:
+            matrices.extend(self.create_matrices(component, periods))
+        self._create_matrix_tool("ms1", "zero", "zero", scenario=self.scenario, overwrite=True)
+        return matrices
+
+    def generate_matrix_list(self, scenario):
+        self._matrices = dict(
+            (name, dict((k, []) for k in self._all_periods + ["ALL"])) 
+            for name in self._all_components)
+        self._count = {"ms": 2, "md": 100, "mo": 100, "mf": 100}
 
         for component in self._all_components:
             fcn = getattr(self, component)
             fcn()
-        matrices = []
-        for component in components:
-            matrices.extend(self.create_matrices(component, periods))
-        return matrices
+        # check dimensions can fit full set of matrices
+        type_names = [
+            ('mf', 'full_matrices'),
+            ('mo', 'origin_matrices'),
+            ('md', 'destination_matrices'),
+            ('ms', 'scalar_matrices')]
+        dims = scenario.emmebank.dimensions
+        for prefix, name in type_names:
+            if self._count[prefix] > dims[name]:
+                raise Exception("emmebank capacity error, increase %s to at least %s" % (name, self._count[prefix]))
 
     def traffic_demand(self):
         tmplt_matrices = [
@@ -171,7 +187,6 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             self.add_matrices("traffic_demand", period,
                 [("mf", period + "_" + name, period + " " + desc) 
                  for name, desc in tmplt_matrices])
-        self.add_matrices("traffic_demand", "ALL", [("ms", "zero", "zero")])
 
     def transit_demand(self):
         tmplt_matrices = [
@@ -412,6 +427,13 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
                             raise Exception("Matrix name conflict '%s', with id %s instead of %s. Delete all matrices first."
                                 % (name, existing_matrix.id, ident))
                         matrices.append(self._create_matrix_tool(ident, name, desc, scenario=self.scenario, overwrite=True))
+        return matrices
+
+    def get_matrix_names(self, component, periods, scenario):
+        self.generate_matrix_list(scenario)
+        matrices = []
+        for period in periods:
+            matrices.extend([m[1] for m in self._matrices[component][period]])
         return matrices
 
     @_m.method(return_type=unicode)
