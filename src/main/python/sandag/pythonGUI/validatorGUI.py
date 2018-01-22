@@ -60,7 +60,8 @@ class CreateScenarioGUI(Tkinter.Frame):
             pair=("xxxx",value)
             dic.append(pair)
             dir=self.releaseDir+"\\"+self.version+'\\validation\\'
-            stringFinder.replace(dir+"sandag_validate_generic.properties",dir+"sandag_validate.properties",dic)
+            #stringFinder.replace(dir+"sandag_validate_generic.properties",dir+"sandag_validate.properties",dic)
+            stringFinder.replace(dir+"sandag_validate.properties",dic)
             return
 
         #set default options for folded browsers

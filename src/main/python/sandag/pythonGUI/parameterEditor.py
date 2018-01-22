@@ -7,7 +7,7 @@ import tkFileDialog
 import os
 from Tkinter import *
 from PIL import Image,ImageTk
-import stringFinder
+from sandag.utils import stringFinder
 import popupMsg
 
 
@@ -46,11 +46,8 @@ class ParametersGUI(Tkinter.Frame):
                 self.yButton[i]=Radiobutton(body, text="Yes", variable=self.buttonVar[i], value=1)
                 self.nButton[i]=Radiobutton(body, text="No", variable=self.buttonVar[i], value=0)
 
-            #set standard property values
+            #set default property values
             self.setDefaultProperties()
-
-            #set AT states-activate and deactivate by selections
-            #self.setATButtons()
 
             #scenario folder browser
             Tkinter.Label(body, text=u"Scenario Folder", font=("Helvetica", 8, 'bold'),width=15).grid(row=0)
@@ -125,31 +122,7 @@ class ParametersGUI(Tkinter.Frame):
 
         def setDefaultProperties(self):
             self.runtimeFile=sys.argv[1]+"\\conf\\sandag_abm.properties"
-            self.standardFile=sys.argv[1]+"\\conf\\sandag_abm_standard.properties"
             self.populateProperties()
-            """
-            for i in range(self.pNum):
-                if i<3 or i>6:
-                    self.yButton[i].select()
-                    self.nButton[i].deselect()
-                else:
-                    self.yButton[i].deselect()
-                    self.nButton[i].select()
-            """
-
-        #def setATButtons(self):
-            #disable create bike and walk logsums if 'copy' is chosen
-            #self.yButton[1].config(command=lambda: self.yButton[3].config(state=DISABLED))
-            #self.yButton[2].config(command=lambda: self.yButton[4].config(state=DISABLED))
-            #disable copy bike and walk logsums if 'create' is chosen
-            #self.yButton[3].config(command=lambda: self.yButton[1].config(state=DISABLED))
-            #self.yButton[4].config(command=lambda: self.yButton[2].config(state=DISABLED))
-            #enable create bike and walk logsums if NOT 'copy' is chosen
-            #self.nButton[1].config(command=lambda: self.yButton[3].config(state=ACTIVE))
-            #self.nButton[2].config(command=lambda: self.yButton[4].config(state=ACTIVE))
-            #enable copy bike and walk logsums if NOT 'create' is chosen
-            #self.nButton[3].config(command=lambda: self.yButton[1].config(state=ACTIVE))
-            #self.nButton[4].config(command=lambda: self.yButton[2].config(state=ACTIVE))
 
         #set scenario path
         def get_scenariopath(self):
@@ -170,7 +143,6 @@ class ParametersGUI(Tkinter.Frame):
 
             #property file settings
             self.runtimeFile=self.scenariopath.get()+"\\conf\\sandag_abm.properties"
-            self.standardFile=self.scenariopath.get()+"\\conf\\sandag_abm_standard.properties"
 
             #populate properties
             self.populateProperties()
@@ -195,9 +167,6 @@ class ParametersGUI(Tkinter.Frame):
         def update_parameters(self):
             #property file settings
             self.runtimeFile=self.scenariopath.get()+"\\conf\\sandag_abm.properties"
-            self.standardFile=self.scenariopath.get()+"\\conf\\sandag_abm_standard.properties"
-
-            self.deleteProperty()
             self.old_text = [0 for x in range(self.pNum)]
             self.new_text = [0 for x in range(self.pNum)]
             for i in range(self.pNum):
@@ -215,10 +184,12 @@ class ParametersGUI(Tkinter.Frame):
                 dic.append(pair)
                 print dic[i][0],dic[i][1]
             #add iteration update to dictionary
-            dic.append(("RunModel.startFromIteration = 1","RunModel.startFromIteration = "+str(self.var.get())))
+            oldValue=stringFinder.findPropertyValue(self.runtimeFile,"RunModel.startFromIteration")
+            dic.append(("RunModel.startFromIteration = "+oldValue,"RunModel.startFromIteration = "+str(self.var.get())))
             #add sample rates update to dictionary
-            dic.append(("sample_rates=0.2,0.5,1.0","sample_rates="+self.samplerates))
-            stringFinder.replace(self.standardFile,self.runtimeFile,dic)
+            oldValue = stringFinder.findPropertyValue(self.runtimeFile, "sample_rates")
+            dic.append(("sample_rates="+oldValue,"sample_rates="+self.samplerates))
+            stringFinder.replace(self.runtimeFile, dic)
             self.quit()
 
         #check if property file exists

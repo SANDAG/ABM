@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.sandag</groupId>
     <artifactId>SANDAG-ABM</artifactId>
-    <version>version_13_3_2</version>
+    <version>version_13_3_3</version>
     <name>SANDAG CT-RAMP Activity Based Model</name>
     <properties>
         <encoding.type>UTF-8</encoding.type> 
@@ -478,6 +478,27 @@
                                         <include>BatchSubstitute.bat</include>
                                         <include>copy_networkfiles_to_study.cmd</include>
                                         <include>init_emme.cmd</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-updateShadowPricing-bat</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${release.root}/common/python/sandag</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>updateProperty.bat</include>
+                                        <include>updateShadowPricing.bat</include>
                                     </includes>
                                 </resource>
                             </resources>

@@ -53,8 +53,24 @@ Macro "Run SANDAG ABM"
    skipDeleteIntermediateFiles = RunMacro("read properties",properties,"RunModel.skipDeleteIntermediateFiles", "S")
    precision = RunMacro("read properties",properties,"RunModel.MatrixPrecision", "S")
    minSpaceOnC=RunMacro("read properties",properties,"RunModel.minSpaceOnC", "S")
+   runShadowPricingFromScratch=RunMacro("read properties",properties,"RunModel.runShadowPricingFromScratch", "S")   
+   
+   //must start from 1st iteration if run shadow pricing from scratch with 10 iterations and 0.1 sample rate (setting based on SP stability tests)
+   //WSU 12/11/2017
+   if runShadowPricingFromScratch = "true" then do
+	   sample_rate={0.1,0.5,1.0}
+	   startFromIteration=1
+	   oldShadowPricingInput_work=RunMacro("read properties",properties,"UsualWorkLocationChoice.ShadowPrice.Input.File", "S") 
+	   oldShadowPricingInput_school=RunMacro("read properties",properties,"UsualSchoolLocationChoice.ShadowPrice.Input.File", "S")  
+	   oldShadowPricingIterations_work=RunMacro("read properties",properties,"uwsl.ShadowPricing.Work.MaximumIterations", "S") 
+	   oldShadowPricingIterations_school=RunMacro("read properties",properties,"uwsl.ShadowPricing.School.MaximumIterations", "S") 
+	   runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"UsualWorkLocationChoice.ShadowPrice.Input.File"+" "+oldShadowPricingInput_work+ "   "
+	   runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"UsualSchoolLocationChoice.ShadowPrice.Input.File"+" "+oldShadowPricingInput_school+"  "
+	   runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"uwsl.ShadowPricing.Work.MaximumIterations"+" "+oldShadowPricingIterations_work+" 10"
+	   runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"uwsl.ShadowPricing.School.MaximumIterations"+" "+oldShadowPricingIterations_school+" 10"
+   end   
 
-  // Swap Server Configurations
+   // Swap Server Configurations
    runString = path+"\\bin\\serverswap.bat "+drive+" "+path_no_drive+" "+path_forward_slash
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Server Config Swap: "+" "+runString})
    ok = RunMacro("TCB Run Command", 1, "Run ServerSwap", runString)
@@ -217,6 +233,23 @@ Macro "Run SANDAG ABM"
 	      ok = RunMacro("TCB Run Command", 1, "Run CT-RAMP", runString)
 	      if !ok then goto quit  
       end
+
+      // Scale shadow pricing files and copy scaled files from output folder to input folder
+      // WSU 12/5/2017
+      if runShadowPricingFromScratch = "true" then do
+         if (iteration =1) then do
+	    runString = path+"\\bin\\updateShadowPricing.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+0.1+" "+10
+	    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Update shadow pricing: "+" "+runString})
+	    ok = RunMacro("TCB Run Command", 1, "Update shadow pricing", runString)
+	    if !ok then 
+	      goto quit
+	    else
+	       //copy updated shadow pricing from output to input folder
+	       CopyFile(outputDir+"\\ShadowPricingOutput_work_9.csv", inputDir+"\\ShadowPricingOutput_work_9.csv")
+	       CopyFile(outputDir+"\\ShadowPricingOutput_school_9.csv", inputDir+"\\ShadowPricingOutput_school_9.csv")
+	    end
+         end
+      end 
  
       // Run airport model, visitor model, cross-border model, internal-external model
       if skipOtherSimulateModel[iteration] = "false" then do
@@ -312,8 +345,6 @@ Macro "Run SANDAG ABM"
     	      RunMacro("HwycadLog",{"sandag_abm_master.rsc","reduce matrix precision for externalExternalTrips.mtx"})
     	      RunMacro("reduce matrix precision",outputDir,"externalExternalTrips.mtx", precision)
       end
-
-   end
 
   // Run final highway assignment
    if skipFinalHighwayAssignment = "false" then do
