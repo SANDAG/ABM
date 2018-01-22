@@ -662,7 +662,17 @@
         <dependency>
             <groupId>pb</groupId>
             <artifactId>common-base</artifactId>
-            <version>2017-05-05-ABM</version>
+            <version>2018-01-19-ABM</version>
+        </dependency>
+        <dependency>
+            <groupId>pb</groupId>
+            <artifactId>crowbar</artifactId>
+            <version>2018-01-19</version>
+        </dependency>
+        <dependency>
+            <groupId>com.inro</groupId>
+            <artifactId>modeller</artifactId>
+            <version>1.1.0</version>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
@@ -788,8 +798,19 @@
             <version>4.0</version>
             <type>dll</type>
         </dependency>
+		<dependency>
+		  <groupId>oldhdf</groupId>
+		  <artifactId>oldjhdf</artifactId>
+		  <version>0.0</version>
+		  <type>dll</type>
+		</dependency>
+		<dependency>
+		  <groupId>hdf</groupId>
+		  <artifactId>jhdf</artifactId>
+		  <version>5.0</version>
+		  <type>dll</type>
+		</dependency>
 	</dependencies>
-	
     <distributionManagement>
         <snapshotRepository>
             <id>nexus-snapshots</id>
