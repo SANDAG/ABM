@@ -309,6 +309,7 @@ public class DriveTransitWalkSkimsCalculator
             
             // copy values stored in storedDepartPeriodTapTapSkims to returned array.  Don't need to copy acc/egr time values; they'll always get replaced in the returned array.
             System.arraycopy(storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap], 0, skimResultsPremium, 0, storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap].length);
+            //primaryLogger.info("departPeriod="+departPeriod+", origTap="+origTap+", destTap="+destTap);
             
             // replace acc/egr time values in results array returned
             skimResultsPremium[ACCESS_TIME_INDEX] = pDriveTime;
@@ -337,6 +338,7 @@ public class DriveTransitWalkSkimsCalculator
             double[] skimResultsLocal = new double[driveLocalWalkSkimUECs[AM].getNumberOfAlternatives() + 2];            
 
             // copy values stored in storedDepartPeriodTapTapSkims to returned array.  Don't need to copy acc/egr time/dist values; they'll always get replaced in the returned array.
+            //primaryLogger.info("departPeriod="+departPeriod+", origTap="+origTap+", destTap="+destTap);
             System.arraycopy(storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap], 0, skimResultsLocal, 0, storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap].length);
             
             // replace acc/egr time values in results array returned

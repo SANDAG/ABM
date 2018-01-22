@@ -26,6 +26,7 @@ public class SandagDestChoiceDMU
         methodIndexMap.put("getGradeSchoolEnrollmentDestAlt", 10);
         methodIndexMap.put("getHighSchoolEnrollmentDestAlt", 11);
         methodIndexMap.put("getUniversityEnrollmentDestAlt", 16);
+        methodIndexMap.put("getEmploymentDestAlt", 17);
         methodIndexMap.put("getPersonIsWorker", 20);
         methodIndexMap.put("getPersonHasBachelors", 21);
         methodIndexMap.put("getPersonType", 22);
@@ -97,6 +98,8 @@ public class SandagDestChoiceDMU
                 return getHighSchoolEnrollmentDestAlt(arrayIndex);
             case 16:
                 return getUniversityEnrollmentDestAlt(arrayIndex);
+            case 17:
+            	return getEmploymentDestAlt(arrayIndex);
             case 20:
                 return getPersonIsWorker();
             case 21:
