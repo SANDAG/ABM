@@ -96,8 +96,12 @@ class TollDiversion(_m.Tool()):
         emmebank = scenario.emmebank
         matrix_calc = dem_utils.MatrixCalculator(scenario, "MAX-1")
         init_matrix = _m.Modeller().tool(
-            'inro.emme.data.matrix.init_matrix')
+             "inro.emme.data.matrix.init_matrix")
+
         periods = ['EA', 'AM', 'MD', 'PM', 'EV']
+        for p in periods:
+            init_matrix("mf%s_COMVEHTOLL" % p, scenario=scenario)
+
         nest = 10
         vot = 0.02
         toll_factor = 1

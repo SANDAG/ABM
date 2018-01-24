@@ -8,16 +8,19 @@
 #//// remote_run_traffic.py                                                 ///
 #////                                                                       ///
 #////     Runs the traffic assignment(s) for the specified periods.         ///  
-#////     For running assignments on a remote server using psexec,          ///
-#////     via batch file which configures for Emme python and maps T        ///
-#////     drive.                                                            ///
+#////     For running assignments on a remote server using PsExec,          ///
+#////     via batch file which configures for Emme python, starts           ///
+#////     or restarts the ISM and and maps T drive.                         ///
 #////                                                                       ///
-#////     Usage: remote_run_traffic.py database_dir periods                 ///
+#////     The input arguments for the traffic assignment is read from       ///
+#////     start_*.args file in the database directory (database_dir).       ///
+#////     The "*" is one of the five time period abbreviations.             ///
+#////                                                                       ///
+#////     Usage: remote_run_traffic.py database_dir                         ///
 #////                                                                       ///
 #////         database_dir: The path to the directory with the period       ///
 #////              specific traffic assignment data (scenarios and          ///
 #////              matrices).                                               ///
-#////         periods: list of comma-separated periods e.g. AM,MD           ///
 #////                                                                       ///
 #////                                                                       ///
 #////                                                                       ///
@@ -38,74 +41,82 @@ _join = os.path.join
 _dir = os.path.dirname
 
 
-def run_assignment(database_path, period, msa_iteration, relative_gap, max_assign_iterations, 
-                   num_processors, period_scenario, select_link, log_path):
-    project_path = _join(_dir(database_path), "emme_project.emp")
-    desktop = _app.start_dedicated(True, "abc", project_path)
-    proc_logbook = _join("%<$ProjectPath>%", "Logbook", "project_%s_temp.mlbk" % period)
-    desktop.project.par("ModellerLogbook").set(proc_logbook)
-    modeller = _m.Modeller(desktop)
+class LogFile(object):
+    def __init__(self, log_path):
+        self._log_path = log_path
+    def write(self, text):
+        with open(self._log_path, 'a') as f:
+            f.write(text)
+    def write_timestamp(self, text):
+        text = "%s - %s\n" % (_time.strftime("%Y-%m-%d %H:%M:%S"), text)
+        self.write(text)
+    def write_dict(self, value):
+        with open(self._log_path, 'a') as f:
+            _json.dump(value, f, indent=4)
+            f.write("\n")
+
+
+def run_assignment(modeller, database_path, period, msa_iteration,
+                   relative_gap, max_assign_iterations, num_processors, 
+                   period_scenario, select_link, logger):
+    logger.write_timestamp("start for period %s" % period)
     traffic_assign  = modeller.tool("sandag.assignment.traffic_assignment")
     export_traffic_skims = modeller.tool("sandag.export.export_traffic_skims")
-
     with _emmebank.Emmebank(_join(database_path, 'emmebank')) as eb:
         period_scenario = eb.scenario(period_scenario)
-        with open(log_path, 'w') as f:
-            f.write(_time.strftime("%Y-%m-%d %H:%M:%S"))
-            f.write(" - start traffic assignment\n")
-        traffic_assign(period, 
-                       msa_iteration, 
-                       relative_gap, 
-                       max_assign_iterations, 
-                       num_processors, 
-                       period_scenario,
-                       select_link)
-        with open(log_path, 'w') as f:
-            f.write(_time.strftime("%Y-%m-%d %H:%M:%S"))
-            f.write(" - traffic assignment finished, start export to OMX\n")
-        omx_file = join(output_dir, "traffic_skims_%s.omx" % period)   
-        export_traffic_skims(period, omx_file, base_scenario)
+        logger.write_timestamp("start traffic assignment")
+        traffic_assign(
+            period, msa_iteration, relative_gap, max_assign_iterations, 
+            num_processors, period_scenario, select_link)
+        logger.write_timestamp("traffic assignment finished, start export to OMX")
+        output_dir = _join(_dir(_dir(database_path)), "output")
+        omx_file = _join(output_dir, "traffic_skims_%s.omx" % period)  
+        logger.write_timestamp("start export to OMX %s" % omx_file) 
+        export_traffic_skims(period, omx_file, period_scenario)
+        logger.write_timestamp("export to OMX finished")
+        logger.write_timestamp("period %s completed successfully" % period)
 
 
 if __name__ == "__main__":
-    python_file, database_path = sys.argv
-    error = False
+    python_file, database_dir = sys.argv
+    file_ref = os.path.split(database_dir)[1].lower()
+    log_path = _join(_dir(_dir(database_dir)), "logFiles", "traffic_assign_%s.log" % file_ref)
+    logger = LogFile(log_path)
     try:
-        from_file = _join(database_path, "start_*.args")
-        all_files = _glob.glob(from_file)
-        for path in all_files:
-            # communication file
-            with open(_join(database_path, path), 'r') as f:
-                input_args = _json.loads(f.read())
-            period = input_args["period"]
-            log_path = _join(_dir(_dir(database_path)), "log", "traffic_assign_%s_remote_log.txt" % period)
-            with open(log_path, 'w') as f:
-                f.write(_time.strftime("%Y-%m-%d %H:%M:%S"))
-                f.write(" - remote process started and input args read\n")
-                _json.dump(input_args, f, indent=4)
-                f.write("\n")
-            input_args["log_path"] = log_path
-            _time.sleep(1)
-            try:
-                run_assignment(**input_args)
-            except Exception as error:
-                with open(log_path, 'a') as f:
-                    f.write(_time.strftime("%Y-%m-%d %H:%M:%S\n"))
-                    f.write("FATAL error execution stopped:\n")
-                    f.write(unicode(error) + "\n")
-                    f.write(_traceback.format_exc(error))
-                raise
-            with open(log_path, 'w') as f:
-                f.write(_time.strftime("%Y-%m-%d %H:%M:%S"))
-                f.write(" - assignment and export to OMX completed successfully\n")
-    except:
-        error = True
-        raise
+        logger.write_timestamp("remote process started")
+        # Test out licence by using the API
+        eb = _emmebank.Emmebank(_join(database_dir, 'emmebank'))
+        eb.close()
+        logger.write_timestamp("starting Emme Desktop application")
+        project_path = _join(_dir(database_dir), "emme_project.emp")
+        desktop = _app.start_dedicated(True, "abc", project_path)
+        try:
+            logger.write_timestamp("Emme Desktop open")
+            proc_logbook = _join("%<$ProjectPath>%", "Logbook", "project_%s_temp.mlbk" % file_ref)
+            desktop.project.par("ModellerLogbook").set(proc_logbook)
+            modeller = _m.Modeller(desktop)
+            
+            from_file = _join(database_dir, "start_*.args")
+            all_files = _glob.glob(from_file)
+            for path in all_files:
+                input_args_file = _join(database_dir, path)  # communication file
+                logger.write_timestamp("input args read from %s" % input_args_file)
+                with open(input_args_file, 'r') as f:
+                    assign_args = _json.load(f)
+                logger.write_dict(assign_args)
+                assign_args["logger"] = logger
+                assign_args["modeller"] = modeller
+                run_assignment(**assign_args)
+        finally:
+            desktop.close()
+    except Exception as error:
+        with open(_join(database_dir, "finish"), 'w') as f:
+            f.write("FATAL ERROR\n")
+        logger.write_timestamp("FATAL error execution stopped:")
+        logger.write(unicode(error) + "\n")
+        logger.write(_traceback.format_exc(error))
     finally:
         _time.sleep(1)
-        with open(_join(database_path, "finish"), 'w') as f:
-            if error:
-                f.write("FATAL ERROR\n")
-            else:
-                f.write("finish\n")
+        with open(_join(database_dir, "finish"), 'a') as f:
+            f.write("finish\n")
     sys.exit(0)

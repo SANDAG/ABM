@@ -27,13 +27,13 @@ class PropertiesSetter(object):
     sample_rates = _m.Attribute(str)
 
     skipBuildNetwork = _m.Attribute(bool)
-    skipCopyWarmupTripTables = _m.Attribute(bool)
-    skipCopyBikeLogsum = _m.Attribute(bool)
-    skipCopyWalkImpedance = _m.Attribute(bool)
-    skipWalkLogsums = _m.Attribute(bool)
-    skipBikeLogsums = _m.Attribute(bool)
     skipInitialization = _m.Attribute(bool)
     deleteAllMatrices = _m.Attribute(bool)
+    skipCopyWarmupTripTables = _m.Attribute(bool)
+    skipWalkLogsums = _m.Attribute(bool)
+    skipCopyWalkImpedance = _m.Attribute(bool)
+    skipBikeLogsums = _m.Attribute(bool)
+    skipCopyBikeLogsum = _m.Attribute(bool)
 
     skipHighwayAssignment_1 = _m.Attribute(bool)
     skipHighwayAssignment_2 = _m.Attribute(bool)
@@ -143,10 +143,10 @@ class PropertiesSetter(object):
             ("skipInitialization",      "Skip matrix and transit database initialization"),
             ("deleteAllMatrices",       "&nbsp;&nbsp;&nbsp;&nbsp;Delete all matrices"),
             ("skipCopyWarmupTripTables","Skip import of warmup trip tables"),
-            ("skipCopyBikeLogsum",      "Skip copy of bike logsum"),
-            ("skipCopyWalkImpedance",   "Skip copy of walk impedance"),
             ("skipWalkLogsums",         "Skip walk logsums"),
+            ("skipCopyWalkImpedance",   "Skip copy of walk impedance"),
             ("skipBikeLogsums",         "Skip bike logsums"),
+            ("skipCopyBikeLogsum",      "Skip copy of bike logsum"),
         ]
         skip_per_iteration_items = [
             ("skipHighwayAssignment",   "Skip highway assignments and skims"),
@@ -248,14 +248,15 @@ class PropertiesSetter(object):
 
         self.startFromIteration = props.get("RunModel.startFromIteration")
         self.sample_rates = ",".join(str(x) for x in props.get("sample_rates"))
-        self.skipCopyWarmupTripTables = props.get("RunModel.skipCopyWarmupTripTables")
-        self.skipCopyBikeLogsum = props.get("RunModel.skipCopyBikeLogsum")
-        self.skipCopyWalkImpedance = props.get("RunModel.skipCopyWalkImpedance")
-        self.skipWalkLogsums = props.get("RunModel.skipWalkLogsums")
-        self.skipBikeLogsums = props.get("RunModel.skipBikeLogsums")
+        
         self.skipBuildNetwork = props.get("RunModel.skipBuildNetwork")
         self.skipInitialization = props.get("RunModel.skipInitialization")
         self.deleteAllMatrices = props.get("RunModel.deleteAllMatrices")
+        self.skipCopyWarmupTripTables = props.get("RunModel.skipCopyWarmupTripTables")
+        self.skipWalkLogsums = props.get("RunModel.skipWalkLogsums")
+        self.skipCopyWalkImpedance = props.get("RunModel.skipCopyWalkImpedance")
+        self.skipBikeLogsums = props.get("RunModel.skipBikeLogsums")
+        self.skipCopyBikeLogsum = props.get("RunModel.skipCopyBikeLogsum")
 
         self.skipHighwayAssignment = props.get("RunModel.skipHighwayAssignment")
         self.skipTransitSkimming = props.get("RunModel.skipTransitSkimming")
@@ -277,14 +278,15 @@ class PropertiesSetter(object):
         props = self._properties
         props["RunModel.startFromIteration"] = self.startFromIteration
         props["sample_rates"] = [float(x) for x in self.sample_rates.split(",")]
-        props["RunModel.skipCopyWarmupTripTables"] = self.skipCopyWarmupTripTables
-        props["RunModel.skipCopyBikeLogsum"] = self.skipCopyBikeLogsum
-        props["RunModel.skipCopyWalkImpedance"] = self.skipCopyWalkImpedance
-        props["RunModel.skipWalkLogsums"] = self.skipWalkLogsums
-        props["RunModel.skipBikeLogsums"] = self.skipBikeLogsums
+        
         props["RunModel.skipBuildNetwork"] = self.skipBuildNetwork
         props["RunModel.skipInitialization"] = self.skipInitialization
         props["RunModel.deleteAllMatrices"] = self.deleteAllMatrices
+        props["RunModel.skipCopyWarmupTripTables"] = self.skipCopyWarmupTripTables
+        props["RunModel.skipWalkLogsums"] = self.skipWalkLogsums
+        props["RunModel.skipCopyWalkImpedance"] = self.skipCopyWalkImpedance
+        props["RunModel.skipBikeLogsums"] = self.skipBikeLogsums
+        props["RunModel.skipCopyBikeLogsum"] = self.skipCopyBikeLogsum
         
         props["RunModel.skipHighwayAssignment"] = self.skipHighwayAssignment
         props["RunModel.skipTransitSkimming"] = self.skipTransitSkimming
@@ -446,6 +448,11 @@ class Properties(object):
     def save(self, path=None):
         if not path:
             path = self._path
+        # Note: could check for possible interference if user edits the 
+        #       properties files directly while it is already open in Modeller
+        #timestamp = os.path.getmtime(path)
+        #if timestamp != self._timestamp:
+        #    raise Exception("%s file has been edited after reading" % path)
         with open(path, 'w') as f:
             for key, value in self._prop.iteritems():
                 if isinstance(value, list):

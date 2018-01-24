@@ -410,22 +410,22 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             self.calc_traffic_attributes(traffic_network)
             self.check_zone_access(traffic_network, traffic_network.mode("d"))
 
-        for elem_type, mapping in traffic_attr_map.iteritems():
-            for name, tcoved_type, emme_type, desc in mapping.values():
-                if emme_type == "INTERNAL" and (self.traffic_scenario_id or self.merged_scenario_id):
-                    traffic_network.delete_attribute(elem_type, name)
-                if self.traffic_scenario_id:
-                    if emme_type == "EXTRA":
-                        xatt = traffic_scenario.create_extra_attribute(elem_type, name)
-                        xatt.description =  desc
-                    elif emme_type == "STRING":
-                        traffic_scenario.create_network_field(elem_type, name, 'STRING', description=desc)
-                if self.merged_scenario_id:
-                    if emme_type == "EXTRA":
-                        xatt = scenario.create_extra_attribute(elem_type, name)
-                        xatt.description = desc
-                    elif emme_type == "STRING":
-                        scenario.create_network_field(elem_type, name, 'STRING', description=desc)
+            for elem_type, mapping in traffic_attr_map.iteritems():
+                for name, tcoved_type, emme_type, desc in mapping.values():
+                    if emme_type == "INTERNAL":
+                        traffic_network.delete_attribute(elem_type, name)
+                    if self.traffic_scenario_id:
+                        if emme_type == "EXTRA":
+                            xatt = traffic_scenario.create_extra_attribute(elem_type, name)
+                            xatt.description =  desc
+                        elif emme_type == "STRING":
+                            traffic_scenario.create_network_field(elem_type, name, 'STRING', description=desc)
+                    if self.merged_scenario_id:
+                        if emme_type == "EXTRA":
+                            xatt = scenario.create_extra_attribute(elem_type, name)
+                            xatt.description = desc
+                        elif emme_type == "STRING":
+                            scenario.create_network_field(elem_type, name, 'STRING', description=desc)
         if self.traffic_scenario_id:
             traffic_scenario.publish_network(traffic_network)
 
@@ -447,25 +447,25 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             self.create_transit_base(transit_network, transit_attr_map)
             self.create_transit_lines(transit_network, transit_attr_map)
             self.calc_transit_attributes(transit_network)
-        
-        for elem_type, mapping in transit_attr_map.iteritems():
-            for name, tcoved_type, emme_type, desc in mapping.values():                    
-                if emme_type == "INTERNAL"and (self.transit_scenario_id or self.merged_scenario_id):
-                    transit_network.delete_attribute(elem_type, name)
-                if self.transit_scenario_id:
-                    if emme_type == "EXTRA":
-                        xatt = transit_scenario.create_extra_attribute(elem_type, name)
-                        xatt.description = desc
-                    elif emme_type == "STRING":
-                        transit_scenario.create_network_field(elem_type, name, 'STRING', description=desc)
-                if self.merged_scenario_id:
-                    if emme_type == "EXTRA":
-                        if not scenario.extra_attribute(name):
-                            xatt = scenario.create_extra_attribute(elem_type, name)
+
+            for elem_type, mapping in transit_attr_map.iteritems():
+                for name, tcoved_type, emme_type, desc in mapping.values():                    
+                    if emme_type == "INTERNAL":
+                        transit_network.delete_attribute(elem_type, name)
+                    if self.transit_scenario_id:
+                        if emme_type == "EXTRA":
+                            xatt = transit_scenario.create_extra_attribute(elem_type, name)
                             xatt.description = desc
-                    elif emme_type == "STRING":
-                        if not scenario.network_field(elem_type, name):
-                            scenario.create_network_field(elem_type, name, 'STRING', description=desc)
+                        elif emme_type == "STRING":
+                            transit_scenario.create_network_field(elem_type, name, 'STRING', description=desc)
+                    if self.merged_scenario_id:
+                        if emme_type == "EXTRA":
+                            if not scenario.extra_attribute(name):
+                                xatt = scenario.create_extra_attribute(elem_type, name)
+                                xatt.description = desc
+                        elif emme_type == "STRING":
+                            if not scenario.network_field(elem_type, name):
+                                scenario.create_network_field(elem_type, name, 'STRING', description=desc)
         if self.transit_scenario_id:
             transit_scenario.publish_network(transit_network)
 
@@ -480,7 +480,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         hwy_data = gen_utils.DataTableProc("ARC", _join(self.source, "hwycov.e00"))
 
         if self.save_data_tables:
-            hwy_data.save("%s-hwycov" % self.data_table_name, self.overwrite)
+            hwy_data.save("%s_hwycov" % self.data_table_name, self.overwrite)
 
         for elem_type in "NODE", "TURN":
             mapping = attr_map.get(elem_type)
@@ -1053,23 +1053,31 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 ]
             }
             self._log.append({"type": "text", "content": "Using default coaster fare based on 2012 base year setup."})
+
+        def get_line(line_id):
+            line = network.transit_line(line_id)
+            if line is None:
+                raise Exception("special_fares.txt: line does not exist: %s" % line_id)
+            return line
+
         for record in special_fares["boarding_cost"]["base"]:
-            line = network.transit_line(record["line"])
+            line = get_line(record["line"])
             line["@fare"] = 0
             for seg in line.segments():
                 seg["@coaster_fare_board"] = record["cost"]
         for record in special_fares["boarding_cost"].get("stop_increment", []):
-            line = network.transit_line(record["line"])
+            line = get_line(record["line"])
             for seg in line.segments(True):
                 if record["stop"] in seg["#stop_name"]:
                     seg["@coaster_fare_board"] += record["cost"]
                     break
         for record in special_fares["in_vehicle_cost"]:
-            line = network.transit_line(record["line"])
+            line = get_line(record["line"])
             for seg in line.segments(True):
                 if record["from"] in seg["#stop_name"]:
                     seg["@coaster_fare_inveh"] = record["cost"]
                     break
+            
         self._log.append({"type": "text", "content": "Calculate derived transit attributes complete"})
         return
 
@@ -1109,7 +1117,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         self._log.append({"type": "text", "content": "Process turns.csv for turn prohibited by ID"})
         turn_data = gen_utils.DataTableProc("turns", _join(self.source, "turns.csv"))
         if self.save_data_tables:
-            turn_data.save("%s-turns"  % self.data_table_name, self.overwrite)
+            turn_data.save("%s_turns"  % self.data_table_name, self.overwrite)
         links = dict((link["@tcov_id"], link) for link in network.links())
 
         # Process turns.csv for prohibited turns from_id, to_id, penalty
@@ -1397,17 +1405,17 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     link.volume_delay_func = 11  # non-controlled approach
 
         for link in network.links():
-            for time in ["_am", "_pm"]:
-                link["@cycle" + time] = link["cycle"]
-                link["@green_to_cycle" + time] = link["green_to_cycle"]
-
-            if not link["@traffic_control"] in [4, 5]:
-                # ramp metering is turned off for the off-peak periods (cycle and green to cycle are 0)
-                # NOTE: the vdf is sub-optimal for this
-                #       possible future improvement: implement this TOD difference as part of the assignment tool.
-                for time in ["_ea", "_md", "_ev"]:
-                    link["@cycle" + time] = 0
-                    link["@green_to_cycle" + time] = 0
+            if link.volume_delay_func in [10, 11]:
+                continue
+            if link["@traffic_control"] in [4, 5]:
+                # Ramp meter controlled links are only enabled during the peak periods
+                for time in ["_am", "_pm"]:
+                    link["@cycle" + time] = link["cycle"]
+                    link["@green_to_cycle" + time] = link["green_to_cycle"]
+            else:
+                for time in time_periods:
+                    link["@cycle" + time] = link["cycle"]
+                    link["@green_to_cycle" + time] = link["green_to_cycle"]
 
         network.delete_attribute("LINK", "green_to_cycle")
         network.delete_attribute("LINK", "cycle")

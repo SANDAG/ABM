@@ -135,13 +135,13 @@ Export network results to csv files for SQL data loader."""
         num_processors = dem_utils.parse_num_processors(num_processors)
 
         periods = ["EA", "AM", "MD", "PM", "EV"]
-        period_scenario_id = OrderedDict((v, i) for i, v in enumerate(periods, start=base_scenario_id + 1))
+        period_scenario_ids = OrderedDict((v, i) for i, v in enumerate(periods, start=base_scenario_id + 1))
 
         base_scenario = traffic_emmebank.scenario(base_scenario_id)
         
-        self.export_traffic_attribute(base_scenario, export_path, traffic_emmebank, period_scenario_id)
-        self.export_traffic_load_by_period(export_path, traffic_emmebank, period_scenario_id)
-        self.export_transit_results(export_path, transit_emmebank, period_scenario_id, num_processors)
+        self.export_traffic_attribute(base_scenario, export_path, traffic_emmebank, period_scenario_ids)
+        self.export_traffic_load_by_period(export_path, traffic_emmebank, period_scenario_ids)
+        self.export_transit_results(export_path, transit_emmebank, period_scenario_ids, num_processors)
 
     @_m.logbook_trace("Export traffic attribute data")
     def export_traffic_attribute(self, base_scenario, export_path, traffic_emmebank, period_scenario_id):

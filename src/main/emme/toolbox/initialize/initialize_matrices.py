@@ -118,7 +118,11 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
 
     @_m.logbook_trace("Create and initialize matrices", save_arguments=True)
     def __call__(self, components, periods, scenario, delete_all_existing=False):
-        attributes = {"components": components, "periods": periods}
+        attributes = {
+            "components": components, 
+            "periods": periods, 
+            "delete_all_existing": delete_all_existing
+        }
         gen_utils.log_snapshot("Initialize matrices", str(self), attributes)
 
         self.scenario = scenario
@@ -501,10 +505,15 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
 
     def create_matrices(self, component, periods):
         with _m.logbook_trace("Create matrices for component %s" % (component.replace("_", " "))):
+            emmebank = self.scenario.emmebank
             matrices = []
             for period in periods + ["ALL"]:
                 with _m.logbook_trace("For period %s" % (period)):
                     for ident, name, desc in self._matrices[component][period]:
+                        existing_matrix = emmebank.matrix(name)
+                        if existing_matrix and (existing_matrix.id != ident):
+                            raise Exception("Matrix name conflict '%s', with id %s instead of %s. Delete all matrices first."
+                                % (name, existing_matrix.id, ident))
                         matrices.append(self._create_matrix_tool(ident, name, desc, scenario=self.scenario, overwrite=True))
         return matrices
 

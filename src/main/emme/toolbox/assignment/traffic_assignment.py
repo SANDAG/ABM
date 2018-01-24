@@ -527,6 +527,8 @@ Assign traffic demand for the selected time period."""
                 net_calc("ul3", "@capacity_link_%s" % p, "modes=d")
                 # set number of lanes (not used in VDF, just for reference)
                 net_calc("lanes", "@lane_%s" % p, "modes=d")
+                # For links with signals inactive in this period, convert VDF to type 10
+                net_calc("vdf", "11", "modes=d and @green_to_cycle=0 and not vdf=10,11")
 
             with _m.logbook_trace("Transit line headway and background traffic"):
                 # set headway for the period
@@ -751,14 +753,15 @@ Assign traffic demand for the selected time period."""
                             data = matrix.get_numpy_data(scenario)
                             if skim_type == "TIME" or skim_type == "DIST":
                                 numpy.fill_diagonal(data, 999999999.0)
-                                data[numpy.diag_indices_from(data)] = 0.5 * numpy.nanmin(data, 1)
+                                data[numpy.diag_indices_from(data)] = 0.5 * numpy.nanmin(data[::,12::], 1)
+                                internal_data = data[12::, 12::]  # Exclude the first 12 zones, external zones
+                                self._stats[name] = (name, internal_data.min(), internal_data.max(), internal_data.mean(), internal_data.sum(), 0)
                             elif skim_type == "REL":
                                 data = numpy.sqrt(data)
                             else:
+                                self._stats[name] = (name, data.min(), data.max(), data.mean(), data.sum(), 0)
                                 numpy.fill_diagonal(data, -99999999.0)
                             matrix.set_numpy_data(data, scenario)
-                            data = numpy.ma.masked_outside(data, -9999999, 9999999, copy=False)
-                            self._stats[name] = (name, data.min(), data.max(), data.mean(), data.sum(), num_cells-data.count())
         return
 
     def base_assignment_spec(self, relative_gap, max_iterations, num_processors, background_traffic=True):
