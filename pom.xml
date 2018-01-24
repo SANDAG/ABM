@@ -454,6 +454,7 @@
                                         <exclude>copy_networks.cmd</exclude>
                                         <exclude>BatchSubstitute.bat</exclude>
                                         <exclude>init_emme.cmd</exclude>
+                                        <exclude>cleanup.cmd</exclude> 
                                     </excludes>
                                 </resource>
                             </resources>
@@ -478,6 +479,7 @@
                                         <include>BatchSubstitute.bat</include>
                                         <include>copy_networkfiles_to_study.cmd</include>
                                         <include>init_emme.cmd</include>
+                                        <include>cleanup.cmd</include>
                                     </includes>
                                 </resource>
                             </resources>
