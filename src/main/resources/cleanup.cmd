@@ -1,4 +1,4 @@
-REM This batch file deletes: 
+REM This batch file deletes:  
 REM 1) files in report folder 
 REM 2) intermediate files in /iter1 and /iter3 folders 
 REM 3) temporary and intermediate files in output folder
