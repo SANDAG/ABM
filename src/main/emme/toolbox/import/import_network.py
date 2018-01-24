@@ -466,7 +466,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         hwy_data = gen_utils.DataTableProc("ARC", _join(self.source, "hwycov.e00"))
 
         if self.save_data_tables:
-            hwy_data.save("%s-hwycov" % self.data_table_name, self.overwrite)
+            hwy_data.save("%s_hwycov" % self.data_table_name, self.overwrite)
 
         # Create Modes
         dummy_auto = network.create_mode("AUTO", "d")
@@ -1096,7 +1096,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         self._log.append({"type": "text", "content": "Process turns.csv for turn prohibited by ID"})
         turn_data = gen_utils.DataTableProc("turns", _join(self.source, "turns.csv"))
         if self.save_data_tables:
-            turn_data.save("%s-turns"  % self.data_table_name, self.overwrite)
+            turn_data.save("%s_turns"  % self.data_table_name, self.overwrite)
         links = dict((link["@tcov_id"], link) for link in network.links())
 
         # Process turns.csv for prohibited turns from_id, to_id, penalty
@@ -1268,17 +1268,17 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     link.volume_delay_func = 10
 
         for link in network.links():
-            for time in ["_am", "_pm"]:
-                link["@cycle" + time] = link["cycle"]
-                link["@green_to_cycle" + time] = link["green_to_cycle"]
-
-            if not link["@traffic_control"] in [4, 5]:
-                # ramp metering is turned off for the off-peak periods (cycle and green to cycle are 0)
-                # NOTE: the vdf is sub-optimal for this
-                #       possible future improvment: implement this TOD difference as part of the assignment tool.
-                for time in ["_ea", "_md", "_ev"]:
-                    link["@cycle" + time] = 0
-                    link["@green_to_cycle" + time] = 0
+            if link.volume_delay_func == 10:
+                continue
+            if link["@traffic_control"] in [4, 5]:
+                # Ramp meter controlled links are only enabled during the peak periods
+                for time in ["_am", "_pm"]:
+                    link["@cycle" + time] = link["cycle"]
+                    link["@green_to_cycle" + time] = link["green_to_cycle"]
+            else:
+                for time in time_periods:
+                    link["@cycle" + time] = link["cycle"]
+                    link["@green_to_cycle" + time] = link["green_to_cycle"]
 
         network.delete_attribute("LINK", "green_to_cycle")
         network.delete_attribute("LINK", "cycle")

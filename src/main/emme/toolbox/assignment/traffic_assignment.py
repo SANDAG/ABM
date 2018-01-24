@@ -455,6 +455,8 @@ Assign traffic demand for the selected time period."""
                 net_calc("ul3", "@capacity_link_%s" % p, "modes=d")
                 # set number of lanes (not used in VDF, just for reference)
                 net_calc("lanes", "@lane_%s" % p, "modes=d")
+                # For links with signals inactive in this period, convert VDF to type 10
+                net_calc("vdf", "10", "modes=d and @green_to_cycle=0 and not vdf=10")
 
             with _m.logbook_trace("Transit line headway and background traffic"):
                 # set headway for the period
