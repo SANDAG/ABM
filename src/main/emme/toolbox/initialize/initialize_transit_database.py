@@ -46,6 +46,7 @@ TOOLBOX_ORDER = 8
 import inro.modeller as _m
 import inro.emme.network as _network
 import inro.emme.database.emmebank as _eb
+from inro.emme.desktop.exception import AddDatabaseError
 import traceback as _traceback
 import shutil as _shutil
 import time
@@ -155,4 +156,7 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
         for db in data_explorer.databases():
             if os.path.normpath(db.path) == os.path.normpath(emmebank.path):
                 return 
-        data_explorer.add_database(emmebank.path)
+        try:
+            data_explorer.add_database(emmebank.path)
+        except AddDatabaseError:
+            pass  # database has already been added to the project
