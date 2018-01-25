@@ -55,19 +55,26 @@ Macro "Run SANDAG ABM"
    minSpaceOnC=RunMacro("read properties",properties,"RunModel.minSpaceOnC", "S")
    runShadowPricingFromScratch=RunMacro("read properties",properties,"RunModel.runShadowPricingFromScratch", "S")   
    
-   //must start from 1st iteration if run shadow pricing from scratch with 10 iterations and 0.1 sample rate (setting based on SP stability tests)
-   //WSU 12/11/2017
+   
+   //WSU 01/24/2018
    if runShadowPricingFromScratch = "true" then do
+	   //must start from 1st iteration if run shadow pricing from scratch--with 10 iterations and 0.1 sample rate (based on SP stability tests)
 	   sample_rate={0.1,0.5,1.0}
 	   startFromIteration=1
-	   oldShadowPricingInput_work=RunMacro("read properties",properties,"UsualWorkLocationChoice.ShadowPrice.Input.File", "S") 
-	   oldShadowPricingInput_school=RunMacro("read properties",properties,"UsualSchoolLocationChoice.ShadowPrice.Input.File", "S")  
-	   oldShadowPricingIterations_work=RunMacro("read properties",properties,"uwsl.ShadowPricing.Work.MaximumIterations", "S") 
-	   oldShadowPricingIterations_school=RunMacro("read properties",properties,"uwsl.ShadowPricing.School.MaximumIterations", "S") 
-	   runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"UsualWorkLocationChoice.ShadowPrice.Input.File"+" "+oldShadowPricingInput_work+ "   "
-	   runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"UsualSchoolLocationChoice.ShadowPrice.Input.File"+" "+oldShadowPricingInput_school+"  "
-	   runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"uwsl.ShadowPricing.Work.MaximumIterations"+" "+oldShadowPricingIterations_work+" 10"
-	   runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"uwsl.ShadowPricing.School.MaximumIterations"+" "+oldShadowPricingIterations_school+" 10"
+
+           //update 4 shadow pricing properties
+	   runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"UsualWorkLocationChoice.ShadowPrice.Input.File"+"   "
+  	   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Update work shadow pricing property: "+" "+runString})
+  	   ok=RunMacro("TCB Run Command", 1, "Update work shadow pricing property", runString)
+	   runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"UsualSchoolLocationChoice.ShadowPrice.Input.File"+"   "
+  	   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Update school shadow pricing property: "+" "+runString})
+  	   ok=RunMacro("TCB Run Command", 1, "Update school shadow pricing property", runString)
+	   runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"uwsl.ShadowPricing.Work.MaximumIterations"+" 9"
+  	   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Update work shadow pricing max itneration property: "+" "+runString})
+  	   ok=RunMacro("TCB Run Command", 1, "Update work shadow pricing max iteration property", runString)
+	   runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"uwsl.ShadowPricing.School.MaximumIterations"+" 9"
+  	   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Update work shadow pricing max iteration property: "+" "+runString})
+  	   ok=RunMacro("TCB Run Command", 1, "Update school shadow pricing max iteration property", runString)
    end   
 
    // Swap Server Configurations

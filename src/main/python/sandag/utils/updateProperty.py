@@ -1,5 +1,5 @@
 # Wu.Sun@sandag.org 12/19/2017
-from sandag.utils import stringFinder as sf
+import stringFinder as sf
 from optparse import OptionParser
 
 def update_property(path,fName,pName,pNewValue):
@@ -19,15 +19,15 @@ def update_property(path,fName,pName,pNewValue):
     :param pNewValue:new property value
     """
     logFile = open(path + "/logFiles/updateProperties.log", "w")
-    if sf.find(path+'/'+fName,pName)==False:
-        logFile.write(pName+ " doesn't exist in "+path+'\\'+fName+"!\n")
+    if sf.find(path+'/conf/'+fName,pName)==False:
+        logFile.write(pName+ " doesn't exist in "+path+'\\conf\\'+fName+"!\n")
         return -1
     else:
         dic=[]
-        oldValue = sf.findPropertySetting(path+"/"+fName, pName)
+        oldValue = sf.findPropertySetting(path+"/conf/"+fName, pName)
         pair = (oldValue, pName + "=" + pNewValue+"\n")
         dic.append(pair)
-        sf.replace(path+'/'+fName,dic)
+        sf.replace(path+'/conf/'+fName,dic)
         return 0
 
  # Set Parser Options
