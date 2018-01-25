@@ -799,14 +799,14 @@
             <type>dll</type>
         </dependency>
 		<dependency>
-		  <groupId>oldhdf</groupId>
-		  <artifactId>oldjhdf</artifactId>
-		  <version>0.0</version>
+		  <groupId>hdf</groupId>
+		  <artifactId>jhdf</artifactId>
+		  <version>1.0</version>
 		  <type>dll</type>
 		</dependency>
 		<dependency>
 		  <groupId>hdf</groupId>
-		  <artifactId>jhdf</artifactId>
+		  <artifactId>jhdf5</artifactId>
 		  <version>5.0</version>
 		  <type>dll</type>
 		</dependency>
