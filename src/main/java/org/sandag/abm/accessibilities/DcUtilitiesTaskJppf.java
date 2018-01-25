@@ -359,19 +359,8 @@ public class DcUtilitiesTaskJppf
                 bestPathCalculator.findBestWalkTransitWalkTaps(walkDmu, ModelStructure.MD_SKIM_PERIOD_INDEX, iMgra, jMgra, trace, logger);
                 
                 // sum the exponentiated utilities over modes
-                double opWTExpUtility = 0;
-                double[] walkTransitWalkUtilities = bestPathCalculator.getBestUtilities();
-                for (int k=0; k < walkTransitWalkUtilities.length; k++){
-                	if(trace){
-                		logger.info("OP Walk Transit Utilities (TAP pair number,utility, sum)");
-                	}
-                    if ( walkTransitWalkUtilities[k] > MIN_EXP_FUNCTION_ARGUMENT ){
-                        opWTExpUtility += Math.exp(walkTransitWalkUtilities[k]);
-                        if(trace)
-                        	logger.info(k+","+walkTransitWalkUtilities[k]+","+opWTExpUtility);
-                    }
-                }
-
+                double opWTExpUtility = bestPathCalculator.getSumExpUtilities();
+                
                 double pkSovExpUtility = 0;
                 double pkHovExpUtility = 0;
                 try
@@ -395,17 +384,7 @@ public class DcUtilitiesTaskJppf
                 bestPathCalculator.findBestWalkTransitWalkTaps(walkDmu, ModelStructure.AM_SKIM_PERIOD_INDEX, iMgra, jMgra, trace, logger);
                 
                 // sum the exponentiated utilities over modes
-                double pkWTExpUtility = 0;
-                walkTransitWalkUtilities = bestPathCalculator.getBestUtilities();
-            	if(trace){
-            		logger.info("PK Walk Transit Utilities (TAP pair number,utility, sum)");
-            	}
-                for (int k=0; k < walkTransitWalkUtilities.length; k++){
-                    if ( walkTransitWalkUtilities[k] > MIN_EXP_FUNCTION_ARGUMENT )
-                        pkWTExpUtility += Math.exp(walkTransitWalkUtilities[k]);
-                    if(trace)
-                    	logger.info(k+","+walkTransitWalkUtilities[k]+","+pkWTExpUtility);
-                }
+                double pkWTExpUtility = bestPathCalculator.getSumExpUtilities();
                 
                 double pkDTExpUtility = 0;
                 double opDTExpUtility = 0;
