@@ -180,7 +180,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         try:
             self.save_properties()
             self(self.main_directory, self.scenario_id, self.scenario_title, self.emmebank_title,
-                 self.num_processors, self.select_link, self.username, self.password)
+                 self.num_processors, self.select_link, username=self.username, password=self.password)
             run_msg = "Tool complete"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
         except Exception as error:

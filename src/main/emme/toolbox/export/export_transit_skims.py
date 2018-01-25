@@ -90,7 +90,7 @@ class ExportSkims(_m.Tool(), gen_utils.Snapshot):
             raise
 
     @_m.logbook_trace("Export transit skims to OMX", save_arguments=True)
-    def __call__(self, omx_file, periods, scenario, self.big_to_zero=False):
+    def __call__(self, omx_file, periods, scenario, big_to_zero=False):
         attributes = {"omx_file": omx_file, "periods": periods, "big_to_zero": big_to_zero}
         gen_utils.log_snapshot("Export transit skims to OMX", str(self), attributes)
         init_matrices = _m.Modeller().tool("sandag.initialize.initialize_matrices")
