@@ -698,19 +698,29 @@ public class HouseholdDataWriter
             int numModeAlts = modelStructure.getMaxTourModeIndex();
             float[] utils = t.getTourModalUtilities();
 
-            int dummy = 0;
-            if (utils == null) dummy = 1;
+            if (utils != null){
 
-            for (int i = 0; i < utils.length; i++)
-                data.add(string(utils[i]));
-            for (int i = utils.length; i < numModeAlts; i++)
-                data.add("-999");
-
+            	for (int i = 0; i < utils.length; i++)
+            		data.add(string(utils[i]));
+            	for (int i = utils.length; i < numModeAlts; i++)
+            		data.add("-999");
+            
+            }else{
+            	for(int i =0;i<numModeAlts;++i)
+            		data.add("-999");
+            }
+            
             float[] probs = t.getTourModalProbabilities();
-            for (int i = 0; i < probs.length; i++)
-                data.add(string(probs[i]));
-            for (int i = probs.length; i < numModeAlts; i++)
-                data.add("0.0");
+           
+            if(probs != null){
+            	for (int i = 0; i < probs.length; i++)
+            		data.add(string(probs[i]));
+            	for (int i = probs.length; i < numModeAlts; i++)
+            		data.add("0.0");
+            }else{
+            	for(int i =0;i<numModeAlts;++i)
+            		data.add("0.0");
+            }
         }
 
         if(writeLogsums){
