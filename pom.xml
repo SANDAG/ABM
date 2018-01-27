@@ -323,6 +323,26 @@
                 </configuration>
                 <executions>
                     <execution>
+                        <id>copy-dll-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${release.root}/common/application</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>*.dll</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>                  
+                    <execution>
                         <id>copy-uec-resources</id>
                         <phase>package</phase>
                         <goals>
@@ -798,18 +818,6 @@
             <version>4.0</version>
             <type>dll</type>
         </dependency>
-		<dependency>
-		  <groupId>hdf</groupId>
-		  <artifactId>jhdf</artifactId>
-		  <version>1.0</version>
-		  <type>dll</type>
-		</dependency>
-		<dependency>
-		  <groupId>hdf</groupId>
-		  <artifactId>jhdf5</artifactId>
-		  <version>5.0</version>
-		  <type>dll</type>
-		</dependency>
 	</dependencies>
     <distributionManagement>
         <snapshotRepository>
