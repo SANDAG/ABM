@@ -38,23 +38,23 @@ public class AirportPartyManager
      * @param resourceFile
      *            Property file.
      */
-    public AirportPartyManager(HashMap<String, String> rbMap, float sampleRate)
+    public AirportPartyManager(HashMap<String, String> rbMap, float sampleRate, String airportCode)
     {
         sandagStructure = new SandagModelStructure();
 
         String directory = Util.getStringValueFromPropertyMap(rbMap, "Project.Directory");
         String purposeFile = directory
-                + Util.getStringValueFromPropertyMap(rbMap, "airport.purpose.file");
+                + Util.getStringValueFromPropertyMap(rbMap, "airport."+airportCode+".purpose.file");
         String sizeFile = directory
-                + Util.getStringValueFromPropertyMap(rbMap, "airport.size.file");
+                + Util.getStringValueFromPropertyMap(rbMap, "airport."+airportCode+".size.file");
         String durationFile = directory
-                + Util.getStringValueFromPropertyMap(rbMap, "airport.duration.file");
+                + Util.getStringValueFromPropertyMap(rbMap, "airport."+airportCode+".duration.file");
         String incomeFile = directory
-                + Util.getStringValueFromPropertyMap(rbMap, "airport.income.file");
+                + Util.getStringValueFromPropertyMap(rbMap, "airport."+airportCode+".income.file");
         String departFile = directory
-                + Util.getStringValueFromPropertyMap(rbMap, "airport.departureTime.file");
+                + Util.getStringValueFromPropertyMap(rbMap, "airport."+airportCode+".departureTime.file");
         String arriveFile = directory
-                + Util.getStringValueFromPropertyMap(rbMap, "airport.arrivalTime.file");
+                + Util.getStringValueFromPropertyMap(rbMap, "airport."+airportCode+".arrivalTime.file");
 
         // Read the distributions
         setPurposeDistribution(purposeFile);
@@ -66,13 +66,13 @@ public class AirportPartyManager
 
         // calculate total number of parties
         float enplanements = new Float(Util.getStringValueFromPropertyMap(rbMap,
-                "airport.enplanements").replace(",", ""));
+                "airport."+airportCode+".enplanements").replace(",", ""));
         float connectingPassengers = new Float(Util.getStringValueFromPropertyMap(rbMap,
-                "airport.connecting").replace(",", ""));
+                "airport."+airportCode+".connecting").replace(",", ""));
         float annualFactor = new Float(Util.getStringValueFromPropertyMap(rbMap,
-                "airport.annualizationFactor"));
+                "airport."+airportCode+".annualizationFactor"));
         float averageSize = new Float(Util.getStringValueFromPropertyMap(rbMap,
-                "airport.averageSize"));
+                "airport."+airportCode+".averageSize"));
 
         float directPassengers = (enplanements - connectingPassengers) / annualFactor;
         int totalParties = (int) (directPassengers / averageSize) * 2;
