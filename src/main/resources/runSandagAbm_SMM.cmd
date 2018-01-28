@@ -41,11 +41,17 @@ ping -n 10 %MAIN% > nul
 
 cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 
-rem Airport model
-%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.airport.AirportModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% 
+rem Airport model - SAN
+%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.airport.AirportModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% -airport SAN
 
-rem Build airport model trip tables
-%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.airport.AirportTripTables %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE%
+rem Build airport model trip tables - SAN
+%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.airport.AirportTripTables %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% -airport SAN
+
+rem Airport model - CBX
+%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.airport.AirportModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% -airport CBX
+
+rem Build airport model trip tables - CBX
+%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.airport.AirportTripTables %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% -airport CBX
 
 rem Cross-border model
 %JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.crossborder.CrossBorderModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE%   
