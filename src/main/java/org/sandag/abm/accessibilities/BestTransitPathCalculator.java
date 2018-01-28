@@ -805,23 +805,26 @@ public class BestTransitPathCalculator implements Serializable
     	//iterate through paths and calculate exponentiated utility and sum
     	double sumExpUtility=0;
     	for(int i = 0; i<bestTapPairs.length;++i){
-    		if(bestTapPairs[i] != null){
-    			expUtilities[i] = Math.exp(bestTapPairs[i][3]);
-    			sumExpUtility += expUtilities[i]; 
-        	}
-    			
+    		if(bestTapPairs[i] == null)
+    			continue;
+    		if(bestTapPairs[i][3]<-500)
+    			continue;
+    		expUtilities[i] = Math.exp(bestTapPairs[i][3]);
+    		sumExpUtility += expUtilities[i]; 
+        		
     	}
     	if(sumExpUtility>0){
+			double cumProb=0;
     		//re-iterate through paths and calculate probability, choose alternative based on rnum
     		for(int i = 0; i<bestTapPairs.length;++i){
-    			double cumProb=0;
-    			if(bestTapPairs[i] != null){
-    				cumProb += (expUtilities[i]/sumExpUtility);
-    				if(rnum<=cumProb){
-    					alt = i;
-    					break;
-    				}
-    					
+        		if(bestTapPairs[i] == null)
+        			continue;
+        		if(bestTapPairs[i][3]<-500)
+        			continue;
+   				cumProb += (expUtilities[i]/sumExpUtility);
+   				if(rnum<=cumProb){
+   					alt = i;
+   					break;
     			}
     		}
     	}
