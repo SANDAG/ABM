@@ -82,7 +82,7 @@ public class AirportDestChoiceModel
      * @param dmuFactory
      *            Factory object for creation of airport model DMUs
      */
-    public AirportDestChoiceModel(HashMap<String, String> rbMap, AirportDmuFactoryIf dmuFactory)
+    public AirportDestChoiceModel(HashMap<String, String> rbMap, AirportDmuFactoryIf dmuFactory, String airportCode)
     {
 
         this.rbMap = rbMap;
@@ -93,13 +93,13 @@ public class AirportDestChoiceModel
         String uecFileDirectory = Util.getStringValueFromPropertyMap(rbMap,
                 CtrampApplication.PROPERTIES_UEC_PATH);
         String airportDistUecFileName = Util.getStringValueFromPropertyMap(rbMap,
-                "airport.dc.uec.file");
+                "airport."+airportCode+".dc.uec.file");
         airportDistUecFileName = uecFileDirectory + airportDistUecFileName;
 
         int dataPage = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap,
-                "airport.dc.data.page"));
+                "airport."+airportCode+".dc.data.page"));
         int sizePage = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap,
-                "airport.dc.size.page"));
+                "airport."+airportCode+".dc.size.page"));
 
         // read the model pages from the property file, create one choice model
         // for each
@@ -108,7 +108,7 @@ public class AirportDestChoiceModel
         {
 
             // get page from property file
-            String purposeName = "airport.dc.segment" + (i + 1) + ".page";
+            String purposeName = "airport."+airportCode+".dc.segment" + (i + 1) + ".page";
             String purposeString = Util.getStringValueFromPropertyMap(rbMap, purposeName);
             purposeString.replaceAll(" ", "");
             int destModelPage = Integer.parseInt(purposeString);

@@ -112,6 +112,9 @@ public class BestTransitPathCalculator implements Serializable
     
     private int numSkimSets;
     private int numTransitAlts;
+    private int[] maxLogsumUtilitiesBySkimSet;				//maximum number of utilities for each skims set in logsum calcs
+    private int[] utilityCount;								//counter for utilities    
+    private double[] expUtilities;							//exponentiated utility array for path choice
         
     /**
      * Constructor.
@@ -192,6 +195,9 @@ public class BestTransitPathCalculator implements Serializable
         bestPTap = new int[numTransitAlts];
         bestATap = new int[numTransitAlts];
         bestSet = new int[numTransitAlts];
+        maxLogsumUtilitiesBySkimSet = Util.getIntegerArrayFromPropertyMap(rbMap, "utility.bestTransitPath.maxPathsPerSkimSetForLogsum");
+        utilityCount = new int[numSkimSets];
+        expUtilities = new double[numTransitAlts];
         
      }
     
@@ -744,7 +750,8 @@ public class BestTransitPathCalculator implements Serializable
         return bestTapPairs;
     }
     
-    public LogitModel setupTripLogSum(double[][] bestTapPairs, boolean myTrace, Logger myLogger) {      
+    /*
+    private LogitModel setupTripLogSum(double[][] bestTapPairs, boolean myTrace, Logger myLogger) {      
     	
     	//must size logit model ahead of time
     	int alts = 0;
@@ -767,24 +774,64 @@ public class BestTransitPathCalculator implements Serializable
 
         return(tripNPaths);
     }
+    */
     
+    /**
+     * Returns the constrained logsum using the getTransitBestPathLogsum() method.
+     * 
+     * @param bestTapPairs
+     * @param myTrace
+     * @param myLogger
+     * @return
+     */
     public float calcTripLogSum(double[][] bestTapPairs, boolean myTrace, Logger myLogger) {      
     	
-    	LogitModel tripNPaths = setupTripLogSum(bestTapPairs, myTrace, myLogger);
-        return((float)tripNPaths.getUtility());
+    	return (float) getTransitBestPathLogsum(bestTapPairs, myTrace, myLogger);
     }
 
-    //select best transit path from N-path for trip
+    /**
+     * Choose a trip path across all available tap pairs.
+     * 
+     * @param rnum
+     * @param bestTapPairs
+     * @param myTrace
+     * @param myLogger
+     * @return
+     */
     public int chooseTripPath(float rnum, double[][] bestTapPairs, boolean myTrace, Logger myLogger) {
     	
-    	LogitModel tripNPaths = setupTripLogSum(bestTapPairs, myTrace, myLogger);
-    	double logSum = tripNPaths.getUtility();
-    	tripNPaths.calculateProbabilities();
-    	Alternative alt = tripNPaths.chooseAlternative(rnum);
-    	if (alt==null) {
+    	Arrays.fill(expUtilities, 0);
+    	int alt=-1;
+    	//iterate through paths and calculate exponentiated utility and sum
+    	double sumExpUtility=0;
+    	for(int i = 0; i<bestTapPairs.length;++i){
+    		if(bestTapPairs[i] == null)
+    			continue;
+    		if(bestTapPairs[i][3]<-500)
+    			continue;
+    		expUtilities[i] = Math.exp(bestTapPairs[i][3]);
+    		sumExpUtility += expUtilities[i]; 
+        		
+    	}
+    	if(sumExpUtility>0){
+			double cumProb=0;
+    		//re-iterate through paths and calculate probability, choose alternative based on rnum
+    		for(int i = 0; i<bestTapPairs.length;++i){
+        		if(bestTapPairs[i] == null)
+        			continue;
+        		if(bestTapPairs[i][3]<-500)
+        			continue;
+   				cumProb += (expUtilities[i]/sumExpUtility);
+   				if(rnum<=cumProb){
+   					alt = i;
+   					break;
+    			}
+    		}
+    	}
+    	else{
     		myLogger.info("No best taps to pick set from");
     	}
-    	return alt.getNumber();
+    	return alt;
     }
     
     /**
@@ -844,7 +891,10 @@ public class BestTransitPathCalculator implements Serializable
     }
 
     /**
-     * Get the best utilities.
+     * Get the best utilities. Note that these utilities have
+     * not been trimmed by the maximum number of utilities
+     * for each skim set. If a transit logsum is desired, use
+     * getTransitBestPathLogsum(). 
      * 
      * @return An array of the best utilities.
      */
@@ -852,6 +902,116 @@ public class BestTransitPathCalculator implements Serializable
     {
         return bestUtilities;
     }
+    
+    
+    /**
+     * Get the best path logsum, subject to constraints. The constraints
+     * are that the logsum only include a certain number of paths for each
+     * skim set, as defined in the property utility.bestTransitPath.maxPathsPerSkimSetForLogsum.
+     * This allows the logsum 
+     * to reduce or eliminate path overlap should any exist in the path set, without having
+     * access to actual route data in the utility calculation. Transit trips
+     * are still subject to choice across all paths in the best utility set.
+     * 
+     * @return The constrained transit logsum. 
+     */
+    public double getTransitBestPathLogsum(){
+    	
+    	double logsum=-999;
+    	double sumExpUtility  = getSumExpUtilities();
+    	if(sumExpUtility>0)
+    		logsum = Math.log(sumExpUtility);
+    	return logsum;
+    }
+    
+    /**
+     * Get the best path logsum, subject to constraints. The constraints
+     * are that the logsum only include a certain number of paths for each
+     * skim set, as defined in the property utility.bestTransitPath.maxPathsPerSkimSetForLogsum.
+     * This allows the logsum 
+     * to reduce or eliminate path overlap should any exist in the path set, without having
+     * access to actual route data in the utility calculation. Transit trips
+     * are still subject to choice across all paths in the best utility set.
+     * 
+     * @return The constrained transit logsum. 
+     */
+    public double getTransitBestPathLogsum(double[][] bestTapPairs, boolean myTrace, Logger myLogger){
+    	
+    	double logsum=-999;
+    	double sumExpUtility  = getSumExpUtilities(bestTapPairs, myTrace, myLogger);
+    	if(sumExpUtility>0)
+    		logsum = Math.log(sumExpUtility);
+    	return logsum;
+    }
+
+    
+    /**
+     * Get the sum of exponentiated utilities, subject to constraints. The constraints
+     * are that the sum only include a certain number of paths for each
+     * skim set, as defined in the property utility.bestTransitPath.maxPathsPerSkimSetForLogsum.
+     * to reduce or eliminate path overlap should any exist in the path set, without having
+     * access to actual route data in the utility calculation. Transit trips
+     * are still subject to choice across all paths in the best utility set.
+     * 
+     * @param bestTapPairs The tap pairs to calculate the sum exponentiated utility over
+     * @param myTrace  Trace calculations
+     * @param myLogger The logger to write tracing to
+     * 
+     * @return The constrained sum of exponentiated utilities. 
+     */
+     public double getSumExpUtilities(double[][] bestTapPairs, boolean myTrace, Logger myLogger){
+    	double sumExpUtility=0;
+    	//utilityCount tracks how many utilities included in logsum calc by skimset
+    	Arrays.fill(utilityCount,0); 
+    	for(int i = 0; i<bestTapPairs.length;++i){
+    		if(bestTapPairs[i] != null){
+    			int skimSet = (int)bestTapPairs[i][2];
+    			
+    			//only include the utility in the logsum if the count
+    			//by skimset hasn't been met yet.
+        		if(utilityCount[skimSet]<maxLogsumUtilitiesBySkimSet[skimSet]){
+        			sumExpUtility += Math.exp(bestTapPairs[i][3]); 
+        			++utilityCount[skimSet];
+        		}
+    		}
+    			
+    	}
+
+    	return sumExpUtility;
+    }
+    
+    
+    /**
+     * Get the sum of exponentiated utilities, subject to constraints. The constraints
+     * are that the sum only include a certain number of paths for each
+     * skim set, as defined in the property utility.bestTransitPath.maxPathsPerSkimSetForLogsum.
+     * to reduce or eliminate path overlap should any exist in the path set, without having
+     * access to actual route data in the utility calculation. Transit trips
+     * are still subject to choice across all paths in the best utility set.
+     * 
+     * @return The constrained sum of exponentiated utilities. 
+     */
+    public double getSumExpUtilities(){
+    	double sumExpUtility=0;
+    	//utilityCount tracks how many utilities included in logsum calc by skimset
+    	Arrays.fill(utilityCount,0); 
+    	for(int i = 0; i<bestUtilities.length;++i){
+    		if(bestUtilities[i] > -500){
+    			int skimSet = bestSet[i];
+    			
+    			//only include the utility in the logsum if the count
+    			//by skimset hasn't been met yet.
+        		if(utilityCount[skimSet]<maxLogsumUtilitiesBySkimSet[skimSet]){
+        			sumExpUtility += Math.exp(bestUtilities[i]); 
+        			++utilityCount[skimSet];
+        		}
+    		}
+    			
+    	}
+
+    	return sumExpUtility;
+    }
+    
 
     /**
      * Create the UEC for the main transit portion of the utility.

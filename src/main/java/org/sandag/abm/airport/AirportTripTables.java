@@ -93,6 +93,7 @@ public class AirportTripTables
     private TazDataManager          tazManager;
     private TapDataManager          tapManager;
     private SandagModelStructure    modelStructure;
+    private String 					airportCode;
 
     private MatrixDataServerRmi     ms;
     private float                   sampleRate              = 1;
@@ -114,7 +115,7 @@ public class AirportTripTables
 		this.sampleRate = sampleRate;
 	}
 
-	public AirportTripTables(HashMap<String, String> rbMap)
+	public AirportTripTables(HashMap<String, String> rbMap, String airportCode)
     {
 
         this.rbMap = rbMap;
@@ -161,6 +162,7 @@ public class AirportTripTables
         //value of time thresholds
         valueOfTimeThresholdLow = new Float(rbMap.get(VOT_THRESHOLD_LOW));
         valueOfTimeThresholdMed = new Float(rbMap.get(VOT_THRESHOLD_MED));
+        this.airportCode = airportCode;
    }
 
     /**
@@ -259,7 +261,7 @@ public class AirportTripTables
         String directory = Util.getStringValueFromPropertyMap(rbMap, "scenario.path");
 
         // Open the individual trip file
-        String tripFile = Util.getStringValueFromPropertyMap(rbMap, "airport.output.file");
+        String tripFile = Util.getStringValueFromPropertyMap(rbMap, "airport."+airportCode+".output.file");
         tripData = openTripFile(directory + tripFile);
 
         // Iterate through periods so that we don't have to keep
@@ -463,13 +465,13 @@ public class AirportTripTables
         String[] fileName = new String[4];
 
         fileName[0] = directory
-                + Util.getStringValueFromPropertyMap(rbMap, "airport.results.autoTripMatrix");
+                + Util.getStringValueFromPropertyMap(rbMap, "airport."+airportCode+".results.autoTripMatrix");
         fileName[1] = directory
-                + Util.getStringValueFromPropertyMap(rbMap, "airport.results.nMotTripMatrix");
+                + Util.getStringValueFromPropertyMap(rbMap, "airport."+airportCode+".results.nMotTripMatrix");
         fileName[2] = directory
-                + Util.getStringValueFromPropertyMap(rbMap, "airport.results.tranTripMatrix");
+                + Util.getStringValueFromPropertyMap(rbMap, "airport."+airportCode+".results.tranTripMatrix");
         fileName[3] = directory
-                + Util.getStringValueFromPropertyMap(rbMap, "airport.results.othrTripMatrix");
+                + Util.getStringValueFromPropertyMap(rbMap, "airport."+airportCode+".results.othrTripMatrix");
 
         //the end of the name depends on whether there are multiple vot bins or not
         String[] votBinName = {"low","med","high"};
@@ -592,6 +594,7 @@ public class AirportTripTables
 
         HashMap<String, String> pMap;
         String propertiesFile = null;
+        String airportCode = null;
 
         logger.info(String.format(
                 "SANDAG Airport Model Trip Table Generation Program using CT-RAMP version %s",
@@ -605,7 +608,7 @@ public class AirportTripTables
         } else propertiesFile = args[0];
 
         pMap = ResourceUtil.getResourceBundleAsHashMap(propertiesFile);
-        AirportTripTables tripTables = new AirportTripTables(pMap);
+        AirportTripTables tripTables = new AirportTripTables(pMap, airportCode);
         
         float sampleRate = 1.0f;
         int iteration = 1;
@@ -620,9 +623,13 @@ public class AirportTripTables
             {
                 iteration = Integer.parseInt(args[i + 1]);
             }
-        }
+            if (args[i].equalsIgnoreCase("-airport"))
+            {
+            	airportCode = args[i + 1];
+            }
+       }
         
-        logger.info("Airport Model Trip Table:"+String.format("-sampleRate %.4f.", sampleRate)+"-iteration  " + iteration);
+        logger.info("Airport Model Trip Table:"+String.format("-sampleRate %.4f.", sampleRate)+"-iteration  " + iteration+" -airport "+airportCode);
         
         tripTables.setSampleRate(sampleRate);
                 

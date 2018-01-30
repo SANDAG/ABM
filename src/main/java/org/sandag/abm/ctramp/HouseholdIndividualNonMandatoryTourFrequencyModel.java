@@ -786,7 +786,7 @@ public class HouseholdIndividualNonMandatoryTourFrequencyModel
 
     private void createIndividualNonMandatoryTours_new(Person person, float[] tours)
     {
-        person.clearIndividualNonMandatoryToursArray();
+        // person.clearIndividualNonMandatoryToursArray();
 
         for (int i = 1; i < tours.length; i++)
         {

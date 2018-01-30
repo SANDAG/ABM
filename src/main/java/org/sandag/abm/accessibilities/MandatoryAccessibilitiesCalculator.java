@@ -383,13 +383,9 @@ public class MandatoryAccessibilitiesCalculator
             bestPathCalculator.findBestWalkTransitWalkTaps(walkDmu, ModelStructure.AM_SKIM_PERIOD_INDEX, oMgra, dMgra, debug, aLogger);
             
             // sum the exponentiated utilities over modes
-            double sumWlkExpUtilities = 0;
+            double sumWlkExpUtilities = bestPathCalculator.getSumExpUtilities();
             double[] walkTransitWalkUtilities = bestPathCalculator.getBestUtilities();
-            for (int i=0; i < walkTransitWalkUtilities.length; i++){
-                if ( walkTransitWalkUtilities[i] > MIN_EXP_FUNCTION_ARGUMENT )
-                    sumWlkExpUtilities += Math.exp(walkTransitWalkUtilities[i]);
-            }
-
+          
             // calculate  ln( sum of exponentiated utilities ) and set in accessibilities array and the dmu object
             if (sumWlkExpUtilities > 0)
                 accessibilities[7] = Math.log(sumWlkExpUtilities);

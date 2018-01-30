@@ -54,7 +54,7 @@ public class AirportModeChoiceModel
      * @param dmuFactory
      *            Factory object for creation of airport model DMUs
      */
-    public AirportModeChoiceModel(HashMap<String, String> rbMap, AirportDmuFactoryIf dmuFactory)
+    public AirportModeChoiceModel(HashMap<String, String> rbMap, AirportDmuFactoryIf dmuFactory, String airportCode)
     {
 
         this.rbMap = rbMap;
@@ -65,21 +65,21 @@ public class AirportModeChoiceModel
         String uecFileDirectory = Util.getStringValueFromPropertyMap(rbMap,
                 CtrampApplication.PROPERTIES_UEC_PATH);
         String airportModeUecFileName = Util.getStringValueFromPropertyMap(rbMap,
-                "airport.mc.uec.file");
+                "airport."+airportCode+".mc.uec.file");
         airportModeUecFileName = uecFileDirectory + airportModeUecFileName;
 
         int dataPage = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap,
-                "airport.mc.data.page"));
+                "airport."+airportCode+".mc.data.page"));
         int daPage = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap,
-                "airport.mc.da.page"));
+                "airport."+airportCode+".mc.da.page"));
         int s2Page = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap,
-                "airport.mc.s2.page"));
+                "airport."+airportCode+".mc.s2.page"));
         int s3Page = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap,
-                "airport.mc.s3.page"));
+                "airport."+airportCode+".mc.s3.page"));
         int transitPage = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap,
-                "airport.mc.transit.page"));
+                "airport."+airportCode+".mc.transit.page"));
         int accessPage = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap,
-                "airport.mc.accessMode.page"));
+                "airport."+airportCode+".mc.accessMode.page"));
 
         logger.info("Creating Airport Model Mode Choice Application UECs");
 

@@ -29,6 +29,7 @@ public class AirportModel
     private HashMap<String, String> rbMap;
     private static float sampleRate;
     private static int iteration;
+    private static String airportCode;
 
 	/**
      * Constructor
@@ -48,17 +49,17 @@ public class AirportModel
     {
         AirportDmuFactory dmuFactory = new AirportDmuFactory();
 
-        AirportPartyManager apm = new AirportPartyManager(rbMap, sampleRate);
+        AirportPartyManager apm = new AirportPartyManager(rbMap, sampleRate, airportCode);
 
         apm.generateAirportParties();
         AirportParty[] parties = apm.getParties();
 
-        AirportDestChoiceModel destChoiceModel = new AirportDestChoiceModel(rbMap, dmuFactory);
+        AirportDestChoiceModel destChoiceModel = new AirportDestChoiceModel(rbMap, dmuFactory,airportCode);
         destChoiceModel.calculateMgraProbabilities(dmuFactory);
         destChoiceModel.calculateTazProbabilities(dmuFactory);
         destChoiceModel.chooseOrigins(parties);
 
-        AirportModeChoiceModel modeChoiceModel = new AirportModeChoiceModel(rbMap, dmuFactory);
+        AirportModeChoiceModel modeChoiceModel = new AirportModeChoiceModel(rbMap, dmuFactory,airportCode);
         modeChoiceModel.chooseModes(parties, dmuFactory);
 
         apm.writeOutputFile(rbMap);
@@ -134,6 +135,9 @@ public class AirportModel
 	            if (args[i].equalsIgnoreCase("-iteration"))
 	            {
 	                iteration = Integer.parseInt(args[i + 1]);
+	            }
+	            if(args[i].equalsIgnoreCase("-airport")){
+	            	airportCode = args[i+1];
 	            }
 	        }
         }
