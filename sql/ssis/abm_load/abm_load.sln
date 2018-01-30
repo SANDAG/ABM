@@ -1,22 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2006
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{159641D6-6404-4A2A-AE62-294DE0FE8301}") = "abm_load", "abm_load\abm_load.dtproj", "{E747BEDE-D8E5-431D-8DC9-A316DA9670BF}"
+Project("{159641D6-6404-4A2A-AE62-294DE0FE8301}") = "abm_load", "abm_load\abm_load.dtproj", "{0FC902D9-9027-4F5E-BCC2-AC5775288EE8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Development|Default = Development|Default
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E747BEDE-D8E5-431D-8DC9-A316DA9670BF}.Development|Default.ActiveCfg = Development
-		{E747BEDE-D8E5-431D-8DC9-A316DA9670BF}.Development|Default.Build.0 = Development
+		{0FC902D9-9027-4F5E-BCC2-AC5775288EE8}.Development|Default.ActiveCfg = Development
+		{0FC902D9-9027-4F5E-BCC2-AC5775288EE8}.Development|Default.Build.0 = Development
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {D3F878ED-9372-4A51-807F-C6A5EFF0A206}
+		SolutionGuid = {8054A89D-0270-4303-B20E-56C57C78F673}
 	EndGlobalSection
 EndGlobal
