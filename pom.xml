@@ -806,18 +806,6 @@
         	<artifactId>omx</artifactId>
 			<version>8.28.17</version>
 		</dependency>
-	    <dependency>	
-		  <groupId>hdf</groupId>
-            <artifactId>jhi</artifactId>
-            <version>5.0</version>
-            <type>dll</type>
-        </dependency>
-        <dependency>
-          <groupId>hdf</groupId>
-            <artifactId>jhi</artifactId>
-            <version>4.0</version>
-            <type>dll</type>
-        </dependency>
 	</dependencies>
     <distributionManagement>
         <snapshotRepository>
