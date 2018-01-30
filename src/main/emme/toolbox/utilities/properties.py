@@ -18,6 +18,7 @@ TOOLBOX_ORDER = 103
 import inro.modeller as _m
 import traceback as _traceback
 from collections import OrderedDict
+import csv
 import os
 
 
@@ -454,7 +455,7 @@ class Properties(object):
         #if timestamp != self._timestamp:
         #    raise Exception("%s file has been edited after reading" % path)
         with open(path, 'w') as f:
-            for key, value in self._prop.iteritems():
+            for key, value in self.iteritems():
                 if isinstance(value, list):
                     value = ",".join([self._format(v) for v in value])
                 else:
@@ -465,6 +466,18 @@ class Properties(object):
                         f.write(line)
                         f.write("\n")
                 f.write("%s = %s\n" % (key, value))
+
+    def set_year_specific_properties(self, file_path):
+        with open(file_path, 'r') as f:
+            reader = csv.DictReader(f)
+            properties_by_year = {}
+            for row in reader:
+                year = int(row.pop("year"))
+                properties_by_year[year] = row
+        year_properties = properties_by_year.get(self["scenarioYear"])
+        if year_properties is None:
+            raise Exception("Row with year %s not found in %s" % (self["scenarioYear"], file_path))
+        self.update(year_properties)
 
     def __setitem__(self, key, item): 
         self._prop[key] = item
@@ -501,6 +514,9 @@ class Properties(object):
 
     def items(self):
         return self._prop.items()
+
+    def iteritems(self):
+        return self._prop.iteritems()
 
     def pop(self, *args):
         return self._prop.pop(*args)

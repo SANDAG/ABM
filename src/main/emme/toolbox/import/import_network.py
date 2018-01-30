@@ -1167,9 +1167,10 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         # "ITOLL5":     "@cost_hvy_truck"  # ITOLL5 - Toll * 2.33 + AOC
         load_properties = _m.Modeller().tool('sandag.utilities.properties')
         props = load_properties(_join(_dir(self.source), "conf", "sandag_abm.properties"))
-        aoc_f = props["aoc.fuel"]
-        aoc_m = props["aoc.maintenance"]
-        aoc = aoc_f + aoc_m
+        try:
+            aoc = float(props["aoc.fuel"] + props["aoc.maintenance"])
+        except ValueError:
+            raise Exception("Error during float conversion for aoc.fuel or aoc.maintenance from sandag_abm.properties file")
         time_periods = ["_ea", "_am", "_md", "_pm", "_ev"]
         src_time_periods = ["_op", "_am", "_op", "_pm", "_op"]
         mode_d = network.mode('d')
@@ -1555,7 +1556,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         self._log.append({"type": "text", "content": "Merge transit network to traffic network complete"})
 
     def _split_link(self, network, i_node, j_node, new_node_id):
-        # Attribute types to maintain consistency for correspondance with incoming / outgoing link data
+        # Attribute types to maintain consistency for correspondence with incoming / outgoing link data
         periods = ["ea", "am", "md", "pm", "ev"]
         approach_attrs = ["@traffic_control", "@turn_thru", "@turn_right", "@turn_left",
                           "@lane_auxiliary", "@green_to_cycle_init"]
@@ -1634,7 +1635,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         create_function(
             "fd11", 
             "(ul1 * (1.0 + 0.8 * put((volau + volad) / ul3) ** 4.0))"
-            + reliability_tmplt.format(**parameters["road"]), 
+            + reliability_tmplt.format(**parameters["road"]),
             emmebank=emmebank)       
         create_function(
             "fd20",  # Local collector and lower intersection and stop controlled approaches
@@ -1671,7 +1672,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             el1="@green_to_cycle", el2="@sta_reliability", el3="@capacity_inter_am",
             emmebank=emmebank)
 
-        create_function("fp1", "up1")  # fixed cost turns stored in turn data 1 (up1)
+        create_function("fp1", "up1", emmebank=emmebank)  # fixed cost turns stored in turn data 1 (up1)
 
         # buses in mixed traffic, use auto time
         create_function("ft1", "timau", emmebank=emmebank)  

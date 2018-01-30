@@ -243,6 +243,8 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         external_zones = "1-12"
 
         props = load_properties(_join(main_directory, "conf", "sandag_abm.properties"))
+        props.set_year_specific_properties(_join(main_directory, "input", "parametersByYears.csv"))
+        props.save()
 
         scenarioYear = props["scenarioYear"]
         startFromIteration =  props["RunModel.startFromIteration"]
@@ -250,7 +252,6 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         minSpaceOnC = props["RunModel.minSpaceOnC"]
         sample_rate = props["sample_rates"]
         end_iteration = len(sample_rate)
-        #cvm_ScaleFactor = props["cvm.scaleFactor"]
 
         period_ids = list(enumerate(periods, start=int(scenario_id) + 1))
 
@@ -456,7 +457,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                           capture_output=True)
         if not skipDataLoadRequest:
             self.run_proc("DataLoadRequest.bat", 
-                [drive + path_no_drive, end_iteration, scenarioYear, sample_rate[end_iteration-1]], 
+                [drive + path_no_drive, end_iteration, sample_rate[end_iteration-1]], 
                 "Data load request")
 
         # delete trip table files in iteration sub folder if model finishes without crashing
