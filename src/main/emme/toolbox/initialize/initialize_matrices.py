@@ -205,7 +205,7 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
     def transit_demand(self):
         tmplt_matrices = [
             ("BUS",  "local bus demand"),
-            ("ALL",  "all modes demand"),
+            ("PREM", "Premium modes demand"), 
             ("ALLPEN",  "all modes xfer pen demand"),
         ]
         for period in self._all_periods:
@@ -386,8 +386,8 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             ("BRTDIST",    "BRT red and yel IV distance"),
         ]
         skim_sets = [
-            ("BUS", "Local bus"), 
-            ("ALL", "All modes"), 
+            ("BUS",    "Local bus only"), 
+            ("PREM",   "Premium modes only"), 
             ("ALLPEN", "All w/ xfer pen")
         ]
         for period in self._all_periods:

@@ -147,7 +147,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
 
             self.run_assignment(period, params, skims_only, num_processors)
             self.run_skims("BUS", period, params, num_processors)
-            self.run_skims("ALL", period, params, num_processors)
+            self.run_skims("PREM", period, params, num_processors)
             self.run_skims("ALLPEN", period, params, num_processors)
             self.post_process_skims(period)
             self.report(period)
@@ -221,57 +221,16 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             },
         }
         return perception_parameters[period]
-
-    @_m.logbook_trace("Transit assignment by demand set", save_arguments=True)
-    def run_assignment(self, period, params, skims_only, num_processors):
-        modeller = _m.Modeller()
-        scenario = self.scenario
-        emmebank = scenario.emmebank
-        assign_transit = modeller.tool(
-            "inro.emme.transit_assignment.extended_transit_assignment")
-
-        all_modes = ["b", "c", "e", "l", "r", "p", "y", "a", "w", "x"]
-        local_bus_modes = ["b", "a", "w", "x"]
-        #transfer_penalty = {"on_segments": {"penalty": "@transfer_penalty_s", "perception_factor": 5}}
-        transfer_penalty = {"on_lines": {"penalty": "@transfer_penalty", "perception_factor": 5.0}}
+        
+    def all_modes_journey_levels(self, params):
+        transfer_penalty = {"on_segments": {"penalty": "@transfer_penalty_s", "perception_factor": 5.0}}
         transfer_wait = {
             "effective_headways": "@headway_seg",
             "headway_fraction": 0.5,
             "perception_factor": params["xfer_wait"],
             "spread_factor": 1.0
         }
-        local_bus_journey_levels = [
-            {
-                "description": "base",
-                "destinations_reachable": False,
-                "transition_rules": [{"mode": "b", "next_journey_level": 1}, ],
-                "boarding_time": {"global": {"penalty": 0, "perception_factor": 1}},
-                "waiting_time": {
-                    "effective_headways": "@headway_seg", "headway_fraction": 0.5,
-                    "perception_factor": params["init_wait"], "spread_factor": 1.0
-                },
-                "boarding_cost": {
-                    "on_lines": {"penalty": "@fare", "perception_factor": params["fare"]},
-                },
-            },
-            {
-                "description": "boarded_bus",
-                "destinations_reachable": True,
-                "transition_rules": [{"mode": "b", "next_journey_level": 2}],
-                "boarding_time": transfer_penalty,
-                "waiting_time": transfer_wait,
-                "boarding_cost": {"on_lines": {"penalty": "@xfer_from_bus", "perception_factor": params["fare"]}},
-            },
-            {
-                "description": "day_pass",
-                "destinations_reachable": True,
-                "transition_rules": [{"mode": "b", "next_journey_level": 2}],
-                "boarding_time": transfer_penalty,
-                "waiting_time": transfer_wait,
-                "boarding_cost": {"on_lines": {"penalty": "@xfer_regional_pass", "perception_factor": params["fare"]}},
-            }
-        ]
-        all_modes_journey_levels = [
+        journey_levels = [
             {
                 "description": "base",
                 "destinations_reachable": False,
@@ -291,8 +250,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 },
                 "boarding_cost": {
                     "on_lines": {"penalty": "@fare", "perception_factor": params["fare"]},
-                    "at_nodes": {"penalty": "@coaster_fare_node", "perception_factor": params["coaster_fare_percep"]},
-                    #"on_segments": {"penalty": "@coaster_fare_board", "perception_factor": params["coaster_fare_percep"]},
+                    "on_segments": {"penalty": "@coaster_fare_board", "perception_factor": params["coaster_fare_percep"]},
                 },
             },
             {
@@ -310,7 +268,8 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "boarding_time": transfer_penalty,
                 "waiting_time": transfer_wait,
                 "boarding_cost": {
-                    "on_lines": {"penalty": "@xfer_from_bus", "perception_factor": params["fare"]},
+                    # xfer from bus fare is on segments so circle lines get free transfer
+                    "on_segments": {"penalty": "@xfer_from_bus", "perception_factor": params["fare"]},
                 },
             },
             {
@@ -386,9 +345,61 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 },
             }
         ]
-        # All modes transfer penalty assignment uses penalty of 15 minutes for all modes
-        all_pen_journey_levels = _copy(all_modes_journey_levels)
-        for level in all_pen_journey_levels[1:]:
+        return journey_levels
+
+    def get_mode_specific_journey_levels(self, modes, journey_levels):
+        # remove rules for unused modes from provided journey_levels
+        # (restrict to provided modes)
+        journey_levels = _copy(journey_levels)
+        for level in journey_levels:
+            rules = level["transition_rules"]
+            rules = [r for r in rules if r["mode"] in modes]
+            level["transition_rules"] = rules
+        # count level transition rules references to find unused levels
+        num_levels = len(journey_levels)
+        level_count = [0] * len(journey_levels)
+
+        def follow_rule(next_level):
+            level_count[next_level] += 1
+            if level_count[next_level] > 1:
+                return
+            for rule in journey_levels[next_level]["transition_rules"]:
+                follow_rule(rule["next_journey_level"])
+
+        follow_rule(0)
+        # remove unreachable levels
+        # and find new index for transition rules for remaining levels
+        level_map = {i:i for i in range(num_levels)}
+        for level_id, count in reversed(list(enumerate(level_count))):
+            if count == 0:
+                for index in range(level_id, num_levels):
+                    level_map[index] -= 1
+                del journey_levels[level_id]
+        # re-index remaining journey_levels
+        for level in journey_levels:
+            for rule in level["transition_rules"]:
+                next_level = rule["next_journey_level"]
+                rule["next_journey_level"] = level_map[next_level]
+        return journey_levels
+
+    @_m.logbook_trace("Transit assignment by demand set", save_arguments=True)
+    def run_assignment(self, period, params, skims_only, num_processors):
+        modeller = _m.Modeller()
+        scenario = self.scenario
+        emmebank = scenario.emmebank
+        assign_transit = modeller.tool(
+            "inro.emme.transit_assignment.extended_transit_assignment")
+
+        walk_modes = ["a", "w", "x"]
+        local_bus_mode = ["b"]
+        premium_modes = ["c", "l", "e", "p", "r", "y"]
+
+        # get the generic all-modes journey levels table
+        journey_levels = self.all_modes_journey_levels(params)
+        local_bus_journey_levels = self.get_mode_specific_journey_levels(local_bus_mode, journey_levels)
+        premium_modes_journey_levels = self.get_mode_specific_journey_levels(premium_modes, journey_levels)
+        # All modes transfer penalty assignment uses penalty of 15 minutes
+        for level in journey_levels[1:]:
             level["boarding_time"] =  {"global": {"penalty": 15, "perception_factor": 1}}
 
         base_spec = {
@@ -400,12 +411,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "perception_factor": params["init_wait"], "spread_factor": 1.0
             },
             # Fare attributes
-            "boarding_cost": {
-                "on_lines": {"penalty": "@fare", "perception_factor": params["fare"]},
-                "at_nodes": {"penalty": "@coaster_fare_node",
-                             "perception_factor": params["coaster_fare_percep"]},
-                #"on_segments": {"penalty": "@coaster_fare_board", "perception_factor": params["coaster_fare_percep"]},
-            },
+            "boarding_cost": {"global": {"penalty": 0, "perception_factor": 1}},
             "boarding_time": {"global": {"penalty": 0, "perception_factor": 1}},
             "in_vehicle_cost": {"penalty": "@coaster_fare_inveh",
                                 "perception_factor": params["coaster_fare_percep"]},
@@ -428,16 +434,16 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
 
         skim_parameters = OrderedDict([
             ("BUS", {
-                "modes": local_bus_modes,
+                "modes": walk_modes + local_bus_mode,
                 "journey_levels": local_bus_journey_levels
             }),
-            ("ALL", {
-                "modes": all_modes,
-                "journey_levels": all_modes_journey_levels
+            ("PREM", {
+                "modes": walk_modes + premium_modes,
+                "journey_levels": premium_modes_journey_levels
             }),
             ("ALLPEN", {
-                "modes": all_modes,
-                "journey_levels": all_pen_journey_levels
+                "modes": walk_modes + local_bus_mode + premium_modes,
+                "journey_levels": journey_levels
             }),
         ])
 
@@ -544,7 +550,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             matrix_calc(spec, scenario=scenario, num_processors=num_processors)
 
             # sum in-vehicle cost and boarding cost to get the fare paid
-            max_fare = 6.0 if "ALL" in name else 2.50
+            max_fare = 2.50 if "BUS" in name else 6.00
             spec = {
                 "type": "MATRIX_CALCULATION",
                 "constraint": None,
@@ -703,6 +709,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         matrix_calc(spec, scenario=scenario, num_processors=num_processors)
         return
 
+    @_m.logbook_trace("Post-process skims for identical sampled skim sets")
     def post_process_skims(self, period):
         # Post-process the skim matrices to zero-out O-D pairs which are 
         # identical to the "lower" mode skim.
@@ -716,14 +723,11 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             "GENCOST", "XFERWAIT", "FARE",
             "ACCWALK", "XFERWALK", "EGRWALK", "TOTALIVTT",  
             "BUSDIST", "LRTDIST", "CMRDIST", "EXPDIST", "BRTDIST"]
-        # compare ALLPEN to ALL
         self.mask_identical(
-            period + "_" + "ALL", period + "_" + "ALLPEN", 
+            period + "_" + "PREM", period + "_" + "ALLPEN", 
             bus_comparison_skims + premium_skims, other_skims)
-
-        # compare ALL to BUS
         self.mask_identical(
-            period + "_" + "BUS", period + "_" + "ALL", 
+            period + "_" + "BUS", period + "_" + "ALLPEN", 
             bus_comparison_skims, premium_skims + other_skims)
         
     def mask_identical(self, primary, secondary, comparison_skims, other_skims):
@@ -736,11 +740,15 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         mask = results[0] & results[1]
         for result in results[2:]:
             mask = mask & result
+        if secondary + "_MASK" in self._matrix_cache:
+            prev_mask = self._matrix_cache[secondary + "_MASK"]
+            self._matrix_cache[secondary + "_MASK"] = mask & prev_mask
+        else:
+            self._matrix_cache[secondary + "_MASK"] = mask
         mask = numpy.logical_not(mask)
-        self._matrix_cache[secondary + "_MASK"] = mask
         for matrix in comparison_skims + other_skims:
             mat_name = secondary + "_" + name
-            data = self.get_matrix_data(secondary + "_" + name)
+            data = self.get_matrix_data(mat_name)
             self.set_matrix_data(mat_name, data*mask)
 
     def get_matrix_data(self, name):
@@ -762,11 +770,10 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         matrices = init_matrices.get_matrix_names("transit_skims", [period], self.scenario)
         num_zones = len(self.scenario.zone_numbers)
         num_cells = num_zones ** 2
-        text.append("""
-            Number of zones: %s. Number of O-D pairs: %s. 
-            Values outside -9999999, 9999999 are masked in summaries.<br>""" % (num_zones, num_cells))
-        text.append("<p>ALLPEN filtered O-D pairs with identical skim values</p>" % self.get_matrix_data(period + "_ALLPEN_MASK").sum())
-        text.append("<p>ALL filtered O-D pairs with identical skim values</p>" % self.get_matrix_data(period + "_ALL_MASK").sum())
+        text.append(
+            "Number of zones: %s. Number of O-D pairs: %s. "
+            "Values outside -9999999, 9999999 are masked in summaries.<br>" % (num_zones, num_cells))
+        text.append("<p>ALLPEN filtered out %s O-D pairs with identical skim values</p>" % self.get_matrix_data(period + "_ALLPEN_MASK").sum())
         text.append("%-25s %9s %9s %9s %13s %9s" % ("name", "min", "max", "mean", "sum", "mask num"))
         for name in matrices:
             data = self.get_matrix_data(name)

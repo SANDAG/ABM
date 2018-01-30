@@ -178,21 +178,21 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 scenario.create_network_field(field.type, field.name, field.atype, field.description)
             network = base_scenario.get_network()
             new_attrs = [
-                ("TRANSIT_LINE", "@xfer_from_bus", "Fare for first xfer from bus"), 
-                ("TRANSIT_LINE", "@xfer_from_day", "Fare for xfer from daypass/trolley"), 
-                ("TRANSIT_LINE", "@xfer_from_premium", "Fare for first xfer from premium"), 
-                ("TRANSIT_LINE", "@xfer_from_coaster", "Fare for first xfer from coaster"), 
-                ("TRANSIT_LINE", "@xfer_regional_pass", "0-fare for regional pass"),  
-                ("TRANSIT_SEGMENT", "@headway_seg", "Headway adj for special xfers"), 
+                ("TRANSIT_LINE", "@xfer_from_day", "Fare for xfer from daypass/trolley"),
+                ("TRANSIT_LINE", "@xfer_from_premium", "Fare for first xfer from premium"),
+                ("TRANSIT_LINE", "@xfer_from_coaster", "Fare for first xfer from coaster"),
+                ("TRANSIT_LINE", "@xfer_regional_pass", "0-fare for regional pass"),
+                ("TRANSIT_SEGMENT", "@xfer_from_bus", "Fare for first xfer from bus"),
+                ("TRANSIT_SEGMENT", "@headway_seg", "Headway adj for special xfers"),
                 ("TRANSIT_SEGMENT", "@transfer_penalty_s", "Xfer pen adj for special xfers"),
                 ("TRANSIT_SEGMENT", "@layover_board", "Boarding cost adj for special xfers"),
-                ("NODE", "@coaster_fare_node", "Coaster fare boarding costs at nodes"),
                 ("NODE", "@network_adj", "Model: 1=TAP adj, 2=circle, 3=timedxfer")
             ]
             for elem, name, desc in new_attrs:
                 attr = scenario.create_extra_attribute(elem, name)
                 attr.description = desc
                 network.create_attribute(elem, name)
+            network.create_attribute("TRANSIT_LINE", "xfer_from_bus")
 
             self._init_node_id(network)
             coaster_mode = network.mode("c")
@@ -209,20 +209,23 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
 
                 # set the fare increments for transfer combinations with day pass / regional pass
                 if line.mode == bus_mode and line["@fare"] > 1.00:
-                    line["@xfer_from_bus"] = min(max(2.50 - line["@fare"], 0), 0.75)
+                    line["xfer_from_bus"] = min(max(2.50 - line["@fare"], 0), 0.75)
                 elif line.mode in [ prem_mode, coaster_mode ]:
-                    line["@xfer_from_bus"] = 4.0    # increment from bus to regional (either 1.75 and 2.25 bus fare)
+                    line["xfer_from_bus"] = 4.0    # increment from bus to regional (either 1.75 and 2.25 bus fare)
                     line["@xfer_from_day"] = 3.5    # increment from trolley / half day pass to half regional pass
-                elif line.id.startswith("399"):
-                    line["@xfer_from_bus"] = 0.75
+                elif line.id.startswith("399"):     # sprinter fare
+                    line["xfer_from_bus"] = 0.75
                 else:  # lrt, express and brt (red and yellow)
-                    line["@xfer_from_bus"] = 0.25
+                    line["xfer_from_bus"] = 0.25
                 if line["@fare"] > 0.0:
                     line["@xfer_from_premium"] = 1.0
                     line["@xfer_from_coaster"] = 1.25
             for segment in network.transit_segments():
-                segment["@headway_seg"] = segment.line[params["headway"]]
-                segment["@transfer_penalty_s"] = segment.line["@transfer_penalty"]
+                line = segment.line
+                segment["@headway_seg"] = line[params["headway"]]
+                segment["@transfer_penalty_s"] = line["@transfer_penalty"]
+                segment["@xfer_from_bus"] = line["xfer_from_bus"]
+            network.delete_attribute("TRANSIT_LINE", "xfer_from_bus")
 
             self.taps_to_centroids(network)
             if timed_xfers_table:
@@ -236,18 +239,6 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             values = network.get_attribute_values("LINK", [params["fixed_link_time"]])
             network.set_attribute_values("LINK", ["data2"], values)
             scenario.publish_network(network)
-
-            network_calc = _m.Modeller().tool(
-                "inro.emme.network_calculation.network_calculator")
-            network_calc_spec = {
-                "result": "@coaster_fare_node",
-                "expression": "@coaster_fare_board",
-                "selections": {"transit_line": "all", "link": "all"},
-                "aggregation": ".max.",
-                "type": "NETWORK_CALCULATION"
-            }
-            network_calc(network_calc_spec, scenario=scenario)
-            
             return scenario
 
     @_m.logbook_trace("Convert TAP nodes to centroids")
@@ -514,7 +505,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                     (xfer_node, start_node, 1): {
                         "allow_boardings": True, "allow_alightings": True, 
                         "@headway_seg": 0.01, "dwell_time": 0, "transit_time_func": 3,
-                        "@transfer_penalty_s": 0, #"@xfer_from_bus": 0,
+                        "@transfer_penalty_s": 0, "@xfer_from_bus": 0,
                         "@layover_board": 1
                     },
                     (xfer_node, None, 1): {

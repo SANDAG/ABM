@@ -128,7 +128,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         emme_zones = self.scenario.zone_numbers
         matrix_name_tmplts = [
             ("mf%s_%sBUS",    "%s_SET_set1_%s"),
-            ("mf%s_%sALL",    "%s_SET_set2_%s"), 
+            ("mf%s_%sPREM",   "%s_SET_set2_%s"),
             ("mf%s_%sALLPEN", "%s_SET_set3_%s")
         ]
         periods = ["EA", "AM", "MD", "PM", "EV"]
