@@ -44,7 +44,7 @@
         <USERNAME>XX</USERNAME>
         <PASSWORD>XX</PASSWORD>
         <MAPANDRUN>mapAndRun.bat</MAPANDRUN>
-        <JAVA_64_PATH>C:\Progra~1\Java\jre7</JAVA_64_PATH>
+        <JAVA_64_PATH>C:\Progra~1\Java\jre1.8.0_151</JAVA_64_PATH>
         <JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
         <workpath>WORKPATH</workpath>
         <database_server>sql2014a8</database_server>
@@ -806,18 +806,6 @@
         	<artifactId>omx</artifactId>
 			<version>8.28.17</version>
 		</dependency>
-	    <dependency>	
-		  <groupId>hdf</groupId>
-            <artifactId>jhi</artifactId>
-            <version>5.0</version>
-            <type>dll</type>
-        </dependency>
-        <dependency>
-          <groupId>hdf</groupId>
-            <artifactId>jhi</artifactId>
-            <version>4.0</version>
-            <type>dll</type>
-        </dependency>
 	</dependencies>
     <distributionManagement>
         <snapshotRepository>
