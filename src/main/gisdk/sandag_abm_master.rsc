@@ -57,11 +57,8 @@ Macro "Run SANDAG ABM"
    
    
    //WSU 01/24/2018
-   if runShadowPricingFromScratch = "true" then do
-	   //must start from 1st iteration if run shadow pricing from scratch--with 10 iterations and 0.1 sample rate (based on SP stability tests)
-	   sample_rate={0.1,0.5,1.0}
-	   startFromIteration=1
-
+   //create shadow pricing from scratch in iteration 1
+   if RunModel.skipShadowPricing = "false" then do
            //update 4 shadow pricing properties
 	   runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"UsualWorkLocationChoice.ShadowPrice.Input.File"+"   "
   	   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Update work shadow pricing property: "+" "+runString})
@@ -242,8 +239,8 @@ Macro "Run SANDAG ABM"
       end
 
       // Scale shadow pricing files and copy scaled files from output folder to input folder
-      // WSU 12/5/2017
-      if runShadowPricingFromScratch = "true" then do
+      // WSU 2/1/2018
+      if RunModel.skipShadowPricing = "false" then do
          if (iteration =1) then do
 	    runString = path+"\\bin\\updateShadowPricing.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+0.1+" "+10
 	    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Update shadow pricing: "+" "+runString})
