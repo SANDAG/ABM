@@ -23,6 +23,8 @@ public class AirportParty
     // following variables chosen via choice models
     private int             originMGRA;
     private int             destinationMGRA;
+    private int             originTAZ;
+    private int             destinationTAZ;
     private byte            mode;
     private byte            arrivalMode;
     
@@ -289,6 +291,22 @@ public class AirportParty
 
 	public void setSet(int set) {
 		this.set = set;
+	}
+
+	public int getOriginTAZ() {
+		return originTAZ;
+	}
+
+	public void setOriginTAZ(int originTAZ) {
+		this.originTAZ = originTAZ;
+	}
+
+	public int getDestinationTAZ() {
+		return destinationTAZ;
+	}
+
+	public void setDestinationTAZ(int destinationTAZ) {
+		this.destinationTAZ = destinationTAZ;
 	}
 
 }

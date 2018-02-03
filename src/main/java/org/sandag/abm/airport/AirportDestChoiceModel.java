@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.datafile.OLD_CSVFileReader;
@@ -71,8 +73,15 @@ public class AirportDestChoiceModel
     private int[]                       traceDtaz;
     private boolean                     seek;
     private HashMap<String, String>     rbMap;
+    private TableDataSet   externalDataSet;
+    private int externalAirportColumn;
+    private int tazColumn;
+    private int mazOutColumn;
+    private int mazInbColumn;
+   
 
     private int                         airportMgra;
+    private int                         airportTaz;
 
     /**
      * Constructor
@@ -148,11 +157,15 @@ public class AirportDestChoiceModel
         }
         seek = Util.getBooleanValueFromPropertyMap(rbMap, "Seek");
 
-        airportMgra = Util.getIntegerValueFromPropertyMap(rbMap, "airport.airportMgra");
+        airportMgra = Util.getIntegerValueFromPropertyMap(rbMap, "airport."+airportCode+".airportMgra");
+        airportTaz = mgraManager.getTaz(airportMgra);
 
         // calculate the zip code array
         calculateZipCodes();
-
+        
+        //read the external station dataset into memory
+        String externalStationFile = Util.getStringValueFromPropertyMap(rbMap, "airport."+airportCode+".externalStationFile");
+        readExternalPercentages(externalStationFile,airportCode);
     }
 
     /**
@@ -474,5 +487,79 @@ public class AirportDestChoiceModel
 
         }
     }
+    /**
+     * Read a csv file with probabilities by external station. Required fields in the file:
+     * 
+     * taz The TAZ number of the external station
+     * mgraOut The MGRA number for trips leaving the region (closest MGRA to outbound external TAZ)
+     * mgraRet The MGRA number for trips returning to the region (closest MGRA to inbound external TAZ)
+     * AIRPORTNAME.pct The share of trips entering\exiting at the external station for the airport
+     * 
+     * 
+     * @param fileName The name of the external station file
+     */
+    private void readExternalPercentages(String fileName, String airportCode){
+    	
+        logger.info("Begin reading the data in file " + fileName);
+        
+        try
+        {
+            OLD_CSVFileReader csvFile = new OLD_CSVFileReader();
+            externalDataSet = csvFile.readFile(new File(fileName));
+        } catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        externalAirportColumn = externalDataSet.getColumnPosition(airportCode+".pct");
+        tazColumn = externalDataSet.getColumnPosition("taz");
+        mazOutColumn = externalDataSet.getColumnPosition("mgraOut");
+        mazInbColumn = externalDataSet.getColumnPosition("mgraRet");
+        
+        if(externalAirportColumn<=0|| tazColumn<=0 || mazOutColumn<=0 || mazInbColumn<=0){
+        	logger.error("Check fields in external station file "+fileName);
+        	logger.error("File should have fields taz, mgraOut, mgraReg and "+airportCode+".pct");
+        	throw new RuntimeException();
+        }
+        
+        logger.info("End reading the data in file " + fileName);
+
+   }
+    
+    
+    private void chooseExternalStation(AirportParty airportParty, double randomNumber){
+    	
+    	double cumProb=0;
+    	int taz = -1;
+    	int maz = -1;
+    	for(int row = 1; row <= externalDataSet.getRowCount();++row){
+    		
+    		cumProb += externalDataSet.getValueAt(row,externalAirportColumn);
+    		if(cumProb > randomNumber){
+    			taz = (int) externalDataSet.getValueAt(row, tazColumn);
+    			
+    			if(airportParty.getDirection() == AirportModelStructure.DEPARTURE){
+    				maz = (int) externalDataSet.getValueAt(row,mazInbColumn);
+    				airportParty.setOriginTAZ(taz);
+    				airportParty.setOriginMGRA(maz);
+    				airportParty.setDestinationMGRA(airportMgra);
+    				airportParty.setDestinationTAZ(airportTaz);
+    			}else{
+    				maz = (int) externalDataSet.getValueAt(row,mazOutColumn);
+    				airportParty.setDestinationTAZ(taz);
+    				airportParty.setDestinationMGRA(maz);
+    				airportParty.setOriginMGRA(airportMgra);
+   				    airportParty.setOriginTAZ(airportTaz);
+   				
+    			}
+    			
+    		}
+    		
+    		
+    	}
+    	
+    	
+    }
+    
 
 }
