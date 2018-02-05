@@ -14,14 +14,14 @@
         <jppf.driver.memory.max>9000m</jppf.driver.memory.max> 
         <jppf.headnode.memory.min>32000m</jppf.headnode.memory.min> 
         <jppf.headnode.memory.max>32000m</jppf.headnode.memory.max> 
-        <jppf.workernode.memory.min>45000m</jppf.workernode.memory.min> 
+        <jppf.workernode.memory.min>70000m</jppf.workernode.memory.min> 
         <jppf.workernode.memory.max>120000m</jppf.workernode.memory.max> 
-        <mtxmgr.memory.min>20000m</mtxmgr.memory.min> 
-        <mtxmgr.memory.max>80000m</mtxmgr.memory.max> 
+        <mtxmgr.memory.min>60000m</mtxmgr.memory.min> 
+        <mtxmgr.memory.max>70000m</mtxmgr.memory.max> 
         <hhmgr.memory.min>1000m</hhmgr.memory.min> 
         <hhmgr.memory.max>20000m</hhmgr.memory.max>         
         <client.memory.min>30000m</client.memory.min> 
-        <client.memory.max>30000m</client.memory.max>          
+        <client.memory.max>80000m</client.memory.max>          
         <spmarket.memory.min>30000m</spmarket.memory.min> 
         <spmarket.memory.max>160000m</spmarket.memory.max>      
         <bikelogsum.memory.min>26000m</bikelogsum.memory.min> 

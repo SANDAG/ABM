@@ -28,6 +28,7 @@ public class AirportPartyManager
     private double[][]     departureDistribution;
     private double[][]     arrivalDistribution;
 
+    
     SandagModelStructure   sandagStructure;
 
     /**
@@ -55,6 +56,8 @@ public class AirportPartyManager
                 + Util.getStringValueFromPropertyMap(rbMap, "airport."+airportCode+".departureTime.file");
         String arriveFile = directory
                 + Util.getStringValueFromPropertyMap(rbMap, "airport."+airportCode+".arrivalTime.file");
+        String externalFile = directory
+                + Util.getStringValueFromPropertyMap(rbMap, "airport."+airportCode+".externalStation.file");
 
         // Read the distributions
         setPurposeDistribution(purposeFile);
@@ -63,7 +66,7 @@ public class AirportPartyManager
         incomeDistribution = setDistribution(incomeDistribution, incomeFile);
         departureDistribution = setDistribution(departureDistribution, departFile);
         arrivalDistribution = setDistribution(arrivalDistribution, arriveFile);
-
+    
         // calculate total number of parties
         float enplanements = new Float(Util.getStringValueFromPropertyMap(rbMap,
                 "airport."+airportCode+".enplanements").replace(",", ""));
@@ -357,6 +360,7 @@ public class AirportPartyManager
     {
         return parties;
     }
+    
 
   /*
     public static void main(String[] args)
