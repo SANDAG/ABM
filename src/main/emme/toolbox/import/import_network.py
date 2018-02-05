@@ -287,7 +287,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             ("@green_to_cycle",    "green to cycle ratio"),
             ("@capacity_link",     "mid-link capacity"),
             ("@capacity_inter",    "approach capacity"),
-            ("@toll",              "toll cost (cent)"),
+            ("@toll",              "toll cost (cent) with CPI adjustment"),
             ("@lane",              "number of lanes"),
             ("@time_link",         "link time in minutes"),
             ("@time_inter",        "intersection delay time"),
@@ -1449,9 +1449,11 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         mode_d = network.mode("d")
         # Zero out tolls and I-15 (hov type is 0) and index links by tcov_id
         for link in network.links():
-            if mode_d in link.modes and (link["@lane_restriction"] == 2 or link["type"] in freeway_types):
+            if mode_d in link.modes and link["@lane_restriction"] == 2:
                 for period in time_periods:
                     link["@toll_" + period] = 0
+                hwy_links[link["@tcov_id"]] = link
+            elif link["type"] in freeway_types:
                 hwy_links[link["@tcov_id"]] = link
         # Set tolls on links (by tcov_id) using lookup table
         for direction in ["NB", "SB"]:
