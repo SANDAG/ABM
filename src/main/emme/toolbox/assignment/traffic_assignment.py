@@ -529,7 +529,7 @@ Assign traffic demand for the selected time period."""
                 net_calc("lanes", "@lane_%s" % p, "modes=d")
                 if period in ["EA", "MD", "EV"]:
                     # For links with signals inactive in the off-peak periods, convert VDF to type 11
-                    net_calc("vdf", "11", "modes=d and @green_to_cycle=0 and not vdf=10,11 and @traffic_control=4,5")
+                    net_calc("vdf", "11", "modes=d and @green_to_cycle=0 and @traffic_control=4,5 and vdf=24")
 
             with _m.logbook_trace("Transit line headway and background traffic"):
                 # set headway for the period
@@ -542,10 +542,10 @@ Assign traffic demand for the selected time period."""
 
                 # transit vehicle as background flow with periods
                 period_hours = {'ea': 3, 'am': 3, 'md': 6.5, 'pm': 3.5, 'ev': 5}
-                expression = "60 / (hdw) * vauteq * %s" % (period_hours[p])
+                expression = "(60 / hdw) * vauteq * %s" % (period_hours[p])
                 net_calc("ul2", "0", "modes=d")
                 net_calc("ul2", expression,
-                    selections={"link": "all", "transit_line": "hdw=0.02,9999"},
+                    selections={"link": "modes=d", "transit_line": "hdw=0.02,9999"},
                     aggregation="+")
 
             with _m.logbook_trace("Per-class flow attributes"):
