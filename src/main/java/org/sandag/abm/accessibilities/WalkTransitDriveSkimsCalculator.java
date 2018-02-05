@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.ResourceBundle;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.MatrixDataServer;
@@ -14,6 +15,7 @@ import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.Modes;
 import org.sandag.abm.modechoice.TransitDriveAccessDMU;
 import org.sandag.abm.modechoice.TransitWalkAccessUEC;
+
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.MatrixDataManager;
 import com.pb.common.calculator.MatrixDataServerIf;
@@ -295,6 +297,14 @@ public class WalkTransitDriveSkimsCalculator
             // these arrays get skim values copied into them from the shared storedDepartPeriodTapTapSkims array
             double[] skimResultsPremium = new double[walkPremiumDriveSkimUECs[AM].getNumberOfAlternatives() + 2];
 
+            //log out null tap to tap skim array info
+            if (storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap]==null){
+            	System.out.println("storedDepartPeriodTapTapSkims["+PREM+"]["+departPeriod+"]["+origTap+"]["+destTap+"]"+ " is null");
+            	logger.info("storedDepartPeriodTapTapSkims["+LOC+"]["+departPeriod+"]["+origTap+"]["+destTap+"]"+ " is null");
+            	logger.info("LOC, departPeriod="+departPeriod+" origTap="+origTap+" destTap="+destTap);
+            	logger.info("skimResultsPreium length="+skimResultsPremium.length);
+            }
+            
             // copy values stored in storedDepartPeriodTapTapSkims to returned array.  Don't need to copy acc/egr time values; they'll always get replaced in the returned array.
             System.arraycopy(storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap], 0, skimResultsPremium, 0, storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap].length);
             
@@ -323,7 +333,15 @@ public class WalkTransitDriveSkimsCalculator
 
             // these arrays get skim values copied into them from the shared storedDepartPeriodTapTapSkims array
             double[] skimResultsLocal = new double[walkLocalDriveSkimUECs[AM].getNumberOfAlternatives() + 2];
-
+            
+            //log out null tap to tap skim array info
+            if (storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap]==null){
+            	System.out.println("storedDepartPeriodTapTapSkims["+LOC+"]["+departPeriod+"]["+origTap+"]["+destTap+"]"+ " is null");
+            	logger.info("storedDepartPeriodTapTapSkims["+LOC+"]["+departPeriod+"]["+origTap+"]["+destTap+"]"+ " is null");
+            	logger.info("LOC, departPeriod="+departPeriod+" origTap="+origTap+" destTap="+destTap);
+            	logger.info("skimResultsPreium length="+skimResultsLocal.length);
+            }
+            
             // copy values stored in storedDepartPeriodTapTapSkims to returned array.  Don't need to copy acc/egr time values; they'll always get replaced in the returned array.
             System.arraycopy(storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap], 0, skimResultsLocal, 0, storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap].length);
             

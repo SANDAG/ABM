@@ -297,6 +297,14 @@ public class WalkTransitWalkSkimsCalculator
 
             // these arrays get skim values copied into them from the shared storedDepartPeriodTapTapSkims array
             double[] skimResultsPremium = new double[walkPremiumWalkSkimUECs[AM].getNumberOfAlternatives() + 2];
+            
+            //log out null tap to tap skim array info
+            if (storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap]==null){
+            	System.out.println("storedDepartPeriodTapTapSkims["+PREM+"]["+departPeriod+"]["+origTap+"]["+destTap+"]"+ " is null");
+            	logger.info("storedDepartPeriodTapTapSkims["+PREM+"]["+departPeriod+"]["+origTap+"]["+destTap+"]"+ " is null");
+            	logger.info("PREM, departPeriod="+departPeriod+" origTap="+origTap+" destTap="+destTap);
+            	logger.info("skimResultsPreium length="+skimResultsPremium.length);
+            }
 
             // copy values stored in storedDepartPeriodTapTapSkims to returned array.  Don't need to copy acc/egr time values; they'll always get replaced in the returned array.
             System.arraycopy(storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap], 0, skimResultsPremium, 0, storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap].length);
@@ -327,6 +335,13 @@ public class WalkTransitWalkSkimsCalculator
             // these arrays get skim values copied into them from the shared storedDepartPeriodTapTapSkims array, as well as acc and egr distance values
             double[] skimResultsLocal = new double[walkLocalWalkSkimUECs[AM].getNumberOfAlternatives() + 2];
 
+            //log out null tap to tap skim array info
+            if (storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap]==null){
+            	System.out.println("storedDepartPeriodTapTapSkims["+LOC+"]["+departPeriod+"]["+origTap+"]["+destTap+"]"+ " is null");
+            	logger.info("storedDepartPeriodTapTapSkims["+LOC+"]["+departPeriod+"]["+origTap+"]["+destTap+"]"+ " is null");
+            	logger.info("LOC, departPeriod="+departPeriod+" origTap="+origTap+" destTap="+destTap);
+            	logger.info("skimResultsPreium length="+skimResultsLocal.length);
+            }            
             // copy values stored in storedDepartPeriodTapTapSkims to returned array.  Don't need to copy acc/egr time values; they'll always get replaced in the returned array.
             System.arraycopy(storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap], 0, skimResultsLocal, 0, storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap].length);
             
