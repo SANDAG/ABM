@@ -1196,45 +1196,11 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         for node in network.nodes():
             node["@interchange"] = node.is_interchange
 
-        def interchange_distance(orig_link, direction):
-            visited = set([])
-            visited_add = visited.add
-            back_links = {}
-            heap = []
-            if direction == "DOWNSTREAM":
-                get_links = lambda l: l.j_node.outgoing_links()
-                check_far_node = lambda l: l.j_node.is_interchange
-            elif direction == "UPSTREAM":
-                get_links = lambda l: l.i_node.incoming_links()
-                check_far_node = lambda l: l.i_node.is_interchange
-            # Shortest path search for nearest interchange node along freeway
-            for link in get_links(orig_link):   
-                _heapq.heappush(heap, (link["length"], link))
-            interchange_found = False
-            try:
-                while not interchange_found:
-                    link_cost, link = _heapq.heappop(heap)
-                    if link in visited:
-                        continue
-                    visited_add(link)
-                    if check_far_node(link):
-                        interchange_found = True
-                        break
-                    for next_link in get_links(link):
-                        if next_link in visited:
-                            continue
-                        next_cost = link_cost + link["length"]
-                        _heapq.heappush(heap, (next_cost, next_link))
-            except IndexError:
-                # IndexError if heap is empty
-                # case where start / end of highway, dist = 99
-                return 99
-            return orig_link["length"] / 2.0 + link_cost
-
         for link in network.links():
             if link.type == 1 and mode_d in link.modes:
                 link["@intdist_down"] = interchange_distance(link, "DOWNSTREAM")
                 link["@intdist_up"] = interchange_distance(link, "UPSTREAM")
+        self._log.append({"type": "text", "content": "Calculate of nearest interchange distance complete"})
 
         # Static reliability parameters
         # freeway coefficients
@@ -1306,8 +1272,11 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     link["@cost_hov" + time] = link["@cost_auto" + time]
                 link["@cost_med_truck" + time] = 1.03 * link["@toll" + time] + link["@cost_operating"]
                 link["@cost_hvy_truck" + time] = 2.33 * link["@toll" + time] + link["@cost_operating"]
-                
-            # calculate static reliability
+        self._log.append({"type": "text", "content": "Calculation and time period expansion of costs, tolls, capacities and times complete"})
+
+        self.apply_i15_tolls(network)
+        # calculate static reliability
+        for link in network.links():
             for time in time_periods:
                 sta_reliability = "@sta_reliability" + time
                 # if freeway apply freeway parameters to this link
@@ -1331,6 +1300,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     link[sta_reliability] = road_rel["intercept"] + lane_factor + speed_factor + control_factor
                 else:
                     link[sta_reliability] = 0.0
+        self._log.append({"type": "text", "content": "Calculate of link static reliability factors complete"})
  
         # Cycle length matrix
         #       Intersecting Link                     
@@ -1404,7 +1374,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     link.volume_delay_func = 10  # freeway 
                 else: 
                     link.volume_delay_func = 11  # non-controlled approach
-
+        self._log.append({"type": "text", "content": "Derive cycle, green_to_cycle, and VDF by approach node complete"})
+        
         for link in network.links():
             if link.volume_delay_func in [10, 11]:
                 continue
@@ -1417,13 +1388,70 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 for time in time_periods:
                     link["@cycle" + time] = link["cycle"]
                     link["@green_to_cycle" + time] = link["green_to_cycle"]
+        self._log.append({"type": "text", "content": "Setting of time period @cycle and @green_to_cycle complete"})
 
         network.delete_attribute("LINK", "green_to_cycle")
         network.delete_attribute("LINK", "cycle")
         network.delete_attribute("NODE", "is_interchange")
         self._log.append({"type": "text", "content": "Calculate derived traffic attributes complete"})
         return
-        
+
+    def apply_i15_tolls(self, network):
+        # Special approximation of gate-to-gate tolls for the I15 HOV / toll lanes
+        #       tolls are determined by gate-to-gate toll optimization, solved using excel solver
+        #       tolls from two methods are used, traversed links (NB PM and SB AM) entry and exit links (all other periods)
+        #       by: nagendra.dhakar@rsginc.com
+
+        toll_scale = 1.05308  # fixed inflation (CPI) scaling of toll value from 2012 back to 2010
+        time_periods = ["ea", "am", "md", "pm", "ev"]
+        # Link IDs for corresponding toll table by tcov_id
+        # "DIR": "type": [list of link IDs]
+        toll_links = {
+            "NB": {
+                "traverse":  [29716, 460, 526, 23044, 459, 463, 512, 464, 469, 470, 510, 29368, 9808],
+                "entryexit": [31143, 29472, 52505, 52507, 52508, 475, 34231, 52511, 52512, 34229, 34228, 38793, 29765, 29766, 52513, 29764, 26766],
+            },
+            "SB":{
+                "traverse":  [12193, 25749, 52567, 23128, 515, 31204, 52569, 52550, 524, 525, 52555, 52559, 52561, 52565],
+                "entryexit": [52568, 52570, 29768, 38794, 29763, 52560, 52562, 52566, 52556, 34227, 34233, 29407, 26398, 52571, 52572, 29767, 52575, 52576, 52574, 34226, 34232, 29471, 52573]
+            }
+        }
+        # toll values are in cents, referenced to link ID above by index in list
+        # "DIR": "PERIOD": ("type", [list of tolls])
+        tolls = {
+            "NB": {
+                "ea": ("entryexit", [35.00, 35.00, 35.00, 35.00,  35.00, 15.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00]),
+                "am": ("entryexit", [45.05, 42.43, 31.54, 30.00,  30.00, 20.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 17.41, 32.59, 32.59, 32.59]),
+                "md": ("entryexit", [69.91, 73.91, 70.42, 66.12,  51.61,  0.00, 26.88, 25.00, 25.00, 25.00, 12.07, 37.93, 47.51,  3.35, 46.65, 60.66, 65.74]),
+                "pm": ("traverse",  [21.83, 31.11, 50.00, 55.34, 113.23, 50.00, 50.00, 50.00, 50.00, 50.00, 50.00, 50.00, 0.00]),
+                "ev": ("entryexit", [41.73, 36.26, 32.01, 30.00,  30.00, 20.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 17.77, 32.23, 32.23, 32.23]),
+            },
+            "SB": {
+                "ea": ("entryexit", [25.00, 25.00, 25.00, 25.00, 35.00,  7.29,  7.29,  7.29, 17.30, 25.00, 17.30, 17.30, 35.00, 15.00, 25.00, 25.00, 32.70, 42.71, 32.70, 25.00, 25.00, 42.71, 25.00]),
+                "am": ("traverse",  [ 0.00, 59.74, 50.00, 80.42, 50.00, 50.00, 69.24,  0.00,  3.18, 50.00, 50.17, 19.06, 50.00, 84.26]),
+                "md": ("entryexit", [32.80, 25.00, 25.00, 25.00, 32.80, 11.43, 11.43, 10.65, 18.85, 25.00, 18.85, 18.85, 32.80, 17.20, 25.00, 17.20, 31.15, 38.57, 31.15, 25.00, 25.00, 39.35, 25.00]),
+                "pm": ("entryexit", [27.78, 25.00, 25.00, 25.00, 35.00, 12.67, 12.67, 12.67, 19.36, 25.00, 19.36, 19.36, 35.00, 15.00, 25.00, 22.22, 30.64, 37.33, 30.64, 25.00, 25.00, 37.33, 25.00]),
+                "ev": ("entryexit", [29.12, 25.00, 25.00, 25.00, 35.00, 13.14, 13.14, 13.14, 21.56, 25.00, 21.56, 21.56, 35.00, 15.00, 25.00, 20.88, 28.44, 36.86, 28.44, 25.00, 25.00, 36.86, 25.00]),
+            }
+        }
+        hwy_links = {}
+        mode_d = network.mode("d")
+        # Zero out tolls and I-15 (hov type is 0) and index links by tcov_id
+        for link in network.links():
+            if mode_d in link.modes and link["@lane_restriction"] == 2:
+                for period in time_periods:
+                    link["@toll_" + period] = 0
+                hwy_links[link["@tcov_id"]] = link
+        # Set tolls on links (by tcov_id) using lookup table
+        for direction in ["NB", "SB"]:
+            for period in time_periods:
+                toll_type, toll_values = tolls[direction][period]
+                link_ids = toll_links[direction][period][toll_type]
+                for link_id, toll_value in zip(link_ids, toll_values):
+                    link = hwy_links[link_id]
+                    link["@toll_" + period] = toll_value / toll_scale
+        self._log.append({"type": "text", "content": "Calculation of I-15 managed lanes toll approximation complete"})
+
     def check_zone_access(self, network, mode):
         # Verify that every centroid has at least one available
         # access and egress connector
@@ -1811,3 +1839,39 @@ def revised_headway(headway):
         rev_headway = part_1_headway + part_2_headway + part_3_headway + part_4_headway
             
     return rev_headway
+
+
+def interchange_distance(orig_link, direction):
+    visited = set([])
+    visited_add = visited.add
+    back_links = {}
+    heap = []
+    if direction == "DOWNSTREAM":
+        get_links = lambda l: l.j_node.outgoing_links()
+        check_far_node = lambda l: l.j_node.is_interchange
+    elif direction == "UPSTREAM":
+        get_links = lambda l: l.i_node.incoming_links()
+        check_far_node = lambda l: l.i_node.is_interchange
+    # Shortest path search for nearest interchange node along freeway
+    for link in get_links(orig_link):   
+        _heapq.heappush(heap, (link["length"], link))
+    interchange_found = False
+    try:
+        while not interchange_found:
+            link_cost, link = _heapq.heappop(heap)
+            if link in visited:
+                continue
+            visited_add(link)
+            if check_far_node(link):
+                interchange_found = True
+                break
+            for next_link in get_links(link):
+                if next_link in visited:
+                    continue
+                next_cost = link_cost + link["length"]
+                _heapq.heappush(heap, (next_cost, next_link))
+    except IndexError:
+        # IndexError if heap is empty
+        # case where start / end of highway, dist = 99
+        return 99
+    return orig_link["length"] / 2.0 + link_cost
