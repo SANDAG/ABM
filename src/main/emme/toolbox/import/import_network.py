@@ -1168,7 +1168,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         load_properties = _m.Modeller().tool('sandag.utilities.properties')
         props = load_properties(_join(_dir(self.source), "conf", "sandag_abm.properties"))
         try:
-            aoc = float(props["aoc.fuel"] + props["aoc.maintenance"])
+            aoc = float(props["aoc.fuel"]) + float(props["aoc.maintenance"])
         except ValueError:
             raise Exception("Error during float conversion for aoc.fuel or aoc.maintenance from sandag_abm.properties file")
         time_periods = ["_ea", "_am", "_md", "_pm", "_ev"]
@@ -1236,6 +1236,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 4: 0.0127692,   # Other, Railway, etc.
             }
         }
+        toll_scale = 1.10084  # fixed inflation (CPI) scaling of toll value from 2016 back to 2010
         for link in network.links():
             # Change SR125 toll speed to 70MPH
             if link["@lane_restriction"] == 4 and link.type == 1:
@@ -1248,7 +1249,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 link["@lane" + time] = link["lane" + src_time]
                 link["@time_link" + time] = link["time_link" + src_time]
                 link["@time_inter" + time] = link["time_inter" + src_time]
-                link["@toll" + time] = link["toll" + src_time]
+                link["@toll" + time] = link["toll" + src_time] / toll_scale
 
             factors = [(3.0/12.0), 1.0, (6.5/12.0), (3.5/3.0), (8.0/12.0)]
             for f, time, src_time in zip(factors, time_periods, src_time_periods):
@@ -1402,6 +1403,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         #       tolls from two methods are used, traversed links (NB PM and SB AM) entry and exit links (all other periods)
         #       by: nagendra.dhakar@rsginc.com
 
+        toll_scale = 1.05308  # fixed inflation (CPI) scaling of toll value from 2012 back to 2010
         time_periods = ["ea", "am", "md", "pm", "ev"]
         # Link IDs for corresponding toll table by tcov_id
         # "DIR": "type": [list of link IDs]
@@ -1460,7 +1462,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     link = hwy_links.get(link_id)
                     if not link:
                         raise Exception("Applying I-15 tolls: link with TCOV_ID %s not found" % link_id)
-                    link["@toll_" + period] = toll_value
+                    link["@toll_" + period] = toll_value / toll_scale
         self._log.append({"type": "text", "content": "Calculation of I-15 managed lanes toll approximation complete"})
 
     def check_zone_access(self, network, mode):
