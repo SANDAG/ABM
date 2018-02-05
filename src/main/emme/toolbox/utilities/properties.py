@@ -317,8 +317,6 @@ class PropertiesTool(_m.Tool(), PropertiesSetter):
         self.properties_path = os.path.join(
             os.path.dirname(project_dir), "conf", "sandag_abm.properties")
         self._properties = None
-        if os.path.exists(self.properties_path):
-            self.load_properties()
 
     tool_run_msg = ""
 
@@ -327,6 +325,8 @@ class PropertiesTool(_m.Tool(), PropertiesSetter):
         return self.tool_run_msg
 
     def page(self):
+        if os.path.exists(self.properties_path):
+            self.load_properties()
         pb = _m.ToolPageBuilder(self)
         pb.title = 'Set properties'
         pb.description = """Properties setting tool."""
@@ -393,9 +393,6 @@ class Properties(object):
         if os.path.isdir(path):
             path = os.path.join(path, "sandag_abm.properties")
         timestamp = os.path.getmtime(path)
-        if hasattr(self, "_created"):
-            if self._timestamp == timestamp:
-                return
         self._path = os.path.normpath(os.path.abspath(path))
         self._load_properties()
         self._created = True
@@ -449,11 +446,11 @@ class Properties(object):
     def save(self, path=None):
         if not path:
             path = self._path
-        # Note: could check for possible interference if user edits the 
-        #       properties files directly while it is already open in Modeller
-        #timestamp = os.path.getmtime(path)
-        #if timestamp != self._timestamp:
-        #    raise Exception("%s file has been edited after reading" % path)
+        # check for possible interference if user edits the 
+        # properties files directly while it is already open in Modeller
+        timestamp = os.path.getmtime(path)
+        if timestamp != self._timestamp:
+            raise Exception("%s file conflict - edited externally after loading" % path)
         with open(path, 'w') as f:
             for key, value in self.iteritems():
                 if isinstance(value, list):
@@ -466,6 +463,7 @@ class Properties(object):
                         f.write(line)
                         f.write("\n")
                 f.write("%s = %s\n" % (key, value))
+        self._timestamp = os.path.getmtime(path)
 
     def set_year_specific_properties(self, file_path):
         with open(file_path, 'r') as f:
