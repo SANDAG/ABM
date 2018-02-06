@@ -25,7 +25,9 @@
 #   base_scenario_id: the base traffic assignment scenario in the main Emme database
 #   scenario_id: the ID to use for the new scenario in the Transit Emme database
 #   scenario_title: the title for the new scenario
-#   timed_xfers_table: the source data table for the timed transfer line pairs
+#   data_table_name: the root name for the source data table for the timed transfer 
+#                    line pairs and the day and regional pass costs. 
+#                    Usually the ScenarioYear
 #   overwrite: overwrite the scenario if it already exists.
 #
 #
@@ -58,7 +60,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
     scenario_id = _m.Attribute(int)
     base_scenario_id =  _m.Attribute(str)
 
-    timed_xfers_table = _m.Attribute(unicode)
+    data_table_name = _m.Attribute(unicode)
     scenario_title = _m.Attribute(unicode)
     overwrite = _m.Attribute(bool)
 
@@ -69,17 +71,23 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
         return self.tool_run_msg
 
     def __init__(self):
-        self.timed_xfers_table = None
+        self.data_table_name = None
         self.base_scenario = _m.Modeller().scenario
         self.scenario_id = 100
         self.scenario_title = ""
         self.overwrite = False
         self.attributes = [
             "period", "scenario_id", "base_scenario_id", 
-            "timed_xfers_table", "scenario_title", "overwrite"]
-        self._dt_db = _m.Modeller().desktop.project.data_tables()
+            "data_table_name", "scenario_title", "overwrite"]
 
     def page(self):
+        if not self.data_table_name:
+            load_properties = _m.Modeller().tool('sandag.utilities.properties')
+            project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
+            main_directory = os.path.dirname(project_dir)
+            props = load_properties(os.path.join(main_directory, "conf", "sandag_abm.properties"))
+            self.data_table_name = props["scenarioYear"]
+        
         pb = _m.ToolPageBuilder(self)
         pb.title = "Build transit network"
         pb.description = """
@@ -105,11 +113,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
 
         pb.add_text_box("scenario_id", title="ID for transit assignment scenario:")
         pb.add_text_box("scenario_title", title="Scenario title:", size=80)
-        
-        options = [(None, "")] + [(table.name, table.name) for table in self._dt_db.tables()]
-        pb.add_select("timed_xfers_table", options, title="Timed transfer data table:",
-            note="Normally used only with AM peak period assignment.")
-
+        pb.add_text_box("data_table_name", title="Data table prefix name:", note="Default is the ScenarioYear")
         pb.add_checkbox("overwrite", title=" ", label="Overwrite existing scenario")
 
         return pb.render()
@@ -124,7 +128,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             results = self(
                 self.period, base_scenario, transit_emmebank,
                 self.scenario_id, self.scenario_title, 
-                self.timed_xfers_table, self.overwrite)
+                self.data_table_name, self.overwrite)
             run_msg = "Transit scenario created"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -132,16 +136,16 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 error, _traceback.format_exc(error))
             raise
 
-    def __call__(self, period, base_scenario, transit_emmebank, scenario_id, scenario_title="", 
-                 timed_xfers_table=None, overwrite=False):
+    def __call__(self, period, base_scenario, transit_emmebank, scenario_id, scenario_title, 
+                 data_table_name, overwrite=False):
         modeller = _m.Modeller()
         attrs = {
             "period": period, 
-            "scenario_id": scenario_id, 
-            "transit_emmebank": transit_emmebank.path, 
             "base_scenario_id": base_scenario.id, 
-            "timed_xfers_table": timed_xfers_table,
+            "transit_emmebank": transit_emmebank.path, 
+            "scenario_id": scenario_id, 
             "scenario_title": scenario_title, 
+            "data_table_name": data_table_name,
             "overwrite": overwrite,
             "self": str(self)
         }
@@ -154,13 +158,8 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 raise Exception(
                     'period: unknown value - specify one of %s' % periods)
 
-            if timed_xfers_table:
-                timed_transfers_with_walk = list(gen_utils.DataTableProc(timed_xfers_table))
-
-            transit_assginment = modeller.tool(
-                "sandag.assignment.transit_assignment")
-            params = transit_assginment.get_perception_parameters(period)
-            
+            transit_assignment = modeller.tool(
+                "sandag.assignment.transit_assignment")            
             if transit_emmebank.scenario(scenario_id):
                 if overwrite:
                     transit_emmebank.delete_scenario(scenario_id)
@@ -193,12 +192,42 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 attr.description = desc
                 network.create_attribute(elem, name)
             network.create_attribute("TRANSIT_LINE", "xfer_from_bus")
-
             self._init_node_id(network)
-            coaster_mode = network.mode("c")
-            bus_mode = network.mode("b")
-            prem_mode = network.mode("p")
-            lrt_mode = network.mode("l")
+            
+            transit_passes = gen_utils.DataTableProc("%s_transit_passes" % data_table_name)
+            transit_passes = {row["pass_type"]: row["cost"] for row in transit_passes}
+            day_pass = float(transit_passes["day_pass"]) / 2.0
+            regional_pass = float(transit_passes["regional_pass"]) / 2.0
+            params = transit_assignment.get_perception_parameters(period)
+            mode_groups = transit_assignment.group_modes_by_fare(network, day_pass)
+            bus_fares = {}
+            for mode_id, fares in mode_groups["bus"]:
+                for fare, count in fares.items():
+                    bus_fares[fare] = bus_fares.get(fare, 0) + count
+            # set nominal bus fare as unweighted average of two most frequent fares
+            bus_fares = sorted(bus_fares.items(), key=lambda x: x[1], reverse=True)
+            bus_fare = (bus_fares[0][0] + bus_fares[1][0]) / 2
+            # find max premium mode fare
+            premium_fare = 0
+            for mode_id, fares in mode_groups["premium"]:
+                for fare in fares.keys():
+                    premium_fare = max(premium_fare, fare)
+            # find max coaster_fare by checking the cumulative fare along each line
+            coaster_fare = 0
+            for line in network.transit_lines():
+                if line.mode.id != "c":
+                    continue
+                segments = line.segments()
+                first = segments.next()
+                fare = first["@coaster_fare_board"]
+                for seg in segments:
+                    fare += seg["@coaster_fare_inveh"]
+                coaster_fare = max(coaster_fare, fare)
+
+            bus_fare_modes = [x[0] for x in mode_groups["bus"]]  # have a bus fare, less than the day pass
+            day_pass_modes = [x[0] for x in mode_groups["day_pass"]]  # boarding fare is the same as the day pass
+            premium_fare_modes = ["c"] + [x[0] for x in mode_groups["premium"]] # special premium services not covered by day pass
+
             for line in list(network.transit_lines()):
                 # remove the "unavailable" lines in this period
                 if line[params["headway"]] == 0:
@@ -206,20 +235,30 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                     continue
                 # Adjust fare perception by VOT
                 line[params["fare"]] = line[params["fare"]] / params["vot"]
-
                 # set the fare increments for transfer combinations with day pass / regional pass
-                if line.mode == bus_mode and line["@fare"] > 1.00:
-                    line["xfer_from_bus"] = min(max(2.50 - line["@fare"], 0), 0.75)
-                elif line.mode in [ prem_mode, coaster_mode ]:
-                    line["xfer_from_bus"] = 4.0    # increment from bus to regional (either 1.75 and 2.25 bus fare)
-                    line["@xfer_from_day"] = 3.5    # increment from trolley / half day pass to half regional pass
-                elif line.id.startswith("399"):     # sprinter fare
-                    line["xfer_from_bus"] = 0.75
-                else:  # lrt, express and brt (red and yellow)
-                    line["xfer_from_bus"] = 0.25
-                if line["@fare"] > 0.0:
-                    line["@xfer_from_premium"] = 1.0
-                    line["@xfer_from_coaster"] = 1.25
+                if line.mode.id in bus_fare_modes:
+                    line["xfer_from_bus"] = max(min(day_pass - line["@fare"], line["@fare"]), 0)
+                    line["@xfer_from_day"] = 0.0
+                    line["@xfer_from_premium"] = max(min(regional_pass - premium_fare, line["@fare"]), 0)
+                    line["@xfer_from_coaster"] = max(min(regional_pass - coaster_fare, line["@fare"]), 0)
+                elif line.mode.id in day_pass_modes:
+                    line["xfer_from_bus"] = max(day_pass - bus_fare, 0.0)
+                    line["@xfer_from_day"] = 0.0 
+                    line["@xfer_from_premium"] = max(min(regional_pass - premium_fare, line["@fare"]), 0)
+                    line["@xfer_from_coaster"] = max(min(regional_pass - coaster_fare, line["@fare"]), 0)
+                elif line.mode.id in premium_fare_modes:
+                    if line["@fare"] > day_pass or line.mode.id == "c":
+                        # increment from bus to regional
+                        line["xfer_from_bus"] = max(regional_pass - bus_fare, 0)
+                        line["@xfer_from_day"] = max(regional_pass - day_pass, 0)
+                    else: 
+                        # some "premium" modes lines are really regular fare
+                        # increment from bus to day pass
+                        line["xfer_from_bus"] = max(day_pass - bus_fare, 0)
+                        line["@xfer_from_day"] = 0.0
+                    line["@xfer_from_premium"] = max(regional_pass - premium_fare, 0)
+                    line["@xfer_from_coaster"] = max(min(regional_pass - coaster_fare, line["@fare"]), 0)
+
             for segment in network.transit_segments():
                 line = segment.line
                 segment["@headway_seg"] = line[params["headway"]]
@@ -228,7 +267,8 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             network.delete_attribute("TRANSIT_LINE", "xfer_from_bus")
 
             self.taps_to_centroids(network)
-            if timed_xfers_table:
+            if period == "AM":
+                timed_transfers_with_walk = list(gen_utils.DataTableProc("%s_timed_xfer" % data_table_name))
                 self.timed_transfers(network, timed_transfers_with_walk, period)
             self.connect_circle_lines(network)
             self.duplicate_tap_adajcent_stops(network)

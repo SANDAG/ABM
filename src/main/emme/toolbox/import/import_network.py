@@ -110,6 +110,11 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             "overwrite", "title", "save_data_tables", "data_table_name"]
 
     def page(self):
+        if not self.data_table_name:
+            load_properties = _m.Modeller().tool('sandag.utilities.properties')
+            props = load_properties(_join(_dir(self.source), "conf", "sandag_abm.properties"))
+            self.data_table_name = props["scenarioYear"]
+            
         pb = _m.ToolPageBuilder(self)
         pb.title = "Import network"
         pb.description = """
@@ -287,7 +292,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             ("@green_to_cycle",    "green to cycle ratio"),
             ("@capacity_link",     "mid-link capacity"),
             ("@capacity_inter",    "approach capacity"),
-            ("@toll",              "toll cost (cent) with CPI adjustment"),
+            ("@toll",              "toll cost (cent) w/CPI adjust"),
             ("@lane",              "number of lanes"),
             ("@time_link",         "link time in minutes"),
             ("@time_inter",        "intersection delay time"),
@@ -1005,6 +1010,14 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         for c in network.centroids():
             c["@tap_id"] = c.number
+            
+        # Adjust fare values by CPI adjustment from props (copied from parametersByYears.csv)
+        load_properties = _m.Modeller().tool('sandag.utilities.properties')
+        props = load_properties(_join(_dir(self.source), "conf", "sandag_abm.properties"))
+        cpi_factor = float(props["CPI"])
+        self._log.append({"type": "text", "content": "Adjusting input fares using CPI factor %s" % cpi_factor})
+        for line in network.transit_lines():
+            line["@fare"] = line["@fare"] / cpi_factor
 
         # Special incremental boarding and in-vehicle fares        
         # to recreate the coaster zone fares
@@ -1050,7 +1063,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     {"line": "398104", "from": "SORRENTO VALLEY", "cost": 0.5},
                     {"line": "398204", "from": "OLD TOWN", "cost": 1.0},
                     {"line": "398204", "from": "SORRENTO VALLEY", "cost": 0.5}
-                ]
+                ],
+                "day_pass": 5.0,
+                "regional_pass": 12.0
             }
             self._log.append({"type": "text", "content": "Using default coaster fare based on 2012 base year setup."})
 
@@ -1064,20 +1079,30 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             line = get_line(record["line"])
             line["@fare"] = 0
             for seg in line.segments():
-                seg["@coaster_fare_board"] = record["cost"]
+                seg["@coaster_fare_board"] = record["cost"] / cpi_factor
         for record in special_fares["boarding_cost"].get("stop_increment", []):
             line = get_line(record["line"])
             for seg in line.segments(True):
                 if record["stop"] in seg["#stop_name"]:
-                    seg["@coaster_fare_board"] += record["cost"]
+                    seg["@coaster_fare_board"] += record["cost"] / cpi_factor
                     break
         for record in special_fares["in_vehicle_cost"]:
             line = get_line(record["line"])
             for seg in line.segments(True):
                 if record["from"] in seg["#stop_name"]:
-                    seg["@coaster_fare_inveh"] = record["cost"]
+                    seg["@coaster_fare_inveh"] = record["cost"] / cpi_factor
                     break
-            
+        day_pass = special_fares.get("day_pass")
+        if not day_pass:
+            raise Exception("key 'day_pass' missing from special_fares.txt")
+        regional_pass = special_fares.get("regional_pass")
+        if not regional_pass:
+            raise Exception("key 'regional_pass' missing from special_fares.txt")
+        pass_costs = _np.array([day_pass / cpi_factor, regional_pass / cpi_factor])
+        pass_values = _dt.Data()
+        pass_values.add_attribute(_dt.Attribute("pass_type", _np.array(['day_pass', 'regional_pass']).astype("O")))
+        pass_values.add_attribute(_dt.Attribute("cost", pass_costs.astype("f8")))
+        gen_utils.DataTableProc("%s_transit_passes" % self.data_table_name, data=pass_values)
         self._log.append({"type": "text", "content": "Calculate derived transit attributes complete"})
         return
 

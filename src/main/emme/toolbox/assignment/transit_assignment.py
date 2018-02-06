@@ -59,6 +59,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
 
     period = _m.Attribute(unicode)
     scenario =  _m.Attribute(_m.InstanceType)
+    data_table_name = _m.Attribute(unicode)
     skims_only = _m.Attribute(bool)
     num_processors = _m.Attribute(str)
 
@@ -73,7 +74,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         self.scenario = _m.Modeller().scenario
         self.num_processors = "MAX-1"
         self.attributes = [
-            "period", "scenario", "skims_only",  "num_processors"]
+            "period", "scenario", "data_table_name", "skims_only",  "num_processors"]
         self._dt_db = _m.Modeller().desktop.project.data_tables()
         self._matrix_cache = {}  # used to hold data for reporting and post-processing of skims
 
@@ -84,6 +85,13 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         return self
 
     def page(self):
+        if not self.data_table_name:
+            load_properties = _m.Modeller().tool('sandag.utilities.properties')
+            project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
+            main_directory = os.path.dirname(project_dir)
+            props = load_properties(os.path.join(main_directory, "conf", "sandag_abm.properties"))
+            self.data_table_name = props["scenarioYear"]
+
         pb = _m.ToolPageBuilder(self)
         pb.title = "Transit assignment"
         pb.description = """Assign transit demand for the selected time period."""
@@ -98,6 +106,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         pb.add_select("period", options, title="Period:")
         pb.add_select_scenario("scenario",
             title="Transit assignment scenario:")
+        pb.add_text_box("data_table_name", title="Data table prefix name:", note="Default is the ScenarioYear")
         pb.add_checkbox("skims_only", title=" ", label="Only run assignments for skim matrices")
         dem_utils.add_select_processors("num_processors", pb, self)
         return pb.render()
@@ -106,7 +115,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         self.tool_run_msg = ""
         try:
             results = self(
-                self.period, self.scenario, self.skims_only, self.num_processors)
+                self.period, self.scenario, self.data_table_name, self.skims_only, self.num_processors)
             run_msg = "Transit assignment completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -114,10 +123,11 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 error, _traceback.format_exc(error))
             raise
 
-    def __call__(self, period, scenario, skims_only=False, num_processors="MAX-1"):
+    def __call__(self, period, scenario, data_table_name, skims_only=False, num_processors="MAX-1"):
         attrs = {
             "period": period,
             "scenario": scenario.id,
+            "data_table_name": data_table_name,
             "skims_only": skims_only,
             "num_processors": num_processors,
             "self": str(self)
@@ -130,12 +140,9 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             gen_utils.log_snapshot("Transit assignment", str(self), attrs)
             periods = ["EA", "AM", "MD", "PM", "EV"]
             if not period in periods:
-                raise Exception(
-                    'period: unknown value - specify one of %s' % periods)
+                raise Exception('period: unknown value - specify one of %s' % periods)
             num_processors = dem_utils.parse_num_processors(num_processors)
-
             params = self.get_perception_parameters(period)
-
             network = scenario.get_partial_network(
                 element_types=["TRANSIT_LINE"], include_attributes=True)
             coaster_mode = network.mode("c")
@@ -145,10 +152,17 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                     params["coaster_fare_percep"] = line[params["fare"]]
                     break
 
-            self.run_assignment(period, params, skims_only, num_processors)
-            self.run_skims("BUS", period, params, num_processors)
-            self.run_skims("PREM", period, params, num_processors)
-            self.run_skims("ALLPEN", period, params, num_processors)
+            transit_passes = gen_utils.DataTableProc("%s_transit_passes" % data_table_name)
+            transit_passes = {row["pass_type"]: row["cost"] for row in transit_passes}
+            day_pass = float(transit_passes["day_pass"]) / 2.0
+            regional_pass = float(transit_passes["regional_pass"]) / 2.0
+            
+            self.run_assignment(period, params, network, day_pass, skims_only, num_processors)
+            
+            # max_fare = day_pass for local bus and regional_pass for premium modes
+            self.run_skims("BUS", period, params, day_pass, num_processors)
+            self.run_skims("PREM", period, params, regional_pass, num_processors)
+            self.run_skims("ALLPEN", period, params, regional_pass, num_processors)
             self.post_process_skims(period)
             self.report(period)
 
@@ -222,7 +236,35 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         }
         return perception_parameters[period]
         
-    def all_modes_journey_levels(self, params):
+    def group_modes_by_fare(self, network, day_pass_cost):
+        # Identify all the unique boarding fare values
+        fare_set = {mode.id: _defaultdict(lambda:0) 
+                    for mode in network.modes()
+                    if mode.type == "TRANSIT"}
+        for line in network.transit_lines():
+            fare_set[line.mode.id][line["@fare"]] += 1
+        del fare_set['c']  # remove coaster mode, this fare is handled separately
+        # group the modes relative to day_pass
+        mode_groups = {
+            "bus": [],       # have a bus fare, less than 1/2 day pass
+            "day_pass": [],  # boarding fare is the same as 1/2 day pass
+            "premium": []    # special premium services not covered by day pass
+        }
+        for mode_id, fares in fare_set.items():
+            try:
+                max_fare = max(fares.keys())
+            except ValueError:
+                continue  # an empty set means this mode is unused in this period
+            if numpy.isclose(max_fare, day_pass_cost, rtol=0.0001):
+                mode_groups["day_pass"].append((mode_id, fares))
+            elif max_fare < day_pass_cost:
+                mode_groups["bus"].append((mode_id, fares))
+            else:
+                mode_groups["premium"].append((mode_id, fares))
+        print mode_groups
+        return mode_groups
+        
+    def all_modes_journey_levels(self, params, network, day_pass_cost):
         transfer_penalty = {"on_segments": {"penalty": "@transfer_penalty_s", "perception_factor": 5.0}}
         transfer_wait = {
             "effective_headways": "@headway_seg",
@@ -230,19 +272,21 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             "perception_factor": params["xfer_wait"],
             "spread_factor": 1.0
         }
+        mode_groups = self.group_modes_by_fare(network, day_pass_cost)
+
+        def get_transition_rules(next_level):
+            rules = []
+            for name, group in mode_groups.items():
+                for mode_id, fares in group:
+                    rules.append({"mode": mode_id, "next_journey_level": next_level[name]})
+            rules.append({"mode": "c", "next_journey_level": next_level["coaster"]})
+            return rules
+
         journey_levels = [
             {
                 "description": "base",
                 "destinations_reachable": False,
-                "transition_rules": [
-                    {"mode": "b", "next_journey_level": 1},
-                    {"mode": "l", "next_journey_level": 2},
-                    {"mode": "e", "next_journey_level": 2},
-                    {"mode": "r", "next_journey_level": 2},
-                    {"mode": "y", "next_journey_level": 2},
-                    {"mode": "p", "next_journey_level": 3},
-                    {"mode": "c", "next_journey_level": 4},
-                ],
+                "transition_rules": get_transition_rules({"bus": 1, "day_pass": 2, "premium": 3, "coaster": 4}),
                 "boarding_time": {"global": {"penalty": 0, "perception_factor": 1}},
                 "waiting_time": {
                     "effective_headways": "@headway_seg", "headway_fraction": 0.5,
@@ -256,15 +300,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             {
                 "description": "boarded_bus",
                 "destinations_reachable": True,
-                "transition_rules": [
-                    {"mode": "b", "next_journey_level": 2},
-                    {"mode": "l", "next_journey_level": 2},
-                    {"mode": "e", "next_journey_level": 2},
-                    {"mode": "r", "next_journey_level": 2},
-                    {"mode": "y", "next_journey_level": 2},
-                    {"mode": "p", "next_journey_level": 5},
-                    {"mode": "c", "next_journey_level": 5},
-                ],
+                "transition_rules": get_transition_rules({"bus": 2, "day_pass": 2, "premium": 5, "coaster": 5}),
                 "boarding_time": transfer_penalty,
                 "waiting_time": transfer_wait,
                 "boarding_cost": {
@@ -275,15 +311,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             {
                 "description": "day_pass",
                 "destinations_reachable": True,
-                "transition_rules": [
-                    {"mode": "b", "next_journey_level": 2},
-                    {"mode": "l", "next_journey_level": 2},
-                    {"mode": "e", "next_journey_level": 2},
-                    {"mode": "r", "next_journey_level": 2},
-                    {"mode": "y", "next_journey_level": 2},
-                    {"mode": "p", "next_journey_level": 5},
-                    {"mode": "c", "next_journey_level": 5},
-                ],
+                "transition_rules": get_transition_rules({"bus": 2, "day_pass": 2, "premium": 5, "coaster": 5}),
                 "boarding_time": transfer_penalty,
                 "waiting_time": transfer_wait,
                 "boarding_cost": {
@@ -293,15 +321,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             {
                 "description": "boarded_premium",
                 "destinations_reachable": True,
-                "transition_rules": [
-                    {"mode": "b", "next_journey_level": 5},
-                    {"mode": "l", "next_journey_level": 5},
-                    {"mode": "e", "next_journey_level": 5},
-                    {"mode": "r", "next_journey_level": 5},
-                    {"mode": "y", "next_journey_level": 5},
-                    {"mode": "p", "next_journey_level": 5},
-                    {"mode": "c", "next_journey_level": 5},
-                ],
+                "transition_rules": get_transition_rules({"bus": 5, "day_pass": 5, "premium": 5, "coaster": 5}),
                 "boarding_time": transfer_penalty,
                 "waiting_time": transfer_wait,
                 "boarding_cost": {
@@ -311,15 +331,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             {
                 "description": "boarded_coaster",
                 "destinations_reachable": True,
-                "transition_rules": [
-                    {"mode": "b", "next_journey_level": 5},
-                    {"mode": "l", "next_journey_level": 5},
-                    {"mode": "e", "next_journey_level": 5},
-                    {"mode": "r", "next_journey_level": 5},
-                    {"mode": "y", "next_journey_level": 5},
-                    {"mode": "p", "next_journey_level": 5},
-                    {"mode": "c", "next_journey_level": 5},
-                ],
+                "transition_rules": get_transition_rules({"bus": 5, "day_pass": 5, "premium": 5, "coaster": 5}),
                 "boarding_time": transfer_penalty,
                 "waiting_time": transfer_wait,
                 "boarding_cost": {
@@ -329,15 +341,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             {
                 "description": "regional_pass",
                 "destinations_reachable": True,
-                "transition_rules": [
-                    {"mode": "b", "next_journey_level": 5},
-                    {"mode": "l", "next_journey_level": 5},
-                    {"mode": "e", "next_journey_level": 5},
-                    {"mode": "r", "next_journey_level": 5},
-                    {"mode": "y", "next_journey_level": 5},
-                    {"mode": "p", "next_journey_level": 5},
-                    {"mode": "c", "next_journey_level": 5},
-                ],
+                "transition_rules": get_transition_rules({"bus": 5, "day_pass": 5, "premium": 5, "coaster": 5}),
                 "boarding_time": transfer_penalty,
                 "waiting_time": transfer_wait,
                 "boarding_cost":  {
@@ -347,7 +351,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         ]
         return journey_levels
 
-    def get_mode_specific_journey_levels(self, modes, journey_levels):
+    def filter_journey_levels_by_mode(self, modes, journey_levels):
         # remove rules for unused modes from provided journey_levels
         # (restrict to provided modes)
         journey_levels = _copy(journey_levels)
@@ -383,7 +387,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         return journey_levels
 
     @_m.logbook_trace("Transit assignment by demand set", save_arguments=True)
-    def run_assignment(self, period, params, skims_only, num_processors):
+    def run_assignment(self, period, params, network, day_pass_cost, skims_only, num_processors):
         modeller = _m.Modeller()
         scenario = self.scenario
         emmebank = scenario.emmebank
@@ -395,9 +399,9 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         premium_modes = ["c", "l", "e", "p", "r", "y"]
 
         # get the generic all-modes journey levels table
-        journey_levels = self.all_modes_journey_levels(params)
-        local_bus_journey_levels = self.get_mode_specific_journey_levels(local_bus_mode, journey_levels)
-        premium_modes_journey_levels = self.get_mode_specific_journey_levels(premium_modes, journey_levels)
+        journey_levels = self.all_modes_journey_levels(params, network, day_pass_cost)
+        local_bus_journey_levels = self.filter_journey_levels_by_mode(local_bus_mode, journey_levels)
+        premium_modes_journey_levels = self.filter_journey_levels_by_mode(premium_modes, journey_levels)
         # All modes transfer penalty assignment uses penalty of 15 minutes
         for level in journey_levels[1:]:
             level["boarding_time"] =  {"global": {"penalty": 15, "perception_factor": 1}}
@@ -463,7 +467,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 add_volumes = True
 
     @_m.logbook_trace("Extract skims", save_arguments=True)
-    def run_skims(self, name, period, params, num_processors):
+    def run_skims(self, name, period, params, max_fare, num_processors):
         modeller = _m.Modeller()
         scenario = self.scenario
         emmebank = scenario.emmebank
@@ -550,7 +554,6 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             matrix_calc(spec, scenario=scenario, num_processors=num_processors)
 
             # sum in-vehicle cost and boarding cost to get the fare paid
-            max_fare = 2.50 if "BUS" in name else 6.00
             spec = {
                 "type": "MATRIX_CALCULATION",
                 "constraint": None,

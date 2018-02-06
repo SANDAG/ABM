@@ -370,15 +370,14 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                     with _m.logbook_trace("Transit assignments and skims"):
                         for number, period in period_ids:
                             src_period_scenario = main_emmebank.scenario(number)
-                            timed_xfers = "%s_timed_xfer" % scenarioYear if period == "AM" else None
                             transit_assign_scen = build_transit_scen(
                                 period=period, base_scenario=src_period_scenario, 
                                 transit_emmebank=transit_emmebank, 
                                 scenario_id=src_period_scenario.id, 
                                 scenario_title="%s %s transit assign" % (base_scenario.title, period),
-                                timed_xfers_table=timed_xfers, overwrite=True)
-                            transit_assign(period, transit_assign_scen, skims_only=True, 
-                                           num_processors=num_processors)
+                                data_table_name=scenarioYear, overwrite=True)
+                            transit_assign(period, transit_assign_scen, data_table_name=scenarioYear,
+                                           skims_only=True, num_processors=num_processors)
 
                         omx_file = _join(output_dir, "transit_skims.omx")   
                         export_transit_skims(omx_file, periods, transit_scenario)
@@ -439,13 +438,13 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
             with _m.logbook_trace("Final transit assignments"):
                 for number, period in period_ids:
                     src_period_scenario = main_emmebank.scenario(number)
-                    timed_xfers = "%s_timed_xfer" % scenarioYear if period == "AM" else None
                     transit_assign_scen = build_transit_scen(
                         period=period, base_scenario=src_period_scenario, 
                         transit_emmebank=transit_emmebank, scenario_id=src_period_scenario.id, 
                         scenario_title="%s - %s transit assign" % (base_scenario.title, period), 
-                        timed_xfers_table=timed_xfers, overwrite=True)
-                    transit_assign(period, transit_assign_scen, num_processors=num_processors)
+                        data_table_name=ScenarioYear, overwrite=True)
+                    transit_assign(period, transit_assign_scen, data_table_name=scenarioYear,
+                                   num_processors=num_processors)
                 omx_file = _join(output_dir, "transit_skims.omx")
                 export_transit_skims(omx_file, periods, transit_scenario, big_to_zero=True)
 
