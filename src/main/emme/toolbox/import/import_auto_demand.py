@@ -29,7 +29,8 @@
 #    output/autoInternalExternalTrips_pp_vot.omx
 #    output/autoVisitorTrips_pp_vot.omx
 #    output/autoCrossBorderTrips_pp_vot.omx
-#    output/autoAirportTrips_pp_vot.omx
+#    output/autoAirportTrips.SAN_pp_vot.omx
+#    output/autoAirportTrips.CDX_pp_vot.omx (if they exist)
 #    output/autoTrips_pp_vot.omx
 #    output/TripMatrices.csv
 #
@@ -105,7 +106,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         <li>autoInternalExternalTrips_pp.omx</li>
         <li>autoVisitorTrips_pp.omx</li>
         <li>autoCrossBorderTrips_pp.omx</li>
-        <li>autoAirportTrips_pp.omx</li>
+        <li>autoAirportTrips.SAN_pp.omx and autoAirportTrips.CDX_pp.omx</li>
         <li>autoTrips_pp.omx</li>
     </ul>
     As well as one CSV file "TripMatrices.csv" for the commercial vehicle trips.
@@ -171,21 +172,20 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
             ("mf%s_HOV2TOLL%s", "SR2_PAY_%s"),
             ("mf%s_HOV3HOV%s",  "SR3_NOPAY_%s"),
             ("mf%s_HOV3TOLL%s", "SR3_PAY_%s")]
-        omx_file_names = [
-            "Trips", "InternalExternalTrips", "VisitorTrips", 
-            "CrossBorderTrips", "VisitorTrips", "AirportTrips"]
         matrix_names = []
         for vot_bin in ["low", "med", "high"]:
             vot = vot_bin[0].upper()
             for period in periods:
                 for emme_name, omx_name in matrix_name_tmplts:
-                    matrix_names.append((period, vot_bin, emme_name % (period, vot), omx_name % (period)))
-        with gen_utils.OMXManager(self.output_dir, "auto%sTrips_%s_%s.omx") as omx_manager:
+                    matrix_names.append(("_" + period, vot_bin, emme_name % (period, vot), omx_name % (period)))
+        with gen_utils.OMXManager(self.output_dir, "auto%sTrips%s_%s.omx") as omx_manager:
             for period, vot_bin, matrix_name, omx_key in matrix_names:
                 logbook_label = "Import from OMX key %s to matrix %s" % (omx_key, matrix_name)
                 visitor_demand = omx_manager.lookup(("Visitor", period, vot_bin), omx_key)
                 cross_border_demand = omx_manager.lookup(("CrossBorder", period, vot_bin), omx_key)
-                airport_demand = omx_manager.lookup(("Airport", period, vot_bin), omx_key)
+                airport_demand = omx_manager.lookup(("Airport", ".SAN" + period, vot_bin), omx_key)
+                if omx_manager.file_exists(("Airport", ".CBX" + period, vot_bin)):
+                    airport_demand += omx_manager.lookup(("Airport", ".CBX" + period, vot_bin), omx_key)
                 person_demand = omx_manager.lookup(("", period, vot_bin), omx_key)
                 internal_external_demand = omx_manager.lookup(("InternalExternal", period, vot_bin), omx_key)
                 total_ct_ramp_trips = (

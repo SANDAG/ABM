@@ -298,6 +298,11 @@ class OMXManager(object):
             self._omx_files[file_name] = omx_file
         return omx_file[key].read()
         
+    def file_exists(self, name_args):
+        file_name = self._name_tmplt % name_args
+        file_path = os.path.join(self._directory, file_name)
+        return os.path.isfile(file_path)
+
     def zone_list(self, file_name):
         omx_file = self._omx_files[file_name]
         mapping_name = omx_file.listMappings()[0]
