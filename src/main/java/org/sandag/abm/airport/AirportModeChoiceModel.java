@@ -335,12 +335,8 @@ public class AirportModeChoiceModel
             if ((ID <= 5) || (ID % 100) == 0)
                 logger.info("Choosing mode for party " + party.getID());
 
-            if (party.getPurpose() < AirportModelStructure.INTERNAL_PURPOSES) chooseMode(party, dmu);
-            else
-            {
-                party.setArrivalMode((byte) -99);
-                party.setMode((byte) -99);
-            }
+            chooseMode(party, dmu);
+           
         }
     }
 

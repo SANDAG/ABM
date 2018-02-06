@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoAndNonMotorizedSkimsCalculator;
+import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.airport.AirportModelStructure;
 import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.CtrampApplication;
@@ -22,7 +23,8 @@ public class InternalExternalTripModeChoiceModel
 
     private transient Logger                   logger                     = Logger.getLogger("internalExternalModel");
 
-    private AutoAndNonMotorizedSkimsCalculator anm;
+    private AutoTazSkimsCalculator  tazDistanceCalculator;
+
     private McLogsumsCalculator                logsumHelper;
     private InternalExternalModelStructure     modelStructure;
     private TazDataManager                     tazs;
@@ -46,13 +48,21 @@ public class InternalExternalTripModeChoiceModel
      */
     public InternalExternalTripModeChoiceModel(HashMap<String, String> propertyMap,
             InternalExternalModelStructure myModelStructure,
-            InternalExternalDmuFactoryIf dmuFactory, McLogsumsCalculator myLogsumHelper)
+            InternalExternalDmuFactoryIf dmuFactory)
     {
         tazs = TazDataManager.getInstance(propertyMap);
         mgraManager = MgraDataManager.getInstance(propertyMap);
 
         modelStructure = myModelStructure;
-        logsumHelper = myLogsumHelper;
+        
+        tazDistanceCalculator = new AutoTazSkimsCalculator(propertyMap);
+        tazDistanceCalculator.computeTazDistanceArrays();
+        
+        logsumHelper = new McLogsumsCalculator();
+        logsumHelper.setupSkimCalculators(propertyMap);
+        logsumHelper.setTazDistanceSkimArrays(
+                tazDistanceCalculator.getStoredFromTazToAllTazsDistanceSkims(),
+                tazDistanceCalculator.getStoredToTazFromAllTazsDistanceSkims());
 
         SandagModelStructure modelStructure = new SandagModelStructure();
         mcDmuObject = new TripModeChoiceDMU(modelStructure, logger);

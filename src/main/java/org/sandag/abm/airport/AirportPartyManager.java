@@ -30,6 +30,8 @@ public class AirportPartyManager
 
     
     SandagModelStructure   sandagStructure;
+    private String airportCode;
+    
 
     /**
      * Constructor. Reads properties file and opens/stores all probability
@@ -42,6 +44,7 @@ public class AirportPartyManager
     public AirportPartyManager(HashMap<String, String> rbMap, float sampleRate, String airportCode)
     {
         sandagStructure = new SandagModelStructure();
+        this.airportCode = airportCode;
 
         String directory = Util.getStringValueFromPropertyMap(rbMap, "Project.Directory");
         String purposeFile = directory
@@ -56,9 +59,7 @@ public class AirportPartyManager
                 + Util.getStringValueFromPropertyMap(rbMap, "airport."+airportCode+".departureTime.file");
         String arriveFile = directory
                 + Util.getStringValueFromPropertyMap(rbMap, "airport."+airportCode+".arrivalTime.file");
-        String externalFile = directory
-                + Util.getStringValueFromPropertyMap(rbMap, "airport."+airportCode+".externalStation.file");
-
+ 
         // Read the distributions
         setPurposeDistribution(purposeFile);
         sizeDistribution = setDistribution(sizeDistribution, sizeFile);
@@ -320,7 +321,7 @@ public class AirportPartyManager
 
         String directory = Util.getStringValueFromPropertyMap(rbMap, "Project.Directory");
         String fileName = directory
-                + Util.getStringValueFromPropertyMap(rbMap, "airport.output.file");
+                + Util.getStringValueFromPropertyMap(rbMap, "airport."+airportCode+".output.file");
 
         PrintWriter writer = null;
         try
@@ -332,7 +333,8 @@ public class AirportPartyManager
             throw new RuntimeException();
         }
         String headerString = new String(
-                "id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,tripMode,arrivalMode,boardingTAP,alightingTAP,set,valueOfTime\n");
+                "id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,originTAZ,"
+                + "destinationTAZ,tripMode,arrivalMode,boardingTAP,alightingTAP,set,valueOfTime\n");
         writer.print(headerString);
 
         // Iterate through the array, printing records to the file
@@ -343,7 +345,9 @@ public class AirportPartyManager
                     + parties[i].getPurpose() + "," + parties[i].getSize() + ","
                     + parties[i].getIncome() + "," + parties[i].getNights() + ","
                     + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
-                    + parties[i].getDestinationMGRA() + "," + parties[i].getMode() + ","
+                    + parties[i].getDestinationMGRA() + "," 
+                    + parties[i].getOriginTAZ() + "," + parties[i].getDestinationTAZ() + ","
+                    + parties[i].getMode() + ","
                     + parties[i].getArrivalMode() + "," + parties[i].getBoardTap() + "," + 
                     + parties[i].getAlightTap() + "," + parties[i].getSet() + "," + 
                     String.format("%9.2f", parties[i].getValueOfTime()) + "\n");

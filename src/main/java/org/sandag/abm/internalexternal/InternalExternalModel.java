@@ -98,7 +98,7 @@ public class InternalExternalModel
         destChoiceModel.calculateTazProbabilities(dmuFactory);
 
         InternalExternalTripModeChoiceModel tripModeChoiceModel = new InternalExternalTripModeChoiceModel(
-                rbMap, modelStructure, dmuFactory, logsumsCalculator);
+                rbMap, modelStructure, dmuFactory);
 
         // Run models for array of tours
         for (int i = 0; i < tours.length; ++i)

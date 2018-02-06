@@ -470,21 +470,28 @@ public class AirportDestChoiceModel
             int purpose = party.getPurpose();
             double random = party.getRandom();
             int mgra = -99;
-            if (purpose < AirportModelStructure.INTERNAL_PURPOSES)
+            if (purpose < AirportModelStructure.INTERNAL_PURPOSES){
                 mgra = chooseMGRA(purpose, income, random);
 
-            // if this is a departing travel party, the origin is the chosen
-            // mgra, and the destination is the airport terminal
-            if (party.getDirection() == AirportModelStructure.DEPARTURE)
-            {
-                party.setOriginMGRA(mgra);
-                party.setDestinationMGRA(airportMgra);
-            } else
-            {
-                party.setOriginMGRA(airportMgra);
-                party.setDestinationMGRA(mgra);
-            }
+                // if this is a departing travel party, the origin is the chosen
+                // mgra, and the destination is the airport terminal
+                if (party.getDirection() == AirportModelStructure.DEPARTURE)
+                {
+                	party.setOriginMGRA(mgra);
+                	party.setOriginTAZ(mgraManager.getTaz(mgra));
+                	party.setDestinationMGRA(airportMgra);
+                	party.setDestinationTAZ(airportTaz);
+                } else
+                {
+                	party.setOriginMGRA(airportMgra);
+                	party.setOriginTAZ(airportTaz);
+                	party.setDestinationMGRA(mgra);
+                	party.setDestinationTAZ(mgraManager.getTaz(mgra));
+                }
 
+            }else{
+            	chooseExternalStation(party, random);
+            }
         }
     }
     /**
@@ -526,7 +533,13 @@ public class AirportDestChoiceModel
 
    }
     
-    
+    /**
+     * Choose an external TAZ and associated MAZ for the tour if it is external. The 
+     * probabilities are in the external station file.
+     * 
+     * @param airportParty The airport party
+     * @param randomNumber A uniform random number
+     */
     private void chooseExternalStation(AirportParty airportParty, double randomNumber){
     	
     	double cumProb=0;
@@ -555,9 +568,12 @@ public class AirportDestChoiceModel
     			
     		}
     		
-    		
     	}
-    	
+    	if(taz==-1||maz==-1){
+    		logger.fatal("Error: could not find external destination for airport tour");
+    		logger.fatal("Make sure probabilities add up to 1.0 in external station file");
+    		throw new RuntimeException();
+    	}
     	
     }
     

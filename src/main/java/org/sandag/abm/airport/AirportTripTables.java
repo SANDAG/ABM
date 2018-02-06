@@ -332,9 +332,6 @@ public class AirportTripTables
 
             int purpose = (int) tripData.getValueAt(i, "purpose");
 
-            // skip external trips
-            if (purpose == 4) continue;
-
             int departTime = (int) tripData.getValueAt(i, "departTime");
             int period = modelStructure.getModelPeriodIndex(departTime);
             if (period != timePeriod) continue;
@@ -342,12 +339,10 @@ public class AirportTripTables
             //value of time
             float valueOfTime = tripData.getValueAt(i,valueOfTimeCol);
 
-            int originMGRA = (int) tripData.getValueAt(i, "originMgra");
-            int destinationMGRA = (int) tripData.getValueAt(i, "destinationMgra");
             int tripMode = (int) tripData.getValueAt(i, "tripMode");
 
-            int originTAZ = mgraManager.getTaz(originMGRA);
-            int destinationTAZ = mgraManager.getTaz(destinationMGRA);
+            int originTAZ = (int)tripData.getValueAt(i,"originTaz");
+            int destinationTAZ = (int)tripData.getValueAt(i,"destinationTaz");
             int inbound = (int) tripData.getValueAt(i, "direction");
 
             // get access mode
@@ -608,7 +603,6 @@ public class AirportTripTables
         } else propertiesFile = args[0];
 
         pMap = ResourceUtil.getResourceBundleAsHashMap(propertiesFile);
-        AirportTripTables tripTables = new AirportTripTables(pMap, airportCode);
         
         float sampleRate = 1.0f;
         int iteration = 1;
@@ -629,6 +623,7 @@ public class AirportTripTables
             }
        }
         
+        AirportTripTables tripTables = new AirportTripTables(pMap, airportCode);
         logger.info("Airport Model Trip Table:"+String.format("-sampleRate %.4f.", sampleRate)+"-iteration  " + iteration+" -airport "+airportCode);
         
         tripTables.setSampleRate(sampleRate);
