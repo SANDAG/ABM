@@ -8,13 +8,13 @@
   DTS:DTSID="{A994A9FA-B5CE-4053-A69C-4E846566131D}"
   DTS:ExecutableType="Microsoft.Package"
   DTS:FailParentOnFailure="True"
-  DTS:LastModifiedProductVersion="14.0.3002.68"
+  DTS:LastModifiedProductVersion="14.0.0800.98"
   DTS:LocaleID="1033"
   DTS:MaxErrorCount="0"
   DTS:ObjectName="13_2_4_skims"
   DTS:PackageType="5"
   DTS:VersionBuild="38"
-  DTS:VersionGUID="{0A1213E7-5792-48A5-B802-C31AB3A307A5}">
+  DTS:VersionGUID="{78C71C98-0399-43E4-8A10-7173FA9A4C7D}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -637,8 +637,8 @@
                   <connections>
                     <connection
                       refId="Package\at_skims\bike_skims\at_skims_1.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="The OLE DB runtime connection used to access the database."
                       name="OleDbConnection" />
                   </connections>
@@ -818,8 +818,8 @@
                   <connections>
                     <connection
                       refId="Package\at_skims\bike_skims\at_skims_2.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="The OLE DB runtime connection used to access the database."
                       name="OleDbConnection" />
                   </connections>
@@ -1591,8 +1591,8 @@ where [refTable].[zone] = ?</property>
                   <connections>
                     <connection
                       refId="Package\at_skims\bike_skims\dest_mgra_geography_lookup.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="Connection manager used to access lookup data."
                       name="OleDbConnection" />
                   </connections>
@@ -1761,8 +1761,8 @@ where [refTable].[zone] = ?</property>
                   <connections>
                     <connection
                       refId="Package\at_skims\bike_skims\dest_taz_geography_lookup.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="Connection manager used to access lookup data."
                       name="OleDbConnection" />
                   </connections>
@@ -1931,8 +1931,8 @@ where [refTable].[zone] = ?</property>
                   <connections>
                     <connection
                       refId="Package\at_skims\bike_skims\orig_mgra_geography_lookup.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="Connection manager used to access lookup data."
                       name="OleDbConnection" />
                   </connections>
@@ -2101,8 +2101,8 @@ where [refTable].[zone] = ?</property>
                   <connections>
                     <connection
                       refId="Package\at_skims\bike_skims\orig_taz_geography_lookup.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="Connection manager used to access lookup data."
                       name="OleDbConnection" />
                   </connections>
@@ -2271,8 +2271,8 @@ where [refTable].[time_period_number] = ?</property>
                   <connections>
                     <connection
                       refId="Package\at_skims\bike_skims\time_period_lookup_1.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="Connection manager used to access lookup data."
                       name="OleDbConnection" />
                   </connections>
@@ -2441,8 +2441,8 @@ where [refTable].[time_period_number] = ?</property>
                   <connections>
                     <connection
                       refId="Package\at_skims\bike_skims\time_period_lookup_2.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="Connection manager used to access lookup data."
                       name="OleDbConnection" />
                   </connections>
@@ -2804,8 +2804,8 @@ where [refTable].[zone] = ?</property>
                   <connections>
                     <connection
                       refId="Package\at_skims\walk_time\dest_geography_lookup.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="Connection manager used to access lookup data."
                       name="OleDbConnection" />
                   </connections>
@@ -2974,8 +2974,8 @@ where [refTable].[zone] = ?</property>
                   <connections>
                     <connection
                       refId="Package\at_skims\walk_time\orig_geography_lookup.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="Connection manager used to access lookup data."
                       name="OleDbConnection" />
                   </connections>
@@ -3144,8 +3144,8 @@ where [refTable].[time_period_number] = ?</property>
                   <connections>
                     <connection
                       refId="Package\at_skims\walk_time\time_period_lookup.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="Connection manager used to access lookup data."
                       name="OleDbConnection" />
                   </connections>
@@ -3489,8 +3489,8 @@ where [refTable].[time_period_number] = ?</property>
                   <connections>
                     <connection
                       refId="Package\at_skims\walk_time\walk_access.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="The OLE DB runtime connection used to access the database."
                       name="OleDbConnection" />
                   </connections>
@@ -3617,7 +3617,7 @@ where [refTable].[time_period_number] = ?</property>
                   contactInfo="Executes a custom script.;Microsoft Corporation; Microsoft SqlServer v10; © 2007 Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
                   description="Executes a custom script."
                   name="wide_to_long"
-                  version="11">
+                  version="9">
                   <properties>
                     <property
                       dataType="System.String"
@@ -3829,7 +3829,7 @@ End Class
     <OutputPath>bin\</OutputPath>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
+    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
   </PropertyGroup>
   <!-- This section defines properties that are set when the "Release" configuration is
        selected.
@@ -3850,7 +3850,7 @@ End Class
     <OutputPath>bin\</OutputPath>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
+    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
   </PropertyGroup>
   <!-- This section enables pre- and post-build steps. However,
        it is recommended that MSBuild tasks be used instead of these properties.
@@ -4188,7 +4188,7 @@ End Class
 		<msb:CodeName>sc_c54663b5eb5545cc84c742c6032d4625</msb:CodeName>
 		<msb:Language>msBuild</msb:Language>
 		<msb:DisplayName>sc_c54663b5eb5545cc84c742c6032d4625</msb:DisplayName>
-		<msb:ProjectId>{6CFDA517-CD98-4B71-A68C-3B68F0C88DC7}</msb:ProjectId>
+		<msb:ProjectId>{601C073D-8F28-4478-8E6B-7C43C274062F}</msb:ProjectId>
 	</msb:PropertyGroup>
 	<msb:ItemGroup>
 		<msb:Project Include="sc_c54663b5eb5545cc84c742c6032d4625.vbproj"/>
@@ -4450,14 +4450,14 @@ End Namespace
                         <arrayElement
                           dataType="System.String"><![CDATA[TVqQAAMAAAAEAAAA//8AALgAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAgAAAAA4fug4AtAnNIbgBTM0hVGhpcyBwcm9ncmFtIGNhbm5vdCBiZSBydW4gaW4gRE9TIG1v
-ZGUuDQ0KJAAAAAAAAABQRQAATAEDAOXQcFoAAAAAAAAAAOAAIiALAVAAACQAAAAIAAAAAAAAMkMA
+ZGUuDQ0KJAAAAAAAAABQRQAATAEDADH/eVoAAAAAAAAAAOAAIiALAVAAACYAAAAIAAAAAAAAakQA
 AAAgAAAAYAAAAAAAEAAgAAAAAgAABAAAAAAAAAAGAAAAAAAAAACgAAAAAgAAAAAAAAMAYIUAABAA
-ABAAAAAAEAAAEAAAAAAAABAAAAAAAAAAAAAAAOBCAABPAAAAAGAAAGgEAAAAAAAAAAAAAAAAAAAA
-AAAAAIAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAIAAACAAAAAAAAAAAAAAACCAAAEgAAAAAAAAAAAAAAC50ZXh0AAAAOCMAAAAgAAAAJAAAAAIA
-AAAAAAAAAAAAAAAAACAAAGAucnNyYwAAAGgEAAAAYAAAAAYAAAAmAAAAAAAAAAAAAAAAAABAAABA
-LnJlbG9jAAAMAAAAAIAAAAACAAAALAAAAAAAAAAAAAAAAAAAQAAAQgAAAAAAAAAAAAAAAAAAAAAU
-QwAAAAAAAEgAAAACAAUAYCUAAMgcAAABAAAAAAAAAChCAAC4AAAAAAAAAAAAAAAAAAAAAAAAAAAA
+ABAAAAAAEAAAEAAAAAAAABAAAAAAAAAAAAAAABhEAABPAAAAAGAAAGgEAAAAAAAAAAAAAAAAAAAA
+AAAAAIAAAAwAAADgQgAAHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAIAAACAAAAAAAAAAAAAAACCAAAEgAAAAAAAAAAAAAAC50ZXh0AAAAcCQAAAAgAAAAJgAAAAIA
+AAAAAAAAAAAAAAAAACAAAGAucnNyYwAAAGgEAAAAYAAAAAYAAAAoAAAAAAAAAAAAAAAAAABAAABA
+LnJlbG9jAAAMAAAAAIAAAAACAAAALgAAAAAAAAAAAAAAAAAAQAAAQgAAAAAAAAAAAAAAAAAAAABM
+RAAAAAAAAEgAAAACAAUAYCUAAMgcAAABAAAAAAAAAChCAAC4AAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAB4CKBgAAAoqHgIoGQAACiqmcxoAAAqAAQAABHMbAAAKgAIA
 AARzHAAACoADAAAEcx0AAAqABAAABCoufgEAAARvHgAACioufgIAAARvHwAACioufgMAAARvIAAA
 CioufgQAAARvIQAACioeAigiAAAKKq5+BQAABC0ecgEAAHDQBQAAAigjAAAKbyQAAApzJQAACoAF
@@ -4591,8 +4591,8 @@ NDJjNjAzMmQ0NjI1LnZicHJvai5NeQBnZXRfQXNzZW1ibHkAAAAxTQB5AC4AUgBlAHMAbwB1AHIA
 YwBlAHMALgBNAHkAUgBlAHMAbwB1AHIAYwBlAHMAAICbSQBzAE4AdQBsAGwAIABwAHIAbwBwAGUA
 cgB0AHkAIABjAGEAbgBuAG8AdAAgAGIAZQAgAHMAZQB0ACAAdABvACAARgBhAGwAcwBlAC4AIABB
 AHMAcwBpAGcAbgAgAGEAIAB2AGEAbAB1AGUAIAB0AG8AIAB0AGgAZQAgAGMAbwBsAHUAbQBuACAA
-aQBuAHMAdABlAGEAZAAuAAAPSQBuAHAAdQB0ACAAMAAAEU8AdQB0AHAAdQB0ACAAMAAAAACi7Ka4
-KT1eSKJ6VpZ/djuaAAQgAQEIAyAAAQUgAQEREQQgAQEOBCABAQIFIAIBDg4FIAEBEUUHIAQBDg4O
+aQBuAHMAdABlAGEAZAAuAAAPSQBuAHAAdQB0ACAAMAAAEU8AdQB0AHAAdQB0ACAAMAAAAACILEpX
+eZnmSrLhz9UBAKfEAAQgAQEIAyAAAQUgAQEREQQgAQEOBCABAQIFIAIBDg4FIAEBEUUHIAQBDg4O
 DgYVEjgBEgwGFRI4ARIIBhUSOAESZQYVEjgBEjQEIAATAAcAARJtEYClBSAAEoCpByACAQ4SgKkL
 IAMBEoCFHQgSgIkEBhKAhQMGHQgEIAEGCAQgAQIIBiABEYCNCAMHAQIDIAACBSACAQgcByACAg4R
 gL0FIAEdCAgEBwIICAcAAggSgIkOBwcDHQ0IEhwGAAENEYCNBCABAQ0EAAEcHAQAAQEcBCABAhwD
@@ -4613,39 +4613,48 @@ bmNlX18AAAAQAQALTXkuQ29tcHV0ZXIAABMBAA5NeS5BcHBsaWNhdGlvbgAADAEAB015LlVzZXIA
 ABMBAA5NeS5XZWJTZXJ2aWNlcwAAALQAAADOyu++AQAAAJEAAABsU3lzdGVtLlJlc291cmNlcy5S
 ZXNvdXJjZVJlYWRlciwgbXNjb3JsaWIsIFZlcnNpb249NC4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFs
 LCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5I1N5c3RlbS5SZXNvdXJjZXMuUnVudGlt
-ZVJlc291cmNlU2V0AgAAAAAAAAAAAAAAUEFEUEFEULQAAAAIQwAAAAAAAAAAAAAiQwAAACAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAFEMAAAAAAAAAAAAAAABfQ29yRGxsTWFpbgBtc2NvcmVlLmRsbAAA
-AAAA/yUAIAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+ZVJlc291cmNlU2V0AgAAAAAAAAAAAAAAUEFEUEFEULQAAAAAAAAAAAAAAAAAAAACAAAAHAEAAPxC
+AAD8JAAAUlNEUwAAAAAAAAAAAAAAAAAAAAABAAAAQzpcVXNlcnNcZ3NjXEFwcERhdGFcTG9jYWxc
+VGVtcFx2c3RhXGI3ZTM5Njk2MTdiYzQ5NmFiOTM0NzM5M2MyYWI1MGFiXG9ialxSZWxlYXNlXFND
+XzkzQjE1RkY3MThBRjREM0JBODI2QTk0NzZGNzNCQzczLnBkYgAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAEAAA
-ABgAAIAAAAAAAAAAAAAAAAAAAAEAAQAAADAAAIAAAAAAAAAAAAAAAAAAAAEAAAAAAEgAAABYYAAA
-DAQAAAAAAAAAAAAADAQ0AAAAVgBTAF8AVgBFAFIAUwBJAE8ATgBfAEkATgBGAE8AAAAAAL0E7/4A
-AAEAAAABAAAAAAAAAAEAAAAAAD8AAAAAAAAABAAAAAIAAAAAAAAAAAAAAAAAAABEAAAAAQBWAGEA
-cgBGAGkAbABlAEkAbgBmAG8AAAAAACQABAAAAFQAcgBhAG4AcwBsAGEAdABpAG8AbgAAAAAAAACw
-BGwDAAABAFMAdAByAGkAbgBnAEYAaQBsAGUASQBuAGYAbwAAAEgDAAABADAAMAAwADAAMAA0AGIA
-MAAAABoAAQABAEMAbwBtAG0AZQBuAHQAcwAAAAAAAAAiAAEAAQBDAG8AbQBwAGEAbgB5AE4AYQBt
-AGUAAAAAAAAAAAB+ACsAAQBGAGkAbABlAEQAZQBzAGMAcgBpAHAAdABpAG8AbgAAAAAAUwBDAF8A
-YwA1ADQANgA2ADMAYgA1AGUAYgA1ADUANAA1AGMAYwA4ADQAYwA3ADQAMgBjADYAMAAzADIAZAA0
-ADYAMgA1AC4AdgBiAHAAcgBvAGoAAAAAADAACAABAEYAaQBsAGUAVgBlAHIAcwBpAG8AbgAAAAAA
-MQAuADAALgAwAC4AMAAAAHAAKAABAEkAbgB0AGUAcgBuAGEAbABOAGEAbQBlAAAAUwBDAF8AOQAz
-AEIAMQA1AEYARgA3ADEAOABBAEYANABEADMAQgBBADgAMgA2AEEAOQA0ADcANgBGADcAMwBCAEMA
-NwAzAC4AZABsAGwAAABIABIAAQBMAGUAZwBhAGwAQwBvAHAAeQByAGkAZwBoAHQAAABDAG8AcAB5
-AHIAaQBnAGgAdAAgAEAAIAAgADIAMAAxADQAAAAqAAEAAQBMAGUAZwBhAGwAVAByAGEAZABlAG0A
-YQByAGsAcwAAAAAAAAAAAHgAKAABAE8AcgBpAGcAaQBuAGEAbABGAGkAbABlAG4AYQBtAGUAAABT
-AEMAXwA5ADMAQgAxADUARgBGADcAMQA4AEEARgA0AEQAMwBCAEEAOAAyADYAQQA5ADQANwA2AEYA
-NwAzAEIAQwA3ADMALgBkAGwAbAAAAHYAKwABAFAAcgBvAGQAdQBjAHQATgBhAG0AZQAAAAAAUwBD
-AF8AYwA1ADQANgA2ADMAYgA1AGUAYgA1ADUANAA1AGMAYwA4ADQAYwA3ADQAMgBjADYAMAAzADIA
-ZAA0ADYAMgA1AC4AdgBiAHAAcgBvAGoAAAAAADQACAABAFAAcgBvAGQAdQBjAHQAVgBlAHIAcwBp
-AG8AbgAAADEALgAwAC4AMAAuADAAAAA4AAgAAQBBAHMAcwBlAG0AYgBsAHkAIABWAGUAcgBzAGkA
-bwBuAAAAMQAuADAALgAwAC4AMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAABARAAAAAAAAAAAAABaRAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATEQAAAAAAAAAAAAA
+AABfQ29yRGxsTWFpbgBtc2NvcmVlLmRsbAAAAAAA/yUAIAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAADAAAADQzAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAQAAAA
+GAAAgAAAAAAAAAAAAAAAAAAAAQABAAAAMAAAgAAAAAAAAAAAAAAAAAAAAQAAAAAASAAAAFhgAAAM
+BAAAAAAAAAAAAAAMBDQAAABWAFMAXwBWAEUAUgBTAEkATwBOAF8ASQBOAEYATwAAAAAAvQTv/gAA
+AQAAAAEAAAAAAAAAAQAAAAAAPwAAAAAAAAAEAAAAAgAAAAAAAAAAAAAAAAAAAEQAAAABAFYAYQBy
+AEYAaQBsAGUASQBuAGYAbwAAAAAAJAAEAAAAVAByAGEAbgBzAGwAYQB0AGkAbwBuAAAAAAAAALAE
+bAMAAAEAUwB0AHIAaQBuAGcARgBpAGwAZQBJAG4AZgBvAAAASAMAAAEAMAAwADAAMAAwADQAYgAw
+AAAAGgABAAEAQwBvAG0AbQBlAG4AdABzAAAAAAAAACIAAQABAEMAbwBtAHAAYQBuAHkATgBhAG0A
+ZQAAAAAAAAAAAH4AKwABAEYAaQBsAGUARABlAHMAYwByAGkAcAB0AGkAbwBuAAAAAABTAEMAXwBj
+ADUANAA2ADYAMwBiADUAZQBiADUANQA0ADUAYwBjADgANABjADcANAAyAGMANgAwADMAMgBkADQA
+NgAyADUALgB2AGIAcAByAG8AagAAAAAAMAAIAAEARgBpAGwAZQBWAGUAcgBzAGkAbwBuAAAAAAAx
+AC4AMAAuADAALgAwAAAAcAAoAAEASQBuAHQAZQByAG4AYQBsAE4AYQBtAGUAAABTAEMAXwA5ADMA
+QgAxADUARgBGADcAMQA4AEEARgA0AEQAMwBCAEEAOAAyADYAQQA5ADQANwA2AEYANwAzAEIAQwA3
+ADMALgBkAGwAbAAAAEgAEgABAEwAZQBnAGEAbABDAG8AcAB5AHIAaQBnAGgAdAAAAEMAbwBwAHkA
+cgBpAGcAaAB0ACAAQAAgACAAMgAwADEANAAAACoAAQABAEwAZQBnAGEAbABUAHIAYQBkAGUAbQBh
+AHIAawBzAAAAAAAAAAAAeAAoAAEATwByAGkAZwBpAG4AYQBsAEYAaQBsAGUAbgBhAG0AZQAAAFMA
+QwBfADkAMwBCADEANQBGAEYANwAxADgAQQBGADQARAAzAEIAQQA4ADIANgBBADkANAA3ADYARgA3
+ADMAQgBDADcAMwAuAGQAbABsAAAAdgArAAEAUAByAG8AZAB1AGMAdABOAGEAbQBlAAAAAABTAEMA
+XwBjADUANAA2ADYAMwBiADUAZQBiADUANQA0ADUAYwBjADgANABjADcANAAyAGMANgAwADMAMgBk
+ADQANgAyADUALgB2AGIAcAByAG8AagAAAAAANAAIAAEAUAByAG8AZAB1AGMAdABWAGUAcgBzAGkA
+bwBuAAAAMQAuADAALgAwAC4AMAAAADgACAABAEEAcwBzAGUAbQBiAGwAeQAgAFYAZQByAHMAaQBv
+AG4AAAAxAC4AMAAuADAALgAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAMAAAAbDQAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -4654,7 +4663,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA]]></arrayElement>
                       </arrayElements>
                     </property>
                     <property
@@ -5777,8 +5786,8 @@ where [refTable].[zone] = ?</property>
                   <connections>
                     <connection
                       refId="Package\hwy_skims\taz_skims\dest_geography_lookup_1.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="Connection manager used to access lookup data."
                       name="OleDbConnection" />
                   </connections>
@@ -5947,8 +5956,8 @@ where [refTable].[zone] = ?</property>
                   <connections>
                     <connection
                       refId="Package\hwy_skims\taz_skims\dest_geography_lookup_2.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="Connection manager used to access lookup data."
                       name="OleDbConnection" />
                   </connections>
@@ -6117,8 +6126,8 @@ where [refTable].[zone] = ?</property>
                   <connections>
                     <connection
                       refId="Package\hwy_skims\taz_skims\dest_geography_lookup_3.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="Connection manager used to access lookup data."
                       name="OleDbConnection" />
                   </connections>
@@ -6264,8 +6273,8 @@ where [refTable].[zone] = ?</property>
                   <connections>
                     <connection
                       refId="Package\hwy_skims\taz_skims\hwy_skims_1.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="The OLE DB runtime connection used to access the database."
                       name="OleDbConnection" />
                   </connections>
@@ -6691,8 +6700,8 @@ where [refTable].[zone] = ?</property>
                   <connections>
                     <connection
                       refId="Package\hwy_skims\taz_skims\hwy_skims_2.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="The OLE DB runtime connection used to access the database."
                       name="OleDbConnection" />
                   </connections>
@@ -7118,8 +7127,8 @@ where [refTable].[zone] = ?</property>
                   <connections>
                     <connection
                       refId="Package\hwy_skims\taz_skims\hwy_skims_3.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="The OLE DB runtime connection used to access the database."
                       name="OleDbConnection" />
                   </connections>
@@ -7568,8 +7577,8 @@ where [refTable].[zone] = ?</property>
                   <connections>
                     <connection
                       refId="Package\hwy_skims\taz_skims\orig_geography_lookup_1.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="Connection manager used to access lookup data."
                       name="OleDbConnection" />
                   </connections>
@@ -7738,8 +7747,8 @@ where [refTable].[zone] = ?</property>
                   <connections>
                     <connection
                       refId="Package\hwy_skims\taz_skims\orig_geography_lookup_2.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="Connection manager used to access lookup data."
                       name="OleDbConnection" />
                   </connections>
@@ -7908,8 +7917,8 @@ where [refTable].[zone] = ?</property>
                   <connections>
                     <connection
                       refId="Package\hwy_skims\taz_skims\orig_geography_lookup_3.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="Connection manager used to access lookup data."
                       name="OleDbConnection" />
                   </connections>
@@ -8779,8 +8788,8 @@ where [refTable].[time_period_number] = ?</property>
                   <connections>
                     <connection
                       refId="Package\hwy_skims\taz_skims\time_period_lookup_1.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="Connection manager used to access lookup data."
                       name="OleDbConnection" />
                   </connections>
@@ -8949,8 +8958,8 @@ where [refTable].[time_period_number] = ?</property>
                   <connections>
                     <connection
                       refId="Package\hwy_skims\taz_skims\time_period_lookup_2.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="Connection manager used to access lookup data."
                       name="OleDbConnection" />
                   </connections>
@@ -9119,8 +9128,8 @@ where [refTable].[time_period_number] = ?</property>
                   <connections>
                     <connection
                       refId="Package\hwy_skims\taz_skims\time_period_lookup_3.Connections[OleDbConnection]"
-                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                      connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                      connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                      connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                       description="Connection manager used to access lookup data."
                       name="OleDbConnection" />
                   </connections>

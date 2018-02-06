@@ -4,8 +4,8 @@
     <Configuration>
       <Name>Development</Name>
       <Options>
-        <ServerName>sql2014a8</ServerName>
-        <PathOnServer>/SSISDB/load_abm_13_2_3/abm_load</PathOnServer>
+        <ServerName />
+        <PathOnServer />
         <UserIDs />
         <UserPasswords />
         <OfflineMode>false</OfflineMode>
@@ -14,7 +14,7 @@
           <ConfigurationSetting>
             <Id>LastModifiedTime</Id>
             <Name>LastModifiedTime</Name>
-            <Value xsi:type="xsd:dateTime">2018-01-30T20:16:25.309166Z</Value>
+            <Value xsi:type="xsd:dateTime">2018-02-06T19:21:16.4770376Z</Value>
           </ConfigurationSetting>
         </ParameterConfigurationSensitiveValues>
       </Options>
