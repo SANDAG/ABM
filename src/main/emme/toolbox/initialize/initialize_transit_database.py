@@ -109,9 +109,13 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
         gen_utils.log_snapshot("Initialize transit database", str(self), attributes)
         create_function = _m.Modeller().tool("inro.emme.data.function.create_function")
         build_transit_scen  = _m.Modeller().tool("sandag.assignment.build_transit_scenario")
+        load_properties = _m.Modeller().tool('sandag.utilities.properties')
 
         base_eb = base_scenario.emmebank
         project_dir = os.path.dirname(os.path.dirname(base_eb.path))
+        main_directory = os.path.dirname(project_dir)
+        props = load_properties(os.path.join(main_directory, "conf", "sandag_abm.properties"))
+        scenarioYear = props["scenarioYear"]
 
         transit_db_dir = join(project_dir, "Database_transit")
         transit_db_path = join(transit_db_dir, "emmebank")
@@ -139,8 +143,8 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
         
         zone_scenario = build_transit_scen(
             period="AM", base_scenario=base_scenario, transit_emmebank=transit_eb, 
-            scenario_id=base_scenario.id, 
-            scenario_title="%s transit zones" % (base_scenario.title), overwrite=True)
+            scenario_id=base_scenario.id, scenario_title="%s transit zones" % (base_scenario.title), 
+            data_table_name=scenarioYear, overwrite=True)
         
         for function in base_scenario.emmebank.functions():
             create_function(function.id, function.expression, transit_eb)
