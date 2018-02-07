@@ -114,7 +114,7 @@ Macro "Run SANDAG ABM"
    end
    if skipBikeLogsums = "false" then do
    	  runString = path+"\\bin\\runSandagBikeLogsums.cmd "+drive+" "+path_forward_slash
-	  RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run create AT logsums and walk impedances"+" "+runString})
+	  RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run create bike access files."+" "+runString})
 	  ok = RunMacro("TCB Run Command", 1, "Run AT-Logsums", runString)
 	  if !ok then goto quit  
    end
@@ -126,7 +126,7 @@ Macro "Run SANDAG ABM"
    end
    if skipWalkLogsums = "false" then do
 	  runString = path+"\\bin\\runSandagWalkLogsums.cmd "+drive+" "+path_forward_slash
-	  RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run create AT logsums and walk impedances"+" "+runString})
+	  RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run create walk acess files."+" "+runString})
 	  ok = RunMacro("TCB Run Command", 1, "Run AT-Logsums", runString)
 	  if !ok then goto quit  
    end
@@ -258,7 +258,7 @@ Macro "Run SANDAG ABM"
       // Run airport model, visitor model, cross-border model, internal-external model
       if skipOtherSimulateModel[iteration] = "false" then do
 	      runString = path+"\\bin\\runSandagAbm_SMM.cmd "+drive+" "+path_forward_slash +" "+sample_rate[iteration]+" "+i2s(iteration)
-	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run airport model, visitor model, cross-border model"+" "+runString})
+	      RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run airport, visitor, cross-border, and IE models."+" "+runString})
 	      ok = RunMacro("TCB Run Command", 1, "Run CT-RAMP", runString)
 	      if !ok then goto quit  
       end
