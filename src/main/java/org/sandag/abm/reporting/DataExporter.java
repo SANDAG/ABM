@@ -107,11 +107,11 @@ public final class DataExporter
     }
 
     /**
-     * Takes an input file name, returns a java.io.File created in the output directory
+     * Takes an input file name, returns the path to the directory
      * with that name.
      * 
      * @param The name of the file to create
-     * @return  A new java.io.File in the directory indicated by the report.path property.
+     * @return  The path of the file.
      */
     private String getOutputPath(String file)
     {
@@ -463,7 +463,7 @@ public final class DataExporter
         int[] tripBoardTaz = new int[rowCount];
         int[] tripAlightTaz = new int[rowCount];
         int[] set = new int[rowCount];
-        float[] valueOfTime = new float[rowCount];
+      //  float[] valueOfTime = new float[rowCount];
         
 
         SkimBuilder skimBuilder = new SkimBuilder(properties);
@@ -514,7 +514,7 @@ public final class DataExporter
             tripDepartTime[i] = attributes.getTripStartTime();
             tripBoardTaz[i] = attributes.getTripBoardTaz();
             tripAlightTaz[i] = attributes.getTripAlightTaz();
-            valueOfTime[i] = attributes.getValueOfTime();
+//            valueOfTime[i] = attributes.getValueOfTime();
         }
         table.appendColumn(autoInVehicleTime, "AUTO_IVT");
         table.appendColumn(autoOperatingCost, "AUTO_AOC");
@@ -532,7 +532,7 @@ public final class DataExporter
         table.appendColumn(tripId, "RECID");
         table.appendColumn(tripBoardTaz, "TRIP_BOARD_TAZ");
         table.appendColumn(tripAlightTaz, "TRIP_ALIGHT_TAZ");
-        table.appendColumn(valueOfTime, "VALUE_OF_TIME");
+//        table.appendColumn(valueOfTime, "VALUE_OF_TIME");
     }
 
     private void exportAccessibilities(String outputFileBase)
@@ -1109,9 +1109,9 @@ public final class DataExporter
         Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
         
         if(writeUtilities){
-        	for(int i=1;i<=26;++i)
+        	for(int i=1;i<=12;++i)
         		floatColumns.add("util_"+i); // util_i
-            for(int i=1;i<=26;++i)
+            for(int i=1;i<=12;++i)
             	floatColumns.add("prob_"+i); // prob_i
         }
         if(writeLogsums){
@@ -1188,9 +1188,9 @@ public final class DataExporter
         Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
         
         if(writeUtilities){
-        	for(int i=1;i<=26;++i)
+        	for(int i=1;i<=12;++i)
         		floatColumns.add("util_"+i); // util_i
-            for(int i=1;i<=26;++i)
+            for(int i=1;i<=12;++i)
             	floatColumns.add("prob_"+i); // prob_i
         }
         if(writeLogsums){
@@ -1236,9 +1236,14 @@ public final class DataExporter
         formatList.add(NUMBER_FORMAT_NAME); // trip_mode
         formatList.add(NUMBER_FORMAT_NAME); // trip_board_tap
         formatList.add(NUMBER_FORMAT_NAME); // trip_alight_tap
-        formatList.add(NUMBER_FORMAT_NAME); //set
+        formatList.add(NUMBER_FORMAT_NAME); // set
         formatList.add(NUMBER_FORMAT_NAME); // tour_mode
-        formatList.add(NUMBER_FORMAT_NAME);  // value of time
+        formatList.add(NUMBER_FORMAT_NAME); // driver_pnum
+        formatList.add(NUMBER_FORMAT_NAME); // orig_escort_stoptype
+        formatList.add(NUMBER_FORMAT_NAME); // orig_escortee_pnum
+        formatList.add(NUMBER_FORMAT_NAME); // dest_escort_stoptype
+        formatList.add(NUMBER_FORMAT_NAME); // dest_escortee_pnum
+        formatList.add(NUMBER_FORMAT_NAME); // value of time
         
         if(writeLogsums)
         	formatList.add(NUMBER_FORMAT_NAME);//tripModeLogsum
@@ -1318,7 +1323,7 @@ public final class DataExporter
                 new TripStructureDefinition(8, 9, 6, 7, 11, 12, 14, 15, 13, 18, "JOINT", 4, false, 18, 16));
     }
 
-    private void exportAirportTrips(String outputFileBase)
+    private void exportAirportTripsSAN(String outputFileBase)
     {
     	
     	//id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,tripMode,arrivalMode,boardingTAP,alightingTAP,valueOfTime
@@ -1330,10 +1335,28 @@ public final class DataExporter
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("id"));
         Map<String, String> overridingNames = new HashMap<String, String>();
         // overridingNames.put("id","PARTYID");
-        exportDataGeneric(outputFileBase, "airport.output.file", false, null, floatColumns,
+        exportDataGeneric(outputFileBase, "airport.SAN.output.file", false, null, floatColumns,
                 stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey, overridingNames,
-                new TripStructureDefinition(8, 9, 7, 10, 12, 13, 4, 15, "AIRPORT", "HOME",
-                        "AIRPORT", 2, false, 15, 14));
+                new TripStructureDefinition(8, 9, 7, 12, 14, 15, 4, 17, "AIRPORT", "HOME",
+                        "AIRPORT", 2, false, 17, 16));
+    }
+
+    private void exportAirportTripsCBX(String outputFileBase)
+    {
+    	
+    	//id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,tripMode,arrivalMode,boardingTAP,alightingTAP,valueOfTime
+        addTable(outputFileBase);
+        Set<String> intColumns = new HashSet<String>();
+        Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
+        Set<String> stringColumns = new HashSet<String>();
+        Set<String> bitColumns = new HashSet<String>();
+        Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("id"));
+        Map<String, String> overridingNames = new HashMap<String, String>();
+        // overridingNames.put("id","PARTYID");
+        exportDataGeneric(outputFileBase, "airport.CBX.output.file", false, null, floatColumns,
+                stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey, overridingNames,
+                new TripStructureDefinition(8, 9, 7, 12, 14, 15, 4, 17, "AIRPORT", "HOME",
+                        "AIRPORT", 2, false, 17, 16));
     }
 
     private void exportCrossBorderTourData(String outputFileBase)
@@ -1369,25 +1392,26 @@ public final class DataExporter
     private void exportCrossBorderTripData(String outputFileBase)
     {
         addTable(outputFileBase);
-        String[] formats = {NUMBER_FORMAT_NAME, // tourID
-                NUMBER_FORMAT_NAME, // tripID
-                NUMBER_FORMAT_NAME, // originPurp
-                NUMBER_FORMAT_NAME, // destPurp
-                NUMBER_FORMAT_NAME, // originMGRA
-                NUMBER_FORMAT_NAME, // destinationMGRA
-                NUMBER_FORMAT_NAME, // originTAZ
-                NUMBER_FORMAT_NAME, // destinationTAZ
-                STRING_FORMAT_NAME, // inbound
-                STRING_FORMAT_NAME, // originIsTourDestination
-                STRING_FORMAT_NAME, // destinationIsTourDestination
-                NUMBER_FORMAT_NAME, // period
-                NUMBER_FORMAT_NAME, // tripMode
-                NUMBER_FORMAT_NAME, // boardingTap
-                NUMBER_FORMAT_NAME, // alightingTap
-                NUMBER_FORMAT_NAME, // set
-                NUMBER_FORMAT_NAME, // workTimeFactor
-                NUMBER_FORMAT_NAME, // nonWorkTimeFactor
-                NUMBER_FORMAT_NAME  // valueOfTime
+        String[] formats = {
+        		NUMBER_FORMAT_NAME, // 1 tourID
+                NUMBER_FORMAT_NAME, // 2 tripID
+                NUMBER_FORMAT_NAME, // 3 originPurp
+                NUMBER_FORMAT_NAME, // 4 destPurp
+                NUMBER_FORMAT_NAME, // 5 originMGRA
+                NUMBER_FORMAT_NAME, // 6 destinationMGRA
+                NUMBER_FORMAT_NAME, // 7 originTAZ
+                NUMBER_FORMAT_NAME, // 8 destinationTAZ
+                STRING_FORMAT_NAME, // 9 inbound
+                STRING_FORMAT_NAME, // 10 originIsTourDestination
+                STRING_FORMAT_NAME, // 11 destinationIsTourDestination
+                NUMBER_FORMAT_NAME, // 12 period
+                NUMBER_FORMAT_NAME, // 13 tripMode
+                NUMBER_FORMAT_NAME, // 14 boardingTap
+                NUMBER_FORMAT_NAME, // 15 alightingTap
+                NUMBER_FORMAT_NAME, // 16 set
+                NUMBER_FORMAT_NAME, // 17 workTimeFactor
+                NUMBER_FORMAT_NAME, // 18 nonWorkTimeFactor
+                NUMBER_FORMAT_NAME  // 19 valueOfTime
               };
         Set<String> intColumns = new HashSet<String>();
         Set<String> floatColumns = new HashSet<String>(Arrays.asList("workTimeFactor","nonWorkTimeFactor","valueOfTime"));
@@ -1400,7 +1424,7 @@ public final class DataExporter
         exportDataGeneric(outputFileBase, "crossBorder.trip.output.file", false, formats,
                 floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
                 overridingNames, new TripStructureDefinition(5, 6, 3, 4, 12, 13, 14, 15, -1, 19,
-                        "CB", 9, true, 19, 18));
+                        "CB", 9, true, 19, 16));
     }
 
     private void exportVisitorData(String outputTourFileBase, String outputTripFileBase)
@@ -1434,22 +1458,23 @@ public final class DataExporter
     private void exportVisitorTripData(String outputFileBase, Map<Integer, Integer> tourIdToPartyMap)
     {
         addTable(outputFileBase);
-        String[] formats = {NUMBER_FORMAT_NAME, // tourID
-                NUMBER_FORMAT_NAME, // tripID
-                NUMBER_FORMAT_NAME, // originPurp
-                NUMBER_FORMAT_NAME, // destPurp
-                NUMBER_FORMAT_NAME, // originMGRA
-                NUMBER_FORMAT_NAME, // destinationMGRA
-                STRING_FORMAT_NAME, // inbound
-                STRING_FORMAT_NAME, // originIsTourDestination
-                STRING_FORMAT_NAME, // destinationIsTourDestination
-                NUMBER_FORMAT_NAME, // period
-                NUMBER_FORMAT_NAME, // tripMode
-                NUMBER_FORMAT_NAME, // boardingTap
-                NUMBER_FORMAT_NAME, // alightingTap
-                NUMBER_FORMAT_NAME, // set
-                NUMBER_FORMAT_NAME, // valueOfTime
-                NUMBER_FORMAT_NAME // partySize (added)
+        String[] formats = {
+        		NUMBER_FORMAT_NAME, // 1 tourID
+                NUMBER_FORMAT_NAME, // 2 tripID
+                NUMBER_FORMAT_NAME, // 3 originPurp
+                NUMBER_FORMAT_NAME, // 4 destPurp
+                NUMBER_FORMAT_NAME, // 5 originMGRA
+                NUMBER_FORMAT_NAME, // 6 destinationMGRA
+                STRING_FORMAT_NAME, // 7 inbound
+                STRING_FORMAT_NAME, // 8 originIsTourDestination
+                STRING_FORMAT_NAME, // 9 destinationIsTourDestination
+                NUMBER_FORMAT_NAME, // 10 period
+                NUMBER_FORMAT_NAME, // 11 tripMode
+                NUMBER_FORMAT_NAME, // 12 boardingTap
+                NUMBER_FORMAT_NAME, // 13 alightingTap
+                NUMBER_FORMAT_NAME, // 14 set
+                NUMBER_FORMAT_NAME, // 15 valueOfTime
+                NUMBER_FORMAT_NAME // 16 partySize (added)
         };
         Set<String> intColumns = new HashSet<String>();
         Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
@@ -1457,10 +1482,7 @@ public final class DataExporter
                 "originIsTourDestination", "destinationIsTourDestination"));
         Set<String> bitColumns = new HashSet<String>();
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("tourID", "tripId"));
-        primaryKey = new LinkedHashSet<String>(Arrays.asList("RECID")); // todo:
-                                                                        // temporary
-                                                                        // until
-                                                                        // bugfix
+        primaryKey = new LinkedHashSet<String>(Arrays.asList("RECID")); // todo: temporary until bugfix
         JoinData joinData = new JoinData("tourID");
         joinData.addJoinData(tourIdToPartyMap, FieldType.INT, "partySize");
         exportDataGeneric(
@@ -1482,23 +1504,23 @@ public final class DataExporter
     {
         addTable(outputFileBase);
         String[] formats = {
-        		NUMBER_FORMAT_NAME, // hh_id
-        		NUMBER_FORMAT_NAME, // pnum
-                NUMBER_FORMAT_NAME, // person_id
-                NUMBER_FORMAT_NAME, // tour_id
-        		NUMBER_FORMAT_NAME, // originMGRA
-                NUMBER_FORMAT_NAME, // destinationMGRA
-                NUMBER_FORMAT_NAME, // originTAZ
-                NUMBER_FORMAT_NAME, // destinationTAZ
-                STRING_FORMAT_NAME, // inbound
-                STRING_FORMAT_NAME, // originIsTourDestination
-                STRING_FORMAT_NAME, // destinationIsTourDestination
-                NUMBER_FORMAT_NAME, // period
-                NUMBER_FORMAT_NAME, // tripMode
-                NUMBER_FORMAT_NAME, // boardingTap
-                NUMBER_FORMAT_NAME, // alightingTap
-                NUMBER_FORMAT_NAME, // set
-                NUMBER_FORMAT_NAME  // value of time
+        		NUMBER_FORMAT_NAME, // 1 hh_id
+        		NUMBER_FORMAT_NAME, // 2 pnum
+                NUMBER_FORMAT_NAME, // 3 person_id
+                NUMBER_FORMAT_NAME, // 4 tour_id
+        		NUMBER_FORMAT_NAME, // 5 originMGRA
+                NUMBER_FORMAT_NAME, // 6 destinationMGRA
+                NUMBER_FORMAT_NAME, // 7 originTAZ
+                NUMBER_FORMAT_NAME, // 8 destinationTAZ
+                STRING_FORMAT_NAME, // 9 inbound
+                STRING_FORMAT_NAME, // 10 originIsTourDestination
+                STRING_FORMAT_NAME, // 11 destinationIsTourDestination
+                NUMBER_FORMAT_NAME, // 12 period
+                NUMBER_FORMAT_NAME, // 13 tripMode
+                NUMBER_FORMAT_NAME, // 14 boardingTap
+                NUMBER_FORMAT_NAME, // 15 alightingTap
+                NUMBER_FORMAT_NAME, // 16 set
+                NUMBER_FORMAT_NAME  // 17 value of time
         };
         Set<String> intColumns = new HashSet<String>();
         Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
@@ -1764,100 +1786,131 @@ public final class DataExporter
          }
             
     }
-
+    
     /**
-     * Get a map of all vehicle skims for exporting. Includes both auto and truck skims. Auto skims 
-     * are by VOT
+     * A private helper class to organize skims
      * 
-     * @return A map of auto skim file names.
+     * @author joel.freedman
+     *
      */
-    private Map<String, String> getVehicleSkimFileNameMapping()
-    {
-        Map<String, String> map = new LinkedHashMap<String, String>();
-        
-        String[] votBins = {"low","med","high"};
-        
-        for(int i = 1; i< votBins.length;++i){
-        	map.put("impdat_" + TOD_TOKEN + "_"+votBins[i], "DRIVE_ALONE_TOLL_"+votBins[i].toUpperCase());
-        	map.put("impdan_" + TOD_TOKEN + "_"+votBins[i], "DRIVE_ALONE_FREE_"+votBins[i].toUpperCase());
-        	map.put("imps2th_" + TOD_TOKEN + "_"+votBins[i], "HOV2_TOLL_"+votBins[i].toUpperCase());
-        	map.put("imps2nh_" + TOD_TOKEN + "_"+votBins[i], "HOV2_FREE_"+votBins[i].toUpperCase());
-        	map.put("imps3th_" + TOD_TOKEN + "_"+votBins[i], "HOV3_TOLL_"+votBins[i].toUpperCase());
-        	map.put("imps3nh_" + TOD_TOKEN + "_"+votBins[i], "HOV3_FREE_"+votBins[i].toUpperCase());
-        }
-        
-        //commercial vehicle skims
-        map.put("impcvt_" + TOD_TOKEN, "CV_TOLL");
-        map.put("impcvn_" + TOD_TOKEN, "CV_FREE");
-
-        //light-heavy skims
-        map.put("implhdt_" + TOD_TOKEN, "LH_TOLL");
-        map.put("implhdn_" + TOD_TOKEN, "LH_FREE");
-
-        //medium-heavy skims
-        map.put("impmhdt_" + TOD_TOKEN, "MH_TOLL");
-        map.put("impmhdn_" + TOD_TOKEN, "MH_FREE");
-
-        //heavy-heavy skims
-        map.put("imphhdt_" + TOD_TOKEN, "HH_TOLL");
-        map.put("imphhdn_" + TOD_TOKEN, "HH_FREE");
-
-        return map;
+    private class AutoSkimSet{
+    	
+    	String fileName;
+    	String[] skimNames;
+    	
+    	AutoSkimSet(String fileName, String[] skimNames){
+    		this.fileName = fileName;
+    		this.skimNames = skimNames;
+    	}
     }
 
-    /**
+     /**
      * Return a map containing a number of elements where key is the name of the skim file and 
      * value is the name of a matrix core in the skim file. The map includes length and time for 
      * "free" path skims and length, time and toll for toll skims.
      * 
      * @return The map.
      */
-    private Map<String, String[]> getVehicleSkimFileCoreNameMapping()
-    { // distance,time,cost
-        Map<String, String[]> map = new LinkedHashMap<String, String[]>();
+    private HashMap<String, AutoSkimSet> getVehicleSkimFileCoreNameMapping()
+    { 
+    	HashMap<String,AutoSkimSet> map = new HashMap<String, AutoSkimSet>();
         
-        String[] votBins = {"low","med","high"};
+        String[] votBins = {"L","M","H"};
         
         for(int i = 1; i< votBins.length;++i){
         
-        	map.put("impdat_" + TOD_TOKEN + "_"+votBins[i], new String[] {"Length (Skim)",
-                "*STM_" + TOD_TOKEN + " (Skim)", "dat_" + TOD_TOKEN + " - itoll_" + TOD_TOKEN, "dat - *_TOTREL_"+TOD_TOKEN});
-        	map.put("impdan_" + TOD_TOKEN + "_"+votBins[i], new String[] {"Length (Skim)",
-                "*STM_" + TOD_TOKEN + " (Skim)","dant - *_TOTREL_"+TOD_TOKEN});
-        	map.put("imps2th_" + TOD_TOKEN + "_"+votBins[i], new String[] {"Length (Skim)",
-                "*HTM_" + TOD_TOKEN + " (Skim)", "s2t_" + TOD_TOKEN + " - itoll_" + TOD_TOKEN,"s2th - *_TOTREL_"+TOD_TOKEN});
-        	map.put("imps2nh_" + TOD_TOKEN + "_"+votBins[i], new String[] {"Length (Skim)",
-                "*HTM_" + TOD_TOKEN + " (Skim)","s2nh - *_TOTREL_"+TOD_TOKEN});
-        	map.put("imps3th_" + TOD_TOKEN + "_"+votBins[i], new String[] {"Length (Skim)",
-                "*HTM_" + TOD_TOKEN + " (Skim)", "s3t_" + TOD_TOKEN + " - itoll_" + TOD_TOKEN,"s3th - *_TOTREL_"+TOD_TOKEN});
-        	map.put("imps3nh_" + TOD_TOKEN + "_"+votBins[i], new String[] {"Length (Skim)",
-                "*HTM_" + TOD_TOKEN + " (Skim)","s3nh - *_TOTREL_"+TOD_TOKEN});
+        	// DA Non-Toll
+        	AutoSkimSet SOVGP = new AutoSkimSet("traffic_skims_" + TOD_TOKEN, new String[] {
+        			TOD_TOKEN+"_SOVGP"+votBins[i]+"_DIST",
+                    TOD_TOKEN+"_SOVGP"+votBins[i]+"_TIME", 
+                    TOD_TOKEN+"_SOVGP"+votBins[i]+"_REL"});
+        	map.put("SOVGP"+votBins[i], SOVGP);
+        	
+        	// DA Toll
+        	AutoSkimSet SOVTOLL = new AutoSkimSet("traffic_skims_" + TOD_TOKEN, new String[] {
+        			TOD_TOKEN+"_SOVTOLL"+votBins[i]+"_DIST",
+                    TOD_TOKEN+"_SOVTOLL"+votBins[i]+"_TIME", 
+                    TOD_TOKEN+"_SOVTOLL"+votBins[i]+"_TOLLCOST", 
+                    TOD_TOKEN+"_SOVTOLL"+votBins[i]+"_REL"});
+        	map.put("SOTOLL"+votBins[i], SOVTOLL);
+        	
+        	// S2 Non-Toll
+        	AutoSkimSet HOV2HOV = new AutoSkimSet("traffic_skims_" + TOD_TOKEN, new String[] {
+        			TOD_TOKEN+"_HOV2HOV"+votBins[i]+"_DIST",
+                    TOD_TOKEN+"_HOV2HOV"+votBins[i]+"_TIME", 
+                    TOD_TOKEN+"_HOV2HOV"+votBins[i]+"_REL"});
+        	map.put("HOV2HOV"+votBins[i], HOV2HOV);
+
+        	// S2 Toll
+        	AutoSkimSet HOV2TOLL = new AutoSkimSet("traffic_skims_" + TOD_TOKEN, new String[] {
+        			TOD_TOKEN+"_HOV2TOLL"+votBins[i]+"_DIST",
+                    TOD_TOKEN+"_HOV2TOLL"+votBins[i]+"_TIME", 
+                    TOD_TOKEN+"_HOV2TOLL"+votBins[i]+"_TOLLCOST", 
+                    TOD_TOKEN+"_HOV2TOLL"+votBins[i]+"_REL"});
+           	map.put("HOV2TOLL"+votBins[i], HOV2TOLL);
+
+           	// S3+ Non-Toll
+        	AutoSkimSet HOV3HOV = new AutoSkimSet("traffic_skims_" + TOD_TOKEN, new String[] {
+        			TOD_TOKEN+"_HOV3HOV"+votBins[i]+"_DIST",
+                    TOD_TOKEN+"_HOV3HOV"+votBins[i]+"_TIME", 
+                    TOD_TOKEN+"_HOV3HOV"+votBins[i]+"_REL"});
+           	map.put("HOV3HOV"+votBins[i], HOV3HOV);
+        	
+        	// S3+ Toll
+        	AutoSkimSet HOV3TOLL = new AutoSkimSet("traffic_skims_" + TOD_TOKEN, new String[] {
+        			TOD_TOKEN+"_HOV3TOLL"+votBins[i]+"_DIST",
+                    TOD_TOKEN+"_HOV3TOLL"+votBins[i]+"_TIME", 
+                    TOD_TOKEN+"_HOV3TOLL"+votBins[i]+"_TOLLCOST", 
+                    TOD_TOKEN+"_HOV3TOLL"+votBins[i]+"_REL"});
+           	map.put("HOV3TOLL"+votBins[i], HOV3TOLL);
+         
         }
         
-        map.put("impcvt_" + TOD_TOKEN, new String[] {"Length (Skim)",
-                "*STM_" + TOD_TOKEN + " (Skim)", "cvt - ITOLL2_" + TOD_TOKEN,"cvt - *_TOTREL_"+TOD_TOKEN});
-        map.put("impcvn_" + TOD_TOKEN, new String[] {"Length (Skim)",
-                "*STM_" + TOD_TOKEN + " (Skim)","cvn - *_TOTREL_"+TOD_TOKEN});
+        // Light Truck GP
+        AutoSkimSet TRKLGP = new AutoSkimSet("traffic_skims_" + TOD_TOKEN, new String[] {
+        		TOD_TOKEN+"_TRKLGP_DIST",
+                TOD_TOKEN+"_TRKLGP_TIME"});
+       	map.put("TRKLGP", TRKLGP);
+
+        // Light Truck Toll
+        AutoSkimSet TRKLTOLL = new AutoSkimSet("traffic_skims_" + TOD_TOKEN, new String[] {
+        		TOD_TOKEN+"_TRKLTOLL_DIST",
+                TOD_TOKEN+"_TRKLTOLL_TIME",
+                TOD_TOKEN+"_TRKLTOLL_TOLLCOST"});
+       	map.put("TRKLTOLL", TRKLTOLL);
+        
        
-        map.put("implhdt_" + TOD_TOKEN, new String[] {"Length (Skim)",
-                "*STM_" + TOD_TOKEN + " (Skim)", "lhdt - ITOLL2_" + TOD_TOKEN, "lhdt - *_TOTREL_"+TOD_TOKEN});
-        map.put("implhdn_" + TOD_TOKEN, new String[] {"Length (Skim)",
-                "*STM_" + TOD_TOKEN + " (Skim)","lhdn - *_TOTREL_"+TOD_TOKEN});
+        // Medium Truck GP
+        AutoSkimSet TRKMGP = new AutoSkimSet("traffic_skims_" + TOD_TOKEN, new String[] {
+        		TOD_TOKEN+"_TRKMGP_DIST",
+                TOD_TOKEN+"_TRKMGP_TIME"});
+       	map.put("TRKMGP", TRKMGP);
 
-        map.put("impmhdt_" + TOD_TOKEN, new String[] {"Length (Skim)",
-                "*STM_" + TOD_TOKEN + " (Skim)", "mhdt - ITOLL2_" + TOD_TOKEN, "mhdt - *_TOTREL_"+TOD_TOKEN});
-        map.put("impmhdn_" + TOD_TOKEN, new String[] {"Length (Skim)",
-                "*STM_" + TOD_TOKEN + " (Skim)", "mhdn - *_TOTREL_"+TOD_TOKEN});
+        // Medium Truck Toll
+        AutoSkimSet TRKMTOLL = new AutoSkimSet("traffic_skims_" + TOD_TOKEN, new String[] {
+        		TOD_TOKEN+"_TRKMTOLL_DIST",
+                TOD_TOKEN+"_TRKMTOLL_TIME",
+                TOD_TOKEN+"_TRKMTOLL_TOLLCOST"});
+       	map.put("TRKMTOLL", TRKMTOLL);
+        
+        // Heavy Truck GP
+        AutoSkimSet TRKHGP = new AutoSkimSet("traffic_skims_" + TOD_TOKEN, new String[] {
+        		TOD_TOKEN+"_TRKHGP_DIST",
+                TOD_TOKEN+"_TRKHGP_TIME"});
+       	map.put("TRKHGP", TRKHGP);
 
-        map.put("imphhdt_" + TOD_TOKEN, new String[] {"Length (Skim)",
-                "*STM_" + TOD_TOKEN + " (Skim)", "hhdt - ITOLL2_" + TOD_TOKEN, "hhdt - *_TOTREL_"+TOD_TOKEN});
-        map.put("imphhdn_" + TOD_TOKEN, new String[] {"Length (Skim)",
-                "*STM_" + TOD_TOKEN + " (Skim)", "hhdn - *_TOTREL_"+TOD_TOKEN});
+        // Heavy Truck Toll
+        AutoSkimSet TRKHTOLL = new AutoSkimSet("traffic_skims_" + TOD_TOKEN, new String[] {
+        		TOD_TOKEN+"_TRKHTOLL_DIST",
+                TOD_TOKEN+"_TRKHTOLL_TIME",
+                TOD_TOKEN+"_TRKHTOLL_TOLLCOST"});
+       	map.put("TRKHTOLL", TRKHTOLL);
+        
 
         return map;
     }
-
-    /**
+    
+        /**
      * Export auto skims to the directory using both csv and omx formats. The CSV file will be 
      * written if writeCSV is true. Otherwise OMX files will be written. The OMX files will also
      * contain an auto operating cost matrix.
@@ -1869,17 +1922,17 @@ public final class DataExporter
         addTable(outputFileBase);
         String[] includedTimePeriods = getTimePeriodsForSkims();
         Set<Integer> internalZones = new LinkedHashSet<Integer>();
-
+        String path = properties.getProperty("report.path");
         
         BlockingQueue<CsvRow> queue = new LinkedBlockingQueue<CsvRow>();
         try
         {
-            Map<String, String> vehicleSkimFiles = getVehicleSkimFileNameMapping();
-            Map<String, String[]> vehicleSkimCores = getVehicleSkimFileCoreNameMapping();
-            Set<String> modeNames = new LinkedHashSet<String>();
-            for (String n : vehicleSkimFiles.keySet())
-                modeNames.add(vehicleSkimFiles.get(n));
+
+            Map<String, AutoSkimSet> vehicleSkimCores = getVehicleSkimFileCoreNameMapping();
+
             boolean first = true;
+            
+            ArrayList<String> modeNames = new ArrayList<String>();
 
             for (String period : includedTimePeriods)
             {
@@ -1892,49 +1945,71 @@ public final class DataExporter
                 //iterate through the auto modes
                 for (String key : vehicleSkimCores.keySet())
                 {
-                    String name = vehicleSkimFiles.get(key);
-                    String[] cores = vehicleSkimCores.get(key);
+                   // String name = vehicleSkimFiles.get(key);
+                    AutoSkimSet skimSet = vehicleSkimCores.get(key);
+                    String skimFileName = skimSet.fileName;
+                    String[] inputMatrixNames = skimSet.skimNames;
                     
-                    //need to replace the TOD token with the period name for matrices to output to OMX
-                    String[] outCores = new String[cores.length+1];
-                    for(int i =0; i < (outCores.length-1);++i)
-                    	outCores[i] = cores[i].replace(TOD_TOKEN, period);
+                    // the first skim is always distance. Remove it to get the name of the mode.
+                    modeNames.add(key+"_"+TOD_TOKEN); //store all the modes
                     
-                    //add a label for auto operating cost
-                    outCores[outCores.length-1] = "aoc";
+                    int stdMatrixNumber=-1;
+                    int tollMatrixNumber=-1;
                     
-                    String file = key.replace(TOD_TOKEN, period);
-                    Matrix length = mtxDao.getMatrix(file, cores[0].replace(TOD_TOKEN, period));
-                    Matrix time = mtxDao.getMatrix(file, cores[1].replace(TOD_TOKEN, period));
-                    Matrix std  = mtxDao.getMatrix(file,cores[2].replace(TOD_TOKEN, period));
+                    //need to replace the TOD token with the period name for matrices to output to OMX 
+                    String[] outCores = new String[inputMatrixNames.length+1];
+                    for(int i =0; i < (outCores.length-1);++i){
+                    	outCores[i] = inputMatrixNames[i].replace(TOD_TOKEN, period);
+                    	if(inputMatrixNames[i].contains("REL"))
+                    		stdMatrixNumber=i;
+                    	if(inputMatrixNames[i].contains("TOLLCOST"))
+                    		tollMatrixNumber=i;
+                    }
+                     
+                    skimFileName = skimFileName.replace(TOD_TOKEN,period);
+                    Matrix length = mtxDao.getMatrix(skimFileName+".omx", inputMatrixNames[0].replace(TOD_TOKEN, period));
+                    Matrix time = mtxDao.getMatrix(skimFileName+".omx", inputMatrixNames[1].replace(TOD_TOKEN, period));
                     Matrix aoc = length.multiply(autoOperatingCost);
                     
-                    String outputFileName = getOutputPath(name+"_"+period+".omx");
+                    String aocName = outCores[0].replace("_DIST", "_AOC");
+                    outCores[outCores.length-1] = aocName;
+                    
+                    String outputFileName = path+key+"_"+period+".omx";
+                    
                     MatrixWriter matrixWriter = MatrixWriter.createWriter(MatrixType.OMX, new File(outputFileName));
 
-                    Matrix[] matrices = new Matrix[cores.length+1];
+                    Matrix[] matrices = new Matrix[inputMatrixNames.length+1];
                     matrices[0] = length;
                     matrices[1] = time;
-                    matrices[2] = std;
                     
-                    lengthMatrix.put(name,length);
-                    timeMatrix.put(name, time);
-                    if (cores.length > 3){
-                    	Matrix cost = mtxDao.getMatrix(file, cores[3].replace(TOD_TOKEN, period));
-                        tollMatrix.put(name,cost);
-                        matrices[3] = cost;
-                        matrices[4] = aoc;
-                    }else
-                    	matrices[3] = aoc;
+                    lengthMatrix.put(inputMatrixNames[0],length);
+                    timeMatrix.put(inputMatrixNames[1], time);
+ 
                     
+                    int matrixNumber=2;
+                    if(stdMatrixNumber>-1){
+                    	Matrix std = mtxDao.getMatrix(skimFileName+".omx", inputMatrixNames[stdMatrixNumber].replace(TOD_TOKEN, period));
+                    	matrices[matrixNumber]= std;
+                    	stdMatrix.put(inputMatrixNames[matrixNumber], std);
+                    	++matrixNumber;
+                    }
+                    if(tollMatrixNumber>-1){
+                    	Matrix cost = mtxDao.getMatrix(skimFileName+".omx", inputMatrixNames[tollMatrixNumber].replace(TOD_TOKEN, period));
+                    	matrices[matrixNumber]= cost;
+             
+                    	++matrixNumber;
+                    }
                     
+                    matrices[matrixNumber] = aoc;
+                    
+                    LOGGER.info("Writing "+outCores.length+" skims to file "+outputFileName);
                     matrixWriter.writeMatrices(outCores, matrices);
                    
                     if(writeCSV){
                     	if (internalZones.size() == 0)
                     	{
                     		boolean f = true;
-                    		for (int zone : lengthMatrix.get(name).getExternalColumnNumbers())
+                    		for (int zone : lengthMatrix.get(inputMatrixNames[0]).getExternalColumnNumbers())
                     		{
                     			if (f)
                     			{
@@ -1955,7 +2030,7 @@ public final class DataExporter
                     	orderedData[counter++] = timeMatrix.get(mode);
                     	orderedData[counter++] = stdMatrix.get(mode);
                     	if (tollMatrix.containsKey(mode))
-                        orderedData[counter++] = tollMatrix.get(mode);
+                    		orderedData[counter++] = tollMatrix.get(mode);
                     }
 
                     if (first)
@@ -2352,9 +2427,11 @@ public final class DataExporter
         if (definedTables.contains("jointtours")) dataExporter.exportJointToursData("jointtours");
         if (definedTables.contains("indivtrips")) dataExporter.exportIndivTripData("indivtrips");
         if (definedTables.contains("jointtrips")) dataExporter.exportJointTripData("jointtrips");
-        if (definedTables.contains("airporttrips"))
-            dataExporter.exportAirportTrips("airporttrips");
-        if (definedTables.contains("cbtours")) dataExporter.exportCrossBorderTourData("cbtours");
+        if (definedTables.contains("airporttripssan"))
+            dataExporter.exportAirportTripsSAN("airporttripssan");
+        if (definedTables.contains("airporttripscbx"))
+            dataExporter.exportAirportTripsCBX("airporttripscbx");
+       if (definedTables.contains("cbtours")) dataExporter.exportCrossBorderTourData("cbtours");
         if (definedTables.contains("cbtrips")) dataExporter.exportCrossBorderTripData("cbtrips");
         if (definedTables.contains("visitortours") && definedTables.contains("visitortrips"))
             dataExporter.exportVisitorData("visitortours", "visitortrips");
