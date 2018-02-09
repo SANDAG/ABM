@@ -292,7 +292,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             ("@green_to_cycle",    "green to cycle ratio"),
             ("@capacity_link",     "mid-link capacity"),
             ("@capacity_inter",    "approach capacity"),
-            ("@toll",              "toll cost (cent) w/CPI adjust"),
+            ("@toll",              "toll cost (cent)"),
             ("@lane",              "number of lanes"),
             ("@time_link",         "link time in minutes"),
             ("@time_inter",        "intersection delay time"),
@@ -1010,14 +1010,6 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         for c in network.centroids():
             c["@tap_id"] = c.number
-            
-        # Adjust fare values by CPI adjustment from props (copied from parametersByYears.csv)
-        load_properties = _m.Modeller().tool('sandag.utilities.properties')
-        props = load_properties(_join(_dir(self.source), "conf", "sandag_abm.properties"))
-        cpi_factor = float(props["CPI"])
-        self._log.append({"type": "text", "content": "Adjusting input fares using CPI factor %s" % cpi_factor})
-        for line in network.transit_lines():
-            line["@fare"] = line["@fare"] / cpi_factor
 
         # Special incremental boarding and in-vehicle fares        
         # to recreate the coaster zone fares
@@ -1079,29 +1071,29 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             line = get_line(record["line"])
             line["@fare"] = 0
             for seg in line.segments():
-                seg["@coaster_fare_board"] = record["cost"] / cpi_factor
+                seg["@coaster_fare_board"] = record["cost"]
         for record in special_fares["boarding_cost"].get("stop_increment", []):
             line = get_line(record["line"])
             for seg in line.segments(True):
                 if record["stop"] in seg["#stop_name"]:
-                    seg["@coaster_fare_board"] += record["cost"] / cpi_factor
+                    seg["@coaster_fare_board"] += record["cost"]
                     break
         for record in special_fares["in_vehicle_cost"]:
             line = get_line(record["line"])
             for seg in line.segments(True):
                 if record["from"] in seg["#stop_name"]:
-                    seg["@coaster_fare_inveh"] = record["cost"] / cpi_factor
+                    seg["@coaster_fare_inveh"] = record["cost"]
                     break
-        day_pass = special_fares.get("day_pass")
-        if not day_pass:
-            raise Exception("key 'day_pass' missing from special_fares.txt")
-        regional_pass = special_fares.get("regional_pass")
-        if not regional_pass:
-            raise Exception("key 'regional_pass' missing from special_fares.txt")
-        pass_costs = _np.array([day_pass / cpi_factor, regional_pass / cpi_factor])
+        pass_cost_keys = ['day_pass', 'regional_pass']
+        pass_costs = []
+        for key in pass_cost_keys:
+            cost = special_fares.get(key)
+            if cost is None:
+                raise Exception("key '%s' missing from special_fares.txt" % key)
+            pass_costs.append(cost)
         pass_values = _dt.Data()
-        pass_values.add_attribute(_dt.Attribute("pass_type", _np.array(['day_pass', 'regional_pass']).astype("O")))
-        pass_values.add_attribute(_dt.Attribute("cost", pass_costs.astype("f8")))
+        pass_values.add_attribute(_dt.Attribute("pass_type", _np.array(pass_cost_keys).astype("O")))
+        pass_values.add_attribute(_dt.Attribute("cost", _np.array(pass_costs).astype("f8")))
         gen_utils.DataTableProc("%s_transit_passes" % self.data_table_name, data=pass_values)
         self._log.append({"type": "text", "content": "Calculate derived transit attributes complete"})
         return
@@ -1261,7 +1253,6 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 4: 0.0127692,   # Other, Railway, etc.
             }
         }
-        toll_scale = 1.10084  # fixed inflation (CPI) scaling of toll value from 2016 back to 2010
         for link in network.links():
             # Change SR125 toll speed to 70MPH
             if link["@lane_restriction"] == 4 and link.type == 1:
@@ -1274,7 +1265,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 link["@lane" + time] = link["lane" + src_time]
                 link["@time_link" + time] = link["time_link" + src_time]
                 link["@time_inter" + time] = link["time_inter" + src_time]
-                link["@toll" + time] = link["toll" + src_time] / toll_scale
+                link["@toll" + time] = link["toll" + src_time]
 
             factors = [(3.0/12.0), 1.0, (6.5/12.0), (3.5/3.0), (8.0/12.0)]
             for f, time, src_time in zip(factors, time_periods, src_time_periods):
