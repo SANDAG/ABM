@@ -106,9 +106,12 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         self.num_processors = "MAX-1"
         self.select_link = '[]'
         self.attributes = ["main_directory", "scenario_id", "scenario_title", "emmebank_title", "num_processors", "select_link"]
-        self._properties = None
+        self._properties_loaded = False
 
     def page(self):
+        if not self._properties_loaded and os.path.exists(self.properties_path):
+            self.load_properties()
+            self._properties_loaded = True
         pb = _m.ToolPageBuilder(self)
         pb.title = "Master run ABM"
         pb.description = """Runs the SANDAG ABM, assignments, and other demand model tools."""
@@ -124,7 +127,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         pb.add_text_box('scenario_title', title="Scenario title:", size=80)
         pb.add_text_box('emmebank_title', title="Emmebank title:", size=60)
         dem_utils.add_select_processors("num_processors", pb, self)
-        
+
         # optional username and password input for distributed assignment
         pb.add_html('''
 <div class="t_element">
@@ -144,11 +147,6 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
     </div>
 </div>''' % {"tool_proxy_tag": tool_proxy_tag})
 
-        properties_path = _join(
-            self.main_directory, "conf", "sandag_abm.properties")
-        if os.path.exists(properties_path):
-            self.load_properties()
-            
         # defined in properties utilities
         self.add_properties_interface(pb, disclosure=True)
         # redirect properties file after browse of main_directory

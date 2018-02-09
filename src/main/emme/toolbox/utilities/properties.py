@@ -20,6 +20,7 @@ import traceback as _traceback
 from collections import OrderedDict
 import csv
 import os
+import time
 
 
 class PropertiesSetter(object):
@@ -387,9 +388,13 @@ class Properties(object):
         if os.path.isdir(path):
             path = os.path.join(path, "sandag_abm.properties")
         properties = _properties_lookup.get(os.path.normcase(path), None)
-        return properties or object.__new__(cls, *args, **kwargs)
+        if properties:
+            return properties
+        return object.__new__(cls, *args, **kwargs)
 
     def __init__(self, path="./sandag_abm.properties"):
+        if hasattr(self, "_created"):
+            return
         if os.path.isdir(path):
             path = os.path.join(path, "sandag_abm.properties")
         timestamp = os.path.getmtime(path)
@@ -451,6 +456,8 @@ class Properties(object):
         timestamp = os.path.getmtime(path)
         if timestamp != self._timestamp:
             raise Exception("%s file conflict - edited externally after loading" % path)
+        self["SavedFrom"] = "Emme Modeller properties writer Process ID %s" % os.getpid()
+        self["SavedLast"] = time.strftime("%b-%d-%Y %H:%M:%S")
         with open(path, 'w') as f:
             for key, value in self.iteritems():
                 if isinstance(value, list):
