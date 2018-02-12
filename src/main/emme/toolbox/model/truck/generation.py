@@ -24,7 +24,7 @@
 # Files referenced:
 #    Note: YEAR is replaced by truck.FFyear in the conf/sandag_abm.properties file 
 #    input/TruckTripRates.csv
-#    input/mgra13_based_inputYEAR.csv
+#    file referenced by key mgra.socec.file, e.g. input/mgra13_based_inputYEAR.csv
 #    input/specialGenerators.csv
 #    input_truck/regionalIEtripsYEAR.csv
 #    input_truck/regionalEItripsYEAR.csv
@@ -134,34 +134,25 @@ class TruckGeneration(_m.Tool(), gen_utils.Snapshot):
 
     def truck_standard_generation(self):
         year = self._properties['truck.FFyear']
-
         is_interim_year, prev_year, next_year = self.interim_year_check(year)
+        head, mgra_input_file = os.path.split(self._properties['mgra.socec.file'])
         if is_interim_year:
-            # interpolation for interim year is untested
-            raise Exception("tuck_model.generation: interim year interpolation not tested.")
-        #     households_taz = self.interpolate_table(
-        #         prev_year, year, next_year,
-        #         'hhByTaz_%s' % prev_year,
-        #         'hhByTaz_%s' % year,
-        #         'hhByTaz_%s' % next_year)
-        #     employments_taz = self.interpolate_table(
-        #         prev_year, year, next_year,
-        #         'empByTaz_%s' % prev_year,
-        #         'empByTaz_%s' % year,
-        #         'empByTaz_%s' % next_year)
-            
-        taz = self.create_demographics_by_taz()
+            taz_prev_year = self.create_demographics_by_taz(
+                mgra_input_file.replace(str(year), str(prev_year)))
+            taz_next_year = self.create_demographics_by_taz(
+                mgra_input_file.replace(str(year), str(next_year)))
+            taz = self.interpolate_df(prev_year, year, next_year, taz_prev_year, taz_next_year)
+        else:
+            taz = self.create_demographics_by_taz(mgra_input_file)
 
         trip_rates = pd.read_csv(
             os.path.join(self.input_directory, 'TruckTripRates.csv'))
-
-        taz = pd.merge(
-            taz, trip_rates,
-            left_on='truckregiontype', right_on='RegionType',
-            how='left')
+        taz = pd.merge(taz, trip_rates,
+                       left_on='truckregiontype', right_on='RegionType', how='left')
         taz.fillna(0, inplace=True)
 
-        # Compute lhd truck productions "AGREMPN", "CONEMPN", "RETEMPN", "GOVEMPN", "MANEMPN", "UTLEMPN", "WHSEMPN", "OTHEMPN"}
+        # Compute lhd truck productions "AGREMPN", "CONEMPN", "RETEMPN", "GOVEMPN", 
+        #                               "MANEMPN", "UTLEMPN", "WHSEMPN", "OTHEMPN"
         taz['LHD_Productions'] = \
             (taz['emp_agmin'] + taz['emp_cons']) * taz['TG_L_Ag/Min/Constr'] \
             + taz['emp_retrade'] * taz['TG_L_Retail'] \
@@ -229,19 +220,18 @@ class TruckGeneration(_m.Tool(), gen_utils.Snapshot):
                    'HHD_Productions', 'HHD_Attractions']]
         return taz
 
-
     # Creates households and employments by TAZ.
     # Specific to the truck trip generation model.
     # Inputs:
     #     - sandag.properties
-    #     - input/mgra13_based_input20XX.csv
-    def create_demographics_by_taz(self):
+    #     - input/mgra13_based_input20XX.csv (referenced by mgra.socec.file in properties file)
+    def create_demographics_by_taz(self, mgra_input_file):
         utils = _m.Modeller().module('sandag.utilities.demand')
         dt = _m.Modeller().desktop.project.data_tables()
-        year = self._properties['truck.FFyear']
-        mgra = pd.read_csv(os.path.join(
-            self.input_directory, 'mgra13_based_input%s.csv' % year))
-
+        file_path = os.path.join(self.input_directory, mgra_input_file)
+        if not os.path.exists(file_path):
+            raise Exception("MGRA input file '%s' does not exist" % file_path)
+        mgra = pd.read_csv(file_path)
         # Combine employment fields that match to the truck trip rate classification
         mgra['TOTEMP'] = mgra.emp_total
         mgra['emp_agmin'] = mgra.emp_ag
@@ -281,8 +271,8 @@ class TruckGeneration(_m.Tool(), gen_utils.Snapshot):
         }
 
         mgra = mgra[['truckregiontype', 'emp_agmin', 'emp_cons',
-                           'emp_retrade', 'emp_gov', 'emp_mfg', 'emp_twu',
-                           'emp_whtrade', 'emp_other', 'taz', 'hh']]
+                     'emp_retrade', 'emp_gov', 'emp_mfg', 'emp_twu',
+                     'emp_whtrade', 'emp_other', 'taz', 'hh']]
         taz = mgra.groupby('taz').agg(f)
         taz.reset_index(inplace=True)
         taz.columns = taz.columns.droplevel(-1)
@@ -294,24 +284,18 @@ class TruckGeneration(_m.Tool(), gen_utils.Snapshot):
     # mail to//from airport, cruise ships etc
     # Inputs:
     # - input/specialGenerators.csv
-    # - dataframe: base_trucks (gmTruckDataII.csv)
+    # - dataframe: base_trucks 
     def special_truck_generation(self, base_trucks):
         year = self._properties['truck.FFyear']
-
-        # is_interim_year, prev_year, next_year = self.interim_year_check(year)
-        # if is_interim_year:
-        #     prev_year = prev_year
-        #     next_year = next_year
-        #     spec_gen_prev = self.add_special_truck_PA(prev_year, base_trucks)
-        #     spec_gen_next = self.add_special_truck_PA(next_year, base_trucks)
-        #     special_trucks = self.interpolate_df(prev_year, year, next_year,
-        #                                          spec_gen_prev, spec_gen_next)
-
+        is_interim_year, prev_year, next_year = self.interim_year_check(year)
         spec_gen = pd.read_csv(os.path.join(self.input_directory, 'specialGenerators.csv'))
         spec_gen = pd.merge(spec_gen, base_trucks,
-                            left_on=['TAZ'], right_on=['taz'],
-                            how='outer')
+                            left_on=['TAZ'], right_on=['taz'], how='outer')
         spec_gen.fillna(0, inplace=True)
+        if is_interim_year:
+            year_ratio = float(year - prev_year) / (next_year - prev_year)
+            prev_year, next_year = 'Y%s' % prev_year, 'Y%s' % next_year
+            spec_gen['Y%s' % year] = spec_gen[prev_year] + year_ratio * (spec_gen[next_year] - spec_gen[prev_year])
 
         for t in ['L', 'M', 'H']:
             spec_gen['%sHD_Attr' % t] = spec_gen['%sHD_Attractions' % t] + \
@@ -351,28 +335,22 @@ class TruckGeneration(_m.Tool(), gen_utils.Snapshot):
         year = self._properties['truck.FFyear']
         trips = {}
         regional_trip_types = ['IE', 'EI', 'EE']
-        # is_interim_year, prev_year, next_year = self.interim_year_check(year)
-        # if is_interim_year:
-        #     for t in regional_trip_types:
-        #         prev_trips = pd.read_csv(os.path.join(
-        #             self.input_truck_directory,
-        #             'regional%strips%s.csv' % (t, prev_year)
-        #         ))
-        #         next_trips = pd.read_csv(os.path.join(
-        #             self.input_truck_directory,
-        #             'regional%strips%s.csv' % (t, next_year)
-        #         ))
-        #         trips_df = self.interpolate_df(
-        #             prev_year, year, next_year,
-        #             prev_trips, next_trips
-        #         )
-        #         trips[t] = trips_df
+        is_interim_year, prev_year, next_year = self.interim_year_check(year)
+        if is_interim_year:
+            for t in regional_trip_types:
+                prev_trips = pd.read_csv(os.path.join(
+                    self.input_truck_directory,
+                    'regional%strips%s.csv' % (t, prev_year)))
+                next_trips = pd.read_csv(os.path.join(
+                    self.input_truck_directory,
+                    'regional%strips%s.csv' % (t, next_year)))
+                trips_df = self.interpolate_df(prev_year, year, next_year, prev_trips, next_trips)
+                trips[t] = trips_df
 
         for t in regional_trip_types:
             trips[t] = pd.read_csv(os.path.join(
                 self.input_truck_directory,
-                'regional%strips%s.csv' % (t, year)
-            ))
+                'regional%strips%s.csv' % (t, year)))
         return trips
 
     def balance_internal_truck_PA(self, truck_pa):
@@ -383,7 +361,6 @@ class TruckGeneration(_m.Tool(), gen_utils.Snapshot):
             avg = (s1 + s2)/2.0
             w1 = avg / s1
             w2 = avg / s2
-
             truck_pa['%s_Prod_unbalanced' % t] = truck_pa['%s_Prod' % t]
             truck_pa['%s_Attr_unbalanced' % t] = truck_pa['%s_Attr' % t]
             truck_pa['%s_Prod' % t] = truck_pa['%s_Prod' % t] * w1
@@ -436,7 +413,6 @@ class TruckGeneration(_m.Tool(), gen_utils.Snapshot):
     @_m.logbook_trace('External - external truck matrix')
     def read_external_external_demand(self):
         utils = _m.Modeller().module('sandag.utilities.demand')
-        # TODO: reads the regional truck table a second time
         emmebank = self.scenario.emmebank
         regional_trips = self.get_regional_truck_PA()
         ee = regional_trips['EE']
@@ -446,38 +422,22 @@ class TruckGeneration(_m.Tool(), gen_utils.Snapshot):
             m_ee_data.set(row['fromZone'], row['toZone'], row['EETrucks'])
         m_ee.set_data(m_ee_data, self.scenario)
 
-    # Generates data for the forecast years from years where data is
-    # is available. Interpolates data from the closest previous/ next years.
-    def interpolate_table(self, prev_year, new_year, next_year,
-                          prev_table, new_table_name, next_table):
-        utils = _m.Modeller().module('sandag.utilities.demand')
-        prev_table = utils.table_to_dataframe(prev_table)
-        next_table = utils.table_to_dataframe(next_table)
-        new_df = self.interpolate_df(prev_year, new_year, next_year,
-                                     prev_table, next_table)
-        utils.dataframe_to_table(new_df, new_table_name)
-        return new_df
-
-    def interpolate_df(self, prev_year, new_year, next_year,
-                       prev_year_df, next_year_df):
+    def interpolate_df(self, prev_year, new_year, next_year, prev_year_df, next_year_df):
         current_year_df = pd.DataFrame()
+        year_ratio = float(new_year - prev_year) / (next_year - prev_year)
         for key in prev_year_df.columns:
-            current_year_df[key] = prev_year_df[key] \
-                             + (new_year - prev_year) / (next_year-prev_year) \
-                            * (next_year_df[key] - prev_year_df[key])
+            current_year_df[key] = (
+                prev_year_df[key] + year_ratio * (next_year_df[key] - prev_year_df[key]))
         return current_year_df
 
     def interim_year_check(self, year):
-        year_with_data = self._properties['truck.DFyear']
-
-        if year in year_with_data:
-            return [False, year, year]
-
+        years_with_data = self._properties['truck.DFyear']
+        if year in years_with_data:
+            return (False, year, year)
         else:
-            next_year_idx = np.searchsorted(year_with_data, year)
-            if next_year_idx == 0 or next_year_idx > len(year_with_data):
+            next_year_idx = np.searchsorted(years_with_data, year)
+            if next_year_idx == 0 or next_year_idx > len(years_with_data):
                 raise Exception('Cannot interpolate data for year %s' % year)
-
-            prev_year = year_with_data[next_year_idx - 1]
-            next_year = year_with_data[next_year_idx]
-            return [True, prev_year, next_year]
+            prev_year = years_with_data[next_year_idx - 1]
+            next_year = years_with_data[next_year_idx]
+            return (True, prev_year, next_year)
