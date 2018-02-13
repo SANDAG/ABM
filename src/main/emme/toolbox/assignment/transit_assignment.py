@@ -261,7 +261,6 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 mode_groups["bus"].append((mode_id, fares))
             else:
                 mode_groups["premium"].append((mode_id, fares))
-        print mode_groups
         return mode_groups
         
     def all_modes_journey_levels(self, params, network, day_pass_cost):
