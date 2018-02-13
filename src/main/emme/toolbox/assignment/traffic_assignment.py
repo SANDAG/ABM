@@ -307,115 +307,91 @@ Assign traffic demand for the selected time period."""
                     "name": 'SOVTOLLL', "mode": 'S', "PCE": 1, "VOT": 16.6, "cost": '@cost_auto',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
-                # {   # 2
-                    # "name": 'HOV2GPL', "mode": 's', "PCE": 1, "VOT": 16.6, "cost": '',
-                    # "skims": []  # same as SOV_GP
-                # },
-                {   # 3
+                {   # 2
                     "name": 'HOV2HOVL', "mode": 'h', "PCE": 1, "VOT": 16.6, "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
                 },
-                {   # 4
+                {   # 3
                     "name": 'HOV2TOLLL', "mode": 'H', "PCE": 1, "VOT": 16.6, "cost": '@cost_hov',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
-                # {   # 5
-                    # "name": 'HOV3GPL', "mode": 's', "PCE": 1, "VOT": 16.6, "cost": '',
-                    # "skims": []  # same as SOV_GP
-                # },
-                {   # 6
+                {   # 4
                     "name": 'HOV3HOVL', "mode": 'i', "PCE": 1, "VOT": 16.6, "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
                 },
-                {   # 7
+                {   # 5
                     "name": 'HOV3TOLLL', "mode": 'I', "PCE": 1, "VOT": 16.6, "cost": '@cost_hov',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
-                {   # 8
+                {   # 6
                     "name": 'SOVGPM', "mode": 's', "PCE": 1, "VOT": 33.3, "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "REL"]
                 },
-                {   # 9
+                {   # 7
                     "name": 'SOVTOLLM', "mode": 'S', "PCE": 1, "VOT": 33.3, "cost": '@cost_auto',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
-                # {   # 10
-                    # "name": 'HOV2GPM', "mode": 's', "PCE": 1, "VOT": 33.3, "cost": '',
-                    # "skims": []  # same as SOV_GP
-                # },
-                {   # 11
+                {   # 8
                     "name": 'HOV2HOVM', "mode": 'h', "PCE": 1, "VOT": 33.3, "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
                 },
-                {   # 12
+                {   # 9
                     "name": 'HOV2TOLLM', "mode": 'H', "PCE": 1, "VOT": 33.3, "cost": '@cost_hov',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
-                # {   # 13
-                    # "name": 'HOV3GPM', "mode": 's', "PCE": 1, "VOT": 33.3, "cost": '',
-                    # "skims": []  # same as SOV_GP
-                # },
-                {   # 14
+                {   # 10
                     "name": 'HOV3HOVM', "mode": 'i', "PCE": 1, "VOT": 33.3, "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
                 },
-                {   # 15
+                {   # 11
                     "name": 'HOV3TOLLM', "mode": 'I', "PCE": 1, "VOT": 33.3, "cost": '@cost_hov',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
-                {   # 16
+                {   # 12
                     "name": 'SOVGPH', "mode": 's', "PCE": 1, "VOT": 100., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "REL"]
                 },
-                {   # 17
+                {   # 13
                     "name": 'SOVTOLLH', "mode": 'S', "PCE": 1, "VOT": 100., "cost": '@cost_auto',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
-                # {   # 18
-                    # "name": 'HOV2GPH', "mode": 's', "PCE": 1, "VOT": 100., "cost": '',
-                    # "skims": []  # same as SOV_GP
-                # },
-                {   # 19
+                {   # 14
                     "name": 'HOV2HOVH', "mode": 'h', "PCE": 1, "VOT": 100., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
                 },
-                {   # 20
+                {   # 15
                     "name": 'HOV2TOLLH', "mode": 'H', "PCE": 1, "VOT": 100., "cost": '@cost_hov',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
-                # {   # 21
-                    # "name": 'HOV3GPH', "mode": 's', "PCE": 1, "VOT": 100., "cost": '',
-                    # "skims": []  # same as SOV_GP
-                # },
-                {   # 22
+                {   # 16
                     "name": 'HOV3HOVH', "mode": 'i', "PCE": 1, "VOT": 100., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
                 },
-                {   # 23
+                {   # 17
                     "name": 'HOV3TOLLH', "mode": 'I', "PCE": 1, "VOT": 100., "cost": '@cost_hov',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
-                {   # 24
+                {   # 18
                     "name": 'TRKHGP', "mode": 'v', "PCE": 2.5, "VOT": 89., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST"]
                 },
-                {   # 25
+                {   # 19
                     "name": 'TRKHTOLL',  "mode": 'V', "PCE": 2.5, "VOT": 89., "cost": '@cost_hvy_truck',
                     "skims": ["GENCOST", "TIME", "DIST", "TOLLCOST"]
                 },
-                {   # 26
+                {   # 20
                     "name": 'TRKLGP',    "mode": 't', "PCE": 1.3, "VOT": 67., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST"]
                 },
-                {   # 27
+                {   # 21
                     "name": 'TRKLTOLL',  "mode": 'T', "PCE": 1.3, "VOT": 67., "cost": '@cost_auto',
                     "skims": ["GENCOST", "TIME", "DIST", "TOLLCOST"]
                 },
-                {   # 28
+                {   # 22
                     "name": 'TRKMGP',   "mode": 'm', "PCE": 1.5, "VOT": 68., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST"]
                 },
-                {   # 29
+                {   # 23
                     "name": 'TRKMTOLL', "mode": 'M', "PCE": 1.5, "VOT": 68., "cost": '@cost_med_truck',
                     "skims": ["GENCOST", "TIME", "DIST",  "TOLLCOST"]
                 }
@@ -790,7 +766,7 @@ Assign traffic demand for the selected time period."""
         with _m.logbook_trace("Extract skims for period %s" % period):
             # temp_functions converts to skim-type VDFs
             with temp_functions(emmebank):
-                backup_attributes = {"LINK": ["auto_volume", "auto_time", "additional_volume"]}
+                backup_attributes = {"LINK": ["data2", "auto_volume", "auto_time", "additional_volume"]}
                 with gen_utils.backup_and_restore(scenario, backup_attributes):
                     yield
 
