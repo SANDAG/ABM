@@ -100,14 +100,16 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
     the commercial vehicle demand in CSV format, 
     and adds the demand from the aggregate models for the final
     trip assignments. <br>
-    A total of 25 OMX files are expected, for 5 time periods
-    EA, AM, MD, PM and EVm, with matrices by mode and toll / GP-only:
+    A total of 90 OMX files are expected, for 5 time periods
+    EA, AM, MD, PM and EV, and value-of-time level low, med or high,
+    with internal matrices by SOV, HOV2, HOV3+ and toll access type:
     <ul>
-        <li>autoInternalExternalTrips_pp.omx</li>
-        <li>autoVisitorTrips_pp.omx</li>
-        <li>autoCrossBorderTrips_pp.omx</li>
-        <li>autoAirportTrips.SAN_pp.omx and autoAirportTrips.CDX_pp.omx</li>
-        <li>autoTrips_pp.omx</li>
+        <li>autoInternalExternalTrips_pp_vot.omx</li>
+        <li>autoVisitorTrips_pp_vot.omx</li>
+        <li>autoCrossBorderTrips_pp_vot.omx</li>
+        <li>autoAirportTrips.SAN_pp_vot.omx</li>
+        <li>autoAirportTrips.CDX_pp_vot.omx (optional)</li>
+        <li>autoTrips_pp_vot.omx</li>
     </ul>
     As well as one CSV file "TripMatrices.csv" for the commercial vehicle trips.
     Adds the aggregate demand from the
