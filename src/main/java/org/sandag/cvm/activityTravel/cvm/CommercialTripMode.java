@@ -135,6 +135,7 @@ public class CommercialTripMode extends TripMode implements CodedAlternative , A
 		double tollDisutility = 0;
 		switch (myType) {
 		// FIXME parameterize them in the .CSV file
+		// JEF added check on toll cost and set disutility to -999 if toll cost is not greater than 0\lt 99999
 		case "L:NT":
 			return getMyCM().dispersionParam*(
 					-0.313*noTollTime.getTravelAttribute(origin, destination, timeOfDay, vehicleType)+
@@ -149,14 +150,23 @@ public class CommercialTripMode extends TripMode implements CodedAlternative , A
 					-0.313*noTollTime.getTravelAttribute(origin, destination, timeOfDay, vehicleType)+
 					-0.580*noTollDistance.getTravelAttribute(origin, destination, timeOfDay, vehicleType));
 		case "L:T":
+			double toll = tollCost.getTravelAttribute(origin, destination, timeOfDay, vehicleType);
+			
+			if(toll<0.01 || toll>99999)
+				return -999.0;
+			
 			tollDisutility = 
 			-0.313*tollTime.getTravelAttribute(origin, destination, timeOfDay, vehicleType)+
 			-0.138*tollOptTotalDistance+
-			-0.01 * tollCost.getTravelAttribute(origin, destination, timeOfDay, vehicleType);
+			-0.01 * toll;
 			return getMyCM().dispersionParam * tollDisutility + 
 					getMyCM().portionParam * tollPortion;
 		case "I:T":
 		case "M:T":
+			toll = tollCost.getTravelAttribute(origin, destination, timeOfDay, vehicleType);
+			
+			if(toll<0.01 || toll>99999)
+				return -999.0;
 			tollDisutility = 
 			-0.313*tollTime.getTravelAttribute(origin, destination, timeOfDay, vehicleType)+
 			-0.492*tollOptTotalDistance+
@@ -164,6 +174,11 @@ public class CommercialTripMode extends TripMode implements CodedAlternative , A
 			return getMyCM().dispersionParam * tollDisutility + 
 					getMyCM().portionParam * tollPortion;
 		case "H:T":
+			toll = tollCost.getTravelAttribute(origin, destination, timeOfDay, vehicleType);
+			
+			if(toll<0.01 || toll>99999)
+				return -999.0;
+			
 			tollDisutility = 
 			-0.313*tollTime.getTravelAttribute(origin, destination, timeOfDay, vehicleType)+
 			-0.580*tollOptTotalDistance+

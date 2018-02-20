@@ -825,7 +825,29 @@ public final class TazDataManager
     	return time;
     	
     }
-   /**
+    /**
+     * Get the distance from the TAZ to the TAP in miles.
+     * 
+     * @param taz The origin TAZ
+     * @param tap The destination TAP
+     * @param aMode The access model (PNR or KNR)
+     * @return The distance in miles, or -1 if there isn't an access link from the TAZ to the TAP.
+     */
+    public float getDistanceToTapFromTaz(int taz, int tap, AccessMode aMode){
+    	
+    	int btapPosition = getTapPosition(taz,tap,aMode);
+    	float distance;
+    	
+    	if(btapPosition==-1){
+    		logger.info("Bad tap position for " + (aMode==Modes.AccessMode.PARK_N_RIDE ? "PNR" : "KNR") +" access board tap");
+    		return -1;
+    	}else{
+    		distance = getTapDist(taz,btapPosition,Modes.AccessMode.PARK_N_RIDE);
+    	}
+    	
+    	return distance;
+    	
+    }   /**
      * Returns the max TAZ value
      * 
      * @return the max TAZ value

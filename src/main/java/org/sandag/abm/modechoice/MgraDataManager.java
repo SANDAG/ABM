@@ -131,7 +131,8 @@ public final class MgraDataManager
     private Set<Integer>[]              driveAccessibleTaps;
     private Set<Integer>[]              walkAccessibleTaps;
 
-    private TableDataSet                mgraTableDataSet;
+ 
+	private TableDataSet                mgraTableDataSet;
 
     private HashMap<Integer, Integer>   mgraDataTableMgraRowMap;
 
@@ -675,6 +676,27 @@ public final class MgraDataManager
     		time = (float) (mgraWlkTapsDistArray[mgra][1][tapPosition] * Constants.walkMinutesPerFoot);
     	}
     	return time;
+    }
+    /**
+     * Get the walk distance from an MGRA to a TAP.
+     * 
+     * @param mgra The MGRA
+     * @param tap The TAP
+     * @return The walk distance in miles, else -1 if there is no walk link between the MGRA and the TAP.
+     */
+    public float getWalkDistanceFromMgraToTap(int mgra, int tap){
+    	
+    	int tapPosition = getTapPosition(mgra, tap);
+    	float distance = 0;
+    	
+    	if(tapPosition==-1){
+    		logger.info("Bad Tap Position for Walk Access From MAZ: "+mgra+" to TAP: "+tap);
+    		return -1;
+    	}
+    	else{
+    		distance = (float) (mgraWlkTapsDistArray[mgra][1][tapPosition]/Constants.feetPerMile);
+    	}
+    	return distance;
     }
    /**
      * Get the walk distance from an MGRA to an MGRA. Return 0 if not within
@@ -1512,6 +1534,9 @@ public final class MgraDataManager
 		    }
     	}
     }
+    public TableDataSet getMgraTableDataSet() {
+ 		return mgraTableDataSet;
+ 	}
 
     public static void main(String[] args)
     {

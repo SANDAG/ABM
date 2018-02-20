@@ -164,7 +164,7 @@ public class SkimBuilder
 
     private TripAttributes getTripAttributesUnknown()
     {
-        return new TripAttributes(0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,0);
+        return new TripAttributes(0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,0,0,0,0,0,0,0);
     }
 
     private final float DEFAULT_BIKE_SPEED = 12;
@@ -280,7 +280,7 @@ public class SkimBuilder
                 	distance = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false, logger)[DA_DIST_INDEX];
                 	time = distance * 60 / DEFAULT_WALK_SPEED;
                 }
-                return new TripAttributes(0, 0, 0, 0, 0, 0, 0, 0, time, 0, distance, -1, -1, 0,0);
+                return new TripAttributes(0, 0, 0, 0, 0, 0, 0, 0, time, 0, distance, -1, -1, 0,0,0,0,0,0,0,0);
             }
             case BIKE:
             {
@@ -295,7 +295,7 @@ public class SkimBuilder
                         logger)[DA_DIST_INDEX];
                 	time = distance * 60 / DEFAULT_BIKE_SPEED;
                 }
-                return new TripAttributes(0, 0, 0, 0, 0, 0, 0, 0, 0, time, distance, -1, -1, 0,0);
+                return new TripAttributes(0, 0, 0, 0, 0, 0, 0, 0, 0, time, distance, -1, -1, 0,0,0,0,0,0,0,0);
             }
             case WALK_SET : 
             case PNR_SET : 
@@ -308,13 +308,17 @@ public class SkimBuilder
                 int boardTaz = -1;
                 int alightTaz = -1;
                 double boardAccessTime = 0.0;
-                double alightAccessTime = 0.0;
+                double alightEgressTime = 0.0;
+                double accessDistance = 0.0;
+                double egressDistance = 0.0;
                 int originTaz = mgraManager.getTaz(origin);
                 int destTaz = mgraManager.getTaz(destination);
                 if (isDrive) { 
                     if (!inbound) { //outbound: drive to transit stop at origin, then transit to destination
                         boardAccessTime = tazManager.getTimeToTapFromTaz(originTaz,boardTap,( modeChoice==TripModeChoice.PNR_SET ? Modes.AccessMode.PARK_N_RIDE : Modes.AccessMode.KISS_N_RIDE));
-                        alightAccessTime = mgraManager.getWalkTimeFromMgraToTap(destination,alightTap);
+                        accessDistance = tazManager.getDistanceToTapFromTaz(originTaz,boardTap,( modeChoice==TripModeChoice.PNR_SET ? Modes.AccessMode.PARK_N_RIDE : Modes.AccessMode.KISS_N_RIDE));
+                        alightEgressTime = mgraManager.getWalkTimeFromMgraToTap(destination,alightTap);
+                        egressDistance = mgraManager.getWalkDistanceFromMgraToTap(destination,alightTap);
                         
                         if (boardAccessTime ==-1) {
                             logger.info("Error: TAP not accessible from origin TAZ by "+ (modeChoice==TripModeChoice.PNR_SET ? "PNR" : "KNR" )+" access");
@@ -329,7 +333,7 @@ public class SkimBuilder
                             logger.info("set: " + set);
                         } 
                         
-                        if (alightAccessTime == -1){
+                        if (alightEgressTime == -1){
                             logger.info("Error: TAP not accessible from destination MAZ by walk access");
                             logger.info("mc: " + modeChoice);
                             logger.info("origin MAZ: " + origin);
@@ -342,14 +346,15 @@ public class SkimBuilder
                             logger.info("set: " + set);
                        	
                         }
-                        skims = dtw.getDriveTransitWalkSkims(set,boardAccessTime,alightAccessTime,boardTap,alightTap,tod,false);
-                        walkTime = alightAccessTime;
+                        skims = dtw.getDriveTransitWalkSkims(set,boardAccessTime,alightEgressTime,boardTap,alightTap,tod,false);
+                        walkTime = alightEgressTime;
                         driveTime= boardAccessTime;
                         
                     } else { //inbound: transit from origin to destination, then drive
                         boardAccessTime = mgraManager.getWalkTimeFromMgraToTap(origin,boardTap);
-                        alightAccessTime = tazManager.getTimeToTapFromTaz(destTaz,alightTap,( modeChoice==TripModeChoice.PNR_SET ? Modes.AccessMode.PARK_N_RIDE : Modes.AccessMode.KISS_N_RIDE));
-                        
+                        accessDistance = mgraManager.getWalkDistanceFromMgraToTap(origin,boardTap);
+                        alightEgressTime = tazManager.getTimeToTapFromTaz(destTaz,alightTap,( modeChoice==TripModeChoice.PNR_SET ? Modes.AccessMode.PARK_N_RIDE : Modes.AccessMode.KISS_N_RIDE));
+                        egressDistance = tazManager.getDistanceToTapFromTaz(destTaz,alightTap,( modeChoice==TripModeChoice.PNR_SET ? Modes.AccessMode.PARK_N_RIDE : Modes.AccessMode.KISS_N_RIDE));
                         if (boardAccessTime ==-1) {
                             logger.info("Error: TAP not accessible from origin MAZ by walk access");
                             logger.info("mc: " + modeChoice);
@@ -363,7 +368,7 @@ public class SkimBuilder
                             logger.info("set: " + set);
                         } 
                         
-                        if (alightAccessTime == -1){
+                        if (alightEgressTime == -1){
                             logger.info("Error: TAP not accessible from destination TAZ by "+ (modeChoice==TripModeChoice.PNR_SET ? "PNR" : "KNR" )+" access");
                             logger.info("mc: " + modeChoice);
                             logger.info("origin MAZ: " + origin);
@@ -376,9 +381,9 @@ public class SkimBuilder
                             logger.info("set: " + set);
                        	
                         }
-                   skims = wtd.getWalkTransitDriveSkims(set,boardAccessTime,alightAccessTime,boardTap,alightTap,tod,false);
+                   skims = wtd.getWalkTransitDriveSkims(set,boardAccessTime,alightEgressTime,boardTap,alightTap,tod,false);
                    walkTime = boardAccessTime ;
-                   driveTime= alightAccessTime;
+                   driveTime= alightEgressTime;
                     }
                 } else {
                     int bt = mgraManager.getTapPosition(origin,boardTap);
@@ -397,10 +402,12 @@ public class SkimBuilder
                         logger.info("alight tap position: " + at);
                     } else {
                         boardAccessTime = mgraManager.getMgraToTapWalkTime(origin,bt);
-                        alightAccessTime = mgraManager.getMgraToTapWalkTime(destination,at);
+                        accessDistance = mgraManager.getWalkDistanceFromMgraToTap(origin,boardTap);
+                        alightEgressTime = mgraManager.getMgraToTapWalkTime(destination,at);
+                        egressDistance = mgraManager.getWalkDistanceFromMgraToTap(destination,alightTap);
                     }
-                    walkTime = boardAccessTime + alightAccessTime;
-                    skims = wtw.getWalkTransitWalkSkims(set,boardAccessTime,alightAccessTime,boardTap,alightTap,tod,false);
+                    walkTime = boardAccessTime + alightEgressTime;
+                    skims = wtw.getWalkTransitWalkSkims(set,boardAccessTime,alightEgressTime,boardTap,alightTap,tod,false);
                 }
 
                 double transitInVehicleTime = 0.0;
@@ -415,9 +422,13 @@ public class SkimBuilder
                 walkTime += skims[TRANSIT_SET_EGRESS_TIME_INDEX ];
                 walkTime += skims[TRANSIT_SET_AUX_WALK_TIME_INDEX];
                 
+                double auxiliaryTime = skims[TRANSIT_SET_AUX_WALK_TIME_INDEX];
+                
                 double waitTime = 0.0;
                 waitTime += skims[TRANSIT_SET_FIRST_WAIT_TIME_INDEX];
                 waitTime += skims[TRANSIT_SET_TRANSFER_WAIT_TIME_INDEX];
+                
+                double transfers = skims[TRANSIT_SET_XFERS_INDEX];
                 
                 double transitFare = 0.0;
                 transitFare += skims[TRANSIT_SET_FARE_INDEX];
@@ -431,7 +442,8 @@ public class SkimBuilder
                 */
                 double dist = autoNonMotSkims.getAutoSkims(origin,destination,tod,vot,false,logger)[DA_DIST_INDEX];  //todo: is this correct enough?
                 return new TripAttributes(driveTime, driveTime/60*35*autoOperatingCost, 0, 0,  transitInVehicleTime, 
-                		waitTime, walkTime, transitFare, 0, 0, dist, boardTaz, alightTaz, vot, set);
+                		waitTime, walkTime, transitFare, 0, 0, dist, boardTaz, alightTaz, vot, set,
+                		accessDistance,egressDistance,auxiliaryTime,boardAccessTime,alightEgressTime,transfers);
             }
             default:
                 throw new IllegalStateException("Should not be here: " + modeChoice);
@@ -481,6 +493,12 @@ public class SkimBuilder
         private final int   tripAlightTaz;
         private final int   set;
         private final float valueOfTime;
+        private final float transitAccessDistance;
+        private final float transitEgressDistance;
+        private final float transitAuxiliaryTime;
+        private final float transitAccessTime;
+        private final float transitEgressTime;
+        private final float transitTransfers;
     
         private String      tripModeName;
 
@@ -498,7 +516,8 @@ public class SkimBuilder
 
         public TripAttributes(double autoInVehicleTime, double autoOperatingCost, double autoStandardDeviationTime, double autoTollCost, double transitInVehicleTime, 
         		double transitWaitTime, double transitWalkTime, double transitFare, double walkModeTime, double bikeModeTime, double tripDistance,
-        		int tripBoardTaz, int tripAlightTaz, float valueOfTime, int set)
+        		int tripBoardTaz, int tripAlightTaz, float valueOfTime, int set, double accessDistance,
+        		double egressDistance, double auxiliaryTime, double accessTime,double egressTime, double transfers)
         {
             this.autoInVehicleTime = (float) autoInVehicleTime;
             this.autoOperatingCost = (float)  autoOperatingCost;
@@ -515,6 +534,13 @@ public class SkimBuilder
             this.tripAlightTaz = tripAlightTaz;
             this.set = set;
             this.valueOfTime = valueOfTime;
+            this.transitAccessDistance = (float) accessDistance;
+            this.transitEgressDistance = (float) egressDistance;
+            this.transitAuxiliaryTime = (float) auxiliaryTime;
+            this.transitAccessTime = (float) accessTime;
+            this.transitEgressTime = (float) egressTime;
+            this.transitTransfers = (float) transfers;
+            
         }
 
         /**
@@ -526,7 +552,7 @@ public class SkimBuilder
          */
         public TripAttributes(double autoInVehicleTime, double tripDistance, double autoOperatingCost, double stdDevTime)
         {
-            this(autoInVehicleTime, autoOperatingCost, stdDevTime, 0,0,0,0,0,0,0,tripDistance,-1,-1,0,0);
+            this(autoInVehicleTime, autoOperatingCost, stdDevTime, 0,0,0,0,0,0,0,tripDistance,-1,-1,0,0,0,0,0,0,0,0);
         }
 
         /**
@@ -539,7 +565,7 @@ public class SkimBuilder
          */
         public TripAttributes(double autoInVehicleTime, double tripDistance, double autoOperatingCost, double stdDevTime, double tollCost)
         {
-            this(autoInVehicleTime, autoOperatingCost, stdDevTime, tollCost,0,0,0,0,0,0,tripDistance,-1,-1,0,0);
+            this(autoInVehicleTime, autoOperatingCost, stdDevTime, tollCost,0,0,0,0,0,0,tripDistance,-1,-1,0,0,0,0,0,0,0,0);
         }
        
          
@@ -610,6 +636,34 @@ public class SkimBuilder
 
 		public float getValueOfTime() {
 			return valueOfTime;
+		}
+
+		public int getSet() {
+			return set;
+		}
+
+		public float getTransitAccessDistance() {
+			return transitAccessDistance;
+		}
+
+		public float getTransitEgressDistance() {
+			return transitEgressDistance;
+		}
+
+		public float getTransitAuxiliaryTime() {
+			return transitAuxiliaryTime;
+		}
+
+		public float getTransitAccessTime() {
+			return transitAccessTime;
+		}
+
+		public float getTransitEgressTime() {
+			return transitEgressTime;
+		}
+		
+		public float getTransitTransfers() {
+			return transitTransfers;
 		}
     }
 

@@ -23,7 +23,7 @@
         <client.memory.min>30000m</client.memory.min> 
         <client.memory.max>80000m</client.memory.max>          
         <spmarket.memory.min>30000m</spmarket.memory.min> 
-        <spmarket.memory.max>160000m</spmarket.memory.max>      
+        <spmarket.memory.max>180000m</spmarket.memory.max>      
         <bikelogsum.memory.min>26000m</bikelogsum.memory.min> 
         <bikelogsum.memory.max>50000m</bikelogsum.memory.max>    
         <walklogsum.memory.min>26000m</walklogsum.memory.min> 

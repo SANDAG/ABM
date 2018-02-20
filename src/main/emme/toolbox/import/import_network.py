@@ -1687,7 +1687,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         # freeway fd10
         create_function(
             "fd10", 
-            "(ul1 * (1.0 + 0.8 * put((volau + volad) / ul3) ** 4.0))" 
+            "(ul1 * (1.0 + 0.24 * put((volau + volad) / ul3) ** 5.5))" 
             + reliability_tmplt.format(**parameters["freeway"]),
             emmebank=emmebank)
         # non-freeway link which is not an intersection approach fd11
@@ -1846,7 +1846,7 @@ def revised_headway(headway):
     slope_1 = 1.0     # slope for 1st segment (high frequency) transit
     slope_2 = 0.8     # slope for 2nd segemnt (med frequency)  transit
     slope_3 = 0.7     # slope for 3rd segment (low frequency)  transit
-    slope_4 = 0.2     # slope for 4th segment (very low freq)  transit    
+    slope_4 = 0.5     # slope for 4th segment (very low freq)  transit    
     break_1 = 10      # breakpoint of 1st segment, min 
     break_2 = 20      # breakpoint of 2nd segment, min 
     break_3 = 30      # breakpoint of 3rd segment, min 

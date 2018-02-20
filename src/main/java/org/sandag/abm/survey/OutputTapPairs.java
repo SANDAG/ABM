@@ -10,26 +10,20 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.rmi.RemoteException;
 import java.util.HashMap;
-import java.util.MissingResourceException;
 
 import org.apache.log4j.Logger;
-import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.accessibilities.BestTransitPathCalculator;
 import org.sandag.abm.accessibilities.DriveTransitWalkSkimsCalculator;
-import org.sandag.abm.accessibilities.NonTransitUtilities;
 import org.sandag.abm.accessibilities.WalkTransitDriveSkimsCalculator;
 import org.sandag.abm.accessibilities.WalkTransitWalkSkimsCalculator;
-import org.sandag.abm.airport.AirportModel;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.MatrixDataServer;
 import org.sandag.abm.ctramp.MatrixDataServerRmi;
-import org.sandag.abm.ctramp.McLogsumsCalculator;
-import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
-import org.sandag.abm.modechoice.Modes;
 import org.sandag.abm.modechoice.TazDataManager;
 import org.sandag.abm.modechoice.TransitDriveAccessDMU;
 import org.sandag.abm.modechoice.TransitWalkAccessDMU;
+import org.sandag.abm.modechoice.Modes;
 
 import com.pb.common.calculator.MatrixDataManager;
 import com.pb.common.calculator.MatrixDataServerIf;
@@ -60,17 +54,20 @@ public class OutputTapPairs {
     private TableDataSet inputDataTable;
     private MgraDataManager mgraManager;
     private TazDataManager tazManager;
-
+    private HashMap<Integer,Integer> sequentialMaz;
+    
      protected PrintWriter writer;
     
     
     public OutputTapPairs(HashMap<String, String> propertyMap, String inputFile, String outputFile){
     	this.inputFile = inputFile;
     	this.outputFile = outputFile;
+    	
     	startMatrixServer(propertyMap);
     	initialize(propertyMap);
     }
-
+    
+    
     /**
      * Initialize best path builders.
      * 
@@ -79,18 +76,18 @@ public class OutputTapPairs {
 	public void initialize(HashMap<String, String> propertyMap){
 		
 		logger.info("Initializing OutputTapPairs");
-		
 	    mgraManager = MgraDataManager.getInstance(propertyMap);
 	    tazManager = TazDataManager.getInstance(propertyMap);
 
         bestPathCalculator = new BestTransitPathCalculator(propertyMap);
+
         wtw = new WalkTransitWalkSkimsCalculator(propertyMap);
         wtw.setup(propertyMap, logger, bestPathCalculator);
         wtd = new WalkTransitDriveSkimsCalculator(propertyMap);
         wtd.setup(propertyMap, logger, bestPathCalculator);
         dtw = new DriveTransitWalkSkimsCalculator(propertyMap);
         dtw.setup(propertyMap, logger, bestPathCalculator);
-        
+  
         readData();
         createOutputFile();
 
@@ -131,12 +128,15 @@ public class OutputTapPairs {
             throw new RuntimeException();
         }
         String headerString = new String(
-                "id,npath,accessEgressMode,period,set,boardTap,alightTap,bestUtility,accessTime,egressTime,"
-                + "auxWalkTime,localBusIvt,expressBusIvt,brtIvt,lrtIvt,crIvt,firstWaitTime,trfWaitTime,fare,totalIVT,xfers\n");
+                "rownames,npath,access_mode_recode,period,set,boardTap,alightTap,bestUtility,accessTime,egressTime,auxWalkTime,"
+                + "localBusIvt,expressBusIvt,brtIvt,lrtIvt,crIvt,firstWaitTime,trfWaitTime,fare,totalIVT,xfers\n");
+        
+        
         writer.print(headerString);
 
 	}
 	
+
 	/**
 	 * Iterate through input data and process\write taps.
 	 */
@@ -148,7 +148,6 @@ public class OutputTapPairs {
 		double[] skims = null;
 		double boardAccessTime;
 		double alightAccessTime;
-
 		//iterate through data and calculate
 		for(int row = 1; row<=inputDataTable.getRowCount();++row ){
 		
@@ -156,26 +155,28 @@ public class OutputTapPairs {
 				logger.info("Processing input record "+row);
 			
 			String label=inputDataTable.getStringValueAt(row, "id");
-			int originMaz = (int) inputDataTable.getValueAt(row, "orig_mgra");
-			int destinationMaz = (int) inputDataTable.getValueAt(row, "dest_mgra");
-			int period = (int) inputDataTable.getValueAt(row, "period") - 1; //Input is 1=EA, 2=AM, 3=MD, 4=PM, 5=EV
-			int accessMode = (int) inputDataTable.getValueAt(row, "accessEgress"); //1=WTW, 2=DTW, 3=WTD
-			int inbound = (int) inputDataTable.getValueAt(row, "inbound");
+			int originMaz = (int) inputDataTable.getValueAt(row, "orig_maz");
+			int destinationMaz = (int) inputDataTable.getValueAt(row, "dest_maz");
+			int period = (int) inputDataTable.getValueAt(row, "period")-1; //Input is 1=EA, 2=AM, 3=MD, 4=PM, 5=EV
+			int accessMode = (int) inputDataTable.getValueAt(row, "accessEgress"); // 1 walk, 2 PNR, 3 KNR\bike
+			int inbound = (int) inputDataTable.getValueAt(row, "inbound"); // 1 if inbound, else 0
 			
 			int accessEgressMode = -1;
+			
 			if(accessMode ==1) 
 				accessEgressMode=bestPathCalculator.WTW;
 			else if ((accessMode == 2||accessMode==3) && inbound==0)
 				accessEgressMode = bestPathCalculator.DTW;
 			else if ((accessMode == 2||accessMode==3) && inbound==1)
 				accessEgressMode = bestPathCalculator.WTD;
-					
-			if(originMaz==0||destinationMaz==0||period==0||accessEgressMode==0)
+			
+			if(originMaz==0||destinationMaz==0||accessEgressMode==-1)
 				continue;
-		
+			
+			
 			int originTaz = mgraManager.getTaz(originMaz);
 			int destinationTaz = mgraManager.getTaz(destinationMaz);
-
+		
 			bestTaps = bestPathCalculator.getBestTapPairs(walkDmu, driveDmu, accessEgressMode, originMaz, destinationMaz, period, false, logger);
 			double[] bestUtilities = bestPathCalculator.getBestUtilities();
 			
@@ -214,9 +215,12 @@ public class OutputTapPairs {
 					writer.format(",%9.2f",skims[j]);	
 				
 				writer.format("\n");
-	        }
+			
+			}
 	        writer.flush();
 		}
+
+
 	}
 	
 	/**
@@ -288,7 +292,7 @@ public class OutputTapPairs {
         String propertiesFile = null;
         HashMap<String, String> pMap;
 
-        logger.info(String.format("SANDAG Activity Based Model using CT-RAMP version %s",
+        logger.info(String.format("Best Tap Pairs Program using CT-RAMP version ",
                 CtrampApplication.VERSION));
 
         logger.info(String.format("Outputting TAP pairs and utilities for on-board survey data"));
@@ -320,7 +324,11 @@ public class OutputTapPairs {
         pMap = ResourceUtil.getResourceBundleAsHashMap(propertiesFile);
         OutputTapPairs outputTapPairs = new OutputTapPairs(pMap, inputFile, outputFile);
 
+   
         outputTapPairs.run();
+
+  
+
     
 	}
 	  private void startMatrixServer(HashMap<String, String> properties) {

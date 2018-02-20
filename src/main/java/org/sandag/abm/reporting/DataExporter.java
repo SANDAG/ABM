@@ -362,6 +362,13 @@ public final class DataExporter
             floatColumns.add("TRAN_WAIT");
             floatColumns.add("TRAN_WALK");
             floatColumns.add("TRAN_FARE");
+            floatColumns.add("TRAN_ACCDIST");
+            floatColumns.add("TRAN_EGRDIST");
+            floatColumns.add("TRAN_AUXTIME");
+            floatColumns.add("TRAN_ACCTIME");
+            floatColumns.add("TRAN_EGRTIME");      
+            floatColumns.add("TRAN_TRANSFERS");
+                
             floatColumns.add("WALK_TIME");
             floatColumns.add("BIKE_TIME");
             floatColumns.add("TRIP_DIST");
@@ -462,8 +469,12 @@ public final class DataExporter
         int[] tripDepartTime = new int[rowCount];
         int[] tripBoardTaz = new int[rowCount];
         int[] tripAlightTaz = new int[rowCount];
-        int[] set = new int[rowCount];
-      //  float[] valueOfTime = new float[rowCount];
+        float[] transitAccessDist = new float[rowCount];
+        float[] transitEgressDist = new float[rowCount];
+        float[] transitAuxTime = new float[rowCount];
+        float[] transitAccTime = new float[rowCount];
+        float[] transitEgrTime = new float[rowCount];
+        float[] transitTransfers = new float[rowCount];
         
 
         SkimBuilder skimBuilder = new SkimBuilder(properties);
@@ -498,6 +509,13 @@ public final class DataExporter
             walkModeTime[i] = attributes.getWalkModeTime();
             bikeModeTime[i] = attributes.getBikeModeTime();
             tripDistance[i] = attributes.getTripDistance();
+            transitAccessDist[i] = attributes.getTransitAccessDistance();
+            transitEgressDist[i] = attributes.getTransitEgressDistance();
+            transitAuxTime[i] = attributes.getTransitAuxiliaryTime();
+            transitAccTime[i] = attributes.getTransitAccessTime();
+            transitEgrTime[i] = attributes.getTransitEgressTime();
+            transitTransfers[i] = attributes.getTransitTransfers();
+           
             
             if (hasPurposeColumn)
             {
@@ -514,7 +532,6 @@ public final class DataExporter
             tripDepartTime[i] = attributes.getTripStartTime();
             tripBoardTaz[i] = attributes.getTripBoardTaz();
             tripAlightTaz[i] = attributes.getTripAlightTaz();
-//            valueOfTime[i] = attributes.getValueOfTime();
         }
         table.appendColumn(autoInVehicleTime, "AUTO_IVT");
         table.appendColumn(autoOperatingCost, "AUTO_AOC");
@@ -524,6 +541,13 @@ public final class DataExporter
         table.appendColumn(transitWaitTime, "TRAN_WAIT");
         table.appendColumn(transitWalkTime, "TRAN_WALK");
         table.appendColumn(transitFare, "TRAN_FARE");
+        table.appendColumn(transitAccessDist, "TRAN_ACCDIST");
+        table.appendColumn(transitEgressDist, "TRAN_EGRDIST");
+        table.appendColumn(transitAuxTime, "TRAN_AUXTIME");
+        table.appendColumn(transitAccTime, "TRAN_ACCTIME");
+        table.appendColumn(transitEgrTime, "TRAN_EGRTIME");     
+        table.appendColumn(transitTransfers, "TRAN_TRANSFERS");
+        
         table.appendColumn(walkModeTime, "WALK_TIME");
         table.appendColumn(bikeModeTime, "BIKE_TIME");
         table.appendColumn(tripDistance, "TRIP_DIST");
@@ -532,6 +556,12 @@ public final class DataExporter
         table.appendColumn(tripId, "RECID");
         table.appendColumn(tripBoardTaz, "TRIP_BOARD_TAZ");
         table.appendColumn(tripAlightTaz, "TRIP_ALIGHT_TAZ");
+        
+        
+        
+        
+        
+        
 //        table.appendColumn(valueOfTime, "VALUE_OF_TIME");
     }
 
@@ -2437,11 +2467,11 @@ public final class DataExporter
             dataExporter.exportVisitorData("visitortours", "visitortrips");
         if (definedTables.contains("ietrip"))
             dataExporter.exportInternalExternalTripData("ietrip");
-        if (definedTables.contains("commtrip")) 
-        	if(dataExporter.writeCSV)
-        		dataExporter.exportCommVehData("commtrip");
-        	else
-        		dataExporter.exportCommVehDataToOmx("commtrip");
+        if (definedTables.contains("commtrip")){
+        	CVMExporter cvmExporter = new CVMExporter(properties,mtxDao);
+        	cvmExporter.export();
+        }
+        	
         	
         if (definedTables.contains("trucktrip"))
         {
