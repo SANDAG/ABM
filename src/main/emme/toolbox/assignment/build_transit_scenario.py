@@ -230,7 +230,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
 
             for line in list(network.transit_lines()):
                 # remove the "unavailable" lines in this period
-                if line[params["headway"]] == 0:
+                if line[params["xfer_headway"]] == 0:
                     network.delete_transit_line(line)
                     continue
                 # Adjust fare perception by VOT
@@ -261,7 +261,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
 
             for segment in network.transit_segments():
                 line = segment.line
-                segment["@headway_seg"] = line[params["headway"]]
+                segment["@headway_seg"] = line[params["xfer_headway"]]
                 segment["@transfer_penalty_s"] = line["@transfer_penalty"]
                 segment["@xfer_from_bus"] = line["xfer_from_bus"]
             network.delete_attribute("TRANSIT_LINE", "xfer_from_bus")

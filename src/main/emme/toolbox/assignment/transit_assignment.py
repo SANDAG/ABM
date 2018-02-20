@@ -188,7 +188,8 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "init_wait": 1.6,
                 "xfer_wait": 2.5,
                 "walk": 1.6,
-                "headway": "@headway_rev_op",
+                "init_headway": "@headway_rev_op", 
+                "xfer_headway": "@headway_op",
                 "fare": "@fare_per_op",
                 "in_vehicle": "@vehicle_per_op",
                 "fixed_link_time": "@trtime_link_ea"
@@ -198,7 +199,8 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "init_wait": 1.5,
                 "xfer_wait": 3.0,
                 "walk": 1.8,
-                "headway": "@headway_rev_am",
+                "init_headway": "@headway_rev_am", 
+                "xfer_headway": "@headway_am",
                 "fare": "@fare_per_pk",
                 "in_vehicle": "@vehicle_per_pk",
                 "fixed_link_time": "@trtime_link_am"
@@ -208,7 +210,8 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "init_wait": 1.6,
                 "xfer_wait": 2.5,
                 "walk": 1.6,
-                "headway": "@headway_rev_op",
+                "init_headway": "@headway_rev_op", 
+                "xfer_headway": "@headway_op",
                 "fare": "@fare_per_op",
                 "in_vehicle": "@vehicle_per_op",
                 "fixed_link_time": "@trtime_link_md"
@@ -218,7 +221,8 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "init_wait": 1.5,
                 "xfer_wait": 3.0,
                 "walk": 1.8,
-                "headway": "@headway_rev_pm",
+                "init_headway": "@headway_rev_pm",
+                "xfer_headway": "@headway_pm",
                 "fare": "@fare_per_pk",
                 "in_vehicle": "@vehicle_per_pk",
                 "fixed_link_time": "@trtime_link_pm"
@@ -228,11 +232,12 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "init_wait": 1.6,
                 "xfer_wait": 2.5,
                 "walk": 1.6,
-                "headway": "@headway_rev_op",
+                "init_headway": "@headway_rev_op",
+                "xfer_headway": "@headway_op",
                 "fare": "@fare_per_op",
                 "in_vehicle": "@vehicle_per_op",
                 "fixed_link_time": "@trtime_link_ev"
-            },
+            }
         }
         return perception_parameters[period]
         
@@ -288,7 +293,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "transition_rules": get_transition_rules({"bus": 1, "day_pass": 2, "premium": 3, "coaster": 4}),
                 "boarding_time": {"global": {"penalty": 0, "perception_factor": 1}},
                 "waiting_time": {
-                    "effective_headways": "@headway_seg", "headway_fraction": 0.5,
+                    "effective_headways": params["init_headway"], "headway_fraction": 0.5,
                     "perception_factor": params["init_wait"], "spread_factor": 1.0
                 },
                 "boarding_cost": {
@@ -410,7 +415,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             "modes": [],
             "demand": "",
             "waiting_time": {
-                "effective_headways": "@headway_seg", "headway_fraction": 0.5,
+                "effective_headways": params["init_headway"], "headway_fraction": 0.5,
                 "perception_factor": params["init_wait"], "spread_factor": 1.0
             },
             # Fare attributes
