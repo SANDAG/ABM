@@ -1843,31 +1843,39 @@ class NoPathException(Exception):
 
 def revised_headway(headway):
     # CALCULATE REVISED HEADWAY
-    slope_1 = 1.0     # slope for 1st segment (high frequency) transit
-    slope_2 = 0.8     # slope for 2nd segemnt (med frequency)  transit
-    slope_3 = 0.7     # slope for 3rd segment (low frequency)  transit
-    slope_4 = 0.5     # slope for 4th segment (very low freq)  transit    
-    break_1 = 10      # breakpoint of 1st segment, min 
-    break_2 = 20      # breakpoint of 2nd segment, min 
-    break_3 = 30      # breakpoint of 3rd segment, min 
-    
-    if headway < break_1:
-        rev_headway = headway * slope_1
-    elif headway < break_2:
-        part_1_headway = break_1 * slope_1
-        part_2_headway = (headway - break_1) * slope_2
-        rev_headway = part_1_headway + part_2_headway
-    elif headway < break_3:
-        part_1_headway = break_1 * slope_1
-        part_2_headway = (break_2 - break_1) * slope_2
-        part_3_headway = (headway - break_2) * slope_3
-        rev_headway = part_1_headway + part_2_headway + part_3_headway
+    #slope_1 = 1.0     # slope for 1st segment (high frequency) transit
+    #slope_2 = 0.8     # slope for 2nd segemnt (med frequency)  transit
+    #slope_3 = 0.7     # slope for 3rd segment (low frequency)  transit
+    #slope_4 = 0.5     # slope for 4th segment (very low freq)  transit    
+    #break_1 = 10      # breakpoint of 1st segment, min 
+    #break_2 = 20      # breakpoint of 2nd segment, min 
+    #break_3 = 30      # breakpoint of 3rd segment, min 
+    #
+    #if headway < break_1:
+    #    rev_headway = headway * slope_1
+    #elif headway < break_2:
+    #    part_1_headway = break_1 * slope_1
+    #    part_2_headway = (headway - break_1) * slope_2
+    #    rev_headway = part_1_headway + part_2_headway
+    #elif headway < break_3:
+    #    part_1_headway = break_1 * slope_1
+    #    part_2_headway = (break_2 - break_1) * slope_2
+    #    part_3_headway = (headway - break_2) * slope_3
+    #    rev_headway = part_1_headway + part_2_headway + part_3_headway
+    #else:
+    #    part_1_headway = break_1 * slope_1
+    #    part_2_headway = (break_2 - break_1) * slope_2
+    #    part_3_headway = (break_3 - break_2) * slope_3
+    #    part_4_headway = (headway - break_3) * slope_4
+    #    rev_headway = part_1_headway + part_2_headway + part_3_headway + part_4_headway
+    #
+    # new headway calculation is less aggressive; also only being used for initial wait
+    # It uses a negative exponential formula to calculate headway
+    #
+    if headway <= 10
+         rev_headway = headway
     else:
-        part_1_headway = break_1 * slope_1
-        part_2_headway = (break_2 - break_1) * slope_2
-        part_3_headway = (break_3 - break_2) * slope_3
-        part_4_headway = (headway - break_3) * slope_4
-        rev_headway = part_1_headway + part_2_headway + part_3_headway + part_4_headway
+    	   rev_headway = 0.275 + 0.788*numpy.exp(-0.011*headway)
             
     return rev_headway
 
