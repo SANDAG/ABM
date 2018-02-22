@@ -1872,10 +1872,10 @@ def revised_headway(headway):
     # new headway calculation is less aggressive; also only being used for initial wait
     # It uses a negative exponential formula to calculate headway
     #
-    if headway <= 10
+    if headway <= 10:
          rev_headway = headway
     else:
-    	   rev_headway = 0.275 + 0.788*numpy.exp(-0.011*headway)
+    	   rev_headway = 0.275 + 0.788 * _np.exp(-0.011*headway)
             
     return rev_headway
 

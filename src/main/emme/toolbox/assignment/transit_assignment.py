@@ -746,17 +746,15 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             "GENCOST", "XFERWAIT", "FARE",
             "ACCWALK", "XFERWALK", "EGRWALK", "TOTALIVTT",  
             "BUSDIST", "LRTDIST", "CMRDIST", "EXPDIST", "BRTDIST"]
-    	  localivt_skim = self.get_matrix_data(period+"_ALLPEN_BUSIVTT")
-    	  totalivt_skim = self.get_matrix_data(period+"_ALLPEN_TOTALIVTT")
-    	  has_premium = numpy.greater((totalivt_skim - localivt_skim),0)
-    	  has_both = numpy.greater(localivt_skim,0) * has_premium
-    	  for skim in skims:
-    	  	   mat_name = period+"_ALLPEN_"+skim
-    	  	   data = self.get_matrix_data(mat_name)
-    	  	   self.set_matrix_data(mat_name, data * has_both)
-    	  
-    	  
-    	    
+        localivt_skim = self.get_matrix_data(period+"_ALLPEN_BUSIVTT")
+        totalivt_skim = self.get_matrix_data(period+"_ALLPEN_TOTALIVTT")
+        has_premium = numpy.greater((totalivt_skim - localivt_skim),0)
+        has_both = numpy.greater(localivt_skim,0) * has_premium
+        for skim in skims:
+            mat_name = period+"_ALLPEN_"+skim
+            data = self.get_matrix_data(mat_name)
+            self.set_matrix_data(mat_name, data * has_both)
+	  
     def mask_identical(self, primary, secondary, comparison_skims, other_skims):
         rtol, atol = 10E-6, 10E-4
         results = []
