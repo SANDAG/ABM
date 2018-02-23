@@ -111,8 +111,8 @@
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>              
-                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
-                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
+                <workShadowPricing.iteration>ShadowPricingOutput_work_9.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_9.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
