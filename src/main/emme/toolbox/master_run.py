@@ -244,7 +244,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         props.set_year_specific_properties(_join(main_directory, "input", "parametersByYears.csv"))
         props.save()
 
-        scenarioYear = props["scenarioYear"]
+        scenarioYear = str(props["scenarioYear"])
         startFromIteration =  props["RunModel.startFromIteration"]
         precision = props["RunModel.MatrixPrecision"]
         minSpaceOnC = props["RunModel.minSpaceOnC"]
@@ -308,7 +308,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                     source=input_dir,
                     merged_scenario_id=scenario_id, 
                     title=scenario_title,
-                    data_table_name=str(scenarioYear),
+                    data_table_name=scenarioYear,
                     overwrite=True,
                     emmebank=main_emmebank)
                 export_tap_adjacent_lines(_join(output_dir, "tapLines.csv"), base_scenario)
@@ -440,7 +440,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                         period=period, base_scenario=src_period_scenario, 
                         transit_emmebank=transit_emmebank, scenario_id=src_period_scenario.id, 
                         scenario_title="%s - %s transit assign" % (base_scenario.title, period), 
-                        data_table_name=ScenarioYear, overwrite=True)
+                        data_table_name=scenarioYear, overwrite=True)
                     transit_assign(period, transit_assign_scen, data_table_name=scenarioYear,
                                    num_processors=num_processors)
                 omx_file = _join(output_dir, "transit_skims.omx")
