@@ -31,7 +31,7 @@
 #        (if externalInternalControlTotalsByYear.csv is unavailable)
 #
 # Matrix results:
-#    pp_SOVGP_EETRIPS, pp_HOV2HOV_EETRIPS, pp_HOV3HOV_EETRIPS
+#    pp_SOV_EETRIPS, pp_HOV2_EETRIPS, pp_HOV3_EETRIPS
 # Script example:
 """
     import os
@@ -124,7 +124,7 @@ class ExternalExternal(_m.Tool(), gen_utils.Snapshot):
 
         periods = ["EA", "AM", "MD", "PM", "EV"]
         time_of_day_factors = [0.074, 0.137, 0.472, 0.183, 0.133]
-        modes = ["SOVGP", "HOV2HOV", "HOV3HOV"]
+        modes = ["SOV", "HOV2", "HOV3"]
         mode_factors = [0.43, 0.42, 0.15]
 
         ee_matrix = emmebank.matrix("ALL_TOTAL_EETRIPS")
@@ -153,7 +153,7 @@ class ExternalExternal(_m.Tool(), gen_utils.Snapshot):
 
         # factor for final demand matrix by time and mode type
         # all external-external trips are non-toll
-        # SOV_GP, SR2_HOV SR3_HOV = "SOVGP", "HOV2HOV", "HOV3HOV"
+        # SOV_GP, SR2_HOV SR3_HOV = "SOV", "HOV2", "HOV3"
         for period, tod_fac in zip(periods, time_of_day_factors):
             for mode, mode_fac in zip(modes, mode_factors):
                 spec = {

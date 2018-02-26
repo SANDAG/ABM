@@ -489,9 +489,9 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
         self.add_matrices("external_external_model", "ALL",
                 [("mf", "ALL_TOTAL_EETRIPS",  "All periods Total for all modes external-external trips")])
         tmplt_matrices = [
-            ('SOVGP_EETRIPS',    'SOVGP external-external demand'),
-            ('HOV2HOV_EETRIPS',  'HOV2HOV external-external demand'),
-            ('HOV3HOV_EETRIPS',  'HOV3HOV external-external demand'),
+            ('SOV_EETRIPS',   'SOV external-external demand'),
+            ('HOV2_EETRIPS',  'HOV2 external-external demand'),
+            ('HOV3_EETRIPS',  'HOV3 external-external demand'),
         ]
         for period in self._all_periods:
             self.add_matrices("external_external_model", period,

@@ -38,7 +38,7 @@
 #    pp_SOVGP_EIWORK, pp_SOVGP_EINONWORK, pp_SOVTOLL_EIWORK, pp_SOVTOLL_EINONWORK,
 #    pp_HOV2HOV_EIWORK, pp_HOV2HOV_EINONWORK, pp_HOV2TOLL_EIWORK, pp_HOV2TOLL_EINONWORK,
 #    pp_HOV3HOV_EIWORK, pp_HOV3HOV_EINONWORK, pp_HOV3TOLL_EIWORK, pp_HOV3TOLL_EINONWORK
-#    pp_SOVGP_EETRIPS, pp_HOV2HOV_EETRIPS, pp_HOV3HOV_EETRIPS
+#    pp_SOV_EETRIPS, pp_HOV2_EETRIPS, pp_HOV3_EETRIPS
 #
 # Matrix results:
 #    Note: pp is time period, one of EA, AM, MD, PM, EV, v is one of L, M, H
@@ -291,12 +291,13 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         # External - external faster with single-processor as number of O-D pairs is so small (12 X 12)
         matrix_calc.num_processors = 0
         with matrix_calc.trace_run("Add external-external trips to auto demand"):
-            modes = ["SOVGP", "HOV2HOV", "HOV3HOV"]
+            modes = ["SOV", "HOV2", "HOV3"]
             for period in periods:
                 for mode in modes:
                     for vot in vots:
                         # Segment imported demand into 3 equal parts for VOT Low/Med/High
+                        params = {'p': period, 'm': mode, 'v': vot}
                         matrix_calc.add(
-                            "mf%s_%s%s" % (period, mode, vot),
-                            "mf%(p)s_%(m)s%(v)s + (1.0/3.0)*mf%(p)s_%(m)s_EETRIPS" % ({'p': period, 'm': mode, 'v': vot}),
+                            "mf%(p)s_%(m)sTOLL%(v)s" % params,
+                            "mf%(p)s_%(m)sTOLL%(v)s + (1.0/3.0)*mf%(p)s_%(m)s_EETRIPS" % params,
                             {"origins": self.external_zones, "destinations": self.external_zones})
