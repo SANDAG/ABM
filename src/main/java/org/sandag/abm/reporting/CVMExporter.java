@@ -101,7 +101,7 @@ public class CVMExporter {
 			
 			String modelPeriod = periodMap.get(cvmPeriod);
 			String modelClass = null;
-			if(cvmMode=="NT"){
+			if(cvmMode.equals("NT")){
 				modelClass = nonTollClassMap.get(cvmClass);
 
 			}else{
