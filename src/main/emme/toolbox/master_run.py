@@ -277,6 +277,12 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         skipDataLoadRequest = props["RunModel.skipDataLoadRequest"]
         skipDeleteIntermediateFiles = props["RunModel.skipDeleteIntermediateFiles"]
 
+        travel_modes = ["auto", "tran", "nmot", "othr"]
+        core_abm_files = ["Trips*.omx", "InternalExternalTrips*.omx"]
+        core_abm_files = [mode + name for name in core_abm_files for mode in travel_modes]
+        smm_abm_files = ["AirportTrips*.omx", "CrossBorderTrips*.omx", "VisitorTrips*.omx"]
+        smm_abm_files = [mode + name for name in smm_abm_files for mode in travel_modes]
+
         relative_gap = props["convergence"]
         max_assign_iterations = 1000
 
@@ -380,21 +386,17 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                         omx_file = _join(output_dir, "transit_skims.omx")   
                         export_transit_skims(omx_file, periods, transit_scenario)
 
-                # move some trip matrices so run will stop if ctramp model
+                # For each step move trip matrices so run will stop if ctramp model
                 # doesn't produced csv/omx files for assignment
                 # also needed as CT-RAMP does not overwrite existing files
-                if (msa_iteration > startFromIteration):
-                    self.move_files(
-                        ["auto*Trips*.omx", "tran*Trips*.omx", "nmot*.omx", "othr*.omx", 
-                         "trip*.omx", "*Trips.csv", "*airport_out.csv"],
-                        output_dir, _join(output_dir, "iter%s" % (iteration)))
-
                 if not skipCoreABM[iteration]:
+                    self.remove_prev_iter_files(core_abm_files, output_dir, iteration)
                     self.run_proc(
                         "runSandagAbm_SDRM.cmd", 
                         [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
                         "Java-Run CT-RAMP", capture_output=True)
                 if not skipOtherSimulateModel[iteration]:
+                    self.remove_prev_iter_files(smm_abm_files, output_dir, iteration)
                     self.run_proc(
                         "runSandagAbm_SMM.cmd", 
                         [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
@@ -586,6 +588,12 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         if free < min_space:
             raise Exception("Free space on C drive %s is less than %s" % (free, min_space))
 
+    def remove_prev_iter_files(self, file_names, output_dir, iteration):        
+        if iteration == 0:
+            self.delete_files(file_names, output_dir)
+        else:
+            self.move_files(file_names, output_dir, _join(output_dir, "iter%s" % (iteration)))
+
     def copy_files(self, file_names, from_dir, to_dir):
         with _m.logbook_trace("Copy files %s" % ", ".join(file_names)):
             for file_name in file_names:
@@ -593,28 +601,27 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                 _shutil.copy(from_file, to_dir)
 
     def move_files(self, file_names, from_dir, to_dir):
-        try:
             with _m.logbook_trace("Move files %s" % ", ".join(file_names)):
                 if not os.path.exists(to_dir):
                     os.mkdir(to_dir)
                 for file_name in file_names:
-                    from_file = _join(from_dir, file_name)
-                    all_files = _glob.glob(from_file)
+                    all_files = _glob.glob(_join(from_dir, file_name))
                     for path in all_files:
-                        dst_file = _join(to_dir, os.path.basename(path))
-                        if os.path.exists(dst_file):
-                            os.remove(dst_file)
-                        _shutil.move(path, to_dir)
-        except:
-            pass
+                        try:
+                            dst_file = _join(to_dir, os.path.basename(path))
+                            if os.path.exists(dst_file):
+                                os.remove(dst_file)
+                            _shutil.move(path, to_dir)
+                        except Exception as error:
+                            _m.logbook_write(
+                                "Error moving file %s" % path, {"error": _traceback.format_exc(error)})
 
     def delete_files(self, file_names, directory):
         with _m.logbook_trace("Delete files %s" % ", ".join(file_names)):
             for file_name in file_names:
-                from_file = _join(directory, file_name)
-                all_files = _glob.glob(from_file)
+                all_files = _glob.glob(_join(directory, file_name))
                 for path in all_files:
-                    os.remove(from_file, directory)
+                    os.remove(path)
 
     def check_for_fatal(self, file_name, error_msg):
         with open(file_name, 'r') as f:
