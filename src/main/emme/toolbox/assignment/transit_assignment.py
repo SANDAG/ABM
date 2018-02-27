@@ -798,7 +798,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         text.append(
             "Number of zones: %s. Number of O-D pairs: %s. "
             "Values outside -9999999, 9999999 are masked in summaries.<br>" % (num_zones, num_cells))
-        text.append("<p>ALLPEN filtered out %s O-D pairs with identical skim values</p>" % self.get_matrix_data(period + "_ALLPEN_MASK").sum())
+        # text.append("<p>ALLPEN filtered out %s O-D pairs with identical skim values</p>" % self.get_matrix_data(period + "_ALLPEN_MASK").sum())
         text.append("%-25s %9s %9s %9s %13s %9s" % ("name", "min", "max", "mean", "sum", "mask num"))
         for name in matrices:
             data = self.get_matrix_data(name)
