@@ -333,7 +333,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                     if walk_mode in stop_link.modes :
                         has_adjacent_walk_links = True
                         
-                if has_adjacent_transfer_links and not has_adjacent_walk_links:
+                if has_adjacent_transfer_links or has_adjacent_walk_links:
                     length = link.length
                     tap_stop = network.split_link(centroid, real_stop, self._get_node_id(), include_reverse=True)
                     tap_stop["@network_adj"] = 1
