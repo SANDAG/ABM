@@ -29,6 +29,8 @@
 #    report/transit_aggflow.csv 
 #    report/transit_flow.csv
 #    report/transit_onoff.csv
+#	 report/trrt.csv
+#    report/trstop.csv
 #
 # Script example:
 """
@@ -56,6 +58,7 @@ from collections import OrderedDict
 from itertools import chain as _chain
 import math
 import os
+import pandas as pd
 
 gen_utils = _m.Modeller().module("sandag.utilities.general")
 dem_utils = _m.Modeller().module("sandag.utilities.demand")
@@ -132,6 +135,7 @@ Export network results to csv files for SQL data loader."""
         traffic_emmebank = _eb.Emmebank(traffic_emmebank)
         transit_emmebank = _eb.Emmebank(transit_emmebank)
         export_path = os.path.join(main_directory, "report")
+        input_path = os.path.join(main_directory,"input")
         num_processors = dem_utils.parse_num_processors(num_processors)
 
         periods = ["EA", "AM", "MD", "PM", "EV"]
@@ -141,7 +145,7 @@ Export network results to csv files for SQL data loader."""
         
         self.export_traffic_attribute(base_scenario, export_path, traffic_emmebank, period_scenario_ids)
         self.export_traffic_load_by_period(export_path, traffic_emmebank, period_scenario_ids)
-        self.export_transit_results(export_path, transit_emmebank, period_scenario_ids, num_processors)
+        self.export_transit_results(export_path, input_path, transit_emmebank, period_scenario_ids, num_processors)
 
     @_m.logbook_trace("Export traffic attribute data")
     def export_traffic_attribute(self, base_scenario, export_path, traffic_emmebank, period_scenario_id):
@@ -356,20 +360,18 @@ Export network results to csv files for SQL data loader."""
             ("AB_VDF", "@msa_time"),
             ("AB_MSA_Flow", "@msa_flow"),
             ("AB_MSA_Time", "@msa_time"),
-            ("AB_Flow_SOV_GP", "@sovgp"),
-            ("AB_Flow_SOV_PAY", "@sovtoll"),
-            ("AB_Flow_SR2_GP", "@hov2gp"),
-            ("AB_Flow_SR2_HOV", "@hov2hov"),
-            ("AB_Flow_SR2_PAY", "@hov2toll"),
-            ("AB_Flow_SR3_GP", "@hov3gp"),
-            ("AB_Flow_SR3_HOV", "@hov3hov"),
-            ("AB_Flow_SR3_PAY", "@hov3toll"),
-            ("AB_Flow_lhdn", "@trklgp"),
-            ("AB_Flow_mhdn", "@trkmgp"),
-            ("AB_Flow_hhdn", "@trkhgp"),
-            ("AB_Flow_lhdt", "@trkltoll"),
-            ("AB_Flow_mhdt", "@trkmtoll"),
-            ("AB_Flow_hhdt", "@trkhtoll"),
+            ("AB_Flow_SOV_GP", "@sovgp_all"),
+            ("AB_Flow_SOV_PAY", "@sovtoll_all"),
+            ("AB_Flow_SR2_HOV", "@hov2hov_all"),
+            ("AB_Flow_SR2_PAY", "@hov2toll_all"),
+            ("AB_Flow_SR3_HOV", "@hov3hov_all"),
+            ("AB_Flow_SR3_PAY", "@hov3toll_all"),
+            ("AB_Flow_lhdn", "@trklgp_non_pce"),
+            ("AB_Flow_mhdn", "@trkmgp_non_pce"),
+            ("AB_Flow_hhdn", "@trkhgp_non_pce"),
+            ("AB_Flow_lhdt", "@trkltoll_non_pce"),
+            ("AB_Flow_mhdt", "@trkmtoll_non_pce"),
+            ("AB_Flow_hhdt", "@trkhtoll_non_pce"),
             ("AB_Flow", "@non_pce_flow"),
         ]
         for key, attr in dir_atts:
@@ -382,19 +384,44 @@ Export network results to csv files for SQL data loader."""
                         ("@voc", "volume over capacity", "@auto_volume/ul3"),
                         ("@vht", "vehicle hours travelled", "@auto_volume*timau/60"),
                         ("@speed", "link travel speed", "length*60/timau"),
+                        ("@sovgp_all", "total number of SOV GP vehicles",
+                                 "@sovgpl+@sovgpm+@sovgph" ),
+                        ("@sovtoll_all", "total number of SOV TOLL vehicles",
+                                 "@sovtolll+@sovtollm+@sovtollh" ),							 
+                        ("@hov2hov_all", "total number of HOV2 HOV vehicles",
+                                 "@hov2hovl+@hov2hovm+@hov2hovh" ),
+                        ("@hov2toll_all", "total number of HOV2 TOLL vehicles",
+                                 "@hov2tolll+@hov2tollm+@hov2tollh" ),								 
+                        ("@hov3hov_all", "total number of HOV3 HOV vehicles",
+                                 "@hov3hovl+@hov3hovm+@hov3hovh" ),
+                        ("@hov3toll_all", "total number of HOV3 TOLL vehicles",
+                                 "@hov3tolll+@hov3tollm+@hov3tollh" ),
+                        ("@trklgp_non_pce", "total number of light trucks in non-Pce",
+                                 "(@trklgp)/1.3" ),	
+                        ("@trkltoll_non_pce", "total toll light trucks in non-Pce",
+                                 "(@trkltoll)/1.3" ),
+                        ("@trkmgp_non_pce", "total medium trucks in non-Pce",
+                                 "(@trkmgp)/1.5" ),	
+                        ("@trkmtoll_non_pce", "total toll medium trucks non-Pce",
+                                 "(@trkmtoll)/1.5" ),
+                        ("@trkhgp_non_pce", "total heavy trucks in non-Pce",
+                                 "(@trkhgp)/2.5" ),	
+                        ("@trkhtoll_non_pce", "total toll heavy trucks in non-Pce",
+                                 "(@trkhtoll)/2.5" ),								 
                         ("@pce_flow", "total number of vehicles in Pce",
-                                 "@sovgp+@sovtoll+ \
-                                  @hov2gp+@hov2hov+@hov2toll+ \
-                                  @hov3gp+@hov3hov+@hov3toll+ \
-                                  (@trklgp+@trkltoll) + (@trkmgp+@trkltoll) + \
-                                  (@trkhgp+@trkhtoll)" ),
+                                 "@sovgp_all+@sovtoll_all+ \
+                                  @hov2gp_all+@hov2hov_all+@hov2toll_all+ \
+                                  @hov3gp_all+@hov3hov_all+@hov3toll_all+ \
+                                  (@trklgp+@trkltoll) + (@trkmgp+@trkmtoll) + \
+                                  (@trkhgp+@trkhtoll) + volad" ),
                         ("@non_pce_flow", "total number of vehicles in non-Pce",
-                                 "@sovgp+@sovtoll+ \
-                                  @hov2gp+@hov2hov+@hov2toll+ \
-                                  @hov3gp+@hov3hov+@hov3toll+ \
-                                  (@trklgp+@trkltoll)/1.3 + (@trkmgp+@trkltoll)/1.5 + \
-                                  (@trkhgp+@trkhtoll)/2.5" )
+                                 "@sovgp_all+@sovtoll_all+ \
+                                  @hov2gp_all+@hov2hov_all+@hov2toll_all+ \
+                                  @hov3gp_all+@hov3hov_all+@hov3toll_all+ \
+                                  (@trklgp+@trkltoll)/1.3 + (@trkmgp+@trkmtoll)/1.5 + \
+                                  (@trkhgp+@trkhtoll)/2.5 + volad/3" )									 
                         ]
+						
             for name, des, formula in new_atts:
                 att = scenario.extra_attribute(name)
                 if not att:
@@ -432,7 +459,13 @@ Export network results to csv files for SQL data loader."""
                         values.append(link.j_node.id)
                     elif key.startswith("BA"):
                         name, default = att
-                        values.append(format(reverse_link[name]) if reverse_link else default)
+                        
+                        if reverse_link and (abs(link["@tcov_id"]) == abs(reverse_link["@tcov_id"])):
+                            values.append(format(reverse_link[name]))
+                        else:
+                            values.append(default)
+                                        
+                        #values.append(format(reverse_link[name]) if reverse_link else default)
                     elif att.startswith("#"):
                         values.append('"%s"' % link[att])
                     else:
@@ -441,9 +474,30 @@ Export network results to csv files for SQL data loader."""
                 fout.write("\n")
 
     @_m.logbook_trace("Export transit results")
-    def export_transit_results(self, export_path, transit_emmebank, period_scenario_id, num_processors):
+    def export_transit_results(self, export_path, input_path, transit_emmebank, period_scenario_id, num_processors):
         # Note: Node analysis for transfers is VERY time consuming
         #       this implementation will be replaced when new Emme version is available
+
+        trrt_atts = ["Route_ID","Route_Name","Mode","AM_Headway","PM_Headway","OP_Headway","Config","Fare"]
+        trstop_atts = ["Stop_ID","Route_ID","Link_ID","Pass_Count","Milepost","Longitude","Latitude","NearNode","FareZone","StopName"]
+
+        #transit route file
+        trrt_infile = os.path.join(input_path, "trrt.csv")
+        trrt = pd.read_csv(trrt_infile)
+        trrt = trrt.rename(columns=lambda x:x.strip())
+        trrt_out = trrt[trrt_atts]
+        trrt_outfile = os.path.join(export_path, "trrt.csv")
+        trrt_out.to_csv(trrt_outfile, index=False)
+
+        #transit stop file		
+        trstop_infile = os.path.join(input_path, "trstop.csv")
+        trstop = pd.read_csv(trstop_infile)
+        trstop = trstop.rename(columns={"HwyNode":"NearNode"})
+        trstop = trstop.rename(columns=lambda x:x.strip())		
+        trstop_out = trstop[trstop_atts]
+        trstop_outfile = os.path.join(export_path, "trstop.csv")
+        trstop_out.to_csv(trstop_outfile, index=False)
+		
         use_node_analysis_to_get_transit_transfers = False
         
         copy_scenario = _m.Modeller().tool(
@@ -521,9 +575,11 @@ Export network results to csv files for SQL data loader."""
         fout_stop.write("\n")
         try:
             access_modes = ["WLK", "PNR", "KNR"]
-            main_modes = ["BUS", "LRT", "CMR", "BRT", "EXP"]
+            #main_modes = ["BUS", "LRT", "CMR", "BRT", "EXP"]
+            main_modes = ["BUS", "PREM","ALLPEN"]
             all_modes = ["b", "c", "e", "l", "r", "p", "y", "a", "w", "x"]
             local_bus_modes = ["b", "a", "w", "x"]
+            premium_modes = ["c", "l", "e", "p", "r", "y", "a", "w", "x"]
             for tod, scen_id in period_scenario_id.iteritems():
                 with _m.logbook_trace("Processing period %s" % tod):
                     scenario = transit_emmebank.scenario(scen_id)
@@ -565,8 +621,16 @@ Export network results to csv files for SQL data loader."""
                                 0, overwrite=True, scenario=scenario)
 
                     for main_mode in main_modes:
-                        mode = "LOC" if main_mode == "BUS" else main_mode
-                        mode_list = local_bus_modes if main_mode == "BUS" else all_modes
+                        #mode = "LOC" if main_mode == "BUS" else main_mode
+                        #mode_list = local_bus_modes if main_mode == "BUS" else all_modes
+                        mode = main_mode
+                        if main_mode == "BUS":
+                            mode_list = local_bus_modes
+                        elif main_mode == "PREM":
+                            mode_list = premium_modes
+                        else:
+                            mode_list = all_modes
+							
                         for access_type in access_modes:
                             with _m.logbook_trace("Main mode %s access mode %s" % (main_mode, access_type)):
                                 class_name = "%s_%s%s" % (tod, access_type, main_mode)
@@ -641,6 +705,7 @@ Export network results to csv files for SQL data loader."""
         voc = ""  # volume/capacity, not actually used, 
         for line in lines:
             line_id = id_format(line["@route_id"])
+            #mode = line["mode"]
             ivtt = from_mp = to_mp = 0
             segments = iter(line.segments())
             seg = segments.next()
