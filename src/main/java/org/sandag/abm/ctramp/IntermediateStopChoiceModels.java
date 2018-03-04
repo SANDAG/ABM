@@ -4059,6 +4059,7 @@ public class IntermediateStopChoiceModels
                 mcDmuObject.getDmuIndexValues().setDebug(false);
 
                 // throw new RuntimeException();
+                
             }
 
         }
@@ -4295,7 +4296,9 @@ public class IntermediateStopChoiceModels
                                                         prevTripPeriod, tour.getTourDepartPeriod(),
                                                         tour.getTourArrivePeriod(), choice));
                                 System.out.println("=" + invalidCount + " times.");
-                                throw new RuntimeException();
+                                //throw new RuntimeException();
+                                //instead of throwing an exception, set the stop period to the same period as the last stop
+                                stop.setStopPeriod(prevTripPeriod);
                             }
 
                         }
@@ -4541,7 +4544,9 @@ public class IntermediateStopChoiceModels
                                                         prevTripPeriod, tour.getTourDepartPeriod(),
                                                         tour.getTourArrivePeriod(), choice));
                                 System.out.println("=" + invalidCount + " times.");
-                                throw new RuntimeException();
+                                //throw new RuntimeException();
+                                //instead of throwing an exception, set the stop period to the same period as the previous stop
+                                stop.setStopPeriod(lastOutboundTripDeparts);
                             }
 
                         }
