@@ -6530,9 +6530,9 @@ FROM
 UNPIVOT (
 	VMT for VEHICLE_CLASS in (SOV_GP, SOV_PAY,SR2_GP,SR2_HOV,SR2_PAY,SR3_GP,SR3_HOV,SR3_PAY,LHDN,LHDT,MHDN,MHDT,HHDN,HHDT)) AS vmt
 	INNER JOIN  [emfac].[SANDAG_VEHICLE_CLASS] sclass ON vmt.VEHICLE_CLASS = sclass.SANDAG_VEHICLE_CLASS
-	INNER JOIN 	[ws].[emfac].[EMFAC_VEHICLE_MAP] emap ON sclass.SANDAG_VEHICLE_CLASS_ID = emap.SANDAG_VEHICLE_CLASS_ID 
+	INNER JOIN 	[emfac].[EMFAC_VEHICLE_MAP] emap ON sclass.SANDAG_VEHICLE_CLASS_ID = emap.SANDAG_VEHICLE_CLASS_ID 
 		AND emap.YEAR = @SCENARIO_YEAR
-	INNER JOIN [ws].[emfac].[EMFAC_VEHICLE_CLASS] eclass ON emap.EMFAC_VEHICLE_CLASS_ID = eclass.EMFAC_VEHICLE_CLASS_ID and eclass.major_version = @EMFAC_MAJOR and eclass.minor_version = @EMFAC_MINOR
+	INNER JOIN [emfac].[EMFAC_VEHICLE_CLASS] eclass ON emap.EMFAC_VEHICLE_CLASS_ID = eclass.EMFAC_VEHICLE_CLASS_ID and eclass.major_version = @EMFAC_MAJOR and eclass.minor_version = @EMFAC_MINOR
 	GROUP BY 
 		eclass.EMFAC_VEHICLE_CLASS
 	UNION ALL
@@ -6549,12 +6549,12 @@ UNPIVOT (
 			,v.YEAR
 			,SUM(v.VMT) as VMT 
 		FROM 
-			ws.emfac.EMFAC_DEFAULT_SPEED_VMT v 
+			emfac.EMFAC_DEFAULT_SPEED_VMT v 
 		GROUP BY 
 			v.EMFAC_VEHICLE_CLASS_ID, v.YEAR
 		) v
 	INNER JOIN 
-		ws.emfac.EMFAC_VEHICLE_CLASS e  
+		emfac.EMFAC_VEHICLE_CLASS e  
 	ON 
 		v.EMFAC_VEHICLE_CLASS_ID = e.EMFAC_VEHICLE_CLASS_ID and e.major_version = @EMFAC_MAJOR and e.minor_version = @EMFAC_MINOR
 	WHERE 
@@ -6569,8 +6569,8 @@ UNPIVOT (
 		,UPPER(eclass.EMFAC_VEHICLE_CLASS) as [Veh_Tech]
 		,SUM((PRELOAD / @BUS_PCE) * LENGTH_MILE) * emap.VALUE AS [New Total VMT]
 	FROM
-		(SELECT m.EMFAC_VEHICLE_CLASS_ID, VALUE FROM ws.emfac.EMFAC_VEHICLE_MAP m JOIN ws.emfac.emfac_vehicle_class e ON m.emfac_vehicle_class_id = e.emfac_vehicle_class_id AND e.major_version = @EMFAC_MAJOR and e.minor_version = @EMFAC_MINOR WHERE m.SANDAG_VEHICLE_CLASS_ID = 15 AND m.YEAR = @SCENARIO_YEAR) emap
-		JOIN ws.emfac.EMFAC_VEHICLE_CLASS eclass ON emap.EMFAC_VEHICLE_CLASS_ID = eclass.EMFAC_VEHICLE_CLASS_ID
+		(SELECT m.EMFAC_VEHICLE_CLASS_ID, VALUE FROM emfac.EMFAC_VEHICLE_MAP m JOIN emfac.emfac_vehicle_class e ON m.emfac_vehicle_class_id = e.emfac_vehicle_class_id AND e.major_version = @EMFAC_MAJOR and e.minor_version = @EMFAC_MINOR WHERE m.SANDAG_VEHICLE_CLASS_ID = 15 AND m.YEAR = @SCENARIO_YEAR) emap
+		JOIN emfac.EMFAC_VEHICLE_CLASS eclass ON emap.EMFAC_VEHICLE_CLASS_ID = eclass.EMFAC_VEHICLE_CLASS_ID
 		,abm.hwy_link_ab_tod t
 	INNER JOIN
 		[abm].[hwy_link_ab]
@@ -6716,8 +6716,8 @@ FROM
 	as source_table
 		UNPIVOT (VMT FOR VEHICLE_CLASS in (SOV_GP, SOV_PAY,SR2_GP,SR2_HOV,SR2_PAY,SR3_GP,SR3_HOV,SR3_PAY,LHDN,LHDT,MHDN,MHDT,HHDN,HHDT)) as vmt_speed
 		JOIN emfac.sandag_vehicle_class sclass ON vmt_speed.VEHICLE_CLASS = sclass.sandag_vehicle_class
-		JOIN ws.emfac.EMFAC_VEHICLE_MAP emap ON sclass.SANDAG_VEHICLE_CLASS_ID = emap.SANDAG_VEHICLE_CLASS_ID AND emap.YEAR = @SCENARIO_YEAR
-		JOIN ws.emfac.EMFAC_VEHICLE_CLASS eclass ON emap.EMFAC_VEHICLE_CLASS_ID = eclass.EMFAC_VEHICLE_CLASS_ID AND eclass.major_version = @EMFAC_MAJOR and eclass.minor_version = @EMFAC_MINOR
+		JOIN emfac.EMFAC_VEHICLE_MAP emap ON sclass.SANDAG_VEHICLE_CLASS_ID = emap.SANDAG_VEHICLE_CLASS_ID AND emap.YEAR = @SCENARIO_YEAR
+		JOIN emfac.EMFAC_VEHICLE_CLASS eclass ON emap.EMFAC_VEHICLE_CLASS_ID = eclass.EMFAC_VEHICLE_CLASS_ID AND eclass.major_version = @EMFAC_MAJOR and eclass.minor_version = @EMFAC_MINOR
 	GROUP BY eclass.EMFAC_VEHICLE_CLASS, emfac_hours, vmt_speed.SPEED_BIN
 	UNION ALL
 	SELECT
@@ -6726,8 +6726,8 @@ FROM
 	,CEILING(f.SPEED / 5.0) * 5 AS SPEED_BIN
 	,SUM((l.PRELOAD / @BUS_PCE) * t.LENGTH_MILE) * emap.value AS VMT
 FROM
-(SELECT EMFAC_VEHICLE_CLASS_ID, VALUE FROM ws.emfac.EMFAC_VEHICLE_MAP m WHERE m.SANDAG_VEHICLE_CLASS_ID = 15 AND m.YEAR = @SCENARIO_YEAR) as emap
-				JOIN ws.emfac.EMFAC_VEHICLE_CLASS eclass on emap.EMFAC_VEHICLE_CLASS_ID = eclass.EMFAC_VEHICLE_CLASS_ID AND eclass.major_version = @EMFAC_MAJOR and eclass.minor_version = @EMFAC_MINOR
+(SELECT EMFAC_VEHICLE_CLASS_ID, VALUE FROM emfac.EMFAC_VEHICLE_MAP m WHERE m.SANDAG_VEHICLE_CLASS_ID = 15 AND m.YEAR = @SCENARIO_YEAR) as emap
+				JOIN emfac.EMFAC_VEHICLE_CLASS eclass on emap.EMFAC_VEHICLE_CLASS_ID = eclass.EMFAC_VEHICLE_CLASS_ID AND eclass.major_version = @EMFAC_MAJOR and eclass.minor_version = @EMFAC_MINOR
 	,[abm].[hwy_link] AS t
 	JOIN [abm].[hwy_link_ab] ON	t.[scenario_id] = [hwy_link_ab].[scenario_id] AND t.[hwy_link_id] = [hwy_link_ab].[hwy_link_id]
 	JOIN [abm].[hwy_link_ab_tod] l ON  [hwy_link_ab].[scenario_id] = l.[scenario_id] AND [hwy_link_ab].[hwy_link_ab_id] = l.[hwy_link_ab_id]
@@ -6763,8 +6763,8 @@ FROM
 	,(SELECT
 	c.emfac_vehicle_class
 FROM
-	ws.emfac.emfac_default_speed_vmt d 
-	JOIN ws.emfac.emfac_vehicle_class c ON d.emfac_vehicle_class_id = c.emfac_vehicle_class_id and c.major_version = @EMFAC_MAJOR and c.minor_version = @EMFAC_MINOR
+	emfac.emfac_default_speed_vmt d 
+	JOIN emfac.emfac_vehicle_class c ON d.emfac_vehicle_class_id = c.emfac_vehicle_class_id and c.major_version = @EMFAC_MAJOR and c.minor_version = @EMFAC_MINOR
 WHERE
 	d.year = @SCENARIO_YEAR) default_classes
 
