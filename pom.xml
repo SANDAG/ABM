@@ -44,7 +44,7 @@
         <USERNAME>XX</USERNAME>
         <PASSWORD>XX</PASSWORD>
         <MAPANDRUN>mapAndRun.bat</MAPANDRUN>
-        <JAVA_64_PATH>C:\Progra~1\Java\jre1.8.0_151</JAVA_64_PATH>
+        <JAVA_64_PATH>C:\Progra~1\Java\jre1.8.0_162</JAVA_64_PATH>
         <JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
         <workpath>WORKPATH</workpath>
         <database_server>sql2014a8</database_server>
