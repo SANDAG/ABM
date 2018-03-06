@@ -410,14 +410,14 @@ Export network results to csv files for SQL data loader."""
                                  "(@trkhtoll)/2.5" ),								 
                         ("@pce_flow", "total number of vehicles in Pce",
                                  "@sovgp_all+@sovtoll_all+ \
-                                  @hov2gp_all+@hov2hov_all+@hov2toll_all+ \
-                                  @hov3gp_all+@hov3hov_all+@hov3toll_all+ \
+                                  @hov2hov_all+@hov2toll_all+ \
+                                  @hov3hov_all+@hov3toll_all+ \
                                   (@trklgp+@trkltoll) + (@trkmgp+@trkmtoll) + \
                                   (@trkhgp+@trkhtoll) + volad" ),
                         ("@non_pce_flow", "total number of vehicles in non-Pce",
                                  "@sovgp_all+@sovtoll_all+ \
-                                  @hov2gp_all+@hov2hov_all+@hov2toll_all+ \
-                                  @hov3gp_all+@hov3hov_all+@hov3toll_all+ \
+                                  @hov2hov_all+@hov2toll_all+ \
+                                  @hov3hov_all+@hov3toll_all+ \
                                   (@trklgp+@trkltoll)/1.3 + (@trkmgp+@trkmtoll)/1.5 + \
                                   (@trkhgp+@trkhtoll)/2.5 + volad/3" )									 
                         ]
