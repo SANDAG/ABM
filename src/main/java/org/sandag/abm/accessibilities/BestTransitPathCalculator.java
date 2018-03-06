@@ -115,7 +115,8 @@ public class BestTransitPathCalculator implements Serializable
     private int[] maxLogsumUtilitiesBySkimSet;				//maximum number of utilities for each skims set in logsum calcs
     private int[] utilityCount;								//counter for utilities    
     private double[] expUtilities;							//exponentiated utility array for path choice
-        
+      
+    private float nestingCoefficient;
     /**
      * Constructor.
      * 
@@ -198,6 +199,8 @@ public class BestTransitPathCalculator implements Serializable
         maxLogsumUtilitiesBySkimSet = Util.getIntegerArrayFromPropertyMap(rbMap, "utility.bestTransitPath.maxPathsPerSkimSetForLogsum");
         utilityCount = new int[numSkimSets];
         expUtilities = new double[numTransitAlts];
+        
+        nestingCoefficient =  new Float(Util.getStringValueFromPropertyMap(rbMap, "utility.bestTransitPath.nesting.coeff")).floatValue();
         
      }
     
@@ -809,7 +812,7 @@ public class BestTransitPathCalculator implements Serializable
     			continue;
     		if(bestTapPairs[i][3]<-500)
     			continue;
-    		expUtilities[i] = Math.exp(bestTapPairs[i][3]);
+    		expUtilities[i] = Math.exp(bestTapPairs[i][3]/nestingCoefficient);
     		sumExpUtility += expUtilities[i]; 
         		
     	}
