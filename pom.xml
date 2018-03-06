@@ -360,23 +360,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>copy-gisdk-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${release.root}/common/gisdk</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/gisdk</directory>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>copy-python-resources</id>
                         <phase>package</phase>
                         <goals>
