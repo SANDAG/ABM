@@ -624,7 +624,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                     os.remove(path)
 
     def check_for_fatal(self, file_name, error_msg):
-        with open(file_name, 'r') as f:
+        with open(file_name, 'a+') as f:
             for line in f:
                 if "FATAL" in line:
                     raise Exception(error_msg)
