@@ -219,9 +219,9 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
 
 	#EXTERNAL_EXTERNAL TRIP TABLE (toll-eligible)
         name_mapping = [
-            ("DA", "SOVGP"),
-            ("S2", "HOV2HOV"),
-            ("S3", "HOV3HOV"),
+            ("DA", "SOV"),
+            ("S2", "HOV2"),
+            ("S3", "HOV3"),
         ]	
         scenario = self.base_scenario
         emmebank = scenario.emmebank
