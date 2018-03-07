@@ -6,6 +6,13 @@ set SCENARIO_FOLDER=%1
 rem add EMME to PATH
 set PATH=%EMMEPATH%\\programs;%EMMEPATH%\\python27;%PATH%
 
+rem delete existing emme_project folder
+:removedir
+if exist %SCENARIO_FOLDER%\emme_project (
+    rd /s /q %SCENARIO_FOLDER%\\emme_project
+    goto removedir
+)
+
 rem create EMME project folder
 python .\\common\\python\\emme\\init_emme_project.py -r %SCENARIO_FOLDER% -t emmebank 
 
