@@ -300,75 +300,75 @@ Assign traffic demand for the selected time period."""
             # Main list of assignment classes
             classes = [
                 {   # 0
-                    "name": 'SOVGPL', "mode": 's', "PCE": 1, "VOT": 16.6, "cost": '',
+                    "name": 'SOVGPL', "mode": 's', "PCE": 1, "VOT": 15.0, "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "REL"]
                 },
                 {   # 1
-                    "name": 'SOVTOLLL', "mode": 'S', "PCE": 1, "VOT": 16.6, "cost": '@cost_auto',
+                    "name": 'SOVTOLLL', "mode": 'S', "PCE": 1, "VOT": 15.0, "cost": '@cost_auto',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
                 {   # 2
-                    "name": 'HOV2HOVL', "mode": 'h', "PCE": 1, "VOT": 16.6, "cost": '',
+                    "name": 'HOV2HOVL', "mode": 'h', "PCE": 1, "VOT": 15.0, "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
                 },
                 {   # 3
-                    "name": 'HOV2TOLLL', "mode": 'H', "PCE": 1, "VOT": 16.6, "cost": '@cost_hov',
+                    "name": 'HOV2TOLLL', "mode": 'H', "PCE": 1, "VOT": 15.0, "cost": '@cost_hov',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
                 {   # 4
-                    "name": 'HOV3HOVL', "mode": 'i', "PCE": 1, "VOT": 16.6, "cost": '',
+                    "name": 'HOV3HOVL', "mode": 'i', "PCE": 1, "VOT": 15.0, "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
                 },
                 {   # 5
-                    "name": 'HOV3TOLLL', "mode": 'I', "PCE": 1, "VOT": 16.6, "cost": '@cost_hov',
+                    "name": 'HOV3TOLLL', "mode": 'I', "PCE": 1, "VOT": 15.0, "cost": '@cost_hov',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
                 {   # 6
-                    "name": 'SOVGPM', "mode": 's', "PCE": 1, "VOT": 33.3, "cost": '',
+                    "name": 'SOVGPM', "mode": 's', "PCE": 1, "VOT": 30.0, "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "REL"]
                 },
                 {   # 7
-                    "name": 'SOVTOLLM', "mode": 'S', "PCE": 1, "VOT": 33.3, "cost": '@cost_auto',
+                    "name": 'SOVTOLLM', "mode": 'S', "PCE": 1, "VOT": 30.0, "cost": '@cost_auto',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
                 {   # 8
-                    "name": 'HOV2HOVM', "mode": 'h', "PCE": 1, "VOT": 33.3, "cost": '',
+                    "name": 'HOV2HOVM', "mode": 'h', "PCE": 1, "VOT": 30.0, "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
                 },
                 {   # 9
-                    "name": 'HOV2TOLLM', "mode": 'H', "PCE": 1, "VOT": 33.3, "cost": '@cost_hov',
+                    "name": 'HOV2TOLLM', "mode": 'H', "PCE": 1, "VOT": 30.0, "cost": '@cost_hov',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
                 {   # 10
-                    "name": 'HOV3HOVM', "mode": 'i', "PCE": 1, "VOT": 33.3, "cost": '',
+                    "name": 'HOV3HOVM', "mode": 'i', "PCE": 1, "VOT": 30.0, "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
                 },
                 {   # 11
-                    "name": 'HOV3TOLLM', "mode": 'I', "PCE": 1, "VOT": 33.3, "cost": '@cost_hov',
+                    "name": 'HOV3TOLLM', "mode": 'I', "PCE": 1, "VOT": 30.0, "cost": '@cost_hov',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
                 {   # 12
-                    "name": 'SOVGPH', "mode": 's', "PCE": 1, "VOT": 100., "cost": '',
+                    "name": 'SOVGPH', "mode": 's', "PCE": 1, "VOT": 85., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "REL"]
                 },
                 {   # 13
-                    "name": 'SOVTOLLH', "mode": 'S', "PCE": 1, "VOT": 100., "cost": '@cost_auto',
+                    "name": 'SOVTOLLH', "mode": 'S', "PCE": 1, "VOT": 85., "cost": '@cost_auto',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
                 {   # 14
-                    "name": 'HOV2HOVH', "mode": 'h', "PCE": 1, "VOT": 100., "cost": '',
+                    "name": 'HOV2HOVH', "mode": 'h', "PCE": 1, "VOT": 85., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
                 },
                 {   # 15
-                    "name": 'HOV2TOLLH', "mode": 'H', "PCE": 1, "VOT": 100., "cost": '@cost_hov',
+                    "name": 'HOV2TOLLH', "mode": 'H', "PCE": 1, "VOT": 85., "cost": '@cost_hov',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
                 {   # 16
-                    "name": 'HOV3HOVH', "mode": 'i', "PCE": 1, "VOT": 100., "cost": '',
+                    "name": 'HOV3HOVH', "mode": 'i', "PCE": 1, "VOT": 85., "cost": '',
                     "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
                 },
                 {   # 17
-                    "name": 'HOV3TOLLH', "mode": 'I', "PCE": 1, "VOT": 100., "cost": '@cost_hov',
+                    "name": 'HOV3TOLLH', "mode": 'I', "PCE": 1, "VOT": 85., "cost": '@cost_hov',
                     "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
                 },
                 {   # 18

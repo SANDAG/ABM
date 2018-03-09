@@ -10,15 +10,7 @@ public class InternalExternalTrip
     private int originMgra;
     private int destinationMgra;
 
-    /**
-     * @param destinationTaz
-     *            the destinationTaz to set
-     */
-    public void setDestinationTaz(int destinationTaz)
-    {
-        this.destinationTaz = destinationTaz;
-    }
-
+  
     private int     originTaz;
     private int     destinationTaz;
 
@@ -32,7 +24,7 @@ public class InternalExternalTrip
 
  	private int boardTap;
  	private int alightTap;
- 	private int set;
+ 	private int set = -1;
     
     private double valueOfTime;
 
@@ -98,6 +90,15 @@ public class InternalExternalTrip
         }
 
     }
+    /**
+     * @param destinationTaz
+     *            the destinationTaz to set
+     */
+    public void setDestinationTaz(int destinationTaz)
+    {
+        this.destinationTaz = destinationTaz;
+    }
+
 
     /**
      * @return the period

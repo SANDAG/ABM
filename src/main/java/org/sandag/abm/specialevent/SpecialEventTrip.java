@@ -18,7 +18,7 @@ public class SpecialEventTrip
 
  	private int boardTap;
  	private int alightTap;
- 	private int set;
+ 	private int set = -1;
  
     /**
      * Default constructor; nothing initialized.
