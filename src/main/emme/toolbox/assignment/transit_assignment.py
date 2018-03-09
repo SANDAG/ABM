@@ -509,21 +509,25 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 },
             }
             matrix_results(spec, class_name=class_name, scenario=scenario, num_processors=num_processors)
-        with _m.logbook_trace("Distance by mode"):
+        with _m.logbook_trace("Distance and in-vehicle time by mode"):
             mode_combinations = [
-                ("BUS", ["b"]),
-                ("LRT", ["l"]),
-                ("CMR", ["c"]),
-                ("EXP", ["e", "p"]),
-                ("BRT", ["r", "y"]),
+                ("BUS", ["b"],      ["IVTT", "DIST"]),
+                ("LRT", ["l"],      ["IVTT", "DIST"]),
+                ("CMR", ["c"],      ["IVTT", "DIST"]),
+                ("EXP", ["e", "p"], ["IVTT", "DIST"]),
+                ("BRT", ["r", "y"], ["DIST"]),
+                ("BRTRED", ["r"],   ["IVTT"]),
+                ("BRTYEL", ["y"],   ["IVTT"]),
             ]
-
-            for mode_name, modes in mode_combinations:
+            for mode_name, modes, skim_types in mode_combinations:
+                dist = 'mf"%s_%sDIST"' % (skim_name, mode_name) if "DIST" in skim_types else None
+                ivtt = 'mf"%s_%sIVTT"' % (skim_name, mode_name) if "IVTT" in skim_types else None
                 spec = {
                     "type": "EXTENDED_TRANSIT_MATRIX_RESULTS",
                     "by_mode_subset": {
                         "modes": modes,
-                        "distance": 'mf"%s_%sDIST"' % (skim_name, mode_name),
+                        "distance": dist,
+                        "actual_in_vehicle_times": ivtt,
                     },
                 }
                 matrix_results(spec, class_name=class_name, scenario=scenario, num_processors=num_processors)
@@ -632,8 +636,8 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             }
             matrix_calc(spec, scenario=scenario, num_processors=num_processors)
 
-        with _m.logbook_trace("In-vehicle time breakdown - dwell time and by main mode(s)"):
-            with gen_utils.temp_attrs(scenario, "TRANSIT_SEGMENT", ["@dwt_for_analysis", "@tm_for_analysis"]):
+        with _m.logbook_trace("Calculate dwell time"):
+            with gen_utils.temp_attrs(scenario, "TRANSIT_SEGMENT", ["@dwt_for_analysis"]):
                 values = scenario.get_attribute_values("TRANSIT_SEGMENT", ["dwell_time"])
                 scenario.set_attribute_values("TRANSIT_SEGMENT", ["@dwt_for_analysis"], values)
 
@@ -652,54 +656,6 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 }
                 strategy_analysis(spec, class_name=class_name, scenario=scenario, num_processors=num_processors)
 
-                spec = {
-                    "type": "MATRIX_CALCULATION",
-                    "constraint":{
-                        "by_value": {
-                            "od_values": 'mf"%s_TOTALIVTT"' % skim_name,
-                            "interval_min": 0, "interval_max": 9999999,
-                            "condition": "INCLUDE"},
-                    },
-                    "result": 'mf"%s_TOTALIVTT"' % skim_name,
-                    "expression": '({name}_TOTALIVTT - {name}_DWELLTIME).max.0'.format(name=skim_name),
-                }
-                matrix_calc(spec, scenario=scenario, num_processors=num_processors)
-
-                strat_analysis_spec = {
-                    "trip_components": {"in_vehicle": "@tm_for_analysis"},
-                    "sub_path_combination_operator": "+",
-                    "sub_strategy_combination_operator": "average",
-                    "selected_demand_and_transit_volumes": {
-                        "sub_strategies_to_retain": "ALL",
-                        "selection_threshold": {"lower": -999999, "upper": 999999}
-                    },
-                    "results": {"strategy_values": None},
-                    "type": "EXTENDED_TRANSIT_STRATEGY_ANALYSIS"
-                }
-                network_calc_spec = {
-                    "result": "@tm_for_analysis",
-                    "expression": "timtr - dwtn",
-                    "selections": {"transit_line": "all", "link": "all"},
-                    "aggregation": None,
-                    "type": "NETWORK_CALCULATION"
-                }
-                mode_names = [
-                    ("mode=c", "CMRIVTT"),
-                    ("mode=e", "EXPIVTT"),
-                    ("mode=l", "LRTIVTT"),
-                    ("mode=p", "LTDEXPIVTT"),
-                    ("mode=b", "BUSIVTT"),
-                    ("mode=y", "BRTYELIVTT"),
-                    ("mode=r", "BRTREDIVTT"),
-                ]
-                for selection, m_name in mode_names:
-                    scenario.extra_attribute("@tm_for_analysis").initialize(0)
-                    network_calc_spec["selections"]["transit_line"] = selection
-                    network_calc(network_calc_spec, scenario=scenario)
-                    strat_analysis_spec["results"]["strategy_values"] = '%s_%s' % (skim_name, m_name)
-                    strategy_analysis(strat_analysis_spec, class_name=class_name,
-                                      scenario=scenario, num_processors=num_processors)
-
         expr_params = _copy(params)
         expr_params["xfers"] = 15.0 if "ALLPEN" in name else 5.0
         expr_params["name"] = skim_name
@@ -717,64 +673,22 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         matrix_calc(spec, scenario=scenario, num_processors=num_processors)
         return
 
-    @_m.logbook_trace("Post-process skims for identical sampled skim sets")
-    def post_process_skims(self, period):
-        # Post-process the skim matrices to zero-out O-D pairs which are 
-        # identical to the "lower" mode skim.
-        # Assume that if critical skim components are the same, than these
-        # set slices generated the same strategy.
-        bus_comparison_skims = [
-            "FIRSTWAIT", "TOTALWAIT", "DWELLTIME", "BUSIVTT", "XFERS", "TOTALWALK"]
-        premium_skims = [
-            "LRTIVTT", "CMRIVTT", "EXPIVTT", "LTDEXPIVTT", "BRTREDIVTT", "BRTYELIVTT"]
-        other_skims = [
-            "GENCOST", "XFERWAIT", "FARE",
-            "ACCWALK", "XFERWALK", "EGRWALK", "TOTALIVTT",  
-            "BUSDIST", "LRTDIST", "CMRDIST", "EXPDIST", "BRTDIST"]
-        self.mask_identical(
-            period + "_" + "PREM", period + "_" + "ALLPEN", 
-            bus_comparison_skims + premium_skims, other_skims)
-        self.mask_identical(
-            period + "_" + "BUS", period + "_" + "ALLPEN", 
-            bus_comparison_skims, premium_skims + other_skims)
-    
     def mask_allpen(self, period):
-    	  # Reset skims to 0 if not both local and premium
+        # Reset skims to 0 if not both local and premium
         skims = [
             "FIRSTWAIT", "TOTALWAIT", "DWELLTIME", "BUSIVTT", "XFERS", "TOTALWALK",
             "LRTIVTT", "CMRIVTT", "EXPIVTT", "LTDEXPIVTT", "BRTREDIVTT", "BRTYELIVTT",
             "GENCOST", "XFERWAIT", "FARE",
             "ACCWALK", "XFERWALK", "EGRWALK", "TOTALIVTT",  
             "BUSDIST", "LRTDIST", "CMRDIST", "EXPDIST", "BRTDIST"]
-        localivt_skim = self.get_matrix_data(period+"_ALLPEN_BUSIVTT")
-        totalivt_skim = self.get_matrix_data(period+"_ALLPEN_TOTALIVTT")
-        has_premium = numpy.greater((totalivt_skim - localivt_skim),0)
-        has_both = numpy.greater(localivt_skim,0) * has_premium
+        localivt_skim = self.get_matrix_data(period + "_ALLPEN_BUSIVTT")
+        totalivt_skim = self.get_matrix_data(period + "_ALLPEN_TOTALIVTT")
+        has_premium = numpy.greater((totalivt_skim - localivt_skim), 0)
+        has_both = numpy.greater(localivt_skim, 0) * has_premium
         for skim in skims:
-            mat_name = period+"_ALLPEN_"+skim
+            mat_name = period + "_ALLPEN_" + skim
             data = self.get_matrix_data(mat_name)
             self.set_matrix_data(mat_name, data * has_both)
-	  
-    def mask_identical(self, primary, secondary, comparison_skims, other_skims):
-        rtol, atol = 10E-6, 10E-4
-        results = []
-        for name in comparison_skims:
-            primary_skim = self.get_matrix_data(primary + "_" + name)
-            secondary_skim = self.get_matrix_data(secondary + "_" + name)
-            results.append(numpy.isclose(primary_skim, secondary_skim, rtol, atol))
-        mask = results[0] & results[1]
-        for result in results[2:]:
-            mask = mask & result
-        if secondary + "_MASK" in self._matrix_cache:
-            prev_mask = self._matrix_cache[secondary + "_MASK"]
-            self._matrix_cache[secondary + "_MASK"] = mask & prev_mask
-        else:
-            self._matrix_cache[secondary + "_MASK"] = mask
-        mask = numpy.logical_not(mask)
-        for matrix in comparison_skims + other_skims:
-            mat_name = secondary + "_" + name
-            data = self.get_matrix_data(mat_name)
-            self.set_matrix_data(mat_name, data*mask)
 
     def get_matrix_data(self, name):
         data = self._matrix_cache.get(name)
@@ -798,7 +712,6 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         text.append(
             "Number of zones: %s. Number of O-D pairs: %s. "
             "Values outside -9999999, 9999999 are masked in summaries.<br>" % (num_zones, num_cells))
-        # text.append("<p>ALLPEN filtered out %s O-D pairs with identical skim values</p>" % self.get_matrix_data(period + "_ALLPEN_MASK").sum())
         text.append("%-25s %9s %9s %9s %13s %9s" % ("name", "min", "max", "mean", "sum", "mask num"))
         for name in matrices:
             data = self.get_matrix_data(name)
