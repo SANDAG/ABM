@@ -659,7 +659,7 @@ Export network results to csv files for SQL data loader."""
                                     "NODE": ["@network_adj"],#, "initial_boardings", "final_alightings"],
                                     "LINK": link_results.values() + ["@tcov_id", "length"],
                                     "TRANSIT_LINE": ["@route_id"],
-                                    "TRANSIT_SEGMENT": segment_results.values() + ["@stop_id", "allow_boardings", "allow_alightings"],
+                                    "TRANSIT_SEGMENT": segment_results.values() + ["transit_time", "@stop_id", "allow_boardings", "allow_alightings"],
                                 }
                                 network = self.get_partial_network(scenario, attributes)
                                 self.collapse_network_adjustments(network, segment_results, link_results)
@@ -705,7 +705,6 @@ Export network results to csv files for SQL data loader."""
         voc = ""  # volume/capacity, not actually used, 
         for line in lines:
             line_id = id_format(line["@route_id"])
-            #mode = line["mode"]
             ivtt = from_mp = to_mp = 0
             segments = iter(line.segments())
             seg = segments.next()
