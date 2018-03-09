@@ -21,7 +21,7 @@ public class Stop
     int     boardTap;
     int     alightTap;
     boolean inbound;
-    int     set;
+    int     set = -1;
 
     private int escorteePnumOrig;
     private byte escortStopTypeOrig;

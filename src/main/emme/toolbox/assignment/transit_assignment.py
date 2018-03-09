@@ -185,10 +185,10 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
     def get_perception_parameters(self, period):
         perception_parameters = {
             "EA": {
-                "vot": 0.05,
-                "init_wait": 1.6,
-                "xfer_wait": 2.5,
-                "walk": 1.6,
+                "vot": 0.27,
+                "init_wait": 1.5,
+                "xfer_wait": 3.0,
+                "walk": 2.0,
                 "init_headway": "@headway_rev_op", 
                 "xfer_headway": "@headway_op",
                 "fare": "@fare_per_op",
@@ -196,10 +196,10 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "fixed_link_time": "@trtime_link_ea"
             },
             "AM": {
-                "vot": 0.10,
+                "vot": 0.27,
                 "init_wait": 1.5,
                 "xfer_wait": 3.0,
-                "walk": 1.8,
+                "walk": 2.0,
                 "init_headway": "@headway_rev_am", 
                 "xfer_headway": "@headway_am",
                 "fare": "@fare_per_pk",
@@ -207,10 +207,10 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "fixed_link_time": "@trtime_link_am"
             },
             "MD": {
-                "vot": 0.05,
-                "init_wait": 1.6,
-                "xfer_wait": 2.5,
-                "walk": 1.6,
+                "vot": 0.27,
+                "init_wait": 1.5,
+                "xfer_wait": 3.0,
+                "walk": 2.0,
                 "init_headway": "@headway_rev_op", 
                 "xfer_headway": "@headway_op",
                 "fare": "@fare_per_op",
@@ -218,10 +218,10 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "fixed_link_time": "@trtime_link_md"
             },
             "PM": {
-                "vot": 0.10,
+                "vot": 0.27,
                 "init_wait": 1.5,
                 "xfer_wait": 3.0,
-                "walk": 1.8,
+                "walk": 2.0,
                 "init_headway": "@headway_rev_pm",
                 "xfer_headway": "@headway_pm",
                 "fare": "@fare_per_pk",
@@ -229,10 +229,10 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "fixed_link_time": "@trtime_link_pm"
             },
             "EV": {
-                "vot": 0.05,
-                "init_wait": 1.6,
-                "xfer_wait": 2.5,
-                "walk": 1.6,
+                "vot": 0.27,
+                "init_wait": 1.5,
+                "xfer_wait": 3.0,
+                "walk": 2.0,
                 "init_headway": "@headway_rev_op",
                 "xfer_headway": "@headway_op",
                 "fare": "@fare_per_op",
@@ -657,7 +657,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 strategy_analysis(spec, class_name=class_name, scenario=scenario, num_processors=num_processors)
 
         expr_params = _copy(params)
-        expr_params["xfers"] = 15.0 if "ALLPEN" in name else 5.0
+        expr_params["xfers"] = 15.0
         expr_params["name"] = skim_name
         spec = {
             "type": "MATRIX_CALCULATION",
