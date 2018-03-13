@@ -3,7 +3,7 @@
 if "%1"=="" goto usage
 if "%2"=="" goto usage
 
-set FILE_LIST=hwycov.e00 turns.csv trcov.e00 trlink.bin trlink.dcb trrt.bin trrt.dcb trstop.bin trstop.dcb trrt.csv tap.elev tap.ptype timexfer.bin timexfer.dcb fare.mtx tapcov.dbf tapcov.shp tapcov.shx tapcov.shp.xml SANDAG_Bike_Net.sbn SANDAG_Bike_Net.sbx SANDAG_Bike_Net.dbf SANDAG_Bike_Net.shp SANDAG_Bike_Net.shx SANDAG_Bike_Net.prj SANDAG_Bike_Node.sbn SANDAG_Bike_Node.sbx SANDAG_Bike_Node.dbf SANDAG_Bike_Node.shp SANDAG_Bike_Node.shx SANDAG_Bike_Node.prj
+set FILE_LIST=hwycov.e00 turns.csv trcov.e00 trlink.bin trlink.dcb trlink.csv trrt.bin trrt.dcb trrt.csv trstop.bin trstop.dcb trstop.csv tap.elev tap.ptype timexfer.bin timexfer.dcb timexfer.csv fare.mtx special_fares.txt linktypeturns.dbf mode5tod.dbf tapcov.dbf tapcov.shp tapcov.shx tapcov.shp.xml SANDAG_Bike_Net.sbn SANDAG_Bike_Net.sbx SANDAG_Bike_Net.dbf SANDAG_Bike_Net.shp SANDAG_Bike_Net.shx SANDAG_Bike_Net.prj SANDAG_Bike_Node.sbn SANDAG_Bike_Node.sbx SANDAG_Bike_Node.dbf SANDAG_Bike_Node.shp SANDAG_Bike_Node.shx SANDAG_Bike_Node.prj
 
 @echo %FILE_LIST%
 
