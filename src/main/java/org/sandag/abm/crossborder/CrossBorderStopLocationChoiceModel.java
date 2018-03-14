@@ -3,6 +3,7 @@ package org.sandag.abm.crossborder;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
+import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
 import org.sandag.abm.ctramp.Util;
@@ -20,7 +21,7 @@ public class CrossBorderStopLocationChoiceModel
 
     private transient Logger                 logger = Logger.getLogger("crossBorderModel");
 
-    private McLogsumsCalculator              logsumHelper;
+   // private McLogsumsCalculator              logsumHelper;
     private CrossBorderModelStructure        modelStructure;
     private MgraDataManager                  mgraManager;
     private TazDataManager                   tazManager;
@@ -29,6 +30,8 @@ public class CrossBorderStopLocationChoiceModel
     double                                   logsum = 0;
     private ChoiceModelApplication           soaModel;
     private ChoiceModelApplication           destModel;
+    private McLogsumsCalculator            logsumHelper;
+
 
     // the following arrays are calculated in the station-destination choice
     // model and passed in the constructor.
@@ -125,6 +128,7 @@ public class CrossBorderStopLocationChoiceModel
                                                                                             // destinationMgra)
     private int                              originTAZ;
     private int                              destinationTAZ;
+    private AutoTazSkimsCalculator tazDistanceCalculator;
 
     /**
      * Constructor.
@@ -135,15 +139,14 @@ public class CrossBorderStopLocationChoiceModel
      * @param myLogsumHelper
      */
     public CrossBorderStopLocationChoiceModel(HashMap<String, String> propertyMap,
-            CrossBorderModelStructure myModelStructure, CrossBorderDmuFactoryIf dmuFactory,
-            McLogsumsCalculator myLogsumHelper)
+            CrossBorderModelStructure myModelStructure, CrossBorderDmuFactoryIf dmuFactory, AutoTazSkimsCalculator tazDistanceCalculator)
     {
         mgraManager = MgraDataManager.getInstance(propertyMap);
         tazManager = TazDataManager.getInstance(propertyMap);
 
         modelStructure = myModelStructure;
-        logsumHelper = myLogsumHelper;
-
+        
+        this.tazDistanceCalculator = tazDistanceCalculator;
         setupStopLocationChoiceModel(propertyMap, dmuFactory);
 
         frequencyChosen = new HashMap<Integer, Integer>();
@@ -214,6 +217,11 @@ public class CrossBorderStopLocationChoiceModel
         stopToTourDestDistanceAlt = new double[sampleRate + 1];
         osMcLogsumAlt = new double[sampleRate + 1];
         sdMcLogsumAlt = new double[sampleRate + 1];
+        
+        tripModeChoiceModel = new CrossBorderTripModeChoiceModel(rbMap, modelStructure,
+                dmuFactory, tazDistanceCalculator);
+        logsumHelper = tripModeChoiceModel.getMcLogsumsCalculator(); 
+        
 
     }
 
@@ -524,14 +532,5 @@ public class CrossBorderStopLocationChoiceModel
         this.mgraProbabilities = mgraProbabilities;
     }
 
-    /**
-     * Set trip mode choice model. Must call before choosing location.
-     * 
-     * @param tripModeChoiceModel
-     */
-    public void setTripModeChoiceModel(CrossBorderTripModeChoiceModel tripModeChoiceModel)
-    {
-        this.tripModeChoiceModel = tripModeChoiceModel;
-    }
 
 }

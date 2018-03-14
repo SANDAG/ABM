@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
+import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
 import org.sandag.abm.ctramp.Util;
@@ -63,7 +64,7 @@ public class CrossBorderTourModeChoiceModel
                                                                                                                                     // coefficients)
     private CrossBorderTripModeChoiceModel tripModeChoiceModel;
     private CrossBorderTourModeChoiceDMU   mcDmuObject;
-    private McLogsumsCalculator            logsumsCalculator;
+    private McLogsumsCalculator            logsumHelper;
 
     private CrossBorderModelStructure      modelStructure;
 
@@ -89,19 +90,24 @@ public class CrossBorderTourModeChoiceModel
      */
     public CrossBorderTourModeChoiceModel(HashMap<String, String> propertyMap,
             CrossBorderModelStructure myModelStructure, CrossBorderDmuFactoryIf dmuFactory,
-            McLogsumsCalculator myLogsumHelper)
+            AutoTazSkimsCalculator tazDistanceCalculator)
     {
 
         mgraManager = MgraDataManager.getInstance(propertyMap);
         modelStructure = myModelStructure;
-        logsumsCalculator = myLogsumHelper;
+        
+        logsumHelper = new McLogsumsCalculator();
+        logsumHelper.setupSkimCalculators(propertyMap);
+        logsumHelper.setTazDistanceSkimArrays(
+                tazDistanceCalculator.getStoredFromTazToAllTazsDistanceSkims(),
+                tazDistanceCalculator.getStoredToTazFromAllTazsDistanceSkims());
 
         mcDmuObject = dmuFactory.getCrossBorderTourModeChoiceDMU();
         setupModeChoiceModelApplicationArray(propertyMap);
 
         // Create a trip mode choice model object for calculation of logsums
         tripModeChoiceModel = new CrossBorderTripModeChoiceModel(propertyMap, myModelStructure,
-                dmuFactory, myLogsumHelper);
+                dmuFactory, tazDistanceCalculator);
 
         tour = new CrossBorderTour(0);
         trip = new CrossBorderTrip();

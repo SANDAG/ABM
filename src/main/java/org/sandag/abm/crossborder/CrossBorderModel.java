@@ -38,7 +38,6 @@ public class CrossBorderModel
 
     private MatrixDataServerRmi     ms;
     private HashMap<String, String> rbMap;
-    private McLogsumsCalculator                logsumsCalculator;
     private AutoTazSkimsCalculator  tazDistanceCalculator;
     private MgraDataManager         mgraManager;
     private TazDataManager          tazManager;
@@ -100,25 +99,20 @@ public class CrossBorderModel
                 {
                     tazDistanceCalculator = new AutoTazSkimsCalculator(rbMap);
                     tazDistanceCalculator.computeTazDistanceArrays();
-                    logsumsCalculator = new McLogsumsCalculator();
-                    logsumsCalculator.setupSkimCalculators(rbMap);
                     calculatorsInitialized.set(true);
                 }
             }
         }
-        // this sets by thread, so do it outside of initialization
-        logsumsCalculator.setTazDistanceSkimArrays(
-                tazDistanceCalculator.getStoredFromTazToAllTazsDistanceSkims(),
-                tazDistanceCalculator.getStoredToTazFromAllTazsDistanceSkims());
 
         CrossBorderTourTimeOfDayChoiceModel todChoiceModel = new CrossBorderTourTimeOfDayChoiceModel(
                 rbMap);
         CrossBorderStationDestChoiceModel destChoiceModel = new CrossBorderStationDestChoiceModel(
-                rbMap, modelStructure, dmuFactory, logsumsCalculator);
-        CrossBorderTourModeChoiceModel tourModeChoiceModel = destChoiceModel
-                .getTourModeChoiceModel();
-        CrossBorderTripModeChoiceModel tripModeChoiceModel = tourModeChoiceModel
-                .getTripModeChoiceModel();
+                rbMap, modelStructure, dmuFactory, tazDistanceCalculator);
+        CrossBorderTourModeChoiceModel tourModeChoiceModel = new CrossBorderTourModeChoiceModel(rbMap, modelStructure, dmuFactory,
+                		tazDistanceCalculator);
+
+        CrossBorderTripModeChoiceModel tripModeChoiceModel = new CrossBorderTripModeChoiceModel(rbMap, modelStructure,
+                dmuFactory, tazDistanceCalculator);
         destChoiceModel.calculateSizeTerms(dmuFactory);
         destChoiceModel.calculateTazProbabilities(dmuFactory);
 
@@ -128,15 +122,15 @@ public class CrossBorderModel
         CrossBorderStopTimeOfDayChoiceModel stopTodChoiceModel = new CrossBorderStopTimeOfDayChoiceModel(
                 rbMap);
         CrossBorderStopLocationChoiceModel stopLocationChoiceModel = new CrossBorderStopLocationChoiceModel(
-                rbMap, modelStructure, dmuFactory, logsumsCalculator);
+                rbMap, modelStructure, dmuFactory, tazDistanceCalculator);
+        
         double[][] mgraSizeTerms = destChoiceModel.getMgraSizeTerms();
         double[][] tazSizeTerms = destChoiceModel.getTazSizeTerms();
         double[][][] mgraProbabilities = destChoiceModel.getMgraProbabilities();
         stopLocationChoiceModel.setMgraSizeTerms(mgraSizeTerms);
         stopLocationChoiceModel.setTazSizeTerms(tazSizeTerms);
         stopLocationChoiceModel.setMgraProbabilities(mgraProbabilities);
-        stopLocationChoiceModel.setTripModeChoiceModel(tripModeChoiceModel);
-
+        
         for (int i = start; i < end; i++)
         {
             CrossBorderTour tour = tours[i];

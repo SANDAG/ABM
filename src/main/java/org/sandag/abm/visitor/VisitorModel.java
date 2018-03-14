@@ -98,20 +98,14 @@ public class VisitorModel
                 {
                     tazDistanceCalculator = new AutoTazSkimsCalculator(rbMap);
                     tazDistanceCalculator.computeTazDistanceArrays();
-                    logsumsCalculator = new McLogsumsCalculator();
-                    logsumsCalculator.setupSkimCalculators(rbMap);
                     calculatorsInitialized.set(true);
                 }
             }
         }
         
-        // this sets by thread, so do it outside of initialization
-       logsumsCalculator.setTazDistanceSkimArrays(
-                tazDistanceCalculator.getStoredFromTazToAllTazsDistanceSkims(),
-                tazDistanceCalculator.getStoredToTazFromAllTazsDistanceSkims());
-
+ 
         VisitorTourTimeOfDayChoiceModel todChoiceModel = new VisitorTourTimeOfDayChoiceModel(rbMap);
-        VisitorTourDestChoiceModel destChoiceModel = new VisitorTourDestChoiceModel(rbMap, modelStructure, dmuFactory, logsumsCalculator);
+        VisitorTourDestChoiceModel destChoiceModel = new VisitorTourDestChoiceModel(rbMap, modelStructure, dmuFactory);
         VisitorTourModeChoiceModel tourModeChoiceModel = destChoiceModel.getTourModeChoiceModel();
         //VisitorTripModeChoiceModel tripModeChoiceModel = tourModeChoiceModel.getTripModeChoiceModel();
         destChoiceModel.calculateSizeTerms(dmuFactory);
@@ -120,7 +114,7 @@ public class VisitorModel
         VisitorStopFrequencyModel stopFrequencyModel = new VisitorStopFrequencyModel(rbMap);
         VisitorStopPurposeModel stopPurposeModel = new VisitorStopPurposeModel(rbMap);
         VisitorStopTimeOfDayChoiceModel stopTodChoiceModel = new VisitorStopTimeOfDayChoiceModel(rbMap);
-        VisitorStopLocationChoiceModel stopLocationChoiceModel = new VisitorStopLocationChoiceModel(rbMap, modelStructure, dmuFactory, logsumsCalculator);
+        VisitorStopLocationChoiceModel stopLocationChoiceModel = new VisitorStopLocationChoiceModel(rbMap, modelStructure, dmuFactory, tazDistanceCalculator);
         VisitorTripModeChoiceModel tripModeChoiceModel = new VisitorTripModeChoiceModel(rbMap, modelStructure, dmuFactory);
         double[][] mgraSizeTerms = destChoiceModel.getMgraSizeTerms();
         double[][] tazSizeTerms = destChoiceModel.getTazSizeTerms();

@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
+import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
 import org.sandag.abm.ctramp.Util;
@@ -176,7 +177,7 @@ public class CrossBorderStationDestChoiceModel
      */
     public CrossBorderStationDestChoiceModel(HashMap<String, String> rbMap,
             CrossBorderModelStructure myStructure, CrossBorderDmuFactoryIf dmuFactory,
-            McLogsumsCalculator myLogsumHelper)
+            AutoTazSkimsCalculator tazDistanceCalculator)
     {
 
         this.rbMap = rbMap;
@@ -261,10 +262,19 @@ public class CrossBorderStationDestChoiceModel
         sampledCorrectionFactors = new double[sampleRate + 1];
         frequencyChosen = new HashMap<KeyClass, Integer>();
 
+        logsumHelper = new McLogsumsCalculator();
+        logsumHelper.setupSkimCalculators(rbMap);
+
+        // this sets by thread, so do it outside of initialization
+        logsumHelper.setTazDistanceSkimArrays(
+                tazDistanceCalculator.getStoredFromTazToAllTazsDistanceSkims(),
+                tazDistanceCalculator.getStoredToTazFromAllTazsDistanceSkims());
+
         // set up a tour mode choice model for calculation of tour mode
         // probabilities
         tourModeChoiceModel = new CrossBorderTourModeChoiceModel(rbMap, myStructure, dmuFactory,
-                myLogsumHelper);
+        		tazDistanceCalculator);
+
         tourModeChoiceLogsums = new double[sampleRate + 1];
         sampledSizeTerms = new double[myStructure.CROSSBORDER_PURPOSES.length][sampleRate + 1];
         sampledStationLogsums = new double[sampleRate + 1];
@@ -272,8 +282,8 @@ public class CrossBorderStationDestChoiceModel
 
         sampledOriginTazs = new int[sampleRate + 1];
         sampledDestinationTazs = new int[sampleRate + 1];
+        
 
-        logsumHelper = myLogsumHelper;
     }
 
     /**

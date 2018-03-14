@@ -668,11 +668,8 @@ public class BestTransitPathCalculator implements Serializable
         	myLogger.info(header);
         	myLogger.info("Final Best Utilities:");
         	myLogger.info("Alt, Alt, Utility, bestITap, bestJTap, bestSet");
-            int availableModeCount = 0;
             for (int i = 0; i < bestUtilities.length; i++)
             {
-                if (bestTaps[i] != null) availableModeCount++;
-
                 myLogger.info(i + "," + i + "," + bestUtilities[i] + ","
                         + (bestTaps[i] == null ? "NA" : bestTaps[i][0]) + ","
                         + (bestTaps[i] == null ? "NA" : bestTaps[i][1]) + ","
