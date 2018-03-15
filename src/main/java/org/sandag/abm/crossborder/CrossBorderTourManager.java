@@ -99,7 +99,8 @@ public class CrossBorderTourManager
         for (int i = 0; i < tours.length; ++i)
         {
 
-            CrossBorderTour tour = new CrossBorderTour(i + 1001);
+            long seed = i * 10 + 1001;
+            CrossBorderTour tour = new CrossBorderTour(seed);
 
             tours[i] = tour;
 

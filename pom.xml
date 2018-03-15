@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.sandag</groupId>
     <artifactId>SANDAG-ABM</artifactId>
-    <version>version_13_4_0_SNAPSHOT</version>
+    <version>version_14_0_0_SNAPSHOT</version>
     <name>SANDAG CT-RAMP Activity Based Model</name>
     <properties>
         <encoding.type>UTF-8</encoding.type> 
@@ -44,7 +44,7 @@
         <USERNAME>XX</USERNAME>
         <PASSWORD>XX</PASSWORD>
         <MAPANDRUN>mapAndRun.bat</MAPANDRUN>
-        <JAVA_64_PATH>C:\Progra~1\Java\jre1.8.0_151</JAVA_64_PATH>
+        <JAVA_64_PATH>C:\Progra~1\Java\jre1.8.0_162</JAVA_64_PATH>
         <JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
         <workpath>WORKPATH</workpath>
         <database_server>sql2014a8</database_server>
@@ -355,23 +355,6 @@
                                 <resource>
                                     <directory>uec</directory>
                                     <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-gisdk-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${release.root}/common/gisdk</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/gisdk</directory>
-                                    <filtering>true</filtering>
                                 </resource>
                             </resources>
                         </configuration>

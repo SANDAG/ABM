@@ -14,7 +14,7 @@ call %SCEN_DIR%\bin\CTRampEnv.bat
 set CLASSPATH=%SCEN_DIR%/application/*
 
 REM create the land-use data
-REM python %SCEN_DIR%\python\cvm_input_create.py %SCEN_DIR%\input %MGRA_DATA% "Zonal Properties CVM.csv"
+python %SCEN_DIR%\python\cvm_input_create.py %SCEN_DIR%\input %MGRA_DATA% "Zonal Properties CVM.csv"
 
 REM create the commercial vehicle tours
 python %SCEN_DIR%\python\sdcvm.py -s %CVM_ScaleFactor% -p %SCEN_DIR%

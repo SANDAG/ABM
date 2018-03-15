@@ -1,6 +1,6 @@
 __author__ = 'wsu'
 #Wu.Sun@sandag.org 10-27-2016
-#wsu update 5/2/2017 for release 13.3.2
+#wsu update 3/6/2018 for release 14.0.0
 import Tkinter
 import Tkconstants
 import tkFileDialog
@@ -55,8 +55,8 @@ class CreateScenarioGUI(Tkinter.Frame):
 
             Tkinter.Label(body, text=u"Version", font=("Helvetica", 8, 'bold')).grid(row=8)
             var = StringVar(root)
-            self.version="version_13_4_0"
-            optionList=["version_13_3_0", "version_13_3_2", "version_13_4_0"]
+            self.version="version_14_0_0"
+            optionList=["version_13_3_0", "version_13_3_2", "version_14_0_0"]
             option=Tkinter.OptionMenu(body,var,*optionList,command=self.setversion)
             option.config(width=50)
             option.grid(row=8, column=1)

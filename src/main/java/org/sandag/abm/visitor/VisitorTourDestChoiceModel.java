@@ -110,8 +110,7 @@ public class VisitorTourDestChoiceModel
      *            Factory object for creation of airport model DMUs
      */
     public VisitorTourDestChoiceModel(HashMap<String, String> rbMap,
-            VisitorModelStructure modelStructure, VisitorDmuFactoryIf dmuFactory,
-            McLogsumsCalculator logsumsCalculator)
+            VisitorModelStructure modelStructure, VisitorDmuFactoryIf dmuFactory)
     {
 
         this.rbMap = rbMap;

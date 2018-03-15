@@ -53,8 +53,7 @@ public class CrossBorderTripModeChoiceModel
      * @param myLogsumHelper
      */
     public CrossBorderTripModeChoiceModel(HashMap<String, String> propertyMap,
-            CrossBorderModelStructure myModelStructure, CrossBorderDmuFactoryIf dmuFactory,
-            McLogsumsCalculator myLogsumHelper)
+            CrossBorderModelStructure myModelStructure, CrossBorderDmuFactoryIf dmuFactory, AutoTazSkimsCalculator tazDistanceCalculator)
     {
         tazs = TazDataManager.getInstance(propertyMap);
         mgraManager = MgraDataManager.getInstance(propertyMap);
@@ -65,8 +64,9 @@ public class CrossBorderTripModeChoiceModel
 
         modelStructure = myModelStructure;
         sandagModelStructure = new SandagModelStructure();
-        logsumHelper = myLogsumHelper;
-
+        
+        this.tazDistanceCalculator = tazDistanceCalculator;
+        
         setupTripModeChoiceModel(propertyMap, dmuFactory);
 
     }
@@ -96,9 +96,6 @@ public class CrossBorderTripModeChoiceModel
 
         tripModeChoiceModel = new ChoiceModelApplication(tripModeUecFile, modelPage, dataPage,
                 propertyMap, (VariableTable) dmu);
-        
-        tazDistanceCalculator = new AutoTazSkimsCalculator(propertyMap);
-        tazDistanceCalculator.computeTazDistanceArrays();
         
         logsumHelper = new McLogsumsCalculator();
         logsumHelper.setupSkimCalculators(propertyMap);
@@ -293,4 +290,7 @@ public class CrossBorderTripModeChoiceModel
 
     }
 
+    public McLogsumsCalculator getMcLogsumsCalculator(){
+    	return logsumHelper;
+    }
 }

@@ -41,12 +41,34 @@ public class TransitWalkAccessDMU
     int                                 personType = 1;     //defaults to full-time worker
     float                               ivtCoeff;
     float                               costCoeff;
+    int									accessEgressMode=0; //this is called a walk-access DMU but it is used in the TAP-to-TAP UEC, so it is
+                                                            //possible that it is being called for a drive-access path!
 
     public TransitWalkAccessDMU()
     {
         setupMethodIndexMap();
     }
 
+    /**
+     * Set the access/egress mode
+     * 
+     * @param accessEgressMode
+     */
+    public void setAccessEgressMode(int accessEgressMode){
+    	this.accessEgressMode = accessEgressMode;
+    }
+    
+    
+    /**
+     * Get the access/egress mode
+     * 
+     * @return accessEgressMode
+     */
+    public int getAccessEgressMode(){
+    	return accessEgressMode;
+    }
+    
+  
     /**
      * Get the time from the production/origin MGRA to the boarding TAP.
      * 
@@ -178,6 +200,8 @@ public class TransitWalkAccessDMU
         localLogger.info(String.format("personType:               %9s", personType));
         localLogger.info(String.format("ivtCoeff  :               %9.4f", ivtCoeff));
         localLogger.info(String.format("costCoeff  :              %9.4f", costCoeff));
+        localLogger.info(String.format("accessEgressMode  :       %9s", accessEgressMode));
+        
 
     }
 
@@ -195,6 +219,7 @@ public class TransitWalkAccessDMU
         methodIndexMap.put("getPersonType", 8);
         methodIndexMap.put("getIvtCoeff", 9);
         methodIndexMap.put("getCostCoeff", 10);
+        methodIndexMap.put("getAccessEgressMode", 11);
                
 
     }
@@ -222,6 +247,8 @@ public class TransitWalkAccessDMU
                 return getIvtCoeff();
             case 10:
             	return getCostCoeff();
+            case 11:
+            	return getAccessEgressMode();
 
             default:
                 logger.error("method number = " + variableIndex + " not found");

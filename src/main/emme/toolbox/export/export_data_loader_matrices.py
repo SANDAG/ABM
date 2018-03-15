@@ -168,7 +168,7 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
         scenario = self.base_scenario
         emmebank = scenario.emmebank
         zones = scenario.zone_numbers
-        formater = lambda x: ("%.2f" % x).rstrip('0').rstrip(".")
+        formater = lambda x: ("%.5f" % x).rstrip('0').rstrip(".")
         truck_trip_path = os.path.join(os.path.dirname(self.output_dir), "report", "trucktrip.csv")
         
 	#get auto operating cost	
@@ -219,14 +219,14 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
 
 	#EXTERNAL_EXTERNAL TRIP TABLE (toll-eligible)
         name_mapping = [
-            ("DA", "SOVGP"),
-            ("S2", "HOV2HOV"),
-            ("S3", "HOV3HOV"),
+            ("DA", "SOV"),
+            ("S2", "HOV2"),
+            ("S3", "HOV3"),
         ]	
         scenario = self.base_scenario
         emmebank = scenario.emmebank
         zones = scenario.zone_numbers	
-        formater = lambda x: ("%.2f" % x).rstrip('0').rstrip(".")
+        formater = lambda x: ("%.5f" % x).rstrip('0').rstrip(".")
         ee_trip_path = os.path.join(os.path.dirname(self.output_dir), "report", "eetrip.csv")
         with _m.logbook_trace("Export external-external demand"):
             with open(ee_trip_path, 'w') as f:

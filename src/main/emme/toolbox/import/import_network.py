@@ -1875,7 +1875,7 @@ def revised_headway(headway):
     if headway <= 10:
          rev_headway = headway
     else:
-    	   rev_headway = 0.275 + 0.788 * _np.exp(-0.011*headway)
+    	   rev_headway = headway * (0.275 + 0.788 * _np.exp(-0.011*headway))
             
     return rev_headway
 

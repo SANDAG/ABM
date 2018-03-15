@@ -115,7 +115,8 @@ public class BestTransitPathCalculator implements Serializable
     private int[] maxLogsumUtilitiesBySkimSet;				//maximum number of utilities for each skims set in logsum calcs
     private int[] utilityCount;								//counter for utilities    
     private double[] expUtilities;							//exponentiated utility array for path choice
-        
+      
+    private float nestingCoefficient;
     /**
      * Constructor.
      * 
@@ -199,6 +200,8 @@ public class BestTransitPathCalculator implements Serializable
         utilityCount = new int[numSkimSets];
         expUtilities = new double[numTransitAlts];
         
+        nestingCoefficient =  new Float(Util.getStringValueFromPropertyMap(rbMap, "utility.bestTransitPath.nesting.coeff")).floatValue();
+        
      }
     
    
@@ -269,7 +272,7 @@ public class BestTransitPathCalculator implements Serializable
         			
         			//loop across number of skim sets  the pTap to aTap utility values 
         			for (int set=0; set<numSkimSets; set++) {
-	            		tapTapUtil[set] = calcUtilitiesForTapPair(walkDmu, period, pTap, aTap, set, pMgra, aMgra, writeCalculations, myLogger);
+	            		tapTapUtil[set] = calcUtilitiesForTapPair(walkDmu, period, WTW, pTap, aTap, set, pMgra, aMgra, writeCalculations, myLogger);
         			}
         			storedDepartPeriodTapTapUtils.get(WTW).get(period).putIfAbsent(storedDataObject.paTapKey(pTap, aTap), tapTapUtil);
         		} else {
@@ -355,7 +358,7 @@ public class BestTransitPathCalculator implements Serializable
             			
             			//loop across number of skim sets  the pTap to aTap utility values 
             			for (int set=0; set<numSkimSets; set++) {
-    	            		tapTapUtil[set] = calcUtilitiesForTapPair(walkDmu, period, pTap, aTap, set, pMgra, aMgra, writeCalculations, myLogger);
+    	            		tapTapUtil[set] = calcUtilitiesForTapPair(walkDmu, period, DTW, pTap, aTap, set, pMgra, aMgra, writeCalculations, myLogger);
             			}
             			storedDepartPeriodTapTapUtils.get(DTW).get(period).putIfAbsent(storedDataObject.paTapKey(pTap, aTap), tapTapUtil);
             		} else {
@@ -440,7 +443,7 @@ public class BestTransitPathCalculator implements Serializable
             			
             			//loop across number of skim sets  the pTap to aTap utility values 
             			for (int set=0; set<numSkimSets; set++) {
-    	            		tapTapUtil[set] = calcUtilitiesForTapPair(walkDmu, period, pTap, aTap, set, pMgra, aMgra, writeCalculations, myLogger);
+    	            		tapTapUtil[set] = calcUtilitiesForTapPair(walkDmu, period, WTD, pTap, aTap, set, pMgra, aMgra, writeCalculations, myLogger);
             			}
             			storedDepartPeriodTapTapUtils.get(WTD).get(period).putIfAbsent(storedDataObject.paTapKey(pTap, aTap), tapTapUtil);
             		} else {
@@ -524,13 +527,14 @@ public class BestTransitPathCalculator implements Serializable
         return(util);
     }
     
-    public float calcUtilitiesForTapPair(TransitWalkAccessDMU walkDmu, int period, int pTap, int aTap, int set, int origMgra, int destMgra, boolean myTrace, Logger myLogger) {
+    public float calcUtilitiesForTapPair(TransitWalkAccessDMU walkDmu, int period, int accessEgressMode, int pTap, int aTap, int set, int origMgra, int destMgra, boolean myTrace, Logger myLogger) {
    	
         // set up the index and dmu objects
         index.setOriginZone(pTap);
         index.setDestZone(aTap);
         walkDmu.setTOD(period);
         walkDmu.setSet(set);
+        walkDmu.setAccessEgressMode(accessEgressMode);
 
         // solve
         float util = (float)tapToTapUEC.solve(index, walkDmu, null)[0];  
@@ -585,19 +589,19 @@ public class BestTransitPathCalculator implements Serializable
     	if(accEgr==WTW) {
     		accUtil = calcWalkAccessUtility(walkDmu, origMgra, pTap, myTrace, myLogger);
             egrUtil = calcWalkEgressUtility(walkDmu, aTap, destMgra, myTrace, myLogger);
-            tapTapUtil = calcUtilitiesForTapPair(walkDmu, period, pTap, aTap, set, origMgra, destMgra, myTrace, myLogger);
+            tapTapUtil = calcUtilitiesForTapPair(walkDmu, period, WTW, pTap, aTap, set, origMgra, destMgra, myTrace, myLogger);
     	} else if(accEgr==WTD) {
     		int aTaz = mgraManager.getTaz(destMgra);
     		AccessMode accMode = AccessMode.PARK_N_RIDE;
     		accUtil = calcWalkAccessUtility(walkDmu, origMgra, pTap, myTrace, myLogger);
     		egrUtil = calcDriveEgressUtility(driveDmu, aTap, aTaz, destMgra, accMode, myTrace, myLogger);
-    		tapTapUtil = calcUtilitiesForTapPair(walkDmu, period, pTap, aTap, set, origMgra, destMgra, myTrace, myLogger);
+    		tapTapUtil = calcUtilitiesForTapPair(walkDmu, period, WTD, pTap, aTap, set, origMgra, destMgra, myTrace, myLogger);
     	} else if(accEgr==DTW) {
     		int pTaz = mgraManager.getTaz(origMgra);
     		AccessMode accMode = AccessMode.PARK_N_RIDE;
     		accUtil = calcDriveAccessUtility(driveDmu, origMgra, pTaz, pTap, accMode, myTrace, myLogger);
     		egrUtil = calcWalkEgressUtility(walkDmu, aTap, destMgra, myTrace, myLogger);
-    		tapTapUtil = calcUtilitiesForTapPair(walkDmu, period, pTap, aTap, set, origMgra, destMgra, myTrace, myLogger);
+    		tapTapUtil = calcUtilitiesForTapPair(walkDmu, period, DTW, pTap, aTap, set, origMgra, destMgra, myTrace, myLogger);
     	}
         return(accUtil + tapTapUtil + egrUtil);
     }
@@ -664,11 +668,8 @@ public class BestTransitPathCalculator implements Serializable
         	myLogger.info(header);
         	myLogger.info("Final Best Utilities:");
         	myLogger.info("Alt, Alt, Utility, bestITap, bestJTap, bestSet");
-            int availableModeCount = 0;
             for (int i = 0; i < bestUtilities.length; i++)
             {
-                if (bestTaps[i] != null) availableModeCount++;
-
                 myLogger.info(i + "," + i + "," + bestUtilities[i] + ","
                         + (bestTaps[i] == null ? "NA" : bestTaps[i][0]) + ","
                         + (bestTaps[i] == null ? "NA" : bestTaps[i][1]) + ","
@@ -809,7 +810,7 @@ public class BestTransitPathCalculator implements Serializable
     			continue;
     		if(bestTapPairs[i][3]<-500)
     			continue;
-    		expUtilities[i] = Math.exp(bestTapPairs[i][3]);
+    		expUtilities[i] = Math.exp(bestTapPairs[i][3]/nestingCoefficient);
     		sumExpUtility += expUtilities[i]; 
         		
     	}
