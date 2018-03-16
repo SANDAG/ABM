@@ -252,6 +252,9 @@ public class BestTransitPathCalculator implements Serializable
     			storedWalkAccessUtils[pMgra][pTap] = accUtil;
             } else {
             	accUtil = storedWalkAccessUtils[pMgra][pTap];
+            	if(writeCalculations){
+            		myLogger.info("Stored walk access utility from Mgra "+pMgra+" to Tap "+pTap+" is "+accUtil);
+            	}
             }
 
             for (int aTap : aMgraSet)
@@ -264,6 +267,7 @@ public class BestTransitPathCalculator implements Serializable
         			storedWalkEgressUtils[aTap][aMgra] = egrUtil;
                 } else {
                 	egrUtil = storedWalkEgressUtils[aTap][aMgra];	
+            		myLogger.info("Stored walk egress utility from Tap "+aTap+" to Mgra "+aMgra+" is "+egrUtil);
                 }
                 	
                 // Calculate the pTap to aTap utility values
@@ -277,7 +281,9 @@ public class BestTransitPathCalculator implements Serializable
         			storedDepartPeriodTapTapUtils.get(WTW).get(period).putIfAbsent(storedDataObject.paTapKey(pTap, aTap), tapTapUtil);
         		} else {
 	                tapTapUtil = storedDepartPeriodTapTapUtils.get(WTW).get(period).get(storedDataObject.paTapKey(pTap, aTap));
-            	}
+            		myLogger.info("Stored walk tap to tap utility from Tap "+pTap+" to Tap "+aTap+" is "+tapTapUtil);
+            	
+        		}
         		
         		//create path for each skim set
         		for (int set=0; set<numSkimSets; set++) {
@@ -331,6 +337,7 @@ public class BestTransitPathCalculator implements Serializable
     			storedDriveAccessUtils[pTaz][pTap] = accUtil;
             } else {
             	accUtil = storedDriveAccessUtils[pTaz][pTap];
+        		myLogger.info("Stored drive access utility from TAZ "+pTaz+" to Tap "+pTap+" is "+accUtil);
             }
             
             int lotID = (int)tapParkingInfo[pTap][0][0]; // lot ID
@@ -350,6 +357,7 @@ public class BestTransitPathCalculator implements Serializable
             			storedWalkEgressUtils[aTap][aMgra] = egrUtil;
                     } else {
                     	egrUtil = storedWalkEgressUtils[aTap][aMgra];	
+                		myLogger.info("Stored walk egress utility from Tap "+aTap+" to Mgra "+aMgra+" is "+egrUtil);
                     }
                                         
                     // Calculate the pTap to aTap utility values
@@ -363,7 +371,8 @@ public class BestTransitPathCalculator implements Serializable
             			storedDepartPeriodTapTapUtils.get(DTW).get(period).putIfAbsent(storedDataObject.paTapKey(pTap, aTap), tapTapUtil);
             		} else {
     	                tapTapUtil = storedDepartPeriodTapTapUtils.get(DTW).get(period).get(storedDataObject.paTapKey(pTap, aTap));
-                	}
+    	                myLogger.info("Stored drive Tap to Tap utility from Tap "+pTap+" to Tap "+aTap+" is "+tapTapUtil);
+            		}
             		
             		//create path for each skim set
             		for (int set=0; set<numSkimSets; set++) {
@@ -415,6 +424,7 @@ public class BestTransitPathCalculator implements Serializable
     			storedWalkAccessUtils[pMgra][pTap] = accUtil;
             } else {
             	accUtil = storedWalkAccessUtils[pMgra][pTap];
+        		myLogger.info("Stored walk access utility from Mgra "+pMgra+" to Tap "+pTap+" is "+accUtil);
             }
 
             for (int aTap : tazManager.getParkRideOrKissRideTapsForZone(aTaz, accMode))
@@ -435,6 +445,7 @@ public class BestTransitPathCalculator implements Serializable
             			storedDriveEgressUtils[aTap][aTaz] = egrUtil;
                     } else {
                     	egrUtil = storedDriveEgressUtils[aTap][aTaz];	
+                		myLogger.info("Stored drive egress utility from Tap "+aTap+" to TAZ "+aTaz+" is "+egrUtil);
                     }
                 	
                     // Calculate the pTap to aTap utility values
@@ -448,7 +459,9 @@ public class BestTransitPathCalculator implements Serializable
             			storedDepartPeriodTapTapUtils.get(WTD).get(period).putIfAbsent(storedDataObject.paTapKey(pTap, aTap), tapTapUtil);
             		} else {
     	                tapTapUtil = storedDepartPeriodTapTapUtils.get(WTD).get(period).get(storedDataObject.paTapKey(pTap, aTap));
-                	}
+                		myLogger.info("Stored drive Tap to Tap utility from Tap "+pTap+" to Tap "+aTap+" is "+tapTapUtil);
+
+            		}
             		
             		//create path for each skim set
             		for (int set=0; set<numSkimSets; set++) {
