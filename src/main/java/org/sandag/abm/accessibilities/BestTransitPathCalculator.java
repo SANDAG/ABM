@@ -562,8 +562,8 @@ public class BestTransitPathCalculator implements Serializable
     		return NA;
     	}
     	
-    	driveDmu.setDriveDistToTap(tazManager.getTapDist(aTaz, aPos, accMode));
-        driveDmu.setDriveTimeToTap(aDriveTime);
+    	driveDmu.setDriveDistFromTap(tazManager.getTapDist(aTaz, aPos, accMode));
+        driveDmu.setDriveTimeFromTap(aDriveTime);
         float util = (float)driveEgressUEC.solve(index, driveDmu, null)[0];
 
         // logging
