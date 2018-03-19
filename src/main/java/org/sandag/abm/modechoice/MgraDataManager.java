@@ -264,6 +264,16 @@ public final class MgraDataManager
                 int alightDistPercieved = Math.round(alightTimePercieved / Constants.walkMinutesPerMile  * Constants.feetPerMile);
                 int boardDistActual = Math.round(boardTimeActual / Constants.walkMinutesPerMile  * Constants.feetPerMile);
                 int alightDistActual = Math.round(alightTimeActual / Constants.walkMinutesPerMile  * Constants.feetPerMile);
+                
+                //reset 0 distances to 0.1 miles, and log potential error
+                if((boardDistPercieved==0)||(alightDistPercieved==0)||(boardDistActual==0)||(alightDistActual==0)){
+                	logger.info("Potential error: Distance from mgra "+mgra+" to tap "+tap+" is 0; resetting to 0.1 miles");
+                	boardDistPercieved= Math.round(Constants.feetPerMile * (float)0.1);
+                   	boardDistActual= Math.round(Constants.feetPerMile * (float)0.1);
+                  	alightDistPercieved= Math.round(Constants.feetPerMile * (float)0.1);
+                   	alightDistActual= Math.round(Constants.feetPerMile * (float)0.1);
+               }
+                
                 if (!mgraWlkTapList.containsKey(mgra))
                 	mgraWlkTapList.put(mgra,new HashMap<Integer,int[]>());
                 mgraWlkTapList.get(mgra).put(tap,new int[] {boardDistPercieved,alightDistPercieved,boardDistActual,alightDistActual});
@@ -329,9 +339,7 @@ public final class MgraDataManager
      */
     public void trimTapSet() {
     	
-    	//mgraWlkTapsDistArray[maz], [2] ([0] = taps, [1]=distances), []
-    	
-	    int mazToTaps = 0;
+        int mazToTaps = 0;
 	    int trimmedTaps = 0; 
 	    
         //loop thru mazs	    
@@ -372,6 +380,8 @@ public final class MgraDataManager
 								linesServed.put(m2t.lines[k], m2t.lines[k]);
 							}
 						}
+					}else{
+						logger.info("Potential network error: No transit lines serve TAP "+m2t.tap);
 					}
 		    	}
 		    	
@@ -521,45 +531,8 @@ public final class MgraDataManager
 
     }
 
-    /**
-     * Get the walk distance from an MGRA to a TAP.
-     * 
-     * @param mgra
-     *            The number of the destination MGRA.
-     * @param pos
-     *            The position of the TAP in the MGRA array (0+)
-     * @return The walk distance in feet.
-     */
-    public float getMgraToTapWalkBoardDist(int mgra, int pos)
-    {
-        return mgraWlkTapsDistArray[mgra][1][pos];
-    }
-
-    /**
-     * Get the walk alight distance from a TAP to an MGRA.
-     * 
-     * @param mgra The number of the destination MGRA.
-     * @param pos The position of the TAP in the MGRA array (0+)
-     * @return The walk distance in feet.
-     */
-    public float getMgraToTapWalkAlightDist(int mgra, int pos)
-    {
-        return mgraWlkTapsDistArray[mgra][2][pos];
-    }
-
-    
-//    /**
-//     * Get the walk distance from an MGRA to a TAP.
-//     * 
-//     * @param mgra The number of the destination MGRA.
-//     * @param pos The position of the TAP in the MGRA array (0+)
-//     * @return The walk distance in feet.
-//     */
-//    public float getMgraToTapWalkDist(int mgra, int pos)
-//    {
-//        return mgraWlkTapsDistArray[mgra][1][pos]; // [1] = distance
-//    }
-
+  
+ 
     /**
      * Get the position of the tap in the mgra walk tap array.
      * 
