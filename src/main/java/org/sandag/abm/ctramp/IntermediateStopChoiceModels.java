@@ -1374,6 +1374,8 @@ public class IntermediateStopChoiceModels
 
                         selectedIndex = selectDestinationWithTiming(stop);
                         choice = finalSample[selectedIndex];
+                        //Wu's temporary fix to set stop destination to orign is no valid stop is found
+                        if (choice==-1) choice=stop.getOrig();
                         stop.setDest(choice);
 
                         if (sampleMgraInAlightingTapShed[choice])
