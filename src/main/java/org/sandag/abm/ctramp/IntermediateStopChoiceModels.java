@@ -1470,7 +1470,8 @@ public class IntermediateStopChoiceModels
                                 .format("origMgra=%d, destMgra=%d, newOrig=%d, lastDest=%d, modeAlt=%d, selectedIndex=%d, choice=%d.",
                                         origMgra, destMgra, newOrig, lastDest, modeAlt,
                                         selectedIndex, choice));
-                        throw new RuntimeException(e);
+                        //Wu's temporary fix to disable exception
+                        //throw new RuntimeException(e);
                     }
 
                     stop.setMode(modeAlt);
