@@ -16,6 +16,9 @@ md %SCENARIO_FOLDER%\%%i)
 #grant full permissions to scenario folder
 cacls %SCENARIO_FOLDER% /t /e /g Everyone:f
 
+#copy master server-config.csv to a scenario folder
+xcopy /Y T:\ABM\release\ABM\config\server-config.csv %SCENARIO_FOLDER%\conf
+
 xcopy /Y .\common\application\"*.*" %SCENARIO_FOLDER%\application
 xcopy /Y .\common\input_truck\"*.*" %SCENARIO_FOLDER%\input_truck
 xcopy /Y/E .\common\python\"*.*" %SCENARIO_FOLDER%\python
