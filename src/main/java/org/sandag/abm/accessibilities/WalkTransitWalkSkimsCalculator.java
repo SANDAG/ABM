@@ -336,7 +336,7 @@ public class WalkTransitWalkSkimsCalculator
             double[] skimResultsLocal = new double[walkLocalWalkSkimUECs[AM].getNumberOfAlternatives() + 2];
 
             //log out null tap to tap skim array info
-            if (storedDepartPeriodTapTapSkims[PREM][departPeriod][origTap][destTap]==null){
+            if (storedDepartPeriodTapTapSkims[LOC][departPeriod][origTap][destTap]==null){
             	System.out.println("storedDepartPeriodTapTapSkims["+LOC+"]["+departPeriod+"]["+origTap+"]["+destTap+"]"+ " is null");
             	logger.info("storedDepartPeriodTapTapSkims["+LOC+"]["+departPeriod+"]["+origTap+"]["+destTap+"]"+ " is null");
             	logger.info("LOC, departPeriod="+departPeriod+" origTap="+origTap+" destTap="+destTap);
