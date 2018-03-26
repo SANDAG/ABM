@@ -1581,8 +1581,14 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 })
                 self._split_link(hwy_network, i_node, j_node, new_node_id)
                 new_node_id += 1
-                
-            link = hwy_network.create_link(i_node, j_node, tr_link.modes)
+            try:
+                link = hwy_network.create_link(i_node, j_node, tr_link.modes)
+            except Exception as error:
+                msg = "Error creating link '%s', I-node '%s', J-node '%s'. Error message %s" % (
+                    tr_link["@tcov_id"], i_node, j_node, error)
+                self._log.append({"type": "text", "content": msg})
+                self._error.append("Cannot create tr link '%s' in traffic network" % tr_link["@tcov_id"])
+                continue
             hwy_link_index[tr_link["@tcov_id"]] = link
             for attr in tr_network.attributes("LINK"):
                 link[attr] = tr_link[attr]
