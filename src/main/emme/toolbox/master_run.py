@@ -292,6 +292,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         relative_gap = props["convergence"]
         max_assign_iterations = 1000
+        mgra_lu_input_file = props["mgra.socec.file"]
 
         with _m.logbook_trace("Setup and initialization"):
             # Swap Server Configurations
@@ -412,7 +413,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     export_for_commercial_vehicle(output_dir, base_scenario)
                     self.run_proc(
                         "cvm.bat",
-                        [drive, path_no_drive, path_forward_slash, 1.0],
+                        [drive, path_no_drive, path_forward_slash, 10.0, mgra_lu_input_file, "tazcentroids_cvm.csv"],
                         "Commercial vehicle model", capture_output=True)
                 if msa_iteration == startFromIteration:
                     external_zones = "1-12"

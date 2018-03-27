@@ -6,23 +6,22 @@ INSTALL (LIBRARY):
 Numpy
 https://pypi.python.org/pypi/numpy
 
-GDAL/OGR
-https://pypi.python.org/pypi/GDAL/
+Pandas
+https://pypi.python.org/pypi/pandas
 
 HOW TO RUN:
-[script_filepath] [Project Directory] [MGRA filename] [output filename]
+[script_filepath] [Project Directory] [MGRA filename] [TAZ Centroid flename] [output filename]
 
-example: cvm_input_create_v1.py "C:\Projects\SANDAG_CTM_Validation\_Tasks" "mgra13_based_input2012.csv" "Zonal Properties CVM.csv"
+example: cvm_input_create.py "C:\Projects\SANDAG_CTM_Validation\_Tasks" "input/mgra13_based_input2012.csv" "tazcentroids_cvm.csv" "Zonal Properties CVM.csv"
 
 Note: The script name is sufficient if the run folder is the same as the script folder. Otherwise, a full path of the script would be needed. Also, if the output file does not contain spaces, the command line does not need to have quotation marks around the arguments. 
 
 STEPS:
 STEP 0: read mgra socio-economic file
 STEP 1: find min and max tazids
-STEP 2: read node bin file header
-STEP 3: read node file for taz centroids. also transform coordinates.
-STEP 4: calculate taz level variables
-STEP 5. write to output
+STEP 2: read taz centroids.
+STEP 3: calculate taz level variables
+STEP 4. write to output
 
 REFERENCES:
 Following reference are used for calculations:
@@ -34,8 +33,14 @@ CREATED BY:
 nagendra.dhakar@rsginc.com
 
 LAST MODIFIED:
-05/19/2016
+03/13/2018
 
+Updates:
+03/13/2018 - nagendra.dhakar@rsginc.com
+Updated to remove transformation of coordinates
+Instead an input file is provided with taz centroids (tazcentroids_cvm.csv
+the script now reads the input centroid file that already has transformed coordinates that are reported in the output
+no need for GDAL library
 '''
 
 import sys
@@ -44,16 +49,15 @@ import numpy as np
 import datetime
 import math
 import csv
-import osr
-import ogr
+import pandas as pd
 
 class Constant:
     """ Represents constants in the script
     constants: FEET_TO_MILE, COORDS_EPSG_SOURCE,COORDS_EPSG_TARGET
     """
     ACRES_TO_SQMILE = 0.0015625
-    COORDS_EPSG_SOURCE = 2230 #EPSG: 2230 - NAD83/ California zone 6 (ftUS)
-    COORDS_EPSG_TARGET = 3310 #EPSG: 3310 - NAD83/ California Albers
+    #COORDS_EPSG_SOURCE = 2230 #EPSG: 2230 - NAD83/ California zone 6 (ftUS)
+    #COORDS_EPSG_TARGET = 3310 #EPSG: 3310 - NAD83/ California Albers
 
 class Header:
     """ Represents header for output files """
@@ -137,64 +141,21 @@ def get_tazid_range(data):
 
     return([id_min,id_max])
     
-def read_node_file(node_file, fields_info, taz_ids, outfile):
+def read_node_file(tazcentroid_file):
     """
     Reads taz centroids from node bin file
     Transforms them into the coordinate system expected by the CTM
     Returns transformed (projected) coordinates
     """
 
-    # create data type    
-    file_dtype = np.dtype(zip(*fields_info))
-
-    # save data to an array
-    data_array = np.fromfile(node_file,dtype=file_dtype)
-
-    # sort by tazid
-    data_array.sort(order='hnode')
-    
-    taz_id = data_array['hnode']
-    x_coord = data_array['X-COORD']
-    y_coord = data_array['Y-COORD']
-
-    # current coordinate system (EPSG: 2230 - NAD83/ California zone 6 (ftUS))
-    source = osr.SpatialReference()
-    source.ImportFromEPSG(Constant.COORDS_EPSG_SOURCE)
-
-    # target coordinate system (EPSG: 3310 - NAD83/ California Albers)
-    target = osr.SpatialReference()
-    target.ImportFromEPSG(Constant.COORDS_EPSG_TARGET)
-
-    # coordinate system conversion
-    transform = osr.CoordinateTransformation(source, target)
-    point = ogr.Geometry(ogr.wkbPoint)
+    centroids = pd.read_csv(tazcentroid_file)
+    centroids = centroids[centroids['taz']>0]
+    centroids = centroids.sort_values(by='taz')
+    centroids = centroids.reset_index()
     
     coords_proj = {}
-    with open(outfile,"wb") as csvfile:
-        fieldnames = Header.temptazcentroidsfile
-        writer = csv.writer(csvfile)
-        writer.writerow(fieldnames)
-        # iterate only for TAZ centroids - upto max_tazid
-        for i in range(0,taz_ids.max):
-            #add point
-            point.AddPoint(float(x_coord[i]), float(y_coord[i]))
-
-            # transform to a new coordinate system
-            point.Transform(transform)
-
-            # export coordinates to text
-            point_text = point.ExportToWkt()
-
-            # remove unwanted text, format ex: "POINT (279034.50343913469 -603302.04500659322 0)"
-            point_text = point_text.replace("POINT (","")
-            point_text = point_text.replace(" 0)","")
-
-            # split into x and y coords, format ex: "279034.50343913469 -603302.04500659322"
-            [x_coord_proj,y_coord_proj] = point_text.split(" ")
-            
-            coords_proj[str(taz_id[i])] = [x_coord_proj,y_coord_proj]
-            
-            writer.writerow([taz_id[i],x_coord[i],y_coord[i],x_coord_proj,y_coord_proj])
+    for i in range(0,max(centroids['taz'])):        
+        coords_proj[str(centroids['taz'][i])] = [float(centroids['x_coord_albers'][i]), float(centroids['y_coord_albers'][i])]
 
     return coords_proj
 
@@ -229,6 +190,7 @@ def read_mgra_input(mgrafile):
             row['CVM_TH'] = float(row['emp_utilities_prod']) + float(row['emp_utilities_office']) + float(row['emp_trans'])
 
             row['CVM_WH'] = float(row['emp_whsle_whs'])
+
             
             row['CVM_OFF'] = float(row['emp_prof_bus_svcs']) + float(row['emp_prof_bus_svcs_bldg_maint']) + \
                              float(row['emp_state_local_gov_ent']) + float(row['emp_fed_non_mil']) + float(row['emp_state_local_gov_blue']) + \
@@ -283,6 +245,7 @@ def calculate_taz_variables(data, coords, taz_ids, outfile):
         writer.writerow(fieldnames)
     
         for taz in range(1, taz_ids.max+1):
+
             if taz>=taz_ids.min:
                     
                 # initialize variables to 0
@@ -338,7 +301,7 @@ def calculate_taz_variables(data, coords, taz_ids, outfile):
                         ret_servret = 1
 
                 # landuse flags
-                
+
                 if (emp_dens < 250 and pop_dens < 250):
                     # low density
                     low_dens = 1
@@ -452,51 +415,49 @@ def main(argv):
         tazid_info = TazId()
 
         # store arguments
-        inputs.projdir = argv[0]    # project directory
-        mgra_filename = argv[1]     # mgra filename
-        out_filename = argv[2]      # output filename
+        inputs.projdir = argv[0]       # project directory
+        mgra_filename = argv[1]        # mgra filename
+        tazcentroid_filename = argv[2] # taz centroids filename
+        out_filename = argv[3]         # output filename
 
-        print "Project Directory: " + inputs.projdir
-        print "MGRA File: " + mgra_filename
-        print "Calculting ..."    
+        print("Project Directory: " + inputs.projdir)
+        print("MGRA File: " + mgra_filename)
+        print("Calculting ...") 
 
         # input and output settings
-        outputs.dir = os.path.join(inputs.projdir,"CVM\inputs")
+        outputs.dir = os.path.join(inputs.projdir,"input")
         outputs.outfile = os.path.join(outputs.dir,out_filename)
-        outputs.temptazdatafile = os.path.join(outputs.dir,"temp_tazdata.csv")
-        outputs.tempcentroidfile = os.path.join(outputs.dir,"temp_tazcentroids.csv")
+        outputs.temptazdatafile = os.path.join(inputs.projdir,"output","temp_tazdata_cvm.csv")
         
-        inputs.mgrafile = os.path.join(inputs.projdir,"input",mgra_filename)
-        inputs.nodebinfile = os.path.join(inputs.projdir,"output","hwy_.bin")
+        inputs.mgrafile = os.path.join(inputs.projdir,mgra_filename)
+        inputs.tazcentroidfile = os.path.join(inputs.projdir,"input",tazcentroid_filename)
 
         # read mgra socio-economic file
         taz_data = read_mgra_input(inputs.mgrafile)
 
         # find min and max tazid
         [tazid_info.min, tazid_info.max] = get_tazid_range(taz_data)
-
-        # read node bin file header
-        node_fields_info = read_node_header(inputs.nodebinfile)
         
         # read node file for taz centroids. also transform coordinates
-        taz_coords_proj = read_node_file(inputs.nodebinfile, node_fields_info, tazid_info, outputs.tempcentroidfile)
+        print("reading taz centroid file")
+        taz_coords_proj = read_node_file(inputs.tazcentroidfile)
 
         # calculate taz level variables
+        print("calculating variables")
         taz_data_calc = calculate_taz_variables(taz_data, taz_coords_proj, tazid_info, outputs.temptazdatafile)
 
         # write final output
+        print("writing outputs")
         write_output(taz_data_calc, tazid_info, outputs.outfile)
 
     except Exception as e:
-        print "Error: " + str(e)
+        print("Error: " + str(e))
 
     else:
-        print "Finished."
-        print "Output File: " + outputs.outfile
+        print("Finished.")
+        print("Output File: " + outputs.outfile)
         
 # Run
 if __name__ == "__main__":
     main(sys.argv[1:])
     
-    #test=["abm_to_cvm_v1.py", "C:\Projects\SANDAG_CTM_Validation\_Tasks", "mgra13_based_input2012.csv", "Zonal Properties CVM.csv"]
-    #main(test[1:])
