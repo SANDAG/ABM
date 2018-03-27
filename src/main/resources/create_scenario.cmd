@@ -9,7 +9,7 @@ set YEAR=%2
 set NETWORKDIR=%3
 
 @echo creating scenario folders
-set FOLDERS=input application bin conf gisdk input_truck logFiles output python report sql uec
+set FOLDERS=input application bin conf input_truck logFiles output python report sql uec
 for %%i in (%FOLDERS%) do (
 md %SCENARIO_FOLDER%\%%i)
 
@@ -26,7 +26,6 @@ xcopy /Y .\common\input_truck\"*.*" %SCENARIO_FOLDER%\input_truck
 xcopy /Y/E .\common\python\"*.*" %SCENARIO_FOLDER%\python
 xcopy /Y/E .\common\sql\"*.*" %SCENARIO_FOLDER%\sql
 xcopy /Y .\common\uec\"*.*" %SCENARIO_FOLDER%\uec
-xcopy /Y .\common\gisdk\"*.*" %SCENARIO_FOLDER%\gisdk
 xcopy /Y .\common\bin\"*.*" %SCENARIO_FOLDER%\bin
 xcopy /Y .\conf\%YEAR%\"*.*" %SCENARIO_FOLDER%\conf
 xcopy /Y .\"*.txt" %SCENARIO_FOLDER%
@@ -38,13 +37,6 @@ xcopy /Y .\input\%YEAR%\"*.*" %SCENARIO_FOLDER%\input
 
 @echo replace \ with \\
 set SCENARIO_FOLDER2=%SCENARIO_FOLDER:\=\\%
-
-@echo subsitute strings in GISDK
-call BatchSubstitute.bat WORKPATH %SCENARIO_FOLDER2% %SCENARIO_FOLDER%\gisdk\sandag_abm_generic.lst>%SCENARIO_FOLDER%\gisdk\sandag_abm.lst
-call BatchSubstitute.bat WORKPATH %SCENARIO_FOLDER2% %SCENARIO_FOLDER%\gisdk\gui_generic.rsc>%SCENARIO_FOLDER%\gisdk\gui.rsc
-del %SCENARIO_FOLDER%\gisdk\sandag_abm_generic.lst
-del %SCENARIO_FOLDER%\gisdk\sandag_abm_master_generic.rsc
-del %SCENARIO_FOLDER%\gisdk\gui_generic.rsc
 
 @echo copy network inputs
 call copy_networks.cmd %NETWORKDIR% %SCENARIO_FOLDER%\input
