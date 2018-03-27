@@ -18,8 +18,6 @@ cacls %SCENARIO_FOLDER% /t /e /g Everyone:f
 
 #copy master server-config.csv to a scenario folder
 xcopy /Y T:\ABM\release\ABM\config\server-config.csv %SCENARIO_FOLDER%\conf
-#copy master tazcentroids_cvm.csv to a scenario input folder
-xcopy /Y T:\ABM\release\ABM\config\tazcentroids_cvm.csv %SCENARIO_FOLDER%\input
 
 xcopy /Y .\common\application\"*.*" %SCENARIO_FOLDER%\application
 xcopy /Y .\common\input_truck\"*.*" %SCENARIO_FOLDER%\input_truck
@@ -34,6 +32,8 @@ xcopy /Y .\common\output\"*.*" %SCENARIO_FOLDER%\output
 @echo copy year specific folders
 del %SCENARIO_FOLDER%\input /q
 xcopy /Y .\input\%YEAR%\"*.*" %SCENARIO_FOLDER%\input
+#copy master tazcentroids_cvm.csv to a scenario input folder
+xcopy /Y T:\ABM\release\ABM\config\tazcentroids_cvm.csv %SCENARIO_FOLDER%\input
 
 @echo replace \ with \\
 set SCENARIO_FOLDER2=%SCENARIO_FOLDER:\=\\%

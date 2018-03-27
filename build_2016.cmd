@@ -1,7 +1,5 @@
 e:
-cd \apps\ABM
+cd \ABM2\ABM
 
-call mvn package -P aztec,2016 -DskipTests
-call mvn package -P wildcat,2016 -DskipTests
-call mvn package -P gaucho,2016 -DskipTests
-call mvn package -P local,2016 -DskipTests
+call mvn package -P 2016 -DskipTests
+call mvn package -P 2035 -DskipTests
