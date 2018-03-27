@@ -110,6 +110,16 @@ class PropertiesSetter(object):
         fget=lambda self: self._get_list_prop("skipTripTableCreation"),
         fset=lambda self, value: self._set_list_prop("skipTripTableCreation", value))
 
+    def __init__(self):
+        self._run_model_names = (
+            "startFromIteration", "skipInitialization", "deleteAllMatrices", "skipCopyWarmupTripTables", 
+            "skipCopyBikeLogsum", "skipCopyWalkImpedance", "skipWalkLogsums", "skipBikeLogsums", "skipBuildNetwork", 
+            "skipHighwayAssignment", "skipTransitSkimming", "skipCoreABM", "skipOtherSimulateModel", "skipCTM", 
+            "skipEI", "skipExternalExternal", "skipTruck", "skipTripTableCreation", "skipFinalHighwayAssignment", 
+            "skipFinalTransitAssignment", "skipDataExport", "skipDataLoadRequest", 
+            "skipDeleteIntermediateFiles")
+        self._properties = None
+
     def add_properties_interface(self, pb, disclosure=False):
         tool_proxy_tag = pb.tool_proxy_tag
         title = "Run model - skip steps"
@@ -246,7 +256,10 @@ class PropertiesSetter(object):
 
     @_m.method()
     def load_properties(self):
+        if not os.path.exists(self.properties_path):
+            return
         self._properties = props = Properties(self.properties_path)
+        _m.logbook_write("SANDAG properties interface load")
 
         self.startFromIteration = props.get("RunModel.startFromIteration")
         self.sample_rates = ",".join(str(x) for x in props.get("sample_rates"))
@@ -308,16 +321,20 @@ class PropertiesSetter(object):
 
         props.save()
 
+        # Log current state of props interface for debugging of UI / file sync issues
+        tool_attributes = dict((name, getattr(self, name)) for name in self._run_model_names)
+        _m.logbook_write("SANDAG properties interface save", attributes=tool_attributes)
 
-class PropertiesTool(_m.Tool(), PropertiesSetter):
+
+class PropertiesTool(PropertiesSetter, _m.Tool()):
 
     properties_path = _m.Attribute(unicode)
 
     def __init__(self):
+        super(PropertiesTool, self).__init__()
         project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
         self.properties_path = os.path.join(
             os.path.dirname(project_dir), "conf", "sandag_abm.properties")
-        self._properties = None
 
     tool_run_msg = ""
 
@@ -378,33 +395,17 @@ class PropertiesTool(_m.Tool(), PropertiesSetter):
         return Properties(file_path)
 
 
-# Singleton implementation to avoid re-reading the file in the same process
-_properties_lookup = {}
-
 class Properties(object):
 
-    def __new__(cls, path="./sandag_abm.properties", *args, **kwargs):
-        path = os.path.normpath(os.path.abspath(unicode(path)))
+    def __init__(self, path):
         if os.path.isdir(path):
             path = os.path.join(path, "sandag_abm.properties")
-        properties = _properties_lookup.get(os.path.normcase(path), None)
-        if properties:
-            return properties
-        return object.__new__(cls, *args, **kwargs)
-
-    def __init__(self, path="./sandag_abm.properties"):
-        if hasattr(self, "_created"):
-            return
-        if os.path.isdir(path):
-            path = os.path.join(path, "sandag_abm.properties")
-        timestamp = os.path.getmtime(path)
+        if not os.path.isfile(path):
+            raise Exception("properties files does not exist '%s'" % path)
         self._path = os.path.normpath(os.path.abspath(path))
-        self._load_properties()
-        self._created = True
-        self._timestamp = timestamp
-        _properties_lookup[os.path.normcase(self._path)] = self        
+        self.load_properties()
 
-    def _load_properties(self):
+    def load_properties(self):
         self._prop = prop = OrderedDict()
         self._comments = comments = {}
         with open(self._path, 'r') as properties:
@@ -423,6 +424,7 @@ class Properties(object):
                     value = self._parse(value)
                 prop[key] = value
                 comments[key], comment = comment, []
+        self._timestamp = os.path.getmtime(self._path)
 
     def _parse_list(self, values):
         converted_values = []

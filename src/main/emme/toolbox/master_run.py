@@ -81,7 +81,7 @@ dem_utils = _m.Modeller().module("sandag.utilities.demand")
 props_utils = _m.Modeller().module("sandag.utilities.properties")
 
 
-class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
+class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
     main_directory = _m.Attribute(unicode)
     scenario_id = _m.Attribute(int)
     scenario_title = _m.Attribute(unicode)
@@ -96,6 +96,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
     tool_run_msg = ""
 
     def __init__(self):
+        super(MasterRun, self).__init__()
         project_dir = _dir(_m.Modeller().desktop.project.path)
         self.main_directory = _dir(project_dir)
         self.properties_path = _join(
@@ -106,20 +107,9 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         self.num_processors = "MAX-1"
         self.select_link = '[]'
         self.attributes = ["main_directory", "scenario_id", "scenario_title", "emmebank_title", "num_processors", "select_link"]
-        self._properties_loaded = False
-        self._run_model_names = [
-            "startFromIteration", "skipInitialization", "deleteAllMatrices", "skipCopyWarmupTripTables", 
-            "skipCopyBikeLogsum", "skipCopyWalkImpedance", "skipWalkLogsums", "skipBikeLogsums", "skipBuildNetwork", 
-            "skipHighwayAssignment", "skipTransitSkimming", "skipCoreABM", "skipOtherSimulateModel", "skipCTM", 
-            "skipEI", "skipExternalExternal", "skipTruck", "skipTripTableCreation", "skipFinalHighwayAssignment", 
-            "skipFinalTransitAssignment", "skipDataExport", "skipDataLoadRequest", 
-            "skipDeleteIntermediateFiles", 
-        ]
 
     def page(self):
-        if not self._properties_loaded and os.path.exists(self.properties_path):
-            self.load_properties()
-            self._properties_loaded = True
+        self.load_properties()
         pb = _m.ToolPageBuilder(self)
         pb.title = "Master run ABM"
         pb.description = """Runs the SANDAG ABM, assignments, and other demand model tools."""
@@ -213,11 +203,6 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         }
         gen_utils.log_snapshot("Master run model", str(self), attributes)
 
-        if self._properties_loaded:
-            # Log current state of props interface for debugging of UI / file sync issues
-            attributes = dict((name, getattr(self, name)) for name in self._run_model_names)
-            with _m.logbook_trace("SANDAG properties interface", attributes=attributes):
-                pass
         modeller = _m.Modeller()
         copy_scenario = modeller.tool("inro.emme.data.scenario.copy_scenario")
         import_network = modeller.tool("sandag.import.import_network")
@@ -256,16 +241,14 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
         props = load_properties(_join(main_directory, "conf", "sandag_abm.properties"))
         props.set_year_specific_properties(_join(main_directory, "input", "parametersByYears.csv"))
         props.save()
-        if self._properties_loaded:
-            # Log current state of props file for debugging of UI / file sync issues
-            attributes = dict((name, props["RunModel." + name]) for name in self._run_model_names)
-            with _m.logbook_trace("SANDAG properties file", attributes=attributes):
-                pass
+        # Log current state of props file for debugging of UI / file sync issues
+        attributes = dict((name, props["RunModel." + name]) for name in self._run_model_names)
+        _m.logbook_write("SANDAG properties file", attributes=attributes)
+        if self._properties:  # Tool has been called via the UI
             # Compare UI values and file values to make sure they are the same
             error_text = ("Different value found in sandag_abm.properties than specified in UI for '%s'. "
                           "Close sandag_abm.properties if open in any text editor, check UI and re-run.")
             for name in self._run_model_names:
-                print name, type(getattr(self, name)), getattr(self, name), type(props["RunModel." + name]), props["RunModel." + name]
                 if getattr(self, name) != props["RunModel." + name]:
                     raise Exception(error_text % name)
 
@@ -348,7 +331,6 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
                     copy_scenario(base_scenario, number, title, overwrite=True)
             else:
                 base_scenario = main_emmebank.scenario(scenario_id)
-            
 
             if not skipInitialization:
                 # initialize traffic demand, skims, truck, CV, EI, EE matrices
@@ -365,7 +347,7 @@ class MasterRun(_m.Tool(), gen_utils.Snapshot, props_utils.PropertiesSetter):
             else:
                 transit_emmebank = _eb.Emmebank(_join(main_directory, "emme_project", "Database_transit", "emmebank"))
                 transit_scenario = transit_emmebank.scenario(base_scenario.number)
-            
+
             if not skipCopyWarmupTripTables:
                 for period in periods:
                     omx_file = _join(input_dir, "trip_%s.omx" % period)
