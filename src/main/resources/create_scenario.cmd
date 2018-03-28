@@ -21,12 +21,13 @@ xcopy /Y T:\ABM\release\ABM\config\server-config.csv %SCENARIO_FOLDER%\conf
 
 xcopy /Y .\common\application\"*.*" %SCENARIO_FOLDER%\application
 xcopy /Y .\common\input_truck\"*.*" %SCENARIO_FOLDER%\input_truck
+
 xcopy /Y/E .\common\python\"*.*" %SCENARIO_FOLDER%\python
 xcopy /Y/E .\common\sql\"*.*" %SCENARIO_FOLDER%\sql
 xcopy /Y .\common\uec\"*.*" %SCENARIO_FOLDER%\uec
 xcopy /Y .\common\bin\"*.*" %SCENARIO_FOLDER%\bin
 xcopy /Y .\conf\%YEAR%\"*.*" %SCENARIO_FOLDER%\conf
-xcopy /Y .\"*.txt" %SCENARIO_FOLDER%
+#xcopy /Y .\"*.txt" %SCENARIO_FOLDER%
 xcopy /Y .\common\output\"*.*" %SCENARIO_FOLDER%\output
 
 @echo copy year specific folders
@@ -34,6 +35,8 @@ del %SCENARIO_FOLDER%\input /q
 xcopy /Y .\input\%YEAR%\"*.*" %SCENARIO_FOLDER%\input
 #copy master tazcentroids_cvm.csv to a scenario input folder
 xcopy /Y T:\ABM\release\ABM\config\tazcentroids_cvm.csv %SCENARIO_FOLDER%\input
+#copy cvm paramter tables to input folder
+xcopy /Y .\common\input_cvm\"*.*" %SCENARIO_FOLDER%\input
 
 @echo replace \ with \\
 set SCENARIO_FOLDER2=%SCENARIO_FOLDER:\=\\%
