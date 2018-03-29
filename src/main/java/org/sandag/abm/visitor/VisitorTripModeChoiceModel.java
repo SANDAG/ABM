@@ -213,6 +213,10 @@ public class VisitorTripModeChoiceModel
         double walkTransitLogsum = -999.0;
         double driveTransitLogsum = -999.0;
    
+        logsumHelper.setNmTripMcDmuAttributes(mcDmuObject, trip.getOriginMgra(), trip.getDestinationMgra(), trip.getPeriod(), tour.getDebugChoiceModels());
+        dmu.setNonMotorizedWalkTime(mcDmuObject.getNm_walkTime());
+        dmu.setNonMotorizedBikeTime(mcDmuObject.getNm_bikeTime());
+        
         logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, trip.getOriginMgra(), trip.getDestinationMgra(), trip.getPeriod(),tour.getDebugChoiceModels());
         walkTransitLogsum = mcDmuObject.getTransitLogSum(McLogsumsCalculator.WTW);
 
@@ -229,7 +233,7 @@ public class VisitorTripModeChoiceModel
 
         dmu.setPnrTransitLogsum(driveTransitLogsum);
         dmu.setKnrTransitLogsum(driveTransitLogsum);
-
+        
         dmu.setTourPurpose(tour.getPurpose());
 
         dmu.setOutboundStops(tour.getNumberInboundStops());

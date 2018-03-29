@@ -172,12 +172,26 @@ public class VisitorTourModeChoiceModel
         tripDmuObject.setIvtCoeff(ivtCoeff);
         tripDmuObject.setCostCoeff(costCoeff);
 
+        logsumHelper.setNmTripMcDmuAttributes( tripDmuObject, tour.getOriginMGRA(), tour.getDestinationMGRA(),
+        		tour.getDepartTime(),tour.getDebugChoiceModels());
+        double nmWalkTimeOut = tripDmuObject.getNm_walkTime();
+        double nmBikeTimeOut = tripDmuObject.getNm_bikeTime();
+        mcDmuObject.setNmWalkTimeOut(nmWalkTimeOut);
+        mcDmuObject.setNmBikeTimeOut(nmBikeTimeOut);
+        logsumHelper.setNmTripMcDmuAttributes( tripDmuObject, tour.getDestinationMGRA(), tour.getOriginMGRA(), 
+        		tour.getArriveTime(),tour.getDebugChoiceModels());
+        double nmWalkTimeIn = tripDmuObject.getNm_walkTime();
+        double nmBikeTimeIn = tripDmuObject.getNm_bikeTime();
+        mcDmuObject.setNmWalkTimeOut(nmWalkTimeIn);
+        mcDmuObject.setNmBikeTimeOut(nmBikeTimeIn);
+               
+        
         double walkTransitLogsumOut = -999.0;
         double driveTransitLogsumOut = -999.0;
         double walkTransitLogsumIn = -999.0;
         double driveTransitLogsumIn = -999.0;
-   
-        // walk-transit out logsum
+        
+             // walk-transit out logsum
         logsumHelper.setWtwTripMcDmuAttributes( tripDmuObject, tour.getOriginMGRA(), tour.getDestinationMGRA(),
         		tour.getDepartTime(),tour.getDebugChoiceModels());
         

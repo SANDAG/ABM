@@ -40,7 +40,7 @@ public class InternalExternalModelStructure
     public static final int      UPPER_PM                    = 29;
     public static final String[] MODEL_PERIOD_LABELS         = {"EA", "AM", "MD", "PM", "EV"};
 
-    public static final byte     TAXI                        = 27;
+    public static final byte     TAXI                        = 13;
 
     /**
      * Taxi tour mode
