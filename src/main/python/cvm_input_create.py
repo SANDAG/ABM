@@ -150,7 +150,6 @@ def read_node_file(tazcentroid_file):
 
     centroids = pd.read_csv(tazcentroid_file)
     centroids = centroids[centroids['taz']>0]
-    centroids = centroids.sort_values(by='taz')
     centroids = centroids.reset_index()
     
     coords_proj = {}
