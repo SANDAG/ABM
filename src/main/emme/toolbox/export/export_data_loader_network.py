@@ -670,7 +670,9 @@ Export network results to csv files for SQL data loader."""
                                 else:
                                     stop_on, stop_off = {}, {}
                                 # ===============================================
-                                links = [link for link in network.links() if link["@tcov_id"] > 0]
+                                transit_modes = [m for m in network.modes() if m.type in ("TRANSIT", "AUX_TRANSIT")]
+                                links = [link for link in network.links() 
+                                         if link["@tcov_id"] > 0 and (link.modes.union(transit_modes))]
                                 links.sort(key=lambda l: l["@tcov_id"])
                                 lines = [line for line in network.transit_lines() if line.mode.id in mode_list]
                                 lines.sort(key=lambda l: l["@route_id"])
@@ -706,20 +708,23 @@ Export network results to csv files for SQL data loader."""
         for line in lines:
             line_id = id_format(line["@route_id"])
             ivtt = from_mp = to_mp = 0
-            segments = iter(line.segments())
+            segments = iter(line.segments(include_hidden=True))
             seg = segments.next()
+            from_stop = id_format(seg["@stop_id"])
             for next_seg in segments:
                 to_mp += seg.link.length
                 ivtt += seg.transit_time
-                if not next_seg.allow_boardings :
-                    continue
                 transit_flow = seg[segment_flow]
-                format_ivtt = format(ivtt)
-                fout_seg.write(",".join([
-                    label, line_id, id_format(seg["@stop_id"]), id_format(next_seg["@stop_id"]), centroid, 
-                    format(from_mp), format(to_mp), format(transit_flow), format_ivtt, format_ivtt, voc]))
-                fout_seg.write("\n")
                 seg = next_seg
+                if not next_seg.allow_alightings:
+                    continue
+                to_stop = id_format(next_seg["@stop_id"])
+                formatted_ivtt = format(ivtt)
+                fout_seg.write(",".join([
+                    label, line_id, from_stop, to_stop, centroid, format(from_mp), format(to_mp),
+                    format(transit_flow), formatted_ivtt, formatted_ivtt, voc]))
+                fout_seg.write("\n")
+                from_stop = to_stop
                 from_mp = to_mp
                 ivtt = 0
 
