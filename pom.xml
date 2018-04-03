@@ -534,38 +534,14 @@
                         </goals>
                         <configuration>
                             <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${release.root}/common/input_truck</outputDirectory>
+                            <outputDirectory>${release.root}/common/input</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>input_truck</directory>
-                                    <filtering>true</filtering>
-                                    <includes>
-                                        <include>*.csv</include>
-                                    </includes>
+                                    <directory>input</directory>
                                 </resource>
                             </resources>
                         </configuration>
                     </execution>  
-                    <execution>
-                        <id>copy-inputcvm-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${release.root}/common/input_cvm</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>input_cvm</directory>
-                                    <filtering>true</filtering>
-                                    <includes>
-                                        <include>*.csv</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>copy-validation-resources</id>
                         <phase>package</phase>
