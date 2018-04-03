@@ -20,9 +20,6 @@ public class AirportModelDMU
     private int[]                             zips;                                                                            // dimensioned
                                                                                                                                 // by
                                                                                                                                 // taz
-    protected double                          nmWalkTime;
-    protected double                          nmBikeTime;
-
     public static final int                   OUT                           = 0;
     public static final int                   IN                            = 1;
     protected static final int                NUM_DIR                       = 2;

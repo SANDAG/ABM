@@ -32,7 +32,7 @@ public class AirportParty
 
     private int     boardTap;
     private int     alightTap;
-    private int     set;
+    private int     set = -1;
 
     /**
      * Public constructor.

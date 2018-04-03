@@ -520,7 +520,7 @@ public class McLogsumsCalculator implements Serializable
         */
     }
 
-    private void setNmTripMcDmuAttributes( TripModeChoiceDMU tripMcDmuObject, int origMgra, int destMgra, int departPeriod, boolean loggingEnabled )
+    public void setNmTripMcDmuAttributes( TripModeChoiceDMU tripMcDmuObject, int origMgra, int destMgra, int departPeriod, boolean loggingEnabled )
     {
 
         double[] nmSkims = null;

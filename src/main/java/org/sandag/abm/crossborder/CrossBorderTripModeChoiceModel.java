@@ -244,6 +244,10 @@ public class CrossBorderTripModeChoiceModel
         mcDmuObject.setCostCoeff(c_cost);
         double walkTransitLogsum = -999.0;
    
+        logsumHelper.setNmTripMcDmuAttributes(mcDmuObject, trip.getOriginMgra(), trip.getDestinationMgra(), trip.getPeriod(), tour.getDebugChoiceModels());
+        dmu.setNonMotorizedWalkTime(mcDmuObject.getNm_walkTime());
+        dmu.setNonMotorizedBikeTime(mcDmuObject.getNm_bikeTime());
+
         logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, tripOriginMgra, tripDestinationMgra, trip.getPeriod(), tour.getDebugChoiceModels());
         walkTransitLogsum = mcDmuObject.getTransitLogSum(McLogsumsCalculator.WTW);
 

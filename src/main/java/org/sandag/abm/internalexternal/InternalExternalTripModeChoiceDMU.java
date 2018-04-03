@@ -46,8 +46,6 @@ public class InternalExternalTripModeChoiceDMU
     protected double pnrTransitLogsum;
     protected double knrTransitLogsum;
 
-   protected double bikeLogsum;
-   
    protected int outboundHalfTourDirection;
 
     public InternalExternalTripModeChoiceDMU(InternalExternalModelStructure modelStructure,
@@ -340,14 +338,6 @@ public class InternalExternalTripModeChoiceDMU
         return hhSize;
     }
 	
-	public void setBikeLogsum(double bikeLogsum) {
-		this.bikeLogsum = bikeLogsum;
-	}
-	
-	public double getBikeLogsum() {
-		return bikeLogsum;
-	}
-
     public void setHhSize(int hhSize)
     {
         this.hhSize = hhSize;
@@ -422,8 +412,6 @@ public class InternalExternalTripModeChoiceDMU
         methodIndexMap.put("getTripOrigIsTourDest", 23);
         methodIndexMap.put("getTripDestIsTourDest", 24);
         
-        methodIndexMap.put("getBikeLogsum",50);
-        
         methodIndexMap.put("getIvtCoeff", 60);
         methodIndexMap.put("getCostCoeff", 61);
                
@@ -490,9 +478,7 @@ public class InternalExternalTripModeChoiceDMU
             case 24:
             	returnValue = getTripDestIsTourDest();
             	break;
-            case 50:	
-            	returnValue = getBikeLogsum();
-            	break;
+         
             case 60:
             	returnValue = getIvtCoeff();
             	break;
