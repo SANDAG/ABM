@@ -969,9 +969,13 @@ Export network results to csv files for SQL data loader."""
             for seg in line.segments(include_hidden=True):
                 if seg.i_node["@network_adj"] in [1,2] or (seg.j_node and seg.j_node["@network_adj"] in [1,2]):
                     continue
-                seg_data[(seg.i_node, seg.j_node, seg.loop_index)] = \
-                    dict((k, seg[k]) for k in seg_attrs)
+                seg_data[(seg.i_node, seg.j_node, seg.loop_index)] = dict((k, seg[k]) for k in seg_attrs)
                 itinerary.append(seg.i_node.number)
+            # special case to change the final "hidden" segment
+            if line.segment(-1).i_node["@network_adj"] == 2:
+                seg = line.segment(-2)
+                seg_data[(seg.i_node, None, seg.loop_index)] = dict((k, seg[k]) for k in seg_attrs)
+
             lines.append({
                 "id": line.id,
                 "vehicle": line.vehicle,
