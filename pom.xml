@@ -503,7 +503,7 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>copy-inputtruck-resources</id>
+                        <id>copy-input-resources</id>
                         <phase>package</phase>
                         <goals>
                             <goal>copy-resources</goal>
