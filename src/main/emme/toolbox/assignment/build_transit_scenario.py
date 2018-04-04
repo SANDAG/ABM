@@ -528,7 +528,9 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
 
         transit_lines = list(network.transit_lines())
         for line in transit_lines:
-            if line.segment(0).i_node == line.segment(-1).i_node:
+            first_seg = line.segment(0)
+            last_seg = line.segment(-1)
+            if first_seg.i_node == last_seg.i_node:
                 # Add new node, offset from existing node
                 start_node = line.segment(0).i_node
                 xfer_node = network.create_node(self._get_node_id(), False)
@@ -541,22 +543,24 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 line_data = dict((k, line[k]) for k in line_attributes)
                 line_data["id"] = line.id
                 line_data["vehicle"] = line.vehicle
+                first_seg.allow_boardings = True
+                first_seg.allow_alightings = False
+                first_seg_data = dict((k, first_seg[k]) for k in seg_attributes)
+                first_seg_data.update({
+                    "@headway_seg": 0.01, "dwell_time": 0, "transit_time_func": 3,
+                    "@transfer_penalty_s": 0, "@xfer_from_bus": 0, "@layover_board": 1
+                })
+                last_seg.allow_boardings = False
+                last_seg.allow_alightings = True
+                last_seg_data = dict((k, last_seg[k]) for k in seg_attributes)
+                last_seg_data.update({
+                    "@headway_seg": 0.01, "dwell_time": 5.0, "transit_time_func": 3
+                    # incremental dwell time for layover of 5 min
+                    # Note: some lines seem to have a layover of 0, most of 5 mins
+                })
                 seg_data = {
-                    (xfer_node, start_node, 1): {
-                        "allow_boardings": True, "allow_alightings": True, 
-                        "@headway_seg": 0.01, "dwell_time": 0, "transit_time_func": 3,
-                        "@transfer_penalty_s": 0, "@xfer_from_bus": 0,
-                        "@layover_board": 1
-                    },
-                    (xfer_node, None, 1): {
-                        "allow_boardings": True, "allow_alightings": True, 
-                        "@headway_seg": 0.01, 
-                        "dwell_time": 4.7,  
-                        # incremental dwell time for layover of 5 min (0.3 already included)
-                        # Note: some lines seem to have a layover of 0, most of 5 mins
-                        "transit_time_func": 3
-                    },
-                }
+                    (xfer_node, start_node, 1): first_seg_data,
+                    (xfer_node, None, 1): last_seg_data}
                 itinerary = [xfer_node.number]
                 for seg in line.segments():
                     seg_data[(seg.i_node, seg.j_node, seg.loop_index)] = dict((k, seg[k]) for k in seg_attributes)

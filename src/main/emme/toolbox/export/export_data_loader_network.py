@@ -148,7 +148,7 @@ Export network results to csv files for SQL data loader."""
         self.export_transit_results(export_path, input_path, transit_emmebank, period_scenario_ids, num_processors)
 
     @_m.logbook_trace("Export traffic attribute data")
-    def export_traffic_attribute(self, base_scenario, export_path, traffic_emmebank, period_scenario_id):
+    def export_traffic_attribute(self, base_scenario, export_path, traffic_emmebank, period_scenario_ids):
         # Several column names are legacy from the original network files
         # and data loader process, and are populated with zeros.
         # items are ("column name", "attribute name") or ("column name", ("attribute name", default))
@@ -305,7 +305,7 @@ Export network results to csv files for SQL data loader."""
         network = base_scenario.get_partial_network(["LINK"], include_attributes=True)
 
         #copy assignment from period scenarios
-        for period, scenario_id in period_scenario_id.iteritems():
+        for period, scenario_id in period_scenario_ids.iteritems():
             from_scenario = traffic_emmebank.scenario(scenario_id)
             src_attrs = ["@auto_time", "additional_volume"]
             dst_attrs = ["auto_time_" + period.lower(), 
@@ -344,7 +344,7 @@ Export network results to csv files for SQL data loader."""
         self.export_traffic_to_csv(hwylink_atts_file, hwylink_attrs, network)
 
     @_m.logbook_trace("Export traffic load data by period")
-    def export_traffic_load_by_period(self, export_path, traffic_emmebank, period_scenario_id):
+    def export_traffic_load_by_period(self, export_path, traffic_emmebank, period_scenario_ids):
         create_attribute = _m.Modeller().tool(
             "inro.emme.data.extra_attribute.create_extra_attribute")
         net_calculator = _m.Modeller().tool(
@@ -377,7 +377,7 @@ Export network results to csv files for SQL data loader."""
         for key, attr in dir_atts:
             hwyload_attrs.append((key, attr))
             hwyload_attrs.append((key.replace("AB_", "BA_"), (attr, "")))  # default for BA on one-way links is blank
-        for p, scen_id in period_scenario_id.iteritems():
+        for p, scen_id in period_scenario_ids.iteritems():
             scenario = traffic_emmebank.scenario(scen_id)
             new_atts = [("@msa_flow", "MSA flow", "@auto_volume"), #updated with vdf on msa flow
                         ("@msa_time", "MSA time", "timau"),  #skim assignment time on msa flow
@@ -419,9 +419,9 @@ Export network results to csv files for SQL data loader."""
                                   @hov2hov_all+@hov2toll_all+ \
                                   @hov3hov_all+@hov3toll_all+ \
                                   (@trklgp+@trkltoll)/1.3 + (@trkmgp+@trkmtoll)/1.5 + \
-                                  (@trkhgp+@trkhtoll)/2.5 + volad/3" )									 
+                                  (@trkhgp+@trkhtoll)/2.5 + volad/3" )
                         ]
-						
+
             for name, des, formula in new_atts:
                 att = scenario.extra_attribute(name)
                 if not att:
@@ -474,7 +474,7 @@ Export network results to csv files for SQL data loader."""
                 fout.write("\n")
 
     @_m.logbook_trace("Export transit results")
-    def export_transit_results(self, export_path, input_path, transit_emmebank, period_scenario_id, num_processors):
+    def export_transit_results(self, export_path, input_path, transit_emmebank, period_scenario_ids, num_processors):
         # Note: Node analysis for transfers is VERY time consuming
         #       this implementation will be replaced when new Emme version is available
 
@@ -489,15 +489,15 @@ Export network results to csv files for SQL data loader."""
         trrt_outfile = os.path.join(export_path, "trrt.csv")
         trrt_out.to_csv(trrt_outfile, index=False)
 
-        #transit stop file		
+        #transit stop file
         trstop_infile = os.path.join(input_path, "trstop.csv")
         trstop = pd.read_csv(trstop_infile)
         trstop = trstop.rename(columns={"HwyNode":"NearNode"})
-        trstop = trstop.rename(columns=lambda x:x.strip())		
+        trstop = trstop.rename(columns=lambda x:x.strip())
         trstop_out = trstop[trstop_atts]
         trstop_outfile = os.path.join(export_path, "trstop.csv")
         trstop_out.to_csv(trstop_outfile, index=False)
-		
+
         use_node_analysis_to_get_transit_transfers = False
         
         copy_scenario = _m.Modeller().tool(
@@ -580,7 +580,7 @@ Export network results to csv files for SQL data loader."""
             all_modes = ["b", "c", "e", "l", "r", "p", "y", "a", "w", "x"]
             local_bus_modes = ["b", "a", "w", "x"]
             premium_modes = ["c", "l", "e", "p", "r", "y", "a", "w", "x"]
-            for tod, scen_id in period_scenario_id.iteritems():
+            for tod, scen_id in period_scenario_ids.iteritems():
                 with _m.logbook_trace("Processing period %s" % tod):
                     scenario = transit_emmebank.scenario(scen_id)
                     self.check_network_adj(scenario)
@@ -621,8 +621,6 @@ Export network results to csv files for SQL data loader."""
                                 0, overwrite=True, scenario=scenario)
 
                     for main_mode in main_modes:
-                        #mode = "LOC" if main_mode == "BUS" else main_mode
-                        #mode_list = local_bus_modes if main_mode == "BUS" else all_modes
                         mode = main_mode
                         if main_mode == "BUS":
                             mode_list = local_bus_modes
@@ -630,7 +628,7 @@ Export network results to csv files for SQL data loader."""
                             mode_list = premium_modes
                         else:
                             mode_list = all_modes
-							
+
                         for access_type in access_modes:
                             with _m.logbook_trace("Main mode %s access mode %s" % (main_mode, access_type)):
                                 class_name = "%s_%s%s" % (tod, access_type, main_mode)
@@ -917,27 +915,24 @@ Export network results to csv files for SQL data loader."""
         nodes_to_delete = []
 
         for node in network.nodes():
-            if 1 <= node["@network_adj"] <= 2:
-                if node["@network_adj"] == 1:
-                    nodes_to_merge.append(node)
-                    incoming_seg_shift = 2
-                if node["@network_adj"] == 2:
-                    nodes_to_delete.append(node)
-                    incoming_seg_shift = -1
-                node_pairs = set([])
+            if node["@network_adj"] == 1:
+                nodes_to_merge.append(node)
                 # copy boarding / alighting attributes for the segments to the original segment / stop
                 for seg in node.incoming_segments():
                     lines_to_update.add(seg.line)
-                    node_pairs.add((seg.i_node, seg.j_node))
-                    copy_seg_attrs(seg, seg.line.segment(seg.number+incoming_seg_shift))
+                    copy_seg_attrs(seg, seg.line.segment(seg.number+2))
                 for seg in node.outgoing_segments():
                     lines_to_update.add(seg.line)
-                    node_pairs.add((seg.j_node, seg.i_node))
                     copy_seg_attrs(seg, seg.line.segment(seg.number+1))
-                # optimization: skip setting node results as they are unused in this script
-                #for node, dup_node in node_pairs:
-                #    node.initial_boardings += dup_node.initial_boardings
-                #    node.final_alightings += dup_node.final_alightings
+            elif node["@network_adj"] == 2:
+                nodes_to_delete.append(node)
+                # copy boarding / alighting attributes for the segments to the original segment / stop
+                for seg in node.outgoing_segments(True):
+                    lines_to_update.add(seg.line)
+                    if seg.j_node:
+                        copy_seg_attrs(seg, seg.line.segment(seg.number+1))
+                    else:
+                        copy_seg_attrs(seg, seg.line.segment(seg.number-1))
             elif node["@network_adj"] == 3:
                 short_link = get_short_link(node)
                 remove_timed_xfer_links(node, short_link)
@@ -949,7 +944,7 @@ Export network results to csv files for SQL data loader."""
                     else:
                         for attr in link_attrs:
                             attr_map[attr] = link1[attr]
-                        
+
                 for (seg1, seg2), attr_map in mapping['transit_segments'].iteritems():
                     if seg1.link is short_link or seg1.link.reverse_link is short_link:
                         short_seg, long_seg = seg1, seg2
@@ -964,17 +959,17 @@ Export network results to csv files for SQL data loader."""
         # Backup transit lines with altered routes and remove from network
         lines = []
         for line in lines_to_update:
-            seg_data ={}
+            seg_data = {}
             itinerary = []
             for seg in line.segments(include_hidden=True):
-                if seg.i_node["@network_adj"] in [1,2] or (seg.j_node and seg.j_node["@network_adj"] in [1,2]):
+                if seg.i_node["@network_adj"] in [1,2] or (seg.j_node and seg.j_node["@network_adj"] == 1):
                     continue
-                seg_data[(seg.i_node, seg.j_node, seg.loop_index)] = dict((k, seg[k]) for k in seg_attrs)
+                # for circle line transfers, j_node is now None for new "hidden" segment
+                j_node = seg.j_node 
+                if (seg.j_node and seg.j_node["@network_adj"] == 2):
+                    j_node = None
+                seg_data[(seg.i_node, j_node, seg.loop_index)] = dict((k, seg[k]) for k in seg_attrs)
                 itinerary.append(seg.i_node.number)
-            # special case to change the final "hidden" segment
-            if line.segment(-1).i_node["@network_adj"] == 2:
-                seg = line.segment(-2)
-                seg_data[(seg.i_node, None, seg.loop_index)] = dict((k, seg[k]) for k in seg_attrs)
 
             lines.append({
                 "id": line.id,
