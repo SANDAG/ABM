@@ -6849,3 +6849,394 @@ GO
 EXECUTE [db_meta].[add_xp] 'emfac.fn_emfac_2014_vmt_speed', 'SUBSYSTEM', 'emfac'
 EXECUTE [db_meta].[add_xp] 'emfac.fn_emfac_2014_vmt_speed', 'MS_Description', ''
 GO
+
+
+
+
+-- Create fn_emfac_2017_vmt object
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[emfac].[fn_emfac_2017_vmt]') AND type in (N'FN', N'IF', N'TF', N'FS', N'FT'))
+DROP FUNCTION [emfac].[fn_emfac_2017_vmt]
+GO
+
+CREATE FUNCTION [emfac].[fn_emfac_2017_vmt]
+(
+	@SCENARIO_ID smallint
+)
+RETURNS
+@TBL_EMFAC_2017_VMT TABLE
+(
+	[MPO] char(6) NOT NULL
+	,[GAI] smallint
+	,[Sub-Area] char(14) NOT NULL
+	,[Cal_Year] int NOT NULL
+	,[Veh_Tech] varchar(40) NOT NULL
+	,[New Total VMT] float NOT NULL
+)
+AS
+BEGIN
+
+DECLARE @LOC_SCENARIO_ID int = @SCENARIO_ID;
+DECLARE @SCENARIO_YEAR int;
+DECLARE @BUS_PCE float = 3.0;
+DECLARE @EMFAC_MAJOR nvarchar(4) = '2017';
+DECLARE @EMFAC_MINOR nvarchar(3) = '1.0'
+
+SELECT @SCENARIO_YEAR = s.SCENARIO_YEAR FROM ref.scenario s WHERE s.scenario_id = @LOC_SCENARIO_ID
+
+INSERT INTO
+	@TBL_EMFAC_2017_VMT ([MPO],[GAI],[Sub-Area],[Cal_Year],[Veh_Tech],[New Total VMT])
+SELECT
+	'SANDAG' as [MPO]
+	,38 as [GAI]
+	,'San Diego (SD)' as [Sub-Area]
+	,@SCENARIO_YEAR as [Cal_Year]
+	,UPPER(eclass.EMFAC_VEHICLE_CLASS) as [Veh_Tech]
+	,SUM(vmt.VMT * emap.VALUE) as [New Total VMT]
+FROM
+	(SELECT
+		SUM(CASE WHEN mode_id = 1 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS SOV_GP
+		,SUM(CASE WHEN mode_id = 2 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS SOV_PAY
+		,SUM(CASE WHEN mode_id = 3 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS SR2_GP
+		,SUM(CASE WHEN mode_id = 4 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS SR2_HOV
+		,SUM(CASE WHEN mode_id = 5 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS SR2_PAY
+		,SUM(CASE WHEN mode_id = 6 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS SR3_GP
+		,SUM(CASE WHEN mode_id = 7 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS SR3_HOV
+		,SUM(CASE WHEN mode_id = 8 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS SR3_PAY
+		,SUM(CASE WHEN mode_id = 32 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS LHDN
+		,SUM(CASE WHEN mode_id = 33 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS LHDT
+		,SUM(CASE WHEN mode_id = 34 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS MHDN
+		,SUM(CASE WHEN mode_id = 35 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS MHDT
+		,SUM(CASE WHEN mode_id = 36 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS HHDN
+		,SUM(CASE WHEN mode_id = 37 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS HHDT
+	FROM
+		[abm].[hwy_flow_mode] l
+		INNER JOIN [abm].[hwy_flow] ON l.[scenario_id] = [hwy_flow].[scenario_id] AND l.[hwy_flow_id] = [hwy_flow].[hwy_flow_id]
+		INNER JOIN [abm].[hwy_link_ab_tod] ON [hwy_flow].[scenario_id] = [hwy_link_ab_tod].[scenario_id] AND [hwy_flow].[hwy_link_ab_tod_id] = [hwy_link_ab_tod].[hwy_link_ab_tod_id]
+		INNER JOIN [abm].[hwy_link_ab] ON [hwy_link_ab_tod].[scenario_id] = [hwy_link_ab].[scenario_id]	AND [hwy_link_ab_tod].[hwy_link_ab_id] = [hwy_link_ab].[hwy_link_ab_id]
+		INNER JOIN [abm].[hwy_link] t ON [hwy_link_ab].[scenario_id] = t.[scenario_id] AND [hwy_link_ab].[hwy_link_id] = t.[hwy_link_id]
+	WHERE
+		l.[scenario_id] = @LOC_SCENARIO_ID
+		AND [hwy_flow].[scenario_id] = @LOC_SCENARIO_ID
+		AND [hwy_link_ab_tod].[scenario_id] = @LOC_SCENARIO_ID
+		AND [hwy_link_ab].[scenario_id] = @LOC_SCENARIO_ID
+		AND t.[scenario_id] = @LOC_SCENARIO_ID
+) AS vmt_source
+UNPIVOT (
+	VMT for VEHICLE_CLASS in (SOV_GP, SOV_PAY,SR2_GP,SR2_HOV,SR2_PAY,SR3_GP,SR3_HOV,SR3_PAY,LHDN,LHDT,MHDN,MHDT,HHDN,HHDT)) AS vmt
+	INNER JOIN  [emfac].[SANDAG_VEHICLE_CLASS] sclass ON vmt.VEHICLE_CLASS = sclass.SANDAG_VEHICLE_CLASS
+	INNER JOIN 	[emfac].[EMFAC_VEHICLE_MAP] emap ON sclass.SANDAG_VEHICLE_CLASS_ID = emap.SANDAG_VEHICLE_CLASS_ID
+		AND emap.YEAR = @SCENARIO_YEAR
+	INNER JOIN [emfac].[EMFAC_VEHICLE_CLASS] eclass ON emap.EMFAC_VEHICLE_CLASS_ID = eclass.EMFAC_VEHICLE_CLASS_ID and eclass.major_version = @EMFAC_MAJOR and eclass.minor_version = @EMFAC_MINOR
+	GROUP BY
+		eclass.EMFAC_VEHICLE_CLASS
+	UNION ALL
+	SELECT
+		'SANDAG' as [MPO]
+		,38 as [GAI]
+		,'San Diego (SD)' as [Sub-Area]
+		,@SCENARIO_YEAR as [Cal_Year]
+		,UPPER(e.EMFAC_VEHICLE_CLASS) as [Veh_Tech]
+		,v.VMT as [New Total VMT]
+	FROM (
+		SELECT
+			v.EMFAC_VEHICLE_CLASS_ID
+			,v.YEAR
+			,SUM(v.VMT) as VMT
+		FROM
+			emfac.EMFAC_DEFAULT_SPEED_VMT v
+		GROUP BY
+			v.EMFAC_VEHICLE_CLASS_ID, v.YEAR
+		) v
+	INNER JOIN
+		emfac.EMFAC_VEHICLE_CLASS e
+	ON
+		v.EMFAC_VEHICLE_CLASS_ID = e.EMFAC_VEHICLE_CLASS_ID and e.major_version = @EMFAC_MAJOR and e.minor_version = @EMFAC_MINOR
+	WHERE
+		v.YEAR IN (SELECT s.SCENARIO_YEAR FROM ref.scenario s WHERE SCENARIO_ID = @LOC_SCENARIO_ID)
+
+	UNION ALL
+	SELECT
+		'SANDAG' as [MPO]
+		,38 as [GAI]
+		,'San Diego (SD)' as [Sub-Area]
+		,@SCENARIO_YEAR as [Cal_Year]
+		,UPPER(eclass.EMFAC_VEHICLE_CLASS) as [Veh_Tech]
+		,SUM((PRELOAD / @BUS_PCE) * LENGTH_MILE) * emap.VALUE AS [New Total VMT]
+	FROM
+		(SELECT m.EMFAC_VEHICLE_CLASS_ID, VALUE FROM emfac.EMFAC_VEHICLE_MAP m JOIN emfac.emfac_vehicle_class e ON m.emfac_vehicle_class_id = e.emfac_vehicle_class_id AND e.major_version = @EMFAC_MAJOR and e.minor_version = @EMFAC_MINOR WHERE m.SANDAG_VEHICLE_CLASS_ID = 15 AND m.YEAR = @SCENARIO_YEAR) emap
+		JOIN emfac.EMFAC_VEHICLE_CLASS eclass ON emap.EMFAC_VEHICLE_CLASS_ID = eclass.EMFAC_VEHICLE_CLASS_ID
+		,abm.hwy_link_ab_tod t
+	INNER JOIN
+		[abm].[hwy_link_ab]
+	ON
+		t.[scenario_id] = [hwy_link_ab].[scenario_id]
+		AND t.[hwy_link_ab_id] = [hwy_link_ab].[hwy_link_ab_id]
+	INNER JOIN
+		[abm].[hwy_link]
+	ON
+		[hwy_link_ab].[scenario_id] = [hwy_link].[scenario_id]
+		AND [hwy_link_ab].[hwy_link_id] = [hwy_link].[hwy_link_id]
+	WHERE
+		t.[scenario_id] = @LOC_SCENARIO_ID
+		AND [hwy_link_ab].[scenario_id] = @LOC_SCENARIO_ID
+		AND [hwy_link].[scenario_id] = @LOC_SCENARIO_ID
+		AND PRELOAD > 0
+	GROUP BY
+		eclass.EMFAC_VEHICLE_CLASS
+		,emap.VALUE
+	RETURN
+END
+GO
+
+-- Add metadata for [emfac].[fn_emfac_2017_vmt]
+EXECUTE [db_meta].[add_xp] 'emfac.fn_emfac_2017_vmt', 'SUBSYSTEM', 'emfac'
+EXECUTE [db_meta].[add_xp] 'emfac.fn_emfac_2017_vmt', 'MS_Description', ''
+GO
+
+
+
+
+-- Create fn_emfac_2017_vmt_speed object
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[emfac].[fn_emfac_2017_vmt_speed]') AND type in (N'FN', N'IF', N'TF', N'FS', N'FT'))
+DROP FUNCTION [emfac].[fn_emfac_2017_vmt_speed]
+GO
+
+CREATE FUNCTION [emfac].[fn_emfac_2017_vmt_speed] (
+@SCENARIO_ID int
+)
+RETURNS
+@TBL_EMFAC_2017_VMT_SPEED TABLE
+(
+	[MPO] nvarchar(50)
+	,[GAI] int
+	,[Sub-Area] nvarchar(50)
+	,[Cal_Year] int
+	,[Veh_Tech] nvarchar(50)
+	,[Hour] int
+	,[5mph] float
+	,[10mph] float
+	,[15mph] float
+	,[20mph] float
+	,[25mph] float
+	,[30mph] float
+	,[35mph] float
+	,[40mph] float
+	,[45mph] float
+	,[50mph] float
+	,[55mph] float
+	,[60mph] float
+	,[65mph] float
+	,[70mph] float
+	,[75mph] float
+	,[80mph] float
+	,[85mph] float
+	,[90mph] float
+)
+AS
+BEGIN
+
+
+
+DECLARE @LOC_SCENARIO_ID int = @SCENARIO_ID;
+DECLARE @BUS_PCE float = 3.0;
+DECLARE @EMFAC_MAJOR nvarchar(4) = '2017';
+DECLARE @EMFAC_MINOR nvarchar(3) = '1.0'
+DECLARE @SCENARIO_YEAR int;
+
+SELECT @SCENARIO_YEAR = s.scenario_year from ref.scenario s where s.scenario_id = @LOC_SCENARIO_ID
+
+DECLARE @EMFAC_TIME TABLE
+(
+	time_period_id int not null
+	,emfac_hours int not null
+)
+
+DECLARE @EMFAC_VMT TABLE
+(
+	vehicle_class nvarchar(50)
+	,emfac_hours smallint
+	,speed_bin smallint
+	,vmt float
+)
+
+INSERT INTO @EMFAC_TIME (time_period_id, emfac_hours) VALUES
+(6,1),(6,2),(6,3),(6,20),(6,21),(6,22),(6,23),(6,24)
+,(2,4),(2,5),(2,6)
+,(3,7),(3,8),(3,9)
+,(4,10),(4,11),(4,12),(4,13),(4,14),(4,15),(4,16)
+,(5,17),(5,18),(5,19)
+
+INSERT INTO @EMFAC_VMT
+SELECT
+	eclass.EMFAC_VEHICLE_CLASS
+	,emfac_hours
+	,SPEED_BIN
+	,SUM(VMT * emap.VALUE) AS VMT
+FROM
+	(SELECT
+		CEILING(f.SPEED / 5) * 5 SPEED_BIN
+		,e.emfac_hours
+		,SUM(CASE WHEN mode_id = 1 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS SOV_GP
+		,SUM(CASE WHEN mode_id = 2 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS SOV_PAY
+		,SUM(CASE WHEN mode_id = 3 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS SR2_GP
+		,SUM(CASE WHEN mode_id = 4 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS SR2_HOV
+		,SUM(CASE WHEN mode_id = 5 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS SR2_PAY
+		,SUM(CASE WHEN mode_id = 6 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS SR3_GP
+		,SUM(CASE WHEN mode_id = 7 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS SR3_HOV
+		,SUM(CASE WHEN mode_id = 8 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS SR3_PAY
+		,SUM(CASE WHEN mode_id = 32 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS LHDN
+		,SUM(CASE WHEN mode_id = 33 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS LHDT
+		,SUM(CASE WHEN mode_id = 34 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS MHDN
+		,SUM(CASE WHEN mode_id = 35 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS MHDT
+		,SUM(CASE WHEN mode_id = 36 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS HHDN
+		,SUM(CASE WHEN mode_id = 37 THEN l.flow * t.LENGTH_MILE ELSE 0 END) AS HHDT
+	FROM
+		[abm].[hwy_flow_mode] l
+		JOIN [abm].[hwy_flow] f	ON	l.[scenario_id] = f.[scenario_id] AND l.[hwy_flow_id] = f.[hwy_flow_id]
+		JOIN [abm].[hwy_link_ab_tod] ON	f.[scenario_id] = [hwy_link_ab_tod].[scenario_id] AND f.[hwy_link_ab_tod_id] = [hwy_link_ab_tod].[hwy_link_ab_tod_id]
+		JOIN [abm].[hwy_link_tod] ON [abm].[hwy_link_ab_tod].[scenario_id] = [abm].[hwy_link_tod].[scenario_id] AND [abm].[hwy_link_ab_tod].[hwy_link_tod_id] = [abm].[hwy_link_tod].[hwy_link_tod_id]
+		RIGHT JOIN @EMFAC_TIME e ON [abm].[hwy_link_tod].[time_period_id] = e.time_period_id
+		JOIN [abm].[hwy_link_ab] ON	[hwy_link_ab_tod].[scenario_id] = [hwy_link_ab].[scenario_id] AND [hwy_link_ab_tod].[hwy_link_ab_id] = [hwy_link_ab].[hwy_link_ab_id]
+		JOIN [abm].[hwy_link] t	ON 	[hwy_link_ab].[scenario_id] = t.[scenario_id] AND [hwy_link_ab].[hwy_link_id] = t.[hwy_link_id]
+	WHERE
+		l.[scenario_id] = @LOC_SCENARIO_ID
+		AND f.[scenario_id] = @LOC_SCENARIO_ID
+		AND [hwy_link_ab_tod].[scenario_id] = @LOC_SCENARIO_ID
+		AND [hwy_link_ab].[scenario_id] = @LOC_SCENARIO_ID
+		and t.[scenario_id] = @LOC_SCENARIO_ID
+	GROUP BY
+		CEILING(f.SPEED / 5) * 5,e.emfac_hours)
+	as source_table
+		UNPIVOT (VMT FOR VEHICLE_CLASS in (SOV_GP, SOV_PAY,SR2_GP,SR2_HOV,SR2_PAY,SR3_GP,SR3_HOV,SR3_PAY,LHDN,LHDT,MHDN,MHDT,HHDN,HHDT)) as vmt_speed
+		JOIN emfac.sandag_vehicle_class sclass ON vmt_speed.VEHICLE_CLASS = sclass.sandag_vehicle_class
+		JOIN emfac.EMFAC_VEHICLE_MAP emap ON sclass.SANDAG_VEHICLE_CLASS_ID = emap.SANDAG_VEHICLE_CLASS_ID AND emap.YEAR = @SCENARIO_YEAR
+		JOIN emfac.EMFAC_VEHICLE_CLASS eclass ON emap.EMFAC_VEHICLE_CLASS_ID = eclass.EMFAC_VEHICLE_CLASS_ID AND eclass.major_version = @EMFAC_MAJOR and eclass.minor_version = @EMFAC_MINOR
+	GROUP BY eclass.EMFAC_VEHICLE_CLASS, emfac_hours, vmt_speed.SPEED_BIN
+	UNION ALL
+	SELECT
+	eclass.EMFAC_VEHICLE_CLASS
+	,e.emfac_hours
+	,CEILING(f.SPEED / 5.0) * 5 AS SPEED_BIN
+	,SUM((l.PRELOAD / @BUS_PCE) * t.LENGTH_MILE) * emap.value AS VMT
+FROM
+(SELECT EMFAC_VEHICLE_CLASS_ID, VALUE FROM emfac.EMFAC_VEHICLE_MAP m WHERE m.SANDAG_VEHICLE_CLASS_ID = 15 AND m.YEAR = @SCENARIO_YEAR) as emap
+				JOIN emfac.EMFAC_VEHICLE_CLASS eclass on emap.EMFAC_VEHICLE_CLASS_ID = eclass.EMFAC_VEHICLE_CLASS_ID AND eclass.major_version = @EMFAC_MAJOR and eclass.minor_version = @EMFAC_MINOR
+	,[abm].[hwy_link] AS t
+	JOIN [abm].[hwy_link_ab] ON	t.[scenario_id] = [hwy_link_ab].[scenario_id] AND t.[hwy_link_id] = [hwy_link_ab].[hwy_link_id]
+	JOIN [abm].[hwy_link_ab_tod] l ON  [hwy_link_ab].[scenario_id] = l.[scenario_id] AND [hwy_link_ab].[hwy_link_ab_id] = l.[hwy_link_ab_id]
+	JOIN [abm].[hwy_link_tod] ON l.[scenario_id] = [abm].[hwy_link_tod].[scenario_id] AND l.[hwy_link_tod_id] = [abm].[hwy_link_tod].[hwy_link_tod_id]
+	RIGHT JOIN @EMFAC_TIME e ON [abm].[hwy_link_tod].[time_period_id] = e.time_period_id
+	JOIN [abm].[hwy_flow] f ON l.[scenario_id] = f.[scenario_id] AND l.[hwy_link_ab_tod_id] = f.hwy_link_ab_tod_id
+WHERE
+	l.PRELOAD > 0
+	AND t.[scenario_id] = @LOC_SCENARIO_ID
+	AND [hwy_link_ab].[scenario_id] = @LOC_SCENARIO_ID
+	AND l.[scenario_id] = @LOC_SCENARIO_ID
+	AND f.[scenario_id] = @LOC_SCENARIO_ID
+GROUP BY
+	eclass.EMFAC_VEHICLE_CLASS,e.emfac_hours,CEILING(f.SPEED / 5.0) * 5,emap.value
+
+INSERT INTO @EMFAC_VMT
+SELECT
+	default_classes.emfac_vehicle_class
+	,lda_speed.emfac_hours
+	,lda_speed.speed_bin
+	,lda_speed.vmt
+FROM
+	(
+		SELECT
+			emfac_hours
+			,speed_bin
+			,vmt
+		FROM
+			@EMFAC_VMT
+		WHERE
+			vehicle_class = 'LDA - GAS'
+	) lda_speed
+	,(SELECT
+	c.emfac_vehicle_class
+FROM
+	emfac.emfac_default_speed_vmt d
+	JOIN emfac.emfac_vehicle_class c ON d.emfac_vehicle_class_id = c.emfac_vehicle_class_id and c.major_version = @EMFAC_MAJOR and c.minor_version = @EMFAC_MINOR
+WHERE
+	d.year = @SCENARIO_YEAR) default_classes
+
+INSERT INTO @TBL_EMFAC_2017_VMT_SPEED
+SELECT
+	'SANDAG' as [MPO]
+	,38 as [GAI]
+	,'San Diego (SD)' as [Sub-Area]
+	,@SCENARIO_YEAR as [Cal_Year]
+	,vehicle_class as [Veh_Tech]
+	,emfac_hours as [Hour]
+	,ISNULL([0],0) + ISNULL([5],0) AS [5mph]
+	,ISNULL([10],0) AS [10mph]
+	,ISNULL([15],0) AS [15mph]
+	,ISNULL([20],0) AS [20mph]
+	,ISNULL([25],0) AS [25mph]
+	,ISNULL([30],0) AS [30mph]
+	,ISNULL([35],0) AS [35mph]
+	,ISNULL([40],0) AS [40mph]
+	,ISNULL([45],0) AS [45mph]
+	,ISNULL([50],0) AS [50mph]
+	,ISNULL([55],0) AS [55mph]
+	,ISNULL([60],0) AS [60mph]
+	,ISNULL([65],0) AS [65mph]
+	,ISNULL([70],0) AS [70mph]
+	,ISNULL([75],0) AS [75mph]
+	,ISNULL([80],0) as [80mph]
+	,ISNULL([85],0) as [85mph]
+	,ISNULL([90],0) as [90mph]
+FROM
+(
+	SELECT
+		vehicle_class
+		,emfac_hours
+		,speed_bin
+		,vmt / SUM(VMT) OVER (PARTITION BY vehicle_class, emfac_hours) as class_hr_vmt_pct
+	FROM
+		@EMFAC_VMT
+) as vmt_bin
+PIVOT
+	(SUM(class_hr_vmt_pct) FOR speed_bin in ([0], [5], [10], [15],[20],[25],[30],[35],[40],[45],[50],[55],[60],[65],[70],[75],[80],[85],[90])) as pvt
+
+--UPDATE SPEED BIN FOR PORT TRAYAGE OPERATORS
+UPDATE @TBL_EMFAC_2017_VMT_SPEED SET
+	[5mph] = 0,
+	[10mph] = 0,
+	[15mph] = 0,
+    [20mph] = 1,
+	[25mph] = 0,
+	[30mph] = 0,
+	[35mph] = 0,
+	[40mph] = 0,
+	[45mph] = 0,
+	[50mph] = 0,
+	[55mph] = 0,
+	[60mph] = 0,
+	[65mph] = 0,
+	[70mph] = 0,
+	[75mph] = 0,
+	[80mph] = 0,
+	[85mph] = 0,
+	[90mph] = 0
+WHERE Veh_Tech = 'PTO - Dsl'
+
+--CAP TRUCKS AT 55 MPH
+UPDATE @TBL_EMFAC_2017_VMT_SPEED SET
+	[65mph] = [65mph] + [70mph] + [75mph] + [80mph] + [85mph] + [90mph],
+	[70mph] = 0,
+	[75mph] = 0,
+	[80mph] = 0,
+	[85mph] = 0,
+	[90mph] = 0
+WHERE Veh_Tech IN ( 'LHD1 - DSL','LHD1 - GAS','LHD2 - DSL','LHD2 - GAS','OBUS - GAS','SBUS - DSL','SBUS - GAS','T6 AG - DSL','T6 CAIRP HEAVY - DSL','T6 CAIRP SMALL - DSL','T6 INSTATE CONSTRUCTION HEAVY - DSL','T6 INSTATE CONSTRUCTION SMALL - DSL','T6 INSTATE HEAVY - DSL','T6 INSTATE SMALL - DSL','T6 OOS HEAVY - DSL','T6 OOS SMALL - DSL','T6 PUBLIC - DSL','T6 UTILITY - DSL','T6TS - GAS','T7 AG - DSL','T7 CAIRP - DSL','T7 CAIRP CONSTRUCTION - DSL','T7 NNOOS - DSL','T7 NOOS - DSL','T7 OTHER PORT - DSL','T7 POAK - DSL','T7 POLA - DSL','T7 PUBLIC - DSL','T7 SINGLE - DSL','T7 SINGLE CONSTRUCTION - DSL','T7 SWCV - DSL','T7 TRACTOR - DSL','T7 TRACTOR CONSTRUCTION - DSL','T7 UTILITY - DSL','T7IS - GAS','UBUS - DSL','UBUS - GAS')
+
+RETURN
+END
+GO
+
+-- Add metadata for [emfac].[fn_emfac_2017_vmt_speed]
+EXECUTE [db_meta].[add_xp] 'emfac.fn_emfac_2017_vmt_speed', 'SUBSYSTEM', 'emfac'
+EXECUTE [db_meta].[add_xp] 'emfac.fn_emfac_2017_vmt_speed', 'MS_Description', ''
+GO
