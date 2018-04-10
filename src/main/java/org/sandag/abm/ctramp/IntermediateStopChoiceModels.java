@@ -1373,9 +1373,10 @@ public class IntermediateStopChoiceModels
                         check = System.nanoTime();
 
                         selectedIndex = selectDestinationWithTiming(stop);
-                        choice = finalSample[selectedIndex];
-                        //Wu's temporary fix to set stop destination to origin if no valid stop is found
-                        if (choice==-1) choice=stop.getOrig();
+                        //Wu's temporary fix to set stop destination to origin if no valid stop is found 4/10/2018
+                        if (selectedIndex==-1) choice=stop.getOrig();
+                        else choice = finalSample[selectedIndex];
+                        
                         stop.setDest(choice);
 
                         if (sampleMgraInAlightingTapShed[choice])
