@@ -61,60 +61,60 @@
             </activation>
             <properties>
                 <year>2010</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>                
+                <tourdest.uec.file>TourDestinationChoice.xls</tourdest.uec.file>                
             </properties>
         </profile>
          <profile>
             <id>2012</id>
             <properties>
                 <year>2012</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>  
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives.csv</crossborder.dc.soa.alts.file>  
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>  
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>     
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice.xls</crossBorder.dc.uec.file>
+                <tourdest.uec.file>TourDestinationChoice.xls</tourdest.uec.file>     
             </properties>
         </profile>
         <profile>
             <id>2014</id>
             <properties>
                 <year>2014</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>              
+                <tourdest.uec.file>TourDestinationChoice.xls</tourdest.uec.file>              
             </properties>
         </profile>
         <profile>
             <id>2015</id>
             <properties>
                 <year>2015</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2015.xls</tourdest.uec.file>              
+                <tourdest.uec.file>TourDestinationChoice.xls</tourdest.uec.file>              
             </properties>
         </profile>
         <profile>
             <id>2016</id>
             <properties>
                 <year>2016</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2015.xls</tourdest.uec.file>              
+                <tourdest.uec.file>TourDestinationChoice.xls</tourdest.uec.file>              
             </properties>
         </profile>
         <profile>
             <id>2017</id>
             <properties>
                 <year>2017</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2015.xls</tourdest.uec.file>              
+                <tourdest.uec.file>TourDestinationChoice.xls</tourdest.uec.file>              
             </properties>
         </profile>
         <profile>
@@ -134,7 +134,7 @@
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2020.xls</tourdest.uec.file>                   
+                <tourdest.uec.file>TourDestinationChoice2025.xls</tourdest.uec.file>                   
             </properties>
         </profile>
         <profile>
@@ -144,7 +144,7 @@
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2020.xls</tourdest.uec.file>                   
+                <tourdest.uec.file>TourDestinationChoice2025.xls</tourdest.uec.file>                   
             </properties>
         </profile>
         <profile>
