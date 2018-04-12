@@ -484,6 +484,13 @@ public class AirportTripTables
            	for(int j = 0; j < votBins[i];++j){
         		try
         		{
+          		     //Delete the file if it exists
+        			File f = new File(fileName[i]+end[i][j]);
+       	         	if(f.exists()){
+       	         		logger.info("Deleting existing trip file: "+fileName[i]+end[i][j]);
+       	         		f.delete();
+       	         	}
+
         			if (ms != null) ms.writeMatrixFile(fileName[i]+end[i][j], matrix[i][j], mt);
         			else writeMatrixFile(fileName[i]+end[i][j], matrix[i][j]);
         		} catch (Exception e)

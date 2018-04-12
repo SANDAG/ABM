@@ -148,13 +148,13 @@ public class VisitorTripModeChoiceModel
         try{
         	int mode = tripModeChoiceModel.getChoiceResult(rand); 
         	trip.setTripMode(mode);
-            if(mode>=9){
+            if(modelStructure.getTripModeIsTransit(mode)){
             	double[][] bestTapPairs = null;
             
-            	if (mode == 9){
+            	if (modelStructure.getTripModeIsWalkTransit(mode)){
             		bestTapPairs = logsumHelper.getBestWtwTripTaps();
             	}
-            	else if (mode==10||mode==11){
+            	else if (modelStructure.getTripModeIsPnrTransit(mode)||modelStructure.getTripModeIsKnrTransit(mode)){
             		if (!trip.isInbound())
             			bestTapPairs = logsumHelper.getBestDtwTripTaps();
             		else
@@ -171,7 +171,7 @@ public class VisitorTripModeChoiceModel
             }
 
         }catch(Exception e){
-        	logger.info("rand="+rand);
+        	logger.info("Error calculating visitor trip mode choice with rand="+rand);
         	tour.logTourObject(logger, 100);
         	logger.error(e.getMessage());
         }

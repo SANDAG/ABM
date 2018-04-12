@@ -385,9 +385,16 @@ public class SpecialEventTripTables {
         fileName[3] = directory
                 + Util.getStringValueFromPropertyMap(rbMap, "specialEvent.results.othrTripMatrix") + end;
 
-        for (int i = 0; i < 4; ++i)
+        for (int i = 0; i < 4; ++i){
+		     //Delete the file if it exists
+            File f = new File(fileName[i]);
+            if(f.exists()){
+            	logger.info("Deleting existing trip file: "+fileName[i]);
+               f.delete();
+            }
+        
             ms.writeMatrixFile(fileName[i], matrix[i], mt);
-
+        }
     }
 
     /**
