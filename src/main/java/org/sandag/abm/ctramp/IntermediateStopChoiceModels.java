@@ -1374,14 +1374,56 @@ public class IntermediateStopChoiceModels
 
                         selectedIndex = selectDestinationWithTiming(stop);
                         //Wu's temporary fix to set stop destination to origin if no valid stop is found 4/10/2018
-                        if (selectedIndex==-1) choice=stop.getOrig();
-                        else choice = finalSample[selectedIndex];
+                        if (selectedIndex==-1) { 
+                        	choice=stop.getOrig();
+                        	stop.setDest(choice);
+                        	lastDest = choice;
+                        	selectedIndex=0;
+                        	logger.info("selectedIndex is -1 and reset to 0");
+                        	logger.info("stop orig="+stop.getOrig());
+                        	logger.info("stop dest="+stop.getDest());
+                        	logger.info("lastDest="+lastDest);
+                            logger.error(String.format(
+                                    "Exception caught processing %s stop location choice model.",
+                                    (stopLocDmuObj.getInboundStop() == 1 ? "inbound" : "outbound")));
+                            logger.error("HHID=" + household.getHhId() + ", persNum="
+                                    + person.getPersonNum() + ", tour category="
+                                    + tour.getTourCategory() + ", tourPurpose="
+                                    + tour.getTourPrimaryPurpose() + ", tourId=" + tour.getTourId()
+                                    + ", tourMode=" + tour.getTourModeChoice());
+                            logger.error("StopID=" + (stop.getStopId() + 1) + " of "
+                                    + (stops.length - 1) + " stops, inbound=" + stop.isInboundStop()
+                                    + ", stopPurpose=" + stop.getDestPurpose() + ", stopDepart="
+                                    + stop.getStopPeriod() + ", stopOrig=" + stop.getOrig()
+                                    + ", stopDest=" + stop.getDest());
+                        }else { 
+                        	logger.info("selectedIndex="+selectedIndex);
+                        	logger.info("stop orig="+stop.getOrig());
+                        	logger.info("stop dest="+stop.getDest());
+                        	logger.info("lastDest="+lastDest);
+                            logger.error(String.format(
+                                    "Exception caught processing %s stop location choice model.",
+                                    (stopLocDmuObj.getInboundStop() == 1 ? "inbound" : "outbound")));
+                            logger.error("HHID=" + household.getHhId() + ", persNum="
+                                    + person.getPersonNum() + ", tour category="
+                                    + tour.getTourCategory() + ", tourPurpose="
+                                    + tour.getTourPrimaryPurpose() + ", tourId=" + tour.getTourId()
+                                    + ", tourMode=" + tour.getTourModeChoice());
+                            logger.error("StopID=" + (stop.getStopId() + 1) + " of "
+                                    + (stops.length - 1) + " stops, inbound=" + stop.isInboundStop()
+                                    + ", stopPurpose=" + stop.getDestPurpose() + ", stopDepart="
+                                    + stop.getStopPeriod() + ", stopOrig=" + stop.getOrig()
+                                    + ", stopDest=" + stop.getDest());
+                        	choice = finalSample[selectedIndex];
+                        	stop.setDest(choice);
+                        	lastDest = choice;
+                        }
                         
-                        stop.setDest(choice);
+                        //stop.setDest(choice);
 
                         if (sampleMgraInAlightingTapShed[choice])
                             earlierTripWasLocatedInAlightingTapShed = true;
-                        lastDest = choice;
+                        //lastDest = choice;
                         slcTime += (System.nanoTime() - check);
 
                         if (household.getDebugChoiceModels())
