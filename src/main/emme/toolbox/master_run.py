@@ -433,7 +433,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skipTripTableCreation[iteration]:
                     import_auto_demand(output_dir, external_zones, num_processors, base_scenario)
 
-        msa_iteration = len(sample_rate)
+        msa_iteration = 1
         if not skipFinalHighwayAssignment:
             with _m.logbook_trace("Final traffic assignments"):
                 self.run_traffic_assignments(
