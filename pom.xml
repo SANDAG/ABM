@@ -56,15 +56,12 @@
     <profiles>
          <profile>
             <id>2010</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <year>2010</year>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice.xls</tourdest.uec.file>                
+                <tourdest.uec.file>TourDestinationChoice.xls</tourdest.uec.file>      
             </properties>
         </profile>
          <profile>
@@ -387,7 +384,8 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>                     
+                    </execution> 
+                    <!--                
                     <execution>
                         <id>copy-txt-resources</id>
                         <phase>package</phase>
@@ -408,6 +406,7 @@
                             </resources>
                         </configuration>
                     </execution>
+                    -->
                     <execution>
                         <id>copy-conf-resources</id>
                         <phase>package</phase>
@@ -518,6 +517,7 @@
                             </resources>
                         </configuration>
                     </execution>  
+                    <!--
                     <execution>
                         <id>copy-validation-resources</id>
                         <phase>package</phase>
@@ -537,7 +537,8 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>                                             
+                    </execution>   
+                    -->                                          
                     <execution>
                         <id>copy-sql-resources</id>
                         <phase>package</phase>
