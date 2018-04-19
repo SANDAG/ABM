@@ -96,6 +96,9 @@
         </profile>
         <profile>
             <id>2016</id>
+            <activation>
+            	<activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <year>2016</year>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives.csv</crossborder.dc.soa.alts.file>    
