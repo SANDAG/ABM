@@ -267,9 +267,9 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             network.delete_attribute("TRANSIT_LINE", "xfer_from_bus")
 
             self.taps_to_centroids(network)
-            if period == "AM":
-                timed_transfers_with_walk = list(gen_utils.DataTableProc("%s_timed_xfer" % data_table_name))
-                self.timed_transfers(network, timed_transfers_with_walk, period)
+            # changed to allow timed xfers for different periods
+            timed_transfers_with_walk = list(gen_utils.DataTableProc("%s_timed_xfer_%s" % (data_table_name,period)))
+            self.timed_transfers(network, timed_transfers_with_walk, period)
             self.connect_circle_lines(network)
             self.duplicate_tap_adajcent_stops(network)
             # The fixed guideway travel times are stored in "@trtime_link_xx"

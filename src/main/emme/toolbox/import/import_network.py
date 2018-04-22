@@ -34,7 +34,7 @@
 #    trrt.csv: transit routes and their attributes
 #    trlink.csv: itineraries for each route as sequence of link IDs (TRCOV-ID field)
 #    trstop.csv: transit stop attributes
-#    timexfer.csv: table of timed transfer pairs of lines
+#    timexfer_period.csv: table of timed transfer pairs of lines, by period
 #    mode5tod.dbf: global (per-mode) transit cost and perception attributes
 #    special_fares.txt: table listing special fares in terms of boarding and incremental in-vehicle costs. 
 #
@@ -120,7 +120,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         pb.description = """
         Create an Emme network from the E00 and associated files 
         generated from TCOVED. 
-        The timed transfer is stored in a data table with the suffix "_timed_xfers".
+        The timed transfer is stored in a data table with the suffix "_timed_xfers_period".
         <br>
         <div style="text-align:left">
         The following files are used:
@@ -133,7 +133,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 <li>trrt.csv</li>
                 <li>trlink.csv</li>
                 <li>trstop.csv</li>
-                <li>timexfer.csv</li>
+                <li>timexfer_period.csv, where period = EA,AM,MD,PM,EV</li>
                 <li>MODE5TOD.dbf</li>
                 <li>special_fares.txt</li>
             </ul>
@@ -771,7 +771,11 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         transit_stop_data = gen_utils.DataTableProc("trstop", _join(self.source, "trstop.csv"))
         # From_line,To_line,Board_stop,Wait_time
         # Note: Board_stop is not used
-        timed_xfer_data = gen_utils.DataTableProc("timexfer", _join(self.source, "timexfer.csv"))
+        #   Timed xfer data
+        periods = ['EA', 'AM', 'MD', 'PM', 'EV']
+        timed_xfer_data = {}
+        for period in periods:
+            timed_xfer_data[period] = gen_utils.DataTableProc("timexfer", _join(self.source, "timexfer_"+period+".csv"))
 
         mode_properties = gen_utils.DataTableProc("MODE5TOD", _join(self.source, "MODE5TOD.dbf"))
         mode_details = {}
@@ -969,24 +973,27 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 for field, attr in seg_float_attr_map:
                     segment[attr] = float(stop[field])
         # Normalizing the case of the headers as different examples have been seen
-        norm_data = []
-        for record in timed_xfer_data:
-            norm_record = {}
-            for key, val in record.iteritems():
-                norm_record[key.lower()] = val
-            norm_data.append(norm_record)
+        for period in periods:
+            norm_data = []
+            for record in timed_xfer_data[period]:
+                norm_record = {}
+                for key, val in record.iteritems():
+                    norm_record[key.lower()] = val
+                norm_data.append(norm_record)
 
-        from_line, to_line, wait_time = [], [], []
-        for record in norm_data:
-            from_line.append(transit_lines[int(record["from_line"])].id)
-            to_line.append(transit_lines[int(record["to_line"])].id)
-            wait_time.append(float(record["wait_time"]))
-        timed_xfer = _dt.Data()
-        timed_xfer.add_attribute(_dt.Attribute("from_line", _np.array(from_line).astype("O")))
-        timed_xfer.add_attribute(_dt.Attribute("to_line", _np.array(to_line).astype("O")))
-        timed_xfer.add_attribute(_dt.Attribute("wait_time", _np.array(wait_time)))
-        # Creates and saves the new table
-        gen_utils.DataTableProc("%s_timed_xfer" % self.data_table_name, data=timed_xfer)
+            from_line, to_line, wait_time = [], [], []
+            for record in norm_data:
+                from_line.append(transit_lines[int(record["from_line"])].id)
+                to_line.append(transit_lines[int(record["to_line"])].id)
+                wait_time.append(float(record["wait_time"]))
+        
+            timed_xfer = _dt.Data()
+            timed_xfer.add_attribute(_dt.Attribute("from_line", _np.array(from_line).astype("O")))
+            timed_xfer.add_attribute(_dt.Attribute("to_line", _np.array(to_line).astype("O")))
+            timed_xfer.add_attribute(_dt.Attribute("wait_time", _np.array(wait_time)))
+            # Creates and saves the new table
+            gen_utils.DataTableProc("%s_timed_xfer_%s" % (self.data_table_name,period), data=timed_xfer)
+        
         self._log.append({"type": "text", "content": "Import transit lines complete"})
 
     def calc_transit_attributes(self, network):
