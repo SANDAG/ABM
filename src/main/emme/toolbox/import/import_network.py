@@ -775,7 +775,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         periods = ['EA', 'AM', 'MD', 'PM', 'EV']
         timed_xfer_data = {}
         for period in periods:
-            timed_xfer_data[period] = gen_utils.DataTableProc("timexfer", _join(self.source, "timexfer_"+period+".csv"))
+            timed_xfer_data[period] = gen_utils.DataTableProc("timexfer_"+period, _join(self.source, "timexfer_"+period+".csv"))
 
         mode_properties = gen_utils.DataTableProc("MODE5TOD", _join(self.source, "MODE5TOD.dbf"))
         mode_details = {}
