@@ -367,7 +367,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         file_names = [
             "hwycov.e00", "LINKTYPETURNS.DBF", "turns.csv",
             "trcov.e00", "trrt.csv", "trlink.csv", "trstop.csv", 
-            "timexfer.csv", "MODE5TOD.dbf"]
+            "timexfer_EA.csv", "timexfer_AM.csv","timexfer_MD.csv","timexfer_PM.csv","timexfer_EV.csv","MODE5TOD.dbf"]
         for name in file_names:
             file_path = _join(self.source, name)
             if not os.path.exists(file_path):
