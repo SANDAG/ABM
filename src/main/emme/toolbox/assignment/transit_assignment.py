@@ -701,7 +701,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
     def set_matrix_data(self, name, data):
         matrix = self.scenario.emmebank.matrix(name)
         self._matrix_cache[name] = data
-        matrix.set_numpy_data(data)
+        matrix.set_numpy_data(data, self.scenario)
 
     def report(self, period):
         text = ['<div class="preformat">']
