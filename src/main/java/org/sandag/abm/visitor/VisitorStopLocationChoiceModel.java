@@ -212,6 +212,7 @@ public class VisitorStopLocationChoiceModel
 
     }
 
+
     /**
      * Create a sample for the tour and stop.
      * 
@@ -387,6 +388,18 @@ public class VisitorStopLocationChoiceModel
 
         // create a sample of mgras and set all of the dmu properties
         createSample(tour, stop);
+        
+        //Wu added, if not mgra samples are found, allow tour origin mgra as a stop alternative
+        if (sampledMgras.length==0){
+        	logger.error("sample mgra=0");
+            logger.error("Tour ID " + tour.getID() + " stop id " + stop.getId()
+            + " purpose " + modelStructure.VISITOR_PURPOSES[stop.getPurpose()]);
+            for (int sample = 1; sample <= sampleRate; ++sample)
+            {
+            	sampledMgras[sample]=tour.getOriginMGRA();
+            }
+        }
+        
         dmu.setCorrectionFactors(correctionFactors);
         dmu.setSizeTerms(sampledSizeTerms);
         dmu.setTourOrigToStopDistanceAlt(stopToTourDestDistanceAlt);
