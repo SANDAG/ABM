@@ -478,7 +478,9 @@ public final class MgraDataManager
      */
     public float getMgraToTapWalkBoardTime(int mgra, int pos)
     {
-    	float distanceInFeet = (float) mgraWlkTapsDistArray[mgra][1][pos];
+    	//float distanceInFeet = (float) mgraWlkTapsDistArray[mgra][1][pos];
+    	//Wu's temporary fix to read in actual walk to tap time, instead of perceived
+    	float distanceInFeet = (float) mgraWlkTapsDistArray[mgra][3][pos];
     	float time = distanceInFeet/Constants.feetPerMile * Constants.walkMinutesPerMile;
         return time;
     }
@@ -492,7 +494,9 @@ public final class MgraDataManager
      */
     public float getMgraToTapWalkAlightTime(int mgra, int pos)
     {
-    	float distanceInFeet = (float) mgraWlkTapsDistArray[mgra][2][pos];
+    	//float distanceInFeet = (float) mgraWlkTapsDistArray[mgra][2][pos];
+    	//Wu's temporary fix to read in actual walk to tap time, instead of perceived
+    	float distanceInFeet = (float) mgraWlkTapsDistArray[mgra][4][pos];
     	float time = distanceInFeet/Constants.feetPerMile * Constants.walkMinutesPerMile;
         return time;
     }
@@ -507,7 +511,9 @@ public final class MgraDataManager
      */
     public float getMgraToTapWalkTime(int mgra, int pos)
     {
-    	float distanceInFeet = (float) mgraWlkTapsDistArray[mgra][1][pos];
+    	//float distanceInFeet = (float) mgraWlkTapsDistArray[mgra][1][pos];
+    	//Wu's temporary fix to read in actual walk to tap time, instead of perceived
+    	float distanceInFeet = (float) mgraWlkTapsDistArray[mgra][3][pos];
     	float time = distanceInFeet/Constants.feetPerMile * Constants.walkMinutesPerMile;
         return time;
     }
