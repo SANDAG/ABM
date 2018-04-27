@@ -1374,11 +1374,11 @@ public class IntermediateStopChoiceModels
                         selectedIndex = selectDestinationWithTiming(stop);
                         choice = finalSample[selectedIndex];
                         stop.setDest(choice);
-                        lastDest = choice;
-                        
+
                         if (sampleMgraInAlightingTapShed[choice])
                             earlierTripWasLocatedInAlightingTapShed = true;
-
+                        lastDest = choice;
+                        
                         slcTime += (System.nanoTime() - check);
 
                         if (household.getDebugChoiceModels())
