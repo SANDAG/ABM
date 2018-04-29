@@ -185,7 +185,8 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 ("TRANSIT_SEGMENT", "@headway_seg", "Headway adj for special xfers"),
                 ("TRANSIT_SEGMENT", "@transfer_penalty_s", "Xfer pen adj for special xfers"),
                 ("TRANSIT_SEGMENT", "@layover_board", "Boarding cost adj for special xfers"),
-                ("NODE", "@network_adj", "Model: 1=TAP adj, 2=circle, 3=timedxfer")
+                ("NODE", "@network_adj", "Model: 1=TAP adj, 2=circle, 3=timedxfer"),
+                ("NODE", "@network_adj_src", "Orig src node for timedxfer splits"),
             ]
             for elem, name, desc in new_attrs:
                 attr = scenario.create_extra_attribute(elem, name)
@@ -416,14 +417,18 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
         def find_walk_link(from_line, to_line):
             to_nodes = set([s.i_node for s in to_line.segments(True)
                             if s.allow_boardings])
+            link_candidates = []
             for seg in from_line.segments(True):
                 if not s.allow_alightings:
                     continue
                 for link in seg.i_node.outgoing_links():
                     if link.j_node in to_nodes:
-                        return link
-            raise Exception(no_walk_link_error % (from_line, to_line))
-            
+                        link_candidates.append(link)
+            if not link_candidates:
+                raise Exception(no_walk_link_error % (from_line, to_line))
+            # if there are multiple connecting links take the shortest one
+            return sorted(link_candidates, key=lambda x: x.length)[0]
+
         def link_on_line(line, node, near_side_stop):
             node = network.node(node)
             if near_side_stop:
@@ -436,9 +441,8 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                         return seg.link
             raise Exception(node_not_found_error % (node, line))
 
-        # Group parallel transfers together (same pair of alighting-boarding nodes)
-        walk_transfers = _defaultdict(lambda: {"from_lines": [], "to_lines": [], "walk_link": None})
-        waits = {}
+        # Group parallel transfers together (same pair of alighting-boarding nodes from the same line)
+        walk_transfers = _defaultdict(lambda: [])
         for i, transfer in enumerate(timed_transfers_with_walk):
             try:
                 from_line = network.transit_line(transfer["from_line"])
@@ -447,49 +451,82 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 to_line = network.transit_line(transfer["to_line"])
                 if not to_line:
                     raise Exception("to_line %s does not exist" % transfer["to_line"])
-                walk_link = find_walk_link(from_line, to_line)        
+                walk_link = find_walk_link(from_line, to_line)
                 from_link = link_on_line(from_line, walk_link.i_node, near_side_stop=True)
                 to_link = link_on_line(to_line, walk_link.j_node, near_side_stop=False)
-                walk_transfers[(from_link, to_link)]["from_lines"].append(from_line)
-                walk_transfers[(from_link, to_link)]["to_lines"].append(to_line)
-                walk_transfers[(from_link, to_link)]["walk_link"] = walk_link
-                waits[to_line] = transfer["wait_time"]
+                walk_transfers[(from_link, to_link)].append({
+                    "to_line": to_line, 
+                    "from_line": from_line, 
+                    "walk_link": walk_link,
+                    "wait": transfer["wait_time"],
+                })
             except Exception as error:
                 new_message = "Timed transfer[%s]: %s" % (i, error.message)
                 raise type(error), type(error)(new_message), sys.exc_info()[2]
-
-        def split_link(link, node_id, lines, stop_attr, split_links, waits=None, near_side_stop=True):
-            i_node, j_node = link.i_node, link.j_node
-            if link in split_links:
-                new_node = split_links[link]
-                in_link = network.link(i_node, new_node)
-                out_link = network.link(new_node, j_node)
+    
+        # If there is only one transfer at the location (redundant case)
+        # OR all transfers are from the same line (can have different waits)
+        # OR all transfers are to the same line and have the same wait
+        # Merge all transfers onto the same transfer node
+        network_transfers = []
+        for (from_link, to_link), transfers in walk_transfers.iteritems():
+            walk_links = set([t["walk_link"] for t in transfers])
+            from_lines = set([t["from_line"] for t in transfers])
+            to_lines = set([t["to_line"] for t in transfers])
+            waits = set(t["wait"] for t in transfers)
+            if len(transfers) == 1 or len(from_lines) == 1 or (len(to_lines) == 1 and len(waits) == 1):
+                network_transfers.append({
+                    "from_link": from_link,
+                    "to_link": to_link,
+                    "to_lines": list(to_lines),
+                    "from_lines": list(from_lines),
+                    "walk_link": walk_links.pop(),
+                    "wait": dict((t["to_line"], t["wait"]) for t in transfers)})
             else:
-                length = link.length
-                proportion = min(0.006 / length, 0.2)
-                if near_side_stop:
-                    proportion = 1 - proportion
-                new_node = network.split_link(i_node, j_node, node_id, False, proportion)
-                new_node["@network_adj"] = 3
-                split_links[link] = new_node
-                in_link = network.link(i_node, new_node)
-                out_link = network.link(new_node, j_node)
-                if near_side_stop:
-                    out_link.length = 0
-                    in_link.length = length
-                    for p in ["ea", "am", "md", "pm", "ev"]:
-                        out_link["@time_link_" + p] = 0
-                else:
-                    out_link.length = length
-                    in_link.length = 0
-                    for p in ["ea", "am", "md", "pm", "ev"]:
-                        in_link["@time_link_" + p] = 0
-                
+                for transfer in transfers:
+                    network_transfers.append({
+                        "from_link": from_link,
+                        "to_link": to_link,
+                        "to_lines": [transfer["to_line"]], 
+                        "from_lines": [transfer["from_line"]],
+                        "walk_link": transfer["walk_link"],
+                        "wait": {transfer["to_line"]: transfer["wait"]}})
+
+        def split_link(link, node_id, lines, split_links, stop_attr, waits=None):
+            near_side_stop = (stop_attr == "allow_alightings")
+            orig_link = link
+            if link in split_links:
+                link = split_links[link]
+            i_node, j_node = link.i_node, link.j_node
+            length = link.length
+            proportion = min(0.006 / length, 0.2)
+            if near_side_stop:
+                proportion = 1 - proportion
+            new_node = network.split_link(i_node, j_node, node_id, False, proportion)
+            new_node["@network_adj"] = 3
+            new_node["@network_adj_src"] = orig_link.j_node.number if near_side_stop else orig_link.i_node.number
+            in_link = network.link(i_node, new_node)
+            out_link = network.link(new_node, j_node)
+            split_links[orig_link] = in_link if near_side_stop else out_link
+            if near_side_stop:
+                in_link.length = length
+                out_link.length = 0
+                for p in ["ea", "am", "md", "pm", "ev"]:
+                    out_link["@trtime_link_" + p] = 0
+            else:
+                out_link.length = length
+                in_link.length = 0
+                for p in ["ea", "am", "md", "pm", "ev"]:
+                    in_link["@trtime_link_" + p] = 0
+
             for seg in in_link.segments():
-                seg.transit_time_func = 3
+                if not near_side_stop:
+                    seg.transit_time_func = 3
                 seg["@coaster_fare_inveh"] = 0
             for seg in out_link.segments():
-                seg.allow_alightings = seg.allow_boardings = False            
+                if near_side_stop:
+                    seg.transit_time_func = 3
+                seg.allow_alightings = seg.allow_boardings = False
                 seg.dwell_time = 0
                 if seg.line in lines:
                     seg[stop_attr] = True
@@ -499,13 +536,13 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
 
         # process the transfer points, split links and set attributes
         split_links = {}
-        for (from_link, to_link), transfer in walk_transfers.iteritems():
+        for transfer in network_transfers:
             new_alight_node = split_link(
-                from_link, self._get_node_id(), transfer["from_lines"], 
-                "allow_alightings", split_links, near_side_stop=True)
+                transfer["from_link"], self._get_node_id(), transfer["from_lines"],
+                split_links, "allow_alightings")
             new_board_node = split_link(
-                to_link, self._get_node_id(), transfer["to_lines"], 
-                "allow_boardings", split_links, waits, near_side_stop=False)
+                transfer["to_link"], self._get_node_id(), transfer["to_lines"],
+                split_links, "allow_boardings", waits=transfer["wait"])
             walk_link = transfer["walk_link"]
             transfer_link = network.create_link(
                 new_alight_node, new_board_node, [network.mode("x")])
