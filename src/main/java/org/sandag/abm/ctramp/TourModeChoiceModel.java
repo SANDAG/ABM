@@ -6,6 +6,9 @@ import java.util.Random;
 
 
 
+
+
+
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.newmodel.ChoiceModelApplication;
@@ -273,14 +276,21 @@ public class TourModeChoiceModel
 
         Household household = tour.getPersonObject().getHouseholdObject();
         double income = (double) household.getIncomeInDollars();
+        double timeFactor = 1.0f;
+        if(tour.getTourCategory().equalsIgnoreCase(ModelStructure.JOINT_NON_MANDATORY_CATEGORY))
+        	timeFactor = mcDmuObject.getJointTourTimeFactor();
+        else if(tour.getTourPrimaryPurposeIndex()==ModelStructure.WORK_PRIMARY_PURPOSE_INDEX)
+        	timeFactor = mcDmuObject.getWorkTimeFactor();
+        else
+        	timeFactor = mcDmuObject.getNonWorkTimeFactor();
+        
         double ivtCoeff    = ivtCoeffs[modelIndex];
         double incomeCoeff = incomeCoeffs[modelIndex];
         double incomeExpon = incomeExponents[modelIndex];
         double costCoeff = calculateCostCoefficient(income, incomeCoeff,incomeExpon);
 
-        mcDmuObject.setIvtCoeff(ivtCoeff);
+        mcDmuObject.setIvtCoeff(ivtCoeff*timeFactor);
         mcDmuObject.setCostCoeff(costCoeff);
-        
 
         // log headers to traceLogger
         if (household.getDebugChoiceModels())

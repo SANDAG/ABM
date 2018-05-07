@@ -109,8 +109,8 @@ public class McLogsumsCalculator implements Serializable
     
         setNmTourMcDmuAttributes(  mcDmuObject, origMgra, destMgra, departPeriod, arrivePeriod, debug );
         setWtwTourMcDmuAttributes( mcDmuObject, origMgra, destMgra, departPeriod, arrivePeriod, debug );        
-        setWtdTourMcDmuAttributes( mcDmuObject, origMgra, destMgra, departPeriod, arrivePeriod, debug );        
         setDtwTourMcDmuAttributes( mcDmuObject, origMgra, destMgra, departPeriod, arrivePeriod, debug );        
+        setWtdTourMcDmuAttributes( mcDmuObject, origMgra, destMgra, departPeriod, arrivePeriod, debug );        
 
         // set the land use data items in the DMU for the origin
         mcDmuObject.setOrigDuDen( mgraManager.getDuDenValue( origMgra ) );
@@ -416,10 +416,6 @@ public class McLogsumsCalculator implements Serializable
         	mcDmuObject.setTransitLogSum( WTD, false, logsumOut);
         }
         */
-    	
-        //setup best path dmu variables
-    	walkDmu =  new TransitWalkAccessDMU();
-    	driveDmu  = new TransitDriveAccessDMU();
     	
         // walk access, drive egress transit, inbound
         int skimPeriodIndexIn = ModelStructure.getSkimPeriodIndex(arrivePeriod);

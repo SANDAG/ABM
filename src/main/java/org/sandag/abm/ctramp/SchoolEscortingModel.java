@@ -1836,7 +1836,8 @@ public class SchoolEscortingModel {
 				    
 	   	            Stop[] stops = chauffeurTour.getInboundStops();
 	   	            int origMAZ = chauffeurTour.getTourDestMgra();
-	   	            occupancy = 2; //driver plus child picked up at origin
+	   	            
+	   	            
 	   	            
 	   	            //if it is a pure escort tour, the origin of the first inbound stop is escort
 	   	            int escorteePnumOrig=0;
@@ -1844,12 +1845,16 @@ public class SchoolEscortingModel {
 	   	            if(escortType==ModelStructure.PURE_ESCORTING_TYPE){
 		   	  			escorteePnumOrig = childPnums[0];
 		   	  			escortStopTypeOrig = ModelStructure.ESCORT_STOP_TYPE_PICKUP;
-		  			}
-	
+		   	  			occupancy = 2; //driver + child 
+	   	            }else{
+	   	            	occupancy=1; //driver
+    				}
 	   	            for (int i = 0; i < stops.length; ++i) {
 	   	            	Stop stop = stops[i]; 
 	   	            	int mode = 0;
-	   	            	if(occupancy==2)
+	   	            	if(occupancy==1)
+	   	            		mode = DRIVE_ALONE_MODE;
+	   	            	else if(occupancy==2)
 	   						mode = SHARED_RIDE_2_MODE;
 	   					else
 	   						mode = SHARED_RIDE_3_MODE;

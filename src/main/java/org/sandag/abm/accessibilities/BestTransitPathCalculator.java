@@ -69,6 +69,7 @@ public class BestTransitPathCalculator implements Serializable
     public static final int               DTW           = 2;
     public static final int[]             ACC_EGR       = {WTW,WTD,DTW};
     public static final int               NUM_ACC_EGR   = ACC_EGR.length;
+    public static final String[]          ACC_EGR_STRING = {"WTW","WTD","DTW"};
 
     // seek and trace
     private boolean                       trace;
@@ -588,7 +589,7 @@ public class BestTransitPathCalculator implements Serializable
         
         // logging
         if (myTrace) {
-        	tapToTapUEC.logAnswersArray(myLogger, "TAP-TAP Utilities From Orig pTap=" + pTap + " (Origin MAZ:" + origMgra +") " +  " to Dest aTap=" + aTap + " (Dest MAZ:" + destMgra +") " + " Utility Piece");
+        	tapToTapUEC.logAnswersArray(myLogger, ACC_EGR_STRING[accessEgressMode]+" TAP-TAP Utilities From Orig pTap=" + pTap + " (Origin MAZ:" + origMgra +") " +  " to Dest aTap=" + aTap + " (Dest MAZ:" + destMgra +") " + " Utility Piece");
             tapToTapUEC.logResultsArray(myLogger, pTap, aTap);
         }
         return(util);
@@ -848,6 +849,12 @@ public class BestTransitPathCalculator implements Serializable
      */
     public int chooseTripPath(float rnum, double[][] bestTapPairs, boolean myTrace, Logger myLogger) {
     	
+    	if(myTrace){
+    		myLogger.info("****************************************");
+    		myLogger.info("Choosing best TAP pair with rnum "+rnum);
+    		myLogger.info("BestPath    Utility   ExpUtility  Prob  Cumul.P");
+    		myLogger.info("-----------------------------------------------");
+    	}
     	Arrays.fill(expUtilities, 0);
     	int alt=-1;
     	//iterate through paths and calculate exponentiated utility and sum
@@ -870,8 +877,14 @@ public class BestTransitPathCalculator implements Serializable
         		if(bestTapPairs[i][3]<-500)
         			continue;
    				cumProb += (expUtilities[i]/sumExpUtility);
+   				
+   				if(myTrace){
+   					myLogger.info(i+"     "+bestTapPairs[i][3]+"  "+expUtilities[i]+"  "+(expUtilities[i]/sumExpUtility)+"  "+ cumProb);
+   				}
    				if(rnum<=cumProb){
    					alt = i;
+   					if(myTrace)
+   						myLogger.info("Chose Tap Pair "+i);
    					break;
     			}
     		}
