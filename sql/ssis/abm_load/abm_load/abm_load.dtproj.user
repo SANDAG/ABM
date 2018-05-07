@@ -4,8 +4,6 @@
     <Configuration>
       <Name>Development</Name>
       <Options>
-        <ServerName />
-        <PathOnServer />
         <UserIDs />
         <UserPasswords />
         <OfflineMode>false</OfflineMode>
@@ -14,7 +12,7 @@
           <ConfigurationSetting>
             <Id>LastModifiedTime</Id>
             <Name>LastModifiedTime</Name>
-            <Value xsi:type="xsd:dateTime">2018-02-06T19:21:16.4770376Z</Value>
+            <Value xsi:type="xsd:dateTime">2018-05-07T21:34:12.4648659Z</Value>
           </ConfigurationSetting>
         </ParameterConfigurationSensitiveValues>
       </Options>
