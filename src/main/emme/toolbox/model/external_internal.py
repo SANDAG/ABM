@@ -289,5 +289,5 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
 
                 toll_einonwork =  emmebank.matrix('%s_%s_EINONWORK' % (p, toll_mode))
                 gp_einonwork = emmebank.matrix('%s_%s_EINONWORK' % (p, gp_mode))
-                toll_einonwork.set_numpy_data(non_work_gp_matrix, scenario)
-                gp_einonwork.set_numpy_data(non_work_toll_matrix, scenario)
+                toll_einonwork.set_numpy_data(non_work_toll_matrix, scenario)
+                gp_einonwork.set_numpy_data(non_work_gp_matrix, scenario)
