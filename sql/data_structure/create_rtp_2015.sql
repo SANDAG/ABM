@@ -13,7 +13,7 @@ GO
 
 
 
-/*
+
 -- Create Screenline Spatial Table
 IF OBJECT_ID('rtp_2015.screenline','U') IS NOT NULL
 DROP TABLE [rtp_2015].[screenline]
@@ -35,26 +35,26 @@ GO
 INSERT INTO
 	[rtp_2015].[screenline]
 VALUES
-	(1, 'I-5 Palomar Airport',0xB608000001140000006016C4574100000000FA1E3E41000000C0DDD057410000008036303E41),
-	(10, 'I-5/I-805 South Bay', 0xB6080000011400000080E71B584100000040DD963B41000000A006095841000000E0F17D3B41),
-	(8, 'I-805 Chula Vista', 0xB60800000114000000004B0C5841000000006BCE3B410000008086125841000000C016D73B41),
-	(9, 'I-5 National City', 0xB608000001140000008022FF5741000000804ADE3B41000000202E0958410000002066E73B41),
-	(6, 'I-5 Mission Bay', 0xB608000001140000002069E55741000000E0926B3C41000000E014EE5741000000E05D6F3C41),
-	(5, 'I-15 Mira Mesa', 0xB6080000011400000080E900584100000000ECF83C4100000000F408584100000000ECF83C41),
-	(4, 'I-5 North of I-805 merge', 0xB60800000114000000E082DB5741000000E0BD3F3D410000008085E15741000000E09A493D41),
-	(2, 'SR-78 Vista', 0xB60800000114000000C007E457410000004083913E4100000060C2E9574100000060B3AF3E41),
-	(3, 'I-15 Rancho Bernardo', 0xB60800000114000000E0610E58410000008072023E4100000040981758410000002042013E41),
-	(11, 'SR-52 Kearny Mesa', 0xB608000001140000006014F657410000000020BE3C410000006014F6574100000060C7D43C41),
-	(7, 'I-8/SR-94 west of SDSU', 0xB6080000010403000000000000E02F105841000000401D8F3C41000000603512584100000020CD2A3C4100000020DD12584100000000BC023C4101000000010000000001000000FFFFFFFF0000000002),
-	(12, 'I-5 North of SR-78', 0xB608000001140000002045B8574100000040AFAB3E4100000060E8BC57410000008066B93E41),
-	(13, 'SR-78 East of College Blvd', 0xB60800000114000000E0ACD45741000000605EDF3E41000000404AD557410000004094B93E41)
+	(1, 'I-5 Palomar Airport', 0xE61000000114CFE52048158A404071B6205846555DC0A957AFA3AE8B4040447900D68C525DC0),
+	(2, 'SR-78 Vista', 0xE61000000114C130A0DE829440404CFD1E987F4E5DC031B272B83F974040FDE76A56494D5DC0),
+	(3, 'I-15 Rancho Bernardo', 0xE6100000011485452286C28740402FDC86345E455DC0072036C8AD874040077D80A265435DC0),
+	(4, 'I-5 North of I-805 merge', 0xE61000000114362E056810764040D182101826505DC0D37B7712F976404030B02AC8DE4E5DC0),
+	(5, 'I-15 Mira Mesa', 0xE61000000114756C67C8CE6F40403A2A7C3721485DC0EBB0C9ECD46F404009D0FCD969465DC0),
+	(6, 'I-5 Mission Bay', 0xE610000001149203C0A4FD62404016E904FAED4D5DC0AF3008665C6340403C6ACA33154C5DC0),
+	(7, 'I-8/SR-94 west of SDSU', 0xE610000001040300000053F4AEEE526640407F1A0B25D3445DC043F7EEB84B5D4040AA6A770A5A445DC0A5160078B05940400CD95B0532445DC001000000010000000001000000FFFFFFFF0000000002),
+	(8, 'I-805 Chula Vista', 0xE610000001140812A388F5544040C3F8899F92455DC0C32DADFEC15540404B8092D03F445DC0),
+	(9, 'I-5 National City', 0xE610000001143AF9517B59564040872CD1B561485DC06BEB9F2333574040986A22123F465DC0),
+	(10, 'I-5/I-805 South Bay', 0xE610000001143E16CCF6FF4F4040D06B33F039425DC0F027E8D4B34D4040723911CD3B465DC0),
+	(11, 'SR-52 Kearny Mesa', 0xE61000000114DD3C2DAD7A6A4040D752C2136A4A5DC0B6B3AEF2846C40406A490DC96C4A5DC0),
+	(12, 'I-5 North of SR-78', 0xE6100000011435345C98B5964040E196DD4CE2575DC08A6F6C5EF6974040BD3AF204E6565DC0),
+	(13, 'SR-78 East of College Blvd', 0xE610000001146C4FCD20789B40402918BDDAD3515DC0AB48927F1198404033EFA408AD515DC0)
 GO
 
 -- Add metadata for [rtp_2015].[screenline]
 EXECUTE [db_meta].[add_xp] 'rtp_2015.screenline', 'SUBSYSTEM', 'rtp_2015'
 EXECUTE [db_meta].[add_xp] 'rtp_2015.screenline', 'MS_Description', 'screenline geography'
 GO
-*/
+
 
 
 
@@ -3566,70 +3566,64 @@ GO
 
 
 
----- Create stored procedure for transit evaluation criteria #8e
---IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2015].[sp_eval_transit_8e]') AND type in (N'P', N'PC'))
---DROP PROCEDURE [rtp_2015].[sp_eval_transit_8e]
---GO
+-- Create stored procedure for transit evaluation criteria #8e
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2015].[sp_eval_transit_8e]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [rtp_2015].[sp_eval_transit_8e]
+GO
 
---CREATE PROCEDURE [rtp_2015].[sp_eval_transit_8e]
---	@scenario_id smallint
---AS
+CREATE PROCEDURE [rtp_2015].[sp_eval_transit_8e]
+	@scenario_id smallint
+AS
 
---/*	Author: Ziying Ouyang and Gregor Schroeder
---	Date: Revised 9/10/2014
---	Description: Evaluation Criteria Transit 8E, Total person trips across the walk/pnr/knr transit modes with a destination MGRA whose centroid lies within an indian reservation
---*/
+/*	Author: Ziying Ouyang and Gregor Schroeder
+	Date: Revised 5/9/2018
+	Description: Evaluation Criteria Transit 8E, Total person trips across the walk/pnr/knr transit modes with a destination MGRA whose centroid lies within an indian reservation
+*/
 
----- scenario sample rate
---DECLARE @sample_rate decimal(6,4)
---SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id);
+-- scenario sample rate
+DECLARE @sample_rate decimal(6,4)
+SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id);
 
---with xref AS (
---	SELECT
---		[mgra]
---		FROM
---			OPENQUERY(
---			[pila\sdgintdb],	'SELECT
---									[mgra]
---								FROM
---									[lis].[gis].[INDIANRES],[lis].[gis].[MGRA13PT]
---								WHERE
---									[INDIANRES].[Shape].STContains([MGRA13PT].[Shape]) = 1'
---									)
---			)
---SELECT
---	@scenario_id AS scenario_id
---	,SUM(ISNULL([party_size], 0)) / @sample_rate AS person_trips
---FROM
---	[abm].[trip_ij] -- individual and joint models only
---INNER JOIN
---	[ref].[geography_zone] AS orig_geography
---ON
---	[trip_ij].[orig_geography_zone_id] = orig_geography.[geography_zone_id]
---INNER JOIN
---	[ref].[geography_zone] AS dest_geography
---ON
---	[trip_ij].[dest_geography_zone_id] = dest_geography.[geography_zone_id]
---LEFT OUTER JOIN
---	xref x1
---ON
---	orig_geography.[zone] = x1.[mgra]
---LEFT OUTER JOIN
---	xref x2
---ON
---	dest_geography.[zone] = x2.[mgra]
---WHERE
---	[trip_ij].[scenario_id] = @scenario_id
---	AND orig_geography.[geography_type_id] = 90 -- assumes trip_ij uses mgra13
---	AND dest_geography.[geography_type_id] = 90 -- assumes trip_ij uses mgra13
---	AND (x1.[mgra] > 0 OR x2.[mgra] > 0)
---	AND [mode_id] BETWEEN 11 AND 25 -- transit mode only
---GO
+with [xref] AS (
+	SELECT [mgra] FROM
+	OPENQUERY(
+		[sql2014b8],
+		'SELECT [mgra] FROM [lis].[gis].[INDIANRES],[lis].[gis].[MGRA13PT]
+		WHERE [INDIANRES].[Shape].STContains([MGRA13PT].[Shape]) = 1'))
+SELECT
+	@scenario_id AS scenario_id
+	,SUM(ISNULL([party_size], 0)) / @sample_rate AS person_trips
+FROM
+	[abm].[trip_ij] -- individual and joint models only
+INNER JOIN
+	[ref].[geography_zone] AS orig_geography
+ON
+	[trip_ij].[orig_geography_zone_id] = orig_geography.[geography_zone_id]
+INNER JOIN
+	[ref].[geography_zone] AS dest_geography
+ON
+	[trip_ij].[dest_geography_zone_id] = dest_geography.[geography_zone_id]
+LEFT OUTER JOIN
+	xref x1
+ON
+	orig_geography.[zone] = x1.[mgra]
+LEFT OUTER JOIN
+	xref x2
+ON
+	dest_geography.[zone] = x2.[mgra]
+WHERE
+	[trip_ij].[scenario_id] = @scenario_id
+	AND orig_geography.[geography_type_id] = 90 -- assumes trip_ij uses mgra13
+	AND dest_geography.[geography_type_id] = 90 -- assumes trip_ij uses mgra13
+	AND (x1.[mgra] > 0 OR x2.[mgra] > 0)
+	AND [mode_id] BETWEEN 11 AND 25 -- transit mode only
+GO
 
----- Add metadata for [rtp_2015].[sp_eval_transit_8e]
---EXECUTE [db_meta].[add_xp] 'rtp_2015.sp_eval_transit_8e', 'SUBSYSTEM', 'rtp_2015'
---EXECUTE [db_meta].[add_xp] 'rtp_2015.sp_eval_transit_8e', 'MS_Description', 'project evaluation criteria transit 8e'
---GO
+-- Add metadata for [rtp_2015].[sp_eval_transit_8e]
+EXECUTE [db_meta].[add_xp] 'rtp_2015.sp_eval_transit_8e', 'SUBSYSTEM', 'rtp_2015'
+EXECUTE [db_meta].[add_xp] 'rtp_2015.sp_eval_transit_8e', 'MS_Description', 'project evaluation criteria transit 8e'
+GO
+
 
 
 
@@ -4200,67 +4194,65 @@ GO
 
 
 
----- Create stored procedure for performance metric #6a
---IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2015].[sp_pm_6a]') AND type in (N'P', N'PC'))
---DROP PROCEDURE [rtp_2015].[sp_pm_6a]
---GO
+-- Create stored procedure for performance metric #6a
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2015].[sp_pm_6a]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [rtp_2015].[sp_pm_6a]
+GO
 
---CREATE PROCEDURE [rtp_2015].[sp_pm_6a]
---	@scenario_id smallint
---AS
+CREATE PROCEDURE [rtp_2015].[sp_pm_6a]
+	@scenario_id smallint
+AS
 
---/*	Author: Ziying Ouyang and Gregor Schroeder
---	Date: Revised 9/12/2014
---	Description: Performance Measure 6A, Average travel time to/from tribal lands
---											Average travel time of micro-simulated trips with origin or destination MGRAs whose centroids are within the tribal lands
---*/
+/*	Author: Ziying Ouyang and Gregor Schroeder
+	Date: Revised 9/12/2014
+	Description: Performance Measure 6A, Average travel time to/from tribal lands
+											Average travel time of micro-simulated trips with origin or destination MGRAs whose centroids are within the tribal lands
+*/
 
----- scenario sample rate
---DECLARE @sample_rate decimal(6,4)
---SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id);
+-- scenario sample rate
+DECLARE @sample_rate decimal(6,4)
+SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id);
 
----- assumes micro-simulated trips are mgra series 13 based
---with xref AS (
---	SELECT
---		[mgra]
---	FROM
---		OPENQUERY(
---			[pila\sdgintdb],'SELECT [mgra] FROM [lis].[gis].[INDIANRES], [lis].[gis].[MGRA13PT]
---								WHERE [INDIANRES].[Shape].STContains([MGRA13PT].[Shape]) = 1')
---)
---SELECT
---	@scenario_id AS [scenario_id]
---	,SUM(ISNULL([party_size] * [trip_time], 0)) / SUM(ISNULL([party_size], 0)) AS avg_travel_time
---	,SUM(ISNULL([party_size], 0)) / @sample_rate AS trips
---FROM
---	[abm].[vi_trip_micro_simul] -- all micro-simulated trips view
---INNER JOIN
---	[ref].[geography_zone] AS orig_geography
---ON
---	[vi_trip_micro_simul].[orig_geography_zone_id] = orig_geography.[geography_zone_id]
---INNER JOIN
---	[ref].[geography_zone] AS dest_geography
---ON
---	[vi_trip_micro_simul].[dest_geography_zone_id] = dest_geography.[geography_zone_id]
---LEFT OUTER JOIN
---	xref x1
---ON
---	orig_geography.[zone] = x1.[mgra]
---LEFT OUTER JOIN
---	xref x2
---ON
---	dest_geography.[zone] = x2.[mgra]
---WHERE
---	[vi_trip_micro_simul].[scenario_id] = @scenario_id
---	AND orig_geography.[geography_type_id] = 90 -- assumes vi_trip_micro_simul uses mgra13
---	AND dest_geography.[geography_type_id] = 90 -- assumes vi_trip_micro_simul uses mgra13
---	AND (x1.[mgra] > 0 OR x2.[mgra] > 0)
---GO
+-- assumes micro-simulated trips are mgra series 13 based
+with [xref] AS (
+	SELECT [mgra] FROM
+	OPENQUERY(
+		[sql2014b8],
+		'SELECT [mgra] FROM [lis].[gis].[INDIANRES],[lis].[gis].[MGRA13PT]
+		WHERE [INDIANRES].[Shape].STContains([MGRA13PT].[Shape]) = 1'))
+SELECT
+	@scenario_id AS [scenario_id]
+	,SUM(ISNULL([party_size] * [trip_time], 0)) / SUM(ISNULL([party_size], 0)) AS avg_travel_time
+	,SUM(ISNULL([party_size], 0)) / @sample_rate AS trips
+FROM
+	[abm].[vi_trip_micro_simul] -- all micro-simulated trips view
+INNER JOIN
+	[ref].[geography_zone] AS orig_geography
+ON
+	[vi_trip_micro_simul].[orig_geography_zone_id] = orig_geography.[geography_zone_id]
+INNER JOIN
+	[ref].[geography_zone] AS dest_geography
+ON
+	[vi_trip_micro_simul].[dest_geography_zone_id] = dest_geography.[geography_zone_id]
+LEFT OUTER JOIN
+	xref x1
+ON
+	orig_geography.[zone] = x1.[mgra]
+LEFT OUTER JOIN
+	xref x2
+ON
+	dest_geography.[zone] = x2.[mgra]
+WHERE
+	[vi_trip_micro_simul].[scenario_id] = @scenario_id
+	AND orig_geography.[geography_type_id] = 90 -- assumes vi_trip_micro_simul uses mgra13
+	AND dest_geography.[geography_type_id] = 90 -- assumes vi_trip_micro_simul uses mgra13
+	AND (x1.[mgra] > 0 OR x2.[mgra] > 0)
+GO
 
----- Add metadata for [rtp_2015].[sp_pm_6a]
---EXECUTE [db_meta].[add_xp] 'rtp_2015.sp_pm_6a', 'SUBSYSTEM', 'rtp_2015'
---EXECUTE [db_meta].[add_xp] 'rtp_2015.sp_pm_6a', 'MS_Description', 'performance metric 6a'
---GO
+-- Add metadata for [rtp_2015].[sp_pm_6a]
+EXECUTE [db_meta].[add_xp] 'rtp_2015.sp_pm_6a', 'SUBSYSTEM', 'rtp_2015'
+EXECUTE [db_meta].[add_xp] 'rtp_2015.sp_pm_6a', 'MS_Description', 'performance metric 6a'
+GO
 
 
 
@@ -4378,71 +4370,64 @@ GO
 
 
 
----- Create stored procedure for performance metric #6d
---IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2015].[sp_pm_6d]') AND type in (N'P', N'PC'))
---DROP PROCEDURE [rtp_2015].[sp_pm_6d]
---GO
+-- Create stored procedure for performance metric #6d
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2015].[sp_pm_6d]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [rtp_2015].[sp_pm_6d]
+GO
 
---CREATE PROCEDURE [rtp_2015].[sp_pm_6d]
---	@scenario_id smallint
---AS
+CREATE PROCEDURE [rtp_2015].[sp_pm_6d]
+	@scenario_id smallint
+AS
 
---/*	Author: Ziying Ouyang
---	Date: Revised 9/15/2014
---	Description: Performance Measure 6d, Average travel time to/from military bases/installations
---											Average travel time of micro-simulated trips with origin or destination MGRAs whose centroids are within the military bases/installations
---*/
+/*	Author: Ziying Ouyang
+	Date: Revised 9/15/2014
+	Description: Performance Measure 6d, Average travel time to/from military bases/installations
+											Average travel time of micro-simulated trips with origin or destination MGRAs whose centroids are within the military bases/installations
+*/
 
----- scenario sample rate
---DECLARE @sample_rate decimal(6,4)
---SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id);
+-- scenario sample rate
+DECLARE @sample_rate decimal(6,4)
+SET @sample_rate = (SELECT [sample_rate] FROM [ref].[scenario] WHERE [scenario_id] = @scenario_id);
 
---with xref AS (
---	SELECT
---		[mgra]
---	FROM
---		OPENQUERY(
+with [xref] AS (
+	SELECT [mgra] FROM
+	OPENQUERY(
+		[sql2014b8],
+		'SELECT [mgra] FROM [lis].[gis].[OWNERSHIP], [lis].[gis].[MGRA13PT]
+			WHERE [Own] = 41 AND [OWNERSHIP].[Shape].STContains([MGRA13PT].[Shape]) = 1'))
+SELECT
+	@scenario_id AS [scenario_id]
+	,SUM(ISNULL([party_size] * [trip_time], 0)) / SUM(ISNULL([party_size], 0)) AS avg_travel_time
+	,SUM(ISNULL([party_size], 0)) / @sample_rate AS trips
+FROM
+	[abm].[vi_trip_micro_simul] -- view
+INNER JOIN
+	[ref].[geography_zone] AS orig_geography
+ON
+	[vi_trip_micro_simul].[orig_geography_zone_id] = orig_geography.[geography_zone_id]
+INNER JOIN
+	[ref].[geography_zone] AS dest_geography
+ON
+	[vi_trip_micro_simul].[dest_geography_zone_id] = dest_geography.[geography_zone_id]
+LEFT OUTER JOIN
+	xref x1
+ON
+	orig_geography.[zone] = x1.[mgra]
+LEFT OUTER JOIN
+	xref x2
+ON
+	dest_geography.[zone] = x2.[mgra]
+WHERE
+	[vi_trip_micro_simul].[scenario_id] = @scenario_id
+	AND orig_geography.[geography_type_id] = 90 -- assumes vi_trip_micro_simul uses mgra13
+	AND dest_geography.[geography_type_id] = 90 -- assumes vi_trip_micro_simul uses mgra13
+	AND (x1.[mgra] > 0 OR x2.[mgra] > 0)
+GO
 
-
---			[pila\sdgintdb],'SELECT [mgra]
---			FROM [lis].[gis].[OWNERSHIP], [lis].[gis].[MGRA13PT]
---			WHERE [Own] = 41  AND
---			[OWNERSHIP].[Shape].STContains([MGRA13PT].[Shape]) = 1'
---			)
---)
---SELECT
---	@scenario_id AS [scenario_id]
---	,SUM(ISNULL([party_size] * [trip_time], 0)) / SUM(ISNULL([party_size], 0)) AS avg_travel_time
---	,SUM(ISNULL([party_size], 0)) / @sample_rate AS trips
---FROM
---	[abm].[vi_trip_micro_simul] -- view
---INNER JOIN
---	[ref].[geography_zone] AS orig_geography
---ON
---	[vi_trip_micro_simul].[orig_geography_zone_id] = orig_geography.[geography_zone_id]
---INNER JOIN
---	[ref].[geography_zone] AS dest_geography
---ON
---	[vi_trip_micro_simul].[dest_geography_zone_id] = dest_geography.[geography_zone_id]
---LEFT OUTER JOIN
---	xref x1
---ON
---	orig_geography.[zone] = x1.[mgra]
---LEFT OUTER JOIN
---	xref x2
---ON
---	dest_geography.[zone] = x2.[mgra]
---WHERE
---	[vi_trip_micro_simul].[scenario_id] = @scenario_id
---	AND orig_geography.[geography_type_id] = 90 -- assumes vi_trip_micro_simul uses mgra13
---	AND dest_geography.[geography_type_id] = 90 -- assumes vi_trip_micro_simul uses mgra13
---	AND (x1.[mgra] > 0 OR x2.[mgra] > 0)
---GO
-
----- Add metadata for [rtp_2015].[sp_pm_6d]
---EXECUTE [db_meta].[add_xp] 'rtp_2015.sp_pm_6d', 'SUBSYSTEM', 'rtp_2015'
---EXECUTE [db_meta].[add_xp] 'rtp_2015.sp_pm_6d', 'MS_Description', 'performance metric 6d'
---GO
+-- Add metadata for [rtp_2015].[sp_pm_6d]
+EXECUTE [db_meta].[add_xp] 'rtp_2015.sp_pm_6d', 'SUBSYSTEM', 'rtp_2015'
+EXECUTE [db_meta].[add_xp] 'rtp_2015.sp_pm_6d', 'MS_Description', 'performance metric 6d'
+GO
 
 
 
