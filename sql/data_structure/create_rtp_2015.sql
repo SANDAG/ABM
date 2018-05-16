@@ -3060,7 +3060,7 @@ with taz_results AS (
 	INNER JOIN (
 		SELECT
 			[lu_person].[scenario_id]
-			,[taz_13_geography_zone_id]
+			,[taz_geography_zone_id]
 			,CAST(COUNT(*) AS float) AS pop
 		FROM
 			[abm].[lu_person]  -- weighted by Popsyn pop
@@ -3075,43 +3075,43 @@ with taz_results AS (
 			[lu_hh].[scenario_id] = [lu_mgra_input].[scenario_id]
 			AND [lu_hh].[geography_zone_id] = [lu_mgra_input].[geography_zone_id]
 		INNER JOIN
-			[ref].[mgra13_xref]
+			[ref].[mgra13_xref_taz13]
 		ON
-			[lu_hh].[geography_zone_id] = [mgra13_xref].[mgra_13_geography_zone_id]
+			[lu_hh].[geography_zone_id] = [mgra13_xref_taz13].[mgra_geography_zone_id]
 		WHERE
 			[lu_person].[scenario_id] = @scenario_id
 			AND [lu_hh].[scenario_id] = @scenario_id
 			AND [lu_mgra_input].[scenario_id] = @scenario_id
 		GROUP BY
 			[lu_person].[scenario_id]
-			,[taz_13_geography_zone_id]
+			,[taz_geography_zone_id]
 		) orig
 		ON
 			[hwy_skims].[scenario_id] = orig.[scenario_id]
-			AND [hwy_skims].[orig_geography_zone_id] = orig.[taz_13_geography_zone_id]
+			AND [hwy_skims].[orig_geography_zone_id] = orig.[taz_geography_zone_id]
 	INNER JOIN (
 		SELECT
 			[scenario_id]
-			,[taz_13_geography_zone_id]
+			,[taz_geography_zone_id]
 			,SUM([EMP_TOTAL] + [ENROLLGRADEKTO8] + [ENROLLGRADE9TO12] + [COLLEGEENROLL] + [OTHERCOLLEGEENROLL] + [ADULTSCHENRL]) AS emp_enroll
 			-- includes adult school and other college enrollment as abm does place university people to those
 		FROM
 			[abm].[lu_mgra_input]
 		INNER JOIN
-			[ref].[mgra13_xref]
+			[ref].[mgra13_xref_taz13]
 		ON
-			[lu_mgra_input].[geography_zone_id] = [mgra13_xref].[mgra_13_geography_zone_id]
+			[lu_mgra_input].[geography_zone_id] = [mgra13_xref_taz13].[mgra_geography_zone_id]
 		WHERE
 			[scenario_id] = @scenario_id
 			AND ([emp_total] + [enrollgradekto8] + [enrollgrade9to12] + [collegeenroll] + [othercollegeenroll] + [adultschenrl]) > 0
 			-- includes adult school and other college enrollment as abm does place university people to those
 		GROUP BY
 			[scenario_id]
-			,[taz_13_geography_zone_id]
+			,[taz_geography_zone_id]
 		) dest
 		ON
 			[hwy_skims].[scenario_id] = dest.[scenario_id]
-			AND [hwy_skims].[dest_geography_zone_id] = dest.[taz_13_geography_zone_id]
+			AND [hwy_skims].[dest_geography_zone_id] = dest.[taz_geography_zone_id]
 	WHERE
 		[hwy_skims].[scenario_id] = @scenario_id
 		AND [time_resolution_id] = 1
@@ -3119,7 +3119,7 @@ with taz_results AS (
 		AND [time_drive_alone_free] > 0 AND [time_drive_alone_free] <= 30
 	GROUP BY
 		[hwy_skims].[scenario_id]
-		,orig.[taz_13_geography_zone_id]
+		,orig.[taz_geography_zone_id]
 	)
 SELECT
 	@scenario_id AS [scenario_id]
@@ -4778,17 +4778,17 @@ ON
 INNER JOIN (
 	SELECT
 		34 AS geography_type_id -- series 13 taz id
-		,[taz_13_geography_zone_id]
+		,[taz_geography_zone_id]
 	FROM
 		[abm].[lu_mgra_input]
 	INNER JOIN
-		[ref].[mgra13_xref]
+		[ref].[mgra13_xref_taz13]
 	ON
-		[lu_mgra_input].[geography_zone_id] = [mgra13_xref].[mgra_13_geography_zone_id]
+		[lu_mgra_input].[geography_zone_id] = [mgra13_xref_taz13].[mgra_geography_zone_id]
 	WHERE
 		[scenario_id] = @scenario_id
 	GROUP BY
-		[taz_13_geography_zone_id]
+		[taz_geography_zone_id]
 	HAVING
 		CASE	WHEN @beach = 1 AND SUM([beachactive]) > 0.5 THEN 1
 				WHEN @health = 1 AND SUM([emp_health]) > 1 THEN 1
@@ -4799,7 +4799,7 @@ INNER JOIN (
 				END = 1
 		) dest
 ON
-	[hwy_skims].[dest_geography_zone_id] = dest.[taz_13_geography_zone_id]
+	[hwy_skims].[dest_geography_zone_id] = dest.[taz_geography_zone_id]
 WHERE
 	[scenario_id] = @scenario_id
 	AND [time_resolution_id] = 1 -- ABM 5 time of day
@@ -4809,7 +4809,7 @@ WHERE
 -- Get populations of interest in each series 13 taz
 SELECT
 	[lu_person].[scenario_id]
-	,[taz_13_geography_zone_id]
+	,[taz_geography_zone_id]
 	,COUNT(*) as taz_tot_pop
 	,SUM(CASE WHEN ISNULL([poverty], 99) <= 2 THEN 1 ELSE 0 END) AS taz_pop_lowInc
 	,SUM(CASE WHEN ISNULL([poverty], 99) > 2 THEN 1 ELSE 0 END) AS taz_pop_nonlowInc
@@ -4827,15 +4827,15 @@ ON
 	[lu_person].[scenario_id] = [lu_hh].[scenario_id]
 	AND [lu_person].[lu_hh_id] = [lu_hh].[lu_hh_id]
 INNER JOIN
-	[ref].[mgra13_xref]
+	[ref].[mgra13_xref_taz13]
 ON
-	[lu_hh].[geography_zone_id] = [mgra13_xref].[mgra_13_geography_zone_id]
+	[lu_hh].[geography_zone_id] = [mgra13_xref_taz13].[mgra_geography_zone_id]
 WHERE
 	[lu_person].[scenario_id] = @scenario_id
 	AND [lu_hh].[scenario_id] = @scenario_id
 GROUP BY
 	[lu_person].[scenario_id]
-	,[taz_13_geography_zone_id];
+	,[taz_geography_zone_id];
 
 -- Get total population and population of interest from the above two temp tables
 with total_pop AS (
