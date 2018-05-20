@@ -1271,6 +1271,11 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             for time, src_time in zip(time_periods, src_time_periods):
                 link["@lane" + time] = link["lane" + src_time]
                 link["@time_link" + time] = link["time_link" + src_time]
+
+                #add link delay (30 sec=0.5mins) to HOV connectors to discourage travel
+                if link.type == 8 and link["@lane_restriction"] == 2:
+                    link["@time_link" + time] = link["@time_link" + time] + 0.5
+                
                 link["@time_inter" + time] = link["time_inter" + src_time]
                 link["@toll" + time] = link["toll" + src_time]
 
