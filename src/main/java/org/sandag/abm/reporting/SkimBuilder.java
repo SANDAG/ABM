@@ -164,7 +164,7 @@ public class SkimBuilder
 
     private TripAttributes getTripAttributesUnknown()
     {
-        return new TripAttributes(0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,0,0,0,0,0,0,0);
+        return new TripAttributes(0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,0,0,0,0,0,0,0,0,0,0,0,0);
     }
 
     private final float DEFAULT_BIKE_SPEED = 12;
@@ -280,7 +280,7 @@ public class SkimBuilder
                 	distance = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false, logger)[DA_DIST_INDEX];
                 	time = distance * 60 / DEFAULT_WALK_SPEED;
                 }
-                return new TripAttributes(0, 0, 0, 0, 0, 0, 0, 0, time, 0, distance, -1, -1, 0,0,0,0,0,0,0,0);
+                return new TripAttributes(0, 0, 0, 0, 0, 0, 0, 0, time, 0, distance, -1, -1, 0,0,0,0,0,0,0,0,0,0,0,0,0);
             }
             case BIKE:
             {
@@ -295,7 +295,7 @@ public class SkimBuilder
                         logger)[DA_DIST_INDEX];
                 	time = distance * 60 / DEFAULT_BIKE_SPEED;
                 }
-                return new TripAttributes(0, 0, 0, 0, 0, 0, 0, 0, 0, time, distance, -1, -1, 0,0,0,0,0,0,0,0);
+                return new TripAttributes(0, 0, 0, 0, 0, 0, 0, 0, 0, time, distance, -1, -1, 0,0,0,0,0,0,0,0,0,0,0,0,0);
             }
             case WALK_SET : 
             case PNR_SET : 
@@ -418,6 +418,12 @@ public class SkimBuilder
                 transitInVehicleTime += skims[TRANSIT_SET_EXPRESS_BUS_TIME_INDEX];
                 transitInVehicleTime += skims[TRANSIT_SET_LOCAL_BUS_TIME_INDEX];
                 
+                double crTime = skims[TRANSIT_SET_CR_TIME_INDEX];
+                double lrtTime = skims[TRANSIT_SET_LRT_TIME_INDEX];
+                double brtTime = skims[TRANSIT_SET_BRT_TIME_INDEX];
+                double expTime = skims[TRANSIT_SET_EXPRESS_BUS_TIME_INDEX];
+                double locTime = skims[TRANSIT_SET_LOCAL_BUS_TIME_INDEX];
+                
                 walkTime += skims[TRANSIT_SET_ACCESS_TIME_INDEX];
                 walkTime += skims[TRANSIT_SET_EGRESS_TIME_INDEX ];
                 walkTime += skims[TRANSIT_SET_AUX_WALK_TIME_INDEX];
@@ -443,7 +449,7 @@ public class SkimBuilder
                 double dist = autoNonMotSkims.getAutoSkims(origin,destination,tod,vot,false,logger)[DA_DIST_INDEX];  //todo: is this correct enough?
                 return new TripAttributes(driveTime, driveTime/60*35*autoOperatingCost, 0, 0,  transitInVehicleTime, 
                 		waitTime, walkTime, transitFare, 0, 0, dist, boardTaz, alightTaz, vot, set,
-                		accessDistance,egressDistance,auxiliaryTime,boardAccessTime,alightEgressTime,transfers);
+                		accessDistance,egressDistance,auxiliaryTime,boardAccessTime,alightEgressTime,transfers,locTime,expTime,brtTime,lrtTime,crTime);
             }
             default:
                 throw new IllegalStateException("Should not be here: " + modeChoice);
@@ -499,6 +505,11 @@ public class SkimBuilder
         private final float transitAccessTime;
         private final float transitEgressTime;
         private final float transitTransfers;
+        private final float locTime;
+        private final float expTime;
+        private final float brtTime;
+        private final float lrtTime;
+        private final float crTime;
     
         private String      tripModeName;
 
@@ -517,7 +528,7 @@ public class SkimBuilder
         public TripAttributes(double autoInVehicleTime, double autoOperatingCost, double autoStandardDeviationTime, double autoTollCost, double transitInVehicleTime, 
         		double transitWaitTime, double transitWalkTime, double transitFare, double walkModeTime, double bikeModeTime, double tripDistance,
         		int tripBoardTaz, int tripAlightTaz, float valueOfTime, int set, double accessDistance,
-        		double egressDistance, double auxiliaryTime, double accessTime,double egressTime, double transfers)
+        		double egressDistance, double auxiliaryTime, double accessTime,double egressTime, double transfers, double locTime, double expTime, double brtTime, double lrtTime, double crTime)
         {
             this.autoInVehicleTime = (float) autoInVehicleTime;
             this.autoOperatingCost = (float)  autoOperatingCost;
@@ -540,6 +551,11 @@ public class SkimBuilder
             this.transitAccessTime = (float) accessTime;
             this.transitEgressTime = (float) egressTime;
             this.transitTransfers = (float) transfers;
+            this.locTime = (float) locTime;
+            this.expTime = (float) expTime;
+            this.brtTime = (float) brtTime;
+            this.lrtTime = (float) lrtTime;
+            this.crTime = (float) crTime;
             
         }
 
@@ -552,7 +568,7 @@ public class SkimBuilder
          */
         public TripAttributes(double autoInVehicleTime, double tripDistance, double autoOperatingCost, double stdDevTime)
         {
-            this(autoInVehicleTime, autoOperatingCost, stdDevTime, 0,0,0,0,0,0,0,tripDistance,-1,-1,0,0,0,0,0,0,0,0);
+            this(autoInVehicleTime, autoOperatingCost, stdDevTime, 0,0,0,0,0,0,0,tripDistance,-1,-1,0,0,0,0,0,0,0,0,0,0,0,0,0);
         }
 
         /**
@@ -565,7 +581,7 @@ public class SkimBuilder
          */
         public TripAttributes(double autoInVehicleTime, double tripDistance, double autoOperatingCost, double stdDevTime, double tollCost)
         {
-            this(autoInVehicleTime, autoOperatingCost, stdDevTime, tollCost,0,0,0,0,0,0,tripDistance,-1,-1,0,0,0,0,0,0,0,0);
+            this(autoInVehicleTime, autoOperatingCost, stdDevTime, tollCost,0,0,0,0,0,0,tripDistance,-1,-1,0,0,0,0,0,0,0,0,0,0,0,0,0);
         }
        
          
@@ -664,6 +680,26 @@ public class SkimBuilder
 		
 		public float getTransitTransfers() {
 			return transitTransfers;
+		}
+
+		public float getLocTime() {
+			return locTime;
+		}
+
+		public float getExpTime() {
+			return expTime;
+		}
+
+		public float getBrtTime() {
+			return brtTime;
+		}
+
+		public float getLrtTime() {
+			return lrtTime;
+		}
+
+		public float getCrTime() {
+			return crTime;
 		}
     }
 

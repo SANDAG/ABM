@@ -1341,19 +1341,13 @@ public class IntermediateStopChoiceModels
             }
             else {
                 
-            	// set taps
-                if ( modelStructure.getTripModeIsWalkTransit(modeAlt) || modelStructure.getTripModeIsPnrTransit(modeAlt) || modelStructure.getTripModeIsKnrTransit(modeAlt) ) {
-
-                	//pick transit path from N-paths
-                	float rn = (float)household.getHhRandom().nextDouble();
-                	int pathindex = logsumHelper.chooseTripPath(rn, bestTaps, household.getDebugChoiceModels(), smcLogger);
+              	//pick transit path from N-paths
+               	float rn = (float)household.getHhRandom().nextDouble();
+               	int pathindex = logsumHelper.chooseTripPath(rn, bestTaps, household.getDebugChoiceModels(), smcLogger);
                 	
-                    stop.setBoardTap( (int)bestTaps[pathindex][0] );
-                    stop.setAlightTap( (int)bestTaps[pathindex][1] );
-                    stop.setSet( (int)bestTaps[pathindex][2] );
-
-                }
-            
+                stop.setBoardTap( (int)bestTaps[pathindex][0] );
+                stop.setAlightTap( (int)bestTaps[pathindex][1] );
+                stop.setSet( (int)bestTaps[pathindex][2] );
             }
 
             // inbound half-tour, only need park location choice if tour is
@@ -1905,7 +1899,7 @@ public class IntermediateStopChoiceModels
             Arrays.fill(sampleMgraInBoardingTapShed, false);
             Arrays.fill(sampleMgraInAlightingTapShed, false);
 
-            int numAvailableAlternatives = setSoaAvailabilityForTransitTour(s, tour);
+            int numAvailableAlternatives = setSoaAvailabilityForTransitTour(s, tour, household.getDebugChoiceModels());
             if (numAvailableAlternatives == 0)
             {
                 logger.error("no available locations - empty sample.");
@@ -2270,7 +2264,7 @@ public class IntermediateStopChoiceModels
             Arrays.fill(sampleMgraInBoardingTapShed, false);
             Arrays.fill(sampleMgraInAlightingTapShed, false);
 
-            int numAvailableAlternatives = setSoaAvailabilityForTransitTour(s, tour);
+            int numAvailableAlternatives = setSoaAvailabilityForTransitTour(s, tour, household.getDebugChoiceModels());
             if (numAvailableAlternatives == 0)
             {
                 logger.error("no available locations - empty sample.");
@@ -3555,7 +3549,7 @@ public class IntermediateStopChoiceModels
      * TAP within walk egress distance of the mgra or zero if no walk TAPS exist
      * for the mgra.
      */
-    private int setSoaAvailabilityForTransitTour(Stop s, Tour t)
+    private int setSoaAvailabilityForTransitTour(Stop s, Tour t, boolean debug)
     {
 
         int availableCount = 0;
@@ -3580,10 +3574,12 @@ public class IntermediateStopChoiceModels
                 // continue;
 
                 boolean accessible = false;
+                int i=-1;
                 for (double[] tapPair : bestTaps)
                 {
                     if (tapPair == null) continue;
 
+                    ++i;
                     if ( modelStructure.getTourModeIsWalkTransit(t.getTourModeChoice() ) ) {
                         // if alternative location mgra is accessible by walk to any of the best inbound boarding taps, AND it's accessible by walk to the stop origin, it's available.                    
                         if ( mgraManager.getTapIsWalkAccessibleFromMgra(alt, (int)tapPair[0])
@@ -3613,7 +3609,20 @@ public class IntermediateStopChoiceModels
                         }
                     }
 
-                    if (accessible) break;
+                    if ( accessible ){
+                        if(debug){
+                        	slcSoaLogger.info("");
+                        	if(sampleMgraInBoardingTapShed[alt]==true){
+                        		slcSoaLogger.info("Stop alternative MGRA "+alt+" is accessible for TapPair "+i+" in boarding shed of TAP "+tapPair[0]);
+                        	}else if(sampleMgraInAlightingTapShed[alt]==true){
+                           		slcSoaLogger.info("Stop alternative MGRA "+alt+" is accessible for TapPair "+i+" in alighting shed of TAP "+tapPair[1]);
+                        	}
+                        	if((sampleMgraInBoardingTapShed[alt]==true) && (sampleMgraInAlightingTapShed[alt]==true)) //should not happen
+                           		slcSoaLogger.info("Stop alternative MGRA "+alt+" is accessible for TapPair "+i+" in both boarding shed of TAP "+tapPair[0]+" and alighting shed of TAP "+tapPair[1]);
+                        }
+                        
+                        break;
+                    }
                 }
 
                 if (accessible)
@@ -3648,10 +3657,12 @@ public class IntermediateStopChoiceModels
                 // the alternative mgra.
                 // if not, the alternative is not available.
                 boolean accessible = false;
+                int i=-1;
                 for (double[] tapPair : bestTaps)
                 {
                     if (tapPair == null) continue;
 
+                    ++i;
                     if ( modelStructure.getTourModeIsWalkTransit(t.getTourModeChoice() ) ) {
                         // if alternative location mgra is accessible by walk to any of the best origin taps, AND it's accessible by walk to the stop origin, it's available.                    
                         if ( mgraManager.getTapIsWalkAccessibleFromMgra(alt, (int)tapPair[0])
@@ -3680,7 +3691,20 @@ public class IntermediateStopChoiceModels
                         }
                     }
 
-                    if (accessible) break;
+                    if ( accessible ){
+                        if(debug){
+                        	slcSoaLogger.info("");
+                        	if(sampleMgraInBoardingTapShed[alt]==true){
+                        		slcSoaLogger.info("Stop alternative MGRA "+alt+" is accessible for TapPair "+i+" in boarding shed of TAP "+tapPair[0]);
+                        	}else if(sampleMgraInAlightingTapShed[alt]==true){
+                           		slcSoaLogger.info("Stop alternative MGRA "+alt+" is accessible for TapPair "+i+" in alighting shed of TAP "+tapPair[1]);
+                        	}
+                        	if((sampleMgraInBoardingTapShed[alt]==true) && (sampleMgraInAlightingTapShed[alt]==true)) //should not happen
+                           		slcSoaLogger.info("Stop alternative MGRA "+alt+" is accessible for TapPair "+i+" in both boarding shed of TAP "+tapPair[0]+" and alighting shed of TAP "+tapPair[1]);
+                        }
+                        
+                        break;
+                    }
 
                 }
                 if (accessible)
@@ -3883,13 +3907,19 @@ public class IntermediateStopChoiceModels
         {
             smcLogger.info("LOGSUM calculation for determining Mode Choice Probabilities for "
                     + (s.isInboundStop() ? "INBOUND" : "OUTBOUND") + " half-tour with no stops.");
-            smcLogger.info("HHID=" + hh.getHhId() + ", persNum="
-                    + s.getTour().getPersonObject().getPersonNum() + ", tourPurpose="
-                    + s.getTour().getTourPrimaryPurpose() + ", tourId=" + s.getTour().getTourId()
-                    + ", tourMode=" + s.getTour().getTourModeChoice());
-            smcLogger.info("StopID=" + (s.getStopId() + 1) + ", inbound=" + s.isInboundStop()
-                    + ", stopPurpose=" + s.getDestPurpose() + ", stopDepart=" + s.getStopPeriod()
-                    + ", stopOrig=" + s.getOrig() + ", stopDest=" + s.getDest());
+            
+            hh.logHouseholdObject(
+                    "Half Tour Mode Choice: HH_" + hh.getHhId() + ", Pers_"
+                            + s.getTour().getPersonObject().getPersonNum() + ", Tour Purpose_"
+                            + s.getTour().getTourPurpose() + ", Tour_" + s.getTour().getTourId()
+                            + ", Tour Purpose_" + s.getTour().getTourPurpose() + ", Stop_"
+                            + (s.getStopId() + 1), smcLogger);
+            hh.logPersonObject("Half Tour Mode Choice for person "
+                    + s.getTour().getPersonObject().getPersonNum(), smcLogger, s.getTour().getPersonObject());
+            hh.logTourObject("Half Tour Mode Choice for tour " + s.getTour().getTourId(),
+            		smcLogger, s.getTour().getPersonObject(), s.getTour());
+            hh.logStopObject("Half Tour Mode Choice for stop " + (s.getStopId() + 1),
+            		smcLogger, s, modelStructure);
         }
 
         if (modelStructure.getTourModeIsDriveTransit(s.getTour().getTourModeChoice()))

@@ -57,6 +57,7 @@ public final class DataExporter
     private final String 			FUEL_COST_PROPERTY          = "aoc.fuel";
     private final String 			MAINTENANCE_COST_PROPERTY = "aoc.maintenance";
     private static final String     WRITE_LOGSUMS_PROPERTY      = "Results.WriteLogsums";
+    private static final String     WRITE_TRANSIT_IVT_PROPERTY  = "Report.writeTransitIVT";
     private static final String     WRITE_UTILS_PROPERTY        = "TourModeChoice.Save.UtilsAndProbs";
     
     private float autoOperatingCost;
@@ -64,6 +65,7 @@ public final class DataExporter
     private boolean writeCSV = false;
     private boolean writeLogsums = false;
     private boolean writeUtilities = true;
+    private boolean writeTransitIVTs = false;
     
     public DataExporter(Properties theProperties, OMXMatrixDao aMtxDao, String projectPath,
             int feedbackIterationNumber)
@@ -78,6 +80,7 @@ public final class DataExporter
         float mainCost = new Float(theProperties.getProperty(MAINTENANCE_COST_PROPERTY));
         writeLogsums = new Boolean(theProperties.getProperty(WRITE_LOGSUMS_PROPERTY));
         writeUtilities = new Boolean(theProperties.getProperty(WRITE_UTILS_PROPERTY));
+        writeTransitIVTs = new Boolean(theProperties.getProperty(WRITE_TRANSIT_IVT_PROPERTY));
         
         autoOperatingCost = (fuelCost + mainCost) * 0.01f;
         
@@ -476,6 +479,13 @@ public final class DataExporter
         float[] transitEgrTime = new float[rowCount];
         float[] transitTransfers = new float[rowCount];
         
+        //these are only set if writeTransitIVTs is true
+        float[] locIVT = new float[rowCount];
+        float[] expIVT = new float[rowCount];
+        float[] brtIVT = new float[rowCount];
+        float[] lrtIVT = new float[rowCount];
+        float[] crIVT = new float[rowCount];
+        
 
         SkimBuilder skimBuilder = new SkimBuilder(properties);
         boolean hasPurposeColumn = tripStructureDefinition.originPurposeColumn > -1;
@@ -532,6 +542,15 @@ public final class DataExporter
             tripDepartTime[i] = attributes.getTripStartTime();
             tripBoardTaz[i] = attributes.getTripBoardTaz();
             tripAlightTaz[i] = attributes.getTripAlightTaz();
+            
+            if(writeTransitIVTs){
+            	locIVT[i] = attributes.getLocTime();
+            	expIVT[i] = attributes.getExpTime();
+            	brtIVT[i] = attributes.getBrtTime();
+            	lrtIVT[i] = attributes.getLrtTime();
+            	crIVT[i] = attributes.getCrTime();
+            	
+            }
         }
         table.appendColumn(autoInVehicleTime, "AUTO_IVT");
         table.appendColumn(autoOperatingCost, "AUTO_AOC");
@@ -557,10 +576,13 @@ public final class DataExporter
         table.appendColumn(tripBoardTaz, "TRIP_BOARD_TAZ");
         table.appendColumn(tripAlightTaz, "TRIP_ALIGHT_TAZ");
         
-        
-        
-        
-        
+        if(writeTransitIVTs){
+        	table.appendColumn(locIVT, "LOC_IVT");
+            table.appendColumn(expIVT, "EXP_IVT");
+            table.appendColumn(brtIVT, "BRT_IVT");
+            table.appendColumn(lrtIVT, "LRT_IVT");
+            table.appendColumn(crIVT, "CR_IVT");
+       	}
         
 //        table.appendColumn(valueOfTime, "VALUE_OF_TIME");
     }

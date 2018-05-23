@@ -1000,8 +1000,11 @@ public class BestTransitPathCalculator implements Serializable
     	
     	double logsum = NA;
     	double sumExpUtility  = getSumExpUtilities(bestTapPairs, myTrace, myLogger);
-    	if(sumExpUtility>0)
+    	if(sumExpUtility>0.0)
     		logsum = Math.log(sumExpUtility);
+    	
+    	if(myTrace)
+    		myLogger.info("Best Transit Path Logsum "+logsum);
     	return logsum;
     }
 
@@ -1022,20 +1025,29 @@ public class BestTransitPathCalculator implements Serializable
      */
      public double getSumExpUtilities(double[][] bestTapPairs, boolean myTrace, Logger myLogger){
     	double sumExpUtility=0;
+    	
+    	if(myTrace){
+    		myLogger.info("Calculating sum of exponentiated utilities for transit best TAP pairs");
+    		myLogger.info("Best_Path   Utility   Skim_Set  Included?  ExpUtility  Sum");
+    	}
+    	
     	//utilityCount tracks how many utilities included in logsum calc by skimset
     	Arrays.fill(utilityCount,0); 
     	for(int i = 0; i<bestTapPairs.length;++i){
+    		byte included=0;
     		if(bestTapPairs[i] != null){
     			int skimSet = (int)bestTapPairs[i][2];
     			
     			//only include the utility in the logsum if the count
     			//by skimset hasn't been met yet.
         		if(utilityCount[skimSet]<maxLogsumUtilitiesBySkimSet[skimSet]){
+        			included=1;
         			sumExpUtility += Math.exp(bestTapPairs[i][3]); 
         			++utilityCount[skimSet];
         		}
     		}
-    			
+    		if(myTrace)
+    			myLogger.info(i+"  "+bestTapPairs[i][3]+" "+bestTapPairs[i][2]+" "+included+Math.exp(bestTapPairs[i][3])+" "+sumExpUtility);
     	}
 
     	return sumExpUtility;

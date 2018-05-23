@@ -540,6 +540,9 @@ public class McLogsumsCalculator implements Serializable
     {
 
         if (bestTapPairs == null) {
+        	if(loggingEnabled){
+        		autoSkimLogger.info("Attempting to set WTW Trip MC DMU Attributes for null best TAP pairs array");
+        	}
         	tripMcDmuObject.setTransitLogSum( WTW, bestPathUEC.NA );
             bestWtwTripTapPairs = bestTapPairs;
             return;
@@ -557,6 +560,9 @@ public class McLogsumsCalculator implements Serializable
     {
 
         if (bestTapPairs == null) {
+        	if(loggingEnabled){
+        		autoSkimLogger.info("Attempting to set DTW Trip MC DMU Attributes for null best TAP pairs array");
+        	}
         	tripMcDmuObject.setTransitLogSum( DTW, bestPathUEC.NA );
             bestDtwTripTapPairs = bestTapPairs;
             return;
@@ -565,6 +571,10 @@ public class McLogsumsCalculator implements Serializable
         // calculate logsum
         int skimPeriodIndex = ModelStructure.getSkimPeriodIndex(departPeriod);
         double logsum = bestPathUEC.calcTripLogSum(bestTapPairs, loggingEnabled, autoSkimLogger);
+        
+        if(loggingEnabled)
+        	autoSkimLogger.info("Setting DTW logsum in trip MC DMU object to "+logsum);
+        
         tripMcDmuObject.setTransitLogSum( DTW, logsum);
         bestDtwTripTapPairs = bestTapPairs;
         
@@ -574,6 +584,9 @@ public class McLogsumsCalculator implements Serializable
     {
 
         if (bestTapPairs == null) {
+        	if(loggingEnabled){
+        		autoSkimLogger.info("Attempting to set WTD Trip MC DMU Attributes for null best TAP pairs array");
+        	}
         	tripMcDmuObject.setTransitLogSum( WTD, bestPathUEC.NA );
             bestWtdTripTapPairs = bestTapPairs;
             return;

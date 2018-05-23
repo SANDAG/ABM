@@ -1971,6 +1971,7 @@ public class SchoolEscortingModel {
 			return;
     	}
     	Tour schoolTour = schoolTours.get(0);
+    	schoolTour.setTourModeChoice(SHARED_RIDE_2_MODE);
     	
     	if(direction==DIR_OUTBOUND){
     		Stop[] chauffeurStops = chauffeurTour.getOutboundStops();

@@ -201,7 +201,7 @@ public class VisitorTourModeChoiceModel
         logsumHelper.setWtwTripMcDmuAttributes( tripDmuObject,tour.getDestinationMGRA(), tour.getOriginMGRA(), 
         		tour.getArriveTime(),tour.getDebugChoiceModels());
         
-        walkTransitLogsumOut = tripDmuObject.getTransitLogSum(McLogsumsCalculator.WTW);
+        walkTransitLogsumIn = tripDmuObject.getTransitLogSum(McLogsumsCalculator.WTW);
        
         //drive-transit out logsum
         logsumHelper.setDtwTripMcDmuAttributes( tripDmuObject, tour.getOriginMGRA(), tour.getDestinationMGRA(),

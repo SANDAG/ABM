@@ -250,7 +250,7 @@ public class TripModeChoiceDMU
 
     public void setOutboundHalfTourDirection(int arg)
     {
-        int outboundHalfTourDirection = arg;
+        outboundHalfTourDirection = arg;
     }
 
     public void setDepartPeriod(int period)
