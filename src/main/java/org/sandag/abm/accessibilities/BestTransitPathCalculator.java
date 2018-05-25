@@ -1047,7 +1047,8 @@ public class BestTransitPathCalculator implements Serializable
         		}
     		}
     		if(myTrace)
-    			myLogger.info(i+"  "+bestTapPairs[i][3]+" "+bestTapPairs[i][2]+" "+included+Math.exp(bestTapPairs[i][3])+" "+sumExpUtility);
+    			if(bestTapPairs[i] != null)
+    				myLogger.info(i+"  "+bestTapPairs[i][3]+" "+bestTapPairs[i][2]+"    "+included+"    "+Math.exp(bestTapPairs[i][3])+" "+sumExpUtility);
     	}
 
     	return sumExpUtility;

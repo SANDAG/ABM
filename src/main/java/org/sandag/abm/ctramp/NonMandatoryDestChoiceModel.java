@@ -1036,8 +1036,8 @@ public class NonMandatoryDestChoiceModel
                     logger.fatal("choiceModelDescription = " + choiceModelDescription);
                     logger.fatal("decisionMakerLabel = " + decisionMakerLabel);
                     e.printStackTrace();
-                    System.exit(-1);
-                    // throw new RuntimeException(e);
+                    //System.exit(-1);
+                    throw new RuntimeException(e);
                 }
                 needToComputeLogsum[index] = false;
             }
