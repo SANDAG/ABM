@@ -258,6 +258,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         minSpaceOnC = props["RunModel.minSpaceOnC"]
         sample_rate = props["sample_rates"]
         end_iteration = len(sample_rate)
+        scale_factor = props["cvm.scale_factor"]
 
         period_ids = list(enumerate(periods, start=int(scenario_id) + 1))
 
@@ -413,7 +414,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     export_for_commercial_vehicle(output_dir, base_scenario)
                     self.run_proc(
                         "cvm.bat",
-                        [drive, path_no_drive, path_forward_slash, 1.0, mgra_lu_input_file, "tazcentroids_cvm.csv"],
+                        [drive, path_no_drive, path_forward_slash, scale_factor, mgra_lu_input_file, "tazcentroids_cvm.csv"],
                         "Commercial vehicle model", capture_output=True)
                 if msa_iteration == startFromIteration:
                     external_zones = "1-12"
@@ -433,7 +434,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skipTripTableCreation[iteration]:
                     import_auto_demand(output_dir, external_zones, num_processors, base_scenario)
 
-        msa_iteration = 1
+        msa_iteration = len(sample_rate)
         if not skipFinalHighwayAssignment:
             with _m.logbook_trace("Final traffic assignments"):
                 self.run_traffic_assignments(
@@ -463,7 +464,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                           capture_output=True)
         if not skipDataLoadRequest:
             self.run_proc("DataLoadRequest.bat", 
-                [drive + path_no_drive, end_iteration, scenarioYear, sample_rate[end_iteration-1]], 
+                [drive + path_no_drive, end_iteration, sample_rate[end_iteration-1]], 
                 "Data load request")
 
         # delete trip table files in iteration sub folder if model finishes without crashing

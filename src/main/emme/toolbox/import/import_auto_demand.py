@@ -66,6 +66,7 @@ import csv as _csv
 import pandas as _pandas
 import os
 
+_join = os.path.join
 
 dem_utils = _m.Modeller().module('sandag.utilities.demand')
 gen_utils = _m.Modeller().module("sandag.utilities.general")
@@ -87,6 +88,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         self.external_zones = "1-12"
         project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
         main_dir = os.path.dirname(project_dir)
+        self.main_dir = main_dir
         self.output_dir = os.path.join(main_dir, "output")
         self.num_processors = "MAX-1"
         self.attributes = ["external_zones", "output_dir", "num_processors"]
@@ -208,27 +210,39 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
     def import_commercial_vehicle_demand(self):
         scenario = self.scenario
         emmebank = scenario.emmebank
+		
+        modeller = _m.Modeller()
+        load_properties = modeller.tool('sandag.utilities.properties')
+        props = load_properties(_join(self.main_dir, "conf", "sandag_abm.properties"))
+        scale_factor = props["cvm.scale_factor"]
+        scale_light = props["cvm.scale_light"]
+        scale_medium = props["cvm.scale_medium"]
+        scale_heavy = props["cvm.scale_heavy"]
+        
         mapping = {}
         periods = ["EA", "AM", "MD", "PM", "EV"]
         # The SOV demand is modified in-place, which was imported 
         # prior from the CT-RAMP demand
         # The truck demand in vehicles is copied from separate matrices
-        for period in periods:
+        for index, period in enumerate(periods):
             for cvm_acc, access_type in [("T", "TOLL"), ("NT", "GP")]:
                 mapping["CVM_%s:L%s" % (period, cvm_acc)] = {
                     "orig": "%s_SOV%sH" % (period, access_type), 
                     "dest": "%s_SOV%sH" % (period, access_type), 
-                    "pce": 1.0
+                    "pce": 1.0,
+                    "scale": scale_light[index]
                 }
                 mapping["CVM_%s:M%s" % (period, cvm_acc)] = {
                     "orig": "%s_TRKM%s_VEH" % (period, access_type),
                     "dest": "%s_TRKM%s" % (period, access_type), 
-                    "pce": 1.5
+                    "pce": 1.5,
+                    "scale": scale_medium[index]
                 }
                 mapping["CVM_%s:H%s" % (period, cvm_acc)] = {
                     "orig": "%s_TRKH%s_VEH" % (period, access_type),
                     "dest": "%s_TRKH%s" % (period, access_type), 
-                    "pce": 2.5
+                    "pce": 2.5,
+                    "scale": scale_heavy[index]
                 }
         with _m.logbook_trace('Load starting SOV and truck matrices'):
             for key, value in mapping.iteritems():
@@ -239,13 +253,18 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
             table = _pandas.read_csv(path)
             for key, value in mapping.iteritems():
                 cvm_array = table[key].reshape((4996, 4996))
+                #factor in cvm demand by the scale factor used in trip generation
+                cvm_array = cvm_array/scale_factor
+                #scale trips to take care of underestimation
+                cvm_array = cvm_array * value["scale"]
+                
                 value["array"] = value["array"] + cvm_array
         with _m.logbook_trace('Save SOV matrix and convert CV and truck vehicle demand to PCEs for assignment'):
             for key, value in mapping.iteritems():
                 matrix = emmebank.matrix(value["dest"])
                 array = value["array"]
                 if value["pce"] != 1.0:
-                    array = array * value["pce"]
+                    array = array * value["pce"]				
                 matrix.set_numpy_data(array, scenario)
 
     @_m.logbook_trace('Convert light truck vehicle demand to PCEs for assignment')
