@@ -662,7 +662,11 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             # possible improvement: snap walk nodes to nearby node if not matched and within distance
             if arc_filter(arc):
                 continue
-
+            if float(arc["AN"]) == 0 or float(arc["BN"]) == 0:
+                self._log.append({"type": "text",
+                    "content": "Node ID 0 in AN (%s) or BN (%s) for link ID %s." % 
+                    (arc["AN"], arc["BN"], arc["TRCOV-ID"])})
+                continue
             coordinates = arc["geo_coordinates"]
             arc_length = arc["LENGTH"] / 5280.0  # convert feet to miles
             i_node = get_node(network, arc['AN'], coordinates[0], False)
@@ -732,6 +736,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             if not arc_filter(arc):
                 continue
             if float(arc["AN"]) == 0 or float(arc["BN"]) == 0:
+                self._log.append({"type": "text",
+                    "content": "Node ID 0 in AN (%s) or BN (%s) for link ID %s." % 
+                    (arc["AN"], arc["BN"], arc[arc_id_name])})
                 continue
             coordinates = arc["geo_coordinates"]
             i_node = get_node(network, arc['AN'], coordinates[0], centroid_callback(arc, "AN"))
