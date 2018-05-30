@@ -130,6 +130,9 @@ public class CrossBorderTourTimeOfDayChoiceModel
             cumProbability[purpose][alt] = cumProb;
             outboundPeriod[purpose][alt] = outPer;
             returnPeriod[purpose][alt] = retPer;
+            
+            //temporary
+            logger.info("row="+row+" alt="+alt+" purpose="+purpose+" outPer="+outPer+" retPer="+retPer+" cumProb="+cumProb);
 
             ++alt;
 

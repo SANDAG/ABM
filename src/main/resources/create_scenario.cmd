@@ -17,6 +17,7 @@ rem grant full permissions to scenario folder
 cacls %SCENARIO_FOLDER% /t /e /g Everyone:f
 
 rem copy master server-config.csv to a scenario folder
+rem to make local copy of server configuration file effective, user needs to rename it to server-config-local.csv
 xcopy /Y T:\ABM\release\ABM\config\server-config.csv %SCENARIO_FOLDER%\conf
 
 rem setup model folders
