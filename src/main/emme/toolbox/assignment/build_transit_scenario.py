@@ -412,7 +412,8 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
     @_m.logbook_trace("Add timed-transfer links", save_arguments=True)
     def timed_transfers(self, network, timed_transfers_with_walk, period):
         no_walk_link_error = "no walk link from line %s to %s"
-        node_not_found_error = "node %s not found in itinerary for line %s"
+        node_not_found_error = "node %s not found in itinerary for line %s; "\
+            "the to_line may end at the transfer stop"
 
         def find_walk_link(from_line, to_line):
             to_nodes = set([s.i_node for s in to_line.segments(True)
@@ -443,7 +444,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
 
         # Group parallel transfers together (same pair of alighting-boarding nodes from the same line)
         walk_transfers = _defaultdict(lambda: [])
-        for i, transfer in enumerate(timed_transfers_with_walk):
+        for i, transfer in enumerate(timed_transfers_with_walk, start=1):
             try:
                 from_line = network.transit_line(transfer["from_line"])
                 if not from_line:
@@ -531,7 +532,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 if seg.line in lines:
                     seg[stop_attr] = True
                     if stop_attr == "allow_boardings":
-                        seg["@headway_seg"] = waits[seg.line] * 2
+                        seg["@headway_seg"] = float(waits[seg.line]) * 2
             return new_node
 
         # process the transfer points, split links and set attributes
