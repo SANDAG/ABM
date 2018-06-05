@@ -120,7 +120,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         pb.description = """
         Create an Emme network from the E00 and associated files 
         generated from TCOVED. 
-        The timed transfer is stored in a data table with the suffix "_timed_xfers_period".
+        The timed transfer is stored in data tables with the suffix "_timed_xfers_<i>period</i>".
         <br>
         <div style="text-align:left">
         The following files are used:
@@ -133,7 +133,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 <li>trrt.csv</li>
                 <li>trlink.csv</li>
                 <li>trstop.csv</li>
-                <li>timexfer_period.csv, where period = EA,AM,MD,PM,EV</li>
+                <li>timexfer_<i>period</i>.csv, where <i>period</i> = EA,AM,MD,PM,EV</li>
                 <li>MODE5TOD.dbf</li>
                 <li>special_fares.txt</li>
             </ul>
@@ -979,6 +979,16 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     segment[attr] = stop[field]
                 for field, attr in seg_float_attr_map:
                     segment[attr] = float(stop[field])
+
+        def lookup_line(ident):
+            line = network.transit_line(ident)
+            if line:
+                return line.id
+            line = transit_lines.get(int(ident))
+            if line:
+                return line.id
+            raise Exception("'%s' is not a route name or route ID" % ident)
+
         # Normalizing the case of the headers as different examples have been seen
         for period in periods:
             norm_data = []
@@ -989,17 +999,20 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 norm_data.append(norm_record)
 
             from_line, to_line, wait_time = [], [], []
-            for record in norm_data:
-                from_line.append(transit_lines[int(record["from_line"])].id)
-                to_line.append(transit_lines[int(record["to_line"])].id)
-                wait_time.append(float(record["wait_time"]))
+            for i, record in enumerate(norm_data, start=2):
+                try:
+                    from_line.append(lookup_line(record["from_line"]))
+                    to_line.append(lookup_line(record["to_line"]))
+                    wait_time.append(float(record["wait_time"]))
+                except Exception as error:
+                    raise Exception("timexfer_%s.csv on line %s: %s" % (period, i, error))
         
             timed_xfer = _dt.Data()
             timed_xfer.add_attribute(_dt.Attribute("from_line", _np.array(from_line).astype("O")))
             timed_xfer.add_attribute(_dt.Attribute("to_line", _np.array(to_line).astype("O")))
             timed_xfer.add_attribute(_dt.Attribute("wait_time", _np.array(wait_time)))
             # Creates and saves the new table
-            gen_utils.DataTableProc("%s_timed_xfer_%s" % (self.data_table_name,period), data=timed_xfer)
+            gen_utils.DataTableProc("%s_timed_xfer_%s" % (self.data_table_name, period), data=timed_xfer)
         
         self._log.append({"type": "text", "content": "Import transit lines complete"})
 
