@@ -328,6 +328,7 @@ public class VisitorTripTables
             int originMGRA = (int) tripData.getValueAt(i, "originMGRA");
             int destinationMGRA = (int) tripData.getValueAt(i, "destinationMGRA");
             int tripMode = (int) tripData.getValueAt(i, "tripMode");
+            float partySize =  tripData.getValueAt(i, "partySize");
 
             // save taxi trips as shared-2
             if (tripMode == modelStructure.TAXI)
@@ -351,8 +352,8 @@ public class VisitorTripTables
                 set = (int) tripData.getValueAt(i, "set");
            }
 
-            // all person trips are 1 per party (for now)
-            float personTrips = 1.0f / sampleRate;
+            // all person trips are based on party size
+            float personTrips = partySize / sampleRate;
 
             // all auto trips are 1 per party
             float vehicleTrips = 1.0f / sampleRate;

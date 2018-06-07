@@ -371,13 +371,19 @@ public final class DataExporter
             floatColumns.add("TRAN_ACCTIME");
             floatColumns.add("TRAN_EGRTIME");      
             floatColumns.add("TRAN_TRANSFERS");
-                
             floatColumns.add("WALK_TIME");
             floatColumns.add("BIKE_TIME");
             floatColumns.add("TRIP_DIST");
             stringColumns.add("TRIP_PURPOSE_NAME");
             stringColumns.add("TRIP_MODE_NAME");
             intColumns.add("RECID");
+            if(writeTransitIVTs){
+            	floatColumns.add("LOC_IVT");
+            	floatColumns.add("EXP_IVT");
+            	floatColumns.add("BRT_IVT");
+            	floatColumns.add("LRT_IVT");
+            	floatColumns.add("CR_IVT");
+            }
         }
 
         if (primaryKey.size() == 0)
@@ -1535,8 +1541,8 @@ public final class DataExporter
         Set<String> bitColumns = new HashSet<String>();
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("tourID", "tripId"));
         primaryKey = new LinkedHashSet<String>(Arrays.asList("RECID")); // todo: temporary until bugfix
-        JoinData joinData = new JoinData("tourID");
-        joinData.addJoinData(tourIdToPartyMap, FieldType.INT, "partySize");
+        //JoinData joinData = new JoinData("tourID");
+        //joinData.addJoinData(tourIdToPartyMap, FieldType.INT, "partySize");
         exportDataGeneric(
                 outputFileBase,
                 "visitor.trip.output.file",
@@ -1548,8 +1554,8 @@ public final class DataExporter
                 bitColumns,
                 FieldType.INT,
                 primaryKey,
-                new TripStructureDefinition(5, 6, 3, 4, 10, 11, 12, 13, 15, 15, "VISITOR", 7, true, 15,14),
-                joinData);
+                new TripStructureDefinition(5, 6, 3, 4, 10, 11, 12, 13, 15, 15, "VISITOR", 7, true, 15,14));
+                //,                joinData);
     }
 
     private void exportInternalExternalTripData(String outputFileBase)

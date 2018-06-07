@@ -380,6 +380,16 @@ public abstract class StopFrequencyDMU
     {
         return modelStructure.getTourModeIsSchoolBus(tour.getTourModeChoice()) ? 1 : 0;
     }
+    
+    public int getTourDepartPeriod()
+    {
+    	return tour.getTourDepartPeriod();
+    }
+    
+    public int getTourArrivePeriod()
+    {
+    	return tour.getTourArrivePeriod();
+    }
 
     public int getIndexValue(String variableName)
     {

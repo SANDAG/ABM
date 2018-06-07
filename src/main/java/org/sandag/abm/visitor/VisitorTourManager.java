@@ -417,7 +417,7 @@ public class VisitorTourManager
             throw new RuntimeException();
         }
         String tripHeaderString = new String(
-                "tourID,tripID,originPurp,destPurp,originMGRA,destinationMGRA,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,boardingTap,alightingTap,set,valueOfTime\n");
+                "tourID,tripID,originPurp,destPurp,originMGRA,destinationMGRA,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,boardingTap,alightingTap,set,valueOfTime,partySize\n");
         tripWriter.print(tripHeaderString);
 
         // Iterate through the array, printing records to the file
@@ -479,7 +479,7 @@ public class VisitorTourManager
                 + trip.isOriginIsTourDestination() + "," + trip.isDestinationIsTourDestination()
                 + "," + trip.getPeriod() + "," + trip.getTripMode() + "," 
                 + trip.getBoardTap() + "," + trip.getAlightTap() + "," + trip.getSet()
-                + "," + String.format("%9.2f",tour.getValueOfTime())+ "\n");
+                + "," + String.format("%9.2f",tour.getValueOfTime())+ "," + tour.getNumberOfParticipants()+ "\n");
         writer.print(record);
     }
 
