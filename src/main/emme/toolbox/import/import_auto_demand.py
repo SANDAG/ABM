@@ -232,6 +232,12 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     "pce": 1.0,
                     "scale": scale_light[index]
                 }
+		mapping["CVM_%s:I%s" % (period, cvm_acc)] = {
+                    "orig": "%s_TRKL%s_VEH" % (period, access_type),
+                    "dest": "%s_TRKL%s" % (period, access_type), 
+                    "pce": 1.3,
+                    "scale": scale_medium[index]
+                }				
                 mapping["CVM_%s:M%s" % (period, cvm_acc)] = {
                     "orig": "%s_TRKM%s_VEH" % (period, access_type),
                     "dest": "%s_TRKM%s" % (period, access_type), 
