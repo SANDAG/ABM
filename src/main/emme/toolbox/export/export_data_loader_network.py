@@ -865,9 +865,14 @@ Export network results to csv files for SQL data loader."""
                 for (link1, link2), attr_map in mapping['links'].iteritems():
                     for attr in link_modified_attrs:
                         attr_map[attr] = max(link1[attr], link1[attr])
+                
                 for (seg1, seg2), attr_map in mapping['transit_segments'].iteritems():
-                    for attr in seg_attrs:
-                        attr_map[attr] = max(seg1[attr], seg2[attr])
+                    if seg2.allow_alightings:
+                        for attr in seg_attrs:
+                            attr_map[attr] = seg1[attr]
+                    else:  # if it is a boarding stop or non-stop
+                        for attr in seg_attrs:
+                            attr_map[attr] = max(seg1[attr], seg2[attr])
                     attr_map["transit_time_func"] = min(seg1["transit_time_func"], seg2["transit_time_func"])
                     for attr in segment_boards:
                         attr_map[attr] = seg1[attr] + seg2[attr]
