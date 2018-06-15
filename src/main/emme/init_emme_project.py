@@ -46,7 +46,7 @@ def init_emme_project(root, title):
         'transit_vehicles': 200,
         'transit_lines': 450,
         'transit_segments': 40000,
-        'extra_attribute_values': 15000000,
+        'extra_attribute_values': 18000000,
 
         'functions': 99,
         'operators': 5000,
