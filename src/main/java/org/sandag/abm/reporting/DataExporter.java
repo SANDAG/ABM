@@ -65,7 +65,7 @@ public final class DataExporter
     private boolean writeCSV = false;
     private boolean writeLogsums = false;
     private boolean writeUtilities = true;
-    private boolean writeTransitIVTs = false;
+    //private boolean writeTransitIVTs = false;
     
     public DataExporter(Properties theProperties, OMXMatrixDao aMtxDao, String projectPath,
             int feedbackIterationNumber)
@@ -80,7 +80,7 @@ public final class DataExporter
         float mainCost = new Float(theProperties.getProperty(MAINTENANCE_COST_PROPERTY));
         writeLogsums = new Boolean(theProperties.getProperty(WRITE_LOGSUMS_PROPERTY));
         writeUtilities = new Boolean(theProperties.getProperty(WRITE_UTILS_PROPERTY));
-        writeTransitIVTs = new Boolean(theProperties.getProperty(WRITE_TRANSIT_IVT_PROPERTY));
+        //writeTransitIVTs = new Boolean(theProperties.getProperty(WRITE_TRANSIT_IVT_PROPERTY));
         
         autoOperatingCost = (fuelCost + mainCost) * 0.01f;
         
@@ -377,13 +377,13 @@ public final class DataExporter
             stringColumns.add("TRIP_PURPOSE_NAME");
             stringColumns.add("TRIP_MODE_NAME");
             intColumns.add("RECID");
-            if(writeTransitIVTs){
+            //if(writeTransitIVTs){
             	floatColumns.add("LOC_IVT");
             	floatColumns.add("EXP_IVT");
             	floatColumns.add("BRT_IVT");
             	floatColumns.add("LRT_IVT");
             	floatColumns.add("CR_IVT");
-            }
+            //}
         }
 
         if (primaryKey.size() == 0)
@@ -549,14 +549,14 @@ public final class DataExporter
             tripBoardTaz[i] = attributes.getTripBoardTaz();
             tripAlightTaz[i] = attributes.getTripAlightTaz();
             
-            if(writeTransitIVTs){
+            //if(writeTransitIVTs){
             	locIVT[i] = attributes.getLocTime();
             	expIVT[i] = attributes.getExpTime();
             	brtIVT[i] = attributes.getBrtTime();
             	lrtIVT[i] = attributes.getLrtTime();
             	crIVT[i] = attributes.getCrTime();
             	
-            }
+            //}
         }
         table.appendColumn(autoInVehicleTime, "AUTO_IVT");
         table.appendColumn(autoOperatingCost, "AUTO_AOC");
@@ -582,13 +582,13 @@ public final class DataExporter
         table.appendColumn(tripBoardTaz, "TRIP_BOARD_TAZ");
         table.appendColumn(tripAlightTaz, "TRIP_ALIGHT_TAZ");
         
-        if(writeTransitIVTs){
+        //if(writeTransitIVTs){
         	table.appendColumn(locIVT, "LOC_IVT");
             table.appendColumn(expIVT, "EXP_IVT");
             table.appendColumn(brtIVT, "BRT_IVT");
             table.appendColumn(lrtIVT, "LRT_IVT");
             table.appendColumn(crIVT, "CR_IVT");
-       	}
+       	//}
         
 //        table.appendColumn(valueOfTime, "VALUE_OF_TIME");
     }
