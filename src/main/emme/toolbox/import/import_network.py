@@ -1301,7 +1301,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     speed_adj = link["@speed_adjusted"]	
                     speed_posted = link["@speed_posted"]
                     if speed_adj>0:
-                        link["@time_link" + time] = (speed_adj/speed_posted) * link["@time_link" + time]
+                        link["@time_link" + time] = (speed_adj/(speed_posted*1.0)) * link["@time_link" + time]
 						
                 link["@time_inter" + time] = link["time_inter" + src_time]
                 link["@toll" + time] = link["toll" + src_time]
