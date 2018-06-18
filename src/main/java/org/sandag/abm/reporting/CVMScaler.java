@@ -120,7 +120,7 @@ public class CVMScaler {
         
         return inputDataTable;
 	}
-	
+	/*
 	 public static void main(String... args) throws Exception
 	    {
 	        Properties properties = new Properties();
@@ -128,4 +128,5 @@ public class CVMScaler {
 	        CVMScaler cvmScaler = new CVMScaler(properties);
 	        cvmScaler.scale();
 	    }
+	    */
 }

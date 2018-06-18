@@ -2498,6 +2498,8 @@ public final class DataExporter
         if (definedTables.contains("commtrip")){
         	CVMExporter cvmExporter = new CVMExporter(properties,mtxDao);
         	cvmExporter.export();
+        	CVMScaler cvmScaler = new CVMScaler(properties);
+        	cvmScaler.scale();
         }
         	
         	
