@@ -132,7 +132,7 @@ public class CrossBorderTourTimeOfDayChoiceModel
             returnPeriod[purpose][alt] = retPer;
             
             //temporary
-            logger.info("row="+row+" alt="+alt+" purpose="+purpose+" outPer="+outPer+" retPer="+retPer+" cumProb="+cumProb);
+            //logger.info("row="+row+" alt="+alt+" purpose="+purpose+" outPer="+outPer+" retPer="+retPer+" cumProb="+cumProb);
 
             ++alt;
 

@@ -408,7 +408,7 @@ public class VisitorTripTables
                 matrix[mode][votBin][mat].setValueAt(originTAZ, destinationTAZ, (value + personTrips));
             }
 
-            logger.info("End creating trip tables for period " + timePeriod);
+            //logger.info("End creating trip tables for period " + timePeriod);
         }
     }
 

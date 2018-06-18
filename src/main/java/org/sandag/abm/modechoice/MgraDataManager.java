@@ -267,7 +267,7 @@ public final class MgraDataManager
                 
                 //reset 0 distances to 0.1 miles, and log potential error
                 if((boardDistPercieved==0)||(alightDistPercieved==0)||(boardDistActual==0)||(alightDistActual==0)){
-                	logger.info("Potential error: Distance from mgra "+mgra+" to tap "+tap+" is 0; resetting to 0.1 miles");
+                	//logger.info("Potential error: Distance from mgra "+mgra+" to tap "+tap+" is 0; resetting to 0.1 miles");
                 	boardDistPercieved= Math.round(Constants.feetPerMile * (float)0.1);
                    	boardDistActual= Math.round(Constants.feetPerMile * (float)0.1);
                   	alightDistPercieved= Math.round(Constants.feetPerMile * (float)0.1);
