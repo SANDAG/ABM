@@ -576,7 +576,7 @@ public class SandagTripTables
             }
         }
 
-        logger.info("End creating trip tables for period " + timePeriod);
+        //logger.info("End creating trip tables for period " + timePeriod);
     }
     
     /**
