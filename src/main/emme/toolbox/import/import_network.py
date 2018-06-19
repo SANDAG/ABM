@@ -166,7 +166,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 self.execute()
             run_msg = "Network import complete"
             if self._error:
-                run_msg += " with %s errors. See logbook for details" % len(self._error)
+                run_msg += " with %s non-fatal errors. See logbook for details" % len(self._error)
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
         except Exception as error:
             self.tool_run_msg = _m.PageBuilder.format_exception(
@@ -770,6 +770,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
     def create_transit_lines(self, network, attr_map):
         self._log.append({"type": "header", "content": "Import transit lines"})
+        fatal_errors = 0
         # Route_ID,Route_Name,Mode,AM_Headway,PM_Headway,OP_Headway,Night_Headway,Night_Hours,Config,Fare
         transit_line_data = gen_utils.DataTableProc("trrt", _join(self.source, "trrt.csv"))
         # Route_ID,Link_ID,Direction
@@ -864,6 +865,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     line_ref, record["Link_ID"])
                 self._log.append({"type": "text", "content": msg})
                 self._error.append("Transit route import: " + msg)
+                fatal_errors += 1
                 continue
 
             transit_routes[int(record["Route_ID"])].append(link)
@@ -926,6 +928,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 msg = "Transit line %s: %s" % (record["Route_Name"], error)
                 self._log.append({"type": "text", "content": msg})
                 self._error.append("Transit route import: line %s not created" % record["Route_Name"])
+                fatal_errors += 1
 
         line_stops = _defaultdict(lambda: [])
         for record in transit_stop_data:
@@ -968,9 +971,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 elif node_id == segment.j_node.number:
                     segment = itinerary.next()  # its the next segment
                 else:
-                    self._log.append(
-                        {"type": "text", 
-                        "content": "Transit line %s: could not find stop with Link ID %s" % (line_name, link_id)})
+                    msg = "Transit line %s: could not find stop with Link ID %s" % (line_name, link_id)
+                    self._log.append({"type": "text", "content": msg})
+                    self._error.append(msg)
                     continue
                 segment.allow_boardings = True
                 segment.allow_alightings = True
@@ -1005,7 +1008,10 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     to_line.append(lookup_line(record["to_line"]))
                     wait_time.append(float(record["wait_time"]))
                 except Exception as error:
-                    raise Exception("timexfer_%s.csv on line %s: %s" % (period, i, error))
+                    msg = "Error processing timexfer_%s.csv on file line %s: %s" % (period, i, error)
+                    self._log.append({"type": "text", "content": msg})
+                    self._error.append(msg)
+                    fatal_errors += 1
         
             timed_xfer = _dt.Data()
             timed_xfer.add_attribute(_dt.Attribute("from_line", _np.array(from_line).astype("O")))
@@ -1014,6 +1020,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             # Creates and saves the new table
             gen_utils.DataTableProc("%s_timed_xfer_%s" % (self.data_table_name, period), data=timed_xfer)
         
+        if fatal_errors > 0:
+            raise Exception("Cannot create transit network, %s fatal errors found" % fatal_errors)
         self._log.append({"type": "text", "content": "Import transit lines complete"})
 
     def calc_transit_attributes(self, network):
@@ -1550,6 +1558,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
     def add_transit_to_traffic(self, hwy_network, tr_network):
         self._log.append({"type": "header", "content": "Merge transit network to traffic network"})
+        fatal_errors = 0
         for tr_mode in tr_network.modes():
             hwy_mode = hwy_network.create_mode(tr_mode.type, tr_mode.id)
             hwy_mode.description = tr_mode.description
@@ -1609,24 +1618,29 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             i_node, new_node_id = lookup_node(tr_link.i_node, new_node_id)
             j_node, new_node_id = lookup_node(tr_link.j_node, new_node_id)
             # check for duplicate but different links 
-            # (e.g. for reserved transit lanes along arterials)
+            # All cases to be logged and then an error raised at end
             ex_link = hwy_network.link(i_node, j_node)
             if ex_link:
                 self._log.append({
                     "type": "text",
-                    "content": "Traffic link split due to duplicate link in traffic/transit merge. "
-                               "Traffic link ID %s, transit link ID %s, new Emme node ID %s." % 
-                               (ex_link["@tcov_id"], tr_link["@tcov_id"], new_node_id)
+                    "content": "Duplicate links between the same nodes with different IDs in traffic/transit merge. "
+                               "Traffic link ID %s, transit link ID %s." % (ex_link["@tcov_id"], tr_link["@tcov_id"])
                 })
+                self._error.append("Duplicate links with different IDs between traffic (%s) and transit (%s) networks" % 
+                                   (ex_link["@tcov_id"], tr_link["@tcov_id"]))
                 self._split_link(hwy_network, i_node, j_node, new_node_id)
                 new_node_id += 1
+                fatal_errors += 1
             try:
                 link = hwy_network.create_link(i_node, j_node, tr_link.modes)
             except Exception as error:
-                msg = "Error creating link '%s', I-node '%s', J-node '%s'. Error message %s" % (
-                    tr_link["@tcov_id"], i_node, j_node, error)
-                self._log.append({"type": "text", "content": msg})
-                self._error.append("Cannot create tr link '%s' in traffic network" % tr_link["@tcov_id"])
+                self._log.append({
+                    "type": "text", 
+                    "content": "Error creating link '%s', I-node '%s', J-node '%s'. Error message %s" % 
+                    (tr_link["@tcov_id"], i_node, j_node, error)
+                })
+                self._error.append("Cannot create transit link '%s' in traffic network" % tr_link["@tcov_id"])
+                fatal_errors += 1
                 continue
             hwy_link_index[tr_link["@tcov_id"]] = link
             for attr in tr_network.attributes("LINK"):
@@ -1643,7 +1657,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             except Exception as error:
                 msg = "Transit line %s, error message %s" % (tr_line.id, error)
                 self._log.append({"type": "text", "content": msg})
-                self._error.append("Error creating transit line in traffic network: line %s not created" % tr_line.id)
+                self._error.append("Cannot create transit line '%s' in traffic network" % tr_line.id)
+                fatal_errors += 1
                 continue
             for attr in hwy_network.attributes("TRANSIT_LINE"):
                 hwy_line[attr] = tr_line[attr]
@@ -1657,6 +1672,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             if auto_mode in hwy_link.modes:
                 for seg in hwy_link.segments():
                     seg.transit_time_func = 1
+
+        if fatal_errors > 0:
+            raise Exception("Cannot merge traffic and transit network, %s fatal errors found" % fatal_errors)
         self._log.append({"type": "text", "content": "Merge transit network to traffic network complete"})
 
     def _split_link(self, network, i_node, j_node, new_node_id):
