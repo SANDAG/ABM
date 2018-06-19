@@ -178,7 +178,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             self.save_properties()
             self(self.main_directory, self.scenario_id, self.scenario_title, self.emmebank_title,
                  self.num_processors, self.select_link, username=self.username, password=self.password)
-            run_msg = "Tool complete"
+            run_msg = "Model run complete"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
         except Exception as error:
             self.tool_run_msg = _m.PageBuilder.format_exception(
@@ -340,24 +340,29 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             if not skipInitialization:
                 # initialize traffic demand, skims, truck, CV, EI, EE matrices
                 traffic_components = [
-                    "traffic_demand", "traffic_skims",
+                    "traffic_skims",
                     "truck_model", "commercial_vehicle_model",
                     "external_internal_model", "external_external_model"]
+                if not skipCopyWarmupTripTables:
+                    traffic_components.append("traffic_demand")
                 init_matrices(traffic_components, periods, base_scenario, deleteAllMatrices)
-                # import seed auto demand and seed truck demand
+
                 transit_scenario = init_transit_db(base_scenario)
                 transit_emmebank = transit_scenario.emmebank
-                transit_components = ["transit_demand", "transit_skims"]
+                transit_components = ["transit_skims"]
+                if not skipCopyWarmupTripTables:
+                    transit_components.append("transit_demand")
                 init_matrices(transit_components, periods, transit_scenario, deleteAllMatrices)
             else:
                 transit_emmebank = _eb.Emmebank(_join(main_directory, "emme_project", "Database_transit", "emmebank"))
                 transit_scenario = transit_emmebank.scenario(base_scenario.number)
 
             if not skipCopyWarmupTripTables:
+                # import seed auto demand and seed truck demand
                 for period in periods:
                     omx_file = _join(input_dir, "trip_%s.omx" % period)
                     import_demand(omx_file, "AUTO", period, base_scenario)
-                    import_demand(omx_file, "TRUCK", period, base_scenario, convert_truck_to_pce=True)
+                    import_demand(omx_file, "TRUCK", period, base_scenario)
 
         # Note: iteration indexes from 0, msa_iteration indexes from 1
         for iteration in range(startFromIteration - 1, end_iteration):

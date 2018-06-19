@@ -105,13 +105,12 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                 error, _traceback.format_exc(error))
             raise
 
-    def __call__(self, omx_file, demand_type, period, scenario, convert_truck_to_pce=None):
+    def __call__(self, omx_file, demand_type, period, scenario):
         attributes = {
             "omx_file": omx_file, 
             "demand_type": demand_type, 
             "period": period, 
             "scenario": scenario.id, 
-            "convert_truck_to_pce": convert_truck_to_pce,
             "self": str(self)
         }
         with _m.logbook_trace("Import %s matrices for period %s" % (demand_type, period), attributes=attributes):
@@ -127,34 +126,45 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                 "inro.emme.data.matrix.import_from_omx")
 
             if demand_type == "AUTO":
-                # TODO: add VOT class bins when warm start demand is available
-                # Note: SRX_GP and SRX_HOV will be merged into the same class of demand
                 matrices = {
-                    'SOV_GP':   'mf"%s_SOVGPL"',
-                    'SOV_PAY':  'mf"%s_SOVTOLLL"',
-                    'SR2_GP':   'mf"%s_HOV2GPL"',
-                    'SR2_HOV':  'mf"%s_HOV2HOVL"',
-                    'SR2_PAY':  'mf"%s_HOV2TOLLL"',
-                    'SR3_GP':   'mf"%s_HOV3GPL"',
-                    'SR3_HOV':  'mf"%s_HOV3HOVL"',
-                    'SR3_PAY':  'mf"%s_HOV3TOLLL"'}
+                    '%s_SOVGPL':    'mf"%s_SOVGPL"',
+                    '%s_SOVTOLLL':  'mf"%s_SOVTOLLL"',
+                    '%s_HOV2HOVL':  'mf"%s_HOV2HOVL"',
+                    '%s_HOV2TOLLL': 'mf"%s_HOV2TOLLL"',
+                    '%s_HOV3HOVL':  'mf"%s_HOV3HOVL"',
+                    '%s_HOV3TOLLL': 'mf"%s_HOV3TOLLL"',
+                    '%s_SOVGPM':    'mf"%s_SOVGPM"',
+                    '%s_SOVTOLLM':  'mf"%s_SOVTOLLM"',
+                    '%s_HOV2HOVM':  'mf"%s_HOV2HOVM"',
+                    '%s_HOV2TOLLM': 'mf"%s_HOV2TOLLM"',
+                    '%s_HOV3HOVM':  'mf"%s_HOV3HOVM"',
+                    '%s_HOV3TOLLM': 'mf"%s_HOV3TOLLM"',
+                    '%s_SOVGPH':    'mf"%s_SOVGPH"',
+                    '%s_SOVTOLLH':  'mf"%s_SOVTOLLH"',
+                    '%s_HOV2HOVH':  'mf"%s_HOV2HOVH"',
+                    '%s_HOV2TOLLH': 'mf"%s_HOV2TOLLH"',
+                    '%s_HOV3HOVH':  'mf"%s_HOV3HOVH"',
+                    '%s_HOV3TOLLH': 'mf"%s_HOV3TOLLH"'}
+                matrices = dict((k % period, v % period) for k, v in matrices.iteritems())
+                import_from_omx(file_path=omx_file, matrices=matrices, scenario=scenario)
+
             if demand_type == "TRUCK":
                 matrices = {
-                    'hhdn':     'mf"%s_TRKHGP"',
-                    'hhdt':     'mf"%s_TRKHTOLL"',
-                    'lhdn':     'mf"%s_TRKLGP"',
-                    'lhdt':     'mf"%s_TRKLTOLL"',
-                    'mhdn':     'mf"%s_TRKMGP"',
-                    'mhdt':     'mf"%s_TRKMTOLL"'}
+                    '%s_TRKHGP':     'mf"%s_TRKHGP"',
+                    '%s_TRKHTOLL':   'mf"%s_TRKHTOLL"',
+                    '%s_TRKLGP':     'mf"%s_TRKLGP"',
+                    '%s_TRKLTOLL':   'mf"%s_TRKLTOLL"',
+                    '%s_TRKMGP':     'mf"%s_TRKMGP"',
+                    '%s_TRKMTOLL':   'mf"%s_TRKMTOLL"'}
+                matrices = dict((k % period, v % period) for k, v in matrices.iteritems())
+                import_from_omx(file_path=omx_file, matrices=matrices, scenario=scenario)
 
             if demand_type == "TRANSIT":
                 matrices = {
                     'SET1':  'mf"%s_WLKBUS"',
                     'SET2':  'mf"%s_WLKPREM"',
                     'SET3':  'mf"%s_WLKALLPEN"',}
-
-            matrices = dict((k, v % period) for k, v in matrices.iteritems())
-            if demand_type == "TRANSIT":
+                matrices = dict((k, v % period) for k, v in matrices.iteritems())
                 # special custom mapping from subset of TAPs to all TAPs
                 emme_zones = scenario.zone_numbers
                 emmebank = scenario.emmebank
@@ -163,67 +173,17 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     zone_mapping = omx_file_obj.mapping(omx_file_obj.listMappings()[0]).items()
                     zone_mapping.sort(key=lambda x: x[1])
                     omx_zones = [x[0] for x in zone_mapping]
-                    for omx_name, emme_name in matrices.iteritems():
-                        omx_data = omx_file_obj[omx_name].read()
-                        matrix_data = _matrix.MatrixData(type='f', indices=[omx_zones, omx_zones])
-                        matrix_data.from_numpy(omx_data)
-                        expanded_matrix_data = matrix_data.expand([emme_zones, emme_zones])
-                        matrix = emmebank.matrix(emme_name)
-                        matrix.set_data(expanded_matrix_data, scenario)
+                    if omx_zones != emme_zones:
+                        for omx_name, emme_name in matrices.iteritems():
+                            omx_data = omx_file_obj[omx_name].read()
+                            matrix_data = _matrix.MatrixData(type='f', indices=[omx_zones, omx_zones])
+                            matrix_data.from_numpy(omx_data)
+                            expanded_matrix_data = matrix_data.expand([emme_zones, emme_zones])
+                            matrix = emmebank.matrix(emme_name)
+                            matrix.set_data(expanded_matrix_data, scenario)
+                    else:
+                        for omx_name, emme_name in matrices.iteritems():
+                            omx_data = omx_file_obj[omx_name].read()
+                            matrix.set_numpy_data(omx_data, scenario)
                 finally:
                     omx_file_obj.close()
-            else:
-                import_from_omx(file_path=omx_file, matrices=matrices, scenario=scenario)
-                if demand_type == "TRUCK" :
-                    self.convert_truck(scenario, period, convert_truck_to_pce)
-                else:
-                    self.split_auto_vots(scenario, period)
-
-    @_m.logbook_trace('Convert truck vehicle demand to PCE')
-    def convert_truck(self, scenario, period, convert_truck_to_pce):
-        matrix_calc = _m.Modeller().tool(
-            'inro.emme.matrix_calculation.matrix_calculator')
-        # Calculate PCEs for trucks
-        mat_trucks = ['TRKHGP', 'TRKHTOLL', 'TRKLGP', 'TRKLTOLL', 'TRKMGP', 'TRKMTOLL']
-        if convert_truck_to_pce:
-            pce_values = [2.5, 2.5, 1.3, 1.3, 1.5, 1.5]
-        else:
-            pce_values = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-        for name, pce in zip(mat_trucks, pce_values):
-            demand_name = "%s_%s" % (period, name)
-            mat_spec = {
-                "expression": '(mf"%s" * %s).max.0' % (demand_name, pce), 
-                "result": 'mf"%s"' % demand_name,
-                "type": "MATRIX_CALCULATION"
-            }
-            matrix_calc(mat_spec, scenario)
-
-    @_m.logbook_trace('Split input auto demand into VOT classes, assume 1/3 each')
-    def split_auto_vots(self, scenario, period):
-        matrix_calc = _m.Modeller().tool(
-            'inro.emme.matrix_calculation.matrix_calculator')
-        # SRX_GP and SRX_HOV summed into the same class of demand
-        mat_spec = {
-            "expression": '(%s_HOV2GPL + %s_HOV2HOVL)' % (period, period), 
-            "result": 'mf"%s_HOV2HOVL"' % period,
-            "type": "MATRIX_CALCULATION"
-        }
-        matrix_calc(mat_spec, scenario)
-        mat_spec = {
-            "expression": '(%s_HOV3GPL + %s_HOV3HOVL)' % (period, period), 
-            "result": 'mf"%s_HOV3HOVL"' % period,
-            "type": "MATRIX_CALCULATION"
-        }
-        matrix_calc(mat_spec, scenario)
-        
-        traffic_names = [
-            "SOVGP", "SOVTOLL", "HOV2HOV", "HOV2TOLL", "HOV3HOV", "HOV3TOLL"]
-        for name in traffic_names:
-            for vot in ["H", "M", "L"]:
-                demand_name = "%s_%s%s" % (period, name, vot)
-                mat_spec = {
-                    "expression": '(mf%s_%sL / 3.0)' % (period, name), 
-                    "result": 'mf"%s"' % demand_name,
-                    "type": "MATRIX_CALCULATION"
-                }
-                matrix_calc(mat_spec, scenario)
