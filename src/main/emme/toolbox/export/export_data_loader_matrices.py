@@ -27,16 +27,7 @@
 #       ../report/eetrip.csv
 #       ../report/eitrip.csv
 #   OMX format files 
-#        commVehTODTrips
-#        implocl_ppo, impprem_ppo
-#        impdan_pp, 
-#        impdat_pp
-#        imps2nh_pp
-#        imps2th_pp
-#        imps3nh_pp
-#        imps3th_pp
-#        imphhdn_pp
-#        imphhdt_pp
+#        trip_pp.omx
 #
 #
 # Script example:
@@ -84,7 +75,6 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
     def __init__(self):
         project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
         self.output_dir = os.path.join(os.path.dirname(project_dir), "output")
-        self.source = _join(_dir(project_dir), "input")
         self.base_scenario_id = 100
         self.transit_scenario_id = 100
         self.periods = ["EA", "AM", "MD", "PM", "EV"]
@@ -137,23 +127,9 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
         self.base_scenario = base_scenario
         self.transit_scenario = transit_scenario
 
-        #self.commercial_vehicle_demand()
         self.truck_demand()
         self.external_demand()
-        #self.transit_skims()
-        #self.traffic_skims()
-
-    @_m.logbook_trace("Export commercial vehicle demand")
-    def commercial_vehicle_demand(self):
-        omx_file = os.path.join(self.output_dir, "commVehTODTrips")
-        name_mapping = [("Trips", "COMMVEH"), ("NonToll", "COMVEHGP"), ("Toll", "COMVEHTOLL")]
-        matrices = OrderedDict()
-        for period in self.periods:
-            for key, name in name_mapping:
-                matrices[period + " " + key] = (period + "_" + name)
-        matrices["OD Trips"] = "COMMVEH_TOTAL_DEMAND"
-        with gen_utils.ExportOMX(omx_file, self.base_scenario) as exporter:
-            exporter.write_matrices(matrices)
+        self.total_demand()
 
     @_m.logbook_trace("Export truck demand")
     def truck_demand(self):
@@ -171,58 +147,52 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
         formater = lambda x: ("%.5f" % x).rstrip('0').rstrip(".")
         truck_trip_path = os.path.join(os.path.dirname(self.output_dir), "report", "trucktrip.csv")
         
-	#get auto operating cost	
+        # get auto operating cost	
         load_properties = _m.Modeller().tool('sandag.utilities.properties')
-        props = load_properties(_join(_dir(self.source), "conf", "sandag_abm.properties"))
+        props = load_properties(_join(_dir(self.output_dir), "conf", "sandag_abm.properties"))
         try:
             aoc = float(props["aoc.fuel"]) + float(props["aoc.maintenance"])
         except ValueError:
             raise Exception("Error during float conversion for aoc.fuel or aoc.maintenance from sandag_abm.properties file")		
-		
+
         with open(truck_trip_path, 'w') as f:
-            #f.write("ORIG,DEST,TOD,CLASS,TRIPS\n")
-	    f.write("OTAZ,DTAZ,TOD,MODE,TRIPS,TIME,DIST,AOC,TOLLCOST\n")
+            f.write("OTAZ,DTAZ,TOD,MODE,TRIPS,TIME,DIST,AOC,TOLLCOST\n")
             for period in self.periods:
-                #omx_file = os.path.join(self.output_dir, "Trip_" + period)
                 for key, name, pce in name_mapping:
                     matrix_data = emmebank.matrix(period + "_" + name + "_VEH").get_data(scenario)
                     matrix_data_time = emmebank.matrix(period + "_" + name + "_TIME").get_data(scenario)
                     matrix_data_dist = emmebank.matrix(period + "_" + name + "_DIST").get_data(scenario)
                     if "TOLL" in name:
                         matrix_data_tollcost = emmebank.matrix(period + "_" + name + "_TOLLCOST").get_data(scenario)
-                    #array = matrix_data.to_numpy()
-                    #matrix_data.from_numpy(array)
-                    #exporter.write_array(array, key)
                     for orig in zones:
                         for dest in zones:
                             value = matrix_data.get(orig, dest)
                             if value == 0: 
-                                continue							
+                                continue
                             time = matrix_data_time.get(orig, dest)
                             distance = matrix_data_dist.get(orig, dest)
                             tollcost = 0
                             if "TOLL" in name:
                                 tollcost = matrix_data_tollcost.get(orig, dest)
-                            od_aoc=distance * aoc
-
+                            od_aoc = distance * aoc
                             f.write(",".join([str(orig), str(dest), period, key, formater(value), formater(time), formater(distance), formater(od_aoc), formater(tollcost)]))
                             f.write("\n")
 
     def external_demand(self):
         #get auto operating cost
         load_properties = _m.Modeller().tool('sandag.utilities.properties')
-        props = load_properties(_join(_dir(self.source), "conf", "sandag_abm.properties"))
+        props = load_properties(_join(_dir(self.output_dir), "conf", "sandag_abm.properties"))
         try:
-                aoc = float(props["aoc.fuel"]) + float(props["aoc.maintenance"])
+            aoc = float(props["aoc.fuel"]) + float(props["aoc.maintenance"])
         except ValueError:
-                raise Exception("Error during float conversion for aoc.fuel or aoc.maintenance from sandag_abm.properties file")	
+            raise Exception("Error during float conversion for aoc.fuel or aoc.maintenance from sandag_abm.properties file")	
 
-	#EXTERNAL_EXTERNAL TRIP TABLE (toll-eligible)
+        # EXTERNAL-EXTERNAL TRIP TABLE (toll-eligible)
         name_mapping = [
             ("DA", "SOV"),
             ("S2", "HOV2"),
             ("S3", "HOV3"),
-        ]	
+        ]
         scenario = self.base_scenario
         emmebank = scenario.emmebank
         zones = scenario.zone_numbers	
@@ -241,22 +211,18 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                             for dest in zones:
                                 value = matrix_data.get(orig, dest)
                                 if value == 0: 
-                                    continue								
+                                    continue
                                 time = matrix_data_time.get(orig, dest)
                                 distance = matrix_data_dist.get(orig, dest)
                                 tollcost = 0
                                 tollcost = matrix_data_tollcost.get(orig, dest)
-				od_aoc=distance * aoc
-				
-                                f.write(",".join([str(orig), str(dest), period, key, formater(value), formater(time), formater(distance), formater(od_aoc), formater(tollcost)]))
-                                f.write("\n")								
-                                                            
-        #with _m.logbook_trace("Export external-external demand"):
-        #    omx_file = os.path.join(self.output_dir, "externalExternalTrips")
-        #    with gen_utils.ExportOMX(omx_file, self.base_scenario) as exporter:
-        #        exporter.write_matrices({"Trips": "ALL_TOTAL_EETRIPS"})
+                                od_aoc = distance * aoc
+                                f.write(",".join(
+                                    [str(orig), str(dest), period, key, formater(value), formater(time), 
+                                     formater(distance), formater(od_aoc), formater(tollcost)]))
+                                f.write("\n")
 
-        #EXTERNAL_INTERNAL TRIP TABLE				
+        # EXTERNAL-INTERNAL TRIP TABLE				
         name_mapping = [
                 ("DAN", "SOVGP"),
                 ("DAT", "SOVTOLL"),
@@ -266,7 +232,7 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                 ("S3T", "HOV3TOLL"),
         ]
         ei_trip_path = os.path.join(os.path.dirname(self.output_dir), "report", "eitrip.csv")
-				
+
         with _m.logbook_trace("Export external-internal demand"):
             with open(ei_trip_path, 'w') as f:
                 f.write("OTAZ,DTAZ,TOD,MODE,PURPOSE,TRIPS,TIME,DIST,AOC,TOLLCOST\n")
@@ -288,176 +254,45 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                                     tollcost = 0
                                     if "TOLL" in name:
                                         tollcost = matrix_data_tollcost.get(orig, dest)                                        
-				    od_aoc=distance * aoc
-
-                                    f.write(",".join([str(orig), str(dest), period, key, purpose, formater(value), formater(time), formater(distance), formater(od_aoc), formater(tollcost)]))
+                                    od_aoc = distance * aoc
+                                    f.write(",".join(
+                                        [str(orig), str(dest), period, key, purpose, formater(value), formater(time), 
+                                         formater(distance), formater(od_aoc), formater(tollcost)]))
                                     f.write("\n")
-				
-        #with _m.logbook_trace("Export external-internal demand"):
-        #    for file_name, purpose in [("Wrk", "EIWORK"), ("Non", "EINONWORK")]:
-        #        for period in self.periods:
-        #            omx_file = os.path.join(self.output_dir, "usSd" + file_name + "_" + period)
-        #            name_mapping = [
-        #                ("DAN", "SOVGP"),
-        #                ("DAT", "SOVTOLL"),
-        #                ("S2N", "HOV2HOV"),
-        #                ("S2T", "HOV2TOLL"),
-        #                ("S3N", "HOV3HOV"),
-        #                ("S3T", "HOV3TOLL"),
-        #            ]
-        #            matrices = OrderedDict()
-        #            for key, name in name_mapping:
-        #                matrices[key] = (period + "_" + name + "_" + purpose)
-        #            with gen_utils.ExportOMX(omx_file, self.base_scenario) as exporter:
-        #                exporter.write_matrices(matrices)
 
-    @_m.logbook_trace("Export transit skims")
-    def transit_skims(self):
-        name_mapping = [
-            ("Walk Time", "_BUS_TOTALWALK"),
-            ("Initial Wait Time", "_BUS_FIRSTWAIT"),
-            ("Transfer Wait Time", "_BUS_XFERWAIT"),
-            ("Fare", "_BUS_FARE"),
-            ("Number of Transfers", "_BUS_XFERS"),
-        ]
-        transit_emmebank = self.transit_scenario.emmebank
+    @_m.logbook_trace("Export total auto and truck demand to OMX")
+    def total_demand(self):
         for period in self.periods:
-            get_numpy_data = lambda name: transit_emmebank.matrix(period + name).get_numpy_data(self.transit_scenario)
-            omx_file = os.path.join(self.output_dir, "implocl_" + period + "o")
-            with gen_utils.ExportOMX(omx_file, self.transit_scenario) as exporter:
-                # cap  matrices to 999.99
-                for key, matrix_name in name_mapping:
-                    numpy_array = get_numpy_data(matrix_name)
-                    exporter.write_clipped_array(numpy_array, key, 0, 999.99)
-                ivtt = get_numpy_data("_BUS_TOTALIVTT")
-                dwell = get_numpy_data("_BUS_DWELLTIME")
-                exporter.write_clipped_array(ivtt+dwell, "Total IV Time", 0, 999.99)
-
-        name_mapping = [
-            ("Walk Time", "_ALL_TOTALWALK"),
-            ("Initial Wait Time", "_ALL_FIRSTWAIT"),
-            ("Transfer Wait Time", "_ALL_XFERWAIT"),
-            ("Fare", "_ALL_FARE"),
-            ("Number of Transfers", "_ALL_XFERS"),
-            ("Length:LB", "_ALL_BUSDIST"),
-            ("Length:LR", "_ALL_LRTDIST"),
-            ("Length:CR", "_ALL_CMRDIST"),
-            ("Length:EXP", "_ALL_EXPDIST"),
-            ("Length:BRT", "_ALL_BRTDIST"),
-        ]
-        for period in self.periods:
-            get_numpy_data = lambda name: transit_emmebank.matrix(period + name).get_numpy_data(self.transit_scenario)
-
-            bus_ivtt = get_numpy_data("_ALL_BUSIVTT")
-            brtred_ivtt = get_numpy_data("_ALL_BRTREDIVTT")
-            brtyel_ivtt = get_numpy_data("_ALL_BRTYELIVTT")
-            exp_ivtt = get_numpy_data("_ALL_EXPIVTT")
-            ltdexp_ivtt = get_numpy_data("_ALL_LTDEXPIVTT")
-            lrt_ivtt = get_numpy_data("_ALL_LRTIVTT")
-            cmr_ivtt = get_numpy_data("_ALL_CMRIVTT")
-            dwell_time = get_numpy_data("_ALL_DWELLTIME")
-            total_ivtt = get_numpy_data("_ALL_TOTALIVTT")
-
-            # Note: this is an approximation, the true dwell time could be skimmed directly                
-            sum_ivtt_dwell_modes = bus_ivtt + brtred_ivtt + brtyel_ivtt + exp_ivtt + ltdexp_ivtt
-            bus_ivtt = bus_ivtt * (1.0 + dwell_time / sum_ivtt_dwell_modes)
-            brtred_ivtt = brtred_ivtt * (1.0 + dwell_time / sum_ivtt_dwell_modes)
-            brtyel_ivtt = brtyel_ivtt * (1.0 + dwell_time / sum_ivtt_dwell_modes)
-            exp_ivtt = exp_ivtt * (1.0 + dwell_time / sum_ivtt_dwell_modes)
-            ltdexp_ivtt = ltdexp_ivtt * (1.0 + dwell_time / sum_ivtt_dwell_modes)
-
-            # Assign main mode of travel by IVTT
-            main_mode_matrix = transit_emmebank.matrix(period + "_ALL_MAINMODE")
-            main_mode_matrix.initialize(0)
-            main_mode = get_numpy_data("_ALL_MAINMODE")
-            max_non_exp_time = lrt_ivtt
-            for a2 in [cmr_ivtt, bus_ivtt, brtred_ivtt, brtyel_ivtt]:
-                max_non_exp_time = numpy.maximum(max_non_exp_time, a2)
-            prem_bus_ivtt = exp_ivtt + ltdexp_ivtt
-            main_mode = numpy.where((main_mode==0) & ((bus_ivtt>0.5*total_ivtt) ), 8, main_mode)
-            main_mode = numpy.where((main_mode==0) & ((exp_ivtt + ltdexp_ivtt)>max_non_exp_time), 7, main_mode)
-            main_mode = numpy.where((main_mode==0) & (lrt_ivtt>cmr_ivtt), 5, main_mode)
-            main_mode = numpy.where((main_mode==0), 4, main_mode)
-            main_mode = main_mode * ((total_ivtt>=0) & (total_ivtt<1000))
-            main_mode_matrix.set_numpy_data(main_mode, self.transit_scenario)
-
-            omx_file = os.path.join(self.output_dir, "impprem_" + period + "o")
-            with gen_utils.ExportOMX(omx_file, self.transit_scenario) as exporter:
-                # cap  matrices to 999.99 - TODO: double check which matrices are required
-                for key, matrix_name in name_mapping:
-                    numpy_array = get_numpy_data(matrix_name)
-                    exporter.write_clipped_array(numpy_array, key, 0, 999.99)
-                exporter.write_clipped_array(total_ivtt+dwell_time, "IVT:Sum", 0, 999.99)
-                exporter.write_clipped_array(bus_ivtt, "IVT:LB", 0, 999.99)
-                exporter.write_clipped_array(lrt_ivtt, "IVT:LR", 0, 999.99)
-                exporter.write_clipped_array(cmr_ivtt, "IVT:CR", 0, 999.99)
-                exporter.write_clipped_array(prem_bus_ivtt, "IVT:EXP", 0, 999.99)
-                exporter.write_clipped_array(brtred_ivtt+brtred_ivtt, "IVT:BRT", 0, 999.99)
-                exporter.write_array(main_mode, "Main Mode")
-                        
-    @_m.logbook_trace("Export traffic skims")
-    def traffic_skims(self):
-        emmebank = self.base_scenario.emmebank
-        get_numpy_data = lambda name: emmebank.matrix(name).get_numpy_data(self.base_scenario)
-        name_mapping = [
-            ("dan", "SOVGP", [
-                ("*SCST_{0}",           "GENCOST"),
-                ("*STM_{0} (Skim)",     "TIME"),
-                ("Length (Skim)",       "DIST")
-            ]),
-            ("dat", "SOVTOLL", [
-                ("*SCST_{0}",           "GENCOST"),
-                ("*STM_{0} (Skim)",     "TIME"),
-                ("Length (Skim)",       "DIST"),
-                ("dat_{0} - itoll_{0}", "TOLLCOST"),
-            ]),
-            ("s2nh", "HOV2HOV", [
-                ("*H2CST_{0}",          "GENCOST"),
-                ("*HTM_{0} (Skim)",     "TIME"),
-                ("Length (Skim)",       "DIST"),
-            ]),
-            ("s2th", "HOV2TOLL", [
-                ("*H2CST_{0}",          "GENCOST"),
-                ("*HTM_{0} (Skim)",     "TIME"),
-                ("Length (Skim)",       "DIST"),
-                ("s2t_{0} - itoll_{0}", "TOLLCOST"),
-            ]),
-            ("s3nh", "HOV3HOV", [
-                ("*H3CST_{0}",          "GENCOST"),
-                ("*HTM_{0} (Skim)",     "TIME"),
-                ("Length (Skim)",       "DIST"),
-            ]),
-            ("s3th", "HOV3TOLL", [
-                ("*H3CST_{0}",          "GENCOST"),
-                ("*HTM_{0} (Skim)",     "TIME"),
-                ("Length (Skim)",       "DIST"),
-                ("s3t_{0} - itoll_{0}", "TOLLCOST"),
-            ]),
-            ("hhdn", "TRKHGP", [
-                ("*SCST_{0}",           "GENCOST"),
-                ("*STM_{0} (Skim)",     "TIME"),
-                ("Length (Skim)",       "DIST")
-            ]),
-            ("hhdt", "TRKHTOLL", [
-                ("*SCST_{0}",           "GENCOST"),
-                ("*STM_{0} (Skim)",     "TIME"),
-                ("Length (Skim)",       "DIST"),
-                ("hhdt - ITOLL2_{0}",   "TOLLCOST"),
-            ]),
-        ]
-        for period in self.periods:
-            for file_name, mode, mat_mapping in name_mapping:
-                omx_file = os.path.join(self.output_dir, "imp" + file_name + "_" + period)
-                matrices = OrderedDict()
-                for key, skim in mat_mapping:
-                    if "{0}" in key:
-                        key = key.format(period)
-                    matrices[key] = (period + "_" + mode + "_" + skim)
-                with gen_utils.ExportOMX(omx_file, self.base_scenario) as exporter:
-                    # filter out diagonal -99999999.0 values from GENCOST and TOLLCOST
-                    for key, matrix in matrices.iteritems():
-                        numpy_array = get_numpy_data(matrix)
-                        exporter.write_clipped_array(numpy_array, key, 0)
+            matrices = {
+                '%s_SOVGPL':     'mf"%s_SOVGPL"',
+                '%s_SOVTOLLL':   'mf"%s_SOVTOLLL"',
+                '%s_HOV2HOVL':   'mf"%s_HOV2HOVL"',
+                '%s_HOV2TOLLL':  'mf"%s_HOV2TOLLL"',
+                '%s_HOV3HOVL':   'mf"%s_HOV3HOVL"',
+                '%s_HOV3TOLLL':  'mf"%s_HOV3TOLLL"',
+                '%s_SOVGPM':     'mf"%s_SOVGPM"',
+                '%s_SOVTOLLM':   'mf"%s_SOVTOLLM"',
+                '%s_HOV2HOVM':   'mf"%s_HOV2HOVM"',
+                '%s_HOV2TOLLM':  'mf"%s_HOV2TOLLM"',
+                '%s_HOV3HOVM':   'mf"%s_HOV3HOVM"',
+                '%s_HOV3TOLLM':  'mf"%s_HOV3TOLLM"',
+                '%s_SOVGPH':     'mf"%s_SOVGPH"',
+                '%s_SOVTOLLH':   'mf"%s_SOVTOLLH"',
+                '%s_HOV2HOVH':   'mf"%s_HOV2HOVH"',
+                '%s_HOV2TOLLH':  'mf"%s_HOV2TOLLH"',
+                '%s_HOV3HOVH':   'mf"%s_HOV3HOVH"',
+                '%s_HOV3TOLLH':  'mf"%s_HOV3TOLLH"',
+                '%s_TRKHGP':     'mf"%s_TRKHGP"',
+                '%s_TRKHTOLL':   'mf"%s_TRKHTOLL"',
+                '%s_TRKLGP':     'mf"%s_TRKLGP"',
+                '%s_TRKLTOLL':   'mf"%s_TRKLTOLL"',
+                '%s_TRKMGP':     'mf"%s_TRKMGP"',
+                '%s_TRKMTOLL':   'mf"%s_TRKMTOLL"'
+            }
+            matrices = dict((k % period, v % period) for k, v in matrices.iteritems())
+            omx_file = os.path.join(self.output_dir, "trip_%s.omx" % period)
+            with gen_utils.ExportOMX(omx_file, self.base_scenario) as exporter:
+                exporter.write_matrices(matrices)
 
     @_m.method(return_type=unicode)
     def tool_run_msg_status(self):
