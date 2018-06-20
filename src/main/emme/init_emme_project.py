@@ -60,7 +60,7 @@ def init_emme_project(root, title):
     emmebank.unit_of_energy = "MJ"
     emmebank.node_number_digits = 6
     emmebank.use_engineering_notation = True
-    scenario = emmebank.create_scenario(1)
+    scenario = emmebank.create_scenario(100)
     scenario.title = "Empty scenario"
     emmebank.dispose()
 
