@@ -44,7 +44,7 @@
     transit_components = ["transit_demand", "transit_skims"]
     base_scenario = main_emmebank.scenario(100)
     transit_scenario = transit_emmebank.scenario(100)
-    initialize_matrices = modeller.tool("sandag.model.initialize.initialize_matrices")
+    initialize_matrices = modeller.tool("sandag.initialize.initialize_matrices")
     # Create / initialize matrices in the base, traffic emmebank
     initialize_matrices(traffic_components, periods, base_scenario)
     # Create / initialize matrices in the transit emmebank

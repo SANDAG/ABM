@@ -53,7 +53,7 @@
     external_zones = "1-12"
     num_processors = "MAX-1"
     base_scenario = modeller.scenario
-    import_auto_demand = modeller.tool("sandag.model.import.import_auto_demand")
+    import_auto_demand = modeller.tool("sandag.import.import_auto_demand")
     import_auto_demand(external_zones, output_dir, num_processors, base_scenario)
 """
 

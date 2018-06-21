@@ -46,7 +46,7 @@
     demand_type = "TRUCK"
     demand_as_pce = True
     base_scenario = modeller.scenario
-    import_seed_demand = modeller.tool("sandag.model.import.import_seed_demand")
+    import_seed_demand = modeller.tool("sandag.import.import_seed_demand")
     import_seed_demand(input_omx_file, demand_type, period, demand_as_pce, base_scenario)
 """
 

@@ -33,7 +33,7 @@
     main_directory = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
     output_dir = os.path.join(main_directory, "output")
     scenario = modeller.scenario
-    export_transit_skims = modeller.tool("sandag.model.import.export_transit_skims")
+    export_transit_skims = modeller.tool("sandag.import.export_transit_skims")
     omx_file_path = os.path.join(output_dir, "transit_skims.omx"
     export_transit_skims(output_dir, period, scenario)
 """

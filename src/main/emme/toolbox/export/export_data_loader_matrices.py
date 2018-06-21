@@ -41,7 +41,7 @@
     output_dir = os.path.join(main_directory, "output")
     num_processors = "MAX-1"
     export_data_loader_matrices = modeller.tool(
-        "sandag.model.export.export_data_loader_matrices")
+        "sandag.export.export_data_loader_matrices")
     export_data_loader_matrices(output_dir, 100, main_emmebank, transit_emmebank, num_processors)
 """
 TOOLBOX_ORDER = 74

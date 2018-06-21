@@ -37,7 +37,7 @@
     main_directory = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
     main_emmebank = _eb.Emmebank(os.path.join(main_directory, "emme_project", "Database", "emmebank"))
     base_scenario = main_emmebank.scenario(100)
-    initialize_transit_db = modeller.tool("sandag.model.initialize.initialize_transit_database")
+    initialize_transit_db = modeller.tool("sandag.initialize.initialize_transit_database")
     initialize_transit_db(base_scenario)
 """
 TOOLBOX_ORDER = 8

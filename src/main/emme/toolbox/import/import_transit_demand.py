@@ -43,7 +43,7 @@
     main_directory = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
     output_dir = os.path.join(main_directory, "output")
     scenario = modeller.scenario
-    import_transit_demand = modeller.tool("sandag.model.import.import_transit_demand")
+    import_transit_demand = modeller.tool("sandag.import.import_transit_demand")
     import_transit_demand(output_dir, scenario)
 """
 

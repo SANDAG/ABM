@@ -31,7 +31,7 @@
     output_dir = os.path.join(main_directory, "output")
     scenario = modeller.scenario
     periods = ["EA", "AM", "MD", "PM", "EV"]
-    export_traffic_skims = modeller.tool("sandag.model.import.export_traffic_skims")
+    export_traffic_skims = modeller.tool("sandag.import.export_traffic_skims")
     for period in periods:
         omx_file_path = os.path.join(output_dir, "traffic_skims_%s.omx" % period
         export_traffic_skims(output_dir, period, scenario)
