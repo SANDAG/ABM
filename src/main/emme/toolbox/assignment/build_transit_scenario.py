@@ -207,7 +207,10 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                     bus_fares[fare] = bus_fares.get(fare, 0) + count
             # set nominal bus fare as unweighted average of two most frequent fares
             bus_fares = sorted(bus_fares.items(), key=lambda x: x[1], reverse=True)
-            bus_fare = (bus_fares[0][0] + bus_fares[1][0]) / 2
+            if len(bus_fares) >= 2:
+                bus_fare = (bus_fares[0][0] + bus_fares[1][0]) / 2
+            else:  # unless there is only one fare value, in which case use that one
+                bus_fare = bus_fares[0][0]
             # find max premium mode fare
             premium_fare = 0
             for mode_id, fares in mode_groups["premium"]:
