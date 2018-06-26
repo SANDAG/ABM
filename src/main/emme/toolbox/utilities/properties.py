@@ -218,6 +218,7 @@ class PropertiesSetter(object):
         var tool = new inro.modeller.util.Proxy(%(tool_proxy_tag)s) ;
 
         var iter_names = %(iter_items)s;
+        var startup_names = %(startup_items)s;
 
         for (var j = 1; j <= 3; j++){
             var number = j.toString();
@@ -244,10 +245,23 @@ class PropertiesSetter(object):
                 for (var i = 0; i < iter_names.length; i++) { 
                     $("#" + iter_names[i] + "_" + j.toString()).prop('disabled', false);
             }
+            if (iter > 1) {
+                for (var i = 0; i < startup_names.length; i++) { 
+                    $("#" + startup_names[i]).prop('disabled', true);
+                }
+            }
+            else {
+                for (var i = 0; i < startup_names.length; i++) { 
+                    $("#" + startup_names[i]).prop('disabled', false);
+                }
+            }
+
         }).trigger('change');
    });
 </script>""" % {"tool_proxy_tag": tool_proxy_tag, 
-                "iter_items": str([x[0] for x in skip_per_iteration_items])})
+                "iter_items": str([x[0] for x in skip_per_iteration_items]),
+                "startup_items": str([x[0] for x in skip_startup_items]),
+                })
         return
 
     @_m.method(return_type=bool, argument_types=(str,))

@@ -309,60 +309,61 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             self.check_for_fatal(_join(main_directory, "logFiles", "AtTransitCheck_event.log"), 
                 "AT and Transit network consistency checking failed! Open AtTransitCheck_event.log for details.")
 
-            if not skipWalkLogsums:
-                self.run_proc("runSandagWalkLogsums.cmd", [drive, path_forward_slash],
-                    "Walk - create AT logsums and impedances")
-            if not skipCopyWalkImpedance:
-                self.copy_files(["walkMgraEquivMinutes.csv", "walkMgraTapEquivMinutes.csv"], 
-                                input_dir, output_dir)
-            if not skipBikeLogsums:
-                self.run_proc("runSandagBikeLogsums.cmd",  [drive, path_forward_slash], 
-                    "Bike - create AT logsums and impedances")
-            if not skipCopyBikeLogsum:
-                self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], input_dir, output_dir)
+            if startFromIteration == 1:  # only run the setup / init steps if starting from iteration 1
+                if not skipWalkLogsums:
+                    self.run_proc("runSandagWalkLogsums.cmd", [drive, path_forward_slash],
+                        "Walk - create AT logsums and impedances")
+                if not skipCopyWalkImpedance:
+                    self.copy_files(["walkMgraEquivMinutes.csv", "walkMgraTapEquivMinutes.csv"], 
+                                    input_dir, output_dir)
+                if not skipBikeLogsums:
+                    self.run_proc("runSandagBikeLogsums.cmd",  [drive, path_forward_slash], 
+                        "Bike - create AT logsums and impedances")
+                if not skipCopyBikeLogsum:
+                    self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], input_dir, output_dir)
 
-            if not skipBuildNetwork:
-                base_scenario = import_network(
-                    source=input_dir,
-                    merged_scenario_id=scenario_id, 
-                    title=scenario_title,
-                    data_table_name=scenarioYear,
-                    overwrite=True,
-                    emmebank=main_emmebank)
-                export_tap_adjacent_lines(_join(output_dir, "tapLines.csv"), base_scenario)
-                # initialize per time-period scenarios
-                for number, period in period_ids:
-                    title = "%s - %s assign" % (base_scenario.title, period)
-                    copy_scenario(base_scenario, number, title, overwrite=True)
-            else:
-                base_scenario = main_emmebank.scenario(scenario_id)
+                if not skipBuildNetwork:
+                    base_scenario = import_network(
+                        source=input_dir,
+                        merged_scenario_id=scenario_id, 
+                        title=scenario_title,
+                        data_table_name=scenarioYear,
+                        overwrite=True,
+                        emmebank=main_emmebank)
+                    export_tap_adjacent_lines(_join(output_dir, "tapLines.csv"), base_scenario)
+                    # initialize per time-period scenarios
+                    for number, period in period_ids:
+                        title = "%s - %s assign" % (base_scenario.title, period)
+                        copy_scenario(base_scenario, number, title, overwrite=True)
+                else:
+                    base_scenario = main_emmebank.scenario(scenario_id)
 
-            if not skipInitialization:
-                # initialize traffic demand, skims, truck, CV, EI, EE matrices
-                traffic_components = [
-                    "traffic_skims",
-                    "truck_model", "commercial_vehicle_model",
-                    "external_internal_model", "external_external_model"]
+                if not skipInitialization:
+                    # initialize traffic demand, skims, truck, CV, EI, EE matrices
+                    traffic_components = [
+                        "traffic_skims",
+                        "truck_model", "commercial_vehicle_model",
+                        "external_internal_model", "external_external_model"]
+                    if not skipCopyWarmupTripTables:
+                        traffic_components.append("traffic_demand")
+                    init_matrices(traffic_components, periods, base_scenario, deleteAllMatrices)
+
+                    transit_scenario = init_transit_db(base_scenario)
+                    transit_emmebank = transit_scenario.emmebank
+                    transit_components = ["transit_skims"]
+                    if not skipCopyWarmupTripTables:
+                        transit_components.append("transit_demand")
+                    init_matrices(transit_components, periods, transit_scenario, deleteAllMatrices)
+                else:
+                    transit_emmebank = _eb.Emmebank(_join(main_directory, "emme_project", "Database_transit", "emmebank"))
+                    transit_scenario = transit_emmebank.scenario(base_scenario.number)
+
                 if not skipCopyWarmupTripTables:
-                    traffic_components.append("traffic_demand")
-                init_matrices(traffic_components, periods, base_scenario, deleteAllMatrices)
-
-                transit_scenario = init_transit_db(base_scenario)
-                transit_emmebank = transit_scenario.emmebank
-                transit_components = ["transit_skims"]
-                if not skipCopyWarmupTripTables:
-                    transit_components.append("transit_demand")
-                init_matrices(transit_components, periods, transit_scenario, deleteAllMatrices)
-            else:
-                transit_emmebank = _eb.Emmebank(_join(main_directory, "emme_project", "Database_transit", "emmebank"))
-                transit_scenario = transit_emmebank.scenario(base_scenario.number)
-
-            if not skipCopyWarmupTripTables:
-                # import seed auto demand and seed truck demand
-                for period in periods:
-                    omx_file = _join(input_dir, "trip_%s.omx" % period)
-                    import_demand(omx_file, "AUTO", period, base_scenario)
-                    import_demand(omx_file, "TRUCK", period, base_scenario)
+                    # import seed auto demand and seed truck demand
+                    for period in periods:
+                        omx_file = _join(input_dir, "trip_%s.omx" % period)
+                        import_demand(omx_file, "AUTO", period, base_scenario)
+                        import_demand(omx_file, "TRUCK", period, base_scenario)
 
         # Note: iteration indexes from 0, msa_iteration indexes from 1
         for iteration in range(startFromIteration - 1, end_iteration):
