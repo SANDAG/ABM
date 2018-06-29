@@ -1,0 +1,1652 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="3/9/2018 10:17:50 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="SOCIOECA8"
+  DTS:CreatorName="SANDAGNET\gsc"
+  DTS:DTSID="{38C3FA4C-6C9C-4C3C-A5CE-ED64CFE1913F}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:FailParentOnFailure="True"
+  DTS:LastModifiedProductVersion="14.0.3002.68"
+  DTS:LocaleID="1033"
+  DTS:MaxErrorCount="0"
+  DTS:ObjectName="abm_2_bike"
+  DTS:PackageType="5"
+  DTS:VersionBuild="41"
+  DTS:VersionGUID="{4037F840-BEC5-4A91-AFC6-B20C827EEE72}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[SANDAG_Bike_Net]"
+      DTS:CreationName="FLATFILE"
+      DTS:Description="input\SANDAG_Bike_Net"
+      DTS:DTSID="{5FFE1154-B3D6-4FFA-BBF8-E729DDB721D9}"
+      DTS:ObjectName="SANDAG_Bike_Net">
+      <DTS:PropertyExpression
+        DTS:Name="ConnectionString">@[$Package::scenario_filepath] + "\\input\\SANDAG_Bike_Net.csv"</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:Format="Delimited"
+          DTS:LocaleID="1033"
+          DTS:HeaderRowDelimiter="_x000D__x000A_"
+          DTS:ColumnNamesInFirstDataRow="True"
+          DTS:RowDelimiter=""
+          DTS:TextQualifier="_x003C_none_x003E_"
+          DTS:CodePage="1252"
+          DTS:ConnectionString="\input\SANDAG_Bike_Net.csv">
+          <DTS:FlatFileColumns>
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="3"
+              DTS:TextQualified="True"
+              DTS:ObjectName="ROADSEGID"
+              DTS:DTSID="{3510A15D-7116-4D93-9BAD-F63593F7152B}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="130"
+              DTS:TextQualified="True"
+              DTS:ObjectName="RD20FULL"
+              DTS:DTSID="{88F53267-E1E8-4C3C-AACE-22E141B7F0C0}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="3"
+              DTS:TextQualified="True"
+              DTS:ObjectName="A"
+              DTS:DTSID="{3BFCC5E6-BD49-4725-AC70-2F447872EB4B}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="3"
+              DTS:TextQualified="True"
+              DTS:ObjectName="B"
+              DTS:DTSID="{75E3FDAC-0E03-42D4-A9F7-510C0B44AFAD}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="4"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Distance"
+              DTS:DTSID="{583D8503-8587-4C56-B71E-33E869252526}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="2"
+              DTS:TextQualified="True"
+              DTS:ObjectName="AB_Gain"
+              DTS:DTSID="{7062F366-A5F0-4FFA-BB31-213500B35168}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="2"
+              DTS:TextQualified="True"
+              DTS:ObjectName="BA_Gain"
+              DTS:DTSID="{4A550D6C-FA13-4F52-BE7D-E70518474066}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="16"
+              DTS:TextQualified="True"
+              DTS:ObjectName="ABBikeClas"
+              DTS:DTSID="{51E52093-9D00-4CFD-B628-F47568A0E1A6}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="16"
+              DTS:TextQualified="True"
+              DTS:ObjectName="BABikeClas"
+              DTS:DTSID="{F159E088-55C3-40CE-BCEB-D65FAC7F7AA8}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="16"
+              DTS:TextQualified="True"
+              DTS:ObjectName="AB_Lanes"
+              DTS:DTSID="{689815C5-9092-42D0-B15F-F72C39341BBF}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="16"
+              DTS:TextQualified="True"
+              DTS:ObjectName="BA_Lanes"
+              DTS:DTSID="{81A06357-1F1F-45BD-AD7A-16C477D2C18B}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="2"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Func_Class"
+              DTS:DTSID="{E347CA8E-2511-4B90-A303-74C4E256E76A}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="16"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Bike2Sep"
+              DTS:DTSID="{4B583787-B48E-45C2-8675-D6F462694044}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="16"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Bike3Blvd"
+              DTS:DTSID="{0ECF806E-E8C4-4009-AA4C-5741DF6F62FB}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="16"
+              DTS:TextQualified="True"
+              DTS:ObjectName="SPEED"
+              DTS:DTSID="{E819963E-8628-460B-99BE-0DFC3C0E4104}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="4"
+              DTS:TextQualified="True"
+              DTS:ObjectName="ScenicIdx"
+              DTS:DTSID="{A2554D7A-D3CE-4D59-A297-95C850A3B2AB}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x000D__x000A_"
+              DTS:DataType="302"
+              DTS:TextQualified="True"
+              DTS:ObjectName="geometry"
+              DTS:DTSID="{75ECFD64-73AF-4636-B7DA-6C67F8C30034}"
+              DTS:CreationName="" />
+          </DTS:FlatFileColumns>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[SANDAG_Bike_Node]"
+      DTS:CreationName="FLATFILE"
+      DTS:Description="input\SANDAG_Bike_Node"
+      DTS:DTSID="{01C0FADB-55F7-4AC1-8705-FE3BD5D63A8E}"
+      DTS:ObjectName="SANDAG_Bike_Node">
+      <DTS:PropertyExpression
+        DTS:Name="ConnectionString">@[$Package::scenario_filepath] + "\\input\\SANDAG_Bike_Node.csv"</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:Format="Delimited"
+          DTS:LocaleID="1033"
+          DTS:HeaderRowDelimiter="_x000D__x000A_"
+          DTS:ColumnNamesInFirstDataRow="True"
+          DTS:RowDelimiter=""
+          DTS:TextQualifier="_x003C_none_x003E_"
+          DTS:CodePage="1252"
+          DTS:ConnectionString="\input\SANDAG_Bike_Node.csv">
+          <DTS:FlatFileColumns>
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="3"
+              DTS:TextQualified="True"
+              DTS:ObjectName="NodeLev_ID"
+              DTS:DTSID="{1E31202C-ADE5-4A99-A9B5-8C1D0E5AF7C3}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x000D__x000A_"
+              DTS:DataType="16"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Signal"
+              DTS:DTSID="{535622DA-0E12-4937-9E76-B436686ADF39}"
+              DTS:CreationName="" />
+          </DTS:FlatFileColumns>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:PackageParameters>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:Description="iteration of the scenario"
+      DTS:DTSID="{BEBA9229-B013-4E57-A222-CB0FA422BC0E}"
+      DTS:ObjectName="iteration"
+      DTS:Required="True">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue"
+        xml:space="preserve"></DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:Description="file path of the scenario folder"
+      DTS:DTSID="{20B958EB-4CC6-457A-AB36-FE81E7CA690A}"
+      DTS:ObjectName="scenario_filepath"
+      DTS:Required="True">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue"
+        xml:space="preserve"></DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="3"
+      DTS:Description="database scenario_id of the scenario"
+      DTS:DTSID="{CCC0318B-4907-4CC8-9028-8796FCA38E73}"
+      DTS:ObjectName="scenario_id"
+      DTS:Required="True">
+      <DTS:Property
+        DTS:DataType="3"
+        DTS:Name="ParameterValue">0</DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:Description="year of the scenario"
+      DTS:DTSID="{5E4D13B9-B0EB-40B9-8A8D-13429D9132E2}"
+      DTS:ObjectName="year"
+      DTS:Required="True">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue"
+        xml:space="preserve"></DTS:Property>
+    </DTS:PackageParameter>
+  </DTS:PackageParameters>
+  <DTS:Variables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\bike_network_dimensions"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{C87EDC5F-51C5-41A6-897D-33CAB6744B55}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="bike_network_dimensions"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{15638D61-ABAF-4C44-938D-BC48B8A41948}"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON&#xA;DECLARE @scenario_id integer&#xA;SET @scenario_id = ?&#xA;BEGIN TRANSACTION bike_link_dimensions&#xA;&#xA;&#xA;-- [dimension].[bike_link]&#xA;INSERT INTO [dimension].[bike_link] (&#xA;[scenario_id], [bike_link_id], [roadsegid], [nm], [functional_class],&#xA;[bike2sep], [bike3blvd], [speed], [distance], [scenicldx], [shape])&#xA;SELECT&#xA;&#x9;@scenario_id AS [scenario_id]&#xA;&#x9;,ROW_NUMBER()OVER(ORDER BY [SANDAG_Bike_Net].[ROADSEGID]) AS [bike_link_id]&#xA;&#x9;,[SANDAG_Bike_Net].[ROADSEGID] AS [roadsegid]&#xA;&#x9;,[SANDAG_Bike_Net].[RD20FULL] AS [nm]&#xA;&#x9;,[SANDAG_Bike_Net_Func_Class].[description] AS [functional_class]&#xA;&#x9;,[SANDAG_Bike_Net].[Bike2Sep] AS [bike2sep]&#xA;&#x9;,[SANDAG_Bike_Net].[Bike3Blvd] AS [bike3blvd]&#xA;&#x9;,[SANDAG_Bike_Net].[SPEED] AS [speed]&#xA;&#x9;,[SANDAG_Bike_Net].[Distance] AS [distance]&#xA;&#x9;,[SANDAG_Bike_Net].[ScenicIdx] AS [scenicIdx]&#xA;&#x9;,geometry::STGeomFromText(REPLACE([SANDAG_Bike_Net].[geometry], '&quot;', ''), 2230) AS [shape]  -- hardcoded NAD83 CA State Plane VI SRID&#xA;FROM&#xA;&#x9;[staging].[SANDAG_Bike_Net]&#xA;LEFT OUTER JOIN -- throws insert error on unexpected value since column is not nullable&#xA;&#x9;[staging].[SANDAG_Bike_Net_Func_Class]&#xA;ON&#xA;&#x9;[SANDAG_Bike_Net].[Func_Class] = [SANDAG_Bike_Net_Func_Class].[Func_Class]&#xA;&#xA;&#xA;-- [dimension].[bike_link_ab]&#xA;INSERT INTO [dimension].[bike_link_ab] (&#xA;[scenario_id], [bike_link_ab_id], [bike_link_id], [roadsegid], [ab],&#xA;[from_node], [to_node], [gain], [bike_class], [lanes], [from_signal],&#xA;[to_signal])&#xA;SELECT&#xA;&#x9;@scenario_id AS [scenario_id]&#xA;&#x9;,ROW_NUMBER()OVER(ORDER BY [roadsegid], [ab] DESC) AS [bike_link_ab_id]&#xA;&#x9;,DENSE_RANK()OVER(ORDER BY [roadsegid]) AS [bike_link_id]&#xA;&#x9;,[roadsegid]&#xA;&#x9;,[ab]&#xA;&#x9;,[from_node]&#xA;&#x9;,[to_node]&#xA;&#x9;,[gain]&#xA;&#x9;,[bike_class]&#xA;&#x9;,[lanes]&#xA;&#x9;,[from_signal]&#xA;&#x9;,[to_signal]&#xA;FROM (&#xA;&#x9;SELECT&#xA;&#x9;&#x9;[SANDAG_Bike_Net].[ROADSEGID] AS [roadsegid]&#xA;&#x9;&#x9;,1 AS [ab]&#xA;&#x9;&#x9;,[SANDAG_Bike_Net].[A] AS [from_node]&#xA;&#x9;&#x9;,[SANDAG_Bike_Net].[B] AS [to_node]&#xA;&#x9;&#x9;,[SANDAG_Bike_Net].[AB_Gain] AS [gain]&#xA;&#x9;&#x9;,[SANDAG_Bike_Net_BikeClas].[description] AS [bike_class]&#xA;&#x9;&#x9;,[SANDAG_Bike_Net].[AB_Lanes] AS [lanes]&#xA;&#x9;&#x9;,[from_node_tbl].[Signal] AS [from_signal]&#xA;&#x9;&#x9;,[to_node_tbl].[Signal] AS [to_signal]&#xA;&#x9;FROM&#xA;&#x9;&#x9;[staging].[SANDAG_Bike_Net]&#xA;&#x9;LEFT OUTER JOIN -- throws insert error on unexpected value since column is not nullable&#xA;&#x9;&#x9;[staging].[SANDAG_Bike_Net_BikeClas]&#xA;&#x9;ON&#xA;&#x9;&#x9;[SANDAG_Bike_Net].[ABBikeClas] = [SANDAG_Bike_Net_BikeClas].[BikeClas]&#xA;&#x9;LEFT OUTER JOIN -- throws insert error on unexpected value since column is not nullable&#xA;&#x9;&#x9;[staging].[SANDAG_Bike_Node] AS [from_node_tbl]&#xA;&#x9;ON&#xA;&#x9;&#x9;[SANDAG_Bike_Net].[A] = [from_node_tbl].[NodeLev_ID]&#xA;&#x9;LEFT OUTER JOIN -- throws insert error on unexpected value since column is not nullable&#xA;&#x9;&#x9;[staging].[SANDAG_Bike_Node] AS [to_node_tbl]&#xA;&#x9;ON&#xA;&#x9;&#x9;[SANDAG_Bike_Net].[B] = [to_node_tbl].[NodeLev_ID]&#xA;&#x9;UNION ALL&#xA;&#x9;SELECT&#xA;&#x9;&#x9;[SANDAG_Bike_Net].[ROADSEGID] AS [roadsegid]&#xA;&#x9;&#x9;,0 AS [ab]&#xA;&#x9;&#x9;,[SANDAG_Bike_Net].[B] AS [from_node]&#xA;&#x9;&#x9;,[SANDAG_Bike_Net].[A] AS [to_node]&#xA;&#x9;&#x9;,[SANDAG_Bike_Net].[BA_Gain] AS [gain]&#xA;&#x9;&#x9;,[SANDAG_Bike_Net_BikeClas].[description] AS [bike_class]&#xA;&#x9;&#x9;,[SANDAG_Bike_Net].[BA_Lanes] AS [lanes]&#xA;&#x9;&#x9;,[from_node_tbl].[Signal] AS [from_signal]&#xA;&#x9;&#x9;,[to_node_tbl].[Signal] AS [to_signal]&#xA;&#x9;FROM&#xA;&#x9;&#x9;[staging].[SANDAG_Bike_Net]&#xA;&#x9;LEFT OUTER JOIN -- throws insert error on unexpected value since column is not nullable&#xA;&#x9;&#x9;[staging].[SANDAG_Bike_Net_BikeClas]&#xA;&#x9;ON&#xA;&#x9;&#x9;[SANDAG_Bike_Net].[ABBikeClas] = [SANDAG_Bike_Net_BikeClas].[BikeClas]&#xA;&#x9;LEFT OUTER JOIN -- throws insert error on unexpected value since column is not nullable&#xA;&#x9;&#x9;[staging].[SANDAG_Bike_Node] AS [from_node_tbl]&#xA;&#x9;ON&#xA;&#x9;&#x9;[SANDAG_Bike_Net].[B] = [from_node_tbl].[NodeLev_ID]&#xA;&#x9;LEFT OUTER JOIN -- throws insert error on unexpected value since column is not nullable&#xA;&#x9;&#x9;[staging].[SANDAG_Bike_Node] AS [to_node_tbl]&#xA;&#x9;ON&#xA;&#x9;&#x9;[SANDAG_Bike_Net].[A] = [to_node_tbl].[NodeLev_ID]) AS [staging_bike_link_ab]&#xA;&#xA;&#xA;COMMIT TRANSACTION bike_link_dimensions" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="$Package::scenario_id"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="131"
+            SQLTask:ParameterSize="-1" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\bike_network_load"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:DelayValidation="True"
+      DTS:Description="Data Flow Task"
+      DTS:DTSID="{897E978E-4E9B-4421-BCC2-238557E8FB7D}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="bike_network_load"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          autoAdjustBufferSize="true"
+          version="1">
+          <components>
+            <component
+              refId="Package\bike_network_load\SANDAG_Bike_Net"
+              componentClassID="Microsoft.FlatFileSource"
+              contactInfo="Flat File Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
+              description="Flat File Source"
+              localeId="1033"
+              name="SANDAG_Bike_Net"
+              usesDispositions="true"
+              version="1">
+              <properties>
+                <property
+                  dataType="System.Boolean"
+                  description="Specifies whether zero-length columns are treated as null."
+                  name="RetainNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of an output column containing the file name. If no name is specified, no output column containing the file name will be generated."
+                  name="FileNameColumnName"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\bike_network_load\SANDAG_Bike_Net.Connections[FlatFileConnection]"
+                  connectionManagerID="Package.ConnectionManagers[SANDAG_Bike_Net]"
+                  connectionManagerRefId="Package.ConnectionManagers[SANDAG_Bike_Net]"
+                  name="FlatFileConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output]"
+                  name="Flat File Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[ROADSEGID]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[ROADSEGID]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[ROADSEGID]"
+                      name="ROADSEGID"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">true</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[RD20FULL]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[RD20FULL]"
+                      length="50"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[RD20FULL]"
+                      name="RD20FULL"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[A]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[A]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[A]"
+                      name="A"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">true</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[B]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[B]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[B]"
+                      name="B"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">true</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[Distance]"
+                      dataType="r4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[Distance]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[Distance]"
+                      name="Distance"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">true</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[AB_Gain]"
+                      dataType="i2"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[AB_Gain]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[AB_Gain]"
+                      name="AB_Gain"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">true</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[BA_Gain]"
+                      dataType="i2"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[BA_Gain]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[BA_Gain]"
+                      name="BA_Gain"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">true</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[ABBikeClas]"
+                      dataType="i1"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[ABBikeClas]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[ABBikeClas]"
+                      name="ABBikeClas"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">true</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[BABikeClas]"
+                      dataType="i1"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[BABikeClas]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[BABikeClas]"
+                      name="BABikeClas"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">true</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[AB_Lanes]"
+                      dataType="i1"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[AB_Lanes]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[AB_Lanes]"
+                      name="AB_Lanes"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">true</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[BA_Lanes]"
+                      dataType="i1"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[BA_Lanes]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[BA_Lanes]"
+                      name="BA_Lanes"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">true</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[Func_Class]"
+                      dataType="i2"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[Func_Class]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[Func_Class]"
+                      name="Func_Class"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">true</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[Bike2Sep]"
+                      dataType="i1"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[Bike2Sep]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[Bike2Sep]"
+                      name="Bike2Sep"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">true</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[Bike3Blvd]"
+                      dataType="i1"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[Bike3Blvd]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[Bike3Blvd]"
+                      name="Bike3Blvd"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">true</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[SPEED]"
+                      dataType="i1"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[SPEED]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[SPEED]"
+                      name="SPEED"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">true</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[ScenicIdx]"
+                      dataType="r4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[ScenicIdx]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[ScenicIdx]"
+                      name="ScenicIdx"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">true</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[geometry]"
+                      codePage="1252"
+                      dataType="text"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[geometry]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[geometry]"
+                      name="geometry"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[ROADSEGID]"
+                      dataType="i4"
+                      name="ROADSEGID" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[RD20FULL]"
+                      dataType="wstr"
+                      length="50"
+                      name="RD20FULL" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[A]"
+                      dataType="i4"
+                      name="A" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[B]"
+                      dataType="i4"
+                      name="B" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[Distance]"
+                      dataType="r4"
+                      name="Distance" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[AB_Gain]"
+                      dataType="i2"
+                      name="AB_Gain" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[BA_Gain]"
+                      dataType="i2"
+                      name="BA_Gain" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[ABBikeClas]"
+                      dataType="i1"
+                      name="ABBikeClas" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[BABikeClas]"
+                      dataType="i1"
+                      name="BABikeClas" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[AB_Lanes]"
+                      dataType="i1"
+                      name="AB_Lanes" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[BA_Lanes]"
+                      dataType="i1"
+                      name="BA_Lanes" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[Func_Class]"
+                      dataType="i2"
+                      name="Func_Class" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[Bike2Sep]"
+                      dataType="i1"
+                      name="Bike2Sep" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[Bike3Blvd]"
+                      dataType="i1"
+                      name="Bike3Blvd" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[SPEED]"
+                      dataType="i1"
+                      name="SPEED" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[ScenicIdx]"
+                      dataType="r4"
+                      name="ScenicIdx" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].ExternalColumns[geometry]"
+                      codePage="1252"
+                      dataType="text"
+                      name="geometry" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Error Output]"
+                  isErrorOut="true"
+                  name="Flat File Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Error Output].Columns[Flat File Source Error Output Column]"
+                      codePage="1252"
+                      dataType="text"
+                      description="Flat File Source Error Output Column"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Error Output].Columns[Flat File Source Error Output Column]"
+                      name="Flat File Source Error Output Column" />
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\bike_network_load\SANDAG_Bike_Net_staging"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="SANDAG_Bike_Net_staging"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[staging].[SANDAG_Bike_Net]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">true</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">true</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Connections[OleDbConnection]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].Columns[ROADSEGID]"
+                      cachedDataType="i4"
+                      cachedName="ROADSEGID"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[ROADSEGID]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[ROADSEGID]" />
+                    <inputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].Columns[RD20FULL]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="RD20FULL"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[RD20FULL]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[RD20FULL]" />
+                    <inputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].Columns[A]"
+                      cachedDataType="i4"
+                      cachedName="A"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[A]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[A]" />
+                    <inputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].Columns[B]"
+                      cachedDataType="i4"
+                      cachedName="B"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[B]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[B]" />
+                    <inputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].Columns[Distance]"
+                      cachedDataType="r4"
+                      cachedName="Distance"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[Distance]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[Distance]" />
+                    <inputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].Columns[AB_Gain]"
+                      cachedDataType="i2"
+                      cachedName="AB_Gain"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[AB_Gain]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[AB_Gain]" />
+                    <inputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].Columns[BA_Gain]"
+                      cachedDataType="i2"
+                      cachedName="BA_Gain"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[BA_Gain]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[BA_Gain]" />
+                    <inputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].Columns[ABBikeClas]"
+                      cachedDataType="i1"
+                      cachedName="ABBikeClas"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[ABBikeClas]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[ABBikeClas]" />
+                    <inputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].Columns[BABikeClas]"
+                      cachedDataType="i1"
+                      cachedName="BABikeClas"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[BABikeClas]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[BABikeClas]" />
+                    <inputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].Columns[AB_Lanes]"
+                      cachedDataType="i1"
+                      cachedName="AB_Lanes"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[AB_Lanes]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[AB_Lanes]" />
+                    <inputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].Columns[BA_Lanes]"
+                      cachedDataType="i1"
+                      cachedName="BA_Lanes"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[BA_Lanes]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[BA_Lanes]" />
+                    <inputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].Columns[Func_Class]"
+                      cachedDataType="i2"
+                      cachedName="Func_Class"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[Func_Class]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[Func_Class]" />
+                    <inputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].Columns[Bike2Sep]"
+                      cachedDataType="i1"
+                      cachedName="Bike2Sep"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[Bike2Sep]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[Bike2Sep]" />
+                    <inputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].Columns[Bike3Blvd]"
+                      cachedDataType="i1"
+                      cachedName="Bike3Blvd"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[Bike3Blvd]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[Bike3Blvd]" />
+                    <inputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].Columns[SPEED]"
+                      cachedDataType="i1"
+                      cachedName="SPEED"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[SPEED]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[SPEED]" />
+                    <inputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].Columns[ScenicIdx]"
+                      cachedDataType="r4"
+                      cachedName="ScenicIdx"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[ScenicIdx]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[ScenicIdx]" />
+                    <inputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].Columns[geometry]"
+                      cachedCodepage="1252"
+                      cachedDataType="text"
+                      cachedName="geometry"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[geometry]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output].Columns[geometry]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[ROADSEGID]"
+                      dataType="i4"
+                      name="ROADSEGID" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[RD20FULL]"
+                      dataType="wstr"
+                      length="50"
+                      name="RD20FULL" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[A]"
+                      dataType="i4"
+                      name="A" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[B]"
+                      dataType="i4"
+                      name="B" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[Distance]"
+                      dataType="numeric"
+                      name="Distance"
+                      precision="14"
+                      scale="9" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[AB_Gain]"
+                      dataType="i2"
+                      name="AB_Gain" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[BA_Gain]"
+                      dataType="i2"
+                      name="BA_Gain" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[ABBikeClas]"
+                      dataType="ui1"
+                      name="ABBikeClas" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[BABikeClas]"
+                      dataType="ui1"
+                      name="BABikeClas" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[AB_Lanes]"
+                      dataType="ui1"
+                      name="AB_Lanes" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[BA_Lanes]"
+                      dataType="ui1"
+                      name="BA_Lanes" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[Func_Class]"
+                      dataType="i2"
+                      name="Func_Class" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[Bike2Sep]"
+                      dataType="ui1"
+                      name="Bike2Sep" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[Bike3Blvd]"
+                      dataType="ui1"
+                      name="Bike3Blvd" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[SPEED]"
+                      dataType="ui1"
+                      name="SPEED" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[ScenicIdx]"
+                      dataType="numeric"
+                      name="ScenicIdx"
+                      precision="12"
+                      scale="9" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input].ExternalColumns[geometry]"
+                      codePage="1252"
+                      dataType="text"
+                      name="geometry" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net_staging.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Net_staging.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\bike_network_load\SANDAG_Bike_Node"
+              componentClassID="Microsoft.FlatFileSource"
+              contactInfo="Flat File Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
+              description="Flat File Source"
+              localeId="1033"
+              name="SANDAG_Bike_Node"
+              usesDispositions="true"
+              version="1">
+              <properties>
+                <property
+                  dataType="System.Boolean"
+                  description="Specifies whether zero-length columns are treated as null."
+                  name="RetainNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of an output column containing the file name. If no name is specified, no output column containing the file name will be generated."
+                  name="FileNameColumnName"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\bike_network_load\SANDAG_Bike_Node.Connections[FlatFileConnection]"
+                  connectionManagerID="Package.ConnectionManagers[SANDAG_Bike_Node]"
+                  connectionManagerRefId="Package.ConnectionManagers[SANDAG_Bike_Node]"
+                  name="FlatFileConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\bike_network_load\SANDAG_Bike_Node.Outputs[Flat File Source Output]"
+                  isSorted="true"
+                  name="Flat File Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Node.Outputs[Flat File Source Output].Columns[NodeLev_ID]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Node.Outputs[Flat File Source Output].ExternalColumns[NodeLev_ID]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Node.Outputs[Flat File Source Output].Columns[NodeLev_ID]"
+                      name="NodeLev_ID"
+                      sortKeyPosition="1"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">true</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Node.Outputs[Flat File Source Output].Columns[Signal]"
+                      dataType="i1"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Node.Outputs[Flat File Source Output].ExternalColumns[Signal]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Node.Outputs[Flat File Source Output].Columns[Signal]"
+                      name="Signal"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">true</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Node.Outputs[Flat File Source Output].ExternalColumns[NodeLev_ID]"
+                      dataType="i4"
+                      name="NodeLev_ID" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Node.Outputs[Flat File Source Output].ExternalColumns[Signal]"
+                      dataType="i1"
+                      name="Signal" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\bike_network_load\SANDAG_Bike_Node.Outputs[Flat File Source Error Output]"
+                  isErrorOut="true"
+                  name="Flat File Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Node.Outputs[Flat File Source Error Output].Columns[Flat File Source Error Output Column]"
+                      codePage="1252"
+                      dataType="text"
+                      description="Flat File Source Error Output Column"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Node.Outputs[Flat File Source Error Output].Columns[Flat File Source Error Output Column]"
+                      name="Flat File Source Error Output Column" />
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Node.Outputs[Flat File Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Node.Outputs[Flat File Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Node.Outputs[Flat File Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Node.Outputs[Flat File Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\bike_network_load\SANDAG_Bike_Node_staging"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="SANDAG_Bike_Node_staging"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[staging].[SANDAG_Bike_Node]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">true</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">true</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\bike_network_load\SANDAG_Bike_Node_staging.Connections[OleDbConnection]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\bike_network_load\SANDAG_Bike_Node_staging.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Node_staging.Inputs[OLE DB Destination Input].Columns[NodeLev_ID]"
+                      cachedDataType="i4"
+                      cachedName="NodeLev_ID"
+                      cachedSortKeyPosition="1"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Node_staging.Inputs[OLE DB Destination Input].ExternalColumns[NodeLev_ID]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Node.Outputs[Flat File Source Output].Columns[NodeLev_ID]" />
+                    <inputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Node_staging.Inputs[OLE DB Destination Input].Columns[Signal]"
+                      cachedDataType="i1"
+                      cachedName="Signal"
+                      externalMetadataColumnId="Package\bike_network_load\SANDAG_Bike_Node_staging.Inputs[OLE DB Destination Input].ExternalColumns[Signal]"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Node.Outputs[Flat File Source Output].Columns[Signal]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Node_staging.Inputs[OLE DB Destination Input].ExternalColumns[NodeLev_ID]"
+                      dataType="i4"
+                      name="NodeLev_ID" />
+                    <externalMetadataColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Node_staging.Inputs[OLE DB Destination Input].ExternalColumns[Signal]"
+                      dataType="bool"
+                      name="Signal" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\bike_network_load\SANDAG_Bike_Node_staging.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\bike_network_load\SANDAG_Bike_Node_staging.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Node_staging.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Node_staging.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\bike_network_load\SANDAG_Bike_Node_staging.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\bike_network_load\SANDAG_Bike_Node_staging.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\bike_network_load.Paths[Flat File Source Output]"
+              endId="Package\bike_network_load\SANDAG_Bike_Net_staging.Inputs[OLE DB Destination Input]"
+              name="Flat File Source Output"
+              startId="Package\bike_network_load\SANDAG_Bike_Net.Outputs[Flat File Source Output]" />
+            <path
+              refId="Package\bike_network_load.Paths[Flat File Source Output1]"
+              endId="Package\bike_network_load\SANDAG_Bike_Node_staging.Inputs[OLE DB Destination Input]"
+              name="Flat File Source Output"
+              startId="Package\bike_network_load\SANDAG_Bike_Node.Outputs[Flat File Source Output]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\bike_network_reference_tables"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{B6A1884A-8781-4940-9B67-D7D5EAF492D8}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="bike_network_reference_tables"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{15638D61-ABAF-4C44-938D-BC48B8A41948}"
+          SQLTask:SqlStatementSource="BEGIN TRANSACTION&#xA;&#xA;&#xA;IF OBJECT_ID('staging.SANDAG_Bike_Net_Func_Class','U') IS NOT NULL&#xA;DROP TABLE [staging].[SANDAG_Bike_Net_Func_Class]&#xA;CREATE TABLE [staging].[SANDAG_Bike_Net_Func_Class] (&#xA;&#x9;[Func_Class] smallint,&#xA;&#x9;[description] nchar(70),&#xA;&#x9;CONSTRAINT pk_staging_SANDAGBikeNetFuncClass PRIMARY KEY([Func_Class]))&#xA;ON staging_fg&#xA;WITH (DATA_COMPRESSION = PAGE)&#xA;INSERT INTO [staging].[SANDAG_Bike_Net_Func_Class] VALUES&#xA;(-1, 'P - Paper Streets and Q - Undocumented'),&#xA;(0, 'Pedestrian/bikeway, Recreational Parkway, Class I Bicycle Path'),&#xA;(1, 'Interstate'),&#xA;(2, 'Other Freeway and Expressway'),&#xA;(3, 'Other Principal Arterial'),&#xA;(4, 'Minor Arterial'),&#xA;(5, 'Major Collector'),&#xA;(6, 'Minor Collector'),&#xA;(7, 'Local'),&#xA;(10, 'Centroid Connector'),&#xA;(11, 'TAP Connector')&#xA;&#xA;&#xA;IF OBJECT_ID('staging.SANDAG_Bike_Net_BikeClas','U') IS NOT NULL&#xA;DROP TABLE [staging].[SANDAG_Bike_Net_BikeClas]&#xA;CREATE TABLE [staging].[SANDAG_Bike_Net_BikeClas] (&#xA;&#x9;[BikeClas] tinyint,&#xA;&#x9;[description] nchar(55),&#xA;&#x9;CONSTRAINT pk_staging_SANDAGBikeNetBikeClas PRIMARY KEY([BikeClas]))&#xA;ON staging_fg&#xA;WITH (DATA_COMPRESSION = PAGE)&#xA;INSERT INTO [staging].[SANDAG_Bike_Net_BikeClas] VALUES&#xA;(0, 'Other suggested routes, Ferry, and Freeway shoulder'),&#xA;(1, 'Off-street path'),&#xA;(2, 'On-street lane'),&#xA;(3, 'On-street signed route'),&#xA;(10, 'Centroid Connector'),&#xA;(11, 'TAP Connector')&#xA;&#xA;&#xA;COMMIT TRANSACTION" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\bike_network_sql_cleanup"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{5666014F-9710-4EEA-9D4C-A66498BC4EB0}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="bike_network_sql_cleanup"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{15638D61-ABAF-4C44-938D-BC48B8A41948}"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON&#xA;BEGIN TRANSACTION&#xA;&#xA;&#xA;IF OBJECT_ID('staging.SANDAG_Bike_Net','U') IS NOT NULL&#xA;DROP TABLE [staging].[SANDAG_Bike_Net]&#xA;&#xA;IF OBJECT_ID('staging.SANDAG_Bike_Net_BikeClas','U') IS NOT NULL&#xA;DROP TABLE [staging].[SANDAG_Bike_Net_BikeClas]&#xA;&#xA;IF OBJECT_ID('staging.SANDAG_Bike_Net_Func_Class','U') IS NOT NULL&#xA;DROP TABLE [staging].[SANDAG_Bike_Net_Func_Class]&#xA;&#xA;IF OBJECT_ID('staging.SANDAG_Bike_Node','U') IS NOT NULL&#xA;DROP TABLE [staging].[SANDAG_Bike_Node]&#xA;&#xA;&#xA;COMMIT TRANSACTION" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\bike_network_staging_tables"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{3AA93920-AE5A-46A9-9124-7873F62B2C87}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="bike_network_staging_tables"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{15638D61-ABAF-4C44-938D-BC48B8A41948}"
+          SQLTask:SqlStatementSource="BEGIN TRANSACTION&#xA;&#xA;&#xA;IF OBJECT_ID('staging.SANDAG_Bike_Net','U') IS NOT NULL&#xA;DROP TABLE [staging].[SANDAG_Bike_Net]&#xA;CREATE TABLE [staging].[SANDAG_Bike_Net] (&#xA;&#x9;[ROADSEGID] int NOT NULL,&#xA;&#x9;[RD20FULL] nchar(50) NOT NULL,&#xA;&#x9;[A] int NOT NULL,&#xA;&#x9;[B] int NOT NULL,&#xA;&#x9;[Distance] decimal(14,9) NOT NULL,&#xA;&#x9;[AB_Gain] smallint NOT NULL,&#xA;&#x9;[BA_Gain] smallint NOT NULL,&#xA;&#x9;[ABBikeClas] tinyint NOT NULL,&#xA;&#x9;[BABikeClas] tinyint NOT NULL,&#xA;&#x9;[AB_Lanes] tinyint NOT NULL,&#xA;&#x9;[BA_Lanes] tinyint NOT NULL,&#xA;&#x9;[Func_Class] smallint NOT NULL,&#xA;&#x9;[Bike2Sep] tinyint NOT NULL,&#xA;&#x9;[Bike3Blvd] tinyint NOT NULL,&#xA;&#x9;[SPEED] tinyint NOT NULL,&#xA;&#x9;[ScenicIdx] decimal(12,9) NOT NULL,&#xA;&#x9;[geometry] varchar(max) NOT NULL,&#xA;&#x9;CONSTRAINT pk_staging_SANDAGBikeNet PRIMARY KEY([ROADSEGID]))&#xA;ON staging_fg&#xA;WITH (DATA_COMPRESSION = PAGE)&#xA;&#xA;&#xA;IF OBJECT_ID('staging.SANDAG_Bike_Node','U') IS NOT NULL&#xA;DROP TABLE [staging].[SANDAG_Bike_Node]&#xA;CREATE TABLE [staging].[SANDAG_Bike_Node] (&#xA;&#x9;[NodeLev_ID] int NOT NULL,&#xA;&#x9;[Signal] bit NOT NULL,&#xA;&#x9;CONSTRAINT pk_staging_SANDAGBikeNode PRIMARY KEY([NodeLev_ID]))&#xA;ON staging_fg&#xA;WITH (DATA_COMPRESSION = PAGE)&#xA;&#xA;&#xA;COMMIT TRANSACTION" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{C1E8F19F-AEC6-441A-9F65-0E3BE6095959}"
+      DTS:From="Package\bike_network_staging_tables"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\bike_network_load" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
+      DTS:CreationName=""
+      DTS:DTSID="{BB6918BE-D1D8-451B-A225-02A20EAC8DA0}"
+      DTS:From="Package\bike_network_load"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 1"
+      DTS:To="Package\bike_network_reference_tables" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
+      DTS:CreationName=""
+      DTS:DTSID="{6F8C701F-D58C-4822-9DAC-F940E25C90AB}"
+      DTS:From="Package\bike_network_reference_tables"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 2"
+      DTS:To="Package\bike_network_dimensions" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 3]"
+      DTS:CreationName=""
+      DTS:DTSID="{0F38EC40-6DD6-42A8-8C7B-1D29A73BD5E5}"
+      DTS:From="Package\bike_network_dimensions"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 3"
+      DTS:To="Package\bike_network_sql_cleanup" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="200,42"
+          Id="Package\bike_network_dimensions"
+          TopLeft="312,324" />
+        <NodeLayout
+          Size="168,42"
+          Id="Package\bike_network_load"
+          TopLeft="327,147" />
+        <NodeLayout
+          Size="226,42"
+          Id="Package\bike_network_reference_tables"
+          TopLeft="298,233" />
+        <NodeLayout
+          Size="203,42"
+          Id="Package\bike_network_sql_cleanup"
+          TopLeft="311,411" />
+        <NodeLayout
+          Size="216,42"
+          Id="Package\bike_network_staging_tables"
+          TopLeft="302,59" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="410.5,101">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,46"
+              Start="0,0"
+              End="0,38.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,38.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 1]"
+          TopLeft="411,189">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,44"
+              Start="0,0"
+              End="0,36.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,36.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 2]"
+          TopLeft="411.5,275">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,49"
+              Start="0,0"
+              End="0,41.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,41.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 3]"
+          TopLeft="412.25,366">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,45"
+              Start="0,0"
+              End="0,37.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,37.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\bike_network_load">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="175,42"
+          Id="Package\bike_network_load\SANDAG_Bike_Node"
+          TopLeft="438,82" />
+        <NodeLayout
+          Size="207,42"
+          Id="Package\bike_network_load\SANDAG_Bike_Net_staging"
+          TopLeft="132,202" />
+        <NodeLayout
+          Size="215,42"
+          Id="Package\bike_network_load\SANDAG_Bike_Node_staging"
+          TopLeft="414,204" />
+        <NodeLayout
+          Size="167,42"
+          Id="Package\bike_network_load\SANDAG_Bike_Net"
+          TopLeft="152,82" />
+        <EdgeLayout
+          Id="Package\bike_network_load.Paths[Flat File Source Output1]"
+          TopLeft="523.5,124">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,80"
+              Start="0,0"
+              End="0,72.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,72.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\bike_network_load.Paths[Flat File Source Output]"
+          TopLeft="235.5,124">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,78"
+              Start="0,0"
+              End="0,70.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,70.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\bike_network_load\SANDAG_Bike_Net_staging">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\bike_network_load\SANDAG_Bike_Node_staging">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
