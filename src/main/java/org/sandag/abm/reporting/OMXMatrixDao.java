@@ -1,7 +1,9 @@
 package org.sandag.abm.reporting;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Properties;
+
 import com.pb.common.matrix.Matrix;
 import com.pb.common.matrix.MatrixReader;
 import com.pb.common.matrix.MatrixType;
@@ -17,6 +19,12 @@ public class OMXMatrixDao
         matrixLocation = properties.getProperty(outputFolderToken);
     }
 
+    public OMXMatrixDao(HashMap<String,String> properties)
+    {
+        matrixLocation = (String)properties.get(outputFolderToken);
+    }
+
+    
     public Matrix getMatrix(String matrixName, String coreName)
     {
         String matrixPath = matrixLocation + File.separator + matrixName;

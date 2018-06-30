@@ -12,6 +12,8 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
+import org.sandag.abm.accessibilities.AutoAndNonMotorizedSkimsCalculator;
+import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.accessibilities.BestTransitPathCalculator;
 import org.sandag.abm.accessibilities.DriveTransitWalkSkimsCalculator;
 import org.sandag.abm.accessibilities.WalkTransitDriveSkimsCalculator;
@@ -19,6 +21,7 @@ import org.sandag.abm.accessibilities.WalkTransitWalkSkimsCalculator;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.MatrixDataServer;
 import org.sandag.abm.ctramp.MatrixDataServerRmi;
+import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
 import org.sandag.abm.modechoice.TransitDriveAccessDMU;
@@ -56,6 +59,8 @@ public class OutputTapPairs {
     private TazDataManager tazManager;
     private HashMap<Integer,Integer> sequentialMaz;
     
+    AutoTazSkimsCalculator tazDistanceCalculator;
+    
      protected PrintWriter writer;
     
     
@@ -80,6 +85,9 @@ public class OutputTapPairs {
 	    tazManager = TazDataManager.getInstance(propertyMap);
 
         bestPathCalculator = new BestTransitPathCalculator(propertyMap);
+        
+        tazDistanceCalculator = new AutoTazSkimsCalculator(propertyMap);
+        tazDistanceCalculator.computeTazDistanceArrays();
 
         wtw = new WalkTransitWalkSkimsCalculator(propertyMap);
         wtw.setup(propertyMap, logger, bestPathCalculator);
@@ -177,7 +185,8 @@ public class OutputTapPairs {
 			int originTaz = mgraManager.getTaz(originMaz);
 			int destinationTaz = mgraManager.getTaz(destinationMaz);
 		
-			bestTaps = bestPathCalculator.getBestTapPairs(walkDmu, driveDmu, accessEgressMode, originMaz, destinationMaz, period, false, logger);
+			float odDistance  = (float) tazDistanceCalculator.getTazToTazDistance(ModelStructure.AM_SKIM_PERIOD_INDEX, originTaz, destinationTaz);
+			bestTaps = bestPathCalculator.getBestTapPairs(walkDmu, driveDmu, accessEgressMode, originMaz, destinationMaz, period, false, logger, odDistance);
 			double[] bestUtilities = bestPathCalculator.getBestUtilities();
 			
 			//iterate through n-best paths
