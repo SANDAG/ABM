@@ -1769,8 +1769,8 @@ SELECT
 					WHEN @minority = 1 THEN [minority]
 					WHEN @low_income = 1 THEN [low_income]
 					ELSE 'All' END, 'Total') AS [pop_segmentation]
-	,100.0 * SUM(CASE WHEN ISNULL([physical_activity].[time_physical_activity], 0) >= 20 THEN 1 ELSE 0 END) / SUM([person_coc].[weight_person]) AS [pct_physical_activity_population]
-	,SUM(CASE WHEN ISNULL([physical_activity].[time_physical_activity], 0) >= 20 THEN 1 ELSE 0 END) AS [physical_activity_population]
+	,100.0 * SUM(CASE WHEN ISNULL([physical_activity].[time_physical_activity], 0) >= 20 THEN [person_coc].[weight_person] ELSE 0 END) / SUM([person_coc].[weight_person]) AS [pct_physical_activity_population]
+	,SUM(CASE WHEN ISNULL([physical_activity].[time_physical_activity], 0) >= 20 THEN [person_coc].[weight_person] ELSE 0 END) AS [physical_activity_population]
 	,SUM([person_coc].[weight_person]) AS [population]
 FROM (
 	SELECT
@@ -1800,7 +1800,8 @@ FROM (
 		AND [person].[household_id] = [household].[household_id]
 	WHERE
 		[person].[scenario_id] = @scenario_id
-		AND [household].[scenario_id] = @scenario_id) AS [person_coc]
+		AND [household].[scenario_id] = @scenario_id
+		AND [person].[weight_person] > 0) AS [person_coc]
 LEFT OUTER JOIN ( -- keep persons who do not travel
 	SELECT
 		[person_id]
@@ -1809,7 +1810,6 @@ LEFT OUTER JOIN ( -- keep persons who do not travel
 		[fact].[person_trip]
 	WHERE
 		[person_trip].[scenario_id] = @scenario_id
-		AND [person_trip].[person_id] > 0 -- 0 is the null record
 	GROUP BY
 		[person_id]) AS [physical_activity]
 ON
@@ -1820,6 +1820,8 @@ GROUP BY
 			WHEN @low_income = 1 THEN [low_income]
 			ELSE 'All' END
 WITH ROLLUP
+OPTION(MAXDOP 1)
+GO
 
 -- Add metadata for [rtp_2019].[sp_pm_H]
 EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_pm_H', 'SUBSYSTEM', 'rtp 2019'
