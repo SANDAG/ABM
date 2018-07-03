@@ -2075,8 +2075,8 @@ BEGIN
 		INNER JOIN
 			[fact].[hwy_flow]
 		ON
-			[hwy_link].[scenario_id] = [hwy_flow].[scenario_id]
-			AND [hwy_link].[hwy_link_id] = [hwy_flow].[hwy_link_id]
+			[hwy_flow_mode].[scenario_id] = [hwy_flow].[scenario_id]
+			AND [hwy_flow_mode].[hwy_link_ab_tod_id] = [hwy_flow].[hwy_link_ab_tod_id]
 		INNER JOIN
 			[dimension].[mode]
 		ON
@@ -2089,6 +2089,7 @@ BEGIN
 			[hwy_flow_mode].[scenario_id] = @scenario_id
 			AND [hwy_link].[scenario_id] = @scenario_id
 			AND [hwy_flow].[scenario_id] = @scenario_id
+			AND [hwy_flow_mode].[flow] > 0
 		GROUP BY 
 			[fn_emfac_2014_vmt_map].[emfac_vehicle_class]
 			,[hwy_flow_mode].[time_id]
@@ -2529,8 +2530,8 @@ BEGIN
 		INNER JOIN
 			[fact].[hwy_flow]
 		ON
-			[hwy_link].[scenario_id] = [hwy_flow].[scenario_id]
-			AND [hwy_link].[hwy_link_id] = [hwy_flow].[hwy_link_id]
+			[hwy_flow_mode].[scenario_id] = [hwy_flow].[scenario_id]
+			AND [hwy_flow_mode].[hwy_link_ab_tod_id] = [hwy_flow].[hwy_link_ab_tod_id]
 		INNER JOIN
 			[dimension].[mode]
 		ON
@@ -2543,6 +2544,7 @@ BEGIN
 			[hwy_flow_mode].[scenario_id] = @scenario_id
 			AND [hwy_link].[scenario_id] = @scenario_id
 			AND [hwy_flow].[scenario_id] = @scenario_id
+			AND [hwy_flow_mode].[flow] > 0
 		GROUP BY 
 			[fn_emfac_2017_vmt_map].[emfac_vehicle_class]
 			,[hwy_flow_mode].[time_id]
