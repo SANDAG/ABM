@@ -73,7 +73,7 @@ GO
 
 CREATE PROCEDURE [rtp_2019].[sp_pm_2a]
 	@scenario_id integer,
-	@uats bit = 0, -- switch to limit origin/destination geographies to UATS zones
+	@uats bit = 0, -- switch to limit origin and/or destination geographies to UATS zones
 	@work bit = 0 -- switch to limit trip purpose to work
 AS
 
@@ -82,9 +82,11 @@ AS
 	Description: Percent of trips by walk, bike, transit, and carpool (work trips and all trips) regionwide and within
 		Urban Area Transit Strategy (UATS) districts */
 
+SET NOCOUNT ON;
+
 -- get mgras that are fully contained within UATS districts
-DECLARE @tt_1 TABLE ([mgra] nchar(15) PRIMARY KEY NOT NULL)
-INSERT INTO @tt_1
+DECLARE @uats_mgras TABLE ([mgra] nchar(15) PRIMARY KEY NOT NULL)
+INSERT INTO @uats_mgras
 SELECT CONVERT(nchar, [mgra]) AS [mgra] FROM
 OPENQUERY(
 	[sql2014b8],
@@ -94,10 +96,10 @@ OPENQUERY(
 -- get person trips by mode
 -- for resident models only (Individual, Internal-External, Joint)
 -- potentially filtered by destination work purpose or mgra in UATS district
-DECLARE @tt_2 TABLE (
+DECLARE @aggregated_trips TABLE (
 	[mode_aggregate] nchar(15) NOT NULL,
 	[person_trips] float NOT NULL)
-INSERT INTO @tt_2
+INSERT INTO @aggregated_trips
 SELECT
 	ISNULL(CASE	WHEN [mode_trip_description] IN ('Drive Alone Non-Toll',
 												 'Drive Alone Toll Eligible')
@@ -142,13 +144,13 @@ INNER JOIN
 ON
 	[person_trip].[geography_trip_destination_id] = [geography_trip_destination].[geography_trip_destination_id]
 LEFT OUTER JOIN -- keep as outer join since where clause is	OR condition
-	@tt_1 AS [origin_xref]
+	@uats_mgras AS [uats_mgras_origin_xref]
 ON
-	[geography_trip_origin].[trip_origin_mgra_13] = [origin_xref].[mgra]
+	[geography_trip_origin].[trip_origin_mgra_13] = [uats_mgras_origin_xref].[mgra]
 LEFT OUTER JOIN -- keep as outer join since where clause is OR condition
-	@tt_1 AS [dest_xref]
+	@uats_mgras AS [uats_mgras_dest_xref]
 ON
-	[geography_trip_destination].[trip_destination_mgra_13] = [dest_xref].[mgra]
+	[geography_trip_destination].[trip_destination_mgra_13] = [uats_mgras_dest_xref].[mgra]
 WHERE
 	[scenario_id] = @scenario_id
 	AND [model_trip].[model_trip_description] IN ('Individual',
@@ -156,8 +158,8 @@ WHERE
 												  'Joint') -- resident models only
 	AND ((@work = 1 AND [purpose_trip_destination].[purpose_trip_destination_description] = 'Work')
 			OR @work = 0) -- if work trips then filter by destination work purpose
-	AND ((@uats = 1 AND ([origin_xref].[mgra] IS NOT NULL OR [dest_xref].[mgra] IS NOT NULL))
-			OR @uats = 0) -- if uats districts only count trips originating and ending in uats mgras
+	AND ((@uats = 1 AND ([uats_mgras_origin_xref].[mgra] IS NOT NULL OR [uats_mgras_dest_xref].[mgra] IS NOT NULL))
+			OR @uats = 0) -- if UATS districts option selected only count trips originating and/or ending in UATS mgras
 GROUP BY
 	CASE	WHEN [mode_trip_description] IN ('Drive Alone Non-Toll',
 											 'Drive Alone Toll Eligible')
@@ -181,12 +183,12 @@ GROUP BY
 WITH ROLLUP
 
 SELECT
-	@scenario_id AS [scenario_id] 
+	@scenario_id AS [scenario_id]
 	,[mode_aggregate]
-	,100.0 * [person_trips] / (SELECT [person_trips] FROM @tt_2 WHERE [mode_aggregate] = 'Total') AS [pct_person_trips]
+	,100.0 * [person_trips] / (SELECT [person_trips] FROM @aggregated_trips WHERE [mode_aggregate] = 'Total') AS [pct_person_trips]
 	,[person_trips]
 FROM
-	@tt_2
+	@aggregated_trips
 
 GO
 
@@ -359,7 +361,8 @@ DROP PROCEDURE [rtp_2019].[sp_pm_7a_auto]
 GO
 
 CREATE PROCEDURE [rtp_2019].[sp_pm_7a_auto]
-	@scenario_id integer
+	@scenario_id integer,
+	@uats bit = 0 -- switch to limit origin and destination geographies to UATS zones
 AS
 
 /*	Author: Gregor Schroeder
@@ -367,10 +370,22 @@ AS
 	Description: Percent of population within 30 minutes jobs and higher
 		education via driving (total population, disadvantaged
 		communities (seniors, low-income, and minority) and non-disadvantaged
-		communities)
+		communities). Can be run just for origin and destinations
+		within UATS districts.
 		Note this measure has been adjusted to be the percent of total
 		employment and enrollment in the region accessible by the average person
 		similar to Highway Evaluation Criteria 9a and Performance Measure 8ab_auto in the 2015 RTP */
+
+SET NOCOUNT ON;
+
+-- get mgras that are fully contained within UATS districts
+DECLARE @uats_mgras TABLE ([mgra] nchar(15) PRIMARY KEY NOT NULL)
+INSERT INTO @uats_mgras
+SELECT CONVERT(nchar, [mgra]) AS [mgra] FROM
+OPENQUERY(
+	[sql2014b8],
+	'SELECT [mgra] FROM [lis].[gis].[uats2014],[lis].[gis].[MGRA13PT]
+		WHERE [uats2014].[Shape].STContains([MGRA13PT].[Shape]) = 1');
 
 -- for resident models only (Individual, Internal-External, Joint)
 -- get the weighted average by auto person trips of TAZ-TAZ trip time
@@ -399,6 +414,14 @@ with [skims] AS (
 		[dimension].[geography_trip_destination]
 	ON
 		[person_trip].[geography_trip_destination_id] = [geography_trip_destination].[geography_trip_destination_id]
+	LEFT OUTER JOIN -- keep as outer join since where clause is	OR condition
+		@uats_mgras AS [uats_origin_xref]
+	ON
+		[geography_trip_origin].[trip_origin_mgra_13] = [uats_origin_xref].[mgra]
+	LEFT OUTER JOIN -- keep as outer join since where clause is OR condition
+		@uats_mgras AS [uats_dest_xref]
+	ON
+		[geography_trip_destination].[trip_destination_mgra_13] = [uats_dest_xref].[mgra]
 	WHERE
 		[person_trip].[scenario_id] = @scenario_id
 		AND [model_trip].[model_trip_description] IN ('Individual',
@@ -410,6 +433,8 @@ with [skims] AS (
 													'Shared Ride 2 Toll Eligible',
 													'Shared Ride 3 Non-Toll',
 													'Shared Ride 3 Toll Eligible') -- auto modes only
+		AND ((@uats = 1 AND ([uats_origin_xref].[mgra] IS NOT NULL AND [uats_dest_xref].[mgra] IS NOT NULL))
+			OR @uats = 0) -- if UATS districts option selected only count trips originating and ending in UATS mgras
 	GROUP BY
 		[geography_trip_origin].[trip_origin_taz_13]
 		,[geography_trip_destination].[trip_destination_taz_13]
@@ -427,8 +452,14 @@ with [skims] AS (
 		[dimension].[geography]
 	ON
 		[mgra_based_input].[geography_id] = [geography].[geography_id]
+	LEFT OUTER JOIN -- keep as outer join since where clause is	OR condition
+		@uats_mgras AS [uats_xref]
+	ON
+		[geography].[mgra_13] = [uats_xref].[mgra]
 	WHERE
 		[mgra_based_input].[scenario_id] = @scenario_id
+		AND ((@uats = 1 AND [uats_xref].[mgra] IS NOT NULL)
+			OR @uats = 0) -- if UATS districts option selected only count destinations within UATS district
 	GROUP BY
 		[geography].[taz_13]
 	HAVING
@@ -456,7 +487,7 @@ with [skims] AS (
 												 'Two or More Major Race Groups',
 												 'Native Hawaiian and Other Pacific Islander Alone',
 												 'American Indian and Alaska Native Tribes specified; or American Indian or Alaska Native, not specified and no other races')
-							 OR [person].[hispanic] = 'Hispanic' THEN [person].[weight_person] 
+							 OR [person].[hispanic] = 'Hispanic' THEN [person].[weight_person]
 							 ELSE 0 END) AS [pop_minority]
 			,SUM(CASE WHEN [household].[poverty] <= 2 THEN [person].[weight_person] ELSE 0 END) AS [pop_low_income]
 		FROM
@@ -470,9 +501,15 @@ with [skims] AS (
 			[dimension].[geography_household_location]
 		ON
 			[household].[geography_household_location_id] = [geography_household_location].[geography_household_location_id]
+		LEFT OUTER JOIN -- keep as outer join since where clause is	OR condition
+			@uats_mgras AS [uats_xref]
+		ON
+			[geography_household_location].[household_location_mgra_13] = [uats_xref].[mgra]
 		WHERE
 			[person].[scenario_id] = @scenario_id
 			AND [household].[scenario_id] = @scenario_id
+			AND ((@uats = 1 AND [uats_xref].[mgra] IS NOT NULL)
+			    OR @uats = 0) -- if UATS districts option selected only count population within UATS district
 		GROUP BY
 			[geography_household_location].[household_location_taz_13]
 		HAVING
@@ -510,6 +547,7 @@ CROSS JOIN (
 		SUM([emp_educ]) AS [total_emp_educ]
 	FROM
 		[destinations]) AS [total_destinations]
+OPTION(MAXDOP 1)
 GO
 
 -- Add metadata for [rtp_2019].[sp_pm_7a_auto]
@@ -526,7 +564,8 @@ DROP PROCEDURE [rtp_2019].[sp_pm_7a_transit]
 GO
 
 CREATE PROCEDURE [rtp_2019].[sp_pm_7a_transit]
-	@scenario_id integer
+	@scenario_id integer,
+	@uats bit = 0 -- switch to limit origin and destination geographies to UATS zones
 AS
 
 /*	Author: Gregor Schroeder
@@ -538,6 +577,17 @@ AS
 		Note this measure has been adjusted to be the percent of total
 		employment and enrollment in the region accessible by the average person
 		similar to Highway Evaluation Criteria 9a and Performance Measure 8ab_auto in the 2015 RTP */
+
+SET NOCOUNT ON;
+
+-- get mgras that are fully contained within UATS districts
+DECLARE @uats_mgras TABLE ([mgra] nchar(15) PRIMARY KEY NOT NULL)
+INSERT INTO @uats_mgras
+SELECT CONVERT(nchar, [mgra]) AS [mgra] FROM
+OPENQUERY(
+	[sql2014b8],
+	'SELECT [mgra] FROM [lis].[gis].[uats2014],[lis].[gis].[MGRA13PT]
+		WHERE [uats2014].[Shape].STContains([MGRA13PT].[Shape]) = 1');
 
 -- for resident models only (Individual, Internal-External, Joint)
 -- get the weighted average by transit person trips of MGRA-MGRA trip time
@@ -566,6 +616,14 @@ with [skims] AS (
 		[dimension].[geography_trip_destination]
 	ON
 		[person_trip].[geography_trip_destination_id] = [geography_trip_destination].[geography_trip_destination_id]
+	LEFT OUTER JOIN -- keep as outer join since where clause is	OR condition
+		@uats_mgras AS [uats_origin_xref]
+	ON
+		[geography_trip_origin].[trip_origin_mgra_13] = [uats_origin_xref].[mgra]
+	LEFT OUTER JOIN -- keep as outer join since where clause is OR condition
+		@uats_mgras AS [uats_dest_xref]
+	ON
+		[geography_trip_destination].[trip_destination_mgra_13] = [uats_dest_xref].[mgra]
 	WHERE
 		[person_trip].[scenario_id] = @scenario_id
 		AND [model_trip].[model_trip_description] IN ('Individual',
@@ -580,6 +638,8 @@ with [skims] AS (
 													'Kiss and Ride to Transit - Local Bus Only',
 													'Kiss and Ride to Transit - Premium Transit Only',
 													'Kiss and Ride to Transit - Local Bus and Premium Transit') -- transit mode only
+		AND ((@uats = 1 AND ([uats_origin_xref].[mgra] IS NOT NULL AND [uats_dest_xref].[mgra] IS NOT NULL))
+			OR @uats = 0) -- if UATS districts option selected only count trips originating and ending in UATS mgras
 	GROUP BY
 		[geography_trip_origin].[trip_origin_mgra_13]
 		,[geography_trip_destination].[trip_destination_mgra_13]
@@ -597,8 +657,14 @@ with [skims] AS (
 		[dimension].[geography]
 	ON
 		[mgra_based_input].[geography_id] = [geography].[geography_id]
+	LEFT OUTER JOIN -- keep as outer join since where clause is	OR condition
+		@uats_mgras AS [uats_xref]
+	ON
+		[geography].[mgra_13] = [uats_xref].[mgra]
 	WHERE
 		[mgra_based_input].[scenario_id] = @scenario_id
+		AND ((@uats = 1 AND [uats_xref].[mgra] IS NOT NULL)
+			OR @uats = 0) -- if UATS districts option selected only count destinations within UATS district
 	GROUP BY
 		[geography].[mgra_13]
 	HAVING
@@ -626,7 +692,7 @@ with [skims] AS (
 												 'Two or More Major Race Groups',
 												 'Native Hawaiian and Other Pacific Islander Alone',
 												 'American Indian and Alaska Native Tribes specified; or American Indian or Alaska Native, not specified and no other races')
-							 OR [person].[hispanic] = 'Hispanic' THEN [person].[weight_person] 
+							 OR [person].[hispanic] = 'Hispanic' THEN [person].[weight_person]
 							 ELSE 0 END) AS [pop_minority]
 			,SUM(CASE WHEN [household].[poverty] <= 2 THEN [person].[weight_person] ELSE 0 END) AS [pop_low_income]
 		FROM
@@ -640,9 +706,15 @@ with [skims] AS (
 			[dimension].[geography_household_location]
 		ON
 			[household].[geography_household_location_id] = [geography_household_location].[geography_household_location_id]
+		LEFT OUTER JOIN -- keep as outer join since where clause is	OR condition
+			@uats_mgras AS [uats_xref]
+		ON
+			[geography_household_location].[household_location_mgra_13] = [uats_xref].[mgra]
 		WHERE
 			[person].[scenario_id] = @scenario_id
 			AND [household].[scenario_id] = @scenario_id
+			AND ((@uats = 1 AND [uats_xref].[mgra] IS NOT NULL)
+				OR @uats = 0) -- if UATS districts option selected only count population within UATS district
 		GROUP BY
 			[geography_household_location].[household_location_mgra_13]
 		HAVING
@@ -680,6 +752,7 @@ CROSS JOIN (
 		SUM([emp_educ]) AS [total_emp_educ]
 	FROM
 		[destinations]) AS [total_destinations]
+OPTION(MAXDOP 1)
 GO
 
 -- Add metadata for [rtp_2019].[sp_pm_7a_transit]
@@ -697,6 +770,7 @@ GO
 
 CREATE PROCEDURE [rtp_2019].[sp_pm_7b_auto]
 	@scenario_id integer,
+	@uats bit = 0, -- switch to limit origin and destination geographies to UATS zones
 	@senior bit = 0, -- indicator to use senior population segmentation
 	@minority bit = 0, -- indicator to use minority population segmentation
 	@low_income bit = 0 -- indicator to use low income population segmentation
@@ -711,13 +785,24 @@ END;
 /*	Author: Gregor Schroeder
 	Date: 4/25/2018
 	Description: Percent of population within 15 minutes of goods and services
-		(retail, medical, parks, and beaches) via driving (total 
+		(retail, medical, parks, and beaches) via driving (total
 		population, disadvantaged communities (seniors, low-income, and minority)
 		and non-disadvantaged communities)
 		Note that for retail and medical the measure is adjusted to be the percent
-		of total retail and medical employment in the region accessible by the 
+		of total retail and medical employment in the region accessible by the
 		average person
 		similar to Performance Measure 8ab_auto in the 2015 RTP */
+
+SET NOCOUNT ON;
+
+-- get mgras that are fully contained within UATS districts
+DECLARE @uats_mgras TABLE ([mgra] nchar(15) PRIMARY KEY NOT NULL)
+INSERT INTO @uats_mgras
+SELECT CONVERT(nchar, [mgra]) AS [mgra] FROM
+OPENQUERY(
+	[sql2014b8],
+	'SELECT [mgra] FROM [lis].[gis].[uats2014],[lis].[gis].[MGRA13PT]
+		WHERE [uats2014].[Shape].STContains([MGRA13PT].[Shape]) = 1');
 
 -- for resident models only (Individual, Internal-External, Joint)
 -- get the weighted average by auto person trips of TAZ-TAZ trip time
@@ -746,6 +831,14 @@ with [skims] AS (
 		[dimension].[geography_trip_destination]
 	ON
 		[person_trip].[geography_trip_destination_id] = [geography_trip_destination].[geography_trip_destination_id]
+	LEFT OUTER JOIN -- keep as outer join since where clause is	OR condition
+		@uats_mgras AS [uats_origin_xref]
+	ON
+		[geography_trip_origin].[trip_origin_mgra_13] = [uats_origin_xref].[mgra]
+	LEFT OUTER JOIN -- keep as outer join since where clause is OR condition
+		@uats_mgras AS [uats_dest_xref]
+	ON
+		[geography_trip_destination].[trip_destination_mgra_13] = [uats_dest_xref].[mgra]
 	WHERE
 		[person_trip].[scenario_id] = @scenario_id
 		AND [model_trip].[model_trip_description] IN ('Individual',
@@ -757,6 +850,8 @@ with [skims] AS (
 													'Shared Ride 2 Toll Eligible',
 													'Shared Ride 3 Non-Toll',
 													'Shared Ride 3 Toll Eligible') -- drive modes only
+		AND ((@uats = 1 AND ([uats_origin_xref].[mgra] IS NOT NULL AND [uats_dest_xref].[mgra] IS NOT NULL))
+			OR @uats = 0) -- if UATS districts option selected only count trips originating and ending in UATS mgras
 	GROUP BY
 		[geography_trip_origin].[trip_origin_taz_13]
 		,[geography_trip_destination].[trip_destination_taz_13]
@@ -776,8 +871,14 @@ with [skims] AS (
 		[dimension].[geography]
 	ON
 		[mgra_based_input].[geography_id] = [geography].[geography_id]
+	LEFT OUTER JOIN -- keep as outer join since where clause is	OR condition
+		@uats_mgras AS [uats_xref]
+	ON
+		[geography].[mgra_13] = [uats_xref].[mgra]
 	WHERE
 		[mgra_based_input].[scenario_id] = @scenario_id
+		AND ((@uats = 1 AND [uats_xref].[mgra] IS NOT NULL)
+			OR @uats = 0) -- if UATS districts option selected only count destinations within UATS district
 	GROUP BY
 		[geography].[taz_13]
 	HAVING
@@ -820,9 +921,15 @@ with [skims] AS (
 			[dimension].[geography_household_location]
 		ON
 			[household].[geography_household_location_id] = [geography_household_location].[geography_household_location_id]
+		LEFT OUTER JOIN -- keep as outer join since where clause is	OR condition
+			@uats_mgras AS [uats_xref]
+		ON
+			[geography_household_location].[household_location_mgra_13] = [uats_xref].[mgra]
 		WHERE
 			[person].[scenario_id] = @scenario_id
-			AND [household].[scenario_id] = @scenario_id) AS [tt]
+			AND [household].[scenario_id] = @scenario_id
+			AND ((@uats = 1 AND [uats_xref].[mgra] IS NOT NULL
+				OR @uats = 0))) AS [tt] -- if UATS districts option selected only count population within UATS district
 	GROUP BY
 		[taz_13]
 		,CASE	WHEN @senior = 1 THEN [senior]
@@ -867,6 +974,7 @@ CROSS JOIN (
 GROUP BY
 	[pop_segmentation]
 WITH ROLLUP
+OPTION(MAXDOP 1)
 GO
 
 -- Add metadata for [rtp_2019].[sp_pm_7b_auto]
@@ -884,6 +992,7 @@ GO
 
 CREATE PROCEDURE [rtp_2019].[sp_pm_7b_transit]
 	@scenario_id integer,
+	@uats bit = 0, -- switch to limit origin and destination geographies to UATS zones
 	@senior bit = 0, -- indicator to use senior population segmentation
 	@minority bit = 0, -- indicator to use minority population segmentation
 	@low_income bit = 0 -- indicator to use low income population segmentation
@@ -898,18 +1007,29 @@ END;
 /*	Author: Gregor Schroeder
 	Date: 4/25/2018
 	Description: Percent of population within 15 minutes of goods and services
-		(retail, medical, parks, and beaches) via transit (total 
+		(retail, medical, parks, and beaches) via transit (total
 		population, disadvantaged communities (seniors, low-income, and minority)
 		and non-disadvantaged communities)
 		Note that for retail and medical the measure is adjusted to be the percent
-		of total retail and medical employment in the region accessible by the 
+		of total retail and medical employment in the region accessible by the
 		average person
 		similar to Performance Measure 8ab_auto in the 2015 RTP */
+
+SET NOCOUNT ON;
+
+-- get mgras that are fully contained within UATS districts
+DECLARE @uats_mgras TABLE ([mgra] nchar(15) PRIMARY KEY NOT NULL)
+INSERT INTO @uats_mgras
+SELECT CONVERT(nchar, [mgra]) AS [mgra] FROM
+OPENQUERY(
+	[sql2014b8],
+	'SELECT [mgra] FROM [lis].[gis].[uats2014],[lis].[gis].[MGRA13PT]
+		WHERE [uats2014].[Shape].STContains([MGRA13PT].[Shape]) = 1');
 
 -- for resident models only (Individual, Internal-External, Joint)
 -- get the weighted average by transit person trips of MGRA-MGRA trip time
 -- note if a MGRA-MGRA pair does not appear in this trip list it is not considered
--- do not have to consider external zones with no MGRAs as these zones 
+-- do not have to consider external zones with no MGRAs as these zones
 -- do not have population or employment for the San Diego region
 -- keeping only trip times under 15 minutes
 with [skims] AS (
@@ -935,6 +1055,14 @@ with [skims] AS (
 		[dimension].[geography_trip_destination]
 	ON
 		[person_trip].[geography_trip_destination_id] = [geography_trip_destination].[geography_trip_destination_id]
+	LEFT OUTER JOIN -- keep as outer join since where clause is	OR condition
+		@uats_mgras AS [uats_origin_xref]
+	ON
+		[geography_trip_origin].[trip_origin_mgra_13] = [uats_origin_xref].[mgra]
+	LEFT OUTER JOIN -- keep as outer join since where clause is OR condition
+		@uats_mgras AS [uats_dest_xref]
+	ON
+		[geography_trip_destination].[trip_destination_mgra_13] = [uats_dest_xref].[mgra]
 	WHERE
 		[person_trip].[scenario_id] = @scenario_id
 		AND [model_trip].[model_trip_description] IN ('Individual',
@@ -949,6 +1077,8 @@ with [skims] AS (
 													'Kiss and Ride to Transit - Local Bus Only',
 													'Kiss and Ride to Transit - Premium Transit Only',
 													'Kiss and Ride to Transit - Local Bus and Premium Transit') -- transit mode only
+		AND ((@uats = 1 AND ([uats_origin_xref].[mgra] IS NOT NULL AND [uats_dest_xref].[mgra] IS NOT NULL))
+			OR @uats = 0) -- if UATS districts option selected only count trips originating and ending in UATS mgras
 	GROUP BY
 		[geography_trip_origin].[trip_origin_mgra_13]
 		,[geography_trip_destination].[trip_destination_mgra_13]
@@ -969,8 +1099,14 @@ with [skims] AS (
 		[dimension].[geography]
 	ON
 		[mgra_based_input].[geography_id] = [geography].[geography_id]
+	LEFT OUTER JOIN -- keep as outer join since where clause is	OR condition
+		@uats_mgras AS [uats_xref]
+	ON
+		[geography].[mgra_13] = [uats_xref].[mgra]
 	WHERE
 		[mgra_based_input].[scenario_id] = @scenario_id
+		AND ((@uats = 1 AND [uats_xref].[mgra] IS NOT NULL)
+			OR @uats = 0) -- if UATS districts option selected only count destinations within UATS district
 	GROUP BY
 		[geography].[mgra_13]
 	HAVING
@@ -1013,9 +1149,15 @@ with [skims] AS (
 			[dimension].[geography_household_location]
 		ON
 			[household].[geography_household_location_id] = [geography_household_location].[geography_household_location_id]
+		LEFT OUTER JOIN -- keep as outer join since where clause is	OR condition
+			@uats_mgras AS [uats_xref]
+		ON
+			[geography_household_location].[household_location_mgra_13] = [uats_xref].[mgra]
 		WHERE
 			[person].[scenario_id] = @scenario_id
-			AND [household].[scenario_id] = @scenario_id) AS [tt]
+			AND [household].[scenario_id] = @scenario_id
+			AND ((@uats = 1 AND [uats_xref].[mgra] IS NOT NULL
+				OR @uats = 0))) AS [tt] -- if UATS districts option selected only count population within UATS district
 	GROUP BY
 		[mgra_13]
 		,CASE	WHEN @senior = 1 THEN [senior]
@@ -1060,6 +1202,7 @@ CROSS JOIN (
 GROUP BY
 	[pop_segmentation]
 WITH ROLLUP
+OPTION(MAXDOP 1)
 GO
 
 -- Add metadata for [rtp_2019].[sp_pm_7b_transit]
