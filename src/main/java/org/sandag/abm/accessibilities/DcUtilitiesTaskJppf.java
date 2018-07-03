@@ -238,6 +238,7 @@ public class DcUtilitiesTaskJppf
         McLogsumsCalculator logsumHelper = new McLogsumsCalculator();
         logsumHelper.setupSkimCalculators(rbMap);
         bestPathCalculator = logsumHelper.getBestTransitPathCalculator();
+    	AutoAndNonMotorizedSkimsCalculator anm = logsumHelper.getAnmSkimCalculator();
 
         // set up the tracer object
         tracer = Tracer.getTracer();
@@ -392,8 +393,10 @@ public class DcUtilitiesTaskJppf
                 if (calculateLuAccessibilities)
                 {
                 	
+                    float odDistance = (float) anm.getTazDistanceFromTaz(iTaz, ModelStructure.AM_SKIM_PERIOD_INDEX)[jTaz];
+
                     // determine the best transit path, which also stores the best utilities array and the best mode
-                    bestPathCalculator.findBestDriveTransitWalkTaps(walkDmu, driveDmu, ModelStructure.AM_SKIM_PERIOD_INDEX, iMgra, jMgra, trace, logger);
+                    bestPathCalculator.findBestDriveTransitWalkTaps(walkDmu, driveDmu, ModelStructure.AM_SKIM_PERIOD_INDEX, iMgra, jMgra, trace, logger, odDistance);
                	
                     // sum the exponentiated utilities over modes
                     double driveTransitWalkUtilities[] = bestPathCalculator.getBestUtilities();
@@ -408,7 +411,7 @@ public class DcUtilitiesTaskJppf
                     }
                     
                     // determine the best transit path, which also stores the best utilities array and the best mode
-                    bestPathCalculator.findBestDriveTransitWalkTaps(walkDmu, driveDmu, ModelStructure.MD_SKIM_PERIOD_INDEX, iMgra, jMgra, trace, logger);
+                    bestPathCalculator.findBestDriveTransitWalkTaps(walkDmu, driveDmu, ModelStructure.MD_SKIM_PERIOD_INDEX, iMgra, jMgra, trace, logger, odDistance);
                	
                     // sum the exponentiated utilities over modes
                     driveTransitWalkUtilities = bestPathCalculator.getBestUtilities();

@@ -201,16 +201,22 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             regional_pass = float(transit_passes["regional_pass"]) / 2.0
             params = transit_assignment.get_perception_parameters(period)
             mode_groups = transit_assignment.group_modes_by_fare(network, day_pass)
+            print mode_groups
             bus_fares = {}
             for mode_id, fares in mode_groups["bus"]:
                 for fare, count in fares.items():
                     bus_fares[fare] = bus_fares.get(fare, 0) + count
             # set nominal bus fare as unweighted average of two most frequent fares
             bus_fares = sorted(bus_fares.items(), key=lambda x: x[1], reverse=True)
+            
+            print bus_fares
+            
             if len(bus_fares) >= 2:
                 bus_fare = (bus_fares[0][0] + bus_fares[1][0]) / 2
-            else:  # unless there is only one fare value, in which case use that one
+            elif len(bus_fares) == 1:  # unless there is only one fare value, in which case use that one
                 bus_fare = bus_fares[0][0]
+            else:
+                bus_fare = 0
             # find max premium mode fare
             premium_fare = 0
             for mode_id, fares in mode_groups["premium"]:

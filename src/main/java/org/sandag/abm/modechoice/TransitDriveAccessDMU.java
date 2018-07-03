@@ -27,6 +27,7 @@ public class TransitDriveAccessDMU
     double                              driveDistToTap;
     double                              driveDistFromTap;
     double                              driveTimeFromTap;
+    double                              OrigDestDistance;
     double                              tapToMgraWalkTime;
     double                              mgraToTapWalkTime;
     double                              carToStationWalkTime;
@@ -227,7 +228,15 @@ public class TransitDriveAccessDMU
         driveDistFromTap = driveDist;
     }
     
-    public void setTOD(int period) {
+    public double getOrigDestDistance() {
+		return OrigDestDistance;
+	}
+
+	public void setOrigDestDistance(double origDestDistance) {
+		OrigDestDistance = origDestDistance;
+	}
+
+	public void setTOD(int period) {
     	this.period = period;
     }
     
@@ -301,6 +310,7 @@ public class TransitDriveAccessDMU
         localLogger.info(String.format("personType:               %9s", personType));
         localLogger.info(String.format("ivtCoeff                  %9.4f", ivtCoeff));
         localLogger.info(String.format("costCoeff                 %9.4f", costCoeff));
+        localLogger.info(String.format("origDestDistance          %9.4f, origDestDistance"));
 
 
         AccessMode[] accessModes = AccessMode.values();
@@ -329,6 +339,7 @@ public class TransitDriveAccessDMU
         methodIndexMap.put("getPersonType", 14);
         methodIndexMap.put("getIvtCoeff", 15);
         methodIndexMap.put("getCostCoeff", 16);
+        methodIndexMap.put("getOrigDestDistance",17);
 
     }
 
@@ -368,6 +379,8 @@ public class TransitDriveAccessDMU
                 return getIvtCoeff();
             case 16:
             	return getCostCoeff();
+            case 17:
+            	return getOrigDestDistance();
 
 
             default:
