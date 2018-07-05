@@ -1816,7 +1816,9 @@ SELECT
 					WHEN @minority = 1 THEN [minority]
 					WHEN @low_income = 1 THEN [low_income]
 					ELSE 'All' END, 'Total') AS [pop_segmentation]
-	,AVG(100.0 * CASE	WHEN [household_costs].[cost_annual_transportation] / [coc_households].[income] > 1 THEN 1
+	,AVG(100.0 * CASE	WHEN [coc_households].[income] = 0
+							OR [household_costs].[cost_annual_transportation] / [coc_households].[income] > 1
+						THEN 1
 						ELSE [household_costs].[cost_annual_transportation] / [coc_households].[income]
 						END) AS [pct_income_transportation_cost] -- cap percentage cost at 100% of income
 FROM
