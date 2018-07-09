@@ -14,14 +14,8 @@ CREATE TABLE [fact].[bike_flow] (
 	[bike_link_ab_id] int NOT NULL,
 	[time_id] int NOT NULL,
 	[flow] decimal(8,4) NOT NULL,
-	CONSTRAINT pk_bikeflow PRIMARY KEY ([scenario_id], [bike_flow_id]) WITH (STATISTICS_INCREMENTAL = ON),
-	CONSTRAINT ixuq_bikeflow UNIQUE ([scenario_id], [bike_link_ab_id], [time_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
-	CONSTRAINT fk_bikeflow_scenario FOREIGN KEY ([scenario_id]) REFERENCES [dimension].[scenario] ([scenario_id]),
-	CONSTRAINT fk_bikeflow_time FOREIGN KEY ([time_id]) REFERENCES [dimension].[time] ([time_id]),
-	CONSTRAINT fk_bikeflow_bikelink FOREIGN KEY ([scenario_id], [bike_link_id]) REFERENCES [dimension].[bike_link] ([scenario_id], [bike_link_id]),
-	CONSTRAINT fk_bikeflow_bikelinkab FOREIGN KEY ([scenario_id], [bike_link_ab_id]) REFERENCES [dimension].[bike_link_ab] ([scenario_id], [bike_link_ab_id]))
+	INDEX ccsi_bikeflow CLUSTERED COLUMNSTORE)
 ON scenario_scheme([scenario_id])
-WITH (DATA_COMPRESSION = PAGE)
 
 
 -- create hwy_flow fact
@@ -43,15 +37,8 @@ CREATE TABLE [fact].[hwy_flow] (
 	[msa_flow] decimal(12,6) NOT NULL,
 	[msa_time] decimal(10,6) NOT NULL,
 	[flow] decimal(12,6) NOT NULL,
-	CONSTRAINT pk_hwyflow PRIMARY KEY ([scenario_id], [hwy_flow_id]) WITH (STATISTICS_INCREMENTAL = ON),
-	CONSTRAINT fk_hwyflow_scenario FOREIGN KEY ([scenario_id]) REFERENCES [dimension].[scenario] ([scenario_id]),
-	CONSTRAINT fk_hwyflow_time FOREIGN KEY ([time_id]) REFERENCES [dimension].[time] ([time_id]),
-	CONSTRAINT fk_hwyflow_hwylink FOREIGN KEY ([scenario_id], [hwy_link_id]) REFERENCES [dimension].[hwy_link] ([scenario_id], [hwy_link_id]),
-	CONSTRAINT fk_hwyflow_hwylinkab FOREIGN KEY ([scenario_id], [hwy_link_ab_id]) REFERENCES [dimension].[hwy_link_ab] ([scenario_id], [hwy_link_ab_id]),
-	CONSTRAINT fk_hwyflow_hwylinktod FOREIGN KEY ([scenario_id], [hwy_link_tod_id]) REFERENCES [dimension].[hwy_link_tod] ([scenario_id], [hwy_link_tod_id]),
-	CONSTRAINT fk_hwyflow_hwylinkabtod FOREIGN KEY ([scenario_id], [hwy_link_ab_tod_id]) REFERENCES [dimension].[hwy_link_ab_tod] ([scenario_id], [hwy_link_ab_tod_id]))
+	INDEX ccsi_hwyflow CLUSTERED COLUMNSTORE)
 ON scenario_scheme([scenario_id])
-WITH (DATA_COMPRESSION = PAGE)
 
 
 -- create hwy_flow_mode fact
@@ -65,16 +52,8 @@ CREATE TABLE [fact].[hwy_flow_mode] (
 	[time_id] int NOT NULL,
 	[mode_id] tinyint NOT NULL,
 	[flow] decimal(12,6) NOT NULL,
-	CONSTRAINT pk_hwyflowmode PRIMARY KEY ([scenario_id], [hwy_flow_mode_id]) WITH (STATISTICS_INCREMENTAL = ON),
-	CONSTRAINT fk_hwyflowmode_scenario FOREIGN KEY ([scenario_id]) REFERENCES [dimension].[scenario] ([scenario_id]),
-	CONSTRAINT fk_hwyflowmode_time FOREIGN KEY ([time_id]) REFERENCES [dimension].[time] ([time_id]),
-	CONSTRAINT fk_hwyflowmode_mode FOREIGN KEY ([mode_id]) REFERENCES [dimension].[mode] ([mode_id]),
-	CONSTRAINT fk_hwyflowmode_hwylink FOREIGN KEY ([scenario_id], [hwy_link_id]) REFERENCES [dimension].[hwy_link] ([scenario_id], [hwy_link_id]),
-	CONSTRAINT fk_hwyflowmode_hwylinkab FOREIGN KEY ([scenario_id], [hwy_link_ab_id]) REFERENCES [dimension].[hwy_link_ab] ([scenario_id], [hwy_link_ab_id]),
-	CONSTRAINT fk_hwyflowmode_hwylinktod FOREIGN KEY ([scenario_id], [hwy_link_tod_id]) REFERENCES [dimension].[hwy_link_tod] ([scenario_id], [hwy_link_tod_id]),
-	CONSTRAINT fk_hwyflowmode_hwylinkabtod FOREIGN KEY ([scenario_id], [hwy_link_ab_tod_id]) REFERENCES [dimension].[hwy_link_ab_tod] ([scenario_id], [hwy_link_ab_tod_id]))
+	INDEX ccsi_hwyflowmode CLUSTERED COLUMNSTORE)
 ON scenario_scheme([scenario_id])
-WITH (DATA_COMPRESSION = PAGE)
 
 
 -- create mgra_based_input fact
@@ -183,11 +162,8 @@ CREATE TABLE [fact].[mgra_based_input] (
     [acres] decimal(10,5) NOT NULL,
     [effective_acres] decimal(10,5) NOT NULL,
     [land_acres] decimal(10,5) NOT NULL,
-	CONSTRAINT pk_mgrabasedinput PRIMARY KEY ([scenario_id], [mgra_based_input_id]) WITH (STATISTICS_INCREMENTAL = ON),
-	CONSTRAINT fk_mgrabasedinput_scenario FOREIGN KEY ([scenario_id]) REFERENCES [dimension].[scenario] ([scenario_id]),
-	CONSTRAINT fk_mgrabasedinput_geography FOREIGN KEY ([geography_id]) REFERENCES [dimension].[geography] ([geography_id]))
+	INDEX ccsi_mgrabasedinput CLUSTERED COLUMNSTORE)
 ON scenario_scheme([scenario_id])
-WITH (DATA_COMPRESSION = PAGE)
 
 
 -- create transit_aggflow fact
@@ -205,15 +181,8 @@ CREATE TABLE [fact].[transit_aggflow] (
 	[access_walk_flow] decimal(11,6) NOT NULL,
 	[xfer_walk_flow] decimal(11,6) NOT NULL,
 	[egress_walk_flow] decimal(11,6) NOT NULL,
-	CONSTRAINT pk_transitaggflow PRIMARY KEY ([scenario_id], [transit_aggflow_id]) WITH (STATISTICS_INCREMENTAL = ON),
-	CONSTRAINT ixuq_transitaggflow UNIQUE ([scenario_id], [transit_link_id], [ab], [time_id], [mode_transit_id], [mode_transit_access_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
-	CONSTRAINT fk_transitaggflow_scenario FOREIGN KEY ([scenario_id]) REFERENCES [dimension].[scenario] ([scenario_id]),
-	CONSTRAINT fk_transitaggflow_time FOREIGN KEY ([time_id]) REFERENCES [dimension].[time] ([time_id]),
-	CONSTRAINT fk_transitaggflow_modetransit FOREIGN KEY ([mode_transit_id]) REFERENCES [dimension].[mode] ([mode_id]),
-	CONSTRAINT fk_transitaggflow_modetransitaccess FOREIGN KEY ([mode_transit_access_id]) REFERENCES [dimension].[mode] ([mode_id]),
-	CONSTRAINT fk_transitaggflow_transitlink FOREIGN KEY ([scenario_id], [transit_link_id]) REFERENCES [dimension].[transit_link] ([scenario_id], [transit_link_id]))
+	INDEX ccsi_transitaggflow CLUSTERED COLUMNSTORE)
 ON scenario_scheme([scenario_id])
-WITH (DATA_COMPRESSION = PAGE)
 
 
 -- create transit_flow fact
@@ -231,17 +200,8 @@ CREATE TABLE [fact].[transit_flow] (
 	[baseivtt] decimal(9,6) NOT NULL,
 	[cost] decimal(9,6) NOT NULL,
 	[transit_flow] decimal(11,6) NOT NULL,
-	CONSTRAINT pk_transitflow PRIMARY KEY ([scenario_id], [transit_flow_id]) WITH (STATISTICS_INCREMENTAL = ON),
-	CONSTRAINT ixuq_transitflow UNIQUE ([scenario_id], [transit_route_id], [transit_stop_from_id], [transit_stop_to_id], [time_id], [mode_transit_id], [mode_transit_access_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
-	CONSTRAINT fk_transitflow_scenario FOREIGN KEY ([scenario_id]) REFERENCES [dimension].[scenario] ([scenario_id]),
-	CONSTRAINT fk_transitflow_time FOREIGN KEY ([time_id]) REFERENCES [dimension].[time] ([time_id]),
-	CONSTRAINT fk_transitflow_modetransit FOREIGN KEY ([mode_transit_id]) REFERENCES [dimension].[mode] ([mode_id]),
-	CONSTRAINT fk_transitflow_modetransitaccess FOREIGN KEY ([mode_transit_access_id]) REFERENCES [dimension].[mode] ([mode_id]),
-	CONSTRAINT fk_transitflow_transitroute FOREIGN KEY ([scenario_id], [transit_route_id]) REFERENCES [dimension].[transit_route] ([scenario_id], [transit_route_id]),
-	CONSTRAINT fk_transitflow_transitstopfrom FOREIGN KEY ([scenario_id], [transit_stop_from_id]) REFERENCES [dimension].[transit_stop] ([scenario_id], [transit_stop_id]),
-	CONSTRAINT fk_transitflow_totransitstopto FOREIGN KEY ([scenario_id], [transit_stop_to_id]) REFERENCES [dimension].[transit_stop] ([scenario_id], [transit_stop_id]))
+	INDEX ccsi_transitflow CLUSTERED COLUMNSTORE)
 ON scenario_scheme([scenario_id])
-WITH (DATA_COMPRESSION = PAGE)
 
 
 -- create transit_onoff fact
@@ -259,16 +219,8 @@ CREATE TABLE [fact].[transit_onoff] (
 	[direct_transfer_on] decimal(11,6) NOT NULL,
 	[direct_transfer_off] decimal(11,6) NOT NULL,
 	[egress_off] decimal(11,6) NOT NULL,
-	CONSTRAINT pk_transitonoff PRIMARY KEY ([scenario_id], [transit_onoff_id]) WITH (STATISTICS_INCREMENTAL = ON),
-	CONSTRAINT ixuq_transitonoff UNIQUE ([scenario_id], [transit_route_id], [transit_stop_id], [time_id], [mode_transit_id], [mode_transit_access_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
-	CONSTRAINT fk_transitonoff_scenario FOREIGN KEY ([scenario_id]) REFERENCES [dimension].[scenario] ([scenario_id]),
-	CONSTRAINT fk_transitonoff_time FOREIGN KEY ([time_id]) REFERENCES [dimension].[time] ([time_id]),
-	CONSTRAINT fk_transitonoff_modetransit FOREIGN KEY ([mode_transit_id]) REFERENCES [dimension].[mode] ([mode_id]),
-	CONSTRAINT fk_transitonoff_modetransitaccess FOREIGN KEY ([mode_transit_access_id]) REFERENCES [dimension].[mode] ([mode_id]),
-	CONSTRAINT fk_transitonoff_transitroute FOREIGN KEY ([scenario_id], [transit_route_id]) REFERENCES [dimension].[transit_route] ([scenario_id], [transit_route_id]),
-	CONSTRAINT fk_transitonoff_transitstop FOREIGN KEY ([scenario_id], [transit_stop_id]) REFERENCES [dimension].[transit_stop] ([scenario_id], [transit_stop_id]))
+	INDEX ccsi_transitonoff CLUSTERED COLUMNSTORE)
 ON scenario_scheme([scenario_id])
-WITH (DATA_COMPRESSION = PAGE)
 
 
 -- create transit_pnr fact
@@ -283,14 +235,8 @@ CREATE TABLE [fact].[transit_pnr] (
 	[capacity] smallint NOT NULL,
 	[distance] smallint NOT NULL,
 	[vehicles] smallint NOT NULL,
-	CONSTRAINT pk_transitpnr PRIMARY KEY ([scenario_id], [transit_pnr_id]) WITH (STATISTICS_INCREMENTAL = ON),
-	CONSTRAINT ixuq_transitpnr UNIQUE ([scenario_id], [transit_tap_id], [time_id]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
-	CONSTRAINT fk_transitpnr_scenario FOREIGN KEY ([scenario_id]) REFERENCES [dimension].[scenario] ([scenario_id]),
-	CONSTRAINT fk_transitpnr_geography FOREIGN KEY ([time_id]) REFERENCES [dimension].[geography] ([geography_id]),
-	CONSTRAINT fk_transitpnr_time FOREIGN KEY ([time_id]) REFERENCES [dimension].[time] ([time_id]),
-	CONSTRAINT fk_transitonoff_transittap FOREIGN KEY ([scenario_id], [transit_tap_id]) REFERENCES [dimension].[transit_tap] ([scenario_id], [transit_tap_id]))
+	INDEX ccsi_transitpnr CLUSTERED COLUMNSTORE)
 ON scenario_scheme([scenario_id])
-WITH (DATA_COMPRESSION = PAGE)
 
 
 

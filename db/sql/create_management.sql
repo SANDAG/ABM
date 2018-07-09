@@ -54,14 +54,8 @@ CREATE TABLE [staging].[bike_flow] (
 	[bike_link_ab_id] int NOT NULL,
 	[time_id] int NOT NULL,
 	[flow] decimal(8,4) NOT NULL,
-	CONSTRAINT pk_bikeflow PRIMARY KEY ([scenario_id], [bike_flow_id]),
-	CONSTRAINT ixuq_bikeflow UNIQUE ([scenario_id], [bike_link_ab_id], [time_id]) WITH (DATA_COMPRESSION = PAGE),
-	CONSTRAINT fk_bikeflow_scenario FOREIGN KEY ([scenario_id]) REFERENCES [dimension].[scenario] ([scenario_id]),
-	CONSTRAINT fk_bikeflow_time FOREIGN KEY ([time_id]) REFERENCES [dimension].[time] ([time_id]),
-	CONSTRAINT fk_bikeflow_bikelink FOREIGN KEY ([scenario_id], [bike_link_id]) REFERENCES [dimension].[bike_link] ([scenario_id], [bike_link_id]),
-	CONSTRAINT fk_bikeflow_bikelinkab FOREIGN KEY ([scenario_id], [bike_link_ab_id]) REFERENCES [dimension].[bike_link_ab] ([scenario_id], [bike_link_ab_id]))
-ON ' + @filegroupname + N'
-WITH (DATA_COMPRESSION = PAGE);'
+	INDEX ccsi_bikeflow CLUSTERED COLUMNSTORE)
+ON ' + @filegroupname + N';'
 EXECUTE sp_executesql @SQL
 
 
@@ -88,15 +82,8 @@ CREATE TABLE [staging].[hwy_flow] (
 	[msa_flow] decimal(12,6) NOT NULL,
 	[msa_time] decimal(10,6) NOT NULL,
 	[flow] decimal(12,6) NOT NULL,
-	CONSTRAINT pk_hwyflow PRIMARY KEY ([scenario_id], [hwy_flow_id]),
-	CONSTRAINT fk_hwyflow_scenario FOREIGN KEY ([scenario_id]) REFERENCES [dimension].[scenario] ([scenario_id]),
-	CONSTRAINT fk_hwyflow_time FOREIGN KEY ([time_id]) REFERENCES [dimension].[time] ([time_id]),
-	CONSTRAINT fk_hwyflow_hwylink FOREIGN KEY ([scenario_id], [hwy_link_id]) REFERENCES [dimension].[hwy_link] ([scenario_id], [hwy_link_id]),
-	CONSTRAINT fk_hwyflow_hwylinkab FOREIGN KEY ([scenario_id], [hwy_link_ab_id]) REFERENCES [dimension].[hwy_link_ab] ([scenario_id], [hwy_link_ab_id]),
-	CONSTRAINT fk_hwyflow_hwylinktod FOREIGN KEY ([scenario_id], [hwy_link_tod_id]) REFERENCES [dimension].[hwy_link_tod] ([scenario_id], [hwy_link_tod_id]),
-	CONSTRAINT fk_hwyflow_hwylinkabtod FOREIGN KEY ([scenario_id], [hwy_link_ab_tod_id]) REFERENCES [dimension].[hwy_link_ab_tod] ([scenario_id], [hwy_link_ab_tod_id]))
-ON ' + @filegroupname + N'
-WITH (DATA_COMPRESSION = PAGE);'
+	INDEX ccsi_hwyflow CLUSTERED COLUMNSTORE)
+ON ' + @filegroupname + N';'
 EXECUTE sp_executesql @SQL
 
 
@@ -115,16 +102,8 @@ CREATE TABLE [staging].[hwy_flow_mode] (
 	[time_id] int NOT NULL,
 	[mode_id] tinyint NOT NULL,
 	[flow] decimal(12,6) NOT NULL,
-	CONSTRAINT pk_hwyflowmode PRIMARY KEY ([scenario_id], [hwy_flow_mode_id]),
-	CONSTRAINT fk_hwyflowmode_scenario FOREIGN KEY ([scenario_id]) REFERENCES [dimension].[scenario] ([scenario_id]),
-	CONSTRAINT fk_hwyflowmode_time FOREIGN KEY ([time_id]) REFERENCES [dimension].[time] ([time_id]),
-	CONSTRAINT fk_hwyflowmode_mode FOREIGN KEY ([mode_id]) REFERENCES [dimension].[mode] ([mode_id]),
-	CONSTRAINT fk_hwyflowmode_hwylink FOREIGN KEY ([scenario_id], [hwy_link_id]) REFERENCES [dimension].[hwy_link] ([scenario_id], [hwy_link_id]),
-	CONSTRAINT fk_hwyflowmode_hwylinkab FOREIGN KEY ([scenario_id], [hwy_link_ab_id]) REFERENCES [dimension].[hwy_link_ab] ([scenario_id], [hwy_link_ab_id]),
-	CONSTRAINT fk_hwyflowmode_hwylinktod FOREIGN KEY ([scenario_id], [hwy_link_tod_id]) REFERENCES [dimension].[hwy_link_tod] ([scenario_id], [hwy_link_tod_id]),
-	CONSTRAINT fk_hwyflowmode_hwylinkabtod FOREIGN KEY ([scenario_id], [hwy_link_ab_tod_id]) REFERENCES [dimension].[hwy_link_ab_tod] ([scenario_id], [hwy_link_ab_tod_id]))
-ON ' + @filegroupname + N'
-WITH (DATA_COMPRESSION = PAGE);'
+	INDEX ccsi_hwyflowmode CLUSTERED COLUMNSTORE)
+ON ' + @filegroupname + N';'
 EXECUTE sp_executesql @SQL
 
 
@@ -238,11 +217,8 @@ CREATE TABLE [staging].[mgra_based_input] (
     [acres] decimal(10,5) NOT NULL,
     [effective_acres] decimal(10,5) NOT NULL,
     [land_acres] decimal(10,5) NOT NULL,
-	CONSTRAINT pk_mgrabasedinput PRIMARY KEY ([scenario_id], [mgra_based_input_id]),
-	CONSTRAINT fk_mgrabasedinput_scenario FOREIGN KEY ([scenario_id]) REFERENCES [dimension].[scenario] ([scenario_id]),
-	CONSTRAINT fk_mgrabasedinput_geography FOREIGN KEY ([geography_id]) REFERENCES [dimension].[geography] ([geography_id]))
-ON ' + @filegroupname + N'
-WITH (DATA_COMPRESSION = PAGE);'
+	INDEX ccsi_mgrabasedinput CLUSTERED COLUMNSTORE)
+ON ' + @filegroupname + N';'
 EXECUTE sp_executesql @SQL
 
 
@@ -265,15 +241,8 @@ CREATE TABLE [staging].[transit_aggflow] (
 	[access_walk_flow] decimal(11,6) NOT NULL,
 	[xfer_walk_flow] decimal(11,6) NOT NULL,
 	[egress_walk_flow] decimal(11,6) NOT NULL,
-	CONSTRAINT pk_transitaggflow PRIMARY KEY ([scenario_id], [transit_aggflow_id]),
-	CONSTRAINT ixuq_transitaggflow UNIQUE ([scenario_id], [transit_link_id], [ab], [time_id], [mode_transit_id], [mode_transit_access_id]) WITH (DATA_COMPRESSION = PAGE),
-	CONSTRAINT fk_transitaggflow_scenario FOREIGN KEY ([scenario_id]) REFERENCES [dimension].[scenario] ([scenario_id]),
-	CONSTRAINT fk_transitaggflow_time FOREIGN KEY ([time_id]) REFERENCES [dimension].[time] ([time_id]),
-	CONSTRAINT fk_transitaggflow_modetransit FOREIGN KEY ([mode_transit_id]) REFERENCES [dimension].[mode] ([mode_id]),
-	CONSTRAINT fk_transitaggflow_modetransitaccess FOREIGN KEY ([mode_transit_access_id]) REFERENCES [dimension].[mode] ([mode_id]),
-	CONSTRAINT fk_transitaggflow_transitlink FOREIGN KEY ([scenario_id], [transit_link_id]) REFERENCES [dimension].[transit_link] ([scenario_id], [transit_link_id]))
-ON ' + @filegroupname + N'
-WITH (DATA_COMPRESSION = PAGE);'
+	INDEX ccsi_transitaggflow CLUSTERED COLUMNSTORE)
+ON ' + @filegroupname + N';'
 EXECUTE sp_executesql @SQL
 
 
@@ -296,17 +265,8 @@ CREATE TABLE [staging].[transit_flow] (
 	[baseivtt] decimal(9,6) NOT NULL,
 	[cost] decimal(9,6) NOT NULL,
 	[transit_flow] decimal(11,6) NOT NULL,
-	CONSTRAINT pk_transitflow PRIMARY KEY ([scenario_id], [transit_flow_id]),
-	CONSTRAINT ixuq_transitflow UNIQUE ([scenario_id], [transit_route_id], [transit_stop_from_id], [transit_stop_to_id], [time_id], [mode_transit_id], [mode_transit_access_id]) WITH (DATA_COMPRESSION = PAGE),
-	CONSTRAINT fk_transitflow_scenario FOREIGN KEY ([scenario_id]) REFERENCES [dimension].[scenario] ([scenario_id]),
-	CONSTRAINT fk_transitflow_time FOREIGN KEY ([time_id]) REFERENCES [dimension].[time] ([time_id]),
-	CONSTRAINT fk_transitflow_modetransit FOREIGN KEY ([mode_transit_id]) REFERENCES [dimension].[mode] ([mode_id]),
-	CONSTRAINT fk_transitflow_modetransitaccess FOREIGN KEY ([mode_transit_access_id]) REFERENCES [dimension].[mode] ([mode_id]),
-	CONSTRAINT fk_transitflow_transitroute FOREIGN KEY ([scenario_id], [transit_route_id]) REFERENCES [dimension].[transit_route] ([scenario_id], [transit_route_id]),
-	CONSTRAINT fk_transitflow_transitstopfrom FOREIGN KEY ([scenario_id], [transit_stop_from_id]) REFERENCES [dimension].[transit_stop] ([scenario_id], [transit_stop_id]),
-	CONSTRAINT fk_transitflow_totransitstopto FOREIGN KEY ([scenario_id], [transit_stop_to_id]) REFERENCES [dimension].[transit_stop] ([scenario_id], [transit_stop_id]))
-ON ' + @filegroupname + N'
-WITH (DATA_COMPRESSION = PAGE);'
+	INDEX ccsi_transitflow CLUSTERED COLUMNSTORE)
+ON ' + @filegroupname + N';'
 EXECUTE sp_executesql @SQL
 
 
@@ -329,16 +289,8 @@ CREATE TABLE [staging].[transit_onoff] (
 	[direct_transfer_on] decimal(11,6) NOT NULL,
 	[direct_transfer_off] decimal(11,6) NOT NULL,
 	[egress_off] decimal(11,6) NOT NULL,
-	CONSTRAINT pk_transitonoff PRIMARY KEY ([scenario_id], [transit_onoff_id]),
-	CONSTRAINT ixuq_transitonoff UNIQUE ([scenario_id], [transit_route_id], [transit_stop_id], [time_id], [mode_transit_id], [mode_transit_access_id]) WITH (DATA_COMPRESSION = PAGE),
-	CONSTRAINT fk_transitonoff_scenario FOREIGN KEY ([scenario_id]) REFERENCES [dimension].[scenario] ([scenario_id]),
-	CONSTRAINT fk_transitonoff_time FOREIGN KEY ([time_id]) REFERENCES [dimension].[time] ([time_id]),
-	CONSTRAINT fk_transitonoff_modetransit FOREIGN KEY ([mode_transit_id]) REFERENCES [dimension].[mode] ([mode_id]),
-	CONSTRAINT fk_transitonoff_modetransitaccess FOREIGN KEY ([mode_transit_access_id]) REFERENCES [dimension].[mode] ([mode_id]),
-	CONSTRAINT fk_transitonoff_transitroute FOREIGN KEY ([scenario_id], [transit_route_id]) REFERENCES [dimension].[transit_route] ([scenario_id], [transit_route_id]),
-	CONSTRAINT fk_transitonoff_transitstop FOREIGN KEY ([scenario_id], [transit_stop_id]) REFERENCES [dimension].[transit_stop] ([scenario_id], [transit_stop_id]))
-ON ' + @filegroupname + N'
-WITH (DATA_COMPRESSION = PAGE);'
+	INDEX ccsi_transitonoff CLUSTERED COLUMNSTORE)
+ON ' + @filegroupname + N';'
 EXECUTE sp_executesql @SQL
 
 
@@ -358,20 +310,12 @@ CREATE TABLE [staging].[transit_pnr] (
 	[capacity] smallint NOT NULL,
 	[distance] smallint NOT NULL,
 	[vehicles] smallint NOT NULL,
-	CONSTRAINT pk_transitpnr PRIMARY KEY ([scenario_id], [transit_pnr_id]),
-	CONSTRAINT ixuq_transitpnr UNIQUE ([scenario_id], [transit_tap_id], [time_id]) WITH (DATA_COMPRESSION = PAGE),
-	CONSTRAINT fk_transitpnr_scenario FOREIGN KEY ([scenario_id]) REFERENCES [dimension].[scenario] ([scenario_id]),
-	CONSTRAINT fk_transitpnr_geography FOREIGN KEY ([time_id]) REFERENCES [dimension].[geography] ([geography_id]),
-	CONSTRAINT fk_transitpnr_time FOREIGN KEY ([time_id]) REFERENCES [dimension].[time] ([time_id]),
-	CONSTRAINT fk_transitonoff_transittap FOREIGN KEY ([scenario_id], [transit_tap_id]) REFERENCES [dimension].[transit_tap] ([scenario_id], [transit_tap_id]))
-ON ' + @filegroupname + N'
-WITH (DATA_COMPRESSION = PAGE);'
+	INDEX ccsi_transitpnr CLUSTERED COLUMNSTORE)
+ON ' + @filegroupname + N';'
 EXECUTE sp_executesql @SQL
 
 
-
 -- create person trips fact staging table to drop
--- partitioned clustered columnstore
 SET @SQL = N'
 IF OBJECT_ID(''staging.person_trip'',''U'') IS NOT NULL
 DROP TABLE [staging].[person_trip]
@@ -456,19 +400,193 @@ ALTER TABLE [fact].[transit_pnr] SWITCH PARTITION @drop_partition TO [staging].[
 DROP TABLE [staging].[transit_pnr];
 
 
--- Run regular delete statements for scenario dimension tables
--- Order matters due to foreign key constraints
 
--- bike network
-DELETE FROM [dimension].[bike_link_ab] WHERE [scenario_id] = @scenario_id
+
+-- Create staging tables to drop on the scenario filegroup for
+-- dimension tables whose primary keys are not foreign key constraints
+-- create bike_link_ab dimension staging table to drop
+SET @SQL = N'
+IF OBJECT_ID(''staging.bike_link_ab'',''U'') IS NOT NULL
+DROP TABLE [staging].[bike_link_ab]
+
+CREATE TABLE [staging].[bike_link_ab] (
+	[scenario_id] int NOT NULL,
+	[bike_link_ab_id] int NOT NULL,
+	[bike_link_id] int NOT NULL,
+	[roadsegid] int NOT NULL,
+	[ab] tinyint NOT NULL,
+	[from_node] int NOT NULL,
+	[to_node] int NOT NULL,
+	[gain] smallint NOT NULL,
+	[bike_class] nchar(100) NOT NULL,
+	[lanes] tinyint NOT NULL,
+	[from_signal] bit NOT NULL,
+	[to_signal] bit NOT NULL,
+	CONSTRAINT pk_bikelinkab PRIMARY KEY ([scenario_id], [bike_link_ab_id]),
+	CONSTRAINT ixuq_bikelinkab UNIQUE ([scenario_id], [roadsegid], [ab]) WITH (DATA_COMPRESSION = PAGE),
+	CONSTRAINT fk_bikelinkab_scenario FOREIGN KEY ([scenario_id]) REFERENCES [dimension].[scenario] ([scenario_id]),
+	CONSTRAINT fk_bikelinkab_bikelink FOREIGN KEY ([scenario_id], [bike_link_id]) REFERENCES [dimension].[bike_link] ([scenario_id], [bike_link_id]),
+	INDEX ix_bikelinkab_bikelink NONCLUSTERED ([scenario_id], [bike_link_id])  WITH (DATA_COMPRESSION = PAGE))
+ON  ' + @filegroupname + N'
+WITH (DATA_COMPRESSION = PAGE);'
+EXECUTE sp_executesql @SQL
+
+
+-- create household dimension staging table to drop
+SET @SQL = N'
+IF OBJECT_ID(''staging.household'',''U'') IS NOT NULL
+DROP TABLE [staging].[household]
+
+CREATE TABLE [staging].[household] (
+	[scenario_id] int NOT NULL,
+	[household_id] int NOT NULL, -- insert NULL record as 0
+	[income] int NULL,
+	[income_category] nchar(20) NOT NULL,
+	[household_size] nchar(20) NOT NULL,
+	[household_workers] nchar(20) NOT NULL,
+	[bldgsz] nchar(35) NOT NULL,
+	[unittype] nchar(35) NOT NULL,
+	[autos] nchar(20) NOT NULL,
+	[transponder] nchar(20) NOT NULL,
+	[poverty] decimal(7,4) NULL,
+	[geography_household_location_id] int NOT NULL,
+	[version_household] nchar(20) NOT NULL,
+	[weight_household] tinyint NOT NULL,
+	INDEX ccsi_household CLUSTERED COLUMNSTORE)
+ON  ' + @filegroupname + N';'
+EXECUTE sp_executesql @SQL
+
+
+-- create person dimension staging table to drop
+SET @SQL = N'
+IF OBJECT_ID(''staging.person'',''U'') IS NOT NULL
+DROP TABLE [staging].[person]
+
+CREATE TABLE [staging].[person] (
+	[scenario_id] int NOT NULL,
+	[person_id] int NOT NULL,
+	[household_id] int NOT NULL,
+	[age] smallint NULL,
+	[sex] nchar(20) NOT NULL,
+	[military_status] nchar(20) NOT NULL,
+	[employment_status] nchar(35) NOT NULL,
+	[student_status] nchar(40) NOT NULL,
+	[abm_person_type] nchar(40) NOT NULL,
+	[education] nchar(45) NOT NULL,
+	[grade] nchar(45) NOT NULL,
+	[weeks] nchar(50) NOT NULL,
+	[hours] nchar(40) NOT NULL,
+	[race] nchar(130) NOT NULL,
+	[hispanic] nchar(20) NOT NULL,
+	[version_person] nchar(20) NOT NULL,
+	[abm_activity_pattern] nchar(20) NOT NULL,
+	[freeparking_choice] nchar(35) NOT NULL,
+	[freeparking_reimbpct] float NULL,
+	[work_segment] nchar(55) NOT NULL,
+	[school_segment] nchar(20) NOT NULL,
+	[geography_work_location_id] int NOT NULL,
+	[geography_school_location_id] int NOT NULL,
+	[work_distance] int NULL,
+	[school_distance] int NULL,
+	[weight_person] tinyint NOT NULL,
+	INDEX ccsi_person CLUSTERED COLUMNSTORE)
+ON  ' + @filegroupname + N';'
+EXECUTE sp_executesql @SQL
+
+
+-- create hwy_link_ab_tod dimension staging table to drop
+SET @SQL = N'
+IF OBJECT_ID(''staging.hwy_link_ab_tod'',''U'') IS NOT NULL
+DROP TABLE [staging].[hwy_link_ab_tod]
+
+CREATE TABLE [staging].[hwy_link_ab_tod] (
+	[scenario_id] int NOT NULL,
+	[hwy_link_ab_tod_id] int NOT NULL,
+	[hwy_link_id] int NOT NULL,
+	[hwy_link_ab_id] int NOT NULL,
+	[hwy_link_tod_id] int NOT NULL,
+	[hwycov_id] int NOT NULL,
+	[ab] bit NOT NULL,
+	[time_id] int NOT NULL,
+	[cp] decimal(12,6) NOT NULL,
+	[cx] decimal(12,6) NOT NULL,
+	[tm] decimal(12,6) NOT NULL,
+	[tx] decimal(12,6) NOT NULL,
+	[ln] decimal(12,6) NOT NULL,
+	[stm] decimal(12,6) NOT NULL,
+	[htm] decimal(12,6) NOT NULL,
+	CONSTRAINT pk_hwylinkabtod PRIMARY KEY ([scenario_id], [hwy_link_ab_tod_id]),
+	CONSTRAINT ixuq_hwylinkabtod UNIQUE ([scenario_id], [hwycov_id], [ab], [time_id]) WITH (DATA_COMPRESSION = PAGE),
+	CONSTRAINT fk_hwylinkabtod_scenario FOREIGN KEY ([scenario_id]) REFERENCES [dimension].[scenario] ([scenario_id]),
+	CONSTRAINT fk_hwylinkabtod_time FOREIGN KEY ([time_id]) REFERENCES [dimension].[time] ([time_id]),
+	CONSTRAINT fk_hwylinkabtod_hwylink FOREIGN KEY ([scenario_id], [hwy_link_id]) REFERENCES [dimension].[hwy_link] ([scenario_id], [hwy_link_id]),
+	CONSTRAINT fk_hwylinkabtod_hwylinkab FOREIGN KEY ([scenario_id], [hwy_link_ab_id]) REFERENCES [dimension].[hwy_link_ab] ([scenario_id], [hwy_link_ab_id]),
+	CONSTRAINT fk_hwylinkabtod_hwylinktod FOREIGN KEY ([scenario_id], [hwy_link_tod_id]) REFERENCES [dimension].[hwy_link_tod] ([scenario_id], [hwy_link_tod_id]),
+	INDEX ix_hwylinkabtod_hwylink NONCLUSTERED ([scenario_id], [hwy_link_id])  WITH (DATA_COMPRESSION = PAGE),
+	INDEX ix_hwylinkabtod_hwylinkab NONCLUSTERED ([scenario_id], [hwy_link_ab_id])  WITH (DATA_COMPRESSION = PAGE),
+	INDEX ix_hwylinkabtod_hwylinktod NONCLUSTERED ([scenario_id], [hwy_link_tod_id])  WITH (DATA_COMPRESSION = PAGE))
+ON  ' + @filegroupname + N'
+WITH (DATA_COMPRESSION = PAGE);'
+EXECUTE sp_executesql @SQL
+
+
+-- create tour dimension staging table to drop
+SET @SQL = N'
+IF OBJECT_ID(''staging.tour'',''U'') IS NOT NULL
+DROP TABLE [staging].[tour]
+
+CREATE TABLE [staging].[tour] (
+	[scenario_id] int NOT NULL,
+	[tour_id] int IDENTITY(0,1) NOT NULL, -- insert NULL record as 0
+	[model_tour_id] tinyint NOT NULL,
+	[abm_tour_id] int NOT NULL,
+	[time_tour_start_id] int NOT NULL,
+	[time_tour_end_id] int NOT NULL,
+	[geography_tour_origin_id] int NOT NULL,
+	[geography_tour_destination_id] int NOT NULL,
+	[mode_tour_id] tinyint NOT NULL,
+	[purpose_tour_id] tinyint NOT NULL,
+	[tour_category] nchar(50) NOT NULL,
+	[tour_crossborder_point_of_entry] nchar(30) NOT NULL,
+	[tour_crossborder_sentri] nchar(20) NOT NULL,
+	[tour_visitor_auto] nchar(20) NOT NULL,
+	[tour_visitor_income] nchar(15) NOT NULL,
+	[weight_person_tour] decimal(4,2) NOT NULL,
+	[weight_tour] smallint NOT NULL,
+	INDEX ccsi_tour CLUSTERED COLUMNSTORE)
+ON  ' + @filegroupname + N';'
+EXECUTE sp_executesql @SQL
+
+
+-- Switch and drop partitions for all dimension tables
+-- whose primary keys are not foreign key constraints
+ALTER TABLE [dimension].[bike_link_ab] SWITCH PARTITION @drop_partition TO [staging].[bike_link_ab]
+DROP TABLE [staging].[bike_link_ab];
+
+ALTER TABLE [dimension].[household] SWITCH PARTITION @drop_partition TO [staging].[household]
+DROP TABLE [staging].[household];
+
+ALTER TABLE [dimension].[person] SWITCH PARTITION @drop_partition TO [staging].[person]
+DROP TABLE [staging].[person];
+
+ALTER TABLE [dimension].[hwy_link_ab_tod] SWITCH PARTITION @drop_partition TO [staging].[hwy_link_ab_tod]
+DROP TABLE [staging].[hwy_link_ab_tod];
+
+ALTER TABLE [dimension].[tour] SWITCH PARTITION @drop_partition TO [staging].[tour]
+DROP TABLE [staging].[tour];
+
+
+
+
+-- Run regular delete statements for remaining scenario dimension tables
+-- Order matters due to foreign key constraints
+-- bike_link
 DELETE FROM [dimension].[bike_link] WHERE [scenario_id] = @scenario_id
 
--- households and persons
-DELETE FROM [dimension].[person] WHERE [scenario_id] = @scenario_id
+-- households
 DELETE FROM [dimension].[household] WHERE [scenario_id] = @scenario_id
 
 -- highway network
-DELETE FROM [dimension].[hwy_link_ab_tod] WHERE [scenario_id] = @scenario_id
 DELETE FROM [dimension].[hwy_link_ab] WHERE [scenario_id] = @scenario_id
 DELETE FROM [dimension].[hwy_link_tod] WHERE [scenario_id] = @scenario_id
 DELETE FROM [dimension].[hwy_link] WHERE [scenario_id] = @scenario_id
@@ -478,9 +596,6 @@ DELETE FROM [dimension].[transit_tap] WHERE [scenario_id] = @scenario_id
 DELETE FROM [dimension].[transit_stop] WHERE [scenario_id] = @scenario_id
 DELETE FROM [dimension].[transit_route] WHERE [scenario_id] = @scenario_id
 DELETE FROM [dimension].[transit_link] WHERE [scenario_id] = @scenario_id
-
--- tours
-DELETE FROM [dimension].[tour] WHERE [scenario_id] = @scenario_id
 
 -- delete scenario from scenario table
 DELETE FROM [dimension].[scenario] WHERE [scenario_id] = @scenario_id
