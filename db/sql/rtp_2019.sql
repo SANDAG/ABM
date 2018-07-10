@@ -256,7 +256,7 @@ AS
 /*	Author: Gregor Schroeder
 	Date: Revised 4/17/2018
 	Description: Time engaged in transportation-related physical activity per capita (minutes)
-		similar to Performance Measure 7F in the 2015 RTP
+		similar to Performance Measures 7E and 7F in the 2015 RTP
 */
 
 IF CONVERT(int, @senior) + CONVERT(int, @minority) + CONVERT(int, @low_income) > 1
@@ -345,6 +345,7 @@ ON
 	[physical_activity].[pop_segmentation] = [agg_coc_pop].[pop_segmentation]
 ORDER BY
 	[physical_activity].[pop_segmentation]
+OPTION(MAXDOP 1)
 GO
 
 -- Add metadata for [rtp_2019].[sp_pm_6a]
@@ -1816,7 +1817,9 @@ SELECT
 					WHEN @minority = 1 THEN [minority]
 					WHEN @low_income = 1 THEN [low_income]
 					ELSE 'All' END, 'Total') AS [pop_segmentation]
-	,AVG(100.0 * CASE	WHEN [household_costs].[cost_annual_transportation] / [coc_households].[income] > 1 THEN 1
+	,AVG(100.0 * CASE	WHEN [coc_households].[income] = 0
+							OR [household_costs].[cost_annual_transportation] / [coc_households].[income] > 1
+						THEN 1
 						ELSE [household_costs].[cost_annual_transportation] / [coc_households].[income]
 						END) AS [pct_income_transportation_cost] -- cap percentage cost at 100% of income
 FROM
@@ -1991,7 +1994,7 @@ AS
 SELECT
 	@scenario_id AS [scenario_id]
 	,SUM([dist_bike]) AS [bmt]
-	,SUM([dist_walk]) AS [pmt] -- includes transit walk distances
+	,SUM([dist_walk]) AS [pmt] -- includes transit walk distances while 2015 RTP sp_pmt_bmt did not
 FROM
 	[fact].[person_trip]
 INNER JOIN
@@ -2006,7 +2009,7 @@ WHERE
 												  'Individual',
 												  'Internal-External',
 												  'Joint',
-												  'Visitor') -- all microsimulated trips excepting commercial vehicle model
+												  'Visitor') -- all micro-simulated trips excepting commercial vehicle model
 GO
 
 -- Add metadata for [rtp_2019].[sp_pm_3ab_pmt_bmt]

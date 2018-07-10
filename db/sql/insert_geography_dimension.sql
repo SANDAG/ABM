@@ -1,5 +1,4 @@
 SET NOCOUNT ON;
-BEGIN TRANSACTION insert_geography
 
 INSERT INTO [dimension].[geography] (
     [mgra_13]
@@ -5025,7 +5024,54 @@ FROM (VALUES
 ('Not Applicable','4993','123','1433','San Ysidro','Not Applicable','Not Applicable','14','San Diego','1','San Diego County','Not Applicable'),
 ('Not Applicable','4994','123','1433','San Ysidro','Not Applicable','Not Applicable','14','San Diego','1','San Diego County','Not Applicable'),
 ('Not Applicable','4995','229','1433','San Ysidro','Not Applicable','Not Applicable','14','San Diego','1','San Diego County','Not Applicable'),
-('Not Applicable','4996','229','1433','San Ysidro','Not Applicable','Not Applicable','14','San Diego','1','San Diego County','Not Applicable'),
+('Not Applicable','4996','229','1433','San Ysidro','Not Applicable','Not Applicable','14','San Diego','1','San Diego County','Not Applicable')
+) AS [geography_insert_table] (
+	[mgra_13]
+	,[taz_13]
+	,[luz_13]
+	,[cicpa_2016]
+	,[cicpa_2016_name]
+	,[cocpa_2016]
+	,[cocpa_2016_name]
+	,[jurisdiction_2016]
+	,[jurisdiction_2016_name]
+	,[region_2004]
+	,[region_2004_name]
+	,[external_zone]
+)
+GO
+
+
+
+
+INSERT INTO [dimension].[geography] (
+    [mgra_13]
+	,[taz_13]
+	,[luz_13]
+	,[cicpa_2016]
+	,[cicpa_2016_name]
+	,[cocpa_2016]
+	,[cocpa_2016_name]
+	,[jurisdiction_2016]
+	,[jurisdiction_2016_name]
+	,[region_2004]
+	,[region_2004_name]
+	,[external_zone]
+)
+SELECT
+    [mgra_13]
+	,[taz_13]
+	,[luz_13]
+	,[cicpa_2016]
+	,[cicpa_2016_name]
+	,[cocpa_2016]
+	,[cocpa_2016_name]
+	,[jurisdiction_2016]
+	,[jurisdiction_2016_name]
+	,[region_2004]
+	,[region_2004_name]
+	,[external_zone]
+FROM (VALUES
 ('1','3331','95','1442','Uptown','Not Applicable','Not Applicable','14','San Diego','1','San Diego County','Not Applicable'),
 ('2','3331','95','1442','Uptown','Not Applicable','Not Applicable','14','San Diego','1','San Diego County','Not Applicable'),
 ('3','3358','95','1442','Uptown','Not Applicable','Not Applicable','14','San Diego','1','San Diego County','Not Applicable'),
@@ -28042,7 +28088,4 @@ FROM (VALUES
 	,[region_2004_name]
 	,[external_zone]
 )
-
-
-COMMIT TRANSACTION insert_geography
 GO
