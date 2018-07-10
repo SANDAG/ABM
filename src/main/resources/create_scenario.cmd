@@ -31,8 +31,6 @@ xcopy /Y .\common\output\"*.*" %SCENARIO_FOLDER%\output
 
 @echo assemble inputs
 del %SCENARIO_FOLDER%\input /q
-rem copy network inputs
-call copy_networks.cmd %NETWORKDIR% %SCENARIO_FOLDER%\input
 rem copy pop, hh, landuse, and other input files
 xcopy /Y .\input\%YEAR%\"*.*" %SCENARIO_FOLDER%\input
 rem copy common geography files to input folder
@@ -59,6 +57,8 @@ rem copy xborder input files
 xcopy /Y .\common\input\xborder\"*.*" %SCENARIO_FOLDER%\input
 rem copy visitor input files
 xcopy /Y .\common\input\visitor\"*.*" %SCENARIO_FOLDER%\input
+rem copy network inputs
+call copy_networks.cmd %NETWORKDIR% %SCENARIO_FOLDER%\input
 
 @echo init emme folder
 call init_emme.cmd %SCENARIO_FOLDER%
