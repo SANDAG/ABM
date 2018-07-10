@@ -31,7 +31,7 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('[rtp_2019]
 BEGIN
 	RAISERROR('Note: Building [rtp_2019].[pm_2_5_grid] takes approximately one hour and 15 minutes at a 100x100 grid size', 0, 1) WITH NOWAIT;
 	-- create table to hold representation of square San Diego region to be split into square polygons
-	CREATE TABLE [rtp_2019].[[pm_2_5_grid]] (
+	CREATE TABLE [rtp_2019].[pm_2_5_grid] (
 		[id] int NOT NULL,
 		[shape] geometry NOT NULL,
 		[centroid] geometry NOT NULL,
@@ -41,7 +41,7 @@ BEGIN
 
 	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2_5_grid', 'SUBSYSTEM', 'rtp_2019'
 	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2_5_grid', 'MS_Description', 'a square representation of the San Diego region broken into a square polygon grid'
-	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2_5_grid.id', 'MS_Description', 'pm_2a_grid surrogate key'
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2_5_grid.id', 'MS_Description', 'pm_2_5_grid surrogate key'
 	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2_5_grid.shape', 'MS_Description', 'geometry representation of square polygon grid'
 	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2_5_grid.centroid', 'MS_Description', 'geometry representation of centroid of square polygon grid'
 
@@ -75,8 +75,8 @@ BEGIN
 															   CONVERT(nvarchar, @x_tracker) + ' ' + CONVERT(nvarchar, (@y_tracker + @grid_size)) + ',' +
 															   CONVERT(nvarchar, @x_tracker) + ' ' + CONVERT(nvarchar, @y_tracker) + '))', 2230)
 			SET @cell = @cell.MakeValid()
-			SET @centroid = @cell.STCentroid()
-			INSERT INTO [rtp_2019].[pm_2a_grid] ([id], [shape], [centroid]) VALUES (@counter, @cell, @centroid)
+			SET @centroid = @cell.STCentroid().MakeValid()
+			INSERT INTO [rtp_2019].[pm_2_5_grid] ([id], [shape], [centroid]) VALUES (@counter, @cell, @centroid)
 			SET @y_tracker = @y_tracker + @grid_size;
 		END
 		SET @x_tracker = @x_tracker + @grid_size;
