@@ -18,6 +18,202 @@ GO
 GRANT EXECUTE ON SCHEMA :: [rtp_2019] TO [abm_user]
 GRANT SELECT ON SCHEMA :: [rtp_2019] TO [abm_user]
 GRANT VIEW DEFINITION ON SCHEMA :: [rtp_2019] TO [abm_user]
+GO
+
+
+
+-- Create stored procedure for particulate_matter_ctemfac_2014
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2019].[sp_particulate_matter_ctemfac_2014]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [rtp_2019].[sp_particulate_matter_ctemfac_2014]
+GO
+
+CREATE PROCEDURE [rtp_2019].[sp_particulate_matter_ctemfac_2014]
+	@scenario_id integer
+AS
+
+/*	Author: Gregor Schroeder
+	Date: 7/10/2018
+	Description: Calculate link level emissions using emfac 2014 values.
+		Recreates [abm_13_2_3].[abm].[ctemfac11_particulate_matter_10]
+		stored procedure originally created by Clint Daniels and
+		Ziying Ouyang. Used to calculate [rtp_2019].[sp_pm_2a].
+		Relies on the MSSQL database ctemfac_2014 existing in the environment,
+		the port of the EMFAC 2014 Access database. */
+
+SET NOCOUNT ON;
+DECLARE @AreaID tinyint
+DECLARE @year smallint
+DECLARE @PeriodID tinyint
+
+SET @AreaID = (SELECT [AreaID] FROM [ctemfac_2014].[dbo].[Area] WHERE [Name] = 'San Diego (SD)')
+SET @year = (SELECT [year] FROM [dimension].[scenario] WHERE [scenario_id] = @scenario_id)
+SET @PeriodID = (SELECT [PeriodID] FROM [ctemfac_2014].[dbo].[Period] WHERE [Year] = @year and [Season] = 'Annual');
+
+with [running_exhaust] AS (
+	SELECT
+		'RunningExhaust' AS [EmissionType]
+		,[Pollutant].[Name] AS [PollutantName]
+		,[Category].[Name] AS [CategoryName]
+		,[RunningExhaust].[Speed]
+		,[RunningExhaust].[Value]
+	FROM
+		[ctemfac_2014].[dbo].[RunningExhaust]
+	INNER JOIN
+		[ctemfac_2014].[dbo].[Pollutant]
+	ON
+		[RunningExhaust].[PollutantID] = [Pollutant].[PollutantID]
+	INNER JOIN
+		[ctemfac_2014].[dbo].[Category]
+	ON
+		[RunningExhaust].[CategoryID] = [Category].[CategoryID]
+	WHERE
+		[RunningExhaust].[AreaID] = @AreaID
+		AND [RunningExhaust].[PeriodID] = @PeriodID
+		AND [Pollutant].[Name] IN ('PM10',
+								   'PM10 TW',
+								   'PM10 BW')),
+[running_loss] AS (
+	SELECT
+		'RunningLoss' AS [EmissionType]
+		,[Pollutant].[Name] AS [PollutantName]
+		,[Category].[Name] AS [CategoryName]
+		,[RunningLoss].[Value]
+	FROM
+		[ctemfac_2014].[dbo].[RunningLoss]
+	INNER JOIN
+		[ctemfac_2014].[dbo].[Pollutant]
+	ON
+		[RunningLoss].[PollutantID] = [Pollutant].[PollutantID]
+	INNER JOIN
+		[ctemfac_2014].[dbo].[Category]
+	ON
+		[RunningLoss].[CategoryID] = [Category].[CategoryID]
+	WHERE
+		[RunningLoss].[AreaID] = @AreaID
+		AND [RunningLoss].[PeriodID] = @PeriodID
+		AND [Pollutant].[Name] IN ('PM10',
+								   'PM10 TW',
+								   'PM10 BW')),
+[tire_brake_wear] AS (
+	SELECT
+		'TireBrakeWear' AS [EmissionType]
+		,[Pollutant].[Name] AS [PollutantName]
+		,[Category].[Name] AS [CategoryName]
+		,[TireBrakeWear].[Value]
+	FROM
+		[ctemfac_2014].[dbo].[TireBrakeWear]
+	INNER JOIN
+		[ctemfac_2014].[dbo].[Pollutant]
+	ON
+		[TireBrakeWear].[PollutantID] = [Pollutant].[PollutantID]
+	INNER JOIN
+		[ctemfac_2014].[dbo].[Category]
+	ON
+		[TireBrakeWear].[CategoryID] = [Category].[CategoryID]
+	WHERE
+		[TireBrakeWear].[AreaID] = @AreaID
+		AND [TireBrakeWear].[PeriodID] = @PeriodID
+		AND [Pollutant].[Name] IN ('PM10',
+								   'PM10 TW',
+								   'PM10 BW')),
+[travel] AS (
+	SELECT
+		[hwy_link].[hwy_link_id]
+		,CASE	WHEN DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0 <= 0
+				THEN 24 + DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0
+				ELSE DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0
+				END AS [duration_hours]
+		,CASE	WHEN [mode].[mode_description] IN ('Light Heavy Duty Truck (Non-Toll)',
+												   'Light Heavy Duty Truck (Toll)')
+				THEN 'Truck 1'
+				WHEN [mode].[mode_description] IN ('Medium Heavy Duty Truck (Non-Toll)',
+												   'Medium Heavy Duty Truck (Toll)',
+												   'Heavy Heavy Duty Truck (Non-Toll)',
+												   'Heavy Heavy Duty Truck (Toll)')
+				THEN 'Truck 2'
+				ELSE 'Non-truck' END AS [CategoryName]
+		 ,5 * ((CAST([hwy_flow].[speed] AS integer) / 5) + 1) AS [bin]
+		 ,SUM([hwy_flow_mode].[flow] * [hwy_link].[length_mile]) AS [vmt]
+	FROM
+		[fact].[hwy_flow_mode]
+	INNER JOIN
+		[fact].[hwy_flow]
+	ON
+		[hwy_flow_mode].[scenario_id] = [hwy_flow].[scenario_id]
+		AND [hwy_flow_mode].[hwy_link_ab_tod_id] = [hwy_flow].[hwy_link_ab_tod_id]
+	INNER JOIN
+		[dimension].[hwy_link]
+	ON
+		[hwy_flow_mode].[scenario_id] = [hwy_link].[scenario_id]
+		AND [hwy_flow_mode].[hwy_link_id] = [hwy_link].[hwy_link_id]
+	INNER JOIN
+		[dimension].[mode]
+	ON
+		[hwy_flow_mode].[mode_id] = [mode].[mode_id]
+	INNER JOIN
+		[dimension].[time]
+	ON
+		[hwy_flow_mode].[time_id] = [time].[time_id]
+	WHERE
+		[hwy_flow_mode].[scenario_id] = @scenario_id
+		AND [hwy_flow].[scenario_id] = @scenario_id
+		AND [hwy_link].[scenario_id] = @scenario_id
+	GROUP BY
+		[hwy_link].[hwy_link_id]
+		,CASE	WHEN DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0 <= 0
+				THEN 24 + DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0
+				ELSE DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0
+				END
+		,CASE	WHEN [mode].[mode_description] IN ('Light Heavy Duty Truck (Non-Toll)',
+													   'Light Heavy Duty Truck (Toll)')
+					THEN 'Truck 1'
+					WHEN [mode].[mode_description] IN ('Medium Heavy Duty Truck (Non-Toll)',
+													   'Medium Heavy Duty Truck (Toll)',
+													   'Heavy Heavy Duty Truck (Non-Toll)',
+													   'Heavy Heavy Duty Truck (Toll)')
+					THEN 'Truck 2'
+					ELSE 'Non-truck' END
+		 ,5 * ((CAST([hwy_flow].[speed] AS integer) / 5) + 1)),
+[link_emissions] AS (
+	SELECT
+		[travel].[hwy_link_id]
+		,SUM(ISNULL([travel].[vmt] * [running_exhaust].[Value], 0)) AS [link_running_exhaust]
+		,SUM(ISNULL([travel].[vmt] * [running_loss].[Value], 0)) AS [link_running_loss]
+		,SUM(ISNULL([travel].[vmt] * [tire_brake_wear].[Value], 0)) AS [link_tire_brake_wear]
+	FROM
+		[travel]
+	LEFT OUTER JOIN
+		[running_exhaust]
+	ON
+		[travel].[CategoryName] = [running_exhaust].[CategoryName]
+		AND [travel].[bin] = [running_exhaust].[Speed]
+	LEFT OUTER JOIN
+		[running_loss]
+	ON
+		[travel].[CategoryName] = [running_loss].[CategoryName]
+	LEFT OUTER JOIN
+		[tire_brake_wear]
+	ON
+		[travel].[CategoryName] = [tire_brake_wear].[CategoryName]
+	GROUP BY
+		[travel].[hwy_link_id])
+SELECT
+	@scenario_id AS [scenario_id]
+	,[hwy_link_id]
+	,[link_running_exhaust]
+	,[link_running_loss]
+	,[link_tire_brake_wear]
+	,[link_running_exhaust] + [link_running_loss] + [link_tire_brake_wear] AS [link_total_emissions]
+FROM
+	[link_emissions]
+ORDER BY
+	[hwy_link_id]
+GO
+
+-- Add metadata for [rtp_2019].[sp_particulate_matter_ctemfac_2014]
+EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_particulate_matter_ctemfac_2014', 'SUBSYSTEM', 'rtp 2019'
+EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_particulate_matter_ctemfac_2014', 'MS_Description', 'calculate link level particulate matter emission using emfac 2014 values'
+GO
 
 
 
