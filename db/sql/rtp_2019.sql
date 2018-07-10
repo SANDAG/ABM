@@ -27,23 +27,23 @@ GO
 -- region to be split into square polygons
 -- only does so if table does not already exist due to slow run time
 -- recreates process developed by Clint Daniels, needs to be refactored due to slow run time
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('[rtp_2019].[pm_2a_grid]') AND type in ('U'))
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('[rtp_2019].[pm_2_5_grid]') AND type in ('U'))
 BEGIN
-	RAISERROR('Note: Building [rtp_2019].[pm_2a_grid] takes approximately one hour and 15 minutes at a 100x100 grid size', 0, 1) WITH NOWAIT;
-	-- create table to hold representaion of square San Diego region to be split into square polygons
-	CREATE TABLE [rtp_2019].[pm_2a_grid] (
+	RAISERROR('Note: Building [rtp_2019].[pm_2_5_grid] takes approximately one hour and 15 minutes at a 100x100 grid size', 0, 1) WITH NOWAIT;
+	-- create table to hold representation of square San Diego region to be split into square polygons
+	CREATE TABLE [rtp_2019].[[pm_2_5_grid]] (
 		[id] int NOT NULL,
 		[shape] geometry NOT NULL,
 		[centroid] geometry NOT NULL,
-		CONSTRAINT pk_pm2agrid PRIMARY KEY ([id]))
+		CONSTRAINT pk_pm25grid PRIMARY KEY ([id]))
 	ON [reference_fg]
 	WITH (DATA_COMPRESSION = PAGE)
 
-	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2a_grid', 'SUBSYSTEM', 'rtp_2019'
-	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2a_grid', 'MS_Description', 'a square representation of the San Diego region broken into a square polygon grid'
-	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2a_grid.id', 'MS_Description', 'pm_2a_grid surrogate key'
-	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2a_grid.shape', 'MS_Description', 'geometry representation of square polygon grid'
-	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2a_grid.centroid', 'MS_Description', 'geometry representation of centroid of square polygon grid'
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2_5_grid', 'SUBSYSTEM', 'rtp_2019'
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2_5_grid', 'MS_Description', 'a square representation of the San Diego region broken into a square polygon grid'
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2_5_grid.id', 'MS_Description', 'pm_2a_grid surrogate key'
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2_5_grid.shape', 'MS_Description', 'geometry representation of square polygon grid'
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2_5_grid.centroid', 'MS_Description', 'geometry representation of centroid of square polygon grid'
 
 
 	-- define the square region to be split into square polygons
@@ -101,7 +101,7 @@ AS
 	Description: Calculate link level emissions using emfac 2014 values.
 		Recreates [abm_13_2_3].[abm].[ctemfac11_particulate_matter_10]
 		stored procedure originally created by Clint Daniels and
-		Ziying Ouyang. Used to calculate [rtp_2019].[sp_pm_2a].
+		Ziying Ouyang. Used to calculate Performance Measure 2.5.
 		Relies on the MSSQL database ctemfac_2014 existing in the environment,
 		the port of the EMFAC 2014 Access database. */
 
