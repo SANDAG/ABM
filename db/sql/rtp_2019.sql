@@ -18,6 +18,267 @@ GO
 GRANT EXECUTE ON SCHEMA :: [rtp_2019] TO [abm_user]
 GRANT SELECT ON SCHEMA :: [rtp_2019] TO [abm_user]
 GRANT VIEW DEFINITION ON SCHEMA :: [rtp_2019] TO [abm_user]
+GO
+
+
+
+
+-- creates and populates table holding square representation of San Diego
+-- region to be split into square polygons
+-- only does so if table does not already exist due to slow run time
+-- recreates process developed by Clint Daniels, needs to be refactored due to slow run time
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('[rtp_2019].[pm_2a_grid]') AND type in ('U'))
+BEGIN
+	RAISERROR('Note: Building [rtp_2019].[pm_2a_grid] takes approximately one hour and 15 minutes at a 100x100 grid size', 0, 1) WITH NOWAIT;
+	-- create table to hold representaion of square San Diego region to be split into square polygons
+	CREATE TABLE [rtp_2019].[pm_2a_grid] (
+		[id] int NOT NULL,
+		[shape] geometry NOT NULL,
+		[centroid] geometry NOT NULL,
+		CONSTRAINT pk_pm2agrid PRIMARY KEY ([id]))
+	ON [reference_fg]
+	WITH (DATA_COMPRESSION = PAGE)
+
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2a_grid', 'SUBSYSTEM', 'rtp_2019'
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2a_grid', 'MS_Description', 'a square representation of the San Diego region broken into a square polygon grid'
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2a_grid.id', 'MS_Description', 'pm_2a_grid surrogate key'
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2a_grid.shape', 'MS_Description', 'geometry representation of square polygon grid'
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2a_grid.centroid', 'MS_Description', 'geometry representation of centroid of square polygon grid'
+
+
+	-- define the square region to be split into square polygons
+	-- defined by ((x_min, y_min), (x_max, y_min), (x_max, y_max), (x_min, y_max))
+	DECLARE @x_min int = 6149700
+	DECLARE @x_max int = 6614500
+	DECLARE @y_min int = 1774300
+	DECLARE @y_max int = 2130800
+
+	-- declare size of square polygons to split square region into
+	DECLARE @grid_size int = 100
+
+	-- build 100x100 polygons for the square region
+	DECLARE @x_tracker int = @x_min
+	DECLARE @counter int = 0
+
+	WHILE @x_tracker < @x_max
+	BEGIN
+		DECLARE @y_tracker int = @y_min;
+		WHILE @y_tracker < @y_max
+		BEGIN
+			SET @counter = @counter + 1;
+			DECLARE @cell geometry
+			DECLARE @centroid geometry;
+			-- build 100x100 polygon assume EPSG: 2230
+			SET @cell = geometry::STPolyFromText('POLYGON((' + CONVERT(nvarchar, @x_tracker) + ' ' +CONVERT(nvarchar, @y_tracker) + ',' +
+															   CONVERT(nvarchar, (@x_tracker + @grid_size)) + ' ' + CONVERT(nvarchar, @y_tracker) + ',' +
+															   CONVERT(nvarchar, (@x_tracker + @grid_size)) + ' ' + CONVERT(nvarchar, (@y_tracker + @grid_size)) + ',' +
+															   CONVERT(nvarchar, @x_tracker) + ' ' + CONVERT(nvarchar, (@y_tracker + @grid_size)) + ',' +
+															   CONVERT(nvarchar, @x_tracker) + ' ' + CONVERT(nvarchar, @y_tracker) + '))', 2230)
+			SET @cell = @cell.MakeValid()
+			SET @centroid = @cell.STCentroid()
+			INSERT INTO [rtp_2019].[pm_2a_grid] ([id], [shape], [centroid]) VALUES (@counter, @cell, @centroid)
+			SET @y_tracker = @y_tracker + @grid_size;
+		END
+		SET @x_tracker = @x_tracker + @grid_size;
+	END
+END
+GO
+
+
+
+
+-- Create stored procedure for particulate_matter_ctemfac_2014
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2019].[sp_particulate_matter_ctemfac_2014]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [rtp_2019].[sp_particulate_matter_ctemfac_2014]
+GO
+
+CREATE PROCEDURE [rtp_2019].[sp_particulate_matter_ctemfac_2014]
+	@scenario_id integer
+AS
+
+/*	Author: Gregor Schroeder
+	Date: 7/10/2018
+	Description: Calculate link level emissions using emfac 2014 values.
+		Recreates [abm_13_2_3].[abm].[ctemfac11_particulate_matter_10]
+		stored procedure originally created by Clint Daniels and
+		Ziying Ouyang. Used to calculate [rtp_2019].[sp_pm_2a].
+		Relies on the MSSQL database ctemfac_2014 existing in the environment,
+		the port of the EMFAC 2014 Access database. */
+
+SET NOCOUNT ON;
+DECLARE @AreaID tinyint
+DECLARE @year smallint
+DECLARE @PeriodID tinyint
+
+SET @AreaID = (SELECT [AreaID] FROM [ctemfac_2014].[dbo].[Area] WHERE [Name] = 'San Diego (SD)')
+SET @year = (SELECT [year] FROM [dimension].[scenario] WHERE [scenario_id] = @scenario_id)
+SET @PeriodID = (SELECT [PeriodID] FROM [ctemfac_2014].[dbo].[Period] WHERE [Year] = @year and [Season] = 'Annual');
+
+with [running_exhaust] AS (
+	SELECT
+		'RunningExhaust' AS [EmissionType]
+		,[Pollutant].[Name] AS [PollutantName]
+		,[Category].[Name] AS [CategoryName]
+		,[RunningExhaust].[Speed]
+		,[RunningExhaust].[Value]
+	FROM
+		[ctemfac_2014].[dbo].[RunningExhaust]
+	INNER JOIN
+		[ctemfac_2014].[dbo].[Pollutant]
+	ON
+		[RunningExhaust].[PollutantID] = [Pollutant].[PollutantID]
+	INNER JOIN
+		[ctemfac_2014].[dbo].[Category]
+	ON
+		[RunningExhaust].[CategoryID] = [Category].[CategoryID]
+	WHERE
+		[RunningExhaust].[AreaID] = @AreaID
+		AND [RunningExhaust].[PeriodID] = @PeriodID
+		AND [Pollutant].[Name] IN ('PM10',
+								   'PM10 TW',
+								   'PM10 BW')),
+[running_loss] AS (
+	SELECT
+		'RunningLoss' AS [EmissionType]
+		,[Pollutant].[Name] AS [PollutantName]
+		,[Category].[Name] AS [CategoryName]
+		,[RunningLoss].[Value]
+	FROM
+		[ctemfac_2014].[dbo].[RunningLoss]
+	INNER JOIN
+		[ctemfac_2014].[dbo].[Pollutant]
+	ON
+		[RunningLoss].[PollutantID] = [Pollutant].[PollutantID]
+	INNER JOIN
+		[ctemfac_2014].[dbo].[Category]
+	ON
+		[RunningLoss].[CategoryID] = [Category].[CategoryID]
+	WHERE
+		[RunningLoss].[AreaID] = @AreaID
+		AND [RunningLoss].[PeriodID] = @PeriodID
+		AND [Pollutant].[Name] IN ('PM10',
+								   'PM10 TW',
+								   'PM10 BW')),
+[tire_brake_wear] AS (
+	SELECT
+		'TireBrakeWear' AS [EmissionType]
+		,[Pollutant].[Name] AS [PollutantName]
+		,[Category].[Name] AS [CategoryName]
+		,[TireBrakeWear].[Value]
+	FROM
+		[ctemfac_2014].[dbo].[TireBrakeWear]
+	INNER JOIN
+		[ctemfac_2014].[dbo].[Pollutant]
+	ON
+		[TireBrakeWear].[PollutantID] = [Pollutant].[PollutantID]
+	INNER JOIN
+		[ctemfac_2014].[dbo].[Category]
+	ON
+		[TireBrakeWear].[CategoryID] = [Category].[CategoryID]
+	WHERE
+		[TireBrakeWear].[AreaID] = @AreaID
+		AND [TireBrakeWear].[PeriodID] = @PeriodID
+		AND [Pollutant].[Name] IN ('PM10',
+								   'PM10 TW',
+								   'PM10 BW')),
+[travel] AS (
+	SELECT
+		[hwy_link].[hwy_link_id]
+		,CASE	WHEN DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0 <= 0
+				THEN 24 + DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0
+				ELSE DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0
+				END AS [duration_hours]
+		,CASE	WHEN [mode].[mode_description] IN ('Light Heavy Duty Truck (Non-Toll)',
+												   'Light Heavy Duty Truck (Toll)')
+				THEN 'Truck 1'
+				WHEN [mode].[mode_description] IN ('Medium Heavy Duty Truck (Non-Toll)',
+												   'Medium Heavy Duty Truck (Toll)',
+												   'Heavy Heavy Duty Truck (Non-Toll)',
+												   'Heavy Heavy Duty Truck (Toll)')
+				THEN 'Truck 2'
+				ELSE 'Non-truck' END AS [CategoryName]
+		 ,5 * ((CAST([hwy_flow].[speed] AS integer) / 5) + 1) AS [bin]
+		 ,SUM([hwy_flow_mode].[flow] * [hwy_link].[length_mile]) AS [vmt]
+	FROM
+		[fact].[hwy_flow_mode]
+	INNER JOIN
+		[fact].[hwy_flow]
+	ON
+		[hwy_flow_mode].[scenario_id] = [hwy_flow].[scenario_id]
+		AND [hwy_flow_mode].[hwy_link_ab_tod_id] = [hwy_flow].[hwy_link_ab_tod_id]
+	INNER JOIN
+		[dimension].[hwy_link]
+	ON
+		[hwy_flow_mode].[scenario_id] = [hwy_link].[scenario_id]
+		AND [hwy_flow_mode].[hwy_link_id] = [hwy_link].[hwy_link_id]
+	INNER JOIN
+		[dimension].[mode]
+	ON
+		[hwy_flow_mode].[mode_id] = [mode].[mode_id]
+	INNER JOIN
+		[dimension].[time]
+	ON
+		[hwy_flow_mode].[time_id] = [time].[time_id]
+	WHERE
+		[hwy_flow_mode].[scenario_id] = @scenario_id
+		AND [hwy_flow].[scenario_id] = @scenario_id
+		AND [hwy_link].[scenario_id] = @scenario_id
+	GROUP BY
+		[hwy_link].[hwy_link_id]
+		,CASE	WHEN DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0 <= 0
+				THEN 24 + DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0
+				ELSE DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0
+				END
+		,CASE	WHEN [mode].[mode_description] IN ('Light Heavy Duty Truck (Non-Toll)',
+													   'Light Heavy Duty Truck (Toll)')
+					THEN 'Truck 1'
+					WHEN [mode].[mode_description] IN ('Medium Heavy Duty Truck (Non-Toll)',
+													   'Medium Heavy Duty Truck (Toll)',
+													   'Heavy Heavy Duty Truck (Non-Toll)',
+													   'Heavy Heavy Duty Truck (Toll)')
+					THEN 'Truck 2'
+					ELSE 'Non-truck' END
+		 ,5 * ((CAST([hwy_flow].[speed] AS integer) / 5) + 1)),
+[link_emissions] AS (
+	SELECT
+		[travel].[hwy_link_id]
+		,SUM(ISNULL([travel].[vmt] * [running_exhaust].[Value], 0)) AS [link_running_exhaust]
+		,SUM(ISNULL([travel].[vmt] * [running_loss].[Value], 0)) AS [link_running_loss]
+		,SUM(ISNULL([travel].[vmt] * [tire_brake_wear].[Value], 0)) AS [link_tire_brake_wear]
+	FROM
+		[travel]
+	LEFT OUTER JOIN
+		[running_exhaust]
+	ON
+		[travel].[CategoryName] = [running_exhaust].[CategoryName]
+		AND [travel].[bin] = [running_exhaust].[Speed]
+	LEFT OUTER JOIN
+		[running_loss]
+	ON
+		[travel].[CategoryName] = [running_loss].[CategoryName]
+	LEFT OUTER JOIN
+		[tire_brake_wear]
+	ON
+		[travel].[CategoryName] = [tire_brake_wear].[CategoryName]
+	GROUP BY
+		[travel].[hwy_link_id])
+SELECT
+	@scenario_id AS [scenario_id]
+	,[hwy_link_id]
+	,[link_running_exhaust]
+	,[link_running_loss]
+	,[link_tire_brake_wear]
+	,[link_running_exhaust] + [link_running_loss] + [link_tire_brake_wear] AS [link_total_emissions]
+FROM
+	[link_emissions]
+ORDER BY
+	[hwy_link_id]
+GO
+
+-- Add metadata for [rtp_2019].[sp_particulate_matter_ctemfac_2014]
+EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_particulate_matter_ctemfac_2014', 'SUBSYSTEM', 'rtp 2019'
+EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_particulate_matter_ctemfac_2014', 'MS_Description', 'calculate link level particulate matter emission using emfac 2014 values'
+GO
 
 
 
