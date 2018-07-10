@@ -22,6 +22,71 @@ GO
 
 
 
+
+-- creates and populates table holding square representation of San Diego
+-- region to be split into square polygons
+-- only does so if table does not already exist due to slow run time
+-- recreates process developed by Clint Daniels, needs to be refactored due to slow run time
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('[rtp_2019].[pm_2a_grid]') AND type in ('U'))
+BEGIN
+	RAISERROR('Note: Building [rtp_2019].[pm_2a_grid] takes approximately one hour and 15 minutes at a 100x100 grid size', 0, 1) WITH NOWAIT;
+	-- create table to hold representaion of square San Diego region to be split into square polygons
+	CREATE TABLE [rtp_2019].[pm_2a_grid] (
+		[id] int NOT NULL,
+		[shape] geometry NOT NULL,
+		[centroid] geometry NOT NULL,
+		CONSTRAINT pk_pm2agrid PRIMARY KEY ([id]))
+	ON [reference_fg]
+	WITH (DATA_COMPRESSION = PAGE)
+
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2a_grid', 'SUBSYSTEM', 'rtp_2019'
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2a_grid', 'MS_Description', 'a square representation of the San Diego region broken into a square polygon grid'
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2a_grid.id', 'MS_Description', 'pm_2a_grid surrogate key'
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2a_grid.shape', 'MS_Description', 'geometry representation of square polygon grid'
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2a_grid.centroid', 'MS_Description', 'geometry representation of centroid of square polygon grid'
+
+
+	-- define the square region to be split into square polygons
+	-- defined by ((x_min, y_min), (x_max, y_min), (x_max, y_max), (x_min, y_max))
+	DECLARE @x_min int = 6149700
+	DECLARE @x_max int = 6614500
+	DECLARE @y_min int = 1774300
+	DECLARE @y_max int = 2130800
+
+	-- declare size of square polygons to split square region into
+	DECLARE @grid_size int = 100
+
+	-- build 100x100 polygons for the square region
+	DECLARE @x_tracker int = @x_min
+	DECLARE @counter int = 0
+
+	WHILE @x_tracker < @x_max
+	BEGIN
+		DECLARE @y_tracker int = @y_min;
+		WHILE @y_tracker < @y_max
+		BEGIN
+			SET @counter = @counter + 1;
+			DECLARE @cell geometry
+			DECLARE @centroid geometry;
+			-- build 100x100 polygon assume EPSG: 2230
+			SET @cell = geometry::STPolyFromText('POLYGON((' + CONVERT(nvarchar, @x_tracker) + ' ' +CONVERT(nvarchar, @y_tracker) + ',' +
+															   CONVERT(nvarchar, (@x_tracker + @grid_size)) + ' ' + CONVERT(nvarchar, @y_tracker) + ',' +
+															   CONVERT(nvarchar, (@x_tracker + @grid_size)) + ' ' + CONVERT(nvarchar, (@y_tracker + @grid_size)) + ',' +
+															   CONVERT(nvarchar, @x_tracker) + ' ' + CONVERT(nvarchar, (@y_tracker + @grid_size)) + ',' +
+															   CONVERT(nvarchar, @x_tracker) + ' ' + CONVERT(nvarchar, @y_tracker) + '))', 2230)
+			SET @cell = @cell.MakeValid()
+			SET @centroid = @cell.STCentroid()
+			INSERT INTO [rtp_2019].[pm_2a_grid] ([id], [shape], [centroid]) VALUES (@counter, @cell, @centroid)
+			SET @y_tracker = @y_tracker + @grid_size;
+		END
+		SET @x_tracker = @x_tracker + @grid_size;
+	END
+END
+GO
+
+
+
+
 -- Create stored procedure for particulate_matter_ctemfac_2014
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2019].[sp_particulate_matter_ctemfac_2014]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [rtp_2019].[sp_particulate_matter_ctemfac_2014]
