@@ -480,6 +480,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             scenario.publish_network(traffic_network)
 
         self.set_functions(scenario)
+        self.check_connectivity(scenario)
 
     def create_traffic_base(self, network, attr_map):
         self._log.append({"type": "header", "content": "Import traffic base network from hwycov.e00"})
@@ -1851,7 +1852,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     "relative_gap": 0.0, "normalized_gap": 0.0
                 },
                 "performance_settings": {"number_of_processors": num_processors},
-            }        
+            }
             sola_assign(spec, scenario=scenario)
             travel_time = result_matrix.get_numpy_data(scenario)
 
@@ -1861,8 +1862,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             error_msg = "Connectivity error(s) between %s O-D pairs" % disconnected_pairs
             self._log.append({"type": "header", "content": error_msg})
             count_disconnects = []
-            for axis, term in [(0, "from"), (1, "to")]
-                axis_totals = is_disconnected.sum(axis=0)
+            for axis, term in [(0, "from"), (1, "to")]:
+                axis_totals = is_disconnected.sum(axis=axis)
                 for i, v in enumerate(axis_totals):
                     if v > 0:
                         count_disconnects.append((zone_index[i], term, v))
