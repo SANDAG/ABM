@@ -141,6 +141,7 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
         matrices = []
         for component in components:
             matrices.extend(self.create_matrices(component, periods))
+        # Note: matrix is also created in import_network
         self._create_matrix_tool("ms1", "zero", "zero", scenario=self.scenario, overwrite=True)
         return matrices
         
