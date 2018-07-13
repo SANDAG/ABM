@@ -21,15 +21,18 @@ from sqlalchemy import create_engine
 input_path = sys.argv[1]
 
 emfac_vehicle_class_sql = """
-    SELECT emfac_vehicle_class_id, UPPER(emfac_vehicle_class) AS emfac_vehicle_class
-        FROM emfac.emfac_vehicle_class
-        WHERE emfac_vehicle_class_id > 51
+    SELECT [emfac_vehicle_class_id], UPPER([emfac_vehicle_class]) AS [emfac_vehicle_class]
+    FROM [emfac].[emfac_vehicle_class]
+    WHERE [major_version] = '2014' AND [minor_version] = '1.0'
 """
 
 class_map_sql = """
-    SELECT sandag_vehicle_class_id,emfac_vehicle_class_id
-        FROM emfac.emfac_vehicle_map
-        WHERE year = 2012 and emfac_vehicle_class_id > 51
+    SELECT [sandag_vehicle_class_id], [emfac_vehicle_class].[emfac_vehicle_class_id]
+    FROM [emfac].[emfac_vehicle_map]
+    INNER JOIN [emfac].[emfac_vehicle_class]
+    ON [emfac_vehicle_map].[emfac_vehicle_class_id] = [emfac_vehicle_class].[emfac_vehicle_class_id]
+    WHERE [year] = 2012 AND [emfac_vehicle_class].[major_version] = '2014' 
+    AND [emfac_vehicle_class].[minor_version] = '1.0'
 """
 
 default_emfac_vmt = pd.read_csv(input_path)
