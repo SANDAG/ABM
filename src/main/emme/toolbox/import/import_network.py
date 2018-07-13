@@ -78,6 +78,7 @@ _dir = os.path.dirname
 
 
 gen_utils = _m.Modeller().module("sandag.utilities.general")
+dem_utils = _m.Modeller().module("sandag.utilities.demand")
 
 
 class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
@@ -479,6 +480,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             scenario.publish_network(traffic_network)
 
         self.set_functions(scenario)
+        self.check_connectivity(scenario)
 
     def create_traffic_base(self, network, attr_map):
         self._log.append({"type": "header", "content": "Import traffic base network from hwycov.e00"})
@@ -971,9 +973,10 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 elif node_id == segment.j_node.number:
                     segment = itinerary.next()  # its the next segment
                 else:
-                    msg = "Transit line %s: could not find stop with Link ID %s" % (line_name, link_id)
+                    msg = "Transit line %s: could not find stop on link ID %s at node ID %s" % (line_name, link_id, node_id)
                     self._log.append({"type": "text", "content": msg})
                     self._error.append(msg)
+                    fatal_errors += 1
                     continue
                 segment.allow_boardings = True
                 segment.allow_alightings = True
@@ -1804,6 +1807,75 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         create_function("ft3", "0", emmebank=emmebank)  
         # fixed guideway systems according to vehicle speed (not used at the moment)
         create_function("ft4", "60 * length / speed", emmebank=emmebank)  
+
+    @_m.logbook_trace("Traffic zone connectivity check")
+    def check_connectivity(self, scenario):
+        modeller = _m.Modeller()
+        sola_assign = modeller.tool(
+            "inro.emme.traffic_assignment.sola_traffic_assignment")
+        set_extra_function_para = modeller.tool(
+            "inro.emme.traffic_assignment.set_extra_function_parameters")
+        create_matrix = _m.Modeller().tool(
+            "inro.emme.data.matrix.create_matrix")
+        net_calc = gen_utils.NetworkCalculator(scenario)
+
+        emmebank = scenario.emmebank
+        zone_index = dict(enumerate(scenario.zone_numbers))
+        num_processors = dem_utils.parse_num_processors("MAX-1")
+
+        # Note matrix is also created in initialize_matrices
+        create_matrix("ms1", "zero", "zero", scenario=scenario, overwrite=True)
+        with gen_utils.temp_matrices(emmebank, "FULL", 1) as (result_matrix,):
+            result_matrix.name = "TEMP_SOV_TRAVEL_TIME"
+            set_extra_function_para(
+                el1="@green_to_cycle_am",
+                el2="@sta_reliability_am",
+                el3="@capacity_inter_am", emmebank=emmebank)
+            net_calc("ul1", "@time_link_am", "modes=d")
+            net_calc("ul3", "@capacity_link_am", "modes=d")
+            net_calc("lanes", "@lane_am", "modes=d")
+            spec = {
+                "type": "SOLA_TRAFFIC_ASSIGNMENT",
+                "background_traffic": None,
+                "classes": [
+                    {
+                        "mode": "S",  # SOV toll mode
+                        "demand": 'ms"zero"',
+                        "generalized_cost": None,
+                        "results": {
+                            "od_travel_times": {"shortest_paths": result_matrix.named_id}
+                        }
+                    }
+                ],
+                "stopping_criteria": {
+                    "max_iterations": 0, "best_relative_gap": 0.0,
+                    "relative_gap": 0.0, "normalized_gap": 0.0
+                },
+                "performance_settings": {"number_of_processors": num_processors},
+            }
+            sola_assign(spec, scenario=scenario)
+            travel_time = result_matrix.get_numpy_data(scenario)
+
+        is_disconnected = (travel_time == 1e20)
+        disconnected_pairs = is_disconnected.sum()
+        if disconnected_pairs > 0:
+            error_msg = "Connectivity error(s) between %s O-D pairs" % disconnected_pairs
+            self._log.append({"type": "header", "content": error_msg})
+            count_disconnects = []
+            for axis, term in [(0, "from"), (1, "to")]:
+                axis_totals = is_disconnected.sum(axis=axis)
+                for i, v in enumerate(axis_totals):
+                    if v > 0:
+                        count_disconnects.append((zone_index[i], term, v))
+            count_disconnects.sort(key=lambda x: x[2], reverse=True)
+            for z, direction, count in count_disconnects[:50]:
+                msg ="Zone %s disconnected %s %d other zones" % (z, direction, count)
+                self._log.append({"type": "text", "content": msg})
+            if disconnected_pairs > 50:
+                self._log.append({"type": "text", "content": "[List truncated]"})
+            raise Exception(error_msg)
+        self._log.append({"type": "header", "content": 
+                          "Zone connectivity verified for AM period on SOV toll ('S') mode"})
 
     def log_report(self):
         report = _m.PageBuilder(title="Import network from TCOVED files report")
