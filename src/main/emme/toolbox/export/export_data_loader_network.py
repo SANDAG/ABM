@@ -864,7 +864,7 @@ Export network results to csv files for SQL data loader."""
                 mapping = network.merge_links_mapping(node)
                 for (link1, link2), attr_map in mapping['links'].iteritems():
                     for attr in link_modified_attrs:
-                        attr_map[attr] = max(link1[attr], link1[attr])
+                        attr_map[attr] = max(link1[attr], link2[attr])
                 
                 for (seg1, seg2), attr_map in mapping['transit_segments'].iteritems():
                     if seg2.allow_alightings:
