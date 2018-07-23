@@ -1516,8 +1516,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         # Zero out tolls and I-15 (hov type is 0) and index links by tcov_id
         for link in network.links():
             if mode_d in link.modes and link["@lane_restriction"] == 2:
-                for period in time_periods:
-                    link["@toll_" + period] = 0
+                # remove zero out HOV2 section wsu
+                #for period in time_periods:
+                #    link["@toll_" + period] = 0
                 hwy_links[link["@tcov_id"]] = link
             elif link["type"] in freeway_types:
                 hwy_links[link["@tcov_id"]] = link

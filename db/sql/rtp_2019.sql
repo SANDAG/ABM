@@ -26,32 +26,49 @@ GO
 -- creates and populates table holding square representation of San Diego
 -- region to be split into square polygons
 -- only does so if table does not already exist due to slow run time
--- recreates process developed by Clint Daniels, needs to be refactored due to slow run time
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('[rtp_2019].[pm_2_5_grid]') AND type in ('U'))
+-- recreates process developed by Clint Daniels for particulate matter 10
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('[rtp_2019].[particulate_matter_2_5_grid]') AND type in ('U'))
 BEGIN
-	RAISERROR('Note: Building [rtp_2019].[pm_2_5_grid] takes approximately one hour and 15 minutes at a 100x100 grid size', 0, 1) WITH NOWAIT;
+	RAISERROR('Note: Building [rtp_2019].[particulate_matter_2_5_grid] takes approximately one hour and 45 minutes at a 100x100 grid size', 0, 1) WITH NOWAIT;
+	SET NOCOUNT ON;
+
 	-- create table to hold representation of square San Diego region to be split into square polygons
-	CREATE TABLE [rtp_2019].[pm_2_5_grid] (
+	CREATE TABLE [rtp_2019].[particulate_matter_2_5_grid] (
 		[id] int NOT NULL,
 		[shape] geometry NOT NULL,
 		[centroid] geometry NOT NULL,
-		CONSTRAINT pk_pm25grid PRIMARY KEY ([id]))
+		[mgra_13] nchar(20) NOT NULL,
+		CONSTRAINT pk_particulatematter25grid PRIMARY KEY ([id]))
 	ON [reference_fg]
 	WITH (DATA_COMPRESSION = PAGE)
 
-	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2_5_grid', 'SUBSYSTEM', 'rtp_2019'
-	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2_5_grid', 'MS_Description', 'a square representation of the San Diego region broken into a square polygon grid'
-	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2_5_grid.id', 'MS_Description', 'pm_2_5_grid surrogate key'
-	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2_5_grid.shape', 'MS_Description', 'geometry representation of square polygon grid'
-	EXECUTE [db_meta].[add_xp] 'rtp_2019.pm_2_5_grid.centroid', 'MS_Description', 'geometry representation of centroid of square polygon grid'
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.particulate_matter_2_5_grid', 'SUBSYSTEM', 'rtp_2019'
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.particulate_matter_2_5_grid', 'MS_Description', 'a square representation of the San Diego region broken into a square polygon grid'
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.particulate_matter_2_5_grid.id', 'MS_Description', 'particulate_matter_2_5_grid surrogate key'
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.particulate_matter_2_5_grid.shape', 'MS_Description', 'geometry representation of square polygon grid'
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.particulate_matter_2_5_grid.centroid', 'MS_Description', 'geometry representation of centroid of square polygon grid'
+	EXECUTE [db_meta].[add_xp] 'rtp_2019.particulate_matter_2_5_grid.mgra_13', 'MS_Description', 'the mgra_13 number that contains the square polygon''s centroid'
 
 
 	-- define the square region to be split into square polygons
 	-- defined by ((x_min, y_min), (x_max, y_min), (x_max, y_max), (x_min, y_max))
-	DECLARE @x_min int = 6149700
-	DECLARE @x_max int = 6614500
-	DECLARE @y_min int = 1774300
-	DECLARE @y_max int = 2130800
+	-- calculate by taking the envelope of the San Diego Region 2004 polygon
+	-- and finding its minimum latitude and longitude
+	DECLARE @x_min int = 6150700
+	DECLARE @x_max int = 6613500
+	DECLARE @y_min int = 1775300
+	DECLARE @y_max int = 2129800
+
+	-- create spatial index for the table on the [centroid] attribute
+	-- use the square region bounding box of the San Diego region
+	-- have to hardcode the bounding box, should match above variables
+	CREATE SPATIAL INDEX spix_particulatematter25grid_centroid
+	ON [rtp_2019].[particulate_matter_2_5_grid]([centroid]) USING GEOMETRY_GRID
+	WITH (
+		BOUNDING_BOX = (xmin=6150700, ymin=1775300, xmax=6613500, ymax=2129800),
+		GRIDS = (LOW, LOW, MEDIUM, HIGH),
+		CELLS_PER_OBJECT = 64,
+		DATA_COMPRESSION = PAGE)
 
 	-- declare size of square polygons to split square region into
 	DECLARE @grid_size int = 100
@@ -67,169 +84,163 @@ BEGIN
 		BEGIN
 			SET @counter = @counter + 1;
 			DECLARE @cell geometry
-			DECLARE @centroid geometry;
+			DECLARE @centroid geometry
+			DECLARE @mgra_13 nchar(20);
 			-- build 100x100 polygon assume EPSG: 2230
 			SET @cell = geometry::STPolyFromText('POLYGON((' + CONVERT(nvarchar, @x_tracker) + ' ' +CONVERT(nvarchar, @y_tracker) + ',' +
 															   CONVERT(nvarchar, (@x_tracker + @grid_size)) + ' ' + CONVERT(nvarchar, @y_tracker) + ',' +
 															   CONVERT(nvarchar, (@x_tracker + @grid_size)) + ' ' + CONVERT(nvarchar, (@y_tracker + @grid_size)) + ',' +
 															   CONVERT(nvarchar, @x_tracker) + ' ' + CONVERT(nvarchar, (@y_tracker + @grid_size)) + ',' +
 															   CONVERT(nvarchar, @x_tracker) + ' ' + CONVERT(nvarchar, @y_tracker) + '))', 2230)
-			SET @cell = @cell.MakeValid()
-			SET @centroid = @cell.STCentroid().MakeValid()
-			INSERT INTO [rtp_2019].[pm_2_5_grid] ([id], [shape], [centroid]) VALUES (@counter, @cell, @centroid)
+			SET @centroid = @cell.STCentroid()
+
+			INSERT INTO [rtp_2019].[particulate_matter_2_5_grid] ([id], [shape], [centroid], [mgra_13])
+			VALUES (@counter, @cell, @centroid, 'Not Applicable')
+
 			SET @y_tracker = @y_tracker + @grid_size;
 		END
 		SET @x_tracker = @x_tracker + @grid_size;
 	END
+
+	-- get xref of grid cell to mgra_13
+	UPDATE [rtp_2019].[particulate_matter_2_5_grid]
+	SET [particulate_matter_2_5_grid].[mgra_13] = [mgras].[mgra_13]
+	FROM
+		[rtp_2019].[particulate_matter_2_5_grid] WITH(INDEX(spix_particulatematter25grid_centroid))
+	INNER JOIN (
+		SELECT
+			[mgra_13]
+			,[mgra_13_shape]
+		FROM
+			[dimension].[geography]
+		WHERE
+			[mgra_13] != 'Not Applicable') AS [mgras]
+	ON
+		[particulate_matter_2_5_grid].[centroid].STWithin([mgra_13_shape]) = 1
+
+	-- remove grid cells that do not match to a mgra_13
+	DELETE FROM [rtp_2019].[particulate_matter_2_5_grid] WHERE [mgra_13] = 'Not Applicable'
 END
 GO
 
 
 
 
--- Create stored procedure for particulate_matter_ctemfac_2014
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2019].[sp_particulate_matter_ctemfac_2014]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [rtp_2019].[sp_particulate_matter_ctemfac_2014]
+-- Create fn_particulate_matter_2_5_ctemfac_2014 table valued function
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2019].[fn_particulate_matter_2_5_ctemfac_2014]') AND type in (N'FN', N'IF', N'TF', N'FS', N'FT'))
+DROP FUNCTION [rtp_2019].[fn_particulate_matter_2_5_ctemfac_2014]
 GO
 
-CREATE PROCEDURE [rtp_2019].[sp_particulate_matter_ctemfac_2014]
+CREATE FUNCTION [rtp_2019].[fn_particulate_matter_2_5_ctemfac_2014]
+(
 	@scenario_id integer
+)
+RETURNS @tbl_particulate_matter_2_5_ctemfac_2014 TABLE
+(
+	[scenario_id] integer NOT NULL
+	,[hwy_link_id] integer NOT NULL
+	,[hwycov_id] integer NOT NULL
+	,[link_running_exhaust] float NOT NULL
+	,[link_running_loss] float NOT NULL
+	,[link_tire_brake_wear] float NOT NULL
+	,[link_total_emissions] float NOT NULL
+	,PRIMARY KEY ([scenario_id], [hwy_link_id])
+)
 AS
-
 /*	Author: Gregor Schroeder
 	Date: 7/10/2018
-	Description: Calculate link level emissions using emfac 2014 values.
-		Recreates [abm_13_2_3].[abm].[ctemfac11_particulate_matter_10]
+	Description: Calculate link level emissions for particulate matter 2.5
+	    using emfac 2014 values. Similar to
+	    [abm_13_2_3].[abm].[ctemfac11_particulate_matter_10]
 		stored procedure originally created by Clint Daniels and
-		Ziying Ouyang. Used to calculate Performance Measure 2.5.
+		Ziying Ouyang. Used to calculate Particulate Matter 2.5.
 		Relies on the MSSQL database ctemfac_2014 existing in the environment,
 		the port of the EMFAC 2014 Access database. */
+BEGIN
+	DECLARE @AreaID tinyint
+	DECLARE @year smallint
+	DECLARE @PeriodID tinyint
 
-SET NOCOUNT ON;
-DECLARE @AreaID tinyint
-DECLARE @year smallint
-DECLARE @PeriodID tinyint
+	SET @AreaID = (SELECT [AreaID] FROM [ctemfac_2014].[dbo].[Area] WHERE [Name] = 'San Diego (SD)')
+	SET @year = (SELECT [year] FROM [dimension].[scenario] WHERE [scenario_id] = @scenario_id)
+	SET @PeriodID = (SELECT [PeriodID] FROM [ctemfac_2014].[dbo].[Period] WHERE [Year] = @year and [Season] = 'Annual');
 
-SET @AreaID = (SELECT [AreaID] FROM [ctemfac_2014].[dbo].[Area] WHERE [Name] = 'San Diego (SD)')
-SET @year = (SELECT [year] FROM [dimension].[scenario] WHERE [scenario_id] = @scenario_id)
-SET @PeriodID = (SELECT [PeriodID] FROM [ctemfac_2014].[dbo].[Period] WHERE [Year] = @year and [Season] = 'Annual');
-
-with [running_exhaust] AS (
-	SELECT
-		'RunningExhaust' AS [EmissionType]
-		,[Pollutant].[Name] AS [PollutantName]
-		,[Category].[Name] AS [CategoryName]
-		,[RunningExhaust].[Speed]
-		,[RunningExhaust].[Value]
-	FROM
-		[ctemfac_2014].[dbo].[RunningExhaust]
-	INNER JOIN
-		[ctemfac_2014].[dbo].[Pollutant]
-	ON
-		[RunningExhaust].[PollutantID] = [Pollutant].[PollutantID]
-	INNER JOIN
-		[ctemfac_2014].[dbo].[Category]
-	ON
-		[RunningExhaust].[CategoryID] = [Category].[CategoryID]
-	WHERE
-		[RunningExhaust].[AreaID] = @AreaID
-		AND [RunningExhaust].[PeriodID] = @PeriodID
-		AND [Pollutant].[Name] IN ('PM10',
-								   'PM10 TW',
-								   'PM10 BW')),
-[running_loss] AS (
-	SELECT
-		'RunningLoss' AS [EmissionType]
-		,[Pollutant].[Name] AS [PollutantName]
-		,[Category].[Name] AS [CategoryName]
-		,[RunningLoss].[Value]
-	FROM
-		[ctemfac_2014].[dbo].[RunningLoss]
-	INNER JOIN
-		[ctemfac_2014].[dbo].[Pollutant]
-	ON
-		[RunningLoss].[PollutantID] = [Pollutant].[PollutantID]
-	INNER JOIN
-		[ctemfac_2014].[dbo].[Category]
-	ON
-		[RunningLoss].[CategoryID] = [Category].[CategoryID]
-	WHERE
-		[RunningLoss].[AreaID] = @AreaID
-		AND [RunningLoss].[PeriodID] = @PeriodID
-		AND [Pollutant].[Name] IN ('PM10',
-								   'PM10 TW',
-								   'PM10 BW')),
-[tire_brake_wear] AS (
-	SELECT
-		'TireBrakeWear' AS [EmissionType]
-		,[Pollutant].[Name] AS [PollutantName]
-		,[Category].[Name] AS [CategoryName]
-		,[TireBrakeWear].[Value]
-	FROM
-		[ctemfac_2014].[dbo].[TireBrakeWear]
-	INNER JOIN
-		[ctemfac_2014].[dbo].[Pollutant]
-	ON
-		[TireBrakeWear].[PollutantID] = [Pollutant].[PollutantID]
-	INNER JOIN
-		[ctemfac_2014].[dbo].[Category]
-	ON
-		[TireBrakeWear].[CategoryID] = [Category].[CategoryID]
-	WHERE
-		[TireBrakeWear].[AreaID] = @AreaID
-		AND [TireBrakeWear].[PeriodID] = @PeriodID
-		AND [Pollutant].[Name] IN ('PM10',
-								   'PM10 TW',
-								   'PM10 BW')),
-[travel] AS (
-	SELECT
-		[hwy_link].[hwy_link_id]
-		,CASE	WHEN DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0 <= 0
-				THEN 24 + DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0
-				ELSE DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0
-				END AS [duration_hours]
-		,CASE	WHEN [mode].[mode_description] IN ('Light Heavy Duty Truck (Non-Toll)',
-												   'Light Heavy Duty Truck (Toll)')
-				THEN 'Truck 1'
-				WHEN [mode].[mode_description] IN ('Medium Heavy Duty Truck (Non-Toll)',
-												   'Medium Heavy Duty Truck (Toll)',
-												   'Heavy Heavy Duty Truck (Non-Toll)',
-												   'Heavy Heavy Duty Truck (Toll)')
-				THEN 'Truck 2'
-				ELSE 'Non-truck' END AS [CategoryName]
-		 ,5 * ((CAST([hwy_flow].[speed] AS integer) / 5) + 1) AS [bin]
-		 ,SUM([hwy_flow_mode].[flow] * [hwy_link].[length_mile]) AS [vmt]
-	FROM
-		[fact].[hwy_flow_mode]
-	INNER JOIN
-		[fact].[hwy_flow]
-	ON
-		[hwy_flow_mode].[scenario_id] = [hwy_flow].[scenario_id]
-		AND [hwy_flow_mode].[hwy_link_ab_tod_id] = [hwy_flow].[hwy_link_ab_tod_id]
-	INNER JOIN
-		[dimension].[hwy_link]
-	ON
-		[hwy_flow_mode].[scenario_id] = [hwy_link].[scenario_id]
-		AND [hwy_flow_mode].[hwy_link_id] = [hwy_link].[hwy_link_id]
-	INNER JOIN
-		[dimension].[mode]
-	ON
-		[hwy_flow_mode].[mode_id] = [mode].[mode_id]
-	INNER JOIN
-		[dimension].[time]
-	ON
-		[hwy_flow_mode].[time_id] = [time].[time_id]
-	WHERE
-		[hwy_flow_mode].[scenario_id] = @scenario_id
-		AND [hwy_flow].[scenario_id] = @scenario_id
-		AND [hwy_link].[scenario_id] = @scenario_id
-	GROUP BY
-		[hwy_link].[hwy_link_id]
-		,CASE	WHEN DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0 <= 0
-				THEN 24 + DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0
-				ELSE DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0
-				END
-		,CASE	WHEN [mode].[mode_description] IN ('Light Heavy Duty Truck (Non-Toll)',
+	with [running_exhaust] AS (
+		SELECT
+			'RunningExhaust' AS [EmissionType]
+			,[Pollutant].[Name] AS [PollutantName]
+			,[Category].[Name] AS [CategoryName]
+			,[RunningExhaust].[Speed]
+			,[RunningExhaust].[Value]
+		FROM
+			[ctemfac_2014].[dbo].[RunningExhaust]
+		INNER JOIN
+			[ctemfac_2014].[dbo].[Pollutant]
+		ON
+			[RunningExhaust].[PollutantID] = [Pollutant].[PollutantID]
+		INNER JOIN
+			[ctemfac_2014].[dbo].[Category]
+		ON
+			[RunningExhaust].[CategoryID] = [Category].[CategoryID]
+		WHERE
+			[RunningExhaust].[AreaID] = @AreaID
+			AND [RunningExhaust].[PeriodID] = @PeriodID
+			AND [Pollutant].[Name] IN ('PM25',
+									   'PM25 TW',
+									   'PM25 BW')),
+	[running_loss] AS (
+		SELECT
+			'RunningLoss' AS [EmissionType]
+			,[Pollutant].[Name] AS [PollutantName]
+			,[Category].[Name] AS [CategoryName]
+			,[RunningLoss].[Value]
+		FROM
+			[ctemfac_2014].[dbo].[RunningLoss]
+		INNER JOIN
+			[ctemfac_2014].[dbo].[Pollutant]
+		ON
+			[RunningLoss].[PollutantID] = [Pollutant].[PollutantID]
+		INNER JOIN
+			[ctemfac_2014].[dbo].[Category]
+		ON
+			[RunningLoss].[CategoryID] = [Category].[CategoryID]
+		WHERE
+			[RunningLoss].[AreaID] = @AreaID
+			AND [RunningLoss].[PeriodID] = @PeriodID
+			AND [Pollutant].[Name] IN ('PM25',
+									   'PM25 TW',
+									   'PM25 BW')),
+	[tire_brake_wear] AS (
+		SELECT
+			'TireBrakeWear' AS [EmissionType]
+			,[Pollutant].[Name] AS [PollutantName]
+			,[Category].[Name] AS [CategoryName]
+			,[TireBrakeWear].[Value]
+		FROM
+			[ctemfac_2014].[dbo].[TireBrakeWear]
+		INNER JOIN
+			[ctemfac_2014].[dbo].[Pollutant]
+		ON
+			[TireBrakeWear].[PollutantID] = [Pollutant].[PollutantID]
+		INNER JOIN
+			[ctemfac_2014].[dbo].[Category]
+		ON
+			[TireBrakeWear].[CategoryID] = [Category].[CategoryID]
+		WHERE
+			[TireBrakeWear].[AreaID] = @AreaID
+			AND [TireBrakeWear].[PeriodID] = @PeriodID
+			AND [Pollutant].[Name] IN ('PM25',
+									   'PM25 TW',
+									   'PM25 BW')),
+	[travel] AS (
+		SELECT
+			[hwy_link].[hwy_link_id]
+			,[hwy_link].[hwycov_id]
+			,CASE	WHEN DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0 <= 0
+					THEN 24 + DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0
+					ELSE DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0
+					END AS [duration_hours]
+			,CASE	WHEN [mode].[mode_description] IN ('Light Heavy Duty Truck (Non-Toll)',
 													   'Light Heavy Duty Truck (Toll)')
 					THEN 'Truck 1'
 					WHEN [mode].[mode_description] IN ('Medium Heavy Duty Truck (Non-Toll)',
@@ -237,47 +248,270 @@ with [running_exhaust] AS (
 													   'Heavy Heavy Duty Truck (Non-Toll)',
 													   'Heavy Heavy Duty Truck (Toll)')
 					THEN 'Truck 2'
-					ELSE 'Non-truck' END
-		 ,5 * ((CAST([hwy_flow].[speed] AS integer) / 5) + 1)),
-[link_emissions] AS (
+					ELSE 'Non-truck' END AS [CategoryName]
+			 ,5 * ((CAST([hwy_flow].[speed] AS integer) / 5) + 1) AS [bin]
+			 ,SUM([hwy_flow_mode].[flow] * [hwy_link].[length_mile]) AS [vmt]
+		FROM
+			[fact].[hwy_flow_mode]
+		INNER JOIN
+			[fact].[hwy_flow]
+		ON
+			[hwy_flow_mode].[scenario_id] = [hwy_flow].[scenario_id]
+			AND [hwy_flow_mode].[hwy_link_ab_tod_id] = [hwy_flow].[hwy_link_ab_tod_id]
+		INNER JOIN
+			[dimension].[hwy_link]
+		ON
+			[hwy_flow_mode].[scenario_id] = [hwy_link].[scenario_id]
+			AND [hwy_flow_mode].[hwy_link_id] = [hwy_link].[hwy_link_id]
+		INNER JOIN
+			[dimension].[mode]
+		ON
+			[hwy_flow_mode].[mode_id] = [mode].[mode_id]
+		INNER JOIN
+			[dimension].[time]
+		ON
+			[hwy_flow_mode].[time_id] = [time].[time_id]
+		WHERE
+			[hwy_flow_mode].[scenario_id] = @scenario_id
+			AND [hwy_flow].[scenario_id] = @scenario_id
+			AND [hwy_link].[scenario_id] = @scenario_id
+		GROUP BY
+			[hwy_link].[hwy_link_id]
+			,[hwy_link].[hwycov_id]
+			,CASE	WHEN DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0 <= 0
+					THEN 24 + DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0
+					ELSE DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0
+					END
+			,CASE	WHEN [mode].[mode_description] IN ('Light Heavy Duty Truck (Non-Toll)',
+														   'Light Heavy Duty Truck (Toll)')
+						THEN 'Truck 1'
+						WHEN [mode].[mode_description] IN ('Medium Heavy Duty Truck (Non-Toll)',
+														   'Medium Heavy Duty Truck (Toll)',
+														   'Heavy Heavy Duty Truck (Non-Toll)',
+														   'Heavy Heavy Duty Truck (Toll)')
+						THEN 'Truck 2'
+						ELSE 'Non-truck' END
+			 ,5 * ((CAST([hwy_flow].[speed] AS integer) / 5) + 1)),
+	[link_emissions] AS (
+		SELECT
+			[travel].[hwy_link_id]
+			,[travel].[hwycov_id]
+			,SUM(ISNULL([travel].[vmt] * [running_exhaust].[Value], 0)) AS [link_running_exhaust]
+			,SUM(ISNULL([travel].[vmt] * [running_loss].[Value], 0)) AS [link_running_loss]
+			,SUM(ISNULL([travel].[vmt] * [tire_brake_wear].[Value], 0)) AS [link_tire_brake_wear]
+		FROM
+			[travel]
+		LEFT OUTER JOIN
+			[running_exhaust]
+		ON
+			[travel].[CategoryName] = [running_exhaust].[CategoryName]
+			AND [travel].[bin] = [running_exhaust].[Speed]
+		LEFT OUTER JOIN
+			[running_loss]
+		ON
+			[travel].[CategoryName] = [running_loss].[CategoryName]
+		LEFT OUTER JOIN
+			[tire_brake_wear]
+		ON
+			[travel].[CategoryName] = [tire_brake_wear].[CategoryName]
+		GROUP BY
+			[travel].[hwy_link_id]
+			,[travel].[hwycov_id])
+	INSERT INTO @tbl_particulate_matter_2_5_ctemfac_2014
 	SELECT
-		[travel].[hwy_link_id]
-		,SUM(ISNULL([travel].[vmt] * [running_exhaust].[Value], 0)) AS [link_running_exhaust]
-		,SUM(ISNULL([travel].[vmt] * [running_loss].[Value], 0)) AS [link_running_loss]
-		,SUM(ISNULL([travel].[vmt] * [tire_brake_wear].[Value], 0)) AS [link_tire_brake_wear]
+		@scenario_id AS [scenario_id]
+		,[hwy_link_id]
+		,[hwycov_id]
+		,[link_running_exhaust]
+		,[link_running_loss]
+		,[link_tire_brake_wear]
+		,[link_running_exhaust] + [link_running_loss] + [link_tire_brake_wear] AS [link_total_emissions]
 	FROM
-		[travel]
-	LEFT OUTER JOIN
-		[running_exhaust]
-	ON
-		[travel].[CategoryName] = [running_exhaust].[CategoryName]
-		AND [travel].[bin] = [running_exhaust].[Speed]
-	LEFT OUTER JOIN
-		[running_loss]
-	ON
-		[travel].[CategoryName] = [running_loss].[CategoryName]
-	LEFT OUTER JOIN
-		[tire_brake_wear]
-	ON
-		[travel].[CategoryName] = [tire_brake_wear].[CategoryName]
-	GROUP BY
-		[travel].[hwy_link_id])
-SELECT
-	@scenario_id AS [scenario_id]
-	,[hwy_link_id]
-	,[link_running_exhaust]
-	,[link_running_loss]
-	,[link_tire_brake_wear]
-	,[link_running_exhaust] + [link_running_loss] + [link_tire_brake_wear] AS [link_total_emissions]
-FROM
-	[link_emissions]
-ORDER BY
-	[hwy_link_id]
+		[link_emissions]
+
+	RETURN
+END
 GO
 
--- Add metadata for [rtp_2019].[sp_particulate_matter_ctemfac_2014]
-EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_particulate_matter_ctemfac_2014', 'SUBSYSTEM', 'rtp 2019'
-EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_particulate_matter_ctemfac_2014', 'MS_Description', 'calculate link level particulate matter emission using emfac 2014 values'
+-- Add metadata for [rtp_2019].[fn_particulate_matter_2_5_ctemfac_2014]
+EXECUTE [db_meta].[add_xp] 'rtp_2019.fn_particulate_matter_2_5_ctemfac_2014', 'SUBSYSTEM', 'rtp 2019'
+EXECUTE [db_meta].[add_xp] 'rtp_2019.fn_particulate_matter_2_5_ctemfac_2014', 'MS_Description', 'calculate link level particulate matter 2.5 emission using emfac 2014 values'
+GO
+
+
+
+
+-- Create stored procedure for particulate matter 2.5
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2019].[sp_particulate_matter_2_5]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [rtp_2019].[sp_particulate_matter_2_5]
+GO
+
+CREATE PROCEDURE [rtp_2019].[sp_particulate_matter_2_5]
+	@scenario_id integer,
+	@distance integer = 500,
+	@shoulder_width integer = 10
+AS
+
+/*	Author: Gregor Schroeder
+	Date: 7/12/2018
+	Description: Particulate Matter 2.5, Recreates process created for
+		the 2015 RTP Particulate Matter 10 by Clint Daniels. Uses
+		a 100x100 square polygon grid of the San Diego region stored in
+		the [rtp_2019].[particulate_matter_2_5_grid] table and an estimate
+		of particulate matter 2.5 emissions by highway network link
+		([rtp_2019].[fn_particulate_matter_2_5_ctemfac_2014]) that relies on the
+		emfac 2014 Access database existing in SQL Server ([ctemfac_2014])
+		to create a measure of total and average person particulate 2.5
+		emission exposure overall and within Community of Concern groups
+		(seniors, minorities, and low income households). */
+
+-- create highway network to grid xref temporary table
+SELECT
+	[particulate_matter_2_5_grid].[id]
+	,[hwy_link_lanes].[hwy_link_id]
+	,[hwy_link_lanes].[hwycov_id]
+	,CASE	WHEN [hwy_link_lanes].[shape].STDistance([particulate_matter_2_5_grid].[centroid]) - @shoulder_width - CEILING([hwy_link_lanes].[lanes] / 2.0) * 12 <= 0
+		THEN 100
+		ELSE CEILING(([hwy_link_lanes].[shape].STDistance([particulate_matter_2_5_grid].[centroid]) - @shoulder_width - CEILING([hwy_link_lanes].[lanes] / 2.0) * 12) / 100.0) * 100
+		END AS [interval]
+	INTO #xref_grid_hwycov
+FROM (
+	SELECT
+		[hwy_link].[hwy_link_id]
+		,[hwy_link].[hwycov_id]
+		,CONVERT(integer,
+				CASE	WHEN [hwy_link].[iway] = 2
+						THEN [ln_max] * 2
+						ELSE [ln_max] END) AS [lanes]
+		,[hwy_link].[shape].MakeValid() AS [shape]
+	FROM
+		[dimension].[hwy_link]
+	INNER JOIN (
+		SELECT
+			[hwy_link_id]
+			,MAX([ln]) AS [ln_max]
+		FROM
+			[dimension].[hwy_link_ab_tod]
+		WHERE
+			[scenario_id] = @scenario_id
+			AND [ln] < 9 -- this coding means lane unavailable
+		GROUP BY
+			[hwy_link_id]) AS [link_ln_max]
+	ON
+		[hwy_link].[scenario_id] = @scenario_id
+		AND [hwy_link].[hwy_link_id] = [link_ln_max].[hwy_link_id]
+	WHERE
+		[hwy_link].[scenario_id] = @scenario_id
+		AND [hwy_link].[ifc] < 10) AS [hwy_link_lanes]
+INNER JOIN
+	[rtp_2019].[particulate_matter_2_5_grid] WITH(INDEX(spix_particulatematter25grid_centroid))
+ON
+	[particulate_matter_2_5_grid].[centroid].STWithin([hwy_link_lanes].[shape].STBuffer(@distance + @shoulder_width + CEILING([hwy_link_lanes].[lanes] / 2.0) * 12)) = 1;
+
+
+-- use the highway network to grid xref to output the final results
+-- for Particulate Matter 2.5
+with [grid_particulate_matter] AS (
+	SELECT
+		[id]
+		,SUM([assigned_particulate_matter]) AS [assigned_particulate_matter]
+	FROM (
+		SELECT
+			[id]
+			,([link_total_emissions] / (COUNT(#xref_grid_hwycov.[id]) OVER (PARTITION BY #xref_grid_hwycov.[hwycov_id]) / 2.0)) /
+				([interval] / 100.0) AS [assigned_particulate_matter]
+		FROM
+			#xref_grid_hwycov
+		INNER JOIN
+			[rtp_2019].[fn_particulate_matter_2_5_ctemfac_2014](@scenario_id)
+		ON
+			#xref_grid_hwycov.[hwycov_id] = [fn_particulate_matter_2_5_ctemfac_2014].[hwycov_id]) AS [tt]
+	GROUP BY
+		[id]),
+[mgra_13_particulate_matter] AS (
+	SELECT
+		[particulate_matter_2_5_grid].[mgra_13]
+		,AVG(ISNULL([grid_particulate_matter].[assigned_particulate_matter], 0)) AS [avg_grid_particulate_matter]
+	FROM
+		[rtp_2019].[particulate_matter_2_5_grid]
+	LEFT OUTER JOIN
+		[grid_particulate_matter]
+	ON
+		[particulate_matter_2_5_grid].[id] = [grid_particulate_matter].[id]
+	GROUP BY
+		[mgra_13]),
+[population] AS (
+	SELECT
+		[geography_household_location].[household_location_mgra_13]
+		,SUM([person].[weight_person]) AS [persons]
+		,SUM(CASE WHEN [person].[age] >= 75 THEN [person].[weight_person] ELSE 0 END) AS [senior]
+		,SUM(CASE WHEN [person].[age] < 75 THEN [person].[weight_person] ELSE 0 END) AS [non_senior]
+		,SUM(CASE	WHEN [person].[race] IN ('Some Other Race Alone',
+											 'Asian Alone',
+											 'Black or African American Alone',
+											 'Two or More Major Race Groups',
+											 'Native Hawaiian and Other Pacific Islander Alone',
+											 'American Indian and Alaska Native Tribes specified; or American Indian or Alaska Native, not specified and no other races')
+						OR [person].[hispanic] = 'Hispanic' THEN [person].[weight_person]
+					ELSE 0 END) AS [minority]
+		,SUM(CASE	WHEN [person].[race] NOT IN ('Some Other Race Alone',
+												 'Asian Alone',
+												 'Black or African American Alone',
+												 'Two or More Major Race Groups',
+												 'Native Hawaiian and Other Pacific Islander Alone',
+												 'American Indian and Alaska Native Tribes specified; or American Indian or Alaska Native, not specified and no other races')
+						AND [person].[hispanic] != 'Hispanic' THEN [person].[weight_person]
+					ELSE 0 END) AS [non_minority]
+		,SUM(CASE WHEN [household].[poverty] <= 2 THEN [person].[weight_person] ELSE 0 END) AS [low_income]
+		,SUM(CASE WHEN [household].[poverty] > 2 THEN [person].[weight_person] ELSE 0 END) AS [non_low_income]
+	FROM
+		[dimension].[person]
+	INNER JOIN
+		[dimension].[household]
+	ON
+		[person].[scenario_id] = [household].[scenario_id]
+		AND [person].[household_id] = [household].[household_id]
+	INNER JOIN
+		[dimension].[geography_household_location] -- this is at the mgra_13 level
+	ON
+		[household].[geography_household_location_id] = [geography_household_location].[geography_household_location_id]
+	WHERE
+		[person].[scenario_id] = @scenario_id
+		AND [household].[scenario_id] = @scenario_id
+	GROUP BY
+		[geography_household_location].[household_location_mgra_13])
+SELECT
+	@scenario_id AS [scenario_id]
+	,SUM(ISNULL([avg_grid_particulate_matter], 0) * [persons]) AS [person_total_particulate_matter]
+	,SUM(ISNULL([avg_grid_particulate_matter], 0) * [senior]) AS [senior_total_particulate_matter]
+	,SUM(ISNULL([avg_grid_particulate_matter], 0) * [non_senior]) AS [non_senior_total_particulate_matter]
+	,SUM(ISNULL([avg_grid_particulate_matter], 0) * [minority]) AS [minority_total_particulate_matter]
+	,SUM(ISNULL([avg_grid_particulate_matter], 0) * [non_minority]) AS [non_minority_total_particulate_matter]
+	,SUM(ISNULL([avg_grid_particulate_matter], 0) * [low_income]) AS [low_income_total_particulate_matter]
+	,SUM(ISNULL([avg_grid_particulate_matter], 0) * [non_low_income]) AS [non_low_income_total_particulate_matter]
+	,SUM(ISNULL([avg_grid_particulate_matter], 0) * [persons]) / SUM([persons]) AS [person_avg_particulate_matter]
+	,SUM(ISNULL([avg_grid_particulate_matter], 0) * [senior]) / SUM([senior]) AS [senior_avg_particulate_matter]
+	,SUM(ISNULL([avg_grid_particulate_matter], 0) * [non_senior]) / SUM([non_senior]) AS [non_senior_avg_particulate_matter]
+	,SUM(ISNULL([avg_grid_particulate_matter], 0) * [minority]) / SUM([minority]) AS [minority_avg_particulate_matter]
+	,SUM(ISNULL([avg_grid_particulate_matter], 0) * [non_minority]) / SUM([non_minority]) AS [non_minority_avg_particulate_matter]
+	,SUM(ISNULL([avg_grid_particulate_matter], 0) * [low_income]) / SUM([low_income]) AS [low_income_avg_particulate_matter]
+	,SUM(ISNULL([avg_grid_particulate_matter], 0) * [non_low_income]) / SUM([non_low_income]) AS [non_low_income_avg_particulate_matter]
+FROM
+	[population]
+LEFT OUTER JOIN
+	[mgra_13_particulate_matter]
+ON
+	[population].[household_location_mgra_13] = [mgra_13_particulate_matter].[mgra_13]
+OPTION(MAXDOP 1)
+
+
+-- drop the highway network to grid xref temporary table
+DROP TABLE #xref_grid_hwycov
+GO
+
+-- Add metadata for [rtp_2019].[sp_particulate_matter_2_5]
+EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_particulate_matter_2_5', 'SUBSYSTEM', 'rtp 2019'
+EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_particulate_matter_2_5', 'MS_Description', 'particulate matter 2.5'
 GO
 
 
@@ -532,13 +766,13 @@ with [coc_pop] AS (
 		,[person].[weight_person]
 		,CASE WHEN [person].[age] >= 75 THEN 'Senior' ELSE 'Non-Senior' END AS [senior]
 		,CASE	WHEN [person].[race] IN ('Some Other Race Alone',
-											'Asian Alone',
-											'Black or African American Alone',
-											'Two or More Major Race Groups',
-											'Native Hawaiian and Other Pacific Islander Alone',
-											'American Indian and Alaska Native Tribes specified; or American Indian or Alaska Native, not specified and no other races')
-						OR [person].[hispanic] = 'Hispanic' THEN 'Minority'
-					ELSE 'Non-Minority' END AS [minority]
+										 'Asian Alone',
+										 'Black or African American Alone',
+										 'Two or More Major Race Groups',
+										 'Native Hawaiian and Other Pacific Islander Alone',
+										 'American Indian and Alaska Native Tribes specified; or American Indian or Alaska Native, not specified and no other races')
+					 OR [person].[hispanic] = 'Hispanic' THEN 'Minority'
+				 ELSE 'Non-Minority' END AS [minority]
 		,CASE WHEN [household].[poverty] <= 2 THEN 'Low Income' ELSE 'Non-Low Income' END AS [low_income]
 	FROM
 		[dimension].[person]
