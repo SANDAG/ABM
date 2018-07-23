@@ -22,7 +22,7 @@ def dbf_to_csv(dbf_fn, fields, csv_fn):
         out_csv.writerow([dbf_record[x] for x in fields])
 
 
-def ogr_to_csv(fn, layer_nm, fields, csv_fn, in_srid = None, out_srid=None, where_filter=None):
+def ogr_to_csv(fn, layer_nm, fields, csv_fn, where_filter=None):
     """
     Takes an input layer of a compatible OGR GIS file, writes the
     fields of interest and spatial wkt feature to a csv file applying a field
