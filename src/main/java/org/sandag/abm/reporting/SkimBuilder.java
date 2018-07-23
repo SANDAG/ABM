@@ -136,7 +136,7 @@ public class SkimBuilder
             TripModeChoice.WALK, TripModeChoice.BIKE, TripModeChoice.WALK_SET,
             TripModeChoice.PNR_SET, TripModeChoice.KNR_SET, 
             TripModeChoice.DRIVE_ALONE_NO_TOLL,
-            TripModeChoice.DRIVE_ALONE_NO_TOLL      };
+            TripModeChoice.SR2_HOV      };
 
     private int getTod(int tripTimePeriod)
     {
