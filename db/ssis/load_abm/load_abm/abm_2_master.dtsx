@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
   DTS:refId="Package"
   DTS:CreationDate="2/22/2018 1:25:07 PM"
@@ -14,8 +14,8 @@
   DTS:MaxErrorCount="0"
   DTS:ObjectName="abm_2_master"
   DTS:PackageType="5"
-  DTS:VersionBuild="71"
-  DTS:VersionGUID="{B836D33F-9C10-465D-9EA9-F240A704E9D4}">
+  DTS:VersionBuild="72"
+  DTS:VersionGUID="{6783F97B-80FB-484F-B4E1-A767CCB9DAA3}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:Variables>
@@ -282,8 +282,8 @@
         DTS:Name="Executable">@[$Project::python_script_path] + "\\run_python.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="F:\DEV\gks\python\run_python.bat"
-          Arguments="D:\Python27\ArcGIS10.6\Lib\site-packages\osgeo\data\gdal D:\Python27\ArcGIS10.6 F:\DEV\gks\python\arcpy_cleanup.py "
+          Executable="\run_python.bat"
+          Arguments="  \arcpy_cleanup.py "
           WindowStyle="Hidden" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -327,13 +327,13 @@
       DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:PropertyExpression
-        DTS:Name="Arguments">@[$Project::gdal_path] + " " + @[$Project::python_path] + " " + @[$Project::python_script_path] + "\\e00_to_shape.py" + " " +  @[User::scenario_filepath]</DTS:PropertyExpression>
+        DTS:Name="Arguments">@[$Project::gdal_path] + " " + @[$Project::python_path] + " " + @[$Project::python_script_path] + "\\e00_to_shape.py" + " " +  @[User::scenario_filepath] + " " +  @[$Project::python_script_path]</DTS:PropertyExpression>
       <DTS:PropertyExpression
         DTS:Name="Executable">@[$Project::python_script_path] + "\\run_python.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="F:\DEV\gks\python\run_python.bat"
-          Arguments="D:\Python27\ArcGIS10.6\Lib\site-packages\osgeo\data\gdal D:\Python27\ArcGIS10.6 F:\DEV\gks\python\e00_to_shape.py "
+          Executable="\run_python.bat"
+          Arguments="  \e00_to_shape.py  "
           WindowStyle="Hidden" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -358,8 +358,8 @@
         DTS:Name="Executable">@[$Project::python_script_path] + "\\run_python.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="F:\DEV\gks\python\run_python.bat"
-          Arguments="D:\Python27\ArcGIS10.6\Lib\site-packages\osgeo\data\gdal D:\Python27\ArcGIS10.6 F:\DEV\gks\python\geospatial_export.py "
+          Executable="\run_python.bat"
+          Arguments="  \geospatial_export.py "
           WindowStyle="Hidden" />
       </DTS:ObjectData>
     </DTS:Executable>
