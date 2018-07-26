@@ -284,10 +284,10 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             self.duplicate_tap_adajcent_stops(network)
             # The fixed guideway travel times are stored in "@trtime_link_xx"
             # and copied to data2 (ul2) for the ttf 
-            # The congested auto times for mixed traffic are in "timau" 
-            # (output from traffic assignment)
-            values = network.get_attribute_values("LINK", [params["fixed_link_time"]])
-            network.set_attribute_values("LINK", ["data2"], values)
+            # The congested auto times for mixed traffic are in "@auto_time" 
+            # (output from traffic assignment) which needs to be copied to auto_time (a.k.a. timau)
+            values = network.get_attribute_values("LINK", [params["fixed_link_time"], "@auto_time"])
+            network.set_attribute_values("LINK", ["data2", "auto_time"], values)
             scenario.publish_network(network)
             return scenario
 
