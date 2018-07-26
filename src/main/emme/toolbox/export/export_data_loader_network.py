@@ -710,7 +710,7 @@ Export network results to csv files for SQL data loader."""
             from_stop = id_format(seg["@stop_id"])
             for next_seg in segments:
                 to_mp += seg.link.length
-                ivtt += seg.transit_time
+                ivtt += seg.transit_time - seg.dwell_time
                 transit_flow = seg[segment_flow]
                 seg = next_seg
                 if not next_seg.allow_alightings:
