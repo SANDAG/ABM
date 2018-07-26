@@ -313,7 +313,7 @@ Assign traffic demand for the selected time period."""
                 },
                 {   # 3
                     "name": 'HOV2TOLLL', "mode": 'H', "PCE": 1, "VOT": 15.0, "cost": '@cost_hov',
-                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
+                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST.HOV", "TOLLDIST", "REL"]
                 },
                 {   # 4
                     "name": 'HOV3HOVL', "mode": 'i', "PCE": 1, "VOT": 15.0, "cost": '',
@@ -321,7 +321,7 @@ Assign traffic demand for the selected time period."""
                 },
                 {   # 5
                     "name": 'HOV3TOLLL', "mode": 'I', "PCE": 1, "VOT": 15.0, "cost": '@cost_hov',
-                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
+                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST.HOV", "TOLLDIST", "REL"]
                 },
                 {   # 6
                     "name": 'SOVGPM', "mode": 's', "PCE": 1, "VOT": 30.0, "cost": '',
@@ -337,7 +337,7 @@ Assign traffic demand for the selected time period."""
                 },
                 {   # 9
                     "name": 'HOV2TOLLM', "mode": 'H', "PCE": 1, "VOT": 30.0, "cost": '@cost_hov',
-                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
+                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST.HOV", "TOLLDIST", "REL"]
                 },
                 {   # 10
                     "name": 'HOV3HOVM', "mode": 'i', "PCE": 1, "VOT": 30.0, "cost": '',
@@ -345,7 +345,7 @@ Assign traffic demand for the selected time period."""
                 },
                 {   # 11
                     "name": 'HOV3TOLLM', "mode": 'I', "PCE": 1, "VOT": 30.0, "cost": '@cost_hov',
-                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
+                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST.HOV", "TOLLDIST", "REL"]
                 },
                 {   # 12
                     "name": 'SOVGPH', "mode": 's', "PCE": 1, "VOT": 85., "cost": '',
@@ -361,7 +361,7 @@ Assign traffic demand for the selected time period."""
                 },
                 {   # 15
                     "name": 'HOV2TOLLH', "mode": 'H', "PCE": 1, "VOT": 85., "cost": '@cost_hov',
-                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
+                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST.HOV", "TOLLDIST", "REL"]
                 },
                 {   # 16
                     "name": 'HOV3HOVH', "mode": 'i', "PCE": 1, "VOT": 85., "cost": '',
@@ -369,7 +369,7 @@ Assign traffic demand for the selected time period."""
                 },
                 {   # 17
                     "name": 'HOV3TOLLH', "mode": 'I', "PCE": 1, "VOT": 85., "cost": '@cost_hov',
-                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
+                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST.HOV", "TOLLDIST", "REL"]
                 },
                 {   # 18
                     "name": 'TRKHGP', "mode": 'v', "PCE": 2.5, "VOT": 89., "cost": '',
@@ -617,6 +617,7 @@ Assign traffic demand for the selected time period."""
                 "DIST":     "length",
                 "HOVDIST":  "@hovdist",
                 "TOLLCOST": "@tollcost",
+                "TOLLCOST.HOV": "@htollcost"
                 "MLCOST":   "@mlcost",
                 "TOLLDIST": "@tolldist",
                 "REL": "@reliability_sq"
@@ -625,6 +626,8 @@ Assign traffic demand for the selected time period."""
             create_attribute("LINK", "@hovdist", "distance for HOV",
                              0, overwrite=True, scenario=scenario)
             create_attribute("LINK", "@tollcost", "Toll cost in cents",
+                             0, overwrite=True, scenario=scenario)
+            create_attribute("LINK", "@htollcost", "Toll cost in cents for hov",
                              0, overwrite=True, scenario=scenario)
             create_attribute("LINK", "@mlcost", "Manage lane cost in cents",
                              0, overwrite=True, scenario=scenario)
@@ -643,6 +646,7 @@ Assign traffic demand for the selected time period."""
 
             net_calc("@hovdist", "length", {"link": "@lane_restriction=2,3"})
             net_calc("@tollcost", "@toll_%s" % p, {"link": "modes=d"})
+            net_calc("@htollcost", "@toll_%s" % p, {"link": "modes=d and not @lane_restriction=2,3"})
             net_calc("@mlcost", "@toll_%s" % p,
                 {"link": "not @toll_%s=0.0 and not @lane_restriction=4" % p})
             net_calc("@tolldist", "length", {"link": "not @toll_%s=0.0" % p})
@@ -674,6 +678,7 @@ Assign traffic demand for the selected time period."""
                 else:
                     od_travel_times = None
                 for skim_type in traffic_class["skims"]:
+                    skim_name = skim_type.split(".")[0]
                     class_analysis.append({
                         "link_component": analysis_link.get(skim_type),
                         "turn_component": analysis_turn.get(skim_type),
@@ -685,7 +690,7 @@ Assign traffic demand for the selected time period."""
                                 {"analyzed_demand": False, "path_value": True}
                         },
                         "results": {
-                            "od_values": 'mf"%s_%s_%s"' % (period, traffic_class["name"], skim_type),
+                            "od_values": 'mf"%s_%s_%s"' % (period, traffic_class["name"], skim_name),
                             "selected_link_volumes": None,
                             "selected_turn_volumes": None
                         }
