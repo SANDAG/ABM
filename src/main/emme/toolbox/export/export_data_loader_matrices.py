@@ -167,7 +167,8 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                     for orig in zones:
                         for dest in zones:
                             value = matrix_data.get(orig, dest)
-                            if value == 0: 
+                            # skip trips less than 0.00001 to avoid 0 trips records in database
+                            if value < 0.00001: 
                                 continue
                             time = matrix_data_time.get(orig, dest)
                             distance = matrix_data_dist.get(orig, dest)
@@ -210,7 +211,8 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                         for orig in zones:
                             for dest in zones:
                                 value = matrix_data.get(orig, dest)
-                                if value == 0: 
+                                # skip trips less than 0.00001 to avoid 0 trips records in database
+                                if value < 0.00001:  
                                     continue
                                 time = matrix_data_time.get(orig, dest)
                                 distance = matrix_data_dist.get(orig, dest)
@@ -247,7 +249,8 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                             for orig in zones:
                                 for dest in zones:
                                     value = matrix_data.get(orig, dest)
-                                    if value == 0: 
+                                    # skip trips less than 0.00001 to avoid 0 trips records in database
+                                    if value < 0.00001: 
                                         continue                                    
                                     time = matrix_data_time.get(orig, dest)
                                     distance = matrix_data_dist.get(orig, dest)
