@@ -617,7 +617,7 @@ Assign traffic demand for the selected time period."""
                 "DIST":     "length",
                 "HOVDIST":  "@hovdist",
                 "TOLLCOST": "@tollcost",
-                "TOLLCOST.HOV": "@htollcost"
+                "TOLLCOST.HOV": "@htollcost",
                 "MLCOST":   "@mlcost",
                 "TOLLDIST": "@tolldist",
                 "REL": "@reliability_sq"
@@ -638,11 +638,11 @@ Assign traffic demand for the selected time period."""
             create_attribute("LINK", "@reliability_sq", "Reliability factor squared",
                              0, overwrite=True, scenario=scenario)
             create_attribute("LINK", "@auto_volume", "traffic link volume (volau)",
-                              0, overwrite=True, scenario=scenario)
+                             0, overwrite=True, scenario=scenario)
             create_attribute("LINK", "@auto_time", "traffic link time (timau)",
-                              0, overwrite=True, scenario=scenario)
+                             0, overwrite=True, scenario=scenario)
             create_attribute("TURN", "@auto_time_turn", "traffic turn time (ptimau)",
-                              0, overwrite=True, scenario=scenario)
+                             0, overwrite=True, scenario=scenario)
 
             net_calc("@hovdist", "length", {"link": "@lane_restriction=2,3"})
             net_calc("@tollcost", "@toll_%s" % p, {"link": "modes=d"})
