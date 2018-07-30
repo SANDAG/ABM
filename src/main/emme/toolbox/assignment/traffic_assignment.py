@@ -617,7 +617,7 @@ Assign traffic demand for the selected time period."""
                 "DIST":     "length",
                 "HOVDIST":  "@hovdist",
                 "TOLLCOST": "@tollcost",
-                "TOLLCOST.HOV": "@htollcost"
+                "TOLLCOST.HOV": "@htollcost",
                 "MLCOST":   "@mlcost",
                 "TOLLDIST": "@tolldist",
                 "REL": "@reliability_sq"
@@ -638,11 +638,11 @@ Assign traffic demand for the selected time period."""
             create_attribute("LINK", "@reliability_sq", "Reliability factor squared",
                              0, overwrite=True, scenario=scenario)
             create_attribute("LINK", "@auto_volume", "traffic link volume (volau)",
-                              0, overwrite=True, scenario=scenario)
+                             0, overwrite=True, scenario=scenario)
             create_attribute("LINK", "@auto_time", "traffic link time (timau)",
-                              0, overwrite=True, scenario=scenario)
+                             0, overwrite=True, scenario=scenario)
             create_attribute("TURN", "@auto_time_turn", "traffic turn time (ptimau)",
-                              0, overwrite=True, scenario=scenario)
+                             0, overwrite=True, scenario=scenario)
 
             net_calc("@hovdist", "length", {"link": "@lane_restriction=2,3"})
             net_calc("@tollcost", "@toll_%s" % p, {"link": "modes=d"})
@@ -700,7 +700,7 @@ Assign traffic demand for the selected time period."""
                 else:
                     link_cost = "@cost_operating"
                 skim_spec["classes"].append({
-                    "mode": traffic_class["mode"],                  
+                    "mode": traffic_class["mode"],
                     "demand": 'ms"zero"',  # 0 demand for skim with 0 iteration and fix flow in ul2 in vdf
                     "generalized_cost": {
                         "link_costs": link_cost, "perception_factor": 1.0 / traffic_class["VOT"]
@@ -730,15 +730,16 @@ Assign traffic demand for the selected time period."""
                     skims = traffic_class["skims"]
                     with _m.logbook_trace("Class %s" % class_name):
                         for skim_type in skims:
-                            name = '%s_%s_%s' % (period, class_name, skim_type)
+                            skim_name = skim_type.split(".")[0]
+                            name = '%s_%s_%s' % (period, class_name, skim_name)
                             matrix = emmebank.matrix(name)
                             data = matrix.get_numpy_data(scenario)
-                            if skim_type == "TIME" or skim_type == "DIST":
+                            if skim_name == "TIME" or skim_name == "DIST":
                                 numpy.fill_diagonal(data, 999999999.0)
                                 data[numpy.diag_indices_from(data)] = 0.5 * numpy.nanmin(data[::,12::], 1)
                                 internal_data = data[12::, 12::]  # Exclude the first 12 zones, external zones
                                 self._stats[name] = (name, internal_data.min(), internal_data.max(), internal_data.mean(), internal_data.sum(), 0)
-                            elif skim_type == "REL":
+                            elif skim_name == "REL":
                                 data = numpy.sqrt(data)
                             else:
                                 self._stats[name] = (name, data.min(), data.max(), data.mean(), data.sum(), 0)
@@ -798,7 +799,7 @@ Assign traffic demand for the selected time period."""
         text = ['<div class="preformat">']
         matrices = []
         for traffic_class in classes:
-            matrices.extend(["%s_%s" % (traffic_class["name"], s) for s in traffic_class["skims"]])
+            matrices.extend(["%s_%s" % (traffic_class["name"], s.split(".")[0]) for s in traffic_class["skims"]])
         num_zones = len(scenario.zone_numbers)
         num_cells = num_zones ** 2
         text.append("""
@@ -831,7 +832,7 @@ Assign traffic demand for the selected time period."""
 
 
 @_context
-def temp_functions(emmebank):    
+def temp_functions(emmebank):
     change_function = _m.Modeller().tool(
         "inro.emme.data.function.change_function")
     orig_expression = {}

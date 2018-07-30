@@ -286,8 +286,14 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             # and copied to data2 (ul2) for the ttf 
             # The congested auto times for mixed traffic are in "@auto_time" 
             # (output from traffic assignment) which needs to be copied to auto_time (a.k.a. timau)
-            values = network.get_attribute_values("LINK", [params["fixed_link_time"], "@auto_time"])
-            network.set_attribute_values("LINK", ["data2", "auto_time"], values)
+            # (The auto_time attribute is generated from the VDF values which include reliability factor)
+            src_attrs = [params["fixed_link_time"]]
+            dst_attrs = ["data2"]
+            if base_scenario.has_traffic_results:
+                src_attrs.append("@auto_time")
+                dst_attrs.append("auto_time")
+            values = network.get_attribute_values("LINK", src_attrs)
+            network.set_attribute_values("LINK", dst_attrs, values)
             scenario.publish_network(network)
             return scenario
 
