@@ -1877,6 +1877,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             raise Exception(error_msg)
         self._log.append({"type": "header", "content": 
                           "Zone connectivity verified for AM period on SOV toll ('S') mode"})
+        scenario.has_traffic_results = False
 
     def log_report(self):
         report = _m.PageBuilder(title="Import network from TCOVED files report")

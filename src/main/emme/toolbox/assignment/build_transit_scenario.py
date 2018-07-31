@@ -194,23 +194,21 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 network.create_attribute(elem, name)
             network.create_attribute("TRANSIT_LINE", "xfer_from_bus")
             self._init_node_id(network)
-            
+
             transit_passes = gen_utils.DataTableProc("%s_transit_passes" % data_table_name)
             transit_passes = {row["pass_type"]: row["cost"] for row in transit_passes}
             day_pass = float(transit_passes["day_pass"]) / 2.0
             regional_pass = float(transit_passes["regional_pass"]) / 2.0
             params = transit_assignment.get_perception_parameters(period)
             mode_groups = transit_assignment.group_modes_by_fare(network, day_pass)
-            print mode_groups
+
             bus_fares = {}
             for mode_id, fares in mode_groups["bus"]:
                 for fare, count in fares.items():
                     bus_fares[fare] = bus_fares.get(fare, 0) + count
             # set nominal bus fare as unweighted average of two most frequent fares
             bus_fares = sorted(bus_fares.items(), key=lambda x: x[1], reverse=True)
-            
-            print bus_fares
-            
+
             if len(bus_fares) >= 2:
                 bus_fare = (bus_fares[0][0] + bus_fares[1][0]) / 2
             elif len(bus_fares) == 1:  # unless there is only one fare value, in which case use that one
@@ -289,7 +287,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             # (The auto_time attribute is generated from the VDF values which include reliability factor)
             src_attrs = [params["fixed_link_time"]]
             dst_attrs = ["data2"]
-            if base_scenario.has_traffic_results:
+            if scenario.has_traffic_results and "@auto_time" in scenario.attributes("LINK"):
                 src_attrs.append("@auto_time")
                 dst_attrs.append("auto_time")
             values = network.get_attribute_values("LINK", src_attrs)
