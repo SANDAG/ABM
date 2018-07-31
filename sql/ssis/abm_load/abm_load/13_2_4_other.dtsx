@@ -1,0 +1,2545 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="11/14/2017 2:21:52 PM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="SQL2014A8"
+  DTS:CreatorName="SANDAGNET\gsc"
+  DTS:DTSID="{86BFE828-D23A-456E-AD4F-F29E37204DDB}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:FailParentOnFailure="True"
+  DTS:LastModifiedProductVersion="14.0.0800.90"
+  DTS:LocaleID="1033"
+  DTS:MaxErrorCount="0"
+  DTS:ObjectName="13_2_4_other"
+  DTS:PackageType="5"
+  DTS:VersionBuild="24"
+  DTS:VersionGUID="{02CDBC55-1C82-4222-B243-E48ADA81A5DB}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[cbd_vehicles]"
+      DTS:CreationName="FLATFILE"
+      DTS:DelayValidation="True"
+      DTS:Description="cbdvehicles.csv"
+      DTS:DTSID="{429D6307-2507-4114-A33C-949D8CABD79C}"
+      DTS:ObjectName="cbd_vehicles">
+      <DTS:PropertyExpression
+        DTS:Name="ConnectionString">@[$Package::scenario_path] + "\\output\\CBDByMGRA_Vehicles.csv"</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:Format="Delimited"
+          DTS:LocaleID="1033"
+          DTS:HeaderRowDelimiter="_x000D__x000A_"
+          DTS:ColumnNamesInFirstDataRow="True"
+          DTS:RowDelimiter=""
+          DTS:TextQualifier="_x003C_none_x003E_"
+          DTS:CodePage="1252"
+          DTS:ConnectionString="\output\CBDByMGRA_Vehicles.csv">
+          <DTS:FlatFileColumns>
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="2"
+              DTS:TextQualified="True"
+              DTS:ObjectName="MGRA"
+              DTS:DTSID="{40EAF052-709F-42DD-9F23-48B026E2149F}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="131"
+              DTS:DataPrecision="10"
+              DTS:DataScale="6"
+              DTS:TextQualified="True"
+              DTS:ObjectName="EA"
+              DTS:DTSID="{BF955550-AEC7-40C1-BD2F-8CC75B240BAB}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="131"
+              DTS:DataPrecision="10"
+              DTS:DataScale="6"
+              DTS:TextQualified="True"
+              DTS:ObjectName="AM"
+              DTS:DTSID="{7E7C3036-C8C7-435F-B010-4C229A4861EE}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="131"
+              DTS:DataPrecision="10"
+              DTS:DataScale="6"
+              DTS:TextQualified="True"
+              DTS:ObjectName="MD"
+              DTS:DTSID="{5173C342-3B54-420F-B5AD-CA332064714D}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="131"
+              DTS:DataPrecision="10"
+              DTS:DataScale="6"
+              DTS:TextQualified="True"
+              DTS:ObjectName="PM"
+              DTS:DTSID="{00657ABA-C26F-477E-B6BE-E72CC9190EF7}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="131"
+              DTS:DataPrecision="10"
+              DTS:DataScale="6"
+              DTS:TextQualified="True"
+              DTS:ObjectName="EV"
+              DTS:DTSID="{74B637F6-09C1-4B24-B1AA-C747EBD54B14}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x000A_"
+              DTS:DataType="131"
+              DTS:DataPrecision="10"
+              DTS:DataScale="6"
+              DTS:TextQualified="True"
+              DTS:ObjectName="TOTAL"
+              DTS:DTSID="{5B7A3A64-CE59-47AA-B349-B2B5BEA6C04C}"
+              DTS:CreationName="" />
+          </DTS:FlatFileColumns>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:PackageParameters>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="2"
+      DTS:Description="abm scenario id"
+      DTS:DTSID="{531806FD-AB0C-441D-AA7F-73B6DED6F4DD}"
+      DTS:ObjectName="scenario_id"
+      DTS:Required="True">
+      <DTS:Property
+        DTS:DataType="2"
+        DTS:Name="ParameterValue">0</DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:Description="abm scenario model run iteration to be loaded"
+      DTS:DTSID="{FACF9C21-CE5A-4D9F-A609-F0BC934E4FA7}"
+      DTS:ObjectName="scenario_iteration"
+      DTS:Required="True">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue"
+        xml:space="preserve"></DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:Description="abm scenario network path"
+      DTS:DTSID="{4F3CDEDB-5FE5-4E52-B60E-8796893E8493}"
+      DTS:ObjectName="scenario_path"
+      DTS:Required="True">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue"
+        xml:space="preserve"></DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:Description="abm scenario model run year"
+      DTS:DTSID="{F42A3593-B071-4982-9E81-E3634B6A8F72}"
+      DTS:ObjectName="scenario_year"
+      DTS:Required="True">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue"
+        xml:space="preserve"></DTS:Property>
+    </DTS:PackageParameter>
+  </DTS:PackageParameters>
+  <DTS:Variables>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{8FF9A2CC-63BE-4916-BC78-0E8A4B7FF27A}"
+      DTS:EvaluateAsExpression="True"
+      DTS:Expression="&quot;[abm_staging].[cbd_vehicles_&quot; + (DT_WSTR,5)@[$Package::scenario_id]  + &quot;]&quot;"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="cbd_vehicles">
+      <DTS:VariableValue
+        DTS:DataType="8">[abm_staging].[cbd_vehicles_0]</DTS:VariableValue>
+    </DTS:Variable>
+  </DTS:Variables>
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\cbd_vehicles"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:DelayValidation="True"
+      DTS:Description="Data Flow Task"
+      DTS:DTSID="{908eba12-0e3b-430c-bd54-81f2a50a7174}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="cbd_vehicles"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server v10; (C) 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:LoggingOptions
+        DTS:FilterKind="0" />
+      <DTS:ObjectData>
+        <pipeline
+          autoAdjustBufferSize="true"
+          BLOBTempStoragePath=""
+          bufferTempStoragePath=""
+          version="1">
+          <components>
+            <component
+              refId="Package\cbd_vehicles\cbd_vehicles"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SqlServer v10; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="cbd_vehicles"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[abm].[CBDVEHICLES]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable">User::cbd_vehicles</property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">4</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">0</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\cbd_vehicles\cbd_vehicles.Connections[OleDbConnection]"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\cbd_vehicles\cbd_vehicles.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles.Inputs[OLE DB Destination Input].Columns[scenario_id]"
+                      cachedDataType="i2"
+                      cachedName="scenario_id"
+                      externalMetadataColumnId="Package\cbd_vehicles\cbd_vehicles.Inputs[OLE DB Destination Input].ExternalColumns[scenario_id]"
+                      lineageId="Package\cbd_vehicles\constants.Outputs[Derived Column Output].Columns[scenario_id]" />
+                    <inputColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles.Inputs[OLE DB Destination Input].Columns[VALUE]"
+                      cachedDataType="numeric"
+                      cachedName="VALUE"
+                      cachedPrecision="10"
+                      cachedScale="6"
+                      externalMetadataColumnId="Package\cbd_vehicles\cbd_vehicles.Inputs[OLE DB Destination Input].ExternalColumns[vehicles]"
+                      lineageId="Package\cbd_vehicles\wide_to_long.Outputs[Output 0].Columns[VALUE]" />
+                    <inputColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles.Inputs[OLE DB Destination Input].Columns[time_period_id]"
+                      cachedDataType="i4"
+                      cachedName="time_period_id"
+                      externalMetadataColumnId="Package\cbd_vehicles\cbd_vehicles.Inputs[OLE DB Destination Input].ExternalColumns[time_period_id]"
+                      lineageId="Package\cbd_vehicles\time_period_lookup.Outputs[Lookup Match Output].Columns[time_period_id]" />
+                    <inputColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles.Inputs[OLE DB Destination Input].Columns[geography_zone_id]"
+                      cachedDataType="i4"
+                      cachedName="geography_zone_id"
+                      externalMetadataColumnId="Package\cbd_vehicles\cbd_vehicles.Inputs[OLE DB Destination Input].ExternalColumns[geography_zone_id]"
+                      lineageId="Package\cbd_vehicles\geography_lookup.Outputs[Lookup Match Output].Columns[geography_zone_id]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles.Inputs[OLE DB Destination Input].ExternalColumns[scenario_id]"
+                      dataType="i2"
+                      name="scenario_id" />
+                    <externalMetadataColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles.Inputs[OLE DB Destination Input].ExternalColumns[time_period_id]"
+                      dataType="i4"
+                      name="time_period_id" />
+                    <externalMetadataColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles.Inputs[OLE DB Destination Input].ExternalColumns[vehicles]"
+                      dataType="numeric"
+                      name="vehicles"
+                      precision="10"
+                      scale="6" />
+                    <externalMetadataColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles.Inputs[OLE DB Destination Input].ExternalColumns[cbd_vehicles_id]"
+                      dataType="i4"
+                      name="cbd_vehicles_id" />
+                    <externalMetadataColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles.Inputs[OLE DB Destination Input].ExternalColumns[geography_zone_id]"
+                      dataType="i4"
+                      name="geography_zone_id" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\cbd_vehicles\cbd_vehicles.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\cbd_vehicles\cbd_vehicles.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\cbd_vehicles\cbd_vehicles.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\cbd_vehicles\cbd_vehicles.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\cbd_vehicles\cbd_vehicles_csv"
+              componentClassID="Microsoft.FlatFileSource"
+              contactInfo="Flat File Source;Microsoft Corporation; Microsoft SqlServer v10; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
+              description="Flat File Source"
+              localeId="1033"
+              name="cbd_vehicles_csv"
+              usesDispositions="true"
+              version="1">
+              <properties>
+                <property
+                  dataType="System.Boolean"
+                  description="Specifies whether zero-length columns are treated as null."
+                  name="RetainNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of an output column containing the file name. If no name is specified, no output column containing the file name will be generated."
+                  name="FileNameColumnName"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\cbd_vehicles\cbd_vehicles_csv.Connections[FlatFileConnection]"
+                  connectionManagerID="Package.ConnectionManagers[cbd_vehicles]"
+                  connectionManagerRefId="Package.ConnectionManagers[cbd_vehicles]"
+                  name="FlatFileConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output]"
+                  name="Flat File Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].Columns[MGRA]"
+                      dataType="i2"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].ExternalColumns[MGRA]"
+                      lineageId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].Columns[MGRA]"
+                      name="MGRA"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">true</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].Columns[EA]"
+                      dataType="numeric"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].ExternalColumns[EA]"
+                      lineageId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].Columns[EA]"
+                      name="EA"
+                      precision="10"
+                      scale="6"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].Columns[AM]"
+                      dataType="numeric"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].ExternalColumns[AM]"
+                      lineageId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].Columns[AM]"
+                      name="AM"
+                      precision="10"
+                      scale="6"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].Columns[MD]"
+                      dataType="numeric"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].ExternalColumns[MD]"
+                      lineageId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].Columns[MD]"
+                      name="MD"
+                      precision="10"
+                      scale="6"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].Columns[PM]"
+                      dataType="numeric"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].ExternalColumns[PM]"
+                      lineageId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].Columns[PM]"
+                      name="PM"
+                      precision="10"
+                      scale="6"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].Columns[EV]"
+                      dataType="numeric"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].ExternalColumns[EV]"
+                      lineageId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].Columns[EV]"
+                      name="EV"
+                      precision="10"
+                      scale="6"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].Columns[TOTAL]"
+                      dataType="numeric"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].ExternalColumns[TOTAL]"
+                      lineageId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].Columns[TOTAL]"
+                      name="TOTAL"
+                      precision="10"
+                      scale="6"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].ExternalColumns[MGRA]"
+                      dataType="i2"
+                      name="MGRA" />
+                    <externalMetadataColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].ExternalColumns[EA]"
+                      dataType="numeric"
+                      name="EA"
+                      precision="10"
+                      scale="6" />
+                    <externalMetadataColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].ExternalColumns[AM]"
+                      dataType="numeric"
+                      name="AM"
+                      precision="10"
+                      scale="6" />
+                    <externalMetadataColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].ExternalColumns[MD]"
+                      dataType="numeric"
+                      name="MD"
+                      precision="10"
+                      scale="6" />
+                    <externalMetadataColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].ExternalColumns[PM]"
+                      dataType="numeric"
+                      name="PM"
+                      precision="10"
+                      scale="6" />
+                    <externalMetadataColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].ExternalColumns[EV]"
+                      dataType="numeric"
+                      name="EV"
+                      precision="10"
+                      scale="6" />
+                    <externalMetadataColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].ExternalColumns[TOTAL]"
+                      dataType="numeric"
+                      name="TOTAL"
+                      precision="10"
+                      scale="6" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Error Output]"
+                  isErrorOut="true"
+                  name="Flat File Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Error Output].Columns[Flat File Source Error Output Column]"
+                      codePage="1252"
+                      dataType="text"
+                      description="Flat File Source Error Output Column"
+                      lineageId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Error Output].Columns[Flat File Source Error Output Column]"
+                      name="Flat File Source Error Output Column" />
+                    <outputColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\cbd_vehicles\constants"
+              componentClassID="Microsoft.DerivedColumn"
+              contactInfo="Derived Column;Microsoft Corporation; Microsoft SqlServer v10; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Updates column values using expressions"
+              localeId="1033"
+              name="constants"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\cbd_vehicles\constants.Inputs[Derived Column Input]"
+                  description="Input to the Derived Column Transformation"
+                  name="Derived Column Input">
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\cbd_vehicles\constants.Outputs[Derived Column Output]"
+                  description="Default Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  name="Derived Column Output"
+                  synchronousInputId="Package\cbd_vehicles\constants.Inputs[Derived Column Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\cbd_vehicles\constants.Outputs[Derived Column Output].Columns[scenario_id]"
+                      dataType="i2"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\cbd_vehicles\constants.Outputs[Derived Column Output].Columns[scenario_id]"
+                      name="scenario_id"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">@[$Package::scenario_id]</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">@[$Package::scenario_id]</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\cbd_vehicles\constants.Outputs[Derived Column Error Output]"
+                  description="Error Output of the Derived Column Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Derived Column Error Output"
+                  synchronousInputId="Package\cbd_vehicles\constants.Inputs[Derived Column Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\cbd_vehicles\constants.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\cbd_vehicles\constants.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\cbd_vehicles\constants.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\cbd_vehicles\constants.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\cbd_vehicles\geography_lookup"
+              componentClassID="Microsoft.Lookup"
+              contactInfo="Lookup;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;6"
+              description="Joins additional columns to the data flow by looking up values in a table. For example, join to the 'employee id' column the employees table to get 'hire date' and 'employee name'. We recommend this transformation when the lookup table can fit into memory."
+              name="geography_lookup"
+              usesDispositions="true"
+              version="6">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Specifies the SQL statement that generates the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">SELECT 
+	[geography_zone_id]
+	,[zone]
+FROM
+	[ref].[geography_zone]
+WHERE
+	[geography_type_id] = 90</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies a SQL statement that uses parameters to generate the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommandParam"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">select * from (SELECT 
+	[geography_zone_id]
+	,[zone]
+FROM
+	[ref].[geography_zone]
+WHERE
+	[geography_type_id] = 90) [refTable]
+where [refTable].[zone] = ?</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the type of connection used to access the reference dataset."
+                  name="ConnectionType"
+                  typeConverter="LookupConnectionType">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the cache type of the lookup table."
+                  name="CacheType"
+                  typeConverter="CacheType">1</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies how the Lookup transformation handles rows without matching entries in the reference data set."
+                  name="NoMatchBehavior"
+                  typeConverter="LookupNoMatchBehavior">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the percentage of the cache that is allocated for rows with no matching entries in the reference dataset."
+                  name="NoMatchCachePercentage">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Maximum Memory Usage for Reference Cache on a 32 bit platform."
+                  name="MaxMemoryUsage">25</property>
+                <property
+                  dataType="System.Int64"
+                  description="Maximum Memory Usage for Reference Cache on a 64 bit platform."
+                  name="MaxMemoryUsage64">25</property>
+                <property
+                  dataType="System.String"
+                  description="Indicates whether to reference metadata in an XML format."
+                  name="ReferenceMetadataXml">&lt;referenceMetadata&gt;&lt;referenceColumns&gt;&lt;referenceColumn name="geography_zone_id" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="zone" dataType="DT_I2" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;/referenceColumns&gt;&lt;/referenceMetadata&gt;</property>
+                <property
+                  containsID="true"
+                  dataType="System.String"
+                  description="Specifies the list of lineage identifiers that map to the parameters that the SQL statement in the SQLCommand property uses. Entries in the list are separated by semicolons."
+                  name="ParameterMap">#{Package\cbd_vehicles\wide_to_long.Outputs[Output 0].Columns[MGRA_OUT]};</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Determines whether duplicate keys in the reference data should be treated as errors when full cache mode is used."
+                  name="TreatDuplicateKeysAsError">false</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\cbd_vehicles\geography_lookup.Connections[OleDbConnection]"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  description="Connection manager used to access lookup data."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\cbd_vehicles\geography_lookup.Inputs[Lookup Input]"
+                  name="Lookup Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\cbd_vehicles\geography_lookup.Inputs[Lookup Input].Columns[MGRA_OUT]"
+                      cachedDataType="i2"
+                      cachedName="MGRA_OUT"
+                      lineageId="Package\cbd_vehicles\wide_to_long.Outputs[Output 0].Columns[MGRA_OUT]">
+                      <properties>
+                        <property
+                          dataType="System.String"
+                          description="Specifies the column in the reference table that a column joins."
+                          name="JoinToReferenceColumn">zone</property>
+                        <property
+                          dataType="System.Null"
+                          description="Specifies the column in the reference table from which a column is copied."
+                          name="CopyFromReferenceColumn" />
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\cbd_vehicles\geography_lookup.Outputs[Lookup Match Output]"
+                  errorOrTruncationOperation="Lookup"
+                  errorRowDisposition="FailComponent"
+                  exclusionGroup="1"
+                  name="Lookup Match Output"
+                  synchronousInputId="Package\cbd_vehicles\geography_lookup.Inputs[Lookup Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\cbd_vehicles\geography_lookup.Outputs[Lookup Match Output].Columns[geography_zone_id]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Copy Column"
+                      lineageId="Package\cbd_vehicles\geography_lookup.Outputs[Lookup Match Output].Columns[geography_zone_id]"
+                      name="geography_zone_id"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.String"
+                          description="Specifies the column in the reference table from which a column is copied."
+                          name="CopyFromReferenceColumn">geography_zone_id</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\cbd_vehicles\geography_lookup.Outputs[Lookup No Match Output]"
+                  description="The Lookup output that handles rows with no matching entries in the reference dataset. Use this output when the NoMatchBehavior property is set to &quot;Send rows with no matching entries to the no match output.&quot;"
+                  exclusionGroup="1"
+                  name="Lookup No Match Output"
+                  synchronousInputId="Package\cbd_vehicles\geography_lookup.Inputs[Lookup Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\cbd_vehicles\geography_lookup.Outputs[Lookup Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Lookup Error Output"
+                  synchronousInputId="Package\cbd_vehicles\geography_lookup.Inputs[Lookup Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\cbd_vehicles\geography_lookup.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\cbd_vehicles\geography_lookup.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\cbd_vehicles\geography_lookup.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\cbd_vehicles\geography_lookup.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\cbd_vehicles\time_period_lookup"
+              componentClassID="Microsoft.Lookup"
+              contactInfo="Lookup;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;6"
+              description="Joins additional columns to the data flow by looking up values in a table. For example, join to the 'employee id' column the employees table to get 'hire date' and 'employee name'. We recommend this transformation when the lookup table can fit into memory."
+              name="time_period_lookup"
+              usesDispositions="true"
+              version="6">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Specifies the SQL statement that generates the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">SELECT
+	 [time_period_id]
+	 ,[time_period_number]
+FROM 
+	[ref].[time_period]
+WHERE 
+	[time_resolution_id] = 1</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies a SQL statement that uses parameters to generate the lookup table."
+                  expressionType="Notify"
+                  name="SqlCommandParam"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">select * from (SELECT
+	 [time_period_id]
+	 ,[time_period_number]
+FROM 
+	[ref].[time_period]
+WHERE 
+	[time_resolution_id] = 1) [refTable]
+where [refTable].[time_period_number] = ?</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the type of connection used to access the reference dataset."
+                  name="ConnectionType"
+                  typeConverter="LookupConnectionType">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the cache type of the lookup table."
+                  name="CacheType"
+                  typeConverter="CacheType">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies how the Lookup transformation handles rows without matching entries in the reference data set."
+                  name="NoMatchBehavior"
+                  typeConverter="LookupNoMatchBehavior">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the percentage of the cache that is allocated for rows with no matching entries in the reference dataset."
+                  name="NoMatchCachePercentage">0</property>
+                <property
+                  dataType="System.Int32"
+                  description="Maximum Memory Usage for Reference Cache on a 32 bit platform."
+                  name="MaxMemoryUsage">25</property>
+                <property
+                  dataType="System.Int64"
+                  description="Maximum Memory Usage for Reference Cache on a 64 bit platform."
+                  name="MaxMemoryUsage64">25</property>
+                <property
+                  dataType="System.String"
+                  description="Indicates whether to reference metadata in an XML format."
+                  name="ReferenceMetadataXml">&lt;referenceMetadata&gt;&lt;referenceColumns&gt;&lt;referenceColumn name="time_period_id" dataType="DT_I4" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="time_period_number" dataType="DT_UI1" length="0" precision="0" scale="0" codePage="0"/&gt;&lt;/referenceColumns&gt;&lt;/referenceMetadata&gt;</property>
+                <property
+                  containsID="true"
+                  dataType="System.String"
+                  description="Specifies the list of lineage identifiers that map to the parameters that the SQL statement in the SQLCommand property uses. Entries in the list are separated by semicolons."
+                  name="ParameterMap">#{Package\cbd_vehicles\wide_to_long.Outputs[Output 0].Columns[TOD]};</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Determines whether duplicate keys in the reference data should be treated as errors when full cache mode is used."
+                  name="TreatDuplicateKeysAsError">false</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\cbd_vehicles\time_period_lookup.Connections[OleDbConnection]"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  description="Connection manager used to access lookup data."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\cbd_vehicles\time_period_lookup.Inputs[Lookup Input]"
+                  name="Lookup Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\cbd_vehicles\time_period_lookup.Inputs[Lookup Input].Columns[TOD]"
+                      cachedDataType="ui1"
+                      cachedName="TOD"
+                      lineageId="Package\cbd_vehicles\wide_to_long.Outputs[Output 0].Columns[TOD]">
+                      <properties>
+                        <property
+                          dataType="System.String"
+                          description="Specifies the column in the reference table that a column joins."
+                          name="JoinToReferenceColumn">time_period_number</property>
+                        <property
+                          dataType="System.Null"
+                          description="Specifies the column in the reference table from which a column is copied."
+                          name="CopyFromReferenceColumn" />
+                      </properties>
+                    </inputColumn>
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\cbd_vehicles\time_period_lookup.Outputs[Lookup Match Output]"
+                  errorOrTruncationOperation="Lookup"
+                  errorRowDisposition="FailComponent"
+                  exclusionGroup="1"
+                  name="Lookup Match Output"
+                  synchronousInputId="Package\cbd_vehicles\time_period_lookup.Inputs[Lookup Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\cbd_vehicles\time_period_lookup.Outputs[Lookup Match Output].Columns[time_period_id]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Copy Column"
+                      lineageId="Package\cbd_vehicles\time_period_lookup.Outputs[Lookup Match Output].Columns[time_period_id]"
+                      name="time_period_id"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.String"
+                          description="Specifies the column in the reference table from which a column is copied."
+                          name="CopyFromReferenceColumn">time_period_id</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\cbd_vehicles\time_period_lookup.Outputs[Lookup No Match Output]"
+                  description="The Lookup output that handles rows with no matching entries in the reference dataset. Use this output when the NoMatchBehavior property is set to &quot;Send rows with no matching entries to the no match output.&quot;"
+                  exclusionGroup="1"
+                  name="Lookup No Match Output"
+                  synchronousInputId="Package\cbd_vehicles\time_period_lookup.Inputs[Lookup Input]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\cbd_vehicles\time_period_lookup.Outputs[Lookup Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Lookup Error Output"
+                  synchronousInputId="Package\cbd_vehicles\time_period_lookup.Inputs[Lookup Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\cbd_vehicles\time_period_lookup.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\cbd_vehicles\time_period_lookup.Outputs[Lookup Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\cbd_vehicles\time_period_lookup.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\cbd_vehicles\time_period_lookup.Outputs[Lookup Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\cbd_vehicles\wide_to_long"
+              componentClassID="Microsoft.ManagedComponentHost"
+              contactInfo="Executes a custom script.;Microsoft Corporation; Microsoft SqlServer v10; © 2007 Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="Executes a custom script."
+              name="wide_to_long"
+              version="9">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Stores the source code of the component"
+                  isArray="true"
+                  name="SourceCode"
+                  state="cdata">
+                  <arrayElements
+                    arrayElementCount="30">
+                    <arrayElement
+                      dataType="System.String"><![CDATA[My Project\AssemblyInfo.vb]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[UTF8]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[Imports System
+Imports System.Reflection
+Imports System.Runtime.InteropServices
+
+' General Information about an assembly is controlled through the following 
+' set of attributes. Change these attribute values to modify the information
+' associated with an assembly.
+
+' Review the values of the assembly attributes
+
+<Assembly: AssemblyTitle("SC_df7f322aa7ae4147bb7fcdcbe4436efc.vbproj")> 
+<Assembly: AssemblyDescription("")> 
+<Assembly: AssemblyCompany("")> 
+<Assembly: AssemblyProduct("SC_df7f322aa7ae4147bb7fcdcbe4436efc.vbproj")> 
+<Assembly: AssemblyCopyright("Copyright @  2013")> 
+<Assembly: AssemblyTrademark("")> 
+<Assembly: CLSCompliant(True)> 
+
+<Assembly: ComVisible(False)> 
+
+'The following GUID is for the ID of the typelib if this project is exposed to COM
+<Assembly: Guid("c28738d8-c69c-4a69-ad2f-f58bde4f4d27")> 
+
+' Version information for an assembly consists of the following four values:
+'
+'      Major Version
+'      Minor Version 
+'      Build Number
+'      Revision
+'
+' You can specify all the values or you can default the Build and Revision Numbers 
+' by using the '*' as shown below:
+' <Assembly: AssemblyVersion("1.0.*")>
+
+<Assembly: AssemblyVersion("1.0.0.0")> 
+<Assembly: AssemblyFileVersion("1.0.0.0")> 
+]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[ComponentWrapper.vb]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[UTF8]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[' THIS IS AUTO-GENERATED CODE THAT WILL BE OVERWRITTEN! DO NOT EDIT!
+' Microsoft SQL Server Integration Services component wrapper
+' This module defines the base class for your component
+' THIS IS AUTO-GENERATED CODE THAT WILL BE OVERWRITTEN! DO NOT EDIT!
+
+Imports System
+Imports System.Data
+Imports Microsoft.SqlServer.Dts.Pipeline
+Imports Microsoft.SqlServer.Dts.Pipeline.Wrapper
+Imports Microsoft.SqlServer.Dts.Runtime.Wrapper
+
+<CLSCompliant(False)> _
+Public Class UserComponent
+    Inherits ScriptComponent
+
+    Public Connections As New Connections(Me)
+    Public Variables As New Variables(Me)
+
+    Public Output0Buffer As Output0Buffer
+
+    Dim InputsFinished As Integer = 0
+
+    Public Overrides Sub ProcessInput(ByVal InputID As Integer, ByVal InputName As String, ByVal Buffer As PipelineBuffer, ByVal OutputMap As OutputNameMap)
+
+        If InputName.Equals("Input 0", StringComparison.Ordinal) Then
+            Input0_ProcessInput(New Input0Buffer(Buffer, GetColumnIndexes(InputID), OutputMap))
+        End If
+
+        If Buffer.EndOfRowset Then
+            InputsFinished = InputsFinished + 1
+            If InputsFinished = 1 Then
+                FinishOutputs()
+                MarkOutputsFinished()
+            End If
+        End If
+
+    End Sub
+
+    Public Overridable Sub FinishOutputs()
+    End Sub
+
+    Private Sub MarkOutputsFinished()
+
+        If Output0Buffer IsNot Nothing Then
+            Output0Buffer.SetEndOfRowset
+            Output0Buffer = Nothing
+        End If
+
+    End Sub
+
+    Public Overrides Sub PrimeOutput(ByVal Outputs As Integer, ByVal OutputIDs() As Integer, ByVal Buffers() As PipelineBuffer, ByVal OutputMap As OutputNameMap)
+
+        For I As Integer = 0 To Outputs - 1
+            If OutputIDs(I) = GetOutputID(OutputMap, "Output 0") Then
+                Output0Buffer = New Output0Buffer(Buffers(I), GetColumnIndexes(OutputIDs(I)), OutputMap)
+            End If
+        Next
+
+        CreateNewOutputRows()
+
+    End Sub
+
+    Public Overridable Sub CreateNewOutputRows()
+    End Sub
+
+    Public Overridable Sub Input0_ProcessInput(ByVal Buffer As Input0Buffer)
+
+        While Buffer.NextRow()
+            Input0_ProcessInputRow(Buffer)
+        End While
+
+    End Sub
+
+    Public Overridable Sub Input0_ProcessInputRow(ByVal Row As Input0Buffer)
+
+    End Sub
+
+End Class
+
+<CLSCompliant(False)> _
+Public Class Connections
+
+    Dim ParentComponent As ScriptComponent
+
+    <CLSCompliant(False)> _
+    Public Sub New(ByVal Component As ScriptComponent)
+        ParentComponent = Component
+    End Sub
+
+End Class
+
+<CLSCompliant(False)> _
+Public Class Variables
+
+    Dim ParentComponent As ScriptComponent
+
+    <CLSCompliant(False)> _
+    Public Sub New(ByVal Component As ScriptComponent)
+        ParentComponent = Component
+    End Sub
+
+End Class
+]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[main.vb]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[UTF8]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[' Microsoft SQL Server Integration Services Script Component
+' Write scripts using Microsoft Visual Basic 2008.
+' ScriptMain is the entry point class of the script.
+
+Imports System
+Imports System.Data
+Imports System.Math
+Imports Microsoft.SqlServer.Dts.Pipeline.Wrapper
+Imports Microsoft.SqlServer.Dts.Runtime.Wrapper
+
+<Microsoft.SqlServer.Dts.Pipeline.SSISScriptComponentEntryPointAttribute> _
+<CLSCompliant(False)> _
+Public Class ScriptMain
+    Inherits UserComponent
+
+    Public Overrides Sub Input0_ProcessInputRow(ByVal Row As Input0Buffer)
+
+        Dim inputValueArray(0 To 4) As Double
+        inputValueArray(0) = Row.EA
+        inputValueArray(1) = Row.AM
+        inputValueArray(2) = Row.MD
+        inputValueArray(3) = Row.PM
+        inputValueArray(4) = Row.EV
+
+        For index = 0 To 4
+            With Output0Buffer
+                If (inputValueArray(index) > 0) Then
+                    .AddRow()
+                    .MGRAOUT = Row.MGRA
+                    .TOD = index + 1
+                    .VALUE = inputValueArray(index)
+                End If
+            End With
+        Next
+
+
+    End Sub
+
+
+End Class
+]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[BufferWrapper.vb]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[UTF8]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[' THIS IS AUTO-GENERATED CODE THAT WILL BE OVERWRITTEN! DO NOT EDIT!
+' Microsoft SQL Server Integration Services buffer wrappers
+' This module defines classes for accessing data flow buffers
+' THIS IS AUTO-GENERATED CODE THAT WILL BE OVERWRITTEN! DO NOT EDIT!
+
+
+Option Strict Off   ' This allows usage of PipelineBuffer typed accessors.
+
+Imports System
+Imports System.Data
+Imports Microsoft.SqlServer.Dts.Pipeline
+Imports Microsoft.SqlServer.Dts.Pipeline.Wrapper
+
+<CLSCompliant(False)> _
+Public Class Input0Buffer
+    Inherits ScriptBuffer
+
+    Public Sub New(ByVal Buffer As PipelineBuffer, ByVal BufferColumnIndexes As Integer(), ByVal OutputMap As OutputNameMap)
+        MyBase.New(Buffer, BufferColumnIndexes, OutputMap)
+    End Sub
+
+    Public ReadOnly Property [MGRA]() As Int16
+        Get
+            Return Buffer.GetInt16(Me.BufferColumnIndexes(0))
+        End Get
+    End Property
+    Public ReadOnly Property [MGRA_IsNull] As Boolean
+        Get
+            Return IsNull(0)
+        End Get
+    End Property
+
+    Public ReadOnly Property [EA]() As Decimal
+        Get
+            Return Buffer.GetDecimal(Me.BufferColumnIndexes(1))
+        End Get
+    End Property
+    Public ReadOnly Property [EA_IsNull] As Boolean
+        Get
+            Return IsNull(1)
+        End Get
+    End Property
+
+    Public ReadOnly Property [AM]() As Decimal
+        Get
+            Return Buffer.GetDecimal(Me.BufferColumnIndexes(2))
+        End Get
+    End Property
+    Public ReadOnly Property [AM_IsNull] As Boolean
+        Get
+            Return IsNull(2)
+        End Get
+    End Property
+
+    Public ReadOnly Property [MD]() As Decimal
+        Get
+            Return Buffer.GetDecimal(Me.BufferColumnIndexes(3))
+        End Get
+    End Property
+    Public ReadOnly Property [MD_IsNull] As Boolean
+        Get
+            Return IsNull(3)
+        End Get
+    End Property
+
+    Public ReadOnly Property [PM]() As Decimal
+        Get
+            Return Buffer.GetDecimal(Me.BufferColumnIndexes(4))
+        End Get
+    End Property
+    Public ReadOnly Property [PM_IsNull] As Boolean
+        Get
+            Return IsNull(4)
+        End Get
+    End Property
+
+    Public ReadOnly Property [EV]() As Decimal
+        Get
+            Return Buffer.GetDecimal(Me.BufferColumnIndexes(5))
+        End Get
+    End Property
+    Public ReadOnly Property [EV_IsNull] As Boolean
+        Get
+            Return IsNull(5)
+        End Get
+    End Property
+
+    Public Overloads Function NextRow() As Boolean
+        NextRow = MyBase.NextRow()
+    End Function
+
+    Public Overloads Function EndOfRowset() As Boolean
+        EndOfRowset = MyBase.EndOfRowset
+    End Function
+
+End Class
+
+<CLSCompliant(False)> _
+Public Class Output0Buffer
+    Inherits ScriptBuffer
+
+    Public Sub New(ByVal Buffer As PipelineBuffer, ByVal BufferColumnIndexes As Integer(), ByVal OutputMap As OutputNameMap)
+        MyBase.New(Buffer, BufferColumnIndexes, OutputMap)
+    End Sub
+
+    Public WriteOnly Property [TOD]() As Byte
+        Set
+            Me(0) = Value
+        End Set
+    End Property
+    Public WriteOnly Property [TOD_IsNull] As Boolean
+        Set
+            If (value)
+                SetNull(0)
+            Else
+                Throw new InvalidOperationException("IsNull property cannot be set to False. Assign a value to the column instead.")
+            End If
+        End Set
+    End Property
+
+    Public WriteOnly Property [MGRAOUT]() As Int16
+        Set
+            Me(1) = Value
+        End Set
+    End Property
+    Public WriteOnly Property [MGRAOUT_IsNull] As Boolean
+        Set
+            If (value)
+                SetNull(1)
+            Else
+                Throw new InvalidOperationException("IsNull property cannot be set to False. Assign a value to the column instead.")
+            End If
+        End Set
+    End Property
+
+    Public WriteOnly Property [VALUE]() As Decimal
+        Set
+            Me(2) = Value
+        End Set
+    End Property
+    Public WriteOnly Property [VALUE_IsNull] As Boolean
+        Set
+            If (value)
+                SetNull(2)
+            Else
+                Throw new InvalidOperationException("IsNull property cannot be set to False. Assign a value to the column instead.")
+            End If
+        End Set
+    End Property
+
+    Public Overloads Sub AddRow()
+        MyBase.AddRow()
+    End Sub
+
+    Public Overloads Sub SetEndOfRowset()
+        MyBase.SetEndOfRowset()
+    End Sub
+
+    Public Overloads Function EndOfRowset() As Boolean
+        EndOfRowset = MyBase.EndOfRowset
+    End Function
+
+End Class
+]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[My Project\Settings.settings]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[UTF8]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)" GeneratedClassNamespace="" GeneratedClassName="MySettings">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[My Project\Settings.Designer.vb]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[UTF8]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA['------------------------------------------------------------------------------
+' <autogenerated>
+'     This code was generated by a tool.
+'
+'     Changes to this file may cause incorrect behavior and will be lost if
+'     the code is regenerated.
+' </autogenerated>
+'------------------------------------------------------------------------------
+
+Option Strict Off
+Option Explicit On
+
+
+
+Partial Friend NotInheritable Class MySettings
+    Inherits System.Configuration.ApplicationSettingsBase
+
+    Private Shared m_Value As MySettings
+
+    Private Shared m_SyncObject As Object = New Object
+
+    <System.Diagnostics.DebuggerNonUserCode()> _
+    Public Shared ReadOnly Property Value() As MySettings
+        Get
+            If (MySettings.m_Value Is Nothing) Then
+                System.Threading.Monitor.Enter(MySettings.m_SyncObject)
+                If (MySettings.m_Value Is Nothing) Then
+                    Try
+                        MySettings.m_Value = New MySettings
+                    Finally
+                        System.Threading.Monitor.Exit(MySettings.m_SyncObject)
+                    End Try
+                End If
+            End If
+            Return MySettings.m_Value
+        End Get
+    End Property
+End Class
+]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[Project]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[UTF16LE]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[<?xml version="1.0" encoding="UTF-16" standalone="yes"?>
+<c:Project xmlns:c="http://schemas.microsoft.com/codeprojectml/2010/08/main" xmlns:msb="http://schemas.microsoft.com/developer/msbuild/2003" runtimeVersion="4.0" schemaVersion="1.0">
+	<msb:PropertyGroup>
+		<msb:CodeName>sc_df7f322aa7ae4147bb7fcdcbe4436efc</msb:CodeName>
+		<msb:Language>msBuild</msb:Language>
+		<msb:DisplayName>sc_df7f322aa7ae4147bb7fcdcbe4436efc</msb:DisplayName>
+		<msb:ProjectId>{379946FE-613F-4514-9FE5-C9535964B5E7}</msb:ProjectId>
+	</msb:PropertyGroup>
+	<msb:ItemGroup>
+		<msb:Project Include="sc_df7f322aa7ae4147bb7fcdcbe4436efc.vbproj"/>
+		<msb:File Include="My Project\Settings.Designer.vb"/>
+		<msb:File Include="main.vb"/>
+		<msb:File Include="BufferWrapper.vb"/>
+		<msb:File Include="My Project\Resources.resx"/>
+		<msb:File Include="ComponentWrapper.vb"/>
+		<msb:File Include="My Project\AssemblyInfo.vb"/>
+		<msb:File Include="My Project\Resources.Designer.vb"/>
+		<msb:File Include="My Project\Settings.settings"/>
+	</msb:ItemGroup>
+</c:Project>]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[My Project\Resources.resx]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[UTF8]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+</root>]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[My Project\Resources.Designer.vb]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[UTF8]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA['------------------------------------------------------------------------------
+' <autogenerated>
+'     This code was generated by a tool.
+'
+'     Changes to this file may cause incorrect behavior and will be lost if
+'     the code is regenerated.
+' </autogenerated>
+'------------------------------------------------------------------------------
+
+Option Strict Off
+Option Explicit On
+
+
+Namespace My.Resources
+    
+    '''<summary>
+    '''   A strongly-typed resource class, for looking up localized strings, etc.
+    '''</summary>
+    'This class was auto-generated by the Strongly Typed Resource Builder
+    'class via a tool like ResGen or Visual Studio.NET.
+    'To add or remove a member, edit your .ResX file then rerun ResGen
+    'with the /str option, or rebuild your VS project.
+    Class MyResources
+        
+        Private Shared _resMgr As System.Resources.ResourceManager
+        
+        Private Shared _resCulture As System.Globalization.CultureInfo
+        
+        Friend Sub New()
+            MyBase.New
+        End Sub
+        
+        '''<summary>
+        '''   Returns the cached ResourceManager instance used by this class.
+        '''</summary>
+        <System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)>  _
+        Public Shared ReadOnly Property ResourceManager() As System.Resources.ResourceManager
+            Get
+                If (_resMgr Is Nothing) Then
+                    Dim temp As System.Resources.ResourceManager = New System.Resources.ResourceManager("My.Resources.MyResources", GetType(MyResources).Assembly)
+                    _resMgr = temp
+                End If
+                Return _resMgr
+            End Get
+        End Property
+        
+        '''<summary>
+        '''   Overrides the current thread's CurrentUICulture property for all
+        '''   resource lookups using this strongly typed resource class.
+        '''</summary>
+        <System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)>  _
+        Public Shared Property Culture() As System.Globalization.CultureInfo
+            Get
+                Return _resCulture
+            End Get
+            Set
+                _resCulture = value
+            End Set
+        End Property
+    End Class
+End Namespace
+]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[sc_df7f322aa7ae4147bb7fcdcbe4436efc.vbproj]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[UTF16LE]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[<?xml version="1.0" encoding="utf-16"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- This section defines project-level properties.
+
+       Configuration - Specifies whether the default configuration is Release or Debug.
+       Platform - Specifies what CPU the output of this project can run on.
+       OutputType - Must be "Library" for VSTA.
+       NoStandardLibraries - Set to "false" for VSTA.
+       RootNamespace - In C#, this specifies the namespace given to new files.
+                       In Visual Basic, all objects are wrapped in this namespace at runtime.
+       AssemblyName - Name of the output assembly.
+  -->
+  <PropertyGroup>
+    <ProjectTypeGuids>{30D016F9-3734-4E33-A861-5E7D899E18F3};{F184B08F-C81C-45F6-A57F-5ABD9991F28F}</ProjectTypeGuids>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SC_df7f322aa7ae4147bb7fcdcbe4436efc.vbproj</RootNamespace>
+    <AssemblyName>SC_df7f322aa7ae4147bb7fcdcbe4436efc.vbproj</AssemblyName>
+    <StartupObject></StartupObject>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionCompare>Binary</OptionCompare>
+    <OptionStrict>Off</OptionStrict>
+    <OptionInfer>On</OptionInfer>
+    <ProjectGuid>{7DB21C31-BE96-4436-BA9F-ADCE1D695948}</ProjectGuid>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile></TargetFrameworkProfile>
+  </PropertyGroup>
+  <!-- This section defines properties that are set when the "Debug" configuration is
+       selected.
+
+       DebugSymbols - If true, create symbols (.pdb). If false, do not create symbols.
+       Optimize - If true, optimize the build output. If false, do not optimize.
+       OutputPath - Output path of the project relative to the project file.
+       EnableUnmanagedDebugging - If true, starting the debugger will attach both managed and unmanaged debuggers.
+       DefineConstants - Constants defined for the preprocessor.
+       Warning Level - Warning level for the compiler.
+  -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DefineConstants></DefineConstants>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
+  </PropertyGroup>
+  <!-- This section defines properties that are set when the "Release" configuration is
+       selected.
+
+       DebugSymbols - If true, create symbols (.pdb). If false, do not create symbols.
+       Optimize - If true, optimize the build output. If false, do not optimize.
+       OutputPath - Output path of the project relative to the project file.
+       EnableUnmanagedDebugging - If true, starting the debugger will attach both managed and unmanaged debuggers.
+       DefineConstants - Constants defined for the preprocessor.
+       Warning Level - Warning level for the compiler.
+  -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DefineConstants></DefineConstants>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
+  </PropertyGroup>
+  <!-- This section enables pre- and post-build steps. However,
+       it is recommended that MSBuild tasks be used instead of these properties.
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+    <PostBuildEvent></PostBuildEvent>
+  </PropertyGroup>
+  <!-- This sections specifies references for the project. -->
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.SqlServer.TxScript, Version=14.0.0.0, Culture=Neutral, PublicKeyToken=89845dcd8080cc91">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.PipelineHost, Version=14.0.0.0, Culture=Neutral, PublicKeyToken=89845dcd8080cc91">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.DTSPipelineWrap, Version=14.0.0.0, Culture=Neutral, PublicKeyToken=89845dcd8080cc91">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.DTSRuntimeWrap, Version=14.0.0.0, Culture=Neutral, PublicKeyToken=89845dcd8080cc91">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <!-- Visual Basic supports Importing namespaces (equivalent to using statements in C#).-->
+  <ItemGroup>
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Data" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Windows.Forms" />
+  </ItemGroup>
+  <!-- This section defines the user source files that are part of the
+       project.
+
+       Compile - Specifies a source file to compile.
+       EmbeddedResource - Specifies a .resx file for embedded resources.
+       None - Specifies a file that is not to be passed to the compiler (for instance,
+              a text file or XML file).
+       AppDesigner - Specifies the directory where the application properties files can
+                     be found.
+  -->
+  <ItemGroup>
+    <AppDesigner Include="My Project\" />
+    <Compile Include="BufferWrapper.vb" />
+    <Compile Include="ComponentWrapper.vb" />
+    <Compile Include="main.vb" />
+    <Compile Include="My Project\AssemblyInfo.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+    </EmbeddedResource>
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <!-- Include the default configuration information and metadata files for the add-in.
+         These files are copied to the build output directory when the project is
+         built, and the path to the configuration file is passed to add-in on the command
+         line when debugging.
+    -->
+  </ItemGroup>
+  <!-- Include the build rules for a VB project.-->
+  <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
+  <!-- This section defines VSTA properties that describe the host-changable project properties. -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{30D016F9-3734-4E33-A861-5E7D899E18F3}">
+        <ProjectProperties HostName="VSTAHostName" HostPackage="{B3A685AA-7EAF-4BC6-9940-57959FA5AC07}" ApplicationType="usd" Language="vb" TemplatesPath="" />
+        <Host Name="SSIS_ScriptComponent" />
+        <ProjectClient>
+          <HostIdentifier>SSIS_SC140</HostIdentifier>
+        </ProjectClient>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>]]></arrayElement>
+                  </arrayElements>
+                </property>
+                <property
+                  dataType="System.String"
+                  description="Stores the binary representation of the component"
+                  isArray="true"
+                  name="BinaryCode"
+                  state="cdata">
+                  <arrayElements
+                    arrayElementCount="2">
+                    <arrayElement
+                      dataType="System.String"><![CDATA[SC_df7f322aa7ae4147bb7fcdcbe4436efc.vbproj.dll]]></arrayElement>
+                    <arrayElement
+                      dataType="System.String"><![CDATA[TVqQAAMAAAAEAAAA//8AALgAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAgAAAAA4fug4AtAnNIbgBTM0hVGhpcyBwcm9ncmFtIGNhbm5vdCBiZSBydW4gaW4gRE9TIG1v
+ZGUuDQ0KJAAAAAAAAABQRQAATAEDABY98loAAAAAAAAAAOAAIiALAVAAACQAAAAIAAAAAAAA+kIA
+AAAgAAAAYAAAAAAAEAAgAAAAAgAABAAAAAAAAAAGAAAAAAAAAACgAAAAAgAAAAAAAAMAYIUAABAA
+ABAAAAAAEAAAEAAAAAAAABAAAAAAAAAAAAAAAKhCAABPAAAAAGAAAIgEAAAAAAAAAAAAAAAAAAAA
+AAAAAIAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAIAAACAAAAAAAAAAAAAAACCAAAEgAAAAAAAAAAAAAAC50ZXh0AAAAACMAAAAgAAAAJAAAAAIA
+AAAAAAAAAAAAAAAAACAAAGAucnNyYwAAAIgEAAAAYAAAAAYAAAAmAAAAAAAAAAAAAAAAAABAAABA
+LnJlbG9jAAAMAAAAAIAAAAACAAAALAAAAAAAAAAAAAAAAAAAQAAAQgAAAAAAAAAAAAAAAAAAAADc
+QgAAAAAAAEgAAAACAAUAaCUAAIgcAAABAAAAAAAAAPBBAAC4AAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAB4CKBgAAAoqHgIoGQAACiqmcxoAAAqAAQAABHMbAAAKgAIA
+AARzHAAACoADAAAEcx0AAAqABAAABCoufgEAAARvHgAACioufgIAAARvHwAACioufgMAAARvIAAA
+CioufgQAAARvIQAACioeAigiAAAKKq5+BQAABC0ecgEAAHDQBQAAAigjAAAKbyQAAApzJQAACoAF
+AAAEfgUAAAQqGn4GAAAEKh4CgAYAAAQqKgIDBAUoJgAACipSAnsnAAAKAnsoAAAKFpRvKQAACioi
+AhYoKgAACipSAnsnAAAKAnsoAAAKF5RvKwAACioiAhcoKgAACipSAnsnAAAKAnsoAAAKGJRvKwAA
+CioiAhgoKgAACipSAnsnAAAKAnsoAAAKGZRvKwAACioiAhkoKgAACipSAnsnAAAKAnsoAAAKGpRv
+KwAACioiAhooKgAACipSAnsnAAAKAnsoAAAKG5RvKwAACioiAhsoKgAACioTMAEACQAAAAEAABEC
+KCwAAAoKBioAAAATMAEACQAAAAEAABECKC0AAAoKBio6AhYDjCsAAAEoLgAACipaAywIAhYoLwAA
+CipyMwAAcHMwAAAKejoCFwOMLQAAASguAAAKKloDLAgCFygvAAAKKnIzAABwczAAAAp6OgIYA4wj
+AAABKC4AAAoqWgMsCAIYKC8AAAoqcjMAAHBzMAAACnoeAigxAAAKKh4CKDIAAAoqABMwAQAJAAAA
+AQAAEQIoLQAACgoGKpoCKDMAAAoCAnMtAAAGfQcAAAQCAnMuAAAGfQgAAAQCFn0KAAAEKhMwBABP
+AAAAAAAAAARy0AAAcBpvNAAACiwVAgUCAyg1AAAKDgRzDAAABm8rAAAGBW82AAAKLCMCAnsKAAAE
+F9Z9CgAABAJ7CgAABBczDAJvJwAABgIoKAAABioGKm4CewkAAAQsEgJ7CQAABG8jAAAGAhR9CQAA
+BCoAAAATMAUAQQAAAAIAABEDF9oKFgsrLgQHlA4EcuAAAHAoNwAACjMZAgUHmgIEB5QoNQAACg4E
+cxsAAAZ9CQAABAcX1gsHBjHOAm8qAAAGKkorBwIDbywAAAYDbxkAAAYt8So6AigiAAAKAgN9CwAA
+BCo6AigiAAAKAgN9DAAABCoeAiglAAAGKgAAEzADAJkAAAADAAARG40wAAABCgYWA28PAAAGKDgA
+AAqhBhcDbxEAAAYoOAAACqEGGANvEwAABig4AAAKoQYZA28VAAAGKDgAAAqhBhoDbxcAAAYoOAAA
+CqEWCwJ7CQAABAwGB5kjAAAAAAAAAAA2KghvIgAABggDbw0AAAZvHgAABggHF9a0bxwAAAYIBgeZ
+czkAAApvIAAABhQMBxfWCwcaMbcqQnMiAAAKKDoAAAqADgAABCoeAig7AAAKKgAAGzABAD8AAAAA
+AAAAfg0AAAQtMn4OAAAEKDoAAAooPAAACn4NAAAELRxzMgAABoANAAAE3hB+DgAABCg6AAAKKD0A
+AArcfg0AAAQqAAEQAAACAB0ADCkAEAAAAAA2AgMoOgAACig+AAAKKh4CKD8AAAoqLtANAAACKCMA
+AAoqHgIoQAAACioAABMwAQAUAAAABAAAEQKMBQAAGy0IKAEAACsKKwICCgYqIgP+FQUAABsqAAAA
+EzACACgAAAAFAAARAntCAAAKb0MAAAoKBowIAAAbLRIoAgAAKwoCe0IAAAoGb0QAAAoGKkoCKCIA
+AAoCc0UAAAp9QgAACioAQlNKQgEAAQAAAAAADAAAAHY0LjAuMzAzMTkAAAAABQBsAAAA7AsAACN+
+AABYDAAAIAsAACNTdHJpbmdzAAAAAHgXAAD0AAAAI1VTAGwYAAAQAAAAI0dVSUQAAAB8GAAADAQA
+ACNCbG9iAAAAAAAAAAIAAAFXFaIJCQ8AAAD6ATMAFgAAAQAAADQAAAAOAAAADwAAADwAAAAdAAAA
+RQAAAD4AAAAFAAAABgAAABoAAAAbAAAACAAAAAEAAAAFAAAAAQAAAAIAAAADAAAAAgAAAAAAIAUB
+AAAAAAAGAHkDmwgGACMEmwgGAFAC3AcPAE8JAAAGAJECYAYGAFwDYAYGAAoEYAYGAJkDYAYGALID
+YAYGANgCYAYGAM0D6QUGAH0CVQgGAPkBVQgGACQDYAYGAPMCggQKABwCbAcKAOQBCgUKAGQCCgUO
+ALwBKwgOAKIH7wcGAAwD3AcOAKgCdAgOAMACywAGAOoJ6QUOAIgHKwgOAEEDywAGAJMB6QUOAAEA
+4AQKAAcC8AUGAFwHuwgGAJ0GSwYSAEsHbwEWADwHbwESAKkGbwEGANgE6QUSAD0KbwESAOMDbwEG
+AKUE6QUKAMwBNgYGADMC3AcGAEEB6QUGABULYAYGAEEE6QUGAHIG6QUGAC4A6QUGAJ4E6QUGAIwG
+6QUGADoB6QUGAGoK6QUGALMJmwgGAMoHcQQGALMH6QUAAAAANAAAAAAAAQABAAAAAAAoBuMKTQAB
+AAEAAAAAAKAH4wpRAAEAAgAAARAA8QnjCmEAAQADAAAAAAAECcwIYQAFAAgAAQAAACEHqgSBAAcA
+DAABAAAALgeqBIEABwAbAAEAAAAfCqoEkQAHACUAAQAAAJ8JqgRhAAsALQABAAAAXgmqBGEADAAu
+AAEAAAANBqoEIAANAC8AAAEQAI0JqgSdAA0AMQAFAQAAHQgAAGEADwA0AAUBAAAQAAAAYQAPADsA
+MQDqBjYBMQDBBj4BMQDVBkYBMQADB04BEQCrB1YBEQCwAVoBBgCfCV4BBgBeCWIBBgAuB2YBAQDh
+AGoBAQAtCm0BAQAtCm0BEQBGBHIBEQDkCXYBIQCzCv4AUCAAAAAABhi9BwYAAQBYIAAAAAAGGL0H
+BgABAGAgAAAAABEYwwd5AQEAiiAAAAAAEwiTB30BAQCWIAAAAAATCBgGggEBAKIgAAAAABMIhAeH
+AQEAriAAAAAAEwgNCIwBAQC6IAAAAAADGL0HBgABAMIgAAAAABYIWAeRAQEA7iAAAAAAFgiYAZYB
+AQD1IAAAAAAWCKQBmwEBAP0gAAAAAAYYvQdlAAIACCEAAAAABghEAKEBBQAdIQAAAAAGCF0FjwAF
+ACYhAAAAAAYIPQClAQUAOyEAAAAABghPBY8ABQBEIQAAAAAGCHoApQEFAFkhAAAAAAYImwWPAAUA
+YiEAAAAABghhAKUBBQB3IQAAAAAGCG0FjwAFAIAhAAAAAAYIgQClAQUAlSEAAAAABgipBY8ABQCe
+IQAAAAAGCJQApQEFALMhAAAAAAYIygWPAAUAvCEAAAAAhgDbCo8ABQDUIQAAAACGAA4KjwAFAP0g
+AAAAAAYYvQdlAAUA6SEAAAAABghoAKsBCAD4IQAAAAAGCHsFFQAJAA8iAAAAAAYIiACwAQoAHiIA
+AAAABgi3BRUACwA1IgAAAAAGCHAAtQEMAEQiAAAAAAYIigUVAA0AWyIAAAAAhgC9CgYADgBjIgAA
+AACGAAsKBgAOAGwiAAAAAIYADgqPAA4AgSIAAAAABhi9BwYADgCoIgAAAADGApoKvAEOAAMjAAAA
+AEYDwgkGABIABSMAAAAAAQDwAAYAEgAkIwAAAADGAqcKyAESAAMjAAAAAEYD0AkGABYAcSMAAAAA
+RgOTCtYBFgADIwAAAABGA8QK1gEXAIQjAAAAAAYYvQfcARgAkyMAAAAABhi9B9wBGQCiIwAAAAAG
+GL0HBgAaAKwjAAAAAMYCxArWARoAUSQAAAAAERjDB3kBGwBiJAAAAAAGGL0HBgAbAGwkAAAAABYI
+TgTjARsAyCQAAAAAxgKYCdIAGwDWJAAAAADGAiwB1wAcAN4kAAAAAIMAkAHoARwA6iQAAAAAxgKc
+BNsAHAD0JAAAAAARAK8A7QEcABQlAAAAAAEAmwD1AR0AuiAAAAAABhi9BwYAHgAgJQAAAAADCBMB
+SgAeAFQlAAAAAAYYvQcGAB4AAAABAGsEAAABAFEHAAACAGgJAAADALcGAAABAFEHAAACAGgJAAAD
+ALcGAAABAGsEAAABAGsEAAABAGsEAAABAGsEAAABAGsEAAABAGsEAAABAE0AAAACAGUBAAADAFEH
+AAAEALcGAAABAMgJAAACANIHAAADAKsJAAAEALcGAAABAFEHAAABAN8KAAABAEMKAAABAEMKAAAB
+AN8KAAABAKcGAAABACMBAAABACMBCQC9BwEAEQC9BwYAGQC9BwoAKQC9BxAAMQC9BxAAOQC9BxAA
+QQC9BxAASQC9BxAAUQC9BxAAWQC9BxUAYQC9BxUAaQC9BxAAcQC9BxAAeQC9BxAAgQC9BxoAkQC9
+ByAAqQC9BwYAsQC9BwYAuQC9BwYA0QC9ByYA6QC9BxAAKQG9BwYAQQG9BwYAmQC9BwYAoQC9BwYA
+DAC9BwYAFAC9BwYAHAC9BwYAJAC9BwYADAATAUoAFAATAUoAHAATAUoAJAATAUoAwQC9BwYA2QBT
+AU8A2QARC1cA8QC9B10AAQG9B2UAAQFRB3EAAQFoCXYACQErAHoAAQHRBX8ACQHVBIQAAQHbCo8A
+AQEOCo8AAQHgBZMAAQHYBQEAYQG9BxAAAQG9CgYAAQELCgYAIQG9BwYAcQGYCZkAIQF8CaEACQH7
+CY8AIQFVAKwAiQE4AbwAGQG9B8MAkQFiBMgAOQG9BwYAmQGNB80AmQEaCs0AwQCYCdIAwQAsAdcA
+wQCcBNsAoQEEAecANACzCv4APABOBEoAPABYBBUBPAC9BwYAKQCrAMUDLgALADcCLgATAEACLgAb
+AF8CLgAjAGgCLgArAJgCLgAzAJgCLgA7AGgCLgBDAJ4CLgBLAJgCLgBTALUCLgBbAJgCLgBjALsC
+LgBrAOUCLgBzAPICQACLADwDQACDAEEDQwB7AEoDQwCDAEEDSQCrANYDYwB7AEoDYwCDAEEDaQCr
+AOoDgACLADwDgwCTADwDgwCbADwDgwB7AEoDiQCrAPcDoACLADwDqQCDAF8CwACLADwDwwBTAJgC
+yQCDAF8C4ACLADwD4wBTAJgCAwFTAJgCIwFTAJgCQwFTAJgCYwGzADwDYwFTAJgCowGDAEEDowGj
+AGMDwwGDAEEDwwFbAJgCKQO7ADwDoAVTAJgCwAVTAJgCgAaDAEEDgAaLADwDoAaDAEEDoAaLADwD
+wAaDAEEDwAaLADwD4AaDAEED4AaLADwDAAeLADwDIAeLADwDQAeLADwDQAeDAEEDYAeLADwDgAeL
+ADwDgAeDAEEDiwCnALQA3wDyAAQAAQAFAAUABgAHAAcAEwAMABkADgAaAAAAogf9AQAAKgYCAgAA
+iAcHAgAAHwgMAgAAXAcRAgAAtAEWAgAASAAbAgAAYQUfAgAAQQAjAgAAUwUfAgAAfgAjAgAAnwUf
+AgAAZQAjAgAAcQUfAgAAhQAjAgAArQUfAgAAmAAjAgAAzgUfAgAAbAApAgAAfwUfAgAAjAAbAgAA
+uwUfAgAAdAAjAgAAjgUfAgAAawQtAgAAFwEyAgIABAADAAIABQAFAAIABgAHAAIABwAJAAIACQAL
+AAIACgANAAEACwANAAIADQAPAAIADgARAAIADwATAAIAEAAVAAIAEQAXAAIAEgAZAAIAEwAbAAIA
+FAAdAAIAFQAfAAIAFgAhAAIAFwAjAAIAGAAlAAEAHAAnAAEAHQApAAEAHgArAAEAHwAtAAEAIAAv
+AAEAIQAxAAIAMwAzAAIAOwA1AC4ANQA8AEMA5AD3AAYBDQEEgAAAAQAAAAAAAAAAAAAAAACqBAAA
+BAAAAAAAAAAAAAAAGwHCAAAAAAAEAAAAAAAAAAAAAAAbAekFAAAAAAoAAAAAAAAAAAAAACQBywAA
+AAAADgAAAAAAAAAAAAAALQFNCgAAAAAOAAAAAAAAAAAAAAAtAXIKAAAAAAAAAAABAAAAEAkAAA0A
+BAAOAAQAAAAQABwAkgAAABAAcQCSAAAAAABzAJIAgwDtAIMAEAEAAABDb250ZXh0VmFsdWVgMQBU
+aHJlYWRTYWZlT2JqZWN0UHJvdmlkZXJgMQBHZXRJbnQxNgA8TW9kdWxlPgBnZXRfRUEAZ2V0X01H
+UkEASW5wdXRJRABHZXRPdXRwdXRJRABnZXRfTUQAc2V0X1RPRABzZXRfVkFMVUUAZ2V0X0FNAGdl
+dF9QTQBzZXRfTUdSQU9VVABnZXRfRVYARGlzcG9zZV9fSW5zdGFuY2VfXwBDcmVhdGVfX0luc3Rh
+bmNlX18AbXNjb3JsaWIATWljcm9zb2Z0LlZpc3VhbEJhc2ljAElucHV0c0ZpbmlzaGVkAE1hcmtP
+dXRwdXRzRmluaXNoZWQAQ3JlYXRlSW5zdGFuY2UAZ2V0X0dldEluc3RhbmNlAGluc3RhbmNlAEdl
+dEhhc2hDb2RlAFRvRG91YmxlAFJ1bnRpbWVUeXBlSGFuZGxlAEdldFR5cGVGcm9tSGFuZGxlAElu
+cHV0TmFtZQBNaWNyb3NvZnQuU3FsU2VydmVyLkR0cy5QaXBlbGluZQBHZXRUeXBlAGdldF9DdWx0
+dXJlAHNldF9DdWx0dXJlAF9yZXNDdWx0dXJlAEFwcGxpY2F0aW9uQmFzZQBBcHBsaWNhdGlvblNl
+dHRpbmdzQmFzZQBFZGl0b3JCcm93c2FibGVTdGF0ZQBHdWlkQXR0cmlidXRlAEhlbHBLZXl3b3Jk
+QXR0cmlidXRlAEdlbmVyYXRlZENvZGVBdHRyaWJ1dGUARGVidWdnZXJOb25Vc2VyQ29kZUF0dHJp
+YnV0ZQBEZWJ1Z2dhYmxlQXR0cmlidXRlAEVkaXRvckJyb3dzYWJsZUF0dHJpYnV0ZQBDb21WaXNp
+YmxlQXR0cmlidXRlAEFzc2VtYmx5VGl0bGVBdHRyaWJ1dGUAU3RhbmRhcmRNb2R1bGVBdHRyaWJ1
+dGUASGlkZU1vZHVsZU5hbWVBdHRyaWJ1dGUAQXNzZW1ibHlUcmFkZW1hcmtBdHRyaWJ1dGUAVGFy
+Z2V0RnJhbWV3b3JrQXR0cmlidXRlAERlYnVnZ2VySGlkZGVuQXR0cmlidXRlAEFzc2VtYmx5Rmls
+ZVZlcnNpb25BdHRyaWJ1dGUATXlHcm91cENvbGxlY3Rpb25BdHRyaWJ1dGUAQXNzZW1ibHlEZXNj
+cmlwdGlvbkF0dHJpYnV0ZQBDb21waWxhdGlvblJlbGF4YXRpb25zQXR0cmlidXRlAEFzc2VtYmx5
+UHJvZHVjdEF0dHJpYnV0ZQBBc3NlbWJseUNvcHlyaWdodEF0dHJpYnV0ZQBDTFNDb21wbGlhbnRB
+dHRyaWJ1dGUAU1NJU1NjcmlwdENvbXBvbmVudEVudHJ5UG9pbnRBdHRyaWJ1dGUAQXNzZW1ibHlD
+b21wYW55QXR0cmlidXRlAFJ1bnRpbWVDb21wYXRpYmlsaXR5QXR0cmlidXRlAEJ5dGUAbV9WYWx1
+ZQBnZXRfVmFsdWUAc2V0X1ZhbHVlAEdldE9iamVjdFZhbHVlAFN5c3RlbS5UaHJlYWRpbmcAU3lz
+dGVtLlJ1bnRpbWUuVmVyc2lvbmluZwBUb1N0cmluZwBNYXRoAFNDX2RmN2YzMjJhYTdhZTQxNDdi
+YjdmY2RjYmU0NDM2ZWZjLnZicHJvagBHZXREZWNpbWFsAE1pY3Jvc29mdC5WaXN1YWxCYXNpYy5N
+eVNlcnZpY2VzLkludGVybmFsAFN5c3RlbS5Db21wb25lbnRNb2RlbABTQ19kZjdmMzIyYWE3YWU0
+MTQ3YmI3ZmNkY2JlNDQzNmVmYy52YnByb2ouZGxsAGdldF9FQV9Jc051bGwAZ2V0X01HUkFfSXNO
+dWxsAGdldF9NRF9Jc051bGwAc2V0X1RPRF9Jc051bGwAc2V0X1ZBTFVFX0lzTnVsbABnZXRfQU1f
+SXNOdWxsAGdldF9QTV9Jc051bGwAc2V0X01HUkFPVVRfSXNOdWxsAGdldF9FVl9Jc051bGwAU2V0
+TnVsbABzZXRfSXRlbQBTeXN0ZW0AU3lzdGVtLkNvbXBvbmVudE1vZGVsLkRlc2lnbgBTY3JpcHRN
+YWluAGdldF9BcHBsaWNhdGlvbgBNeUFwcGxpY2F0aW9uAFN5c3RlbS5Db25maWd1cmF0aW9uAFN5
+c3RlbS5HbG9iYWxpemF0aW9uAFN5c3RlbS5SZWZsZWN0aW9uAEludmFsaWRPcGVyYXRpb25FeGNl
+cHRpb24AU3RyaW5nQ29tcGFyaXNvbgBDdWx0dXJlSW5mbwBPdXRwdXROYW1lTWFwAE91dHB1dE1h
+cABtX0FwcE9iamVjdFByb3ZpZGVyAG1fVXNlck9iamVjdFByb3ZpZGVyAG1fQ29tcHV0ZXJPYmpl
+Y3RQcm92aWRlcgBtX015V2ViU2VydmljZXNPYmplY3RQcm92aWRlcgBJbnB1dDBCdWZmZXIAT3V0
+cHV0MEJ1ZmZlcgBQaXBlbGluZUJ1ZmZlcgBTY3JpcHRCdWZmZXIAZ2V0X1Jlc291cmNlTWFuYWdl
+cgBTeXN0ZW0uQ29kZURvbS5Db21waWxlcgBnZXRfVXNlcgBFbnRlcgBnZXRfQ29tcHV0ZXIATXlD
+b21wdXRlcgBfcmVzTWdyAEFjdGl2YXRvcgAuY3RvcgAuY2N0b3IATW9uaXRvcgBPdXRwdXRJRHMA
+U3lzdGVtLkRpYWdub3N0aWNzAE1pY3Jvc29mdC5WaXN1YWxCYXNpYy5EZXZpY2VzAGdldF9XZWJT
+ZXJ2aWNlcwBNeVdlYlNlcnZpY2VzAE1pY3Jvc29mdC5WaXN1YWxCYXNpYy5BcHBsaWNhdGlvblNl
+cnZpY2VzAFN5c3RlbS5SdW50aW1lLkludGVyb3BTZXJ2aWNlcwBNaWNyb3NvZnQuVmlzdWFsQmFz
+aWMuQ29tcGlsZXJTZXJ2aWNlcwBTeXN0ZW0uUnVudGltZS5Db21waWxlclNlcnZpY2VzAFN5c3Rl
+bS5SZXNvdXJjZXMAU0NfZGY3ZjMyMmFhN2FlNDE0N2JiN2ZjZGNiZTQ0MzZlZmMudmJwcm9qLk15
+LlJlc291cmNlcwBNeVJlc291cmNlcwBTQ19kZjdmMzIyYWE3YWU0MTQ3YmI3ZmNkY2JlNDQzNmVm
+Yy52YnByb2ouUmVzb3VyY2VzLnJlc291cmNlcwBEZWJ1Z2dpbmdNb2RlcwBWYXJpYWJsZXMAQnVm
+ZmVyQ29sdW1uSW5kZXhlcwBHZXRDb2x1bW5JbmRleGVzAE15U2V0dGluZ3MARXF1YWxzAENvbm5l
+Y3Rpb25zAEJ1ZmZlcnMAUnVudGltZUhlbHBlcnMARmluaXNoT3V0cHV0cwBDcmVhdGVOZXdPdXRw
+dXRSb3dzAG1fU3luY09iamVjdABNeVByb2plY3QAZ2V0X0VuZE9mUm93c2V0AFNldEVuZE9mUm93
+c2V0AEV4aXQAVXNlckNvbXBvbmVudABQYXJlbnRDb21wb25lbnQAU2NyaXB0Q29tcG9uZW50AE1p
+Y3Jvc29mdC5TcWxTZXJ2ZXIuVHhTY3JpcHQAQ29udmVydABNaWNyb3NvZnQuU3FsU2VydmVyLlBp
+cGVsaW5lSG9zdABJbnB1dDBfUHJvY2Vzc0lucHV0AFByaW1lT3V0cHV0AG1fQ29udGV4dABBZGRS
+b3cASW5wdXQwX1Byb2Nlc3NJbnB1dFJvdwBOZXh0Um93AFNDX2RmN2YzMjJhYTdhZTQxNDdiYjdm
+Y2RjYmU0NDM2ZWZjLnZicHJvai5NeQBnZXRfQXNzZW1ibHkAAAAAMU0AeQAuAFIAZQBzAG8AdQBy
+AGMAZQBzAC4ATQB5AFIAZQBzAG8AdQByAGMAZQBzAACAm0kAcwBOAHUAbABsACAAcAByAG8AcABl
+AHIAdAB5ACAAYwBhAG4AbgBvAHQAIABiAGUAIABzAGUAdAAgAHQAbwAgAEYAYQBsAHMAZQAuACAA
+QQBzAHMAaQBnAG4AIABhACAAdgBhAGwAdQBlACAAdABvACAAdABoAGUAIABjAG8AbAB1AG0AbgAg
+AGkAbgBzAHQAZQBhAGQALgAAD0kAbgBwAHUAdAAgADAAABFPAHUAdABwAHUAdAAgADAAAAAA76T6
+Mz1zTEyMszRdzdfpwwAEIAEBCAMgAAEFIAEBEREEIAEBDgQgAQECBSACAQ4OBSABARFFByAEAQ4O
+Dg4GFRI4ARIMBhUSOAESCAYVEjgBEmUGFRI4ARI0BCAAEwAHAAESbRGApQUgABKAqQcgAgEOEoCp
+CyADARKAhR0IEoCJBAYSgIUDBh0IBCABBggEIAECCAYgARGAjQgDBwECAyAAAgUgAgEIHAcgAgIO
+EYC9BSABHQgIBAcCCAgHAAIIEoCJDgcHAx0NCBIcBgABDRGAjQQgAQENBAABHBwEAAEBHAQgAQIc
+AyAACAMgAA4EBwEeAAIeAAUQAQAeAAQKAR4ABAcBEwAGFRI4ARMABwYVEnEBEwAGFRJxARMAAhMA
+BAoBEwAFIAEBEwAIt3pcVhk04IkIsD9ffxHVCjoIiYRdzYCAzJEHBhUSOAESDAcGFRI4ARIIBwYV
+EjgBEmUHBhUSOAESNAMGEnkDBhJ9AwYSJAMGEigDBhIcAgYIBAYSgJEDBhIwAgYcAwAAAQQAABIM
+BAAAEggEAAASZQQAABI0BAAAEnkEAAASfQUAAQESfQMgAAYFIAARgI0EIAEBBQQgAQEGBiABARGA
+jQsgBAEIDhKAhRKAiQ0gBAEIHQgdEoCFEoCJBSABARIYBiABARKAkQQAABIwBCAAEm0HEAEBHgAe
+AAcwAQEBEB4ABAgAEgwECAASCAQIABJlBAgAEjQECAASeQQIABJ9AygABgMoAAIFKAARgI0DKAAF
+BAgAEjAEKAATAAgBAAgAAAAAAB4BAAEAVAIWV3JhcE5vbkV4Y2VwdGlvblRocm93cwEIAQACAAAA
+AAAvAQAqU0NfZGY3ZjMyMmFhN2FlNDE0N2JiN2ZjZGNiZTQ0MzZlZmMudmJwcm9qAAAFAQAAAAAW
+AQARQ29weXJpZ2h0IEAgIDIwMTMAAAUBAAEAACkBACRjMjg3MzhkOC1jNjljLTRhNjktYWQyZi1m
+NThiZGU0ZjRkMjcAAAwBAAcxLjAuMC4wAABJAQAaLk5FVEZyYW1ld29yayxWZXJzaW9uPXY0LjUB
+AFQOFEZyYW1ld29ya0Rpc3BsYXlOYW1lEi5ORVQgRnJhbWV3b3JrIDQuNQQBAAAACAEAAQAAAAAA
+GAEACk15VGVtcGxhdGUIMTEuMC4wLjAAAGEBADRTeXN0ZW0uV2ViLlNlcnZpY2VzLlByb3RvY29s
+cy5Tb2FwSHR0cENsaWVudFByb3RvY29sEkNyZWF0ZV9fSW5zdGFuY2VfXxNEaXNwb3NlX19JbnN0
+YW5jZV9fAAAAEAEAC015LkNvbXB1dGVyAAATAQAOTXkuQXBwbGljYXRpb24AAAwBAAdNeS5Vc2Vy
+AAATAQAOTXkuV2ViU2VydmljZXMAAAC0AAAAzsrvvgEAAACRAAAAbFN5c3RlbS5SZXNvdXJjZXMu
+UmVzb3VyY2VSZWFkZXIsIG1zY29ybGliLCBWZXJzaW9uPTQuMC4wLjAsIEN1bHR1cmU9bmV1dHJh
+bCwgUHVibGljS2V5VG9rZW49Yjc3YTVjNTYxOTM0ZTA4OSNTeXN0ZW0uUmVzb3VyY2VzLlJ1bnRp
+bWVSZXNvdXJjZVNldAIAAAAAAAAAAAAAAFBBRFBBRFC0AAAA0EIAAAAAAAAAAAAA6kIAAAAgAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAANxCAAAAAAAAAAAAAAAAX0NvckRsbE1haW4AbXNjb3JlZS5kbGwA
+AAAAAP8lACAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAEAAA
+ABgAAIAAAAAAAAAAAAAAAAAAAAEAAQAAADAAAIAAAAAAAAAAAAAAAAAAAAEAAAAAAEgAAABYYAAA
+LAQAAAAAAAAAAAAALAQ0AAAAVgBTAF8AVgBFAFIAUwBJAE8ATgBfAEkATgBGAE8AAAAAAL0E7/4A
+AAEAAAABAAAAAAAAAAEAAAAAAD8AAAAAAAAABAAAAAIAAAAAAAAAAAAAAAAAAABEAAAAAQBWAGEA
+cgBGAGkAbABlAEkAbgBmAG8AAAAAACQABAAAAFQAcgBhAG4AcwBsAGEAdABpAG8AbgAAAAAAAACw
+BIwDAAABAFMAdAByAGkAbgBnAEYAaQBsAGUASQBuAGYAbwAAAGgDAAABADAAMAAwADAAMAA0AGIA
+MAAAABoAAQABAEMAbwBtAG0AZQBuAHQAcwAAAAAAAAAiAAEAAQBDAG8AbQBwAGEAbgB5AE4AYQBt
+AGUAAAAAAAAAAAB+ACsAAQBGAGkAbABlAEQAZQBzAGMAcgBpAHAAdABpAG8AbgAAAAAAUwBDAF8A
+ZABmADcAZgAzADIAMgBhAGEANwBhAGUANAAxADQANwBiAGIANwBmAGMAZABjAGIAZQA0ADQAMwA2
+AGUAZgBjAC4AdgBiAHAAcgBvAGoAAAAAADAACAABAEYAaQBsAGUAVgBlAHIAcwBpAG8AbgAAAAAA
+MQAuADAALgAwAC4AMAAAAH4ALwABAEkAbgB0AGUAcgBuAGEAbABOAGEAbQBlAAAAUwBDAF8AZABm
+ADcAZgAzADIAMgBhAGEANwBhAGUANAAxADQANwBiAGIANwBmAGMAZABjAGIAZQA0ADQAMwA2AGUA
+ZgBjAC4AdgBiAHAAcgBvAGoALgBkAGwAbAAAAAAASAASAAEATABlAGcAYQBsAEMAbwBwAHkAcgBp
+AGcAaAB0AAAAQwBvAHAAeQByAGkAZwBoAHQAIABAACAAIAAyADAAMQAzAAAAKgABAAEATABlAGcA
+YQBsAFQAcgBhAGQAZQBtAGEAcgBrAHMAAAAAAAAAAACGAC8AAQBPAHIAaQBnAGkAbgBhAGwARgBp
+AGwAZQBuAGEAbQBlAAAAUwBDAF8AZABmADcAZgAzADIAMgBhAGEANwBhAGUANAAxADQANwBiAGIA
+NwBmAGMAZABjAGIAZQA0ADQAMwA2AGUAZgBjAC4AdgBiAHAAcgBvAGoALgBkAGwAbAAAAAAAdgAr
+AAEAUAByAG8AZAB1AGMAdABOAGEAbQBlAAAAAABTAEMAXwBkAGYANwBmADMAMgAyAGEAYQA3AGEA
+ZQA0ADEANAA3AGIAYgA3AGYAYwBkAGMAYgBlADQANAAzADYAZQBmAGMALgB2AGIAcAByAG8AagAA
+AAAANAAIAAEAUAByAG8AZAB1AGMAdABWAGUAcgBzAGkAbwBuAAAAMQAuADAALgAwAC4AMAAAADgA
+CAABAEEAcwBzAGUAbQBiAGwAeQAgAFYAZQByAHMAaQBvAG4AAAAxAC4AMAAuADAALgAwAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAADAAAAPwyAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
+                  </arrayElements>
+                </property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the Microsoft Visual Studio Tools for Applications project. Project names must be unique within a package."
+                  name="VSTAProjectName"
+                  typeConverter="NOTBROWSABLE">SC_df7f322aa7ae4147bb7fcdcbe4436efc</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the programming language used by the script."
+                  name="ScriptLanguage"
+                  typeConverter="Microsoft.SqlServer.VSTAHosting.ScriptingLanguages">VisualBasic</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies a comma-separated list of read-only variables."
+                  name="ReadOnlyVariables"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ScriptUIVariablePickerDlg"></property>
+                <property
+                  dataType="System.String"
+                  description="Specifies a comma-separated list of read/write variables."
+                  name="ReadWriteVariables"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ScriptUIWriteableVariablePickerDlg"></property>
+                <property
+                  dataType="System.String"
+                  description="List of breakpoints present on the script."
+                  isArray="true"
+                  name="BreakpointCollection"
+                  typeConverter="NOTBROWSABLE">
+                  <arrayElements
+                    arrayElementCount="0" />
+                </property>
+                <property
+                  dataType="System.String"
+                  name="UserComponentTypeName">Microsoft.ScriptComponentHost</property>
+                <property
+                  dataType="System.String"
+                  description="Checksum to match component metedata against compiled codes."
+                  name="MetadataChecksum"
+                  typeConverter="NOTBROWSABLE">4db4c88b257fdc387fb80afe9f4f03aa</property>
+                <property
+                  dataType="System.String"
+                  description="Checksum to match component metedata against compiled codes."
+                  name="MetadataShaChecksum"
+                  typeConverter="NOTBROWSABLE">2498787e86250003f05ef15417b2d03f0f627282</property>
+                <property
+                  dataType="System.String"
+                  description="Checksum to match component metedata against compiled codes."
+                  name="MetadataChecksum140"
+                  typeConverter="NOTBROWSABLE">76</property>
+              </properties>
+              <inputs>
+                <input
+                  refId="Package\cbd_vehicles\wide_to_long.Inputs[Input 0]"
+                  hasSideEffects="true"
+                  name="Input 0">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\cbd_vehicles\wide_to_long.Inputs[Input 0].Columns[MGRA]"
+                      cachedDataType="i2"
+                      cachedName="MGRA"
+                      lineageId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].Columns[MGRA]" />
+                    <inputColumn
+                      refId="Package\cbd_vehicles\wide_to_long.Inputs[Input 0].Columns[EA]"
+                      cachedDataType="numeric"
+                      cachedName="EA"
+                      cachedPrecision="10"
+                      cachedScale="6"
+                      lineageId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].Columns[EA]" />
+                    <inputColumn
+                      refId="Package\cbd_vehicles\wide_to_long.Inputs[Input 0].Columns[AM]"
+                      cachedDataType="numeric"
+                      cachedName="AM"
+                      cachedPrecision="10"
+                      cachedScale="6"
+                      lineageId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].Columns[AM]" />
+                    <inputColumn
+                      refId="Package\cbd_vehicles\wide_to_long.Inputs[Input 0].Columns[MD]"
+                      cachedDataType="numeric"
+                      cachedName="MD"
+                      cachedPrecision="10"
+                      cachedScale="6"
+                      lineageId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].Columns[MD]" />
+                    <inputColumn
+                      refId="Package\cbd_vehicles\wide_to_long.Inputs[Input 0].Columns[PM]"
+                      cachedDataType="numeric"
+                      cachedName="PM"
+                      cachedPrecision="10"
+                      cachedScale="6"
+                      lineageId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].Columns[PM]" />
+                    <inputColumn
+                      refId="Package\cbd_vehicles\wide_to_long.Inputs[Input 0].Columns[EV]"
+                      cachedDataType="numeric"
+                      cachedName="EV"
+                      cachedPrecision="10"
+                      cachedScale="6"
+                      lineageId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output].Columns[EV]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\cbd_vehicles\wide_to_long.Outputs[Output 0]"
+                  hasSideEffects="true"
+                  name="Output 0">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\cbd_vehicles\wide_to_long.Outputs[Output 0].Columns[TOD]"
+                      dataType="ui1"
+                      lineageId="Package\cbd_vehicles\wide_to_long.Outputs[Output 0].Columns[TOD]"
+                      name="TOD" />
+                    <outputColumn
+                      refId="Package\cbd_vehicles\wide_to_long.Outputs[Output 0].Columns[MGRA_OUT]"
+                      dataType="i2"
+                      lineageId="Package\cbd_vehicles\wide_to_long.Outputs[Output 0].Columns[MGRA_OUT]"
+                      name="MGRA_OUT" />
+                    <outputColumn
+                      refId="Package\cbd_vehicles\wide_to_long.Outputs[Output 0].Columns[VALUE]"
+                      dataType="numeric"
+                      lineageId="Package\cbd_vehicles\wide_to_long.Outputs[Output 0].Columns[VALUE]"
+                      name="VALUE"
+                      precision="10"
+                      scale="6" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\cbd_vehicles.Paths[Derived Column Output]"
+              endId="Package\cbd_vehicles\cbd_vehicles.Inputs[OLE DB Destination Input]"
+              name="Derived Column Output"
+              startId="Package\cbd_vehicles\constants.Outputs[Derived Column Output]" />
+            <path
+              refId="Package\cbd_vehicles.Paths[Flat File Source Output]"
+              endId="Package\cbd_vehicles\wide_to_long.Inputs[Input 0]"
+              name="Flat File Source Output"
+              startId="Package\cbd_vehicles\cbd_vehicles_csv.Outputs[Flat File Source Output]" />
+            <path
+              refId="Package\cbd_vehicles.Paths[Lookup Match Output]"
+              endId="Package\cbd_vehicles\geography_lookup.Inputs[Lookup Input]"
+              name="Lookup Match Output"
+              startId="Package\cbd_vehicles\time_period_lookup.Outputs[Lookup Match Output]" />
+            <path
+              refId="Package\cbd_vehicles.Paths[Lookup Match Output1]"
+              endId="Package\cbd_vehicles\constants.Inputs[Derived Column Input]"
+              name="Lookup Match Output"
+              startId="Package\cbd_vehicles\geography_lookup.Outputs[Lookup Match Output]" />
+            <path
+              refId="Package\cbd_vehicles.Paths[Output 0]"
+              endId="Package\cbd_vehicles\time_period_lookup.Inputs[Lookup Input]"
+              name="Output 0"
+              startId="Package\cbd_vehicles\wide_to_long.Outputs[Output 0]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\other_tables_keys"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{c594ca67-f783-47d5-95c9-2df7b8e8658c}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="other_tables_keys"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2012; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}"
+          SQLTask:SqlStatementSource="DECLARE @SQL nvarchar(max)&#xA;DECLARE @scenario_id nvarchar(5)&#xA;&#xA;&#xA;SET @scenario_id = CAST(? AS nvarchar(5))&#xA;&#xA;&#xA;SET @SQL =&#xA;N'ALTER TABLE [abm_staging].[cbd_vehicles_' + @scenario_id + N'] ADD CONSTRAINT [pk_cbdvehicles_' + @scenario_id + N'] PRIMARY KEY CLUSTERED &#xA;(&#xA; [scenario_id] ASC,&#xA; [cbd_vehicles_id] ASC&#xA;)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON, DATA_COMPRESSION = PAGE, SORT_IN_TEMPDB = ON)'&#xA;EXECUTE sp_executesql @SQL&#xA;&#xA;&#xA;SET @SQL =&#xA;N'ALTER TABLE [abm_staging].[cbd_vehicles_' + @scenario_id + N'] ADD CONSTRAINT [ixuq_cbdvehicles_' + @scenario_id + N'] UNIQUE NONCLUSTERED &#xA;(&#xA; [scenario_id] ASC,&#xA; [geography_zone_id] ASC,&#xA; [time_period_id] ASC&#xA;)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON, DATA_COMPRESSION = PAGE, SORT_IN_TEMPDB = ON)'&#xA;EXECUTE sp_executesql @SQL&#xA;&#xA;&#xA;SET @SQL =&#xA;N'ALTER TABLE [abm_staging].[cbd_vehicles_' + @scenario_id + N']  WITH CHECK ADD  CONSTRAINT [fk_cbdvehicles_scenario_' + @scenario_id + N'] FOREIGN KEY([scenario_id])&#xA;REFERENCES [ref].[scenario] ([scenario_id])'&#xA;EXECUTE sp_executesql @SQL&#xA;&#xA;&#xA;SET @SQL =&#xA;N'ALTER TABLE [abm_staging].[cbd_vehicles_' + @scenario_id + N']  WITH CHECK ADD  CONSTRAINT [fk_cbdvehicles_period_' + @scenario_id + N'] FOREIGN KEY([time_period_id])&#xA;REFERENCES [ref].[time_period] ([time_period_id])'&#xA;EXECUTE sp_executesql @SQL&#xA;&#xA;&#xA;SET @SQL =&#xA;N'ALTER TABLE [abm_staging].[cbd_vehicles_' + @scenario_id + N']  WITH CHECK ADD  CONSTRAINT [fk_cbdvehicles_zone_' + @scenario_id + N'] FOREIGN KEY([geography_zone_id])&#xA;REFERENCES [ref].[geography_zone] ([geography_zone_id])'&#xA;EXECUTE sp_executesql @SQL&#xA;&#xA;&#xA;SET @SQL =&#xA;N'ALTER TABLE [abm_staging].[cbd_vehicles_' + @scenario_id + N'] WITH CHECK ADD CONSTRAINT [cbdvehicles_partition_' + @scenario_id + N'] CHECK ([scenario_id] = ' + @scenario_id + N')'&#xA;EXECUTE sp_executesql @SQL" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="$Package::scenario_id"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="131"
+            SQLTask:ParameterSize="16" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\other_tables_partition_switch"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{9ace3914-6bcc-476c-81d5-7c74949e67cb}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="other_tables_partition_switch"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2012; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}"
+          SQLTask:SqlStatementSource="DECLARE @SQL nvarchar(max)&#xA;DECLARE @scenario_id nvarchar(5)&#xA;DECLARE @dest_partition smallint&#xA;&#xA;SET @scenario_id = CAST(? AS nvarchar(5))&#xA;SET @dest_partition = (SELECT $PARTITION.[scenario_partition](CAST(@scenario_id AS smallint)))&#xA;&#xA;SET @SQL =&#xA;N'ALTER TABLE [abm_staging].[cbd_vehicles_' + @scenario_id + N'] SWITCH TO [abm].[cbd_vehicles] PARTITION ' + CAST(@dest_partition AS nvarchar(5)) + N';'&#xA;EXECUTE sp_executesql @SQL&#xA;&#xA;-- Drop staging tables&#xA;SET @SQL =&#xA;N'DROP TABLE [abm_staging].[cbd_vehicles_' + @scenario_id + N']'&#xA;EXECUTE sp_executesql @SQL" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="$Package::scenario_id"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="131"
+            SQLTask:ParameterSize="16" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{8DBAE320-4842-4656-9AFF-DD94AD3B061D}"
+      DTS:From="Package\other_tables_keys"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\other_tables_partition_switch" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 7]"
+      DTS:CreationName=""
+      DTS:DTSID="{137c5b15-0df9-4e5a-8ee0-7ce56c1da4d9}"
+      DTS:From="Package\cbd_vehicles"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 7"
+      DTS:To="Package\other_tables_keys" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="139,42"
+          Id="Package\cbd_vehicles"
+          TopLeft="72.5,60" />
+        <NodeLayout
+          Size="164,42"
+          Id="Package\other_tables_keys"
+          TopLeft="61,164" />
+        <NodeLayout
+          Size="218,42"
+          Id="Package\other_tables_partition_switch"
+          TopLeft="30,260" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="141,206">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,54"
+              Start="0,0"
+              End="0,46.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,46.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 7]"
+          TopLeft="142.5,102">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,62"
+              Start="0,0"
+              End="0,54.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,54.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\cbd_vehicles">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="172,42"
+          Id="Package\cbd_vehicles\time_period_lookup"
+          TopLeft="5.50000000000003,209.5" />
+        <NodeLayout
+          Size="159,42"
+          Id="Package\cbd_vehicles\cbd_vehicles_csv"
+          TopLeft="12,5.5" />
+        <NodeLayout
+          Size="166,42"
+          Id="Package\cbd_vehicles\geography_lookup"
+          TopLeft="8.50000000000004,311.5" />
+        <NodeLayout
+          Size="142,42"
+          Id="Package\cbd_vehicles\wide_to_long"
+          TopLeft="20.5,107.5" />
+        <NodeLayout
+          Size="124,42"
+          Id="Package\cbd_vehicles\constants"
+          TopLeft="29.5000000000001,413.5" />
+        <NodeLayout
+          Size="139,42"
+          Id="Package\cbd_vehicles\cbd_vehicles"
+          TopLeft="22.0000000000001,515.5" />
+        <EdgeLayout
+          Id="Package\cbd_vehicles.Paths[Output 0]"
+          TopLeft="91.5,149.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\cbd_vehicles.Paths[Lookup Match Output1]"
+          TopLeft="91.5000000000001,353.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-48.19138671875,20.4453125,96.3827734375,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\cbd_vehicles.Paths[Lookup Match Output]"
+          TopLeft="91.5,251.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-48.19138671875,20.4453125,96.3827734375,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\cbd_vehicles.Paths[Flat File Source Output]"
+          TopLeft="91.5,47.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\cbd_vehicles.Paths[Derived Column Output]"
+          TopLeft="91.5000000000001,455.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\cbd_vehicles\time_period_lookup">
+    <Properties>
+      <Property>
+        <Name>OverwriteParamsSQLProp</Name>
+        <Value
+          type="q2:string">false</Value>
+      </Property>
+      <Property>
+        <Name>UsedTableName</Name>
+        <Value
+          type="q3:string"></Value>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q4:string">0</Value>
+      </Property>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\cbd_vehicles\cbd_vehicles">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
