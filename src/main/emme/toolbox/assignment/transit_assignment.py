@@ -60,6 +60,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
     period = _m.Attribute(unicode)
     scenario =  _m.Attribute(_m.InstanceType)
     data_table_name = _m.Attribute(unicode)
+    assignment_only = _m.Attribute(bool)
     skims_only = _m.Attribute(bool)
     num_processors = _m.Attribute(str)
 
@@ -70,11 +71,12 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         return self.tool_run_msg
 
     def __init__(self):
+        self.assignment_only = False
         self.skims_only = False
         self.scenario = _m.Modeller().scenario
         self.num_processors = "MAX-1"
         self.attributes = [
-            "period", "scenario", "data_table_name", "skims_only",  "num_processors"]
+            "period", "scenario", "data_table_name", "assignment_only", "skims_only",  "num_processors"]
         self._dt_db = _m.Modeller().desktop.project.data_tables()
         self._matrix_cache = {}  # used to hold data for reporting and post-processing of skims
 
@@ -107,7 +109,8 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         pb.add_select_scenario("scenario",
             title="Transit assignment scenario:")
         pb.add_text_box("data_table_name", title="Data table prefix name:", note="Default is the ScenarioYear")
-        pb.add_checkbox("skims_only", title=" ", label="Only run assignments for skim matrices")
+        pb.add_checkbox("assignment_only", title=" ", label="Only assign trips (no skims)")
+        pb.add_checkbox("skims_only", title=" ", label="Only run assignments relevant for skims")
         dem_utils.add_select_processors("num_processors", pb, self)
         return pb.render()
 
@@ -115,7 +118,8 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         self.tool_run_msg = ""
         try:
             results = self(
-                self.period, self.scenario, self.data_table_name, self.skims_only, self.num_processors)
+                self.period, self.scenario, self.data_table_name, 
+                self.assignment_only, self.skims_only, self.num_processors)
             run_msg = "Transit assignment completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -123,11 +127,13 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 error, _traceback.format_exc(error))
             raise
 
-    def __call__(self, period, scenario, data_table_name, skims_only=False, num_processors="MAX-1"):
+    def __call__(self, period, scenario, data_table_name, assignment_only=False, skims_only=False, 
+                 num_processors="MAX-1"):
         attrs = {
             "period": period,
             "scenario": scenario.id,
             "data_table_name": data_table_name,
+            "assignment_only": assignment_only,
             "skims_only": skims_only,
             "num_processors": num_processors,
             "self": str(self)
@@ -156,16 +162,16 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             transit_passes = {row["pass_type"]: row["cost"] for row in transit_passes}
             day_pass = float(transit_passes["day_pass"]) / 2.0
             regional_pass = float(transit_passes["regional_pass"]) / 2.0
-            
+
             self.run_assignment(period, params, network, day_pass, skims_only, num_processors)
-            
-            # max_fare = day_pass for local bus and regional_pass for premium modes
-            self.run_skims("BUS", period, params, day_pass, num_processors)
-            self.run_skims("PREM", period, params, regional_pass, num_processors)
-            self.run_skims("ALLPEN", period, params, regional_pass, num_processors)
-            # self.post_process_skims(period)
-            self.mask_allpen(period)
-            self.report(period)
+
+            if not assignment_only:
+                # max_fare = day_pass for local bus and regional_pass for premium modes
+                self.run_skims("BUS", period, params, day_pass, num_processors)
+                self.run_skims("PREM", period, params, regional_pass, num_processors)
+                self.run_skims("ALLPEN", period, params, regional_pass, num_processors)
+                self.mask_allpen(period)
+                self.report(period)
 
     @_context.contextmanager
     def setup(self, attrs):

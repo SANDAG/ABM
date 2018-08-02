@@ -71,8 +71,9 @@ def run_assignment(modeller, database_path, period, msa_iteration,
         logger.write_timestamp("traffic assignment finished, start export to OMX")
         output_dir = _join(_dir(_dir(database_path)), "output")
         omx_file = _join(output_dir, "traffic_skims_%s.omx" % period)  
-        logger.write_timestamp("start export to OMX %s" % omx_file) 
-        export_traffic_skims(period, omx_file, period_scenario)
+        logger.write_timestamp("start export to OMX %s" % omx_file)
+        if msa_iteration < 4:
+            export_traffic_skims(period, omx_file, period_scenario)
         logger.write_timestamp("export to OMX finished")
         logger.write_timestamp("period %s completed successfully" % period)
 

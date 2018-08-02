@@ -400,7 +400,7 @@ Assign traffic demand for the selected time period."""
             if period == "MD" and (msa_iteration == 1 or not scenario.mode('D')):
                 self.prepare_midday_generic_truck(scenario)
 
-            if msa_iteration > 1:
+            if 1 < msa_iteration < 4:
                 # Link and turn flows
                 link_attrs = ["auto_volume"]
                 turn_attrs = ["auto_volume"]
@@ -412,7 +412,7 @@ Assign traffic demand for the selected time period."""
 
             self.run_assignment(period, relative_gap, max_iterations, num_processors, scenario, classes, select_link)
 
-            if msa_iteration > 1:
+            if 1 < msa_iteration < 4:
                 link_flows = scenario.get_attribute_values("LINK", link_attrs)
                 values = [link_flows.pop(0)]
                 for msa_array, flow_array in zip(msa_link_flows, link_flows):
@@ -435,21 +435,21 @@ Assign traffic demand for the selected time period."""
                     values.append(result_array)
                 scenario.set_attribute_values("TURN", turn_attrs, values)
 
-            self.run_skims(period, num_processors, scenario, classes)
-            self.report(period, scenario, classes)
-
-            # Check that the distance matrix is valid (no disconnected zones)
-            # Using SOVGPL class as representative
-            if raise_zero_dist:
-                name = "%s_SOVGPL_DIST" % period
-                dist_stats = self._stats[name]
-                if dist_stats[1] == 0:
-                    zones = scenario.zone_numbers
-                    matrix = scenario.emmebank.matrix(name)
-                    data = matrix.get_numpy_data(scenario)
-                    row, col = numpy.unravel_index(data.argmin(), data.shape)
-                    row, col = zones[row], zones[col]
-                    raise Exception("Disconnected zone error: 0 value found in matrix %s from zone %s to %s" % (name, row, col))
+            if msa_iteration < 4:
+                self.run_skims(period, num_processors, scenario, classes)
+                self.report(period, scenario, classes)
+                # Check that the distance matrix is valid (no disconnected zones)
+                # Using SOVGPL class as representative
+                if raise_zero_dist:
+                    name = "%s_SOVGPL_DIST" % period
+                    dist_stats = self._stats[name]
+                    if dist_stats[1] == 0:
+                        zones = scenario.zone_numbers
+                        matrix = scenario.emmebank.matrix(name)
+                        data = matrix.get_numpy_data(scenario)
+                        row, col = numpy.unravel_index(data.argmin(), data.shape)
+                        row, col = zones[row], zones[col]
+                        raise Exception("Disconnected zone error: 0 value found in matrix %s from zone %s to %s" % (name, row, col))
 
     def run_assignment(self, period, relative_gap, max_iterations, num_processors, scenario, classes, select_link):
         emmebank = scenario.emmebank

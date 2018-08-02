@@ -447,12 +447,12 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skipTripTableCreation[iteration]:
                     import_auto_demand(output_dir, external_zones, num_processors, base_scenario)
 
-        msa_iteration = 1
         if not skipFinalHighwayAssignment:
             with _m.logbook_trace("Final traffic assignments"):
                 self.run_traffic_assignments(
                     base_scenario, period_ids, msa_iteration, relative_gap, max_assign_iterations, 
                     num_processors, select_link)
+                # Final iteration is assignment only, no skims
 
         if not skipFinalTransitAssignment:
             import_transit_demand(output_dir, transit_scenario)
@@ -465,9 +465,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         scenario_title="%s - %s transit assign" % (base_scenario.title, period), 
                         data_table_name=scenarioYear, overwrite=True)
                     transit_assign(period, transit_assign_scen, data_table_name=scenarioYear,
-                                   num_processors=num_processors)
-                omx_file = _join(output_dir, "transit_skims.omx")
-                export_transit_skims(omx_file, periods, transit_scenario, big_to_zero=True)
+                                   assignment_only=True, num_processors=num_processors)
+                # Final iteration is assignment only, no skims
+                # omx_file = _join(output_dir, "transit_skims.omx")
+                # export_transit_skims(omx_file, periods, transit_scenario, big_to_zero=True)
 
         if not skipDataExport:
             export_network_data(main_directory, scenario_id, main_emmebank, transit_emmebank, num_processors)
@@ -557,7 +558,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     traffic_assign(period, msa_iteration, relative_gap, max_assign_iterations, 
                                    num_processors, local_scenario, select_link)
                     omx_file = _join(output_dir, "traffic_skims_%s.omx" % period)
-                    export_traffic_skims(local_period, omx_file, base_scenario)
+                    if msa_iteration < 4:
+                        export_traffic_skims(local_period, omx_file, base_scenario)
                 scenarios = {
                     database_path1: [scen_map[p] for p in periods_node1], 
                     database_path2: [scen_map[p] for p in periods_node2]
@@ -578,7 +580,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 traffic_assign(period, msa_iteration, relative_gap, max_assign_iterations, 
                                num_processors, period_scenario, select_link)
                 omx_file = _join(output_dir, "traffic_skims_%s.omx" % period)
-                export_traffic_skims(period, omx_file, base_scenario)
+                if msa_iteration < 4:
+                    export_traffic_skims(period, omx_file, base_scenario)
 
     def run_proc(self, name, arguments, log_message, capture_output=False):
         path = _join(self._path, "bin", name)
