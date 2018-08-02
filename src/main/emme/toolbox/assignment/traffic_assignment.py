@@ -507,10 +507,10 @@ Assign traffic demand for the selected time period."""
                     # For links with signals inactive in the off-peak periods, convert VDF to type 11
                     net_calc("vdf", "11", "modes=d and @green_to_cycle=0 and @traffic_control=4,5 and vdf=24")
                 # Set HOV2 cost attribute
-                create_attribute("LINK", "@cost_hov2_" % p, "toll (non-mngd) + cost for HOV2",
+                create_attribute("LINK", "@cost_hov2_%s" % p, "toll (non-mngd) + cost for HOV2",
                                  0, overwrite=True, scenario=scenario)
                 net_calc("@cost_hov2_%s" % p, "@cost_hov_%s" % p, "modes=d")
-                net_calc("@cost_hov2_%s" % p, "@cost_auto_%s" % p, "@land_restriction=3")
+                net_calc("@cost_hov2_%s" % p, "@cost_auto_%s" % p, "@lane_restriction=3")
 
             with _m.logbook_trace("Transit line headway and background traffic"):
                 # set headway for the period
@@ -644,11 +644,12 @@ Assign traffic demand for the selected time period."""
                 ("@reliability_sq", "Reliability factor squared"),
                 ("@auto_volume", "traffic link volume (volau)"),
                 ("@auto_time", "traffic link time (timau)"),
-                ("@auto_time_turn", "traffic turn time (ptimau)"),
             ]
             for name, description in link_attributes:
                 create_attribute("LINK", name, description,
                                  0, overwrite=True, scenario=scenario)
+            create_attribute("TURN", "@auto_time_turn", "traffic turn time (ptimau)", 
+                             overwrite=True, scenario=scenario)
 
             net_calc("@hovdist", "length", {"link": "@lane_restriction=2,3"})
             net_calc("@tollcost", "@toll_%s" % p)
