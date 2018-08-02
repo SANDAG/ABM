@@ -449,8 +449,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         if not skipFinalHighwayAssignment:
             with _m.logbook_trace("Final traffic assignments"):
+                final_iteration = 4
                 self.run_traffic_assignments(
-                    base_scenario, period_ids, msa_iteration, relative_gap, max_assign_iterations, 
+                    base_scenario, period_ids, final_iteration, relative_gap, max_assign_iterations, 
                     num_processors, select_link)
                 # Final iteration is assignment only, no skims
 
