@@ -126,7 +126,7 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
             _shutil.rmtree(transit_db_dir)
             time.sleep(10)  # wait 10 seconds - avoid potential race condition to remove the file in Windows
         os.mkdir(transit_db_dir)
-        
+
         network = base_scenario.get_partial_network(["NODE"], include_attributes=True)
         num_zones = sum([1 for n in network.nodes() if n["@tap_id"] > 0])
         dimensions = base_eb.dimensions
@@ -140,15 +140,14 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
         transit_eb.unit_of_energy = base_eb.unit_of_energy
         transit_eb.use_engineering_notation = base_eb.use_engineering_notation
         transit_eb.node_number_digits = base_eb.node_number_digits
-        
+
         zone_scenario = build_transit_scen(
             period="AM", base_scenario=base_scenario, transit_emmebank=transit_eb, 
             scenario_id=base_scenario.id, scenario_title="%s transit zones" % (base_scenario.title), 
             data_table_name=scenarioYear, overwrite=True)
-        
         for function in base_scenario.emmebank.functions():
             create_function(function.id, function.expression, transit_eb)
-
+        self.add_database(transit_eb)
         return zone_scenario
 
     def add_database(self, emmebank):
