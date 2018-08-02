@@ -251,8 +251,7 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
                 periods, work_time_PA_factors, work_time_AP_factors,
                 nonwork_time_PA_factors, nonwork_time_AP_factors):
             for gp_mode, toll_mode, w_o, nw_o in zip(
-                    gp_modes, toll_modes, 
-                    work_occupancy_factors, nonwork_occupancy_factors):
+                    gp_modes, toll_modes, work_occupancy_factors, nonwork_occupancy_factors):
                 wrk_mtx = w_o * (w_d_pa * wrk_pa_mtx + w_d_ap * wrk_ap_mtx)
                 nwrk_mtx = nw_o * (nw_d_pa * nwrk_pa_mtx + nw_d_ap * nwrk_ap_mtx)
 
@@ -291,3 +290,25 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
                 gp_einonwork = emmebank.matrix('%s_%s_EINONWORK' % (p, gp_mode))
                 toll_einonwork.set_numpy_data(non_work_toll_matrix, scenario)
                 gp_einonwork.set_numpy_data(non_work_gp_matrix, scenario)
+
+        precision = float(props['RunModel.MatrixPrecision'])
+        self.matrix_rounding(scenario, precision)
+
+    @_m.logbook_trace('Controlled rounding of demand')
+    def matrix_rounding(self, scenario, precision):
+        round_matrix = _m.Modeller().tool(
+            "inro.emme.matrix_calculation.matrix_controlled_rounding")
+        emmebank = scenario.emmebank
+        periods = ['EA', 'AM', 'MD', 'PM', 'EV']
+        modes = ["SOV", "HOV2", "HOV3"]
+        access_types = ["GP", "TOLL"]
+        purpose_types = ["EIWORK", "EINONWORK"]
+        for period in periods:
+            for mode in modes:
+                for access in access_types:
+                    for purpose in purpose_types:
+                        matrix = emmebank.matrix("mf_%s_%s%s_%s" % (period, mode, access, purpose))
+                        report = round_matrix(demand_to_round=matrix,
+                                              rounded_demand=matrix,
+                                              min_demand=precision,
+                                              values_to_round="SMALLER_THAN_MIN")

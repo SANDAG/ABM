@@ -165,7 +165,7 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
                 for p in ['EA', 'AM', 'MD', 'PM', 'EV']:
                     matrices.append('mf%s_TRK%sGP_VEH' % (p, t))
                     matrices.append('mf%s_TRK%sTOLL_VEH' % (p, t))
-            dem_utils.reduce_matrix_precision(matrices, precision*pce, num_processors, scenario)
+            dem_utils.reduce_matrix_precision(matrices, precision, num_processors, scenario)
 
     @_m.logbook_trace('Create friction factors matrix')
     def calc_friction_factors(self, truck_type, impedance, coeff):

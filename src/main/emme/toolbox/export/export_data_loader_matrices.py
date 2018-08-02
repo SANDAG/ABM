@@ -164,11 +164,13 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                     matrix_data_dist = emmebank.matrix(period + "_" + name + "_DIST").get_data(scenario)
                     if "TOLL" in name:
                         matrix_data_tollcost = emmebank.matrix(period + "_" + name + "_TOLLCOST").get_data(scenario)
+                    rounded_demand = 0
                     for orig in zones:
                         for dest in zones:
                             value = matrix_data.get(orig, dest)
                             # skip trips less than 0.00001 to avoid 0 trips records in database
                             if value < 0.00001: 
+                                rounded_demand += value
                                 continue
                             time = matrix_data_time.get(orig, dest)
                             distance = matrix_data_dist.get(orig, dest)
@@ -178,6 +180,8 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                             od_aoc = distance * aoc
                             f.write(",".join([str(orig), str(dest), period, key, formater(value), formater(time), formater(distance), formater(od_aoc), formater(tollcost)]))
                             f.write("\n")
+                    if rounded_demand > 0:
+                        print period + "_" + name + "_VEH", "rounded_demand", rounded_demand
 
     def external_demand(self):
         #get auto operating cost
@@ -208,11 +212,13 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                     matrix_data_tollcost = emmebank.matrix(period + "_SOVTOLLM_TOLLCOST").get_data(scenario)				
                     for key, name in name_mapping:
                         matrix_data = emmebank.matrix(period + "_" + name + "_EETRIPS").get_data(scenario)
+                        rounded_demand = 0
                         for orig in zones:
                             for dest in zones:
                                 value = matrix_data.get(orig, dest)
                                 # skip trips less than 0.00001 to avoid 0 trips records in database
-                                if value < 0.00001:  
+                                if value < 0.00001: 
+                                    rounded_demand += value
                                     continue
                                 time = matrix_data_time.get(orig, dest)
                                 distance = matrix_data_dist.get(orig, dest)
@@ -223,6 +229,8 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                                     [str(orig), str(dest), period, key, formater(value), formater(time), 
                                      formater(distance), formater(od_aoc), formater(tollcost)]))
                                 f.write("\n")
+                        if rounded_demand > 0:
+                            print period + "_" + name + "_EETRIPS", "rounded_demand", rounded_demand
 
         # EXTERNAL-INTERNAL TRIP TABLE				
         name_mapping = [
@@ -246,11 +254,13 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                     for purpose in ["WORK", "NONWORK"]:
                         for key, name in name_mapping:
                             matrix_data = emmebank.matrix(period + "_" + name + "_EI" + purpose).get_data(scenario)
+                            rounded_demand = 0
                             for orig in zones:
                                 for dest in zones:
                                     value = matrix_data.get(orig, dest)
                                     # skip trips less than 0.00001 to avoid 0 trips records in database
-                                    if value < 0.00001: 
+                                    if value < 0.00001:
+                                        rounded_demand += value
                                         continue                                    
                                     time = matrix_data_time.get(orig, dest)
                                     distance = matrix_data_dist.get(orig, dest)
@@ -262,6 +272,8 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                                         [str(orig), str(dest), period, key, purpose, formater(value), formater(time), 
                                          formater(distance), formater(od_aoc), formater(tollcost)]))
                                     f.write("\n")
+                            if rounded_demand > 0:
+                                print period + "_" + name + "_EI" + purpose, "rounded_demand", rounded_demand
 
     @_m.logbook_trace("Export total auto and truck demand to OMX")
     def total_demand(self):

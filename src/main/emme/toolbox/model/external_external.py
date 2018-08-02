@@ -168,3 +168,21 @@ class ExternalExternal(_m.Tool(), gen_utils.Snapshot):
                     "type": "MATRIX_CALCULATION"
                 }
                 matrix_calc(spec, scenario=scenario)
+
+        precision = float(props['RunModel.MatrixPrecision'])
+        self.matrix_rounding(scenario, precision)
+
+    @_m.logbook_trace('Controlled rounding of demand')
+    def matrix_rounding(self, scenario, precision):
+        round_matrix = _m.Modeller().tool(
+            "inro.emme.matrix_calculation.matrix_controlled_rounding")
+        emmebank = scenario.emmebank
+        periods = ['EA', 'AM', 'MD', 'PM', 'EV']
+        modes = ["SOV", "HOV2", "HOV3"]
+        for period in periods:
+            for mode in modes:
+                matrix = emmebank.matrix("mf_%s_%s_EETRIPS" % (period, mode))
+                report = round_matrix(demand_to_round=matrix,
+                                      rounded_demand=matrix,
+                                      min_demand=precision,
+                                      values_to_round="SMALLER_THAN_MIN")
