@@ -172,8 +172,8 @@ class PropertiesSetter(object):
             ("skipTripTableCreation",   "Skip trip table creation"),
         ]
         skip_final_items = [
-            ("skipFinalHighwayAssignment",  "Skip final highway assignments and skims"),
-            ("skipFinalTransitAssignment",  "Skip final transit assignments and skims"),
+            ("skipFinalHighwayAssignment",  "Skip final highway assignments"),
+            ("skipFinalTransitAssignment",  "Skip final transit assignments"),
             ("skipDataExport",              "Skip data export"),
             ("skipDataLoadRequest",         "Skip data load request"),
             ("skipDeleteIntermediateFiles", "Skip delete intermediate files"),

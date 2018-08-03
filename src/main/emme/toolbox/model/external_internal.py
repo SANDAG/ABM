@@ -300,15 +300,13 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
             "inro.emme.matrix_calculation.matrix_controlled_rounding")
         emmebank = scenario.emmebank
         periods = ['EA', 'AM', 'MD', 'PM', 'EV']
-        modes = ["SOV", "HOV2", "HOV3"]
-        access_types = ["GP", "TOLL"]
+        modes = ["SOVGP", "HOV2HOV", "HOV3HOV", "SOVTOLL", "HOV2TOLL", "HOV3TOLL"]
         purpose_types = ["EIWORK", "EINONWORK"]
         for period in periods:
             for mode in modes:
-                for access in access_types:
-                    for purpose in purpose_types:
-                        matrix = emmebank.matrix("mf_%s_%s%s_%s" % (period, mode, access, purpose))
-                        report = round_matrix(demand_to_round=matrix,
-                                              rounded_demand=matrix,
-                                              min_demand=precision,
-                                              values_to_round="SMALLER_THAN_MIN")
+                for purpose in purpose_types:
+                    matrix = emmebank.matrix("mf%s_%s_%s" % (period, mode, purpose))
+                    report = round_matrix(demand_to_round=matrix,
+                                          rounded_demand=matrix,
+                                          min_demand=precision,
+                                          values_to_round="SMALLER_THAN_MIN")

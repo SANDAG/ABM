@@ -181,7 +181,7 @@ class ExternalExternal(_m.Tool(), gen_utils.Snapshot):
         modes = ["SOV", "HOV2", "HOV3"]
         for period in periods:
             for mode in modes:
-                matrix = emmebank.matrix("mf_%s_%s_EETRIPS" % (period, mode))
+                matrix = emmebank.matrix("mf%s_%s_EETRIPS" % (period, mode))
                 report = round_matrix(demand_to_round=matrix,
                                       rounded_demand=matrix,
                                       min_demand=precision,
