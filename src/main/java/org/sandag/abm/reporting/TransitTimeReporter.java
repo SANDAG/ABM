@@ -72,6 +72,7 @@ public class TransitTimeReporter {
     
     String period; //should be "AM" or "MD"
     float threshold; //tested at 30 minutes
+    boolean inbound = false;
     
     private PrintWriter walkAccessWriter;
     private PrintWriter driveAccessWriter;
@@ -151,10 +152,24 @@ public class TransitTimeReporter {
 		
 		int skimPeriod = -1;
 		
-		if(period.compareTo("AM")==0){
+		if(period.compareTo("EA")==0){
+			skimPeriod=ModelStructure.EA_SKIM_PERIOD_INDEX;
+			inbound = false;
+		}else if(period.compareTo("AM")==0){
 			skimPeriod=ModelStructure.AM_SKIM_PERIOD_INDEX;
-		}else{
+			inbound = false;
+		}else if(period.compareTo("MD")==0){
 			skimPeriod=ModelStructure.MD_SKIM_PERIOD_INDEX;
+			inbound = false;
+		}else if(period.compareTo("PM")==0){
+			skimPeriod=ModelStructure.PM_SKIM_PERIOD_INDEX;
+			inbound = true;
+		}else if(period.compareTo("EV")==0){
+			skimPeriod=ModelStructure.EV_SKIM_PERIOD_INDEX;
+			inbound = true;
+		}else{
+			logger.fatal("Skim period "+period+" not recognized");
+			throw new RuntimeException();
 		}
 		
 		//iterate through mazs and calculate time
@@ -215,7 +230,12 @@ public class TransitTimeReporter {
 				}
 				
 				//drive calculations
-		    	double[][] bestDriveTaps = bestPathCalculator.getBestTapPairs(walkDmu, driveDmu, bestPathCalculator.DTW, originMaz, destinationMaz, skimPeriod, false, logger, odDistance);
+				double[][] bestDriveTaps = null;
+				if(inbound==false){
+					bestDriveTaps = bestPathCalculator.getBestTapPairs(walkDmu, driveDmu, bestPathCalculator.DTW, originMaz, destinationMaz, skimPeriod, false, logger, odDistance);
+				}else{
+					bestDriveTaps = bestPathCalculator.getBestTapPairs(walkDmu, driveDmu, bestPathCalculator.WTD, originMaz, destinationMaz, skimPeriod, false, logger, odDistance);
+				}
 				double[] bestDriveUtilities = bestPathCalculator.getBestUtilities();
 			
 			    //only look at best utility path; continue if MGRA isn't available by walk.
@@ -227,10 +247,17 @@ public class TransitTimeReporter {
 					int set = (int) bestDriveTaps[0][2];
 	        	
 					//skims for best drive pair
-                    boardAccessTime = tazManager.getTimeToTapFromTaz(originTaz,boardTap,( Modes.AccessMode.PARK_N_RIDE ));
-                    alightAccessTime = mgraManager.getWalkTimeFromMgraToTap(destinationMaz,alightTap);
-					double[] driveSkims = dtw.getDriveTransitWalkSkims(set, boardAccessTime, alightAccessTime, boardTap, alightTap, skimPeriod, false); 
-
+					double[] driveSkims = null;
+					if(inbound==false){
+						boardAccessTime = tazManager.getTimeToTapFromTaz(originTaz,boardTap,( Modes.AccessMode.PARK_N_RIDE ));
+						alightAccessTime = mgraManager.getWalkTimeFromMgraToTap(destinationMaz,alightTap);
+						driveSkims = dtw.getDriveTransitWalkSkims(set, boardAccessTime, alightAccessTime, boardTap, alightTap, skimPeriod, false); 
+					}else{
+						boardAccessTime = mgraManager.getWalkTimeFromMgraToTap(originMaz,boardTap);
+						alightAccessTime = tazManager.getTimeToTapFromTaz(destinationTaz,alightTap,( Modes.AccessMode.PARK_N_RIDE ));
+						driveSkims = wtd.getWalkTransitDriveSkims(set, boardAccessTime, alightAccessTime, boardTap, alightTap, skimPeriod, false); 
+						
+					}
 					//total drive-transit time
 					double totalTime =  driveSkims[DRV_DRIVEACCESSTIME]   
 					                  + driveSkims[DRV_WALKEGRESSTIME]
