@@ -221,6 +221,12 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             gen_utils.log_snapshot("Import network", str(self), attributes)
             try:
                 yield
+            except Exception as error:
+                self._log.append({"type": "text", "content": error})
+                trace_text = _traceback.format_exc(error).replace("\n", "<br>")
+                self._log.append({"type": "text", "content": trace_text})
+                self._error.append(error)
+                raise
             finally:
                 self.log_report()
                 if self._error:
@@ -380,104 +386,90 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             if existing_scenario:
                 title = existing_scenario.title
 
+        def create_attributes(scenario, attr_map):
+            for elem_type, mapping in attr_map.iteritems():
+                for name, _tcoved_type, emme_type, desc in mapping.values():
+                    if emme_type == "EXTRA":
+                        if not scenario.extra_attribute(name):
+                            xatt = scenario.create_extra_attribute(elem_type, name)
+                            xatt.description =  desc
+                    elif emme_type == "STRING":
+                        if not scenario.network_field(elem_type, name):
+                            scenario.create_network_field(elem_type, name, 'STRING', description=desc)
+
         if self.traffic_scenario_id:
-            traffic_scenario = create_scenario(self.traffic_scenario_id, title + " Traffic", 
-                                               overwrite=self.overwrite, emmebank=self.emmebank)
+            traffic_scenario = create_scenario(
+                self.traffic_scenario_id, title + " Traffic", 
+                overwrite=self.overwrite, emmebank=self.emmebank)
+            create_attributes(traffic_scenario, traffic_attr_map)
         else:
             traffic_scenario = None
         if self.transit_scenario_id:
-            transit_scenario = create_scenario(self.transit_scenario_id, title + " Transit", 
-                                               overwrite=self.overwrite, emmebank=self.emmebank)
+            transit_scenario = create_scenario(
+                self.transit_scenario_id, title + " Transit", 
+                overwrite=self.overwrite, emmebank=self.emmebank)
+            create_attributes(transit_scenario, transit_attr_map)
         else:
             transit_scenario = None
         if self.merged_scenario_id:
-            scenario = create_scenario(self.merged_scenario_id, title, 
-                                       overwrite=self.overwrite, emmebank=self.emmebank)
+            scenario = create_scenario(
+                self.merged_scenario_id, title, 
+                overwrite=self.overwrite, emmebank=self.emmebank)
+            create_attributes(scenario, traffic_attr_map)
+            create_attributes(scenario, transit_attr_map)
         else:
             scenario = traffic_scenario or transit_scenario
 
-        if self.traffic_scenario_id or self.merged_scenario_id:
-            for elem_type, attrs in traffic_attr_map.iteritems():
-                log_content = []
-                for k, v in attrs.iteritems():
-                    if v[3] == "DERIVED":
-                        k = "--"
-                    log_content.append([k] + list(v))
-                self._log.append({
-                    "content": log_content, 
-                    "type": "table", 
-                    "header": ["TCOVED", "Emme", "Source", "Type", "Description"],
-                    "title": "Traffic %s attributes" % elem_type.lower().replace("_", " "), 
-                    "disclosure": True
-                })
-            traffic_network = _network.Network()
-            self.create_traffic_base(traffic_network, traffic_attr_map)
-            self.create_turns(traffic_network)
-            self.calc_traffic_attributes(traffic_network)
-            self.check_zone_access(traffic_network, traffic_network.mode("d"))
+        traffic_network = _network.Network()
+        transit_network = _network.Network()
+        try:
+            if self.traffic_scenario_id or self.merged_scenario_id:
+                for elem_type, attrs in traffic_attr_map.iteritems():
+                    log_content = []
+                    for k, v in attrs.iteritems():
+                        if v[3] == "DERIVED":
+                            k = "--"
+                        log_content.append([k] + list(v))
+                    self._log.append({
+                        "content": log_content, 
+                        "type": "table", 
+                        "header": ["TCOVED", "Emme", "Source", "Type", "Description"],
+                        "title": "Traffic %s attributes" % elem_type.lower().replace("_", " "), 
+                        "disclosure": True
+                    })
+                try:
+                    self.create_traffic_base(traffic_network, traffic_attr_map)
+                    self.create_turns(traffic_network)
+                    self.calc_traffic_attributes(traffic_network)
+                    self.check_zone_access(traffic_network, traffic_network.mode("d"))
+                finally:
+                    traffic_scenario.publish_network(traffic_network, resolve_attributes=True)
 
-            for elem_type, mapping in traffic_attr_map.iteritems():
-                for name, tcoved_type, emme_type, desc in mapping.values():
-                    if emme_type == "INTERNAL":
-                        traffic_network.delete_attribute(elem_type, name)
-                    if self.traffic_scenario_id:
-                        if emme_type == "EXTRA":
-                            xatt = traffic_scenario.create_extra_attribute(elem_type, name)
-                            xatt.description =  desc
-                        elif emme_type == "STRING":
-                            traffic_scenario.create_network_field(elem_type, name, 'STRING', description=desc)
+            if self.transit_scenario_id or self.merged_scenario_id:
+                for elem_type, attrs in transit_attr_map.iteritems():
+                    log_content = []
+                    for k, v in attrs.iteritems():
+                        if v[3] == "DERIVED":
+                            k = "--"
+                        log_content.append([k] + list(v))
+                    self._log.append({
+                        "content": log_content, 
+                        "type": "table", 
+                        "header": ["TCOVED", "Emme", "Source", "Type", "Description"],
+                        "title": "Transit %s attributes" % elem_type.lower().replace("_", " "),
+                        "disclosure": True
+                    })
+                try:
+                    self.create_transit_base(transit_network, transit_attr_map)
+                    self.create_transit_lines(transit_network, transit_attr_map)
+                    self.calc_transit_attributes(transit_network)
+                finally:
+                    transit_scenario.publish_network(traffic_network, resolve_attributes=True)
                     if self.merged_scenario_id:
-                        if emme_type == "EXTRA":
-                            xatt = scenario.create_extra_attribute(elem_type, name)
-                            xatt.description = desc
-                        elif emme_type == "STRING":
-                            scenario.create_network_field(elem_type, name, 'STRING', description=desc)
-        if self.traffic_scenario_id:
-            traffic_scenario.publish_network(traffic_network)
-
-        if self.transit_scenario_id or self.merged_scenario_id:
-            for elem_type, attrs in transit_attr_map.iteritems():
-                log_content = []
-                for k, v in attrs.iteritems():
-                    if v[3] == "DERIVED":
-                        k = "--"
-                    log_content.append([k] + list(v))
-                self._log.append({
-                    "content": log_content, 
-                    "type": "table", 
-                    "header": ["TCOVED", "Emme", "Source", "Type", "Description"],
-                    "title": "Transit %s attributes" % elem_type.lower().replace("_", " "),
-                    "disclosure": True
-                })
-            transit_network = _network.Network()
-            self.create_transit_base(transit_network, transit_attr_map)
-            self.create_transit_lines(transit_network, transit_attr_map)
-            self.calc_transit_attributes(transit_network)
-
-            for elem_type, mapping in transit_attr_map.iteritems():
-                for name, tcoved_type, emme_type, desc in mapping.values():                    
-                    if emme_type == "INTERNAL":
-                        transit_network.delete_attribute(elem_type, name)
-                    if self.transit_scenario_id:
-                        if emme_type == "EXTRA":
-                            xatt = transit_scenario.create_extra_attribute(elem_type, name)
-                            xatt.description = desc
-                        elif emme_type == "STRING":
-                            transit_scenario.create_network_field(elem_type, name, 'STRING', description=desc)
-                    if self.merged_scenario_id:
-                        if emme_type == "EXTRA":
-                            if not scenario.extra_attribute(name):
-                                xatt = scenario.create_extra_attribute(elem_type, name)
-                                xatt.description = desc
-                        elif emme_type == "STRING":
-                            if not scenario.network_field(elem_type, name):
-                                scenario.create_network_field(elem_type, name, 'STRING', description=desc)
-        if self.transit_scenario_id:
-            transit_scenario.publish_network(transit_network)
-
-        if self.merged_scenario_id:
-            self.add_transit_to_traffic(traffic_network, transit_network)
-            scenario.publish_network(traffic_network)
+                        self.add_transit_to_traffic(traffic_network, transit_network)
+        finally:
+            if self.merged_scenario_id:
+                scenario.publish_network(traffic_network, resolve_attributes=True)
 
         self.set_functions(scenario)
         self.check_connectivity(scenario)
@@ -1561,6 +1553,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 raise Exception("No access permitted to zone %s" % centroid.id)
 
     def add_transit_to_traffic(self, hwy_network, tr_network):
+        if not self.merged_scenario_id or not hwy_network or not tr_network:
+            return
         self._log.append({"type": "header", "content": "Merge transit network to traffic network"})
         fatal_errors = 0
         for tr_mode in tr_network.modes():
@@ -1676,9 +1670,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             if auto_mode in hwy_link.modes:
                 for seg in hwy_link.segments():
                     seg.transit_time_func = 1
-
         if fatal_errors > 0:
             raise Exception("Cannot merge traffic and transit network, %s fatal errors found" % fatal_errors)
+
         self._log.append({"type": "text", "content": "Merge transit network to traffic network complete"})
 
     def _split_link(self, network, i_node, j_node, new_node_id):
