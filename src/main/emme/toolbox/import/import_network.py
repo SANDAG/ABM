@@ -464,7 +464,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     self.create_transit_lines(transit_network, transit_attr_map)
                     self.calc_transit_attributes(transit_network)
                 finally:
-                    transit_scenario.publish_network(traffic_network, resolve_attributes=True)
+                    transit_scenario.publish_network(transit_network, resolve_attributes=True)
                     if self.merged_scenario_id:
                         self.add_transit_to_traffic(traffic_network, transit_network)
         finally:
