@@ -736,76 +736,6 @@ GO
 
 
 
--- Create stored procedure for performance metrics #7a/b to return destinations
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2019].[sp_pm_7ab_destinations]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [rtp_2019].[sp_pm_7ab_destinations]
-GO
-
-CREATE PROCEDURE [rtp_2019].[sp_pm_7ab_destinations]
-	@scenario_id integer,
-	@uats bit = 0 -- switch to limit population geography to UATS zones
-AS
-
-/*	Author: Gregor Schroeder
-	Date: 8/7/2018
-	Description: Destinations at the MGRA level to be used in calculations
-	for Performance Measures 7a/b. Allows aggregation to MGRA or TAZ level for
-	both transit and auto accessibility and optional restriction to UATS
-	geography only. Beachactive and parkactive measures are left as sums for now
-	for later calculation of indicators of > .5 to allow for aggregation. */
-
-SET NOCOUNT ON;
-
--- get mgras that are fully contained within UATS districts
-DECLARE @uats_mgras TABLE ([mgra] nchar(15) PRIMARY KEY NOT NULL)
-INSERT INTO @uats_mgras
-SELECT CONVERT(nchar, [mgra]) AS [mgra] FROM
-OPENQUERY(
-	[sql2014b8],
-	'SELECT [mgra] FROM [lis].[gis].[uats2014],[lis].[gis].[MGRA13PT]
-		WHERE [uats2014].[Shape].STContains([MGRA13PT].[Shape]) = 1');
-
-SELECT
-	[geography].[mgra_13]
-	,[geography].[taz_13]
-	,SUM([emp_total] + [collegeenroll] + [othercollegeenroll] + [adultschenrl]) AS [emp_educ] -- used in pm 7a
-	,SUM([beachactive]) AS [beachactive] -- used in pm 7b, indicator > .5
-	,SUM([emp_health]) AS [emp_health] -- used in pm 7b
-	,SUM([parkactive]) AS [parkactive] -- used in pm 7b, indicator > .5
-	,SUM([emp_retail]) AS [emp_retail] -- used in pm 7b
-FROM
-	[fact].[mgra_based_input]
-INNER JOIN
-	[dimension].[geography]
-ON
-	[mgra_based_input].[geography_id] = [geography].[geography_id]
-LEFT OUTER JOIN -- keep as outer join since where clause is	OR condition
-	@uats_mgras AS [uats_xref]
-ON
-	[geography].[mgra_13] = [uats_xref].[mgra]
-WHERE
-	[mgra_based_input].[scenario_id] = @scenario_id
-	AND ((@uats = 1 AND [uats_xref].[mgra] IS NOT NULL)
-		OR @uats = 0) -- if UATS districts option selected only count destinations within UATS district
-GROUP BY
-	[geography].[mgra_13]
-	,[geography].[taz_13]
-HAVING
-	SUM([emp_total] + [collegeenroll] + [othercollegeenroll] + [adultschenrl]) > 0
-	OR SUM([beachactive]) > 0
-	OR SUM([emp_health]) > 0
-	OR SUM([parkactive]) > 0
-	OR SUM([emp_retail]) > 0
-GO
-
--- Add metadata for [rtp_2019].[sp_pm_7ab_destinations]
-EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_pm_7ab_destinations', 'SUBSYSTEM', 'rtp 2019'
-EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_pm_7ab_destinations', 'MS_Description', 'performance metric 7ab destinations'
-GO
-
-
-
-
 -- Create stored procedure for performance metric #6a
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2019].[sp_pm_6a]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [rtp_2019].[sp_pm_6a]
@@ -916,6 +846,76 @@ GO
 -- Add metadata for [rtp_2019].[sp_pm_6a]
 EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_pm_6a', 'SUBSYSTEM', 'rtp 2019'
 EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_pm_6a', 'MS_Description', 'performance metric 6a'
+GO
+
+
+
+
+-- Create stored procedure for performance metrics #7a/b to return destinations
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2019].[sp_pm_7ab_destinations]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [rtp_2019].[sp_pm_7ab_destinations]
+GO
+
+CREATE PROCEDURE [rtp_2019].[sp_pm_7ab_destinations]
+	@scenario_id integer,
+	@uats bit = 0 -- switch to limit population geography to UATS zones
+AS
+
+/*	Author: Gregor Schroeder
+	Date: 8/7/2018
+	Description: Destinations at the MGRA level to be used in calculations
+	for Performance Measures 7a/b. Allows aggregation to MGRA or TAZ level for
+	both transit and auto accessibility and optional restriction to UATS
+	geography only. Beachactive and parkactive measures are left as sums for now
+	for later calculation of indicators of > .5 to allow for aggregation. */
+
+SET NOCOUNT ON;
+
+-- get mgras that are fully contained within UATS districts
+DECLARE @uats_mgras TABLE ([mgra] nchar(15) PRIMARY KEY NOT NULL)
+INSERT INTO @uats_mgras
+SELECT CONVERT(nchar, [mgra]) AS [mgra] FROM
+OPENQUERY(
+	[sql2014b8],
+	'SELECT [mgra] FROM [lis].[gis].[uats2014],[lis].[gis].[MGRA13PT]
+		WHERE [uats2014].[Shape].STContains([MGRA13PT].[Shape]) = 1');
+
+SELECT
+	[geography].[mgra_13]
+	,[geography].[taz_13]
+	,SUM([emp_total] + [collegeenroll] + [othercollegeenroll] + [adultschenrl]) AS [emp_educ] -- used in pm 7a
+	,SUM([beachactive]) AS [beachactive] -- used in pm 7b, indicator > .5
+	,SUM([emp_health]) AS [emp_health] -- used in pm 7b
+	,SUM([parkactive]) AS [parkactive] -- used in pm 7b, indicator > .5
+	,SUM([emp_retail]) AS [emp_retail] -- used in pm 7b
+FROM
+	[fact].[mgra_based_input]
+INNER JOIN
+	[dimension].[geography]
+ON
+	[mgra_based_input].[geography_id] = [geography].[geography_id]
+LEFT OUTER JOIN -- keep as outer join since where clause is	OR condition
+	@uats_mgras AS [uats_xref]
+ON
+	[geography].[mgra_13] = [uats_xref].[mgra]
+WHERE
+	[mgra_based_input].[scenario_id] = @scenario_id
+	AND ((@uats = 1 AND [uats_xref].[mgra] IS NOT NULL)
+		OR @uats = 0) -- if UATS districts option selected only count destinations within UATS district
+GROUP BY
+	[geography].[mgra_13]
+	,[geography].[taz_13]
+HAVING
+	SUM([emp_total] + [collegeenroll] + [othercollegeenroll] + [adultschenrl]) > 0
+	OR SUM([beachactive]) > 0
+	OR SUM([emp_health]) > 0
+	OR SUM([parkactive]) > 0
+	OR SUM([emp_retail]) > 0
+GO
+
+-- Add metadata for [rtp_2019].[sp_pm_7ab_destinations]
+EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_pm_7ab_destinations', 'SUBSYSTEM', 'rtp 2019'
+EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_pm_7ab_destinations', 'MS_Description', 'performance metric 7ab destinations'
 GO
 
 
@@ -1614,9 +1614,9 @@ with [skims] AS (
 	SELECT
 		[trip_origin_taz_13]
 		,MAX([beachactive]) AS [beachactive]
-		,SUM([emp_health]) AS [emp_health]
+		,CONVERT(float, SUM([emp_health])) AS [emp_health]
 		,MAX([parkactive]) AS [parkactive]
-		,SUM([emp_retail]) AS [emp_retail]
+		,CONVERT(float, SUM([emp_retail])) AS [emp_retail]
 	FROM
 		[skims]
 	INNER JOIN
