@@ -1096,6 +1096,7 @@ with [skims] AS (
 		WHERE
 			[person].[scenario_id] = @scenario_id
 			AND [household].[scenario_id] = @scenario_id
+			AND [person].[age] >= 18
 			AND ((@uats = 1 AND [uats_xref].[mgra] IS NOT NULL)
 			    OR @uats = 0) -- if UATS districts option selected only count population within UATS district
 		GROUP BY
@@ -1117,13 +1118,20 @@ with [skims] AS (
 SELECT
 	@scenario_id AS [scenario_id]
 	,'auto' AS [accessibility_mode]
-	,SUM(100.0 * [pop] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop]) AS [pop_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_senior] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_senior]) AS [pop_senior_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_non_senior] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_senior]) AS [pop_non_senior_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_minority] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_minority]) AS [pop_minority_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_non_minority] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_minority]) AS [pop_non_minority_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_low_income] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_low_income]) AS [pop_low_income_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_non_low_income] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_low_income]) AS [pop_non_low_income_wgt_avg_job_sch_enroll]
+	,SUM(100.0 * [pop] * ISNULL([emp_educ], 0)) / SUM([pop]) AS [pop_job_enroll]
+	,SUM(100.0 * [pop_senior] * ISNULL([emp_educ], 0)) / SUM([pop_senior]) AS [pop_senior_job_enroll]
+	,SUM(100.0 * [pop_non_senior] * ISNULL([emp_educ], 0)) / SUM([pop_non_senior]) AS [pop_non_senior_job_enroll]
+	,SUM(100.0 * [pop_minority] * ISNULL([emp_educ], 0)) / SUM([pop_minority]) AS [pop_minority_job_enroll]
+	,SUM(100.0 * [pop_non_minority] * ISNULL([emp_educ], 0)) / SUM([pop_non_minority]) AS [pop_non_minority_job_enroll]
+	,SUM(100.0 * [pop_low_income] * ISNULL([emp_educ], 0)) / SUM([pop_low_income]) AS [pop_low_income_job_enroll]
+	,SUM(100.0 * [pop_non_low_income] * ISNULL([emp_educ], 0)) / SUM([pop_non_low_income]) AS [pop_non_low_income_job_enroll]
+	,SUM(100.0 * [pop] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop]) AS [pop_pct_job_enroll]
+	,SUM(100.0 * [pop_senior] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_senior]) AS [pop_senior_pct_job_enroll]
+	,SUM(100.0 * [pop_non_senior] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_senior]) AS [pop_non_senior_pct_job_enroll]
+	,SUM(100.0 * [pop_minority] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_minority]) AS [pop_minority_pct_job_enroll]
+	,SUM(100.0 * [pop_non_minority] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_minority]) AS [pop_non_minority_pct_job_enroll]
+	,SUM(100.0 * [pop_low_income] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_low_income]) AS [pop_low_income_pct_job_enroll]
+	,SUM(100.0 * [pop_non_low_income] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_low_income]) AS [pop_non_low_income_pct_job_enroll]
 FROM
 	[taz_pop]
 LEFT OUTER JOIN
@@ -1301,6 +1309,7 @@ with [skims] AS (
 		WHERE
 			[person].[scenario_id] = @scenario_id
 			AND [household].[scenario_id] = @scenario_id
+			AND [person].[age] >= 18
 			AND ((@uats = 1 AND [uats_xref].[mgra] IS NOT NULL)
 				OR @uats = 0) -- if UATS districts option selected only count population within UATS district
 		GROUP BY
@@ -1322,13 +1331,20 @@ with [skims] AS (
 SELECT
 	@scenario_id AS [scenario_id]
 	,'transit' AS [accessibility_mode]
-	,SUM(100.0 * [pop] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop]) AS [pop_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_senior] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_senior]) AS [pop_senior_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_non_senior] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_senior]) AS [pop_non_senior_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_minority] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_minority]) AS [pop_minority_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_non_minority] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_minority]) AS [pop_non_minority_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_low_income] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_low_income]) AS [pop_low_income_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_non_low_income] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_low_income]) AS [pop_non_low_income_wgt_avg_job_sch_enroll]
+	,SUM(100.0 * [pop] * ISNULL([emp_educ], 0)) / SUM([pop]) AS [pop_job_enroll]
+	,SUM(100.0 * [pop_senior] * ISNULL([emp_educ], 0)) / SUM([pop_senior]) AS [pop_senior_job_enroll]
+	,SUM(100.0 * [pop_non_senior] * ISNULL([emp_educ], 0)) / SUM([pop_non_senior]) AS [pop_non_senior_job_enroll]
+	,SUM(100.0 * [pop_minority] * ISNULL([emp_educ], 0)) / SUM([pop_minority]) AS [pop_minority_job_enroll]
+	,SUM(100.0 * [pop_non_minority] * ISNULL([emp_educ], 0)) / SUM([pop_non_minority]) AS [pop_non_minority_job_enroll]
+	,SUM(100.0 * [pop_low_income] * ISNULL([emp_educ], 0)) / SUM([pop_low_income]) AS [pop_low_income_job_enroll]
+	,SUM(100.0 * [pop_non_low_income] * ISNULL([emp_educ], 0)) / SUM([pop_non_low_income]) AS [pop_non_low_income_job_enroll]
+	,SUM(100.0 * [pop] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop]) AS [pop_pct_job_enroll]
+	,SUM(100.0 * [pop_senior] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_senior]) AS [pop_senior_pct_job_enroll]
+	,SUM(100.0 * [pop_non_senior] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_senior]) AS [pop_non_senior_pct_job_enroll]
+	,SUM(100.0 * [pop_minority] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_minority]) AS [pop_minority_pct_job_enroll]
+	,SUM(100.0 * [pop_non_minority] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_minority]) AS [pop_non_minority_pct_job_enroll]
+	,SUM(100.0 * [pop_low_income] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_low_income]) AS [pop_low_income_pct_job_enroll]
+	,SUM(100.0 * [pop_non_low_income] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_low_income]) AS [pop_non_low_income_pct_job_enroll]
 FROM
 	[mgra_pop]
 LEFT OUTER JOIN
@@ -1543,10 +1559,12 @@ SELECT
 	@scenario_id AS [scenario_id]
 	,'auto' AS [accessibility_mode]
 	,ISNULL([pop_segmentation], 'Total') AS [pop_segmentation]
-	,100.0 * SUM([weight_person] * ISNULL([emp_health], 0) / [total_emp_health]) / SUM([weight_person]) AS [emp_health]
-	,100.0 * SUM([weight_person] * ISNULL([emp_retail], 0) / [total_emp_retail]) / SUM([weight_person]) AS [emp_retail]
-	,100.0 * SUM(CASE WHEN [beachactive] = 1 THEN [weight_person] ELSE 0 END) / SUM([weight_person]) AS [beachactive]
-	,100.0 * SUM(CASE WHEN [parkactive] = 1 THEN [weight_person] ELSE 0 END) / SUM([weight_person]) AS [parkactive]
+	,100.0 * SUM(CASE WHEN [beachactive] = 1 THEN [weight_person] ELSE 0 END) / SUM([weight_person]) AS [pct_pop_beachactive]
+	,100.0 * SUM(CASE WHEN [parkactive] = 1 THEN [weight_person] ELSE 0 END) / SUM([weight_person]) AS [pct_pop_parkactive]
+	,100.0 * SUM([weight_person] * ISNULL([emp_health], 0)) / SUM([weight_person]) AS [health]
+	,100.0 * SUM([weight_person] * ISNULL([emp_retail], 0)) / SUM([weight_person]) AS [retail]
+	,100.0 * SUM([weight_person] * ISNULL([emp_health], 0) / [total_emp_health]) / SUM([weight_person]) AS [pct_health]
+	,100.0 * SUM([weight_person] * ISNULL([emp_retail], 0) / [total_emp_retail]) / SUM([weight_person]) AS [pct_retail]
 FROM
 	[taz_pop]
 LEFT OUTER JOIN
@@ -1771,10 +1789,12 @@ SELECT
 	@scenario_id AS [scenario_id]
 	,'transit' AS [accessibility_mode]
 	,ISNULL([pop_segmentation], 'Total') AS [pop_segmentation]
-	,100.0 * SUM([weight_person] * ISNULL([emp_health], 0) / [total_emp_health]) / SUM([weight_person]) AS [emp_health]
-	,100.0 * SUM([weight_person] * ISNULL([emp_retail], 0) / [total_emp_retail]) / SUM([weight_person]) AS [emp_retail]
-	,100.0 * SUM(CASE WHEN [beachactive] = 1 THEN [weight_person] ELSE 0 END) / SUM([weight_person]) AS [beachactive]
-	,100.0 * SUM(CASE WHEN [parkactive] = 1 THEN [weight_person] ELSE 0 END) / SUM([weight_person]) AS [parkactive]
+	,100.0 * SUM(CASE WHEN [beachactive] = 1 THEN [weight_person] ELSE 0 END) / SUM([weight_person]) AS [pct_pop_beachactive]
+	,100.0 * SUM(CASE WHEN [parkactive] = 1 THEN [weight_person] ELSE 0 END) / SUM([weight_person]) AS [pct_pop_parkactive]
+	,100.0 * SUM([weight_person] * ISNULL([emp_health], 0)) / SUM([weight_person]) AS [health]
+	,100.0 * SUM([weight_person] * ISNULL([emp_retail], 0)) / SUM([weight_person]) AS [retail]
+	,100.0 * SUM([weight_person] * ISNULL([emp_health], 0) / [total_emp_health]) / SUM([weight_person]) AS [pct_health]
+	,100.0 * SUM([weight_person] * ISNULL([emp_retail], 0) / [total_emp_retail]) / SUM([weight_person]) AS [pct_retail]
 FROM
 	[mgra_pop]
 LEFT OUTER JOIN
