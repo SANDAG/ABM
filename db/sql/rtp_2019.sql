@@ -851,6 +851,98 @@ GO
 
 
 
+-- Create stored procedure for performance metrics #7a/b to return population
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2019].[sp_pm_7ab_population]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [rtp_2019].[sp_pm_7ab_population]
+GO
+
+CREATE PROCEDURE [rtp_2019].[sp_pm_7ab_population]
+	@scenario_id integer,
+	@age_18_plus bit = 0, -- switch to limit population to aged 18+
+	@uats bit = 0 -- switch to limit population geography to UATS zones
+AS
+
+/*	Author: Gregor Schroeder
+	Date: 8/7/2018
+	Description: Population at the MGRA level to be used in calculations
+	for Performance Measures 7a/b. Allows aggregation to MGRA or TAZ level for
+	both transit and auto accessibility, optional restriction to 18+ for
+	employment and enrollment metrics, and optional restriction to UATS
+	geography only. */
+
+SET NOCOUNT ON;
+
+-- get mgras that are fully contained within UATS districts
+DECLARE @uats_mgras TABLE ([mgra] nchar(15) PRIMARY KEY NOT NULL)
+INSERT INTO @uats_mgras
+SELECT CONVERT(nchar, [mgra]) AS [mgra] FROM
+OPENQUERY(
+	[sql2014b8],
+	'SELECT [mgra] FROM [lis].[gis].[uats2014],[lis].[gis].[MGRA13PT]
+		WHERE [uats2014].[Shape].STContains([MGRA13PT].[Shape]) = 1');
+
+SELECT
+	[mgra_13]
+	,[taz_13]
+	,[pop]
+	,[pop_senior]
+	,[pop] - [pop_senior] AS [pop_non_senior]
+	,[pop_minority]
+	,[pop] - [pop_minority] AS [pop_non_minority]
+	,[pop_low_income]
+	,[pop] - [pop_low_income] AS [pop_non_low_income]
+FROM (
+	SELECT
+		[geography_household_location].[household_location_mgra_13] AS [mgra_13]
+		,[geography_household_location].[household_location_taz_13] AS [taz_13]
+		,SUM([person].[weight_person]) AS [pop]
+		,SUM(CASE WHEN [person].[age] >= 75 THEN [person].[weight_person] ELSE 0 END) AS [pop_senior]
+		,SUM(CASE	WHEN [person].[race] IN ('Some Other Race Alone',
+												'Asian Alone',
+												'Black or African American Alone',
+												'Two or More Major Race Groups',
+												'Native Hawaiian and Other Pacific Islander Alone',
+												'American Indian and Alaska Native Tribes specified; or American Indian or Alaska Native, not specified and no other races')
+							OR [person].[hispanic] = 'Hispanic' THEN [person].[weight_person]
+							ELSE 0 END) AS [pop_minority]
+		,SUM(CASE WHEN [household].[poverty] <= 2 THEN [person].[weight_person] ELSE 0 END) AS [pop_low_income]
+	FROM
+		[dimension].[person]
+	INNER JOIN
+		[dimension].[household]
+	ON
+		[person].[scenario_id] = [household].[scenario_id]
+		AND [person].[household_id] = [household].[household_id]
+	INNER JOIN
+		[dimension].[geography_household_location]
+	ON
+		[household].[geography_household_location_id] = [geography_household_location].[geography_household_location_id]
+	LEFT OUTER JOIN -- keep as outer join since where clause is	OR condition
+		@uats_mgras AS [uats_xref]
+	ON
+		[geography_household_location].[household_location_mgra_13] = [uats_xref].[mgra]
+	WHERE
+		[person].[scenario_id] = @scenario_id
+		AND [household].[scenario_id] = @scenario_id
+		AND ((@age_18_plus = 1 AND [person].[age] >= 18)
+			OR @age_18_plus = 0) -- if age 18+ option is selected restrict population to individuals age 18 or older
+		AND ((@uats = 1 AND [uats_xref].[mgra] IS NOT NULL)
+			OR @uats = 0) -- if UATS districts option selected only count population within UATS district
+	GROUP BY
+		[geography_household_location].[household_location_mgra_13]
+		,[geography_household_location].[household_location_taz_13]
+	HAVING
+		SUM([person].[weight_person]) > 0) AS [tt]
+GO
+
+-- Add metadata for [rtp_2019].[sp_pm_7ab_population]
+EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_pm_7ab_population', 'SUBSYSTEM', 'rtp 2019'
+EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_pm_7ab_population', 'MS_Description', 'performance metric 7ab population'
+GO
+
+
+
+
 -- Create stored procedure for performance metric #7a using auto skims
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2019].[sp_pm_7a_auto]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [rtp_2019].[sp_pm_7a_auto]
