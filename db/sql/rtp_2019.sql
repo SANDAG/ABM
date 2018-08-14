@@ -412,26 +412,45 @@ ON
 -- use the highway network to grid xref to output the final results
 -- for Particulate Matter 2.5
 with [grid_particulate_matter] AS (
+-- for each (link, interval) tuple
+-- calculate the link emissions at that interval/distance multiplied by 2 to assume symmetric emissions
+-- assign the emissions uniformly to all the grids that the (link, interval) tuple is matched to
 	SELECT
-		[id]
+		#xref_grid_hwycov.[id]
 		,SUM([assigned_particulate_matter]) AS [assigned_particulate_matter]
 	FROM (
 		SELECT
-			[id]
-			,([link_total_emissions] / (COUNT(#xref_grid_hwycov.[id]) OVER (PARTITION BY #xref_grid_hwycov.[hwycov_id]) / 2.0)) /
-				([interval] / 100.0) AS [assigned_particulate_matter]
+			#xref_grid_hwycov.[hwy_link_id]
+			,[interval]
+			,2 * [link_total_emissions] / COUNT([id]) / ([interval] / 100.0) AS [assigned_particulate_matter]
 		FROM
 			#xref_grid_hwycov
 		INNER JOIN
 			[rtp_2019].[fn_particulate_matter_2_5_ctemfac_2014](@scenario_id)
 		ON
-			#xref_grid_hwycov.[hwycov_id] = [fn_particulate_matter_2_5_ctemfac_2014].[hwycov_id]) AS [tt]
+			#xref_grid_hwycov.[hwycov_id] = [fn_particulate_matter_2_5_ctemfac_2014].[hwycov_id]
+		GROUP BY
+			#xref_grid_hwycov.[hwy_link_id]
+			,[interval]
+			,[link_total_emissions]
+		HAVING
+			(COUNT([id]) / 2) / ([interval] / 100.0) > 0) AS [link_interval_emissions]
+	INNER JOIN
+		#xref_grid_hwycov
+	ON
+		#xref_grid_hwycov.[hwy_link_id] = [link_interval_emissions].[hwy_link_id]
+		AND #xref_grid_hwycov.[interval] = [link_interval_emissions].[interval]
+	INNER JOIN
+		[rtp_2019].[particulate_matter_2_5_grid]
+	ON
+		#xref_grid_hwycov.[id] = [particulate_matter_2_5_grid].[id]
 	GROUP BY
-		[id]),
+		#xref_grid_hwycov.[id]),
 [mgra_13_particulate_matter] AS (
+-- average the grid emissions within each mgra, grids are of equal size so average is ok
 	SELECT
 		[particulate_matter_2_5_grid].[mgra_13]
-		,AVG(ISNULL([grid_particulate_matter].[assigned_particulate_matter], 0)) AS [avg_grid_particulate_matter]
+		,AVG(ISNULL([assigned_particulate_matter], 0)) AS [avg_grid_particulate_matter]
 	FROM
 		[rtp_2019].[particulate_matter_2_5_grid]
 	LEFT OUTER JOIN
