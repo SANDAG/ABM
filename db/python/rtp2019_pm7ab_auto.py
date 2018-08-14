@@ -84,13 +84,13 @@ destinations = destinations.groupby(["taz_13"], as_index=False).agg(
      "parkactive": lambda x: 1 if sum(x) > .5 else 0,  # active park indicator used in pm_7b
      "emp_retail": sum})  # sum of retail employment used in pm_7b
 
-# get the highway network am peak period omx skim matrix
-# get the am peak period single occupancy vehicle general purpose
+# get the highway network mid-day period omx skim matrix
+# get the mid-day period single occupancy vehicle general purpose
 # low value of time highway time skim
 # matrix is 0-indexed to TAZs (0:1, 1:2, ..., 4995:4996)
 # todo create mapping instead? requires opening in append or write mode
-am_sovgpl_time = omx.open_file(
-    scenario_path + "/output/traffic_skims_AM.omx")["AM_SOVGPL_TIME"]
+md_sovgpl_time = omx.open_file(
+    scenario_path + "/output/traffic_skims_MD.omx")["MD_SOVGPL_TIME"]
 
 # Performance Measure 7a
 # initialize empty list to store results
@@ -102,7 +102,7 @@ for index, row in population_7a.iterrows():
     # the population row index taz_13 must be converted to integer
     # it is converted to string earlier in the groupby function
     index = int(index)
-    taz_accessible = list(np.where(am_sovgpl_time[index - 1] <= 30)[0] + 1)
+    taz_accessible = list(np.where(md_sovgpl_time[index - 1] <= 30)[0] + 1)
 
     # sum the destinations with TAZ indices accessible within 30 minutes
     # note the destinations taz_13 column must be converted to integer
@@ -181,7 +181,7 @@ for index, row in population_7b.iterrows():
     # the population row index taz_13 must be converted to integer
     # it is converted to string earlier in the groupby function
     index = int(index)
-    taz_accessible = list(np.where(am_sovgpl_time[index - 1] <= 15)[0] + 1)
+    taz_accessible = list(np.where(md_sovgpl_time[index - 1] <= 15)[0] + 1)
 
     # get the maximum of the destinations
     # with TAZ indices accessible within 15 minutes
