@@ -443,7 +443,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     self.calc_traffic_attributes(traffic_network)
                     self.check_zone_access(traffic_network, traffic_network.mode("d"))
                 finally:
-                    traffic_scenario.publish_network(traffic_network, resolve_attributes=True)
+                    if traffic_scenario:
+                        traffic_scenario.publish_network(traffic_network, resolve_attributes=True)
 
             if self.transit_scenario_id or self.merged_scenario_id:
                 for elem_type, attrs in transit_attr_map.iteritems():
@@ -464,7 +465,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     self.create_transit_lines(transit_network, transit_attr_map)
                     self.calc_transit_attributes(transit_network)
                 finally:
-                    transit_scenario.publish_network(transit_network, resolve_attributes=True)
+                    if transit_scenario:
+                        transit_scenario.publish_network(transit_network, resolve_attributes=True)
                     if self.merged_scenario_id:
                         self.add_transit_to_traffic(traffic_network, transit_network)
         finally:
