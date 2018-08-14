@@ -1924,8 +1924,9 @@ AS
 
 /*	Author: Gregor Schroeder
 	Date: 4/20/2018
-	Description:  Average peak-period tour travel time to work 
-		(drive alone, carpool, transit, bike, and walk) (minutes)
+	Description:  Average peak-period trip travel time to work
+		(drive alone, carpool, transit, bike, and walk) (minutes).
+		Only includes trip that go directly from home to work.
 		similar to Performance Measures 1a and 7d in the 2015 RTP*/
 
 IF CONVERT(int, @senior) + CONVERT(int, @minority) + CONVERT(int, @low_income) > 1
@@ -1934,27 +1935,48 @@ RAISERROR ('Select only one population segmentation.', 16, 1)
 RETURN -1
 END;
 
-with [eligible_records] AS (
+SELECT
+	@scenario_id AS [scenario_id]
+	,ISNULL(CASE	WHEN @senior = 1 THEN [senior]
+					WHEN @minority = 1 THEN [minority]
+					WHEN @low_income = 1 THEN [low_income]
+					ELSE 'All' END, 'Total') AS [pop_segmentation]
+	,ISNULL([mode_aggregate], 'Total') AS [mode_aggregate]
+	,SUM([time_total] * [weight_person_trip]) / SUM([weight_person_trip]) AS [avg_time_trip]
+	,SUM([weight_person_trip]) AS [person_trips]
+FROM (
 	SELECT
-		[tour].[tour_id]
-		,[mode_trip].[mode_trip_description]
-		,[dist_total]
+		CASE	WHEN [mode_trip_description] IN ('Drive Alone Non-Toll',
+													'Drive Alone Toll Eligible')
+				THEN 'Drive Alone'
+				WHEN [mode_trip_description] IN ('Shared Ride 2 Non-Toll',
+													'Shared Ride 2 Toll Eligible',
+													'Shared Ride 3 Non-Toll',
+													'Shared Ride 3 Toll Eligible')
+				THEN 'Shared Ride'
+				WHEN [mode_trip_description] IN ('Kiss and Ride to Transit - Local Bus and Premium Transit',
+													'Kiss and Ride to Transit - Local Bus Only',
+													'Kiss and Ride to Transit - Premium Transit Only' ,
+													'Park and Ride to Transit - Local Bus and Premium Transit',
+													'Park and Ride to Transit - Local Bus Only',
+													'Park and Ride to Transit - Premium Transit Only',
+													'Walk to Transit - Local Bus and Premium Transit',
+													'Walk to Transit - Local Bus Only',
+													'Walk to Transit - Premium Transit Only')
+				THEN 'Transit'
+				ELSE [mode_trip_description] END AS [mode_aggregate]
 		,[time_total]
-		,[weight_person_tour]
+		,[weight_person_trip]
 		,CASE WHEN [person].[age] >= 75 THEN 'Senior' ELSE 'Non-Senior' END AS [senior]
 		,CASE	WHEN [person].[race] IN ('Some Other Race Alone',
-										 'Asian Alone',
-										 'Black or African American Alone',
-										 'Two or More Major Race Groups',
-										 'Native Hawaiian and Other Pacific Islander Alone',
-										 'American Indian and Alaska Native Tribes specified; or American Indian or Alaska Native, not specified and no other races')
-					 OR [person].[hispanic] = 'Hispanic' THEN 'Minority'
+											'Asian Alone',
+											'Black or African American Alone',
+											'Two or More Major Race Groups',
+											'Native Hawaiian and Other Pacific Islander Alone',
+											'American Indian and Alaska Native Tribes specified; or American Indian or Alaska Native, not specified and no other races')
+						OR [person].[hispanic] = 'Hispanic' THEN 'Minority'
 					ELSE 'Non-Minority' END AS [minority]
 		,CASE WHEN [household].[poverty] <= 2 THEN 'Low Income' ELSE 'Non-Low Income' END AS [low_income]
-		,MAX(CASE	WHEN [mode_trip].[mode_trip_description] IN ('Bike', 'Walk') 
-					THEN 1 ELSE 0 END) OVER (PARTITION BY [tour].[tour_id]) AS [bike_walk_indicator]
-		,MAX([person_trip].[dist_total]) OVER (PARTITION BY [tour].[tour_id]) AS [dist_max]
-		,MAX([person_trip].[time_total]) OVER (PARTITION BY [tour].[tour_id]) AS [time_max]
 	FROM
 		[fact].[person_trip]
 	INNER JOIN
@@ -1976,94 +1998,30 @@ with [eligible_records] AS (
 	ON
 		[person_trip].[mode_trip_id] = [mode_trip].[mode_trip_id]
 	INNER JOIN
-		[dimension].[tour]
+		[dimension].[model_trip]
 	ON
-		[person_trip].[scenario_id] = [tour].[scenario_id]
-		AND [person_trip].[tour_id] = [tour].[tour_id]
+		[person_trip].[model_trip_id] = [model_trip].[model_trip_id]
 	INNER JOIN
-		[dimension].[model_tour]
+		[dimension].[time_trip_start]
 	ON
-		[tour].[model_tour_id] = [model_tour].[model_tour_id]
+		[person_trip].[time_trip_start_id] = [time_trip_start].[time_trip_start_id]
 	INNER JOIN
-		[dimension].[time_tour_start]
+		[dimension].[purpose_trip_origin]
 	ON
-		[tour].[time_tour_start_id] = [time_tour_start].[time_tour_start_id]
+		[person_trip].[purpose_trip_origin_id] = [purpose_trip_origin].[purpose_trip_origin_id]
 	INNER JOIN
-		[dimension].[purpose_tour]
+		[dimension].[purpose_trip_destination]
 	ON
-		[tour].[purpose_tour_id] = [purpose_tour].[purpose_tour_id]
+		[person_trip].[purpose_trip_destination_id] = [purpose_trip_destination].[purpose_trip_destination_id]
 	WHERE
 		[person_trip].[scenario_id] = @scenario_id
 		AND [person].[scenario_id] = @scenario_id
 		AND [household].[scenario_id] = @scenario_id
-		AND [tour].[scenario_id] = @scenario_id
 		AND [inbound].[inbound_description] = 'Outbound' -- to work trips only
-		AND [model_tour].[model_tour_description] IN ('Individual', 'Internal-External','Joint') -- resident models only
-		AND [time_tour_start].[tour_start_abm_5_tod] IN ('2', '4') -- tours that start in abm five time of day peak periods only
-		AND [purpose_tour].[purpose_tour_description] = 'Work'), -- work tours only
-[filtered_records_tour_mode] AS (
-	SELECT
-		[tour_id]
-		,[mode_trip_description]
-		,rn = ROW_NUMBER()OVER(PARTITION BY [tour_id] ORDER BY [mode_trip_description])
-	FROM
-		[eligible_records]
-	WHERE
-		([bike_walk_indicator] = 0 AND [time_total] = [time_max]) -- if eligible records do not contain bike/walk trips then take trip mode with maximum time
-		OR ([bike_walk_indicator] = 1 AND [dist_total] = [dist_max])), -- if eligible records contain bike/walk trips then take trip mode with maximum distance
-[tour_mode] AS (
-	SELECT
-		[tour_id]
-		,CASE	WHEN [mode_trip_description] IN ('Drive Alone Non-Toll',
-												 'Drive Alone Toll Eligible')
-				THEN 'Drive Alone'
-				WHEN [mode_trip_description] IN ('Shared Ride 2 Non-Toll',
-													'Shared Ride 2 Toll Eligible',
-													'Shared Ride 3 Non-Toll',
-													'Shared Ride 3 Toll Eligible')
-				THEN 'Shared Ride'
-				WHEN [mode_trip_description] IN ('Kiss and Ride to Transit - Local Bus and Premium Transit',
-													'Kiss and Ride to Transit - Local Bus Only',
-													'Kiss and Ride to Transit - Premium Transit Only' ,
-													'Park and Ride to Transit - Local Bus and Premium Transit',
-													'Park and Ride to Transit - Local Bus Only',
-													'Park and Ride to Transit - Premium Transit Only',
-													'Walk to Transit - Local Bus and Premium Transit',
-													'Walk to Transit - Local Bus Only',
-													'Walk to Transit - Premium Transit Only')
-				THEN 'Transit'
-				ELSE [mode_trip_description] END AS [mode_aggregate]
-	FROM
-		[filtered_records_tour_mode]
-	WHERE
-		[rn] = 1) -- add a filter to remove ties (multiple trips with same maximum distances/times)
-SELECT
-	@scenario_id AS [scenario_id]
-	,ISNULL(CASE	WHEN @senior = 1 THEN [senior]
-					WHEN @minority = 1 THEN [minority]
-					WHEN @low_income = 1 THEN [low_income]
-					ELSE 'All' END, 'Total') AS [pop_segmentation]
-	,ISNULL([mode_aggregate], 'Total') AS [mode_aggregate]
-	,SUM([time_tour] * [weight_person_tour]) / SUM([weight_person_tour]) AS [avg_time_tour]
-	,SUM([weight_person_tour]) AS [person_tours]
-FROM (
-	SELECT
-		[eligible_records].[tour_id]
-		,[tour_mode].[mode_aggregate]
-		,MAX([eligible_records].[senior]) AS [senior]
-		,MAX([eligible_records].[minority]) AS [minority]
-		,MAX([eligible_records].[low_income]) AS [low_income]
-		,MAX([eligible_records].[weight_person_tour]) AS [weight_person_tour]
-		,SUM([eligible_records].[time_total]) AS [time_tour]
-	FROM
-		[eligible_records]
-	INNER JOIN
-		[tour_mode]
-	ON
-		[eligible_records].[tour_id] = [tour_mode].[tour_id]
-	GROUP BY
-		[eligible_records].[tour_id]
-		,[tour_mode].[mode_aggregate]) AS [results]
+		AND [model_trip].[model_trip_description] IN ('Individual', 'Internal-External','Joint') -- resident models only
+		AND [time_trip_start].[trip_start_abm_5_tod] IN ('2', '4') -- trips that start in abm five time of day peak periods only
+		AND [purpose_trip_origin].[purpose_trip_origin_description] = 'Home' -- work trips must start at home, a direct to work trip
+		AND [purpose_trip_destination].[purpose_trip_destination_description] = 'Work') [tt] -- work trips only
 GROUP BY
 	CASE	WHEN @senior = 1 THEN [senior]
 			WHEN @minority = 1 THEN [minority]
