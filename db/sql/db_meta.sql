@@ -326,7 +326,8 @@ CREATE TABLE [db_meta].[schema_change_log] (
 	[major_release_no] [nchar](2) NOT NULL,
 	[minor_release_no] [nchar](2) NOT NULL,
 	[point_release_no] [nchar](4) NOT NULL,
-	[description] [nchar](100) NOT NULL,
+	[description] [nvarchar](max) NOT NULL,
+	[sql] [nvarchar](max) NOT NULL,
 	[date_applied] [datetime] NOT NULL,
 	CONSTRAINT [pk_schema_change_log] PRIMARY KEY CLUSTERED ([id])
 	) 
