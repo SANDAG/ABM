@@ -16,6 +16,7 @@ import com.pb.common.newmodel.Alternative;
 import com.pb.common.newmodel.ChoiceModelApplication;
 import com.pb.common.newmodel.ConcreteAlternative;
 import com.pb.common.newmodel.LogitModel;
+import com.pb.common.newmodel.UtilityExpressionCalculator;
 import com.pb.common.calculator.IndexValues;
 
 
@@ -39,6 +40,7 @@ public class McLogsumsCalculator implements Serializable
 
     private BestTransitPathCalculator          bestPathUEC;
     private double[]                           tripModeChoiceSegmentStoredProbabilities;
+    private double[]                           tripModeChoiceSegmentStoredVOTs;
 
     
     private TazDataManager                     tazManager;
@@ -79,6 +81,8 @@ public class McLogsumsCalculator implements Serializable
         this.lsWgtAvgCostD = mgraManager.getLsWgtAvgCostD();
         this.lsWgtAvgCostH = mgraManager.getLsWgtAvgCostH();
         this.parkingArea = mgraManager.getMgraParkAreas();
+        
+        tripModeChoiceSegmentStoredVOTs = new double[3];
     }
     
     
@@ -218,6 +222,15 @@ public class McLogsumsCalculator implements Serializable
         double logsum = mcModel.getLogsum();
         tripModeChoiceSegmentStoredProbabilities = Arrays.copyOf( mcModel.getCumulativeProbabilities(), mcModel.getNumberOfAlternatives() );
         
+        //also save the VOTs from the model
+        UtilityExpressionCalculator uec = mcModel.getUEC();
+        
+        ModelStructure modelStructure = mcDmuObject.modelStructure;
+        
+        tripModeChoiceSegmentStoredVOTs[0] = uec.getValueForIndex(uec.lookupVariableIndex("vot"));
+        tripModeChoiceSegmentStoredVOTs[1] = uec.getValueForIndex(uec.lookupVariableIndex("votS2"));
+        tripModeChoiceSegmentStoredVOTs[2] = uec.getValueForIndex(uec.lookupVariableIndex("votS3"));
+         
         if ( mcDmuObject.getHouseholdObject().getDebugChoiceModels() )
             mcModel.logUECResults(myLogger, "Trip Mode Choice Utility Expressions for mgras: " + origMgra + " to " + destMgra + " for HHID: " + mcDmuIndex.getHHIndex() );
         
@@ -239,6 +252,9 @@ public class McLogsumsCalculator implements Serializable
         return tripModeChoiceSegmentStoredProbabilities;
     }
 
+    public double[] getStoredSegmentVOTs() {
+    	return tripModeChoiceSegmentStoredVOTs;
+    }
     public double[][] getBestWtwTapsOut()
     {
         return bestWtwTapPairsOut;

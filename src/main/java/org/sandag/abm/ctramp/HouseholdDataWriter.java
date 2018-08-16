@@ -1057,7 +1057,7 @@ public class HouseholdDataWriter
         data.add(string(s.getEscorteePnumOrig()));
         data.add(string(s.getEscortStopTypeDest()));
         data.add(string(s.getEscorteePnumDest()));
-        data.add(string(t.getValueOfTime()));
+        data.add(string(s.getValueOfTime()));
         
         if(writeLogsums)
         	data.add(string(s.getModeLogsum()));
@@ -1154,7 +1154,7 @@ public class HouseholdDataWriter
         }
         data.add(string(set));
         data.add(string(t.getTourModeChoice()));
-        data.add(string(t.getValueOfTime()));
+        data.add(string(s.getValueOfTime()));
         
         if(writeLogsums)
         	data.add(string(s.getModeLogsum()));

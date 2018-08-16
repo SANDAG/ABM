@@ -1737,6 +1737,14 @@ public class Household
         logger.info(logString);
     }
 
+    public static void logHelper(Logger logger, String label, float value, int totalChars)
+    {
+        int labelChars = label.length() + 2;
+        int remainingChars = totalChars - labelChars - 4;
+        String formatString = String.format("     %%%ds %%%df", label.length(), remainingChars);
+        String logString = String.format(formatString, label, value);
+        logger.info(logString);
+    }
     public enum HouseholdType
     {
         nul, FAMILY_MARRIED, FAMILY_MALE_NO_WIFE, FAMILY_FEMALE_NO_HUSBAND, NON_FAMILY_MALE_ALONE, NON_FAMILY_MALE_NOT_ALONE, NON_FAMILY_FEMALE_ALONE, NON_FAMILY_FEMALE_NOT_ALONE

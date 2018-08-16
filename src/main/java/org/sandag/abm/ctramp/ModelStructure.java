@@ -325,6 +325,10 @@ public abstract class ModelStructure
     
     public abstract boolean getTripModeIsTransit(int tripMode);
 
+    public abstract boolean getTripModeIsS2(int tripMode);
+
+    public abstract boolean getTripModeIsS3(int tripMode);
+
     public abstract double[][] getCdap6PlusProps();
 
     public abstract int getDefaultAmPeriod();
