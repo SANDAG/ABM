@@ -22,6 +22,8 @@ public class VisitorTrip
  	private int alightTap;
  	private int set = -1;
 
+ 	private float valueOfTime;
+ 	
  	/**
      * Default constructor; nothing initialized.
      */
@@ -442,5 +444,13 @@ public class VisitorTrip
     {
         this.destinationIsTourDestination = destinationIsTourDestination;
     }
+
+	public float getValueOfTime() {
+		return valueOfTime;
+	}
+
+	public void setValueOfTime(float valueOfTime) {
+		this.valueOfTime = valueOfTime;
+	}
 
 }
