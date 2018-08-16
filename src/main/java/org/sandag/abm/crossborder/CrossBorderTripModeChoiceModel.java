@@ -187,17 +187,17 @@ public class CrossBorderTripModeChoiceModel
      * @param tourMode
      * @return The value of time
      */
-    public float getValueOfTime(int mode){
+    public float getValueOfTime(int tourMode){
        
     	//value of time; lookup vot, votS2, or votS3 from the UEC depending on chosen mode
         UtilityExpressionCalculator uec = tripModeChoiceModel.getUEC();
         
         double vot = 0.0;
         
-        if(modelStructure.getTourModeIsS2(mode)){
+        if(tourMode== modelStructure.SHARED2){
             int votIndex = uec.lookupVariableIndex("votS2");
             vot = uec.getValueForIndex(votIndex);
-        }else if (modelStructure.getTourModeIsS3(mode)){
+        }else if (tourMode== modelStructure.SHARED3){
             int votIndex = uec.lookupVariableIndex("votS3");
             vot = uec.getValueForIndex(votIndex);
         }else{
