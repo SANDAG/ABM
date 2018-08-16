@@ -285,6 +285,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipDataExport = props["RunModel.skipDataExport"]
         skipDataLoadRequest = props["RunModel.skipDataLoadRequest"]
         skipDeleteIntermediateFiles = props["RunModel.skipDeleteIntermediateFiles"]
+        skipTransitShed = props["RunModel.skipTransitShed"]
+        transitShedThreshold = props["transitShed.threshold"]
+        transitShedTOD = props["transitShed.TOD"]
 
         travel_modes = ["auto", "tran", "nmot", "othr"]
         core_abm_files = ["Trips*.omx", "InternalExternalTrips*.omx"]
@@ -466,10 +469,20 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         scenario_title="%s - %s transit assign" % (base_scenario.title, period), 
                         data_table_name=scenarioYear, overwrite=True)
                     transit_assign(period, transit_assign_scen, data_table_name=scenarioYear,
-                                   assignment_only=True, num_processors=num_processors)
+                                   num_processors=num_processors)                        
+                omx_file = _join(output_dir, "transit_skims.omx")
+                export_transit_skims(omx_file, periods, transit_scenario, big_to_zero=True)
+                                        
+                #    transit_assign(period, transit_assign_scen, data_table_name=scenarioYear,
+                #                   assignment_only=True, num_processors=num_processors)
                 # Final iteration is assignment only, no skims
                 # omx_file = _join(output_dir, "transit_skims.omx")
                 # export_transit_skims(omx_file, periods, transit_scenario, big_to_zero=True)
+
+        if not skipTransitShed:
+            # write walk and drive transit sheds
+            self.run_proc("runtransitreporter.cmd", [drive, path_no_drive, transitShedThreshold, transitShedTOD], "Create walk and drive transit sheds", 
+                          capture_output=True)
 
         if not skipDataExport:
             export_network_data(main_directory, scenario_id, main_emmebank, transit_emmebank, num_processors)
