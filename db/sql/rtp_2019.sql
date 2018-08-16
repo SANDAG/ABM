@@ -412,26 +412,45 @@ ON
 -- use the highway network to grid xref to output the final results
 -- for Particulate Matter 2.5
 with [grid_particulate_matter] AS (
+-- for each (link, interval) tuple
+-- calculate the link emissions at that interval/distance multiplied by 2 to assume symmetric emissions
+-- assign the emissions uniformly to all the grids that the (link, interval) tuple is matched to
 	SELECT
-		[id]
+		#xref_grid_hwycov.[id]
 		,SUM([assigned_particulate_matter]) AS [assigned_particulate_matter]
 	FROM (
 		SELECT
-			[id]
-			,([link_total_emissions] / (COUNT(#xref_grid_hwycov.[id]) OVER (PARTITION BY #xref_grid_hwycov.[hwycov_id]) / 2.0)) /
-				([interval] / 100.0) AS [assigned_particulate_matter]
+			#xref_grid_hwycov.[hwy_link_id]
+			,[interval]
+			,2 * [link_total_emissions] / COUNT([id]) / ([interval] / 100.0) AS [assigned_particulate_matter]
 		FROM
 			#xref_grid_hwycov
 		INNER JOIN
 			[rtp_2019].[fn_particulate_matter_2_5_ctemfac_2014](@scenario_id)
 		ON
-			#xref_grid_hwycov.[hwycov_id] = [fn_particulate_matter_2_5_ctemfac_2014].[hwycov_id]) AS [tt]
+			#xref_grid_hwycov.[hwycov_id] = [fn_particulate_matter_2_5_ctemfac_2014].[hwycov_id]
+		GROUP BY
+			#xref_grid_hwycov.[hwy_link_id]
+			,[interval]
+			,[link_total_emissions]
+		HAVING
+			(COUNT([id]) / 2) / ([interval] / 100.0) > 0) AS [link_interval_emissions]
+	INNER JOIN
+		#xref_grid_hwycov
+	ON
+		#xref_grid_hwycov.[hwy_link_id] = [link_interval_emissions].[hwy_link_id]
+		AND #xref_grid_hwycov.[interval] = [link_interval_emissions].[interval]
+	INNER JOIN
+		[rtp_2019].[particulate_matter_2_5_grid]
+	ON
+		#xref_grid_hwycov.[id] = [particulate_matter_2_5_grid].[id]
 	GROUP BY
-		[id]),
+		#xref_grid_hwycov.[id]),
 [mgra_13_particulate_matter] AS (
+-- average the grid emissions within each mgra, grids are of equal size so average is ok
 	SELECT
 		[particulate_matter_2_5_grid].[mgra_13]
-		,AVG(ISNULL([grid_particulate_matter].[assigned_particulate_matter], 0)) AS [avg_grid_particulate_matter]
+		,AVG(ISNULL([assigned_particulate_matter], 0)) AS [avg_grid_particulate_matter]
 	FROM
 		[rtp_2019].[particulate_matter_2_5_grid]
 	LEFT OUTER JOIN
@@ -851,6 +870,168 @@ GO
 
 
 
+-- Create stored procedure for performance metrics #7a/b to return destinations
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2019].[sp_pm_7ab_destinations]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [rtp_2019].[sp_pm_7ab_destinations]
+GO
+
+CREATE PROCEDURE [rtp_2019].[sp_pm_7ab_destinations]
+	@scenario_id integer,
+	@uats bit = 0 -- switch to limit population geography to UATS zones
+AS
+
+/*	Author: Gregor Schroeder
+	Date: 8/7/2018
+	Description: Destinations at the MGRA level to be used in calculations
+	for Performance Measures 7a/b. Allows aggregation to MGRA or TAZ level for
+	both transit and auto accessibility and optional restriction to UATS
+	geography only. Beachactive and parkactive measures are left as sums for now
+	for later calculation of indicators of > .5 to allow for aggregation. */
+
+SET NOCOUNT ON;
+
+-- get mgras that are fully contained within UATS districts
+DECLARE @uats_mgras TABLE ([mgra] nchar(15) PRIMARY KEY NOT NULL)
+INSERT INTO @uats_mgras
+SELECT CONVERT(nchar, [mgra]) AS [mgra] FROM
+OPENQUERY(
+	[sql2014b8],
+	'SELECT [mgra] FROM [lis].[gis].[uats2014],[lis].[gis].[MGRA13PT]
+		WHERE [uats2014].[Shape].STContains([MGRA13PT].[Shape]) = 1');
+
+SELECT
+	[geography].[mgra_13]
+	,[geography].[taz_13]
+	,SUM([emp_total] + [collegeenroll] + [othercollegeenroll] + [adultschenrl]) AS [emp_educ] -- used in pm 7a
+	,SUM([beachactive]) AS [beachactive] -- used in pm 7b, indicator > .5
+	,SUM([emp_health]) AS [emp_health] -- used in pm 7b
+	,SUM([parkactive]) AS [parkactive] -- used in pm 7b, indicator > .5
+	,SUM([emp_retail]) AS [emp_retail] -- used in pm 7b
+FROM
+	[fact].[mgra_based_input]
+INNER JOIN
+	[dimension].[geography]
+ON
+	[mgra_based_input].[geography_id] = [geography].[geography_id]
+LEFT OUTER JOIN -- keep as outer join since where clause is	OR condition
+	@uats_mgras AS [uats_xref]
+ON
+	[geography].[mgra_13] = [uats_xref].[mgra]
+WHERE
+	[mgra_based_input].[scenario_id] = @scenario_id
+	AND ((@uats = 1 AND [uats_xref].[mgra] IS NOT NULL)
+		OR @uats = 0) -- if UATS districts option selected only count destinations within UATS district
+GROUP BY
+	[geography].[mgra_13]
+	,[geography].[taz_13]
+HAVING
+	SUM([emp_total] + [collegeenroll] + [othercollegeenroll] + [adultschenrl]) > 0
+	OR SUM([beachactive]) > 0
+	OR SUM([emp_health]) > 0
+	OR SUM([parkactive]) > 0
+	OR SUM([emp_retail]) > 0
+GO
+
+-- Add metadata for [rtp_2019].[sp_pm_7ab_destinations]
+EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_pm_7ab_destinations', 'SUBSYSTEM', 'rtp 2019'
+EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_pm_7ab_destinations', 'MS_Description', 'performance metric 7ab destinations'
+GO
+
+
+
+
+-- Create stored procedure for performance metrics #7a/b to return population
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2019].[sp_pm_7ab_population]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [rtp_2019].[sp_pm_7ab_population]
+GO
+
+CREATE PROCEDURE [rtp_2019].[sp_pm_7ab_population]
+	@scenario_id integer,
+	@age_18_plus bit = 0, -- switch to limit population to aged 18+
+	@uats bit = 0 -- switch to limit population geography to UATS zones
+AS
+
+/*	Author: Gregor Schroeder
+	Date: 8/7/2018
+	Description: Population at the MGRA level to be used in calculations
+	for Performance Measures 7a/b. Allows aggregation to MGRA or TAZ level for
+	both transit and auto accessibility, optional restriction to 18+ for
+	employment and enrollment metrics, and optional restriction to UATS
+	geography only. */
+
+SET NOCOUNT ON;
+
+-- get mgras that are fully contained within UATS districts
+DECLARE @uats_mgras TABLE ([mgra] nchar(15) PRIMARY KEY NOT NULL)
+INSERT INTO @uats_mgras
+SELECT CONVERT(nchar, [mgra]) AS [mgra] FROM
+OPENQUERY(
+	[sql2014b8],
+	'SELECT [mgra] FROM [lis].[gis].[uats2014],[lis].[gis].[MGRA13PT]
+		WHERE [uats2014].[Shape].STContains([MGRA13PT].[Shape]) = 1');
+
+SELECT
+	[mgra_13]
+	,[taz_13]
+	,[pop]
+	,[pop_senior]
+	,[pop] - [pop_senior] AS [pop_non_senior]
+	,[pop_minority]
+	,[pop] - [pop_minority] AS [pop_non_minority]
+	,[pop_low_income]
+	,[pop] - [pop_low_income] AS [pop_non_low_income]
+FROM (
+	SELECT
+		[geography_household_location].[household_location_mgra_13] AS [mgra_13]
+		,[geography_household_location].[household_location_taz_13] AS [taz_13]
+		,SUM([person].[weight_person]) AS [pop]
+		,SUM(CASE WHEN [person].[age] >= 75 THEN [person].[weight_person] ELSE 0 END) AS [pop_senior]
+		,SUM(CASE	WHEN [person].[race] IN ('Some Other Race Alone',
+												'Asian Alone',
+												'Black or African American Alone',
+												'Two or More Major Race Groups',
+												'Native Hawaiian and Other Pacific Islander Alone',
+												'American Indian and Alaska Native Tribes specified; or American Indian or Alaska Native, not specified and no other races')
+							OR [person].[hispanic] = 'Hispanic' THEN [person].[weight_person]
+							ELSE 0 END) AS [pop_minority]
+		,SUM(CASE WHEN [household].[poverty] <= 2 THEN [person].[weight_person] ELSE 0 END) AS [pop_low_income]
+	FROM
+		[dimension].[person]
+	INNER JOIN
+		[dimension].[household]
+	ON
+		[person].[scenario_id] = [household].[scenario_id]
+		AND [person].[household_id] = [household].[household_id]
+	INNER JOIN
+		[dimension].[geography_household_location]
+	ON
+		[household].[geography_household_location_id] = [geography_household_location].[geography_household_location_id]
+	LEFT OUTER JOIN -- keep as outer join since where clause is	OR condition
+		@uats_mgras AS [uats_xref]
+	ON
+		[geography_household_location].[household_location_mgra_13] = [uats_xref].[mgra]
+	WHERE
+		[person].[scenario_id] = @scenario_id
+		AND [household].[scenario_id] = @scenario_id
+		AND ((@age_18_plus = 1 AND [person].[age] >= 18)
+			OR @age_18_plus = 0) -- if age 18+ option is selected restrict population to individuals age 18 or older
+		AND ((@uats = 1 AND [uats_xref].[mgra] IS NOT NULL)
+			OR @uats = 0) -- if UATS districts option selected only count population within UATS district
+	GROUP BY
+		[geography_household_location].[household_location_mgra_13]
+		,[geography_household_location].[household_location_taz_13]
+	HAVING
+		SUM([person].[weight_person]) > 0) AS [tt]
+GO
+
+-- Add metadata for [rtp_2019].[sp_pm_7ab_population]
+EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_pm_7ab_population', 'SUBSYSTEM', 'rtp 2019'
+EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_pm_7ab_population', 'MS_Description', 'performance metric 7ab population'
+GO
+
+
+
+
 -- Create stored procedure for performance metric #7a using auto skims
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2019].[sp_pm_7a_auto]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [rtp_2019].[sp_pm_7a_auto]
@@ -1004,6 +1185,7 @@ with [skims] AS (
 		WHERE
 			[person].[scenario_id] = @scenario_id
 			AND [household].[scenario_id] = @scenario_id
+			AND [person].[age] >= 18
 			AND ((@uats = 1 AND [uats_xref].[mgra] IS NOT NULL)
 			    OR @uats = 0) -- if UATS districts option selected only count population within UATS district
 		GROUP BY
@@ -1025,13 +1207,20 @@ with [skims] AS (
 SELECT
 	@scenario_id AS [scenario_id]
 	,'auto' AS [accessibility_mode]
-	,SUM(100.0 * [pop] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop]) AS [pop_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_senior] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_senior]) AS [pop_senior_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_non_senior] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_senior]) AS [pop_non_senior_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_minority] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_minority]) AS [pop_minority_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_non_minority] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_minority]) AS [pop_non_minority_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_low_income] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_low_income]) AS [pop_low_income_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_non_low_income] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_low_income]) AS [pop_non_low_income_wgt_avg_job_sch_enroll]
+	,SUM(100.0 * [pop] * ISNULL([emp_educ], 0)) / SUM([pop]) AS [pop_job_enroll]
+	,SUM(100.0 * [pop_senior] * ISNULL([emp_educ], 0)) / SUM([pop_senior]) AS [pop_senior_job_enroll]
+	,SUM(100.0 * [pop_non_senior] * ISNULL([emp_educ], 0)) / SUM([pop_non_senior]) AS [pop_non_senior_job_enroll]
+	,SUM(100.0 * [pop_minority] * ISNULL([emp_educ], 0)) / SUM([pop_minority]) AS [pop_minority_job_enroll]
+	,SUM(100.0 * [pop_non_minority] * ISNULL([emp_educ], 0)) / SUM([pop_non_minority]) AS [pop_non_minority_job_enroll]
+	,SUM(100.0 * [pop_low_income] * ISNULL([emp_educ], 0)) / SUM([pop_low_income]) AS [pop_low_income_job_enroll]
+	,SUM(100.0 * [pop_non_low_income] * ISNULL([emp_educ], 0)) / SUM([pop_non_low_income]) AS [pop_non_low_income_job_enroll]
+	,SUM(100.0 * [pop] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop]) AS [pop_pct_job_enroll]
+	,SUM(100.0 * [pop_senior] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_senior]) AS [pop_senior_pct_job_enroll]
+	,SUM(100.0 * [pop_non_senior] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_senior]) AS [pop_non_senior_pct_job_enroll]
+	,SUM(100.0 * [pop_minority] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_minority]) AS [pop_minority_pct_job_enroll]
+	,SUM(100.0 * [pop_non_minority] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_minority]) AS [pop_non_minority_pct_job_enroll]
+	,SUM(100.0 * [pop_low_income] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_low_income]) AS [pop_low_income_pct_job_enroll]
+	,SUM(100.0 * [pop_non_low_income] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_low_income]) AS [pop_non_low_income_pct_job_enroll]
 FROM
 	[taz_pop]
 LEFT OUTER JOIN
@@ -1209,6 +1398,7 @@ with [skims] AS (
 		WHERE
 			[person].[scenario_id] = @scenario_id
 			AND [household].[scenario_id] = @scenario_id
+			AND [person].[age] >= 18
 			AND ((@uats = 1 AND [uats_xref].[mgra] IS NOT NULL)
 				OR @uats = 0) -- if UATS districts option selected only count population within UATS district
 		GROUP BY
@@ -1230,13 +1420,20 @@ with [skims] AS (
 SELECT
 	@scenario_id AS [scenario_id]
 	,'transit' AS [accessibility_mode]
-	,SUM(100.0 * [pop] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop]) AS [pop_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_senior] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_senior]) AS [pop_senior_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_non_senior] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_senior]) AS [pop_non_senior_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_minority] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_minority]) AS [pop_minority_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_non_minority] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_minority]) AS [pop_non_minority_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_low_income] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_low_income]) AS [pop_low_income_wgt_avg_job_sch_enroll]
-	,SUM(100.0 * [pop_non_low_income] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_low_income]) AS [pop_non_low_income_wgt_avg_job_sch_enroll]
+	,SUM(100.0 * [pop] * ISNULL([emp_educ], 0)) / SUM([pop]) AS [pop_job_enroll]
+	,SUM(100.0 * [pop_senior] * ISNULL([emp_educ], 0)) / SUM([pop_senior]) AS [pop_senior_job_enroll]
+	,SUM(100.0 * [pop_non_senior] * ISNULL([emp_educ], 0)) / SUM([pop_non_senior]) AS [pop_non_senior_job_enroll]
+	,SUM(100.0 * [pop_minority] * ISNULL([emp_educ], 0)) / SUM([pop_minority]) AS [pop_minority_job_enroll]
+	,SUM(100.0 * [pop_non_minority] * ISNULL([emp_educ], 0)) / SUM([pop_non_minority]) AS [pop_non_minority_job_enroll]
+	,SUM(100.0 * [pop_low_income] * ISNULL([emp_educ], 0)) / SUM([pop_low_income]) AS [pop_low_income_job_enroll]
+	,SUM(100.0 * [pop_non_low_income] * ISNULL([emp_educ], 0)) / SUM([pop_non_low_income]) AS [pop_non_low_income_job_enroll]
+	,SUM(100.0 * [pop] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop]) AS [pop_pct_job_enroll]
+	,SUM(100.0 * [pop_senior] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_senior]) AS [pop_senior_pct_job_enroll]
+	,SUM(100.0 * [pop_non_senior] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_senior]) AS [pop_non_senior_pct_job_enroll]
+	,SUM(100.0 * [pop_minority] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_minority]) AS [pop_minority_pct_job_enroll]
+	,SUM(100.0 * [pop_non_minority] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_minority]) AS [pop_non_minority_pct_job_enroll]
+	,SUM(100.0 * [pop_low_income] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_low_income]) AS [pop_low_income_pct_job_enroll]
+	,SUM(100.0 * [pop_non_low_income] * ISNULL([emp_educ], 0) / [total_emp_educ]) / SUM([pop_non_low_income]) AS [pop_non_low_income_pct_job_enroll]
 FROM
 	[mgra_pop]
 LEFT OUTER JOIN
@@ -1436,9 +1633,9 @@ with [skims] AS (
 	SELECT
 		[trip_origin_taz_13]
 		,MAX([beachactive]) AS [beachactive]
-		,SUM([emp_health]) AS [emp_health]
+		,CONVERT(float, SUM([emp_health])) AS [emp_health]
 		,MAX([parkactive]) AS [parkactive]
-		,SUM([emp_retail]) AS [emp_retail]
+		,CONVERT(float, SUM([emp_retail])) AS [emp_retail]
 	FROM
 		[skims]
 	INNER JOIN
@@ -1451,10 +1648,12 @@ SELECT
 	@scenario_id AS [scenario_id]
 	,'auto' AS [accessibility_mode]
 	,ISNULL([pop_segmentation], 'Total') AS [pop_segmentation]
-	,100.0 * SUM([weight_person] * ISNULL([emp_health], 0) / [total_emp_health]) / SUM([weight_person]) AS [emp_health]
-	,100.0 * SUM([weight_person] * ISNULL([emp_retail], 0) / [total_emp_retail]) / SUM([weight_person]) AS [emp_retail]
-	,100.0 * SUM(CASE WHEN [beachactive] = 1 THEN [weight_person] ELSE 0 END) / SUM([weight_person]) AS [beachactive]
-	,100.0 * SUM(CASE WHEN [parkactive] = 1 THEN [weight_person] ELSE 0 END) / SUM([weight_person]) AS [parkactive]
+	,100.0 * SUM(CASE WHEN [beachactive] = 1 THEN [weight_person] ELSE 0 END) / SUM([weight_person]) AS [pct_pop_beachactive]
+	,100.0 * SUM(CASE WHEN [parkactive] = 1 THEN [weight_person] ELSE 0 END) / SUM([weight_person]) AS [pct_pop_parkactive]
+	,100.0 * SUM([weight_person] * ISNULL([emp_health], 0)) / SUM([weight_person]) AS [health]
+	,100.0 * SUM([weight_person] * ISNULL([emp_retail], 0)) / SUM([weight_person]) AS [retail]
+	,100.0 * SUM([weight_person] * ISNULL([emp_health], 0) / [total_emp_health]) / SUM([weight_person]) AS [pct_health]
+	,100.0 * SUM([weight_person] * ISNULL([emp_retail], 0) / [total_emp_retail]) / SUM([weight_person]) AS [pct_retail]
 FROM
 	[taz_pop]
 LEFT OUTER JOIN
@@ -1679,10 +1878,12 @@ SELECT
 	@scenario_id AS [scenario_id]
 	,'transit' AS [accessibility_mode]
 	,ISNULL([pop_segmentation], 'Total') AS [pop_segmentation]
-	,100.0 * SUM([weight_person] * ISNULL([emp_health], 0) / [total_emp_health]) / SUM([weight_person]) AS [emp_health]
-	,100.0 * SUM([weight_person] * ISNULL([emp_retail], 0) / [total_emp_retail]) / SUM([weight_person]) AS [emp_retail]
-	,100.0 * SUM(CASE WHEN [beachactive] = 1 THEN [weight_person] ELSE 0 END) / SUM([weight_person]) AS [beachactive]
-	,100.0 * SUM(CASE WHEN [parkactive] = 1 THEN [weight_person] ELSE 0 END) / SUM([weight_person]) AS [parkactive]
+	,100.0 * SUM(CASE WHEN [beachactive] = 1 THEN [weight_person] ELSE 0 END) / SUM([weight_person]) AS [pct_pop_beachactive]
+	,100.0 * SUM(CASE WHEN [parkactive] = 1 THEN [weight_person] ELSE 0 END) / SUM([weight_person]) AS [pct_pop_parkactive]
+	,100.0 * SUM([weight_person] * ISNULL([emp_health], 0)) / SUM([weight_person]) AS [health]
+	,100.0 * SUM([weight_person] * ISNULL([emp_retail], 0)) / SUM([weight_person]) AS [retail]
+	,100.0 * SUM([weight_person] * ISNULL([emp_health], 0) / [total_emp_health]) / SUM([weight_person]) AS [pct_health]
+	,100.0 * SUM([weight_person] * ISNULL([emp_retail], 0) / [total_emp_retail]) / SUM([weight_person]) AS [pct_retail]
 FROM
 	[mgra_pop]
 LEFT OUTER JOIN
@@ -1723,8 +1924,9 @@ AS
 
 /*	Author: Gregor Schroeder
 	Date: 4/20/2018
-	Description:  Average peak-period tour travel time to work 
-		(drive alone, carpool, transit, bike, and walk) (minutes)
+	Description:  Average peak-period trip travel time to work
+		(drive alone, carpool, transit, bike, and walk) (minutes).
+		Only includes trip that go directly from home to work.
 		similar to Performance Measures 1a and 7d in the 2015 RTP*/
 
 IF CONVERT(int, @senior) + CONVERT(int, @minority) + CONVERT(int, @low_income) > 1
@@ -1733,27 +1935,48 @@ RAISERROR ('Select only one population segmentation.', 16, 1)
 RETURN -1
 END;
 
-with [eligible_records] AS (
+SELECT
+	@scenario_id AS [scenario_id]
+	,ISNULL(CASE	WHEN @senior = 1 THEN [senior]
+					WHEN @minority = 1 THEN [minority]
+					WHEN @low_income = 1 THEN [low_income]
+					ELSE 'All' END, 'Total') AS [pop_segmentation]
+	,ISNULL([mode_aggregate], 'Total') AS [mode_aggregate]
+	,SUM([time_total] * [weight_person_trip]) / SUM([weight_person_trip]) AS [avg_time_trip]
+	,SUM([weight_person_trip]) AS [person_trips]
+FROM (
 	SELECT
-		[tour].[tour_id]
-		,[mode_trip].[mode_trip_description]
-		,[dist_total]
+		CASE	WHEN [mode_trip_description] IN ('Drive Alone Non-Toll',
+													'Drive Alone Toll Eligible')
+				THEN 'Drive Alone'
+				WHEN [mode_trip_description] IN ('Shared Ride 2 Non-Toll',
+													'Shared Ride 2 Toll Eligible',
+													'Shared Ride 3 Non-Toll',
+													'Shared Ride 3 Toll Eligible')
+				THEN 'Shared Ride'
+				WHEN [mode_trip_description] IN ('Kiss and Ride to Transit - Local Bus and Premium Transit',
+													'Kiss and Ride to Transit - Local Bus Only',
+													'Kiss and Ride to Transit - Premium Transit Only' ,
+													'Park and Ride to Transit - Local Bus and Premium Transit',
+													'Park and Ride to Transit - Local Bus Only',
+													'Park and Ride to Transit - Premium Transit Only',
+													'Walk to Transit - Local Bus and Premium Transit',
+													'Walk to Transit - Local Bus Only',
+													'Walk to Transit - Premium Transit Only')
+				THEN 'Transit'
+				ELSE [mode_trip_description] END AS [mode_aggregate]
 		,[time_total]
-		,[weight_person_tour]
+		,[weight_person_trip]
 		,CASE WHEN [person].[age] >= 75 THEN 'Senior' ELSE 'Non-Senior' END AS [senior]
 		,CASE	WHEN [person].[race] IN ('Some Other Race Alone',
-										 'Asian Alone',
-										 'Black or African American Alone',
-										 'Two or More Major Race Groups',
-										 'Native Hawaiian and Other Pacific Islander Alone',
-										 'American Indian and Alaska Native Tribes specified; or American Indian or Alaska Native, not specified and no other races')
-					 OR [person].[hispanic] = 'Hispanic' THEN 'Minority'
+											'Asian Alone',
+											'Black or African American Alone',
+											'Two or More Major Race Groups',
+											'Native Hawaiian and Other Pacific Islander Alone',
+											'American Indian and Alaska Native Tribes specified; or American Indian or Alaska Native, not specified and no other races')
+						OR [person].[hispanic] = 'Hispanic' THEN 'Minority'
 					ELSE 'Non-Minority' END AS [minority]
 		,CASE WHEN [household].[poverty] <= 2 THEN 'Low Income' ELSE 'Non-Low Income' END AS [low_income]
-		,MAX(CASE	WHEN [mode_trip].[mode_trip_description] IN ('Bike', 'Walk') 
-					THEN 1 ELSE 0 END) OVER (PARTITION BY [tour].[tour_id]) AS [bike_walk_indicator]
-		,MAX([person_trip].[dist_total]) OVER (PARTITION BY [tour].[tour_id]) AS [dist_max]
-		,MAX([person_trip].[time_total]) OVER (PARTITION BY [tour].[tour_id]) AS [time_max]
 	FROM
 		[fact].[person_trip]
 	INNER JOIN
@@ -1775,94 +1998,30 @@ with [eligible_records] AS (
 	ON
 		[person_trip].[mode_trip_id] = [mode_trip].[mode_trip_id]
 	INNER JOIN
-		[dimension].[tour]
+		[dimension].[model_trip]
 	ON
-		[person_trip].[scenario_id] = [tour].[scenario_id]
-		AND [person_trip].[tour_id] = [tour].[tour_id]
+		[person_trip].[model_trip_id] = [model_trip].[model_trip_id]
 	INNER JOIN
-		[dimension].[model_tour]
+		[dimension].[time_trip_start]
 	ON
-		[tour].[model_tour_id] = [model_tour].[model_tour_id]
+		[person_trip].[time_trip_start_id] = [time_trip_start].[time_trip_start_id]
 	INNER JOIN
-		[dimension].[time_tour_start]
+		[dimension].[purpose_trip_origin]
 	ON
-		[tour].[time_tour_start_id] = [time_tour_start].[time_tour_start_id]
+		[person_trip].[purpose_trip_origin_id] = [purpose_trip_origin].[purpose_trip_origin_id]
 	INNER JOIN
-		[dimension].[purpose_tour]
+		[dimension].[purpose_trip_destination]
 	ON
-		[tour].[purpose_tour_id] = [purpose_tour].[purpose_tour_id]
+		[person_trip].[purpose_trip_destination_id] = [purpose_trip_destination].[purpose_trip_destination_id]
 	WHERE
 		[person_trip].[scenario_id] = @scenario_id
 		AND [person].[scenario_id] = @scenario_id
 		AND [household].[scenario_id] = @scenario_id
-		AND [tour].[scenario_id] = @scenario_id
 		AND [inbound].[inbound_description] = 'Outbound' -- to work trips only
-		AND [model_tour].[model_tour_description] IN ('Individual', 'Internal-External','Joint') -- resident models only
-		AND [time_tour_start].[tour_start_abm_5_tod] IN ('2', '4') -- tours that start in abm five time of day peak periods only
-		AND [purpose_tour].[purpose_tour_description] = 'Work'), -- work tours only
-[filtered_records_tour_mode] AS (
-	SELECT
-		[tour_id]
-		,[mode_trip_description]
-		,rn = ROW_NUMBER()OVER(PARTITION BY [tour_id] ORDER BY [mode_trip_description])
-	FROM
-		[eligible_records]
-	WHERE
-		([bike_walk_indicator] = 0 AND [time_total] = [time_max]) -- if eligible records do not contain bike/walk trips then take trip mode with maximum time
-		OR ([bike_walk_indicator] = 1 AND [dist_total] = [dist_max])), -- if eligible records contain bike/walk trips then take trip mode with maximum distance
-[tour_mode] AS (
-	SELECT
-		[tour_id]
-		,CASE	WHEN [mode_trip_description] IN ('Drive Alone Non-Toll',
-												 'Drive Alone Toll Eligible')
-				THEN 'Drive Alone'
-				WHEN [mode_trip_description] IN ('Shared Ride 2 Non-Toll',
-													'Shared Ride 2 Toll Eligible',
-													'Shared Ride 3 Non-Toll',
-													'Shared Ride 3 Toll Eligible')
-				THEN 'Shared Ride'
-				WHEN [mode_trip_description] IN ('Kiss and Ride to Transit - Local Bus and Premium Transit',
-													'Kiss and Ride to Transit - Local Bus Only',
-													'Kiss and Ride to Transit - Premium Transit Only' ,
-													'Park and Ride to Transit - Local Bus and Premium Transit',
-													'Park and Ride to Transit - Local Bus Only',
-													'Park and Ride to Transit - Premium Transit Only',
-													'Walk to Transit - Local Bus and Premium Transit',
-													'Walk to Transit - Local Bus Only',
-													'Walk to Transit - Premium Transit Only')
-				THEN 'Transit'
-				ELSE [mode_trip_description] END AS [mode_aggregate]
-	FROM
-		[filtered_records_tour_mode]
-	WHERE
-		[rn] = 1) -- add a filter to remove ties (multiple trips with same maximum distances/times)
-SELECT
-	@scenario_id AS [scenario_id]
-	,ISNULL(CASE	WHEN @senior = 1 THEN [senior]
-					WHEN @minority = 1 THEN [minority]
-					WHEN @low_income = 1 THEN [low_income]
-					ELSE 'All' END, 'Total') AS [pop_segmentation]
-	,ISNULL([mode_aggregate], 'Total') AS [mode_aggregate]
-	,SUM([time_tour] * [weight_person_tour]) / SUM([weight_person_tour]) AS [avg_time_tour]
-	,SUM([weight_person_tour]) AS [person_tours]
-FROM (
-	SELECT
-		[eligible_records].[tour_id]
-		,[tour_mode].[mode_aggregate]
-		,MAX([eligible_records].[senior]) AS [senior]
-		,MAX([eligible_records].[minority]) AS [minority]
-		,MAX([eligible_records].[low_income]) AS [low_income]
-		,MAX([eligible_records].[weight_person_tour]) AS [weight_person_tour]
-		,SUM([eligible_records].[time_total]) AS [time_tour]
-	FROM
-		[eligible_records]
-	INNER JOIN
-		[tour_mode]
-	ON
-		[eligible_records].[tour_id] = [tour_mode].[tour_id]
-	GROUP BY
-		[eligible_records].[tour_id]
-		,[tour_mode].[mode_aggregate]) AS [results]
+		AND [model_trip].[model_trip_description] IN ('Individual', 'Internal-External','Joint') -- resident models only
+		AND [time_trip_start].[trip_start_abm_5_tod] IN ('2', '4') -- trips that start in abm five time of day peak periods only
+		AND [purpose_trip_origin].[purpose_trip_origin_description] = 'Home' -- work trips must start at home, a direct to work trip
+		AND [purpose_trip_destination].[purpose_trip_destination_description] = 'Work') [tt] -- work trips only
 GROUP BY
 	CASE	WHEN @senior = 1 THEN [senior]
 			WHEN @minority = 1 THEN [minority]
