@@ -257,6 +257,8 @@ CREATE TABLE [fact].[person_trip] (
 	[time_trip_end_id] int NOT NULL,
 	[geography_trip_origin_id] int NOT NULL,
 	[geography_trip_destination_id] int NOT NULL,
+	[transit_tap_boarding_id] int NOT NULL,
+	[transit_tap_alighting_id] int NOT NULL,
 	[person_escort_drive_id] int NOT NULL,
 	[escort_stop_type_origin_id] tinyint NOT NULL,
 	[person_escort_origin_id] int NOT NULL,
