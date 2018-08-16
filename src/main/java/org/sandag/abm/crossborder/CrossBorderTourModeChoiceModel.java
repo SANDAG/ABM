@@ -356,7 +356,7 @@ public class CrossBorderTourModeChoiceModel
         byte tourMode = (byte) getModeChoice(tour);
         tour.setTourMode(tourMode);
         
-        float valueOfTime = tripModeChoiceModel.getValueOfTime(tourMode);
+        float valueOfTime = tripModeChoiceModel.getTourValueOfTime(tourMode);
         tour.setValueOfTime(valueOfTime);
     }
 

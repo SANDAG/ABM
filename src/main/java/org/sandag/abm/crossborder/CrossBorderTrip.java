@@ -20,6 +20,7 @@ public class CrossBorderTrip
     private int boardTap;
     private int alightTap;
     private int set = -1;
+    float valueOfTime;
     
     /**
      * Default constructor; nothing initialized.
@@ -478,6 +479,14 @@ public class CrossBorderTrip
 
 	public void setSet(int set) {
 		this.set = set;
+	}
+
+	public float getValueOfTime() {
+		return valueOfTime;
+	}
+
+	public void setValueOfTime(float valueOfTime) {
+		this.valueOfTime = valueOfTime;
 	}
 
 }

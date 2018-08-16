@@ -155,6 +155,8 @@ public class CrossBorderTripModeChoiceModel
         try{
             mode = tripModeChoiceModel.getChoiceResult(rand); 
         	trip.setTripMode(mode);
+        	float vot = getTripValueOfTime(mode);
+        	trip.setValueOfTime(vot);
         	
         	if(sandagModelStructure.getTripModeIsTransit(mode)){ 
             	double[][] bestTapPairs = logsumHelper.getBestWtwTripTaps();
@@ -187,7 +189,7 @@ public class CrossBorderTripModeChoiceModel
      * @param tourMode
      * @return The value of time
      */
-    public float getValueOfTime(int tourMode){
+    public float getTourValueOfTime(int tourMode){
        
     	//value of time; lookup vot, votS2, or votS3 from the UEC depending on chosen mode
         UtilityExpressionCalculator uec = tripModeChoiceModel.getUEC();
@@ -198,6 +200,37 @@ public class CrossBorderTripModeChoiceModel
             int votIndex = uec.lookupVariableIndex("votS2");
             vot = uec.getValueForIndex(votIndex);
         }else if (tourMode== modelStructure.SHARED3){
+            int votIndex = uec.lookupVariableIndex("votS3");
+            vot = uec.getValueForIndex(votIndex);
+        }else{
+            int votIndex = uec.lookupVariableIndex("vot");
+            vot = uec.getValueForIndex(votIndex);
+        }
+        return (float) (vot * 0.5); //take half the VOT (assumed for tours)
+
+    	
+    }
+
+    /**
+     * This method looks up the value of time from the last call to the UEC and returns
+     * it based on the occupancy of the mode passed in as an argument. this method ensures
+     * that the value of time at a tour level is the same for all trips on the tour (even
+     * though the actual trip level VOT might vary based on the trip occupancy).
+     * 
+     * @param tripMode
+     * @return The value of time
+     */
+    public float getTripValueOfTime(int tripMode){
+       
+    	//value of time; lookup vot, votS2, or votS3 from the UEC depending on chosen mode
+        UtilityExpressionCalculator uec = tripModeChoiceModel.getUEC();
+        
+        double vot = 0.0;
+        
+        if(modelStructure.getTripModeIsS2(tripMode)){
+            int votIndex = uec.lookupVariableIndex("votS2");
+            vot = uec.getValueForIndex(votIndex);
+        }else if (modelStructure.getTripModeIsS3(tripMode)){
             int votIndex = uec.lookupVariableIndex("votS3");
             vot = uec.getValueForIndex(votIndex);
         }else{
