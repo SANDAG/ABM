@@ -151,10 +151,10 @@ public class InternalExternalTripModeChoiceModel
         
         double vot = 0.0;
         
-        if(modelStructure.getTourModeIsS2(mode)){
+        if(modelStructure.getTripModeIsS2(mode)){
             int votIndex = uec.lookupVariableIndex("votS2");
             vot = uec.getValueForIndex(votIndex);
-        }else if (modelStructure.getTourModeIsS3(mode)){
+        }else if (modelStructure.getTripModeIsS3(mode)){
             int votIndex = uec.lookupVariableIndex("votS3");
             vot = uec.getValueForIndex(votIndex);
         }else{
@@ -225,6 +225,9 @@ public class InternalExternalTripModeChoiceModel
         // Solve trip mode level utilities
         mcDmuObject.setIvtCoeff(c_ivt * tour.getNonWorkTimeFactor());
         mcDmuObject.setCostCoeff(c_cost);
+        
+        dmu.setIvtCoeff(c_ivt * tour.getNonWorkTimeFactor());
+        dmu.setCostCoeff(c_cost);
         double walkTransitLogsum = -999.0;
         double driveTransitLogsum = -999.0;
    
