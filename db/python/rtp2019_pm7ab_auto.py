@@ -84,11 +84,14 @@ destinations = destinations.groupby(["taz_13"], as_index=False).agg(
      "parkactive": lambda x: 1 if sum(x) > .5 else 0,  # active park indicator used in pm_7b
      "emp_retail": sum})  # sum of retail employment used in pm_7b
 
-# get the highway network mid-day period omx skim matrix
-# get the mid-day period single occupancy vehicle general purpose
+# get the highway network am peak and mid-day period omx skim matrix
+# for single occupancy vehicle general purpose
 # low value of time highway time skim
 # matrix is 0-indexed to TAZs (0:1, 1:2, ..., 4995:4996)
 # todo create mapping instead? requires opening in append or write mode
+am_sovgpl_time = omx.open_file(
+    scenario_path + "/output/traffic_skims_AM.omx")["AM_SOVGPL_TIME"]
+
 md_sovgpl_time = omx.open_file(
     scenario_path + "/output/traffic_skims_MD.omx")["MD_SOVGPL_TIME"]
 
@@ -98,11 +101,12 @@ results_7a = list()
 # for each record in the population DataFrame
 for index, row in population_7a.iterrows():
     # get the indices of the TAZs accessible within 30 minutes
-    # from the population TAZ, note the 0-index in the skim matrix
+    # from the population TAZ using am peak period skims
+    # note the 0-index in the skim matrix
     # the population row index taz_13 must be converted to integer
     # it is converted to string earlier in the groupby function
     index = int(index)
-    taz_accessible = list(np.where(md_sovgpl_time[index - 1] <= 30)[0] + 1)
+    taz_accessible = list(np.where(am_sovgpl_time[index - 1] <= 30)[0] + 1)
 
     # sum the destinations with TAZ indices accessible within 30 minutes
     # note the destinations taz_13 column must be converted to integer
@@ -177,7 +181,8 @@ results_7b = list()
 # for each record in the population DataFrame
 for index, row in population_7b.iterrows():
     # get the indices of the TAZs accessible within 15 minutes
-    # from the population TAZ, note the 0-index in the skim matrix
+    # from the population TAZ using mid-day skim
+    # note the 0-index in the skim matrix
     # the population row index taz_13 must be converted to integer
     # it is converted to string earlier in the groupby function
     index = int(index)
