@@ -98,6 +98,10 @@ public class TransitTimeReporter {
       */
  	public void initialize(HashMap<String, String> propertyMap){
  		
+ 		String path=System.getProperty("user.dir");
+ 		outWalkFile=path+"\\output\\"+outWalkFile;
+ 		outDriveFile=path+"\\output\\"+outDriveFile;
+ 		
  		logger.info("Initializing Transit Time Reporter");
  	    mgraManager = MgraDataManager.getInstance(propertyMap);
  	    tazManager = TazDataManager.getInstance(propertyMap);
@@ -138,12 +142,64 @@ public class TransitTimeReporter {
 		return writer;
        
 	}
+	
+	private ArrayList<Integer> getWalkTransitTimeComponents(HashMap<String, String> propertyMap){
+		String timeElements = (String) propertyMap.get("transitShed.walkTransitTimeComponents");
+		String delims = "[,]";
+		String[] elements = timeElements.split(delims);
+		ArrayList<Integer> components=new ArrayList<Integer>();
+		for (int i=0; i<elements.length; i++) {
+			if (elements[i].equalsIgnoreCase("walkAccTime")) {
+				components.add(WLK_WALKACCESSTIME);
+			}else if(elements[i].equalsIgnoreCase("walkEgrTime")) {
+				components.add(WLK_WALKEGRESSTIME);
+			}else if(elements[i].equalsIgnoreCase("walkAuxTime")) {
+				components.add(WLK_AUXWALKTIME);
+			}else if(elements[i].equalsIgnoreCase("1stWaitTime")) {
+				components.add(WLK_FIRSTWAITTIME);
+			}else if(elements[i].equalsIgnoreCase("xferWaitTime")) {
+				components.add(WLK_TRWAITTIME);
+			}else if(elements[i].equalsIgnoreCase("IVTime")) {
+				components.add(WLK_TOTALIVT);
+			}else {
+				 logger.fatal("invalid transit shed time component: " + elements[i] + "\n");
+				 System.exit(-999);
+			}
+		}
+		return components;
+	}
+	
+	private ArrayList<Integer> getDriveTransitTimeComponents(HashMap<String, String> propertyMap){
+		String timeElements = (String) propertyMap.get("transitShed.driveTransitTimeComponents");
+		String delims = "[,]";
+		String[] elements = timeElements.split(delims);
+		ArrayList<Integer> components=new ArrayList<Integer>();
+		for (int i=0; i<elements.length; i++) {
+			if (elements[i].equalsIgnoreCase("drvAccTime")) {
+				components.add(DRV_DRIVEACCESSTIME);
+			}else if(elements[i].equalsIgnoreCase("walkEgrTime")) {
+				components.add(DRV_WALKEGRESSTIME);
+			}else if(elements[i].equalsIgnoreCase("walkAuxTime")) {
+				components.add(DRV_AUXWALKTIME);
+			}else if(elements[i].equalsIgnoreCase("1stWaitTime")) {
+				components.add(DRV_FIRSTWAITTIME);
+			}else if(elements[i].equalsIgnoreCase("xferWaitTime")) {
+				components.add(DRV_TRWAITTIME);
+			}else if(elements[i].equalsIgnoreCase("IVTime")) {
+				components.add(DRV_TOTALIVT);
+			}else {
+				 logger.fatal("invalid transit shed time component: " + elements[i] + "\n");
+				 System.exit(-999);
+			}
+		}
+		return components;
+	}
 
 	
 	/**
 	 * Iterate through MAZs and write results
 	 */
-	private void run(){
+	private void run(HashMap<String, String> pMap){
 		
 		TransitWalkAccessDMU walkDmu =  new TransitWalkAccessDMU();
     	TransitDriveAccessDMU driveDmu  = new TransitDriveAccessDMU();
@@ -212,13 +268,20 @@ public class TransitTimeReporter {
 					double[] walkSkims = wtw.getWalkTransitWalkSkims(set, boardAccessTime, alightAccessTime, boardTap, alightTap, skimPeriod, false); 
 
 					//calculate total time
+					double totalTime=0;
+					ArrayList<Integer> wtelements=getWalkTransitTimeComponents(pMap);
+					for (int i=0; i<wtelements.size(); i++) {
+						totalTime +=  walkSkims[wtelements.get(i)];
+					}
+					/*
 					double totalTime =  walkSkims[WLK_WALKACCESSTIME]   
 					                  + walkSkims[WLK_WALKEGRESSTIME]
 					                  + walkSkims[WLK_AUXWALKTIME]
 				                      + walkSkims[WLK_FIRSTWAITTIME]	
 				                      + walkSkims[WLK_TRWAITTIME]
 				                      + walkSkims[WLK_TOTALIVT];
-				    
+				    */
+					
 					//if total time is less than or equal to the threshold, add the destination MAZ to the output string
 					if(totalTime<=threshold){
 						if(outWalkString==null)
@@ -259,12 +322,21 @@ public class TransitTimeReporter {
 						
 					}
 					//total drive-transit time
+					//calculate total time
+					double totalTime=0;
+					ArrayList<Integer> dtelements=getDriveTransitTimeComponents(pMap);
+					for (int i=0; i<dtelements.size(); i++) {
+						totalTime +=  driveSkims[dtelements.get(i)];
+					}
+					
+					/*
 					double totalTime =  driveSkims[DRV_DRIVEACCESSTIME]   
 					                  + driveSkims[DRV_WALKEGRESSTIME]
 					                  + driveSkims[DRV_AUXWALKTIME]
 				                      + driveSkims[DRV_FIRSTWAITTIME]	
 				                      + driveSkims[DRV_TRWAITTIME]
 				                      + driveSkims[DRV_TOTALIVT];
+				    */
 				    
 					//if total time is less than or equal to the threshold, add the destination MAZ to the output string
 					if(totalTime<=threshold){
@@ -291,8 +363,6 @@ public class TransitTimeReporter {
 			}
 			
 		} //end for origins
-
-
 	}
 	
 	
@@ -327,6 +397,7 @@ public class TransitTimeReporter {
          String period = null;
          String outWalkFileName = null;
          String outDriveFileName = null;
+         String delims = "[.]";
          
          HashMap<String, String> pMap;
 
@@ -355,14 +426,14 @@ public class TransitTimeReporter {
 
  	             if (args[i].equalsIgnoreCase("-outWalkFileName"))
  	            {
- 	                outWalkFileName = args[i + 1];
+ 	       		    String[] elements = args[i + 1].split(delims);
+ 	                outWalkFileName = elements[0]+"_"+period+".csv";
  	            }
-
  	             if (args[i].equalsIgnoreCase("-outDriveFileName"))
  	            {
- 	                outDriveFileName = args[i + 1];
+ 	            	String[] elements = args[i + 1].split(delims);
+ 	                outDriveFileName = elements[0]+"_"+period+".csv";
  	            }
-
  	        }
          }
          
@@ -370,7 +441,7 @@ public class TransitTimeReporter {
          TransitTimeReporter transitTimeReporter = new TransitTimeReporter(pMap, threshold, period,outWalkFileName,outDriveFileName);
 
     
-         transitTimeReporter.run();
+         transitTimeReporter.run(pMap);
  	}
 
 }
