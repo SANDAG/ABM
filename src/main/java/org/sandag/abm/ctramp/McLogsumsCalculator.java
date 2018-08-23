@@ -196,6 +196,8 @@ public class McLogsumsCalculator implements Serializable
         long currentTime = System.currentTimeMillis();
         setNmTripMcDmuAttributes(  mcDmuObject, origMgra, destMgra, departPeriod, mcDmuObject.getHouseholdObject().getDebugChoiceModels() );
 
+        mcDmuObject.setTripPeriod(departPeriod);
+        
         // set the land use data items in the DMU for the origin
         mcDmuObject.setOrigDuDen( mgraManager.getDuDenValue( origMgra ) );
         mcDmuObject.setOrigEmpDen( mgraManager.getEmpDenValue( origMgra ) );
