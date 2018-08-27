@@ -54,8 +54,7 @@ Macro "Run SANDAG ABM"
    skipDeleteIntermediateFiles = RunMacro("read properties",properties,"RunModel.skipDeleteIntermediateFiles", "S")
    precision = RunMacro("read properties",properties,"RunModel.MatrixPrecision", "S")
    minSpaceOnC=RunMacro("read properties",properties,"RunModel.minSpaceOnC", "S")
-  // runShadowPricingFromScratch=RunMacro("read properties",properties,"RunModel.runShadowPricingFromScratch", "S")   
-   
+    
    
    //WSU 01/24/2018
    //create shadow pricing from scratch in iteration 1
@@ -67,11 +66,11 @@ Macro "Run SANDAG ABM"
 	   runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"UsualSchoolLocationChoice.ShadowPrice.Input.File"+"   "
   	   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Update school shadow pricing property: "+" "+runString})
   	   ok=RunMacro("TCB Run Command", 1, "Update school shadow pricing property", runString)
-	   runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"uwsl.ShadowPricing.Work.MaximumIterations"+" 9"
+	   runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"uwsl.ShadowPricing.Work.MaximumIterations"+" 10"
   	   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Update work shadow pricing max itneration property: "+" "+runString})
   	   ok=RunMacro("TCB Run Command", 1, "Update work shadow pricing max iteration property", runString)
-	   runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"uwsl.ShadowPricing.School.MaximumIterations"+" 9"
-  	   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Update work shadow pricing max iteration property: "+" "+runString})
+	   runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"uwsl.ShadowPricing.School.MaximumIterations"+" 10"
+  	   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Update school shadow pricing max iteration property: "+" "+runString})
   	   ok=RunMacro("TCB Run Command", 1, "Update school shadow pricing max iteration property", runString)
    end   
 
@@ -93,6 +92,15 @@ Macro "Run SANDAG ABM"
    if !ok then goto quit
 
 
+   //Check Select Link Query File, added by YMA, 8/9/2018
+   runString = path+"\\bin\\selectLinkQueryFileCheck.bat "+drive+" "+path_no_drive+" "+path_forward_slash
+   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Check Select Link Query File: "+" "+runString})
+   ok = RunMacro("TCB Run Command", 1, "Check Select Link Query File", runString)
+   if !ok then  do
+     RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Suspecious SelectLinkQueryFile Found!"})
+     goto quit  
+   end  
+    
    //check free space on C drive
    runString = path+"\\bin\\checkFreeSpaceOnC.bat "+minSpaceOnC
    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Checking if there is enough space on C drive: "+" "+runString})
@@ -141,11 +149,21 @@ Macro "Run SANDAG ABM"
 	   CopyFile(inputDir+"\\trip_EV.mtx", outputDir+"\\trip_EV.mtx")
    end
 
-  // Build highway network
+  // Build highway network and check Dat Skim //modified 08/09/2018, YMA
    if skipBuildHwyNetwork = "false" then do
-	   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - run create hwy"})
-	   ok = RunMacro("TCB Run Macro", 1, "run create hwy",{}) 
-	   if !ok then goto quit
+       
+       RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - run create hwy"})
+       ok = RunMacro("TCB Run Macro", 1, "run create hwy",{}) 
+       if !ok then goto quit
+
+       RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - Datskim create for testing"})  //added 08/09/2018, YMA
+       ok = RunMacro("TCB Run Macro", 1, "DatskimCreate",{})
+       if !ok then goto quit
+       
+       RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - DatskimCheck"})  //added 08/09/2018, YMA
+       ok = RunMacro("TCB Run Macro", 1, "DatskimCheck",{})
+       if !ok then goto quit
+
    end
 
    // Create transit routes
@@ -242,16 +260,36 @@ Macro "Run SANDAG ABM"
   // Scale shadow pricing files and copy scaled files from output folder to input folder
       // WSU 2/1/2018            
         if skipShadowPricing = "false"  and (iteration =1) then do
-            runString = path+"\\bin\\updateShadowPricing.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+0.1+" "+10
+            //runString = path+"\\bin\\updateShadowPricing.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+0.1+" "+10
+            runString = path+"\\bin\\updateShadowPricing.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+sample_rate[iteration]+" "+"10"
 	    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Update shadow pricing: "+" "+runString})
 	    ok = RunMacro("TCB Run Command", 1, "Update shadow pricing", runString)
 	    if !ok then goto quit              
-	    else do
-	       //copy updated shadow pricing from output to input folder
-	       CopyFile(outputDir+"\\ShadowPricingOutput_work_9.csv", inputDir+"\\ShadowPricingOutput_work_9.csv")
-	       CopyFile(outputDir+"\\ShadowPricingOutput_school_9.csv", inputDir+"\\ShadowPricingOutput_school_9.csv")
+	
+	    //copy updated shadow pricing from output to input folder
+	    CopyFile(outputDir+"\\ShadowPricingOutput_work_9.csv", inputDir+"\\ShadowPricingOutput_work_9.csv")
+	    CopyFile(outputDir+"\\ShadowPricingOutput_school_9.csv", inputDir+"\\ShadowPricingOutput_school_9.csv")
+            
+            //update config file back to normal, YMA, 8/7/2018
+            runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"UsualWorkLocationChoice.ShadowPrice.Input.File"+"  input/ShadowPricingOutput_work_9.csv"
+  	    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Update work shadow pricing property: "+" "+runString})
+  	    ok=RunMacro("TCB Run Command", 1, "Update work shadow pricing property", runString)
+          
+	    runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"UsualSchoolLocationChoice.ShadowPrice.Input.File"+"  input/ShadowPricingOutput_school_9.csv"
+  	    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Update school shadow pricing property: "+" "+runString})
+  	    ok=RunMacro("TCB Run Command", 1, "Update school shadow pricing property", runString)
+          
+	    runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"uwsl.ShadowPricing.Work.MaximumIterations"+" 1"
+  	    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Update work shadow pricing max itneration property: "+" "+runString})
+  	    ok=RunMacro("TCB Run Command", 1, "Update work shadow pricing max iteration property", runString)
+          
+	    runString = path+"\\bin\\updateProperty.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+"uwsl.ShadowPricing.School.MaximumIterations"+" 1"
+  	    RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Update school shadow pricing max iteration property: "+" "+runString})
+  	    ok=RunMacro("TCB Run Command", 1, "Update school shadow pricing max iteration property", runString)
+    
+            
 	    end
-         end
+
  
       // Run airport model, visitor model, cross-border model, internal-external model
       if skipOtherSimulateModel[iteration] = "false" then do
@@ -348,6 +386,7 @@ Macro "Run SANDAG ABM"
     	      RunMacro("reduce matrix precision",outputDir,"externalExternalTrips.mtx", precision)
       end
    end
+
   // Run final highway assignment
    if skipFinalHighwayAssignment = "false" then do
 	   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Macro - hwy assignment"})

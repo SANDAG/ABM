@@ -8,5 +8,6 @@ set ITERATIONS=%5
 set "SCEN_DIR=%PROJECT_DRIVE%%PROJECT_DIRECTORY%"
 set "SCEN_DIR_FWD=%PROJECT_DRIVE%%PROJECT_DIRECTORY_FWD%"
 
-python.exe %SCEN_DIR%\python\shadowpricing\update_SP.py -p %SCEN_DIR_FWD%\output %ITERATIONS% work %SAMPLE_RATE%
-python.exe %SCEN_DIR%\python\shadowpricing\update_SP.py -p %SCEN_DIR_FWD%\output %ITERATIONS% school %SAMPLE_RATE%
+python.exe %SCEN_DIR%\python\sandag\shadowpricing\scaleShadowPricing.py  %SCEN_DIR_FWD%\output %ITERATIONS% work %SAMPLE_RATE%
+python.exe %SCEN_DIR%\python\sandag\shadowpricing\scaleShadowPricing.py  %SCEN_DIR_FWD%\output %ITERATIONS% school %SAMPLE_RATE%
+
