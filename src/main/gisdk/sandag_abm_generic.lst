@@ -20,4 +20,5 @@ ${workpath}\\gisdk\\create_LUZ_Skims.rsc
 ${workpath}\\gisdk\\sandag_abm_outputs.rsc 
 ${workpath}\\gisdk\\exportTCData.rsc 
 ${workpath}\\gisdk\\Utilities.rsc
-${workpath}\\gisdk\\matrixPrecisionReduction.rsc 
+${workpath}\\gisdk\\matrixPrecisionReduction.rsc
+${workpath}\\gisdk\\hwyskimCheck.rsc
