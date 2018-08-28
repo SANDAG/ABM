@@ -570,6 +570,7 @@ WHERE
 	[hwy_flow].[scenario_id] = @scenario_id
 	AND [hwy_link_ab_tod].[scenario_id] = @scenario_id
 	AND ([time] - ([tm] + [tx])) >= 0
+	AND [tm] != 999
 GO
 
 -- Add metadata for [rtp_2019].[sp_pm_1a]
