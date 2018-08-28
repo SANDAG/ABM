@@ -588,7 +588,7 @@ GO
 
 CREATE PROCEDURE [rtp_2019].[sp_pm_2a]
 	@scenario_id integer,
-	@uats bit = 0, -- switch to limit origin and/or destination geographies to UATS zones
+	@uats bit = 0, -- switch to limit origin and destination geographies to UATS zones
 	@work bit = 0 -- switch to limit trip purpose to work
 AS
 
@@ -673,8 +673,8 @@ WHERE
 												  'Joint') -- resident models only
 	AND ((@work = 1 AND [purpose_trip_destination].[purpose_trip_destination_description] = 'Work')
 			OR @work = 0) -- if work trips then filter by destination work purpose
-	AND ((@uats = 1 AND ([uats_mgras_origin_xref].[mgra] IS NOT NULL OR [uats_mgras_dest_xref].[mgra] IS NOT NULL))
-			OR @uats = 0) -- if UATS districts option selected only count trips originating and/or ending in UATS mgras
+	AND ((@uats = 1 AND ([uats_mgras_origin_xref].[mgra] IS NOT NULL AND [uats_mgras_dest_xref].[mgra] IS NOT NULL))
+			OR @uats = 0) -- if UATS districts option selected only count trips originating and ending in UATS mgras
 GROUP BY
 	CASE	WHEN [mode_trip_description] IN ('Drive Alone Non-Toll',
 											 'Drive Alone Toll Eligible')
