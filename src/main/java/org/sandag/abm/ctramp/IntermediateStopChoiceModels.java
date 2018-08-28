@@ -1033,8 +1033,12 @@ public class IntermediateStopChoiceModels
 
                 // if i is 0, the stop origin is set to origMgra; otherwise stop
                 // orig is the chosen dest from the previous stop.
-                if (i == 0) newOrig = origMgra;
-                else newOrig = lastDest;
+                if (i == 0){
+                	newOrig = origMgra;
+                  }
+                else{
+                	newOrig = lastDest;
+                }
                 stop.setOrig(newOrig);
 
                 stopLocDmuObj.setStopObject(stop);
@@ -1053,10 +1057,18 @@ public class IntermediateStopChoiceModels
                 if (i < stops.length - 1)
                 {
 
+                    //new code - depart period to and from stop
+                   	int departPeriodToStop = stop.getStopPeriod();
+                   	int departPeriodFromStop = -1;
+                   	if(!directionIsInbound)
+                   		departPeriodFromStop = tour.getOutboundStops()[i+1].getStopPeriod();
+                   	else
+                   		departPeriodFromStop = tour.getInboundStops()[i+1].getStopPeriod();
+ 
                     try
                     {
 
-                        selectedIndex = selectDestination(stop);
+                        selectedIndex = selectDestination(stop, departPeriodToStop, departPeriodFromStop);
                         choice = finalSample[selectedIndex];
                         stop.setDest(choice);
                         lastDest = choice;
@@ -1460,12 +1472,20 @@ public class IntermediateStopChoiceModels
                 if (i < stops.length - 1)
                 {
 
-                    try
+                    //new code - depart period to and from stop
+                   	int departPeriodToStop = stop.getStopPeriod();
+                   	int departPeriodFromStop = -1;
+                   	if(!directionIsInbound)
+                   		departPeriodFromStop = tour.getOutboundStops()[i+1].getStopPeriod();
+                   	else
+                   		departPeriodFromStop = tour.getInboundStops()[i+1].getStopPeriod();
+                    
+                   	try
                     {
 
                         check = System.nanoTime();
 
-                        selectedIndex = selectDestinationWithTiming(stop);
+                        selectedIndex = selectDestinationWithTiming(stop,departPeriodToStop,departPeriodFromStop);
                         choice = finalSample[selectedIndex];
                         stop.setDest(choice);
 
@@ -1877,7 +1897,7 @@ public class IntermediateStopChoiceModels
 
     }
 
-    private int selectDestination(Stop s)
+    private int selectDestination(Stop s, int departPeriodToStop, int departPeriodFromStop)
     {
 
         Logger modelLogger = slcLogger;
@@ -2063,7 +2083,7 @@ public class IntermediateStopChoiceModels
 
         }
 
-        setupStopLocationChoiceAlternativeArrays(numAltsInSample, s);
+        setupStopLocationChoiceAlternativeArrays(numAltsInSample, s, departPeriodToStop,departPeriodFromStop);
 
         int slcModelIndex = -1;
         if (tour.getTourCategory().equalsIgnoreCase(ModelStructure.MANDATORY_CATEGORY)) slcModelIndex = MAND_SLC_MODEL_INDEX;
@@ -2244,7 +2264,7 @@ public class IntermediateStopChoiceModels
         return selectedIndex;
     }
 
-    private int selectDestinationWithTiming(Stop s)
+    private int selectDestinationWithTiming(Stop s,int departPeriodToStop,int departPeriodFromStop)
     {
 
         Logger modelLogger = slcLogger;
@@ -2434,7 +2454,7 @@ public class IntermediateStopChoiceModels
         }
 
         check = System.nanoTime();
-        setupStopLocationChoiceAlternativeArrays(numAltsInSample, s);
+        setupStopLocationChoiceAlternativeArrays(numAltsInSample, s,departPeriodToStop,departPeriodFromStop);
         slsTime += (System.nanoTime() - check);
 
         int slcModelIndex = -1;
@@ -2614,7 +2634,7 @@ public class IntermediateStopChoiceModels
         return selectedIndex;
     }
 
-    private void setupStopLocationChoiceAlternativeArrays(int numAltsInSample, Stop s)
+    private void setupStopLocationChoiceAlternativeArrays(int numAltsInSample, Stop s,int departPeriodToStop, int departPeriodFromStop)
     {
 
         stopLocDmuObj.setNumberInSample(numAltsInSample);
@@ -2727,13 +2747,13 @@ public class IntermediateStopChoiceModels
             		// if the sampled mgra is in the outbound half-tour alighting tap shed (near tour primary destination)
             		if ( sampleMgraInAlightingTapShed[altMgra] ) {
             			logsumHelper.setWalkTransitLogSumUnavailable( mcDmuObject );
-            			logsumHelper.setDtwTripMcDmuAttributes(mcDmuObject,s.getOrig(),altMgra,s.getStopPeriod(),s.getTour().getPersonObject().getHouseholdObject().getDebugChoiceModels());
+            			logsumHelper.setDtwTripMcDmuAttributes(mcDmuObject,s.getOrig(),altMgra,departPeriodToStop,s.getTour().getPersonObject().getHouseholdObject().getDebugChoiceModels());
             		}
 
             
             		// if the trip origin and sampled mgra are in the outbound half-tour alighting tap shed (near tour origin)
             		if ( sampleMgraInAlightingTapShed[s.getOrig()] && sampleMgraInAlightingTapShed[altMgra] ) {
-            			logsumHelper.setWtwTripMcDmuAttributes(mcDmuObject, s.getOrig(), altMgra, s.getStopPeriod(),s.getTour().getPersonObject().getHouseholdObject().getDebugChoiceModels());
+            			logsumHelper.setWtwTripMcDmuAttributes(mcDmuObject, s.getOrig(), altMgra, departPeriodToStop,s.getTour().getPersonObject().getHouseholdObject().getDebugChoiceModels());
             			logsumHelper.setDriveTransitLogSumUnavailable( mcDmuObject, s.isInboundStop() );
             		}
 
@@ -2741,14 +2761,14 @@ public class IntermediateStopChoiceModels
                 {
             		// if the sampled mgra is in the inbound half-tour boarding tap shed (near tour primary destination)
             		if ( sampleMgraInBoardingTapShed[altMgra] ) {
-            			logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, s.getOrig(), altMgra, s.getStopPeriod(), s.getTour().getPersonObject().getHouseholdObject().getDebugChoiceModels() );
+            			logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, s.getOrig(), altMgra, departPeriodToStop, s.getTour().getPersonObject().getHouseholdObject().getDebugChoiceModels() );
             			logsumHelper.setDriveTransitLogSumUnavailable( mcDmuObject, s.isInboundStop() );
             		}
 
             		// if the sampled mgra is in the inbound half-tour alighting tap shed (near tour origin)
             		if ( sampleMgraInAlightingTapShed[altMgra] ) {
             			logsumHelper.setWalkTransitLogSumUnavailable( mcDmuObject );
-            			logsumHelper.setWtdTripMcDmuAttributes(mcDmuObject,s.getOrig(),altMgra,s.getStopPeriod(),s.getTour().getPersonObject().getHouseholdObject().getDebugChoiceModels());
+            			logsumHelper.setWtdTripMcDmuAttributes(mcDmuObject,s.getOrig(),altMgra,departPeriodToStop,s.getTour().getPersonObject().getHouseholdObject().getDebugChoiceModels());
             		}
 
             		// if the trip origin and sampled mgra are in the inbound half-tour alighting tap shed (near tour origin)
@@ -2763,7 +2783,7 @@ public class IntermediateStopChoiceModels
             { // tour mode is walk-transit
 
                 logsumHelper.setWtwTripMcDmuAttributes(mcDmuObject, s.getOrig(), altMgra,
-                        s.getStopPeriod(), s.getTour().getPersonObject().getHouseholdObject()
+                        departPeriodToStop, s.getTour().getPersonObject().getHouseholdObject()
                                 .getDebugChoiceModels());
 
             } else
@@ -2771,7 +2791,7 @@ public class IntermediateStopChoiceModels
     			logsumHelper.setWalkTransitLogSumUnavailable( mcDmuObject );
     			logsumHelper.setDriveTransitLogSumUnavailable( mcDmuObject, s.isInboundStop() );
             }
-            ikSegment = logsumHelper.calculateTripMcLogsum(s.getOrig(), altMgra, s.getStopPeriod(),
+            ikSegment = logsumHelper.calculateTripMcLogsum(s.getOrig(), altMgra, departPeriodToStop,
                     mcModel, mcDmuObject, slcLogger);
 
             if (ikSegment < -900)
@@ -2813,7 +2833,7 @@ public class IntermediateStopChoiceModels
                 mcDmuObject.getDmuIndexValues().setHHIndex(
                         s.getTour().getPersonObject().getHouseholdObject().getHhId());
                 ikSegment = logsumHelper.calculateTripMcLogsum(s.getOrig(), altMgra,
-                        s.getStopPeriod(), mcModel, mcDmuObject, slcLogger);
+                        departPeriodToStop, mcModel, mcDmuObject, slcLogger);
                 mcDmuObject.getDmuIndexValues().setDebug(false);
                 mcDmuObject.getHouseholdObject().setDebugChoiceModels(false);
 
@@ -2866,12 +2886,12 @@ public class IntermediateStopChoiceModels
 
             		if ( sampleMgraInBoardingTapShed[altMgra] ) {
             			logsumHelper.setWalkTransitLogSumUnavailable( mcDmuObject );
-            			logsumHelper.setDtwTripMcDmuAttributes(mcDmuObject,altMgra,halfTourFinalDest,s.getStopPeriod(),s.getTour().getPersonObject().getHouseholdObject().getDebugChoiceModels());
+            			logsumHelper.setDtwTripMcDmuAttributes(mcDmuObject,altMgra,halfTourFinalDest,departPeriodFromStop,s.getTour().getPersonObject().getHouseholdObject().getDebugChoiceModels());
             		}
 
             		// if the trip origin is in the outbound half-tour alighting tap shed (close to tour primary destination)
             		if ( sampleMgraInAlightingTapShed[altMgra] ) {
-            			logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, altMgra, halfTourFinalDest, s.getStopPeriod(), s.getTour().getPersonObject().getHouseholdObject().getDebugChoiceModels() );
+            			logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, altMgra, halfTourFinalDest, departPeriodFromStop, s.getTour().getPersonObject().getHouseholdObject().getDebugChoiceModels() );
             			logsumHelper.setDriveTransitLogSumUnavailable( mcDmuObject, s.isInboundStop() );
             		}
             		            		
@@ -2880,12 +2900,12 @@ public class IntermediateStopChoiceModels
             		
             		if ( sampleMgraInBoardingTapShed[altMgra] ) {
             			logsumHelper.setWalkTransitLogSumUnavailable( mcDmuObject );
-            			logsumHelper.setWtdTripMcDmuAttributes(mcDmuObject,altMgra,halfTourFinalDest,s.getStopPeriod(),s.getTour().getPersonObject().getHouseholdObject().getDebugChoiceModels());
+            			logsumHelper.setWtdTripMcDmuAttributes(mcDmuObject,altMgra,halfTourFinalDest,departPeriodFromStop,s.getTour().getPersonObject().getHouseholdObject().getDebugChoiceModels());
             		}
             		
             		// if the trip origin is in the inbound half-tour alighting tap shed (close to tour origin)
             		if ( sampleMgraInAlightingTapShed[altMgra] ) {
-            			logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, altMgra, halfTourFinalDest, s.getStopPeriod(), s.getTour().getPersonObject().getHouseholdObject().getDebugChoiceModels() );
+            			logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, altMgra, halfTourFinalDest, departPeriodFromStop, s.getTour().getPersonObject().getHouseholdObject().getDebugChoiceModels() );
             			logsumHelper.setDriveTransitLogSumUnavailable( mcDmuObject, s.isInboundStop() );
             		}
 
@@ -2895,7 +2915,7 @@ public class IntermediateStopChoiceModels
             { // tour mode is walk-transit
 
                 logsumHelper.setWtwTripMcDmuAttributes(mcDmuObject, altMgra, halfTourFinalDest,
-                        s.getStopPeriod(), s.getTour().getPersonObject().getHouseholdObject()
+                		departPeriodFromStop, s.getTour().getPersonObject().getHouseholdObject()
                                 .getDebugChoiceModels());
 
             } else
@@ -2904,7 +2924,7 @@ public class IntermediateStopChoiceModels
     			logsumHelper.setDriveTransitLogSumUnavailable( mcDmuObject, s.isInboundStop() );
             }
             kjSegment = logsumHelper.calculateTripMcLogsum(altMgra, halfTourFinalDest,
-                    s.getStopPeriod(), mcModel, mcDmuObject, slcLogger);
+            		departPeriodFromStop, mcModel, mcDmuObject, slcLogger);
 
             if (kjSegment < -900)
             {
@@ -2947,7 +2967,7 @@ public class IntermediateStopChoiceModels
                 mcDmuObject.getDmuIndexValues().setHHIndex(
                         s.getTour().getPersonObject().getHouseholdObject().getHhId());
                 kjSegment = logsumHelper.calculateTripMcLogsum(altMgra, halfTourFinalDest,
-                        s.getStopPeriod(), mcModel, mcDmuObject, slcLogger);
+                		departPeriodFromStop, mcModel, mcDmuObject, slcLogger);
                 mcDmuObject.getDmuIndexValues().setDebug(false);
                 mcDmuObject.getHouseholdObject().setDebugChoiceModels(false);
             }
