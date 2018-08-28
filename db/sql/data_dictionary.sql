@@ -156,13 +156,13 @@ EXECUTE [db_meta].[add_xp] 'dimension.hwy_link_ab_tod.hwy_link_tod_id', 'MS_Desc
 EXECUTE [db_meta].[add_xp] 'dimension.hwy_link_ab_tod.hwycov_id', 'MS_Description', 'highway network link identifier'
 EXECUTE [db_meta].[add_xp] 'dimension.hwy_link_ab_tod.ab', 'MS_Description', 'link ab direction indicator'
 EXECUTE [db_meta].[add_xp] 'dimension.hwy_link_ab_tod.time_id', 'MS_Description', 'time surrogate key'
-EXECUTE [db_meta].[add_xp] 'dimension.hwy_link_ab_tod.cp', 'MS_Description', 'link capacity'
-EXECUTE [db_meta].[add_xp] 'dimension.hwy_link_ab_tod.cx', 'MS_Description', 'intersection approach capacity'
-EXECUTE [db_meta].[add_xp] 'dimension.hwy_link_ab_tod.tm', 'MS_Description', 'link time in minutes in the from-to direction'
+EXECUTE [db_meta].[add_xp] 'dimension.hwy_link_ab_tod.cp', 'MS_Description', 'link capacity, 999999 used as missing value'
+EXECUTE [db_meta].[add_xp] 'dimension.hwy_link_ab_tod.cx', 'MS_Description', 'intersection approach capacity, 999999 used as missing value'
+EXECUTE [db_meta].[add_xp] 'dimension.hwy_link_ab_tod.tm', 'MS_Description', 'link time in minutes in the from-to direction, 999 used as missing value'
 EXECUTE [db_meta].[add_xp] 'dimension.hwy_link_ab_tod.tx', 'MS_Description', 'intersection delay time'
-EXECUTE [db_meta].[add_xp] 'dimension.hwy_link_ab_tod.ln', 'MS_Description', 'number of lanes in the from-to direction'
-EXECUTE [db_meta].[add_xp] 'dimension.hwy_link_ab_tod.stm', 'MS_Description', 'single occupancy vehicle time'
-EXECUTE [db_meta].[add_xp] 'dimension.hwy_link_ab_tod.htm', 'MS_Description', 'high occupancy vehicle time'
+EXECUTE [db_meta].[add_xp] 'dimension.hwy_link_ab_tod.ln', 'MS_Description', 'number of lanes in the from-to direction, 9 used as missing value'
+EXECUTE [db_meta].[add_xp] 'dimension.hwy_link_ab_tod.stm', 'MS_Description', 'single occupancy vehicle time, 999.25 used as missing value'
+EXECUTE [db_meta].[add_xp] 'dimension.hwy_link_ab_tod.htm', 'MS_Description', 'high occupancy vehicle time, 999.25 used as missing value'
 GO
 
 
