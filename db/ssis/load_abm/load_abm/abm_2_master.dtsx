@@ -14,8 +14,8 @@
   DTS:MaxErrorCount="0"
   DTS:ObjectName="abm_2_master"
   DTS:PackageType="5"
-  DTS:VersionBuild="84"
-  DTS:VersionGUID="{B674A423-6109-492C-8483-9D07212C0FDF}">
+  DTS:VersionBuild="85"
+  DTS:VersionGUID="{7986FF19-5CC6-4EA3-B1DB-5918F30D7AC5}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:Variables>
@@ -282,8 +282,8 @@
         DTS:Name="Executable">@[$Project::python_script_path] + "\\run_python.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="F:\SSISDEV\python\run_python.bat"
-          Arguments="D:\Python27\ArcGIS10.6\Lib\site-packages\osgeo\data\gdal D:\Python27\ArcGIS10.6 F:\SSISDEV\python\arcpy_cleanup.py "
+          Executable="\run_python.bat"
+          Arguments="  \arcpy_cleanup.py "
           WindowStyle="Hidden" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -332,9 +332,35 @@
         DTS:Name="Executable">@[$Project::python_script_path] + "\\run_python.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="F:\SSISDEV\python\run_python.bat"
-          Arguments="D:\Python27\ArcGIS10.6\Lib\site-packages\osgeo\data\gdal D:\Python27\ArcGIS10.6 F:\SSISDEV\python\e00_to_shape.py  F:\SSISDEV\python"
+          Executable="\run_python.bat"
+          Arguments="  \e00_to_shape.py  "
           TerminateAfterTimeout="False" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\export_loaded_hwycov"
+      DTS:CreationName="Microsoft.ExecuteProcess"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute Process Task"
+      DTS:DTSID="{0c8c253f-d9f1-4a88-88e9-98e2d960fe20}"
+      DTS:ExecutableType="Microsoft.ExecuteProcess"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="export_loaded_hwycov"
+      DTS:TaskContact="Execute Process Task;Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:PropertyExpression
+        DTS:Name="Arguments">@[$Project::gdal_path] + " " + @[$Project::ogr2ogr_path] + " " + @[User::scenario_filepath] +  " " + (DT_WSTR, 4)@[User::scenario_id]</DTS:PropertyExpression>
+      <DTS:PropertyExpression
+        DTS:Name="Executable">@[$Project::python_script_path] + "\\hwyload_shp.bat"</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <ExecuteProcessData
+          Executable="\hwyload_shp.bat"
+          Arguments="   0"
+          WindowStyle="Hidden" />
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
@@ -358,8 +384,8 @@
         DTS:Name="Executable">@[$Project::python_script_path] + "\\run_python.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="F:\SSISDEV\python\run_python.bat"
-          Arguments="D:\Python27\ArcGIS10.6\Lib\site-packages\osgeo\data\gdal D:\Python27\ArcGIS10.6 F:\SSISDEV\python\geospatial_export.py "
+          Executable="\run_python.bat"
+          Arguments="  \geospatial_export.py "
           WindowStyle="Hidden" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -449,6 +475,14 @@
       DTS:ObjectName="Constraint 13"
       DTS:To="Package\abm_2_trips" />
     <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 14]"
+      DTS:CreationName=""
+      DTS:DTSID="{A28023B4-CAA2-4D2C-AF2A-68A18CCC9188}"
+      DTS:From="Package\export_loaded_hwycov"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 14"
+      DTS:To="Package\complete_scenario" />
+    <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
       DTS:CreationName=""
       DTS:DTSID="{D0807C25-1DCF-45F5-BFA5-AE656AC78BB5}"
@@ -499,11 +533,11 @@
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 8]"
       DTS:CreationName=""
-      DTS:DTSID="{5D15E65F-2C26-43DF-89FB-B3E98ABD15AC}"
+      DTS:DTSID="{E74491DC-0731-41F0-9C8C-FE47D742C6FF}"
       DTS:From="Package\abm_2_hwy"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 8"
-      DTS:To="Package\complete_scenario" />
+      DTS:To="Package\export_loaded_hwycov" />
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 9]"
       DTS:CreationName=""
@@ -603,7 +637,7 @@
         <NodeLayout
           Size="167,42"
           Id="Package\complete_scenario"
-          TopLeft="453,491" />
+          TopLeft="400,659" />
         <NodeLayout
           Size="145,42"
           Id="Package\e00_to_shape"
@@ -678,26 +712,26 @@
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-104.3,35"
+              EndConnector="-157.3,203"
               Start="0,0"
-              End="-104.3,27.5">
+              End="-157.3,195.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,20.4970662196144" />
+                    End="0,138.082984073764" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,20.4970662196144"
-                    Point2="0,24.4970662196144"
-                    Point3="-4,24.4970662196144" />
+                    Point1="0,138.082984073764"
+                    Point2="0,142.082984073764"
+                    Point3="-4,142.082984073764" />
                   <mssgle:LineSegment
-                    End="-100.3,24.4970662196144" />
+                    End="-153.3,142.082984073764" />
                   <mssgle:CubicBezierSegment
-                    Point1="-100.3,24.4970662196144"
-                    Point2="-104.3,24.4970662196144"
-                    Point3="-104.3,28.4970662196144" />
+                    Point1="-153.3,142.082984073764"
+                    Point2="-157.3,142.082984073764"
+                    Point3="-157.3,146.082984073764" />
                   <mssgle:LineSegment
-                    End="-104.3,27.5" />
+                    End="-157.3,195.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -754,6 +788,28 @@
                   Capacity="5">
                   <mssgle:LineSegment
                     End="0,26.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 13]"
+          TopLeft="573,435.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="47,0"
+              Start="0,0"
+              End="39.5,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="39.5,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -914,60 +970,26 @@
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="302.8,32"
+              EndConnector="249.8,200"
               Start="0,0"
-              End="302.8,24.5">
+              End="249.8,192.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,18.3973176865046" />
+                    End="0,135.983235540654" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,18.3973176865046"
-                    Point2="0,22.3973176865046"
-                    Point3="4,22.3973176865046" />
+                    Point1="0,135.983235540654"
+                    Point2="0,139.983235540654"
+                    Point3="4,139.983235540654" />
                   <mssgle:LineSegment
-                    End="298.8,22.3973176865046" />
+                    End="245.8,139.983235540654" />
                   <mssgle:CubicBezierSegment
-                    Point1="298.8,22.3973176865046"
-                    Point2="302.8,22.3973176865046"
-                    Point3="302.8,26.3973176865046" />
+                    Point1="245.8,139.983235540654"
+                    Point2="249.8,139.983235540654"
+                    Point3="249.8,143.983235540654" />
                   <mssgle:LineSegment
-                    End="302.8,24.5" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 8]"
-          TopLeft="343,458">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="177.6,33"
-              Start="0,0"
-              End="177.6,25.5">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,14.2362673726009" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,14.2362673726009"
-                    Point2="0,18.2362673726009"
-                    Point3="4,18.2362673726009" />
-                  <mssgle:LineSegment
-                    End="173.6,18.2362673726009" />
-                  <mssgle:CubicBezierSegment
-                    Point1="173.6,18.2362673726009"
-                    Point2="177.6,18.2362673726009"
-                    Point3="177.6,22.2362673726009" />
-                  <mssgle:LineSegment
-                    End="177.6,25.5" />
+                    End="249.8,192.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -978,30 +1000,44 @@
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 9]"
-          TopLeft="499.5,457">
+          TopLeft="499.45,457">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="52.9,34"
+              EndConnector="0,202"
               Start="0,0"
-              End="52.9,26.5">
+              End="0,194.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,14.788881535407" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,14.788881535407"
-                    Point2="0,18.788881535407"
-                    Point3="4,18.788881535407" />
+                    End="0,194.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="187,42"
+          Id="Package\export_loaded_hwycov"
+          TopLeft="251,509" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 8]"
+          TopLeft="343.75,458">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,51"
+              Start="0,0"
+              End="0,43.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
                   <mssgle:LineSegment
-                    End="48.9,18.788881535407" />
-                  <mssgle:CubicBezierSegment
-                    Point1="48.9,18.788881535407"
-                    Point2="52.9,18.788881535407"
-                    Point3="52.9,22.788881535407" />
-                  <mssgle:LineSegment
-                    End="52.9,26.5" />
+                    End="0,43.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -1011,19 +1047,31 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 13]"
-          TopLeft="573,435.5">
+          Id="Package.PrecedenceConstraints[Constraint 14]"
+          TopLeft="344.5,551">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="47,0"
+              EndConnector="123.1,108"
               Start="0,0"
-              End="39.5,0">
+              End="123.1,100.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="39.5,0" />
+                    End="0,55.6823295830576" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,55.6823295830576"
+                    Point2="0,59.6823295830576"
+                    Point3="4,59.6823295830576" />
+                  <mssgle:LineSegment
+                    End="119.1,59.6823295830576" />
+                  <mssgle:CubicBezierSegment
+                    Point1="119.1,59.6823295830576"
+                    Point2="123.1,59.6823295830576"
+                    Point3="123.1,63.6823295830576" />
+                  <mssgle:LineSegment
+                    End="123.1,100.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
