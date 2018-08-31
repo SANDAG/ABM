@@ -180,7 +180,17 @@ public class FakeModelStructure
         return getTripModeIsKnrTransit(tripMode);
     }
 
-  
+    @Override
+    public boolean getTripModeIsS2(int tripMode)
+    {
+        return getTripModeIsS2(tripMode);
+    }
+    @Override
+    public boolean getTripModeIsS3(int tripMode)
+    {
+        return getTripModeIsS3(tripMode);
+    }
+
     @Override
     public double[][] getCdap6PlusProps()
     {

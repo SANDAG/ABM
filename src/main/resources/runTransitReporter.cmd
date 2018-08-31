@@ -2,8 +2,8 @@ rem @echo off
 
 set PROJECT_DRIVE=%1
 set PROJECT_DIRECTORY=%2
-set SAMPLERATE=%3
-set ITERATION=%4
+set THRESHOLD=%3
+set TOD=%4
 
 %PROJECT_DRIVE%
 cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%
@@ -36,20 +36,10 @@ rem ### Change the PATH environment variable so that JAVA_HOME is listed first i
 rem ### Doing this ensures that the JAVA_HOME path we defined above is the on that gets used in case other java paths are in PATH.
 set PATH=%JAVA_PATH%\bin;%OLDPATH%
 
-rem run ping to add a pause so that hhMgr and mtxMgr have time to fully start
-ping -n 10 %MAIN% > nul
-
 cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 
-rem Special Event model
-%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.specialevent.SpecialEventModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE%  
-
-rem Build Special Event model trip tables
-%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -Djava.library.path=%TRANSCAD_PATH% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.specialevent.SpecialEventTripTables %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE%
-
-
-rem kill java tasks
-taskkill /F /IM java.exe
+rem TransitTimeReporter
+%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.reporting.TransitTimeReporter %PROPERTIES_NAME% -threshold %THRESHOLD% -period %TOD% -outWalkFileName walkMgrasWithin%THRESHOLD%Min.csv -outDriveFileName driveMgrasWithin%THRESHOLD%Min.csv
 
 rem ### restore saved environment variable values, and change back to original current directory
 set JAVA_PATH=%OLDJAVAPATH%

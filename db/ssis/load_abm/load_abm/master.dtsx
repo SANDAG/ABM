@@ -15,7 +15,7 @@
   DTS:ObjectName="master"
   DTS:PackageType="5"
   DTS:VersionBuild="4"
-  DTS:VersionGUID="{52BB4151-69A0-4376-88E8-E50544058B47}">
+  DTS:VersionGUID="{4B5CA404-3B66-4BF3-BF96-ACD114F43678}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:Variables>

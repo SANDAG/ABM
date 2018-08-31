@@ -479,7 +479,7 @@ public class VisitorTourManager
                 + trip.isOriginIsTourDestination() + "," + trip.isDestinationIsTourDestination()
                 + "," + trip.getPeriod() + "," + trip.getTripMode() + "," 
                 + trip.getBoardTap() + "," + trip.getAlightTap() + "," + trip.getSet()
-                + "," + String.format("%9.2f",tour.getValueOfTime())+ "," + tour.getNumberOfParticipants()+ "\n");
+                + "," + String.format("%9.2f",trip.getValueOfTime())+ "," + tour.getNumberOfParticipants()+ "\n");
         writer.print(record);
     }
 

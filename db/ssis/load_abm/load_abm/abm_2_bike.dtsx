@@ -14,7 +14,7 @@
   DTS:ObjectName="abm_2_bike"
   DTS:PackageType="5"
   DTS:VersionBuild="41"
-  DTS:VersionGUID="{4037F840-BEC5-4A91-AFC6-B20C827EEE72}">
+  DTS:VersionGUID="{B79ADE04-608B-4303-B09C-332B9452BC27}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>

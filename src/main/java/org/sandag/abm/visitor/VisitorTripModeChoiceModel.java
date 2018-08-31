@@ -15,6 +15,7 @@ import org.sandag.abm.modechoice.TazDataManager;
 
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.newmodel.ChoiceModelApplication;
+import com.pb.common.newmodel.UtilityExpressionCalculator;
 
 public class VisitorTripModeChoiceModel
 {
@@ -148,6 +149,14 @@ public class VisitorTripModeChoiceModel
         try{
         	int mode = tripModeChoiceModel.getChoiceResult(rand); 
         	trip.setTripMode(mode);
+        	
+        	//value of time; lookup vot, votS2, or votS3 from the UEC depending on chosen mode
+            UtilityExpressionCalculator uec = tripModeChoiceModel.getUEC();
+            
+            int votIndex = uec.lookupVariableIndex("vot");
+            double vot = uec.getValueForIndex(votIndex);
+            trip.setValueOfTime((float)vot);
+
             if(modelStructure.getTripModeIsTransit(mode)){
             	double[][] bestTapPairs = null;
             

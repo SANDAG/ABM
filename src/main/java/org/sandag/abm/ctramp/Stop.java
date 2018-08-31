@@ -33,6 +33,8 @@ public class Stop
     int     stopPurposeIndex;
 
     Tour    parentTour;
+    
+    private double valueOfTime;
 
     public Stop(Tour parentTour, String origPurpose, String destPurpose, int id, boolean inbound,
             int stopPurposeIndex)
@@ -200,6 +202,14 @@ public class Stop
 	public void setModeLogsum(float modeLogsum) {
 		this.modeLogsum = modeLogsum;
 	}
+	public double getValueOfTime() {
+		return valueOfTime;
+	}
+
+	public void setValueOfTime(double valueOfTime) {
+		this.valueOfTime = valueOfTime;
+	}
+
 
 	public void logStopObject(Logger logger, int totalChars)
     {
@@ -214,6 +224,7 @@ public class Stop
         Household.logHelper(logger, "orig: ", orig, totalChars);
         Household.logHelper(logger, "dest: ", dest, totalChars);
         Household.logHelper(logger, "mode: ", mode, totalChars);
+        Household.logHelper(logger, "value of time: ", ((float)valueOfTime), totalChars);
         Household.logHelper(logger, "boardTap: ", boardTap, totalChars);
         Household.logHelper(logger, "alightTap: ", alightTap, totalChars);
         Household.logHelper(logger, "TapSet: ", set, totalChars);

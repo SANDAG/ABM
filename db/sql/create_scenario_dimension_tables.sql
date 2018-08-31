@@ -295,8 +295,8 @@ WITH (DATA_COMPRESSION = PAGE)
 CREATE TABLE [dimension].[transit_tap] (
 	[scenario_id] int NOT NULL,
 	[transit_tap_id] int NOT NULL,
-	[tap] int NOT NULL,
-	[transit_tap_shape] geometry NOT NULL,
+	[tap] nchar(20) NOT NULL,
+	[transit_tap_shape] geometry NULL,
 	CONSTRAINT pk_transittap PRIMARY KEY ([scenario_id], [transit_tap_id]) WITH (STATISTICS_INCREMENTAL = ON),
 	CONSTRAINT ixuq_transittap UNIQUE ([scenario_id], [tap]) WITH (STATISTICS_INCREMENTAL = ON, DATA_COMPRESSION = PAGE),
 	CONSTRAINT fk_transittap_scenario FOREIGN KEY ([scenario_id]) REFERENCES [dimension].[scenario] ([scenario_id]))

@@ -307,7 +307,7 @@ public class CrossBorderTourManager
                 + trip.getSet() + ","
                         + String.format("%9.2f",tour.getWorkTimeFactor()) + "," 
                         + String.format("%9.2f",tour.getNonWorkTimeFactor()) + ","
-                        + String.format("%9.2f", tour.getValueOfTime()) +"\n");
+                        + String.format("%9.2f", trip.getValueOfTime()) +"\n");
         writer.print(record);
     }
     /**

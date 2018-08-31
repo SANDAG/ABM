@@ -211,6 +211,10 @@ public class IntermediateStopChoiceModels
     
     private double[]                           mcLogsumsSegmentIk;
     private double[]                           mcLogsumsSegmentKj;
+    
+    private double[][]                         mcVOTsSegmentIk; //by sample and occupancy (0=non-SR,1=S2,2=S3)
+    private double[][]                         mcVOTsSegmentKj;
+    
 
     private double[][][][] segmentIkBestTapPairs;
     private double[][][][] segmentKjBestTapPairs;
@@ -441,7 +445,11 @@ public class IntermediateStopChoiceModels
         // mode choice probability arrays
         mcCumProbsSegmentIk = new double[sampleSize + 1][];
         mcCumProbsSegmentKj = new double[sampleSize + 1][];
-        
+  
+        //declare the arrays for storing the VOTs calculated by trip mode choice for ik and kj segment
+        mcVOTsSegmentIk = new double[sampleSize+1][3];
+        mcVOTsSegmentKj = new double[sampleSize+1][3];
+
         //declare the arrays for storing the stop location choice ik and kj segment
         //mode choice logsum arrays
         mcLogsumsSegmentIk = new double[sampleSize + 1];
@@ -1037,6 +1045,7 @@ public class IntermediateStopChoiceModels
                 int selectedIndex = -1;
                 int modeAlt = -1;
                 float modeLogsum = 0;
+                double vot = -1.0;
                 // if not the last stop object, make a destination choice and a
                 // mode choice from IK MC probabilities;
                 // otherwise stop dest is set to destMgra, and make a mode
@@ -1073,7 +1082,7 @@ public class IntermediateStopChoiceModels
                         modeAlt = selectModeFromProbabilities(stop,
                                 mcCumProbsSegmentIk[selectedIndex]);
                         modeLogsum = (float) mcLogsumsSegmentIk[selectedIndex];
-                        
+                       
                         if (modeAlt < 0)
                         {
                             logger.info("error getting trip mode choice for IK proportions, i=" + i);
@@ -1089,6 +1098,15 @@ public class IntermediateStopChoiceModels
                                     + ", stopDest=" + stop.getDest());
                             throw new RuntimeException();
                         }
+
+                        //value of time; lookup vot, votS2, or votS3 depending on chosen mode
+                        if(modelStructure.getTripModeIsS2(modeAlt)){
+                            vot = mcVOTsSegmentIk[selectedIndex][1];
+                        }else if (modelStructure.getTripModeIsS3(modeAlt)){
+                            vot = mcVOTsSegmentIk[selectedIndex][2];
+                       }else{
+                            vot = mcVOTsSegmentIk[selectedIndex][0];
+                       }
 
                         int park = -1;
                         if (modelStructure.getTripModeIsSovOrHov(modeAlt))
@@ -1114,6 +1132,7 @@ public class IntermediateStopChoiceModels
 
                     stop.setMode(modeAlt);
                     stop.setModeLogsum(modeLogsum);
+                    stop.setValueOfTime(vot);
 
                     // if the trip is a transit mode, set the boarding and
                     // alighting tap pairs in the stop object based on the ik
@@ -1180,7 +1199,7 @@ public class IntermediateStopChoiceModels
                     modeAlt = selectModeFromProbabilities(stop,
                             mcCumProbsSegmentKj[oldSelectedIndex]);
                     modeLogsum = (float) mcLogsumsSegmentKj[oldSelectedIndex];
-                    
+ 
                     if (modeAlt < 0)
                     {
                         logger.error("error getting trip mode choice for KJ proportions, i=" + i);
@@ -1195,6 +1214,15 @@ public class IntermediateStopChoiceModels
                                 + stop.getOrig() + ", stopDest=" + stop.getDest());
                         throw new RuntimeException();
                     }
+
+                    //value of time; lookup vot, votS2, or votS3 depending on chosen mode
+                    if(modelStructure.getTripModeIsS2(modeAlt)){
+                        vot = mcVOTsSegmentKj[oldSelectedIndex][1];
+                    }else if (modelStructure.getTripModeIsS3(modeAlt)){
+                        vot = mcVOTsSegmentKj[oldSelectedIndex][2];
+                   }else{
+                        vot = mcVOTsSegmentKj[oldSelectedIndex][0];
+                   }
 
                     // last stop on tour, so if inbound, only need park location
                     // choice if tour is work-based subtour;
@@ -1222,6 +1250,7 @@ public class IntermediateStopChoiceModels
 
                     stop.setMode(modeAlt);
                     stop.setModeLogsum(modeLogsum);
+                    stop.setValueOfTime(vot);
 
                     // if the last trip is a transit mode, set the boarding and
                     // alighting tap pairs in the stop object based on the kj
@@ -1422,6 +1451,7 @@ public class IntermediateStopChoiceModels
                 int selectedIndex = -1;
                 int modeAlt = -1;
                 float modeLogsum = 0;
+                double vot= -1;
                 
                 // if not the last stop object, make a destination choice and a
                 // mode choice from IK MC probabilities;
@@ -1504,7 +1534,16 @@ public class IntermediateStopChoiceModels
                             throw new RuntimeException();
                         }
 
-                        int park = -1;
+                        //value of time; lookup vot, votS2, or votS3 depending on chosen mode
+                        if(modelStructure.getTripModeIsS2(modeAlt)){
+                            vot = mcVOTsSegmentIk[selectedIndex][1];
+                        }else if (modelStructure.getTripModeIsS3(modeAlt)){
+                            vot = mcVOTsSegmentIk[selectedIndex][2];
+                       }else{
+                            vot = mcVOTsSegmentIk[selectedIndex][0];
+                       }
+
+                       int park = -1;
                         if (modelStructure.getTripModeIsSovOrHov(modeAlt))
                         {
                             park = selectParkingLocation(household, tour, stop);
@@ -1537,6 +1576,7 @@ public class IntermediateStopChoiceModels
 
                     stop.setMode(modeAlt);
                     stop.setModeLogsum(modeLogsum);
+                    stop.setValueOfTime(vot);
 
                     // if the trip is a transit mode, set the boarding and
                     // alighting tap pairs in the stop object based on the ik
@@ -1638,6 +1678,15 @@ public class IntermediateStopChoiceModels
                         throw new RuntimeException();
                     }
 
+                    //value of time; lookup vot, votS2, or votS3 depending on chosen mode
+                    if(modelStructure.getTripModeIsS2(modeAlt)){
+                        vot = mcVOTsSegmentKj[oldSelectedIndex][1];
+                    }else if (modelStructure.getTripModeIsS3(modeAlt)){
+                        vot = mcVOTsSegmentKj[oldSelectedIndex][2];
+                   }else{
+                        vot = mcVOTsSegmentKj[oldSelectedIndex][0];
+                   }
+
                     // last stop on tour, so if inbound, only need park location
                     // choice if tour is work-based subtour;
                     // otherwise dest is home.
@@ -1666,6 +1715,7 @@ public class IntermediateStopChoiceModels
 
                     stop.setMode(modeAlt);
                     stop.setModeLogsum(modeLogsum);
+                    stop.setValueOfTime(vot);
 
                     // if the last trip is a transit mode, set the boarding and
                     // alighting tap pairs in the stop object based on the kj
@@ -2771,6 +2821,7 @@ public class IntermediateStopChoiceModels
 
             // store the mode choice probabilities for the segment
             mcCumProbsSegmentIk[i] = logsumHelper.getStoredSegmentCumulativeProbabilities();
+            mcVOTsSegmentIk[i] = logsumHelper.getStoredSegmentVOTs(); 
             
             // Store the mode choice logsum for the segment
             mcLogsumsSegmentIk[i] = ikSegment;
@@ -2903,7 +2954,8 @@ public class IntermediateStopChoiceModels
 
             // store the mode choice probabilities for the segment
             mcCumProbsSegmentKj[i] = logsumHelper.getStoredSegmentCumulativeProbabilities();
-            
+            mcVOTsSegmentKj[i] = logsumHelper.getStoredSegmentVOTs();
+          
             // store the mode choice logsum for the segment
             mcLogsumsSegmentKj[i] = kjSegment;
 
@@ -4093,7 +4145,23 @@ public class IntermediateStopChoiceModels
             }
 
         }
-
+        //value of time; lookup vot, votS2, or votS3 from the UEC depending on chosen mode
+        UtilityExpressionCalculator uec = mcModel.getUEC();
+        
+        double vot = 0.0;
+        
+        if(modelStructure.getTripModeIsS2(selectedModeAlt)){
+            int votIndex = uec.lookupVariableIndex("votS2");
+            vot = uec.getValueForIndex(votIndex);
+        }else if (modelStructure.getTripModeIsS3(selectedModeAlt)){
+            int votIndex = uec.lookupVariableIndex("votS3");
+            vot = uec.getValueForIndex(votIndex);
+        }else{
+            int votIndex = uec.lookupVariableIndex("vot");
+            vot = uec.getValueForIndex(votIndex);
+        }
+        s.setValueOfTime(vot);
+      
         return selectedModeAlt;
     }
 
