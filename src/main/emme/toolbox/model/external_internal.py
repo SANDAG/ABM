@@ -306,7 +306,15 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
             for mode in modes:
                 for purpose in purpose_types:
                     matrix = emmebank.matrix("mf%s_%s_%s" % (period, mode, purpose))
-                    report = round_matrix(demand_to_round=matrix,
-                                          rounded_demand=matrix,
-                                          min_demand=precision,
-                                          values_to_round="SMALLER_THAN_MIN")
+                    try:
+                        report = round_matrix(demand_to_round=matrix,
+                                              rounded_demand=matrix,
+                                              min_demand=precision,
+                                              values_to_round="SMALLER_THAN_MIN")
+                    except:
+                        max_val = matrix.get_numpy_data(scenario.id).max()
+                        if max_val == 0: 
+                            # if max_val is 0 the error is that the matrix is 0, log a warning
+                            _m.logbook_write('Warning: matrix %s is all 0s' % matrix.named_id)
+                        else:
+                            raise
