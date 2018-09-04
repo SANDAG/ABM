@@ -13,8 +13,8 @@
   DTS:MaxErrorCount="0"
   DTS:ObjectName="master_package"
   DTS:PackageType="5"
-  DTS:VersionBuild="22"
-  DTS:VersionGUID="{DFAEF748-86F0-4955-A173-F182A9E1C283}">
+  DTS:VersionBuild="24"
+  DTS:VersionGUID="{EBBDE402-CC8C-4ECC-8188-AEF1C0737984}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:Variables>
@@ -50,6 +50,26 @@
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
+      DTS:refId="Package\13_4_0_master"
+      DTS:CreationName="Microsoft.ExecutePackageTask"
+      DTS:Description="Execute Package Task"
+      DTS:DTSID="{6dae5b8b-ac26-4c16-966d-f455708ad632}"
+      DTS:ExecutableType="Microsoft.ExecutePackageTask"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="13_4_0_master"
+      DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <ExecutePackageTask>
+          <UseProjectReference>True</UseProjectReference>
+          <PackageName>13_4_0_master.dtsx</PackageName>
+        </ExecutePackageTask>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
       DTS:refId="Package\load?"
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:Description="Execute SQL Task"
@@ -66,7 +86,7 @@
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}"
-          SQLTask:SqlStatementSource="SELECT&#xA;&#x9;ISNULL(&#xA;&#x9;&#x9;(SELECT TOP 1&#xA;&#x9;&#x9;&#x9;CASE&#x9;WHEN [abm_version] = 'pre 13.2.4' THEN 1&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('13.2.4', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('13.2.5', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('13.3.0', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('version_13_3_0', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('13_3_1', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('13_3_2', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('13_3_3', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('13_4_0', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;ELSE 0&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;END&#xA;&#x9;&#x9;FROM&#xA;&#x9;&#x9;&#x9;[data_load].[scenario_load_request]&#xA;&#x9;&#x9;WHERE&#xA;&#x9;&#x9;&#x9;[loading] = 0&#xA;&#x9;&#x9;&#x9;AND [scenario_id] IS NULL&#xA;&#x9;&#x9;&#x9;AND ([abm_version] = 'pre 13.2.4'&#xA;&#x9;&#x9;&#x9;&#x9; OR CHARINDEX('13.2.4', [abm_version]) &gt; 0&#xA;&#x9;&#x9;&#x9;&#x9; OR CHARINDEX('13.2.5', [abm_version]) &gt; 0&#xA;&#x9;&#x9;&#x9;&#x9; OR CHARINDEX('13.3.0', [abm_version]) &gt; 0&#xA;&#x9;&#x9;&#x9;&#x9; OR CHARINDEX('13_3_0', [abm_version]) &gt; 0&#xA;&#x9;&#x9;&#x9;&#x9; OR CHARINDEX('13_3_1', [abm_version]) &gt; 0&#xA;&#x9;&#x9;&#x9;&#x9; OR CHARINDEX('13_3_2', [abm_version]) &gt; 0&#xA;&#x9;&#x9;&#x9;&#x9; OR CHARINDEX('13_3_3', [abm_version]) &gt; 0&#xA;&#x9;&#x9;&#x9;&#x9; OR CHARINDEX('13_4_0', [abm_version]) &gt; 0))&#xA;&#x9;, 0)"
+          SQLTask:SqlStatementSource="SELECT&#xA;&#x9;ISNULL(&#xA;&#x9;&#x9;(SELECT TOP 1&#xA;&#x9;&#x9;&#x9;CASE&#x9;WHEN [abm_version] = 'pre 13.2.4' THEN 1&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('13.2.4', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('13.2.5', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('13.3.0', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('version_13_3_0', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('13_3_1', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('13_3_2', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('13_3_3', [abm_version]) &gt; 0 THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;WHEN CHARINDEX('13_4_0', [abm_version]) &gt; 0 THEN 3&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;ELSE 0&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;END&#xA;&#x9;&#x9;FROM&#xA;&#x9;&#x9;&#x9;[data_load].[scenario_load_request]&#xA;&#x9;&#x9;WHERE&#xA;&#x9;&#x9;&#x9;[loading] = 0&#xA;&#x9;&#x9;&#x9;AND [scenario_id] IS NULL&#xA;&#x9;&#x9;&#x9;AND ([abm_version] = 'pre 13.2.4'&#xA;&#x9;&#x9;&#x9;&#x9; OR CHARINDEX('13.2.4', [abm_version]) &gt; 0&#xA;&#x9;&#x9;&#x9;&#x9; OR CHARINDEX('13.2.5', [abm_version]) &gt; 0&#xA;&#x9;&#x9;&#x9;&#x9; OR CHARINDEX('13.3.0', [abm_version]) &gt; 0&#xA;&#x9;&#x9;&#x9;&#x9; OR CHARINDEX('13_3_0', [abm_version]) &gt; 0&#xA;&#x9;&#x9;&#x9;&#x9; OR CHARINDEX('13_3_1', [abm_version]) &gt; 0&#xA;&#x9;&#x9;&#x9;&#x9; OR CHARINDEX('13_3_2', [abm_version]) &gt; 0&#xA;&#x9;&#x9;&#x9;&#x9; OR CHARINDEX('13_3_3', [abm_version]) &gt; 0&#xA;&#x9;&#x9;&#x9;&#x9; OR CHARINDEX('13_4_0', [abm_version]) &gt; 0))&#xA;&#x9;, 0)"
           SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ResultBinding
             SQLTask:ResultName="0"
@@ -116,6 +136,16 @@
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 1"
       DTS:To="Package\13_2_4_master" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
+      DTS:CreationName=""
+      DTS:DTSID="{439FB470-2D5D-4CB5-8AC1-CF6C1F39BC1D}"
+      DTS:EvalOp="3"
+      DTS:Expression="@[User::to_load] == 3"
+      DTS:From="Package\load?"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 2"
+      DTS:To="Package\13_4_0_master" />
   </DTS:PrecedenceConstraints>
   <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
 <!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
@@ -132,84 +162,112 @@
         <NodeLayout
           Size="152,42"
           Id="Package\13_2_4_master"
-          TopLeft="332,191" />
+          TopLeft="458,223" />
         <NodeLayout
           Size="104,42"
           Id="Package\load?"
-          TopLeft="112,129" />
+          TopLeft="466,104" />
         <NodeLayout
           Size="135,42"
           Id="Package\pre_13_2_4"
-          TopLeft="353,74" />
+          TopLeft="272,219" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
-          TopLeft="216,144.333333333333">
+          TopLeft="502,146">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="137,-49.3333333333333"
+              EndConnector="-162.5,73"
               Start="0,0"
-              End="129.5,-49.3333333333333">
+              End="-162.5,65.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="53.8165137614679,0" />
+                    End="0,25.8636363636364" />
                   <mssgle:CubicBezierSegment
-                    Point1="53.8165137614679,0"
-                    Point2="57.8165137614679,0"
-                    Point3="57.8165137614679,-4" />
+                    Point1="0,25.8636363636364"
+                    Point2="0,29.8636363636364"
+                    Point3="-4,29.8636363636364" />
                   <mssgle:LineSegment
-                    End="57.8165137614679,-45.3333333333333" />
+                    End="-158.5,29.8636363636364" />
                   <mssgle:CubicBezierSegment
-                    Point1="57.8165137614679,-45.3333333333333"
-                    Point2="57.8165137614679,-49.3333333333333"
-                    Point3="61.8165137614679,-49.3333333333333" />
+                    Point1="-158.5,29.8636363636364"
+                    Point2="-162.5,29.8636363636364"
+                    Point3="-162.5,33.8636363636364" />
                   <mssgle:LineSegment
-                    End="129.5,-49.3333333333333" />
+                    End="-162.5,65.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="49.8165137614679,1,16,16"
+              BoundingBox="-89.25,34.8636363636364,16,16"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 1]"
-          TopLeft="216,155.666666666667">
+          TopLeft="534,146">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="116,56.3333333333333"
+              EndConnector="0,77"
               Start="0,0"
-              End="108.5,56.3333333333333">
+              End="0,69.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="44.954128440367,0" />
-                  <mssgle:CubicBezierSegment
-                    Point1="44.954128440367,0"
-                    Point2="48.954128440367,0"
-                    Point3="48.954128440367,4" />
-                  <mssgle:LineSegment
-                    End="48.954128440367,52.3333333333333" />
-                  <mssgle:CubicBezierSegment
-                    Point1="48.954128440367,52.3333333333333"
-                    Point2="48.954128440367,56.3333333333333"
-                    Point3="52.954128440367,56.3333333333333" />
-                  <mssgle:LineSegment
-                    End="108.5,56.3333333333333" />
+                    End="0,69.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="40.954128440367,-22,16,16"
+              BoundingBox="-8,26.75,16,16"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="152,42"
+          Id="Package\13_4_0_master"
+          TopLeft="663,222" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 2]"
+          TopLeft="542,146">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="197,76"
+              Start="0,0"
+              End="197,68.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,22.6" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,22.6"
+                    Point2="0,26.6"
+                    Point3="4,26.6" />
+                  <mssgle:LineSegment
+                    End="193,26.6" />
+                  <mssgle:CubicBezierSegment
+                    Point1="193,26.6"
+                    Point2="197,26.6"
+                    Point3="197,30.6" />
+                  <mssgle:LineSegment
+                    End="197,68.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="90.5,31.6,16,16"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
