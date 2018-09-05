@@ -348,7 +348,7 @@ GO
 
 CREATE PROCEDURE [rtp_2019].[sp_particulate_matter_2_5]
 	@scenario_id integer,
-	@distance integer = 500,
+	@distance integer = 1000,
 	@shoulder_width integer = 10
 AS
 
