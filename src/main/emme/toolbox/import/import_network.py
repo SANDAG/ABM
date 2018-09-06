@@ -1724,7 +1724,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         load_properties = _m.Modeller().tool('sandag.utilities.properties')
         props = load_properties(_join(_dir(self.source), "conf", "sandag_abm.properties"))
-        smartSignalf = props["smartSignal.factor"]
+        smartSignalf_CL = props["smartSignal.factor.LC"]
+        smartSignalf_MA = props["smartSignal.factor.MA"]
+        smartSignalf_PA = props["smartSignal.factor.PA"]
         atdmf = props["atdm.factor"]
 
         reliability_tmplt = (
@@ -1768,31 +1770,31 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         create_function(
             "fd20",  # Local collector and lower intersection and stop controlled approaches
             "(ul1 * (1.0 + 0.8 * put((volau + volad) / ul3) ** 4.0) +"
-            "{0} * 1.25 / 2 * (1-el1) ** 2 * (1.0 + 4.5 * ( (volau + volad) / el3 ) ** 2.0))".format(smartSignalf)
+            "1.25 / 2 * (1-el1) ** 2 * (1.0 + 4.5 * ( (volau + volad) / el3 ) ** 2.0))"
             + reliability_tmplt.format(**parameters["road"]),
             emmebank=emmebank)
         create_function(
             "fd21",  # Collector intersection approaches
             "(ul1 * (1.0 + 0.8 * put((volau + volad) / ul3) ** 4.0) +"
-            "{0} * 1.5/ 2 * (1-el1) ** 2 * (1.0 + 4.5 * ( (volau + volad) / el3 ) ** 2.0))".format(smartSignalf)
+            "{0} * 1.5/ 2 * (1-el1) ** 2 * (1.0 + 4.5 * ( (volau + volad) / el3 ) ** 2.0))".format(smartSignalf_CL)
             + reliability_tmplt.format(**parameters["road"]),
             emmebank=emmebank)
         create_function(
             "fd22",  # Major arterial and major or prime arterial intersection approaches
             "(ul1 * (1.0 + 0.8 * put((volau + volad) / ul3) ** 4.0) +"            
-            "{0} * 2.0 / 2 * (1-el1) ** 2 * (1.0 + 4.5 * ( (volau + volad) / el3 ) ** 2.0))".format(smartSignalf)
+            "{0} * 2.0 / 2 * (1-el1) ** 2 * (1.0 + 4.5 * ( (volau + volad) / el3 ) ** 2.0))".format(smartSignalf_MA)
             + reliability_tmplt.format(**parameters["road"]),
             emmebank=emmebank)
         create_function(
             "fd23",  # Primary arterial intersection approaches
             "(ul1 * (1.0 + 0.8 * put((volau + volad) / ul3) ** 4.0) +"
-            "{0} * 2.5/ 2 * (1-el1) ** 2 * (1.0 + 4.5 * ( (volau + volad) / el3 ) ** 2.0))".format(smartSignalf)
+            "{0} * 2.5/ 2 * (1-el1) ** 2 * (1.0 + 4.5 * ( (volau + volad) / el3 ) ** 2.0))".format(smartSignalf_PA)
             + reliability_tmplt.format(**parameters["road"]),
             emmebank=emmebank)
         create_function(
             "fd24",  # Metered ramps
             "(ul1 * (1.0 + 0.8 * put((volau + volad) / ul3) ** 4.0) +"
-            "{0} * 2.5/ 2 * (1-el1) ** 2 * (1.0 + 6.0 * ( (volau + volad) / el3 ) ** 2.0))".format(smartSignalf)
+            "2.5/ 2 * (1-el1) ** 2 * (1.0 + 6.0 * ( (volau + volad) / el3 ) ** 2.0))"
             + reliability_tmplt.format(**parameters["road"]),
             emmebank=emmebank)
 
