@@ -39,7 +39,8 @@ set PATH=%JAVA_PATH%\bin;%OLDPATH%
 cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 
 rem TransitTimeReporter
-%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.reporting.TransitTimeReporter %PROPERTIES_NAME% -threshold %THRESHOLD% -period %TOD% -outWalkFileName walkMgrasWithin%THRESHOLD%Min.csv -outDriveFileName driveMgrasWithin%THRESHOLD%Min.csv
+rem %JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.reporting.TransitTimeReporter %PROPERTIES_NAME% -threshold %THRESHOLD% -period %TOD% -outWalkFileName walkMgrasWithin%THRESHOLD%Min.csv -outDriveFileName driveMgrasWithin%THRESHOLD%Min.csv
+%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.reporting.TransitTimeReporter %PROPERTIES_NAME% -threshold %THRESHOLD% -period %TOD% -outWalkFileName walkMgrasWithin%THRESHOLD%Min.csv
 
 rem ### restore saved environment variable values, and change back to original current directory
 set JAVA_PATH=%OLDJAVAPATH%

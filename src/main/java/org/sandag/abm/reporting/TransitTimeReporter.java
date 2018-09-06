@@ -78,6 +78,7 @@ public class TransitTimeReporter {
     private PrintWriter driveAccessWriter;
     private String outWalkFile;
     private String outDriveFile;
+    private boolean createDriveFile=false;
      
      public TransitTimeReporter(HashMap<String, String> propertyMap, float threshold, String period,String outWalkFileName,String outDriveFileName){
      	
@@ -86,7 +87,10 @@ public class TransitTimeReporter {
      	this.threshold = threshold;
      	this.period = period;
      	this.outWalkFile = outWalkFileName;
-     	this.outDriveFile = outDriveFileName;
+     	if(outDriveFile!=null) {
+     		this.outDriveFile = outDriveFileName;
+     		createDriveFile=true;
+     	}
      	
      	initialize(propertyMap);
      }
@@ -100,7 +104,9 @@ public class TransitTimeReporter {
  		
  		String path=System.getProperty("user.dir");
  		outWalkFile=path+"\\output\\"+outWalkFile;
- 		outDriveFile=path+"\\output\\"+outDriveFile;
+ 		if(createDriveFile) {
+ 			outDriveFile=path+"\\output\\"+outDriveFile;
+ 		}
  		
  		logger.info("Initializing Transit Time Reporter");
  	    mgraManager = MgraDataManager.getInstance(propertyMap);
@@ -119,8 +125,9 @@ public class TransitTimeReporter {
          dtw.setup(propertyMap, logger, bestPathCalculator);
    
          walkAccessWriter = createOutputFile(outWalkFile);
-         driveAccessWriter = createOutputFile(outDriveFile);
-
+  		if(createDriveFile) {
+  			driveAccessWriter = createOutputFile(outDriveFile);
+  		}
  	}
 	
  	/**
@@ -292,59 +299,61 @@ public class TransitTimeReporter {
 					}
 				}
 				
-				//drive calculations
-				double[][] bestDriveTaps = null;
-				if(inbound==false){
-					bestDriveTaps = bestPathCalculator.getBestTapPairs(walkDmu, driveDmu, bestPathCalculator.DTW, originMaz, destinationMaz, skimPeriod, false, logger, odDistance);
-				}else{
-					bestDriveTaps = bestPathCalculator.getBestTapPairs(walkDmu, driveDmu, bestPathCalculator.WTD, originMaz, destinationMaz, skimPeriod, false, logger, odDistance);
-				}
-				double[] bestDriveUtilities = bestPathCalculator.getBestUtilities();
-			
-			    //only look at best utility path; continue if MGRA isn't available by walk.
-				if(bestDriveUtilities[0]>-500){
-	           
-					//best drive TAP pair
-					int boardTap = (int) bestDriveTaps[0][0];
-					int alightTap = (int) bestDriveTaps[0][1];
-					int set = (int) bestDriveTaps[0][2];
-	        	
-					//skims for best drive pair
-					double[] driveSkims = null;
+				if(createDriveFile) {
+					//drive calculations
+					double[][] bestDriveTaps = null;
 					if(inbound==false){
-						boardAccessTime = tazManager.getTimeToTapFromTaz(originTaz,boardTap,( Modes.AccessMode.PARK_N_RIDE ));
-						alightAccessTime = mgraManager.getWalkTimeFromMgraToTap(destinationMaz,alightTap);
-						driveSkims = dtw.getDriveTransitWalkSkims(set, boardAccessTime, alightAccessTime, boardTap, alightTap, skimPeriod, false); 
+						bestDriveTaps = bestPathCalculator.getBestTapPairs(walkDmu, driveDmu, bestPathCalculator.DTW, originMaz, destinationMaz, skimPeriod, false, logger, odDistance);
 					}else{
-						boardAccessTime = mgraManager.getWalkTimeFromMgraToTap(originMaz,boardTap);
-						alightAccessTime = tazManager.getTimeToTapFromTaz(destinationTaz,alightTap,( Modes.AccessMode.PARK_N_RIDE ));
-						driveSkims = wtd.getWalkTransitDriveSkims(set, boardAccessTime, alightAccessTime, boardTap, alightTap, skimPeriod, false); 
-						
+						bestDriveTaps = bestPathCalculator.getBestTapPairs(walkDmu, driveDmu, bestPathCalculator.WTD, originMaz, destinationMaz, skimPeriod, false, logger, odDistance);
 					}
-					//total drive-transit time
-					//calculate total time
-					double totalTime=0;
-					ArrayList<Integer> dtelements=getDriveTransitTimeComponents(pMap);
-					for (int i=0; i<dtelements.size(); i++) {
-						totalTime +=  driveSkims[dtelements.get(i)];
-					}
-					
-					/*
-					double totalTime =  driveSkims[DRV_DRIVEACCESSTIME]   
-					                  + driveSkims[DRV_WALKEGRESSTIME]
-					                  + driveSkims[DRV_AUXWALKTIME]
-				                      + driveSkims[DRV_FIRSTWAITTIME]	
-				                      + driveSkims[DRV_TRWAITTIME]
-				                      + driveSkims[DRV_TOTALIVT];
-				    */
-				    
-					//if total time is less than or equal to the threshold, add the destination MAZ to the output string
-					if(totalTime<=threshold){
-						if(outDriveString==null)
-							outDriveString = String.valueOf(originMaz);
-						
-						outDriveString += ","+destinationMaz; 
+					double[] bestDriveUtilities = bestPathCalculator.getBestUtilities();
 				
+				    //only look at best utility path; continue if MGRA isn't available by walk.
+					if(bestDriveUtilities[0]>-500){
+		           
+						//best drive TAP pair
+						int boardTap = (int) bestDriveTaps[0][0];
+						int alightTap = (int) bestDriveTaps[0][1];
+						int set = (int) bestDriveTaps[0][2];
+		        	
+						//skims for best drive pair
+						double[] driveSkims = null;
+						if(inbound==false){
+							boardAccessTime = tazManager.getTimeToTapFromTaz(originTaz,boardTap,( Modes.AccessMode.PARK_N_RIDE ));
+							alightAccessTime = mgraManager.getWalkTimeFromMgraToTap(destinationMaz,alightTap);
+							driveSkims = dtw.getDriveTransitWalkSkims(set, boardAccessTime, alightAccessTime, boardTap, alightTap, skimPeriod, false); 
+						}else{
+							boardAccessTime = mgraManager.getWalkTimeFromMgraToTap(originMaz,boardTap);
+							alightAccessTime = tazManager.getTimeToTapFromTaz(destinationTaz,alightTap,( Modes.AccessMode.PARK_N_RIDE ));
+							driveSkims = wtd.getWalkTransitDriveSkims(set, boardAccessTime, alightAccessTime, boardTap, alightTap, skimPeriod, false); 
+							
+						}
+						//total drive-transit time
+						//calculate total time
+						double totalTime=0;
+						ArrayList<Integer> dtelements=getDriveTransitTimeComponents(pMap);
+						for (int i=0; i<dtelements.size(); i++) {
+							totalTime +=  driveSkims[dtelements.get(i)];
+						}
+						
+						/*
+						double totalTime =  driveSkims[DRV_DRIVEACCESSTIME]   
+						                  + driveSkims[DRV_WALKEGRESSTIME]
+						                  + driveSkims[DRV_AUXWALKTIME]
+					                      + driveSkims[DRV_FIRSTWAITTIME]	
+					                      + driveSkims[DRV_TRWAITTIME]
+					                      + driveSkims[DRV_TOTALIVT];
+					    */
+					    
+						//if total time is less than or equal to the threshold, add the destination MAZ to the output string
+						if(totalTime<=threshold){
+							if(outDriveString==null)
+								outDriveString = String.valueOf(originMaz);
+							
+							outDriveString += ","+destinationMaz; 
+					
+						}
 					}
 				}
 				
@@ -357,7 +366,7 @@ public class TransitTimeReporter {
 			}
 			
 			//write the drive access MAZs under 30 minutes - origin, dest1, dest2, dest3...etc
-			if(outDriveString!=null){
+			if(createDriveFile||outDriveString!=null){
 				driveAccessWriter.print(outDriveString+"\n");
 				driveAccessWriter.flush();
 			}
