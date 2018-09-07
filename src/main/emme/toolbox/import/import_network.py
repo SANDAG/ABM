@@ -1730,7 +1730,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         atdmf = props["atdm.factor"]
 
         reliability_tmplt = (
-            "* (1 + el2 + {0}*(".format(adtmf)+
+            "* (1 + el2 + {0}*(".format(atdmf)+
             "( {factor[LOS_C]} * ( put(get(1).min.1.5) - {threshold[LOS_C]} + 0.01 ) ) * (get(1) .gt. {threshold[LOS_C]})"
             "+ ( {factor[LOS_D]} * ( get(2) - {threshold[LOS_D]} + 0.01 )  ) * (get(1) .gt. {threshold[LOS_D]})"
             "+ ( {factor[LOS_E]} * ( get(2) - {threshold[LOS_E]} + 0.01 )  ) * (get(1) .gt. {threshold[LOS_E]})"
