@@ -2383,15 +2383,15 @@ with [tour_freeparking_reimbpct] AS (
 		[tour_id]),
 -- sum costs to the person level
 -- auto = aoc split among riders, fare split among riders, and parking cost split among riders
-	-- for individual and i-e models use mode to determine split (2 or 3.34), for joint model and drive alone use weight_trip
 	-- for parking have to look at tour reimbursement and mgra based input parking costs
 -- transit = transit fare
 	-- for age >= 60 apply a 50% reduction
-[person_costs] AS ( 
+[person_costs] AS (
 	SELECT
 		[person_trip].[person_id]
 		,[person_trip].[household_id]
-		,SUM(([toll_cost_drive] + [operating_cost_drive]) * [weight_person_trip]) AS [cost_auto]
+		,[person].[weight_person]
+		,SUM(([toll_cost_drive] + [operating_cost_drive]) * [weight_trip]) AS [cost_auto]
 		,SUM(CASE	WHEN [mode_trip].[mode_trip_description] IN ('Drive Alone Non-Toll',
 																 'Drive Alone Toll Eligible',
 																 'Shared Ride 2 Non-Toll',
@@ -2399,7 +2399,7 @@ with [tour_freeparking_reimbpct] AS (
 																 'Shared Ride 3 Non-Toll',
 																 'Shared Ride 3 Toll Eligible')
 						AND [mparkcost] >= [dparkcost]
-					THEN (1 - ISNULL([tour_freeparking_reimbpct].[freeparking_reimbpct], 0)) * [dparkcost] * [weight_person_trip]
+					THEN (1 - ISNULL([tour_freeparking_reimbpct].[freeparking_reimbpct], 0)) * [dparkcost] * [weight_trip]
 					WHEN [mode_trip].[mode_trip_description] IN ('Drive Alone Non-Toll',
 																 'Drive Alone Toll Eligible',
 																 'Shared Ride 2 Non-Toll',
@@ -2407,10 +2407,10 @@ with [tour_freeparking_reimbpct] AS (
 																 'Shared Ride 3 Non-Toll',
 																 'Shared Ride 3 Toll Eligible')
 						AND [mparkcost] < [dparkcost]
-					THEN (1 - ISNULL([tour_freeparking_reimbpct].[freeparking_reimbpct], 0)) * [mparkcost] * [weight_person_trip]
+					THEN (1 - ISNULL([tour_freeparking_reimbpct].[freeparking_reimbpct], 0)) * [mparkcost] * [weight_trip]
 					ELSE 0 END) AS [cost_parking]
-		,SUM(CASE	WHEN [person].[age] >= 60 THEN [cost_transit] * .5
-					ELSE [cost_transit] END) AS [cost_transit]
+		,SUM(CASE	WHEN [person].[age] >= 60 THEN [weight_person_trip] * [cost_transit] * .5
+					ELSE [weight_person_trip] * [cost_transit] END) AS [cost_transit]
 		,MAX(CASE	WHEN [mode_trip].[mode_trip_description] IN ('Kiss and Ride to Transit - Local Bus and Premium Transit',
 																 'Kiss and Ride to Transit - Premium Transit Only',
 																 'Park and Ride to Transit - Local Bus and Premium Transit',
@@ -2452,16 +2452,17 @@ with [tour_freeparking_reimbpct] AS (
 													  'Joint') -- models that use synthetic population
 	GROUP BY
 		[person_trip].[person_id]
-		,[person_trip].[household_id]),
+		,[person_trip].[household_id]
+		,[person].[weight_person]),
 [household_costs] AS (
 	SELECT
 		-- multiply the person cost by 300 to get annual cost and sum over the household to get household costs
 		-- cap person transit costs at $12 or $5 depending on if they used premium or non-premium transit
 		[person_costs].[household_id]
-		,SUM(300.0 * ([cost_auto] + [cost_parking] +
+		,SUM(300.0 * [weight_person] * ([cost_auto] + [cost_parking] +
 			 CASE	WHEN [premium_transit_indicator] = 1 AND [cost_transit] > 12 THEN 12
 					WHEN [premium_transit_indicator] = 0 AND [cost_transit] > 5 THEN 5
-					ELSE [cost_transit] END)) AS [cost_annual_transportation]							
+					ELSE [cost_transit] END)) AS [cost_annual_transportation]
 	FROM
 		[person_costs]
 	GROUP BY
@@ -2472,17 +2473,21 @@ SELECT
 					WHEN @minority = 1 THEN [minority]
 					WHEN @low_income = 1 THEN [low_income]
 					ELSE 'All' END, 'Total') AS [pop_segmentation]
-	,AVG(100.0 * CASE	WHEN [coc_households].[income] = 0
-							OR [household_costs].[cost_annual_transportation] / [coc_households].[income] > 1
-						THEN 1
-						ELSE [household_costs].[cost_annual_transportation] / [coc_households].[income]
-						END) AS [pct_income_transportation_cost] -- cap percentage cost at 100% of income
+	,100.0 *
+		SUM([coc_households].[weight_household] *
+		    CASE	WHEN [coc_households].[income] = 0
+						OR [household_costs].[cost_annual_transportation] / [coc_households].[income] > 1
+					THEN 1
+					ELSE [household_costs].[cost_annual_transportation] / [coc_households].[income]
+					END) /
+		SUM([coc_households].[weight_household]) AS [pct_income_transportation_cost] -- cap percentage cost at 100% of income
 FROM
 	[household_costs]
 INNER JOIN (-- only keeping households that actually travelled
 	SELECT
 		[household].[household_id]
 		,[household].[income]
+		,[household].[weight_household]
 		,CASE	WHEN MAX(CASE WHEN [person].[age] >= 75 THEN 1 ELSE 0 END) = 1 THEN 'Senior'
 				WHEN MAX(CASE WHEN [person].[age] >= 75 THEN 1 ELSE 0 END) = 0 THEN 'Non-Senior'
 				ELSE NULL END AS [senior]
@@ -2501,7 +2506,7 @@ INNER JOIN (-- only keeping households that actually travelled
 														 'Native Hawaiian and Other Pacific Islander Alone',
 														 'American Indian and Alaska Native Tribes specified; or American Indian or Alaska Native, not specified and no other races')
 								OR [person].[hispanic] = 'Hispanic' THEN 1 ELSE 0 END) = 0
-				THEN 'Non-Minority' 
+				THEN 'Non-Minority'
 				ELSE NULL END AS [minority]
 		,CASE	WHEN MAX(CASE WHEN [household].[poverty] <= 2 THEN 1 ELSE 0 END) = 1
 				THEN 'Low Income'
@@ -2520,7 +2525,8 @@ INNER JOIN (-- only keeping households that actually travelled
 		AND [person].[scenario_id] = @scenario_id
 	GROUP BY
 		[household].[household_id]
-		,[household].[income]) AS [coc_households]
+		,[household].[income]
+		,[household].[weight_household]) AS [coc_households]
 ON
 	[household_costs].[household_id] = [coc_households].[household_id]
 GROUP BY
