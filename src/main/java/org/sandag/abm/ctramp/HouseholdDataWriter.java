@@ -272,6 +272,7 @@ public class HouseholdDataWriter
         data.add("transponder");
         data.add("cdap_pattern");
         data.add("jtf_choice");
+        data.add("sampleRate");
         return data;
     }
 
@@ -298,6 +299,7 @@ public class HouseholdDataWriter
         data.add(string(hh.getTpChoice()));
         data.add(string(hh.getCoordinatedDailyActivityPattern()));
         data.add(string(hh.getJointTourFreqChosenAlt()));
+        data.add(string(hh.getSampleRate()));
         return data;
     }
 
@@ -317,6 +319,7 @@ public class HouseholdDataWriter
         data.add("fp_choice");
         data.add("reimb_pct");
         data.add("ie_choice");
+        data.add("sampleRate");
         return data;
     }
 
@@ -355,6 +358,7 @@ public class HouseholdDataWriter
         data.add(string(p.getFreeParkingAvailableResult()));
         data.add(string(p.getParkingReimbursement()));
         data.add(string(p.getInternalExternalTripChoiceResult()));
+        data.add(string(p.getSampleRate()));
         return data;
     }
 
@@ -377,6 +381,7 @@ public class HouseholdDataWriter
         data.add("atWork_freq");
         data.add("num_ob_stops");
         data.add("num_ib_stops");
+        data.add("sampleRate");
 
         if (saveUtilsProbsFlag)
         {
@@ -414,6 +419,7 @@ public class HouseholdDataWriter
         data.add("tour_distance");
         data.add("num_ob_stops");
         data.add("num_ib_stops");
+        data.add("sampleRate");
 
         if (saveUtilsProbsFlag)
         {
@@ -526,6 +532,7 @@ public class HouseholdDataWriter
         data.add(string(t.getSubtourFreqChoice()));
         data.add(string(t.getNumOutboundStops() == 0 ? 0 : t.getNumOutboundStops() - 1));
         data.add(string(t.getNumInboundStops() == 0 ? 0 : t.getNumInboundStops() - 1));
+        data.add(string(t.getSampleRate()));
 
         if (saveUtilsProbsFlag)
         {
@@ -567,7 +574,8 @@ public class HouseholdDataWriter
         data.add(string(calculateDistancesForAllMgras(t.getTourOrigMgra(), t.getTourDestMgra())));
         data.add(string(t.getNumOutboundStops() == 0 ? 0 : t.getNumOutboundStops() - 1));
         data.add(string(t.getNumInboundStops() == 0 ? 0 : t.getNumInboundStops() - 1));
-
+        data.add(string(t.getSampleRate()));
+        
         if (saveUtilsProbsFlag)
         {
             int numModeAlts = modelStructure.getMaxTourModeIndex();
@@ -643,6 +651,7 @@ public class HouseholdDataWriter
         data.add("trip_board_tap");
         data.add("trip_alight_tap");
         data.add("tour_mode");
+        data.add("sampleRate");
         return data;
     }
 
@@ -665,6 +674,7 @@ public class HouseholdDataWriter
         data.add("trip_board_tap");
         data.add("trip_alight_tap");
         data.add("tour_mode");
+        data.add("sampleRate");
         return data;
     }
 
@@ -791,6 +801,8 @@ public class HouseholdDataWriter
         data.add(string(s.getBoardTap()));
         data.add(string(s.getAlightTap()));
         data.add(string(t.getTourModeChoice()));
+        
+        data.add(string(t.getSampleRate()));
 
         return data;
     }
@@ -878,6 +890,8 @@ public class HouseholdDataWriter
         data.add(string(s.getBoardTap()));
         data.add(string(s.getAlightTap()));
         data.add(string(t.getTourModeChoice()));
+        
+        data.add(string(t.getSampleRate()));
 
         return data;
     }

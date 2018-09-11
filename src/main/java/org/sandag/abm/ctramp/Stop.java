@@ -16,6 +16,8 @@ public class Stop
     int     boardTap;
     int     alightTap;
     boolean inbound;
+    
+    float   sampleRate;
 
     String  origPurpose;
     String  destPurpose;
@@ -32,6 +34,7 @@ public class Stop
         this.stopPurposeIndex = stopPurposeIndex;
         this.id = id;
         this.inbound = inbound;
+        this.sampleRate = parentTour.getSampleRate();
     }
 
     public void setOrig(int orig)

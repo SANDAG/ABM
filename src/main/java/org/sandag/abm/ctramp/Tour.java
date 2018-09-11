@@ -50,6 +50,8 @@ public class Tour
     private int[][]               bestWtdTapPairsIn;
     private int[][]               bestDtwTapPairsOut;
     private int[][]               bestDtwTapPairsIn;
+    
+    private float                 sampleRate;
 
     private static final String[] RIDE_MODE_LABELS = {"CR", "LRT", "BRT", "EB", "LB"};
 
@@ -61,6 +63,7 @@ public class Tour
         this.tourId = tourId;
         tourCategory = ModelStructure.MANDATORY_CATEGORY;
         tourPrimaryPurposeIndex = primaryIndex;
+        this.sampleRate = perObj.getSampleRate();
     }
 
     // this constructor used for joint tour creation
@@ -70,6 +73,7 @@ public class Tour
         this.tourPurpose = tourPurpose;
         tourCategory = category;
         tourPrimaryPurposeIndex = primaryIndex;
+        this.sampleRate = hhObj.getSampleRate();
     }
 
     // this constructor used for individual non-mandatory or at-work subtour
@@ -83,6 +87,7 @@ public class Tour
         this.tourPurpose = tourPurpose;
         tourCategory = category;
         tourPrimaryPurposeIndex = primaryIndex;
+        this.sampleRate = hhObj.getSampleRate();
     }
 
     public Person getPersonObject()
@@ -698,6 +703,16 @@ public class Tour
     public int[][] getBestDtwTapPairsIn()
     {
         return bestDtwTapPairsIn;
+    }
+    
+    public float getSampleRate()
+    {
+    	return this.sampleRate;
+    }
+    
+    public void setSampleRate(float aSampleRate) 
+    {
+    	this.sampleRate = aSampleRate;
     }
 
 }

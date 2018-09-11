@@ -108,7 +108,6 @@ public class SandagTripTables
                                                                                                      // by
                                                                                                      // period
 
-    private float                   sampleRate;
     private int                     iteration;
 
     private MatrixType              mt;
@@ -117,11 +116,11 @@ public class SandagTripTables
 
     private String[]                indivColumns            = {"stop_period", "orig_mgra",
             "dest_mgra", "trip_mode", "inbound", "trip_board_tap", "trip_alight_tap",
-            "parking_mgra", "tour_purpose"                  };
+            "parking_mgra", "tour_purpose" , "sampleRate"                 };
 
     private String[]                jointColumns            = {"stop_period", "orig_mgra",
             "dest_mgra", "trip_mode", "inbound", "trip_board_tap", "trip_alight_tap",
-            "parking_mgra", "tour_purpose", "num_participants"};
+            "parking_mgra", "tour_purpose", "num_participants", "sampleRate"};
 
     private HashMap<String, Float>  averageOcc3Plus;                                                // a
                                                                                                      // HashMap
@@ -147,7 +146,7 @@ public class SandagTripTables
      *            Iteration number, program will look for trip file names with
      *            _iteration appended
      */
-    public SandagTripTables(HashMap<String, String> rbMap, float sampleRate, int iteration)
+    public SandagTripTables(HashMap<String, String> rbMap, int iteration)
     {
 
         this.rbMap = rbMap;
@@ -196,7 +195,6 @@ public class SandagTripTables
         CBDVehicles = new float[mgraManager.getMaxMgra() + 1][numberOfPeriods];
         PNRVehicles = new float[tapManager.getMaxTap() + 1][numberOfPeriods];
 
-        setSampleRate(sampleRate);
         setIteration(iteration);
     }
 
@@ -453,6 +451,7 @@ public class SandagTripTables
             int originTAZ = mgraManager.getTaz(originMGRA);
             int destinationTAZ = mgraManager.getTaz(destinationMGRA);
             int inbound = (int) tripData.getValueAt(i, "inbound");
+            float sampleRate = tripData.getValueAt(i, "sampleRate");
 
             // transit trip - get boarding and alighting tap
             int boardTap = 0;
@@ -768,17 +767,6 @@ public class SandagTripTables
     }
 
     /**
-     * Set the sample rate
-     * 
-     * @param sampleRate
-     *            The sample rate, used for expanding trips
-     */
-    public void setSampleRate(float sampleRate)
-    {
-        this.sampleRate = sampleRate;
-    }
-
-    /**
      * Set the iteration number
      * 
      * @param sampleRate
@@ -928,7 +916,7 @@ public class SandagTripTables
         logger.info(String.format("-sampleRate %.4f.", sampleRate));
         logger.info("-iteration  " + iteration);
 
-        SandagTripTables tripTables = new SandagTripTables(pMap, sampleRate, iteration);
+        SandagTripTables tripTables = new SandagTripTables(pMap, iteration);
 
         tripTables.setupMatrixServer(pMap);
 
