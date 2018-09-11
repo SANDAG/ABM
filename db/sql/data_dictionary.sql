@@ -540,6 +540,7 @@ EXECUTE [db_meta].[add_xp] 'fact.person_trip.time_trip_start_id', 'MS_Descriptio
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.time_trip_end_id', 'MS_Description', 'trip end time surrogate key'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.geography_trip_origin_id', 'MS_Description', 'trip origin geography surrogate key'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.geography_trip_destination_id', 'MS_Description', 'trip destination geography surrogate key'
+EXECUTE [db_meta].[add_xp] 'fact.person_trip.geography_parking_destination_id', 'MS_Description', 'trip destination parking geography surrogate key'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.transit_tap_boarding_id', 'MS_Description', 'boarding transit tap surrogate key'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.transit_tap_alighting_id', 'MS_Description', 'alighting transit tap surrogate key'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.person_escort_drive_id', 'MS_Description', 'escort model driver person surrogate key and ABM person identifier'

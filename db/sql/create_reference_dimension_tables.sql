@@ -120,7 +120,34 @@ SELECT
 	,[region_2004] AS [household_location_region_2004]
 	,[region_2004_name] AS [household_location_region_2004_name]
 	,[region_2004_shape] AS [household_location_region_2004_shape]
-	,[external_zone] AS [household_external_zone]
+	,[external_zone] AS [household_location_external_zone]
+FROM
+	[dimension].[geography]
+GO
+
+-- parking location
+CREATE VIEW [dimension].[geography_parking_destination] AS
+SELECT
+	[geography_id] AS [geography_parking_destination_id]
+	,[mgra_13] AS [parking_destination_mgra_13]
+	,[mgra_13_shape] AS [parking_destination_mgra_13_shape]
+	,[taz_13] AS [parking_destination_taz_13]
+	,[taz_13_shape] AS [parking_destination_taz_13_shape]
+	,[luz_13] AS [parking_destination_luz_13]
+	,[luz_13_shape] AS [parking_destination_luz_13_shape]
+	,[cicpa_2016] AS [parking_destination_cicpa_2016]
+	,[cicpa_2016_name] AS [parking_destination_cicpa_2016_name]
+	,[cicpa_2016_shape] AS [parking_destination_cicpa_2016_shape]
+	,[cocpa_2016] AS [parking_destination_cocpa_2016]
+	,[cocpa_2016_name] AS [parking_destination_cocpa_2016_name]
+	,[cocpa_2016_shape] AS [parking_destination_cocpa_2016_shape]
+	,[jurisdiction_2016] AS [parking_destination_jurisdiction_2016]
+	,[jurisdiction_2016_name] AS [parking_destination_jurisdiction_2016_name]
+	,[jurisdiction_2016_shape] AS [parking_destination_jurisdiction_2016_shape]
+	,[region_2004] AS [parking_destination_region_2004]
+	,[region_2004_name] AS [parking_destination_region_2004_name]
+	,[region_2004_shape] AS [parking_destination_region_2004_shape]
+	,[external_zone] AS [parking_destination_external_zone]
 FROM
 	[dimension].[geography]
 GO
@@ -147,7 +174,7 @@ SELECT
 	,[region_2004] AS [school_location_region_2004]
 	,[region_2004_name] AS [school_location_region_2004_name]
 	,[region_2004_shape] AS [school_location_region_2004_shape]
-	,[external_zone] AS [school_external_zone]
+	,[external_zone] AS [school_location_external_zone]
 FROM
 	[dimension].[geography]
 GO
