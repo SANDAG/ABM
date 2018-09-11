@@ -481,7 +481,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         if not skipTransitShed:
             # write walk and drive transit sheds
-            self.run_proc("runtransitreporter.cmd", [drive, path_no_drive, transitShedThreshold, transitShedTOD], "Create walk and drive transit sheds", 
+            self.run_proc("runtransitreporter.cmd", [drive, path_forward_slash, transitShedThreshold, transitShedTOD], "Create walk and drive transit sheds", 
                           capture_output=True)
 
         if not skipDataExport:
