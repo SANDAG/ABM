@@ -236,10 +236,6 @@ BEGIN
 		SELECT
 			[hwy_link].[hwy_link_id]
 			,[hwy_link].[hwycov_id]
-			,CASE	WHEN DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0 <= 0
-					THEN 24 + DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0
-					ELSE DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0
-					END AS [duration_hours]
 			,CASE	WHEN [mode].[mode_description] IN ('Light Heavy Duty Truck (Non-Toll)',
 													   'Light Heavy Duty Truck (Toll)')
 					THEN 'Truck 1'
@@ -249,8 +245,22 @@ BEGIN
 													   'Heavy Heavy Duty Truck (Toll)')
 					THEN 'Truck 2'
 					ELSE 'Non-truck' END AS [CategoryName]
-			 ,5 * ((CAST([hwy_flow].[speed] AS integer) / 5) + 1) AS [bin]
-			 ,SUM([hwy_flow_mode].[flow] * [hwy_link].[length_mile]) AS [vmt]
+			-- create lower bound of 5mph speed bins
+			,CASE	WHEN 5 * ((CAST([hwy_flow].[speed] AS integer) / 5) + 1) - 5 < 5
+					THEN 5 -- speed bins begin at 5mph
+					WHEN 5 * ((CAST([hwy_flow].[speed] AS integer) / 5) + 1) - 5 > 75
+					THEN 75 -- speed bins end at 75mph
+					ELSE 5 * ((CAST([hwy_flow].[speed] AS integer) / 5) + 1) - 5
+					END AS [speed_bin_low]
+			-- create upper bound of 5mph speed bins
+			,CASE	WHEN 5 * ((CAST([hwy_flow].[speed] AS integer) / 5) + 1) < 5
+					THEN 5 -- speed bins begin at 5mph
+					WHEN 5 * ((CAST([hwy_flow].[speed] AS integer) / 5) + 1) > 75
+					THEN 75 -- speed bins end at 75mph
+					ELSE 5 * ((CAST([hwy_flow].[speed] AS integer) / 5) + 1)
+					END AS [speed_bin_high]
+			,[hwy_flow].[speed]
+			,[hwy_flow_mode].[flow] * [hwy_link].[length_mile] AS [vmt]
 		FROM
 			[fact].[hwy_flow_mode]
 		INNER JOIN
@@ -274,38 +284,30 @@ BEGIN
 		WHERE
 			[hwy_flow_mode].[scenario_id] = @scenario_id
 			AND [hwy_flow].[scenario_id] = @scenario_id
-			AND [hwy_link].[scenario_id] = @scenario_id
-		GROUP BY
-			[hwy_link].[hwy_link_id]
-			,[hwy_link].[hwycov_id]
-			,CASE	WHEN DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0 <= 0
-					THEN 24 + DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0
-					ELSE DATEDIFF(n, [time].[abm_5_tod_period_start], [time].[abm_5_tod_period_end]) / 60.0
-					END
-			,CASE	WHEN [mode].[mode_description] IN ('Light Heavy Duty Truck (Non-Toll)',
-														   'Light Heavy Duty Truck (Toll)')
-						THEN 'Truck 1'
-						WHEN [mode].[mode_description] IN ('Medium Heavy Duty Truck (Non-Toll)',
-														   'Medium Heavy Duty Truck (Toll)',
-														   'Heavy Heavy Duty Truck (Non-Toll)',
-														   'Heavy Heavy Duty Truck (Toll)')
-						THEN 'Truck 2'
-						ELSE 'Non-truck' END
-			 ,5 * ((CAST([hwy_flow].[speed] AS integer) / 5) + 1)),
+			AND [hwy_link].[scenario_id] = @scenario_id),
 	[link_emissions] AS (
 		SELECT
 			[travel].[hwy_link_id]
 			,[travel].[hwycov_id]
-			,SUM(ISNULL([travel].[vmt] * [running_exhaust].[Value], 0)) AS [link_running_exhaust]
+			-- running exhaust calculation based on EMFAC 2017 User Guide page 12
+			-- https://www.arb.ca.gov/msei/downloads/emfac2017-volume-ii-pl-handbook.pdf
+			,SUM(ISNULL([travel].[vmt] * ([running_exhaust_high].[Value] * ([travel].[speed] - ([travel].[speed_bin_low] - 2.5)) / 5 +
+							[running_exhaust_low].[Value] * (([travel].[speed_bin_high] - 2.5) - [travel].[speed]) / 5),
+						0)) AS [link_running_exhaust]
 			,SUM(ISNULL([travel].[vmt] * [running_loss].[Value], 0)) AS [link_running_loss]
 			,SUM(ISNULL([travel].[vmt] * [tire_brake_wear].[Value], 0)) AS [link_tire_brake_wear]
 		FROM
 			[travel]
 		LEFT OUTER JOIN
-			[running_exhaust]
+			[running_exhaust] AS [running_exhaust_low]
 		ON
-			[travel].[CategoryName] = [running_exhaust].[CategoryName]
-			AND [travel].[bin] = [running_exhaust].[Speed]
+			[travel].[CategoryName] = [running_exhaust_low].[CategoryName]
+			AND [travel].[speed_bin_low] = [running_exhaust_low].[Speed]
+		LEFT OUTER JOIN
+			[running_exhaust] AS [running_exhaust_high]
+		ON
+			[travel].[CategoryName] = [running_exhaust_high].[CategoryName]
+			AND [travel].[speed_bin_high] = [running_exhaust_high].[Speed]
 		LEFT OUTER JOIN
 			[running_loss]
 		ON
@@ -328,7 +330,6 @@ BEGIN
 		,[link_running_exhaust] + [link_running_loss] + [link_tire_brake_wear] AS [link_total_emissions]
 	FROM
 		[link_emissions]
-
 	RETURN
 END
 GO
