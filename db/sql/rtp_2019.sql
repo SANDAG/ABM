@@ -2398,6 +2398,7 @@ with [tour_freeparking_reimbpct] AS (
 																 'Shared Ride 2 Toll Eligible',
 																 'Shared Ride 3 Non-Toll',
 																 'Shared Ride 3 Toll Eligible')
+						AND [mgra_based_input].[parkarea] IN (1, 2, 3) -- values of park area that imply trip pays for parking
 						AND [mparkcost] >= [dparkcost]
 					THEN (1 - ISNULL([tour_freeparking_reimbpct].[freeparking_reimbpct], 0)) * [dparkcost] * [weight_trip]
 					WHEN [mode_trip].[mode_trip_description] IN ('Drive Alone Non-Toll',
@@ -2406,6 +2407,7 @@ with [tour_freeparking_reimbpct] AS (
 																 'Shared Ride 2 Toll Eligible',
 																 'Shared Ride 3 Non-Toll',
 																 'Shared Ride 3 Toll Eligible')
+						AND [mgra_based_input].[parkarea] IN (1, 2, 3) -- values of park area that imply trip pays for parking
 						AND [mparkcost] < [dparkcost]
 					THEN (1 - ISNULL([tour_freeparking_reimbpct].[freeparking_reimbpct], 0)) * [mparkcost] * [weight_trip]
 					ELSE 0 END) AS [cost_parking]
@@ -2442,7 +2444,10 @@ with [tour_freeparking_reimbpct] AS (
 		[fact].[mgra_based_input]
 	ON -- join works since i, i-e, j trips are all mgra based, do not need to account for tazs
 		[person_trip].[scenario_id] = [mgra_based_input].[scenario_id]
-		AND [person_trip].[geography_trip_destination_id] = [mgra_based_input].[geography_id]
+		AND CASE	WHEN [person_trip].[geography_parking_destination_id] = 0 -- null record, do not use
+					THEN [person_trip].[geography_trip_destination_id]
+					ELSE [person_trip].[geography_parking_destination_id]
+					END = [mgra_based_input].[geography_id] -- use parking geography field if applicable otherwise use trip destination field
 	WHERE
 		[person_trip].[scenario_id] = @scenario_id
 		AND [person].[scenario_id] = @scenario_id
