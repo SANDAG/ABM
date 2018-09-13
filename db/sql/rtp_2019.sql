@@ -62,6 +62,7 @@ BEGIN
 	-- create spatial index for the table on the [centroid] attribute
 	-- use the square region bounding box of the San Diego region
 	-- have to hardcode the bounding box, should match above variables
+	SET QUOTED_IDENTIFIER ON; -- set this default option for sqlcmd execution to work
 	CREATE SPATIAL INDEX spix_particulatematter25grid_centroid
 	ON [rtp_2019].[particulate_matter_2_5_grid]([centroid]) USING GEOMETRY_GRID
 	WITH (
