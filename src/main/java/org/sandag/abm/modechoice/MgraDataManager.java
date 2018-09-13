@@ -1378,10 +1378,19 @@ public final class MgraDataManager
 
                 }
                 // jef: storing by mgra since they are indexed into by mgra
-                lsWgtAvgCostM[mgra] = numeratorM / denominatorM;
-                lsWgtAvgCostD[mgra] = numeratorD / denominatorD;
-                lsWgtAvgCostH[mgra] = numeratorH / denominatorH;
-
+                // wsu added if clauses.  If denominators are 0, read costs directly from input file
+                if(denominatorM>0)
+                	lsWgtAvgCostM[mgra] = numeratorM / denominatorM;
+                else
+                	lsWgtAvgCostM[mgra] = mparkcost[mgra];
+                if(denominatorD>0)
+                	lsWgtAvgCostD[mgra] = numeratorD / denominatorD;
+                else
+                	lsWgtAvgCostD[mgra] = dparkcost[mgra];
+                if(denominatorH>0)
+                	lsWgtAvgCostH[mgra] = numeratorH / denominatorH;
+                else
+                	lsWgtAvgCostH[mgra] = hparkcost[mgra];
             } else
             {
 
