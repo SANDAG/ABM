@@ -147,7 +147,7 @@ RETURNS @tbl_particulate_matter_2_5_ctemfac_2014 TABLE
 	,PRIMARY KEY ([scenario_id], [hwy_link_id])
 )
 AS
-/*	Author: Gregor Schroeder
+/*	Author: Gregor Schroeder and Ziying Ouyang
 	Date: 7/10/2018
 	Description: Calculate link level emissions for particulate matter 2.5
 	    using emfac 2014 values. Similar to
