@@ -424,8 +424,9 @@ public class SkimBuilder
                 double expTime = skims[TRANSIT_SET_EXPRESS_BUS_TIME_INDEX];
                 double locTime = skims[TRANSIT_SET_LOCAL_BUS_TIME_INDEX];
                 
-                walkTime += skims[TRANSIT_SET_ACCESS_TIME_INDEX];
-                walkTime += skims[TRANSIT_SET_EGRESS_TIME_INDEX ];
+                //wsu 9/17/18, walkTime already set
+                //walkTime += skims[TRANSIT_SET_ACCESS_TIME_INDEX];
+                //walkTime += skims[TRANSIT_SET_EGRESS_TIME_INDEX ];
                 walkTime += skims[TRANSIT_SET_AUX_WALK_TIME_INDEX];
                 
                 double auxiliaryTime = skims[TRANSIT_SET_AUX_WALK_TIME_INDEX];
