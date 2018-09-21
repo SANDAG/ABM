@@ -1,6 +1,7 @@
 __author__ = 'wsu'
 #Wu.Sun@sandag.org 10-27-2016
 #wsu update 3/6/2018 for release 14.0.0
+#wsu update 9/17/2018 for release 14.0.1
 import Tkinter
 import Tkconstants
 import tkFileDialog
@@ -21,7 +22,7 @@ class CreateScenarioGUI(Tkinter.Frame):
             divider=u"_"*120
             self.releaseDir='T:\\ABM\\release\\ABM'
             self.defaultScenarioDir="T:\\projects\\sr14"
-            self.defaultNetworkDir="T:\\projects\\sr14\\version14_4_0\\network_build"
+            self.defaultNetworkDir="T:\\projects\\sr14\\version14_0_1\\network_build"
 
             self.buttonVar= IntVar(root)
             self.yButton=Radiobutton(body, text="Yes", variable=self.buttonVar, value=1, command=self.initStudy)
@@ -55,8 +56,8 @@ class CreateScenarioGUI(Tkinter.Frame):
 
             Tkinter.Label(body, text=u"Version", font=("Helvetica", 8, 'bold')).grid(row=8)
             var = StringVar(root)
-            self.version="version_14_0_0"
-            optionList=["version_13_3_0", "version_13_3_2", "version_14_0_0"]
+            self.version="version_14_0_1"
+            optionList=["version_13_3_2", "version_14_0_0", "version_14_0_1"]
             option=Tkinter.OptionMenu(body,var,*optionList,command=self.setversion)
             option.config(width=50)
             option.grid(row=8, column=1)
