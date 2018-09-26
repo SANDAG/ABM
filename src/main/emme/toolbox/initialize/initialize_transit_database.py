@@ -119,20 +119,25 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
 
         transit_db_dir = join(project_dir, "Database_transit")
         transit_db_path = join(transit_db_dir, "emmebank")
-        if os.path.exists(transit_db_dir):
-            if os.path.exists(transit_db_path):
-                emmebank = _eb.Emmebank(transit_db_path)
-                emmebank.dispose()
-            _shutil.rmtree(transit_db_dir)
-            time.sleep(10)  # wait 10 seconds - avoid potential race condition to remove the file in Windows
-        os.mkdir(transit_db_dir)
-
         network = base_scenario.get_partial_network(["NODE"], include_attributes=True)
         num_zones = sum([1 for n in network.nodes() if n["@tap_id"] > 0])
         dimensions = base_eb.dimensions
         dimensions["centroids"] = num_zones
         dimensions["scenarios"] = 10
-        transit_eb = _eb.create(transit_db_path, dimensions)
+        if not os.path.exists(transit_db_dir):
+            os.mkdir(transit_db_dir)
+        if os.path.exists(transit_db_path):
+            transit_eb = _eb.Emmebank(transit_db_path)
+            for scenario in transit_eb.scenarios():
+                transit_eb.delete_scenario(scenario.id)
+            for function in transit_eb.functions():
+                transit_eb.delete_function(function.id)
+            if transit_eb.dimensions != dimensions:
+                _eb.change_dimensions(transit_db_path, dimensions, keep_backup=False)
+
+        else:
+            transit_eb = _eb.create(transit_db_path, dimensions)
+
         transit_eb.title = base_eb.title[:65] + "-transit"
         transit_eb.coord_unit_length = base_eb.coord_unit_length
         transit_eb.unit_of_length = base_eb.unit_of_length
