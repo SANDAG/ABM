@@ -56,16 +56,16 @@ class CreateScenarioGUI(Tkinter.Frame):
             Tkinter.Label(body, text=u"Version", font=("Helvetica", 8, 'bold')).grid(row=8)
             var = StringVar(root)
             self.version="version_14_0_1"
-            optionList=["version_13_3_2", "version_14_0_0", "version_14_0_1"]
+            optionList=["version_14_0_1"]
             option=Tkinter.OptionMenu(body,var,*optionList,command=self.setversion)
             option.config(width=50)
             option.grid(row=8, column=1)
 
             Tkinter.Label(body, text=u"Year", font=("Helvetica", 8, 'bold')).grid(row=9)
             var = StringVar(root)
-            self.year="2012"
-            optionList=["2012", "2014", "2015", "2016", "2017", "2020", "2025", "2030", "2035", "2040", "2045", "2050"]
-            option=Tkinter.OptionMenu(body,var,*optionList,command=self.setyear)
+            self.year="2016"
+            yearOptionList = ["2012", "2014", "2016", "2020", "2025", "2030", "2035", "2035nb", "2040", "2045", "2050"]
+            option=Tkinter.OptionMenu(body,var,*yearOptionList,command=self.setyear)
             option.config(width=50)
             option.grid(row=9, column=1)
 
@@ -196,7 +196,10 @@ class CreateScenarioGUI(Tkinter.Frame):
         def executeBatch(self, type):
             self.popup.destroy()
             if type=="scenario":
-                commandstr=u"create_scenario.cmd "+self.scenariopath.get()+" "+self.year+" "+self.networkpath.get()
+                if self.year=="2035nb":
+                   commandstr=u"create_scenario.cmd "+self.scenariopath.get()+" "+self.year+" "+self.networkpath.get().rstrip("nb")
+                else:
+                   commandstr=u"create_scenario.cmd "+self.scenariopath.get()+" "+self.year+" "+self.networkpath.get()
             elif type=="study":
                 commandstr=u"copy_networkfiles_to_study.cmd "+self.studypath.get()+" "+self.studynetworkpath.get()
             print commandstr

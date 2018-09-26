@@ -8,6 +8,14 @@ set SCENARIO_FOLDER=%1
 set YEAR=%2
 set NETWORKDIR=%3
 
+if "%YEAR%"=="2035nb" (
+	set INPUTYEAR=2035
+	set CONFYEAR=2035nb
+)else (
+	set INPUTYEAR=%YEAR%
+	set CONFYEAR=%YEAR%
+)
+
 @echo creating scenario folders
 set FOLDERS=input application bin conf input_truck logFiles output python report sql uec
 for %%i in (%FOLDERS%) do (
@@ -26,13 +34,13 @@ xcopy /Y/E .\common\python\"*.*" %SCENARIO_FOLDER%\python
 xcopy /Y/E .\common\sql\"*.*" %SCENARIO_FOLDER%\sql
 xcopy /Y .\common\uec\"*.*" %SCENARIO_FOLDER%\uec
 xcopy /Y .\common\bin\"*.*" %SCENARIO_FOLDER%\bin
-xcopy /Y .\conf\%YEAR%\"*.*" %SCENARIO_FOLDER%\conf
+xcopy /Y .\conf\%CONFYEAR%\"*.*" %SCENARIO_FOLDER%\conf
 xcopy /Y .\common\output\"*.*" %SCENARIO_FOLDER%\output
 
 @echo assemble inputs
 del %SCENARIO_FOLDER%\input /q
 rem copy pop, hh, landuse, and other input files
-xcopy /Y .\input\%YEAR%\"*.*" %SCENARIO_FOLDER%\input
+xcopy /Y .\input\%INPUTYEAR%\"*.*" %SCENARIO_FOLDER%\input
 rem copy common geography files to input folder
 xcopy /Y .\common\input\geography\"*.*" %SCENARIO_FOLDER%\input
 rem copy ctm paramter tables to input folder
