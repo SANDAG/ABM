@@ -254,6 +254,7 @@ def reduce_matrix_precision(matrices, precision, num_processors, scenario):
                 calc.add(sum1.named_id, mat, aggregation={"destinations": "+", "origins": "+"})
                 calc.add(mat, "%s * (%s >= %s)" % (mat, mat, precision))
                 calc.add(sum2.named_id, mat, aggregation={"destinations": "+", "origins": "+"})
+                calc.add(sum2.named_id, "(%s + %s.eq.0)" % (sum2.named_id, sum2.named_id))
                 calc.add(mat, "%s * %s / %s" % (mat, sum1.named_id, sum2.named_id))
 
 
