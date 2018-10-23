@@ -252,10 +252,12 @@ def reduce_matrix_precision(matrices, precision, num_processors, scenario):
             mat = emmebank.matrix(mat).named_id
             with calc.trace_run('Reduce precision for matrix %s' % mat):
                 calc.add(sum1.named_id, mat, aggregation={"destinations": "+", "origins": "+"})
-                calc.add(mat, "%s * (%s >= %s)" % (mat, mat, precision))
+                calc.add(mat, "{mat} * ({mat} >= {precision})".format(
+                    mat=mat, precision=precision))
                 calc.add(sum2.named_id, mat, aggregation={"destinations": "+", "origins": "+"})
-                calc.add(sum2.named_id, "(%s + %s.eq.0)" % (sum2.named_id, sum2.named_id))
-                calc.add(mat, "%s * %s / %s" % (mat, sum1.named_id, sum2.named_id))
+                calc.add(sum2.named_id, "({sum2} + ({sum2} == 0))".format(sum2=sum2.named_id))
+                calc.add(mat, "{mat} * ({sum1} / {sum2})".format(
+                    mat=mat, sum2=sum2.named_id, sum1=sum1.named_id))
 
 
 def create_full_matrix(name, desc, scenario):
