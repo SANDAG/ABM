@@ -68,9 +68,9 @@ public class CrossBorderTourManager
 
         // Read the distributions
         sentriPurposeDistribution = setPurposeDistribution(sentriPurposeFile,
-                sentriPurposeDistribution);
+                sentriPurposeDistribution,2);
         nonSentriPurposeDistribution = setPurposeDistribution(nonSentriPurposeFile,
-                nonSentriPurposeDistribution);
+                nonSentriPurposeDistribution,2);
         totalTours = new Integer(Util.getStringValueFromPropertyMap(rbMap, "crossBorder.tours")
                 .replace(",", ""));
 
@@ -144,7 +144,7 @@ public class CrossBorderTourManager
      *            First column has purpose number, second column has
      *            probability.
      */
-    protected double[] setPurposeDistribution(String fileName, double[] purposeDistribution)
+    protected double[] setPurposeDistribution(String fileName, double[] purposeDistribution, int position)
     {
         logger.info("Begin reading the data in file " + fileName);
         TableDataSet probabilityTable;
@@ -168,7 +168,7 @@ public class CrossBorderTourManager
         for (int purp = 0; purp < purposes; ++purp)
         {
 
-            double probability = probabilityTable.getValueAt(purp + 1, 2);
+            double probability = probabilityTable.getValueAt(purp + 1, position);
 
             total_prob += probability;
             purposeDistribution[purp] = total_prob;

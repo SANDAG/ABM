@@ -3,6 +3,8 @@ package org.sandag.abm.crossborder;
 import gnu.cajo.invoke.Remote;
 import gnu.cajo.utils.ItemServer;
 
+import java.io.File;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.MissingResourceException;
@@ -20,8 +22,11 @@ import org.sandag.abm.ctramp.McLogsumsCalculator;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+import org.sandag.abm.crossborder.CrossBorderTourManager;
 
 import com.pb.common.calculator.MatrixDataManager;
+import com.pb.common.datafile.OLD_CSVFileReader;
+import com.pb.common.datafile.TableDataSet;
 import com.pb.common.matrix.MatrixType;
 import com.pb.common.util.ResourceUtil;
 import com.pb.sawdust.util.concurrent.DnCRecursiveAction;
@@ -41,6 +46,7 @@ public class CrossBorderModel
     private AutoTazSkimsCalculator  tazDistanceCalculator;
     private MgraDataManager         mgraManager;
     private TazDataManager          tazManager;
+    private CrossBorderTourManager  tourManager;
 
     private boolean                 seek;
     private int                     traceId;
@@ -62,6 +68,7 @@ public class CrossBorderModel
           // threads
             mgraManager = MgraDataManager.getInstance(rbMap);
             tazManager = TazDataManager.getInstance(rbMap);
+            tourManager = new CrossBorderTourManager(rbMap);
         }
 
         seek = Boolean.valueOf(Util.getStringValueFromPropertyMap(rbMap, "crossBorder.seek"));
@@ -130,8 +137,9 @@ public class CrossBorderModel
         stopLocationChoiceModel.setMgraSizeTerms(mgraSizeTerms);
         stopLocationChoiceModel.setTazSizeTerms(tazSizeTerms);
         stopLocationChoiceModel.setMgraProbabilities(mgraProbabilities);
+    	String purposeControlFileName = Util.getStringValueFromPropertyMap(rbMap, "Project.Directory")+"input/crossBorder_tourPurpose_control.csv";       
         
-        for (int i = start; i < end; i++)
+    	for (int i = start; i < end; i++)
         {
             CrossBorderTour tour = tours[i];
 
@@ -148,6 +156,7 @@ public class CrossBorderModel
 
             todChoiceModel.calculateTourTOD(tour);
             destChoiceModel.chooseStationAndDestination(tour);
+        	resetCrossingPurpose(purposeControlFileName,tour);
             tourModeChoiceModel.chooseTourMode(tour);
             stopFrequencyModel.calculateStopFrequency(tour);
             stopPurposeModel.calculateStopPurposes(tour);
@@ -292,7 +301,6 @@ public class CrossBorderModel
      */
     public void runModel()
     {
-        CrossBorderTourManager tourManager = new CrossBorderTourManager(rbMap);
         tourManager.generateCrossBorderTours();
         CrossBorderTour[] tours = tourManager.getTours();
 
@@ -374,6 +382,21 @@ public class CrossBorderModel
 
         return matrixServer;
 
+    }
+    
+    /**
+     * Reset tour NB crossing purpose using purpose distribution by POE from 2011 survey
+     */
+    private void resetCrossingPurpose(String purposeControlFile, CrossBorderTour tour) {
+    	int poe=tour.getPoe();
+        double [][] purpDistributionByPoe=new double[5][CrossBorderModelStructure.NUMBER_CROSSBORDER_PURPOSES];
+        
+        // Read the distributions by poe
+        for (int i=0; i<5; i++) {
+        	purpDistributionByPoe[i] = tourManager.setPurposeDistribution(purposeControlFile,purpDistributionByPoe[i],i+3);
+        }
+        int purpose = tourManager.choosePurpose(tour.getRandom(), purpDistributionByPoe[poe]);
+        tour.setPurpose((byte) purpose);
     }
 
     /**
