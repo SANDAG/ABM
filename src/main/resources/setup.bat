@@ -1,1 +1,1 @@
-python ./src/main/python/pythonGUI/setup.py py2exe
+python ./src/main/python/sandag/pythonGUI/setup.py py2exe

@@ -8,7 +8,12 @@ enditem
 // set model run parameters
 button "Set Model Parameters" 0,0,30, 2 do
   RunMacro("TCB Init")
-  runString = "T:\\ABM\\release\\ABM\\${version}\\dist\\parameterEditor.exe "+path
+   path_parts = SplitPath(path)
+   path_no_drive = path_parts[2]+path_parts[3]
+   drive=path_parts[1]  
+   path_forward_slash =  Substitute(path_no_drive, "\\", "/", )
+  //runString = "T:\\ABM\\release\\ABM\\${version}\\dist\\parameterEditor.exe "+path
+  runString = path+"\\python\\parameterEditor.bat "+drive+" "+path_no_drive+" "+path_forward_slash
   RunMacro("HwycadLog",{"gui.rsc:","Create a scenario"+" "+runString})
   ok = RunMacro("TCB Run Command", 1, "Create a scenario", runString)
 enditem

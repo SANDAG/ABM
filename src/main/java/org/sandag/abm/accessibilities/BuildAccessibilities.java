@@ -1346,6 +1346,12 @@ public final class BuildAccessibilities
     {
         return mgraManager.getMgraHouseholds(mgra);
     }
+    
+    
+    public double getMgraEmployment(int mgra)
+    {
+    	return mgraManager.getMgraEmployment(mgra);
+    }
 
     /**
      * @param mgra
