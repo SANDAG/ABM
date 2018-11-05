@@ -537,6 +537,14 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                     },
                 }
                 matrix_results(spec, class_name=class_name, scenario=scenario, num_processors=num_processors)
+            # Sum total distance
+            spec = {
+                "type": "MATRIX_CALCULATION",
+                "constraint": None,
+                "result": 'mf"%s_TOTDIST"' % skim_name,
+                "expression": 'mf"{0}_BUSDIST" + mf"{0}_LRTDIST" + mf"{0}_CMRDIST" + mf"{0}_EXPDIST" + mf"{0}_BRTDIST"'.format(skim_name),
+            }
+            matrix_calc(spec, scenario=scenario, num_processors=num_processors)
 
         # convert number of boardings to number of transfers
         # and subtract transfers to the same line at layover points
