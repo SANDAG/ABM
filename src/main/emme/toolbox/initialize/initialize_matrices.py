@@ -385,6 +385,7 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             ("CMRDIST",    "Rail IV distance"),
             ("EXPDIST",    "Express and Ltd IV distance"),
             ("BRTDIST",    "BRT red and yel IV distance"),
+            ("TOTDIST",    "Total transit distance")
         ]
         skim_sets = [
             ("BUS",    "Local bus only"), 
