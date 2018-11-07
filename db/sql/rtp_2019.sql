@@ -2385,7 +2385,7 @@ with [tour_freeparking_reimbpct] AS (
 		[tour_id]),
 -- sum costs to the person level
 -- auto = aoc split among riders, fare split among riders, and parking cost split among riders
-	-- for parking have to look at tour reimbursement and mgra based input parking costs
+	-- for parking have to look at tour reimbursement, mgra based input parking costs, and home location
 -- transit = transit fare
 	-- for age >= 60 apply a 50% reduction
 [person_costs] AS (
@@ -2412,7 +2412,13 @@ with [tour_freeparking_reimbpct] AS (
 						AND [mgra_based_input].[parkarea] IN (1, 2, 3) -- values of park area that imply trip pays for parking
 						AND [mparkcost] < [dparkcost]
 					THEN (1 - ISNULL([tour_freeparking_reimbpct].[freeparking_reimbpct], 0)) * [mparkcost] * [weight_trip]
-					ELSE 0 END) AS [cost_parking]
+					ELSE 0 END *
+			-- multiply parking cost by indicator if trip destination is the persons household location
+			-- note this works as both resident trips and household location operate on the same geographic resolution (mgra)
+			-- also works as all members of a tour live in same household
+			 CASE WHEN [person_trip].[geography_trip_destination_id] = [household].[geography_household_location_id]
+					OR [person_trip].[geography_parking_destination_id] = [household].[geography_household_location_id]
+				  THEN 0 ELSE 1 END) AS [cost_parking]
 		,SUM(CASE	WHEN [person].[age] >= 60 THEN [weight_person_trip] * [cost_transit] * .5
 					ELSE [weight_person_trip] * [cost_transit] END) AS [cost_transit]
 		,MAX(CASE	WHEN [mode_trip].[mode_trip_description] IN ('Kiss and Ride to Transit - Local Bus and Premium Transit',
@@ -2437,6 +2443,11 @@ with [tour_freeparking_reimbpct] AS (
 	ON
 		[person_trip].[scenario_id] = [person].[scenario_id]
 		AND [person_trip].[person_id] = [person].[person_id]
+	INNER JOIN
+		[dimension].[household]
+	ON
+		[person_trip].[scenario_id] = [household].[scenario_id]
+		AND [person_trip].[household_id] = [household].[household_id]
 	LEFT OUTER JOIN
 		[tour_freeparking_reimbpct]
 	ON
@@ -2453,6 +2464,7 @@ with [tour_freeparking_reimbpct] AS (
 	WHERE
 		[person_trip].[scenario_id] = @scenario_id
 		AND [person].[scenario_id] = @scenario_id
+		AND [household].[scenario_id] = @scenario_id
 		AND [mgra_based_input].[scenario_id] = @scenario_id
 		AND [model_trip].[model_trip_description] IN ('Individual',
 													  'Internal-External',
