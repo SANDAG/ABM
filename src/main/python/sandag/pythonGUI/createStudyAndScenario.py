@@ -1,6 +1,7 @@
 __author__ = 'wsu'
 #Wu.Sun@sandag.org 10-27-2016
 #wsu update 5/2/2017 for release 13.3.2
+#wsu update 12/12/2017 for release 13.3.3
 import Tkinter
 import Tkconstants
 import tkFileDialog
@@ -21,7 +22,7 @@ class CreateScenarioGUI(Tkinter.Frame):
             divider=u"_"*120
             self.releaseDir='T:\\ABM\\release\\ABM'
             self.defaultScenarioDir="T:\\projects\\sr13"
-            self.defaultNetworkDir="T:\\projects\\sr13\\version13_3_2\\network_build"
+            self.defaultNetworkDir="T:\\projects\\sr13\\version13_4_0\\network_build"
 
             self.buttonVar= IntVar(root)
             self.yButton=Radiobutton(body, text="Yes", variable=self.buttonVar, value=1, command=self.initStudy)
@@ -55,8 +56,8 @@ class CreateScenarioGUI(Tkinter.Frame):
 
             Tkinter.Label(body, text=u"Version", font=("Helvetica", 8, 'bold')).grid(row=8)
             var = StringVar(root)
-            self.version="version_13_3_2"
-            optionList=["version_13_3_0", "version_13_3_2"]
+            self.version="version_13_4_0"
+            optionList=["version_13_3_0", "version_13_3_2", "version_13_4_0"]
             option=Tkinter.OptionMenu(body,var,*optionList,command=self.setversion)
             option.config(width=50)
             option.grid(row=8, column=1)
@@ -65,9 +66,9 @@ class CreateScenarioGUI(Tkinter.Frame):
             var = StringVar(root)
             self.year="2012"
             # standard release years
-            #optionList=["2012", "2014", "2020", "2025", "2030", "2035", "2040", "2045", "2050"]
+            optionList=["2014", "2020", "2025", "2030", "2035", "2050"]
             # development/testing years; un-comment if build testing years
-            optionList=["2015", "2016", "2017"]
+            #optionList=["2015", "2016", "2017"]
             option=Tkinter.OptionMenu(body,var,*optionList,command=self.setyear)
             option.config(width=50)
             option.grid(row=9, column=1)

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.sandag</groupId>
     <artifactId>SANDAG-ABM</artifactId>
-    <version>version_13_4_0</version>
+    <version>version_13_4_0_SNAPSHOT</version>
     <name>SANDAG CT-RAMP Activity Based Model</name>
     <properties>
         <encoding.type>UTF-8</encoding.type> 
@@ -15,27 +15,27 @@
         <jppf.headnode.memory.min>32000m</jppf.headnode.memory.min> 
         <jppf.headnode.memory.max>32000m</jppf.headnode.memory.max> 
         <jppf.workernode.memory.min>45000m</jppf.workernode.memory.min> 
-        <jppf.workernode.memory.max>50000m</jppf.workernode.memory.max> 
+        <jppf.workernode.memory.max>120000m</jppf.workernode.memory.max> 
         <mtxmgr.memory.min>20000m</mtxmgr.memory.min> 
-        <mtxmgr.memory.max>20000m</mtxmgr.memory.max> 
+        <mtxmgr.memory.max>80000m</mtxmgr.memory.max> 
         <hhmgr.memory.min>1000m</hhmgr.memory.min> 
-        <hhmgr.memory.max>12000m</hhmgr.memory.max>         
+        <hhmgr.memory.max>20000m</hhmgr.memory.max>         
         <client.memory.min>30000m</client.memory.min> 
         <client.memory.max>30000m</client.memory.max>          
         <spmarket.memory.min>30000m</spmarket.memory.min> 
-        <spmarket.memory.max>30000m</spmarket.memory.max>      
+        <spmarket.memory.max>160000m</spmarket.memory.max>      
         <bikelogsum.memory.min>26000m</bikelogsum.memory.min> 
-        <bikelogsum.memory.max>26000m</bikelogsum.memory.max>    
+        <bikelogsum.memory.max>50000m</bikelogsum.memory.max>    
         <walklogsum.memory.min>26000m</walklogsum.memory.min> 
-        <walklogsum.memory.max>26000m</walklogsum.memory.max>    
+        <walklogsum.memory.max>50000m</walklogsum.memory.max>    
         <bikeroute.memory.min>26000m</bikeroute.memory.min> 
-        <bikeroute.memory.max>26000m</bikeroute.memory.max> 
+        <bikeroute.memory.max>50000m</bikeroute.memory.max> 
         <dataexport.memory.min>30000m</dataexport.memory.min> 
-        <dataexport.memory.max>30000m</dataexport.memory.max> 
+        <dataexport.memory.max>140000m</dataexport.memory.max> 
         <emfac.memory.min>10000m</emfac.memory.min> 
-        <emfac.memory.max>10000m</emfac.memory.max>  
+        <emfac.memory.max>15000m</emfac.memory.max>  
         <validate.memory.min>10000m</validate.memory.min> 
-        <validate.memory.max>10000m</validate.memory.max>  
+        <validate.memory.max>15000m</validate.memory.max>  
         <matrix.server.port>1191</matrix.server.port>  
         <household.server.port>1129</household.server.port>  
         <java.32.port>1190</java.32.port>  
@@ -44,7 +44,7 @@
         <USERNAME>XX</USERNAME>
         <PASSWORD>XX</PASSWORD>
         <MAPANDRUN>mapAndRun.bat</MAPANDRUN>
-        <JAVA_64_PATH>C:\Progra~1\Java\jre1.8.0_162</JAVA_64_PATH>
+        <JAVA_64_PATH>C:\Progra~1\Java\jre7</JAVA_64_PATH>
         <JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
         <workpath>WORKPATH</workpath>
         <database_server>sql2014a8</database_server>
@@ -52,17 +52,79 @@
         <jppf_version>5.0.1</jppf_version>
     </properties>
     <profiles>
+         <profile>
+            <id>2010</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <year>2010</year>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
+                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
+                <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>                
+                <workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
+            </properties>
+        </profile>
+         <profile>
+            <id>2012</id>
+            <properties>
+                <year>2012</year>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>  
+                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>  
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
+                <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>     
+                <workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
+            </properties>
+        </profile>
         <profile>
             <id>2014</id>
             <properties>
                 <year>2014</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2014.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2014.xls</crossBorder.dc.uec.file>
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2014.xls</crossBorder.tour.mc.uec.file>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2014.xls</tourdest.uec.file>              
-                <workShadowPricing.iteration>ShadowPricingOutput_work_9.csv</workShadowPricing.iteration>
-                <schoolShadowPricing.iteration>ShadowPricingOutput_school_9.csv</schoolShadowPricing.iteration>
+                <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>              
+                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
+            </properties>
+        </profile>
+        <profile>
+            <id>2015</id>
+            <properties>
+                <year>2015</year>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
+                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
+                <tourdest.uec.file>TourDestinationChoice2015.xls</tourdest.uec.file>              
+                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
+            </properties>
+        </profile>
+        <profile>
+            <id>2016</id>
+            <properties>
+                <year>2016</year>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
+                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
+                <tourdest.uec.file>TourDestinationChoice2015.xls</tourdest.uec.file>              
+                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
+            </properties>
+        </profile>
+        <profile>
+            <id>2017</id>
+            <properties>
+                <year>2017</year>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
+                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
+                <tourdest.uec.file>TourDestinationChoice2015.xls</tourdest.uec.file>              
+                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
@@ -71,50 +133,82 @@
                 <year>2020</year>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2020.xls</tourdest.uec.file>           
-                <workShadowPricing.iteration>ShadowPricingOutput_work_9.csv</workShadowPricing.iteration>
-                <schoolShadowPricing.iteration>ShadowPricingOutput_school_9.csv</schoolShadowPricing.iteration>
+                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
             <id>2025</id>
             <properties>
                 <year>2025</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2025.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2025.xls</crossBorder.dc.uec.file>
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2025.xls</crossBorder.tour.mc.uec.file>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2025.xls</tourdest.uec.file>                   
-                <workShadowPricing.iteration>ShadowPricingOutput_work_9.csv</workShadowPricing.iteration>
-                <schoolShadowPricing.iteration>ShadowPricingOutput_school_9.csv</schoolShadowPricing.iteration>
+                <tourdest.uec.file>TourDestinationChoice2020.xls</tourdest.uec.file>                   
+                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
+            </properties>
+        </profile>
+        <profile>
+            <id>2030</id>
+            <properties>
+                <year>2030</year>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
+                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
+                <tourdest.uec.file>TourDestinationChoice2020.xls</tourdest.uec.file>                   
+                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
             <id>2035</id>
             <properties>
                 <year>2035</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2035.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2035.xls</crossBorder.dc.uec.file>
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2035.xls</crossBorder.tour.mc.uec.file>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2035.xls</tourdest.uec.file>      
-                <workShadowPricing.iteration>ShadowPricingOutput_work_9.csv</workShadowPricing.iteration>
-                <schoolShadowPricing.iteration>ShadowPricingOutput_school_9.csv</schoolShadowPricing.iteration>
+                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
+            </properties>
+        </profile>
+        <profile>
+            <id>2040</id>
+            <properties>
+                <year>2040</year>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2040.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2040.xls</crossBorder.dc.uec.file>
+                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
+                <tourdest.uec.file>TourDestinationChoice2035.xls</tourdest.uec.file>      
+                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
+            </properties>
+        </profile>
+        <profile>
+            <id>2045</id>
+            <properties>
+                <year>2045</year>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2040.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2040.xls</crossBorder.dc.uec.file>
+                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
+                <tourdest.uec.file>TourDestinationChoice2035.xls</tourdest.uec.file>      
+                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
             <id>2050</id>
             <properties>
                 <year>2050</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2050.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2050.xls</crossBorder.dc.uec.file>
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2050.xls</crossBorder.tour.mc.uec.file>
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2040.csv</crossborder.dc.soa.alts.file>    
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2040.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2050.xls</tourdest.uec.file>      
-                <workShadowPricing.iteration>ShadowPricingOutput_work_9.csv</workShadowPricing.iteration>
-                <schoolShadowPricing.iteration>ShadowPricingOutput_school_9.csv</schoolShadowPricing.iteration>
+                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
+                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
             </properties>
         </profile>
         <profile>
@@ -291,10 +385,30 @@
                                 <resource>
                                     <directory>src/main/python</directory>
                                     <filtering>true</filtering>
+                                    <excludes>
+                                        <exclude>**/reporting/*</exclude>
+                                    </excludes>
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>                    
+                    </execution>
+                    <execution>
+                        <id>copy-emme-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${release.root}/common/python/emme</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/emme</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>                     
                     <execution>
                         <id>copy-txt-resources</id>
                         <phase>package</phase>
@@ -360,7 +474,6 @@
                                         <exclude>copy_networks.cmd</exclude>
                                         <exclude>BatchSubstitute.bat</exclude>
                                         <exclude>init_emme.cmd</exclude>
-                                        <exclude>cleanup.cmd</exclude> 
                                     </excludes>
                                 </resource>
                             </resources>
@@ -385,28 +498,6 @@
                                         <include>BatchSubstitute.bat</include>
                                         <include>copy_networkfiles_to_study.cmd</include>
                                         <include>init_emme.cmd</include>
-                                        <include>cleanup.cmd</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-updateShadowPricing-bat</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${release.root}/common/python/sandag</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/resources</directory>
-                                    <filtering>true</filtering>
-                                    <includes>
-                                        <include>updateProperty.bat</include>
-                                        <include>updateShadowPricing.bat</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -420,7 +511,7 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${release.root}/common/bin</outputDirectory>
-                            <resources>"src/main/resources/sandag_abm.properties"
+                            <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>
                                     <filtering>false</filtering>
@@ -471,7 +562,7 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>                                               
+                    </execution>                                             
                     <execution>
                         <id>copy-sql-resources</id>
                         <phase>package</phase>
@@ -488,7 +579,7 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>                                                 
+                    </execution>                                                         
                 </executions>
             </plugin>
             <plugin>
@@ -518,6 +609,25 @@
                     </archive>
                 </configuration>
             </plugin>
+            <!--  
+            <plugin>
+	            <groupId>org.codehaus.mojo</groupId>
+	            <artifactId>exec-maven-plugin</artifactId>
+	            <version>1.2</version>
+	            <executions>
+	              <execution>
+	                <id>init_emme_project</id>
+	                <phase>package</phase>
+	                <goals>
+	                  <goal>exec</goal>
+	                </goals>
+	              </execution>
+	            </executions>
+	            <configuration>
+	              <executable>src/main/resources/init_emme.cmd</executable>
+	            </configuration>
+	        </plugin>
+	        -->
         </plugins>
         <pluginManagement>
             <plugins>
@@ -552,7 +662,17 @@
         <dependency>
             <groupId>pb</groupId>
             <artifactId>common-base</artifactId>
-            <version>2014.07.09-ABM</version>
+            <version>2017-05-05-ABM</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
         </dependency>
         <dependency>
             <groupId>ca.umontreal.iro</groupId>
@@ -654,7 +774,7 @@
         <dependency>
          <groupId>osplanning</groupId>
         	<artifactId>omx</artifactId>
-			<version>0.2.3</version>
+			<version>8.28.17</version>
 		</dependency>
 	    <dependency>	
 		  <groupId>hdf</groupId>

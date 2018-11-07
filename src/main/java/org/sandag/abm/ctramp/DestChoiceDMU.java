@@ -209,6 +209,11 @@ public abstract class DestChoiceDMU
     {
         return aggAcc.getMgraAdultSchoolEnrollment(mgra);
     }
+    
+    protected double getEmploymentDestAlt(int mgra)
+    {
+    	return aggAcc.getMgraEmployment(mgra);
+    }
 
     protected int getIncome()
     {
