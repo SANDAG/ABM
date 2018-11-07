@@ -827,7 +827,7 @@ with [coc_pop] AS (
 						WHEN @minority = 1 THEN [minority]
 						WHEN @low_income = 1 THEN [low_income]
 						ELSE 'All' END, 'Total') AS [pop_segmentation]
-		,SUM([time_walk] + [time_bike]) AS [physical_activity_minutes] -- time_walk includes transit walk times
+		,SUM([weight_person_trip] * ([time_walk] + [time_bike])) AS [physical_activity_minutes] -- time_walk includes transit walk times
 	FROM
 		[fact].[person_trip]
 	INNER JOIN
@@ -2657,27 +2657,17 @@ AS
 /*	Author: Ziying Ouyang and Gregor Schroeder
 	Date: Revised 4/20/2018
 	Description: Person and bicycle miles travelled used in Performance Measures 3a/3b
+	  includes all models as 3ab vmt is a network based measure that includes all models
 	  similar to sp_pmt_bmt in the 2015 RTP */
 
 SELECT
 	@scenario_id AS [scenario_id]
-	,SUM([dist_bike]) AS [bmt]
-	,SUM([dist_walk]) AS [pmt] -- includes transit walk distances while 2015 RTP sp_pmt_bmt did not
+	,SUM([weight_person_trip] * [dist_bike]) AS [bmt]
+	,SUM([weight_person_trip] * [dist_walk]) AS [pmt] -- includes transit walk distances
 FROM
 	[fact].[person_trip]
-INNER JOIN
-	[dimension].[model_trip]
-ON
-	[person_trip].[model_trip_id] = [model_trip].[model_trip_id]
 WHERE
 	[person_trip].[scenario_id] = @scenario_id
-	AND [model_trip].[model_trip_description] IN ('Airport - CBX',
-												  'Airport - SAN',
-												  'Cross Border',
-												  'Individual',
-												  'Internal-External',
-												  'Joint',
-												  'Visitor') -- all micro-simulated trips excepting commercial vehicle model
 GO
 
 -- Add metadata for [rtp_2019].[sp_pm_3ab_pmt_bmt]
