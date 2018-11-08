@@ -614,29 +614,11 @@ OPENQUERY(
 -- for resident models only (Individual, Internal-External, Joint)
 -- potentially filtered by destination work purpose or mgra in UATS district
 DECLARE @aggregated_trips TABLE (
-	[mode_aggregate] nchar(15) NOT NULL,
+	[mode_aggregate_trip_description] nchar(15) NOT NULL,
 	[person_trips] float NOT NULL)
 INSERT INTO @aggregated_trips
 SELECT
-	ISNULL(CASE	WHEN [mode_trip_description] IN ('Drive Alone Non-Toll',
-												 'Drive Alone Toll Eligible')
-				THEN 'Drive Alone'
-				WHEN [mode_trip_description] IN ('Shared Ride 2 Non-Toll',
-											 	 'Shared Ride 2 Toll Eligible',
-												 'Shared Ride 3 Non-Toll',
-												 'Shared Ride 3 Toll Eligible')
-				THEN 'Shared Ride'
-				WHEN [mode_trip_description] IN ('Kiss and Ride to Transit - Local Bus and Premium Transit',
-												 'Kiss and Ride to Transit - Local Bus Only',
-												 'Kiss and Ride to Transit - Premium Transit Only' ,
-												 'Park and Ride to Transit - Local Bus and Premium Transit',
-												 'Park and Ride to Transit - Local Bus Only',
-												 'Park and Ride to Transit - Premium Transit Only',
-												 'Walk to Transit - Local Bus and Premium Transit',
-												 'Walk to Transit - Local Bus Only',
-												 'Walk to Transit - Premium Transit Only')
-				THEN 'Transit'
-				ELSE [mode_trip_description] END, 'Total') AS [mode_aggregate]
+	ISNULL([mode_aggregate_trip_description], 'Total') AS [mode_aggregate_trip_description]
 	,SUM([weight_person_trip]) AS [person_trips]
 FROM
 	[fact].[person_trip]
@@ -678,35 +660,16 @@ WHERE
 	AND ((@uats = 1 AND ([uats_mgras_origin_xref].[mgra] IS NOT NULL AND [uats_mgras_dest_xref].[mgra] IS NOT NULL))
 			OR @uats = 0) -- if UATS districts option selected only count trips originating and ending in UATS mgras
 GROUP BY
-	CASE	WHEN [mode_trip_description] IN ('Drive Alone Non-Toll',
-											 'Drive Alone Toll Eligible')
-			THEN 'Drive Alone'
-			WHEN [mode_trip_description] IN ('Shared Ride 2 Non-Toll',
-											 'Shared Ride 2 Toll Eligible',
-											 'Shared Ride 3 Non-Toll',
-											 'Shared Ride 3 Toll Eligible')
-			THEN 'Shared Ride'
-			WHEN [mode_trip_description] IN ('Kiss and Ride to Transit - Local Bus and Premium Transit',
-											 'Kiss and Ride to Transit - Local Bus Only',
-											 'Kiss and Ride to Transit - Premium Transit Only' ,
-											 'Park and Ride to Transit - Local Bus and Premium Transit',
-											 'Park and Ride to Transit - Local Bus Only',
-											 'Park and Ride to Transit - Premium Transit Only',
-											 'Walk to Transit - Local Bus and Premium Transit',
-											 'Walk to Transit - Local Bus Only',
-											 'Walk to Transit - Premium Transit Only')
-			THEN 'Transit'
-			ELSE [mode_trip_description] END
+	[mode_aggregate_trip_description]
 WITH ROLLUP
 
 SELECT
 	@scenario_id AS [scenario_id]
-	,[mode_aggregate]
-	,100.0 * [person_trips] / (SELECT [person_trips] FROM @aggregated_trips WHERE [mode_aggregate] = 'Total') AS [pct_person_trips]
+	,[mode_aggregate_trip_description]
+	,100.0 * [person_trips] / (SELECT [person_trips] FROM @aggregated_trips WHERE [mode_aggregate_trip_description] = 'Total') AS [pct_person_trips]
 	,[person_trips]
 FROM
 	@aggregated_trips
-
 GO
 
 -- Add metadata for [rtp_2019].[sp_pm_2a]
@@ -1944,30 +1907,12 @@ SELECT
 					WHEN @minority = 1 THEN [minority]
 					WHEN @low_income = 1 THEN [low_income]
 					ELSE 'All' END, 'Total') AS [pop_segmentation]
-	,ISNULL([mode_aggregate], 'Total') AS [mode_aggregate]
+	,ISNULL([mode_aggregate_trip_description], 'Total') AS [mode_aggregate]
 	,SUM([time_total] * [weight_person_trip]) / SUM([weight_person_trip]) AS [avg_time_trip]
 	,SUM([weight_person_trip]) AS [person_trips]
 FROM (
 	SELECT
-		CASE	WHEN [mode_trip_description] IN ('Drive Alone Non-Toll',
-													'Drive Alone Toll Eligible')
-				THEN 'Drive Alone'
-				WHEN [mode_trip_description] IN ('Shared Ride 2 Non-Toll',
-													'Shared Ride 2 Toll Eligible',
-													'Shared Ride 3 Non-Toll',
-													'Shared Ride 3 Toll Eligible')
-				THEN 'Shared Ride'
-				WHEN [mode_trip_description] IN ('Kiss and Ride to Transit - Local Bus and Premium Transit',
-													'Kiss and Ride to Transit - Local Bus Only',
-													'Kiss and Ride to Transit - Premium Transit Only' ,
-													'Park and Ride to Transit - Local Bus and Premium Transit',
-													'Park and Ride to Transit - Local Bus Only',
-													'Park and Ride to Transit - Premium Transit Only',
-													'Walk to Transit - Local Bus and Premium Transit',
-													'Walk to Transit - Local Bus Only',
-													'Walk to Transit - Premium Transit Only')
-				THEN 'Transit'
-				ELSE [mode_trip_description] END AS [mode_aggregate]
+		[mode_aggregate_trip_description]
 		,[time_total]
 		,[weight_person_trip]
 		,CASE WHEN [person].[age] >= 75 THEN 'Senior' ELSE 'Non-Senior' END AS [senior]
@@ -2030,7 +1975,7 @@ GROUP BY
 			WHEN @minority = 1 THEN [minority]
 			WHEN @low_income = 1 THEN [low_income]
 			ELSE 'All' END
-	,[mode_aggregate]
+	,[mode_aggregate_trip_description]
 WITH ROLLUP
 OPTION(MAXDOP 1)
 GO
