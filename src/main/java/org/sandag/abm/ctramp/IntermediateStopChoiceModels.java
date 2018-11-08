@@ -105,7 +105,7 @@ public class IntermediateStopChoiceModels
 
     private static final String                PARK_MGRA_COLUMN                                    = "mgra";
     private static final String                PARK_AREA_COLUMN                                    = "parkarea";
-    private static final int                   MAX_PLC_SAMPLE_SIZE                                 = 5000;
+    private static final int                   MAX_PLC_SAMPLE_SIZE                                 = 1200;
 
     private static final int                   WORK_STOP_PURPOSE_INDEX                             = 1;
     private static final int                   UNIV_STOP_PURPOSE_INDEX                             = 2;
@@ -547,7 +547,6 @@ public class IntermediateStopChoiceModels
         int plcDataPage = Integer.parseInt(propertyMap.get(PROPERTIES_UEC_PLC_DATA_PAGE));
         int plcModelPage = Integer.parseInt(propertyMap.get(PROPERTIES_UEC_PLC_MODEL_PAGE));
 
-        /*
         altMgraIndices = new int[MAX_PLC_SAMPLE_SIZE + 1];
         altOsDistances = new double[MAX_PLC_SAMPLE_SIZE + 1];
         altSdDistances = new double[MAX_PLC_SAMPLE_SIZE + 1];
@@ -567,7 +566,6 @@ public class IntermediateStopChoiceModels
 
         altParkAvail = new boolean[MAX_PLC_SAMPLE_SIZE + 1];
         altParkSample = new int[MAX_PLC_SAMPLE_SIZE + 1];
-        */
 
         parkingChoiceDmuObj = dmuFactory.getParkingChoiceDMU();
 
@@ -579,38 +577,16 @@ public class IntermediateStopChoiceModels
         String plcAltsFile = propertyMap.get(PROPERTIES_UEC_PARKING_LOCATION_CHOICE_ALTERNATIVES);
         plcAltsFile = uecPath + plcAltsFile;
 
-        int parkAlts=5000;
-        
         try
         {
             OLD_CSVFileReader reader = new OLD_CSVFileReader();
             plcAltsTable = reader.readFile(new File(plcAltsFile));
-            parkAlts=plcAltsTable.getRowCount()+1;
         } catch (IOException e)
         {
             logger.error("problem reading table of cbd zones for parking location choice model.", e);
             System.exit(1);
         }
-        
-        altMgraIndices = new int[parkAlts];
-        altOsDistances = new double[parkAlts];
-        altSdDistances = new double[parkAlts];
-        altParkingCostsM = new double[parkAlts];
-        altParkingCostsD = new double[parkAlts];
-        altParkingCostsH = new double[parkAlts];
-        altMstallsoth = new int[parkAlts];
-        altMstallssam = new int[parkAlts];
-        altMparkcost = new float[parkAlts];
-        altDstallsoth = new int[parkAlts];
-        altDstallssam = new int[parkAlts];
-        altDparkcost = new float[parkAlts];
-        altHstallsoth = new int[parkAlts];
-        altHstallssam = new int[parkAlts];
-        altHparkcost = new float[parkAlts];
-        altNumfreehrs = new int[parkAlts];
-        altParkAvail = new boolean[parkAlts];
-        altParkSample = new int[parkAlts];
-        
+
         parkMgras = plcAltsTable.getColumnAsInt(PARK_MGRA_COLUMN);
         parkAreas = plcAltsTable.getColumnAsInt(PARK_AREA_COLUMN);
 
@@ -4954,12 +4930,6 @@ public class IntermediateStopChoiceModels
     private int[] setupParkLocationChoiceAlternativeArrays(int tripOrigMgra, int tripDestMgra)
     {
 
-    	//temp
-    	/*
-    	logger.info("parking model tripOrigMgra="+tripOrigMgra);
-    	logger.info("parking model tripDestMgra="+tripDestMgra);
-    	*/
-    	
         // get the array of mgras within walking distance of the trip
         // destination
         int[] walkMgras = mgraManager.getMgrasWithinWalkDistanceTo(tripDestMgra);
@@ -4973,28 +4943,20 @@ public class IntermediateStopChoiceModels
             // distances read from the data file
             int altCount = 0;
             for (int wMgra : walkMgras)
-            {            	
+            {
                 // if wMgra is in the set of parkarea==1 MGRAs, add to list of
                 // alternatives for this park location choice
                 if (mgraAltLocationIndex.containsKey(wMgra))
                 {
 
                     double curWalkDist = mgraManager.getMgraToMgraWalkDistTo(wMgra, tripDestMgra) / 5280.0;
-                    
+
                     if (curWalkDist > MgraDataManager.MAX_PARKING_WALK_DISTANCE) continue;
 
                     // the hashMap stores a 0-based index
                     int altIndex = mgraAltLocationIndex.get(wMgra);
-                    // wsu corrected wrong index
-                    int m=wMgra;
                     //int m = wMgra - 1;
-                    
-                    //temp
-                    /*
-                    logger.info("m="+m);
-                    logger.info("altIndex="+altIndex);
-                    logger.info("wmgra="+wMgra);
-                    */
+                    int m=wMgra;
 
                     altSdDistances[altCount + 1] = curWalkDist;
                     altMgraIndices[altCount + 1] = altIndex;
@@ -5012,35 +4974,10 @@ public class IntermediateStopChoiceModels
                     altHstallssam[altCount + 1] = hstallssam[m];
                     altHparkcost[altCount + 1] = hparkcost[m];
                     altNumfreehrs[altCount + 1] = numfreehrs[m];
+
                     altParkAvail[altCount + 1] = true;
                     altParkSample[altCount + 1] = 1;
 
-                    //temp
-                    /*
-                    logger.info("mstallsoth[m]="+mstallsoth[m]);
-                    logger.info("dstallsoth[m]="+dstallsoth[m]);
-                    logger.info("hstallsoth[m]="+hstallsoth[m]);
-                    logger.info("mstallssam[m]="+mstallssam[m]);
-                    logger.info("dstallssam[m]="+dstallssam[m]);
-                    logger.info("hstallssam[m]="+hstallssam[m]);
-                    logger.info("mparkcost[m]="+mparkcost[m]);
-                    logger.info("dparkcost[m]="+dparkcost[m]);
-                    logger.info("hparkcost[m]="+hparkcost[m]);
-                    logger.info("altCount="+altCount);
-                    logger.info("altParkingCostsM[altCount + 1]="+altParkingCostsM[altCount + 1] );
-                    logger.info("altParkingCostsD[altCount + 1]="+altParkingCostsD[altCount + 1] );
-                    logger.info("altParkingCostsH[altCount + 1]="+altParkingCostsH[altCount + 1] );
-                    logger.info("altMstallsoth[altCount + 1]="+altMstallsoth[altCount + 1] );
-                    logger.info("altMstallssam[altCount + 1]="+altMstallssam[altCount + 1] );
-                    logger.info("altDstallsoth[altCount + 1]="+altDstallsoth[altCount + 1] );
-                    logger.info("altDstallssam[altCount + 1]="+altDstallssam[altCount + 1] );
-                    logger.info("altHstallsoth[altCount + 1]="+altHstallsoth[altCount + 1] );
-                    logger.info("altHstallssam[altCount + 1]="+altHstallssam[altCount + 1] );
-                    logger.info("altHparkcost[altCount + 1]="+altHparkcost[altCount + 1] );    
-                    logger.info("altDparkcost[altCount + 1]="+altDparkcost[altCount + 1] );      
-                    logger.info("altMparkcost[altCount + 1]="+altMparkcost[altCount + 1] ); 
-                    */
-                    
                     altCount++;
                 }
             }
