@@ -195,6 +195,7 @@ EXECUTE [db_meta].[add_xp] 'dimension.mode', 'SUBSYSTEM', 'reference'
 EXECUTE [db_meta].[add_xp] 'dimension.mode', 'MS_Description', 'travel mode dimension'
 EXECUTE [db_meta].[add_xp] 'dimension.mode.mode_id', 'MS_Description', 'mode surrogate key'
 EXECUTE [db_meta].[add_xp] 'dimension.mode.mode_description', 'MS_Description', 'mode description'
+EXECUTE [db_meta].[add_xp] 'dimension.mode.mode_aggregate_description', 'MS_Description', 'aggregate mode category description'
 GO
 
 

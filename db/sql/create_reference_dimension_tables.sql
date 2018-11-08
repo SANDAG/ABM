@@ -332,71 +332,71 @@ GO
 
 
 -- create mode dimension
--- will add aggregations in later
 CREATE TABLE [dimension].[mode] (
 	[mode_id] tinyint IDENTITY(0,1) NOT NULL, -- insert NULL record as 0
 	[mode_description] nchar(75) NOT NULL,
+	[mode_aggregate_description] nchar(50) NOT NULL,
 	CONSTRAINT pk_mode PRIMARY KEY ([mode_id]),
 	CONSTRAINT ixuq_mode UNIQUE ([mode_description]) WITH (DATA_COMPRESSION = PAGE))
 ON reference_fg
 WITH (DATA_COMPRESSION = PAGE)
 INSERT INTO [dimension].[mode] VALUES
-('Not Applicable'), -- insert NULL record as 0
-('Drive Alone Non-Toll'),
-('Drive Alone Toll Eligible'),
-('Shared Ride 2 Non-Toll'),
-('Shared Ride 2 Toll Eligible'),
-('Shared Ride 3 Non-Toll'),
-('Shared Ride 3 Toll Eligible'),
-('Walk'),
-('Bike'),
-('Walk to Transit'),
-('Walk to Transit - Local Bus Only'),
-('Walk to Transit - Premium Transit Only'),
-('Walk to Transit - Local Bus and Premium Transit'),
-('Park and Ride to Transit'),
-('Park and Ride to Transit - Local Bus Only'),
-('Park and Ride to Transit - Premium Transit Only'),
-('Park and Ride to Transit - Local Bus and Premium Transit'),
-('Kiss and Ride to Transit'),
-('Kiss and Ride to Transit - Local Bus Only'),
-('Kiss and Ride to Transit - Premium Transit Only'),
-('Kiss and Ride to Transit - Local Bus and Premium Transit'),
-('School Bus'),
-('Taxi'),
-('Commuter Rail'),
-('Light Rail'),
-('Freeway Rapid'),
-('Arterial Rapid'),
-('Premium Express Bus'),
-('Express Bus'),
-('Local Bus'),
-('Local Bus Only'),
-('Local Bus and Premium Transit'),
-('Premium Transit Only'),
-('Heavy Truck - Non-Toll'),
-('Heavy Truck - Toll'),
-('Intermediate Truck - Non-Toll'),
-('Intermediate Truck - Toll'),
-('Light Vehicle - Non-Toll'),
-('Light Vehicle - Toll'),
-('Medium Truck - Non-Toll'),
-('Medium Truck - Toll'),
-('Light Heavy Duty Truck (Non-Toll)'),
-('Light Heavy Duty Truck (Toll)'),
-('Medium Heavy Duty Truck (Non-Toll)'),
-('Medium Heavy Duty Truck (Toll)'),
-('Heavy Heavy Duty Truck (Non-Toll)'),
-('Heavy Heavy Duty Truck (Toll)'),
-('Parking lot terminal'),
-('Parking lot off-site San Diego Airport area'),
-('Parking lot off-site private'),
-('Pickup/Drop-off escort'),
-('Pickup/Drop-off curbside'),
-('Rental car'),
-('Shuttle/Van/Courtesy Vehicle'),
-('Transit'),
-('Highway Network Preload - Bus')
+('Not Applicable', 'Not Applicable'), -- insert NULL record as 0
+('Drive Alone Non-Toll', 'Drive Alone'),
+('Drive Alone Toll Eligible', 'Drive Alone'),
+('Shared Ride 2 Non-Toll', 'Shared Ride 2'),
+('Shared Ride 2 Toll Eligible', 'Shared Ride 2'),
+('Shared Ride 3 Non-Toll', 'Shared Ride 3'),
+('Shared Ride 3 Toll Eligible', 'Shared Ride 3'),
+('Walk', 'Walk'),
+('Bike', 'Bike'),
+('Walk to Transit', 'Transit'),
+('Walk to Transit - Local Bus Only', 'Transit'),
+('Walk to Transit - Premium Transit Only', 'Transit'),
+('Walk to Transit - Local Bus and Premium Transit', 'Transit'),
+('Park and Ride to Transit', 'Transit'),
+('Park and Ride to Transit - Local Bus Only', 'Transit'),
+('Park and Ride to Transit - Premium Transit Only', 'Transit'),
+('Park and Ride to Transit - Local Bus and Premium Transit', 'Transit'),
+('Kiss and Ride to Transit', 'Transit'),
+('Kiss and Ride to Transit - Local Bus Only', 'Transit'),
+('Kiss and Ride to Transit - Premium Transit Only', 'Transit'),
+('Kiss and Ride to Transit - Local Bus and Premium Transit', 'Transit'),
+('School Bus', 'School Bus'),
+('Taxi', 'Taxi'),
+('Commuter Rail', 'Transit'),
+('Light Rail', 'Transit'),
+('Freeway Rapid', 'Transit'),
+('Arterial Rapid', 'Transit'),
+('Premium Express Bus', 'Transit'),
+('Express Bus', 'Transit'),
+('Local Bus', 'Transit'),
+('Local Bus Only', 'Transit'),
+('Local Bus and Premium Transit', 'Transit'),
+('Premium Transit Only', 'Transit'),
+('Heavy Truck - Non-Toll', 'Heavy Heavy Duty Truck'),
+('Heavy Truck - Toll', 'Heavy Heavy Duty Truck'),
+('Intermediate Truck - Non-Toll', 'Light Heavy Duty Truck'),
+('Intermediate Truck - Toll', 'Light Heavy Duty Truck'),
+('Light Vehicle - Non-Toll', 'Drive Alone'),
+('Light Vehicle - Toll', 'Drive Alone'),
+('Medium Truck - Non-Toll', 'Medium Heavy Duty Truck'),
+('Medium Truck - Toll', 'Medium Heavy Duty Truck'),
+('Light Heavy Duty Truck (Non-Toll)', 'Light Heavy Duty Truck'),
+('Light Heavy Duty Truck (Toll)', 'Light Heavy Duty Truck'),
+('Medium Heavy Duty Truck (Non-Toll)', 'Medium Heavy Duty Truck'),
+('Medium Heavy Duty Truck (Toll)', 'Medium Heavy Duty Truck'),
+('Heavy Heavy Duty Truck (Non-Toll)', 'Heavy Heavy Duty Truck'),
+('Heavy Heavy Duty Truck (Toll)', 'Heavy Heavy Duty Truck'),
+('Parking lot terminal', 'Parking Lot'),
+('Parking lot off-site San Diego Airport area', 'Parking Lot'),
+('Parking lot off-site private', 'Parking Lot'),
+('Pickup/Drop-off escort', 'Pickup/Drop-off'),
+('Pickup/Drop-off curbside', 'Pickup/Drop-off'),
+('Rental car', 'Rental car'),
+('Shuttle/Van/Courtesy Vehicle', 'Shuttle/Van/Courtesy Vehicle'),
+('Transit', 'Transit'),
+('Highway Network Preload - Bus', 'Transit')
 GO
 
 
@@ -406,6 +406,7 @@ CREATE VIEW [dimension].[mode_airport_arrival] AS
 SELECT
 	[mode_id] AS [mode_airport_arrival_id]
 	,[mode_description] AS [mode_airport_arrival_description]
+	,[mode_aggregate_description] AS [mode_aggregate_airport_arrival_description]
 FROM
 	[dimension].[mode]
 GO
@@ -416,6 +417,7 @@ CREATE VIEW [dimension].[mode_tour] AS
 SELECT
 	[mode_id] AS [mode_tour_id]
 	,[mode_description] AS [mode_tour_description]
+	,[mode_aggregate_description] AS [mode_aggregate_tour_description]
 FROM
 	[dimension].[mode]
 GO
@@ -425,6 +427,7 @@ CREATE VIEW [dimension].[mode_trip] AS
 SELECT
 	[mode_id] AS [mode_trip_id]
 	,[mode_description] AS [mode_trip_description]
+	,[mode_aggregate_description] AS [mode_aggregate_trip_description]
 FROM
 	[dimension].[mode]
 GO
@@ -434,6 +437,7 @@ CREATE VIEW [dimension].[mode_transit] AS
 SELECT
 	[mode_id] AS [mode_transit_id]
 	,[mode_description] AS [mode_transit_description]
+	,[mode_aggregate_description] AS [mode_aggregate_transit_description]
 FROM
 	[dimension].[mode]
 GO
@@ -443,6 +447,7 @@ CREATE VIEW [dimension].[mode_transit_access] AS
 SELECT
 	[mode_id] AS [mode_transit_access_id]
 	,[mode_description] AS [mode_transit_access_description]
+	,[mode_aggregate_description] AS [mode_aggregate_transit_access_description]
 FROM
 	[dimension].[mode]
 GO
@@ -452,6 +457,7 @@ CREATE VIEW [dimension].[mode_transit_route] AS
 SELECT
 	[mode_id] AS [mode_transit_route_id]
 	,[mode_description] AS [mode_transit_route_description]
+	,[mode_aggregate_description] AS [mode_aggregate_transit_route_description]
 FROM
 	[dimension].[mode]
 GO

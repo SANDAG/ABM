@@ -614,29 +614,11 @@ OPENQUERY(
 -- for resident models only (Individual, Internal-External, Joint)
 -- potentially filtered by destination work purpose or mgra in UATS district
 DECLARE @aggregated_trips TABLE (
-	[mode_aggregate] nchar(15) NOT NULL,
+	[mode_aggregate_trip_description] nchar(15) NOT NULL,
 	[person_trips] float NOT NULL)
 INSERT INTO @aggregated_trips
 SELECT
-	ISNULL(CASE	WHEN [mode_trip_description] IN ('Drive Alone Non-Toll',
-												 'Drive Alone Toll Eligible')
-				THEN 'Drive Alone'
-				WHEN [mode_trip_description] IN ('Shared Ride 2 Non-Toll',
-											 	 'Shared Ride 2 Toll Eligible',
-												 'Shared Ride 3 Non-Toll',
-												 'Shared Ride 3 Toll Eligible')
-				THEN 'Shared Ride'
-				WHEN [mode_trip_description] IN ('Kiss and Ride to Transit - Local Bus and Premium Transit',
-												 'Kiss and Ride to Transit - Local Bus Only',
-												 'Kiss and Ride to Transit - Premium Transit Only' ,
-												 'Park and Ride to Transit - Local Bus and Premium Transit',
-												 'Park and Ride to Transit - Local Bus Only',
-												 'Park and Ride to Transit - Premium Transit Only',
-												 'Walk to Transit - Local Bus and Premium Transit',
-												 'Walk to Transit - Local Bus Only',
-												 'Walk to Transit - Premium Transit Only')
-				THEN 'Transit'
-				ELSE [mode_trip_description] END, 'Total') AS [mode_aggregate]
+	ISNULL([mode_aggregate_trip_description], 'Total') AS [mode_aggregate_trip_description]
 	,SUM([weight_person_trip]) AS [person_trips]
 FROM
 	[fact].[person_trip]
@@ -678,35 +660,16 @@ WHERE
 	AND ((@uats = 1 AND ([uats_mgras_origin_xref].[mgra] IS NOT NULL AND [uats_mgras_dest_xref].[mgra] IS NOT NULL))
 			OR @uats = 0) -- if UATS districts option selected only count trips originating and ending in UATS mgras
 GROUP BY
-	CASE	WHEN [mode_trip_description] IN ('Drive Alone Non-Toll',
-											 'Drive Alone Toll Eligible')
-			THEN 'Drive Alone'
-			WHEN [mode_trip_description] IN ('Shared Ride 2 Non-Toll',
-											 'Shared Ride 2 Toll Eligible',
-											 'Shared Ride 3 Non-Toll',
-											 'Shared Ride 3 Toll Eligible')
-			THEN 'Shared Ride'
-			WHEN [mode_trip_description] IN ('Kiss and Ride to Transit - Local Bus and Premium Transit',
-											 'Kiss and Ride to Transit - Local Bus Only',
-											 'Kiss and Ride to Transit - Premium Transit Only' ,
-											 'Park and Ride to Transit - Local Bus and Premium Transit',
-											 'Park and Ride to Transit - Local Bus Only',
-											 'Park and Ride to Transit - Premium Transit Only',
-											 'Walk to Transit - Local Bus and Premium Transit',
-											 'Walk to Transit - Local Bus Only',
-											 'Walk to Transit - Premium Transit Only')
-			THEN 'Transit'
-			ELSE [mode_trip_description] END
+	[mode_aggregate_trip_description]
 WITH ROLLUP
 
 SELECT
 	@scenario_id AS [scenario_id]
-	,[mode_aggregate]
-	,100.0 * [person_trips] / (SELECT [person_trips] FROM @aggregated_trips WHERE [mode_aggregate] = 'Total') AS [pct_person_trips]
+	,[mode_aggregate_trip_description]
+	,100.0 * [person_trips] / (SELECT [person_trips] FROM @aggregated_trips WHERE [mode_aggregate_trip_description] = 'Total') AS [pct_person_trips]
 	,[person_trips]
 FROM
 	@aggregated_trips
-
 GO
 
 -- Add metadata for [rtp_2019].[sp_pm_2a]
@@ -827,7 +790,7 @@ with [coc_pop] AS (
 						WHEN @minority = 1 THEN [minority]
 						WHEN @low_income = 1 THEN [low_income]
 						ELSE 'All' END, 'Total') AS [pop_segmentation]
-		,SUM([time_walk] + [time_bike]) AS [physical_activity_minutes] -- time_walk includes transit walk times
+		,SUM([weight_person_trip] * ([time_walk] + [time_bike])) AS [physical_activity_minutes] -- time_walk includes transit walk times
 	FROM
 		[fact].[person_trip]
 	INNER JOIN
@@ -1944,30 +1907,12 @@ SELECT
 					WHEN @minority = 1 THEN [minority]
 					WHEN @low_income = 1 THEN [low_income]
 					ELSE 'All' END, 'Total') AS [pop_segmentation]
-	,ISNULL([mode_aggregate], 'Total') AS [mode_aggregate]
+	,ISNULL([mode_aggregate_trip_description], 'Total') AS [mode_aggregate]
 	,SUM([time_total] * [weight_person_trip]) / SUM([weight_person_trip]) AS [avg_time_trip]
 	,SUM([weight_person_trip]) AS [person_trips]
 FROM (
 	SELECT
-		CASE	WHEN [mode_trip_description] IN ('Drive Alone Non-Toll',
-													'Drive Alone Toll Eligible')
-				THEN 'Drive Alone'
-				WHEN [mode_trip_description] IN ('Shared Ride 2 Non-Toll',
-													'Shared Ride 2 Toll Eligible',
-													'Shared Ride 3 Non-Toll',
-													'Shared Ride 3 Toll Eligible')
-				THEN 'Shared Ride'
-				WHEN [mode_trip_description] IN ('Kiss and Ride to Transit - Local Bus and Premium Transit',
-													'Kiss and Ride to Transit - Local Bus Only',
-													'Kiss and Ride to Transit - Premium Transit Only' ,
-													'Park and Ride to Transit - Local Bus and Premium Transit',
-													'Park and Ride to Transit - Local Bus Only',
-													'Park and Ride to Transit - Premium Transit Only',
-													'Walk to Transit - Local Bus and Premium Transit',
-													'Walk to Transit - Local Bus Only',
-													'Walk to Transit - Premium Transit Only')
-				THEN 'Transit'
-				ELSE [mode_trip_description] END AS [mode_aggregate]
+		[mode_aggregate_trip_description]
 		,[time_total]
 		,[weight_person_trip]
 		,CASE WHEN [person].[age] >= 75 THEN 'Senior' ELSE 'Non-Senior' END AS [senior]
@@ -2030,7 +1975,7 @@ GROUP BY
 			WHEN @minority = 1 THEN [minority]
 			WHEN @low_income = 1 THEN [low_income]
 			ELSE 'All' END
-	,[mode_aggregate]
+	,[mode_aggregate_trip_description]
 WITH ROLLUP
 OPTION(MAXDOP 1)
 GO
@@ -2385,7 +2330,7 @@ with [tour_freeparking_reimbpct] AS (
 		[tour_id]),
 -- sum costs to the person level
 -- auto = aoc split among riders, fare split among riders, and parking cost split among riders
-	-- for parking have to look at tour reimbursement and mgra based input parking costs
+	-- for parking have to look at tour reimbursement, mgra based input parking costs, and home location
 -- transit = transit fare
 	-- for age >= 60 apply a 50% reduction
 [person_costs] AS (
@@ -2412,7 +2357,13 @@ with [tour_freeparking_reimbpct] AS (
 						AND [mgra_based_input].[parkarea] IN (1, 2, 3) -- values of park area that imply trip pays for parking
 						AND [mparkcost] < [dparkcost]
 					THEN (1 - ISNULL([tour_freeparking_reimbpct].[freeparking_reimbpct], 0)) * [mparkcost] * [weight_trip]
-					ELSE 0 END) AS [cost_parking]
+					ELSE 0 END *
+			-- multiply parking cost by indicator if trip destination is the persons household location
+			-- note this works as both resident trips and household location operate on the same geographic resolution (mgra)
+			-- also works as all members of a tour live in same household
+			 CASE WHEN [person_trip].[geography_trip_destination_id] = [household].[geography_household_location_id]
+					OR [person_trip].[geography_parking_destination_id] = [household].[geography_household_location_id]
+				  THEN 0 ELSE 1 END) AS [cost_parking]
 		,SUM(CASE	WHEN [person].[age] >= 60 THEN [weight_person_trip] * [cost_transit] * .5
 					ELSE [weight_person_trip] * [cost_transit] END) AS [cost_transit]
 		,MAX(CASE	WHEN [mode_trip].[mode_trip_description] IN ('Kiss and Ride to Transit - Local Bus and Premium Transit',
@@ -2437,6 +2388,11 @@ with [tour_freeparking_reimbpct] AS (
 	ON
 		[person_trip].[scenario_id] = [person].[scenario_id]
 		AND [person_trip].[person_id] = [person].[person_id]
+	INNER JOIN
+		[dimension].[household]
+	ON
+		[person_trip].[scenario_id] = [household].[scenario_id]
+		AND [person_trip].[household_id] = [household].[household_id]
 	LEFT OUTER JOIN
 		[tour_freeparking_reimbpct]
 	ON
@@ -2453,6 +2409,7 @@ with [tour_freeparking_reimbpct] AS (
 	WHERE
 		[person_trip].[scenario_id] = @scenario_id
 		AND [person].[scenario_id] = @scenario_id
+		AND [household].[scenario_id] = @scenario_id
 		AND [mgra_based_input].[scenario_id] = @scenario_id
 		AND [model_trip].[model_trip_description] IN ('Individual',
 													  'Internal-External',
@@ -2657,27 +2614,17 @@ AS
 /*	Author: Ziying Ouyang and Gregor Schroeder
 	Date: Revised 4/20/2018
 	Description: Person and bicycle miles travelled used in Performance Measures 3a/3b
+	  includes all models as 3ab vmt is a network based measure that includes all models
 	  similar to sp_pmt_bmt in the 2015 RTP */
 
 SELECT
 	@scenario_id AS [scenario_id]
-	,SUM([dist_bike]) AS [bmt]
-	,SUM([dist_walk]) AS [pmt] -- includes transit walk distances while 2015 RTP sp_pmt_bmt did not
+	,SUM([weight_person_trip] * [dist_bike]) AS [bmt]
+	,SUM([weight_person_trip] * [dist_walk]) AS [pmt] -- includes transit walk distances
 FROM
 	[fact].[person_trip]
-INNER JOIN
-	[dimension].[model_trip]
-ON
-	[person_trip].[model_trip_id] = [model_trip].[model_trip_id]
 WHERE
 	[person_trip].[scenario_id] = @scenario_id
-	AND [model_trip].[model_trip_description] IN ('Airport - CBX',
-												  'Airport - SAN',
-												  'Cross Border',
-												  'Individual',
-												  'Internal-External',
-												  'Joint',
-												  'Visitor') -- all micro-simulated trips excepting commercial vehicle model
 GO
 
 -- Add metadata for [rtp_2019].[sp_pm_3ab_pmt_bmt]

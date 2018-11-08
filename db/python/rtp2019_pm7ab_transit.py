@@ -146,8 +146,15 @@ output_7a = pd.DataFrame(data=[(
     100 * (results_7a["pop_minority"] * results_7a["emp_educ"] / destinations["emp_educ"].sum()).sum() / results_7a["pop_minority"].sum(),
     100 * (results_7a["pop_non_minority"] * results_7a["emp_educ"] / destinations["emp_educ"].sum()).sum() / results_7a["pop_non_minority"].sum(),
     100 * (results_7a["pop_senior"] * results_7a["emp_educ"] / destinations["emp_educ"].sum()).sum() / results_7a["pop_senior"].sum(),
-    100 * (results_7a["pop_non_senior"] * results_7a["emp_educ"] / destinations["emp_educ"].sum()).sum() / results_7a["pop_non_senior"].sum()
-         )],
+    100 * (results_7a["pop_non_senior"] * results_7a["emp_educ"] / destinations["emp_educ"].sum()).sum() / results_7a["pop_non_senior"].sum(),
+    100 * (results_7a["pop"].where(results_7a["emp_educ"] > 0, 0).sum() / results_7a["pop"].sum()),
+    100 * (results_7a["pop_low_income"].where(results_7a["emp_educ"] > 0, 0).sum() / results_7a["pop_low_income"].sum()),
+    100 * (results_7a["pop_non_low_income"].where(results_7a["emp_educ"] > 0, 0).sum() / results_7a["pop_non_low_income"].sum()),
+    100 * (results_7a["pop_minority"].where(results_7a["emp_educ"] > 0, 0).sum() / results_7a["pop_minority"].sum()),
+    100 * (results_7a["pop_non_minority"].where(results_7a["emp_educ"] > 0, 0).sum() / results_7a["pop_non_minority"].sum()),
+    100 * (results_7a["pop_senior"].where(results_7a["emp_educ"] > 0, 0).sum() / results_7a["pop_senior"].sum()),
+    100 * (results_7a["pop_non_senior"].where(results_7a["emp_educ"] > 0, 0).sum() / results_7a["pop_non_senior"].sum())
+    )],
     columns=["measure",
              "scenario_id",
              "pop_job_enroll",
@@ -163,7 +170,14 @@ output_7a = pd.DataFrame(data=[(
              "pop_minority_pct_job_enroll",
              "pop_non_minority_pct_job_enroll",
              "pop_senior_pct_job_enroll",
-             "pop_non_senior_pct_job_enroll"
+             "pop_non_senior_pct_job_enroll",
+             "pct_pop_job_enroll",
+             "pct_pop_low_income_job_enroll",
+             "pct_pop_non_low_income_job_enroll",
+             "pct_pop_minority_job_enroll",
+             "pct_pop_non_minority_job_enroll",
+             "pct_pop_senior_job_enroll",
+             "pct_pop_non_senior_job_enroll"
              ])
 
 
@@ -278,7 +292,21 @@ output_7b = pd.DataFrame(data=[(
     100 * (results_7b["pop_minority"].where(results_7b["beachactive"] == 1, 0).sum() / results_7b["pop_minority"].sum()),
     100 * (results_7b["pop_non_minority"].where(results_7b["beachactive"] == 1, 0).sum() / results_7b["pop_non_minority"].sum()),
     100 * (results_7b["pop_senior"].where(results_7b["beachactive"] == 1, 0).sum() / results_7b["pop_senior"].sum()),
-    100 * (results_7b["pop_non_senior"].where(results_7b["beachactive"] == 1, 0).sum() / results_7b["pop_non_senior"].sum())
+    100 * (results_7b["pop_non_senior"].where(results_7b["beachactive"] == 1, 0).sum() / results_7b["pop_non_senior"].sum()),
+    100 * (results_7b["pop"].where(results_7b["emp_retail"] > 0, 0).sum() / results_7b["pop"].sum()),
+    100 * (results_7b["pop_low_income"].where(results_7b["emp_retail"] > 0, 0).sum() / results_7b["pop_low_income"].sum()),
+    100 * (results_7b["pop_non_low_income"].where(results_7b["emp_retail"] > 0, 0).sum() / results_7b["pop_non_low_income"].sum()),
+    100 * (results_7b["pop_minority"].where(results_7b["emp_retail"] > 0, 0).sum() / results_7b["pop_minority"].sum()),
+    100 * (results_7b["pop_non_minority"].where(results_7b["emp_retail"] > 0, 0).sum() / results_7b["pop_non_minority"].sum()),
+    100 * (results_7b["pop_senior"].where(results_7b["emp_retail"] > 0, 0).sum() / results_7b["pop_senior"].sum()),
+    100 * (results_7b["pop_non_senior"].where(results_7b["emp_retail"] > 0, 0).sum() / results_7b["pop_non_senior"].sum()),
+    100 * (results_7b["pop"].where(results_7b["emp_health"] > 0, 0).sum() / results_7b["pop"].sum()),
+    100 * (results_7b["pop_low_income"].where(results_7b["emp_health"] > 0, 0).sum() / results_7b["pop_low_income"].sum()),
+    100 * (results_7b["pop_non_low_income"].where(results_7b["emp_health"] > 0, 0).sum() / results_7b["pop_non_low_income"].sum()),
+    100 * (results_7b["pop_minority"].where(results_7b["emp_health"] > 0, 0).sum() / results_7b["pop_minority"].sum()),
+    100 * (results_7b["pop_non_minority"].where(results_7b["emp_health"] > 0, 0).sum() / results_7b["pop_non_minority"].sum()),
+    100 * (results_7b["pop_senior"].where(results_7b["emp_health"] > 0, 0).sum() / results_7b["pop_senior"].sum()),
+    100 * (results_7b["pop_non_senior"].where(results_7b["emp_health"] > 0, 0).sum() / results_7b["pop_non_senior"].sum())
     )],
     columns=["measure",
              "scenario_id",
@@ -323,7 +351,21 @@ output_7b = pd.DataFrame(data=[(
              "pct_pop_minority_beachactive",
              "pct_pop_non_minority_beachactive",
              "pct_pop_senior_beachactive",
-             "pct_pop_non_senior_beachactive"
+             "pct_pop_non_senior_beachactive",
+             "pct_pop_retail",
+             "pct_pop_low_income_retail",
+             "pct_pop_non_low_income_retail",
+             "pct_pop_minority_retail",
+             "pct_pop_non_minority_retail",
+             "pct_pop_senior_retail",
+             "pct_pop_non_senior_retail",
+             "pct_pop_health",
+             "pct_pop_low_income_health",
+             "pct_pop_non_low_income_health",
+             "pct_pop_minority_health",
+             "pct_pop_non_minority_health",
+             "pct_pop_senior_health",
+             "pct_pop_non_senior_health"
             ])
 
 
