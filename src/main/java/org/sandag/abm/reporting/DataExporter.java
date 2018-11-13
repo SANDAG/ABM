@@ -377,13 +377,12 @@ public final class DataExporter
             stringColumns.add("TRIP_PURPOSE_NAME");
             stringColumns.add("TRIP_MODE_NAME");
             intColumns.add("RECID");
-            //if(writeTransitIVTs){
-            	floatColumns.add("LOC_IVT");
-            	floatColumns.add("EXP_IVT");
-            	floatColumns.add("BRT_IVT");
-            	floatColumns.add("LRT_IVT");
-            	floatColumns.add("CR_IVT");
-            //}
+           	floatColumns.add("LOC_IVT");
+           	floatColumns.add("EXP_IVT");
+           	floatColumns.add("BRT_IVT");
+           	floatColumns.add("LRT_IVT");
+           	floatColumns.add("CR_IVT");
+           	floatColumns.add("TRAN_DIST");
         }
 
         if (primaryKey.size() == 0)
@@ -492,6 +491,7 @@ public final class DataExporter
         float[] lrtIVT = new float[rowCount];
         float[] crIVT = new float[rowCount];
         
+        float[] tranDist = new float[rowCount];
 
         SkimBuilder skimBuilder = new SkimBuilder(properties);
         boolean hasPurposeColumn = tripStructureDefinition.originPurposeColumn > -1;
@@ -549,14 +549,13 @@ public final class DataExporter
             tripBoardTaz[i] = attributes.getTripBoardTaz();
             tripAlightTaz[i] = attributes.getTripAlightTaz();
             
-            //if(writeTransitIVTs){
-            	locIVT[i] = attributes.getLocTime();
-            	expIVT[i] = attributes.getExpTime();
-            	brtIVT[i] = attributes.getBrtTime();
-            	lrtIVT[i] = attributes.getLrtTime();
-            	crIVT[i] = attributes.getCrTime();
-            	
-            //}
+           	locIVT[i] = attributes.getLocTime();
+           	expIVT[i] = attributes.getExpTime();
+           	brtIVT[i] = attributes.getBrtTime();
+           	lrtIVT[i] = attributes.getLrtTime();
+           	crIVT[i] = attributes.getCrTime();
+ 
+           	tranDist[i] = attributes.getTransitDistance();
         }
         table.appendColumn(autoInVehicleTime, "AUTO_IVT");
         table.appendColumn(autoOperatingCost, "AUTO_AOC");
@@ -582,13 +581,13 @@ public final class DataExporter
         table.appendColumn(tripBoardTaz, "TRIP_BOARD_TAZ");
         table.appendColumn(tripAlightTaz, "TRIP_ALIGHT_TAZ");
         
-        //if(writeTransitIVTs){
-        	table.appendColumn(locIVT, "LOC_IVT");
-            table.appendColumn(expIVT, "EXP_IVT");
-            table.appendColumn(brtIVT, "BRT_IVT");
-            table.appendColumn(lrtIVT, "LRT_IVT");
-            table.appendColumn(crIVT, "CR_IVT");
-       	//}
+       	table.appendColumn(locIVT, "LOC_IVT");
+        table.appendColumn(expIVT, "EXP_IVT");
+        table.appendColumn(brtIVT, "BRT_IVT");
+        table.appendColumn(lrtIVT, "LRT_IVT");
+        table.appendColumn(crIVT, "CR_IVT");
+
+        table.appendColumn(tranDist, "TRAN_DIST");
         
 //        table.appendColumn(valueOfTime, "VALUE_OF_TIME");
     }
