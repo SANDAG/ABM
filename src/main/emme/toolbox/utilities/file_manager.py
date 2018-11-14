@@ -1,0 +1,315 @@
+#//////////////////////////////////////////////////////////////////////////////
+#////                                                                       ///
+#//// Copyright INRO, 2018.                                                 ///
+#//// Rights to use and modify are granted to the                           ///
+#//// San Diego Association of Governments and partner agencies.            ///
+#//// This copyright notice must be preserved.                              ///
+#////                                                                       ///
+#//// utilities/file_manager.py                                             ///
+#////                                                                       ///
+#////                                                                       ///
+#////                                                                       ///
+#////                                                                       ///
+#//////////////////////////////////////////////////////////////////////////////
+#
+TOOLBOX_ORDER = 104
+
+
+import inro.modeller as _m
+import inro.emme.database.emmebank as _eb
+import inro.director.logging as _log
+
+import traceback as _traceback
+import shutil as _shutil
+import time as _time
+import os
+from fnmatch import fnmatch as _fnmatch
+from math import log10
+
+_join = os.path.join
+_dir = os.path.dirname
+_norm = os.path.normpath
+
+gen_utils = _m.Modeller().module("sandag.utilities.general")
+
+
+class FileManagerTool(_m.Tool()):
+
+    operation = _m.Attribute(_m.StringType)
+    remote_dir = _m.Attribute(_m.StringType)
+    local_dir = _m.Attribute(_m.StringType)
+    initialize = _m.Attribute(_m.BooleanType)
+    delete_local_files = _m.Attribute(_m.BooleanType)
+
+    tool_run_msg = ""
+    LOCAL_ROOT = "C:\\temp"
+
+    def __init__(self):
+        self.operation = "UPLOAD"
+        project_dir = _dir(_m.Modeller().desktop.project.path)
+        self.remote_dir = _dir(project_dir)
+        folder_name = os.path.basename(self.remote_dir)
+        user_folder = os.environ.get("USERNAME")
+        self.local_dir = _join(self.LOCAL_ROOT, user_folder, folder_name)
+        self.initialize = True
+        self.delete_local_files = True
+
+    def page(self):
+        pb = _m.ToolPageBuilder(self)
+        pb.title = "File run manager utility"
+        pb.description = """
+    <p align="left">
+        Utility tool to manually manage the use of the local drive for subsequent model run.
+        The remote data can be downloaded (copied) to the local drive; 
+        or the local data can be uploaded to the remote drive. 
+        In normal operation this tool does not need to run manually, but in case of an
+        error it may be necessary to upload the project data in order to run on 
+        a different machine, or operate directly on the server.        
+    </p>
+    <p align="left">
+    Note that file masks are used from config/sandag_abm.properties to identify which
+    files to copy. See RunModel.FileMask.Upload and RunModel.FileMask.Download for
+    upload and download respectively.
+    </p>"""
+        pb.branding_text = "- SANDAG"
+        if self.tool_run_msg:
+            pb.add_html(self.tool_run_msg)
+
+        pb.add_radio_group('operation', title="File copy operation",
+            keyvalues=[("UPLOAD", "Upload from local directory to remote directory"),
+                       ("DOWNLOAD", "Download from remote directory to local directory")], )
+
+        pb.add_select_file('remote_dir','directory',
+                           title='Select remote ABM directory (e.g. on T drive)', note='')
+        pb.add_select_file('local_dir','directory',
+                           title='Select local ABM directory (on C drive)', note='')
+        pb.add_checkbox_group(
+            [{"attribute": "delete_local_files", "label": "Delete all local files on completion (upload only)"},
+             {"attribute": "initialize", "label": "Overwrite and initialize all local files (download only)"}])
+        pb.add_html("""
+<script>
+    $(document).ready( function ()
+    {
+        $("input:radio[name='operation']").bind('change', function()    {
+            var value = $("input:radio[name='operation']:checked").val();
+            $("#delete_local_files").prop('disabled', value == "DOWNLOAD");
+            $("#initialize").prop('disabled', value == "UPLOAD");
+        }).trigger('change');
+   });
+</script>""")
+
+        return pb.render()
+
+    def run(self):
+        self.tool_run_msg = ""
+        try:
+            self(self.operation, self.remote_dir, self.local_dir, self.initialize, self.delete_local_files)
+            run_msg = "File copying complete"
+            self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
+        except Exception as error:
+            self.tool_run_msg = _m.PageBuilder.format_exception(
+                error, _traceback.format_exc(error))
+            raise
+
+    def __call__(self, operation, remote_dir, local_dir, initialize=True, delete_local_files=True):
+        load_properties = _m.Modeller().tool('sandag.utilities.properties')
+        props = load_properties(_join(remote_dir, "conf", "sandag_abm.properties"))
+        if operation == "DOWNLOAD":
+            self.download(remote_dir, local_dir, initialize, props)
+        elif operation == "UPLOAD":
+            self.upload(remote_dir, local_dir, delete_local_files, props)
+        else:
+            raise Exception("operation must be one of UPLOAD or DOWNLOAD")
+
+    @_m.logbook_trace("Copy project data to local drive", save_arguments=True)
+    def download(self, remote_dir, local_dir, initialize, props):
+        self._report = ["Copy"]
+        self._stats = {"size": 0, "count": 0}
+        default_file_masks = [ "output", "report", "sql", "logFiles"]
+        file_masks = props.get("RunModel.FileMask.Download", default_file_masks)
+        self.download.logbook_cursor.write(attributes={"file_masks": file_masks})
+        file_masks = [_join(remote_dir, p) for p in file_masks]
+        file_masks.append(_join(remote_dir, "emme_project"))
+        if initialize:
+            # make sure that all of the root directories are created
+            root_dirs = [
+                "application", "bin", "conf", "emme_project", "input", "input_truck",
+                "logFiles", "output", "python", "report", "sql", "uec"
+            ]
+            for name in root_dirs:
+                if not os.path.exists(_join(local_dir, name)):
+                    os.mkdir(_join(local_dir, name))
+            # create new Emmebanks with scenario and matrix data
+            title_fcn = lambda t: "(local) " + t[:50]
+            # emmebank_paths = self._copy_emme_data(
+            #     src=remote_dir, dst=local_dir, remove_db=True, title_fcn=title_fcn)
+            # # add new emmebanks to the open project
+            # for path in emmebank_paths:
+            #     desktop.data_explorer().add_database(path)
+
+        # copy all files (except Emme project, and other file_masks)
+        self._copy_dir(src=remote_dir, dst=local_dir, 
+                       file_masks=file_masks, check_metadata=not initialize)
+        self.log_report()
+
+        # redirect logbook to the local_dir 
+        dst_logbook_path = _norm(_join(local_dir, "Logbook", "project.mlbk"))
+        #self._redirect_logbook(dst_logbook_path)
+
+    @_m.logbook_trace("Copy project data to remote drive", save_arguments=True)
+    def upload(self, remote_dir, local_dir, delete_local_files, props):
+        self._report = []
+        self._stats = {"size": 0, "count": 0}
+        default_file_masks = [
+            "application", "bin", "input", "input_truck", "uec", 
+            "output\\iter*", "output\\*_1.csv" "output\\*_2.csv"]
+        file_masks = props.get("RunModel.FileMask.Download", default_file_masks)
+        self.upload.logbook_cursor.write(attributes={"file_masks": file_masks})
+        # add the src dir to the project masks
+        file_masks = [_join(local_dir, p) for p in file_masks]
+        # add to mask the emme_project folder
+        file_masks.append(_join(local_dir, "emme_project"))
+
+        # copy all files (except Emme project, and other file_masks)
+        self._copy_dir(src=local_dir, dst=remote_dir, file_masks=file_masks)
+        title_fcn = lambda t: t[8:] if t.startswith("(local)") else t
+        emmebank_paths = self._copy_emme_data(
+            src=local_dir, dst=remote_dir, title_fcn=title_fcn)
+        
+        data_explorer = _m.Modeller().desktop.data_explorer()
+        for path in emmebank_paths:
+            for db in data_explorer.databases():
+                if db.path == path:
+                    db.close()
+                    data_explorer.remove_database(db)
+        data_explorer.databases()[0].open()
+
+        self.log_report()
+        # redirect logbook to the remote dir
+        dst_logbook_path = _norm(_join(remote_dir, "Logbook", "project.mlbk"))
+        #self._redirect_logbook(dst_logbook_path)
+        
+        if delete_local_files:
+            # small pause for file handles to close
+            _time.wait(2)
+            for name in os.listdir(local_dir):
+                path = os.path.join(local_dir, name)
+                if os.path.isfile(path):
+                    try:  # no raise, local files can be left behind
+                        os.remove(path)
+                    except:
+                        pass
+                elif os.path.isdir(path):
+                    _shutil.rmtree(path, ignore_errors=True)
+        
+    def _copy_emme_data(self, src, dst, title_fcn, remove_db=False):
+        # copy data from Database and Database_transit using API and import tool
+        # create new emmebanks and copy emmebank data to local drive
+        import_from_db = _m.Modeller().tool("inro.emme.data.database.import_from_database")
+        emmebank_paths = []
+        for db_dir in ["Database", "Database_transit"]:            
+            src_db_path = _join(src, "emme_project", db_dir, "emmebank")
+            if not os.path.exists(src_db_path):
+                # skip if the database does not exist (will be created later)
+                continue
+            src_db = _eb.Emmebank(src_db_path)
+            dst_db_dir = _join(dst, "emme_project", db_dir)
+            dst_db_path = _join(dst_db_dir, "emmebank")
+            if remove_db:
+                # remove any existing database (overwrite)
+                if os.path.exists(dst_db_path):
+                    dst_db = _eb.Emmebank(dst_db_path)
+                    dst_db.dispose()
+                if os.path.exists(dst_db_dir):
+                    gen_utils.retry(lambda: _shutil.rmtree(dst_db_dir))
+                gen_utils.retry(lambda: os.mkdir(dst_db_dir))
+                dst_db = _eb.create(dst_db_path, src_db.dimensions)
+            else:
+                if not os.path.exists(dst_db_dir):
+                    os.mkdir(dst_db_dir)
+                if os.path.exists(dst_db_path):
+                    dst_db = _eb.Emmebank(dst_db_path)
+                else:
+                    dst_db = _eb.create(dst_db_path, src_db.dimensions)
+            dst_db.title = title_fcn(src_db.title)
+
+            emmebank_paths.append(dst_db_path)
+            for prop in ["coord_unit_length", "unit_of_length", "unit_of_cost", 
+                         "unit_of_energy", "use_engineering_notation", "node_number_digits"]:
+                setattr(dst_db, prop, getattr(src_db, prop))
+            exfpars = [p for p in dir(src_db.extra_function_parameters) if p.startswith("e")]
+            for exfpar in exfpars:
+                value = getattr(src_db.extra_function_parameters, exfpar)
+                setattr(dst_db.extra_function_parameters, exfpar, value)
+            src_db.dispose()
+            import_from_db(
+                src_database=src_db_path,
+                src_scenario_ids=[s.id for s in src_db.scenarios()],
+                copy_path_strat_files=True,
+                dst_database=dst_db_path)
+            import_from_db(
+                src_database=src_db_path,
+                src_zone_system_scenario=100,
+                src_function_ids=[f.id for f in src_db.functions()],
+                src_matrix_ids=[m.id for m in src_db.matrices()],
+                src_partition_ids=[p.id for p in src_db.partitions()],
+                dst_database=dst_db_path,
+                dst_zone_system_scenario=100)
+        return emmebank_paths
+
+    def _redirect_logbook(self, dst_logbook_path):
+        project = _m.Modeller().desktop.project
+        src_logbook_path = _norm(_log.trail.Trail.instance().url)
+        dst_logbook_path = _norm(dst_logbook_path)
+        if src_logbook_path != dst_logbook_path:
+            if not os.path.exists(_dir(dst_logbook_path)):
+                os.mkdir(_dir(dst_logbook_path))
+            _shutil.copy2(src_logbook_path, dst_logbook_path)
+            _log.trail.Trail(
+                dst_logbook_path, "Modeller session", 
+                attributes={"project": project.path})
+            project_dir = _norm(_dir(project.path))
+            if dst_logbook_path.startswith(project_dir):
+                dst_logbook_path = dst_logbook_path.replace(project_dir, "%<$ProjectPath>%")
+            project.par("ModellerLogbook").set(dst_logbook_path)
+
+    def _copy_dir(self, src, dst, file_masks, check_metadata=False):
+        for name in os.listdir(src):
+            src_path = _join(src, name)
+            skip_file = bool([1 for mask in file_masks if _fnmatch(src_path, mask)])
+            if skip_file:
+                continue
+            dst_path = _join(dst, name)
+            if os.path.isfile(src_path):
+                size = os.path.getsize(src_path)
+                if check_metadata and os.path.exists(dst_path):
+                    same_size = os.path.getsize(dst_path) == size
+                    same_time = os.path.getmtime(dst_path) == os.path.getmtime(src_path)
+                    if same_size and same_time:
+                        continue
+                self._report.append(dst_path + file_size(size))
+                self._stats["size"] += size
+                self._stats["count"] += 1
+                # TODO: verify performance on the server of copy, xcopy and shutil.copy2
+                os.system('copy "%s" "%s"' % (src_path, dst_path))
+                #os.system('xcopy "%s" "%s"' % (src_path, dst))
+                #_shutil.copy2(src_path, dst_path)
+            elif os.path.isdir(src_path):
+                if not os.path.exists(dst_path):
+                    os.mkdir(dst_path)
+                self._report.append(dst_path)
+                self._copy_dir(src_path, dst_path, file_masks, check_metadata)
+
+    def log_report(self):
+        size, count = file_size(self._stats["size"]), self._stats["count"]
+        name = "File copy report: copied {count} files {size}".format(count=count, size=size)
+        report = _m.PageBuilder(title=name)
+        report.add_html("<br>".join(self._report))
+        _m.logbook_write(name, report.render())
+
+
+_suffixes = ['bytes', 'KiB', 'MiB', 'GiB', 'TiB']
+
+def file_size(size):
+    order = int(log10(size) / 3) if size else 0
+    return ' {} {}'.format(round(float(size) / (10**(order*3)), 1), _suffixes[order])

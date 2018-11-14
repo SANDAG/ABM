@@ -28,6 +28,7 @@ class PropertiesSetter(object):
     startFromIteration = _m.Attribute(int)
     sample_rates = _m.Attribute(str)
 
+    useLocalDrive = _m.Attribute(bool)
     skipBuildNetwork = _m.Attribute(bool)
     skipInitialization = _m.Attribute(bool)
     deleteAllMatrices = _m.Attribute(bool)
@@ -112,6 +113,7 @@ class PropertiesSetter(object):
 
     def __init__(self):
         self._run_model_names = (
+            "useLocalDrive",
             "startFromIteration", "skipInitialization", "deleteAllMatrices", "skipCopyWarmupTripTables", 
             "skipCopyBikeLogsum", "skipCopyWalkImpedance", "skipWalkLogsums", "skipBikeLogsums", "skipBuildNetwork", 
             "skipHighwayAssignment", "skipTransitSkimming", "skipCoreABM", "skipOtherSimulateModel", "skipCTM", 
@@ -151,6 +153,7 @@ class PropertiesSetter(object):
                 </tr>""" % {"tool_proxy_tag": tool_proxy_tag}]
 
         skip_startup_items = [
+            ("useLocalDrive",           "Use the local drive during the model run"),
             ("skipBuildNetwork",        "Skip build of highway and transit network"),
             ("skipInitialization",      "Skip matrix and transit database initialization"),
             ("deleteAllMatrices",       "&nbsp;&nbsp;&nbsp;&nbsp;Delete all matrices"),
@@ -178,7 +181,6 @@ class PropertiesSetter(object):
             ("skipDataLoadRequest",         "Skip data load request"),
             ("skipDeleteIntermediateFiles", "Skip delete intermediate files"),
         ]
-
 
         if disclosure:
             contents.insert(0, """
@@ -278,6 +280,7 @@ class PropertiesSetter(object):
         self.startFromIteration = props.get("RunModel.startFromIteration", 1)
         self.sample_rates = ",".join(str(x) for x in props.get("sample_rates"))
         
+        self.useLocalDrive = props.get("useLocalDrive", False)
         self.skipBuildNetwork = props.get("RunModel.skipBuildNetwork", False)
         self.skipInitialization = props.get("RunModel.skipInitialization", False)
         self.deleteAllMatrices = props.get("RunModel.deleteAllMatrices", False)
@@ -308,6 +311,7 @@ class PropertiesSetter(object):
         props["RunModel.startFromIteration"] = self.startFromIteration
         props["sample_rates"] = [float(x) for x in self.sample_rates.split(",")]
         
+        props["RunModel.useLocalDrive"] = self.useLocalDrive
         props["RunModel.skipBuildNetwork"] = self.skipBuildNetwork
         props["RunModel.skipInitialization"] = self.skipInitialization
         props["RunModel.deleteAllMatrices"] = self.deleteAllMatrices

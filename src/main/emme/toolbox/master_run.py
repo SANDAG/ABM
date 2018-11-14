@@ -59,6 +59,7 @@ TOOLBOX_ORDER = 1
 
 import inro.modeller as _m
 import inro.emme.database.emmebank as _eb
+
 import traceback as _traceback
 import glob as _glob
 import subprocess as _subprocess
@@ -74,6 +75,7 @@ import os
 
 _join = os.path.join
 _dir = os.path.dirname
+_norm = os.path.normpath
 
 
 gen_utils = _m.Modeller().module("sandag.utilities.general")
@@ -99,14 +101,16 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         super(MasterRun, self).__init__()
         project_dir = _dir(_m.Modeller().desktop.project.path)
         self.main_directory = _dir(project_dir)
-        self.properties_path = _join(
-            _dir(project_dir), "conf", "sandag_abm.properties")
+        self.properties_path = _join(_dir(project_dir), "conf", "sandag_abm.properties")
         self.scenario_id = 100
         self.scenario_title = ""
         self.emmebank_title = ""
         self.num_processors = "MAX-1"
         self.select_link = '[]'
-        self.attributes = ["main_directory", "scenario_id", "scenario_title", "emmebank_title", "num_processors", "select_link"]
+        self.attributes = [
+            "main_directory", "scenario_id", "scenario_title", "emmebank_title", 
+            "num_processors", "select_link"
+        ]
         self._log_level = "ENABLED"
 
     def page(self):
@@ -223,21 +227,12 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         export_tap_adjacent_lines = modeller.tool("sandag.export.export_tap_adjacent_lines")
         export_for_commercial_vehicle = modeller.tool("sandag.export.export_for_commercial_vehicle")
 
+        file_manager = modeller.tool("sandag.utilities.file_manager")
         utils = modeller.module('sandag.utilities.demand')
         load_properties = modeller.tool('sandag.utilities.properties')
 
         self.username = username
         self.password = password
-        self._path = main_directory
-        drive, path_no_drive = os.path.splitdrive(main_directory)
-        path_forward_slash =  path_no_drive.replace("\\", "/")
-        input_dir = _join(main_directory, "input")
-        input_truck_dir = _join(main_directory, "input_truck")
-        output_dir = _join(main_directory, "output")
-        main_emmebank = _eb.Emmebank(_join(main_directory, "emme_project", "Database", "emmebank"))
-        if emmebank_title:
-            main_emmebank.title = emmebank_title
-        external_zones = "1-12"
 
         props = load_properties(_join(main_directory, "conf", "sandag_abm.properties"))
         props.set_year_specific_properties(_join(main_directory, "input", "parametersByYears.csv"))
@@ -262,6 +257,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         scale_factor = props["cvm.scale_factor"]
 
         period_ids = list(enumerate(periods, start=int(scenario_id) + 1))
+
+        useLocalDrive = props["RunModel.useLocalDrive"]
 
         skipInitialization = props["RunModel.skipInitialization"]
         deleteAllMatrices = props["RunModel.deleteAllMatrices"]
@@ -289,6 +286,38 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         transitShedThreshold = props["transitShed.threshold"]
         transitShedTOD = props["transitShed.TOD"]
 
+        if useLocalDrive:
+            self.check_free_space(minSpaceOnC)
+            folder_name = os.path.basename(main_directory)
+            user_folder = username or os.environ.get("USERNAME")
+            if not user_folder:
+                raise Exception("Username must be specified for local drive operation "
+                                "(or define USERNAME environment variable)")
+            user_directory = _join(file_manager.LOCAL_ROOT, user_folder)
+            if not os.path.exists(user_directory):
+                os.mkdir(user_directory)
+            local_directory = _join(user_directory, folder_name)
+            if not os.path.exists(local_directory):
+                os.mkdir(local_directory)
+
+            # if initialization copy ALL files from remote
+            # else check file meta data and copy those that have changed
+            initialize = not skipInitialization
+            file_manager.download(main_directory, local_directory, initialize, props)
+            self._path = local_directory
+        else:
+            self._path = main_directory
+
+        drive, path_no_drive = os.path.splitdrive(self._path)
+        path_forward_slash =  path_no_drive.replace("\\", "/")
+        input_dir = _join(self._path, "input")
+        input_truck_dir = _join(self._path, "input_truck")
+        output_dir = _join(self._path, "output")
+        main_emmebank = _eb.Emmebank(_join(self._path, "emme_project", "Database", "emmebank"))
+        if emmebank_title:
+            main_emmebank.title = emmebank_title
+        external_zones = "1-12"
+
         travel_modes = ["auto", "tran", "nmot", "othr"]
         core_abm_files = ["Trips*.omx", "InternalExternalTrips*.omx"]
         core_abm_files = [mode + name for name in core_abm_files for mode in travel_modes]
@@ -304,12 +333,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
             # Swap Server Configurations
             self.run_proc("serverswap.bat", [drive, path_no_drive, path_forward_slash], "Run ServerSwap")
-            self.check_for_fatal(_join(main_directory, "logFiles", "serverswap.log"), 
+            self.check_for_fatal(_join(self._path, "logFiles", "serverswap.log"), 
                 "ServerSwap failed! Open logFiles/serverswap.log for details.")
-            self.check_free_space(minSpaceOnC)
             self.run_proc("checkAtTransitNetworkConsistency.cmd", [drive, path_forward_slash],
                 "Checking if AT and Transit Networks are consistent")
-            self.check_for_fatal(_join(main_directory, "logFiles", "AtTransitCheck_event.log"), 
+            self.check_for_fatal(_join(self._path, "logFiles", "AtTransitCheck_event.log"), 
                 "AT and Transit network consistency checking failed! Open AtTransitCheck_event.log for details.")
 
             if startFromIteration == 1:  # only run the setup / init steps if starting from iteration 1
@@ -358,7 +386,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         transit_components.append("transit_demand")
                     init_matrices(transit_components, periods, transit_scenario, deleteAllMatrices)
                 else:
-                    transit_emmebank = _eb.Emmebank(_join(main_directory, "emme_project", "Database_transit", "emmebank"))
+                    transit_emmebank = _eb.Emmebank(_join(self._path, "emme_project", "Database_transit", "emmebank"))
                     transit_scenario = transit_emmebank.scenario(base_scenario.number)
 
                 if not skipCopyWarmupTripTables:
@@ -369,7 +397,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         import_demand(omx_file, "TRUCK", period, base_scenario)
             else:
                 base_scenario = main_emmebank.scenario(scenario_id)
-                transit_emmebank = _eb.Emmebank(_join(main_directory, "emme_project", "Database_transit", "emmebank"))
+                transit_emmebank = _eb.Emmebank(_join(self._path, "emme_project", "Database_transit", "emmebank"))
                 transit_scenario = transit_emmebank.scenario(base_scenario.number)
 
         # Note: iteration indexes from 0, msa_iteration indexes from 1
@@ -452,15 +480,16 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         if not skipFinalHighwayAssignment:
             with _m.logbook_trace("Final traffic assignments"):
+                # Final iteration is assignment only, no skims
                 final_iteration = 4
                 self.run_traffic_assignments(
                     base_scenario, period_ids, final_iteration, relative_gap, max_assign_iterations, 
                     num_processors, select_link)
-                # Final iteration is assignment only, no skims
 
         if not skipFinalTransitAssignment:
             import_transit_demand(output_dir, transit_scenario)
             with _m.logbook_trace("Final transit assignments"):
+                # Final iteration includes the transit skims per ABM-1072
                 for number, period in period_ids:
                     src_period_scenario = main_emmebank.scenario(number)
                     transit_assign_scen = build_transit_scen(
@@ -472,31 +501,36 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                                    num_processors=num_processors)                        
                 omx_file = _join(output_dir, "transit_skims.omx")
                 export_transit_skims(omx_file, periods, transit_scenario, big_to_zero=True)
-                                        
-                #    transit_assign(period, transit_assign_scen, data_table_name=scenarioYear,
-                #                   assignment_only=True, num_processors=num_processors)
-                # Final iteration is assignment only, no skims
-                # omx_file = _join(output_dir, "transit_skims.omx")
-                # export_transit_skims(omx_file, periods, transit_scenario, big_to_zero=True)
 
         if not skipTransitShed:
             # write walk and drive transit sheds
-            self.run_proc("runtransitreporter.cmd", [drive, path_forward_slash, transitShedThreshold, transitShedTOD], "Create walk and drive transit sheds", 
+            self.run_proc("runtransitreporter.cmd", [drive, path_forward_slash, transitShedThreshold, transitShedTOD], 
+                          "Create walk and drive transit sheds", 
                           capture_output=True)
 
         if not skipDataExport:
+            # export network and matrix results from Emme directly to T if using local drive
+            main_output_directory = _join(main_directory, "output")
             export_network_data(main_directory, scenario_id, main_emmebank, transit_emmebank, num_processors)
-            export_matrix_data(output_dir, base_scenario, transit_scenario)
+            export_matrix_data(main_output_directory, base_scenario, transit_scenario)
             # export core ABM data
+            # Note: uses relative project stucture, so cannot redirect to T drive
             self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data", 
                           capture_output=True)
+        
+        # UPLOAD DATA AND SWITCH PATHS
+        if useLocalDrive:
+            file_manager.upload(main_directory, local_directory, not skipDeleteIntermediateFiles, props)
+            self._path = main_directory
+            drive, path_no_drive = os.path.splitdrive(self._path)
+
         if not skipDataLoadRequest:
             self.run_proc("DataLoadRequest.bat", 
                 [drive + path_no_drive, end_iteration, scenarioYear, sample_rate[end_iteration-1]], 
                 "Data load request")
 
-        # delete trip table files in iteration sub folder if model finishes without crashing
-        if not skipDeleteIntermediateFiles:
+        # delete trip table files in iteration sub folder if model finishes without errors
+        if not useLocalDrive and not skipDeleteIntermediateFiles:
             for msa_iteration in range(startFromIteration, end_iteration + 1):
                 self.delete_files(
                     ["auto*Trips*.omx", "tran*Trips*.omx", "nmot*.omx", "othr*.omx", "trip*.omx"],
@@ -541,7 +575,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     break
             else:
                 _m.logbook_write("Warning: current machine name not found in "
-                                 "conf\server-config.csv ServerName column")
+                                 "conf\\server-config.csv ServerName column")
                 server_config = {"SNODE": "yes"}
         distributed = server_config["SNODE"] == "no"
         if distributed:
@@ -703,7 +737,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         desktop = modeller.desktop
         data_explorer = desktop.data_explorer()
         for db in data_explorer.databases():
-            if os.path.normpath(db.path) == os.path.normpath(unicode(emmebank)):
+            if _norm(db.path) == _norm(unicode(emmebank)):
                 db.open()
                 return db
         return None

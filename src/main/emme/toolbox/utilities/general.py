@@ -84,14 +84,20 @@ def temp_matrices(emmebank, mat_type, total=1, default_value=0.0):
         for matrix in matrices:
             # In case of transient file conflicts and lag in windows file handles over the network
             # attempt to delete file 10 times with increasing delays 0.05, 0.2, 0.45, 0.8 ... 5
-            for attempt in range(1,11):
-                try:
-                    emmebank.delete_matrix(matrix)
-                    break
-                except RuntimeError:
-                    if attempt > 10:
-                        raise
-                    _time.sleep(0.05 * (attempt**2))
+            remove_matrix = lambda: emmebank.delete_matrix(matrix)
+            retry(remove_matrix)
+
+
+def retry(fcn, attempts=10, init_wait=0.05, error_types=(RuntimeError, WindowsError)):
+    for attempt in range(1, attempts + 1):
+        try:
+            fcn()
+            return
+        except error_types:
+            if attempt > attempts:
+                raise
+            _time.sleep(init_wait * (attempt**2))
+
 
 @_context
 def temp_attrs(scenario, attr_type, idents, default_value=0.0):
