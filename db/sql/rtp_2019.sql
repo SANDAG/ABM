@@ -721,6 +721,107 @@ GO
 
 
 
+-- Create stored procedure for performance metric #5a high frequency transit stops
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2019].[sp_pm_5a_hf_transit_stops]') AND type in ('P', 'PC'))
+DROP PROCEDURE [rtp_2019].[sp_pm_5a_hf_transit_stops]
+GO
+
+CREATE PROCEDURE [rtp_2019].[sp_pm_5a_hf_transit_stops]
+	@scenario_id integer,
+	@high_frequency_headway integer = 15 -- transit vehicle headway/frequency in minutes
+AS
+
+/*
+	Author: Ziying Ouyang and Gregor Schroeder
+	Date: Revised 11/13/2018
+	Description: Input for Performance Measure 5a, Percentage of
+	population/employment within 0.5-mile of high-frequency (≤15 min peak)
+	transit stops High frequency transit stops are defined by the combined
+	headway frequency of transit stops on a node, route, and direction where
+	multiple stops ocurring on the same node, route, direction, and
+	configuration are counted only once.
+*/
+
+SET NOCOUNT ON;
+
+-- transform minute headway frequency into vehicles per hour
+DECLARE @high_frequency_vehicles float = 60.0 / @high_frequency_headway;
+
+
+with [high_freq_nodes] AS (
+	-- combine multiple stops at the same [near_node]
+	-- on the same [route] and [direction] across different [config]
+	-- summing vehicles defined by the headways
+	-- have to select distinct as same [near_node]
+	-- on different [route] and/or [direction] can appear
+	SELECT DISTINCT
+		[near_node]
+	FROM (
+		-- combine multiple stops at the same [near_node] with the same [config]
+		-- not double-counting the vehicles defined by the headways
+		SELECT DISTINCT
+			[near_node]
+			,[config]
+			,[config] / 1000 AS [route]
+			,([config] - 1000 * ([config] / 1000)) / 100 AS [direction]
+			,CASE WHEN [am_headway] > 0 THEN 60.0 / [am_headway] ELSE 0 END AS [am_vehicles]
+			,CASE WHEN [pm_headway] > 0 THEN 60.0 / [pm_headway] ELSE 0 END AS [pm_vehicles]
+			,CASE WHEN [op_headway] > 0 THEN 60.0 / [op_headway] ELSE 0 END AS [op_vehicles]
+		FROM
+			[dimension].[transit_stop]
+		INNER JOIN
+			[dimension].[transit_route]
+		ON
+			[transit_stop].[scenario_id] = [transit_route].[scenario_id]
+			AND [transit_stop].[transit_route_id] = [transit_route].[transit_route_id]
+		WHERE
+			[transit_stop].[scenario_id] = @scenario_id
+			AND [transit_route].[scenario_id] = @scenario_id) AS [unique_stops]
+	GROUP BY
+		[near_node]
+		,[route]
+		,[direction]
+	HAVING
+		SUM([am_vehicles]) >= @high_frequency_vehicles
+		OR SUM([pm_vehicles]) >= @high_frequency_vehicles
+		OR SUM([op_vehicles]) >= @high_frequency_vehicles)
+SELECT
+	@scenario_id AS [scenario_id]
+	,[tt_high_freq_nodes].[near_node]
+	,[transit_stop].[transit_stop_shape] AS [near_node_shape]
+FROM (
+	-- create an interim table of the high-frequency transit nodes
+	-- to allow one-to-one join of geometry column as
+	-- geometry columns do not allow for DISTINCT statements
+	-- [near_node]s can have multiple [transit_stop_id]s
+	-- but the [transit_stop_shape] is always the same within a [near_node]
+	SELECT
+		[high_freq_nodes].[near_node]
+		,MIN([transit_stop].[transit_stop_id]) AS [min_transit_stop_id]
+	FROM
+		[high_freq_nodes]
+	INNER JOIN
+		[dimension].[transit_stop]
+	ON
+		[transit_stop].[scenario_id] = @scenario_id
+		AND [transit_stop].[near_node] = [high_freq_nodes].[near_node]
+	GROUP BY
+		[high_freq_nodes].[near_node]) AS [tt_high_freq_nodes]
+INNER JOIN
+	[dimension].[transit_stop]
+ON
+	[transit_stop].[scenario_id] = @scenario_id
+	AND [tt_high_freq_nodes].[min_transit_stop_id] = [transit_stop].[transit_stop_id]
+GO
+
+-- Add metadata for [rtp_2019].[sp_pm_5a_hf_transit_stops]
+EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_pm_5a_hf_transit_stops', 'SUBSYSTEM', 'rtp 2019'
+EXECUTE [db_meta].[add_xp] 'rtp_2019.sp_pm_5a_hf_transit_stops', 'MS_Description', 'performance metric 5a high frequency transit stops'
+GO
+
+
+
+
 -- Create stored procedure for performance metric #6a
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[rtp_2019].[sp_pm_6a]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [rtp_2019].[sp_pm_6a]
