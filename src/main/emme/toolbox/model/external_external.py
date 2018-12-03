@@ -185,4 +185,6 @@ class ExternalExternal(_m.Tool(), gen_utils.Snapshot):
                 report = round_matrix(demand_to_round=matrix,
                                       rounded_demand=matrix,
                                       min_demand=precision,
-                                      values_to_round="SMALLER_THAN_MIN")
+                                      values_to_round="SMALLER_THAN_MIN",
+                                      scenario=scenario)
+

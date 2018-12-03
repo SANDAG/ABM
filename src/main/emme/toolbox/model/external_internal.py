@@ -310,7 +310,8 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
                         report = round_matrix(demand_to_round=matrix,
                                               rounded_demand=matrix,
                                               min_demand=precision,
-                                              values_to_round="SMALLER_THAN_MIN")
+                                              values_to_round="SMALLER_THAN_MIN",
+                                              scenario=scenario)
                     except:
                         max_val = matrix.get_numpy_data(scenario.id).max()
                         if max_val == 0: 
