@@ -107,6 +107,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         self.emmebank_title = ""
         self.num_processors = "MAX-1"
         self.select_link = '[]'
+        self.username = os.environ.get("USERNAME")
         self.attributes = [
             "main_directory", "scenario_id", "scenario_title", "emmebank_title", 
             "num_processors", "select_link"
@@ -131,7 +132,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         pb.add_text_box('emmebank_title', title="Emmebank title:", size=60)
         dem_utils.add_select_processors("num_processors", pb, self)
 
-        # optional username and password input for distributed assignment
+        # username and password input for distributed assignment
+        # username also used in the folder name for the local drive operation
         pb.add_html('''
 <div class="t_element">
     <div class="t_local_title">Credentials for remote run</div>
@@ -145,8 +147,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
     </div>
     <div class="t_after_widget">
     Note: required for running distributed traffic assignments using PsExec. 
-    Not used in single-node mode. <br>
+    <br>
     Distributed / single node modes are configured in "config/server-config.csv".
+    <br> The username is also used for the folder name when running on the local drive.
     </div>
 </div>''' % {"tool_proxy_tag": tool_proxy_tag})
 
@@ -288,22 +291,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         if useLocalDrive:
             self.check_free_space(minSpaceOnC)
-            folder_name = os.path.basename(main_directory)
-            user_folder = username or os.environ.get("USERNAME")
-            if not user_folder:
-                raise Exception("Username must be specified for local drive operation "
-                                "(or define USERNAME environment variable)")
-            user_directory = _join(file_manager.LOCAL_ROOT, user_folder)
-            if not os.path.exists(user_directory):
-                os.mkdir(user_directory)
-            local_directory = _join(user_directory, folder_name)
-            if not os.path.exists(local_directory):
-                os.mkdir(local_directory)
-
             # if initialization copy ALL files from remote
             # else check file meta data and copy those that have changed
             initialize = not skipInitialization
-            file_manager.download(main_directory, local_directory, initialize, props)
+            local_directory = file_manager(
+                "DOWNLOAD", main_directory, username, scenario_id, initialize=initialize)
             self._path = local_directory
         else:
             self._path = main_directory
@@ -520,7 +512,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         
         # UPLOAD DATA AND SWITCH PATHS
         if useLocalDrive:
-            file_manager.upload(main_directory, local_directory, not skipDeleteIntermediateFiles, props)
+            file_manager("UPLOAD", main_directory, username, scenario_id,
+                         delete_local_files=not skipDeleteIntermediateFiles)
             self._path = main_directory
             drive, path_no_drive = os.path.splitdrive(self._path)
 
