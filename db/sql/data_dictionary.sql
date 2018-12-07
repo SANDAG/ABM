@@ -520,7 +520,7 @@ EXECUTE [db_meta].[add_xp] 'fact.mgra_based_input.district27', 'MS_Description',
 EXECUTE [db_meta].[add_xp] 'fact.mgra_based_input.milestocoast', 'MS_Description', 'miles to the coast'
 EXECUTE [db_meta].[add_xp] 'fact.mgra_based_input.acres', 'MS_Description', 'acres'
 EXECUTE [db_meta].[add_xp] 'fact.mgra_based_input.effective_acres', 'MS_Description', 'acres of developable land (or available for development)'
-EXECUTE [db_meta].[add_xp] 'fact.mgra_based_input.land_acres', 'MS_Description', 'acres of land (excluding water)'
+EXECUTE [db_meta].[add_xp] 'fact.mgra_based_input.land_acres', 'MS_Description', 'acres of land area excluding water such as bay, lagoon, lake, reservoir, or large pond'
 GO
 
 
