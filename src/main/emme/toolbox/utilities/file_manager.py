@@ -164,20 +164,18 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
             # create new Emmebanks with scenario and matrix data
             title_fcn = lambda t: "(local) " + t[:50]
             emmebank_paths = self._copy_emme_data(
-                src=remote_dir, dst=local_dir, remove_db=True, 
+                src=remote_dir, dst=local_dir, initialize=True,
                 title_fcn=title_fcn, scenario_id=scenario_id)
             # add new emmebanks to the open project
-            for path in emmebank_paths:
-                _m.Modeller().desktop.data_explorer().add_database(path)
+            # db_paths = set([db.core_emmebank.path for db in data_explorer.databases()])
+            # for path in emmebank_paths:
+                # if path not in db_paths:
+                    # _m.Modeller().desktop.data_explorer().add_database(path)
 
         # copy all files (except Emme project, and other file_masks)
         self._copy_dir(src=remote_dir, dst=local_dir, 
                        file_masks=file_masks, check_metadata=not initialize)
         self.log_report()
-
-        # redirect logbook to the local_dir 
-        #dst_logbook_path = _norm(_join(local_dir, "Logbook", "project.mlbk"))
-        #self._redirect_logbook(dst_logbook_path)
         return local_dir
 
     @_m.logbook_trace("Copy project data to remote drive", save_arguments=True)
@@ -191,7 +189,7 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
         self._stats = {"size": 0, "count": 0}
         if not file_masks:
             # suggested defaults: "application", "bin", "input", "input_truck", "uec",
-            #                     "output\\iter*", "output\\*_1.csv" "output\\*_2.csv"
+            #                     "output\\iter*", "output\\*_1.csv", "output\\*_2.csv"
             file_masks = []
         # prepend the src dir to the project masks
         file_masks = [_join(local_dir, p) for p in file_masks]
@@ -204,22 +202,19 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
         emmebank_paths = self._copy_emme_data(
             src=local_dir, dst=remote_dir, title_fcn=title_fcn, scenario_id=scenario_id)
 
-        data_explorer = _m.Modeller().desktop.data_explorer()
-        for path in emmebank_paths:
-            for db in data_explorer.databases():
-                if db.path == path:
-                    db.close()
-                    data_explorer.remove_database(db)
-        data_explorer.databases()[0].open()
+        # data_explorer = _m.Modeller().desktop.data_explorer()
+        # for path in emmebank_paths:
+            # for db in data_explorer.databases():
+                # if db.core_emmebank.path == path:
+                    # db.close()
+                    # data_explorer.remove_database(db)
+        # data_explorer.databases()[0].open()
 
         self.log_report()
-        # redirect logbook to the remote dir
-        #dst_logbook_path = _norm(_join(remote_dir, "Logbook", "project.mlbk"))
-        #self._redirect_logbook(dst_logbook_path)
 
         if delete_local_files:
             # small pause for file handles to close
-            _time.wait(2)
+            _time.sleep(2)
             for name in os.listdir(local_dir):
                 path = os.path.join(local_dir, name)
                 if os.path.isfile(path):
@@ -230,12 +225,12 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
                 elif os.path.isdir(path):
                     _shutil.rmtree(path, ignore_errors=True)
 
-    def _copy_emme_data(self, src, dst, title_fcn, scenario_id, remove_db=False):
+    def _copy_emme_data(self, src, dst, title_fcn, scenario_id, initialize=False):
         # copy data from Database and Database_transit using API and import tool
         # create new emmebanks and copy emmebank data to local drive
         import_from_db = _m.Modeller().tool("inro.emme.data.database.import_from_database")
         emmebank_paths = []
-        for db_dir in ["Database", "Database_transit"]:            
+        for db_dir in ["Database", "Database_transit"]:
             src_db_path = _join(src, "emme_project", db_dir, "emmebank")
             if not os.path.exists(src_db_path):
                 # skip if the database does not exist (will be created later)
@@ -244,7 +239,7 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
             dst_db_dir = _join(dst, "emme_project", db_dir)
             dst_db_path = _join(dst_db_dir, "emmebank")
             emmebank_paths.append(dst_db_path)
-            if remove_db:
+            if initialize:
                 # remove any existing database (overwrite)
                 if os.path.exists(dst_db_path):
                     dst_db = _eb.Emmebank(dst_db_path)
@@ -265,14 +260,16 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
             for prop in ["coord_unit_length", "unit_of_length", "unit_of_cost", 
                          "unit_of_energy", "use_engineering_notation", "node_number_digits"]:
                 setattr(dst_db, prop, getattr(src_db, prop))
+
+            if initialize:
+                src_db.dispose()
+                continue
+
             exfpars = [p for p in dir(src_db.extra_function_parameters) if p.startswith("e")]
             for exfpar in exfpars:
                 value = getattr(src_db.extra_function_parameters, exfpar)
                 setattr(dst_db.extra_function_parameters, exfpar, value)
 
-            src_matrices = [m.id for m in src_db.matrices()]
-            src_partitions =[p.id for p in src_db.partitions()
-                if not(p.description == '' and not (sum(p.raw_data)))]
             for s in src_db.scenarios():
                 if dst_db.scenario(s.id):
                     dst_db.delete_scenario(s)
@@ -296,6 +293,9 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
                 dst_database=dst_db,
                 dst_zone_system_scenario=ref_scen)
             dst_db.delete_scenario(999)
+            src_matrices = [m.id for m in src_db.matrices()]
+            src_partitions = [p.id for p in src_db.partitions()
+                if not(p.description == '' and not (sum(p.raw_data)))]
             if src_matrices or src_partitions:
                 import_from_db(
                     src_database=src_db,
@@ -306,22 +306,6 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
                     dst_zone_system_scenario=dst_db.scenario(scenario_id))
             src_db.dispose()
         return emmebank_paths
-
-    def _redirect_logbook(self, dst_logbook_path):
-        project = _m.Modeller().desktop.project
-        src_logbook_path = _norm(_log.trail.Trail.instance().url)
-        dst_logbook_path = _norm(dst_logbook_path)
-        if src_logbook_path != dst_logbook_path:
-            if not os.path.exists(_dir(dst_logbook_path)):
-                os.mkdir(_dir(dst_logbook_path))
-            _shutil.copy2(src_logbook_path, dst_logbook_path)
-            _log.trail.Trail(
-                dst_logbook_path, "Modeller session", 
-                attributes={"project": project.path})
-            project_dir = _norm(_dir(project.path))
-            if dst_logbook_path.startswith(project_dir):
-                dst_logbook_path = dst_logbook_path.replace(project_dir, "%<$ProjectPath>%")
-            project.par("ModellerLogbook").set(dst_logbook_path)
 
     def _copy_dir(self, src, dst, file_masks, check_metadata=False):
         for name in os.listdir(src):
@@ -337,15 +321,14 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
                     same_time = os.path.getmtime(dst_path) == os.path.getmtime(src_path)
                     if same_size and same_time:
                         continue
-                #self._report.append(_time.strftime("%c"))
+                self._report.append(_time.strftime("%c"))
                 self._report.append(dst_path + file_size(size))
                 self._stats["size"] += size
                 self._stats["count"] += 1
-                # shutil.copy2 performs 5-10 times faster on download; upload not yet tested
-                #os.system('copy "%s" "%s"' % (src_path, dst_path))
-                #os.system('xcopy "%s" "%s"' % (src_path, dst))
+                # shutil.copy2 performs 5-10 times faster on download, and ~20% faster on upload
+                # than os.system copy calls 
                 _shutil.copy2(src_path, dst_path)
-                #self._report.append(_time.strftime("%c"))
+                self._report.append(_time.strftime("%c"))
             elif os.path.isdir(src_path):
                 if not os.path.exists(dst_path):
                     os.mkdir(dst_path)
