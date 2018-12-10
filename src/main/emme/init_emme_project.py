@@ -7,6 +7,14 @@
 #////                                                                       ///
 #//// init_emme_project.py                                                  ///
 #////                                                                       ///
+#////     Usage: init_emme_project.py [-r root] [-t title]                  ///
+#////                                                                       ///
+#////         [-r root]: Specifies the root directory in which to create    ///
+#////              the Emme project.                                        ///
+#////              If omitted, defaults to the current working directory    ///
+#////         [-t title]: The title of the Emme project and Emme database.  ///
+#////              If omitted, defaults to SANDAG empty database.           ///
+#////                                                                       ///
 #////                                                                       ///
 #////                                                                       ///
 #////                                                                       ///

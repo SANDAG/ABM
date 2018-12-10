@@ -34,6 +34,46 @@
 #   All transit demand and skim matrices.
 #   See list of matrices under report method.
 #
+# Script example:
+"""
+import inro.modeller as _m
+import os
+modeller = _m.Modeller()
+desktop = modeller.desktop
+
+build_transit_scen  = modeller.tool("sandag.assignment.build_transit_scenario")
+transit_assign  = modeller.tool("sandag.assignment.transit_assignment")
+load_properties = modeller.tool('sandag.utilities.properties')
+
+project_dir = os.path.dirname(desktop.project_path())
+main_directory = os.path.dirname(project_dir)
+props = load_properties(os.path.join(main_directory, "conf", "sandag_abm.properties"))
+main_emmebank = os.path.join(project_dir, "Database", "emmebank")
+scenario_id = 100
+base_scenario = main_emmebank.scenario(scenario_id)
+
+transit_emmebank = os.path.join(project_dir, "Database_transit", "emmebank")
+
+periods = ["EA", "AM", "MD", "PM", "EV"]
+period_ids = list(enumerate(periods, start=int(scenario_id) + 1))
+num_processors = "MAX-1"
+scenarioYear = str(props["scenarioYear"])
+
+for number, period in period_ids:
+    src_period_scenario = main_emmebank.scenario(number)
+    transit_assign_scen = build_transit_scen(
+        period=period, base_scenario=src_period_scenario,
+        transit_emmebank=transit_emmebank,
+        scenario_id=src_period_scenario.id,
+        scenario_title="%s %s transit assign" % (base_scenario.title, period),
+        data_table_name=scenarioYear, overwrite=True)
+    transit_assign(period, transit_assign_scen, data_table_name=scenarioYear,
+                   skims_only=True, num_processors=num_processors)
+
+omx_file = os.path.join(output_dir, "transit_skims.omx")
+export_transit_skims(omx_file, periods, transit_scenario)
+"""
+
 
 TOOLBOX_ORDER = 21
 

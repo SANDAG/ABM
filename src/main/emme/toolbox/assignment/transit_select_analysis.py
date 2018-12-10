@@ -35,6 +35,39 @@
 #   Scenario: the scenario to analyse.
 #
 #
+# Script example:
+"""
+import inro.modeller as _m
+import os
+modeller = _m.Modeller()
+desktop = modeller.desktop
+
+select_link = modeller.tool("sandag.assignment.transit_select_link")
+
+project_dir = os.path.dirname(desktop.project_path())
+main_directory = os.path.dirname(project_dir)
+
+transit_emmebank = os.path.join(project_dir, "Database_transit", "emmebank")
+
+periods = ["EA", "AM", "MD", "PM", "EV"]
+period_ids = list(enumerate(periods, start=int(scenario_id) + 1))
+
+suffix = "LRT"
+threshold = 1
+num_processors = "MAX-1"
+selection = {
+    "in_vehicle": None,
+    "aux_transit": None,
+    "initial_boarding": "@selected_line",
+    "transfer_boarding": None,
+    "transfer_alighting": None,
+    "final_alighting": None,
+}
+
+for number, period in period_ids:
+    scenario = transit_emmebank.scenario(number)
+    select_link(selection, suffix, threshold, scenario, num_processors)
+"""
 
 TOOLBOX_ORDER = 25
 
@@ -59,14 +92,17 @@ class TransitSelectAnalysis(_m.Tool(), gen_utils.Snapshot):
 
     suffix = _m.Attribute(str)
     threshold = _m.Attribute(int)
+    num_processors = _m.Attribute(str)
 
     tool_run_msg = ""
 
     def __init__(self):
         self.threshold = 1
+        self.num_processors = "MAX-1"
         self.attributes = [
             "in_vehicle", "aux_transit", "initial_boarding", "transfer_boarding", 
-            "transfer_alighting", "final_alighting", "suffix", "threshold"]
+            "transfer_alighting", "final_alighting", "suffix", "threshold", 
+            "num_processors"]
 
     def page(self):
         pb = _m.ToolPageBuilder(self)
@@ -94,6 +130,7 @@ class TransitSelectAnalysis(_m.Tool(), gen_utils.Snapshot):
         pb.add_text_box("threshold", title="Threshold for selection:", 
             note="The minimum number of links which must be encountered for the path selection. "
                  "The default value of 1 indicates an 'any' link selection.")
+        dem_utils.add_select_processors("num_processors", pb, self)
 
         return pb.render()
 
@@ -109,7 +146,7 @@ class TransitSelectAnalysis(_m.Tool(), gen_utils.Snapshot):
                 "final_alighting": self.final_alighting,
             }
             scenario = _m.Modeller().scenario
-            results = self(selection, self.suffix, self.threshold, scenario)
+            results = self(selection, self.suffix, self.threshold, scenario, self.num_processors)
             run_msg = "Traffic assignment completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -117,12 +154,13 @@ class TransitSelectAnalysis(_m.Tool(), gen_utils.Snapshot):
                 error, _traceback.format_exc(error))
             raise
 
-    def __call__(self, selection, suffix, threshold, scenario):
+    def __call__(self, selection, suffix, threshold, scenario, num_processors):
         attrs = {
             "selection": selection, 
             "suffix": suffix, 
             "threshold": threshold, 
-            "scenario": scenario.id
+            "scenario": scenario.id,
+            "num_processors": num_processors
         }
         with _m.logbook_trace("Transit select analysis %s" % suffix, attributes=attrs):
             attrs.update(dict((k,v) for k,v in attrs["selection"].iteritems()))
@@ -172,7 +210,7 @@ class TransitSelectAnalysis(_m.Tool(), gen_utils.Snapshot):
                                                 0, overwrite=True, scenario=scenario)
                         results_from_retained_paths[key] = attr.id
                     spec["results_from_retained_paths"] = results_from_retained_paths
-                    path_analysis(spec, class_name=class_name, scenario=scenario)
+                    path_analysis(spec, class_name=class_name, scenario=scenario, num_processors=num_processors)
 
     @_m.method(return_type=unicode)
     def tool_run_msg_status(self):

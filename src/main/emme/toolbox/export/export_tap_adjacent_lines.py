@@ -21,6 +21,29 @@
 #
 # Files created:
 #    output/tapLines.csv (or as specified)
+#
+#
+# Script example:
+"""
+import inro.modeller as _m
+import os
+modeller = _m.Modeller()
+desktop = modeller.desktop
+
+export_tap_adjacent_lines = modeller.tool("sandag.export.export_tap_adjacent_lines")
+
+project_dir = os.path.dirname(desktop.project_path())
+main_directory = os.path.dirname(project_dir)
+output_dir = os.path.join(main_directory, "output")
+
+main_emmebank = os.path.join(project_dir, "Database", "emmebank")
+scenario_id = 100
+base_scenario = main_emmebank.scenario(scenario_id)
+
+export_tap_adjacent_lines(os.path.join(output_dir, "tapLines.csv"), base_scenario)
+
+"""
+
 
 TOOLBOX_ORDER = 75
 

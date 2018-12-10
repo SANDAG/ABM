@@ -32,21 +32,63 @@
 #   relative_gap: minimum relative stopping criteria.
 #   max_iterations: maximum iterations stopping criteria.
 #   num_processors: number of processors to use for the traffic assignments.
+#   select_link: specify one or more select link analysis setups as a list of 
+#       specifications with three keys:
+#           "expression": selection expression to identify the link(s) of interest. 
+#           "suffix": the suffix to use in the naming of per-class result 
+#               attributes and matrices, up to 6 characters.
+#           "threshold": the minimum number of links which must be encountered 
+#               for the path selection.
+#        Example:
+#   select_link = [
+#       {"expression": "@tov_id=4578 or @tcov_id=9203", "suffix": "fwy", "threshold": "1"}
+#   ]
 #   raise_zero_dist: if checked, the distance skim for the SOVGP is checked for 
 #       any zero values, which would indicate a disconnected zone, in which case 
 #       an error is raised and the model run is halted.
-#   select_link: specify one or more select link analysis setups as a list of 
-#       specifications with three keys:
-#           Expression: selection expression to identify the link(s) of interest. 
-#           Result suffix: the suffix to use in the naming of per-class result 
-#               attributes and matrices, up to 6 characters.
-#           Threshold: the minimum number of links which must be encountered 
-#               for the path selection.
 #
 # Matrices:
 #   All traffic demand and skim matrices.
 #   See list of classes under __call__ method, or matrix list under report method.
 #
+# Script example:
+"""
+import inro.modeller as _m
+import os
+import inro.emme.database.emmebank as _eb
+
+modeller = _m.Modeller()
+desktop = modeller.desktop
+traffic_assign  = modeller.tool("sandag.assignment.traffic_assignment")
+export_traffic_skims = modeller.tool("sandag.export.export_traffic_skims")
+load_properties = modeller.tool('sandag.utilities.properties')
+project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
+main_directory = os.path.dirname(project_dir)
+output_dir = os.path.join(main_directory, "output")
+props = load_properties(os.path.join(main_directory, "conf", "sandag_abm.properties"))
+
+
+main_emmebank = os.path.join(project_dir, "Database", "emmebank")
+scenario_id = 100
+base_scenario = main_emmebank.scenario(scenario_id)
+
+periods = ["EA", "AM", "MD", "PM", "EV"]
+period_ids = list(enumerate(periods, start=int(scenario_id) + 1))
+
+msa_iteration = 1
+relative_gap = 0.005
+max_assign_iterations = 100
+num_processors = "MAX-1"
+select_link = None  # Optional select link specification
+
+for number, period in period_ids:
+    period_scenario = main_emmebank.scenario(number)
+    traffic_assign(period, msa_iteration, relative_gap, max_assign_iterations,
+                   num_processors, period_scenario, select_link)
+    omx_file = _join(output_dir, "traffic_skims_%s.omx" % period)
+    if msa_iteration < 4:
+        export_traffic_skims(period, omx_file, base_scenario)
+"""
 
 
 TOOLBOX_ORDER = 20
