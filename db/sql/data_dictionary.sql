@@ -562,6 +562,7 @@ EXECUTE [db_meta].[add_xp] 'fact.person_trip.time_transit_in_vehicle_rapid', 'MS
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.time_transit_in_vehicle_light_rail', 'MS_Description', 'light rail transit in vehicle time in minutes'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.time_transit_in_vehicle_commuter_rail', 'MS_Description', 'commuter rail transit in vehicle time in minutes'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.time_transit_in_vehicle', 'MS_Description', 'transit in vehicle time in minutes'
+EXECUTE [db_meta].[add_xp] 'fact.person_trip.dist_transit_in_vehicle', 'MS_Description', 'transit in vehicle distance in miles'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.cost_transit', 'MS_Description', 'transit fare cost in dollars'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.time_transit_auxiliary', 'MS_Description', 'auxiliary transit time in minutes'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.time_transit_wait', 'MS_Description', 'initial transit wait time and first transfer wait time in minutes'

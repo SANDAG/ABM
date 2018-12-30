@@ -358,6 +358,7 @@ CREATE TABLE [staging].[person_trip] (
 	[time_transit_in_vehicle_light_rail] decimal(10, 4) NOT NULL,
 	[time_transit_in_vehicle_commuter_rail] decimal(10, 4) NOT NULL,
 	[time_transit_in_vehicle] decimal(10, 4) NOT NULL,
+	[dist_transit_in_vehicle] decimal(10, 4) NOT NULL,
 	[cost_transit] decimal(4, 2) NOT NULL,
 	[time_transit_auxiliary] decimal(10, 4) NOT NULL,
 	[time_transit_wait] decimal(10, 4) NOT NULL,
