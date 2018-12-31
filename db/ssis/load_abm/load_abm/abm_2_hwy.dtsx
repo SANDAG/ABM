@@ -14,7 +14,7 @@
   DTS:ObjectName="abm_2_hwy"
   DTS:PackageType="5"
   DTS:VersionBuild="81"
-  DTS:VersionGUID="{9B2D43B7-B2D5-480A-9376-F9FE039AD016}">
+  DTS:VersionGUID="{D30A586E-3C0F-4AEE-B4FE-6238F494CAED}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -10536,8 +10536,8 @@
               <connections>
                 <connection
                   refId="Package\hwyload_load\staging_hwyload_AM.Connections[OleDbConnection]"
-                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
+                  connectionManagerRefId="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -11178,8 +11178,8 @@
               <connections>
                 <connection
                   refId="Package\hwyload_load\staging_hwyload_EA.Connections[OleDbConnection]"
-                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
+                  connectionManagerRefId="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -11820,8 +11820,8 @@
               <connections>
                 <connection
                   refId="Package\hwyload_load\staging_hwyload_EV.Connections[OleDbConnection]"
-                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
+                  connectionManagerRefId="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -12462,8 +12462,8 @@
               <connections>
                 <connection
                   refId="Package\hwyload_load\staging_hwyload_MD.Connections[OleDbConnection]"
-                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
+                  connectionManagerRefId="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -13104,8 +13104,8 @@
               <connections>
                 <connection
                   refId="Package\hwyload_load\staging_hwyload_PM.Connections[OleDbConnection]"
-                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
+                  connectionManagerRefId="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -13731,7 +13731,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="hwyload_reference_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -13773,7 +13773,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="hwyload_staging_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -13850,7 +13850,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="hwy_network_dimensions"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="1">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -18433,8 +18433,8 @@
               <connections>
                 <connection
                   refId="Package\hwy_network_load\staging_hwy_link.Connections[OleDbConnection]"
-                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
+                  connectionManagerRefId="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -18558,8 +18558,8 @@
               <connections>
                 <connection
                   refId="Package\hwy_network_load\staging_hwy_tcad.Connections[OleDbConnection]"
-                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
+                  connectionManagerRefId="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -20221,7 +20221,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="hwy_network_staging_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="1">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData

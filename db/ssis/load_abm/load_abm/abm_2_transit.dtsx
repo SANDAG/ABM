@@ -1,4 +1,4 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
   DTS:refId="Package"
   DTS:CreationDate="3/9/2018 10:17:50 AM"
@@ -14,7 +14,7 @@
   DTS:ObjectName="abm_2_transit"
   DTS:PackageType="5"
   DTS:VersionBuild="141"
-  DTS:VersionGUID="{DE1B3BDF-84EA-400F-A450-F36EC0CDDEA2}">
+  DTS:VersionGUID="{7F0C95B9-AAC2-4B5C-BBF6-414A7EFDDA72}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -1418,8 +1418,8 @@
               <connections>
                 <connection
                   refId="Package\transit_network_load\staging_PNRByTAP_Vehicles.Connections[OleDbConnection]"
-                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
+                  connectionManagerRefId="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -1604,8 +1604,8 @@
               <connections>
                 <connection
                   refId="Package\transit_network_load\staging_tap_ptype.Connections[OleDbConnection]"
-                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
+                  connectionManagerRefId="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -1777,8 +1777,8 @@
               <connections>
                 <connection
                   refId="Package\transit_network_load\staging_transit_aggflow.Connections[OleDbConnection]"
-                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
+                  connectionManagerRefId="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -2070,8 +2070,8 @@
               <connections>
                 <connection
                   refId="Package\transit_network_load\staging_transit_flow.Connections[OleDbConnection]"
-                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
+                  connectionManagerRefId="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -2299,8 +2299,8 @@
               <connections>
                 <connection
                   refId="Package\transit_network_load\staging_transit_link.Connections[OleDbConnection]"
-                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
+                  connectionManagerRefId="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -2424,8 +2424,8 @@
               <connections>
                 <connection
                   refId="Package\transit_network_load\staging_transit_link_route.Connections[OleDbConnection]"
-                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
+                  connectionManagerRefId="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -2550,8 +2550,8 @@
               <connections>
                 <connection
                   refId="Package\transit_network_load\staging_transit_link_stop.Connections[OleDbConnection]"
-                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
+                  connectionManagerRefId="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -2675,8 +2675,8 @@
               <connections>
                 <connection
                   refId="Package\transit_network_load\staging_transit_link_tap.Connections[OleDbConnection]"
-                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
+                  connectionManagerRefId="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -2800,8 +2800,8 @@
               <connections>
                 <connection
                   refId="Package\transit_network_load\staging_transit_onoff.Connections[OleDbConnection]"
-                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
+                  connectionManagerRefId="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -3031,8 +3031,8 @@
               <connections>
                 <connection
                   refId="Package\transit_network_load\staging_trrt.Connections[OleDbConnection]"
-                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
+                  connectionManagerRefId="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -3245,8 +3245,8 @@
               <connections>
                 <connection
                   refId="Package\transit_network_load\staging_trstop.Connections[OleDbConnection]"
-                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
+                  connectionManagerRefId="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>

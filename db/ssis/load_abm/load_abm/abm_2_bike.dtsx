@@ -14,7 +14,7 @@
   DTS:ObjectName="abm_2_bike"
   DTS:PackageType="5"
   DTS:VersionBuild="41"
-  DTS:VersionGUID="{B79ADE04-608B-4303-B09C-332B9452BC27}">
+  DTS:VersionGUID="{754F7DD2-A96C-4680-91FC-DEB499883CA3}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -852,8 +852,8 @@
               <connections>
                 <connection
                   refId="Package\bike_network_load\SANDAG_Bike_Net_staging.Connections[OleDbConnection]"
-                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
+                  connectionManagerRefId="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -1248,8 +1248,8 @@
               <connections>
                 <connection
                   refId="Package\bike_network_load\SANDAG_Bike_Node_staging.Connections[OleDbConnection]"
-                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[abm_db]"
+                  connectionManagerID="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
+                  connectionManagerRefId="{15638D61-ABAF-4C44-938D-BC48B8A41948}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
