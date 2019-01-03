@@ -2750,7 +2750,7 @@ with [rail_nodes] AS (
 		[bus_high_freq_nodes].[near_node] = [loop_nodes].[near_node]
 	GROUP BY
 		[bus_high_freq_nodes].[near_node]
-	HAVING COUNT([bus_high_freq_nodes].[near_node]) >= 2),
+	HAVING COUNT([bus_high_freq_nodes].[near_node]) > 2), -- loop routes require more than 2
 -- process rest of bus stop nodes
 -- further filter to high frequency nodes that appear on more than one
 -- ([route], [direction], [mode]) 3-tuple not including the loop routes
