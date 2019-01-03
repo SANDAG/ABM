@@ -595,7 +595,7 @@ CREATE PROCEDURE [rtp_2019].[sp_pm_2a]
 AS
 
 /*	Author: Gregor Schroeder
-	Date: Revised 4/21/2018
+	Date: Revised 1/3/2019
 	Description: Percent of trips by walk, bike, transit, and carpool (work trips and all trips) regionwide and within
 		Urban Area Transit Strategy (UATS) districts */
 
@@ -622,6 +622,11 @@ SELECT
 	,SUM([weight_person_trip]) AS [person_trips]
 FROM
 	[fact].[person_trip]
+INNER JOIN -- all resident models have tours associated
+	[dimension].[tour]
+ON
+	[person_trip].[scenario_id] = [tour].[scenario_id]
+	AND [person_trip].[tour_id] = [tour].[tour_id]
 INNER JOIN
 	[dimension].[model_trip]
 ON
@@ -651,11 +656,11 @@ LEFT OUTER JOIN -- keep as outer join since where clause is OR condition
 ON
 	[geography_trip_destination].[trip_destination_mgra_13] = [uats_mgras_dest_xref].[mgra]
 WHERE
-	[scenario_id] = @scenario_id
+	[person_trip].[scenario_id] = @scenario_id
 	AND [model_trip].[model_trip_description] IN ('Individual',
 												  'Internal-External', -- can use external TAZs but they will not be in UATS districts
 												  'Joint') -- resident models only
-	AND ((@work = 1 AND [purpose_trip_destination].[purpose_trip_destination_description] = 'Work')
+	AND ((@work = 1 AND [tour].[tour_category] = 'Mandatory' AND [purpose_trip_destination].[purpose_trip_destination_description] = 'Work')
 			OR @work = 0) -- if work trips then filter by destination work purpose
 	AND ((@uats = 1 AND ([uats_mgras_origin_xref].[mgra] IS NOT NULL AND [uats_mgras_dest_xref].[mgra] IS NOT NULL))
 			OR @uats = 0) -- if UATS districts option selected only count trips originating and ending in UATS mgras
