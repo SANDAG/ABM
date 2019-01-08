@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
   DTS:refId="Package"
   DTS:CreationDate="2/22/2018 1:12:18 PM"
@@ -14,8 +14,8 @@
   DTS:MaxErrorCount="0"
   DTS:ObjectName="master"
   DTS:PackageType="5"
-  DTS:VersionBuild="10"
-  DTS:VersionGUID="{AF853A12-1026-40E9-8059-C374AC3ABCBF}">
+  DTS:VersionBuild="11"
+  DTS:VersionGUID="{4D66D026-21FD-4115-A912-A810E024CE40}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:Variables>
@@ -88,7 +88,7 @@
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{15638D61-ABAF-4C44-938D-BC48B8A41948}"
-          SQLTask:SqlStatementSource="SELECT TOP (1)&#xA;&#x9;CASE&#x9;WHEN  [abm_version] IN ('version_14_0_0_SNAPSHOT',&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;'version_14_0_1')&#xA;&#x9;&#x9;&#x9;THEN 1&#xA;&#x9;&#x9;&#x9;WHEN [abm_version] IN ('version_14_1_0')&#xA;&#x9;&#x9;&#x9;THEN 2&#xA;&#x9;&#x9;&#x9;ELSE 0&#xA;&#x9;&#x9;&#x9;END AS [loading_version]&#xA;FROM&#xA;&#x9;[data_load].[load_request]&#xA;WHERE&#xA;&#x9;[loading] = 0&#xA;&#x9;AND [loading_failed] = 0&#xA;&#x9;AND [scenario_id] IS NULL&#xA;ORDER BY&#xA;&#x9;[date_requested]"
+          SQLTask:SqlStatementSource="IF EXISTS( SELECT TOP (1) [abm_version] FROM [data_load].[load_request] WHERE [loading] = 0 AND [loading_failed] = 0 AND [scenario_id] IS NULL)&#xA;&#x9;SELECT TOP (1)&#xA;&#x9;&#x9;CASE&#x9;WHEN  [abm_version] IN ('version_14_0_0_SNAPSHOT',&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;'version_14_0_1')&#xA;&#x9;&#x9;&#x9;&#x9;THEN 1&#xA;&#x9;&#x9;&#x9;&#x9;WHEN [abm_version] IN ('version_14_1_0')&#xA;&#x9;&#x9;&#x9;&#x9;THEN 2&#xA;&#x9;&#x9;&#x9;&#x9;ELSE 0&#xA;&#x9;&#x9;&#x9;&#x9;END AS [loading_version]&#xA;&#x9;FROM&#xA;&#x9;&#x9;[data_load].[load_request]&#xA;&#x9;WHERE&#xA;&#x9;&#x9;[loading] = 0&#xA;&#x9;&#x9;AND [loading_failed] = 0&#xA;&#x9;&#x9;AND [scenario_id] IS NULL&#xA;&#x9;ORDER BY&#xA;&#x9;&#x9;[date_requested];&#xA;ELSE&#xA;&#x9;SELECT 0 AS [loading_version];"
           SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ResultBinding
             SQLTask:ResultName="0"
@@ -136,6 +136,10 @@
           Id="Package\abm_14_0_1_master"
           TopLeft="148,250" />
         <NodeLayout
+          Size="178,42"
+          Id="Package\abm_14_1_0_master"
+          TopLeft="355,250" />
+        <NodeLayout
           Size="161,42"
           Id="Package\eligible_scenarios"
           TopLeft="270,141" />
@@ -175,10 +179,6 @@
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
-        <NodeLayout
-          Size="178,42"
-          Id="Package\abm_14_1_0_master"
-          TopLeft="355,250" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 1]"
           TopLeft="376,183">
