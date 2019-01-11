@@ -41,6 +41,8 @@ public class TransitDriveAccessDMU
     int                                 personType = 1;
     float                               ivtCoeff;
     float                               costCoeff;
+    int 								joint = 0;			//added for consistency with MTC
+    float                               valueOfTime = 0;    //added for consistency with MTC
 
 
     public TransitDriveAccessDMU()
@@ -48,6 +50,43 @@ public class TransitDriveAccessDMU
         setupMethodIndexMap();
     }
 
+    /**
+     * Set the joint indicator.
+     * 
+     * @param joint
+     */
+    public void setTourCategoryIsJoint(int joint){
+    	this.joint = joint;
+    }
+    
+    /**
+     * Get the joint indicator.
+     * 
+     * @return joint
+     */
+    public int getTourCategoryIsJoint(){
+    	return joint;
+    }
+   
+    /**
+     * Set the value of time.
+     * 
+     * @param the value of time
+     */
+    public void setValueOfTime(float valueOfTime){
+    	this.valueOfTime = valueOfTime;
+    }
+    
+    /**
+     * Get the value of time.
+     * 
+     * @return value of time.
+     */
+    public float getValueOfTime(){
+    	return valueOfTime;
+    }
+
+    
     /**
      * Get the walk time from the alighting TAP to the destination MGRA.
      * 
@@ -311,6 +350,8 @@ public class TransitDriveAccessDMU
         localLogger.info(String.format("ivtCoeff                  %9.4f", ivtCoeff));
         localLogger.info(String.format("costCoeff                 %9.4f", costCoeff));
         localLogger.info(String.format("origDestDistance          %9.4f, origDestDistance"));
+        localLogger.info(String.format("joint             :       %9s", joint));
+        localLogger.info(String.format("value of time     :       %9.4f", valueOfTime));
 
 
         AccessMode[] accessModes = AccessMode.values();
@@ -340,6 +381,8 @@ public class TransitDriveAccessDMU
         methodIndexMap.put("getIvtCoeff", 15);
         methodIndexMap.put("getCostCoeff", 16);
         methodIndexMap.put("getOrigDestDistance",17);
+        methodIndexMap.put("getTourCategoryIsJoint", 18);
+        methodIndexMap.put("getValueOfTime", 19);
 
     }
 
@@ -381,6 +424,10 @@ public class TransitDriveAccessDMU
             	return getCostCoeff();
             case 17:
             	return getOrigDestDistance();
+            case 18:
+            	return getTourCategoryIsJoint();
+            case 19:
+            	return getValueOfTime();
 
 
             default:
