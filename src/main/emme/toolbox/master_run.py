@@ -293,7 +293,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             self.check_free_space(minSpaceOnC)
             # if initialization copy ALL files from remote
             # else check file meta data and copy those that have changed
-            initialize = not skipInitialization
+            initialize = (skipInitialization == False and startFromIteration == 1)
             local_directory = file_manager(
                 "DOWNLOAD", main_directory, username, scenario_id, initialize=initialize)
             self._path = local_directory
