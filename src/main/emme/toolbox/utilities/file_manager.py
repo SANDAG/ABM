@@ -196,11 +196,12 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
         # add to mask the emme_project folder
         file_masks.append(_join(local_dir, "emme_project"))
 
-        # copy all files (except Emme project, and other file_masks)
-        self._copy_dir(src=local_dir, dst=remote_dir, file_masks=file_masks)
         title_fcn = lambda t: t[8:] if t.startswith("(local)") else t
         emmebank_paths = self._copy_emme_data(
             src=local_dir, dst=remote_dir, title_fcn=title_fcn, scenario_id=scenario_id)
+        # copy all files (except Emme project, and other file_masks)
+        self._copy_dir(src=local_dir, dst=remote_dir, file_masks=file_masks)
+        self.log_report()
 
         # data_explorer = _m.Modeller().desktop.data_explorer()
         # for path in emmebank_paths:
@@ -209,8 +210,6 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
                     # db.close()
                     # data_explorer.remove_database(db)
         # data_explorer.databases()[0].open()
-
-        self.log_report()
 
         if delete_local_files:
             # small pause for file handles to close
@@ -239,9 +238,12 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
             dst_db_dir = _join(dst, "emme_project", db_dir)
             dst_db_path = _join(dst_db_dir, "emmebank")
             emmebank_paths.append(dst_db_path)
+            self._report.append("Copying Emme data <br>from %s<br> to %s" % (src_db_path, dst_db_path))
+            self._report.append("Start: %s" % _time.strftime("%c"))
             if initialize:
                 # remove any existing database (overwrite)
                 if os.path.exists(dst_db_path):
+                    self._report.append("Warning: overwritting existing Emme database %s" % dst_db_path)
                     dst_db = _eb.Emmebank(dst_db_path)
                     dst_db.dispose()
                 if os.path.exists(dst_db_dir):
@@ -305,6 +307,7 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
                     dst_database=dst_db,
                     dst_zone_system_scenario=dst_db.scenario(scenario_id))
             src_db.dispose()
+            self._report.append("End: %s" % _time.strftime("%c"))
         return emmebank_paths
 
     def _copy_dir(self, src, dst, file_masks, check_metadata=False):

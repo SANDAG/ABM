@@ -42,6 +42,12 @@ public final class Util
 
         return returnValue;
     }
+    
+    public static String[] getStringArrayFromPropertyMap(HashMap<String, String> rbMap, String key) {
+        String[] values = getStringValueFromPropertyMap(rbMap,key).split(",");
+        return values;
+    }
+
 
     public static int getIntegerValueFromPropertyMap(HashMap<String, String> rbMap, String key)
     {
@@ -57,6 +63,20 @@ public final class Util
         }
     }
 
+    public static float getFloatValueFromPropertyMap(HashMap<String, String> rbMap, String key)
+    {
+        String value = rbMap.get(key);
+        if (value != null)
+        {
+            return Float.parseFloat(value);
+        } else
+        {
+            logger.info("property file key: " + key
+                    + " missing.  No float value can be determined.");
+            throw new RuntimeException();
+        }
+    }
+    
     public static int[] getIntegerArrayFromPropertyMap(HashMap<String, String> rbMap, String key)
     {
 
