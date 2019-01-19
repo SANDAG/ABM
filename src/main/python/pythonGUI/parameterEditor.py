@@ -50,7 +50,7 @@ class ParametersGUI(Tkinter.Frame):
             self.setDefaultProperties()
 
             #set AT states-activate and deactivate by selections
-            self.setATButtons()
+            #self.setATButtons()
 
             #scenario folder browser
             Tkinter.Label(body, text=u"Scenario Folder", font=("Helvetica", 8, 'bold'),width=15).grid(row=0)
