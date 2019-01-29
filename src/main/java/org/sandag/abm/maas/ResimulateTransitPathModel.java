@@ -67,6 +67,8 @@ public class ResimulateTransitPathModel{
     private PrintWriter outputIndivTripWriter;
     private PrintWriter outputJointTripWriter;
     
+    int idNumber;
+    
     //for tracing
     private boolean seek;
     private ArrayList<Long> traceHHIds;
@@ -354,6 +356,8 @@ public class ResimulateTransitPathModel{
 		
          for(int row = 1; row <= inputTripTableData.getRowCount();++row){
         	
+         	++idNumber;
+
            	long hhid = (long) inputTripTableData.getValueAt(row,"hh_id");	
            	long personId=-1;
            	int personNumber=-1;
@@ -388,7 +392,7 @@ public class ResimulateTransitPathModel{
         	int set = (int)inputTripTableData.getValueAt(row,"set"); 
         	
             if(modelStructure.getTripModeIsTransit(mode)){
-        		PersonTrip personTrip = new PersonTrip(hhid,personId,personNumber,tourid,stopid,inbound,(jointTripData?1:0),oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set);
+        		PersonTrip personTrip = new PersonTrip(idNumber, hhid,personId,personNumber,tourid,stopid,inbound,(jointTripData?1:0),oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set);
         		personTrip.setAvAvailable(avAvailable);
         		personTrip.setTourPurpose(tour_purpose);
         		personTrip.setOriginPurpose(orig_purpose);

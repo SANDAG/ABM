@@ -2,6 +2,7 @@ package org.sandag.abm.maas;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -14,6 +15,8 @@ import org.sandag.abm.modechoice.TazDataManager;
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.newmodel.UtilityExpressionCalculator;
+
+import drasys.or.util.Array;
 
 public class TransportCostManager {
 
@@ -102,6 +105,8 @@ public class TransportCostManager {
     public void initialize()
     {
 
+    	logger.info("Initializing TransportCostManager");
+    	
     	//create time and distance matrices
     	tazTimeSkims  = new float[NUM_PERIODS][maxTaz+1][maxTaz+1];
     	tazDistanceSkims  = new float[NUM_PERIODS][maxTaz+1][maxTaz+1];
@@ -124,6 +129,9 @@ public class TransportCostManager {
         }
 
         calculateTazsWithinDistanceThreshold();
+        
+    	logger.info("Completed Initializing TransportCostManager");
+
     }
     
     /**
@@ -133,14 +141,22 @@ public class TransportCostManager {
      */
     private void calculateTazsWithinDistanceThreshold(){
     	
+    	logger.info("...Calculating TAZs within distance thresholds");
+    	
     	ArrayList<StopTaz> stopTazList = new ArrayList<StopTaz>();
     
         tazsWithinOriginAndDestination = new int[NUM_PERIODS][maxTaz+1][maxTaz+1][];
         addTimeWithinOriginAndDestination = new float[NUM_PERIODS][maxTaz+1][maxTaz+1][];
 
     	for(int period = 0; period<NUM_PERIODS;++period){
+    		
+        	logger.info("...Period "+period);
+
            	for (int oTaz = 1; oTaz <= maxTaz; oTaz++){
-	            for (int dTaz = 1; dTaz <= maxTaz; dTaz++){	
+
+            	logger.info("......Origin TAZ "+oTaz);
+
+           		for (int dTaz = 1; dTaz <= maxTaz; dTaz++){	
 	            	
 	            	stopTazList.clear();
 	            	
@@ -271,6 +287,27 @@ public class TransportCostManager {
 	   return tazsWithinOriginAndDestination[period][origTaz][destTaz];
 	   
    }
+   
+   /**
+    * Is the zone within the set of zones that is within maximum diversion time from the origin to the destination?
+ 	* 
+    * @param period
+    * @param origTaz  The origin TAZ
+    * @param destTaz  The destination TAZ
+    * @param taz      The stop TAZ
+    * @return A boolean indicating whether the zone is within the maximum deviation time from the origin to the destination.
+    */
+  public boolean stopZoneIsWithinMaxDiversionTime(int period, int origTaz, int destTaz, int taz){
+	   
+	   int[] tazArray = getZonesWithinMaxDiversionTime(period, origTaz, destTaz);
+	   for(int i = 0; i < tazArray.length; ++i)
+		   if(tazArray[i]==taz)
+			   return true;
+	   return false;
+	   
+  }
+
+   
  
    /**
     * Get the diversion times for the zones that are within the diversion time from the origin to the 

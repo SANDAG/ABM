@@ -23,14 +23,14 @@ public class PersonTripManager {
     private HashMap<String, String> propertyMap = null;
     private MersenneTwister       random;
     private ModelStructure modelStructure;
-    private HashMap<Long,PersonTrip> personTripMap;
+    private HashMap<Integer,PersonTrip> personTripMap;
 	private ArrayList<PersonTrip>[][] personTripArrayByDepartureBinAndMaz; //an array of PersonTrips by departure time increment and origin MAZ.
 	private ArrayList<PersonTrip>[] personTripArrayByDepartureBin; //an array of PersonTrips by departure time increment
     private double[] endTimeMinutes; // the period end time in number of minutes past 3 AM , starting in period 1 (index 1)
     private int iteration;
     private MgraDataManager mgraManager;
     private TazDataManager tazManager;
-    private long idNumber;
+    private int idNumber;
 
     private static final String ModelSeedProperty = "Model.Random.Seed";
     private static final String DirectoryProperty = "Project.Directory";
@@ -72,6 +72,7 @@ public class PersonTripManager {
         random = new MersenneTwister(seed);
         
         readInputFiles();
+		logger.info("Completed Initializing PersonTripManager");
 
 	}
 	
@@ -105,10 +106,10 @@ public class PersonTripManager {
 	 * @param inputTripTableData The TableDataSet containing the CT-RAMP output trip file.
 	 * @param jointTripData A boolean indicating whether the data is for individual or joint trips.
 	 */
-	public HashMap<Long, PersonTrip> readTripList(HashMap<Long, PersonTrip> personTripMap, TableDataSet inputTripTableData, boolean jointTripData){
+	public HashMap<Integer, PersonTrip> readTripList(HashMap<Integer, PersonTrip> personTripMap, TableDataSet inputTripTableData, boolean jointTripData){
 		
 		if(personTripMap==null)
-			personTripMap = new HashMap<Long, PersonTrip>();
+			personTripMap = new HashMap<Integer, PersonTrip>();
 		
          for(int row = 1; row <= inputTripTableData.getRowCount();++row){
         	

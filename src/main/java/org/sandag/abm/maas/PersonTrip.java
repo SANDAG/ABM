@@ -6,7 +6,7 @@ package org.sandag.abm.maas;
  *
  */
 class PersonTrip implements Comparable{
-    long uniqueId;
+    int uniqueId;
 	long hhid;		
 	long personId;
 	int personNumber;
@@ -35,7 +35,7 @@ class PersonTrip implements Comparable{
 	int tourMode;
 	
 	
-	public PersonTrip(long uniqueId,long hhid,long personId,int personNumber, int tourid,int stopid,int inbound,int joint,int originMaz, int destinationMaz, int departPeriod, float departTime, float sampleRate, int mode, int boardingTap, int alightingTap, int set){
+	public PersonTrip(int uniqueId,long hhid,long personId,int personNumber, int tourid,int stopid,int inbound,int joint,int originMaz, int destinationMaz, int departPeriod, float departTime, float sampleRate, int mode, int boardingTap, int alightingTap, int set){
        	this.uniqueId = uniqueId;
 		this.hhid = hhid;		
        	this.personId = personId;
@@ -58,11 +58,11 @@ class PersonTrip implements Comparable{
 		
 	}
 
-	public long getUniqueId() {
+	public int getUniqueId() {
 		return uniqueId;
 	}
 
-	public void setUniqueId(long uniqueId) {
+	public void setUniqueId(int uniqueId) {
 		this.uniqueId = uniqueId;
 	}
 	public long getHhid() {
