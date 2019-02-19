@@ -18,21 +18,12 @@ class PersonTrip implements Comparable{
 
 	int originMaz;
 	int destinationMaz;
-	int departPeriod;
+	short departPeriod;
 	float departTime; //minutes after 3 AM
-	int occupancy;
 	float sampleRate;
 	int mode;
-	int boardingTap;
-	int alightingTap;
-	int set;
-	String tourPurpose;
-	String originPurpose;
-	String destinationPurpose;
-	float distance;
 	int parkingMaz;
-	int avAvailable;
-	int tourMode;
+	byte avAvailable;
 	
 	
 	public PersonTrip(int uniqueId,long hhid,long personId,int personNumber, int tourid,int stopid,int inbound,int joint,int originMaz, int destinationMaz, int departPeriod, float departTime, float sampleRate, int mode, int boardingTap, int alightingTap, int set){
@@ -47,13 +38,10 @@ class PersonTrip implements Comparable{
 
 		this.originMaz = originMaz;
 		this.destinationMaz = destinationMaz;
-		this.departPeriod = departPeriod;
+		this.departPeriod = (short) departPeriod;
 		this.departTime = departTime;
 		this.sampleRate = sampleRate;
 		this.mode = mode;
-		this.boardingTap = boardingTap;
-		this.alightingTap = alightingTap;
-		this.set = set;
 		
 		
 	}
@@ -137,11 +125,11 @@ class PersonTrip implements Comparable{
 		this.destinationMaz = destinationMaz;
 	}
 
-	public int getDepartPeriod() {
+	public short getDepartPeriod() {
 		return departPeriod;
 	}
 
-	public void setDepartPeriod(int departPeriod) {
+	public void setDepartPeriod(short departPeriod) {
 		this.departPeriod = departPeriod;
 	}
 
@@ -151,14 +139,6 @@ class PersonTrip implements Comparable{
 
 	public void setDepartTime(float departTime) {
 		this.departTime = departTime;
-	}
-
-	public int getOccupancy() {
-		return occupancy;
-	}
-
-	public void setOccupancy(int occupancy) {
-		this.occupancy = occupancy;
 	}
 
 	public float getSampleRate() {
@@ -177,62 +157,7 @@ class PersonTrip implements Comparable{
 		this.mode = mode;
 	}
 
-	public int getBoardingTap() {
-		return boardingTap;
-	}
-
-	public void setBoardingTap(int boardingTap) {
-		this.boardingTap = boardingTap;
-	}
-
-	public int getAlightingTap() {
-		return alightingTap;
-	}
-
-	public void setAlightingTap(int alightingTap) {
-		this.alightingTap = alightingTap;
-	}
-
-	public int getSet() {
-		return set;
-	}
-
-	public void setSet(int set) {
-		this.set = set;
-	}
-
-	public String getTourPurpose() {
-		return tourPurpose;
-	}
-
-	public void setTourPurpose(String tourPurpose) {
-		this.tourPurpose = tourPurpose;
-	}
-
-	public String getOriginPurpose() {
-		return originPurpose;
-	}
-
-	public void setOriginPurpose(String originPurpose) {
-		this.originPurpose = originPurpose;
-	}
-
-	public String getDestinationPurpose() {
-		return destinationPurpose;
-	}
-
-	public void setDestinationPurpose(String destinationPurpose) {
-		this.destinationPurpose = destinationPurpose;
-	}
-
-	public float getDistance() {
-		return distance;
-	}
-
-	public void setDistance(float distance) {
-		this.distance = distance;
-	}
-
+	
 	public int getParkingMaz() {
 		return parkingMaz;
 	}
@@ -245,7 +170,7 @@ class PersonTrip implements Comparable{
 		return avAvailable;
 	}
 
-	public void setAvAvailable(int avAvailable) {
+	public void setAvAvailable(byte avAvailable) {
 		this.avAvailable = avAvailable;
 	}
 
@@ -255,14 +180,6 @@ class PersonTrip implements Comparable{
 
 	public void setNumberParticipants(int numberParticipants) {
 		this.numberParticipants = numberParticipants;
-	}
-
-	public int getTourMode() {
-		return tourMode;
-	}
-
-	public void setTourMode(int tourMode) {
-		this.tourMode = tourMode;
 	}
 
 	/**
@@ -280,5 +197,17 @@ class PersonTrip implements Comparable{
 	    if (this.departTime > that.departTime) return AFTER;
 
 		return EQUAL;
+	}
+	
+	/**
+	 * Override equals.
+	 */
+	public boolean equals(Object aThat){
+	    final PersonTrip that = (PersonTrip)aThat;
+
+		if(this.uniqueId== that.getUniqueId())
+			return true;
+		
+		return false;
 	}
 }

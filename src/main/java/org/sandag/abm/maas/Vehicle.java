@@ -7,16 +7,38 @@ public class Vehicle {
 	
 	private ArrayList<PersonTrip> personTripList;
 	
-	private ArrayList<Integer> pickupMazs;
-	private ArrayList<Integer> dropoffMazs;
+	private ArrayList<VehicleTrip> vehicleTrips;
 	private byte maxPassengers;
+	private short generationTaz;
+	private short generationPeriod;
+	private int id;
 	
-	public Vehicle(byte maxPassengers){
-		
+	public Vehicle(int id, byte maxPassengers){
+		this.id= id;
 		this.maxPassengers = maxPassengers;
 		personTripList = new ArrayList<PersonTrip>();
-		pickupMazs = new ArrayList<Integer>();
-		dropoffMazs = new ArrayList<Integer>();
+		vehicleTrips = new ArrayList<VehicleTrip>();
+	}
+	
+	public void addVehicleTrip(VehicleTrip vehicleTrip){
+		vehicleTrips.add(vehicleTrip);
+	}
+	
+	public void addVehicleTrips(ArrayList<VehicleTrip> vehicleTrips){
+		this.vehicleTrips.addAll(vehicleTrips);
+	}
+	
+	public void clearPersonTrips(){
+		this.personTripList.clear();
+	}
+
+	public ArrayList<VehicleTrip> getVehicleTrips(){
+		
+		return vehicleTrips;
+	}
+	
+	public int getId(){
+		return this.id;
 	}
 	
 	/**
@@ -28,9 +50,11 @@ public class Vehicle {
 		
 		personTripList.add(personTrip);
 		
-		pickupMazs.add(personTrip.getOriginMaz());
-		dropoffMazs.add(personTrip.getDestinationMaz());
+	}
+	
+	public void removePersonTrip(PersonTrip personTrip){
 		
+		personTripList.remove(personTrip);
 	}
 	
 	/**
@@ -51,12 +75,27 @@ public class Vehicle {
 		this.maxPassengers = maxPassengers;
 	}
 
-	private class Stop{
-		
-		int maz;
-		int taz;
-		int arrivalTime;
-	
+	public short getGenerationTaz() {
+		return generationTaz;
 	}
-	
+
+	public void setGenerationTaz(short generationTaz) {
+		this.generationTaz = generationTaz;
+	}
+
+	public short getGenerationPeriod() {
+		return generationPeriod;
+	}
+
+	public void setGenerationPeriod(short generationPeriod) {
+		this.generationPeriod = generationPeriod;
+	}
+
+	public ArrayList<PersonTrip> getPersonTripList() {
+		return personTripList;
+	}
+
+
+
+		
 }

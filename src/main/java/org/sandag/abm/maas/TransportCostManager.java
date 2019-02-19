@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.CtrampApplication;
@@ -30,16 +33,18 @@ public class TransportCostManager {
     public static final int              NUM_PERIODS                   = ModelStructure.SKIM_PERIOD_INDICES.length;
     private static final String[]         PERIODS                = ModelStructure.SKIM_PERIOD_STRINGS;
 
+    private static int TAZ_CALCULATOR_THREADS = 20; //default
+    
     //by period, origin, destination -  ragged array of zone numbers of zones within max time diversion
     //sorted by time from origin (assuming pickups would be en-route)
-    private int[][][][]                  tazsWithinOriginAndDestination; 
-    private float[][][][]                addTimeWithinOriginAndDestination; 
+    private short[][][][]                  tazsWithinOriginAndDestination; 
+  //  private float[][][][]                addTimeWithinOriginAndDestination; 
     
     //by period, origin, destination
     private float[][][]                  tazTimeSkims;		//travel time
     private float[][][]                  tazDistanceSkims;	//travel distance
     
-    private int[][][]                    tazsByTimeFromOrigin; //array of TAZs sorted by time from origin, by period and origin TAZ
+    private short[][][]                    tazsByTimeFromOrigin; //array of TAZs sorted by time from origin, by period and origin TAZ
 
     private float 						  maxTimeDiversion;
     private float 						  maxDistanceToPickup;
@@ -85,10 +90,10 @@ public class TransportCostManager {
         	int distancePage = Util.getIntegerValueFromPropertyMap(rbMap, distName);
         	int timePage = Util.getIntegerValueFromPropertyMap(rbMap, timeName);
        
-            autoDistOD_UECs[EA] = new UtilityExpressionCalculator(uecFile, distancePage, dataPage,
+            autoDistOD_UECs[i] = new UtilityExpressionCalculator(uecFile, distancePage, dataPage,
                     rbMap, dmu);
        
-            autoTimeOD_UECs[EA] = new UtilityExpressionCalculator(uecFile, timePage, dataPage,
+            autoTimeOD_UECs[i] = new UtilityExpressionCalculator(uecFile, timePage, dataPage,
                     rbMap, dmu);
         }
        
@@ -134,6 +139,105 @@ public class TransportCostManager {
 
     }
     
+    
+    /**
+     * A class that calculates TAZs within maximum distance, and creates the tazsWithinOriginAndDestination array.
+     * Run method does the work for a specific time period and range of origin TAZs. Implements Runnable so that
+     * threading can be used.
+     * 
+     * @author joel.freedman
+     *
+     */
+    private class TazDistanceCalculatorThread implements Runnable{ 
+    
+    	private String threadName;
+    	   
+    	int period;
+    	int startOriginTaz;
+    	int endOriginTaz;
+    	
+    	public TazDistanceCalculatorThread( String threadName, int period, int startOriginTaz, int endOriginTaz ) {
+    		this.threadName = threadName;
+    		this.period = period;
+    		this.startOriginTaz = startOriginTaz;
+    		this.endOriginTaz = endOriginTaz;
+    		logger.info("Creating " +  threadName );
+        }
+   
+        /**
+         * Run the thread. Calls @calculateTazsWithinDistanceThreshold
+         */
+    	public void run() {
+    	   logger.info("Running " +  threadName + " for period " + period + " from origin TAZ "+startOriginTaz+ " to origin TAZ "+endOriginTaz );
+    	   calculateTazsWithinDistanceThreshold( period,  startOriginTaz,  endOriginTaz);
+    	   logger.info("Thread " +  threadName + " exiting.");
+    	//   notify();
+    	}
+    	
+    	/**
+    	 * The main work method in the thread, which calculates TAZs within the max distance threshold
+    	 * for the given time period and from start to end TAZ number.
+    	 * 
+    	 * @param period
+    	 * @param startOriginTaz
+    	 * @param endOriginTaz
+    	 */
+    	private void calculateTazsWithinDistanceThreshold(int period, int startOriginTaz, int endOriginTaz){
+   			
+    		ArrayList<StopTaz> stopTazList = new ArrayList<StopTaz>();
+    	
+    		for (int oTaz = startOriginTaz; oTaz <= endOriginTaz; oTaz++){
+
+    			if((oTaz==startOriginTaz)||(oTaz % 100 == 0))
+    				logger.info("Thread "+threadName + " Period "+period+" Origin TAZ "+oTaz);
+
+    			for (int dTaz = 1; dTaz <= maxTaz; dTaz++){	
+	            	
+	          	stopTazList.clear();
+	            	
+	           	//Stop TAZs
+	           	for(int kTaz = 1; kTaz <= maxTaz; ++kTaz){
+	            	
+	           		//Calculate additional time to stop
+	           		float ikTime = tazTimeSkims[period][oTaz][kTaz];
+	           		float kjTime = tazTimeSkims[period][kTaz][dTaz];
+	           		float totalIKJTime = ikTime + kjTime;
+	           		float divertTime = totalIKJTime - tazTimeSkims[period][oTaz][dTaz];
+	            	
+	           		//if time is less than max diversion time (or the stop zone is the origin or destination zone), add zone and time to arraylist
+	           		if( (divertTime < maxTimeDiversion) || (kTaz==oTaz) || (kTaz==dTaz)){
+	           			StopTaz stopTaz = new StopTaz();
+	           			stopTaz.tazNumber = kTaz;
+	           			stopTaz.diversionTime = divertTime;
+	           			stopTaz.originStopTime = ikTime;
+	           			stopTazList.add(stopTaz);
+	           		}
+	           		
+	           	} //end for stops
+	            	
+	           	//initialize arrays for saving tazs, time and set the values in the ragged arrays
+	           	if(!stopTazList.isEmpty()){
+	           		Collections.sort(stopTazList);
+	           		int numberOfStops = stopTazList.size();
+	           		tazsWithinOriginAndDestination[period][oTaz][dTaz] = new short[numberOfStops];
+	           		//addTimeWithinOriginAndDestination[period][oTaz][dTaz] = new float[numberOfStops];
+	           	
+	           		for(int k = 0; k < numberOfStops; ++k){
+	           			StopTaz stopTaz = stopTazList.get(k);
+	           			tazsWithinOriginAndDestination[period][oTaz][dTaz][k] = (short) stopTaz.tazNumber;
+	           			//addTimeWithinOriginAndDestination[period][oTaz][dTaz][k] = stopTaz.diversionTime;
+	           		}
+	           	}
+       		}
+
+       	}
+    
+
+    	
+    	
+    	}
+    }
+    
     /**
      * This method finds stop zones for each origin-destination zone pair and saves the zone number
      * and diversion time, sorted by distance from origin.
@@ -141,74 +245,52 @@ public class TransportCostManager {
      */
     private void calculateTazsWithinDistanceThreshold(){
     	
-    	logger.info("...Calculating TAZs within distance thresholds");
     	
-    	ArrayList<StopTaz> stopTazList = new ArrayList<StopTaz>();
-    
-        tazsWithinOriginAndDestination = new int[NUM_PERIODS][maxTaz+1][maxTaz+1][];
-        addTimeWithinOriginAndDestination = new float[NUM_PERIODS][maxTaz+1][maxTaz+1][];
+        tazsWithinOriginAndDestination = new short[NUM_PERIODS][maxTaz+1][maxTaz+1][];
+        //addTimeWithinOriginAndDestination = new float[NUM_PERIODS][maxTaz+1][maxTaz+1][];
+        int processors = Runtime.getRuntime().availableProcessors();
+        //use 80% of the machine's processing power
+        TAZ_CALCULATOR_THREADS = (int) Math.floor(processors * 0.8);
+        int chunkSize = (int) Math.floor(maxTaz / TAZ_CALCULATOR_THREADS);
+       
+    	logger.info("...Calculating TAZs within distance thresholds with "+TAZ_CALCULATOR_THREADS+ " threads ("+processors+" processors)");
 
-    	for(int period = 0; period<NUM_PERIODS;++period){
-    		
-        	logger.info("...Period "+period);
+    	for( int period = 0; period < NUM_PERIODS;++period ){
 
-           	for (int oTaz = 1; oTaz <= maxTaz; oTaz++){
+        	int endZone = 0;
 
-            	logger.info("......Origin TAZ "+oTaz);
+        	ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(TAZ_CALCULATOR_THREADS);
 
-           		for (int dTaz = 1; dTaz <= maxTaz; dTaz++){	
-	            	
-	            	stopTazList.clear();
-	            	
-	            	//Stop TAZs
-	            	for(int kTaz = 1; kTaz <= maxTaz; ++kTaz){
-	            	
-	            		//Calculate additional time to stop
-	            		float ikTime = tazTimeSkims[period][oTaz][kTaz];
-	            		float kjTime = tazTimeSkims[period][kTaz][dTaz];
-	            		float totalIKJTime = ikTime + kjTime;
-	            		float divertTime = totalIKJTime - tazTimeSkims[period][oTaz][dTaz];
-	            	
-	            		//if time is less than max diversion time, add zone and time to arraylist
-	            		if( divertTime < maxTimeDiversion){
-	            			StopTaz stopTaz = new StopTaz();
-	            			stopTaz.tazNumber = kTaz;
-	            			stopTaz.diversionTime = divertTime;
-	            			stopTaz.originStopTime = ikTime;
-	            			stopTazList.add(stopTaz);
-	            		}
-	            		
-	            	} //end for stops
-	            	
-	            	//initialize arrays for saving tazs, time and set the values in the ragged arrays
-	            	if(!stopTazList.isEmpty()){
-	            		Collections.sort(stopTazList);
-	            		int numberOfStops = stopTazList.size();
-	            		tazsWithinOriginAndDestination[period][oTaz][dTaz] = new int[numberOfStops];
-	            		addTimeWithinOriginAndDestination[period][oTaz][dTaz] = new float[numberOfStops];
-	            	
-	            		for(int k = 0; k < numberOfStops; ++k){
-	            			StopTaz stopTaz = stopTazList.get(k);
-	            			tazsWithinOriginAndDestination[period][oTaz][dTaz][k] = stopTaz.tazNumber;
-	            			addTimeWithinOriginAndDestination[period][oTaz][dTaz][k] = stopTaz.diversionTime;
-	            		}
-	            	}
-	            }
-           	}
-
-    	}
-    
-    }
+            for(int i = 0; i < TAZ_CALCULATOR_THREADS; ++ i){
+        		
+        		int startZone = endZone + 1;
+        		
+        		if(i==(TAZ_CALCULATOR_THREADS-1))
+        			endZone = maxTaz;
+        		else
+        			endZone = startZone+chunkSize;
+       		
+        		executor.execute(new TazDistanceCalculatorThread( "Thread-"+i,period,startZone,endZone));
+        	 	
+        	}
+            executor.shutdown();
+            try{ 
+            	executor.awaitTermination(60, TimeUnit.MINUTES);
+            }catch(InterruptedException e){
+            	throw new RuntimeException(e);
+            }
+        }
+     }
     
     /**
-     * Calculate zones sorted by time from origin.
+     * Calculate zones sorted by time from origin. Always include intrazonal as within the maximum distance range.
      * 
      */
     public void calculateTazsByTimeFromOrigin(){
     	
        	ArrayList<StopTaz> stopTazList = new ArrayList<StopTaz>();
         
-       	tazsByTimeFromOrigin = new int[NUM_PERIODS][maxTaz+1][];
+       	tazsByTimeFromOrigin = new short[NUM_PERIODS][maxTaz+1][];
  
     	for(int period = 0; period<NUM_PERIODS;++period){
            	for (int oTaz = 1; oTaz <= maxTaz; oTaz++){
@@ -217,7 +299,7 @@ public class TransportCostManager {
 
            		for (int dTaz = 1; dTaz <= maxTaz; dTaz++){	
 	            	
-           			if(tazDistanceSkims[period][oTaz][dTaz]<maxDistanceToPickup){
+           			if((tazDistanceSkims[period][oTaz][dTaz]<maxDistanceToPickup)||(oTaz==dTaz)){
            				StopTaz stopTaz = new StopTaz();
            				stopTaz.tazNumber = dTaz;
            				stopTaz.diversionTime = tazTimeSkims[period][oTaz][dTaz];
@@ -228,10 +310,10 @@ public class TransportCostManager {
            		if(!stopTazList.isEmpty()){
            			int numberOfStops = stopTazList.size();
            			Collections.sort(stopTazList);
-           	       	tazsByTimeFromOrigin[period][oTaz] = new int[numberOfStops];
+           	       	tazsByTimeFromOrigin[period][oTaz] = new short[numberOfStops];
            	       	for(int i = 0; i < numberOfStops; ++i){
            	       		StopTaz stopTaz = stopTazList.get(i);
-           	       		tazsByTimeFromOrigin[period][oTaz][i] = stopTaz.tazNumber;
+           	       		tazsByTimeFromOrigin[period][oTaz][i] = (short) stopTaz.tazNumber;
            	       	}
            		}
            	}
@@ -277,29 +359,29 @@ public class TransportCostManager {
      * Get the array of zones that are within the diversion time from the origin to the 
      * destination, sorted by time from origin.
      * 
-     * @param period
+     * @param skimPeriod
      * @param origTaz
      * @param destTaz
      * @return The array of zones, or null if there are no zones within the max diversion time.
      */
-   public int[] getZonesWithinMaxDiversionTime(int period, int origTaz, int destTaz){
+   public short[] getZonesWithinMaxDiversionTime(int skimPeriod, int origTaz, int destTaz){
 	   
-	   return tazsWithinOriginAndDestination[period][origTaz][destTaz];
+	   return tazsWithinOriginAndDestination[skimPeriod][origTaz][destTaz];
 	   
    }
    
    /**
     * Is the zone within the set of zones that is within maximum diversion time from the origin to the destination?
  	* 
-    * @param period
+    * @param skimPeriod
     * @param origTaz  The origin TAZ
     * @param destTaz  The destination TAZ
     * @param taz      The stop TAZ
     * @return A boolean indicating whether the zone is within the maximum deviation time from the origin to the destination.
     */
-  public boolean stopZoneIsWithinMaxDiversionTime(int period, int origTaz, int destTaz, int taz){
+  public boolean stopZoneIsWithinMaxDiversionTime(int skimPeriod, int origTaz, int destTaz, int taz){
 	   
-	   int[] tazArray = getZonesWithinMaxDiversionTime(period, origTaz, destTaz);
+	   short[] tazArray = getZonesWithinMaxDiversionTime(skimPeriod, origTaz, destTaz);
 	   for(int i = 0; i < tazArray.length; ++i)
 		   if(tazArray[i]==taz)
 			   return true;
@@ -320,8 +402,9 @@ public class TransportCostManager {
     */
   public float[] getDiversionTimes(int period, int origTaz, int destTaz){
 	   
-	   return addTimeWithinOriginAndDestination[period][origTaz][destTaz];
-	   
+	   //return addTimeWithinOriginAndDestination[period][origTaz][destTaz];
+	   logger.fatal("Error trying to call getDiversionTimes when additional time array not initialized");
+	   throw new RuntimeException();
   }
 
   /**
@@ -332,8 +415,19 @@ public class TransportCostManager {
    * @param origTaz
    * @return A sorted array of zone numbers, or null if there are no zones within the maximum distance.
    */
-  public int[] getZoneNumbersSortedByTime(int period, int origTaz){
+  public short[] getZoneNumbersSortedByTime(int period, int origTaz){
 	  
 	  return tazsByTimeFromOrigin[period][origTaz];
   }
+  
+  public float getTime(int period, int origTaz, int destTaz){
+	  
+	  return tazTimeSkims[period][origTaz][destTaz]; 
+  }
+  
+  public float getDistance(int period, int origTaz, int destTaz){
+	  
+	  return tazDistanceSkims[period][origTaz][destTaz]; 
+  }
+
 }

@@ -19,24 +19,27 @@ import com.pb.common.math.MersenneTwister;
 
 public class PersonTripManager {
 	
-	private static final Logger logger = Logger.getLogger(PersonTripManager.class);
-    private HashMap<String, String> propertyMap = null;
-    private MersenneTwister       random;
-    private ModelStructure modelStructure;
-    private HashMap<Integer,PersonTrip> personTripMap;
-	private ArrayList<PersonTrip>[][] personTripArrayByDepartureBinAndMaz; //an array of PersonTrips by departure time increment and origin MAZ.
-	private ArrayList<PersonTrip>[] personTripArrayByDepartureBin; //an array of PersonTrips by departure time increment
-    private double[] endTimeMinutes; // the period end time in number of minutes past 3 AM , starting in period 1 (index 1)
-    private int iteration;
-    private MgraDataManager mgraManager;
-    private TazDataManager tazManager;
-    private int idNumber;
+	protected static final Logger logger = Logger.getLogger(PersonTripManager.class);
+	protected HashMap<String, String> propertyMap = null;
+	protected MersenneTwister       random;
+	protected ModelStructure modelStructure;
+	protected HashMap<Integer,PersonTrip> personTripMap;
+	protected ArrayList<PersonTrip>[][] personTripArrayByDepartureBinAndMaz; //an array of PersonTrips by departure time increment and origin MAZ.
+	protected ArrayList<PersonTrip>[] personTripArrayByDepartureBin; //an array of PersonTrips by departure time increment
+	protected double[] endTimeMinutes; // the period end time in number of minutes past 3 AM , starting in period 1 (index 1)
+	protected int iteration;
+	protected MgraDataManager mgraManager;
+	protected TazDataManager tazManager;
+	protected int idNumber;
+	protected int[] modesToKeep;
+	protected int minTaz; //the minimum taz number with mazs; any origin or destination person trip less than this will be skipped.
 
-    private static final String ModelSeedProperty = "Model.Random.Seed";
-    private static final String DirectoryProperty = "Project.Directory";
-    private static final String IndivTripDataFileProperty = "Results.IndivTripDataFile";
-    private static final String JointTripDataFileProperty = "Results.JointTripDataFile";
-
+	protected static final String ModelSeedProperty = "Model.Random.Seed";
+	protected static final String DirectoryProperty = "Project.Directory";
+	protected static final String IndivTripDataFileProperty = "Results.IndivTripDataFile";
+	protected static final String JointTripDataFileProperty = "Results.JointTripDataFile";
+	protected static final String ModesToKeepProperty = "TNC.shared.Modes";
+	
 	/**
 	 * Constructor.
 	 * 
@@ -60,6 +63,19 @@ public class PersonTripManager {
 		
 	    mgraManager = MgraDataManager.getInstance(propertyMap);
 	    tazManager = TazDataManager.getInstance(propertyMap);
+	    
+	    //find minimum TAZ with mazs
+	    int maxTaz = tazManager.getMaxTaz();
+	    minTaz = -1;
+	    for(int i=1;i<=maxTaz;++i){
+			int[] mazs = tazManager.getMgraArray(i);
+			
+			if(mazs==null|| mazs.length==0)
+				minTaz = Math.max(i, minTaz);
+	    }
+	    
+	    logger.info("Minimum TAZ number is +minTaz");
+	    logger.info("Maximum TAZ number is +maxTaz");
 
         //initialize the end time in minutes (stored in double so no overlap between periods)
         endTimeMinutes = new double[40+1];
@@ -71,9 +87,12 @@ public class PersonTripManager {
         int seed = Util.getIntegerValueFromPropertyMap(propertyMap, ModelSeedProperty);
         random = new MersenneTwister(seed);
         
+        modesToKeep = Util.getIntegerArrayFromPropertyMap(propertyMap,ModesToKeepProperty);
+        
         readInputFiles();
 		logger.info("Completed Initializing PersonTripManager");
-
+		
+		
 	}
 	
 	/**
@@ -93,10 +112,18 @@ public class PersonTripManager {
         //start with individual trips
         TableDataSet indivTripDataSet = readTableData(indivTripFile);
         personTripMap = readTripList(personTripMap, indivTripDataSet, false);
+        int individualPersonTrips=personTripMap.size();
+        
+        logger.info("Read "+individualPersonTrips+" individual person trips");
         
         //now read joint trip data
         TableDataSet jointTripDataSet = readTableData(jointTripFile);
         personTripMap = readTripList(personTripMap, jointTripDataSet, true);
+        int jointPersonTrips = personTripMap.size() - individualPersonTrips;
+        
+        logger.info("Read "+jointPersonTrips+" joint person trips");
+        logger.info("Read "+personTripMap.size()+" total person trips");
+        
 	}
 	
 	/**
@@ -113,7 +140,22 @@ public class PersonTripManager {
 		
          for(int row = 1; row <= inputTripTableData.getRowCount();++row){
         	
+        	
+           	int mode = (int) inputTripTableData.getValueAt(row,"trip_mode");
+        	if(modesToKeep[mode]!=1)
+        		continue;
+        	
+         	int oMaz = (int) inputTripTableData.getValueAt(row,"orig_mgra");
+        	int dMaz = (int) inputTripTableData.getValueAt(row,"dest_mgra");
+        	
+        	int oTaz = mgraManager.getTaz(oMaz);
+        	int dTaz = mgraManager.getTaz(dMaz);
+        	
+        	if((oTaz<minTaz) || (dTaz<minTaz))
+        		continue;
+
         	++idNumber;
+        	
         	
            	long hhid = (long) inputTripTableData.getValueAt(row,"hh_id");	
            	long personId=-1;
@@ -126,41 +168,51 @@ public class PersonTripManager {
         	int tourid = (int) inputTripTableData.getValueAt(row,"tour_id");
         	int stopid = (int) inputTripTableData.getValueAt(row,"stop_id");
         	int inbound = (int)inputTripTableData.getValueAt(row,"inbound");
-         	int oMaz = (int) inputTripTableData.getValueAt(row,"orig_mgra");
-        	int dMaz = (int) inputTripTableData.getValueAt(row,"dest_mgra");
-        	int depPeriod = (int) inputTripTableData.getValueAt(row,"stop_period");
+         	int depPeriod = (int) inputTripTableData.getValueAt(row,"stop_period");
         	float depTime = simulateExactTime(depPeriod);
-        	float sRate = inputTripTableData.getValueAt(row,"sampleRate");
-          	int mode = (int) inputTripTableData.getValueAt(row,"trip_mode");
-            int avAvailable = (int) inputTripTableData.getValueAt(row,"avAvailable");  	
+        	int tour_mode = (int)inputTripTableData.getValueAt(row,"tour_mode");
+
+        	
+        	//TODO: doesn't handle sampling yet
+        	float sRate = 1;
+        	if(inputTripTableData.containsColumn("sampleRate"))
+        		sRate = inputTripTableData.getValueAt(row,"sampleRate");
+        	
+          	
+          	int avAvailable = 0;
+          	if(inputTripTableData.containsColumn("avAvailable"))
+          		avAvailable = (int) inputTripTableData.getValueAt(row,"avAvailable");
+        	
         	int boardingTap = (int) inputTripTableData.getValueAt(row,"trip_board_tap");  
         	int alightingTap = (int) inputTripTableData.getValueAt(row,"trip_alight_tap");  
         	String tour_purpose	= inputTripTableData.getStringValueAt(row, "tour_purpose");
         	String orig_purpose	= inputTripTableData.getStringValueAt(row, "orig_purpose");
         	String dest_purpose = inputTripTableData.getStringValueAt(row, "dest_purpose");
-        	float distance = inputTripTableData.getValueAt(row,"trip_dist");
+        	
+        	float distance = 0;
+         	if(inputTripTableData.containsColumn("trip_dist"))
+         		distance = inputTripTableData.getValueAt(row, "trip_dist");
+        	
         	
         	int num_participants=-1;
         	if(jointTripData){
         		num_participants = (int) inputTripTableData.getValueAt(row,"num_participants");
         	}
-        	int tour_mode = (int)inputTripTableData.getValueAt(row,"tour_mode");
-        	
         	int set = (int)inputTripTableData.getValueAt(row,"set"); 
         	
-            if(modelStructure.getTripModeIsTransit(mode)){
-        		PersonTrip personTrip = new PersonTrip(idNumber,hhid,personId,personNumber,tourid,stopid,inbound,(jointTripData?1:0),oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set);
-        		personTrip.setAvAvailable(avAvailable);
-        		personTrip.setTourPurpose(tour_purpose);
-        		personTrip.setOriginPurpose(orig_purpose);
-        		personTrip.setDestinationPurpose(dest_purpose);
-        		personTrip.setDistance(distance);
-        		personTrip.setNumberParticipants(num_participants);
-        		personTrip.setTourMode(tour_mode);
-        		if(num_participants>-1)
-        			personTrip.setJoint(1);
-        		personTripMap.put(idNumber, personTrip);
-        	} 
+       		PersonTrip personTrip = new PersonTrip(idNumber,hhid,personId,personNumber,tourid,stopid,inbound,(jointTripData?1:0),oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set);
+       		personTrip.setAvAvailable((byte) avAvailable);
+       		personTrip.setNumberParticipants(num_participants);
+       		if(num_participants>-1)
+       			personTrip.setJoint(1);
+       		personTripMap.put(idNumber, personTrip);
+       		
+       		//replicate joint trips
+       		if(num_participants>1)
+       			for(int i=2;i<=num_participants;++i){
+       	        	++idNumber;
+       	        	personTripMap.put(idNumber, personTrip);
+       			}
         }
          
          return personTripMap;
@@ -233,6 +285,15 @@ public class PersonTripManager {
 		personTripArrayByDepartureBinAndMaz = new ArrayList[numberOfTimeBins][maxMaz+1];
 		personTripArrayByDepartureBin = new ArrayList[numberOfTimeBins];
 		
+		//initialize
+		for(int i = 0; i < numberOfTimeBins;++i){
+			personTripArrayByDepartureBin[i] = new ArrayList<PersonTrip>();
+			for(int j = 0; j <=maxMaz;++j){
+				personTripArrayByDepartureBinAndMaz[i][j] = new ArrayList<PersonTrip>();
+			}
+				
+		}
+		
 		Collection<PersonTrip> personTripList = personTripMap.values();
 		for(PersonTrip personTrip : personTripList){
 			
@@ -248,18 +309,7 @@ public class PersonTripManager {
 		}
 	}
 
-	/**
-	 * Get the person trips for the period bin (indexed from 0)
-	 * 
-	 * @param periodBin The number of the departure time period bin based on the period length used to group person trips.
-	 * 
-	 * @return An arraylist of person trips.
-	 */
-	public ArrayList<PersonTrip> getPersonTripsDepartingInTimePeriod(int periodBin){
 		
-		return personTripArrayByDepartureBin[periodBin];
-	}
-	
 	/**
 	 * Get the person trips for the period bin (indexed from 0) and the origin MAZ
 	 * 
@@ -274,24 +324,113 @@ public class PersonTripManager {
 	}
 	
 	/**
-	 * Sample a person trip from the array. REMOVE IT from the array.
+	 * Sample a person trip from the array for the given period. REMOVE IT from the person trip arrays.
 	 * 
-	 * @param personTripArray
-	 * @param rnum
-	 * @return
+	 * @param simulationPeriod  The simulation period to sample a trip from.
+	 * @param rnum A random number to be used in sampling.
+	 * @return A person trip, or null if the ArrayList is null or empty.
 	 */
-	PersonTrip samplePersonTripFromArrayList(ArrayList<PersonTrip> personTripArray, double rnum){
+	PersonTrip samplePersonTrip(int simulationPeriod, double rnum){
+		
+		ArrayList<PersonTrip> personTripArray = personTripArrayByDepartureBin[simulationPeriod];
 		
 		if(personTripArray==null)
 			return null;
 		
 		int listSize = personTripArray.size();
+		
+		if(listSize==0)
+			return null;
+		
 		int element = (int) Math.floor(rnum * listSize);
 		PersonTrip personTrip = personTripArray.get(element);
-		personTripArray.remove(personTrip);
+		personTripArrayByDepartureBin[simulationPeriod].remove(personTrip);
+		personTripArrayByDepartureBinAndMaz[simulationPeriod][personTrip.getOriginMaz()].remove(personTrip);
 		
 		return personTrip;
 	}
 
+	/**
+	 * Sample a person trip from the array for the given period. REMOVE IT from the array.
+	 * 
+	 * @param simulationPeriod  The period to sample a trip from.
+	 * @param maz The maz to sample a trip from.
+	 * @param rnum A random number to be used in sampling.
+	 * @return A person trip, or null if the ArrayList is null or empty.
+	 */
+	PersonTrip samplePersonTrip(int simulationPeriod, int maz, double rnum){
+		
+		ArrayList<PersonTrip> personTripArray = personTripArrayByDepartureBinAndMaz[simulationPeriod][maz];
+		
+		if(personTripArray==null)
+			return null;
+		
+		int listSize = personTripArray.size();
+		
+		if(listSize==0)
+			return null;
+		
+		int element = (int) Math.floor(rnum * listSize);
+		PersonTrip personTrip = personTripArray.get(element);
+		personTripArrayByDepartureBinAndMaz[simulationPeriod][maz].remove(personTrip);
+		personTripArrayByDepartureBin[simulationPeriod].remove(personTrip);
+		
+		return personTrip;
+	}
 
+	/**
+	 * Check if there are more person trips in this simulation period.
+	 * 
+	 * @param simulationPeriod
+	 * @return true if there are more person trips, false if not.
+	 */
+	public boolean morePersonTripsInSimulationPeriod(int simulationPeriod){
+		ArrayList<PersonTrip> personTripArray = personTripArrayByDepartureBin[simulationPeriod];
+		
+		if(personTripArray==null)
+			return false;
+		
+		int listSize = personTripArray.size();
+		
+		if(listSize==0)
+			return false;
+		
+		return true;
+
+	}
+	
+	/**
+	 * Check if there are more person trips in this simulation period and maz.
+	 * 
+	 * @param simulationPeriod
+	 * @return true if there are more person trips, false if not.
+	 */
+	public boolean morePersonTripsInSimulationPeriodAndMaz(int simulationPeriod, int maz){
+		ArrayList<PersonTrip> personTripArray = personTripArrayByDepartureBinAndMaz[simulationPeriod][maz];
+		
+		if(personTripArray==null)
+			return false;
+		
+		int listSize = personTripArray.size();
+		
+		if(listSize==0)
+			return false;
+		
+		return true;
+
+	}
+	/**
+	 * Remove the person trip.
+	 * 
+	 * @param trip
+	 * @param simulationPeriod
+	 */
+	public void removePersonTrip(PersonTrip trip, int simulationPeriod){
+		
+		int originMaz = trip.getOriginMaz();
+		personTripArrayByDepartureBin[simulationPeriod].remove(trip);
+		personTripArrayByDepartureBinAndMaz[simulationPeriod][originMaz].remove(trip);
+		
+		
+	}
 }

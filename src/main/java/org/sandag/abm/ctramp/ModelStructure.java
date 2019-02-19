@@ -102,6 +102,8 @@ public abstract class ModelStructure
     public static final int                             UPPER_AM                          = 9;
     public static final int                             UPPER_MD                          = 22;
     public static final int                             UPPER_PM                          = 29;
+    
+    public static final int[]                           PERIOD_ENDS = {UPPER_EA,UPPER_AM,UPPER_MD,UPPER_PM, 40};
 
     private HashMap<Integer, Integer>                   indexTimePeriodMap;
     private HashMap<Integer, Integer>                   timePeriodIndexMap;
