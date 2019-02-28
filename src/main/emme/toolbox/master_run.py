@@ -212,6 +212,14 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         gen_utils.log_snapshot("Master run model", str(self), attributes)
 
         modeller = _m.Modeller()
+        # Checking that the virtualenv path is set and the folder is installed
+        default_tool = modeller.module("sandag.default_tool")
+        venv_path = default_tool.VIRUTALENV_PATH
+        if not venv_path in sys.path:
+            sys.path.insert(1, venv_path)
+        if not os.path.exists(venv_path):
+            raise Exception("Python virtual environment not installed at expected location %s" %venv_path)
+
         copy_scenario = modeller.tool("inro.emme.data.scenario.copy_scenario")
         import_network = modeller.tool("sandag.import.import_network")
         init_transit_db = modeller.tool("sandag.initialize.initialize_transit_database")
