@@ -116,7 +116,7 @@ def add_missing_zones(df, scenario):
         ext_df[c] = _numpy.zeros(num_missing)
     ext_df['taz'] = _numpy.array(list(missing_zones))
     df = _pandas.concat([df, ext_df])
-    df = df.sort('taz', ascending=True)
+    df = df.sort_values('taz', ascending=True)      # sort method was deprecated in version 0.20.0,yma,2/12/2019 
     return df
 
 
