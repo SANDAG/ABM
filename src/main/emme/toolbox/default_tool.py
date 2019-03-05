@@ -19,7 +19,7 @@
 
 # Add the custom Sandag virtualenv to the system path
 import sys
-VIRUTALENV_PATH = "C:\\python_virtualenv\\abm14_1\\Lib\\site-packages"
+VIRUTALENV_PATH = "C:\\python_virtualenv\\abm14_1_0\\Lib\\site-packages"
 if not VIRUTALENV_PATH in sys.path:
     sys.path.insert(1, VIRUTALENV_PATH)
 
@@ -27,9 +27,8 @@ if not VIRUTALENV_PATH in sys.path:
 # Delegate to load the standard Default tool
 import inro.modeller as _m
 
-default_mod = inro.modeller.Modeller().module(
-    "inro.emme.default_tool")
+default_mod = _m.Modeller().module("inro.emme.default_tool")
 
 
-class Tool(default_mod.DefaultTool):
+class Tool(_m.Tool(), default_mod.DefaultTool):
     pass
