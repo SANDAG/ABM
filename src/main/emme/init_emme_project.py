@@ -74,7 +74,6 @@ def init_emme_project(root, title):
 
     desktop.data_explorer().add_database(emmebank.path)
     desktop.add_modeller_toolbox("%<$ProjectPath>%/scripts/sandag_toolbox.mtbx")
-    project.par("ModellerDefaultTool").set("sandag.default_tool")
     project.save()
 
 
