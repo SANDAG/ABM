@@ -55,7 +55,7 @@ master_run(main_directory, scenario_id, scenario_title, emmebank_title, num_proc
 """
 
 TOOLBOX_ORDER = 1
-VIRUTALENV_PATH = "C:\\python_virtualenv\\abm14_1_0\\Lib\\site-packages"
+VIRUTALENV_PATH = "C:\\python_virtualenv\\abm14_1_0"
 
 import inro.modeller as _m
 import inro.emme.database.emmebank as _eb
@@ -224,9 +224,13 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             raise Exception("Environment variable PYTHON_VIRTUALENV not set, start Emme from 'start_emme_with_virtualenv.bat'")
         if not venv_path == VIRUTALENV_PATH:
             raise Exception("PYTHON_VIRTUALENV is not the expected value (%s instead of %s)" % (venv_path, VIRUTALENV_PATH))
-        if not VIRUTALENV_PATH in sys.path:
+        venv_path_found = False
+        for path in sys.path:
+            if VIRUTALENV_PATH in path:
+                venv_path_found = True
+                break
+        if not venv_path_found:
             raise Exception("Python virtual environment not found in system path %s" % VIRUTALENV_PATH)
-
         copy_scenario = modeller.tool("inro.emme.data.scenario.copy_scenario")
         import_network = modeller.tool("sandag.import.import_network")
         init_transit_db = modeller.tool("sandag.initialize.initialize_transit_database")
@@ -386,7 +390,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         traffic_components.append("traffic_demand")
                     init_matrices(traffic_components, periods, base_scenario, deleteAllMatrices)
 
-                    transit_scenario = init_transit_db(base_scenario)
+                    transit_scenario = init_transit_db(base_scenario, add_database=not useLocalDrive)
                     transit_emmebank = transit_scenario.emmebank
                     transit_components = ["transit_skims"]
                     if not skipCopyWarmupTripTables:
@@ -532,6 +536,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                          delete_local_files=not skipDeleteIntermediateFiles)
             self._path = main_directory
             drive, path_no_drive = os.path.splitdrive(self._path)
+            init_transit_db.add_database(
+                _eb.Emmebank(_join(main_directory, "emme_project", "Database_transit", "emmebank")))
 
         if not skipDataLoadRequest:
 
