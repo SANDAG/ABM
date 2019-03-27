@@ -466,6 +466,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     self.calc_transit_attributes(transit_network)
                 finally:
                     if transit_scenario:
+                        for link in transit_network.links():
+                            if link.type <= 0:
+                                link.type = 99
                         transit_scenario.publish_network(transit_network, resolve_attributes=True)
                     if self.merged_scenario_id:
                         self.add_transit_to_traffic(traffic_network, transit_network)
@@ -595,6 +598,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         brt_yellow = network.create_mode("TRANSIT", "y")
         lrt = network.create_mode("TRANSIT", "l")
         coaster_rail = network.create_mode("TRANSIT", "c")
+        hyperloop = network.create_mode("TRANSIT", "Y")
 
         access.description = "ACCESS"
         transfer.description = "TRANSFER"
@@ -606,6 +610,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         brt_yellow.description = "BRT YEL"       # (vehicle type 60 , PCE=3.0)
         brt_red.description = "BRT RED"          # (vehicle type 70 , PCE=3.0)
         coaster_rail.description = "CMR"         # (vehicle type 40)
+        hyperloop.description = "HYPERLOOP"
 
         access.speed = 3
         transfer.speed = 3
@@ -627,7 +632,10 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             10: set([ltdexp_bus, express_bus, bus]),             # 10 = Local Bus
         }
         def define_modes(arc):
-            return mode_setting[arc["MINMODE"]]
+            if arc["OSPD"] < 80:
+                return mode_setting[arc["MINMODE"]]
+            else:
+                return set([hyperloop])
 
         arc_filter = lambda arc: (arc["MINMODE"] > 2)
 
@@ -799,6 +807,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         premium_bus = network.create_transit_vehicle(80, 'p')   # 8  prem express
         express_bus = network.create_transit_vehicle(90, 'e')   # 9  regular express
         local_bus = network.create_transit_vehicle(100, 'b')    # 10 local bus
+        hyper = network.create_transit_vehicle(45, 'Y')  # Hyperloop, special type of 'coaster'
 
         brt_yellow.auto_equivalent = 3.0
         brt_red.auto_equivalent = 3.0
@@ -808,6 +817,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         # Capacities - for reference / post-assignment analysis
         coaster.seated_capacity, coaster.total_capacity = 7 * 142, 7 * 276
+        hyper.seated_capacity, hyper.total_capacity = 7 * 142, 7 * 276
         trolley.seated_capacity, trolley.total_capacity = 4 * 64, 4 * 200
         brt_yellow.seated_capacity, brt_yellow.total_capacity = 32, 70
         brt_red.seated_capacity, brt_red.total_capacity = 32, 70
@@ -863,9 +873,10 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 self._error.append("Transit route import: " + msg)
                 fatal_errors += 1
                 continue
-
             transit_routes[int(record["Route_ID"])].append(link)
-                
+
+        hyper_mode = network.mode('Y')
+        dummy_links = set([])
         transit_lines = {}
         for record in transit_line_records:
             try:
@@ -873,7 +884,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 vehicle_type = int(record["Mode"]) * 10
                 mode = network.transit_vehicle(vehicle_type).mode
                 prev_link = route[0]
-                itinerary = [prev_link] 
+                itinerary = [prev_link]
+                is_hyperloop = False
                 for link in route[1:]:
                     if prev_link.j_node != link.i_node:  # filling in the missing gap
                         msg = "line %s : Links not adjacent, shortest path interpolation used (%s and %s)" % (
@@ -883,9 +895,21 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                         sub_path = find_path(prev_link, link, mode)
                         itinerary.extend(sub_path)
                         log_record["content"] = log_record["content"] + " through %s links" % (len(sub_path))
+                    if hyper_mode in link.modes:
+                        is_hyperloop = True
                     itinerary.append(link)        
                     prev_link = link
 
+                if is_hyperloop:
+                    vehicle_type = network.transit_vehicle(45)
+                    mode = hyper_mode
+                    # Remove dummy links from network for short lines
+                    itinerary, old_itinerary = [], itinerary
+                    for l in old_itinerary:
+                        if l["#name"].startswith("DUMMY"):
+                            dummy_links.add(l)
+                        else:
+                            itinerary.append(l)
                 node_itinerary = [itinerary[0].i_node] +  [l.j_node for l in itinerary]
                 try:
                     tline = network.create_transit_line(
@@ -925,6 +949,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 self._log.append({"type": "text", "content": msg})
                 self._error.append("Transit route import: line %s not created" % record["Route_Name"])
                 fatal_errors += 1
+        for link in dummy_links:
+            network.delete_link(link.i_node, link.j_node)
 
         line_stops = _defaultdict(lambda: [])
         for record in transit_stop_data:
@@ -954,6 +980,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             segment = itinerary.next()
             tcov_id = abs(segment.link["@tcov_id"])
             for stop in stops:
+                if "DUMMY" in stop["StopName"]:
+                    continue
                 link_id = int(stop['Link_ID'])
                 node_id = int(stop['TrnNode'])
                 while tcov_id != link_id:
