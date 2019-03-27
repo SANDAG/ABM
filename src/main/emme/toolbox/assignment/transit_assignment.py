@@ -447,7 +447,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
 
         walk_modes = ["a", "w", "x"]
         local_bus_mode = ["b"]
-        premium_modes = ["c", "l", "e", "p", "r", "y"]
+        premium_modes = ["c", "l", "e", "p", "r", "y", "Y"]
 
         # get the generic all-modes journey levels table
         journey_levels = self.all_modes_journey_levels(params, network, day_pass_cost)
@@ -545,7 +545,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "actual_total_waiting_times": 'mf"%s_TOTALWAIT"' % skim_name,
                 "total_impedance": 'mf"%s_GENCOST"' % skim_name,
                 "by_mode_subset": {
-                    "modes": ["b", "e", "p", "r", "y", "l", "c", "a", "w", "x"],
+                    "modes": ["b", "e", "p", "r", "y", "l", "c", "Y", "a", "w", "x"],
                     "avg_boardings": 'mf"%s_XFERS"' % skim_name,
                     "actual_in_vehicle_times": 'mf"%s_TOTALIVTT"' % skim_name,
                     "actual_in_vehicle_costs": 'mf"TEMP_IN_VEHICLE_COST"',
@@ -564,6 +564,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 ("BRT", ["r", "y"], ["DIST"]),
                 ("BRTRED", ["r"],   ["IVTT"]),
                 ("BRTYEL", ["y"],   ["IVTT"]),
+                ("HYP", ["Y"],      ["IVTT", "DIST"]),
             ]
             for mode_name, modes, skim_types in mode_combinations:
                 dist = 'mf"%s_%sDIST"' % (skim_name, mode_name) if "DIST" in skim_types else None
@@ -582,7 +583,8 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "type": "MATRIX_CALCULATION",
                 "constraint": None,
                 "result": 'mf"%s_TOTDIST"' % skim_name,
-                "expression": 'mf"{0}_BUSDIST" + mf"{0}_LRTDIST" + mf"{0}_CMRDIST" + mf"{0}_EXPDIST" + mf"{0}_BRTDIST"'.format(skim_name),
+                "expression": ('mf"{0}_BUSDIST" + mf"{0}_LRTDIST" + mf"{0}_CMRDIST"'
+                               ' + mf"{0}_EXPDIST" + mf"{0}_BRTDIST" + mf"{0}_HYPDIST" ').format(skim_name),
             }
             matrix_calc(spec, scenario=scenario, num_processors=num_processors)
 
@@ -731,10 +733,10 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         # Reset skims to 0 if not both local and premium
         skims = [
             "FIRSTWAIT", "TOTALWAIT", "DWELLTIME", "BUSIVTT", "XFERS", "TOTALWALK",
-            "LRTIVTT", "CMRIVTT", "EXPIVTT", "LTDEXPIVTT", "BRTREDIVTT", "BRTYELIVTT",
+            "LRTIVTT", "CMRIVTT", "EXPIVTT", "LTDEXPIVTT", "BRTREDIVTT", "BRTYELIVTT", "HYPIVTT",
             "GENCOST", "XFERWAIT", "FARE",
             "ACCWALK", "XFERWALK", "EGRWALK", "TOTALIVTT",  
-            "BUSDIST", "LRTDIST", "CMRDIST", "EXPDIST", "BRTDIST"]
+            "BUSDIST", "LRTDIST", "CMRDIST", "EXPDIST", "BRTDIST", "HYPDIST"]
         localivt_skim = self.get_matrix_data(period + "_ALLPEN_BUSIVTT")
         totalivt_skim = self.get_matrix_data(period + "_ALLPEN_TOTALIVTT")
         has_premium = numpy.greater((totalivt_skim - localivt_skim), 0)
