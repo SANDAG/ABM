@@ -372,6 +372,16 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         data_table_name=scenarioYear,
                         overwrite=True,
                         emmebank=main_emmebank)
+
+                    if "modify_network.py" in os.listdir(os.getcwd()):
+                        try:
+                            with _m.logbook_trace("Modify network script"):
+                                import modify_network
+                                reload(modify_network)
+                                modify_network.run(base_scenario)
+                        except ImportError as e:
+                            pass
+
                     export_tap_adjacent_lines(_join(output_dir, "tapLines.csv"), base_scenario)
                     # initialize per time-period scenarios
                     for number, period in period_ids:
