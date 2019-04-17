@@ -280,7 +280,7 @@ class PropertiesSetter(object):
         self.startFromIteration = props.get("RunModel.startFromIteration", 1)
         self.sample_rates = ",".join(str(x) for x in props.get("sample_rates"))
         
-        self.useLocalDrive = props.get("RunModel.useLocalDrive", False)
+        self.useLocalDrive = props.get("RunModel.useLocalDrive", True)
         self.skipBuildNetwork = props.get("RunModel.skipBuildNetwork", False)
         self.skipInitialization = props.get("RunModel.skipInitialization", False)
         self.deleteAllMatrices = props.get("RunModel.deleteAllMatrices", False)
