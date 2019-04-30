@@ -576,7 +576,23 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>  
+                    </execution>
+                    <execution>
+                        <id>copy-template-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${release.root}/template</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>input/template</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>   
                     <!--
                     <execution>
                         <id>copy-validation-resources</id>

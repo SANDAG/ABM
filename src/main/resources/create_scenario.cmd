@@ -1,3 +1,5 @@
+rem create_scenario.cmd T:\projects\sr14\version_14_1_x\abm_runs\2016 2016 T:\projects\sr14\version_14_1_x\network_build\2016
+
 @echo off
 
 if "%1"=="" goto usage
@@ -9,7 +11,7 @@ set YEAR=%2
 set NETWORKDIR=%3
 
 @echo creating scenario folders
-set FOLDERS=input application bin conf input_truck logFiles output python report sql uec
+set FOLDERS=input application bin conf input_truck logFiles output python report sql uec analysis
 for %%i in (%FOLDERS%) do (
 md %SCENARIO_FOLDER%\%%i)
 
@@ -60,6 +62,14 @@ xcopy /Y .\common\input\visitor\"*.*" %SCENARIO_FOLDER%\input
 rem copy network inputs
 call copy_networks.cmd %NETWORKDIR% %SCENARIO_FOLDER%\input
 
+
+rem copy analysis templates
+@echo copy analysis templates
+if %YEAR%==2016 (xcopy /Y/S   .\template\validation\2016\"*.*" %SCENARIO_FOLDER%\analysis\validation\)
+if %YEAR%==2018 (xcopy /Y/S   .\template\validation\2018\"*.*" %SCENARIO_FOLDER%\\analysis\validation\) 
+xcopy /Y/S   .\template\summary\"*.*" %SCENARIO_FOLDER%\analysis\summary\     
+
+
 @echo init emme folder
 call init_emme.cmd %SCENARIO_FOLDER%
 
@@ -67,3 +77,6 @@ call init_emme.cmd %SCENARIO_FOLDER%
 
 @echo Usage: %0 ^<scenario_folder^> ^<year^> ^<network^>
 @echo If 3rd parameter is empty, default network inputs in standard release are used
+
+
+

@@ -477,6 +477,8 @@ Assign traffic demand for the selected time period."""
                     values.append(result_array)
                 scenario.set_attribute_values("TURN", turn_attrs, values)
 
+            self.calc_network_results(period, num_processors, scenario)
+
             if msa_iteration < 4:
                 self.run_skims(period, num_processors, scenario, classes)
                 self.report(period, scenario, classes)
@@ -642,37 +644,15 @@ Assign traffic demand for the selected time period."""
         traffic_assign(assign_spec, scenario, chart_log_interval=2)
         return
 
-    def run_skims(self, period, num_processors, scenario, classes):
+    def calc_network_results(self, period, num_processors, scenario):
         modeller = _m.Modeller()
         create_attribute = modeller.tool(
             "inro.emme.data.extra_attribute.create_extra_attribute")
-        traffic_assign = modeller.tool(
-            "inro.emme.traffic_assignment.sola_traffic_assignment")
         net_calc = gen_utils.NetworkCalculator(scenario)
         emmebank = scenario.emmebank
         p = period.lower()
         # ul2 is the total flow (volau + volad) in the skim assignment
         with _m.logbook_trace("Calculation of attributes for skims"):
-            if period == "MD":
-                gen_truck_mode = 'D'
-                classes.append({
-                    "name": 'TRK', "mode": gen_truck_mode, "PCE": 1, "VOT": 67., "cost": '',
-                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST"]
-                })
-            analysis_link = {
-                "TIME":          "@auto_time",
-                "DIST":          "length",
-                "HOVDIST":       "@hovdist",
-                "TOLLCOST":      "@tollcost",
-                "TOLLCOST.HOV2": "@h2tollcost",
-                "TOLLCOST.HOV3": "@h3tollcost",
-                "MLCOST":        "@mlcost",
-                "TOLLDIST":      "@tolldist",
-                "TOLLDIST.HOV2": "@h2tolldist",
-                "TOLLDIST.HOV3": "@h3tolldist",
-                "REL":           "@reliability_sq"
-            }
-            analysis_turn = {"TIME": "@auto_time_turn"}
             link_attributes = [
                 ("@hovdist", "distance for HOV"),
                 ("@tollcost", "Toll cost in cents"),
@@ -712,12 +692,40 @@ Assign traffic demand for the selected time period."""
                 # split function into time component and reliability component
                 time_expr, reliability_expr = expression.split("*(1+@sta_reliability+")
                 net_calc("@auto_time", time_expr, {"link": "vdf=%s" % function.id[2:]})
-                net_calc("@reliability", "(@sta_reliability+" + reliability_expr, {"link": "vdf=%s" % function.id[2:]})
+                net_calc("@reliability", "(@sta_reliability+" + reliability_expr, 
+                         {"link": "vdf=%s" % function.id[2:]})
+
             net_calc("@reliability_sq", "@reliability**2", {"link": "modes=d"})
             net_calc("@auto_time_turn", "ptimau*(ptimau.gt.0)",
                      {"incoming_link": "all", "outgoing_link": "all"})
 
+    def run_skims(self, period, num_processors, scenario, classes):
+        modeller = _m.Modeller()
+        traffic_assign = modeller.tool(
+            "inro.emme.traffic_assignment.sola_traffic_assignment")
+        emmebank = scenario.emmebank
+        p = period.lower()
+        analysis_link = {
+            "TIME":          "@auto_time",
+            "DIST":          "length",
+            "HOVDIST":       "@hovdist",
+            "TOLLCOST":      "@tollcost",
+            "TOLLCOST.HOV2": "@h2tollcost",
+            "TOLLCOST.HOV3": "@h3tollcost",
+            "MLCOST":        "@mlcost",
+            "TOLLDIST":      "@tolldist",
+            "TOLLDIST.HOV2": "@h2tolldist",
+            "TOLLDIST.HOV3": "@h3tolldist",
+            "REL":           "@reliability_sq"
+        }
+        analysis_turn = {"TIME": "@auto_time_turn"}
         with self.setup_skims(period, scenario):
+            if period == "MD":
+                gen_truck_mode = 'D'
+                classes.append({
+                    "name": 'TRK', "mode": gen_truck_mode, "PCE": 1, "VOT": 67., "cost": '',
+                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST"]
+                })
             skim_spec = self.base_assignment_spec(0, 0, num_processors, background_traffic=False)
             for traffic_class in classes:
                 if not traffic_class["skims"]:

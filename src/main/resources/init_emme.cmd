@@ -19,9 +19,11 @@ python .\\common\\python\\emme\\init_emme_project.py -r %SCENARIO_FOLDER% -t emm
 rem create toolbox
 python .\\common\\python\\emme\\toolbox\\build_toolbox.py -s .\\common\\python\\emme\\toolbox -p %SCENARIO_FOLDER%\emme_project\Scripts\sandag_toolbox.mtbx
 
-mkdir %SCENARIO_FOLDER%\emme_project\Scripts\yaml
+rem create a batch script at startup
+copy .\\common\\bin\\start_emme_with_virtualenv.bat %SCENARIO_FOLDER%\emme_project
 
-copy .\\common\\python\\emme\\yaml\\*.* %SCENARIO_FOLDER%\emme_project\Scripts\yaml
+rem mkdir %SCENARIO_FOLDER%\emme_project\Scripts\yaml
+rem copy .\\common\\python\\emme\\yaml\\*.* %SCENARIO_FOLDER%\emme_project\Scripts\yaml
 
 :usage
 @echo Usage: %0 ^<scenario_folder^>

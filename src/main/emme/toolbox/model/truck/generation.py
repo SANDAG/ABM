@@ -402,7 +402,7 @@ class TruckGeneration(_m.Tool(), gen_utils.Snapshot):
 
     def store_PA_to_matrices(self, truck_pa):
         emmebank = self.scenario.emmebank
-        truck_pa.sort('taz', inplace=True)
+        truck_pa.sort_values('taz', inplace=True)           #sort method was deprecated since version 0.20.0, yma, 2/12/2019
         control_to_store = ['L', 'M', 'H', 'EI', 'IE']
         for t in control_to_store:
             prod = emmebank.matrix('moTRK%s_PROD' % t)

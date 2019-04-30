@@ -1,6 +1,7 @@
 __author__ = 'wsu'
 #Wu.Sun@sandag.org 10-27-2016
 #wsu update 9/24/2018 for release 14.0.1
+#wsu update 1/30/2019 for release 14.1.0
 import Tkinter
 import Tkconstants
 import tkFileDialog
@@ -64,7 +65,7 @@ class CreateScenarioGUI(Tkinter.Frame):
             Tkinter.Label(body, text=u"Year", font=("Helvetica", 8, 'bold')).grid(row=9)
             var = StringVar(root)
             self.year="2016"
-            yearOptionList = ["2012", "2014", "2016", "2020", "2025", "2025nb", "2035", "2035nb", "2050","2050nb"]
+            yearOptionList = ["2016", "2020", "2025", "2025nb", "2035", "2035nb", "2050","2050nb"]
             option=Tkinter.OptionMenu(body,var,*yearOptionList,command=self.setyear)
             option.config(width=50)
             option.grid(row=9, column=1)

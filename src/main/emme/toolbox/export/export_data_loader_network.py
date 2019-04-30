@@ -575,11 +575,10 @@ Export network results to csv files for SQL data loader."""
         fout_stop.write("\n")
         try:
             access_modes = ["WLK", "PNR", "KNR"]
-            #main_modes = ["BUS", "LRT", "CMR", "BRT", "EXP"]
             main_modes = ["BUS", "PREM","ALLPEN"]
-            all_modes = ["b", "c", "e", "l", "r", "p", "y", "a", "w", "x"]
+            all_modes = ["b", "c", "e", "l", "r", "p", "y", "Y", "a", "w", "x"]
             local_bus_modes = ["b", "a", "w", "x"]
-            premium_modes = ["c", "l", "e", "p", "r", "y", "a", "w", "x"]
+            premium_modes = ["c", "l", "e", "p", "r", "y", "Y", "a", "w", "x"]
             for tod, scen_id in period_scenario_ids.iteritems():
                 with _m.logbook_trace("Processing period %s" % tod):
                     scenario = transit_emmebank.scenario(scen_id)

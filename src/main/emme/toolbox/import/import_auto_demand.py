@@ -258,7 +258,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
             path = os.path.join(self.output_dir, "TripMatrices.csv")
             table = _pandas.read_csv(path)
             for key, value in mapping.iteritems():
-                cvm_array = table[key].reshape((4996, 4996))
+                cvm_array = table[key].values.reshape((4996, 4996))     # reshape method deprecated since v 0.19.0, yma, 2/12/2019
                 #factor in cvm demand by the scale factor used in trip generation
                 cvm_array = cvm_array/scale_factor
                 #scale trips to take care of underestimation

@@ -104,7 +104,7 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
             raise
 
     @_m.logbook_trace('Initialize transit database', save_arguments=True)
-    def __call__(self, base_scenario):
+    def __call__(self, base_scenario, add_database=True):
         attributes = {"base_scenario": base_scenario.id}
         gen_utils.log_snapshot("Initialize transit database", str(self), attributes)
         create_function = _m.Modeller().tool("inro.emme.data.function.create_function")
@@ -134,7 +134,6 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
                 transit_eb.delete_function(function.id)
             if transit_eb.dimensions != dimensions:
                 _eb.change_dimensions(transit_db_path, dimensions, keep_backup=False)
-
         else:
             transit_eb = _eb.create(transit_db_path, dimensions)
 
@@ -152,7 +151,8 @@ class InitializeTransitDatabase(_m.Tool(), gen_utils.Snapshot):
             data_table_name=scenarioYear, overwrite=True)
         for function in base_scenario.emmebank.functions():
             create_function(function.id, function.expression, transit_eb)
-        self.add_database(transit_eb)
+        if add_database:
+            self.add_database(transit_eb)
         return zone_scenario
 
     def add_database(self, emmebank):
