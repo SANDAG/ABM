@@ -329,6 +329,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             values = network.get_attribute_values("LINK", src_attrs)
             network.set_attribute_values("LINK", dst_attrs, values)
             scenario.publish_network(network)
+
             return scenario
 
     @_m.logbook_trace("Convert TAP nodes to centroids")
@@ -360,7 +361,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
     def duplicate_tap_adajcent_stops(self, network):
         # Expand network by duplicating TAP adjacent stops
         network.create_attribute("NODE", "tap_stop", False)
-        all_transit_modes = set([network.mode(m) for m in ["b", "e", "p", "r", "y", "l", "c"]])
+        all_transit_modes = set([network.mode(m) for m in ["b", "e", "p", "r", "y", "l", "c", "Y"]])
         access_mode = set([network.mode("a")])
         transfer_mode =  network.mode("x")
         walk_mode =  network.mode("w")

@@ -380,11 +380,13 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             ("LTDEXPIVTT", "Ltd exp bus in-vehicle time"),
             ("BRTREDIVTT", "BRT red in-vehicle time"),
             ("BRTYELIVTT", "BRT yellow in-vehicle time"),
+            ("HYPIVTT",    "Hyperloop in-vehicle time"),
             ("BUSDIST",    "Bus IV distance"),
             ("LRTDIST",    "LRT IV distance"),
             ("CMRDIST",    "Rail IV distance"),
             ("EXPDIST",    "Express and Ltd IV distance"),
             ("BRTDIST",    "BRT red and yel IV distance"),
+            ("HYPDIST",    "Hyperloop distance"),
             ("TOTDIST",    "Total transit distance")
         ]
         skim_sets = [

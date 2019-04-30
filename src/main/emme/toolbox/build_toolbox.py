@@ -16,10 +16,23 @@
 #////              If omitted,defaults to "sandag_toolbox.mtbx"             ///
 #////         [-s source_folder]: The location of the source code folder.   ///
 #////             If omitted, defaults to the working directory.            ///
+#////         [-l] [--link] Build the toolbox with references to the files  ///
+#////             Use with developing or debugging scripts, changes to the  ///
+#////             scripts can be used with a "Refresh" of the toolbox       ///
+#////         [-c] [--consolidate] Build the toolbox with copies of the     ///
+#////             scripts included inside the toolbox.                      ///
+#////             Use to have a "frozen" version of the scripts with node   ///
+#////             changes available.                                        ///
 #////                                                                       ///
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
+#
+# Example:
+#  python "T:\projects\sr13\develop\emme_conversion\git\sandag_abm\ABM_EMME\src\main\emme\toolbox\build_toolbox.py" --link 
+#    -p "T:\projects\sr14\abm2_test\abm_runs\14_1_0\2035D_Hyperloop\emme_project\Scripts\sandag_toolbox.mtbx" 
+#    -s T:\projects\sr13\develop\emme_conversion\git\sandag_abm\ABM_EMME\src\main\emme\toolbox
+
 
 import os
 import re

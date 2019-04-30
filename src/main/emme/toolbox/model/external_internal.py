@@ -194,10 +194,10 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
         taz = mgra[['taz', 'work_size', 'non_work_size']].groupby('taz').sum()
         taz.reset_index(inplace=True)
         taz = dem_utils.add_missing_zones(taz, scenario)
-        taz.sort('taz', ascending=True, inplace=True)
+        taz.sort_values('taz', ascending=True, inplace=True)   # method sort was deprecated since pandas version 0.20.0, yma, 2/12/2019
         taz.reset_index(inplace=True, drop=True)
         control_totals = pd.merge(control_totals, taz[['taz']], how='outer')
-        control_totals.sort('taz', inplace=True)
+        control_totals.sort_values('taz', inplace=True)        # method sort was deprecated since pandas version 0.20.0, yma, 2/12/2019
 
         length_skim = emmebank.matrix('mf"MD_SOVTOLLM_DIST"').get_numpy_data(scenario)
 
