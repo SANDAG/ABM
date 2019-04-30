@@ -46,6 +46,7 @@ public class CrossBorderTripModeChoiceDMU
     protected float        hourlyParkingCostTripDest;
     protected float        workTimeFactor;
     protected float        nonWorkTimeFactor;
+    protected int          avAvailable;
 
     protected double       nmWalkTime;
     protected double       nmBikeTime;
@@ -59,6 +60,9 @@ public class CrossBorderTripModeChoiceDMU
     protected IndexValues              dmuIndex;
     protected int outboundHalfTourDirection;
 
+    protected float waitTimeTaxi;
+    protected float waitTimeSingleTNC;
+    protected float waitTimeSharedTNC;
 
    public CrossBorderTripModeChoiceDMU(CrossBorderModelStructure modelStructure, Logger aLogger)
     {
@@ -540,6 +544,38 @@ public class CrossBorderTripModeChoiceDMU
 
 
 
+	public int getAvAvailable() {
+		return avAvailable;
+	}
+
+	public void setAvAvailable(int avAvailable) {
+		this.avAvailable = avAvailable;
+	}
+
+	public float getWaitTimeTaxi() {
+		return waitTimeTaxi;
+	}
+
+	public void setWaitTimeTaxi(float waitTimeTaxi) {
+		this.waitTimeTaxi = waitTimeTaxi;
+	}
+
+	public float getWaitTimeSingleTNC() {
+		return waitTimeSingleTNC;
+	}
+
+	public void setWaitTimeSingleTNC(float waitTimeSingleTNC) {
+		this.waitTimeSingleTNC = waitTimeSingleTNC;
+	}
+
+	public float getWaitTimeSharedTNC() {
+		return waitTimeSharedTNC;
+	}
+
+	public void setWaitTimeSharedTNC(float waitTimeSharedTNC) {
+		this.waitTimeSharedTNC = waitTimeSharedTNC;
+	}
+
 	private void setupMethodIndexMap()
     {
         methodIndexMap = new HashMap<String, Integer>();
@@ -575,9 +611,15 @@ public class CrossBorderTripModeChoiceDMU
         methodIndexMap.put("getWalkSetLogSum", 62);
         methodIndexMap.put("getPnrSetLogSum", 63);
         methodIndexMap.put("getKnrSetLogSum", 64);
+        
+        methodIndexMap.put("getWaitTimeTaxi", 70);
+        methodIndexMap.put("getWaitTimeSingleTNC", 71);
+        methodIndexMap.put("getWaitTimeSharedTNC", 72);
 
         methodIndexMap.put("getNm_walkTime", 90);
         methodIndexMap.put("getNm_bikeTime", 91);
+        
+        methodIndexMap.put("getAvAvailable", 95);
 
        
     }
@@ -670,12 +712,20 @@ public class CrossBorderTripModeChoiceDMU
             case 64:
             	returnValue = getKnrTransitLogsum();
                 break;
+            case 70: return getWaitTimeTaxi();
+            case 71: return getWaitTimeSingleTNC();
+            case 72: return getWaitTimeSharedTNC();
+
             case 90:
             	returnValue = getNm_walkTime();
             	break;
             case 91:
             	returnValue = getNm_bikeTime();
                 break;
+            case 95:
+            	returnValue = getAvAvailable();
+            	break;
+            	
             default:
                 logger.error( "method number = " + variableIndex + " not found" );
                 throw new RuntimeException( "method number = " + variableIndex + " not found" );

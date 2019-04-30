@@ -266,6 +266,11 @@ public class InternalExternalTripModeChoiceModel
 
         if (trip.isDestinationIsTourDestination()) dmu.setTripDestIsTourDest(1);
         else dmu.setTripDestIsTourDest(0);
+        
+        if(tour.isAvAvailable())
+        	dmu.setAvAvailable(1);
+        else
+        	dmu.setAvAvailable(0);
 
     }
 

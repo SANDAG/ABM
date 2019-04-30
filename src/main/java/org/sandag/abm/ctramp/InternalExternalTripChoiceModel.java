@@ -58,7 +58,7 @@ public class InternalExternalTripChoiceModel
         ieDmuObject.setDistanceToCordonsLogsum(distanceToCordonsLogsums[homeTaz]);
 
         ieDmuObject.setHouseholdObject(hhObject);
-        double vehiclesPerHouseholdMember = hhObject.getAutoOwnershipModelResult()
+        double vehiclesPerHouseholdMember = hhObject.getAutosOwned()
                 / hhObject.getHhSize();
         ieDmuObject.setVehiclesPerHouseholdMember(vehiclesPerHouseholdMember);
 

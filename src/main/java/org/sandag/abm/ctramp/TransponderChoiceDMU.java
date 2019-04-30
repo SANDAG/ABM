@@ -117,7 +117,7 @@ public class TransponderChoiceDMU
 
     public int getAutoOwnership()
     {
-        return hh.getAutoOwnershipModelResult();
+        return hh.getAutosOwned();
     }
 
     public IndexValues getDmuIndexValues()

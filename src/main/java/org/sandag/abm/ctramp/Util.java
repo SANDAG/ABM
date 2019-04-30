@@ -114,6 +114,40 @@ public final class Util
 
     }
 
+    public static float[] getFloatArrayFromPropertyMap(HashMap<String, String> rbMap, String key)
+    {
+
+    	float[] returnArray;
+        String valueList = rbMap.get(key);
+        if (valueList != null)
+        {
+
+            ArrayList<Float> valueSet = new ArrayList<Float>();
+
+            StringTokenizer valueTokenizer = new StringTokenizer(valueList, ",");
+            while (valueTokenizer.hasMoreTokens())
+            {
+                 String listValue = valueTokenizer.nextToken();
+                 float floatValue = Float.parseFloat(listValue.trim());
+                 valueSet.add(floatValue);
+            }
+
+            returnArray = new float[valueSet.size()];
+            int i = 0;
+            for (float v : valueSet)
+                returnArray[i++] = v;
+
+        } else
+        {
+            logger.info("property file key: " + key
+                    + " missing.  No float value can be determined.");
+            throw new RuntimeException();
+        }
+
+        return returnArray;
+
+    }
+
     public static double[] getDoubleArrayFromPropertyMap(HashMap<String, String> rbMap, String key)
     {
 

@@ -292,6 +292,14 @@ public class SandagTourModeChoiceDMU
         methodIndexMap.put("getPnrSetLogSum", 60);
         methodIndexMap.put("getKnrSetLogSum", 61);
                 
+        methodIndexMap.put( "getOrigTaxiWaitTime", 70 );
+        methodIndexMap.put( "getDestTaxiWaitTime", 71 );
+        methodIndexMap.put( "getOrigSingleTNCWaitTime", 72 );
+        methodIndexMap.put( "getDestSingleTNCWaitTime", 73 );
+        methodIndexMap.put( "getOrigSharedTNCWaitTime", 74 );
+        methodIndexMap.put( "getDestSharedTNCWaitTime", 75 );
+        methodIndexMap.put( "getUseOwnedAV", 76);
+
         methodIndexMap.put("getNm_walkTime_out", 90);
         methodIndexMap.put("getNm_walkTime_in", 91);
         methodIndexMap.put("getNm_bikeTime_out", 92);
@@ -448,6 +456,23 @@ public class SandagTourModeChoiceDMU
             case 61:
                 returnValue = getTransitLogSum(WTD, true) + getTransitLogSum(DTW, false);
                 break;
+ 
+            case 70: return getOrigTaxiWaitTime();
+            case 71: return getDestTaxiWaitTime();
+            case 72: return getOrigSingleTNCWaitTime();
+            case 73: return getDestSingleTNCWaitTime();
+            case 74: return getOrigSharedTNCWaitTime();
+            case 75: return getDestSharedTNCWaitTime();
+            case 76: return getUseOwnedAV();
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
             case 90:
                 returnValue = getNmWalkTimeOut();
                 break;

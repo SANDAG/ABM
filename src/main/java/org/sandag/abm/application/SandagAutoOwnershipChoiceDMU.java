@@ -36,6 +36,9 @@ public class SandagAutoOwnershipChoiceDMU
         methodIndexMap.put("getWorkersRailProportion", 17);
         methodIndexMap.put("getStudentsRailProportion", 18);
         methodIndexMap.put("getGq", 19);
+        methodIndexMap.put("getNumPersons18to35", 25);
+        methodIndexMap.put("getNumPersons65plus", 26);
+        methodIndexMap.put("getWorkAutoTime", 27);
 
     }
 
@@ -82,6 +85,12 @@ public class SandagAutoOwnershipChoiceDMU
                 return getStudentsRailProportion();
             case 19:
                 return getGq();
+            case 25:
+            	return getNumPersons18to35();
+            case 26:
+            	return getNumPersons65Plus();
+            case 27:
+            	return getWorkAutoTime();
 
             default:
                 logger.error("method number = " + variableIndex + " not found");

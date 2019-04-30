@@ -36,6 +36,8 @@ public class CrossBorderTourManager
     private boolean           seek;
     private int               traceId;
     
+    private float avShare;
+    
     TimeCoefficientDistributions timeDistributions;
     
     boolean distributedTimeCoefficients = false;
@@ -83,6 +85,9 @@ public class CrossBorderTourManager
         	timeDistributions = new TimeCoefficientDistributions();
         	timeDistributions.createTimeDistributions(rbMap);
         }
+        
+        avShare = Util.getFloatValueFromPropertyMap(rbMap, "crossBorder.avShare");
+        
     }
 
     /**
@@ -131,6 +136,9 @@ public class CrossBorderTourManager
             }
             tour.setWorkTimeFactor((float)workTimeFactor);
             tour.setNonWorkTimeFactor((float)nonWorkTimeFactor);
+            
+            if(tour.getRandom() < avShare)
+            	tour.setAvAvailable(true);
             
         }
     }
@@ -224,7 +232,7 @@ public class CrossBorderTourManager
             throw new RuntimeException();
         }
         String tourHeaderString = new String(
-                "id,purpose,sentri,poe,departTime,arriveTime,originMGRA,destinationMGRA,originTAZ,destinationTAZ,tourMode,workTimeFactor,nonWorkTimeFactor,valueOfTime\n");
+                "id,purpose,sentri,poe,departTime,arriveTime,originMGRA,destinationMGRA,originTAZ,destinationTAZ,tourMode,workTimeFactor,nonWorkTimeFactor,valueOfTime,avAvailable\n");
         tourWriter.print(tourHeaderString);
 
         PrintWriter tripWriter = null;
@@ -280,7 +288,8 @@ public class CrossBorderTourManager
                 + tour.getDestinationTAZ() + "," + tour.getTourMode() + ","
                 + String.format("%9.2f",tour.getWorkTimeFactor()) + "," 
                 + String.format("%9.2f",tour.getNonWorkTimeFactor()) + ","
-                + String.format("%9.2f", tour.getValueOfTime()) +"\n");
+                + String.format("%9.2f", tour.getValueOfTime()) +"\n") + "," 
+        		+ (tour.isAvAvailable() ? 1 : 0);
         writer.print(record);
 
     }

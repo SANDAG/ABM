@@ -205,7 +205,7 @@ public class JointTourModelsDMU
 
     public int getAutoOwnership()
     {
-        return hh.getAutoOwnershipModelResult();
+        return hh.getAutosOwned();
     }
 
     public int getTourPurposeIsMaint()

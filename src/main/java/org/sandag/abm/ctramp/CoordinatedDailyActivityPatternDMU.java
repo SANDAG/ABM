@@ -234,7 +234,7 @@ public class CoordinatedDailyActivityPatternDMU
     {
 
         int workers = householdObject.getWorkers();
-        int autos = householdObject.getAutoOwnershipModelResult();
+        int autos = householdObject.getAutosOwned();
 
         if (autos > workers) return 1;
         return 0;
@@ -246,7 +246,7 @@ public class CoordinatedDailyActivityPatternDMU
     {
 
         int workers = householdObject.getWorkers();
-        int autos = householdObject.getAutoOwnershipModelResult();
+        int autos = householdObject.getAutosOwned();
 
         if (autos < workers) return 1;
         return 0;
@@ -256,7 +256,7 @@ public class CoordinatedDailyActivityPatternDMU
     // household with zero cars
     public int getZeroCars()
     {
-        int autos = householdObject.getAutoOwnershipModelResult();
+        int autos = householdObject.getAutosOwned();
         if (autos == 0) return 1;
         return 0;
 

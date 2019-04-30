@@ -67,6 +67,9 @@ public class TripModeChoiceDMU
     protected int                      partySize;
 
     protected int outboundHalfTourDirection;
+    protected float waitTimeTaxi;
+    protected float waitTimeSingleTNC;
+    protected float waitTimeSharedTNC;
     
     protected int                      tourModeIsDA;
     protected int                      tourModeIsS2;
@@ -571,8 +574,7 @@ public class TripModeChoiceDMU
 
     public int getAutos()
     {
-        return hh.getAutoOwnershipModelResult();
-    }
+    	return hh.getAutosOwned();    }
 
     public int getAge()
     {
@@ -764,7 +766,41 @@ public class TripModeChoiceDMU
         return hh.getIncomeInDollars();
     }
 
+   public int getUseOwnedAV(){
+    	
+    	if(tour==null)
+    		return 0;
+    	
+    	return (tour.getUseOwnedAV() ? 1: 0);
+    }
 
+
+
+
+    public float getWaitTimeTaxi() {
+		return waitTimeTaxi;
+	}
+
+	public void setWaitTimeTaxi(float waitTimeTaxi) {
+		this.waitTimeTaxi = waitTimeTaxi;
+	}
+
+	public float getWaitTimeSingleTNC() {
+		return waitTimeSingleTNC;
+	}
+
+	public void setWaitTimeSingleTNC(float waitTimeSingleTNC) {
+		this.waitTimeSingleTNC = waitTimeSingleTNC;
+	}
+
+	public float getWaitTimeSharedTNC() {
+		return waitTimeSharedTNC;
+	}
+
+	public void setWaitTimeSharedTNC(float waitTimeSharedTNC) {
+		this.waitTimeSharedTNC = waitTimeSharedTNC;
+	}
+	
 	public int getIndexValue(String variableName)
     {
         return methodIndexMap.get(variableName);

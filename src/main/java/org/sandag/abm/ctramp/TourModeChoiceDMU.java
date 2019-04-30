@@ -24,7 +24,13 @@ public class TourModeChoiceDMU implements Serializable,
 
     protected HashMap<String, Integer> methodIndexMap;
     protected IndexValues              dmuIndex;
-
+    protected float origTaxiWaitTime;
+    protected float destTaxiWaitTime;
+    protected float origSingleTNCWaitTime;
+    protected float destSingleTNCWaitTime;
+    protected float origSharedTNCWaitTime;
+    protected float destSharedTNCWaitTime;
+ 
 
 	protected Household hh;
 	protected Tour tour;
@@ -260,7 +266,7 @@ public class TourModeChoiceDMU implements Serializable,
 	}
 
 	public int getAutos() {
-		return hh.getAutoOwnershipModelResult();
+		return hh.getAutosOwned();
 	}
 
 	public int getAge() {
@@ -431,4 +437,87 @@ public void setCostCoeff(double costCoeff) {
 	public void setValue(int variableIndex, double variableValue) {
 		throw new UnsupportedOperationException();
 	}
+    public int getUseOwnedAV(){
+    	
+    	if(tour==null)
+    		return 0;
+    	
+    	return (tour.getUseOwnedAV() ? 1: 0);
+    }
+
+
+
+	public float getOrigTaxiWaitTime() {
+		return origTaxiWaitTime;
+	}
+
+
+
+	public void setOrigTaxiWaitTime(float origTaxiWaitTime) {
+		this.origTaxiWaitTime = origTaxiWaitTime;
+	}
+
+
+
+	public float getDestTaxiWaitTime() {
+		return destTaxiWaitTime;
+	}
+
+
+
+	public void setDestTaxiWaitTime(float destTaxiWaitTime) {
+		this.destTaxiWaitTime = destTaxiWaitTime;
+	}
+
+
+
+	public float getOrigSingleTNCWaitTime() {
+		return origSingleTNCWaitTime;
+	}
+
+
+
+	public void setOrigSingleTNCWaitTime(float origSingleTNCWaitTime) {
+		this.origSingleTNCWaitTime = origSingleTNCWaitTime;
+	}
+
+
+
+	public float getDestSingleTNCWaitTime() {
+		return destSingleTNCWaitTime;
+	}
+
+
+
+	public void setDestSingleTNCWaitTime(float destSingleTNCWaitTime) {
+		this.destSingleTNCWaitTime = destSingleTNCWaitTime;
+	}
+
+
+
+	public float getOrigSharedTNCWaitTime() {
+		return origSharedTNCWaitTime;
+	}
+
+
+
+	public void setOrigSharedTNCWaitTime(float origSharedTNCWaitTime) {
+		this.origSharedTNCWaitTime = origSharedTNCWaitTime;
+	}
+
+
+
+	public float getDestSharedTNCWaitTime() {
+		return destSharedTNCWaitTime;
+	}
+
+
+
+	public void setDestSharedTNCWaitTime(float destSharedTNCWaitTime) {
+		this.destSharedTNCWaitTime = destSharedTNCWaitTime;
+	}
+
+
+    
 }
+

@@ -97,6 +97,8 @@ public final class MgraDataManager
     private static final String         MGRA_MSTALLSSAM_FIELD                    = "mstallssam";
     private static final String         MGRA_MPARKCOST_FIELD                     = "mparkcost";
 
+    //for TNC and Taxi wait time calculations
+    private static final String MGRA_POPEMPPERSQMI_FIELD = "PopEmpDenPerMi";
     private ArrayList<Integer>          mgras                                    = new ArrayList<Integer>();
     private int                         maxMgra;
     private int                         maxLuz;
@@ -139,6 +141,7 @@ public final class MgraDataManager
     private double[]                    duDen;
     private double[]                    empDen;
     private double[]                    totInt;
+    private double[]                    popEmpDenPerSqMi;
 
     private double[]                    lsWgtAvgCostM;
     private double[]                    lsWgtAvgCostD;
@@ -949,6 +952,11 @@ public final class MgraDataManager
         return totInt[mgra];
     }
 
+   
+    public double getPopEmpPerSqMi( int mgra ) {
+        return popEmpDenPerSqMi[mgra];
+    }
+  
     /**
      * Process the 4D density land use data file and store the selected fields
      * as arrays indexed by the mgra value. The data fields are in the mgra
@@ -969,12 +977,15 @@ public final class MgraDataManager
             empDen = new double[maxMgra + 1];
             totInt = new double[maxMgra + 1];
 
+           //added for Taxi/TNC
+            popEmpDenPerSqMi = new double[maxMgra+1];
             // get the data fields needed for the mode choice utilities as
             // 0-based double[]
             double[] duDenField = mgraTableDataSet.getColumnAsDouble(MGRA_4DDENSITY_DU_DEN_FIELD);
             double[] empDenField = mgraTableDataSet.getColumnAsDouble(MGRA_4DDENSITY_EMP_DEN_FIELD);
             double[] totIntField = mgraTableDataSet.getColumnAsDouble(MGRA_4DDENSITY_TOT_INT_FIELD);
-
+            double[] popEmpField = mgraTableDataSet.getColumnAsDouble( MGRA_POPEMPPERSQMI_FIELD );
+ 
             // create a HashMap to convert MGRA values to array indices for the
             // data
             // arrays above
@@ -987,7 +998,8 @@ public final class MgraDataManager
                 duDen[mgra] = duDenField[row - 1];
                 empDen[mgra] = empDenField[row - 1];
                 totInt[mgra] = totIntField[row - 1];
-
+                popEmpDenPerSqMi [mgra] = popEmpField[row-1];
+ 
             }
 
         } catch (Exception e)
@@ -995,7 +1007,7 @@ public final class MgraDataManager
             logger.error(
                     String.format("Exception occurred processing 4ddensity data file from mgraData TableDataSet object."),
                     e);
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
 
     }

@@ -29,7 +29,7 @@ public final class AirportModelStructure
     public static final int      UPPER_PM            = 29;
     public static final String[] MODEL_PERIOD_LABELS = {"EA", "AM", "MD", "PM", "EV"};
 
-    public static final byte     ACCESS_MODES        = 9;
+    public static final byte     ACCESS_MODES        = 11;
 
     public static final byte     PARK_TMNL           = 1;
     public static final byte     PARK_SANOFF         = 2;
@@ -38,9 +38,20 @@ public final class AirportModelStructure
     public static final byte     PUDO_CURB           = 5;
     public static final byte     RENTAL              = 6;
     public static final byte     TAXI                = 7;
-    public static final byte     SHUTTLE_VAN         = 8;
-    public static final byte     TRANSIT             = 9;
+    public static final byte     TNC_SINGLE          = 8;
+    public static final byte     TNC_SHARED          = 9;
+    public static final byte     SHUTTLE_VAN         = 10;
+    public static final byte     TRANSIT             = 11;
     
+    //reallocate the trip modes from the access choice model to ones that the trip table and other code can read, consistent with
+    //resident models.
+    public static final byte     REALLOCATE_WLKTRN     = 9; //walk access
+    public static final byte     REALLOCATE_KNRPERTRN  = 11; //knr-personal vehicle
+    public static final byte     REALLOCATE_KNRTNCTRN  = 12; //knr-TNC
+    public static final byte     REALLOCATE_TAXI       = 13; 
+    public static final byte     REALLOCATE_TNCSINGLE  = 14; 
+    public static final byte     REALLOCATE_TNCSHARED  = 15; 
+  
         private AirportModelStructure()
     {
     }
@@ -196,6 +207,10 @@ public final class AirportModelStructure
                 return partySize;
             case TAXI:
                 return partySize + 1;
+            case TNC_SINGLE:
+                return partySize + 1;
+            case TNC_SHARED:
+                return partySize + 1;
             case SHUTTLE_VAN:
                 return partySize + 1;
             case TRANSIT:
@@ -207,5 +222,18 @@ public final class AirportModelStructure
 
         }
     }
-
+    
+    public static boolean taxiTncMode(int accessMode) {
+    	
+    	switch (accessMode) {
+    		case TAXI:
+    			return true;
+    		case TNC_SINGLE:
+    			return true;
+    		case TNC_SHARED:
+    			return true;
+    	}
+    	
+    	return false;
+    }
 }

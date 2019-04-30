@@ -34,6 +34,7 @@ public class AirportParty
     private int     alightTap;
     private int     set = -1;
 
+    private boolean avAvailable;
     /**
      * Public constructor.
      * 
@@ -307,6 +308,14 @@ public class AirportParty
 
 	public void setDestinationTAZ(int destinationTAZ) {
 		this.destinationTAZ = destinationTAZ;
+	}
+
+	public boolean getAvAvailable() {
+		return avAvailable;
+	}
+
+	public void setAvAvailable(boolean avAvailable) {
+		this.avAvailable = avAvailable;
 	}
 
 }

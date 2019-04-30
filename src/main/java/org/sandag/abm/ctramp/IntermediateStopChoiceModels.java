@@ -276,7 +276,8 @@ public class IntermediateStopChoiceModels
 
     private int                                availAltsToLog                                      = 55;    
                                                                                                                                                           // this
-                                                                                                                                                           // logging
+    private TNCAndTaxiWaitTimeCalculator tncTaxiWaitTimeCalculator;
+                                                                                                                                                       // logging
     // private int availAltsToLog = 5;
 
     // set this constant for checking the number of times depart/arrive period
@@ -352,6 +353,9 @@ public class IntermediateStopChoiceModels
         ivtCoeffs = Util.getDoubleArrayFromPropertyMap(propertyMap, PROPERTIES_TRIP_UTILITY_IVT_COEFFS);
         incomeCoeffs = Util.getDoubleArrayFromPropertyMap(propertyMap, PROPERTIES_TRIP_UTILITY_INCOME_COEFFS);
         incomeExponents = Util.getDoubleArrayFromPropertyMap(propertyMap, PROPERTIES_TRIP_UTILITY_INCOME_EXPONENTS);
+
+        tncTaxiWaitTimeCalculator = new TNCAndTaxiWaitTimeCalculator();
+        tncTaxiWaitTimeCalculator.createWaitTimeDistributions(propertyMap);
 
 
     }
@@ -3588,7 +3592,7 @@ public class IntermediateStopChoiceModels
 
         mcDmuObject.setIncomeInDollars(hh.getIncomeInDollars());
         mcDmuObject.setAdults(hh.getNumPersons18plus());
-        mcDmuObject.setAutos(hh.getAutoOwnershipModelResult());
+        mcDmuObject.setAutos(hh.getAutosOwned());
         mcDmuObject.setAge(p.getAge());
         mcDmuObject.setHhSize(hh.getHhSize());
         mcDmuObject.setPersonIsFemale(p.getPersonIsFemale());
@@ -3612,6 +3616,22 @@ public class IntermediateStopChoiceModels
 
         double reimbursePct = mcDmuObject.getPersonObject().getParkingReimbursement();
         mcDmuObject.setReimburseProportion( reimbursePct );
+        
+        
+        float popEmpDenOrig = (float) mgraManager.getPopEmpPerSqMi(origMgra);
+        float waitTimeSingleTNC=0;
+        float waitTimeSharedTNC=0;
+        float waitTimeTaxi=0;
+        
+        Random hhRandom = hh.getHhRandom();
+        double rnum = hhRandom.nextDouble();
+        waitTimeSingleTNC = (float) tncTaxiWaitTimeCalculator.sampleFromSingleTNCWaitTimeDistribution(rnum, popEmpDenOrig);
+        waitTimeSharedTNC = (float) tncTaxiWaitTimeCalculator.sampleFromSharedTNCWaitTimeDistribution(rnum, popEmpDenOrig);
+        waitTimeTaxi = (float) tncTaxiWaitTimeCalculator.sampleFromTaxiWaitTimeDistribution(rnum, popEmpDenOrig);
+        mcDmuObject.setWaitTimeSingleTNC(waitTimeSingleTNC);
+        mcDmuObject.setWaitTimeSharedTNC(waitTimeSharedTNC);
+        mcDmuObject.setWaitTimeTaxi(waitTimeTaxi);
+
         
     }
 

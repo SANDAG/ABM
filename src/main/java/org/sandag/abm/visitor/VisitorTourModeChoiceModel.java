@@ -2,11 +2,13 @@ package org.sandag.abm.visitor;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
+import org.sandag.abm.ctramp.TNCAndTaxiWaitTimeCalculator;
 import org.sandag.abm.ctramp.TourModeChoiceDMU;
 import org.sandag.abm.ctramp.TripModeChoiceDMU;
 import org.sandag.abm.ctramp.Util;
@@ -49,7 +51,9 @@ public class VisitorTourModeChoiceModel
     private boolean                  saveUtilsProbsFlag              = false;
     private AutoTazSkimsCalculator   tazDistanceCalculator;
 
-  
+    //added for TNC and Taxi modes
+    TNCAndTaxiWaitTimeCalculator tncTaxiWaitTimeCalculator = null;
+
     /**
      * Constructor.
      * 
@@ -76,6 +80,9 @@ public class VisitorTourModeChoiceModel
         tripDmuObject = new TripModeChoiceDMU(modelStructure,logger);
         mcDmuObject = dmuFactory.getVisitorTourModeChoiceDMU();
         setupModeChoiceModelApplicationArray(propertyMap);
+
+        tncTaxiWaitTimeCalculator = new TNCAndTaxiWaitTimeCalculator();
+        tncTaxiWaitTimeCalculator.createWaitTimeDistributions(propertyMap);
 
     }
 
@@ -219,6 +226,32 @@ public class VisitorTourModeChoiceModel
         mcDmuObject.setTransitLogSum(McLogsumsCalculator.WTW,true,walkTransitLogsumIn);
         mcDmuObject.setTransitLogSum(McLogsumsCalculator.DTW,false,driveTransitLogsumOut);
         mcDmuObject.setTransitLogSum(McLogsumsCalculator.WTD,true,driveTransitLogsumIn);
+        
+        float SingleTNCWaitTimeOrig = 0;
+        float SingleTNCWaitTimeDest = 0;
+        float SharedTNCWaitTimeOrig = 0;
+        float SharedTNCWaitTimeDest = 0;
+        float TaxiWaitTimeOrig = 0;
+        float TaxiWaitTimeDest = 0;
+        float popEmpDenOrig = (float) mgraManager.getPopEmpPerSqMi(tour.getOriginMGRA());
+        float popEmpDenDest = (float) mgraManager.getPopEmpPerSqMi(tour.getDestinationMGRA());
+        
+        double rnum = tour.getRandom();
+        SingleTNCWaitTimeOrig = (float) tncTaxiWaitTimeCalculator.sampleFromSingleTNCWaitTimeDistribution(rnum, popEmpDenOrig);
+        SingleTNCWaitTimeDest = (float) tncTaxiWaitTimeCalculator.sampleFromSingleTNCWaitTimeDistribution(rnum, popEmpDenDest);
+        SharedTNCWaitTimeOrig = (float) tncTaxiWaitTimeCalculator.sampleFromSharedTNCWaitTimeDistribution(rnum, popEmpDenOrig);
+        SharedTNCWaitTimeDest = (float) tncTaxiWaitTimeCalculator.sampleFromSharedTNCWaitTimeDistribution(rnum, popEmpDenDest);
+        TaxiWaitTimeOrig = (float) tncTaxiWaitTimeCalculator.sampleFromTaxiWaitTimeDistribution(rnum, popEmpDenOrig);
+        TaxiWaitTimeDest = (float) tncTaxiWaitTimeCalculator.sampleFromTaxiWaitTimeDistribution(rnum, popEmpDenDest);
+
+        mcDmuObject.setOrigTaxiWaitTime(TaxiWaitTimeOrig);
+        mcDmuObject.setDestTaxiWaitTime(TaxiWaitTimeDest);
+        mcDmuObject.setOrigSingleTNCWaitTime(SingleTNCWaitTimeOrig);
+        mcDmuObject.setDestSingleTNCWaitTime(SingleTNCWaitTimeDest);
+        mcDmuObject.setOrigSharedTNCWaitTime(SharedTNCWaitTimeOrig);
+        mcDmuObject.setDestSharedTNCWaitTime(SharedTNCWaitTimeDest);
+
+        
     }
 
     /**

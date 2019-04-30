@@ -237,7 +237,7 @@ public abstract class DestChoiceTwoStageModelDMU
 
     protected int getAutos()
     {
-        return hh.getAutoOwnershipModelResult();
+        return hh.getAutosOwned();
     }
 
     protected int getWorkers()

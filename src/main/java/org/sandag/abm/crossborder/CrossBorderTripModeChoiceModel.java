@@ -1,6 +1,7 @@
 package org.sandag.abm.crossborder;
 
 import java.util.HashMap;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoAndNonMotorizedSkimsCalculator;
@@ -9,6 +10,7 @@ import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
 import org.sandag.abm.ctramp.ModelStructure;
+import org.sandag.abm.ctramp.TNCAndTaxiWaitTimeCalculator;
 import org.sandag.abm.ctramp.TripModeChoiceDMU;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
@@ -43,6 +45,8 @@ public class CrossBorderTripModeChoiceModel
     private static final String                PROPERTIES_UEC_DATA_SHEET  = "crossBorder.trip.mc.data.page";
     private static final String                PROPERTIES_UEC_MODEL_SHEET = "crossBorder.trip.mc.model.page";
     private static final String                PROPERTIES_UEC_FILE        = "crossBorder.trip.mc.uec.file";
+
+    private TNCAndTaxiWaitTimeCalculator tncTaxiWaitTimeCalculator;
 
     /**
      * Constructor.
@@ -106,6 +110,8 @@ public class CrossBorderTripModeChoiceModel
         SandagModelStructure modelStructure = new SandagModelStructure();
         mcDmuObject = new TripModeChoiceDMU(modelStructure, logger);
 
+        tncTaxiWaitTimeCalculator = new TNCAndTaxiWaitTimeCalculator();
+        tncTaxiWaitTimeCalculator.createWaitTimeDistributions(propertyMap);
 
     }
 
@@ -325,6 +331,17 @@ public class CrossBorderTripModeChoiceModel
         dmu.setHourlyParkingCostTripOrig((float) lsWgtAvgCostH[tripOriginMgra]);
         dmu.setHourlyParkingCostTripDest((float) lsWgtAvgCostH[tripDestinationMgra]);
 
+        float popEmpDenOrig = (float) mgraManager.getPopEmpPerSqMi(trip.getOriginMgra());
+
+        double rnum = tour.getRandom();
+        float waitTimeSingleTNC = (float) tncTaxiWaitTimeCalculator.sampleFromSingleTNCWaitTimeDistribution(rnum, popEmpDenOrig);
+        float waitTimeSharedTNC = (float) tncTaxiWaitTimeCalculator.sampleFromSharedTNCWaitTimeDistribution(rnum, popEmpDenOrig);
+        float waitTimeTaxi = (float) tncTaxiWaitTimeCalculator.sampleFromTaxiWaitTimeDistribution(rnum, popEmpDenOrig);
+        dmu.setWaitTimeSingleTNC(waitTimeSingleTNC);
+        dmu.setWaitTimeSharedTNC(waitTimeSharedTNC);
+        dmu.setWaitTimeTaxi(waitTimeTaxi);
+
+        
     }
 
     public McLogsumsCalculator getMcLogsumsCalculator(){

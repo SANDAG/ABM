@@ -59,6 +59,11 @@ public class VisitorTripModeChoiceDMU
     protected double walkTransitLogsum;
     protected double pnrTransitLogsum;
     protected double knrTransitLogsum;
+    
+    protected float waitTimeTaxi;
+    protected float waitTimeSingleTNC;
+    protected float waitTimeSharedTNC;
+
 
     protected int outboundHalfTourDirection;
 
@@ -637,6 +642,29 @@ public class VisitorTripModeChoiceDMU
 		this.knrTransitLogsum = knrTransitLogsum;
 	}
 
+   public float getWaitTimeTaxi() {
+		return waitTimeTaxi;
+	}
+
+	public void setWaitTimeTaxi(float waitTimeTaxi) {
+		this.waitTimeTaxi = waitTimeTaxi;
+	}
+
+	public float getWaitTimeSingleTNC() {
+		return waitTimeSingleTNC;
+	}
+
+	public void setWaitTimeSingleTNC(float waitTimeSingleTNC) {
+		this.waitTimeSingleTNC = waitTimeSingleTNC;
+	}
+
+	public float getWaitTimeSharedTNC() {
+		return waitTimeSharedTNC;
+	}
+
+	public void setWaitTimeSharedTNC(float waitTimeSharedTNC) {
+		this.waitTimeSharedTNC = waitTimeSharedTNC;
+	}
 
 
     private void setupMethodIndexMap()
@@ -680,6 +708,10 @@ public class VisitorTripModeChoiceDMU
         methodIndexMap.put("getWalkSetLogSum", 62);
         methodIndexMap.put("getPnrSetLogSum", 63);
         methodIndexMap.put("getKnrSetLogSum", 64);
+        
+        methodIndexMap.put("getWaitTimeTaxi", 70);
+        methodIndexMap.put("getWaitTimeSingleTNC", 71);
+        methodIndexMap.put("getWaitTimeSharedTNC", 72);
 
         methodIndexMap.put("getNm_walkTime", 90);
         methodIndexMap.put("getNm_bikeTime", 91);
@@ -792,6 +824,9 @@ public class VisitorTripModeChoiceDMU
         	case 64:
         		returnValue = getKnrTransitLogsum();
         		break;
+            case 70: return getWaitTimeTaxi();
+            case 71: return getWaitTimeSingleTNC();
+            case 72: return getWaitTimeSharedTNC();
         	case 90:
         		returnValue = getNm_walkTime();
         		break;

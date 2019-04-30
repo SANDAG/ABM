@@ -32,6 +32,8 @@ public class AirportPartyManager
     SandagModelStructure   sandagStructure;
     private String airportCode;
     
+    private float avShare;
+    
 
     /**
      * Constructor. Reads properties file and opens/stores all probability
@@ -78,6 +80,9 @@ public class AirportPartyManager
         float averageSize = new Float(Util.getStringValueFromPropertyMap(rbMap,
                 "airport."+airportCode+".averageSize"));
 
+        
+        avShare = Util.getFloatValueFromPropertyMap(rbMap, "Mobility.AV.Share");
+        
         float directPassengers = (enplanements - connectingPassengers) / annualFactor;
         int totalParties = (int) (directPassengers / averageSize) * 2;
         parties = new AirportParty[(int)(totalParties*sampleRate)];
@@ -115,6 +120,11 @@ public class AirportPartyManager
                     party.getRandom());
             byte period = (byte) chooseFromDistribution(purpose, departureDistribution,
                     party.getRandom());
+            
+             if(party.getRandom()<avShare)
+            	party.setAvAvailable(true);
+             else 
+            	party.setAvAvailable(false);
 
             party.setPurpose(purpose);
             party.setSize(size);

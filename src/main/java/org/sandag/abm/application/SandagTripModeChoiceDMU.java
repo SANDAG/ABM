@@ -326,6 +326,11 @@ public class SandagTripModeChoiceDMU
         methodIndexMap.put("getPnrSetLogSum", 63);
         methodIndexMap.put("getKnrSetLogSum", 64);
 
+        methodIndexMap.put("getWaitTimeTaxi", 70);
+        methodIndexMap.put("getWaitTimeSingleTNC", 71);
+        methodIndexMap.put("getWaitTimeSharedTNC", 72);
+        methodIndexMap.put("getUseOwnedAV", 73);
+
         methodIndexMap.put("getNm_walkTime", 90);
         methodIndexMap.put("getNm_bikeTime", 91);
         
@@ -531,6 +536,10 @@ public class SandagTripModeChoiceDMU
                 else
                     returnValue = getTransitLogSum(WTD);
                 break;
+            case 70: return getWaitTimeTaxi();
+            case 71: return getWaitTimeSingleTNC();
+            case 72: return getWaitTimeSharedTNC();
+            case 73: return getUseOwnedAV();
             case 90:
             	returnValue = getNm_walkTime();
             	break;

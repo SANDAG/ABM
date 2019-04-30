@@ -1051,7 +1051,7 @@ public abstract class HouseholdDataManager
             int homeTaz = mgraManager.getTaz(homeMgra);
             numHhs[homeTaz]++;
             if (hhs[r].getIncomeInDollars() > 100000) percentHhsIncome100Kplus[homeTaz]++;
-            if (hhs[r].getAutoOwnershipModelResult() > 1) percentHhsMultipleAutos[homeTaz]++;
+            if (hhs[r].getAutosOwned() > 1) percentHhsMultipleAutos[homeTaz]++;
         }
 
         out.println("taz,numHhsTaz,numHhsIncome100KplusTaz,numHhsMultipleAutosTaz,proportionHhsIncome100KplusTaz,proportionHhsMultipleAutosTaz");
@@ -1786,7 +1786,7 @@ public abstract class HouseholdDataManager
                             ao = Integer.parseInt(fieldValue);
                             // pass in the ao model alternative number to this
                             // method
-                            hh.setAutoOwnershipModelResult(ao + 1);
+                            hh.setHhAutos(ao + 1);
                             break;
                         }
 

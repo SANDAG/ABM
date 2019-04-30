@@ -111,6 +111,8 @@ public class AirportModelDMU
         methodIndexMap.put("getWalkTransitLogsum", 10);
         methodIndexMap.put("getDriveTransitLogsum", 11);
         
+        methodIndexMap.put("getAvAvailable", 70);
+        
         methodIndexMap.put("getDriveAloneLogsum", 90);
         methodIndexMap.put("getShared2Logsum", 91);
         methodIndexMap.put("getShared3Logsum", 92);
@@ -163,6 +165,9 @@ public class AirportModelDMU
             case 11:
             	returnValue = getDriveTransitLogsum();
                 break;
+            case 70:
+            	returnValue = getAvAvailable();
+            	break;
             case 90:
                 returnValue = getDriveAloneLogsum();
                 break;
@@ -253,6 +258,15 @@ public class AirportModelDMU
     {
         return airportParty.getOriginMGRA();
     }
+    
+    public int getAvAvailable() {
+    	
+    	if(airportParty.getAvAvailable())
+    		return 1;
+    	
+    	return 0;
+    }
+    
 
     /**
      * Set the index values for this DMU.

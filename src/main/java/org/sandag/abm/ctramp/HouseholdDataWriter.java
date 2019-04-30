@@ -279,6 +279,8 @@ public class HouseholdDataWriter
         data.add("home_mgra");
         data.add("income");
         data.add("autos");
+        data.add("HVs");
+        data.add("AVs");
         data.add("transponder");
         data.add("cdap_pattern");
         data.add("out_escort_choice");
@@ -298,6 +300,8 @@ public class HouseholdDataWriter
     private List<SqliteDataTypes> formHouseholdColumnTypes()
     {
         List<SqliteDataTypes> data = new LinkedList<SqliteDataTypes>();
+        data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
@@ -323,7 +327,9 @@ public class HouseholdDataWriter
         data.add(string(hh.getHhId()));
         data.add(string(hh.getHhMgra()));
         data.add(string(hh.getIncomeInDollars()));
-        data.add(string(hh.getAutoOwnershipModelResult()));
+        data.add(string(hh.getAutosOwned()));
+        data.add(string(hh.getConventionalVehicles()));
+        data.add(string(hh.getAutomatedVehicles()));
         data.add(string(hh.getTpChoice()));
         data.add(string(hh.getCoordinatedDailyActivityPattern()));
         data.add(string(hh.getOutboundEscortChoice()));

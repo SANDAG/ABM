@@ -21,6 +21,8 @@ public class InternalExternalTour
     private int                    age;
     private int                    female;
     private double					nonWorkTimeFactor;
+    
+    private boolean avAvailable;
 
     // private InternalExternalStop[] outboundStops;
     // private InternalExternalStop[] inboundStops;
@@ -282,6 +284,14 @@ public class InternalExternalTour
 
 	public void setNonWorkTimeFactor(double nonWorkTimeFactor) {
 		this.nonWorkTimeFactor = nonWorkTimeFactor;
+	}
+
+	public boolean isAvAvailable() {
+		return avAvailable;
+	}
+
+	public void setAvAvailable(boolean avAvailable) {
+		this.avAvailable = avAvailable;
 	}
 
 	public void logTourObject(Logger logger, int totalChars)

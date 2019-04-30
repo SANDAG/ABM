@@ -43,6 +43,7 @@ public class InternalExternalTourManager
         int autos;
         int income;
         int homeMGRA;
+        int autonomousVehicles;
     }
 
     private HashMap<Long, HouseholdClass> householdData;
@@ -164,13 +165,16 @@ public class InternalExternalTourManager
             int autos = (int) hhData.getValueAt(i, "autos");
             int income = (int) hhData.getValueAt(i, "income");
             int mgra = (int) hhData.getValueAt(i, "home_mgra");
+            
+            int AVs = (int) hhData.getValueAt(i,"AVs");
 
             // new household
             HouseholdClass hh = new HouseholdClass();
             hh.autos = autos;
             hh.income = income;
             hh.homeMGRA = mgra;
-
+            hh.autonomousVehicles = AVs;
+            
             // store in HashMap
             householdData.put(hhID, hh);
         }
@@ -240,6 +244,11 @@ public class InternalExternalTourManager
                 tour.setIncome(hh.income);
                 tour.setAutos(hh.autos);
                 tour.setAge(age);
+                
+                if(hh.autonomousVehicles>0)
+                	tour.setAvAvailable(true);
+                else
+                	tour.setAvAvailable(false);
 
                 if (gender.equals("f")) tour.setFemale(1);
                 else tour.setFemale(0);

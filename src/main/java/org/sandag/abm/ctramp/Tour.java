@@ -70,6 +70,8 @@ public class Tour
 
     private int       choosenTransitPathOut;
     
+    private boolean   useOwnedAV;
+
     private double valueOfTime;
 
     private int escortTypeOutbound;
@@ -839,4 +841,12 @@ public class Tour
 		inboundStopDestinationLogsums.add(logsum);
 	}
 	
+	public boolean getUseOwnedAV() {
+		return useOwnedAV;
+	}
+
+	public void setUseOwnedAV(boolean useOwnedAV) {
+		this.useOwnedAV = useOwnedAV;
+	}
+
 }

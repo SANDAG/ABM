@@ -36,6 +36,8 @@ public class CrossBorderTour
     private float                workTimeFactor;
     private float                nonWorkTimeFactor;
     private float                valueOfTime;
+    
+    private boolean              avAvailable;
 
     /**
      * Public constructor.
@@ -335,6 +337,14 @@ public class CrossBorderTour
 		this.valueOfTime = valueOfTime;
 	}
 
+	public boolean isAvAvailable() {
+		return avAvailable;
+	}
+
+	public void setAvAvailable(boolean avAvailable) {
+		this.avAvailable = avAvailable;
+	}
+
 	public void logTourObject(Logger logger, int totalChars)
     {
 
@@ -345,6 +355,7 @@ public class CrossBorderTour
         Household.logHelper(logger, "tourDepartPeriod: ", departTime, totalChars);
         Household.logHelper(logger, "tourArrivePeriod: ", arriveTime, totalChars);
         Household.logHelper(logger, "tourMode: ", tourMode, totalChars);
+        Household.logHelper(logger, "avAvailable:", (avAvailable ? 0 : 1), totalChars);
         
         String tempString = null;
       

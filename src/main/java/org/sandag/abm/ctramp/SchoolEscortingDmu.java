@@ -760,7 +760,7 @@ public class SchoolEscortingDmu implements VariableTable {
 	        case 65:
 	        	return hhObj.getIncomeInDollars();
 	        case 66:
-	        	return hhObj.getAutoOwnershipModelResult();
+	        	return hhObj.getAutosOwned();
 	        case 67:
 	        	return hhObj.getWorkers();
 	        case 68:

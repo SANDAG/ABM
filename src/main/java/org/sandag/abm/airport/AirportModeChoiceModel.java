@@ -245,7 +245,7 @@ public class AirportModeChoiceModel
         
         float valueOfTime = 0;
 
-        if (accessMode != AirportModelStructure.TRANSIT)
+        if ((accessMode != AirportModelStructure.TRANSIT) && (! AirportModelStructure.taxiTncMode(accessMode)))
         {
             if (occupancy == 1)
             {
@@ -278,22 +278,29 @@ public class AirportModeChoiceModel
                 valueOfTime = (float) uec.getValueForIndex(votIndex);
 
             }
-        } else
+        } else if (accessMode == AirportModelStructure.TRANSIT)
         {
             int choice = transitModel.getChoiceResult(randomNumber);
             double[][] bestTapPairs;
             if (choice == 1){
-            	tripMode = 9; //walk-transit
+            	tripMode = AirportModelStructure.REALLOCATE_WLKTRN; //walk-transit
             	bestTapPairs = logsumHelper.getBestWtwTripTaps();
             }
-            else{
-            	tripMode = 11; //knr-transit
+            else if (choice == 2){
+            	tripMode = AirportModelStructure.REALLOCATE_KNRPERTRN; //knr-personal vehicle
                 if (party.getDirection() == AirportModelStructure.DEPARTURE)
                 	bestTapPairs = logsumHelper.getBestDtwTripTaps();
                 else
                 	bestTapPairs = logsumHelper.getBestWtdTripTaps();
-             }
-            
+            }
+            else {
+               	tripMode = AirportModelStructure.REALLOCATE_KNRTNCTRN; //knr-TNC
+                if (party.getDirection() == AirportModelStructure.DEPARTURE)
+                	bestTapPairs = logsumHelper.getBestDtwTripTaps();
+                else
+                	bestTapPairs = logsumHelper.getBestWtdTripTaps();
+           }
+           
            	//pick transit path from N-paths
             float rn = new Double(party.getRandom()).floatValue();
         	int pathIndex = logsumHelper.chooseTripPath(rn, bestTapPairs, party.getDebugChoiceModels(), logger);
@@ -306,6 +313,36 @@ public class AirportModeChoiceModel
          	        			
         	//following gets vot from UEC
             UtilityExpressionCalculator uec = transitModel.getUEC();
+            int votIndex = uec.lookupVariableIndex("vot");
+            valueOfTime = (float) uec.getValueForIndex(votIndex);
+
+        }else if(accessMode == AirportModelStructure.TAXI){
+        	
+        	tripMode=AirportModelStructure.REALLOCATE_TAXI;
+        }
+    	else if(accessMode == AirportModelStructure.TNC_SINGLE){
+    	
+           	tripMode=AirportModelStructure.REALLOCATE_TNCSINGLE;
+  	
+    	}
+    	else if(accessMode == AirportModelStructure.TNC_SHARED){
+        	
+           	tripMode=AirportModelStructure.REALLOCATE_TNCSHARED;
+
+    	}
+        
+        //set the VOT
+        if(AirportModelStructure.taxiTncMode(accessMode) ) {
+        	UtilityExpressionCalculator uec = null;
+        	
+        	//following gets vot from UEC
+            if(occupancy==1) 
+            	uec = driveAloneModel.getUEC();
+            else if (occupancy==2)
+                uec = shared2Model.getUEC();
+            else 
+                uec = shared3Model.getUEC();
+           	
             int votIndex = uec.lookupVariableIndex("vot");
             valueOfTime = (float) uec.getValueForIndex(votIndex);
 

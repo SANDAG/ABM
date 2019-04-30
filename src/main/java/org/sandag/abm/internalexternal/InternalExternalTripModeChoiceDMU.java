@@ -47,6 +47,8 @@ public class InternalExternalTripModeChoiceDMU
     protected double knrTransitLogsum;
 
    protected int outboundHalfTourDirection;
+   
+   protected int avAvailable;
 
     public InternalExternalTripModeChoiceDMU(InternalExternalModelStructure modelStructure,
             Logger aLogger)
@@ -391,7 +393,15 @@ public class InternalExternalTripModeChoiceDMU
 	}
 
 
-    private void setupMethodIndexMap()
+    public int getAvAvailable() {
+		return avAvailable;
+	}
+
+	public void setAvAvailable(int avAvailable) {
+		this.avAvailable = avAvailable;
+	}
+
+	private void setupMethodIndexMap()
     {
         methodIndexMap = new HashMap<String, Integer>();
 
@@ -418,6 +428,8 @@ public class InternalExternalTripModeChoiceDMU
         methodIndexMap.put("getWalkSetLogSum", 62);
         methodIndexMap.put("getPnrSetLogSum", 63);
         methodIndexMap.put("getKnrSetLogSum", 64);
+        
+        methodIndexMap.put("getAvAvailable",70);
 
         methodIndexMap.put("getNm_walkTime", 90);
         methodIndexMap.put("getNm_bikeTime", 91);
@@ -494,6 +506,9 @@ public class InternalExternalTripModeChoiceDMU
             case 64:
             	returnValue = getKnrTransitLogsum();
                 break;
+            case 70:
+            	returnValue = getAvAvailable();
+            	break;
             case 90:
             	 returnValue = getNm_walkTime();
             	 break;

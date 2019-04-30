@@ -37,6 +37,8 @@ public class Household
     private Tour[]                    jointTours;
 
     private int                       aoModelAutos;
+    private int                       automatedVehicles;
+    private int                       conventionalVehicles;
     private String                    cdapModelPattern;
     private int                       imtfModelPattern;
     private String                    jtfModelPattern;
@@ -252,14 +254,6 @@ public class Household
         tpChoice = value;
     }
 
-    public void setAutoOwnershipModelResult(int aoModelAlternativeChosen)
-    {
-        // store the number of autos owned by the household (AO model
-        // alternative -
-        // 1).
-        aoModelAutos = aoModelAlternativeChosen - 1;
-    }
-
     /**
      * auto sufficiency: 1 if cars < workers, 2 if cars equal workers, 3 if cars
      * > workers
@@ -273,10 +267,26 @@ public class Household
         else return 3;
     }
 
-    public int getAutoOwnershipModelResult()
+   public int getAutosOwned()
     {
         return aoModelAutos;
     }
+    
+    public int getAutomatedVehicles() {
+		return automatedVehicles;
+	}
+
+	public void setAutomatedVehicles(int automatedVehicles) {
+		this.automatedVehicles = automatedVehicles;
+	}
+
+	public int getConventionalVehicles() {
+		return conventionalVehicles;
+	}
+
+	public void setConventionalVehicles(int conventionalVehicles) {
+		this.conventionalVehicles = conventionalVehicles;
+	}
 
     public int getTpChoice()
     {
@@ -781,6 +791,16 @@ public class Household
             if (persons[i].getAge() >= 16 && persons[i].getAge() <= 17) numPersons16to17++;
         }
         return numPersons16to17;
+    }
+    
+    public int getNumPersons18to35(){
+    	
+        int numPersons18to35 = 0;
+        for (int i = 1; i < persons.length; i++)
+        {
+            if (persons[i].getAge() >= 18 && persons[i].getAge() <= 35) numPersons18to35++;
+        }
+        return numPersons18to35;
     }
 
     public int getNumPersons16plus()

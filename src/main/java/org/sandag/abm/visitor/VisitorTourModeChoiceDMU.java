@@ -53,6 +53,12 @@ public class VisitorTourModeChoiceDMU
     protected double                   lsWgtAvgCostH;
 
     protected double[][]                 transitLogSum;
+    protected float origTaxiWaitTime;
+    protected float destTaxiWaitTime;
+    protected float origSingleTNCWaitTime;
+    protected float destSingleTNCWaitTime;
+    protected float origSharedTNCWaitTime;
+    protected float destSharedTNCWaitTime;
 
      public VisitorTourModeChoiceDMU(VisitorModelStructure modelStructure, Logger aLogger)
     {
@@ -327,6 +333,78 @@ public class VisitorTourModeChoiceDMU
     }
 
 
+
+	public float getOrigTaxiWaitTime() {
+		return origTaxiWaitTime;
+	}
+
+
+
+	public void setOrigTaxiWaitTime(float origTaxiWaitTime) {
+		this.origTaxiWaitTime = origTaxiWaitTime;
+	}
+
+
+
+	public float getDestTaxiWaitTime() {
+		return destTaxiWaitTime;
+	}
+
+
+
+	public void setDestTaxiWaitTime(float destTaxiWaitTime) {
+		this.destTaxiWaitTime = destTaxiWaitTime;
+	}
+
+
+
+	public float getOrigSingleTNCWaitTime() {
+		return origSingleTNCWaitTime;
+	}
+
+
+
+	public void setOrigSingleTNCWaitTime(float origSingleTNCWaitTime) {
+		this.origSingleTNCWaitTime = origSingleTNCWaitTime;
+	}
+
+
+
+	public float getDestSingleTNCWaitTime() {
+		return destSingleTNCWaitTime;
+	}
+
+
+
+	public void setDestSingleTNCWaitTime(float destSingleTNCWaitTime) {
+		this.destSingleTNCWaitTime = destSingleTNCWaitTime;
+	}
+
+
+
+	public float getOrigSharedTNCWaitTime() {
+		return origSharedTNCWaitTime;
+	}
+
+
+
+	public void setOrigSharedTNCWaitTime(float origSharedTNCWaitTime) {
+		this.origSharedTNCWaitTime = origSharedTNCWaitTime;
+	}
+
+
+
+	public float getDestSharedTNCWaitTime() {
+		return destSharedTNCWaitTime;
+	}
+
+
+
+	public void setDestSharedTNCWaitTime(float destSharedTNCWaitTime) {
+		this.destSharedTNCWaitTime = destSharedTNCWaitTime;
+	}
+
+
     private void setupMethodIndexMap()
     {
         methodIndexMap = new HashMap<String, Integer>();
@@ -355,11 +433,19 @@ public class VisitorTourModeChoiceDMU
         methodIndexMap.put("getPnrSetLogSum", 60);
         methodIndexMap.put("getKnrSetLogSum", 61);
 
+        methodIndexMap.put( "getOrigTaxiWaitTime", 70 );
+        methodIndexMap.put( "getDestTaxiWaitTime", 71 );
+        methodIndexMap.put( "getOrigSingleTNCWaitTime", 72 );
+        methodIndexMap.put( "getDestSingleTNCWaitTime", 73 );
+        methodIndexMap.put( "getOrigSharedTNCWaitTime", 74 );
+        methodIndexMap.put( "getDestSharedTNCWaitTime", 75 );
+
         methodIndexMap.put("getNm_walkTime_out", 90);
         methodIndexMap.put("getNm_walkTime_in", 91);
         methodIndexMap.put("getNm_bikeTime_out", 92);
         methodIndexMap.put("getNm_bikeTime_in", 93);
 
+        
      }
 
     public double getValueForIndex(int variableIndex, int arrayIndex)
@@ -429,6 +515,12 @@ public class VisitorTourModeChoiceDMU
         case 61:
             returnValue = getTransitLogSum(WTD, true) + getTransitLogSum(DTW, false);
             break;
+        case 70: return getOrigTaxiWaitTime();
+        case 71: return getDestTaxiWaitTime();
+        case 72: return getOrigSingleTNCWaitTime();
+        case 73: return getDestSingleTNCWaitTime();
+        case 74: return getOrigSharedTNCWaitTime();
+        case 75: return getDestSharedTNCWaitTime();
         case 90:
             returnValue = getNm_walkTime_out();
             break;

@@ -136,16 +136,16 @@ public class SandagModelStructure
     public static final int[]    NON_MOTORIZED_ALTS                                                 = {
             7, 8                                                                                  };
     public static final int[]    TRANSIT_ALTS                                                       = {
-            9, 10, 11                              };
+            9, 10, 11, 12                              };
     public static final int[]    WALK_TRANSIT_ALTS                                                  = {
             9                                                                     };
     public static final int[]    DRIVE_TRANSIT_ALTS                                                 = {
-            10, 11                                                  };
+            10, 11, 12                                                  };
     public static final int[]    PNR_ALTS                                                           = {
             10                                                                      };
     public static final int[]    KNR_ALTS                                                           = {
-            11                                                                     };
-    public static final int[]    SCHOOL_BUS_ALTS                                                    = {12};
+            11, 12                                                                     };
+    public static final int[]    SCHOOL_BUS_ALTS                                                    = {16};
     public static final int[]    TRIP_SOV_ALTS                                                      = {
             1, 2                                                                                    };
     public static final int[]    TRIP_HOV_ALTS                                                      = {
@@ -154,18 +154,19 @@ public class SandagModelStructure
     public static final int[]    PAY_ALTS                                                           = {
             2, 4, 6                                                                                 };
 
-    public static final int[]    OTHER_ALTS                                                         = {12};
+    public static final int[]    OTHER_ALTS                                                         = {13,14,15,16};
 
     private static final int     WALK                                                               = 7;
     private static final int     BIKE                                                               = 8;
 
-    public static final int      SCHOOL_BUS                                                         = 12;
+    public static final int      SCHOOL_BUS                                                         = 16;
     public static final int      TAXI                                                               = 13;
+    public static final int[]    TNC_ALTS = {14,15};
 
     public static final String[] modeName = {"SOV_GP","SOV_PAY","SR2_NOPAY","SR2_PAY","SR3_NOPAY","SR3_PAY",
-    	"WALK","BIKE","WLK_SET","PNR_SET","KNR_SET","SCHLBUS","TAXI"};
+    	"WALK","BIKE","WLK_SET","PNR_SET","KNR_PER","KNR_TNC","TAXI","TNC_SINGLE","TNC_SHARED","SCHLBUS"};
 
-    public static final int      MAXIMUM_TOUR_MODE_ALT_INDEX                                        = 12;
+    public static final int      MAXIMUM_TOUR_MODE_ALT_INDEX                                        = 16;
 
     public final double[][]      CDAP_6_PLUS_PROPORTIONS                                            = {
             {0.0, 0.0, 0.0}, {0.79647, 0.09368, 0.10985}, {0.61678, 0.25757, 0.12565},
@@ -394,7 +395,7 @@ public class SandagModelStructure
             if (HOV_ALTS[i] == tourMode) return true;
         }
 
-        if (tourMode == TAXI) return true;
+   //     if (tourMode == TAXI) return true;
 
         return false;
     }

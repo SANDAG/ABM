@@ -21,6 +21,7 @@ public class HouseholdAutoOwnershipModel
     private static final String                AO_MODEL_SHEET_TARGET  = "ao.model.page";
     private static final String                AO_DATA_SHEET_TARGET   = "ao.data.page";
 
+    private static final int                   AUTO_SOV_TIME_INDEX    = 10;
     private static final int                   AUTO_LOGSUM_INDEX      = 6;
     private static final int                   TRANSIT_LOGSUM_INDEX   = 8;
     private static final int                   DT_RAIL_PROP_INDEX     = 10;
@@ -29,6 +30,10 @@ public class HouseholdAutoOwnershipModel
     private MandatoryAccessibilitiesCalculator mandAcc;
     private ChoiceModelApplication             aoModel;
     private AutoOwnershipChoiceDMU             aoDmuObject;
+    
+    private int[]                              totalAutosByAlt;
+    private int[]                              automatedVehiclesByAlt;
+    private int[]                              conventionalVehiclesByAlt;
 
     public HouseholdAutoOwnershipModel(HashMap<String, String> rbMap,
             CtrampDmuFactoryIf dmuFactory, AccessibilitiesTable myAccTable,
@@ -59,6 +64,9 @@ public class HouseholdAutoOwnershipModel
         // create the auto ownership choice model object
         aoModel = new ChoiceModelApplication(autoOwnershipUecFile, modelPage, dataPage, rbMap,
                 (VariableTable) aoDmuObject);
+        
+        String[] alternativeNames = aoModel.getAlternativeNames();
+        calculateAlternativeArrays(alternativeNames);
 
     }
 
@@ -106,6 +114,7 @@ public class HouseholdAutoOwnershipModel
             double schoolAutoDependency = 0.0;
             double workRailProp = 0.0;
             double schoolRailProp = 0.0;
+            double workAutoTime = 0.0;
             Person[] persons = hhObj.getPersons();
             for (int i = 1; i < persons.length; i++)
             {
@@ -131,7 +140,8 @@ public class HouseholdAutoOwnershipModel
                         double[] workerAccessibilities = mandAcc
                                 .calculateWorkerMandatoryAccessibilities(hhObj.getHhMgra(),
                                         workMgra);
-                        if (workerAccessibilities[AUTO_LOGSUM_INDEX] >= workerAccessibilities[TRANSIT_LOGSUM_INDEX])
+                        workAutoTime += workerAccessibilities[AUTO_SOV_TIME_INDEX];
+                         if (workerAccessibilities[AUTO_LOGSUM_INDEX] >= workerAccessibilities[TRANSIT_LOGSUM_INDEX])
                         {
                             double logsumDiff = workerAccessibilities[AUTO_LOGSUM_INDEX]
                                     - workerAccessibilities[TRANSIT_LOGSUM_INDEX];
@@ -191,6 +201,8 @@ public class HouseholdAutoOwnershipModel
 
             aoDmuObject.setWorkersRailProportion(workRailProp);
             aoDmuObject.setStudentsRailProportion(schoolRailProp);
+           
+            aoDmuObject.setWorkAutoTime(workAutoTime);
 
         }
 
@@ -267,8 +279,61 @@ public class HouseholdAutoOwnershipModel
         if (preAutoOwnership) hhObj.setPreAoRandomCount(hhObj.getHhRandomCount());
         else hhObj.setAoRandomCount(hhObj.getHhRandomCount());
 
-        hhObj.setAutoOwnershipModelResult(chosenAlt);
-
+       int autos = totalAutosByAlt[chosenAlt-1];
+        int AVs = automatedVehiclesByAlt[chosenAlt-1];
+        int CVs = conventionalVehiclesByAlt[chosenAlt-1];
+        hhObj.setHhAutos(autos);
+        hhObj.setAutomatedVehicles(AVs);
+        hhObj.setConventionalVehicles(CVs);
+  
     }
+   
+    
+    /**
+     * This is a helper method that iterates through the alternative names
+     * in the auto ownership UEC and searches through each name to collect 
+     * the total number of autos (in the first position of the name character
+     * array), the number of AVs for the alternative (preceded by the "AV" substring) 
+     * and the number of CVs for the alternative (preceded by the "CV" substring). The
+     * results are stored in the arrays:
+     * 
+     *  totalAutosByAlt
+     *  automatedVehiclesByAlt
+     *  conventionalVehiclesByAlt
+     *  
+     * @param alternativeNames The array of alternative names.
+     */
+    private void calculateAlternativeArrays(String[] alternativeNames){
+    	
+    	totalAutosByAlt = new int[alternativeNames.length];
+	    automatedVehiclesByAlt = new int[alternativeNames.length];
+	    conventionalVehiclesByAlt = new int[alternativeNames.length];
+   	
+    	
+    	//iterate thru names
+    	for(int i = 0; i < alternativeNames.length;++i){
+    		
+    		String altName = alternativeNames[i];
+    		
+    		//find the number of cars; first element of name (e.g. 0_CARS)
+    		int autos = new Integer(altName.substring(0,1)).intValue();
+    		int AVs=0;
+    		int HVs=0;
+    		int AVPosition = altName.indexOf("AV");
+    		if(AVPosition>=0)
+    			AVs = new Integer(altName.substring(AVPosition-1, AVPosition)).intValue();
+    		int HVPosition = altName.indexOf("HV");
+    		if(HVPosition>=0)
+    			HVs = new Integer(altName.substring(HVPosition-1, HVPosition)).intValue();
+    		
+    		totalAutosByAlt[i] = autos;
+    	    automatedVehiclesByAlt[i] = AVs;
+    	    conventionalVehiclesByAlt[i] = HVs;
+   		
+    	}
+    	
+    }
+    
 
 }
+
