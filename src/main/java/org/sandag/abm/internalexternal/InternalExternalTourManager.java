@@ -305,14 +305,14 @@ public class InternalExternalTourManager
             throw new RuntimeException();
         }
         String tripHeaderString = new String(
-                "hhID,pnum,personID,tourID,originMGRA,destinationMGRA,originTAZ,destinationTAZ,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,boardingTap,alightingTap,set,valueOfTime\n");
+                "hhID,pnum,personID,tourID,originMGRA,destinationMGRA,originTAZ,destinationTAZ,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,av_avail,boardingTap,alightingTap,set,valueOfTime\n");
         tripWriter.print(tripHeaderString);
 
         for (int i = 0; i < tours.length; ++i)
         {
             InternalExternalTrip[] trips = tours[i].getTrips();
             for (int j = 0; j < trips.length; ++j)
-                writeTrip(tours[i].getHhID(), tours[i].getPnum(),tours[i].getPersonID(), tours[i].getID(), trips[j], tripWriter);
+                writeTrip(tours[i].getHhID(), tours[i].getPnum(),tours[i].getPersonID(), tours[i].getID(), tours[i],trips[j], tripWriter);
         }
 
         tripWriter.close();
@@ -327,14 +327,14 @@ public class InternalExternalTourManager
      * @param tripNumber
      * @param writer
      */
-    private void writeTrip(int hhID, int pnum, int personID, int tourID, InternalExternalTrip trip, PrintWriter writer)
+    private void writeTrip(int hhID, int pnum, int personID, int tourID, InternalExternalTour tour, InternalExternalTrip trip, PrintWriter writer)
     {
 
         String record = new String(hhID+","+pnum+","+personID+","+tourID+","+trip.getOriginMgra() + "," + trip.getDestinationMgra() + ","
                  + trip.getOriginTaz() + "," + trip.getDestinationTaz() + "," + trip.isInbound()
                 + "," + trip.isOriginIsTourDestination() + ","
                 + trip.isDestinationIsTourDestination() + "," + trip.getPeriod() + ","
-                + trip.getTripMode() + "," 
+                + trip.getTripMode() + "," + (tour.isAvAvailable() ? 1 : 0) + "," 
                 + trip.getBoardTap() + "," + trip.getAlightTap() + "," + trip.getSet()+ ","
                 +String.format("%9.2f",trip.getValueOfTime()) + "\n");
         writer.print(record);

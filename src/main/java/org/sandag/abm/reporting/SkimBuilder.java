@@ -11,6 +11,7 @@ import org.sandag.abm.accessibilities.BestTransitPathCalculator;
 import org.sandag.abm.accessibilities.DriveTransitWalkSkimsCalculator;
 import org.sandag.abm.accessibilities.WalkTransitDriveSkimsCalculator;
 import org.sandag.abm.accessibilities.WalkTransitWalkSkimsCalculator;
+import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.Modes;
@@ -128,16 +129,16 @@ public class SkimBuilder
             "UNKNOWN", // ids start at one
             "DRIVEALONEFREE", "DRIVEALONEPAY", "SHARED2HOV", "SHARED2PAY",
             "SHARED3HOV", "SHARED3PAY", "WALK", "BIKE", "WALK_SET", "PNR_SET", 
-            "KNR_SET", "SCHBUS", "TAXI"};
+            "KNR_TRN", "TNC_TRN", "SCHBUS", "TAXI", "TNC_SINGLE", "TNC_SHARED"};
 
     private final TripModeChoice[] modeChoiceLookup = {TripModeChoice.UNKNOWN,
             TripModeChoice.DRIVE_ALONE_NO_TOLL, TripModeChoice.DRIVE_ALONE_TOLL,
             TripModeChoice.SR2_HOV, TripModeChoice.SR2_TOLL,
             TripModeChoice.SR3_HOV, TripModeChoice.SR3_TOLL,
             TripModeChoice.WALK, TripModeChoice.BIKE, TripModeChoice.WALK_SET,
-            TripModeChoice.PNR_SET, TripModeChoice.KNR_SET, 
+            TripModeChoice.PNR_SET, TripModeChoice.KNR_SET, TripModeChoice.KNR_SET, 
             TripModeChoice.DRIVE_ALONE_NO_TOLL,
-            TripModeChoice.SR2_HOV      };
+            TripModeChoice.SR2_HOV, TripModeChoice.SR2_HOV,  TripModeChoice.SR2_HOV       };
 
     private int getTod(int tripTimePeriod)
     {
@@ -473,7 +474,7 @@ public class SkimBuilder
         WALK_SET(false, false), 
         PNR_SET(true, false),
         KNR_SET(true, false);
-
+       
         private final boolean isDrive;
         private final boolean isToll;
 
@@ -563,8 +564,9 @@ public class SkimBuilder
             this.transitDistance = (float) trnDist;
             
         }
-
-        /**
+        
+        
+         /**
          * A method to set create trip attributes for a non-toll auto choice.
          * 
          * @param autoInVehicleTime
@@ -711,5 +713,17 @@ public class SkimBuilder
 			return transitDistance;
 		}
     }
+    
+    public float getLotWalkTime(int parkingLotMaz, int destinationMaz) {
+
+    	// first, look in mgra manager, otherwise default to auto skims
+        double distance = mgraManager.getMgraToMgraWalkDistFrom(parkingLotMaz, destinationMaz) / FEET_IN_MILE;
+        if (distance <= 0) {
+        	distance = autoNonMotSkims.getAutoSkims(parkingLotMaz, destinationMaz, SandagModelStructure.EA_SKIM_PERIOD_INDEX +1, (float)15.0,false, logger)[DA_DIST_INDEX];
+        }
+       	
+       	return (float) (distance * 60 / DEFAULT_WALK_SPEED);
+    }
+
 
 }

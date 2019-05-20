@@ -47,6 +47,8 @@ public class VisitorTourManager
     private int             traceId;
 
     private MersenneTwister random;
+    
+    private boolean avAvailable;
 
     /**
      * Constructor. Reads properties file and opens/stores all probability
@@ -106,7 +108,11 @@ public class VisitorTourManager
 
         seek = new Boolean(Util.getStringValueFromPropertyMap(rbMap, "visitor.seek"));
         traceId = new Integer(Util.getStringValueFromPropertyMap(rbMap, "visitor.trace"));
-
+        
+        float avShare = new Float(Util.getFloatValueFromPropertyMap(rbMap, "Mobility.AV.Share"));
+        if(avShare>0)
+        	avAvailable=true;
+        
         random = new MersenneTwister(1000001);
 
     }
@@ -404,7 +410,7 @@ public class VisitorTourManager
             throw new RuntimeException();
         }
         String tourHeaderString = new String(
-                "id,segment,purpose,autoAvailable,partySize,income,departTime,arriveTime,originMGRA,destinationMGRA,tourMode,outboundStops,inboundStops,valueOfTime\n");
+                "id,segment,purpose,autoAvailable,partySize,income,departTime,arriveTime,originMGRA,destinationMGRA,tourMode,avAvailable,outboundStops,inboundStops,valueOfTime\n");
         tourWriter.print(tourHeaderString);
 
         PrintWriter tripWriter = null;
@@ -417,7 +423,7 @@ public class VisitorTourManager
             throw new RuntimeException();
         }
         String tripHeaderString = new String(
-                "tourID,tripID,originPurp,destPurp,originMGRA,destinationMGRA,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,boardingTap,alightingTap,set,valueOfTime,partySize\n");
+                "tourID,tripID,originPurp,destPurp,originMGRA,destinationMGRA,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,avAvailable,boardingTap,alightingTap,set,valueOfTime,partySize\n");
         tripWriter.print(tripHeaderString);
 
         // Iterate through the array, printing records to the file
@@ -456,7 +462,8 @@ public class VisitorTourManager
         String record = new String(tour.getID() + "," + tour.getSegment() + "," + tour.getPurpose()
                 + "," + tour.getAutoAvailable() + "," + tour.getNumberOfParticipants() + ","
                 + tour.getIncome() + "," + tour.getDepartTime() + "," + tour.getArriveTime() + ","
-                + tour.getOriginMGRA() + "," + tour.getDestinationMGRA() + "," + tour.getTourMode()
+                + tour.getOriginMGRA() + "," + tour.getDestinationMGRA() + "," + tour.getTourMode() + ","
+                + (avAvailable?1:0)
                 + "," + tour.getNumberOutboundStops() + "," + tour.getNumberInboundStops() 
                 + "," + String.format("%9.2f",tour.getValueOfTime())+ "\n");
         writer.print(record);
@@ -477,7 +484,7 @@ public class VisitorTourManager
                 + "," + trip.getDestinationPurpose() + "," + trip.getOriginMgra() + ","
                 + trip.getDestinationMgra() + "," + trip.isInbound() + ","
                 + trip.isOriginIsTourDestination() + "," + trip.isDestinationIsTourDestination()
-                + "," + trip.getPeriod() + "," + trip.getTripMode() + "," 
+                + "," + trip.getPeriod() + "," + trip.getTripMode() + ","  + (avAvailable?1:0) +","
                 + trip.getBoardTap() + "," + trip.getAlightTap() + "," + trip.getSet()
                 + "," + String.format("%9.2f",trip.getValueOfTime())+ "," + tour.getNumberOfParticipants()+ "\n");
         writer.print(record);

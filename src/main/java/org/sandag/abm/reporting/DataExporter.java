@@ -477,6 +477,8 @@ public final class DataExporter
         int[] tripDepartTime = new int[rowCount];
         int[] tripBoardTaz = new int[rowCount];
         int[] tripAlightTaz = new int[rowCount];
+        float[] tripParkingTime = new float[rowCount];
+        
         float[] transitAccessDist = new float[rowCount];
         float[] transitEgressDist = new float[rowCount];
         float[] transitAuxTime = new float[rowCount];
@@ -531,6 +533,19 @@ public final class DataExporter
             transitAccTime[i] = attributes.getTransitAccessTime();
             transitEgrTime[i] = attributes.getTransitEgressTime();
             transitTransfers[i] = attributes.getTransitTransfers();
+            
+            
+            //get parking walk time
+            if(tripStructureDefinition.parkingMazColumn>-1) {
+            	int parkingMaz = (int) table.getValueAt(row, tripStructureDefinition.parkingMazColumn);
+            	
+            	if(parkingMaz==0)
+            		continue;
+            	
+            	int destMaz =  (int) table.getValueAt(row, tripStructureDefinition.destMgraColumn);
+            	float parkingWalkTime = skimBuilder.getLotWalkTime(parkingMaz,destMaz);
+            	tripParkingTime[i]= parkingWalkTime;
+            }
            
             
             if (hasPurposeColumn)
@@ -588,6 +603,7 @@ public final class DataExporter
         table.appendColumn(crIVT, "CR_IVT");
 
         table.appendColumn(tranDist, "TRAN_DIST");
+        table.appendColumn(tripParkingTime, "PARK_WALK_TIME");
         
 //        table.appendColumn(valueOfTime, "VALUE_OF_TIME");
     }
@@ -960,6 +976,8 @@ public final class DataExporter
         formatList.add(NUMBER_FORMAT_NAME); // home_mgra
         formatList.add(NUMBER_FORMAT_NAME); // income
         formatList.add(NUMBER_FORMAT_NAME); // autos
+        formatList.add(NUMBER_FORMAT_NAME); // HVs
+        formatList.add(NUMBER_FORMAT_NAME); // AVs
         formatList.add(NUMBER_FORMAT_NAME); // transponder
         formatList.add(STRING_FORMAT_NAME); // cdap_pattern
         formatList.add(NUMBER_FORMAT_NAME); // jtf_choice
@@ -1129,6 +1147,7 @@ public final class DataExporter
         formatList.add(NUMBER_FORMAT_NAME); // start_period
         formatList.add(NUMBER_FORMAT_NAME); // end_period
         formatList.add(NUMBER_FORMAT_NAME); // tour_mode
+        formatList.add(NUMBER_FORMAT_NAME); // av_avail        
         formatList.add(NUMBER_FORMAT_NAME); // tour_distance
         formatList.add(NUMBER_FORMAT_NAME); // atWork_freq
         formatList.add(NUMBER_FORMAT_NAME); // num_ob_stops
@@ -1161,7 +1180,7 @@ public final class DataExporter
         
         Set<String> intColumns = new HashSet<String>(Arrays.asList("hh_id", "person_id",
                 "person_num", "person_type", "tour_id", "orig_mgra", "dest_mgra", "start_period",
-                "end_period", "tour_mode", "atWork_freq", "num_ob_stops", "num_ib_stops"));
+                "end_period", "tour_mode", "av_avail", "atWork_freq", "num_ob_stops", "num_ib_stops"));
 
         Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
         
@@ -1210,6 +1229,7 @@ public final class DataExporter
         formatList.add(NUMBER_FORMAT_NAME); // start_period
         formatList.add(NUMBER_FORMAT_NAME); // end_period
         formatList.add(NUMBER_FORMAT_NAME); // tour_mode
+        formatList.add(NUMBER_FORMAT_NAME); // av_avail
         formatList.add(NUMBER_FORMAT_NAME); // tour_distance
         formatList.add(NUMBER_FORMAT_NAME); // num_ob_stops
         formatList.add(NUMBER_FORMAT_NAME); // num_ib_stops
@@ -1241,7 +1261,7 @@ public final class DataExporter
                
         Set<String> intColumns = new HashSet<String>(Arrays.asList("hh_id", "tour_id",
                 "tour_composition", "orig_mgra", "dest_mgra", "start_period", "end_period",
-                "tour_mode", "num_ob_stops", "num_ib_stops"));
+                "tour_mode", "av_avail", "num_ob_stops", "num_ib_stops"));
         Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
         
         if(writeUtilities){
@@ -1277,30 +1297,31 @@ public final class DataExporter
         addTable(outputFileBase);
         ArrayList<String> formatList = new ArrayList<String>();
 
-        formatList.add(NUMBER_FORMAT_NAME); // hh_id
-        formatList.add(NUMBER_FORMAT_NAME); // person_id
-        formatList.add(NUMBER_FORMAT_NAME); // person_num
-        formatList.add(NUMBER_FORMAT_NAME); // tour_id
-        formatList.add(NUMBER_FORMAT_NAME); // stop_id
-        formatList.add(NUMBER_FORMAT_NAME); // inbound
-        formatList.add(STRING_FORMAT_NAME); // tour_purpose
-        formatList.add(STRING_FORMAT_NAME); // orig_purpose
-        formatList.add(STRING_FORMAT_NAME); // dest_purpose
-        formatList.add(NUMBER_FORMAT_NAME); // orig_mgra
-        formatList.add(NUMBER_FORMAT_NAME); // dest_mgra
-        formatList.add(NUMBER_FORMAT_NAME); // parking_mgra
-        formatList.add(NUMBER_FORMAT_NAME); // stop_period
-        formatList.add(NUMBER_FORMAT_NAME); // trip_mode
-        formatList.add(NUMBER_FORMAT_NAME); // trip_board_tap
-        formatList.add(NUMBER_FORMAT_NAME); // trip_alight_tap
-        formatList.add(NUMBER_FORMAT_NAME); // set
-        formatList.add(NUMBER_FORMAT_NAME); // tour_mode
-        formatList.add(NUMBER_FORMAT_NAME); // driver_pnum
-        formatList.add(NUMBER_FORMAT_NAME); // orig_escort_stoptype
-        formatList.add(NUMBER_FORMAT_NAME); // orig_escortee_pnum
-        formatList.add(NUMBER_FORMAT_NAME); // dest_escort_stoptype
-        formatList.add(NUMBER_FORMAT_NAME); // dest_escortee_pnum
-        formatList.add(NUMBER_FORMAT_NAME); // value of time
+        formatList.add(NUMBER_FORMAT_NAME); // 1 hh_id
+        formatList.add(NUMBER_FORMAT_NAME); // 2 person_id
+        formatList.add(NUMBER_FORMAT_NAME); // 3 person_num
+        formatList.add(NUMBER_FORMAT_NAME); // 4 tour_id
+        formatList.add(NUMBER_FORMAT_NAME); // 5 stop_id
+        formatList.add(NUMBER_FORMAT_NAME); // 6 inbound
+        formatList.add(STRING_FORMAT_NAME); // 7 tour_purpose
+        formatList.add(STRING_FORMAT_NAME); // 8 orig_purpose
+        formatList.add(STRING_FORMAT_NAME); // 9 dest_purpose
+        formatList.add(NUMBER_FORMAT_NAME); // 10 orig_mgra
+        formatList.add(NUMBER_FORMAT_NAME); // 11 dest_mgra
+        formatList.add(NUMBER_FORMAT_NAME); // 12 parking_mgra
+        formatList.add(NUMBER_FORMAT_NAME); // 13 stop_period
+        formatList.add(NUMBER_FORMAT_NAME); // 14 trip_mode
+        formatList.add(NUMBER_FORMAT_NAME); // 15 av_avail
+        formatList.add(NUMBER_FORMAT_NAME); // 16 trip_board_tap
+        formatList.add(NUMBER_FORMAT_NAME); // 17 trip_alight_tap
+        formatList.add(NUMBER_FORMAT_NAME); // 18 set
+        formatList.add(NUMBER_FORMAT_NAME); // 19 tour_mode
+        formatList.add(NUMBER_FORMAT_NAME); // 20 driver_pnum
+        formatList.add(NUMBER_FORMAT_NAME); // 21 orig_escort_stoptype
+        formatList.add(NUMBER_FORMAT_NAME); // 22 orig_escortee_pnum
+        formatList.add(NUMBER_FORMAT_NAME); // 23 dest_escort_stoptype
+        formatList.add(NUMBER_FORMAT_NAME); // 24 dest_escortee_pnum
+        formatList.add(NUMBER_FORMAT_NAME); // 25 value of time
         
         if(writeLogsums)
         	formatList.add(NUMBER_FORMAT_NAME);//tripModeLogsum
@@ -1331,7 +1352,7 @@ public final class DataExporter
                 bitColumns,
                 FieldType.INT,
                 primaryKey,
-                new TripStructureDefinition(10, 11, 8, 9, 13, 14, 15, 16, -1, 24, "INDIV", 6, false, 24, 17));
+                new TripStructureDefinition(10, 11, 8, 9, 13, 14, 16, 17, 12, -1, 25, "INDIV", 6, false, 25, 18));
     }
 
     private void exportJointTripData(String outputFileBase)
@@ -1339,24 +1360,25 @@ public final class DataExporter
         addTable(outputFileBase);
         ArrayList<String> formatList = new ArrayList<String>();
 
-        formatList.add(NUMBER_FORMAT_NAME); // hh_id
-        formatList.add(NUMBER_FORMAT_NAME); // tour_id
-        formatList.add(NUMBER_FORMAT_NAME); // stop_id
-        formatList.add(NUMBER_FORMAT_NAME); // inbound
-        formatList.add(STRING_FORMAT_NAME); // tour_purpose
-        formatList.add(STRING_FORMAT_NAME); // orig_purpose
-        formatList.add(STRING_FORMAT_NAME); // dest_purpose
-        formatList.add(NUMBER_FORMAT_NAME); // orig_mgra
-        formatList.add(NUMBER_FORMAT_NAME); // dest_mgra
-        formatList.add(NUMBER_FORMAT_NAME); // parking_mgra
-        formatList.add(NUMBER_FORMAT_NAME); // stop_period
-        formatList.add(NUMBER_FORMAT_NAME); // trip_mode
-        formatList.add(NUMBER_FORMAT_NAME); // num_participants
-        formatList.add(NUMBER_FORMAT_NAME); // trip_board_tap
-        formatList.add(NUMBER_FORMAT_NAME); // trip_alight_tap
-        formatList.add(NUMBER_FORMAT_NAME); // set 
-        formatList.add(NUMBER_FORMAT_NAME); // tour_mode
-        formatList.add(NUMBER_FORMAT_NAME);  // value of time
+        formatList.add(NUMBER_FORMAT_NAME); // 1 hh_id
+        formatList.add(NUMBER_FORMAT_NAME); // 2 tour_id
+        formatList.add(NUMBER_FORMAT_NAME); // 3 stop_id
+        formatList.add(NUMBER_FORMAT_NAME); // 4 inbound
+        formatList.add(STRING_FORMAT_NAME); // 5 tour_purpose
+        formatList.add(STRING_FORMAT_NAME); // 6 orig_purpose
+        formatList.add(STRING_FORMAT_NAME); // 7 dest_purpose
+        formatList.add(NUMBER_FORMAT_NAME); // 8 orig_mgra
+        formatList.add(NUMBER_FORMAT_NAME); // 9 dest_mgra
+        formatList.add(NUMBER_FORMAT_NAME); // 10 parking_mgra
+        formatList.add(NUMBER_FORMAT_NAME); // 11 stop_period
+        formatList.add(NUMBER_FORMAT_NAME); // 12 trip_mode
+        formatList.add(NUMBER_FORMAT_NAME); // 13 av_avail
+        formatList.add(NUMBER_FORMAT_NAME); // 14 num_participants
+        formatList.add(NUMBER_FORMAT_NAME); // 15 trip_board_tap
+        formatList.add(NUMBER_FORMAT_NAME); // 16 trip_alight_tap
+        formatList.add(NUMBER_FORMAT_NAME); // 17 set 
+        formatList.add(NUMBER_FORMAT_NAME); // 18 tour_mode
+        formatList.add(NUMBER_FORMAT_NAME);  // 19 value of time
                 
         if(writeLogsums)
          	formatList.add(NUMBER_FORMAT_NAME);//tripModeLogsum
@@ -1377,13 +1399,14 @@ public final class DataExporter
                 "tour_purpose", "inbound", "stop_id"));
         exportDataGeneric(outputFileBase, "Results.JointTripDataFile", true, formats, floatColumns,
                 stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
-                new TripStructureDefinition(8, 9, 6, 7, 11, 12, 14, 15, 13, 18, "JOINT", 4, false, 18, 16));
+                new TripStructureDefinition(8, 9, 6, 7, 11, 12, 14, 16, 10, 13, 19, "JOINT", 4, false, 19, 17));
     }
 
     private void exportAirportTripsSAN(String outputFileBase)
     {
     	
-    	//id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,tripMode,arrivalMode,boardingTAP,alightingTAP,valueOfTime
+    	//id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,originTAZ,destinationTAZ,tripMode,av_avail,arrivalMode,boardingTAP,alightingTAP,set,valueOfTime\n");
+
         addTable(outputFileBase);
         Set<String> intColumns = new HashSet<String>();
         Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
@@ -1394,14 +1417,14 @@ public final class DataExporter
         // overridingNames.put("id","PARTYID");
         exportDataGeneric(outputFileBase, "airport.SAN.output.file", false, null, floatColumns,
                 stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey, overridingNames,
-                new TripStructureDefinition(8, 9, 7, 12, 14, 15, 4, 17, "AIRPORT", "HOME",
-                        "AIRPORT", 2, false, 17, 16));
+                new TripStructureDefinition(8, 9, 7, 12, 15, 16, -1, 4, 18, "AIRPORT", "HOME",
+                        "AIRPORT", 2, false, 18, 17));
     }
 
     private void exportAirportTripsCBX(String outputFileBase)
     {
     	
-    	//id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,tripMode,arrivalMode,boardingTAP,alightingTAP,valueOfTime
+    	//id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,originTAZ,destinationTAZ,tripMode,av_avail,arrivalMode,boardingTAP,alightingTAP,set,valueOfTime\n");
         addTable(outputFileBase);
         Set<String> intColumns = new HashSet<String>();
         Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
@@ -1412,8 +1435,8 @@ public final class DataExporter
         // overridingNames.put("id","PARTYID");
         exportDataGeneric(outputFileBase, "airport.CBX.output.file", false, null, floatColumns,
                 stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey, overridingNames,
-                new TripStructureDefinition(8, 9, 7, 12, 14, 15, 4, 17, "AIRPORT", "HOME",
-                        "AIRPORT", 2, false, 17, 16));
+                new TripStructureDefinition(8, 9, 7, 12, 15, 16, -1, 4, 18, "AIRPORT", "HOME",
+                        "AIRPORT", 2, false, 18, 17));
     }
 
     private void exportCrossBorderTourData(String outputFileBase)
@@ -1430,6 +1453,7 @@ public final class DataExporter
                 NUMBER_FORMAT_NAME, // origTaz
                 NUMBER_FORMAT_NAME, // destTaz
                 NUMBER_FORMAT_NAME, // tourMode
+                NUMBER_FORMAT_NAME, // av_avail
                 NUMBER_FORMAT_NAME, // workTimeFactor
                 NUMBER_FORMAT_NAME, // nonWorkTimeFactor
                 NUMBER_FORMAT_NAME  // valueOfTime
@@ -1463,12 +1487,13 @@ public final class DataExporter
                 STRING_FORMAT_NAME, // 11 destinationIsTourDestination
                 NUMBER_FORMAT_NAME, // 12 period
                 NUMBER_FORMAT_NAME, // 13 tripMode
-                NUMBER_FORMAT_NAME, // 14 boardingTap
-                NUMBER_FORMAT_NAME, // 15 alightingTap
-                NUMBER_FORMAT_NAME, // 16 set
-                NUMBER_FORMAT_NAME, // 17 workTimeFactor
-                NUMBER_FORMAT_NAME, // 18 nonWorkTimeFactor
-                NUMBER_FORMAT_NAME  // 19 valueOfTime
+                NUMBER_FORMAT_NAME, // 14 av_avail
+                NUMBER_FORMAT_NAME, // 15 boardingTap
+                NUMBER_FORMAT_NAME, // 16 alightingTap
+                NUMBER_FORMAT_NAME, // 17 set
+                NUMBER_FORMAT_NAME, // 18 workTimeFactor
+                NUMBER_FORMAT_NAME, // 19 nonWorkTimeFactor
+                NUMBER_FORMAT_NAME  // 20 valueOfTime
               };
         Set<String> intColumns = new HashSet<String>();
         Set<String> floatColumns = new HashSet<String>(Arrays.asList("workTimeFactor","nonWorkTimeFactor","valueOfTime"));
@@ -1480,8 +1505,8 @@ public final class DataExporter
         overridingNames.put("id", "TOURID");
         exportDataGeneric(outputFileBase, "crossBorder.trip.output.file", false, formats,
                 floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
-                overridingNames, new TripStructureDefinition(5, 6, 3, 4, 12, 13, 14, 15, -1, 19,
-                        "CB", 9, true, 19, 16));
+                overridingNames, new TripStructureDefinition(5, 6, 3, 4, 12, 13, 15, 16, -1, -1, 20,
+                        "CB", 9, true, 20, 17));
     }
 
     private void exportVisitorData(String outputTourFileBase, String outputTripFileBase)
@@ -1527,11 +1552,12 @@ public final class DataExporter
                 STRING_FORMAT_NAME, // 9 destinationIsTourDestination
                 NUMBER_FORMAT_NAME, // 10 period
                 NUMBER_FORMAT_NAME, // 11 tripMode
-                NUMBER_FORMAT_NAME, // 12 boardingTap
-                NUMBER_FORMAT_NAME, // 13 alightingTap
-                NUMBER_FORMAT_NAME, // 14 set
-                NUMBER_FORMAT_NAME, // 15 valueOfTime
-                NUMBER_FORMAT_NAME // 16 partySize (added)
+                NUMBER_FORMAT_NAME, // 12 avAvailable
+                NUMBER_FORMAT_NAME, // 13 boardingTap
+                NUMBER_FORMAT_NAME, // 14 alightingTap
+                NUMBER_FORMAT_NAME, // 15 set
+                NUMBER_FORMAT_NAME, // 16 valueOfTime
+                NUMBER_FORMAT_NAME // 17 partySize (added)
         };
         Set<String> intColumns = new HashSet<String>();
         Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
@@ -1553,7 +1579,7 @@ public final class DataExporter
                 bitColumns,
                 FieldType.INT,
                 primaryKey,
-                new TripStructureDefinition(5, 6, 3, 4, 10, 11, 12, 13, 15, 15, "VISITOR", 7, true, 15,14));
+                new TripStructureDefinition(5, 6, 3, 4, 10, 11, 13, 14, -1, 17, 17, "VISITOR", 7, true, 16,15));
                 //,                joinData);
     }
 
@@ -1574,10 +1600,11 @@ public final class DataExporter
                 STRING_FORMAT_NAME, // 11 destinationIsTourDestination
                 NUMBER_FORMAT_NAME, // 12 period
                 NUMBER_FORMAT_NAME, // 13 tripMode
-                NUMBER_FORMAT_NAME, // 14 boardingTap
-                NUMBER_FORMAT_NAME, // 15 alightingTap
-                NUMBER_FORMAT_NAME, // 16 set
-                NUMBER_FORMAT_NAME  // 17 value of time
+                NUMBER_FORMAT_NAME, // 14 av_avail
+                NUMBER_FORMAT_NAME, // 15 boardingTap
+                NUMBER_FORMAT_NAME, // 16 alightingTap
+                NUMBER_FORMAT_NAME, // 17 set
+                NUMBER_FORMAT_NAME  // 18 value of time
         };
         Set<String> intColumns = new HashSet<String>();
         Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
@@ -1587,8 +1614,8 @@ public final class DataExporter
         Set<String> primaryKey = new LinkedHashSet<String>();
         exportDataGeneric(outputFileBase, "internalExternal.trip.output.file", false, formats,
                 floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
-                new TripStructureDefinition(5, 6, 12, 13, 14, 15, -1, 17, "IE", "HOME", "EXTERNAL",
-                        9, true,17,16));   
+                new TripStructureDefinition(5, 6, 12, 13, 15, 16, -1, -1, 18, "IE", "HOME", "EXTERNAL",
+                        9, true,18,17));   
     }
 
     private Set<Integer> getExternalZones()
@@ -2380,6 +2407,8 @@ public final class DataExporter
         private final int     modeColumn;
         private final int     boardTapColumn;
         private final int     alightTapColumn;
+        
+        private final int 	  parkingMazColumn;
 
         private final String  homeName;
         private final String  destinationName;
@@ -2390,7 +2419,7 @@ public final class DataExporter
 
         private TripStructureDefinition(int originMgraColumn, int destMgraColumn,
                 int originPurposeColumn, int destinationPurposeColumn, int todColumn,
-                int modeColumn, int boardTapColumn, int alightTapColumn, int partySizeColumn,
+                int modeColumn, int boardTapColumn, int alightTapColumn, int parkingMazColumn, int partySizeColumn,
                 int tripTimeColumn, int outVehicleTimeColumn, int tripDistanceColumn,
                 int tripCostColumn, int tripPurposeNameColumn, int tripModeNameColumn,
                 int recIdColumn, int boardTazColumn, int alightTazColumn, String tripType,
@@ -2405,6 +2434,7 @@ public final class DataExporter
             this.modeColumn = modeColumn;
             this.boardTapColumn = boardTapColumn;
             this.alightTapColumn = alightTapColumn;
+            this.parkingMazColumn = parkingMazColumn;
             this.homeName = homeName;
             this.destinationName = destinationName;
             this.inboundColumn = inboundColumn;
@@ -2416,24 +2446,24 @@ public final class DataExporter
 
         private TripStructureDefinition(int originMgraColumn, int destMgraColumn,
                 int originPurposeColumn, int destinationPurposeColumn, int todColumn,
-                int modeColumn, int boardTapColumn, int alightTapColumn, int partySizeColumn,
+                int modeColumn, int boardTapColumn, int alightTapColumn, int parkingMazColumn, int partySizeColumn,
                 int columnCount, String tripType, int inboundColumn,
                 boolean booleanIndicatorVariables, int valueOfTimeColumn, int setColumn)
         {
             this(originMgraColumn, destMgraColumn, originPurposeColumn, destinationPurposeColumn,
-                    todColumn, modeColumn, boardTapColumn, alightTapColumn, partySizeColumn,
+                    todColumn, modeColumn, boardTapColumn, alightTapColumn, parkingMazColumn, partySizeColumn,
                     columnCount + 1, columnCount + 2, columnCount + 3, columnCount + 4,
                     columnCount + 5, columnCount + 6, columnCount + 7, columnCount + 8,
                     columnCount + 9, tripType, "", "", inboundColumn, booleanIndicatorVariables, valueOfTimeColumn,setColumn);
         }
 
         private TripStructureDefinition(int originMgraColumn, int destMgraColumn, int todColumn,
-                int modeColumn, int boardTapColumn, int alightTapColumn, int partySizeColumn,
+                int modeColumn, int boardTapColumn, int alightTapColumn, int parkingMazColumn, int partySizeColumn,
                 int columnCount, String tripType, String homeName, String destinationName,
                 int inboundColumn, boolean booleanIndicatorVariables, int valueOfTimeColumn, int setColumn)
         {
             this(originMgraColumn, destMgraColumn, -1, -1, todColumn, modeColumn, boardTapColumn,
-                    alightTapColumn, partySizeColumn, columnCount + 1, columnCount + 2,
+                    alightTapColumn, parkingMazColumn, partySizeColumn, columnCount + 1, columnCount + 2,
                     columnCount + 3, columnCount + 4, columnCount + 5, columnCount + 6,
                     columnCount + 7, columnCount + 8, columnCount + 9, tripType, homeName,
                     destinationName, inboundColumn, booleanIndicatorVariables, valueOfTimeColumn,setColumn);

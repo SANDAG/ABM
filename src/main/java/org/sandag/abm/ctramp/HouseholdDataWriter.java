@@ -459,6 +459,7 @@ public class HouseholdDataWriter
         data.add("start_period");
         data.add("end_period");
         data.add("tour_mode");
+        data.add("av_avail");
         data.add("tour_distance");
         data.add("atWork_freq");
         data.add("num_ob_stops");
@@ -521,6 +522,7 @@ public class HouseholdDataWriter
         data.add("start_period");
         data.add("end_period");
         data.add("tour_mode");
+        data.add("av_avail");
         data.add("tour_distance");
         data.add("num_ob_stops");
         data.add("num_ib_stops");
@@ -572,6 +574,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.TEXT);
         data.add(SqliteDataTypes.TEXT);
+        data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
@@ -635,6 +638,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.REAL);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
@@ -688,6 +692,7 @@ public class HouseholdDataWriter
         data.add(string(t.getTourDepartPeriod()));
         data.add(string(t.getTourArrivePeriod()));
         data.add(string(t.getTourModeChoice()));
+        data.add(string(t.getUseOwnedAV() ? 1 : 0));
         data.add(string(calculateDistancesForAllMgras(t.getTourOrigMgra(), t.getTourDestMgra())));
         data.add(string(t.getSubtourFreqChoice()));
         data.add(string(t.getNumOutboundStops() == 0 ? 0 : t.getNumOutboundStops() - 1));
@@ -769,6 +774,7 @@ public class HouseholdDataWriter
         data.add(string(t.getTourDepartPeriod()));
         data.add(string(t.getTourArrivePeriod()));
         data.add(string(t.getTourModeChoice()));
+        data.add(string(t.getUseOwnedAV() ? 1 : 0));
         data.add(string(calculateDistancesForAllMgras(t.getTourOrigMgra(), t.getTourDestMgra())));
         data.add(string(t.getNumOutboundStops() == 0 ? 0 : t.getNumOutboundStops() - 1));
         data.add(string(t.getNumInboundStops() == 0 ? 0 : t.getNumInboundStops() - 1));
@@ -868,6 +874,7 @@ public class HouseholdDataWriter
         data.add("parking_mgra");
         data.add("stop_period");
         data.add("trip_mode");
+        data.add("av_avail");
         data.add("trip_board_tap");
         data.add("trip_alight_tap");
         data.add("set");
@@ -900,6 +907,7 @@ public class HouseholdDataWriter
         data.add("parking_mgra");
         data.add("stop_period");
         data.add("trip_mode");
+        data.add("av_avail");
         data.add("num_participants");
         data.add("trip_board_tap");
         data.add("trip_alight_tap");
@@ -939,6 +947,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.REAL);
 
         if(writeLogsums)
@@ -957,6 +966,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.TEXT);
         data.add(SqliteDataTypes.TEXT);
         data.add(SqliteDataTypes.TEXT);
+        data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
@@ -1050,6 +1060,7 @@ public class HouseholdDataWriter
         data.add(string(s.getPark()));
         data.add(string(s.getStopPeriod()));
         data.add(string(s.getMode()));
+        data.add(string(t.getUseOwnedAV() ? 1 : 0));
         data.add(string(s.getBoardTap()));
         data.add(string(s.getAlightTap()));
         int set = setNA;
@@ -1137,6 +1148,7 @@ public class HouseholdDataWriter
         data.add(string(s.getPark()));
         data.add(string(s.getStopPeriod()));
         data.add(string(s.getMode()));
+        data.add(string(t.getUseOwnedAV() ? 1 : 0));
 
         int[] participants = t.getPersonNumArray();
         if (participants == null)
@@ -1211,6 +1223,7 @@ public class HouseholdDataWriter
         data.add(string(0));
         data.add(string(inbound ? t.getTourArrivePeriod() : t.getTourDepartPeriod()));
         data.add(string(t.getTourModeChoice()));
+        data.add(string(t.getUseOwnedAV() ? 1 : 0));
         data.add(string(inbound ? t.getDriverPnumInbound() : t.getDriverPnumOutbound()));
         
   /*      //outbound chauffeured school tour no stops; origin stop type and escortee is zero, dest stop type is dropoff, escortee is pnum.
@@ -1312,6 +1325,7 @@ public class HouseholdDataWriter
         data.add(string(t.getTourParkMgra()));
         data.add(string(inbound ? t.getTourArrivePeriod() : t.getTourDepartPeriod()));
         data.add(string(t.getTourModeChoice()));
+        data.add(string(t.getUseOwnedAV() ? 1 : 0));
 
         int[] participants = t.getPersonNumArray();
         if (participants == null)
