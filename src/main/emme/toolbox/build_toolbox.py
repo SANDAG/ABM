@@ -30,7 +30,7 @@
 #
 # Example:
 #  python "T:\projects\sr13\develop\emme_conversion\git\sandag_abm\ABM_EMME\src\main\emme\toolbox\build_toolbox.py" --link 
-#    -p "T:\projects\sr14\abm2_test\abm_runs\14_1_0\2035D_Hyperloop\emme_project\Scripts\sandag_toolbox.mtbx" 
+#    -p "T:\projects\sr14\abm2_test\abm_runs\14_2_0\2035D_Hyperloop\emme_project\Scripts\sandag_toolbox.mtbx" 
 #    -s T:\projects\sr13\develop\emme_conversion\git\sandag_abm\ABM_EMME\src\main\emme\toolbox
 
 
