@@ -22,7 +22,7 @@ class CreateScenarioGUI(Tkinter.Frame):
             divider=u"_"*120
             self.releaseDir='T:\\ABM\\release\\ABM'
             self.defaultScenarioDir="T:\\projects\\sr14"
-            self.defaultNetworkDir="T:\\projects\\sr14\\version14_1_0\\network_build"
+            self.defaultNetworkDir="T:\\projects\\sr14\\version14_2_0\\network_build"
 
             self.buttonVar= IntVar(root)
             self.yButton=Radiobutton(body, text="Yes", variable=self.buttonVar, value=1, command=self.initStudy)
@@ -56,8 +56,8 @@ class CreateScenarioGUI(Tkinter.Frame):
 
             Tkinter.Label(body, text=u"Version", font=("Helvetica", 8, 'bold')).grid(row=8)
             var = StringVar(root)
-            self.version="version_14_1_0"
-            optionList=["version_14_1_0"]
+            self.version="version_14_2_0"
+            optionList=["version_14_2_0"]
             option=Tkinter.OptionMenu(body,var,*optionList,command=self.setversion)
             option.config(width=50)
             option.grid(row=8, column=1)
