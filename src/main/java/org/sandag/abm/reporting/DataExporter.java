@@ -478,6 +478,8 @@ public final class DataExporter
         int[] tripBoardTaz = new int[rowCount];
         int[] tripAlightTaz = new int[rowCount];
         float[] tripParkingTime = new float[rowCount];
+        float[] tripParkingDistance = new float[rowCount];
+        
         
         float[] transitAccessDist = new float[rowCount];
         float[] transitEgressDist = new float[rowCount];
@@ -539,12 +541,15 @@ public final class DataExporter
             if(tripStructureDefinition.parkingMazColumn>-1) {
             	int parkingMaz = (int) table.getValueAt(row, tripStructureDefinition.parkingMazColumn);
             	
-            	if(parkingMaz==0)
+            	if(parkingMaz<=0)
             		continue;
             	
             	int destMaz =  (int) table.getValueAt(row, tripStructureDefinition.destMgraColumn);
             	float parkingWalkTime = skimBuilder.getLotWalkTime(parkingMaz,destMaz);
+            	float parkingWalkDistance = skimBuilder.getLotWalkDistance(parkingMaz,destMaz);
             	tripParkingTime[i]= parkingWalkTime;
+            	tripParkingDistance[i] = parkingWalkDistance;
+            	
             }
            
             
@@ -604,6 +609,7 @@ public final class DataExporter
 
         table.appendColumn(tranDist, "TRAN_DIST");
         table.appendColumn(tripParkingTime, "PARK_WALK_TIME");
+        table.appendColumn(tripParkingDistance,"PARK_WALK_DIST");
         
 //        table.appendColumn(valueOfTime, "VALUE_OF_TIME");
     }

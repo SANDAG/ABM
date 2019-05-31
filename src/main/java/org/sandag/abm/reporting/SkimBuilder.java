@@ -726,4 +726,15 @@ public class SkimBuilder
     }
 
 
+    public float getLotWalkDistance(int parkingLotMaz, int destinationMaz) {
+
+    	// first, look in mgra manager, otherwise default to auto skims
+        double distance = mgraManager.getMgraToMgraWalkDistFrom(parkingLotMaz, destinationMaz) / FEET_IN_MILE;
+        if (distance <= 0) {
+        	distance = autoNonMotSkims.getAutoSkims(parkingLotMaz, destinationMaz, SandagModelStructure.EA_SKIM_PERIOD_INDEX +1, (float)15.0,false, logger)[DA_DIST_INDEX];
+        }
+       	
+       	return (float) distance;
+    }
+    
 }
