@@ -1405,7 +1405,7 @@ public final class DataExporter
                 "tour_purpose", "inbound", "stop_id"));
         exportDataGeneric(outputFileBase, "Results.JointTripDataFile", true, formats, floatColumns,
                 stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
-                new TripStructureDefinition(8, 9, 6, 7, 11, 12, 14, 16, 10, 13, 19, "JOINT", 4, false, 19, 17));
+                new TripStructureDefinition(8, 9, 6, 7, 11, 12, 15, 16, 10, 14, 19, "JOINT", 4, false, 19, 17));
     }
 
     private void exportAirportTripsSAN(String outputFileBase)
