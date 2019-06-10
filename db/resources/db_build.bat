@@ -40,13 +40,4 @@ sqlcmd -E -C -b -S %db_server% -d %db_name% -i %script_path%data_load.sql || got
 echo Creating database management objects and permissions roles
 sqlcmd -E -C -b -S %db_server% -d %db_name% -i %script_path%create_management.sql || goto :EOF
 
-echo Creating emfac schema and objects
-sqlcmd -E -C -b -S %db_server% -d %db_name% -i %script_path%emfac.sql || goto :EOF
-
-echo Creating abm reporting schema and objects
-sqlcmd -E -C -b -S %db_server% -d %db_name% -i %script_path%report.sql || goto :EOF
-
-echo Creating rtp_2019 schema and objects
-sqlcmd -E -C -b -S %db_server% -d %db_name% -i %script_path%rtp_2019.sql || goto :EOF
-
 echo Successfully created  %db_name% on %db_server% at %db_path%
