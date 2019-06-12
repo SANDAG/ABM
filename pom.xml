@@ -631,6 +631,23 @@
                                 </resource>
                             </resources>
                         </configuration>
+                    </execution> 
+                    <execution>
+                        <id>copy-visualizer-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${release.root}/visualizer</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>input/visualizer</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
                     </execution>                                                         
                 </executions>
             </plugin>
