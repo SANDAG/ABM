@@ -130,28 +130,61 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         emmebank = self.scenario.emmebank
         emme_zones = self.scenario.zone_numbers
         matrix_name_tmplts = [
-            ("mf%s_%sBUS",    "%s_SET_set1_%s"),
-            ("mf%s_%sPREM",   "%s_SET_set2_%s"),
-            ("mf%s_%sALLPEN", "%s_SET_set3_%s")
+            ("mf%s_%sBUS",    "%s_%s_set1_%s"),
+            ("mf%s_%sPREM",   "%s_%s_set2_%s"),
+            ("mf%s_%sALLPEN", "%s_%s_set3_%s")
         ]
         periods = ["EA", "AM", "MD", "PM", "EV"]
         access_modes = ["WLK", "PNR", "KNR"]
         matrix_names = []
         for period in periods:
             for acc_mode in access_modes:
+                #for trip_set in trip_sets:
                 for emme_name, omx_name in matrix_name_tmplts:
                     matrix_names.append(
-                        ("_" + period, emme_name % (period, acc_mode), omx_name % (acc_mode, period)))
+                        ("_" + period, emme_name % (period, acc_mode), omx_name % (acc_mode, "%s", period)))
+                        
         with gen_utils.OMXManager(self.output_dir, "tran%sTrips%s.omx") as omx_manager:
             for period, matrix_name, omx_key in matrix_names:
-                logbook_label = "Report on import from OMX key %s to matrix %s" % (omx_key, matrix_name)
-                visitor_demand = omx_manager.lookup(("Visitor", period), omx_key)
-                cross_border_demand = omx_manager.lookup(("CrossBorder", period), omx_key)
-                airport_demand = omx_manager.lookup(("Airport", ".SAN" + period), omx_key)
-                if omx_manager.file_exists(("Airport", ".CBX" + period)):
-                    airport_demand += omx_manager.lookup(("Airport", ".CBX" + period), omx_key)
-                person_demand = omx_manager.lookup(("", period), omx_key)
-                internal_external_demand = omx_manager.lookup(("InternalExternal", period), omx_key)
+                logbook_label = "Report on import from OMX key %s to matrix %s" % (omx_key % "SET", matrix_name)
+                
+                #add both KNR_PER and KNR_TNC into person_demand
+                if ("KNR" in matrix_name):
+                    #resident
+                    person_per_demand = omx_manager.lookup(("", period), omx_key % "PER")
+                    person_tnc_Demand = omx_manager.lookup(("", period), omx_key % "TNC")
+                    person_demand = person_per_demand + person_tnc_Demand
+                    #visitor
+                    visitor_per_demand = omx_manager.lookup(("Visitor", period), omx_key % "PER")
+                    visitor_tnc_Demand = omx_manager.lookup(("Visitor", period), omx_key % "TNC")
+                    visitor_demand = visitor_per_demand + visitor_tnc_Demand
+                    #cross border
+                    cross_border_per_demand = omx_manager.lookup(("CrossBorder", period), omx_key % "PER")
+                    cross_border_tnc_Demand = omx_manager.lookup(("CrossBorder", period), omx_key % "TNC")
+                    cross_border_demand = cross_border_per_demand + cross_border_tnc_Demand                    
+                    #airport SAN
+                    airport_per_demand = omx_manager.lookup(("Airport", ".SAN" + period), omx_key % "PER")
+                    airport_tnc_Demand = omx_manager.lookup(("Airport", ".SAN" + period), omx_key % "TNC")                  
+                    #airport CBX
+                    if omx_manager.file_exists(("Airport", ".CBX" + period)):                    
+                        airport_per_demand += omx_manager.lookup(("Airport", ".CBX" + period), omx_key % "PER")
+                        airport_tnc_Demand += omx_manager.lookup(("Airport", ".CBX" + period), omx_key % "TNC")
+                    airport_demand = airport_per_demand + airport_tnc_Demand                      
+                    #internal external
+                    internal_external_per_demand = omx_manager.lookup(("InternalExternal", period), omx_key % "PER")
+                    internal_external_tnc_Demand = omx_manager.lookup(("InternalExternal", period), omx_key % "TNC")
+                    internal_external_demand = internal_external_per_demand + internal_external_tnc_Demand
+                else:
+                    person_demand = omx_manager.lookup(("", period), omx_key % "SET")
+                    visitor_demand = omx_manager.lookup(("Visitor", period), omx_key % "SET")
+                    cross_border_demand = omx_manager.lookup(("CrossBorder", period), omx_key % "SET" )
+                    airport_demand = omx_manager.lookup(("Airport", ".SAN" + period), omx_key % "SET")
+                    if omx_manager.file_exists(("Airport", ".CBX" + period)):
+                        airport_demand += omx_manager.lookup(("Airport", ".CBX" + period), omx_key % "SET")
+    
+                    internal_external_demand = omx_manager.lookup(("InternalExternal", period), omx_key % "SET")                    
+                    
+                total_ct_ramp_trips = person_demand #for testing only
                 total_ct_ramp_trips = (
                     visitor_demand + cross_border_demand + airport_demand 
                     + person_demand + internal_external_demand)
@@ -166,12 +199,32 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     matrix.set_data(expanded_matrix_data, self.scenario)
                 else:
                     matrix.set_numpy_data(total_ct_ramp_trips, self.scenario)
-                
-                dem_utils.demand_report([
-                    ("person_demand", person_demand), 
-                    ("internal_external_demand", internal_external_demand), 
-                    ("cross_border_demand", cross_border_demand),
-                    ("airport_demand", airport_demand), 
-                    ("visitor_demand", visitor_demand), 
-                    ("total_ct_ramp_trips", total_ct_ramp_trips)
-                ], logbook_label, self.scenario)
+                    
+                if ("KNR" in matrix_name):
+                    dem_utils.demand_report([
+                        ("person_demand", person_demand), 
+                        ("person_per_demand", person_per_demand), 
+                        ("person_tnc_Demand", person_tnc_Demand),
+                        ("internal_external_demand", internal_external_demand), 
+                        ("internal_external_per_demand", internal_external_per_demand), 
+                        ("internal_external_tnc_Demand", internal_external_tnc_Demand),
+                        ("cross_border_demand", cross_border_demand),
+                        ("cross_border_per_demand", cross_border_per_demand), 
+                        ("cross_border_tnc_Demand", cross_border_tnc_Demand),
+                        ("airport_demand", airport_demand), 
+                        ("airport_per_demand", airport_per_demand), 
+                        ("airport_tnc_Demand", airport_tnc_Demand),
+                        ("visitor_demand", visitor_demand), 
+                        ("visitor_per_demand", visitor_per_demand), 
+                        ("visitor_tnc_Demand", visitor_tnc_Demand),
+                        ("total_ct_ramp_trips", total_ct_ramp_trips)
+                    ], logbook_label, self.scenario)
+                else:
+                    dem_utils.demand_report([
+                        ("person_demand", person_demand), 
+                        ("internal_external_demand", internal_external_demand), 
+                        ("cross_border_demand", cross_border_demand),
+                        ("airport_demand", airport_demand), 
+                        ("visitor_demand", visitor_demand), 
+                        ("total_ct_ramp_trips", total_ct_ramp_trips)
+                    ], logbook_label, self.scenario)

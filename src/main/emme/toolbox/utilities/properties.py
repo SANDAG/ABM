@@ -68,6 +68,7 @@ class PropertiesSetter(object):
 
     skipFinalHighwayAssignment = _m.Attribute(bool)
     skipFinalTransitAssignment = _m.Attribute(bool)
+    skipVisualizer = _m.Attribute(bool)
     skipDataExport = _m.Attribute(bool)
     skipDataLoadRequest = _m.Attribute(bool)
     skipDeleteIntermediateFiles = _m.Attribute(bool)
@@ -118,7 +119,7 @@ class PropertiesSetter(object):
             "skipCopyBikeLogsum", "skipCopyWalkImpedance", "skipWalkLogsums", "skipBikeLogsums", "skipBuildNetwork", 
             "skipHighwayAssignment", "skipTransitSkimming", "skipCoreABM", "skipOtherSimulateModel", "skipCTM", 
             "skipEI", "skipExternalExternal", "skipTruck", "skipTripTableCreation", "skipFinalHighwayAssignment", 
-            "skipFinalTransitAssignment", "skipDataExport", "skipDataLoadRequest", 
+            "skipFinalTransitAssignment", "skipVisualizer", "skipDataExport", "skipDataLoadRequest", 
             "skipDeleteIntermediateFiles")
         self._properties = None
 
@@ -177,6 +178,7 @@ class PropertiesSetter(object):
         skip_final_items = [
             ("skipFinalHighwayAssignment",  "Skip final highway assignments"),
             ("skipFinalTransitAssignment",  "Skip final transit assignments"),
+            ("skipVisualizer",              "Skip running visualizer"),
             ("skipDataExport",              "Skip data export"),
             ("skipDataLoadRequest",         "Skip data load request"),
             ("skipDeleteIntermediateFiles", "Skip delete intermediate files"),
@@ -301,7 +303,8 @@ class PropertiesSetter(object):
         self.skipTripTableCreation = props.get("RunModel.skipTripTableCreation", [False, False, False])
 
         self.skipFinalHighwayAssignment = props.get("RunModel.skipFinalHighwayAssignment", False)
-        self.skipFinalTransitAssignment = props.get("RunModel.skipFinalTransitAssignment", False)
+        self.skipFinalTransitAssignment = props.get("RunModel.skipFinalTransitAssignment", False) 
+        self.skipVisualizer = props.get("RunModel.skipVisualizer", False)
         self.skipDataExport = props.get("RunModel.skipDataExport", False)
         self.skipDataLoadRequest = props.get("RunModel.skipDataLoadRequest", False)
         self.skipDeleteIntermediateFiles = props.get("RunModel.skipDeleteIntermediateFiles", False)
@@ -333,6 +336,7 @@ class PropertiesSetter(object):
 
         props["RunModel.skipFinalHighwayAssignment"] = self.skipFinalHighwayAssignment
         props["RunModel.skipFinalTransitAssignment"] = self.skipFinalTransitAssignment
+        props["RunModel.skipVisualizer"] = self.skipVisualizer
         props["RunModel.skipDataExport"] = self.skipDataExport
         props["RunModel.skipDataLoadRequest"] = self.skipDataLoadRequest
         props["RunModel.skipDeleteIntermediateFiles"] = self.skipDeleteIntermediateFiles
