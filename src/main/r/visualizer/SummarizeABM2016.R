@@ -16,7 +16,7 @@
 ## 8. Auto ownership data        : aoResults.csv
 ## 9. Auto ownership data        : aoResults_Pre.csv
 ## 10. Geographic crosswalk data : geographicXwalk_PMSA.csv
-## 11. Distance skim data        : MD_TOLL_DST_SKM.csv
+## 11. Distance skim             : traffic_skims_MD.omx -> MD_SOVTOLLH_DIST
 
 start_time <- Sys.time()
 
@@ -25,13 +25,13 @@ library(weights)
 library(reshape)
 library(data.table)
 library(omxr)
+showWarnings=FALSE
 
 # Read Command Line Arguments
 args          <- commandArgs(trailingOnly = TRUE)
 inputs_File   <- args[1]
 
 inputs        <- read.csv(inputs_File, header = TRUE)
-# inputs        <- read.csv("C:/ABM_runs/2016_calibration3/visualizer/outputs/summaries/summ_inputs_abm.csv", header = T)
 WD            <- trimws(paste(inputs$Value[inputs$Key=="WD"]))
 ABMOutputDir  <- trimws(paste(inputs$Value[inputs$Key=="ABMOutputDir"]))
 geogXWalkDir  <- trimws(paste(inputs$Value[inputs$Key=="geogXWalkDir"]))
@@ -62,6 +62,7 @@ pertypeCodes <- data.frame(code = c(1,2,3,4,5,6,7,8,"All"),
 
 #-------------------------------------------
 # Prepare files for computing summary statistics
+dir.create(WD)
 setwd(WD)
 
 aoResults$HHVEH[aoResults$AO == 0] <- 0

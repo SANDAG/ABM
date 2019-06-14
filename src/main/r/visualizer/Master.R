@@ -20,7 +20,7 @@
 ### Read Command Line Arguments
 args                <- commandArgs(trailingOnly = TRUE)
 Parameters_File     <- args[1]
-#Parameters_File <- "E:/projects/clients/sandag/TO21_AB2_Calibration/SANDAG_Visualizer/runtime/parameters.csv"
+showWarnings=FALSE
 
 ### Read parameters from Parameters_File
 parameters          <- read.csv(Parameters_File, header = TRUE)
@@ -40,6 +40,10 @@ IS_BASE_SURVEY      <- trimws(paste(parameters$Value[parameters$Key=="IS_BASE_SU
 # Load global variables
 .libPaths(R_LIBRARY)
 source(paste(WORKING_DIR, "scripts/_SYSTEM_VARIABLES.R", sep = "/"))
+
+###create directories
+dir.create(BASE_DATA_PATH)
+dir.create(BUILD_DATA_PATH)
 
 ### Copy summary CSVs
 base_CSV_list <- ifelse(IS_BASE_SURVEY=="Yes", "summaryFilesNames_survey.csv", "summaryFilesNames.csv")
@@ -86,9 +90,5 @@ template.html <- readLines(file.path(RUNTIME_PATH, "template.html"))
 idx <- which(template.html == "window.FlexDashboardComponents = [];")[1]
 template.html <- append(template.html, "L_PREFER_CANVAS = true;", after = idx)
 writeLines(template.html, file.path(OUTPUT_PATH, paste(OUTPUT_HTML_NAME, ".html", sep = "")))
-
-
-
-
 
 # finish
