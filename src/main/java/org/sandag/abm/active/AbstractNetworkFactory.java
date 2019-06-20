@@ -31,7 +31,17 @@ public abstract class AbstractNetworkFactory<N extends Node, E extends Edge<N>, 
         for (N node : getNodes())
             predecessors.put(node, new LinkedList<E>());
         for (E edge : edges)
+        {
+        	if(edge.getFromNode()==null) {
+        		System.out.print(edge.toString()+" has null from node!");
+        		System.out.print("from node="+edge.getFromNode()+"  to node="+edge.getToNode());
+        	}
+        	if(edge.getToNode()==null) {
+        		System.out.print(edge.toString()+" has null to node!");
+        		System.out.print("from node="+edge.getFromNode()+"  to node="+edge.getToNode());
+        	}
             predecessors.get(edge.getToNode()).add(edge);
+        }
         Set<T> traversals = new LinkedHashSet<>();
         for (E toEdge : getEdges())
         {
