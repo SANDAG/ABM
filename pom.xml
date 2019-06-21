@@ -648,7 +648,24 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>                                                         
+                    </execution>  
+                    <execution>
+                        <id>copy-visualizer-scripts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${release.root}/common/visualizer/scripts</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/r/visualizer</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>                                                       
                 </executions>
             </plugin>
             <plugin>
