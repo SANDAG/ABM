@@ -7,19 +7,19 @@
 :: # To-Do
 :: # 1. create log files from scripts (for later)
 :: # 2. identify the input files names used by the summary R scripts and visualizer. maybe we can put them in the batch file
+:: # script arguments (for testing):
+:: SET PROJECT_DRIVE=C:
+:: SET PROJECT_DIRECTORY=\ABM_runs\maint_2019_RSG\Model\ABM2_14_2_0
+:: SET REFER_DIR=T:\projects\sr14\abm2_test\abm_runs\14_1_0\2016_local_mask_2\
+:: SET OUTPUT_HTML_NAME=SANDAG_Dashboard_2016_calib_3_19_19_final_test
+:: SET IS_BASE_SURVEY=No
+:: SET BASE_SCENARIO_NAME=REFERENCE
+:: SET BUILD_SCENARIO_NAME=SDABM16
+:: SET MGRA_INPUT_FILE=input/mgra13_based_input2016.csv
+
 :: ############################################################################
 
 @ECHO off
-
-REM SET PROJECT_DRIVE=C:
-REM SET PROJECT_DIRECTORY=\ABM_runs\maint_2019_RSG\Model\ABM2_14_2_0
-REM SET REFER_DIR=T:\projects\sr14\abm2_test\abm_runs\14_1_0\2016_local_mask_2\
-REM SET OUTPUT_HTML_NAME=SANDAG_Dashboard_2016_calib_3_19_19_final_test
-REM SET IS_BASE_SURVEY=No
-REM SET BASE_SCENARIO_NAME=REFERENCE
-REM SET BUILD_SCENARIO_NAME=SDABM16
-REM SET MGRA_INPUT_FILE=input/mgra13_based_input2016.csv
-
 :: Inputs from arguments
 SET PROJECT_DRIVE=%1
 SET PROJECT_DIRECTORY=%2
@@ -50,6 +50,9 @@ SET BUILD_SUMMARY_DIR=%SUMM_DIR%BUILD
 SET R_SCRIPT=%WORKING_DIR%dependencies\R-3.4.1\bin\Rscript
 SET R_LIBRARY=%WORKING_DIR%dependencies\R-3.4.1\library
 SET RSTUDIO_PANDOC=%WORKING_DIR%dependencies\Pandoc
+
+:: Extract Dependencies.zip
+unzip %WORKING_DIR%dependencies.zip -d %WORKING_DIR%
 
 :: Summarize BUILD
 SET WD=%BUILD_SUMMARY_DIR%
