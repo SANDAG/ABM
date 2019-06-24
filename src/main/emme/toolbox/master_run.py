@@ -277,7 +277,12 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         sample_rate = props["sample_rates"]
         end_iteration = len(sample_rate)
         scale_factor = props["cvm.scale_factor"]
-
+        visualizer_reference_path = props["visualizer.reference.path"]
+        visualizer_output_file = props["visualizer.output"]
+        visualizer_reference_label = props["visualizer.reference.label"]
+        visualizer_build_label = props["visualizer.build.label"]
+        mgraInputFile = props["mgra.socec.file"]
+        
         period_ids = list(enumerate(periods, start=int(scenario_id) + 1))
 
         useLocalDrive = props["RunModel.useLocalDrive"]
@@ -301,6 +306,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipTripTableCreation = props["RunModel.skipTripTableCreation"]
         skipFinalHighwayAssignment = props["RunModel.skipFinalHighwayAssignment"]
         skipFinalTransitAssignment = props["RunModel.skipFinalTransitAssignment"]
+        skipVisualizer = props["RunModel.skipVisualizer"]        
         skipDataExport = props["RunModel.skipDataExport"]
         skipDataLoadRequest = props["RunModel.skipDataLoadRequest"]
         skipDeleteIntermediateFiles = props["RunModel.skipDeleteIntermediateFiles"]
@@ -372,16 +378,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         data_table_name=scenarioYear,
                         overwrite=True,
                         emmebank=main_emmebank)
-
-                    if "modify_network.py" in os.listdir(os.getcwd()):
-                        try:
-                            with _m.logbook_trace("Modify network script"):
-                                import modify_network
-                                reload(modify_network)
-                                modify_network.run(base_scenario)
-                        except ImportError as e:
-                            pass
-
                     export_tap_adjacent_lines(_join(output_dir, "tapLines.csv"), base_scenario)
                     # initialize per time-period scenarios
                     for number, period in period_ids:
@@ -529,7 +525,12 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             self.run_proc("runtransitreporter.cmd", [drive, path_forward_slash, transitShedThreshold, transitShedTOD],
                           "Create walk and drive transit sheds",
                           capture_output=True)
-
+            
+        if not skipVisualizer:
+            self.run_proc("RunViz.bat",
+                          [drive, path_no_drive, visualizer_reference_path, visualizer_output_file, "NO", visualizer_reference_label, visualizer_build_label, mgraInputFile],
+                          "HTML Visualizer", capture_output=True)
+            
         if not skipDataExport:
             # export network and matrix results from Emme directly to T if using local drive
             main_output_directory = _join(main_directory, "output")
