@@ -52,52 +52,9 @@
         <jppf_version>5.0.1</jppf_version>
         <workShadowPricing.iteration>ShadowPricingOutput_work_9.csv</workShadowPricing.iteration>
         <schoolShadowPricing.iteration>ShadowPricingOutput_school_9.csv</schoolShadowPricing.iteration>
+        <model_years>2016,2020,2023,2025,2026,2029,2030,2032,2035,2040,2050</model_years>
     </properties>
     <profiles>
-         <profile>
-            <id>2010</id>
-            <properties>
-                <year>2010</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice.xls</crossBorder.dc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice.xls</tourdest.uec.file>
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice.xls</crossBorder.tour.mc.uec.file>      
-            </properties>
-        </profile>
-         <profile>
-            <id>2012</id>
-            <properties>
-                <year>2012</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives.csv</crossborder.dc.soa.alts.file>  
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>  
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice.xls</crossBorder.dc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice.xls</tourdest.uec.file> 
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice.xls</crossBorder.tour.mc.uec.file>        
-            </properties>
-        </profile>
-        <profile>
-            <id>2014</id>
-            <properties>
-                <year>2014</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice.xls</crossBorder.dc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice.xls</tourdest.uec.file>  
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice.xls</crossBorder.tour.mc.uec.file>                
-            </properties>
-        </profile>
-        <profile>
-            <id>2015</id>
-            <properties>
-                <year>2015</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice.xls</crossBorder.dc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice.xls</tourdest.uec.file>         
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice.xls</crossBorder.tour.mc.uec.file>         
-            </properties>
-        </profile>
         <profile>
             <id>2016</id>
             <activation>
@@ -110,28 +67,6 @@
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice.xls</tourdest.uec.file>
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice.xls</crossBorder.tour.mc.uec.file>                  
-            </properties>
-        </profile>
-        <profile>
-            <id>2017</id>
-            <properties>
-                <year>2017</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice.xls</crossBorder.dc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice.xls</tourdest.uec.file>   
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice.xls</crossBorder.tour.mc.uec.file>               
-            </properties>
-        </profile>
-        <profile>
-            <id>2018</id>
-            <properties>
-                <year>2018</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice.xls</crossBorder.dc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice.xls</tourdest.uec.file>   
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice.xls</crossBorder.tour.mc.uec.file>               
             </properties>
         </profile>
         <profile>
@@ -253,17 +188,6 @@
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2050.xls</tourdest.uec.file>  
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2050.xls</crossBorder.tour.mc.uec.file>        
-            </properties>
-        </profile>
-        <profile>
-            <id>2045</id>
-            <properties>
-                <year>2045</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2050.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2050.xls</crossBorder.dc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2050.xls</tourdest.uec.file>   
-                <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2050.xls</crossBorder.tour.mc.uec.file>       
             </properties>
         </profile>
         <profile>
