@@ -564,7 +564,6 @@ EXECUTE [db_meta].[add_xp] 'fact.person_trip.time_transit_in_vehicle_commuter_ra
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.time_transit_in_vehicle', 'MS_Description', 'transit in vehicle time in minutes'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.dist_transit_in_vehicle', 'MS_Description', 'transit in vehicle distance in miles'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.cost_transit', 'MS_Description', 'transit fare cost in dollars'
-EXECUTE [db_meta].[add_xp] 'fact.person_trip.time_transit_auxiliary', 'MS_Description', 'auxiliary transit time in minutes'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.time_transit_wait', 'MS_Description', 'initial transit wait time and first transfer wait time in minutes'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.transit_transfers', 'MS_Description', 'number of transit transfers'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.time_total', 'MS_Description', 'total trip time in minutes'
