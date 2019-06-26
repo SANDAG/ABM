@@ -232,6 +232,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         if not venv_path_found:
             raise Exception("Python virtual environment not found in system path %s" % VIRUTALENV_PATH)
         copy_scenario = modeller.tool("inro.emme.data.scenario.copy_scenario")
+        run4Ds = modeller.tool("sandag.import.run4Ds")
         import_network = modeller.tool("sandag.import.import_network")
         init_transit_db = modeller.tool("sandag.initialize.initialize_transit_database")
         init_matrices = modeller.tool("sandag.initialize.initialize_matrices")
@@ -286,7 +287,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         period_ids = list(enumerate(periods, start=int(scenario_id) + 1))
 
         useLocalDrive = props["RunModel.useLocalDrive"]
-
+        
+        skip4Ds = props["RunModel.skip4Ds"]
         skipInitialization = props["RunModel.skipInitialization"]
         deleteAllMatrices = props["RunModel.deleteAllMatrices"]
         skipCopyWarmupTripTables = props["RunModel.skipCopyWarmupTripTables"]
@@ -306,7 +308,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipTripTableCreation = props["RunModel.skipTripTableCreation"]
         skipFinalHighwayAssignment = props["RunModel.skipFinalHighwayAssignment"]
         skipFinalTransitAssignment = props["RunModel.skipFinalTransitAssignment"]
-        skipVisualizer = props["RunModel.skipVisualizer"]        
+        skipVisualizer = props["RunModel.skipVisualizer"]
         skipDataExport = props["RunModel.skipDataExport"]
         skipDataLoadRequest = props["RunModel.skipDataLoadRequest"]
         skipDeleteIntermediateFiles = props["RunModel.skipDeleteIntermediateFiles"]
@@ -358,6 +360,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                                  "AT and Transit network consistency checking failed! Open AtTransitCheck_event.log for details.")
 
             if startFromIteration == 1:  # only run the setup / init steps if starting from iteration 1
+                if not skip4Ds:
+                    run4Ds(path=self._path, int_radius=0.65, ref_path=visualizer_reference_path)
+
                 if not skipWalkLogsums:
                     self.run_proc("runSandagWalkLogsums.cmd", [drive, path_forward_slash],
                                   "Walk - create AT logsums and impedances")
@@ -369,7 +374,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                                   "Bike - create AT logsums and impedances")
                 if not skipCopyBikeLogsum:
                     self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], input_dir, output_dir)
-
+                    
                 if not skipBuildNetwork:
                     base_scenario = import_network(
                         source=input_dir,
@@ -378,16 +383,16 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         data_table_name=scenarioYear,
                         overwrite=True,
                         emmebank=main_emmebank)
-                    
-                    if "modify_network.py" in os.listdir(os.getcwd()):	
-                        try:	
-                            with _m.logbook_trace("Modify network script"):	
-                                import modify_network	
-                                reload(modify_network)	
-                                modify_network.run(base_scenario)	
-                        except ImportError as e:	
+
+                    if "modify_network.py" in os.listdir(os.getcwd()):
+                        try:
+                            with _m.logbook_trace("Modify network script"):
+                                import modify_network
+                                reload(modify_network)
+                                modify_network.run(base_scenario)
+                        except ImportError as e:
                             pass
-                        
+
                     export_tap_adjacent_lines(_join(output_dir, "tapLines.csv"), base_scenario)
                     # initialize per time-period scenarios
                     for number, period in period_ids:
@@ -535,12 +540,12 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             self.run_proc("runtransitreporter.cmd", [drive, path_forward_slash, transitShedThreshold, transitShedTOD],
                           "Create walk and drive transit sheds",
                           capture_output=True)
-            
+
         if not skipVisualizer:
             self.run_proc("RunViz.bat",
                           [drive, path_no_drive, visualizer_reference_path, visualizer_output_file, "NO", visualizer_reference_label, visualizer_build_label, mgraInputFile],
                           "HTML Visualizer", capture_output=True)
-            
+                          
         if not skipDataExport:
             # export network and matrix results from Emme directly to T if using local drive
             main_output_directory = _join(main_directory, "output")

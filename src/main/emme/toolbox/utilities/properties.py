@@ -29,6 +29,7 @@ class PropertiesSetter(object):
     sample_rates = _m.Attribute(str)
 
     useLocalDrive = _m.Attribute(bool)
+    skip4Ds = _m.Attribute(bool)
     skipBuildNetwork = _m.Attribute(bool)
     skipInitialization = _m.Attribute(bool)
     deleteAllMatrices = _m.Attribute(bool)
@@ -114,7 +115,7 @@ class PropertiesSetter(object):
 
     def __init__(self):
         self._run_model_names = (
-            "useLocalDrive",
+            "useLocalDrive", "skip4Ds",
             "startFromIteration", "skipInitialization", "deleteAllMatrices", "skipCopyWarmupTripTables", 
             "skipCopyBikeLogsum", "skipCopyWalkImpedance", "skipWalkLogsums", "skipBikeLogsums", "skipBuildNetwork", 
             "skipHighwayAssignment", "skipTransitSkimming", "skipCoreABM", "skipOtherSimulateModel", "skipCTM", 
@@ -155,6 +156,7 @@ class PropertiesSetter(object):
 
         skip_startup_items = [
             ("useLocalDrive",           "Use the local drive during the model run"),
+            ("skip4Ds",                 "Skip running 4Ds"),
             ("skipBuildNetwork",        "Skip build of highway and transit network"),
             ("skipInitialization",      "Skip matrix and transit database initialization"),
             ("deleteAllMatrices",       "&nbsp;&nbsp;&nbsp;&nbsp;Delete all matrices"),
@@ -283,6 +285,7 @@ class PropertiesSetter(object):
         self.sample_rates = ",".join(str(x) for x in props.get("sample_rates"))
         
         self.useLocalDrive = props.get("RunModel.useLocalDrive", True)
+        self.skip4Ds = props.get("RunModel.skip4Ds", False)
         self.skipBuildNetwork = props.get("RunModel.skipBuildNetwork", False)
         self.skipInitialization = props.get("RunModel.skipInitialization", False)
         self.deleteAllMatrices = props.get("RunModel.deleteAllMatrices", False)
@@ -315,6 +318,7 @@ class PropertiesSetter(object):
         props["sample_rates"] = [float(x) for x in self.sample_rates.split(",")]
         
         props["RunModel.useLocalDrive"] = self.useLocalDrive
+        props["RunModel.skip4Ds"] = self.skip4Ds
         props["RunModel.skipBuildNetwork"] = self.skipBuildNetwork
         props["RunModel.skipInitialization"] = self.skipInitialization
         props["RunModel.deleteAllMatrices"] = self.deleteAllMatrices
