@@ -360,8 +360,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                                  "AT and Transit network consistency checking failed! Open AtTransitCheck_event.log for details.")
 
             if startFromIteration == 1:  # only run the setup / init steps if starting from iteration 1
-                if not skip4Ds:
-                    run4Ds(path=self._path, int_radius=0.65, ref_path=visualizer_reference_path)
 
                 if not skipWalkLogsums:
                     self.run_proc("runSandagWalkLogsums.cmd", [drive, path_forward_slash],
@@ -374,6 +372,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                                   "Bike - create AT logsums and impedances")
                 if not skipCopyBikeLogsum:
                     self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], input_dir, output_dir)
+
+                if not skip4Ds:
+                    run4Ds(path=self._path, int_radius=0.65, ref_path=visualizer_reference_path)
                     
                 if not skipBuildNetwork:
                     base_scenario = import_network(
