@@ -79,7 +79,7 @@ class FourDs(_m.Tool()):
         self.ref_path = ''
         self.maps = False
         self.int_radius = 0.65 #mile
-        self.oth_radius = 0.5 #mile
+        self.oth_radius = self.int_radius #same as intersection radius
         self.new_cols = ['totint','duden','empden','popden','retempden','totintbin','empdenbin','dudenbin','PopEmpDenPerMi']
         self.continuous_fields = ['totint', 'popden', 'empden', 'retempden']
         self.discrete_fields = ['totintbin', 'empdenbin', 'dudenbin']
@@ -120,7 +120,7 @@ class FourDs(_m.Tool()):
         pb.add_select_file("path", window_type="directory", file_filter="", 
                            title="Source directory:",)
 
-        pb.add_text_box("int_radius", size=6, title="Buffer size (miles) for intersections:")
+        pb.add_text_box("int_radius", size=6, title="Buffer size (miles):")
         #pb.add_checkbox("maps", title=" ", label="Generate 4D maps")
         pb.add_select_file("ref_path", window_type="directory", file_filter="", title="Reference directory for comparison")
 
@@ -141,13 +141,14 @@ class FourDs(_m.Tool()):
                  int_radius = 0.65,
                  ref_path = ""):
         _m.logbook_write("Started running 4Ds ...")
-        load_properties = _m.Modeller().tool('sandag.utilities.properties')
-        props = load_properties(_join(self.path, "conf", "sandag_abm.properties"))
 
         self.path = path
         self.ref_path = ref_path
         self.int_radius = int_radius
         #self.maps = maps
+
+        load_properties = _m.Modeller().tool('sandag.utilities.properties')
+        props = load_properties(_join(self.path, "conf", "sandag_abm.properties"))
 
         self.mgradata_file = props["mgra.socec.file"] #input/filename
         self.equivmins_file = props["active.logsum.matrix.file.walk.mgra"] #filename
@@ -169,15 +170,16 @@ class FourDs(_m.Tool()):
         
         self.mgra_data = pd.read_csv(os.path.join(self.path,self.mgradata_file))
         self.base_cols = self.mgra_data.columns.tolist()
-               
+           
+        _m.logbook_write("Tagging intersections to mgra")
         self.get_intersection_count()
-        _m.logbook_write("Tagged intersections to mgra")
         
+        _m.logbook_write("Generating density variables")
         self.get_density()
-        _m.logbook_write("Generated density variables")
         
+        _m.logbook_write("Creating comparison plots")
         self.make_plots()
-        _m.logbook_write("Created comparison plots")
+        
         _m.logbook_write("Finished running 4Ds")
 
     def get_intersection_count(self):
@@ -257,7 +259,7 @@ class FourDs(_m.Tool()):
             mgra_circa_int = eqmn[eqmn['dist'] < self.int_radius]['j'].unique()
             mgra_circa_oth = eqmn[eqmn['dist'] < self.oth_radius]['j'].unique()
             totEmp = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_total'].sum()
-            totRet = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_retail'].sum() + mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_personal_svcs_retail'].sum()
+            totRet = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_retail'].sum() + mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_personal_svcs_retail'].sum() + mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_restaurant_bar'].sum()
             totHH = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['hh'].sum()
             totPop = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['pop'].sum()
             totAcres = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['land_acres'].sum()
@@ -311,21 +313,15 @@ class FourDs(_m.Tool()):
             bins = np.linspace(0,max,div)
             plt.hist(self.base[field], bins, normed = True, alpha = 0.5, label = 'Base', color = rsg_marine)
             plt.hist(self.build[field], bins, normed = True, alpha = 0.5, label = 'Build', color = rsg_orange)
-            plt.legend(loc = 'upper right')
             mean_base = self.base[field].mean()
             mean = self.build[field].mean()
             median_base = self.base[field].median()
             median = self.build[field].median()
-            plt.axvline(mean_base, color = 'b', linestyle = '-')
-            plt.axvline(median_base, color = 'b', linestyle = '--')
-            plt.axvline(mean, color = 'r', linestyle = '-')
-            plt.axvline(median, color = 'r', linestyle = '--')
-            plt.legend({'Base Mean':mean_base,
-                        'Base Median':median_base,
-                        'Build Mean': mean,
-                        'Build Median':median,
-                        'Base':self.base[field],
-                        'Build':self.build[field]})
+            plt.axvline(mean_base, color = 'b', linestyle = '-', label = 'Base Mean')
+            plt.axvline(median_base, color = 'b', linestyle = '--', label = 'Base Median')
+            plt.axvline(mean, color = 'r', linestyle = '-', label = 'Build Mean')
+            plt.axvline(median, color = 'r', linestyle = '--',label = 'Build Median')
+            plt.legend(loc = 'upper right')
             ylims = plt.ylim()[1]
             plt.text(mean_base + div/4, ylims-ylims/32, "mean: {:0.2f}".format(mean_base), color = 'b')
             plt.text(mean_base + div/4, ylims - 5*ylims/32, "median: {:0.0f}".format(median_base), color = 'b')
@@ -334,7 +330,7 @@ class FourDs(_m.Tool()):
             plt.text(self.base[field].min() , ylims/32, "min: {:0.0f}".format(self.base[field].min()), color = 'b')
             plt.text(self.base[field].max()-div , ylims/32, "max: {:0.0f}".format(self.base[field].max()), color = 'b')
             plt.text(self.build[field].min() , 2*ylims/32, "min: {:0.0f}".format(self.build[field].min()), color = 'r')
-            plt.text(self.build[field].max()-div , 2*ylims/32, "max: {:0.0f}".format(self.build[field].max()), color = 'r')
+            plt.text(self.base[field].max()-div , 2*ylims/32, "max: {:0.0f}".format(self.build[field].max()), color = 'r')
 
             plt.xlabel(field)
             plt.ylabel("MGRA's")
