@@ -54,10 +54,6 @@ _dir = os.path.dirname
 
 gen_utils = _m.Modeller().module("sandag.utilities.general")
 
-#input files and parameters
-#print( "Start time: ", datetime.datetime.now())
-#starttime = datetime.datetime.now()
-
 class FourDs(_m.Tool()):
 
     path = _m.Attribute(unicode)
@@ -82,9 +78,11 @@ class FourDs(_m.Tool()):
         self.inNode = ''
         self.ref_path = ''
         self.maps = False
-        self.int_radius = 0.65
-        self.continuous_fields = []
-        self.discrete_fields = []
+        self.int_radius = 0.65 #mile
+        self.oth_radius = 0.5 #mile
+        self.new_cols = ['totint','duden','empden','popden','retempden','totintbin','empdenbin','dudenbin','PopEmpDenPerMi']
+        self.continuous_fields = ['totint', 'popden', 'empden', 'retempden']
+        self.discrete_fields = ['totintbin', 'empdenbin', 'dudenbin']
         self.mgra_shape_file = ''
         self.base = pd.DataFrame()
         self.build = pd.DataFrame()
@@ -168,10 +166,6 @@ class FourDs(_m.Tool()):
         for path in file_paths:
             if not os.path.exists(path):
                 raise Exception("missing file '%s'" % (path))
-                
-        #list of continuous and discrete variables to compare
-        self.continuous_fields = ['totint', 'totint', 'popden', 'popden', 'empden', 'empden', 'retempden', 'retempden']#, 'PopEmpDenPerMi','PopEmpDenPerMi']
-        self.discrete_fields = ['totintbin', 'empdenbin', 'dudenbin']
         
         self.mgra_data = pd.read_csv(os.path.join(self.path,self.mgradata_file))
         self.base_cols = self.mgra_data.columns.tolist()
@@ -184,7 +178,6 @@ class FourDs(_m.Tool()):
         
         self.make_plots()
         _m.logbook_write("Created comparison plots")
-        #print( "TOTAL TIME: ", (datetime.datetime.now() - starttime).seconds/60, (datetime.datetime.now() - starttime).seconds)
         _m.logbook_write("Finished running 4Ds")
 
     def get_intersection_count(self):
@@ -247,20 +240,28 @@ class FourDs(_m.Tool()):
            mgra_landuse = pd.read_csv(os.path.join(self.path, self.mgradata_file))
         else:
            mgra_landuse = self.mgra_data
+           
+        #remove if 4D columns exist
+        for col in self.new_cols:
+            if col in self.base_cols:
+                self.base_cols.remove(col)
+                mgra_landuse = mgra_landuse.drop(col,axis=1)
+        
+        #all street distance  
         equiv_min = pd.read_csv(_join(self.path, "output", self.equivmins_file))
         equiv_min['dist'] = equiv_min['actual']/60*3
         print("MGRA input landuse: " + self.mgradata_file)
         
         def density_function(mgra_in):
             eqmn = equiv_min[equiv_min['i'] == mgra_in]
-            mgra_circa_75 = eqmn[eqmn['dist'] < self.int_radius]['j'].unique()
-            mgra_circa_5 = eqmn[eqmn['dist'] < .5]['j'].unique()
-            totEmp = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_5)]['emp_total'].sum()
-            totRet = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_5)]['emp_retail'].sum() + mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_5)]['emp_personal_svcs_retail'].sum()
-            totHH = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_5)]['hh'].sum()
-            totPop = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_5)]['pop'].sum()
-            totAcres = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_5)]['land_acres'].sum()
-            totInt = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_75)]['icnt'].sum()
+            mgra_circa_int = eqmn[eqmn['dist'] < self.int_radius]['j'].unique()
+            mgra_circa_oth = eqmn[eqmn['dist'] < self.oth_radius]['j'].unique()
+            totEmp = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_total'].sum()
+            totRet = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_retail'].sum() + mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_personal_svcs_retail'].sum()
+            totHH = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['hh'].sum()
+            totPop = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['pop'].sum()
+            totAcres = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['land_acres'].sum()
+            totInt = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_int)]['icnt'].sum()
             if(totAcres>0):
                 empDen = totEmp/totAcres
                 retDen = totRet/totAcres
@@ -268,7 +269,6 @@ class FourDs(_m.Tool()):
                 popDen = totPop/totAcres
                 popEmpDenPerMi = (totEmp+totPop)/(totAcres/640) #Acres to miles
                 tot_icnt = totInt
-                icntDen = totInt/totAcres
             else:
                 empDen = 0
                 retDen = 0
@@ -276,21 +276,18 @@ class FourDs(_m.Tool()):
                 popDen = 0
                 popEmpDenPerMi = 0
                 tot_icnt = 0
-                icntDen = 0
-            return empDen,retDen,duDen,popDen,popEmpDenPerMi,tot_icnt,icntDen
+            return tot_icnt,duDen,empDen,popDen,retDen,popEmpDenPerMi
     
-        mgra_landuse['empden'],mgra_landuse['retden'],mgra_landuse['duden'],mgra_landuse['popden'],mgra_landuse['PopEmpDenPerMi'],mgra_landuse['totint'],mgra_landuse['intden'] = zip(*mgra_landuse['mgra'].map(density_function))
+        #new_cols = [0-'totint',1-'duden',2-'empden',3-'popden',4-'retempden',5-'totintbin',6-'empdenbin',7-'dudenbin',8-'PopEmpDenPerMi']
+        mgra_landuse[self.new_cols[0]],mgra_landuse[self.new_cols[1]],mgra_landuse[self.new_cols[2]],mgra_landuse[self.new_cols[3]],mgra_landuse[self.new_cols[4]],mgra_landuse[self.new_cols[8]] = zip(*mgra_landuse['mgra'].map(density_function))
 
         mgra_landuse = mgra_landuse.fillna(0)
-        mgra_landuse['totintbin'] = np.where(mgra_landuse['totint'] < 80, 1, np.where(mgra_landuse['totint'] < 130, 2, 3))
-        mgra_landuse['empdenbin'] = np.where(mgra_landuse['empden'] < 10, 1, np.where(mgra_landuse['empden'] < 30, 2,3))
-        mgra_landuse['dudenbin'] = np.where(mgra_landuse['duden'] < 5, 1, np.where(mgra_landuse['duden'] < 10, 2,3))
+        mgra_landuse[self.new_cols[5]] = np.where(mgra_landuse[self.new_cols[0]] < 80, 1, np.where(mgra_landuse[self.new_cols[0]] < 130, 2, 3))
+        mgra_landuse[self.new_cols[6]] = np.where(mgra_landuse[self.new_cols[2]] < 10, 1, np.where(mgra_landuse[self.new_cols[2]] < 30, 2,3))
+        mgra_landuse[self.new_cols[7]] = np.where(mgra_landuse[self.new_cols[1]] < 5, 1, np.where(mgra_landuse[self.new_cols[1]] < 10, 2,3))
 
-        # save new density data
-        if 'PopEmpDenPerMi' in self.base_cols:
-            mgra_landuse[self.base_cols].to_csv(os.path.join(self.path, self.mgradata_file), index = False, float_format='%.4f' )
-        else:
-            mgra_landuse[self.base_cols+['PopEmpDenPerMi']].to_csv(os.path.join(self.path, self.mgradata_file), index = False, float_format='%.4f' )
+        mgra_landuse[self.base_cols+self.new_cols].to_csv(os.path.join(self.path, self.mgradata_file), index = False, float_format='%.4f' )
+        
         self.mgra_data = mgra_landuse
         print( "*** Finished ***")
 
@@ -301,7 +298,7 @@ class FourDs(_m.Tool()):
         else:
             self.build = self.mgra_data
                 
-        def plot_continuous(base_field, build_field):
+        def plot_continuous(field):
             #colors
             rsg_orange = '#f68b1f'
             rsg_marine = '#006fa1'
@@ -309,40 +306,40 @@ class FourDs(_m.Tool()):
             #rsg_grey   = '#48484a'
             #rsg_mist   = '#dcddde'
                         
-            max = self.base[base_field].max() + self.base[base_field].max()%5
+            max = self.base[field].max() + self.base[field].max()%5
             div = max/5 if max/5 >= 10 else max/2
             bins = np.linspace(0,max,div)
-            plt.hist(self.base[base_field], bins, normed = True, alpha = 0.5, label = 'base', color = rsg_marine)
-            plt.hist(self.build[build_field], bins, normed = True, alpha = 0.5, label = 'build', color = rsg_orange)
+            plt.hist(self.base[field], bins, normed = True, alpha = 0.5, label = 'Base', color = rsg_marine)
+            plt.hist(self.build[field], bins, normed = True, alpha = 0.5, label = 'Build', color = rsg_orange)
             plt.legend(loc = 'upper right')
-            mean_base = self.base[base_field].mean()
-            mean = self.build[build_field].mean()
-            median_base = self.base[base_field].median()
-            median = self.build[build_field].median()
+            mean_base = self.base[field].mean()
+            mean = self.build[field].mean()
+            median_base = self.base[field].median()
+            median = self.build[field].median()
             plt.axvline(mean_base, color = 'b', linestyle = '-')
             plt.axvline(median_base, color = 'b', linestyle = '--')
             plt.axvline(mean, color = 'r', linestyle = '-')
             plt.axvline(median, color = 'r', linestyle = '--')
             plt.legend({'Base Mean':mean_base,
-                                    'Base Median':median_base,
-                                    'Build Mean': mean,
-                                    'Build Median':median,
-                                    'Base':self.base[base_field],
-                                    'Build':self.build[build_field]})
+                        'Base Median':median_base,
+                        'Build Mean': mean,
+                        'Build Median':median,
+                        'Base':self.base[field],
+                        'Build':self.build[field]})
             ylims = plt.ylim()[1]
             plt.text(mean_base + div/4, ylims-ylims/32, "mean: {:0.2f}".format(mean_base), color = 'b')
             plt.text(mean_base + div/4, ylims - 5*ylims/32, "median: {:0.0f}".format(median_base), color = 'b')
             plt.text(mean_base + div/4, ylims-2*ylims/32, "mean: {:0.2f}".format(mean), size = 'medium',color = 'r')
             plt.text(mean_base + div/4, ylims-6*ylims/32, "median: {:0.0f}".format(median), color = 'r')
-            plt.text(self.base[base_field].min() , ylims/32, "min: {:0.0f}".format(self.base[base_field].min()), color = 'b')
-            plt.text(self.base[base_field].max()-div , ylims/32, "max: {:0.0f}".format(self.base[base_field].max()), color = 'b')
-            plt.text(self.build[build_field].min() , 2*ylims/32, "min: {:0.0f}".format(self.build[build_field].min()), color = 'r')
-            plt.text(self.base[base_field].max()-div , 2*ylims/32, "max: {:0.0f}".format(self.build[build_field].max()), color = 'r')
+            plt.text(self.base[field].min() , ylims/32, "min: {:0.0f}".format(self.base[field].min()), color = 'b')
+            plt.text(self.base[field].max()-div , ylims/32, "max: {:0.0f}".format(self.base[field].max()), color = 'b')
+            plt.text(self.build[field].min() , 2*ylims/32, "min: {:0.0f}".format(self.build[field].min()), color = 'r')
+            plt.text(self.build[field].max()-div , 2*ylims/32, "max: {:0.0f}".format(self.build[field].max()), color = 'r')
 
-            plt.xlabel(base_field)
+            plt.xlabel(field)
             plt.ylabel("MGRA's")
-            plt.title(base_field.replace('den','') + ' Density')
-            outfile = _join(self.path, "output", '4Ds_{}_plot.png'.format(base_field))
+            plt.title(field.replace('den','') + ' Density')
+            outfile = _join(self.path, "output", '4Ds_{}_plot.png'.format(field))
             if os.path.isfile(outfile):
                 os.remove(outfile)
             plt.savefig(outfile)
@@ -361,18 +358,14 @@ class FourDs(_m.Tool()):
             ax.get_figure().savefig(outfile)
 
         self.base = pd.read_csv(os.path.join(self.ref_path, self.mgradata_file))
-        self.base['type'] = 'base' #'orig'
-        self.build['type'] = 'build' #'new'
+        self.base['type'] = 'base'
+        self.build['type'] = 'build'
 
-        self.build = self.build.rename(columns = {'empdenbin':'empdenbin','dudenbin':'dudenbin'})
-        self.base = self.base.rename(columns = {'MGRA':'mgra'})
-        discretedf_base = self.base[['mgra','totintbin','empdenbin','dudenbin','type']]
-        discretedf_build = self.build[['mgra','totintbin','empdenbin','dudenbin','type']]
+        discretedf_base = self.base[['mgra','type']+self.discrete_fields]
+        discretedf_build = self.build[['mgra','type']+self.discrete_fields]
         
-        i = 0
-        for m in range(0,int(len(self.continuous_fields)/2)) :
-            plot_continuous(self.continuous_fields[i],self.continuous_fields[i+1])
-            i +=2
+        for f in self.continuous_fields:
+            plot_continuous(f)            
         for f in self.discrete_fields:
             plot_discrete(f)
             
