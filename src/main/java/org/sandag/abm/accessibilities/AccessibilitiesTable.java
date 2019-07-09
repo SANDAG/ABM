@@ -55,10 +55,21 @@ public final class AccessibilitiesTable
     private static final int   MAINT_ACCESSIBILITY_SOV_INSUFFICIENT_INDEX       = 31;
     private static final int   MAINT_ACCESSIBILITY_SOV_SUFFICIENT_INDEX         = 32;
     private static final int   MAINT_ACCESSIBILITY_SOV_OVERSUFFICIENT_INDEX     = 33;
+    private static final int   EAT_ACCESSIBILITY_SOV_INSUFFICIENT_INDEX         = 34;
+    private static final int   EAT_ACCESSIBILITY_SOV_SUFFICIENT_INDEX           = 35;
+    private static final int   EAT_ACCESSIBILITY_SOV_OVERSUFFICIENT_INDEX       = 36;
+    private static final int   VISIT_ACCESSIBILITY_SOV_INSUFFICIENT_INDEX       = 37;
+    private static final int   VISIT_ACCESSIBILITY_SOV_SUFFICIENT_INDEX         = 38;
+    private static final int   VISIT_ACCESSIBILITY_SOV_OVERSUFFICIENT_INDEX     = 39;
     private static final int   DISCR_ACCESSIBILITY_SOV_INSUFFICIENT_INDEX       = 40;
     private static final int   DISCR_ACCESSIBILITY_SOV_SUFFICIENT_INDEX         = 41;
     private static final int   DISCR_ACCESSIBILITY_SOV_OVERSUFFICIENT_INDEX     = 42;
+    private static final int   ATWORK_ACCESSIBILITY_SOV_INSUFFICIENT_INDEX      = 43;
+    private static final int   ATWORK_ACCESSIBILITY_SOV_OVERSUFFICIENT_INDEX    = 44;
     private static final int   TOTAL_EMPLOYMENT_ACCESSIBILITY_INDEX             = 45;
+    private static final int   ATWORK_ACCESSIBILITY_NMOT_INDEX                  = 46;
+    private static final int   ALLHH_ACCESSIBILITY_TRANSIT_INDEX                = 47;
+    private static final int   NONMANDATORY_MAAS_ACCESSIBILITY_FIELD_NUMBER     = 48;    
 
     // accessibilities by mgra, accessibility alternative
     private float[][]          accessibilities;
@@ -185,6 +196,7 @@ public final class AccessibilitiesTable
         dataColumnHeadings.add("TOTAL_EMP");
         dataColumnHeadings.add("ATWORK_NM");
         dataColumnHeadings.add("ALL_HHS_TRANSIT");
+        dataColumnHeadings.add("NONMAN_MAAS");
         dataColumnHeadings.add("MGRA");
 
         // copy accessibilities array into a 0-based array
@@ -335,6 +347,7 @@ public final class AccessibilitiesTable
 
         if (type.equalsIgnoreCase("auto")) returnValue = accessibilities[homeMgra][NONMANDATORY_AUTO_ACCESSIBILITY_FIELD_NUMBER - 1];
         else if (type.equalsIgnoreCase("transit")) returnValue = accessibilities[homeMgra][NONMANDATORY_TRANSIT_ACCESSIBILITY_FIELD_NUMBER - 1];
+        else if (type.equalsIgnoreCase("maas")) returnValue = accessibilities[homeMgra][NONMANDATORY_MAAS_ACCESSIBILITY_FIELD_NUMBER - 1];
         else if (type.equalsIgnoreCase("nonmotor")) returnValue = accessibilities[homeMgra][NONMANDATORY_NONMOTOR_ACCESSIBILITY_FIELD_NUMBER - 1];
         else if (type.equalsIgnoreCase("sov0")) returnValue = accessibilities[homeMgra][NONMANDATORY_SOV_0_ACCESSIBILITY_FIELD_NUMBER - 1];
         else if (type.equalsIgnoreCase("sov1")) returnValue = accessibilities[homeMgra][NONMANDATORY_SOV_1_ACCESSIBILITY_FIELD_NUMBER - 1];
@@ -383,7 +396,7 @@ public final class AccessibilitiesTable
         {
             logger.error("argument type = "
                     + type
-                    + " is not valid.  Must be either 'auto', 'transit', 'nonmotor', or hov0, hov1, or hov2.");
+                    + " is not valid");
             throw new RuntimeException();
         }
 

@@ -6,11 +6,14 @@ import java.io.File;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.MatrixDataServer;
+import org.sandag.abm.ctramp.TNCAndTaxiWaitTimeCalculator;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.AutoUEC;
+import org.sandag.abm.modechoice.MaasUEC;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.NonMotorUEC;
 import org.sandag.abm.modechoice.TazDataManager;
@@ -36,13 +39,19 @@ public class NonTransitUtilities
     private static final String[]        SOVPERIODS           = {"OP", "PK"};
     private static final String[]        HOVPERIODS           = {"OP", "PK"};
     private static final String[]        NMTPERIODS           = {"OP"};
+    private static final String[]        MAASPERIODS           = {"OP", "PK"};
+    
 
     // store taz-taz exponentiated utilities (period, from taz, to taz)
     private double[][][]                 sovExpUtilities;
     private double[][][]                 hovExpUtilities;
     private double[][][]                 nMotorExpUtilities;
+    private double[][][]                 maasExpUtilities; 
 
     private double[]                     avgTazHourlyParkingCost;
+    private float[]                     avgTazTaxiWaitTime;
+    private float[]                     avgTazSingleTNCWaitTime;
+    private float[]                     avgTazSharedTNCWaitTime;
 
     // A HashMap of non-motorized utilities, period,oMgra,dMgra (where dMgra is
     // ragged)
@@ -54,11 +63,16 @@ public class NonTransitUtilities
     private AutoUEC[]                    sovUEC;
     private AutoUEC[]                    hovUEC;
     private NonMotorUEC[]                nMotorUEC;
+    private MaasUEC[]                    maasUEC;
 
     private int                          maxTaz;
 
     private boolean                      trace, seek;
     private Tracer                       tracer;
+    
+    //added for TNC and Taxi modes
+    TNCAndTaxiWaitTimeCalculator tncTaxiWaitTimeCalculator = null;
+
 
     /**
      * Constructor.
@@ -69,12 +83,13 @@ public class NonTransitUtilities
      */
 
     public NonTransitUtilities(HashMap<String, String> rbMap, double[][][] mySovExpUtilities,
-            double[][][] myHovExpUtilities, double[][][] myNMotorExpUtilities)
+            double[][][] myHovExpUtilities, double[][][] myNMotorExpUtilities, double[][][] myMaasExpUtilities)
     {
 
         sovExpUtilities = mySovExpUtilities;
         hovExpUtilities = myHovExpUtilities;
         nMotorExpUtilities = myNMotorExpUtilities;
+        maasExpUtilities = myMaasExpUtilities;
 
         mgraManager = MgraDataManager.getInstance();
         tazManager = TazDataManager.getInstance(rbMap);
@@ -91,10 +106,13 @@ public class NonTransitUtilities
         int peakSOVPage = Util.getIntegerValueFromPropertyMap(rbMap, "acc.sov.peak.page");
         int peakHOVPage = Util.getIntegerValueFromPropertyMap(rbMap, "acc.hov.peak.page");
         int nonMotorPage = Util.getIntegerValueFromPropertyMap(rbMap, "acc.nonmotorized.page");
+        int peakMaasPage = Util.getIntegerValueFromPropertyMap(rbMap, "acc.maas.peak.page");
+        int offpeakMaasPage = Util.getIntegerValueFromPropertyMap(rbMap, "acc.maas.offpeak.page");
 
         sovUEC = new AutoUEC[SOVPERIODS.length];
         hovUEC = new AutoUEC[HOVPERIODS.length];
         nMotorUEC = new NonMotorUEC[NMTPERIODS.length];
+        maasUEC = new MaasUEC[NMTPERIODS.length];
 
         sovUEC[OFFPEAK_PERIOD_INDEX] = new AutoUEC(rbMap, uecFileName, offpeakSOVPage, dataPage);
         sovUEC[PEAK_PERIOD_INDEX] = new AutoUEC(rbMap, uecFileName, peakSOVPage, dataPage);
@@ -102,7 +120,9 @@ public class NonTransitUtilities
         hovUEC[PEAK_PERIOD_INDEX] = new AutoUEC(rbMap, uecFileName, peakHOVPage, dataPage);
         nMotorUEC[OFFPEAK_PERIOD_INDEX] = new NonMotorUEC(rbMap, uecFileName, nonMotorPage,
                 dataPage);
-
+        maasUEC[OFFPEAK_PERIOD_INDEX] = new MaasUEC(rbMap, uecFileName, offpeakMaasPage, dataPage);
+        maasUEC[PEAK_PERIOD_INDEX] = new MaasUEC(rbMap, uecFileName, peakMaasPage, dataPage);
+ 
         trace = Util.getBooleanValueFromPropertyMap(rbMap, "Trace");
         int[] traceOtaz = Util.getIntegerArrayFromPropertyMap(rbMap, "Trace.otaz");
         int[] traceDtaz = Util.getIntegerArrayFromPropertyMap(rbMap, "Trace.dtaz");
@@ -132,7 +152,16 @@ public class NonTransitUtilities
         hovExpUtilities = new double[HOVPERIODS.length][maxTaz + 1][];
         nMotorExpUtilities = new double[NMTPERIODS.length][maxTaz + 1][];
 
+        maasExpUtilities = new double[MAASPERIODS.length][maxTaz + 1][];
+        
         calculateAverageTazParkingCosts();
+        
+        tncTaxiWaitTimeCalculator = new TNCAndTaxiWaitTimeCalculator();
+        tncTaxiWaitTimeCalculator.createWaitTimeDistributions(rbMap);
+        
+        calculateAverageMaasWaitTimes();
+
+        
 
     }
 
@@ -145,13 +174,14 @@ public class NonTransitUtilities
         this.sovExpUtilities = ntUtilities[0];
         this.hovExpUtilities = ntUtilities[1];
         this.nMotorExpUtilities = ntUtilities[2];
+        this.maasExpUtilities = ntUtilities[3];
     }
 
     /**
      * get the set of utilities arrays built by calling buildUtilities().
      * 
-     * @return array of 3 utilities arrays: sovExpUtilities, hovExpUtilities,
-     *         nMotorExpUtilities
+     * @return array of 4 utilities arrays: sovExpUtilities, hovExpUtilities,
+     *         nMotorExpUtilities, maasExpUtilities
      */
     public double[][][][] getAllUtilities()
     {
@@ -159,6 +189,7 @@ public class NonTransitUtilities
         allUtilities[0] = sovExpUtilities;
         allUtilities[1] = hovExpUtilities;
         allUtilities[2] = nMotorExpUtilities;
+        allUtilities[3] = maasExpUtilities;
         return allUtilities;
     }
 
@@ -309,6 +340,65 @@ public class NonTransitUtilities
 
     }
 
+    /**
+     * calculate an average TAZ parking cost to use in accessibilities
+     * calculation which are done at TAZ level.
+     */
+    private void calculateAverageMaasWaitTimes()
+    {
+
+        avgTazTaxiWaitTime = new float[maxTaz + 1];
+        avgTazSingleTNCWaitTime = new float[maxTaz + 1];
+        avgTazSharedTNCWaitTime = new float[maxTaz + 1];
+
+        for (int jTaz = 1; jTaz <= maxTaz; ++jTaz)
+        {
+
+            int[] mgras = tazManager.getMgraArray(jTaz);
+            if (mgras == null || mgras.length == 0) continue;
+
+            float taxiWait = 0;
+            float singleTNCWait = 0;
+            float sharedTNCWait = 0;
+            int singleTNCCount = 0;
+            int sharedTNCCount = 0;
+            int taxiCount = 0;
+            
+            
+            for (int mgra : mgras)
+            {
+                float popEmpDen = (float) mgraManager.getPopEmpPerSqMi(mgra);
+                float singleTNCWaitTime = (float) tncTaxiWaitTimeCalculator.getMeanSingleTNCWaitTime( popEmpDen);
+                float sharedTNCWaitTime = (float) tncTaxiWaitTimeCalculator.getMeanSharedTNCWaitTime( popEmpDen);
+                float taxiWaitTime = (float) tncTaxiWaitTimeCalculator.getMeanTaxiWaitTime( popEmpDen);
+        
+                if (taxiWaitTime > 0)
+                {
+                	taxiWait += taxiWaitTime;
+                	taxiCount++;
+                }
+                if (singleTNCWaitTime > 0)
+                {
+                	singleTNCWait += singleTNCWaitTime;
+                	singleTNCCount++;
+                }
+               if (sharedTNCWaitTime > 0)
+                {
+                	sharedTNCWait += sharedTNCWaitTime;
+                	sharedTNCCount++;
+                }
+                if (taxiCount > 0) taxiWait /= taxiCount;
+                if (singleTNCCount > 0) singleTNCWait /= singleTNCCount;
+                if (sharedTNCCount > 0) sharedTNCWait /= sharedTNCCount;
+            }
+
+            avgTazTaxiWaitTime[jTaz] = taxiWait;
+            avgTazSingleTNCWaitTime[jTaz] = singleTNCWait;
+            avgTazSharedTNCWaitTime[jTaz] = sharedTNCWait;
+         }
+
+    }
+
     public void buildUtilitiesForOrigMgraAndPeriod(int iMgra, int period)
     {
 
@@ -317,6 +407,7 @@ public class NonTransitUtilities
 
         sovExpUtilities[period][iTaz] = new double[maxTaz + 1];
         hovExpUtilities[period][iTaz] = new double[maxTaz + 1];
+        maasExpUtilities[period][iTaz] = new double[maxTaz + 1];
 
         for (int jTaz = 1; jTaz <= maxTaz; ++jTaz)
         {
@@ -328,9 +419,15 @@ public class NonTransitUtilities
 
             double hovUtility = hovUEC[period].calculateUtilitiesForTazPair(iTaz, jTaz,
                     avgTazHourlyParkingCost[jTaz]);
-            // exponentiate the SOV utility
+            // exponentiate the HOV utility
             if (hovUtility > -500) hovExpUtilities[period][iTaz][jTaz] = Math.exp(hovUtility);
 
+            double maasUtility = maasUEC[period].calculateUtilitiesForTazPair(iTaz, jTaz,
+                    avgTazTaxiWaitTime[jTaz], avgTazSingleTNCWaitTime[jTaz], avgTazSharedTNCWaitTime[jTaz]);
+            // exponentiate the SOV utility
+            if (maasUtility > -500) maasExpUtilities[period][iTaz][jTaz] = Math.exp(maasUtility);
+            
+            
         }
 
         // non-motorized utilities are only needed for off-peak period, so if
@@ -462,6 +559,21 @@ public class NonTransitUtilities
     }
 
     /**
+     * Get the Maas Exponentiated Utility for a given ptaz, ataz, and period
+     * 
+     * @param pTaz
+     *            Production/Origin TAZ
+     * @param aTaz
+     *            Attraction/Destination TAZ
+     * @param period
+     *            Period
+     * @return Maas Exponentiated Utility.
+     */
+    public double getMaasExpUtility(int pTaz, int aTaz, int period)
+    {
+        return maasExpUtilities[period][pTaz][aTaz];
+    }
+   /**
      * The main method runs this class, for testing purposes.
      * 
      * @param args
@@ -519,8 +631,10 @@ public class NonTransitUtilities
         double[][][] sovExpUtilities = null;
         double[][][] hovExpUtilities = null;
         double[][][] nMotorExpUtilities = null;
+        double[][][] maasExpUtilities = null;
+        
         NonTransitUtilities au = new NonTransitUtilities(rbMap, sovExpUtilities, hovExpUtilities,
-                nMotorExpUtilities);
+                nMotorExpUtilities, maasExpUtilities);
         au.buildUtilities();
 
     }

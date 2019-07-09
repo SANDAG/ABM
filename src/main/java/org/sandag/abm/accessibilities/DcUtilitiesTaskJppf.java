@@ -31,7 +31,7 @@ public class DcUtilitiesTaskJppf
     private static final String[]       LOGSUM_SEGMENTS               = {"SOV       ",
             "HOV       ", "Transit   ", "NMotorized", "SOVLS_0   ", "SOVLS_1   ", "SOVLS_2   ",
             "HOVLS_0_OP", "HOVLS_1_OP", "HOVLS_2_OP", "HOVLS_0_PK", "HOVLS_1_PK", "HOVLS_2_PK",
-            "TOTAL"                                                   };
+            "TOTAL", "MAAS"                                                   };
 
     public static final String[]        LU_LOGSUM_SEGMENTS            = {"LS_0_PK", "LS_1_PK",
             "LS_2_PK", "LS_0_OP", "LS_1_OP", "LS_2_OP", "All_PK "     };
@@ -57,6 +57,8 @@ public class DcUtilitiesTaskJppf
     private double[][][]                sovExpUtilities;
     private double[][][]                hovExpUtilities;
     private double[][][]                nMotorExpUtilities;
+    private double[][][]                maasExpUtilities;
+    
 
     private float[][]                   accessibilities;
     private float[][]                   luAccessibilities;
@@ -231,7 +233,7 @@ public class DcUtilitiesTaskJppf
         logger.info(threadName + " - Calculating Accessibilities");
 
         NonTransitUtilities ntUtilities = new NonTransitUtilities(rbMap, sovExpUtilities,
-                hovExpUtilities, nMotorExpUtilities);
+                hovExpUtilities, nMotorExpUtilities, maasExpUtilities);
         // ntUtilities.setAllUtilities(ntUtilitiesArrays);
         // ntUtilities.setNonMotorUtilsMap(ntUtilitiesMap);
 
@@ -337,11 +339,14 @@ public class DcUtilitiesTaskJppf
 
                 double opSovExpUtility = 0;
                 double opHovExpUtility = 0;
+                double opMaasExpUtility = 0;
                 try
                 {
                     opSovExpUtility = ntUtilities.getSovExpUtility(iTaz, jTaz,
                             NonTransitUtilities.OFFPEAK_PERIOD_INDEX);
                     opHovExpUtility = ntUtilities.getHovExpUtility(iTaz, jTaz,
+                            NonTransitUtilities.OFFPEAK_PERIOD_INDEX);
+                    opMaasExpUtility =  ntUtilities.getMaasExpUtility(iTaz, jTaz,
                             NonTransitUtilities.OFFPEAK_PERIOD_INDEX);
                     // opSovExpUtility =
                     // ntUtilities.getAllUtilities()[0][0][iTaz][jTaz];
@@ -364,12 +369,17 @@ public class DcUtilitiesTaskJppf
                 
                 double pkSovExpUtility = 0;
                 double pkHovExpUtility = 0;
+                double pkMaasExpUtility = 0;
                 try
                 {
                     pkSovExpUtility = ntUtilities.getSovExpUtility(iTaz, jTaz,
                             NonTransitUtilities.PEAK_PERIOD_INDEX);
                     pkHovExpUtility = ntUtilities.getHovExpUtility(iTaz, jTaz,
                             NonTransitUtilities.PEAK_PERIOD_INDEX);
+                    
+                    pkMaasExpUtility = ntUtilities.getMaasExpUtility(iTaz, jTaz,
+                            NonTransitUtilities.PEAK_PERIOD_INDEX);
+
                     // pkSovExpUtility =
                     // ntUtilities.getAllUtilities()[0][1][iTaz][jTaz];
                     // pkHovExpUtility =
@@ -493,6 +503,9 @@ public class DcUtilitiesTaskJppf
                 logsums[13] = Math.log(pkSovExpUtility * expConstants[3][0] + pkHovExpUtility
                         * expConstants[3][1] + pkWTExpUtility * expConstants[3][2] + nmExpUtility
                         * expConstants[3][3]);
+                
+                // 14: MAAS
+                logsums[14] = Math.log(opMaasExpUtility);
                 
                 aDmu.setLogsums(logsums);
                 aDmu.setSizeTerms(sizeTerms[jMgra]);
