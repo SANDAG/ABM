@@ -1074,8 +1074,9 @@ public class SubtourDestChoiceModel
         double[][][] sovExpUtilities = null;
         double[][][] hovExpUtilities = null;
         double[][][] nMotorExpUtilities = null;
+        double[][][] maasExpUtilities = null;
         NonTransitUtilities ntUtilities = new NonTransitUtilities(propertyMap, sovExpUtilities,
-                hovExpUtilities, nMotorExpUtilities);
+                hovExpUtilities, nMotorExpUtilities, maasExpUtilities);
 
         MandatoryAccessibilitiesCalculator mandAcc = new MandatoryAccessibilitiesCalculator(
                 propertyMap, ntUtilities, expConstants, logsumHelper.getBestTransitPathCalculator());

@@ -72,6 +72,7 @@ public final class HouseholdChoiceModelsManager
     private double[][][]                        sovExpUtilities;
     private double[][][]                        hovExpUtilities;
     private double[][][]                        nMotorExpUtilities;
+    private double[][][]                        maasExpUtilities;
 
     private double[]                            pctHighIncome;
     private double[]                            pctMultipleAutos;
@@ -230,7 +231,7 @@ public final class HouseholdChoiceModelsManager
         {
 
             NonTransitUtilities ntUtilities = new NonTransitUtilities(propertyMap, sovExpUtilities,
-                    hovExpUtilities, nMotorExpUtilities);
+                    hovExpUtilities, nMotorExpUtilities, maasExpUtilities);
 
             McLogsumsCalculator logsumHelper = new McLogsumsCalculator();
             logsumHelper.setupSkimCalculators(propertyMap);

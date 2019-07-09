@@ -838,8 +838,9 @@ public class SubtourDepartureAndDurationTime
         double[][][] sovExpUtilities = null;
         double[][][] hovExpUtilities = null;
         double[][][] nMotorExpUtilities = null;
-        NonTransitUtilities ntUtilities = new NonTransitUtilities(propertyMap, sovExpUtilities,
-                hovExpUtilities, nMotorExpUtilities);
+        double[][][] maasExpUtilities = null;
+               NonTransitUtilities ntUtilities = new NonTransitUtilities(propertyMap, sovExpUtilities,
+                hovExpUtilities, nMotorExpUtilities, maasExpUtilities);
 
         MandatoryAccessibilitiesCalculator mandAcc = new MandatoryAccessibilitiesCalculator(
                 propertyMap, ntUtilities, expConstants, logsumHelper.getBestTransitPathCalculator());
