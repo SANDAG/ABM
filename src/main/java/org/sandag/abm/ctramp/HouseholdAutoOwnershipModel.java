@@ -96,7 +96,11 @@ public class HouseholdAutoOwnershipModel
                 hhObj.getHhMgra()));
         aoDmuObject.setHomeTazNonMotorizedAccessibility(accTable.getAggregateAccessibility(
                 "nonmotor", hhObj.getHhMgra()));
+        aoDmuObject.setHomeTazMaasAccessibility(accTable.getAggregateAccessibility("maas",
+                hhObj.getHhMgra()));
 
+        
+        
         if (preAutoOwnership)
         {
 

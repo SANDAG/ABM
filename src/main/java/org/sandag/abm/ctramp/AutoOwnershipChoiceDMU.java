@@ -29,6 +29,7 @@ public class AutoOwnershipChoiceDMU
     private double                     homeTazAutoAccessibility         = 0.0;
     private double                     homeTazTransitAccessibility      = 0.0;
     private double                     homeTazNonMotorizedAccessibility = 0.0;
+    private double                     homeTazMaasAccessibility         = 0.0;
 
     public AutoOwnershipChoiceDMU()
     {
@@ -150,6 +151,11 @@ public class AutoOwnershipChoiceDMU
         return homeTazTransitAccessibility;
     }
 
+    public double getHomeTazMaasAccessibility()
+    {
+        return homeTazMaasAccessibility;
+    }
+
     public double getHomeTazNonMotorizedAccessibility()
     {
         return homeTazNonMotorizedAccessibility;
@@ -196,6 +202,11 @@ public class AutoOwnershipChoiceDMU
     public void setHomeTazTransitAccessibility(double acc)
     {
         homeTazTransitAccessibility = acc;
+    }
+
+    public void setHomeTazMaasAccessibility(double acc)
+    {
+        homeTazMaasAccessibility = acc;
     }
 
     public void setHomeTazNonMotorizedAccessibility(double acc)

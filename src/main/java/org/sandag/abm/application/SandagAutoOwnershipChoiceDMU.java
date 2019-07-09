@@ -39,7 +39,7 @@ public class SandagAutoOwnershipChoiceDMU
         methodIndexMap.put("getNumPersons18to35", 25);
         methodIndexMap.put("getNumPersons65plus", 26);
         methodIndexMap.put("getWorkAutoTime", 27);
-
+        methodIndexMap.put("getHomeTazMaasAccessibility", 28);
     }
 
     public double getValueForIndex(int variableIndex, int arrayIndex)
@@ -91,6 +91,8 @@ public class SandagAutoOwnershipChoiceDMU
             	return getNumPersons65Plus();
             case 27:
             	return getWorkAutoTime();
+            case 28:
+                return getHomeTazMaasAccessibility();
 
             default:
                 logger.error("method number = " + variableIndex + " not found");
