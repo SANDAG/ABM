@@ -112,7 +112,7 @@ public class NonTransitUtilities
         sovUEC = new AutoUEC[SOVPERIODS.length];
         hovUEC = new AutoUEC[HOVPERIODS.length];
         nMotorUEC = new NonMotorUEC[NMTPERIODS.length];
-        maasUEC = new MaasUEC[NMTPERIODS.length];
+        maasUEC = new MaasUEC[MAASPERIODS.length];
 
         sovUEC[OFFPEAK_PERIOD_INDEX] = new AutoUEC(rbMap, uecFileName, offpeakSOVPage, dataPage);
         sovUEC[PEAK_PERIOD_INDEX] = new AutoUEC(rbMap, uecFileName, peakSOVPage, dataPage);

@@ -11,6 +11,8 @@ public interface CtrampDmuFactoryIf
 
     ParkingProvisionChoiceDMU getFreeParkingChoiceDMU();
 
+    TelecommuteDMU getTelecommuteDMU();
+    
     TransponderChoiceDMU getTransponderChoiceDMU();
 
     InternalExternalTripChoiceDMU getInternalExternalTripChoiceDMU();
