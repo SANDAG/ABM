@@ -360,6 +360,7 @@ public class HouseholdDataWriter
         data.add("inmf_choice");
         data.add("fp_choice");
         data.add("reimb_pct");
+        data.add("tele_choice");
         data.add("ie_choice");
         data.add("timeFactorWork");
         data.add("timeFactorNonWork");
@@ -369,6 +370,7 @@ public class HouseholdDataWriter
         	data.add("wlLogsum");
         	data.add("slLogsum");
             data.add("fpLogsum");
+            data.add("tcLogsum");
         	data.add("ieLogsum");
             data.add("cdapLogsum");
             data.add("imtfLogsum");
@@ -392,6 +394,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.REAL);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.REAL);
@@ -406,7 +409,8 @@ public class HouseholdDataWriter
             data.add(SqliteDataTypes.REAL);
             data.add(SqliteDataTypes.REAL);
             data.add(SqliteDataTypes.REAL);
-        	
+            data.add(SqliteDataTypes.REAL);
+       	
         }
         return data;
     }
@@ -426,6 +430,7 @@ public class HouseholdDataWriter
         data.add(string(p.getInmtfChoice()));
         data.add(string(p.getFreeParkingAvailableResult()));
         data.add(string(p.getParkingReimbursement()));
+        data.add(string(p.getTelecommuteChoice()));
         data.add(string(p.getInternalExternalTripChoiceResult()));
         data.add(string(p.getTimeFactorWork()));
         data.add(string(p.getTimeFactorNonWork()));
@@ -435,6 +440,7 @@ public class HouseholdDataWriter
           	data.add(string(p.getWorkLocationLogsum()));
         	data.add(string(p.getSchoolLocationLogsum()));        	
         	data.add(string(p.getParkingProvisionLogsum()));
+        	data.add(string(p.getTelecommuteLogsum()));
         	data.add(string(p.getIeLogsum()));
             data.add(string(p.getCdapLogsum()));
             data.add(string(p.getImtfLogsum()));

@@ -32,6 +32,7 @@ import org.sandag.abm.ctramp.ParkingChoiceDMU;
 import org.sandag.abm.ctramp.ParkingProvisionChoiceDMU;
 import org.sandag.abm.ctramp.StopFrequencyDMU;
 import org.sandag.abm.ctramp.StopLocationDMU;
+import org.sandag.abm.ctramp.TelecommuteDMU;
 import org.sandag.abm.ctramp.TourDepartureTimeAndDurationDMU;
 import org.sandag.abm.ctramp.TourModeChoiceDMU;
 import org.sandag.abm.ctramp.TransponderChoiceDMU;
@@ -64,6 +65,11 @@ public class SandagCtrampDmuFactory
     public TransponderChoiceDMU getTransponderChoiceDMU()
     {
         return new SandagTransponderChoiceDMU();
+    }
+
+    public TelecommuteDMU getTelecommuteDMU()
+    {
+        return new SandagTelecommuteDMU();
     }
 
     public InternalExternalTripChoiceDMU getInternalExternalTripChoiceDMU()

@@ -22,6 +22,7 @@ public class Person
 
     public static final int      MIN_ADULT_AGE                              = 19;
     public static final int      MIN_STUDENT_AGE                            = 5;
+    
 
     // person type strings used for data summaries
     public static final String   PERSON_TYPE_FULL_TIME_WORKER_NAME          = "Full-time worker";
@@ -109,6 +110,7 @@ public class Person
     
     private float                worksFromHomeLogsum;
     private float                parkingProvisionLogsum;
+    private float                telecommuteLogsum;
 	private float                ieLogsum;
     private float                cdapLogsum;
     private float                imtfLogsum;
@@ -120,6 +122,8 @@ public class Person
 
     private int                  maxAdultOverlaps;
     private int                  maxChildOverlaps;
+    
+    private short                telecommuteChoice;
 
     private ArrayList<Tour>      workTourArrayList;
     private ArrayList<Tour>      schoolTourArrayList;
@@ -2009,4 +2013,20 @@ public class Person
 						activeAdult=true;
     	return activeAdult;
     }
+
+	public short getTelecommuteChoice() {
+		return telecommuteChoice;
+	}
+
+	public void setTelecommuteChoice(short telecommuteChoice) {
+		this.telecommuteChoice = telecommuteChoice;
+	}
+
+	public float getTelecommuteLogsum() {
+		return telecommuteLogsum;
+	}
+
+	public void setTelecommuteLogsum(float telecommuteLogsum) {
+		this.telecommuteLogsum = telecommuteLogsum;
+	}
 }

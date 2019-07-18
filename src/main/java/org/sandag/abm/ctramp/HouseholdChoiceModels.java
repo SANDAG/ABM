@@ -71,6 +71,7 @@ public class HouseholdChoiceModels
     private TransponderChoiceModel                                   tcModel;
     private InternalExternalTripChoiceModel                          ieModel;
     private ParkingProvisionModel                                    ppModel;
+    private TelecommuteModel                                         teModel;
     private HouseholdCoordinatedDailyActivityPatternModel            cdapModel;
     private HouseholdIndividualMandatoryTourFrequencyModel           imtfModel;
     private HouseholdIndividualNonMandatoryTourFrequencyModel        inmtfModel;
@@ -226,9 +227,11 @@ public class HouseholdChoiceModels
             if (runParkingProvisionModel)
             {
                 ppModel = new ParkingProvisionModel(propertyMap, dmuFactory);
+                teModel = new TelecommuteModel(propertyMap, dmuFactory);
                 if (measureObjectSizes)
                     logger.info("PP size:       " + ObjectUtil.sizeOf(ppModel));
-            }
+                    logger.info("TE size:       " + ObjectUtil.sizeOf(teModel));
+           }
 
             if (runInternalExternalModel)
             {
@@ -474,7 +477,10 @@ public class HouseholdChoiceModels
 
         if (runTransponderModel) tcModel.applyModel(hhObject);
 
-        if (runParkingProvisionModel) ppModel.applyModel(hhObject);
+        if (runParkingProvisionModel) {
+        	ppModel.applyModel(hhObject);
+        	teModel.applyModel(hhObject);
+        }
 
         if (runInternalExternalModel) ieModel.applyModel(hhObject, distanceToCordonsLogsums);
 
@@ -562,6 +568,7 @@ public class HouseholdChoiceModels
             // long hhSeed = globalSeed + hhObject.getHhId() + PP_SEED_OFFSET;
             // hhObject.getHhRandom().setSeed( hhSeed );
             ppModel.applyModel(hhObject);
+            teModel.applyModel(hhObject);
             fpTime += (System.nanoTime() - check);
         }
 
