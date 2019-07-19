@@ -383,6 +383,9 @@ public final class DataExporter
            	floatColumns.add("LRT_IVT");
            	floatColumns.add("CR_IVT");
            	floatColumns.add("TRAN_DIST");
+           	floatColumns.add("PARK_WALK_TIME");
+            floatColumns.add("PARK_WALK_DIST");
+     
         }
 
         if (primaryKey.size() == 0)
