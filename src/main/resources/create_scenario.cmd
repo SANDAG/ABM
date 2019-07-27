@@ -31,7 +31,7 @@ xcopy /Y .\common\bin\"*.*" %SCENARIO_FOLDER%\bin
 xcopy /Y .\conf\%YEAR%\"*.*" %SCENARIO_FOLDER%\conf
 xcopy /Y .\common\output\"*.*" %SCENARIO_FOLDER%\output
 xcopy /s/Y .\common\visualizer %SCENARIO_FOLDER%\visualizer
-xcopy /s/Y .\dependencies %SCENARIO_FOLDER%\visualizer\dependencies\*
+xcopy /s/Y .\dependencies.* %SCENARIO_FOLDER%\visualizer
 
 @echo assemble inputs
 del %SCENARIO_FOLDER%\input /q
