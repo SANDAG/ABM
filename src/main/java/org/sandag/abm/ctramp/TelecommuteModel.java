@@ -14,9 +14,9 @@ public class TelecommuteModel
 
     private transient Logger          logger                           = Logger.getLogger("tc");
 
-    private static final String       TC_CONTROL_FILE_TARGET           = "tc.uec.file";
-    private static final String       TC_DATA_SHEET_TARGET             = "tc.data.page";
-    private static final String       TC_MODEL_SHEET_TARGET            = "tc.model.page";
+    private static final String       TC_CONTROL_FILE_TARGET           = "te.uec.file";
+    private static final String       TC_DATA_SHEET_TARGET             = "te.data.page";
+    private static final String       TC_MODEL_SHEET_TARGET            = "te.model.page";
 
     public static final short           TC_MODEL_NO_TC_CHOICE            = -1;
     public static final short           TC_MODEL_NO_TELECOMMUTE          = 1;

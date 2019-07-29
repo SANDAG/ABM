@@ -7,8 +7,8 @@ import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 
 /**
- * @author crf <br/>
- *         Started: Apr 14, 2009 11:09:58 AM
+ * @author jef <br/>
+ *         Started: Jun 2019
  */
 public class TelecommuteDMU
         implements Serializable, VariableTable
