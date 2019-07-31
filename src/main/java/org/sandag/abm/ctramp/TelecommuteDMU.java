@@ -30,7 +30,7 @@ public class TelecommuteDMU
     /** need to set hh and home taz before using **/
     public void setPersonObject(Person person)
     {
-        hh = person.getHouseholdObject();
+        this.hh = person.getHouseholdObject();
         this.person = person;
     }
 
@@ -66,7 +66,7 @@ public class TelecommuteDMU
     {
     	Person[] persons = hh.getPersons();
     	int adults=0;
-    	for(int i=0;i<persons.length;++i) {
+    	for(int i=1;i<persons.length;++i) {
     		
     		if(persons[i].getAge()>=18)
     			++adults;
@@ -78,7 +78,7 @@ public class TelecommuteDMU
     {
     	Person[] persons = hh.getPersons();
     	int hasKids_0_5=0;
-    	for(int i=0;i<persons.length;++i) {
+    	for(int i=1;i<persons.length;++i) {
     		
     		if((persons[i].getAge()>=0) && persons[i].getAge()<=5) {
     			hasKids_0_5=1;
@@ -93,7 +93,7 @@ public class TelecommuteDMU
     {
     	Person[] persons = hh.getPersons();
     	int hasKids_6_12=0;
-    	for(int i=0;i<persons.length;++i) {
+    	for(int i=1;i<persons.length;++i) {
     		
     		if((persons[i].getAge()>=6) && persons[i].getAge()<=12) {
     			hasKids_6_12=1;

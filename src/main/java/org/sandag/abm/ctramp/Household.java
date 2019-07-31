@@ -84,6 +84,10 @@ public class Household
         uwslRandomCountList = new HashMap<Integer, Integer>();
     }
 
+    /**
+     * Returns a 1-based array of persons in the household
+     * @return Person array
+     */
     public Person[] getPersons()
     {
         return persons;
