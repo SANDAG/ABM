@@ -544,15 +544,14 @@ public final class DataExporter
             if(tripStructureDefinition.parkingMazColumn>-1) {
             	int parkingMaz = (int) table.getValueAt(row, tripStructureDefinition.parkingMazColumn);
             	
-            	if(parkingMaz<=0)
-            		continue;
-            	
-            	int destMaz =  (int) table.getValueAt(row, tripStructureDefinition.destMgraColumn);
-            	float parkingWalkTime = skimBuilder.getLotWalkTime(parkingMaz,destMaz);
-            	float parkingWalkDistance = skimBuilder.getLotWalkDistance(parkingMaz,destMaz);
-            	tripParkingTime[i]= parkingWalkTime;
-            	tripParkingDistance[i] = parkingWalkDistance;
-            	
+            	if(parkingMaz>0) {
+
+            		int destMaz =  (int) table.getValueAt(row, tripStructureDefinition.destMgraColumn);
+            		float parkingWalkTime = skimBuilder.getLotWalkTime(parkingMaz,destMaz);
+            		float parkingWalkDistance = skimBuilder.getLotWalkDistance(parkingMaz,destMaz);
+            		tripParkingTime[i]= parkingWalkTime;
+            		tripParkingDistance[i] = parkingWalkDistance;
+            	}
             }
            
             
