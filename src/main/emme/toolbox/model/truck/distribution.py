@@ -217,7 +217,7 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
         truck_share = [0.307, 0.155, 0.538]
         for t_type, share in zip(truck_types, truck_share):
             matrix_calc.add('mf"TRK%s_DEMAND"' % (t_type),
-                'mf"TRK%s_DEMAND" + %s * (mf"TRKEI_DEMAND" + mf"TRKIE_DEMAND" + mf"TRKEE_DEMAND")' % (t_type, share))
+                '%s * (mf"TRKEI_DEMAND" + mf"TRKIE_DEMAND" + mf"TRKEE_DEMAND")' % (share))				
             # Set intrazonal truck trips to 0
             matrix_calc.add('mf"TRK%s_DEMAND"' % (t_type), 'mf"TRK%s_DEMAND" * (p.ne.q)' % (t_type))
             matrix_calc.run()
