@@ -396,6 +396,19 @@ public class CoordinatedDailyActivityPatternDMU
         return retailAccessibility;
     }
 
+    public int getTelecommuteFrequencyA() {
+    	return personA.getTelecommuteChoice();
+    }
+
+    public int getTelecommuteFrequencyB() {
+    	return personB.getTelecommuteChoice();
+    }
+
+    public int getTelecommuteFrequencyC() {
+    	return personC.getTelecommuteChoice();
+    }
+
+
     public int getIndexValue(String variableName)
     {
         return methodIndexMap.get(variableName);

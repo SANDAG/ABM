@@ -390,6 +390,10 @@ public abstract class StopFrequencyDMU
     {
     	return tour.getTourArrivePeriod();
     }
+    
+    public int getTelecommuteFrequency() {
+    	return person.getTelecommuteChoice();
+    }
 
     public int getIndexValue(String variableName)
     {

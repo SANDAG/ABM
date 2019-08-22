@@ -61,6 +61,9 @@ public class SandagCoordinatedDailyActivityPatternDMU
         methodIndexMap.put("getNumKidsWithMandatoryDap", 41);
         methodIndexMap.put("getAllAdultsAtHome", 42);
         methodIndexMap.put("getWorkAccessForMandatoryDap", 43);
+        methodIndexMap.put("getTelecommuteFrequencyA", 44);
+        methodIndexMap.put("getTelecommuteFrequencyB", 45);
+        methodIndexMap.put("getTelecommuteFrequencyC", 46);
     }
 
     public double getValueForIndex(int variableIndex, int arrayIndex)
@@ -156,6 +159,12 @@ public class SandagCoordinatedDailyActivityPatternDMU
                 return getAllAdultsAtHome();
             case 43:
                 return getWorkAccessForMandatoryDap();
+            case 44:
+                return getTelecommuteFrequencyA();
+            case 45:
+                return getTelecommuteFrequencyB();
+            case 46:
+                return getTelecommuteFrequencyC();
 
             default:
                 logger.error("method number = " + variableIndex + " not found");

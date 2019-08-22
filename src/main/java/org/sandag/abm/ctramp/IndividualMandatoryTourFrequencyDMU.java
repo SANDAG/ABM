@@ -257,6 +257,11 @@ public class IndividualMandatoryTourFrequencyDMU
         return person.getPersonSchoolLocationZone() == ModelStructure.NOT_ENROLLED_SEGMENT_INDEX ? 1
                 : 0;
     }
+    
+    public int getTelecommuteFrequency() {
+    	return person.getTelecommuteChoice();
+    }
+
 
     public int getUsualSchoolLocation()
     {

@@ -733,6 +733,12 @@ public class IndividualNonMandatoryTourFrequencyDMU
     {
         return schoolAccessibility;
     }
+    
+    public int getTelecommuteFrequency() {
+    	return person.getTelecommuteChoice();
+    }
+
+
 
     public int getIndexValue(String variableName)
     {

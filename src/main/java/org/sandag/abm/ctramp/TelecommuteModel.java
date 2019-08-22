@@ -19,11 +19,10 @@ public class TelecommuteModel
     private static final String       TC_MODEL_SHEET_TARGET            = "te.model.page";
 
     public static final short           TC_MODEL_NO_TC_CHOICE            = -1;
-    public static final short           TC_MODEL_NO_TELECOMMUTE          = 1;
-    public static final short           TC_MODEL_1_3_DAYS_MONTH_CHOICE   = 2;
-    public static final short           TC_MODEL_1_DAY_WEEK_CHOICE       = 3;
-    public static final short           TC_MODEL_2_3_DAYS_WEEK_CHOICE    = 4;
-    public static final short           TC_MODEL_4P_DAYS_WEEK_CHOICE     = 5;
+    public static final short           TC_MODEL_NO_TELECOMMUTE          = 0;
+    public static final short           TC_MODEL_1_DAY_WEEK_CHOICE       = 1;
+    public static final short           TC_MODEL_2_3_DAYS_WEEK_CHOICE    = 2;
+    public static final short           TC_MODEL_4P_DAYS_WEEK_CHOICE     = 3;
     
 
     private MgraDataManager           mgraManager;
@@ -78,8 +77,8 @@ public class TelecommuteModel
             {
 
                 double randomNumber = hhRandom.nextDouble();
-                short chosen = (short) getTelecommuteChoice(person[i], randomNumber);
-                person[i].setTelecommuteChoice(chosen);
+                short chosen = (short) ((short) getTelecommuteChoice(person[i], randomNumber) - (short)1);
+                person[i].setTelecommuteChoice(chosen );
 
                
             } else
