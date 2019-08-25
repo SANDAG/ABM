@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,14 +26,22 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.log4j.Logger;
+import org.sandag.abm.ctramp.MatrixDataServer;
+import org.sandag.abm.ctramp.MatrixDataServerRmi;
 import org.sandag.abm.ctramp.ModelStructure;
 
+import com.pb.common.calculator.MatrixDataManager;
+import com.pb.common.calculator.MatrixDataServerIf;
 import com.pb.common.datafile.CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.matrix.Matrix;
 import com.pb.common.matrix.MatrixType;
 import com.pb.common.matrix.MatrixWriter;
 import com.pb.common.matrix.OMXMatrixWriter;
+import com.pb.common.util.ResourceUtil;
+
+import gnu.cajo.invoke.Remote;
+import gnu.cajo.utils.ItemServer;
 
 /**
  * The {@code DataExporter} ...
@@ -66,6 +75,8 @@ public final class DataExporter
     private boolean writeLogsums = false;
     private boolean writeUtilities = true;
     //private boolean writeTransitIVTs = false;
+    private MatrixDataServerIf ms;
+    
     
     public DataExporter(Properties theProperties, OMXMatrixDao aMtxDao, String projectPath,
             int feedbackIterationNumber)
@@ -85,6 +96,7 @@ public final class DataExporter
         autoOperatingCost = (fuelCost + mainCost) * 0.01f;
         
         tables = new LinkedHashSet<String>();
+        
     }
 
     private void addTable(String table)
@@ -1660,7 +1672,7 @@ public final class DataExporter
             {
                 Matrix matrixData = mtxDao.getMatrix("commVehTODTrips", period + " Trips");
 
-                // This doesn't make sense
+               // This doesn't make sense
                 if (internalZones.isEmpty()) for (int zone : matrixData.getExternalColumnNumbers())
                     internalZones.add(zone);
 
@@ -2482,6 +2494,8 @@ public final class DataExporter
     {
         Properties properties = new Properties();
         properties.load(new FileInputStream("conf/sandag_abm.properties"));
+        HashMap<String, String> pMap = ResourceUtil.getResourceBundleAsHashMap("conf/sandag_abm.properties");
+
 
         int feedbackIteration = Integer.valueOf(properties.getProperty("Report.iteration").trim());
 
@@ -2503,6 +2517,8 @@ public final class DataExporter
         OMXMatrixDao mtxDao = new OMXMatrixDao(properties);
 
         DataExporter dataExporter = new DataExporter(properties, mtxDao, appPath, feedbackIteration);
+        dataExporter.startMatrixServer(pMap);
+
         if (definedTables.contains("accessibilities"))
             dataExporter.exportAccessibilities("accessibilities");
         if (definedTables.contains("mgra")) dataExporter.exportMazData("mgra");
@@ -2567,5 +2583,84 @@ public final class DataExporter
         if (definedTables.contains("cbdvehicles"))
             dataExporter.exportCbdVehicleData("cbdvehicles");
     }
+
+	  private void startMatrixServer(HashMap<String, String> properties) {
+	        String serverAddress = (String) properties.get("RunModel.MatrixServerAddress");
+	        int serverPort = new Integer((String) properties.get("RunModel.MatrixServerPort"));
+	        LOGGER.info("connecting to matrix server " + serverAddress + ":" + serverPort);
+
+	        try{
+
+	            MatrixDataManager mdm = MatrixDataManager.getInstance();
+	            ms = new MatrixDataServerRmi(serverAddress, serverPort, MatrixDataServer.MATRIX_DATA_SERVER_NAME);
+	            ms.testRemote(Thread.currentThread().getName());
+	            mdm.setMatrixDataServerObject(ms);
+
+	        } catch (Exception e) {
+	            LOGGER.error("could not connect to matrix server", e);
+	            throw new RuntimeException(e);
+
+	        }
+
+	    }
+
+	/**
+	 * Startup a connection to the matrix manager.
+	 * 
+	 * @param serverAddress
+	 * @param serverPort
+	 * @param mt
+	 * @return
+	 */
+	private MatrixDataServerRmi startMatrixServerProcess(String serverAddress, int serverPort,
+	            MatrixType mt)
+	    {
+
+	        String className = MatrixDataServer.MATRIX_DATA_SERVER_NAME;
+
+	        MatrixDataServerRmi matrixServer = new MatrixDataServerRmi(serverAddress, serverPort,
+	                MatrixDataServer.MATRIX_DATA_SERVER_NAME);
+
+	        try
+	        {
+	            // create the concrete data server object
+	            matrixServer.start32BitMatrixIoServer(mt);
+	        } catch (RuntimeException e)
+	        {
+	            matrixServer.stop32BitMatrixIoServer();
+	            LOGGER.error(
+	                    "RuntimeException caught making remote method call to start 32 bit mitrix in remote MatrixDataServer.",
+	                    e);
+	        }
+
+	        // bind this concrete object with the cajo library objects for managing
+	        // RMI
+	        try
+	        {
+	            Remote.config(serverAddress, serverPort, null, 0);
+	        } catch (Exception e)
+	        {
+	            LOGGER.error(String.format(
+	                    "UnknownHostException. serverAddress = %s, serverPort = %d -- exiting.",
+	                    serverAddress, serverPort), e);
+	            matrixServer.stop32BitMatrixIoServer();
+	            throw new RuntimeException();
+	        }
+
+	        try
+	        {
+	            ItemServer.bind(matrixServer, className);
+	        } catch (RemoteException e)
+	        {
+	            LOGGER.error(String.format(
+	                    "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",
+	                    serverAddress, serverPort), e);
+	            matrixServer.stop32BitMatrixIoServer();
+	            throw new RuntimeException();
+	        }
+
+	        return matrixServer;
+
+	    }
 
 }
