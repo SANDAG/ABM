@@ -109,6 +109,7 @@ public class SandagIndividualNonMandatoryTourFrequencyDMU
         methodIndexMap.put("getWorksAtHome", 68);
         methodIndexMap.put("getWorkAccessibility", 69);
         methodIndexMap.put("getSchoolAccessibility", 70);
+        methodIndexMap.put("getTelecommuteFrequency", 71);
     }
 
     public double getValueForIndex(int variableIndex, int arrayIndex)
@@ -257,6 +258,8 @@ public class SandagIndividualNonMandatoryTourFrequencyDMU
                 return getWorkAccessibility();
             case 70:
                 return getSchoolAccessibility();
+            case 71:
+            	return getTelecommuteFrequency();
 
             default:
                 logger.error("method number = " + variableIndex + " not found");

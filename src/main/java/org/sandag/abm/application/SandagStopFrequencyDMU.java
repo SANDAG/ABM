@@ -170,6 +170,7 @@ public class SandagStopFrequencyDMU
         methodIndexMap.put("getTourModeIsSchoolBus", 29);
         methodIndexMap.put("getTourDepartPeriod", 30);
         methodIndexMap.put("getTourArrivePeriod", 31);
+        methodIndexMap.put("getTelecommuteFrequency", 32);
     }
 
     public double getValueForIndex(int variableIndex, int arrayIndex)
@@ -241,6 +242,8 @@ public class SandagStopFrequencyDMU
             	return getTourDepartPeriod();
             case 31:
             	return getTourArrivePeriod();
+            case 32:
+            	return getTelecommuteFrequency();
 
             default:
                 logger.error("method number = " + variableIndex + " not found");
