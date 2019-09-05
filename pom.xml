@@ -108,7 +108,7 @@
                 <year>2025</year>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
+                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2025.xls</tourdest.uec.file>
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file>                       
             </properties>
@@ -174,7 +174,7 @@
                 <year>2035</year>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
+                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2035.xls</tourdest.uec.file>      
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file>    
             </properties>
@@ -207,7 +207,7 @@
                 <year>2050</year>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2020.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
+                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2050.xls</tourdest.uec.file>   
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file>       
             </properties>
