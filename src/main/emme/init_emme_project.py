@@ -58,6 +58,7 @@ def init_emme_project(root, title):
 
         'functions': 99,
         'operators': 5000,
+        'sola_analyses': 240
     }
     os.mkdir(os.path.join(project_root, "Database"))
     emmebank = _eb.create(os.path.join(project_root, "Database", "emmebank"), dimensions)
