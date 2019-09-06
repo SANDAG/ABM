@@ -63,8 +63,7 @@ from inro.emme.core.exception import Error as _NetworkError
 from itertools import izip as _izip
 from collections import defaultdict as _defaultdict, OrderedDict
 from contextlib import contextmanager as _context
-import dbflib as _dbflib
-from copy import deepcopy as _copy
+import fiona as _fiona
 
 from math import ceil as _ceiling
 import numpy as _np
@@ -1162,10 +1161,10 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         self._log.append({"type": "header", "content": "Import turns and turn restrictions"})
         self._log.append({"type": "text", "content": "Process LINKTYPETURNS.DBF for turn prohibited by type"})
         # Process LINKTYPETURNS.DBF for turn prohibited by type
-        f = _dbflib.open(_join(self.source, "LINKTYPETURNS.DBF"), 'r')
+        f = _fiona.open(_join(self.source, "LINKTYPETURNS.DBF"), 'r')
         link_type_turns = _defaultdict(lambda: {})
-        for i in range(f.record_count()):
-            record = f.read_record(i)
+        for record in f:
+            record = record['properties']
             link_type_turns[record["FROM"]][record["TO"]] = {
                 "LEFT": record["LEFT"],
                 "RIGHT": record["RIGHT"],
