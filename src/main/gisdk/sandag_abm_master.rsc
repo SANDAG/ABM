@@ -107,6 +107,12 @@ Macro "Run SANDAG ABM"
 	  runString = path+"\\bin\\runSandagWalkLogsums.cmd "+drive+" "+path_forward_slash
 	  RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Java-Run create AT logsums and walk impedances"+" "+runString})
 	  ok = RunMacro("TCB Run Command", 1, "Run AT-Logsums", runString)
+	  runString = path+"\\bin\\intra_mgra_walk.cmd "+scenarioYear+" "+inputDir+" "+outputDir 
+	  RunMacro("HwycadLog",{"sandag_abm_master.rsc:","Python-add intra-mgra walk records"+" "+runString})
+	  ok = RunMacro("TCB Run Command", 1, "Run Intra-MGRA Walk", runString)
+	  //**********************************
+	  //update 13.3.2 release, create a new scenario, test and run with small sample size
+	  //point to socioeco database in pom file, change both db server and name
 	  if !ok then goto quit  
    end
 
