@@ -228,9 +228,10 @@ public class HouseholdChoiceModels
             {
                 ppModel = new ParkingProvisionModel(propertyMap, dmuFactory);
                 teModel = new TelecommuteModel(propertyMap, dmuFactory);
-                if (measureObjectSizes)
+                if (measureObjectSizes) {
                     logger.info("PP size:       " + ObjectUtil.sizeOf(ppModel));
                     logger.info("TE size:       " + ObjectUtil.sizeOf(teModel));
+                    }
            }
 
             if (runInternalExternalModel)
