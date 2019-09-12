@@ -41,7 +41,9 @@ ip = socket.gethostbyname(socket.gethostname())
 print str(ip)
 
 # Read Server Info
-fileServer = options.path + "/conf/server-config.csv"
+fileServer = options.path + "/conf/server-config-local.csv"
+if not os.path.exists(fileServer):
+    fileServer = "T:/ABM/release/ABM/config/server-config.csv"
 print fileServer
 logFile = options.path + "/logFiles/serverswap.log"
 if os.path.exists(logFile):
@@ -63,11 +65,13 @@ for row in dictServer:
 # Write error log if IP address not found
 logWriteFile = open(logFile, "w")
 if match == 'false':
-    logWriteFile.write('FATAL, Head Node not found - check for ' + str(ip) + ' in server-config.csv')
+    logWriteFile.write('Using server-config file in: ' + fileServer + "\n")
+    logWriteFile.write('FATAL, Head Node not found - check for ' + str(ip))
     print 'Head Node not found'
 else:
     # Update Files in serverswap_files.csv
-    logWriteFile.write('MATCH, Head Node found - ' + str(ip) + ' in server-config.csv')
+    logWriteFile.write('Using server-config file in: ' + fileServer + "\n")
+    logWriteFile.write('MATCH, Head Node found - ' + str(ip))
     skip = 0
     fileUpdate = options.path + "/conf/serverswap_files.csv"
     print fileUpdate
