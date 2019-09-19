@@ -74,6 +74,8 @@ import sys
 import os
 
 import pandas as pd
+import numpy as np
+import csv
 import datetime
 import pyodbc
 import win32com.client as win32
@@ -352,6 +354,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                                  "AT and Transit network consistency checking failed! Open AtTransitCheck_event.log for details.")
 
             if startFromIteration == 1:  # only run the setup / init steps if starting from iteration 1
+                print ('start') 
                 if not skipWalkLogsums:
                     self.run_proc("runSandagWalkLogsums.cmd", [drive, path_forward_slash],
                                   "Walk - create AT logsums and impedances")
@@ -363,6 +366,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                                   "Bike - create AT logsums and impedances")
                 if not skipCopyBikeLogsum:
                     self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], input_dir, output_dir)
+
+                mgraFile = 'mgra13_based_input' + str(scenarioYear) + '.csv'
+                self.intra_mgra_walk(scenarioYear, input_dir, output_dir, mgraFile, "walkMgraEquivMinutes.csv")                                  
+                print ('complete intra-mgra walk insertion')
 
                 if not skipBuildNetwork:
                     base_scenario = import_network(
@@ -536,7 +543,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             export_network_data(main_directory, scenario_id, main_emmebank, transit_emmebank, num_processors)
             export_matrix_data(main_output_directory, base_scenario, transit_scenario)
             # export core ABM data
-            # Note: uses relative project stucture, so cannot redirect to T drive
+            # Note: uses relative project structure, so cannot redirect to T drive
             self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",
                           capture_output=True)
 
@@ -765,6 +772,21 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             for file_name in file_names:
                 from_file = _join(from_dir, file_name)
                 _shutil.copy(from_file, to_dir)
+
+    def intra_mgra_walk(self, scenarioYear, input_dir, output_dir, input_file, output_file):
+        fullList = np.array(pd.read_csv(_join(input_dir, input_file))['mgra'])
+        workList = np.array(pd.read_csv(_join(output_dir, output_file))['i'])
+        list_set = set(workList)
+        unique_list = (list(list_set))
+        notMatch = [x for x in fullList if x not in unique_list]
+        if notMatch:
+            out_file = _join(output_dir, output_file)
+            with open(out_file, 'ab') as csvfile:
+                spamwriter = csv.writer(csvfile)
+                # spamwriter.writerow([])
+                for item in notMatch:
+                    # pdb.set_trace()
+                    spamwriter.writerow([item, item, '30', '30', '30'])
 
     def move_files(self, file_names, from_dir, to_dir):
         with _m.logbook_trace("Move files %s" % ", ".join(file_names)):
