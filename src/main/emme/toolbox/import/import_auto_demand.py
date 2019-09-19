@@ -5,7 +5,7 @@
 #//// San Diego Association of Governments and partner agencies.            ///
 #//// This copyright notice must be preserved.                              ///
 #////                                                                       ///
-#//// import/import_traffic_demand.py                                       ///
+#//// import/import_auto_demand.py                                       ///
 #////                                                                       ///
 #////                                                                       ///
 #////                                                                       ///
@@ -32,6 +32,7 @@
 #    output/autoAirportTrips.SAN_pp_vot.omx
 #    output/autoAirportTrips.CDX_pp_vot.omx (if they exist)
 #    output/autoTrips_pp_vot.omx
+#    output/othrTrips_pp.omx (added to high vot)
 #    output/TripMatrices.csv
 #
 # Matrix inputs:
@@ -62,7 +63,6 @@ TOOLBOX_ORDER = 13
 
 import inro.modeller as _m
 import traceback as _traceback
-import csv as _csv
 import pandas as _pandas
 import os
 
@@ -155,14 +155,26 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
             "external_zones": external_zones, 
             "num_processors": num_processors}
         gen_utils.log_snapshot("Create TOD auto trip tables", str(self), attributes)
+        
+        #get parameters from sandag_abm.properties
+        modeller = _m.Modeller()
+        load_properties = modeller.tool('sandag.utilities.properties')
+        props = load_properties(_join(self.main_dir, "conf", "sandag_abm.properties"))
+        cvm_scale_factor = props["cvm.scale_factor"]
+        cvm_scale_light = props["cvm.scale_light"]
+        cvm_scale_medium = props["cvm.scale_medium"]
+        cvm_scale_heavy = props["cvm.scale_heavy"]
+        cvm_share_light = props["cvm.share.light"]
+        cvm_share_medium = props["cvm.share.medium"]
+        cvm_share_heavy = props["cvm.share.heavy"]
 
         self.scenario = scenario
         self.output_dir = output_dir
         self.external_zones = external_zones
         self.num_processors = num_processors
         self.import_traffic_trips()
-        self.import_commercial_vehicle_demand()
-        self.convert_light_trucks_to_pce()
+        self.import_commercial_vehicle_demand(cvm_scale_factor,cvm_scale_light,cvm_scale_medium,cvm_scale_heavy,cvm_share_light,cvm_share_medium,cvm_share_heavy)
+        #self.convert_light_trucks_to_pce()
         self.add_aggregate_demand()
 
     @_m.logbook_trace("Import CT-RAMP traffic trips from OMX")
@@ -176,6 +188,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
             ("mf%s_HOV2TOLL%s", "SR2_PAY_%s"),
             ("mf%s_HOV3HOV%s",  "SR3_NOPAY_%s"),
             ("mf%s_HOV3TOLL%s", "SR3_PAY_%s")]
+            
         matrix_names = []
         for vot_bin in ["low", "med", "high"]:
             vot = vot_bin[0].upper()
@@ -205,19 +218,12 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     ("visitor_demand", visitor_demand),
                     ("total_ct_ramp_trips", total_ct_ramp_trips)
                 ], logbook_label, self.scenario)
+                
 
     @_m.logbook_trace('Import commercial vehicle demand')
-    def import_commercial_vehicle_demand(self):
+    def import_commercial_vehicle_demand(self, scale_factor, scale_light, scale_medium, scale_heavy, share_light, share_medium, share_heavy):
         scenario = self.scenario
         emmebank = scenario.emmebank
-		
-        modeller = _m.Modeller()
-        load_properties = modeller.tool('sandag.utilities.properties')
-        props = load_properties(_join(self.main_dir, "conf", "sandag_abm.properties"))
-        scale_factor = props["cvm.scale_factor"]
-        scale_light = props["cvm.scale_light"]
-        scale_medium = props["cvm.scale_medium"]
-        scale_heavy = props["cvm.scale_heavy"]
         
         mapping = {}
         periods = ["EA", "AM", "MD", "PM", "EV"]
@@ -230,25 +236,38 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     "orig": "%s_SOV%sH" % (period, access_type), 
                     "dest": "%s_SOV%sH" % (period, access_type), 
                     "pce": 1.0,
-                    "scale": scale_light[index]
+                    "scale": scale_light[index],
+                    "share": share_light,
+                    "period": period,
+                    "cvm_acc": cvm_acc
                 }
-		mapping["CVM_%s:I%s" % (period, cvm_acc)] = {
+                mapping["CVM_%s:I%s" % (period, cvm_acc)] = {
                     "orig": "%s_TRKL%s_VEH" % (period, access_type),
                     "dest": "%s_TRKL%s" % (period, access_type), 
                     "pce": 1.3,
-                    "scale": scale_medium[index]
+                    "scale": scale_medium[index],
+                    "share": share_medium,
+                    "period": period,
+                    "cvm_acc": cvm_acc
+
                 }				
                 mapping["CVM_%s:M%s" % (period, cvm_acc)] = {
                     "orig": "%s_TRKM%s_VEH" % (period, access_type),
                     "dest": "%s_TRKM%s" % (period, access_type), 
                     "pce": 1.5,
-                    "scale": scale_medium[index]
+                    "scale": scale_medium[index],
+                    "share": share_medium,
+                    "period": period,
+                    "cvm_acc": cvm_acc
                 }
                 mapping["CVM_%s:H%s" % (period, cvm_acc)] = {
                     "orig": "%s_TRKH%s_VEH" % (period, access_type),
                     "dest": "%s_TRKH%s" % (period, access_type), 
                     "pce": 2.5,
-                    "scale": scale_heavy[index]
+                    "scale": scale_heavy[index],
+                    "share": share_heavy,
+                    "period": period,
+                    "cvm_acc": cvm_acc
                 }
         with _m.logbook_trace('Load starting SOV and truck matrices'):
             for key, value in mapping.iteritems():
@@ -264,7 +283,24 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                 #scale trips to take care of underestimation
                 cvm_array = cvm_array * value["scale"]
                 
-                value["array"] = value["array"] + cvm_array
+                #add remaining share to the correspnding truck matrix
+                value["array"] = value["array"] + (cvm_array * (1-value["share"]))
+                
+            #add cvm truck vehicles to light-heavy trucks
+            for key, value in mapping.iteritems():
+                period = value["period"]
+                cvm_acc = value["cvm_acc"]
+                cvm_vehs = ['L','M','H']
+                if key == "CVM_%s:I%s" % (period, cvm_acc):
+                    for veh in cvm_vehs:
+                        key_new = "CVM_%s:%s%s" % (period, veh, cvm_acc)
+                        value_new = mapping[key_new]
+                        if value_new["share"] != 0.0:
+                            cvm_array = table[key_new].values.reshape((4996, 4996))
+                            cvm_array = cvm_array/scale_factor
+                            cvm_array = cvm_array * value_new["scale"]
+                            value["array"] = value["array"] + (cvm_array * value_new["share"])
+                            
         with _m.logbook_trace('Save SOV matrix and convert CV and truck vehicle demand to PCEs for assignment'):
             for key, value in mapping.iteritems():
                 matrix = emmebank.matrix(value["dest"])
