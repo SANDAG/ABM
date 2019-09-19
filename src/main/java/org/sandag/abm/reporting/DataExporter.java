@@ -2492,10 +2492,12 @@ public final class DataExporter
 
     public static void main(String... args) throws Exception
     {
+    	String propertiesFile = null;
+    	propertiesFile = args[0];
+    	
         Properties properties = new Properties();
         properties.load(new FileInputStream("conf/sandag_abm.properties"));
-        HashMap<String, String> pMap = ResourceUtil.getResourceBundleAsHashMap("conf/sandag_abm.properties");
-
+        HashMap<String, String> pMap = ResourceUtil.getResourceBundleAsHashMap(propertiesFile);
 
         int feedbackIteration = Integer.valueOf(properties.getProperty("Report.iteration").trim());
 
