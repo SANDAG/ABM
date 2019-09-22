@@ -4914,10 +4914,16 @@ public class IntermediateStopChoiceModels
         if (chosen > 0) return parkMgra;
         else
         {
-            logger.error(String
+            logger.info(String
                     .format("Exception caught for HHID=%d, personNum=%d, no available parking location alternatives in tourId=%d to choose from in plcModelApplication.",
                             household.getHhId(), person.getPersonNum(), tour.getTourId()));
+        	return stop.getDest();
+        	/*
+            logger.error(String
+                    i.format("Exception caught for HHID=%d, personNum=%d, no available parking location alternatives in tourId=%d to choose from in plcModelApplication.",
+                            household.getHhId(), person.getPersonNum(), tour.getTourId()));
             throw new RuntimeException();
+            */
         }
 
     }
