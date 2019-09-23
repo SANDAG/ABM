@@ -47,11 +47,11 @@ public class AVFleetModel {
     private boolean routeIntrazonal;
 	
 	
-    private static final String MAX_PICKUP_DISTANCE_PROPERTY = "TNC.shared.maxDistanceForPickup";
-    private static final String MAX_PICKUP_DIVERSON_TIME_PROPERTY = "TNC.shared.maxDiversionTimeForPickup";
-    private static final String MINUTES_PER_SIMULATION_PERIOD_PROPERTY = "TNC.shared.minutesPerSimulationPeriod";
-    private static final String MAX_SHARED_TNC_PASSENGERS_PROPERTY = "TNC.shared.maxPassengers";
-    private static final String ROUTE_INTRAZONAL_PROPERTY = "TNC.shared.routeIntrazonal";
+    private static final String MAX_PICKUP_DISTANCE_PROPERTY = "Maas.RoutingModel.maxDistanceForPickup";
+    private static final String MAX_PICKUP_DIVERSON_TIME_PROPERTY = "Maas.RoutingModel.maxDiversionTimeForPickup";
+    private static final String MINUTES_PER_SIMULATION_PERIOD_PROPERTY = "Maas.RoutingModel.minutesPerSimulationPeriod";
+    private static final String MAX_SHARED_TNC_PASSENGERS_PROPERTY = "Maas.RoutingModel.maxPassengers";
+    private static final String ROUTE_INTRAZONAL_PROPERTY = "Maas.RoutingModel.routeIntrazonal";
     private static final String MODEL_SEED_PROPERTY = "Model.Random.Seed";
     
     /**
@@ -183,6 +183,9 @@ public class AVFleetModel {
 		
 				if(simulatedPersonTrips<10||( ( simulatedPersonTrips % 1000) == 0) )
 					logger.info("...Total simulated person trips = "+simulatedPersonTrips);
+				
+				if(!personTrip.isRideSharer())
+					continue;
 
 				//get list of zones within max time deviation
 				short[] maxDiversionTimeTazArray = transportCostManager.getZonesWithinMaxDiversionTime(skimPeriod, origTaz, destTaz);
@@ -224,6 +227,9 @@ public class AVFleetModel {
 						
 						//iterate through people in this list
 						for(PersonTrip trip : potentialTrips){
+							
+							if(!trip.isRideSharer())
+								continue;
 						
 							int tripOriginMaz = trip.getOriginMaz();
 							int tripOriginTaz = mgraManager.getTaz(tripOriginMaz);
@@ -272,6 +278,7 @@ public class AVFleetModel {
 			
 			vehicleManager.routeActiveVehicles(skimPeriod, simulationPeriod, transportCostManager);
 			vehicleManager.freeVehicles(simulationPeriod);
+			
 			
 			logger.info("...Total simulated vehicles period "+simulationPeriod+" = "+vehicleManager.getTotalVehicles());
 			logger.info("...Total simulated person trips period "+simulationPeriod+" = "+simulatedPersonTrips);

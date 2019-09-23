@@ -23,40 +23,41 @@ import drasys.or.util.Array;
 
 public class TransportCostManager {
 
-    private transient Logger              logger                 = Logger.getLogger(TransportCostManager.class);
+    protected transient Logger              logger                 = Logger.getLogger(TransportCostManager.class);
 
-    private static final int              EA                            = ModelStructure.EA_SKIM_PERIOD_INDEX;
-    private static final int              AM                            = ModelStructure.AM_SKIM_PERIOD_INDEX;
-    private static final int              MD                            = ModelStructure.MD_SKIM_PERIOD_INDEX;
-    private static final int              PM                            = ModelStructure.PM_SKIM_PERIOD_INDEX;
-    private static final int              EV                            = ModelStructure.EV_SKIM_PERIOD_INDEX;
+    protected static final int              EA                            = ModelStructure.EA_SKIM_PERIOD_INDEX;
+    protected static final int              AM                            = ModelStructure.AM_SKIM_PERIOD_INDEX;
+    protected static final int              MD                            = ModelStructure.MD_SKIM_PERIOD_INDEX;
+    protected static final int              PM                            = ModelStructure.PM_SKIM_PERIOD_INDEX;
+    protected static final int              EV                            = ModelStructure.EV_SKIM_PERIOD_INDEX;
     public static final int              NUM_PERIODS                   = ModelStructure.SKIM_PERIOD_INDICES.length;
-    private static final String[]         PERIODS                = ModelStructure.SKIM_PERIOD_STRINGS;
+    protected static final String[]         PERIODS                = ModelStructure.SKIM_PERIOD_STRINGS;
 
-    private static int TAZ_CALCULATOR_THREADS = 20; //default
+    protected static int TAZ_CALCULATOR_THREADS = 20; //default
     
     //by period, origin, destination -  ragged array of zone numbers of zones within max time diversion
     //sorted by time from origin (assuming pickups would be en-route)
-    private short[][][][]                  tazsWithinOriginAndDestination; 
+    protected short[][][][]                  tazsWithinOriginAndDestination; 
   //  private float[][][][]                addTimeWithinOriginAndDestination; 
     
     //by period, origin, destination
-    private float[][][]                  tazTimeSkims;		//travel time
-    private float[][][]                  tazDistanceSkims;	//travel distance
+    protected float[][][]                  tazTimeSkims;		//travel time
+    protected float[][][]                  tazDistanceSkims;	//travel distance
     
-    private short[][][]                    tazsByTimeFromOrigin; //array of TAZs sorted by time from origin, by period and origin TAZ
+    protected short[][][]                    tazsByTimeFromOrigin; //array of TAZs sorted by time from origin, by period and origin TAZ
 
-    private float 						  maxTimeDiversion;
-    private float 						  maxDistanceToPickup;
-    private int                           maxTaz;
+    protected float 						  maxTimeDiversion;
+    protected float 						  maxDistanceToPickup;
+    protected int                           maxTaz;
 
     // declare an array of UEC objects, 1 for each time period
-    private UtilityExpressionCalculator[] autoDistOD_UECs;
-    private UtilityExpressionCalculator[] autoTimeOD_UECs;
+    protected UtilityExpressionCalculator[] autoDistOD_UECs;
+    protected UtilityExpressionCalculator[] autoTimeOD_UECs;
     
     // The simple auto skims UEC does not use any DMU variables
-    private VariableTable                 dmu         = null;
-    private TazDataManager                tazManager;
+    protected VariableTable                 dmu         = null;
+    protected TazDataManager                tazManager;
+    
 
     /**
      * Instantiate transport cost manager.

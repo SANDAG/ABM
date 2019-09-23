@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.ctramp.Util;
+import org.sandag.abm.maas.VehicleTrip.Purpose;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
@@ -17,24 +18,38 @@ import com.pb.common.math.MersenneTwister;
 
 public class VehicleManager {
 	
-	private static final Logger logger = Logger.getLogger(VehicleManager.class);
-	private HashMap<String, String> propertyMap = null;
-	private ArrayList<Vehicle>[] emptyVehicleList; //by taz
-	private ArrayList<Vehicle> vehiclesToRouteList;
-	private ArrayList<Vehicle> activeVehicleList;  
-	private MersenneTwister       random;
-	private static final String MODEL_SEED_PROPERTY = "Model.Random.Seed";
-	private static final String VEHICLETRIP_OUTPUT_FILE_PROPERTY = "TNC.shared.vehicletrip.output.file";
-	private String vehicleTripOutputFile;
-	private TazDataManager                tazManager;
-	private MgraDataManager               mazManager;
-	private int maxTaz;
-	private byte maxPassengers;
-	private TransportCostManager transportCostManager;
-	private int totalVehicles;
-	private int minutesPerSimulationPeriod;
-	private int vehicleDebug;
-	private int totalVehicleTrips;
+	protected static final Logger logger = Logger.getLogger(VehicleManager.class);
+	protected HashMap<String, String> propertyMap = null;
+	protected ArrayList<Vehicle>[] emptyVehicleList; //by taz
+	protected ArrayList<Vehicle> vehiclesToRouteList;
+	protected ArrayList<Vehicle> activeVehicleList;  
+	protected ArrayList<Vehicle> refuelingVehicleList;
+	
+	protected MersenneTwister       random;
+	protected static final String MODEL_SEED_PROPERTY = "Model.Random.Seed";
+	protected static final String VEHICLETRIP_OUTPUT_FILE_PROPERTY = "Maas.RoutingModel.vehicletrip.output.file";
+	protected static final String MAX_DISTANCE_BEFORE_REFUEL_PROPERTY = "Maas.RoutingModel.maxDistanceBeforeRefuel";
+	protected static final String TIME_REQUIRED_FOR_REFUEL_PROPERTY = "Maas.RoutingModel.timeRequiredForRefuel";
+	
+	
+	protected String vehicleTripOutputFile;
+	protected TazDataManager                tazManager;
+	protected MgraDataManager               mazManager;
+	protected int maxTaz;
+	protected int maxMaz;
+	protected byte maxPassengers;
+	protected TransportCostManager transportCostManager;
+	protected int totalVehicles;
+	protected int minutesPerSimulationPeriod;
+	protected int vehicleDebug;
+	protected int totalVehicleTrips;
+	
+	protected float maxDistanceBeforeRefuel;
+	protected float timeRequiredForRefuel;
+	protected int periodsRequiredForRefuel;
+    protected int[] closestMazWithRefeulingStation ; //the closest MAZ with a refueling station
+
+	
     
     
  
@@ -62,17 +77,65 @@ public class VehicleManager {
        maxTaz = tazManager.getMaxTaz();
        
        mazManager = MgraDataManager.getInstance();
+       maxMaz = mazManager.getMaxMgra();
        
        emptyVehicleList = new ArrayList[maxTaz+1];
        
        activeVehicleList = new ArrayList<Vehicle>();
        vehiclesToRouteList = new ArrayList<Vehicle>();
+       refuelingVehicleList = new ArrayList<Vehicle>();
        
        String directory = Util.getStringValueFromPropertyMap(propertyMap, "Project.Directory");
        vehicleTripOutputFile = directory + Util.getStringValueFromPropertyMap(propertyMap, VEHICLETRIP_OUTPUT_FILE_PROPERTY);
        
+   	   maxDistanceBeforeRefuel = Util.getFloatValueFromPropertyMap(propertyMap, MAX_DISTANCE_BEFORE_REFUEL_PROPERTY);
+   	   timeRequiredForRefuel = Util.getFloatValueFromPropertyMap(propertyMap, TIME_REQUIRED_FOR_REFUEL_PROPERTY);
+       periodsRequiredForRefuel = (int) Math.ceil(timeRequiredForRefuel/minutesPerSimulationPeriod);
+   	   
        vehicleDebug = 1;
+       
+       calculateClosestRefuelingMazs();
 
+	}
+	
+	
+	/**
+	 * Iterate through the zones for each MAZ and find the closest MAZ with at least one refeuling station.
+	 * 
+	 */
+	public void calculateClosestRefuelingMazs() {
+	   	   
+		//initialize the array
+		closestMazWithRefeulingStation = new int[maxMaz+1];
+
+		//iterate through origin MAZs
+		for(int originMaz=1;originMaz<=maxMaz;++originMaz) {
+			
+			float minDist = 99999; //initialize to a really high value
+			
+			int originTaz = mazManager.getTaz(originMaz);
+			if(originTaz<=0)
+				continue;
+			
+			//iterate through destination MAZs
+			for(int destinationMaz=1;destinationMaz<=maxMaz;++destinationMaz) {
+				
+				//no refueling stations in the destination, keep going
+				if(mazManager.getRefeulingStations(originMaz)==0)
+					continue;
+				
+				int destinationTaz = mazManager.getTaz(destinationMaz);
+				if(destinationTaz<=0)
+					continue;
+
+				float dist = transportCostManager.getDistance(transportCostManager.MD, originTaz, destinationTaz);
+				
+				//lowest distance, so reset the closest MAZ
+				if(dist<minDist)
+					closestMazWithRefeulingStation[originMaz]=destinationMaz;
+			}
+			
+		}
 	}
 	
 	/**
@@ -166,7 +229,7 @@ public class VehicleManager {
 	 */
 	private Vehicle generateVehicle(int simulationPeriod, int taz){
 		++totalVehicles;
-		Vehicle vehicle = new Vehicle(totalVehicles, maxPassengers);
+		Vehicle vehicle = new Vehicle(totalVehicles, maxPassengers, maxDistanceBeforeRefuel);
 		vehicle.setGenerationPeriod((short)simulationPeriod);
 		vehicle.setGenerationTaz((short) taz);
 		return vehicle;
@@ -207,6 +270,15 @@ public class VehicleManager {
 		vehiclesToRouteList.add(vehicle);
 	}
 
+	/**
+	 * All active vehicles are assigned passengers, now they must be routed through all pickups and dropoffs.
+	 * THe method iterates through the vehiclesToRouteList and adds passengers based on the out-direction
+	 * time required to pick them up and drop them off.
+	 * 
+	 * @param skimPeriod
+	 * @param simulationPeriod
+	 * @param transportCostManager
+	 */
 	public void routeActiveVehicles(int skimPeriod, int simulationPeriod, TransportCostManager transportCostManager){
 		
 		logger.info("Routing "+vehiclesToRouteList.size()+" vehicles in period "+simulationPeriod);
@@ -368,9 +440,12 @@ public class VehicleManager {
 					trip.setDestinationTaz((short) tazs[i]);
 
 					float time = transportCostManager.getTime(skimPeriod, firstOriginTaz, tazs[i]);
+					float distance = transportCostManager.getDistance(skimPeriod, firstOriginTaz, tazs[i]);
 					float periods = time/(float)minutesPerSimulationPeriod;
 					int endPeriod = (int) Math.floor(simulationPeriod + periods);
 					trip.setEndPeriod(endPeriod);
+					trip.setDistance(distance);
+					vehicle.setDistanceSinceRefuel(vehicle.getDistanceSinceRefuel()+distance);
 					
 					if(vehicle.getId()==vehicleDebug){
 						logger.info("Vehicle "+vehicle.getId()+" now has vehicle trip "+trip.getId());
@@ -458,6 +533,106 @@ public class VehicleManager {
 	}
 	
 	
+	/**
+	 * First find vehicles that need to refuel, generate a trip to the closest refueling station, then 
+	 * remove them from the empty vehicle list, and add them to the refueling vehicle list.
+	 * Next, for all refueling vehicles, check if they are done refueling, and if so, remove them
+	 * from the refueling list and add them to the empty vehicle list.
+	 * 
+	 * @param skimPeriod
+	 * @param simulationPeriod
+	 */
+	public void checkForRefuelingVehicles(int skimPeriod, int simulationPeriod) {
+		
+		//iterate through zones
+        for(int i = 1; i <= maxTaz; ++ i){
+        	if(emptyVehicleList[i]==null)
+        		continue;
+        	
+    		//track the vehicles to remove
+    		ArrayList<Vehicle> vehiclesToRemove = new ArrayList<Vehicle>();
+        	
+        	//iterate through vehicles in this zone
+        	for(Vehicle vehicle : emptyVehicleList[i]) {
+        		
+        		//if distance since refueling is greater than max, generate a new trip to the closest refueling station.
+        		if(vehicle.getDistanceSinceRefuel()>=maxDistanceBeforeRefuel) {
+        			
+        			ArrayList<VehicleTrip> currentTrips =  vehicle.getVehicleTrips();
+        			VehicleTrip lastTrip = currentTrips.get(currentTrips.size()-1);
+        			
+        			VehicleTrip trip = new VehicleTrip(vehicle,totalVehicleTrips+1);
+        			trip.setStartPeriod(lastTrip.endPeriod);
+        			trip.setOriginMaz(lastTrip.destinationMaz);
+        			trip.setOriginTaz(lastTrip.originTaz);
+        			trip.setPassengers(0);
+        			trip.setOriginPurpose(lastTrip.destinationPurpose);
+        			trip.setDestinationPurpose(Purpose.REFUEL);
+        			
+        			int refeulingMaz = closestMazWithRefeulingStation[trip.getOriginMaz()];
+        			trip.setDestinationMaz(refeulingMaz);
+        			trip.setDestinationTaz((short) mazManager.getTaz(refeulingMaz));
+        			float time = transportCostManager.getTime(skimPeriod, trip.getOriginTaz(), trip.getDestinationTaz() );
+					float distance = transportCostManager.getDistance(skimPeriod, trip.getOriginTaz(), trip.getDestinationTaz());
+					float periods = time/(float)minutesPerSimulationPeriod;
+					int endPeriod = (int) Math.floor(simulationPeriod + periods);
+					trip.setEndPeriod(endPeriod);
+					trip.setDistance(distance);
+					
+					//add the vehicle trip to the vehicle
+					vehicle.addVehicleTrip(trip);
+					
+					vehiclesToRemove.add(vehicle);
+
+        		}
+        			
+        		//remove all the refueling vehicles from the empty vehicle list
+        		emptyVehicleList[i].removeAll(vehiclesToRemove);
+        		
+        		//add them to the refueling vehicle list
+        		refuelingVehicleList.addAll(vehiclesToRemove);
+        			
+        	}
+        }
+        
+ 		//track the vehicles to remove
+		ArrayList<Vehicle> vehiclesToRemove = new ArrayList<Vehicle>();
+
+        //iterate through the refueling vehicles
+        for(Vehicle vehicle : refuelingVehicleList ) {
+        	
+			ArrayList<VehicleTrip> currentTrips =  vehicle.getVehicleTrips();
+			VehicleTrip lastTrip = currentTrips.get(currentTrips.size()-1);
+			
+			//trip is not refueling
+			if(lastTrip.destinationPurpose!=Purpose.REFUEL)
+				continue;
+			
+			//trip is still en-route to refueling
+        	if(lastTrip.endPeriod>simulationPeriod)
+        		continue;
+        	
+        	
+        	//if its been refueling for appropriate periods, add to empty vehicle list and remove it from the refueling vehicle list
+        	if(vehicle.periodsRefueling==periodsRequiredForRefuel) {
+        		vehicle.setDistanceSinceRefuel(0);
+        		vehiclesToRemove.add(vehicle);
+        		short refuelTaz = lastTrip.destinationTaz;
+        		emptyVehicleList[refuelTaz].add(vehicle);
+        	// else increment up the number of periods refueling	
+        	}else  {
+        		vehicle.setPeriodsRefueling(vehicle.getPeriodsRefueling()+1);;
+        	}
+        }
+        
+        refuelingVehicleList.removeAll(vehiclesToRemove);
+	}
+	
+	
+	/**
+	 * This method writes vehicle trips to the output file.
+	 * 
+	 */
 	public void writeVehicleTrips(){
 		
 		logger.info("Writing vehicle trips to file " + vehicleTripOutputFile);

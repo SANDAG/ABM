@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
+import org.sandag.abm.accessibilities.AutoAndNonMotorizedSkimsCalculator;
+import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.Util;
@@ -32,14 +34,17 @@ public class PersonTripManager {
 	protected TazDataManager tazManager;
 	protected int idNumber;
 	protected int[] modesToKeep;
+	protected int[] rideShareEligibleModes;
 	protected int minTaz; //the minimum taz number with mazs; any origin or destination person trip less than this will be skipped.
+	protected float maxWalkDistance;
 
 	protected static final String ModelSeedProperty = "Model.Random.Seed";
 	protected static final String DirectoryProperty = "Project.Directory";
 	protected static final String IndivTripDataFileProperty = "Results.IndivTripDataFile";
 	protected static final String JointTripDataFileProperty = "Results.JointTripDataFile";
-	protected static final String ModesToKeepProperty = "TNC.shared.Modes";
-	
+	protected static final String ModesToKeepProperty = "Maas.RoutingModel.Modes";
+	protected static final String SharedEligibleProperty = "Maas.RoutingModel.SharedEligible";	
+	protected static final String MaxWalkDistance = "Maas.RoutingModel.maxWalkDistance";
 	/**
 	 * Constructor.
 	 * 
@@ -51,6 +56,7 @@ public class PersonTripManager {
     	this.propertyMap = propertyMap;
     	
     	modelStructure = new SandagModelStructure();
+    
     }
 
 	/**
@@ -88,8 +94,11 @@ public class PersonTripManager {
         random = new MersenneTwister(seed);
         
         modesToKeep = Util.getIntegerArrayFromPropertyMap(propertyMap,ModesToKeepProperty);
+        rideShareEligibleModes = Util.getIntegerArrayFromPropertyMap(propertyMap,SharedEligibleProperty);
+        maxWalkDistance = Util.getFloatValueFromPropertyMap(propertyMap, MaxWalkDistance);
         
         readInputFiles();
+          
 		logger.info("Completed Initializing PersonTripManager");
 		
 		
@@ -144,6 +153,10 @@ public class PersonTripManager {
            	int mode = (int) inputTripTableData.getValueAt(row,"trip_mode");
         	if(modesToKeep[mode]!=1)
         		continue;
+        	
+        	boolean rideShare=false;
+        	if(rideShareEligibleModes[mode]==1)
+        		rideShare=true;
         	
          	int oMaz = (int) inputTripTableData.getValueAt(row,"orig_mgra");
         	int dMaz = (int) inputTripTableData.getValueAt(row,"dest_mgra");
@@ -200,7 +213,7 @@ public class PersonTripManager {
         	}
         	int set = (int)inputTripTableData.getValueAt(row,"set"); 
         	
-       		PersonTrip personTrip = new PersonTrip(idNumber,hhid,personId,personNumber,tourid,stopid,inbound,(jointTripData?1:0),oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set);
+       		PersonTrip personTrip = new PersonTrip(idNumber,hhid,personId,personNumber,tourid,stopid,inbound,(jointTripData?1:0),oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set,rideShare);
        		personTrip.setAvAvailable((byte) avAvailable);
        		personTrip.setNumberParticipants(num_participants);
        		if(num_participants>-1)
@@ -271,7 +284,7 @@ public class PersonTripManager {
 	}
 	
 	/**
-	 * Go through the person trip list, sort the person trips by departure time and TAZ.
+	 * Go through the person trip list, sort the person trips by departure time and MAZ.
 	 *  
 	 * @param periodLengthInMinutes
 	 */
@@ -311,7 +324,8 @@ public class PersonTripManager {
 
 		
 	/**
-	 * Get the person trips for the period bin (indexed from 0) and the origin MAZ
+	 * Get the person trips for the period bin (indexed from 0) and the origin MAZ. This method also finds nearby trips willing
+	 * to rideshare if they are within the maximum walk distance from the origin.
 	 * 
 	 * @param periodBin The number of the departure time period bin based on the period length used to group person trips.
 	 * @param maz The number of the origin MAZ.
@@ -320,7 +334,21 @@ public class PersonTripManager {
 	 */
 	public ArrayList<PersonTrip> getPersonTripsByDepartureTimePeriodAndMaz(int periodBin, int maz){
 		
-		return personTripArrayByDepartureBinAndMaz[periodBin][maz];
+		
+		if(maxWalkDistance==0)
+			return personTripArrayByDepartureBinAndMaz[periodBin][maz];
+		
+		ArrayList<PersonTrip> returnList = new ArrayList<PersonTrip>();
+		
+		if(personTripArrayByDepartureBinAndMaz[periodBin][maz]!=null)
+			returnList.addAll(personTripArrayByDepartureBinAndMaz[periodBin][maz]);
+		
+		ArrayList<PersonTrip> nearbyTrips = findNearbyRideSharers(maz,periodBin);
+		
+		if(nearbyTrips != null)
+			returnList.addAll(nearbyTrips);
+		
+		return returnList;
 	}
 	
 	/**
@@ -431,6 +459,51 @@ public class PersonTripManager {
 		personTripArrayByDepartureBin[simulationPeriod].remove(trip);
 		personTripArrayByDepartureBinAndMaz[simulationPeriod][originMaz].remove(trip);
 		
+		
+	}
+	
+	/**
+	 * Cycle through all the MAZs within maximum walk distance of the origin MAZ, and find
+	 * rideshare passengers departing within the same period. Add them to an ArrayList and 
+	 * return it.
+	 * 
+	 * @param originMaz The origin for searching
+	 * @param simulationPeriod The simulation period
+	 * @return The ArrayList of ridesharers.
+	 */
+	public ArrayList<PersonTrip> findNearbyRideSharers(int originMaz, int simulationPeriod) {
+		
+		int[] walkMgras = mgraManager.getMgrasWithinWalkDistanceFrom(originMaz);
+		
+		if(walkMgras==null)
+			return null;
+		
+		ArrayList<PersonTrip> nearbyRideSharers = new ArrayList<PersonTrip>();
+		
+		//cycle through walk mgras
+		for(int walkMgra : walkMgras) {
+
+			//skip intrazonal
+			if(walkMgra==originMaz)
+				continue;
+			
+			//walk mgra is less than max walk distance
+			if(mgraManager.getMgraToMgraWalkDistFrom(originMaz,walkMgra)<=maxWalkDistance) {
+				
+					ArrayList<PersonTrip> personTrips = personTripArrayByDepartureBinAndMaz[simulationPeriod][walkMgra];
+				
+					//cycle through person trips in this mgra and add them to the array if they are willing to rideshare
+					for(PersonTrip personTrip : personTrips) {
+						
+						if(personTrip.isRideSharer()) {
+							personTrip.setPickupMaz(originMaz);
+							nearbyRideSharers.add(personTrip);
+						}
+					}
+			}
+		}
+		
+		return nearbyRideSharers;
 		
 	}
 }
