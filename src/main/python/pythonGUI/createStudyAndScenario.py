@@ -64,8 +64,8 @@ class CreateScenarioGUI(Tkinter.Frame):
 
             Tkinter.Label(body, text=u"Emme Version", font=("Helvetica", 8, 'bold')).grid(row=8)
             var = StringVar(root)
-            self.version = "4.4.1"
-            optionList = ["4.3.7", "4.4.0", "4.4.1"]
+            self.version = "4.4.2"
+            optionList = ["4.3.7", "4.4.0", "4.4.1","4.4.2"]
             option = Tkinter.OptionMenu(body, var, *optionList, command=self.setEmmeversion)
             option.config(width=50)
             option.grid(row=8, column=1)
