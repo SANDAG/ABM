@@ -11,21 +11,21 @@
 #////                                                                       ///
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
-# 
-# 
-# Runs the truck distribution step. Distributes truck trips with congested 
+#
+#
+# Runs the truck distribution step. Distributes truck trips with congested
 # skims and splits by time of day.
-# The distribution is based on the mid-day travel time for the "generic" 
-# truck skim "mfMD_TRK_TIME". Applies truck toll diversion model with 
+# The distribution is based on the mid-day travel time for the "generic"
+# truck skim "mfMD_TRK_TIME". Applies truck toll diversion model with
 # toll and non-toll skims.
 #
 # Inputs:
 #    input_directory: source directory for input files
-#    num_processors: Number of processors to use, either as a number or "MAX-#" 
+#    num_processors: Number of processors to use, either as a number or "MAX-#"
 #    scenario: traffic scenario to use for reference zone system
 #
 # Files referenced:
-#    Note: YEAR is replaced by truck.FFyear in the conf/sandag_abm.properties file 
+#    Note: YEAR is replaced by truck.FFyear in the conf/sandag_abm.properties file
 #    input/TruckTripRates.csv
 #    input/mgra13_based_inputYEAR.csv
 #    input/specialGenerators.csv
@@ -54,7 +54,7 @@
     modeller = inro.modeller.Modeller()
     main_directory = os.path.dirname(os.path.dirname(modeller.desktop.project.path))
     input_dir = os.path.join(main_directory, "input")
-    num_processors = "MAX-1" 
+    num_processors = "MAX-1"
     base_scenario = modeller.scenario
     distribution = modeller.tool("sandag.model.truck.distribution")
     distribution(input_dir, num_processors, base_scenario)
@@ -95,10 +95,10 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
     def page(self):
         pb = _m.ToolPageBuilder(self)
         pb.title = "Truck distribution"
-        pb.description = """ 
-<div style="text-align:left">    
+        pb.description = """
+<div style="text-align:left">
     Distributes truck trips with congested skims and splits by time of day.
-    The distribution is based on the mid-day travel time for the "generic" truck 
+    The distribution is based on the mid-day travel time for the "generic" truck
     skim "mfMD_TRK_TIME".
     <br>
     Applies truck toll diversion model with toll and non-toll skims,
@@ -172,7 +172,7 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
         matrix_calc = dem_utils.MatrixCalculator(self.scenario, self.num_processors)
         matrix_calc.run_single('mfTRK%s_FRICTION' % truck_type,
             'exp(-%s*%s)' % (coeff, impedance.named_id))
-        return 
+        return
 
     def matrix_balancing(self, truck_type):
         matrix_calc = dem_utils.MatrixCalculator(self.scenario, self.num_processors)
@@ -182,7 +182,7 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
                 with gen_utils.temp_matrices(emmebank, "DESTINATION") as (temp_md,):
                     temp_md.name = 'TRKIE_ROWTOTAL'
                     matrix_calc.add('md"TRKIE_ROWTOTAL"', 'mf"TRKIE_FRICTION"', aggregation={"origins": "+", "destinations": None})
-                    matrix_calc.add('mf"TRKIE_DEMAND"', 'mf"TRKIE_FRICTION" * md"TRKIE_ATTR" / md"TRKIE_ROWTOTAL"', 
+                    matrix_calc.add('mf"TRKIE_DEMAND"', 'mf"TRKIE_FRICTION" * md"TRKIE_ATTR" / md"TRKIE_ROWTOTAL"',
                         constraint=['md"TRKIE_ROWTOTAL"', 0, 0, "EXCLUDE"])
                     matrix_calc.run()
 
@@ -190,7 +190,7 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
                 with gen_utils.temp_matrices(emmebank, "ORIGIN") as (temp_mo,):
                     temp_mo.name = 'TRKEI_COLTOTAL'
                     matrix_calc.add('mo"TRKEI_COLTOTAL"', 'mf"TRKEI_FRICTION"', aggregation={"origins": None, "destinations": "+"})
-                    matrix_calc.add('mf"TRKEI_DEMAND"', 'mf"TRKEI_FRICTION" * mo"TRKEI_PROD" / mo"TRKEI_COLTOTAL"', 
+                    matrix_calc.add('mf"TRKEI_DEMAND"', 'mf"TRKEI_FRICTION" * mo"TRKEI_PROD" / mo"TRKEI_COLTOTAL"',
                         constraint=['mo"TRKEI_COLTOTAL"', 0, 0, "EXCLUDE"])
                     matrix_calc.run()
             else:
@@ -217,7 +217,7 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
         truck_share = [0.307, 0.155, 0.538]
         for t_type, share in zip(truck_types, truck_share):
             matrix_calc.add('mf"TRK%s_DEMAND"' % (t_type),
-                '%s * (mf"TRKEI_DEMAND" + mf"TRKIE_DEMAND" + mf"TRKEE_DEMAND")' % (share))				
+                '%s * (mf"TRKEI_DEMAND" + mf"TRKIE_DEMAND" + mf"TRKEE_DEMAND")' % (share))
             # Set intrazonal truck trips to 0
             matrix_calc.add('mf"TRK%s_DEMAND"' % (t_type), 'mf"TRK%s_DEMAND" * (p.ne.q)' % (t_type))
             matrix_calc.run()
@@ -229,7 +229,7 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
         time_share = [0.1018, 0.1698, 0.4284, 0.1543, 0.1457]
         border_time_share = [0.0188, 0.1812, 0.4629, 0.2310, 0.1061]
         border_correction = [bs/s for bs, s in zip(border_time_share, time_share)]
-        
+
         truck_types = ['L', 'M', 'H']
         truck_names = {"L": "light trucks", "M": "medium trucks", "H": "heavy trucks"}
 
@@ -277,6 +277,10 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
                     matrix_calc.add('mf"%s_TRK%sTOLL_VEH"' % (period, truck),
                         'mf"%(p)s_TRK%(t)s" * (1/(1 + exp(- %(u)s)))' % {'p': period, 't': truck, 'u': utility},
                         ['mf"%s_TRK%sTOLL_TOLLCOST"' % (period, truck), 0, 0 , "EXCLUDE"])
-                    # Compute the truck demand for non toll 
+                    # if non-toll path is not available (GP time=0), set all demand to toll
+                    matrix_calc.add('mf"%s_TRK%sTOLL_VEH"' % (period, truck),
+                                    'mf"%(p)s_TRK%(t)s"'  % {'p': period, 't': truck},
+                                    ['mf"%(p)s_TRK%(t)sGP_TIME"' % {'p': period, 't': truck}, 0, 0 , "INCLUDE"])
+                    # Compute the truck demand for non toll
                     matrix_calc.add('mf"%s_TRK%sGP_VEH"' % (period, truck),
                         '(mf"%(p)s_TRK%(t)s" - mf"%(p)s_TRK%(t)sTOLL_VEH").max.0' % {'p': period, 't': truck})
