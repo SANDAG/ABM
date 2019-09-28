@@ -6,27 +6,28 @@ package org.sandag.abm.maas;
  *
  */
 class PersonTrip implements Comparable{
-    int uniqueId;
-	long hhid;		
-	long personId;
-	int personNumber;
-	int tourid;
-	int stopid;
-	int inbound;
-	int joint;
-	int numberParticipants;
+    protected int uniqueId;
+    protected long hhid;		
+    protected long personId;
+    protected int personNumber;
+    protected int tourid;
+    protected int stopid;
+    protected int inbound;
+    protected int joint;
+    protected int numberParticipants;
 
-	int originMaz;
-	int destinationMaz;
-	short departPeriod;
-	float departTime; //minutes after 3 AM
-	float sampleRate;
-	int mode;
-	int parkingMaz;
-	byte avAvailable;
+    protected int originMaz;
+    protected int destinationMaz;
+    protected short departPeriod;
+    protected float departTime; //minutes after 3 AM
+    protected float sampleRate;
+    protected int mode;
+    protected int parkingMaz;
+    protected byte avAvailable;
+    protected boolean rideSharer;
+	protected int pickupMaz;
 	
-	
-	public PersonTrip(int uniqueId,long hhid,long personId,int personNumber, int tourid,int stopid,int inbound,int joint,int originMaz, int destinationMaz, int departPeriod, float departTime, float sampleRate, int mode, int boardingTap, int alightingTap, int set){
+	public PersonTrip(int uniqueId,long hhid,long personId,int personNumber, int tourid,int stopid,int inbound,int joint,int originMaz, int destinationMaz, int departPeriod, float departTime, float sampleRate, int mode, int boardingTap, int alightingTap, int set, boolean rideSharer){
        	this.uniqueId = uniqueId;
 		this.hhid = hhid;		
        	this.personId = personId;
@@ -42,6 +43,10 @@ class PersonTrip implements Comparable{
 		this.departTime = departTime;
 		this.sampleRate = sampleRate;
 		this.mode = mode;
+		this.rideSharer = rideSharer;
+		
+		//set the pickup MAZ to the originMaz
+		this.pickupMaz = originMaz;
 		
 		
 	}
@@ -117,6 +122,14 @@ class PersonTrip implements Comparable{
 		this.originMaz = originMaz;
 	}
 
+	public int getPickupMaz() {
+		return pickupMaz;
+	}
+
+	public void setPickupMaz(int pickupMaz) {
+		this.pickupMaz = pickupMaz;
+	}
+
 	public int getDestinationMaz() {
 		return destinationMaz;
 	}
@@ -181,6 +194,15 @@ class PersonTrip implements Comparable{
 	public void setNumberParticipants(int numberParticipants) {
 		this.numberParticipants = numberParticipants;
 	}
+	
+	public boolean isRideSharer() {
+		return rideSharer;
+	}
+	
+	public void setRideSharer(boolean rideSharer) {
+		this.rideSharer=rideSharer;
+	}
+	
 
 	/**
 	 * Compare based on departure time.

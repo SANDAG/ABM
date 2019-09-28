@@ -77,6 +77,7 @@ public final class MgraDataManager
     private static final String         MGRA_ADULT_SCHOOL_ENROLLMENT_FIELD_NAME  = "AdultSchEnrl";
     private static final String         MGRA_GRADE_SCHOOL_DISTRICT_FIELD_NAME    = "ech_dist";
     private static final String         MGRA_HIGH_SCHOOL_DISTRICT_FIELD_NAME     = "hch_dist";
+    private static final String         MGRA_REFUELING_STATIONS_FIELD_NAME       = "refueling_stations";
 
     private static final String         PROPERTIES_PARKING_COST_OUTPUT_FILE      = "mgra.avg.cost.output.file";
 
@@ -158,7 +159,7 @@ public final class MgraDataManager
     private int[]                       mstallsoth;
     private int[]                       mstallssam;
     private float[]                     mparkcost;
-
+    
     private TableDataSet tapLinesTable;
     private HashMap<Integer,String> taplines;
  
@@ -979,13 +980,14 @@ public final class MgraDataManager
 
            //added for Taxi/TNC
             popEmpDenPerSqMi = new double[maxMgra+1];
+            
             // get the data fields needed for the mode choice utilities as
             // 0-based double[]
             double[] duDenField = mgraTableDataSet.getColumnAsDouble(MGRA_4DDENSITY_DU_DEN_FIELD);
             double[] empDenField = mgraTableDataSet.getColumnAsDouble(MGRA_4DDENSITY_EMP_DEN_FIELD);
             double[] totIntField = mgraTableDataSet.getColumnAsDouble(MGRA_4DDENSITY_TOT_INT_FIELD);
             double[] popEmpField = mgraTableDataSet.getColumnAsDouble( MGRA_POPEMPPERSQMI_FIELD );
- 
+      
             // create a HashMap to convert MGRA values to array indices for the
             // data
             // arrays above
@@ -999,7 +1001,7 @@ public final class MgraDataManager
                 empDen[mgra] = empDenField[row - 1];
                 totInt[mgra] = totIntField[row - 1];
                 popEmpDenPerSqMi [mgra] = popEmpField[row-1];
- 
+      
             }
 
         } catch (Exception e)
@@ -1507,6 +1509,12 @@ public final class MgraDataManager
     {
         int row = mgraDataTableMgraRowMap.get(mgra);
         return (int) mgraTableDataSet.getValueAt(row, MGRA_HPARKCOST_FIELD);
+    }
+
+    public float getRefeulingStations(int mgra)
+    {
+        int row = mgraDataTableMgraRowMap.get(mgra);
+        return  mgraTableDataSet.getValueAt(row, MGRA_REFUELING_STATIONS_FIELD_NAME);
     }
 
     private class Maz2Tap implements Comparable<Maz2Tap>, Serializable

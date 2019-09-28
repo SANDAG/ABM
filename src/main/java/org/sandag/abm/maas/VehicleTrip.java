@@ -28,7 +28,11 @@ public class VehicleTrip {
 	protected ArrayList<Integer> dropoffIdsAtOrigin;
 	protected ArrayList<Integer> pickupIdsAtDestination;
 	protected ArrayList<Integer> dropoffIdsAtDestination;
+	protected Purpose originPurpose;
+	protected Purpose destinationPurpose;
+	protected float distance;
 	
+	protected enum Purpose { HOME, PICKUP_ONLY, DROPOFF_ONLY, PICKUP_AND_DROPOFF, REFUEL } 
 
 	
 	public VehicleTrip(Vehicle vehicle, int id){
@@ -39,6 +43,8 @@ public class VehicleTrip {
 		dropoffIdsAtOrigin = new ArrayList<Integer>();
 		pickupIdsAtDestination = new ArrayList<Integer>();
 		dropoffIdsAtDestination = new ArrayList<Integer>();
+		originPurpose=Purpose.HOME;
+		destinationPurpose=Purpose.HOME;
 		
 	}
 
@@ -48,10 +54,27 @@ public class VehicleTrip {
 
 	public void setPickupIdsAtOrigin(ArrayList<Integer> pickupIdsAtOrigin) {
 		this.pickupIdsAtOrigin = pickupIdsAtOrigin;
+		
+		if(pickupIdsAtOrigin.isEmpty())
+			return;
+		
+		if(originPurpose==Purpose.DROPOFF_ONLY)
+			originPurpose = Purpose.PICKUP_AND_DROPOFF;
+		else
+			originPurpose = Purpose.PICKUP_ONLY;
 	}
 
 	public void addPickupIdsAtOrigin(ArrayList<Integer> pickupIdsAtOrigin) {
 		this.pickupIdsAtOrigin.addAll(pickupIdsAtOrigin);
+		
+		if(pickupIdsAtOrigin.isEmpty())
+			return;
+		
+		if(originPurpose==Purpose.DROPOFF_ONLY)
+			originPurpose = Purpose.PICKUP_AND_DROPOFF;
+		else
+			originPurpose = Purpose.PICKUP_ONLY;
+
 	}
 	public ArrayList<Integer> getDropoffIdsAtOrigin() {
 		return dropoffIdsAtOrigin;
@@ -59,10 +82,28 @@ public class VehicleTrip {
 
 	public void setDropoffIdsAtOrigin(ArrayList<Integer> dropoffIdsAtOrigin) {
 		this.dropoffIdsAtOrigin = dropoffIdsAtOrigin;
+		
+		if(dropoffIdsAtOrigin.isEmpty())
+			return;
+		
+		if(originPurpose==Purpose.PICKUP_ONLY)
+			originPurpose = Purpose.PICKUP_AND_DROPOFF;
+		else
+			originPurpose = Purpose.DROPOFF_ONLY;
+
 	}
 
 	public void addDropoffIdsAtOrigin(ArrayList<Integer> dropoffIdsAtOrigin) {
 		this.dropoffIdsAtOrigin.addAll(dropoffIdsAtOrigin);
+		
+		if(dropoffIdsAtOrigin.isEmpty())
+			return;
+		
+		if(originPurpose==Purpose.PICKUP_ONLY)
+			originPurpose = Purpose.PICKUP_AND_DROPOFF;
+		else
+			originPurpose = Purpose.DROPOFF_ONLY;
+
 	}
 	public ArrayList<Integer> getPickupIdsAtDestination() {
 		return pickupIdsAtDestination;
@@ -70,6 +111,15 @@ public class VehicleTrip {
 
 	public void setPickupIdsAtDestination(ArrayList<Integer> pickupIdsAtDestination) {
 		this.pickupIdsAtDestination = pickupIdsAtDestination;
+		
+		if(pickupIdsAtDestination.isEmpty())
+			return;
+		
+		if(destinationPurpose==Purpose.DROPOFF_ONLY)
+			destinationPurpose = Purpose.PICKUP_AND_DROPOFF;
+		else
+			destinationPurpose = Purpose.PICKUP_ONLY;
+
 	}
 
 	public ArrayList<Integer> getDropoffIdsAtDestination() {
@@ -79,25 +129,56 @@ public class VehicleTrip {
 	public void setDropoffIdsAtDestination(
 			ArrayList<Integer> dropoffIdsAtDestination) {
 		this.dropoffIdsAtDestination = dropoffIdsAtDestination;
+		
+		if(dropoffIdsAtDestination.isEmpty())
+			return;
+		
+		if(destinationPurpose==Purpose.PICKUP_ONLY)
+			destinationPurpose = Purpose.PICKUP_AND_DROPOFF;
+		else
+			destinationPurpose = Purpose.DROPOFF_ONLY;
+
 	}
 
 
 	
 	public void addPickupAtOrigin(int id){
 		pickupIdsAtOrigin.add(id);
+		
+		if(originPurpose==Purpose.DROPOFF_ONLY)
+			originPurpose = Purpose.PICKUP_AND_DROPOFF;
+		else
+			originPurpose = Purpose.PICKUP_ONLY;
 	}
 
 	public void addPickupAtDestination(int id){
 		pickupIdsAtDestination.add(id);
+
+		if(destinationPurpose==Purpose.DROPOFF_ONLY)
+			destinationPurpose = Purpose.PICKUP_AND_DROPOFF;
+		else
+			destinationPurpose = Purpose.PICKUP_ONLY;
 	}
 
 	public void addDropoffAtOrigin(int id){
 		dropoffIdsAtOrigin.add(id);
+	
+		if(originPurpose==Purpose.PICKUP_ONLY)
+			originPurpose = Purpose.PICKUP_AND_DROPOFF;
+		else
+			originPurpose = Purpose.DROPOFF_ONLY;
+
+	
 	}
 
 	public void addDropoffAtDestination(int id){
 		dropoffIdsAtDestination.add(id);
-	}
+
+		if(destinationPurpose==Purpose.PICKUP_ONLY)
+			destinationPurpose = Purpose.PICKUP_AND_DROPOFF;
+		else
+			destinationPurpose = Purpose.DROPOFF_ONLY;
+}
 
 	public int getNumberOfPickupsAtOrigin(){
 		return pickupIdsAtOrigin.size();
@@ -199,7 +280,7 @@ public class VehicleTrip {
 	}
 
 	public static void printHeader(PrintWriter writer){
-	     String record = new String("trip_ID,vehicle_ID,originTaz,destinationTaz,originMaz,destinationMaz,totalPassengers,startPeriod,endPeriod,pickupIdsAtOrigin,dropoffIdsAtOrigin,pickupIdsAtDestination,dropoffIdsAtDestination");
+	     String record = new String("trip_ID,vehicle_ID,originTaz,destinationTaz,originMaz,destinationMaz,totalPassengers,startPeriod,endPeriod,pickupIdsAtOrigin,dropoffIdsAtOrigin,pickupIdsAtDestination,dropoffIdsAtDestination, originPurpose, destinationPurpose");
 	     writer.println(record);
 	     writer.flush();
 	}
@@ -240,7 +321,9 @@ public class VehicleTrip {
 			    pickupIdsAtOriginString + "," +
 			    dropoffIdsAtOriginString + "," +
 			    pickupIdsAtDestinationString + "," +
-			    dropoffIdsAtDestinationString);
+			    dropoffIdsAtDestinationString + "," +
+			    originPurpose.ordinal() + "," +
+			    destinationPurpose.ordinal());
 		
 		writer.println(record);
 		writer.flush();
@@ -284,9 +367,37 @@ public class VehicleTrip {
 		logger.info("Dropoffs at Origin:      "+ dropoffIdsAtOriginString);
 		logger.info("Pickups at Destination:  "+ pickupIdsAtDestinationString);
 		logger.info("Dropoffs at Destination: "+ dropoffIdsAtDestinationString);
+		logger.info("Origin Purpose:          "+ originPurpose);
+		logger.info("Destination Purpose:     "+ destinationPurpose);
+		
 		logger.info("*********************************************************");
 		
 		
+	}
+
+	public Purpose getOriginPurpose() {
+		return originPurpose;
+	}
+
+	public void setOriginPurpose(Purpose originPurpose) {
+		this.originPurpose = originPurpose;
+	}
+
+	public Purpose getDestinationPurpose() {
+		return destinationPurpose;
+	}
+
+	public void setDestinationPurpose(Purpose destinationPurpose) {
+		this.destinationPurpose = destinationPurpose;
+	}
+
+
+	public float getDistance() {
+		return distance;
+	}
+
+	public void setDistance(float distance) {
+		this.distance = distance;
 	}
 
 
