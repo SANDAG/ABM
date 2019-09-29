@@ -203,34 +203,22 @@ public final class DataExporter
             boolean includeFeedbackIteration, String[] formats, Set<String> floatColumns,
             Set<String> stringColumns, Set<String> intColumns, Set<String> bitColumns,
             FieldType defaultFieldType, Set<String> primaryKey,
-            TripStructureDefinition tripStructureDefinition)
+            TripStructureDefinition tripStructureDefinition,boolean isCB)
     {
         return exportDataGeneric(outputFileBase, filePropertyToken, includeFeedbackIteration,
                 formats, floatColumns, stringColumns, intColumns, bitColumns, defaultFieldType,
-                primaryKey, tripStructureDefinition, null);
+                primaryKey, tripStructureDefinition, null,isCB);
     }
 
     private TableDataSet exportDataGeneric(String outputFileBase, String filePropertyToken,
             boolean includeFeedbackIteration, String[] formats, Set<String> floatColumns,
             Set<String> stringColumns, Set<String> intColumns, Set<String> bitColumns,
             FieldType defaultFieldType, Set<String> primaryKey,
-            TripStructureDefinition tripStructureDefinition, JoinData joinData)
+            TripStructureDefinition tripStructureDefinition, JoinData joinData, boolean isCB)
     {
         return exportDataGeneric(outputFileBase, filePropertyToken, includeFeedbackIteration,
                 formats, floatColumns, stringColumns, intColumns, bitColumns, defaultFieldType,
-                primaryKey, new HashMap<String, String>(), tripStructureDefinition, joinData);
-    }
-
-    private TableDataSet exportDataGeneric(String outputFileBase, String filePropertyToken,
-            boolean includeFeedbackIteration, String[] formats, Set<String> floatColumns,
-            Set<String> stringColumns, Set<String> intColumns, Set<String> bitColumns,
-            FieldType defaultFieldType, Set<String> primaryKey,
-            Map<String, String> overridingFieldMappings,
-            TripStructureDefinition tripStructureDefinition)
-    {
-        return exportDataGeneric(outputFileBase, filePropertyToken, includeFeedbackIteration,
-                formats, floatColumns, stringColumns, intColumns, bitColumns, defaultFieldType,
-                primaryKey, overridingFieldMappings, tripStructureDefinition, null);
+                primaryKey, new HashMap<String, String>(), tripStructureDefinition, joinData,isCB);
     }
 
     private TableDataSet exportDataGeneric(String outputFileBase, String filePropertyToken,
@@ -238,7 +226,19 @@ public final class DataExporter
             Set<String> stringColumns, Set<String> intColumns, Set<String> bitColumns,
             FieldType defaultFieldType, Set<String> primaryKey,
             Map<String, String> overridingFieldMappings,
-            TripStructureDefinition tripStructureDefinition, JoinData joinData)
+            TripStructureDefinition tripStructureDefinition, boolean isCB)
+    {
+        return exportDataGeneric(outputFileBase, filePropertyToken, includeFeedbackIteration,
+                formats, floatColumns, stringColumns, intColumns, bitColumns, defaultFieldType,
+                primaryKey, overridingFieldMappings, tripStructureDefinition, null,isCB);
+    }
+
+    private TableDataSet exportDataGeneric(String outputFileBase, String filePropertyToken,
+            boolean includeFeedbackIteration, String[] formats, Set<String> floatColumns,
+            Set<String> stringColumns, Set<String> intColumns, Set<String> bitColumns,
+            FieldType defaultFieldType, Set<String> primaryKey,
+            Map<String, String> overridingFieldMappings,
+            TripStructureDefinition tripStructureDefinition, JoinData joinData, boolean isCB)
     {
         TableDataSet table;
         try
@@ -254,7 +254,7 @@ public final class DataExporter
         if (joinData != null) joinData.joinDataToTable(table);
         exportDataGeneric(table, outputFileBase, floatColumns, stringColumns, intColumns,
                 bitColumns, defaultFieldType, primaryKey, overridingFieldMappings,
-                tripStructureDefinition);
+                tripStructureDefinition, isCB);
         return table;
     }
 
@@ -337,11 +337,11 @@ public final class DataExporter
     private void exportDataGeneric(TableDataSet table, String outputFileBase,
             Set<String> floatColumns, Set<String> stringColumns, Set<String> intColumns,
             Set<String> bitColumns, FieldType defaultFieldType, Set<String> primaryKey,
-            TripStructureDefinition tripStructureDefinition)
+            TripStructureDefinition tripStructureDefinition, boolean isCB)
     {
         exportDataGeneric(table, outputFileBase, floatColumns, stringColumns, intColumns,
                 bitColumns, defaultFieldType, primaryKey, new HashMap<String, String>(),
-                tripStructureDefinition);
+                tripStructureDefinition, isCB);
 
     }
 
@@ -349,14 +349,14 @@ public final class DataExporter
             Set<String> floatColumns, Set<String> stringColumns, Set<String> intColumns,
             Set<String> bitColumns, FieldType defaultFieldType, Set<String> primaryKey,
             Map<String, String> overridingFieldMappings,
-            TripStructureDefinition tripStructureDefinition)
+            TripStructureDefinition tripStructureDefinition, boolean isCB)
     {
         Map<String, String> fieldMappings = new LinkedHashMap<String, String>();
         Map<String, FieldType> fieldTypes = new HashMap<String, FieldType>();
 
         if (tripStructureDefinition != null)
         {
-            appendTripData(table, tripStructureDefinition);
+            appendTripData(table, tripStructureDefinition,isCB);
             floatColumns.add("AUTO_IVT");
             floatColumns.add("AUTO_AOC");
             floatColumns.add("AUTO_STD");
@@ -453,7 +453,7 @@ public final class DataExporter
      * @param table
      * @param tripStructureDefinition
      */
-    private void appendTripData(TableDataSet table, TripStructureDefinition tripStructureDefinition)
+    private void appendTripData(TableDataSet table, TripStructureDefinition tripStructureDefinition, boolean isCB)
     {
         // id triptype recid partysize orig_mgra dest_mgra trip_board_tap
         // trip_alight_tap trip_depart_time trip_time trip_distance trip_cost
@@ -512,7 +512,7 @@ public final class DataExporter
                     (int) table.getValueAt(row, tripStructureDefinition.todColumn),
                     inbound,
                     table.getValueAt(row,tripStructureDefinition.valueOfTimeColumn),
-                    (int) table.getValueAt(row, tripStructureDefinition.setColumn));
+                    (int) table.getValueAt(row, tripStructureDefinition.setColumn),isCB);
            
             autoInVehicleTime[i] = attributes.getAutoInVehicleTime();
             autoOperatingCost[i] = attributes.getAutoOperatingCost();
@@ -601,7 +601,7 @@ public final class DataExporter
         Set<String> bitColumns = new HashSet<String>();
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("mgra"));
         exportDataGeneric(outputFileBase, "acc.output.file", false, null, floatColumns,
-                stringColumns, intColumns, bitColumns, FieldType.FLOAT, primaryKey, null);
+                stringColumns, intColumns, bitColumns, FieldType.FLOAT, primaryKey, null,false);
     }
 
     private void exportMazData(String outputFileBase)
@@ -613,7 +613,7 @@ public final class DataExporter
         Set<String> bitColumns = new HashSet<String>();
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("mgra"));
         exportDataGeneric(outputFileBase, "mgra.socec.file", false, null, floatColumns,
-                stringColumns, intColumns, bitColumns, FieldType.FLOAT, primaryKey, null);
+                stringColumns, intColumns, bitColumns, FieldType.FLOAT, primaryKey, null,false);
     }
 
     private void nullifyFile(String file)
@@ -676,7 +676,7 @@ public final class DataExporter
         Set<String> bitColumns = new HashSet<String>();
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("TAP"));
         exportDataGeneric(finalData, outputFileBase, floatColumns, stringColumns, intColumns,
-                bitColumns, FieldType.INT, primaryKey, null);
+                bitColumns, FieldType.INT, primaryKey, null,false);
         nullifyFile(getOutputPath(outputFileBase + ".csv"));
     }
 
@@ -695,7 +695,7 @@ public final class DataExporter
         Set<String> bitColumns = new HashSet<String>();
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("MGRA", "TAP"));
         exportDataGeneric(finalData, outputFileBase, floatColumns, stringColumns, intColumns,
-                bitColumns, FieldType.INT, primaryKey, null);
+                bitColumns, FieldType.INT, primaryKey, null,false);
         nullifyFile(getOutputPath(outputFileBase + ".csv"));
     }
 
@@ -754,7 +754,7 @@ public final class DataExporter
         Set<String> bitColumns = new HashSet<String>();
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("ORIG_MGRA", "DEST_MGRA"));
         exportDataGeneric(finalData, outputFileBase, floatColumns, stringColumns, intColumns,
-                bitColumns, FieldType.INT, primaryKey, null);
+                bitColumns, FieldType.INT, primaryKey, null,false);
         nullifyFile(getOutputPath(outputFileBase + ".csv"));
     }
 
@@ -811,7 +811,7 @@ public final class DataExporter
         Set<String> bitColumns = new HashSet<String>();
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("TAZ", "TAP"));
         exportDataGeneric(finalData, outputFileBase, floatColumns, stringColumns, intColumns,
-                bitColumns, FieldType.INT, primaryKey, null);
+                bitColumns, FieldType.INT, primaryKey, null,false);
         nullifyFile(getOutputPath(outputFileBase + ".csv"));
     }
 
@@ -863,7 +863,7 @@ public final class DataExporter
         Set<String> bitColumns = new HashSet<String>();
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("TAZ"));
         exportDataGeneric(data, outputFileBase, floatColumns, stringColumns, intColumns,
-                bitColumns, FieldType.INT, primaryKey, null);
+                bitColumns, FieldType.INT, primaryKey, null,false);
         nullifyFile(getOutputPath(outputFileBase + ".csv"));
     }
 
@@ -989,7 +989,7 @@ public final class DataExporter
         Set<String> bitColumns = new HashSet<String>();
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("hh_id"));
         exportDataGeneric(outputFileBase, "Results.HouseholdDataFile", true, formats, floatColumns,
-                stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey, null);
+                stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey, null,false);
     }
 
     private void exportPersonData(String outputFileBase)
@@ -1047,7 +1047,7 @@ public final class DataExporter
         Set<String> bitColumns = new HashSet<String>();
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("person_id"));
         exportDataGeneric(outputFileBase, "Results.PersonDataFile", true, formats, floatColumns,
-                stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey, null);
+                stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey, null,false);
     }
 
     private void exportSyntheticHouseholdData(String outputFileBase)
@@ -1060,7 +1060,7 @@ public final class DataExporter
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("HHID"));
         exportDataGeneric(outputFileBase, "PopulationSynthesizer.InputToCTRAMP.HouseholdFile",
                 false, null, floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT,
-                primaryKey, null);
+                primaryKey, null,false);
     }
 
     private void exportSyntheticPersonData(String outputFileBase)
@@ -1091,7 +1091,7 @@ public final class DataExporter
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("PERID"));
         exportDataGeneric(outputFileBase, "PopulationSynthesizer.InputToCTRAMP.PersonFile", false,
                 formats, floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT,
-                primaryKey, null);
+                primaryKey, null,false);
     }
 
     private void exportWorkSchoolLocation(String outputFileBase)
@@ -1108,7 +1108,7 @@ public final class DataExporter
         overridingNames.put("PersonID", "PERSON_ID");
         exportDataGeneric(outputFileBase, "Results.UsualWorkAndSchoolLocationChoice", true, null,
                 floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
-                overridingNames, null);
+                overridingNames, null,false);
     }
 
     private void exportIndivToursData(String outputFileBase)
@@ -1191,7 +1191,7 @@ public final class DataExporter
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("hh_id", "person_id",
                 "tour_category", "tour_id", "tour_purpose"));
         exportDataGeneric(outputFileBase, "Results.IndivTourDataFile", true, formats, floatColumns,
-                stringColumns, intColumns, bitColumns, FieldType.FLOAT, primaryKey, null);
+                stringColumns, intColumns, bitColumns, FieldType.FLOAT, primaryKey, null,false);
     }
 
     private void exportJointToursData(String outputFileBase)
@@ -1269,7 +1269,7 @@ public final class DataExporter
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("hh_id", "tour_category",
                 "tour_id", "tour_purpose"));
         exportDataGeneric(outputFileBase, "Results.JointTourDataFile", true, formats, floatColumns,
-                stringColumns, intColumns, bitColumns, FieldType.FLOAT, primaryKey, null);
+                stringColumns, intColumns, bitColumns, FieldType.FLOAT, primaryKey, null,false);
     }
 
     private void exportIndivTripData(String outputFileBase)
@@ -1331,7 +1331,7 @@ public final class DataExporter
                 bitColumns,
                 FieldType.INT,
                 primaryKey,
-                new TripStructureDefinition(10, 11, 8, 9, 13, 14, 15, 16, -1, 24, "INDIV", 6, false, 24, 17));
+                new TripStructureDefinition(10, 11, 8, 9, 13, 14, 15, 16, -1, 24, "INDIV", 6, false, 24, 17),false);
     }
 
     private void exportJointTripData(String outputFileBase)
@@ -1377,7 +1377,7 @@ public final class DataExporter
                 "tour_purpose", "inbound", "stop_id"));
         exportDataGeneric(outputFileBase, "Results.JointTripDataFile", true, formats, floatColumns,
                 stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
-                new TripStructureDefinition(8, 9, 6, 7, 11, 12, 14, 15, 13, 18, "JOINT", 4, false, 18, 16));
+                new TripStructureDefinition(8, 9, 6, 7, 11, 12, 14, 15, 13, 18, "JOINT", 4, false, 18, 16),false);
     }
 
     private void exportAirportTripsSAN(String outputFileBase)
@@ -1395,7 +1395,7 @@ public final class DataExporter
         exportDataGeneric(outputFileBase, "airport.SAN.output.file", false, null, floatColumns,
                 stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey, overridingNames,
                 new TripStructureDefinition(8, 9, 7, 12, 14, 15, 4, 17, "AIRPORT", "HOME",
-                        "AIRPORT", 2, false, 17, 16));
+                        "AIRPORT", 2, false, 17, 16),false);
     }
 
     private void exportAirportTripsCBX(String outputFileBase)
@@ -1413,7 +1413,7 @@ public final class DataExporter
         exportDataGeneric(outputFileBase, "airport.CBX.output.file", false, null, floatColumns,
                 stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey, overridingNames,
                 new TripStructureDefinition(8, 9, 7, 12, 14, 15, 4, 17, "AIRPORT", "HOME",
-                        "AIRPORT", 2, false, 17, 16));
+                        "AIRPORT", 2, false, 17, 16),false);
     }
 
     private void exportCrossBorderTourData(String outputFileBase)
@@ -1443,7 +1443,7 @@ public final class DataExporter
         overridingNames.put("id", "TOURID");
         exportDataGeneric(outputFileBase, "crossBorder.tour.output.file", false, formats,
                 floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
-                overridingNames, null);
+                overridingNames, null,true);
     }
 
     private void exportCrossBorderTripData(String outputFileBase)
@@ -1481,7 +1481,7 @@ public final class DataExporter
         exportDataGeneric(outputFileBase, "crossBorder.trip.output.file", false, formats,
                 floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
                 overridingNames, new TripStructureDefinition(5, 6, 3, 4, 12, 13, 14, 15, -1, 19,
-                        "CB", 9, true, 19, 16));
+                        "CB", 9, true, 19, 16),true);
     }
 
     private void exportVisitorData(String outputTourFileBase, String outputTripFileBase)
@@ -1509,7 +1509,7 @@ public final class DataExporter
         // overridingNames.put("id","PARTYID");
         return exportDataGeneric(outputFileBase, "visitor.tour.output.file", false, null,
                 floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
-                overridingNames, null);
+                overridingNames, null,false);
     }
 
     private void exportVisitorTripData(String outputFileBase, Map<Integer, Integer> tourIdToPartyMap)
@@ -1553,7 +1553,7 @@ public final class DataExporter
                 bitColumns,
                 FieldType.INT,
                 primaryKey,
-                new TripStructureDefinition(5, 6, 3, 4, 10, 11, 12, 13, 15, 15, "VISITOR", 7, true, 15,14));
+                new TripStructureDefinition(5, 6, 3, 4, 10, 11, 12, 13, 15, 15, "VISITOR", 7, true, 15,14),false);
                 //,                joinData);
     }
 
@@ -1588,7 +1588,7 @@ public final class DataExporter
         exportDataGeneric(outputFileBase, "internalExternal.trip.output.file", false, formats,
                 floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
                 new TripStructureDefinition(5, 6, 12, 13, 14, 15, -1, 17, "IE", "HOME", "EXTERNAL",
-                        9, true,17,16));   
+                        9, true,17,16),false);   
     }
 
     private Set<Integer> getExternalZones()
@@ -2350,7 +2350,7 @@ public final class DataExporter
         Set<String> bitColumns = new HashSet<String>();
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("TAP"));
         exportDataGeneric(outputFileBase, "Results.PNRFile", false, null, floatColumns,
-                stringColumns, intColumns, bitColumns, FieldType.FLOAT, primaryKey, null);
+                stringColumns, intColumns, bitColumns, FieldType.FLOAT, primaryKey, null,false);
     }
 
     private void exportCbdVehicleData(String outputFileBase)
@@ -2362,7 +2362,7 @@ public final class DataExporter
         Set<String> bitColumns = new HashSet<String>();
         Set<String> primaryKey = new LinkedHashSet<String>(Arrays.asList("MGRA"));
         exportDataGeneric(outputFileBase, "Results.CBDFile", false, null, floatColumns,
-                stringColumns, intColumns, bitColumns, FieldType.FLOAT, primaryKey, null);
+                stringColumns, intColumns, bitColumns, FieldType.FLOAT, primaryKey, null,false);
     }
 
     private static enum FieldType

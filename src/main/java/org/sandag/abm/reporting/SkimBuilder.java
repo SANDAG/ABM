@@ -91,6 +91,8 @@ public class SkimBuilder
     private final String 			FUEL_COST_PROPERTY          = "aoc.fuel";
     private final String 			MAINTENANCE_COST_PROPERTY = "aoc.maintenance";
     private float autoOperatingCost;
+    //wu added
+    
     
 
     public SkimBuilder(Properties properties)
@@ -151,13 +153,13 @@ public class SkimBuilder
     }
 
     public TripAttributes getTripAttributes(int origin, int destination, int tripModeIndex,
-            int boardTap, int alightTap, int tripTimePeriod, boolean inbound, float valueOfTime, int set)
+            int boardTap, int alightTap, int tripTimePeriod, boolean inbound, float valueOfTime, int set, boolean isCB)
     {
         int tod = getTod(tripTimePeriod);
         TripModeChoice tripMode = modeChoiceLookup[tripModeIndex < 0 ? 0 : tripModeIndex];
        
         TripAttributes attributes = getTripAttributes(tripMode, origin, destination, boardTap,
-                alightTap, tod, inbound, valueOfTime, set);
+                alightTap, tod, inbound, valueOfTime, set, isCB);
         attributes.setTripModeName(modeNameLookup[tripModeIndex < 0 ? 0 : tripModeIndex]);
         attributes.setTripStartTime(getStartTime(tripTimePeriod));
         return attributes;
@@ -172,12 +174,13 @@ public class SkimBuilder
     private final float DEFAULT_WALK_SPEED = 3;
 
     private TripAttributes getTripAttributes(TripModeChoice modeChoice, int origin,
-            int destination, int boardTap, int alightTap, int tod, boolean inbound, float vot, int set)
+            int destination, int boardTap, int alightTap, int tod, boolean inbound, float vot, int set, boolean isCB)
     {
         int timeIndex = -1;
         int distIndex = -1;
         int costIndex = -1;
         int stdIndex  = -1;
+        double [] autoSkims;
       
         switch (modeChoice)
         {
@@ -189,8 +192,17 @@ public class SkimBuilder
                 distIndex = DA_DIST_INDEX;
                 costIndex = -1;
                 stdIndex  = DA_STD_INDEX;
+                if(isCB && isOME(origin,destination) ) {
+	                autoSkims = autoNonMotSkims.getAutoSkimsByTAZ(mgraManager.getTaz(origin), mgraManager.getTaz(destination), tod, vot,false,
+	                        logger);
+                }else {
+	                autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
+	                        logger);                	
+                }
+                /*
                 double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
                         logger);
+                        */
                 return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost, autoSkims[stdIndex]);
             }
             case DRIVE_ALONE_TOLL:
@@ -199,13 +211,22 @@ public class SkimBuilder
                 distIndex = DA_TOLL_DIST_INDEX;
                 costIndex = DA_TOLL_COST_INDEX;
                 stdIndex  = DA_TOLL_STD_INDEX;
+                if(isCB && isOME(origin,destination) ) {
+	                autoSkims = autoNonMotSkims.getAutoSkimsByTAZ(mgraManager.getTaz(origin), mgraManager.getTaz(destination), tod, vot,false,
+	                        logger);
+                }else {
+	                autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
+	                        logger);                	
+                }
+                /*
                double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
                         logger);
+                        */
                 
                 //if IVT for toll is zero, get non-toll skim
                 if(autoSkims[timeIndex]==0){
                     getTripAttributes(TripModeChoice.DRIVE_ALONE_NO_TOLL, origin,
-                            destination, boardTap,  alightTap,  tod,  inbound,  vot, set);
+                            destination, boardTap,  alightTap,  tod,  inbound,  vot, set,isCB);
                 }
                 return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost, autoSkims[stdIndex], autoSkims[costIndex]);
             }
@@ -214,13 +235,22 @@ public class SkimBuilder
                 timeIndex = SR2_TIME_INDEX;
                 distIndex = SR2_DIST_INDEX;
                 costIndex = -1;
-                stdIndex  = SR2_STD_INDEX;               
+                stdIndex  = SR2_STD_INDEX;
+                if(isCB && isOME(origin,destination) ) {
+	                autoSkims = autoNonMotSkims.getAutoSkimsByTAZ(mgraManager.getTaz(origin), mgraManager.getTaz(destination), tod, vot,false,
+	                        logger);
+                }else {
+	                autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
+	                        logger);                	
+                }
+                /*
                 double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
                         logger);
+                        */
                 //if IVT for HOV is zero, get non-toll skim
                 if(autoSkims[timeIndex]==0){
                     getTripAttributes(TripModeChoice.DRIVE_ALONE_NO_TOLL, origin,
-                            destination, boardTap,  alightTap,  tod,  inbound,  vot, set);
+                            destination, boardTap,  alightTap,  tod,  inbound,  vot, set,isCB);
                 }
                 return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost, autoSkims[stdIndex]);
                             }
@@ -230,12 +260,21 @@ public class SkimBuilder
                 distIndex = SR2_TOLL_DIST_INDEX;
                 costIndex = SR2_TOLL_COST_INDEX;
                 stdIndex  = SR2_TOLL_STD_INDEX;
+                if(isCB && isOME(origin,destination) ) {
+	                autoSkims = autoNonMotSkims.getAutoSkimsByTAZ(mgraManager.getTaz(origin), mgraManager.getTaz(destination), tod, vot,false,
+	                        logger);
+                }else {
+	                autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
+	                        logger);                	
+                }
+                /*
                 double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
                         logger);
+                        */
                 //if IVT for toll is zero, get non-toll HOV skim
                 if(autoSkims[timeIndex]==0){
                     getTripAttributes(TripModeChoice.SR2_HOV, origin,
-                            destination, boardTap,  alightTap,  tod,  inbound,  vot, set);
+                            destination, boardTap,  alightTap,  tod,  inbound,  vot, set,isCB);
                 }
                 return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost, autoSkims[stdIndex], autoSkims[costIndex]);
                             }
@@ -245,12 +284,21 @@ public class SkimBuilder
                 distIndex = SR3_DIST_INDEX;
                 costIndex = -1;
                 stdIndex  = SR2_STD_INDEX;
+                if(isCB && isOME(origin,destination) ) {
+	                autoSkims = autoNonMotSkims.getAutoSkimsByTAZ(mgraManager.getTaz(origin), mgraManager.getTaz(destination), tod, vot,false,
+	                        logger);
+                }else {
+	                autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
+	                        logger);                	
+                }
+                /*
                 double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
                         logger);
+                        */
                 //if IVT for HOV is zero, get non-HOV skim
                 if(autoSkims[timeIndex]==0){
                     getTripAttributes(TripModeChoice.DRIVE_ALONE_NO_TOLL, origin,
-                            destination, boardTap,  alightTap,  tod,  inbound,  vot, set);
+                            destination, boardTap,  alightTap,  tod,  inbound,  vot, set,isCB);
                 }
                 return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost, autoSkims[stdIndex]);
             }
@@ -260,12 +308,21 @@ public class SkimBuilder
                 distIndex = SR3_TOLL_DIST_INDEX;
                 costIndex = SR3_TOLL_COST_INDEX;
                 stdIndex  = SR3_TOLL_STD_INDEX;
+                if(isCB && isOME(origin,destination) ) {
+	                autoSkims = autoNonMotSkims.getAutoSkimsByTAZ(mgraManager.getTaz(origin), mgraManager.getTaz(destination), tod, vot,false,
+	                        logger);
+                }else {
+	                autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
+	                        logger);                	
+                }
+                /*
                 double[] autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
                         logger);
+                        */
                 //if IVT for toll is zero, get non-toll HOV skim
                 if(autoSkims[timeIndex]==0){
                     getTripAttributes(TripModeChoice.SR3_HOV, origin,
-                            destination, boardTap,  alightTap,  tod,  inbound,  vot, set);
+                            destination, boardTap,  alightTap,  tod,  inbound,  vot, set,isCB);
                 }
                 return new TripAttributes(autoSkims[timeIndex], autoSkims[distIndex], autoSkims[distIndex]*autoOperatingCost, autoSkims[stdIndex], autoSkims[costIndex]);
             }
@@ -458,6 +515,13 @@ public class SkimBuilder
                 throw new IllegalStateException("Should not be here: " + modeChoice);
         }
     }
+    
+    private boolean isOME(int omgra, int dmgra) {
+    	boolean result=false;
+    	if (omgra==7123 || dmgra==7123) result=true;
+    	return result;
+    }
+
 
     public static enum TripModeChoice
     {
