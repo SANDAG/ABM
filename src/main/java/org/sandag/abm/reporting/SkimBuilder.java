@@ -172,6 +172,7 @@ public class SkimBuilder
 
     private final float DEFAULT_BIKE_SPEED = 12;
     private final float DEFAULT_WALK_SPEED = 3;
+    private int omeMgra=7123;
 
     private TripAttributes getTripAttributes(TripModeChoice modeChoice, int origin,
             int destination, int boardTap, int alightTap, int tod, boolean inbound, float vot, int set, boolean isCB)
@@ -180,6 +181,9 @@ public class SkimBuilder
         int distIndex = -1;
         int costIndex = -1;
         int stdIndex  = -1;
+        int otaz=-1;
+        int dtaz=-1;
+
         double [] autoSkims;
       
         switch (modeChoice)
@@ -192,8 +196,11 @@ public class SkimBuilder
                 distIndex = DA_DIST_INDEX;
                 costIndex = -1;
                 stdIndex  = DA_STD_INDEX;
-                if(isCB && isOME(origin,destination) ) {
-	                autoSkims = autoNonMotSkims.getAutoSkimsByTAZ(mgraManager.getTaz(origin), mgraManager.getTaz(destination), tod, vot,false,
+                if(isCB && (origin==omeMgra||destination==omeMgra)) {
+                	int[] tazPair=setTazOD(origin, destination);
+                	otaz=tazPair[0];
+                	dtaz=tazPair[1];
+	                autoSkims = autoNonMotSkims.getAutoSkimsByTAZ(otaz, dtaz, tod, vot,false,
 	                        logger);
                 }else {
 	                autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
@@ -211,8 +218,11 @@ public class SkimBuilder
                 distIndex = DA_TOLL_DIST_INDEX;
                 costIndex = DA_TOLL_COST_INDEX;
                 stdIndex  = DA_TOLL_STD_INDEX;
-                if(isCB && isOME(origin,destination) ) {
-	                autoSkims = autoNonMotSkims.getAutoSkimsByTAZ(mgraManager.getTaz(origin), mgraManager.getTaz(destination), tod, vot,false,
+                if(isCB && (origin==omeMgra||destination==omeMgra)) {
+                	int[] tazPair=setTazOD(origin, destination);
+                	otaz=tazPair[0];
+                	dtaz=tazPair[1];
+	                autoSkims = autoNonMotSkims.getAutoSkimsByTAZ(otaz, dtaz, tod, vot,false,
 	                        logger);
                 }else {
 	                autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
@@ -236,8 +246,11 @@ public class SkimBuilder
                 distIndex = SR2_DIST_INDEX;
                 costIndex = -1;
                 stdIndex  = SR2_STD_INDEX;
-                if(isCB && isOME(origin,destination) ) {
-	                autoSkims = autoNonMotSkims.getAutoSkimsByTAZ(mgraManager.getTaz(origin), mgraManager.getTaz(destination), tod, vot,false,
+                if(isCB && (origin==omeMgra||destination==omeMgra)) {
+                	int[] tazPair=setTazOD(origin, destination);
+                	otaz=tazPair[0];
+                	dtaz=tazPair[1];
+	                autoSkims = autoNonMotSkims.getAutoSkimsByTAZ(otaz, dtaz, tod, vot,false,
 	                        logger);
                 }else {
 	                autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
@@ -260,8 +273,11 @@ public class SkimBuilder
                 distIndex = SR2_TOLL_DIST_INDEX;
                 costIndex = SR2_TOLL_COST_INDEX;
                 stdIndex  = SR2_TOLL_STD_INDEX;
-                if(isCB && isOME(origin,destination) ) {
-	                autoSkims = autoNonMotSkims.getAutoSkimsByTAZ(mgraManager.getTaz(origin), mgraManager.getTaz(destination), tod, vot,false,
+                if(isCB && (origin==omeMgra||destination==omeMgra)) {
+                	int[] tazPair=setTazOD(origin, destination);
+                	otaz=tazPair[0];
+                	dtaz=tazPair[1];
+	                autoSkims = autoNonMotSkims.getAutoSkimsByTAZ(otaz, dtaz, tod, vot,false,
 	                        logger);
                 }else {
 	                autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
@@ -284,8 +300,11 @@ public class SkimBuilder
                 distIndex = SR3_DIST_INDEX;
                 costIndex = -1;
                 stdIndex  = SR2_STD_INDEX;
-                if(isCB && isOME(origin,destination) ) {
-	                autoSkims = autoNonMotSkims.getAutoSkimsByTAZ(mgraManager.getTaz(origin), mgraManager.getTaz(destination), tod, vot,false,
+                if(isCB && (origin==omeMgra||destination==omeMgra)) {
+                	int[] tazPair=setTazOD(origin, destination);
+                	otaz=tazPair[0];
+                	dtaz=tazPair[1];
+	                autoSkims = autoNonMotSkims.getAutoSkimsByTAZ(otaz, dtaz, tod, vot,false,
 	                        logger);
                 }else {
 	                autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
@@ -308,8 +327,11 @@ public class SkimBuilder
                 distIndex = SR3_TOLL_DIST_INDEX;
                 costIndex = SR3_TOLL_COST_INDEX;
                 stdIndex  = SR3_TOLL_STD_INDEX;
-                if(isCB && isOME(origin,destination) ) {
-	                autoSkims = autoNonMotSkims.getAutoSkimsByTAZ(mgraManager.getTaz(origin), mgraManager.getTaz(destination), tod, vot,false,
+                if(isCB && (origin==omeMgra||destination==omeMgra)) {
+                	int[] tazPair=setTazOD(origin, destination);
+                	otaz=tazPair[0];
+                	dtaz=tazPair[1];
+	                autoSkims = autoNonMotSkims.getAutoSkimsByTAZ(otaz, dtaz, tod, vot,false,
 	                        logger);
                 }else {
 	                autoSkims = autoNonMotSkims.getAutoSkims(origin, destination, tod, vot,false,
@@ -516,9 +538,13 @@ public class SkimBuilder
         }
     }
     
-    private boolean isOME(int omgra, int dmgra) {
-    	boolean result=false;
-    	if (omgra==7123 || dmgra==7123) result=true;
+    private int[] setTazOD(int omgra, int dmgra) {
+    	int [] result=new int[2];
+    	//int omeMgra=7123;
+    	result [0]=mgraManager.getTaz(omgra);
+    	result [1]=mgraManager.getTaz(dmgra);
+    	if (omgra==omeMgra) result[0]=3;
+    	if (dmgra==omeMgra) result[1]=3;
     	return result;
     }
 
