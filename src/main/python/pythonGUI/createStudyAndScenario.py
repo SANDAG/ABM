@@ -198,10 +198,7 @@ class CreateScenarioGUI(Tkinter.Frame):
         def executeBatch(self, type):
             self.popup.destroy()
             if type=="scenario":
-                if self.year=="2035nb":
-                   commandstr=u"create_scenario.cmd "+self.scenariopath.get()+" "+self.year+" "+self.networkpath.get().rstrip("nb")
-                else:
-                   commandstr=u"create_scenario.cmd "+self.scenariopath.get()+" "+self.year+" "+self.networkpath.get()
+                commandstr=u"create_scenario.cmd "+self.scenariopath.get()+" "+self.year+" "+self.networkpath.get()
             elif type=="study":
                 commandstr=u"copy_networkfiles_to_study.cmd "+self.studypath.get()+" "+self.studynetworkpath.get()
             print commandstr
