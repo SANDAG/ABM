@@ -239,6 +239,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         init_transit_db = modeller.tool("sandag.initialize.initialize_transit_database")
         init_matrices = modeller.tool("sandag.initialize.initialize_matrices")
         import_demand = modeller.tool("sandag.import.import_seed_demand")
+        import_from_db = _m.Modeller().tool("inro.emme.data.database.import_from_database")
         build_transit_scen = modeller.tool("sandag.assignment.build_transit_scenario")
         transit_assign = modeller.tool("sandag.assignment.transit_assignment")
         run_truck = modeller.tool("sandag.model.truck.run_truck_model")
@@ -406,7 +407,16 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     # initialize per time-period scenarios
                     for number, period in period_ids:
                         title = "%s - %s assign" % (base_scenario.title, period)
-                        copy_scenario(base_scenario, number, title, overwrite=True)
+                        if base_scenario.emmebank.path == modeller.emmebank.path:
+                            copy_scenario(base_scenario, number, title, overwrite=True)
+                        else:
+                            import_from_db(
+                                src_database=base_scenario.emmebank,
+                                src_zone_system_scenario=[base_scenario],
+                                src_scenario_ids=base_scenario.id,
+                                dst_database=modeller.emmebank,
+                                dst_zone_system_scenario=modeller.emmebank.scenario(100)
+                            )
                 else:
                     base_scenario = main_emmebank.scenario(scenario_id)
 
