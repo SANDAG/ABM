@@ -24,8 +24,7 @@ rem create toolbox
 python .\\common\\python\\emme\\toolbox\\build_toolbox.py -s .\\common\\python\\emme\\toolbox -p %SCENARIO_FOLDER%\emme_project\Scripts\sandag_toolbox.mtbx
 
 rem create a batch script at startup
-echo set python_virtualenv=C:\python_virtualenv\abm14_2_0>%SCENARIO_FOLDER%\emme_project\start_emme_with_virtualenv.bat
-echo "%E_PATH%\\programs\\EmmeDesktop.exe" ./emme_project.emp>%SCENARIO_FOLDER%\emme_project\start_emme_with_virtualenv.bat
+echo set python_virtualenv=C:\python_virtualenv\abm14_2_0 & "%E_PATH%\\programs\\EmmeDesktop.exe" ./emme_project.emp>%SCENARIO_FOLDER%\emme_project\start_emme_with_virtualenv.bat
 
 rem mkdir %SCENARIO_FOLDER%\emme_project\Scripts\yaml
 rem copy .\\common\\python\\emme\\yaml\\*.* %SCENARIO_FOLDER%\emme_project\Scripts\yaml
