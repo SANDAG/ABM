@@ -252,6 +252,75 @@ public class AutoAndNonMotorizedSkimsCalculator
         return autoSkims;
 
     }
+    
+  //Wu modified for xborder trips; 9/27/2019
+    public double[] getAutoSkimsByTAZ(int origTAZ, int destTAZ, int departPeriod, float vot, boolean debug,
+            Logger logger)
+    {
+
+        String separator = "";
+        String header = "";
+        if (debug)
+        {
+            logger.info("");
+            logger.info("");
+            header = "get auto skims debug info for origTaz=" + origTAZ + ", destTaz="
+                    + destTAZ + ", period index=" + departPeriod + ", period label="
+                    + PERIODS[departPeriod];
+            for (int i = 0; i < header.length(); i++)
+                separator += "^";
+        }
+
+        // assign a helper UEC object to the array element for the desired
+        // departure
+        // time period
+        UtilityExpressionCalculator autoSkimUEC = autoSkimUECs[departPeriod];
+
+        // declare the array to hold the skim values, which will be returned
+        double[] autoSkims = null;
+
+        if (origTAZ > 0 && destTAZ > 0)
+        {
+
+            int oTaz = origTAZ;
+            int dTaz = destTAZ;
+
+            iv.setOriginZone(oTaz);
+            iv.setDestZone(dTaz);
+            
+            autoSkimsDMU.setVOT(vot);
+
+            // use the UEC to return skim values for the orign/destination TAZs
+            // associated with the MGRAs
+            autoSkims = autoSkimUEC.solve(iv, autoSkimsDMU, null);
+            if (debug)
+                autoSkimUEC.logAnswersArray(logger, String.format(
+                        "autoSkimUEC:  oTaz=%d, dTaz=%d, period=%d", origTAZ, destTAZ,
+                        departPeriod));
+
+        }
+
+        if (debug)
+        {
+
+            logger.info(separator);
+            logger.info(header);
+            logger.info(separator);
+
+            logger.info("auto skims array values");
+            logger.info(String.format("%5s %40s %15s", "i", "skimName", "value"));
+            logger.info(String.format("%5s %40s %15s", "-----", "----------", "----------"));
+            for (int i = 0; i < autoSkims.length; i++)
+            {
+                logger.info(String.format("%5d %40s %15.2f", i, AUTO_SKIM_DESCRIPTIONS[i],
+                        autoSkims[i]));
+            }
+
+        }
+
+        return autoSkims;
+
+    }
 
     /**
      * Get the non-motorized skims.
