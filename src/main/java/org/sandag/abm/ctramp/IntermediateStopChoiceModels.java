@@ -4937,7 +4937,8 @@ public class IntermediateStopChoiceModels
             logger.error(String
                     .format("Exception caught for HHID=%d, personNum=%d, no available parking location alternatives in tourId=%d to choose from in plcModelApplication.",
                             household.getHhId(), person.getPersonNum(), tour.getTourId()));
-            throw new RuntimeException();
+            return stop.getDest();
+            //throw new RuntimeException();
         }
 
     }
