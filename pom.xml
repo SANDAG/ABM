@@ -653,7 +653,8 @@
         <dependency>
             <groupId>pb</groupId>
             <artifactId>common-base</artifactId>
-            <version>2018-01-19-ABM</version>
+            <version>2019-10-15-ABM</version>
+            <classifier>ABM</classifier>
         </dependency>
         <dependency>
             <groupId>pb</groupId>

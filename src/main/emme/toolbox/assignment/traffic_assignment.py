@@ -13,38 +13,38 @@
 #//////////////////////////////////////////////////////////////////////////////
 #
 #
-# The Traffic assignment tool runs the traffic assignment and skims per 
+# The Traffic assignment tool runs the traffic assignment and skims per
 # period on the current primary scenario.
 #
-# The traffic assignment is a 14-class assignment with generalized cost on 
-# links and BPR-type volume-delay functions which include capacities on links 
-# and at intersection approaches. The assignment is run using the 
-# fast-converging Second-Order Linear Approximation (SOLA) method in Emme to 
-# a relative gap of 5x10-4. The per-link fixed costs include toll values and 
-# operating costs which vary by class of demand (see Table 6 for the complete 
+# The traffic assignment is a 14-class assignment with generalized cost on
+# links and BPR-type volume-delay functions which include capacities on links
+# and at intersection approaches. The assignment is run using the
+# fast-converging Second-Order Linear Approximation (SOLA) method in Emme to
+# a relative gap of 5x10-4. The per-link fixed costs include toll values and
+# operating costs which vary by class of demand (see Table 6 for the complete
 # list of classes). Assignment matrices and resulting network flows are always in PCE.
 #
 # Inputs:
 #   period: the time-of-day period, one of EA, AM, MD, PM, EV.
-#   msa_iteration: global iteration number. If greater than 1, existing flow 
-#       values must be present and the resulting flows on links and turns will 
+#   msa_iteration: global iteration number. If greater than 1, existing flow
+#       values must be present and the resulting flows on links and turns will
 #       be the weighted average of this assignment and the existing values.
 #   relative_gap: minimum relative stopping criteria.
 #   max_iterations: maximum iterations stopping criteria.
 #   num_processors: number of processors to use for the traffic assignments.
-#   select_link: specify one or more select link analysis setups as a list of 
+#   select_link: specify one or more select link analysis setups as a list of
 #       specifications with three keys:
-#           "expression": selection expression to identify the link(s) of interest. 
-#           "suffix": the suffix to use in the naming of per-class result 
+#           "expression": selection expression to identify the link(s) of interest.
+#           "suffix": the suffix to use in the naming of per-class result
 #               attributes and matrices, up to 6 characters.
-#           "threshold": the minimum number of links which must be encountered 
+#           "threshold": the minimum number of links which must be encountered
 #               for the path selection.
 #        Example:
 #   select_link = [
 #       {"expression": "@tov_id=4578 or @tcov_id=9203", "suffix": "fwy", "threshold": "1"}
 #   ]
-#   raise_zero_dist: if checked, the distance skim for the SOVGP is checked for 
-#       any zero values, which would indicate a disconnected zone, in which case 
+#   raise_zero_dist: if checked, the distance skim for the SOVGP is checked for
+#       any zero values, which would indicate a disconnected zone, in which case
 #       an error is raised and the model run is halted.
 #
 # Matrices:
@@ -76,7 +76,7 @@ periods = ["EA", "AM", "MD", "PM", "EV"]
 period_ids = list(enumerate(periods, start=int(scenario_id) + 1))
 
 msa_iteration = 1
-relative_gap = 0.005
+relative_gap = 0.0005
 max_assign_iterations = 100
 num_processors = "MAX-1"
 select_link = None  # Optional select link specification
@@ -192,21 +192,21 @@ Assign traffic demand for the selected time period."""
     </div>
     <div>
         <p>
-            <strong>Expression:</strong> Emme selection expression to identify the link(s) of interest. 
+            <strong>Expression:</strong> Emme selection expression to identify the link(s) of interest.
             Examples and available attributes below.
         </p>
         <p>
-            <strong>Result suffix:</strong> the suffix to use in the naming of per-class result 
-            attributes and matrices, up to 6 characters. 
+            <strong>Result suffix:</strong> the suffix to use in the naming of per-class result
+            attributes and matrices, up to 6 characters.
             Should be unique (existing attributes / matrices will be overwritten).
         </p>
         <p>
-            <strong>Threshold:</strong> the minimum number of links which must be encountered 
-            for the path selection. 
+            <strong>Threshold:</strong> the minimum number of links which must be encountered
+            for the path selection.
             The default value of 1 indicates an "any" link selection.
         </p>
         <p>
-            Expression selection help: use one (or more) selection criteria of the form 
+            Expression selection help: use one (or more) selection criteria of the form
             <tt>attribute=value</tt> or <tt>attribute=min,max</tt>.
             Multiple criteria may be combined with 'and' ('&'), 'or' ('|'), and
             'xor' ('^'). Use 'not' ('!') in front or a criteria to negate it. <br>
@@ -225,8 +225,8 @@ Assign traffic demand for the selected time period."""
         </p>
         <p>
             Result link and turn flows will be saved in extra attributes
-            <tt>@sel_XX_NAME_SUFFIX</tt>, where XX is the period, NAME is 
-            the class name, and SUFFIX is the specified result suffix. 
+            <tt>@sel_XX_NAME_SUFFIX</tt>, where XX is the period, NAME is
+            the class name, and SUFFIX is the specified result suffix.
             The selected O-D demand will be saved in SELDEM_XX_NAME_SUFFIX.
         </p>
     </div>
@@ -271,7 +271,7 @@ Assign traffic demand for the selected time period."""
                 text += '</tr>';
                 $("#ref_select_link").append(text);
                 var select_items = ["expression", "suffix", "threshold"]
-                for (var i = 0; i < select_items.length; i++) { 
+                for (var i = 0; i < select_items.length; i++) {
                     var jq_obj = $('#select_link_' + select_items[i] + "_" + num);
                     jq_obj.val(this.value[num][select_items[i]]);
                     jq_obj.bind('change', function (){
@@ -287,7 +287,7 @@ Assign traffic demand for the selected time period."""
                 this.update_text_field();
             },
             preload: function( ) {
-                for (var i = 0; i < this.value.length; i++) { 
+                for (var i = 0; i < this.value.length; i++) {
                     this.add_select_row_ui()
                 }
             }
@@ -670,7 +670,7 @@ Assign traffic demand for the selected time period."""
             for name, description in link_attributes:
                 create_attribute("LINK", name, description,
                                  0, overwrite=True, scenario=scenario)
-            create_attribute("TURN", "@auto_time_turn", "traffic turn time (ptimau)", 
+            create_attribute("TURN", "@auto_time_turn", "traffic turn time (ptimau)",
                              overwrite=True, scenario=scenario)
 
             net_calc("@hovdist", "length", {"link": "@lane_restriction=2,3"})
@@ -692,7 +692,7 @@ Assign traffic demand for the selected time period."""
                 # split function into time component and reliability component
                 time_expr, reliability_expr = expression.split("*(1+@sta_reliability+")
                 net_calc("@auto_time", time_expr, {"link": "vdf=%s" % function.id[2:]})
-                net_calc("@reliability", "(@sta_reliability+" + reliability_expr, 
+                net_calc("@reliability", "(@sta_reliability+" + reliability_expr,
                          {"link": "vdf=%s" % function.id[2:]})
 
             net_calc("@reliability_sq", "@reliability**2", {"link": "modes=d"})
@@ -862,7 +862,7 @@ Assign traffic demand for the selected time period."""
         num_zones = len(scenario.zone_numbers)
         num_cells = num_zones ** 2
         text.append("""
-            Number of zones: %s. Number of O-D pairs: %s. 
+            Number of zones: %s. Number of O-D pairs: %s.
             Values outside -9999999, 9999999 are masked in summaries.<br>""" % (num_zones, num_cells))
         text.append("%-25s %9s %9s %9s %13s %9s" % ("name", "min", "max", "mean", "sum", "mask num"))
         for name in matrices:
