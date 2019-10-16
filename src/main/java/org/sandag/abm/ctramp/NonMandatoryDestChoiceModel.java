@@ -1,5 +1,7 @@
 package org.sandag.abm.ctramp;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +39,7 @@ import org.sandag.abm.ctramp.TourModeChoiceModel;
 import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+import org.sandag.abm.visitor.VisitorTour;
 public class NonMandatoryDestChoiceModel
         implements Serializable
 {
@@ -69,7 +72,15 @@ public class NonMandatoryDestChoiceModel
     private static final String                  PROPERTIES_DC_SOA_EATOUT_MODEL_SHEET       = "nmdc.soa.eat.model.page";
     private static final String                  PROPERTIES_DC_SOA_VISIT_MODEL_SHEET        = "nmdc.soa.visit.model.page";
     private static final String                  PROPERTIES_DC_SOA_DISCR_MODEL_SHEET        = "nmdc.soa.discr.model.page";
-
+    
+    private static final String 				 PROPERTIES_DC_SAMPLE_TOD_PERIOD            = "nmdc.SampleTODPeriod";
+    private static final String 				 PROPERTIES_SAMPLE_TOD_PERIOD_FILE          = "nmdc.SampleTODPeriod.file";
+    private boolean sampleTODPeriod = false;
+    private double[][]       cumProbability;  // by purpose, alternative: cumulative probability distribution
+    private int[][]          outboundPeriod;  // by purpose, alternative: outbound period 
+    private int[][]          returnPeriod;    // by purpose, alternative: return period
+   
+    
     private static final String[]                TOUR_PURPOSE_NAMES                         = {
             ModelStructure.ESCORT_PRIMARY_PURPOSE_NAME,
             ModelStructure.SHOPPING_PRIMARY_PURPOSE_NAME,
@@ -185,9 +196,170 @@ public class NonMandatoryDestChoiceModel
         // purpose
         setupDestChoiceModelArrays(propertyMap, dmuFactory);
 
+        sampleTODPeriod = Util.getBooleanValueFromPropertyMap(propertyMap, PROPERTIES_DC_SAMPLE_TOD_PERIOD);
+        String directory = Util.getStringValueFromPropertyMap(propertyMap, "Project.Directory");
+        String diurnalFile = Util.getStringValueFromPropertyMap(propertyMap,
+        		PROPERTIES_SAMPLE_TOD_PERIOD_FILE);
+        diurnalFile = directory + diurnalFile;
+
+        if(sampleTODPeriod)
+        	readTODFile(diurnalFile);
     }
 
-    private void setupDestChoiceModelArrays(HashMap<String, String> propertyMap,
+    /**
+     * Read the TOD distribution in the file and populate the arrays.
+     * 
+     * @param fileName
+     */
+    private void readTODFile(String fileName)
+    {
+
+        logger.info("Begin reading the data in file " + fileName);
+        TableDataSet probabilityTable;
+
+        try
+        {
+            OLD_CSVFileReader csvFile = new OLD_CSVFileReader();
+            probabilityTable = csvFile.readFile(new File(fileName));
+        } catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        logger.info("End reading the data in file " + fileName);
+
+        logger.info("Begin calculating tour TOD probability distribution");
+
+        int purposes = PERIOD_COMBINATIONS.length; // start at 0
+        int periods = ModelStructure.MAX_TOD_INTERVAL; // start at 1
+        int periodCombinations = periods * (periods + 1) / 2;
+
+        cumProbability = new double[purposes][periodCombinations]; 
+        outboundPeriod = new int[purposes][periodCombinations]; 
+        returnPeriod = new int[purposes][periodCombinations]; 
+
+        // fill up arrays
+        int rowCount = probabilityTable.getRowCount();
+        int lastPurpose = -99;
+        double cumProb = 0;
+        int alt = 0;
+        for (int row = 1; row <= rowCount; ++row)
+        {
+
+            int purpose = (int) probabilityTable.getValueAt(row, "Purpose");
+            int outPer = (int) probabilityTable.getValueAt(row, "OutboundPeriod");
+            int retPer = (int) probabilityTable.getValueAt(row, "ReturnPeriod");
+
+            // continue if return period before outbound period
+            if (retPer < outPer) continue;
+
+            // reset if new purpose
+            if (purpose != lastPurpose)
+            {
+
+                // log cumulative probability just in case
+                if (lastPurpose != -99)
+                    logger.info("Cumulative probability for purpose " + purpose + " is " + cumProb);
+                cumProb = 0;
+                alt = 0;
+            }
+
+            // calculate cumulative probability and store in array
+            cumProb += probabilityTable.getValueAt(row, "Percent");
+            cumProbability[purpose][alt] = cumProb;
+            outboundPeriod[purpose][alt] = outPer;
+            returnPeriod[purpose][alt] = retPer;
+
+            ++alt;
+
+            lastPurpose = purpose;
+        }
+
+        logger.info("End calculating tour TOD probability distribution");
+
+    }
+    
+    /**
+     * Calculate tour time of day for the tour.
+     * 
+     * @param tour
+     *            A tour (with purpose)
+     */
+    public double sampleTODPeriodAndCalculateDCLogsum(Person person, Tour tour, int sampleDestMgra)
+    {
+    	
+        Logger modelLogger = todMcLogger;
+        String choiceModelDescription = "";
+        String decisionMakerLabel = "";
+        String loggingHeader = "";
+        
+        Household household = person.getHouseholdObject();
+    	double random = household.getHhRandom().nextDouble();
+        int purpose = purposeNameIndexMap.get(tour.getTourPurpose());
+
+        int depart = -1;
+        int arrive = -1;
+        if (household.getDebugChoiceModels())
+        {
+            logger.info("Choosing tour time of day for purpose "
+                    + tour.getTourPurpose() + " using random number " + random);
+            tour.logTourObject(logger, 100);
+        }
+
+        for (int i = 0; i < cumProbability[purpose].length; ++i)
+        {
+
+            if (random < cumProbability[purpose][i])
+            {
+                depart = outboundPeriod[purpose][i];
+                arrive = returnPeriod[purpose][i];
+                break;
+            }
+        }
+        if((depart ==-1)||(arrive==-1)){
+        	logger.fatal("Error: did not find outbound or return period for tour");
+        	logger.fatal("Depart period, arrive period = "+depart+","+arrive);
+        	logger.fatal("Random number: "+random);
+        	tour.logTourObject(logger,100);
+        	throw new RuntimeException();
+        }
+        	
+
+        if (household.getDebugChoiceModels())
+        {
+            logger.info("");
+            logger.info("Chose depart period " + depart + " and arrival period "
+                    + arrive);
+            logger.info("");
+        }
+        
+         // set the mode choice attributes needed by @variables in the UEC spreadsheets
+        setModeChoiceDmuAttributes(household, person, tour, depart, arrive, sampleDestMgra);
+
+        double logsum = -999;
+        try
+        {
+        	logsum = mcModel.getModeChoiceLogsum(mcDmuObject, tour,
+                        modelLogger, choiceModelDescription, decisionMakerLabel);
+        } catch (Exception e)
+        {
+        	logger.fatal("exception caught applying mcModel.getModeChoiceLogsum() for "
+                         + tour.getTourPrimaryPurpose() + " tour.");
+            logger.fatal("choiceModelDescription = " + choiceModelDescription);
+            logger.fatal("decisionMakerLabel = " + decisionMakerLabel);
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    
+        if (household.getDebugChoiceModels())
+        	modelLogger.info("Mode choice logsum for sampled mgra = " + logsum);
+
+        return logsum;
+        
+    }
+
+
+     private void setupDestChoiceModelArrays(HashMap<String, String> propertyMap,
             CtrampDmuFactoryIf dmuFactory)
     {
 
@@ -601,7 +773,12 @@ public class NonMandatoryDestChoiceModel
 
             // set logsum value in DC dmuObject for the logsum index, sampled
             // zone and subzone.
-            double logsum = calculateSimpleTODChoiceLogsum(person, tour, destMgra, i);
+            double logsum = -999;
+            if(sampleTODPeriod)
+            	logsum = sampleTODPeriodAndCalculateDCLogsum(person, tour, destMgra);
+            else
+            	logsum = calculateSimpleTODChoiceLogsum(person, tour, destMgra, i);
+            
             dcDmuObject.setMcLogsum(destMgra, logsum);
 
             // set sample of alternatives correction factor used in destination
@@ -815,7 +992,11 @@ public class NonMandatoryDestChoiceModel
 
             // set logsum value in DC dmuObject for the logsum index, sampled
             // zone and subzone.
-            double logsum = calculateSimpleTODChoiceLogsum(person, tour, destMgra, i);
+            double logsum = -999;
+            if(sampleTODPeriod)
+            	logsum = sampleTODPeriodAndCalculateDCLogsum(person, tour, destMgra);
+            else
+            	logsum = calculateSimpleTODChoiceLogsum(person, tour, destMgra, i);
             dcDistSoaDmuObject.setMcLogsum(i, logsum);
 
             // set availaibility and sample values for the purpose, dcAlt.
@@ -967,43 +1148,7 @@ public class NonMandatoryDestChoiceModel
 
     }
 
-    
-    private double calculateSampleTODChoiceLogsum(Person person, Tour tour, int sampleDestMgra, int sampleNum) {
-    	
-        Household household = person.getHouseholdObject();
-
-        Arrays.fill(needToComputeLogsum, true);
-        Arrays.fill(modeChoiceLogsums, -999);
-
-        Logger modelLogger = todMcLogger;
-        String choiceModelDescription = "";
-        String decisionMakerLabel = "";
-        String loggingHeader = "";
-        if (household.getDebugChoiceModels())
-        {
-            choiceModelDescription = String
-                    .format("Non-Mandatory Sample TOD logsum calculations for %s Location Choice, Sample Number %d",
-                            tour.getTourPurpose(), sampleNum);
-            decisionMakerLabel = String.format(
-                    "HH=%d, PersonNum=%d, PersonType=%s, tourId=%d of %d non-mand tours",
-                    household.getHhId(), person.getPersonNum(), person.getPersonType(),
-                    tour.getTourId(), person.getListOfIndividualNonMandatoryTours().size());
-            loggingHeader = String.format("%s    %s", choiceModelDescription, decisionMakerLabel);
-
-        }
-        
-        int tourPurposeIndex = purposeNameIndexMap.get(tour.getTourPurpose());
-        
-        
-        double rn = household.getHhRandom().nextDouble();
-        
-        
-        
-        
-        return 0f;
-    }
-    
-    
+   
     /**
      * This method calculates TOD choice logsum for the person, tour and sampled destination.
      * @param person
