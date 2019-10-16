@@ -66,11 +66,11 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
         pb.description = """
     <p align="left">
         Utility tool to manually manage the use of the local drive for subsequent model run.
-        The remote data can be downloaded (copied) to the local drive; 
-        or the local data can be uploaded to the remote drive. 
+        The remote data can be downloaded (copied) to the local drive;
+        or the local data can be uploaded to the remote drive.
         In normal operation this tool does not need to run manually, but in case of an
-        error it may be necessary to upload the project data in order to run on 
-        a different machine, or operate directly on the server.        
+        error it may be necessary to upload the project data in order to run on
+        a different machine, or operate directly on the server.
     </p>
     <p align="left">
     Note that file masks are used from config/sandag_abm.properties to identify which
@@ -108,7 +108,7 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
     def run(self):
         self.tool_run_msg = ""
         try:
-            self(self.operation, self.remote_dir, self.user_folder, self.scenario_id, 
+            self(self.operation, self.remote_dir, self.user_folder, self.scenario_id,
                  self.initialize, self.delete_local_files)
             run_msg = "File copying complete"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
@@ -173,7 +173,7 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
                     # _m.Modeller().desktop.data_explorer().add_database(path)
 
         # copy all files (except Emme project, and other file_masks)
-        self._copy_dir(src=remote_dir, dst=local_dir, 
+        self._copy_dir(src=remote_dir, dst=local_dir,
                        file_masks=file_masks, check_metadata=not initialize)
         self.log_report()
         return local_dir
@@ -184,7 +184,7 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
         user_folder = user_folder or os.environ.get("USERNAME")
         user_directory = _join(self.LOCAL_ROOT, user_folder)
         local_dir = _join(user_directory, folder_name)
-    
+
         self._report = []
         self._stats = {"size": 0, "count": 0}
         if not file_masks:
@@ -259,7 +259,7 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
                     dst_db = _eb.create(dst_db_path, src_db.dimensions)
 
             dst_db.title = title_fcn(src_db.title)
-            for prop in ["coord_unit_length", "unit_of_length", "unit_of_cost", 
+            for prop in ["coord_unit_length", "unit_of_length", "unit_of_cost",
                          "unit_of_energy", "use_engineering_notation", "node_number_digits"]:
                 setattr(dst_db, prop, getattr(src_db, prop))
 
@@ -329,8 +329,22 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
                 self._stats["size"] += size
                 self._stats["count"] += 1
                 # shutil.copy2 performs 5-10 times faster on download, and ~20% faster on upload
-                # than os.system copy calls 
-                _shutil.copy2(src_path, dst_path)
+                # than os.system copy calls
+                src_time = os.path.getmtime(src_path)
+                if name == 'persons.csv':
+                    src_time = os.path.getmtime(src_path)
+                    if os.path.exists(dst_path):
+                        dest_time = os.path.getmtime(dst_path)
+                        if dest_time <= src_time:
+                            _shutil.copy2(src_path, dst_path)
+                            print "dest_time <= ori_time, copied, dst_path", dst_path
+                        else:
+                            print "dest_time > ori_time, not copied, dst_path", dst_path
+                    else:
+                        _shutil.copy2(src_path, dst_path)
+                        print "dest file not exist, copied"
+                else:
+                    _shutil.copy2(src_path, dst_path)
                 self._report.append(_time.strftime("%c"))
             elif os.path.isdir(src_path):
                 if not os.path.exists(dst_path):
