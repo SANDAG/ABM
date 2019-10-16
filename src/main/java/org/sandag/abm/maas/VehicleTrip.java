@@ -76,6 +76,18 @@ public class VehicleTrip {
 			originPurpose = Purpose.PICKUP_ONLY;
 
 	}
+	public void addPickupIdsAtDestination(ArrayList<Integer> pickupIdsAtDestination) {
+		this.pickupIdsAtDestination.addAll(pickupIdsAtDestination);
+		
+		if(pickupIdsAtDestination.isEmpty())
+			return;
+		
+		if(destinationPurpose==Purpose.DROPOFF_ONLY)
+			destinationPurpose = Purpose.PICKUP_AND_DROPOFF;
+		else
+			destinationPurpose = Purpose.PICKUP_ONLY;
+
+	}
 	public ArrayList<Integer> getDropoffIdsAtOrigin() {
 		return dropoffIdsAtOrigin;
 	}
@@ -103,6 +115,18 @@ public class VehicleTrip {
 			originPurpose = Purpose.PICKUP_AND_DROPOFF;
 		else
 			originPurpose = Purpose.DROPOFF_ONLY;
+
+	}
+	public void addDropoffIdsAtDestination(ArrayList<Integer> dropoffIdsAtDestination) {
+		this.dropoffIdsAtDestination.addAll(dropoffIdsAtDestination);
+		
+		if(dropoffIdsAtDestination.isEmpty())
+			return;
+		
+		if(destinationPurpose==Purpose.PICKUP_ONLY)
+			destinationPurpose = Purpose.PICKUP_AND_DROPOFF;
+		else
+			destinationPurpose = Purpose.DROPOFF_ONLY;
 
 	}
 	public ArrayList<Integer> getPickupIdsAtDestination() {
