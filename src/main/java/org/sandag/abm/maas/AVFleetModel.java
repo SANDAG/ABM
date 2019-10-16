@@ -96,9 +96,9 @@ public class AVFleetModel {
 		
 		//create a person trip manager, read person trips
 		personTripManager = new PersonTripManager(propertyMap, iteration);
-		personTripManager.initialize();
-		personTripManager.groupPersonTripsByDepartureTimePeriodAndOrigin(minutesPerSimulationPeriod);
-		
+		personTripManager.initialize(minutesPerSimulationPeriod);
+
+
 		//create a vehicle manager
 		vehicleManager = new VehicleManager(propertyMap, transportCostManager, maxSharedTNCPassengers, minutesPerSimulationPeriod);
 		vehicleManager.initialize();
@@ -215,8 +215,8 @@ public class AVFleetModel {
 						if(vehicle.getNumberPassengers()>=vehicle.getMaxPassengers())
 							break;
 
-						if(!personTripManager.morePersonTripsInSimulationPeriodAndMaz(simulationPeriod,maz))
-							continue;
+						//if(!personTripManager.morePersonTripsInSimulationPeriodAndMaz(simulationPeriod,maz))
+						//	continue;
 						
 						//get a list of people leaving in this period from this MAZ
 						ArrayList<PersonTrip> potentialTrips = personTripManager.getPersonTripsByDepartureTimePeriodAndMaz(simulationPeriod, maz);
@@ -278,6 +278,7 @@ public class AVFleetModel {
 			
 			vehicleManager.routeActiveVehicles(skimPeriod, simulationPeriod, transportCostManager);
 			vehicleManager.freeVehicles(simulationPeriod);
+			vehicleManager.checkForRefuelingVehicles(skimPeriod, simulationPeriod);
 			
 			
 			logger.info("...Total simulated vehicles period "+simulationPeriod+" = "+vehicleManager.getTotalVehicles());

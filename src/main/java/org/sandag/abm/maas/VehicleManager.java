@@ -190,8 +190,13 @@ public class VehicleManager {
 				newTrip.setDestinationMaz(departureMaz);
 				newTrip.setDestinationTaz((short)departureTaz);
 				newTrip.setStartPeriod(simulationPeriod);
-				newTrip.setPickupIdsAtOrigin(pickupIdsAtOrigin);
-				newTrip.setDropoffIdsAtOrigin(dropoffIdsAtOrigin);
+				newTrip.setEndPeriod(simulationPeriod); //instantaneous arrivals? Need traveling vehicle queue...
+				if(lastTrip.getDestinationPurpose()==VehicleTrip.Purpose.REFUEL)
+					newTrip.setOriginPurpose(VehicleTrip.Purpose.REFUEL);
+				else {
+					newTrip.setPickupIdsAtOrigin(pickupIdsAtOrigin);
+					newTrip.setDropoffIdsAtOrigin(dropoffIdsAtOrigin);
+				}
 				vehicle.addVehicleTrip(newTrip);
 				
 				return vehicle;
@@ -431,6 +436,12 @@ public class VehicleManager {
 						//add pickups and dropoffs at origin from last trip
 						trip.addDropoffIdsAtOrigin(dropoffsAtDestinationOfLastTrip);	
 						trip.addPickupIdsAtOrigin(pickupsAtDestinationOfLastTrip);	
+						
+						//add pickup and dropoffs at origin of this trip to destination of last trip.
+						lastTrip.addDropoffIdsAtDestination(trip.getDropoffIdsAtOrigin());
+						lastTrip.addPickupIdsAtDestination(trip.getPickupIdsAtOrigin());
+						
+						
 	
 					}
 					
@@ -586,13 +597,12 @@ public class VehicleManager {
 
         		}
         			
-        		//remove all the refueling vehicles from the empty vehicle list
-        		emptyVehicleList[i].removeAll(vehiclesToRemove);
-        		
-        		//add them to the refueling vehicle list
-        		refuelingVehicleList.addAll(vehiclesToRemove);
-        			
         	}
+    		//remove all the refueling vehicles from the empty vehicle list
+    		emptyVehicleList[i].removeAll(vehiclesToRemove);
+    		
+    		//add them to the refueling vehicle list
+    		refuelingVehicleList.addAll(vehiclesToRemove);
         }
         
  		//track the vehicles to remove
@@ -618,6 +628,10 @@ public class VehicleManager {
         		vehicle.setDistanceSinceRefuel(0);
         		vehiclesToRemove.add(vehicle);
         		short refuelTaz = lastTrip.destinationTaz;
+
+        		if(emptyVehicleList[refuelTaz] == null)
+        			emptyVehicleList[refuelTaz] = new ArrayList<Vehicle>();
+
         		emptyVehicleList[refuelTaz].add(vehicle);
         	// else increment up the number of periods refueling	
         	}else  {

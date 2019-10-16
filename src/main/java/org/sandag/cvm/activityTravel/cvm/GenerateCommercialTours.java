@@ -686,7 +686,7 @@ public class GenerateCommercialTours implements Runnable, Callable<Object> {
 		try {
 			logger.info("Opening log file "+tripLogFile);
 			tripLog = new PrintWriter(new FileWriter(tripLogFile));
-			tripLog.println("Model,SerialNo,Person,Trip,Tour,HomeZone,ActorType,OPurp,DPurp,I,J,Time,Mode,StartTime,EndTime,StopDuration,TourType,OriginalTimePeriod,TripMode,TollAvailable");
+			tripLog.println("Model,SerialNo,Person,Trip,Tour,HomeZone,ActorType,OPurp,DPurp,I,J,TripTime,Mode,StartTime,EndTime,StopDuration,TourType,OriginalTimePeriod,TripMode,TollAvailable");
 		} catch (IOException e) {
 			logger.fatal("Can't open trip log file "+tripLogFile,e);
 			throw new RuntimeException("Can't open trip log file "+tripLogFile, e);

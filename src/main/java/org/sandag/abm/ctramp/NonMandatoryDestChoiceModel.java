@@ -967,6 +967,51 @@ public class NonMandatoryDestChoiceModel
 
     }
 
+    
+    private double calculateSampleTODChoiceLogsum(Person person, Tour tour, int sampleDestMgra, int sampleNum) {
+    	
+        Household household = person.getHouseholdObject();
+
+        Arrays.fill(needToComputeLogsum, true);
+        Arrays.fill(modeChoiceLogsums, -999);
+
+        Logger modelLogger = todMcLogger;
+        String choiceModelDescription = "";
+        String decisionMakerLabel = "";
+        String loggingHeader = "";
+        if (household.getDebugChoiceModels())
+        {
+            choiceModelDescription = String
+                    .format("Non-Mandatory Sample TOD logsum calculations for %s Location Choice, Sample Number %d",
+                            tour.getTourPurpose(), sampleNum);
+            decisionMakerLabel = String.format(
+                    "HH=%d, PersonNum=%d, PersonType=%s, tourId=%d of %d non-mand tours",
+                    household.getHhId(), person.getPersonNum(), person.getPersonType(),
+                    tour.getTourId(), person.getListOfIndividualNonMandatoryTours().size());
+            loggingHeader = String.format("%s    %s", choiceModelDescription, decisionMakerLabel);
+
+        }
+        
+        int tourPurposeIndex = purposeNameIndexMap.get(tour.getTourPurpose());
+        
+        
+        double rn = household.getHhRandom().nextDouble();
+        
+        
+        
+        
+        return 0f;
+    }
+    
+    
+    /**
+     * This method calculates TOD choice logsum for the person, tour and sampled destination.
+     * @param person
+     * @param tour
+     * @param sampleDestMgra
+     * @param sampleNum
+     * @return The logsum.
+     */
     private double calculateSimpleTODChoiceLogsum(Person person, Tour tour, int sampleDestMgra,
             int sampleNum)
     {
