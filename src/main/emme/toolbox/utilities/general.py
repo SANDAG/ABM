@@ -17,7 +17,7 @@ TOOLBOX_ORDER = 102
 
 import inro.modeller as _m
 import inro.emme.datatable as _dt
-import omx as _omx
+import openmatrix as _omx
 from osgeo import ogr as _ogr
 from contextlib import contextmanager as _context
 from itertools import izip as _izip
@@ -248,9 +248,9 @@ class ExportOMX(object):
                 "file_path": self.file_path, "omx_key": self.omx_key,
                 "scenario": self.scenario, "emmebank": self.emmebank.path})
         self.trace.__enter__()
-        self.omx_file = _omx.openFile(self.file_path, 'w')
+        self.omx_file = _omx.open_file(self.file_path, 'w')
         try:
-            self.omx_file.createMapping('zone_number', self.scenario.zone_numbers)
+            self.omx_file.create_mapping('zone_number', self.scenario.zone_numbers)
         except LookupError:
             pass
         return self
@@ -295,7 +295,7 @@ class ExportOMX(object):
             chunkshape = None
         attrs["source"] = "Emme"
         numpy_array = numpy_array.astype(dtype="float64", copy=False)
-        omx_matrix = self.omx_file.createMatrix(
+        omx_matrix = self.omx_file.create_matrix(
             key, obj=numpy_array, chunkshape=chunkshape, attrs=attrs)
 
             
@@ -310,7 +310,7 @@ class OMXManager(object):
         omx_file = self._omx_files.get(file_name)
         if omx_file is None:
             file_path = os.path.join(self._directory, file_name)
-            omx_file = _omx.openFile(file_path, 'r')
+            omx_file = _omx.open_file(file_path, 'r')
             self._omx_files[file_name] = omx_file
         return omx_file[key].read()
         

@@ -57,7 +57,7 @@ TOOLBOX_ORDER = 12
 import inro.modeller as _m
 import inro.emme.matrix as _matrix
 import traceback as _traceback
-import omx as _omx
+import openmatrix as _omx
 
 
 gen_utils = _m.Modeller().module("sandag.utilities.general")
@@ -168,7 +168,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                 # special custom mapping from subset of TAPs to all TAPs
                 emme_zones = scenario.zone_numbers
                 emmebank = scenario.emmebank
-                omx_file_obj = _omx.openFile(omx_file, 'r')
+                omx_file_obj = _omx.open_file(omx_file, 'r')
                 try:
                     zone_mapping = omx_file_obj.mapping(omx_file_obj.listMappings()[0]).items()
                     zone_mapping.sort(key=lambda x: x[1])
