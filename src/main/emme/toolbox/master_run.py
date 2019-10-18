@@ -776,8 +776,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         ret = fun(path, _ctypes.byref(temp), _ctypes.byref(total), _ctypes.byref(free))
         if ret == 0:
             raise _ctypes.WinError()
-        total = total.value / (1024.0 ** 2)
-        free = free.value / (1024.0 ** 2)
+        total = total.value / (1024.0 ** 3)
+        free = free.value / (1024.0 ** 3)
         if free < min_space:
             raise Exception("Free space on C drive %s is less than %s" % (free, min_space))
 
