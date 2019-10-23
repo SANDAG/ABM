@@ -64,7 +64,7 @@ for ind in settings.cvmSectors:
             home = int(row[header.index("HomeZone")])
             iTaz = int(row[header.index("I")])
             jTaz = int(row[header.index("J")])
-            tim = row[header.index("Time")]
+            tim = row[header.index("TripTime")]
 
             iIdx = tazList.index(iTaz)
             jIdx = tazList.index(jTaz)
