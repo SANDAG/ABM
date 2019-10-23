@@ -246,7 +246,7 @@ public class NonMandatoryDestChoiceModel
         for (int row = 1; row <= rowCount; ++row)
         {
 
-            int purpose = (int) probabilityTable.getValueAt(row, "Purpose");
+            int purpose = (int) probabilityTable.getValueAt(row, "Purpose") - 4; //4 mandatory purposes, first non-mand purpose is escort - 4
             int outPer = (int) probabilityTable.getValueAt(row, "OutboundPeriod");
             int retPer = (int) probabilityTable.getValueAt(row, "ReturnPeriod");
 

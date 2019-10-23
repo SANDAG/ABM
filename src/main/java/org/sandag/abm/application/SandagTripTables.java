@@ -37,8 +37,8 @@ public class SandagTripTables
     private TableDataSet            jointTripData;
 
     // Some parameters
-    private int[]                   modeIndex;                                                      // an
-    private int[]                   matrixIndex;                                                    // an
+    private int[]                   modeIndex;   // an
+    private int[]                   matrixIndex; // an
 
     // array modes: AUTO, NON-MOTORIZED, TRANSIT, OTHER
     private int                     autoModes               = 0;
@@ -71,11 +71,11 @@ public class SandagTripTables
 
     private String[]                indivColumns            = {"stop_period", "orig_mgra",
             "dest_mgra", "trip_mode", "inbound", "trip_board_tap", "trip_alight_tap", "set",
-            "parking_mgra", "tour_purpose", "valueOfTime"                  };
+            "parking_mgra", "tour_purpose", "valueOfTime", "transponder_avail"                 };
 
     private String[]                jointColumns            = {"stop_period", "orig_mgra",
             "dest_mgra", "trip_mode", "inbound", "trip_board_tap", "trip_alight_tap", "set",
-            "parking_mgra", "tour_purpose", "num_participants", "valueOfTime"};
+            "parking_mgra", "tour_purpose", "num_participants", "valueOfTime", "transponder_avail"};
 
     private HashMap<String, Float>  averageOcc3Plus;                                                // a
 
@@ -83,6 +83,8 @@ public class SandagTripTables
     private float valueOfTimeThresholdMed = 0;
     //value of time bins by mode group
     int[] votBins = {3,1,1,1};
+    
+    boolean segmentByTransponderOwnership;
     
     public int numSkimSets;
 
@@ -105,6 +107,7 @@ public class SandagTripTables
         this.rbMap = rbMap;        
         numSkimSets = Util.getIntegerValueFromPropertyMap(rbMap,"utility.bestTransitPath.skim.sets");
 
+        segmentByTransponderOwnership = Util.getBooleanValueFromPropertyMap(rbMap,"Results.segmentByTransponderOwnership");
         tazManager = TazDataManager.getInstance(rbMap);
         tapManager = TapDataManager.getInstance(rbMap);
         mgraManager = MgraDataManager.getInstance(rbMap);
@@ -227,14 +230,32 @@ public class SandagTripTables
  
         		if (i == 0)
         		{
-        			matrix[i][j] = new Matrix[autoModes];
+   
+        			int autoModeSegments = autoModes;
+        			String transponderLabel = "";
+        			
+        			if(segmentByTransponderOwnership) {
+        				autoModeSegments *=2; //twice as many since segmentation would be by number of auto modes and by 0,1 for ownership
+        				transponderLabel = "NOTRPDR";
+        			}
+        			matrix[i][j] = new Matrix[autoModeSegments];
+        			
         			for (int k = 0; k < autoModes; ++k)
         			{
         				modeName = modelStructure.getModeName(k + 1);
-                		matrix[i][j][k] = new Matrix(modeName + "_" + periodName, "", maxTaz, maxTaz);
+                		matrix[i][j][k] = new Matrix(modeName + transponderLabel + "_" + periodName, "", maxTaz, maxTaz);
                 		matrix[i][j][k].setExternalNumbers(tazIndex);
                		}
-                		
+
+        			for (int k = autoModes; k < autoModeSegments; ++k)
+        			{
+        				modeName = modelStructure.getModeName((k + 1)-autoModes);
+                		matrix[i][j][k] = new Matrix(modeName + "TRPDR"+ "_" + periodName, "", maxTaz, maxTaz);
+                		matrix[i][j][k].setExternalNumbers(tazIndex);
+               		}
+
+        			
+        			
                 } else if (i == 1){
                 
             		matrix[i][j] = new Matrix[nmotModes];
@@ -498,6 +519,11 @@ public class SandagTripTables
             
             if (mode == 0)
             {
+            	if(segmentByTransponderOwnership) {
+            		int ownsTransponder = (int) tripData.getValueAt(i, "transponder_avail");
+            		if(ownsTransponder==1)
+            			mat = mat + SandagModelStructure.TRIP_SOV_ALTS.length + SandagModelStructure.TRIP_HOV_ALTS.length;
+            	}
                 // look up what taz the parking mgra is in, and re-assign the
                 // trip destination to the parking taz
                 if (parkingMGRA > 0)

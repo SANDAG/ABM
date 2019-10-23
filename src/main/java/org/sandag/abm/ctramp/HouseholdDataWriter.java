@@ -891,6 +891,7 @@ public class HouseholdDataWriter
         data.add("dest_escort_stoptype");
         data.add("dest_escortee_pnum");
         data.add("valueOfTime");
+        data.add("transponder_avail");
         
         if(writeLogsums)
         	data.add("tripModeLogsum");
@@ -920,6 +921,7 @@ public class HouseholdDataWriter
         data.add("set");        
         data.add("tour_mode");
         data.add("valueOfTime");
+        data.add("transponder_avail");
 
         if(writeLogsums)
         	data.add("tripModeLogsum");
@@ -955,6 +957,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.REAL);
+        data.add(SqliteDataTypes.INTEGER);
 
         if(writeLogsums)
         	data.add(SqliteDataTypes.REAL);
@@ -984,6 +987,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.REAL);
+        data.add(SqliteDataTypes.INTEGER);
 
         if(writeLogsums)
         	data.add(SqliteDataTypes.REAL);
@@ -994,6 +998,8 @@ public class HouseholdDataWriter
     private List<String> formIndivTripDataEntry(Stop s)
     {
         Tour t = s.getTour();
+        Household h = t.getPersonObject().getHouseholdObject();
+        
         List<String> data = new LinkedList<String>();
         data.add(string(t.getHhId()));
         data.add(string(t.getPersonObject().getPersonId()));
@@ -1081,6 +1087,7 @@ public class HouseholdDataWriter
         data.add(string(s.getEscortStopTypeDest()));
         data.add(string(s.getEscorteePnumDest()));
         data.add(string(s.getValueOfTime()));
+        data.add(string(h.getTpChoice()));
         
         if(writeLogsums)
         	data.add(string(s.getModeLogsum()));
@@ -1092,6 +1099,7 @@ public class HouseholdDataWriter
     private List<String> formJointTripDataEntry(Stop s)
     {
         Tour t = s.getTour();
+        Household h = t.getPersonObject().getHouseholdObject();
         List<String> data = new LinkedList<String>();
         data.add(string(t.getHhId()));
         data.add(string(t.getTourId()));
@@ -1179,6 +1187,8 @@ public class HouseholdDataWriter
         data.add(string(set));
         data.add(string(t.getTourModeChoice()));
         data.add(string(s.getValueOfTime()));
+        data.add(string(h.getTpChoice()));
+
         
         if(writeLogsums)
         	data.add(string(s.getModeLogsum()));
@@ -1189,6 +1199,8 @@ public class HouseholdDataWriter
     private List<String> formTourAsIndivTripDataEntry(Tour t, boolean inbound)
     {
         List<String> data = new LinkedList<String>();
+        Household h = t.getPersonObject().getHouseholdObject();
+
         data.add(string(t.getHhId()));
         data.add(string(t.getPersonObject().getPersonId()));
         data.add(string(t.getPersonObject().getPersonNum()));
@@ -1284,6 +1296,7 @@ public class HouseholdDataWriter
     	
         
         data.add(string(t.getValueOfTime()));
+        data.add(string(h.getTpChoice()));
         
         if(writeLogsums)
         	data.add(string(t.getTourModeLogsum()));
