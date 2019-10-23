@@ -246,7 +246,8 @@ class FourDs(_m.Tool()):
            mgra_landuse = self.mgra_data
         
 		# get population from synthetic population instead of mgra data file
-        syn_pop = pd.read_csv(os.path.join(self.path, self.syn_households_file))[['persons','MGRA']].groupby('MGRA',as_index = False).sum()
+        syn_pop = pd.read_csv(os.path.join(self.path, self.syn_households_file))
+        syn_pop = syn_pop.rename(columns = {'MGRA':'mgra'})[['persons','mgra']].groupby('mgra',as_index = False).sum()
         #remove if 4D columns exist
         for col in self.new_cols:
             if col in self.base_cols:
@@ -254,7 +255,7 @@ class FourDs(_m.Tool()):
                 mgra_landuse = mgra_landuse.drop(col,axis=1)
         
 		#merge syntetic population to landuse
-        mgra_landuse = mgra_landuse.merge(syn_pop, how = 'left', left_on = 'mgra', right_on = 'MGRA')
+        mgra_landuse = mgra_landuse.merge(syn_pop, how = 'left', on = 'mgra')
         #all street distance  
         equiv_min = pd.read_csv(_join(self.path, "output", self.equivmins_file))
         equiv_min['dist'] = equiv_min['actual']/60*3
