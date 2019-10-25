@@ -10,3 +10,4 @@ pytz==2018.9
 pywin32==224
 PyYAML==3.13
 six==1.12.0
+openmatrix==0.3.3

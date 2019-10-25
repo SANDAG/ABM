@@ -5,10 +5,12 @@ rem create_scenario.cmd T:\projects\sr14\version_14_1_x\abm_runs\2016 2016 T:\pr
 if "%1"=="" goto usage
 if "%2"=="" goto usage
 if "%3"=="" goto usage
+if "%4"=="" goto usage
 
 set SCENARIO_FOLDER=%1
 set YEAR=%2
 set NETWORKDIR=%3
+set EMME_VERSION=%4
 
 @echo creating scenario folders
 set FOLDERS=input application bin conf input_truck logFiles output python report sql uec analysis visualizer visualizer\outputs\summaries
@@ -73,11 +75,11 @@ xcopy /Y/S   .\template\summary\"*.*" %SCENARIO_FOLDER%\analysis\summary\
 
 
 @echo init emme folder
-call init_emme.cmd %SCENARIO_FOLDER%
+call init_emme.cmd %SCENARIO_FOLDER% %EMME_VERSION%
 
 :usage
 
-@echo Usage: %0 ^<scenario_folder^> ^<year^> ^<network^>
+@echo Usage: %0 ^<scenario_folder^> ^<year^> ^<network^> ^<emme_version^>
 @echo If 3rd parameter is empty, default network inputs in standard release are used
 
 

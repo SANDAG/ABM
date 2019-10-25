@@ -62,6 +62,14 @@ class CreateScenarioGUI(Tkinter.Frame):
             option.config(width=50)
             option.grid(row=8, column=1)
 
+            Tkinter.Label(body, text=u"Emme Version", font=("Helvetica", 8, 'bold')).grid(row=8)
+            var = StringVar(root)
+            self.version = "4.4.2"
+            optionList = ["4.3.7", "4.4.0", "4.4.1", "4.4.2"]
+            option = Tkinter.OptionMenu(body, var, *optionList, command=self.setEmmeVersion)
+            option.config(width=50)
+            option.grid(row=8, column=1)
+
             Tkinter.Label(body, text=u"Year", font=("Helvetica", 8, 'bold')).grid(row=9)
             var = StringVar(root)
             self.year="2016"
@@ -111,6 +119,11 @@ class CreateScenarioGUI(Tkinter.Frame):
         #set default input and network paths based on selected year
         def setversion(self,value):
             self.version=value
+            return
+
+        # set Emme version
+        def setEmmeVersion(self, value):
+            self.emme_version = value
             return
 
         #set default input and network paths based on selected year
@@ -198,9 +211,19 @@ class CreateScenarioGUI(Tkinter.Frame):
             self.popup.destroy()
             if type=="scenario":
                 if self.year=="2035nb":
-                   commandstr=u"create_scenario.cmd "+self.scenariopath.get()+" "+self.year+" "+self.networkpath.get().rstrip("nb")
+                   commandstr = u"create_scenario.cmd %s %s %s %s" % (
+                       self.scenariopath.get(),
+                       self.year,
+                       self.networkpath.get().rstrip("nb"),
+                       self.emme_version
+                   )
                 else:
-                   commandstr=u"create_scenario.cmd "+self.scenariopath.get()+" "+self.year+" "+self.networkpath.get()
+                    commandstr = u"create_scenario.cmd %s %s %s %s" % (
+                        self.scenariopath.get(),
+                        self.year,
+                        self.networkpath.get(),
+                        self.emme_version
+                    )
             elif type=="study":
                 commandstr=u"copy_networkfiles_to_study.cmd "+self.studypath.get()+" "+self.studynetworkpath.get()
             print commandstr

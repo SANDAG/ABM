@@ -78,6 +78,7 @@ import numpy as np
 import csv
 import datetime
 import pyodbc
+import openmatrix # check that the openmatrix is installed
 import win32com.client as win32
 
 _join = os.path.join
@@ -406,7 +407,23 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     # initialize per time-period scenarios
                     for number, period in period_ids:
                         title = "%s - %s assign" % (base_scenario.title, period)
-                        copy_scenario(base_scenario, number, title, overwrite=True)
+                        # copy_scenario(base_scenario, number, title, overwrite=True)
+                        _m.logbook_write(
+                            name="Copy scenario %s to %s" % (base_scenario.number, number),
+                            attributes={
+                                'from_scenario': base_scenario.number,
+                                'scenario_id': number,
+                                'overwrite': True,
+                                'scenario_title': title
+                            }
+                        )
+                        if base_scenario.emmebank.scenario(number):
+                            base_scenario.emmebank.delete_scenario(number)
+                        s = base_scenario.emmebank.copy_scenario(
+                            base_scenario.number,
+                            number
+                        )
+                        s.title = title
                 else:
                     base_scenario = main_emmebank.scenario(scenario_id)
 
@@ -436,13 +453,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         omx_file = _join(input_dir, "trip_%s.omx" % period)
                         import_demand(omx_file, "AUTO", period, base_scenario)
                         import_demand(omx_file, "TRUCK", period, base_scenario)
-						
             else:
                 base_scenario = main_emmebank.scenario(scenario_id)
                 transit_emmebank = _eb.Emmebank(_join(self._path, "emme_project", "Database_transit", "emmebank"))
                 transit_scenario = transit_emmebank.scenario(base_scenario.number)
 
-				
         # Note: iteration indexes from 0, msa_iteration indexes from 1
         for iteration in range(startFromIteration - 1, end_iteration):
             msa_iteration = iteration + 1

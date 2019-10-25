@@ -27,7 +27,7 @@ import argparse
 import os
 
 
-def init_emme_project(root, title):
+def init_emme_project(root, title, emmeversion):
     project_path = _app.create_project(root, "emme_project")
     desktop = _app.start_dedicated(
         project=project_path, user_initials="WS", visible=False)
@@ -83,5 +83,6 @@ if __name__ == "__main__":
                         default=os.path.abspath(os.getcwd()))
     parser.add_argument('-t', '--title', help="the Emmebank title", 
                         default="SANDAG empty database")
+    parser.add_argument('-v', '--emmeversion', help='the Emme version', default='4.3.7')
     args = parser.parse_args()
-    init_emme_project(args.root, args.title)
+init_emme_project(args.root, args.title, args.emmeversion)
