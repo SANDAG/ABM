@@ -150,7 +150,9 @@ class FourDs(_m.Tool()):
         load_properties = _m.Modeller().tool('sandag.utilities.properties')
         props = load_properties(_join(self.path, "conf", "sandag_abm.properties"))
 
+		
         self.mgradata_file = props["mgra.socec.file"] #input/filename
+        self.syn_households_file = props["PopulationSynthesizer.InputToCTRAMP.HouseholdFile"] #input/filename
         self.equivmins_file = props["active.logsum.matrix.file.walk.mgra"] #filename
         self.inNet = os.path.basename(props["active.edge.file"])  #filename
         self.inNode = os.path.basename(props["active.node.file"])  #filename
@@ -163,7 +165,7 @@ class FourDs(_m.Tool()):
         }
         gen_utils.log_snapshot("Run 4Ds", str(self), attributes)
         
-        file_paths = [_join(self.path, self.mgradata_file), _join(self.path, "output", self.equivmins_file),  _join(self.path, "input", self.inNet),  _join(self.path, "input", self.inNode)]
+        file_paths = [_join(self.path, self.mgradata_file),_join(self.path, self.syn_households_file),_join(self.path, "output", self.equivmins_file),  _join(self.path, "input", self.inNet),  _join(self.path, "input", self.inNode)]
         for path in file_paths:
             if not os.path.exists(path):
                 raise Exception("missing file '%s'" % (path))
@@ -242,13 +244,18 @@ class FourDs(_m.Tool()):
            mgra_landuse = pd.read_csv(os.path.join(self.path, self.mgradata_file))
         else:
            mgra_landuse = self.mgra_data
-           
+        
+		# get population from synthetic population instead of mgra data file
+        syn_pop = pd.read_csv(os.path.join(self.path, self.syn_households_file))
+        syn_pop = syn_pop.rename(columns = {'MGRA':'mgra'})[['persons','mgra']].groupby('mgra',as_index = False).sum()
         #remove if 4D columns exist
         for col in self.new_cols:
             if col in self.base_cols:
                 self.base_cols.remove(col)
                 mgra_landuse = mgra_landuse.drop(col,axis=1)
         
+		#merge syntetic population to landuse
+        mgra_landuse = mgra_landuse.merge(syn_pop, how = 'left', on = 'mgra')
         #all street distance  
         equiv_min = pd.read_csv(_join(self.path, "output", self.equivmins_file))
         equiv_min['dist'] = equiv_min['actual']/60*3
@@ -261,7 +268,7 @@ class FourDs(_m.Tool()):
             totEmp = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_total'].sum()
             totRet = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_retail'].sum() + mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_personal_svcs_retail'].sum() + mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['emp_restaurant_bar'].sum()
             totHH = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['hh'].sum()
-            totPop = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['pop'].sum()
+            totPop = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['persons'].sum()
             totAcres = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_oth)]['land_acres'].sum()
             totInt = mgra_landuse[mgra_landuse.mgra.isin(mgra_circa_int)]['icnt'].sum()
             if(totAcres>0):
