@@ -118,11 +118,13 @@ public class detailedTODProcessing {
 		// read skims - AshishK
 		String skimPath = Util.getStringValueFromPropertyMap(rbMap, "skims.path");
 	    String skimPrefix = Util.getStringValueFromPropertyMap(rbMap, "da.no.toll.skims.prefix");
+	    String skimExt = Util.getStringValueFromPropertyMap(rbMap, "skims.extension");
 	    skimMatrix = new Matrix[ModelStructure.MODEL_PERIOD_LABELS.length];
 
 	    for(int p=0; p<ModelStructure.MODEL_PERIOD_LABELS.length; p++){
-	    	String skimFileName = skimPath + skimPrefix + ModelStructure.MODEL_PERIOD_LABELS[p] + ".mtx";
-	    	String matName = "*STM_" + ModelStructure.SKIM_PERIOD_STRINGS[p] + " (Skim)";
+	    	String skimFileName = skimPath + skimPrefix + ModelStructure.MODEL_PERIOD_LABELS[p] + skimExt;
+	    	//String matName = "*STM_" + ModelStructure.SKIM_PERIOD_STRINGS[p] + " (Skim)";
+	    	String matName = "SOV_GP_" + ModelStructure.SKIM_PERIOD_STRINGS[p];
 	    	skimMatrix[p] = MatrixReader.readMatrix(new File(skimFileName), matName);
 	    }
 
