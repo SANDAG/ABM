@@ -30,7 +30,7 @@ def mapNodes():
 	for node in model.getCatalog().getObjectsByType(nodeType).itervalues():
 		id = str(node.getExternalId())
 		if id != "":
-			nodes[id] = node
+			nodes[id] = node	
 	return nodes
 
 def mapSections():

@@ -166,7 +166,7 @@ def convertNumLanes(numLl, numTl, numRl):
         numLl = 0
     elif numLl == 7: # This shouldn't happen
         numLl = 1
-
+        
     if numRl == 9: # Shared
         sharedRight = True
         numRl = 0
@@ -212,7 +212,7 @@ def convertNumLanes(numLl, numTl, numRl):
             if sharedRight:
                 numStr = 1
                 numTl -= 1
-
+            
     return(numLl, numTl, numRl, numStl, numStr, numSlr, numStlr)
 
 print "Configuring intersection approaches..."

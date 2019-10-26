@@ -12,18 +12,18 @@ import org.sandag.abm.ctramp.Util;
 public class todDisaggregationModel {
 
 	private static final String PROPERTIES_RANDOMSEED             = "dta.postprocessing.RandomSeed";
-
+	
     private HashMap<String,String> rbMap;
 	private MersenneTwister random;
 	private long randomSeed;
-
-
+	
+		
 	public PrintWriter tripWriter;
 
 
     private transient Logger           logger                         = Logger.getLogger("postprocessModel");
 
-
+	
 	/**
 	 * Default constructor.
 	 */
@@ -33,16 +33,16 @@ public class todDisaggregationModel {
 		random = new MersenneTwister();
 		random.setSeed(randomSeed);
  	}
-
+			
 	/**
 	 * Read the probability by tod data file, return an array of probabilities.
 	 */
 	public double[] getTODProbabilities(TableDataSet TODData, int numPeriods, String marketSegment){
-
+	 	
 		// read the tod factors file
 		double [] probabilities;
 		probabilities = new double [numPeriods];
-
+					
 		//fill in probabilities array
 		for(int i = 0;i<numPeriods;++i){
 			if (marketSegment==null){
@@ -52,31 +52,31 @@ public class todDisaggregationModel {
 				double prob = (double) TODData.getValueAt(i+1, marketSegment);
 				probabilities[i] = prob;
 			}
-
-
+			
+								
 		}
 		//return array of probabilities
 		return probabilities;
 	}
-
+	
 	/**
 	 * Read the probability by tod data file, return an array of aggregate TOD values.
 	 */
 	public int[] getTODMap(TableDataSet TODData, int numPeriods){
-
+	 	
 		// read the tod factors file
 		int [] TODMap;
 		TODMap = new int [numPeriods];
-
+					
 		//fill in array of more aggregate time period values
 		for(int i = 0;i<numPeriods;++i){
 			int tod = (int) TODData.getValueAt(i+1, "TOD");
-			TODMap[i] = tod;
+			TODMap[i] = tod;					
 		}
 		//return array of aggregate time period values
 		return TODMap;
 	}
-
+	
 	/**
 	 * Return a disaggregate time period from an aggregate time period
 	 */
@@ -86,13 +86,13 @@ public class todDisaggregationModel {
 		double cumProbability = 0;
 		double rn = random.nextDouble();
 		int startLoc = 0;
-
+		
 		if (period>1)
-			startLoc = (period-1)*6 + 18;
-
+			startLoc = (period-1)*6 + 18;	
+				
         // loop through the array of probabilities
 		for (int i=startLoc;i<probabilities.length;++i){
-
+			
 			// check if the time period for that probability is in the period to be disaggregated
 			if (TODMap[i]!=period)
 				continue;
@@ -113,5 +113,5 @@ public class todDisaggregationModel {
 		}
 		return dtaPeriod;
 	}
-
+    
 }
