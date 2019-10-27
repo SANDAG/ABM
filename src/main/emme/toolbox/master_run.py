@@ -78,7 +78,6 @@ import numpy as np
 import csv
 import datetime
 import pyodbc
-import openmatrix # check that the openmatrix is installed
 import win32com.client as win32
 
 _join = os.path.join

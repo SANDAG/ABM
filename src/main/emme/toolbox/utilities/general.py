@@ -17,7 +17,6 @@ TOOLBOX_ORDER = 102
 
 import inro.modeller as _m
 import inro.emme.datatable as _dt
-import openmatrix as _omx
 from osgeo import ogr as _ogr
 from contextlib import contextmanager as _context
 from itertools import izip as _izip
@@ -26,6 +25,8 @@ import re as _re
 import json as _json
 import time as _time
 import os
+
+_omx = _m.Modeller().module("sandag.utilities.omxwrapper")
 
 
 class UtilityTool(_m.Tool()):
@@ -321,7 +322,7 @@ class OMXManager(object):
 
     def zone_list(self, file_name):
         omx_file = self._omx_files[file_name]
-        mapping_name = omx_file.listMappings()[0]
+        mapping_name = omx_file.list_mappings()[0]
         zone_mapping = omx_file.mapping(mapping_name).items()
         zone_mapping.sort(key=lambda x: x[1])
         omx_zones = [x[0] for x in zone_mapping]

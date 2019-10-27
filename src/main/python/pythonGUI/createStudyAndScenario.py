@@ -62,33 +62,33 @@ class CreateScenarioGUI(Tkinter.Frame):
             option.config(width=50)
             option.grid(row=8, column=1)
 
-            Tkinter.Label(body, text=u"Emme Version", font=("Helvetica", 8, 'bold')).grid(row=8)
+            Tkinter.Label(body, text=u"Emme Version", font=("Helvetica", 8, 'bold')).grid(row=9)
             var = StringVar(root)
             self.version = "4.4.2"
             optionList = ["4.3.7", "4.4.0", "4.4.1", "4.4.2"]
             option = Tkinter.OptionMenu(body, var, *optionList, command=self.setEmmeVersion)
             option.config(width=50)
-            option.grid(row=8, column=1)
+            option.grid(row=9, column=1)
 
-            Tkinter.Label(body, text=u"Year", font=("Helvetica", 8, 'bold')).grid(row=9)
+            Tkinter.Label(body, text=u"Year", font=("Helvetica", 8, 'bold')).grid(row=10)
             var = StringVar(root)
             self.year="2016"
             yearOptionList = ["2016", "2020", "2025", "2025nb", "2035", "2035nb", "2050","2050nb"]
             option=Tkinter.OptionMenu(body,var,*yearOptionList,command=self.setyear)
             option.config(width=50)
-            option.grid(row=9, column=1)
+            option.grid(row=10, column=1)
 
-            Tkinter.Label(body, text=u"Scenario Folder", font=("Helvetica", 8, 'bold')).grid(row=10)
+            Tkinter.Label(body, text=u"Scenario Folder", font=("Helvetica", 8, 'bold')).grid(row=11)
             self.scenariopath = Tkinter.Entry(body, width=40)
-            self.scenariopath.grid(row=10, column=1, sticky=sticky)
+            self.scenariopath.grid(row=11, column=1, sticky=sticky)
             button = Tkinter.Button(body, text=u"...",width=4,command=lambda: self.get_path("scenario"))
-            button.grid(row=10, column=2)
-
-            Tkinter.Label(body, text=u"Network Folder",font=("Helvetica", 8, 'bold')).grid(row=11)
-            self.networkpath = Tkinter.Entry(body, width=40)
-            self.networkpath.grid(row=11, column=1, sticky=sticky)
-            button = Tkinter.Button(body, text=u"...",width=4,command=lambda: self.get_path("network"))
             button.grid(row=11, column=2)
+
+            Tkinter.Label(body, text=u"Network Folder",font=("Helvetica", 8, 'bold')).grid(row=12)
+            self.networkpath = Tkinter.Entry(body, width=40)
+            self.networkpath.grid(row=12, column=1, sticky=sticky)
+            button = Tkinter.Button(body, text=u"...",width=4,command=lambda: self.get_path("network"))
+            button.grid(row=12, column=2)
 
             buttons = Tkinter.Frame(self)
             buttons.pack()
