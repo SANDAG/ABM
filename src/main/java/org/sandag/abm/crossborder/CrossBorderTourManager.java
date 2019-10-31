@@ -154,7 +154,7 @@ public class CrossBorderTourManager
      */
     protected double[] setPurposeDistribution(String fileName, double[] purposeDistribution, int position)
     {
-        logger.info("Begin reading the data in file " + fileName);
+        //logger.info("Begin reading the data in file " + fileName);
         TableDataSet probabilityTable;
 
         try
@@ -182,7 +182,7 @@ public class CrossBorderTourManager
             purposeDistribution[purp] = total_prob;
 
         }
-        logger.info("End storing cumulative probabilies from file " + fileName);
+        //logger.info("End storing cumulative probabilies from file " + fileName);
 
         return purposeDistribution;
     }
