@@ -33,4 +33,4 @@ rem mkdir %SCENARIO_FOLDER%\emme_project\Scripts\yaml
 rem copy .\\common\\python\\emme\\yaml\\*.* %SCENARIO_FOLDER%\emme_project\Scripts\yaml
 
 :usage
-@echo Usage: %0 ^<scenario_folder^>
+@echo Usage: %0 ^<scenario_folder^> ^<emme_version^>
