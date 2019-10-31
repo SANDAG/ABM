@@ -714,7 +714,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                                    num_processors, local_scenario, select_link)
                     omx_file = _join(output_dir, "traffic_skims_%s.omx" % period)
                     if msa_iteration < 4:
-                        export_traffic_skims(local_period, omx_file, base_scenario)
+                        export_traffic_skims(period, omx_file, base_scenario)
                 scenarios = {
                     database_path1: [scen_map[p] for p in periods_node1],
                     database_path2: [scen_map[p] for p in periods_node2]

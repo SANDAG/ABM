@@ -17,6 +17,7 @@ TOOLBOX_ORDER = 102
 
 import inro.modeller as _m
 import inro.emme.datatable as _dt
+import inro.emme.core.exception as _except
 from osgeo import ogr as _ogr
 from contextlib import contextmanager as _context
 from itertools import izip as _izip
@@ -25,6 +26,7 @@ import re as _re
 import json as _json
 import time as _time
 import os
+import numpy as _numpy
 
 _omx = _m.Modeller().module("sandag.utilities.omxwrapper")
 
@@ -275,8 +277,10 @@ class ExportOMX(object):
             key = self.generate_key(matrix)
         numpy_array = matrix.get_numpy_data(self.scenario.id)
         if matrix.type == "DESTINATION":
+            n_zones = len(numpy_array)
             numpy_array = _numpy.resize(numpy_array, (1, n_zones))
         elif matrix.type == "ORIGIN":
+            n_zones = len(numpy_array)
             numpy_array = _numpy.resize(numpy_array, (n_zones, 1))
         attrs = {"description": matrix.description.encode(text_encoding)}
         self.write_array(numpy_array, key, attrs)

@@ -184,6 +184,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     else:
                         for omx_name, emme_name in matrices.iteritems():
                             omx_data = omx_file_obj[omx_name].read()
+                            matrix = emmebank.matrix(emme_name)
                             matrix.set_numpy_data(omx_data, scenario)
                 finally:
                     omx_file_obj.close()
