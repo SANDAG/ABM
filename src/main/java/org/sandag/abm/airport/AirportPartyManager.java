@@ -181,7 +181,7 @@ public class AirportPartyManager
      */
     protected void setPurposeDistribution(String fileName)
     {
-        logger.info("Begin reading the data in file " + fileName);
+        //logger.info("Begin reading the data in file " + fileName);
         TableDataSet probabilityTable;
 
         try
@@ -209,7 +209,7 @@ public class AirportPartyManager
             purposeDistribution[purp] = total_prob;
 
         }
-        logger.info("End storing cumulative probabilies from file " + fileName);
+        //logger.info("End storing cumulative probabilies from file " + fileName);
     }
 
     /**
