@@ -1342,6 +1342,7 @@ public final class DataExporter
         formatList.add(NUMBER_FORMAT_NAME); // 23 dest_escort_stoptype
         formatList.add(NUMBER_FORMAT_NAME); // 24 dest_escortee_pnum
         formatList.add(NUMBER_FORMAT_NAME); // 25 value of time
+        formatList.add(NUMBER_FORMAT_NAME); // 26 transponder availability
         
         if(writeLogsums)
         	formatList.add(NUMBER_FORMAT_NAME);//tripModeLogsum
@@ -1372,7 +1373,7 @@ public final class DataExporter
                 bitColumns,
                 FieldType.INT,
                 primaryKey,
-                new TripStructureDefinition(10, 11, 8, 9, 13, 14, 16, 17, 12, -1, 25, "INDIV", 6, false, 25, 18),false);
+                new TripStructureDefinition(10, 11, 8, 9, 13, 14, 16, 17, 12, -1, 26, "INDIV", 6, false, 25, 18),false);
     }
 
     private void exportJointTripData(String outputFileBase)
@@ -1398,7 +1399,8 @@ public final class DataExporter
         formatList.add(NUMBER_FORMAT_NAME); // 16 trip_alight_tap
         formatList.add(NUMBER_FORMAT_NAME); // 17 set 
         formatList.add(NUMBER_FORMAT_NAME); // 18 tour_mode
-        formatList.add(NUMBER_FORMAT_NAME);  // 19 value of time
+        formatList.add(NUMBER_FORMAT_NAME); // 19 value of time
+        formatList.add(NUMBER_FORMAT_NAME); // 20 transponder availability
                 
         if(writeLogsums)
          	formatList.add(NUMBER_FORMAT_NAME);//tripModeLogsum
@@ -1419,7 +1421,7 @@ public final class DataExporter
                 "tour_purpose", "inbound", "stop_id"));
         exportDataGeneric(outputFileBase, "Results.JointTripDataFile", true, formats, floatColumns,
                 stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
-                new TripStructureDefinition(8, 9, 6, 7, 11, 12, 15, 16, 10, 14, 19, "JOINT", 4, false, 19, 17),false);
+                new TripStructureDefinition(8, 9, 6, 7, 11, 12, 15, 16, 10, 14, 20, "JOINT", 4, false, 19, 17),false);
     }
 
     private void exportAirportTripsSAN(String outputFileBase)
