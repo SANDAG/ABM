@@ -26,6 +26,7 @@ class PersonTrip implements Comparable{
     protected byte avAvailable;
     protected boolean rideSharer;
 	protected int pickupMaz;
+	protected int dropoffMaz;
 	
 	public PersonTrip(int uniqueId,long hhid,long personId,int personNumber, int tourid,int stopid,int inbound,int joint,int originMaz, int destinationMaz, int departPeriod, float departTime, float sampleRate, int mode, int boardingTap, int alightingTap, int set, boolean rideSharer){
        	this.uniqueId = uniqueId;
@@ -45,8 +46,11 @@ class PersonTrip implements Comparable{
 		this.mode = mode;
 		this.rideSharer = rideSharer;
 		
-		//set the pickup MAZ to the originMaz
+		//set the pickup MAZ to the originMaz and dropoff MAZ to the destinationMaz
 		this.pickupMaz = originMaz;
+		this.dropoffMaz = destinationMaz;
+		
+		
 		
 		
 	}
@@ -136,6 +140,14 @@ class PersonTrip implements Comparable{
 
 	public void setDestinationMaz(int destinationMaz) {
 		this.destinationMaz = destinationMaz;
+	}
+
+	public int getDropoffMaz() {
+		return dropoffMaz;
+	}
+
+	public void setDropoffMaz(int dropoffMaz) {
+		this.dropoffMaz = dropoffMaz;
 	}
 
 	public short getDepartPeriod() {

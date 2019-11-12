@@ -166,8 +166,8 @@ public class AVFleetModel {
 				double rnum = random.nextDouble();
 				PersonTrip personTrip = personTripManager.samplePersonTrip(simulationPeriod, rnum);
 			
-				int origMaz = personTrip.getOriginMaz();
-				int destMaz = personTrip.getDestinationMaz();
+				int origMaz = personTrip.getPickupMaz();
+				int destMaz = personTrip.getDropoffMaz();
 				int origTaz = mgraManager.getTaz(origMaz);
 				int destTaz = mgraManager.getTaz(destMaz);
 				if((origTaz==destTaz) && routeIntrazonal==false){
@@ -231,7 +231,7 @@ public class AVFleetModel {
 							if(!trip.isRideSharer())
 								continue;
 						
-							int tripOriginMaz = trip.getOriginMaz();
+							int tripOriginMaz = trip.getPickupMaz();
 							int tripOriginTaz = mgraManager.getTaz(tripOriginMaz);
 							
 							if((tripOriginMaz==tripOriginTaz) && routeIntrazonal==false){
@@ -239,7 +239,7 @@ public class AVFleetModel {
 								continue;
 							}
 
-							int tripDestinationMaz = trip.getDestinationMaz();
+							int tripDestinationMaz = trip.getDropoffMaz();
 							int tripDestinationTaz = mgraManager.getTaz(tripDestinationMaz);
 						
 							//check if destination is within maximum diversion time

@@ -36,6 +36,7 @@ public class PersonTripManager {
 	protected int[] modesToKeep;
 	protected int[] rideShareEligibleModes;
 	protected int numberOfTimeBins;
+	protected int periodLengthInMinutes;
 	protected int minTaz; //the minimum taz number with mazs; any origin or destination person trip less than this will be skipped.
 	protected float maxWalkDistance;
 
@@ -99,8 +100,8 @@ public class PersonTripManager {
         maxWalkDistance = Util.getFloatValueFromPropertyMap(propertyMap, MaxWalkDistance);
         
         readInputFiles();
-        
-        groupPersonTripsByDepartureTimePeriodAndOrigin(periodLengthInMinutes);
+        this.periodLengthInMinutes=periodLengthInMinutes;
+        groupPersonTripsByDepartureTimePeriodAndOrigin();
 
         //if max walk distance > 0, implement hotspots
         if(maxWalkDistance>0)
@@ -293,10 +294,9 @@ public class PersonTripManager {
 	/**
 	 * Go through the person trip list, sort the person trips by departure time and MAZ.
 	 *  
-	 * @param periodLengthInMinutes
 	 */
 	@SuppressWarnings("unchecked")
-	public void groupPersonTripsByDepartureTimePeriodAndOrigin(int periodLengthInMinutes){
+	public void groupPersonTripsByDepartureTimePeriodAndOrigin(){
 		
 		numberOfTimeBins = ((24*60)/periodLengthInMinutes);
 		int maxMaz = mgraManager.getMaxMgra();
@@ -317,7 +317,7 @@ public class PersonTripManager {
 		Collection<PersonTrip> personTripList = personTripMap.values();
 		for(PersonTrip personTrip : personTripList){
 			
-			int originMaz = personTrip.getOriginMaz();
+			int originMaz = personTrip.getPickupMaz();
 		
 			float departTime = personTrip.getDepartTime();
 			int bin = (int) Math.floor(departTime/((float) periodLengthInMinutes));
@@ -366,7 +366,7 @@ public class PersonTripManager {
 		int element = (int) Math.floor(rnum * listSize);
 		PersonTrip personTrip = personTripArray.get(element);
 		personTripArrayByDepartureBin[simulationPeriod].remove(personTrip);
-		personTripArrayByDepartureBinAndMaz[simulationPeriod][personTrip.getOriginMaz()].remove(personTrip);
+		personTripArrayByDepartureBinAndMaz[simulationPeriod][personTrip.getPickupMaz()].remove(personTrip);
 		
 		return personTrip;
 	}
@@ -448,7 +448,7 @@ public class PersonTripManager {
 	 */
 	public void removePersonTrip(PersonTrip trip, int simulationPeriod){
 		
-		int originMaz = trip.getOriginMaz();
+		int originMaz = trip.getPickupMaz();
 		personTripArrayByDepartureBin[simulationPeriod].remove(trip);
 		personTripArrayByDepartureBinAndMaz[simulationPeriod][originMaz].remove(trip);
 		
@@ -461,9 +461,14 @@ public class PersonTripManager {
 	 */
 	public void moveRidesharersToHotspots() {
 		
-		logger.info("Hotspots - moving passengers to high demand MAZs");
+		logger.info("Hotspots - moving ride-sharers to high demand MAZs");
 		
 		int[] tazs = tazManager.getTazs();
+		
+		//store the hotspot Maz for each period and taz
+		int[][] hotspotMazs = new int[numberOfTimeBins][tazs.length+1];
+		
+		//track the number of ridesharers moved
 		int totalRidesharersMoved = 0;
 		
 		for(int simulationPeriod=0;simulationPeriod<numberOfTimeBins;++simulationPeriod) {
@@ -485,6 +490,7 @@ public class PersonTripManager {
 					if(personTrips.size()>maxRideSharers) {
 						maxRideSharers= personTrips.size();
 						hotspotMaz = maz;
+						hotspotMazs[simulationPeriod][taz] = hotspotMaz;
 					}
 				}	// end mazs
 				
@@ -494,7 +500,7 @@ public class PersonTripManager {
 				else {
 					
 					//get nearby ridesharers and move them to hotspot
-					ArrayList<PersonTrip> nearbySharers = findNearbyRideSharers(hotspotMaz, simulationPeriod, mgraManager.getTaz(hotspotMaz));
+					ArrayList<PersonTrip> nearbySharers = findNearbyRideSharersByOriginMaz(hotspotMaz, simulationPeriod, mgraManager.getTaz(hotspotMaz));
 					
 					if(nearbySharers==null)
 						continue;
@@ -515,10 +521,44 @@ public class PersonTripManager {
 					}
 				}
 			} //end for zones
+			
+			
+			
 			logger.info("Simulation period "+ simulationPeriod+" moved "+ridesharersMoved+" ridesharers");
 		} // end for simulation periods
 		
-		logger.info("Hotspots moved "+totalRidesharersMoved+" ride-sharers");
+		//now move dropoffs to hotspot locations
+		int movedDropoffs = 0;
+		Collection<PersonTrip> personTripList = personTripMap.values();
+		for(PersonTrip personTrip : personTripList){
+			
+			//skip non-ride shareres
+			if(!personTrip.isRideSharer())
+				continue;
+			
+			int destinationMaz = personTrip.getDestinationMaz();
+			int destinationTaz = mgraManager.getTaz(destinationMaz);
+			float departTime = personTrip.getDepartTime();
+			int departBin = (int) Math.floor(departTime/((float) periodLengthInMinutes));
+			int hotspotMaz = hotspotMazs[departBin][destinationTaz];
+			
+			//no hotspot for this person's destination taz
+			if(hotspotMaz==0)
+				continue;
+			
+			float distance = ((float) mgraManager.getMgraToMgraWalkDistFrom(destinationMaz,hotspotMaz))/((float)5280.0);
+			
+			if(distance==0)
+				continue;
+			
+			//distance between destination and hotspot is less than max walk distance, so move this person
+			if(distance<=maxWalkDistance) {
+				personTrip.setDropoffMaz(hotspotMaz);
+				++movedDropoffs;
+			}
+		}
+
+		logger.info("Hotspots moved "+totalRidesharersMoved+" ride-share pickups and "+movedDropoffs+" dropoffs");
 	}
 	
 	
@@ -532,7 +572,7 @@ public class PersonTripManager {
 	 * @param simulationPeriod The simulation period
 	 * @return The ArrayList of ridesharers.
 	 */
-	public ArrayList<PersonTrip> findNearbyRideSharers(int originMaz, int simulationPeriod, int constraintTaz) {
+	public ArrayList<PersonTrip> findNearbyRideSharersByOriginMaz(int originMaz, int simulationPeriod, int constraintTaz) {
 		
 		int[] walkMgras = mgraManager.getMgrasWithinWalkDistanceFrom(originMaz);
 		

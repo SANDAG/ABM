@@ -197,6 +197,7 @@ public class VehicleManager {
 					newTrip.setPickupIdsAtOrigin(pickupIdsAtOrigin);
 					newTrip.setDropoffIdsAtOrigin(dropoffIdsAtOrigin);
 				}
+				newTrip.setDestinationPurpose(VehicleTrip.Purpose.PICKUP_ONLY);
 				vehicle.addVehicleTrip(newTrip);
 				
 				return vehicle;
@@ -305,14 +306,14 @@ public class VehicleManager {
 				logger.info("***********************************************************************************");
 				logger.info("There are "+personTrips.size()+" person trips in vehicle "+vehicle.getId());
 				for(PersonTrip pTrip: personTrips){
-					logger.info("Vehicle "+vehicle.getId()+" person trip id: "+pTrip.getUniqueId()+" from origin MAZ: "+pTrip.getOriginMaz()+ " to destination MAZ "+pTrip.getDestinationMaz());
+					logger.info("Vehicle "+vehicle.getId()+" person trip id: "+pTrip.getUniqueId()+" from pickup MAZ: "+pTrip.getPickupMaz()+ " to dropoff MAZ "+pTrip.getDropoffMaz());
 				}
 			}
 			//some information on the first passenger
 			PersonTrip firstTrip = personTrips.get(0);
-			int firstOriginMaz = firstTrip.getOriginMaz();
+			int firstOriginMaz = firstTrip.getPickupMaz();
 			int firstOriginTaz = mazManager.getTaz(firstOriginMaz);
-			int firstDestinationMaz = firstTrip.getDestinationMaz();
+			int firstDestinationMaz = firstTrip.getDropoffMaz();
 			int firstDestinationTaz = mazManager.getTaz(firstDestinationMaz);
 
 			// get the arraylist of vehicle trips for this vehicle
@@ -331,12 +332,13 @@ public class VehicleManager {
 			firstDropoffArray.add(personTrips.get(0));
 			dropoffsByMaz.put(firstDestinationMaz, firstDropoffArray);
 			
+			//iterate through the rest of the person trips other than the first passenger
 			for(int i = 1; i < personTrips.size();++i){
 				
 				PersonTrip personTrip = personTrips.get(i);
 				
-				int pickupMaz = personTrip.getOriginMaz();
-				int dropoffMaz = personTrip.getDestinationMaz();
+				int pickupMaz = personTrip.getPickupMaz();
+				int dropoffMaz = personTrip.getDropoffMaz();
 				
 				//only add pickup maz for passengers other than first passenger
 				if(!pickupsByMaz.containsKey(pickupMaz) ){
@@ -437,9 +439,9 @@ public class VehicleManager {
 						trip.addDropoffIdsAtOrigin(dropoffsAtDestinationOfLastTrip);	
 						trip.addPickupIdsAtOrigin(pickupsAtDestinationOfLastTrip);	
 						
-						//add pickup and dropoffs at origin of this trip to destination of last trip.
-						lastTrip.addDropoffIdsAtDestination(trip.getDropoffIdsAtOrigin());
-						lastTrip.addPickupIdsAtDestination(trip.getPickupIdsAtOrigin());
+						//add pickup and dropoffs at origin of this trip to destination of last trip. (commenting to test write problem)
+						//lastTrip.addDropoffIdsAtDestination(trip.getDropoffIdsAtOrigin());
+						//lastTrip.addPickupIdsAtDestination(trip.getPickupIdsAtOrigin());
 						
 						
 	
@@ -450,11 +452,14 @@ public class VehicleManager {
 					trip.setDestinationMaz(maz);
 					trip.setDestinationTaz((short) tazs[i]);
 
-					float time = transportCostManager.getTime(skimPeriod, firstOriginTaz, tazs[i]);
-					float distance = transportCostManager.getDistance(skimPeriod, firstOriginTaz, tazs[i]);
+					//measure time from first trip to destination (current) or track time in vehicle explicitly for each trip?
+					float time = transportCostManager.getTime(skimPeriod, firstOriginTaz, trip.getDestinationTaz());
 					float periods = time/(float)minutesPerSimulationPeriod;
-					int endPeriod = (int) Math.floor(simulationPeriod + periods);
+					int endPeriod = (int) Math.floor(simulationPeriod + periods); //currently measuring time as simulation period + straight time to dest.
 					trip.setEndPeriod(endPeriod);
+
+					//measure distance for current trip origin and destination
+					float distance = transportCostManager.getDistance(skimPeriod, trip.getOriginTaz(), trip.getDestinationTaz());
 					trip.setDistance(distance);
 					vehicle.setDistanceSinceRefuel(vehicle.getDistanceSinceRefuel()+distance);
 					
