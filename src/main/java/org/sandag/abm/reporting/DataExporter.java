@@ -2601,8 +2601,9 @@ public final class DataExporter
 	            mdm.setMatrixDataServerObject(ms);
 
 	        } catch (Exception e) {
-	            LOGGER.error("could not connect to matrix server", e);
-	            throw new RuntimeException(e);
+	            LOGGER.error("could not connect to matrix server");
+	            LOGGER.info("Running Data Exporter with internal matrix class");
+	           // throw new RuntimeException(e);
 
 	        }
 
