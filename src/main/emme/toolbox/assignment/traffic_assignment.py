@@ -13,38 +13,38 @@
 #//////////////////////////////////////////////////////////////////////////////
 #
 #
-# The Traffic assignment tool runs the traffic assignment and skims per
+# The Traffic assignment tool runs the traffic assignment and skims per 
 # period on the current primary scenario.
 #
-# The traffic assignment is a 14-class assignment with generalized cost on
-# links and BPR-type volume-delay functions which include capacities on links
-# and at intersection approaches. The assignment is run using the
-# fast-converging Second-Order Linear Approximation (SOLA) method in Emme to
-# a relative gap of 5x10-4. The per-link fixed costs include toll values and
-# operating costs which vary by class of demand (see Table 6 for the complete
-# list of classes). Assignment matrices and resulting network flows are always in PCE.
+# The traffic assignment is a 15-class assignment with generalized cost on 
+# links and BPR-type volume-delay functions which include capacities on links 
+# and at intersection approaches. The assignment is run using the 
+# fast-converging Second-Order Linear Approximation (SOLA) method in Emme to 
+# a relative gap of 5x10-4. The per-link fixed costs include toll values and 
+# operating costs which vary by class of demand. 
+# Assignment matrices and resulting network flows are always in PCE.
 #
 # Inputs:
 #   period: the time-of-day period, one of EA, AM, MD, PM, EV.
-#   msa_iteration: global iteration number. If greater than 1, existing flow
-#       values must be present and the resulting flows on links and turns will
+#   msa_iteration: global iteration number. If greater than 1, existing flow 
+#       values must be present and the resulting flows on links and turns will 
 #       be the weighted average of this assignment and the existing values.
 #   relative_gap: minimum relative stopping criteria.
 #   max_iterations: maximum iterations stopping criteria.
 #   num_processors: number of processors to use for the traffic assignments.
-#   select_link: specify one or more select link analysis setups as a list of
+#   select_link: specify one or more select link analysis setups as a list of 
 #       specifications with three keys:
-#           "expression": selection expression to identify the link(s) of interest.
-#           "suffix": the suffix to use in the naming of per-class result
+#           "expression": selection expression to identify the link(s) of interest. 
+#           "suffix": the suffix to use in the naming of per-class result 
 #               attributes and matrices, up to 6 characters.
-#           "threshold": the minimum number of links which must be encountered
+#           "threshold": the minimum number of links which must be encountered 
 #               for the path selection.
 #        Example:
 #   select_link = [
 #       {"expression": "@tov_id=4578 or @tcov_id=9203", "suffix": "fwy", "threshold": "1"}
 #   ]
-#   raise_zero_dist: if checked, the distance skim for the SOVGP is checked for
-#       any zero values, which would indicate a disconnected zone, in which case
+#   raise_zero_dist: if checked, the distance skim for the SOVGP is checked for 
+#       any zero values, which would indicate a disconnected zone, in which case 
 #       an error is raised and the model run is halted.
 #
 # Matrices:
@@ -137,7 +137,17 @@ class TrafficAssignment(_m.Tool(), gen_utils.Snapshot):
         pb = _m.ToolPageBuilder(self)
         pb.title = "Traffic assignment"
         pb.description = """
-Assign traffic demand for the selected time period."""
+The Traffic assignment tool runs the traffic assignment and skims per 
+period on the current primary scenario.
+<br>
+The traffic assignment is a 15-class assignment with generalized cost on 
+links and BPR-type volume-delay functions which include capacities on links 
+and at intersection approaches. The assignment is run using the 
+fast-converging Second-Order Linear Approximation (SOLA) method in Emme to 
+a relative gap of 5x10-4. The per-link fixed costs include toll values and 
+operating costs which vary by class of demand. 
+Assignment matrices and resulting network flows are always in PCE.
+"""
         pb.branding_text = "- SANDAG - Assignment"
         if self.tool_run_msg != "":
             pb.tool_run_status(self.tool_run_msg_status)
@@ -192,21 +202,21 @@ Assign traffic demand for the selected time period."""
     </div>
     <div>
         <p>
-            <strong>Expression:</strong> Emme selection expression to identify the link(s) of interest.
+            <strong>Expression:</strong> Emme selection expression to identify the link(s) of interest. 
             Examples and available attributes below.
         </p>
         <p>
-            <strong>Result suffix:</strong> the suffix to use in the naming of per-class result
-            attributes and matrices, up to 6 characters.
+            <strong>Result suffix:</strong> the suffix to use in the naming of per-class result 
+            attributes and matrices, up to 6 characters. 
             Should be unique (existing attributes / matrices will be overwritten).
         </p>
         <p>
-            <strong>Threshold:</strong> the minimum number of links which must be encountered
-            for the path selection.
+            <strong>Threshold:</strong> the minimum number of links which must be encountered 
+            for the path selection. 
             The default value of 1 indicates an "any" link selection.
         </p>
         <p>
-            Expression selection help: use one (or more) selection criteria of the form
+            Expression selection help: use one (or more) selection criteria of the form 
             <tt>attribute=value</tt> or <tt>attribute=min,max</tt>.
             Multiple criteria may be combined with 'and' ('&'), 'or' ('|'), and
             'xor' ('^'). Use 'not' ('!') in front or a criteria to negate it. <br>
@@ -225,8 +235,8 @@ Assign traffic demand for the selected time period."""
         </p>
         <p>
             Result link and turn flows will be saved in extra attributes
-            <tt>@sel_XX_NAME_SUFFIX</tt>, where XX is the period, NAME is
-            the class name, and SUFFIX is the specified result suffix.
+            <tt>@sel_XX_NAME_SUFFIX</tt>, where XX is the period, NAME is 
+            the class name, and SUFFIX is the specified result suffix. 
             The selected O-D demand will be saved in SELDEM_XX_NAME_SUFFIX.
         </p>
     </div>
@@ -271,7 +281,7 @@ Assign traffic demand for the selected time period."""
                 text += '</tr>';
                 $("#ref_select_link").append(text);
                 var select_items = ["expression", "suffix", "threshold"]
-                for (var i = 0; i < select_items.length; i++) {
+                for (var i = 0; i < select_items.length; i++) { 
                     var jq_obj = $('#select_link_' + select_items[i] + "_" + num);
                     jq_obj.val(this.value[num][select_items[i]]);
                     jq_obj.bind('change', function (){
@@ -287,7 +297,7 @@ Assign traffic demand for the selected time period."""
                 this.update_text_field();
             },
             preload: function( ) {
-                for (var i = 0; i < this.value.length; i++) {
+                for (var i = 0; i < this.value.length; i++) { 
                     this.add_select_row_ui()
                 }
             }
@@ -342,103 +352,72 @@ Assign traffic demand for the selected time period."""
             # Main list of assignment classes
             classes = [
                 {   # 0
-                    "name": 'SOVGPL', "mode": 's', "PCE": 1, "VOT": 15.0, "cost": '',
-                    "skims": ["GENCOST", "TIME", "DIST", "REL"]
+                    "name": 'SOVNTPL', "mode": 's', "PCE": 1, "VOT": 150, "cost": '@cost_auto',
+                    "skims": ["TIME", "DIST", "REL", "TOLLCOST", "TOLLDIST"]
                 },
                 {   # 1
-                    "name": 'SOVTOLLL', "mode": 'S', "PCE": 1, "VOT": 15.0, "cost": '@cost_auto',
-                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
+                    "name": 'SOVTPL', "mode": 'S', "PCE": 1, "VOT": 15.0, "cost": '@cost_auto',
+                    "skims": ["TIME", "DIST", "REL", "TOLLCOST", "TOLLDIST"]
                 },
                 {   # 2
-                    "name": 'HOV2HOVL', "mode": 'h', "PCE": 1, "VOT": 15.0, "cost": '',
-                    "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
+                    "name": 'HOV2L', "mode": 'H', "PCE": 1, "VOT": 15.0, "cost": '@cost_hov2',
+                    "skims": ["TIME", "DIST", "REL", "TOLLCOST.HOV2", "TOLLDIST.HOV2", "HOVDIST"]
                 },
                 {   # 3
-                    "name": 'HOV2TOLLL', "mode": 'H', "PCE": 1, "VOT": 15.0, "cost": '@cost_hov2',
-                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST.HOV2", "TOLLDIST.HOV2", "REL"]
+                    "name": 'HOV3L', "mode": 'I', "PCE": 1, "VOT": 15.0, "cost": '@cost_hov',
+                    "skims": ["TIME", "DIST", "REL", "TOLLCOST.HOV3", "TOLLDIST.HOV3", "HOVDIST"]
                 },
                 {   # 4
-                    "name": 'HOV3HOVL', "mode": 'i', "PCE": 1, "VOT": 15.0, "cost": '',
-                    "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
+                    "name": 'SOVNTPM', "mode": 's', "PCE": 1, "VOT": 30.0, "cost": '@cost_auto',
+                    "skims": ["TIME", "DIST", "REL", "TOLLCOST", "TOLLDIST"]
                 },
                 {   # 5
-                    "name": 'HOV3TOLLL', "mode": 'I', "PCE": 1, "VOT": 15.0, "cost": '@cost_hov',
-                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST.HOV3", "TOLLDIST.HOV3", "REL"]
+                    "name": 'SOVTPM', "mode": 'S', "PCE": 1, "VOT": 30.0, "cost": '@cost_auto',
+                    "skims": ["TIME", "DIST", "REL", "TOLLCOST", "TOLLDIST"]
                 },
                 {   # 6
-                    "name": 'SOVGPM', "mode": 's', "PCE": 1, "VOT": 30.0, "cost": '',
-                    "skims": ["GENCOST", "TIME", "DIST", "REL"]
+                    "name": 'HOV2M', "mode": 'H', "PCE": 1, "VOT": 30.0, "cost": '@cost_hov2',
+                    "skims": ["TIME", "DIST", "REL", "TOLLCOST.HOV2", "TOLLDIST.HOV2", "HOVDIST"]
                 },
                 {   # 7
-                    "name": 'SOVTOLLM', "mode": 'S', "PCE": 1, "VOT": 30.0, "cost": '@cost_auto',
-                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
+                    "name": 'HOV3M', "mode": 'I', "PCE": 1, "VOT": 30.0, "cost": '@cost_hov',
+                    "skims": ["TIME", "DIST", "REL", "TOLLCOST.HOV3", "TOLLDIST.HOV3", "HOVDIST"]
                 },
                 {   # 8
-                    "name": 'HOV2HOVM', "mode": 'h', "PCE": 1, "VOT": 30.0, "cost": '',
-                    "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
+                    "name": 'SOVNTPH', "mode": 's', "PCE": 1, "VOT": 85., "cost": '@cost_auto',
+                    "skims": ["TIME", "DIST", "REL", "TOLLCOST", "TOLLDIST"]
                 },
                 {   # 9
-                    "name": 'HOV2TOLLM', "mode": 'H', "PCE": 1, "VOT": 30.0, "cost": '@cost_hov2',
-                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST.HOV2", "TOLLDIST.HOV2", "REL"]
+                    "name": 'SOVTPH', "mode": 'S', "PCE": 1, "VOT": 85., "cost": '@cost_auto',
+                    "skims": ["TIME", "DIST", "REL", "TOLLCOST", "TOLLDIST"]
                 },
                 {   # 10
-                    "name": 'HOV3HOVM', "mode": 'i', "PCE": 1, "VOT": 30.0, "cost": '',
-                    "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
+                    "name": 'HOV2H', "mode": 'H', "PCE": 1, "VOT": 85., "cost": '@cost_hov2',
+                    "skims": ["TIME", "DIST", "REL", "TOLLCOST.HOV2", "TOLLDIST.HOV2", "HOVDIST"]
                 },
                 {   # 11
-                    "name": 'HOV3TOLLM', "mode": 'I', "PCE": 1, "VOT": 30.0, "cost": '@cost_hov',
-                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST.HOV3", "TOLLDIST.HOV3", "REL"]
+                    "name": 'HOV3H', "mode": 'I', "PCE": 1, "VOT": 85., "cost": '@cost_hov',
+                    "skims": ["TIME", "DIST", "REL", "TOLLCOST.HOV3", "TOLLDIST.HOV3", "HOVDIST"]
                 },
                 {   # 12
-                    "name": 'SOVGPH', "mode": 's', "PCE": 1, "VOT": 85., "cost": '',
-                    "skims": ["GENCOST", "TIME", "DIST", "REL"]
+                    "name": 'TRKHALL', "mode": 'V', "PCE": 2.5, "VOT": 89., "cost": '@cost_hvy_truck',
+                    "skims": ["TIME", "DIST", "TOLLCOST"]
                 },
                 {   # 13
-                    "name": 'SOVTOLLH', "mode": 'S', "PCE": 1, "VOT": 85., "cost": '@cost_auto',
-                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST", "TOLLDIST", "REL"]
+                    "name": 'TRKLALL', "mode": 'T', "PCE": 1.3, "VOT": 67., "cost": '@cost_auto',
+                    "skims": ["TIME", "DIST", "TOLLCOST"]
                 },
                 {   # 14
-                    "name": 'HOV2HOVH', "mode": 'h', "PCE": 1, "VOT": 85., "cost": '',
-                    "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
+                    "name": 'TRKMALL', "mode": 'M', "PCE": 1.5, "VOT": 68., "cost": '@cost_med_truck',
+                    "skims": ["TIME", "DIST", "TOLLCOST"]
                 },
-                {   # 15
-                    "name": 'HOV2TOLLH', "mode": 'H', "PCE": 1, "VOT": 85., "cost": '@cost_hov2',
-                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST.HOV2", "TOLLDIST.HOV2", "REL"]
-                },
-                {   # 16
-                    "name": 'HOV3HOVH', "mode": 'i', "PCE": 1, "VOT": 85., "cost": '',
-                    "skims": ["GENCOST", "TIME", "DIST", "HOVDIST", "REL"]
-                },
-                {   # 17
-                    "name": 'HOV3TOLLH', "mode": 'I', "PCE": 1, "VOT": 85., "cost": '@cost_hov',
-                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST.HOV3", "TOLLDIST.HOV3", "REL"]
-                },
-                {   # 18
-                    "name": 'TRKHGP', "mode": 'v', "PCE": 2.5, "VOT": 89., "cost": '',
-                    "skims": ["GENCOST", "TIME", "DIST"]
-                },
-                {   # 19
-                    "name": 'TRKHTOLL',  "mode": 'V', "PCE": 2.5, "VOT": 89., "cost": '@cost_hvy_truck',
-                    "skims": ["GENCOST", "TIME", "DIST", "TOLLCOST"]
-                },
-                {   # 20
-                    "name": 'TRKLGP',    "mode": 't', "PCE": 1.3, "VOT": 67., "cost": '',
-                    "skims": ["GENCOST", "TIME", "DIST"]
-                },
-                {   # 21
-                    "name": 'TRKLTOLL',  "mode": 'T', "PCE": 1.3, "VOT": 67., "cost": '@cost_auto',
-                    "skims": ["GENCOST", "TIME", "DIST", "TOLLCOST"]
-                },
-                {   # 22
-                    "name": 'TRKMGP',   "mode": 'm', "PCE": 1.5, "VOT": 68., "cost": '',
-                    "skims": ["GENCOST", "TIME", "DIST"]
-                },
-                {   # 23
-                    "name": 'TRKMTOLL', "mode": 'M', "PCE": 1.5, "VOT": 68., "cost": '@cost_med_truck',
-                    "skims": ["GENCOST", "TIME", "DIST",  "TOLLCOST"]
-                }
             ]
-
+            
+            # change mode to allow sovntp on SR125
+            # TODO: incorporate this into import_network instead
+            #       also, consider updating mode definitions
+            self.change_mode_sovntp(scenario)
+            
             if period == "MD" and (msa_iteration == 1 or not scenario.mode('D')):
                 self.prepare_midday_generic_truck(scenario)
 
@@ -670,7 +649,7 @@ Assign traffic demand for the selected time period."""
             for name, description in link_attributes:
                 create_attribute("LINK", name, description,
                                  0, overwrite=True, scenario=scenario)
-            create_attribute("TURN", "@auto_time_turn", "traffic turn time (ptimau)",
+            create_attribute("TURN", "@auto_time_turn", "traffic turn time (ptimau)", 
                              overwrite=True, scenario=scenario)
 
             net_calc("@hovdist", "length", {"link": "@lane_restriction=2,3"})
@@ -692,7 +671,7 @@ Assign traffic demand for the selected time period."""
                 # split function into time component and reliability component
                 time_expr, reliability_expr = expression.split("*(1+@sta_reliability+")
                 net_calc("@auto_time", time_expr, {"link": "vdf=%s" % function.id[2:]})
-                net_calc("@reliability", "(@sta_reliability+" + reliability_expr,
+                net_calc("@reliability", "(@sta_reliability+" + reliability_expr, 
                          {"link": "vdf=%s" % function.id[2:]})
 
             net_calc("@reliability_sq", "@reliability**2", {"link": "modes=d"})
@@ -724,7 +703,7 @@ Assign traffic demand for the selected time period."""
                 gen_truck_mode = 'D'
                 classes.append({
                     "name": 'TRK', "mode": gen_truck_mode, "PCE": 1, "VOT": 67., "cost": '',
-                    "skims": ["GENCOST", "TIME", "DIST", "MLCOST", "TOLLCOST"]
+                    "skims": ["TIME"]
                 })
             skim_spec = self.base_assignment_spec(0, 0, num_processors, background_traffic=False)
             for traffic_class in classes:
@@ -852,6 +831,19 @@ Assign traffic demand for the selected time period."""
                     mode_description="all trucks", scenario=scenario)
             change_link_modes(modes=[truck_mode], action="ADD",
                               selection="modes=vVmMtT", scenario=scenario)
+            
+    #added by RSG (nagendra.dhakar@rsginc.com) for collapsed assignment classes testing
+    #this adds non-transponder SOV mode to SR-125 links
+    # TODO: move this to the network_import step for consistency and foward-compatibility
+    def change_mode_sovntp(self, scenario):
+        modeller = _m.Modeller()
+        change_link_modes = modeller.tool(
+            "inro.emme.data.network.base.change_link_modes")
+        with _m.logbook_trace("Preparation for sov ntp assignment"):
+            gen_sov_mode = 's'
+            sov_mode = scenario.mode(gen_sov_mode)
+            change_link_modes(modes=[sov_mode], action="ADD",
+                              selection="@lane_restriction=4", scenario=scenario)            
 
     def report(self, period, scenario, classes):
         emmebank = scenario.emmebank
@@ -862,7 +854,7 @@ Assign traffic demand for the selected time period."""
         num_zones = len(scenario.zone_numbers)
         num_cells = num_zones ** 2
         text.append("""
-            Number of zones: %s. Number of O-D pairs: %s.
+            Number of zones: %s. Number of O-D pairs: %s. 
             Values outside -9999999, 9999999 are masked in summaries.<br>""" % (num_zones, num_cells))
         text.append("%-25s %9s %9s %9s %13s %9s" % ("name", "min", "max", "mean", "sum", "mask num"))
         for name in matrices:

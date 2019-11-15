@@ -167,36 +167,21 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
 
     def traffic_demand(self):
         tmplt_matrices = [
-            ("SOVGPL",     "SOV GP-only demand LVOT"),
-            ("SOVTOLLL",   "SOV toll demand LVOT"),
-            ("HOV2GPL",    "HOV2 GP-only demand LVOT"),
-            ("HOV2HOVL",   "HOV2 HOV-lane demand LVOT"),
-            ("HOV2TOLLL",  "HOV2 toll demand LVOT"),
-            ("HOV3GPL",    "HOV3+ GP-only demand LVOT"),
-            ("HOV3HOVL",   "HOV3+ HOV-lane demand LVOT"),
-            ("HOV3TOLLL",  "HOV3+ toll demand LVOT"),
-            ("SOVGPM",     "SOV GP-only demand MVOT"),
-            ("SOVTOLLM",   "SOV toll demand MVOT"),
-            ("HOV2GPM",    "HOV2 GP-only demand MVOT"),
-            ("HOV2HOVM",   "HOV2 HOV-lane demand MVOT"),
-            ("HOV2TOLLM",  "HOV2 toll demand MVOT"),
-            ("HOV3GPM",    "HOV3+ GP-only demand MVOT"),
-            ("HOV3HOVM",   "HOV3+ HOV-lane demand MVOT"),
-            ("HOV3TOLLM",  "HOV3+ toll demand MVOT"),
-            ("SOVGPH",     "SOV GP-only demand HVOT"),
-            ("SOVTOLLH",   "SOV toll demand HVOT"),
-            ("HOV2GPH",    "HOV2 GP-only demand HVOT"),
-            ("HOV2HOVH",   "HOV2 HOV-lane demand HVOT"),
-            ("HOV2TOLLH",  "HOV2 toll demand HVOT"),
-            ("HOV3GPH",    "HOV3+ GP-only demand HVOT"),
-            ("HOV3HOVH",   "HOV3+ HOV-lane demand HVOT"),
-            ("HOV3TOLLH",  "HOV3+ toll demand HVOT"),
-            ("TRKHGP",    "Truck Heavy GP-only PCE demand"),
-            ("TRKHTOLL",  "Truck Heavy toll PCE demand"),
-            ("TRKLGP",    "Truck Light GP-only PCE demand"),
-            ("TRKLTOLL",  "Truck Light toll PCE demand"),
-            ("TRKMGP",    "Truck Medium GP-only PCE demand"),
-            ("TRKMTOLL",  "Truck Medium toll PCE demand"),
+            ("SOVNTPL",  "SOV non-transponder demand low VOT"),
+            ("SOVTPL",   "SOV transponder demand low VOT"),
+            ("HOV2L",    "HOV2 demand low VOT"),
+            ("HOV3L",    "HOV3+ demand low VOT"),
+            ("SOVNTPM",  "SOV non-transponder demand medium VOT"),
+            ("SOVTPM",   "SOV transponder demand medium VOT"),
+            ("HOV2M",    "HOV2 demand medium VOT"),
+            ("HOV3M",    "HOV3+ demand medium VOT"),
+            ("SOVNTPH",  "SOV non-transponder demand high VOT"),
+            ("SOVTPH",   "SOV transponder demand high VOT"),
+            ("HOV2H",    "HOV2 demand high VOT"),
+            ("HOV3H",    "HOV3+ demand high VOT"),
+            ("TRKHALL",  "Truck Heavy PCE demand"),
+            ("TRKLALL",  "Truck Light PCE demand"),
+            ("TRKMALL",  "Truck Medium PCE demand"),
         ]
         for period in self._all_periods:
             self.add_matrices("traffic_demand", period,
@@ -216,148 +201,54 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
                      for name, desc in tmplt_matrices])
 
     def traffic_skims(self):
-        tmplt_matrices = [
-            ("SOVGPL_GENCOST",     "SOV LVOT GP total generalized cost"),
-            ("SOVGPL_TIME",        "SOV LVOT GP travel time"),
-            ("SOVGPL_DIST",        "SOV LVOT GP distance"),
-            ("SOVGPL_REL",         "SOV LVOT GP reliability skim"),
-            ("SOVTOLLL_GENCOST",   "SOV LVOT Toll total generalized cost"),
-            ("SOVTOLLL_TIME",      "SOV LVOT Toll travel time"),
-            ("SOVTOLLL_DIST",      "SOV LVOT Toll distance"),
-            ("SOVTOLLL_MLCOST",    "SOV LVOT Toll managed lane cost $0.01"),
-            ("SOVTOLLL_TOLLCOST",  "SOV LVOT Toll toll cost $0.01"),
-            ("SOVTOLLL_TOLLDIST",  "SOV LVOT Toll distance on toll facility"),
-            ("SOVTOLLL_REL",       "SOV LVOT GP reliability skim"),
-            ("HOV2HOVL_GENCOST",   "HOV2 LVOT HOV total generalized cost"),
-            ("HOV2HOVL_TIME",      "HOV2 LVOT HOV travel time"),
-            ("HOV2HOVL_DIST",      "HOV2 LVOT HOV distance"),
-            ("HOV2HOVL_HOVDIST",   "HOV2 LVOT HOV distance on HOV facility"),
-            ("HOV2HOVL_REL",       "HOV2 LVOT HOV reliability skim"),
-            ("HOV2TOLLL_GENCOST",  "HOV2 LVOT Toll total generalized cost"),
-            ("HOV2TOLLL_TIME",     "HOV2 LVOT Toll travel time"),
-            ("HOV2TOLLL_DIST",     "HOV2 LVOT Toll distance"),
-            ("HOV2TOLLL_MLCOST",   "HOV2 LVOT Toll managed lane cost $0.01"),
-            ("HOV2TOLLL_TOLLCOST", "HOV2 LVOT Toll toll cost $0.01"),
-            ("HOV2TOLLL_TOLLDIST", "HOV2 LVOT Toll distance on toll facility"),
-            ("HOV2TOLLL_REL",      "HOV2 LVOT Toll reliability skim"),
-            ("HOV3HOVL_GENCOST",   "HOV3+ LVOT HOV total generalized cost"),
-            ("HOV3HOVL_TIME",      "HOV3+ LVOT HOV travel time"),
-            ("HOV3HOVL_DIST",      "HOV3+ LVOT HOV distance"),
-            ("HOV3HOVL_HOVDIST",   "HOV3+ LVOT HOV distance on HOV facility"),
-            ("HOV3HOVL_REL",       "HOV3+ LVOT HOV reliability skim"),
-            ("HOV3TOLLL_GENCOST",  "HOV3+ LVOT Toll total generalized cost"),
-            ("HOV3TOLLL_TIME",     "HOV3+ LVOT Toll travel time"),
-            ("HOV3TOLLL_DIST",     "HOV3+ LVOT Toll distance"),
-            ("HOV3TOLLL_MLCOST",   "HOV3+ LVOT Toll managed lane cost $0.01"),
-            ("HOV3TOLLL_TOLLCOST", "HOV3+ LVOT Toll toll cost $0.01"),
-            ("HOV3TOLLL_TOLLDIST", "HOV3+ LVOT Toll distance on toll facility"),
-            ("HOV3TOLLL_REL",      "HOV3+ LVOT Toll reliability skim"),
-            ("SOVGPM_GENCOST",     "SOV MVOT GP total generalized cost"),
-            ("SOVGPM_TIME",        "SOV MVOT GP travel time"),
-            ("SOVGPM_DIST",        "SOV MVOT GP distance"),
-            ("SOVGPM_REL",         "SOV MVOT GP reliability skim"),
-            ("SOVTOLLM_GENCOST",   "SOV MVOT Toll total generalized cost"),
-            ("SOVTOLLM_TIME",      "SOV MVOT Toll travel time"),
-            ("SOVTOLLM_DIST",      "SOV MVOT Toll distance"),
-            ("SOVTOLLM_MLCOST",    "SOV MVOT Toll managed lane cost $0.01"),
-            ("SOVTOLLM_TOLLCOST",  "SOV MVOT Toll toll cost $0.01"),
-            ("SOVTOLLM_TOLLDIST",  "SOV MVOT Toll distance on toll facility"),
-            ("SOVTOLLM_REL",       "SOV MVOT Toll reliability skim"),
-            ("HOV2HOVM_GENCOST",   "HOV2 MVOT HOV total generalized cost"),
-            ("HOV2HOVM_TIME",      "HOV2 MVOT HOV travel time"),
-            ("HOV2HOVM_DIST",      "HOV2 MVOT HOV distance"),
-            ("HOV2HOVM_HOVDIST",   "HOV2 MVOT HOV distance on HOV facility"),
-            ("HOV2HOVM_REL",       "HOV2 MVOT HOV reliability skim"),
-            ("HOV2TOLLM_GENCOST",  "HOV2 MVOT Toll total generalized cost"),
-            ("HOV2TOLLM_TIME",     "HOV2 MVOT Toll travel time"),
-            ("HOV2TOLLM_DIST",     "HOV2 MVOT Toll distance"),
-            ("HOV2TOLLM_MLCOST",   "HOV2 MVOT Toll managed lane cost $0.01"),
-            ("HOV2TOLLM_TOLLCOST", "HOV2 MVOT Toll toll cost $0.01"),
-            ("HOV2TOLLM_TOLLDIST", "HOV2 MVOT Toll distance on toll facility"),
-            ("HOV2TOLLM_REL",      "HOV2 MVOT Toll reliability skim"),
-            ("HOV3HOVM_GENCOST",   "HOV3+ MVOT HOV total generalized cost"),
-            ("HOV3HOVM_TIME",      "HOV3+ MVOT HOV travel time"),
-            ("HOV3HOVM_DIST",      "HOV3+ MVOT HOV distance"),
-            ("HOV3HOVM_HOVDIST",   "HOV3+ MVOT HOV distance on HOV facility"),
-            ("HOV3HOVM_REL",       "HOV3+ MVOT HOV reliability skim"),
-            ("HOV3TOLLM_GENCOST",  "HOV3+ MVOT Toll total generalized cost"),
-            ("HOV3TOLLM_TIME",     "HOV3+ MVOT Toll travel time"),
-            ("HOV3TOLLM_DIST",     "HOV3+ MVOT Toll distance"),
-            ("HOV3TOLLM_MLCOST",   "HOV3+ MVOT Toll managed lane cost $0.01"),
-            ("HOV3TOLLM_TOLLCOST", "HOV3+ MVOT Toll toll cost $0.01"),
-            ("HOV3TOLLM_TOLLDIST", "HOV3+ MVOT Toll distance on toll facility"),
-            ("HOV3TOLLM_REL",      "HOV3+ MVOT Toll reliability skim"),
-            ("SOVGPH_GENCOST",     "SOV HVOT GP total generalized cost"),
-            ("SOVGPH_TIME",        "SOV HVOT GP travel time"),
-            ("SOVGPH_DIST",        "SOV HVOT GP distance"),
-            ("SOVGPH_REL",         "SOV HVOT GP reliability skim"),
-            ("SOVTOLLH_GENCOST",   "SOV HVOT Toll total generalized cost"),
-            ("SOVTOLLH_TIME",      "SOV HVOT Toll travel time"),
-            ("SOVTOLLH_DIST",      "SOV HVOT Toll distance"),
-            ("SOVTOLLH_MLCOST",    "SOV HVOT Toll managed lane cost $0.01"),
-            ("SOVTOLLH_TOLLCOST",  "SOV HVOT Toll toll cost $0.01"),
-            ("SOVTOLLH_TOLLDIST",  "SOV HVOT Toll distance on toll facility"),
-            ("SOVTOLLH_REL",       "SOV HVOT Toll reliability skim"),
-            ("HOV2HOVH_GENCOST",   "HOV2 HVOT HOV total generalized cost"),
-            ("HOV2HOVH_TIME",      "HOV2 HVOT HOV travel time"),
-            ("HOV2HOVH_DIST",      "HOV2 HVOT HOV distance"),
-            ("HOV2HOVH_HOVDIST",   "HOV2 HVOT HOV distance on HOV facility"),
-            ("HOV2HOVH_REL",       "HOV2 HVOT HOV reliability skim"),
-            ("HOV2TOLLH_GENCOST",  "HOV2 HVOT Toll total generalized cost"),
-            ("HOV2TOLLH_TIME",     "HOV2 HVOT Toll travel time"),
-            ("HOV2TOLLH_DIST",     "HOV2 HVOT Toll distance"),
-            ("HOV2TOLLH_MLCOST",   "HOV2 HVOT Toll managed lane cost $0.01"),
-            ("HOV2TOLLH_TOLLCOST", "HOV2 HVOT Toll toll cost $0.01"),
-            ("HOV2TOLLH_TOLLDIST", "HOV2 HVOT Toll distance on toll facility"),
-            ("HOV2TOLLH_REL",      "HOV2 HVOT Toll reliability skim"),
-            ("HOV3HOVH_GENCOST",   "HOV3+ HVOT HOV total generalized cost"),
-            ("HOV3HOVH_TIME",      "HOV3+ HVOT HOV travel time"),
-            ("HOV3HOVH_DIST",      "HOV3+ HVOT HOV distance"),
-            ("HOV3HOVH_HOVDIST",   "HOV3+ HVOT HOV distance on HOV facility"),
-            ("HOV3HOVH_REL",       "HOV3+ HVOT HOV reliability skim"),
-            ("HOV3TOLLH_GENCOST",  "HOV3+ HVOT Toll total generalized cost"),
-            ("HOV3TOLLH_TIME",     "HOV3+ HVOT Toll travel time"),
-            ("HOV3TOLLH_DIST",     "HOV3+ HVOT Toll distance"),
-            ("HOV3TOLLH_MLCOST",   "HOV3+ HVOT Toll managed lane cost $0.01"),
-            ("HOV3TOLLH_TOLLCOST", "HOV3+ HVOT Toll toll cost $0.01"),
-            ("HOV3TOLLH_TOLLDIST", "HOV3+ HVOT Toll distance on toll facility"),
-            ("HOV3TOLLH_REL",      "HOV3+ HVOT Toll reliability skim"),
-            ("TRKHGP_GENCOST",    "Truck Heavy GP total generalized cost"),
-            ("TRKHGP_TIME",       "Truck Heavy GP travel time"),
-            ("TRKHGP_DIST",       "Truck Heavy GP distance"),
-            ("TRKHTOLL_GENCOST",  "Truck Heavy Toll total generalized cost"),
-            ("TRKHTOLL_TIME",     "Truck Heavy Toll travel time"),
-            ("TRKHTOLL_DIST",     "Truck Heavy Toll distance"),
-            ("TRKHTOLL_TOLLCOST", "Truck Heavy Toll toll cost $0.01"),
-            ("TRKLGP_GENCOST",    "Truck Light GP total generalized cost"),
-            ("TRKLGP_TIME",       "Truck Light GP travel time"),
-            ("TRKLGP_DIST",       "Truck Light GP distance"),
-            ("TRKLTOLL_GENCOST",  "Truck Light Toll total generalized cost"),
-            ("TRKLTOLL_TIME",     "Truck Light Toll travel time"),
-            ("TRKLTOLL_DIST",     "Truck Light Toll distance"),
-            ("TRKLTOLL_TOLLCOST", "Truck Light Toll toll cost $0.01"),
-            ("TRKMGP_GENCOST",    "Truck Medium GP total generalized cost"),
-            ("TRKMGP_TIME",       "Truck Medium GP travel time"),
-            ("TRKMGP_DIST",       "Truck Medium GP distance"),
-            ("TRKMTOLL_GENCOST",  "Truck Medium Toll total generalized cost"),
-            ("TRKMTOLL_TIME",     "Truck Medium Toll travel time"),
-            ("TRKMTOLL_DIST",     "Truck Medium Toll distance"),
-            ("TRKMTOLL_TOLLCOST", "Truck Medium Toll toll cost $0.01"),
+        tp_desc = {"TP": "transponder", "NTP": "non-transponder"}
+        vot_desc = {"L": "low", "M": "medium", "H": "high"}
+        truck_desc = {"L": "light", "M": "medium", "H": "heavy"}
+
+        sov_tmplt_matrices = [
+            ("TIME",        "SOV %s travel time"),
+            ("DIST",        "SOV %s distance"),
+            ("REL",         "SOV %s reliability skim"),
+            ("TOLLCOST",    "SOV %s toll cost $0.01"),
+            ("TOLLDIST",    "SOV %s distance on toll facility"),
+        ]
+        hov_tmplt_matrices = [
+            ("TIME",        "HOV%s travel time"),
+            ("DIST",        "HOV%s distance"),
+            ("REL",         "HOV%s reliability skim"),
+            ("TOLLCOST",    "HOV%s toll cost $0.01"),
+            ("TOLLDIST",    "HOV%s distance on toll facility"),
+            ("HOVDIST",     "HOV%s HOV distance on HOV facility")
+        ]
+        truck_tmplt_matrices = [
+            ("TIME",     "Truck %s travel time"),
+            ("DIST",     "Truck %s distance"),
+            ("TOLLCOST", "Truck %s toll cost $0.01")
         ]
         for period in self._all_periods:
-            self.add_matrices("traffic_skims", period,
-                [("mf", period + "_" + name, period + " " + desc) 
-                 for name, desc in tmplt_matrices])
+            for vot_type in "L", "M", "H":
+                for tp_type in "NTP", "TP":
+                    cls_name = "SOV" + tp_type + vot_type
+                    cls_desc = tp_desc[tp_type] + " " + vot_desc[vot_type] + " VOT"
+                    self.add_matrices("traffic_skims", period,
+                        [("mf", period + "_" + cls_name + "_" + name, period + " " + desc % cls_desc) for name, desc in sov_tmplt_matrices])
+                for hov_type in "2", "3":
+                    cls_name = "HOV" + hov_type + vot_type
+                    cls_desc = hov_type + " " + vot_desc[vot_type] + " VOT"
+                    self.add_matrices("traffic_skims", period,
+                        [("mf", period + "_" + cls_name + "_" + name, 
+                            period + " " + desc % cls_desc) 
+                         for name, desc in hov_tmplt_matrices])
+            for truck_type in "L", "M", "H":
+                cls_name = "TRK" + truck_type + "ALL"
+                cls_desc = truck_desc[truck_type]
+                self.add_matrices("traffic_skims", period,
+                    [("mf", period + "_" + cls_name + "_" + name, 
+                      period + " " + desc % cls_desc) 
+                     for name, desc in truck_tmplt_matrices])
 
-        tmplt_matrices = [
-            ("MD_TRK_GENCOST",  "MD Truck generic total generalized cost"),
-            ("MD_TRK_TIME",     "MD Truck generic travel time"),
-            ("MD_TRK_DIST",     "MD Truck generic distance"),
-            ("MD_TRK_MLCOST",   "MD Truck generic managed lane cost $0.01"),
-            ("MD_TRK_TOLLCOST", "MD Truck generic toll cost $0.01"),
-        ]
         self.add_matrices("traffic_skims", "MD",
-            [("mf", name, desc) for name, desc in tmplt_matrices])
+            [("mf", "MD_TRK_TIME", "MD Truck generic travel time")])
 
     def transit_skims(self):
         tmplt_matrices = [
