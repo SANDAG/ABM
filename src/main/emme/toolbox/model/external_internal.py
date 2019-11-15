@@ -246,6 +246,16 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
 
         gp_modes = ["SOVGP", "HOV2HOV", "HOV3HOV"]
         toll_modes = ["SOVTOLL", "HOV2TOLL", "HOV3TOLL"]
+        # TODO: the GP vs. TOLL distinction should be collapsed 
+        #       (all demand added to transponder demand in import_auto_demand)
+        skim_lookup = {
+            "SOVGP":    "SOV_NT_M", 
+            "HOV2HOV":  "HOV2_M", 
+            "HOV3HOV":  "HOV3_M",
+            "SOVTOLL":  "SOV_TR_M", 
+            "HOV2TOLL": "HOV2_M", 
+            "HOV3TOLL": "HOV3_M"
+        }
         periods = ["EA", "AM", "MD", "PM", "EV"]
         for p, w_d_pa, w_d_ap, nw_d_pa, nw_d_ap in zip(
                 periods, work_time_PA_factors, work_time_AP_factors,
@@ -256,9 +266,9 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
                 nwrk_mtx = nw_o * (nw_d_pa * nwrk_pa_mtx + nw_d_ap * nwrk_ap_mtx)
 
                 # Toll choice split
-                f_tm_imp = emmebank.matrix('mf%s_%sM_TIME' % (p, gp_mode)).get_numpy_data(scenario)
-                t_tm_imp = emmebank.matrix('mf%s_%sM_TIME' % (p, toll_mode)).get_numpy_data(scenario)
-                t_cst_imp = emmebank.matrix('mf%s_%sM_TOLLCOST' % (p, toll_mode)).get_numpy_data(scenario)
+                f_tm_imp = emmebank.matrix('mf%s_%s_TIME' % (p, skim_lookup[gp_mode])).get_numpy_data(scenario)
+                t_tm_imp = emmebank.matrix('mf%s_%s_TIME' % (p, skim_lookup[toll_mode])).get_numpy_data(scenario)
+                t_cst_imp = emmebank.matrix('mf%s_%s_TOLLCOST' % (p, skim_lookup[toll_mode])).get_numpy_data(scenario)
 
                 # Toll diversion for work purpose
                 # TODO: .mod no longer needed, to confirm
