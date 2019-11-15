@@ -125,36 +125,36 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
             if demand_type == "AUTO":
                 # TODO: update for new seed matrices
                 matrices = {
-                    '%s_SOVGPL':    'mf"%s_SOVNTPL"',
-                    '%s_SOVTOLLL':  'mf"%s_SOVTPL"',
-                    '%s_HOV2HOVL':  'mf"%s_HOV2L"',
-                    '%s_HOV2TOLLL': 'mf"%s_HOV2L"',
-                    '%s_HOV3HOVL':  'mf"%s_HOV3L"',
-                    '%s_HOV3TOLLL': 'mf"%s_HOV3L"',
-                    '%s_SOVGPM':    'mf"%s_SOVNTPM"',
-                    '%s_SOVTOLLM':  'mf"%s_SOVTPM"',
-                    '%s_HOV2HOVM':  'mf"%s_HOV2M"',
-                    '%s_HOV2TOLLM': 'mf"%s_HOV2M"',
-                    '%s_HOV3HOVM':  'mf"%s_HOV3M"',
-                    '%s_HOV3TOLLM': 'mf"%s_HOV3M"',
-                    '%s_SOVGPH':    'mf"%s_SOVNTPH"',
-                    '%s_SOVTOLLH':  'mf"%s_SOVTPH"',
-                    '%s_HOV2HOVH':  'mf"%s_HOV2H"',
-                    '%s_HOV2TOLLH': 'mf"%s_HOV2H"',
-                    '%s_HOV3HOVH':  'mf"%s_HOV3H"',
-                    '%s_HOV3TOLLH': 'mf"%s_HOV3H"'}
+                    '%s_SOVGPL':    'mf"%s_SOV_NT_L"',
+                    '%s_SOVTOLLL':  'mf"%s_SOV_TR_L"',
+                    '%s_HOV2HOVL':  'mf"%s_HOV2_L"',
+                    '%s_HOV2TOLLL': 'mf"%s_HOV2_L"',
+                    '%s_HOV3HOVL':  'mf"%s_HOV3_L"',
+                    '%s_HOV3TOLLL': 'mf"%s_HOV3_L"',
+                    '%s_SOVGPM':    'mf"%s_SOV_NT_M"',
+                    '%s_SOVTOLLM':  'mf"%s_SOV_TR_M"',
+                    '%s_HOV2HOVM':  'mf"%s_HOV2_M"',
+                    '%s_HOV2TOLLM': 'mf"%s_HOV2_M"',
+                    '%s_HOV3HOVM':  'mf"%s_HOV3_M"',
+                    '%s_HOV3TOLLM': 'mf"%s_HOV3_M"',
+                    '%s_SOVGPH':    'mf"%s_SOV_NT_H"',
+                    '%s_SOVTOLLH':  'mf"%s_SOV_TR_H"',
+                    '%s_HOV2HOVH':  'mf"%s_HOV2_H"',
+                    '%s_HOV2TOLLH': 'mf"%s_HOV2_H"',
+                    '%s_HOV3HOVH':  'mf"%s_HOV3_H"',
+                    '%s_HOV3TOLLH': 'mf"%s_HOV3_H"'}
                 matrices = dict((k % period, v % period) for k, v in matrices.iteritems())
                 self._import_from_omx(omx_file, matrices, scenario)
 
             if demand_type == "TRUCK":
                 # TODO: update for new seed matrices
                 matrices = {
-                    '%s_TRKHGP':     'mf"%s_TRKHALL"',
-                    '%s_TRKHTOLL':   'mf"%s_TRKHALL"',
-                    '%s_TRKLGP':     'mf"%s_TRKLALL"',
-                    '%s_TRKLTOLL':   'mf"%s_TRKLALL"',
-                    '%s_TRKMGP':     'mf"%s_TRKMALL"',
-                    '%s_TRKMTOLL':   'mf"%s_TRKMALL"'}
+                    '%s_TRKHGP':     'mf"%s_TRK_H"',
+                    '%s_TRKHTOLL':   'mf"%s_TRK_H"',
+                    '%s_TRKLGP':     'mf"%s_TRK_L"',
+                    '%s_TRKLTOLL':   'mf"%s_TRK_L"',
+                    '%s_TRKMGP':     'mf"%s_TRK_M"',
+                    '%s_TRKMTOLL':   'mf"%s_TRK_M"'}
                 matrices = dict((k % period, v % period) for k, v in matrices.iteritems())
                 self._import_from_omx(omx_file, matrices, scenario)
 

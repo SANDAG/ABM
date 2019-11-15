@@ -350,6 +350,7 @@ Export network results to csv files for SQL data loader."""
         net_calculator = _m.Modeller().tool(
             "inro.emme.network_calculation.network_calculator")
         hwyload_attrs = [("ID1", "@tcov_id")]
+
         dir_atts = [
             ("AB_Flow_PCE", "@pce_flow"),   # sum of pce flow
             ("AB_Time", "@auto_time"),      # computed vdf based on pce flow
@@ -360,67 +361,62 @@ Export network results to csv files for SQL data loader."""
             ("AB_VDF", "@msa_time"),
             ("AB_MSA_Flow", "@msa_flow"),
             ("AB_MSA_Time", "@msa_time"),
-            ("AB_Flow_SOV_GP", "@sovgp_all"),
-            ("AB_Flow_SOV_PAY", "@sovtoll_all"),
-            ("AB_Flow_SR2_HOV", "@hov2hov_all"),
-            ("AB_Flow_SR2_PAY", "@hov2toll_all"),
-            ("AB_Flow_SR3_HOV", "@hov3hov_all"),
-            ("AB_Flow_SR3_PAY", "@hov3toll_all"),
-            ("AB_Flow_lhdn", "@trklgp_non_pce"),
-            ("AB_Flow_mhdn", "@trkmgp_non_pce"),
-            ("AB_Flow_hhdn", "@trkhgp_non_pce"),
-            ("AB_Flow_lhdt", "@trkltoll_non_pce"),
-            ("AB_Flow_mhdt", "@trkmtoll_non_pce"),
-            ("AB_Flow_hhdt", "@trkhtoll_non_pce"),
+            ("AB_Flow_SOV_NTPL", "@sov_nt_l"),
+            ("AB_Flow_SOV_TPL", "@sov_tr_l"),
+            ("AB_Flow_SR2L", "@hov2_l"),
+            ("AB_Flow_SR3L", "@hov3_l"),
+            ("AB_Flow_SOV_NTPM", "@sov_nt_m"),
+            ("AB_Flow_SOV_TPM", "@sov_tr_m"),
+            ("AB_Flow_SR2M", "@hov2_m"),
+            ("AB_Flow_SR3M", "@hov3_m"),
+            ("AB_Flow_SOV_NTPH", "@sov_nt_h"),
+            ("AB_Flow_SOV_TPH", "@sov_tr_h"),
+            ("AB_Flow_SR2H", "@hov2_h"),
+            ("AB_Flow_SR3H", "@hov3_h"),            
+            ("AB_Flow_lhd", "@trk_l_non_pce"),
+            ("AB_Flow_mhd", "@trk_m_non_pce"),
+            ("AB_Flow_hhd", "@trk_h_non_pce"),
             ("AB_Flow", "@non_pce_flow"),
-        ]
+        ]        
+
         for key, attr in dir_atts:
             hwyload_attrs.append((key, attr))
             hwyload_attrs.append((key.replace("AB_", "BA_"), (attr, "")))  # default for BA on one-way links is blank
         for p, scen_id in period_scenario_ids.iteritems():
             scenario = traffic_emmebank.scenario(scen_id)
-            new_atts = [("@speed", "link travel speed", "length*60/timau"),
-                        ("@sovgp_all", "total number of SOV GP vehicles",
-                                 "@sovgpl+@sovgpm+@sovgph" ),
-                        ("@sovtoll_all", "total number of SOV TOLL vehicles",
-                                 "@sovtolll+@sovtollm+@sovtollh" ),							 
-                        ("@hov2hov_all", "total number of HOV2 HOV vehicles",
-                                 "@hov2hovl+@hov2hovm+@hov2hovh" ),
-                        ("@hov2toll_all", "total number of HOV2 TOLL vehicles",
-                                 "@hov2tolll+@hov2tollm+@hov2tollh" ),								 
-                        ("@hov3hov_all", "total number of HOV3 HOV vehicles",
-                                 "@hov3hovl+@hov3hovm+@hov3hovh" ),
-                        ("@hov3toll_all", "total number of HOV3 TOLL vehicles",
-                                 "@hov3tolll+@hov3tollm+@hov3tollh" ),
-                        ("@trklgp_non_pce", "total number of light trucks in non-Pce",
-                                 "(@trklgp)/1.3" ),	
-                        ("@trkltoll_non_pce", "total toll light trucks in non-Pce",
-                                 "(@trkltoll)/1.3" ),
-                        ("@trkmgp_non_pce", "total medium trucks in non-Pce",
-                                 "(@trkmgp)/1.5" ),	
-                        ("@trkmtoll_non_pce", "total toll medium trucks non-Pce",
-                                 "(@trkmtoll)/1.5" ),
-                        ("@trkhgp_non_pce", "total heavy trucks in non-Pce",
-                                 "(@trkhgp)/2.5" ),	
-                        ("@trkhtoll_non_pce", "total toll heavy trucks in non-Pce",
-                                 "(@trkhtoll)/2.5" ),								 
-                        ("@pce_flow", "total number of vehicles in Pce",
-                                 "@sovgp_all+@sovtoll_all+ \
-                                  @hov2hov_all+@hov2toll_all+ \
-                                  @hov3hov_all+@hov3toll_all+ \
-                                  (@trklgp+@trkltoll) + (@trkmgp+@trkmtoll) + \
-                                  (@trkhgp+@trkhtoll) + volad" ),
-                        ("@non_pce_flow", "total number of vehicles in non-Pce",
-                                 "@sovgp_all+@sovtoll_all+ \
-                                  @hov2hov_all+@hov2toll_all+ \
-                                  @hov3hov_all+@hov3toll_all+ \
-                                  (@trklgp+@trkltoll)/1.3 + (@trkmgp+@trkmtoll)/1.5 + \
-                                  (@trkhgp+@trkhtoll)/2.5 + volad/3" ), #volad includes bus flow - pce factor is 3
-                        ("@msa_flow", "MSA flow", "@non_pce_flow"), #flow from final assignment
-                        ("@msa_time", "MSA time", "timau"),  #skim assignment time on msa flow
-                        ("@voc", "volume over capacity", "@pce_flow/ul3"), #pce flow over road capacity
-                        ("@vht", "vehicle hours travelled", "@non_pce_flow*timau/60") #vehicle flow (non-pce)*time
-                        ]
+            new_atts = [
+                ("@speed", "link travel speed", "length*60/timau"),
+                ("@sov_nt_all", "total number of SOV GP vehicles",
+                         "@sov_nt_l+@sov_nt_m+@sov_nt_h" ),
+                ("@sov_tr_all", "total number of SOV TOLL vehicles",
+                         "@sov_tr_l+@sov_tr_m+@sov_tr_h" ),							 
+                ("@hov2_all", "total number of HOV2 HOV vehicles",
+                         "@hov2_l+@hov2_m+@hov2_h" ),							 
+                ("@hov3_all", "total number of HOV3 HOV vehicles",
+                         "@hov3_l+@hov3_m+@hov3_h" ),
+                ("@trk_l_non_pce", "total number of light trucks in non-Pce",
+                         "(@trk_l)/1.3" ),	
+                ("@trk_m_non_pce", "total medium trucks in non-Pce",
+                         "(@trk_m)/1.5" ),	
+                ("@trk_h_non_pce", "total heavy trucks in non-Pce",
+                         "(@trk_h)/2.5" ),								 
+                ("@pce_flow", "total number of vehicles in Pce",
+                         "@sov_nt_all+@sov_tr_all+ \
+                          @hov2_all+ \
+                          @hov3_all+ \
+                          (@trk_l) + (@trk_m) + \
+                          (@trk_h) + volad" ),
+                ("@non_pce_flow", "total number of vehicles in non-Pce",
+                         "@sov_nt_all+@sov_tr_all+ \
+                          @hov2_all+ \
+                          @hov3_all+ \
+                          (@trk_l)/1.3 + (@trk_m)/1.5 + \
+                          (@trk_h)/2.5 + volad/3" ), #volad includes bus flow - pce factor is 3
+                ("@msa_flow", "MSA flow", "@non_pce_flow"), #flow from final assignment
+                ("@msa_time", "MSA time", "timau"),  #skim assignment time on msa flow
+                ("@voc", "volume over capacity", "@pce_flow/ul3"), #pce flow over road capacity
+                ("@vht", "vehicle hours travelled", "@non_pce_flow*timau/60") #vehicle flow (non-pce)*time
+            ]
 
             for name, des, formula in new_atts:
                 att = scenario.extra_attribute(name)

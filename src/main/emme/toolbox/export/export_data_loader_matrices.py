@@ -135,10 +135,10 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
     def truck_demand(self):
         name_mapping = [
             ("lhdn", "TRKLGP", 1.3),
-            ("mhdn", "TRKMGP", 1.3),
-            ("hhdn", "TRKHGP", 1.5),
-            ("lhdt", "TRKLTOLL", 1.5),
-            ("mhdt", "TRKMTOLL", 2.5),
+            ("mhdn", "TRKMGP", 1.5),
+            ("hhdn", "TRKHGP", 2.5),
+            ("lhdt", "TRKLTOLL", 1.3),
+            ("mhdt", "TRKMTOLL", 1.5),
             ("hhdt", "TRKHTOLL", 2.5),
         ]
         scenario = self.base_scenario
@@ -160,10 +160,10 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
             for period in self.periods:
                 for key, name, pce in name_mapping:
                     matrix_data = emmebank.matrix(period + "_" + name + "_VEH").get_data(scenario)
-                    matrix_data_time = emmebank.matrix(period + "_" + name + "_TIME").get_data(scenario)
-                    matrix_data_dist = emmebank.matrix(period + "_" + name + "_DIST").get_data(scenario)
+                    matrix_data_time = emmebank.matrix(period + "_" + name[:4] + "_TIME").get_data(scenario)
+                    matrix_data_dist = emmebank.matrix(period + "_" + name[:4] + "_DIST").get_data(scenario)
                     if "TOLL" in name:
-                        matrix_data_tollcost = emmebank.matrix(period + "_" + name + "_TOLLCOST").get_data(scenario)
+                        matrix_data_tollcost = emmebank.matrix(period + "_" + name[:4] + "_TOLLCOST").get_data(scenario)
                     rounded_demand = 0
                     for orig in zones:
                         for dest in zones:
@@ -207,9 +207,9 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
             with open(ee_trip_path, 'w') as f:
                 f.write("OTAZ,DTAZ,TOD,MODE,TRIPS,TIME,DIST,AOC,TOLLCOST\n")
                 for period in self.periods:
-                    matrix_data_time = emmebank.matrix(period + "_SOVTOLLM_TIME").get_data(scenario)
-                    matrix_data_dist = emmebank.matrix(period + "_SOVTOLLM_DIST").get_data(scenario)
-                    matrix_data_tollcost = emmebank.matrix(period + "_SOVTOLLM_TOLLCOST").get_data(scenario)				
+                    matrix_data_time = emmebank.matrix(period + "_SOV_NT_M_TIME").get_data(scenario)
+                    matrix_data_dist = emmebank.matrix(period + "_SOV_NT_M_DIST").get_data(scenario)
+                    matrix_data_tollcost = emmebank.matrix(period + "_SOV_NT_M_TOLLCOST").get_data(scenario)				
                     for key, name in name_mapping:
                         matrix_data = emmebank.matrix(period + "_" + name + "_EETRIPS").get_data(scenario)
                         rounded_demand = 0
@@ -232,7 +232,7 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                         if rounded_demand > 0:
                             print period + "_" + name + "_EETRIPS", "rounded_demand", rounded_demand
 
-        # EXTERNAL-INTERNAL TRIP TABLE				
+        # EXTERNAL-INTERNAL TRIP TABLE
         name_mapping = [
                 ("DAN", "SOVGP"),
                 ("DAT", "SOVTOLL"),
@@ -247,10 +247,10 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
             with open(ei_trip_path, 'w') as f:
                 f.write("OTAZ,DTAZ,TOD,MODE,PURPOSE,TRIPS,TIME,DIST,AOC,TOLLCOST\n")
                 for period in self.periods:
-                    matrix_data_time = emmebank.matrix(period + "_SOVTOLLM_TIME").get_data(scenario)
-                    matrix_data_dist = emmebank.matrix(period + "_SOVTOLLM_DIST").get_data(scenario)
+                    matrix_data_time = emmebank.matrix(period + "_SOV_TR_M_TIME").get_data(scenario)
+                    matrix_data_dist = emmebank.matrix(period + "_SOV_TR_M_DIST").get_data(scenario)
                     if "TOLL" in name:
-                        matrix_data_tollcost = emmebank.matrix(period + "_SOVTOLLM_TOLLCOST").get_data(scenario)
+                        matrix_data_tollcost = emmebank.matrix(period + "_SOV_NT_M_TOLLCOST").get_data(scenario)
                     for purpose in ["WORK", "NONWORK"]:
                         for key, name in name_mapping:
                             matrix_data = emmebank.matrix(period + "_" + name + "_EI" + purpose).get_data(scenario)
@@ -279,30 +279,21 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
     def total_demand(self):
         for period in self.periods:
             matrices = {
-                '%s_SOVGPL':     'mf"%s_SOVGPL"',
-                '%s_SOVTOLLL':   'mf"%s_SOVTOLLL"',
-                '%s_HOV2HOVL':   'mf"%s_HOV2HOVL"',
-                '%s_HOV2TOLLL':  'mf"%s_HOV2TOLLL"',
-                '%s_HOV3HOVL':   'mf"%s_HOV3HOVL"',
-                '%s_HOV3TOLLL':  'mf"%s_HOV3TOLLL"',
-                '%s_SOVGPM':     'mf"%s_SOVGPM"',
-                '%s_SOVTOLLM':   'mf"%s_SOVTOLLM"',
-                '%s_HOV2HOVM':   'mf"%s_HOV2HOVM"',
-                '%s_HOV2TOLLM':  'mf"%s_HOV2TOLLM"',
-                '%s_HOV3HOVM':   'mf"%s_HOV3HOVM"',
-                '%s_HOV3TOLLM':  'mf"%s_HOV3TOLLM"',
-                '%s_SOVGPH':     'mf"%s_SOVGPH"',
-                '%s_SOVTOLLH':   'mf"%s_SOVTOLLH"',
-                '%s_HOV2HOVH':   'mf"%s_HOV2HOVH"',
-                '%s_HOV2TOLLH':  'mf"%s_HOV2TOLLH"',
-                '%s_HOV3HOVH':   'mf"%s_HOV3HOVH"',
-                '%s_HOV3TOLLH':  'mf"%s_HOV3TOLLH"',
-                '%s_TRKHGP':     'mf"%s_TRKHGP"',
-                '%s_TRKHTOLL':   'mf"%s_TRKHTOLL"',
-                '%s_TRKLGP':     'mf"%s_TRKLGP"',
-                '%s_TRKLTOLL':   'mf"%s_TRKLTOLL"',
-                '%s_TRKMGP':     'mf"%s_TRKMGP"',
-                '%s_TRKMTOLL':   'mf"%s_TRKMTOLL"'
+                "%s_SOV_NTP_L": 'mf"%s_"SOV_NT_L"',
+                "%s_SOV_TR_L":  'mf"%s_"SOV_TR_L"',
+                "%s_HOV2_L":    'mf"%s_"HOV2_L"',
+                "%s_HOV3_L":    'mf"%s_"HOV3_L"',
+                "%s_SOV_NT_M":  'mf"%s_"SOV_NT_M"',
+                "%s_SOV_TR_M":  'mf"%s_"SOV_TR_M"',
+                "%s_HOV2_M":    'mf"%s_"HOV2_M"',
+                "%s_HOV3_M":    'mf"%s_"HOV3_M"',
+                "%s_SOV_NT_H":  'mf"%s_"SOV_NT_H"',
+                "%s_SOV_TR_H":  'mf"%s_"SOV_TR_H"',
+                "%s_HOV2_H":    'mf"%s_"HOV2_H"',
+                "%s_HOV3_H":    'mf"%s_"HOV3_H"',
+                "%s_TRK_H":     'mf"%s_"TRK_H"',
+                "%s_TRK_L":     'mf"%s_"TRK_L"',
+                "%s_TRK_M":     'mf"%s_"TRK_M"',
             }
             matrices = dict((k % period, v % period) for k, v in matrices.iteritems())
             omx_file = os.path.join(self.output_dir, "trip_%s.omx" % period)
@@ -312,4 +303,3 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
     @_m.method(return_type=unicode)
     def tool_run_msg_status(self):
         return self.tool_run_msg
-        

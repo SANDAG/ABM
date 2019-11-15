@@ -94,7 +94,7 @@ class ExportForCommercialVehicleModel(_m.Tool(), gen_utils.Snapshot):
     def __call__(self, output_directory, scenario):
         emmebank = scenario.emmebank
         modes = ['ldn', 'ldt', 'lhdn', 'lhdt', 'mhdn', 'mhdt', 'hhdn', 'hhdt']
-        classes = ['SOVGPH', 'SOVTOLLH', 'TRKLGP', 'TRKLTOLL', 'TRKMGP', 'TRKMTOLL', 'TRKHGP', 'TRKHTOLL']
+        classes = ['SOV_NT_H', 'SOV_TR_H', 'TRK_L', 'TRK_L', 'TRK_M', 'TRK_M', 'TRK_H', 'TRK_H']
         # Mappings between COMMVEH modes and Emme classes
         mode_class = dict(zip(modes, classes))
         class_mode = dict(zip(classes, modes))
@@ -117,36 +117,36 @@ class ExportForCommercialVehicleModel(_m.Tool(), gen_utils.Snapshot):
             'mhdn': 1,
             'mhdt': 1,
             'hhdn': 2,
-            'hhdt': 2}
+            'hhdt': 2
+        }
 
-        # Convert relevant skims to numpy arrays
+        # Lookup relevant skims as numpy arrays
         skim_mat = {}
         for cls in classes:
             for skim in skims:
-                if "TOLL" in skim and not "TOLL" in cls:
-                    continue  # Only extract toll skim for toll-eligible classes
                 name = '%s_%s_%s' % (period, cls, skim)
-                skim_mat[name] = emmebank.matrix(name).get_numpy_data(scenario)
+                if name not in skim_mat:
+                    skim_mat[name] = emmebank.matrix(name).get_numpy_data(scenario)
                     
         output_matrices = {
-            'impldt_MD_Time.txt': skim_mat['MD_SOVTOLLH_TIME'],
-            'impldt_MD_Dist.txt': skim_mat['MD_SOVTOLLH_DIST'],
+            'impldt_MD_Time.txt': skim_mat['MD_SOV_TR_H_TIME'],
+            'impldt_MD_Dist.txt': skim_mat['MD_SOV_TR_H_DIST'],
         }
         
         # Calculate DU matrices in numpy
         for mode in modes:
             time = skim_mat['%s_%s_TIME' % (period, mode_class[mode])]
             distance = skim_mat['%s_%s_DIST' % (period, mode_class[mode])]
+            # All classes now have a tollcost skim available
+            toll_cost = skim_mat['%s_%s_TOLLCOST' % (period, mode_class[mode])]
+            _np.fill_diagonal(toll_cost, 0)
+
             coeffs = DUCoef[modes_util[mode]]
-            disutil_mat = coeffs[0] * time + coeffs[1] * distance
-            # Add additional toll parameter for toll modes
-            if is_toll_mode(mode):
-                toll_cost = skim_mat['%s_%s_TOLLCOST' % (period, mode_class[mode])]
-                _np.fill_diagonal(toll_cost, 0)
-                disutil_mat += coeffs[2] * toll_cost
+            disutil_mat = coeffs[0] * time + coeffs[1] * distance + coeffs[2] * toll_cost
             output_matrices['imp%s_%s_DU.txt' % (mode, period)] = disutil_mat
 
         # Insert row number into first column of the array
+        # Note: assumes zone IDs are continuous
         for key, array in output_matrices.iteritems():
             output_matrices[key] = _np.insert(array, 0, range(1, array.shape[0]+1), axis=1)
 
