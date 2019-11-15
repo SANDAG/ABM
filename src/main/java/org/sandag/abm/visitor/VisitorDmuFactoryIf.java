@@ -14,4 +14,5 @@ public interface VisitorDmuFactoryIf
 
     VisitorTripModeChoiceDMU getVisitorTripModeChoiceDMU();
 
+    VisitorMicromobilityChoiceDMU getVisitorMicromobilityChoiceDMU();
 }

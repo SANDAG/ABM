@@ -892,10 +892,16 @@ public class HouseholdDataWriter
         data.add("dest_escortee_pnum");
         data.add("valueOfTime");
         data.add("transponder_avail");
+        data.add("micro_walkMode");
+        data.add("micro_trnAcc");
+        data.add("micro_trnEgr");
         
-        if(writeLogsums)
+        if(writeLogsums) {
         	data.add("tripModeLogsum");
-        
+        	data.add("microWalkModeLogsum");
+        	data.add("microTrnAccLogsum");
+        	data.add("microTrnEgrLogsum");
+        }
         return data;
     }
 
@@ -922,9 +928,16 @@ public class HouseholdDataWriter
         data.add("tour_mode");
         data.add("valueOfTime");
         data.add("transponder_avail");
-
-        if(writeLogsums)
+        data.add("micro_walkMode");
+        data.add("micro_trnAcc");
+        data.add("micro_trnEgr");
+        
+        if(writeLogsums) {
         	data.add("tripModeLogsum");
+        	data.add("microWalkModeLogsum");
+        	data.add("microTrnAccLogsum");
+        	data.add("microTrnEgrLogsum");
+        }
 
         return data;
     }
@@ -958,10 +971,15 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.REAL);
         data.add(SqliteDataTypes.INTEGER);
-
-        if(writeLogsums)
+        data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.INTEGER);
+ 
+        if(writeLogsums) {
         	data.add(SqliteDataTypes.REAL);
-
+        	data.add(SqliteDataTypes.REAL);
+        	data.add(SqliteDataTypes.REAL);
+        }
         return data;
     }
 
@@ -988,10 +1006,15 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.REAL);
         data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.INTEGER);
 
-        if(writeLogsums)
+        if(writeLogsums) {
         	data.add(SqliteDataTypes.REAL);
-        
+        	data.add(SqliteDataTypes.REAL);
+        	data.add(SqliteDataTypes.REAL);
+        }       
         return data;
     }
 
@@ -1088,11 +1111,17 @@ public class HouseholdDataWriter
         data.add(string(s.getEscorteePnumDest()));
         data.add(string(s.getValueOfTime()));
         data.add(string(h.getTpChoice()));
+        data.add(string(s.getMicromobilityWalkMode()));
+        data.add(string(s.getMicromobilityAccessMode()));
+        data.add(string(s.getMicromobilityEgressMode()));
         
-        if(writeLogsums)
+        if(writeLogsums) {
         	data.add(string(s.getModeLogsum()));
+           	data.add(string(s.getMicromobilityWalkLogsum()));
+           	data.add(string(s.getMicromobilityAccessLogsum()));
+           	data.add(string(s.getMicromobilityEgressLogsum()));
 
-        
+        }
         return data;
     }
 
@@ -1188,6 +1217,17 @@ public class HouseholdDataWriter
         data.add(string(t.getTourModeChoice()));
         data.add(string(s.getValueOfTime()));
         data.add(string(h.getTpChoice()));
+        data.add(string(s.getMicromobilityWalkMode()));
+        data.add(string(s.getMicromobilityAccessMode()));
+        data.add(string(s.getMicromobilityEgressMode()));
+        
+        if(writeLogsums) {
+        	data.add(string(s.getModeLogsum()));
+           	data.add(string(s.getMicromobilityWalkLogsum()));
+           	data.add(string(s.getMicromobilityAccessLogsum()));
+           	data.add(string(s.getMicromobilityEgressLogsum()));
+
+        }
 
         
         if(writeLogsums)

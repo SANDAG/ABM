@@ -116,6 +116,8 @@ public class VisitorModel
         VisitorStopTimeOfDayChoiceModel stopTodChoiceModel = new VisitorStopTimeOfDayChoiceModel(rbMap);
         VisitorStopLocationChoiceModel stopLocationChoiceModel = new VisitorStopLocationChoiceModel(rbMap, modelStructure, dmuFactory, tazDistanceCalculator);
         VisitorTripModeChoiceModel tripModeChoiceModel = new VisitorTripModeChoiceModel(rbMap, modelStructure, dmuFactory);
+        VisitorMicromobilityChoiceModel micromobilityChoiceModel = new VisitorMicromobilityChoiceModel(rbMap,modelStructure, dmuFactory);
+        
         double[][] mgraSizeTerms = destChoiceModel.getMgraSizeTerms();
         double[][] tazSizeTerms = destChoiceModel.getTazSizeTerms();
         double[][][] mgraProbabilities = destChoiceModel.getMgraProbabilities();
@@ -228,6 +230,7 @@ public class VisitorModel
 
             // set the trips in the tour object
             tour.setTrips(trips);
+            micromobilityChoiceModel.applyModel(tour);
 
         }
     }

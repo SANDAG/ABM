@@ -849,4 +849,27 @@ public class Tour
 		this.useOwnedAV = useOwnedAV;
 	}
 
+	/**
+	 * Iterate through persons on tour and return non-work time factor
+	 * for oldest person. If the person array is null then return 1.0.
+	 * 
+	 * @return Time factor for oldest person on joint tour.
+	 */
+	public double getJointTourTimeFactor() {
+		int[] personNumArray = getPersonNumArray();
+		int oldestAge = -999;
+		Person oldestPerson = null;
+		for (int num : personNumArray){
+			Person p = 	hhObj.getPerson(num);
+			if(p.getAge() > oldestAge){
+				oldestPerson = p;
+				oldestAge = p.getAge();
+			}
+	    }
+		if(oldestPerson != null)
+			return oldestPerson.getTimeFactorNonWork();
+		
+		return 1.0;
+	}
+
 }

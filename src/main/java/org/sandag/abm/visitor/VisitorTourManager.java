@@ -423,7 +423,8 @@ public class VisitorTourManager
             throw new RuntimeException();
         }
         String tripHeaderString = new String(
-                "tourID,tripID,originPurp,destPurp,originMGRA,destinationMGRA,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,avAvailable,boardingTap,alightingTap,set,valueOfTime,partySize\n");
+                "tourID,tripID,originPurp,destPurp,originMGRA,destinationMGRA,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,avAvailable,boardingTap,alightingTap,set,valueOfTime,partySize,"
+        		+"micro_walkMode,micro_trnAcc,micro_trnEgr\n");
         tripWriter.print(tripHeaderString);
 
         // Iterate through the array, printing records to the file
@@ -486,7 +487,8 @@ public class VisitorTourManager
                 + trip.isOriginIsTourDestination() + "," + trip.isDestinationIsTourDestination()
                 + "," + trip.getPeriod() + "," + trip.getTripMode() + ","  + (avAvailable?1:0) +","
                 + trip.getBoardTap() + "," + trip.getAlightTap() + "," + trip.getSet()
-                + "," + String.format("%9.2f",trip.getValueOfTime())+ "," + tour.getNumberOfParticipants()+ "\n");
+                + "," + String.format("%9.2f",trip.getValueOfTime())+ "," + tour.getNumberOfParticipants()+"," 
+                +trip.getMicromobilityWalkMode()+"," +trip.getMicromobilityAccessMode()+"," +trip.getMicromobilityEgressMode()+"\n");
         writer.print(record);
     }
 

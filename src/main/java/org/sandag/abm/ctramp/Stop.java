@@ -15,6 +15,12 @@ public class Stop
     int     dest;
     int     park;
     int     mode;
+    byte micromobilityWalkMode;
+    byte micromobilityAccessMode;
+    byte micromobilityEgressMode;
+    float micromobilityWalkLogsum;
+    float micromobilityAccessLogsum;
+    float micromobilityEgressLogsum;
     private float   modeLogsum;
     
     int     stopPeriod;
@@ -210,6 +216,52 @@ public class Stop
 		this.valueOfTime = valueOfTime;
 	}
 
+	public void setMicromobilityWalkMode(byte micromobilityWalkMode) {
+		this.micromobilityWalkMode=micromobilityWalkMode;
+	}
+	
+	public byte getMicromobilityWalkMode() {
+		return micromobilityWalkMode;
+	}
+    public float getMicromobilityWalkLogsum() {
+		return micromobilityWalkLogsum;
+	}
+
+	public void setMicromobilityWalkLogsum(float micromobilityWalkLogsum) {
+		this.micromobilityWalkLogsum = micromobilityWalkLogsum;
+	}
+
+	public byte getMicromobilityAccessMode() {
+		return micromobilityAccessMode;
+	}
+
+	public void setMicromobilityAccessMode(byte micromobilityAccessMode) {
+		this.micromobilityAccessMode = micromobilityAccessMode;
+	}
+
+	public byte getMicromobilityEgressMode() {
+		return micromobilityEgressMode;
+	}
+
+	public void setMicromobilityEgressMode(byte micromobilityEgressMode) {
+		this.micromobilityEgressMode = micromobilityEgressMode;
+	}
+
+	public float getMicromobilityAccessLogsum() {
+		return micromobilityAccessLogsum;
+	}
+
+	public void setMicromobilityAccessLogsum(float micromobilityAccessLogsum) {
+		this.micromobilityAccessLogsum = micromobilityAccessLogsum;
+	}
+
+	public float getMicromobilityEgressLogsum() {
+		return micromobilityEgressLogsum;
+	}
+
+	public void setMicromobilityEgressLogsum(float micromobilityEgressLogsum) {
+		this.micromobilityEgressLogsum = micromobilityEgressLogsum;
+	}
 
 	public void logStopObject(Logger logger, int totalChars)
     {

@@ -20,6 +20,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -134,6 +135,8 @@ public final class MgraDataManager
     private Set<Integer>[]              driveAccessibleTaps;
     private Set<Integer>[]              walkAccessibleTaps;
 
+    //by TAP, closest mgra to the tap by walking distance.
+    private int[] 	closestMgraToTap; 
  
 	private TableDataSet                mgraTableDataSet;
 
@@ -193,9 +196,51 @@ public final class MgraDataManager
 
         calculateMgraAvgParkingCosts(rbMap);
 
+        calculateClosestMgraToTap();
+        
         printMgraStats();
     }
 
+    /**
+     * Find the closest mgra by walk time to the tap.
+     */
+    public void calculateClosestMgraToTap() {
+    	
+    	closestMgraToTap = new int[maxTap+1];
+    	float[] minTimeToTap = new float[maxTap+1];
+    	Arrays.fill(minTimeToTap, 999999);
+    	
+    	for(int mgra = 1; mgra<walkAccessibleTaps.length;++mgra) {
+    		
+    		if(walkAccessibleTaps[mgra]==null)
+    			continue;
+    		
+    		Set<Integer> taps = walkAccessibleTaps[mgra];
+    		for(int tap : taps) {
+    			int pos = getTapPosition(mgra, tap);
+    			float time = getMgraToTapWalkTime(mgra,pos);
+    			if(time<minTimeToTap[tap]) {
+    				minTimeToTap[tap]=time;
+    				closestMgraToTap[tap] = mgra;
+    			}
+    		}
+    		
+    	}
+    	
+    }
+    
+    
+    /**
+     * Get the closest mgra by walk time to the tap
+     * @param tap
+     * @return The closest mgra
+     */
+    public int getClosestMgra(int tap) {
+    	
+    	return closestMgraToTap[tap];
+    }
+    
+    
     /**
      * Get a static instance of the Mgra data manager. Creates one if it is not
      * initialized.

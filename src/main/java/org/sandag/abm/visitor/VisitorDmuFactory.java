@@ -47,4 +47,9 @@ public class VisitorDmuFactory
     {
         return new VisitorTripModeChoiceDMU(visitorModelStructure, null);
     }
+    
+    public VisitorMicromobilityChoiceDMU getVisitorMicromobilityChoiceDMU()
+    {
+        return new VisitorMicromobilityChoiceDMU();
+    }
 }

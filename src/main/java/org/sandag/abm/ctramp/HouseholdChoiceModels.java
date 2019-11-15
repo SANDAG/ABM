@@ -88,6 +88,7 @@ public class HouseholdChoiceModels
     private SubtourDestChoiceModel                                   awlcModel;
     private SubtourDepartureAndDurationTime                          awtodModel;
     private IntermediateStopChoiceModels                             stlmcModel;
+    private MicromobilityChoiceModel                                 mmModel;
 
     private long                                                     aoTime;
     private long                                                     fpTime;
@@ -371,6 +372,8 @@ public class HouseholdChoiceModels
             {
                 stlmcModel = new IntermediateStopChoiceModels(propertyMap, modelStructure,
                         dmuFactory, logsumHelper);
+                
+                mmModel = new MicromobilityChoiceModel(propertyMap,modelStructure,dmuFactory);
 
                 // if the slcTazDistProbs are not null, they have been already
                 // computed, and it is
@@ -536,7 +539,10 @@ public class HouseholdChoiceModels
 
         if (runStopFrequencyModel) stfModel.applyModel(hhObject);
 
-        if (runStopLocationModel) stlmcModel.applyModel(hhObject, false);
+        if (runStopLocationModel) {
+        	stlmcModel.applyModel(hhObject, false);
+        	mmModel.applyModel(hhObject);
+        }
 
     }
 
@@ -744,6 +750,8 @@ public class HouseholdChoiceModels
 
             if (stlmcModel.getMaxAltsInSample() > maxAlts)
                 maxAlts = stlmcModel.getMaxAltsInSample();
+            
+            mmModel.applyModel(hhObject);
         }
 
     }

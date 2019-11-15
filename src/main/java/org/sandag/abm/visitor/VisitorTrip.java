@@ -17,6 +17,12 @@ public class VisitorTrip
     private boolean lastTrip;
     private boolean originIsTourDestination;
     private boolean destinationIsTourDestination;
+    byte micromobilityWalkMode;
+    byte micromobilityAccessMode;
+    byte micromobilityEgressMode;
+    float micromobilityWalkLogsum;
+    float micromobilityAccessLogsum;
+    float micromobilityEgressLogsum;
 
  	private int boardTap;
  	private int alightTap;
@@ -451,6 +457,52 @@ public class VisitorTrip
 
 	public void setValueOfTime(float valueOfTime) {
 		this.valueOfTime = valueOfTime;
+	}
+	public void setMicromobilityWalkMode(byte micromobilityWalkMode) {
+		this.micromobilityWalkMode=micromobilityWalkMode;
+	}
+	
+	public byte getMicromobilityWalkMode() {
+		return micromobilityWalkMode;
+	}
+    public float getMicromobilityWalkLogsum() {
+		return micromobilityWalkLogsum;
+	}
+
+	public void setMicromobilityWalkLogsum(float micromobilityWalkLogsum) {
+		this.micromobilityWalkLogsum = micromobilityWalkLogsum;
+	}
+
+	public byte getMicromobilityAccessMode() {
+		return micromobilityAccessMode;
+	}
+
+	public void setMicromobilityAccessMode(byte micromobilityAccessMode) {
+		this.micromobilityAccessMode = micromobilityAccessMode;
+	}
+
+	public byte getMicromobilityEgressMode() {
+		return micromobilityEgressMode;
+	}
+
+	public void setMicromobilityEgressMode(byte micromobilityEgressMode) {
+		this.micromobilityEgressMode = micromobilityEgressMode;
+	}
+
+	public float getMicromobilityAccessLogsum() {
+		return micromobilityAccessLogsum;
+	}
+
+	public void setMicromobilityAccessLogsum(float micromobilityAccessLogsum) {
+		this.micromobilityAccessLogsum = micromobilityAccessLogsum;
+	}
+
+	public float getMicromobilityEgressLogsum() {
+		return micromobilityEgressLogsum;
+	}
+
+	public void setMicromobilityEgressLogsum(float micromobilityEgressLogsum) {
+		this.micromobilityEgressLogsum = micromobilityEgressLogsum;
 	}
 
 }

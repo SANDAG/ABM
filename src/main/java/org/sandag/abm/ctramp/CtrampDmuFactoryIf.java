@@ -46,5 +46,7 @@ public interface CtrampDmuFactoryIf
     TripModeChoiceDMU getTripModeChoiceDMU();
 
     ParkingChoiceDMU getParkingChoiceDMU();
+    
+    MicromobilityChoiceDMU getMicromobilityChoiceDMU();
 
 }

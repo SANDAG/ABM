@@ -27,6 +27,7 @@ import org.sandag.abm.ctramp.IndividualMandatoryTourFrequencyDMU;
 import org.sandag.abm.ctramp.IndividualNonMandatoryTourFrequencyDMU;
 import org.sandag.abm.ctramp.InternalExternalTripChoiceDMU;
 import org.sandag.abm.ctramp.JointTourModelsDMU;
+import org.sandag.abm.ctramp.MicromobilityChoiceDMU;
 import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.ParkingChoiceDMU;
 import org.sandag.abm.ctramp.ParkingProvisionChoiceDMU;
@@ -159,6 +160,11 @@ public class SandagCtrampDmuFactory
     public ParkingChoiceDMU getParkingChoiceDMU()
     {
         return new SandagParkingChoiceDMU();
+    }
+
+    public MicromobilityChoiceDMU getMicromobilityChoiceDMU()
+    {
+        return new SandagMicromobilityChoiceDMU();
     }
 
 }
