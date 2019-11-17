@@ -124,49 +124,49 @@ public class SandagModelStructure
 
     // TODO: set these values from project specific code.
     public static final int[]    SOV_ALTS                                                           = {
-            1, 2                                                                                    };
+            1                                                                                   };
     public static final int[]    HOV_ALTS                                                           = {
-            3, 4, 5, 6                                                                       };
+            2, 3                                                                       };
     public static final int[]    HOV2_ALTS                                                          = {
-            3, 4                                                                               };
+            2                                                                               };
     public static final int[]    HOV3_ALTS                                                          = {
-            5, 6                                                                                };
-    public static final int[]    WALK_ALTS                                                          = {7};
-    public static final int[]    BIKE_ALTS                                                          = {8};
+            3                                                                                };
+    public static final int[]    WALK_ALTS                                                          = {4};
+    public static final int[]    BIKE_ALTS                                                          = {5};
     public static final int[]    NON_MOTORIZED_ALTS                                                 = {
-            7, 8                                                                                  };
+            4, 5                                                                                  };
     public static final int[]    TRANSIT_ALTS                                                       = {
-            9, 10, 11, 12                              };
+            6, 7, 8, 9                              };
     public static final int[]    WALK_TRANSIT_ALTS                                                  = {
-            9                                                                     };
+            6                                                                     };
     public static final int[]    DRIVE_TRANSIT_ALTS                                                 = {
-            10, 11, 12                                                  };
+            7, 8, 9                                                 };
     public static final int[]    PNR_ALTS                                                           = {
-            10                                                                      };
+            7                                                                      };
     public static final int[]    KNR_ALTS                                                           = {
-            11, 12                                                                     };
-    public static final int[]    SCHOOL_BUS_ALTS                                                    = {16};
+            8, 9                                                                     };
+    public static final int[]    SCHOOL_BUS_ALTS                                                    = {13};
     public static final int[]    TRIP_SOV_ALTS                                                      = {
-            1, 2                                                                                    };
+            1                                                                                     };
     public static final int[]    TRIP_HOV_ALTS                                                      = {
-            3, 4, 5, 6                                                                       };
+            2,3                                                                      };
 
-    public static final int[]    PAY_ALTS                                                           = {
-            2, 4, 6                                                                                 };
+  //  public static final int[]    PAY_ALTS                                                           = {
+  //          2, 4, 6                                                                                 };
 
-    public static final int[]    OTHER_ALTS                                                         = {13,14,15,16};
+    public static final int[]    OTHER_ALTS                                                         = {10,11,12,13};
 
-    private static final int     WALK                                                               = 7;
-    private static final int     BIKE                                                               = 8;
+    private static final int     WALK                                                               = 4;
+    private static final int     BIKE                                                               = 5;
 
-    public static final int      SCHOOL_BUS                                                         = 16;
-    public static final int      TAXI                                                               = 13;
-    public static final int[]    TNC_ALTS = {14,15};
+    public static final int      SCHOOL_BUS                                                         = 13;
+    public static final int      TAXI                                                               = 10;
+    public static final int[]    TNC_ALTS = {11,12};
 
-    public static final String[] modeName = {"SOV_GP","SOV_PAY","SR2_NOPAY","SR2_PAY","SR3_NOPAY","SR3_PAY",
-    	"WALK","BIKE","WLK_SET","PNR_SET","KNR_PER","KNR_TNC","TAXI","TNC_SINGLE","TNC_SHARED","SCHLBUS"};
+    public static final String[] modeName = {"SOV","SR2","SR3",
+    	"WALK","BIKE","WLK_SET","PNR_SET","KNR_SET","TNC_SET","TAXI","TNC_SINGLE","TNC_SHARED","SCHLBUS"};
 
-    public static final int      MAXIMUM_TOUR_MODE_ALT_INDEX                                        = 16;
+    public static final int      MAXIMUM_TOUR_MODE_ALT_INDEX                                        = 13;
 
     public final double[][]      CDAP_6_PLUS_PROPORTIONS                                            = {
             {0.0, 0.0, 0.0}, {0.79647, 0.09368, 0.10985}, {0.61678, 0.25757, 0.12565},
@@ -530,7 +530,7 @@ public class SandagModelStructure
     public static boolean getTripModeIsPay(int tripMode)
     {
         boolean returnValue = false;
-        for (int i = 0; i < PAY_ALTS.length; i++)
+     /*   for (int i = 0; i < PAY_ALTS.length; i++)
         {
             if (PAY_ALTS[i] == tripMode)
             {
@@ -538,7 +538,7 @@ public class SandagModelStructure
                 break;
             }
         }
-
+*/
         return returnValue;
     }
     
