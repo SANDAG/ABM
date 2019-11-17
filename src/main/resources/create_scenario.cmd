@@ -1,4 +1,4 @@
-rem create_scenario.cmd T:\projects\sr14\version_14_1_x\abm_runs\2016 2016 T:\projects\sr14\version_14_1_x\network_build\2016
+rem create_scenario.cmd T:\projects\sr14\version_14_1_x\abm_runs\2016 2016 T:\projects\sr14\version_14_1_x\network_build\2016 4.4.0
 
 @echo off
 

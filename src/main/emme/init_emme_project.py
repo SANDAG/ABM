@@ -1,24 +1,26 @@
-#//////////////////////////////////////////////////////////////////////////////
-#////                                                                       ///
-#//// Copyright INRO, 2016-2017.                                            ///
-#//// Rights to use and modify are granted to the                           ///
-#//// San Diego Association of Governments and partner agencies.            ///
-#//// This copyright notice must be preserved.                              ///
-#////                                                                       ///
-#//// init_emme_project.py                                                  ///
-#////                                                                       ///
-#////     Usage: init_emme_project.py [-r root] [-t title]                  ///
-#////                                                                       ///
-#////         [-r root]: Specifies the root directory in which to create    ///
-#////              the Emme project.                                        ///
-#////              If omitted, defaults to the current working directory    ///
-#////         [-t title]: The title of the Emme project and Emme database.  ///
-#////              If omitted, defaults to SANDAG empty database.           ///
-#////                                                                       ///
-#////                                                                       ///
-#////                                                                       ///
-#////                                                                       ///
-#//////////////////////////////////////////////////////////////////////////////
+#///////////////////////////////////////////////////////////////////////////////
+#////                                                                        ///
+#//// Copyright INRO, 2016-2019.                                             ///
+#//// Rights to use and modify are granted to the                            ///
+#//// San Diego Association of Governments and partner agencies.             ///
+#//// This copyright notice must be preserved.                               ///
+#////                                                                        ///
+#//// init_emme_project.py                                                   ///
+#////                                                                        ///
+#////     Usage: init_emme_project.py [-r root] [-t title]                   ///
+#////                                                                        ///
+#////         [-r root]: Specifies the root directory in which to create     ///
+#////              the Emme project.                                         ///
+#////              If omitted, defaults to the current working directory     ///
+#////         [-t title]: The title of the Emme project and Emme database.   ///
+#////              If omitted, defaults to SANDAG empty database.            ///
+#////         [-v emmeversion]: Emme version to use to create the project.   ///
+#////              If omitted, defaults to 4.3.7.                            ///
+#////                                                                        ///
+#////                                                                        ///
+#////                                                                        ///
+#////                                                                        ///
+#///////////////////////////////////////////////////////////////////////////////
 
 import inro.emme.desktop.app as _app
 import inro.emme.desktop.types as _ws_types
@@ -57,8 +59,13 @@ def init_emme_project(root, title, emmeversion):
         'extra_attribute_values': 18000000,
 
         'functions': 99,
-        'operators': 5000,
+        'operators': 5000
     }
+
+    # for Emme version > 4.3.7, add the sola_analyses dimension
+    if emmeversion != '4.3.7':
+        dimensions['sola_analyses'] = 240
+
     os.mkdir(os.path.join(project_root, "Database"))
     emmebank = _eb.create(os.path.join(project_root, "Database", "emmebank"), dimensions)
     emmebank.title = title
@@ -85,4 +92,5 @@ if __name__ == "__main__":
                         default="SANDAG empty database")
     parser.add_argument('-v', '--emmeversion', help='the Emme version', default='4.3.7')
     args = parser.parse_args()
-init_emme_project(args.root, args.title, args.emmeversion)
+
+    init_emme_project(args.root, args.title, args.emmeversion)
