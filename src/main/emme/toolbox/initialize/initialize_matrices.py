@@ -175,8 +175,8 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             ("SOV_TR_M",  "SOV transponder demand medium VOT"),
             ("HOV2_M",    "HOV2 demand medium VOT"),
             ("HOV3_M",    "HOV3+ demand medium VOT"),
-            ("SOV_NTP_H", "SOV non-transponder demand high VOT"),
-            ("SOV_TP_H",  "SOV transponder demand high VOT"),
+            ("SOV_NT_H", "SOV non-transponder demand high VOT"),
+            ("SOV_TR_H",  "SOV transponder demand high VOT"),
             ("HOV2_H",    "HOV2 demand high VOT"),
             ("HOV3_H",    "HOV3+ demand high VOT"),
             ("TRK_H",     "Truck Heavy PCE demand"),
@@ -201,7 +201,7 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
                      for name, desc in tmplt_matrices])
 
     def traffic_skims(self):
-        tp_desc = {"TP": "transponder", "NTP": "non-transponder"}
+        tp_desc = {"TR": "transponder", "NT": "non-transponder"}
         vot_desc = {"L": "low", "M": "medium", "H": "high"}
         truck_desc = {"L": "light", "M": "medium", "H": "heavy"}
 
@@ -227,20 +227,20 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
         ]
         for period in self._all_periods:
             for vot_type in "L", "M", "H":
-                for tp_type in "NTP", "TP":
-                    cls_name = "SOV" + tp_type + vot_type
+                for tp_type in "NT", "TR":
+                    cls_name = "SOV_" + tp_type + "_" + vot_type
                     cls_desc = tp_desc[tp_type] + " " + vot_desc[vot_type] + " VOT"
                     self.add_matrices("traffic_skims", period,
                         [("mf", period + "_" + cls_name + "_" + name, period + " " + desc % cls_desc) for name, desc in sov_tmplt_matrices])
                 for hov_type in "2", "3":
-                    cls_name = "HOV" + hov_type + vot_type
+                    cls_name = "HOV" + hov_type + "_" + vot_type
                     cls_desc = hov_type + " " + vot_desc[vot_type] + " VOT"
                     self.add_matrices("traffic_skims", period,
                         [("mf", period + "_" + cls_name + "_" + name, 
                             period + " " + desc % cls_desc) 
                          for name, desc in hov_tmplt_matrices])
             for truck_type in "L", "M", "H":
-                cls_name = "TRK" + truck_type + "ALL"
+                cls_name = "TRK" + "_" + truck_type
                 cls_desc = truck_desc[truck_type]
                 self.add_matrices("traffic_skims", period,
                     [("mf", period + "_" + cls_name + "_" + name, 
@@ -323,14 +323,15 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
         self.add_matrices("truck_model", "ALL",
                 [("mf", name, desc) for name, desc in tmplt_matrices])
 
+        # TODO: remove GP and TOLL matrices, no longer used
         tmplt_matrices = [
-            ("TRKL",            "Truck Light demand"), 
+            ("TRK_L_VEH",            "Truck Light demand"), 
             ("TRKLGP_VEH",      "Truck Light GP-only vehicle demand"),
             ("TRKLTOLL_VEH",    "Truck Light toll vehicle demand"),
-            ("TRKM",            "Truck Medium demand"),
+            ("TRK_M_VEH",            "Truck Medium demand"),
             ("TRKMGP_VEH",      "Truck Medium GP-only vehicle demand"),
             ("TRKMTOLL_VEH",    "Truck Medium toll vehicle demand"),
-            ("TRKH",            "Truck Heavy demand"), 
+            ("TRK_H_VEH",            "Truck Heavy demand"), 
             ("TRKHGP_VEH",      "Truck Heavy GP-only vehicle demand"),
             ("TRKHTOLL_VEH",    "Truck Heavy toll vehicle demand"),
         ]
@@ -340,6 +341,7 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
                  for name, desc in tmplt_matrices])
 
     def commercial_vehicle_model(self):
+        # TODO : remove commercial vehicle matrices, no longer used
         tmplt_matrices = [
             ('mo', 'COMVEH_PROD',         'Commercial vehicle production'),
             ('md', 'COMVEH_ATTR',         'Commercial vehicle attraction'),

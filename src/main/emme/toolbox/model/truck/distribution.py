@@ -156,15 +156,15 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
 
         self.split_external_demand()
         self.split_into_time_of_day()
-        self.toll_diversion()
+        # NOTE: TOLL diversion skipped with new class definitions
+        #self.toll_diversion()
 
         with _m.logbook_trace('Reduce matrix precision'):
             precision = props['RunModel.MatrixPrecision']
             matrices = []
             for t, pce in [('L', 1.3), ('M', 1.5), ('H', 2.5)]:
                 for p in ['EA', 'AM', 'MD', 'PM', 'EV']:
-                    matrices.append('mf%s_TRK%sGP_VEH' % (p, t))
-                    matrices.append('mf%s_TRK%sTOLL_VEH' % (p, t))
+                    matrices.append('mf%s_TRK_%s_VEH' % (p, t))
             dem_utils.reduce_matrix_precision(matrices, precision, num_processors, scenario)
 
     @_m.logbook_trace('Create friction factors matrix')
@@ -236,51 +236,53 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
         for period, share, border_corr in zip(periods, time_share, border_correction):
             for t in truck_types:
                 with matrix_calc.trace_run('Calculate %s demand matrix for %s' % (period, truck_names[t])):
-                    tod_demand = 'mf"%s_TRK%s"' % (period, t)
+                    tod_demand = 'mf"%s_TRK_%s"' % (period, t)
                     matrix_calc.add(tod_demand, 'mf"TRK%s_DEMAND"' % (t))
-                    matrix_calc.add(tod_demand, '%s_TRK%s * %s' % (period, t, share))
-                    matrix_calc.add(tod_demand, 'mf%s_TRK%s * %s' % (period, t, border_corr),
+                    matrix_calc.add(tod_demand, 'mf%s_TRK_%s_VEH * %s' % (period, t, share))
+                    matrix_calc.add(tod_demand, 'mf%s_TRK_%s_VEH * %s' % (period, t, border_corr),
                         {"origins": "1-5", "destinations": "1-9999"})
-                    matrix_calc.add(tod_demand, 'mf%s_TRK%s * %s' % (period, t, border_corr),
+                    matrix_calc.add(tod_demand, 'mf%s_TRK_%s_VEH * %s' % (period, t, border_corr),
                         {"origins": "1-9999", "destinations": "1-5"})
 
     @_m.logbook_trace('Toll diversion')
     def toll_diversion(self):
-        matrix_calc = dem_utils.MatrixCalculator(self.scenario, self.num_processors)
-        nest_factor = 10
-        vot = 0.02 # cent/min
-        periods = ['EA', 'AM', 'MD', 'PM', 'EV']
-        truck_types = ['L', 'M', 'H']
-        truck_toll_factors = [1, 1.03, 2.33]
+        # NOTE: toll diversion skipped
+        pass 
+        # matrix_calc = dem_utils.MatrixCalculator(self.scenario, self.num_processors)
+        # nest_factor = 10
+        # vot = 0.02 # cent/min
+        # periods = ['EA', 'AM', 'MD', 'PM', 'EV']
+        # truck_types = ['L', 'M', 'H']
+        # truck_toll_factors = [1, 1.03, 2.33]
 
-        for period in periods:
-            for truck, toll_factor in zip(truck_types, truck_toll_factors):
-                with matrix_calc.trace_run('Toll diversion for period %s, truck type %s' % (period, truck) ):
-                    # Define the utility expression
-                    utility = """
-                    (
-                        (mf"%(p)s_TRK%(t)sGP_TIME" - mf"%(p)s_TRK%(t)sTOLL_TIME")
-                        - %(vot)s * mf"%(p)s_TRK%(t)sTOLL_TOLLCOST" * %(t_fact)s
-                    )
-                    / %(n_fact)s
-                     """ % {
-                        'p': period,
-                        't': truck,
-                        'vot': vot,
-                        't_fact': toll_factor,
-                        'n_fact': nest_factor
-                    }
-                    # If there is no toll probability of using toll is 0
-                    matrix_calc.add('mf"%s_TRK%sTOLL_VEH"' % (period, truck), '0')
-                    # If there is a non-zero toll value compute the share of
-                    # toll-available passengers using the utility expression defined earlier
-                    matrix_calc.add('mf"%s_TRK%sTOLL_VEH"' % (period, truck),
-                        'mf"%(p)s_TRK%(t)s" * (1/(1 + exp(- %(u)s)))' % {'p': period, 't': truck, 'u': utility},
-                        ['mf"%s_TRK%sTOLL_TOLLCOST"' % (period, truck), 0, 0 , "EXCLUDE"])
-                    # if non-toll path is not available (GP time=0), set all demand to toll
-                    matrix_calc.add('mf"%s_TRK%sTOLL_VEH"' % (period, truck),
-                                    'mf"%(p)s_TRK%(t)s"'  % {'p': period, 't': truck},
-                                    ['mf"%(p)s_TRK%(t)sGP_TIME"' % {'p': period, 't': truck}, 0, 0 , "INCLUDE"])
-                    # Compute the truck demand for non toll
-                    matrix_calc.add('mf"%s_TRK%sGP_VEH"' % (period, truck),
-                        '(mf"%(p)s_TRK%(t)s" - mf"%(p)s_TRK%(t)sTOLL_VEH").max.0' % {'p': period, 't': truck})
+        # for period in periods:
+        #     for truck, toll_factor in zip(truck_types, truck_toll_factors):
+        #         with matrix_calc.trace_run('Toll diversion for period %s, truck type %s' % (period, truck) ):
+        #             # Define the utility expression
+        #             utility = """
+        #             (
+        #                 (mf"%(p)s_TRK%(t)sGP_TIME" - mf"%(p)s_TRK%(t)sTOLL_TIME")
+        #                 - %(vot)s * mf"%(p)s_TRK%(t)sTOLL_TOLLCOST" * %(t_fact)s
+        #             )
+        #             / %(n_fact)s
+        #              """ % {
+        #                 'p': period,
+        #                 't': truck,
+        #                 'vot': vot,
+        #                 't_fact': toll_factor,
+        #                 'n_fact': nest_factor
+        #             }
+        #             # If there is no toll probability of using toll is 0
+        #             matrix_calc.add('mf"%s_TRK%sTOLL_VEH"' % (period, truck), '0')
+        #             # If there is a non-zero toll value compute the share of
+        #             # toll-available passengers using the utility expression defined earlier
+        #             matrix_calc.add('mf"%s_TRK%sTOLL_VEH"' % (period, truck),
+        #                 'mf"%(p)s_TRK%(t)s" * (1/(1 + exp(- %(u)s)))' % {'p': period, 't': truck, 'u': utility},
+        #                 ['mf"%s_TRK%sTOLL_TOLLCOST"' % (period, truck), 0, 0 , "EXCLUDE"])
+        #             # if non-toll path is not available (GP time=0), set all demand to toll
+        #             matrix_calc.add('mf"%s_TRK%sTOLL_VEH"' % (period, truck),
+        #                             'mf"%(p)s_TRK%(t)s"'  % {'p': period, 't': truck},
+        #                             ['mf"%(p)s_TRK%(t)sGP_TIME"' % {'p': period, 't': truck}, 0, 0 , "INCLUDE"])
+        #             # Compute the truck demand for non toll
+        #             matrix_calc.add('mf"%s_TRK%sGP_VEH"' % (period, truck),
+        #                 '(mf"%(p)s_TRK%(t)s" - mf"%(p)s_TRK%(t)sTOLL_VEH").max.0' % {'p': period, 't': truck})

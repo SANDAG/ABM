@@ -390,13 +390,11 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         # The SOV demand is modified in-place, which was imported 
         # prior from the CT-RAMP demand
         # The truck demand in vehicles is copied from separate matrices
-        transponder_name = {"T": "TR", "NT": "NT"}
         for index, period in enumerate(periods):
-            for cvm_acc, access_type in [("T", "TOLL"), ("NT", "GP")]:
-                trnspdr = transponder_name[cvm_acc]
+            for cvm_acc, trnspdr in [("T", "TR"), ("NT", "NT")]:
                 mapping["CVM_%s:L%s" % (period, cvm_acc)] = {
-                    "orig": "%s_SOV_%sH" % (period, trnspdr), 
-                    "dest": "%s_SOV_%sH" % (period, trnspdr), 
+                    "orig": "%s_SOV_%s_H" % (period, trnspdr), 
+                    "dest": "%s_SOV_%s_H" % (period, trnspdr), 
                     "pce": 1.0,
                     "scale": scale_light[index],
                     "share": share_light,
@@ -404,7 +402,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     "cvm_acc": cvm_acc
                 }
                 mapping["CVM_%s:I%s" % (period, cvm_acc)] = {
-                    "orig": "%s_TRKL%s_VEH" % (period, access_type),
+                    "orig": "%s_TRK_L_VEH" % (period),
                     "dest": "%s_TRK_L" % (period), 
                     "pce": 1.3,
                     "scale": scale_medium[index],
@@ -413,7 +411,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     "cvm_acc": cvm_acc
                 }				
                 mapping["CVM_%s:M%s" % (period, cvm_acc)] = {
-                    "orig": "%s_TRKM%s_VEH" % (period, access_type),
+                    "orig": "%s_TRK_M_%s_VEH" % (period),
                     "dest": "%s_TRK_M" % (period), 
                     "pce": 1.5,
                     "scale": scale_medium[index],
@@ -422,7 +420,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     "cvm_acc": cvm_acc
                 }
                 mapping["CVM_%s:H%s" % (period, cvm_acc)] = {
-                    "orig": "%s_TRKH%s_VEH" % (period, access_type),
+                    "orig": "%s_TRK_H_%s_VEH" % (period),
                     "dest": "%s_TRK_H" % (period), 
                     "pce": 2.5,
                     "scale": scale_heavy[index],
@@ -480,7 +478,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         matrix_calc = dem_utils.MatrixCalculator(self.scenario, self.num_processors)
         # Calculate PCEs for trucks
         periods = ["EA", "AM", "MD", "PM", "EV"]
-        mat_trucks = ['TRKL']
+        mat_trucks = ['TRK_L']
         pce_values = [1.3]
         for period in periods:
             with matrix_calc.trace_run("Period %s" % period):
