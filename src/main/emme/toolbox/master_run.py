@@ -430,7 +430,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     # initialize traffic demand, skims, truck, CV, EI, EE matrices
                     traffic_components = [
                         "traffic_skims",
-                        "truck_model", "commercial_vehicle_model",
+                        "truck_model", 
                         "external_internal_model", "external_external_model"]
                     if not skipCopyWarmupTripTables:
                         traffic_components.append("traffic_demand")
