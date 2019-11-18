@@ -132,6 +132,7 @@ class TrafficAssignment(_m.Tool(), gen_utils.Snapshot):
         version = os.environ.get("EMMEPATH", "")
         self._version = version[-5:] if version else ""
         self._skim_classes_separately = False  # Used for debugging only
+        self._stats = {}
 
     def page(self):
         pb = _m.ToolPageBuilder(self)
@@ -464,7 +465,7 @@ Assignment matrices and resulting network flows are always in PCE.
                 # Check that the distance matrix is valid (no disconnected zones)
                 # Using SOVGPL class as representative
                 if raise_zero_dist:
-                    name = "%s_SOVGPL_DIST" % period
+                    name = "%s_SOV_TR_H_DIST" % period
                     dist_stats = self._stats[name]
                     if dist_stats[1] == 0:
                         zones = scenario.zone_numbers
