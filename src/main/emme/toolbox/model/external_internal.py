@@ -199,7 +199,7 @@ class ExternalInternal(_m.Tool(), gen_utils.Snapshot):
         control_totals = pd.merge(control_totals, taz[['taz']], how='outer')
         control_totals.sort_values('taz', inplace=True)        # method sort was deprecated since pandas version 0.20.0, yma, 2/12/2019
 
-        length_skim = emmebank.matrix('mf"MD_SOVTOLLM_DIST"').get_numpy_data(scenario)
+        length_skim = emmebank.matrix('mf"MD_SOV_TR_M_DIST"').get_numpy_data(scenario)
 
         # Compute probabilities for work purpose
         wrk_dist_coef = -0.029
