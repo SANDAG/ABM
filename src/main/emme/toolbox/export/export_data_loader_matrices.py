@@ -134,12 +134,12 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
     @_m.logbook_trace("Export truck demand")
     def truck_demand(self):
         name_mapping = [
-            ("lhdn", "TRKLGP", 1.3),
-            ("mhdn", "TRKMGP", 1.5),
-            ("hhdn", "TRKHGP", 2.5),
-            ("lhdt", "TRKLTOLL", 1.3),
-            ("mhdt", "TRKMTOLL", 1.5),
-            ("hhdt", "TRKHTOLL", 2.5),
+            # ("lhdn", "TRKLGP", 1.3),
+            # ("mhdn", "TRKMGP", 1.5),
+            # ("hhdn", "TRKHGP", 2.5),
+            ("lhdt", "TRK_L", 1.3),
+            ("mhdt", "TRK_M", 1.5),
+            ("hhdt", "TRK_H", 2.5),
         ]
         scenario = self.base_scenario
         emmebank = scenario.emmebank
@@ -160,10 +160,9 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
             for period in self.periods:
                 for key, name, pce in name_mapping:
                     matrix_data = emmebank.matrix(period + "_" + name + "_VEH").get_data(scenario)
-                    matrix_data_time = emmebank.matrix(period + "_" + name[:4] + "_TIME").get_data(scenario)
-                    matrix_data_dist = emmebank.matrix(period + "_" + name[:4] + "_DIST").get_data(scenario)
-                    if "TOLL" in name:
-                        matrix_data_tollcost = emmebank.matrix(period + "_" + name[:4] + "_TOLLCOST").get_data(scenario)
+                    matrix_data_time = emmebank.matrix(period + "_" + name + "_TIME").get_data(scenario)
+                    matrix_data_dist = emmebank.matrix(period + "_" + name + "_DIST").get_data(scenario)
+                    matrix_data_tollcost = emmebank.matrix(period + "_" + name + "_TOLLCOST").get_data(scenario)
                     rounded_demand = 0
                     for orig in zones:
                         for dest in zones:
@@ -174,9 +173,7 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
                                 continue
                             time = matrix_data_time.get(orig, dest)
                             distance = matrix_data_dist.get(orig, dest)
-                            tollcost = 0
-                            if "TOLL" in name:
-                                tollcost = matrix_data_tollcost.get(orig, dest)
+                            tollcost = matrix_data_tollcost.get(orig, dest)
                             od_aoc = distance * aoc
                             f.write(",".join([str(orig), str(dest), period, key, formater(value), formater(time), formater(distance), formater(od_aoc), formater(tollcost)]))
                             f.write("\n")
@@ -279,7 +276,7 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
     def total_demand(self):
         for period in self.periods:
             matrices = {
-                "%s_SOV_NTP_L": 'mf"%s_"SOV_NT_L"',
+                "%s_SOV_NT_L":  'mf"%s_"SOV_NT_L"',
                 "%s_SOV_TR_L":  'mf"%s_"SOV_TR_L"',
                 "%s_HOV2_L":    'mf"%s_"HOV2_L"',
                 "%s_HOV3_L":    'mf"%s_"HOV3_L"',

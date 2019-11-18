@@ -236,7 +236,7 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
         for period, share, border_corr in zip(periods, time_share, border_correction):
             for t in truck_types:
                 with matrix_calc.trace_run('Calculate %s demand matrix for %s' % (period, truck_names[t])):
-                    tod_demand = 'mf"%s_TRK_%s"' % (period, t)
+                    tod_demand = 'mf"%s_TRK_%s_VEH"' % (period, t)
                     matrix_calc.add(tod_demand, 'mf"TRK%s_DEMAND"' % (t))
                     matrix_calc.add(tod_demand, 'mf%s_TRK_%s_VEH * %s' % (period, t, share))
                     matrix_calc.add(tod_demand, 'mf%s_TRK_%s_VEH * %s' % (period, t, border_corr),
@@ -246,8 +246,8 @@ class TruckModel(_m.Tool(), gen_utils.Snapshot):
 
     @_m.logbook_trace('Toll diversion')
     def toll_diversion(self):
-        # NOTE: toll diversion skipped
-        pass 
+        # NOTE: toll diversion skipped 
+        pass
         # matrix_calc = dem_utils.MatrixCalculator(self.scenario, self.num_processors)
         # nest_factor = 10
         # vot = 0.02 # cent/min
