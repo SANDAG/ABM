@@ -74,24 +74,24 @@ ALTER DATABASE $(db_name) ADD FILEGROUP scenario_fg_1;
 ALTER DATABASE $(db_name) ADD FILE (
 	NAME = scenario_file_1_1,
 	FILENAME = N'$(db_path)scenario_file_1_1.ndf',
-	SIZE = 2GB,
-	MAXSIZE = 2GB,
+	SIZE = 1GB,
+	MAXSIZE = 1GB,
 	FILEGROWTH = 0GB) TO FILEGROUP scenario_fg_1;
 
 -- add three files to the filegroup
 ALTER DATABASE $(db_name) ADD FILE (
 	NAME = scenario_file_1_2,
 	FILENAME = N'$(db_path)scenario_file_1_2.ndf',
-	SIZE = 2GB,
-	MAXSIZE = 2GB,
+	SIZE = 1GB,
+	MAXSIZE = 1GB,
 	FILEGROWTH = 0GB) TO FILEGROUP scenario_fg_1;
 
 -- add three files to the filegroup
 ALTER DATABASE $(db_name) ADD FILE (
 	NAME = scenario_file_1_3,
 	FILENAME = N'$(db_path)scenario_file_1_3.ndf',
-	SIZE = 2GB,
-	MAXSIZE = 2GB,
+	SIZE = 1GB,
+	MAXSIZE = 1GB,
 	FILEGROWTH = 0GB) TO FILEGROUP scenario_fg_1;
 END
 
@@ -143,24 +143,24 @@ ALTER DATABASE $(db_name) ADD FILEGROUP staging_fg;
 ALTER DATABASE $(db_name) ADD FILE (
 	NAME = staging_file_1_1,
 	FILENAME = N'$(db_path)staging_file_1_1.ndf',
-	SIZE = 2GB,
-	MAXSIZE = 2GB,
+	SIZE = 1GB,
+	MAXSIZE = 1GB,
 	FILEGROWTH = 0GB) TO FILEGROUP staging_fg;
 
 -- add three files to the filegroup
 ALTER DATABASE $(db_name) ADD FILE (
 	NAME = staging_file_1_2,
 	FILENAME = N'$(db_path)staging_file_1_2.ndf',
-	SIZE = 2GB,
-	MAXSIZE = 2GB,
+	SIZE = 1GB,
+	MAXSIZE = 1GB,
 	FILEGROWTH = 0GB) TO FILEGROUP staging_fg;
 
 -- add three files to the filegroup
 ALTER DATABASE $(db_name) ADD FILE (
 	NAME = staging_file_1_3,
 	FILENAME = N'$(db_path)staging_file_1_3.ndf',
-	SIZE = 2GB,
-	MAXSIZE = 2GB,
+	SIZE = 1GB,
+	MAXSIZE = 1GB,
 	FILEGROWTH = 0GB) TO FILEGROUP staging_fg;
 END
 GO
