@@ -229,10 +229,10 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     value = parameter_name_tmplts[emme_name]
                     parameter_names[key] = value
                     
-        # TP and NTP segmentation for non-residents (Joel email - Oct 22nd 2019):
-        # crossborder - DO NOT have transponder (all SOV into SOVNTP)
+        # TR and NT segmentation for non-residents (Joel email - Oct 22nd 2019):
+        # crossborder - DO NOT have transponder (all SOV into SOVNT)
         # visitors - DO NOT have transponder
-        # Internal-Extrnal - DO have transponder (all SOV into SOVTP)
+        # Internal-Extrnal - DO have transponder (all SOV into SOVTR)
         # Airport - DO have transponder
         # External - DO have transponder
             
@@ -250,8 +250,8 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                         visitor_demand = array_zeros
                         cross_border_demand = array_zeros
 
-                        #airport and internal-external demand - doesn't have transpnder segmentation
-                        #assume they DO have transpnder
+                        #airport and internal-external demand - doesn't have transponder segmentation
+                        #assume they DO have transponder
                         #all SOV go to SOVTP
                         airport_demand = omx_manager.lookup(("Airport", ".SAN" + period, vot_bin), omx_key.replace("PAYTRPDR","GP"))
                         if omx_manager.file_exists(("Airport", ".CBX" + period, vot_bin)):
@@ -352,7 +352,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                         visitor_demand + cross_border_demand + airport_demand
                         + person_demand + internal_external_demand)
                         
-                if ((vot_bin == "high")  and ("NTP" not in matrix_name)):
+                if ((vot_bin == "high")  and ("NT" not in matrix_name)):
                     dem_utils.demand_report([
                         ("person_demand", person_demand),
                         ("internal_external_demand", internal_external_demand),
@@ -409,9 +409,9 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     "share": share_medium,
                     "period": period,
                     "cvm_acc": cvm_acc
-                }				
+                }
                 mapping["CVM_%s:M%s" % (period, cvm_acc)] = {
-                    "orig": "%s_TRK_M_%s_VEH" % (period),
+                    "orig": "%s_TRK_M_VEH" % (period),
                     "dest": "%s_TRK_M" % (period), 
                     "pce": 1.5,
                     "scale": scale_medium[index],
@@ -420,7 +420,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     "cvm_acc": cvm_acc
                 }
                 mapping["CVM_%s:H%s" % (period, cvm_acc)] = {
-                    "orig": "%s_TRK_H_%s_VEH" % (period),
+                    "orig": "%s_TRK_H_VEH" % (period),
                     "dest": "%s_TRK_H" % (period), 
                     "pce": 2.5,
                     "scale": scale_heavy[index],
