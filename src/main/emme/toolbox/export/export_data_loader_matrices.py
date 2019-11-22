@@ -276,21 +276,21 @@ class ExportDataLoaderMatrices(_m.Tool(), gen_utils.Snapshot):
     def total_demand(self):
         for period in self.periods:
             matrices = {
-                "%s_SOV_NT_L":  'mf"%s_"SOV_NT_L"',
-                "%s_SOV_TR_L":  'mf"%s_"SOV_TR_L"',
-                "%s_HOV2_L":    'mf"%s_"HOV2_L"',
-                "%s_HOV3_L":    'mf"%s_"HOV3_L"',
-                "%s_SOV_NT_M":  'mf"%s_"SOV_NT_M"',
-                "%s_SOV_TR_M":  'mf"%s_"SOV_TR_M"',
-                "%s_HOV2_M":    'mf"%s_"HOV2_M"',
-                "%s_HOV3_M":    'mf"%s_"HOV3_M"',
-                "%s_SOV_NT_H":  'mf"%s_"SOV_NT_H"',
-                "%s_SOV_TR_H":  'mf"%s_"SOV_TR_H"',
-                "%s_HOV2_H":    'mf"%s_"HOV2_H"',
-                "%s_HOV3_H":    'mf"%s_"HOV3_H"',
-                "%s_TRK_H":     'mf"%s_"TRK_H"',
-                "%s_TRK_L":     'mf"%s_"TRK_L"',
-                "%s_TRK_M":     'mf"%s_"TRK_M"',
+                "%s_SOV_NT_L":  'mf"%s_SOV_NT_L"',
+                "%s_SOV_TR_L":  'mf"%s_SOV_TR_L"',
+                "%s_HOV2_L":    'mf"%s_HOV2_L"',
+                "%s_HOV3_L":    'mf"%s_HOV3_L"',
+                "%s_SOV_NT_M":  'mf"%s_SOV_NT_M"',
+                "%s_SOV_TR_M":  'mf"%s_SOV_TR_M"',
+                "%s_HOV2_M":    'mf"%s_HOV2_M"',
+                "%s_HOV3_M":    'mf"%s_HOV3_M"',
+                "%s_SOV_NT_H":  'mf"%s_SOV_NT_H"',
+                "%s_SOV_TR_H":  'mf"%s_SOV_TR_H"',
+                "%s_HOV2_H":    'mf"%s_HOV2_H"',
+                "%s_HOV3_H":    'mf"%s_HOV3_H"',
+                "%s_TRK_H":     'mf"%s_TRK_H"',
+                "%s_TRK_L":     'mf"%s_TRK_L"',
+                "%s_TRK_M":     'mf"%s_TRK_M"',
             }
             matrices = dict((k % period, v % period) for k, v in matrices.iteritems())
             omx_file = os.path.join(self.output_dir, "trip_%s.omx" % period)
