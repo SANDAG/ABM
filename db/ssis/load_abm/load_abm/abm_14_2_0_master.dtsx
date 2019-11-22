@@ -14,8 +14,8 @@
   DTS:MaxErrorCount="0"
   DTS:ObjectName="abm_14_2_0_master"
   DTS:PackageType="5"
-  DTS:VersionBuild="110"
-  DTS:VersionGUID="{7B979214-2C5C-4D33-AD74-58913C17C96B}">
+  DTS:VersionBuild="113"
+  DTS:VersionGUID="{2677C696-4E6C-4069-9B2A-38D32855347F}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:Variables>
@@ -239,7 +239,7 @@
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{15638D61-ABAF-4C44-938D-BC48B8A41948}"
-          SQLTask:SqlStatementSource="DECLARE @scenario_id int = ?&#xA;DECLARE @db_name nvarchar(50) = ?&#xA;DECLARE @db_file_path nvarchar(200) = ?&#xA;&#xA;DECLARE @next_scenario_id smallint = @scenario_id + 1&#xA;DECLARE @SQL nvarchar(max)&#xA;&#xA;&#xA;-- Step 1. Add filegroup for next scenario if it does not already exist&#xA;-- All scenarios have filegroup size at 3GB&#xA;IF NOT EXISTS (SELECT name FROM sys.filegroups WHERE name = 'scenario_fg_' + CAST(@next_scenario_id AS NVARCHAR))&#xA;BEGIN&#xA; SET @SQL = N' ALTER DATABASE ' + @db_name + N'&#xA;   ADD FILEGROUP scenario_fg_' + CAST(@next_scenario_id AS NVARCHAR) + N';'&#xA; EXECUTE sp_executesql @SQL&#xA;END&#xA;&#xA;IF NOT EXISTS (SELECT [name] FROM sys.sysfiles WHERE name = 'scenario_file_' + CAST(@next_scenario_id AS NVARCHAR) + '_1')&#xA;BEGIN  &#xA; SET @SQL = N' ALTER DATABASE ' + @db_name + N'&#xA;   ADD FILE&#xA;   (&#xA;    NAME = scenario_file_' + CAST(@next_scenario_id AS NVARCHAR) + N'_1,&#xA;    FILENAME = ''' + @db_file_path + '\scenario_file_' + CAST(@next_scenario_id AS NVARCHAR) + N'_1.ndf'',&#xA;    SIZE = 1GB,&#xA;    MAXSIZE = 1GB,&#xA;    FILEGROWTH = 0&#xA;   )&#xA;   TO FILEGROUP scenario_fg_' + CAST(@next_scenario_id AS NVARCHAR) + N';'&#xA; EXECUTE sp_executesql @SQL&#xA;END&#xA;&#xA;IF NOT EXISTS (SELECT [name] FROM sys.sysfiles WHERE name = 'scenario_file_' + CAST(@next_scenario_id AS NVARCHAR) + '_2')&#xA;BEGIN &#xA; SET @SQL = N' ALTER DATABASE ' + @db_name + N'&#xA;   ADD FILE&#xA;   (&#xA;    NAME = scenario_file_' + CAST(@next_scenario_id AS NVARCHAR) + N'_2,&#xA;    FILENAME = ''' + @db_file_path + '\scenario_file_' + CAST(@next_scenario_id AS NVARCHAR) + N'_2.ndf'',&#xA;    SIZE = 1GB,&#xA;    MAXSIZE = 1GB,&#xA;    FILEGROWTH = 0&#xA;   )&#xA;   TO FILEGROUP scenario_fg_' + CAST(@next_scenario_id AS NVARCHAR) + N';'&#xA; EXECUTE sp_executesql @SQL&#xA;END&#xA;&#xA;IF NOT EXISTS (SELECT [name] FROM sys.sysfiles WHERE name = 'scenario_file_' + CAST(@next_scenario_id AS NVARCHAR) + '_3')&#xA;BEGIN  &#xA; SET @SQL = N' ALTER DATABASE ' + @db_name + N'&#xA;   ADD FILE&#xA;   (&#xA;    NAME = scenario_file_' + CAST(@next_scenario_id AS NVARCHAR) + N'_3,&#xA;    FILENAME = ''' + @db_file_path + '\scenario_file_' + CAST(@next_scenario_id AS NVARCHAR) + N'_3.ndf'',&#xA;    SIZE = 1GB,&#xA;    MAXSIZE = 1GB,&#xA;    FILEGROWTH = 0&#xA;   )&#xA;   TO FILEGROUP scenario_fg_' + CAST(@next_scenario_id AS NVARCHAR) + N';'&#xA; EXECUTE sp_executesql @SQL &#xA;END&#xA;&#xA;&#xA;-- Need to keep an empty partition at the end&#xA;-- Create partition for next scenario&#xA;IF NOT EXISTS(&#xA; SELECT [value] &#xA; FROM [sys].[partition_functions] func&#xA; INNER JOIN [sys].[partition_range_values] val&#xA; ON func.[function_id] = val.[function_id]&#xA; WHERE [name] = 'scenario_partition'&#xA; AND [value] = @next_scenario_id&#xA; )&#xA;BEGIN&#xA; -- Step 2. Set filegroup as next used&#xA; SET @SQL = N'ALTER PARTITION SCHEME scenario_scheme NEXT USED ' + N'scenario_fg_' + CAST(@next_scenario_id AS NVARCHAR)&#xA; EXECUTE sp_executesql @SQL&#xA;&#xA; -- Step 3. Alter partition function to include the scenario as a boundary point&#xA; ALTER PARTITION FUNCTION scenario_partition ()&#xA; SPLIT RANGE (@next_scenario_id);&#xA;END" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          SQLTask:SqlStatementSource="DECLARE @scenario_id int = ?&#xA;DECLARE @db_name nvarchar(50) = ?&#xA;DECLARE @db_file_path nvarchar(200) = ?&#xA;&#xA;DECLARE @next_scenario_id smallint = @scenario_id + 1&#xA;DECLARE @SQL nvarchar(max)&#xA;&#xA;&#xA;-- Step 1. Add filegroup for next scenario if it does not already exist&#xA;-- All scenarios have filegroup size at 6GB&#xA;IF NOT EXISTS (SELECT name FROM sys.filegroups WHERE name = 'scenario_fg_' + CAST(@next_scenario_id AS NVARCHAR))&#xA;BEGIN&#xA; SET @SQL = N' ALTER DATABASE ' + @db_name + N'&#xA;   ADD FILEGROUP scenario_fg_' + CAST(@next_scenario_id AS NVARCHAR) + N';'&#xA; EXECUTE sp_executesql @SQL&#xA;END&#xA;&#xA;IF NOT EXISTS (SELECT [name] FROM sys.sysfiles WHERE name = 'scenario_file_' + CAST(@next_scenario_id AS NVARCHAR) + '_1')&#xA;BEGIN  &#xA; SET @SQL = N' ALTER DATABASE ' + @db_name + N'&#xA;   ADD FILE&#xA;   (&#xA;    NAME = scenario_file_' + CAST(@next_scenario_id AS NVARCHAR) + N'_1,&#xA;    FILENAME = ''' + @db_file_path + '\scenario_file_' + CAST(@next_scenario_id AS NVARCHAR) + N'_1.ndf'',&#xA;    SIZE = 2GB,&#xA;    MAXSIZE = 2GB,&#xA;    FILEGROWTH = 0&#xA;   )&#xA;   TO FILEGROUP scenario_fg_' + CAST(@next_scenario_id AS NVARCHAR) + N';'&#xA; EXECUTE sp_executesql @SQL&#xA;END&#xA;&#xA;IF NOT EXISTS (SELECT [name] FROM sys.sysfiles WHERE name = 'scenario_file_' + CAST(@next_scenario_id AS NVARCHAR) + '_2')&#xA;BEGIN &#xA; SET @SQL = N' ALTER DATABASE ' + @db_name + N'&#xA;   ADD FILE&#xA;   (&#xA;    NAME = scenario_file_' + CAST(@next_scenario_id AS NVARCHAR) + N'_2,&#xA;    FILENAME = ''' + @db_file_path + '\scenario_file_' + CAST(@next_scenario_id AS NVARCHAR) + N'_2.ndf'',&#xA;    SIZE = 2GB,&#xA;    MAXSIZE = 2GB,&#xA;    FILEGROWTH = 0&#xA;   )&#xA;   TO FILEGROUP scenario_fg_' + CAST(@next_scenario_id AS NVARCHAR) + N';'&#xA; EXECUTE sp_executesql @SQL&#xA;END&#xA;&#xA;IF NOT EXISTS (SELECT [name] FROM sys.sysfiles WHERE name = 'scenario_file_' + CAST(@next_scenario_id AS NVARCHAR) + '_3')&#xA;BEGIN  &#xA; SET @SQL = N' ALTER DATABASE ' + @db_name + N'&#xA;   ADD FILE&#xA;   (&#xA;    NAME = scenario_file_' + CAST(@next_scenario_id AS NVARCHAR) + N'_3,&#xA;    FILENAME = ''' + @db_file_path + '\scenario_file_' + CAST(@next_scenario_id AS NVARCHAR) + N'_3.ndf'',&#xA;    SIZE = 2GB,&#xA;    MAXSIZE = 2GB,&#xA;    FILEGROWTH = 0&#xA;   )&#xA;   TO FILEGROUP scenario_fg_' + CAST(@next_scenario_id AS NVARCHAR) + N';'&#xA; EXECUTE sp_executesql @SQL &#xA;END&#xA;&#xA;&#xA;-- Need to keep an empty partition at the end&#xA;-- Create partition for next scenario&#xA;IF NOT EXISTS(&#xA; SELECT [value] &#xA; FROM [sys].[partition_functions] func&#xA; INNER JOIN [sys].[partition_range_values] val&#xA; ON func.[function_id] = val.[function_id]&#xA; WHERE [name] = 'scenario_partition'&#xA; AND [value] = @next_scenario_id&#xA; )&#xA;BEGIN&#xA; -- Step 2. Set filegroup as next used&#xA; SET @SQL = N'ALTER PARTITION SCHEME scenario_scheme NEXT USED ' + N'scenario_fg_' + CAST(@next_scenario_id AS NVARCHAR)&#xA; EXECUTE sp_executesql @SQL&#xA;&#xA; -- Step 3. Alter partition function to include the scenario as a boundary point&#xA; ALTER PARTITION FUNCTION scenario_partition ()&#xA; SPLIT RANGE (@next_scenario_id);&#xA;END" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ParameterBinding
             SQLTask:ParameterName="0"
             SQLTask:DtsVariableName="User::scenario_id"
@@ -282,8 +282,8 @@
         DTS:Name="Executable">@[$Project::python_script_path] + "\\run_python.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="\run_python.bat"
-          Arguments="  \arcpy_cleanup.py "
+          Executable="F:\SSISDEV\python\run_python.bat"
+          Arguments="D:\Python27\ArcGIS10.6\Lib\site-packages\osgeo\data\gdal D:\Python27\ArcGIS10.6 F:\SSISDEV\python\arcpy_cleanup.py "
           WindowStyle="Hidden" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -332,8 +332,8 @@
         DTS:Name="Executable">@[$Project::python_script_path] + "\\run_python.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="\run_python.bat"
-          Arguments="  \e00_to_shape.py  "
+          Executable="F:\SSISDEV\python\run_python.bat"
+          Arguments="D:\Python27\ArcGIS10.6\Lib\site-packages\osgeo\data\gdal D:\Python27\ArcGIS10.6 F:\SSISDEV\python\e00_to_shape.py  F:\SSISDEV\python"
           TerminateAfterTimeout="False" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -342,6 +342,7 @@
       DTS:CreationName="Microsoft.ExecuteProcess"
       DTS:DelayValidation="True"
       DTS:Description="Execute Process Task"
+      DTS:Disabled="True"
       DTS:DTSID="{FEC1D47C-903B-482B-8C84-E7CCA93C65F7}"
       DTS:ExecutableType="Microsoft.ExecuteProcess"
       DTS:FailPackageOnFailure="True"
@@ -358,8 +359,8 @@
         DTS:Name="Executable">@[$Project::python_script_path] + "\\hwyload_shp.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="\hwyload_shp.bat"
-          Arguments="   0"
+          Executable="F:\SSISDEV\python\hwyload_shp.bat"
+          Arguments="D:\Python27\ArcGIS10.6\Lib\site-packages\osgeo\data\gdal D:\Python27\ArcGIS10.6\Lib\site-packages\osgeo  0"
           WindowStyle="Hidden" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -384,8 +385,8 @@
         DTS:Name="Executable">@[$Project::python_script_path] + "\\run_python.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="\run_python.bat"
-          Arguments="  \geospatial_export.py "
+          Executable="F:\SSISDEV\python\run_python.bat"
+          Arguments="D:\Python27\ArcGIS10.6\Lib\site-packages\osgeo\data\gdal D:\Python27\ArcGIS10.6 F:\SSISDEV\python\geospatial_export.py "
           WindowStyle="Hidden" />
       </DTS:ObjectData>
     </DTS:Executable>

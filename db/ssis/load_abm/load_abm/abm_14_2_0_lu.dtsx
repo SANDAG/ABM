@@ -13,8 +13,8 @@
   DTS:MaxErrorCount="0"
   DTS:ObjectName="abm_14_2_0_lu"
   DTS:PackageType="5"
-  DTS:VersionBuild="124"
-  DTS:VersionGUID="{39C475CD-9CFF-4DC8-BFA0-64D478AAA505}">
+  DTS:VersionBuild="125"
+  DTS:VersionGUID="{6B3A7760-61DE-4424-B06D-7E94BBF3D179}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -2819,7 +2819,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="mgra_based_input_fact"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="1">
+      DTS:ThreadHint="2">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -2847,7 +2847,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="mgra_based_input_fact_reseed"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="1">
+      DTS:ThreadHint="2">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -6458,7 +6458,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="mgra_based_input_sql_cleanup"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="1">
+      DTS:ThreadHint="2">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -6479,7 +6479,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="mgra_based_input_staging_table"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="1">
+      DTS:ThreadHint="2">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -7965,12 +7965,12 @@
       DTS:LocaleID="-1"
       DTS:ObjectName="persons_sql_cleanup"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{15638D61-ABAF-4C44-938D-BC48B8A41948}"
-          SQLTask:SqlStatementSource="SET NOCOUNT ON&#xA;BEGIN TRANSACTION&#xA;&#xA;&#xA;IF OBJECT_ID('staging.personData','U') IS NOT NULL&#xA;DROP TABLE [staging].[personData]&#xA;&#xA;IF OBJECT_ID('staging.personData_activity_pattern','U') IS NOT NULL&#xA;DROP TABLE [staging].[personData_activity_pattern]&#xA;&#xA;IF OBJECT_ID('staging.personData_fp_choice','U') IS NOT NULL&#xA;DROP TABLE [staging].[personData_fp_choice]&#xA;&#xA;IF OBJECT_ID('staging.personData_fp_choice','U') IS NOT NULL&#xA;DROP TABLE [staging].[personData_fp_choice]&#xA;&#xA;-- do not drop here need this for escort model driver and passenger pnums in individual trip loading&#xA;-- and the tour participants pnum in the joint trip loading&#xA;--IF OBJECT_ID('staging.persons','U') IS NOT NULL&#xA;--DROP TABLE [staging].[persons]&#xA;&#xA;IF OBJECT_ID('staging.persons_educ','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_educ]&#xA;&#xA;IF OBJECT_ID('staging.persons_grade','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_grade]&#xA;&#xA;IF OBJECT_ID('staging.persons_hisp','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_hisp]&#xA;&#xA;IF OBJECT_ID('staging.persons_hours','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_hours]&#xA;&#xA;IF OBJECT_ID('staging.persons_military','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_military]&#xA;&#xA;IF OBJECT_ID('staging.persons_pemploy','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_pemploy]&#xA;&#xA;IF OBJECT_ID('staging.persons_pstudent','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_pstudent]&#xA;&#xA;IF OBJECT_ID('staging.persons_ptype','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_ptype]&#xA;&#xA;IF OBJECT_ID('staging.persons_rac1p','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_rac1p]&#xA;&#xA;IF OBJECT_ID('staging.persons_sex','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_sex]&#xA;&#xA;IF OBJECT_ID('staging.persons_weeks','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_weeks]&#xA;&#xA;&#xA;COMMIT TRANSACTION" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:SqlStatementSource="SET NOCOUNT ON&#xA;BEGIN TRANSACTION&#xA;&#xA;&#xA;IF OBJECT_ID('staging.personData','U') IS NOT NULL&#xA;DROP TABLE [staging].[personData]&#xA;&#xA;IF OBJECT_ID('staging.personData_activity_pattern','U') IS NOT NULL&#xA;DROP TABLE [staging].[personData_activity_pattern]&#xA;&#xA;IF OBJECT_ID('staging.personData_fp_choice','U') IS NOT NULL&#xA;DROP TABLE [staging].[personData_fp_choice]&#xA;&#xA;IF OBJECT_ID('staging.personData_fp_choice','U') IS NOT NULL&#xA;DROP TABLE [staging].[personData_fp_choice]&#xA;&#xA;-- do not drop here need this for the tour participants pnum in the joint trip loading&#xA;--IF OBJECT_ID('staging.persons','U') IS NOT NULL&#xA;--DROP TABLE [staging].[persons]&#xA;&#xA;IF OBJECT_ID('staging.persons_educ','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_educ]&#xA;&#xA;IF OBJECT_ID('staging.persons_grade','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_grade]&#xA;&#xA;IF OBJECT_ID('staging.persons_hisp','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_hisp]&#xA;&#xA;IF OBJECT_ID('staging.persons_hours','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_hours]&#xA;&#xA;IF OBJECT_ID('staging.persons_military','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_military]&#xA;&#xA;IF OBJECT_ID('staging.persons_pemploy','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_pemploy]&#xA;&#xA;IF OBJECT_ID('staging.persons_pstudent','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_pstudent]&#xA;&#xA;IF OBJECT_ID('staging.persons_ptype','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_ptype]&#xA;&#xA;IF OBJECT_ID('staging.persons_rac1p','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_rac1p]&#xA;&#xA;IF OBJECT_ID('staging.persons_sex','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_sex]&#xA;&#xA;IF OBJECT_ID('staging.persons_weeks','U') IS NOT NULL&#xA;DROP TABLE [staging].[persons_weeks]&#xA;&#xA;&#xA;COMMIT TRANSACTION" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
@@ -8003,7 +8003,7 @@
       DTS:LocaleID="-1"
       DTS:ObjectName="person_dimension"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -8743,7 +8743,7 @@
       DTS:LocaleID="-1"
       DTS:ObjectName="ws_loc_model_reference_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -8781,7 +8781,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="ws_loc_model_staging_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData

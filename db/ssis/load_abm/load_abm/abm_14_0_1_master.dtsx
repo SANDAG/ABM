@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
   DTS:refId="Package"
   DTS:CreationDate="2/22/2018 1:25:07 PM"
@@ -14,8 +14,8 @@
   DTS:MaxErrorCount="0"
   DTS:ObjectName="abm_14_0_1_master"
   DTS:PackageType="5"
-  DTS:VersionBuild="89"
-  DTS:VersionGUID="{3CE79418-50C6-44A4-864B-3BFE6E83E4F1}">
+  DTS:VersionBuild="91"
+  DTS:VersionGUID="{C3BDF0E4-E431-425A-BAEB-0F8A3B2C018B}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:Variables>
@@ -60,6 +60,39 @@
     </DTS:Variable>
   </DTS:Variables>
   <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\abm_14_0_1_lu"
+      DTS:CreationName="Microsoft.ExecutePackageTask"
+      DTS:Description="Execute Package Task"
+      DTS:DTSID="{8944e317-f81f-4f60-a1af-777c42568da5}"
+      DTS:ExecutableType="Microsoft.ExecutePackageTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="abm_14_0_1_lu"
+      DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <ExecutePackageTask>
+          <UseProjectReference>True</UseProjectReference>
+          <PackageName>abm_14_0_1_lu.dtsx</PackageName>
+          <ParameterAssignment>
+            <ParameterName>iteration</ParameterName>
+            <BindedVariableOrParameterName>User::iteration</BindedVariableOrParameterName>
+          </ParameterAssignment>
+          <ParameterAssignment>
+            <ParameterName>scenario_filepath</ParameterName>
+            <BindedVariableOrParameterName>User::scenario_filepath</BindedVariableOrParameterName>
+          </ParameterAssignment>
+          <ParameterAssignment>
+            <ParameterName>scenario_id</ParameterName>
+            <BindedVariableOrParameterName>User::scenario_id</BindedVariableOrParameterName>
+          </ParameterAssignment>
+          <ParameterAssignment>
+            <ParameterName>year</ParameterName>
+            <BindedVariableOrParameterName>User::year</BindedVariableOrParameterName>
+          </ParameterAssignment>
+        </ExecutePackageTask>
+      </DTS:ObjectData>
+    </DTS:Executable>
     <DTS:Executable
       DTS:refId="Package\abm_14_0_1_trips"
       DTS:CreationName="Microsoft.ExecutePackageTask"
@@ -140,39 +173,6 @@
         <ExecutePackageTask>
           <UseProjectReference>True</UseProjectReference>
           <PackageName>abm_2_hwy.dtsx</PackageName>
-          <ParameterAssignment>
-            <ParameterName>iteration</ParameterName>
-            <BindedVariableOrParameterName>User::iteration</BindedVariableOrParameterName>
-          </ParameterAssignment>
-          <ParameterAssignment>
-            <ParameterName>scenario_filepath</ParameterName>
-            <BindedVariableOrParameterName>User::scenario_filepath</BindedVariableOrParameterName>
-          </ParameterAssignment>
-          <ParameterAssignment>
-            <ParameterName>scenario_id</ParameterName>
-            <BindedVariableOrParameterName>User::scenario_id</BindedVariableOrParameterName>
-          </ParameterAssignment>
-          <ParameterAssignment>
-            <ParameterName>year</ParameterName>
-            <BindedVariableOrParameterName>User::year</BindedVariableOrParameterName>
-          </ParameterAssignment>
-        </ExecutePackageTask>
-      </DTS:ObjectData>
-    </DTS:Executable>
-    <DTS:Executable
-      DTS:refId="Package\abm_2_lu"
-      DTS:CreationName="Microsoft.ExecutePackageTask"
-      DTS:Description="Execute Package Task"
-      DTS:DTSID="{8944e317-f81f-4f60-a1af-777c42568da5}"
-      DTS:ExecutableType="Microsoft.ExecutePackageTask"
-      DTS:LocaleID="-1"
-      DTS:ObjectName="abm_2_lu"
-      DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
-      <DTS:Variables />
-      <DTS:ObjectData>
-        <ExecutePackageTask>
-          <UseProjectReference>True</UseProjectReference>
-          <PackageName>abm_2_lu.dtsx</PackageName>
           <ParameterAssignment>
             <ParameterName>iteration</ParameterName>
             <BindedVariableOrParameterName>User::iteration</BindedVariableOrParameterName>
@@ -282,8 +282,8 @@
         DTS:Name="Executable">@[$Project::python_script_path] + "\\run_python.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="F:\SSISDEV\python\run_python.bat"
-          Arguments="D:\Python27\ArcGIS10.6\Lib\site-packages\osgeo\data\gdal D:\Python27\ArcGIS10.6 F:\SSISDEV\python\arcpy_cleanup.py "
+          Executable="E:\SSIS_DEV\abm_2\python\run_python.bat"
+          Arguments="C:\Python27\ArcGIS10.1\Lib\site-packages\osgeo\data\gdal C:\Python27\ArcGIS10.1 E:\SSIS_DEV\abm_2\python\arcpy_cleanup.py "
           WindowStyle="Hidden" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -332,8 +332,8 @@
         DTS:Name="Executable">@[$Project::python_script_path] + "\\run_python.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="F:\SSISDEV\python\run_python.bat"
-          Arguments="D:\Python27\ArcGIS10.6\Lib\site-packages\osgeo\data\gdal D:\Python27\ArcGIS10.6 F:\SSISDEV\python\e00_to_shape.py  F:\SSISDEV\python"
+          Executable="E:\SSIS_DEV\abm_2\python\run_python.bat"
+          Arguments="C:\Python27\ArcGIS10.1\Lib\site-packages\osgeo\data\gdal C:\Python27\ArcGIS10.1 E:\SSIS_DEV\abm_2\python\e00_to_shape.py  E:\SSIS_DEV\abm_2\python"
           TerminateAfterTimeout="False" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -342,6 +342,7 @@
       DTS:CreationName="Microsoft.ExecuteProcess"
       DTS:DelayValidation="True"
       DTS:Description="Execute Process Task"
+      DTS:Disabled="True"
       DTS:DTSID="{0c8c253f-d9f1-4a88-88e9-98e2d960fe20}"
       DTS:ExecutableType="Microsoft.ExecuteProcess"
       DTS:FailPackageOnFailure="True"
@@ -358,8 +359,8 @@
         DTS:Name="Executable">@[$Project::python_script_path] + "\\hwyload_shp.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="F:\SSISDEV\python\hwyload_shp.bat"
-          Arguments="D:\Python27\ArcGIS10.6\Lib\site-packages\osgeo\data\gdal D:\Python27\ArcGIS10.6\Lib\site-packages\osgeo  0"
+          Executable="E:\SSIS_DEV\abm_2\python\hwyload_shp.bat"
+          Arguments="C:\Python27\ArcGIS10.1\Lib\site-packages\osgeo\data\gdal C:\Python27\ArcGIS10.1\Lib\site-packages\osgeo  0"
           WindowStyle="Hidden" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -384,8 +385,8 @@
         DTS:Name="Executable">@[$Project::python_script_path] + "\\run_python.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="F:\SSISDEV\python\run_python.bat"
-          Arguments="D:\Python27\ArcGIS10.6\Lib\site-packages\osgeo\data\gdal D:\Python27\ArcGIS10.6 F:\SSISDEV\python\geospatial_export.py "
+          Executable="E:\SSIS_DEV\abm_2\python\run_python.bat"
+          Arguments="C:\Python27\ArcGIS10.1\Lib\site-packages\osgeo\data\gdal C:\Python27\ArcGIS10.1 E:\SSIS_DEV\abm_2\python\geospatial_export.py "
           WindowStyle="Hidden" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -441,7 +442,7 @@
       DTS:From="Package\alter_partition_scheme"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 1"
-      DTS:To="Package\abm_2_lu" />
+      DTS:To="Package\abm_14_0_1_lu" />
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 10]"
       DTS:CreationName=""
@@ -486,7 +487,7 @@
       DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
       DTS:CreationName=""
       DTS:DTSID="{D0807C25-1DCF-45F5-BFA5-AE656AC78BB5}"
-      DTS:From="Package\abm_2_lu"
+      DTS:From="Package\abm_14_0_1_lu"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 2"
       DTS:To="Package\abm_14_0_1_trips" />
@@ -607,6 +608,14 @@
       <GraphLayout
         Capacity="32" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
+          Size="154,42"
+          Id="Package\abm_14_0_1_lu"
+          TopLeft="568,208" />
+        <NodeLayout
+          Size="167,42"
+          Id="Package\abm_14_0_1_trips"
+          TopLeft="620,414" />
+        <NodeLayout
           Size="136,42"
           Id="Package\abm_2_bike"
           TopLeft="118,417" />
@@ -615,17 +624,9 @@
           Id="Package\abm_2_hwy"
           TopLeft="275,416" />
         <NodeLayout
-          Size="125,42"
-          Id="Package\abm_2_lu"
-          TopLeft="568,208" />
-        <NodeLayout
           Size="147,42"
           Id="Package\abm_2_transit"
           TopLeft="426,415" />
-        <NodeLayout
-          Size="167,42"
-          Id="Package\abm_14_0_1_trips"
-          TopLeft="620,414" />
         <NodeLayout
           Size="187,42"
           Id="Package\alter_partition_scheme"
@@ -682,9 +683,9 @@
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="65.1666666666666,25"
+              EndConnector="79.6666666666666,25"
               Start="0,0"
-              End="65.1666666666666,17.5">
+              End="79.6666666666666,17.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
@@ -695,13 +696,13 @@
                     Point2="0,10.1272534464475"
                     Point3="4,10.1272534464475" />
                   <mssgle:LineSegment
-                    End="61.1666666666666,10.1272534464475" />
+                    End="75.6666666666666,10.1272534464475" />
                   <mssgle:CubicBezierSegment
-                    Point1="61.1666666666666,10.1272534464475"
-                    Point2="65.1666666666666,10.1272534464475"
-                    Point3="65.1666666666666,14.1272534464475" />
+                    Point1="75.6666666666666,10.1272534464475"
+                    Point2="79.6666666666666,10.1272534464475"
+                    Point3="79.6666666666666,14.1272534464475" />
                   <mssgle:LineSegment
-                    End="65.1666666666666,17.5" />
+                    End="79.6666666666666,17.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -858,13 +859,13 @@
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 2]"
-          TopLeft="630.5,250">
+          TopLeft="645,250">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="73,164"
+              EndConnector="58.5,164"
               Start="0,0"
-              End="73,156.5">
+              End="58.5,156.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
@@ -875,13 +876,13 @@
                     Point2="0,82"
                     Point3="4,82" />
                   <mssgle:LineSegment
-                    End="69,82" />
+                    End="54.5,82" />
                   <mssgle:CubicBezierSegment
-                    Point1="69,82"
-                    Point2="73,82"
-                    Point3="73,86" />
+                    Point1="54.5,82"
+                    Point2="58.5,82"
+                    Point3="58.5,86" />
                   <mssgle:LineSegment
-                    End="73,156.5" />
+                    End="58.5,156.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
