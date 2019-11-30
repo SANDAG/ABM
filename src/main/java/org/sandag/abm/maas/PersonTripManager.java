@@ -464,9 +464,10 @@ public class PersonTripManager {
 		logger.info("Hotspots - moving ride-sharers to high demand MAZs");
 		
 		int[] tazs = tazManager.getTazs();
+		int maxTaz = tazManager.getMaxTaz();
 		
 		//store the hotspot Maz for each period and taz
-		int[][] hotspotMazs = new int[numberOfTimeBins][tazs.length+1];
+		int[][] hotspotMazs = new int[numberOfTimeBins][maxTaz+1];
 		
 		//track the number of ridesharers moved
 		int totalRidesharersMoved = 0;

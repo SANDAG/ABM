@@ -55,44 +55,62 @@ public class AutoAndNonMotorizedSkimsCalculator
     
     private MgraDataManager               mgraManager;
 
-    private static final String[]         AUTO_SKIM_NAMES        = {"DA_NT_Time", "DA_NT_FFTime",
-            "DA_NT_Dist", "DA_TL_Time", "DA_TL_FFTime", "DA_TL_Dist", "DA_TL_Value",
-            "DA_TL_FacLen", "HOV_NT_Time", "HOV_NT_FFTime", "HOV_NT_Dist", "HOV_NT_FacLen"};
+    private static final String[]         AUTO_SKIM_NAMES        = {
+    		"da_nt_time",
+    		"da_nt_fftime",
+    		"da_nt_dist",
+    		"da_nt_toll",
+    		"da_nt_tdist",
+    		"da_nt_std",
+    		"da_tr_time",
+    		"da_tr_fftime",
+    		"da_tr_dist",
+    		"da_tr_toll",
+    		"da_tr_tdist",
+    		"da_tr_std",
+    		"s2_time",
+    		"s2_fftime",
+    		"s2_dist",
+    		"s2_hdist",
+    		"s2_toll",
+    		"s2_tdist",
+    		"s2_std",
+    		"s3_time",
+    		"s3_fftime",
+    		"s3_dist",
+    		"s3_hdist",
+    		"s3_toll",
+    		"s3_tdist",
+    		"s3_std"};
     private static final int              NUM_AUTO_SKIMS         = AUTO_SKIM_NAMES.length;
 
-    private static final String[]         AUTO_SKIM_DESCRIPTIONS = {"DA NonToll - Time", // 0
-            "DA NonToll - Free Flow Time", // 1
-            "DA NonToll - Distance", // 2
-            "DA Toll - Time", // 3
-            "DA Toll - Free Flow Time", // 4
-            "DA Toll - Distance", // 5
-            "DA Toll - Toll Value", // 6
-            "DA Toll - Length on Toll Facility", // 7
-            "S2 NonToll - Time", // 8
-            "S2 NonToll - Free Flow Time", // 9
-            "S2 NonToll - Distance", // 10
-            "S2 NonToll - Length on HOV Facility", // 11
-            "S2 Toll - Time", // 12
-            "S2 Toll - Free Flow Time", // 13
-            "S2 Toll - Distance", // 14
-            "S2 Toll - Toll Value", // 15
-            "S2 Toll - Length on HOV Facility", // 16
-            "S3 NonToll - Time", // 17
-            "S3 NonToll - Free Flow Time", // 18
-            "S3 NonToll - Distance", // 19
-            "S3 NonToll - Length on HOV Facility", // 20
-            "S3 Toll - Time", // 21
-            "S3 Toll - Free Flow Time", // 22
-            "S3 Toll - Distance", // 23
-            "S3 Toll - Toll Value", // 24
-            "S3 Toll - Length on HOV Facility", // 25
-            "DA NonToll - Std Dev Time", // 26
-            "DA Toll - Std Dev Time", // 27
-            "S2 NonToll - Std Dev Time", //28
-            "S2 Toll - Std Dev Time", //29
-            "S3 NonToll - Std Dev Time", //30
-            "S3 Toll - Std Dev Time" //31
-            
+    private static final String[]         AUTO_SKIM_DESCRIPTIONS = {
+    		"SOV Non-transponder Time", 			//0
+    		"SOV Non-transponder Free-flow Time",	//1
+    		"SOV Non-transponder Distance",			//2
+    		"SOV Non-transponder Toll",				//3
+    		"SOV Non-transponder Toll Distance",	//4
+    		"SOV Non-transponder Std. Deviation",	//5
+    		"SOV Transponder Time",					//6
+    		"SOV Transponder Free-flow Time",		//7
+    		"SOV Transponder Distance",				//8
+    		"SOV Transponder Toll",					//9
+    		"SOV Transponder Toll Distance",		//10
+    		"SOV Transponder Std. Deviation",		//11
+    		"Shared 2 Time",						//12
+    		"Shared 2 Free-flow Time",				//13
+    		"Shared 2 Distance",					//14
+    		"Shared 2 HOV Distance",				//15
+    		"Shared 2 Toll",						//16
+    		"Shared 2 Toll Distance",				//17
+    		"Shared 2 Std. Deviation",				//18
+    		"Shared 3+ Time",						//19
+    		"Shared 3+ Free-flow Time",				//20
+    		"Shared 3+ Distance",					//21
+    		"Shared 3+ HOV Distance",				//22
+    		"Shared 3+ Toll",						//23
+    		"Shared 3+ Toll Distance",				//24
+    		"Shared 3+ Std. Deviation"            	//25
             };
 
     private static final String[]         NM_SKIM_NAMES          = {"walkTime", "bikeTime"};

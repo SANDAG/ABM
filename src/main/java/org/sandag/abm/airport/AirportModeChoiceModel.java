@@ -249,8 +249,7 @@ public class AirportModeChoiceModel
         {
             if (occupancy == 1)
             {
-                int choice = driveAloneModel.getChoiceResult(randomNumber);
-                tripMode = choice;
+                tripMode = occupancy;
                
                 //following gets vot from UEC
                 UtilityExpressionCalculator uec = driveAloneModel.getUEC();
@@ -259,8 +258,7 @@ public class AirportModeChoiceModel
 
             } else if (occupancy == 2)
             {
-                int choice = shared2Model.getChoiceResult(randomNumber);
-                tripMode = choice + 2;
+                tripMode = occupancy;
 
                 //following gets vot from UEC
                 UtilityExpressionCalculator uec = shared2Model.getUEC();
@@ -269,8 +267,7 @@ public class AirportModeChoiceModel
 
             } else if (occupancy > 2)
             {
-                int choice = shared3Model.getChoiceResult(randomNumber);
-                tripMode = choice + 2 + 2;
+                tripMode = 3;
                 
                 //following gets vot from UEC
                 UtilityExpressionCalculator uec = shared3Model.getUEC();

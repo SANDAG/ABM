@@ -45,12 +45,12 @@ public final class AirportModelStructure
     
     //reallocate the trip modes from the access choice model to ones that the trip table and other code can read, consistent with
     //resident models.
-    public static final byte     REALLOCATE_WLKTRN     = 9; //walk access
-    public static final byte     REALLOCATE_KNRPERTRN  = 11; //knr-personal vehicle
-    public static final byte     REALLOCATE_KNRTNCTRN  = 12; //knr-TNC
-    public static final byte     REALLOCATE_TAXI       = 13; 
-    public static final byte     REALLOCATE_TNCSINGLE  = 14; 
-    public static final byte     REALLOCATE_TNCSHARED  = 15; 
+    public static final byte     REALLOCATE_WLKTRN     = 6; //walk access
+    public static final byte     REALLOCATE_KNRPERTRN  = 8; //knr-personal vehicle
+    public static final byte     REALLOCATE_KNRTNCTRN  = 9; //knr-TNC
+    public static final byte     REALLOCATE_TAXI       = 10; 
+    public static final byte     REALLOCATE_TNCSINGLE  = 11; 
+    public static final byte     REALLOCATE_TNCSHARED  = 12; 
   
         private AirportModelStructure()
     {

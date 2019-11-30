@@ -522,6 +522,11 @@ public final class DataExporter
             boolean inbound = tripStructureDefinition.booleanIndicatorVariables ? table
                     .getBooleanValueAt(row, tripStructureDefinition.inboundColumn) : Math.abs(table
                     .getValueAt(row, tripStructureDefinition.inboundColumn) - 1.0) < epsilon;
+            
+            int transponderOwnership=0;
+            if(tripStructureDefinition.transponderOwnershipColumn>0)
+            	transponderOwnership = (int) table.getValueAt(row, tripStructureDefinition.transponderOwnershipColumn);
+                    
             SkimBuilder.TripAttributes attributes = skimBuilder.getTripAttributes(
                     (int) table.getValueAt(row, tripStructureDefinition.originMgraColumn),
                     (int) table.getValueAt(row, tripStructureDefinition.destMgraColumn),
@@ -531,7 +536,7 @@ public final class DataExporter
                     (int) table.getValueAt(row, tripStructureDefinition.todColumn),
                     inbound,
                     table.getValueAt(row,tripStructureDefinition.valueOfTimeColumn),
-                    (int) table.getValueAt(row, tripStructureDefinition.setColumn),isCB);
+                    (int) table.getValueAt(row, tripStructureDefinition.setColumn),isCB,transponderOwnership);
            
             autoInVehicleTime[i] = attributes.getAutoInVehicleTime();
             autoOperatingCost[i] = attributes.getAutoOperatingCost();
@@ -1343,6 +1348,9 @@ public final class DataExporter
         formatList.add(NUMBER_FORMAT_NAME); // 24 dest_escortee_pnum
         formatList.add(NUMBER_FORMAT_NAME); // 25 value of time
         formatList.add(NUMBER_FORMAT_NAME); // 26 transponder availability
+        formatList.add(NUMBER_FORMAT_NAME); // 27 micro_walkMode
+        formatList.add(NUMBER_FORMAT_NAME); // 28 micro_trnAcc
+        formatList.add(NUMBER_FORMAT_NAME); // 29 micro_trnEgr
         
         if(writeLogsums)
         	formatList.add(NUMBER_FORMAT_NAME);//tripModeLogsum
@@ -1373,7 +1381,7 @@ public final class DataExporter
                 bitColumns,
                 FieldType.INT,
                 primaryKey,
-                new TripStructureDefinition(10, 11, 8, 9, 13, 14, 16, 17, 12, -1, 26, "INDIV", 6, false, 25, 18),false);
+                new TripStructureDefinition(10, 11, 8, 9, 13, 14, 16, 17, 12, -1, 29, "INDIV", 6, false, 25, 18,26),false);
     }
 
     private void exportJointTripData(String outputFileBase)
@@ -1401,6 +1409,9 @@ public final class DataExporter
         formatList.add(NUMBER_FORMAT_NAME); // 18 tour_mode
         formatList.add(NUMBER_FORMAT_NAME); // 19 value of time
         formatList.add(NUMBER_FORMAT_NAME); // 20 transponder availability
+        formatList.add(NUMBER_FORMAT_NAME); // 21 micro_walkMode
+        formatList.add(NUMBER_FORMAT_NAME); // 22 micro_trnAcc
+        formatList.add(NUMBER_FORMAT_NAME); // 23 micro_trnEgr
                 
         if(writeLogsums)
          	formatList.add(NUMBER_FORMAT_NAME);//tripModeLogsum
@@ -1421,7 +1432,7 @@ public final class DataExporter
                 "tour_purpose", "inbound", "stop_id"));
         exportDataGeneric(outputFileBase, "Results.JointTripDataFile", true, formats, floatColumns,
                 stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
-                new TripStructureDefinition(8, 9, 6, 7, 11, 12, 15, 16, 10, 14, 20, "JOINT", 4, false, 19, 17),false);
+                new TripStructureDefinition(8, 9, 6, 7, 11, 12, 15, 16, 10, 14, 23, "JOINT", 4, false, 19, 17,20),false);
     }
 
     private void exportAirportTripsSAN(String outputFileBase)
@@ -1440,7 +1451,7 @@ public final class DataExporter
         exportDataGeneric(outputFileBase, "airport.SAN.output.file", false, null, floatColumns,
                 stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey, overridingNames,
                 new TripStructureDefinition(8, 9, 7, 12, 15, 16, -1, 4, 18, "AIRPORT", "HOME",
-                        "AIRPORT", 2, false, 18, 17),false);
+                        "AIRPORT", 2, false, 18, 17,-1),false);
     }
 
     private void exportAirportTripsCBX(String outputFileBase)
@@ -1458,7 +1469,7 @@ public final class DataExporter
         exportDataGeneric(outputFileBase, "airport.CBX.output.file", false, null, floatColumns,
                 stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey, overridingNames,
                 new TripStructureDefinition(8, 9, 7, 12, 15, 16, -1, 4, 18, "AIRPORT", "HOME",
-                        "AIRPORT", 2, false, 18, 17),false);
+                        "AIRPORT", 2, false, 18, 17,-1),false);
     }
 
     private void exportCrossBorderTourData(String outputFileBase)
@@ -1528,7 +1539,7 @@ public final class DataExporter
         exportDataGeneric(outputFileBase, "crossBorder.trip.output.file", false, formats,
                 floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
                 overridingNames, new TripStructureDefinition(5, 6, 3, 4, 12, 13, 15, 16, -1, -1, 20,
-                        "CB", 9, true, 20, 17),true);
+                        "CB", 9, true, 20, 17,-1),true);
     }
 
     private void exportVisitorData(String outputTourFileBase, String outputTripFileBase)
@@ -1579,7 +1590,11 @@ public final class DataExporter
                 NUMBER_FORMAT_NAME, // 14 alightingTap
                 NUMBER_FORMAT_NAME, // 15 set
                 NUMBER_FORMAT_NAME, // 16 valueOfTime
-                NUMBER_FORMAT_NAME // 17 partySize (added)
+                NUMBER_FORMAT_NAME, // 17 partySize (added)
+                NUMBER_FORMAT_NAME, // 18 micro_walkMode
+                NUMBER_FORMAT_NAME, // 19 micro_trnAcc
+                NUMBER_FORMAT_NAME // 20 micro_trnEgr
+
         };
         Set<String> intColumns = new HashSet<String>();
         Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
@@ -1601,7 +1616,7 @@ public final class DataExporter
                 bitColumns,
                 FieldType.INT,
                 primaryKey,
-                new TripStructureDefinition(5, 6, 3, 4, 10, 11, 13, 14, -1, 17, 17, "VISITOR", 7, true, 16,15),false);
+                new TripStructureDefinition(5, 6, 3, 4, 10, 11, 13, 14, -1, 17, 20, "VISITOR", 7, true, 16,15,-1),false);
                 //,                joinData);
     }
 
@@ -1637,7 +1652,7 @@ public final class DataExporter
         exportDataGeneric(outputFileBase, "internalExternal.trip.output.file", false, formats,
                 floatColumns, stringColumns, intColumns, bitColumns, FieldType.INT, primaryKey,
                 new TripStructureDefinition(5, 6, 12, 13, 15, 16, -1, -1, 18, "IE", "HOME", "EXTERNAL",
-                        9, true,18,17),false);   
+                        9, true,18,17,-1),false);   
     }
 
     private Set<Integer> getExternalZones()
@@ -2438,6 +2453,7 @@ public final class DataExporter
         private final boolean booleanIndicatorVariables;
         private final int   valueOfTimeColumn;
         private final int setColumn;
+        private final int transponderOwnershipColumn;
 
         private TripStructureDefinition(int originMgraColumn, int destMgraColumn,
                 int originPurposeColumn, int destinationPurposeColumn, int todColumn,
@@ -2446,7 +2462,7 @@ public final class DataExporter
                 int tripCostColumn, int tripPurposeNameColumn, int tripModeNameColumn,
                 int recIdColumn, int boardTazColumn, int alightTazColumn, String tripType,
                 String homeName, String destinationName, int inboundColumn,
-                boolean booleanIndicatorVariables, int valueOfTimeColumn, int setColumn)
+                boolean booleanIndicatorVariables, int valueOfTimeColumn, int setColumn, int transponderOwnershipColumn)
         {
             this.originMgraColumn = originMgraColumn;
             this.destMgraColumn = destMgraColumn;
@@ -2464,31 +2480,32 @@ public final class DataExporter
             this.booleanIndicatorVariables = booleanIndicatorVariables;
             this.valueOfTimeColumn = valueOfTimeColumn;
             this.setColumn = setColumn;
+            this.transponderOwnershipColumn = transponderOwnershipColumn;
         }
 
         private TripStructureDefinition(int originMgraColumn, int destMgraColumn,
                 int originPurposeColumn, int destinationPurposeColumn, int todColumn,
                 int modeColumn, int boardTapColumn, int alightTapColumn, int parkingMazColumn, int partySizeColumn,
                 int columnCount, String tripType, int inboundColumn,
-                boolean booleanIndicatorVariables, int valueOfTimeColumn, int setColumn)
+                boolean booleanIndicatorVariables, int valueOfTimeColumn, int setColumn, int transponderOwnershipColumn)
         {
             this(originMgraColumn, destMgraColumn, originPurposeColumn, destinationPurposeColumn,
                     todColumn, modeColumn, boardTapColumn, alightTapColumn, parkingMazColumn, partySizeColumn,
                     columnCount + 1, columnCount + 2, columnCount + 3, columnCount + 4,
                     columnCount + 5, columnCount + 6, columnCount + 7, columnCount + 8,
-                    columnCount + 9, tripType, "", "", inboundColumn, booleanIndicatorVariables, valueOfTimeColumn,setColumn);
+                    columnCount + 9, tripType, "", "", inboundColumn, booleanIndicatorVariables, valueOfTimeColumn,setColumn,transponderOwnershipColumn);
         }
 
         private TripStructureDefinition(int originMgraColumn, int destMgraColumn, int todColumn,
                 int modeColumn, int boardTapColumn, int alightTapColumn, int parkingMazColumn, int partySizeColumn,
                 int columnCount, String tripType, String homeName, String destinationName,
-                int inboundColumn, boolean booleanIndicatorVariables, int valueOfTimeColumn, int setColumn)
+                int inboundColumn, boolean booleanIndicatorVariables, int valueOfTimeColumn, int setColumn, int transponderOwnershipColumn)
         {
             this(originMgraColumn, destMgraColumn, -1, -1, todColumn, modeColumn, boardTapColumn,
                     alightTapColumn, parkingMazColumn, partySizeColumn, columnCount + 1, columnCount + 2,
                     columnCount + 3, columnCount + 4, columnCount + 5, columnCount + 6,
                     columnCount + 7, columnCount + 8, columnCount + 9, tripType, homeName,
-                    destinationName, inboundColumn, booleanIndicatorVariables, valueOfTimeColumn,setColumn);
+                    destinationName, inboundColumn, booleanIndicatorVariables, valueOfTimeColumn,setColumn,transponderOwnershipColumn);
         }
     }
 
