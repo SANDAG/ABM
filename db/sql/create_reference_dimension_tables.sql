@@ -24,41 +24,6 @@ ON reference_fg
 WITH (DATA_COMPRESSION = PAGE)
 
 
--- create escort_stop_type dimension
-CREATE TABLE [dimension].[escort_stop_type] (
-	[escort_stop_type_id] tinyint IDENTITY(0,1) NOT NULL, -- insert NULL record as 0
-	[escort_stop_type_description] nchar(20) NOT NULL,
-	CONSTRAINT pk_escortstoptype PRIMARY KEY ([escort_stop_type_id]),
-	CONSTRAINT ixuq_escortstoptype UNIQUE ([escort_stop_type_description]) WITH (DATA_COMPRESSION = PAGE))
-ON reference_fg
-WITH (DATA_COMPRESSION = PAGE)
-INSERT INTO [dimension].[escort_stop_type] VALUES
-('Not Applicable'), -- insert NULL record as 0
-('No Escort'),
-('Dropoff'),
-('Pickup')
-GO
-
--- create escort_stop_type role-playing views
--- origin
-CREATE VIEW [dimension].[escort_stop_type_origin] AS
-SELECT
-	[escort_stop_type_id] AS [escort_stop_type_origin_id]
-	,[escort_stop_type_description] AS [escort_stop_type_origin_description]
-FROM
-	[dimension].[escort_stop_type]
-GO
-
--- destination
-CREATE VIEW [dimension].[escort_stop_type_destination] AS
-SELECT
-	[escort_stop_type_id] AS [escort_stop_type_destination_id]
-	,[escort_stop_type_description] AS [escort_stop_type_destination_description]
-FROM
-	[dimension].[escort_stop_type]
-GO
-
-
 -- create geography dimension
 -- use an input file and an update query to fill at a later step
 CREATE TABLE [dimension].[geography] (
@@ -362,8 +327,14 @@ INSERT INTO [dimension].[mode] VALUES
 ('Kiss and Ride to Transit - Local Bus Only', 'Transit'),
 ('Kiss and Ride to Transit - Premium Transit Only', 'Transit'),
 ('Kiss and Ride to Transit - Local Bus and Premium Transit', 'Transit'),
+('TNC to Transit', 'Transit'),
+('TNC to Transit - Local Bus Only', 'Transit'),
+('TNC to Transit - Premium Transit Only', 'Transit'),
+('TNC to Transit - Local Bus and Premium Transit', 'Transit'),
 ('School Bus', 'School Bus'),
 ('Taxi', 'Taxi'),
+('TNC Single', 'TNC Single'),
+('TNC Shared', 'TNC Shared'),
 ('Commuter Rail', 'Transit'),
 ('Light Rail', 'Transit'),
 ('Freeway Rapid', 'Transit'),
@@ -718,20 +689,4 @@ SELECT
     ,[day_period_end] AS [trip_start_day_period_end]
 FROM
 	[dimension].[time]
-GO
-
-
--- create value_of_time_drive_bin dimension
-CREATE TABLE [dimension].[value_of_time_drive_bin] (
-	[value_of_time_drive_bin_id] tinyint IDENTITY(0,1) NOT NULL, -- insert NULL record as 0
-	[value_of_time_drive_bin_description] nchar(20) NOT NULL,
-	CONSTRAINT pk_valueoftimedrivebin PRIMARY KEY ([value_of_time_drive_bin_id]),
-	CONSTRAINT ixuq_valueoftimedrivebin UNIQUE ([value_of_time_drive_bin_description]) WITH (DATA_COMPRESSION = PAGE))
-ON reference_fg
-WITH (DATA_COMPRESSION = PAGE)
-INSERT INTO [dimension].[value_of_time_drive_bin] VALUES
-('Not Applicable'), -- insert NULL record as 0
-('Low'),
-('Medium'),
-('High')
 GO

@@ -44,14 +44,6 @@ EXECUTE [db_meta].[add_xp] 'dimension.bike_link_ab.TO_signal', 'MS_Description',
 GO
 
 
--- [dimension].[escort_stop_type]
-EXECUTE [db_meta].[add_xp] 'dimension.escort_stop_type', 'SUBSYSTEM', 'tours and trips'
-EXECUTE [db_meta].[add_xp] 'dimension.escort_stop_type', 'MS_Description', 'escort model stop types within individual model'
-EXECUTE [db_meta].[add_xp] 'dimension.escort_stop_type.escort_stop_type_id', 'MS_Description', 'escort_stop_type surrogate key'
-EXECUTE [db_meta].[add_xp] 'dimension.escort_stop_type.escort_stop_type_description', 'MS_Description', 'escort_stop_type description'
-GO
-
-
 -- [dimension].[geography]
 EXECUTE [db_meta].[add_xp] 'dimension.geography', 'SUBSYSTEM', 'reference'
 EXECUTE [db_meta].[add_xp] 'dimension.geography', 'MS_Description', 'geography dimension for ABM model including cross references'
@@ -358,14 +350,6 @@ EXECUTE [db_meta].[add_xp] 'dimension.transit_tap.transit_tap_shape', 'MS_Descri
 GO
 
 
--- [dimension].[value_of_time_drive_bin]
-EXECUTE [db_meta].[add_xp] 'dimension.value_of_time_drive_bin', 'SUBSYSTEM', 'tours and trips'
-EXECUTE [db_meta].[add_xp] 'dimension.value_of_time_drive_bin', 'MS_Description', 'dimension table of passenger auto skim value of time categories'
-EXECUTE [db_meta].[add_xp] 'dimension.value_of_time_drive_bin.value_of_time_drive_bin_id', 'MS_Description', 'passenger auto skim value of time surrogate key'
-EXECUTE [db_meta].[add_xp] 'dimension.value_of_time_drive_bin.value_of_time_drive_bin_description', 'MS_Description', 'passenger auto skim value of time description'
-GO
-
-
 -- [fact].[bike_flow]
 EXECUTE [db_meta].[add_xp] 'fact.bike_flow', 'SUBSYSTEM', 'bike network'
 EXECUTE [db_meta].[add_xp] 'fact.bike_flow', 'MS_Description', 'bike volumes by roadsegid, ab, and time period'
@@ -509,11 +493,6 @@ EXECUTE [db_meta].[add_xp] 'fact.mgra_based_input.zip09', 'MS_Description', 'zip
 EXECUTE [db_meta].[add_xp] 'fact.mgra_based_input.parkactive', 'MS_Description', 'park acres'
 EXECUTE [db_meta].[add_xp] 'fact.mgra_based_input.openspaceparkpreserve', 'MS_Description', 'open space acres'
 EXECUTE [db_meta].[add_xp] 'fact.mgra_based_input.beachactive', 'MS_Description', 'beach acres'
-EXECUTE [db_meta].[add_xp] 'fact.mgra_based_input.budgetroom', 'MS_Description', 'budget hotel rooms'
-EXECUTE [db_meta].[add_xp] 'fact.mgra_based_input.economyroom', 'MS_Description', 'economy hotel rooms'
-EXECUTE [db_meta].[add_xp] 'fact.mgra_based_input.luxuryroom', 'MS_Description', 'luxury hotel rooms'
-EXECUTE [db_meta].[add_xp] 'fact.mgra_based_input.midpriceroom', 'MS_Description', 'mid price hotel rooms'
-EXECUTE [db_meta].[add_xp] 'fact.mgra_based_input.upscaleroom', 'MS_Description', 'upscale hotel rooms'
 EXECUTE [db_meta].[add_xp] 'fact.mgra_based_input.hotelroomtotal', 'MS_Description', 'total hotel rooms'
 EXECUTE [db_meta].[add_xp] 'fact.mgra_based_input.truckregiontype', 'MS_Description', 'truck region type'
 EXECUTE [db_meta].[add_xp] 'fact.mgra_based_input.district27', 'MS_Description', 'district 27 indicator'
@@ -544,11 +523,6 @@ EXECUTE [db_meta].[add_xp] 'fact.person_trip.geography_trip_destination_id', 'MS
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.geography_parking_destination_id', 'MS_Description', 'trip destination parking geography surrogate key'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.transit_tap_boarding_id', 'MS_Description', 'boarding transit tap surrogate key'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.transit_tap_alighting_id', 'MS_Description', 'alighting transit tap surrogate key'
-EXECUTE [db_meta].[add_xp] 'fact.person_trip.person_escort_drive_id', 'MS_Description', 'escort model driver person surrogate key and ABM person identifier'
-EXECUTE [db_meta].[add_xp] 'fact.person_trip.escort_stop_type_origin_id', 'MS_Description', 'trip origin escort_stop_type surrogate key'
-EXECUTE [db_meta].[add_xp] 'fact.person_trip.person_escort_origin_id', 'MS_Description', 'escort model trip origin passenger person surrogate key and ABM person identifier'
-EXECUTE [db_meta].[add_xp] 'fact.person_trip.escort_stop_type_destination_id', 'MS_Description', 'trip destination escort_stop_type surrogate key'
-EXECUTE [db_meta].[add_xp] 'fact.person_trip.person_escort_destination_id', 'MS_Description', 'escort model trip destination passenger person surrogate key and ABM person identifier'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.mode_airport_arrival_id', 'MS_Description', 'airport model arrival mode surrogate key'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.time_drive', 'MS_Description', 'trip drive time in minutes - includes auto portion of transit trips where applicable'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.dist_drive', 'MS_Description', 'trip drive distance in miles - includes auto portion of transit trips where applicable'
@@ -570,7 +544,6 @@ EXECUTE [db_meta].[add_xp] 'fact.person_trip.time_total', 'MS_Description', 'tot
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.dist_total', 'MS_Description', 'total trip distance in miles'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.cost_total', 'MS_Description', 'total trip cost in dollars - includes operating cost'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.value_of_time', 'MS_Description', 'person trip value of time in dollars per hour'
-EXECUTE [db_meta].[add_xp] 'fact.person_trip.value_of_time_drive_bin_id', 'MS_Description', 'person trip auto skim value of time category surrogate key'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.weight_person_trip', 'MS_Description', 'weight to use if measuring number of person trips'
 EXECUTE [db_meta].[add_xp] 'fact.person_trip.weight_trip', 'MS_Description', 'weight to use if measuring number of trips'
 GO
@@ -652,17 +625,6 @@ GO
 
 
 -- views
--- [dimension].[escort_stop_type_destination]
-EXECUTE [db_meta].[add_xp] 'dimension.escort_stop_type_destination', 'SUBSYSTEM', 'tours and trips'
-EXECUTE [db_meta].[add_xp] 'dimension.escort_stop_type_destination', 'MS_Description', '[dimension].[escort_stop_type] role playing view'
-GO
-
-
--- [dimension].[escort_stop_type_origin]
-EXECUTE [db_meta].[add_xp] 'dimension.escort_stop_type_origin', 'SUBSYSTEM', 'tours and trips'
-EXECUTE [db_meta].[add_xp] 'dimension.escort_stop_type_origin', 'MS_Description', '[dimension].[escort_stop_type] role playing view'
-GO
-
 
 -- [dimension].[geography_household_location]
 EXECUTE [db_meta].[add_xp] 'dimension.geography_household_location', 'SUBSYSTEM', 'reference'
