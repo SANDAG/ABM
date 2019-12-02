@@ -280,12 +280,12 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                         resident_demand = (
                             omx_manager.lookup(("auto", period, vot), omx_name % ("TRPDR" + period))
                             + omx_manager.lookup(("auto", period, vot), omx_name % ("NOTRPDR" + period)))
-                        visitor_demand = omx_manager.lookup(("autoVisitor", period, vot), omx_name % (period))
-                        cross_border_demand = omx_manager.lookup(("autoCrossBorder", period, vot), omx_name % (period))
-                        airport_demand = omx_manager.lookup(("autoAirport", ".SAN" + period, vot), omx_name % (period))
+                        visitor_demand = omx_manager.lookup(("autoVisitor", period, vot), omx_name % period)
+                        cross_border_demand = omx_manager.lookup(("autoCrossBorder", period, vot), omx_name % period)
+                        airport_demand = omx_manager.lookup(("autoAirport", ".SAN" + period, vot), omx_name % period)
                         if omx_manager.file_exists(("autoAirport", ".CBX" + period, vot)):
-                            airport_demand += omx_manager.lookup(("autoAirport", ".CBX" + period, vot), omx_name % (period))
-                        internal_external_demand = omx_manager.lookup(("autoInternalExternal", period, vot), omx_name % (period))
+                            airport_demand += omx_manager.lookup(("autoAirport", ".CBX" + period, vot), omx_name % period)
+                        internal_external_demand = omx_manager.lookup(("autoInternalExternal", period, vot), omx_name % period)
                         total_ct_ramp_trips = (
                             resident_demand + visitor_demand + cross_border_demand + airport_demand + internal_external_demand)
                         dem_utils.demand_report([
@@ -347,13 +347,13 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
 
     @_m.logbook_trace('Import commercial vehicle demand')
     def import_commercial_vehicle_demand(self, props):
-        cvm_scale_factor = props["cvm.scale_factor"]
-        cvm_scale_light = props["cvm.scale_light"]
-        cvm_scale_medium = props["cvm.scale_medium"]
-        cvm_scale_heavy = props["cvm.scale_heavy"]
-        cvm_share_light = props["cvm.share.light"]
-        cvm_share_medium = props["cvm.share.medium"]
-        cvm_share_heavy = props["cvm.share.heavy"]
+        scale_factor = props["cvm.scale_factor"]
+        scale_light = props["cvm.scale_light"]
+        scale_medium = props["cvm.scale_medium"]
+        scale_heavy = props["cvm.scale_heavy"]
+        share_light = props["cvm.share.light"]
+        share_medium = props["cvm.share.medium"]
+        share_heavy = props["cvm.share.heavy"]
 
         scenario = self.scenario
         emmebank = scenario.emmebank
@@ -364,43 +364,38 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         # prior from the CT-RAMP demand
         # The truck demand in vehicles is copied from separate matrices
         for index, period in enumerate(periods):
-            for cvm_acc, trnspdr in [("T", "TR"), ("NT", "NT")]:
-                mapping["CVM_%s:L%s" % (period, cvm_acc)] = {
-                    "orig": "%s_SOV_%s_H" % (period, trnspdr), 
-                    "dest": "%s_SOV_%s_H" % (period, trnspdr), 
-                    "pce": 1.0,
-                    "scale": scale_light[index],
-                    "share": share_light,
-                    "period": period,
-                    "cvm_acc": cvm_acc
-                }
-                mapping["CVM_%s:I%s" % (period, cvm_acc)] = {
-                    "orig": "%s_TRK_L_VEH" % (period),
-                    "dest": "%s_TRK_L" % (period), 
-                    "pce": 1.3,
-                    "scale": scale_medium[index],
-                    "share": share_medium,
-                    "period": period,
-                    "cvm_acc": cvm_acc
-                }
-                mapping["CVM_%s:M%s" % (period, cvm_acc)] = {
-                    "orig": "%s_TRK_M_VEH" % (period),
-                    "dest": "%s_TRK_M" % (period), 
-                    "pce": 1.5,
-                    "scale": scale_medium[index],
-                    "share": share_medium,
-                    "period": period,
-                    "cvm_acc": cvm_acc
-                }
-                mapping["CVM_%s:H%s" % (period, cvm_acc)] = {
-                    "orig": "%s_TRK_H_VEH" % (period),
-                    "dest": "%s_TRK_H" % (period), 
-                    "pce": 2.5,
-                    "scale": scale_heavy[index],
-                    "share": share_heavy,
-                    "period": period,
-                    "cvm_acc": cvm_acc
-                }
+            mapping["CVM_%s:LNT" % period] = {
+                "orig": "%s_SOV_TR_H" % period,
+                "dest": "%s_SOV_TR_H" % period,
+                "pce": 1.0,
+                "scale": scale_light[index],
+                "share": share_light,
+                "period": period
+            }
+            mapping["CVM_%s:INT" % period] = {
+                "orig": "%s_TRK_L_VEH" % period,
+                "dest": "%s_TRK_L" % period, 
+                "pce": 1.3,
+                "scale": scale_medium[index],
+                "share": share_medium,
+                "period": period
+            }
+            mapping["CVM_%s:MNT" % period] = {
+                "orig": "%s_TRK_M_VEH" % period,
+                "dest": "%s_TRK_M" % period, 
+                "pce": 1.5,
+                "scale": scale_medium[index],
+                "share": share_medium,
+                "period": period
+            }
+            mapping["CVM_%s:HNT" % period] = {
+                "orig": "%s_TRK_H_VEH" % period,
+                "dest": "%s_TRK_H" % period, 
+                "pce": 2.5,
+                "scale": scale_heavy[index],
+                "share": share_heavy,
+                "period": period
+            }
         with _m.logbook_trace('Load starting SOV and truck matrices'):
             for key, value in mapping.iteritems():
                 value["array"] = emmebank.matrix(value["orig"]).get_numpy_data(scenario)
@@ -421,11 +416,10 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
             #add cvm truck vehicles to light-heavy trucks
             for key, value in mapping.iteritems():
                 period = value["period"]
-                cvm_acc = value["cvm_acc"]
                 cvm_vehs = ['L','M','H']
-                if key == "CVM_%s:I%s" % (period, cvm_acc):
+                if key == "CVM_%s:INT" % period:
                     for veh in cvm_vehs:
-                        key_new = "CVM_%s:%s%s" % (period, veh, cvm_acc)
+                        key_new = "CVM_%s:%sNT" % (period, veh)
                         value_new = mapping[key_new]
                         if value_new["share"] != 0.0:
                             cvm_array = table[key_new].values.reshape((4996, 4996))
