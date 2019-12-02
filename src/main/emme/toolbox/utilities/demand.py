@@ -281,17 +281,17 @@ def create_full_matrix(name, desc, scenario):
     return create_matrix(ident, name, desc, scenario=scenario, overwrite=True)
 
 
-def demand_report(matrices, label, scenario):
-    emmebank = scenario.emmebank
+def demand_report(matrices, label, scenario, report=None):
     text = ['<div class="preformat">']
-    num_cells = len(scenario.zone_numbers) ** 2
-    text.append("Number of O-D pairs: %s. <br>" % num_cells)
-    text.append("%-25s %9s %9s %9s %13s" % ("name", "min", "max", "mean", "sum"))
+    text.append("%-28s %13s" % ("name", "sum"))
     for name, data in matrices:
-        stats = (name, data.min(), data.max(), data.mean(), data.sum())
-        text.append("%-25s %9.4g %9.4g %9.4g %13.7g" % stats)
+        stats = (name, data.sum())
+        text.append("%-28s %13.7g" % stats)
     text.append("</div>")
     title = "Demand summary"
-    report = _m.PageBuilder(title)
-    report.wrap_html('Matrix details', "<br>".join(text))
-    _m.logbook_write(label, report.render())
+    if report is None:
+        report = _m.PageBuilder(title)
+        report.wrap_html('Matrix details', "<br>".join(text))
+        _m.logbook_write(label, report.render())
+    else:
+        report.wrap_html(label, "<br>".join(text))
