@@ -123,7 +123,8 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
         ml_link_coords = []
         ml_links = []
         for link in network.links():
-            if link["type"] == 1 and link["@lane_restriction"] in (2,3) and (link["@toll_am"] + link["@toll_md"] + link["@toll_pm"]) > 0:
+            if link["type"] == 1 and link["@lane_restriction"] in (2,3) and (
+                    link["@toll_am"] + link["@toll_md"] + link["@toll_pm"]) > 0:
                 ml_link_coords.append(LineString(link.shape))
                 ml_links.append(link)
         ml_link_collection = MultiLineString(ml_link_coords)
@@ -190,10 +191,8 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
         with get_temp_scenario(scenario) as temp_scenario:
             temp_scenario.create_extra_attribute("NODE", "@root")
             temp_scenario.create_extra_attribute("NODE", "@leaf")
-            temp_scenario.create_extra_attribute("LINK", "@cost")
             network.create_attribute("NODE", "@root")
             network.create_attribute("NODE", "@leaf")
-            network.create_attribute("LINK", "@cost")
 
             mode_id = get_available_mode_id(network)
             new_mode = network.create_mode("AUX_AUTO", mode_id)
@@ -203,10 +202,10 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
             ml_link_coords = []
             freeway_links = []
             for link in network.links():
-                if link["@lane_restriction"] in [2, 3] and link["type"] == 1:
+                if link["@lane_restriction"] in [2, 3] and link["type"] == 1 and (
+                        link["@toll_am"] + link["@toll_md"] + link["@toll_pm"]) > 0:
                     ml_link_coords.append(LineString(link.shape))
                 if sov_non_toll_mode in link.modes:
-                    link["@cost"] = link["auto_time"]
                     link.modes |= set([new_mode])
                     if link["type"] == 1:
                         freeway_links.append(link)
@@ -224,7 +223,6 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
 
             for node in network.centroids():
                 node["@root"] = 1
-
             for dst in destinations:
                 network.node(dst)["@leaf"] = 1
             temp_scenario.publish_network(network, resolve_attributes=True)
@@ -233,7 +231,7 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
                     modes=[new_mode],
                     roots_attribute="@root",
                     leafs_attribute="@leaf",
-                    link_cost_attribute="@cost",
+                    link_cost_attribute="@auto_time",
                     num_processors=num_processors,
                     direction="AUTO",
                     use_turns=True,
@@ -243,7 +241,7 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
                     modes=[sov_non_toll_mode],
                     roots_attribute="@root",
                     leafs_attribute="@leaf",
-                    link_cost_attribute="@cost",
+                    link_cost_attribute="@auto_time",
                     num_processors=num_processors,
                     direction="AUTO",
                     use_turns=True,
