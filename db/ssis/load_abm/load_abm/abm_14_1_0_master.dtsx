@@ -9,13 +9,13 @@
   DTS:DTSID="{5D9B3D5F-7F20-48B6-9177-15F06CFA606E}"
   DTS:ExecutableType="Microsoft.Package"
   DTS:FailParentOnFailure="True"
-  DTS:LastModifiedProductVersion="14.0.3002.68"
+  DTS:LastModifiedProductVersion="14.0.0800.98"
   DTS:LocaleID="1033"
   DTS:MaxErrorCount="0"
   DTS:ObjectName="abm_14_1_0_master"
   DTS:PackageType="5"
-  DTS:VersionBuild="98"
-  DTS:VersionGUID="{FCAC8D01-6641-47CE-A612-4904BADBBC3F}">
+  DTS:VersionBuild="101"
+  DTS:VersionGUID="{3C54CF10-6198-4FD0-8136-79F171FEACA9}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:Variables>
@@ -282,8 +282,8 @@
         DTS:Name="Executable">@[$Project::python_script_path] + "\\run_python.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="E:\SSIS_DEV\abm_2\python\run_python.bat"
-          Arguments="C:\Python27\ArcGIS10.1\Lib\site-packages\osgeo\data\gdal C:\Python27\ArcGIS10.1 E:\SSIS_DEV\abm_2\python\arcpy_cleanup.py "
+          Executable="\run_python.bat"
+          Arguments="  \arcpy_cleanup.py "
           WindowStyle="Hidden" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -332,8 +332,8 @@
         DTS:Name="Executable">@[$Project::python_script_path] + "\\run_python.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="E:\SSIS_DEV\abm_2\python\run_python.bat"
-          Arguments="C:\Python27\ArcGIS10.1\Lib\site-packages\osgeo\data\gdal C:\Python27\ArcGIS10.1 E:\SSIS_DEV\abm_2\python\e00_to_shape.py  E:\SSIS_DEV\abm_2\python"
+          Executable="\run_python.bat"
+          Arguments="  \e00_to_shape.py  "
           TerminateAfterTimeout="False" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -342,7 +342,6 @@
       DTS:CreationName="Microsoft.ExecuteProcess"
       DTS:DelayValidation="True"
       DTS:Description="Execute Process Task"
-      DTS:Disabled="True"
       DTS:DTSID="{3FCCDA03-4B35-4679-9E44-0049EA628669}"
       DTS:ExecutableType="Microsoft.ExecuteProcess"
       DTS:FailPackageOnFailure="True"
@@ -359,8 +358,8 @@
         DTS:Name="Executable">@[$Project::python_script_path] + "\\hwyload_shp.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="E:\SSIS_DEV\abm_2\python\hwyload_shp.bat"
-          Arguments="C:\Python27\ArcGIS10.1\Lib\site-packages\osgeo\data\gdal C:\Python27\ArcGIS10.1\Lib\site-packages\osgeo  0"
+          Executable="\hwyload_shp.bat"
+          Arguments="   0"
           WindowStyle="Hidden" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -385,8 +384,8 @@
         DTS:Name="Executable">@[$Project::python_script_path] + "\\run_python.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="E:\SSIS_DEV\abm_2\python\run_python.bat"
-          Arguments="C:\Python27\ArcGIS10.1\Lib\site-packages\osgeo\data\gdal C:\Python27\ArcGIS10.1 E:\SSIS_DEV\abm_2\python\geospatial_export.py "
+          Executable="\run_python.bat"
+          Arguments="  \geospatial_export.py "
           WindowStyle="Hidden" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -552,10 +551,15 @@
     <DTS:EventHandler
       DTS:refId="Package.EventHandlers[OnTaskFailed]"
       DTS:CreationName="OnTaskFailed"
+      DTS:DelayValidation="True"
       DTS:DTSID="{F69E5C9F-1E4F-46BA-98D7-811B6E653778}"
       DTS:EventID="1644194048"
       DTS:EventName="OnTaskFailed"
-      DTS:LocaleID="-1">
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:ForceExecutionResult="1"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0">
       <DTS:Variables>
         <DTS:Variable
           DTS:CreationName=""
@@ -572,10 +576,14 @@
         <DTS:Executable
           DTS:refId="Package.EventHandlers[OnTaskFailed]\set_load_fail_indicators"
           DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:DelayValidation="True"
           DTS:Description="Execute SQL Task"
           DTS:DTSID="{635C9914-AB01-42BD-A0F9-3E0A063BAE21}"
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:FailPackageOnFailure="True"
+          DTS:FailParentOnFailure="True"
           DTS:LocaleID="-1"
+          DTS:MaxErrorCount="0"
           DTS:ObjectName="set_load_fail_indicators"
           DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
           <DTS:Variables />
