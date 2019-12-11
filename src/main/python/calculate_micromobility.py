@@ -214,7 +214,7 @@ def calculate_micromobility(output_file_key, mat, props, **cols):
 def validate_file(filename):
     if not os.path.isfile(filename):
         PARSER.print_help()
-        raise FileNotFoundError("Could not locate %s" % filename)
+        raise IOError("Could not locate %s" % filename)
 
 
 def pretty_print_dictionary(dictionary):
