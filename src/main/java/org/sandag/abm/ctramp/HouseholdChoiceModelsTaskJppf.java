@@ -117,7 +117,7 @@ public class HouseholdChoiceModelsTaskJppf
                                 taskIndex, hhModel.getModelIndex(), i, householdArray[i].getHhId()));
                 logger.fatal("Exception caught:", e);
                 logger.fatal("Throwing new RuntimeException() to terminate.");
-                throw new RuntimeException();
+                throw new RuntimeException(e);
             }
 
         }

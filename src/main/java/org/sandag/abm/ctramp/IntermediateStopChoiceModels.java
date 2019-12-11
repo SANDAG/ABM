@@ -4389,13 +4389,13 @@ public class IntermediateStopChoiceModels
 
                             if (invalidCount > MAX_INVALID_FIRST_ARRIVAL_COUNT)
                             {
-                                tripDepartLogger.error("Error in Outbound Trip Depart Time Model.");
+                                tripDepartLogger.warn("Problem in Outbound Trip Depart Time Model.");
                                 tripDepartLogger
-                                        .error("Outbound trip depart time less than previous trip depart time for "
+                                        .warn("Outbound trip depart time less than previous trip depart time for "
                                                 + invalidCount + " times.");
-                                tripDepartLogger.error("Possible infinite loop?");
+                                tripDepartLogger.warn("Possible infinite loop?");
                                 tripDepartLogger
-                                        .error(String
+                                        .warn(String
                                                 .format("HH=%d, PersonNum=%d, PersonType=%s, TourMode=%d, TourCategory=%s, TourPurpose=%s, TourId=%d, StopOrigPurpose=%s, StopDestPurpose=%s, StopId=%d, outboundStopsArray Length=%d",
                                                         household.getHhId(), person.getPersonNum(),
                                                         person.getPersonType(),
@@ -4406,35 +4406,13 @@ public class IntermediateStopChoiceModels
                                                         stop.getDestPurpose(),
                                                         (stop.getStopId() + 1), stops.length));
                                 tripDepartLogger
-                                        .error(String
+                                        .warn(String
                                                 .format("prevTripPeriod=%d, tourDepartPeriod=%d, tourArrivePeriod=%d, last choice=%d",
                                                         prevTripPeriod, tour.getTourDepartPeriod(),
                                                         tour.getTourArrivePeriod(), choice));
-                                tripDepartLogger.error("=" + invalidCount + " times.");
+                                tripDepartLogger.warn("=" + invalidCount + " times.");
 
-                                System.out.println("Error in Outbound Trip Depart Time Model.");
-                                System.out
-                                        .println("Outbound trip depart time less than previous trip depart time for "
-                                                + invalidCount + " times.");
-                                System.out.println("Possible infinite loop?");
-                                System.out
-                                        .println(String
-                                                .format("HH=%d, PersonNum=%d, PersonType=%s, TourMode=%d, TourCategory=%s, TourPurpose=%s, TourId=%d, StopOrigPurpose=%s, StopDestPurpose=%s, StopId=%d, outboundStopsArray Length=%d",
-                                                        household.getHhId(), person.getPersonNum(),
-                                                        person.getPersonType(),
-                                                        tour.getTourModeChoice(),
-                                                        tour.getTourCategory(),
-                                                        tour.getTourPrimaryPurpose(),
-                                                        tour.getTourId(), stop.getOrigPurpose(),
-                                                        stop.getDestPurpose(),
-                                                        (stop.getStopId() + 1), stops.length));
-                                System.out
-                                        .println(String
-                                                .format("prevTripPeriod=%d, tourDepartPeriod=%d, tourArrivePeriod=%d, last choice=%d",
-                                                        prevTripPeriod, tour.getTourDepartPeriod(),
-                                                        tour.getTourArrivePeriod(), choice));
-                                System.out.println("=" + invalidCount + " times.");
-                                //throw new RuntimeException();
+                                 //throw new RuntimeException();
                                 //instead of throwing an exception, set the stop period to the same period as the last stop
                                 stop.setStopPeriod(prevTripPeriod);
                             }
@@ -4637,13 +4615,13 @@ public class IntermediateStopChoiceModels
 
                             if (invalidCount > MAX_INVALID_FIRST_ARRIVAL_COUNT)
                             {
-                                tripDepartLogger.error("Error in Inbound Trip Arrival Time Model.");
+                                tripDepartLogger.warn("Problem in Inbound Trip Arrival Time Model.");
                                 tripDepartLogger
-                                        .error("Inbound trip arrive time greater than tour arrive time chosen for "
+                                        .warn("Inbound trip arrive time greater than tour arrive time chosen for "
                                                 + invalidCount + " times.");
-                                tripDepartLogger.error("Possible infinite loop?");
+                                tripDepartLogger.warn("Possible infinite loop?");
                                 tripDepartLogger
-                                        .error(String
+                                        .warn(String
                                                 .format("HH=%d, PersonNum=%d, PersonType=%s, TourMode=%d, TourCategory=%s, TourPurpose=%s, TourId=%d, StopOrigPurpose=%s, StopDestPurpose=%s, StopId=%d, outboundStopsArray Length=%d",
                                                         household.getHhId(), person.getPersonNum(),
                                                         person.getPersonType(),
@@ -4654,35 +4632,13 @@ public class IntermediateStopChoiceModels
                                                         stop.getDestPurpose(),
                                                         (stop.getStopId() + 1), stops.length));
                                 tripDepartLogger
-                                        .error(String
+                                        .warn(String
                                                 .format("prevTripPeriod=%d, tourDepartPeriod=%d, tourArrivePeriod=%d, last choice=%d",
                                                         prevTripPeriod, tour.getTourDepartPeriod(),
                                                         tour.getTourArrivePeriod(), choice));
-                                tripDepartLogger.error("=" + invalidCount + " times.");
+                                tripDepartLogger.warn("=" + invalidCount + " times.");
 
-                                System.out.println("Error in Inbound Trip Arrival Time Model.");
-                                System.out
-                                        .println("Inbound trip arrive time greater than tour arrive time chosen for "
-                                                + invalidCount + " times.");
-                                System.out.println("Possible infinite loop?");
-                                System.out
-                                        .println(String
-                                                .format("HH=%d, PersonNum=%d, PersonType=%s, TourMode=%d, TourCategory=%s, TourPurpose=%s, TourId=%d, StopOrigPurpose=%s, StopDestPurpose=%s, StopId=%d, outboundStopsArray Length=%d",
-                                                        household.getHhId(), person.getPersonNum(),
-                                                        person.getPersonType(),
-                                                        tour.getTourModeChoice(),
-                                                        tour.getTourCategory(),
-                                                        tour.getTourPrimaryPurpose(),
-                                                        tour.getTourId(), stop.getOrigPurpose(),
-                                                        stop.getDestPurpose(),
-                                                        (stop.getStopId() + 1), stops.length));
-                                System.out
-                                        .println(String
-                                                .format("prevTripPeriod=%d, tourDepartPeriod=%d, tourArrivePeriod=%d, last choice=%d",
-                                                        prevTripPeriod, tour.getTourDepartPeriod(),
-                                                        tour.getTourArrivePeriod(), choice));
-                                System.out.println("=" + invalidCount + " times.");
-                                //throw new RuntimeException();
+                                  //throw new RuntimeException();
                                 //instead of throwing an exception, set the stop period to the same period as the previous stop
                                 stop.setStopPeriod(lastOutboundTripDeparts);
                             }
