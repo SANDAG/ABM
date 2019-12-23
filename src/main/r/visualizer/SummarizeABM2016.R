@@ -54,7 +54,7 @@ mazCorrespondence <- fread(paste(geogXWalkDir, "geographicXwalk_PMSA.csv", sep =
 districtList         <- sort(unique(mazCorrespondence$pmsa))
 
 SkimFile <- paste(SkimDir, "traffic_skims_MD.omx", sep = "/")
-DST_SKM <- read_omx(SkimFile, "MD_SOVTOLLH_DIST")
+DST_SKM <- read_omx(SkimFile, "MD_SOV_TR_H_DIST")
 skimLookUp <- read_lookup(SkimFile, "zone_number")
 
 pertypeCodes <- data.frame(code = c(1,2,3,4,5,6,7,8,"All"), 
@@ -62,7 +62,7 @@ pertypeCodes <- data.frame(code = c(1,2,3,4,5,6,7,8,"All"),
 
 #-------------------------------------------
 # Prepare files for computing summary statistics
-dir.create(WD)
+dir.create(WD, showWarnings = FALSE)
 setwd(WD)
 
 aoResults$HHVEH[aoResults$AO == 0] <- 0
@@ -306,12 +306,13 @@ tours$TOURCAT[tours$tour_purpose=="Work-Based"] <- 2
 #compute duration
 tours$tourdur <- tours$end_period - tours$start_period + 1 #[to match survey]
 
-tours$TOURMODE[tours$tour_mode<=2] <- 1
-tours$TOURMODE[tours$tour_mode>=3 & tours$tour_mode<=4] <- 2
-tours$TOURMODE[tours$tour_mode>=5 & tours$tour_mode<=6] <- 3
-tours$TOURMODE[tours$tour_mode>=7 & tours$tour_mode<=13] <- tours$tour_mode[tours$tour_mode>=7 & tours$tour_mode<=13]-3
-tours$TOURMODE[tours$tour_mode>=14 & tours$tour_mode<=15] <- 11
-tours$TOURMODE[tours$tour_mode==16] <- 12
+tours$TOURMODE <- tours$tour_mode
+#tours$TOURMODE[tours$tour_mode==1] <- 1
+#tours$TOURMODE[tours$tour_mode==2] <- 2
+#tours$TOURMODE[tours$tour_mode==3] <- 3
+#tours$TOURMODE[tours$tour_mode>=7 & tours$tour_mode<=13] <- tours$tour_mode[tours$tour_mode>=7 & tours$tour_mode<=13]-3
+#tours$TOURMODE[tours$tour_mode>=14 & tours$tour_mode<=15] <- 11
+#tours$TOURMODE[tours$tour_mode==16] <- 12
 
 # exclude school escorting stop from ride sharing mandatory tours
 
@@ -397,19 +398,22 @@ write.csv(stopFreqModel_summary, "stopFreqModel_summary.csv", row.names = T)
 
 # Process Trip file
 #------------------
-trips$TOURMODE[trips$tour_mode<=2] <- 1
-trips$TOURMODE[trips$tour_mode>=3 & trips$tour_mode<=4] <- 2
-trips$TOURMODE[trips$tour_mode>=5 & trips$tour_mode<=6] <- 3
-trips$TOURMODE[trips$tour_mode>=7 & trips$tour_mode<=13] <- trips$tour_mode[trips$tour_mode>=7 & trips$tour_mode<=13]-3
-trips$TOURMODE[trips$tour_mode>=14 & trips$tour_mode<=15] <- 11
-trips$TOURMODE[trips$tour_mode==16] <- 12
+trips$TOURMODE <- trips$tour_mode
+trips$TRIPMODE <- trips$trip_mode
 
-trips$TRIPMODE[trips$trip_mode<=2] <- 1
-trips$TRIPMODE[trips$trip_mode>=3 & trips$trip_mode<=4] <- 2
-trips$TRIPMODE[trips$trip_mode>=5 & trips$trip_mode<=6] <- 3
-trips$TRIPMODE[trips$trip_mode>=7 & trips$trip_mode<=13] <- trips$trip_mode[trips$trip_mode>=7 & trips$trip_mode<=13]-3
-trips$TRIPMODE[trips$trip_mode>=14 & trips$trip_mode<=15] <- 11
-trips$TRIPMODE[trips$trip_mode==16] <- 12
+#trips$TOURMODE[trips$tour_mode<=2] <- 1
+#trips$TOURMODE[trips$tour_mode>=3 & trips$tour_mode<=4] <- 2
+#trips$TOURMODE[trips$tour_mode>=5 & trips$tour_mode<=6] <- 3
+#trips$TOURMODE[trips$tour_mode>=7 & trips$tour_mode<=13] <- trips$tour_mode[trips$tour_mode>=7 & trips$tour_mode<=13]-3
+#trips$TOURMODE[trips$tour_mode>=14 & trips$tour_mode<=15] <- 11
+#trips$TOURMODE[trips$tour_mode==16] <- 12
+#
+#trips$TRIPMODE[trips$trip_mode<=2] <- 1
+#trips$TRIPMODE[trips$trip_mode>=3 & trips$trip_mode<=4] <- 2
+#trips$TRIPMODE[trips$trip_mode>=5 & trips$trip_mode<=6] <- 3
+#trips$TRIPMODE[trips$trip_mode>=7 & trips$trip_mode<=13] <- trips$trip_mode[trips$trip_mode>=7 & trips$trip_mode<=13]-3
+#trips$TRIPMODE[trips$trip_mode>=14 & trips$trip_mode<=15] <- 11
+#trips$TRIPMODE[trips$trip_mode==16] <- 12
 
 #Code tour purposes
 trips$TOURPURP[trips$tour_purpose=="Home"] <- 0
