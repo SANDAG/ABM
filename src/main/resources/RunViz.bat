@@ -52,7 +52,7 @@ SET R_LIBRARY=%WORKING_DIR%dependencies\R-3.4.1\library
 SET RSTUDIO_PANDOC=%WORKING_DIR%dependencies\Pandoc
 
 :: Extract Dependencies.zip
-unzip %WORKING_DIR%dependencies.zip -d %WORKING_DIR%
+IF NOT EXIST %WORKING_DIR%dependencies unzip %WORKING_DIR%dependencies.zip -d %WORKING_DIR%
 
 :: Summarize BUILD
 SET WD=%BUILD_SUMMARY_DIR%
