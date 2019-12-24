@@ -782,7 +782,7 @@ Assignment matrices and resulting network flows are always in PCE.
                                 data = numpy.sqrt(data)
                             else:
                                 self._stats[name] = (name, data.min(), data.max(), data.mean(), data.sum(), 0)
-                                numpy.fill_diagonal(data, -99999999.0)
+                                numpy.fill_diagonal(data, 0.0)
                             matrix.set_numpy_data(data, scenario)
         return
 
