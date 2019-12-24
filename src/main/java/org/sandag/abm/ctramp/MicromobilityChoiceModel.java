@@ -191,7 +191,8 @@ public class MicromobilityChoiceModel
             // write choice model alternative info to log file
 	        if (household.getDebugChoiceModels())
 	        {
-	        	String decisionMaker = String.format("Household %d", household.getHhId()+ "Person %d", person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
+	        	String decisionMaker = String.format("Household " + household.getHhId()+ "Person " + person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
+	        	//String decisionMaker = String.format("Household %d", household.getHhId()+ "Person %d", person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
 	            mmModel.logAlternativesInfo("Micromobility Choice", decisionMaker, logger);
 	            logger.info(String.format("%s result chosen for %s is %d",
 	            	"Micromobility Choice", decisionMaker, chosenAlt));
@@ -226,7 +227,8 @@ public class MicromobilityChoiceModel
 		    // write choice model alternative info to log file
 		    if (household.getDebugChoiceModels())
 		    {
-		    	String decisionMaker = String.format("Household %d", household.getHhId()+ "Person %d", person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode()+ " access choice");
+		    	String decisionMaker = String.format("Household " + household.getHhId()+ "Person " + person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
+		    	//String decisionMaker = String.format("Household %d", household.getHhId()+ "Person %d", person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode()+ " access choice");
 		        mmModel.logAlternativesInfo("Micromobility Choice", decisionMaker, logger);
 		        logger.info(String.format("%s result chosen for %s is %d",
 		        	"Micromobility Choice", decisionMaker, chosenAlt));
@@ -258,7 +260,8 @@ public class MicromobilityChoiceModel
 		    // write choice model alternative info to log file
 		    if (household.getDebugChoiceModels())
 		    {
-		      	String decisionMaker = String.format("Household %d", household.getHhId()+ "Person %d", person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode()+ " egress choice");
+		    	String decisionMaker = String.format("Household " + household.getHhId()+ "Person " + person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
+		      	//String decisionMaker = String.format("Household %d", household.getHhId()+ "Person %d", person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode()+ " egress choice");
 		       	mmModel.logAlternativesInfo("Micromobility Choice", decisionMaker, logger);
 		        logger.info(String.format("%s result chosen for %s is %d",
 		           		"Micromobility Choice", decisionMaker, chosenAlt));
@@ -314,7 +317,8 @@ public class MicromobilityChoiceModel
             // write choice model alternative info to log file
 	        if (household.getDebugChoiceModels())
 	        {
-	        	String decisionMaker = String.format("Household %d", household.getHhId()+ "Person %d", person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
+	        	String decisionMaker = String.format("Household " + household.getHhId()+ "Person " + person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
+	        	//String decisionMaker = String.format("Household %d", household.getHhId()+ "Person %d", person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
 	            mmModel.logAlternativesInfo("Micromobility Choice", decisionMaker, logger);
 	            logger.info(String.format("%s result chosen for %s is %d",
 	                     "Micromobility Choice", decisionMaker, chosenAlt));
@@ -347,7 +351,8 @@ public class MicromobilityChoiceModel
         		return chosenAlt;
         	} else
         	{
-        		String decisionMaker = String.format("Househol %d", household.getHhId()+ "Person %d", person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
+        		String decisionMaker = String.format("Household " + household.getHhId()+ "Person " + person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
+        		//String decisionMaker = String.format("Househol %d", household.getHhId()+ "Person %d", person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
         		String errorMessage = String
                     .format("Exception caught for %s, no available micromobility choice alternatives to choose from in choiceModelApplication.",
                             decisionMaker);
