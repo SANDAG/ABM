@@ -66,89 +66,101 @@ public class FakeModelStructure
     @Override
     public boolean getTourModeIsSov(int tourMode)
     {
-        return tourMode == 1 || tourMode==2;
+        return tourMode == 1 ;
     }
 
     @Override
     public boolean getTourModeIsSovOrHov(int tourMode)
     {
-        return (tourMode <=6);
+        return (tourMode <=3);
     }
 
     @Override
     public boolean getTourModeIsS2(int tourMode)
     {
         // TODO Auto-generated method stub
-        return tourMode==3||tourMode==4;
+        return tourMode==2;
     }
 
     @Override
     public boolean getTourModeIsS3(int tourMode)
     {
         // TODO Auto-generated method stub
-        return tourMode==5||tourMode==6;
+        return tourMode==3;
     }
 
     @Override
     public boolean getTourModeIsHov(int tourMode)
     {
-        return tourMode>2 && tourMode<7;
+        return tourMode>=2 && tourMode<=3;
     }
 
     @Override
     public boolean getTourModeIsNonMotorized(int tourMode)
     {
         // TODO Auto-generated method stub
-        return tourMode==7||tourMode==8;
+        return tourMode==4||tourMode==5;
     }
 
     @Override
     public boolean getTourModeIsBike(int tourMode)
     {
-        return tourMode == 8;
+        return tourMode == 5;
     }
 
     @Override
     public boolean getTourModeIsWalk(int tourMode)
     {
-        return tourMode==7;
+        return tourMode==4;
     }
 
   
     @Override
     public boolean getTourModeIsTransit(int tourMode)
     {
-        return tourMode>=9 && tourMode<=11;
+        return tourMode>=6 && tourMode<=9;
     }
 
     @Override
     public boolean getTourModeIsWalkTransit(int tourMode)
     {
-        return tourMode==9;
+        return tourMode==6;
     }
 
     @Override
     public boolean getTourModeIsDriveTransit(int tourMode)
     {
-        return tourMode==10||tourMode==11;
+        return tourMode==7||tourMode==8||tourMode==9;
     }
 
     @Override
     public boolean getTourModeIsPnr(int tourMode)
     {
-        return tourMode==10;
+        return tourMode==7;
     }
 
     @Override
     public boolean getTourModeIsKnr(int tourMode)
     {
-        return tourMode==11;
+        return tourMode==8;
     }
 
     @Override
+    public boolean getTourModeIsTncTransit(int tourMode)
+    {
+        return tourMode==9;
+    }
+    @Override
+    public boolean getTourModeIsMaas(int tourMode)
+    {
+        return tourMode==10||tourMode==11||tourMode==12;
+    }
+
+    
+    @Override
     public boolean getTourModeIsSchoolBus(int tourMode)
     {
-        return tourMode==12;
+        return tourMode==13;
     }
 
     @Override

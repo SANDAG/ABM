@@ -145,6 +145,9 @@ public class SandagModelStructure
             7                                                                      };
     public static final int[]    KNR_ALTS                                                           = {
             8, 9                                                                     };
+    
+    public static final int      TNC_TRANSIT_ALT                                                   = 9;
+    
     public static final int[]    SCHOOL_BUS_ALTS                                                    = {13};
     public static final int[]    TRIP_SOV_ALTS                                                      = {
             1                                                                                     };
@@ -162,6 +165,7 @@ public class SandagModelStructure
     public static final int      SCHOOL_BUS                                                         = 13;
     public static final int      TAXI                                                               = 10;
     public static final int[]    TNC_ALTS = {11,12};
+    public static final int[]    MAAS_ALTS = {10,11,12};
 
     public static final String[] modeName = {"SOV","SR2","SR3",
     	"WALK","BIKE","WLK_SET","PNR_SET","KNR_SET","TNC_SET","TAXI","TNC_SINGLE","TNC_SHARED","SCHLBUS"};
@@ -513,7 +517,28 @@ public class SandagModelStructure
         return returnValue;
     }
 
-    public boolean getTourModeIsSchoolBus(int tourMode)
+    public boolean getTourModeIsTncTransit(int tourMode)
+    {
+        if (TNC_TRANSIT_ALT == tourMode)
+           return true;
+        else
+        	return false;
+     }
+
+     public boolean getTourModeIsMaas(int tourMode)
+    {
+        boolean returnValue = false;
+        for (int i = 0; i < MAAS_ALTS.length; i++)
+        {
+            if (MAAS_ALTS[i] == tourMode)
+            {
+                returnValue = true;
+                break;
+            }
+        }
+        return returnValue;
+    }
+   public boolean getTourModeIsSchoolBus(int tourMode)
     {
         boolean returnValue = false;
         for (int i = 0; i < SCHOOL_BUS_ALTS.length; i++)

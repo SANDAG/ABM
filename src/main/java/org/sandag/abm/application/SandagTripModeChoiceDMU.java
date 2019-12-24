@@ -337,6 +337,9 @@ public class SandagTripModeChoiceDMU
         methodIndexMap.put("getOriginMgra", 93);
         methodIndexMap.put("getDestMgra", 94);
 
+        
+        methodIndexMap.put("getTourModeIsTncTransit", 95);
+        methodIndexMap.put("getTourModeIsMaas", 96);
    }
 
     public double getValueForIndex(int variableIndex, int arrayIndex)
@@ -552,6 +555,14 @@ public class SandagTripModeChoiceDMU
             case 94:
             	returnValue = getDestMgra();
                 break;
+            case 95:
+            	returnValue = getTourModeIsTncTransit();
+                break;
+            case 96:
+            	returnValue = getTourModeIsMaas();
+            	break;
+                
+                
             default:
                 logger.error( "method number = " + variableIndex + " not found" );
                 throw new RuntimeException( "method number = " + variableIndex + " not found" );
