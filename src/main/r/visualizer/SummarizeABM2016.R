@@ -2071,11 +2071,12 @@ temp$tourmode[temp$tourmode=="tourmode4"] <- 'Walk'
 temp$tourmode[temp$tourmode=="tourmode5"] <- 'Bike/Moped'
 temp$tourmode[temp$tourmode=="tourmode6"] <- 'Walk-Transit'
 temp$tourmode[temp$tourmode=="tourmode7"] <- 'PNR-Transit'
-temp$tourmode[temp$tourmode=="tourmode8"] <- 'KNR-Transit_PERS'
-temp$tourmode[temp$tourmode=="tourmode9"] <- 'KNR-Transit_TNC'
+temp$tourmode[temp$tourmode=="tourmode8"] <- 'KNR-Transit'
+temp$tourmode[temp$tourmode=="tourmode9"] <- 'TNC-Transit'
 temp$tourmode[temp$tourmode=="tourmode10"] <- 'Taxi'
-temp$tourmode[temp$tourmode=="tourmode11"] <- 'TNC'
-temp$tourmode[temp$tourmode=="tourmode12"] <- 'School Bus'
+temp$tourmode[temp$tourmode=="tourmode11"] <- 'TNC-Single'
+temp$tourmode[temp$tourmode=="tourmode12"] <- 'TNC-Shared'
+temp$tourmode[temp$tourmode=="tourmode13"] <- 'School Bus'
 
 colnames(temp) <- c("tripmode","tourmode","purpose","value","grp_var")
 
