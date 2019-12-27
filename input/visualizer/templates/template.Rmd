@@ -1454,10 +1454,10 @@ colnames(build_df) <- colnames(base_df)
 
 
 sd.pertype <- get_standardDF(data_df1=base_df, data_df2=build_df, x="id", y = c("freq_as0", "freq_as1", "freq_as2", "freq_all"), grp = "purpose", shared = T)
-p1 <- plotly_bar_plotter(data = sd.pertype, height = 375, xlabel = "Tour Mode [Zero Auto]", ylabel = "Percent", ynames = c(BASE_SCENARIO_NAME, BUILD_SCENARIO_NAME), percent = T, tickvals = seq(1,12), ticktext = tourMode, bottom_offset = 55, tickangle = 300)
-p2 <- plotly_bar_plotter(data = sd.pertype, height = 375, xlabel = "Tour Mode [Autos < HH Adults]", ylabel = "Percent", ynames = c(BASE_SCENARIO_NAME, BUILD_SCENARIO_NAME), percent = T, tickvals = seq(1,12), ticktext = tourMode, index = 2, bottom_offset = 55, tickangle = 300)
-p3 <- plotly_bar_plotter(data = sd.pertype, height = 375, xlabel = "Tour Mode [Autos >= HH Adults]", ylabel = "Percent", ynames = c(BASE_SCENARIO_NAME, BUILD_SCENARIO_NAME), percent = T, tickvals = seq(1,12), ticktext = tourMode, index = 3, bottom_offset = 55, tickangle = 300)
-p4 <- plotly_bar_plotter(data = sd.pertype, height = 375, xlabel = "Tour Mode [Total]", ylabel = "Percent", ynames = c(BASE_SCENARIO_NAME, BUILD_SCENARIO_NAME), percent = T, tickvals = seq(1,12), ticktext = tourMode, index = 4, bottom_offset = 55, tickangle = 300)
+p1 <- plotly_bar_plotter(data = sd.pertype, height = 375, xlabel = "Tour Mode [Zero Auto]", ylabel = "Percent", ynames = c(BASE_SCENARIO_NAME, BUILD_SCENARIO_NAME), percent = T, tickvals = seq(1,13), ticktext = tourMode, bottom_offset = 55, tickangle = 300)
+p2 <- plotly_bar_plotter(data = sd.pertype, height = 375, xlabel = "Tour Mode [Autos < HH Adults]", ylabel = "Percent", ynames = c(BASE_SCENARIO_NAME, BUILD_SCENARIO_NAME), percent = T, tickvals = seq(1,13), ticktext = tourMode, index = 2, bottom_offset = 55, tickangle = 300)
+p3 <- plotly_bar_plotter(data = sd.pertype, height = 375, xlabel = "Tour Mode [Autos >= HH Adults]", ylabel = "Percent", ynames = c(BASE_SCENARIO_NAME, BUILD_SCENARIO_NAME), percent = T, tickvals = seq(1,13), ticktext = tourMode, index = 3, bottom_offset = 55, tickangle = 300)
+p4 <- plotly_bar_plotter(data = sd.pertype, height = 375, xlabel = "Tour Mode [Total]", ylabel = "Percent", ynames = c(BASE_SCENARIO_NAME, BUILD_SCENARIO_NAME), percent = T, tickvals = seq(1,13), ticktext = tourMode, index = 4, bottom_offset = 55, tickangle = 300)
 
 filter_select("tourMode", "Select Tour Purpose", sd.pertype, ~grp_var,multiple=F)
 
@@ -1783,7 +1783,7 @@ build_df$purpose <- purpose_type_df$name[match(build_df$purpose, purpose_type_df
 
 sd.purpose <- get_standardDF(data_df1=base_df, data_df2=build_df, x="tripmode", y = c("value"), grp = "grp_var", shared = T)
 
-p <- plotly_bar_plotter(data = sd.purpose, height = 700, xlabel = "Trip Mode", ylabel = "Percent", ynames = c(BASE_SCENARIO_NAME, BUILD_SCENARIO_NAME), percent = T, tickvals = seq(1,12), ticktext = tripMode, bottom_offset = 75)
+p <- plotly_bar_plotter(data = sd.purpose, height = 700, xlabel = "Trip Mode", ylabel = "Percent", ynames = c(BASE_SCENARIO_NAME, BUILD_SCENARIO_NAME), percent = T, tickvals = seq(1,13), ticktext = tripMode, bottom_offset = 75)
 
 bscols(widths=c(12),
   list(filter_select("tripMode1", "Select Tour Purpose", sd.purpose, ~purpose,multiple=F), 
