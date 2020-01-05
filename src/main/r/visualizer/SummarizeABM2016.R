@@ -83,6 +83,18 @@ hh$HHVEH[hh$autos == 2] <- 2
 hh$HHVEH[hh$autos == 3] <- 3
 hh$HHVEH[hh$autos >= 4] <- 4
 
+hh$VEH_NEWCAT[(hh$HVs == 0) & (hh$AVs) == 0] <- 1
+hh$VEH_NEWCAT[(hh$HVs == 1) & (hh$AVs) == 0] <- 2
+hh$VEH_NEWCAT[(hh$HVs == 0) & (hh$AVs) == 1] <- 3
+hh$VEH_NEWCAT[(hh$HVs == 2) & (hh$AVs) == 0] <- 4
+hh$VEH_NEWCAT[(hh$HVs == 0) & (hh$AVs) == 2] <- 5
+hh$VEH_NEWCAT[(hh$HVs == 1) & (hh$AVs) == 1] <- 6
+hh$VEH_NEWCAT[(hh$HVs == 3) & (hh$AVs) == 0] <- 7
+hh$VEH_NEWCAT[(hh$HVs == 0) & (hh$AVs) == 3] <- 8
+hh$VEH_NEWCAT[(hh$HVs == 2) & (hh$AVs) == 1] <- 9
+hh$VEH_NEWCAT[(hh$HVs == 1) & (hh$AVs) == 2] <- 10
+hh$VEH_NEWCAT[(hh$HVs == 4) & (hh$AVs) == 0] <- 11
+
 #HH Size
 hhsize <- count(per, c("hh_id"), "hh_id>0")
 hh$HHSIZ <- hhsize$freq[match(hh$hh_id, hhsize$hh_id)]
@@ -136,6 +148,9 @@ write.csv(autoOwnership, "autoOwnership.csv", row.names = TRUE)
 autoOwnership_AV <- count(hh, c("AVs"))
 write.csv(autoOwnership_AV, "autoOwnership_AV.csv", row.names = TRUE)
 
+autoOwnership_new <- count(hh, c("VEH_NEWCAT"))
+write.csv(autoOwnership_new, "autoOwnership_new.csv", row.names = TRUE)
+
 # Zero auto HHs by TAZ
 hh$HHTAZ <- mazCorrespondence$taz[match(hh$home_mgra, mazCorrespondence$mgra)]
 hh$ZeroAutoWgt[hh$HHVEH==0] <- 1
@@ -147,7 +162,14 @@ write.csv(zeroAutoByTaz, "zeroAutoByTaz.csv", row.names = TRUE)
 pertypeDistbn <- count(per, c("PERTYPE"))
 write.csv(pertypeDistbn, "pertypeDistbn.csv", row.names = TRUE)
 
-# 
+# Telecommute Freuency
+teleCommute <- count(per, c("tele_choice"))
+write.csv(teleCommute, "teleCommute_frequency.csv", row.names = TRUE)
+
+# HH Transponder Ownership
+transponder <- count(hh, c("transponder"))
+write.csv(transponder, "transponder_ownership.csv", row.names = TRUE)
+
 
 # Mandatory DC
 workers <- wsLoc[wsLoc$WorkLocation > 0 & wsLoc$WorkLocation != 99999,]
@@ -2049,11 +2071,12 @@ temp$tourmode[temp$tourmode=="tourmode4"] <- 'Walk'
 temp$tourmode[temp$tourmode=="tourmode5"] <- 'Bike/Moped'
 temp$tourmode[temp$tourmode=="tourmode6"] <- 'Walk-Transit'
 temp$tourmode[temp$tourmode=="tourmode7"] <- 'PNR-Transit'
-temp$tourmode[temp$tourmode=="tourmode8"] <- 'KNR-Transit_PERS'
-temp$tourmode[temp$tourmode=="tourmode9"] <- 'KNR-Transit_TNC'
+temp$tourmode[temp$tourmode=="tourmode8"] <- 'KNR-Transit'
+temp$tourmode[temp$tourmode=="tourmode9"] <- 'TNC-Transit'
 temp$tourmode[temp$tourmode=="tourmode10"] <- 'Taxi'
-temp$tourmode[temp$tourmode=="tourmode11"] <- 'TNC'
-temp$tourmode[temp$tourmode=="tourmode12"] <- 'School Bus'
+temp$tourmode[temp$tourmode=="tourmode11"] <- 'TNC-Single'
+temp$tourmode[temp$tourmode=="tourmode12"] <- 'TNC-Shared'
+temp$tourmode[temp$tourmode=="tourmode13"] <- 'School Bus'
 
 colnames(temp) <- c("tripmode","tourmode","purpose","value","grp_var")
 

@@ -8,13 +8,13 @@
   DTS:DTSID="{8F29AE6B-4FFC-46A2-8DD6-45D1B917D4B2}"
   DTS:ExecutableType="Microsoft.Package"
   DTS:FailParentOnFailure="True"
-  DTS:LastModifiedProductVersion="14.0.3002.68"
+  DTS:LastModifiedProductVersion="14.0.0800.98"
   DTS:LocaleID="1033"
   DTS:MaxErrorCount="0"
   DTS:ObjectName="abm_14_2_0_lu"
   DTS:PackageType="5"
-  DTS:VersionBuild="129"
-  DTS:VersionGUID="{FFD840F0-BE3D-439E-959D-405B09A38044}">
+  DTS:VersionBuild="130"
+  DTS:VersionGUID="{76C49C50-3375-4D82-B809-FEFE70676F58}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -2760,7 +2760,7 @@
       DTS:LocaleID="-1"
       DTS:ObjectName="households_reference_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -2777,7 +2777,7 @@
       DTS:LocaleID="-1"
       DTS:ObjectName="households_sql_cleanup"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -2798,7 +2798,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="households_staging_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -2815,7 +2815,7 @@
       DTS:LocaleID="-1"
       DTS:ObjectName="household_dimension"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -2843,7 +2843,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="mgra_based_input_fact"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="3">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -2871,7 +2871,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="mgra_based_input_fact_reseed"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="3">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -6482,7 +6482,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="mgra_based_input_sql_cleanup"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="3">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -6503,12 +6503,12 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="mgra_based_input_staging_table"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="3">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{15638D61-ABAF-4C44-938D-BC48B8A41948}"
-          SQLTask:SqlStatementSource="BEGIN TRANSACTION&#xA;&#xA;&#xA;IF OBJECT_ID('staging.mgra_based_input','U') IS NOT NULL&#xA;DROP TABLE [staging].[mgra_based_input]&#xA;CREATE TABLE [staging].[mgra_based_input] (&#xA;&#x9;[mgra] int NOT NULL,&#xA;&#x9;[hs] integer NOT NULL,&#xA;&#x9;[hs_sf] smallint NOT NULL,&#xA;&#x9;[hs_mf] integer NOT NULL,&#xA;&#x9;[hs_mh] smallint NOT NULL,&#xA;&#x9;[hh] integer NOT NULL,&#xA;&#x9;[hh_sf] smallint NOT NULL,&#xA;&#x9;[hh_mf] integer NOT NULL,&#xA;&#x9;[hh_mh] smallint NOT NULL,&#xA;&#x9;[gq_civ] smallint NOT NULL,&#xA;&#x9;[gq_mil] smallint NOT NULL,&#xA;&#x9;[i1] smallint NOT NULL,&#xA;&#x9;[i2] smallint NOT NULL,&#xA;&#x9;[i3] smallint NOT NULL,&#xA;&#x9;[i4] smallint NOT NULL,&#xA;&#x9;[i5] smallint NOT NULL,&#xA;&#x9;[i6] smallint NOT NULL,&#xA;&#x9;[i7] smallint NOT NULL,&#xA;&#x9;[i8] smallint NOT NULL,&#xA;&#x9;[i9] smallint NOT NULL,&#xA;&#x9;[i10] smallint NOT NULL,&#xA;&#x9;[hhs] decimal(9,7) NOT NULL,&#xA;&#x9;[pop] integer NOT NULL,&#xA;&#x9;[hhp] integer NOT NULL,&#xA;&#x9;[emp_ag] int NOT NULL,&#xA;&#x9;[emp_const_non_bldg_prod] int NOT NULL,&#xA;&#x9;[emp_const_non_bldg_office] int NOT NULL,&#xA;&#x9;[emp_utilities_prod] int NOT NULL,&#xA;&#x9;[emp_utilities_office] int NOT NULL,&#xA;&#x9;[emp_const_bldg_prod] int NOT NULL,&#xA;&#x9;[emp_const_bldg_office] int NOT NULL,&#xA;&#x9;[emp_mfg_prod] int NOT NULL,&#xA;&#x9;[emp_mfg_office] int NOT NULL,&#xA;&#x9;[emp_whsle_whs] int NOT NULL,&#xA;&#x9;[emp_trans] int NOT NULL,&#xA;&#x9;[emp_retail] int NOT NULL,&#xA;&#x9;[emp_prof_bus_svcs] int NOT NULL,&#xA;&#x9;[emp_prof_bus_svcs_bldg_maint] int NOT NULL,&#xA;&#x9;[emp_pvt_ed_k12] int NOT NULL,&#xA;&#x9;[emp_pvt_ed_post_k12_oth] int NOT NULL,&#xA;&#x9;[emp_health] int NOT NULL,&#xA;&#x9;[emp_personal_svcs_office] int NOT NULL,&#xA;&#x9;[emp_amusement] int NOT NULL,&#xA;&#x9;[emp_hotel] int NOT NULL,&#xA;&#x9;[emp_restaurant_bar] int NOT NULL,&#xA;&#x9;[emp_personal_svcs_retail] int NOT NULL,&#xA;&#x9;[emp_religious] int NOT NULL,&#xA;&#x9;[emp_pvt_hh] int NOT NULL,&#xA;&#x9;[emp_state_local_gov_ent] int NOT NULL,&#xA;&#x9;[emp_fed_non_mil] int NOT NULL,&#xA;&#x9;[emp_fed_mil] int NOT NULL,&#xA;&#x9;[emp_state_local_gov_blue] int NOT NULL,&#xA;&#x9;[emp_state_local_gov_white] int NOT NULL,&#xA;&#x9;[emp_public_ed] int NOT NULL,&#xA;&#x9;[emp_own_occ_dwell_mgmt] int NOT NULL,&#xA;&#x9;[emp_fed_gov_accts] int NOT NULL,&#xA;&#x9;[emp_st_lcl_gov_accts] int NOT NULL,&#xA;&#x9;[emp_cap_accts] int NOT NULL,&#xA;&#x9;[emp_total] int NOT NULL,&#xA;&#x9;[enrollgradekto8] int NOT NULL,&#xA;&#x9;[enrollgrade9to12] int NOT NULL,&#xA;&#x9;[collegeenroll] int NOT NULL,&#xA;&#x9;[othercollegeenroll] int NOT NULL,&#xA;    [adultschenrl] decimal(12,7) NOT NULL,&#xA;    [ech_dist] int NOT NULL,&#xA;    [hch_dist] int NOT NULL,&#xA;&#x9;[pseudomsa] tinyint NOT NULL,&#xA;    [parkarea] tinyint NOT NULL,&#xA;&#x9;[hstallsoth] decimal(12,7) NOT NULL,&#xA;    [hstallssam] decimal(12,7) NOT NULL,&#xA;&#x9;[hparkcost] decimal(6,4) NOT NULL,&#xA;&#x9;[numfreehrs] tinyint NOT NULL,&#xA;&#x9;[dstallsoth] decimal(12,7) NOT NULL,&#xA;    [dstallssam] decimal(12,7) NOT NULL,&#xA;    [dparkcost] decimal(6,4) NOT NULL,&#xA;    [mstallsoth] decimal(12,7) NOT NULL,&#xA;    [mstallssam] decimal(12,7) NOT NULL,&#xA;    [mparkcost] decimal(6,4) NOT NULL,&#xA;&#x9;[zip09] int NOT NULL,&#xA;&#x9;[parkactive] decimal(9,4) NOT NULL,&#xA;    [openspaceparkpreserve] decimal(9,4) NOT NULL,&#xA;    [beachactive] decimal(9,4) NOT NULL,&#xA;    [hotelroomtotal] decimal(12,7) NOT NULL,&#xA;&#x9;[truckregiontype] tinyint NOT NULL,&#xA;    [district27] tinyint NOT NULL,&#xA;    [milestocoast] decimal(7,4) NOT NULL,&#xA;    [acres] decimal(10,5) NOT NULL,&#xA;    [effective_acres] decimal(10,5) NOT NULL,&#xA;    [land_acres] decimal(10,5) NOT NULL,&#xA;&#x9;[totint] decimal(9,5) NOT NULL,&#xA;&#x9;[duden] decimal(8,4) NOT NULL,&#xA;    [empden] decimal(8,4) NOT NULL,&#xA;    [popden] decimal(8,4) NOT NULL,&#xA;    [retempden] decimal(8,4) NOT NULL,&#xA;&#x9;[totintbin] tinyint NOT NULL,&#xA;    [empdenbin] tinyint NOT NULL,&#xA;    [dudenbin] tinyint NOT NULL,&#xA;&#x9;CONSTRAINT pk_staging_mgrabasedinput PRIMARY KEY([mgra]))&#xA;ON staging_fg&#xA;WITH (DATA_COMPRESSION = PAGE)&#xA;&#xA;&#xA;COMMIT TRANSACTION" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:SqlStatementSource="BEGIN TRANSACTION&#xA;&#xA;&#xA;IF OBJECT_ID('staging.mgra_based_input','U') IS NOT NULL&#xA;DROP TABLE [staging].[mgra_based_input]&#xA;CREATE TABLE [staging].[mgra_based_input] (&#xA;&#x9;[mgra] int NOT NULL,&#xA;&#x9;[hs] integer NOT NULL,&#xA;&#x9;[hs_sf] smallint NOT NULL,&#xA;&#x9;[hs_mf] integer NOT NULL,&#xA;&#x9;[hs_mh] smallint NOT NULL,&#xA;&#x9;[hh] integer NOT NULL,&#xA;&#x9;[hh_sf] smallint NOT NULL,&#xA;&#x9;[hh_mf] integer NOT NULL,&#xA;&#x9;[hh_mh] smallint NOT NULL,&#xA;&#x9;[gq_civ] smallint NOT NULL,&#xA;&#x9;[gq_mil] smallint NOT NULL,&#xA;&#x9;[i1] smallint NOT NULL,&#xA;&#x9;[i2] smallint NOT NULL,&#xA;&#x9;[i3] smallint NOT NULL,&#xA;&#x9;[i4] smallint NOT NULL,&#xA;&#x9;[i5] smallint NOT NULL,&#xA;&#x9;[i6] smallint NOT NULL,&#xA;&#x9;[i7] smallint NOT NULL,&#xA;&#x9;[i8] smallint NOT NULL,&#xA;&#x9;[i9] smallint NOT NULL,&#xA;&#x9;[i10] smallint NOT NULL,&#xA;&#x9;[hhs] decimal(9,7) NOT NULL,&#xA;&#x9;[pop] integer NOT NULL,&#xA;&#x9;[hhp] integer NOT NULL,&#xA;&#x9;[emp_ag] int NOT NULL,&#xA;&#x9;[emp_const_non_bldg_prod] int NOT NULL,&#xA;&#x9;[emp_const_non_bldg_office] int NOT NULL,&#xA;&#x9;[emp_utilities_prod] int NOT NULL,&#xA;&#x9;[emp_utilities_office] int NOT NULL,&#xA;&#x9;[emp_const_bldg_prod] int NOT NULL,&#xA;&#x9;[emp_const_bldg_office] int NOT NULL,&#xA;&#x9;[emp_mfg_prod] int NOT NULL,&#xA;&#x9;[emp_mfg_office] int NOT NULL,&#xA;&#x9;[emp_whsle_whs] int NOT NULL,&#xA;&#x9;[emp_trans] int NOT NULL,&#xA;&#x9;[emp_retail] int NOT NULL,&#xA;&#x9;[emp_prof_bus_svcs] int NOT NULL,&#xA;&#x9;[emp_prof_bus_svcs_bldg_maint] int NOT NULL,&#xA;&#x9;[emp_pvt_ed_k12] int NOT NULL,&#xA;&#x9;[emp_pvt_ed_post_k12_oth] int NOT NULL,&#xA;&#x9;[emp_health] int NOT NULL,&#xA;&#x9;[emp_personal_svcs_office] int NOT NULL,&#xA;&#x9;[emp_amusement] int NOT NULL,&#xA;&#x9;[emp_hotel] int NOT NULL,&#xA;&#x9;[emp_restaurant_bar] int NOT NULL,&#xA;&#x9;[emp_personal_svcs_retail] int NOT NULL,&#xA;&#x9;[emp_religious] int NOT NULL,&#xA;&#x9;[emp_pvt_hh] int NOT NULL,&#xA;&#x9;[emp_state_local_gov_ent] int NOT NULL,&#xA;&#x9;[emp_fed_non_mil] int NOT NULL,&#xA;&#x9;[emp_fed_mil] int NOT NULL,&#xA;&#x9;[emp_state_local_gov_blue] int NOT NULL,&#xA;&#x9;[emp_state_local_gov_white] int NOT NULL,&#xA;&#x9;[emp_public_ed] int NOT NULL,&#xA;&#x9;[emp_own_occ_dwell_mgmt] int NOT NULL,&#xA;&#x9;[emp_fed_gov_accts] int NOT NULL,&#xA;&#x9;[emp_st_lcl_gov_accts] int NOT NULL,&#xA;&#x9;[emp_cap_accts] int NOT NULL,&#xA;&#x9;[emp_total] int NOT NULL,&#xA;&#x9;[enrollgradekto8] int NOT NULL,&#xA;&#x9;[enrollgrade9to12] int NOT NULL,&#xA;&#x9;[collegeenroll] int NOT NULL,&#xA;&#x9;[othercollegeenroll] int NOT NULL,&#xA;    [adultschenrl] decimal(12,7) NOT NULL,&#xA;    [ech_dist] int NOT NULL,&#xA;    [hch_dist] int NOT NULL,&#xA;&#x9;[pseudomsa] tinyint NOT NULL,&#xA;    [parkarea] tinyint NOT NULL,&#xA;&#x9;[hstallsoth] decimal(12,7) NOT NULL,&#xA;    [hstallssam] decimal(12,7) NOT NULL,&#xA;&#x9;[hparkcost] decimal(7,4) NOT NULL,&#xA;&#x9;[numfreehrs] tinyint NOT NULL,&#xA;&#x9;[dstallsoth] decimal(12,7) NOT NULL,&#xA;    [dstallssam] decimal(12,7) NOT NULL,&#xA;    [dparkcost] decimal(7,4) NOT NULL,&#xA;    [mstallsoth] decimal(12,7) NOT NULL,&#xA;    [mstallssam] decimal(12,7) NOT NULL,&#xA;    [mparkcost] decimal(8,4) NOT NULL,&#xA;&#x9;[zip09] int NOT NULL,&#xA;&#x9;[parkactive] decimal(9,4) NOT NULL,&#xA;    [openspaceparkpreserve] decimal(9,4) NOT NULL,&#xA;    [beachactive] decimal(9,4) NOT NULL,&#xA;    [hotelroomtotal] decimal(12,7) NOT NULL,&#xA;&#x9;[truckregiontype] tinyint NOT NULL,&#xA;    [district27] tinyint NOT NULL,&#xA;    [milestocoast] decimal(7,4) NOT NULL,&#xA;    [acres] decimal(10,5) NOT NULL,&#xA;    [effective_acres] decimal(10,5) NOT NULL,&#xA;    [land_acres] decimal(10,5) NOT NULL,&#xA;&#x9;[totint] decimal(9,5) NOT NULL,&#xA;&#x9;[duden] decimal(8,4) NOT NULL,&#xA;    [empden] decimal(8,4) NOT NULL,&#xA;    [popden] decimal(8,4) NOT NULL,&#xA;    [retempden] decimal(8,4) NOT NULL,&#xA;&#x9;[totintbin] tinyint NOT NULL,&#xA;    [empdenbin] tinyint NOT NULL,&#xA;    [dudenbin] tinyint NOT NULL,&#xA;&#x9;CONSTRAINT pk_staging_mgrabasedinput PRIMARY KEY([mgra]))&#xA;ON staging_fg&#xA;WITH (DATA_COMPRESSION = PAGE)&#xA;&#xA;&#xA;COMMIT TRANSACTION" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
@@ -7972,7 +7972,7 @@
       DTS:LocaleID="-1"
       DTS:ObjectName="persons_reference_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="2">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -7989,7 +7989,7 @@
       DTS:LocaleID="-1"
       DTS:ObjectName="persons_sql_cleanup"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="3">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -8010,7 +8010,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="persons_staging_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="2">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -8027,7 +8027,7 @@
       DTS:LocaleID="-1"
       DTS:ObjectName="person_dimension"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="2">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -8767,7 +8767,7 @@
       DTS:LocaleID="-1"
       DTS:ObjectName="ws_loc_model_reference_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="1">
+      DTS:ThreadHint="3">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -8784,7 +8784,7 @@
       DTS:LocaleID="-1"
       DTS:ObjectName="ws_loc_model_sql_cleanup"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="1">
+      DTS:ThreadHint="2">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -8805,7 +8805,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="ws_loc_model_staging_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="1">
+      DTS:ThreadHint="3">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
