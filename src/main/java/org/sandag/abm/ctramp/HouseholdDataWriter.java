@@ -460,8 +460,8 @@ public class HouseholdDataWriter
         data.add("tour_id");
         data.add("tour_category");
         data.add("tour_purpose");
-        data.add("orig_mgra");
-        data.add("dest_mgra");
+        data.add("orig_maz");
+        data.add("dest_maz");
         data.add("start_period");
         data.add("end_period");
         data.add("tour_mode");
@@ -523,8 +523,8 @@ public class HouseholdDataWriter
         data.add("tour_purpose");
         data.add("tour_composition");
         data.add("tour_participants");
-        data.add("orig_mgra");
-        data.add("dest_mgra");
+        data.add("orig_maz");
+        data.add("dest_maz");
         data.add("start_period");
         data.add("end_period");
         data.add("tour_mode");
@@ -875,9 +875,9 @@ public class HouseholdDataWriter
         data.add("tour_purpose");
         data.add("orig_purpose");
         data.add("dest_purpose");
-        data.add("orig_mgra");
-        data.add("dest_mgra");
-        data.add("parking_mgra");
+        data.add("orig_maz");
+        data.add("dest_maz");
+        data.add("parking_maz");
         data.add("stop_period");
         data.add("trip_mode");
         data.add("av_avail");
@@ -915,9 +915,9 @@ public class HouseholdDataWriter
         data.add("tour_purpose");
         data.add("orig_purpose");
         data.add("dest_purpose");
-        data.add("orig_mgra");
-        data.add("dest_mgra");
-        data.add("parking_mgra");
+        data.add("orig_maz");
+        data.add("dest_maz");
+        data.add("parking_maz");
         data.add("stop_period");
         data.add("trip_mode");
         data.add("av_avail");

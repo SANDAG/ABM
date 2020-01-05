@@ -366,8 +366,8 @@ public class SandagSummitFile
 
             long hhID = (long) tourData.getValueAt(i, "hh_id");
 
-            int originMGRA = (int) tourData.getValueAt(i, "orig_mgra");
-            int destinationMGRA = (int) tourData.getValueAt(i, "dest_mgra");
+            int originMGRA = (int) tourData.getValueAt(i, "orig_maz");
+            int destinationMGRA = (int) tourData.getValueAt(i, "dest_maz");
 
             int departPeriod = (int) tourData.getValueAt(i, "start_period");
             int arrivePeriod = (int) tourData.getValueAt(i, "end_period");
@@ -718,11 +718,11 @@ public class SandagSummitFile
     }
 
     /**
-     * Get the in-vehicle time coefficient for the file, based on the values
+     * Get the in-tNCVehicle time coefficient for the file, based on the values
      * read in the properties file.
      * 
      * @param fileNumber
-     * @return The in-vehicle time coefficient for the file.
+     * @return The in-tNCVehicle time coefficient for the file.
      */
     public float getIVTCoefficient(int fileNumber)
     {

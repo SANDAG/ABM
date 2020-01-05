@@ -5,7 +5,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * The {@code EmfacVehicleType} enum represents the EMFAC2011 vehicle types.
+ * The {@code EmfacVehicleType} enum represents the EMFAC2011 tNCVehicle types.
  * 
  * @author crf Started 2/8/12 8:54 AM
  */
@@ -57,10 +57,10 @@ public enum Emfac2011VehicleType
     }
 
     /**
-     * Get the name of the vehicle type. This is the name used by the EMFAC2011
+     * Get the name of the tNCVehicle type. This is the name used by the EMFAC2011
      * model.
      * 
-     * @return the name of the vehicle type.
+     * @return the name of the tNCVehicle type.
      */
     public String getName()
     {
@@ -68,9 +68,9 @@ public enum Emfac2011VehicleType
     }
 
     /**
-     * Get this vehicle type's equivalent EMFAC2007 vehicle type name.
+     * Get this tNCVehicle type's equivalent EMFAC2007 tNCVehicle type name.
      * 
-     * @return the EMFAC2007 vehicle type corresponding to this vehicle type.
+     * @return the EMFAC2007 tNCVehicle type corresponding to this tNCVehicle type.
      */
     public String getEmfac2007Name()
     {
@@ -78,11 +78,11 @@ public enum Emfac2011VehicleType
     }
 
     /**
-     * Determine if this vehicle type is mutable. If a vehicle type is mutable,
+     * Determine if this tNCVehicle type is mutable. If a tNCVehicle type is mutable,
      * then its EMFAC2011 SG inputs may be adjusted to account for travel demand
      * model results.
      * 
-     * @return {@code true} if this vehicle type is mutable, {@code false} if
+     * @return {@code true} if this tNCVehicle type is mutable, {@code false} if
      *         not.
      */
     public boolean isMutableType()
@@ -101,13 +101,13 @@ public enum Emfac2011VehicleType
     }
 
     /**
-     * Set the mutable vehicle types. This need only be called if the default
+     * Set the mutable tNCVehicle types. This need only be called if the default
      * mutable types are unsatisfactory for the particular application; however,
      * if it needs to be called, then it should be before any of the
      * EMFAC2011/Aquavis processing commences.
      * 
      * @param mutableTypes
-     *            The set of mutable vehicle types for processing.
+     *            The set of mutable tNCVehicle types for processing.
      */
     public static void setMutableTypes(Set<Emfac2011VehicleType> mutableTypes)
     {
@@ -115,29 +115,29 @@ public enum Emfac2011VehicleType
     }
 
     /**
-     * Get the vehicle type corresponding to the given (EMFAC2011) name.
+     * Get the tNCVehicle type corresponding to the given (EMFAC2011) name.
      * 
      * @param name
-     *            The vehicle type name used in the EMFAC2011 vehicle type.
+     *            The tNCVehicle type name used in the EMFAC2011 tNCVehicle type.
      * 
-     * @return the vehicle type corresponding to {@code name}.
+     * @return the tNCVehicle type corresponding to {@code name}.
      * 
      * @throws IllegalArgumentException
-     *             if {@code name} does not correspond to any vehicle type.
+     *             if {@code name} does not correspond to any tNCVehicle type.
      */
     public static Emfac2011VehicleType getVehicleType(String name)
     {
         for (Emfac2011VehicleType type : values())
             if (type.getName().equals(name)) return type;
-        throw new IllegalArgumentException("No EMFAC vehicle type corresponding to: " + name);
+        throw new IllegalArgumentException("No EMFAC tNCVehicle type corresponding to: " + name);
     }
 
     /**
-     * Get the set of EMFAC2011 vehicle types which are mutable. If a vehicle
+     * Get the set of EMFAC2011 tNCVehicle types which are mutable. If a tNCVehicle
      * type is mutable, then its EMFAC2011 SG inputs may be adjusted to account
      * for travel demand model results.
      * 
-     * @return a set holding the mutable EMFAC2011 vehicle types.
+     * @return a set holding the mutable EMFAC2011 tNCVehicle types.
      */
     public static Set<Emfac2011VehicleType> getMutableVehicleTypes()
     {

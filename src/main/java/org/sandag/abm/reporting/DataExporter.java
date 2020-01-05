@@ -470,7 +470,7 @@ public final class DataExporter
      */
     private void appendTripData(TableDataSet table, TripStructureDefinition tripStructureDefinition, boolean isCB)
     {
-        // id triptype recid partysize orig_mgra dest_mgra trip_board_tap
+        // id triptype recid partysize orig_maz dest_maz trip_board_tap
         // trip_alight_tap trip_depart_time trip_time trip_distance trip_cost
         // trip_purpose_name trip_mode_name vot
         int rowCount = table.getRowCount();
@@ -1167,8 +1167,8 @@ public final class DataExporter
         formatList.add(NUMBER_FORMAT_NAME); // tour_id
         formatList.add(STRING_FORMAT_NAME); // tour_category
         formatList.add(STRING_FORMAT_NAME); // tour_purpose
-        formatList.add(NUMBER_FORMAT_NAME); // orig_mgra
-        formatList.add(NUMBER_FORMAT_NAME); // dest_mgra
+        formatList.add(NUMBER_FORMAT_NAME); // orig_maz
+        formatList.add(NUMBER_FORMAT_NAME); // dest_maz
         formatList.add(NUMBER_FORMAT_NAME); // start_period
         formatList.add(NUMBER_FORMAT_NAME); // end_period
         formatList.add(NUMBER_FORMAT_NAME); // tour_mode
@@ -1204,7 +1204,7 @@ public final class DataExporter
         formats = formatList.toArray(formats);
         
         Set<String> intColumns = new HashSet<String>(Arrays.asList("hh_id", "person_id",
-                "person_num", "person_type", "tour_id", "orig_mgra", "dest_mgra", "start_period",
+                "person_num", "person_type", "tour_id", "orig_maz", "dest_maz", "start_period",
                 "end_period", "tour_mode", "av_avail", "atWork_freq", "num_ob_stops", "num_ib_stops"));
 
         Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
@@ -1249,8 +1249,8 @@ public final class DataExporter
         formatList.add(STRING_FORMAT_NAME); // tour_purpose
         formatList.add(NUMBER_FORMAT_NAME); // tour_composition
         formatList.add(STRING_FORMAT_NAME); // tour_participants
-        formatList.add(NUMBER_FORMAT_NAME); // orig_mgra
-        formatList.add(NUMBER_FORMAT_NAME); // dest_mgra
+        formatList.add(NUMBER_FORMAT_NAME); // orig_maz
+        formatList.add(NUMBER_FORMAT_NAME); // dest_maz
         formatList.add(NUMBER_FORMAT_NAME); // start_period
         formatList.add(NUMBER_FORMAT_NAME); // end_period
         formatList.add(NUMBER_FORMAT_NAME); // tour_mode
@@ -1285,7 +1285,7 @@ public final class DataExporter
         formats = formatList.toArray(formats);
                
         Set<String> intColumns = new HashSet<String>(Arrays.asList("hh_id", "tour_id",
-                "tour_composition", "orig_mgra", "dest_mgra", "start_period", "end_period",
+                "tour_composition", "orig_maz", "dest_maz", "start_period", "end_period",
                 "tour_mode", "av_avail", "num_ob_stops", "num_ib_stops"));
         Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
         
@@ -1331,9 +1331,9 @@ public final class DataExporter
         formatList.add(STRING_FORMAT_NAME); // 7 tour_purpose
         formatList.add(STRING_FORMAT_NAME); // 8 orig_purpose
         formatList.add(STRING_FORMAT_NAME); // 9 dest_purpose
-        formatList.add(NUMBER_FORMAT_NAME); // 10 orig_mgra
-        formatList.add(NUMBER_FORMAT_NAME); // 11 dest_mgra
-        formatList.add(NUMBER_FORMAT_NAME); // 12 parking_mgra
+        formatList.add(NUMBER_FORMAT_NAME); // 10 orig_maz
+        formatList.add(NUMBER_FORMAT_NAME); // 11 dest_maz
+        formatList.add(NUMBER_FORMAT_NAME); // 12 parking_maz
         formatList.add(NUMBER_FORMAT_NAME); // 13 stop_period
         formatList.add(NUMBER_FORMAT_NAME); // 14 trip_mode
         formatList.add(NUMBER_FORMAT_NAME); // 15 av_avail
@@ -1396,9 +1396,9 @@ public final class DataExporter
         formatList.add(STRING_FORMAT_NAME); // 5 tour_purpose
         formatList.add(STRING_FORMAT_NAME); // 6 orig_purpose
         formatList.add(STRING_FORMAT_NAME); // 7 dest_purpose
-        formatList.add(NUMBER_FORMAT_NAME); // 8 orig_mgra
-        formatList.add(NUMBER_FORMAT_NAME); // 9 dest_mgra
-        formatList.add(NUMBER_FORMAT_NAME); // 10 parking_mgra
+        formatList.add(NUMBER_FORMAT_NAME); // 8 orig_maz
+        formatList.add(NUMBER_FORMAT_NAME); // 9 dest_maz
+        formatList.add(NUMBER_FORMAT_NAME); // 10 parking_maz
         formatList.add(NUMBER_FORMAT_NAME); // 11 stop_period
         formatList.add(NUMBER_FORMAT_NAME); // 12 trip_mode
         formatList.add(NUMBER_FORMAT_NAME); // 13 av_avail
@@ -1664,7 +1664,7 @@ public final class DataExporter
     }
 
     /**
-     * Export commercial vehicle data.
+     * Export commercial tNCVehicle data.
      * 
      * @param outputFileBase
      * @throws IOException
@@ -1718,7 +1718,7 @@ public final class DataExporter
     }
 
     /**
-    * Export commercial vehicle data to OMX Format.
+    * Export commercial tNCVehicle data to OMX Format.
     * 
     * @param outputFileBase
     * @throws IOException

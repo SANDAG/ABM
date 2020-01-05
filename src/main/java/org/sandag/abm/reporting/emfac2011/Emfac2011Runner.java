@@ -63,7 +63,7 @@ public class Emfac2011Runner {
 
 	public void runEmfac2011() {
 		LOGGER.info("***************Running Emfac2011 for SANDAG***********************");
-		LOGGER.info("Step 0: Setting up mutable vehicle types");
+		LOGGER.info("Step 0: Setting up mutable tNCVehicle types");
 		// have to call this first because it sets the mutable types, which are,
 		// used throughout the EMFAC2011 process
 		Path path = Paths
@@ -139,7 +139,7 @@ public class Emfac2011Runner {
 			Emfac2011VehicleType emfac2011VehicleType = Emfac2011VehicleType
 					.getVehicleType(row
 							.getCellAsString(Emfac2011Definitions.VEHICLE_CODE_MAPPING_EMFAC2011_VEHICLE_NAME_COLUMN));
-			// now dynamically setting mutable vehicle types, so we need to not
+			// now dynamically setting mutable tNCVehicle types, so we need to not
 			// rely on the defaults
 			// if (!emfac2011VehicleType.isMutableType())
 			// continue; //skip any non-mutable types, as they can't be used
@@ -150,7 +150,7 @@ public class Emfac2011Runner {
 																	// exists,
 																	// then the
 																	// EMFAC
-																	// vehicle
+																	// tNCVehicle
 																	// type is
 																	// assumed
 																	// to

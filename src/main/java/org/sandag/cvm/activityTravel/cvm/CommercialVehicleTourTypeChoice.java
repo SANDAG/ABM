@@ -216,7 +216,7 @@ public class CommercialVehicleTourTypeChoice extends LogitModel implements Model
 
     public void setMyTour(Tour myTour) {
         if (! (myTour instanceof CommercialTour)) {
-            throw new RuntimeException("Commercial Vehicle Tour Type Choice can only work with Tours of type CommercialTour");
+            throw new RuntimeException("Commercial TNCVehicle Tour Type Choice can only work with Tours of type CommercialTour");
         }
         this.myTour = (CommercialTour) myTour;
     }

@@ -26,13 +26,13 @@ import com.pb.common.math.MersenneTwister;
 import com.pb.common.matrix.MatrixType;
 import com.pb.common.util.ResourceUtil;
 
-public class AVFleetModel {
+public class TNCFleetModel {
 
-	private static final Logger logger = Logger.getLogger(AVFleetModel.class);
+	private static final Logger logger = Logger.getLogger(TNCFleetModel.class);
     private HashMap<String, String> propertyMap = null;
 	TransportCostManager transportCostManager;		//manages transport costs!
 	PersonTripManager personTripManager;			//manages person trips!
-	VehicleManager vehicleManager;					//manages vehicles!
+	TNCVehicleManager tNCVehicleManager;					//manages vehicles!
     
 	private int iteration;
 	private int minutesPerSimulationPeriod;
@@ -60,7 +60,7 @@ public class AVFleetModel {
      * @param propertyMap
      * @param iteration
      */
-	public AVFleetModel(HashMap<String, String> propertyMap, int iteration){
+	public TNCFleetModel(HashMap<String, String> propertyMap, int iteration){
 		this.propertyMap = propertyMap;
 		this.iteration = iteration;
 	}
@@ -99,9 +99,9 @@ public class AVFleetModel {
 		personTripManager.initialize(minutesPerSimulationPeriod);
 
 
-		//create a vehicle manager
-		vehicleManager = new VehicleManager(propertyMap, transportCostManager, maxSharedTNCPassengers, minutesPerSimulationPeriod);
-		vehicleManager.initialize();
+		//create a tNCVehicle manager
+		tNCVehicleManager = new TNCVehicleManager(propertyMap, transportCostManager, maxSharedTNCPassengers, minutesPerSimulationPeriod);
+		tNCVehicleManager.initialize();
 		
 		//seed the random number generator so that results can be replicated if desired.
         int seed = Util.getIntegerValueFromPropertyMap(propertyMap, MODEL_SEED_PROPERTY);
@@ -176,9 +176,9 @@ public class AVFleetModel {
 				}
 					
 			
-				//create a vehicle for this person
-				Vehicle vehicle = vehicleManager.getClosestEmptyVehicle(skimPeriod, simulationPeriod, origMaz);
-				vehicle.addPersonTrip(personTrip);
+				//create a tNCVehicle for this person
+				TNCVehicle tNCVehicle = tNCVehicleManager.getClosestEmptyVehicle(skimPeriod, simulationPeriod, origMaz);
+				tNCVehicle.addPersonTrip(personTrip);
 				++simulatedPersonTrips;
 		
 				if(simulatedPersonTrips<10||( ( simulatedPersonTrips % 1000) == 0) )
@@ -197,8 +197,8 @@ public class AVFleetModel {
 				// who need a ride and whose origin & destination is within the max diversion time
 				for(int i = 0; i < maxDiversionTimeTazArray.length; ++i){
 				
-					//if vehicle is full, break.
-					if(vehicle.getNumberPassengers()>=vehicle.getMaxPassengers())
+					//if tNCVehicle is full, break.
+					if(tNCVehicle.getNumberPassengers()>=tNCVehicle.getMaxPassengers())
 						break;
 
 					int taz = maxDiversionTimeTazArray[i];
@@ -211,8 +211,8 @@ public class AVFleetModel {
 					
 					for(int maz : mazArray){
 					
-						//if vehicle is full, break.
-						if(vehicle.getNumberPassengers()>=vehicle.getMaxPassengers())
+						//if tNCVehicle is full, break.
+						if(tNCVehicle.getNumberPassengers()>=tNCVehicle.getMaxPassengers())
 							break;
 
 						//if(!personTripManager.morePersonTripsInSimulationPeriodAndMaz(simulationPeriod,maz))
@@ -255,12 +255,12 @@ public class AVFleetModel {
 							boolean tripIsInDirection = firstPickupToPassengerPickupTime < firstPickupToPassengerDropoffTime ? true : false;
 							
 							if(destinationIsWithinMax && tripIsInDirection){
-								vehicle.addPersonTrip(trip);
+								tNCVehicle.addPersonTrip(trip);
 								tripsToRemove.add(trip);
 								++simulatedPersonTrips;
 							}
-							//if vehicle is full, break.
-							if(vehicle.getNumberPassengers()>=vehicle.getMaxPassengers())
+							//if tNCVehicle is full, break.
+							if(tNCVehicle.getNumberPassengers()>=tNCVehicle.getMaxPassengers())
 								break;
 						
 						} //no more potential trips in TAZ
@@ -272,24 +272,24 @@ public class AVFleetModel {
 					} //no more MAZs within max diversion for first passenger
 				} //no more TAZs within max diversion for first passenger
 			
-				vehicleManager.addVehicleToRoute(vehicle);
+				tNCVehicleManager.addVehicleToRoute(tNCVehicle);
 				
 			} //until no more person trips in simulation period
 			
-			vehicleManager.routeActiveVehicles(skimPeriod, simulationPeriod, transportCostManager);
-			vehicleManager.freeVehicles(simulationPeriod);
-			vehicleManager.checkForRefuelingVehicles(skimPeriod, simulationPeriod);
+			tNCVehicleManager.routeActiveVehicles(skimPeriod, simulationPeriod, transportCostManager);
+			tNCVehicleManager.freeVehicles(simulationPeriod);
+			tNCVehicleManager.checkForRefuelingVehicles(skimPeriod, simulationPeriod);
 			
 			
-			logger.info("...Total simulated vehicles period "+simulationPeriod+" = "+vehicleManager.getTotalVehicles());
+			logger.info("...Total simulated vehicles period "+simulationPeriod+" = "+tNCVehicleManager.getTotalVehicles());
 			logger.info("...Total simulated person trips period "+simulationPeriod+" = "+simulatedPersonTrips);
 			if(routeIntrazonal==false)
 				logger.info("...Total skipped intra-zonal person trips period "+simulationPeriod+" = "+intraZonalTrips);
 
 		} //end simulation period
 		
-		//write vehicle trips
-		vehicleManager.writeVehicleTrips();
+		//write tNCVehicle trips
+		tNCVehicleManager.writeVehicleTrips();
 	}
 	
 	/**
@@ -409,7 +409,7 @@ public class AVFleetModel {
         }
         
         pMap = ResourceUtil.getResourceBundleAsHashMap(propertiesFile);
-        AVFleetModel fleetModel = new AVFleetModel(pMap, iteration);
+        TNCFleetModel fleetModel = new TNCFleetModel(pMap, iteration);
         fleetModel.initialize();
         fleetModel.runModel();
 

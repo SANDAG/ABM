@@ -69,13 +69,13 @@ public class SandagTripTables
     private MatrixType              mt;
     private MatrixDataServerRmi     ms;
 
-    private String[]                indivColumns            = {"stop_period", "orig_mgra",
-            "dest_mgra", "trip_mode", "inbound", "trip_board_tap", "trip_alight_tap", "set",
-            "parking_mgra", "tour_purpose", "valueOfTime", "transponder_avail"                 };
+    private String[]                indivColumns            = {"stop_period", "orig_maz",
+            "dest_maz", "trip_mode", "inbound", "trip_board_tap", "trip_alight_tap", "set",
+            "parking_maz", "tour_purpose", "valueOfTime", "transponder_avail"                 };
 
-    private String[]                jointColumns            = {"stop_period", "orig_mgra",
-            "dest_mgra", "trip_mode", "inbound", "trip_board_tap", "trip_alight_tap", "set",
-            "parking_mgra", "tour_purpose", "num_participants", "valueOfTime", "transponder_avail"};
+    private String[]                jointColumns            = {"stop_period", "orig_maz",
+            "dest_maz", "trip_mode", "inbound", "trip_board_tap", "trip_alight_tap", "set",
+            "parking_maz", "tour_purpose", "num_participants", "valueOfTime", "transponder_avail"};
 
     private HashMap<String, Float>  averageOcc3Plus;                                                // a
 
@@ -452,8 +452,8 @@ public class SandagTripTables
             int period = modelStructure.getModelPeriodIndex(departTime);
             if (period != timePeriod) continue;
 
-            int originMGRA = (int) tripData.getValueAt(i, "orig_mgra");
-            int destinationMGRA = (int) tripData.getValueAt(i, "dest_mgra");
+            int originMGRA = (int) tripData.getValueAt(i, "orig_maz");
+            int destinationMGRA = (int) tripData.getValueAt(i, "dest_maz");
             int tripMode = (int) tripData.getValueAt(i, "trip_mode");
 
             int originTAZ = mgraManager.getTaz(originMGRA);
@@ -478,10 +478,10 @@ public class SandagTripTables
            			set = (int) tripData.getValueAt(i,"set");
             } else
             {
-                parkingMGRA = (int) tripData.getValueAt(i, "parking_mgra");
+                parkingMGRA = (int) tripData.getValueAt(i, "parking_maz");
             }
 
-            // scale individual person trips by occupancy for vehicle trips
+            // scale individual person trips by occupancy for tNCVehicle trips
             // (auto modes only)
             float vehicleTrips = 1;
 
@@ -570,7 +570,7 @@ public class SandagTripTables
                 if (modelStructure.getTourModeIsDriveTransit(tripMode))
                 {
 
-                    // add the vehicle trip portion to the trip table
+                    // add the tNCVehicle trip portion to the trip table
                     if (inbound == 0)
                     { // from origin to lot (boarding tap)
                         int PNRTAZ = tapManager.getTazForTap(boardTap);

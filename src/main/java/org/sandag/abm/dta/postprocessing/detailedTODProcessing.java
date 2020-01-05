@@ -235,12 +235,12 @@ public class detailedTODProcessing {
 			if (tripRecords.containsColumn("tripID")){
 				tripid = (int) tripRecords.getValueAt(i+1, "tripID");
 			}			
-			if (tripRecords.containsColumn("orig_mgra")){
-				origMGRA = (int) tripRecords.getValueAt(i+1, "orig_mgra");
+			if (tripRecords.containsColumn("orig_maz")){
+				origMGRA = (int) tripRecords.getValueAt(i+1, "orig_maz");
 			}
-			if (tripRecords.containsColumn("dest_mgra")){
-				int parkingMGRA = (int) tripRecords.getValueAt(i+1, "parking_mgra");
-				destMGRA = (int) tripRecords.getValueAt(i+1, "dest_mgra");
+			if (tripRecords.containsColumn("dest_maz")){
+				int parkingMGRA = (int) tripRecords.getValueAt(i+1, "parking_maz");
+				destMGRA = (int) tripRecords.getValueAt(i+1, "dest_maz");
 				if(parkingMGRA>0){
 					destMGRA = parkingMGRA;	
 				}	

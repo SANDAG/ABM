@@ -284,7 +284,7 @@ public class AirportModeChoiceModel
             	bestTapPairs = logsumHelper.getBestWtwTripTaps();
             }
             else if (choice == 2){
-            	tripMode = AirportModelStructure.REALLOCATE_KNRPERTRN; //knr-personal vehicle
+            	tripMode = AirportModelStructure.REALLOCATE_KNRPERTRN; //knr-personal tNCVehicle
                 if (party.getDirection() == AirportModelStructure.DEPARTURE)
                 	bestTapPairs = logsumHelper.getBestDtwTripTaps();
                 else

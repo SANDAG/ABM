@@ -87,7 +87,7 @@ public class CVMScaler {
 			}else if(str.contains(":H")) {
 				proceesRow(inData, columnNames, row, str, hscaler, heavyshare, "H", writer);				
 			}else {
-				logger.info("Unrecognized CVM vehicle type: "+ str);
+				logger.info("Unrecognized CVM tNCVehicle type: "+ str);
 			}
 		}
 			

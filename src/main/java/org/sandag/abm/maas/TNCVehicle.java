@@ -2,12 +2,12 @@ package org.sandag.abm.maas;
 
 import java.util.ArrayList;
 
-public class Vehicle {
+public class TNCVehicle {
 	
 	
 	protected ArrayList<PersonTrip> personTripList;
 	
-	protected ArrayList<VehicleTrip> vehicleTrips;
+	protected ArrayList<TNCVehicleTrip> tNCVehicleTrips;
 	protected byte maxPassengers;
 	protected short generationTaz;
 	protected short generationPeriod;
@@ -17,40 +17,40 @@ public class Vehicle {
 	protected int periodsRefueling;
 
 	/**
-	 * Create a new vehicle.
+	 * Create a new tNCVehicle.
 	 * 
 	 * @param id
 	 * @param maxPassengers
 	 * @param maxDistanceBeforeRefuel
 	 */
-	public Vehicle(int id, byte maxPassengers, float maxDistanceBeforeRefuel){
+	public TNCVehicle(int id, byte maxPassengers, float maxDistanceBeforeRefuel){
 		this.id= id;
 		this.maxPassengers = maxPassengers;
 		personTripList = new ArrayList<PersonTrip>();
-		vehicleTrips = new ArrayList<VehicleTrip>();
+		tNCVehicleTrips = new ArrayList<TNCVehicleTrip>();
 		this.maxDistanceBeforeRefuel = maxDistanceBeforeRefuel;
 	}
 	
 	/**
-	 * Add a vehicle trip to this vehicle.
+	 * Add a tNCVehicle trip to this tNCVehicle.
 	 * 
-	 * @param vehicleTrip
+	 * @param tNCVehicleTrip
 	 */
-	public void addVehicleTrip(VehicleTrip vehicleTrip){
-		vehicleTrips.add(vehicleTrip);
+	public void addVehicleTrip(TNCVehicleTrip tNCVehicleTrip){
+		tNCVehicleTrips.add(tNCVehicleTrip);
 	}
 	
 	/**
-	 * Add an ArrayList of vehicle trips to this vehicle.
+	 * Add an ArrayList of tNCVehicle trips to this tNCVehicle.
 	 * 
-	 * @param vehicleTrips
+	 * @param tNCVehicleTrips
 	 */
-	public void addVehicleTrips(ArrayList<VehicleTrip> vehicleTrips){
-		this.vehicleTrips.addAll(vehicleTrips);
+	public void addVehicleTrips(ArrayList<TNCVehicleTrip> tNCVehicleTrips){
+		this.tNCVehicleTrips.addAll(tNCVehicleTrips);
 	}
 	
 	/**
-	 * Clear all the person trips from this vehicle. Used after routing the vehicle.
+	 * Clear all the person trips from this tNCVehicle. Used after routing the tNCVehicle.
 	 * 
 	 */
 	public void clearPersonTrips(){
@@ -58,17 +58,17 @@ public class Vehicle {
 	}
 
 	/**
-	 * Get all the vehicle trips for this vehicle.
+	 * Get all the tNCVehicle trips for this tNCVehicle.
 	 * 
 	 * @return VehicleTrips
 	 */
-	public ArrayList<VehicleTrip> getVehicleTrips(){
+	public ArrayList<TNCVehicleTrip> getVehicleTrips(){
 		
-		return vehicleTrips;
+		return tNCVehicleTrips;
 	}
 	
 	/**
-	 * Get the vehicle ID.
+	 * Get the tNCVehicle ID.
 	 * 
 	 * @return
 	 */
@@ -77,7 +77,7 @@ public class Vehicle {
 	}
 	
 	/**
-	 * Add a passenger to the vehicle.
+	 * Add a passenger to the tNCVehicle.
 	 * 
 	 * @param personTrip
 	 */
@@ -88,7 +88,7 @@ public class Vehicle {
 	}
 	
 	/**
-	 * Remove one person trip from the vehicle. Used after routing.
+	 * Remove one person trip from the tNCVehicle. Used after routing.
 	 * 
 	 * @param personTrip
 	 */

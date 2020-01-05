@@ -223,7 +223,7 @@ public class WeekendTour extends Tour {
     }
 
     /**
-     * <code>tourTypeChoiceModel</code> is the choice model for the vehicle tour type.  It is currently
+     * <code>tourTypeChoiceModel</code> is the choice model for the tNCVehicle tour type.  It is currently
      * a static variable, but it is accesssed by getters and setters so could be an instance variable instead, if
      * different tours need different models for choosing the tour type
      */
@@ -301,7 +301,7 @@ public class WeekendTour extends Tour {
      */
     protected String getTourTypeCode() {
         // not return myVehicleTourType.getCode().substring(1);
-        // for the weekend model tour type codes do not have the vehicle type at the beginning
+        // for the weekend model tour type codes do not have the tNCVehicle type at the beginning
         return myVehicleTourType.getCode();
         
     }

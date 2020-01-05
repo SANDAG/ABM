@@ -55,14 +55,14 @@ public class Emfac2011Properties
 
     /**
      * The property key for the boolean indicating if the (default) EMFAC
-     * vehicle fractions should be preserved in the EMFAC input file (value is
-     * {@code true}), or if the model vehicle fractions should be used (value is
+     * tNCVehicle fractions should be preserved in the EMFAC input file (value is
+     * {@code true}), or if the model tNCVehicle fractions should be used (value is
      * {@code false}).
      */
     public static final String PRESERVE_EMFAC_VEHICLE_FRACTIONS_PROPERTY = "emfac.2011.preserve.emfac.vehicle.fractions";
     /**
      * The property key for the boolean indicating whether or not the model
-     * (travel demand, not EMFAC) VMT includes totals for non-mutable vehicle
+     * (travel demand, not EMFAC) VMT includes totals for non-mutable tNCVehicle
      * types. If it does, then the VMT will be scaled before adjusting the EMFAC
      * input file.
      */
