@@ -146,8 +146,8 @@ public class SchoolEscortingModel {
 	public static final int NUM_RESULTS_BY_CHAUF_FIELDS = 22;
 	
 	public static final int DRIVE_ALONE_MODE = 1;
-	public static final int SHARED_RIDE_2_MODE = 3;
-	public static final int SHARED_RIDE_3_MODE = 5;
+	public static final int SHARED_RIDE_2_MODE = 2;
+	public static final int SHARED_RIDE_3_MODE = 3;
 	
     private Map<Integer,Integer> chauffeurPriorityOutboundMap;
     private Map<Integer,Integer> chauffeurPriorityInboundMap;
