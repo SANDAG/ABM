@@ -317,6 +317,10 @@ public abstract class ModelStructure
 
     public abstract boolean getTourModeIsSchoolBus(int tourMode);
 
+    public abstract boolean getTourModeIsTncTransit(int tripMode);
+
+    public abstract boolean getTourModeIsMaas(int tripMode);
+
     public abstract boolean getTripModeIsSovOrHov(int tripMode);
 
     public abstract boolean getTripModeIsWalkTransit(int tripMode);

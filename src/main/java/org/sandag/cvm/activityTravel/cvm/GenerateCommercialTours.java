@@ -595,7 +595,7 @@ public class GenerateCommercialTours implements Runnable, Callable<Object> {
 				"LS,LG,LO,MS,MG,MO,IS,IG,IO,HS,HG,HO").split(","),
 				ResourceUtil.getBooleanProperty(propsResource,"NestingVTTChoice",true)));
 
-		// don't use these anymore because vehicle and tour type are joint in the same alternative.
+		// don't use these anymore because tNCVehicle and tour type are joint in the same alternative.
 		//        models.put("LTour", new TourTypeChoice());
 		//        models.put("MTour", new TourTypeChoice());
 		//        models.put("HTour", new TourTypeChoice());

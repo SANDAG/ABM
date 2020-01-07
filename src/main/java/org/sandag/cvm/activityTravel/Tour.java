@@ -204,7 +204,7 @@ public abstract class Tour implements TourInterface {
 
     /**
      * Method getVehicleCode.
-     * @return a string representing the vehicle code used for the tour
+     * @return a string representing the tNCVehicle code used for the tour
      */
     protected String getVehicleCode() {
         return myVehicleTourType.getCode().substring(0,1);
@@ -233,7 +233,7 @@ public abstract class Tour implements TourInterface {
 
     /**
      * This method uses a random number generator to sample the type of tour, including
-     * the type of vehicle(s) used for the tour and perhaps some information about the types
+     * the type of tNCVehicle(s) used for the tour and perhaps some information about the types
      * of activities that occur along the tour.
      */
     public void sampleVehicleAndTourType() {

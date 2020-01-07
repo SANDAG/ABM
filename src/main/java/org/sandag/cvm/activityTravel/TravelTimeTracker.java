@@ -101,7 +101,7 @@ public abstract class TravelTimeTracker
                 else if (s.startTime <0) defaultMatrix = s;
             }
         }
-        if (defaultMatrix==null) throw new RuntimeException("no default travel time matrix for vehicle type "+vehicleType);
+        if (defaultMatrix==null) throw new RuntimeException("no default travel time matrix for tNCVehicle type "+vehicleType);
         return defaultMatrix.getTimeFromMatrix(origin,destination);
     }
 

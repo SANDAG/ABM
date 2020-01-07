@@ -491,6 +491,18 @@ public class TripModeChoiceDMU
         return tourModeIsKnr ? 1 : 0;
     }
     
+    public int getTourModeIsTncTransit()
+    {
+        boolean tourModeIsTncTransit = modelStructure.getTourModeIsTncTransit(tour.getTourModeChoice());
+        return tourModeIsTncTransit ? 1 : 0;
+    }
+
+    public int getTourModeIsMaas()
+    {
+        boolean tourModeIsMaas = modelStructure.getTourModeIsMaas(tour.getTourModeChoice());
+        return tourModeIsMaas ? 1 : 0;
+    }
+
     public void setTransitLogSum(int accEgr, double value){
     	transitLogSum[accEgr] = value;
     }

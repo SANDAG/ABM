@@ -20,7 +20,7 @@
 
 /*
  * An interface that determines the travel time between two points, given a time (represented by a double) and
- * a vehicle type (represented by a char). 
+ * a tNCVehicle type (represented by a char). 
  */
 package org.sandag.cvm.activityTravel;
 
@@ -28,7 +28,7 @@ package org.sandag.cvm.activityTravel;
  * @author jabraham
  *
  * An interface that determines a travel attribute between two points, given a time (represented by a double) and
- * a vehicle type (represented by a char).  For instance if there are matrices of travel time for peak and off-peak,
+ * a tNCVehicle type (represented by a char).  For instance if there are matrices of travel time for peak and off-peak,
  * and implementation of this interface would be able to determine whether time was in the peak or off-peak, and
  * then return the travel conditions appropriately.
  */ 
@@ -36,7 +36,7 @@ public interface ChangingTravelAttributeGetter {
     /**
      * 
      * This method returns the travel attribute associated with travelling from origin to destination at time time by 
-     * vehicle type vehicleType
+     * tNCVehicle type vehicleType
      * 
      * @param origin
      * @param destination

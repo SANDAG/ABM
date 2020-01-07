@@ -126,8 +126,8 @@ public class broadTODProcessing {
 	    logger.info("*************************************");
 	    logger.info("Summary info for TransCAD Matrix");
 	    logger.info("Market Segment = "+MarketSegment);
-	    logger.info("Vehicle Type = "+vehType);
-	    logger.info("Vehicle Occupancy = "+occ);
+	    logger.info("TNCVehicle Type = "+vehType);
+	    logger.info("TNCVehicle Occupancy = "+occ);
 	    logger.info("Toll Eligibility = "+toll);
 	    logger.info("Number of Trips = "+m.getSum());
 	    logger.info("*************************************");

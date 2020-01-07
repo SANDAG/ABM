@@ -124,37 +124,37 @@ public class SandagTripModeChoiceDMUTest {
 		Assert.assertEquals(1, (int) value);
 
 		dmu.setTourModeIsS2(1);
-		tour.setTourModeChoice(3);
+		tour.setTourModeChoice(2);
 		value = dmu.getValueForIndex(16, 0);
 		Assert.assertEquals(1, (int) value);
 
 		dmu.setTourModeIsS3(1);
-		tour.setTourModeChoice(5);
+		tour.setTourModeChoice(3);
 		value = dmu.getValueForIndex(17, 0);
 		Assert.assertEquals(1, (int) value);
 
 		dmu.setTourModeIsWalk(1);
-		tour.setTourModeChoice(7);
+		tour.setTourModeChoice(4);
 		value = dmu.getValueForIndex(18, 0);
 		Assert.assertEquals(1, (int) value);
 
 		dmu.setTourModeIsBike(1);
-		tour.setTourModeChoice(8);
+		tour.setTourModeChoice(5);
 		value = dmu.getValueForIndex(19, 0);
 		Assert.assertEquals(1, (int) value);
 
 		dmu.setTourModeIsWTran(1);
-		tour.setTourModeChoice(9);
+		tour.setTourModeChoice(6);
 		value = dmu.getValueForIndex(20, 0);
 		Assert.assertEquals(1, (int) value);
 
 		dmu.setTourModeIsPnr(1);
-		tour.setTourModeChoice(10);
+		tour.setTourModeChoice(7);
 		value = dmu.getValueForIndex(21, 0);
 		Assert.assertEquals(1, (int) value);
 
 		dmu.setTourModeIsKnr(1);
-		tour.setTourModeChoice(11);
+		tour.setTourModeChoice(8);
 		value = dmu.getValueForIndex(22, 0);
 		Assert.assertEquals(1, (int) value);
 

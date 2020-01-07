@@ -39,7 +39,7 @@ import org.sandag.cvm.common.model.NoAlternativeAvailable;
 /**
  * @author jabraham
  *
- * A model of vehicle type together with tour type
+ * A model of tNCVehicle type together with tour type
  */
 public abstract class TripModeChoice implements ChangingTravelAttributeGetter {
 	

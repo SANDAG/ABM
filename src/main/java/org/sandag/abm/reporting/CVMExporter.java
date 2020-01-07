@@ -20,7 +20,7 @@ public class CVMExporter {
 	public final String[] cvmPeriodNames = {"OE","AM","MD","PM","OL"};
 	public final String[] periodNames = {"EA","AM","MD","PM","EV"};
 	public final String[] cvmClassNames = {"L","M","I","H"};
-	public final String[] skimTollClassNames = {"SOV_H","TRK_L","TRK_M","TRK_H"};
+	public final String[] skimTollClassNames = {"SOV_NT_H","TRK_L","TRK_M","TRK_H"};
 	public final String[] skimNonTollClassNames = {"SOV_TR_H","TRK_L","TRK_M","TRK_H"};
 	public final String[] nonTollSkims = {"TIME","DIST"};
 	public final String[] tollSkims = {"TIME","DIST","TOLLCOST"};

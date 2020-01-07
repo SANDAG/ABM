@@ -79,6 +79,7 @@ public final class MgraDataManager
     private static final String         MGRA_GRADE_SCHOOL_DISTRICT_FIELD_NAME    = "ech_dist";
     private static final String         MGRA_HIGH_SCHOOL_DISTRICT_FIELD_NAME     = "hch_dist";
     private static final String         MGRA_REFUELING_STATIONS_FIELD_NAME       = "refueling_stations";
+    private static final String         MGRA_REMOTE_PARKING_LOT_FIELD_NAME       = "remoteAVParking";
 
     private static final String         PROPERTIES_PARKING_COST_OUTPUT_FILE      = "mgra.avg.cost.output.file";
 
@@ -1562,7 +1563,12 @@ public final class MgraDataManager
         return  mgraTableDataSet.getValueAt(row, MGRA_REFUELING_STATIONS_FIELD_NAME);
     }
 
-    private class Maz2Tap implements Comparable<Maz2Tap>, Serializable
+    public float getRemoteParkingLot(int mgra)
+    {
+        int row = mgraDataTableMgraRowMap.get(mgra);
+        return  mgraTableDataSet.getValueAt(row, MGRA_REMOTE_PARKING_LOT_FIELD_NAME);
+    }
+   private class Maz2Tap implements Comparable<Maz2Tap>, Serializable
     {
         public int maz;
         public int tap;

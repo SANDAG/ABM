@@ -373,7 +373,7 @@ public class CrossBorderTripTables
 
             }
 
-            // scale individual person trips by occupancy for vehicle trips
+            // scale individual person trips by occupancy for tNCVehicle trips
             // (auto modes only)
             float vehicleTrips = 1 / sampleRate;
 
@@ -422,7 +422,7 @@ public class CrossBorderTripTables
 
                     boolean inbound = tripData.getBooleanValueAt(i, "inbound");
 
-                    // add the vehicle trip portion to the trip table
+                    // add the tNCVehicle trip portion to the trip table
                     if (!inbound)
                     { // from origin to lot (boarding tap)
                         int PNRTAZ = tapManager.getTazForTap(boardTap);

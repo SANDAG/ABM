@@ -6,17 +6,17 @@ import org.apache.log4j.Logger;
 
 
 /**
- * A vehicle trip has multiple potential pickups and dropoffs?
+ * A tNCVehicle trip has multiple potential pickups and dropoffs?
  * 
  * @author joel.freedman
  *
  */
-public class VehicleTrip {
+public class TNCVehicleTrip {
 
-	protected static final Logger logger = Logger.getLogger(VehicleTrip.class);
+	protected static final Logger logger = Logger.getLogger(TNCVehicleTrip.class);
 
 	protected int id;
-	protected Vehicle vehicle;
+	protected TNCVehicle tNCVehicle;
 	protected short originTaz;
 	protected short destinationTaz;
 	protected int originMaz;
@@ -35,10 +35,10 @@ public class VehicleTrip {
 	protected enum Purpose { HOME, PICKUP_ONLY, DROPOFF_ONLY, PICKUP_AND_DROPOFF, REFUEL } 
 
 	
-	public VehicleTrip(Vehicle vehicle, int id){
+	public TNCVehicleTrip(TNCVehicle tNCVehicle, int id){
 
 		this.id=id;
-		this.vehicle = vehicle;
+		this.tNCVehicle = tNCVehicle;
 		pickupIdsAtOrigin = new ArrayList<Integer>();
 		dropoffIdsAtOrigin = new ArrayList<Integer>();
 		pickupIdsAtDestination = new ArrayList<Integer>();
@@ -220,13 +220,13 @@ public class VehicleTrip {
 		return dropoffIdsAtDestination.size();
 	}
 
-	public Vehicle getVehicle() {
-		return vehicle;
+	public TNCVehicle getVehicle() {
+		return tNCVehicle;
 	}
 
 
-	public void setVehicle(Vehicle vehicle) {
-		this.vehicle = vehicle;
+	public void setVehicle(TNCVehicle tNCVehicle) {
+		this.tNCVehicle = tNCVehicle;
 	}
 
 
@@ -334,7 +334,7 @@ public class VehicleTrip {
 
 		String record = new String(
 				id + "," +
-				vehicle.getId() +"," +
+				tNCVehicle.getId() +"," +
 			    originTaz + "," +
 			    destinationTaz + "," +
 			    originMaz + "," +
@@ -377,9 +377,9 @@ public class VehicleTrip {
 				dropoffIdsAtDestinationString += (pid + " ");
 
 		logger.info("*********************************************************");
-		logger.info("Trace for vehicle trip "+id+" in vehicle "+vehicle.getId());
+		logger.info("Trace for tNCVehicle trip "+id+" in tNCVehicle "+tNCVehicle.getId());
 		logger.info("Trip ID:                 " + id);
-		logger.info("Vehicle ID:              "+vehicle.getId());
+		logger.info("TNCVehicle ID:              "+tNCVehicle.getId());
 		logger.info("Origin TAZ:              "+originTaz);
 		logger.info("Destination TAZ:         "+destinationTaz);
 		logger.info("Origin MAZ:              "+originMaz);

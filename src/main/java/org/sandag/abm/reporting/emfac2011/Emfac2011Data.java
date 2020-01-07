@@ -36,19 +36,19 @@ public abstract class Emfac2011Data {
 	private Emfac2011SqlUtil sqlUtil = null;
 
 	/**
-	 * Get a mapping from the vehicle types listed in a model's AquaVis results
-	 * to their corresponding EMFAC2011 vehicle types. The returned map should
+	 * Get a mapping from the tNCVehicle types listed in a model's AquaVis results
+	 * to their corresponding EMFAC2011 tNCVehicle types. The returned map should
 	 * have the (exact) names listed in the AquaVis results as keys, and the set
-	 * of EMFAC2011 vehicle types that the represent the AquaVis type. A single
+	 * of EMFAC2011 tNCVehicle types that the represent the AquaVis type. A single
 	 * EMFAC2011 may be used in the mappings of multiple AquaVis types (there is
-	 * no functional mapping requirement), and only mutable EMFAC2011 vehicle
+	 * no functional mapping requirement), and only mutable EMFAC2011 tNCVehicle
 	 * types may be used in the mapping (see
 	 * {@link com.pb.aquavis.emfac2011.Emfac2011VehicleType#getMutableVehicleTypes()}
-	 * . Also, <i>all</i> aquavis vehicle types must be represented in the map
+	 * . Also, <i>all</i> aquavis tNCVehicle types must be represented in the map
 	 * (even if it is an empty mapping).
 	 * 
 	 * @return a map representing the relationship between the AquaVis and
-	 *         EMFAC2011 vehicle types.
+	 *         EMFAC2011 tNCVehicle types.
 	 */
 	protected abstract Map<String, Set<Emfac2011VehicleType>> getAquavisVehicleTypeToEmfacTypeMapping();
 
@@ -221,8 +221,8 @@ public abstract class Emfac2011Data {
 
 	private Map<Emfac2011VehicleType, Map<String, Double>> buildVehicleFractioning(
 			Map<String, Set<Emfac2011VehicleType>> aquavisVehicleTypeToEmfacTypeMapping) {
-		// returns a map which says for every emfac vehicle type, what aquavis
-		// vehicle types should have their vmt added
+		// returns a map which says for every emfac tNCVehicle type, what aquavis
+		// tNCVehicle types should have their vmt added
 		// to it, and by what fraction
 
 		Map<Emfac2011VehicleType, Map<String, Double>> vehicleFractionMap = new EnumMap<>(
@@ -238,7 +238,7 @@ public abstract class Emfac2011Data {
 					.get(aquavisVehicleType)) {
 				if (!vehicleFractionMap.containsKey(type))
 					throw new IllegalStateException(
-							"Emfac vehicle type is not mutable ("
+							"Emfac tNCVehicle type is not mutable ("
 									+ type
 									+ ") and should not be component for aquavis type "
 									+ aquavisVehicleType);

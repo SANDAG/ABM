@@ -223,8 +223,8 @@ EXECUTE [db_meta].[add_xp] 'dimension.person.freeparking_choice', 'MS_Descriptio
 EXECUTE [db_meta].[add_xp] 'dimension.person.freeparking_reimbpct', 'MS_Description', 'ABM free parking reimbursement percentage model result'
 EXECUTE [db_meta].[add_xp] 'dimension.person.work_segment', 'MS_Description', 'ABM work location choice model employment category'
 EXECUTE [db_meta].[add_xp] 'dimension.person.school_segment', 'MS_Description', 'ABM school location choice model student category'
-EXECUTE [db_meta].[add_xp] 'dimension.person.work_distance', 'MS_Description', 'ABM work location choice model distance from work location'
-EXECUTE [db_meta].[add_xp] 'dimension.person.school_distance', 'MS_Description', 'ABM school location choice model distance from school location'
+EXECUTE [db_meta].[add_xp] 'dimension.person.work_distance', 'MS_Description', 'ABM work location choice model distance from work location in feet'
+EXECUTE [db_meta].[add_xp] 'dimension.person.school_distance', 'MS_Description', 'ABM school location choice model distance from school location in feet'
 EXECUTE [db_meta].[add_xp] 'dimension.person.weight_person', 'MS_Description', 'weight to use if measuring number of persons'
 GO
 

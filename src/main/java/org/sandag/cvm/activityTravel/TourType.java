@@ -28,14 +28,14 @@ package org.sandag.cvm.activityTravel;
  *
  * This class is a representation of a type of tour. Contained it in
  * are counters for the number of instances of the type of tour and trips 
- * as well as a choice model for choosing a vehicle type for the tour.
+ * as well as a choice model for choosing a tNCVehicle type for the tour.
  * The class is identified by a name which is a String.
  */
 public abstract class TourType {
 
     /**
-     * @param tourType a string representing the type of tour, which may also have information on vehicle types
-     * @param vehicleType a char representing the type of vehicle
+     * @param tourType a string representing the type of tour, which may also have information on tNCVehicle types
+     * @param vehicleType a char representing the type of tNCVehicle
      * @param theChoiceModel the choice model associated with the tour type
      */
     public TourType(String tourType, char vehicleType, VehicleTourTypeChoice theChoiceModel){
@@ -66,7 +66,7 @@ public abstract class TourType {
      */
     public final String tourTypeName;
     /**
-     * <code>vehicleType</code> is the identifier for the vehicle type used in the tour
+     * <code>vehicleType</code> is the identifier for the tNCVehicle type used in the tour
      */
     public final char vehicleType;
 
@@ -85,7 +85,7 @@ public abstract class TourType {
     }
 
     /**
-     * @return the char representing the vehicle type
+     * @return the char representing the tNCVehicle type
      */
     public char getVehicleType() {
         return vehicleType;

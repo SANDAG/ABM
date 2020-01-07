@@ -20,7 +20,7 @@ public class TourVehicleTypeChoiceModel
     public TourVehicleTypeChoiceModel(HashMap<String, String> rbMap)
     {
 
-        logger.info("setting up tour vehicle type choice model.");
+        logger.info("setting up tour tNCVehicle type choice model.");
         probabilityBoostAutosLTDrivers = Util.getFloatValueFromPropertyMap(rbMap,"Mobility.AV.ProbabilityBoost.AutosLTDrivers");
         probabilityBoostAutosGEDrivers = Util.getFloatValueFromPropertyMap(rbMap,"Mobility.AV.ProbabilityBoost.AutosGEDrivers");
 
@@ -56,7 +56,7 @@ public class TourVehicleTypeChoiceModel
     }
     
     /**
-     * Iterate through all persons and mandatory tours in the household and choose a vehicle type for each
+     * Iterate through all persons and mandatory tours in the household and choose a tNCVehicle type for each
      * 
      * @param hhObj for which to apply the model
      */
@@ -103,7 +103,7 @@ public class TourVehicleTypeChoiceModel
     		
     }
     /**
-    * Iterate through all persons and non-mandatory tours in the household and choose a vehicle type for each
+    * Iterate through all persons and non-mandatory tours in the household and choose a tNCVehicle type for each
     * 
     * @param hhObj for which to apply the model
     */
@@ -134,7 +134,7 @@ public class TourVehicleTypeChoiceModel
     }
     
     /**
-    * Iterate through all persons and fully joint tours in the household and choose a vehicle type for each
+    * Iterate through all persons and fully joint tours in the household and choose a tNCVehicle type for each
     * 
     * @param hhObj for which to apply the model
     */
@@ -158,7 +158,7 @@ public class TourVehicleTypeChoiceModel
      	}
     }
     /**
-     * Iterate through all persons and at-work sub-tours in the household and choose a vehicle type for each
+     * Iterate through all persons and at-work sub-tours in the household and choose a tNCVehicle type for each
      * 
      * @param hhObj for which to apply the model
      */

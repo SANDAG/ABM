@@ -46,7 +46,7 @@ public final class AirportModelStructure
     //reallocate the trip modes from the access choice model to ones that the trip table and other code can read, consistent with
     //resident models.
     public static final byte     REALLOCATE_WLKTRN     = 6; //walk access
-    public static final byte     REALLOCATE_KNRPERTRN  = 8; //knr-personal vehicle
+    public static final byte     REALLOCATE_KNRPERTRN  = 8; //knr-personal tNCVehicle
     public static final byte     REALLOCATE_KNRTNCTRN  = 9; //knr-TNC
     public static final byte     REALLOCATE_TAXI       = 10; 
     public static final byte     REALLOCATE_TNCSINGLE  = 11; 
@@ -180,13 +180,13 @@ public final class AirportModelStructure
     }
 
     /**
-     * Get the vehicle occupancy based upon the access mode and the party size.
+     * Get the tNCVehicle occupancy based upon the access mode and the party size.
      * 
      * @param accessMode
      *            Access mode, 1-based, consistent with definitions above.
      * @param partySize
      *            Number of passengers in travel party
-     * @return The (minimum) occupancy of the vehicle trip to/from the airport.
+     * @return The (minimum) occupancy of the tNCVehicle trip to/from the airport.
      */
     public static int getOccupancy(int accessMode, int partySize)
     {

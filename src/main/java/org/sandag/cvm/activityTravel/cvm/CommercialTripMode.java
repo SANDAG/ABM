@@ -116,8 +116,8 @@ public class CommercialTripMode extends TripMode implements CodedAlternative , A
 				tollCost.addCoefficient("L", "", "15.5",          "traffic_skims_PM:PM_SOV_TR_H_TOLLCOST", 19);
 				break;
 			default:
-				logger.fatal("Invalid vehicle type in trip mode choice model "+myType);
-				throw new RuntimeException("Invalid vehicle type in trip mode choice model "+myType);
+				logger.fatal("Invalid tNCVehicle type in trip mode choice model "+myType);
+				throw new RuntimeException("Invalid tNCVehicle type in trip mode choice model "+myType);
 			}
 		} catch (CoefficientFormatError e) {
 			logger.fatal("Problem setting up coefficeint for trip modes", e);
@@ -198,7 +198,7 @@ public class CommercialTripMode extends TripMode implements CodedAlternative , A
 					getMyCM().portionParam * tollPortion;
 		*/
 		}
-		String msg = "Invalid vehicle toll trip mode "+myType;
+		String msg = "Invalid tNCVehicle toll trip mode "+myType;
 		logger.fatal(msg);
 		throw new RuntimeException(msg);
 	}

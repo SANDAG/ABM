@@ -248,16 +248,17 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
                     return_numpy=True,
                     scenario=temp_scenario)
 
-        percent_detour = 100*(detour_impedances - direct_impedances) / direct_impedances
+        percent_detour = (detour_impedances - direct_impedances) / direct_impedances
         avg_percent_detour = _np.sum(percent_detour, axis=1) / len(destinations)
+        avg_percent_detour = _np.nan_to_num(avg_percent_detour)
         return avg_percent_detour
 
-    @_m.logbook_trace("Export results to transponder.csv file")
+    @_m.logbook_trace("Export results to transponderModelAccessibilities.csv file")
     def export_results(self, output_directory, scenario, distances, savings, detour):
         zones = scenario.zone_numbers
-        output_file = _join(output_directory, "transponder.csv")
+        output_file = _join(output_directory, "transponderModelAccessibilities.csv")
         with open(output_file, 'w') as f:
-            f.write("TAZ, DIST, AVGTTS, PCTDETOUR\n")
+            f.write("TAZ,DIST,AVGTTS,PCTDETOUR\n")
             for row in _izip(zones, distances, savings, detour):
                 f.write("%d, %.4f, %.5f, %.5f\n" % row)
 

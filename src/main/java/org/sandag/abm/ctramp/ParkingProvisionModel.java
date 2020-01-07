@@ -178,7 +178,14 @@ public class ParkingProvisionModel
         int chosenAlt;
         if (fpModel.getAvailabilityCount() > 0)
         {
-            chosenAlt = fpModel.getChoiceResult(randomNumber);
+        	try {
+        		chosenAlt = fpModel.getChoiceResult(randomNumber);
+        	}catch(Exception e) {
+        		
+        		logger.fatal("Error trying to get parking location for HHID="+hhObj.getHhId()+", PERSID="+
+                        personObj.getPersonId() +" Destination MGRA="+personObj.getWorkLocation());
+        		throw new RuntimeException(e);
+        	}
         } else
         {
             String decisionMaker = String.format("HHID=%d, PERSID=%d", hhObj.getHhId(),

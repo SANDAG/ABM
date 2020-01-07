@@ -387,7 +387,7 @@ public class VisitorTripTables
                 if (modelStructure.getTourModeIsDriveTransit(tripMode))
                 {
 
-                    // add the vehicle trip portion to the trip table
+                    // add the tNCVehicle trip portion to the trip table
                     if (!inbound)
                     { // from origin to lot (boarding tap)
                         int PNRTAZ = tapManager.getTazForTap(boardTap);

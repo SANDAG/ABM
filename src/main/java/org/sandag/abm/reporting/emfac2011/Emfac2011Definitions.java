@@ -58,7 +58,7 @@ public class Emfac2011Definitions {
 	public static final String EMFAC_2011_VMT_TABLE_SEASON_FIELD = "Season";
 	public static final String EMFAC_2011_VMT_TABLE_TITLE_FIELD = "Title";
 	public static final String EMFAC_2011_VMT_TABLE_VMT_PROFILE_FIELD = "VMT Profile";
-	public static final String EMFAC_2011_VMT_TABLE_VMT_BY_VEH_FIELD = "VMT by Vehicle Category";
+	public static final String EMFAC_2011_VMT_TABLE_VMT_BY_VEH_FIELD = "VMT by TNCVehicle Category";
 	public static final String EMFAC_2011_VMT_TABLE_SPEED_PROFILE_FIELD = "Speed Profile";
 	public static final String EMFAC_2011_VMT_TABLE_VMT_FIELD = "New Total VMT";
 

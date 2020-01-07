@@ -5,7 +5,7 @@ import org.sandag.cvm.common.emme2.MatrixCacheReader;
 public abstract class TripMode {
 
 	/**
-	 * First part of string is vehicle type aka tour mode.
+	 * First part of string is tNCVehicle type aka tour mode.
 	 * Followed by a colon and then the trip mode.
 	 * e.g L:T means tour "Light" and trip-mode "toll"
 	 */

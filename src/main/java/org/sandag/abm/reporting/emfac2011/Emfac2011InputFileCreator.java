@@ -146,7 +146,7 @@ public class Emfac2011InputFileCreator
 
             LOGGER.debug("Building vmt table");
             DataTable vmtTable = extractVmtTables(inputTables, i+1, region, year, SEASONS[i]);
-            LOGGER.debug("Building vmt by vehicle type table");
+            LOGGER.debug("Building vmt by tNCVehicle type table");
             DataTable vehicleVmtTable = extractVmtVehicleTables(inputTables, i+1, region, year, SEASONS[i]);
             LOGGER.debug("Building speed fraction table");
             DataTable vmtSpeedTable = extractVmtSpeedTables(inputTables, i+1, region, year, SEASONS[i]);
@@ -547,7 +547,7 @@ public class Emfac2011InputFileCreator
                     Emfac2011Definitions.EMFAC_2011_VMT_TABLE_VMT_FIELD, originalVmt);
         }
 
-        // replace vehicle vmts
+        // replace tNCVehicle vmts
         TableIndex<String> index = new BasicTableIndex<>(vehicleVmtTable,
                 Emfac2011Definitions.EMFAC_2011_VEHICLE_VMT_TABLE_SUB_AREA_FIELD,
                 Emfac2011Definitions.EMFAC_2011_VEHICLE_VMT_TABLE_VEHICLE_FIELD);

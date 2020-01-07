@@ -191,10 +191,11 @@ public class MicromobilityChoiceModel
             // write choice model alternative info to log file
 	        if (household.getDebugChoiceModels())
 	        {
-	        	String decisionMaker = String.format("Household %d", household.getHhId()+ "Person %d", person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
+	        	String decisionMaker = String.format("Household " + household.getHhId()+ "Person " + person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
+	        	//String decisionMaker = String.format("Household %d", household.getHhId()+ "Person %d", person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
 	            mmModel.logAlternativesInfo("Micromobility Choice", decisionMaker, logger);
 	            logger.info(String.format("%s result chosen for %s is %d",
-	            	"Transponder Choice", decisionMaker, chosenAlt));
+	            	"Micromobility Choice", decisionMaker, chosenAlt));
 	            mmModel.logUECResults(logger, decisionMaker);
 	        }
 
@@ -203,6 +204,12 @@ public class MicromobilityChoiceModel
         		   
         	//access
         	int tapPosition =  mgraDataManager.getTapPosition(originMaz, s.boardTap);
+        	if(tapPosition==-1) {
+        		logger.warn("Problem with hh "+household.getHhId()+" Person "+person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
+        		logger.warn("Origin MAZ "+originMaz+ " Board TAP "+s.boardTap+ " Alight TAP "+s.alightTap+" Destination MAZ "+destMaz);
+        		logger.warn("Can't find walk connection from origin to board TAP; skipping micromobility choice");
+        		return;
+        	}
         	float walkTime = mgraDataManager.getMgraToTapWalkTime(originMaz, tapPosition);
             mmDmuObject.setWalkTime(walkTime);
             
@@ -220,14 +227,21 @@ public class MicromobilityChoiceModel
 		    // write choice model alternative info to log file
 		    if (household.getDebugChoiceModels())
 		    {
-		    	String decisionMaker = String.format("Household %d", household.getHhId()+ "Person %d", person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode()+ " access choice");
+		    	String decisionMaker = String.format("Household " + household.getHhId()+ "Person " + person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
+		    	//String decisionMaker = String.format("Household %d", household.getHhId()+ "Person %d", person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode()+ " access choice");
 		        mmModel.logAlternativesInfo("Micromobility Choice", decisionMaker, logger);
 		        logger.info(String.format("%s result chosen for %s is %d",
-		        	"Transponder Choice", decisionMaker, chosenAlt));
+		        	"Micromobility Choice", decisionMaker, chosenAlt));
 		        mmModel.logUECResults(logger, decisionMaker);
 		    }
 	        //egress
 	        tapPosition =  mgraDataManager.getTapPosition(destMaz, s.alightTap);
+        	if(tapPosition==-1) {
+        		logger.warn("Problem with hh "+household.getHhId()+" Person "+person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
+        		logger.warn("Origin MAZ "+originMaz+ " Board TAP "+s.boardTap+ " Alight TAP "+s.alightTap+" Destination MAZ "+destMaz);
+        		logger.warn("Can't find walk connection from alight TAP to destination; skipping micromobility choice");
+        		return;
+        	}
 	        walkTime = mgraDataManager.getMgraToTapWalkTime(destMaz, tapPosition);
 	        mmDmuObject.setWalkTime(walkTime);
 
@@ -246,10 +260,11 @@ public class MicromobilityChoiceModel
 		    // write choice model alternative info to log file
 		    if (household.getDebugChoiceModels())
 		    {
-		      	String decisionMaker = String.format("Household %d", household.getHhId()+ "Person %d", person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode()+ " egress choice");
+		    	String decisionMaker = String.format("Household " + household.getHhId()+ "Person " + person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
+		      	//String decisionMaker = String.format("Household %d", household.getHhId()+ "Person %d", person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode()+ " egress choice");
 		       	mmModel.logAlternativesInfo("Micromobility Choice", decisionMaker, logger);
 		        logger.info(String.format("%s result chosen for %s is %d",
-		           		"Transponder Choice", decisionMaker, chosenAlt));
+		           		"Micromobility Choice", decisionMaker, chosenAlt));
 		        mmModel.logUECResults(logger, decisionMaker);
 		    }
         } else if( modelStructure.getTourModeIsDriveTransit(s.getMode()) ) {     	   //drive-transit. Choose non-drive direction
@@ -259,12 +274,25 @@ public class MicromobilityChoiceModel
         		
         	if(s.isInboundStop()) { //inbound, so access mode is walk
         		tapPosition =  mgraDataManager.getTapPosition(originMaz, s.boardTap);
+            	if(tapPosition==-1) {
+            		logger.warn("Problem with hh "+household.getHhId()+" Person "+person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
+            		logger.warn("Origin MAZ "+originMaz+ " Board TAP "+s.boardTap+ " Alight TAP "+s.alightTap+" Destination MAZ "+destMaz);
+            		logger.warn("Can't find walk connection from origin to board TAP; skipping micromobility choice");
+            		return;
+            	}
+
         		walkTime = mgraDataManager.getMgraToTapWalkTime(originMaz, tapPosition);
         		//set destination to origin so that Z can be used to find origin zone access to mode in mgra data file in UEC
         		mmDmuObject.setDmuIndexValues(household.getHhId(), homeMaz, originMaz, originMaz);
         		   
         	}else { //outbound so egress mode is walk.
         		   tapPosition =  mgraDataManager.getTapPosition(destMaz, s.alightTap);
+        		   if(tapPosition==-1) {
+        			   logger.warn("Problem with hh "+household.getHhId()+" Person "+person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
+        			   logger.warn("Origin MAZ "+originMaz+ " Board TAP "+s.boardTap+ " Alight TAP "+s.alightTap+" Destination MAZ "+destMaz);
+        			   logger.warn("Can't find walk connection from destination MAZ to alight TAP; skipping micromobility choice");
+        			   return;
+        		   }
         		   walkTime = mgraDataManager.getMgraToTapWalkTime(destMaz, tapPosition);
         		   //set destination to closest mgra to alighting TAP so that Z can be used to find access to mode in mgra data file in UEC
    	            	int closestMazToAlightTap = mgraDataManager.getClosestMgra(s.alightTap);
@@ -289,10 +317,11 @@ public class MicromobilityChoiceModel
             // write choice model alternative info to log file
 	        if (household.getDebugChoiceModels())
 	        {
-	        	String decisionMaker = String.format("Household %d", household.getHhId()+ "Person %d", person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
+	        	String decisionMaker = String.format("Household " + household.getHhId()+ "Person " + person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
+	        	//String decisionMaker = String.format("Household %d", household.getHhId()+ "Person %d", person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
 	            mmModel.logAlternativesInfo("Micromobility Choice", decisionMaker, logger);
 	            logger.info(String.format("%s result chosen for %s is %d",
-	                     "Transponder Choice", decisionMaker, chosenAlt));
+	                     "Micromobility Choice", decisionMaker, chosenAlt));
 	            mmModel.logUECResults(logger, decisionMaker);
 	        }
       		   
@@ -322,7 +351,8 @@ public class MicromobilityChoiceModel
         		return chosenAlt;
         	} else
         	{
-        		String decisionMaker = String.format("Househol %d", household.getHhId()+ "Person %d", person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
+        		String decisionMaker = String.format("Household " + household.getHhId()+ "Person " + person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
+        		//String decisionMaker = String.format("Househol %d", household.getHhId()+ "Person %d", person.getPersonNum()+" "+tour.getTourCategory()+" tour ID "+tour.getTourId()+ "stop "+s.getStopId()+ " mode " +s.getMode());
         		String errorMessage = String
                     .format("Exception caught for %s, no available micromobility choice alternatives to choose from in choiceModelApplication.",
                             decisionMaker);

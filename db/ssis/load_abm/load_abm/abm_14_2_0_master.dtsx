@@ -9,13 +9,13 @@
   DTS:DTSID="{081A0272-A3B9-4441-ABD1-D5853B0576B6}"
   DTS:ExecutableType="Microsoft.Package"
   DTS:FailParentOnFailure="True"
-  DTS:LastModifiedProductVersion="14.0.3002.68"
+  DTS:LastModifiedProductVersion="14.0.0800.98"
   DTS:LocaleID="1033"
   DTS:MaxErrorCount="0"
   DTS:ObjectName="abm_14_2_0_master"
   DTS:PackageType="5"
-  DTS:VersionBuild="113"
-  DTS:VersionGUID="{2677C696-4E6C-4069-9B2A-38D32855347F}">
+  DTS:VersionBuild="118"
+  DTS:VersionGUID="{CE9F5F8A-AE10-4C35-B174-82DC233EA8CB}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:Variables>
@@ -282,8 +282,8 @@
         DTS:Name="Executable">@[$Project::python_script_path] + "\\run_python.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="F:\SSISDEV\python\run_python.bat"
-          Arguments="D:\Python27\ArcGIS10.6\Lib\site-packages\osgeo\data\gdal D:\Python27\ArcGIS10.6 F:\SSISDEV\python\arcpy_cleanup.py "
+          Executable="\run_python.bat"
+          Arguments="  \arcpy_cleanup.py "
           WindowStyle="Hidden" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -332,8 +332,8 @@
         DTS:Name="Executable">@[$Project::python_script_path] + "\\run_python.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="F:\SSISDEV\python\run_python.bat"
-          Arguments="D:\Python27\ArcGIS10.6\Lib\site-packages\osgeo\data\gdal D:\Python27\ArcGIS10.6 F:\SSISDEV\python\e00_to_shape.py  F:\SSISDEV\python"
+          Executable="\run_python.bat"
+          Arguments="  \e00_to_shape.py  "
           TerminateAfterTimeout="False" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -342,7 +342,6 @@
       DTS:CreationName="Microsoft.ExecuteProcess"
       DTS:DelayValidation="True"
       DTS:Description="Execute Process Task"
-      DTS:Disabled="True"
       DTS:DTSID="{FEC1D47C-903B-482B-8C84-E7CCA93C65F7}"
       DTS:ExecutableType="Microsoft.ExecuteProcess"
       DTS:FailPackageOnFailure="True"
@@ -359,8 +358,8 @@
         DTS:Name="Executable">@[$Project::python_script_path] + "\\hwyload_shp.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="F:\SSISDEV\python\hwyload_shp.bat"
-          Arguments="D:\Python27\ArcGIS10.6\Lib\site-packages\osgeo\data\gdal D:\Python27\ArcGIS10.6\Lib\site-packages\osgeo  0"
+          Executable="\hwyload_shp.bat"
+          Arguments="   0"
           WindowStyle="Hidden" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -385,8 +384,8 @@
         DTS:Name="Executable">@[$Project::python_script_path] + "\\run_python.bat"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <ExecuteProcessData
-          Executable="F:\SSISDEV\python\run_python.bat"
-          Arguments="D:\Python27\ArcGIS10.6\Lib\site-packages\osgeo\data\gdal D:\Python27\ArcGIS10.6 F:\SSISDEV\python\geospatial_export.py "
+          Executable="\run_python.bat"
+          Arguments="  \geospatial_export.py "
           WindowStyle="Hidden" />
       </DTS:ObjectData>
     </DTS:Executable>
@@ -552,10 +551,15 @@
     <DTS:EventHandler
       DTS:refId="Package.EventHandlers[OnTaskFailed]"
       DTS:CreationName="OnTaskFailed"
+      DTS:DelayValidation="True"
       DTS:DTSID="{4DCC837F-37AE-4892-AC1C-74593E56E0C6}"
       DTS:EventID="1644194048"
       DTS:EventName="OnTaskFailed"
-      DTS:LocaleID="-1">
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:ForceExecutionResult="1"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0">
       <DTS:Variables>
         <DTS:Variable
           DTS:CreationName=""
@@ -572,10 +576,14 @@
         <DTS:Executable
           DTS:refId="Package.EventHandlers[OnTaskFailed]\set_load_fail_indicators"
           DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:DelayValidation="True"
           DTS:Description="Execute SQL Task"
           DTS:DTSID="{0555F69B-2A7F-40A5-ACFC-44D0355AE2A2}"
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:FailPackageOnFailure="True"
+          DTS:FailParentOnFailure="True"
           DTS:LocaleID="-1"
+          DTS:MaxErrorCount="0"
           DTS:ObjectName="set_load_fail_indicators"
           DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
           <DTS:Variables />
@@ -644,9 +652,9 @@
           Id="Package\e00_to_shape"
           TopLeft="392,206" />
         <NodeLayout
-          Size="187,42"
+          Size="193,42"
           Id="Package\export_loaded_hwycov"
-          TopLeft="251,509" />
+          TopLeft="243,510" />
         <NodeLayout
           Size="162,42"
           Id="Package\geospatial_export"
@@ -825,30 +833,30 @@
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 14]"
-          TopLeft="344.5,551">
+          TopLeft="339.5,552">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="123.1,108"
+              EndConnector="128.1,107"
               Start="0,0"
-              End="123.1,100.5">
+              End="128.1,99.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,55.6823295830576" />
+                    End="0,55.1297154202515" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,55.6823295830576"
-                    Point2="0,59.6823295830576"
-                    Point3="4,59.6823295830576" />
+                    Point1="0,55.1297154202515"
+                    Point2="0,59.1297154202515"
+                    Point3="4,59.1297154202515" />
                   <mssgle:LineSegment
-                    End="119.1,59.6823295830576" />
+                    End="124.1,59.1297154202515" />
                   <mssgle:CubicBezierSegment
-                    Point1="119.1,59.6823295830576"
-                    Point2="123.1,59.6823295830576"
-                    Point3="123.1,63.6823295830576" />
+                    Point1="124.1,59.1297154202515"
+                    Point2="128.1,59.1297154202515"
+                    Point3="128.1,63.1297154202515" />
                   <mssgle:LineSegment
-                    End="123.1,100.5" />
+                    End="128.1,99.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -1039,18 +1047,18 @@
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 8]"
-          TopLeft="343.75,458">
+          TopLeft="341.25,458">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,51"
+              EndConnector="0,52"
               Start="0,0"
-              End="0,43.5">
+              End="0,44.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,43.5" />
+                    End="0,44.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>

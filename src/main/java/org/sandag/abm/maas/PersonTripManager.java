@@ -166,8 +166,8 @@ public class PersonTripManager {
         	if(rideShareEligibleModes[mode]==1)
         		rideShare=true;
         	
-         	int oMaz = (int) inputTripTableData.getValueAt(row,"orig_mgra");
-        	int dMaz = (int) inputTripTableData.getValueAt(row,"dest_mgra");
+         	int oMaz = (int) inputTripTableData.getValueAt(row,"orig_maz");
+        	int dMaz = (int) inputTripTableData.getValueAt(row,"dest_maz");
         	
         	int oTaz = mgraManager.getTaz(oMaz);
         	int dTaz = mgraManager.getTaz(dMaz);

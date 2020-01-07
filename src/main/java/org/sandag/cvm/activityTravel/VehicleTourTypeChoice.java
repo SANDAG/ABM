@@ -29,7 +29,7 @@ import org.sandag.cvm.common.model.DiscreteChoiceModelInterface;
 /**
  * @author jabraham
  *
- * A model of vehicle type together with tour type
+ * A model of tNCVehicle type together with tour type
  */
 public interface VehicleTourTypeChoice extends DiscreteChoiceModelInterface {
     /**

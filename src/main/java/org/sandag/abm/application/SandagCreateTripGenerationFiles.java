@@ -31,8 +31,8 @@ public class SandagCreateTripGenerationFiles
 
     private static final String   TRIP_ORIG_PURPOSE_FIELD_NAME                  = "orig_purpose";
     private static final String   TRIP_DEST_PURPOSE_FIELD_NAME                  = "dest_purpose";
-    private static final String   TRIP_ORIG_MGRA_FIELD_NAME                     = "orig_mgra";
-    private static final String   TRIP_DEST_MGRA_FIELD_NAME                     = "dest_mgra";
+    private static final String   TRIP_ORIG_MGRA_FIELD_NAME                     = "orig_maz";
+    private static final String   TRIP_DEST_MGRA_FIELD_NAME                     = "dest_maz";
     private static final String[] HH_HEADINGS                                   = {
             TRIP_ORIG_PURPOSE_FIELD_NAME, TRIP_DEST_PURPOSE_FIELD_NAME, TRIP_ORIG_MGRA_FIELD_NAME,
             TRIP_DEST_MGRA_FIELD_NAME                                           };

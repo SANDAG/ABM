@@ -252,7 +252,7 @@ public class CtrampApplication
 
             logger.error(String
                     .format("exception caught running ctramp model components -- exiting."), e);
-            throw new RuntimeException();
+            throw new RuntimeException(e);
 
         }
 
