@@ -37,6 +37,8 @@
 #    timexfer_period.csv: table of timed transfer pairs of lines, by period
 #    mode5tod.dbf: global (per-mode) transit cost and perception attributes
 #    special_fares.txt: table listing special fares in terms of boarding and incremental in-vehicle costs. 
+#    off_peak_toll_factors.csv (optional): specifies factors to calculate the toll for EA, MD, and EV periods from the OP toll input for specified facilities
+#    
 #
 #
 # Script example:
@@ -78,6 +80,11 @@ _dir = os.path.dirname
 
 gen_utils = _m.Modeller().module("sandag.utilities.general")
 dem_utils = _m.Modeller().module("sandag.utilities.demand")
+
+FILE_NAMES = {
+    "FARES": "special_fares.txt",
+    "OFF_PEAK": "off_peak_toll_factors.csv",
+}
 
 
 class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
@@ -136,6 +143,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 <li>timexfer_<i>period</i>.csv, where <i>period</i> = EA,AM,MD,PM,EV</li>
                 <li>MODE5TOD.dbf</li>
                 <li>special_fares.txt</li>
+                <li>off_peak_toll_factors.csv (optional)</li>
+                <li>vehicle_class_toll_factors.csv (optional)</li>
             </ul>
         </div>
         """
@@ -1072,10 +1081,11 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
         # Special incremental boarding and in-vehicle fares        
         # to recreate the coaster zone fares
-        special_fare_path = _join(self.source, "special_fares.txt")
+        fares_file_name = FILE_NAMES["FARES"]
+        special_fare_path = _join(self.source, fares_file_name)
         if os.path.isfile(special_fare_path):
             with open(special_fare_path) as fare_file:
-                self._log.append({"type": "text", "content": "Using fare details (for coaster) from special_fares.txt"})
+                self._log.append({"type": "text", "content": "Using fare details (for coaster) from %s" % fares_file_name})
                 special_fares = None
                 yaml_installed = True
                 try:
@@ -1095,7 +1105,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                         pass
                 if special_fares is None:
                     msg = "YAML or JSON" if yaml_installed else "JSON (YAML parser not installed)"
-                    raise Exception("special_fares.txt: file could not be parsed as " + msg)
+                    raise Exception(fares_file_name + ": file could not be parsed as " + msg)
         else:
             # Default coaster fare for 2012 base year
             special_fares = {
@@ -1123,7 +1133,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         def get_line(line_id):
             line = network.transit_line(line_id)
             if line is None:
-                raise Exception("special_fares.txt: line does not exist: %s" % line_id)
+                raise Exception("%s: line does not exist: %s" % (fares_file_name, line_id))
             return line
 
         for record in special_fares["boarding_cost"]["base"]:
@@ -1148,7 +1158,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         for key in pass_cost_keys:
             cost = special_fares.get(key)
             if cost is None:
-                raise Exception("key '%s' missing from special_fares.txt" % key)
+                raise Exception("key '%s' missing from %s" % (key, fares_file_name))
             pass_costs.append(cost)
         pass_values = _dt.Data()
         pass_values.add_attribute(_dt.Attribute("pass_type", _np.array(pass_cost_keys).astype("O")))
@@ -1324,11 +1334,12 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 link["@lane" + time] = link["lane" + src_time]
                 link["@time_link" + time] = link["time_link" + src_time]
 
-                #add link delay (30 sec=0.5mins) to HOV connectors to discourage travel
+                # add link delay (30 sec=0.5mins) to HOV connectors to discourage travel
                 if link.type == 8 and link["@lane_restriction"] == 2:
                     link["@time_link" + time] = link["@time_link" + time] + 0.5
 
-		#make speed on HOV lanes (70mph) the same as parallel GP lanes (65mph) - set speed back to posted speed - increase travel time by (speed_adj/speed_posted)
+		        # make speed on HOV lanes (70mph) the same as parallel GP lanes (65mph) 
+                # - set speed back to posted speed - increase travel time by (speed_adj/speed_posted)
                 if link.type == 1 and link["@lane_restriction"] == 2:
                     speed_adj = link["@speed_adjusted"]	
                     speed_posted = link["@speed_posted"]
@@ -1338,6 +1349,32 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 link["@time_inter" + time] = link["time_inter" + src_time]
                 link["@toll" + time] = link["toll" + src_time]
 
+        off_peak_factor_file = FILE_NAMES["OFF_PEAK"]
+        if os.path.exists(_join(input_dir, off_peak_factor_file)):
+            msg = "Adjusting off-peak tolls based on factors from %s" % off_peak_factor_file
+            self._log.append({"type": "text", "content": msg})
+            # NOTE: CSV Reader sets the field names to UPPERCASE for consistency
+            with gen_utils.CSVReader(_join(input_dir, off_peak_factor_file)) as r:
+                for row in r:
+                    name = row["FACILITY_NAME"]
+                    ea_factor = float(row["OP_EA_FACTOR"])
+                    md_factor = float(row["OP_MD_FACTOR"])
+                    ev_factor = float(row["OP_EV_FACTOR"])
+                    count = 0
+                    for link in network.links():
+                        if name in link["#name"]:
+                            count += 1
+                            link["@toll_ea"] = link["@toll_ea"] * ea_factor
+                            link["@toll_md"] = link["@toll_md"] * md_factor
+                            link["@toll_ev"] = link["@toll_ev"] * ev_factor
+
+                    msg = "Facility name '%s' matched to %s links" % (name, count)
+                    self._log.append({"type": "text", "content": msg})
+                    msg = "Adjusting off-peak period costs EA: %s, MD: %s, EV: %s" % (ea_factor, md_factor, ev_factor)
+                    self._log.append({"type": "text", "content": msg})
+
+
+        for link in network.links():
             factors = [(3.0/12.0), 1.0, (6.5/12.0), (3.5/3.0), (8.0/12.0)]
             for f, time, src_time in zip(factors, time_periods, src_time_periods):
                 if link["capacity_link" + src_time] != 999999:
@@ -1360,6 +1397,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     link["@cost_hov" + time] = link["@cost_auto" + time]
                 link["@cost_med_truck" + time] = 1.03 * link["@toll" + time] + link["@cost_operating"]
                 link["@cost_hvy_truck" + time] = 2.33 * link["@toll" + time] + link["@cost_operating"]
+                
         self._log.append({"type": "text", "content": "Calculation and time period expansion of costs, tolls, capacities and times complete"})
 
         self.apply_i15_tolls(network)
