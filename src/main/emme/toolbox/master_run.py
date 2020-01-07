@@ -37,6 +37,8 @@
 #   Select link: add select link analyses for traffic. 
 #       See the Select link analysis section under the Traffic assignment tool.
 #
+#   Also reads and processes the per-scenario
+#    vehicle_class_availability.csv (optional): 0 or 1 indicators by vehicle class and specified facilities to indicate availability
 #
 # Script example:
 """
@@ -68,6 +70,7 @@ import json as _json
 import shutil as _shutil
 import tempfile as _tempfile
 from copy import deepcopy as _copy
+from collections import defaultdict as _defaultdict
 import time as _time
 import socket as _socket
 import sys
@@ -362,7 +365,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                                  "AT and Transit network consistency checking failed! Open AtTransitCheck_event.log for details.")
 
             if startFromIteration == 1:  # only run the setup / init steps if starting from iteration 1
-                print ('start')   
+                print('start')
                 if not skipWalkLogsums:
                     self.run_proc("runSandagWalkLogsums.cmd", [drive, path_forward_slash],
                                   "Walk - create AT logsums and impedances")
@@ -372,7 +375,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skipBikeLogsums:
                     self.run_proc("runSandagBikeLogsums.cmd", [drive, path_forward_slash],
                                   "Bike - create AT logsums and impedances")
-                                  
                 if not skipCopyBikeLogsum:
                     self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], input_dir, output_dir)
 
@@ -382,7 +384,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 
                 mgraFile = 'mgra13_based_input' + str(scenarioYear) + '.csv'
                 self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "walkMgraEquivMinutes.csv")                                  
-                print ('complete walk')  
+                print('complete walk')  
                 
                 if not skipBuildNetwork:
                     base_scenario = import_network(
@@ -403,6 +405,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                             pass
 
                     export_tap_adjacent_lines(_join(output_dir, "tapLines.csv"), base_scenario)
+                    # parse vehicle availablility file by time-of-day
+                    availability_file = "vehicle_class_availability.csv"
+                    availabilities = self.parse_availability_file(_join(input_dir, availability_file), periods)
                     # initialize per time-period scenarios
                     for number, period in period_ids:
                         title = "%s - %s assign" % (base_scenario.title, period)
@@ -416,13 +421,12 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                                 'scenario_title': title
                             }
                         )
-                        if base_scenario.emmebank.scenario(number):
-                            base_scenario.emmebank.delete_scenario(number)
-                        s = base_scenario.emmebank.copy_scenario(
-                            base_scenario.number,
-                            number
-                        )
-                        s.title = title
+                        if main_emmebank.scenario(number):
+                            main_emmebank.delete_scenario(number)
+                        scenario = main_emmebank.copy_scenario(base_scenario.number, number)
+                        scenario.title = title
+                        # Apply availabilities by facility and vehicle class to this time period
+                        self.apply_availabilities(period, scenario, availabilities)
                 else:
                     base_scenario = main_emmebank.scenario(scenario_id)
 
@@ -863,6 +867,74 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 db.open()
                 return db
         return None
+
+    def parse_availability_file(self, file_path, periods):
+        if os.path.exists(file_path):
+            availabilities = _defaultdict(lambda: _defaultdict(lambda: dict()))
+            # NOTE: CSV Reader sets the field names to UPPERCASE for consistency
+            with gen_utils.CSVReader(file_path) as r:
+                for row in r:
+                    name = row.pop("FACILITY_NAME")
+                    class_name = row.pop("VEHICLE_CLASS")
+                    for period in periods:
+                        availabilities[period][name][class_name] = int(row[period + "_AVAIL"])
+        else:
+            availabilities = None
+        return availabilities
+
+    def apply_availabilities(self, period, scenario, availabilities):
+        if availabilities is None:
+            return
+
+        network = scenario.get_network()
+        hov2 = network.mode("h")
+        hov2_trnpdr = network.mode("H")
+        hov3 = network.mode("i")
+        hov3_trnpdr = network.mode("I")
+        sov = network.mode("s")
+        sov_trnpdr = network.mode("S")
+        heavy_trk = network.mode("v")
+        heavy_trk_trnpdr = network.mode("V")
+        medium_trk = network.mode("m")
+        medium_trk_trnpdr = network.mode("M")
+        light_trk = network.mode("t")
+        light_trk_trnpdr = network.mode("T")
+
+        class_mode_map = {
+            "DA":    set([sov_trnpdr, sov]),
+            "S2":    set([hov2_trnpdr, hov2]),
+            "S3":    set([hov3_trnpdr, hov3]),
+            "TRK_L": set([light_trk_trnpdr, light_trk]),
+            "TRK_M": set([medium_trk_trnpdr, medium_trk]),
+            "TRK_H": set([heavy_trk_trnpdr, heavy_trk]),
+        }
+        report = ["<div style='margin-left:5px'>Link mode changes</div>"]
+        for name, class_availabilities in availabilities[period].iteritems():
+            report.append("<div style='margin-left:10px'>%s</div>" % name)
+            changes = _defaultdict(lambda: 0)
+            for link in network.links():
+                if name in link["#name"]:
+                    for class_name, is_avail in class_availabilities.iteritems():
+                        if is_avail == 0:
+                            continue
+                        modes = class_mode_map[class_name]
+                        if is_avail == 1 and not modes.issubset(link.modes):
+                            link.modes |= modes
+                            changes["added " + class_name] += 1
+                        elif is_avail == -1 and modes.issubset(link.modes):
+                            link.modes -= modes
+                            changes[class_name + " removed"] += 1
+            report.append("<div style='margin-left:20px'><ul>")
+            for x in changes.iteritems():
+                report.append("<li>%s to %s links</li>" % x)
+            report.append("</div></ul>")
+        scenario.publish_network(network)
+
+        title = "Apply global class availabilities by faclity name for period %s" % period
+        log_report = _m.PageBuilder(title=title)
+        for item in report:
+            log_report.add_html(item)
+        _m.logbook_write(title, log_report.render())
 
     def setup_remote_database(self, src_scenarios, periods, remote_num, msa_iteration):
         with _m.logbook_trace("Set up remote database #%s for %s" % (remote_num, ", ".join(periods))):

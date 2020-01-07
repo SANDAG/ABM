@@ -1350,11 +1350,11 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 link["@toll" + time] = link["toll" + src_time]
 
         off_peak_factor_file = FILE_NAMES["OFF_PEAK"]
-        if os.path.exists(_join(input_dir, off_peak_factor_file)):
+        if os.path.exists(_join(self.source, off_peak_factor_file)):
             msg = "Adjusting off-peak tolls based on factors from %s" % off_peak_factor_file
             self._log.append({"type": "text", "content": msg})
             # NOTE: CSV Reader sets the field names to UPPERCASE for consistency
-            with gen_utils.CSVReader(_join(input_dir, off_peak_factor_file)) as r:
+            with gen_utils.CSVReader(_join(self.source, off_peak_factor_file)) as r:
                 for row in r:
                     name = row["FACILITY_NAME"]
                     ea_factor = float(row["OP_EA_FACTOR"])
@@ -1368,11 +1368,10 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                             link["@toll_md"] = link["@toll_md"] * md_factor
                             link["@toll_ev"] = link["@toll_ev"] * ev_factor
 
-                    msg = "Facility name '%s' matched to %s links" % (name, count)
-                    self._log.append({"type": "text", "content": msg})
-                    msg = "Adjusting off-peak period costs EA: %s, MD: %s, EV: %s" % (ea_factor, md_factor, ev_factor)
-                    self._log.append({"type": "text", "content": msg})
-
+                    msg = "Facility name '%s' matched to %s links." % (name, count)
+                    msg += " Adjusting off-peak period tolls EA: %s, MD: %s, EV: %s" % (ea_factor, md_factor, ev_factor)
+                    self._log.append({"type": "text2", "content": msg})
+                    self._log.append({"type": "text2", "content": msg})
 
         for link in network.links():
             factors = [(3.0/12.0), 1.0, (6.5/12.0), (3.5/3.0), (8.0/12.0)]
@@ -1964,6 +1963,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             for item in self._log:
                 if item["type"] == "text":
                     report.add_html("<div style='margin-left:20px'>%s</div>" % item["content"])
+                if item["type"] == "text2":
+                    report.add_html("<div style='margin-left:30px'>%s</div>" % item["content"])
                 elif item["type"] == "header":
                     report.add_html("<h3 style='margin-left:10px'>%s</h3>" % item["content"])
                 elif item["type"] == "table":
@@ -2049,40 +2050,13 @@ class NoPathException(Exception):
 
 def revised_headway(headway):
     # CALCULATE REVISED HEADWAY
-    #slope_1 = 1.0     # slope for 1st segment (high frequency) transit
-    #slope_2 = 0.8     # slope for 2nd segemnt (med frequency)  transit
-    #slope_3 = 0.7     # slope for 3rd segment (low frequency)  transit
-    #slope_4 = 0.5     # slope for 4th segment (very low freq)  transit    
-    #break_1 = 10      # breakpoint of 1st segment, min 
-    #break_2 = 20      # breakpoint of 2nd segment, min 
-    #break_3 = 30      # breakpoint of 3rd segment, min 
-    #
-    #if headway < break_1:
-    #    rev_headway = headway * slope_1
-    #elif headway < break_2:
-    #    part_1_headway = break_1 * slope_1
-    #    part_2_headway = (headway - break_1) * slope_2
-    #    rev_headway = part_1_headway + part_2_headway
-    #elif headway < break_3:
-    #    part_1_headway = break_1 * slope_1
-    #    part_2_headway = (break_2 - break_1) * slope_2
-    #    part_3_headway = (headway - break_2) * slope_3
-    #    rev_headway = part_1_headway + part_2_headway + part_3_headway
-    #else:
-    #    part_1_headway = break_1 * slope_1
-    #    part_2_headway = (break_2 - break_1) * slope_2
-    #    part_3_headway = (break_3 - break_2) * slope_3
-    #    part_4_headway = (headway - break_3) * slope_4
-    #    rev_headway = part_1_headway + part_2_headway + part_3_headway + part_4_headway
-    #
     # new headway calculation is less aggressive; also only being used for initial wait
     # It uses a negative exponential formula to calculate headway
     #
     if headway <= 10:
-         rev_headway = headway
+        rev_headway = headway
     else:
-    	   rev_headway = headway * (0.275 + 0.788 * _np.exp(-0.011*headway))
-            
+        rev_headway = headway * (0.275 + 0.788 * _np.exp(-0.011*headway))
     return rev_headway
 
 
