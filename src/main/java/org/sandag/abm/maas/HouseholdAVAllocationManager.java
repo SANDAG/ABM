@@ -15,12 +15,18 @@ import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.application.SandagModelStructure;
+import org.sandag.abm.ctramp.MatrixDataServerRmi;
 import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.Util;
+import org.sandag.abm.modechoice.MgraDataManager;
+import org.sandag.abm.modechoice.TazDataManager;
 
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.math.MersenneTwister;
+import com.pb.common.matrix.Matrix;
+import com.pb.common.matrix.MatrixType;
+import com.pb.common.matrix.MatrixWriter;
 import com.pb.common.util.PropertyMap;
 
 public class HouseholdAVAllocationManager {
@@ -38,8 +44,14 @@ public class HouseholdAVAllocationManager {
 	protected static final String IndivTripDataFileProperty = "Results.IndivTripDataFile";
 	protected static final String JointTripDataFileProperty = "Results.JointTripDataFile";
 	protected static final String VEHICLETRIP_OUTPUT_FILE_PROPERTY = "Maas.AVAllocationModel.vehicletrip.output.file";
-    protected HashSet<Integer>        householdTraceSet;
+	protected static final String VEHICLETRIP_OUTPUT_MATRIX_PROPERTY = "Maas.AVAllocationModel.vehicletrip.output.matrix";
+   protected HashSet<Integer>        householdTraceSet;
     public static final String        PROPERTIES_HOUSEHOLD_TRACE_LIST                         = "Debug.Trace.HouseholdIdList";
+    // one file per time period
+    // matrices are indexed by periods
+    private Matrix[]             emptyVehicleTripMatrix;
+    MgraDataManager mazManager;
+    TazDataManager tazManager;
 
 	protected static final int[] AutoModes = {1,2,3};
 	protected static final int MaxAutoMode = 3;
@@ -707,7 +719,7 @@ public class HouseholdAVAllocationManager {
 	  * This method writes AV vehicle trips to the output file.
 	 * 
 	 */
-	public void writeVehicleTrips(){
+	public void writeVehicleTrips(float sampleRate){
 		
 		logger.info("Writing AV trips to file " + vehicleTripOutputFile);
         PrintWriter printWriter = null;
@@ -724,7 +736,7 @@ public class HouseholdAVAllocationManager {
        Set<Integer> keySet = householdMap.keySet();
        for(Integer key: keySet) {
     	   Household hh = householdMap.get(key);
-    	   printVehicleTrips(printWriter,hh);
+    	   printVehicleTrips(printWriter,hh, sampleRate);
     	   printWriter.flush();
        }
        
@@ -749,7 +761,7 @@ public class HouseholdAVAllocationManager {
 	 * @param writer
 	 * @param hh
 	 */
-	public void printVehicleTrips(PrintWriter writer, Household hh) {
+	public void printVehicleTrips(PrintWriter writer, Household hh, float sampleRate) {
 		
 		int hhid=hh.getId();
 		ArrayList<Vehicle> vehicles = hh.getAutonomousVehicles();
@@ -771,6 +783,7 @@ public class HouseholdAVAllocationManager {
 				
 				VehicleTrip vehicleTrip = vehicleTrips.get(j);
 				
+
 				writer.print(hhid +"," + (i+1) + "," + (j+1) + ","
 						+ vehicleTrip.getOrigMaz() + "," + vehicleTrip.getDestMaz() +","
 						+ vehicleTrip.getPeriod() + "," + vehicleTrip.getOccupants() +","
@@ -812,6 +825,17 @@ public class HouseholdAVAllocationManager {
 							0);
 				}
 				writer.print("\n");
+				
+				//save the trip if its an empty trip in the matrix
+				if(vehicleTrip.getOccupants()==0) {
+					int period = vehicleTrip.getPeriod();
+					int skimPeriod = modelStructure.getModelPeriodIndex(period);
+					int originTaz = mazManager.getTaz(vehicleTrip.getOrigMaz());
+					int destinationTaz = mazManager.getTaz(vehicleTrip.getDestMaz());
+					
+					float existingTrips = emptyVehicleTripMatrix[skimPeriod].getValueAt(originTaz, destinationTaz);
+					emptyVehicleTripMatrix[skimPeriod].setValueAt(originTaz, destinationTaz, (existingTrips+1) * (1/sampleRate));
+				}
 						
 			}
 			
@@ -822,6 +846,7 @@ public class HouseholdAVAllocationManager {
 		
 		int maz;
 		boolean isHome;
+		int withPersonId;
 		int periodAvailable;
 		ArrayList<VehicleTrip> vehicleTrips;
 		
@@ -911,13 +936,22 @@ public class HouseholdAVAllocationManager {
 		public void setVehicleTrips(ArrayList<VehicleTrip> vehicleTrips) {
 			this.vehicleTrips = vehicleTrips;
 		}
+
+		public int getWithPersonId() {
+			return withPersonId;
+		}
+
+		public void setWithPersonId(int withPersonId) {
+			this.withPersonId = withPersonId;
+		}
 	
 	}
 	
-	public HouseholdAVAllocationManager(HashMap<String, String> propertyMap, int iteration){
+	public HouseholdAVAllocationManager(HashMap<String, String> propertyMap, int iteration,MgraDataManager mazManager,TazDataManager tazManager){
     	this.iteration = iteration;
     	this.propertyMap = propertyMap;
-    	
+    	this.tazManager = tazManager;
+    	this.mazManager = mazManager;
     	modelStructure = new SandagModelStructure();
 		
 	}
@@ -937,6 +971,22 @@ public class HouseholdAVAllocationManager {
 	    for(int i = 0;i<personTypes.length;++i) {
 	    	
 	    	personTypeMap.put(personTypes[i],new Integer(i+1));
+	    }
+	    
+	    //initialize the matrices for writing trips
+        int maxTaz = tazManager.getMaxTaz();
+        int[] tazIndex = new int[maxTaz + 1];
+
+        // assume zone numbers are sequential
+        for (int i = 1; i < tazIndex.length; ++i)
+            tazIndex[i] = i;
+        
+        emptyVehicleTripMatrix = new Matrix[modelStructure.SKIM_PERIOD_INDICES.length];
+
+	    for(int i =0;i<modelStructure.SKIM_PERIOD_INDICES.length;++i) {
+	    	emptyVehicleTripMatrix[i] = new Matrix("EmptyAV_" + modelStructure.getModelPeriodLabel(i), "", maxTaz, maxTaz);
+	    	emptyVehicleTripMatrix[i].setExternalNumbers(tazIndex);
+	    	
 	    }
 	}
 	
@@ -1223,7 +1273,7 @@ public class HouseholdAVAllocationManager {
                	driver_pnum = (int) tripDataSet.getValueAt(row,"driver_pnum");
             }else {
          		num_participants = (int) tripDataSet.getValueAt(row,"num_participants");
-           		person_id = 100+num_participants;
+           		person_id = hh_id*100+num_participants;
         	}
         	int tour_id = (int) tripDataSet.getValueAt(row,"tour_id");
         	int stop_id = (int) tripDataSet.getValueAt(row,"stop_id");
@@ -1348,6 +1398,66 @@ public class HouseholdAVAllocationManager {
             }
         }
 
+    }
+
+    /**
+     * Get the output trip table file names from the properties file, and write
+     * trip tables for all modes for the given time period.
+     * 
+     * @param period
+     *            Time period, which will be used to find the period time string
+     *            to append to each trip table matrix file
+     */
+    public void writeTripTable(MatrixDataServerRmi ms)
+    {
+
+        String directory = Util.getStringValueFromPropertyMap(propertyMap, "scenario.path");
+        String matrixTypeName = Util.getStringValueFromPropertyMap(propertyMap, "Results.MatrixType");
+        MatrixType mt = MatrixType.lookUpMatrixType(matrixTypeName);
+
+        String fileName = directory + Util.getStringValueFromPropertyMap(propertyMap, VEHICLETRIP_OUTPUT_MATRIX_PROPERTY) + ".omx";
+       	try{
+	    	//Delete the file if it exists
+	    	File f = new File(fileName);
+       	    if(f.exists()){
+       	       	logger.info("Deleting existing trip file: "+fileName);
+       	       	f.delete();
+       	    }
+
+        	if (ms != null) 
+        		ms.writeMatrixFile(fileName, emptyVehicleTripMatrix, mt);
+        	else 
+        		writeMatrixFile(fileName, emptyVehicleTripMatrix);
+       		} catch (Exception e){
+       			logger.error("exception caught writing " + mt.toString() + " matrix file = "
+                       + fileName, e);
+        		throw new RuntimeException();
+       		}
+
+    }
+    /**
+     * Utility method to write a set of matrices to disk.
+     * 
+     * @param fileName
+     *            The file name to write to.
+     * @param m
+     *            An array of matrices
+     */
+    private void writeMatrixFile(String fileName, Matrix[] m)
+    {
+
+        // auto trips
+        MatrixWriter writer = MatrixWriter.createWriter(fileName);
+        String[] names = new String[m.length];
+
+        for (int i = 0; i < m.length; i++)
+        {
+            names[i] = m[i].getName();
+            logger.info(m[i].getName() + " has " + m[i].getRowCount() + " rows, "
+                    + m[i].getColumnCount() + " cols, and a total of " + m[i].getSum());
+        }
+
+        writer.writeMatrices(names, m);
     }
 
 

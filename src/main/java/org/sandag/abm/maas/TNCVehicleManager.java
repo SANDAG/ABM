@@ -1,6 +1,7 @@
 package org.sandag.abm.maas;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -8,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
+import org.sandag.abm.ctramp.MatrixDataServerRmi;
+import org.sandag.abm.ctramp.ModelStructure;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.maas.TNCVehicleTrip.Purpose;
 import org.sandag.abm.modechoice.MgraDataManager;
@@ -15,6 +18,9 @@ import org.sandag.abm.modechoice.TapDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
 
 import com.pb.common.math.MersenneTwister;
+import com.pb.common.matrix.Matrix;
+import com.pb.common.matrix.MatrixType;
+import com.pb.common.matrix.MatrixWriter;
 
 public class TNCVehicleManager {
 	
@@ -28,6 +34,7 @@ public class TNCVehicleManager {
 	protected MersenneTwister       random;
 	protected static final String MODEL_SEED_PROPERTY = "Model.Random.Seed";
 	protected static final String VEHICLETRIP_OUTPUT_FILE_PROPERTY = "Maas.RoutingModel.vehicletrip.output.file";
+	protected static final String VEHICLETRIP_OUTPUT_MATRIX_PROPERTY = "Maas.RoutingModel.vehicletrip.output.matrix";
 	protected static final String MAX_DISTANCE_BEFORE_REFUEL_PROPERTY = "Maas.RoutingModel.maxDistanceBeforeRefuel";
 	protected static final String TIME_REQUIRED_FOR_REFUEL_PROPERTY = "Maas.RoutingModel.timeRequiredForRefuel";
 	
@@ -43,13 +50,17 @@ public class TNCVehicleManager {
 	protected int minutesPerSimulationPeriod;
 	protected int vehicleDebug;
 	protected int totalVehicleTrips;
-	
+    private byte[] skimPeriodLookup; //an array indexed by number of periods that corresponds to the skim period
+    private int numberOfSimulationPeriods;
 	protected float maxDistanceBeforeRefuel;
 	protected float timeRequiredForRefuel;
 	protected int periodsRequiredForRefuel;
     protected int[] closestMazWithRefeulingStation ; //the closest MAZ with a refueling station
 
-	
+    // one file per time period
+    // matrices are indexed by periods, occupants
+    private Matrix[][]  TNCTripMatrix;
+
     
     
  
@@ -64,7 +75,8 @@ public class TNCVehicleManager {
 		this.transportCostManager = transportCostManager;
 		this.maxPassengers = maxPassengers;
 		this.minutesPerSimulationPeriod = minutesPerSimulationPeriod;
-		
+		numberOfSimulationPeriods = ((24*60)/minutesPerSimulationPeriod);
+
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -95,6 +107,28 @@ public class TNCVehicleManager {
        vehicleDebug = 1;
        
        calculateClosestRefuelingMazs();
+       
+    	calculateSkimPeriods();
+
+	    //initialize the matrices for writing trips
+       int maxTaz = tazManager.getMaxTaz();
+       int[] tazIndex = new int[maxTaz + 1];
+
+       // assume zone numbers are sequential
+       for (int i = 1; i < tazIndex.length; ++i)
+           tazIndex[i] = i;
+       
+       TNCTripMatrix = new Matrix[transportCostManager.NUM_PERIODS][];
+
+	    for(int i =0;i<TNCTripMatrix.length;++i) {
+	    	TNCTripMatrix[i] = new Matrix[4];
+	    	for(int j=0;j<TNCTripMatrix[i].length;++j) {
+	    		TNCTripMatrix[i][j] = new Matrix("TNC_" + transportCostManager.PERIODS[i] + "_"+j, "", maxTaz, maxTaz);
+	    		TNCTripMatrix[i][j].setExternalNumbers(tazIndex);
+	    	}
+	    	
+	    }
+
 
 	}
 	
@@ -652,7 +686,7 @@ public class TNCVehicleManager {
 	 * This method writes tNCVehicle trips to the output file.
 	 * 
 	 */
-	public void writeVehicleTrips(){
+	public void writeVehicleTrips(float sampleRate){
 		
 		logger.info("Writing tNCVehicle trips to file " + vehicleTripOutputFile);
         PrintWriter printWriter = null;
@@ -676,9 +710,124 @@ public class TNCVehicleManager {
         	for(TNCVehicle tNCVehicle : emptyVehicleList[i] ){
         		for(TNCVehicleTrip tNCVehicleTrip : tNCVehicle.getVehicleTrips()){
         			tNCVehicleTrip.printData(printWriter);
+        			
+        			//save the data in the trip matrix
+        			int startPeriod = tNCVehicleTrip.getStartPeriod();
+        			int skimPeriod = skimPeriodLookup[startPeriod]; 
+        			int origTaz = tNCVehicleTrip.getOriginTaz();
+        			int destTaz =  tNCVehicleTrip.getDestinationTaz();
+        			int occ = Math.min(tNCVehicleTrip.getPassengers(),3);
+        			
+        			float existingTrips = TNCTripMatrix[skimPeriod][occ].getValueAt(origTaz,destTaz);
+        			TNCTripMatrix[skimPeriod][occ].setValueAt(origTaz,destTaz,(existingTrips+1)*(1/sampleRate));
+        			
+        			
         		}
         	}
         }
         printWriter.close();
+	}
+	
+    /**
+     * Get the output trip table file names from the properties file, and write
+     * trip tables for all modes for the given time period.
+     * 
+     * @param period
+     *            Time period, which will be used to find the period time string
+     *            to append to each trip table matrix file
+     */
+    public void writeTripTable(MatrixDataServerRmi ms)
+    {
+
+        String directory = Util.getStringValueFromPropertyMap(propertyMap, "scenario.path");
+        String matrixTypeName = Util.getStringValueFromPropertyMap(propertyMap, "Results.MatrixType");
+        MatrixType mt = MatrixType.lookUpMatrixType(matrixTypeName);
+
+        
+        for(int i =0;i< transportCostManager.NUM_PERIODS;++i) {
+        String fileName = directory + Util.getStringValueFromPropertyMap(propertyMap, VEHICLETRIP_OUTPUT_MATRIX_PROPERTY) + "_"+transportCostManager.PERIODS[i]+".omx";
+       	try{
+        		//Delete the file if it exists
+        		File f = new File(fileName);
+        		if(f.exists()){
+        			logger.info("Deleting existing trip file: "+fileName);
+        			f.delete();
+        		}
+
+        		if (ms != null) 
+        			ms.writeMatrixFile(fileName, TNCTripMatrix[i], mt);
+        		else 
+        			writeMatrixFile(fileName, TNCTripMatrix[i]);
+       			} catch (Exception e){
+       				logger.error("exception caught writing " + mt.toString() + " matrix file = "
+                       + fileName, e);
+       				throw new RuntimeException();
+       			}
+        }
+
+    }
+    /**
+     * Utility method to write a set of matrices to disk.
+     * 
+     * @param fileName
+     *            The file name to write to.
+     * @param m
+     *            An array of matrices
+     */
+    private void writeMatrixFile(String fileName, Matrix[] m)
+    {
+
+        // auto trips
+        MatrixWriter writer = MatrixWriter.createWriter(fileName);
+        String[] names = new String[m.length];
+
+        for (int i = 0; i < m.length; i++)
+        {
+            names[i] = m[i].getName();
+            logger.info(m[i].getName() + " has " + m[i].getRowCount() + " rows, "
+                    + m[i].getColumnCount() + " cols, and a total of " + m[i].getSum());
+        }
+
+        writer.writeMatrices(names, m);
+    }
+
+	/**
+	 * Relate simulation periods to skim periods.
+	 * 
+	 */
+	public void calculateSkimPeriods(){
+		
+		skimPeriodLookup = new byte[numberOfSimulationPeriods];
+		int numberSkimPeriods = ModelStructure.SKIM_PERIOD_INDICES.length;
+		int[] endSkimPeriod = new int[numberSkimPeriods];
+		
+		int lastPeriodEnd = 0;
+		int lastEndSkimPeriod = 0;
+		for(int skimPeriod = 0;skimPeriod<numberSkimPeriods;++skimPeriod){
+			int periodLengthInMinutes = 30 * (ModelStructure.PERIOD_ENDS[skimPeriod] - lastPeriodEnd);
+			lastPeriodEnd = ModelStructure.PERIOD_ENDS[skimPeriod];
+			if(skimPeriod==0)
+				periodLengthInMinutes += 90;
+			
+			if(skimPeriod==4)
+				periodLengthInMinutes += 150;
+				
+			endSkimPeriod[skimPeriod] = periodLengthInMinutes/minutesPerSimulationPeriod + lastEndSkimPeriod;
+			lastEndSkimPeriod = endSkimPeriod[skimPeriod];
+			
+			logger.info("Last simulation period for skim period "+skimPeriod+ " is "+endSkimPeriod[skimPeriod]);
+			
+		}
+		
+		//calculate lookup array
+		for(int period = 0; period < numberOfSimulationPeriods;++period){
+			
+			for(int skimPeriod=(numberSkimPeriods-1);skimPeriod>=0;--skimPeriod){
+				if(period<endSkimPeriod[skimPeriod]) 
+					skimPeriodLookup[period]= (byte) skimPeriod;
+			}
+			logger.info("Simulation period "+period+" is in skim period "+skimPeriodLookup[period]);
+		}
+		
 	}
 }
