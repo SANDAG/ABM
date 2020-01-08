@@ -164,6 +164,7 @@ public class HouseholdAVAllocationModel {
 		    	Vehicle vehicle = hhVehicles.get(chosenVehicle-1);
 		    	ArrayList<VehicleTrip> vehicleTrips = vehicle.getVehicleTrips();
 		    	VehicleTrip newVehicleTrip = vehicle.createNewVehicleTrip();
+		    	
 		    	if(trip.getOrig_purpose().compareToIgnoreCase("Home")==0)
 		    		newVehicleTrip.setOriginIsHome(true);
 		    	else
@@ -183,25 +184,22 @@ public class HouseholdAVAllocationModel {
 		    	
 		    	//update the time for which the vehicle will be available if it 
 		    	//is an AV, and update the vehicle location
-		    	if(chosenVehicle<=3) {
-		    		ArrayList<Vehicle> vehicles = hh.getAutonomousVehicles();
-		    		Vehicle veh = vehicles.get(chosenVehicle-1);
+		    	int period = trip.getStop_period();
+				if(period>1 && period<40) {
+			    	float timeInMinutes = getTravelTime(hh.getId(),trip.getOrig_maz(),trip.getDest_maz(),period);
+					int additionalPeriods = (int) (timeInMinutes/30);
+					vehicle.setPeriodAvailable(period + additionalPeriods);
+				}else {
+					vehicle.setPeriodAvailable(period);
+				}
+				vehicle.setMaz(trip.getDest_maz());
+			    if(trip.getDest_purpose().compareToIgnoreCase("Home")==0)
+			    	vehicle.setHome(true);
+			    else
+			    	vehicle.setHome(false);
+			    
+			    vehicle.setWithPersonId(trip.getPerson_id());
 
-		    		int period = trip.getStop_period();
-					if(period>1 && period<40) {
-			    		float timeInMinutes = getTravelTime(hh.getId(),trip.getOrig_maz(),trip.getDest_maz(),period);
-						int additionalPeriods = (int) (timeInMinutes/30);
-						veh.setPeriodAvailable(period + additionalPeriods);
-					}else {
-						veh.setPeriodAvailable(period);
-					}
-					veh.setMaz(trip.getDest_maz());
-			    	if(trip.getDest_purpose().compareToIgnoreCase("Home")==0)
-			    		veh.setHome(true);
-			    	else
-			    		veh.setHome(false);
-
-		    	}
 		    }
 			
 			if(hh.isDebug()) {
@@ -387,6 +385,7 @@ public class HouseholdAVAllocationModel {
 	public void setVehicleChoiceDMUAttributes(Household hh,Trip thisTrip) {
 	    int[] vehicleIsAvailable= {0,0,0};
 	    float[] travelUtilityToPerson= {0,0,0};
+	    int[] vehicleIsWithPerson = {0,0,0};
 	    
 	    int[] avail = {1,1,1};
 
@@ -403,6 +402,10 @@ public class HouseholdAVAllocationModel {
 				vehicleIsAvailable[i]=0;
 				continue;
 			}
+			
+			//if the vehicle is with the person
+			if(thisTrip.getPerson_id()==veh.getWithPersonId())
+				vehicleIsWithPerson[i]=1;
 
 			int origMgra=veh.getMaz();
 			int origTaz = mgraManager.getTaz(origMgra);
@@ -423,9 +426,16 @@ public class HouseholdAVAllocationModel {
 		vehicleChoiceDMU.setVehicle1IsAvailable(vehicleIsAvailable[0]);
 		vehicleChoiceDMU.setVehicle2IsAvailable(vehicleIsAvailable[1]);
 		vehicleChoiceDMU.setVehicle3IsAvailable(vehicleIsAvailable[2]);
+
+		vehicleChoiceDMU.setPersonWithVehicle1(vehicleIsWithPerson[0]);
+		vehicleChoiceDMU.setPersonWithVehicle2(vehicleIsWithPerson[1]);
+		vehicleChoiceDMU.setPersonWithVehicle3(vehicleIsWithPerson[2]);
+		
 		vehicleChoiceDMU.setTravelUtilityToPersonVeh1(travelUtilityToPerson[0]);
 		vehicleChoiceDMU.setTravelUtilityToPersonVeh2(travelUtilityToPerson[1]);
 		vehicleChoiceDMU.setTravelUtilityToPersonVeh3(travelUtilityToPerson[2]);
+		
+		vehicleChoiceDMU.setMinutesUntilNextTrip(thisTrip.getPeriodsUntilNextTrip()*30);
 		
 		
 	}

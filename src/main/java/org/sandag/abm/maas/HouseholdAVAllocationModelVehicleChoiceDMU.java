@@ -26,6 +26,7 @@ public class HouseholdAVAllocationModelVehicleChoiceDMU
     float travelUtilityToPersonVeh1;
     float travelUtilityToPersonVeh2;
     float travelUtilityToPersonVeh3;
+    float minutesUntilNextTrip;
  
     public HouseholdAVAllocationModelVehicleChoiceDMU()
     {
@@ -57,6 +58,8 @@ public class HouseholdAVAllocationModelVehicleChoiceDMU
         methodIndexMap.put("getTravelUtilityToPersonVeh1",7);
         methodIndexMap.put("getTravelUtilityToPersonVeh2",8);
         methodIndexMap.put("getTravelUtilityToPersonVeh3",9);
+        methodIndexMap.put("getMinutesUntilNextTrip",10);
+        
         
     }
 
@@ -83,8 +86,10 @@ public class HouseholdAVAllocationModelVehicleChoiceDMU
         		return getTravelUtilityToPersonVeh2();
         	case 9:
         		return getTravelUtilityToPersonVeh3();
+        	case 10:
+        		return getMinutesUntilNextTrip();
 
-            default:
+        	default:
                 logger.error("method number = " + variableIndex + " not found");
                 throw new RuntimeException("method number = " + variableIndex + " not found");
 
@@ -194,6 +199,14 @@ public class HouseholdAVAllocationModelVehicleChoiceDMU
 
 	public void setPersonWithVehicle3(int personWithVehicle3) {
 		this.personWithVehicle3 = personWithVehicle3;
+	}
+
+	public float getMinutesUntilNextTrip() {
+		return minutesUntilNextTrip;
+	}
+
+	public void setMinutesUntilNextTrip(float minutesUntilNextTrip) {
+		this.minutesUntilNextTrip = minutesUntilNextTrip;
 	}
 
 }

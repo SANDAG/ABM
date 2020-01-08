@@ -42,11 +42,12 @@ public class HouseholdAVAllocationModelRunner {
     private static final String MODEL_SEED_PROPERTY = "Model.Random.Seed";
    
  	private int iteration;
+ 	private float sampleRate;
 	  private MgraDataManager mgraManager;
     private TazDataManager tazManager;
     private HouseholdAVAllocationModel AVAllocationModel; //one for now, can multi-thread later
     private int[] closestMazWithRemoteLot;
-
+    MatrixDataServerRmi ms;
     private UtilityExpressionCalculator distanceUEC;
     protected VariableTable                 dmu         = null;
     protected float[][]                  tazDistanceSkims;	//travel distance
@@ -57,9 +58,10 @@ public class HouseholdAVAllocationModelRunner {
      * @param propertyMap
      * @param iteration
      */
-	public HouseholdAVAllocationModelRunner(HashMap<String, String> propertyMap, int iteration){
+	public HouseholdAVAllocationModelRunner(HashMap<String, String> propertyMap, int iteration, float sampleRate){
 		this.propertyMap = propertyMap;
 		this.iteration = iteration;
+		this.sampleRate = sampleRate;
 	}
 	
 	/**
@@ -76,7 +78,7 @@ public class HouseholdAVAllocationModelRunner {
 
 		
 	    //create a household AV manager, read trips
-		avManager = new HouseholdAVAllocationManager(propertyMap, iteration);
+		avManager = new HouseholdAVAllocationManager(propertyMap, iteration, mgraManager, tazManager);
 		avManager.setup();
 		avManager.readInputFiles();
 
@@ -127,7 +129,9 @@ public class HouseholdAVAllocationModelRunner {
 
         AVAllocationModel.runModel(hhMap);
 		
-        avManager.writeVehicleTrips();
+        avManager.writeVehicleTrips(sampleRate);
+        
+        avManager.writeTripTable(ms);
 	
 	}
 	
@@ -146,7 +150,7 @@ public class HouseholdAVAllocationModelRunner {
 	        try{
 
 	            MatrixDataManager mdm = MatrixDataManager.getInstance();
-	            MatrixDataServerIf ms = new MatrixDataServerRmi(serverAddress, serverPort, MatrixDataServer.MATRIX_DATA_SERVER_NAME);
+	            ms = new MatrixDataServerRmi(serverAddress, serverPort, MatrixDataServer.MATRIX_DATA_SERVER_NAME);
 	            ms.testRemote(Thread.currentThread().getName());
 	            mdm.setMatrixDataServerObject(ms);
 
@@ -158,64 +162,6 @@ public class HouseholdAVAllocationModelRunner {
 
 	    }
 
-	  /**
-	 * Startup a connection to the matrix manager.
-	 * 
-	 * @param serverAddress
-	 * @param serverPort
-	 * @param mt
-	 * @return
-	 */
-	private MatrixDataServerRmi startMatrixServerProcess(String serverAddress, int serverPort,
-	            MatrixType mt)
-	    {
-
-	        String className = MatrixDataServer.MATRIX_DATA_SERVER_NAME;
-
-	        MatrixDataServerRmi matrixServer = new MatrixDataServerRmi(serverAddress, serverPort,
-	                MatrixDataServer.MATRIX_DATA_SERVER_NAME);
-
-	        try
-	        {
-	            // create the concrete data server object
-	            matrixServer.start32BitMatrixIoServer(mt);
-	        } catch (RuntimeException e)
-	        {
-	            matrixServer.stop32BitMatrixIoServer();
-	            logger.error(
-	                    "RuntimeException caught making remote method call to start 32 bit mitrix in remote MatrixDataServer.",
-	                    e);
-	        }
-
-	        // bind this concrete object with the cajo library objects for managing
-	        // RMI
-	        try
-	        {
-	            Remote.config(serverAddress, serverPort, null, 0);
-	        } catch (Exception e)
-	        {
-	            logger.error(String.format(
-	                    "UnknownHostException. serverAddress = %s, serverPort = %d -- exiting.",
-	                    serverAddress, serverPort), e);
-	            matrixServer.stop32BitMatrixIoServer();
-	            throw new RuntimeException();
-	        }
-
-	        try
-	        {
-	            ItemServer.bind(matrixServer, className);
-	        } catch (RemoteException e)
-	        {
-	            logger.error(String.format(
-	                    "RemoteException. serverAddress = %s, serverPort = %d -- exiting.",
-	                    serverAddress, serverPort), e);
-	            matrixServer.stop32BitMatrixIoServer();
-	            throw new RuntimeException();
-	        }
-
-	        return matrixServer;
-
-	    }
 	
 	/**
 	 * Iterate through the zones for each MAZ and find the closest MAZ with a remote parking lot.
@@ -276,6 +222,7 @@ public class HouseholdAVAllocationModelRunner {
                 CtrampApplication.VERSION));
 
         int iteration=0;
+        float sampleRate=1;
         
         if (args.length == 0)
         {
@@ -292,11 +239,16 @@ public class HouseholdAVAllocationModelRunner {
 	                iteration = Integer.valueOf(args[i + 1]);
 	            }
 	           
+	            if (args[i].equalsIgnoreCase("-sampleRate"))
+	            {
+	                sampleRate = Float.valueOf(args[i + 1]);
+	            }
+
 	        }
         }
         
         pMap = ResourceUtil.getResourceBundleAsHashMap(propertiesFile);
-        HouseholdAVAllocationModelRunner householdAVModel = new HouseholdAVAllocationModelRunner(pMap, iteration);
+        HouseholdAVAllocationModelRunner householdAVModel = new HouseholdAVAllocationModelRunner(pMap, iteration, sampleRate);
         householdAVModel.initialize();
         householdAVModel.runModel();
 

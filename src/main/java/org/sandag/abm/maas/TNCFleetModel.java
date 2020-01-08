@@ -35,6 +35,7 @@ public class TNCFleetModel {
 	TNCVehicleManager tNCVehicleManager;					//manages vehicles!
     
 	private int iteration;
+	private float sampleRate;
 	private int minutesPerSimulationPeriod;
 	private int numberOfSimulationPeriods;
     private MersenneTwister       random;
@@ -42,10 +43,10 @@ public class TNCFleetModel {
     private TazDataManager tazManager;
     private byte maxSharedTNCPassengers;
     
+    MatrixDataServerRmi ms;
     private byte[] skimPeriodLookup; //an array indexed by number of periods that corresponds to the skim period
 
     private boolean routeIntrazonal;
-	
 	
     private static final String MAX_PICKUP_DISTANCE_PROPERTY = "Maas.RoutingModel.maxDistanceForPickup";
     private static final String MAX_PICKUP_DIVERSON_TIME_PROPERTY = "Maas.RoutingModel.maxDiversionTimeForPickup";
@@ -60,9 +61,10 @@ public class TNCFleetModel {
      * @param propertyMap
      * @param iteration
      */
-	public TNCFleetModel(HashMap<String, String> propertyMap, int iteration){
+	public TNCFleetModel(HashMap<String, String> propertyMap, int iteration, float sampleRate){
 		this.propertyMap = propertyMap;
 		this.iteration = iteration;
+		this.sampleRate = sampleRate;
 	}
 	
 	/**
@@ -289,7 +291,8 @@ public class TNCFleetModel {
 		} //end simulation period
 		
 		//write tNCVehicle trips
-		tNCVehicleManager.writeVehicleTrips();
+		tNCVehicleManager.writeVehicleTrips(sampleRate);
+		tNCVehicleManager.writeTripTable(ms);
 	}
 	
 	/**
@@ -305,7 +308,7 @@ public class TNCFleetModel {
 	        try{
 
 	            MatrixDataManager mdm = MatrixDataManager.getInstance();
-	            MatrixDataServerIf ms = new MatrixDataServerRmi(serverAddress, serverPort, MatrixDataServer.MATRIX_DATA_SERVER_NAME);
+	            ms = new MatrixDataServerRmi(serverAddress, serverPort, MatrixDataServer.MATRIX_DATA_SERVER_NAME);
 	            ms.testRemote(Thread.currentThread().getName());
 	            mdm.setMatrixDataServerObject(ms);
 
@@ -385,10 +388,11 @@ public class TNCFleetModel {
         String propertiesFile = null;
         HashMap<String, String> pMap;
 
-        logger.info(String.format("AV Fleet Simulation Program using CT-RAMP version ",
+        logger.info(String.format("TNC Fleet Simulation Program using CT-RAMP version ",
                 CtrampApplication.VERSION));
 
         int iteration=0;
+        float sampleRate=1;
         
         if (args.length == 0)
         {
@@ -404,12 +408,19 @@ public class TNCFleetModel {
 	            {
 	                iteration = Integer.valueOf(args[i + 1]);
 	            }
+	            
+	            if (args[i].equalsIgnoreCase("-sampleRate"))
+	            {
+	                sampleRate = Float.valueOf(args[i + 1]);
+	            }
+	
+	            
 	           
 	        }
         }
         
         pMap = ResourceUtil.getResourceBundleAsHashMap(propertiesFile);
-        TNCFleetModel fleetModel = new TNCFleetModel(pMap, iteration);
+        TNCFleetModel fleetModel = new TNCFleetModel(pMap, iteration, sampleRate);
         fleetModel.initialize();
         fleetModel.runModel();
 
