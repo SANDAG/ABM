@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -38,7 +39,7 @@ public class CVMScaler {
 		heavyshare = new Float(properties.getProperty("cvm.share.heavy"));
 	} 
 	
-	public void scale(){
+	public void scale(HashMap<String, Integer> tripIndexMap){
 		logger.info("Running CVM scaler ... ");
 		String fileName = reportPath+"cvm_trips.csv";
 		TableDataSet inData = readTableDataSet(fileName);
@@ -76,27 +77,36 @@ public class CVMScaler {
 		writer.println(header);
 		
 		for(int row = 1; row<=totalRows;++row){	
+			
+			String serialNo = inData.getStringValueAt(row,"SerialNo");
+			int maxTripIndex = tripIndexMap.get(serialNo);
+			int maxTripIndex_new = maxTripIndex;
+			
 			timeCol[row-1]= inData.getStringValueAt(row,"TripTime");
 			String str=timeCol[row-1];
 			if(str.contains(":L")) {
-				proceesRow(inData, columnNames, row, str, lscaler, lightshare, "L",writer);
+				maxTripIndex_new = proceesRow(inData, columnNames, row, str, lscaler, lightshare, "L", maxTripIndex, writer);
 			}else if(str.contains(":I")) {
-				proceesRow(inData, columnNames, row, str, mscaler, mediumshare, "I", writer);
+				maxTripIndex_new = proceesRow(inData, columnNames, row, str, mscaler, mediumshare, "I", maxTripIndex, writer);
 			}else if(str.contains(":M")) {
-				proceesRow(inData, columnNames, row, str, mscaler, mediumshare, "M", writer);
+				maxTripIndex_new = proceesRow(inData, columnNames, row, str, mscaler, mediumshare, "M", maxTripIndex, writer);
 			}else if(str.contains(":H")) {
-				proceesRow(inData, columnNames, row, str, hscaler, heavyshare, "H", writer);				
+				maxTripIndex_new = proceesRow(inData, columnNames, row, str, hscaler, heavyshare, "H", maxTripIndex, writer);				
 			}else {
-				logger.info("Unrecognized CVM tNCVehicle type: "+ str);
+				logger.info("Unrecognized CVM Vehicle type: "+ str);
 			}
+			
+			//update max trip index
+			tripIndexMap.put(serialNo, maxTripIndex_new);
 		}
 			
 		writer.close();
 		logger.info("Finished cvm report");	
 	}
 	
-	private void proceesRow(TableDataSet inData, String[] columnNames, int row, String str, float[] scalerArray, float share, String vehicle, PrintWriter writer) {
+	private int proceesRow(TableDataSet inData, String[] columnNames, int row, String str, float[] scalerArray, float share, String vehicle, int maxTripIndex, PrintWriter writer) {
 		float value_new = 0.0f;
+		int maxTripIndex_new = maxTripIndex;
 		String colname;
 		String value;
 		float scaler;
@@ -117,6 +127,9 @@ public class CVMScaler {
 					value = value.replaceAll(vehicle, "I");
 				}else if (colname.equals("TripTime")){
 					value = value.replaceAll(":"+vehicle, ":I");
+				}else if (colname.equals("Trip")) {
+					maxTripIndex_new = maxTripIndex + 1;
+					value = Integer.toString(maxTripIndex_new);	
 				}
 
 				if (line_new==null) line_new = value;
@@ -135,7 +148,9 @@ public class CVMScaler {
 			value_new = scaler * (share);
 			line_new = line_new + "," + Float.toString(value_new);
 			writer.println(line_new.trim());
-		}		
+		}
+		
+		return maxTripIndex_new;
 	}
 	
 	private float getScaler(float [] scalerArray, String str) {

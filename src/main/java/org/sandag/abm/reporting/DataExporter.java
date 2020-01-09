@@ -2571,9 +2571,9 @@ public final class DataExporter
             dataExporter.exportInternalExternalTripData("ietrip");
         if (definedTables.contains("commtrip")){
         	CVMExporter cvmExporter = new CVMExporter(properties,mtxDao);
-        	cvmExporter.export();
+        	HashMap <String, Integer> tripIndexMap = cvmExporter.export();
         	CVMScaler cvmScaler = new CVMScaler(properties);
-        	cvmScaler.scale();
+        	cvmScaler.scale(tripIndexMap);
         }
         	
         	

@@ -38,6 +38,7 @@ public class CVMExporter {
     protected HashMap<String,String> nonTollClassMap;   //lookup cvm class, return non-toll skim class
     
     protected HashMap<String,String> modeMap; //lookup cvm mode, return model mode
+    
     private final OMXMatrixDao mtxDao;
     protected float autoOperatingCost;
     
@@ -75,7 +76,7 @@ public class CVMExporter {
 			modeMap.put(cvmModeNames[i], modelModeNames[i]);
 	}
 	
-	public void export(){
+	public HashMap<String, Integer> export(){
 		createPeriodMap();
 		createClassMap();
 		createModeMap();
@@ -87,6 +88,8 @@ public class CVMExporter {
 		float[] aocCol  = new float[totalRows];
 		float[] tollCol = new float[totalRows];
 		
+		HashMap<String, Integer> tripIndexMap = new HashMap<String, Integer>();
+		
 		for(int row = 1; row<=totalRows;++row){
 			
 			int otaz = (int) inputData.getValueAt(row, "I");
@@ -94,6 +97,15 @@ public class CVMExporter {
 			String cvmPeriod = inputData.getStringValueAt(row,"OriginalTimePeriod");
 			String cvmClass = inputData.getStringValueAt(row,"Mode");
 			String cvmMode = inputData.getStringValueAt(row,"TripMode");
+			String serialNo = inputData.getStringValueAt(row, "SerialNo");
+			int tripId = (int) inputData.getValueAt(row, "Trip");
+			
+			//tripIndexMap is used CVMScaler to assign trip ids for new records
+			if (tripIndexMap.containsKey(serialNo)){
+				int value = tripIndexMap.get(serialNo);
+				if (value>tripId) tripId = value;
+			}
+			tripIndexMap.put(serialNo, tripId);
 			
 			Matrix timeMatrix = null;
 			Matrix distMatrix = null;
@@ -129,6 +141,7 @@ public class CVMExporter {
 		
 		//write the data
 		TableDataSet.writeFile(reportPath+"cvm_trips.csv", inputData);
+		return tripIndexMap;
 	}
 	
 	/**
