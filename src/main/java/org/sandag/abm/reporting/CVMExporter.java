@@ -76,7 +76,7 @@ public class CVMExporter {
 			modeMap.put(cvmModeNames[i], modelModeNames[i]);
 	}
 	
-	public HashMap<String, Integer> export(){
+	public void export(){
 		createPeriodMap();
 		createClassMap();
 		createModeMap();
@@ -87,9 +87,7 @@ public class CVMExporter {
 		float[] distCol = new float[totalRows];
 		float[] aocCol  = new float[totalRows];
 		float[] tollCol = new float[totalRows];
-		
-		HashMap<String, Integer> tripIndexMap = new HashMap<String, Integer>();
-		
+				
 		for(int row = 1; row<=totalRows;++row){
 			
 			int otaz = (int) inputData.getValueAt(row, "I");
@@ -97,15 +95,6 @@ public class CVMExporter {
 			String cvmPeriod = inputData.getStringValueAt(row,"OriginalTimePeriod");
 			String cvmClass = inputData.getStringValueAt(row,"Mode");
 			String cvmMode = inputData.getStringValueAt(row,"TripMode");
-			String serialNo = inputData.getStringValueAt(row, "SerialNo");
-			int tripId = (int) inputData.getValueAt(row, "Trip");
-			
-			//tripIndexMap is used CVMScaler to assign trip ids for new records
-			if (tripIndexMap.containsKey(serialNo)){
-				int value = tripIndexMap.get(serialNo);
-				if (value>tripId) tripId = value;
-			}
-			tripIndexMap.put(serialNo, tripId);
 			
 			Matrix timeMatrix = null;
 			Matrix distMatrix = null;
@@ -141,7 +130,7 @@ public class CVMExporter {
 		
 		//write the data
 		TableDataSet.writeFile(reportPath+"cvm_trips.csv", inputData);
-		return tripIndexMap;
+		
 	}
 	
 	/**
