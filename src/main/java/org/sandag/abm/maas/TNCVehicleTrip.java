@@ -304,7 +304,7 @@ public class TNCVehicleTrip {
 	}
 
 	public static void printHeader(PrintWriter writer){
-	     String record = new String("trip_ID,vehicle_ID,originTaz,destinationTaz,originMaz,destinationMaz,totalPassengers,startPeriod,endPeriod,pickupIdsAtOrigin,dropoffIdsAtOrigin,pickupIdsAtDestination,dropoffIdsAtDestination, originPurpose, destinationPurpose");
+	     String record = new String("trip_ID,vehicle_ID,originTaz,destinationTaz,originMgra,destinationMgra,totalPassengers,startPeriod,endPeriod,pickupIdsAtOrigin,dropoffIdsAtOrigin,pickupIdsAtDestination,dropoffIdsAtDestination, originPurpose, destinationPurpose");
 	     writer.println(record);
 	     writer.flush();
 	}

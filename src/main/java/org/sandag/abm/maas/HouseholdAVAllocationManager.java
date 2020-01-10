@@ -747,11 +747,11 @@ public class HouseholdAVAllocationManager {
 	
 	public void printHeader(PrintWriter writer) {
 		
-		writer.println("hh_id,veh_id,vehicleTrip_id,origMaz,destMaz,period,occupants,"
+		writer.println("hh_id,veh_id,vehicleTrip_id,orig_mgra,dest_gra,period,occupants,"
 				+ "originIsHome,destinationIsHome,originIsRemoteParking,destinationIsRemoteParking,"
 				+ "parkingChoiceAtDestination,"
 				+ "person_id,person_num,tour_id,stop_id,inbound,tour_purpose,orig_purpose,dest_purpose,"
-				+ "orig_maz,dest_maz,stop_period,periodsUntilNextTrip,trip_mode");
+				+ "trip_orig_mgra,trip_dest_mgra,stop_period,periodsUntilNextTrip,trip_mode");
 		
 	}
 	
