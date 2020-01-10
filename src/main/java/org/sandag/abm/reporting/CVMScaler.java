@@ -87,7 +87,7 @@ public class CVMScaler {
 			if(str.contains(":L")) {
 				maxTripIndex_new = proceesRow(inData, columnNames, row, str, lscaler, lightshare, "L", maxTripIndex, writer);
 			}else if(str.contains(":I")) {
-				maxTripIndex_new = proceesRow(inData, columnNames, row, str, mscaler, mediumshare, "I", maxTripIndex, writer);
+				maxTripIndex_new = proceesRow(inData, columnNames, row, str, mscaler, 0, "I", maxTripIndex, writer);
 			}else if(str.contains(":M")) {
 				maxTripIndex_new = proceesRow(inData, columnNames, row, str, mscaler, mediumshare, "M", maxTripIndex, writer);
 			}else if(str.contains(":H")) {
