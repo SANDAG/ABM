@@ -151,7 +151,6 @@ public class PersonTripManager {
 
         String mexicanResidentTripFile = directory
                 + Util.getStringValueFromPropertyMap(propertyMap, MexResTripDataFileProperty);
-        mexicanResidentTripFile = insertIterationNumber(mexicanResidentTripFile,iteration);
         TableDataSet mexicanResidentTripDataSet = readTableData(mexicanResidentTripFile);
         personTripMap = readMexicanResidentTripList(personTripMap, mexicanResidentTripDataSet);
         logger.info("Read "+(personTripMap.size()-tripsSoFar)+" mexican resident person trips");
@@ -160,7 +159,6 @@ public class PersonTripManager {
         
         String visitorTripFile = directory
                 + Util.getStringValueFromPropertyMap(propertyMap, VisitorTripDataFileProperty);
-        visitorTripFile = insertIterationNumber(visitorTripFile,iteration);
         TableDataSet visitorTripDataSet = readTableData(visitorTripFile);
         personTripMap = readVisitorTripList(personTripMap, visitorTripDataSet);
         logger.info("Read "+(personTripMap.size()-tripsSoFar)+" visitor person trips");
@@ -168,7 +166,6 @@ public class PersonTripManager {
 
         String airportSANTripFile = directory
                 + Util.getStringValueFromPropertyMap(propertyMap, AirportSANTripDataFileProperty);
-        airportSANTripFile = insertIterationNumber(airportSANTripFile,iteration);
         TableDataSet airportSANTripDataSet = readTableData(airportSANTripFile);
         personTripMap = readAirportTripList(personTripMap, airportSANTripDataSet, -6);
         logger.info("Read "+(personTripMap.size()-tripsSoFar)+" SAN airport person trips");
@@ -176,7 +173,6 @@ public class PersonTripManager {
 
         String airportCBXTripFile = directory
                 + Util.getStringValueFromPropertyMap(propertyMap, AirportCBXTripDataFileProperty);
-        airportCBXTripFile = insertIterationNumber(airportCBXTripFile,iteration);
         TableDataSet airportCBXTripDataSet = readTableData(airportCBXTripFile);
         personTripMap = readAirportTripList(personTripMap, airportCBXTripDataSet, -5);
         logger.info("Read "+(personTripMap.size()-tripsSoFar)+" CBX airport person trips");
@@ -184,7 +180,6 @@ public class PersonTripManager {
 
         String ieTripFile = directory
                 + Util.getStringValueFromPropertyMap(propertyMap, IETripDataFileProperty);
-        ieTripFile = insertIterationNumber(ieTripFile,iteration);
         TableDataSet ieTripDataSet = readTableData(ieTripFile);
         personTripMap = readIETripList(personTripMap, ieTripDataSet);
         logger.info("Read "+(personTripMap.size()-tripsSoFar)+" IE person trips");
