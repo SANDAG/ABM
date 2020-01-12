@@ -239,12 +239,9 @@ public class PersonTripManager {
         	float depTime = simulateExactTime(depPeriod);
         	int tour_mode = (int)inputTripTableData.getValueAt(row,"tour_mode");
 
-        	
-        	//TODO: doesn't handle sampling yet
         	float sRate = 1;
         	if(inputTripTableData.containsColumn("sampleRate"))
-        		sRate = inputTripTableData.getValueAt(row,"sampleRate");
-        	
+        		sRate = inputTripTableData.getValueAt(row,"sampleRate");        	
           	
           	int avAvailable = 0;
           	if(inputTripTableData.containsColumn("avAvailable"))
@@ -326,13 +323,16 @@ public class PersonTripManager {
            	
         	int tourid = (int) inputTripTableData.getValueAt(row,"tourID");
         	int stopid = (int) inputTripTableData.getValueAt(row,"tripID");
-        	int inbound = (int)inputTripTableData.getValueAt(row,"inbound");
+
+        	int inbound=0;
+        	String inbound_bool = inputTripTableData.getStringValueAt(row,"inbound");
+        	if (inbound_bool.equals("FALSE")) inbound = 0;
+        	else inbound=1;
+        	
          	int depPeriod = (int) inputTripTableData.getValueAt(row,"period");
         	float depTime = simulateExactTime(depPeriod);
         	int tour_mode = -9;
-
         	
-        	//TODO: doesn't handle sampling yet
         	float sRate = 1;
         	if(inputTripTableData.containsColumn("sampleRate"))
         		sRate = inputTripTableData.getValueAt(row,"sampleRate");
@@ -414,18 +414,20 @@ public class PersonTripManager {
            	
         	int tourid = (int) inputTripTableData.getValueAt(row,"tourID");
         	int stopid = (int) inputTripTableData.getValueAt(row,"tripID");
-        	int inbound = (int)inputTripTableData.getValueAt(row,"inbound");
+        	
+        	int inbound=0;
+        	String inbound_bool = inputTripTableData.getStringValueAt(row,"inbound");
+        	if (inbound_bool.equals("FALSE")) inbound = 0;
+        	else inbound=1;
+        	
          	int depPeriod = (int) inputTripTableData.getValueAt(row,"period");
         	float depTime = simulateExactTime(depPeriod);
         	int tour_mode = -9;
 
-        	
-        	//TODO: doesn't handle sampling yet
         	float sRate = 1;
         	if(inputTripTableData.containsColumn("sampleRate"))
         		sRate = inputTripTableData.getValueAt(row,"sampleRate");
         	
-          	
           	int avAvailable = 0;
           	if(inputTripTableData.containsColumn("avAvailable"))
           		avAvailable = (int) inputTripTableData.getValueAt(row,"avAvailable");
@@ -502,17 +504,14 @@ public class PersonTripManager {
            	
         	int tourid = default_id;
         	int stopid = (int) inputTripTableData.getValueAt(row,"id");
-        	int inbound = 0;
+        	int inbound = (int) inputTripTableData.getValueAt(row,"direction");;
          	int depPeriod = (int) inputTripTableData.getValueAt(row,"departTime");
         	float depTime = simulateExactTime(depPeriod);
         	int tour_mode = -9;
 
-        	
-        	//TODO: doesn't handle sampling yet
         	float sRate = 1;
         	if(inputTripTableData.containsColumn("sampleRate"))
-        		sRate = inputTripTableData.getValueAt(row,"sampleRate");
-        	
+        		sRate = inputTripTableData.getValueAt(row,"sampleRate");        	
           	
           	int avAvailable = 0;
           	if(inputTripTableData.containsColumn("av_avail"))
@@ -591,18 +590,20 @@ public class PersonTripManager {
            	
         	int tourid = (int) inputTripTableData.getValueAt(row,"tourID");;
         	int stopid = -4;
-        	int inbound = 0;
+
+        	int inbound=0;
+        	String inbound_bool = inputTripTableData.getStringValueAt(row,"inbound");
+        	if (inbound_bool.equals("FALSE")) inbound = 0;
+        	else inbound=1;
+
          	int depPeriod = (int) inputTripTableData.getValueAt(row,"period");
         	float depTime = simulateExactTime(depPeriod);
         	int tour_mode = -9;
 
-        	
-        	//TODO: doesn't handle sampling yet
         	float sRate = 1;
         	if(inputTripTableData.containsColumn("sampleRate"))
         		sRate = inputTripTableData.getValueAt(row,"sampleRate");
-        	
-          	
+        	          	
           	int avAvailable = 0;
           	if(inputTripTableData.containsColumn("av_avail"))
           		avAvailable = (int) inputTripTableData.getValueAt(row,"av_avail");
