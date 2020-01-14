@@ -303,6 +303,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipTransitSkimming = props["RunModel.skipTransitSkimming"]
         skipCoreABM = props["RunModel.skipCoreABM"]
         skipOtherSimulateModel = props["RunModel.skipOtherSimulateModel"]
+        skipMAASModel = props["RunModel.skipMAASModel"]
         skipCTM = props["RunModel.skipCTM"]
         skipEI = props["RunModel.skipEI"]
         skipExternal = props["RunModel.skipExternalExternal"]
@@ -344,6 +345,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         core_abm_files = [mode + name for name in core_abm_files for mode in travel_modes]
         smm_abm_files = ["AirportTrips*.omx", "CrossBorderTrips*.omx", "VisitorTrips*.omx"]
         smm_abm_files = [mode + name for name in smm_abm_files for mode in travel_modes]
+        maas_abm_files = ["EmptyAVTrips.omx", "TNCVehicleTrips*.omx"]
 
         relative_gap = props["convergence"]
         max_assign_iterations = 1000
@@ -461,7 +463,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         for iteration in range(startFromIteration - 1, end_iteration):
             msa_iteration = iteration + 1
             with _m.logbook_trace("Iteration %s" % msa_iteration):
-                if not skipCoreABM[iteration] or not skipOtherSimulateModel[iteration]:
+                if not skipCoreABM[iteration] or not skipOtherSimulateModel[iteration] or not skipMAASModel[iteration]:
                     self.run_proc("runMtxMgr.cmd", [drive, drive + path_no_drive], "Start matrix manager")
                     self.run_proc("runDriver.cmd", [drive, drive + path_no_drive], "Start JPPF Driver")
                     self.run_proc("StartHHAndNodes.cmd", [drive, path_no_drive],
@@ -510,6 +512,13 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         "runSandagAbm_SMM.cmd",
                         [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
                         "Java-Run airport model, visitor model, cross-border model", capture_output=True)
+                        
+                if not skipMAASModel[iteration]:
+                    self.remove_prev_iter_files(maas_abm_files, output_dir, iteration)
+                    self.run_proc(
+                        "runSandagAbm_MAAS.cmd",
+                        [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
+                        "Java-Run AV allocation model and TNC routing model", capture_output=True)
 
                 if not skipCTM[iteration]:
                     export_for_commercial_vehicle(output_dir, base_scenario)

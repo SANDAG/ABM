@@ -51,6 +51,9 @@ class PropertiesSetter(object):
     skipOtherSimulateModel_1 = _m.Attribute(bool)
     skipOtherSimulateModel_2 = _m.Attribute(bool)
     skipOtherSimulateModel_3 = _m.Attribute(bool)
+    skipMAASModel_1 = _m.Attribute(bool)
+    skipMAASModel_2 = _m.Attribute(bool)
+    skipMAASModel_3 = _m.Attribute(bool)
     skipCTM_1 = _m.Attribute(bool)
     skipCTM_2 = _m.Attribute(bool)
     skipCTM_3 = _m.Attribute(bool)
@@ -97,6 +100,9 @@ class PropertiesSetter(object):
     skipOtherSimulateModel = property(
         fget=lambda self: self._get_list_prop("skipOtherSimulateModel"),
         fset=lambda self, value: self._set_list_prop("skipOtherSimulateModel", value))
+    skipMAASModel = property(
+        fget=lambda self: self._get_list_prop("skipMAASModel"),
+        fset=lambda self, value: self._set_list_prop("skipMAASModel", value)) 
     skipCTM = property(
         fget=lambda self: self._get_list_prop("skipCTM"),
         fset=lambda self, value: self._set_list_prop("skipCTM", value))
@@ -118,7 +124,7 @@ class PropertiesSetter(object):
             "useLocalDrive", "skip4Ds",
             "startFromIteration", "skipInitialization", "deleteAllMatrices", "skipCopyWarmupTripTables", 
             "skipCopyBikeLogsum", "skipCopyWalkImpedance", "skipWalkLogsums", "skipBikeLogsums", "skipBuildNetwork", 
-            "skipHighwayAssignment", "skipTransitSkimming", "skipCoreABM", "skipOtherSimulateModel", "skipCTM", 
+            "skipHighwayAssignment", "skipTransitSkimming", "skipCoreABM", "skipOtherSimulateModel", "skipMAASModel","skipCTM", 
             "skipEI", "skipExternalExternal", "skipTruck", "skipTripTableCreation", "skipFinalHighwayAssignment", 
             "skipFinalTransitAssignment", "skipVisualizer", "skipDataExport", "skipDataLoadRequest", 
             "skipDeleteIntermediateFiles")
@@ -171,6 +177,7 @@ class PropertiesSetter(object):
             ("skipTransitSkimming",     "Skip transit skims"),
             ("skipCoreABM",             "Skip core ABM"),
             ("skipOtherSimulateModel",  "Skip other simulation model"),
+            ("skipMAASModel",           "Skip MAAS model"),
             ("skipCTM",                 "Skip commercial vehicle sub-model"),
             ("skipTruck",               "Skip truck sub-model"),
             ("skipEI",                  "Skip external-internal sub-model"),
@@ -299,6 +306,7 @@ class PropertiesSetter(object):
         self.skipTransitSkimming = props.get("RunModel.skipTransitSkimming", [False, False, False])
         self.skipCoreABM = props.get("RunModel.skipCoreABM", [False, False, False])
         self.skipOtherSimulateModel = props.get("RunModel.skipOtherSimulateModel", [False, False, False])
+        self.skipMAASModel = props.get("RunModel.skipMAASModel", [False, False, False])
         self.skipCTM = props.get("RunModel.skipCTM", [False, False, False])
         self.skipEI = props.get("RunModel.skipEI", [False, False, False])
         self.skipExternalExternal = props.get("RunModel.skipExternalExternal", [False, False, False])
@@ -332,6 +340,7 @@ class PropertiesSetter(object):
         props["RunModel.skipTransitSkimming"] = self.skipTransitSkimming
         props["RunModel.skipCoreABM"] = self.skipCoreABM
         props["RunModel.skipOtherSimulateModel"] = self.skipOtherSimulateModel
+        props["RunModel.skipMAASModel"] = self.skipMAASModel
         props["RunModel.skipCTM"] = self.skipCTM
         props["RunModel.skipEI"] = self.skipEI
         props["RunModel.skipExternalExternal"] = self.skipExternalExternal
