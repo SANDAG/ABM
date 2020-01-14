@@ -1097,7 +1097,7 @@ public class HouseholdAVAllocationManager {
 		    	if(trip.getAv_avail()==0)
 		    		itr.remove();
 		    	
-		    	if(trip.trip_mode>MaxAutoMode)
+		    	else if(trip.trip_mode>MaxAutoMode)
 		    		itr.remove();
 		    }
 		}
