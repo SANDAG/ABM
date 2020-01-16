@@ -719,7 +719,7 @@ public class TNCVehicleManager {
         			int occ = Math.min(tNCVehicleTrip.getPassengers(),3);
         			
         			float existingTrips = TNCTripMatrix[skimPeriod][occ].getValueAt(origTaz,destTaz);
-        			TNCTripMatrix[skimPeriod][occ].setValueAt(origTaz,destTaz,(existingTrips+1)*(1/sampleRate));
+        			TNCTripMatrix[skimPeriod][occ].setValueAt(origTaz,destTaz,existingTrips + (1*(1/sampleRate)));
         			
         			
         		}

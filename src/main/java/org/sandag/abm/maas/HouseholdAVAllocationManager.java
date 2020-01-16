@@ -834,7 +834,8 @@ public class HouseholdAVAllocationManager {
 					int destinationTaz = mazManager.getTaz(vehicleTrip.getDestMaz());
 					
 					float existingTrips = emptyVehicleTripMatrix[skimPeriod].getValueAt(originTaz, destinationTaz);
-					emptyVehicleTripMatrix[skimPeriod].setValueAt(originTaz, destinationTaz, (existingTrips+1) * (1/sampleRate));
+					emptyVehicleTripMatrix[skimPeriod].setValueAt(originTaz, destinationTaz, existingTrips + (1 * (1/sampleRate)));
+
 				}
 						
 			}
