@@ -207,7 +207,8 @@ def calculate_micromobility(output_file_key, mat, props, **cols):
     else:
         print("Overwriting %s with new calcs ..." % output_file)
         df[cols['target']] = df['minTime']
-        df.drop(columns=['genTime', 'minTime'])
+        #df.drop(columns=['genTime', 'minTime'])
+        df.drop(['genTime', 'minTime'], axis=1, inplace=True)
         df.to_csv(output_file, index=False)
 
 
