@@ -41,7 +41,9 @@ public class VisitorTripModeChoiceDMU
     protected int                      tourModeIsWalkTransit;
     protected int                      tourModeIsPNRTransit;
     protected int                      tourModeIsKNRTransit;
-    protected int                      tourModeIsTaxi;
+    protected int                      tourModeIsMaas;
+    protected int                      tourModeIsTNCTransit;
+    
 
     protected float                    hourlyParkingCostTourDest;
     protected float                    dailyParkingCostTourDest;
@@ -333,20 +335,20 @@ public class VisitorTripModeChoiceDMU
     }
 
     /**
-     * @return the tourModeIsTaxi
+     * @return the tourModeIsMaas
      */
-    public int getTourModeIsTaxi()
+    public int getTourModeIsMaas()
     {
-        return tourModeIsTaxi;
+        return tourModeIsMaas;
     }
 
     /**
-     * @param tourModeIsTaxi
-     *            the tourModeIsTaxi to set
+     * @param tourModeIsMaas
+     *            the tourModeIsMaas to set
      */
-    public void setTourModeIsTaxi(int tourModeIsTaxi)
+    public void setTourModeIsMaas(int tourModeIsMaas)
     {
-        this.tourModeIsTaxi = tourModeIsTaxi;
+        this.tourModeIsMaas = tourModeIsMaas;
     }
 
     /**
@@ -688,8 +690,9 @@ public class VisitorTripModeChoiceDMU
         methodIndexMap.put("getTourModeIsWalkTransit", 14);
         methodIndexMap.put("getTourModeIsPNRTransit", 15);
         methodIndexMap.put("getTourModeIsKNRTransit", 16);
-        methodIndexMap.put("getTourModeIsTaxi", 17);
-
+        methodIndexMap.put("getTourModeIsMaas", 17);
+        methodIndexMap.put("getTourModeIsTNCTransit", 18);
+        
         methodIndexMap.put("getHourlyParkingCostTourDest", 20);
         methodIndexMap.put("getDailyParkingCostTourDest", 21);
         methodIndexMap.put("getMonthlyParkingCostTourDest", 22);
@@ -777,9 +780,12 @@ public class VisitorTripModeChoiceDMU
            		returnValue = getTourModeIsKNRTransit();
         		break;
         	case 17:
-           		returnValue = getTourModeIsTaxi();
+           		returnValue = getTourModeIsMaas();
         		break;
-         	case 20:
+        	case 18:
+           		returnValue = getTourModeIsTNCTransit();
+        		break;
+        	case 20:
         		returnValue = getHourlyParkingCostTourDest();
         		break;
         	case 21:
@@ -865,5 +871,13 @@ public class VisitorTripModeChoiceDMU
     {
         throw new UnsupportedOperationException();
     }
+
+	public int getTourModeIsTNCTransit() {
+		return tourModeIsTNCTransit;
+	}
+
+	public void setTourModeIsTNCTransit(int tourModeIsTNCTransit) {
+		this.tourModeIsTNCTransit = tourModeIsTNCTransit;
+	}
 
 }
