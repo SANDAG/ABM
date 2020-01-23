@@ -24,10 +24,10 @@ public class TNCVehicleTrip {
 	protected int passengers;
 	protected int startPeriod;
 	protected int endPeriod;
-	protected ArrayList<Integer> pickupIdsAtOrigin;
-	protected ArrayList<Integer> dropoffIdsAtOrigin;
-	protected ArrayList<Integer> pickupIdsAtDestination;
-	protected ArrayList<Integer> dropoffIdsAtDestination;
+	protected ArrayList<String> pickupIdsAtOrigin;
+	protected ArrayList<String> dropoffIdsAtOrigin;
+	protected ArrayList<String> pickupIdsAtDestination;
+	protected ArrayList<String> dropoffIdsAtDestination;
 	protected Purpose originPurpose;
 	protected Purpose destinationPurpose;
 	protected float distance;
@@ -39,20 +39,20 @@ public class TNCVehicleTrip {
 
 		this.id=id;
 		this.tNCVehicle = tNCVehicle;
-		pickupIdsAtOrigin = new ArrayList<Integer>();
-		dropoffIdsAtOrigin = new ArrayList<Integer>();
-		pickupIdsAtDestination = new ArrayList<Integer>();
-		dropoffIdsAtDestination = new ArrayList<Integer>();
+		pickupIdsAtOrigin = new ArrayList<String>();
+		dropoffIdsAtOrigin = new ArrayList<String>();
+		pickupIdsAtDestination = new ArrayList<String>();
+		dropoffIdsAtDestination = new ArrayList<String>();
 		originPurpose=Purpose.HOME;
 		destinationPurpose=Purpose.HOME;
 		
 	}
 
-	public ArrayList<Integer> getPickupIdsAtOrigin() {
+	public ArrayList<String> getPickupIdsAtOrigin() {
 		return pickupIdsAtOrigin;
 	}
 
-	public void setPickupIdsAtOrigin(ArrayList<Integer> pickupIdsAtOrigin) {
+	public void setPickupIdsAtOrigin(ArrayList<String> pickupIdsAtOrigin) {
 		this.pickupIdsAtOrigin = pickupIdsAtOrigin;
 		
 		if(pickupIdsAtOrigin.isEmpty())
@@ -64,7 +64,7 @@ public class TNCVehicleTrip {
 			originPurpose = Purpose.PICKUP_ONLY;
 	}
 
-	public void addPickupIdsAtOrigin(ArrayList<Integer> pickupIdsAtOrigin) {
+	public void addPickupIdsAtOrigin(ArrayList<String> pickupIdsAtOrigin) {
 		this.pickupIdsAtOrigin.addAll(pickupIdsAtOrigin);
 		
 		if(pickupIdsAtOrigin.isEmpty())
@@ -76,7 +76,7 @@ public class TNCVehicleTrip {
 			originPurpose = Purpose.PICKUP_ONLY;
 
 	}
-	public void addPickupIdsAtDestination(ArrayList<Integer> pickupIdsAtDestination) {
+	public void addPickupIdsAtDestination(ArrayList<String> pickupIdsAtDestination) {
 		this.pickupIdsAtDestination.addAll(pickupIdsAtDestination);
 		
 		if(pickupIdsAtDestination.isEmpty())
@@ -88,11 +88,11 @@ public class TNCVehicleTrip {
 			destinationPurpose = Purpose.PICKUP_ONLY;
 
 	}
-	public ArrayList<Integer> getDropoffIdsAtOrigin() {
+	public ArrayList<String> getDropoffIdsAtOrigin() {
 		return dropoffIdsAtOrigin;
 	}
 
-	public void setDropoffIdsAtOrigin(ArrayList<Integer> dropoffIdsAtOrigin) {
+	public void setDropoffIdsAtOrigin(ArrayList<String> dropoffIdsAtOrigin) {
 		this.dropoffIdsAtOrigin = dropoffIdsAtOrigin;
 		
 		if(dropoffIdsAtOrigin.isEmpty())
@@ -105,7 +105,7 @@ public class TNCVehicleTrip {
 
 	}
 
-	public void addDropoffIdsAtOrigin(ArrayList<Integer> dropoffIdsAtOrigin) {
+	public void addDropoffIdsAtOrigin(ArrayList<String> dropoffIdsAtOrigin) {
 		this.dropoffIdsAtOrigin.addAll(dropoffIdsAtOrigin);
 		
 		if(dropoffIdsAtOrigin.isEmpty())
@@ -117,7 +117,7 @@ public class TNCVehicleTrip {
 			originPurpose = Purpose.DROPOFF_ONLY;
 
 	}
-	public void addDropoffIdsAtDestination(ArrayList<Integer> dropoffIdsAtDestination) {
+	public void addDropoffIdsAtDestination(ArrayList<String> dropoffIdsAtDestination) {
 		this.dropoffIdsAtDestination.addAll(dropoffIdsAtDestination);
 		
 		if(dropoffIdsAtDestination.isEmpty())
@@ -129,11 +129,11 @@ public class TNCVehicleTrip {
 			destinationPurpose = Purpose.DROPOFF_ONLY;
 
 	}
-	public ArrayList<Integer> getPickupIdsAtDestination() {
+	public ArrayList<String> getPickupIdsAtDestination() {
 		return pickupIdsAtDestination;
 	}
 
-	public void setPickupIdsAtDestination(ArrayList<Integer> pickupIdsAtDestination) {
+	public void setPickupIdsAtDestination(ArrayList<String> pickupIdsAtDestination) {
 		this.pickupIdsAtDestination = pickupIdsAtDestination;
 		
 		if(pickupIdsAtDestination.isEmpty())
@@ -146,12 +146,12 @@ public class TNCVehicleTrip {
 
 	}
 
-	public ArrayList<Integer> getDropoffIdsAtDestination() {
+	public ArrayList<String> getDropoffIdsAtDestination() {
 		return dropoffIdsAtDestination;
 	}
 
 	public void setDropoffIdsAtDestination(
-			ArrayList<Integer> dropoffIdsAtDestination) {
+			ArrayList<String> dropoffIdsAtDestination) {
 		this.dropoffIdsAtDestination = dropoffIdsAtDestination;
 		
 		if(dropoffIdsAtDestination.isEmpty())
@@ -166,7 +166,7 @@ public class TNCVehicleTrip {
 
 
 	
-	public void addPickupAtOrigin(int id){
+	public void addPickupAtOrigin(String id){
 		pickupIdsAtOrigin.add(id);
 		
 		if(originPurpose==Purpose.DROPOFF_ONLY)
@@ -175,7 +175,7 @@ public class TNCVehicleTrip {
 			originPurpose = Purpose.PICKUP_ONLY;
 	}
 
-	public void addPickupAtDestination(int id){
+	public void addPickupAtDestination(String id){
 		pickupIdsAtDestination.add(id);
 
 		if(destinationPurpose==Purpose.DROPOFF_ONLY)
@@ -184,7 +184,7 @@ public class TNCVehicleTrip {
 			destinationPurpose = Purpose.PICKUP_ONLY;
 	}
 
-	public void addDropoffAtOrigin(int id){
+	public void addDropoffAtOrigin(String id){
 		dropoffIdsAtOrigin.add(id);
 	
 		if(originPurpose==Purpose.PICKUP_ONLY)
@@ -195,7 +195,7 @@ public class TNCVehicleTrip {
 	
 	}
 
-	public void addDropoffAtDestination(int id){
+	public void addDropoffAtDestination(String id){
 		dropoffIdsAtDestination.add(id);
 
 		if(destinationPurpose==Purpose.PICKUP_ONLY)
@@ -317,19 +317,19 @@ public class TNCVehicleTrip {
 		String dropoffIdsAtDestinationString = "";
 		
 		if(pickupIdsAtOrigin.size()>0)
-			for(int pid : pickupIdsAtOrigin)
+			for(String pid : pickupIdsAtOrigin)
 				pickupIdsAtOriginString += (pid + " ");
 		
 		if(dropoffIdsAtOrigin.size()>0)
-			for(int pid : dropoffIdsAtOrigin)
+			for(String pid : dropoffIdsAtOrigin)
 				dropoffIdsAtOriginString += (pid + " ");
 
 		if(pickupIdsAtDestination.size()>0)
-			for(int pid : pickupIdsAtDestination)
+			for(String pid : pickupIdsAtDestination)
 				pickupIdsAtDestinationString += (pid + " ");
 
 		if(dropoffIdsAtDestination.size()>0)
-			for(int pid : dropoffIdsAtDestination)
+			for(String pid : dropoffIdsAtDestination)
 				dropoffIdsAtDestinationString += (pid + " ");
 
 		String record = new String(
@@ -361,19 +361,19 @@ public class TNCVehicleTrip {
 		String dropoffIdsAtDestinationString = "";
 		
 		if(pickupIdsAtOrigin.size()>0)
-			for(int pid : pickupIdsAtOrigin)
+			for(String pid : pickupIdsAtOrigin)
 				pickupIdsAtOriginString += (pid + " ");
 		
 		if(dropoffIdsAtOrigin.size()>0)
-			for(int pid : dropoffIdsAtOrigin)
+			for(String pid : dropoffIdsAtOrigin)
 				dropoffIdsAtOriginString += (pid + " ");
 
 		if(pickupIdsAtDestination.size()>0)
-			for(int pid : pickupIdsAtDestination)
+			for(String pid : pickupIdsAtDestination)
 				pickupIdsAtDestinationString += (pid + " ");
 
 		if(dropoffIdsAtDestination.size()>0)
-			for(int pid : dropoffIdsAtDestination)
+			for(String pid : dropoffIdsAtDestination)
 				dropoffIdsAtDestinationString += (pid + " ");
 
 		logger.info("*********************************************************");

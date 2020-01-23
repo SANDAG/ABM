@@ -147,7 +147,7 @@ public class VisitorMicromobilityChoiceModel
 
 	            //set destination to closest mgra to alighting TAP so that Z can be used to find access to mode in mgra data file in UEC
 	            int closestMazToAlightTap = mgraDataManager.getClosestMgra(trip.getAlightTap());
-	            mmDmuObject.setDmuIndexValues(tour.getID(), originMaz, originMaz, closestMazToAlightTap);
+	            mmDmuObject.setDmuIndexValues(tour.getID(), closestMazToAlightTap, closestMazToAlightTap, closestMazToAlightTap);
 	            
 	        	// compute utilities and choose micromobility choice alternative.
 	            logsum = (float) mmModel.computeUtilities(mmDmuObject, mmDmuObject.getDmuIndexValues());
@@ -182,7 +182,7 @@ public class VisitorMicromobilityChoiceModel
         		   walkTime = mgraDataManager.getMgraToTapWalkTime(destMaz, tapPosition);
         		   //set destination to closest mgra to alighting TAP so that Z can be used to find access to mode in mgra data file in UEC
    	            	int closestMazToAlightTap = mgraDataManager.getClosestMgra(trip.getAlightTap());
-   	            	mmDmuObject.setDmuIndexValues(tour.getID(), originMaz, originMaz, closestMazToAlightTap);
+   	            	mmDmuObject.setDmuIndexValues(tour.getID(), closestMazToAlightTap, closestMazToAlightTap, closestMazToAlightTap);
         		}
 	            mmDmuObject.setWalkTime(walkTime);
 	
