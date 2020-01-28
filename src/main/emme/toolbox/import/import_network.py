@@ -1351,6 +1351,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 link["@time_inter" + time] = link["time_inter" + src_time]
                 link["@toll" + time] = link["toll" + src_time]
 
+        self.apply_i15_tolls(network)
+
         off_peak_factor_file = FILE_NAMES["OFF_PEAK"]
         if os.path.exists(_join(self.source, off_peak_factor_file)):
             msg = "Adjusting off-peak tolls based on factors from %s" % off_peak_factor_file
@@ -1435,7 +1437,6 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 
         self._log.append({"type": "text", "content": "Calculation and time period expansion of costs, tolls, capacities and times complete"})
 
-        self.apply_i15_tolls(network)
         # calculate static reliability
         for link in network.links():
             for time in time_periods:
