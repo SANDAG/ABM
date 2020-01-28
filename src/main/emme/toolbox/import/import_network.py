@@ -37,8 +37,8 @@
 #    timexfer_period.csv: table of timed transfer pairs of lines, by period
 #    mode5tod.dbf: global (per-mode) transit cost and perception attributes
 #    special_fares.txt: table listing special fares in terms of boarding and incremental in-vehicle costs. 
-#    off_peak_toll_factors.csv (optional): specifies factors to calculate the toll for EA, MD, and EV periods from the OP toll input for specified facilities
-#    
+#    off_peak_toll_factors.csv (optional): factors to calculate the toll for EA, MD, and EV periods from the OP toll input for specified facilities
+#    vehicle_class_toll_factors.csv (optional): factors to adjust the toll cost by facility name and class (DA, S2, S3, TRK_L, TRK_M, TRK_H)
 #
 #
 # Script example:
@@ -84,6 +84,7 @@ dem_utils = _m.Modeller().module("sandag.utilities.demand")
 FILE_NAMES = {
     "FARES": "special_fares.txt",
     "OFF_PEAK": "off_peak_toll_factors.csv",
+    "VEHICLE_CLASS": "vehicle_class_toll_factors.csv"
 }
 
 
@@ -129,9 +130,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         generated from TCOVED. 
         The timed transfer is stored in data tables with the suffix "_timed_xfers_<i>period</i>".
         <br>
-        <div style="text-align:left">
-        The following files are used:
         <br>
+        <div style="text-align:left">
+            The following files are used:
             <ul>
                 <li>hwycov.e00</li>
                 <li>LINKTYPETURNS.DBF</li>
@@ -300,7 +301,9 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         }
         time_period_attrs = OrderedDict([
             ("@cost_auto",         "toll + cost autos"),
-            ("@cost_hov",          "toll (non-mngd) + cost HOV"),
+            ("@cost_hov2",          "toll (non-mngd) + cost HOV2"),
+            ("@cost_hov3",          "toll (non-mngd) + cost HOV3+"),
+            ("@cost_lgt_truck",    "toll + cost light trucks"),
             ("@cost_med_truck",    "toll + cost medium trucks"),
             ("@cost_hvy_truck",    "toll + cost heavy trucks"),
             ("@cycle",             "cycle length (minutes)"),
@@ -738,7 +741,6 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         emme_id_name = forward_attr_map[arc_id_name]
         dir_name =  forward_attr_map["DIR"]
         reverse_dir_map = {1:3, 3:1, 2:4, 4:2, 0:0}
-        split_link = 0
         new_node_id = max(data.values("AN").max(), data.values("BN").max()) + 1
         if arc_filter is None:
             arc_filter = lambda arc : True
@@ -757,12 +759,12 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             j_node = get_node(network, arc['BN'], coordinates[-1], centroid_callback(arc, "BN"))
             existing_link = network.link(i_node, j_node)
             if existing_link:
-                self._log.append({"type": "text",
-                    "content": "Duplicate link between AN %s and BN %s. Link IDs %s and %s." % 
-                    (arc["AN"], arc["BN"], existing_link[emme_id_name], arc[arc_id_name])})
+                msg = "Duplicate link between AN %s and BN %s. Link IDs %s and %s." % \
+                    (arc["AN"], arc["BN"], existing_link[emme_id_name], arc[arc_id_name])
+                self._log.append({"type": "text", "content": msg})
+                self._error.append(msg)
                 self._split_link(network, i_node, j_node, new_node_id)
                 new_node_id += 1
-                split_link += 1
 
             modes = mode_callback(arc)
             link = network.create_link(i_node, j_node, modes)
@@ -1369,8 +1371,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                             link["@toll_ev"] = link["@toll_ev"] * ev_factor
 
                     msg = "Facility name '%s' matched to %s links." % (name, count)
-                    msg += " Adjusting off-peak period tolls EA: %s, MD: %s, EV: %s" % (ea_factor, md_factor, ev_factor)
-                    self._log.append({"type": "text2", "content": msg})
+                    msg += " Adjusted off-peak period tolls EA: %s, MD: %s, EV: %s" % (ea_factor, md_factor, ev_factor)
                     self._log.append({"type": "text2", "content": msg})
 
         for link in network.links():
@@ -1385,17 +1386,52 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 else:
                     link["@capacity_inter" + time] = 999999
 
+        vehicle_class_factor_file = FILE_NAMES["VEHICLE_CLASS"]
+        facility_factors = {}
+        if os.path.exists(_join(self.source, vehicle_class_factor_file)):
+            msg = "Adjusting tolls based on factors from %s" % vehicle_class_factor_file
+            self._log.append({"type": "text", "content": msg})
+            # NOTE: CSV Reader sets the field names to UPPERCASE for consistency
+            with gen_utils.CSVReader(_join(self.source, vehicle_class_factor_file)) as r:
+                for row in r:
+                    name = row.pop("FACILITY_NAME")
+                    facility_factors[name] = {
+                        "DA": float(row["DA_FACTOR"]),
+                        "S2": float(row["S2_FACTOR"]),
+                        "S3": float(row["S3_FACTOR"]),
+                        "TRK_L": float(row["TRK_L_FACTOR"]),
+                        "TRK_M": float(row["TRK_M_FACTOR"]),
+                        "TRK_H": float(row["TRK_H_FACTOR"]),
+                        "count": 0
+                    }
+
+        for link in network.links():
+            factor = {"DA": 1, "S2": 1, "S3": 1, "TRK_L": 1, "TRK_M": 1, "TRK_H": 1}
+            for name, class_factors in facility_factors.iteritems():
+                if name in link["#name"]:
+                    factor = class_factors
+                    factor["count"] += 1
+                    break
             for time in time_periods:
-                link["@cost_auto" + time] = link["@toll" + time] + link["@cost_operating"]                
-                if link["@lane_restriction"] in [2, 3]:
+                link["@cost_auto" + time] = factor["DA"] * link["@toll" + time] + link["@cost_operating"]
+                if link["@lane_restriction"] == 2:
                     # managed lanes, toll free for HOV
-                    # NOTE: if scenarios with separate HOV2 and HOV3 facilities 
-                    #       will need to expand the HOV cost attribute
-                    link["@cost_hov" + time] = link["@cost_operating"]
+                    link["@cost_hov2" + time] = link["@cost_operating"]
+                    link["@cost_hov3" + time] = link["@cost_operating"]
+                if link["@lane_restriction"] == 3:
+                    link["@cost_hov2" + time] = factor["S2"] * link["@toll" + time] + link["@cost_operating"]
+                    link["@cost_hov3" + time] = link["@cost_operating"]
                 else:
-                    link["@cost_hov" + time] = link["@cost_auto" + time]
-                link["@cost_med_truck" + time] = 1.03 * link["@toll" + time] + link["@cost_operating"]
-                link["@cost_hvy_truck" + time] = 2.33 * link["@toll" + time] + link["@cost_operating"]
+                    link["@cost_hov2" + time] = factor["S2"] * link["@toll" + time] + link["@cost_operating"]
+                    link["@cost_hov3" + time] = factor["S3"] * link["@toll" + time] + link["@cost_operating"]
+                link["@cost_lgt_truck" + time] = factor["TRK_L"] * link["@toll" + time] + link["@cost_operating"]
+                link["@cost_med_truck" + time] = 1.03 * factor["TRK_M"] * link["@toll" + time] + link["@cost_operating"]
+                link["@cost_hvy_truck" + time] = 2.33 * factor["TRK_H"] * link["@toll" + time] + link["@cost_operating"]
+
+        for name, class_factors in facility_factors.iteritems():
+            msg = "Facility name '%s' matched to %s links." % (name, class_factors.pop("count"))
+            msg += " Adjusting tolls by class %s" % (class_factors)
+            self._log.append({"type": "text2", "content": msg})
                 
         self._log.append({"type": "text", "content": "Calculation and time period expansion of costs, tolls, capacities and times complete"})
 
@@ -1750,8 +1786,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             approach_attrs.extend([p_attr + p for p in periods])
         capacity_inter = ["@capacity_inter_" + p for p in periods]
         cost_attrs = ["@cost_operating"]
-        for p_attr in ["@cost_med_truck_", "@cost_hvy_truck_", "@cost_hov_", "@cost_auto_", 
-                       "@time_link_", "@trtime_link_", "@toll_"]:
+        for p_attr in ["@cost_lgt_truck_", "@cost_med_truck_", "@cost_hvy_truck_", "@cost_hov2_",
+                       "@cost_hov3_", "@cost_auto_", "@time_link_", "@trtime_link_", "@toll_"]:
             cost_attrs.extend([p_attr + p for p in periods])
         approach_attrs = [a for a in approach_attrs if a in network.attributes("LINK")]
         capacity_inter = [a for a in capacity_inter if a in network.attributes("LINK")]
