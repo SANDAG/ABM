@@ -929,13 +929,13 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         modes = class_mode_map[class_name]
                         if is_avail == 1 and not modes.issubset(link.modes):
                             link.modes |= modes
-                            changes["added " + class_name] += 1
+                            changes["added %s to" % class_name] += 1
                         elif is_avail == -1 and modes.issubset(link.modes):
                             link.modes -= modes
-                            changes[class_name + " removed"] += 1
+                            changes["removed %s from" % class_name] += 1
             report.append("<div style='margin-left:20px'><ul>")
             for x in changes.iteritems():
-                report.append("<li>%s to %s links</li>" % x)
+                report.append("<li>%s %s links</li>" % x)
             report.append("</div></ul>")
         scenario.publish_network(network)
 
