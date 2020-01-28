@@ -47,6 +47,14 @@ public class PersonTripManager {
 	protected static final String ModesToKeepProperty = "Maas.RoutingModel.Modes";
 	protected static final String SharedEligibleProperty = "Maas.RoutingModel.SharedEligible";	
 	protected static final String MaxWalkDistance = "Maas.RoutingModel.maxWalkDistance";
+	
+	protected static final String MexResTripDataFileProperty ="crossBorder.trip.output.file";
+	protected static final String VisitorTripDataFileProperty ="visitor.trip.output.file";
+	protected static final String AirportSANTripDataFileProperty ="airport.SAN.output.file";
+	protected static final String AirportCBXTripDataFileProperty ="airport.CBX.output.file";
+	protected static final String IETripDataFileProperty ="internalExternal.trip.output.file";
+	
+	
 	/**
 	 * Constructor.
 	 * 
@@ -128,29 +136,67 @@ public class PersonTripManager {
 
         //start with individual trips
         TableDataSet indivTripDataSet = readTableData(indivTripFile);
-        personTripMap = readTripList(personTripMap, indivTripDataSet, false);
-        int individualPersonTrips=personTripMap.size();
+        personTripMap = readResidentTripList(personTripMap, indivTripDataSet, false);
+        int tripsSoFar=personTripMap.size();
         
-        logger.info("Read "+individualPersonTrips+" individual person trips");
+        logger.info("Read "+tripsSoFar+" individual person trips");
         
         //now read joint trip data
         TableDataSet jointTripDataSet = readTableData(jointTripFile);
-        personTripMap = readTripList(personTripMap, jointTripDataSet, true);
-        int jointPersonTrips = personTripMap.size() - individualPersonTrips;
+        personTripMap = readResidentTripList(personTripMap, jointTripDataSet, true);
         
-        logger.info("Read "+jointPersonTrips+" joint person trips");
-        logger.info("Read "+personTripMap.size()+" total person trips");
+        logger.info("Read "+(personTripMap.size()-tripsSoFar)+" joint person trips");
+        tripsSoFar=personTripMap.size();
+        
+
+        String mexicanResidentTripFile = directory
+                + Util.getStringValueFromPropertyMap(propertyMap, MexResTripDataFileProperty);
+        TableDataSet mexicanResidentTripDataSet = readTableData(mexicanResidentTripFile);
+        personTripMap = readMexicanResidentTripList(personTripMap, mexicanResidentTripDataSet);
+        logger.info("Read "+(personTripMap.size()-tripsSoFar)+" mexican resident person trips");
+        tripsSoFar=personTripMap.size();
+    	
+        
+        String visitorTripFile = directory
+                + Util.getStringValueFromPropertyMap(propertyMap, VisitorTripDataFileProperty);
+        TableDataSet visitorTripDataSet = readTableData(visitorTripFile);
+        personTripMap = readVisitorTripList(personTripMap, visitorTripDataSet);
+        logger.info("Read "+(personTripMap.size()-tripsSoFar)+" visitor person trips");
+        tripsSoFar=personTripMap.size();
+
+        String airportSANTripFile = directory
+                + Util.getStringValueFromPropertyMap(propertyMap, AirportSANTripDataFileProperty);
+        TableDataSet airportSANTripDataSet = readTableData(airportSANTripFile);
+        personTripMap = readAirportTripList(personTripMap, airportSANTripDataSet, -6,"SAN");
+        logger.info("Read "+(personTripMap.size()-tripsSoFar)+" SAN airport person trips");
+        tripsSoFar=personTripMap.size();
+
+        String airportCBXTripFile = directory
+                + Util.getStringValueFromPropertyMap(propertyMap, AirportCBXTripDataFileProperty);
+        TableDataSet airportCBXTripDataSet = readTableData(airportCBXTripFile);
+        personTripMap = readAirportTripList(personTripMap, airportCBXTripDataSet, -5,"CBX");
+        logger.info("Read "+(personTripMap.size()-tripsSoFar)+" CBX airport person trips");
+        tripsSoFar=personTripMap.size();
+
+        String ieTripFile = directory
+                + Util.getStringValueFromPropertyMap(propertyMap, IETripDataFileProperty);
+        TableDataSet ieTripDataSet = readTableData(ieTripFile);
+        personTripMap = readIETripList(personTripMap, ieTripDataSet);
+        logger.info("Read "+(personTripMap.size()-tripsSoFar)+" IE person trips");
+        tripsSoFar=personTripMap.size();
+
+        logger.info("Read "+personTripMap.size()+" total person trips");	
         
 	}
 	
 	/**
-	 * Read the trip list in the TableDataSet. 
+	 * Read the CTRAMP trip list in the TableDataSet. 
 	 * 
 	 * @param personTripList A HashMap of PersonTrips. If null will be instantiated in this method.
 	 * @param inputTripTableData The TableDataSet containing the CT-RAMP output trip file.
 	 * @param jointTripData A boolean indicating whether the data is for individual or joint trips.
 	 */
-	public HashMap<Integer, PersonTrip> readTripList(HashMap<Integer, PersonTrip> personTripMap, TableDataSet inputTripTableData, boolean jointTripData){
+	public HashMap<Integer, PersonTrip> readResidentTripList(HashMap<Integer, PersonTrip> personTripMap, TableDataSet inputTripTableData, boolean jointTripData){
 		
 		if(personTripMap==null)
 			personTripMap = new HashMap<Integer, PersonTrip>();
@@ -166,8 +212,8 @@ public class PersonTripManager {
         	if(rideShareEligibleModes[mode]==1)
         		rideShare=true;
         	
-         	int oMaz = (int) inputTripTableData.getValueAt(row,"orig_maz");
-        	int dMaz = (int) inputTripTableData.getValueAt(row,"dest_maz");
+         	int oMaz = (int) inputTripTableData.getValueAt(row,"orig_mgra");
+        	int dMaz = (int) inputTripTableData.getValueAt(row,"dest_mgra");
         	
         	int oTaz = mgraManager.getTaz(oMaz);
         	int dTaz = mgraManager.getTaz(dMaz);
@@ -181,24 +227,26 @@ public class PersonTripManager {
            	long hhid = (long) inputTripTableData.getValueAt(row,"hh_id");	
            	long personId=-1;
            	int personNumber=-1;
+           	String uniqueID=null;
+           	int tourid = (int) inputTripTableData.getValueAt(row,"tour_id");
+        	int stopid = (int) inputTripTableData.getValueAt(row,"stop_id");
+        	int inbound = (int)inputTripTableData.getValueAt(row,"inbound");
+        	String purpose =inputTripTableData.getStringValueAt(row, "tour_purpose");
+        	String purpAbb = purpose.substring(0, 3);
            	if(jointTripData==false){
            		personId = (long) inputTripTableData.getValueAt(row,"person_id");
            		personNumber = (int) inputTripTableData.getValueAt(row,"person_num");
-           		
+           		uniqueID=new String("I_"+personId+"_"+purpAbb+"_"+tourid+"_"+inbound+"_"+stopid);
+           	}else {
+           		uniqueID=new String("J_"+hhid+"_"+purpAbb+"_"+tourid+"_"+inbound+"_"+stopid);
            	}
-        	int tourid = (int) inputTripTableData.getValueAt(row,"tour_id");
-        	int stopid = (int) inputTripTableData.getValueAt(row,"stop_id");
-        	int inbound = (int)inputTripTableData.getValueAt(row,"inbound");
          	int depPeriod = (int) inputTripTableData.getValueAt(row,"stop_period");
         	float depTime = simulateExactTime(depPeriod);
         	int tour_mode = (int)inputTripTableData.getValueAt(row,"tour_mode");
 
-        	
-        	//TODO: doesn't handle sampling yet
         	float sRate = 1;
         	if(inputTripTableData.containsColumn("sampleRate"))
-        		sRate = inputTripTableData.getValueAt(row,"sampleRate");
-        	
+        		sRate = inputTripTableData.getValueAt(row,"sampleRate");        	
           	
           	int avAvailable = 0;
           	if(inputTripTableData.containsColumn("avAvailable"))
@@ -214,26 +262,447 @@ public class PersonTripManager {
          	if(inputTripTableData.containsColumn("trip_dist"))
          		distance = inputTripTableData.getValueAt(row, "trip_dist");
         	
-        	
-        	int num_participants=-1;
+        	int set = (int)inputTripTableData.getValueAt(row,"set"); 
+            
+        	//joint trips need to be replicated
+        	int num_participants=1;
         	if(jointTripData){
         		num_participants = (int) inputTripTableData.getValueAt(row,"num_participants");
         	}
-        	int set = (int)inputTripTableData.getValueAt(row,"set"); 
         	
-       		PersonTrip personTrip = new PersonTrip(idNumber,hhid,personId,personNumber,tourid,stopid,inbound,(jointTripData?1:0),oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set,rideShare);
+       		PersonTrip personTrip = new PersonTrip(uniqueID,hhid,personId,personNumber,tourid,stopid,inbound,(jointTripData?1:0),oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set,rideShare);
        		personTrip.setAvAvailable((byte) avAvailable);
-       		personTrip.setNumberParticipants(num_participants);
-       		if(num_participants>-1)
+     		if(num_participants>1) {
        			personTrip.setJoint(1);
+         		personTrip.setUniqueId(uniqueID+"_1");
+         	}
        		personTripMap.put(idNumber, personTrip);
        		
        		//replicate joint trips
        		if(num_participants>1)
        			for(int i=2;i<=num_participants;++i){
        	        	++idNumber;
-       	        	personTripMap.put(idNumber, personTrip);
+       	        	PersonTrip newTrip = null;
+       	        	try {
+       	        		newTrip = (PersonTrip) personTrip.clone();
+       	        	}catch(Exception e) {
+       	        		
+       	        		logger.fatal("Error attempting to clone joint trip object "+uniqueID);
+       	        		throw new RuntimeException(e);
+       	        	}
+       	        	newTrip.setUniqueId(uniqueID+"_"+i);
+             	    personTripMap.put(idNumber, newTrip);
        			}
+        }
+         
+         return personTripMap;
+ 	}
+	
+	
+	/**
+	 * Read the visitor trip list in the TableDataSet. 
+	 * 
+	 * @param personTripList A HashMap of PersonTrips. If null will be instantiated in this method.
+	 * @param inputTripTableData The TableDataSet containing the visitor output trip file.
+	 */
+	public HashMap<Integer, PersonTrip> readVisitorTripList(HashMap<Integer, PersonTrip> personTripMap, TableDataSet inputTripTableData){
+		
+		if(personTripMap==null)
+			personTripMap = new HashMap<Integer, PersonTrip>();
+		
+         for(int row = 1; row <= inputTripTableData.getRowCount();++row){
+        	
+        	
+           	int mode = (int) inputTripTableData.getValueAt(row,"tripMode");
+        	if(modesToKeep[mode]!=1)
+        		continue;
+        	
+        	boolean rideShare=false;
+        	if(rideShareEligibleModes[mode]==1)
+        		rideShare=true;
+        	
+         	int oMaz = (int) inputTripTableData.getValueAt(row,"originMGRA");
+        	int dMaz = (int) inputTripTableData.getValueAt(row,"destinationMGRA");
+        	
+        	int oTaz = mgraManager.getTaz(oMaz);
+        	int dTaz = mgraManager.getTaz(dMaz);
+        	
+        	if((oTaz<minTaz) || (dTaz<minTaz))
+        		continue;
+
+        	++idNumber;
+        	
+        	
+           	long hhid = -9;	
+           	long personId=-9;
+           	int personNumber=-9;
+           	
+        	int tourid = (int) inputTripTableData.getValueAt(row,"tourID");
+        	int stopid = (int) inputTripTableData.getValueAt(row,"tripID");
+
+        	int inbound=0;
+        	String inbound_bool = inputTripTableData.getStringValueAt(row,"inbound");
+        	if (inbound_bool.equals("FALSE")) inbound = 0;
+        	else inbound=1;
+        	
+         	int depPeriod = (int) inputTripTableData.getValueAt(row,"period");
+        	float depTime = simulateExactTime(depPeriod);
+        	int tour_mode = -9;
+        	
+        	float sRate = 1;
+        	if(inputTripTableData.containsColumn("sampleRate"))
+        		sRate = inputTripTableData.getValueAt(row,"sampleRate");
+        	
+          	
+          	int avAvailable = 0;
+          	if(inputTripTableData.containsColumn("avAvailable"))
+          		avAvailable = (int) inputTripTableData.getValueAt(row,"avAvailable");
+        	
+        	int boardingTap = (int) inputTripTableData.getValueAt(row,"boardingTap");  
+        	int alightingTap = (int) inputTripTableData.getValueAt(row,"alightingTap");  
+        	String tour_purpose	= "null";
+        	String orig_purpose	= inputTripTableData.getStringValueAt(row, "originPurp");
+        	String dest_purpose = inputTripTableData.getStringValueAt(row, "destPurp");
+        	
+        	float distance = 0;
+         	if(inputTripTableData.containsColumn("trip_dist"))
+         		distance = inputTripTableData.getValueAt(row, "trip_dist");
+        	
+        	
+        	int num_participants = (int) inputTripTableData.getValueAt(row,"partySize");
+        	
+        	int set = (int)inputTripTableData.getValueAt(row,"set"); 
+       		String uniqueID=new String("V_"+tourid+"_"+stopid);
+
+       		PersonTrip personTrip = new PersonTrip(uniqueID,hhid,personId,personNumber,tourid,stopid,inbound,0,oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set,rideShare);
+       		personTrip.setAvAvailable((byte) avAvailable);
+       		if(num_participants>1) {
+       			personTrip.setJoint(1);
+         		personTrip.setUniqueId(uniqueID+"_1");
+         	}
+       		personTripMap.put(idNumber, personTrip);
+       		
+      		//replicate joint trips
+       		if(num_participants>1)
+       			for(int i=2;i<=num_participants;++i){
+       	        	++idNumber;
+       	        	PersonTrip newTrip = null;
+       	        	try {
+       	        		newTrip = (PersonTrip) personTrip.clone();
+       	        	}catch(Exception e) {
+       	        		
+       	        		logger.fatal("Error attempting to clone joint trip object "+uniqueID);
+       	        		throw new RuntimeException(e);
+       	        	}
+       	        	newTrip.setUniqueId(uniqueID+"_"+i);
+             	    personTripMap.put(idNumber, newTrip);
+       			}
+       
+        }
+         
+         return personTripMap;
+ 	}
+
+	/**
+	 * Read the Mexican resident trip list in the TableDataSet. 
+	 * 
+	 * @param personTripList A HashMap of PersonTrips. If null will be instantiated in this method.
+	 * @param inputTripTableData The TableDataSet containing the visitor output trip file.
+	 */
+	public HashMap<Integer, PersonTrip> readMexicanResidentTripList(HashMap<Integer, PersonTrip> personTripMap, TableDataSet inputTripTableData){
+		
+		if(personTripMap==null)
+			personTripMap = new HashMap<Integer, PersonTrip>();
+		
+         for(int row = 1; row <= inputTripTableData.getRowCount();++row){
+        	
+           	int mode = (int) inputTripTableData.getValueAt(row,"tripMode");
+        	if(modesToKeep[mode]!=1)
+        		continue;
+        	
+        	boolean rideShare=false;
+        	if(rideShareEligibleModes[mode]==1)
+        		rideShare=true;
+        	
+         	int oMaz = (int) inputTripTableData.getValueAt(row,"originMGRA");
+        	int dMaz = (int) inputTripTableData.getValueAt(row,"destinationMGRA");
+        	
+        	int oTaz = mgraManager.getTaz(oMaz);
+        	int dTaz = mgraManager.getTaz(dMaz);
+        	
+        	if((oTaz<minTaz) || (dTaz<minTaz))
+        		continue;
+
+        	++idNumber;
+        	
+        	
+           	long hhid = -8;	
+           	long personId=-8;
+           	int personNumber=-8;
+           	
+        	int tourid = (int) inputTripTableData.getValueAt(row,"tourID");
+        	int stopid = (int) inputTripTableData.getValueAt(row,"tripID");
+        	
+        	int inbound=0;
+        	String inbound_bool = inputTripTableData.getStringValueAt(row,"inbound");
+        	if (inbound_bool.equals("FALSE")) inbound = 0;
+        	else inbound=1;
+        	
+         	int depPeriod = (int) inputTripTableData.getValueAt(row,"period");
+        	float depTime = simulateExactTime(depPeriod);
+        	int tour_mode = -9;
+
+        	float sRate = 1;
+        	if(inputTripTableData.containsColumn("sampleRate"))
+        		sRate = inputTripTableData.getValueAt(row,"sampleRate");
+        	
+          	int avAvailable = 0;
+          	if(inputTripTableData.containsColumn("avAvailable"))
+          		avAvailable = (int) inputTripTableData.getValueAt(row,"avAvailable");
+        	
+        	int boardingTap = (int) inputTripTableData.getValueAt(row,"boardingTap");  
+        	int alightingTap = (int) inputTripTableData.getValueAt(row,"alightingTap");  
+        	String tour_purpose	="null";
+        	String orig_purpose	= inputTripTableData.getStringValueAt(row, "originPurp");
+        	String dest_purpose = inputTripTableData.getStringValueAt(row, "destPurp");
+        	
+        	float distance = 0;
+         	if(inputTripTableData.containsColumn("trip_dist"))
+         		distance = inputTripTableData.getValueAt(row, "trip_dist");
+        	
+        	
+        	int num_participants = 1;
+        	
+        	int set = (int)inputTripTableData.getValueAt(row,"set"); 
+       		String uniqueID=new String("M_"+tourid+"_"+stopid);
+
+       		PersonTrip personTrip = new PersonTrip(uniqueID,hhid,personId,personNumber,tourid,stopid,inbound,0,oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set,rideShare);
+       		personTrip.setAvAvailable((byte) avAvailable);
+       		if(num_participants>1) {
+       			personTrip.setJoint(1);
+         		personTrip.setUniqueId(uniqueID+"_1");
+       		}
+       		personTripMap.put(idNumber, personTrip);
+      		 
+    		//replicate joint trips
+       		if(num_participants>1)
+       			for(int i=2;i<=num_participants;++i){
+       	        	++idNumber;
+       	        	PersonTrip newTrip = null;
+       	        	try {
+       	        		newTrip = (PersonTrip) personTrip.clone();
+       	        	}catch(Exception e) {
+       	        		
+       	        		logger.fatal("Error attempting to clone joint trip object "+uniqueID);
+       	        		throw new RuntimeException(e);
+       	        	}
+       	        	newTrip.setUniqueId(uniqueID+"_"+i);
+             	    personTripMap.put(idNumber, newTrip);
+       			}
+       
+
+        }
+         
+         return personTripMap;
+ 	}
+
+	/**
+	 * Read the airport trip list in the TableDataSet. 
+	 * 
+	 * @param personTripList A HashMap of PersonTrips. If null will be instantiated in this method.
+	 * @param inputTripTableData The TableDataSet containing the visitor output trip file.
+	 */
+	public HashMap<Integer, PersonTrip> readAirportTripList(HashMap<Integer, PersonTrip> personTripMap, TableDataSet inputTripTableData, int default_id, String airportCode){
+		
+		if(personTripMap==null)
+			personTripMap = new HashMap<Integer, PersonTrip>();
+		
+         for(int row = 1; row <= inputTripTableData.getRowCount();++row){
+        		 
+           	int mode = (int) inputTripTableData.getValueAt(row,"tripMode");
+        	if(modesToKeep[mode]!=1)
+        		continue;
+        	
+        	boolean rideShare=false;
+        	if(rideShareEligibleModes[mode]==1)
+        		rideShare=true;
+        	
+         	int oMaz = (int) inputTripTableData.getValueAt(row,"originMGRA");
+        	int dMaz = (int) inputTripTableData.getValueAt(row,"destinationMGRA");
+        	
+        	int oTaz = mgraManager.getTaz(oMaz);
+        	int dTaz = mgraManager.getTaz(dMaz);
+        	
+        	if((oTaz<minTaz) || (dTaz<minTaz))
+        		continue;
+
+        	++idNumber;
+        	
+        	
+           	long hhid = default_id;	
+           	long personId= default_id;
+           	int personNumber= default_id;
+           	
+        	int tourid = default_id;
+        	int stopid = (int) inputTripTableData.getValueAt(row,"id");
+        	int inbound = (int) inputTripTableData.getValueAt(row,"direction");;
+         	int depPeriod = (int) inputTripTableData.getValueAt(row,"departTime");
+        	float depTime = simulateExactTime(depPeriod);
+        	int tour_mode = -9;
+
+        	float sRate = 1;
+        	if(inputTripTableData.containsColumn("sampleRate"))
+        		sRate = inputTripTableData.getValueAt(row,"sampleRate");        	
+          	
+          	int avAvailable = 0;
+          	if(inputTripTableData.containsColumn("av_avail"))
+          		avAvailable = (int) inputTripTableData.getValueAt(row,"av_avail");
+        	
+        	int boardingTap = (int) inputTripTableData.getValueAt(row,"boardingTAP");  
+        	int alightingTap = (int) inputTripTableData.getValueAt(row,"alightingTAP");  
+        	String tour_purpose	= inputTripTableData.getStringValueAt(row, "purpose");
+        	String orig_purpose	= "null";
+        	String dest_purpose = "null";
+        	
+        	float distance = 0;
+         	if(inputTripTableData.containsColumn("trip_dist"))
+         		distance = inputTripTableData.getValueAt(row, "trip_dist");
+        	
+        	
+        	int num_participants = 1;
+        	
+        	int set = (int)inputTripTableData.getValueAt(row,"set"); 
+       		String uniqueID=new String(airportCode+"_"+stopid);
+
+       		PersonTrip personTrip = new PersonTrip(uniqueID,hhid,personId,personNumber,tourid,stopid,inbound,0,oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set,rideShare);
+       		personTrip.setAvAvailable((byte) avAvailable);
+       		if(num_participants>1) {
+       			personTrip.setJoint(1);
+         		personTrip.setUniqueId(uniqueID+"_1");
+     
+       		}
+       		personTripMap.put(idNumber, personTrip);
+       		
+    		//replicate joint trips
+       		if(num_participants>1)
+       			for(int i=2;i<=num_participants;++i){
+       	        	++idNumber;
+       	        	PersonTrip newTrip = null;
+       	        	try {
+       	        		newTrip = (PersonTrip) personTrip.clone();
+       	        	}catch(Exception e) {
+       	        		
+       	        		logger.fatal("Error attempting to clone joint trip object "+uniqueID);
+       	        		throw new RuntimeException(e);
+       	        	}
+       	        	newTrip.setUniqueId(uniqueID+"_"+i);
+             	    personTripMap.put(idNumber, newTrip);
+       			}
+       
+
+        }
+         
+         return personTripMap;
+ 	}
+
+	
+	/**
+	 * Read the IE trip list in the TableDataSet. 
+	 * 
+	 * @param personTripList A HashMap of PersonTrips. If null will be instantiated in this method.
+	 * @param inputTripTableData The TableDataSet containing the visitor output trip file.
+	 */
+	public HashMap<Integer, PersonTrip> readIETripList(HashMap<Integer, PersonTrip> personTripMap, TableDataSet inputTripTableData){
+		
+		if(personTripMap==null)
+			personTripMap = new HashMap<Integer, PersonTrip>();
+		
+         for(int row = 1; row <= inputTripTableData.getRowCount();++row){
+
+        	int mode = (int) inputTripTableData.getValueAt(row,"tripMode");
+        	if(modesToKeep[mode]!=1)
+        		continue;
+        	
+        	boolean rideShare=false;
+        	if(rideShareEligibleModes[mode]==1)
+        		rideShare=true;
+        	
+         	int oMaz = (int) inputTripTableData.getValueAt(row,"originMGRA");
+        	int dMaz = (int) inputTripTableData.getValueAt(row,"destinationMGRA");
+        	
+        	int oTaz = (int) inputTripTableData.getValueAt(row,"originTAZ");
+        	int dTaz = (int) inputTripTableData.getValueAt(row,"destinationTAZ");
+        	
+        	if((oTaz<minTaz) || (dTaz<minTaz))
+        		continue;
+
+        	++idNumber;
+        	
+        	
+           	long hhid = (long) inputTripTableData.getValueAt(row,"hhID");	
+           	long personId=  (long) inputTripTableData.getValueAt(row,"personID");
+           	int personNumber=  (int) inputTripTableData.getValueAt(row,"pnum");
+           	
+        	int tourid = (int) inputTripTableData.getValueAt(row,"tourID");;
+        	int stopid = -4;
+
+        	int inbound=0;
+        	String inbound_bool = inputTripTableData.getStringValueAt(row,"inbound");
+        	if (inbound_bool.equals("FALSE")) inbound = 0;
+        	else inbound=1;
+
+         	int depPeriod = (int) inputTripTableData.getValueAt(row,"period");
+        	float depTime = simulateExactTime(depPeriod);
+        	int tour_mode = -9;
+
+        	float sRate = 1;
+        	if(inputTripTableData.containsColumn("sampleRate"))
+        		sRate = inputTripTableData.getValueAt(row,"sampleRate");
+        	          	
+          	int avAvailable = 0;
+          	if(inputTripTableData.containsColumn("av_avail"))
+          		avAvailable = (int) inputTripTableData.getValueAt(row,"av_avail");
+        	
+        	int boardingTap = (int) inputTripTableData.getValueAt(row,"boardingTap");  
+        	int alightingTap = (int) inputTripTableData.getValueAt(row,"alightingTap");  
+        	String tour_purpose	= "IE";
+        	String orig_purpose	= "IE";
+        	String dest_purpose = "IE";
+        	
+        	float distance = 0;
+         	if(inputTripTableData.containsColumn("trip_dist"))
+         		distance = inputTripTableData.getValueAt(row, "trip_dist");
+        	
+        	
+        	int num_participants = 1;
+        	
+        	int set = (int)inputTripTableData.getValueAt(row,"set"); 
+       		String uniqueID=new String("IE_"+tourid+"_"+inbound);
+
+       		PersonTrip personTrip = new PersonTrip(uniqueID,hhid,personId,personNumber,tourid,stopid,inbound,0,oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set,rideShare);
+       		personTrip.setAvAvailable((byte) avAvailable);
+       		if(num_participants>1) {
+       			personTrip.setJoint(1);
+         		personTrip.setUniqueId(uniqueID+"_1");
+       		}
+       		personTripMap.put(idNumber, personTrip);
+       		
+       		//replicate joint trips
+       		if(num_participants>1)
+       			for(int i=2;i<=num_participants;++i){
+       	        	++idNumber;
+       	        	PersonTrip newTrip = null;
+       	        	try {
+       	        		newTrip = (PersonTrip) personTrip.clone();
+       	        	}catch(Exception e) {
+       	        		
+       	        		logger.fatal("Error attempting to clone joint trip object "+uniqueID);
+       	        		throw new RuntimeException(e);
+       	        	}
+       	        	newTrip.setUniqueId(uniqueID+"_"+i);
+             	    personTripMap.put(idNumber, newTrip);
+       			}
+
         }
          
          return personTripMap;

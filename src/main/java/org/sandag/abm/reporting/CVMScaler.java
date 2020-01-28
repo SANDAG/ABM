@@ -79,15 +79,15 @@ public class CVMScaler {
 			timeCol[row-1]= inData.getStringValueAt(row,"TripTime");
 			String str=timeCol[row-1];
 			if(str.contains(":L")) {
-				proceesRow(inData, columnNames, row, str, lscaler, lightshare, "L",writer);
+				proceesRow(inData, columnNames, row, str, lscaler, lightshare, "L", writer);
 			}else if(str.contains(":I")) {
-				proceesRow(inData, columnNames, row, str, mscaler, mediumshare, "I", writer);
+				proceesRow(inData, columnNames, row, str, mscaler, 0, "I", writer);
 			}else if(str.contains(":M")) {
 				proceesRow(inData, columnNames, row, str, mscaler, mediumshare, "M", writer);
 			}else if(str.contains(":H")) {
 				proceesRow(inData, columnNames, row, str, hscaler, heavyshare, "H", writer);				
 			}else {
-				logger.info("Unrecognized CVM tNCVehicle type: "+ str);
+				logger.info("Unrecognized CVM Vehicle type: "+ str);
 			}
 		}
 			
@@ -118,7 +118,7 @@ public class CVMScaler {
 				}else if (colname.equals("TripTime")){
 					value = value.replaceAll(":"+vehicle, ":I");
 				}
-
+				
 				if (line_new==null) line_new = value;
 				else line_new = line_new + "," + value;
 			}
@@ -135,7 +135,7 @@ public class CVMScaler {
 			value_new = scaler * (share);
 			line_new = line_new + "," + Float.toString(value_new);
 			writer.println(line_new.trim());
-		}		
+		}
 	}
 	
 	private float getScaler(float [] scalerArray, String str) {

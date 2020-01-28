@@ -291,9 +291,21 @@ public class NonMandatoryDestChoiceModel
         Logger modelLogger = todMcLogger;
         String choiceModelDescription = "";
         String decisionMakerLabel = "";
-        String loggingHeader = "";
-        
         Household household = person.getHouseholdObject();
+             
+        if (household.getDebugChoiceModels())
+        {
+            choiceModelDescription = String
+                    .format("Non-Mandatory sample TOD logsum calculations for %s Location Choice",
+                            tour.getTourPurpose());
+            decisionMakerLabel = String.format(
+                    "HH=%d, PersonNum=%d, PersonType=%s, tourId=%d of %d non-mand tours",
+                    household.getHhId(), person.getPersonNum(), person.getPersonType(),
+                    tour.getTourId(), person.getListOfIndividualNonMandatoryTours().size());
+      
+        }
+
+        
     	double random = household.getHhRandom().nextDouble();
         int purpose = purposeNameIndexMap.get(tour.getTourPurpose());
 
@@ -324,6 +336,11 @@ public class NonMandatoryDestChoiceModel
         	throw new RuntimeException();
         }
         	
+        String periodString = modelStructure.getModelPeriodLabel(modelStructure
+                .getModelPeriodIndex(depart))
+                + " to "
+                + modelStructure.getModelPeriodLabel(modelStructure
+                        .getModelPeriodIndex(arrive));
 
         if (household.getDebugChoiceModels())
         {
@@ -340,7 +357,7 @@ public class NonMandatoryDestChoiceModel
         try
         {
         	logsum = mcModel.getModeChoiceLogsum(mcDmuObject, tour,
-                        modelLogger, choiceModelDescription, decisionMakerLabel);
+                        modelLogger, choiceModelDescription, decisionMakerLabel+","+periodString);
         } catch (Exception e)
         {
         	logger.fatal("exception caught applying mcModel.getModeChoiceLogsum() for "
@@ -596,7 +613,7 @@ public class NonMandatoryDestChoiceModel
                                     tour.getTourPurpose()));
                     logger.fatal("Exception caught:", e);
                     logger.fatal("Throwing new RuntimeException() to terminate.");
-                    throw new RuntimeException();
+                    throw new RuntimeException(e);
                 }
 
                 // set chosen values in tour object

@@ -178,7 +178,7 @@ public class MicromobilityChoiceModel
             mmDmuObject.setWalkTime(walkTime);
             
             //set destination to origin so that Z can be used to find origin zone access to mode in mgra data file in UEC
-            mmDmuObject.setDmuIndexValues(household.getHhId(), homeMaz, originMaz, originMaz);
+            mmDmuObject.setDmuIndexValues(household.getHhId(), originMaz, originMaz, originMaz);
 	
             // compute utilities and choose micromobility choice alternative.
             float logsum = (float) mmModel.computeUtilities(mmDmuObject, mmDmuObject.getDmuIndexValues());
@@ -214,7 +214,7 @@ public class MicromobilityChoiceModel
             mmDmuObject.setWalkTime(walkTime);
             
             //set destination to origin so that Z can be used to find origin zone access to mode in mgra data file in UEC
-            mmDmuObject.setDmuIndexValues(household.getHhId(), homeMaz, originMaz, originMaz);
+            mmDmuObject.setDmuIndexValues(household.getHhId(), originMaz, originMaz, originMaz);
 
         	// compute utilities and choose micromobility choice alternative.
             float logsum = (float) mmModel.computeUtilities(mmDmuObject, mmDmuObject.getDmuIndexValues());
@@ -247,7 +247,7 @@ public class MicromobilityChoiceModel
 
 	        //set destination to closest mgra to alighting TAP so that Z can be used to find access to mode in mgra data file in UEC
 	        int closestMazToAlightTap = mgraDataManager.getClosestMgra(s.alightTap);
-	        mmDmuObject.setDmuIndexValues(household.getHhId(), homeMaz, originMaz, closestMazToAlightTap);
+	        mmDmuObject.setDmuIndexValues(household.getHhId(), closestMazToAlightTap, closestMazToAlightTap, closestMazToAlightTap);
 	            
 	        // compute utilities and choose micromobility choice alternative.
 	        logsum = (float) mmModel.computeUtilities(mmDmuObject, mmDmuObject.getDmuIndexValues());
@@ -283,7 +283,7 @@ public class MicromobilityChoiceModel
 
         		walkTime = mgraDataManager.getMgraToTapWalkTime(originMaz, tapPosition);
         		//set destination to origin so that Z can be used to find origin zone access to mode in mgra data file in UEC
-        		mmDmuObject.setDmuIndexValues(household.getHhId(), homeMaz, originMaz, originMaz);
+        		mmDmuObject.setDmuIndexValues(household.getHhId(), originMaz, originMaz, originMaz);
         		   
         	}else { //outbound so egress mode is walk.
         		   tapPosition =  mgraDataManager.getTapPosition(destMaz, s.alightTap);
@@ -296,7 +296,7 @@ public class MicromobilityChoiceModel
         		   walkTime = mgraDataManager.getMgraToTapWalkTime(destMaz, tapPosition);
         		   //set destination to closest mgra to alighting TAP so that Z can be used to find access to mode in mgra data file in UEC
    	            	int closestMazToAlightTap = mgraDataManager.getClosestMgra(s.alightTap);
-   	            	mmDmuObject.setDmuIndexValues(household.getHhId(), homeMaz, originMaz, closestMazToAlightTap);
+   	            	mmDmuObject.setDmuIndexValues(household.getHhId(), closestMazToAlightTap, closestMazToAlightTap, closestMazToAlightTap);
         	}
 	        mmDmuObject.setWalkTime(walkTime);
 	

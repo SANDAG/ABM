@@ -1204,7 +1204,7 @@ public final class DataExporter
         formats = formatList.toArray(formats);
         
         Set<String> intColumns = new HashSet<String>(Arrays.asList("hh_id", "person_id",
-                "person_num", "person_type", "tour_id", "orig_maz", "dest_maz", "start_period",
+                "person_num", "person_type", "tour_id", "orig_mgra", "dest_mgra", "start_period",
                 "end_period", "tour_mode", "av_avail", "atWork_freq", "num_ob_stops", "num_ib_stops"));
 
         Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
@@ -1285,7 +1285,7 @@ public final class DataExporter
         formats = formatList.toArray(formats);
                
         Set<String> intColumns = new HashSet<String>(Arrays.asList("hh_id", "tour_id",
-                "tour_composition", "orig_maz", "dest_maz", "start_period", "end_period",
+                "tour_composition", "orig_mgra", "dest_mgra", "start_period", "end_period",
                 "tour_mode", "av_avail", "num_ob_stops", "num_ib_stops"));
         Set<String> floatColumns = new HashSet<String>(Arrays.asList("valueOfTime"));
         

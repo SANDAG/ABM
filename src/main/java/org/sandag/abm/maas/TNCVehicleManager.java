@@ -213,8 +213,8 @@ public class TNCVehicleManager {
 				TNCVehicleTrip lastTrip = trips.get(trips.size()-1);
 				int originTaz = lastTrip.getDestinationTaz();
 				int originMaz = lastTrip.getDestinationMaz();
-				ArrayList<Integer> pickupIdsAtOrigin = lastTrip.getPickupIdsAtDestination();
-				ArrayList<Integer> dropoffIdsAtOrigin = lastTrip.getDropoffIdsAtDestination();
+				ArrayList<String> pickupIdsAtOrigin = lastTrip.getPickupIdsAtDestination();
+				ArrayList<String> dropoffIdsAtOrigin = lastTrip.getDropoffIdsAtDestination();
 				
 				++totalVehicleTrips;
 				TNCVehicleTrip newTrip = new TNCVehicleTrip(tNCVehicle,totalVehicleTrips);
@@ -336,11 +336,11 @@ public class TNCVehicleManager {
 			
 			if(tNCVehicle.getId()==vehicleDebug){
 				logger.info("***********************************************************************************");
-				logger.info("Debugging tNCVehicle routing for tNCVehicle "+tNCVehicle.getId());
+				logger.info("Debugging Vehicle routing for vehicle ID "+tNCVehicle.getId());
 				logger.info("***********************************************************************************");
-				logger.info("There are "+personTrips.size()+" person trips in tNCVehicle "+tNCVehicle.getId());
+				logger.info("There are "+personTrips.size()+" person trips in vehicle ID "+tNCVehicle.getId());
 				for(PersonTrip pTrip: personTrips){
-					logger.info("TNCVehicle "+tNCVehicle.getId()+" person trip id: "+pTrip.getUniqueId()+" from pickup MAZ: "+pTrip.getPickupMaz()+ " to dropoff MAZ "+pTrip.getDropoffMaz());
+					logger.info("Vehicle ID "+tNCVehicle.getId()+" person trip id: "+pTrip.getUniqueId()+" from pickup MAZ: "+pTrip.getPickupMaz()+ " to dropoff MAZ "+pTrip.getDropoffMaz());
 				}
 			}
 			//some information on the first passenger
@@ -355,7 +355,7 @@ public class TNCVehicleManager {
 			ArrayList<TNCVehicleTrip> newVehicleTrips = new ArrayList<TNCVehicleTrip>();
 			
 			if(tNCVehicle.getId()==vehicleDebug)
-				logger.info("There are "+existingVehicleTrips.size()+" existing tNCVehicle trips in tNCVehicle "+tNCVehicle.getId());
+				logger.info("There are "+existingVehicleTrips.size()+" existing vehicle trips in vehicle ID "+tNCVehicle.getId());
 			
 			//iterate through person list and save HashMap of other passenger pickups and dropoffs by MAZ
 			HashMap<Integer,ArrayList<PersonTrip>> pickupsByMaz = new HashMap<Integer,ArrayList<PersonTrip>>();
@@ -397,8 +397,8 @@ public class TNCVehicleManager {
 			}
 			
 			if(tNCVehicle.getId()==vehicleDebug){
-				logger.info("There are "+pickupsByMaz.size()+" pickup mazs in tNCVehicle "+tNCVehicle.getId());
-				logger.info("There are "+dropoffsByMaz.size()+" dropoff mazs in tNCVehicle "+tNCVehicle.getId());
+				logger.info("There are "+pickupsByMaz.size()+" pickup mazs in vehicle ID "+tNCVehicle.getId());
+				logger.info("There are "+dropoffsByMaz.size()+" dropoff mazs in vehicle ID "+tNCVehicle.getId());
 			}
 
 			// the list of TAZs in order from closest to furthest, that will determine tNCVehicle routing.
@@ -466,8 +466,8 @@ public class TNCVehicleManager {
 					//set the origin and other values for the trip
 					if(lastTrip!=null){
 						lastTripPassengers = lastTrip.getPassengers();
-						ArrayList<Integer> dropoffsAtDestinationOfLastTrip = lastTrip.getDropoffIdsAtDestination();
-						ArrayList<Integer> pickupsAtDestinationOfLastTrip = lastTrip.getPickupIdsAtDestination();
+						ArrayList<String> dropoffsAtDestinationOfLastTrip = lastTrip.getDropoffIdsAtDestination();
+						ArrayList<String> pickupsAtDestinationOfLastTrip = lastTrip.getPickupIdsAtDestination();
 						
 						//add pickups and dropoffs at origin from last trip
 						trip.addDropoffIdsAtOrigin(dropoffsAtDestinationOfLastTrip);	
@@ -498,7 +498,7 @@ public class TNCVehicleManager {
 					tNCVehicle.setDistanceSinceRefuel(tNCVehicle.getDistanceSinceRefuel()+distance);
 					
 					if(tNCVehicle.getId()==vehicleDebug){
-						logger.info("TNCVehicle "+tNCVehicle.getId()+" now has tNCVehicle trip "+trip.getId());
+						logger.info("Vehicle ID "+tNCVehicle.getId()+" now has vehicle trip ID "+trip.getId());
 						trip.writeTrace();
 					}
 
@@ -544,7 +544,7 @@ public class TNCVehicleManager {
 		
 		//no active vehicles in the simulation period
 		if(activeVehicleList.size()==0){
-			logger.warn("Trying to free vehicles from active tNCVehicle list in simulation period "+simulationPeriod+" but there are no active vehicles.");
+			logger.warn("Trying to free vehicles from active vehicle list in simulation period "+simulationPeriod+" but there are no active vehicles.");
 		}else{
 			logger.info("There are "+activeVehicleList.size()+" active vehicles in period "+simulationPeriod);
 		}
@@ -559,7 +559,7 @@ public class TNCVehicleManager {
 			
 			//this tNCVehicle has no trips; why is it in the active tNCVehicle list??
 			if(trips.size()==0){
-				logger.error("TNCVehicle "+tNCVehicle.getId()+" has no tNCVehicle trips but is in active tNCVehicle list");
+				logger.error("Vehicle ID "+tNCVehicle.getId()+" has no vehicle trips but is in active vehicle list");
 				continue;
 			}
 			
@@ -633,6 +633,15 @@ public class TNCVehicleManager {
 					tNCVehicle.addVehicleTrip(trip);
 					
 					vehiclesToRemove.add(tNCVehicle);
+					
+					if(tNCVehicle.getId()==vehicleDebug) {
+						logger.info("*************");
+						logger.info("Vehicle ID "+tNCVehicle.getId()+" refueling trip generated");
+						logger.info("From origin MAZ "+trip.getOriginMaz()+" to refueling MAZ "+trip.getDestinationMaz()+" in TAZ "+trip.getDestinationTaz());
+						logger.info("Start period "+trip.getStartPeriod()+" end period  "+trip.getEndPeriod());
+						logger.info("*************");
+						
+					}
 
         		}
         			
@@ -672,9 +681,24 @@ public class TNCVehicleManager {
         			emptyVehicleList[refuelTaz] = new ArrayList<TNCVehicle>();
 
         		emptyVehicleList[refuelTaz].add(tNCVehicle);
+        		
+				if(tNCVehicle.getId()==vehicleDebug) {
+					logger.info("*************");
+					logger.info("Vehicle ID "+tNCVehicle.getId()+" has completed refueling in period "+simulationPeriod);
+					logger.info("Distance to refuel is reset to 0 and vehicle added to empty vehicle list in TAZ "+refuelTaz);
+					logger.info("*************");
+				}
+
+        		
         	// else increment up the number of periods refueling	
         	}else  {
-        		tNCVehicle.setPeriodsRefueling(tNCVehicle.getPeriodsRefueling()+1);;
+        		tNCVehicle.setPeriodsRefueling(tNCVehicle.getPeriodsRefueling()+1);
+				if(tNCVehicle.getId()==vehicleDebug) {
+					logger.info("*************");
+					logger.info("Vehicle ID "+tNCVehicle.getId()+" is still refueling in period "+simulationPeriod);
+					logger.info("*************");
+				}
+
         	}
         }
         
@@ -700,16 +724,31 @@ public class TNCVehicleManager {
         }
         
         TNCVehicleTrip.printHeader(printWriter);
+        
+        //count the total empty vehicles
+        int totalEmptyVehicles =0;
+        for(int i = 1; i <= maxTaz; ++ i){
+        	if(emptyVehicleList[i]==null)
+        		continue;
+        	
+        	totalEmptyVehicles+=emptyVehicleList[i].size();
+        }
+        logger.info("Writing "+totalEmptyVehicles+" total vehicles to file");
+        
         for(int i = 1; i <= maxTaz; ++ i){
         	if(emptyVehicleList[i]==null)
         		continue;
         	
         	if(emptyVehicleList[i].size()==0)
         		continue;
-
         	for(TNCVehicle tNCVehicle : emptyVehicleList[i] ){
+    			if(tNCVehicle.getId()==vehicleDebug) {
+    				logger.info("Writing "+tNCVehicle.getVehicleTrips().size()+" vehicle trips for vehicle ID "+tNCVehicle.getId());
+    			}
+
         		for(TNCVehicleTrip tNCVehicleTrip : tNCVehicle.getVehicleTrips()){
-        			tNCVehicleTrip.printData(printWriter);
+        			
+         			tNCVehicleTrip.printData(printWriter);
         			
         			//save the data in the trip matrix
         			int startPeriod = tNCVehicleTrip.getStartPeriod();
@@ -719,7 +758,7 @@ public class TNCVehicleManager {
         			int occ = Math.min(tNCVehicleTrip.getPassengers(),3);
         			
         			float existingTrips = TNCTripMatrix[skimPeriod][occ].getValueAt(origTaz,destTaz);
-        			TNCTripMatrix[skimPeriod][occ].setValueAt(origTaz,destTaz,(existingTrips+1)*(1/sampleRate));
+        			TNCTripMatrix[skimPeriod][occ].setValueAt(origTaz,destTaz,existingTrips + (1*(1/sampleRate)));
         			
         			
         		}
@@ -815,7 +854,7 @@ public class TNCVehicleManager {
 			endSkimPeriod[skimPeriod] = periodLengthInMinutes/minutesPerSimulationPeriod + lastEndSkimPeriod;
 			lastEndSkimPeriod = endSkimPeriod[skimPeriod];
 			
-			logger.info("Last simulation period for skim period "+skimPeriod+ " is "+endSkimPeriod[skimPeriod]);
+		//	logger.info("Last simulation period for skim period "+skimPeriod+ " is "+endSkimPeriod[skimPeriod]);
 			
 		}
 		
@@ -826,7 +865,7 @@ public class TNCVehicleManager {
 				if(period<endSkimPeriod[skimPeriod]) 
 					skimPeriodLookup[period]= (byte) skimPeriod;
 			}
-			logger.info("Simulation period "+period+" is in skim period "+skimPeriodLookup[period]);
+		//	logger.info("Simulation period "+period+" is in skim period "+skimPeriodLookup[period]);
 		}
 		
 	}

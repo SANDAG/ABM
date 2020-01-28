@@ -38,6 +38,7 @@ public class CVMExporter {
     protected HashMap<String,String> nonTollClassMap;   //lookup cvm class, return non-toll skim class
     
     protected HashMap<String,String> modeMap; //lookup cvm mode, return model mode
+    
     private final OMXMatrixDao mtxDao;
     protected float autoOperatingCost;
     
@@ -86,7 +87,7 @@ public class CVMExporter {
 		float[] distCol = new float[totalRows];
 		float[] aocCol  = new float[totalRows];
 		float[] tollCol = new float[totalRows];
-		
+				
 		for(int row = 1; row<=totalRows;++row){
 			
 			int otaz = (int) inputData.getValueAt(row, "I");
@@ -129,6 +130,7 @@ public class CVMExporter {
 		
 		//write the data
 		TableDataSet.writeFile(reportPath+"cvm_trips.csv", inputData);
+		
 	}
 	
 	/**

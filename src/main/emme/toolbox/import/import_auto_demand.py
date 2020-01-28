@@ -34,6 +34,8 @@
 #    output/autoTrips_pp_vot.omx
 #    output/othrTrips_pp.omx (added to high vot)
 #    output/TripMatrices.csv
+#    output/EmptyAVTrips.omx (added to high vot)
+#    output/TNCVehicleTrips_pp.omx (added to high vot)
 #
 # Matrix inputs:
 #    pp_SOVGP_EIWORK, pp_SOVGP_EINONWORK, pp_SOVTOLL_EIWORK, pp_SOVTOLL_EINONWORK,
@@ -114,6 +116,9 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         <li>autoAirportTrips.SAN_pp_vot.omx</li>
         <li>autoAirportTrips.CDX_pp_vot.omx (optional)</li>
         <li>autoTrips_pp_vot.omx</li>
+        <li>othrTrips_pp.omx (added to high vot)</li>
+        <li>EmptyAVTrips.omx (added to high vot)</li>
+        <li>TNCVehicleTrips_pp.omx (added to high vot)</li>
     </ul>
     As well as one CSV file "TripMatrices.csv" for the commercial vehicle trips.
     Adds the aggregate demand from the
@@ -206,24 +211,19 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
         tnc_shared_s2_share = props["TNC.shared.s2.share"]
         tnc_shared_s3_share = props["TNC.shared.s3.share"]
         tnc_shared_pce = props["TNC.shared.passengersPerVehicle"]
+        av_share = props["Mobility.AV.Share"]
     
         periods = ["_EA", "_AM", "_MD", "_PM", "_EV"]
         vot_bins = ["_low", "_med", "_high"]
         mode_shares = [
             ("mf%s_SOV_TR_H", {
-                "TAXI": taxi_da_share / taxi_pce, 
-                "TNC_SINGLE": tnc_single_da_share / tnc_single_pce, 
-                "TNC_SHARED": tnc_shared_da_share / tnc_shared_pce
+                "TAXI": taxi_da_share / taxi_pce
             }),
             ("mf%s_HOV2_H",   {
-                "TAXI": taxi_s2_share / taxi_pce, 
-                "TNC_SINGLE": tnc_single_s2_share / tnc_single_pce, 
-                "TNC_SHARED": tnc_shared_s2_share / tnc_shared_pce
+                "TAXI": taxi_s2_share / taxi_pce
             }),
             ("mf%s_HOV3_H",   {
-                "TAXI": taxi_s3_share / taxi_pce, 
-                "TNC_SINGLE": tnc_single_s3_share / tnc_single_pce, 
-                "TNC_SHARED": tnc_shared_s3_share / tnc_shared_pce
+                "TAXI": taxi_s3_share / taxi_pce
             }),
         ]
 
@@ -258,6 +258,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                     if omx_manager.file_exists(("autoAirport", ".CBX" + period, vot)):
                         airport_demand += omx_manager.lookup(("autoAirport", ".CBX" + period, vot), "SOV%s" % period)
                     internal_external_demand = omx_manager.lookup(("autoInternalExternal", period, vot), "SOV%s" % period)
+                    
                     total_ct_ramp_trips = (
                         resident_demand + airport_demand + internal_external_demand)
                     dem_utils.demand_report([
@@ -286,6 +287,7 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                         if omx_manager.file_exists(("autoAirport", ".CBX" + period, vot)):
                             airport_demand += omx_manager.lookup(("autoAirport", ".CBX" + period, vot), omx_name % period)
                         internal_external_demand = omx_manager.lookup(("autoInternalExternal", period, vot), omx_name % period)
+
                         total_ct_ramp_trips = (
                             resident_demand + visitor_demand + cross_border_demand + airport_demand + internal_external_demand)
                         dem_utils.demand_report([
@@ -302,43 +304,59 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                 # add TNC and TAXI demand to vot="high"
                 for matrix_name_tmplt, share in mode_shares:
                     matrix_name = matrix_name_tmplt % period[1:]
-                    logbook_label = "Import othr from TAXI TNC_SINGLE and TNC_SHARED to matrix %s" % (matrix_name)
-                    resident_taxi_tnc_demand = (
-                        omx_manager.lookup(("othr", period, ""), "TAXI" + period) * share["TAXI"]
-                        + omx_manager.lookup(("othr", period, ""), "TNC_SINGLE" + period) * share["TNC_SINGLE"]
-                        + omx_manager.lookup(("othr", period, ""), "TNC_SHARED" + period) * share["TNC_SHARED"])
-                    visitor_taxi_tnc_demand = (
-                        omx_manager.lookup(("othrVisitor", period, ""), "TAXI" + period) * share["TAXI"]
-                        + omx_manager.lookup(("othrVisitor", period, ""), "TNC_SINGLE" + period) * share["TNC_SINGLE"]
-                        + omx_manager.lookup(("othrVisitor", period, ""), "TNC_SHARED" + period) * share["TNC_SHARED"])
-                    cross_border_taxi_tnc_demand = (
-                        omx_manager.lookup(("othrCrossBorder", period, ""), "TAXI" + period) * share["TAXI"]
-                        + omx_manager.lookup(("othrCrossBorder", period, ""), "TNC_SINGLE" + period) * share["TNC_SINGLE"]
-                        + omx_manager.lookup(("othrCrossBorder", period, ""), "TNC_SHARED" + period) * share["TNC_SHARED"])
+                    logbook_label = "Import othr from TAXI, empty AV, and TNC to matrix %s" % (matrix_name)
+                    resident_taxi_demand = (
+                        omx_manager.lookup(("othr", period, ""), "TAXI" + period) * share["TAXI"])
+                    visitor_taxi_demand = (
+                        omx_manager.lookup(("othrVisitor", period, ""), "TAXI" + period) * share["TAXI"])
+                    cross_border_taxi_demand = (
+                        omx_manager.lookup(("othrCrossBorder", period, ""), "TAXI" + period) * share["TAXI"])
                     # airport SAN
-                    airport_taxi_tnc_demand = (
-                        omx_manager.lookup(("othrAirport", ".SAN", period), "TAXI" + period) * share["TAXI"]
-                        + omx_manager.lookup(("othrAirport", ".SAN", period), "TNC_SINGLE" + period) * share["TNC_SINGLE"]
-                        + omx_manager.lookup(("othrAirport", ".SAN", period), "TNC_SHARED" + period) * share["TNC_SHARED"])
+                    airport_taxi_demand = (
+                        omx_manager.lookup(("othrAirport", ".SAN", period), "TAXI" + period) * share["TAXI"])
                     # airport CBX (optional)
                     if omx_manager.file_exists(("othrAirport", ".CBX", period)):
-                        airport_taxi_tnc_demand += (
-                            omx_manager.lookup(("othrAirport",".CBX", period), "TAXI" + period) * share["TAXI"]
-                            + omx_manager.lookup(("othrAirport",".CBX", period), "TNC_SINGLE" + period) * share["TNC_SINGLE"]
-                            + omx_manager.lookup(("othrAirport",".CBX", period), "TNC_SHARED" + period) * share["TNC_SHARED"])
-                    internal_external_taxi_tnc_demand = (
-                        omx_manager.lookup(("othrInternalExternal", period, ""), "TAXI" + period) * share["TAXI"]
-                        + omx_manager.lookup(("othrInternalExternal", period, ""), "TNC_SINGLE" + period) * share["TNC_SINGLE"]
-                        + omx_manager.lookup(("othrInternalExternal", period, ""), "TNC_SHARED" + period) * share["TNC_SHARED"])
+                        airport_taxi_demand += (
+                            omx_manager.lookup(("othrAirport",".CBX", period), "TAXI" + period) * share["TAXI"])
+                    internal_external_taxi_demand = (
+                        omx_manager.lookup(("othrInternalExternal", period, ""), "TAXI" + period) * share["TAXI"])
+
+                    #AV routing models and TNC fleet model demand
+                    empty_av_demand = omx_manager.lookup(("EmptyAV","",""), "EmptyAV%s" % period)
+                    tnc_demand_0 = omx_manager.lookup(("TNCVehicle","",period), "TNC%s_0" % period)
+                    tnc_demand_1 = omx_manager.lookup(("TNCVehicle","",period), "TNC%s_1" % period)
+                    tnc_demand_2 = omx_manager.lookup(("TNCVehicle","",period), "TNC%s_2" % period)
+                    tnc_demand_3 = omx_manager.lookup(("TNCVehicle","",period), "TNC%s_3" % period)
+                    
+                    #AVs: no driver. No AVs: driver
+                    #AVs: 0 and 1 passenger would be SOV. there will be empty vehicles as well. No AVs: 0 passanger would be SOV                    
+                    #AVs: 2 passenger would be HOV2. No AVs: 1 passenger would be HOV2
+                    #AVs: 3 passenger would be HOV3. No AVs: 2 and 3 passengers would be HOV3
+                    if (av_share>0):
+                        if (matrix_name_tmplt[5:-2] == "SOV_TR"):
+                            av_demand = empty_av_demand + tnc_demand_0 + tnc_demand_1
+                        elif (matrix_name_tmplt[5:-2] == "HOV2"): 
+                            av_demand = tnc_demand_2
+                        else:
+                            av_demand = tnc_demand_3
+                    else:
+                        if (matrix_name_tmplt[5:-2] == "SOV_TR"):
+                            av_demand = tnc_demand_0
+                        elif (matrix_name_tmplt[5:-2] == "HOV2"): 
+                            av_demand = tnc_demand_1
+                        else:
+                            av_demand = tnc_demand_2 + tnc_demand_3
+
                     total_ct_ramp_trips = (
-                        resident_taxi_tnc_demand + visitor_taxi_tnc_demand + cross_border_taxi_tnc_demand
-                        + airport_taxi_tnc_demand + internal_external_taxi_tnc_demand)
+                        resident_taxi_demand + visitor_taxi_demand + cross_border_taxi_demand
+                        + airport_taxi_demand + internal_external_taxi_demand + av_demand)
                     dem_utils.demand_report([
-                            ("resident_taxi_tnc", resident_taxi_tnc_demand),
-                            ("visitor_taxi_tnc", visitor_taxi_tnc_demand),
-                            ("cross_border_taxi_tnc", cross_border_taxi_tnc_demand),
-                            ("airport_taxi_tnc", airport_taxi_tnc_demand),
-                            ("internal_external_taxi_tnc", internal_external_taxi_tnc_demand),
+                            ("resident_taxi", resident_taxi_demand),
+                            ("visitor_taxi", visitor_taxi_demand),
+                            ("cross_border_taxi", cross_border_taxi_demand),
+                            ("airport_taxi", airport_taxi_demand),
+                            ("internal_external_taxi", internal_external_taxi_demand),
+                            ("av_fleet", av_demand),
                             ("total", total_ct_ramp_trips)
                         ],
                         logbook_label, self.scenario, report)
