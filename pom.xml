@@ -64,7 +64,8 @@
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice.xls</crossBorder.dc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice.xls</tourdest.uec.file>
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice.xls</crossBorder.tour.mc.uec.file>
-                <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2016</visualizer.reference.path>                                  
+                <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2016</visualizer.reference.path> 
+                <Mobility.AV.Share>0.0</Mobility.AV.Share>                                 
             </properties>
         </profile>
         <profile>
@@ -75,7 +76,8 @@
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2020.xls</tourdest.uec.file>
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file> 
-                <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2020</visualizer.reference.path>              
+                <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2020</visualizer.reference.path>  
+                <Mobility.AV.Share>0.0</Mobility.AV.Share>            
             </properties>
         </profile>
         <profile>
@@ -86,7 +88,8 @@
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2025.xls</crossBorder.dc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2025.xls</tourdest.uec.file>
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2025.xls</crossBorder.tour.mc.uec.file>    
-                <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2025rc</visualizer.reference.path>                   
+                <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2025rc</visualizer.reference.path>  
+                <Mobility.AV.Share>0.0</Mobility.AV.Share>                 
             </properties>
         </profile>
         <profile>
@@ -97,7 +100,8 @@
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2025.xls</tourdest.uec.file>
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file> 
-                <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2025nb</visualizer.reference.path>                      
+                <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2025nb</visualizer.reference.path>    
+                <Mobility.AV.Share>0.0</Mobility.AV.Share>                  
             </properties>
         </profile>
         <profile>
@@ -108,7 +112,8 @@
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2025.xls</crossBorder.dc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2025.xls</tourdest.uec.file>  
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2025.xls</crossBorder.tour.mc.uec.file>   
-                <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2030rc</visualizer.reference.path>                  
+                <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2030rc</visualizer.reference.path>  
+                <Mobility.AV.Share>0.0</Mobility.AV.Share>                
             </properties>
         </profile>
         <profile>
@@ -120,6 +125,7 @@
                 <tourdest.uec.file>TourDestinationChoice2035.xls</tourdest.uec.file>      
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2035.xls</crossBorder.tour.mc.uec.file>   
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2035rc</visualizer.reference.path> 
+                <Mobility.AV.Share>0.2</Mobility.AV.Share>
             </properties>
         </profile>
         <profile>
@@ -131,6 +137,7 @@
                 <tourdest.uec.file>TourDestinationChoice2035.xls</tourdest.uec.file>      
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file>    
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2035nb_v2</visualizer.reference.path>
+                <Mobility.AV.Share>0.2</Mobility.AV.Share>
             </properties>
         </profile>
         <profile>
@@ -141,7 +148,8 @@
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2050.xls</crossBorder.dc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2050.xls</tourdest.uec.file>  
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2050.xls</crossBorder.tour.mc.uec.file> 
-                <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2040rc</visualizer.reference.path>       
+                <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2040rc</visualizer.reference.path>
+                <Mobility.AV.Share>0.2</Mobility.AV.Share>       
             </properties>
         </profile>
         <profile>
@@ -152,7 +160,8 @@
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2050.xls</crossBorder.dc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2050.xls</tourdest.uec.file>   
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2050.xls</crossBorder.tour.mc.uec.file>  
-                <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2050rc_OMEfix_cornhusker</visualizer.reference.path>     
+                <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2050rc_OMEfix_cornhusker</visualizer.reference.path>    
+                <Mobility.AV.Share>0.5</Mobility.AV.Share> 
             </properties>
         </profile>
         <profile>
@@ -163,7 +172,8 @@
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2020.xls</crossBorder.dc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2050.xls</tourdest.uec.file>   
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file> 
-                <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2050nb</visualizer.reference.path>       
+                <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2050nb</visualizer.reference.path>  
+                <Mobility.AV.Share>0.5</Mobility.AV.Share>     
             </properties>
         </profile>
         <profile>
