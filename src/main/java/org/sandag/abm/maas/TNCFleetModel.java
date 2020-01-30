@@ -55,6 +55,7 @@ public class TNCFleetModel {
     private static final String ROUTE_INTRAZONAL_PROPERTY = "Maas.RoutingModel.routeIntrazonal";
     private static final String MODEL_SEED_PROPERTY = "Model.Random.Seed";
     
+    int vehicleDebug;
     /**
      * Constructor.
      * 
@@ -104,6 +105,7 @@ public class TNCFleetModel {
 		//create a tNCVehicle manager
 		tNCVehicleManager = new TNCVehicleManager(propertyMap, transportCostManager, maxSharedTNCPassengers, minutesPerSimulationPeriod);
 		tNCVehicleManager.initialize();
+		vehicleDebug = tNCVehicleManager.vehicleDebug;
 		
 		//seed the random number generator so that results can be replicated if desired.
         int seed = Util.getIntegerValueFromPropertyMap(propertyMap, MODEL_SEED_PROPERTY);
@@ -135,7 +137,7 @@ public class TNCFleetModel {
 			endSkimPeriod[skimPeriod] = periodLengthInMinutes/minutesPerSimulationPeriod + lastEndSkimPeriod;
 			lastEndSkimPeriod = endSkimPeriod[skimPeriod];
 			
-			logger.info("Last simulation period for skim period "+skimPeriod+ " is "+endSkimPeriod[skimPeriod]);
+	//		logger.info("Last simulation period for skim period "+skimPeriod+ " is "+endSkimPeriod[skimPeriod]);
 			
 		}
 		
@@ -146,7 +148,7 @@ public class TNCFleetModel {
 				if(period<endSkimPeriod[skimPeriod]) 
 					skimPeriodLookup[period]= (byte) skimPeriod;
 			}
-			logger.info("Simulation period "+period+" is in skim period "+skimPeriodLookup[period]);
+	//		logger.info("Simulation period "+period+" is in skim period "+skimPeriodLookup[period]);
 		}
 		
 	}
@@ -166,10 +168,10 @@ public class TNCFleetModel {
 			while(personTripManager.morePersonTripsInSimulationPeriod(simulationPeriod)){
 				
 				double rnum = random.nextDouble();
-				PersonTrip personTrip = personTripManager.samplePersonTrip(simulationPeriod, rnum);
+				PersonTrip firstTrip = personTripManager.samplePersonTrip(simulationPeriod, rnum);
 			
-				int origMaz = personTrip.getPickupMaz();
-				int destMaz = personTrip.getDropoffMaz();
+				int origMaz = firstTrip.getPickupMaz();
+				int destMaz = firstTrip.getDropoffMaz();
 				int origTaz = mgraManager.getTaz(origMaz);
 				int destTaz = mgraManager.getTaz(destMaz);
 				if((origTaz==destTaz) && routeIntrazonal==false){
@@ -180,14 +182,18 @@ public class TNCFleetModel {
 			
 				//create a tNCVehicle for this person
 				TNCVehicle tNCVehicle = tNCVehicleManager.getClosestEmptyVehicle(skimPeriod, simulationPeriod, origMaz);
-				tNCVehicle.addPersonTrip(personTrip);
+				tNCVehicle.addPersonTrip(firstTrip);
+				
+				if(tNCVehicle.getId()==vehicleDebug) {
+					logger.info("*********");
+					logger.info("Adding first passenger "+firstTrip.getUniqueId()+" to vehicle ID"+tNCVehicle.getId());
+					logger.info("*********");
+				}
 				++simulatedPersonTrips;
 		
 				if(simulatedPersonTrips<10||( ( simulatedPersonTrips % 1000) == 0) )
 					logger.info("...Total simulated person trips = "+simulatedPersonTrips);
 				
-				if(!personTrip.isRideSharer())
-					continue;
 
 				//get list of zones within max time deviation
 				short[] maxDiversionTimeTazArray = transportCostManager.getZonesWithinMaxDiversionTime(skimPeriod, origTaz, destTaz);
@@ -199,6 +205,10 @@ public class TNCFleetModel {
 				// who need a ride and whose origin & destination is within the max diversion time
 				for(int i = 0; i < maxDiversionTimeTazArray.length; ++i){
 				
+					//person isn't a ride sharer and it is not a joint trip
+					if(!firstTrip.isRideSharer() && !(firstTrip.getJoint()==1))
+						break;
+					
 					//if tNCVehicle is full, break.
 					if(tNCVehicle.getNumberPassengers()>=tNCVehicle.getMaxPassengers())
 						break;
@@ -230,7 +240,12 @@ public class TNCFleetModel {
 						//iterate through people in this list
 						for(PersonTrip trip : potentialTrips){
 							
-							if(!trip.isRideSharer())
+							//trip isn't a ridesharer and isn't joint
+							if(!trip.isRideSharer() && !(trip.getJoint()==1))
+								continue;
+							
+							//first trip is joint and not a ridesharer, and first trip is not from same party as this trip. continue
+							if(firstTrip.getJoint()==1 && !firstTrip.isRideSharer() &&  !firstTrip.sameParty(trip))
 								continue;
 						
 							int tripOriginMaz = trip.getPickupMaz();
@@ -274,6 +289,8 @@ public class TNCFleetModel {
 					} //no more MAZs within max diversion for first passenger
 				} //no more TAZs within max diversion for first passenger
 			
+				//remove the first person trip
+				personTripManager.removePersonTrip(firstTrip, simulationPeriod);
 				tNCVehicleManager.addVehicleToRoute(tNCVehicle);
 				
 			} //until no more person trips in simulation period

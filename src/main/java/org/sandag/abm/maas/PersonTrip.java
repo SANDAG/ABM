@@ -5,8 +5,8 @@ package org.sandag.abm.maas;
  * @author joel.freedman
  *
  */
-class PersonTrip implements Comparable{
-    protected int uniqueId;
+class PersonTrip implements Comparable, Cloneable{
+    protected String uniqueId;
     protected long hhid;		
     protected long personId;
     protected int personNumber;
@@ -14,8 +14,7 @@ class PersonTrip implements Comparable{
     protected int stopid;
     protected int inbound;
     protected int joint;
-    protected int numberParticipants;
-
+ 
     protected int originMaz;
     protected int destinationMaz;
     protected short departPeriod;
@@ -28,7 +27,7 @@ class PersonTrip implements Comparable{
 	protected int pickupMaz;
 	protected int dropoffMaz;
 	
-	public PersonTrip(int uniqueId,long hhid,long personId,int personNumber, int tourid,int stopid,int inbound,int joint,int originMaz, int destinationMaz, int departPeriod, float departTime, float sampleRate, int mode, int boardingTap, int alightingTap, int set, boolean rideSharer){
+	public PersonTrip(String uniqueId,long hhid,long personId,int personNumber, int tourid,int stopid,int inbound,int joint,int originMaz, int destinationMaz, int departPeriod, float departTime, float sampleRate, int mode, int boardingTap, int alightingTap, int set, boolean rideSharer){
        	this.uniqueId = uniqueId;
 		this.hhid = hhid;		
        	this.personId = personId;
@@ -55,11 +54,11 @@ class PersonTrip implements Comparable{
 		
 	}
 
-	public int getUniqueId() {
+	public String getUniqueId() {
 		return uniqueId;
 	}
 
-	public void setUniqueId(int uniqueId) {
+	public void setUniqueId(String uniqueId) {
 		this.uniqueId = uniqueId;
 	}
 	public long getHhid() {
@@ -199,14 +198,6 @@ class PersonTrip implements Comparable{
 		this.avAvailable = avAvailable;
 	}
 
-	public int getNumberParticipants() {
-		return numberParticipants;
-	}
-
-	public void setNumberParticipants(int numberParticipants) {
-		this.numberParticipants = numberParticipants;
-	}
-	
 	public boolean isRideSharer() {
 		return rideSharer;
 	}
@@ -239,9 +230,48 @@ class PersonTrip implements Comparable{
 	public boolean equals(Object aThat){
 	    final PersonTrip that = (PersonTrip)aThat;
 
-		if(this.uniqueId== that.getUniqueId())
+		if(this.uniqueId.compareTo(that.getUniqueId())==0)
 			return true;
 		
 		return false;
 	}
+	
+	
+	/**
+	 * If this trip and thatTrip are both joint trips from the same travel party, return true, else return false
+	 * the comparison is done based on uniqueID, where the end of the unique id is the participant number,
+	 * for example "_1" versus "_2". The method compares the part of the unique ID before the participant number,
+	 * and returns true if they are the same.
+	 * 
+	 * @param thatTrip
+	 * @return True if both from same party, else false
+	 */
+	public boolean sameParty(PersonTrip thatTrip) {
+		
+		if(joint==0)
+			return false;
+		
+		if(thatTrip.getJoint()==0)
+			return false;
+		
+		int lastIndex = uniqueId.lastIndexOf("_");
+		String thisUniqueIdMinusParticipantID = uniqueId.substring(0, lastIndex);
+		
+		lastIndex = thatTrip.getUniqueId().lastIndexOf("_");
+		String thatUniqueIdMinusParticipantID = thatTrip.getUniqueId().substring(0, lastIndex);
+	
+		if(thisUniqueIdMinusParticipantID.compareTo(thatUniqueIdMinusParticipantID)==0)
+			return true;
+		
+		return false;
+		
+	}
+	
+	public Object clone() throws
+    	CloneNotSupportedException 
+	{ 
+		PersonTrip trip = (PersonTrip) super.clone();
+		trip.uniqueId= new String();
+		return trip;
+	} 
 }

@@ -109,10 +109,10 @@ public class VisitorTripModeChoiceDMUTest
         value = dmu.getValueForIndex(16, 0);
         Assert.assertEquals(tourModeIsKNRTransit, (int) value);
 
-        int tourModeIsTaxi = 18;
-        dmu.setTourModeIsTaxi(tourModeIsTaxi);
+        int tourModeIsMaas = 18;
+        dmu.setTourModeIsMaas(tourModeIsMaas);
         value = dmu.getValueForIndex(17, 0);
-        Assert.assertEquals(tourModeIsTaxi, (int) value);
+        Assert.assertEquals(tourModeIsMaas, (int) value);
 
         int hourlyParkingCostTourDest = 21;
         dmu.setHourlyParkingCostTourDest(hourlyParkingCostTourDest);

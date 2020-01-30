@@ -278,8 +278,11 @@ public class VisitorTripModeChoiceModel
         if (modelStructure.getTourModeIsKnr(tourMode)) dmu.setTourModeIsKNRTransit(1);
         else dmu.setTourModeIsKNRTransit(0);
 
-        if (modelStructure.getTourModeIsTaxi(tourMode)) dmu.setTourModeIsTaxi(1);
-        else dmu.setTourModeIsTaxi(0);
+        if (modelStructure.getTourModeIsMaas(tourMode)) dmu.setTourModeIsMaas(1);
+        else dmu.setTourModeIsMaas(0);
+
+        if (modelStructure.getTourModeIsTncTransit(tourMode)) dmu.setTourModeIsTNCTransit(1);
+        else dmu.setTourModeIsTNCTransit(0);
 
         if (trip.isOriginIsTourDestination()) dmu.setTripOrigIsTourDest(1);
         else dmu.setTripOrigIsTourDest(0);
