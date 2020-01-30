@@ -339,3 +339,29 @@ class OMXManager(object):
         for omx_file in self._omx_files.values():
             omx_file.close()
         self._omx_files = {}
+
+
+class CSVReader(object):
+    def __init__(self, path):
+        self._path = path
+        self._f = None
+        self._fields = None
+        
+    def __enter__(self):
+        self._f = open(self._path)
+        header = self._f.next()
+        self._fields = [h.strip().upper() for h in header.split(",")]
+        return self
+        
+    def __exit__(self, exception_type, exception_value, traceback):
+        self._f.close()
+        self._f = None
+        self._fields = None
+        
+    def __iter__(self):
+        return self
+    
+    def next(self):
+        line = self._f.next()
+        tokens = [t.strip() for t in line.split(",")]
+        return dict(zip(self._fields, tokens))

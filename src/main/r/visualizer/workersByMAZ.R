@@ -38,14 +38,13 @@ if(REF){
 MAX_ITER              <- trimws(paste(parameters$Value[parameters$Key=="MAX_ITER"]))
 WORKING_DIR           <- trimws(paste(parameters$Value[parameters$Key=="WORKING_DIR"]))
 geogXWalkDir          <- trimws(paste(parameters$Value[parameters$Key=="geogXWalkDir"]))
-#mazFile          	  <- trimws(paste(parameters$Value[parameters$Key=="mgraInputFile"]))
-#gsub("input/", "", mazFile, fixed=TRUE)
+mazFile          	  <- trimws(paste(parameters$Value[parameters$Key=="mgraInputFile"]))
 factorDir             <- file.path(WORKING_DIR, "data")
 
 # read data
 per                   <- read.csv(paste(ABMOutputDir, paste("personData_",MAX_ITER, ".csv", sep = ""), sep = "/"), as.is = T)
 wsLoc                 <- read.csv(paste(ABMOutputDir, paste("wsLocResults_",MAX_ITER, ".csv", sep = ""), sep = "/"), as.is = T)
-mazData               <- read.csv(paste(ABMInputDir, "mgra13_based_input2016.csv", sep = "/"), as.is = T)
+mazData               <- read.csv(paste(ABMInputDir, basename(mazFile), sep = "/"), as.is = T)
 occFac                <- read.csv(paste(factorDir, "occFactors.csv", sep = "/"), as.is = T)
 mazCorrespondence     <- fread(paste(geogXWalkDir, "geographicXwalk_PMSA.csv", sep = "/"), stringsAsFactors = F)
 

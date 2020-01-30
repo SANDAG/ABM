@@ -167,14 +167,14 @@ public class PersonTripManager {
         String airportSANTripFile = directory
                 + Util.getStringValueFromPropertyMap(propertyMap, AirportSANTripDataFileProperty);
         TableDataSet airportSANTripDataSet = readTableData(airportSANTripFile);
-        personTripMap = readAirportTripList(personTripMap, airportSANTripDataSet, -6);
+        personTripMap = readAirportTripList(personTripMap, airportSANTripDataSet, -6,"SAN");
         logger.info("Read "+(personTripMap.size()-tripsSoFar)+" SAN airport person trips");
         tripsSoFar=personTripMap.size();
 
         String airportCBXTripFile = directory
                 + Util.getStringValueFromPropertyMap(propertyMap, AirportCBXTripDataFileProperty);
         TableDataSet airportCBXTripDataSet = readTableData(airportCBXTripFile);
-        personTripMap = readAirportTripList(personTripMap, airportCBXTripDataSet, -5);
+        personTripMap = readAirportTripList(personTripMap, airportCBXTripDataSet, -5,"CBX");
         logger.info("Read "+(personTripMap.size()-tripsSoFar)+" CBX airport person trips");
         tripsSoFar=personTripMap.size();
 
@@ -227,14 +227,19 @@ public class PersonTripManager {
            	long hhid = (long) inputTripTableData.getValueAt(row,"hh_id");	
            	long personId=-1;
            	int personNumber=-1;
+           	String uniqueID=null;
+           	int tourid = (int) inputTripTableData.getValueAt(row,"tour_id");
+        	int stopid = (int) inputTripTableData.getValueAt(row,"stop_id");
+        	int inbound = (int)inputTripTableData.getValueAt(row,"inbound");
+        	String purpose =inputTripTableData.getStringValueAt(row, "tour_purpose");
+        	String purpAbb = purpose.substring(0, 3);
            	if(jointTripData==false){
            		personId = (long) inputTripTableData.getValueAt(row,"person_id");
            		personNumber = (int) inputTripTableData.getValueAt(row,"person_num");
-           		
+           		uniqueID=new String("I_"+personId+"_"+purpAbb+"_"+tourid+"_"+inbound+"_"+stopid);
+           	}else {
+           		uniqueID=new String("J_"+hhid+"_"+purpAbb+"_"+tourid+"_"+inbound+"_"+stopid);
            	}
-        	int tourid = (int) inputTripTableData.getValueAt(row,"tour_id");
-        	int stopid = (int) inputTripTableData.getValueAt(row,"stop_id");
-        	int inbound = (int)inputTripTableData.getValueAt(row,"inbound");
          	int depPeriod = (int) inputTripTableData.getValueAt(row,"stop_period");
         	float depTime = simulateExactTime(depPeriod);
         	int tour_mode = (int)inputTripTableData.getValueAt(row,"tour_mode");
@@ -257,25 +262,36 @@ public class PersonTripManager {
          	if(inputTripTableData.containsColumn("trip_dist"))
          		distance = inputTripTableData.getValueAt(row, "trip_dist");
         	
-        	
-        	int num_participants=-1;
+        	int set = (int)inputTripTableData.getValueAt(row,"set"); 
+            
+        	//joint trips need to be replicated
+        	int num_participants=1;
         	if(jointTripData){
         		num_participants = (int) inputTripTableData.getValueAt(row,"num_participants");
         	}
-        	int set = (int)inputTripTableData.getValueAt(row,"set"); 
         	
-       		PersonTrip personTrip = new PersonTrip(idNumber,hhid,personId,personNumber,tourid,stopid,inbound,(jointTripData?1:0),oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set,rideShare);
+       		PersonTrip personTrip = new PersonTrip(uniqueID,hhid,personId,personNumber,tourid,stopid,inbound,(jointTripData?1:0),oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set,rideShare);
        		personTrip.setAvAvailable((byte) avAvailable);
-       		personTrip.setNumberParticipants(num_participants);
-       		if(num_participants>-1)
+     		if(num_participants>1) {
        			personTrip.setJoint(1);
+         		personTrip.setUniqueId(uniqueID+"_1");
+         	}
        		personTripMap.put(idNumber, personTrip);
        		
        		//replicate joint trips
        		if(num_participants>1)
        			for(int i=2;i<=num_participants;++i){
        	        	++idNumber;
-       	        	personTripMap.put(idNumber, personTrip);
+       	        	PersonTrip newTrip = null;
+       	        	try {
+       	        		newTrip = (PersonTrip) personTrip.clone();
+       	        	}catch(Exception e) {
+       	        		
+       	        		logger.fatal("Error attempting to clone joint trip object "+uniqueID);
+       	        		throw new RuntimeException(e);
+       	        	}
+       	        	newTrip.setUniqueId(uniqueID+"_"+i);
+             	    personTripMap.put(idNumber, newTrip);
        			}
         }
          
@@ -356,20 +372,32 @@ public class PersonTripManager {
         	int num_participants = (int) inputTripTableData.getValueAt(row,"partySize");
         	
         	int set = (int)inputTripTableData.getValueAt(row,"set"); 
-        	
-       		PersonTrip personTrip = new PersonTrip(idNumber,hhid,personId,personNumber,tourid,stopid,inbound,0,oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set,rideShare);
+       		String uniqueID=new String("V_"+tourid+"_"+stopid);
+
+       		PersonTrip personTrip = new PersonTrip(uniqueID,hhid,personId,personNumber,tourid,stopid,inbound,0,oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set,rideShare);
        		personTrip.setAvAvailable((byte) avAvailable);
-       		personTrip.setNumberParticipants(num_participants);
-       		if(num_participants>-1)
+       		if(num_participants>1) {
        			personTrip.setJoint(1);
+         		personTrip.setUniqueId(uniqueID+"_1");
+         	}
        		personTripMap.put(idNumber, personTrip);
        		
-       		//replicate joint trips
+      		//replicate joint trips
        		if(num_participants>1)
        			for(int i=2;i<=num_participants;++i){
        	        	++idNumber;
-       	        	personTripMap.put(idNumber, personTrip);
+       	        	PersonTrip newTrip = null;
+       	        	try {
+       	        		newTrip = (PersonTrip) personTrip.clone();
+       	        	}catch(Exception e) {
+       	        		
+       	        		logger.fatal("Error attempting to clone joint trip object "+uniqueID);
+       	        		throw new RuntimeException(e);
+       	        	}
+       	        	newTrip.setUniqueId(uniqueID+"_"+i);
+             	    personTripMap.put(idNumber, newTrip);
        			}
+       
         }
          
          return personTripMap;
@@ -446,20 +474,33 @@ public class PersonTripManager {
         	int num_participants = 1;
         	
         	int set = (int)inputTripTableData.getValueAt(row,"set"); 
-        	
-       		PersonTrip personTrip = new PersonTrip(idNumber,hhid,personId,personNumber,tourid,stopid,inbound,0,oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set,rideShare);
+       		String uniqueID=new String("M_"+tourid+"_"+stopid);
+
+       		PersonTrip personTrip = new PersonTrip(uniqueID,hhid,personId,personNumber,tourid,stopid,inbound,0,oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set,rideShare);
        		personTrip.setAvAvailable((byte) avAvailable);
-       		personTrip.setNumberParticipants(num_participants);
-       		if(num_participants>-1)
+       		if(num_participants>1) {
        			personTrip.setJoint(1);
+         		personTrip.setUniqueId(uniqueID+"_1");
+       		}
        		personTripMap.put(idNumber, personTrip);
-       		
-       		//replicate joint trips
+      		 
+    		//replicate joint trips
        		if(num_participants>1)
        			for(int i=2;i<=num_participants;++i){
        	        	++idNumber;
-       	        	personTripMap.put(idNumber, personTrip);
+       	        	PersonTrip newTrip = null;
+       	        	try {
+       	        		newTrip = (PersonTrip) personTrip.clone();
+       	        	}catch(Exception e) {
+       	        		
+       	        		logger.fatal("Error attempting to clone joint trip object "+uniqueID);
+       	        		throw new RuntimeException(e);
+       	        	}
+       	        	newTrip.setUniqueId(uniqueID+"_"+i);
+             	    personTripMap.put(idNumber, newTrip);
        			}
+       
+
         }
          
          return personTripMap;
@@ -471,7 +512,7 @@ public class PersonTripManager {
 	 * @param personTripList A HashMap of PersonTrips. If null will be instantiated in this method.
 	 * @param inputTripTableData The TableDataSet containing the visitor output trip file.
 	 */
-	public HashMap<Integer, PersonTrip> readAirportTripList(HashMap<Integer, PersonTrip> personTripMap, TableDataSet inputTripTableData, int default_id){
+	public HashMap<Integer, PersonTrip> readAirportTripList(HashMap<Integer, PersonTrip> personTripMap, TableDataSet inputTripTableData, int default_id, String airportCode){
 		
 		if(personTripMap==null)
 			personTripMap = new HashMap<Integer, PersonTrip>();
@@ -531,20 +572,34 @@ public class PersonTripManager {
         	int num_participants = 1;
         	
         	int set = (int)inputTripTableData.getValueAt(row,"set"); 
-        	
-       		PersonTrip personTrip = new PersonTrip(idNumber,hhid,personId,personNumber,tourid,stopid,inbound,0,oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set,rideShare);
+       		String uniqueID=new String(airportCode+"_"+stopid);
+
+       		PersonTrip personTrip = new PersonTrip(uniqueID,hhid,personId,personNumber,tourid,stopid,inbound,0,oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set,rideShare);
        		personTrip.setAvAvailable((byte) avAvailable);
-       		personTrip.setNumberParticipants(num_participants);
-       		if(num_participants>-1)
+       		if(num_participants>1) {
        			personTrip.setJoint(1);
+         		personTrip.setUniqueId(uniqueID+"_1");
+     
+       		}
        		personTripMap.put(idNumber, personTrip);
        		
-       		//replicate joint trips
+    		//replicate joint trips
        		if(num_participants>1)
        			for(int i=2;i<=num_participants;++i){
        	        	++idNumber;
-       	        	personTripMap.put(idNumber, personTrip);
+       	        	PersonTrip newTrip = null;
+       	        	try {
+       	        		newTrip = (PersonTrip) personTrip.clone();
+       	        	}catch(Exception e) {
+       	        		
+       	        		logger.fatal("Error attempting to clone joint trip object "+uniqueID);
+       	        		throw new RuntimeException(e);
+       	        	}
+       	        	newTrip.setUniqueId(uniqueID+"_"+i);
+             	    personTripMap.put(idNumber, newTrip);
        			}
+       
+
         }
          
          return personTripMap;
@@ -622,20 +677,32 @@ public class PersonTripManager {
         	int num_participants = 1;
         	
         	int set = (int)inputTripTableData.getValueAt(row,"set"); 
-        	
-       		PersonTrip personTrip = new PersonTrip(idNumber,hhid,personId,personNumber,tourid,stopid,inbound,0,oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set,rideShare);
+       		String uniqueID=new String("IE_"+tourid+"_"+inbound);
+
+       		PersonTrip personTrip = new PersonTrip(uniqueID,hhid,personId,personNumber,tourid,stopid,inbound,0,oMaz,dMaz,depPeriod,depTime,sRate,mode,boardingTap,alightingTap,set,rideShare);
        		personTrip.setAvAvailable((byte) avAvailable);
-       		personTrip.setNumberParticipants(num_participants);
-       		if(num_participants>-1)
+       		if(num_participants>1) {
        			personTrip.setJoint(1);
+         		personTrip.setUniqueId(uniqueID+"_1");
+       		}
        		personTripMap.put(idNumber, personTrip);
        		
        		//replicate joint trips
        		if(num_participants>1)
        			for(int i=2;i<=num_participants;++i){
        	        	++idNumber;
-       	        	personTripMap.put(idNumber, personTrip);
+       	        	PersonTrip newTrip = null;
+       	        	try {
+       	        		newTrip = (PersonTrip) personTrip.clone();
+       	        	}catch(Exception e) {
+       	        		
+       	        		logger.fatal("Error attempting to clone joint trip object "+uniqueID);
+       	        		throw new RuntimeException(e);
+       	        	}
+       	        	newTrip.setUniqueId(uniqueID+"_"+i);
+             	    personTripMap.put(idNumber, newTrip);
        			}
+
         }
          
          return personTripMap;

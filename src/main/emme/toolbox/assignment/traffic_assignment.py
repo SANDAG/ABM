@@ -131,7 +131,7 @@ class TrafficAssignment(_m.Tool(), gen_utils.Snapshot):
                            "num_processors", "select_link", "raise_zero_dist"]
         version = os.environ.get("EMMEPATH", "")
         self._version = version[-5:] if version else ""
-        self._skim_classes_separately = False  # Used for debugging only
+        self._skim_classes_separately = True  # Used for debugging only
         self._stats = {}
 
     def page(self):
@@ -353,64 +353,64 @@ Assignment matrices and resulting network flows are always in PCE.
             # Main list of assignment classes
             classes = [
                 {   # 0
-                    "name": 'SOV_NT_L', "mode": 's', "PCE": 1, "VOT": 150, "cost": '@cost_auto',
-                    "skims": ["TIME", "DIST", "REL", "TOLLCOST", "TOLLDIST"]
+                    "name": 'SOV_NT_L', "mode": 's', "PCE": 1, "VOT": 15.0, "cost": '@cost_auto',
+                    "skims": ["TIME", "DIST", "REL", "TOLLCOST.SOV", "TOLLDIST"]
                 },
                 {   # 1
                     "name": 'SOV_TR_L', "mode": 'S', "PCE": 1, "VOT": 15.0, "cost": '@cost_auto',
-                    "skims": ["TIME", "DIST", "REL", "TOLLCOST", "TOLLDIST"]
+                    "skims": ["TIME", "DIST", "REL", "TOLLCOST.SOV", "TOLLDIST"]
                 },
                 {   # 2
                     "name": 'HOV2_L', "mode": 'H', "PCE": 1, "VOT": 15.0, "cost": '@cost_hov2',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.HOV2", "TOLLDIST.HOV2", "HOVDIST"]
                 },
                 {   # 3
-                    "name": 'HOV3_L', "mode": 'I', "PCE": 1, "VOT": 15.0, "cost": '@cost_hov',
+                    "name": 'HOV3_L', "mode": 'I', "PCE": 1, "VOT": 15.0, "cost": '@cost_hov3',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.HOV3", "TOLLDIST.HOV3", "HOVDIST"]
                 },
                 {   # 4
                     "name": 'SOV_NT_M', "mode": 's', "PCE": 1, "VOT": 30.0, "cost": '@cost_auto',
-                    "skims": ["TIME", "DIST", "REL", "TOLLCOST", "TOLLDIST"]
+                    "skims": ["TIME", "DIST", "REL", "TOLLCOST.SOV", "TOLLDIST"]
                 },
                 {   # 5
                     "name": 'SOV_TR_M', "mode": 'S', "PCE": 1, "VOT": 30.0, "cost": '@cost_auto',
-                    "skims": ["TIME", "DIST", "REL", "TOLLCOST", "TOLLDIST"]
+                    "skims": ["TIME", "DIST", "REL", "TOLLCOST.SOV", "TOLLDIST"]
                 },
                 {   # 6
                     "name": 'HOV2_M', "mode": 'H', "PCE": 1, "VOT": 30.0, "cost": '@cost_hov2',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.HOV2", "TOLLDIST.HOV2", "HOVDIST"]
                 },
                 {   # 7
-                    "name": 'HOV3_M', "mode": 'I', "PCE": 1, "VOT": 30.0, "cost": '@cost_hov',
+                    "name": 'HOV3_M', "mode": 'I', "PCE": 1, "VOT": 30.0, "cost": '@cost_hov3',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.HOV3", "TOLLDIST.HOV3", "HOVDIST"]
                 },
                 {   # 8
                     "name": 'SOV_NT_H', "mode": 's', "PCE": 1, "VOT": 85., "cost": '@cost_auto',
-                    "skims": ["TIME", "DIST", "REL", "TOLLCOST", "TOLLDIST"]
+                    "skims": ["TIME", "DIST", "REL", "TOLLCOST.SOV", "TOLLDIST"]
                 },
                 {   # 9
                     "name": 'SOV_TR_H', "mode": 'S', "PCE": 1, "VOT": 85., "cost": '@cost_auto',
-                    "skims": ["TIME", "DIST", "REL", "TOLLCOST", "TOLLDIST"]
+                    "skims": ["TIME", "DIST", "REL", "TOLLCOST.SOV", "TOLLDIST"]
                 },
                 {   # 10
                     "name": 'HOV2_H', "mode": 'H', "PCE": 1, "VOT": 85., "cost": '@cost_hov2',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.HOV2", "TOLLDIST.HOV2", "HOVDIST"]
                 },
                 {   # 11
-                    "name": 'HOV3_H', "mode": 'I', "PCE": 1, "VOT": 85., "cost": '@cost_hov',
+                    "name": 'HOV3_H', "mode": 'I', "PCE": 1, "VOT": 85., "cost": '@cost_hov3',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.HOV3", "TOLLDIST.HOV3", "HOVDIST"]
                 },
                 {   # 12
-                    "name": 'TRK_H', "mode": 'V', "PCE": 2.5, "VOT": 89., "cost": '@cost_hvy_truck',
-                    "skims": ["TIME", "DIST", "TOLLCOST"]
+                    "name": 'TRK_L', "mode": 'T', "PCE": 1.3, "VOT": 67., "cost": '@cost_lgt_truck',
+                    "skims": ["TIME", "DIST", "TOLLCOST.TRK_L"]
                 },
                 {   # 13
-                    "name": 'TRK_L', "mode": 'T', "PCE": 1.3, "VOT": 67., "cost": '@cost_auto',
-                    "skims": ["TIME", "DIST", "TOLLCOST"]
+                    "name": 'TRK_M', "mode": 'M', "PCE": 1.5, "VOT": 68., "cost": '@cost_med_truck',
+                    "skims": ["TIME", "DIST", "TOLLCOST.TRK_M"]
                 },
                 {   # 14
-                    "name": 'TRK_M', "mode": 'M', "PCE": 1.5, "VOT": 68., "cost": '@cost_med_truck',
-                    "skims": ["TIME", "DIST", "TOLLCOST"]
+                    "name": 'TRK_H', "mode": 'V', "PCE": 2.5, "VOT": 89., "cost": '@cost_hvy_truck',
+                    "skims": ["TIME", "DIST", "TOLLCOST.TRK_H"]
                 },
             ]
             
@@ -530,11 +530,11 @@ Assignment matrices and resulting network flows are always in PCE.
                 if period in ["EA", "MD", "EV"]:
                     # For links with signals inactive in the off-peak periods, convert VDF to type 11
                     net_calc("vdf", "11", "modes=d and @green_to_cycle=0 and @traffic_control=4,5 and vdf=24")
-                # Set HOV2 cost attribute
-                create_attribute("LINK", "@cost_hov2_%s" % p, "toll (non-mngd) + cost for HOV2",
-                                 0, overwrite=True, scenario=scenario)
-                net_calc("@cost_hov2_%s" % p, "@cost_hov_%s" % p, "modes=d")
-                net_calc("@cost_hov2_%s" % p, "@cost_auto_%s" % p, "@lane_restriction=3")
+                # # Set HOV2 cost attribute
+                # create_attribute("LINK", "@cost_hov2_%s" % p, "toll (non-mngd) + cost for HOV2",
+                #                  0, overwrite=True, scenario=scenario)
+                # net_calc("@cost_hov2_%s" % p, "@cost_hov_%s" % p, "modes=d")
+                # net_calc("@cost_hov2_%s" % p, "@cost_auto_%s" % p, "@lane_restriction=3")
 
             with _m.logbook_trace("Transit line headway and background traffic"):
                 # set headway for the period
@@ -635,9 +635,12 @@ Assignment matrices and resulting network flows are always in PCE.
         with _m.logbook_trace("Calculation of attributes for skims"):
             link_attributes = [
                 ("@hovdist", "distance for HOV"),
-                ("@tollcost", "Toll cost in cents"),
-                ("@h2tollcost", "Toll cost in cents for hov2"),
-                ("@h3tollcost", "Toll cost in cents for hov3"),
+                ("@tollcost", "Toll cost for SOV autos"),
+                ("@h2tollcost", "Toll cost for hov2"),
+                ("@h3tollcost", "Toll cost for hov3"),
+                ("@trk_ltollcost", "Toll cost for light trucks"),
+                ("@trk_mtollcost", "Toll cost for medium trucks"),
+                ("@trk_htollcost", "Toll cost for heavy trucks"),
                 ("@mlcost", "Manage lane cost in cents"),
                 ("@tolldist", "Toll distance"),
                 ("@h2tolldist", "Toll distance for hov2"),
@@ -654,9 +657,12 @@ Assignment matrices and resulting network flows are always in PCE.
                              overwrite=True, scenario=scenario)
 
             net_calc("@hovdist", "length", {"link": "@lane_restriction=2,3"})
-            net_calc("@tollcost", "@toll_%s" % p)
-            net_calc("@h2tollcost", "@toll_%s" % p, {"link": "@lane_restriction=3,4"})
-            net_calc("@h3tollcost", "@toll_%s" % p, {"link": "@lane_restriction=4"})
+            net_calc("@tollcost", "@cost_auto_%s - @cost_operating" % p)
+            net_calc("@h2tollcost", "@cost_hov2_%s - @cost_operating" % p, {"link": "@lane_restriction=3,4"})
+            net_calc("@h3tollcost", "@cost_hov3_%s - @cost_operating" % p, {"link": "@lane_restriction=4"})
+            net_calc("@trk_ltollcost", "@cost_lgt_truck_%s - @cost_operating" % p)
+            net_calc("@trk_mtollcost", "@cost_med_truck_%s - @cost_operating" % p)
+            net_calc("@trk_htollcost", "@cost_hvy_truck_%s - @cost_operating" % p)
             net_calc("@mlcost", "@toll_%s" % p, {"link": "not @lane_restriction=4"})
             net_calc("@tolldist", "length", {"link": "@lane_restriction=2,4"})
             net_calc("@h2tolldist", "length", {"link": "@lane_restriction=3,4"})
@@ -686,17 +692,20 @@ Assignment matrices and resulting network flows are always in PCE.
         emmebank = scenario.emmebank
         p = period.lower()
         analysis_link = {
-            "TIME":          "@auto_time",
-            "DIST":          "length",
-            "HOVDIST":       "@hovdist",
-            "TOLLCOST":      "@tollcost",
-            "TOLLCOST.HOV2": "@h2tollcost",
-            "TOLLCOST.HOV3": "@h3tollcost",
-            "MLCOST":        "@mlcost",
-            "TOLLDIST":      "@tolldist",
-            "TOLLDIST.HOV2": "@h2tolldist",
-            "TOLLDIST.HOV3": "@h3tolldist",
-            "REL":           "@reliability_sq"
+            "TIME":           "@auto_time",
+            "DIST":           "length",
+            "HOVDIST":        "@hovdist",
+            "TOLLCOST.SOV":   "@tollcost",
+            "TOLLCOST.HOV2":  "@h2tollcost",
+            "TOLLCOST.HOV3":  "@h3tollcost",
+            "TOLLCOST.TRK_L": "@trk_ltollcost",
+            "TOLLCOST.TRK_M": "@trk_mtollcost",
+            "TOLLCOST.TRK_H": "@trk_htollcost",
+            "MLCOST":         "@mlcost",
+            "TOLLDIST":       "@tolldist",
+            "TOLLDIST.HOV2":  "@h2tolldist",
+            "TOLLDIST.HOV3":  "@h3tolldist",
+            "REL":            "@reliability_sq"
         }
         analysis_turn = {"TIME": "@auto_time_turn"}
         with self.setup_skims(period, scenario):
