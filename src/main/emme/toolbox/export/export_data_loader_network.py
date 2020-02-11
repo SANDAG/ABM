@@ -256,8 +256,8 @@ Export network results to csv files for SQL data loader."""
             ("ABTX",      "@time_inter", "0"),
             ("ABLN",      "@lane", "0"),
             ("ABSCST",    "sov_total_gencost", ""),
-            ("ABH2CST",   "hov_total_gencost", ""),
-            ("ABH3CST",   "hov_total_gencost", ""),
+            ("ABH2CST",   "hov2_total_gencost", ""),
+            ("ABH3CST",   "hov3_total_gencost", ""),
             ("ABSTM",     "auto_time", ""),
             ("ABHTM",     "auto_time", ""),
         ]
@@ -332,9 +332,10 @@ Export network results to csv files for SQL data loader."""
             link.iway = 2 if link.reverse_link else 1
             link.length_feet = link.length * 5280
             for period in periods:
-                link["toll_hov"  + period] = link["@cost_hov" + period] - link["@cost_operating"]
+                link["toll_hov"  + period] = link["@cost_hov2" + period] - link["@cost_operating"]
                 link["sov_total_gencost" + period] = link["auto_time" + period] + link["@cost_auto" + period]
-                link["hov_total_gencost" + period] = link["auto_time" + period] + link["@cost_hov" + period]
+                link["hov2_total_gencost" + period] = link["auto_time" + period] + link["@cost_hov2" + period]
+                link["hov3_total_gencost" + period] = link["auto_time" + period] + link["@cost_hov3" + period]
             if link.volume_delay_func == 24:
                 link.alpha2 = 6.0
             link.per_lane_capacity = max([(link["@capacity_link" + p] / link["@lane" + p]) 
