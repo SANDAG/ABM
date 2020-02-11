@@ -1420,7 +1420,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     # managed lanes, toll free for HOV
                     link["@cost_hov2" + time] = link["@cost_operating"]
                     link["@cost_hov3" + time] = link["@cost_operating"]
-                if link["@lane_restriction"] == 3:
+                elif link["@lane_restriction"] == 3:
                     link["@cost_hov2" + time] = factor["S2"] * link["@toll" + time] + link["@cost_operating"]
                     link["@cost_hov3" + time] = link["@cost_operating"]
                 else:
