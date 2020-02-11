@@ -326,7 +326,8 @@ Export network results to csv files for SQL data loader."""
         for period in periods:
             network.create_attribute("LINK", "toll_hov" + period, 0)
             network.create_attribute("LINK", "sov_total_gencost" + period, 0)
-            network.create_attribute("LINK", "hov_total_gencost" + period, 0)
+            network.create_attribute("LINK", "hov2_total_gencost" + period, 0)
+            network.create_attribute("LINK", "hov3_total_gencost" + period, 0)
         for link in network.links():
             link.is_one_way = 1 if link.reverse_link else 0
             link.iway = 2 if link.reverse_link else 1
