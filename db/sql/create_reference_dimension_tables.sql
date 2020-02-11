@@ -33,19 +33,15 @@ CREATE TABLE [dimension].[geography] (
 	[taz_13] nchar(20) NOT NULL,
 	[taz_13_shape] geometry NULL,
 	[luz_13] nchar(20) NOT NULL,
-	[luz_13_shape] geometry NULL,
 	[cicpa_2016] nchar(20) NOT NULL,
 	[cicpa_2016_name] nchar(50) NOT NULL,
-	[cicpa_2016_shape] geometry NULL,
 	[cocpa_2016] nchar(20) NOT NULL,
 	[cocpa_2016_name] nchar(50) NOT NULL,
-	[cocpa_2016_shape] geometry NULL,
 	[jurisdiction_2016] nchar(20) NOT NULL,
 	[jurisdiction_2016_name] nchar(50) NOT NULL,
-	[jurisdiction_2016_shape] geometry NULL,
+	[tract_2010] nchar(20) NOT NULL,
 	[region_2004] nchar(20) NOT NULL,
 	[region_2004_name] nchar(50) NOT NULL,
-	[region_2004_shape] geometry NULL,
 	[external_zone] nchar(20) NOT NULL,
 	CONSTRAINT pk_geography PRIMARY KEY([geography_id]),
 	CONSTRAINT ixuq_geography UNIQUE([mgra_13], [taz_13]) WITH (DATA_COMPRESSION = PAGE),
@@ -55,6 +51,7 @@ CREATE TABLE [dimension].[geography] (
 	INDEX ix_geography_cicpa_2016 NONCLUSTERED ([geography_id], [cicpa_2016], [cicpa_2016_name]) WITH (DATA_COMPRESSION = PAGE),
 	INDEX ix_geography_cocpa_2016 NONCLUSTERED ([geography_id], [cocpa_2016], [cocpa_2016_name]) WITH (DATA_COMPRESSION = PAGE),
 	INDEX ix_geography_jurisdiction_2016 NONCLUSTERED ([geography_id], [jurisdiction_2016], [jurisdiction_2016_name]) WITH (DATA_COMPRESSION = PAGE),
+	INDEX ix_geography_tract_2010 NONCLUSTERED ([geography_id], [tract_2010]) WITH (DATA_COMPRESSION = PAGE),
 	INDEX ix_geography_region_2004 NONCLUSTERED ([geography_id], [region_2004], [region_2004_name]) WITH (DATA_COMPRESSION = PAGE),
 	INDEX ix_geography_external_zone NONCLUSTERED ([geography_id], [external_zone]) WITH (DATA_COMPRESSION = PAGE))
 ON reference_fg
@@ -72,19 +69,15 @@ SELECT
 	,[taz_13] AS [household_location_taz_13]
 	,[taz_13_shape] AS [household_location_taz_13_shape]
 	,[luz_13] AS [household_location_luz_13]
-	,[luz_13_shape] AS [household_location_luz_13_shape]
 	,[cicpa_2016] AS [household_location_cicpa_2016]
 	,[cicpa_2016_name] AS [household_location_cicpa_2016_name]
-	,[cicpa_2016_shape] AS [household_location_cicpa_2016_shape]
 	,[cocpa_2016] AS [household_location_cocpa_2016]
 	,[cocpa_2016_name] AS [household_location_cocpa_2016_name]
-	,[cocpa_2016_shape] AS [household_location_cocpa_2016_shape]
 	,[jurisdiction_2016] AS [household_location_jurisdiction_2016]
 	,[jurisdiction_2016_name] AS [household_location_jurisdiction_2016_name]
-	,[jurisdiction_2016_shape] AS [household_location_jurisdiction_2016_shape]
+    ,[tract_2010] AS [household_location_tract_2010]
 	,[region_2004] AS [household_location_region_2004]
 	,[region_2004_name] AS [household_location_region_2004_name]
-	,[region_2004_shape] AS [household_location_region_2004_shape]
 	,[external_zone] AS [household_location_external_zone]
 FROM
 	[dimension].[geography]
@@ -99,19 +92,15 @@ SELECT
 	,[taz_13] AS [parking_destination_taz_13]
 	,[taz_13_shape] AS [parking_destination_taz_13_shape]
 	,[luz_13] AS [parking_destination_luz_13]
-	,[luz_13_shape] AS [parking_destination_luz_13_shape]
 	,[cicpa_2016] AS [parking_destination_cicpa_2016]
 	,[cicpa_2016_name] AS [parking_destination_cicpa_2016_name]
-	,[cicpa_2016_shape] AS [parking_destination_cicpa_2016_shape]
 	,[cocpa_2016] AS [parking_destination_cocpa_2016]
 	,[cocpa_2016_name] AS [parking_destination_cocpa_2016_name]
-	,[cocpa_2016_shape] AS [parking_destination_cocpa_2016_shape]
 	,[jurisdiction_2016] AS [parking_destination_jurisdiction_2016]
 	,[jurisdiction_2016_name] AS [parking_destination_jurisdiction_2016_name]
-	,[jurisdiction_2016_shape] AS [parking_destination_jurisdiction_2016_shape]
+    ,[tract_2010] AS [parking_destination_tract_2010]
 	,[region_2004] AS [parking_destination_region_2004]
 	,[region_2004_name] AS [parking_destination_region_2004_name]
-	,[region_2004_shape] AS [parking_destination_region_2004_shape]
 	,[external_zone] AS [parking_destination_external_zone]
 FROM
 	[dimension].[geography]
@@ -126,19 +115,15 @@ SELECT
 	,[taz_13] AS [school_location_taz_13]
 	,[taz_13_shape] AS [school_location_taz_13_shape]
 	,[luz_13] AS [school_location_luz_13]
-	,[luz_13_shape] AS [school_location_luz_13_shape]
 	,[cicpa_2016] AS [school_location_cicpa_2016]
 	,[cicpa_2016_name] AS [school_location_cicpa_2016_name]
-	,[cicpa_2016_shape] AS [school_location_cicpa_2016_shape]
 	,[cocpa_2016] AS [school_location_cocpa_2016]
 	,[cocpa_2016_name] AS [school_location_cocpa_2016_name]
-	,[cocpa_2016_shape] AS [school_location_cocpa_2016_shape]
 	,[jurisdiction_2016] AS [school_location_jurisdiction_2016]
 	,[jurisdiction_2016_name] AS [school_location_jurisdiction_2016_name]
-	,[jurisdiction_2016_shape] AS [school_location_jurisdiction_2016_shape]
+	,[tract_2010] AS [school_location_tract_2010]
 	,[region_2004] AS [school_location_region_2004]
 	,[region_2004_name] AS [school_location_region_2004_name]
-	,[region_2004_shape] AS [school_location_region_2004_shape]
 	,[external_zone] AS [school_location_external_zone]
 FROM
 	[dimension].[geography]
@@ -153,19 +138,15 @@ SELECT
 	,[taz_13] AS [tour_destination_taz_13]
 	,[taz_13_shape] AS [tour_destination_taz_13_shape]
 	,[luz_13] AS [tour_destination_luz_13]
-	,[luz_13_shape] AS [tour_destination_luz_13_shape]
 	,[cicpa_2016] AS [tour_destination_cicpa_2016]
 	,[cicpa_2016_name] AS [tour_destination_cicpa_2016_name]
-	,[cicpa_2016_shape] AS [tour_destination_cicpa_2016_shape]
 	,[cocpa_2016] AS [tour_destination_cocpa_2016]
 	,[cocpa_2016_name] AS [tour_destination_cocpa_2016_name]
-	,[cocpa_2016_shape] AS [tour_destination_cocpa_2016_shape]
 	,[jurisdiction_2016] AS [tour_destination_jurisdiction_2016]
 	,[jurisdiction_2016_name] AS [tour_destination_jurisdiction_2016_name]
-	,[jurisdiction_2016_shape] AS [tour_destination_jurisdiction_2016_shape]
+	,[tract_2010] AS [tour_destination_tract_2010]
 	,[region_2004] AS [tour_destination_region_2004]
 	,[region_2004_name] AS [tour_destination_region_2004_name]
-	,[region_2004_shape] AS [tour_destination_region_2004_shape]
 	,[external_zone] AS [tour_destination_external_zone]
 FROM
 	[dimension].[geography]
@@ -180,19 +161,15 @@ SELECT
 	,[taz_13] AS [tour_origin_taz_13]
 	,[taz_13_shape] AS [tour_origin_taz_13_shape]
 	,[luz_13] AS [tour_origin_luz_13]
-	,[luz_13_shape] AS [tour_origin_luz_13_shape]
 	,[cicpa_2016] AS [tour_origin_cicpa_2016]
 	,[cicpa_2016_name] AS [tour_origin_cicpa_2016_name]
-	,[cicpa_2016_shape] AS [tour_origin_cicpa_2016_shape]
 	,[cocpa_2016] AS [tour_origin_cocpa_2016]
 	,[cocpa_2016_name] AS [tour_origin_cocpa_2016_name]
-	,[cocpa_2016_shape] AS [tour_origin_cocpa_2016_shape]
 	,[jurisdiction_2016] AS [tour_origin_jurisdiction_2016]
 	,[jurisdiction_2016_name] AS [tour_origin_jurisdiction_2016_name]
-	,[jurisdiction_2016_shape] AS [tour_origin_jurisdiction_2016_shape]
+    ,[tract_2010] AS [tour_origin_tract_2010]
 	,[region_2004] AS [tour_origin_region_2004]
 	,[region_2004_name] AS [tour_origin_region_2004_name]
-	,[region_2004_shape] AS [tour_origin_region_2004_shape]
 	,[external_zone] AS [tour_origin_external_zone]
 FROM
 	[dimension].[geography]
@@ -207,19 +184,15 @@ SELECT
 	,[taz_13] AS [trip_destination_taz_13]
 	,[taz_13_shape] AS [trip_destination_taz_13_shape]
 	,[luz_13] AS [trip_destination_luz_13]
-	,[luz_13_shape] AS [trip_destination_luz_13_shape]
 	,[cicpa_2016] AS [trip_destination_cicpa_2016]
 	,[cicpa_2016_name] AS [trip_destination_cicpa_2016_name]
-	,[cicpa_2016_shape] AS [trip_destination_cicpa_2016_shape]
 	,[cocpa_2016] AS [trip_destination_cocpa_2016]
 	,[cocpa_2016_name] AS [trip_destination_cocpa_2016_name]
-	,[cocpa_2016_shape] AS [trip_destination_cocpa_2016_shape]
 	,[jurisdiction_2016] AS [trip_destination_jurisdiction_2016]
 	,[jurisdiction_2016_name] AS [trip_destination_jurisdiction_2016_name]
-	,[jurisdiction_2016_shape] AS [trip_destination_jurisdiction_2016_shape]
+	,[tract_2010] AS [trip_destination_tract_2010]
 	,[region_2004] AS [trip_destination_region_2004]
 	,[region_2004_name] AS [trip_destination_region_2004_name]
-	,[region_2004_shape] AS [trip_destination_region_2004_shape]
 	,[external_zone] AS [trip_destination_external_zone]
 FROM
 	[dimension].[geography]
@@ -234,19 +207,15 @@ SELECT
 	,[taz_13] AS [trip_origin_taz_13]
 	,[taz_13_shape] AS [trip_origin_taz_13_shape]
 	,[luz_13] AS [trip_origin_luz_13]
-	,[luz_13_shape] AS [trip_origin_luz_13_shape]
 	,[cicpa_2016] AS [trip_origin_cicpa_2016]
 	,[cicpa_2016_name] AS [trip_origin_cicpa_2016_name]
-	,[cicpa_2016_shape] AS [trip_origin_cicpa_2016_shape]
 	,[cocpa_2016] AS [trip_origin_cocpa_2016]
 	,[cocpa_2016_name] AS [trip_origin_cocpa_2016_name]
-	,[cocpa_2016_shape] AS [trip_origin_cocpa_2016_shape]
 	,[jurisdiction_2016] AS [trip_origin_jurisdiction_2016]
 	,[jurisdiction_2016_name] AS [trip_origin_jurisdiction_2016_name]
-	,[jurisdiction_2016_shape] AS [trip_origin_jurisdiction_2016_shape]
+	,[tract_2010] AS [trip_origin_tract_2010]
 	,[region_2004] AS [trip_origin_region_2004]
 	,[region_2004_name] AS [trip_origin_region_2004_name]
-	,[region_2004_shape] AS [trip_origin_region_2004_shape]
 	,[external_zone] AS [trip_origin_external_zone]
 FROM
 	[dimension].[geography]
@@ -261,19 +230,15 @@ SELECT
 	,[taz_13] AS [work_location_taz_13]
 	,[taz_13_shape] AS [work_location_taz_13_shape]
 	,[luz_13] AS [work_location_luz_13]
-	,[luz_13_shape] AS [work_location_luz_13_shape]
 	,[cicpa_2016] AS [work_location_cicpa_2016]
 	,[cicpa_2016_name] AS [work_location_cicpa_2016_name]
-	,[cicpa_2016_shape] AS [work_location_cicpa_2016_shape]
 	,[cocpa_2016] AS [work_location_cocpa_2016]
 	,[cocpa_2016_name] AS [work_location_cocpa_2016_name]
-	,[cocpa_2016_shape] AS [work_location_cocpa_2016_shape]
 	,[jurisdiction_2016] AS [work_location_jurisdiction_2016]
 	,[jurisdiction_2016_name] AS [work_location_jurisdiction_2016_name]
-	,[jurisdiction_2016_shape] AS [work_location_jurisdiction_2016_shape]
+    ,[tract_2010] AS [work_location_tract_2010]
 	,[region_2004] AS [work_location_region_2004]
 	,[region_2004_name] AS [work_location_region_2004_name]
-	,[region_2004_shape] AS [work_location_region_2004_shape]
 	,[external_zone] AS [work_location_external_zone]
 FROM
 	[dimension].[geography]
