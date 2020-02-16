@@ -339,6 +339,13 @@ public class HouseholdAVAllocationManager {
         ArrayList<Person> persons;
         int veh_used; //the number of the vehicle used (1,2,3 or 0 for no AV used)
         
+        public Trip() {
+        	
+        	tour_purpose="";
+        	orig_purpose="";
+        	dest_purpose="";
+        	
+        }
 		public void writeDebug(Logger logger) {
 			
 			logger.info("******** TRIP DEBUG *******");
@@ -385,6 +392,8 @@ public class HouseholdAVAllocationManager {
         @Override     
         public int compareTo(Trip thatTrip) {   
         	
+        	if (this == thatTrip) return 0;
+        	
         	if(sortByPerson) {
         		
         		if(person_id<thatTrip.getPerson_id())
@@ -417,14 +426,15 @@ public class HouseholdAVAllocationManager {
         	
         	//if its the same person and the same tour, use the stop ID
         	if(sameTour(thatTrip)){
-        		if(inbound<thatTrip.getInbound())
+        		int thisTourTripSeq = inbound * 1000+stop_id;
+        		int thatTourTripSeq = thatTrip.getInbound() * 1000+thatTrip.getStop_id();
+        		
+        		if(thisTourTripSeq<thatTourTripSeq)
         			return -1;
-        		else if(inbound>thatTrip.getInbound())
+        		else if(thisTourTripSeq>thatTourTripSeq)
         			return 1;
-        		else if(stop_id<thatTrip.getStop_id())
-        			return -1;
         		else
-        			return 1;
+        			return 0;
         	}
         	
         	//its not the same tour
@@ -447,10 +457,12 @@ public class HouseholdAVAllocationManager {
         			}
         			
         		}
-        		if(periodsUntilNextTrip<thatTrip.getPeriodsUntilNextTrip())
-        			return -1;
+        		/*
+        		 * if(periodsUntilNextTrip<thatTrip.getPeriodsUntilNextTrip())
+        		 *        			return -1;
         		else if(periodsUntilNextTrip>thatTrip.getPeriodsUntilNextTrip())
         			return 1;
+        			*/
         	}
         	
         	return 0;
