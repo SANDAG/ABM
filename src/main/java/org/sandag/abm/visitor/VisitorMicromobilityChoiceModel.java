@@ -105,7 +105,7 @@ public class VisitorMicromobilityChoiceModel
             // write choice model alternative info to log file
 	        if (tour.getDebugChoiceModels())
 	        {
-        		String decisionMaker = String.format("Tour %d", tour.getID()+ " mode " +trip.getTripMode());
+        		String decisionMaker = String.format("Tour "+tour.getID()+ " mode " +trip.getTripMode());
 	            mmModel.logAlternativesInfo("Micromobility Choice", decisionMaker, logger);
 	            logger.info(String.format("%s result chosen for %s is %d",
 	            	"Transponder Choice", decisionMaker, chosenAlt));
