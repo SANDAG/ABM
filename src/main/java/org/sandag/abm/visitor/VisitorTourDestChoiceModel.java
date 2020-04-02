@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
+import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.McLogsumsCalculator;
 import org.sandag.abm.ctramp.Util;
@@ -110,7 +111,7 @@ public class VisitorTourDestChoiceModel
      *            Factory object for creation of airport model DMUs
      */
     public VisitorTourDestChoiceModel(HashMap<String, String> rbMap,
-            VisitorModelStructure modelStructure, VisitorDmuFactoryIf dmuFactory)
+            VisitorModelStructure modelStructure, VisitorDmuFactoryIf dmuFactory, AutoTazSkimsCalculator tazDistanceCalculator)
     {
 
         this.rbMap = rbMap;
@@ -189,7 +190,7 @@ public class VisitorTourDestChoiceModel
         sampleSizeTerms = new double[destModel.length][sampleRate + 1];
         sampleLogsums = new double[sampleRate + 1];
 
-        tourModeChoiceModel = new VisitorTourModeChoiceModel(rbMap, modelStructure, dmuFactory);
+        tourModeChoiceModel = new VisitorTourModeChoiceModel(rbMap, modelStructure, dmuFactory, tazDistanceCalculator);
 
     }
 

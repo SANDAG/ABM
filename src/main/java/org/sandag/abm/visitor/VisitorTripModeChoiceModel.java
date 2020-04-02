@@ -49,7 +49,7 @@ public class VisitorTripModeChoiceModel
      * @param myLogsumHelper
      */
     public VisitorTripModeChoiceModel(HashMap<String, String> propertyMap,
-            VisitorModelStructure myModelStructure, VisitorDmuFactoryIf dmuFactory)
+            VisitorModelStructure myModelStructure, VisitorDmuFactoryIf dmuFactory, AutoTazSkimsCalculator tazDistanceCalculator)
     {
         tazs = TazDataManager.getInstance(propertyMap);
         mgraManager = MgraDataManager.getInstance(propertyMap);
@@ -59,8 +59,7 @@ public class VisitorTripModeChoiceModel
         lsWgtAvgCostH = mgraManager.getLsWgtAvgCostH();
 
         modelStructure = myModelStructure;
-        tazDistanceCalculator = new AutoTazSkimsCalculator(propertyMap);
-        tazDistanceCalculator.computeTazDistanceArrays();
+        this.tazDistanceCalculator = tazDistanceCalculator;
         
         logsumHelper = new McLogsumsCalculator();
         logsumHelper.setupSkimCalculators(propertyMap);

@@ -63,13 +63,12 @@ public class VisitorTourModeChoiceModel
      * @param myLogsumHelper
      */
     public VisitorTourModeChoiceModel(HashMap<String, String> propertyMap,
-            VisitorModelStructure myModelStructure, VisitorDmuFactoryIf dmuFactory)
+            VisitorModelStructure myModelStructure, VisitorDmuFactoryIf dmuFactory, AutoTazSkimsCalculator tazDistanceCalculator)
     {
 
         mgraManager = MgraDataManager.getInstance(propertyMap);
         modelStructure = myModelStructure;
-        tazDistanceCalculator = new AutoTazSkimsCalculator(propertyMap);
-        tazDistanceCalculator.computeTazDistanceArrays();
+        this.tazDistanceCalculator = tazDistanceCalculator;
         
         logsumHelper = new McLogsumsCalculator();
         logsumHelper.setupSkimCalculators(propertyMap);
