@@ -24,5 +24,3 @@ if arcpy.Exists("stop.shp"):
     arcpy.Delete_management("stop.shp")
 if arcpy.Exists("route.shp"):
     arcpy.Delete_management("route.shp")
-
-# This is a commit test
