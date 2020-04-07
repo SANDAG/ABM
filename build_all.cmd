@@ -1,6 +1,7 @@
 e:
 cd \ABM2\ABM
 
+
 call mvn package -P 2012 -DskipTests
 call mvn package -P 2014 -DskipTests
 call mvn package -P 2015 -DskipTests
