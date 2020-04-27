@@ -385,7 +385,10 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         file_names = [
             "hwycov.e00", "LINKTYPETURNS.DBF", "turns.csv",
             "trcov.e00", "trrt.csv", "trlink.csv", "trstop.csv", 
-            "timexfer_EA.csv", "timexfer_AM.csv","timexfer_MD.csv","timexfer_PM.csv","timexfer_EV.csv","MODE5TOD.dbf"]
+            "timexfer_EA.csv", "timexfer_AM.csv","timexfer_MD.csv",
+            "timexfer_PM.csv","timexfer_EV.csv","MODE5TOD.dbf",
+            FILE_NAMES["VEHICLE_CLASS"]
+        ]
         for name in file_names:
             file_path = _join(self.source, name)
             if not os.path.exists(file_path):
@@ -1253,6 +1256,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         #               "@cost_hov"
         # "ITOLL4":     "@cost_med_truck"  # ITOLL4 - Toll * 1.03 + AOC
         # "ITOLL5":     "@cost_hvy_truck"  # ITOLL5 - Toll * 2.33 + AOC
+        fatal_errors = 0 
         load_properties = _m.Modeller().tool('sandag.utilities.properties')
         props = load_properties(_join(_dir(self.source), "conf", "sandag_abm.properties"))
         try:
@@ -1388,53 +1392,57 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 else:
                     link["@capacity_inter" + time] = 999999
 
+        # Required file
         vehicle_class_factor_file = FILE_NAMES["VEHICLE_CLASS"]
         facility_factors = {}
-        if os.path.exists(_join(self.source, vehicle_class_factor_file)):
-            msg = "Adjusting tolls based on factors from %s" % vehicle_class_factor_file
-            self._log.append({"type": "text", "content": msg})
-            # NOTE: CSV Reader sets the field names to UPPERCASE for consistency
-            with gen_utils.CSVReader(_join(self.source, vehicle_class_factor_file)) as r:
-                for row in r:
-                    name = row.pop("FACILITY_NAME")
-                    facility_factors[name] = {
-                        "DA": float(row["DA_FACTOR"]),
-                        "S2": float(row["S2_FACTOR"]),
-                        "S3": float(row["S3_FACTOR"]),
-                        "TRK_L": float(row["TRK_L_FACTOR"]),
-                        "TRK_M": float(row["TRK_M_FACTOR"]),
-                        "TRK_H": float(row["TRK_H_FACTOR"]),
-                        "count": 0
-                    }
+        msg = "Adjusting tolls based on factors from %s" % vehicle_class_factor_file
+        self._log.append({"type": "text", "content": msg})
+        # NOTE: CSV Reader sets the field names to UPPERCASE for consistency
+        with gen_utils.CSVReader(_join(self.source, vehicle_class_factor_file)) as r:
+            for row in r:
+                name = row.pop("FACILITY_NAME")
+                facility_factors[name] = {
+                    "auto": float(row["DA_FACTOR"]),
+                    "hov2": float(row["S2_FACTOR"]),
+                    "hov3": float(row["S3_FACTOR"]),
+                    "lgt_truck": float(row["TRK_L_FACTOR"]),
+                    "med_truck": float(row["TRK_M_FACTOR"]),
+                    "hvy_truck": float(row["TRK_H_FACTOR"]),
+                    "count": 0
+                }
+        def match_facility_factors(link, facility_factors):
+            for attr_name in ["#name", "#name_from", "#name_to"]:
+                for name, factor in facility_factors.iteritems():
+                    if name in link[attr_name]:
+                        factor["count"] += 1
+                        return factor
+            return None
 
+        vehicle_classes = ["auto", "hov2", "hov3", "lgt_truck", "med_truck", "hvy_truck"]
         for link in network.links():
-            factor = {"DA": 1, "S2": 1, "S3": 1, "TRK_L": 1, "TRK_M": 1, "TRK_H": 1}
-            for name, class_factors in facility_factors.iteritems():
-                if name in link["#name"]:
-                    factor = class_factors
-                    factor["count"] += 1
-                    break
-            for time in time_periods:
-                link["@cost_auto" + time] = factor["DA"] * link["@toll" + time] + link["@cost_operating"]
-                if link["@lane_restriction"] == 2:
-                    # managed lanes, toll free for HOV
-                    link["@cost_hov2" + time] = link["@cost_operating"]
-                    link["@cost_hov3" + time] = link["@cost_operating"]
-                elif link["@lane_restriction"] == 3:
-                    link["@cost_hov2" + time] = factor["S2"] * link["@toll" + time] + link["@cost_operating"]
-                    link["@cost_hov3" + time] = link["@cost_operating"]
-                else:
-                    link["@cost_hov2" + time] = factor["S2"] * link["@toll" + time] + link["@cost_operating"]
-                    link["@cost_hov3" + time] = factor["S3"] * link["@toll" + time] + link["@cost_operating"]
-                link["@cost_lgt_truck" + time] = factor["TRK_L"] * link["@toll" + time] + link["@cost_operating"]
-                link["@cost_med_truck" + time] = 1.03 * factor["TRK_M"] * link["@toll" + time] + link["@cost_operating"]
-                link["@cost_hvy_truck" + time] = 2.33 * factor["TRK_H"] * link["@toll" + time] + link["@cost_operating"]
+            if sum(link["@toll" + time] for time in time_periods) > 0:
+                factor = match_facility_factors(link, facility_factors)
+                if factor is None:
+                    fatal_errors += 1
+                    msg = "Link %s has non-zero toll value but no matching Facility_name "\
+                          "(#name: '%s', #name_from '%s', #name_to '%s')" %\
+                          (link["@tcov_id"], link["#name"], link["#name_from"], link["#name_to"])
+                    self._error.append(msg)
+                    self._log.append({"type": "text2", "content": msg})
+                    continue
+                for time in time_periods:
+                    for name in vehicle_classes:
+                        link["@cost_" + name + time] = factor[name] * link["@toll" + time] + link["@cost_operating"]
+            else:
+                for time in time_periods:
+                    for name in vehicle_classes:
+                        link["@cost_" + name + time] = link["@cost_operating"]
 
         for name, class_factors in facility_factors.iteritems():
             msg = "Facility name '%s' matched to %s links." % (name, class_factors.pop("count"))
             msg += " Adjusting tolls by class %s" % (class_factors)
             self._log.append({"type": "text2", "content": msg})
-                
+
         self._log.append({"type": "text", "content": "Calculation and time period expansion of costs, tolls, capacities and times complete"})
 
         # calculate static reliability
@@ -1556,6 +1564,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         network.delete_attribute("LINK", "cycle")
         network.delete_attribute("NODE", "is_interchange")
         self._log.append({"type": "text", "content": "Calculate derived traffic attributes complete"})
+        if fatal_errors > 0:
+            raise Exception("%s fatal errors during calculation of traffic attributes" % fatal_errors)
         return
 
     def apply_i15_tolls(self, network):
