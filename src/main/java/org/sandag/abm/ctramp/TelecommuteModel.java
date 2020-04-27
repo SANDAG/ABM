@@ -23,6 +23,7 @@ public class TelecommuteModel
     public static final short           TC_MODEL_1_DAY_WEEK_CHOICE       = 1;
     public static final short           TC_MODEL_2_3_DAYS_WEEK_CHOICE    = 2;
     public static final short           TC_MODEL_4P_DAYS_WEEK_CHOICE     = 3;
+    public static final short           WORK_AT_HOME_CHOICE     = 9;
     
 
     private MgraDataManager           mgraManager;
@@ -71,7 +72,7 @@ public class TelecommuteModel
             if (workLoc == ModelStructure.WORKS_AT_HOME_LOCATION_INDICATOR)
             {
 
-                person[i].setTelecommuteChoice(TC_MODEL_NO_TC_CHOICE);
+                person[i].setTelecommuteChoice(WORK_AT_HOME_CHOICE);
      
             } else if (workLoc > 0 )
             {
