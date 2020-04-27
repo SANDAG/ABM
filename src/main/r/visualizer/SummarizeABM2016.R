@@ -176,15 +176,20 @@ write.csv(transponder, "transponder_ownership.csv", row.names = TRUE)
 micro_r1 <- count(trips, c('micro_walkMode'))
 micro_r2 <- count(trips, c('micro_trnAcc'))
 micro_r3 <- count(trips, c('micro_trnEgr'))
+colnames(micro_r1) <- c("micro_mode","trips")
+colnames(micro_r2) <- c("micro_mode","trips")
+colnames(micro_r3) <- c("micro_mode","trips")
 
 micro_v1 <- count(visitor_trips, c('micro_walkMode'))
 micro_v2 <- count(visitor_trips, c('micro_trnAcc'))
 micro_v3 <- count(visitor_trips, c('micro_trnEgr'))
+colnames(micro_v1) <- c("micro_mode","trips")
+colnames(micro_v2) <- c("micro_mode","trips")
+colnames(micro_v3) <- c("micro_mode","trips")
 
-micormobility <- micro_r1+micro_r2+micro_r3+micro_v1+micro_v2+micro_v3
-micormobility$micro_walkMode[micormobility$micro_walkMode == 6] <- 1
-micormobility$micro_walkMode[micormobility$micro_walkMode == 12] <- 2
-write.csv(micormobility, "micormobility.csv", row.names = TRUE)
+micromobility <- rbind(micro_r1,micro_r2,micro_r3,micro_v1,micro_v2,micro_v3)
+micromobility_summary <- aggregate(trips ~ micro_mode, data=micromobility, FUN = sum)
+write.csv(micromobility_summary, "micormobility.csv", row.names = TRUE)
 
 # Mandatory DC
 workers <- wsLoc[wsLoc$WorkLocation > 0 & wsLoc$WorkLocation != 99999,]
