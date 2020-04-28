@@ -895,6 +895,7 @@ public class HouseholdDataWriter
         data.add("micro_walkMode");
         data.add("micro_trnAcc");
         data.add("micro_trnEgr");
+        data.add("parkingCost");
         
         if(writeLogsums) {
         	data.add("tripModeLogsum");
@@ -931,6 +932,7 @@ public class HouseholdDataWriter
         data.add("micro_walkMode");
         data.add("micro_trnAcc");
         data.add("micro_trnEgr");
+        data.add("parkingCost");
         
         if(writeLogsums) {
         	data.add("tripModeLogsum");
@@ -974,6 +976,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.REAL);
  
         if(writeLogsums) {
         	data.add(SqliteDataTypes.REAL);
@@ -1009,6 +1012,7 @@ public class HouseholdDataWriter
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
         data.add(SqliteDataTypes.INTEGER);
+        data.add(SqliteDataTypes.REAL);
 
         if(writeLogsums) {
         	data.add(SqliteDataTypes.REAL);
@@ -1114,6 +1118,7 @@ public class HouseholdDataWriter
         data.add(string(s.getMicromobilityWalkMode()));
         data.add(string(s.getMicromobilityAccessMode()));
         data.add(string(s.getMicromobilityEgressMode()));
+        data.add(string(s.getParkingCost()));
         
         if(writeLogsums) {
         	data.add(string(s.getModeLogsum()));
@@ -1220,7 +1225,8 @@ public class HouseholdDataWriter
         data.add(string(s.getMicromobilityWalkMode()));
         data.add(string(s.getMicromobilityAccessMode()));
         data.add(string(s.getMicromobilityEgressMode()));
-        
+        data.add(string(s.getParkingCost()));
+       
         if(writeLogsums) {
         	data.add(string(s.getModeLogsum()));
            	data.add(string(s.getMicromobilityWalkLogsum()));

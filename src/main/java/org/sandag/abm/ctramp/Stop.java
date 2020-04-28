@@ -22,6 +22,7 @@ public class Stop
     float micromobilityAccessLogsum;
     float micromobilityEgressLogsum;
     private float   modeLogsum;
+    private float parkingCost;
     
     int     stopPeriod;
     int     boardTap;
@@ -261,6 +262,14 @@ public class Stop
 
 	public void setMicromobilityEgressLogsum(float micromobilityEgressLogsum) {
 		this.micromobilityEgressLogsum = micromobilityEgressLogsum;
+	}
+
+	public float getParkingCost() {
+		return parkingCost;
+	}
+
+	public void setParkingCost(float parkingCost) {
+		this.parkingCost = parkingCost;
 	}
 
 	public void logStopObject(Logger logger, int totalChars)
