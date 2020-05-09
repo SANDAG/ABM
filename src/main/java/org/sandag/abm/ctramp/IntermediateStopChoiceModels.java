@@ -1250,7 +1250,7 @@ public class IntermediateStopChoiceModels
                    }
 
                     if (modelStructure.getTripModeIsSovOrHov(modeAlt)) {
-                    	float parkingCost = parkingCostSegmentKj[selectedIndex];
+                    	float parkingCost = parkingCostSegmentKj[oldSelectedIndex];
                     	stop.setParkingCost(parkingCost);
                     }
                     // last stop on tour, so if inbound, only need park location
@@ -1729,7 +1729,7 @@ public class IntermediateStopChoiceModels
 
 
                     if (modelStructure.getTripModeIsSovOrHov(modeAlt)) {
-                    	float parkingCost = parkingCostSegmentKj[selectedIndex];
+                    	float parkingCost = parkingCostSegmentKj[oldSelectedIndex];
                     	stop.setParkingCost(parkingCost);
                     }
                     // last stop on tour, so if inbound, only need park location

@@ -424,7 +424,7 @@ public class VisitorTourManager
         }
         String tripHeaderString = new String(
                 "tourID,tripID,originPurp,destPurp,originMGRA,destinationMGRA,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,avAvailable,boardingTap,alightingTap,set,valueOfTime,partySize,"
-        		+"micro_walkMode,micro_trnAcc,micro_trnEgr\n");
+        		+"micro_walkMode,micro_trnAcc,micro_trnEgr,parkingCost\n");
         tripWriter.print(tripHeaderString);
 
         // Iterate through the array, printing records to the file
@@ -488,7 +488,8 @@ public class VisitorTourManager
                 + "," + trip.getPeriod() + "," + trip.getTripMode() + ","  + (avAvailable?1:0) +","
                 + trip.getBoardTap() + "," + trip.getAlightTap() + "," + trip.getSet()
                 + "," + String.format("%9.2f",trip.getValueOfTime())+ "," + tour.getNumberOfParticipants()+"," 
-                +trip.getMicromobilityWalkMode()+"," +trip.getMicromobilityAccessMode()+"," +trip.getMicromobilityEgressMode()+"\n");
+                +trip.getMicromobilityWalkMode()+"," +trip.getMicromobilityAccessMode()+"," +trip.getMicromobilityEgressMode()
+                + "," + String.format("%9.2f", trip.getParkingCost()) +"\n");
         writer.print(record);
     }
 

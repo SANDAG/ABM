@@ -17,6 +17,8 @@ public class CrossBorderTrip
     private boolean originIsTourDestination;
     private boolean destinationIsTourDestination;
 
+    private float parkingCost;
+    
     private int boardTap;
     private int alightTap;
     private int set = -1;
@@ -487,6 +489,14 @@ public class CrossBorderTrip
 
 	public void setValueOfTime(float valueOfTime) {
 		this.valueOfTime = valueOfTime;
+	}
+
+	public float getParkingCost() {
+		return parkingCost;
+	}
+
+	public void setParkingCost(float parkingCost) {
+		this.parkingCost = parkingCost;
 	}
 
 }

@@ -155,7 +155,10 @@ public class VisitorTripModeChoiceModel
             int votIndex = uec.lookupVariableIndex("vot");
             double vot = uec.getValueForIndex(votIndex);
             trip.setValueOfTime((float)vot);
-
+           	
+            float parkingCost = getTripParkingCost(mode);
+        	trip.setParkingCost(parkingCost);
+ 
             if(modelStructure.getTripModeIsTransit(mode)){
             	double[][] bestTapPairs = null;
             
@@ -185,6 +188,26 @@ public class VisitorTripModeChoiceModel
         }
 
     }
+
+    /**
+     * Return parking cost from UEC if auto trip, else return 0.
+     * 
+     * @param tripMode
+     * @return Parking cost if auto mode, else 0
+     */
+    public float getTripParkingCost(int tripMode) {
+    	
+    	float parkingCost=0;
+    	
+    	if(modelStructure.getTripModeIsSovOrHov(tripMode)) {
+     		UtilityExpressionCalculator uec = tripModeChoiceModel.getUEC();
+    		int parkingCostIndex = uec.lookupVariableIndex("parkingCost");
+    		parkingCost = (float) uec.getValueForIndex(parkingCostIndex);
+    		return parkingCost;
+    	}
+    	return parkingCost;
+    }
+    
 
     /**
      * Set DMU attributes.
