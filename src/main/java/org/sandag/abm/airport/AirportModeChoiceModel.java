@@ -1,6 +1,7 @@
 package org.sandag.abm.airport;
 
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.BestTransitPathCalculator;
 import org.sandag.abm.accessibilities.DriveTransitWalkSkimsCalculator;
@@ -10,6 +11,7 @@ import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.newmodel.ChoiceModelApplication;
 import com.pb.common.util.Tracer;
@@ -223,9 +225,32 @@ public class AirportModeChoiceModel
 
         } else
         { // if 3+ person party, solve the shared 3+ logsums
+        	            
             shared3Model.computeUtilities(dmu, dmu.getDmuIndex());
             double shared3Logsum = shared3Model.getLogsum();
-            dmu.setShared3Logsum(shared3Logsum);
+            dmu.setShared3Logsum(shared3Logsum);    
+            
+         // add debug
+            if (party.getID() == 2)
+            {
+            	String choiceModelDescription = "";
+                String decisionMakerLabel = "";
+                String loggingHeader = "";
+                String separator = "";
+                 
+            	choiceModelDescription = String.format(
+                        "Airport Mode Choice Model for: Purpose=%s, OrigMGRA=%d, DestMGRA=%d",
+                        party.getPurpose(), party.getOriginMGRA(), party.getDestinationMGRA());
+                decisionMakerLabel = String.format("partyID=%d, partySize=%d, purpose=%s, direction=%d",
+                        party.getID(), party.getSize(),
+                        party.getPurpose(), party.getDirection());
+                loggingHeader = String.format("%s    %s", choiceModelDescription,
+                        decisionMakerLabel);
+                
+                logger.info(loggingHeader);
+                shared3Model.logUECResults(logger);
+            }
+        
         }
         // always solve for the transit logsum
         transitModel.computeUtilities(dmu, dmu.getDmuIndex());
