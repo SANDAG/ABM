@@ -29,17 +29,25 @@ public final class AirportModelStructure
     public static final int      UPPER_PM            = 29;
     public static final String[] MODEL_PERIOD_LABELS = {"EA", "AM", "MD", "PM", "EV"};
 
-    public static final byte     ACCESS_MODES        = 9;
+    public static final byte     ACCESS_MODES        = 10;
 
     public static final byte     PARK_TMNL           = 1;
     public static final byte     PARK_SANOFF         = 2;
     public static final byte     PARK_PVTOFF         = 3;
-    public static final byte     PUDO_ESC            = 4;
+/*    public static final byte     PUDO_ESC            = 4;
     public static final byte     PUDO_CURB           = 5;
     public static final byte     RENTAL              = 6;
     public static final byte     TAXI                = 7;
     public static final byte     SHUTTLE_VAN         = 8;
     public static final byte     TRANSIT             = 9;
+*/
+    public static final byte     PARK_NEWOFF		 = 4;
+    public static final byte     PUDO_ESC            = 5;
+    public static final byte     PUDO_CURB           = 6;
+    public static final byte     RENTAL              = 7;
+    public static final byte     TAXI                = 8;
+    public static final byte     SHUTTLE_VAN         = 9;
+    public static final byte     TRANSIT             = 10;
 
     private AirportModelStructure()
     {
@@ -187,6 +195,8 @@ public final class AirportModelStructure
             case PARK_SANOFF:
                 return partySize;
             case PARK_PVTOFF:
+                return partySize;
+            case PARK_NEWOFF:
                 return partySize;
             case PUDO_ESC:
                 return partySize + 1;
