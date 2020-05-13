@@ -28,12 +28,14 @@ Currently this script uses three files to perform its calculations:
     - active.logsum.matrix.file.walk.mgra, contains the pre-calculated
       walk times between MGRAs
     - active.logsum.matrix.file.walk.mgratap, contains the pre-calculated
-      walk times between TAPs
+      walk times from MGRAs to TAPs
 
-The script then replaces each perceived walk time in the output files with the
-minimum of the existing walk time and the newly calculated micromobility time.
-Alternatively the script can write the calculations to a fresh file with the
-[-k] command-line flag.
+The script then writes a fresh MGRA file with the newly calculated micromobility calculations:
+    - walkTime: the original walk time
+    - mmTime: the micro-mobility time, including travel time, rental time, access time
+    - mmCost: variable cost * travel time + fixed cost
+    - mmGenTime: mmTime + mmCost converted to time + constant
+    - minTime: minimum of walkTime and mmGenTime
 
 Run `python calculate_micromobility.py -h` for more command-line usage.
 """
@@ -60,16 +62,22 @@ def main():
     """Script entry point
     """
 
-    parse_cli_args()
-    props = parse_properties_file(CLI.properties_file)
-    mat = read_micro_access_time(props['mgra_file'])
+    ### Global variables ###
+    # PARSER  # argparse parser
+    # CLI  # command line args
+    # PROPS  # parsed properties dictionary
+    # MAT  # Micro Access Time Pandas series
 
-    calculate_micromobility('walk_mgra_output_file', mat, props,
-                            target='actual', actual='actual',
-                            orig='i', dest='j')
-    calculate_micromobility('walk_mgra_tap_output_file', mat, props,
-                            target='boardingActual', actual='boardingActual',
-                            orig='mgra', dest='tap')
+    parse_cli_args()
+    parse_properties_file()
+    read_micro_access_time()
+
+    calculate_micromobility('walk_mgra_output_file',
+                            walk_time='actual',
+                            orig_col='i', dest_col='j')
+    calculate_micromobility('walk_mgra_tap_output_file',
+                            walk_time='boardingActual',
+                            orig_col='mgra', dest_col='tap')
 
     print('Finished!')
 
@@ -80,6 +88,8 @@ def parse_cli_args():
     Sets global vars PARSER and CLI
     """
     global PARSER
+    global CLI
+
     PARSER = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     PARSER.add_argument('-p', '--properties_file',
                         default=os.path.join('..', 'conf', 'sandag_abm.properties'),
@@ -90,22 +100,18 @@ def parse_cli_args():
     PARSER.add_argument('-i', '--inputs_parent_directory',
                         default='..',
                         help="Directory containing 'input' folder")
-    PARSER.add_argument('-k', '--keep',
-                        action='store_true',
-                        default=False,
-                        help="Save micromobility calculations to new output files "
-                        "without overwriting originals.")
 
-    global CLI
     CLI = PARSER.parse_args()
 
 
-def parse_properties_file(filename):
+def parse_properties_file():
     """Parses attributes from a Java properties file
 
-    Returns hash of attributes as strings
+    Saves the relevant attributes as a dictionary to the
+    global PROPS variable.
     """
 
+    filename = CLI.properties_file
     validate_file(filename)
     print('Parsing tokens from %s ...' % filename)
 
@@ -130,17 +136,18 @@ def parse_properties_file(filename):
     print("Using tokens from properties file:")
     pretty_print_dictionary(useable_props)
 
-    return useable_props
+    global PROPS
+    PROPS = useable_props
 
 
-def read_micro_access_time(mgra_file):
+def read_micro_access_time():
     """Reads the MicroAccessTime for each origin MGRA from
     the provided MGRA file. If no MicroAccessTime is found,
     a simple calculation is performed instead.
 
-    Returns the data as a pandas Series
+    Saves the resulting pandas series to the global MAT variable.
     """
-    mgra_file = os.path.join(CLI.inputs_parent_directory, mgra_file)
+    mgra_file = os.path.join(CLI.inputs_parent_directory, PROPS['mgra_file'])
     validate_file(mgra_file)
 
     with open(mgra_file, 'r') as f:
@@ -157,59 +164,50 @@ def read_micro_access_time(mgra_file):
         mat = pd.read_csv(mgra_file, usecols=['mgra', 'MicroAccessTime'],
                           index_col='mgra', squeeze=True)
 
-    return mat
+    global MAT
+    MAT = mat
 
 
-def calculate_micromobility(output_file_key, mat, props, **cols):
+def calculate_micromobility(output_file_key, walk_time, orig_col, dest_col):
     """Performs micromobility calculations using given output_file
     and attributes from the provided MGRA file and properties file
 
-    Overwrites output file with minimum of existing target column
-    and calculated micromobility General Time. Can also write
-    calculations to new file given the [-k] command line switch.
+    Writes newly calculated micromobility time and intermediate calculations
     """
-    output_file = os.path.join(CLI.outputs_directory, props[output_file_key])
+    output_file = os.path.join(CLI.outputs_directory, PROPS[output_file_key])
     validate_file(output_file)
 
-    with open(output_file, 'r') as f:
-        header = f.readline()
-        if not all(col in header for col in cols.values()):
-            raise "Did not find all expected columns %s in %s" % (cols, output_file)
-
     print('Reading %s ...' % output_file)
-    df = pd.read_csv(output_file)
+    df = pd.read_csv(output_file, usecols=[walk_time, orig_col, dest_col])
+    df.rename({walk_time: 'walkTime'}, axis=1, inplace=True)
 
     # OD vectors
-    length = df[cols['actual']]/float(props['walk_coef'])
-    travel_time = length*60/float(props['speed'])
-    orig_mat = mat.reindex_like(df.set_index(cols['orig'])).reset_index(drop=True)
+    length = df['walkTime']/float(PROPS['walk_coef'])
+    travel_time = length*60/float(PROPS['speed'])
+    orig_mat = df[orig_col].map(MAT)  # micro-access time at origin
+    mm_time = travel_time + float(PROPS['rental_time']) + orig_mat  # total mm time
+    mm_cost = float(PROPS['variable_cost'])*travel_time + float(PROPS['fixed_cost'])
+    mm_cost_as_time = mm_cost * 60 / float(PROPS['vot'])
 
-    print('Calculating Generalized Time for %s using columns:' % output_file)
-    pretty_print_dictionary(cols)
+    # save intermediate calculations
+    df['mmTime'] = mm_time
+    df['mmCost'] = mm_cost
 
     # calculate micromobility Generalized Time
-    df['genTime'] = \
-        travel_time + float(props['rental_time']) + orig_mat + float(props['constant']) + \
-        (float(props['variable_cost'])*travel_time + float(props['fixed_cost']))*60/float(props['vot'])
+    df['mmGenTime'] = mm_time + mm_cost_as_time + float(PROPS['constant'])
 
-    # calculate the minimum of walk time vs. micromobility time
-    df['minTime'] = df[['genTime', cols['target']]].min(axis=1)
+    # calculate the minimum of walk time vs. generalized time
+    df['minTime'] = df[['mmGenTime', 'walkTime']].min(axis=1)
 
     # write output
-    if CLI.keep:
-        outfile = os.path.join(
-            CLI.outputs_directory,
-            # '_mm' for micro-mobility
-            os.path.basename(output_file).replace('.csv', '_mm.csv')
-        )
-        print("Writing final table to %s" % outfile)
-        df.to_csv(outfile, index=False)
-    else:
-        print("Overwriting %s with new calcs ..." % output_file)
-        df[cols['target']] = df['minTime']
-        #df.drop(columns=['genTime', 'minTime'])
-        df.drop(['genTime', 'minTime'], axis=1, inplace=True)
-        df.to_csv(output_file, index=False)
+    outfile = os.path.join(
+        CLI.outputs_directory,
+        os.path.basename(output_file).replace('walk', 'microMobility')
+    )
+
+    print("Writing final table to %s" % outfile)
+    df.to_csv(outfile, index=False)
+    print("Done.")
 
 
 def validate_file(filename):
