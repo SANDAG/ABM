@@ -29,25 +29,33 @@ public final class AirportModelStructure
     public static final int      UPPER_PM            = 29;
     public static final String[] MODEL_PERIOD_LABELS = {"EA", "AM", "MD", "PM", "EV"};
 
-    public static final byte     ACCESS_MODES        = 10;
+    public static final byte     ACCESS_MODES        = 17;
 
-    public static final byte     PARK_TMNL           = 1;
-    public static final byte     PARK_SANOFF         = 2;
-    public static final byte     PARK_PVTOFF         = 3;
-/*    public static final byte     PUDO_ESC            = 4;
-    public static final byte     PUDO_CURB           = 5;
-    public static final byte     RENTAL              = 6;
-    public static final byte     TAXI                = 7;
-    public static final byte     SHUTTLE_VAN         = 8;
-    public static final byte     TRANSIT             = 9;
-*/
-    public static final byte     PARK_NEWOFF		 = 4;
-    public static final byte     PUDO_ESC            = 5;
-    public static final byte     PUDO_CURB           = 6;
+    public static final byte     PARK_LOC1           = 1;
+    public static final byte     PARK_LOC2           = 2;
+    public static final byte     PARK_LOC3           = 3;
+    public static final byte     PARK_LOC4		     = 4;
+    public static final byte     PARK_LOC5		     = 5;
+    public static final byte     PARK_ESC		     = 6;
     public static final byte     RENTAL              = 7;
-    public static final byte     TAXI                = 8;
-    public static final byte     SHUTTLE_VAN         = 9;
-    public static final byte     TRANSIT             = 10;
+    public static final byte     SHUTTLE_VAN         = 8;
+    public static final byte     HOTEL_COURTESY      = 9;
+    public static final byte     RIDEHAILING_LOC1    = 10;
+    public static final byte     RIDEHAILING_LOC2    = 11;
+    public static final byte     TRANSIT             = 12;
+    public static final byte     CURB_LOC1           = 13;
+    public static final byte     CURB_LOC2           = 14;
+    public static final byte     CURB_LOC3           = 15;
+    public static final byte     CURB_LOC4           = 16;
+    public static final byte     CURB_LOC5           = 17;
+    
+    public static final byte     LOS_TYPE        = 4;
+    
+    public static final byte     DA        		= 0;
+    public static final byte     SR2        	= 1;
+    public static final byte     SR3        	= 2;
+    public static final byte     Transit        = 3;
+
 
     private AirportModelStructure()
     {
@@ -190,26 +198,40 @@ public final class AirportModelStructure
 
         switch (accessMode)
         {
-            case PARK_TMNL:
+            case PARK_LOC1:
                 return partySize;
-            case PARK_SANOFF:
+            case PARK_LOC2:
                 return partySize;
-            case PARK_PVTOFF:
+            case PARK_LOC3:
                 return partySize;
-            case PARK_NEWOFF:
+            case PARK_LOC4:
                 return partySize;
-            case PUDO_ESC:
-                return partySize + 1;
-            case PUDO_CURB:
+            case PARK_LOC5:
+                return partySize;
+            case PARK_ESC:
                 return partySize + 1;
             case RENTAL:
                 return partySize;
-            case TAXI:
-                return partySize + 1;
             case SHUTTLE_VAN:
+                return partySize + 1;
+            case HOTEL_COURTESY:
+                return partySize + 1;
+            case RIDEHAILING_LOC1:
+                return partySize + 1;
+            case RIDEHAILING_LOC2:
                 return partySize + 1;
             case TRANSIT:
                 return partySize;
+            case CURB_LOC1:
+                return partySize + 1;
+            case CURB_LOC2:
+                return partySize + 1;
+            case CURB_LOC3:
+                return partySize + 1;
+            case CURB_LOC4:
+                return partySize + 1;
+            case CURB_LOC5:
+                return partySize + 1;
 
             default:
                 throw new RuntimeException(

@@ -1,14 +1,20 @@
 package org.sandag.abm.airport;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.BestTransitPathCalculator;
 import org.sandag.abm.accessibilities.DriveTransitWalkSkimsCalculator;
 import org.sandag.abm.accessibilities.WalkTransitDriveSkimsCalculator;
 import org.sandag.abm.accessibilities.WalkTransitWalkSkimsCalculator;
 import org.sandag.abm.common.ConditionalDMU;
+//import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.Modes;
+
 import com.pb.common.calculator.IndexValues;
 import com.pb.common.calculator.VariableTable;
 
@@ -17,6 +23,7 @@ public class AirportModelDMU
         implements Serializable, VariableTable
 {
     protected IndexValues                     dmuIndex;
+//    private MgraDataManager                   mgraManager;
 
     private AirportParty                      airportParty;
     private double[][]                        sizeTerms;                                                                       // dimensioned
@@ -80,6 +87,32 @@ public class AirportModelDMU
     public static final int                   OUT                           = 0;
     public static final int                   IN                            = 1;
     protected static final int                NUM_DIR                       = 2;
+    
+    protected int							  NUM_A_MGRA;
+    
+    protected static final int				  NUM_LOS = 4;
+
+	private int 							  nonAirportMgra;
+    private int								  direction;
+
+    public int getNonAirportMgra() {
+		return nonAirportMgra;
+	}
+
+	public void setNonAirportMgra(int nonAirportMgra) {
+		this.nonAirportMgra = nonAirportMgra;
+	}
+/*	public int getAirportMgra() {
+		return airportMgra;
+	}
+
+	public void setAirportMgra(int airportMgra) {
+		this.airportMgra = airportMgra;
+	}
+*/
+	public void setDirection(int direction) {
+		this.direction = direction;
+	}
 
     // estimation file defines time periods as:
     // 1 | Early AM: 3:00 AM - 5:59 AM |
@@ -139,10 +172,88 @@ public class AirportModelDMU
     private double                            shared2Logsum;
     private double                            shared3Logsum;
     private double                            transitLogsum;
-
+/*
+	private double                            ParkLoc1DriveAloneLogsum;
+    private double                            ParkLoc1Shared2Logsum;
+    private double                            ParkLoc1Shared3Logsum;
+    private double                            ParkLoc2DriveAloneLogsum;
+    private double                            ParkLoc2Shared2Logsum;
+    private double                            ParkLoc2Shared3Logsum;
+    private double                            ParkLoc3DriveAloneLogsum;
+    private double                            ParkLoc3Shared2Logsum;
+    private double                            ParkLoc3Shared3Logsum;
+    private double                            ParkLoc4DriveAloneLogsum;
+    private double                            ParkLoc4Shared2Logsum;
+    private double                            ParkLoc4Shared3Logsum;
+    private double                            ParkLoc5DriveAloneLogsum;
+    private double                            ParkLoc5Shared2Logsum;
+    private double                            ParkLoc5Shared3Logsum;
+    private double                            ParkESCShared2Logsum;
+    private double                            ParkESCShared3Logsum;
+    private double                            RentalDriveAloneLogsum;
+    private double                            RentalShared2Logsum;
+    private double                            RentalShared3Logsum;
+    private double                            ShuttleVanShared2Logsum;
+    private double                            ShuttleVanShared3Logsum;
+    private double                            HotelCourtesyShared2Logsum;
+    private double                            HotelCourtesyShared3Logsum;
+    private double                            RideHailingLoc1Shared2Logsum;
+    private double                            RideHailingLoc1Shared3Logsum;
+    private double                            RideHailingLoc2Shared2Logsum;
+    private double                            RideHailingLoc2Shared3Logsum;
+    private double                            TransitLogsum;
+    private double                            CurbLoc1Shared2Logsum;
+    private double                            CurbLoc1Shared3Logsum;
+    private double                            CurbLoc2Shared2Logsum;
+    private double                            CurbLoc2Shared3Logsum;
+    private double                            CurbLoc3Shared2Logsum;
+    private double                            CurbLoc3Shared3Logsum;
+    private double                            CurbLoc4Shared2Logsum;
+    private double                            CurbLoc4Shared3Logsum;
+    private double                            CurbLoc5Shared2Logsum;
+    private double                            CurbLoc5Shared3Logsum;
+*/
     protected double[][][]                    transitSkim                   = new double[NUM_ACC_EGR][NUM_LOC_PREM][NUM_SKIMS];
 
     protected Logger                          _logger                       = null;
+    
+    protected double[][][][]                  travel_time;
+    
+    public int								  maxMgra;
+    
+	public void setMaxMgra(int maxMgra) {
+		this.maxMgra = maxMgra;
+	}
+
+	public HashMap<Integer, Integer>				mode_mgra_map = new HashMap<Integer, Integer>();
+    public HashMap<Integer, Integer>				mgra_index_map = new HashMap<Integer, Integer>();
+
+    public void setModeMgraMap(HashMap<Integer, Integer> modeMgraMap){
+    	mode_mgra_map = modeMgraMap;
+    }
+    
+    public void setMgraIndexMap(){
+    	Integer[] mgraValueArray = mode_mgra_map.values().toArray(new Integer[0]);
+    	
+    	//mgra_index_map.put(2997, 0);
+    	
+    	Set<Integer> uniqueMgraValues = new TreeSet<Integer>();
+    	uniqueMgraValues.addAll(Arrays.asList(mgraValueArray));
+    	
+    	//Integer[] uniqueMgraValueArray = new Integer[uniqueMgraValues.size()];
+    	//uniqueMgraValues.toArray(uniqueMgraValueArray);
+    	
+    	Integer[] uniqueMgraValueArray = uniqueMgraValues.toArray(new Integer[0]);
+    	
+    	for (int i = 0; i < uniqueMgraValueArray.length; i++){
+    		mgra_index_map.put(uniqueMgraValueArray[i], i);
+    	}
+    }
+
+    public void setTravelTimeArraySize(){
+    	NUM_A_MGRA = mgra_index_map.size();
+    	travel_time = new double[maxMgra + 1][NUM_A_MGRA][NUM_DIR][NUM_LOS];
+    }
 
     public AirportModelDMU(Logger logger)
     {
@@ -174,8 +285,8 @@ public class AirportModelDMU
         methodIndexMap.put("getDriveAloneLogsum", 90);
         methodIndexMap.put("getShared2Logsum", 91);
         methodIndexMap.put("getShared3Logsum", 92);
-        methodIndexMap.put("getTransitLogsum", 93);
-
+        //methodIndexMap.put("getTransitLogsum", 93);
+        
         methodIndexMap.put("getWtw_lb_LB_ivt", 100);
         methodIndexMap.put("getWtw_lb_fwait", 101);
         methodIndexMap.put("getWtw_lb_xwait", 102);
@@ -282,6 +393,47 @@ public class AirportModelDMU
         methodIndexMap.put("getDt_cr_WalkAuxTime", 202);
         methodIndexMap.put("getDt_cr_fare", 203);
         methodIndexMap.put("getDt_cr_xfers", 204);
+        
+        methodIndexMap.put("getParkLoc1DriveAloneLogsum", 900);
+        methodIndexMap.put("getParkLoc1Shared2Logsum", 901);
+        methodIndexMap.put("getParkLoc1Shared3Logsum", 902);
+        methodIndexMap.put("getParkLoc2DriveAloneLogsum", 903);
+        methodIndexMap.put("getParkLoc2Shared2Logsum", 904);
+        methodIndexMap.put("getParkLoc2Shared3Logsum", 905);
+        methodIndexMap.put("getParkLoc3DriveAloneLogsum", 906);
+        methodIndexMap.put("getParkLoc3Shared2Logsum", 907);
+        methodIndexMap.put("getParkLoc3Shared3Logsum", 908);
+        methodIndexMap.put("getParkLoc4DriveAloneLogsum", 909);
+        methodIndexMap.put("getParkLoc4Shared2Logsum", 910);
+        methodIndexMap.put("getParkLoc4Shared3Logsum", 911);
+        methodIndexMap.put("getParkLoc5DriveAloneLogsum", 912);
+        methodIndexMap.put("getParkLoc5Shared2Logsum", 913);
+        methodIndexMap.put("getParkLoc5Shared3Logsum", 914);
+        methodIndexMap.put("getParkESCShared2Logsum", 915);
+        methodIndexMap.put("getParkESCShared3Logsum", 916);
+        methodIndexMap.put("getRentalDriveAloneLogsum", 917);
+        methodIndexMap.put("getRentalShared2Logsum", 918);
+        methodIndexMap.put("getRentalShared3Logsum", 919);
+        methodIndexMap.put("getShuttleVanShared2Logsum", 920);
+        methodIndexMap.put("getShuttleVanShared3Logsum", 921);
+        methodIndexMap.put("getHotelCourtesyShared2Logsum", 922);
+        methodIndexMap.put("getHotelCourtesyShared3Logsum", 923);
+        methodIndexMap.put("getRideHailingLoc1Shared2Logsum", 924);
+        methodIndexMap.put("getRideHailingLoc1Shared3Logsum", 925);
+        methodIndexMap.put("getRideHailingLoc2Shared2Logsum", 926);
+        methodIndexMap.put("getRideHailingLoc2Shared3Logsum", 927);
+        methodIndexMap.put("getTransitLogsum", 928);
+        methodIndexMap.put("getCurbLoc1Shared2Logsum", 929);
+        methodIndexMap.put("getCurbLoc1Shared3Logsum", 930);
+        methodIndexMap.put("getCurbLoc2Shared2Logsum", 931);
+        methodIndexMap.put("getCurbLoc2Shared3Logsum", 932);
+        methodIndexMap.put("getCurbLoc3Shared2Logsum", 933);
+        methodIndexMap.put("getCurbLoc3Shared3Logsum", 934);
+        methodIndexMap.put("getCurbLoc4Shared2Logsum", 935);
+        methodIndexMap.put("getCurbLoc4Shared3Logsum", 936);
+        methodIndexMap.put("getCurbLoc5Shared2Logsum", 937);
+        methodIndexMap.put("getCurbLoc5Shared3Logsum", 938);
+        
         CreateReverseMap();
     }
 
@@ -315,6 +467,631 @@ public class AirportModelDMU
         dtw = myDtw;
     }
 
+    /**
+     * Set the mode travel time array value for the access/egress mode, line-haul
+     * mode, LOS component
+     * 
+     * @param nonAirportMgra
+     *            Index for nonairport mgra
+     * @param airportMgra
+     *            Index for airport Mgra
+     * @param direction
+     *            The index for direction
+     * @param los
+     *            The los type          
+     * @param value
+     *            The value to set in the array
+     */
+    protected void setModeTravelTime(int nonAirportMgra, int airportMgra, int direction, int los, double value)
+    {
+    	travel_time[nonAirportMgra][airportMgra][direction][los] = value;
+    }
+
+    /**
+     * Get the mode travel time array value for the access/egress mode, line-haul
+     * mode, LOS component
+     * 
+     * @param nonAirportMgra
+     *            Index for nonairport mgra
+     * @param airportMgra
+     *            Index for airport Mgra
+     * @param direction
+     *            The index for direction
+     * @param los
+     *            The los type 
+     * @return The travel time value
+     */
+    protected double getModeTravelTime(int nonAirportMgra, int airportMgra, int direction, int los)
+    {
+        return travel_time[nonAirportMgra][airportMgra][direction][los];
+    }
+    
+/*
+    protected void setParkLoc1DriveAloneLogsum(int nonAirportMgra, int airportMgra, int direction, int los)
+    {	
+    	double travelTime = getModeTravelTime(nonAirportMgra, airportMgra, direction, los);
+    	this.ParkLoc1DriveAloneLogsum = travelTime;
+    }    
+    
+    protected void setParkLoc1DriveAloneLogsum(double ParkLoc1DriveAloneLogsum)
+    {
+    	this.ParkLoc1DriveAloneLogsum = ParkLoc1DriveAloneLogsum;
+    }
+    
+    protected void setParkLoc1Shared2Logsum(double ParkLoc1Shared2Logsum)
+    {
+    	this.ParkLoc1Shared2Logsum = ParkLoc1Shared2Logsum;
+    }
+    
+    protected void setParkLoc1Shared3Logsum(double ParkLoc1Shared3Logsum)
+    {
+    	this.ParkLoc1Shared3Logsum = ParkLoc1Shared3Logsum;
+    }
+    
+    protected void setParkLoc2DriveAloneLogsum(double ParkLoc2DriveAloneLogsum)
+    {
+    	this.ParkLoc2DriveAloneLogsum = ParkLoc2DriveAloneLogsum;
+    }
+    
+    protected void setParkLoc2Shared2Logsum(double ParkLoc2Shared2Logsum)
+    {
+    	this.ParkLoc2Shared2Logsum = ParkLoc2Shared2Logsum;
+    }
+    
+    protected void setParkLoc2Shared3Logsum(double ParkLoc2Shared3Logsum)
+    {
+    	this.ParkLoc2Shared3Logsum = ParkLoc2Shared3Logsum;
+    }
+
+    protected void setParkLoc3DriveAloneLogsum(double ParkLoc3DriveAloneLogsum)
+    {
+    	this.ParkLoc3DriveAloneLogsum = ParkLoc3DriveAloneLogsum;
+    }
+    
+    protected void setParkLoc3Shared2Logsum(double ParkLoc3Shared2Logsum)
+    {
+    	this.ParkLoc3Shared2Logsum = ParkLoc3Shared2Logsum;
+    }
+    
+    protected void setParkLoc3Shared3Logsum(double ParkLoc3Shared3Logsum)
+    {
+    	this.ParkLoc3Shared3Logsum = ParkLoc3Shared3Logsum;
+    }
+    
+    protected void setParkLoc4DriveAloneLogsum(double ParkLoc4DriveAloneLogsum)
+    {
+    	this.ParkLoc4DriveAloneLogsum = ParkLoc4DriveAloneLogsum;
+    }
+    
+    protected void setParkLoc4Shared2Logsum(double ParkLoc4Shared2Logsum)
+    {
+    	this.ParkLoc4Shared2Logsum = ParkLoc4Shared2Logsum;
+    }
+    
+    protected void setParkLoc4Shared3Logsum(double ParkLoc4Shared3Logsum)
+    {
+    	this.ParkLoc4Shared3Logsum = ParkLoc4Shared3Logsum;
+    }
+    
+    protected void setParkLoc5DriveAloneLogsum(double ParkLoc5DriveAloneLogsum)
+    {
+    	this.ParkLoc5DriveAloneLogsum = ParkLoc5DriveAloneLogsum;
+    }
+    
+    protected void setParkLoc5Shared2Logsum(double ParkLoc5Shared2Logsum)
+    {
+    	this.ParkLoc5Shared2Logsum = ParkLoc5Shared2Logsum;
+    }
+    
+    protected void setParkLoc5Shared3Logsum(double ParkLoc5Shared3Logsum)
+    {
+    	this.ParkLoc5Shared3Logsum = ParkLoc5Shared3Logsum;
+    } 
+    
+    protected void setParkESCShared2Logsum(double ParkESCShared2Logsum)
+    {
+    	this.ParkESCShared2Logsum = ParkESCShared2Logsum;
+    }
+    
+    protected void setParkESCShared3Logsum(double ParkESCShared3Logsum)
+    {
+    	this.ParkESCShared3Logsum = ParkESCShared3Logsum;
+    }
+    
+    protected void setRentalDriveAloneLogsum(double RentalDriveAloneLogsum)
+    {
+    	this.RentalDriveAloneLogsum = RentalDriveAloneLogsum;
+    }
+    
+    protected void setRentalShared2Logsum(double RentalShared2Logsum)
+    {
+    	this.RentalShared2Logsum = RentalShared2Logsum;
+    }
+    
+    protected void setRentalShared3Logsum(double RentalShared3Logsum)
+    {
+    	this.RentalShared3Logsum = RentalShared3Logsum;
+    } 
+    protected void setShuttleVanShared2Logsum(double ShuttleVanShared2Logsum)
+    {
+    	this.ShuttleVanShared2Logsum = ShuttleVanShared2Logsum;
+    }
+    
+    protected void setShuttleVanShared3Logsum(double ShuttleVanShared3Logsum)
+    {
+    	this.ShuttleVanShared3Logsum = ShuttleVanShared3Logsum;
+    }
+    
+    protected void setHotelCourtesyShared2Logsum(double HotelCourtesyShared2Logsum)
+    {
+    	this.HotelCourtesyShared2Logsum = HotelCourtesyShared2Logsum;
+    }
+    
+    protected void setHotelCourtesyShared3Logsum(double HotelCourtesyShared3Logsum)
+    {
+    	this.HotelCourtesyShared3Logsum = HotelCourtesyShared3Logsum;
+    }
+    
+    protected void setRideHailingLoc1Shared2Logsum(double RideHailingLoc1Shared2Logsum)
+    {
+    	this.RideHailingLoc1Shared2Logsum = RideHailingLoc1Shared2Logsum;
+    }
+    
+    protected void setRideHailingLoc1Shared3Logsum(double RideHailingLoc1Shared3Logsum)
+    {
+    	this.RideHailingLoc1Shared3Logsum = RideHailingLoc1Shared3Logsum;
+    }
+    
+    protected void setRideHailingLoc2Shared2Logsum(double RideHailingLoc2Shared2Logsum)
+    {
+    	this.RideHailingLoc2Shared2Logsum = RideHailingLoc2Shared2Logsum;
+    }
+    
+    protected void setRideHailingLoc2Shared3Logsum(double RideHailingLoc2Shared3Logsum)
+    {
+    	this.RideHailingLoc2Shared3Logsum = RideHailingLoc2Shared3Logsum;
+    }
+    
+    protected void setTransitLogsum(double TransitLogsum)
+    {
+    	this.TransitLogsum = TransitLogsum;
+    }
+    
+    protected void setCurbLoc1Shared2Logsum(double CurbLoc1Shared2Logsum)
+    {
+    	this.CurbLoc1Shared2Logsum = CurbLoc1Shared2Logsum;
+    }
+    
+    protected void setCurbLoc1Shared3Logsum(double CurbLoc1Shared3Logsum)
+    {
+    	this.CurbLoc1Shared3Logsum = CurbLoc1Shared3Logsum;
+    }
+    
+    protected void setCurbLoc2Shared2Logsum(double CurbLoc2Shared2Logsum)
+    {
+    	this.CurbLoc2Shared2Logsum = CurbLoc2Shared2Logsum;
+    }
+    
+    protected void setCurbLoc2Shared3Logsum(double CurbLoc2Shared3Logsum)
+    {
+    	this.CurbLoc2Shared3Logsum = CurbLoc2Shared3Logsum;
+    }
+    
+    protected void setCurbLoc3Shared2Logsum(double CurbLoc3Shared2Logsum)
+    {
+    	this.CurbLoc3Shared2Logsum = CurbLoc3Shared2Logsum;
+    }
+    
+    protected void setCurbLoc3Shared3Logsum(double CurbLoc3Shared3Logsum)
+    {
+    	this.CurbLoc3Shared3Logsum = CurbLoc3Shared3Logsum;
+    }
+    
+    protected void setCurbLoc4Shared2Logsum(double CurbLoc4Shared2Logsum)
+    {
+    	this.CurbLoc4Shared2Logsum = CurbLoc4Shared2Logsum;
+    }
+    
+    protected void setCurbLoc4Shared3Logsum(double CurbLoc4Shared3Logsum)
+    {
+    	this.CurbLoc4Shared3Logsum = CurbLoc4Shared3Logsum;
+    }
+    
+    protected void setCurbLoc5Shared2Logsum(double CurbLoc5Shared2Logsum)
+    {
+    	this.CurbLoc5Shared2Logsum = CurbLoc5Shared2Logsum;
+    }
+    
+    protected void setCurbLoc5Shared3Logsum(double CurbLoc5Shared3Logsum)
+    {
+    	this.CurbLoc5Shared3Logsum = CurbLoc5Shared3Logsum;
+    }
+*/    
+
+/*
+	public double getParkLoc1Shared2Logsum() {
+		return ParkLoc1Shared2Logsum;
+	}
+
+	public double getParkLoc1Shared3Logsum() {
+		return ParkLoc1Shared3Logsum;
+		//return travel_time[nonAirportMgra][airportMgra][direction][2];
+	}
+
+	public double getParkLoc2DriveAloneLogsum() {
+		return ParkLoc2DriveAloneLogsum;
+	}
+
+	public double getParkLoc2Shared2Logsum() {
+		return ParkLoc2Shared2Logsum;
+	}
+
+	public double getParkLoc2Shared3Logsum() {
+		return ParkLoc2Shared3Logsum;
+	}
+
+	public double getParkLoc3DriveAloneLogsum() {
+		return ParkLoc3DriveAloneLogsum;
+	}
+
+	public double getParkLoc3Shared2Logsum() {
+		return ParkLoc3Shared2Logsum;
+	}
+
+	public double getParkLoc3Shared3Logsum() {
+		return ParkLoc3Shared3Logsum;
+	}
+
+	public double getParkLoc4DriveAloneLogsum() {
+		return ParkLoc4DriveAloneLogsum;
+	}
+
+	public double getParkLoc4Shared2Logsum() {
+		return ParkLoc4Shared2Logsum;
+	}
+
+	public double getParkLoc4Shared3Logsum() {
+		return ParkLoc4Shared3Logsum;
+	}
+
+	public double getParkLoc5DriveAloneLogsum() {
+		return ParkLoc5DriveAloneLogsum;
+	}
+
+	public double getParkLoc5Shared2Logsum() {
+		return ParkLoc5Shared2Logsum;
+	}
+
+	public double getParkLoc5Shared3Logsum() {
+		return ParkLoc5Shared3Logsum;
+	}
+
+	public double getParkESCShared2Logsum() {
+		return ParkESCShared2Logsum;
+	}
+
+	public double getParkESCShared3Logsum() {
+		return ParkESCShared3Logsum;
+	}
+
+	public double getRentalDriveAloneLogsum() {
+		return RentalDriveAloneLogsum;
+	}
+
+	public double getRentalShared2Logsum() {
+		return RentalShared2Logsum;
+	}
+
+	public double getRentalShared3Logsum() {
+		return RentalShared3Logsum;
+	}
+
+	public double getShuttleVanShared2Logsum() {
+		return ShuttleVanShared2Logsum;
+	}
+
+	public double getShuttleVanShared3Logsum() {
+		return ShuttleVanShared3Logsum;
+	}
+
+	public double getHotelCourtesyShared2Logsum() {
+		return HotelCourtesyShared2Logsum;
+	}
+
+	public double getHotelCourtesyShared3Logsum() {
+		return HotelCourtesyShared3Logsum;
+	}
+
+	public double getRideHailingLoc1Shared2Logsum() {
+		return RideHailingLoc1Shared2Logsum;
+	}
+
+	public double getRideHailingLoc1Shared3Logsum() {
+		return RideHailingLoc1Shared3Logsum;
+	}
+
+	public double getRideHailingLoc2Shared2Logsum() {
+		return RideHailingLoc2Shared2Logsum;
+	}
+
+	public double getRideHailingLoc2Shared3Logsum() {
+		return RideHailingLoc2Shared3Logsum;
+	}
+
+	public double getCurbLoc1Shared2Logsum() {
+		return CurbLoc1Shared2Logsum;
+	}
+
+	public double getCurbLoc1Shared3Logsum() {
+		return CurbLoc1Shared3Logsum;
+	}
+
+	public double getCurbLoc2Shared2Logsum() {
+		return CurbLoc2Shared2Logsum;
+	}
+
+	public double getCurbLoc2Shared3Logsum() {
+		return CurbLoc2Shared3Logsum;
+	}
+
+	public double getCurbLoc3Shared2Logsum() {
+		return CurbLoc3Shared2Logsum;
+	}
+
+	public double getCurbLoc3Shared3Logsum() {
+		return CurbLoc3Shared3Logsum;
+	}
+
+	public double getCurbLoc4Shared2Logsum() {
+		return CurbLoc4Shared2Logsum;
+	}
+
+	public double getCurbLoc4Shared3Logsum() {
+		return CurbLoc4Shared3Logsum;
+	}
+
+	public double getCurbLoc5Shared2Logsum() {
+		return CurbLoc5Shared2Logsum;
+	}
+
+	public double getCurbLoc5Shared3Logsum() {
+		return CurbLoc5Shared3Logsum;
+	}
+*/	
+    
+    public double getParkLoc1DriveAloneLogsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC1);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.DA];	
+	}
+    
+    public double getParkLoc1Shared2Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC1);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+	}
+    
+    public double getParkLoc1Shared3Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC1);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+	}
+    
+    public double getParkLoc2DriveAloneLogsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC2);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.DA];	
+	}
+    
+    public double getParkLoc2Shared2Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC2);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+	}
+    
+    public double getParkLoc2Shared3Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC2);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+	}
+    
+    public double getParkLoc3DriveAloneLogsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC3);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.DA];	
+	}
+    
+    public double getParkLoc3Shared2Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC3);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+	}
+    
+    public double getParkLoc3Shared3Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC3);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+	}    
+  
+    public double getParkLoc4DriveAloneLogsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC4);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.DA];	
+	}
+    
+    public double getParkLoc4Shared2Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC4);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+	}
+    
+    public double getParkLoc4Shared3Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC4);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+	}
+    
+    public double getParkLoc5DriveAloneLogsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC5);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.DA];	
+	}
+    
+    public double getParkLoc5Shared2Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC5);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+	}
+    
+    public double getParkLoc5Shared3Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC5);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+	}
+    
+    public double getParkESCShared2Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_ESC);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+	}
+    
+    public double getParkESCShared3Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_ESC);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+	}
+    
+    public double getRentalDriveAloneLogsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.RENTAL);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.DA];	
+	}
+    
+    public double getRentalShared2Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.RENTAL);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+	}
+    
+    public double getRentalShared3Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.RENTAL);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+	}
+       
+    public double getShuttleVanShared2Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.SHUTTLE_VAN);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+	}
+    
+    public double getShuttleVanShared3Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.SHUTTLE_VAN);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+	}
+    
+    public double getHotelCourtesyShared2Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.HOTEL_COURTESY);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+	}
+    
+    public double getHotelCourtesyShared3Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.HOTEL_COURTESY);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+	}
+    
+    public double getRideHailingLoc1Shared2Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.RIDEHAILING_LOC1);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+	}
+    
+    public double getRideHailingLoc1Shared3Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.RIDEHAILING_LOC1);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+	}
+    
+    public double getRideHailingLoc2Shared2Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.RIDEHAILING_LOC2);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+	}
+    
+    public double getRideHailingLoc2Shared3Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.RIDEHAILING_LOC2);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+	}
+    
+    public double getTransitLogsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.TRANSIT);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.Transit];	
+	}
+    
+    public double getCurbLoc1Shared2Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.CURB_LOC1);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+	}
+    
+    public double getCurbLoc1Shared3Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.CURB_LOC1);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+	}
+
+    public double getCurbLoc2Shared2Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.CURB_LOC2);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+	}
+    
+    public double getCurbLoc2Shared3Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.CURB_LOC2);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+	}
+
+    public double getCurbLoc3Shared2Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.CURB_LOC3);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+	}
+    
+    public double getCurbLoc3Shared3Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.CURB_LOC3);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+	}
+
+    public double getCurbLoc4Shared2Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.CURB_LOC4);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+	}
+    
+    public double getCurbLoc4Shared3Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.CURB_LOC4);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+	}
+
+    public double getCurbLoc5Shared2Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.CURB_LOC5);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+	}
+    
+    public double getCurbLoc5Shared3Logsum() 
+    {
+		int airportMgra = mode_mgra_map.get(AirportModelStructure.CURB_LOC5);
+		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+	}
     /**
      * Set the transit skim array value for the access/egress mode, line-haul
      * mode, LOS component
@@ -1096,11 +1873,11 @@ public class AirportModelDMU
     /**
      * @return the transitLogsum
      */
-    public double getTransitLogsum()
+/*    public double getTransitLogsum()
     {
         return transitLogsum;
     }
-
+*/
     /**
      * @param transitLogsum
      *            the transitLogsum to set
