@@ -259,11 +259,11 @@ public class AirportModeChoiceModel
         	airportMgra_index = dmu.mgra_index_map.get(airportMgra);
         	
         	if (direction == 0){ //departure
-            	accessOrigMgra = origMgra;
+            	accessOrigMgra = nonAirportMgra;
             	accessDestMgra = airportMgra;
             } else { //arrival
             	accessOrigMgra = airportMgra;
-            	accessOrigMgra = destMgra;
+            	accessDestMgra = nonAirportMgra;
             }
         	
         	accessOrigTaz = mgraManager.getTaz(accessOrigMgra);
@@ -272,27 +272,27 @@ public class AirportModeChoiceModel
         	dmu.setDmuIndexValues(party.getID(), accessOrigTaz, accessDestTaz);  // should this be access point Taz?
         	
         	for (int los = 0; los < AirportModelStructure.LOS_TYPE; los++){
-        		double travelTime = dmu.getModeTravelTime(nonAirportMgra, airportMgra, direction, los);
+        		double travelTime = dmu.getModeTravelTime(nonAirportMgra, airportMgra_index, direction, los);
         		if (travelTime == 0){
         			if (los == 0){
         				driveAloneModel[airportMgra_index].computeUtilities(dmu, dmu.getDmuIndex());
         				double driveAloneLogsum = driveAloneModel[airportMgra_index].getLogsum();
-        				dmu.setModeTravelTime(nonAirportMgra, airportMgra, direction, los, driveAloneLogsum);
+        				dmu.setModeTravelTime(nonAirportMgra, airportMgra_index, direction, los, driveAloneLogsum);
         			}
         			else if (los == 1){
         				shared2Model[airportMgra_index].computeUtilities(dmu, dmu.getDmuIndex());
         				double shared2Logsum = shared2Model[airportMgra_index].getLogsum();
-        	            dmu.setModeTravelTime(nonAirportMgra, airportMgra, direction, los, shared2Logsum);
+        	            dmu.setModeTravelTime(nonAirportMgra, airportMgra_index, direction, los, shared2Logsum);
         			}
         			else if (los == 2){
         				shared3Model[airportMgra_index].computeUtilities(dmu, dmu.getDmuIndex());
         	            double shared3Logsum = shared3Model[airportMgra_index].getLogsum();
-        	            dmu.setModeTravelTime(nonAirportMgra, airportMgra, direction, los, shared3Logsum);
+        	            dmu.setModeTravelTime(nonAirportMgra, airportMgra_index, direction, los, shared3Logsum);
         			}
         			else {
         				transitModel.computeUtilities(dmu, dmu.getDmuIndex());
         		        double transitLogsum = transitModel.getLogsum();
-        		        dmu.setModeTravelTime(nonAirportMgra, airportMgra, direction, los, transitLogsum);
+        		        dmu.setModeTravelTime(nonAirportMgra, airportMgra_index, direction, los, transitLogsum);
         			}
         		}
         	}

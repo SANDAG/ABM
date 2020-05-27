@@ -419,7 +419,7 @@ public class AirportModelDMU
      * 
      * @param nonAirportMgra
      *            Index for nonairport mgra
-     * @param airportMgra
+     * @param airportMgra_index
      *            Index for airport Mgra
      * @param direction
      *            The index for direction
@@ -428,9 +428,9 @@ public class AirportModelDMU
      * @param value
      *            The value to set in the array
      */
-    protected void setModeTravelTime(int nonAirportMgra, int airportMgra, int direction, int los, double value)
+    protected void setModeTravelTime(int nonAirportMgra, int airportMgra_index, int direction, int los, double value)
     {
-    	travel_time[nonAirportMgra][airportMgra][direction][los] = value;
+    	travel_time[nonAirportMgra][airportMgra_index][direction][los] = value;
     }
 
     /**
@@ -439,7 +439,7 @@ public class AirportModelDMU
      * 
      * @param nonAirportMgra
      *            Index for nonairport mgra
-     * @param airportMgra
+     * @param airportMgra_index
      *            Index for airport Mgra
      * @param direction
      *            The index for direction
@@ -447,87 +447,100 @@ public class AirportModelDMU
      *            The los type 
      * @return The travel time value
      */
-    protected double getModeTravelTime(int nonAirportMgra, int airportMgra, int direction, int los)
+    protected double getModeTravelTime(int nonAirportMgra, int airportMgra_index, int direction, int los)
     {
-        return travel_time[nonAirportMgra][airportMgra][direction][los];
+        return travel_time[nonAirportMgra][airportMgra_index][direction][los];
     }
 
     public double getParkLoc1DriveAloneLogsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC1);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.DA];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.DA];	
 	}
     
     public double getParkLoc1Shared2Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC1);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR2];	
 	}
     
     public double getParkLoc1Shared3Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC1);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR3];	
 	}
     
     public double getParkLoc2DriveAloneLogsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC2);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.DA];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.DA];	
 	}
     
     public double getParkLoc2Shared2Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC2);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR2];	
 	}
     
     public double getParkLoc2Shared3Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC2);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR3];	
 	}
     
     public double getParkLoc3DriveAloneLogsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC3);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.DA];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.DA];	
 	}
     
     public double getParkLoc3Shared2Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC3);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR2];	
 	}
     
     public double getParkLoc3Shared3Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC3);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR3];	
 	}    
   
     public double getParkLoc4DriveAloneLogsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC4);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.DA];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.DA];	
 	}
     
     public double getParkLoc4Shared2Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC4);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR2];	
 	}
     
     public double getParkLoc4Shared3Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC4);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR3];	
 	}
     
     public double getParkLoc5DriveAloneLogsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC5);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.DA];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.DA];	
 	}
     
     public double getParkLoc5Shared2Logsum() 
@@ -539,151 +552,176 @@ public class AirportModelDMU
     public double getParkLoc5Shared3Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC5);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR3];	
 	}
     
     public double getParkESCShared2Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_ESC);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR2];	
 	}
     
     public double getParkESCShared3Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_ESC);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR3];	
 	}
     
     public double getRentalDriveAloneLogsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.RENTAL);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.DA];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.DA];	
 	}
     
     public double getRentalShared2Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.RENTAL);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR2];	
 	}
     
     public double getRentalShared3Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.RENTAL);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR3];	
 	}
        
     public double getShuttleVanShared2Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.SHUTTLE_VAN);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR2];	
 	}
     
     public double getShuttleVanShared3Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.SHUTTLE_VAN);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR3];	
 	}
     
     public double getHotelCourtesyShared2Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.HOTEL_COURTESY);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR2];	
 	}
     
     public double getHotelCourtesyShared3Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.HOTEL_COURTESY);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR3];	
 	}
     
     public double getRideHailingLoc1Shared2Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.RIDEHAILING_LOC1);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR2];	
 	}
     
     public double getRideHailingLoc1Shared3Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.RIDEHAILING_LOC1);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR3];	
 	}
     
     public double getRideHailingLoc2Shared2Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.RIDEHAILING_LOC2);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR2];	
 	}
     
     public double getRideHailingLoc2Shared3Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.RIDEHAILING_LOC2);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR3];	
 	}
     
     public double getTransitLogsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.TRANSIT);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.Transit];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.Transit];	
 	}
     
     public double getCurbLoc1Shared2Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.CURB_LOC1);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR2];	
 	}
     
     public double getCurbLoc1Shared3Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.CURB_LOC1);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR3];	
 	}
 
     public double getCurbLoc2Shared2Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.CURB_LOC2);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR2];	
 	}
     
     public double getCurbLoc2Shared3Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.CURB_LOC2);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR3];	
 	}
 
     public double getCurbLoc3Shared2Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.CURB_LOC3);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR2];	
 	}
     
     public double getCurbLoc3Shared3Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.CURB_LOC3);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR3];	
 	}
 
     public double getCurbLoc4Shared2Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.CURB_LOC4);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR2];	
 	}
     
     public double getCurbLoc4Shared3Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.CURB_LOC4);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR3];	
 	}
 
     public double getCurbLoc5Shared2Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.CURB_LOC5);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR2];	
 	}
     
     public double getCurbLoc5Shared3Logsum() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.CURB_LOC5);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR3];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR3];	
 	}
     
     /**
