@@ -53,7 +53,6 @@ public class SandagBikeNetworkFactory
     private static final String             PROPERTIES_COEF_DWRONGWY              = "active.coef.dwrongwy";
     private static final String             PROPERTIES_COEF_GAIN                  = "active.coef.gain";
     private static final String             PROPERTIES_COEF_TURN                  = "active.coef.turn";
-    private static final String             PROPERTIES_COEF_DISTANCE_WALK         = "active.coef.distance.walk";
     private static final String             PROPERTIES_COEF_GAIN_WALK             = "active.coef.gain.walk";
     private static final String             PROPERTIES_COEF_DCYCTRAC              = "active.coef.dcyctrac";
     private static final String             PROPERTIES_COEF_DBIKBLVD              = "active.coef.dbikblvd";
@@ -62,6 +61,8 @@ public class SandagBikeNetworkFactory
     private static final String             PROPERTIES_COEF_UNLFRMI               = "active.coef.unlfrmi";
     private static final String             PROPERTIES_COEF_UNTOMA                = "active.coef.untoma";
     private static final String             PROPERTIES_COEF_UNTOMI                = "active.coef.untomi";
+    private static final String             PROPERTIES_COEF_DISTANCE_WALK         = "active.walk.minutes.per.mile";
+   
 
     public SandagBikeNetworkFactory(Map<String, String> propertyMap)
     {
