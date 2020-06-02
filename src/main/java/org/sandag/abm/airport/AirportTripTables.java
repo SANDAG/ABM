@@ -393,8 +393,11 @@ public class AirportTripTables
 
             // generate another drive-alone trip in the opposite direction for
             // pickup/dropoff
-            if (accMode == AirportModelStructure.PUDO_CURB
-                    || accMode == AirportModelStructure.PUDO_CURB)
+            if (accMode == AirportModelStructure.CURB_LOC1
+                    || accMode == AirportModelStructure.CURB_LOC2
+                    || accMode == AirportModelStructure.CURB_LOC3
+                    || accMode == AirportModelStructure.CURB_LOC4
+                    || accMode == AirportModelStructure.CURB_LOC5)
             {
                 mode = 0; // auto mode
                 if (SandagModelStructure.getTripModeIsPay(tripMode)) // if the
