@@ -28,6 +28,7 @@ import inro.emme.database.emmebank as _eb
 import argparse
 import os
 
+WKT_PROJECTION = 'PROJCS["NAD_1983_NSRS2007_StatePlane_California_VI_FIPS_0406_Ft_US",GEOGCS["GCS_NAD_1983_NSRS2007",DATUM["D_NAD_1983_NSRS2007",SPHEROID["GRS_1980",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Lambert_Conformal_Conic"],PARAMETER["False_Easting",6561666.666666666],PARAMETER["False_Northing",1640416.666666667],PARAMETER["Central_Meridian",-116.25],PARAMETER["Standard_Parallel_1",32.78333333333333],PARAMETER["Standard_Parallel_2",33.88333333333333],PARAMETER["Latitude_Of_Origin",32.16666666666666],UNIT["Foot_US",0.3048006096012192]];-118608900 -91259500 3048.00609601219;-100000 10000;-100000 10000;3.28083333333333E-03;0.001;0.001;IsHighPrecision'
 
 def init_emme_project(root, title, emmeversion):
     project_path = _app.create_project(root, "emme_project")
@@ -35,12 +36,11 @@ def init_emme_project(root, title, emmeversion):
         project=project_path, user_initials="WS", visible=False)
     project = desktop.project
     project.name = "SANDAG Emme project"
-    prj_file_path = os.path.expandvars(
-        r"%EMMEPATH%\Coordinate Systems\Projected Coordinate Systems\State Plane"
-        r"\NAD 1983 NSRS2007 (US Feet)\NAD 1983 NSRS2007 StatePlane California VI FIPS 0406 (US Feet).prj")
+    prj_file_path = os.path.join(os.path.dirname(project_path), 'NAD 1983 NSRS2007 StatePlane California VI FIPS 0406 (US Feet).prj')
+    with open(prj_file_path, 'w') as f:
+        f.write(WKT_PROJECTION)
     project.spatial_reference_file = prj_file_path
     project.initial_view = _ws_types.Box(6.18187e+06, 1.75917e+06, 6.42519e+06, 1.89371e+06)
-
     project_root = os.path.dirname(project_path)
     dimensions = {
         'scalar_matrices': 9999,
@@ -86,9 +86,9 @@ def init_emme_project(root, title, emmeversion):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Create a new empty Emme project and database with Sandag defaults.")
-    parser.add_argument('-r', '--root', help="path to the root ABM folder, default is the working folder", 
+    parser.add_argument('-r', '--root', help="path to the root ABM folder, default is the working folder",
                         default=os.path.abspath(os.getcwd()))
-    parser.add_argument('-t', '--title', help="the Emmebank title", 
+    parser.add_argument('-t', '--title', help="the Emmebank title",
                         default="SANDAG empty database")
     parser.add_argument('-v', '--emmeversion', help='the Emme version', default='4.3.7')
     args = parser.parse_args()

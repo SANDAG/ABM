@@ -26,7 +26,7 @@ python .\\common\\python\\emme\\toolbox\\build_toolbox.py -s .\\common\\python\\
 rem create a batch script at startup
 (
 echo set python_virtualenv=C:\python_virtualenv\abm14_2_0
-echo "%E_PATH%\\programs\\EmmeDesktop.exe" ./emme_project.emp
+echo start "TITLE" "%E_PATH%\\programs\\EmmeDesktop.exe" ./emme_project.emp
 )>%SCENARIO_FOLDER%\emme_project\start_emme_with_virtualenv.bat
 
 rem mkdir %SCENARIO_FOLDER%\emme_project\Scripts\yaml
