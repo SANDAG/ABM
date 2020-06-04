@@ -23,7 +23,9 @@ public class AirportParty
     // following variables chosen via choice models
     private int             originMGRA;
     private int             destinationMGRA;
-    private byte            mode;
+    private int				airportAccessMGRA;
+
+	private byte            mode;
     private byte            arrivalMode;
 
     // best tap pairs for transit path; dimensioned by ride mode, then boarding
@@ -162,6 +164,14 @@ public class AirportParty
     {
         this.originMGRA = originMGRA;
     }
+    
+    public int getAirportAccessMGRA() {
+		return airportAccessMGRA;
+	}
+
+	public void setAirportAccessMGRA(int airportAccessMGRA) {
+		this.airportAccessMGRA = airportAccessMGRA;
+	}
 
     /**
      * @return the trip mode

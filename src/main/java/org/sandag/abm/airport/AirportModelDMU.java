@@ -555,7 +555,8 @@ public class AirportModelDMU
     public double getShared2LogsumParkLocation5() 
     {
 		int airportMgra = mode_mgra_map.get(AirportModelStructure.PARK_LOC5);
-		return travel_time[nonAirportMgra][airportMgra][direction][AirportModelStructure.SR2];	
+		int airportMgra_index = mgra_index_map.get(airportMgra);
+		return travel_time[nonAirportMgra][airportMgra_index][direction][AirportModelStructure.SR2];	
 	}
     
     public double getShared3LogsumParkLocation5() 

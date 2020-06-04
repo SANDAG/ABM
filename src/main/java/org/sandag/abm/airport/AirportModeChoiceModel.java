@@ -303,11 +303,11 @@ public class AirportModeChoiceModel
         	            double shared3Logsum = shared3Model[airportMgra_index].getLogsum();
         	            dmu.setModeTravelTime(nonAirportMgra, airportMgra_index, direction, los, shared3Logsum);
         			}
-        			else {
-        				transitModel.computeUtilities(dmu, dmu.getDmuIndex());
-        		        double transitLogsum = transitModel.getLogsum();
-        		        dmu.setModeTravelTime(nonAirportMgra, airportMgra_index, direction, los, transitLogsum);
-        			}
+        	//		else {
+        	//			transitModel.computeUtilities(dmu, dmu.getDmuIndex());
+        	//	        double transitLogsum = transitModel.getLogsum();
+        	//	        dmu.setModeTravelTime(nonAirportMgra, airportMgra_index, direction, los, transitLogsum);
+        	//		}
         		}
         	}
         	
@@ -324,15 +324,24 @@ public class AirportModeChoiceModel
         		dmu.setRidehailTravelDistanceLocation2(rideHailModel.getUtilities()[1]);
         		dmu.setRidehailTravelTimeLocation2(rideHailModel.getUtilities()[0]);
         	}
+        
         }
+        
+        dmu.setDmuIndexValues(party.getID(), origTaz, destTaz);
+		transitModel.computeUtilities(dmu, dmu.getDmuIndex());
+        double transitLogsum = transitModel.getLogsum();
+        dmu.setModeTravelTime(nonAirportMgra, airportMgra_index, direction, AirportModelStructure.Transit, transitLogsum);
         
         // calculate access mode utility and choose access mode
         accessModel.computeUtilities(dmu, dmu.getDmuIndex());
         int accessMode = accessModel.getChoiceResult(party.getRandom());
         party.setArrivalMode((byte) accessMode);
+        
+        int airportAccessMGRA = dmu.mode_mgra_map.get(accessMode);
+        party.setAirportAccessMGRA(airportAccessMGRA);
 
         // add debug
-        if (party.getID() == 2)
+        if (party.getID() == 5)
         {
         	String choiceModelDescription = "";
             String decisionMakerLabel = "";
@@ -349,7 +358,9 @@ public class AirportModeChoiceModel
                     decisionMakerLabel);
             
             logger.info(loggingHeader);
+            driveAloneModel[2].logUECResults(logger);
             accessModel.logUECResults(logger);
+            transitModel.logUECResults(logger);
         }
  
         // choose trip mode
@@ -410,6 +421,11 @@ public class AirportModeChoiceModel
 
             int ID = party.getID();
 
+        //    if (ID != 56)
+        //   {
+        //    	continue;
+        //    }
+            
             if ((ID <= 5) || (ID % 100) == 0)
                 logger.info("Choosing mode for party " + party.getID());
 
