@@ -12,29 +12,29 @@
 # ////                                                                       ///
 # //////////////////////////////////////////////////////////////////////////////
 #
-# The Master run tool is the primary method to operate the SANDAG 
+# The Master run tool is the primary method to operate the SANDAG
 # travel demand model. It operates all the model components.
 #
-#   main_directory: Main ABM directory: directory which contains all of the 
-#       ABM scenario data, including this project. The default is the parent 
-#       directory of the current Emme project. 
-#   scenario_id: Scenario ID for the base imported network data. The result 
+#   main_directory: Main ABM directory: directory which contains all of the
+#       ABM scenario data, including this project. The default is the parent
+#       directory of the current Emme project.
+#   scenario_id: Scenario ID for the base imported network data. The result
 #       scenarios are indexed in the next five scenarios by time period.
 #    scenario_title: title to use for the scenario.
 #    emmebank_title: title to use for the Emmebank (Emme database)
-#    num_processors: the number of processors to use for traffic and transit 
+#    num_processors: the number of processors to use for traffic and transit
 #       assignments and skims, aggregate demand models (where required) and
 #       other parallelized procedures in Emme. Default is Max available - 1.
 #    Properties loaded from conf/sandag_abm.properties:
-#       When using the tool UI, the sandag_abm.properties file is read 
-#       and the values cached and the inputs below are pre-set. When the tool 
-#       is started button is clicked this file is written out with the 
-#       values specified. 
+#       When using the tool UI, the sandag_abm.properties file is read
+#       and the values cached and the inputs below are pre-set. When the tool
+#       is started button is clicked this file is written out with the
+#       values specified.
 #           Sample rate by iteration: three values for the sample rates for each iteration
 #           Start from iteration: iteration from which to start the model run
-#           Skip steps: optional checkboxes to skip model steps. 
+#           Skip steps: optional checkboxes to skip model steps.
 #               Note that most steps are dependent upon the results of the previous steps.
-#   Select link: add select link analyses for traffic. 
+#   Select link: add select link analyses for traffic.
 #       See the Select link analysis section under the Traffic assignment tool.
 #
 #   Also reads and processes the per-scenario
@@ -45,7 +45,7 @@
 import inro.modeller as _m
 import os
 modeller = _m.Modeller()
-desktop = modeller.desktop 
+desktop = modeller.desktop
 
 master_run = modeller.tool("sandag.master_run")
 main_directory = os.path.dirname(os.path.dirname(desktop.project_path()))
@@ -155,7 +155,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 data-ref="parent.%(tool_proxy_tag)s.password"></input>
     </div>
     <div class="t_after_widget">
-    Note: required for running distributed traffic assignments using PsExec. 
+    Note: required for running distributed traffic assignments using PsExec.
     <br>
     Distributed / single node modes are configured in "config/server-config.csv".
     <br> The username is also used for the folder name when running on the local drive.
@@ -254,7 +254,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         export_matrix_data = modeller.tool("sandag.export.export_data_loader_matrices")
         export_tap_adjacent_lines = modeller.tool("sandag.export.export_tap_adjacent_lines")
         export_for_commercial_vehicle = modeller.tool("sandag.export.export_for_commercial_vehicle")
-
+        validation = modeller.tool("sandag.validation.validation")
         file_manager = modeller.tool("sandag.utilities.file_manager")
         utils = modeller.module('sandag.utilities.demand')
         load_properties = modeller.tool('sandag.utilities.properties')
@@ -288,11 +288,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         visualizer_reference_label = props["visualizer.reference.label"]
         visualizer_build_label = props["visualizer.build.label"]
         mgraInputFile = props["mgra.socec.file"]
-        
+
         period_ids = list(enumerate(periods, start=int(scenario_id) + 1))
 
         useLocalDrive = props["RunModel.useLocalDrive"]
-        
+
         skip4Ds = props["RunModel.skip4Ds"]
         skipInitialization = props["RunModel.skipInitialization"]
         deleteAllMatrices = props["RunModel.deleteAllMatrices"]
@@ -338,6 +338,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         input_dir = _join(self._path, "input")
         input_truck_dir = _join(self._path, "input_truck")
         output_dir = _join(self._path, "output")
+        validation_dir = _join(self._path, "analysis/validation")
         main_emmebank = _eb.Emmebank(_join(self._path, "emme_project", "Database", "emmebank"))
         if emmebank_title:
             main_emmebank.title = emmebank_title
@@ -367,7 +368,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                                  "AT and Transit network consistency checking failed! Open AtTransitCheck_event.log for details.")
 
             if startFromIteration == 1:  # only run the setup / init steps if starting from iteration 1
-                print('start')
                 if not skipWalkLogsums:
                     self.run_proc("runSandagWalkLogsums.cmd", [drive, path_forward_slash],
                                   "Walk - create AT logsums and impedances")
@@ -383,11 +383,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skip4Ds:
                     run4Ds(path=self._path, int_radius=0.65, ref_path=visualizer_reference_path)
 
-                
+
                 mgraFile = 'mgra13_based_input' + str(scenarioYear) + '.csv'
-                self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "walkMgraEquivMinutes.csv")                                  
-                print('complete walk')  
-                
+                self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "walkMgraEquivMinutes.csv")
+
                 if not skipBuildNetwork:
                     base_scenario = import_network(
                         source=input_dir,
@@ -436,7 +435,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     # initialize traffic demand, skims, truck, CV, EI, EE matrices
                     traffic_components = [
                         "traffic_skims",
-                        "truck_model", 
+                        "truck_model",
                         "external_internal_model", "external_external_model"]
                     if not skipCopyWarmupTripTables:
                         traffic_components.append("traffic_demand")
@@ -516,7 +515,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         "runSandagAbm_SMM.cmd",
                         [drive, drive + path_forward_slash, sample_rate[iteration], msa_iteration],
                         "Java-Run airport model, visitor model, cross-border model", capture_output=True)
-                        
+
                 if not skipMAASModel[iteration]:
                     self.remove_prev_iter_files(maas_abm_files, output_dir, iteration)
                     self.run_proc(
@@ -583,7 +582,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             self.run_proc("RunViz.bat",
                           [drive, path_no_drive, visualizer_reference_path, visualizer_output_file, "NO", visualizer_reference_label, visualizer_build_label, mgraInputFile],
                           "HTML Visualizer", capture_output=True)
-                          
+
         if not skipDataExport:
             # export network and matrix results from Emme directly to T if using local drive
             main_output_directory = _join(main_directory, "output")
@@ -591,8 +590,18 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             export_matrix_data(main_output_directory, base_scenario, transit_scenario)
             # export core ABM data
             # Note: uses relative project stucture, so cannot redirect to T drive
-            self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",
-                          capture_output=True)
+            ### self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",
+            ###              capture_output=True)  CL: This line is temporarily commented. When Gregor complete data export procedure, it should be uncommoented 06/02/20
+        #Validation for 2016 scenario
+        if scenarioYear == "2016":
+            validation(self._path, main_emmebank, base_scenario)
+            ### CL: Below step is temporarily used to update validation output files. When Gregor complete Upload procedure, below step should be removed. 05/31/20
+            self.run_proc("ExcelUpdate.bat",  # forced to update excel links
+                            [drive, path_no_drive, scenarioYear, 0],
+                            "Excel Update",
+                            capture_output=True)
+
+
 
         # UPLOAD DATA AND SWITCH PATHS
         if useLocalDrive:
@@ -604,7 +613,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 _eb.Emmebank(_join(main_directory, "emme_project", "Database_transit", "emmebank")))
 
         if not skipDataLoadRequest:
-
             start_db_time = datetime.datetime.now()  # record the time to search for request id in the load request table, YMA, 1/23/2019
             # start_db_time = start_db_time + datetime.timedelta(minutes=0)
 
@@ -779,7 +787,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         report.add_html('Error message(s):<br><br><div class="preformat">%s</div>' % error_msg)
                     try:
                         # No raise on writing report error
-                        # due to observed issue with runs generating reports which cause 
+                        # due to observed issue with runs generating reports which cause
                         # errors when logged
                         _m.logbook_write("Process run %s report" % name, report.render())
                     except Exception as error:
