@@ -239,6 +239,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         copy_scenario = modeller.tool("inro.emme.data.scenario.copy_scenario")
         run4Ds = modeller.tool("sandag.import.run4Ds")
         import_network = modeller.tool("sandag.import.import_network")
+        input_checker = modeller.tool("sandag.import.input_checker")
         init_transit_db = modeller.tool("sandag.initialize.initialize_transit_database")
         init_matrices = modeller.tool("sandag.initialize.initialize_matrices")
         import_demand = modeller.tool("sandag.import.import_seed_demand")
@@ -294,6 +295,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         useLocalDrive = props["RunModel.useLocalDrive"]
 
         skip4Ds = props["RunModel.skip4Ds"]
+        skipInputChecker = props["RunModel.skipInputChecker"]
         skipInitialization = props["RunModel.skipInitialization"]
         deleteAllMatrices = props["RunModel.deleteAllMatrices"]
         skipCopyWarmupTripTables = props["RunModel.skipCopyWarmupTripTables"]
@@ -404,6 +406,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                                 modify_network.run(base_scenario)
                         except ImportError as e:
                             pass
+
+                    if not skipInputChecker:
+                        input_checker()
 
                     export_tap_adjacent_lines(_join(output_dir, "tapLines.csv"), base_scenario)
                     # parse vehicle availablility file by time-of-day

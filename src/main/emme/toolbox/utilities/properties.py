@@ -31,6 +31,7 @@ class PropertiesSetter(object):
     useLocalDrive = _m.Attribute(bool)
     skip4Ds = _m.Attribute(bool)
     skipBuildNetwork = _m.Attribute(bool)
+    skipInputChecker = _m.Attribute(bool)
     skipInitialization = _m.Attribute(bool)
     deleteAllMatrices = _m.Attribute(bool)
     skipCopyWarmupTripTables = _m.Attribute(bool)
@@ -127,7 +128,7 @@ class PropertiesSetter(object):
             "skipHighwayAssignment", "skipTransitSkimming", "skipCoreABM", "skipOtherSimulateModel", "skipMAASModel","skipCTM", 
             "skipEI", "skipExternalExternal", "skipTruck", "skipTripTableCreation", "skipFinalHighwayAssignment", 
             "skipFinalTransitAssignment", "skipVisualizer", "skipDataExport", "skipDataLoadRequest", 
-            "skipDeleteIntermediateFiles")
+            "skipDeleteIntermediateFiles", "skipInputChecker")
         self._properties = None
 
     def add_properties_interface(self, pb, disclosure=False):
@@ -164,6 +165,7 @@ class PropertiesSetter(object):
             ("useLocalDrive",           "Use the local drive during the model run"),
             ("skip4Ds",                 "Skip running 4Ds"),
             ("skipBuildNetwork",        "Skip build of highway and transit network"),
+            ("skipInputChecker",		"Skip running input checker"),
             ("skipInitialization",      "Skip matrix and transit database initialization"),
             ("deleteAllMatrices",       "&nbsp;&nbsp;&nbsp;&nbsp;Delete all matrices"),
             ("skipCopyWarmupTripTables","Skip import of warmup trip tables"),
@@ -294,6 +296,7 @@ class PropertiesSetter(object):
         self.useLocalDrive = props.get("RunModel.useLocalDrive", True)
         self.skip4Ds = props.get("RunModel.skip4Ds", False)
         self.skipBuildNetwork = props.get("RunModel.skipBuildNetwork", False)
+        self.skipInputChecker = props.get("RunModel.skipInputChecker", False)
         self.skipInitialization = props.get("RunModel.skipInitialization", False)
         self.deleteAllMatrices = props.get("RunModel.deleteAllMatrices", False)
         self.skipCopyWarmupTripTables = props.get("RunModel.skipCopyWarmupTripTables", False)
@@ -328,6 +331,7 @@ class PropertiesSetter(object):
         props["RunModel.useLocalDrive"] = self.useLocalDrive
         props["RunModel.skip4Ds"] = self.skip4Ds
         props["RunModel.skipBuildNetwork"] = self.skipBuildNetwork
+        props["RunModel.skipInputChecker"] = self.skipInputChecker
         props["RunModel.skipInitialization"] = self.skipInitialization
         props["RunModel.deleteAllMatrices"] = self.deleteAllMatrices
         props["RunModel.skipCopyWarmupTripTables"] = self.skipCopyWarmupTripTables
