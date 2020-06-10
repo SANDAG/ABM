@@ -27,6 +27,8 @@ public class AirportPartyManager
     private double[][]     incomeDistribution;
     private double[][]     departureDistribution;
     private double[][]     arrivalDistribution;
+    
+    private int			   airportMgra;
 
     SandagModelStructure   sandagStructure;
 
@@ -73,6 +75,9 @@ public class AirportPartyManager
                 "airport.annualizationFactor"));
         float averageSize = new Float(Util.getStringValueFromPropertyMap(rbMap,
                 "airport.averageSize"));
+        
+        airportMgra = Util.getIntegerValueFromPropertyMap(rbMap,
+                "airport.airportMgra");
 
         float directPassengers = (enplanements - connectingPassengers) / annualFactor;
         int totalParties = (int) (directPassengers / averageSize) * 2;
@@ -329,7 +334,7 @@ public class AirportPartyManager
             throw new RuntimeException();
         }
         String headerString = new String(
-                "id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,airportAccessMGRA,tripMode,arrivalMode,boardingTAP,alightingTAP\n");
+                "id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,tripMode,arrivalMode,boardingTAP,alightingTAP\n");
         writer.print(headerString);
 
         // Iterate through the array, printing records to the file
@@ -337,14 +342,96 @@ public class AirportPartyManager
         {
 
             int[] taps = getTapPair(parties[i]);
+            
+            int airportAccessMgra = parties[i].getAirportAccessMGRA();
+            int accMode_null = -99;
+            
+            // if the arrival mode access point is transit, or it's an external trip
+            if (airportAccessMgra <= 0)
+            {
+            	String record = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
+                        + parties[i].getPurpose() + "," + parties[i].getSize() + ","
+                        + parties[i].getIncome() + "," + parties[i].getNights() + ","
+                        + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
+                        + parties[i].getDestinationMGRA() + "," + parties[i].getMode() + ","
+                        + parties[i].getArrivalMode() + "," + taps[0] + "," + taps[1] + "\n");
+                
+                writer.print(record);
+                
+                continue;
+            }
+            
+            // if the arrival mode access point is not transit, two trip legs will be printed out
+            else
+            {
+            	String record_Origin2Access = new String();
+            	String record_Access2Destination = new String();
+            	
+            	if (parties[i].getDirection() == AirportModelStructure.DEPARTURE)
+            	{
+            		record_Origin2Access = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
+                            + parties[i].getPurpose() + "," + parties[i].getSize() + ","
+                            + parties[i].getIncome() + "," + parties[i].getNights() + ","
+                            + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
+                            + parties[i].getAirportAccessMGRA() + "," + parties[i].getMode() + ","
+                            + parties[i].getArrivalMode() + "," + taps[0] + "," + taps[1] + "\n");
+            		
+            		// if access point is airport terminal, connection mode is walk
+            		if (airportAccessMgra == airportMgra)
+            		{     			
+            			record_Access2Destination = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
+                                + parties[i].getPurpose() + "," + parties[i].getSize() + ","
+                                + parties[i].getIncome() + "," + parties[i].getNights() + ","
+                                + parties[i].getDepartTime() + "," + parties[i].getAirportAccessMGRA() + ","
+                                + parties[i].getDestinationMGRA() + "," + SandagModelStructure.WALK_ALTS[0] + ","
+                                + accMode_null + "," + taps[0] + "," + taps[1] + "\n");
+            		}
+            		// else if access point is not airport terminal, connection mode is transit (APM)
+            		else
+            		{
+            			record_Access2Destination = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
+                                + parties[i].getPurpose() + "," + parties[i].getSize() + ","
+                                + parties[i].getIncome() + "," + parties[i].getNights() + ","
+                                + parties[i].getDepartTime() + "," + parties[i].getAirportAccessMGRA() + ","
+                                + parties[i].getDestinationMGRA() + "," + SandagModelStructure.WALK_TRANSIT_ALTS[0] + ","
+                                + accMode_null + "," + taps[0] + "," + taps[1] + "\n");
+            		}
+            		writer.print(record_Origin2Access);
+            		writer.print(record_Access2Destination);
+            	}
+            	else
+            	{
+            		record_Access2Destination = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
+                            + parties[i].getPurpose() + "," + parties[i].getSize() + ","
+                            + parties[i].getIncome() + "," + parties[i].getNights() + ","
+                            + parties[i].getDepartTime() + "," + parties[i].getAirportAccessMGRA() + ","
+                            + parties[i].getDestinationMGRA() + "," + parties[i].getMode() + ","
+                            + parties[i].getArrivalMode() + "," + taps[0] + "," + taps[1] + "\n");
+            		// if access point is airport terminal, connection mode is walk
+            		if (airportAccessMgra == airportMgra)
+            		{     			
+            			record_Origin2Access = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
+                                + parties[i].getPurpose() + "," + parties[i].getSize() + ","
+                                + parties[i].getIncome() + "," + parties[i].getNights() + ","
+                                + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
+                                + parties[i].getAirportAccessMGRA() + "," + SandagModelStructure.WALK_ALTS[0] + ","
+                                + accMode_null + "," + taps[0] + "," + taps[1] + "\n");
+            		}
+            		// else if access point is not airport terminal, connection mode is transit (APM)
+            		else
+            		{
+            			record_Origin2Access = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
+                                + parties[i].getPurpose() + "," + parties[i].getSize() + ","
+                                + parties[i].getIncome() + "," + parties[i].getNights() + ","
+                                + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
+                                + parties[i].getAirportAccessMGRA() + "," + SandagModelStructure.WALK_TRANSIT_ALTS[0] + ","
+                                + accMode_null + "," + taps[0] + "," + taps[1] + "\n");
+            		}
+            		writer.print(record_Origin2Access);
+            		writer.print(record_Access2Destination);
+            	}
+            }
 
-            String record = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
-                    + parties[i].getPurpose() + "," + parties[i].getSize() + ","
-                    + parties[i].getIncome() + "," + parties[i].getNights() + ","
-                    + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
-                    + parties[i].getDestinationMGRA() + "," + parties[i].getAirportAccessMGRA() + "," + parties[i].getMode() + ","
-                    + parties[i].getArrivalMode() + "," + taps[0] + "," + taps[1] + "\n");
-            writer.print(record);
         }
         writer.close();
 

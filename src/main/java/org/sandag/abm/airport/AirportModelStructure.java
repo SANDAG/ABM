@@ -34,9 +34,9 @@ public final class AirportModelStructure
     public static final int     PARK_LOC1           = 1;
     public static final int     PARK_LOC2           = 2;
     public static final int     PARK_LOC3           = 3;
-    public static final int     PARK_LOC4		     = 4;
-    public static final int     PARK_LOC5		     = 5;
-    public static final int     PARK_ESC		     = 6;
+    public static final int     PARK_LOC4		    = 4;
+    public static final int     PARK_LOC5		    = 5;
+    public static final int     PARK_ESC		    = 6;
     public static final int     RENTAL              = 7;
     public static final int     SHUTTLE_VAN         = 8;
     public static final int     HOTEL_COURTESY      = 9;
@@ -52,9 +52,9 @@ public final class AirportModelStructure
     public static final int     LOS_TYPE        = 4;
     
     public static final int     DA        		= 0;
-    public static final int     SR2        	= 1;
-    public static final int     SR3        	= 2;
-    public static final int     Transit        = 3;
+    public static final int     SR2        		= 1;
+    public static final int     SR3        		= 2;
+    public static final int     Transit         = 3;
 
 
     private AirportModelStructure()
