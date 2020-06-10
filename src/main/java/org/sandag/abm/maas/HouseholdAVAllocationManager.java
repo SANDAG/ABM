@@ -388,6 +388,7 @@ public class HouseholdAVAllocationManager {
            	
         	if((person_id==thatTrip.getPerson_id()) &&
         			(tour_id==thatTrip.getTour_id()) &&
+        			(num_participants==thatTrip.getNum_participants()) &&
         			(tour_purpose.compareTo(thatTrip.getTour_purpose())==0))
         		return true;
         	return false;
@@ -421,13 +422,19 @@ public class HouseholdAVAllocationManager {
             				else 
             					return -1;
             			}
+        				if(tour_id<thatTrip.getTour_id())
+        					return -1;
+        				else if(tour_id>thatTrip.getTour_id())
+        					return 1;
+        				if(inbound==0 && thatTrip.getInbound()==1)
+        					return -1;
         			}
         			
         		}
         		return 0;
         	}
         	
-        	
+ /*       	
         	//if its the same person and the same tour, use the stop ID
         	if(sameTour(thatTrip)){
         		int thisTourTripSeq = inbound * 1000+stop_id;
@@ -440,9 +447,9 @@ public class HouseholdAVAllocationManager {
         		else
         			return 0;
         	}
-        	
+       	
         	//its not the same tour
-        	if(stop_period<thatTrip.getStop_period())
+ */        	if(stop_period<thatTrip.getStop_period())
         		return -1;
         	else if(stop_period>thatTrip.getStop_period())
         		return 1;
@@ -459,7 +466,7 @@ public class HouseholdAVAllocationManager {
         				else 
         					return -1;
         			}
-        			
+ 
         		}
         		/*
         		 * if(periodsUntilNextTrip<thatTrip.getPeriodsUntilNextTrip())
@@ -808,7 +815,7 @@ public class HouseholdAVAllocationManager {
 						+ (vehicleTrip.isOriginIsRemoteParking() ? 1 : 0) +"," 
 						+ (vehicleTrip.isDestinationIsRemoteParking() ? 1 : 0) +","
 						+ vehicleTrip.getParkingChoiceAtDestination()  + "," 
-						+ (vehicleTrip.isOriginIsRemoteParking() ? remoteParkingCostAtDest : 0 ) + ",")
+						+ (vehicleTrip.isDestinationIsRemoteParking() ? remoteParkingCostAtDest : 0 ) + ",")
 				;
 				
 				Trip trip = vehicleTrip.getTripServed();
