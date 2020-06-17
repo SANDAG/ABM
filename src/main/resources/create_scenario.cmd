@@ -63,6 +63,8 @@ rem copy xborder input files
 xcopy /Y .\common\input\xborder\"*.*" %SCENARIO_FOLDER%\input
 rem copy visitor input files
 xcopy /Y .\common\input\visitor\"*.*" %SCENARIO_FOLDER%\input
+rem copy input checker config files
+xcopy /Y .\common\input\input_checker\"*.*" %SCENARIO_FOLDER%
 rem copy network inputs
 call copy_networks.cmd %NETWORKDIR% %SCENARIO_FOLDER%\input
 
