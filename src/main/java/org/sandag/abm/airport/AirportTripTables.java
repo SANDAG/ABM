@@ -343,9 +343,19 @@ public class AirportTripTables
             // party size is a variable in output file. it is used for transit
             // trips (person trips)
             float personTrips = (float) tripData.getValueAt(i, "size")/sampleRate;
+            
+            if (tripData.getValueAt(i, "purpose") == AirportModelStructure.EMPLOYEE)
+            {
+            	personTrips = (float) tripData.getValueAt(i, "size");
+            }
 
             // all auto trips are 1 per party
             float vehicleTrips = 1.0f/sampleRate;
+            
+            if (tripData.getValueAt(i, "purpose") == AirportModelStructure.EMPLOYEE)
+            {
+            	vehicleTrips = 1.0f;
+            }
 
             // Store in matrix
             int mode = modeIndex[tripMode];

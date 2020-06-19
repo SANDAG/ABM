@@ -452,11 +452,15 @@ public class AirportDestChoiceModel
         // iterate through the array, choosing mgras and setting them
         for (AirportParty party : airportParties)
         {
-
+        	
             int income = party.getIncome();
             int purpose = party.getPurpose();
             double random = party.getRandom();
             int mgra = -99;
+            if (purpose == AirportModelStructure.EMPLOYEE)
+            {
+            	continue;
+            }
             if (purpose < AirportModelStructure.INTERNAL_PURPOSES)
                 mgra = chooseMGRA(purpose, income, random);
 

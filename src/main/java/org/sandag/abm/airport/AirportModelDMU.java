@@ -416,7 +416,7 @@ public class AirportModelDMU
     		mgra_index_map.put(uniqueMgraValueArray[i], i);
     	}
     }
-
+    
     public void setTravelTimeArraySize(){
     	NUM_A_MGRA = mgra_index_map.size();
     	travel_time = new double[maxMgra + 1][NUM_A_MGRA][NUM_DIR][NUM_LOS];

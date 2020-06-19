@@ -3,12 +3,13 @@ package org.sandag.abm.airport;
 public final class AirportModelStructure
 {
 
-    public static final byte     PURPOSES            = 5;
+    public static final byte     PURPOSES            = 6;  // employee is not really in the choice model
     public static final byte     RESIDENT_BUSINESS   = 0;
     public static final byte     RESIDENT_PERSONAL   = 1;
     public static final byte     VISITOR_BUSINESS    = 2;
     public static final byte     VISITOR_PERSONAL    = 3;
     public static final byte     EXTERNAL            = 4;
+    public static final byte	 EMPLOYEE			 = 5;
 
     public static final byte     INTERNAL_PURPOSES   = 4;
 
