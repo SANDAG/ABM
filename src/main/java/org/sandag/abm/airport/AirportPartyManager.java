@@ -95,7 +95,7 @@ public class AirportPartyManager
         
         int totalEmployees = 0;
         for ( String key : employeeParkingValuesMap.keySet()) {
-			totalEmployees += employeeParkingValuesMap.get(key).get(2);
+			totalEmployees += (int) (employeeParkingValuesMap.get(key).get(2) * employeeParkingValuesMap.get(key).get(3));
 		}
 
         float directPassengers = (enplanements - connectingPassengers) / annualFactor;
@@ -183,7 +183,7 @@ public class AirportPartyManager
         
         for (String key : employeeParkingValuesMap.keySet())
         	{
-        		double num = employeeParkingValuesMap.get(key).get(2);
+        		double num = employeeParkingValuesMap.get(key).get(2) * employeeParkingValuesMap.get(key).get(3);
         		int stallNum = (int) num;
         		for (int s = 0; s < stallNum; s++)
         		{
@@ -192,7 +192,7 @@ public class AirportPartyManager
         			party.setOriginMGRA((int) stallMgra);
         			party.setDestinationMGRA(airportMgra);
         			
-        			double transitToTerminalProb = employeeParkingValuesMap.get(key).get(3) * employeeParkingValuesMap.get(key).get(4);
+        			double transitToTerminalProb =  employeeParkingValuesMap.get(key).get(4);
         			if (party.getRandom() < transitToTerminalProb)
         			{
         				party.setMode((byte) SandagModelStructure.WALK_TRANSIT_ALTS[0]);
@@ -223,7 +223,7 @@ public class AirportPartyManager
         
         for (String key : employeeParkingValuesMap.keySet())
         	{
-        		double num = employeeParkingValuesMap.get(key).get(2);
+        		double num = employeeParkingValuesMap.get(key).get(2) *employeeParkingValuesMap.get(key).get(3);
         		int stallNum = (int) num;
         		for (int s = 0; s < stallNum; s++)
         		{
@@ -232,7 +232,7 @@ public class AirportPartyManager
         			party.setDestinationMGRA((int) stallMgra);
         			party.setOriginMGRA(airportMgra);
         			
-        			double transitToTerminalProb = employeeParkingValuesMap.get(key).get(3) * employeeParkingValuesMap.get(key).get(4);
+        			double transitToTerminalProb =  employeeParkingValuesMap.get(key).get(4);
         			if (party.getRandom() < transitToTerminalProb)
         			{
         				party.setMode((byte) SandagModelStructure.WALK_TRANSIT_ALTS[0]);
@@ -259,7 +259,7 @@ public class AirportPartyManager
                     totalEmployees += 0;
         		}
         	}
-        logger.info("Total employees " + totalEmployees);
+        logger.info("Total employees going to terminal" + totalEmployees);
 
     }
     
