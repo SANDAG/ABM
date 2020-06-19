@@ -56,6 +56,7 @@ class input_checker(_m.Tool()):
 		self.input_checker_path = ''
 		self.inputs_list_path = ''
 		self.inputs_checks_path = ''
+		self.log_path = ''
 		self.prop_input_paths = {}
 		self.inputs_list = pd.DataFrame()
 		self.inputs_checks = pd.DataFrame()
@@ -77,20 +78,19 @@ class input_checker(_m.Tool()):
 		<br>
 		<div style="text-align:left">
 			<ul>
-	            <li>input_checker\config\inputs_checks.csv</li>
-	            <li>input_checker\config\inputs_list.csv</li>
-	        </ul>
-	    </div>
+				<li>input_checker\config\inputs_checks.csv</li>
+				<li>input_checker\config\inputs_list.csv</li>
+			</ul>
+		</div>
 		The input checker goes through the list of checks and evaluates each
-		one as True or False. A log file is produced at the end with results
-		for each check and additionally, a summary of all checks:
+		one as True or False. A summary file is produced at the end with results
+		for each check:
 		<br>
 		<div style="text-align:left">
 			<ul>
-	            <li>input_checker\logs\inputCheckerLog [YEAR-M-D].LOG</li>
-	            <li>input_checker\logs\inputCheckerSummary.txt</li>
-	        </ul>
-	    </div>
+				<li>input_checker\inputCheckerSummary_[YEAR-M-D].txt</li>
+			</ul>
+		</div>
 		"""
 		pb.branding_text = "SANDAG - Input Checker"
 
@@ -188,8 +188,6 @@ class input_checker(_m.Tool()):
 
 		for item, row in self.inputs_list.iterrows():
 
-			print('Adding Input: ' + row['Input_Table'])
-
 			table_name = row['Input_Table']
 			emme_network_object = row['Emme_Object']
 			column_map = row['Column_Map']
@@ -199,19 +197,19 @@ class input_checker(_m.Tool()):
 			if not (pd.isnull(emme_network_object)):
 				df = get_emme_object(network, emme_network_object, fields_to_export)
 				self.inputs[table_name] = df
-				print(' - ' + table_name + ' added')
 			else:
 				input_path = self.prop_input_paths[table_name]
 				input_ext = os.path.splitext(input_path)[1]
 				if input_ext == '.csv':
 					df = pd.read_csv(_join(self.path, input_path))
 					self.inputs[table_name] = df
-					print(' - ' + table_name + ' added')
 				else:
-					dbf = Dbf5(_join(_dir(self.path), input_path))
+					dbf_path = input_path
+					if '%project.folder%' in dbf_path:
+						dbf_path = dbf_path.replace('%project.folder%/', '')
+					dbf = Dbf5(_join(self.path, dbf_path))
 					df = dbf.to_dataframe()
 					self.inputs[table_name] = df
-					print(' - ' + table_name + ' added')
 
 	def checks(self):
 		# read all input DFs into memory
@@ -245,8 +243,6 @@ class input_checker(_m.Tool()):
 			stat_expr = row['Report_Statistic']
 
 			if test_type == 'Test':
-
-				print ('Performing Check: ' +  row['Test'])
 
 				if (pd.isnull(row['Test_Vals'])):
 
@@ -300,15 +296,10 @@ class input_checker(_m.Tool()):
 						self.result_list[test].append(out)
 					self.results[test] = not (False in self.result_list[test])
 					self.problem_ids[test] = []
-
-				print (' - Check Complete')
-
 			else:
 				# perform calculation
-				print ('Performing Calculation: ' + row['Test'])
 				calc_expr = test + ' = ' + expr
 				exec(calc_expr, {}, calc_dict)
-				print (' - Calculation Complete')
 
 	def prop_file_paths(self):
 		prop_files = self.inputs_list[['Input_Table','Property_Token']].dropna()
@@ -323,20 +314,17 @@ class input_checker(_m.Tool()):
 
 	def write_log(self):
 		# function to write out the input checker log file
-		# there are three blocks:
+		# there are four blocks:
 		#   - Introduction
+		#	- Summary of checks
 		#   - Action Required: FATAL, LOGICAL, WARNINGS
 		#   - List of passed checks
 		
 		# create log file
 		now = datetime.datetime.now()
 
-		# create log directory if it doesn't already exist
-		log_path = _join(self.input_checker_path,'logs')
-		if not os.path.exists(log_path):
-			os.makedirs(log_path)
-
-		f = open(_join(self.input_checker_path,'logs', ('inputCheckerLog ' + now.strftime("[%Y-%m-%d]") + '.LOG')), 'wb')
+		self.log_path = _join(self.input_checker_path, ('inputCheckerSummary_' + now.strftime("[%Y-%m-%d]") + '.txt'))
+		f = open(self.log_path, 'wb')
 		
 		# define re-usable elements
 		seperator1 = '###########################################################'
@@ -345,9 +333,9 @@ class input_checker(_m.Tool()):
 		# write out Header
 		f.write(seperator1 + seperator1 + "\r\n")
 		f.write(seperator1 + seperator1 + "\r\n\r\n")
-		f.write("\t SANDAG ABM Input Checker Log File \r\n")
-		f.write("\t ____________________________ \r\n\r\n\r\n")
-		f.write("\t Log created on: " + now.strftime("%Y-%m-%d %H:%M") + "\r\n\r\n")
+		f.write("\t SANDAG ABM Input Checker Summary File \r\n")
+		f.write("\t _____________________________________ \r\n\r\n\r\n")
+		f.write("\t Created on: " + now.strftime("%Y-%m-%d %H:%M") + "\r\n\r\n")
 		f.write("\t Notes:-\r\n")
 		f.write("\t The SANDAG ABM Input Checker performs various QA/QC checks on SANDAG ABM inputs as specified by the user.\r\n")
 		f.write("\t The Input Checker allows the user to specify three severity levels for each QA/QC check:\r\n\r\n")
@@ -359,7 +347,10 @@ class input_checker(_m.Tool()):
 		f.write("\t                 With logical errors in inputs, the SANDAG ABM outputs may not be meaningful.\r\n")
 		f.write("\t WARNING Checks: The failure of Warning checks would indicate problems in data that would not.\r\n")
 		f.write("\t                 halt the run or affect model outputs but might indicate an issue with inputs.\r\n\r\n\r\n")
-		f.write("\t The results of all the checks are organized as follows: \r\n\r\n")
+		f.write("\t The contents of this summary file are organized as follows: \r\n\r\n")
+		f.write("\t TALLY OF FAILED CHECKS:\r\n")
+		f.write("\t -----------------------\r\n")
+		f.write("\t A tally of all failed checks per severity level\r\n\r\n")
 		f.write("\t IMMEDIATE ACTION REQUIRED:\r\n")
 		f.write("\t -------------------------\r\n")
 		f.write("\t A log under this heading will be generated in case of failure of a FATAL check\r\n\r\n")
@@ -367,10 +358,10 @@ class input_checker(_m.Tool()):
 		f.write("\t ---------------\r\n")
 		f.write("\t A log under this heading will be generated in case of failure of a LOGICAL check\r\n\r\n")
 		f.write("\t WARNINGS:\r\n")
-		f.write("\t ---------------\r\n")
+		f.write("\t ---------\r\n")
 		f.write("\t A log under this heading will be generated in case of failure of a WARNING check\r\n\r\n")
-		f.write("\t LOG OF ALL PASSED CHECKS:\r\n")
-		f.write("\t -----------\r\n")
+		f.write("\t SUMMARY OF ALL PASSED CHECKS:\r\n")
+		f.write("\t ----------------------------\r\n")
 		f.write("\t A complete listing of results of all passed checks\r\n\r\n")
 		f.write(seperator1 + seperator1 + "\r\n")
 		f.write(seperator1 + seperator1 + "\r\n\r\n\r\n\r\n")
@@ -389,6 +380,17 @@ class input_checker(_m.Tool()):
 		
 		# get all WARNING failures
 		self.num_warning = checks_df.result[(checks_df.Severity=='Warning') & (checks_df.reverse_result)].count()
+
+		# write summary of failed checks
+		f.write('\r\n\r\n' + seperator2 + seperator2 + "\r\n")
+		f.write(seperator2 + seperator2 + "\r\n\r\n")
+		f.write('\t' + "TALLY OF FAILED CHECKS \r\n")
+		f.write('\t' + "---------------------- \r\n\r\n")
+		f.write(seperator2 + seperator2 + "\r\n")
+		f.write(seperator2 + seperator2 + "\r\n\r\n\t")
+		f.write(' Number of Fatal Errors: ' + str(self.num_fatal))
+		f.write('\r\n\t Number of Logical Errors: ' + str(self.num_logical))
+		f.write('\r\n\t Number of Warnings: ' + str(self.num_warning))
 
 		def write_check_log(self, fh, row):
 			# define constants
@@ -468,7 +470,7 @@ class input_checker(_m.Tool()):
 			f.write('\r\n\r\n' + seperator2 + seperator2 + "\r\n")
 			f.write(seperator2 + seperator2 + "\r\n\r\n")
 			f.write('\t' + "WARNINGS \r\n")
-			f.write('\t' + "-------- \r\n")
+			f.write('\t' + "-------- \r\n\r\n")
 			f.write(seperator2 + seperator2 + "\r\n")
 			f.write(seperator2 + seperator2 + "\r\n")
 			
@@ -481,7 +483,7 @@ class input_checker(_m.Tool()):
 		f.write('\r\n\r\n' + seperator2 + seperator2 + "\r\n")
 		f.write(seperator2 + seperator2 + "\r\n\r\n")
 		f.write('\t' + "LOG OF ALL PASSED CHECKS \r\n")
-		f.write('\t' + "------------------------ \r\n")
+		f.write('\t' + "------------------------ \r\n\r\n")
 		f.write(seperator2 + seperator2 + "\r\n")
 		f.write(seperator2 + seperator2 + "\r\n")
 		
@@ -490,19 +492,8 @@ class input_checker(_m.Tool()):
 			write_check_log(self, f, row)
 			
 		f.close()
-		# write out a summary of results from input checker for main model
-		f = open(_join(self.input_checker_path,'logs', ('inputCheckerSummary' + '.txt')), 'wb')
-		f.write('\r\n' + seperator2 + '\r\n')
-		f.write('\t Summary of Input Checker Fails \r\n')
-		f.write(seperator2 + '\r\n\r\n')
-		f.write(' Number of Fatal Errors: ' + str(self.num_fatal))
-		f.write('\r\n\r\n Number of Logical Errors: ' + str(self.num_logical))
-		f.write('\r\n\r\n Number of Warnings: ' + str(self.num_warning) + '\r\n\r\n')
-		f.close()
 
 	def check_num_fatal(self):
 		# return code to the main model based on input checks and results
 		if self.num_fatal > 0:
-			_m.logbook_write('At least one fatal error in the inputs.')
-			_m.logbook_write('Input Checker Failed')
-			sys.exit(2)
+			raise Exception("Input checker failed, {} fatal errors found. Open {} for details.".format(self.num_fatal, self.log_path))
