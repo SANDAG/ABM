@@ -59,7 +59,7 @@ def process_file(config, zone):
 
     print('Processing %s ...' % output_file)
     df = pd.read_csv(output_file, usecols=[walk_time_col, orig_col, dest_col])
-    df.rename({walk_time_col: 'walkTime'}, axis=1, inplace=True)
+    df.rename(columns={walk_time_col:'walkTime'}, inplace=True)
 
     # OD vectors
     length = df['walkTime'] / config.walk_coef
