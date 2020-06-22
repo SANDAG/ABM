@@ -66,15 +66,20 @@ def process_file(config, zone):
 
     # availability masks
     if zone == 'mgra':
-        mt_avail = df[orig_col].isin(config.mt_mgras) | df[dest_col].isin(config.mt_mgras)
-        walking_dist = length <= config.walk_max_dist_mgra
+        mt_avail = \
+            (df[orig_col].isin(config.mt_mgras) | df[dest_col].isin(config.mt_mgras)) & \
+            (length <= config.mt_max_dist_mgra)
+
+        walk_avail = length <= config.walk_max_dist_mgra
+        mm_avail = length <= config.mm_max_dist_mgra
 
     else:
-        mt_avail = df[dest_col].isin(config.mt_taps)
-        walking_dist = length <= config.walk_max_dist_tap
+        mt_avail = df[dest_col].isin(config.mt_taps) & (length <= config.mt_max_dist_tap)
+        walk_avail = length <= config.walk_max_dist_tap
+        mm_avail = length <= config.mm_max_dist_tap
 
     all_rows = df.shape[0]
-    df = df[mt_avail | walking_dist]
+    df = df[mt_avail | walk_avail | mm_avail]
     print('Filtered out %s unavailable pairs' % str(all_rows - df.shape[0]))
 
     # micro-mobility
@@ -102,7 +107,8 @@ def process_file(config, zone):
     df['mtGenTime'] = mt_time + mt_cost_as_time + config.mt_constant
 
     # update zones with unavailable walk, micromobility, and microtransit
-    df.loc[~walking_dist, ['walkTime', 'mmTime', 'mmCost', 'mmGenTime']] = config.mt_not_avail
+    df.loc[~walk_avail, ['walkTime']] = config.mt_not_avail
+    df.loc[~mm_avail, ['mmTime', 'mmCost', 'mmGenTime']] = config.mt_not_avail
     df.loc[~mt_avail, ['mtTime', 'mtCost', 'mtGenTime']] = config.mt_not_avail
 
     # calculate the minimum of walk time vs. generalized time
@@ -187,7 +193,7 @@ class Config():
         self.mt_tap_file =                 parse('active.microtransit.tap.file')
         self.mt_mgra_file =                parse('active.microtransit.mgra.file')
 
-        self.walk_coef =                   float(parse('active.coef.distance.walk'))
+        self.walk_coef =                   float(parse('active.walk.minutes.per.mile'))
         self.walk_max_dist_mgra =          float(parse('active.maxdist.walk.mgra'))
         self.walk_max_dist_tap =           float(parse('active.maxdist.walk.tap'))
 
@@ -198,6 +204,8 @@ class Config():
         self.mm_constant =                 float(parse('active.micromobility.constant'))
         self.mm_variable_cost =            float(parse('active.micromobility.variableCost'))
         self.mm_fixed_cost =               float(parse('active.micromobility.fixedCost'))
+        self.mm_max_dist_mgra =            float(parse('active.maxdist.micromobility.mgra'))
+        self.mm_max_dist_tap =             float(parse('active.maxdist.micromobility.tap'))
 
         self.mt_speed =                    float(parse('active.microtransit.speed'))
         self.mt_wait_time =                float(parse('active.microtransit.waitTime'))
@@ -206,6 +214,8 @@ class Config():
         self.mt_variable_cost =            float(parse('active.microtransit.variableCost'))
         self.mt_fixed_cost =               float(parse('active.microtransit.fixedCost'))
         self.mt_not_avail =                float(parse('active.microtransit.notAvailable'))
+        self.mt_max_dist_mgra =            float(parse('active.maxdist.microtransit.mgra'))
+        self.mt_max_dist_tap =             float(parse('active.maxdist.microtransit.tap'))
 
     def init_micro_access_time(self):
         """Reads the MicroAccessTime for each origin MGRA from
@@ -248,7 +258,7 @@ class Config():
 if __name__ == '__main__':
 
     config = Config()
-    process_file(config, zone='mgra')
     process_file(config, zone='tap')
+    process_file(config, zone='mgra')
 
     print('Finished!')
