@@ -1,0 +1,811 @@
+tripmode,tourmode,purpose,value,grp_var
+1,Auto SOV,work,2394844.869,worktourmode1
+2,Auto SOV,work,0,worktourmode1
+3,Auto SOV,work,0,worktourmode1
+4,Auto SOV,work,78505.1315,worktourmode1
+5,Auto SOV,work,0,worktourmode1
+6,Auto SOV,work,0,worktourmode1
+7,Auto SOV,work,0,worktourmode1
+8,Auto SOV,work,0,worktourmode1
+9,Auto SOV,work,0,worktourmode1
+1,Auto 2 Person,work,288150.1051,worktourmode2
+2,Auto 2 Person,work,311144.6789,worktourmode2
+3,Auto 2 Person,work,952.2222364,worktourmode2
+4,Auto 2 Person,work,21472.99375,worktourmode2
+5,Auto 2 Person,work,0,worktourmode2
+6,Auto 2 Person,work,0,worktourmode2
+7,Auto 2 Person,work,0,worktourmode2
+8,Auto 2 Person,work,0,worktourmode2
+9,Auto 2 Person,work,0,worktourmode2
+1,Auto 3+ Person,work,123189.7667,worktourmode3
+2,Auto 3+ Person,work,42145.98019,worktourmode3
+3,Auto 3+ Person,work,110309.6041,worktourmode3
+4,Auto 3+ Person,work,7744.648994,worktourmode3
+5,Auto 3+ Person,work,0,worktourmode3
+6,Auto 3+ Person,work,0,worktourmode3
+7,Auto 3+ Person,work,0,worktourmode3
+8,Auto 3+ Person,work,0,worktourmode3
+9,Auto 3+ Person,work,0,worktourmode3
+1,Walk,work,0,worktourmode4
+2,Walk,work,0,worktourmode4
+3,Walk,work,0,worktourmode4
+4,Walk,work,32770,worktourmode4
+5,Walk,work,0,worktourmode4
+6,Walk,work,0,worktourmode4
+7,Walk,work,0,worktourmode4
+8,Walk,work,0,worktourmode4
+9,Walk,work,0,worktourmode4
+1,Bike/Moped,work,10529.78459,worktourmode5
+2,Bike/Moped,work,7479.328201,worktourmode5
+3,Bike/Moped,work,1345.673014,worktourmode5
+4,Bike/Moped,work,1177.284196,worktourmode5
+5,Bike/Moped,work,35627.93,worktourmode5
+6,Bike/Moped,work,0,worktourmode5
+7,Bike/Moped,work,0,worktourmode5
+8,Bike/Moped,work,0,worktourmode5
+9,Bike/Moped,work,0,worktourmode5
+1,Walk-Transit,work,0,worktourmode6
+2,Walk-Transit,work,3642.58077,worktourmode6
+3,Walk-Transit,work,1243.208048,worktourmode6
+4,Walk-Transit,work,6168.91553,worktourmode6
+5,Walk-Transit,work,185.6975127,worktourmode6
+6,Walk-Transit,work,68599.59814,worktourmode6
+7,Walk-Transit,work,0,worktourmode6
+8,Walk-Transit,work,0,worktourmode6
+9,Walk-Transit,work,0,worktourmode6
+1,PNR-Transit,work,2353.437903,worktourmode7
+2,PNR-Transit,work,2178.731136,worktourmode7
+3,PNR-Transit,work,552.7719266,worktourmode7
+4,PNR-Transit,work,516.451864,worktourmode7
+5,PNR-Transit,work,0,worktourmode7
+6,PNR-Transit,work,1751.751731,worktourmode7
+7,PNR-Transit,work,6943.111,worktourmode7
+8,PNR-Transit,work,33.74443951,worktourmode7
+9,PNR-Transit,work,0,worktourmode7
+1,KNR-Transit,work,0,worktourmode8
+2,KNR-Transit,work,8259.217048,worktourmode8
+3,KNR-Transit,work,1261.035964,worktourmode8
+4,KNR-Transit,work,1764.444297,worktourmode8
+5,KNR-Transit,work,0,worktourmode8
+6,KNR-Transit,work,3033.32413,worktourmode8
+7,KNR-Transit,work,0,worktourmode8
+8,KNR-Transit,work,9611.97856,worktourmode8
+9,KNR-Transit,work,0,worktourmode8
+1,School Bus,work,0,worktourmode9
+2,School Bus,work,0,worktourmode9
+3,School Bus,work,0,worktourmode9
+4,School Bus,work,0,worktourmode9
+5,School Bus,work,0,worktourmode9
+6,School Bus,work,0,worktourmode9
+7,School Bus,work,0,worktourmode9
+8,School Bus,work,0,worktourmode9
+9,School Bus,work,0,worktourmode9
+1,Total,work,2819067.963,workTotal
+2,Total,work,374850.5163,workTotal
+3,Total,work,115664.5153,workTotal
+4,Total,work,150119.8701,workTotal
+5,Total,work,35813.62751,workTotal
+6,Total,work,73384.674,workTotal
+7,Total,work,6943.111,workTotal
+8,Total,work,9645.723,workTotal
+9,Total,work,0,workTotal
+1,Auto SOV,univ,124311.3669,univtourmode1
+2,Auto SOV,univ,0,univtourmode1
+3,Auto SOV,univ,0,univtourmode1
+4,Auto SOV,univ,18288.63314,univtourmode1
+5,Auto SOV,univ,0,univtourmode1
+6,Auto SOV,univ,0,univtourmode1
+7,Auto SOV,univ,0,univtourmode1
+8,Auto SOV,univ,0,univtourmode1
+9,Auto SOV,univ,0,univtourmode1
+1,Auto 2 Person,univ,18367.2958,univtourmode2
+2,Auto 2 Person,univ,38862.89996,univtourmode2
+3,Auto 2 Person,univ,0,univtourmode2
+4,Auto 2 Person,univ,5239.804233,univtourmode2
+5,Auto 2 Person,univ,0,univtourmode2
+6,Auto 2 Person,univ,0,univtourmode2
+7,Auto 2 Person,univ,0,univtourmode2
+8,Auto 2 Person,univ,0,univtourmode2
+9,Auto 2 Person,univ,0,univtourmode2
+1,Auto 3+ Person,univ,5566.426496,univtourmode3
+2,Auto 3+ Person,univ,5211.221456,univtourmode3
+3,Auto 3+ Person,univ,25090.86683,univtourmode3
+4,Auto 3+ Person,univ,1561.485214,univtourmode3
+5,Auto 3+ Person,univ,0,univtourmode3
+6,Auto 3+ Person,univ,0,univtourmode3
+7,Auto 3+ Person,univ,0,univtourmode3
+8,Auto 3+ Person,univ,0,univtourmode3
+9,Auto 3+ Person,univ,0,univtourmode3
+1,Walk,univ,0,univtourmode4
+2,Walk,univ,0,univtourmode4
+3,Walk,univ,0,univtourmode4
+4,Walk,univ,11270,univtourmode4
+5,Walk,univ,0,univtourmode4
+6,Walk,univ,0,univtourmode4
+7,Walk,univ,0,univtourmode4
+8,Walk,univ,0,univtourmode4
+9,Walk,univ,0,univtourmode4
+1,Bike/Moped,univ,672.0043889,univtourmode5
+2,Bike/Moped,univ,195.6646877,univtourmode5
+3,Bike/Moped,univ,185.6655533,univtourmode5
+4,Bike/Moped,univ,236.6504285,univtourmode5
+5,Bike/Moped,univ,1130.014942,univtourmode5
+6,Bike/Moped,univ,0,univtourmode5
+7,Bike/Moped,univ,0,univtourmode5
+8,Bike/Moped,univ,0,univtourmode5
+9,Bike/Moped,univ,0,univtourmode5
+1,Walk-Transit,univ,0,univtourmode6
+2,Walk-Transit,univ,1983.772226,univtourmode6
+3,Walk-Transit,univ,306.0404068,univtourmode6
+4,Walk-Transit,univ,6868.846364,univtourmode6
+5,Walk-Transit,univ,26.60304462,univtourmode6
+6,Walk-Transit,univ,29772.30407,univtourmode6
+7,Walk-Transit,univ,0,univtourmode6
+8,Walk-Transit,univ,0,univtourmode6
+9,Walk-Transit,univ,1222.433886,univtourmode6
+1,PNR-Transit,univ,51.89171705,univtourmode7
+2,PNR-Transit,univ,234.0620216,univtourmode7
+3,PNR-Transit,univ,65.60084325,univtourmode7
+4,PNR-Transit,univ,84.080537,univtourmode7
+5,PNR-Transit,univ,0,univtourmode7
+6,PNR-Transit,univ,931.1113811,univtourmode7
+7,PNR-Transit,univ,1783.2535,univtourmode7
+8,PNR-Transit,univ,0,univtourmode7
+9,PNR-Transit,univ,0,univtourmode7
+1,KNR-Transit,univ,0,univtourmode8
+2,KNR-Transit,univ,0,univtourmode8
+3,KNR-Transit,univ,0,univtourmode8
+4,KNR-Transit,univ,1036.204953,univtourmode8
+5,KNR-Transit,univ,0,univtourmode8
+6,KNR-Transit,univ,4575.105547,univtourmode8
+7,KNR-Transit,univ,0,univtourmode8
+8,KNR-Transit,univ,3258.6895,univtourmode8
+9,KNR-Transit,univ,0,univtourmode8
+1,School Bus,univ,0,univtourmode9
+2,School Bus,univ,0,univtourmode9
+3,School Bus,univ,0,univtourmode9
+4,School Bus,univ,0,univtourmode9
+5,School Bus,univ,0,univtourmode9
+6,School Bus,univ,0,univtourmode9
+7,School Bus,univ,0,univtourmode9
+8,School Bus,univ,0,univtourmode9
+9,School Bus,univ,0,univtourmode9
+1,Total,univ,148968.9853,univTotal
+2,Total,univ,46487.62036,univTotal
+3,Total,univ,25648.17364,univTotal
+4,Total,univ,44585.70487,univTotal
+5,Total,univ,1156.617986,univTotal
+6,Total,univ,35278.521,univTotal
+7,Total,univ,1783.2535,univTotal
+8,Total,univ,3258.6895,univTotal
+9,Total,univ,1222.433886,univTotal
+1,Auto SOV,schl,43224.68861,schltourmode1
+2,Auto SOV,schl,0,schltourmode1
+3,Auto SOV,schl,0,schltourmode1
+4,Auto SOV,schl,4615.311386,schltourmode1
+5,Auto SOV,schl,0,schltourmode1
+6,Auto SOV,schl,0,schltourmode1
+7,Auto SOV,schl,0,schltourmode1
+8,Auto SOV,schl,0,schltourmode1
+9,Auto SOV,schl,0,schltourmode1
+1,Auto 2 Person,schl,20389.11443,schltourmode2
+2,Auto 2 Person,schl,561036.8032,schltourmode2
+3,Auto 2 Person,schl,0,schltourmode2
+4,Auto 2 Person,schl,30324.08237,schltourmode2
+5,Auto 2 Person,schl,0,schltourmode2
+6,Auto 2 Person,schl,0,schltourmode2
+7,Auto 2 Person,schl,0,schltourmode2
+8,Auto 2 Person,schl,0,schltourmode2
+9,Auto 2 Person,schl,0,schltourmode2
+1,Auto 3+ Person,schl,3241.698391,schltourmode3
+2,Auto 3+ Person,schl,130144.2889,schltourmode3
+3,Auto 3+ Person,schl,665267.2743,schltourmode3
+4,Auto 3+ Person,schl,36676.73842,schltourmode3
+5,Auto 3+ Person,schl,0,schltourmode3
+6,Auto 3+ Person,schl,0,schltourmode3
+7,Auto 3+ Person,schl,0,schltourmode3
+8,Auto 3+ Person,schl,0,schltourmode3
+9,Auto 3+ Person,schl,0,schltourmode3
+1,Walk,schl,0,schltourmode4
+2,Walk,schl,0,schltourmode4
+3,Walk,schl,0,schltourmode4
+4,Walk,schl,59950,schltourmode4
+5,Walk,schl,0,schltourmode4
+6,Walk,schl,0,schltourmode4
+7,Walk,schl,0,schltourmode4
+8,Walk,schl,0,schltourmode4
+9,Walk,schl,0,schltourmode4
+1,Bike/Moped,schl,0,schltourmode5
+2,Bike/Moped,schl,68.07734504,schltourmode5
+3,Bike/Moped,schl,303.5247758,schltourmode5
+4,Bike/Moped,schl,213.9022721,schltourmode5
+5,Bike/Moped,schl,16364.49561,schltourmode5
+6,Bike/Moped,schl,0,schltourmode5
+7,Bike/Moped,schl,0,schltourmode5
+8,Bike/Moped,schl,0,schltourmode5
+9,Bike/Moped,schl,0,schltourmode5
+1,Walk-Transit,schl,0,schltourmode6
+2,Walk-Transit,schl,0,schltourmode6
+3,Walk-Transit,schl,0,schltourmode6
+4,Walk-Transit,schl,0,schltourmode6
+5,Walk-Transit,schl,0,schltourmode6
+6,Walk-Transit,schl,10526.0756,schltourmode6
+7,Walk-Transit,schl,0,schltourmode6
+8,Walk-Transit,schl,0,schltourmode6
+9,Walk-Transit,schl,0,schltourmode6
+1,PNR-Transit,schl,0,schltourmode7
+2,PNR-Transit,schl,16.21233954,schltourmode7
+3,PNR-Transit,schl,0,schltourmode7
+4,PNR-Transit,schl,0,schltourmode7
+5,PNR-Transit,schl,0,schltourmode7
+6,PNR-Transit,schl,21.53756346,schltourmode7
+7,PNR-Transit,schl,32.250097,schltourmode7
+8,PNR-Transit,schl,0,schltourmode7
+9,PNR-Transit,schl,0,schltourmode7
+1,KNR-Transit,schl,0,schltourmode8
+2,KNR-Transit,schl,0,schltourmode8
+3,KNR-Transit,schl,164.4521156,schltourmode8
+4,KNR-Transit,schl,164.4521156,schltourmode8
+5,KNR-Transit,schl,0,schltourmode8
+6,KNR-Transit,schl,776.5308389,schltourmode8
+7,KNR-Transit,schl,0,schltourmode8
+8,KNR-Transit,schl,904.56493,schltourmode8
+9,KNR-Transit,schl,0,schltourmode8
+1,School Bus,schl,583.3080724,schltourmode9
+2,School Bus,schl,6686.515142,schltourmode9
+3,School Bus,schl,14094.82468,schltourmode9
+4,School Bus,schl,186.097626,schltourmode9
+5,School Bus,schl,0,schltourmode9
+6,School Bus,schl,0,schltourmode9
+7,School Bus,schl,0,schltourmode9
+8,School Bus,schl,0,schltourmode9
+9,School Bus,schl,88889.25448,schltourmode9
+1,Total,schl,67438.80951,schlTotal
+2,Total,schl,697951.8969,schlTotal
+3,Total,schl,679830.0759,schlTotal
+4,Total,schl,132130.5842,schlTotal
+5,Total,schl,16364.49561,schlTotal
+6,Total,schl,11324.144,schlTotal
+7,Total,schl,32.250097,schlTotal
+8,Total,schl,904.56493,schlTotal
+9,Total,schl,88889.25448,schlTotal
+1,Auto SOV,imain,1544161.114,imaintourmode1
+2,Auto SOV,imain,0,imaintourmode1
+3,Auto SOV,imain,0,imaintourmode1
+4,Auto SOV,imain,14638.88599,imaintourmode1
+5,Auto SOV,imain,0,imaintourmode1
+6,Auto SOV,imain,0,imaintourmode1
+7,Auto SOV,imain,0,imaintourmode1
+8,Auto SOV,imain,0,imaintourmode1
+9,Auto SOV,imain,0,imaintourmode1
+1,Auto 2 Person,imain,411715.2362,imaintourmode2
+2,Auto 2 Person,imain,920720.9689,imaintourmode2
+3,Auto 2 Person,imain,5308.976683,imaintourmode2
+4,Auto 2 Person,imain,19454.81827,imaintourmode2
+5,Auto 2 Person,imain,0,imaintourmode2
+6,Auto 2 Person,imain,0,imaintourmode2
+7,Auto 2 Person,imain,0,imaintourmode2
+8,Auto 2 Person,imain,0,imaintourmode2
+9,Auto 2 Person,imain,0,imaintourmode2
+1,Auto 3+ Person,imain,176835.8188,imaintourmode3
+2,Auto 3+ Person,imain,332874.7783,imaintourmode3
+3,Auto 3+ Person,imain,1170321.418,imaintourmode3
+4,Auto 3+ Person,imain,12777.98479,imaintourmode3
+5,Auto 3+ Person,imain,0,imaintourmode3
+6,Auto 3+ Person,imain,0,imaintourmode3
+7,Auto 3+ Person,imain,0,imaintourmode3
+8,Auto 3+ Person,imain,0,imaintourmode3
+9,Auto 3+ Person,imain,0,imaintourmode3
+1,Walk,imain,0,imaintourmode4
+2,Walk,imain,0,imaintourmode4
+3,Walk,imain,0,imaintourmode4
+4,Walk,imain,272670,imaintourmode4
+5,Walk,imain,0,imaintourmode4
+6,Walk,imain,0,imaintourmode4
+7,Walk,imain,0,imaintourmode4
+8,Walk,imain,0,imaintourmode4
+9,Walk,imain,0,imaintourmode4
+1,Bike/Moped,imain,1149.533567,imaintourmode5
+2,Bike/Moped,imain,421.4294409,imaintourmode5
+3,Bike/Moped,imain,161.610041,imaintourmode5
+4,Bike/Moped,imain,631.0464822,imaintourmode5
+5,Bike/Moped,imain,18136.38047,imaintourmode5
+6,Bike/Moped,imain,0,imaintourmode5
+7,Bike/Moped,imain,0,imaintourmode5
+8,Bike/Moped,imain,0,imaintourmode5
+9,Bike/Moped,imain,0,imaintourmode5
+1,Walk-Transit,imain,0,imaintourmode6
+2,Walk-Transit,imain,956.6276737,imaintourmode6
+3,Walk-Transit,imain,1553.118895,imaintourmode6
+4,Walk-Transit,imain,2039.063546,imaintourmode6
+5,Walk-Transit,imain,9.930907938,imaintourmode6
+6,Walk-Transit,imain,26111.25898,imaintourmode6
+7,Walk-Transit,imain,0,imaintourmode6
+8,Walk-Transit,imain,0,imaintourmode6
+9,Walk-Transit,imain,0,imaintourmode6
+1,PNR-Transit,imain,0,imaintourmode7
+2,PNR-Transit,imain,0,imaintourmode7
+3,PNR-Transit,imain,0,imaintourmode7
+4,PNR-Transit,imain,0,imaintourmode7
+5,PNR-Transit,imain,0,imaintourmode7
+6,PNR-Transit,imain,34.87399901,imaintourmode7
+7,PNR-Transit,imain,376.046864,imaintourmode7
+8,PNR-Transit,imain,0,imaintourmode7
+9,PNR-Transit,imain,0,imaintourmode7
+1,KNR-Transit,imain,0,imaintourmode8
+2,KNR-Transit,imain,597.7596236,imaintourmode8
+3,KNR-Transit,imain,2246.612858,imaintourmode8
+4,KNR-Transit,imain,27.95685892,imaintourmode8
+5,KNR-Transit,imain,0,imaintourmode8
+6,KNR-Transit,imain,91.61386389,imaintourmode8
+7,KNR-Transit,imain,0,imaintourmode8
+8,KNR-Transit,imain,2106.056796,imaintourmode8
+9,KNR-Transit,imain,0,imaintourmode8
+1,School Bus,imain,0,imaintourmode9
+2,School Bus,imain,0,imaintourmode9
+3,School Bus,imain,0,imaintourmode9
+4,School Bus,imain,0,imaintourmode9
+5,School Bus,imain,0,imaintourmode9
+6,School Bus,imain,0,imaintourmode9
+7,School Bus,imain,0,imaintourmode9
+8,School Bus,imain,0,imaintourmode9
+9,School Bus,imain,0,imaintourmode9
+1,Total,imain,2133861.703,imainTotal
+2,Total,imain,1255571.564,imainTotal
+3,Total,imain,1179591.737,imainTotal
+4,Total,imain,322239.7559,imainTotal
+5,Total,imain,18146.31138,imainTotal
+6,Total,imain,26237.74684,imainTotal
+7,Total,imain,376.046864,imainTotal
+8,Total,imain,2106.056796,imainTotal
+9,Total,imain,0,imainTotal
+1,Auto SOV,idisc,499312.1199,idisctourmode1
+2,Auto SOV,idisc,0,idisctourmode1
+3,Auto SOV,idisc,0,idisctourmode1
+4,Auto SOV,idisc,28237.88015,idisctourmode1
+5,Auto SOV,idisc,0,idisctourmode1
+6,Auto SOV,idisc,0,idisctourmode1
+7,Auto SOV,idisc,0,idisctourmode1
+8,Auto SOV,idisc,0,idisctourmode1
+9,Auto SOV,idisc,0,idisctourmode1
+1,Auto 2 Person,idisc,75149.55043,idisctourmode2
+2,Auto 2 Person,idisc,281948.0138,idisctourmode2
+3,Auto 2 Person,idisc,749.0378809,idisctourmode2
+4,Auto 2 Person,idisc,23223.39793,idisctourmode2
+5,Auto 2 Person,idisc,0,idisctourmode2
+6,Auto 2 Person,idisc,0,idisctourmode2
+7,Auto 2 Person,idisc,0,idisctourmode2
+8,Auto 2 Person,idisc,0,idisctourmode2
+9,Auto 2 Person,idisc,0,idisctourmode2
+1,Auto 3+ Person,idisc,26582.15381,idisctourmode3
+2,Auto 3+ Person,idisc,52337.61709,idisctourmode3
+3,Auto 3+ Person,idisc,233472.8694,idisctourmode3
+4,Auto 3+ Person,idisc,14657.35971,idisctourmode3
+5,Auto 3+ Person,idisc,0,idisctourmode3
+6,Auto 3+ Person,idisc,0,idisctourmode3
+7,Auto 3+ Person,idisc,0,idisctourmode3
+8,Auto 3+ Person,idisc,0,idisctourmode3
+9,Auto 3+ Person,idisc,0,idisctourmode3
+1,Walk,idisc,0,idisctourmode4
+2,Walk,idisc,0,idisctourmode4
+3,Walk,idisc,0,idisctourmode4
+4,Walk,idisc,180290,idisctourmode4
+5,Walk,idisc,0,idisctourmode4
+6,Walk,idisc,0,idisctourmode4
+7,Walk,idisc,0,idisctourmode4
+8,Walk,idisc,0,idisctourmode4
+9,Walk,idisc,0,idisctourmode4
+1,Bike/Moped,idisc,2936.264946,idisctourmode5
+2,Bike/Moped,idisc,2467.732942,idisctourmode5
+3,Bike/Moped,idisc,576.785267,idisctourmode5
+4,Bike/Moped,idisc,1473.23998,idisctourmode5
+5,Bike/Moped,idisc,26665.97687,idisctourmode5
+6,Bike/Moped,idisc,0,idisctourmode5
+7,Bike/Moped,idisc,0,idisctourmode5
+8,Bike/Moped,idisc,0,idisctourmode5
+9,Bike/Moped,idisc,0,idisctourmode5
+1,Walk-Transit,idisc,0,idisctourmode6
+2,Walk-Transit,idisc,1602.080933,idisctourmode6
+3,Walk-Transit,idisc,841.4196324,idisctourmode6
+4,Walk-Transit,idisc,3784.427137,idisctourmode6
+5,Walk-Transit,idisc,11.1275158,idisctourmode6
+6,Walk-Transit,idisc,17740.94478,idisctourmode6
+7,Walk-Transit,idisc,0,idisctourmode6
+8,Walk-Transit,idisc,0,idisctourmode6
+9,Walk-Transit,idisc,0,idisctourmode6
+1,PNR-Transit,idisc,87.09719416,idisctourmode7
+2,PNR-Transit,idisc,130.7983198,idisctourmode7
+3,PNR-Transit,idisc,146.813247,idisctourmode7
+4,PNR-Transit,idisc,119.1445097,idisctourmode7
+5,PNR-Transit,idisc,28.50254459,idisctourmode7
+6,PNR-Transit,idisc,180.7096148,idisctourmode7
+7,PNR-Transit,idisc,416.93457,idisctourmode7
+8,PNR-Transit,idisc,0,idisctourmode7
+9,PNR-Transit,idisc,0,idisctourmode7
+1,KNR-Transit,idisc,0,idisctourmode8
+2,KNR-Transit,idisc,1010.174687,idisctourmode8
+3,KNR-Transit,idisc,3135.394426,idisctourmode8
+4,KNR-Transit,idisc,580.8791835,idisctourmode8
+5,KNR-Transit,idisc,0,idisctourmode8
+6,KNR-Transit,idisc,2409.529104,idisctourmode8
+7,KNR-Transit,idisc,0,idisctourmode8
+8,KNR-Transit,idisc,4424.0226,idisctourmode8
+9,KNR-Transit,idisc,0,idisctourmode8
+1,School Bus,idisc,0,idisctourmode9
+2,School Bus,idisc,0,idisctourmode9
+3,School Bus,idisc,0,idisctourmode9
+4,School Bus,idisc,0,idisctourmode9
+5,School Bus,idisc,0,idisctourmode9
+6,School Bus,idisc,0,idisctourmode9
+7,School Bus,idisc,0,idisctourmode9
+8,School Bus,idisc,0,idisctourmode9
+9,School Bus,idisc,0,idisctourmode9
+1,Total,idisc,604067.1862,idiscTotal
+2,Total,idisc,339496.4177,idiscTotal
+3,Total,idisc,238922.3199,idiscTotal
+4,Total,idisc,252366.3286,idiscTotal
+5,Total,idisc,26705.60693,idiscTotal
+6,Total,idisc,20331.1835,idiscTotal
+7,Total,idisc,416.93457,idiscTotal
+8,Total,idisc,4424.0226,idiscTotal
+9,Total,idisc,0,idiscTotal
+1,Auto SOV,jmain,0,jmaintourmode1
+2,Auto SOV,jmain,0,jmaintourmode1
+3,Auto SOV,jmain,0,jmaintourmode1
+4,Auto SOV,jmain,0,jmaintourmode1
+5,Auto SOV,jmain,0,jmaintourmode1
+6,Auto SOV,jmain,0,jmaintourmode1
+7,Auto SOV,jmain,0,jmaintourmode1
+8,Auto SOV,jmain,0,jmaintourmode1
+9,Auto SOV,jmain,0,jmaintourmode1
+1,Auto 2 Person,jmain,0,jmaintourmode2
+2,Auto 2 Person,jmain,179453.0366,jmaintourmode2
+3,Auto 2 Person,jmain,0,jmaintourmode2
+4,Auto 2 Person,jmain,506.9633866,jmaintourmode2
+5,Auto 2 Person,jmain,0,jmaintourmode2
+6,Auto 2 Person,jmain,0,jmaintourmode2
+7,Auto 2 Person,jmain,0,jmaintourmode2
+8,Auto 2 Person,jmain,0,jmaintourmode2
+9,Auto 2 Person,jmain,0,jmaintourmode2
+1,Auto 3+ Person,jmain,0,jmaintourmode3
+2,Auto 3+ Person,jmain,5576.850273,jmaintourmode3
+3,Auto 3+ Person,jmain,66396.93342,jmaintourmode3
+4,Auto 3+ Person,jmain,496.216308,jmaintourmode3
+5,Auto 3+ Person,jmain,0,jmaintourmode3
+6,Auto 3+ Person,jmain,0,jmaintourmode3
+7,Auto 3+ Person,jmain,0,jmaintourmode3
+8,Auto 3+ Person,jmain,0,jmaintourmode3
+9,Auto 3+ Person,jmain,0,jmaintourmode3
+1,Walk,jmain,0,jmaintourmode4
+2,Walk,jmain,0,jmaintourmode4
+3,Walk,jmain,0,jmaintourmode4
+4,Walk,jmain,6180,jmaintourmode4
+5,Walk,jmain,0,jmaintourmode4
+6,Walk,jmain,0,jmaintourmode4
+7,Walk,jmain,0,jmaintourmode4
+8,Walk,jmain,0,jmaintourmode4
+9,Walk,jmain,0,jmaintourmode4
+1,Bike/Moped,jmain,0,jmaintourmode5
+2,Bike/Moped,jmain,63.55237126,jmaintourmode5
+3,Bike/Moped,jmain,0,jmaintourmode5
+4,Bike/Moped,jmain,0,jmaintourmode5
+5,Bike/Moped,jmain,206.4476287,jmaintourmode5
+6,Bike/Moped,jmain,0,jmaintourmode5
+7,Bike/Moped,jmain,0,jmaintourmode5
+8,Bike/Moped,jmain,0,jmaintourmode5
+9,Bike/Moped,jmain,0,jmaintourmode5
+1,Walk-Transit,jmain,0,jmaintourmode6
+2,Walk-Transit,jmain,197.6185437,jmaintourmode6
+3,Walk-Transit,jmain,0,jmaintourmode6
+4,Walk-Transit,jmain,4109.995966,jmaintourmode6
+5,Walk-Transit,jmain,0,jmaintourmode6
+6,Walk-Transit,jmain,4172.38549,jmaintourmode6
+7,Walk-Transit,jmain,0,jmaintourmode6
+8,Walk-Transit,jmain,0,jmaintourmode6
+9,Walk-Transit,jmain,0,jmaintourmode6
+1,PNR-Transit,jmain,0,jmaintourmode7
+2,PNR-Transit,jmain,0,jmaintourmode7
+3,PNR-Transit,jmain,0,jmaintourmode7
+4,PNR-Transit,jmain,0,jmaintourmode7
+5,PNR-Transit,jmain,0,jmaintourmode7
+6,PNR-Transit,jmain,0,jmaintourmode7
+7,PNR-Transit,jmain,0,jmaintourmode7
+8,PNR-Transit,jmain,0,jmaintourmode7
+9,PNR-Transit,jmain,0,jmaintourmode7
+1,KNR-Transit,jmain,0,jmaintourmode8
+2,KNR-Transit,jmain,0,jmaintourmode8
+3,KNR-Transit,jmain,0,jmaintourmode8
+4,KNR-Transit,jmain,0,jmaintourmode8
+5,KNR-Transit,jmain,0,jmaintourmode8
+6,KNR-Transit,jmain,0,jmaintourmode8
+7,KNR-Transit,jmain,0,jmaintourmode8
+8,KNR-Transit,jmain,0,jmaintourmode8
+9,KNR-Transit,jmain,0,jmaintourmode8
+1,School Bus,jmain,0,jmaintourmode9
+2,School Bus,jmain,0,jmaintourmode9
+3,School Bus,jmain,0,jmaintourmode9
+4,School Bus,jmain,0,jmaintourmode9
+5,School Bus,jmain,0,jmaintourmode9
+6,School Bus,jmain,0,jmaintourmode9
+7,School Bus,jmain,0,jmaintourmode9
+8,School Bus,jmain,0,jmaintourmode9
+9,School Bus,jmain,0,jmaintourmode9
+1,Total,jmain,0,jmainTotal
+2,Total,jmain,185291.0578,jmainTotal
+3,Total,jmain,66396.93342,jmainTotal
+4,Total,jmain,11293.17566,jmainTotal
+5,Total,jmain,206.4476287,jmainTotal
+6,Total,jmain,4172.38549,jmainTotal
+7,Total,jmain,0,jmainTotal
+8,Total,jmain,0,jmainTotal
+9,Total,jmain,0,jmainTotal
+1,Auto SOV,jdisc,0,jdisctourmode1
+2,Auto SOV,jdisc,0,jdisctourmode1
+3,Auto SOV,jdisc,0,jdisctourmode1
+4,Auto SOV,jdisc,0,jdisctourmode1
+5,Auto SOV,jdisc,0,jdisctourmode1
+6,Auto SOV,jdisc,0,jdisctourmode1
+7,Auto SOV,jdisc,0,jdisctourmode1
+8,Auto SOV,jdisc,0,jdisctourmode1
+9,Auto SOV,jdisc,0,jdisctourmode1
+1,Auto 2 Person,jdisc,0,jdisctourmode2
+2,Auto 2 Person,jdisc,114177.5032,jdisctourmode2
+3,Auto 2 Person,jdisc,0,jdisctourmode2
+4,Auto 2 Person,jdisc,2312.496801,jdisctourmode2
+5,Auto 2 Person,jdisc,0,jdisctourmode2
+6,Auto 2 Person,jdisc,0,jdisctourmode2
+7,Auto 2 Person,jdisc,0,jdisctourmode2
+8,Auto 2 Person,jdisc,0,jdisctourmode2
+9,Auto 2 Person,jdisc,0,jdisctourmode2
+1,Auto 3+ Person,jdisc,77.79564737,jdisctourmode3
+2,Auto 3+ Person,jdisc,2843.652835,jdisctourmode3
+3,Auto 3+ Person,jdisc,69089.37879,jdisctourmode3
+4,Auto 3+ Person,jdisc,999.1727274,jdisctourmode3
+5,Auto 3+ Person,jdisc,0,jdisctourmode3
+6,Auto 3+ Person,jdisc,0,jdisctourmode3
+7,Auto 3+ Person,jdisc,0,jdisctourmode3
+8,Auto 3+ Person,jdisc,0,jdisctourmode3
+9,Auto 3+ Person,jdisc,0,jdisctourmode3
+1,Walk,jdisc,0,jdisctourmode4
+2,Walk,jdisc,0,jdisctourmode4
+3,Walk,jdisc,0,jdisctourmode4
+4,Walk,jdisc,24350,jdisctourmode4
+5,Walk,jdisc,0,jdisctourmode4
+6,Walk,jdisc,0,jdisctourmode4
+7,Walk,jdisc,0,jdisctourmode4
+8,Walk,jdisc,0,jdisctourmode4
+9,Walk,jdisc,0,jdisctourmode4
+1,Bike/Moped,jdisc,0,jdisctourmode5
+2,Bike/Moped,jdisc,18.24080966,jdisctourmode5
+3,Bike/Moped,jdisc,14.54616301,jdisctourmode5
+4,Bike/Moped,jdisc,0,jdisctourmode5
+5,Bike/Moped,jdisc,87.21302733,jdisctourmode5
+6,Bike/Moped,jdisc,0,jdisctourmode5
+7,Bike/Moped,jdisc,0,jdisctourmode5
+8,Bike/Moped,jdisc,0,jdisctourmode5
+9,Bike/Moped,jdisc,0,jdisctourmode5
+1,Walk-Transit,jdisc,0,jdisctourmode6
+2,Walk-Transit,jdisc,0,jdisctourmode6
+3,Walk-Transit,jdisc,0,jdisctourmode6
+4,Walk-Transit,jdisc,0,jdisctourmode6
+5,Walk-Transit,jdisc,0,jdisctourmode6
+6,Walk-Transit,jdisc,0,jdisctourmode6
+7,Walk-Transit,jdisc,0,jdisctourmode6
+8,Walk-Transit,jdisc,0,jdisctourmode6
+9,Walk-Transit,jdisc,0,jdisctourmode6
+1,PNR-Transit,jdisc,0,jdisctourmode7
+2,PNR-Transit,jdisc,0,jdisctourmode7
+3,PNR-Transit,jdisc,0,jdisctourmode7
+4,PNR-Transit,jdisc,0,jdisctourmode7
+5,PNR-Transit,jdisc,0,jdisctourmode7
+6,PNR-Transit,jdisc,0,jdisctourmode7
+7,PNR-Transit,jdisc,0,jdisctourmode7
+8,PNR-Transit,jdisc,0,jdisctourmode7
+9,PNR-Transit,jdisc,0,jdisctourmode7
+1,KNR-Transit,jdisc,0,jdisctourmode8
+2,KNR-Transit,jdisc,0,jdisctourmode8
+3,KNR-Transit,jdisc,0,jdisctourmode8
+4,KNR-Transit,jdisc,0,jdisctourmode8
+5,KNR-Transit,jdisc,0,jdisctourmode8
+6,KNR-Transit,jdisc,0,jdisctourmode8
+7,KNR-Transit,jdisc,0,jdisctourmode8
+8,KNR-Transit,jdisc,0,jdisctourmode8
+9,KNR-Transit,jdisc,0,jdisctourmode8
+1,School Bus,jdisc,0,jdisctourmode9
+2,School Bus,jdisc,0,jdisctourmode9
+3,School Bus,jdisc,0,jdisctourmode9
+4,School Bus,jdisc,0,jdisctourmode9
+5,School Bus,jdisc,0,jdisctourmode9
+6,School Bus,jdisc,0,jdisctourmode9
+7,School Bus,jdisc,0,jdisctourmode9
+8,School Bus,jdisc,0,jdisctourmode9
+9,School Bus,jdisc,0,jdisctourmode9
+1,Total,jdisc,77.79564737,jdiscTotal
+2,Total,jdisc,117039.3968,jdiscTotal
+3,Total,jdisc,69103.92495,jdiscTotal
+4,Total,jdisc,27661.66953,jdiscTotal
+5,Total,jdisc,87.21302733,jdiscTotal
+6,Total,jdisc,0,jdiscTotal
+7,Total,jdisc,0,jdiscTotal
+8,Total,jdisc,0,jdiscTotal
+9,Total,jdisc,0,jdiscTotal
+1,Auto SOV,atwork,127559.0752,atworktourmode1
+2,Auto SOV,atwork,0,atworktourmode1
+3,Auto SOV,atwork,0,atworktourmode1
+4,Auto SOV,atwork,3040.924796,atworktourmode1
+5,Auto SOV,atwork,0,atworktourmode1
+6,Auto SOV,atwork,0,atworktourmode1
+7,Auto SOV,atwork,0,atworktourmode1
+8,Auto SOV,atwork,0,atworktourmode1
+9,Auto SOV,atwork,0,atworktourmode1
+1,Auto 2 Person,atwork,5105.648213,atworktourmode2
+2,Auto 2 Person,atwork,35353.66215,atworktourmode2
+3,Auto 2 Person,atwork,0,atworktourmode2
+4,Auto 2 Person,atwork,560.6896331,atworktourmode2
+5,Auto 2 Person,atwork,0,atworktourmode2
+6,Auto 2 Person,atwork,0,atworktourmode2
+7,Auto 2 Person,atwork,0,atworktourmode2
+8,Auto 2 Person,atwork,0,atworktourmode2
+9,Auto 2 Person,atwork,0,atworktourmode2
+1,Auto 3+ Person,atwork,695.5053653,atworktourmode3
+2,Auto 3+ Person,atwork,1554.40649,atworktourmode3
+3,Auto 3+ Person,atwork,11010.27039,atworktourmode3
+4,Auto 3+ Person,atwork,629.8177513,atworktourmode3
+5,Auto 3+ Person,atwork,0,atworktourmode3
+6,Auto 3+ Person,atwork,0,atworktourmode3
+7,Auto 3+ Person,atwork,0,atworktourmode3
+8,Auto 3+ Person,atwork,0,atworktourmode3
+9,Auto 3+ Person,atwork,0,atworktourmode3
+1,Walk,atwork,0,atworktourmode4
+2,Walk,atwork,0,atworktourmode4
+3,Walk,atwork,0,atworktourmode4
+4,Walk,atwork,60080,atworktourmode4
+5,Walk,atwork,0,atworktourmode4
+6,Walk,atwork,0,atworktourmode4
+7,Walk,atwork,0,atworktourmode4
+8,Walk,atwork,0,atworktourmode4
+9,Walk,atwork,0,atworktourmode4
+1,Bike/Moped,atwork,0,atworktourmode5
+2,Bike/Moped,atwork,0,atworktourmode5
+3,Bike/Moped,atwork,0,atworktourmode5
+4,Bike/Moped,atwork,27.48303373,atworktourmode5
+5,Bike/Moped,atwork,1162.516966,atworktourmode5
+6,Bike/Moped,atwork,0,atworktourmode5
+7,Bike/Moped,atwork,0,atworktourmode5
+8,Bike/Moped,atwork,0,atworktourmode5
+9,Bike/Moped,atwork,0,atworktourmode5
+1,Walk-Transit,atwork,0,atworktourmode6
+2,Walk-Transit,atwork,0.90411659,atworktourmode6
+3,Walk-Transit,atwork,0.33900515,atworktourmode6
+4,Walk-Transit,atwork,113.6412783,atworktourmode6
+5,Walk-Transit,atwork,0,atworktourmode6
+6,Walk-Transit,atwork,1175.1156,atworktourmode6
+7,Walk-Transit,atwork,0,atworktourmode6
+8,Walk-Transit,atwork,0,atworktourmode6
+9,Walk-Transit,atwork,0,atworktourmode6
+1,PNR-Transit,atwork,0,atworktourmode7
+2,PNR-Transit,atwork,0,atworktourmode7
+3,PNR-Transit,atwork,0,atworktourmode7
+4,PNR-Transit,atwork,0,atworktourmode7
+5,PNR-Transit,atwork,0,atworktourmode7
+6,PNR-Transit,atwork,0,atworktourmode7
+7,PNR-Transit,atwork,101.26776,atworktourmode7
+8,PNR-Transit,atwork,0,atworktourmode7
+9,PNR-Transit,atwork,0,atworktourmode7
+1,KNR-Transit,atwork,0,atworktourmode8
+2,KNR-Transit,atwork,0,atworktourmode8
+3,KNR-Transit,atwork,0,atworktourmode8
+4,KNR-Transit,atwork,0,atworktourmode8
+5,KNR-Transit,atwork,0,atworktourmode8
+6,KNR-Transit,atwork,0,atworktourmode8
+7,KNR-Transit,atwork,0,atworktourmode8
+8,KNR-Transit,atwork,0,atworktourmode8
+9,KNR-Transit,atwork,0,atworktourmode8
+1,School Bus,atwork,0,atworktourmode9
+2,School Bus,atwork,0,atworktourmode9
+3,School Bus,atwork,0,atworktourmode9
+4,School Bus,atwork,0,atworktourmode9
+5,School Bus,atwork,0,atworktourmode9
+6,School Bus,atwork,0,atworktourmode9
+7,School Bus,atwork,0,atworktourmode9
+8,School Bus,atwork,0,atworktourmode9
+9,School Bus,atwork,0,atworktourmode9
+1,Total,atwork,133360.2288,atworkTotal
+2,Total,atwork,36908.97276,atworkTotal
+3,Total,atwork,11010.6094,atworkTotal
+4,Total,atwork,64452.55649,atworkTotal
+5,Total,atwork,1162.516966,atworkTotal
+6,Total,atwork,1175.1156,atworkTotal
+7,Total,atwork,101.26776,atworkTotal
+8,Total,atwork,0,atworkTotal
+9,Total,atwork,0,atworkTotal
+1,Auto SOV,total,4733413.233,totaltourmode1
+2,Auto SOV,total,0,totaltourmode1
+3,Auto SOV,total,0,totaltourmode1
+4,Auto SOV,total,147326.767,totaltourmode1
+5,Auto SOV,total,0,totaltourmode1
+6,Auto SOV,total,0,totaltourmode1
+7,Auto SOV,total,0,totaltourmode1
+8,Auto SOV,total,0,totaltourmode1
+9,Auto SOV,total,0,totaltourmode1
+1,Auto 2 Person,total,818876.9501,totaltourmode2
+2,Auto 2 Person,total,2442697.567,totaltourmode2
+3,Auto 2 Person,total,7010.236801,totaltourmode2
+4,Auto 2 Person,total,103095.2464,totaltourmode2
+5,Auto 2 Person,total,0,totaltourmode2
+6,Auto 2 Person,total,0,totaltourmode2
+7,Auto 2 Person,total,0,totaltourmode2
+8,Auto 2 Person,total,0,totaltourmode2
+9,Auto 2 Person,total,0,totaltourmode2
+1,Auto 3+ Person,total,336189.1653,totaltourmode3
+2,Auto 3+ Person,total,572688.7955,totaltourmode3
+3,Auto 3+ Person,total,2350958.615,totaltourmode3
+4,Auto 3+ Person,total,75543.42391,totaltourmode3
+5,Auto 3+ Person,total,0,totaltourmode3
+6,Auto 3+ Person,total,0,totaltourmode3
+7,Auto 3+ Person,total,0,totaltourmode3
+8,Auto 3+ Person,total,0,totaltourmode3
+9,Auto 3+ Person,total,0,totaltourmode3
+1,Walk,total,0,totaltourmode4
+2,Walk,total,0,totaltourmode4
+3,Walk,total,0,totaltourmode4
+4,Walk,total,647560,totaltourmode4
+5,Walk,total,0,totaltourmode4
+6,Walk,total,0,totaltourmode4
+7,Walk,total,0,totaltourmode4
+8,Walk,total,0,totaltourmode4
+9,Walk,total,0,totaltourmode4
+1,Bike/Moped,total,15287.58749,totaltourmode5
+2,Bike/Moped,total,10714.0258,totaltourmode5
+3,Bike/Moped,total,2587.804814,totaltourmode5
+4,Bike/Moped,total,3759.606392,totaltourmode5
+5,Bike/Moped,total,99380.9755,totaltourmode5
+6,Bike/Moped,total,0,totaltourmode5
+7,Bike/Moped,total,0,totaltourmode5
+8,Bike/Moped,total,0,totaltourmode5
+9,Bike/Moped,total,0,totaltourmode5
+1,Walk-Transit,total,0,totaltourmode6
+2,Walk-Transit,total,8383.584263,totaltourmode6
+3,Walk-Transit,total,3944.125987,totaltourmode6
+4,Walk-Transit,total,23084.88982,totaltourmode6
+5,Walk-Transit,total,233.3589811,totaltourmode6
+6,Walk-Transit,total,158097.6827,totaltourmode6
+7,Walk-Transit,total,0,totaltourmode6
+8,Walk-Transit,total,0,totaltourmode6
+9,Walk-Transit,total,1222.433886,totaltourmode6
+1,PNR-Transit,total,2492.426814,totaltourmode7
+2,PNR-Transit,total,2559.803817,totaltourmode7
+3,PNR-Transit,total,765.1860168,totaltourmode7
+4,PNR-Transit,total,719.6769106,totaltourmode7
+5,PNR-Transit,total,28.50254459,totaltourmode7
+6,PNR-Transit,total,2919.984289,totaltourmode7
+7,PNR-Transit,total,9652.863791,totaltourmode7
+8,PNR-Transit,total,33.74443951,totaltourmode7
+9,PNR-Transit,total,0,totaltourmode7
+1,KNR-Transit,total,0,totaltourmode8
+2,KNR-Transit,total,9867.151359,totaltourmode8
+3,KNR-Transit,total,6807.495363,totaltourmode8
+4,KNR-Transit,total,3573.937407,totaltourmode8
+5,KNR-Transit,total,0,totaltourmode8
+6,KNR-Transit,total,10886.10348,totaltourmode8
+7,KNR-Transit,total,0,totaltourmode8
+8,KNR-Transit,total,20305.31239,totaltourmode8
+9,KNR-Transit,total,0,totaltourmode8
+1,School Bus,total,583.3080724,totaltourmode9
+2,School Bus,total,6686.515142,totaltourmode9
+3,School Bus,total,14094.82468,totaltourmode9
+4,School Bus,total,186.097626,totaltourmode9
+5,School Bus,total,0,totaltourmode9
+6,School Bus,total,0,totaltourmode9
+7,School Bus,total,0,totaltourmode9
+8,School Bus,total,0,totaltourmode9
+9,School Bus,total,88889.25448,totaltourmode9
+1,Total,total,5906842.671,totalTotal
+2,Total,total,3053597.443,totalTotal
+3,Total,total,2386168.289,totalTotal
+4,Total,total,1004849.645,totalTotal
+5,Total,total,99642.83703,totalTotal
+6,Total,total,171903.7704,totalTotal
+7,Total,total,9652.863791,totalTotal
+8,Total,total,20339.05683,totalTotal
+9,Total,total,90111.68837,totalTotal
