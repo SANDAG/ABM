@@ -23,6 +23,8 @@ public class VisitorTrip
     float micromobilityWalkLogsum;
     float micromobilityAccessLogsum;
     float micromobilityEgressLogsum;
+    
+    float parkingCost;
 
  	private int boardTap;
  	private int alightTap;
@@ -458,6 +460,14 @@ public class VisitorTrip
 	public void setValueOfTime(float valueOfTime) {
 		this.valueOfTime = valueOfTime;
 	}
+	public float getParkingCost() {
+		return parkingCost;
+	}
+
+	public void setParkingCost(float parkingCost) {
+		this.parkingCost = parkingCost;
+	}
+
 	public void setMicromobilityWalkMode(byte micromobilityWalkMode) {
 		this.micromobilityWalkMode=micromobilityWalkMode;
 	}

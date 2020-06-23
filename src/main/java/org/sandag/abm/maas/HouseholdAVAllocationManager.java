@@ -45,7 +45,9 @@ public class HouseholdAVAllocationManager {
 	protected static final String JointTripDataFileProperty = "Results.JointTripDataFile";
 	protected static final String VEHICLETRIP_OUTPUT_FILE_PROPERTY = "Maas.AVAllocationModel.vehicletrip.output.file";
 	protected static final String VEHICLETRIP_OUTPUT_MATRIX_PROPERTY = "Maas.AVAllocationModel.vehicletrip.output.matrix";
-   protected HashSet<Integer>        householdTraceSet;
+	protected static final String REMOTE_PARKING_COST_PROPERTY = "Mobility.AV.RemoteParkingCostPerHour";
+  
+	protected HashSet<Integer>        householdTraceSet;
     public static final String        PROPERTIES_HOUSEHOLD_TRACE_LIST                         = "Debug.Trace.HouseholdIdList";
     // one file per time period
     // matrices are indexed by periods
@@ -58,6 +60,8 @@ public class HouseholdAVAllocationManager {
 	private long randomSeed = 198761;
 	protected String vehicleTripOutputFile;
 
+	protected float remoteParkingCostAtDest;
+	
 	boolean sortByPerson;
 	
 	HashMap<String,Integer> personTypeMap;
@@ -384,6 +388,7 @@ public class HouseholdAVAllocationManager {
            	
         	if((person_id==thatTrip.getPerson_id()) &&
         			(tour_id==thatTrip.getTour_id()) &&
+        			(num_participants==thatTrip.getNum_participants()) &&
         			(tour_purpose.compareTo(thatTrip.getTour_purpose())==0))
         		return true;
         	return false;
@@ -417,13 +422,19 @@ public class HouseholdAVAllocationManager {
             				else 
             					return -1;
             			}
+        				if(tour_id<thatTrip.getTour_id())
+        					return -1;
+        				else if(tour_id>thatTrip.getTour_id())
+        					return 1;
+        				if(inbound==0 && thatTrip.getInbound()==1)
+        					return -1;
         			}
         			
         		}
         		return 0;
         	}
         	
-        	
+ /*       	
         	//if its the same person and the same tour, use the stop ID
         	if(sameTour(thatTrip)){
         		int thisTourTripSeq = inbound * 1000+stop_id;
@@ -436,9 +447,9 @@ public class HouseholdAVAllocationManager {
         		else
         			return 0;
         	}
-        	
+       	
         	//its not the same tour
-        	if(stop_period<thatTrip.getStop_period())
+ */        	if(stop_period<thatTrip.getStop_period())
         		return -1;
         	else if(stop_period>thatTrip.getStop_period())
         		return 1;
@@ -455,7 +466,7 @@ public class HouseholdAVAllocationManager {
         				else 
         					return -1;
         			}
-        			
+ 
         		}
         		/*
         		 * if(periodsUntilNextTrip<thatTrip.getPeriodsUntilNextTrip())
@@ -761,7 +772,7 @@ public class HouseholdAVAllocationManager {
 		
 		writer.println("hh_id,veh_id,vehicleTrip_id,orig_mgra,dest_gra,period,occupants,"
 				+ "originIsHome,destinationIsHome,originIsRemoteParking,destinationIsRemoteParking,"
-				+ "parkingChoiceAtDestination,"
+				+ "parkingChoiceAtDestination,remoteParkingCostAtDest,"
 				+ "person_id,person_num,tour_id,stop_id,inbound,tour_purpose,orig_purpose,dest_purpose,"
 				+ "trip_orig_mgra,trip_dest_mgra,stop_period,periodsUntilNextTrip,trip_mode");
 		
@@ -803,7 +814,9 @@ public class HouseholdAVAllocationManager {
 						+ (vehicleTrip.isDestinationIsHome() ? 1 : 0 ) + ","
 						+ (vehicleTrip.isOriginIsRemoteParking() ? 1 : 0) +"," 
 						+ (vehicleTrip.isDestinationIsRemoteParking() ? 1 : 0) +","
-						+ vehicleTrip.getParkingChoiceAtDestination() + ",");
+						+ vehicleTrip.getParkingChoiceAtDestination()  + "," 
+						+ (vehicleTrip.isDestinationIsRemoteParking() ? remoteParkingCostAtDest : 0 ) + ",")
+				;
 				
 				Trip trip = vehicleTrip.getTripServed();
 				if(trip!=null) {
@@ -820,7 +833,10 @@ public class HouseholdAVAllocationManager {
 							trip.getDest_maz() + "," +
 							trip.getStop_period() + "," +
 							trip.getPeriodsUntilNextTrip() + "," +
-							trip.getTrip_mode());
+							trip.getTrip_mode()
+							
+							
+							);
 				}else {
 					writer.print( 0 + "," +
 							0 + "," +
@@ -1001,6 +1017,8 @@ public class HouseholdAVAllocationManager {
 	    	emptyVehicleTripMatrix[i].setExternalNumbers(tazIndex);
 	    	
 	    }
+	    
+	    remoteParkingCostAtDest = Util.getFloatValueFromPropertyMap(propertyMap, REMOTE_PARKING_COST_PROPERTY);
 	}
 	
 	public void readInputFiles() {

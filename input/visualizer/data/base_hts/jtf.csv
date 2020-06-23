@@ -1,0 +1,22 @@
+"jtf_code","alt_name","freq"
+1,"No Joint Tours",985690.642535
+2,"1 Shopping",26128.1496466667
+3,"1 Maintenance",28672.0036
+4,"1 Eating Out",25821.83914
+5,"1 Visiting",5614.435815
+6,"1 Other Discretionary",31933.3933
+7,"2 Shopping",667.161013333333
+8,"1 Shopping / 1 Maintenance",376.86528
+9,"1 Shopping / 1 Eating Out",399.752633333333
+10,"1 Shopping / 1 Visiting",176.67895
+11,"1 Shopping / 1 Other Discretionary",1144.79105666667
+12,"2 Maintenance",702.381423333333
+13,"1 Maintenance / 1 Eating Out",1126.798255
+14,"1 Maintenance / 1 Visiting",54.17708
+15,"1 Maintenance / 1 Other Discretionary",1629.89825
+16,"2 Eating Out",729.85876
+17,"1 Eating Out / 1 Visiting",62.58902
+18,"1 Eating Out / 1 Other Discretionary",538.024926666667
+19,"2 Visiting",296.60538
+20,"1 Visiting / 1 Other Discretionary",1560.46188166667
+21,"2 Other Discretionary",297.424753333333

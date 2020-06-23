@@ -21,14 +21,14 @@ path_name_s = output_path + "\\analysis\\summary\\"
 file_names_s = ["ModelResultSummary"]
 
 path_name_v = output_path + "\\analysis\\validation\\"
-file_names_v = ["HighwayAssignmentValidation_2016_AllClass",
-                "HighwayAssignmentValidation_2016_Truck",
-                "HighwayAssignmentValidation_2016_Speed_FreewayCorridor_AMPM",
-                "HighwayAssignmentValidation_2016_FreewayCorridor_Daily",
-                "HighwayAssignmentValidation_2016_FreewayCorridor_AM",
-                "HighwayAssignmentValidation_2016_FreewayCorridor_PM",
-                "TransitAssignmentValidation_2016_General",
-                "TransitAssignmentValidation_2016_Hub",
+file_names_v = ["HighwayAssignmentValidation_2016_AllClass_EMME",
+                "HighwayAssignmentValidation_2016_Truck_EMME",
+                "HighwayAssignmentValidation_2016_Speed_FreewayCorridor_AMPM_EMME",
+                "HighwayAssignmentValidation_2016_FreewayCorridor_Daily_EMME",
+                "HighwayAssignmentValidation_2016_FreewayCorridor_AM_EMME",
+                "HighwayAssignmentValidation_2016_FreewayCorridor_PM_EMME",
+                "TransitAssignmentValidation_2016_General_EMME",
+                #"TransitAssignmentValidation_2016_Hub",
                 ]
 ext = ".xlsm"
 
@@ -37,7 +37,8 @@ list_s = []
 list_s_new = []
 for file in file_names_s:
     file_s = path_name_s + file + ext
-    file_s_new = path_name_s + file + "_" + scenario + ext
+    #file_s_new = path_name_s + file + "_" + scenario + ext
+    file_s_new = path_name_s + file + ext
     list_s.append(file_s)
     list_s_new.append(file_s_new)
 
@@ -46,7 +47,8 @@ list_v = []
 list_v_new = []
 for file in file_names_v:
     file_v = path_name_v + file + ext
-    file_v_new = path_name_v + file + "_" + scenario + ext
+    #file_v_new = path_name_v + file + "_" + scenario + ext # since the data was read from EMME, scenario is not needed - CL 05222020
+    file_v_new = path_name_v + file + ext
     list_v.append(file_v)
     list_v_new.append(file_v_new)
 
@@ -68,8 +70,16 @@ for file in file_list:
     wb = xl.workbooks.open(file)
     xl.Application.Run("UpdateLinks")
     wb.Close(True)
+    
+EMME = os.path.join(path_name_v, 'source_EMME.xlsx') #with source_EMME.xlsx opened, links  in validation Excel files will work well. This is a temporary solution  - CL 05222020
+wb_emme = xl.Workbooks.Open(EMME)
+for file in file_list:
+    wb = xl.workbooks.open(file)
+    xl.Application.Run("UpdateLinks")
+    wb.Close(True)
+wb_emme.Close(True)
 
 xl.Quit()
 
-for i in range(len(file_list)):
-    os.rename(file_list[i], file_list_new[i])
+#for i in range(len(file_list)): # since the data was read from EMME, scenario is not needed and the file names are not renamed with scenrio ID - CL 05222020
+#    os.rename(file_list[i], file_list_new[i])

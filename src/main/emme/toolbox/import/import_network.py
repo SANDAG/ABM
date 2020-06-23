@@ -1360,8 +1360,6 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 link["@time_inter" + time] = link["time_inter" + src_time]
                 link["@toll" + time] = link["toll" + src_time]
 
-        self.apply_i15_tolls(network)
-
         off_peak_factor_file = FILE_NAMES["OFF_PEAK"]
         if os.path.exists(_join(self.source, off_peak_factor_file)):
             msg = "Adjusting off-peak tolls based on factors from %s" % off_peak_factor_file
@@ -1613,77 +1611,6 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         if fatal_errors > 0:
             raise Exception("%s fatal errors during calculation of traffic attributes" % fatal_errors)
         return
-
-    def apply_i15_tolls(self, network):
-        # Special approximation of gate-to-gate tolls for the I15 HOV / toll lanes
-        #       tolls are determined by gate-to-gate toll optimization, solved using excel solver
-        #       tolls from two methods are used, traversed links (NB PM and SB AM) entry and exit links (all other periods)
-        #       by: nagendra.dhakar@rsginc.com
-
-        toll_scale = 1.05308  # fixed inflation (CPI) scaling of toll value from 2012 back to 2010
-        time_periods = ["ea", "am", "md", "pm", "ev"]
-        # Link IDs for corresponding toll table by tcov_id
-        # "DIR": "type": [list of link IDs]
-        toll_links = {
-            "NB": {
-                "traverse":  [29716, 460, 526, 23044, 459, 463, 512, 464, 469, 470, 510, 29368, 9808],
-                "entryexit": [31143, 29472, 52505, 52507, 52508, 475, 34231, 52511, 52512, 34229, 34228, 38793, 29765, 29766, 52513, 29764, 26766],
-            },
-            "SB":{
-                "traverse": [12193, 25749, 29442, 23128, 515, 31204, 520, 22275, 524, 525, 553, 528, 29415],
-                "entryexit": [52514, 38796, 29768, 38794, 29763, 52510, 52509, 52506, 52510, 34227, 34233, 29407, 26398, 29767, 34226, 34232, 29471]
-                # IDs for "old network" for reference
-                # "traverse":  [12193, 25749, 52567, 23128, 515, 31204, 52569, 52550, 524, 525, 52555, 52559, 52561, 52565],
-                # "entryexit": [52568, 52570, 29768, 38794, 29763, 52560, 52562, 52566, 52556, 34227, 34233, 29407, 26398, 52571, 52572, 29767, 52575, 52576, 52574, 34226, 34232, 29471, 52573]
-            }
-        }
-        # toll values are in cents, referenced to link ID above by index in list
-        # "DIR": "PERIOD": ("type", [list of tolls])
-        tolls = {
-            "NB": {
-                "ea": ("entryexit", [35.00, 35.00, 35.00, 35.00,  35.00, 15.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00]),
-                "am": ("entryexit", [45.05, 42.43, 31.54, 30.00,  30.00, 20.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 17.41, 32.59, 32.59, 32.59]),
-                "md": ("entryexit", [69.91, 73.91, 70.42, 66.12,  51.61,  0.00, 26.88, 25.00, 25.00, 25.00, 12.07, 37.93, 47.51,  3.35, 46.65, 60.66, 65.74]),
-                "pm": ("traverse",  [21.83, 31.11, 50.00, 55.34, 113.23, 50.00, 50.00, 50.00, 50.00, 50.00, 50.00, 50.00, 0.00]),
-                "ev": ("entryexit", [41.73, 36.26, 32.01, 30.00,  30.00, 20.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 17.77, 32.23, 32.23, 32.23]),
-            },
-            "SB": {
-                "ea": ("entryexit", [26.69, 25.54, 26.96, 25.54, 39.23, 25.54, 24.46, 25.54, 25.54, 25.54, 24.46, 24.46, 36.30, 23.31, 24.46, 24.46, 28.04]),
-                "am": ("traverse",  [ 0.00, 50.00, 50.00, 89.82, 50.00, 50.00, 63.74,  0.00,  0.11, 76.40, 38.80, 63.58, 83.28]),
-                "md": ("entryexit", [26.39, 25.00, 25.00, 25.00, 35.00, 25.47, 22.74, 27.26, 25.47, 25.00, 24.53, 25.00, 35.61, 23.61, 25.00, 25.00, 32.65]),
-                "pm": ("entryexit", [25.00, 25.00, 25.00, 25.00, 35.00, 25.00, 24.34, 25.66, 25.00, 25.00, 25.00, 25.00, 35.00, 25.00, 25.00, 25.00, 26.69]),
-                "ev": ("entryexit", [25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 25.00, 35.00, 25.00, 25.00, 25.00, 25.00]),
-                # values for "old network" for reference
-                # "ea": ("entryexit", [25.00, 25.00, 25.00, 25.00, 35.00,  7.29,  7.29,  7.29, 17.30, 25.00, 17.30, 17.30, 35.00, 15.00, 25.00, 25.00, 32.70, 42.71, 32.70, 25.00, 25.00, 42.71, 25.00]),
-                # "am": ("traverse",  [ 0.00, 59.74, 50.00, 80.42, 50.00, 50.00, 69.24,  0.00,  3.18, 50.00, 50.17, 19.06, 50.00, 84.26]),
-                # "md": ("entryexit", [32.80, 25.00, 25.00, 25.00, 32.80, 11.43, 11.43, 10.65, 18.85, 25.00, 18.85, 18.85, 32.80, 17.20, 25.00, 17.20, 31.15, 38.57, 31.15, 25.00, 25.00, 39.35, 25.00]),
-                # "pm": ("entryexit", [27.78, 25.00, 25.00, 25.00, 35.00, 12.67, 12.67, 12.67, 19.36, 25.00, 19.36, 19.36, 35.00, 15.00, 25.00, 22.22, 30.64, 37.33, 30.64, 25.00, 25.00, 37.33, 25.00]),
-                # "ev": ("entryexit", [29.12, 25.00, 25.00, 25.00, 35.00, 13.14, 13.14, 13.14, 21.56, 25.00, 21.56, 21.56, 35.00, 15.00, 25.00, 20.88, 28.44, 36.86, 28.44, 25.00, 25.00, 36.86, 25.00]),
-            }
-        }
-        hwy_links = {}
-        freeway_types = set([1, 8, 9])
-        mode_d = network.mode("d")
-        # Zero out tolls and I-15 (hov type is 0) and index links by tcov_id
-        for link in network.links():
-            if mode_d in link.modes and link["@lane_restriction"] == 2:
-                # remove zero out HOV2 section wsu
-                #for period in time_periods:
-                #    link["@toll_" + period] = 0
-                hwy_links[link["@tcov_id"]] = link
-            elif link["type"] in freeway_types:
-                hwy_links[link["@tcov_id"]] = link
-        # Set tolls on links (by tcov_id) using lookup table
-        for direction in ["NB", "SB"]:
-            for period in time_periods:
-                toll_type, toll_values = tolls[direction][period]
-                link_ids = toll_links[direction][toll_type]
-                for link_id, toll_value in zip(link_ids, toll_values):
-                    link = hwy_links.get(link_id)
-                    if not link:
-                        raise Exception("Applying I-15 tolls: link with TCOV_ID %s not found" % link_id)
-                    link["@toll_" + period] = toll_value / toll_scale
-        self._log.append({"type": "text", "content": "Calculation of I-15 managed lanes toll approximation complete"})
 
     def check_zone_access(self, network, mode):
         # Verify that every centroid has at least one available

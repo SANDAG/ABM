@@ -163,7 +163,9 @@ public class CrossBorderTripModeChoiceModel
         	trip.setTripMode(mode);
         	float vot = getTripValueOfTime(mode);
         	trip.setValueOfTime(vot);
-        	
+        	float parkingCost = getTripParkingCost(mode);
+        	trip.setParkingCost(parkingCost);
+    	
         	if(sandagModelStructure.getTripModeIsTransit(mode)){ 
             	double[][] bestTapPairs = logsumHelper.getBestWtwTripTaps();
               	//pick transit path from N-paths
@@ -175,8 +177,6 @@ public class CrossBorderTripModeChoiceModel
             	trip.setBoardTap(boardTap);
             	trip.setAlightTap(alightTap);
             	trip.setSet(set);
-      
-            	 
         	}
         }catch(Exception e){
         	logger.info("rand="+rand);
@@ -184,6 +184,25 @@ public class CrossBorderTripModeChoiceModel
         	logger.error(e.getMessage());
         }
         
+    }
+    
+    /**
+     * Return parking cost from UEC if auto trip, else return 0.
+     * 
+     * @param tripMode
+     * @return Parking cost if auto mode, else 0
+     */
+    public float getTripParkingCost(int tripMode) {
+    	
+    	float parkingCost=0;
+    	
+    	if(sandagModelStructure.getTripModeIsSovOrHov(tripMode)) {
+     		UtilityExpressionCalculator uec = tripModeChoiceModel.getUEC();
+    		int parkingCostIndex = uec.lookupVariableIndex("parkingCost");
+    		parkingCost = (float) uec.getValueForIndex(parkingCostIndex);
+    		return parkingCost;
+    	}
+    	return parkingCost;
     }
     
     /**

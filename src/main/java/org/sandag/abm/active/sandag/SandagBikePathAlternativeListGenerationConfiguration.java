@@ -29,7 +29,6 @@ public abstract class SandagBikePathAlternativeListGenerationConfiguration
     public static final String                                             PROPERTIES_COEF_DWRONGWY          = "active.coef.dwrongwy";
     public static final String                                             PROPERTIES_COEF_GAIN              = "active.coef.gain";
     public static final String                                             PROPERTIES_COEF_TURN              = "active.coef.turn";
-    public static final String                                             PROPERTIES_COEF_DISTANCE_WALK     = "active.coef.distance.walk";
     public static final String                                             PROPERTIES_COEF_GAIN_WALK         = "active.coef.gain.walk";
     public static final String                                             PROPERTIES_COEF_DCYCTRAC          = "active.coef.dcyctrac";
     public static final String                                             PROPERTIES_COEF_DBIKBLVD          = "active.coef.dbikblvd";

@@ -1,0 +1,1603 @@
+tripmode,tourmode,purpose,value,grp_var
+1,Auto SOV,work,2483874,worktourmode1
+2,Auto SOV,work,0,worktourmode1
+3,Auto SOV,work,0,worktourmode1
+4,Auto SOV,work,0,worktourmode1
+5,Auto SOV,work,0,worktourmode1
+6,Auto SOV,work,0,worktourmode1
+7,Auto SOV,work,0,worktourmode1
+8,Auto SOV,work,0,worktourmode1
+13,Auto SOV,work,0,worktourmode1
+1,Auto 2 Person,work,278922,worktourmode2
+2,Auto 2 Person,work,301180,worktourmode2
+3,Auto 2 Person,work,922,worktourmode2
+4,Auto 2 Person,work,20785,worktourmode2
+5,Auto 2 Person,work,0,worktourmode2
+6,Auto 2 Person,work,0,worktourmode2
+7,Auto 2 Person,work,0,worktourmode2
+8,Auto 2 Person,work,0,worktourmode2
+13,Auto 2 Person,work,0,worktourmode2
+1,Auto 3+ Person,work,112755,worktourmode3
+2,Auto 3+ Person,work,38576,worktourmode3
+3,Auto 3+ Person,work,100966,worktourmode3
+4,Auto 3+ Person,work,7089,worktourmode3
+5,Auto 3+ Person,work,0,worktourmode3
+6,Auto 3+ Person,work,0,worktourmode3
+7,Auto 3+ Person,work,0,worktourmode3
+8,Auto 3+ Person,work,0,worktourmode3
+13,Auto 3+ Person,work,0,worktourmode3
+1,Walk,work,0,worktourmode4
+2,Walk,work,0,worktourmode4
+3,Walk,work,0,worktourmode4
+4,Walk,work,25593,worktourmode4
+5,Walk,work,0,worktourmode4
+6,Walk,work,0,worktourmode4
+7,Walk,work,0,worktourmode4
+8,Walk,work,0,worktourmode4
+13,Walk,work,0,worktourmode4
+1,Bike/Moped,work,8070,worktourmode5
+2,Bike/Moped,work,5732,worktourmode5
+3,Bike/Moped,work,1031,worktourmode5
+4,Bike/Moped,work,902,worktourmode5
+5,Bike/Moped,work,27305,worktourmode5
+6,Bike/Moped,work,0,worktourmode5
+7,Bike/Moped,work,0,worktourmode5
+8,Bike/Moped,work,0,worktourmode5
+13,Bike/Moped,work,0,worktourmode5
+1,Walk-Transit,work,0,worktourmode6
+2,Walk-Transit,work,1656,worktourmode6
+3,Walk-Transit,work,565,worktourmode6
+4,Walk-Transit,work,2804,worktourmode6
+5,Walk-Transit,work,84,worktourmode6
+6,Walk-Transit,work,68600,worktourmode6
+7,Walk-Transit,work,0,worktourmode6
+8,Walk-Transit,work,0,worktourmode6
+13,Walk-Transit,work,0,worktourmode6
+1,PNR-Transit,work,4262,worktourmode7
+2,PNR-Transit,work,3945,worktourmode7
+3,PNR-Transit,work,1001,worktourmode7
+4,PNR-Transit,work,935,worktourmode7
+5,PNR-Transit,work,0,worktourmode7
+6,PNR-Transit,work,1752,worktourmode7
+7,PNR-Transit,work,6943,worktourmode7
+8,PNR-Transit,work,34,worktourmode7
+13,PNR-Transit,work,0,worktourmode7
+1,KNR-Transit,work,0,worktourmode8
+2,KNR-Transit,work,14432,worktourmode8
+3,KNR-Transit,work,2204,worktourmode8
+4,KNR-Transit,work,3083,worktourmode8
+5,KNR-Transit,work,0,worktourmode8
+6,KNR-Transit,work,3033,worktourmode8
+7,KNR-Transit,work,0,worktourmode8
+8,KNR-Transit,work,9612,worktourmode8
+13,KNR-Transit,work,0,worktourmode8
+1,School Bus,work,0,worktourmode13
+2,School Bus,work,0,worktourmode13
+3,School Bus,work,0,worktourmode13
+4,School Bus,work,0,worktourmode13
+5,School Bus,work,0,worktourmode13
+6,School Bus,work,0,worktourmode13
+7,School Bus,work,0,worktourmode13
+8,School Bus,work,0,worktourmode13
+13,School Bus,work,0,worktourmode13
+1,Total,work,2887883,workTotal
+2,Total,work,365521,workTotal
+3,Total,work,106689,workTotal
+4,Total,work,61192,workTotal
+5,Total,work,27390,workTotal
+6,Total,work,73385,workTotal
+7,Total,work,6943,workTotal
+8,Total,work,9646,workTotal
+13,Total,work,0,workTotal
+1,Auto SOV,univ,147841,univtourmode1
+2,Auto SOV,univ,0,univtourmode1
+3,Auto SOV,univ,0,univtourmode1
+4,Auto SOV,univ,0,univtourmode1
+5,Auto SOV,univ,0,univtourmode1
+6,Auto SOV,univ,0,univtourmode1
+7,Auto SOV,univ,0,univtourmode1
+8,Auto SOV,univ,0,univtourmode1
+13,Auto SOV,univ,0,univtourmode1
+1,Auto 2 Person,univ,17176,univtourmode2
+2,Auto 2 Person,univ,36342,univtourmode2
+3,Auto 2 Person,univ,0,univtourmode2
+4,Auto 2 Person,univ,4900,univtourmode2
+5,Auto 2 Person,univ,0,univtourmode2
+6,Auto 2 Person,univ,0,univtourmode2
+7,Auto 2 Person,univ,0,univtourmode2
+8,Auto 2 Person,univ,0,univtourmode2
+13,Auto 2 Person,univ,0,univtourmode2
+1,Auto 3+ Person,univ,4477,univtourmode3
+2,Auto 3+ Person,univ,4191,univtourmode3
+3,Auto 3+ Person,univ,20180,univtourmode3
+4,Auto 3+ Person,univ,1256,univtourmode3
+5,Auto 3+ Person,univ,0,univtourmode3
+6,Auto 3+ Person,univ,0,univtourmode3
+7,Auto 3+ Person,univ,0,univtourmode3
+8,Auto 3+ Person,univ,0,univtourmode3
+13,Auto 3+ Person,univ,0,univtourmode3
+1,Walk,univ,0,univtourmode4
+2,Walk,univ,0,univtourmode4
+3,Walk,univ,0,univtourmode4
+4,Walk,univ,5740,univtourmode4
+5,Walk,univ,0,univtourmode4
+6,Walk,univ,0,univtourmode4
+7,Walk,univ,0,univtourmode4
+8,Walk,univ,0,univtourmode4
+13,Walk,univ,0,univtourmode4
+1,Bike/Moped,univ,343,univtourmode5
+2,Bike/Moped,univ,100,univtourmode5
+3,Bike/Moped,univ,95,univtourmode5
+4,Bike/Moped,univ,121,univtourmode5
+5,Bike/Moped,univ,577,univtourmode5
+6,Bike/Moped,univ,0,univtourmode5
+7,Bike/Moped,univ,0,univtourmode5
+8,Bike/Moped,univ,0,univtourmode5
+13,Bike/Moped,univ,0,univtourmode5
+1,Walk-Transit,univ,0,univtourmode6
+2,Walk-Transit,univ,1357,univtourmode6
+3,Walk-Transit,univ,209,univtourmode6
+4,Walk-Transit,univ,4699,univtourmode6
+5,Walk-Transit,univ,18,univtourmode6
+6,Walk-Transit,univ,29772,univtourmode6
+7,Walk-Transit,univ,0,univtourmode6
+8,Walk-Transit,univ,0,univtourmode6
+13,Walk-Transit,univ,836,univtourmode6
+1,PNR-Transit,univ,326,univtourmode7
+2,PNR-Transit,univ,1469,univtourmode7
+3,PNR-Transit,univ,412,univtourmode7
+4,PNR-Transit,univ,528,univtourmode7
+5,PNR-Transit,univ,0,univtourmode7
+6,PNR-Transit,univ,931,univtourmode7
+7,PNR-Transit,univ,1783,univtourmode7
+8,PNR-Transit,univ,0,univtourmode7
+13,PNR-Transit,univ,0,univtourmode7
+1,KNR-Transit,univ,0,univtourmode8
+2,KNR-Transit,univ,0,univtourmode8
+3,KNR-Transit,univ,0,univtourmode8
+4,KNR-Transit,univ,8142,univtourmode8
+5,KNR-Transit,univ,0,univtourmode8
+6,KNR-Transit,univ,4575,univtourmode8
+7,KNR-Transit,univ,0,univtourmode8
+8,KNR-Transit,univ,3259,univtourmode8
+13,KNR-Transit,univ,0,univtourmode8
+1,School Bus,univ,0,univtourmode13
+2,School Bus,univ,0,univtourmode13
+3,School Bus,univ,0,univtourmode13
+4,School Bus,univ,0,univtourmode13
+5,School Bus,univ,0,univtourmode13
+6,School Bus,univ,0,univtourmode13
+7,School Bus,univ,0,univtourmode13
+8,School Bus,univ,0,univtourmode13
+13,School Bus,univ,0,univtourmode13
+1,Total,univ,170163,univTotal
+2,Total,univ,43459,univTotal
+3,Total,univ,20896,univTotal
+4,Total,univ,25385,univTotal
+5,Total,univ,595,univTotal
+6,Total,univ,35279,univTotal
+7,Total,univ,1783,univTotal
+8,Total,univ,3259,univTotal
+13,Total,univ,836,univTotal
+1,Auto SOV,schl,46479,schltourmode1
+2,Auto SOV,schl,0,schltourmode1
+3,Auto SOV,schl,0,schltourmode1
+4,Auto SOV,schl,0,schltourmode1
+5,Auto SOV,schl,0,schltourmode1
+6,Auto SOV,schl,0,schltourmode1
+7,Auto SOV,schl,0,schltourmode1
+8,Auto SOV,schl,0,schltourmode1
+13,Auto SOV,schl,0,schltourmode1
+1,Auto 2 Person,schl,19417,schltourmode2
+2,Auto 2 Person,schl,534295,schltourmode2
+3,Auto 2 Person,schl,0,schltourmode2
+4,Auto 2 Person,schl,28879,schltourmode2
+5,Auto 2 Person,schl,0,schltourmode2
+6,Auto 2 Person,schl,0,schltourmode2
+7,Auto 2 Person,schl,0,schltourmode2
+8,Auto 2 Person,schl,0,schltourmode2
+13,Auto 2 Person,schl,0,schltourmode2
+1,Auto 3+ Person,schl,3123,schltourmode3
+2,Auto 3+ Person,schl,125373,schltourmode3
+3,Auto 3+ Person,schl,640877,schltourmode3
+4,Auto 3+ Person,schl,35332,schltourmode3
+5,Auto 3+ Person,schl,0,schltourmode3
+6,Auto 3+ Person,schl,0,schltourmode3
+7,Auto 3+ Person,schl,0,schltourmode3
+8,Auto 3+ Person,schl,0,schltourmode3
+13,Auto 3+ Person,schl,0,schltourmode3
+1,Walk,schl,0,schltourmode4
+2,Walk,schl,0,schltourmode4
+3,Walk,schl,0,schltourmode4
+4,Walk,schl,64424,schltourmode4
+5,Walk,schl,0,schltourmode4
+6,Walk,schl,0,schltourmode4
+7,Walk,schl,0,schltourmode4
+8,Walk,schl,0,schltourmode4
+13,Walk,schl,0,schltourmode4
+1,Bike/Moped,schl,0,schltourmode5
+2,Bike/Moped,schl,63,schltourmode5
+3,Bike/Moped,schl,280,schltourmode5
+4,Bike/Moped,schl,197,schltourmode5
+5,Bike/Moped,schl,15102,schltourmode5
+6,Bike/Moped,schl,0,schltourmode5
+7,Bike/Moped,schl,0,schltourmode5
+8,Bike/Moped,schl,0,schltourmode5
+13,Bike/Moped,schl,0,schltourmode5
+1,Walk-Transit,schl,0,schltourmode6
+2,Walk-Transit,schl,0,schltourmode6
+3,Walk-Transit,schl,0,schltourmode6
+4,Walk-Transit,schl,0,schltourmode6
+5,Walk-Transit,schl,0,schltourmode6
+6,Walk-Transit,schl,10526,schltourmode6
+7,Walk-Transit,schl,0,schltourmode6
+8,Walk-Transit,schl,0,schltourmode6
+13,Walk-Transit,schl,0,schltourmode6
+1,PNR-Transit,schl,0,schltourmode7
+2,PNR-Transit,schl,0,schltourmode7
+3,PNR-Transit,schl,0,schltourmode7
+4,PNR-Transit,schl,0,schltourmode7
+5,PNR-Transit,schl,0,schltourmode7
+6,PNR-Transit,schl,22,schltourmode7
+7,PNR-Transit,schl,32,schltourmode7
+8,PNR-Transit,schl,0,schltourmode7
+13,PNR-Transit,schl,0,schltourmode7
+1,KNR-Transit,schl,0,schltourmode8
+2,KNR-Transit,schl,0,schltourmode8
+3,KNR-Transit,schl,355,schltourmode8
+4,KNR-Transit,schl,355,schltourmode8
+5,KNR-Transit,schl,0,schltourmode8
+6,KNR-Transit,schl,777,schltourmode8
+7,KNR-Transit,schl,0,schltourmode8
+8,KNR-Transit,schl,905,schltourmode8
+13,KNR-Transit,schl,0,schltourmode8
+1,School Bus,schl,756,schltourmode13
+2,School Bus,schl,8671,schltourmode13
+3,School Bus,schl,18278,schltourmode13
+4,School Bus,schl,241,schltourmode13
+5,School Bus,schl,0,schltourmode13
+6,School Bus,schl,0,schltourmode13
+7,School Bus,schl,0,schltourmode13
+8,School Bus,schl,0,schltourmode13
+13,School Bus,schl,115273,schltourmode13
+1,Total,schl,69776,schlTotal
+2,Total,schl,668402,schlTotal
+3,Total,schl,659791,schlTotal
+4,Total,schl,129429,schlTotal
+5,Total,schl,15102,schlTotal
+6,Total,schl,11324,schlTotal
+7,Total,schl,32,schlTotal
+8,Total,schl,905,schlTotal
+13,Total,schl,115273,schlTotal
+1,Auto SOV,imain,1549383,imaintourmode1
+2,Auto SOV,imain,0,imaintourmode1
+3,Auto SOV,imain,0,imaintourmode1
+4,Auto SOV,imain,0,imaintourmode1
+5,Auto SOV,imain,0,imaintourmode1
+6,Auto SOV,imain,0,imaintourmode1
+7,Auto SOV,imain,0,imaintourmode1
+8,Auto SOV,imain,0,imaintourmode1
+13,Auto SOV,imain,0,imaintourmode1
+1,Auto 2 Person,imain,416760,imaintourmode2
+2,Auto 2 Person,imain,932002,imaintourmode2
+3,Auto 2 Person,imain,5374,imaintourmode2
+4,Auto 2 Person,imain,19693,imaintourmode2
+5,Auto 2 Person,imain,0,imaintourmode2
+6,Auto 2 Person,imain,0,imaintourmode2
+7,Auto 2 Person,imain,0,imaintourmode2
+8,Auto 2 Person,imain,0,imaintourmode2
+13,Auto 2 Person,imain,0,imaintourmode2
+1,Auto 3+ Person,imain,178084,imaintourmode3
+2,Auto 3+ Person,imain,335224,imaintourmode3
+3,Auto 3+ Person,imain,1178581,imaintourmode3
+4,Auto 3+ Person,imain,12868,imaintourmode3
+5,Auto 3+ Person,imain,0,imaintourmode3
+6,Auto 3+ Person,imain,0,imaintourmode3
+7,Auto 3+ Person,imain,0,imaintourmode3
+8,Auto 3+ Person,imain,0,imaintourmode3
+13,Auto 3+ Person,imain,0,imaintourmode3
+1,Walk,imain,0,imaintourmode4
+2,Walk,imain,0,imaintourmode4
+3,Walk,imain,0,imaintourmode4
+4,Walk,imain,300138,imaintourmode4
+5,Walk,imain,0,imaintourmode4
+6,Walk,imain,0,imaintourmode4
+7,Walk,imain,0,imaintourmode4
+8,Walk,imain,0,imaintourmode4
+13,Walk,imain,0,imaintourmode4
+1,Bike/Moped,imain,828,imaintourmode5
+2,Bike/Moped,imain,303,imaintourmode5
+3,Bike/Moped,imain,116,imaintourmode5
+4,Bike/Moped,imain,454,imaintourmode5
+5,Bike/Moped,imain,13057,imaintourmode5
+6,Bike/Moped,imain,0,imaintourmode5
+7,Bike/Moped,imain,0,imaintourmode5
+8,Bike/Moped,imain,0,imaintourmode5
+13,Bike/Moped,imain,0,imaintourmode5
+1,Walk-Transit,imain,0,imaintourmode6
+2,Walk-Transit,imain,0,imaintourmode6
+3,Walk-Transit,imain,0,imaintourmode6
+4,Walk-Transit,imain,0,imaintourmode6
+5,Walk-Transit,imain,0,imaintourmode6
+6,Walk-Transit,imain,26111,imaintourmode6
+7,Walk-Transit,imain,0,imaintourmode6
+8,Walk-Transit,imain,0,imaintourmode6
+13,Walk-Transit,imain,0,imaintourmode6
+1,PNR-Transit,imain,0,imaintourmode7
+2,PNR-Transit,imain,0,imaintourmode7
+3,PNR-Transit,imain,0,imaintourmode7
+4,PNR-Transit,imain,0,imaintourmode7
+5,PNR-Transit,imain,0,imaintourmode7
+6,PNR-Transit,imain,35,imaintourmode7
+7,PNR-Transit,imain,376,imaintourmode7
+8,PNR-Transit,imain,0,imaintourmode7
+13,PNR-Transit,imain,0,imaintourmode7
+1,KNR-Transit,imain,0,imaintourmode8
+2,KNR-Transit,imain,540,imaintourmode8
+3,KNR-Transit,imain,2029,imaintourmode8
+4,KNR-Transit,imain,25,imaintourmode8
+5,KNR-Transit,imain,0,imaintourmode8
+6,KNR-Transit,imain,92,imaintourmode8
+7,KNR-Transit,imain,0,imaintourmode8
+8,KNR-Transit,imain,2106,imaintourmode8
+13,KNR-Transit,imain,0,imaintourmode8
+1,School Bus,imain,0,imaintourmode13
+2,School Bus,imain,0,imaintourmode13
+3,School Bus,imain,0,imaintourmode13
+4,School Bus,imain,0,imaintourmode13
+5,School Bus,imain,0,imaintourmode13
+6,School Bus,imain,0,imaintourmode13
+7,School Bus,imain,0,imaintourmode13
+8,School Bus,imain,0,imaintourmode13
+13,School Bus,imain,0,imaintourmode13
+1,Total,imain,2145054,imainTotal
+2,Total,imain,1268069,imainTotal
+3,Total,imain,1186101,imainTotal
+4,Total,imain,333179,imainTotal
+5,Total,imain,13057,imainTotal
+6,Total,imain,26238,imainTotal
+7,Total,imain,376,imainTotal
+8,Total,imain,2106,imainTotal
+13,Total,imain,0,imainTotal
+1,Auto SOV,idisc,510368,idisctourmode1
+2,Auto SOV,idisc,0,idisctourmode1
+3,Auto SOV,idisc,0,idisctourmode1
+4,Auto SOV,idisc,0,idisctourmode1
+5,Auto SOV,idisc,0,idisctourmode1
+6,Auto SOV,idisc,0,idisctourmode1
+7,Auto SOV,idisc,0,idisctourmode1
+8,Auto SOV,idisc,0,idisctourmode1
+13,Auto SOV,idisc,0,idisctourmode1
+1,Auto 2 Person,idisc,76364,idisctourmode2
+2,Auto 2 Person,idisc,286506,idisctourmode2
+3,Auto 2 Person,idisc,761,idisctourmode2
+4,Auto 2 Person,idisc,23599,idisctourmode2
+5,Auto 2 Person,idisc,0,idisctourmode2
+6,Auto 2 Person,idisc,0,idisctourmode2
+7,Auto 2 Person,idisc,0,idisctourmode2
+8,Auto 2 Person,idisc,0,idisctourmode2
+13,Auto 2 Person,idisc,0,idisctourmode2
+1,Auto 3+ Person,idisc,26021,idisctourmode3
+2,Auto 3+ Person,idisc,51233,idisctourmode3
+3,Auto 3+ Person,idisc,228546,idisctourmode3
+4,Auto 3+ Person,idisc,14348,idisctourmode3
+5,Auto 3+ Person,idisc,0,idisctourmode3
+6,Auto 3+ Person,idisc,0,idisctourmode3
+7,Auto 3+ Person,idisc,0,idisctourmode3
+8,Auto 3+ Person,idisc,0,idisctourmode3
+13,Auto 3+ Person,idisc,0,idisctourmode3
+1,Walk,idisc,0,idisctourmode4
+2,Walk,idisc,0,idisctourmode4
+3,Walk,idisc,0,idisctourmode4
+4,Walk,idisc,197596,idisctourmode4
+5,Walk,idisc,0,idisctourmode4
+6,Walk,idisc,0,idisctourmode4
+7,Walk,idisc,0,idisctourmode4
+8,Walk,idisc,0,idisctourmode4
+13,Walk,idisc,0,idisctourmode4
+1,Bike/Moped,idisc,2744,idisctourmode5
+2,Bike/Moped,idisc,2306,idisctourmode5
+3,Bike/Moped,idisc,539,idisctourmode5
+4,Bike/Moped,idisc,1377,idisctourmode5
+5,Bike/Moped,idisc,24917,idisctourmode5
+6,Bike/Moped,idisc,0,idisctourmode5
+7,Bike/Moped,idisc,0,idisctourmode5
+8,Bike/Moped,idisc,0,idisctourmode5
+13,Bike/Moped,idisc,0,idisctourmode5
+1,Walk-Transit,idisc,0,idisctourmode6
+2,Walk-Transit,idisc,818,idisctourmode6
+3,Walk-Transit,idisc,430,idisctourmode6
+4,Walk-Transit,idisc,1933,idisctourmode6
+5,Walk-Transit,idisc,6,idisctourmode6
+6,Walk-Transit,idisc,17741,idisctourmode6
+7,Walk-Transit,idisc,0,idisctourmode6
+8,Walk-Transit,idisc,0,idisctourmode6
+13,Walk-Transit,idisc,0,idisctourmode6
+1,PNR-Transit,idisc,395,idisctourmode7
+2,PNR-Transit,idisc,593,idisctourmode7
+3,PNR-Transit,idisc,666,idisctourmode7
+4,PNR-Transit,idisc,541,idisctourmode7
+5,PNR-Transit,idisc,129,idisctourmode7
+6,PNR-Transit,idisc,181,idisctourmode7
+7,PNR-Transit,idisc,417,idisctourmode7
+8,PNR-Transit,idisc,0,idisctourmode7
+13,PNR-Transit,idisc,0,idisctourmode7
+1,KNR-Transit,idisc,0,idisctourmode8
+2,KNR-Transit,idisc,992,idisctourmode8
+3,KNR-Transit,idisc,3078,idisctourmode8
+4,KNR-Transit,idisc,570,idisctourmode8
+5,KNR-Transit,idisc,0,idisctourmode8
+6,KNR-Transit,idisc,2410,idisctourmode8
+7,KNR-Transit,idisc,0,idisctourmode8
+8,KNR-Transit,idisc,4424,idisctourmode8
+13,KNR-Transit,idisc,0,idisctourmode8
+1,School Bus,idisc,0,idisctourmode13
+2,School Bus,idisc,0,idisctourmode13
+3,School Bus,idisc,0,idisctourmode13
+4,School Bus,idisc,0,idisctourmode13
+5,School Bus,idisc,0,idisctourmode13
+6,School Bus,idisc,0,idisctourmode13
+7,School Bus,idisc,0,idisctourmode13
+8,School Bus,idisc,0,idisctourmode13
+13,School Bus,idisc,0,idisctourmode13
+1,Total,idisc,615892,idiscTotal
+2,Total,idisc,342448,idiscTotal
+3,Total,idisc,234020,idiscTotal
+4,Total,idisc,239963,idiscTotal
+5,Total,idisc,25052,idiscTotal
+6,Total,idisc,20331,idiscTotal
+7,Total,idisc,417,idiscTotal
+8,Total,idisc,4424,idiscTotal
+13,Total,idisc,0,idiscTotal
+1,Auto SOV,jmain,0,jmaintourmode1
+2,Auto SOV,jmain,0,jmaintourmode1
+3,Auto SOV,jmain,0,jmaintourmode1
+4,Auto SOV,jmain,0,jmaintourmode1
+5,Auto SOV,jmain,0,jmaintourmode1
+6,Auto SOV,jmain,0,jmaintourmode1
+7,Auto SOV,jmain,0,jmaintourmode1
+8,Auto SOV,jmain,0,jmaintourmode1
+13,Auto SOV,jmain,0,jmaintourmode1
+1,Auto 2 Person,jmain,0,jmaintourmode2
+2,Auto 2 Person,jmain,185399,jmaintourmode2
+3,Auto 2 Person,jmain,0,jmaintourmode2
+4,Auto 2 Person,jmain,524,jmaintourmode2
+5,Auto 2 Person,jmain,0,jmaintourmode2
+6,Auto 2 Person,jmain,0,jmaintourmode2
+7,Auto 2 Person,jmain,0,jmaintourmode2
+8,Auto 2 Person,jmain,0,jmaintourmode2
+13,Auto 2 Person,jmain,0,jmaintourmode2
+1,Auto 3+ Person,jmain,0,jmaintourmode3
+2,Auto 3+ Person,jmain,6209,jmaintourmode3
+3,Auto 3+ Person,jmain,73923,jmaintourmode3
+4,Auto 3+ Person,jmain,552,jmaintourmode3
+5,Auto 3+ Person,jmain,0,jmaintourmode3
+6,Auto 3+ Person,jmain,0,jmaintourmode3
+7,Auto 3+ Person,jmain,0,jmaintourmode3
+8,Auto 3+ Person,jmain,0,jmaintourmode3
+13,Auto 3+ Person,jmain,0,jmaintourmode3
+1,Walk,jmain,0,jmaintourmode4
+2,Walk,jmain,0,jmaintourmode4
+3,Walk,jmain,0,jmaintourmode4
+4,Walk,jmain,6614,jmaintourmode4
+5,Walk,jmain,0,jmaintourmode4
+6,Walk,jmain,0,jmaintourmode4
+7,Walk,jmain,0,jmaintourmode4
+8,Walk,jmain,0,jmaintourmode4
+13,Walk,jmain,0,jmaintourmode4
+1,Bike/Moped,jmain,0,jmaintourmode5
+2,Bike/Moped,jmain,64,jmaintourmode5
+3,Bike/Moped,jmain,0,jmaintourmode5
+4,Bike/Moped,jmain,0,jmaintourmode5
+5,Bike/Moped,jmain,208,jmaintourmode5
+6,Bike/Moped,jmain,0,jmaintourmode5
+7,Bike/Moped,jmain,0,jmaintourmode5
+8,Bike/Moped,jmain,0,jmaintourmode5
+13,Bike/Moped,jmain,0,jmaintourmode5
+1,Walk-Transit,jmain,0,jmaintourmode6
+2,Walk-Transit,jmain,162,jmaintourmode6
+3,Walk-Transit,jmain,0,jmaintourmode6
+4,Walk-Transit,jmain,3378,jmaintourmode6
+5,Walk-Transit,jmain,0,jmaintourmode6
+6,Walk-Transit,jmain,4172,jmaintourmode6
+7,Walk-Transit,jmain,0,jmaintourmode6
+8,Walk-Transit,jmain,0,jmaintourmode6
+13,Walk-Transit,jmain,0,jmaintourmode6
+1,PNR-Transit,jmain,0,jmaintourmode7
+2,PNR-Transit,jmain,0,jmaintourmode7
+3,PNR-Transit,jmain,0,jmaintourmode7
+4,PNR-Transit,jmain,0,jmaintourmode7
+5,PNR-Transit,jmain,0,jmaintourmode7
+6,PNR-Transit,jmain,0,jmaintourmode7
+7,PNR-Transit,jmain,0,jmaintourmode7
+8,PNR-Transit,jmain,0,jmaintourmode7
+13,PNR-Transit,jmain,0,jmaintourmode7
+1,KNR-Transit,jmain,0,jmaintourmode8
+2,KNR-Transit,jmain,0,jmaintourmode8
+3,KNR-Transit,jmain,0,jmaintourmode8
+4,KNR-Transit,jmain,0,jmaintourmode8
+5,KNR-Transit,jmain,0,jmaintourmode8
+6,KNR-Transit,jmain,0,jmaintourmode8
+7,KNR-Transit,jmain,0,jmaintourmode8
+8,KNR-Transit,jmain,0,jmaintourmode8
+13,KNR-Transit,jmain,0,jmaintourmode8
+1,School Bus,jmain,0,jmaintourmode13
+2,School Bus,jmain,0,jmaintourmode13
+3,School Bus,jmain,0,jmaintourmode13
+4,School Bus,jmain,0,jmaintourmode13
+5,School Bus,jmain,0,jmaintourmode13
+6,School Bus,jmain,0,jmaintourmode13
+7,School Bus,jmain,0,jmaintourmode13
+8,School Bus,jmain,0,jmaintourmode13
+13,School Bus,jmain,0,jmaintourmode13
+1,Total,jmain,0,jmainTotal
+2,Total,jmain,191835,jmainTotal
+3,Total,jmain,73923,jmainTotal
+4,Total,jmain,11068,jmainTotal
+5,Total,jmain,208,jmainTotal
+6,Total,jmain,4172,jmainTotal
+7,Total,jmain,0,jmainTotal
+8,Total,jmain,0,jmainTotal
+13,Total,jmain,0,jmainTotal
+1,Auto SOV,jdisc,0,jdisctourmode1
+2,Auto SOV,jdisc,0,jdisctourmode1
+3,Auto SOV,jdisc,0,jdisctourmode1
+4,Auto SOV,jdisc,0,jdisctourmode1
+5,Auto SOV,jdisc,0,jdisctourmode1
+6,Auto SOV,jdisc,0,jdisctourmode1
+7,Auto SOV,jdisc,0,jdisctourmode1
+8,Auto SOV,jdisc,0,jdisctourmode1
+13,Auto SOV,jdisc,0,jdisctourmode1
+1,Auto 2 Person,jdisc,0,jdisctourmode2
+2,Auto 2 Person,jdisc,116911,jdisctourmode2
+3,Auto 2 Person,jdisc,0,jdisctourmode2
+4,Auto 2 Person,jdisc,2368,jdisctourmode2
+5,Auto 2 Person,jdisc,0,jdisctourmode2
+6,Auto 2 Person,jdisc,0,jdisctourmode2
+7,Auto 2 Person,jdisc,0,jdisctourmode2
+8,Auto 2 Person,jdisc,0,jdisctourmode2
+13,Auto 2 Person,jdisc,0,jdisctourmode2
+1,Auto 3+ Person,jdisc,80,jdisctourmode3
+2,Auto 3+ Person,jdisc,2931,jdisctourmode3
+3,Auto 3+ Person,jdisc,71200,jdisctourmode3
+4,Auto 3+ Person,jdisc,1030,jdisctourmode3
+5,Auto 3+ Person,jdisc,0,jdisctourmode3
+6,Auto 3+ Person,jdisc,0,jdisctourmode3
+7,Auto 3+ Person,jdisc,0,jdisctourmode3
+8,Auto 3+ Person,jdisc,0,jdisctourmode3
+13,Auto 3+ Person,jdisc,0,jdisctourmode3
+1,Walk,jdisc,0,jdisctourmode4
+2,Walk,jdisc,0,jdisctourmode4
+3,Walk,jdisc,0,jdisctourmode4
+4,Walk,jdisc,25324,jdisctourmode4
+5,Walk,jdisc,0,jdisctourmode4
+6,Walk,jdisc,0,jdisctourmode4
+7,Walk,jdisc,0,jdisctourmode4
+8,Walk,jdisc,0,jdisctourmode4
+13,Walk,jdisc,0,jdisctourmode4
+1,Bike/Moped,jdisc,0,jdisctourmode5
+2,Bike/Moped,jdisc,10,jdisctourmode5
+3,Bike/Moped,jdisc,8,jdisctourmode5
+4,Bike/Moped,jdisc,0,jdisctourmode5
+5,Bike/Moped,jdisc,49,jdisctourmode5
+6,Bike/Moped,jdisc,0,jdisctourmode5
+7,Bike/Moped,jdisc,0,jdisctourmode5
+8,Bike/Moped,jdisc,0,jdisctourmode5
+13,Bike/Moped,jdisc,0,jdisctourmode5
+1,Walk-Transit,jdisc,0,jdisctourmode6
+2,Walk-Transit,jdisc,0,jdisctourmode6
+3,Walk-Transit,jdisc,0,jdisctourmode6
+4,Walk-Transit,jdisc,0,jdisctourmode6
+5,Walk-Transit,jdisc,0,jdisctourmode6
+6,Walk-Transit,jdisc,0,jdisctourmode6
+7,Walk-Transit,jdisc,0,jdisctourmode6
+8,Walk-Transit,jdisc,0,jdisctourmode6
+13,Walk-Transit,jdisc,0,jdisctourmode6
+1,PNR-Transit,jdisc,0,jdisctourmode7
+2,PNR-Transit,jdisc,0,jdisctourmode7
+3,PNR-Transit,jdisc,0,jdisctourmode7
+4,PNR-Transit,jdisc,0,jdisctourmode7
+5,PNR-Transit,jdisc,0,jdisctourmode7
+6,PNR-Transit,jdisc,0,jdisctourmode7
+7,PNR-Transit,jdisc,0,jdisctourmode7
+8,PNR-Transit,jdisc,0,jdisctourmode7
+13,PNR-Transit,jdisc,0,jdisctourmode7
+1,KNR-Transit,jdisc,0,jdisctourmode8
+2,KNR-Transit,jdisc,0,jdisctourmode8
+3,KNR-Transit,jdisc,0,jdisctourmode8
+4,KNR-Transit,jdisc,0,jdisctourmode8
+5,KNR-Transit,jdisc,0,jdisctourmode8
+6,KNR-Transit,jdisc,0,jdisctourmode8
+7,KNR-Transit,jdisc,0,jdisctourmode8
+8,KNR-Transit,jdisc,0,jdisctourmode8
+13,KNR-Transit,jdisc,0,jdisctourmode8
+1,School Bus,jdisc,0,jdisctourmode13
+2,School Bus,jdisc,0,jdisctourmode13
+3,School Bus,jdisc,0,jdisctourmode13
+4,School Bus,jdisc,0,jdisctourmode13
+5,School Bus,jdisc,0,jdisctourmode13
+6,School Bus,jdisc,0,jdisctourmode13
+7,School Bus,jdisc,0,jdisctourmode13
+8,School Bus,jdisc,0,jdisctourmode13
+13,School Bus,jdisc,0,jdisctourmode13
+1,Total,jdisc,80,jdiscTotal
+2,Total,jdisc,119852,jdiscTotal
+3,Total,jdisc,71208,jdiscTotal
+4,Total,jdisc,28722,jdiscTotal
+5,Total,jdisc,49,jdiscTotal
+6,Total,jdisc,0,jdiscTotal
+7,Total,jdisc,0,jdiscTotal
+8,Total,jdisc,0,jdiscTotal
+13,Total,jdisc,0,jdiscTotal
+1,Auto SOV,atwork,128060,atworktourmode1
+2,Auto SOV,atwork,0,atworktourmode1
+3,Auto SOV,atwork,0,atworktourmode1
+4,Auto SOV,atwork,0,atworktourmode1
+5,Auto SOV,atwork,0,atworktourmode1
+6,Auto SOV,atwork,0,atworktourmode1
+7,Auto SOV,atwork,0,atworktourmode1
+8,Auto SOV,atwork,0,atworktourmode1
+13,Auto SOV,atwork,0,atworktourmode1
+1,Auto 2 Person,atwork,5014,atworktourmode2
+2,Auto 2 Person,atwork,34718,atworktourmode2
+3,Auto 2 Person,atwork,0,atworktourmode2
+4,Auto 2 Person,atwork,551,atworktourmode2
+5,Auto 2 Person,atwork,0,atworktourmode2
+6,Auto 2 Person,atwork,0,atworktourmode2
+7,Auto 2 Person,atwork,0,atworktourmode2
+8,Auto 2 Person,atwork,0,atworktourmode2
+13,Auto 2 Person,atwork,0,atworktourmode2
+1,Auto 3+ Person,atwork,567,atworktourmode3
+2,Auto 3+ Person,atwork,1266,atworktourmode3
+3,Auto 3+ Person,atwork,8969,atworktourmode3
+4,Auto 3+ Person,atwork,513,atworktourmode3
+5,Auto 3+ Person,atwork,0,atworktourmode3
+6,Auto 3+ Person,atwork,0,atworktourmode3
+7,Auto 3+ Person,atwork,0,atworktourmode3
+8,Auto 3+ Person,atwork,0,atworktourmode3
+13,Auto 3+ Person,atwork,0,atworktourmode3
+1,Walk,atwork,0,atworktourmode4
+2,Walk,atwork,0,atworktourmode4
+3,Walk,atwork,0,atworktourmode4
+4,Walk,atwork,72592,atworktourmode4
+5,Walk,atwork,0,atworktourmode4
+6,Walk,atwork,0,atworktourmode4
+7,Walk,atwork,0,atworktourmode4
+8,Walk,atwork,0,atworktourmode4
+13,Walk,atwork,0,atworktourmode4
+1,Bike/Moped,atwork,0,atworktourmode5
+2,Bike/Moped,atwork,0,atworktourmode5
+3,Bike/Moped,atwork,0,atworktourmode5
+4,Bike/Moped,atwork,18,atworktourmode5
+5,Bike/Moped,atwork,740,atworktourmode5
+6,Bike/Moped,atwork,0,atworktourmode5
+7,Bike/Moped,atwork,0,atworktourmode5
+8,Bike/Moped,atwork,0,atworktourmode5
+13,Bike/Moped,atwork,0,atworktourmode5
+1,Walk-Transit,atwork,0,atworktourmode6
+2,Walk-Transit,atwork,0,atworktourmode6
+3,Walk-Transit,atwork,0,atworktourmode6
+4,Walk-Transit,atwork,0,atworktourmode6
+5,Walk-Transit,atwork,0,atworktourmode6
+6,Walk-Transit,atwork,1175,atworktourmode6
+7,Walk-Transit,atwork,0,atworktourmode6
+8,Walk-Transit,atwork,0,atworktourmode6
+13,Walk-Transit,atwork,0,atworktourmode6
+1,PNR-Transit,atwork,0,atworktourmode7
+2,PNR-Transit,atwork,0,atworktourmode7
+3,PNR-Transit,atwork,0,atworktourmode7
+4,PNR-Transit,atwork,0,atworktourmode7
+5,PNR-Transit,atwork,0,atworktourmode7
+6,PNR-Transit,atwork,0,atworktourmode7
+7,PNR-Transit,atwork,101,atworktourmode7
+8,PNR-Transit,atwork,0,atworktourmode7
+13,PNR-Transit,atwork,0,atworktourmode7
+1,KNR-Transit,atwork,0,atworktourmode8
+2,KNR-Transit,atwork,0,atworktourmode8
+3,KNR-Transit,atwork,0,atworktourmode8
+4,KNR-Transit,atwork,0,atworktourmode8
+5,KNR-Transit,atwork,0,atworktourmode8
+6,KNR-Transit,atwork,0,atworktourmode8
+7,KNR-Transit,atwork,0,atworktourmode8
+8,KNR-Transit,atwork,0,atworktourmode8
+13,KNR-Transit,atwork,0,atworktourmode8
+1,School Bus,atwork,0,atworktourmode13
+2,School Bus,atwork,0,atworktourmode13
+3,School Bus,atwork,0,atworktourmode13
+4,School Bus,atwork,0,atworktourmode13
+5,School Bus,atwork,0,atworktourmode13
+6,School Bus,atwork,0,atworktourmode13
+7,School Bus,atwork,0,atworktourmode13
+8,School Bus,atwork,0,atworktourmode13
+13,School Bus,atwork,0,atworktourmode13
+1,Total,atwork,133640,atworkTotal
+2,Total,atwork,35984,atworkTotal
+3,Total,atwork,8969,atworkTotal
+4,Total,atwork,73673,atworkTotal
+5,Total,atwork,740,atworkTotal
+6,Total,atwork,1175,atworkTotal
+7,Total,atwork,101,atworkTotal
+8,Total,atwork,0,atworkTotal
+13,Total,atwork,0,atworkTotal
+1,Auto SOV,total,4866005,totaltourmode1
+2,Auto SOV,total,0,totaltourmode1
+3,Auto SOV,total,0,totaltourmode1
+4,Auto SOV,total,0,totaltourmode1
+5,Auto SOV,total,0,totaltourmode1
+6,Auto SOV,total,0,totaltourmode1
+7,Auto SOV,total,0,totaltourmode1
+8,Auto SOV,total,0,totaltourmode1
+13,Auto SOV,total,0,totaltourmode1
+1,Auto 2 Person,total,813653,totaltourmode2
+2,Auto 2 Person,total,2427352,totaltourmode2
+3,Auto 2 Person,total,7057,totaltourmode2
+4,Auto 2 Person,total,101298,totaltourmode2
+5,Auto 2 Person,total,0,totaltourmode2
+6,Auto 2 Person,total,0,totaltourmode2
+7,Auto 2 Person,total,0,totaltourmode2
+8,Auto 2 Person,total,0,totaltourmode2
+13,Auto 2 Person,total,0,totaltourmode2
+1,Auto 3+ Person,total,325107,totaltourmode3
+2,Auto 3+ Person,total,565003,totaltourmode3
+3,Auto 3+ Person,total,2323241,totaltourmode3
+4,Auto 3+ Person,total,72988,totaltourmode3
+5,Auto 3+ Person,total,0,totaltourmode3
+6,Auto 3+ Person,total,0,totaltourmode3
+7,Auto 3+ Person,total,0,totaltourmode3
+8,Auto 3+ Person,total,0,totaltourmode3
+13,Auto 3+ Person,total,0,totaltourmode3
+1,Walk,total,0,totaltourmode4
+2,Walk,total,0,totaltourmode4
+3,Walk,total,0,totaltourmode4
+4,Walk,total,698021,totaltourmode4
+5,Walk,total,0,totaltourmode4
+6,Walk,total,0,totaltourmode4
+7,Walk,total,0,totaltourmode4
+8,Walk,total,0,totaltourmode4
+13,Walk,total,0,totaltourmode4
+1,Bike/Moped,total,11985,totaltourmode5
+2,Bike/Moped,total,8578,totaltourmode5
+3,Bike/Moped,total,2070,totaltourmode5
+4,Bike/Moped,total,3069,totaltourmode5
+5,Bike/Moped,total,81955,totaltourmode5
+6,Bike/Moped,total,0,totaltourmode5
+7,Bike/Moped,total,0,totaltourmode5
+8,Bike/Moped,total,0,totaltourmode5
+13,Bike/Moped,total,0,totaltourmode5
+1,Walk-Transit,total,0,totaltourmode6
+2,Walk-Transit,total,3994,totaltourmode6
+3,Walk-Transit,total,1204,totaltourmode6
+4,Walk-Transit,total,12814,totaltourmode6
+5,Walk-Transit,total,108,totaltourmode6
+6,Walk-Transit,total,158098,totaltourmode6
+7,Walk-Transit,total,0,totaltourmode6
+8,Walk-Transit,total,0,totaltourmode6
+13,Walk-Transit,total,836,totaltourmode6
+1,PNR-Transit,total,4983,totaltourmode7
+2,PNR-Transit,total,6008,totaltourmode7
+3,PNR-Transit,total,2079,totaltourmode7
+4,PNR-Transit,total,2004,totaltourmode7
+5,PNR-Transit,total,129,totaltourmode7
+6,PNR-Transit,total,2920,totaltourmode7
+7,PNR-Transit,total,9653,totaltourmode7
+8,PNR-Transit,total,34,totaltourmode7
+13,PNR-Transit,total,0,totaltourmode7
+1,KNR-Transit,total,0,totaltourmode8
+2,KNR-Transit,total,15964,totaltourmode8
+3,KNR-Transit,total,7666,totaltourmode8
+4,KNR-Transit,total,12176,totaltourmode8
+5,KNR-Transit,total,0,totaltourmode8
+6,KNR-Transit,total,10886,totaltourmode8
+7,KNR-Transit,total,0,totaltourmode8
+8,KNR-Transit,total,20305,totaltourmode8
+13,KNR-Transit,total,0,totaltourmode8
+1,School Bus,total,756,totaltourmode13
+2,School Bus,total,8671,totaltourmode13
+3,School Bus,total,18278,totaltourmode13
+4,School Bus,total,241,totaltourmode13
+5,School Bus,total,0,totaltourmode13
+6,School Bus,total,0,totaltourmode13
+7,School Bus,total,0,totaltourmode13
+8,School Bus,total,0,totaltourmode13
+13,School Bus,total,115273,totaltourmode13
+1,Total,total,6022488,totalTotal
+2,Total,total,3035570,totalTotal
+3,Total,total,2361596,totalTotal
+4,Total,total,902612,totalTotal
+5,Total,total,82193,totalTotal
+6,Total,total,171904,totalTotal
+7,Total,total,9653,totalTotal
+8,Total,total,20339,totalTotal
+13,Total,total,116109,totalTotal
+1,TNC-Transit,work,0,worktourmode9
+2,TNC-Transit,work,0,worktourmode9
+3,TNC-Transit,work,0,worktourmode9
+4,TNC-Transit,work,0,worktourmode9
+5,TNC-Transit,work,0,worktourmode9
+6,TNC-Transit,work,0,worktourmode9
+7,TNC-Transit,work,0,worktourmode9
+8,TNC-Transit,work,0,worktourmode9
+9,TNC-Transit,work,0,worktourmode9
+1,Taxi,work,0,worktourmode10
+2,Taxi,work,0,worktourmode10
+3,Taxi,work,0,worktourmode10
+4,Taxi,work,0,worktourmode10
+5,Taxi,work,0,worktourmode10
+6,Taxi,work,0,worktourmode10
+7,Taxi,work,0,worktourmode10
+8,Taxi,work,0,worktourmode10
+9,Taxi,work,0,worktourmode10
+1,TNC-Single,work,0,worktourmode11
+2,TNC-Single,work,0,worktourmode11
+3,TNC-Single,work,0,worktourmode11
+4,TNC-Single,work,0,worktourmode11
+5,TNC-Single,work,0,worktourmode11
+6,TNC-Single,work,0,worktourmode11
+7,TNC-Single,work,0,worktourmode11
+8,TNC-Single,work,0,worktourmode11
+9,TNC-Single,work,0,worktourmode11
+1,TNC-Shared,work,0,worktourmode12
+2,TNC-Shared,work,0,worktourmode12
+3,TNC-Shared,work,0,worktourmode12
+4,TNC-Shared,work,0,worktourmode12
+5,TNC-Shared,work,0,worktourmode12
+6,TNC-Shared,work,0,worktourmode12
+7,TNC-Shared,work,0,worktourmode12
+8,TNC-Shared,work,0,worktourmode12
+9,TNC-Shared,work,0,worktourmode12
+1,TNC-Transit,univ,0,univtourmode9
+2,TNC-Transit,univ,0,univtourmode9
+3,TNC-Transit,univ,0,univtourmode9
+4,TNC-Transit,univ,0,univtourmode9
+5,TNC-Transit,univ,0,univtourmode9
+6,TNC-Transit,univ,0,univtourmode9
+7,TNC-Transit,univ,0,univtourmode9
+8,TNC-Transit,univ,0,univtourmode9
+9,TNC-Transit,univ,0,univtourmode9
+1,Taxi,univ,0,univtourmode10
+2,Taxi,univ,0,univtourmode10
+3,Taxi,univ,0,univtourmode10
+4,Taxi,univ,0,univtourmode10
+5,Taxi,univ,0,univtourmode10
+6,Taxi,univ,0,univtourmode10
+7,Taxi,univ,0,univtourmode10
+8,Taxi,univ,0,univtourmode10
+9,Taxi,univ,0,univtourmode10
+1,TNC-Single,univ,0,univtourmode11
+2,TNC-Single,univ,0,univtourmode11
+3,TNC-Single,univ,0,univtourmode11
+4,TNC-Single,univ,0,univtourmode11
+5,TNC-Single,univ,0,univtourmode11
+6,TNC-Single,univ,0,univtourmode11
+7,TNC-Single,univ,0,univtourmode11
+8,TNC-Single,univ,0,univtourmode11
+9,TNC-Single,univ,0,univtourmode11
+1,TNC-Shared,univ,0,univtourmode12
+2,TNC-Shared,univ,0,univtourmode12
+3,TNC-Shared,univ,0,univtourmode12
+4,TNC-Shared,univ,0,univtourmode12
+5,TNC-Shared,univ,0,univtourmode12
+6,TNC-Shared,univ,0,univtourmode12
+7,TNC-Shared,univ,0,univtourmode12
+8,TNC-Shared,univ,0,univtourmode12
+9,TNC-Shared,univ,0,univtourmode12
+1,TNC-Transit,schl,0,schltourmode9
+2,TNC-Transit,schl,0,schltourmode9
+3,TNC-Transit,schl,0,schltourmode9
+4,TNC-Transit,schl,0,schltourmode9
+5,TNC-Transit,schl,0,schltourmode9
+6,TNC-Transit,schl,0,schltourmode9
+7,TNC-Transit,schl,0,schltourmode9
+8,TNC-Transit,schl,0,schltourmode9
+9,TNC-Transit,schl,0,schltourmode9
+1,Taxi,schl,0,schltourmode10
+2,Taxi,schl,0,schltourmode10
+3,Taxi,schl,0,schltourmode10
+4,Taxi,schl,0,schltourmode10
+5,Taxi,schl,0,schltourmode10
+6,Taxi,schl,0,schltourmode10
+7,Taxi,schl,0,schltourmode10
+8,Taxi,schl,0,schltourmode10
+9,Taxi,schl,0,schltourmode10
+1,TNC-Single,schl,0,schltourmode11
+2,TNC-Single,schl,0,schltourmode11
+3,TNC-Single,schl,0,schltourmode11
+4,TNC-Single,schl,0,schltourmode11
+5,TNC-Single,schl,0,schltourmode11
+6,TNC-Single,schl,0,schltourmode11
+7,TNC-Single,schl,0,schltourmode11
+8,TNC-Single,schl,0,schltourmode11
+9,TNC-Single,schl,0,schltourmode11
+1,TNC-Shared,schl,0,schltourmode12
+2,TNC-Shared,schl,0,schltourmode12
+3,TNC-Shared,schl,0,schltourmode12
+4,TNC-Shared,schl,0,schltourmode12
+5,TNC-Shared,schl,0,schltourmode12
+6,TNC-Shared,schl,0,schltourmode12
+7,TNC-Shared,schl,0,schltourmode12
+8,TNC-Shared,schl,0,schltourmode12
+9,TNC-Shared,schl,0,schltourmode12
+1,TNC-Transit,imain,0,imaintourmode9
+2,TNC-Transit,imain,0,imaintourmode9
+3,TNC-Transit,imain,0,imaintourmode9
+4,TNC-Transit,imain,0,imaintourmode9
+5,TNC-Transit,imain,0,imaintourmode9
+6,TNC-Transit,imain,0,imaintourmode9
+7,TNC-Transit,imain,0,imaintourmode9
+8,TNC-Transit,imain,0,imaintourmode9
+9,TNC-Transit,imain,0,imaintourmode9
+1,Taxi,imain,0,imaintourmode10
+2,Taxi,imain,0,imaintourmode10
+3,Taxi,imain,0,imaintourmode10
+4,Taxi,imain,0,imaintourmode10
+5,Taxi,imain,0,imaintourmode10
+6,Taxi,imain,0,imaintourmode10
+7,Taxi,imain,0,imaintourmode10
+8,Taxi,imain,0,imaintourmode10
+9,Taxi,imain,0,imaintourmode10
+1,TNC-Single,imain,0,imaintourmode11
+2,TNC-Single,imain,0,imaintourmode11
+3,TNC-Single,imain,0,imaintourmode11
+4,TNC-Single,imain,0,imaintourmode11
+5,TNC-Single,imain,0,imaintourmode11
+6,TNC-Single,imain,0,imaintourmode11
+7,TNC-Single,imain,0,imaintourmode11
+8,TNC-Single,imain,0,imaintourmode11
+9,TNC-Single,imain,0,imaintourmode11
+1,TNC-Shared,imain,0,imaintourmode12
+2,TNC-Shared,imain,0,imaintourmode12
+3,TNC-Shared,imain,0,imaintourmode12
+4,TNC-Shared,imain,0,imaintourmode12
+5,TNC-Shared,imain,0,imaintourmode12
+6,TNC-Shared,imain,0,imaintourmode12
+7,TNC-Shared,imain,0,imaintourmode12
+8,TNC-Shared,imain,0,imaintourmode12
+9,TNC-Shared,imain,0,imaintourmode12
+1,TNC-Transit,idisc,0,idisctourmode9
+2,TNC-Transit,idisc,0,idisctourmode9
+3,TNC-Transit,idisc,0,idisctourmode9
+4,TNC-Transit,idisc,0,idisctourmode9
+5,TNC-Transit,idisc,0,idisctourmode9
+6,TNC-Transit,idisc,0,idisctourmode9
+7,TNC-Transit,idisc,0,idisctourmode9
+8,TNC-Transit,idisc,0,idisctourmode9
+9,TNC-Transit,idisc,0,idisctourmode9
+1,Taxi,idisc,0,idisctourmode10
+2,Taxi,idisc,0,idisctourmode10
+3,Taxi,idisc,0,idisctourmode10
+4,Taxi,idisc,0,idisctourmode10
+5,Taxi,idisc,0,idisctourmode10
+6,Taxi,idisc,0,idisctourmode10
+7,Taxi,idisc,0,idisctourmode10
+8,Taxi,idisc,0,idisctourmode10
+9,Taxi,idisc,0,idisctourmode10
+1,TNC-Single,idisc,0,idisctourmode11
+2,TNC-Single,idisc,0,idisctourmode11
+3,TNC-Single,idisc,0,idisctourmode11
+4,TNC-Single,idisc,0,idisctourmode11
+5,TNC-Single,idisc,0,idisctourmode11
+6,TNC-Single,idisc,0,idisctourmode11
+7,TNC-Single,idisc,0,idisctourmode11
+8,TNC-Single,idisc,0,idisctourmode11
+9,TNC-Single,idisc,0,idisctourmode11
+1,TNC-Shared,idisc,0,idisctourmode12
+2,TNC-Shared,idisc,0,idisctourmode12
+3,TNC-Shared,idisc,0,idisctourmode12
+4,TNC-Shared,idisc,0,idisctourmode12
+5,TNC-Shared,idisc,0,idisctourmode12
+6,TNC-Shared,idisc,0,idisctourmode12
+7,TNC-Shared,idisc,0,idisctourmode12
+8,TNC-Shared,idisc,0,idisctourmode12
+9,TNC-Shared,idisc,0,idisctourmode12
+1,TNC-Transit,jmain,0,jmaintourmode9
+2,TNC-Transit,jmain,0,jmaintourmode9
+3,TNC-Transit,jmain,0,jmaintourmode9
+4,TNC-Transit,jmain,0,jmaintourmode9
+5,TNC-Transit,jmain,0,jmaintourmode9
+6,TNC-Transit,jmain,0,jmaintourmode9
+7,TNC-Transit,jmain,0,jmaintourmode9
+8,TNC-Transit,jmain,0,jmaintourmode9
+9,TNC-Transit,jmain,0,jmaintourmode9
+1,Taxi,jmain,0,jmaintourmode10
+2,Taxi,jmain,0,jmaintourmode10
+3,Taxi,jmain,0,jmaintourmode10
+4,Taxi,jmain,0,jmaintourmode10
+5,Taxi,jmain,0,jmaintourmode10
+6,Taxi,jmain,0,jmaintourmode10
+7,Taxi,jmain,0,jmaintourmode10
+8,Taxi,jmain,0,jmaintourmode10
+9,Taxi,jmain,0,jmaintourmode10
+1,TNC-Single,jmain,0,jmaintourmode11
+2,TNC-Single,jmain,0,jmaintourmode11
+3,TNC-Single,jmain,0,jmaintourmode11
+4,TNC-Single,jmain,0,jmaintourmode11
+5,TNC-Single,jmain,0,jmaintourmode11
+6,TNC-Single,jmain,0,jmaintourmode11
+7,TNC-Single,jmain,0,jmaintourmode11
+8,TNC-Single,jmain,0,jmaintourmode11
+9,TNC-Single,jmain,0,jmaintourmode11
+1,TNC-Shared,jmain,0,jmaintourmode12
+2,TNC-Shared,jmain,0,jmaintourmode12
+3,TNC-Shared,jmain,0,jmaintourmode12
+4,TNC-Shared,jmain,0,jmaintourmode12
+5,TNC-Shared,jmain,0,jmaintourmode12
+6,TNC-Shared,jmain,0,jmaintourmode12
+7,TNC-Shared,jmain,0,jmaintourmode12
+8,TNC-Shared,jmain,0,jmaintourmode12
+9,TNC-Shared,jmain,0,jmaintourmode12
+1,TNC-Transit,jdisc,0,jdisctourmode9
+2,TNC-Transit,jdisc,0,jdisctourmode9
+3,TNC-Transit,jdisc,0,jdisctourmode9
+4,TNC-Transit,jdisc,0,jdisctourmode9
+5,TNC-Transit,jdisc,0,jdisctourmode9
+6,TNC-Transit,jdisc,0,jdisctourmode9
+7,TNC-Transit,jdisc,0,jdisctourmode9
+8,TNC-Transit,jdisc,0,jdisctourmode9
+9,TNC-Transit,jdisc,0,jdisctourmode9
+1,Taxi,jdisc,0,jdisctourmode10
+2,Taxi,jdisc,0,jdisctourmode10
+3,Taxi,jdisc,0,jdisctourmode10
+4,Taxi,jdisc,0,jdisctourmode10
+5,Taxi,jdisc,0,jdisctourmode10
+6,Taxi,jdisc,0,jdisctourmode10
+7,Taxi,jdisc,0,jdisctourmode10
+8,Taxi,jdisc,0,jdisctourmode10
+9,Taxi,jdisc,0,jdisctourmode10
+1,TNC-Single,jdisc,0,jdisctourmode11
+2,TNC-Single,jdisc,0,jdisctourmode11
+3,TNC-Single,jdisc,0,jdisctourmode11
+4,TNC-Single,jdisc,0,jdisctourmode11
+5,TNC-Single,jdisc,0,jdisctourmode11
+6,TNC-Single,jdisc,0,jdisctourmode11
+7,TNC-Single,jdisc,0,jdisctourmode11
+8,TNC-Single,jdisc,0,jdisctourmode11
+9,TNC-Single,jdisc,0,jdisctourmode11
+1,TNC-Shared,jdisc,0,jdisctourmode12
+2,TNC-Shared,jdisc,0,jdisctourmode12
+3,TNC-Shared,jdisc,0,jdisctourmode12
+4,TNC-Shared,jdisc,0,jdisctourmode12
+5,TNC-Shared,jdisc,0,jdisctourmode12
+6,TNC-Shared,jdisc,0,jdisctourmode12
+7,TNC-Shared,jdisc,0,jdisctourmode12
+8,TNC-Shared,jdisc,0,jdisctourmode12
+9,TNC-Shared,jdisc,0,jdisctourmode12
+1,TNC-Transit,atwork,0,atworktourmode9
+2,TNC-Transit,atwork,0,atworktourmode9
+3,TNC-Transit,atwork,0,atworktourmode9
+4,TNC-Transit,atwork,0,atworktourmode9
+5,TNC-Transit,atwork,0,atworktourmode9
+6,TNC-Transit,atwork,0,atworktourmode9
+7,TNC-Transit,atwork,0,atworktourmode9
+8,TNC-Transit,atwork,0,atworktourmode9
+9,TNC-Transit,atwork,0,atworktourmode9
+1,Taxi,atwork,0,atworktourmode10
+2,Taxi,atwork,0,atworktourmode10
+3,Taxi,atwork,0,atworktourmode10
+4,Taxi,atwork,0,atworktourmode10
+5,Taxi,atwork,0,atworktourmode10
+6,Taxi,atwork,0,atworktourmode10
+7,Taxi,atwork,0,atworktourmode10
+8,Taxi,atwork,0,atworktourmode10
+9,Taxi,atwork,0,atworktourmode10
+1,TNC-Single,atwork,0,atworktourmode11
+2,TNC-Single,atwork,0,atworktourmode11
+3,TNC-Single,atwork,0,atworktourmode11
+4,TNC-Single,atwork,0,atworktourmode11
+5,TNC-Single,atwork,0,atworktourmode11
+6,TNC-Single,atwork,0,atworktourmode11
+7,TNC-Single,atwork,0,atworktourmode11
+8,TNC-Single,atwork,0,atworktourmode11
+9,TNC-Single,atwork,0,atworktourmode11
+1,TNC-Shared,atwork,0,atworktourmode12
+2,TNC-Shared,atwork,0,atworktourmode12
+3,TNC-Shared,atwork,0,atworktourmode12
+4,TNC-Shared,atwork,0,atworktourmode12
+5,TNC-Shared,atwork,0,atworktourmode12
+6,TNC-Shared,atwork,0,atworktourmode12
+7,TNC-Shared,atwork,0,atworktourmode12
+8,TNC-Shared,atwork,0,atworktourmode12
+9,TNC-Shared,atwork,0,atworktourmode12
+1,TNC-Transit,total,0,totaltourmode9
+2,TNC-Transit,total,0,totaltourmode9
+3,TNC-Transit,total,0,totaltourmode9
+4,TNC-Transit,total,0,totaltourmode9
+5,TNC-Transit,total,0,totaltourmode9
+6,TNC-Transit,total,0,totaltourmode9
+7,TNC-Transit,total,0,totaltourmode9
+8,TNC-Transit,total,0,totaltourmode9
+9,TNC-Transit,total,0,totaltourmode9
+1,Taxi,total,0,totaltourmode10
+2,Taxi,total,0,totaltourmode10
+3,Taxi,total,0,totaltourmode10
+4,Taxi,total,0,totaltourmode10
+5,Taxi,total,0,totaltourmode10
+6,Taxi,total,0,totaltourmode10
+7,Taxi,total,0,totaltourmode10
+8,Taxi,total,0,totaltourmode10
+9,Taxi,total,0,totaltourmode10
+1,TNC-Single,total,0,totaltourmode11
+2,TNC-Single,total,0,totaltourmode11
+3,TNC-Single,total,0,totaltourmode11
+4,TNC-Single,total,0,totaltourmode11
+5,TNC-Single,total,0,totaltourmode11
+6,TNC-Single,total,0,totaltourmode11
+7,TNC-Single,total,0,totaltourmode11
+8,TNC-Single,total,0,totaltourmode11
+9,TNC-Single,total,0,totaltourmode11
+1,TNC-Shared,total,0,totaltourmode12
+2,TNC-Shared,total,0,totaltourmode12
+3,TNC-Shared,total,0,totaltourmode12
+4,TNC-Shared,total,0,totaltourmode12
+5,TNC-Shared,total,0,totaltourmode12
+6,TNC-Shared,total,0,totaltourmode12
+7,TNC-Shared,total,0,totaltourmode12
+8,TNC-Shared,total,0,totaltourmode12
+9,TNC-Shared,total,0,totaltourmode12
+10,Auto SOV,work,0,worktourmode1
+11,Auto SOV,work,0,worktourmode1
+12,Auto SOV,work,0,worktourmode1
+13,Auto SOV,work,0,worktourmode1
+10,Auto 2 Person,work,0,worktourmode2
+11,Auto 2 Person,work,0,worktourmode2
+12,Auto 2 Person,work,0,worktourmode2
+13,Auto 2 Person,work,0,worktourmode2
+10,Auto 3+ Person,work,0,worktourmode3
+11,Auto 3+ Person,work,0,worktourmode3
+12,Auto 3+ Person,work,0,worktourmode3
+13,Auto 3+ Person,work,0,worktourmode3
+10,Walk,work,0,worktourmode4
+11,Walk,work,0,worktourmode4
+12,Walk,work,0,worktourmode4
+13,Walk,work,0,worktourmode4
+10,Bike/Moped,work,0,worktourmode5
+11,Bike/Moped,work,0,worktourmode5
+12,Bike/Moped,work,0,worktourmode5
+13,Bike/Moped,work,0,worktourmode5
+10,Walk-Transit,work,0,worktourmode6
+11,Walk-Transit,work,0,worktourmode6
+12,Walk-Transit,work,0,worktourmode6
+13,Walk-Transit,work,0,worktourmode6
+10,PNR-Transit,work,0,worktourmode7
+11,PNR-Transit,work,0,worktourmode7
+12,PNR-Transit,work,0,worktourmode7
+13,PNR-Transit,work,0,worktourmode7
+10,KNR-Transit,work,0,worktourmode8
+11,KNR-Transit,work,0,worktourmode8
+12,KNR-Transit,work,0,worktourmode8
+13,KNR-Transit,work,0,worktourmode8
+10,TNC-Transit,work,0,worktourmode9
+11,TNC-Transit,work,0,worktourmode9
+12,TNC-Transit,work,0,worktourmode9
+13,TNC-Transit,work,0,worktourmode9
+10,Taxi,work,0,worktourmode10
+11,Taxi,work,0,worktourmode10
+12,Taxi,work,0,worktourmode10
+13,Taxi,work,0,worktourmode10
+10,TNC-Single,work,0,worktourmode11
+11,TNC-Single,work,0,worktourmode11
+12,TNC-Single,work,0,worktourmode11
+13,TNC-Single,work,0,worktourmode11
+10,TNC-Shared,work,0,worktourmode12
+11,TNC-Shared,work,0,worktourmode12
+12,TNC-Shared,work,0,worktourmode12
+13,TNC-Shared,work,0,worktourmode12
+10,Total,work,0,workTotal
+11,Total,work,0,workTotal
+12,Total,work,0,workTotal
+13,Total,work,0,workTotal
+10,Auto SOV,univ,0,univtourmode1
+11,Auto SOV,univ,0,univtourmode1
+12,Auto SOV,univ,0,univtourmode1
+13,Auto SOV,univ,0,univtourmode1
+10,Auto 2 Person,univ,0,univtourmode2
+11,Auto 2 Person,univ,0,univtourmode2
+12,Auto 2 Person,univ,0,univtourmode2
+13,Auto 2 Person,univ,0,univtourmode2
+10,Auto 3+ Person,univ,0,univtourmode3
+11,Auto 3+ Person,univ,0,univtourmode3
+12,Auto 3+ Person,univ,0,univtourmode3
+13,Auto 3+ Person,univ,0,univtourmode3
+10,Walk,univ,0,univtourmode4
+11,Walk,univ,0,univtourmode4
+12,Walk,univ,0,univtourmode4
+13,Walk,univ,0,univtourmode4
+10,Bike/Moped,univ,0,univtourmode5
+11,Bike/Moped,univ,0,univtourmode5
+12,Bike/Moped,univ,0,univtourmode5
+13,Bike/Moped,univ,0,univtourmode5
+10,Walk-Transit,univ,0,univtourmode6
+11,Walk-Transit,univ,0,univtourmode6
+12,Walk-Transit,univ,0,univtourmode6
+13,Walk-Transit,univ,0,univtourmode6
+10,PNR-Transit,univ,0,univtourmode7
+11,PNR-Transit,univ,0,univtourmode7
+12,PNR-Transit,univ,0,univtourmode7
+13,PNR-Transit,univ,0,univtourmode7
+10,KNR-Transit,univ,0,univtourmode8
+11,KNR-Transit,univ,0,univtourmode8
+12,KNR-Transit,univ,0,univtourmode8
+13,KNR-Transit,univ,0,univtourmode8
+10,TNC-Transit,univ,0,univtourmode9
+11,TNC-Transit,univ,0,univtourmode9
+12,TNC-Transit,univ,0,univtourmode9
+13,TNC-Transit,univ,0,univtourmode9
+10,Taxi,univ,0,univtourmode10
+11,Taxi,univ,0,univtourmode10
+12,Taxi,univ,0,univtourmode10
+13,Taxi,univ,0,univtourmode10
+10,TNC-Single,univ,0,univtourmode11
+11,TNC-Single,univ,0,univtourmode11
+12,TNC-Single,univ,0,univtourmode11
+13,TNC-Single,univ,0,univtourmode11
+10,TNC-Shared,univ,0,univtourmode12
+11,TNC-Shared,univ,0,univtourmode12
+12,TNC-Shared,univ,0,univtourmode12
+13,TNC-Shared,univ,0,univtourmode12
+10,Total,univ,0,univTotal
+11,Total,univ,0,univTotal
+12,Total,univ,0,univTotal
+13,Total,univ,0,univTotal
+10,Auto SOV,schl,0,schltourmode1
+11,Auto SOV,schl,0,schltourmode1
+12,Auto SOV,schl,0,schltourmode1
+13,Auto SOV,schl,0,schltourmode1
+10,Auto 2 Person,schl,0,schltourmode2
+11,Auto 2 Person,schl,0,schltourmode2
+12,Auto 2 Person,schl,0,schltourmode2
+13,Auto 2 Person,schl,0,schltourmode2
+10,Auto 3+ Person,schl,0,schltourmode3
+11,Auto 3+ Person,schl,0,schltourmode3
+12,Auto 3+ Person,schl,0,schltourmode3
+13,Auto 3+ Person,schl,0,schltourmode3
+10,Walk,schl,0,schltourmode4
+11,Walk,schl,0,schltourmode4
+12,Walk,schl,0,schltourmode4
+13,Walk,schl,0,schltourmode4
+10,Bike/Moped,schl,0,schltourmode5
+11,Bike/Moped,schl,0,schltourmode5
+12,Bike/Moped,schl,0,schltourmode5
+13,Bike/Moped,schl,0,schltourmode5
+10,Walk-Transit,schl,0,schltourmode6
+11,Walk-Transit,schl,0,schltourmode6
+12,Walk-Transit,schl,0,schltourmode6
+13,Walk-Transit,schl,0,schltourmode6
+10,PNR-Transit,schl,0,schltourmode7
+11,PNR-Transit,schl,0,schltourmode7
+12,PNR-Transit,schl,0,schltourmode7
+13,PNR-Transit,schl,0,schltourmode7
+10,KNR-Transit,schl,0,schltourmode8
+11,KNR-Transit,schl,0,schltourmode8
+12,KNR-Transit,schl,0,schltourmode8
+13,KNR-Transit,schl,0,schltourmode8
+10,TNC-Transit,schl,0,schltourmode9
+11,TNC-Transit,schl,0,schltourmode9
+12,TNC-Transit,schl,0,schltourmode9
+13,TNC-Transit,schl,0,schltourmode9
+10,Taxi,schl,0,schltourmode10
+11,Taxi,schl,0,schltourmode10
+12,Taxi,schl,0,schltourmode10
+13,Taxi,schl,0,schltourmode10
+10,TNC-Single,schl,0,schltourmode11
+11,TNC-Single,schl,0,schltourmode11
+12,TNC-Single,schl,0,schltourmode11
+13,TNC-Single,schl,0,schltourmode11
+10,TNC-Shared,schl,0,schltourmode12
+11,TNC-Shared,schl,0,schltourmode12
+12,TNC-Shared,schl,0,schltourmode12
+13,TNC-Shared,schl,0,schltourmode12
+10,Total,schl,0,schlTotal
+11,Total,schl,0,schlTotal
+12,Total,schl,0,schlTotal
+13,Total,schl,0,schlTotal
+10,Auto SOV,imain,0,imaintourmode1
+11,Auto SOV,imain,0,imaintourmode1
+12,Auto SOV,imain,0,imaintourmode1
+13,Auto SOV,imain,0,imaintourmode1
+10,Auto 2 Person,imain,0,imaintourmode2
+11,Auto 2 Person,imain,0,imaintourmode2
+12,Auto 2 Person,imain,0,imaintourmode2
+13,Auto 2 Person,imain,0,imaintourmode2
+10,Auto 3+ Person,imain,0,imaintourmode3
+11,Auto 3+ Person,imain,0,imaintourmode3
+12,Auto 3+ Person,imain,0,imaintourmode3
+13,Auto 3+ Person,imain,0,imaintourmode3
+10,Walk,imain,0,imaintourmode4
+11,Walk,imain,0,imaintourmode4
+12,Walk,imain,0,imaintourmode4
+13,Walk,imain,0,imaintourmode4
+10,Bike/Moped,imain,0,imaintourmode5
+11,Bike/Moped,imain,0,imaintourmode5
+12,Bike/Moped,imain,0,imaintourmode5
+13,Bike/Moped,imain,0,imaintourmode5
+10,Walk-Transit,imain,0,imaintourmode6
+11,Walk-Transit,imain,0,imaintourmode6
+12,Walk-Transit,imain,0,imaintourmode6
+13,Walk-Transit,imain,0,imaintourmode6
+10,PNR-Transit,imain,0,imaintourmode7
+11,PNR-Transit,imain,0,imaintourmode7
+12,PNR-Transit,imain,0,imaintourmode7
+13,PNR-Transit,imain,0,imaintourmode7
+10,KNR-Transit,imain,0,imaintourmode8
+11,KNR-Transit,imain,0,imaintourmode8
+12,KNR-Transit,imain,0,imaintourmode8
+13,KNR-Transit,imain,0,imaintourmode8
+10,TNC-Transit,imain,0,imaintourmode9
+11,TNC-Transit,imain,0,imaintourmode9
+12,TNC-Transit,imain,0,imaintourmode9
+13,TNC-Transit,imain,0,imaintourmode9
+10,Taxi,imain,0,imaintourmode10
+11,Taxi,imain,0,imaintourmode10
+12,Taxi,imain,0,imaintourmode10
+13,Taxi,imain,0,imaintourmode10
+10,TNC-Single,imain,0,imaintourmode11
+11,TNC-Single,imain,0,imaintourmode11
+12,TNC-Single,imain,0,imaintourmode11
+13,TNC-Single,imain,0,imaintourmode11
+10,TNC-Shared,imain,0,imaintourmode12
+11,TNC-Shared,imain,0,imaintourmode12
+12,TNC-Shared,imain,0,imaintourmode12
+13,TNC-Shared,imain,0,imaintourmode12
+10,Total,imain,0,imainTotal
+11,Total,imain,0,imainTotal
+12,Total,imain,0,imainTotal
+13,Total,imain,0,imainTotal
+10,Auto SOV,idisc,0,idisctourmode1
+11,Auto SOV,idisc,0,idisctourmode1
+12,Auto SOV,idisc,0,idisctourmode1
+13,Auto SOV,idisc,0,idisctourmode1
+10,Auto 2 Person,idisc,0,idisctourmode2
+11,Auto 2 Person,idisc,0,idisctourmode2
+12,Auto 2 Person,idisc,0,idisctourmode2
+13,Auto 2 Person,idisc,0,idisctourmode2
+10,Auto 3+ Person,idisc,0,idisctourmode3
+11,Auto 3+ Person,idisc,0,idisctourmode3
+12,Auto 3+ Person,idisc,0,idisctourmode3
+13,Auto 3+ Person,idisc,0,idisctourmode3
+10,Walk,idisc,0,idisctourmode4
+11,Walk,idisc,0,idisctourmode4
+12,Walk,idisc,0,idisctourmode4
+13,Walk,idisc,0,idisctourmode4
+10,Bike/Moped,idisc,0,idisctourmode5
+11,Bike/Moped,idisc,0,idisctourmode5
+12,Bike/Moped,idisc,0,idisctourmode5
+13,Bike/Moped,idisc,0,idisctourmode5
+10,Walk-Transit,idisc,0,idisctourmode6
+11,Walk-Transit,idisc,0,idisctourmode6
+12,Walk-Transit,idisc,0,idisctourmode6
+13,Walk-Transit,idisc,0,idisctourmode6
+10,PNR-Transit,idisc,0,idisctourmode7
+11,PNR-Transit,idisc,0,idisctourmode7
+12,PNR-Transit,idisc,0,idisctourmode7
+13,PNR-Transit,idisc,0,idisctourmode7
+10,KNR-Transit,idisc,0,idisctourmode8
+11,KNR-Transit,idisc,0,idisctourmode8
+12,KNR-Transit,idisc,0,idisctourmode8
+13,KNR-Transit,idisc,0,idisctourmode8
+10,TNC-Transit,idisc,0,idisctourmode9
+11,TNC-Transit,idisc,0,idisctourmode9
+12,TNC-Transit,idisc,0,idisctourmode9
+13,TNC-Transit,idisc,0,idisctourmode9
+10,Taxi,idisc,0,idisctourmode10
+11,Taxi,idisc,0,idisctourmode10
+12,Taxi,idisc,0,idisctourmode10
+13,Taxi,idisc,0,idisctourmode10
+10,TNC-Single,idisc,0,idisctourmode11
+11,TNC-Single,idisc,0,idisctourmode11
+12,TNC-Single,idisc,0,idisctourmode11
+13,TNC-Single,idisc,0,idisctourmode11
+10,TNC-Shared,idisc,0,idisctourmode12
+11,TNC-Shared,idisc,0,idisctourmode12
+12,TNC-Shared,idisc,0,idisctourmode12
+13,TNC-Shared,idisc,0,idisctourmode12
+10,Total,idisc,0,idiscTotal
+11,Total,idisc,0,idiscTotal
+12,Total,idisc,0,idiscTotal
+13,Total,idisc,0,idiscTotal
+10,Auto SOV,jmain,0,jmaintourmode1
+11,Auto SOV,jmain,0,jmaintourmode1
+12,Auto SOV,jmain,0,jmaintourmode1
+13,Auto SOV,jmain,0,jmaintourmode1
+10,Auto 2 Person,jmain,0,jmaintourmode2
+11,Auto 2 Person,jmain,0,jmaintourmode2
+12,Auto 2 Person,jmain,0,jmaintourmode2
+13,Auto 2 Person,jmain,0,jmaintourmode2
+10,Auto 3+ Person,jmain,0,jmaintourmode3
+11,Auto 3+ Person,jmain,0,jmaintourmode3
+12,Auto 3+ Person,jmain,0,jmaintourmode3
+13,Auto 3+ Person,jmain,0,jmaintourmode3
+10,Walk,jmain,0,jmaintourmode4
+11,Walk,jmain,0,jmaintourmode4
+12,Walk,jmain,0,jmaintourmode4
+13,Walk,jmain,0,jmaintourmode4
+10,Bike/Moped,jmain,0,jmaintourmode5
+11,Bike/Moped,jmain,0,jmaintourmode5
+12,Bike/Moped,jmain,0,jmaintourmode5
+13,Bike/Moped,jmain,0,jmaintourmode5
+10,Walk-Transit,jmain,0,jmaintourmode6
+11,Walk-Transit,jmain,0,jmaintourmode6
+12,Walk-Transit,jmain,0,jmaintourmode6
+13,Walk-Transit,jmain,0,jmaintourmode6
+10,PNR-Transit,jmain,0,jmaintourmode7
+11,PNR-Transit,jmain,0,jmaintourmode7
+12,PNR-Transit,jmain,0,jmaintourmode7
+13,PNR-Transit,jmain,0,jmaintourmode7
+10,KNR-Transit,jmain,0,jmaintourmode8
+11,KNR-Transit,jmain,0,jmaintourmode8
+12,KNR-Transit,jmain,0,jmaintourmode8
+13,KNR-Transit,jmain,0,jmaintourmode8
+10,TNC-Transit,jmain,0,jmaintourmode9
+11,TNC-Transit,jmain,0,jmaintourmode9
+12,TNC-Transit,jmain,0,jmaintourmode9
+13,TNC-Transit,jmain,0,jmaintourmode9
+10,Taxi,jmain,0,jmaintourmode10
+11,Taxi,jmain,0,jmaintourmode10
+12,Taxi,jmain,0,jmaintourmode10
+13,Taxi,jmain,0,jmaintourmode10
+10,TNC-Single,jmain,0,jmaintourmode11
+11,TNC-Single,jmain,0,jmaintourmode11
+12,TNC-Single,jmain,0,jmaintourmode11
+13,TNC-Single,jmain,0,jmaintourmode11
+10,TNC-Shared,jmain,0,jmaintourmode12
+11,TNC-Shared,jmain,0,jmaintourmode12
+12,TNC-Shared,jmain,0,jmaintourmode12
+13,TNC-Shared,jmain,0,jmaintourmode12
+10,Total,jmain,0,jmainTotal
+11,Total,jmain,0,jmainTotal
+12,Total,jmain,0,jmainTotal
+13,Total,jmain,0,jmainTotal
+10,Auto SOV,jdisc,0,jdisctourmode1
+11,Auto SOV,jdisc,0,jdisctourmode1
+12,Auto SOV,jdisc,0,jdisctourmode1
+13,Auto SOV,jdisc,0,jdisctourmode1
+10,Auto 2 Person,jdisc,0,jdisctourmode2
+11,Auto 2 Person,jdisc,0,jdisctourmode2
+12,Auto 2 Person,jdisc,0,jdisctourmode2
+13,Auto 2 Person,jdisc,0,jdisctourmode2
+10,Auto 3+ Person,jdisc,0,jdisctourmode3
+11,Auto 3+ Person,jdisc,0,jdisctourmode3
+12,Auto 3+ Person,jdisc,0,jdisctourmode3
+13,Auto 3+ Person,jdisc,0,jdisctourmode3
+10,Walk,jdisc,0,jdisctourmode4
+11,Walk,jdisc,0,jdisctourmode4
+12,Walk,jdisc,0,jdisctourmode4
+13,Walk,jdisc,0,jdisctourmode4
+10,Bike/Moped,jdisc,0,jdisctourmode5
+11,Bike/Moped,jdisc,0,jdisctourmode5
+12,Bike/Moped,jdisc,0,jdisctourmode5
+13,Bike/Moped,jdisc,0,jdisctourmode5
+10,Walk-Transit,jdisc,0,jdisctourmode6
+11,Walk-Transit,jdisc,0,jdisctourmode6
+12,Walk-Transit,jdisc,0,jdisctourmode6
+13,Walk-Transit,jdisc,0,jdisctourmode6
+10,PNR-Transit,jdisc,0,jdisctourmode7
+11,PNR-Transit,jdisc,0,jdisctourmode7
+12,PNR-Transit,jdisc,0,jdisctourmode7
+13,PNR-Transit,jdisc,0,jdisctourmode7
+10,KNR-Transit,jdisc,0,jdisctourmode8
+11,KNR-Transit,jdisc,0,jdisctourmode8
+12,KNR-Transit,jdisc,0,jdisctourmode8
+13,KNR-Transit,jdisc,0,jdisctourmode8
+10,TNC-Transit,jdisc,0,jdisctourmode9
+11,TNC-Transit,jdisc,0,jdisctourmode9
+12,TNC-Transit,jdisc,0,jdisctourmode9
+13,TNC-Transit,jdisc,0,jdisctourmode9
+10,Taxi,jdisc,0,jdisctourmode10
+11,Taxi,jdisc,0,jdisctourmode10
+12,Taxi,jdisc,0,jdisctourmode10
+13,Taxi,jdisc,0,jdisctourmode10
+10,TNC-Single,jdisc,0,jdisctourmode11
+11,TNC-Single,jdisc,0,jdisctourmode11
+12,TNC-Single,jdisc,0,jdisctourmode11
+13,TNC-Single,jdisc,0,jdisctourmode11
+10,TNC-Shared,jdisc,0,jdisctourmode12
+11,TNC-Shared,jdisc,0,jdisctourmode12
+12,TNC-Shared,jdisc,0,jdisctourmode12
+13,TNC-Shared,jdisc,0,jdisctourmode12
+10,Total,jdisc,0,jdiscTotal
+11,Total,jdisc,0,jdiscTotal
+12,Total,jdisc,0,jdiscTotal
+13,Total,jdisc,0,jdiscTotal
+10,Auto SOV,atwork,0,atworktourmode1
+11,Auto SOV,atwork,0,atworktourmode1
+12,Auto SOV,atwork,0,atworktourmode1
+13,Auto SOV,atwork,0,atworktourmode1
+10,Auto 2 Person,atwork,0,atworktourmode2
+11,Auto 2 Person,atwork,0,atworktourmode2
+12,Auto 2 Person,atwork,0,atworktourmode2
+13,Auto 2 Person,atwork,0,atworktourmode2
+10,Auto 3+ Person,atwork,0,atworktourmode3
+11,Auto 3+ Person,atwork,0,atworktourmode3
+12,Auto 3+ Person,atwork,0,atworktourmode3
+13,Auto 3+ Person,atwork,0,atworktourmode3
+10,Walk,atwork,0,atworktourmode4
+11,Walk,atwork,0,atworktourmode4
+12,Walk,atwork,0,atworktourmode4
+13,Walk,atwork,0,atworktourmode4
+10,Bike/Moped,atwork,0,atworktourmode5
+11,Bike/Moped,atwork,0,atworktourmode5
+12,Bike/Moped,atwork,0,atworktourmode5
+13,Bike/Moped,atwork,0,atworktourmode5
+10,Walk-Transit,atwork,0,atworktourmode6
+11,Walk-Transit,atwork,0,atworktourmode6
+12,Walk-Transit,atwork,0,atworktourmode6
+13,Walk-Transit,atwork,0,atworktourmode6
+10,PNR-Transit,atwork,0,atworktourmode7
+11,PNR-Transit,atwork,0,atworktourmode7
+12,PNR-Transit,atwork,0,atworktourmode7
+13,PNR-Transit,atwork,0,atworktourmode7
+10,KNR-Transit,atwork,0,atworktourmode8
+11,KNR-Transit,atwork,0,atworktourmode8
+12,KNR-Transit,atwork,0,atworktourmode8
+13,KNR-Transit,atwork,0,atworktourmode8
+10,TNC-Transit,atwork,0,atworktourmode9
+11,TNC-Transit,atwork,0,atworktourmode9
+12,TNC-Transit,atwork,0,atworktourmode9
+13,TNC-Transit,atwork,0,atworktourmode9
+10,Taxi,atwork,0,atworktourmode10
+11,Taxi,atwork,0,atworktourmode10
+12,Taxi,atwork,0,atworktourmode10
+13,Taxi,atwork,0,atworktourmode10
+10,TNC-Single,atwork,0,atworktourmode11
+11,TNC-Single,atwork,0,atworktourmode11
+12,TNC-Single,atwork,0,atworktourmode11
+13,TNC-Single,atwork,0,atworktourmode11
+10,TNC-Shared,atwork,0,atworktourmode12
+11,TNC-Shared,atwork,0,atworktourmode12
+12,TNC-Shared,atwork,0,atworktourmode12
+13,TNC-Shared,atwork,0,atworktourmode12
+10,Total,atwork,0,atworkTotal
+11,Total,atwork,0,atworkTotal
+12,Total,atwork,0,atworkTotal
+13,Total,atwork,0,atworkTotal
+10,Auto SOV,total,0,totaltourmode1
+11,Auto SOV,total,0,totaltourmode1
+12,Auto SOV,total,0,totaltourmode1
+13,Auto SOV,total,0,totaltourmode1
+10,Auto 2 Person,total,0,totaltourmode2
+11,Auto 2 Person,total,0,totaltourmode2
+12,Auto 2 Person,total,0,totaltourmode2
+13,Auto 2 Person,total,0,totaltourmode2
+10,Auto 3+ Person,total,0,totaltourmode3
+11,Auto 3+ Person,total,0,totaltourmode3
+12,Auto 3+ Person,total,0,totaltourmode3
+13,Auto 3+ Person,total,0,totaltourmode3
+10,Walk,total,0,totaltourmode4
+11,Walk,total,0,totaltourmode4
+12,Walk,total,0,totaltourmode4
+13,Walk,total,0,totaltourmode4
+10,Bike/Moped,total,0,totaltourmode5
+11,Bike/Moped,total,0,totaltourmode5
+12,Bike/Moped,total,0,totaltourmode5
+13,Bike/Moped,total,0,totaltourmode5
+10,Walk-Transit,total,0,totaltourmode6
+11,Walk-Transit,total,0,totaltourmode6
+12,Walk-Transit,total,0,totaltourmode6
+13,Walk-Transit,total,0,totaltourmode6
+10,PNR-Transit,total,0,totaltourmode7
+11,PNR-Transit,total,0,totaltourmode7
+12,PNR-Transit,total,0,totaltourmode7
+13,PNR-Transit,total,0,totaltourmode7
+10,KNR-Transit,total,0,totaltourmode8
+11,KNR-Transit,total,0,totaltourmode8
+12,KNR-Transit,total,0,totaltourmode8
+13,KNR-Transit,total,0,totaltourmode8
+10,TNC-Transit,total,0,totaltourmode9
+11,TNC-Transit,total,0,totaltourmode9
+12,TNC-Transit,total,0,totaltourmode9
+13,TNC-Transit,total,0,totaltourmode9
+10,Taxi,total,0,totaltourmode10
+11,Taxi,total,0,totaltourmode10
+12,Taxi,total,0,totaltourmode10
+13,Taxi,total,0,totaltourmode10
+10,TNC-Single,total,0,totaltourmode11
+11,TNC-Single,total,0,totaltourmode11
+12,TNC-Single,total,0,totaltourmode11
+13,TNC-Single,total,0,totaltourmode11
+10,TNC-Shared,total,0,totaltourmode12
+11,TNC-Shared,total,0,totaltourmode12
+12,TNC-Shared,total,0,totaltourmode12
+13,TNC-Shared,total,0,totaltourmode12
+10,Total,total,0,totalTotal
+11,Total,total,0,totalTotal
+12,Total,total,0,totalTotal
+13,Total,total,0,totalTotal

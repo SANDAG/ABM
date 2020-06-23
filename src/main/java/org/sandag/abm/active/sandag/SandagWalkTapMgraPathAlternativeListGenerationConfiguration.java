@@ -14,7 +14,7 @@ public class SandagWalkTapMgraPathAlternativeListGenerationConfiguration
             Network<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> network)
     {
         super(propertyMap, network);
-        this.PROPERTIES_MAXDIST_ZONE = "active.maxdist.walk.tap";
+        this.PROPERTIES_MAXDIST_ZONE = "active.maxdist.microtransit.tap";
         this.PROPERTIES_TRACE_ORIGINS = "active.trace.origins.tap";
     }
 

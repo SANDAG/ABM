@@ -245,7 +245,7 @@ public class CrossBorderTourManager
             throw new RuntimeException();
         }
         String tripHeaderString = new String(
-                "tourID,tripID,originPurp,destPurp,originMGRA,destinationMGRA,originTAZ,destinationTAZ,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,avAvailable,boardingTap,alightingTap,set,workTimeFactor,nonWorkTimeFactor,valueOfTime\n");
+                "tourID,tripID,originPurp,destPurp,originMGRA,destinationMGRA,originTAZ,destinationTAZ,inbound,originIsTourDestination,destinationIsTourDestination,period,tripMode,avAvailable,boardingTap,alightingTap,set,workTimeFactor,nonWorkTimeFactor,valueOfTime,parkingCost\n");
         tripWriter.print(tripHeaderString);
 
         // Iterate through the array, printing records to the file
@@ -317,7 +317,8 @@ public class CrossBorderTourManager
                 + trip.getSet() + ","
                         + String.format("%9.2f",tour.getWorkTimeFactor()) + "," 
                         + String.format("%9.2f",tour.getNonWorkTimeFactor()) + ","
-                        + String.format("%9.2f", trip.getValueOfTime()) +"\n");
+                        + String.format("%9.2f", trip.getValueOfTime()) + ","
+                        + String.format("%9.2f", trip.getParkingCost())+ "\n");
         writer.print(record);
     }
     /**

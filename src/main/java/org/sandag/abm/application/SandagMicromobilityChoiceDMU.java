@@ -21,6 +21,8 @@ public class SandagMicromobilityChoiceDMU
         methodIndexMap.put("getIvtCoeff", 0);
         methodIndexMap.put("getCostCoeff", 1);
         methodIndexMap.put("getWalkTime", 2);
+        methodIndexMap.put("getIsTransit", 3);
+        methodIndexMap.put("getMicroTransitAvailable", 4);
                
       }
 
@@ -35,6 +37,10 @@ public class SandagMicromobilityChoiceDMU
             return getCostCoeff();
         case 2:
             return getWalkTime();
+        case 3:
+        	return isTransit()? 1 : 0;
+        case 4:
+        	return isMicroTransitAvailable() ? 1 : 0;
 
         default:
             logger.error("method number = " + variableIndex + " not found");

@@ -353,35 +353,35 @@ Assignment matrices and resulting network flows are always in PCE.
             # Main list of assignment classes
             classes = [
                 {   # 0
-                    "name": 'SOV_NT_L', "mode": 's', "PCE": 1, "VOT": 15.0, "cost": '@cost_auto',
+                    "name": 'SOV_NT_L', "mode": 's', "PCE": 1, "VOT": 8.81, "cost": '@cost_auto',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.SOV", "TOLLDIST"]
                 },
                 {   # 1
-                    "name": 'SOV_TR_L', "mode": 'S', "PCE": 1, "VOT": 15.0, "cost": '@cost_auto',
+                    "name": 'SOV_TR_L', "mode": 'S', "PCE": 1, "VOT": 8.81, "cost": '@cost_auto',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.SOV", "TOLLDIST"]
                 },
                 {   # 2
-                    "name": 'HOV2_L', "mode": 'H', "PCE": 1, "VOT": 15.0, "cost": '@cost_hov2',
+                    "name": 'HOV2_L', "mode": 'H', "PCE": 1, "VOT": 8.81, "cost": '@cost_hov2',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.HOV2", "TOLLDIST.HOV2", "HOVDIST"]
                 },
                 {   # 3
-                    "name": 'HOV3_L', "mode": 'I', "PCE": 1, "VOT": 15.0, "cost": '@cost_hov3',
+                    "name": 'HOV3_L', "mode": 'I', "PCE": 1, "VOT": 8.81, "cost": '@cost_hov3',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.HOV3", "TOLLDIST.HOV3", "HOVDIST"]
                 },
                 {   # 4
-                    "name": 'SOV_NT_M', "mode": 's', "PCE": 1, "VOT": 30.0, "cost": '@cost_auto',
+                    "name": 'SOV_NT_M', "mode": 's', "PCE": 1, "VOT": 18.0, "cost": '@cost_auto',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.SOV", "TOLLDIST"]
                 },
                 {   # 5
-                    "name": 'SOV_TR_M', "mode": 'S', "PCE": 1, "VOT": 30.0, "cost": '@cost_auto',
+                    "name": 'SOV_TR_M', "mode": 'S', "PCE": 1, "VOT": 18.0, "cost": '@cost_auto',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.SOV", "TOLLDIST"]
                 },
                 {   # 6
-                    "name": 'HOV2_M', "mode": 'H', "PCE": 1, "VOT": 30.0, "cost": '@cost_hov2',
+                    "name": 'HOV2_M', "mode": 'H', "PCE": 1, "VOT": 18.0, "cost": '@cost_hov2',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.HOV2", "TOLLDIST.HOV2", "HOVDIST"]
                 },
                 {   # 7
-                    "name": 'HOV3_M', "mode": 'I', "PCE": 1, "VOT": 30.0, "cost": '@cost_hov3',
+                    "name": 'HOV3_M', "mode": 'I', "PCE": 1, "VOT": 18.0, "cost": '@cost_hov3',
                     "skims": ["TIME", "DIST", "REL", "TOLLCOST.HOV3", "TOLLDIST.HOV3", "HOVDIST"]
                 },
                 {   # 8
