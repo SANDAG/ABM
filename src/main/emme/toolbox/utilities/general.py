@@ -360,6 +360,10 @@ class CSVReader(object):
         
     def __iter__(self):
         return self
+
+    @property
+    def fields(self):
+        return list(self._fields)
     
     def next(self):
         line = self._f.next()
