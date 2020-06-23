@@ -197,8 +197,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             run_msg = "Model run complete"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
         except Exception as error:
-            self.tool_run_msg = _m.PageBuilder.format_exception(
-                error, _traceback.format_exc(error))
+            self.tool_run_msg = _m.PageBuilder.format_exception(error, _traceback.format_exc())
+
             raise
 
     @_m.method(return_type=_m.UnicodeType)
@@ -385,7 +385,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
                 
                 mgraFile = 'mgra13_based_input' + str(scenarioYear) + '.csv'
-                self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "walkMgraEquivMinutes.csv")                                  
+                self.complete_work(scenarioYear, input_dir, output_dir, mgraFile, "walkMgraEquivMinutes.csv")
                 print('complete walk')  
                 
                 if not skipBuildNetwork:
@@ -886,7 +886,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     name = row.pop("FACILITY_NAME")
                     class_name = row.pop("VEHICLE_CLASS")
                     for period in periods:
-                        availabilities[period][name][class_name] = int(row[period + "_AVAIL"])
+                        is_avail = int(row[period + "_AVAIL"])
+                        if is_avail not in [1, 0]:
+                            msg = "Error processing file '%s': value for period %s class %s facility %s is not 1 or 0"
+                            raise Exception(msg % (file_path, period, class_name, name))
+                        availabilities[period][name][class_name] = is_avail
         else:
             availabilities = None
         return availabilities
@@ -924,13 +928,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             for link in network.links():
                 if name in link["#name"]:
                     for class_name, is_avail in class_availabilities.iteritems():
-                        if is_avail == 0:
-                            continue
                         modes = class_mode_map[class_name]
                         if is_avail == 1 and not modes.issubset(link.modes):
                             link.modes |= modes
                             changes["added %s to" % class_name] += 1
-                        elif is_avail == -1 and modes.issubset(link.modes):
+                        elif is_avail == 0 and modes.issubset(link.modes):
                             link.modes -= modes
                             changes["removed %s from" % class_name] += 1
             report.append("<div style='margin-left:20px'><ul>")
