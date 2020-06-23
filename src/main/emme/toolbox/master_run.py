@@ -408,7 +408,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                             pass
 
                     if not skipInputChecker:
-                        input_checker()
+                        input_checker(path=self._path)
 
                     export_tap_adjacent_lines(_join(output_dir, "tapLines.csv"), base_scenario)
                     # parse vehicle availablility file by time-of-day

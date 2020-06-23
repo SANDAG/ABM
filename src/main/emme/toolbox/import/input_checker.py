@@ -32,6 +32,7 @@ import datetime
 import warnings
 from simpledbf import Dbf5
 import inro.modeller as _m
+import inro.emme.database.emmebank as _eb
 
 warnings.filterwarnings("ignore")
 
@@ -102,7 +103,7 @@ class input_checker(_m.Tool()):
 	def run(self):
 		self.tool_run_msg = ""
 		try:
-			self()
+			self(path = self.path)
 			run_msg = "Input Checker Complete"
 			self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
 		except Exception as error:
@@ -110,8 +111,10 @@ class input_checker(_m.Tool()):
 				error, _traceback.format_exc(error))
 			raise
 
-	def __call__(self):
+	def __call__(self, path = ""):
 		_m.logbook_write("Started running input checker...")
+
+		self.path = path
 
 		self.input_checker_path = _join(self.path, 'input_checker')
 		self.inputs_list_path = _join(self.input_checker_path, 'config', 'inputs_list.csv')
@@ -149,8 +152,12 @@ class input_checker(_m.Tool()):
 		# obtain file paths from the sandag_abm.properties
 		self.prop_file_paths()
 
+		# load emmebank
+		eb_path = _join(self.path, "emme_project", "Database", "emmebank")
+		eb = _eb.Emmebank(eb_path)
+
 		# load emme network
-		network = _m.Modeller().emmebank.scenario(100).get_network()
+		network = eb.scenario(100).get_network()
 
 		def get_emme_object(emme_network, emme_network_object, fields_to_export):
 			# Emme network attribute and object names
