@@ -14,19 +14,19 @@
 #
 # Exports the network results to csv file for use by the Java Data export process
 # and the Data loader to the reporting database.
-# 
+#
 #
 # Inputs:
 #    main_directory: main ABM directory
 #    base_scenario_id: scenario ID for the base scenario (same used in the Import network tool)
 #    traffic_emmebank: the base, traffic, Emme database
 #    transit_emmebank: the transit database
-#    num_processors: number of processors to use in the transit analysis calculations 
+#    num_processors: number of processors to use in the transit analysis calculations
 #
 # Files created:
 #    report/hwyload_pp.csv
 #    report/hwy_tcad.csv
-#    report/transit_aggflow.csv 
+#    report/transit_aggflow.csv
 #    report/transit_flow.csv
 #    report/transit_onoff.csv
 #	 report/trrt.csv
@@ -142,7 +142,7 @@ Export network results to csv files for SQL data loader."""
         period_scenario_ids = OrderedDict((v, i) for i, v in enumerate(periods, start=base_scenario_id + 1))
 
         base_scenario = traffic_emmebank.scenario(base_scenario_id)
-        
+
         self.export_traffic_attribute(base_scenario, export_path, traffic_emmebank, period_scenario_ids)
         self.export_traffic_load_by_period(export_path, traffic_emmebank, period_scenario_ids)
         self.export_transit_results(export_path, input_path, transit_emmebank, period_scenario_ids, num_processors)
@@ -154,7 +154,7 @@ Export network results to csv files for SQL data loader."""
         # items are ("column name", "attribute name") or ("column name", ("attribute name", default))
         hwylink_attrs = [
             ("ID", "@tcov_id"),
-            ("Length", "length"), 
+            ("Length", "length"),
             ("Dir", "is_one_way"),
             ("hwycov-id:1", "@tcov_id"),
             ("ID:1", "@tcov_id"),
@@ -170,15 +170,15 @@ Export network results to csv files for SQL data loader."""
             ("RTNO", "zero"),
             ("LKNO", "zero"),
             ("NM", "#name"),
-            ("FXNM", "#name_from"), 
+            ("FXNM", "#name_from"),
             ("TXNM", "#name_to"),
-            ("AN", "i"), 
+            ("AN", "i"),
             ("BN", "j"),
-            ("COJUR", "zero"), 
-            ("COSTAT", "zero"), 
+            ("COJUR", "zero"),
+            ("COSTAT", "zero"),
             ("COLOC", "zero"),
-            ("RLOOP", "zero"), 
-            ("ADTLK", "zero"), 
+            ("RLOOP", "zero"),
+            ("ADTLK", "zero"),
             ("ADTVL", "zero"),
             ("PKPCT", "zero"),
             ("TRPCT", "zero"),
@@ -186,16 +186,16 @@ Export network results to csv files for SQL data loader."""
             ("DIR:1", "zero"),
             ("FFC", "type"),
             ("CLASS", "zero"),
-            ("ASPD", "@speed_adjusted"), 
+            ("ASPD", "@speed_adjusted"),
             ("IYR", "@year_open_traffic"),
-            ("IPROJ", "@project_code"), 
+            ("IPROJ", "@project_code"),
             ("IJUR", "@jurisdiction_type"),
-            ("IFC", "type"), 
+            ("IFC", "type"),
             ("IHOV", "@lane_restriction"),
-            ("ITRUCK", "@truck_restriction"), 
+            ("ITRUCK", "@truck_restriction"),
             ("ISPD", "@speed_posted"),
             ("ITSPD", "zero"),
-            ("IWAY", "iway"), 
+            ("IWAY", "iway"),
             ("IMED", "@median"),
             ("COST", "@cost_operating"),
             ("ITOLLO", "@toll_md"),
@@ -243,7 +243,7 @@ Export network results to csv files for SQL data loader."""
         for key, name, default in directional_attrs:
             hwylink_attrs.append(("BA" + key[2:], (name, default)))
         hwylink_attrs.append(("relifac", "relifac"))
-        
+
         time_period_atts = [
             ("ITOLL2",    "@toll"),
             ("ITOLL3",    "@cost_auto"),
@@ -279,7 +279,7 @@ Export network results to csv files for SQL data loader."""
             default = "0"
             hwylink_attrs.append((key, name))
             hwylink_attrs.append(("BA" + key[2:], (name, default)))
-            
+
         vdf_attrs = [
             ("AB_GCRatio", "@green_to_cycle", ""),
             ("AB_Cycle", "@cycle", ""),
@@ -308,7 +308,7 @@ Export network results to csv files for SQL data loader."""
         for period, scenario_id in period_scenario_ids.iteritems():
             from_scenario = traffic_emmebank.scenario(scenario_id)
             src_attrs = ["@auto_time", "additional_volume"]
-            dst_attrs = ["auto_time_" + period.lower(), 
+            dst_attrs = ["auto_time_" + period.lower(),
                          "additional_volume_" + period.lower()]
             for dst_attr in dst_attrs:
                 network.create_attribute("LINK", dst_attr)
@@ -316,9 +316,9 @@ Export network results to csv files for SQL data loader."""
             network.set_attribute_values("LINK", dst_attrs, values)
         # add in and calculate additional columns
         new_attrs = [
-            ("zero", 0), ("is_one_way", 0), ("iway", 2), ("length_feet", 0), 
+            ("zero", 0), ("is_one_way", 0), ("iway", 2), ("length_feet", 0),
             ("toll_hov", 0), ("per_lane_capacity", 1900),
-            ("progression_factor", 1.0), ("alpha1", 0.8), ("beta1", 4.0), 
+            ("progression_factor", 1.0), ("alpha1", 0.8), ("beta1", 4.0),
             ("alpha2", 4.5), ("beta2", 2.0), ("relifac", 1.0),
         ]
         for name, default in new_attrs:
@@ -339,7 +339,7 @@ Export network results to csv files for SQL data loader."""
                 link["hov3_total_gencost" + period] = link["auto_time" + period] + link["@cost_hov3" + period]
             if link.volume_delay_func == 24:
                 link.alpha2 = 6.0
-            link.per_lane_capacity = max([(link["@capacity_link" + p] / link["@lane" + p]) 
+            link.per_lane_capacity = max([(link["@capacity_link" + p] / link["@lane" + p])
                                           for p in periods if link["@lane" + p] > 0] + [0])
 
         hwylink_atts_file = os.path.join(export_path, "hwy_tcad.csv")
@@ -374,12 +374,12 @@ Export network results to csv files for SQL data loader."""
             ("AB_Flow_SOV_NTPH", "@sov_nt_h"),
             ("AB_Flow_SOV_TPH", "@sov_tr_h"),
             ("AB_Flow_SR2H", "@hov2_h"),
-            ("AB_Flow_SR3H", "@hov3_h"),            
+            ("AB_Flow_SR3H", "@hov3_h"),
             ("AB_Flow_lhd", "@trk_l_non_pce"),
             ("AB_Flow_mhd", "@trk_m_non_pce"),
             ("AB_Flow_hhd", "@trk_h_non_pce"),
             ("AB_Flow", "@non_pce_flow"),
-        ]        
+        ]
 
         for key, attr in dir_atts:
             hwyload_attrs.append((key, attr))
@@ -391,17 +391,17 @@ Export network results to csv files for SQL data loader."""
                 ("@sov_nt_all", "total number of SOV GP vehicles",
                          "@sov_nt_l+@sov_nt_m+@sov_nt_h" ),
                 ("@sov_tr_all", "total number of SOV TOLL vehicles",
-                         "@sov_tr_l+@sov_tr_m+@sov_tr_h" ),							 
+                         "@sov_tr_l+@sov_tr_m+@sov_tr_h" ),
                 ("@hov2_all", "total number of HOV2 HOV vehicles",
-                         "@hov2_l+@hov2_m+@hov2_h" ),							 
+                         "@hov2_l+@hov2_m+@hov2_h" ),
                 ("@hov3_all", "total number of HOV3 HOV vehicles",
                          "@hov3_l+@hov3_m+@hov3_h" ),
                 ("@trk_l_non_pce", "total number of light trucks in non-Pce",
-                         "(@trk_l)/1.3" ),	
+                         "(@trk_l)/1.3" ),
                 ("@trk_m_non_pce", "total medium trucks in non-Pce",
-                         "(@trk_m)/1.5" ),	
+                         "(@trk_m)/1.5" ),
                 ("@trk_h_non_pce", "total heavy trucks in non-Pce",
-                         "(@trk_h)/2.5" ),								 
+                         "(@trk_h)/2.5" ),
                 ("@pce_flow", "total number of vehicles in Pce",
                          "@sov_nt_all+@sov_tr_all+ \
                           @hov2_all+ \
@@ -438,8 +438,8 @@ Export network results to csv files for SQL data loader."""
     def export_traffic_to_csv(self, filename, att_list, network):
         auto_mode = network.mode("d")
         # only the original forward direction links and auto links only
-        links = [l for l in network.links() 
-                 if l["@tcov_id"] > 0 and 
+        links = [l for l in network.links()
+                 if l["@tcov_id"] > 0 and
                  (auto_mode in l.modes or (l.reverse_link and auto_mode in l.reverse_link.modes))
                 ]
         links.sort(key=lambda l: l["@tcov_id"])
@@ -457,12 +457,12 @@ Export network results to csv files for SQL data loader."""
                         values.append(link.j_node.id)
                     elif key.startswith("BA"):
                         name, default = att
-                        
+
                         if reverse_link and (abs(link["@tcov_id"]) == abs(reverse_link["@tcov_id"])):
                             values.append(format(reverse_link[name]))
                         else:
                             values.append(default)
-                                        
+
                         #values.append(format(reverse_link[name]) if reverse_link else default)
                     elif att.startswith("#"):
                         values.append('"%s"' % link[att])
@@ -497,7 +497,7 @@ Export network results to csv files for SQL data loader."""
         trstop_out.to_csv(trstop_outfile, index=False)
 
         use_node_analysis_to_get_transit_transfers = False
-        
+
         copy_scenario = _m.Modeller().tool(
             "inro.emme.data.scenario.copy_scenario")
         create_attribute = _m.Modeller().tool(
@@ -574,9 +574,9 @@ Export network results to csv files for SQL data loader."""
         try:
             access_modes = ["WLK", "PNR", "KNR"]
             main_modes = ["BUS", "PREM","ALLPEN"]
-            all_modes = ["b", "c", "e", "l", "r", "p", "y", "Y", "a", "w", "x"]
+            all_modes = ["b", "c", "e", "l", "r", "p", "y", "o", "a", "w", "x"]
             local_bus_modes = ["b", "a", "w", "x"]
-            premium_modes = ["c", "l", "e", "p", "r", "y", "Y", "a", "w", "x"]
+            premium_modes = ["c", "l", "e", "p", "r", "y", "o", "a", "w", "x"]
             for tod, scen_id in period_scenario_ids.iteritems():
                 with _m.logbook_trace("Processing period %s" % tod):
                     scenario = transit_emmebank.scenario(scen_id)
@@ -666,12 +666,12 @@ Export network results to csv files for SQL data loader."""
                                     stop_on, stop_off = {}, {}
                                 # ===============================================
                                 transit_modes = [m for m in network.modes() if m.type in ("TRANSIT", "AUX_TRANSIT")]
-                                links = [link for link in network.links() 
+                                links = [link for link in network.links()
                                          if link["@tcov_id"] > 0 and (link.modes.union(transit_modes))]
                                 links.sort(key=lambda l: l["@tcov_id"])
                                 lines = [line for line in network.transit_lines() if line.mode.id in mode_list]
                                 lines.sort(key=lambda l: l["@route_id"])
-                                
+
                                 label = ",".join([mode, access_type, tod])
                                 self.output_transit_flow(label, lines, segment_flow.id, fout_seg)
                                 self.output_transit_aggregate_flow(
@@ -686,7 +686,7 @@ Export network results to csv files for SQL data loader."""
             fout_link.close()
             fout_seg.close()
         return
-        
+
     def get_partial_network(self, scenario, attributes):
         domains = attributes.keys()
         network = scenario.get_partial_network(domains, include_attributes=False)
@@ -699,7 +699,7 @@ Export network results to csv files for SQL data loader."""
     def output_transit_flow(self, label, lines, segment_flow, fout_seg):
         # output segment data (transit_flow)
         centroid = "0"  # always 0
-        voc = ""  # volume/capacity, not actually used, 
+        voc = ""  # volume/capacity, not actually used,
         for line in lines:
             line_id = id_format(line["@route_id"])
             ivtt = from_mp = to_mp = 0
@@ -760,7 +760,7 @@ Export network results to csv files for SQL data loader."""
                  format(ab_egress_walk_flow), format(ba_egress_walk_flow)]))
             fout_link.write("\n")
 
-    def output_transit_onoff(self, label, lines, 
+    def output_transit_onoff(self, label, lines,
                              total_boardings, total_alightings, initial_boardings,
                              xfer_boardings, xfer_alightings, final_alightings,
                              stop_on, stop_off, fout_stop):
@@ -804,7 +804,7 @@ Export network results to csv files for SQL data loader."""
         link_result_attrs = link_results.values() + ["aux_transit_volume"]
         link_attrs = network.attributes("LINK")
         link_modified_attrs = [
-            "length", "@trtime_link_ea", "@trtime_link_am", "@trtime_link_md", 
+            "length", "@trtime_link_ea", "@trtime_link_am", "@trtime_link_md",
             "@trtime_link_pm", "@trtime_link_ev", link_results["link_transit_flow"]]
         seg_attrs = network.attributes("TRANSIT_SEGMENT")
         line_attrs = network.attributes("TRANSIT_LINE")
@@ -819,7 +819,7 @@ Export network results to csv files for SQL data loader."""
             dst_seg["allow_alightings"] |= src_seg["allow_alightings"]
             dst_seg["allow_boardings"] |= src_seg["allow_boardings"]
 
-        def get_xfer_link(node, timed_xfer_link, is_outgoing=True): 
+        def get_xfer_link(node, timed_xfer_link, is_outgoing=True):
             links = node.outgoing_links() if is_outgoing else node.incoming_links()
             for link in links:
                 if xfer_mode in link.modes and link.length == timed_xfer_link.length:
@@ -863,7 +863,7 @@ Export network results to csv files for SQL data loader."""
                 for (link1, link2), attr_map in mapping['links'].iteritems():
                     for attr in link_modified_attrs:
                         attr_map[attr] = max(link1[attr], link2[attr])
-                
+
                 for (seg1, seg2), attr_map in mapping['transit_segments'].iteritems():
                     if seg2.allow_alightings:
                         for attr in seg_attrs:
@@ -888,7 +888,7 @@ Export network results to csv files for SQL data loader."""
                 if seg.i_node["@network_adj"] in [1,2] or (seg.j_node and seg.j_node["@network_adj"] == 1):
                     continue
                 # for circle line transfers, j_node is now None for new "hidden" segment
-                j_node = seg.j_node 
+                j_node = seg.j_node
                 if (seg.j_node and seg.j_node["@network_adj"] == 2):
                     j_node = None
                 seg_data[(seg.i_node, j_node, seg.loop_index)] = dict((k, seg[k]) for k in seg_attrs)
@@ -993,7 +993,7 @@ Export network results to csv files for SQL data loader."""
             path_based_analysis(
                 specification=spec, scenario=scenario,
                 class_name=class_name, num_processors=num_processors)
-        
+
     def transfer_analysis(self, scenario, net, class_name, num_processors):
         create_attribute = _m.Modeller().tool(
             "inro.emme.data.extra_attribute.create_extra_attribute")

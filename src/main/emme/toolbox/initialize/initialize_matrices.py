@@ -12,7 +12,7 @@
 #////                                                                       ///
 #//////////////////////////////////////////////////////////////////////////////
 #
-# 
+#
 # Coordinates the initialization of all matrices.
 # The matrix names are listed for each of the model components / steps,
 # and the matrix IDs are assigned consistently from the set of matrices.
@@ -22,11 +22,11 @@
 #
 # Inputs:
 #    components: A list of the model components / steps for which to initialize matrices
-#                One or more of "traffic_demand", "transit_demand", 
-#                "traffic_skims", "transit_skims",  "external_internal_model", 
+#                One or more of "traffic_demand", "transit_demand",
+#                "traffic_skims", "transit_skims",  "external_internal_model",
 #                "external_external_model", "truck_model", "commercial_vehicle_model"
 #    periods: A list of periods for which to initialize matrices, "EA", "AM", "MD", "PM", "EV"
-#    scenario: scenario to use for reference zone system and the emmebank in which 
+#    scenario: scenario to use for reference zone system and the emmebank in which
 #              the matrices will be created
 #
 # Script example:
@@ -39,7 +39,7 @@
     transit_emmebank = _eb.Emmebank(os.path.join(main_directory, "emme_project", "Database", "emmebank"))
     periods = ["EA", "AM", "MD", "PM", "EV"]
     traffic_components = [
-        "traffic_demand", "traffic_skims", "external_internal_model", 
+        "traffic_demand", "traffic_skims", "external_internal_model",
         "external_external_model", "truck_model", "commercial_vehicle_model"]
     transit_components = ["transit_demand", "transit_skims"]
     base_scenario = main_emmebank.scenario(100)
@@ -90,8 +90,8 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
     def page(self):
         pb = _m.ToolPageBuilder(self)
         pb.title = "Initialize matrices"
-        pb.description = """Creates and initializes the required matrices 
-            for the selected components / sub-models. 
+        pb.description = """Creates and initializes the required matrices
+            for the selected components / sub-models.
             Includes all components by default."""
         pb.branding_text = "- SANDAG"
         if self.tool_run_msg != "":
@@ -119,8 +119,8 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
     @_m.logbook_trace("Create and initialize matrices", save_arguments=True)
     def __call__(self, components, periods, scenario, delete_all_existing=False):
         attributes = {
-            "components": components, 
-            "periods": periods, 
+            "components": components,
+            "periods": periods,
             "delete_all_existing": delete_all_existing
         }
         gen_utils.log_snapshot("Initialize matrices", str(self), attributes)
@@ -144,10 +144,10 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
         # Note: matrix is also created in import_network
         self._create_matrix_tool("ms1", "zero", "zero", scenario=self.scenario, overwrite=True)
         return matrices
-        
+
     def generate_matrix_list(self, scenario):
         self._matrices = dict(
-            (name, dict((k, []) for k in self._all_periods + ["ALL"])) 
+            (name, dict((k, []) for k in self._all_periods + ["ALL"]))
             for name in self._all_components)
         self._count = {"ms": 2, "md": 100, "mo": 100, "mf": 100}
 
@@ -185,19 +185,19 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
         ]
         for period in self._all_periods:
             self.add_matrices("traffic_demand", period,
-                [("mf", period + "_" + name, period + " " + desc) 
+                [("mf", period + "_" + name, period + " " + desc)
                  for name, desc in tmplt_matrices])
 
     def transit_demand(self):
         tmplt_matrices = [
             ("BUS",  "local bus demand"),
-            ("PREM", "Premium modes demand"), 
+            ("PREM", "Premium modes demand"),
             ("ALLPEN",  "all modes xfer pen demand"),
         ]
         for period in self._all_periods:
             for a_name in ["WLK", "PNR", "KNR"]:
                 self.add_matrices("transit_demand", period,
-                    [("mf", "%s_%s%s" % (period, a_name, name), "%s %s access %s" % (period, a_name, desc)) 
+                    [("mf", "%s_%s%s" % (period, a_name, name), "%s %s access %s" % (period, a_name, desc))
                      for name, desc in tmplt_matrices])
 
     def traffic_skims(self):
@@ -236,15 +236,15 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
                     cls_name = "HOV" + hov_type + "_" + vot_type
                     cls_desc = hov_type + " " + vot_desc[vot_type] + " VOT"
                     self.add_matrices("traffic_skims", period,
-                        [("mf", period + "_" + cls_name + "_" + name, 
-                            period + " " + desc % cls_desc) 
+                        [("mf", period + "_" + cls_name + "_" + name,
+                            period + " " + desc % cls_desc)
                          for name, desc in hov_tmplt_matrices])
             for truck_type in "L", "M", "H":
                 cls_name = "TRK" + "_" + truck_type
                 cls_desc = truck_desc[truck_type]
                 self.add_matrices("traffic_skims", period,
-                    [("mf", period + "_" + cls_name + "_" + name, 
-                      period + " " + desc % cls_desc) 
+                    [("mf", period + "_" + cls_name + "_" + name,
+                      period + " " + desc % cls_desc)
                      for name, desc in truck_tmplt_matrices])
 
         self.add_matrices("traffic_skims", "MD",
@@ -271,67 +271,67 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
             ("LTDEXPIVTT", "Ltd exp bus in-vehicle time"),
             ("BRTREDIVTT", "BRT red in-vehicle time"),
             ("BRTYELIVTT", "BRT yellow in-vehicle time"),
-            ("HYPIVTT",    "Hyperloop in-vehicle time"),
+            ("TIER1IVTT",    "Tier1 in-vehicle time"),
             ("BUSDIST",    "Bus IV distance"),
             ("LRTDIST",    "LRT IV distance"),
             ("CMRDIST",    "Rail IV distance"),
             ("EXPDIST",    "Express and Ltd IV distance"),
             ("BRTDIST",    "BRT red and yel IV distance"),
-            ("HYPDIST",    "Hyperloop distance"),
+            ("TIER1DIST",    "Tier1 distance"),
             ("TOTDIST",    "Total transit distance")
         ]
         skim_sets = [
-            ("BUS",    "Local bus only"), 
-            ("PREM",   "Premium modes only"), 
+            ("BUS",    "Local bus only"),
+            ("PREM",   "Premium modes only"),
             ("ALLPEN", "All w/ xfer pen")
         ]
         for period in self._all_periods:
             for set_name, set_desc in skim_sets:
                 self.add_matrices("transit_skims", period,
-                    [("mf", period + "_" + set_name + "_" + name, 
-                      period + " " + set_desc + ": " + desc) 
+                    [("mf", period + "_" + set_name + "_" + name,
+                      period + " " + set_desc + ": " + desc)
                      for name, desc in tmplt_matrices])
 
     def truck_model(self):
         tmplt_matrices = [
-            ("TRKL",    "Truck Light"), 
-            ("TRKM",    "Truck Medium"), 
-            ("TRKH",    "Truck Heavy"), 
-            ("TRKEI",   "Truck external-internal"), 
-            ("TRKIE",   "Truck internal-external"), 
+            ("TRKL",    "Truck Light"),
+            ("TRKM",    "Truck Medium"),
+            ("TRKH",    "Truck Heavy"),
+            ("TRKEI",   "Truck external-internal"),
+            ("TRKIE",   "Truck internal-external"),
         ]
         self.add_matrices("truck_model", "ALL",
-                [("mo", name + '_PROD', desc + ' production') 
+                [("mo", name + '_PROD', desc + ' production')
                  for name, desc in tmplt_matrices])
         self.add_matrices("truck_model", "ALL",
                 [("md", name + '_ATTR', desc + ' attraction')
                  for name, desc in tmplt_matrices])
 
         tmplt_matrices = [
-            ("TRKEE_DEMAND",     "Truck total external-external demand"), 
-            ("TRKL_FRICTION",    "Truck Light friction factors"), 
-            ("TRKM_FRICTION",    "Truck Medium friction factors"), 
-            ("TRKH_FRICTION",    "Truck Heavy friction factors"), 
-            ("TRKIE_FRICTION",   "Truck internal-external friction factors"), 
-            ("TRKEI_FRICTION",   "Truck external-internal friction factors"), 
-            ("TRKL_DEMAND",      "Truck Light total demand"), 
-            ("TRKM_DEMAND",      "Truck Medium total demand"), 
-            ("TRKH_DEMAND",      "Truck Heavy total demand"), 
-            ("TRKIE_DEMAND",     "Truck internal-external total demand"), 
-            ("TRKEI_DEMAND",     "Truck external-internal total demand"), 
+            ("TRKEE_DEMAND",     "Truck total external-external demand"),
+            ("TRKL_FRICTION",    "Truck Light friction factors"),
+            ("TRKM_FRICTION",    "Truck Medium friction factors"),
+            ("TRKH_FRICTION",    "Truck Heavy friction factors"),
+            ("TRKIE_FRICTION",   "Truck internal-external friction factors"),
+            ("TRKEI_FRICTION",   "Truck external-internal friction factors"),
+            ("TRKL_DEMAND",      "Truck Light total demand"),
+            ("TRKM_DEMAND",      "Truck Medium total demand"),
+            ("TRKH_DEMAND",      "Truck Heavy total demand"),
+            ("TRKIE_DEMAND",     "Truck internal-external total demand"),
+            ("TRKEI_DEMAND",     "Truck external-internal total demand"),
         ]
         self.add_matrices("truck_model", "ALL",
                 [("mf", name, desc) for name, desc in tmplt_matrices])
 
         # TODO: remove GP and TOLL matrices, no longer used
         tmplt_matrices = [
-            ("TRK_L_VEH",            "Truck Light demand"), 
+            ("TRK_L_VEH",            "Truck Light demand"),
             ("TRKLGP_VEH",      "Truck Light GP-only vehicle demand"),
             ("TRKLTOLL_VEH",    "Truck Light toll vehicle demand"),
             ("TRK_M_VEH",            "Truck Medium demand"),
             ("TRKMGP_VEH",      "Truck Medium GP-only vehicle demand"),
             ("TRKMTOLL_VEH",    "Truck Medium toll vehicle demand"),
-            ("TRK_H_VEH",            "Truck Heavy demand"), 
+            ("TRK_H_VEH",            "Truck Heavy demand"),
             ("TRKHGP_VEH",      "Truck Heavy GP-only vehicle demand"),
             ("TRKHTOLL_VEH",    "Truck Heavy toll vehicle demand"),
         ]
@@ -395,7 +395,7 @@ class Initialize(_m.Tool(), gen_utils.Snapshot):
                 [("mf", period + "_" + name, period + " " + desc)
                  for name, desc in tmplt_matrices])
 
-    def add_matrices(self, component, period, matrices):        
+    def add_matrices(self, component, period, matrices):
         for ident, name, desc in matrices:
             self._matrices[component][period].append([ident+str(self._count[ident]), name, desc])
             self._count[ident] += 1

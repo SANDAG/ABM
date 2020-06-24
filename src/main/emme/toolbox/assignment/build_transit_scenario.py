@@ -13,11 +13,11 @@
 #//////////////////////////////////////////////////////////////////////////////
 #
 #
-# The build transit scenario tool generates a new scenario in the Transit 
-# database (under the Database_transit directory) as a copy of a scenario in 
-# the base (traffic assignment) database. The base traffic scenario should have 
-# valid results from a traffic assignment for the travel times on links to be 
-# available for transit lines in mixed traffic operation. 
+# The build transit scenario tool generates a new scenario in the Transit
+# database (under the Database_transit directory) as a copy of a scenario in
+# the base (traffic assignment) database. The base traffic scenario should have
+# valid results from a traffic assignment for the travel times on links to be
+# available for transit lines in mixed traffic operation.
 #
 #
 # Inputs:
@@ -25,8 +25,8 @@
 #   base_scenario_id: the base traffic assignment scenario in the main Emme database
 #   scenario_id: the ID to use for the new scenario in the Transit Emme database
 #   scenario_title: the title for the new scenario
-#   data_table_name: the root name for the source data table for the timed transfer 
-#                    line pairs and the day and regional pass costs. 
+#   data_table_name: the root name for the source data table for the timed transfer
+#                    line pairs and the day and regional pass costs.
 #                    Usually the ScenarioYear
 #   overwrite: overwrite the scenario if it already exists.
 #
@@ -113,7 +113,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
         self.scenario_title = ""
         self.overwrite = False
         self.attributes = [
-            "period", "scenario_id", "base_scenario_id", 
+            "period", "scenario_id", "base_scenario_id",
             "data_table_name", "scenario_title", "overwrite"]
 
     def page(self):
@@ -123,11 +123,11 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             main_directory = os.path.dirname(project_dir)
             props = load_properties(os.path.join(main_directory, "conf", "sandag_abm.properties"))
             self.data_table_name = props["scenarioYear"]
-        
+
         pb = _m.ToolPageBuilder(self)
         pb.title = "Build transit network"
         pb.description = """
-            Builds the transit network for the specified period based 
+            Builds the transit network for the specified period based
             on existing base (traffic + transit) scenario."""
         pb.branding_text = "- SANDAG - "
         if self.tool_run_msg != "":
@@ -135,7 +135,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
 
         options = [("EA", "Early AM"),
                    ("AM", "AM peak"),
-                   ("MD", "Mid-day"), 
+                   ("MD", "Mid-day"),
                    ("PM", "PM peak"),
                    ("EV", "Evening")]
         pb.add_select("period", options, title="Period:")
@@ -163,7 +163,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             transit_emmebank = _eb.Emmebank(os.path.join(root_dir, "Database_transit", "emmebank"))
             results = self(
                 self.period, base_scenario, transit_emmebank,
-                self.scenario_id, self.scenario_title, 
+                self.scenario_id, self.scenario_title,
                 self.data_table_name, self.overwrite)
             run_msg = "Transit scenario created"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
@@ -172,15 +172,15 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 error, _traceback.format_exc(error))
             raise
 
-    def __call__(self, period, base_scenario, transit_emmebank, scenario_id, scenario_title, 
+    def __call__(self, period, base_scenario, transit_emmebank, scenario_id, scenario_title,
                  data_table_name, overwrite=False):
         modeller = _m.Modeller()
         attrs = {
-            "period": period, 
-            "base_scenario_id": base_scenario.id, 
-            "transit_emmebank": transit_emmebank.path, 
-            "scenario_id": scenario_id, 
-            "scenario_title": scenario_title, 
+            "period": period,
+            "base_scenario_id": base_scenario.id,
+            "transit_emmebank": transit_emmebank.path,
+            "scenario_id": scenario_id,
+            "scenario_title": scenario_title,
             "data_table_name": data_table_name,
             "overwrite": overwrite,
             "self": str(self)
@@ -195,7 +195,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                     'period: unknown value - specify one of %s' % periods)
 
             transit_assignment = modeller.tool(
-                "sandag.assignment.transit_assignment")            
+                "sandag.assignment.transit_assignment")
             if transit_emmebank.scenario(scenario_id):
                 if overwrite:
                     transit_emmebank.delete_scenario(scenario_id)
@@ -287,7 +287,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                     line["@xfer_from_coaster"] = max(min(regional_pass - coaster_fare, line["@fare"]), 0)
                 elif line.mode.id in day_pass_modes:
                     line["xfer_from_bus"] = max(day_pass - bus_fare, 0.0)
-                    line["@xfer_from_day"] = 0.0 
+                    line["@xfer_from_day"] = 0.0
                     line["@xfer_from_premium"] = max(min(regional_pass - premium_fare, line["@fare"]), 0)
                     line["@xfer_from_coaster"] = max(min(regional_pass - coaster_fare, line["@fare"]), 0)
                 elif line.mode.id in premium_fare_modes:
@@ -295,7 +295,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                         # increment from bus to regional
                         line["xfer_from_bus"] = max(regional_pass - bus_fare, 0)
                         line["@xfer_from_day"] = max(regional_pass - day_pass, 0)
-                    else: 
+                    else:
                         # some "premium" modes lines are really regular fare
                         # increment from bus to day pass
                         line["xfer_from_bus"] = max(day_pass - bus_fare, 0)
@@ -314,11 +314,11 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             # changed to allow timed xfers for different periods
             timed_transfers_with_walk = list(gen_utils.DataTableProc("%s_timed_xfer_%s" % (data_table_name,period)))
             self.timed_transfers(network, timed_transfers_with_walk, period)
-            self.connect_circle_lines(network)
+            #self.connect_circle_lines(network)
             self.duplicate_tap_adajcent_stops(network)
             # The fixed guideway travel times are stored in "@trtime_link_xx"
-            # and copied to data2 (ul2) for the ttf 
-            # The congested auto times for mixed traffic are in "@auto_time" 
+            # and copied to data2 (ul2) for the ttf
+            # The congested auto times for mixed traffic are in "@auto_time"
             # (output from traffic assignment) which needs to be copied to auto_time (a.k.a. timau)
             # (The auto_time attribute is generated from the VDF values which include reliability factor)
             src_attrs = [params["fixed_link_time"]]
@@ -361,7 +361,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
     def duplicate_tap_adajcent_stops(self, network):
         # Expand network by duplicating TAP adjacent stops
         network.create_attribute("NODE", "tap_stop", False)
-        all_transit_modes = set([network.mode(m) for m in ["b", "e", "p", "r", "y", "l", "c", "Y"]])
+        all_transit_modes = set([mode for mode in network.modes() if mode.type == "TRANSIT"])
         access_mode = set([network.mode("a")])
         transfer_mode =  network.mode("x")
         walk_mode =  network.mode("w")
@@ -383,7 +383,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                         has_adjacent_transfer_links = True
                     if walk_mode in stop_link.modes :
                         has_adjacent_walk_links = True
-                        
+
                 if has_adjacent_transfer_links or has_adjacent_walk_links:
                     length = link.length
                     tap_stop = network.split_link(centroid, real_stop, self._get_node_id(), include_reverse=True)
@@ -400,7 +400,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                     access_link.reverse_link.modes = access_mode
                     access_link.length = length
                     access_link.reverse_link.length = length
-            
+
         line_attributes = network.attributes("TRANSIT_LINE")
         seg_attributes = network.attributes("TRANSIT_SEGMENT")
 
@@ -410,7 +410,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
             line_data = dict((k, line[k]) for k in line_attributes)
             line_data["id"] = line.id
             line_data["vehicle"] = line.vehicle
-            
+
             seg_data = {}
             itinerary = []
             tap_adjacent_stops = []
@@ -425,12 +425,12 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                     tap_stop = real_stop.tap_stop
                     itinerary.extend([tap_stop.number, real_stop.number])
                     tap_adjacent_stops.append(len(itinerary) - 1)  # index of "real" stop in itinerary
-            
+
             if tap_adjacent_stops:
                 network.delete_transit_line(line)
                 new_line = network.create_transit_line(
-                    line_data.pop("id"), 
-                    line_data.pop("vehicle"), 
+                    line_data.pop("id"),
+                    line_data.pop("vehicle"),
                     itinerary)
                 for k, v in line_data.iteritems():
                     new_line[k] = v
@@ -506,15 +506,15 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 from_link = link_on_line(from_line, walk_link.i_node, near_side_stop=True)
                 to_link = link_on_line(to_line, walk_link.j_node, near_side_stop=False)
                 walk_transfers[(from_link, to_link)].append({
-                    "to_line": to_line, 
-                    "from_line": from_line, 
+                    "to_line": to_line,
+                    "from_line": from_line,
                     "walk_link": walk_link,
                     "wait": transfer["wait_time"],
                 })
             except Exception as error:
                 new_message = "Timed transfer[%s]: %s" % (i, error.message)
                 raise type(error), type(error)(new_message), sys.exc_info()[2]
-    
+
         # If there is only one transfer at the location (redundant case)
         # OR all transfers are from the same line (can have different waits)
         # OR all transfers are to the same line and have the same wait
@@ -538,7 +538,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                     network_transfers.append({
                         "from_link": from_link,
                         "to_link": to_link,
-                        "to_lines": [transfer["to_line"]], 
+                        "to_lines": [transfer["to_line"]],
                         "from_lines": [transfer["from_line"]],
                         "walk_link": transfer["walk_link"],
                         "wait": {transfer["to_line"]: transfer["wait"]}})
@@ -623,10 +623,10 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 start_node = line.segment(0).i_node
                 xfer_node = network.create_node(self._get_node_id(), False)
                 xfer_node["@network_adj"] = 2
-                xfer_node.x, xfer_node.y = offset_coords(start_node)        
+                xfer_node.x, xfer_node.y = offset_coords(start_node)
                 network.create_link(start_node, xfer_node, [line.vehicle.mode])
                 network.create_link(xfer_node, start_node, [line.vehicle.mode])
-                
+
                 # copy transit line data, re-route itinerary to and from new node
                 line_data = dict((k, line[k]) for k in line_attributes)
                 line_data["id"] = line.id
@@ -657,8 +657,8 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 seg_data[(last_seg.i_node, xfer_node, 1)] = dict((k, last_seg[k]) for k in seg_attributes)
                 seg_data[(last_seg.i_node, xfer_node, 1)]["transit_time_func"] = 3
                 itinerary.extend([last_seg.i_node.number, xfer_node.number])
-                
-                network.delete_transit_line(line)        
+
+                network.delete_transit_line(line)
                 new_line = network.create_transit_line(
                     line_data.pop("id"), line_data.pop("vehicle"), itinerary)
                 for k, v in line_data.iteritems():
@@ -667,7 +667,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                     data = seg_data.get((seg.i_node, seg.j_node, seg.loop_index), {})
                     for k, v in data.iteritems():
                         seg[k] = v
-                
+
         network.delete_attribute("NODE", "circle_lines")
 
     def _init_node_id(self, network):
