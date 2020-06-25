@@ -125,14 +125,15 @@ def backup_and_restore(scenario, backup_attributes):
         for elem_type, attributes in backup_attributes.iteritems():
             scenario.set_attribute_values(elem_type, attributes, backup[elem_type])
 
-                        
+
 class DataTableProc(object):
 
-    def __init__(self, table_name, path=None, data=None):
+    def __init__(self, table_name, path=None, data=None, convert_numeric=False):
         modeller = _m.Modeller()
         desktop = modeller.desktop
         project = desktop.project
         self._dt_db = dt_db = project.data_tables()
+        self._convert_numeric = convert_numeric
         if path:
             #try:
             source = _dt.DataSource(path)
@@ -150,7 +151,21 @@ class DataTableProc(object):
 
     def _load_data(self):
         data = self._data
-        self._values = [a.values for a in data.attributes()]
+        if self._convert_numeric:
+            values = []
+            for a in data.attributes():
+                attr_values = _numpy.copy(a.values)
+                attr_values[attr_values == ''] = 0
+                try:
+                    values.append(attr_values.astype("int"))
+                except ValueError:
+                    try:
+                        values.append(attr_values.astype("float"))
+                    except ValueError:
+                        values.append(a.values)
+            self._values = values
+        else:
+            self._values = [a.values for a in data.attributes()]
         self._attr_names = [a.name for a in data.attributes()]
         self._index = dict((k, i) for i,k in enumerate(self._attr_names))
         if "geometry" in self._attr_names:
@@ -246,7 +261,7 @@ class ExportOMX(object):
             self.generate_key = lambda m: m.id.encode(text_encoding)
 
     def __enter__(self):
-        self.trace = _m.logbook_trace(name="Export matrices to OMX", 
+        self.trace = _m.logbook_trace(name="Export matrices to OMX",
             attributes={
                 "file_path": self.file_path, "omx_key": self.omx_key,
                 "scenario": self.scenario, "emmebank": self.emmebank.path})
@@ -303,13 +318,13 @@ class ExportOMX(object):
         omx_matrix = self.omx_file.create_matrix(
             key, obj=numpy_array, chunkshape=chunkshape, attrs=attrs)
 
-            
+
 class OMXManager(object):
     def __init__(self, directory, name_tmplt):
         self._directory = directory
         self._name_tmplt = name_tmplt
         self._omx_files = {}
-        
+
     def lookup(self, name_args, key):
         file_name = self._name_tmplt % name_args
         omx_file = self._omx_files.get(file_name)
@@ -318,7 +333,7 @@ class OMXManager(object):
             omx_file = _omx.open_file(file_path, 'r')
             self._omx_files[file_name] = omx_file
         return omx_file[key].read()
-        
+
     def file_exists(self, name_args):
         file_name = self._name_tmplt % name_args
         file_path = os.path.join(self._directory, file_name)
@@ -346,25 +361,25 @@ class CSVReader(object):
         self._path = path
         self._f = None
         self._fields = None
-        
+
     def __enter__(self):
         self._f = open(self._path)
         header = self._f.next()
         self._fields = [h.strip().upper() for h in header.split(",")]
         return self
-        
+
     def __exit__(self, exception_type, exception_value, traceback):
         self._f.close()
         self._f = None
         self._fields = None
-        
+
     def __iter__(self):
         return self
 
     @property
     def fields(self):
         return list(self._fields)
-    
+
     def next(self):
         line = self._f.next()
         tokens = [t.strip() for t in line.split(",")]

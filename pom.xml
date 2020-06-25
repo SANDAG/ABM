@@ -14,8 +14,8 @@
         <jppf.headnode.memory.max>32000m</jppf.headnode.memory.max> 
         <jppf.workernode.memory.min>70000m</jppf.workernode.memory.min> 
         <jppf.workernode.memory.max>120000m</jppf.workernode.memory.max> 
-        <mtxmgr.memory.min>100000m</mtxmgr.memory.min>
-        <mtxmgr.memory.max>120000m</mtxmgr.memory.max>
+        <mtxmgr.memory.min>150000m</mtxmgr.memory.min>
+        <mtxmgr.memory.max>200000m</mtxmgr.memory.max>
         <hhmgr.memory.min>1000m</hhmgr.memory.min> 
         <hhmgr.memory.max>20000m</hhmgr.memory.max>         
         <client.memory.min>30000m</client.memory.min> 
