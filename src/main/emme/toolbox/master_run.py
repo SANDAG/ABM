@@ -197,8 +197,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             run_msg = "Model run complete"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
         except Exception as error:
-            self.tool_run_msg = _m.PageBuilder.format_exception(
-                error, _traceback.format_exc(error))
+            self.tool_run_msg = _m.PageBuilder.format_exception(error, _traceback.format_exc())
+
             raise
 
     @_m.method(return_type=_m.UnicodeType)
@@ -251,6 +251,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         import_auto_demand = modeller.tool("sandag.import.import_auto_demand")
         import_transit_demand = modeller.tool("sandag.import.import_transit_demand")
         export_transit_skims = modeller.tool("sandag.export.export_transit_skims")
+        export_for_transponder = modeller.tool("sandag.export.export_for_transponder")
         export_network_data = modeller.tool("sandag.export.export_data_loader_network")
         export_matrix_data = modeller.tool("sandag.export.export_data_loader_matrices")
         export_tap_adjacent_lines = modeller.tool("sandag.export.export_tap_adjacent_lines")
@@ -306,6 +307,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipBuildNetwork = props["RunModel.skipBuildNetwork"]
         skipHighwayAssignment = props["RunModel.skipHighwayAssignment"]
         skipTransitSkimming = props["RunModel.skipTransitSkimming"]
+        skipTransponderExport = props["RunModel.skipTransponderExport"]
         skipCoreABM = props["RunModel.skipCoreABM"]
         skipOtherSimulateModel = props["RunModel.skipOtherSimulateModel"]
         skipMAASModel = props["RunModel.skipMAASModel"]
@@ -408,7 +410,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                             pass
 
                     if not skipInputChecker:
-                        input_checker()
+                        input_checker(path=self._path)
 
                     export_tap_adjacent_lines(_join(output_dir, "tapLines.csv"), base_scenario)
                     # parse vehicle availablility file by time-of-day
@@ -504,6 +506,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
                         omx_file = _join(output_dir, "transit_skims.omx")
                         export_transit_skims(omx_file, periods, transit_scenario)
+
+                if not skipTransponderExport[iteration]:
+                	export_for_transponder(output_dir, num_processors, base_scenario)
 
                 # For each step move trip matrices so run will stop if ctramp model
                 # doesn't produced csv/omx files for assignment
@@ -899,7 +904,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     name = row.pop("FACILITY_NAME")
                     class_name = row.pop("VEHICLE_CLASS")
                     for period in periods:
-                        availabilities[period][name][class_name] = int(row[period + "_AVAIL"])
+                        is_avail = int(row[period + "_AVAIL"])
+                        if is_avail not in [1, 0]:
+                            msg = "Error processing file '%s': value for period %s class %s facility %s is not 1 or 0"
+                            raise Exception(msg % (file_path, period, class_name, name))
+                        availabilities[period][name][class_name] = is_avail
         else:
             availabilities = None
         return availabilities
@@ -937,13 +946,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             for link in network.links():
                 if name in link["#name"]:
                     for class_name, is_avail in class_availabilities.iteritems():
-                        if is_avail == 0:
-                            continue
                         modes = class_mode_map[class_name]
                         if is_avail == 1 and not modes.issubset(link.modes):
                             link.modes |= modes
                             changes["added %s to" % class_name] += 1
-                        elif is_avail == -1 and modes.issubset(link.modes):
+                        elif is_avail == 0 and modes.issubset(link.modes):
                             link.modes -= modes
                             changes["removed %s from" % class_name] += 1
             report.append("<div style='margin-left:20px'><ul>")

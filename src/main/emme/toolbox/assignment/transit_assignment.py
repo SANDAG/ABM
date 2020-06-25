@@ -13,20 +13,20 @@
 #//////////////////////////////////////////////////////////////////////////////
 #
 #
-# The Transit assignment tool runs the transit assignment and skims for each 
+# The Transit assignment tool runs the transit assignment and skims for each
 # period on the current primary scenario.
 #
-# The Build transit network tool must be run first to prepare the scenario for 
-# assignment. Note that this tool must be run with the Transit database 
-# (under the Database_transit directory) open (as the active database in the 
+# The Build transit network tool must be run first to prepare the scenario for
+# assignment. Note that this tool must be run with the Transit database
+# (under the Database_transit directory) open (as the active database in the
 # Emme desktop).
 #
 #
 # Inputs:
 #   period: the time-of-day period, one of EA, AM, MD, PM, EV.
 #   scenario: Transit assignment scenario
-#   skims_only: Only run assignment for skim matrices, if True only two assignments 
-#       are run to generate the skim matrices for the BUS and ALL skim classes. 
+#   skims_only: Only run assignment for skim matrices, if True only two assignments
+#       are run to generate the skim matrices for the BUS and ALL skim classes.
 #       Otherwise, all 15 assignments are run to generate the total network flows.
 #   num_processors: number of processors to use for the traffic assignments.
 #
@@ -158,7 +158,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         self.tool_run_msg = ""
         try:
             results = self(
-                self.period, self.scenario, self.data_table_name, 
+                self.period, self.scenario, self.data_table_name,
                 self.assignment_only, self.skims_only, self.num_processors)
             run_msg = "Transit assignment completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
@@ -167,7 +167,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 error, _traceback.format_exc(error))
             raise
 
-    def __call__(self, period, scenario, data_table_name, assignment_only=False, skims_only=False, 
+    def __call__(self, period, scenario, data_table_name, assignment_only=False, skims_only=False,
                  num_processors="MAX-1"):
         attrs = {
             "period": period,
@@ -192,6 +192,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             network = scenario.get_partial_network(
                 element_types=["TRANSIT_LINE"], include_attributes=True)
             coaster_mode = network.mode("c")
+            params["coaster_fare_percep"] = 0
             for line in list(network.transit_lines()):
                 # get the coaster fare perception for use in journey levels
                 if line.mode == coaster_mode:
@@ -207,9 +208,9 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
 
             if not assignment_only:
                 # max_fare = day_pass for local bus and regional_pass for premium modes
-                self.run_skims("BUS", period, params, day_pass, num_processors)
-                self.run_skims("PREM", period, params, regional_pass, num_processors)
-                self.run_skims("ALLPEN", period, params, regional_pass, num_processors)
+                self.run_skims("BUS", period, params, day_pass, num_processors, network)
+                self.run_skims("PREM", period, params, regional_pass, num_processors, network)
+                self.run_skims("ALLPEN", period, params, regional_pass, num_processors, network)
                 self.mask_allpen(period)
                 self.report(period)
 
@@ -235,7 +236,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "init_wait": 1.5,
                 "xfer_wait": 3.0,
                 "walk": 2.0,
-                "init_headway": "@headway_rev_op", 
+                "init_headway": "@headway_rev_op",
                 "xfer_headway": "@headway_op",
                 "fare": "@fare_per_op",
                 "in_vehicle": "@vehicle_per_op",
@@ -246,7 +247,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "init_wait": 1.5,
                 "xfer_wait": 3.0,
                 "walk": 2.0,
-                "init_headway": "@headway_rev_am", 
+                "init_headway": "@headway_rev_am",
                 "xfer_headway": "@headway_am",
                 "fare": "@fare_per_pk",
                 "in_vehicle": "@vehicle_per_pk",
@@ -257,7 +258,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "init_wait": 1.5,
                 "xfer_wait": 3.0,
                 "walk": 2.0,
-                "init_headway": "@headway_rev_op", 
+                "init_headway": "@headway_rev_op",
                 "xfer_headway": "@headway_op",
                 "fare": "@fare_per_op",
                 "in_vehicle": "@vehicle_per_op",
@@ -287,10 +288,10 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             }
         }
         return perception_parameters[period]
-        
+
     def group_modes_by_fare(self, network, day_pass_cost):
         # Identify all the unique boarding fare values
-        fare_set = {mode.id: _defaultdict(lambda:0) 
+        fare_set = {mode.id: _defaultdict(lambda:0)
                     for mode in network.modes()
                     if mode.type == "TRANSIT"}
         for line in network.transit_lines():
@@ -314,7 +315,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             else:
                 mode_groups["premium"].append((mode_id, fares))
         return mode_groups
-        
+
     def all_modes_journey_levels(self, params, network, day_pass_cost):
         transfer_penalty = {"on_segments": {"penalty": "@transfer_penalty_s", "perception_factor": 5.0}}
         transfer_wait = {
@@ -447,7 +448,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
 
         walk_modes = ["a", "w", "x"]
         local_bus_mode = ["b"]
-        premium_modes = ["c", "l", "e", "p", "r", "y", "Y"]
+        premium_modes = ["c", "l", "e", "p", "r", "y", "o"]
 
         # get the generic all-modes journey levels table
         journey_levels = self.all_modes_journey_levels(params, network, day_pass_cost)
@@ -481,6 +482,9 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             },
             "flow_distribution_at_regular_nodes_with_aux_transit_choices": {
                 "choices_at_regular_nodes": "OPTIMAL_STRATEGY"
+            },
+			"circular_lines": {
+				"stay": True
             },
             "connector_to_connector_path_prohibition": None,
             "od_results": {"total_impedance": None},
@@ -518,7 +522,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 add_volumes = True
 
     @_m.logbook_trace("Extract skims", save_arguments=True)
-    def run_skims(self, name, period, params, max_fare, num_processors):
+    def run_skims(self, name, period, params, max_fare, num_processors, network):
         modeller = _m.Modeller()
         scenario = self.scenario
         emmebank = scenario.emmebank
@@ -545,7 +549,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "actual_total_waiting_times": 'mf"%s_TOTALWAIT"' % skim_name,
                 "total_impedance": 'mf"%s_GENCOST"' % skim_name,
                 "by_mode_subset": {
-                    "modes": ["b", "e", "p", "r", "y", "l", "c", "Y", "a", "w", "x"],
+                    "modes": [mode.id for mode in network.modes() if mode.type == "TRANSIT" or mode.type == "AUX_TRANSIT"],
                     "avg_boardings": 'mf"%s_XFERS"' % skim_name,
                     "actual_in_vehicle_times": 'mf"%s_TOTALIVTT"' % skim_name,
                     "actual_in_vehicle_costs": 'mf"TEMP_IN_VEHICLE_COST"',
@@ -564,7 +568,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 ("BRT", ["r", "y"], ["DIST"]),
                 ("BRTRED", ["r"],   ["IVTT"]),
                 ("BRTYEL", ["y"],   ["IVTT"]),
-                ("HYP", ["Y"],      ["IVTT", "DIST"]),
+                ("TIER1", ["o"],    ["IVTT", "DIST"]),
             ]
             for mode_name, modes, skim_types in mode_combinations:
                 dist = 'mf"%s_%sDIST"' % (skim_name, mode_name) if "DIST" in skim_types else None
@@ -584,7 +588,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "constraint": None,
                 "result": 'mf"%s_TOTDIST"' % skim_name,
                 "expression": ('mf"{0}_BUSDIST" + mf"{0}_LRTDIST" + mf"{0}_CMRDIST"'
-                               ' + mf"{0}_EXPDIST" + mf"{0}_BRTDIST" + mf"{0}_HYPDIST" ').format(skim_name),
+                               ' + mf"{0}_EXPDIST" + mf"{0}_BRTDIST"  + mf"{0}_TIER1DIST"').format(skim_name),
             }
             matrix_calc(spec, scenario=scenario, num_processors=num_processors)
 
@@ -641,7 +645,7 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "type": "EXTENDED_TRANSIT_PATH_ANALYSIS"
             }
             path_analysis(path_spec, class_name=class_name, scenario=scenario, num_processors=num_processors)
-            
+
             # walk egress time - get distance and convert to time with 3 miles/ hr
             path_spec = {
                 "portion_of_path": "FINAL_ALIGHTING_TO_DESTINATION",
@@ -655,12 +659,12 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
                 "type": "EXTENDED_TRANSIT_PATH_ANALYSIS"
             }
             path_analysis(path_spec, class_name=class_name, scenario=scenario, num_processors=num_processors)
-            
+
             spec_list = [
             {    # walk access time - convert to time with 3 miles/ hr
                 "type": "MATRIX_CALCULATION",
                 "constraint": None,
-                "result": 'mf"%s_ACCWALK"' % skim_name, 
+                "result": 'mf"%s_ACCWALK"' % skim_name,
                 "expression": '60.0 * %s_ACCWALK / 3.0' % skim_name,
             },
             {    # walk egress time - convert to time with 3 miles/ hr
@@ -733,10 +737,10 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
         # Reset skims to 0 if not both local and premium
         skims = [
             "FIRSTWAIT", "TOTALWAIT", "DWELLTIME", "BUSIVTT", "XFERS", "TOTALWALK",
-            "LRTIVTT", "CMRIVTT", "EXPIVTT", "LTDEXPIVTT", "BRTREDIVTT", "BRTYELIVTT", "HYPIVTT",
+            "LRTIVTT", "CMRIVTT", "EXPIVTT", "LTDEXPIVTT", "BRTREDIVTT", "BRTYELIVTT", "TIER1IVTT",
             "GENCOST", "XFERWAIT", "FARE",
-            "ACCWALK", "XFERWALK", "EGRWALK", "TOTALIVTT",  
-            "BUSDIST", "LRTDIST", "CMRDIST", "EXPDIST", "BRTDIST", "HYPDIST"]
+            "ACCWALK", "XFERWALK", "EGRWALK", "TOTALIVTT",
+            "BUSDIST", "LRTDIST", "CMRDIST", "EXPDIST", "BRTDIST" , "TIER1DIST"]
         localivt_skim = self.get_matrix_data(period + "_ALLPEN_BUSIVTT")
         totalivt_skim = self.get_matrix_data(period + "_ALLPEN_TOTALIVTT")
         has_premium = numpy.greater((totalivt_skim - localivt_skim), 0)
