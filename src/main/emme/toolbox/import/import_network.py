@@ -181,7 +181,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg, escape=False)
         except Exception as error:
             self.tool_run_msg = _m.PageBuilder.format_exception(
-                error, _traceback.format_exc(error))
+                error, _traceback.format_exc())
             raise
 
     def __call__(self, source, 
@@ -211,6 +211,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
     def setup(self):
         self._log = []
         self._error = []
+        fatal_error = False
         attributes = OrderedDict([
             ("self", str(self)),
             ("source", self.source),
@@ -233,14 +234,18 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 yield
             except Exception as error:
                 self._log.append({"type": "text", "content": error})
-                trace_text = _traceback.format_exc(error).replace("\n", "<br>")
+                trace_text = _traceback.format_exc().replace("\n", "<br>")
                 self._log.append({"type": "text", "content": trace_text})
                 self._error.append(error)
+                fatal_error = True
                 raise
             finally:
                 self.log_report()
                 if self._error:
-                    trace.write("Import network (%s non-fatal errors)" % len(self._error), attributes=attributes)
+                    if fatal_error:
+                        trace.write("Import network failed (%s errors)" % len(self._error), attributes=attributes)
+                    else:
+                        trace.write("Import network completed (%s non-fatal errors)" % len(self._error), attributes=attributes)
 
     def execute(self):
         traffic_attr_map = {
@@ -387,8 +392,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             "hwycov.e00", "LINKTYPETURNS.DBF", "turns.csv",
             "trcov.e00", "trrt.csv", "trlink.csv", "trstop.csv", 
             "timexfer_EA.csv", "timexfer_AM.csv","timexfer_MD.csv",
-            "timexfer_PM.csv","timexfer_EV.csv","MODE5TOD.dbf",
-            FILE_NAMES["VEHICLE_CLASS"]
+            "timexfer_PM.csv","timexfer_EV.csv","MODE5TOD.dbf"
         ]
         for name in file_names:
             file_path = _join(self.source, name)
@@ -572,7 +576,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
 
         def define_modes(arc):
-            if arc["IFC"] == 10:
+            if arc["IFC"] == 10:  # connector
                 return modes_gp_lanes[1]
             elif arc["IHOV"] == 1:
                 return modes_gp_lanes[arc["ITRUCK"]]
@@ -808,7 +812,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         mode_properties = gen_utils.DataTableProc("MODE5TOD", _join(self.source, "MODE5TOD.csv"))
         mode_details = {}
         for record in mode_properties:
-            mode_details[record["MODE_ID"]] = record
+            mode_details[int(record["MODE_ID"])] = record
         
         if self.save_data_tables:
             transit_link_data.save("%s_trlink" % self.data_table_name, self.overwrite)
@@ -944,12 +948,12 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
                 line_details = mode_details[int(record["Mode"])]
                 for field, attr in mode5tod_attrs:
-                    tline[attr] = line_details[field]
+                    tline[attr] = float(line_details[field])
                 #"XFERPENTM": "Transfer penalty time: "
                 #"WTXFERTM":  "Transfer perception:"
                 # NOTE: an additional transfer penalty perception factor of 5.0 is included
                 #       in assignment
-                tline["@transfer_penalty"] = line_details["XFERPENTM"] * line_details["WTXFERTM"]
+                tline["@transfer_penalty"] = float(line_details["XFERPENTM"]) * float(line_details["WTXFERTM"])
                 tline.headway = tline["@headway_am"] if tline["@headway_am"] > 0 else 999
                 tline.layover_time = 5
 
@@ -961,8 +965,10 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     # ft2 = ul2 -> copied @trtime_link_XX
                     # segments on links matched to auto network (with auto mode) are changed to ft1 = timau
             except Exception as error:
-                msg = "Transit line %s: %s" % (record["Route_Name"], error)
+                msg = "Transit line %s: %s %s" % (record["Route_Name"], type(error), error)
                 self._log.append({"type": "text", "content": msg})
+                trace_text = _traceback.format_exc().replace("\n", "<br>")
+                self._log.append({"type": "text", "content": trace_text})
                 self._error.append("Transit route import: line %s not created" % record["Route_Name"])
                 fatal_errors += 1
         for link in dummy_links:
@@ -1266,7 +1272,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             aoc = float(props["aoc.fuel"]) + float(props["aoc.maintenance"])
         except ValueError:
             raise Exception("Error during float conversion for aoc.fuel or aoc.maintenance from sandag_abm.properties file")
-        scenario_year = props["scenarioYear"]
+        scenario_year = int(props["scenarioYear"])
         periods = ["EA", "AM", "MD", "PM", "EV"]
         time_periods = ["_ea", "_am", "_md", "_pm", "_ev"]
         src_time_periods = ["_op", "_am", "_op", "_pm", "_op"]
@@ -1410,44 +1416,45 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             },
             "count": 0
         }
-        msg = "Adjusting tolls based on factors from %s" % vehicle_class_factor_file
-        self._log.append({"type": "text", "content": msg})
-        # NOTE: CSV Reader sets the field names to UPPERCASE for consistency
-        with gen_utils.CSVReader(_join(self.source, vehicle_class_factor_file)) as r:
-            for row in r:
-                if "YEAR" in r.fields and int(row["YEAR"]) != scenario_year:  # optional year column
-                    continue
-                name = row["FACILITY_NAME"]
-                # optional time-of-day entry, default to ALL if no column or blank
-                fac_time = row.get("TIME_OF_DAY")
-                if fac_time is None:
-                    fac_time = "ALL"
-                facility_factors[name][fac_time] = {
-                    "auto": float(row["DA_FACTOR"]),
-                    "hov2": float(row["S2_FACTOR"]),
-                    "hov3": float(row["S3_FACTOR"]),
-                    "lgt_truck": float(row["TRK_L_FACTOR"]),
-                    "med_truck": float(row["TRK_M_FACTOR"]),
-                    "hvy_truck": float(row["TRK_H_FACTOR"])
-                }
-                facility_factors[name]["count"] = 0
+        if os.path.exists(_join(self.source, vehicle_class_factor_file)):
+            msg = "Adjusting tolls based on factors from %s" % vehicle_class_factor_file
+            self._log.append({"type": "text", "content": msg})
+            # NOTE: CSV Reader sets the field names to UPPERCASE for consistency
+            with gen_utils.CSVReader(_join(self.source, vehicle_class_factor_file)) as r:
+                for row in r:
+                    if "YEAR" in r.fields and int(row["YEAR"]) != scenario_year:  # optional year column
+                        continue
+                    name = row["FACILITY_NAME"]
+                    # optional time-of-day entry, default to ALL if no column or blank
+                    fac_time = row.get("TIME_OF_DAY")
+                    if fac_time is None:
+                        fac_time = "ALL"
+                    facility_factors[name][fac_time] = {
+                        "auto": float(row["DA_FACTOR"]),
+                        "hov2": float(row["S2_FACTOR"]),
+                        "hov3": float(row["S3_FACTOR"]),
+                        "lgt_truck": float(row["TRK_L_FACTOR"]),
+                        "med_truck": float(row["TRK_M_FACTOR"]),
+                        "hvy_truck": float(row["TRK_H_FACTOR"])
+                    }
+                    facility_factors[name]["count"] = 0
 
-        # validate ToD entry, either list EA, AM, MD, PM and EV, or ALL, but not both
-        for name, factors in facility_factors.iteritems():
-            # default keys should be "ALL" and "count"
-            if "ALL" in factors:
-                if len(factors) > 2:
+            # validate ToD entry, either list EA, AM, MD, PM and EV, or ALL, but not both
+            for name, factors in facility_factors.iteritems():
+                # default keys should be "ALL" and "count"
+                if "ALL" in factors:
+                    if len(factors) > 2:
+                        fatal_errors += 1
+                        msg = ("Individual time periods and 'ALL' (or blank) listed under "
+                               "TIME_OF_DAY column in {} for facility {}").format(vehicle_class_factor_file, name) 
+                        self._log.append({"type": "text", "content": msg})
+                        self._error.append(msg)
+                elif set(periods + ["count"]) != set(factors.keys()):
                     fatal_errors += 1
-                    msg = ("Individual time periods and 'ALL' (or blank) listed under "
-                           "TIME_OF_DAY column in {} for facility {}").format(vehicle_class_factor_file, name) 
+                    msg = ("Missing time periods {} under TIME_OF_DAY column in {} for facility {}").format(
+                        (set(periods) - set(factors.keys())), vehicle_class_factor_file, name) 
                     self._log.append({"type": "text", "content": msg})
                     self._error.append(msg)
-            elif set(periods + ["count"]) != set(factors.keys()):
-                fatal_errors += 1
-                msg = ("Missing time periods {} under TIME_OF_DAY column in {} for facility {}").format(
-                    (set(periods) - set(factors.keys())), vehicle_class_factor_file, name) 
-                self._log.append({"type": "text", "content": msg})
-                self._error.append(msg)
 
         def lookup_link_name(link):
             for attr_name in ["#name", "#name_from", "#name_to"]:
@@ -2006,7 +2013,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             # no raise during report to avoid masking real error      
             report.add_html("Error generating report")
             report.add_html(unicode(error))
-            report.add_html(_traceback.format_exc(error))
+            report.add_html(_traceback.format_exc())
 
         _m.logbook_write("Import network report", report.render())
 
