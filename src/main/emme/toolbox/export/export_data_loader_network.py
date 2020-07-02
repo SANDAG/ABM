@@ -25,12 +25,14 @@
 #
 # Files created:
 #    report/hwyload_pp.csv
-#    report/hwy_tcad.csv
+#    report/hwy_tcad.csv rename to hwyTcad.csv
 #    report/transit_aggflow.csv
 #    report/transit_flow.csv
 #    report/transit_onoff.csv
-#	 report/trrt.csv
-#    report/trstop.csv
+#	 report/trrt.csv rename to transitRoute.csv
+#    report/trstop.csv renmae to transitStop.csv
+#    report/transitTap.csv
+#    report/transitLink.csv
 #
 # Script example:
 """
@@ -52,6 +54,8 @@ TOOLBOX_ORDER = 73
 import inro.modeller as _m
 import traceback as _traceback
 import inro.emme.database.emmebank as _eb
+import inro.emme.desktop.worksheet as _ws
+import inro.emme.datatable as _dt
 import inro.emme.core.exception as _except
 from contextlib import contextmanager as _context
 from collections import OrderedDict
@@ -59,6 +63,7 @@ from itertools import chain as _chain
 import math
 import os
 import pandas as pd
+import numpy as _np
 
 gen_utils = _m.Modeller().module("sandag.utilities.general")
 dem_utils = _m.Modeller().module("sandag.utilities.demand")
@@ -146,6 +151,7 @@ Export network results to csv files for SQL data loader."""
         self.export_traffic_attribute(base_scenario, export_path, traffic_emmebank, period_scenario_ids)
         self.export_traffic_load_by_period(export_path, traffic_emmebank, period_scenario_ids)
         self.export_transit_results(export_path, input_path, transit_emmebank, period_scenario_ids, num_processors)
+        self.export_geometry(export_path, traffic_emmebank)
 
     @_m.logbook_trace("Export traffic attribute data")
     def export_traffic_attribute(self, base_scenario, export_path, traffic_emmebank, period_scenario_ids):
@@ -686,6 +692,114 @@ Export network results to csv files for SQL data loader."""
             fout_link.close()
             fout_seg.close()
         return
+
+    def export_geometry(self, export_path, traffic_emmebank):
+        # --------------------------Export Transit Nework Geometory-----------------------------
+        # domain: NODE, LINK, TURN, TRANSIT_LINE, TRANSIT_VEHICLE, TRANSIT_SEGMENT
+        def export_as_csv(domain, attributes, scenario = None):
+            if scenario is None:
+                scenario = _m.Modeller().scenario
+            initial_scenario = _m.Modeller().scenario
+            #if initial_scenario.number != scenario.number:
+                #data_explorer.replace_primary_scenario(scenario)
+            # Create the network table
+            network_table = project.new_network_table(domain)
+            for k, a in enumerate(attributes):
+                column = _ws.Column()
+                column.name = column.expression = a
+                network_table.add_column(k, column)
+            # Extract data
+            data = network_table.get_data()
+            f = _np.vectorize(lambda x: x.text)  # required to get the WKT representation of the geometry column
+            data_dict = {}
+            for a in data.attributes():
+                if isinstance(a, _dt.GeometryAttribute):
+                    data_dict[a.name] = f(a.values)
+                else:
+                    data_dict[a.name] = a.values
+            df = pd.DataFrame(data_dict)
+
+            network_table.close()
+            #if initial_scenario.number != scenario.number:
+            #    data_explorer.replace_primary_scenario(initial_scenario)
+            return df
+
+        desktop = _m.Modeller().desktop
+        data_explorer = desktop.data_explorer()
+        project = desktop.project
+        scenario = _m.Modeller().emmebank.scenario(101)
+        data_explorer.replace_primary_scenario(scenario)
+        node_attributes = ['i','@tap_id']
+        link_attributes = ['i', 'j', '@tcov_id', 'modes']
+        transit_line_attributes = ['line', 'routeID']
+        transit_segment_attributes = ['line', 'i', 'j', 'loop_index','@tcov_id','@stop_id']
+        mode_talbe = ['mode', 'type']
+        network_table = project.new_network_table('MODE')
+        for k, a in enumerate(mode_talbe):
+            column = _ws.Column()
+            column.name = column.expression = a
+            network_table.add_column(k, column)
+        data = network_table.get_data()
+        data_dict = {}
+        for a in data.attributes():
+            data_dict[a.name] = a.values
+        df = pd.DataFrame(data_dict)
+        mode_list = df[df['type'].isin([2.0, 3.0])]['mode'].tolist()
+
+        df = export_as_csv('NODE', node_attributes, scenario)
+        df = df[['@tap_id', 'geometry']]
+        is_tap =  df['@tap_id'] > 0
+        df = df[is_tap]
+        df.columns = ['tapID', 'geometry']
+        df.to_csv(os.path.join(export_path, 'transitTap.csv'), index=False)
+
+        df = export_as_csv('TRANSIT_LINE', transit_line_attributes)
+        df = df[['line', 'geometry']]
+        df.columns = ['Route_Name', 'geometry']
+        df['Route_Name'] = df['Route_Name'].astype(int)
+        df_routeFull = pd.read_csv(os.path.join(export_path, 'trrt.csv'))
+        result = pd.merge(df_routeFull, df, how='left', on=['Route_Name'])
+        result.to_csv(os.path.join(export_path, 'transitRoute.csv'), index=False)
+        os.remove(os.path.join(export_path, 'trrt.csv'))
+
+        df = export_as_csv('TRANSIT_SEGMENT', transit_segment_attributes, None)
+        df_seg = df[['@tcov_id', 'geometry']]
+        df_seg.columns = ['trcovID', 'geometry']
+        df_seg = df_seg.drop_duplicates()
+        #df_seg.to_csv(os.path.join(export_path, 'transitLink.csv'), index=False)
+        #df_stop = df[(df['@stop_id'] > 0) & (df['@tcov_id'] > 0)]
+        df_stop = df[(df['@stop_id'] > 0)]
+        df_stop = df_stop[['@stop_id', 'geometry']]
+        df_stop = df_stop.drop_duplicates()
+        df_stop.columns = ['Stop_ID', 'geometry']
+        temp=[]
+        for value in df_stop['geometry']:
+            value=value.split(',')
+            value[0]=value[0]+')'
+            value[0]=value[0].replace("LINESTRING", "POINT")
+            temp.append(value[0])
+        df_stop['geometry'] = temp
+        df_stopFull = pd.read_csv(os.path.join(export_path, 'trstop.csv'))
+        result = pd.merge(df_stopFull, df_stop, how='left', on=['Stop_ID'])
+        result.to_csv(os.path.join(export_path, 'transitStop.csv'), index=False)
+        os.remove(os.path.join(export_path, 'trstop.csv'))
+
+        df = export_as_csv('LINK', link_attributes, None)
+        df_link = df[['@tcov_id', 'geometry']]
+        df_link.columns = ['hwycov-id:1', 'geometry']
+        df_linkFull = pd.read_csv(os.path.join(export_path, 'hwy_tcad.csv'))
+        result = pd.merge(df_linkFull, df_link, how='left', on=['hwycov-id:1'])
+        result.to_csv(os.path.join(export_path, 'hwyTcad.csv'), index=False)
+        os.remove(os.path.join(export_path, 'hwy_tcad.csv'))
+        ##mode_list = ['Y','b','c','e','l','p','r','y','a','x','w']##
+        df_transit_link = df[df.modes.str.contains('|'.join(mode_list))]
+        df_transit_link = df_transit_link[['@tcov_id', 'geometry']]
+        df_transit_link.columns = ['trcovID', 'geometry']
+        df_transit_link = df_transit_link[df_transit_link['trcovID'] != 0]
+        df_transit_link['AB'] = df_transit_link['trcovID'].apply(lambda x: 1 if x > 0 else 0)
+        df_transit_link['trcovID'] = abs(df_transit_link['trcovID'])
+        df_transit_link = df_transit_link[['trcovID', 'AB', 'geometry']]
+        df_transit_link.to_csv(os.path.join(export_path, 'transitLink.csv'), index=False)
 
     def get_partial_network(self, scenario, attributes):
         domains = attributes.keys()
