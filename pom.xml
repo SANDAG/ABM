@@ -14,8 +14,8 @@
         <jppf.headnode.memory.max>32000m</jppf.headnode.memory.max> 
         <jppf.workernode.memory.min>70000m</jppf.workernode.memory.min> 
         <jppf.workernode.memory.max>120000m</jppf.workernode.memory.max> 
-        <mtxmgr.memory.min>150000m</mtxmgr.memory.min>
-        <mtxmgr.memory.max>200000m</mtxmgr.memory.max>
+        <mtxmgr.memory.min>100000m</mtxmgr.memory.min>
+        <mtxmgr.memory.max>220000m</mtxmgr.memory.max>
         <hhmgr.memory.min>1000m</hhmgr.memory.min> 
         <hhmgr.memory.max>20000m</hhmgr.memory.max>         
         <client.memory.min>30000m</client.memory.min> 
@@ -65,8 +65,7 @@
                 <tourdest.uec.file>TourDestinationChoice.xls</tourdest.uec.file>
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice.xls</crossBorder.tour.mc.uec.file>
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2016</visualizer.reference.path> 
-                <Mobility.AV.Share>0.0</Mobility.AV.Share>    
-                <vehicle.class.toll.factor>vehicle_class_toll_factors.csv</vehicle.class.toll.factor>                            
+                <Mobility.AV.Share>0.0</Mobility.AV.Share>                             
             </properties>
         </profile>
         <profile>
@@ -78,8 +77,7 @@
                 <tourdest.uec.file>TourDestinationChoice2020.xls</tourdest.uec.file>
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file> 
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2020</visualizer.reference.path>  
-                <Mobility.AV.Share>0.0</Mobility.AV.Share>   
-                <vehicle.class.toll.factor>vehicle_class_toll_factors2035.csv</vehicle.class.toll.factor>         
+                <Mobility.AV.Share>0.0</Mobility.AV.Share>          
             </properties>
         </profile>
         <profile>
@@ -91,8 +89,7 @@
                 <tourdest.uec.file>TourDestinationChoice2025.xls</tourdest.uec.file>
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2025.xls</crossBorder.tour.mc.uec.file>    
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2025rc</visualizer.reference.path>  
-                <Mobility.AV.Share>0.0</Mobility.AV.Share> 
-                <vehicle.class.toll.factor>vehicle_class_toll_factors2035.csv</vehicle.class.toll.factor>                 
+                <Mobility.AV.Share>0.0</Mobility.AV.Share>                 
             </properties>
         </profile>
         <profile>
@@ -104,8 +101,7 @@
                 <tourdest.uec.file>TourDestinationChoice2025.xls</tourdest.uec.file>
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file> 
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2025nb</visualizer.reference.path>    
-                <Mobility.AV.Share>0.0</Mobility.AV.Share>     
-                <vehicle.class.toll.factor>vehicle_class_toll_factors.csv</vehicle.class.toll.factor>              
+                <Mobility.AV.Share>0.0</Mobility.AV.Share>                   
             </properties>
         </profile>
         <profile>
@@ -117,8 +113,7 @@
                 <tourdest.uec.file>TourDestinationChoice2025.xls</tourdest.uec.file>  
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2025.xls</crossBorder.tour.mc.uec.file>   
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2030rc</visualizer.reference.path>  
-                <Mobility.AV.Share>0.0</Mobility.AV.Share>    
-                <vehicle.class.toll.factor>vehicle_class_toll_factors2035.csv</vehicle.class.toll.factor>             
+                <Mobility.AV.Share>0.0</Mobility.AV.Share>               
             </properties>
         </profile>
         <profile>
@@ -131,7 +126,6 @@
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2035.xls</crossBorder.tour.mc.uec.file>   
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2035rc</visualizer.reference.path> 
                 <Mobility.AV.Share>0.2</Mobility.AV.Share>
-                <vehicle.class.toll.factor>vehicle_class_toll_factors2035.csv</vehicle.class.toll.factor> 
             </properties>
         </profile>
         <profile>
@@ -144,7 +138,6 @@
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file>    
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2035nb_v2</visualizer.reference.path>
                 <Mobility.AV.Share>0.2</Mobility.AV.Share>
-                <vehicle.class.toll.factor>vehicle_class_toll_factors.csv</vehicle.class.toll.factor> 
             </properties>
         </profile>
         <profile>
@@ -156,8 +149,7 @@
                 <tourdest.uec.file>TourDestinationChoice2050.xls</tourdest.uec.file>  
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2050.xls</crossBorder.tour.mc.uec.file> 
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2040rc</visualizer.reference.path>
-                <Mobility.AV.Share>0.2</Mobility.AV.Share>     
-                <vehicle.class.toll.factor>vehicle_class_toll_factors2050.csv</vehicle.class.toll.factor>   
+                <Mobility.AV.Share>0.2</Mobility.AV.Share>       
             </properties>
         </profile>
         <profile>
@@ -169,8 +161,7 @@
                 <tourdest.uec.file>TourDestinationChoice2050.xls</tourdest.uec.file>   
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2050.xls</crossBorder.tour.mc.uec.file>  
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2050rc_OMEfix_cornhusker</visualizer.reference.path>    
-                <Mobility.AV.Share>0.5</Mobility.AV.Share> 
-                <vehicle.class.toll.factor>vehicle_class_toll_factors2050.csv</vehicle.class.toll.factor>  
+                <Mobility.AV.Share>0.5</Mobility.AV.Share>  
             </properties>
         </profile>
         <profile>

@@ -286,13 +286,11 @@ def setup_temp_matrices(emmebank):
 
 @_context
 def get_temp_scenario(src_scenario):
-    copy_scenario = _m.Modeller().tool(
-        "inro.emme.data.scenario.copy_scenario")
     delete_scenario = _m.Modeller().tool(
         "inro.emme.data.scenario.delete_scenario")
     emmebank = src_scenario.emmebank
     scenario_id = get_available_scenario_id(emmebank)
-    temp_scenario = copy_scenario(src_scenario, scenario_id)
+    temp_scenario = emmebank.copy_scenario(src_scenario, scenario_id)
     try:
         yield temp_scenario
     finally:

@@ -405,7 +405,7 @@ class input_checker(_m.Tool()):
 
 			# integerize problem ID list
 			problem_ids = self.problem_ids[row['Test']]
-			problem_ids = [int(x) for x in problem_ids]
+			#problem_ids = [int(x) for x in problem_ids]
 
 			# write check summary
 			fh.write('\r\n\r\n' + seperator2 + seperator2)
