@@ -10,7 +10,7 @@ import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 
-import com.pb.common.datafile.OLD_CSVFileReader;
+import com.pb.common.datafile.CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 
 public final class Util
@@ -365,7 +365,7 @@ public final class Util
 
         try
         {
-            OLD_CSVFileReader csvFile = new OLD_CSVFileReader();
+            CSVFileReader csvFile = new CSVFileReader();
             tableData = csvFile.readFile(new File(fileName));
         } catch (IOException e)
         {
