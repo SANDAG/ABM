@@ -483,9 +483,9 @@ class TransitAssignment(_m.Tool(), gen_utils.Snapshot):
             "flow_distribution_at_regular_nodes_with_aux_transit_choices": {
                 "choices_at_regular_nodes": "OPTIMAL_STRATEGY"
             },
-			"circular_lines": {
-				"stay": True
-            },
+			#"circular_lines": {
+			#	"stay": True
+            #},
             "connector_to_connector_path_prohibition": None,
             "od_results": {"total_impedance": None},
             "performance_settings": {"number_of_processors": num_processors}
