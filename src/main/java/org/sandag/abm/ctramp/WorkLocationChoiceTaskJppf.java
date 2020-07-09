@@ -7,6 +7,8 @@ import org.jppf.node.protocol.AbstractTask;
 import org.jppf.node.protocol.DataProvider;
 import com.pb.common.calculator.MatrixDataServerIf;
 
+import nl.tudelft.simulation.logger.Logger;
+
 public class WorkLocationChoiceTaskJppf
         extends AbstractTask<String>
 {
@@ -132,6 +134,28 @@ public class WorkLocationChoiceTaskJppf
             }
 
             hhDataManager.setHhArray(householdArray, startIndex);
+            
+            //check to make sure hh array got set in hhDataManager
+            boolean allHouseholdsAreSame = false;
+            while(!allHouseholdsAreSame) {
+            	Household[] householdArrayRemote = hhDataManager.getHhArray(startIndex, endIndex);
+            	for(int j = 0; j< householdArrayRemote.length;++j) {
+            	
+            		Household remoteHousehold = householdArrayRemote[j];
+            		Household localHousehold = householdArray[j];
+            	
+            		allHouseholdsAreSame = checkIfSameWorkLocationResults(remoteHousehold, localHousehold);
+            	
+            		if(!allHouseholdsAreSame)
+            			break;
+            	}
+            	if(!allHouseholdsAreSame) {
+            		System.out.println("Warning: found households in household manager (starting array index "+startIndex+") not updated with work location choice results; updating");
+                    hhDataManager.setHhArray(householdArray, startIndex);
+           
+            	}
+            }
+
 
         } catch (Exception e)
         {
@@ -167,6 +191,40 @@ public class WorkLocationChoiceTaskJppf
         modelManager.returnDcWorkModelObject(dcModel, taskIndex, startIndex, endIndex);
 
     }
+
+    /**
+     * Returns true if work location results are the same, else returns false.
+     * 
+     * @param thisHousehold
+     * @param thatHousehold
+     * @return true or false
+     */
+    public boolean checkIfSameWorkLocationResults(Household thisHousehold, Household thatHousehold) {
+    	
+    	Person[] thisPersons = thisHousehold.getPersons();
+    	Person[] thatPersons = thatHousehold.getPersons();
+    	
+    	if(thisPersons.length!=thatPersons.length)
+    		return false;
+    	
+    	for(int k=1;k<thisPersons.length;++k) {
+    		
+    		Person thisPerson = thisPersons[k];
+    		Person thatPerson = thatPersons[k];
+    		
+    		if(thisPerson.getWorkLocation() != thatPerson.getWorkLocation())
+    			return false;
+    		
+    		if(thisPerson.getWorkLocationLogsum() != thatPerson.getWorkLocationLogsum())
+            		return false;
+            
+    		if(thisPerson.getWorkLocationDistance() != thatPerson.getWorkLocationDistance())
+    			return false;
+    	}
+    	
+    	return true;
+    }
+    
 
     public String getId()
     {
