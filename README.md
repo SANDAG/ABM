@@ -1,7 +1,7 @@
 ABM
 ===
 
-How to Build the Sandag ABM Java Programs, <a href="https://github.com/sandag/abm/wiki">click here for detailed build steps</a>
+How to Build the Sandag ABM Java Programs, <a href="https://github.com/sandag/abm/wiki/Build-SANDAG-Jar">click here for detailed build steps</a>
 
   - Download Eclipse
   - Install Maven (m2e) if needed (check if it is already installed via Windows + Preferences)
