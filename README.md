@@ -14,7 +14,7 @@ SANDAG maintains multiple ABM software versions, including ABM1 for <a href="htt
 
 ##
 
-## How to Build the Sandag ABM Java Programs, <a href="https://github.com/sandag/abm/wiki/Build-SANDAG-Jar">click here for details</a>
+## How to Build the SANDAG ABM Java Programs, <a href="https://github.com/sandag/abm/wiki/Build-SANDAG-Jar">click here for details</a>
 
   - Download Eclipse
   - Install Maven (m2e) if needed (check if it is already installed via Windows + Preferences)
