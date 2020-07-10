@@ -72,9 +72,9 @@ call copy_networks.cmd %NETWORKDIR% %SCENARIO_FOLDER%\input
 
 rem copy analysis templates
 @echo copy analysis templates
-if %YEAR%==2016 (xcopy /Y/S   .\template\validation\2016\"*.*" %SCENARIO_FOLDER%\analysis\validation\)
-if %YEAR%==2018 (xcopy /Y/S   .\template\validation\2018\"*.*" %SCENARIO_FOLDER%\\analysis\validation\) 
-xcopy /Y/S   .\template\summary\"*.*" %SCENARIO_FOLDER%\analysis\summary\     
+if %YEAR%==2016 (xcopy /Y/S   .\common\input\template\validation\2016\"*.*" %SCENARIO_FOLDER%\analysis\validation\)
+if %YEAR%==2018 (xcopy /Y/S   .\common\input\template\validation\2018\"*.*" %SCENARIO_FOLDER%\\analysis\validation\) 
+xcopy /Y/S   .\common\input\template\summary\"*.*" %SCENARIO_FOLDER%\analysis\summary\     
 
 
 @echo init emme folder

@@ -509,45 +509,7 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-template-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${release.root}/template</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>input/template</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>   
-                    <!--
-                    <execution>
-                        <id>copy-validation-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${release.root}/validation</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>validation</directory>
-                                    <filtering>false</filtering>
-                                    <includes>
-                                        <include>*.*</include>          
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>   
-                    -->                                          
+                    </execution>                                         
                     <execution>
                         <id>copy-sql-resources</id>
                         <phase>package</phase>
