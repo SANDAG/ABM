@@ -191,11 +191,11 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
 
                 # Check the OMX zones are the same Emme database, assume all files have the same zones
                 omx_zones = omx_manager.zone_list("tranTrips%s.omx" % period)
+                matrix = emmebank.matrix(matrix_name)
                 if omx_zones != emme_zones:
                     matrix_data = _matrix.MatrixData(type='f', indices=[omx_zones, omx_zones])
                     matrix_data.from_numpy(total_ct_ramp_trips)
                     expanded_matrix_data = matrix_data.expand([emme_zones, emme_zones])
-                    matrix = emmebank.matrix(matrix_name)
                     matrix.set_data(expanded_matrix_data, self.scenario)
                 else:
                     matrix.set_numpy_data(total_ct_ramp_trips, self.scenario)
