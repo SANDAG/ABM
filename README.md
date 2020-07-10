@@ -12,7 +12,7 @@ SANDAG maintains multiple versions of ABM software, including ABM1 for 2015 RP, 
   - Release 14.2.0 for ABM2+ (forthcoming)
 - In some cases, short-lived feature branches are allowed. However, once codes on feature branch compiles and passes all tests, they should be merged to trunk and the feature branch should be deleted.
 
-===
+##
 
 How to Build the Sandag ABM Java Programs, <a href="https://github.com/sandag/abm/wiki/Build-SANDAG-Jar">click here for detailed build steps</a>
 
