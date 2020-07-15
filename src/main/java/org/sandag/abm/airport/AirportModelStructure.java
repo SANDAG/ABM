@@ -50,6 +50,9 @@ public final class AirportModelStructure
     public static final int     CURB_LOC4           = 16;
     public static final int     CURB_LOC5           = 17;
     
+    public static final int     MGRAAlt_TERM         = 8;
+    public static final int     MGRAAlt_CMH         = 9;
+    
     public static final int     LOS_TYPE        = 4;
     
     public static final int     DA        		= 0;

@@ -343,6 +343,33 @@ public class AirportModeChoiceModel
         party.setArrivalMode((byte) accessMode);
         
         int airportAccessMGRA = dmu.mode_mgra_map.get(accessMode);
+        
+        if (accessMode == AirportModelStructure.SHUTTLE_VAN | accessMode == AirportModelStructure.HOTEL_COURTESY)
+        {
+        	double terminal_logsum = 0;
+        	double cmh_logsum = 0;
+        	int size = party.getSize();
+        	if (size == 1)
+        	{
+        		terminal_logsum = dmu.getShared2LogsumHotelOrShuttleTerminal();
+        		cmh_logsum = dmu.getShared2LogsumHotelOrShuttleCentralMobilityHub();
+        	}
+        	else
+        	{
+        		terminal_logsum = dmu.getShared3LogsumHotelOrShuttleTerminal();
+        		cmh_logsum = dmu.getShared3LogsumHotelOrShuttleCentralMobilityHub();
+        	}
+        	
+        	if (terminal_logsum >= cmh_logsum)
+        	{
+        		airportAccessMGRA = dmu.mode_mgra_map.get(AirportModelStructure.MGRAAlt_TERM);
+        	}
+        	else
+        	{
+        		airportAccessMGRA = dmu.mode_mgra_map.get(AirportModelStructure.MGRAAlt_CMH);
+        	}
+        }
+        
         party.setAirportAccessMGRA(airportAccessMGRA);
 
         // add debug
