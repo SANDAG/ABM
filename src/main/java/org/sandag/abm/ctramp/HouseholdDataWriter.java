@@ -929,9 +929,10 @@ public class HouseholdDataWriter
         data.add("tour_mode");
         data.add("valueOfTime");
         data.add("transponder_avail");
-        data.add("micro_walkMode");
-        data.add("micro_trnAcc");
-        data.add("micro_trnEgr");
+        //wsu remove micromobility columns, not applicable to joint trips
+        //data.add("micro_walkMode");
+        //data.add("micro_trnAcc");
+        //data.add("micro_trnEgr");
         data.add("parkingCost");
         
         if(writeLogsums) {
@@ -1222,9 +1223,10 @@ public class HouseholdDataWriter
         data.add(string(t.getTourModeChoice()));
         data.add(string(s.getValueOfTime()));
         data.add(string(h.getTpChoice()));
-        data.add(string(s.getMicromobilityWalkMode()));
-        data.add(string(s.getMicromobilityAccessMode()));
-        data.add(string(s.getMicromobilityEgressMode()));
+        //wsu, remove micromobility columns, not applicable to joint trips
+        //data.add(string(s.getMicromobilityWalkMode()));
+        //data.add(string(s.getMicromobilityAccessMode()));
+        //data.add(string(s.getMicromobilityEgressMode()));
         data.add(string(s.getParkingCost()));
        
         if(writeLogsums) {
