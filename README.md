@@ -1,6 +1,6 @@
-SANDAG ABM
+## SANDAG ABM
 
-SANDAG maintains multiple versions of ABM software, including ABM1 for 2015 RP, ABM2 for 2019 Federal RTP, and ABM2+ for 2021 RP.  SANDAG’s ABM source-control follows a <a href="https://trunkbaseddevelopment.com/">trunk-based model (TBD) model:</a>
+SANDAG maintains multiple ABM software versions, including ABM1 for <a href="https://www.sdforward.com/2019-federal-rtp/2015-regional-plan">San Diego Forward: The Regional Plan</a> adopted by the SANDAG Board of Directors in October 2015 and ABM2 for <a href="https://www.sdforward.com/2019-federal-rtp">the SANDAG 2019 Federal Regional Transportation Plan</a> adopted by SANDAG Board of Directors in October 2019.  SANDAG is currently working on updating ABM2 to ABM2+ for applications in <a href="https://www.sdforward.com/about-san-diego-forward/developing-the-2021-regional-plan">the San Diego Forward:  The 2021 Regional Plan (2021 Regional Plan).</a> SANDAG’s ABM source-control follows a <a href="https://trunkbaseddevelopment.com/">trunk-based model (TBD) model:</a>
 
 - Developers collaborate on code in a single branch called ‘trunk’:
   - ABM1_TRUNK for ABM1
@@ -12,9 +12,9 @@ SANDAG maintains multiple versions of ABM software, including ABM1 for 2015 RP, 
   - Release 14.2.0 for ABM2+ (forthcoming)
 - In some cases, short-lived feature branches are allowed. However, once codes on feature branch compiles and passes all tests, they should be merged to trunk and the feature branch should be deleted.
 
-===
+##
 
-How to Build the Sandag ABM Java Programs, <a href="https://github.com/sandag/abm/wiki/Build-SANDAG-Jar">click here for detailed build steps</a>
+## How to Build the SANDAG ABM Java Programs, <a href="https://github.com/sandag/abm/wiki/Build-SANDAG-Jar">click here for details</a>
 
   - Download Eclipse
   - Install Maven (m2e) if needed (check if it is already installed via Windows + Preferences)

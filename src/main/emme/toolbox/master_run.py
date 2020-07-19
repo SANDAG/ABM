@@ -508,7 +508,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         export_transit_skims(omx_file, periods, transit_scenario)
 
                 if not skipTransponderExport[iteration]:
-                	export_for_transponder(output_dir, num_processors, base_scenario)
+                    am_scenario = main_emmebank.scenario(base_scenario.number + 2)
+                    export_for_transponder(output_dir, num_processors, am_scenario)
 
                 # For each step move trip matrices so run will stop if ctramp model
                 # doesn't produced csv/omx files for assignment

@@ -581,12 +581,12 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             elif arc["IHOV"] == 1:
                 return modes_gp_lanes[arc["ITRUCK"]]
             elif arc["IHOV"] == 2:
-                if arc["ITOLLO"] > 0:  # managed lanes, free for HOV2 and HOV3+, tolls for SOV
+                if arc["ITOLLO"] + arc["ITOLLA"] + arc["ITOLLP"] > 0:  # managed lanes, free for HOV2 and HOV3+, tolls for SOV
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV2
                 else:
                     return modes_HOV2
             elif arc["IHOV"] == 3:
-                if arc["ITOLLO"] > 0:  # managed lanes, free for HOV3+, tolls for SOV and HOV2
+                if arc["ITOLLO"] + arc["ITOLLA"] + arc["ITOLLP"]  > 0:  # managed lanes, free for HOV3+, tolls for SOV and HOV2
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV3
                 else:
                     return modes_HOV3
