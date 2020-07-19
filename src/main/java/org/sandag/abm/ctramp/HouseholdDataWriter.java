@@ -1332,6 +1332,7 @@ public class HouseholdDataWriter
      
         data.add(string(t.getTourModeChoice()));
        	
+        /*
         if(true){logger.error("Trying to write a tour as a trip");
         
         logger.info("HHID: " +t.getHhId());
@@ -1339,7 +1340,7 @@ public class HouseholdDataWriter
         logger.info("TOURID: "+t.getTourId());
         logger.info(inbound ? "inbound" : "outbound");
         }
-    	
+    	*/
         
         data.add(string(t.getValueOfTime()));
         data.add(string(h.getTpChoice()));
