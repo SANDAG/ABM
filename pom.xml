@@ -8,28 +8,30 @@
     <properties>
         <encoding.type>UTF-8</encoding.type> 
         <release.root>${project.build.directory}/${project.name}/${project.version}</release.root>
-        <jppf.driver.memory.min>1000m</jppf.driver.memory.min> 
-        <jppf.driver.memory.max>9000m</jppf.driver.memory.max> 
-        <jppf.headnode.memory.min>32000m</jppf.headnode.memory.min> 
-        <jppf.headnode.memory.max>32000m</jppf.headnode.memory.max> 
-        <jppf.workernode.memory.min>70000m</jppf.workernode.memory.min> 
-        <jppf.workernode.memory.max>120000m</jppf.workernode.memory.max> 
-        <mtxmgr.memory.min>90000m</mtxmgr.memory.min>
-        <mtxmgr.memory.max>90000m</mtxmgr.memory.max>
+        <!--
+	        <jppf.driver.memory.min>1000m</jppf.driver.memory.min> 
+	        <jppf.driver.memory.max>9000m</jppf.driver.memory.max> 
+	        <jppf.headnode.memory.min>32000m</jppf.headnode.memory.min> 
+	        <jppf.headnode.memory.max>32000m</jppf.headnode.memory.max> 
+	        <jppf.workernode.memory.min>70000m</jppf.workernode.memory.min> 
+	        <jppf.workernode.memory.max>120000m</jppf.workernode.memory.max> 
+	        <dataexport.memory.min>30000m</dataexport.memory.min> 
+            <dataexport.memory.max>140000m</dataexport.memory.max> 
+        -->
+        <mtxmgr.memory.min>100000m</mtxmgr.memory.min>
+        <mtxmgr.memory.max>120000m</mtxmgr.memory.max>
         <hhmgr.memory.min>1000m</hhmgr.memory.min> 
         <hhmgr.memory.max>30000m</hhmgr.memory.max>         
         <client.memory.min>30000m</client.memory.min> 
         <client.memory.max>50000m</client.memory.max>          
         <spmarket.memory.min>30000m</spmarket.memory.min> 
-        <spmarket.memory.max>180000m</spmarket.memory.max>      
-        <bikelogsum.memory.min>26000m</bikelogsum.memory.min> 
-        <bikelogsum.memory.max>50000m</bikelogsum.memory.max>    
-        <walklogsum.memory.min>26000m</walklogsum.memory.min> 
-        <walklogsum.memory.max>50000m</walklogsum.memory.max>    
-        <bikeroute.memory.min>26000m</bikeroute.memory.min> 
-        <bikeroute.memory.max>50000m</bikeroute.memory.max> 
-        <dataexport.memory.min>30000m</dataexport.memory.min> 
-        <dataexport.memory.max>140000m</dataexport.memory.max> 
+        <spmarket.memory.max>80000m</spmarket.memory.max>      
+        <bikelogsum.memory.min>20000m</bikelogsum.memory.min> 
+        <bikelogsum.memory.max>30000m</bikelogsum.memory.max>    
+        <walklogsum.memory.min>20000m</walklogsum.memory.min> 
+        <walklogsum.memory.max>30000m</walklogsum.memory.max>    
+        <bikeroute.memory.min>20000m</bikeroute.memory.min> 
+        <bikeroute.memory.max>30000m</bikeroute.memory.max> 
         <emfac.memory.min>10000m</emfac.memory.min> 
         <emfac.memory.max>15000m</emfac.memory.max>  
         <validate.memory.min>10000m</validate.memory.min> 
@@ -125,7 +127,7 @@
                 <tourdest.uec.file>TourDestinationChoice2035.xls</tourdest.uec.file>      
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2035.xls</crossBorder.tour.mc.uec.file>   
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2035rc</visualizer.reference.path> 
-                <Mobility.AV.Share>0.2</Mobility.AV.Share>
+                <Mobility.AV.Share>0.0</Mobility.AV.Share>
             </properties>
         </profile>
         <profile>
@@ -137,7 +139,7 @@
                 <tourdest.uec.file>TourDestinationChoice2035.xls</tourdest.uec.file>      
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file>    
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2035nb_v2</visualizer.reference.path>
-                <Mobility.AV.Share>0.2</Mobility.AV.Share>
+                <Mobility.AV.Share>0.0</Mobility.AV.Share>
             </properties>
         </profile>
         <profile>
@@ -149,7 +151,7 @@
                 <tourdest.uec.file>TourDestinationChoice2050.xls</tourdest.uec.file>  
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2050.xls</crossBorder.tour.mc.uec.file> 
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2040rc</visualizer.reference.path>
-                <Mobility.AV.Share>0.2</Mobility.AV.Share>       
+                <Mobility.AV.Share>0.0</Mobility.AV.Share>       
             </properties>
         </profile>
         <profile>
@@ -161,7 +163,7 @@
                 <tourdest.uec.file>TourDestinationChoice2050.xls</tourdest.uec.file>   
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2050.xls</crossBorder.tour.mc.uec.file>  
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2050rc_OMEfix_cornhusker</visualizer.reference.path>    
-                <Mobility.AV.Share>0.5</Mobility.AV.Share>  
+                <Mobility.AV.Share>0.0</Mobility.AV.Share>  
             </properties>
         </profile>
         <profile>
@@ -173,7 +175,7 @@
                 <tourdest.uec.file>TourDestinationChoice2050.xls</tourdest.uec.file>   
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file> 
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2050nb</visualizer.reference.path>  
-                <Mobility.AV.Share>0.5</Mobility.AV.Share>     
+                <Mobility.AV.Share>0.0</Mobility.AV.Share>     
                 <vehicle.class.toll.factor>vehicle_class_toll_factors.csv</vehicle.class.toll.factor>  
             </properties>
         </profile>
