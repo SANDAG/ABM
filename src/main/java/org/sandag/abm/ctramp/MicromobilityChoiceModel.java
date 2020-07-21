@@ -214,7 +214,7 @@ public class MicromobilityChoiceModel
         	float walkTime = mgraDataManager.getMgraToMgraWalkTime(originMaz, destMaz); 
             mmDmuObject.setWalkTime(walkTime);
             
-            if(microtransitMazs.contains(originMaz) || microtransitMazs.contains(destMaz))
+            if(microtransitMazs.contains(originMaz) && microtransitMazs.contains(destMaz))
             	mmDmuObject.setMicroTransitAvailable(true);
             else
             	mmDmuObject.setMicroTransitAvailable(false);
@@ -255,7 +255,7 @@ public class MicromobilityChoiceModel
         	float walkTime = mgraDataManager.getMgraToTapWalkTime(originMaz, tapPosition);
             mmDmuObject.setWalkTime(walkTime);
             
-            if(microtransitTaps.contains(s.boardTap))
+            if(microtransitMazs.contains(originMaz) && microtransitTaps.contains(s.boardTap))
             	mmDmuObject.setMicroTransitAvailable(true);
             else
             	mmDmuObject.setMicroTransitAvailable(false);
@@ -293,7 +293,7 @@ public class MicromobilityChoiceModel
 	        walkTime = mgraDataManager.getMgraToTapWalkTime(destMaz, tapPosition);
 	        mmDmuObject.setWalkTime(walkTime);
 
-            if(microtransitTaps.contains(s.alightTap))
+            if(microtransitMazs.contains(destMaz) && microtransitTaps.contains(s.alightTap))
             	mmDmuObject.setMicroTransitAvailable(true);
             else
             	mmDmuObject.setMicroTransitAvailable(false);
@@ -340,7 +340,7 @@ public class MicromobilityChoiceModel
         		//set destination to origin so that Z can be used to find origin zone access to mode in mgra data file in UEC
         		mmDmuObject.setDmuIndexValues(household.getHhId(), originMaz, originMaz, originMaz);
         		   
-                if(microtransitTaps.contains(s.boardTap))
+                if(microtransitMazs.contains(originMaz) && microtransitTaps.contains(s.boardTap))
                 	mmDmuObject.setMicroTransitAvailable(true);
                 else
                 	mmDmuObject.setMicroTransitAvailable(false);
@@ -358,7 +358,7 @@ public class MicromobilityChoiceModel
    	            	int closestMazToAlightTap = mgraDataManager.getClosestMgra(s.alightTap);
    	            	mmDmuObject.setDmuIndexValues(household.getHhId(), closestMazToAlightTap, closestMazToAlightTap, closestMazToAlightTap);
 
-   	            	if(microtransitTaps.contains(s.alightTap))
+   	            	if(microtransitMazs.contains(destMaz) && microtransitTaps.contains(s.alightTap))
    	            		mmDmuObject.setMicroTransitAvailable(true);
                    else
                    		mmDmuObject.setMicroTransitAvailable(false);
