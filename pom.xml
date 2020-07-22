@@ -8,16 +8,6 @@
     <properties>
         <encoding.type>UTF-8</encoding.type> 
         <release.root>${project.build.directory}/${project.name}/${project.version}</release.root>
-        <!--
-	        <jppf.driver.memory.min>1000m</jppf.driver.memory.min> 
-	        <jppf.driver.memory.max>8000m</jppf.driver.memory.max> 
-	        <jppf.headnode.memory.min>30000m</jppf.headnode.memory.min> 
-	        <jppf.headnode.memory.max>30000m</jppf.headnode.memory.max> 
-	        <jppf.workernode.memory.min>50000m</jppf.workernode.memory.min> 
-	        <jppf.workernode.memory.max>60000m</jppf.workernode.memory.max> 
-	        <dataexport.memory.min>30000m</dataexport.memory.min> 
-            <dataexport.memory.max>140000m</dataexport.memory.max> 
-        -->
         <mtxmgr.memory.min>100000m</mtxmgr.memory.min>
         <mtxmgr.memory.max>120000m</mtxmgr.memory.max>
         <hhmgr.memory.min>1000m</hhmgr.memory.min> 
