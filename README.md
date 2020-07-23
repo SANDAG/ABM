@@ -1,11 +1,11 @@
 ## SANDAG ABM
 
-SANDAG maintains multiple ABM software versions, including ABM1 for <a href="https://www.sdforward.com/2019-federal-rtp/2015-regional-plan">San Diego Forward: The Regional Plan</a> adopted by the SANDAG Board of Directors in October 2015 and ABM2 for <a href="https://www.sdforward.com/2019-federal-rtp">the SANDAG 2019 Federal Regional Transportation Plan</a> adopted by SANDAG Board of Directors in October 2019.  SANDAG is currently working on updating ABM2 to ABM2+ for applications in <a href="https://www.sdforward.com/about-san-diego-forward/developing-the-2021-regional-plan">the San Diego Forward:  The 2021 Regional Plan (2021 Regional Plan).</a> SANDAG’s ABM source-control follows a <a href="https://trunkbaseddevelopment.com/">trunk-based model (TBD) model:</a>
+SANDAG maintains multiple ABM software versions, including ABM1 for <a href="https://www.sdforward.com/2019-federal-rtp/2015-regional-plan">San Diego Forward: The Regional Plan</a> adopted by the SANDAG Board of Directors in October 2015 and ABM2 for <a href="https://www.sdforward.com/2019-federal-rtp">the SANDAG 2019 Federal Regional Transportation Plan</a> adopted by SANDAG Board of Directors in October 2019.  SANDAG is currently working on updating ABM2 to ABM2+ for applications in <a href="https://www.sdforward.com/about-san-diego-forward/developing-the-2021-regional-plan">the San Diego Forward:  The 2021 Regional Plan (2021 Regional Plan).</a> Refer to <a href="https://github.com/SANDAG/ABM/wiki">WIKI</a> page for model design, data dictionaries, and reports. SANDAG’s ABM source-control follows a <a href="https://trunkbaseddevelopment.com/">trunk-based model (TBD) model:</a>
 
 - Developers collaborate on code in a single branch called ‘trunk’:
   - ABM1_TRUNK for ABM1
   - ABM2_TRUNK for ABM2
-  - asim-cross-border for cross border travel model (CBTM) and eventually ABM3.
+  - asim-cross-border for cross border travel model (CBTM): <a href="https://github.com/ActivitySim/activitysim/wiki">ActivitySim</a>-based and will be ABM3
 - For each ABM version there is a release branch that should not receive continued development work.
   - Release 13.3.2 for ABM1
   - Release 14.1.1 for ABM2
