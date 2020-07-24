@@ -75,7 +75,7 @@ def process_file(config, zone):
 
     else:
         mt_avail = \
-            df[orig_col].isin(config.mt.mgras) & df[dest_col].isin(config.mt_taps) & \
+            df[orig_col].isin(config.mt_mgras) & df[dest_col].isin(config.mt_taps) & \
             (length <= config.mt_max_dist_tap)
         walk_avail = length <= config.walk_max_dist_tap
         mm_avail = length <= config.mm_max_dist_tap

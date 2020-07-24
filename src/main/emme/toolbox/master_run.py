@@ -601,8 +601,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             export_matrix_data(main_output_directory, base_scenario, transit_scenario)
             # export core ABM data
             # Note: uses relative project stucture, so cannot redirect to T drive
-            ### self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",
-            ###              capture_output=True)  CL: This line is temporarily commented. When Gregor complete data export procedure, it should be uncommoented 06/02/20
+            self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",capture_output=True)
         #Validation for 2016 scenario
         if scenarioYear == "2016":
             validation(self._path, main_emmebank, base_scenario)
