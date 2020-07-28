@@ -311,7 +311,11 @@ def shortest_paths_impedances(network, mode, link_cost, destinations):
             if node.number == dest_id: 
                 costs.append(0)
             else:
-                costs.append(tree.cost_to_node(node.id))
+                try:
+                    path_cost = tree.cost_to_node(node.id)
+                except KeyError:
+                    path_cost = 600
+                costs.append(path_cost)
         impedances.append(costs)
     return _np.array(impedances).T
 

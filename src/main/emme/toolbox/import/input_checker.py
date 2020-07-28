@@ -159,6 +159,28 @@ class input_checker(_m.Tool()):
 		# load emme network
 		network = eb.scenario(100).get_network()
 
+		# create on-the-fly attributes (temporary)
+
+		# link modes as string
+		network.create_attribute("LINK", "mode_str")
+		for link in network.links():
+			link.mode_str = "".join([m.id for m in link.modes])
+
+		# link isTransit flag
+		network.create_attribute("LINK", "isTransit")
+		transit_modes = set([m for m in network.modes() if m.type == "TRANSIT"])
+		for link in network.links():
+			link.isTransit = bool(link.modes.intersection(transit_modes))
+
+		# isFirst and isLast flags
+		network.create_attribute("TRANSIT_SEGMENT", "isFirst", False)
+		network.create_attribute("TRANSIT_SEGMENT", "isLast", False)
+		for line in network.transit_lines():
+			first_seg = line.segment(0)
+			last_seg = line.segment(-2)
+			first_seg.isFirst = True
+			last_seg.isLast = True
+
 		def get_emme_object(emme_network, emme_network_object, fields_to_export):
 			# Emme network attribute and object names
 			net_attr = {
