@@ -220,11 +220,11 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
         for dst in destinations:
             network.node(dst)["@leaf"] = 1
 
-        reverse_auto_network(network, "@time_link_md")
+        reverse_auto_network(network, "@auto_time")
         detour_impedances = shortest_paths_impedances(
-            network, new_mode, "@time_link_md", destinations)
+            network, new_mode, "@auto_time", destinations)
         direct_impedances = shortest_paths_impedances(
-            network, sov_non_toll_mode, "@time_link_md", destinations)
+            network, sov_non_toll_mode, "@auto_time", destinations)
 
         percent_detour = (detour_impedances - direct_impedances) / direct_impedances
         avg_percent_detour = _np.sum(percent_detour, axis=1) / len(destinations)

@@ -693,6 +693,7 @@ Export network results to csv files for SQL data loader."""
             fout_seg.close()
         return
 
+    @_m.logbook_trace("Export geometries")
     def export_geometry(self, export_path, traffic_emmebank):
         # --------------------------Export Transit Nework Geometory-----------------------------
         # domain: NODE, LINK, TURN, TRANSIT_LINE, TRANSIT_VEHICLE, TRANSIT_SEGMENT
@@ -726,6 +727,9 @@ Export network results to csv files for SQL data loader."""
 
         desktop = _m.Modeller().desktop
         data_explorer = desktop.data_explorer()
+        desktop_traffic_database = data_explorer.add_database(traffic_emmebank.path)
+        previous_active_database = data_explorer.active_database()
+        desktop_traffic_database.open()
         project = desktop.project
         scenario = _m.Modeller().emmebank.scenario(101)
         data_explorer.replace_primary_scenario(scenario)
@@ -801,6 +805,8 @@ Export network results to csv files for SQL data loader."""
         df_transit_link = df_transit_link[['trcovID', 'AB', 'geometry']]
         df_transit_link.to_csv(os.path.join(export_path, 'transitLink.csv'), index=False)
 
+        previous_active_database.open()
+        data_explorer.remove_database(desktop_traffic_database)
     def get_partial_network(self, scenario, attributes):
         domains = attributes.keys()
         network = scenario.get_partial_network(domains, include_attributes=False)

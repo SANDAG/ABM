@@ -67,14 +67,16 @@ def process_file(config, zone):
     # availability masks
     if zone == 'mgra':
         mt_avail = \
-            (df[orig_col].isin(config.mt_mgras) | df[dest_col].isin(config.mt_mgras)) & \
+            (df[orig_col].isin(config.mt_mgras) & df[dest_col].isin(config.mt_mgras)) & \
             (length <= config.mt_max_dist_mgra)
 
         walk_avail = length <= config.walk_max_dist_mgra
         mm_avail = length <= config.mm_max_dist_mgra
 
     else:
-        mt_avail = df[dest_col].isin(config.mt_taps) & (length <= config.mt_max_dist_tap)
+        mt_avail = \
+            df[orig_col].isin(config.mt_mgras) & df[dest_col].isin(config.mt_taps) & \
+            (length <= config.mt_max_dist_tap)
         walk_avail = length <= config.walk_max_dist_tap
         mm_avail = length <= config.mm_max_dist_tap
 
