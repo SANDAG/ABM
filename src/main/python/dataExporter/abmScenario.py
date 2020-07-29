@@ -527,7 +527,7 @@ class ScenarioData(object):
 
         abm_5_tod = np.select(conditions, choices, default=np.NaN)
 
-        return pd.Series(abm_5_tod).astype("int8")
+        return pd.Series(abm_5_tod).astype("float")
 
     def _map_vot_categories(self, vot: pd.Series) -> pd.Series:
         """ Map Pandas Series of continuous ABM value of time (vot) values to
