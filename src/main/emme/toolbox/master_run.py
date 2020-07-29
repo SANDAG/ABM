@@ -596,11 +596,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         if not skipDataExport:
             # export network and matrix results from Emme directly to T if using local drive
-            main_output_directory = _join(main_directory, "output")
-            export_network_data(main_directory, scenario_id, main_emmebank, transit_emmebank, num_processors)
-            export_matrix_data(main_output_directory, base_scenario, transit_scenario)
+            output_directory = _join(self._path, "output")
+            export_network_data(self._path, scenario_id, main_emmebank, transit_emmebank, num_processors)
+            export_matrix_data(output_directory, base_scenario, transit_scenario)
             # export core ABM data
-            # Note: uses relative project stucture, so cannot redirect to T drive
+            # Note: uses relative project structure, so cannot redirect to T drive
             self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",capture_output=True)
         #Validation for 2016 scenario
         if scenarioYear == "2016":
