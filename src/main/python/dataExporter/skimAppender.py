@@ -539,7 +539,7 @@ class SkimAppender(object):
                    df["distanceDrive"] * aoc_av]
 
         df["costOperatingDrive"] = pd.Series(
-            np.select(conditions, choices, default=0),
+            np.select(conditions, choices, default=np.NaN),
             dtype="float32")
 
         # return input DataFrame with appended auto operating cost column
@@ -597,12 +597,12 @@ class SkimAppender(object):
                    df["timeAutoTerminalWalk"] * av_factor]
 
         df["timeAutoTerminalWalk"] = pd.Series(
-            np.select(conditions, choices, default=0),
+            np.select(conditions, choices, default=np.NaN),
             dtype="float32")
 
         # create auto terminal distance from walk speed property
         df["distanceAutoTerminalWalk"] = pd.Series(
-            df["timeAutoTerminalWalk"] * self.properties["walkSpeed"],
+            df["timeAutoTerminalWalk"] * self.properties["walkSpeed"] / 60,
             dtype="float32")
 
         return df
@@ -619,7 +619,7 @@ class SkimAppender(object):
         in the MGRA-MGRA level then the TAZ-TAZ level skim is used. Note the
         skims only provide time in minutes so distance is created using the
         bicycle speed property set in the conf/sandag_abm.properties file.
-        Non-bicycle modes have all skims set to 0.
+        Non-bicycle modes have all skims set to NaN.
 
         Args:
             df: Input Pandas DataFrame containing the fields
@@ -694,12 +694,9 @@ class SkimAppender(object):
             dtype="float32")
 
         # merge result set DataFrame back into initial trip list
+        # keep missing skim records as missing skim means no bike trip
         records = records[["tripID", "timeBike", "distanceBike"]]
         df = df.merge(records, on="tripID", how="left")
-
-        # set missing skim records to 0 as a missing skim means no bike trip
-        skim_cols = ["timeBike", "distanceBike"]
-        df[skim_cols] = df[skim_cols].fillna(0)
 
         # return input DataFrame with appended skim columns
         return df
@@ -712,7 +709,7 @@ class SkimAppender(object):
 
         The model uses an on-the-fly input file (input\accessam.csv) for
         drive to transit auto-mode skims and assumes no fare or toll costs.
-        Non-drive to transit modes have all skims set to 0.
+        Non-drive to transit modes have all skims set to NaN.
 
         Args:
             df: Input Pandas DataFrame containing the fields
@@ -785,11 +782,8 @@ class SkimAppender(object):
         records = records[["tripID", "timeDriveTransit", "distanceDriveTransit"]]
 
         # merge result set DataFrame back into initial trip list
+        # keep missing skim records as missing skim means no transit trip
         df = df.merge(records, on="tripID", how="left")
-
-        # set missing skim records to 0 as a missing skim means no transit trip
-        skim_cols = ["timeDriveTransit", "distanceDriveTransit"]
-        df[skim_cols] = df[skim_cols].fillna(0)
 
         # return input DataFrame with appended skim columns
         return df
@@ -801,7 +795,7 @@ class SkimAppender(object):
         The process uses the trip departure ABM 5 TOD period, trip mode,
         transponder availability, and the trip value of time (vot) category
         to select the correct auto skim-set to get the trip time, distance,
-        and toll costs. Non-auto modes have all skims set to 0.
+        and toll costs. Non-auto modes have all skims set to NaN.
 
         Args:
             df: Input Pandas DataFrame containing the fields
@@ -898,11 +892,8 @@ class SkimAppender(object):
                          "costTollDrive"]]
 
         # merge the output skim list back to the original input DataFrame
+        # keep missing skim records as missing skim means no auto trip
         df = df.merge(right=output, on="tripID", how="left")
-
-        # set missing skim records to 0 as a missing skim means no auto trip
-        skim_cols = ["timeDrive", "distanceDrive", "costTollDrive"]
-        df[skim_cols] = df[skim_cols].fillna(0)
 
         # return input DataFrame with appended skim columns
         return df
@@ -915,7 +906,7 @@ class SkimAppender(object):
 
         The process uses the trip departure ABM 5 TOD period and trip mode to
         select the correct transit skim-set to use to get the trip time,
-        distance, and fare costs. Non-transit modes have all skims set to 0.
+        distance, and fare costs. Non-transit modes have all skims set to NaN.
 
         Args:
             df: Input Pandas DataFrame containing the fields
@@ -1033,7 +1024,7 @@ class SkimAppender(object):
             records["distanceTransitInVehicle"] = omx_file[matrix + "_TOTDIST"][o_idx, d_idx]
             records["costFareTransit"] = omx_file[matrix + "_FARE"][o_idx, d_idx]
             records["transfersTransit"] = omx_file[matrix + "_XFERS"][o_idx, d_idx]
-            records["distanceTransitWalk"] = records.timeTransitWalk * self.properties["walkSpeed"]
+            records["distanceTransitWalk"] = records.timeTransitWalk * self.properties["walkSpeed"] / 60
 
             # set skim data types
             records = records.astype({
@@ -1086,15 +1077,13 @@ class SkimAppender(object):
         # if there are no transit trip skim records
         if result.empty:
             # append skim columns to input DataFrame
-            # set to 0 as a missing skim means no transit trip
+            # set to missing as a missing skim means no transit trip
             for col in skim_cols:
-                df[col] = 0
+                df[col] = np.NaN
         else:
             # merge result set DataFrame back into initial trip list
+            # keep missing skim records as missing skim means no transit trip
             df = df.merge(result, on="tripID", how="left")
-
-            # set missing skim records to 0 as a missing skim means no transit trip
-            df[skim_cols] = df[skim_cols].fillna(0)
 
         # return input DataFrame with appended skim columns
         return df
@@ -1160,7 +1149,7 @@ class SkimAppender(object):
         ]
 
         df["costFareDrive"] = pd.Series(
-            np.select(conditions, choices, default=0),
+            np.select(conditions, choices, default=np.NaN),
             dtype="float32")
 
         # return input DataFrame with appended auto fare cost column
@@ -1246,7 +1235,7 @@ class SkimAppender(object):
         ]
 
         df["timeWaitDrive"] = pd.Series(
-            np.select(conditions, choices, default=0),
+            np.select(conditions, choices, default=np.NaN),
             dtype="float32")
 
         # remove mgra, PopEmpDenPerMi from the input DataFrame
@@ -1260,7 +1249,7 @@ class SkimAppender(object):
         ([tripID], [tripMode], [originMGRA], [destinationMGRA]) and returns
         the associated micro-mobility, micro-transit, and walk mode skims for
         time, distance, and fare cost. Non-micro-mobility/micro-transit/walk
-        modes have all skims set to 0.
+        modes have all skims set to NaN.
 
             Args:
                 df: Input Pandas DataFrame containing the fields
@@ -1376,15 +1365,13 @@ class SkimAppender(object):
         # if there are no mm/mt/walk trip skim records
         if records.empty:
             # append skim columns to input DataFrame
-            # set to 0 as a missing skim means no transit trip
+            # set to missing as a missing skim means no walk trip
             for col in skim_cols:
-                df[col] = 0
+                df[col] = np.NaN
         else:
             # merge result set DataFrame back into initial trip list
+            # keep missing skim records as missing skim means no walk trip
             df = df.merge(records, on="tripID", how="left")
-
-            # set missing skim records to 0 as a missing skim means no transit trip
-            df[skim_cols] = df[skim_cols].fillna(0)
 
         # return input DataFrame with appended skim columns
         return df
@@ -1619,15 +1606,13 @@ class SkimAppender(object):
         # if there are no mm/mt/walk access/egress skim records
         if records.empty:
             # append skim columns to input DataFrame
-            # set to 0 as a missing skim means no transit trip
+            # set to missing as a missing skim means no transit trip
             for col in skim_cols:
-                df[col] = 0
+                df[col] = np.NaN
         else:
             # merge result set DataFrame back into initial trip list
+            # keep missing skim records as missing skim means no transit trip
             df = df.merge(records, on="tripID", how="left")
-
-            # set missing skim records to 0 as a missing skim means no transit trip
-            df[skim_cols] = df[skim_cols].fillna(0)
 
         # return input DataFrame with appended skim columns
         return df
