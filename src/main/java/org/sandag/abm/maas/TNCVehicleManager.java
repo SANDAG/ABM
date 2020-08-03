@@ -267,7 +267,7 @@ public class TNCVehicleManager {
 	/**
 	 * Encapsulating in method so that vehicles and some statistics can be tracked.
 	 */
-	private TNCVehicle generateVehicle(int simulationPeriod, int taz){
+	private synchronized TNCVehicle generateVehicle(int simulationPeriod, int taz){
 		++totalVehicles;
 		TNCVehicle tNCVehicle = new TNCVehicle(totalVehicles, maxPassengers, maxDistanceBeforeRefuel);
 		tNCVehicle.setGenerationPeriod((short)simulationPeriod);
