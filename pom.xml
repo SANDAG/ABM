@@ -8,8 +8,8 @@
     <properties>
         <encoding.type>UTF-8</encoding.type> 
         <release.root>${project.build.directory}/${project.name}/${project.version}</release.root>
-        <mtxmgr.memory.min>60000m</mtxmgr.memory.min>
-        <mtxmgr.memory.max>100000m</mtxmgr.memory.max>
+        <mtxmgr.memory.min>90000m</mtxmgr.memory.min>
+        <mtxmgr.memory.max>120000m</mtxmgr.memory.max>
         <hhmgr.memory.min>1000m</hhmgr.memory.min> 
         <hhmgr.memory.max>30000m</hhmgr.memory.max>         
         <client.memory.min>30000m</client.memory.min> 
@@ -37,8 +37,8 @@
         <JAVA_64_PATH>C:\Progra~1\Java\jre1.8.0_162</JAVA_64_PATH>
         <JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
         <workpath>WORKPATH</workpath>
-        <database_server>sql2014a8</database_server>
-        <database_name>abm_2</database_name>
+        <database_server>socioeca8</database_server>
+        <database_name>abmTest</database_name>
         <jppf_version>5.0.1</jppf_version>
         <workShadowPricing.iteration>ShadowPricingOutput_work_9.csv</workShadowPricing.iteration>
         <schoolShadowPricing.iteration>ShadowPricingOutput_school_9.csv</schoolShadowPricing.iteration>
