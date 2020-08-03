@@ -126,7 +126,7 @@ public class AirportPartyManager
         for (int i = 0; i < departures; ++i)
         {
 
-            AirportParty party = new AirportParty(i * 101 + 1000);
+            AirportParty party = new AirportParty(i * 101 + 1000);         
 
             // simulate from distributions
             party.setDirection(AirportModelStructure.DEPARTURE);
@@ -154,7 +154,7 @@ public class AirportPartyManager
         for (int i = 0; i < arrivals; ++i)
         {
 
-            AirportParty party = new AirportParty(i * 101 + 1000);
+            AirportParty party = new AirportParty(i * 201 + 1000);
 
             // simulate from distributions
             party.setDirection(AirportModelStructure.ARRIVAL);
@@ -187,7 +187,7 @@ public class AirportPartyManager
         		int stallNum = (int) num;
         		for (int s = 0; s < stallNum; s++)
         		{
-        			AirportParty party = new AirportParty(s*101 + 1000);
+        			AirportParty party = new AirportParty(s * 301 + 1000);
         			double stallMgra = employeeParkingValuesMap.get(key).get(1);
         			party.setOriginMGRA((int) stallMgra);
         			party.setDestinationMGRA(airportMgra);

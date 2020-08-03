@@ -42,8 +42,7 @@ public class AirportParty
      */
     public AirportParty(long seed)
     {
-
-        random = new MersenneTwister(seed);
+    	random = new MersenneTwister(seed);
     }
 
     /**
