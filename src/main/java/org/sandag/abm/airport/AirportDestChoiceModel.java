@@ -18,8 +18,6 @@ import com.pb.common.newmodel.ChoiceModelApplication;
 import com.pb.common.newmodel.UtilityExpressionCalculator;
 import com.pb.common.util.Tracer;
 
-import com.pb.common.math.MersenneTwister;
-
 public class AirportDestChoiceModel
 {
 	
@@ -455,23 +453,19 @@ public class AirportDestChoiceModel
      */
     public void chooseOrigins(AirportParty[] airportParties)
     {
-    	//MersenneTwister twister = new MersenneTwister(5);
-        // iterate through the array, choosing mgras and setting them
+    	// iterate through the array, choosing mgras and setting them
         for (AirportParty party : airportParties)
         {
         	
             int income = party.getIncome();
             int purpose = party.getPurpose();
-            double random = party.getRandom();
-           // double random = twister.nextDouble();
             int mgra = -99;
             if (purpose == AirportModelStructure.EMPLOYEE)
             {
             	continue;
             }
             if (purpose < AirportModelStructure.INTERNAL_PURPOSES)
-                //mgra = chooseMGRA(purpose, income, random);
-            	mgra = chooseMGRA(purpose, income, party);
+                mgra = chooseMGRA(purpose, income, party);
 
             // if this is a departing travel party, the origin is the chosen
             // mgra, and the destination is the airport terminal
