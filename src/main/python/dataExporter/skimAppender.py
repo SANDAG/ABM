@@ -690,7 +690,7 @@ class SkimAppender(object):
 
         # calculate distance using bicycle speed
         records["distanceBike"] = pd.Series(
-            records["timeBike"] * self.properties["bicycleSpeed"],
+            records["timeBike"] * self.properties["bicycleSpeed"] / 60,
             dtype="float32")
 
         # merge result set DataFrame back into initial trip list
