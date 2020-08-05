@@ -182,8 +182,7 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
         # is calculated as
         # 100*(TimeWithoutFacility - NonTransponderTime) / NonTransponderTime
 
-        destinations = 4027, 2563, 2258
-        # destinations = props["?????????"]
+        destinations = props["transponder.destinations"]
 
         network.create_attribute("NODE", "@root")
         network.create_attribute("NODE", "@leaf")
