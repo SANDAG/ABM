@@ -491,6 +491,10 @@ class SkimAppender(object):
 
         df["costTotal"] = df.filter(regex="^cost").sum(axis=1)
 
+        # sort return DataFrame by tripID for user-experience
+        # and faster database loading via ORDER hints
+        df.sort_values(by="tripID", inplace=True)
+
         return df
 
     def auto_operating_cost(self, df: pd.DataFrame) -> pd.DataFrame:
