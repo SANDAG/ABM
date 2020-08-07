@@ -2527,14 +2527,14 @@ class TripLists(ScenarioData):
         # adjust by the ABM scenario final iteration sample rate
         conditions = [(trips["MODE"] == "Shared Ride 2"),
                       (trips["MODE"] == "Shared Ride 3+")]
-        choices = [1 / self.properties["sr2Passengers"],
-                   1 / self.properties["sr3Passengers"]]
+        choices = [self.properties["sr2Passengers"],
+                   self.properties["sr3Passengers"]]
 
-        trips["weightTrip"] = pd.Series(
+        trips["weightPersonTrip"] = pd.Series(
             trips["TRIPS"] * np.select(conditions, choices, default=1) / self.properties["sampleRate"],
             dtype="float32")
-        trips["weightPersonTrip"] = trips["TRIPS"] / self.properties["sampleRate"]
-        trips["weightPersonTrip"] = trips["weightPersonTrip"].astype("float32")
+        trips["weightTrip"] = trips["TRIPS"] / self.properties["sampleRate"]
+        trips["weightTrip"] = trips["weightTrip"].astype("float32")
 
         # rename columns to standard/generic ABM naming conventions
         trips.rename(columns={"OTAZ": "originTAZ",
@@ -2658,14 +2658,14 @@ class TripLists(ScenarioData):
         # adjust by the ABM scenario final iteration sample rate
         conditions = [(trips["MODE"] == "Shared Ride 2"),
                       (trips["MODE"] == "Shared Ride 3+")]
-        choices = [1 / self.properties["sr2Passengers"],
-                   1 / self.properties["sr3Passengers"]]
+        choices = [self.properties["sr2Passengers"],
+                   self.properties["sr3Passengers"]]
 
-        trips["weightTrip"] = pd.Series(
+        trips["weightPersonTrip"] = pd.Series(
             trips["TRIPS"] * np.select(conditions, choices, default=1) / self.properties["sampleRate"],
             dtype="float32")
-        trips["weightPersonTrip"] = trips["TRIPS"] / self.properties["sampleRate"]
-        trips["weightPersonTrip"] = trips["weightPersonTrip"].astype("float32")
+        trips["weightTrip"] = trips["TRIPS"] / self.properties["sampleRate"]
+        trips["weightTrip"] = trips["weightTrip"].astype("float32")
 
         # rename columns to standard/generic ABM naming conventions
         trips.rename(columns={"OTAZ": "originTAZ",
