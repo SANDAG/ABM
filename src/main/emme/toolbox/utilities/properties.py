@@ -333,6 +333,8 @@ class PropertiesSetter(object):
 
     def save_properties(self):
         props = self._properties
+        if props is None:
+            raise Exception("Properties not yet loaded (path %s may not exist)" % self.properties_path)
         props["RunModel.startFromIteration"] = self.startFromIteration
         props["sample_rates"] = [float(x) for x in self.sample_rates.split(",")]
         
