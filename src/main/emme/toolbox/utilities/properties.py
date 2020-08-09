@@ -20,6 +20,7 @@ import traceback as _traceback
 from collections import OrderedDict
 import csv
 import os
+import sys
 import time
 
 
@@ -460,20 +461,27 @@ class Properties(object):
         self._comments = comments = {}
         with open(self._path, 'r') as properties:
             comment = []
-            for line in properties:
-                line = line.strip()
-                if not line or line.startswith('#'):
-                    comment.append(line)
-                    continue
-                key, value = line.split('=')
-                key = key.strip()
-                tokens = value.split(',')
-                if len(tokens) > 1:
-                    value = self._parse_list(tokens)
-                else:
-                    value = self._parse(value)
-                prop[key] = value
-                comments[key], comment = comment, []
+            for i, line in enumerate(properties):
+                try:
+                    line = line.strip()
+                    if not line or line.startswith('#'):
+                        comment.append(line)
+                        continue
+                    if "=" not in line:
+                        raise Exception("Expecting 'name = value' format")
+                    key, value = line.split('=')
+                    key = key.strip()
+                    tokens = value.split(',')
+                    if len(tokens) > 1:
+                        value = self._parse_list(tokens)
+                    else:
+                        value = self._parse(value)
+                    prop[key] = value
+                    comments[key], comment = comment, []
+                except Exception as error:
+                    traceback = sys.exc_info()[2]
+                    message = "Error on line %s of .properties file: %s" % (i, error.message)
+                    raise type(error), type(error)(message), traceback
         self._timestamp = os.path.getmtime(self._path)
 
     def _parse_list(self, values):
