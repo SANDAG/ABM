@@ -182,8 +182,7 @@ class ExportForTransponder(_m.Tool(), gen_utils.Snapshot):
         # is calculated as
         # 100*(TimeWithoutFacility - NonTransponderTime) / NonTransponderTime
 
-        destinations = 4027, 2563, 2258
-        # destinations = props["?????????"]
+        destinations = props["transponder.destinations"]
 
         network.create_attribute("NODE", "@root")
         network.create_attribute("NODE", "@leaf")
@@ -311,7 +310,11 @@ def shortest_paths_impedances(network, mode, link_cost, destinations):
             if node.number == dest_id: 
                 costs.append(0)
             else:
-                costs.append(tree.cost_to_node(node.id))
+                try:
+                    path_cost = tree.cost_to_node(node.id)
+                except KeyError:
+                    path_cost = 600
+                costs.append(path_cost)
         impedances.append(costs)
     return _np.array(impedances).T
 

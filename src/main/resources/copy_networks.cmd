@@ -11,10 +11,6 @@ for %%i in (%FILE_LIST%) do (
 @echo Copying and overwriting %1\%%i
 xcopy /Y %1\%%i %2)
 
-set FILE_LIST=trlink.BX trrt.BX trstop.BX
-for %%i in (%FILE_LIST%) do (
-del %2\%%i
-)
 goto :eof
 
 :usage
