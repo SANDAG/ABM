@@ -716,10 +716,13 @@ public abstract class HouseholdDataManager
         // logger.info(String.format("start setHhArray for startIndex=%d, startTime=%d.",
         // startIndex,
         // startTime));
-        for (int i = 0; i < tempHhs.length; i++)
-        {
-            hhs[startIndex + i] = tempHhs[i];
-        }
+       
+    	synchronized(hhs) {
+    		for (int i = 0; i < tempHhs.length; i++)
+        	{
+            	hhs[startIndex + i] = tempHhs[i];
+        	}
+    	}
         // long endTime = System.currentTimeMillis();
         // logger.info(String.format(
         // "end setHhArray for startIndex=%d, endTime=%d, elapsed=%d millisecs.",
