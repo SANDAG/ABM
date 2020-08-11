@@ -57,7 +57,11 @@
                 <tourdest.uec.file>TourDestinationChoice.xls</tourdest.uec.file>
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice.xls</crossBorder.tour.mc.uec.file>
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2016</visualizer.reference.path> 
-                <Mobility.AV.Share>0.0</Mobility.AV.Share>                             
+                <Mobility.AV.Share>0.0</Mobility.AV.Share>   
+                <smartSignal.factor.LC>1.0</smartSignal.factor.LC>
+				<smartSignal.factor.MA>1.0</smartSignal.factor.MA>
+				<smartSignal.factor.PA>1.0</smartSignal.factor.PA> 
+				<atdm.factor>1.0</atdm.factor>                         
             </properties>
         </profile>
         <profile>
@@ -69,7 +73,11 @@
                 <tourdest.uec.file>TourDestinationChoice2020.xls</tourdest.uec.file>
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file> 
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2020</visualizer.reference.path>  
-                <Mobility.AV.Share>0.0</Mobility.AV.Share>          
+                <Mobility.AV.Share>0.0</Mobility.AV.Share>    
+                <smartSignal.factor.LC>1.0</smartSignal.factor.LC>
+				<smartSignal.factor.MA>1.0</smartSignal.factor.MA>
+				<smartSignal.factor.PA>1.0</smartSignal.factor.PA> 
+				<atdm.factor>1.0</atdm.factor>       
             </properties>
         </profile>
         <profile>
@@ -81,7 +89,11 @@
                 <tourdest.uec.file>TourDestinationChoice2025.xls</tourdest.uec.file>
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2025.xls</crossBorder.tour.mc.uec.file>    
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2025rc</visualizer.reference.path>  
-                <Mobility.AV.Share>0.0</Mobility.AV.Share>                 
+                <Mobility.AV.Share>0.0</Mobility.AV.Share>    
+                <smartSignal.factor.LC>0.8</smartSignal.factor.LC>
+				<smartSignal.factor.MA>0.8</smartSignal.factor.MA>
+				<smartSignal.factor.PA>0.8</smartSignal.factor.PA> 
+				<atdm.factor>1.0</atdm.factor>                             
             </properties>
         </profile>
         <profile>
@@ -93,7 +105,11 @@
                 <tourdest.uec.file>TourDestinationChoice2025.xls</tourdest.uec.file>
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file> 
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2025nb</visualizer.reference.path>    
-                <Mobility.AV.Share>0.0</Mobility.AV.Share>                   
+                <Mobility.AV.Share>0.0</Mobility.AV.Share> 
+                <smartSignal.factor.LC>0.8</smartSignal.factor.LC>
+				<smartSignal.factor.MA>0.8</smartSignal.factor.MA>
+				<smartSignal.factor.PA>0.8</smartSignal.factor.PA> 
+				<atdm.factor>1.0</atdm.factor>                   
             </properties>
         </profile>
         <profile>
@@ -105,7 +121,11 @@
                 <tourdest.uec.file>TourDestinationChoice2025.xls</tourdest.uec.file>  
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2025.xls</crossBorder.tour.mc.uec.file>   
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2030rc</visualizer.reference.path>  
-                <Mobility.AV.Share>0.0</Mobility.AV.Share>               
+                <Mobility.AV.Share>0.0</Mobility.AV.Share>     
+                <smartSignal.factor.LC>0.8</smartSignal.factor.LC>
+				<smartSignal.factor.MA>0.8</smartSignal.factor.MA>
+				<smartSignal.factor.PA>0.8</smartSignal.factor.PA> 
+				<atdm.factor>1.0</atdm.factor>           
             </properties>
         </profile>
         <profile>
@@ -118,6 +138,10 @@
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2035.xls</crossBorder.tour.mc.uec.file>   
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2035rc</visualizer.reference.path> 
                 <Mobility.AV.Share>0.0</Mobility.AV.Share>
+                <smartSignal.factor.LC>0.8</smartSignal.factor.LC>
+				<smartSignal.factor.MA>0.8</smartSignal.factor.MA>
+				<smartSignal.factor.PA>0.8</smartSignal.factor.PA> 
+				<atdm.factor>0.93</atdm.factor> 
             </properties>
         </profile>
         <profile>
@@ -130,6 +154,10 @@
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file>    
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2035nb_v2</visualizer.reference.path>
                 <Mobility.AV.Share>0.0</Mobility.AV.Share>
+                <smartSignal.factor.LC>0.8</smartSignal.factor.LC>
+				<smartSignal.factor.MA>0.8</smartSignal.factor.MA>
+				<smartSignal.factor.PA>0.8</smartSignal.factor.PA> 
+				<atdm.factor>0.93</atdm.factor> 
             </properties>
         </profile>
         <profile>
@@ -141,7 +169,11 @@
                 <tourdest.uec.file>TourDestinationChoice2050.xls</tourdest.uec.file>  
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2050.xls</crossBorder.tour.mc.uec.file> 
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2040rc</visualizer.reference.path>
-                <Mobility.AV.Share>0.0</Mobility.AV.Share>       
+                <Mobility.AV.Share>0.0</Mobility.AV.Share>     
+                <smartSignal.factor.LC>0.8</smartSignal.factor.LC>
+				<smartSignal.factor.MA>0.8</smartSignal.factor.MA>
+				<smartSignal.factor.PA>0.8</smartSignal.factor.PA> 
+				<atdm.factor>0.93</atdm.factor>   
             </properties>
         </profile>
         <profile>
@@ -154,6 +186,10 @@
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2050.xls</crossBorder.tour.mc.uec.file>  
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2050rc_OMEfix_cornhusker</visualizer.reference.path>    
                 <Mobility.AV.Share>0.0</Mobility.AV.Share>  
+                <smartSignal.factor.LC>0.8</smartSignal.factor.LC>
+				<smartSignal.factor.MA>0.8</smartSignal.factor.MA>
+				<smartSignal.factor.PA>0.8</smartSignal.factor.PA> 
+				<atdm.factor>0.93</atdm.factor> 
             </properties>
         </profile>
         <profile>
@@ -166,7 +202,10 @@
                 <crossBorder.tour.mc.uec.file>CrossBorderTourModeChoice2020.xls</crossBorder.tour.mc.uec.file> 
                 <visualizer.reference.path>T:\RTP\2020RP_Fed\final\abm_runs\2050nb</visualizer.reference.path>  
                 <Mobility.AV.Share>0.0</Mobility.AV.Share>     
-                <vehicle.class.toll.factor>vehicle_class_toll_factors.csv</vehicle.class.toll.factor>  
+                <smartSignal.factor.LC>0.8</smartSignal.factor.LC>
+				<smartSignal.factor.MA>0.8</smartSignal.factor.MA>
+				<smartSignal.factor.PA>0.8</smartSignal.factor.PA> 
+				<atdm.factor>0.93</atdm.factor>  
             </properties>
         </profile>
         <profile>
