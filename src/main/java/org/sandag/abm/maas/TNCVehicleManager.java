@@ -180,7 +180,7 @@ public class TNCVehicleManager {
 	 * @param departureMaz	MAZ where tNCVehicle is requested from.
 	 * @return
 	 */
-	public TNCVehicle getClosestEmptyVehicle(int skimPeriod, int simulationPeriod, int departureMaz ){
+	public synchronized TNCVehicle getClosestEmptyVehicle(int skimPeriod, int simulationPeriod, int departureMaz ){
 				
 		int departureTaz = mazManager.getTaz(departureMaz);
 		short[] sortedTazs = transportCostManager.getZoneNumbersSortedByTime(skimPeriod, departureTaz);
@@ -319,7 +319,7 @@ public class TNCVehicleManager {
 	 * @param simulationPeriod
 	 * @param transportCostManager
 	 */
-	public void routeActiveVehicles(int skimPeriod, int simulationPeriod, TransportCostManager transportCostManager){
+	public synchronized void routeActiveVehicles(int skimPeriod, int simulationPeriod, TransportCostManager transportCostManager){
 		
 		logger.info("Routing "+vehiclesToRouteList.size()+" vehicles in period "+simulationPeriod);
 		ArrayList<TNCVehicle> vehiclesToRemove = new ArrayList<TNCVehicle>();
@@ -592,7 +592,7 @@ public class TNCVehicleManager {
 	 * @param skimPeriod
 	 * @param simulationPeriod
 	 */
-	public void checkForRefuelingVehicles(int skimPeriod, int simulationPeriod) {
+	public synchronized void checkForRefuelingVehicles(int skimPeriod, int simulationPeriod) {
 		
 		//iterate through zones
         for(int i = 1; i <= maxTaz; ++ i){
