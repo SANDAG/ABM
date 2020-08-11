@@ -29,7 +29,7 @@
 #    report/transit_aggflow.csv
 #    report/transit_flow.csv
 #    report/transit_onoff.csv
-#	 report/trrt.csv rename to transitRoute.csv
+#     report/trrt.csv rename to transitRoute.csv
 #    report/trstop.csv renmae to transitStop.csv
 #    report/transitTap.csv
 #    report/transitLink.csv
@@ -482,7 +482,7 @@ Export network results to csv files for SQL data loader."""
         # Note: Node analysis for transfers is VERY time consuming
         #       this implementation will be replaced when new Emme version is available
 
-        trrt_atts = ["Route_ID","Route_Name","Mode","AM_Headway","PM_Headway","OP_Headway","Config","Fare"]
+        trrt_atts = ["Route_ID","Route_Name","Mode","AM_Headway","PM_Headway","OP_Headway","Night_Headway","Night_Hours","Config","Fare"]
         trstop_atts = ["Stop_ID","Route_ID","Link_ID","Pass_Count","Milepost","Longitude","Latitude","NearNode","FareZone","StopName"]
 
         #transit route file
@@ -727,9 +727,12 @@ Export network results to csv files for SQL data loader."""
 
         desktop = _m.Modeller().desktop
         data_explorer = desktop.data_explorer()
-        desktop_traffic_database = data_explorer.add_database(traffic_emmebank.path)
-        previous_active_database = data_explorer.active_database()
-        desktop_traffic_database.open()
+        try:
+            desktop_traffic_database = data_explorer.add_database(traffic_emmebank.path)
+            previous_active_database = data_explorer.active_database()
+            desktop_traffic_database.open()
+        except:
+            pass
         project = desktop.project
         scenario = _m.Modeller().emmebank.scenario(101)
         data_explorer.replace_primary_scenario(scenario)
@@ -804,9 +807,11 @@ Export network results to csv files for SQL data loader."""
         df_transit_link['trcovID'] = abs(df_transit_link['trcovID'])
         df_transit_link = df_transit_link[['trcovID', 'AB', 'geometry']]
         df_transit_link.to_csv(os.path.join(export_path, 'transitLink.csv'), index=False)
-
-        previous_active_database.open()
-        data_explorer.remove_database(desktop_traffic_database)
+        try:
+            previous_active_database.open()
+            data_explorer.remove_database(desktop_traffic_database)
+        except:
+            pass
     def get_partial_network(self, scenario, attributes):
         domains = attributes.keys()
         network = scenario.get_partial_network(domains, include_attributes=False)
