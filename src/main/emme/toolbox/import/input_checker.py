@@ -33,6 +33,7 @@ import warnings
 from simpledbf import Dbf5
 import inro.modeller as _m
 import inro.emme.database.emmebank as _eb
+import inro.director.util.qtdialog as dialog
 
 warnings.filterwarnings("ignore")
 
@@ -69,6 +70,7 @@ class input_checker(_m.Tool()):
 		self.num_fatal = int()
 		self.num_warning = int()
 		self.num_logical = int()
+		self.logical_fails = pd.DataFrame()
 
 	def page(self):
 		pb = _m.ToolPageBuilder(self)
@@ -137,6 +139,9 @@ class input_checker(_m.Tool()):
 		_m.logbook_write("Writing logs...")
 		self.write_log()
 
+		_m.logbook_write("Checking for logical errors...")
+		self.check_logical()
+
 		_m.logbook_write("Checking for fatal errors...")
 		self.check_num_fatal()
 
@@ -180,6 +185,19 @@ class input_checker(_m.Tool()):
 			last_seg = line.segment(-2)
 			first_seg.isFirst = True
 			last_seg.isLast = True
+
+		# node isCentroid flag
+		network.create_attribute("NODE", "isCentroid", False)
+		centroids = [c for c in network.nodes() if c.is_centroid]
+		for node in network.nodes():
+			node.isCentroid = bool(node in centroids)
+
+		# node inLink and outLink attributes
+		network.create_attribute("NODE", "numInLinks")
+		network.create_attribute("NODE", "numOutLinks")
+		for node in network.nodes():
+			node.numInLinks = len(list(node.incoming_links()))
+			node.numOutLinks = len(list(node.outgoing_links()))
 
 		def get_emme_object(emme_network, emme_network_object, fields_to_export):
 			# Emme network attribute and object names
@@ -401,13 +419,14 @@ class input_checker(_m.Tool()):
 		checks_df = checks_df[checks_df.Type=='Test']
 		checks_df['reverse_result'] = [not i for i in checks_df.result]
 		
-		# get all FATAL failures
+		# get count of all FATAL failures
 		self.num_fatal = checks_df.result[(checks_df.Severity=='Fatal') & (checks_df.reverse_result)].count()
 		
 		# get all LOGICAL failures
 		self.num_logical = checks_df.result[(checks_df.Severity=='Logical') & (checks_df.reverse_result)].count()
+		self.logical_fails = checks_df[(checks_df.Severity=='Logical') & (checks_df.reverse_result)]
 		
-		# get all WARNING failures
+		# get count of all WARNING failures
 		self.num_warning = checks_df.result[(checks_df.Severity=='Warning') & (checks_df.reverse_result)].count()
 
 		# write summary of failed checks
@@ -521,6 +540,20 @@ class input_checker(_m.Tool()):
 			write_check_log(self, f, row)
 			
 		f.close()
+
+	def check_logical(self):
+		if self.num_logical > 0:
+			# raise exception for each logical check fail
+			for item, row in self.logical_fails.iterrows():
+				answer = dialog.alert_question(
+					message = "The following Logical check resulted in at least 1 error: {} \n Open {} for details. \
+					 \n\n Click OK to continue or Cancel to stop input checker.".format(row['Test'], self.log_path),
+					title = "Logical Check Error",
+					answers = [("OK", dialog.YES_ROLE), ("Cancel", dialog.REJECT_ROLE)]
+					)
+
+				if answer == 1:
+					raise Exception("Input checker was cancelled")
 
 	def check_num_fatal(self):
 		# return code to the main model based on input checks and results
