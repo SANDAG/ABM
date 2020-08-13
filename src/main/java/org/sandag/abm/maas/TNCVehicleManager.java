@@ -746,9 +746,14 @@ public class TNCVehicleManager {
     				logger.info("Writing "+tNCVehicle.getVehicleTrips().size()+" vehicle trips for vehicle ID "+tNCVehicle.getId());
     			}
 
+    			int tripid=0;
+    			
         		for(TNCVehicleTrip tNCVehicleTrip : tNCVehicle.getVehicleTrips()){
         			
-         			tNCVehicleTrip.printData(printWriter);
+         			tripid++;
+         			//reorder trip id by wsu
+         			tNCVehicleTrip.setId(tripid);
+        			tNCVehicleTrip.printData(printWriter);
         			
         			//save the data in the trip matrix
         			int startPeriod = tNCVehicleTrip.getStartPeriod();
