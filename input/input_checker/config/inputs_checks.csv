@@ -44,5 +44,5 @@ HH_TAZ_range_check,households,hhid,Fatal,Test,households.taz.apply(lambda x: Tru
 NODE_CTRAMP_Fields_Availability,network_nodes,id,Fatal,Test,test_val in network_nodes.columns,"id,@tap_id",,Check if Node data contains all the required fields for ABM. The CSV exporter should throw an error if any field is missing in the Emme object
 LINK_POSITIVE_LENGTH,network_links,id,Logical,Test,network_links.length>0,,,All link length should be greater than zero
 #TRANSITSEGMENT_Unique_Stop_ID_Check,transit_segments,id,Fatal,Test,len(set(transit_segments['@stop_id'])) == len(transit_segments['@stop_id']),,,All transit segment stop IDs must be unique
-mgra_total_employment,mgra_data,mgra,NA,Calculation,mgra_data[[col for col in mgra_data if (col.startswith('emp')) and not (col.endswith('total'))]].sum(axis=1),,,
+mgra_total_employment,mgra_data,mgra,NA,Calculation,mgra_data[[col for col in mgra_data if (col.startswith('emp_')) and not (col.endswith('total'))]].sum(axis=1),,,
 MGRA_TotalEmployment_CalcCheck,mgra_data,mgra,Logical,Test,mgra_data.emp_total==mgra_total_employment,,,Check if employment by industry adds up to total employment
