@@ -71,6 +71,7 @@ class input_checker(_m.Tool()):
 		self.num_warning = int()
 		self.num_logical = int()
 		self.logical_fails = pd.DataFrame()
+		self.scenario_df = pd.DataFrame()
 
 	def page(self):
 		pb = _m.ToolPageBuilder(self)
@@ -258,6 +259,9 @@ class input_checker(_m.Tool()):
 					df = dbf.to_dataframe()
 					self.inputs[table_name] = df
 
+		# add scenario year as variable input
+		self.inputs['scenario'] = self.scenario_df
+
 	def checks(self):
 		# read all input DFs into memory
 		for key, df in self.inputs.items():
@@ -294,7 +298,10 @@ class input_checker(_m.Tool()):
 				if (pd.isnull(row['Test_Vals'])):
 
 					# perform test
-					out = eval(expr, calc_dict)
+					try:
+						out = eval(expr, calc_dict)
+					except:
+						print('An error occurred with the check: {}'.format(test))
 
 					# check if test result is a series
 					if str(type(out)) == "<class 'pandas.core.series.Series'>":
@@ -331,7 +338,10 @@ class input_checker(_m.Tool()):
 					self.result_list[test] = []
 					for test_val in test_vals:
 						# perform test (test result must not be of type Series)
-						out = eval(expr)
+						try:
+							out = eval(expr)
+						except:
+							print('An error occurred with the check: {}'.format(test))
 
 						# compute report statistic
 						if (pd.isnull(stat_expr)):
@@ -345,8 +355,11 @@ class input_checker(_m.Tool()):
 					self.problem_ids[test] = []
 			else:
 				# perform calculation
-				calc_expr = test + ' = ' + expr
-				exec(calc_expr, {}, calc_dict)
+				try: 
+					calc_expr = test + ' = ' + expr
+					exec(calc_expr, {}, calc_dict)
+				except:
+					print('An error occurred with the calculation: {}'.format(test))
 
 	def prop_file_paths(self):
 		prop_files = self.inputs_list[['Input_Table','Property_Token']].dropna()
@@ -358,6 +371,9 @@ class input_checker(_m.Tool()):
 			input_table = row['Input_Table']
 			input_path = props[row['Property_Token']]
 			self.prop_input_paths[input_table] = input_path
+
+		# obtain scenario year
+		self.scenario_df['Year'] = [props['scenarioYear']]
 
 	def write_log(self):
 		# function to write out the input checker log file
