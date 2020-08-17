@@ -741,12 +741,13 @@ public class TNCVehicleManager {
         	
         	if(emptyVehicleList[i].size()==0)
         		continue;
+        	
+        	//reset trip id;wsu
+			int tripid=0;
         	for(TNCVehicle tNCVehicle : emptyVehicleList[i] ){
     			if(tNCVehicle.getId()==vehicleDebug) {
     				logger.info("Writing "+tNCVehicle.getVehicleTrips().size()+" vehicle trips for vehicle ID "+tNCVehicle.getId());
     			}
-
-    			int tripid=0;
     			
         		for(TNCVehicleTrip tNCVehicleTrip : tNCVehicle.getVehicleTrips()){
         			
