@@ -8,14 +8,14 @@
     <properties>
         <encoding.type>UTF-8</encoding.type> 
         <release.root>${project.build.directory}/${project.name}/${project.version}</release.root>
-        <mtxmgr.memory.min>90000m</mtxmgr.memory.min>
-        <mtxmgr.memory.max>120000m</mtxmgr.memory.max>
+        <mtxmgr.memory.min>60000m</mtxmgr.memory.min>
+        <mtxmgr.memory.max>80000m</mtxmgr.memory.max>
         <hhmgr.memory.min>1000m</hhmgr.memory.min> 
-        <hhmgr.memory.max>30000m</hhmgr.memory.max>         
+        <hhmgr.memory.max>20000m</hhmgr.memory.max>         
         <client.memory.min>30000m</client.memory.min> 
         <client.memory.max>80000m</client.memory.max>          
         <spmarket.memory.min>30000m</spmarket.memory.min> 
-        <spmarket.memory.max>160000m</spmarket.memory.max>      
+        <spmarket.memory.max>180000m</spmarket.memory.max>      
         <bikelogsum.memory.min>20000m</bikelogsum.memory.min> 
         <bikelogsum.memory.max>30000m</bikelogsum.memory.max>    
         <walklogsum.memory.min>20000m</walklogsum.memory.min> 
