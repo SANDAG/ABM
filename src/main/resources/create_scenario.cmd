@@ -26,6 +26,7 @@ xcopy /Y T:\ABM\release\ABM\config\server-config.csv %SCENARIO_FOLDER%\conf
 
 rem setup model folders
 xcopy /Y .\common\application\"*.*" %SCENARIO_FOLDER%\application
+xcopy /E/Y .\common\application\GnuWin32\"*.*" %SCENARIO_FOLDER%\application\GnuWin32
 xcopy /Y/E .\common\python\"*.*" %SCENARIO_FOLDER%\python
 xcopy /Y/E .\common\sql\"*.*" %SCENARIO_FOLDER%\sql
 xcopy /Y .\common\uec\"*.*" %SCENARIO_FOLDER%\uec
