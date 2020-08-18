@@ -393,6 +393,23 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>copy-tee-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>${encoding.type}</encoding>
+                            <outputDirectory>${release.root}/application/GnuWin32</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources/GnuWin32</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>copy-emme-resources</id>
                         <phase>package</phase>
                         <goals>

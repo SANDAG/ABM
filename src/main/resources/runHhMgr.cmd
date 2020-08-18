@@ -42,9 +42,10 @@ rem ### Change the PATH environment variable so that JAVA_HOME is listed first i
 rem ### Doing this ensures that the JAVA_HOME path we defined above is the on that gets used in case other java paths are in PATH.
 set PATH=%JAVA_64_PATH%\bin;%OLDPATH%
 
-
 rem ### Change current directory to RUNTIME, and issue the java command to run the model.
-start %JAVA_64_PATH%/bin/java -server -Xms%MEMORY_HHMGR_MIN% -Xmx%MEMORY_HHMGR_MAX% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j_hh.xml org.sandag.abm.application.SandagHouseholdDataManager2 -hostname %HOST_IP_ADDRESS% -port %HOST_PORT%
+rem Note: Running java script in separate window to properly redirect console output
+start %PROJECT_DIRECTORY%\bin\runHhMgr_log.bat %JAVA_64_PATH% %MEMORY_HHMGR_MIN% %MEMORY_HHMGR_MAX% %CLASSPATH% %HOST_IP_ADDRESS% %HOST_PORT% %RUNTIME%
+rem start %JAVA_64_PATH%/bin/java -server -Xms%MEMORY_HHMGR_MIN% -Xmx%MEMORY_HHMGR_MAX% -cp "%CLASSPATH%" -Dlog4j.configuration=log4j_hh.xml org.sandag.abm.application.SandagHouseholdDataManager2 -hostname %HOST_IP_ADDRESS% -port %HOST_PORT%
 rem java -Xdebug -Xrunjdwp:transport=dt_socket,address=1044,server=y,suspend=y -server -Xmx12000m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j_hh.xml org.sandag.abm.application.SandagHouseholdDataManager2 -hostname %HOST_IP_ADDRESS%
  
 rem ### restore saved environment variable values, and change back to original current directory
