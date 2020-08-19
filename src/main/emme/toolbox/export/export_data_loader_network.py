@@ -71,7 +71,6 @@ dem_utils = _m.Modeller().module("sandag.utilities.demand")
 format = lambda x: ("%.6f" % x).rstrip('0').rstrip(".")
 id_format = lambda x: str(int(x))
 
-
 class ExportDataLoaderNetwork(_m.Tool(), gen_utils.Snapshot):
 
     main_directory = _m.Attribute(str)
@@ -136,6 +135,8 @@ Export network results to csv files for SQL data loader."""
             "self": str(self)
         }
         gen_utils.log_snapshot("Export network results", str(self), attrs)
+        load_properties = _m.Modeller().tool('sandag.utilities.properties')
+        props = load_properties(os.path.join(main_directory, "conf", "sandag_abm.properties"))
 
         traffic_emmebank = _eb.Emmebank(traffic_emmebank)
         transit_emmebank = _eb.Emmebank(transit_emmebank)
@@ -148,13 +149,13 @@ Export network results to csv files for SQL data loader."""
 
         base_scenario = traffic_emmebank.scenario(base_scenario_id)
 
-        self.export_traffic_attribute(base_scenario, export_path, traffic_emmebank, period_scenario_ids)
+        self.export_traffic_attribute(base_scenario, export_path, traffic_emmebank, period_scenario_ids, props)
         self.export_traffic_load_by_period(export_path, traffic_emmebank, period_scenario_ids)
         self.export_transit_results(export_path, input_path, transit_emmebank, period_scenario_ids, num_processors)
         self.export_geometry(export_path, traffic_emmebank)
 
     @_m.logbook_trace("Export traffic attribute data")
-    def export_traffic_attribute(self, base_scenario, export_path, traffic_emmebank, period_scenario_ids):
+    def export_traffic_attribute(self, base_scenario, export_path, traffic_emmebank, period_scenario_ids, props):
         # Several column names are legacy from the original network files
         # and data loader process, and are populated with zeros.
         # items are ("column name", "attribute name") or ("column name", ("attribute name", default))
@@ -349,7 +350,8 @@ Export network results to csv files for SQL data loader."""
                                           for p in periods if link["@lane" + p] > 0] + [0])
 
         hwylink_atts_file = os.path.join(export_path, "hwy_tcad.csv")
-        self.export_traffic_to_csv(hwylink_atts_file, hwylink_attrs, network)
+        busPCE = props["transit.bus.pceveh"]
+        self.export_traffic_to_csv(hwylink_atts_file, hwylink_attrs, network, busPCE)
 
     @_m.logbook_trace("Export traffic load data by period")
     def export_traffic_load_by_period(self, export_path, traffic_emmebank, period_scenario_ids):
@@ -441,7 +443,7 @@ Export network results to csv files for SQL data loader."""
             network = self.get_partial_network(scenario, {"LINK": ["@tcov_id"] + [a[1] for a in dir_atts]})
             self.export_traffic_to_csv(file_path, hwyload_attrs, network)
 
-    def export_traffic_to_csv(self, filename, att_list, network):
+    def export_traffic_to_csv(self, filename, att_list, network, busPCE = None):
         auto_mode = network.mode("d")
         # only the original forward direction links and auto links only
         links = [l for l in network.links()
@@ -463,9 +465,11 @@ Export network results to csv files for SQL data loader."""
                         values.append(link.j_node.id)
                     elif key.startswith("BA"):
                         name, default = att
-
                         if reverse_link and (abs(link["@tcov_id"]) == abs(reverse_link["@tcov_id"])):
-                            values.append(format(reverse_link[name]))
+                            if "additional_volume" in name:
+                                values.append(format(float(reverse_link[name]) / busPCE))
+                            else:
+                                values.append(format(reverse_link[name]))
                         else:
                             values.append(default)
 
@@ -473,7 +477,10 @@ Export network results to csv files for SQL data loader."""
                     elif att.startswith("#"):
                         values.append('"%s"' % link[att])
                     else:
-                        values.append(format(link[att]))
+                        if "additional_volume" in att:
+                            values.append(format(float(link[att]) / busPCE))
+                        else:
+                            values.append(format(link[att]))
                 fout.write(",".join(values))
                 fout.write("\n")
 
@@ -812,6 +819,7 @@ Export network results to csv files for SQL data loader."""
             data_explorer.remove_database(desktop_traffic_database)
         except:
             pass
+
     def get_partial_network(self, scenario, attributes):
         domains = attributes.keys()
         network = scenario.get_partial_network(domains, include_attributes=False)
