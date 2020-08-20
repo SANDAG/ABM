@@ -734,7 +734,9 @@ public class TNCVehicleManager {
         	totalEmptyVehicles+=emptyVehicleList[i].size();
         }
         logger.info("Writing "+totalEmptyVehicles+" total vehicles to file");
-        
+    
+    	//reset trip id;wsu
+		int tripid=0;
         for(int i = 1; i <= maxTaz; ++ i){
         	if(emptyVehicleList[i]==null)
         		continue;
@@ -742,8 +744,6 @@ public class TNCVehicleManager {
         	if(emptyVehicleList[i].size()==0)
         		continue;
         	
-        	//reset trip id;wsu
-			int tripid=0;
         	for(TNCVehicle tNCVehicle : emptyVehicleList[i] ){
     			if(tNCVehicle.getId()==vehicleDebug) {
     				logger.info("Writing "+tNCVehicle.getVehicleTrips().size()+" vehicle trips for vehicle ID "+tNCVehicle.getId());
