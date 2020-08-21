@@ -1183,7 +1183,7 @@ public class IntermediateStopChoiceModels
 	                    else {
 	                        
                         	//pick transit path from N-paths
-                        	float rn = (float)household.getHhRandom().nextDouble();
+                        	double rn = household.getHhRandom().nextDouble();
                         	int pathindex = logsumHelper.chooseTripPath(rn, segmentIkBestTapPairs[selectedIndex][accEgr], household.getDebugChoiceModels(), smcLogger);
                         	
                             stop.setBoardTap( (int)segmentIkBestTapPairs[selectedIndex][accEgr][pathindex][0] );
@@ -1642,7 +1642,7 @@ public class IntermediateStopChoiceModels
 	                    else {
 	                    	
 	                    	//pick transit path from N-paths
-                        	float rn = (float)household.getHhRandom().nextDouble();
+                        	double rn = household.getHhRandom().nextDouble();
                         	int pathindex = logsumHelper.chooseTripPath(rn, segmentIkBestTapPairs[selectedIndex][accEgr], household.getDebugChoiceModels(), smcLogger);
                         	
                             stop.setBoardTap( (int)segmentIkBestTapPairs[selectedIndex][accEgr][pathindex][0] );

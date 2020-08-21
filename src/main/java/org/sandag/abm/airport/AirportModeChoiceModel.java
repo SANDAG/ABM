@@ -299,7 +299,7 @@ public class AirportModeChoiceModel
            }
            
            	//pick transit path from N-paths
-            float rn = new Double(party.getRandom()).floatValue();
+            double rn = party.getRandom();
         	int pathIndex = logsumHelper.chooseTripPath(rn, bestTapPairs, party.getDebugChoiceModels(), logger);
         	int boardTap = (int) bestTapPairs[pathIndex][0];
         	int alightTap = (int) bestTapPairs[pathIndex][1];
