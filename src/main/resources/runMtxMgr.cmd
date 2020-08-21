@@ -20,6 +20,9 @@ set HOST_IP_ADDRESS=%MAIN_IP%
 rem kill java tasks
 taskkill /F /IM java.exe
 
+rem run ping to add a pause so that taskkill has time to fully kill java processes
+ping -n 10 %MAIN% > nul
+
 rem ### Name the project directory.  This directory will hava data and runtime subdirectories
 set CONFIG=%PROJECT_DIRECTORY%/conf
 
