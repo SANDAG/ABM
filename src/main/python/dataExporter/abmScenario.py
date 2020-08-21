@@ -3347,8 +3347,6 @@ class TripLists(ScenarioData):
                    "AOC": "float32",
                    "TOLLCOST": "float32"})
 
-        trips["TRIPS"] = trips["TRIPS"] / 3
-
         # create trip surrogate key
         trips["tripID"] = pd.Series(trips.index + 1, dtype="int32")
 
