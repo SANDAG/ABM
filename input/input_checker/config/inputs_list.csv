@@ -6,5 +6,8 @@ network_links,NA,LINK,All,,Link data from Emme network. File name not needed
 network_nodes,NA,NODE,All,,Node data from Emme network
 transit_segments,NA,TRANSIT_SEGMENT,All,,Transit segment data from Emme network
 transit_lines,NA,TRANSIT_LINE,All,,Transit line data from Emme network
+centroids,NA,CENTROID,All,,Centroid data from Emme network
 occsoc,PopulationSynthesizer.OccupCodes,NA,All,,Occupation codes defined by the Standard Occupational Classification system
-#bike_node,active.node.file,NA,All,,Bike network nodes
+bike_node,active.node.file,NA,All,,Bike network nodes
+transit_stops,transit.stop.file,NA,All,,Transit stop attribute file
+veh_class_toll,vehicle.class.toll.factor.path,NA,All,,Vehicle class toll factors file
