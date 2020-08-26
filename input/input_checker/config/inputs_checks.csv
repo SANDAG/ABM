@@ -60,7 +60,7 @@ emme_toll,network_links,id,NA,Calculation,network_links.loc[network_links['@lane
 emme_toll_names_matching,emme_toll,id,NA,Calculation,emme_toll[emme_toll['linkNames'].str.contains(veh_class_toll_by_year_names_concat)],,,Obtain list of emme network toll links that contain facility toll names from the vehicle_class_toll_factors.csv file
 emme_toll_names_matching_ids,emme_toll_names_matching,id,NA,Calculation,set(emme_toll_names_matching.id),,,Obtain unique ids of matching toll names
 IHOV_FACILITY_CHECK,emme_toll,id,Logical,Test,emme_toll.id.apply(lambda x: True if x in emme_toll_names_matching_ids else False),,,Check that scenario year-specific toll facilities (from vehicle_class_toll_factors.csv) are present in Emme network toll facilities
-TRANSIT_LINE_TAP_CHECK,transit_lines,id,Fatal,Test,transit_lines.hasTAP.apply(lambda x: True if x else False),,,Check that all transit lines begin and end at a TAP
+TRANSIT_LINE_TAP_CHECK,transit_lines,id,Logical,Test,transit_lines.hasTAP.apply(lambda x: True if x else False),,,Check that all transit lines begin and end at a TAP
 ZONE_NON_TOLL_CONN_CHECK,centroids,id,Fatal,Test,centroids.hasLocalConnection.apply(lambda x: True if x else False),,,Check that each zone has a non-toll connection
 ifc_speed_dict,network_links,id,NA,Calculation,"{1:85, 2:70, 3:60, 4:50, 5:50, 6:50, 7:50, 8:85, 9:50, 10:50}",,,"Create IFC-Speed dictionary (IFC=key, Speed=value)"
 #IFC_SPEED_CHECK,network_links,id,Warning,Test,"network_links.apply(lambda x: not (ifc_speed_dict[x['type']]==x['@speed_posted']) if (x['type'] in ifc_speed_dict.keys()) else False, axis=1) ",,,"Check if an IFC's assigned speed is correct (1 = 85mph, 2 = 70mph, 3 = 60mph, 4 = 50mph, 5 = 50mph, 6 = 50mph, 7 = 50mph, 8 = 85mph, 9 = 50mph, 10 = 50mph)"
