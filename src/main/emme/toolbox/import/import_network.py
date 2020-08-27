@@ -587,7 +587,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 # special case of I-15 managed lanes 
                 elif arc["IFC"] == 1 and arc["IPROJ"] in [41, 42, 486]:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV2
-                elif arc["IFC"] == 8 or arc["IFC"] == 9:
+                elif arc["IFC"] == 8 or arc["IFC"] == 9: 
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV2
                 else:
                     return modes_HOV2
