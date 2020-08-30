@@ -29,8 +29,11 @@ class SkimAppender(object):
     Methods:
         _get_omx_auto_skim_dataset: Maps ABM trip list records to OMX files
             and OMX skim matrices
+        append_skims: Master method to append all skims to ABM trip lists
         auto_fare_cost: Appends auto fare cost to ABM trip list records
         auto_operating_cost: Appends auto operating cost to ABM trip list records
+        auto_terminal_skims: Appends auto-mode terminal walk time and distance
+            from the zone.term file to ABM trip list records
         auto_wait_time: Appends auto wait times to ABM trip list records
         bicycle_skims: Appends bicycle mode skims (time, distance) to ABM trip
             list records
@@ -41,6 +44,13 @@ class SkimAppender(object):
             cost) to ABM trip list records
         omx_transit_skims: Appends OMX transit mode skims (time, distance,
             cost) to transit mode trip list records
+        tnc_fare_cost: Appends TNC fare costs to ABM trip list records
+        tnc_wait_time: Appends TNC wait time to ABM trip list records
+        walk_skims: Appends walk/micro-mobility/micro-transit mode skims
+            (time, distance, cost) to ABM trip list records
+        walk_transit_skims: Appends walk/micro-mobility/micro-transit
+            access/egress to/from transit to ABM transit mode trip list
+            records
 
     Properties:
         mgra_xref: Pandas DataFrame geography cross-reference of MGRAs to
@@ -831,9 +841,10 @@ class SkimAppender(object):
 
         for omx_fn in df_map.omxFileName.unique():
 
-            # open the input omx file
+            # open the input omx file and TAZ:element mapping
             fn = os.path.join(self.scenario_path, "output", omx_fn + ".omx")
             omx_file = omx.open_file(fn)
+            omx_map = omx_file.mapping("zone_number")
 
             # filter records mapped to omx file
             records_omx = df_map.loc[df_map.omxFileName == omx_fn]
@@ -848,10 +859,9 @@ class SkimAppender(object):
                 od = set(zip(records.originTAZ, records.destinationTAZ))
                 o, d = zip(*od)
 
-                # auto omx matrices do not have zone to index mappings
-                # assume 1-index to 0-index mappings
-                o_idx = [number - 1 for number in o]
-                d_idx = [number - 1 for number in d]
+                # map o-ds to omx matrix indices
+                o_idx = [omx_map[number] for number in o]
+                d_idx = [omx_map[number] for number in d]
 
                 skims = list(zip(
                     [omx_fn] * len(o),
