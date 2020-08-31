@@ -9,6 +9,7 @@ set SEED=2354345
 %PROJECT_DRIVE%
 cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 call %PROJECT_DIRECTORY%\bin\CTRampEnv.bat
+set PROPERTIES_NAME=sandag_abm_mcd
 
 rem ### First save the JAVA_PATH environment variable so it s value can be restored at the end.
 set OLDJAVAPATH=%JAVA_PATH%
