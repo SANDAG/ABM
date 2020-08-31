@@ -1,0 +1,89 @@
+# SYNTHETIC POPULATION ATTRIBUTES
+# Attributes for household, person and tour files that will be used to create synthetic population
+# files for target market segments.
+#
+# Note: indentation levels should be maintained.
+
+# HOUSEHOLD ATTRIBUTES
+# The resulting target households will be generated using all possible combinations of the 
+# household attributes set below. Each household attribute must have at least 1 value.
+# For more than 1 attribute value, enclose in brackets and separate with comma.
+household:
+
+  # household income(s)
+  hinc: [14000, 67000, 120000]
+
+  # number of vehicles in household(s)
+  veh: [0, 1, 2]
+
+  # household/family type(s):
+  # 0 = Not in universe (vacant or GQ); 1 = Family household: married-couple; 
+  # 2 = Family household: male householder, no wife present; 
+  # 3 = Family household: female householder, no husband present;
+  # 4 = Nonfamily household: male householder, living alone;
+  # 5 = Nonfamily household: male householder, not living alone;
+  # 6 = Nonfamily household: female householder, living alone;
+  # 7 = Nonfamily household: female householder, not living alone 
+  hht: 1
+
+  # building size(s) - number of units in structure & quality:
+  # 1 = Mobile home or trailer; 2 = One-family house detached; 3 = One-family house attached;
+  # 4 = 2 Apartments; 5 = 3-4 Apartments; 6 = 5-9 Apartments; 7 = 10-19 Apartments;
+  # 8 = 20-49 Apartments; 9 = 50 or more apartments; 10 = Board, RV, van, etc.
+  bldgsz: 2
+
+  # household unit type:
+  # 0 = Non-GQ Household; 1 = GQ Household
+  unittype: 0
+
+# PERSON ATTRIBUTES
+# Person attributes must contain exactly 2 values (1 for each hh member)
+# where the 1st value corresponds to the worker and the 2nd to the non-worker.
+person:
+
+  # age of persons
+  age: [35, 55]
+
+  # gender of persons: 
+  # 1 = Male; 2 = Female
+  sex: [1, 2]
+
+  # military status of persons:
+  # 0 = N/A, Less than 17 Years Old; 1 = Yes, Now on Active Duty; 2 = Yes, on Active Duty in Past, but not Now; 
+  # 3 = No, Training for Reserves/National Guard Only; # 4 = No, Never Served in the Military
+  miltary: [4, 4]   
+
+  # school grade of persons:
+  # 0 = N/A (not attending school); 1 = Nursery school/preschool; 2 = Kindergarten; 
+  # 3 = Grade 1 to grade 4; 4 = Grade 5 to grade 8; 5 = Grade 9 to grade 12; 
+  # 6 = College undergraduate; 7  = Graduate to professional school
+  grade: [0, 0]
+
+  # educational attainment of persons:
+  # 0 = N/A (Under 3 years); 1 = No schooling completed; 2 = Nursery school to 4th grade;
+  # 3 = 5th grade or 6th grade; 4 = 7th grade or 8th grade; 5 = 9th grade; 6 = 10th grade; 
+  # 7 = 11th grade; 8 = 12th grade; 9 = High school graduate; 10 = Some college but less than 1 year; 
+  # 11 = One or more years of college no degree; 12 = Associate degree; 13 = Bachelor's degree;
+  # 14 = Master's degree; 15 = Professional degree; 16 = Doctorate degree
+  educ: [13, 13]
+
+# TOUR ATTRIBUTES
+# Tour attributes must contain exactly 2 values (1 for each hh member)
+# where the 1st value corresponds to the worker and the 2nd to the non-worker.
+tour:
+
+  # start period:
+  # 1 = before 5:00AM; 2 = 5:00AM-5:30AM; 3 through 39 = every half hour time slot; 40 After 12:00AM
+  # the default values of 6 and 19 correspond to 7:00-7:30AM and 1:30-2:00PM, respectively
+  start_period: [6, 19]
+  
+  # end period:
+  # 1 = before 5:00AM; 2 = 5:00AM-5:30AM; 3 through 39 = every half hour time slot; 40 After 12:00AM
+  # the default values of 27 and 23 correspond to 5:30-6:00PM and 3:30-4:00PM, respectively
+  end_period: [27, 23]
+
+  # av scenario:
+  # 0 = false; 1 = true
+  # if true, all autos in household will be AVs (HVs = 0 and AVs = autos owned) and av_avail will
+  # be set to 1 for all tours
+  av_avail: 0
