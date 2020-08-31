@@ -1370,7 +1370,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
                 # add link delay (30 sec=0.5mins) to HOV connectors to discourage travel
                 if link.type == 8 and (link["@lane_restriction"] == 2 or link["@lane_restriction"] == 3):
-                    link["@time_link" + time] = link["@time_link" + time] + 0.5
+                    link["@time_link" + time] = link["@time_link" + time] + 0.375
 
 		        # make speed on HOV lanes (70mph) the same as parallel GP lanes (65mph)
                 # - set speed back to posted speed - increase travel time by (speed_adj/speed_posted)
