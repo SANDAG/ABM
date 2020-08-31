@@ -12,14 +12,12 @@ call %ENV%\Scripts\activate.bat %ENV%
 
 rem ### Checking if Data Exporter environment exists
 rem ### Otherwise creates environment
-set EXPORT_ENV=%PROJECT_DRIVE%%PROJECT_DIRECTORY%\python\dataExporter\environment.yml
 call conda env list | find /i "abmDataExporter"
 if not errorlevel 1 (
-	call conda env update --name abmDataExporter --file %EXPORT_ENV%
 	call activate abmDataExporter
 ) else (
-	call conda env create -f %EXPORT_ENV%
-	call activate abmDataExporter 
+	call conda env create -f %PROJECT_DRIVE%%PROJECT_DIRECTORY%\python\dataExporter\environment.yml 
+	call activate abmDataExporter
 )
 
 rem ### Running Data Exporter on scenario
