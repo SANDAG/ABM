@@ -37,8 +37,8 @@
         <JAVA_64_PATH>C:\Progra~1\Java\jre1.8.0_162</JAVA_64_PATH>
         <JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
         <workpath>WORKPATH</workpath>
-        <database_server>socioeca8</database_server>
-        <database_name>abmTest</database_name>
+        <database_server>DDAMWSQL16</database_server>
+        <database_name>abm_14_2_0</database_name>
         <jppf_version>5.0.1</jppf_version>
         <workShadowPricing.iteration>ShadowPricingOutput_work_9.csv</workShadowPricing.iteration>
         <schoolShadowPricing.iteration>ShadowPricingOutput_school_9.csv</schoolShadowPricing.iteration>
