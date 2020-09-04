@@ -2,21 +2,22 @@
 # Attributes for household, person and tour files that will be used to create synthetic population
 # files for target market segments.
 #
-# Note: indentation levels should be maintained.
+# Note: indentation levels must be maintained.
 
 # HOUSEHOLD ATTRIBUTES
-# The resulting target households will be generated using all possible combinations of the 
-# household attributes set below. Each household attribute must have at least 1 value.
-# For more than 1 attribute value, enclose in brackets and separate with comma.
+# The total number of household types generated will be determined by every combination 
+# of the household income (hinc) and number of vehicles (veh) household attributes.
+# The specified values for the remaining household attributes (household/family type, 
+# building size, household unit type) will be applied to all households.
 household:
 
-  # household income(s)
+  # household income
   hinc: [14000, 67000, 120000]
 
-  # number of vehicles in household(s)
+  # number of vehicles in household
   veh: [0, 1, 2]
 
-  # household/family type(s):
+  # household/family type:
   # 0 = Not in universe (vacant or GQ); 1 = Family household: married-couple; 
   # 2 = Family household: male householder, no wife present; 
   # 3 = Family household: female householder, no husband present;
@@ -26,7 +27,7 @@ household:
   # 7 = Nonfamily household: female householder, not living alone 
   hht: 1
 
-  # building size(s) - number of units in structure & quality:
+  # building size - number of units in structure & quality:
   # 1 = Mobile home or trailer; 2 = One-family house detached; 3 = One-family house attached;
   # 4 = 2 Apartments; 5 = 3-4 Apartments; 6 = 5-9 Apartments; 7 = 10-19 Apartments;
   # 8 = 20-49 Apartments; 9 = 50 or more apartments; 10 = Board, RV, van, etc.
