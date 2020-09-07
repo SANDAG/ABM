@@ -1472,7 +1472,7 @@ public class IntermediateStopChoiceModels
                 else newOrig = lastDest;
                 stop.setOrig(newOrig);
 
-                stopLocDmuObj.setStopObject(sop);
+                stopLocDmuObj.setStopObject(stop);
                 stopLocDmuObj.setDmuIndexValues(household.getHhId(), household.getHhMgra(),
                         newOrig, destMgra);
 
@@ -1505,7 +1505,8 @@ public class IntermediateStopChoiceModels
                         selectedIndex = selectDestinationWithTiming(stop,departPeriodToStop,departPeriodFromStop);
                         //close small probability logical hole, reset stop destination as intrazonal stop,  log out reset cases
                         if(selectedIndex<0) {
-                        	stop.setDest(origMgra);
+                        	choice=origMgra;
+                        	stop.setDest(choice);
                         	logger.info("Stop ID"+stop.id+" :destination set as intrazonal stop");
                         }else {
                         	choice = finalSample[selectedIndex];
