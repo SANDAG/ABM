@@ -1503,8 +1503,14 @@ public class IntermediateStopChoiceModels
                         check = System.nanoTime();
 
                         selectedIndex = selectDestinationWithTiming(stop,departPeriodToStop,departPeriodFromStop);
-                        choice = finalSample[selectedIndex];
-                        stop.setDest(choice);
+                        //close small probability logical hole, reset stop destination as intrazonal stop,  log out reset cases
+                        if(selectedIndex<0) {
+                        	stop.setDest(origMgra);
+                        	logger.info("Stop ID"+stop.id+" :destination set as intrazonal stop");
+                        }else {
+                        	choice = finalSample[selectedIndex];
+                        	stop.setDest(choice);
+                        }
 
                         if (sampleMgraInAlightingTapShed[choice])
                             earlierTripWasLocatedInAlightingTapShed = true;
