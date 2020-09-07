@@ -1472,7 +1472,7 @@ public class IntermediateStopChoiceModels
                 else newOrig = lastDest;
                 stop.setOrig(newOrig);
 
-                stopLocDmuObj.setStopObject(stop);
+                stopLocDmuObj.setStopObject(sop);
                 stopLocDmuObj.setDmuIndexValues(household.getHhId(), household.getHhMgra(),
                         newOrig, destMgra);
 
