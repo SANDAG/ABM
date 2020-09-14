@@ -378,11 +378,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skipCopyWalkImpedance:
                     self.copy_files(["walkMgraEquivMinutes.csv", "walkMgraTapEquivMinutes.csv"],
                                     input_dir, output_dir)
-                if not skipBikeLogsums:
-                    self.run_proc("runSandagBikeLogsums.cmd", [drive, path_forward_slash],
-                                  "Bike - create AT logsums and impedances")
-                if not skipCopyBikeLogsum:
-                    self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], input_dir, output_dir)
 
                 if not skip4Ds:
                     run4Ds(path=self._path, int_radius=0.65, ref_path=visualizer_reference_path)
@@ -464,6 +459,13 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         omx_file = _join(input_dir, "trip_%s.omx" % period)
                         import_demand(omx_file, "AUTO", period, base_scenario)
                         import_demand(omx_file, "TRUCK", period, base_scenario)
+                        
+                if not skipBikeLogsums:
+                    self.run_proc("runSandagBikeLogsums.cmd", [drive, path_forward_slash],
+                                  "Bike - create AT logsums and impedances")
+                if not skipCopyBikeLogsum:
+                    self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], input_dir, output_dir)
+                    
             else:
                 base_scenario = main_emmebank.scenario(scenario_id)
                 transit_emmebank = _eb.Emmebank(_join(self._path, "emme_project", "Database_transit", "emmebank"))
