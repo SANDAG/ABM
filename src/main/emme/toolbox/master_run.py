@@ -630,39 +630,40 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                           [drive + path_no_drive, end_iteration, scenarioYear, sample_rate[end_iteration - 1]],
                           "Data load request")
 
+            ### ES: Commented out until this segment is updated to reference new database. 9/10/20 ###
             # add segments below for auto-reporting, YMA, 1/23/2019
             # add this loop to find the sceanro_id in the [dimension].[scenario] table
 
-            database_scenario_id = 0
-            int_hour = 0
-            while int_hour <= 96:
+            #database_scenario_id = 0
+            #int_hour = 0
+            #while int_hour <= 96:
 
-                database_scenario_id = self.sql_select_scenario(scenarioYear, end_iteration,
-                                                                sample_rate[end_iteration - 1], path_no_drive,
-                                                                start_db_time)
-                if database_scenario_id > 0:
-                    break
+            #    database_scenario_id = self.sql_select_scenario(scenarioYear, end_iteration,
+            #                                                    sample_rate[end_iteration - 1], path_no_drive,
+            #                                                    start_db_time)
+            #    if database_scenario_id > 0:
+            #        break
 
-                int_hour = int_hour + 1
-                _time.sleep(900)  # wait for 15 mins
+            #    int_hour = int_hour + 1
+            #    _time.sleep(900)  # wait for 15 mins
 
             # if load failed, then send notification email
-            if database_scenario_id == 0 and int_hour > 96:
-                str_request_check_result = self.sql_check_load_request(scenarioYear, path_no_drive, username,
-                                                                       start_db_time)
-                print(str_request_check_result)
-                sys.exit(0)
+            #if database_scenario_id == 0 and int_hour > 96:
+            #    str_request_check_result = self.sql_check_load_request(scenarioYear, path_no_drive, username,
+            #                                                           start_db_time)
+            #    print(str_request_check_result)
+            #    sys.exit(0)
                 # self.send_notification(str_request_check_result,username) #not working in server
-            else:
-                print(database_scenario_id)
-                self.run_proc("DataSummary.bat",  # get summary from database, added for auto-reporting
-                              [drive, path_no_drive, scenarioYear, database_scenario_id],
-                              "Data Summary")
+            #else:
+            #    print(database_scenario_id)
+            #    self.run_proc("DataSummary.bat",  # get summary from database, added for auto-reporting
+            #                  [drive, path_no_drive, scenarioYear, database_scenario_id],
+            #                  "Data Summary")
 
-                self.run_proc("ExcelUpdate.bat",  # forced to update excel links
-                              [drive, path_no_drive, scenarioYear, database_scenario_id],
-                              "Excel Update",
-                              capture_output=True)
+            #    self.run_proc("ExcelUpdate.bat",  # forced to update excel links
+            #                  [drive, path_no_drive, scenarioYear, database_scenario_id],
+            #                  "Excel Update",
+            #                  capture_output=True)
 
         # delete trip table files in iteration sub folder if model finishes without errors
         if not useLocalDrive and not skipDeleteIntermediateFiles:
