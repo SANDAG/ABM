@@ -22,7 +22,7 @@ class CreateScenarioGUI(Tkinter.Frame):
             divider=u"_"*120
             self.releaseDir='T:\\ABM\\release\\ABM'
             self.defaultScenarioDir="T:\\projects\\sr14"
-            self.defaultNetworkDir="T:\\projects\\sr14\\version14_2_0\\network_build"
+            self.defaultNetworkDir="T:\\projects\\sr14\\Vision\\network_build"
 
             self.buttonVar= IntVar(root)
             self.yButton=Radiobutton(body, text="Yes", variable=self.buttonVar, value=1, command=self.initStudy)
@@ -129,7 +129,7 @@ class CreateScenarioGUI(Tkinter.Frame):
 
         #set default input and network paths based on selected year
         def setyear(self,value):
-            self.defaultpath=self.releaseDir+"\\"+self.version+'\\input\\'+value
+            self.defaultpath=self.defaultNetworkDir+"\\"+value
             self.scenariopath.delete(0, Tkconstants.END)
             self.scenariopath.insert(0, self.defaultScenarioDir)
             self.networkpath.delete(0, Tkconstants.END)
