@@ -681,6 +681,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         # terminate all java processes
         _subprocess.call("taskkill /F /IM java.exe")
 
+        # close all DOS windows
+        _subprocess.call("taskkill /F /IM cmd.exe")
+
     def set_global_logbook_level(self, props):
         self._log_level = props.get("RunModel.LogbookLevel", "ENABLED")
         log_all = _m.LogbookLevel.ATTRIBUTE | _m.LogbookLevel.VALUE | _m.LogbookLevel.COOKIE | _m.LogbookLevel.TRACE | _m.LogbookLevel.LOG
