@@ -253,8 +253,15 @@ class Config():
         self.validate_file(mt_tap_file_path)
         self.validate_file(mt_mgra_file_path)
 
-        self.mt_taps = pd.read_csv(mt_tap_file_path, usecols=['TAP'], squeeze=True).values
-        self.mt_mgras = pd.read_csv(mt_mgra_file_path, usecols=['MGRA'], squeeze=True).values
+        self.mt_taps = \
+            pd.read_csv(mt_tap_file_path,
+                        usecols=lambda x: x.strip().lower() == 'tap',
+                        squeeze=True).values
+
+        self.mt_mgras = \
+            pd.read_csv(mt_mgra_file_path,
+                        usecols=lambda x: x.strip().lower() == 'mgra',
+                        squeeze=True).values
 
 
 if __name__ == '__main__':

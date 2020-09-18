@@ -327,13 +327,14 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         transitShedTOD = props["transitShed.TOD"]
 
         if useLocalDrive:
-            self.check_free_space(minSpaceOnC)
-            # if initialization copy ALL files from remote
-            # else check file meta data and copy those that have changed
             initialize = (skipInitialization == False and startFromIteration == 1)
             local_directory = file_manager(
                 "DOWNLOAD", main_directory, username, scenario_id, initialize=initialize)
             self._path = local_directory
+            if not os.path.exists(_join(self._path, "output")): # check free space only if it is a new run
+                self.check_free_space(minSpaceOnC)
+            # if initialization copy ALL files from remote
+            # else check file meta data and copy those that have changed
         else:
             self._path = main_directory
 
@@ -378,11 +379,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skipCopyWalkImpedance:
                     self.copy_files(["walkMgraEquivMinutes.csv", "walkMgraTapEquivMinutes.csv"],
                                     input_dir, output_dir)
-                if not skipBikeLogsums:
-                    self.run_proc("runSandagBikeLogsums.cmd", [drive, path_forward_slash],
-                                  "Bike - create AT logsums and impedances")
-                if not skipCopyBikeLogsum:
-                    self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], input_dir, output_dir)
 
                 if not skip4Ds:
                     run4Ds(path=self._path, int_radius=0.65, ref_path=visualizer_reference_path)
@@ -464,6 +460,13 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         omx_file = _join(input_dir, "trip_%s.omx" % period)
                         import_demand(omx_file, "AUTO", period, base_scenario)
                         import_demand(omx_file, "TRUCK", period, base_scenario)
+                        
+                if not skipBikeLogsums:
+                    self.run_proc("runSandagBikeLogsums.cmd", [drive, path_forward_slash],
+                                  "Bike - create AT logsums and impedances")
+                if not skipCopyBikeLogsum:
+                    self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], input_dir, output_dir)
+                    
             else:
                 base_scenario = main_emmebank.scenario(scenario_id)
                 transit_emmebank = _eb.Emmebank(_join(self._path, "emme_project", "Database_transit", "emmebank"))
@@ -630,39 +633,40 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                           [drive + path_no_drive, end_iteration, scenarioYear, sample_rate[end_iteration - 1]],
                           "Data load request")
 
+            ### ES: Commented out until this segment is updated to reference new database. 9/10/20 ###
             # add segments below for auto-reporting, YMA, 1/23/2019
             # add this loop to find the sceanro_id in the [dimension].[scenario] table
 
-            database_scenario_id = 0
-            int_hour = 0
-            while int_hour <= 96:
+            #database_scenario_id = 0
+            #int_hour = 0
+            #while int_hour <= 96:
 
-                database_scenario_id = self.sql_select_scenario(scenarioYear, end_iteration,
-                                                                sample_rate[end_iteration - 1], path_no_drive,
-                                                                start_db_time)
-                if database_scenario_id > 0:
-                    break
+            #    database_scenario_id = self.sql_select_scenario(scenarioYear, end_iteration,
+            #                                                    sample_rate[end_iteration - 1], path_no_drive,
+            #                                                    start_db_time)
+            #    if database_scenario_id > 0:
+            #        break
 
-                int_hour = int_hour + 1
-                _time.sleep(900)  # wait for 15 mins
+            #    int_hour = int_hour + 1
+            #    _time.sleep(900)  # wait for 15 mins
 
             # if load failed, then send notification email
-            if database_scenario_id == 0 and int_hour > 96:
-                str_request_check_result = self.sql_check_load_request(scenarioYear, path_no_drive, username,
-                                                                       start_db_time)
-                print(str_request_check_result)
-                sys.exit(0)
+            #if database_scenario_id == 0 and int_hour > 96:
+            #    str_request_check_result = self.sql_check_load_request(scenarioYear, path_no_drive, username,
+            #                                                           start_db_time)
+            #    print(str_request_check_result)
+            #    sys.exit(0)
                 # self.send_notification(str_request_check_result,username) #not working in server
-            else:
-                print(database_scenario_id)
-                self.run_proc("DataSummary.bat",  # get summary from database, added for auto-reporting
-                              [drive, path_no_drive, scenarioYear, database_scenario_id],
-                              "Data Summary")
+            #else:
+            #    print(database_scenario_id)
+            #    self.run_proc("DataSummary.bat",  # get summary from database, added for auto-reporting
+            #                  [drive, path_no_drive, scenarioYear, database_scenario_id],
+            #                  "Data Summary")
 
-                self.run_proc("ExcelUpdate.bat",  # forced to update excel links
-                              [drive, path_no_drive, scenarioYear, database_scenario_id],
-                              "Excel Update",
-                              capture_output=True)
+            #    self.run_proc("ExcelUpdate.bat",  # forced to update excel links
+            #                  [drive, path_no_drive, scenarioYear, database_scenario_id],
+            #                  "Excel Update",
+            #                  capture_output=True)
 
         # delete trip table files in iteration sub folder if model finishes without errors
         if not useLocalDrive and not skipDeleteIntermediateFiles:

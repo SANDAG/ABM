@@ -10,7 +10,24 @@ import ipywidgets as widgets
 
 np.warnings.filterwarnings('ignore')
 
-CONFIG = {}
+CONFIG = {
+    'autos': [0, 1, 2],
+    'autos_labels': ['No autos', 'Autos > 0,  Less than adults', 'Autos >= Adults']
+}
+
+
+def calc_auto_sufficiency(hh_df, autos_col, hh_size):
+    
+    def sufficiency(a):
+        if a < 1:
+            return 0
+
+        if a < hh_size:
+            return 1
+
+        return 2
+
+    hh_df[autos_col] = hh_df[autos_col].map(sufficiency)
 
 def create_configs():
 
@@ -22,9 +39,9 @@ def create_configs():
         ('ozone_col', 'Origin Zone Column -', 'orig_mgra'),
         ('dzone_col', 'Destination Zone Column -', 'dest_mgra'),
         ('income_col', 'HH Income Column -', 'income'),
-        ('income_bins', 'Income Bins (comma separated) -', '0,50_000,100_000,200_000,350_000'),
+        ('income_labels', 'Income Labels (comma separated) -', 'Low,Medium,High'),
         ('autos_col', 'HH Autos Column -', 'autos'),
-        ('autos_labels', 'Auto Labels (comma separated) -', "No autos, Autos > 0 - Less than adults, Autos >= Adults"),
+        ('hh_size', 'Household Size -', '2'),
         ('mode_labels', 'Mode Labels (comma separated) -', 'DRIVEALONE,SHARED2,SHARED3,WALK,BIKE,WALK_SET,PNR_SET,KNR_SET,TNC_SET,TAXI,TNC_SINGLE,TNC_SHARED,SCHOOLBUS'),
         ('prob_cols', 'Probability Columns (comma separated) -', 'prob_1,prob_2,prob_3,prob_4,prob_5,prob_6,prob_7,prob_8,prob_9,prob_10,prob_11,prob_12,prob_13'),
         ('util_cols', 'Utility Columns (comma separated) -', 'util_1,util_2,util_3,util_4,util_5,util_6,util_7,util_8,util_9,util_10,util_11,util_12,util_13'),
@@ -53,17 +70,14 @@ def create_configs():
     def validate_configs(b):
 
         global CONFIG
-        for w in widges:
-
-            if w.name in ['hh_id_col', 'income_bins', 'autos_labels', 'mode_labels', 'prob_cols', 'util_cols']:
+        for w in widges: 
+            if w.name in ['hh_id_col', 'income_labels', 'mode_labels', 'prob_cols', 'util_cols']:
                 val = re.split(',\s?', w.value)
 
             else:
                 val = w.value
 
             CONFIG[w.name] = val
-        
-        CONFIG['income_bins'] = [int(b) for b in CONFIG['income_bins']]
         
         with c_output:
 
@@ -92,14 +106,12 @@ def create_configs():
             print('Done.')
 
             print('Joining household table to tour table... ', end='')
-            hh_df[CONFIG['income_col']] = pd.cut(hh_df[CONFIG['income_col']], CONFIG['income_bins'])
+            calc_auto_sufficiency(hh_df, CONFIG['autos_col'], int(CONFIG['hh_size']))
             tour_df = tour_df.join(hh_df, on=CONFIG['hh_id_col'][0], how='left')
 
             incomes = sorted(list(tour_df[CONFIG['income_col']].unique()))
-            income_labels = [f'${i.left} to ${i.right}' for i in incomes]
+            assert len(incomes) == len(CONFIG['income_labels']), f'Income labels must match {incomes}'
 
-            autos = sorted(list(tour_df[CONFIG['autos_col']].unique()))
-            assert len(autos) == len(CONFIG['autos_labels']), f'Auto labels must match {autos}'
             print('Done.')
 
             print(f"Reading {CONFIG['shapefile']}... ", end='')
@@ -120,9 +132,7 @@ def create_configs():
                 'ozone_list': ozone_list,
                 'dzone_list': dzone_list,
                 'purposes': purposes,
-                'autos': autos,
                 'incomes': incomes,
-                'income_labels': income_labels,
                 'zone_df': zone_df,
                 'center': center,
             })
@@ -311,7 +321,7 @@ def zone_interaction():
                 fill_opacity=0.7,
                 line_opacity=0.1,
                 highlight=True,
-                smooth_factor=2.0,
+                smooth_factor=1.0,
                 legend_name=shade.value,
             )
 
