@@ -36,16 +36,22 @@ rem ### Change the PATH environment variable so that JAVA_HOME is listed first i
 rem ### Doing this ensures that the JAVA_HOME path we defined above is the on that gets used in case other java paths are in PATH.
 set PATH=%JAVA_PATH%\bin;%OLDPATH%
 
-rem run ping to add a pause so that hhMgr and mtxMgr have time to fully start
+rem ### Run ping to add a pause so that hhMgr and mtxMgr have time to fully start
 ping -n 10 %MAIN% > nul
 
 cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 
-rem TNC Fleet Model
+rem ### TNC Fleet Model
 %JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.maas.TNCFleetModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE%
 
-rem Household AV Allocation Model
+rem ### Checking for TNC outputs
+call %PROJECT_DIRECTORY%\bin\CheckOutput.bat %PROJECT_DIRECTORY% TNC %ITERATION%
+
+rem ### Household AV Allocation Model
 %JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.maas.HouseholdAVAllocationModelRunner %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE%
+
+rem ### Checking for AV outputs
+call %PROJECT_DIRECTORY%\bin\CheckOutput.bat %PROJECT_DIRECTORY% AV %ITERATION%
 
 rem ### restore saved environment variable values, and change back to original current directory
 set JAVA_PATH=%OLDJAVAPATH%
