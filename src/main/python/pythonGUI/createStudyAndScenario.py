@@ -1,7 +1,5 @@
 __author__ = 'wsu'
 #Wu.Sun@sandag.org 10-27-2016
-#wsu update 9/24/2018 for release 14.0.1
-#wsu update 1/30/2019 for release 14.1.0
 import Tkinter
 import Tkconstants
 import tkFileDialog
