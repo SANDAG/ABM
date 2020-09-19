@@ -1,7 +1,5 @@
 __author__ = 'wsu'
 #Wu.Sun@sandag.org 10-27-2016
-#wsu update 9/24/2018 for release 14.0.1
-#wsu update 1/30/2019 for release 14.1.0
 import Tkinter
 import Tkconstants
 import tkFileDialog
@@ -20,7 +18,7 @@ class CreateScenarioGUI(Tkinter.Frame):
 
             #divider line
             divider=u"_"*120
-            self.releaseDir='T:\\ABM\\release\\ABM'
+            self.releaseDir='T:\\ABM\\release_test\\ABM'
             self.defaultScenarioDir="T:\\projects\\sr14"
             self.defaultNetworkDir="T:\\projects\\sr14\\Vision\\network_build"
 
@@ -56,8 +54,8 @@ class CreateScenarioGUI(Tkinter.Frame):
 
             Tkinter.Label(body, text=u"Version", font=("Helvetica", 8, 'bold')).grid(row=8)
             var = StringVar(root)
-            self.version="version_14_2_0"
-            optionList=["version_14_2_0"]
+            self.version="version_14_2_1"
+            optionList=["version_14_2_1"]
             option=Tkinter.OptionMenu(body,var,*optionList,command=self.setversion)
             option.config(width=50)
             option.grid(row=8, column=1)
