@@ -72,3 +72,6 @@ ifc_speed_dict,network_links,id,NA,Calculation,"{1:85, 2:70, 3:60, 4:50, 5:50, 6
 #IHOV1_NO_TOLL_CHECK,network_links,id,Fatal,Test,network_links[network_links['@lane_restriction'] == 1][toll_column_names].sum().sum() == 0,,,Check if toll cost is 0 for General Purpose lanes (IHOV=1)
 #NON_ZERO_TOLL_CHECK,network_links,id,Warning,Test,"network_links[not(no_toll_rows)].apply(lambda x: len(set(list('shitmv')).difference((list(x['modes'])))) == 0, axis=1)",,,Check that all operation type lanes are available at a nonzero toll cost
 #TRANSIT_ON_ZONE_CONNECTOR,network_links,id,Fatal,Test,len(network_links[(network_links['isTransit'] == 1) & (network_links['@lane_restriction'] == 10)]) == 0,,,Check if any transit links are on zone connectors
+net_links_lanes,network_links,id,NA,Calculation,network_links.loc[network_links['num_lanes']>0],,,Subset of Emme network links that contain at least 1 lane
+HWYCOV_ID_CHECK_TCOV_ID,net_links_lanes,@tcov_id,Fatal,Test,"~net_links_lanes.duplicated(subset=['@tcov_id'], keep = False)",,,Check if there is more than one network link associated for each unique HWYCOV_ID (i.e. @tcov_id). Reports @tcov_id
+HWYCOV_ID_CHECK_LINK_ID,net_links_lanes,id,Fatal,Test,"~net_links_lanes.duplicated(subset=['@tcov_id'], keep = False)",,,Check if there is more than one network link associated for each unique HWYCOV_ID (i.e. @tcov_id). Reports link id

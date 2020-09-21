@@ -13,15 +13,10 @@
 #//////////////////////////////////////////////////////////////////////////////
 #
 # Reviews all inputs to SANDAG ABM for possible issues that will result in model errors
-# 
 #
 # Files referenced:
 #	input_checker\config\inputs_checks.csv
 # 	input_checker\config\inputs_list.csv	
-#
-# Script example:
-# python C:\ABM_runs\maint_2020_RSG\Tasks\input_checker\emme_toolbox\emme\toolbox\import\input_checker.py
-
 
 import os, shutil, sys, time, csv, logging
 import win32com.client as com
@@ -40,8 +35,6 @@ warnings.filterwarnings("ignore")
 
 _join = os.path.join
 _dir = os.path.dirname
-
-#gen_utils = _m.Modeller().module("sandag.utilities.general")
 
 class input_checker(_m.Tool()):
 
@@ -90,11 +83,15 @@ class input_checker(_m.Tool()):
 		</div>
 		The input checker goes through the list of checks and evaluates each
 		one as True or False. A summary file is produced at the end with results
-		for each check:
+		for each check. The input checker additionally outputs a report for
+		failed checks of severity type Logical with more than 25 failed records.
+		The additional summary report lists every failed record.
+		The following reports are output:
 		<br>
 		<div style="text-align:left">
 			<ul>
-				<li>input_checker\inputCheckerSummary_[YEAR-M-D].txt</li>
+				<li>input_checker\inputCheckerSummary_[YEAR-MM-DD].txt</li>
+				<li>completeLogicalFails_[YEAR-MM-DD].txt</li>
 			</ul>
 		</div>
 		"""
@@ -124,9 +121,6 @@ class input_checker(_m.Tool()):
 		self.input_checker_path = _join(self.path, 'input_checker')
 		self.inputs_list_path = _join(self.input_checker_path, 'config', 'inputs_list.csv')
 		self.inputs_checks_path = _join(self.input_checker_path, 'config', 'inputs_checks.csv')
-
-		#attributes = {"path": self.path}
-		#gen_utils.log_snapshot("Run Input Checker", str(self), attributes)
 
 		file_paths = [self.inputs_list_path, self.inputs_checks_path]
 		for path in file_paths:
@@ -390,7 +384,7 @@ class input_checker(_m.Tool()):
 						
 						# reverse results list since we need all False IDs
 						reverse_results = [not i for i in out.values]
-						error_expr = table + '.' + id_col + '[reverse_results]'
+						error_expr = table + "['" + id_col + "']" + "[reverse_results]"
 						error_id_list = eval(error_expr)
 
 						# report first 25 problem IDs in the log
