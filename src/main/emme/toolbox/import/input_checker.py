@@ -645,8 +645,8 @@ class input_checker(_m.Tool()):
 		self.num_logical = checks_df.result[(checks_df.Severity=='Logical') & (checks_df.reverse_result)].count()
 		self.logical_fails = checks_df[(checks_df.Severity=='Logical') & (checks_df.reverse_result)]
 
+		log_fail_id_tally = 0
 		if self.num_logical > 0:
-			log_fail_id_tally = 0
 			for item, row in self.logical_fails.iterrows():
 				problem_ids = self.problem_ids[row['Test']]
 				if len(problem_ids) > 0:
