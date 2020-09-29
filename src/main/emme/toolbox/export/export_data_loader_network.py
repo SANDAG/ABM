@@ -814,6 +814,7 @@ Export network results to csv files for SQL data loader."""
         df_transit_link['trcovID'] = abs(df_transit_link['trcovID'])
         df_transit_link = df_transit_link[['trcovID', 'AB', 'geometry']]
         df_transit_link.to_csv(os.path.join(export_path, 'transitLink.csv'), index=False)
+        network_table.close()
         try:
             previous_active_database.open()
             data_explorer.remove_database(desktop_traffic_database)
