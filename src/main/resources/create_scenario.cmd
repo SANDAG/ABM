@@ -77,6 +77,22 @@ if %YEAR%==2016 (xcopy /Y/S   .\common\input\template\validation\2016\"*.*" %SCE
 if %YEAR%==2018 (xcopy /Y/S   .\common\input\template\validation\2018\"*.*" %SCENARIO_FOLDER%\\analysis\validation\) 
 xcopy /Y/S   .\common\input\template\summary\"*.*" %SCENARIO_FOLDER%\analysis\summary\     
 
+rem populate scenario year into sandag_abm.properties
+set PROP_FILE=%SCENARIO_FOLDER%\conf\sandag_abm.properties
+set TEMP_FILE=%SCENARIO_FOLDER%\conf\temp.properties
+set RAW_YEAR=%YEAR:nb=%
+type nul>%TEMP_FILE%
+for /f "USEBACKQ delims=" %%A in (`type "%PROP_FILE%" ^| find /V /N ""`) do (
+  set ln=%%A
+  setlocal enableDelayedExpansion
+  set ln=!ln:${year}=%RAW_YEAR%!
+  set ln=!ln:${year_build}=%YEAR%!
+  set ln=!ln:*]=!
+  echo(!ln!>>%TEMP_FILE%
+  endlocal
+)
+del %PROP_FILE%
+move %TEMP_FILE% %PROP_FILE%
 
 @echo init emme folder
 call init_emme.cmd %SCENARIO_FOLDER% %EMME_VERSION%

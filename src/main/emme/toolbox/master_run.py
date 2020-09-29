@@ -266,6 +266,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         props = load_properties(_join(main_directory, "conf", "sandag_abm.properties"))
         props.set_year_specific_properties(_join(main_directory, "input", "parametersByYears.csv"))
+        props.set_year_specific_properties(_join(main_directory, "input", "filesByYears.csv"))
         props.save()
         # Log current state of props file for debugging of UI / file sync issues
         attributes = dict((name, props["RunModel." + name]) for name in self._run_model_names)
