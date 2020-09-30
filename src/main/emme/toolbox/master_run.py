@@ -482,9 +482,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             with _m.logbook_trace("Iteration %s" % msa_iteration):
                 if not skipCoreABM[iteration] or not skipOtherSimulateModel[iteration] or not skipMAASModel[iteration]:
                     self.run_proc("runMtxMgr.cmd", [drive, drive + path_no_drive], "Start matrix manager")
-                    self.run_proc("runDriver.cmd", [drive, drive + path_no_drive], "Start JPPF Driver")
-                    self.run_proc("StartHHAndNodes.cmd", [drive, path_no_drive],
-                                  "Start HH Manager, JPPF Driver, and nodes")
+                    self.run_proc("runHhMgr.cmd", [drive, drive + path_no_drive], "Start Hh manager")
 
                 if not skipHighwayAssignment[iteration]:
                     # run traffic assignment

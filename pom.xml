@@ -12,8 +12,8 @@
         <mtxmgr.memory.max>70000m</mtxmgr.memory.max>
         <hhmgr.memory.min>1000m</hhmgr.memory.min> 
         <hhmgr.memory.max>20000m</hhmgr.memory.max>         
-        <client.memory.min>30000m</client.memory.min> 
-        <client.memory.max>90000m</client.memory.max>          
+        <client.memory.min>100000m</client.memory.min> 
+        <client.memory.max>160000m</client.memory.max>          
         <spmarket.memory.min>30000m</spmarket.memory.min> 
         <spmarket.memory.max>150000m</spmarket.memory.max>      
         <bikelogsum.memory.min>20000m</bikelogsum.memory.min> 
