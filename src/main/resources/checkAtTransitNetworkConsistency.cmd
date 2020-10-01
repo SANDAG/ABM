@@ -36,7 +36,7 @@ set PATH=%JAVA_PATH%\bin;%OLDPATH%
 cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 
 rem AT and Transit Networks Consistency Checking Java
-%JAVA_64_PATH%\bin\java -showversion -server -Xms12000m -Xmx15000m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j_AtTransitCheck.xml -Dproject.folder=%PROJECT_DIRECTORY% -Djppf.config=jppf-clientDistributed.properties org.sandag.abm.utilities.TapAtConsistencyCheck %PROPERTIES_NAME% %PROJECT_DRIVE%%PROJECT_DIRECTORY%\input
+%JAVA_64_PATH%\bin\java -showversion -server -Xms12000m -Xmx15000m -cp "%CLASSPATH%" -Dlog4j.configuration=log4j_AtTransitCheck.xml -Dproject.folder=%PROJECT_DIRECTORY% -Djppf.config=jppf-client.properties org.sandag.abm.utilities.TapAtConsistencyCheck %PROPERTIES_NAME% %PROJECT_DRIVE%%PROJECT_DIRECTORY%\input
 
 rem ### restore saved environment variable values, and change back to original current directory
 set JAVA_PATH=%OLDJAVAPATH%
