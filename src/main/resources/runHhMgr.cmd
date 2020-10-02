@@ -24,7 +24,8 @@ rem set DRIVE=%MAPDRIVE%
 set DRIVE=%PROJECT_DRIVE%
 
 rem ### Name the project directory.  This directory will hava data and runtime subdirectories
-set RUNTIME=%DRIVE%%PROJECT_DIRECTORY%
+rem set RUNTIME=%DRIVE%%PROJECT_DIRECTORY%
+set RUNTIME=%PROJECT_DIRECTORY%
 set CONFIG=%RUNTIME%/conf
 
 set JAR_LOCATION=%RUNTIME%/application
