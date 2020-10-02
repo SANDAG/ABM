@@ -11,6 +11,7 @@ fileName,property,separator,refValue
 /bin/stopABM.cmd,pskill,\\,NODE1
 /bin/stopABM.cmd,pskill,\\,NODE2
 /conf/jppf-client.properties,driver1.jppf.server.host, = ,MAIN
+/conf/jppf-client.properties,jppf.processing.threads, = ,THREADN1
 /conf/jppf-clientDistributed.properties,driver1.jppf.server.host, = ,MAIN
 /conf/jppf-sandag01.properties,jppf.server.host, = ,MAIN
 /conf/jppf-sandag01.properties,jppf.processing.threads, = ,THREADM
