@@ -306,8 +306,12 @@ public class UsualWorkSchoolLocationChoiceModel
                 List<Task<?>> results = jppfClient.submitJob(job);
                 for (Task<?> task : results)
                 {
-                    if (task.getException() != null) throw task.getException();
-
+                    //if (task.getException() != null) throw task.getException();
+                	//wu modefied for jppf 6.1.4
+                	if (task.getThrowable() != null) {
+                		  Throwable t = task.getThrowable();
+                		  t.printStackTrace();
+                	}
                     try
                     {
                         String stringResult = (String) task.getResult();
@@ -496,8 +500,12 @@ public class UsualWorkSchoolLocationChoiceModel
                 List<Task<?>> results = jppfClient.submitJob(job);
                 for (Task<?> task : results)
                 {
-                    if (task.getException() != null) throw task.getException();
-
+                    //if (task.getException() != null) throw task.getException();
+                	//wu modefied for jppf 6.1.4
+                	if (task.getThrowable() != null) {
+                		  Throwable t = task.getThrowable();
+                		  t.printStackTrace();
+                	}
                     try
                     {
                         String stringResult = (String) task.getResult();

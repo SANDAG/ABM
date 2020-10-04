@@ -39,7 +39,7 @@
         <workpath>WORKPATH</workpath>
         <database_server>DDAMWSQL16</database_server>
         <database_name>abm_14_2_0</database_name>
-        <jppf_version>5.0.1</jppf_version>
+        <jppf_version>6.1.4</jppf_version>
         <workShadowPricing.iteration>ShadowPricingOutput_work_9.csv</workShadowPricing.iteration>
         <schoolShadowPricing.iteration>ShadowPricingOutput_school_9.csv</schoolShadowPricing.iteration>
         <model_years>2016,2020,2023,2025,2026,2029,2030,2032,2035,2040,2050</model_years>
