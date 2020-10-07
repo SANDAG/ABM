@@ -624,6 +624,155 @@ Assignment matrices and resulting network flows are always in PCE.
         traffic_assign(assign_spec, scenario, chart_log_interval=2)
         return
 
+    def run_stochastic_assignment(self, period, relative_gap, max_iterations, num_processors, scenario, classes):
+        emmebank = scenario.emmebank
+
+        modeller = _m.Modeller()
+        set_extra_function_para = modeller.tool(
+            "inro.emme.traffic_assignment.set_extra_function_parameters")
+        create_attribute = modeller.tool(
+            "inro.emme.data.extra_attribute.create_extra_attribute")
+        traffic_assign = modeller.tool(
+            "inro.emme.traffic_assignment.sola_traffic_assignment")
+        net_calc = gen_utils.NetworkCalculator(scenario)
+
+        p = period.lower()
+        assign_spec = self.base_assignment_spec(
+            relative_gap, max_iterations, num_processors)
+        with _m.logbook_trace("Prepare traffic data for period %s" % period):
+            with _m.logbook_trace("Input link attributes"):
+                # set extra attributes for the period for VDF
+                # ul1 = @time_link (period)
+                # ul2 = transit flow -> volad (for assignment only)
+                # ul3 = @capacity_link (period)
+                el1 = "@green_to_cycle"
+                el2 = "@sta_reliability"
+                el3 = "@capacity_inter"
+                set_extra_function_para(el1, el2, el3, emmebank=emmebank)
+
+                # set green to cycle to el1=@green_to_cycle for VDF
+                att_name = "@green_to_cycle_%s" % p
+                att = scenario.extra_attribute(att_name)
+                new_att_name = "@green_to_cycle"
+                create_attribute("LINK", new_att_name, att.description,
+                                  0, overwrite=True, scenario=scenario)
+                net_calc(new_att_name, att_name, "modes=d")
+                # set static reliability to el2=@sta_reliability for VDF
+                att_name = "@sta_reliability_%s" % p
+                att = scenario.extra_attribute(att_name)
+                new_att_name = "@sta_reliability"
+                create_attribute("LINK", new_att_name, att.description,
+                                  0, overwrite=True, scenario=scenario)
+                net_calc(new_att_name, att_name, "modes=d")
+                # set capacity_inter to el3=@capacity_inter for VDF
+                att_name = "@capacity_inter_%s" % p
+                att = scenario.extra_attribute(att_name)
+                new_att_name = "@capacity_inter"
+                create_attribute("LINK", new_att_name, att.description,
+                                  0, overwrite=True, scenario=scenario)
+                net_calc(new_att_name, att_name, "modes=d")
+                # set link time
+                net_calc("ul1", "@time_link_%s" % p, "modes=d")
+                net_calc("ul3", "@capacity_link_%s" % p, "modes=d")
+                # set number of lanes (not used in VDF, just for reference)
+                net_calc("lanes", "@lane_%s" % p, "modes=d")
+                if period in ["EA", "MD", "EV"]:
+                    # For links with signals inactive in the off-peak periods, convert VDF to type 11
+                    net_calc("vdf", "11", "modes=d and @green_to_cycle=0 and @traffic_control=4,5 and vdf=24")
+                # # Set HOV2 cost attribute
+                # create_attribute("LINK", "@cost_hov2_%s" % p, "toll (non-mngd) + cost for HOV2",
+                #                  0, overwrite=True, scenario=scenario)
+                # net_calc("@cost_hov2_%s" % p, "@cost_hov_%s" % p, "modes=d")
+                # net_calc("@cost_hov2_%s" % p, "@cost_auto_%s" % p, "@lane_restriction=3")
+
+            with _m.logbook_trace("Transit line headway and background traffic"):
+                # set headway for the period
+                hdw = {"ea": "@headway_op",
+                       "am": "@headway_am",
+                       "md": "@headway_op",
+                       "pm": "@headway_pm",
+                       "ev": "@headway_op"}
+                net_calc("hdw", hdw[p], {"transit_line": "all"})
+
+                # transit vehicle as background flow with periods
+                period_hours = {'ea': 3, 'am': 3, 'md': 6.5, 'pm': 3.5, 'ev': 5}
+                expression = "(60 / hdw) * vauteq * %s" % (period_hours[p])
+                net_calc("ul2", "0", "modes=d")
+                net_calc("ul2", expression,
+                    selections={"link": "modes=d", "transit_line": "hdw=0.02,9999"},
+                    aggregation="+")
+
+            with _m.logbook_trace("Per-class flow attributes"):
+                for traffic_class in classes:
+                    demand = 'mf"%s_%s"' % (period, traffic_class["name"])
+                    link_cost = "%s_%s" % (traffic_class["cost"], p) if traffic_class["cost"] else "@cost_operating"
+
+                    att_name = "@%s" % (traffic_class["name"].lower())
+                    att_des = "%s %s link volume" % (period, traffic_class["name"])
+                    link_flow = create_attribute("LINK", att_name, att_des, 0, overwrite=True, scenario=scenario)
+                    att_name = "@p%s" % (traffic_class["name"].lower())
+                    att_des = "%s %s turn volume" % (period, traffic_class["name"])
+                    turn_flow = create_attribute("TURN", att_name, att_des, 0, overwrite=True, scenario=scenario)
+
+                    class_spec = {
+                        "mode": traffic_class["mode"],
+                        "demand": demand,
+                        "generalized_cost": {
+                            "link_costs": link_cost, "perception_factor": 1.0 / traffic_class["VOT"]
+                        },
+                        "results": {
+                            "link_volumes": link_flow.id, "turn_volumes": turn_flow.id,
+                            "od_travel_times": None
+                        }
+                    }
+                    assign_spec["classes"].append(class_spec)
+            if select_link:
+                for class_spec in assign_spec["classes"]:
+                    class_spec["path_analyses"] = []
+                for sub_spec in select_link:
+                    expr = sub_spec["expression"]
+                    suffix = sub_spec["suffix"]
+                    threshold = sub_spec["threshold"]
+                    if not expr and not suffix:
+                        continue
+                    with _m.logbook_trace("Prepare for select link analysis '%s' - %s" % (expr, suffix)):
+                        slink = create_attribute("LINK", "@slink_%s" % suffix, "selected link for %s" % suffix, 0,
+                                                 overwrite=True, scenario=scenario)
+                        net_calc(slink.id, "1", expr)
+                        with _m.logbook_trace("Initialize result matrices and extra attributes"):
+                            for traffic_class, class_spec in zip(classes, assign_spec["classes"]):
+                                att_name = "@sl_%s_%s" % (traffic_class["name"].lower(), suffix)
+                                att_des = "%s %s '%s' sel link flow"% (period, traffic_class["name"], suffix)
+                                link_flow = create_attribute("LINK", att_name, att_des, 0, overwrite=True, scenario=scenario)
+                                att_name = "@psl_%s_%s" % (traffic_class["name"].lower(), suffix)
+                                att_des = "%s %s '%s' sel turn flow" % (period, traffic_class["name"], suffix)
+                                turn_flow = create_attribute("TURN", att_name, att_des, 0, overwrite=True, scenario=scenario)
+
+                                name = "SELDEM_%s_%s_%s" % (period, traffic_class["name"], suffix)
+                                desc = "Selected demand for %s %s %s" % (period, traffic_class["name"], suffix)
+                                seldem = dem_utils.create_full_matrix(name, desc, scenario=scenario)
+
+                                # add select link analysis
+                                class_spec["path_analyses"].append({
+                                    "link_component": slink.id,
+                                    "turn_component": None,
+                                    "operator": "+",
+                                    "selection_threshold": { "lower": threshold, "upper": 999999},
+                                    "path_to_od_composition": {
+                                        "considered_paths": "SELECTED",
+                                        "multiply_path_proportions_by": {"analyzed_demand": True, "path_value": False}
+                                    },
+                                    "analyzed_demand": None,
+                                    "results": {
+                                        "selected_link_volumes": link_flow.id,
+                                        "selected_turn_volumes": turn_flow.id,
+                                        "od_values": seldem.named_id
+                                    }
+                                })
+        # Run assignment
+        traffic_assign(assign_spec, scenario, chart_log_interval=2)
+        return
+
     def calc_network_results(self, period, num_processors, scenario):
         modeller = _m.Modeller()
         create_attribute = modeller.tool(
