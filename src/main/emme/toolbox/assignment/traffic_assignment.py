@@ -633,7 +633,7 @@ Assignment matrices and resulting network flows are always in PCE.
         create_attribute = modeller.tool(
             "inro.emme.data.extra_attribute.create_extra_attribute")
         traffic_assign = modeller.tool(
-            "inro.emme.traffic_assignment.sola_traffic_assignment")
+            "sandag.utilities.stochastic_traffic_assignment")
         net_calc = gen_utils.NetworkCalculator(scenario)
 
         p = period.lower()
@@ -686,21 +686,21 @@ Assignment matrices and resulting network flows are always in PCE.
                 # net_calc("@cost_hov2_%s" % p, "@cost_auto_%s" % p, "@lane_restriction=3")
 
             with _m.logbook_trace("Transit line headway and background traffic"):
-                # set headway for the period
-                hdw = {"ea": "@headway_op",
-                       "am": "@headway_am",
-                       "md": "@headway_op",
-                       "pm": "@headway_pm",
-                       "ev": "@headway_op"}
-                net_calc("hdw", hdw[p], {"transit_line": "all"})
+                # set headway for the period: format is (attribute_name, period duration in hours) 
+                hdw = {"ea": ("@headway_op", 3),
+                       "am": ("@headway_am", 3)
+                       "md": ("@headway_op", 6.5)
+                       "pm": ("@headway_pm", 3.5)
+                       "ev": ("@headway_op", 5)}
+                net_calc("hdw * %f" % hdw[p][1], hdw[p][0], {"transit_line": "all"})
 
-                # transit vehicle as background flow with periods
-                period_hours = {'ea': 3, 'am': 3, 'md': 6.5, 'pm': 3.5, 'ev': 5}
-                expression = "(60 / hdw) * vauteq * %s" % (period_hours[p])
-                net_calc("ul2", "0", "modes=d")
-                net_calc("ul2", expression,
-                    selections={"link": "modes=d", "transit_line": "hdw=0.02,9999"},
-                    aggregation="+")
+                # # transit vehicle as background flow with periods
+                # period_hours = {'ea': 3, 'am': 3, 'md': 6.5, 'pm': 3.5, 'ev': 5}
+                # expression = "(60 / hdw) * vauteq * %s" % (period_hours[p])
+                # net_calc("ul2", "0", "modes=d")
+                # net_calc("ul2", expression,
+                #     selections={"link": "modes=d", "transit_line": "hdw=0.02,9999"},
+                #     aggregation="+")
 
             with _m.logbook_trace("Per-class flow attributes"):
                 for traffic_class in classes:
