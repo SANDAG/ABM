@@ -708,9 +708,9 @@ Assignment matrices and resulting network flows are always in PCE.
             with _m.logbook_trace("Transit line headway and background traffic"):
                 # set headway for the period: format is (attribute_name, period duration in hours) 
                 hdw = {"ea": ("@headway_op", 3),
-                       "am": ("@headway_am", 3)
-                       "md": ("@headway_op", 6.5)
-                       "pm": ("@headway_pm", 3.5)
+                       "am": ("@headway_am", 3),
+                       "md": ("@headway_op", 6.5),
+                       "pm": ("@headway_pm", 3.5),
                        "ev": ("@headway_op", 5)}
                 net_calc('hdw', "{hdw} / {p} ".format(hdw=hdw[p][0], p=hdw[p][1]), {"transit_line": "all"})
 
