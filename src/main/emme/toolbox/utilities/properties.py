@@ -133,9 +133,9 @@ class PropertiesSetter(object):
             "startFromIteration", "skipInitialization", "deleteAllMatrices", "skipCopyWarmupTripTables", 
             "skipCopyBikeLogsum", "skipCopyWalkImpedance", "skipWalkLogsums", "skipBikeLogsums", "skipBuildNetwork", 
             "skipHighwayAssignment", "skipTransitSkimming", "skipTransponderExport", "skipCoreABM", "skipOtherSimulateModel", "skipMAASModel","skipCTM", 
-            "skipEI", "skipExternalExternal", "skipTruck", "skipTripTableCreation", "skipFinalHighwayAssignment", 
+            "skipEI", "skipExternalExternal", "skipTruck", "skipTripTableCreation", "skipFinalHighwayAssignment", 'makeFinalHighwayAssignmentStochastic', 
             "skipFinalTransitAssignment", "skipVisualizer", "skipDataExport", "skipDataLoadRequest", 
-            "skipDeleteIntermediateFiles", 'makeFinalHighwayAssignmentStochastic')
+            "skipDeleteIntermediateFiles")
         self._properties = None
 
     def add_properties_interface(self, pb, disclosure=False):
