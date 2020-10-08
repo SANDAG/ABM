@@ -117,6 +117,8 @@ class TrafficAssignment(_m.Tool(), gen_utils.Snapshot):
     num_processors = _m.Attribute(str)
     select_link = _m.Attribute(unicode)
     raise_zero_dist = _m.Attribute(bool)
+    stochastic = _m.Attribute(bool)
+    input_directory = _m.Attribute(str)
 
     tool_run_msg = ""
 
@@ -127,8 +129,11 @@ class TrafficAssignment(_m.Tool(), gen_utils.Snapshot):
         self.num_processors = "MAX-1"
         self.raise_zero_dist = True
         self.select_link = '[]'
+        self.stochastic = False
+        project_dir = os.path.dirname(_m.Modeller().desktop.project.path)
+        self.input_directory = os.path.join(os.path.dirname(project_dir), "input")
         self.attributes = ["period", "msa_iteration", "relative_gap", "max_iterations",
-                           "num_processors", "select_link", "raise_zero_dist"]
+                           "num_processors", "select_link", "raise_zero_dist", "stochastic", "input_directory"]
         version = os.environ.get("EMMEPATH", "")
         self._version = version[-5:] if version else ""
         self._skim_classes_separately = True  # Used for debugging only
@@ -165,6 +170,13 @@ Assignment matrices and resulting network flows are always in PCE.
         dem_utils.add_select_processors("num_processors", pb, self)
         pb.add_checkbox("raise_zero_dist", title=" ", label="Raise on zero distance value",
             note="Check for and raise an exception if a zero value is found in the SOVGP_DIST matrix.")
+        pb.add_checkbox(
+            'stochastic',
+            title=" ",
+            label="Run as a stochastic assignment", 
+            note="If the current MSA iteration is the last (4th) one, the SOLA traffic assignment is replaced with a stochastic traffic assignment."
+        )
+        pb.add_select_file('input_directory', 'directory', title='Select input directory')
         self._add_select_link_interface(pb)
         return pb.render()
 
@@ -320,7 +332,8 @@ Assignment matrices and resulting network flows are always in PCE.
         try:
             scenario = _m.Modeller().scenario
             results = self(self.period, self.msa_iteration, self.relative_gap, self.max_iterations,
-                           self.num_processors, scenario, self.select_link, self.raise_zero_dist)
+                           self.num_processors, scenario, self.select_link, self.raise_zero_dist,
+                           self.stochastic, self.input_directory)
             run_msg = "Traffic assignment completed"
             self.tool_run_msg = _m.PageBuilder.format_info(run_msg)
         except Exception as error:
@@ -329,7 +342,7 @@ Assignment matrices and resulting network flows are always in PCE.
             raise
 
     def __call__(self, period, msa_iteration, relative_gap, max_iterations, num_processors, scenario,
-                 select_link=[], raise_zero_dist=True, stochastic=False):
+                 select_link=[], raise_zero_dist=True, stochastic=False, input_directory=None):
         select_link = _json.loads(select_link) if isinstance(select_link, basestring) else select_link
         attrs = {
             "period": period,
@@ -340,6 +353,8 @@ Assignment matrices and resulting network flows are always in PCE.
             "scenario": scenario.id,
             "select_link": _json.dumps(select_link),
             "raise_zero_dist": raise_zero_dist,
+            "stochastic": stochastic,
+            "input_directory": input_directory,
             "self": str(self)
         }
         self._stats = {}
@@ -440,7 +455,8 @@ Assignment matrices and resulting network flows are always in PCE.
                         max_iterations, 
                         num_processors, 
                         scenario, 
-                        classes 
+                        classes,
+                        input_directory 
                     )
 
                 else:
@@ -639,7 +655,18 @@ Assignment matrices and resulting network flows are always in PCE.
         traffic_assign(assign_spec, scenario, chart_log_interval=2)
         return
 
-    def run_stochastic_assignment(self, period, relative_gap, max_iterations, num_processors, scenario, classes):
+    def run_stochastic_assignment(
+            self, period, relative_gap, max_iterations, num_processors, scenario,
+            classes, input_directory):
+        load_properties = _m.Modeller().tool('sandag.utilities.properties')
+        main_directory = os.path.dirname(input_directory)
+        props = load_properties(os.path.join(main_directory, "conf", "sandag_abm.properties"))
+        distribution_type = props['lastHighwayAssignment.stochastic.distributionType']
+        replications = props['lastHighwayAssignment.stochastic.replications']
+        a_parameter = props['lastHighwayAssignment.stochastic.aParameter']
+        b_parameter = props['lastHighwayAssignment.stochastic.bParameter']
+        seed = props['lastHighwayAssignment.stochastic.seed']
+
         emmebank = scenario.emmebank
 
         modeller = _m.Modeller()
@@ -751,9 +778,9 @@ Assignment matrices and resulting network flows are always in PCE.
             # Run assignment
             traffic_assign(
                 assign_spec,
-                dist_par={'type': 'UNIFORM', 'A': 0.9, 'B': 1.1},
-                replications=10,
-                seed=1,
+                dist_par={'type': distribution_type, 'A': a_parameter, 'B': b_parameter},
+                replications=replications,
+                seed=seed,
                 orig_func=False,
                 random_term='ul2',
                 compute_travel_times=False,
