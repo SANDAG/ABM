@@ -329,7 +329,7 @@ Assignment matrices and resulting network flows are always in PCE.
             raise
 
     def __call__(self, period, msa_iteration, relative_gap, max_iterations, num_processors, scenario,
-                 select_link=[], raise_zero_dist=True):
+                 select_link=[], raise_zero_dist=True, stochastic=False):
         select_link = _json.loads(select_link) if isinstance(select_link, basestring) else select_link
         attrs = {
             "period": period,
@@ -432,7 +432,22 @@ Assignment matrices and resulting network flows are always in PCE.
                 msa_link_flows = scenario.get_attribute_values("LINK", link_attrs)[1:]
                 msa_turn_flows = scenario.get_attribute_values("TURN", turn_attrs)[1:]
 
-            self.run_assignment(period, relative_gap, max_iterations, num_processors, scenario, classes, select_link)
+            if stochastic:
+                if msa_iteration == 4:
+                    self.run_stochastic_assignment(
+                        period,
+                        relative_gap, 
+                        max_iterations, 
+                        num_processors, 
+                        scenario, 
+                        classes 
+                    )
+
+                else:
+                    raise Exception('Stochastic traffic assignment is available only at the last iteration (4th iteration)')
+            else:
+                self.run_assignment(period, relative_gap, max_iterations, num_processors, scenario, classes, select_link)
+
 
             if 1 < msa_iteration < 4:
                 link_flows = scenario.get_attribute_values("LINK", link_attrs)
@@ -639,6 +654,11 @@ Assignment matrices and resulting network flows are always in PCE.
         p = period.lower()
         assign_spec = self.base_assignment_spec(
             relative_gap, max_iterations, num_processors)
+        assign_spec['background_traffic'] = {
+            "link_component": None,
+            "turn_component": None,
+            "add_transit_vehicles": True
+        }
         with _m.logbook_trace("Prepare traffic data for period %s" % period):
             with _m.logbook_trace("Input link attributes"):
                 # set extra attributes for the period for VDF
@@ -692,7 +712,7 @@ Assignment matrices and resulting network flows are always in PCE.
                        "md": ("@headway_op", 6.5)
                        "pm": ("@headway_pm", 3.5)
                        "ev": ("@headway_op", 5)}
-                net_calc("hdw * %f" % hdw[p][1], hdw[p][0], {"transit_line": "all"})
+                net_calc('hdw', "{hdw} / {p} ".format(hdw=hdw[p][0], p=hdw[p][1]), {"transit_line": "all"})
 
                 # # transit vehicle as background flow with periods
                 # period_hours = {'ea': 3, 'am': 3, 'md': 6.5, 'pm': 3.5, 'ev': 5}
@@ -726,52 +746,20 @@ Assignment matrices and resulting network flows are always in PCE.
                         }
                     }
                     assign_spec["classes"].append(class_spec)
-            if select_link:
-                for class_spec in assign_spec["classes"]:
-                    class_spec["path_analyses"] = []
-                for sub_spec in select_link:
-                    expr = sub_spec["expression"]
-                    suffix = sub_spec["suffix"]
-                    threshold = sub_spec["threshold"]
-                    if not expr and not suffix:
-                        continue
-                    with _m.logbook_trace("Prepare for select link analysis '%s' - %s" % (expr, suffix)):
-                        slink = create_attribute("LINK", "@slink_%s" % suffix, "selected link for %s" % suffix, 0,
-                                                 overwrite=True, scenario=scenario)
-                        net_calc(slink.id, "1", expr)
-                        with _m.logbook_trace("Initialize result matrices and extra attributes"):
-                            for traffic_class, class_spec in zip(classes, assign_spec["classes"]):
-                                att_name = "@sl_%s_%s" % (traffic_class["name"].lower(), suffix)
-                                att_des = "%s %s '%s' sel link flow"% (period, traffic_class["name"], suffix)
-                                link_flow = create_attribute("LINK", att_name, att_des, 0, overwrite=True, scenario=scenario)
-                                att_name = "@psl_%s_%s" % (traffic_class["name"].lower(), suffix)
-                                att_des = "%s %s '%s' sel turn flow" % (period, traffic_class["name"], suffix)
-                                turn_flow = create_attribute("TURN", att_name, att_des, 0, overwrite=True, scenario=scenario)
-
-                                name = "SELDEM_%s_%s_%s" % (period, traffic_class["name"], suffix)
-                                desc = "Selected demand for %s %s %s" % (period, traffic_class["name"], suffix)
-                                seldem = dem_utils.create_full_matrix(name, desc, scenario=scenario)
-
-                                # add select link analysis
-                                class_spec["path_analyses"].append({
-                                    "link_component": slink.id,
-                                    "turn_component": None,
-                                    "operator": "+",
-                                    "selection_threshold": { "lower": threshold, "upper": 999999},
-                                    "path_to_od_composition": {
-                                        "considered_paths": "SELECTED",
-                                        "multiply_path_proportions_by": {"analyzed_demand": True, "path_value": False}
-                                    },
-                                    "analyzed_demand": None,
-                                    "results": {
-                                        "selected_link_volumes": link_flow.id,
-                                        "selected_turn_volumes": turn_flow.id,
-                                        "od_values": seldem.named_id
-                                    }
-                                })
-        # Run assignment
-        traffic_assign(assign_spec, scenario, chart_log_interval=2)
-        return
+        
+        with temp_stochastic_functions(emmebank):
+            # Run assignment
+            traffic_assign(
+                assign_spec,
+                dist_par={'type': 'UNIFORM', 'A': 0.9, 'B': 1.1},
+                replications=10,
+                seed=1,
+                orig_func=False,
+                random_term='ul2',
+                compute_travel_times=False,
+                scenario=scenario
+            )
+            return
 
     def calc_network_results(self, period, num_processors, scenario):
         modeller = _m.Modeller()
@@ -1053,6 +1041,27 @@ def temp_functions(emmebank):
                 orig_expression[func] = exp
                 if "volau+volad" in exp:
                     exp = exp.replace("volau+volad", "ul2")
+                    change_function(func, exp, emmebank)
+    try:
+        yield
+    finally:
+        with _m.logbook_trace("Reset functions to assignment parameters"):
+            for func, expression in orig_expression.iteritems():
+                change_function(func, expression, emmebank)
+
+
+@_context
+def temp_stochastic_functions(emmebank):
+    change_function = _m.Modeller().tool(
+        "inro.emme.data.function.change_function")
+    orig_expression = {}
+    with _m.logbook_trace("Set functions to skim parameter"):
+        for func in emmebank.functions():
+            if func.prefix=="fd":
+                exp = func.expression
+                orig_expression[func] = exp
+                if "ul2" in exp:
+                    exp = exp.replace("ul2", "volau+volad")
                     change_function(func, exp, emmebank)
     try:
         yield
