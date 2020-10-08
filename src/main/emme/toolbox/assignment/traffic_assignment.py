@@ -448,19 +448,15 @@ Assignment matrices and resulting network flows are always in PCE.
                 msa_turn_flows = scenario.get_attribute_values("TURN", turn_attrs)[1:]
 
             if stochastic:
-                if msa_iteration == 4:
-                    self.run_stochastic_assignment(
-                        period,
-                        relative_gap, 
-                        max_iterations, 
-                        num_processors, 
-                        scenario, 
-                        classes,
-                        input_directory 
-                    )
-
-                else:
-                    raise Exception('Stochastic traffic assignment is available only at the last iteration (4th iteration)')
+                self.run_stochastic_assignment(
+                    period,
+                    relative_gap, 
+                    max_iterations, 
+                    num_processors, 
+                    scenario, 
+                    classes,
+                    input_directory 
+                )
             else:
                 self.run_assignment(period, relative_gap, max_iterations, num_processors, scenario, classes, select_link)
 
@@ -661,11 +657,11 @@ Assignment matrices and resulting network flows are always in PCE.
         load_properties = _m.Modeller().tool('sandag.utilities.properties')
         main_directory = os.path.dirname(input_directory)
         props = load_properties(os.path.join(main_directory, "conf", "sandag_abm.properties"))
-        distribution_type = props['lastHighwayAssignment.stochastic.distributionType']
-        replications = props['lastHighwayAssignment.stochastic.replications']
-        a_parameter = props['lastHighwayAssignment.stochastic.aParameter']
-        b_parameter = props['lastHighwayAssignment.stochastic.bParameter']
-        seed = props['lastHighwayAssignment.stochastic.seed']
+        distribution_type = props['stochasticHighwayAssignment.distributionType']
+        replications = props['stochasticHighwayAssignment.replications']
+        a_parameter = props['stochasticHighwayAssignment.aParameter']
+        b_parameter = props['stochasticHighwayAssignment.bParameter']
+        seed = props['stochasticHighwayAssignment.seed']
 
         emmebank = scenario.emmebank
 
@@ -741,14 +737,6 @@ Assignment matrices and resulting network flows are always in PCE.
                        "ev": ("@headway_op", 5)}
                 net_calc('hdw', "{hdw} / {p} ".format(hdw=hdw[p][0], p=hdw[p][1]), {"transit_line": "all"})
 
-                # # transit vehicle as background flow with periods
-                # period_hours = {'ea': 3, 'am': 3, 'md': 6.5, 'pm': 3.5, 'ev': 5}
-                # expression = "(60 / hdw) * vauteq * %s" % (period_hours[p])
-                # net_calc("ul2", "0", "modes=d")
-                # net_calc("ul2", expression,
-                #     selections={"link": "modes=d", "transit_line": "hdw=0.02,9999"},
-                #     aggregation="+")
-
             with _m.logbook_trace("Per-class flow attributes"):
                 for traffic_class in classes:
                     demand = 'mf"%s_%s"' % (period, traffic_class["name"])
@@ -774,19 +762,27 @@ Assignment matrices and resulting network flows are always in PCE.
                     }
                     assign_spec["classes"].append(class_spec)
         
-        with temp_stochastic_functions(emmebank):
-            # Run assignment
-            traffic_assign(
-                assign_spec,
-                dist_par={'type': distribution_type, 'A': a_parameter, 'B': b_parameter},
-                replications=replications,
-                seed=seed,
-                orig_func=False,
-                random_term='ul2',
-                compute_travel_times=False,
-                scenario=scenario
-            )
-            return
+        # Run assignment
+        traffic_assign(
+            assign_spec,
+            dist_par={'type': distribution_type, 'A': a_parameter, 'B': b_parameter},
+            replications=replications,
+            seed=seed,
+            orig_func=False,
+            random_term='ul2',
+            compute_travel_times=False,
+            scenario=scenario
+        )
+        
+        with _m.logbook_trace("Reset transit line headways"):
+                # set headway for the period
+                hdw = {"ea": "@headway_op",
+                       "am": "@headway_am",
+                       "md": "@headway_op",
+                       "pm": "@headway_pm",
+                       "ev": "@headway_op"}
+                net_calc("hdw", hdw[p], {"transit_line": "all"})
+        return
 
     def calc_network_results(self, period, num_processors, scenario):
         modeller = _m.Modeller()
@@ -1076,23 +1072,3 @@ def temp_functions(emmebank):
             for func, expression in orig_expression.iteritems():
                 change_function(func, expression, emmebank)
 
-
-@_context
-def temp_stochastic_functions(emmebank):
-    change_function = _m.Modeller().tool(
-        "inro.emme.data.function.change_function")
-    orig_expression = {}
-    with _m.logbook_trace("Set functions to skim parameter"):
-        for func in emmebank.functions():
-            if func.prefix=="fd":
-                exp = func.expression
-                orig_expression[func] = exp
-                if "ul2" in exp:
-                    exp = exp.replace("ul2", "volau+volad")
-                    change_function(func, exp, emmebank)
-    try:
-        yield
-    finally:
-        with _m.logbook_trace("Reset functions to assignment parameters"):
-            for func, expression in orig_expression.iteritems():
-                change_function(func, expression, emmebank)
