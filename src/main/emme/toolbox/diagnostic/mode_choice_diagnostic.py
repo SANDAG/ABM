@@ -138,6 +138,11 @@ class mode_choice_diagnostic(_m.Tool()):
 	def __call__(self):
 		_m.logbook_write("Started running mode choice diagnostic...")
 
+		# check if transit shapefiles are present in mcd input directory
+		# if present, will move to mcd output directory
+		_m.logbook_write("Checking for transit shapefiles...")
+		self.check_shp()
+
 		# run synthetic population generator
 		_m.logbook_write("Creating synthetic population...")
 		self.syn_pop()
@@ -643,3 +648,20 @@ class mode_choice_diagnostic(_m.Tool()):
 				raise Exception("missing output file '%s'" % (src))
 			dst = _join(self.mcd_out_path, file)
 			_shutil.move(src, dst)
+
+	def check_shp(self):
+
+	in_directory = _join(self.main_directory, "input", "mcd")
+	out_directory = self.mcd_out_path
+
+	tapcov = "tapcov.shp"
+	rtcov = "rtcov.shp"
+
+	files = [tapcov, rtcov]
+
+	for file in files:
+		src = _join(in_directory, file)
+		dst = _join(out_directory, file)
+		if not os.path.exists(src):
+			raise Exception("missing shapefile '%s'" % (src))
+		_shutil.move(src, dst)
