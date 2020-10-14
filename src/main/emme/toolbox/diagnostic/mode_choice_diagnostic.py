@@ -651,17 +651,19 @@ class mode_choice_diagnostic(_m.Tool()):
 
 	def check_shp(self):
 
-	in_directory = _join(self.main_directory, "input", "mcd")
-	out_directory = self.mcd_out_path
+		in_directory = _join(self.main_directory, "input", "mcd")
+		out_directory = self.mcd_out_path
 
-	tapcov = "tapcov.shp"
-	rtcov = "rtcov.shp"
+		shp_names = ["tapcov", "rtcov"]
 
-	files = [tapcov, rtcov]
+		for shp in shp_names:
 
-	for file in files:
-		src = _join(in_directory, file)
-		dst = _join(out_directory, file)
-		if not os.path.exists(src):
-			raise Exception("missing shapefile '%s'" % (src))
-		_shutil.move(src, dst)
+			files_to_move = [f for f in os.listdir(in_directory) if shp in f]
+
+			for file in files_to_move:
+
+				src = _join(in_directory, file)
+				dst = _join(out_directory, file)
+				if not os.path.exists(src):
+					raise Exception("missing shapefile '%s'" % (src))
+				_shutil.move(src, dst)
