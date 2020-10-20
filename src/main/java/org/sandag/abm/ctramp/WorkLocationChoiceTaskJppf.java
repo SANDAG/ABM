@@ -80,7 +80,7 @@ public class WorkLocationChoiceTaskJppf
         } catch (Exception e)
         {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
 
         // get the factory object used to create and recycle dcModel objects.
@@ -133,8 +133,20 @@ public class WorkLocationChoiceTaskJppf
                 dcModel.applyWorkLocationChoice(householdArray[i]);
             }
 
-            hhDataManager.setHhArray(householdArray, startIndex);
-            
+            boolean worked=false;
+            int tries=0;
+            do{
+            	++tries;
+            	try{
+            		hhDataManager.setHhArray(householdArray, startIndex);
+            		worked=true;
+                }catch(Exception e) {
+            		System.out.println("Error trying to set households in hh manager for start index "+startIndex+" (tried "+tries+" times");
+            		if(tries<1000)
+            			System.out.println("Trying again!");
+                }
+            }while(!worked && (tries<1000));
+            	
             //check to make sure hh array got set in hhDataManager
             boolean allHouseholdsAreSame = false;
             while(!allHouseholdsAreSame) {
