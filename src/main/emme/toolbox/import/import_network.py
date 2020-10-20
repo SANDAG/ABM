@@ -1202,16 +1202,16 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         self._log.append({"type": "header", "content": "Import turns and turn restrictions"})
         self._log.append({"type": "text", "content": "Process LINKTYPETURNS.DBF for turn prohibited by type"})
         # Process LINKTYPETURNS.DBF for turn prohibited by type
-        f = _fiona.open(_join(self.source, "LINKTYPETURNS.DBF"), 'r')
-        link_type_turns = _defaultdict(lambda: {})
-        for record in f:
-            record = record['properties']
-            link_type_turns[record["FROM"]][record["TO"]] = {
-                "LEFT": record["LEFT"],
-                "RIGHT": record["RIGHT"],
-                "STRAIGHT": record["STRAIGHT"],
-                "UTURN": record["UTURN"]
-            }
+        with _fiona.open(_join(self.source, "LINKTYPETURNS.DBF"), 'r') as f:
+            link_type_turns = _defaultdict(lambda: {})
+            for record in f:
+                record = record['properties']
+                link_type_turns[record["FROM"]][record["TO"]] = {
+                    "LEFT": record["LEFT"],
+                    "RIGHT": record["RIGHT"],
+                    "STRAIGHT": record["STRAIGHT"],
+                    "UTURN": record["UTURN"]
+                }
         for from_link in network.links():
             if from_link.type in link_type_turns:
                 to_link_turns = link_type_turns[from_link.type]
