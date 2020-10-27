@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
+import org.sandag.abm.modechoice.Modes;
 
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
@@ -36,7 +37,7 @@ public class AirportPartyManager
     private double[][]     departureDistribution;
     private double[][]     arrivalDistribution;
     
-    private int			   airportMgra;
+    public int			   airportMgra;
 
     SandagModelStructure   sandagStructure;
     
@@ -501,12 +502,27 @@ public class AirportPartyManager
         	// if employee
             if (parties[i].getPurpose() == AirportModelStructure.EMPLOYEE)
             {
-            	String record = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
-                        + parties[i].getPurpose() + "," + parties[i].getSize() + ","
-                        + parties[i].getIncome() + "," + parties[i].getNights() + ","
-                        + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
-                        + parties[i].getDestinationMGRA() + "," + parties[i].getMode() + ","
-                        + parties[i].getArrivalMode() + "," + (int) 0 + "," + (int) 0 + "\n");
+            	String record;
+            	if (parties[i].getMode() == SandagModelStructure.WALK_ALTS[0])
+            	{
+            		record = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
+                            + parties[i].getPurpose() + "," + parties[i].getSize() + ","
+                            + parties[i].getIncome() + "," + parties[i].getNights() + ","
+                            + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
+                            + parties[i].getDestinationMGRA() + "," + parties[i].getMode() + ","
+                            + parties[i].getArrivalMode() + "," + (int) 0 + "," + (int) 0 + "\n");
+            	}
+            	else
+            	{
+            		int[] tapsAP2Terminal = getAccessToTerminalTapPair(parties[i]);
+                	
+                	record = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
+                            + parties[i].getPurpose() + "," + parties[i].getSize() + ","
+                            + parties[i].getIncome() + "," + parties[i].getNights() + ","
+                            + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
+                            + parties[i].getDestinationMGRA() + "," + parties[i].getAP2TerminalTransitMode() + ","
+                            + parties[i].getArrivalMode() + "," + tapsAP2Terminal[0] + "," + tapsAP2Terminal[1] + "\n");
+            	}
                 
                 writer.print(record);
                 
@@ -561,12 +577,15 @@ public class AirportPartyManager
             		// else if access point is not airport terminal, connection mode is transit (APM)
             		else
             		{
+
+                        int[] tapsAP2Terminal = getAccessToTerminalTapPair(parties[i]);
+                        
             			record_Access2Destination = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
                                 + parties[i].getPurpose() + "," + parties[i].getSize() + ","
                                 + parties[i].getIncome() + "," + parties[i].getNights() + ","
                                 + parties[i].getDepartTime() + "," + parties[i].getAirportAccessMGRA() + ","
-                                + parties[i].getDestinationMGRA() + "," + SandagModelStructure.WALK_TRANSIT_ALTS[0] + ","
-                                + accMode_null + "," + taps[0] + "," + taps[1] + "\n");
+                                + parties[i].getDestinationMGRA() + "," + parties[i].getAP2TerminalTransitMode() + ","
+                                + accMode_null + "," + tapsAP2Terminal[0] + "," + tapsAP2Terminal[1] + "\n");
             		}
             		writer.print(record_Origin2Access);
             		writer.print(record_Access2Destination);
@@ -592,12 +611,15 @@ public class AirportPartyManager
             		// else if access point is not airport terminal, connection mode is transit (APM)
             		else
             		{
+
+                        int[] tapsAP2Terminal = getAccessToTerminalTapPair(parties[i]);
+                        
             			record_Origin2Access = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
                                 + parties[i].getPurpose() + "," + parties[i].getSize() + ","
                                 + parties[i].getIncome() + "," + parties[i].getNights() + ","
                                 + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
-                                + parties[i].getAirportAccessMGRA() + "," + SandagModelStructure.WALK_TRANSIT_ALTS[0] + ","
-                                + accMode_null + "," + taps[0] + "," + taps[1] + "\n");
+                                + parties[i].getAirportAccessMGRA() + "," + parties[i].getAP2TerminalTransitMode() + ","
+                                + accMode_null + "," + tapsAP2Terminal[0] + "," + tapsAP2Terminal[1] + "\n");
             		}
             		writer.print(record_Origin2Access);
             		writer.print(record_Access2Destination);
@@ -642,6 +664,42 @@ public class AirportPartyManager
             if (party.getDirection() == AirportModelStructure.ARRIVAL) taps = party
                     .getWtdTapPair(rideMode);
             else taps = party.getDtwTapPair(rideMode);
+
+        return taps;
+    }
+    
+    public int[] getAccessToTerminalTapPair(AirportParty party)
+    {
+
+        int[] taps = new int[2];
+        
+        Modes.TransitMode[] mode = Modes.TransitMode.values();
+
+        // ride mode will be -1 if not transit
+        int rideMode = 3; //lrt
+        
+        int AP2TerminalTransitMode = SandagModelStructure.WALK_TRANSIT_ALTS[rideMode];
+
+        party.setAP2TerminalTransitMode(AP2TerminalTransitMode);
+        
+        taps = party.getAPtoTermBestWtwTapPairs(rideMode);
+        
+        	if (taps == null)
+        	{
+        		for (int i = 0; i < mode.length; i++)
+        		{
+        			taps = party.getAPtoTermBestWtwTapPairs(mode[i].ordinal());
+        			
+        			if (taps != null)
+        			{
+        				AP2TerminalTransitMode = SandagModelStructure.WALK_TRANSIT_ALTS[i];
+
+        		        party.setAP2TerminalTransitMode(AP2TerminalTransitMode);
+        		        
+        				break;
+        			}
+        		}
+        	}
 
         return taps;
     }

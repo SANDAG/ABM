@@ -90,7 +90,7 @@ public class AirportModeChoiceModel
 
         // create a DMU
         AirportModelDMU dmu = dmuFactory.getAirportModelDMU();
-        
+
         // get MAX mgra to initialize mgra size array in dmu
         int maxMgra = mgraManager.getMaxMgra();
         dmu.setMaxMgra(maxMgra);
@@ -242,6 +242,12 @@ public class AirportModeChoiceModel
         int[][] walkTransitTapPairs = wtw.getBestTapPairs(origMgra, destMgra, skimPeriod, debug,
                 logger);
         party.setBestWtwTapPairs(walkTransitTapPairs);
+        
+        if (party.getPurpose() == AirportModelStructure.EMPLOYEE)
+        {
+        	party.setAPtoTermBestWtwTapPairs(walkTransitTapPairs);
+        	return;
+        }
 
         // drive transit tap pairs depend on direction; departing parties use
         // drive-transit-walk, else walk-transit-drive is used.
@@ -411,12 +417,31 @@ public class AirportModeChoiceModel
             } else if (occupancy == 2)
             {
                 int choice = shared2Model[chosenAirportMgra_index].getChoiceResult(randomNumber);
-                tripMode = choice + 2;
+                tripMode = choice + 2; 
             } else if (occupancy > 2)
             {
                 int choice = shared3Model[chosenAirportMgra_index].getChoiceResult(randomNumber);
                 tripMode = choice + 3 + 2;
             }
+            
+            if (chosenAirportMgra != dmu.getTerminalMgra())
+            {
+            	if (direction == 0)
+            	{
+            		int[][] walkTransitTapPairs_AP2Term = wtw.getBestTapPairs(chosenAirportMgra, dmu.getTerminalMgra(), skimPeriod, debug,
+                            logger);
+                    party.setAPtoTermBestWtwTapPairs(walkTransitTapPairs_AP2Term);
+            	}
+            	else
+            	{
+            		int[][] walkTransitTapPairs_AP2Term = wtw.getBestTapPairs(dmu.getTerminalMgra(), chosenAirportMgra, skimPeriod, debug,
+                            logger);
+                    party.setAPtoTermBestWtwTapPairs(walkTransitTapPairs_AP2Term);
+            	}
+            }
+            
+            
+            
         } else
         {
             int choice = transitModel.getChoiceResult(randomNumber);
@@ -424,6 +449,7 @@ public class AirportModeChoiceModel
             else tripMode = choice + 15;
         }
         party.setMode((byte) tripMode);
+        
     }
 
     /**
@@ -447,6 +473,13 @@ public class AirportModeChoiceModel
         dmu.setMaxMgra(maxMgra);
         
         solveModeMgra(dmu);
+        
+        int terminalMgra = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap, 
+        		"airport.airportMgra"));
+        
+        // set terminal Mgra
+        dmu.setTerminalMgra(terminalMgra);
+        
         // iterate through the array, choosing mgras and setting them
         for (AirportParty party : airportParties)
         {
@@ -456,8 +489,8 @@ public class AirportModeChoiceModel
             if ((ID <= 5) || (ID % 100) == 0)
                 logger.info("Choosing mode for party " + party.getID());
             
-            if (party.getPurpose() < AirportModelStructure.INTERNAL_PURPOSES) chooseMode(party, dmu);
-            else if (party.getPurpose() == AirportModelStructure.EMPLOYEE) continue;
+            if (party.getPurpose() < AirportModelStructure.INTERNAL_PURPOSES | party.getPurpose() == AirportModelStructure.EMPLOYEE) chooseMode(party, dmu);
+
             else
             {
                 party.setArrivalMode((byte) -99);

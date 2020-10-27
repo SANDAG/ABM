@@ -33,8 +33,14 @@ public class AirportParty
     private int[][]         bestWtwTapPairs;
     private int[][]         bestWtdTapPairs;
     private int[][]         bestDtwTapPairs;
+    
+    private int[][]			APtoTermBestWtwTapPairs;
+    private int				AP2TerminalTransitMode;
 
-    /**
+    
+
+
+	/**
      * Public constructor.
      * 
      * @param seed
@@ -351,4 +357,19 @@ public class AirportParty
         this.destinationMGRA = destinationMGRA;
     }
 
+    public int[] getAPtoTermBestWtwTapPairs(int rideMode) {
+		return APtoTermBestWtwTapPairs[rideMode];
+	}
+
+	public void setAPtoTermBestWtwTapPairs(int[][] aPtoTermBestWtwTapPairs) {
+		APtoTermBestWtwTapPairs = aPtoTermBestWtwTapPairs;
+	}
+	
+	public int getAP2TerminalTransitMode() {
+		return AP2TerminalTransitMode;
+	}
+
+	public void setAP2TerminalTransitMode(int aP2TerminalTransitMode) {
+		AP2TerminalTransitMode = aP2TerminalTransitMode;
+	}
 }

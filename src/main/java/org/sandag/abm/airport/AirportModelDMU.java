@@ -91,7 +91,10 @@ public class AirportModelDMU
     protected static final int				  NUM_LOS = 4;
 
 	private int 							  nonAirportMgra;
-    private int								  direction;
+	public int								  terminalMgra;
+    
+
+	private int								  direction;
 
     // estimation file defines time periods as:
     // 1 | Early AM: 3:00 AM - 5:59 AM |
@@ -390,6 +393,14 @@ public class AirportModelDMU
 
 	public void setNonAirportMgra(int nonAirportMgra) {
 		this.nonAirportMgra = nonAirportMgra;
+	}
+	
+	public int getTerminalMgra() {
+		return terminalMgra;
+	}
+
+	public void setTerminalMgra(int terminalMgra) {
+		this.terminalMgra = terminalMgra;
 	}
 
 	public void setDirection(int direction) {
