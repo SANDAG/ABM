@@ -962,8 +962,8 @@ Assignment matrices and resulting network flows are always in PCE.
             "background_traffic": None,
             "classes": [],
             "stopping_criteria": {
-                "max_iterations": max_iterations, "best_relative_gap": 0.0,
-                "relative_gap": relative_gap, "normalized_gap": 0.0
+                "max_iterations": int(max_iterations), "best_relative_gap": 0.0,
+                "relative_gap": float(relative_gap), "normalized_gap": 0.0
             },
             "performance_settings": {"number_of_processors": num_processors},
         }
