@@ -736,7 +736,11 @@ Assignment matrices and resulting network flows are always in PCE.
                        "pm": ("@headway_pm", 3.5),
                        "ev": ("@headway_op", 5)}
                 net_calc('ul2', '0', {'link': 'all'})
-                net_calc('hdw', "{hdw} / {p} ".format(hdw=hdw[p][0], p=hdw[p][1]), {"transit_line": "all"})
+                net_calc('hdw', '9999.99', {'transit_line': 'all'})
+                net_calc(
+                    'hdw', "{hdw} / {p} ".format(hdw=hdw[p][0], p=hdw[p][1]),
+                    {"transit_line": "%s=0.02,9999" % hdw[p][0]}
+                )
 
             with _m.logbook_trace("Per-class flow attributes"):
                 for traffic_class in classes:
