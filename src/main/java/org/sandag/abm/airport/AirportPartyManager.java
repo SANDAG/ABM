@@ -96,7 +96,7 @@ public class AirportPartyManager
         
         int totalEmployees = 0;
         for ( String key : employeeParkingValuesMap.keySet()) {
-			totalEmployees += (int) (employeeParkingValuesMap.get(key).get(2) * employeeParkingValuesMap.get(key).get(3));
+			totalEmployees += (int) (employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_stall_index) * employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_terminalpct_index));
 		}
 
         float directPassengers = (enplanements - connectingPassengers) / annualFactor;
@@ -184,16 +184,16 @@ public class AirportPartyManager
         
         for (String key : employeeParkingValuesMap.keySet())
         	{
-        		double num = employeeParkingValuesMap.get(key).get(2) * employeeParkingValuesMap.get(key).get(3);
+        		double num = employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_stall_index) * employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_terminalpct_index);
         		int stallNum = (int) num;
         		for (int s = 0; s < stallNum; s++)
         		{
         			AirportParty party = new AirportParty(s * 301 + 1000);
-        			double stallMgra = employeeParkingValuesMap.get(key).get(1);
+        			double stallMgra = employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_MGRA_index);
         			party.setOriginMGRA((int) stallMgra);
         			party.setDestinationMGRA(airportMgra);
         			
-        			double transitToTerminalProb =  employeeParkingValuesMap.get(key).get(4);
+        			double transitToTerminalProb =  employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_transitpct_index);
         			if (party.getRandom() < transitToTerminalProb)
         			{
         				party.setMode((byte) SandagModelStructure.WALK_TRANSIT_ALTS[0]);
@@ -224,16 +224,16 @@ public class AirportPartyManager
         
         for (String key : employeeParkingValuesMap.keySet())
         	{
-        		double num = employeeParkingValuesMap.get(key).get(2) *employeeParkingValuesMap.get(key).get(3);
+        		double num = employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_stall_index) *employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_terminalpct_index);
         		int stallNum = (int) num;
         		for (int s = 0; s < stallNum; s++)
         		{
         			AirportParty party = new AirportParty(s*101 + 1001);
-        			double stallMgra = employeeParkingValuesMap.get(key).get(1);
+        			double stallMgra = employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_MGRA_index);
         			party.setDestinationMGRA((int) stallMgra);
         			party.setOriginMGRA(airportMgra);
         			
-        			double transitToTerminalProb =  employeeParkingValuesMap.get(key).get(4);
+        			double transitToTerminalProb =  employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_transitpct_index);
         			if (party.getRandom() < transitToTerminalProb)
         			{
         				party.setMode((byte) SandagModelStructure.WALK_TRANSIT_ALTS[0]);
@@ -675,15 +675,17 @@ public class AirportPartyManager
         
         Modes.TransitMode[] mode = Modes.TransitMode.values();
 
-        // ride mode will be -1 if not transit
-        int rideMode = 3; //lrt
+        // APM is coded as light rail
+        int rideMode = AirportModelStructure.rideModeLRT_index;
         
+        // walk-LRT trip mode
         int AP2TerminalTransitMode = SandagModelStructure.WALK_TRANSIT_ALTS[rideMode];
 
         party.setAP2TerminalTransitMode(AP2TerminalTransitMode);
         
         taps = party.getAPtoTermBestWtwTapPairs(rideMode);
         
+        // if there's no best path for light rail, loop through and find the available ride mode
         	if (taps == null)
         	{
         		for (int i = 0; i < mode.length; i++)
