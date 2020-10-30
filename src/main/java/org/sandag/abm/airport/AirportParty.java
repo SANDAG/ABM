@@ -29,6 +29,8 @@ public class AirportParty
     private byte            arrivalMode;
     
     private float           valueOfTime;
+    
+    private int				airportAccessMGRA;
 
     private int     boardTap;
     private int     alightTap;
@@ -165,6 +167,14 @@ public class AirportParty
     {
         this.originMGRA = originMGRA;
     }
+    
+    public int getAirportAccessMGRA() {
+		return airportAccessMGRA;
+	}
+
+	public void setAirportAccessMGRA(int airportAccessMGRA) {
+		this.airportAccessMGRA = airportAccessMGRA;
+	}
 
     /**
      * @return the trip mode

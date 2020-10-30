@@ -3,12 +3,14 @@ package org.sandag.abm.airport;
 public final class AirportModelStructure
 {
 
-    public static final byte     PURPOSES            = 5;
+    public static final byte     PURPOSES_CBX        = 5;
+    public static final byte     PURPOSES_SAN        = 6;
     public static final byte     RESIDENT_BUSINESS   = 0;
     public static final byte     RESIDENT_PERSONAL   = 1;
     public static final byte     VISITOR_BUSINESS    = 2;
     public static final byte     VISITOR_PERSONAL    = 3;
     public static final byte     EXTERNAL            = 4;
+    public static final byte	 EMPLOYEE			 = 5;
 
     public static final byte     INTERNAL_PURPOSES   = 4;
 
@@ -29,19 +31,56 @@ public final class AirportModelStructure
     public static final int      UPPER_PM            = 29;
     public static final String[] MODEL_PERIOD_LABELS = {"EA", "AM", "MD", "PM", "EV"};
 
-    public static final byte     ACCESS_MODES        = 11;
+    public static final byte     ACCESS_MODES_CBX        = 11;
+    
+    public static final int      ACCESS_MODES_SAN        = 17;
 
     public static final byte     PARK_TMNL           = 1;
     public static final byte     PARK_SANOFF         = 2;
     public static final byte     PARK_PVTOFF         = 3;
     public static final byte     PUDO_ESC            = 4;
     public static final byte     PUDO_CURB           = 5;
-    public static final byte     RENTAL              = 6;
+    public static final byte     RENTAL_CBX              = 6;
     public static final byte     TAXI                = 7;
     public static final byte     TNC_SINGLE          = 8;
     public static final byte     TNC_SHARED          = 9;
-    public static final byte     SHUTTLE_VAN         = 10;
-    public static final byte     TRANSIT             = 11;
+    public static final byte     SHUTTLE_VAN_CBX         = 10;
+    public static final byte     TRANSIT_CBX             = 11;
+    
+    public static final int     PARK_LOC1           = 1;
+    public static final int     PARK_LOC2           = 2;
+    public static final int     PARK_LOC3           = 3;
+    public static final int     PARK_LOC4		    = 4;
+    public static final int     PARK_LOC5		    = 5;
+    public static final int     PARK_ESC		    = 6;
+    public static final int     RENTAL_SAN              = 7;
+    public static final int     SHUTTLE_VAN_SAN         = 8;
+    public static final int     HOTEL_COURTESY      = 9;
+    public static final int     RIDEHAILING_LOC1    = 10;
+    public static final int     RIDEHAILING_LOC2    = 11;
+    public static final int     TRANSIT_SAN             = 12;
+    public static final int     CURB_LOC1           = 13;
+    public static final int     CURB_LOC2           = 14;
+    public static final int     CURB_LOC3           = 15;
+    public static final int     CURB_LOC4           = 16;
+    public static final int     CURB_LOC5           = 17;
+    
+    public static final int     MGRAAlt_TERM         = 8;
+    public static final int     MGRAAlt_CMH         = 9;
+    
+    public static final int     LOS_TYPE        = 4;
+    
+    public static final int     DA        		= 0;
+    public static final int     SR2        		= 1;
+    public static final int     SR3        		= 2;
+    public static final int     Transit         = 3;
+    
+    public static final int     rideModeLRT_index     = 3;
+    
+    public static final int     employeePark_MGRA_index = 1;
+    public static final int     employeePark_stall_index = 2;
+    public static final int     employeePark_terminalpct_index = 3;
+    public static final int     employeePark_transitpct_index = 4;    
     
     //reallocate the trip modes from the access choice model to ones that the trip table and other code can read, consistent with
     //resident models.
@@ -52,7 +91,7 @@ public final class AirportModelStructure
     public static final byte     REALLOCATE_TNCSINGLE  = 11; 
     public static final byte     REALLOCATE_TNCSHARED  = 12; 
   
-        private AirportModelStructure()
+    private AirportModelStructure()
     {
     }
 
@@ -188,7 +227,7 @@ public final class AirportModelStructure
      *            Number of passengers in travel party
      * @return The (minimum) occupancy of the tNCVehicle trip to/from the airport.
      */
-    public static int getOccupancy(int accessMode, int partySize)
+    public static int getOccupancy_cbx(int accessMode, int partySize)
     {
 
         switch (accessMode)
@@ -203,7 +242,7 @@ public final class AirportModelStructure
                 return partySize + 1;
             case PUDO_CURB:
                 return partySize + 1;
-            case RENTAL:
+            case RENTAL_CBX:
                 return partySize;
             case TAXI:
                 return partySize + 1;
@@ -211,10 +250,57 @@ public final class AirportModelStructure
                 return partySize + 1;
             case TNC_SHARED:
                 return partySize + 1;
-            case SHUTTLE_VAN:
+            case SHUTTLE_VAN_CBX:
                 return partySize + 1;
-            case TRANSIT:
+            case TRANSIT_CBX:
                 return partySize;
+
+            default:
+                throw new RuntimeException(
+                        "Error:  AccessMode not found in AirportModel.AirportModelStructure");
+
+        }
+    }
+    
+    public static int getOccupancy_san(int accessMode, int partySize)
+    {
+
+        switch (accessMode)
+        {
+        	case PARK_LOC1:
+        		return partySize;
+        	case PARK_LOC2:
+        		return partySize;
+        	case PARK_LOC3:
+        		return partySize;
+        	case PARK_LOC4:
+        		return partySize;
+        	case PARK_LOC5:
+        		return partySize;
+        	case PARK_ESC:
+        		return partySize + 1;
+        	case RENTAL_SAN:
+        		return partySize;
+        	case SHUTTLE_VAN_SAN:
+        		return partySize + 1;
+        	case HOTEL_COURTESY:
+        		return partySize + 1;
+        	case RIDEHAILING_LOC1:
+        		return partySize + 1;
+        	case RIDEHAILING_LOC2:
+        		return partySize + 1;
+        	case TRANSIT_SAN:
+        		return partySize;
+        	case CURB_LOC1:
+        		return partySize + 1;
+        	case CURB_LOC2:
+        		return partySize + 1;
+        	case CURB_LOC3:
+        		return partySize + 1;
+        	case CURB_LOC4:
+        		return partySize + 1;
+        	case CURB_LOC5:
+        		return partySize + 1;
 
             default:
                 throw new RuntimeException(
@@ -231,6 +317,10 @@ public final class AirportModelStructure
     		case TNC_SINGLE:
     			return true;
     		case TNC_SHARED:
+    			return true;
+    		case RIDEHAILING_LOC1:
+    			return true;
+    		case RIDEHAILING_LOC2:
     			return true;
     	}
     	
