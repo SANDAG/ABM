@@ -150,10 +150,18 @@ public class AirportModeChoiceModel
         }
         seek = Util.getBooleanValueFromPropertyMap(rbMap, "Seek");
         
-        debugChoiceModel = Util.getBooleanValueFromPropertyMap(rbMap, "airport.debug");
-        debugPartyID = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap,
-                "airport.debug.party.id"));
+        if (Util.getStringValueFromPropertyMap(rbMap,"airport.debug") != "")
+        {
+        	debugChoiceModel = Util.getBooleanValueFromPropertyMap(rbMap, "airport.debug");
+            debugPartyID = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap,
+                    "airport.debug.party.id"));
 
+        }
+        else
+        {
+        	debugChoiceModel = false;
+        	debugPartyID = -99;
+        }
     }
 
     /**
