@@ -192,9 +192,18 @@ public class AirportModeChoiceModel
         SandagModelStructure modelStructure = new SandagModelStructure();
         mcDmuObject = new TripModeChoiceDMU(modelStructure, logger);
 
-        debugChoiceModel = Util.getBooleanValueFromPropertyMap(rbMap, "airport.debug");
-        debugPartyID = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap,
-                "airport.debug.party.id"));
+        if (Util.getStringValueFromPropertyMap(rbMap,"airport.debug") != "")
+        {
+        	debugChoiceModel = Util.getBooleanValueFromPropertyMap(rbMap, "airport.debug");
+            debugPartyID = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap,
+                    "airport.debug.party.id"));
+
+        }
+        else
+        {
+        	debugChoiceModel = false;
+        	debugPartyID = -99;
+        }
     }
 
     /**
@@ -261,6 +270,37 @@ public class AirportModeChoiceModel
 
         dmu.setAirportParty(party);
         dmu.setDmuIndexValues(party.getID(), origTaz, destTaz);
+        
+        if (party.getPurpose() == AirportModelStructure.EMPLOYEE)
+        {
+        	logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, origMgra, destMgra, period, party.getDebugChoiceModels());
+        	
+        	double[][] walkTransitTapPairs_AP2Term = logsumHelper.getBestWtwTripTaps();
+            
+            //pick transit path from N-paths
+            float rn = new Double(party.getRandom()).floatValue();
+        	int pathIndex = logsumHelper.chooseTripPath(rn, walkTransitTapPairs_AP2Term, party.getDebugChoiceModels(), logger);
+        	if (pathIndex < 0) 
+        	{
+        		int boardTap = (int) 0;
+            	int alightTap = (int) 0;
+            	int set = (int) -1;
+            	party.setAP2TerminalBoardTap(boardTap);
+            	party.setAP2TerminalAlightTap(alightTap);
+            	party.setAP2TerminalSet(set);
+        	}
+        	else
+        	{
+        		int boardTap = (int) walkTransitTapPairs_AP2Term[pathIndex][0];
+            	int alightTap = (int) walkTransitTapPairs_AP2Term[pathIndex][1];
+            	int set = (int) walkTransitTapPairs_AP2Term[pathIndex][2];
+            	party.setAP2TerminalBoardTap(boardTap);
+            	party.setAP2TerminalAlightTap(alightTap);
+            	party.setAP2TerminalSet(set);
+        	}
+
+        	return;
+        }
        
         // set trip mc dmu values for transit logsum (gets replaced below by uec values)
         double c_ivt = -0.03;
@@ -481,7 +521,8 @@ public class AirportModeChoiceModel
         
         float valueOfTime = 0;
 
-        if ((accessMode != AirportModelStructure.TRANSIT_CBX) && (accessMode != AirportModelStructure.TRANSIT_SAN) && (! AirportModelStructure.taxiTncMode(accessMode)))
+        if (((airportCode.equals("CBX")) && (accessMode != AirportModelStructure.TRANSIT_CBX) && (! AirportModelStructure.taxiTncMode_cbx(accessMode))) ||
+        		((airportCode.equals("SAN")) && (accessMode != AirportModelStructure.TRANSIT_SAN) && (! AirportModelStructure.taxiTncMode_san(accessMode))))
         {
         	int chosenAirportMgra;
         	int chosenAirportMgra_index = 0;
@@ -489,6 +530,71 @@ public class AirportModeChoiceModel
         	{
         		chosenAirportMgra = dmu.mode_mgra_map.get(accessMode);
             	chosenAirportMgra_index = dmu.mgra_index_map.get(chosenAirportMgra);
+            	
+            	if (chosenAirportMgra != dmu.getTerminalMgra())
+                {
+                	if (direction == 0)
+                	{
+                		logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, chosenAirportMgra, dmu.getTerminalMgra(), period, party.getDebugChoiceModels());
+                		
+                		double[][] walkTransitTapPairs_AP2Term = logsumHelper.getBestWtwTripTaps();
+                		
+                		//pick transit path from N-paths
+                        float rn = new Double(party.getRandom()).floatValue();
+                    	int pathIndex = logsumHelper.chooseTripPath(rn, walkTransitTapPairs_AP2Term, party.getDebugChoiceModels(), logger);
+                    	if (pathIndex < 0) 
+                    	{
+                    		int boardTap = (int) 0;
+                        	int alightTap = (int) 0;
+                        	int set = (int) -1;
+                        	party.setAP2TerminalBoardTap(boardTap);
+                        	party.setAP2TerminalAlightTap(alightTap);
+                        	party.setAP2TerminalSet(set);
+                    	}
+                    	else
+                    	{
+                    		int boardTap = (int) walkTransitTapPairs_AP2Term[pathIndex][0];
+                        	int alightTap = (int) walkTransitTapPairs_AP2Term[pathIndex][1];
+                        	int set = (int) walkTransitTapPairs_AP2Term[pathIndex][2];
+                        	party.setAP2TerminalBoardTap(boardTap);
+                        	party.setAP2TerminalAlightTap(alightTap);
+                        	party.setAP2TerminalSet(set);
+                    	}
+                    	
+                        //party.setAPtoTermBestWtwTapPairs(walkTransitTapPairs_AP2Term);
+                	}
+                	else
+                	{
+                		logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, dmu.getTerminalMgra(), chosenAirportMgra, period, party.getDebugChoiceModels());
+               
+                		double[][] walkTransitTapPairs_AP2Term = logsumHelper.getBestWtwTripTaps();
+                		
+                		//pick transit path from N-paths
+                        float rn = new Double(party.getRandom()).floatValue();
+                    	int pathIndex = logsumHelper.chooseTripPath(rn, walkTransitTapPairs_AP2Term, party.getDebugChoiceModels(), logger);
+                    	
+                    	if (pathIndex < 0) 
+                    	{
+                    		int boardTap = (int) 0;
+                        	int alightTap = (int) 0;
+                        	int set = (int) -1;
+                        	party.setAP2TerminalBoardTap(boardTap);
+                        	party.setAP2TerminalAlightTap(alightTap);
+                        	party.setAP2TerminalSet(set);
+                    	}
+                    	else
+                    	{
+                    		int boardTap = (int) walkTransitTapPairs_AP2Term[pathIndex][0];
+                        	int alightTap = (int) walkTransitTapPairs_AP2Term[pathIndex][1];
+                        	int set = (int) walkTransitTapPairs_AP2Term[pathIndex][2];
+                        	party.setAP2TerminalBoardTap(boardTap);
+                        	party.setAP2TerminalAlightTap(alightTap);
+                        	party.setAP2TerminalSet(set);
+                    	}
+                    	
+                        //party.setAPtoTermBestWtwTapPairs(walkTransitTapPairs_AP2Term);
+                	}
+                }
                 
         	}
             if (occupancy == 1)
@@ -546,7 +652,8 @@ public class AirportModeChoiceModel
                 valueOfTime = (float) uec.getValueForIndex(votIndex);
 
             }
-        } else if ((accessMode == AirportModelStructure.TRANSIT_CBX) && (accessMode == AirportModelStructure.TRANSIT_SAN))
+        } else if (((airportCode.equals("CBX")) && (accessMode == AirportModelStructure.TRANSIT_CBX)) || 
+        		((airportCode.equals("SAN")) && (accessMode == AirportModelStructure.TRANSIT_SAN)))
         {
             int choice = transitModel.getChoiceResult(randomNumber);
             double[][] bestTapPairs;
@@ -584,33 +691,33 @@ public class AirportModeChoiceModel
             int votIndex = uec.lookupVariableIndex("vot");
             valueOfTime = (float) uec.getValueForIndex(votIndex);
 
-        }else if(accessMode == AirportModelStructure.TAXI){
+        }else if((airportCode.equals("CBX")) && accessMode == AirportModelStructure.TAXI){
         	
         	tripMode=AirportModelStructure.REALLOCATE_TAXI;
         }
-    	else if(accessMode == AirportModelStructure.TNC_SINGLE){
+    	else if((airportCode.equals("CBX")) && accessMode == AirportModelStructure.TNC_SINGLE){
     	
            	tripMode=AirportModelStructure.REALLOCATE_TNCSINGLE;
   	
     	}
-    	else if(accessMode == AirportModelStructure.TNC_SHARED){
+    	else if((airportCode.equals("CBX")) && accessMode == AirportModelStructure.TNC_SHARED){
         	
            	tripMode=AirportModelStructure.REALLOCATE_TNCSHARED;
 
     	}
-    	else if(accessMode == AirportModelStructure.RIDEHAILING_LOC1){
+    	else if((airportCode.equals("SAN")) && accessMode == AirportModelStructure.RIDEHAILING_LOC1){
         	
            	tripMode=AirportModelStructure.REALLOCATE_TNCSINGLE;
 
     	}
-    	else if(accessMode == AirportModelStructure.RIDEHAILING_LOC2){
+    	else if((airportCode.equals("SAN")) && accessMode == AirportModelStructure.RIDEHAILING_LOC2){
         	
            	tripMode=AirportModelStructure.REALLOCATE_TNCSINGLE;
 
     	}
         
         //set the VOT
-        if(AirportModelStructure.taxiTncMode(accessMode) ) {
+        if(((airportCode.equals("CBX")) && AirportModelStructure.taxiTncMode_cbx(accessMode)) || ((airportCode.equals("SAN")) && AirportModelStructure.taxiTncMode_san(accessMode)) ) {
         	UtilityExpressionCalculator uec = null;
         	
         	int chosenAirportMgra;
@@ -683,6 +790,12 @@ public class AirportModeChoiceModel
         if (airportCode.equals("SAN"))
         {
         	solveModeMgra(dmu);
+        	
+        	int terminalMgra = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap, 
+            		"airport.SAN.airportMgra"));
+            
+            // set terminal Mgra
+            dmu.setTerminalMgra(terminalMgra);
         }
         
         // iterate through the array, choosing mgras and setting them
@@ -694,11 +807,13 @@ public class AirportModeChoiceModel
             if ((ID <= 5) || (ID % 100) == 0)
                 logger.info("Choosing mode for party " + party.getID());
 
-            if (party.getPurpose() == AirportModelStructure.EMPLOYEE) continue;
-            else
-            {
-            	chooseMode(party, dmu, airportCode);
-            }
+            chooseMode(party, dmu, airportCode);
+            
+            //if (party.getPurpose() == AirportModelStructure.EMPLOYEE) continue;
+            //else
+            //{
+            //	chooseMode(party, dmu, airportCode);
+            //}
         }
     }
   

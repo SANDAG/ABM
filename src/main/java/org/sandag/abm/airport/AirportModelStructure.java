@@ -309,7 +309,7 @@ public final class AirportModelStructure
         }
     }
     
-    public static boolean taxiTncMode(int accessMode) {
+    public static boolean taxiTncMode_cbx(int accessMode) {
     	
     	switch (accessMode) {
     		case TAXI:
@@ -318,6 +318,14 @@ public final class AirportModelStructure
     			return true;
     		case TNC_SHARED:
     			return true;
+    	}
+    	
+    	return false;
+    }
+    
+    public static boolean taxiTncMode_san(int accessMode) {
+    	
+    	switch (accessMode) {
     		case RIDEHAILING_LOC1:
     			return true;
     		case RIDEHAILING_LOC2:

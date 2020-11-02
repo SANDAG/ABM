@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
+import org.sandag.abm.modechoice.Modes;
 
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
@@ -109,7 +110,7 @@ public class AirportPartyManager
         {
         	int totalEmployees = 0;
             for ( String key : employeeParkingValuesMap.keySet()) {
-    			totalEmployees += (int) (employeeParkingValuesMap.get(key).get(2) * employeeParkingValuesMap.get(key).get(3));
+    			totalEmployees += (int) (employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_stall_index) * employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_terminalpct_index));
     		}
             float directPassengers = (enplanements - connectingPassengers) / annualFactor;
             totalParties = (int) (directPassengers / averageSize) * 2;
@@ -215,16 +216,16 @@ public class AirportPartyManager
         {
         	for (String key : employeeParkingValuesMap.keySet())
         	{
-        		double num = employeeParkingValuesMap.get(key).get(2) * employeeParkingValuesMap.get(key).get(3);
+        		double num = employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_stall_index) * employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_terminalpct_index);
         		int stallNum = (int) num;
         		for (int s = 0; s < stallNum; s++)
         		{
         			AirportParty party = new AirportParty(s * 301 + 1000);
-        			double stallMgra = employeeParkingValuesMap.get(key).get(1);
+        			double stallMgra = employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_MGRA_index);
         			party.setOriginMGRA((int) stallMgra);
         			party.setDestinationMGRA(airportMgra);
         			
-        			double transitToTerminalProb =  employeeParkingValuesMap.get(key).get(4);
+        			double transitToTerminalProb =  employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_transitpct_index);
         			if (party.getRandom() < transitToTerminalProb)
         			{
         				party.setMode((byte) SandagModelStructure.WALK_TRANSIT_ALTS[0]);
@@ -254,16 +255,16 @@ public class AirportPartyManager
         	
         	for (String key : employeeParkingValuesMap.keySet())
         	{
-        		double num = employeeParkingValuesMap.get(key).get(2) *employeeParkingValuesMap.get(key).get(3);
+        		double num = employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_stall_index) *employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_terminalpct_index);
         		int stallNum = (int) num;
         		for (int s = 0; s < stallNum; s++)
         		{
         			AirportParty party = new AirportParty(s*101 + 1001);
-        			double stallMgra = employeeParkingValuesMap.get(key).get(1);
+        			double stallMgra = employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_MGRA_index);
         			party.setDestinationMGRA((int) stallMgra);
         			party.setOriginMGRA(airportMgra);
         			
-        			double transitToTerminalProb =  employeeParkingValuesMap.get(key).get(4);
+        			double transitToTerminalProb =  employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_transitpct_index);
         			if (party.getRandom() < transitToTerminalProb)
         			{
         				party.setMode((byte) SandagModelStructure.WALK_TRANSIT_ALTS[0]);
@@ -557,8 +558,8 @@ public class AirportPartyManager
                             + parties[i].getOriginTAZ() + "," + parties[i].getDestinationTAZ() + ","
                             + parties[i].getMode() + ","
                             + (parties[i].getAvAvailable() ? 1 : 0) + ","
-                            + parties[i].getArrivalMode() + "," + parties[i].getBoardTap() + "," + 
-                            + parties[i].getAlightTap() + "," + parties[i].getSet() + "," + 
+                            + parties[i].getArrivalMode() + "," + parties[i].getAP2TerminalBoardTap() + "," + 
+                            + parties[i].getAP2TerminalAlightTap() + "," + parties[i].getAP2TerminalSet() + "," + 
                             String.format("%9.2f", parties[i].getValueOfTime()) + "\n");
                     writer.print(record);
                     
@@ -634,8 +635,8 @@ public class AirportPartyManager
                                     + parties[i].getOriginTAZ() + "," + parties[i].getDestinationTAZ() + ","
                                     + SandagModelStructure.WALK_TRANSIT_ALTS[0] + ","
                                     + (parties[i].getAvAvailable() ? 1 : 0) + ","
-                                    + accMode_null + "," + parties[i].getBoardTap() + "," + 
-                                    + parties[i].getAlightTap() + "," + parties[i].getSet() + "," + 
+                                    + accMode_null + "," + parties[i].getAP2TerminalBoardTap() + "," + 
+                                    + parties[i].getAP2TerminalAlightTap() + "," + parties[i].getAP2TerminalSet() + "," + 
                                     String.format("%9.2f", parties[i].getValueOfTime()) + "\n");
                 		}
                 		writer.print(record_Origin2Access);
@@ -678,10 +679,10 @@ public class AirportPartyManager
                                     + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
                                     + parties[i].getAirportAccessMGRA() + "," 
                                     + parties[i].getOriginTAZ() + "," + parties[i].getDestinationTAZ() + ","
-                                    + (parties[i].getAvAvailable() ? 1 : 0) + ","
                                     + SandagModelStructure.WALK_TRANSIT_ALTS[0] + ","
-                                    + accMode_null + "," + parties[i].getBoardTap() + "," + 
-                                    + parties[i].getAlightTap() + "," + parties[i].getSet() + "," + 
+                                    + (parties[i].getAvAvailable() ? 1 : 0) + ","
+                                    + accMode_null + "," + parties[i].getAP2TerminalBoardTap() + "," + 
+                                    + parties[i].getAP2TerminalAlightTap() + "," + parties[i].getAP2TerminalSet() + "," + 
                                     String.format("%9.2f", parties[i].getValueOfTime()) + "\n");
                 		}
                 		writer.print(record_Origin2Access);
