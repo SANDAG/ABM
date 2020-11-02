@@ -34,37 +34,48 @@ set OLDPATH=%PATH%
 
 rem ### Change the PATH environment variable so that JAVA_HOME is listed first in the PATH.
 rem ### Doing this ensures that the JAVA_HOME path we defined above is the on that gets used in case other java paths are in PATH.
-set PATH=%JAVA_PATH%\bin;%OLDPATH%
+set PATH=%JAVA_PATH%\bin;%JAR_LOCATION%\GnuWin32\bin;%OLDPATH%
 
-rem run ping to add a pause so that hhMgr and mtxMgr have time to fully start
+rem ### Run ping to add a pause so that hhMgr and mtxMgr have time to fully start
 ping -n 10 %MAIN% > nul
 
 cd %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 
-rem Airport model - SAN
-%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.airport.AirportModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% -airport SAN
+rem ### Airport model - SAN
+%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_CLIENT_MIN% -Xmx%MEMORY_CLIENT_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.airport.AirportModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% -airport SAN  2>&1 | tee.exe %PROJECT_DIRECTORY%\logFiles\airportSANModelConsole_%ITERATION%.log
 
-rem Build airport model trip tables - SAN
+rem ### Build airport model trip tables - SAN
 %JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.airport.AirportTripTables %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% -airport SAN
 
-rem Airport model - CBX
-%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.airport.AirportModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% -airport CBX
+rem ### Checking for SAN outputs
+call %PROJECT_DIRECTORY%\bin\CheckOutput.bat %PROJECT_DIRECTORY% SAN %ITERATION%
 
-rem Build airport model trip tables - CBX
+rem ### Airport model - CBX
+%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_CLIENT_MIN% -Xmx%MEMORY_CLIENT_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.airport.AirportModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% -airport CBX 2>&1 | tee.exe %PROJECT_DIRECTORY%\logFiles\airportCBXModelConsole_%ITERATION%.log
+
+rem ### Build airport model trip tables - CBX
 %JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.airport.AirportTripTables %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% -airport CBX
 
-rem Cross-border model
-%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.crossborder.CrossBorderModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE%   
+rem ### Checking for CBX outputs
+call %PROJECT_DIRECTORY%\bin\CheckOutput.bat %PROJECT_DIRECTORY% CBX %ITERATION%
 
-rem Build cross-border model trip tables
+rem ### Cross-border model
+%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_CLIENT_MIN% -Xmx%MEMORY_CLIENT_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.crossborder.CrossBorderModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% 2>&1 | tee.exe %PROJECT_DIRECTORY%\logFiles\crossBorderModelConsole_%ITERATION%.log
+
+rem ### Build cross-border model trip tables
 %JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.crossborder.CrossBorderTripTables %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE%
 
-rem Visitor model
-%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.visitor.VisitorModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE%  
+rem ### Checking for CBM outputs
+call %PROJECT_DIRECTORY%\bin\CheckOutput.bat %PROJECT_DIRECTORY% CBM %ITERATION%
 
-rem Build visitor model trip tables
+rem ### Visitor model
+%JAVA_64_PATH%\bin\java -server -Xms%MEMORY_CLIENT_MIN% -Xmx%MEMORY_CLIENT_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.visitor.VisitorModel %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE% 2>&1 | tee.exe %PROJECT_DIRECTORY%\logFiles\visitorModelConsole_%ITERATION%.log
+
+rem ### Build visitor model trip tables
 %JAVA_64_PATH%\bin\java -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp "%CLASSPATH%" -Djxl.nowarnings=true -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% org.sandag.abm.visitor.VisitorTripTables %PROPERTIES_NAME% -iteration %ITERATION% -sampleRate %SAMPLERATE%
 
+rem ### Checking for Visitor outputs
+call %PROJECT_DIRECTORY%\bin\CheckOutput.bat %PROJECT_DIRECTORY% Visitor %ITERATION%
 
 rem kill java tasks
 rem taskkill /F /IM java.exe

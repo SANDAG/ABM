@@ -26,11 +26,13 @@ xcopy /Y T:\ABM\release\ABM\config\server-config.csv %SCENARIO_FOLDER%\conf
 
 rem setup model folders
 xcopy /Y .\common\application\"*.*" %SCENARIO_FOLDER%\application
+xcopy /E/Y/i .\common\application\GnuWin32\"*.*" %SCENARIO_FOLDER%\application\GnuWin32
 xcopy /Y/E .\common\python\"*.*" %SCENARIO_FOLDER%\python
 xcopy /Y/E .\common\sql\"*.*" %SCENARIO_FOLDER%\sql
 xcopy /Y .\common\uec\"*.*" %SCENARIO_FOLDER%\uec
 xcopy /Y .\common\bin\"*.*" %SCENARIO_FOLDER%\bin
-xcopy /Y .\conf\%YEAR%\"*.*" %SCENARIO_FOLDER%\conf
+rem xcopy /Y .\conf\%YEAR%\"*.*" %SCENARIO_FOLDER%\conf
+xcopy /Y .\common\conf\"*.*" %SCENARIO_FOLDER%\conf
 xcopy /Y .\common\output\"*.*" %SCENARIO_FOLDER%\output
 xcopy /s/Y .\common\visualizer %SCENARIO_FOLDER%\visualizer
 xcopy /s/Y .\dependencies.* %SCENARIO_FOLDER%\visualizer
@@ -76,6 +78,22 @@ if %YEAR%==2016 (xcopy /Y/S   .\common\input\template\validation\2016\"*.*" %SCE
 if %YEAR%==2018 (xcopy /Y/S   .\common\input\template\validation\2018\"*.*" %SCENARIO_FOLDER%\\analysis\validation\) 
 xcopy /Y/S   .\common\input\template\summary\"*.*" %SCENARIO_FOLDER%\analysis\summary\     
 
+rem populate scenario year into sandag_abm.properties
+set PROP_FILE=%SCENARIO_FOLDER%\conf\sandag_abm.properties
+set TEMP_FILE=%SCENARIO_FOLDER%\conf\temp.properties
+set RAW_YEAR=%YEAR:nb=%
+type nul>%TEMP_FILE%
+for /f "USEBACKQ delims=" %%A in (`type "%PROP_FILE%" ^| find /V /N ""`) do (
+  set ln=%%A
+  setlocal enableDelayedExpansion
+  set ln=!ln:${year}=%RAW_YEAR%!
+  set ln=!ln:${year_build}=%YEAR%!
+  set ln=!ln:*]=!
+  echo(!ln!>>%TEMP_FILE%
+  endlocal
+)
+del %PROP_FILE%
+move %TEMP_FILE% %PROP_FILE%
 
 @echo init emme folder
 call init_emme.cmd %SCENARIO_FOLDER% %EMME_VERSION%

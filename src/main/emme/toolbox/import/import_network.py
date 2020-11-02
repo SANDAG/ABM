@@ -584,8 +584,10 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 # managed lanes, free for HOV2 and HOV3+, tolls for SOV
                 if arc["ITOLLO"] + arc["ITOLLA"] + arc["ITOLLP"] > 0:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV2
-                # special case of I-15 managed lanes 
+                # special case of I-15 managed lanes
                 elif arc["IFC"] == 1 and arc["IPROJ"] in [41, 42, 486]:
+                    return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV2
+                elif arc["IFC"] == 8 or arc["IFC"] == 9:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV2
                 else:
                     return modes_HOV2
@@ -593,8 +595,10 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 # managed lanes, free for HOV3+, tolls for SOV and HOV2
                 if arc["ITOLLO"] + arc["ITOLLA"] + arc["ITOLLP"]  > 0:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV3
-                # special case of I-15 managed lanes 
+                # special case of I-15 managed lanes
                 elif arc["IFC"] == 1 and arc["IPROJ"] in [41, 42, 486]:
+                    return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV3
+                elif arc["IFC"] == 8 or arc["IFC"] == 9:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV3
                 else:
                     return modes_HOV3
@@ -1365,8 +1369,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 link["@time_link" + time] = link["time_link" + src_time]
 
                 # add link delay (30 sec=0.5mins) to HOV connectors to discourage travel
-                if link.type == 8 and link["@lane_restriction"] == 2:
-                    link["@time_link" + time] = link["@time_link" + time] + 0.5
+                if link.type == 8 and (link["@lane_restriction"] == 2 or link["@lane_restriction"] == 3):
+                    link["@time_link" + time] = link["@time_link" + time] + 0.375
 
 		        # make speed on HOV lanes (70mph) the same as parallel GP lanes (65mph)
                 # - set speed back to posted speed - increase travel time by (speed_adj/speed_posted)
@@ -1459,13 +1463,13 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                     if len(factors) > 2:
                         fatal_errors += 1
                         msg = ("Individual time periods and 'ALL' (or blank) listed under "
-                               "TIME_OF_DAY column in {} for facility {}").format(vehicle_class_factor_file, name) 
+                               "TIME_OF_DAY column in {} for facility {}").format(vehicle_class_factor_file, name)
                         self._log.append({"type": "text", "content": msg})
                         self._error.append(msg)
                 elif set(periods + ["count"]) != set(factors.keys()):
                     fatal_errors += 1
                     msg = ("Missing time periods {} under TIME_OF_DAY column in {} for facility {}").format(
-                        (set(periods) - set(factors.keys())), vehicle_class_factor_file, name) 
+                        (set(periods) - set(factors.keys())), vehicle_class_factor_file, name)
                     self._log.append({"type": "text", "content": msg})
                     self._error.append(msg)
 

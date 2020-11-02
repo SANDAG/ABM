@@ -266,6 +266,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         props = load_properties(_join(main_directory, "conf", "sandag_abm.properties"))
         props.set_year_specific_properties(_join(main_directory, "input", "parametersByYears.csv"))
+        props.set_year_specific_properties(_join(main_directory, "input", "filesByYears.csv"))
         props.save()
         # Log current state of props file for debugging of UI / file sync issues
         attributes = dict((name, props["RunModel." + name]) for name in self._run_model_names)
@@ -327,13 +328,14 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         transitShedTOD = props["transitShed.TOD"]
 
         if useLocalDrive:
-            self.check_free_space(minSpaceOnC)
-            # if initialization copy ALL files from remote
-            # else check file meta data and copy those that have changed
             initialize = (skipInitialization == False and startFromIteration == 1)
             local_directory = file_manager(
                 "DOWNLOAD", main_directory, username, scenario_id, initialize=initialize)
             self._path = local_directory
+            if not os.path.exists(_join(self._path, "output")): # check free space only if it is a new run
+                self.check_free_space(minSpaceOnC)
+            # if initialization copy ALL files from remote
+            # else check file meta data and copy those that have changed
         else:
             self._path = main_directory
 
@@ -378,11 +380,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 if not skipCopyWalkImpedance:
                     self.copy_files(["walkMgraEquivMinutes.csv", "walkMgraTapEquivMinutes.csv"],
                                     input_dir, output_dir)
-                if not skipBikeLogsums:
-                    self.run_proc("runSandagBikeLogsums.cmd", [drive, path_forward_slash],
-                                  "Bike - create AT logsums and impedances")
-                if not skipCopyBikeLogsum:
-                    self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], input_dir, output_dir)
 
                 if not skip4Ds:
                     run4Ds(path=self._path, int_radius=0.65, ref_path=visualizer_reference_path)
@@ -464,10 +461,20 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         omx_file = _join(input_dir, "trip_%s.omx" % period)
                         import_demand(omx_file, "AUTO", period, base_scenario)
                         import_demand(omx_file, "TRUCK", period, base_scenario)
+                        
+                if not skipBikeLogsums:
+                    self.run_proc("runSandagBikeLogsums.cmd", [drive, path_forward_slash],
+                                  "Bike - create AT logsums and impedances")
+                if not skipCopyBikeLogsum:
+                    self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], input_dir, output_dir)
+                    
             else:
                 base_scenario = main_emmebank.scenario(scenario_id)
                 transit_emmebank = _eb.Emmebank(_join(self._path, "emme_project", "Database_transit", "emmebank"))
                 transit_scenario = transit_emmebank.scenario(base_scenario.number)
+
+            # Check that setup files were generated
+            self.run_proc("CheckOutput.bat", [drive + path_no_drive, 'Setup'], "Check for outputs")
 
         # Note: iteration indexes from 0, msa_iteration indexes from 1
         for iteration in range(startFromIteration - 1, end_iteration):
@@ -475,9 +482,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             with _m.logbook_trace("Iteration %s" % msa_iteration):
                 if not skipCoreABM[iteration] or not skipOtherSimulateModel[iteration] or not skipMAASModel[iteration]:
                     self.run_proc("runMtxMgr.cmd", [drive, drive + path_no_drive], "Start matrix manager")
-                    self.run_proc("runDriver.cmd", [drive, drive + path_no_drive], "Start JPPF Driver")
-                    self.run_proc("StartHHAndNodes.cmd", [drive, path_no_drive],
-                                  "Start HH Manager, JPPF Driver, and nodes")
+                    self.run_proc("runHhMgr.cmd", [drive, drive + path_no_drive], "Start Hh manager")
 
                 if not skipHighwayAssignment[iteration]:
                     # run traffic assignment
@@ -596,13 +601,12 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         if not skipDataExport:
             # export network and matrix results from Emme directly to T if using local drive
-            main_output_directory = _join(main_directory, "output")
-            export_network_data(main_directory, scenario_id, main_emmebank, transit_emmebank, num_processors)
-            export_matrix_data(main_output_directory, base_scenario, transit_scenario)
+            output_directory = _join(self._path, "output")
+            export_network_data(self._path, scenario_id, main_emmebank, transit_emmebank, num_processors)
+            export_matrix_data(output_directory, base_scenario, transit_scenario)
             # export core ABM data
-            # Note: uses relative project stucture, so cannot redirect to T drive
-            ### self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",
-            ###              capture_output=True)  CL: This line is temporarily commented. When Gregor complete data export procedure, it should be uncommoented 06/02/20
+            # Note: uses relative project structure, so cannot redirect to T drive
+            self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",capture_output=True)
         #Validation for 2016 scenario
         if scenarioYear == "2016":
             validation(self._path, main_emmebank, base_scenario)
@@ -631,39 +635,40 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                           [drive + path_no_drive, end_iteration, scenarioYear, sample_rate[end_iteration - 1]],
                           "Data load request")
 
+            ### ES: Commented out until this segment is updated to reference new database. 9/10/20 ###
             # add segments below for auto-reporting, YMA, 1/23/2019
             # add this loop to find the sceanro_id in the [dimension].[scenario] table
 
-            database_scenario_id = 0
-            int_hour = 0
-            while int_hour <= 96:
+            #database_scenario_id = 0
+            #int_hour = 0
+            #while int_hour <= 96:
 
-                database_scenario_id = self.sql_select_scenario(scenarioYear, end_iteration,
-                                                                sample_rate[end_iteration - 1], path_no_drive,
-                                                                start_db_time)
-                if database_scenario_id > 0:
-                    break
+            #    database_scenario_id = self.sql_select_scenario(scenarioYear, end_iteration,
+            #                                                    sample_rate[end_iteration - 1], path_no_drive,
+            #                                                    start_db_time)
+            #    if database_scenario_id > 0:
+            #        break
 
-                int_hour = int_hour + 1
-                _time.sleep(900)  # wait for 15 mins
+            #    int_hour = int_hour + 1
+            #    _time.sleep(900)  # wait for 15 mins
 
             # if load failed, then send notification email
-            if database_scenario_id == 0 and int_hour > 96:
-                str_request_check_result = self.sql_check_load_request(scenarioYear, path_no_drive, username,
-                                                                       start_db_time)
-                print(str_request_check_result)
-                sys.exit(0)
+            #if database_scenario_id == 0 and int_hour > 96:
+            #    str_request_check_result = self.sql_check_load_request(scenarioYear, path_no_drive, username,
+            #                                                           start_db_time)
+            #    print(str_request_check_result)
+            #    sys.exit(0)
                 # self.send_notification(str_request_check_result,username) #not working in server
-            else:
-                print(database_scenario_id)
-                self.run_proc("DataSummary.bat",  # get summary from database, added for auto-reporting
-                              [drive, path_no_drive, scenarioYear, database_scenario_id],
-                              "Data Summary")
+            #else:
+            #    print(database_scenario_id)
+            #    self.run_proc("DataSummary.bat",  # get summary from database, added for auto-reporting
+            #                  [drive, path_no_drive, scenarioYear, database_scenario_id],
+            #                  "Data Summary")
 
-                self.run_proc("ExcelUpdate.bat",  # forced to update excel links
-                              [drive, path_no_drive, scenarioYear, database_scenario_id],
-                              "Excel Update",
-                              capture_output=True)
+            #    self.run_proc("ExcelUpdate.bat",  # forced to update excel links
+            #                  [drive, path_no_drive, scenarioYear, database_scenario_id],
+            #                  "Excel Update",
+            #                  capture_output=True)
 
         # delete trip table files in iteration sub folder if model finishes without errors
         if not useLocalDrive and not skipDeleteIntermediateFiles:
@@ -674,6 +679,9 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         # terminate all java processes
         _subprocess.call("taskkill /F /IM java.exe")
+
+        # close all DOS windows
+        _subprocess.call("taskkill /F /IM cmd.exe")
 
     def set_global_logbook_level(self, props):
         self._log_level = props.get("RunModel.LogbookLevel", "ENABLED")

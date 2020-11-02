@@ -511,11 +511,11 @@ class Properties(object):
     def save(self, path=None):
         if not path:
             path = self._path
-        # check for possible interference if user edits the 
-        # properties files directly while it is already open in Modeller
-        timestamp = os.path.getmtime(path)
-        if timestamp != self._timestamp:
-            raise Exception("%s file conflict - edited externally after loading" % path)
+            # check for possible interference if user edits the 
+            # properties files directly while it is already open in Modeller
+            timestamp = os.path.getmtime(path)
+            if timestamp != self._timestamp:
+                raise Exception("%s file conflict - edited externally after loading" % path)
         self["SavedFrom"] = "Emme Modeller properties writer Process ID %s" % os.getpid()
         self["SavedLast"] = time.strftime("%b-%d-%Y %H:%M:%S")
         with open(path, 'w') as f:
@@ -537,11 +537,11 @@ class Properties(object):
             reader = csv.DictReader(f)
             properties_by_year = {}
             for row in reader:
-                year = int(row.pop("year"))
+                year = str(row.pop("year"))
                 properties_by_year[year] = row
-        year_properties = properties_by_year.get(self["scenarioYear"])
+        year_properties = properties_by_year.get(str(self["scenarioBuild"]))
         if year_properties is None:
-            raise Exception("Row with year %s not found in %s" % (self["scenarioYear"], file_path))
+            raise Exception("Row with year %s not found in %s" % (self["scenarioBuild"], file_path))
         self.update(year_properties)
 
     def __setitem__(self, key, item): 

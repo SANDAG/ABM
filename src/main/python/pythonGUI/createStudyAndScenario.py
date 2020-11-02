@@ -1,7 +1,5 @@
 __author__ = 'wsu'
 #Wu.Sun@sandag.org 10-27-2016
-#wsu update 9/24/2018 for release 14.0.1
-#wsu update 1/30/2019 for release 14.1.0
 import Tkinter
 import Tkconstants
 import tkFileDialog
@@ -56,8 +54,8 @@ class CreateScenarioGUI(Tkinter.Frame):
 
             Tkinter.Label(body, text=u"Version", font=("Helvetica", 8, 'bold')).grid(row=8)
             var = StringVar(root)
-            self.version="version_14_2_0"
-            optionList=["version_14_2_0"]
+            self.version="version_14_2_1"
+            optionList=["version_14_2_1"]
             option=Tkinter.OptionMenu(body,var,*optionList,command=self.setversion)
             option.config(width=50)
             option.grid(row=8, column=1)
@@ -211,20 +209,12 @@ class CreateScenarioGUI(Tkinter.Frame):
         def executeBatch(self, type):
             self.popup.destroy()
             if type=="scenario":
-                if self.year=="2035nb":
-                   commandstr = u"create_scenario.cmd %s %s %s %s" % (
-                       self.scenariopath.get(),
-                       self.year,
-                       self.networkpath.get().rstrip("nb"),
-                       self.emme_version
-                   )
-                else:
-                    commandstr = u"create_scenario.cmd %s %s %s %s" % (
-                        self.scenariopath.get(),
-                        self.year,
-                        self.networkpath.get(),
-                        self.emme_version
-                    )
+                commandstr = u"create_scenario.cmd %s %s %s %s" % (
+                    self.scenariopath.get(),
+                    self.year,
+                    self.networkpath.get(),
+                    self.emme_version
+                )
             elif type=="study":
                 commandstr=u"copy_networkfiles_to_study.cmd "+self.studypath.get()+" "+self.studynetworkpath.get()
             print commandstr

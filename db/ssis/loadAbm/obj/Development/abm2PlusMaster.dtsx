@@ -1,0 +1,668 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="7/13/2020 12:15:03 PM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="SDG80175"
+  DTS:CreatorName="SANDAGNET\gsc"
+  DTS:DTSID="{1BFF34E8-0A8D-49D5-B7FA-B7DDBC528D93}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="15.0.2000.93"
+  DTS:LocaleID="1033"
+  DTS:ObjectName="abm2PlusMaster"
+  DTS:PackageType="5"
+  DTS:VersionBuild="30"
+  DTS:VersionGUID="{8A6CD903-19AD-47C9-8941-FAC118C6D3C3}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:Variables>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{C39BDDA3-1887-405C-8657-1617C9E2AC31}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="scenarioFilePath">
+      <DTS:VariableValue
+        DTS:DataType="8"
+        xml:space="preserve"></DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{CCDEF339-26EB-41D5-8BBB-763F6EDD8D5F}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="scenarioID">
+      <DTS:VariableValue
+        DTS:DataType="3">0</DTS:VariableValue>
+    </DTS:Variable>
+  </DTS:Variables>
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\abm2PlusHighway"
+      DTS:CreationName="Microsoft.ExecutePackageTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute Package Task"
+      DTS:DTSID="{9146aa85-4501-450d-96b2-0937d527f99c}"
+      DTS:ExecutableType="Microsoft.ExecutePackageTask"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="abm2PlusHighway"
+      DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <ExecutePackageTask>
+          <UseProjectReference>True</UseProjectReference>
+          <PackageName>abm2PlusHighway.dtsx</PackageName>
+          <ParameterAssignment>
+            <ParameterName>scenarioFilePath</ParameterName>
+            <BindedVariableOrParameterName>User::scenarioFilePath</BindedVariableOrParameterName>
+          </ParameterAssignment>
+          <ParameterAssignment>
+            <ParameterName>scenarioID</ParameterName>
+            <BindedVariableOrParameterName>User::scenarioID</BindedVariableOrParameterName>
+          </ParameterAssignment>
+        </ExecutePackageTask>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\abm2PlusLandUse"
+      DTS:CreationName="Microsoft.ExecutePackageTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute Package Task"
+      DTS:DTSID="{552a5408-a9b9-4d08-89e1-eb03ddba1585}"
+      DTS:ExecutableType="Microsoft.ExecutePackageTask"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="abm2PlusLandUse"
+      DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <ExecutePackageTask>
+          <UseProjectReference>True</UseProjectReference>
+          <PackageName>abm2PlusLandUse.dtsx</PackageName>
+          <ParameterAssignment>
+            <ParameterName>scenarioFilePath</ParameterName>
+            <BindedVariableOrParameterName>User::scenarioFilePath</BindedVariableOrParameterName>
+          </ParameterAssignment>
+          <ParameterAssignment>
+            <ParameterName>scenarioID</ParameterName>
+            <BindedVariableOrParameterName>User::scenarioID</BindedVariableOrParameterName>
+          </ParameterAssignment>
+        </ExecutePackageTask>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\abm2PlusTransit"
+      DTS:CreationName="Microsoft.ExecutePackageTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute Package Task"
+      DTS:DTSID="{4b30ba56-7c35-460b-90ee-b975cfba842b}"
+      DTS:ExecutableType="Microsoft.ExecutePackageTask"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="abm2PlusTransit"
+      DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <ExecutePackageTask>
+          <UseProjectReference>True</UseProjectReference>
+          <PackageName>abm2PlusTransit.dtsx</PackageName>
+          <ParameterAssignment>
+            <ParameterName>scenarioFilePath</ParameterName>
+            <BindedVariableOrParameterName>User::scenarioFilePath</BindedVariableOrParameterName>
+          </ParameterAssignment>
+          <ParameterAssignment>
+            <ParameterName>scenarioID</ParameterName>
+            <BindedVariableOrParameterName>User::scenarioID</BindedVariableOrParameterName>
+          </ParameterAssignment>
+        </ExecutePackageTask>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\abm2PlusTrips"
+      DTS:CreationName="Microsoft.ExecutePackageTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute Package Task"
+      DTS:DTSID="{2524900f-d175-4166-abac-2a4f73f79034}"
+      DTS:ExecutableType="Microsoft.ExecutePackageTask"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="abm2PlusTrips"
+      DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <ExecutePackageTask>
+          <UseProjectReference>True</UseProjectReference>
+          <PackageName>abm2PlusTrips.dtsx</PackageName>
+          <ParameterAssignment>
+            <ParameterName>scenarioFilePath</ParameterName>
+            <BindedVariableOrParameterName>User::scenarioFilePath</BindedVariableOrParameterName>
+          </ParameterAssignment>
+          <ParameterAssignment>
+            <ParameterName>scenarioID</ParameterName>
+            <BindedVariableOrParameterName>User::scenarioID</BindedVariableOrParameterName>
+          </ParameterAssignment>
+        </ExecutePackageTask>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\alterPartitionScheme"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{0e0cfdd6-c278-47a5-b32f-b0d712376a25}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="alterPartitionScheme"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{A2745192-1304-4CAD-B395-584AC14AA8AD}"
+          SQLTask:SqlStatementSource="DECLARE @scenarioID int = ?&#xA;DECLARE @dbName nvarchar(50) = ?&#xA;DECLARE @dbFilePath nvarchar(200) = ?;&#xA;&#xA;DECLARE @nextScenarioID int = @scenarioID + 1&#xA;DECLARE @stringNextScenarioID nvarchar(5) = CONVERT(nvarchar, @nextScenarioID)&#xA;&#xA;DECLARE @dynamicSQL nvarchar(max)&#xA;&#xA;&#xA;-- Step 1. Add filegroup for next scenario if it does not already exist&#xA;-- All scenarios have filegroup size set to 5GB&#xA;IF NOT EXISTS ( SELECT [name] FROM sys.filegroups WHERE [name] = 'scenario_fg_' + @stringNextScenarioID )&#xA;BEGIN&#xA;    SET @dynamicSQL = 'ALTER DATABASE ' + @dbName + ' ADD FILEGROUP scenario_fg_' + @stringNextScenarioID&#xA;    EXECUTE sp_executesql @dynamicSQL&#xA;END&#xA;&#xA;IF NOT EXISTS ( SELECT [name] FROM sys.sysfiles WHERE [name] = 'scenario_file_' + @stringNextScenarioID )&#xA;BEGIN  &#xA;    SET @dynamicSQL = '&#xA;        ALTER DATABASE ' + @dbName + ' ADD FILE (&#xA;            NAME = scenario_file_' + @stringNextScenarioID + ',&#xA;            FILENAME = ''' + @dbFilePath + '\scenario_file_' + @stringNextScenarioID + '.ndf'',&#xA;            SIZE = 5GB,&#xA;            MAXSIZE = 5GB,&#xA;            FILEGROWTH = 0)&#xA;        TO FILEGROUP scenario_fg_' + @stringNextScenarioID&#xA;    EXECUTE sp_executesql @dynamicSQL&#xA;END&#xA;&#xA;&#xA;-- Step 2. Need to keep an empty partition at the end. Create partition for next scenario.&#xA;IF NOT EXISTS (&#xA;    SELECT&#xA;        [value] &#xA;    FROM&#xA;        [sys].[partition_functions] AS [func]&#xA;    INNER JOIN&#xA;        [sys].[partition_range_values] AS [val]&#xA;    ON&#xA;        [func].[function_id] = [val].[function_id]&#xA;    WHERE&#xA;        [name] = 'scenario_partition'&#xA;        AND [value] = @nextScenarioID)&#xA;BEGIN&#xA;    -- set filegroup as next used&#xA;    SET @dynamicSQL = 'ALTER PARTITION SCHEME scenario_scheme NEXT USED scenario_fg_' + @stringNextScenarioID&#xA;    EXECUTE sp_executesql @dynamicSQL&#xA;&#xA;    -- alter partition function to include the scenario as a boundary point&#xA;    ALTER PARTITION FUNCTION scenario_partition ()&#xA;    SPLIT RANGE (@nextScenarioID);&#xA;END&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="User::scenarioID"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="131"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="1"
+            SQLTask:DtsVariableName="$Project::dbName"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="130"
+            SQLTask:ParameterSize="50" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="2"
+            SQLTask:DtsVariableName="$Project::dbFilePath"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="130"
+            SQLTask:ParameterSize="200" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\completeScenario"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{839cb754-d9ef-406f-8622-286a44910cf2}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="completeScenario"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{A2745192-1304-4CAD-B395-584AC14AA8AD}"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON&#xA;DECLARE @scenario_id int = ?;&#xA;&#xA;&#xA;-- update scenario table to indicate scenario has been loaded&#xA;UPDATE [dimension].[scenario]&#xA;SET [load_status] = 'complete', [load_status_date] = GETDATE() &#xA;WHERE [scenario_id] = @scenario_id&#xA;&#xA;&#xA;-- remove loaded scenario from request table&#xA;DELETE FROM [data_load].[load_request] WHERE [scenario_id] = @scenario_id&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="User::scenarioID"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="131"
+            SQLTask:ParameterSize="-1" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\setScenarioID"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{87f0d4f5-a8a1-4b6c-902e-4b8bc45661c3}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="setScenarioID"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{A2745192-1304-4CAD-B395-584AC14AA8AD}"
+          SQLTask:SqlStatementSource="SET NOCOUNT ON;&#xA;&#xA;-- set scenario_id for the scenario to be loaded&#xA;DECLARE @scenarioID int = (SELECT ISNULL(MAX([scenario_id]), 0) + 1 FROM [dimension].[scenario])&#xA;&#xA;&#xA;-- grab the first scenario to be loaded and assign it that scenario_id&#xA;UPDATE [data_load].[load_request]&#xA;SET [scenario_id] = @scenarioID, [load_status] = 'loading', [load_status_date] = GETDATE()&#xA;WHERE [load_request_id] IN (&#xA;    SELECT TOP 1&#xA;        [load_request_id]&#xA;    FROM&#xA;        [data_load].[load_request]&#xA;    WHERE&#xA;        [load_status] = 'requested'&#xA;        AND [scenario_id] IS NULL&#xA;    ORDER BY &#xA;        [load_status_date])&#xA;&#xA;&#xA;-- update the scenario table with the scenario to be loaded&#xA;INSERT INTO [dimension].[scenario] (&#xA;    [scenario_id]&#xA;    ,[name]&#xA;    ,[year]&#xA;    ,[iteration]&#xA;    ,[sample_rate]&#xA;    ,[abm_version]&#xA;    ,[path]&#xA;    ,[user_name]&#xA;    ,[load_status]&#xA;    ,[load_status_date])&#xA;SELECT&#xA;    [scenario_id]&#xA;    ,[name]&#xA;    ,[year]&#xA;    ,[iteration]&#xA;    ,[sample_rate]&#xA;    ,[abm_version]&#xA;    ,[path]&#xA;    ,[user_name]&#xA;    ,[load_status]&#xA;    ,[load_status_date]&#xA;FROM&#xA;    [data_load].[load_request]&#xA;WHERE&#xA;    [scenario_id] = @scenarioID&#xA;&#xA;&#xA;-- return result set to the ssis package&#xA;SELECT&#xA;    [scenario_id]&#xA;    ,RTRIM([path]) AS [path]&#xA;FROM&#xA;    [data_load].[load_request]&#xA;WHERE&#xA;    [scenario_id] = @scenarioID&#xA;"
+          SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ResultBinding
+            SQLTask:ResultName="0"
+            SQLTask:DtsVariableName="User::scenarioID" />
+          <SQLTask:ResultBinding
+            SQLTask:ResultName="1"
+            SQLTask:DtsVariableName="User::scenarioFilePath" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{A500B29D-54AA-4BF9-BA88-102D0355035A}"
+      DTS:From="Package\setScenarioID"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\alterPartitionScheme" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
+      DTS:CreationName=""
+      DTS:DTSID="{F626F37A-CE27-449F-A9E4-DD73EA565908}"
+      DTS:From="Package\alterPartitionScheme"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 1"
+      DTS:To="Package\abm2PlusLandUse" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
+      DTS:CreationName=""
+      DTS:DTSID="{24A3FC73-7B37-41AC-8309-93F5168F3E2E}"
+      DTS:From="Package\alterPartitionScheme"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 2"
+      DTS:To="Package\abm2PlusHighway" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 3]"
+      DTS:CreationName=""
+      DTS:DTSID="{654416D9-AE02-43BB-B8A8-EB4953B5128C}"
+      DTS:From="Package\alterPartitionScheme"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 3"
+      DTS:To="Package\abm2PlusTransit" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 4]"
+      DTS:CreationName=""
+      DTS:DTSID="{089FB7D7-9891-4585-8C41-E0562A23D768}"
+      DTS:From="Package\abm2PlusLandUse"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 4"
+      DTS:To="Package\abm2PlusTrips" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 5]"
+      DTS:CreationName=""
+      DTS:DTSID="{402D60DC-7931-4D15-9FD0-A7FEE9A88673}"
+      DTS:From="Package\abm2PlusTransit"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 5"
+      DTS:To="Package\abm2PlusTrips" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 6]"
+      DTS:CreationName=""
+      DTS:DTSID="{92DC8371-5A6F-4B82-AC51-E8E97DF8DCD2}"
+      DTS:From="Package\abm2PlusHighway"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 6"
+      DTS:To="Package\completeScenario" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 7]"
+      DTS:CreationName=""
+      DTS:DTSID="{C55ACDE0-39F4-4BB4-9C81-33C326E4B60F}"
+      DTS:From="Package\abm2PlusTrips"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 7"
+      DTS:To="Package\completeScenario" />
+  </DTS:PrecedenceConstraints>
+  <DTS:EventHandlers>
+    <DTS:EventHandler
+      DTS:refId="Package.EventHandlers[OnTaskFailed]"
+      DTS:CreationName="OnTaskFailed"
+      DTS:DelayValidation="True"
+      DTS:DTSID="{779D8C93-C324-44C6-8174-686BC2FC6A68}"
+      DTS:EventID="-1"
+      DTS:EventName="OnTaskFailed"
+      DTS:FailPackageOnFailure="True"
+      DTS:FailParentOnFailure="True"
+      DTS:ForceExecutionResult="1"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0">
+      <DTS:Variables>
+        <DTS:Variable
+          DTS:CreationName=""
+          DTS:Description="The propagate property of the event"
+          DTS:DTSID="{DD8114E6-F283-4523-9E3D-6F6B89A00BD0}"
+          DTS:IncludeInDebugDump="6789"
+          DTS:Namespace="System"
+          DTS:ObjectName="Propagate">
+          <DTS:VariableValue
+            DTS:DataType="11">-1</DTS:VariableValue>
+        </DTS:Variable>
+      </DTS:Variables>
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package.EventHandlers[OnTaskFailed]\updateFailedLoading"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:DelayValidation="True"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{d24fc872-0199-42b2-b40f-e2ad085de2e0}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:FailPackageOnFailure="True"
+          DTS:FailParentOnFailure="True"
+          DTS:LocaleID="-1"
+          DTS:MaxErrorCount="0"
+          DTS:ObjectName="updateFailedLoading"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{A2745192-1304-4CAD-B395-584AC14AA8AD}"
+              SQLTask:SqlStatementSource="SET NOCOUNT ON&#xA;DECLARE @scenario_id integer = ?;&#xA;&#xA;&#xA;-- update scenario table to indicate failure ---------------------------------&#xA;UPDATE [dimension].[scenario]&#xA;SET [load_status] = 'failed', [load_status_date] = SYSDATETIME()&#xA;WHERE [scenario_id] = @scenario_id&#xA;&#xA;&#xA;-- update load request table to indicate failure -----------------------------&#xA;UPDATE [data_load].[load_request]&#xA;SET [load_status] = 'failed', [load_status_date] = SYSDATETIME()&#xA;WHERE [scenario_id] = @scenario_id&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="0"
+                SQLTask:DtsVariableName="User::scenarioID"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="131"
+                SQLTask:ParameterSize="-1" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+    </DTS:EventHandler>
+  </DTS:EventHandlers>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="170,42"
+          Id="Package\abm2PlusHighway"
+          TopLeft="386,214" />
+        <NodeLayout
+          Size="172,42"
+          Id="Package\abm2PlusLandUse"
+          TopLeft="0,212" />
+        <NodeLayout
+          Size="162,42"
+          Id="Package\abm2PlusTransit"
+          TopLeft="200,212" />
+        <NodeLayout
+          Size="152,42"
+          Id="Package\abm2PlusTrips"
+          TopLeft="204,338" />
+        <NodeLayout
+          Size="181,42"
+          Id="Package\alterPartitionScheme"
+          TopLeft="190,128" />
+        <NodeLayout
+          Size="167,42"
+          Id="Package\completeScenario"
+          TopLeft="286,457" />
+        <NodeLayout
+          Size="148,42"
+          Id="Package\setScenarioID"
+          TopLeft="207,60" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="280.75,102">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,26"
+              Start="0,0"
+              End="0,18.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,18.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 1]"
+          TopLeft="237.25,170">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-151.25,42"
+              Start="0,0"
+              End="-151.25,34.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,10.4065335753176" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,10.4065335753176"
+                    Point2="0,14.4065335753176"
+                    Point3="-4,14.4065335753176" />
+                  <mssgle:LineSegment
+                    End="-147.25,14.4065335753176" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-147.25,14.4065335753176"
+                    Point2="-151.25,14.4065335753176"
+                    Point3="-151.25,18.4065335753176" />
+                  <mssgle:LineSegment
+                    End="-151.25,34.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 2]"
+          TopLeft="323.75,170">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="147.25,44"
+              Start="0,0"
+              End="147.25,36.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,11.0925589836661" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,11.0925589836661"
+                    Point2="0,15.0925589836661"
+                    Point3="4,15.0925589836661" />
+                  <mssgle:LineSegment
+                    End="143.25,15.0925589836661" />
+                  <mssgle:CubicBezierSegment
+                    Point1="143.25,15.0925589836661"
+                    Point2="147.25,15.0925589836661"
+                    Point3="147.25,19.0925589836661" />
+                  <mssgle:LineSegment
+                    End="147.25,36.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 3]"
+          TopLeft="280.75,170">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,42"
+              Start="0,0"
+              End="0,34.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,34.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 4]"
+          TopLeft="86,254">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="158,84"
+              Start="0,0"
+              End="158,76.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,51.0344827586207" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,51.0344827586207"
+                    Point2="0,55.0344827586207"
+                    Point3="4,55.0344827586207" />
+                  <mssgle:LineSegment
+                    End="154,55.0344827586207" />
+                  <mssgle:CubicBezierSegment
+                    Point1="154,55.0344827586207"
+                    Point2="158,55.0344827586207"
+                    Point3="158,59.0344827586207" />
+                  <mssgle:LineSegment
+                    End="158,76.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 5]"
+          TopLeft="280.5,254">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,84"
+              Start="0,0"
+              End="0,76.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,76.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 6]"
+          TopLeft="471,256">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-75,201"
+              Start="0,0"
+              End="-75,193.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,115.455516014235" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,115.455516014235"
+                    Point2="0,119.455516014235"
+                    Point3="-4,119.455516014235" />
+                  <mssgle:LineSegment
+                    End="-71,119.455516014235" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-71,119.455516014235"
+                    Point2="-75,119.455516014235"
+                    Point3="-75,123.455516014235" />
+                  <mssgle:LineSegment
+                    End="-75,193.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 7]"
+          TopLeft="280,380">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="63,77"
+              Start="0,0"
+              End="63,69.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,41.7615658362989" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,41.7615658362989"
+                    Point2="0,45.7615658362989"
+                    Point3="4,45.7615658362989" />
+                  <mssgle:LineSegment
+                    End="59,45.7615658362989" />
+                  <mssgle:CubicBezierSegment
+                    Point1="59,45.7615658362989"
+                    Point2="63,45.7615658362989"
+                    Point3="63,49.7615658362989" />
+                  <mssgle:LineSegment
+                    End="63,69.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <DtsEventHandler
+    design-time-name="Package.EventHandlers[OnTaskFailed]">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
+        <NodeLayout
+          Size="182,42"
+          Id="Package.EventHandlers[OnTaskFailed]\updateFailedLoading"
+          TopLeft="532,170" />
+      </GraphLayout>
+    </LayoutInfo>
+  </DtsEventHandler>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
