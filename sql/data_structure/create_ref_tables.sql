@@ -32,8 +32,8 @@ BEGIN
 
 CREATE TABLE
 	[ref].[ap_arrival_mode] (
-		[ap_arrival_mode_id] tinyint NOT NULL,
-		[ap_arrival_mode_desc] varchar(40) NOT NULL,
+		[ap_arrival_mode_id] smallint NOT NULL,
+		[ap_arrival_mode_desc] nvarchar(40) NOT NULL,
 		CONSTRAINT pk_aparrivalmode PRIMARY KEY ([ap_arrival_mode_id])
 	)
 ON
@@ -44,17 +44,31 @@ WITH
 INSERT INTO
 	[ref].[ap_arrival_mode]
 VALUES
-	(0,'Airport Passing Through'),
-	(1,'Park in Airport Terminal'),
-	(2,'Park in Airport Remote Lot'),
-	(3,'Park in Private Lot'),
-	(4,'Dropped off at Parking Lot'),
-	(5,'Curbside Drop Off'),
-	(6,'Rental Car'),
-	(7,'Taxi'),
-	(8,'Shuttle'),
-	(9,'Transit');
-
+    (-99,'Employee (Not Applicable)'),
+    (0,'Airport Passing Through'),
+    (1,'Park in Airport Terminal'),
+    (2,'Park in Airport Remote Lot'),
+    (3,'Park in Private Lot'),
+    (4,'Dropped off at Parking Lot'),
+    (5,'Curbside Drop Off'),
+    (6,'Rental Car'),
+    (7,'Taxi'),
+    (8,'Shuttle'),
+    (9,'Transit'),
+    (10,'Drive and Park Location 1'),
+    (11,'Drive and Park Location 2'),
+    (12,'Drive and Park Location 3'),
+    (13,'Drive and Park Location 4'),
+    (14,'Drive and Park Location 5'),
+    (15,'Park and Escort'),
+    (16,'Hotel Courtesy'),
+    (17,'Ride Hailing Location 1'),
+    (18,'Ride Hailing Location 2'),
+    (19,'Curbside Drop Off Location 1'),
+    (20,'Curbside Drop Off Location 2'),
+    (21,'Curbside Drop Off Location 3'),
+    (22,'Curbside Drop Off Location 4'),
+    (23,'Curbside Drop Off Location 5');
 END
 
 
@@ -64,8 +78,8 @@ BEGIN
 
 CREATE TABLE
 	[ref].[ap_income_cat] (
-		[ap_income_cat_id] tinyint NOT NULL,
-		[ap_income_cat_desc] varchar(10) NOT NULL,
+		[ap_income_cat_id] smallint NOT NULL,
+		[ap_income_cat_desc] nvarchar(15) NOT NULL,
 		CONSTRAINT pk_apincomecat PRIMARY KEY ([ap_income_cat_id])
 	)
 ON
@@ -76,6 +90,7 @@ WITH
 INSERT INTO
 	[ref].[ap_income_cat]
 VALUES
+    (-99, 'Not Applicable'),
 	(0,'< 25k'),
 	(1,'25-50k'),
 	(2,'50-75k'),
@@ -837,7 +852,7 @@ CREATE TABLE
 		[purpose_id] int IDENTITY(1,1) NOT NULL,
 		[model_type_id] tinyint NOT NULL,
 		[purpose_number] tinyint NOT NULL,
-		[purpose_desc] varchar(20) NOT NULL,
+		[purpose_desc] nvarchar(25) NOT NULL,
 		CONSTRAINT pk_purpose PRIMARY KEY ([purpose_id]),
 		CONSTRAINT ixuq_purpose UNIQUE ([model_type_id],[purpose_number]) WITH (DATA_COMPRESSION = PAGE),
 		CONSTRAINT fk_purpose_model FOREIGN KEY ([model_type_id]) REFERENCES [ref].[model_type] ([model_type_id])
@@ -887,6 +902,7 @@ VALUES
 	(5,2,'Visitor-Business'),
 	(5,3,'Visitor-Personal'),
 	(5,4,'External'),
+	(5,5,'Employee Access/Egress'),
 	(6,0,'None'),
 	(7,0,'None'),
 	(8,0,'Work'),

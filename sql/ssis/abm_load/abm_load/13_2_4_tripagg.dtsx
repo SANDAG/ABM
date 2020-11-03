@@ -8,13 +8,13 @@
   DTS:DTSID="{1F6C0F19-817B-491A-8B70-45F5632D5270}"
   DTS:ExecutableType="Microsoft.Package"
   DTS:FailParentOnFailure="True"
-  DTS:LastModifiedProductVersion="14.0.0800.90"
+  DTS:LastModifiedProductVersion="14.0.3026.27"
   DTS:LocaleID="1033"
   DTS:MaxErrorCount="0"
   DTS:ObjectName="13_2_4_tripagg"
   DTS:PackageType="5"
   DTS:VersionBuild="37"
-  DTS:VersionGUID="{95088FAC-1F98-4D48-A532-9B7DA598879D}">
+  DTS:VersionGUID="{90B81757-1B05-4BC9-B7D3-A917AC9C5346}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -1290,8 +1290,8 @@ where [refTable].[zone] = ?</property>
               <connections>
                 <connection
                   refId="Package\comm_veh\dest_geography_zone_1.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -1460,8 +1460,8 @@ where [refTable].[zone] = ?</property>
               <connections>
                 <connection
                   refId="Package\comm_veh\dest_geography_zone_2.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -1630,8 +1630,8 @@ where [refTable].[zone] = ?</property>
               <connections>
                 <connection
                   refId="Package\comm_veh\dest_geography_zone_3.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -1800,8 +1800,8 @@ where [refTable].[zone] = ?</property>
               <connections>
                 <connection
                   refId="Package\comm_veh\orig_geography_lookup_1.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -1970,8 +1970,8 @@ where [refTable].[zone] = ?</property>
               <connections>
                 <connection
                   refId="Package\comm_veh\orig_geography_lookup_2.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -2140,8 +2140,8 @@ where [refTable].[zone] = ?</property>
               <connections>
                 <connection
                   refId="Package\comm_veh\orig_geography_lookup_3.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -2308,8 +2308,8 @@ where [refTable].[model_type_id] = ? and [refTable].[purpose_number] = ?</proper
               <connections>
                 <connection
                   refId="Package\comm_veh\purpose_lookup_1.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -2492,8 +2492,8 @@ where [refTable].[model_type_id] = ? and [refTable].[purpose_number] = ?</proper
               <connections>
                 <connection
                   refId="Package\comm_veh\purpose_lookup_2.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -2676,8 +2676,8 @@ where [refTable].[model_type_id] = ? and [refTable].[purpose_number] = ?</proper
               <connections>
                 <connection
                   refId="Package\comm_veh\purpose_lookup_3.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -2862,8 +2862,8 @@ where [refTable].[time_period_number] = ?</property>
               <connections>
                 <connection
                   refId="Package\comm_veh\time_period_lookup_1.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -3032,8 +3032,8 @@ where [refTable].[time_period_number] = ?</property>
               <connections>
                 <connection
                   refId="Package\comm_veh\time_period_lookup_2.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -3202,8 +3202,8 @@ where [refTable].[time_period_number] = ?</property>
               <connections>
                 <connection
                   refId="Package\comm_veh\time_period_lookup_3.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -3349,8 +3349,8 @@ where [refTable].[time_period_number] = ?</property>
               <connections>
                 <connection
                   refId="Package\comm_veh\trip_agg_1.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -3538,8 +3538,8 @@ where [refTable].[time_period_number] = ?</property>
               <connections>
                 <connection
                   refId="Package\comm_veh\trip_agg_2.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -3727,8 +3727,8 @@ where [refTable].[time_period_number] = ?</property>
               <connections>
                 <connection
                   refId="Package\comm_veh\trip_agg_3.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -3906,9 +3906,9 @@ where [refTable].[time_period_number] = ?</property>
               startId="Package\comm_veh\purpose_lookup_1.Outputs[Lookup Match Output]" />
             <path
               refId="Package\comm_veh.Paths[Lookup Match Output7]"
-              endId="Package\comm_veh\dest_geography_zone_1.Inputs[Lookup Input]"
+              endId="Package\comm_veh\dest_geography_zone_3.Inputs[Lookup Input]"
               name="Lookup Match Output"
-              startId="Package\comm_veh\orig_geography_lookup_1.Outputs[Lookup Match Output]" />
+              startId="Package\comm_veh\orig_geography_lookup_3.Outputs[Lookup Match Output]" />
             <path
               refId="Package\comm_veh.Paths[Lookup Match Output6]"
               endId="Package\comm_veh\purpose_lookup_1.Inputs[Lookup Input]"
@@ -3916,14 +3916,14 @@ where [refTable].[time_period_number] = ?</property>
               startId="Package\comm_veh\dest_geography_zone_1.Outputs[Lookup Match Output]" />
             <path
               refId="Package\comm_veh.Paths[Lookup Match Output5]"
-              endId="Package\comm_veh\dest_geography_zone_2.Inputs[Lookup Input]"
+              endId="Package\comm_veh\dest_geography_zone_1.Inputs[Lookup Input]"
               name="Lookup Match Output"
-              startId="Package\comm_veh\orig_geography_lookup_2.Outputs[Lookup Match Output]" />
+              startId="Package\comm_veh\orig_geography_lookup_1.Outputs[Lookup Match Output]" />
             <path
               refId="Package\comm_veh.Paths[Lookup Match Output2]"
-              endId="Package\comm_veh\purpose_lookup_2.Inputs[Lookup Input]"
+              endId="Package\comm_veh\trip_agg_3.Inputs[OLE DB Destination Input]"
               name="Lookup Match Output"
-              startId="Package\comm_veh\dest_geography_zone_2.Outputs[Lookup Match Output]" />
+              startId="Package\comm_veh\purpose_lookup_3.Outputs[Lookup Match Output]" />
             <path
               refId="Package\comm_veh.Paths[Lookup Match Output3]"
               endId="Package\comm_veh\orig_geography_lookup_3.Inputs[Lookup Input]"
@@ -3931,9 +3931,9 @@ where [refTable].[time_period_number] = ?</property>
               startId="Package\comm_veh\time_period_lookup_3.Outputs[Lookup Match Output]" />
             <path
               refId="Package\comm_veh.Paths[Lookup Match Output10]"
-              endId="Package\comm_veh\trip_agg_3.Inputs[OLE DB Destination Input]"
+              endId="Package\comm_veh\dest_geography_zone_2.Inputs[Lookup Input]"
               name="Lookup Match Output"
-              startId="Package\comm_veh\purpose_lookup_3.Outputs[Lookup Match Output]" />
+              startId="Package\comm_veh\orig_geography_lookup_2.Outputs[Lookup Match Output]" />
             <path
               refId="Package\comm_veh.Paths[Lookup Match Output1]"
               endId="Package\comm_veh\orig_geography_lookup_2.Inputs[Lookup Input]"
@@ -3946,9 +3946,9 @@ where [refTable].[time_period_number] = ?</property>
               startId="Package\comm_veh\purpose_lookup_2.Outputs[Lookup Match Output]" />
             <path
               refId="Package\comm_veh.Paths[Lookup Match Output4]"
-              endId="Package\comm_veh\dest_geography_zone_3.Inputs[Lookup Input]"
+              endId="Package\comm_veh\purpose_lookup_2.Inputs[Lookup Input]"
               name="Lookup Match Output"
-              startId="Package\comm_veh\orig_geography_lookup_3.Outputs[Lookup Match Output]" />
+              startId="Package\comm_veh\dest_geography_zone_2.Outputs[Lookup Match Output]" />
             <path
               refId="Package\comm_veh.Paths[Lookup Match Output11]"
               endId="Package\comm_veh\purpose_lookup_3.Inputs[Lookup Input]"
@@ -4180,8 +4180,8 @@ where [refTable].[zone] = ?</property>
               <connections>
                 <connection
                   refId="Package\ee\dest_geography_lookup.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -4411,7 +4411,7 @@ where [refTable].[zone] = ?</property>
               contactInfo="Executes a custom script.;Microsoft Corporation; Microsoft SqlServer v10; © 2007 Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
               description="Executes a custom script."
               name="hard_coded_splits"
-              version="9">
+              version="11">
               <properties>
                 <property
                   dataType="System.String"
@@ -4856,7 +4856,7 @@ End Class
     <OutputPath>bin\</OutputPath>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
+    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
   </PropertyGroup>
   <!-- This section defines properties that are set when the "Release" configuration is
        selected.
@@ -4877,7 +4877,7 @@ End Class
     <OutputPath>bin\</OutputPath>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
+    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
   </PropertyGroup>
   <!-- This section enables pre- and post-build steps. However,
        it is recommended that MSBuild tasks be used instead of these properties.
@@ -4984,7 +4984,7 @@ End Class
 		<msb:CodeName>sc_fc011aa0c92a4e47bbd8eea4dbe67594</msb:CodeName>
 		<msb:Language>msBuild</msb:Language>
 		<msb:DisplayName>sc_fc011aa0c92a4e47bbd8eea4dbe67594</msb:DisplayName>
-		<msb:ProjectId>{EC136569-6237-4A59-B586-D047EC9749F5}</msb:ProjectId>
+		<msb:ProjectId>{2DFC7C1A-D2D8-40AC-983C-04F93FF0703B}</msb:ProjectId>
 	</msb:PropertyGroup>
 	<msb:ItemGroup>
 		<msb:Project Include="sc_fc011aa0c92a4e47bbd8eea4dbe67594.vbproj"/>
@@ -5246,7 +5246,7 @@ End Namespace
                     <arrayElement
                       dataType="System.String"><![CDATA[TVqQAAMAAAAEAAAA//8AALgAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAgAAAAA4fug4AtAnNIbgBTM0hVGhpcyBwcm9ncmFtIGNhbm5vdCBiZSBydW4gaW4gRE9TIG1v
-ZGUuDQ0KJAAAAAAAAABQRQAATAEDABQ98loAAAAAAAAAAOAAIiALAVAAACQAAAAIAAAAAAAAykMA
+ZGUuDQ0KJAAAAAAAAABQRQAATAEDAPPMoV8AAAAAAAAAAOAAIiALAVAAACQAAAAIAAAAAAAAykMA
 AAAgAAAAYAAAAAAAEAAgAAAAAgAABAAAAAAAAAAGAAAAAAAAAACgAAAAAgAAAAAAAAMAYIUAABAA
 ABAAAAAAEAAAEAAAAAAAABAAAAAAAAAAAAAAAHhDAABPAAAAAGAAAGgEAAAAAAAAAAAAAAAAAAAA
 AAAAAIAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -5390,7 +5390,7 @@ TQB5AC4AUgBlAHMAbwB1AHIAYwBlAHMALgBNAHkAUgBlAHMAbwB1AHIAYwBlAHMAAICbSQBzAE4A
 dQBsAGwAIABwAHIAbwBwAGUAcgB0AHkAIABjAGEAbgBuAG8AdAAgAGIAZQAgAHMAZQB0ACAAdABv
 ACAARgBhAGwAcwBlAC4AIABBAHMAcwBpAGcAbgAgAGEAIAB2AGEAbAB1AGUAIAB0AG8AIAB0AGgA
 ZQAgAGMAbwBsAHUAbQBuACAAaQBuAHMAdABlAGEAZAAuAAAPSQBuAHAAdQB0ACAAMAAAEU8AdQB0
-AHAAdQB0ACAAMAAAAABquMCtIHRRR5ehr5fXnTncAAQgAQEIAyAAAQUgAQEREQQgAQEOBCABAQIF
+AHAAdQB0ACAAMAAAAABsAvboUTMmQoGIA3xJrtaAAAQgAQEIAyAAAQUgAQEREQQgAQEOBCABAQIF
 IAIBDg4FIAEBEUUHIAQBDg4ODgYVEjgBEgwGFRI4ARIIBhUSOAESZQYVEjgBEjQEIAATAAcAARJt
 EYChBSAAEoClByACAQ4SgKULIAMBEoCFHQgSgIkEBhKAhQMGHQgEIAEGCAQgAQIIBCABDQgDBwEC
 AyAAAgUgAgEIHAcgAgIOEYC9BSABHQgIBAcCCAgHAAIIEoCJDg8HBRQNAgACAAAdDQgIEhwHFA0C
@@ -5644,8 +5644,8 @@ where [refTable].[zone] = ?</property>
               <connections>
                 <connection
                   refId="Package\ee\orig_geography_lookup.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -5812,8 +5812,8 @@ where [refTable].[model_type_id] = ? and [refTable].[purpose_number] = ?</proper
               <connections>
                 <connection
                   refId="Package\ee\purpose_lookup.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -5998,8 +5998,8 @@ where [refTable].[time_period_number] = ?</property>
               <connections>
                 <connection
                   refId="Package\ee\time_period_lookup.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -6145,8 +6145,8 @@ where [refTable].[time_period_number] = ?</property>
               <connections>
                 <connection
                   refId="Package\ee\trip_agg.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -6516,8 +6516,8 @@ where [refTable].[zone] = ?</property>
               <connections>
                 <connection
                   refId="Package\ei\dest_geography_lookup.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -6999,8 +6999,8 @@ where [refTable].[zone] = ?</property>
               <connections>
                 <connection
                   refId="Package\ei\orig_geography_lookup.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -7167,8 +7167,8 @@ where [refTable].[purpose_number] = ? and [refTable].[model_type_id] = ?</proper
               <connections>
                 <connection
                   refId="Package\ei\purpose_lookup.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -7353,8 +7353,8 @@ where [refTable].[time_period_number] = ?</property>
               <connections>
                 <connection
                   refId="Package\ei\time_period_lookup.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -7501,8 +7501,8 @@ where [refTable].[time_period_number] = ?</property>
               <connections>
                 <connection
                   refId="Package\ei\trip_agg.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -7637,7 +7637,7 @@ where [refTable].[time_period_number] = ?</property>
               contactInfo="Executes a custom script.;Microsoft Corporation; Microsoft SqlServer v10; © 2007 Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
               description="Executes a custom script."
               name="wide_to_long"
-              version="9">
+              version="11">
               <properties>
                 <property
                   dataType="System.String"
@@ -8156,7 +8156,7 @@ End Class
 		<msb:CodeName>sc_006197914fb64ab9a3cc6397dfc7710d</msb:CodeName>
 		<msb:Language>msBuild</msb:Language>
 		<msb:DisplayName>sc_006197914fb64ab9a3cc6397dfc7710d</msb:DisplayName>
-		<msb:ProjectId>{7DBF30B6-485C-4A38-A0BD-9EB993AB6F48}</msb:ProjectId>
+		<msb:ProjectId>{7FD1ED9F-B632-47CE-B316-7734BEEBFBCA}</msb:ProjectId>
 	</msb:PropertyGroup>
 	<msb:ItemGroup>
 		<msb:Project Include="sc_006197914fb64ab9a3cc6397dfc7710d.vbproj"/>
@@ -8455,7 +8455,7 @@ End Class
     <OutputPath>bin\</OutputPath>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
+    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
   </PropertyGroup>
   <!-- This section defines properties that are set when the "Release" configuration is
        selected.
@@ -8476,7 +8476,7 @@ End Class
     <OutputPath>bin\</OutputPath>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
+    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
   </PropertyGroup>
   <!-- This section enables pre- and post-build steps. However,
        it is recommended that MSBuild tasks be used instead of these properties.
@@ -8587,7 +8587,7 @@ End Class
                     <arrayElement
                       dataType="System.String"><![CDATA[TVqQAAMAAAAEAAAA//8AALgAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAgAAAAA4fug4AtAnNIbgBTM0hVGhpcyBwcm9ncmFtIGNhbm5vdCBiZSBydW4gaW4gRE9TIG1v
-ZGUuDQ0KJAAAAAAAAABQRQAATAEDABQ98loAAAAAAAAAAOAAIiALAVAAACoAAAAIAAAAAAAAfkgA
+ZGUuDQ0KJAAAAAAAAABQRQAATAEDAPPMoV8AAAAAAAAAAOAAIiALAVAAACoAAAAIAAAAAAAAfkgA
 AAAgAAAAYAAAAAAAEAAgAAAAAgAABAAAAAAAAAAGAAAAAAAAAACgAAAAAgAAAAAAAAMAYIUAABAA
 ABAAAAAAEAAAEAAAAAAAABAAAAAAAAAAAAAAACxIAABPAAAAAGAAAGgEAAAAAAAAAAAAAAAAAAAA
 AAAAAIAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -8752,7 +8752,7 @@ gJtJAHMATgB1AGwAbAAgAHAAcgBvAHAAZQByAHQAeQAgAGMAYQBuAG4AbwB0ACAAYgBlACAAcwBl
 AHQAIAB0AG8AIABGAGEAbABzAGUALgAgAEEAcwBzAGkAZwBuACAAYQAgAHYAYQBsAHUAZQAgAHQA
 bwAgAHQAaABlACAAYwBvAGwAdQBtAG4AIABpAG4AcwB0AGUAYQBkAC4AAA9JAG4AcAB1AHQAIAAw
 AAARTwB1AHQAcAB1AHQAIAAwAAAFRQBBAAAFQQBNAAAFTQBEAAAFUABNAAAFRQBWAAAJVwBPAFIA
-SwAAAAD9/qai909iSo0Wdp/barsRAAQgAQEIAyAAAQUgAQEREQQgAQEOBCABAQIFIAIBDg4FIAEB
+SwAAAACtKV4BX2qCSYtPqHK1N7REAAQgAQEIAyAAAQUgAQEREQQgAQEOBCABAQIFIAIBDg4FIAEB
 EUUHIAQBDg4ODgYVEjgBEgwGFRI4ARIIBhUSOAESZQYVEjgBEjQEIAATAAcAARJtEYChBSAAEoCl
 ByACAQ4SgKULIAMBEoCFHQgSgIkEBhKAhQMGHQgEIAEGCAQgAQIIBCABDggEIAENCAMHAQIDIAAC
 BSACAQgcByACAg4RgL0FIAEdCAgEBwIICAcAAggSgIkODgcFCAgUDQIAAgAACBIcBxQNAgACAAAF
@@ -9852,8 +9852,8 @@ where [refTable].[zone] = ?</property>
               <connections>
                 <connection
                   refId="Package\truck\dest_geography_lookup_1.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -10022,8 +10022,8 @@ where [refTable].[zone] = ?</property>
               <connections>
                 <connection
                   refId="Package\truck\dest_geography_lookup_2.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -10192,8 +10192,8 @@ where [refTable].[zone] = ?</property>
               <connections>
                 <connection
                   refId="Package\truck\dest_geography_lookup_3.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -10362,8 +10362,8 @@ where [refTable].[zone] = ?</property>
               <connections>
                 <connection
                   refId="Package\truck\orig_geography_lookup_1.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -10532,8 +10532,8 @@ where [refTable].[zone] = ?</property>
               <connections>
                 <connection
                   refId="Package\truck\orig_geography_lookup_2.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -10702,8 +10702,8 @@ where [refTable].[zone] = ?</property>
               <connections>
                 <connection
                   refId="Package\truck\orig_geography_lookup_3.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -10870,8 +10870,8 @@ where [refTable].[model_type_id] = ? and [refTable].[purpose_number] = ?</proper
               <connections>
                 <connection
                   refId="Package\truck\purpose_lookup_1.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -11054,8 +11054,8 @@ where [refTable].[model_type_id] = ? and [refTable].[purpose_number] = ?</proper
               <connections>
                 <connection
                   refId="Package\truck\purpose_lookup_2.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -11238,8 +11238,8 @@ where [refTable].[model_type_id] = ? and [refTable].[purpose_number] = ?</proper
               <connections>
                 <connection
                   refId="Package\truck\purpose_lookup_3.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -11424,8 +11424,8 @@ where [refTable].[time_period_number] = ?</property>
               <connections>
                 <connection
                   refId="Package\truck\time_period_lookup_1.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -11594,8 +11594,8 @@ where [refTable].[time_period_number] = ?</property>
               <connections>
                 <connection
                   refId="Package\truck\time_period_lookup_2.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -11764,8 +11764,8 @@ where [refTable].[time_period_number] = ?</property>
               <connections>
                 <connection
                   refId="Package\truck\time_period_lookup_3.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -11911,8 +11911,8 @@ where [refTable].[time_period_number] = ?</property>
               <connections>
                 <connection
                   refId="Package\truck\trip_agg_1.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -12100,8 +12100,8 @@ where [refTable].[time_period_number] = ?</property>
               <connections>
                 <connection
                   refId="Package\truck\trip_agg_2.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -12289,8 +12289,8 @@ where [refTable].[time_period_number] = ?</property>
               <connections>
                 <connection
                   refId="Package\truck\trip_agg_3.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
-                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -12661,9 +12661,9 @@ where [refTable].[time_period_number] = ?</property>
               startId="Package\truck\time_period_lookup_3.Outputs[Lookup Match Output]" />
             <path
               refId="Package\truck.Paths[Lookup Match Output7]"
-              endId="Package\truck\orig_geography_lookup_2.Inputs[Lookup Input]"
+              endId="Package\truck\dest_geography_lookup_3.Inputs[Lookup Input]"
               name="Lookup Match Output"
-              startId="Package\truck\time_period_lookup_2.Outputs[Lookup Match Output]" />
+              startId="Package\truck\orig_geography_lookup_3.Outputs[Lookup Match Output]" />
             <path
               refId="Package\truck.Paths[Lookup Match Output6]"
               endId="Package\truck\orig_geography_lookup_1.Inputs[Lookup Input]"
@@ -12671,14 +12671,14 @@ where [refTable].[time_period_number] = ?</property>
               startId="Package\truck\time_period_lookup_1.Outputs[Lookup Match Output]" />
             <path
               refId="Package\truck.Paths[Lookup Match Output5]"
-              endId="Package\truck\purpose_lookup_2.Inputs[Lookup Input]"
+              endId="Package\truck\orig_geography_lookup_2.Inputs[Lookup Input]"
               name="Lookup Match Output"
-              startId="Package\truck\dest_geography_lookup_2.Outputs[Lookup Match Output]" />
+              startId="Package\truck\time_period_lookup_2.Outputs[Lookup Match Output]" />
             <path
               refId="Package\truck.Paths[Lookup Match Output2]"
-              endId="Package\truck\purpose_lookup_1.Inputs[Lookup Input]"
+              endId="Package\truck\trip_agg_3.Inputs[OLE DB Destination Input]"
               name="Lookup Match Output"
-              startId="Package\truck\dest_geography_lookup_1.Outputs[Lookup Match Output]" />
+              startId="Package\truck\purpose_lookup_3.Outputs[Lookup Match Output]" />
             <path
               refId="Package\truck.Paths[Lookup Match Output3]"
               endId="Package\truck\trip_agg_1.Inputs[OLE DB Destination Input]"
@@ -12686,9 +12686,9 @@ where [refTable].[time_period_number] = ?</property>
               startId="Package\truck\purpose_lookup_1.Outputs[Lookup Match Output]" />
             <path
               refId="Package\truck.Paths[Lookup Match Output10]"
-              endId="Package\truck\trip_agg_3.Inputs[OLE DB Destination Input]"
+              endId="Package\truck\purpose_lookup_2.Inputs[Lookup Input]"
               name="Lookup Match Output"
-              startId="Package\truck\purpose_lookup_3.Outputs[Lookup Match Output]" />
+              startId="Package\truck\dest_geography_lookup_2.Outputs[Lookup Match Output]" />
             <path
               refId="Package\truck.Paths[Lookup Match Output1]"
               endId="Package\truck\dest_geography_lookup_1.Inputs[Lookup Input]"
@@ -12701,9 +12701,9 @@ where [refTable].[time_period_number] = ?</property>
               startId="Package\truck\purpose_lookup_2.Outputs[Lookup Match Output]" />
             <path
               refId="Package\truck.Paths[Lookup Match Output4]"
-              endId="Package\truck\dest_geography_lookup_3.Inputs[Lookup Input]"
+              endId="Package\truck\purpose_lookup_1.Inputs[Lookup Input]"
               name="Lookup Match Output"
-              startId="Package\truck\orig_geography_lookup_3.Outputs[Lookup Match Output]" />
+              startId="Package\truck\dest_geography_lookup_1.Outputs[Lookup Match Output]" />
             <path
               refId="Package\truck.Paths[Lookup Match Output11]"
               endId="Package\truck\purpose_lookup_3.Inputs[Lookup Input]"
@@ -13063,7 +13063,7 @@ where [refTable].[time_period_number] = ?</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\comm_veh.Paths[Lookup Match Output2]"
+          Id="Package\comm_veh.Paths[Lookup Match Output4]"
           TopLeft="358.75,578">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -13135,7 +13135,7 @@ where [refTable].[time_period_number] = ?</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\comm_veh.Paths[Lookup Match Output5]"
+          Id="Package\comm_veh.Paths[Lookup Match Output10]"
           TopLeft="357.25,497">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -13183,7 +13183,7 @@ where [refTable].[time_period_number] = ?</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\comm_veh.Paths[Lookup Match Output10]"
+          Id="Package\comm_veh.Paths[Lookup Match Output2]"
           TopLeft="591.75,665">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -13207,7 +13207,7 @@ where [refTable].[time_period_number] = ?</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\comm_veh.Paths[Lookup Match Output7]"
+          Id="Package\comm_veh.Paths[Lookup Match Output5]"
           TopLeft="138.75,494">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -13255,7 +13255,7 @@ where [refTable].[time_period_number] = ?</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\comm_veh.Paths[Lookup Match Output4]"
+          Id="Package\comm_veh.Paths[Lookup Match Output7]"
           TopLeft="593.25,498">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -14379,7 +14379,7 @@ where [refTable].[time_period_number] = ?</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\truck.Paths[Lookup Match Output2]"
+          Id="Package\truck.Paths[Lookup Match Output4]"
           TopLeft="318.5,601">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -14451,7 +14451,7 @@ where [refTable].[time_period_number] = ?</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\truck.Paths[Lookup Match Output5]"
+          Id="Package\truck.Paths[Lookup Match Output10]"
           TopLeft="537,606">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -14499,7 +14499,7 @@ where [refTable].[time_period_number] = ?</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\truck.Paths[Lookup Match Output10]"
+          Id="Package\truck.Paths[Lookup Match Output2]"
           TopLeft="752.75,685">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -14523,7 +14523,7 @@ where [refTable].[time_period_number] = ?</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\truck.Paths[Lookup Match Output7]"
+          Id="Package\truck.Paths[Lookup Match Output5]"
           TopLeft="539.25,436">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -14571,7 +14571,7 @@ where [refTable].[time_period_number] = ?</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\truck.Paths[Lookup Match Output4]"
+          Id="Package\truck.Paths[Lookup Match Output7]"
           TopLeft="759,520">
           <EdgeLayout.Curve>
             <mssgle:Curve
