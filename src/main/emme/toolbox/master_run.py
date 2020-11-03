@@ -611,18 +611,16 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             # export core ABM data
             # Note: uses relative project structure, so cannot redirect to T drive
             self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",capture_output=True)
-
-        # Validation for 2016 scenario
+        #Validation for 2016 scenario
         if scenarioYear == "2016":
             validation(self._path, main_emmebank, base_scenario)
             ### CL: Below step is temporarily used to update validation output files. When Gregor complete Upload procedure, below step should be removed. 05/31/20
-            self.run_proc("ExcelUpdate.bat",  # forced to update excel links
-                            [drive, path_no_drive, scenarioYear, 0],
-                            "Excel Update",
-                            capture_output=True)
+            # self.run_proc("ExcelUpdate.bat",  # forced to update excel links
+            #                 [drive, path_no_drive, scenarioYear, 0],
+            #                 "Excel Update",
+            #                 capture_output=True)
 
-        # kill java for local files clean up
-        self.run_proc("taskkill.bat", [], "kill java tasks", capture_output=True)
+
 
         # UPLOAD DATA AND SWITCH PATHS
         if useLocalDrive:

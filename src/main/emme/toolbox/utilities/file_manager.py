@@ -227,7 +227,7 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
                     except:
                         pass
 
-            _shutil.rmtree(local_dir, ignore_errors=False)
+            # _shutil.rmtree(local_dir, ignore_errors=False)
 
     def _copy_emme_data(self, src, dst, title_fcn, scenario_id, initialize=False):
         # copy data from Database and Database_transit using API and import tool
