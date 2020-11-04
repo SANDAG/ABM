@@ -1507,6 +1507,7 @@ public class IntermediateStopChoiceModels
                         if(selectedIndex<0) {
                         	choice=origMgra;
                         	stop.setDest(choice);
+                        	selectedIndex=0;
                         	logger.info("Stop ID"+stop.id+" :destination set as intrazonal stop");
                         }else {
                         	choice = finalSample[selectedIndex];
