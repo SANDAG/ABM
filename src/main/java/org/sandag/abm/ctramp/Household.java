@@ -14,13 +14,13 @@ public class Household
     private boolean                   debugChoiceModels;
 
     private int                       hhId;
-    private int                       hhIncomeCategory;
+    private short                     hhIncomeCategory;
     private int                       hhIncomeInDollars;
-    private int                       hhSize;
-    private int                       hhType;
-    private int                       unitType;
-    private int                       hhBldgsz;
-    private int                       hhWorkers;
+    private short                     hhSize;
+    private short                     hhType;
+    private short                     unitType;
+    private short                     hhBldgsz;
+    private short                     hhWorkers;
 
     private int                       homeTaz;
     private int                       homeMgra;
@@ -36,15 +36,15 @@ public class Household
 
     private Tour[]                    jointTours;
 
-    private int                       aoModelAutos;
-    private int                       automatedVehicles;
-    private int                       conventionalVehicles;
+    private short                     aoModelAutos;
+    private short                     automatedVehicles;
+    private short                     conventionalVehicles;
     private String                    cdapModelPattern;
-    private int                       imtfModelPattern;
+    private short                     imtfModelPattern;
     private String                    jtfModelPattern;
-    private int                       tpChoice;
-    private int                       outboundEscortChoice;
-    private int                       inboundEscortChoice;
+    private short                     tpChoice;
+    private short                     outboundEscortChoice;
+    private short                     inboundEscortChoice;
 
 
     private Random                    hhRandom;
@@ -240,7 +240,7 @@ public class Household
 
     public void setHhWalkSubzone(int subzone)
     {
-        homeWalkSubzone = subzone;
+        homeWalkSubzone = (short) subzone;
     }
 
     public void setHhAutos(int autos)
@@ -250,12 +250,12 @@ public class Household
         // after auto ownership runs, this variable gets updated with number of
         // autos
         // for result.
-        aoModelAutos = autos;
+        aoModelAutos = (short) autos;
     }
 
     public void setTpChoice(int value)
     {
-        tpChoice = value;
+        tpChoice = (short) value;
     }
 
     /**
@@ -273,28 +273,28 @@ public class Household
 
    public int getAutosOwned()
     {
-        return aoModelAutos;
+        return (int) aoModelAutos;
     }
     
     public int getAutomatedVehicles() {
-		return automatedVehicles;
+		return (int) automatedVehicles;
 	}
 
 	public void setAutomatedVehicles(int automatedVehicles) {
-		this.automatedVehicles = automatedVehicles;
+		this.automatedVehicles = (short) automatedVehicles;
 	}
 
 	public int getConventionalVehicles() {
-		return conventionalVehicles;
+		return (int) conventionalVehicles;
 	}
 
 	public void setConventionalVehicles(int conventionalVehicles) {
-		this.conventionalVehicles = conventionalVehicles;
+		this.conventionalVehicles = (short) conventionalVehicles;
 	}
 
     public int getTpChoice()
     {
-        return tpChoice;
+        return (int) tpChoice;
     }
 
     public void setCoordinatedDailyActivityPatternResult(String pattern)
@@ -339,17 +339,17 @@ public class Household
 
     public void setHhBldgsz(int code)
     {
-        hhBldgsz = code;
+        hhBldgsz = (short) code;
     }
 
     public int getHhBldgsz()
     {
-        return hhBldgsz;
+        return (int) hhBldgsz;
     }
 
     public void setHhSize(int numPersons)
     {
-        hhSize = numPersons;
+        hhSize = (short) numPersons;
         persons = new Person[numPersons + 1];
         for (int i = 1; i <= numPersons; i++)
             persons[i] = new Person(this, i, modelStructure);
@@ -358,7 +358,7 @@ public class Household
 
     public void setHhIncomeCategory(int category)
     {
-        hhIncomeCategory = category;
+        hhIncomeCategory = (short) category;
     }
 
     public void setHhIncomeInDollars(int dollars)
@@ -368,19 +368,19 @@ public class Household
 
     public void setHhWorkers(int numWorkers)
     {
-        hhWorkers = numWorkers;
+        hhWorkers = (short) numWorkers;
     }
 
     public void setHhType(int type)
     {
-        hhType = type;
+        hhType = (short) type;
     }
 
     // 0=Housing unit, 1=Institutional group quarters, 2=Noninstitutional group
     // quarters
     public void setUnitType(int type)
     {
-        unitType = type;
+        unitType = (short) type;
     }
 
     public boolean getDebugChoiceModels()
@@ -390,7 +390,7 @@ public class Household
 
     public int getHhSize()
     {
-        return hhSize;
+        return (int) hhSize;
     }
 
     public int getNumTotalIndivTours()
@@ -692,7 +692,7 @@ public class Household
 
     public int getIncomeCategory()
     {
-        return hhIncomeCategory;
+        return (int) hhIncomeCategory;
     }
 
     public int getIncomeInDollars()
@@ -702,7 +702,7 @@ public class Household
 
     public int getWorkers()
     {
-        return hhWorkers;
+        return (int) hhWorkers;
     }
 
     public int getDrivers()
@@ -712,7 +712,7 @@ public class Household
 
     public int getSize()
     {
-        return hhSize;
+        return (int) hhSize;
     }
 
     public int getChildunder16()
@@ -1051,7 +1051,7 @@ public class Household
         int[] participatingPersonIndices = t.getPersonNumArray();
 
         // create an array to hold time window arrays for each participant
-        int[][] personWindows = new int[participatingPersonIndices.length][];
+        short[][] personWindows = new short[participatingPersonIndices.length][];
 
         // get time window arrays for each participant
         int k = 0;
@@ -1149,13 +1149,13 @@ public class Household
 		return outboundEscortChoice;
 	}
 	public void setOutboundEscortChoice(int outboundEscortChoice) {
-		this.outboundEscortChoice = outboundEscortChoice;
+		this.outboundEscortChoice = (short) outboundEscortChoice;
 	}
 	public int getInboundEscortChoice() {
 		return inboundEscortChoice;
 	}
 	public void setInboundEscortChoice(int inboundEscortChoice) {
-		this.inboundEscortChoice = inboundEscortChoice;
+		this.inboundEscortChoice = (short) inboundEscortChoice;
 	}
     public void calculateTimeWindowOverlaps()
     {

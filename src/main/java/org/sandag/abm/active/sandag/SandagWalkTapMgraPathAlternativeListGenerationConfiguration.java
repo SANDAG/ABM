@@ -14,8 +14,8 @@ public class SandagWalkTapMgraPathAlternativeListGenerationConfiguration
             Network<SandagBikeNode, SandagBikeEdge, SandagBikeTraversal> network)
     {
         super(propertyMap, network);
-        this.PROPERTIES_MAXDIST_ZONE = Double.max(
-            Double.max(
+        this.PROPERTIES_MAXDIST_ZONE = Math.max(
+            Math.max(
                 Double.parseDouble(propertyMap.get("active.maxdist.walk.tap")),
                 Double.parseDouble(propertyMap.get("active.maxdist.micromobility.tap"))),
             Double.parseDouble(propertyMap.get("active.maxdist.microtransit.tap")));

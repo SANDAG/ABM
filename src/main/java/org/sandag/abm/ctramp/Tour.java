@@ -430,7 +430,7 @@ public class Tour
     public String getTourWindow(String purposeAbbreviation)
     {
         String returnString = String.format("      %5s:     |", purposeAbbreviation);
-        int[] windows = perObj.getTimeWindows();
+        short[] windows = perObj.getTimeWindows();
         for (int i = 1; i < windows.length; i++)
         {
             String tempString = String.format("%s",
