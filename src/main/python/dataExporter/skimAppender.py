@@ -486,14 +486,16 @@ class SkimAppender(object):
             df = self.bicycle_skims(df)
 
         # append total trip time, distance, and cost skims
-        # transit in vehicle times by line haul mode cannot be included
+        # transit in vehicle times by line haul mode and initial wait time
+        # are not included due to double-counting
         transit_line_haul_cols = ["timeTier1TransitInVehicle",
                                   "timeFreewayRapidTransitInVehicle",
                                   "timeArterialRapidTransitInVehicle",
                                   "timeExpressBusTransitInVehicle",
                                   "timeLocalBusTransitInVehicle",
                                   "timeLightRailTransitInVehicle",
-                                  "timeCommuterRailTransitInVehicle"]
+                                  "timeCommuterRailTransitInVehicle",
+                                  "timeTransitInitialWait"]
 
         df["timeTotal"] = df[df.columns.difference(transit_line_haul_cols)].filter(regex="^time").sum(axis=1)
 
