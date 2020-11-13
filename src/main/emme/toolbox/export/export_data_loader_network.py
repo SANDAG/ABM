@@ -733,13 +733,15 @@ Export network results to csv files for SQL data loader."""
             return df
 
         desktop = _m.Modeller().desktop
+        desktop.refresh_data()
         data_explorer = desktop.data_explorer()
+        previous_active_database = data_explorer.active_database()
         try:
             desktop_traffic_database = data_explorer.add_database(traffic_emmebank.path)
-            previous_active_database = data_explorer.active_database()
             desktop_traffic_database.open()
-        except:
-            pass
+        except Exception as error:
+            import traceback
+            print (traceback.format_exc())
         project = desktop.project
         scenario = _m.Modeller().emmebank.scenario(101)
         data_explorer.replace_primary_scenario(scenario)
