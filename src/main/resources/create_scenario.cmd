@@ -31,7 +31,8 @@ xcopy /Y/E .\common\python\"*.*" %SCENARIO_FOLDER%\python
 xcopy /Y/E .\common\sql\"*.*" %SCENARIO_FOLDER%\sql
 xcopy /Y .\common\uec\"*.*" %SCENARIO_FOLDER%\uec
 xcopy /Y .\common\bin\"*.*" %SCENARIO_FOLDER%\bin
-xcopy /Y .\conf\%YEAR%\"*.*" %SCENARIO_FOLDER%\conf
+rem xcopy /Y .\conf\%YEAR%\"*.*" %SCENARIO_FOLDER%\conf
+xcopy /Y .\common\conf\"*.*" %SCENARIO_FOLDER%\conf
 xcopy /Y .\common\output\"*.*" %SCENARIO_FOLDER%\output
 xcopy /s/Y .\common\visualizer %SCENARIO_FOLDER%\visualizer
 xcopy /s/Y .\dependencies.* %SCENARIO_FOLDER%\visualizer
