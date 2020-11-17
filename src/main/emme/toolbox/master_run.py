@@ -609,6 +609,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             # export core ABM data
             # Note: uses relative project structure, so cannot redirect to T drive
             self.run_proc("DataExporter.bat", [drive, path_no_drive], "Export core ABM data",capture_output=True)
+
         #Validation for 2016 scenario
         if scenarioYear == "2016":
             validation(self._path, main_emmebank, base_scenario)
@@ -617,25 +618,6 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             #                 [drive, path_no_drive, scenarioYear, 0],
             #                 "Excel Update",
             #                 capture_output=True)
-
-
-
-        # UPLOAD DATA AND SWITCH PATHS
-        if useLocalDrive:
-            file_manager("UPLOAD", main_directory, username, scenario_id,
-                         delete_local_files=not skipDeleteIntermediateFiles)
-            self._path = main_directory
-            drive, path_no_drive = os.path.splitdrive(self._path)
-            init_transit_db.add_database(
-                _eb.Emmebank(_join(main_directory, "emme_project", "Database_transit", "emmebank")))
-
-        if not skipDataLoadRequest:
-            start_db_time = datetime.datetime.now()  # record the time to search for request id in the load request table, YMA, 1/23/2019
-            # start_db_time = start_db_time + datetime.timedelta(minutes=0)
-
-            self.run_proc("DataLoadRequest.bat",
-                          [drive + path_no_drive, end_iteration, scenarioYear, sample_rate[end_iteration - 1]],
-                          "Data load request")
 
             ### ES: Commented out until this segment is updated to reference new database. 9/10/20 ###
             # add segments below for auto-reporting, YMA, 1/23/2019
@@ -672,18 +654,36 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             #                  "Excel Update",
             #                  capture_output=True)
 
+        # terminate all java processes
+        _subprocess.call("taskkill /F /IM java.exe")
+
+        # close all DOS windows
+        _subprocess.call("taskkill /F /IM cmd.exe")
+
+        # UPLOAD DATA AND SWITCH PATHS
+        if useLocalDrive:
+            file_manager("UPLOAD", main_directory, username, scenario_id,
+                         delete_local_files=not skipDeleteIntermediateFiles)
+            self._path = main_directory
+            drive, path_no_drive = os.path.splitdrive(self._path)
+            # self._path = main_directory
+            # drive, path_no_drive = os.path.splitdrive(self._path)
+            init_transit_db.add_database(
+                _eb.Emmebank(_join(main_directory, "emme_project", "Database_transit", "emmebank")))
+
+        if not skipDataLoadRequest:
+            start_db_time = datetime.datetime.now()  # record the time to search for request id in the load request table, YMA, 1/23/2019
+            # start_db_time = start_db_time + datetime.timedelta(minutes=0)
+            self.run_proc("DataLoadRequest.bat",
+                          [drive + path_no_drive, end_iteration, scenarioYear, sample_rate[end_iteration - 1]],
+                          "Data load request")
+
         # delete trip table files in iteration sub folder if model finishes without errors
         if not useLocalDrive and not skipDeleteIntermediateFiles:
             for msa_iteration in range(startFromIteration, end_iteration + 1):
                 self.delete_files(
                     ["auto*Trips*.omx", "tran*Trips*.omx", "nmot*.omx", "othr*.omx", "trip*.omx"],
                     _join(output_dir, "iter%s" % (msa_iteration)))
-
-        # terminate all java processes
-        _subprocess.call("taskkill /F /IM java.exe")
-
-        # close all DOS windows
-        _subprocess.call("taskkill /F /IM cmd.exe")
 
     def set_global_logbook_level(self, props):
         self._log_level = props.get("RunModel.LogbookLevel", "ENABLED")
