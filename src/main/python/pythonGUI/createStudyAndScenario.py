@@ -18,7 +18,7 @@ class CreateScenarioGUI(Tkinter.Frame):
 
             #divider line
             divider=u"_"*120
-            self.releaseDir='T:\\ABM\\release\\ABM'
+            self.releaseDir='T:\\ABM\\release_test\\ABM'
             self.defaultScenarioDir="T:\\projects\\sr14"
             self.defaultNetworkDir="T:\\projects\\sr14\\version14_2_0\\network_build"
 
@@ -54,8 +54,8 @@ class CreateScenarioGUI(Tkinter.Frame):
 
             Tkinter.Label(body, text=u"Version", font=("Helvetica", 8, 'bold')).grid(row=8)
             var = StringVar(root)
-            self.version="version_14_2_1"
-            optionList=["version_14_2_1"]
+            self.version="version_14_2_2"
+            optionList=["version_14_2_2"]
             option=Tkinter.OptionMenu(body,var,*optionList,command=self.setversion)
             option.config(width=50)
             option.grid(row=8, column=1)
