@@ -38,3 +38,11 @@ src/main/resources/init_emme.cmd.txt
 # Mac
 .DS_Store
 *.args
+
+# Emme toolbox
+src/main/emme/toolbox/sandag.mtbx
+src/main/emme/toolbox/sandag.mtbx-shm
+src/main/emme/toolbox/sandag.mtbx-wal
+src/main/emme/toolbox/utilities/stochastic_traffic_assignment.py
+!src/main/emme/toolbox/utilities/stochastic_traffic_assignment.pyc
+

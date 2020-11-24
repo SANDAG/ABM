@@ -319,6 +319,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipTruck = props["RunModel.skipTruck"]
         skipTripTableCreation = props["RunModel.skipTripTableCreation"]
         skipFinalHighwayAssignment = props["RunModel.skipFinalHighwayAssignment"]
+        makeFinalHighwayAssignmentStochastic = props["RunModel.makeFinalHighwayAssignmentStochastic"]
         skipFinalTransitAssignment = props["RunModel.skipFinalTransitAssignment"]
         skipVisualizer = props["RunModel.skipVisualizer"]
         skipDataExport = props["RunModel.skipDataExport"]
@@ -572,7 +573,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                 final_iteration = 4
                 self.run_traffic_assignments(
                     base_scenario, period_ids, final_iteration, relative_gap, max_assign_iterations,
-                    num_processors, select_link)
+                    num_processors, select_link, makeFinalHighwayAssignmentStochastic, input_dir)
 
         if not skipFinalTransitAssignment:
             import_transit_demand(output_dir, transit_scenario)
@@ -703,7 +704,8 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             raise Exception("properties.RunModel.LogLevel: value must be one of %s" % ",".join(log_states.keys()))
 
     def run_traffic_assignments(self, base_scenario, period_ids, msa_iteration, relative_gap,
-                                max_assign_iterations, num_processors, select_link=None):
+                                max_assign_iterations, num_processors, select_link=None, 
+                                makeFinalHighwayAssignmentStochastic=False, input_dir=None):
         modeller = _m.Modeller()
         traffic_assign = modeller.tool("sandag.assignment.traffic_assignment")
         export_traffic_skims = modeller.tool("sandag.export.export_traffic_skims")
@@ -724,7 +726,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                                  "conf\\server-config.csv ServerName column")
                 server_config = {"SNODE": "yes"}
         distributed = server_config["SNODE"] == "no"
-        if distributed:
+        if distributed and not makeFinalHighwayAssignmentStochastic:
             scen_map = dict((p, main_emmebank.scenario(n)) for n, p in period_ids)
             input_args = {
                 "msa_iteration": msa_iteration,
@@ -775,7 +777,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             for number, period in period_ids:
                 period_scenario = main_emmebank.scenario(number)
                 traffic_assign(period, msa_iteration, relative_gap, max_assign_iterations,
-                               num_processors, period_scenario, select_link)
+                               num_processors, period_scenario, select_link, stochastic=makeFinalHighwayAssignmentStochastic, input_directory=input_dir)
                 omx_file = _join(output_dir, "traffic_skims_%s.omx" % period)
                 if msa_iteration < 4:
                     export_traffic_skims(period, omx_file, base_scenario)
