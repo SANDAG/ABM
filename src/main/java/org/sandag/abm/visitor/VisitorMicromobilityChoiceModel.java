@@ -128,7 +128,7 @@ public class VisitorMicromobilityChoiceModel
             //set destination to origin so that Z can be used to find origin zone access to mode in mgra data file in UEC
             mmDmuObject.setDmuIndexValues(tour.getID(), originMaz, originMaz, originMaz);
             
-            if(microtransitMazs.contains(originMaz) || microtransitMazs.contains(destMaz))
+            if(microtransitMazs.contains(originMaz) && microtransitMazs.contains(destMaz))
             	mmDmuObject.setMicroTransitAvailable(true);
             else
             	mmDmuObject.setMicroTransitAvailable(false);
