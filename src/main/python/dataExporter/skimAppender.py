@@ -47,7 +47,16 @@ class SkimAppender(object):
         tnc_fare_cost: Appends TNC fare costs to ABM trip list records
         tnc_wait_time: Appends TNC wait time to ABM trip list records
         walk_skims: Appends walk/micro-mobility/micro-transit mode skims
-            (time, distance, cost) to ABM trip list records
+            (time, distance, cost) to ABM trip list records for
+            walk/micro-mobility/micro-transit mode trips
+        _walk_skims_at: Appends walk/micro-mobility/micro-transit mode skims
+            (time, distance, cost) to ABM trip list records for
+            walk/micro-mobility/micro-transit mode trips that do not use auto
+            mode skim sets for trip time
+        _walk_skims_auto: Appends walk/micro-mobility/micro-transit mode skims
+            (time, distance, cost) to ABM trip list records for
+            walk/micro-mobility/micro-transit mode trips that use auto mode
+            skim sets for trip time
         walk_transit_skims: Appends walk/micro-mobility/micro-transit
             access/egress to/from transit to ABM transit mode trip list
             records
@@ -76,7 +85,8 @@ class SkimAppender(object):
         mgra = pd.read_csv(os.path.join(self.scenario_path, "input", fn),
                            usecols=["mgra",  # MGRA geography
                                     "taz",  # TAZ geography
-                                    "luz_id"],  # LUZ geography
+                                    "luz_id",  # LUZ geography
+                                    "MicroAccessTime"],  # Micro-Mobility AccessTime
                            dtype={"mgra": "int16",
                                   "taz": "int16",
                                   "luz_id": "int16"})
@@ -96,8 +106,11 @@ class SkimAppender(object):
         properties file (conf/sandag_abm.properties).
 
         The return dictionary contains the following ABM scenario properties:
+            accessTimeMicroTransit - Micro-Transit access time in minutes
             aocFuel - auto operating fuel cost in $/mile
             aocMaintenance - auto operating maintenance cost in $/mile
+            baseFareMicroMobility - initial Micro-Mobility fare in $
+            baseFareMicroTransit - initial Micro-Mobility fare in $
             baseFareNonPooledTNC - initial Non-Pooled TNC fare in $
             baseFarePooledTNC - initial Pooled TNC fare in $
             baseFareTaxi - initial taxi fare in $
@@ -109,11 +122,15 @@ class SkimAppender(object):
             costPerMileNonPooledTNC - Non-Pooled TNC fare cost per mile in $
             costPerMilePooledTNC - Pooled TNC fare cost per mile in $
             costPerMileTaxi - Taxi fare cost per mile in $
+            costPerMinuteMicroMobility - Micro-Mobility fare cost per minute in $
+            costPerMinuteMicroTransit - Micro-Transit fare cost per minute in $
             costPerMinuteNonPooledTNC - Non-Pooled TNC fare cost per minute in $
             costPerMinutePooledTNC - Pooled TNC fare cost per minute in $
             costPerMinuteTaxi - Taxi fare cost per minute in $
-            microMobilitySpeed - micro mobility walk mode speed (miles/hour)
+            microMobilitySpeed - Micro-Mobility mode speed (miles/hour)
+            microTransitSpeed - Micro-Transit mode speed (miles/hour)
             terminalTimeFactorAV - terminal time factor to apply to AV trips
+            waitTimeMicroTransit - Micro-Mobility wait time in minutes
             waitTimeNonPooledTNC - list of mean wait times in minutes for
                 Non-Pooled TNC by PopEmpDenPerMi categories
                 (see waitTimePopEmpDenPerMi)
@@ -135,6 +152,11 @@ class SkimAppender(object):
         # is the string to match in the properties file to
         # return the value of the property
         lookup = {
+            "accessTimeMicroTransit": {
+                "line": "active.microtransit.accessTime=",
+                "type": "float",
+                "value": None
+            },
             "aocFuel": {
                 "line": "aoc.fuel=",
                 "type": "float",
@@ -142,6 +164,16 @@ class SkimAppender(object):
             },
             "aocMaintenance": {
                 "line": "aoc.maintenance=",
+                "type": "float",
+                "value": None
+            },
+            "baseFareMicroMobility": {
+                "line": "active.micromobility.fixedCost=",
+                "type": "float",
+                "value": None
+            },
+            "baseFareMicroTransit": {
+                "line": "active.microtransit.fixedCost=",
                 "type": "float",
                 "value": None
             },
@@ -194,6 +226,16 @@ class SkimAppender(object):
                 "type": "float",
                 "value": None
             },
+            "costPerMinuteMicroMobility": {
+                "line": "active.micromobility.variableCost=",
+                "type": "float",
+                "value": None
+            },
+            "costPerMinuteMicroTransit": {
+                "line": "active.microtransit.variableCost=",
+                "type": "float",
+                "value": None
+            },
             "costPerMinuteNonPooledTNC": {
                 "line": "TNC.single.costPerMinute=",
                 "type": "float",
@@ -213,8 +255,17 @@ class SkimAppender(object):
                 "line": "active.micromobility.speed=",
                 "type": "float",
                 "value": None},
+            "microTransitSpeed": {
+                "line": "active.microtransit.speed=",
+                "type": "float",
+                "value": None},
             "terminalTimeFactorAV": {
                 "line": "Mobility.AV.TerminalTimeFactor=",
+                "type": "float",
+                "value": None
+            },
+            "waitTimeMicroTransit": {
+                "line": "active.microtransit.waitTime=",
                 "type": "float",
                 "value": None
             },
@@ -265,7 +316,8 @@ class SkimAppender(object):
                     # if the properties file contains the matching line
                     if match:
                         # for waitTime properties create list from matching line
-                        if "waitTime" in name:
+                        #
+                        if "waitTime" in name and item["type"] == "list":
                             value = line[match.end():].split(",")
                             value = list(map(float, value))
                         # otherwise take the final element of the line
@@ -297,6 +349,7 @@ class SkimAppender(object):
         # convert AT speeds from minutes per mile to miles per hour
         results["bicycleSpeed"] = (results["bicycleSpeed"] * 1/60)**-1
         results["microMobilitySpeed"] = (results["microMobilitySpeed"] * 1 / 60) ** -1
+        results["microTransitSpeed"] = (results["microTransitSpeed"] * 1 / 60) ** -1
         results["walkSpeed"] = (results["walkSpeed"] * 1/60)**-1
 
         return results
@@ -1277,8 +1330,70 @@ class SkimAppender(object):
             Returns:
                 A Pandas DataFrame containing all associated micro-mobility,
                 micro-transit, and walk mode skims for time, distance, and
-                fare cost. The DataFrame contains all the original fields of
-                the input DataFrame along with the fields:
+                fare cost. The DataFrame contains all original fields of the
+                input DataFrame along with the field:
+                    [timeWalk] - time in minutes for walk mode
+                    [distanceWalk] - distance in miles for walk mode
+                    [timeMM] - time in minutes for micro-mobility mode
+                    [distanceMM] - distance in miles for micro-mobility mode
+                    [costFareMM] - fare cost in dollars for micro-mobility mode
+                    [timeMT] - time in minutes for micro-transit mode
+                    [distanceMT] - distance in miles for micro-transit mode
+                    [costFareMT] - fare cost in dollars for micro-transit mode
+            """
+        # get skims for walk/micro-mobility/micro-transit trips
+        # some use AT skim sets while others use auto skim set
+        records_at = self._walk_skims_at(df)
+        records_auto = self._walk_skims_auto(df)
+
+        # if there are no mm/mt/walk trip skim records
+        if records_at.empty and records_auto.empty:
+            # append skim columns to input DataFrame
+            # set to missing as a missing skim means no walk trip
+            skim_cols = ["timeWalk",
+                         "distanceWalk",
+                         "timeMM",
+                         "distanceMM",
+                         "costFareMM",
+                         "timeMT",
+                         "distanceMT",
+                         "costFareMT"]
+
+            for col in skim_cols:
+                df[col] = np.NaN
+        else:
+            # merge result set DataFrame back into initial trip list
+            # keep missing skim records as missing skim means no walk trip
+            records = records_at.append(records_auto, ignore_index=True)
+            df = df.merge(records, on="tripID", how="left")
+
+        # return input DataFrame with appended skim columns
+        return df
+
+    def _walk_skims_at(self, df: pd.DataFrame) -> pd.DataFrame:
+        """ Takes an input Pandas DataFrame containing the ABM fields
+        ([tripID], [tripMode], [originMGRA], [destinationMGRA]) and returns
+        the associated micro-mobility, micro-transit, and walk mode skims for
+        time, distance, and fare cost. Non-micro-mobility/micro-transit/walk
+        modes have all skims set to NaN. Note that some micro-mobility,
+        micro-transit and walk mode trips use an auto mode skim to define
+        time, distance, and fare cost. These are removed from consideration
+        in this method and handled elsewhere.
+
+            Args:
+                df: Input Pandas DataFrame containing the fields
+                    [tripID] - unique identifier of a trip
+                    [tripMode] - ABM trip modes (Drive Alone, Shared Ride 2, etc...)
+                    [originMGRA] - trip origin MGRA (1-23002)
+                    [destinationMGRA] - trip destination MGRA (1-23002)
+
+            Returns:
+                A Pandas DataFrame containing all associated micro-mobility,
+                micro-transit, and walk mode skims for time, distance, and
+                fare cost. The DataFrame contains only micro-mobility,
+                micro-transit, and walk mode trip records that do not use the
+                auto mode skim set for time:
+                    [tripID] - unique identifier of a trip
                     [timeWalk] - time in minutes for walk mode
                     [distanceWalk] - distance in miles for walk mode
                     [timeMM] - time in minutes for micro-mobility mode
@@ -1320,7 +1435,7 @@ class SkimAppender(object):
 
         records = records.merge(
             right=skims,
-            how="inner",
+            how="inner",  # some of these trips can use auto skims, use inner join to remove them
             left_on=["originMGRA", "destinationMGRA"],
             right_on=["i", "j"]
         )
@@ -1358,39 +1473,171 @@ class SkimAppender(object):
                                          records["mtCost"],
                                          0)
 
-        # merge result set DataFrame back into initial trip list
-        records = records[["tripID",
-                           "timeWalk",
-                           "distanceWalk",
-                           "timeMM",
-                           "distanceMM",
-                           "costFareMM",
-                           "timeMT",
-                           "distanceMT",
-                           "costFareMT"]]
+        # return result set of walk/micro-mobility/micro-transit trips
+        # that use AT skim sets
+        return records[["tripID",
+                        "timeWalk",
+                        "distanceWalk",
+                        "timeMM",
+                        "distanceMM",
+                        "costFareMM",
+                        "timeMT",
+                        "distanceMT",
+                        "costFareMT"]]
 
-        skim_cols = ["timeWalk",
-                     "distanceWalk",
-                     "timeMM",
-                     "distanceMM",
-                     "costFareMM",
-                     "timeMT",
-                     "distanceMT",
-                     "costFareMT"]
+    def _walk_skims_auto(self, df: pd.DataFrame) -> pd.DataFrame:
+        """ Takes an input Pandas DataFrame containing the ABM fields
+        ([tripID], [tripMode], [originMGRA], [originTAZ] [destinationMGRA],
+        [destinationTAZ]) and returns the associated micro-mobility,
+        micro-transit, and walk mode skims for time, distance, and fare cost
+        for micro-mobility, micro-transit, and walk mode trips that use
+        auto mode skim set for time. Note that micro-mobility, micro-transit,
+        and walk mode trips that do not use auto mode skim set for time are
+        removed from consideration and handled elsewhere.
 
-        # if there are no mm/mt/walk trip skim records
-        if records.empty:
-            # append skim columns to input DataFrame
-            # set to missing as a missing skim means no walk trip
-            for col in skim_cols:
-                df[col] = np.NaN
-        else:
-            # merge result set DataFrame back into initial trip list
-            # keep missing skim records as missing skim means no walk trip
-            df = df.merge(records, on="tripID", how="left")
+            Args:
+                df: Input Pandas DataFrame containing the fields
+                    [tripID] - unique identifier of a trip
+                    [tripMode] - ABM trip modes (Drive Alone, Shared Ride 2, etc...)
+                    [originMGRA] - trip origin MGRA (1-23002)
+                    [originTAZ] - trip origin TAZ (1-4996)
+                    [destinationMGRA] - trip destination MGRA (1-23002)
+                    [destinationTAZ] - trip destination TAZ (1-4996)
 
-        # return input DataFrame with appended skim columns
-        return df
+            Returns:
+                A Pandas DataFrame containing all associated micro-mobility,
+                micro-transit, and walk mode skims for time, distance, and
+                fare cost. The DataFrame contains only micro-mobility,
+                micro-transit, and walk mode trip records that use the auto
+                mode skim set for time:
+                    [tripID] - unique identifier of a trip
+                    [timeWalk] - time in minutes for walk mode
+                    [distanceWalk] - distance in miles for walk mode
+                    [timeMM] - time in minutes for micro-mobility mode
+                    [distanceMM] - distance in miles for micro-mobility mode
+                    [costFareMM] - fare cost in dollars for micro-mobility mode
+                    [timeMT] - time in minutes for micro-transit mode
+                    [distanceMT] - distance in miles for micro-transit mode
+                    [costFareMT] - fare cost in dollars for micro-transit mode
+            """
+        # load the mgra-mgra walk/micro-mobility/micro-transit skim file
+        skims = pd.read_csv(os.path.join(self.scenario_path,
+                                         "output",
+                                         "microMgraEquivMinutes.csv"),
+                            usecols=["i",  # origin MGRA geography
+                                     "j",  # destination MGRA geography
+                                     "walkTime",  # walk time in minutes
+                                     "dist",  # distance in miles
+                                     "mmTime",  # micro-mobility time in minutes
+                                     "mmCost",  # micro-mobility cost in dollars
+                                     "mtTime",  # micro-transit time in minutes
+                                     "mtCost"],    # micro-transit cost in dollars
+                            dtype={"i": "int16",
+                                   "j": "int16",
+                                   "walkTime": "float32",
+                                   "dist": "float32",
+                                   "mmTime": "float32",
+                                   "mmCost": "float32",
+                                   "mtTime": "float32",
+                                   "mtCost": "float32"})
+
+        # merge the skims with the input DataFrame walk/mm/mt mode records
+        # ABM Joint sub-model has multiple records per tripID
+        # per person on trip records are identical otherwise
+        records = df.loc[(df["tripMode"].isin(["Micro-Mobility",
+                                               "Micro-Transit",
+                                               "Walk"]))].copy()
+
+        records.drop_duplicates(subset="tripID", inplace=True, ignore_index=True)
+
+        # select records that are NOT in the mgra-mgra
+        # walk/micro-mobility/micro-transit skim file
+        records = records.merge(
+            right=skims,
+            how="left",  # use outer join to keep all trip records
+            left_on=["originMGRA", "destinationMGRA"],
+            right_on=["i", "j"],
+            indicator=True
+        )
+
+        records = records[records["_merge"] == "left_only"]
+
+        # append trip time from auto skim set
+        # midday drive alone non-transponder low value of time
+
+        # open omx transit skim file and get TAZ matrix mapping
+        omx_file = omx.open_file(self.scenario_path + "/output/traffic_skims_MD.omx")
+        omx_map = omx_file.mapping("zone_number")
+
+        # get lists of o-ds
+        o = records.originTAZ.astype("int16").tolist()
+        d = records.destinationTAZ.astype("int16").tolist()
+
+        # map o-ds to omx matrix indices
+        o_idx = [omx_map[number] for number in o]
+        d_idx = [omx_map[number] for number in d]
+
+        # append travel time skim from auto skim set
+        records["sovTime"] = omx_file["MD_SOV_NT_M_TIME"][o_idx, d_idx]
+
+        omx_file.close()
+
+        # load the MGRA-MGRA based input file
+        # merge with trips to get micro-mobility access time for origin MGRAs
+        records = records.merge(
+            right=self.mgra_xref,
+            how="inner",
+            left_on="originMGRA",
+            right_on="MGRA"
+        )
+
+        # set skims based on mode
+        records["timeWalk"] = np.where(records["tripMode"] == "Walk",
+                                       records["sovTime"],
+                                       0)
+
+        records["distanceWalk"] = np.where(records["tripMode"] == "Walk",
+                                           records["sovTime"] * self.properties["walkSpeed"] / 60,
+                                           0)
+
+        records["timeMM"] = np.where(records["tripMode"] == "Micro-Mobility",
+                                     records["sovTime"] + records["MicroAccessTime"],
+                                     0)
+
+        records["distanceMM"] = np.where(records["tripMode"] == "Micro-Mobility",
+                                         records["sovTime"] * self.properties["microMobilitySpeed"] / 60,
+                                         0)
+
+        records["costFareMM"] = np.where(records["tripMode"] == "Micro-Mobility",
+                                         records["sovTime"] * self.properties["costPerMinuteMicroMobility"] +
+                                         self.properties["baseFareMicroMobility"],
+                                         0)
+
+        records["timeMT"] = np.where(records["tripMode"] == "Micro-Transit",
+                                     records["sovTime"] + self.properties["accessTimeMicroTransit"] +
+                                     self.properties["waitTimeMicroTransit"],
+                                     0)
+
+        records["distanceMT"] = np.where(records["tripMode"] == "Micro-Transit",
+                                         records["sovTime"] * self.properties["microTransitSpeed"] / 60,
+                                         0)
+
+        records["costFareMT"] = np.where(records["tripMode"] == "Micro-Transit",
+                                         records["sovTime"] * self.properties["costPerMinuteMicroTransit"] +
+                                         self.properties["baseFareMicroTransit"],
+                                         0)
+
+        # return result set of walk/micro-mobility/micro-transit trips
+        # that use auto mode skim set
+        return records[["tripID",
+                        "timeWalk",
+                        "distanceWalk",
+                        "timeMM",
+                        "distanceMM",
+                        "costFareMM",
+                        "timeMT",
+                        "distanceMT",
+                        "costFareMT"]]
 
     def walk_transit_skims(self, df: pd.DataFrame) -> pd.DataFrame:
         """ Takes an input Pandas DataFrame containing the ABM fields
