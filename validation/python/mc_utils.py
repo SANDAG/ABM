@@ -47,7 +47,8 @@ def create_configs():
         ('util_cols', 'Utility Columns (comma separated) -', 'util_1,util_2,util_3,util_4,util_5,util_6,util_7,util_8,util_9,util_10,util_11,util_12,util_13'),
         ('shapefile', 'Shapefile -', 'syn_pop_and_shapefiles/shapefiles/mgra/SANDAG_MGRA.shp'),
         ('zone_col', 'Zone Column - ', 'MGRA'),
-        ('zone_crs', 'Shapefile CRS -', 'ESRI:102646')
+        ('zone_crs', 'Shapefile CRS -', 'ESRI:102646'),
+        ('layer_shapefiles', 'Layer Shapefiles (optional)', 'output/rtcov.shp, output/tapcov.shp'),
         
     ]
     
@@ -71,11 +72,14 @@ def create_configs():
 
         global CONFIG
         for w in widges: 
-            if w.name in ['hh_id_col', 'income_labels', 'mode_labels', 'prob_cols', 'util_cols']:
-                val = re.split(',\s?', w.value)
+            if w.name in ['hh_id_col', 'income_labels', 'mode_labels', 'prob_cols', 'util_cols', 'layer_shapefiles']:
+                val = re.split(',\s?', w.value.strip())
+
+                if '' in val:
+                    val.remove('')
 
             else:
-                val = w.value
+                val = w.value.strip()
 
             CONFIG[w.name] = val
         
@@ -127,6 +131,17 @@ def create_configs():
             center = [zone_df.geometry.centroid.y.mean(), zone_df.geometry.centroid.x.mean()]
             print('Done.')
 
+            layer_dfs = []
+            for f in CONFIG['layer_shapefiles']:
+
+                print(f'Reading {f}... ', end='')
+                df = gpd.read_file(f)
+                df.crs = CONFIG['zone_crs']
+                df = df.to_crs('epsg:4326')
+                df.name = f
+                layer_dfs.append(df)
+                print('Done.')
+
             CONFIG.update({
                 'tour_df': tour_df,
                 'ozone_list': ozone_list,
@@ -134,32 +149,9 @@ def create_configs():
                 'purposes': purposes,
                 'incomes': incomes,
                 'zone_df': zone_df,
+                'layer_dfs': layer_dfs,
                 'center': center,
             })
-
-            print('Creating zone map... ', end='')
-            zone_map = folium.Map(location=center, zoom_start=10)
-
-            zones = folium.Choropleth(
-                geo_data=zone_df.to_json(),
-                name=zone_col,
-                fill_opacity=0.2,
-                line_opacity=0.3,
-                highlight=True,
-                smooth_factor=2.0,
-                legend_name=zone_col,
-            )
-
-            zones.geojson.add_child(
-                folium.features.GeoJsonTooltip([zone_col], labels=True))
-
-            zone_map.add_child(zones)
-            folium.LayerControl().add_to(zone_map)
-            print('Done.')
-
-            print('Saving zone map to zone_map.html... ', end='')
-            zone_map.save('zone_map.html')
-            print('Done.')
 
         # display filter controls once configs are validated
         zone_interaction()
@@ -334,6 +326,28 @@ def zone_interaction():
                     style=style_function,
                     aliases=['zone'] + list(CONFIG['mode_labels']),
                     labels=True))
+
+            # add additional map layers, if present
+            for df in CONFIG['layer_dfs']:
+                if all(df.geometry.type == 'Point'):
+
+                    layer = folium.FeatureGroup(name=df.name)
+                    for point in df.geometry:
+                        folium.CircleMarker(
+                            [point.y, point.x],
+                            radius=4,
+                            weight=2,
+                            fill_color='red',
+                            fill_opacity=0.7,
+                        ).add_to(layer)
+
+                    layer.add_to(filter_map)
+
+                else:
+                    folium.GeoJson(
+                        data=df['geometry'],
+                        name=df.name,
+                    ).add_to(filter_map)
 
             folium.LayerControl().add_to(filter_map)
 
