@@ -1,0 +1,5 @@
+process,time,rss,used,available,percent,event
+main, 30/11/2020 23:24:08, 0.09, 8.82, 6.66, 58.4%, #MEM pipeline.run before preload_injectables
+main, 30/11/2020 23:24:08, 0.09, 8.82, 6.66, 58.4%, #MEM pipeline.run before run_models
+main, 30/11/2020 23:24:08, 0.11, 8.84, 6.64, 58.5%, pipeline.run after initialize_tours_cb
+main, 30/11/2020 23:24:08, 0.11, 8.84, 6.64, 58.5%, #MEM pipeline.run after run_models

@@ -1,4 +1,4 @@
 
-## ActivitySim Cross Border Model
+### MTC Example
 
-See also [ActivitySim](http://www.activitysim.org)
+The primary ActivitySim example model.  See https://activitysim.github.io/activitysim for more information.
