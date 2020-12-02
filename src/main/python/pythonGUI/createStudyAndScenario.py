@@ -2,6 +2,7 @@ __author__ = 'wsu'
 #Wu.Sun@sandag.org 10-27-2016
 #wsu update 5/2/2017 for release 13.3.2
 #wsu update 12/12/2017 for release 13.3.3
+#yma update 10/3/2019 for release 13.4.0
 import Tkinter
 import Tkconstants
 import tkFileDialog
@@ -66,7 +67,7 @@ class CreateScenarioGUI(Tkinter.Frame):
             var = StringVar(root)
             self.year="2012"
             # standard release years
-            optionList=["2014", "2020", "2025", "2030", "2035", "2050"]
+            optionList=["2012", "2014", "2020", "2023","2025", "2026","2030", "2032","2035", "2040","2045","2050"]
             # development/testing years; un-comment if build testing years
             #optionList=["2015", "2016", "2017"]
             option=Tkinter.OptionMenu(body,var,*optionList,command=self.setyear)
@@ -203,7 +204,7 @@ class CreateScenarioGUI(Tkinter.Frame):
                 commandstr=u"create_scenario.cmd "+self.scenariopath.get()+" "+self.year+" "+self.networkpath.get()
             elif type=="study":
                 commandstr=u"copy_networkfiles_to_study.cmd "+self.studypath.get()+" "+self.studynetworkpath.get()
-            print commandstr
+            print (commandstr)
             os.chdir(self.releaseDir+"\\"+self.version+'\\')
             os.system(commandstr)
             self.popup=Tkinter.Tk()
