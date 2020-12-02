@@ -8,13 +8,13 @@
   DTS:DTSID="{86BFE828-D23A-456E-AD4F-F29E37204DDB}"
   DTS:ExecutableType="Microsoft.Package"
   DTS:FailParentOnFailure="True"
-  DTS:LastModifiedProductVersion="14.0.3026.27"
+  DTS:LastModifiedProductVersion="14.0.0800.90"
   DTS:LocaleID="1033"
   DTS:MaxErrorCount="0"
   DTS:ObjectName="13_2_4_other"
   DTS:PackageType="5"
   DTS:VersionBuild="24"
-  DTS:VersionGUID="{D7169BC1-D32D-4DBA-8121-2E14577893BA}">
+  DTS:VersionGUID="{02CDBC55-1C82-4222-B243-E48ADA81A5DB}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -256,8 +256,8 @@
               <connections>
                 <connection
                   refId="Package\cbd_vehicles\cbd_vehicles.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -761,8 +761,8 @@ where [refTable].[zone] = ?</property>
               <connections>
                 <connection
                   refId="Package\cbd_vehicles\geography_lookup.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -931,8 +931,8 @@ where [refTable].[time_period_number] = ?</property>
               <connections>
                 <connection
                   refId="Package\cbd_vehicles\time_period_lookup.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -1025,7 +1025,7 @@ where [refTable].[time_period_number] = ?</property>
               contactInfo="Executes a custom script.;Microsoft Corporation; Microsoft SqlServer v10; © 2007 Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
               description="Executes a custom script."
               name="wide_to_long"
-              version="11">
+              version="9">
               <properties>
                 <property
                   dataType="System.String"
@@ -1467,7 +1467,7 @@ End Class
 		<msb:CodeName>sc_df7f322aa7ae4147bb7fcdcbe4436efc</msb:CodeName>
 		<msb:Language>msBuild</msb:Language>
 		<msb:DisplayName>sc_df7f322aa7ae4147bb7fcdcbe4436efc</msb:DisplayName>
-		<msb:ProjectId>{683953D2-12DA-4E60-A475-935D7D050585}</msb:ProjectId>
+		<msb:ProjectId>{379946FE-613F-4514-9FE5-C9535964B5E7}</msb:ProjectId>
 	</msb:PropertyGroup>
 	<msb:ItemGroup>
 		<msb:Project Include="sc_df7f322aa7ae4147bb7fcdcbe4436efc.vbproj"/>
@@ -1722,7 +1722,7 @@ End Namespace
     <OutputPath>bin\</OutputPath>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
+    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
   </PropertyGroup>
   <!-- This section defines properties that are set when the "Release" configuration is
        selected.
@@ -1743,7 +1743,7 @@ End Namespace
     <OutputPath>bin\</OutputPath>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
+    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
   </PropertyGroup>
   <!-- This section enables pre- and post-build steps. However,
        it is recommended that MSBuild tasks be used instead of these properties.
@@ -1854,7 +1854,7 @@ End Namespace
                     <arrayElement
                       dataType="System.String"><![CDATA[TVqQAAMAAAAEAAAA//8AALgAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAgAAAAA4fug4AtAnNIbgBTM0hVGhpcyBwcm9ncmFtIGNhbm5vdCBiZSBydW4gaW4gRE9TIG1v
-ZGUuDQ0KJAAAAAAAAABQRQAATAEDAPXMoV8AAAAAAAAAAOAAIiALAVAAACQAAAAIAAAAAAAA+kIA
+ZGUuDQ0KJAAAAAAAAABQRQAATAEDABY98loAAAAAAAAAAOAAIiALAVAAACQAAAAIAAAAAAAA+kIA
 AAAgAAAAYAAAAAAAEAAgAAAAAgAABAAAAAAAAAAGAAAAAAAAAACgAAAAAgAAAAAAAAMAYIUAABAA
 ABAAAAAAEAAAEAAAAAAAABAAAAAAAAAAAAAAAKhCAABPAAAAAGAAAIgEAAAAAAAAAAAAAAAAAAAA
 AAAAAIAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -1994,8 +1994,8 @@ Y2RjYmU0NDM2ZWZjLnZicHJvai5NeQBnZXRfQXNzZW1ibHkAAAAAMU0AeQAuAFIAZQBzAG8AdQBy
 AGMAZQBzAC4ATQB5AFIAZQBzAG8AdQByAGMAZQBzAACAm0kAcwBOAHUAbABsACAAcAByAG8AcABl
 AHIAdAB5ACAAYwBhAG4AbgBvAHQAIABiAGUAIABzAGUAdAAgAHQAbwAgAEYAYQBsAHMAZQAuACAA
 QQBzAHMAaQBnAG4AIABhACAAdgBhAGwAdQBlACAAdABvACAAdABoAGUAIABjAG8AbAB1AG0AbgAg
-AGkAbgBzAHQAZQBhAGQALgAAD0kAbgBwAHUAdAAgADAAABFPAHUAdABwAHUAdAAgADAAAAAAhTRl
-zl5CR06qftHqpriVygAEIAEBCAMgAAEFIAEBEREEIAEBDgQgAQECBSACAQ4OBSABARFFByAEAQ4O
+AGkAbgBzAHQAZQBhAGQALgAAD0kAbgBwAHUAdAAgADAAABFPAHUAdABwAHUAdAAgADAAAAAA76T6
+Mz1zTEyMszRdzdfpwwAEIAEBCAMgAAEFIAEBEREEIAEBDgQgAQECBSACAQ4OBSABARFFByAEAQ4O
 Dg4GFRI4ARIMBhUSOAESCAYVEjgBEmUGFRI4ARI0BCAAEwAHAAESbRGApQUgABKAqQcgAgEOEoCp
 CyADARKAhR0IEoCJBAYSgIUDBh0IBCABBggEIAECCAYgARGAjQgDBwECAyAAAgUgAgEIHAcgAgIO
 EYC9BSABHQgIBAcCCAgHAAIIEoCJDgcHAx0NCBIcBgABDRGAjQQgAQENBAABHBwEAAEBHAQgAQIc

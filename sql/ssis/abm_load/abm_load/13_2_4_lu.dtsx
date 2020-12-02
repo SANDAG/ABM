@@ -8,13 +8,13 @@
   DTS:DTSID="{941F1120-77B0-421E-A8F1-2481E80EF939}"
   DTS:ExecutableType="Microsoft.Package"
   DTS:FailParentOnFailure="True"
-  DTS:LastModifiedProductVersion="14.0.3026.27"
+  DTS:LastModifiedProductVersion="14.0.0800.90"
   DTS:LocaleID="1033"
   DTS:MaxErrorCount="0"
   DTS:ObjectName="13_2_4_lu"
   DTS:PackageType="5"
   DTS:VersionBuild="51"
-  DTS:VersionGUID="{49749131-4664-4F2D-957B-9D6D15FD56E9}">
+  DTS:VersionGUID="{1A377021-4C3D-45C3-9B41-C3FFB6D27394}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -2317,8 +2317,8 @@ where [refTable].[zone] = ?</property>
               <connections>
                 <connection
                   refId="Package\lu_hh_and_person\geography_lookup_1.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -2487,8 +2487,8 @@ where [refTable].[zone] = ?</property>
               <connections>
                 <connection
                   refId="Package\lu_hh_and_person\geography_lookup_2.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -4042,8 +4042,8 @@ where [refTable].[loc_choice_id] = ? and [refTable].[loc_choice_segment_number] 
               <connections>
                 <connection
                   refId="Package\lu_hh_and_person\loc_segment_lookup.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -4205,8 +4205,8 @@ where [refTable].[loc_choice_id] = ? and [refTable].[loc_choice_segment_number] 
               <connections>
                 <connection
                   refId="Package\lu_hh_and_person\lu_hh.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -4451,8 +4451,8 @@ where [refTable].[loc_choice_id] = ? and [refTable].[loc_choice_segment_number] 
               <connections>
                 <connection
                   refId="Package\lu_hh_and_person\lu_person.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -4780,8 +4780,8 @@ where [refTable].[loc_choice_id] = ? and [refTable].[loc_choice_segment_number] 
               <connections>
                 <connection
                   refId="Package\lu_hh_and_person\lu_person_fp.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -4931,8 +4931,8 @@ where [refTable].[loc_choice_id] = ? and [refTable].[loc_choice_segment_number] 
               <connections>
                 <connection
                   refId="Package\lu_hh_and_person\lu_person_lc.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -6339,7 +6339,7 @@ where [refTable].[loc_choice_id] = ? and [refTable].[loc_choice_segment_number] 
               contactInfo="Includes and runs custom script code. For example, apply a business rule that limits the range of valid values in an &quot;income&quot; column or add values in two columns and calculate the average of the sum.;Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;8"
               description="Includes and runs custom script code. For example, apply a business rule that limits the range of valid values in an &quot;income&quot; column or add values in two columns and calculate the average of the sum."
               name="surrogate_key_2"
-              version="11">
+              version="9">
               <properties>
                 <property
                   dataType="System.String"
@@ -6574,7 +6574,7 @@ End Class
 		<msb:CodeName>SC_380beff85e534f0495071a1415636e3c</msb:CodeName>
 		<msb:Language>msBuild</msb:Language>
 		<msb:DisplayName>SC_380beff85e534f0495071a1415636e3c</msb:DisplayName>
-		<msb:ProjectId>{0B9EED19-A963-4BBC-953E-B1B7D433F872}</msb:ProjectId>
+		<msb:ProjectId>{CCCF8761-19B5-416A-8CA2-01B9AD31A553}</msb:ProjectId>
 	</msb:PropertyGroup>
 	<msb:ItemGroup>
 		<msb:Project Include="SC_380beff85e534f0495071a1415636e3c.vbproj"/>
@@ -6944,7 +6944,7 @@ End Class
                     <arrayElement
                       dataType="System.String"><![CDATA[TVqQAAMAAAAEAAAA//8AALgAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAgAAAAA4fug4AtAnNIbgBTM0hVGhpcyBwcm9ncmFtIGNhbm5vdCBiZSBydW4gaW4gRE9TIG1v
-ZGUuDQ0KJAAAAAAAAABQRQAATAEDAPTMoV8AAAAAAAAAAOAAIiALAVAAAB4AAAAIAAAAAAAA/jsA
+ZGUuDQ0KJAAAAAAAAABQRQAATAEDABU98loAAAAAAAAAAOAAIiALAVAAAB4AAAAIAAAAAAAA/jsA
 AAAgAAAAQAAAAAAAEAAgAAAAAgAABAAAAAAAAAAGAAAAAAAAAACAAAAAAgAAAAAAAAMAYIUAABAA
 ABAAAAAAEAAAEAAAAAAAABAAAAAAAAAAAAAAAKw7AABPAAAAAEAAAEgEAAAAAAAAAAAAAAAAAAAA
 AAAAAGAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -7055,7 +7055,7 @@ NTM0ZjA0OTUwNzFhMTQxNTYzNmUzYy5NeQBnZXRfQXNzZW1ibHkAADFNAHkALgBSAGUAcwBvAHUA
 cgBjAGUAcwAuAE0AeQBSAGUAcwBvAHUAcgBjAGUAcwAAgJtJAHMATgB1AGwAbAAgAHAAcgBvAHAA
 ZQByAHQAeQAgAGMAYQBuAG4AbwB0ACAAYgBlACAAcwBlAHQAIAB0AG8AIABGAGEAbABzAGUALgAg
 AEEAcwBzAGkAZwBuACAAYQAgAHYAYQBsAHUAZQAgAHQAbwAgAHQAaABlACAAYwBvAGwAdQBtAG4A
-IABpAG4AcwB0AGUAYQBkAC4AAA9JAG4AcAB1AHQAIAAwAAANpf6W0R5sQL6hc2jGq4ndAAQgAQEI
+IABpAG4AcwB0AGUAYQBkAC4AAA9JAG4AcAB1AHQAIAAwAABySKz1MA+bRJaPE5PqLYfyAAQgAQEI
 AyAAAQUgAQEREQQgAQEOBCABAQIFIAIBDg4FIAEBEUUHIAQBDg4ODgYVEjQBEgwGFRI0ARIIBhUS
 NAESZQYVEjQBEjAEIAATAAcAARJtEYChBSAAEoClByACAQ4SgKUEBwEQCAsgAwESgI0dCBKAkQUg
 AgEIHAMHAQIDIAACByACAg4RgLUFIAEdCAgEAAEcHAQAAQEcBCABAhwDIAAIAyAADgQHAR4AAh4A
@@ -7202,7 +7202,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]]></arrayElement>
               contactInfo="Executes a custom script.;Microsoft Corporation; Microsoft SqlServer v10; © 2007 Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
               description="Executes a custom script."
               name="wide_to_long"
-              version="11">
+              version="9">
               <properties>
                 <property
                   dataType="System.String"
@@ -7414,7 +7414,7 @@ End Class
     <OutputPath>bin\</OutputPath>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
+    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
   </PropertyGroup>
   <!-- This section defines properties that are set when the "Release" configuration is
        selected.
@@ -7435,7 +7435,7 @@ End Class
     <OutputPath>bin\</OutputPath>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
+    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355,42353,42354,42355</NoWarn>
   </PropertyGroup>
   <!-- This section enables pre- and post-build steps. However,
        it is recommended that MSBuild tasks be used instead of these properties.
@@ -7800,7 +7800,7 @@ End Class
 		<msb:CodeName>sc_940d6af9e51d400182bc30a563948e75</msb:CodeName>
 		<msb:Language>msBuild</msb:Language>
 		<msb:DisplayName>sc_940d6af9e51d400182bc30a563948e75</msb:DisplayName>
-		<msb:ProjectId>{030C3309-FBA5-4D08-A46E-14B7D71EFB6C}</msb:ProjectId>
+		<msb:ProjectId>{3718C5B4-DE0C-4A7A-8B27-D5E22C1F53FB}</msb:ProjectId>
 	</msb:PropertyGroup>
 	<msb:ItemGroup>
 		<msb:Project Include="sc_940d6af9e51d400182bc30a563948e75.vbproj"/>
@@ -8062,7 +8062,7 @@ End Namespace
                     <arrayElement
                       dataType="System.String"><![CDATA[TVqQAAMAAAAEAAAA//8AALgAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAgAAAAA4fug4AtAnNIbgBTM0hVGhpcyBwcm9ncmFtIGNhbm5vdCBiZSBydW4gaW4gRE9TIG1v
-ZGUuDQ0KJAAAAAAAAABQRQAATAEDAPXMoV8AAAAAAAAAAOAAIiALAVAAACYAAAAIAAAAAAAAokQA
+ZGUuDQ0KJAAAAAAAAABQRQAATAEDABU98loAAAAAAAAAAOAAIiALAVAAACYAAAAIAAAAAAAAokQA
 AAAgAAAAYAAAAAAAEAAgAAAAAgAABAAAAAAAAAAGAAAAAAAAAACgAAAAAgAAAAAAAAMAYIUAABAA
 ABAAAAAAEAAAEAAAAAAAABAAAAAAAAAAAAAAAFBEAABPAAAAAGAAAGgEAAAAAAAAAAAAAAAAAAAA
 AAAAAIAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -8210,7 +8210,7 @@ TQB5AC4AUgBlAHMAbwB1AHIAYwBlAHMALgBNAHkAUgBlAHMAbwB1AHIAYwBlAHMAAICbSQBzAE4A
 dQBsAGwAIABwAHIAbwBwAGUAcgB0AHkAIABjAGEAbgBuAG8AdAAgAGIAZQAgAHMAZQB0ACAAdABv
 ACAARgBhAGwAcwBlAC4AIABBAHMAcwBpAGcAbgAgAGEAIAB2AGEAbAB1AGUAIAB0AG8AIAB0AGgA
 ZQAgAGMAbwBsAHUAbQBuACAAaQBuAHMAdABlAGEAZAAuAAAPSQBuAHAAdQB0ACAAMAAAEU8AdQB0
-AHAAdQB0ACAAMAAAAACho+aeo+0eSrKgBV459AwUAAQgAQEIAyAAAQUgAQEREQQgAQEOBCABAQIF
+AHAAdQB0ACAAMAAAAACx/UwGSRQJS5SPubcYZA7DAAQgAQEIAyAAAQUgAQEREQQgAQEOBCABAQIF
 IAIBDg4FIAEBEUUHIAQBDg4ODgYVEjgBEgwGFRI4ARIIBhUSOAESZQYVEjgBEjQEIAATAAcAARJt
 EYChBSAAEoClByACAQ4SgKULIAMBEoCFHQgSgIkEBhKAhQMGHQgEIAEICAQgAQIIBCABBQgDBwEC
 AyAAAgUgAgEIHAcgAgIOEYC9BSABHQgIBAcCCAgHAAIIEoCJDgwHAxQNAgACAAAIEhwHFA0CAAIA
@@ -8752,19 +8752,19 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA]]></arrayElement>
               startId="Package\lu_hh_and_person\loc_segment_lookup.Outputs[Lookup Match Output]" />
             <path
               refId="Package\lu_hh_and_person.Paths[Merge Join Output2]"
-              endId="Package\lu_hh_and_person\geography_lookup_1.Inputs[Lookup Input]"
-              name="Merge Join Output"
-              startId="Package\lu_hh_and_person\inner_join_1.Outputs[Merge Join Output]" />
-            <path
-              refId="Package\lu_hh_and_person.Paths[Merge Join Output]"
               endId="Package\lu_hh_and_person\lu_person_lc.Inputs[OLE DB Destination Input]"
               name="Merge Join Output"
               startId="Package\lu_hh_and_person\inner_join_3.Outputs[Merge Join Output]" />
             <path
-              refId="Package\lu_hh_and_person.Paths[Merge Join Output1]"
+              refId="Package\lu_hh_and_person.Paths[Merge Join Output]"
               endId="Package\lu_hh_and_person\derived_column_2.Inputs[Derived Column Input]"
               name="Merge Join Output"
               startId="Package\lu_hh_and_person\inner_join_2.Outputs[Merge Join Output]" />
+            <path
+              refId="Package\lu_hh_and_person.Paths[Merge Join Output1]"
+              endId="Package\lu_hh_and_person\geography_lookup_1.Inputs[Lookup Input]"
+              name="Merge Join Output"
+              startId="Package\lu_hh_and_person\inner_join_1.Outputs[Merge Join Output]" />
             <path
               refId="Package\lu_hh_and_person.Paths[Multicast Output 1]"
               endId="Package\lu_hh_and_person\Conditional Split.Inputs[Conditional Split Input]"
@@ -8993,8 +8993,8 @@ where [refTable].[zone] = ?</property>
               <connections>
                 <connection
                   refId="Package\lu_mgra_input\geography_lookup.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -9140,8 +9140,8 @@ where [refTable].[zone] = ?</property>
               <connections>
                 <connection
                   refId="Package\lu_mgra_input\LU_MGRA_INPUT.Connections[OleDbConnection]"
-                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:external"
-                  connectionManagerRefId="Project.ConnectionManagers[sql_server]"
+                  connectionManagerID="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
+                  connectionManagerRefId="{63EC16A6-50B6-4C84-BB16-3FF88DD74D01}:invalid"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -13298,7 +13298,7 @@ where [refTable].[zone] = ?</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\lu_hh_and_person.Paths[Merge Join Output]"
+          Id="Package\lu_hh_and_person.Paths[Merge Join Output2]"
           TopLeft="834.5,837.166666666667">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -13320,7 +13320,7 @@ where [refTable].[zone] = ?</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\lu_hh_and_person.Paths[Merge Join Output2]"
+          Id="Package\lu_hh_and_person.Paths[Merge Join Output1]"
           TopLeft="279.5,378.166666666667">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -13698,7 +13698,7 @@ where [refTable].[zone] = ?</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\lu_hh_and_person.Paths[Merge Join Output1]"
+          Id="Package\lu_hh_and_person.Paths[Merge Join Output]"
           TopLeft="1096.75,412.666666666667">
           <EdgeLayout.Curve>
             <mssgle:Curve

@@ -8,13 +8,13 @@
   DTS:DTSID="{891BB055-FF03-4DBC-9ADD-FDF5B41DABFB}"
   DTS:ExecutableType="Microsoft.Package"
   DTS:FailParentOnFailure="True"
-  DTS:LastModifiedProductVersion="14.0.3026.27"
+  DTS:LastModifiedProductVersion="14.0.0800.90"
   DTS:LocaleID="1033"
   DTS:MaxErrorCount="0"
   DTS:ObjectName="13_2_4_complete"
   DTS:PackageType="5"
   DTS:VersionBuild="22"
-  DTS:VersionGUID="{1B2B9037-7A6B-4A81-925F-BD2F20FE9BC4}">
+  DTS:VersionGUID="{F98CC539-DED3-4BC7-9DBD-53739C98A8CF}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:PackageParameters>
