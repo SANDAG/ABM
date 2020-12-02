@@ -1,4 +1,5 @@
 
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -47,8 +48,8 @@
         <JAVA_64_PATH>C:\Progra~1\Java\jre7</JAVA_64_PATH>
         <JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
         <workpath>WORKPATH</workpath>
-        <database_server>sql2014a8</database_server>
-        <database_name>abm_13_2_3</database_name>
+        <database_server>socioeca8</database_server>
+        <database_name>abm_13_3_2</database_name>
         <jppf_version>5.0.1</jppf_version>
     </properties>
     <profiles>
@@ -797,4 +798,3 @@
         </repository>
     </repositories>
 </project>
-
