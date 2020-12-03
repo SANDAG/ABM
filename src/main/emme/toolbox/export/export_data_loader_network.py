@@ -740,6 +740,7 @@ Export network results to csv files for SQL data loader."""
             desktop_traffic_database.open()
         except:
             pass
+		desktop.refresh_data()
         project = desktop.project
         scenario = _m.Modeller().emmebank.scenario(101)
         data_explorer.replace_primary_scenario(scenario)
