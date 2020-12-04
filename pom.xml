@@ -49,7 +49,7 @@
         <JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
         <workpath>WORKPATH</workpath>
         <database_server>socioeca8</database_server>
-        <database_name>abm_13_3_2</database_name>
+        <database_name>abm_13_3_3</database_name>
         <jppf_version>5.0.1</jppf_version>
     </properties>
     <profiles>
@@ -57,9 +57,9 @@
             <id>2012</id>
             <properties>
                 <year>2012</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2014.csv</crossborder.dc.soa.alts.file>  
+                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>  
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>  
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2014.xls</crossBorder.dc.uec.file>
+                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
                 <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>     
                 <workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
                 <schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
