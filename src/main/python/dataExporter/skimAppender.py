@@ -1562,82 +1562,96 @@ class SkimAppender(object):
 
         records = records[records["_merge"] == "left_only"]
 
-        # append trip time from auto skim set
-        # midday drive alone non-transponder low value of time
+        # if there are no eligible records return an empty DataFrame
+        if records.empty:
+            return pd.DataFrame(
+                columns=["tripID",
+                         "timeWalk",
+                         "distanceWalk",
+                         "timeMM",
+                         "distanceMM",
+                         "costFareMM",
+                         "timeMT",
+                         "distanceMT",
+                         "costFareMT"]
+            )
+        else:
+            # append trip time from auto skim set
+            # midday drive alone non-transponder low value of time
 
-        # open omx transit skim file and get TAZ matrix mapping
-        omx_file = omx.open_file(self.scenario_path + "/output/traffic_skims_MD.omx")
-        omx_map = omx_file.mapping("zone_number")
+            # open omx transit skim file and get TAZ matrix mapping
+            omx_file = omx.open_file(self.scenario_path + "/output/traffic_skims_MD.omx")
+            omx_map = omx_file.mapping("zone_number")
 
-        # get lists of o-ds
-        o = records.originTAZ.astype("int16").tolist()
-        d = records.destinationTAZ.astype("int16").tolist()
+            # get lists of o-ds
+            o = records.originTAZ.astype("int16").tolist()
+            d = records.destinationTAZ.astype("int16").tolist()
 
-        # map o-ds to omx matrix indices
-        o_idx = [omx_map[number] for number in o]
-        d_idx = [omx_map[number] for number in d]
+            # map o-ds to omx matrix indices
+            o_idx = [omx_map[number] for number in o]
+            d_idx = [omx_map[number] for number in d]
 
-        # append travel time skim from auto skim set
-        records["sovTime"] = omx_file["MD_SOV_NT_M_TIME"][o_idx, d_idx]
+            # append travel time skim from auto skim set
+            records["sovTime"] = omx_file["MD_SOV_NT_M_TIME"][o_idx, d_idx]
 
-        omx_file.close()
+            omx_file.close()
 
-        # load the MGRA-MGRA based input file
-        # merge with trips to get micro-mobility access time for origin MGRAs
-        records = records.merge(
-            right=self.mgra_xref,
-            how="inner",
-            left_on="originMGRA",
-            right_on="MGRA"
-        )
+            # load the MGRA-MGRA based input file
+            # merge with trips to get micro-mobility access time for origin MGRAs
+            records = records.merge(
+                right=self.mgra_xref,
+                how="inner",
+                left_on="originMGRA",
+                right_on="MGRA"
+            )
 
-        # set skims based on mode
-        records["timeWalk"] = np.where(records["tripMode"] == "Walk",
-                                       records["sovTime"],
-                                       0)
-
-        records["distanceWalk"] = np.where(records["tripMode"] == "Walk",
-                                           records["sovTime"] * self.properties["walkSpeed"] / 60,
+            # set skims based on mode
+            records["timeWalk"] = np.where(records["tripMode"] == "Walk",
+                                           records["sovTime"],
                                            0)
 
-        records["timeMM"] = np.where(records["tripMode"] == "Micro-Mobility",
-                                     records["sovTime"] + records["MicroAccessTime"],
-                                     0)
+            records["distanceWalk"] = np.where(records["tripMode"] == "Walk",
+                                               records["sovTime"] * self.properties["walkSpeed"] / 60,
+                                               0)
 
-        records["distanceMM"] = np.where(records["tripMode"] == "Micro-Mobility",
-                                         records["sovTime"] * self.properties["microMobilitySpeed"] / 60,
+            records["timeMM"] = np.where(records["tripMode"] == "Micro-Mobility",
+                                         records["sovTime"] + records["MicroAccessTime"],
                                          0)
 
-        records["costFareMM"] = np.where(records["tripMode"] == "Micro-Mobility",
-                                         records["sovTime"] * self.properties["costPerMinuteMicroMobility"] +
-                                         self.properties["baseFareMicroMobility"],
+            records["distanceMM"] = np.where(records["tripMode"] == "Micro-Mobility",
+                                             records["sovTime"] * self.properties["microMobilitySpeed"] / 60,
+                                             0)
+
+            records["costFareMM"] = np.where(records["tripMode"] == "Micro-Mobility",
+                                             records["sovTime"] * self.properties["costPerMinuteMicroMobility"] +
+                                             self.properties["baseFareMicroMobility"],
+                                             0)
+
+            records["timeMT"] = np.where(records["tripMode"] == "Micro-Transit",
+                                         records["sovTime"] + self.properties["accessTimeMicroTransit"] +
+                                         self.properties["waitTimeMicroTransit"],
                                          0)
 
-        records["timeMT"] = np.where(records["tripMode"] == "Micro-Transit",
-                                     records["sovTime"] + self.properties["accessTimeMicroTransit"] +
-                                     self.properties["waitTimeMicroTransit"],
-                                     0)
+            records["distanceMT"] = np.where(records["tripMode"] == "Micro-Transit",
+                                             records["sovTime"] * self.properties["microTransitSpeed"] / 60,
+                                             0)
 
-        records["distanceMT"] = np.where(records["tripMode"] == "Micro-Transit",
-                                         records["sovTime"] * self.properties["microTransitSpeed"] / 60,
-                                         0)
+            records["costFareMT"] = np.where(records["tripMode"] == "Micro-Transit",
+                                             records["sovTime"] * self.properties["costPerMinuteMicroTransit"] +
+                                             self.properties["baseFareMicroTransit"],
+                                             0)
 
-        records["costFareMT"] = np.where(records["tripMode"] == "Micro-Transit",
-                                         records["sovTime"] * self.properties["costPerMinuteMicroTransit"] +
-                                         self.properties["baseFareMicroTransit"],
-                                         0)
-
-        # return result set of walk/micro-mobility/micro-transit trips
-        # that use auto mode skim set
-        return records[["tripID",
-                        "timeWalk",
-                        "distanceWalk",
-                        "timeMM",
-                        "distanceMM",
-                        "costFareMM",
-                        "timeMT",
-                        "distanceMT",
-                        "costFareMT"]]
+            # return result set of walk/micro-mobility/micro-transit trips
+            # that use auto mode skim set
+            return records[["tripID",
+                            "timeWalk",
+                            "distanceWalk",
+                            "timeMM",
+                            "distanceMM",
+                            "costFareMM",
+                            "timeMT",
+                            "distanceMT",
+                            "costFareMT"]]
 
     def walk_transit_skims(self, df: pd.DataFrame) -> pd.DataFrame:
         """ Takes an input Pandas DataFrame containing the ABM fields
