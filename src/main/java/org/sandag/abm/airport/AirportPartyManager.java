@@ -550,20 +550,40 @@ public class AirportPartyManager
             	// if employee
             	if (parties[i].getPurpose() == AirportModelStructure.EMPLOYEE)
             	{
-            		String record = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
-                            + parties[i].getPurpose() + "," + parties[i].getSize() + ","
-                            + parties[i].getIncome() + "," + parties[i].getNights() + ","
-                            + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
-                            + parties[i].getDestinationMGRA() + "," 
-                            + parties[i].getOriginTAZ() + "," + parties[i].getDestinationTAZ() + ","
-                            + parties[i].getMode() + ","
-                            + (parties[i].getAvAvailable() ? 1 : 0) + ","
-                            + parties[i].getArrivalMode() + "," + parties[i].getAP2TerminalBoardTap() + "," + 
-                            + parties[i].getAP2TerminalAlightTap() + "," + parties[i].getAP2TerminalSet() + "," + 
-                            String.format("%9.2f", parties[i].getValueOfTime()) + "\n");
-                    writer.print(record);
-                    
-                    continue;
+            		if (parties[i].getMode() == SandagModelStructure.WALK_TRANSIT_ALTS[0])
+            		{
+            			String record = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
+                                + parties[i].getPurpose() + "," + parties[i].getSize() + ","
+                                + parties[i].getIncome() + "," + parties[i].getNights() + ","
+                                + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
+                                + parties[i].getDestinationMGRA() + "," 
+                                + parties[i].getOriginTAZ() + "," + parties[i].getDestinationTAZ() + ","
+                                + parties[i].getMode() + ","
+                                + (parties[i].getAvAvailable() ? 1 : 0) + ","
+                                + parties[i].getArrivalMode() + "," + parties[i].getAP2TerminalBoardTap() + "," + 
+                                + parties[i].getAP2TerminalAlightTap() + "," + parties[i].getAP2TerminalSet() + "," + 
+                                String.format("%9.2f", parties[i].getValueOfTime()) + "\n");
+                        writer.print(record);
+                        
+                        continue;
+            		}
+            		else
+            		{
+            			String record = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
+                                + parties[i].getPurpose() + "," + parties[i].getSize() + ","
+                                + parties[i].getIncome() + "," + parties[i].getNights() + ","
+                                + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
+                                + parties[i].getDestinationMGRA() + "," 
+                                + parties[i].getOriginTAZ() + "," + parties[i].getDestinationTAZ() + ","
+                                + parties[i].getMode() + ","
+                                + (parties[i].getAvAvailable() ? 1 : 0) + ","
+                                + parties[i].getArrivalMode() + "," + 0 + "," + 
+                                + 0 + "," + parties[i].getAP2TerminalSet() + "," + 
+                                String.format("%9.2f", parties[i].getValueOfTime()) + "\n");
+                        writer.print(record);
+                        
+                        continue;
+            		}
             	}
             	
             	int airportAccessMgra = parties[i].getAirportAccessMGRA();
