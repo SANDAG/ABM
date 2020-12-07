@@ -1,6 +1,4 @@
-
-
-#annotate_tables:
+# annotate_tables:
 #  - tablename: land_use
 #    annotate:
 #      SPEC: annotate_landuse

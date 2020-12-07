@@ -11,7 +11,12 @@ chunk_size: 0
 trace_hh_id:
 
 # input tables
-# input_table_list:
+input_table_list:
+  - tablename: land_use
+    filename: mgra13_based_input2016.csv
+    index_col: MAZ
+    rename_columns:
+      mgra: MAZ
 #   - tablename: households
 #     filename: households_asim.csv
 #     index_col: household_id
@@ -199,7 +204,7 @@ want_dest_choice_sample_tables: False
 #resume_after: initialize_tvpb
 
 models:
-  # - initialize_landuse
+  - initialize_landuse
   # - initialize_households
   - initialize_tours_cb
   # --- STATIC cache prebuild steps
