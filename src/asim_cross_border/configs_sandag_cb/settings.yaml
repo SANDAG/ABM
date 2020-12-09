@@ -205,6 +205,7 @@ want_dest_choice_sample_tables: False
 
 models:
   - initialize_landuse
+  - compute_poe_accessibility
   # - initialize_households
   - initialize_tours_cb
   # --- STATIC cache prebuild steps
