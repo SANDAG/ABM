@@ -671,7 +671,7 @@ Assignment matrices and resulting network flows are always in PCE.
         create_attribute = modeller.tool(
             "inro.emme.data.extra_attribute.create_extra_attribute")
         traffic_assign = modeller.tool(
-            "sandag.utilities.stochastic_traffic_assignment")
+            "solutions.stochastic_traffic_assignment")
         net_calc = gen_utils.NetworkCalculator(scenario)
 
         p = period.lower()
