@@ -1,0 +1,69 @@
+data_dir: data
+
+maz_input_fname: mgra13_based_input2016.csv
+maz_id_field: 'mgra'
+maz_output_fname: mazs.csv
+poe_id_field: poe_id
+poe_access_field: 'colonia_pop_accessibility'
+
+colonia_input_fname: crossBorder_supercolonia.csv
+colonia_pop_field: 'Population'
+distance_param: -0.19
+
+poes:
+  0:
+    name: San Ysidro
+    maz_id: 7090
+  1:
+    name: Otay Mesa
+    maz_id: 7066
+  2:
+    name: Tecate
+    maz_id: 21895
+  3:
+    name: Otay Mesa East
+    maz_id: 7123
+  4:
+    name: Jacumba
+    maz_id: 22094
+
+tours:
+  num_tours: 113995
+  purpose_shares:
+    work: 0.254
+    school: 0.041
+    cargo: 0.012
+    shop: 0.547
+    visit: 0.088
+    other: 0.058
+  lane_shares_by_purpose: 
+    work:
+      regular: 0.1
+      sentri: 0.2
+      ready: 0.2
+      ped: 0.5
+    school:
+      regular: 0.1
+      sentri: 0.2
+      ready: 0.2
+      ped: 0.5
+    cargo:
+      regular: 0.1
+      sentri: 0.2
+      ready: 0.2
+      ped: 0.5
+    shop:
+      regular: 0.1
+      sentri: 0.2
+      ready: 0.2
+      ped: 0.5
+    visit:
+      regular: 0.1
+      sentri: 0.2
+      ready: 0.2
+      ped: 0.5
+    other:
+      regular: 0.1
+      sentri: 0.2
+      ready: 0.2
+      ped: 0.5

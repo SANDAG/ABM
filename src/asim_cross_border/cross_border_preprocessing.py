@@ -4,32 +4,19 @@ import os
 import yaml
 from collections import OrderedDict
 
-colonia_fname = 'crossBorder_supercolonia.csv'
-maz_input_fname = 'mgra13_based_input2016.csv'
-maz_output_fname = 'mazs.csv'
-data_dir = 'data'
-config_dir = 'configs_sandag_cb'
-tour_settings_fname = 'initialize_tours.yaml'
 
-distance_param = -0.19
-colonia_pop_field = 'Population'
-poe_access_field = 'poe_population_accessibility'
+def create_poe_mazs(poe_settings, mazs, poe_id_field):
 
-
-def create_poe_mazs(colonias, mazs, colonia_pop_field=colonia_pop_field):
-
-    poe_mazs = pd.DataFrame(columns=list(mazs.columns) + ['poe_id'])
+    poe_mazs = pd.DataFrame(columns=list(mazs.columns) + [poe_id_field])
     poe_dist_cols = [col for col in colonias.columns if 'Distance_' in col]
 
     for i, poe in enumerate(poe_dist_cols):
-        poe_mazs = poe_mazs.append({'poe_id': i}, ignore_index=True)
+        poe_mazs = poe_mazs.append({poe_id_field: i}, ignore_index=True)
 
     return poe_mazs
 
 
-def compute_poe_accessibility(
-        poe_id, colonias, colonia_pop_field=colonia_pop_field,
-        distance_param=distance_param):
+def compute_poe_accessibility(poe_id, colonias, colonia_pop_field, distance_param):
 
     pop = colonias[colonia_pop_field]
     dist_col = 'Distance_poe' + str(int(poe_id))
@@ -41,10 +28,7 @@ def compute_poe_accessibility(
     return total_poe_pop_access
 
 
-def create_tours(tour_settings_fname, config_dir=config_dir):
-
-    with open(os.path.join(config_dir, tour_settings_fname)) as f:
-        tour_settings = yaml.load(f)
+def create_tours(tour_settings):
 
     num_tours = tour_settings['num_tours']
     purpose_probs = OrderedDict(tour_settings['purpose_shares'])
@@ -95,22 +79,44 @@ def create_persons(num_households):
 
 
 if __name__ == '__main__':
+
+    # load settings
+    with open('cross_border_preprocessing.yaml') as f:
+        settings = yaml.load(f)
+    data_dir = settings['data_dir']
+    maz_input_fname = settings['maz_input_fname']
+    maz_id_field = settings['maz_id_field']
+    maz_output_fname = settings['maz_output_fname']
+    poe_id_field = settings['poe_id_field']
+    poe_access_field = settings['poe_access_field']
+    colonia_input_fname = settings['colonia_input_fname']
+    colonia_pop_field = settings['colonia_pop_field']
+    distance_param = settings['distance_param']
+    tour_settings = settings['tours']
+    poe_settings = settings['poes']
     
     # read input data
-    colonias = pd.read_csv(os.path.join(data_dir, colonia_fname))
-    mazs = pd.read_csv(os.path.join(data_dir, maz_fname))
+    colonias = pd.read_csv(os.path.join(data_dir, colonia_input_fname))
+    mazs = pd.read_csv(os.path.join(data_dir, maz_input_fname))
 
-    # create poe maz rows
-    poe_mazs = create_poe_mazs(colonias, mazs)
+    # get poe id
+    mazs[poe_id_field] = None
+    for poe_id, poe_attrs in poe_settings.items():
+        maz_mask = mazs[maz_id_field] == poe_attrs['maz_id']
+        mazs.loc[maz_mask, poe_id_field] = poe_id
 
     # compute poe accessibility
-    poe_mazs[poe_access_field] = poe_mazs['poe_id'].apply(compute_poe_accessibility, colonias=colonias)
+    mazs[poe_access_field] = None
+    poe_mask = ~pd.isnull(mazs[poe_id_field])
+    mazs.loc[poe_mask, poe_access_field] = mazs.loc[poe_mask, poe_id_field].apply(
+        compute_poe_accessibility, colonias=colonias, colonia_pop_field=colonia_pop_field,
+        distance_param=distance_param)
 
     # add poe mazs to maz file
     mazs = mazs.append(poe_mazs, ignore_index=True)
 
     # create tours
-    tours = create_tours(tour_settings_fname)
+    tours = create_tours(tour_settings)
 
     # create households, 1 per tour
     num_tours = len(tours)
@@ -123,9 +129,9 @@ if __name__ == '__main__':
     num_households = len(households)
     persons = create_persons(num_households)
 
-    # store results
-    mazs.to_csv(os.path.join(data_dir, maz_output_fname))
+    store results
+    mazs.to_csv(os.path.join(data_dir, maz_output_fname), index=False)
     tours.to_csv(os.path.join(data_dir, tours))
-    households.to_csv(os.path.join(data_dir, households))
-    persons.to_csv(os.path.join(data_dir, persons))
+    households.to_csv(os.path.join(data_dir, households), index=False)
+    persons.to_csv(os.path.join(data_dir, persons), index=False)
 

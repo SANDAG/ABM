@@ -10,8 +10,3 @@ CONSTANTS:
   maximum_walk_distance: 3.0
   # perceived minute of in-vehicle time for every minute of out-of-vehicle time
   out_of_vehicle_time_weight: 2.0
-
-colonia_to_poe_dists: crossBorder_supercolonia.csv
-colonia_pop_field: Population
-colonia_pop_access_field: poe_population_accessibility
-colonia_distance_parameter: -0.19
