@@ -119,7 +119,7 @@ if __name__ == '__main__':
     tours = create_tours(tour_settings)
 
     # create households, 1 per tour
-    num_tours = len(tours)
+    num_tours = tour_settings['num_tours']
     households = create_households(num_tours)
 
     # assign tours to households
@@ -129,7 +129,7 @@ if __name__ == '__main__':
     num_households = len(households)
     persons = create_persons(num_households)
 
-    store results
+    # store results
     mazs.to_csv(os.path.join(data_dir, maz_output_fname), index=False)
     tours.to_csv(os.path.join(data_dir, tours))
     households.to_csv(os.path.join(data_dir, households), index=False)
