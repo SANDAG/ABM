@@ -13,5 +13,5 @@ CONSTANTS:
 
 colonia_to_poe_dists: crossBorder_supercolonia.csv
 colonia_pop_field: Population
-lu_poe_pop_access_field: poe_population_accessibility
-distance_parameter: -0.19
+colonia_pop_access_field: poe_population_accessibility
+colonia_distance_parameter: -0.19
