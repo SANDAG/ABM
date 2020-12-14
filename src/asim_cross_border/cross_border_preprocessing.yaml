@@ -2,13 +2,17 @@ data_dir: data
 
 maz_input_fname: mgra13_based_input2016.csv
 maz_id_field: 'mgra'
-maz_output_fname: mazs.csv
 poe_id_field: poe_id
 poe_access_field: 'colonia_pop_accessibility'
 
 colonia_input_fname: crossBorder_supercolonia.csv
 colonia_pop_field: 'Population'
 distance_param: -0.19
+
+mazs_output_fname: mazs_xborder.csv
+households_output_fname: households_xborder.csv
+persons_output_fname: persons_xborder.csv
+tours_output_fname: tours_xborder.csv
 
 poes:
   0:

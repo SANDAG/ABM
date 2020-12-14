@@ -1,5 +1,5 @@
 Description,Target,Expression
-,tour_category,tours.tour_category.str.lower()
+#,tour_category,tours.tour_category.str.lower()
 ,tour_purpose,tours.tour_purpose.str.lower()
 #,, NOTE: the following might not be correct for all tour types, but is correct for work tours
 ,tour_type,tours.tour_purpose.str.lower()

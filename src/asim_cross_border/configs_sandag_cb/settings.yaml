@@ -13,26 +13,19 @@ trace_hh_id:
 # input tables
 input_table_list:
   - tablename: land_use
-    filename: mgra13_based_input2016.csv
+    filename: mazs_xborder.csv
     index_col: MAZ
     rename_columns:
       mgra: MAZ
-#   - tablename: households
-#     filename: households_asim.csv
-#     index_col: household_id
-#     rename_columns:
-#       HHID: household_id
-#       MAZ: home_zone_id
-#     keep_columns:
-#       - home_zone_id
-#       - HHINCADJ
-#       - NWRKRS_ESR
-#       - VEH
-#       - NP
-      #- MTCCountyID
-      #- HHT
-      #- BLD
-      #- TYPE
+  - tablename: households
+    filename: households_xborder.csv
+    index_col: household_id
+  - tablename: persons
+    filename: persons_xborder.csv
+    index_col: person_id
+  - tablename: tours
+    filename: tours_xborder.csv
+    index_col: tour_id
 
   # - tablename: persons
   #   filename: persons_asim.csv
@@ -205,9 +198,8 @@ want_dest_choice_sample_tables: False
 
 models:
   - initialize_landuse
-  - compute_poe_accessibility
-  # - initialize_households
-  - initialize_tours_cb
+  - initialize_households
+  - initialize_tours
   # --- STATIC cache prebuild steps
   # single-process step to create attribute_combination list
   # - initialize_los

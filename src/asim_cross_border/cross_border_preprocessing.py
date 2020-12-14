@@ -38,16 +38,16 @@ def create_tours(tour_settings):
     
     tours = pd.DataFrame(
         index=range(tour_settings['num_tours']),
-        columns=['lane_type', 'lane_id', 'purpose', 'purpose_id'])
+        columns=['lane_type', 'lane_id', 'tour_purpose', 'purpose_id'])
     tours.index.name = 'tour_id'
 
     purpose_cum_probs = np.array(list(purpose_probs.values())).cumsum()
     purpose_scaled_probs = np.subtract(purpose_cum_probs, np.random.rand(num_tours, 1))
     purpose = np.argmax((purpose_scaled_probs + 1.0).astype('i4'), axis=1)
     tours['purpose_id'] = purpose
-    tours['purpose'] = tours['purpose_id'].map(id_to_purpose)
+    tours['tour_purpose'] = tours['purpose_id'].map(id_to_purpose)
 
-    for purpose, df in tours.groupby('purpose'):
+    for purpose, df in tours.groupby('tour_purpose'):
         lane_probs = OrderedDict(lane_shares_by_purpose[purpose])
         id_to_lane = {i: lane for i, lane in enumerate(lane_probs.keys())}
         lane_cum_probs = np.array(list(lane_probs.values())).cumsum()
@@ -86,7 +86,6 @@ if __name__ == '__main__':
     data_dir = settings['data_dir']
     maz_input_fname = settings['maz_input_fname']
     maz_id_field = settings['maz_id_field']
-    maz_output_fname = settings['maz_output_fname']
     poe_id_field = settings['poe_id_field']
     poe_access_field = settings['poe_access_field']
     colonia_input_fname = settings['colonia_input_fname']
@@ -94,6 +93,10 @@ if __name__ == '__main__':
     distance_param = settings['distance_param']
     tour_settings = settings['tours']
     poe_settings = settings['poes']
+    mazs_output_fname = settings['mazs_output_fname']
+    households_output_fname = settings['households_output_fname']
+    persons_output_fname = settings['persons_output_fname']
+    tours_output_fname = settings['tours_output_fname']
     
     # read input data
     colonias = pd.read_csv(os.path.join(data_dir, colonia_input_fname))
@@ -105,15 +108,12 @@ if __name__ == '__main__':
         maz_mask = mazs[maz_id_field] == poe_attrs['maz_id']
         mazs.loc[maz_mask, poe_id_field] = poe_id
 
-    # compute poe accessibility
+    # compute colonia accessibility for poe mazs
     mazs[poe_access_field] = None
     poe_mask = ~pd.isnull(mazs[poe_id_field])
     mazs.loc[poe_mask, poe_access_field] = mazs.loc[poe_mask, poe_id_field].apply(
         compute_poe_accessibility, colonias=colonias, colonia_pop_field=colonia_pop_field,
         distance_param=distance_param)
-
-    # add poe mazs to maz file
-    mazs = mazs.append(poe_mazs, ignore_index=True)
 
     # create tours
     tours = create_tours(tour_settings)
@@ -130,8 +130,8 @@ if __name__ == '__main__':
     persons = create_persons(num_households)
 
     # store results
-    mazs.to_csv(os.path.join(data_dir, maz_output_fname), index=False)
-    tours.to_csv(os.path.join(data_dir, tours))
-    households.to_csv(os.path.join(data_dir, households), index=False)
-    persons.to_csv(os.path.join(data_dir, persons), index=False)
+    mazs.to_csv(os.path.join(data_dir, mazs_output_fname), index=False)
+    tours.to_csv(os.path.join(data_dir, tours_output_fname))
+    households.to_csv(os.path.join(data_dir, households_output_fname), index=False)
+    persons.to_csv(os.path.join(data_dir, persons_output_fname), index=False)
 
