@@ -227,7 +227,7 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
-            <!-- 
+            
             <plugin>
 	            <groupId>org.codehaus.mojo</groupId>
 	            <artifactId>exec-maven-plugin</artifactId>
@@ -245,7 +245,7 @@
 	              <executable>src/main/resources/setup.bat</executable>
 	            </configuration>
 	        </plugin>
-	        -->
+	        
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -308,7 +308,7 @@
                             </resources>
                         </configuration>
                     </execution>
-                    <!--
+                    
                     <execution>
                         <id>copy-python-resources</id>
                         <phase>package</phase>
@@ -325,7 +325,7 @@
                             </resources>
                         </configuration>
                     </execution> 
-                    -->
+                    
                     <execution>
                         <id>copy-distribution-resources</id>
                         <phase>package</phase>
