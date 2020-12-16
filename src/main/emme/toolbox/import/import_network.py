@@ -584,8 +584,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 # managed lanes, free for HOV2 and HOV3+, tolls for SOV
                 if arc["ITOLLO"] + arc["ITOLLA"] + arc["ITOLLP"] > 0:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV2
-                # special case of I-15 managed lanes
-                elif arc["IFC"] == 1 and arc["IPROJ"] in [41, 42, 486]:
+                # special case of I-15 managed lanes base year and 2020, no build
+                elif arc["IFC"] == 1 and arc["IPROJ"] in [41, 42, 486, 373, 711]:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV2
                 elif arc["IFC"] == 8 or arc["IFC"] == 9:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV2
@@ -595,8 +595,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 # managed lanes, free for HOV3+, tolls for SOV and HOV2
                 if arc["ITOLLO"] + arc["ITOLLA"] + arc["ITOLLP"]  > 0:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV3
-                # special case of I-15 managed lanes
-                elif arc["IFC"] == 1 and arc["IPROJ"] in [41, 42, 486]:
+                # special case of I-15 managed lanes for base year and 2020, no build 
+                elif arc["IFC"] == 1 and arc["IPROJ"] in [41, 42, 486, 373, 711]:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV3
                 elif arc["IFC"] == 8 or arc["IFC"] == 9:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV3
