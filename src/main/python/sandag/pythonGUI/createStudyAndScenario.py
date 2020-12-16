@@ -69,8 +69,8 @@ class CreateScenarioGUI(Tkinter.Frame):
             Tkinter.Label(body, text=u"Version", font=("Helvetica", 8, 'bold')).grid(row=9)
             var = StringVar(root)
 			#need to update to version_13_3_3
-            self.version="version_13_3_3"
-            optionList=["version_13_3_0", "version_13_3_2", "version_13_3_3"]
+            self.version="version_13_3_2"
+            optionList=["version_13_3_2", "version_13_3_3"]
             option=Tkinter.OptionMenu(body,var,*optionList,command=self.setversion)
             option.config(width=50)
             option.grid(row=9, column=1)
