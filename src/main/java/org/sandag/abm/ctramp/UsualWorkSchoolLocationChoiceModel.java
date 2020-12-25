@@ -294,7 +294,7 @@ public class UsualWorkSchoolLocationChoiceModel
         				endIndex = startEndIndices[1];
 
         				//check if there's work to do (JEF)
-        				if(workLocationResultsOK(startIndex, endIndex, householdDataManager))
+        				if(innerLoop>0 && workLocationResultsOK(startIndex, endIndex, householdDataManager))
         					continue;
         				
         				if (useNewSoaMethod)
@@ -505,7 +505,7 @@ public class UsualWorkSchoolLocationChoiceModel
         				endIndex = startEndIndices[1];
         				
         				//check if there's work to do (JEF)
-        				if(schoolLocationResultsOK(startIndex, endIndex, householdDataManager))
+        				if(innerLoop>0 && schoolLocationResultsOK(startIndex, endIndex, householdDataManager))
         					continue;
 
         				if (useNewSoaMethod)
@@ -917,13 +917,11 @@ public class UsualWorkSchoolLocationChoiceModel
 	        	Person p = persons[k];
 	        	
 	            // skip person if they are not a student
-	            if (p.getPersonIsStudent() != 1)
-	            	continue;
-	            
-	            //student, but no work location!
-	            if(p.getPersonSchoolLocationZone()==0)
-	            	return false;
-	        }
+	            if ((p.getPersonIsPreschoolChild() == 1 || p.getPersonIsStudentNonDriving() == 1
+	                    || p.getPersonIsStudentDriving() == 1 || p.getPersonIsUniversityStudent() == 1)
+	            		&& (p.getPersonSchoolLocationZone()==0)) return false;
+	        
+	        	}
         }
     	return true;
     }
