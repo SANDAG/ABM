@@ -110,7 +110,7 @@ public class VisitorModel
                 tazDistanceCalculator.getStoredToTazFromAllTazsDistanceSkims());
 
         VisitorTourTimeOfDayChoiceModel todChoiceModel = new VisitorTourTimeOfDayChoiceModel(rbMap);
-        VisitorTourDestChoiceModel destChoiceModel = new VisitorTourDestChoiceModel(rbMap, modelStructure, dmuFactory, logsumsCalculator);
+        VisitorTourDestChoiceModel destChoiceModel = new VisitorTourDestChoiceModel(rbMap, modelStructure, dmuFactory, tazDistanceCalculator);
         VisitorTourModeChoiceModel tourModeChoiceModel = destChoiceModel.getTourModeChoiceModel();
         //VisitorTripModeChoiceModel tripModeChoiceModel = tourModeChoiceModel.getTripModeChoiceModel();
         destChoiceModel.calculateSizeTerms(dmuFactory);
@@ -119,8 +119,8 @@ public class VisitorModel
         VisitorStopFrequencyModel stopFrequencyModel = new VisitorStopFrequencyModel(rbMap);
         VisitorStopPurposeModel stopPurposeModel = new VisitorStopPurposeModel(rbMap);
         VisitorStopTimeOfDayChoiceModel stopTodChoiceModel = new VisitorStopTimeOfDayChoiceModel(rbMap);
-        VisitorStopLocationChoiceModel stopLocationChoiceModel = new VisitorStopLocationChoiceModel(rbMap, modelStructure, dmuFactory, logsumsCalculator);
-        VisitorTripModeChoiceModel tripModeChoiceModel = new VisitorTripModeChoiceModel(rbMap, modelStructure, dmuFactory, logsumsCalculator);
+        VisitorStopLocationChoiceModel stopLocationChoiceModel = new VisitorStopLocationChoiceModel(rbMap, modelStructure, dmuFactory, tazDistanceCalculator);
+        VisitorTripModeChoiceModel tripModeChoiceModel = new VisitorTripModeChoiceModel(rbMap, modelStructure, dmuFactory, tazDistanceCalculator);
         double[][] mgraSizeTerms = destChoiceModel.getMgraSizeTerms();
         double[][] tazSizeTerms = destChoiceModel.getTazSizeTerms();
         double[][][] mgraProbabilities = destChoiceModel.getMgraProbabilities();

@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoAndNonMotorizedSkimsCalculator;
+import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
@@ -32,6 +33,7 @@ public class VisitorTripModeChoiceModel
     private static final String                PROPERTIES_UEC_DATA_SHEET  = "visitor.trip.mc.data.page";
     private static final String                PROPERTIES_UEC_MODEL_SHEET = "visitor.trip.mc.model.page";
     private static final String                PROPERTIES_UEC_FILE        = "visitor.trip.mc.uec.file";
+    private AutoTazSkimsCalculator   tazDistanceCalculator;
 
     /**
      * Constructor.
@@ -43,7 +45,7 @@ public class VisitorTripModeChoiceModel
      */
     public VisitorTripModeChoiceModel(HashMap<String, String> propertyMap,
             VisitorModelStructure myModelStructure, VisitorDmuFactoryIf dmuFactory,
-            McLogsumsCalculator myLogsumHelper)
+            AutoTazSkimsCalculator tazDistanceCalculator)
     {
         tazs = TazDataManager.getInstance(propertyMap);
         mgraManager = MgraDataManager.getInstance(propertyMap);
@@ -53,8 +55,14 @@ public class VisitorTripModeChoiceModel
         lsWgtAvgCostH = mgraManager.getLsWgtAvgCostH();
 
         modelStructure = myModelStructure;
-        logsumHelper = myLogsumHelper;
-
+        this.tazDistanceCalculator = tazDistanceCalculator;
+        
+        logsumHelper = new McLogsumsCalculator();
+        logsumHelper.setupSkimCalculators(propertyMap);
+        logsumHelper.setTazDistanceSkimArrays(
+                tazDistanceCalculator.getStoredFromTazToAllTazsDistanceSkims(),
+                tazDistanceCalculator.getStoredToTazFromAllTazsDistanceSkims());
+  
         setupTripModeChoiceModel(propertyMap, dmuFactory);
 
     }

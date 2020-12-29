@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.apache.log4j.Logger;
+import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
@@ -108,7 +109,7 @@ public class VisitorTourDestChoiceModel
      */
     public VisitorTourDestChoiceModel(HashMap<String, String> rbMap,
             VisitorModelStructure modelStructure, VisitorDmuFactoryIf dmuFactory,
-            McLogsumsCalculator logsumsCalculator)
+            AutoTazSkimsCalculator tazDistanceCalculator)
     {
 
         this.rbMap = rbMap;
@@ -188,7 +189,7 @@ public class VisitorTourDestChoiceModel
         sampleLogsums = new double[sampleRate + 1];
 
         tourModeChoiceModel = new VisitorTourModeChoiceModel(rbMap, modelStructure, dmuFactory,
-                logsumsCalculator);
+        		tazDistanceCalculator);
 
     }
 

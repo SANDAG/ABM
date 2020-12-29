@@ -3,6 +3,7 @@ package org.sandag.abm.visitor;
 import java.io.Serializable;
 import java.util.HashMap;
 import org.apache.log4j.Logger;
+import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
@@ -54,7 +55,7 @@ public class VisitorTourModeChoiceModel
 
     private ChoiceModelApplication   mcModel;
     private VisitorTourModeChoiceDMU mcDmuObject;
-    private McLogsumsCalculator      logsumsCalculator;
+    private McLogsumsCalculator      logsumHelper;
 
     private VisitorModelStructure    modelStructure;
 
@@ -63,6 +64,7 @@ public class VisitorTourModeChoiceModel
     private String[]                 modeAltNames;
 
     private boolean                  saveUtilsProbsFlag              = false;
+    private AutoTazSkimsCalculator   tazDistanceCalculator;
 
     /**
      * Constructor.
@@ -74,12 +76,18 @@ public class VisitorTourModeChoiceModel
      */
     public VisitorTourModeChoiceModel(HashMap<String, String> propertyMap,
             VisitorModelStructure myModelStructure, VisitorDmuFactoryIf dmuFactory,
-            McLogsumsCalculator myLogsumHelper)
+            AutoTazSkimsCalculator tazDistanceCalculator)
     {
 
         mgraManager = MgraDataManager.getInstance(propertyMap);
         modelStructure = myModelStructure;
-        logsumsCalculator = myLogsumHelper;
+        this.tazDistanceCalculator = tazDistanceCalculator;
+        
+        logsumHelper = new McLogsumsCalculator();
+        logsumHelper.setupSkimCalculators(propertyMap);
+        logsumHelper.setTazDistanceSkimArrays(
+                tazDistanceCalculator.getStoredFromTazToAllTazsDistanceSkims(),
+                tazDistanceCalculator.getStoredToTazFromAllTazsDistanceSkims());
 
         mcDmuObject = dmuFactory.getVisitorTourModeChoiceDMU();
         setupModeChoiceModelApplicationArray(propertyMap);
@@ -135,9 +143,9 @@ public class VisitorTourModeChoiceModel
             mcModel.choiceModelUtilityTraceLoggerHeading(choiceModelDescription, decisionMakerLabel);
         }
 
-        double logsum = logsumsCalculator.calculateTourMcLogsum(tour.getOriginMGRA(),
-                tour.getDestinationMGRA(), tour.getDepartTime(), tour.getArriveTime(), mcModel,
-                mcDmuObject);
+        
+        mcModel.computeUtilities(mcDmuObject, mcDmuObject.getDmuIndexValues());
+        double logsum = mcModel.getLogsum();
 
         // write UEC calculation results to separate model specific log file
         if (tour.getDebugChoiceModels())
@@ -174,7 +182,7 @@ public class VisitorTourModeChoiceModel
         mcDmuObject.setAutoAvailable(tour.getAutoAvailable());
         mcDmuObject.setPartySize(tour.getNumberOfParticipants());
         mcDmuObject.setTourPurpose(tour.getPurpose());
-        logsumsCalculator.setTourMcDmuAttributes(mcDmuObject, tour.getOriginMGRA(),
+        logsumHelper.setTourMcDmuAttributes(mcDmuObject, tour.getOriginMGRA(),
                 tour.getDestinationMGRA(), tour.getDepartTime(), tour.getArriveTime(),
                 tour.getDebugChoiceModels());
 
@@ -239,12 +247,12 @@ public class VisitorTourModeChoiceModel
             // tour object; if not transit tour attributes remain null.
             if (modelStructure.getTourModeIsTransit(chosen))
             {
-                tour.setBestWtwTapPairsOut(logsumsCalculator.getBestWtwTapsOut());
-                tour.setBestWtwTapPairsIn(logsumsCalculator.getBestWtwTapsIn());
-                tour.setBestWtdTapPairsOut(logsumsCalculator.getBestWtdTapsOut());
-                tour.setBestWtdTapPairsIn(logsumsCalculator.getBestWtdTapsIn());
-                tour.setBestDtwTapPairsOut(logsumsCalculator.getBestDtwTapsOut());
-                tour.setBestDtwTapPairsIn(logsumsCalculator.getBestDtwTapsIn());
+                tour.setBestWtwTapPairsOut(logsumHelper.getBestWtwTapsOut());
+                tour.setBestWtwTapPairsIn(logsumHelper.getBestWtwTapsIn());
+                tour.setBestWtdTapPairsOut(logsumHelper.getBestWtdTapsOut());
+                tour.setBestWtdTapPairsIn(logsumHelper.getBestWtdTapsIn());
+                tour.setBestDtwTapPairsOut(logsumHelper.getBestDtwTapsOut());
+                tour.setBestDtwTapPairsIn(logsumHelper.getBestDtwTapsIn());
             }
 
         } else

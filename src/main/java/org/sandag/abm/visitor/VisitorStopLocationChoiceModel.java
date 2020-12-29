@@ -2,6 +2,7 @@ package org.sandag.abm.visitor;
 
 import java.util.HashMap;
 import org.apache.log4j.Logger;
+import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
@@ -131,13 +132,18 @@ public class VisitorStopLocationChoiceModel
      */
     public VisitorStopLocationChoiceModel(HashMap<String, String> propertyMap,
             VisitorModelStructure myModelStructure, VisitorDmuFactoryIf dmuFactory,
-            McLogsumsCalculator myLogsumHelper)
+            AutoTazSkimsCalculator tazDistanceCalculator)
     {
         mgraManager = MgraDataManager.getInstance(propertyMap);
         tazManager = TazDataManager.getInstance(propertyMap);
 
         modelStructure = myModelStructure;
-        logsumHelper = myLogsumHelper;
+        logsumHelper = new McLogsumsCalculator();
+        logsumHelper.setupSkimCalculators(propertyMap);
+        // this sets by thread, so do it outside of initialization
+        logsumHelper.setTazDistanceSkimArrays(
+                 tazDistanceCalculator.getStoredFromTazToAllTazsDistanceSkims(),
+                 tazDistanceCalculator.getStoredToTazFromAllTazsDistanceSkims());
 
         setupStopLocationChoiceModel(propertyMap, dmuFactory);
 
