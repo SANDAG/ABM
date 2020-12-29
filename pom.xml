@@ -1,4 +1,5 @@
 
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -47,26 +48,11 @@
         <JAVA_64_PATH>C:\Progra~1\Java\jre7</JAVA_64_PATH>
         <JAVA_32_PATH>C:\Progra~2\Java\jre7</JAVA_32_PATH>
         <workpath>WORKPATH</workpath>
-        <database_server>sql2014a8</database_server>
-        <database_name>abm_13_2_3</database_name>
+        <database_server>socioeca8</database_server>
+        <database_name>abm_13_3_3</database_name>
         <jppf_version>5.0.1</jppf_version>
     </properties>
     <profiles>
-         <profile>
-            <id>2010</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <year>2010</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>                
-                <workShadowPricing.iteration>ShadowPricingOutput_work_44.csv</workShadowPricing.iteration>
-                <schoolShadowPricing.iteration>ShadowPricingOutput_school_24.csv</schoolShadowPricing.iteration>
-            </properties>
-        </profile>
          <profile>
             <id>2012</id>
             <properties>
@@ -92,57 +78,9 @@
             </properties>
         </profile>
         <profile>
-            <id>2015</id>
-            <properties>
-                <year>2015</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>              
-                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
-                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
-            </properties>
-        </profile>
-        <profile>
-            <id>2016</id>
-            <properties>
-                <year>2016</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>              
-                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
-                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
-            </properties>
-        </profile>
-        <profile>
-            <id>2017</id>
-            <properties>
-                <year>2017</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2010.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2010.xls</crossBorder.dc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2010.xls</tourdest.uec.file>              
-                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
-                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
-            </properties>
-        </profile>
-        <profile>
             <id>2020</id>
             <properties>
                 <year>2020</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2020.xls</tourdest.uec.file>           
-                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
-                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
-            </properties>
-        </profile>
-        <profile>
-            <id>2023</id>
-            <properties>
-                <year>2023</year>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
@@ -164,33 +102,9 @@
             </properties>
         </profile>
         <profile>
-            <id>2026</id>
-            <properties>
-                <year>2026</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2020.xls</tourdest.uec.file>                   
-                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
-                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
-            </properties>
-        </profile>
-        <profile>
             <id>2030</id>
             <properties>
                 <year>2030</year>
-                <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
-                <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
-                <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
-                <tourdest.uec.file>TourDestinationChoice2020.xls</tourdest.uec.file>                   
-                <workShadowPricing.iteration>ShadowPricingOutput_work_19.csv</workShadowPricing.iteration>
-                <schoolShadowPricing.iteration>ShadowPricingOutput_school_19.csv</schoolShadowPricing.iteration>
-            </properties>
-        </profile>
-        <profile>
-            <id>2032</id>
-            <properties>
-                <year>2032</year>
                 <crossborder.dc.soa.alts.file>CrossBorderDestinationChoiceSoaAlternatives2015.csv</crossborder.dc.soa.alts.file>    
                 <crossBorder.dc.uec.file>CrossBorderDestinationChoice2015.xls</crossBorder.dc.uec.file>
                 <crossBorder.trip.mc.uec.file>CrossBorderTripModeChoice_OME.xls</crossBorder.trip.mc.uec.file>
@@ -313,6 +227,7 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
+            
             <plugin>
 	            <groupId>org.codehaus.mojo</groupId>
 	            <artifactId>exec-maven-plugin</artifactId>
@@ -330,6 +245,7 @@
 	              <executable>src/main/resources/setup.bat</executable>
 	            </configuration>
 	        </plugin>
+	        
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -392,6 +308,7 @@
                             </resources>
                         </configuration>
                     </execution>
+                    
                     <execution>
                         <id>copy-python-resources</id>
                         <phase>package</phase>
@@ -408,6 +325,7 @@
                             </resources>
                         </configuration>
                     </execution> 
+                    
                     <execution>
                         <id>copy-distribution-resources</id>
                         <phase>package</phase>
@@ -512,6 +430,7 @@
                                         <include>copy_networks.cmd</include>
                                         <include>BatchSubstitute.bat</include>
                                         <include>copy_networkfiles_to_study.cmd</include>
+                                        <include>createStudyAndScenario.bat</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -797,4 +716,3 @@
         </repository>
     </repositories>
 </project>
-

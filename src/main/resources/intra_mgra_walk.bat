@@ -1,0 +1,11 @@
+set PROJECT_DRIVE=%1
+set PROJECT_DIRECTORY=%2
+set PROJECT_DIRECTORY_FWD=%3
+set scenarioYear=%4
+
+%PROJECT_DRIVE%
+set "SCEN_DIR=%PROJECT_DRIVE%%PROJECT_DIRECTORY%"
+set "SCEN_DIR_FWD=%PROJECT_DRIVE%%PROJECT_DIRECTORY_FWD%"
+set "SCEN_Year=%scenarioYear%"
+
+python.exe %SCEN_DIR%\python\completeWalk.py %SCEN_Year% %SCEN_DIR_FWD%/input/ %SCEN_DIR_FWD%/output/
