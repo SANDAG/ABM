@@ -140,6 +140,10 @@ Macro "Run SANDAG ABM"
 	  if !ok then goto quit  
    end
 
+   runString = path+"\\bin\\intra_mgra_walk.bat "+drive+" "+path_no_drive+" "+path_forward_slash+" "+scenarioYear
+   RunMacro("HwycadLog",{"sandag_abm_master.rsc:","intra_mgra_walk"+" "+runString})
+   ok = RunMacro("TCB Run Command", 1, "intra_mgra_walk", runString)  
+   
    // copy initial trip tables from input to output folder
    if skipCopyWarmupTripTables = "false" then do
 	   CopyFile(inputDir+"\\trip_EA.mtx", outputDir+"\\trip_EA.mtx")

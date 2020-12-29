@@ -71,7 +71,7 @@ public class VisitorTourEstimationFile
                 tazDistanceCalculator.getStoredToTazFromAllTazsDistanceSkims());
 
         tourModeChoiceModel = new VisitorTourModeChoiceModel(rbMap, myModelStructure, dmuFactory,
-                logsumsCalculator);
+        		tazDistanceCalculator);
 
         // open file
         estimationData = openFile(inputFileName);
