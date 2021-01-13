@@ -1,11 +1,11 @@
 #
 annotate_tables:
-  - tablename: persons
-    annotate:
-      SPEC: annotate_persons
-      DF: persons
-      TABLES:
-        - households
+  # - tablename: persons
+  #   annotate:
+  #     SPEC: annotate_persons
+  #     DF: persons
+  #     TABLES:
+  #       - households
   - tablename: households
     annotate:
       SPEC: annotate_households
