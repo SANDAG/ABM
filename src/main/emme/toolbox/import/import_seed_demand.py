@@ -183,8 +183,10 @@ class ImportMatrices(_m.Tool(), gen_utils.Snapshot):
                 else:
                     # Allow multiple src matrices from OMX to sum to same matrix in Emme
                     matrices_to_write[emme_name] = omx_data + matrices_to_write[emme_name]
-        except:
-            omx_file_obj.close()
+        except Exception as error:
+            import traceback
+            print (traceback.format_exc())
+        omx_file_obj.close()
 
         if omx_zones != emme_zones:
             # special custom mapping from subset of TAPs to all TAPs
