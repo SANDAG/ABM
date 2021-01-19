@@ -1,4 +1,5 @@
 data_dir: data
+config_dir: configs_sandag_xborder
 
 maz_input_fname: mgra13_based_input2016.csv
 maz_id_field: 'mgra'
@@ -36,6 +37,9 @@ skims:
   tap_to_tap:
     input_fname: transit_skims.omx
     output_fname: transit_skims_xborder.omx
+  taz_to_taz:
+    input_fname: traffic_skims_AM.omx
+    output_fname: traffic_skims_xborder.omx
 
 poes:
   0:
