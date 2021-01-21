@@ -672,14 +672,12 @@ public class AirportPartyManager
     {
 
         int[] taps = new int[2];
-        
-        Modes.TransitMode[] mode = Modes.TransitMode.values();
 
         // APM is coded as light rail
-        int rideMode = AirportModelStructure.rideModeLRT_index;
+        int rideMode = sandagStructure.getRideModeIndexForTripMode(SandagModelStructure.WALK_LRT);
         
         // walk-LRT trip mode
-        int AP2TerminalTransitMode = SandagModelStructure.WALK_TRANSIT_ALTS[rideMode];
+        int AP2TerminalTransitMode = SandagModelStructure.WALK_LRT;
 
         party.setAP2TerminalTransitMode(AP2TerminalTransitMode);
         
@@ -688,9 +686,10 @@ public class AirportPartyManager
         // if there's no best path for light rail, loop through and find the available ride mode
         	if (taps == null)
         	{
-        		for (int i = 0; i < mode.length; i++)
+        		for (int i = 0; i < SandagModelStructure.WALK_TRANSIT_ALTS.length; i++)
         		{
-        			taps = party.getAPtoTermBestWtwTapPairs(mode[i].ordinal());
+        			rideMode = sandagStructure.getRideModeIndexForTripMode(SandagModelStructure.WALK_TRANSIT_ALTS[i]);
+        			taps = party.getAPtoTermBestWtwTapPairs(rideMode);
         			
         			if (taps != null)
         			{

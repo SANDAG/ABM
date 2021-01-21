@@ -60,8 +60,6 @@ public final class AirportModelStructure
     public static final int     SR3        		= 2;
     public static final int     Transit         = 3;
     
-    public static final int     rideModeLRT_index     = 3;
-    
     public static final int     employeePark_MGRA_index = 1;
     public static final int     employeePark_stall_index = 2;
     public static final int     employeePark_terminalpct_index = 3;

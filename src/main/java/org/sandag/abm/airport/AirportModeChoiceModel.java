@@ -413,11 +413,10 @@ public class AirportModeChoiceModel
         int tripMode = 0;
         int occupancy = AirportModelStructure.getOccupancy(accessMode, party.getSize());
         double randomNumber = party.getRandom();
-
+        
         if (accessMode != AirportModelStructure.TRANSIT)
         {
-        	int chosenAirportMgra = dmu.mode_mgra_map.get(accessMode);
-        	int chosenAirportMgra_index = dmu.mgra_index_map.get(chosenAirportMgra);
+        	int chosenAirportMgra_index = dmu.mgra_index_map.get(airportAccessMGRA);
             if (occupancy == 1)
             {
                 int choice = driveAloneModel[chosenAirportMgra_index].getChoiceResult(randomNumber);
@@ -432,17 +431,17 @@ public class AirportModeChoiceModel
                 tripMode = choice + 3 + 2;
             }
             
-            if (chosenAirportMgra != dmu.getTerminalMgra())
+            if (airportAccessMGRA != dmu.getTerminalMgra())
             {
             	if (direction == 0)
             	{
-            		int[][] walkTransitTapPairs_AP2Term = wtw.getBestTapPairs(chosenAirportMgra, dmu.getTerminalMgra(), skimPeriod, debug,
+            		int[][] walkTransitTapPairs_AP2Term = wtw.getBestTapPairs(airportAccessMGRA, dmu.getTerminalMgra(), skimPeriod, debug,
                             logger);
                     party.setAPtoTermBestWtwTapPairs(walkTransitTapPairs_AP2Term);
             	}
             	else
             	{
-            		int[][] walkTransitTapPairs_AP2Term = wtw.getBestTapPairs(dmu.getTerminalMgra(), chosenAirportMgra, skimPeriod, debug,
+            		int[][] walkTransitTapPairs_AP2Term = wtw.getBestTapPairs(dmu.getTerminalMgra(), airportAccessMGRA, skimPeriod, debug,
                             logger);
                     party.setAPtoTermBestWtwTapPairs(walkTransitTapPairs_AP2Term);
             	}
