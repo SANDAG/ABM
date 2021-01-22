@@ -29,6 +29,15 @@ def calc_auto_sufficiency(hh_df, autos_col, hh_size):
 
     hh_df[autos_col] = hh_df[autos_col].map(sufficiency)
 
+def list_from_str(string):
+    
+    l = re.split(',\s?', string.strip())
+    
+    if '' in l:
+        l.remove('')
+
+    return l
+
 def create_configs():
 
     config_strs = [
@@ -73,10 +82,7 @@ def create_configs():
         global CONFIG
         for w in widges: 
             if w.name in ['hh_id_col', 'income_labels', 'mode_labels', 'prob_cols', 'util_cols', 'layer_shapefiles']:
-                val = re.split(',\s?', w.value.strip())
-
-                if '' in val:
-                    val.remove('')
+                val = list_from_str(w.value)
 
             else:
                 val = w.value.strip()
@@ -101,9 +107,9 @@ def create_configs():
             assert len(CONFIG['prob_cols']) == len(CONFIG['mode_labels']), 'One column per mode is required'
             assert len(CONFIG['util_cols']) == len(CONFIG['mode_labels']), 'One column per mode is required'
 
-            # store min/max of probs and utils for choropleth binning
-            probs = tour_df[CONFIG['prob_cols']].values
-            utils = tour_df[CONFIG['util_cols']].values
+            # store bins of probs and utils as comma-separated lists
+            probs = ', '.join(map(str, pd.cut(tour_df[CONFIG['prob_cols']].values.flatten(), 6, retbins=True, include_lowest=True)[1].round(2)))
+            utils = ', '.join(map(str, pd.cut(tour_df[CONFIG['util_cols']].values.flatten(), 6, retbins=True, include_lowest=True)[1].round(2)))
 
             ozone_list = sorted(list(tour_df[CONFIG['ozone_col']].unique()))
             dzone_list = sorted(list(tour_df[CONFIG['dzone_col']].unique()))
@@ -155,10 +161,8 @@ def create_configs():
                 'zone_df': zone_df,
                 'layer_dfs': layer_dfs,
                 'center': center,
-                # use min/max of probability/utility values from tour df.
-                # cap minimum utility at -10
-                'prob_range': [probs.min().round(2), probs.max().round(2)],
-                'util_range': [max(-9.99, utils.min().round(2)), utils.max().round(2)],
+                'prob_bins': probs,
+                'util_bins': utils,
             })
 
         # display filter controls once configs are validated
@@ -243,38 +247,21 @@ def zone_interaction():
     direction.observe(handle_direction_change, names='value')
 
     shade = widgets.RadioButtons(options=['Probability', 'Utility'], description='Shade by -')
-    bin_range = widgets.FloatRangeSlider(
-        value=[0, 1],
-        min=0,
-        max=1.0,
-        step=0.02,
-        description='Bin Range -',
+    bin_list = widgets.Text(
+        description='Bins -',
+        value=CONFIG['prob_bins'],
         disabled=False,
-        continuous_update=True,
-        orientation='horizontal',
-        readout=True,
-        readout_format='.2f',
     ) 
 
     def handle_shade_change(change):
         if change.new == 'Utility':
-            bin_range.min, bin_range.max = CONFIG['util_range']
-            bin_range.value = CONFIG['util_range']
+            bin_list.value = CONFIG['util_bins']
 
         else:
-            bin_range.min, bin_range.max = CONFIG['prob_range']
-            bin_range.value = CONFIG['prob_range']
+            bin_list.value = CONFIG['prob_bins']
             
     shade.observe(handle_shade_change, names='value')
 
-    bin_num = widgets.BoundedIntText(
-        value=6,
-        min=1,
-        max=10,
-        step=1,
-        description='Bin Count -',
-        disabled=False
-    )
     mode = widgets.Dropdown(options=CONFIG['mode_labels'], description='Mode -')
     purpose = widgets.Dropdown(options=['All'] + CONFIG['purposes'], description='Purpose -')
     income = widgets.Dropdown(options=['All'] + list(CONFIG['income_labels']), description='Income -')
@@ -289,8 +276,7 @@ def zone_interaction():
         direction,
         zone_num,
         shade,
-        bin_range,
-        bin_num,
+        bin_list,
         mode,
         purpose,
         income,
@@ -313,6 +299,7 @@ def zone_interaction():
             mode_value = val_from_label(CONFIG['mode_labels'], shade_list, mode.value)
             income_value = val_from_label(CONFIG['income_labels'], CONFIG['incomes'], income.value)
             autos_value = val_from_label(CONFIG['autos_labels'], CONFIG['autos'], autos.value)
+            bins = list(map(float, list_from_str(bin_list.value)))
 
             ft = filter_tours(
                 zone_num.value,
@@ -322,10 +309,8 @@ def zone_interaction():
                 income=income_value,
                 autos=autos_value)
 
-            ft = ft[(ft[mode_value] >= bin_range.value[0]) &
-                    (ft[mode_value] <= bin_range.value[1])]
-
-            bins = pd.cut(bin_range.value, bin_num.value, retbins=True)[1] 
+            ft = ft[(ft[mode_value] >= bins[0]) &
+                    (ft[mode_value] <= bins[-1])]
 
             if ft.empty:
                 output.clear_output()
