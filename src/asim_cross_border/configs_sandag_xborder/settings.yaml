@@ -8,23 +8,13 @@ households_sample_size: 500
 chunk_size: 0
 
 #trace_hh_id: 662398
-trace_hh_id:
+# trace_hh_id: 57
 
 # input tables
 input_table_list:
   - tablename: households
     filename: households_xborder.csv
     index_col: household_id
-    # keep_columns:
-    #   - home_zone_id
-    #   - HHINCADJ
-    #   - NWRKRS_ESR
-    #   - VEH
-    #   - NP
-      #- MTCCountyID
-      #- HHT
-      #- BLD
-      #- TYPE
 
   - tablename: persons
     filename: persons_xborder.csv
@@ -32,20 +22,6 @@ input_table_list:
     rename_columns:
       HHID: household_id
       PERID: person_id
-    # keep_columns:
-      # - AGEP
-      # - household_id
-      # - type
-      # - value_of_time
-      # - fp_choice
-      #- SEX
-      #- SCHL
-      #- OCCP
-      #- WKHP
-      #- WKW
-      #- EMPLOYED
-      #- ESR
-      #- SCHG
 
   - tablename: land_use
     filename: mazs_xborder.csv
@@ -54,121 +30,10 @@ input_table_list:
       MAZ: zone_id
       pop: POP
       MicroAccessTime: TERMINALTIME
-    keep_columns:
-      - TAZ
-      - POP
-      - emp_total
-      - hparkcost
-      - TERMINALTIME
-      - hh
-      - land_acres
-      - popden
-      - empden
-      # - county_id
-#      - level_0
-#      - index
-#      - MAZ_ORIGINAL
-#      - TAZ_ORIGINAL
-#      - DistName
-#      - CountyID
-#      - CountyName
-#      - HH
-#      - ag
-#      - art_rec
-#      - constr
-#      - eat
-#      - ed_high
-#      - ed_k12
-#      - ed_oth
-#      - fire
-#      - gov
-#      - health
-#      - hotel
-#      - info
-#      - lease
-#      - logis
-#      - man_bio
-#      - man_lgt
-#      - man_hvy
-#      - man_tech
-#      - natres
-#      - prof
-#      - ret_loc
-#      - ret_reg
-#      - serv_bus
-#      - serv_pers
-#      - serv_soc
-#      - transp
-#      - util
-#      - publicEnrollGradeKto8
-#      - privateEnrollGradeKto8
-#      - publicEnrollGrade9to12
-#      - privateEnrollGrade9to12
-#      - comm_coll_enroll
-#      - EnrollGradeKto8
-#      - EnrollGrade9to12
-#      - collegeEnroll
-#      - otherCollegeEnroll
-#      - AdultSchEnrl
-#      - hstallsoth
-#      - hstallssam
-#      - dstallsoth
-#      - dstallssam
-#      - mstallsoth
-#      - mstallssam
-#      - park_area
-#      - numfreehrs
-#      - dparkcost
-#      - mparkcost
-#      - ech_dist
-#      - hch_dist
-#      - parkarea
-#      - MAZ_X
-#      - MAZ_Y
-#      - TotInt
-#      - EmpDen
-#      - RetEmpDen
-#      - DUDen
-#      - PopDen
-#      - IntDenBin
-#      - EmpDenBin
-#      - DuDenBin
-#      - PopEmpDenPerMi
-#      - mgra
-#      - mgraParkArea
-#      - lsWgtAvgCostM
-#      - lsWgtAvgCostD
-#      - lsWgtAvgCostH
 
   - tablename: tours
     filename: tours_xborder.csv
     index_col: tour_id
-    # keep_columns:
-    #   - person_id
-    #   - household_id
-    #   - purpose_id
-      # - tour_category
-      # - tour_purpose
-      # - orig_mgra
-      # - dest_mgra
-      # - start
-      # - end
-      # ctramp tm2 fields for validation
-      # - tm2_tour_id  # really just ordinal position in ctramp tour file, put probably will be useful for validation
-      # - tm2_tour_mode
-      # - tm2_out_btap
-      # - tm2_out_atap
-      # - tm2_in_btap
-      # - tm2_in_atap
-      # - tm2_out_set
-      # - tm2_in_set
-#      - person_num
-#      - person_type
-#      - tour_distance
-#      - tour_time
-#      - atWork_freq
-#      - num_ob_stops
-#      - num_ib_stops
 
 
 # set false to disable variability check in simple_simulate and interaction_simulate
@@ -185,7 +50,7 @@ use_shadow_pricing: False
 # (if True, tables will be written if DEST_CHOICE_SAMPLE_TABLE_NAME is specified in individual model settings)
 want_dest_choice_sample_tables: False
 
-resume_after: initialize_tvpb
+resume_after: _
 
 models:
   - initialize_landuse

@@ -4,64 +4,36 @@ SAMPLE_SPEC: tour_od_choice_sample.csv
 SPEC: tour_od_choice.csv
 COEFFICIENTS: tour_od_choice_coeffs.csv
 
-# LOGSUM_SETTINGS: tour_mode_choice.yaml
-# LOGSUM_PREPROCESSOR: nontour_preprocessor
-# LOGSUM_TOUR_PURPOSE: work
+SIMULATE_CHOOSER_COLUMNS:
+  - tour_category
+  - tour_purpose
 
-# model-specific logsum-related settings
-# CHOOSER_ORIG_COL_NAME: home_zone_id  # only need if using logsums
-ALT_DEST_COL_NAME: alt  # needed for any model that calls location_choice.py or tour_destination.py
+ALT_DEST_COL_NAME: tour_od_id
 
+ORIG_COL_NAME: origin_zone_id
+DEST_COL_NAME: destination_zone_id
 
+# filter to identify potential origin zones from the land use table
+ORIG_FILTER: "poe_id == poe_id"  # trick to use pandas query syntax to filter out rows with null-valued poe_id's
 
 DEST_CHOICE_COLUMN_NAME: tour_od_id
-# comment out DEST_CHOICE_LOGSUM_COLUMN_NAME if not desired in persons table
-# DEST_CHOICE_LOGSUM_COLUMN_NAME: workplace_location_logsum
 
-# comment out DEST_CHOICE_LOGSUM_COLUMN_NAME if saved alt logsum table
 DEST_CHOICE_SAMPLE_TABLE_NAME: tour_od_location_sample
 
-# annotate_persons:
-#   SPEC: annotate_persons_workplace
-#   DF: persons
-#   TABLES:
-#     - land_use
-
-# annotate_households:
-#   SPEC: annotate_households_workplace
-#   DF: households
-#   TABLES:
-#     - persons
-
-# - shadow pricing
-
-# income_segment is in households, but we want to count persons
 CHOOSER_TABLE_NAME: tours
 
-# size_terms model_selector
-MODEL_SELECTOR: tour_od
+SIZE_TERM_SELECTOR: tour_od_choice
 
-# we can't use use household income_segment as this will also be set for non-workers
-# CHOOSER_SEGMENT_COLUMN_NAME: purpose_id
+CHOOSER_SEGMENT_COLUMN_NAME: tour_purpose
 
-# boolean column to filter choosers (True means keep)
-# CHOOSER_FILTER_COLUMN_NAME: is_worker
+ORIGIN_ATTR_COLS_TO_USE:
+  - poe_id
+  - colonia_pop_accessibility
 
-# FIXME - these are assigned to persons in annotate_persons. we need a better way to manage this
-# FIXME - these are not needed for this model and should be re/factored out
-# SEGMENT_IDS:
-#   work_low: 1
-#   work_med: 2
-#   work_high: 3
-#   work_veryhigh: 4
-
-# CONSTANTS:
-#   WORK_HIGH_SEGMENT_ID: 3
-
-
-# model adds these tables (informational - not added if commented out)
-# SHADOW_PRICE_TABLE: workplace_shadow_prices
-# MODELED_SIZE_TABLE: workplace_modeled_size
-
-# not loaded if commented out
-# SAVED_SHADOW_PRICE_TABLE_NAME: workplace_shadow_prices.csv
+SEGMENTS:
+  - work
+  - school
+  - cargo
+  - shop
+  - visit
+  - other

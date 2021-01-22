@@ -20,8 +20,6 @@ def compute_poe_accessibility(poe_id, colonias, colonia_pop_field, distance_para
 
 def create_tours(tour_settings):
 
-
-
     num_tours = tour_settings['num_tours']
     purpose_probs = OrderedDict(tour_settings['purpose_shares'])
     id_to_purpose = {i: purpose for i, purpose in enumerate(purpose_probs.keys())}
@@ -39,7 +37,7 @@ def create_tours(tour_settings):
     tours['purpose_id'] = purpose
     tours['tour_purpose'] = tours['purpose_id'].map(id_to_purpose)
     tours['tour_category'] = 'non_mandatory'
-    tours.loc[tours['tour_purpose'].isin(['work', 'school']), 'tour_category'] = 'mandatory'
+    tours.loc[tours['tour_purpose'].isin(['work', 'school', 'cargo']), 'tour_category'] = 'mandatory'
     tours['tour_type'] = 'cross_border'
 
     for purpose, df in tours.groupby('tour_purpose'):
@@ -117,13 +115,33 @@ def rename_skims(settings, skim_type):
         os.path.join(data_dir, skims_settings[skim_type]['input_fname']), 'a')
     skims.copy_file(
         os.path.join(data_dir, skims_settings[skim_type]['output_fname']), overwrite=True)
-    output_transit_skims = omx.open_file(
+    output_skims = omx.open_file(
         os.path.join(data_dir, skims_settings[skim_type]['output_fname']), 'a')
 
-    for skims_name in output_transit_skims.list_matrices():
+    for skims_name in output_skims.list_matrices():
         name_elems = skims_name.split('_')
         new_name = '_'.join(name_elems[1:]) + '__' + name_elems[0]
-        output_transit_skims[skims_name].rename(new_name)
+        output_skims[skims_name].rename(new_name)
+    skims.close()
+    output_skims.close()
+
+    return
+
+
+def create_taps_tap_lines(settings):
+    
+    skims_settings = settings['skims']
+    data_dir = settings['data_dir']
+
+    transit_skims = omx.open_file(
+        os.path.join(data_dir, skims_settings['tap_to_tap']['input_fname']), 'a')
+    all_taps = pd.DataFrame(pd.Series(list(transit_skims.root.lookup.zone_number)))
+    all_taps.columns = ['TAP']
+    all_taps.to_csv(os.path.join(data_dir, settings['taps_output_fname']), index=False)
+    tap_lines = pd.read_csv(os.path.join(data_dir, settings['tap_lines_input_fname']))
+    tap_lines.to_csv(os.path.join(data_dir, settings['tap_lines_output_fname'])) 
+
+    transit_skims.close()
 
     return
 
@@ -150,64 +168,55 @@ if __name__ == '__main__':
     skims_settings = settings['skims']
     
     # read input data
-    # colonias = pd.read_csv(os.path.join(data_dir, colonia_input_fname))
-    # mazs = pd.read_csv(os.path.join(data_dir, maz_input_fname))
+    colonias = pd.read_csv(os.path.join(data_dir, colonia_input_fname))
+    mazs = pd.read_csv(os.path.join(data_dir, maz_input_fname))
 
-    # # get poe id
-    # mazs[poe_id_field] = None
-    # for poe_id, poe_attrs in poe_settings.items():
-    #     maz_mask = mazs[maz_id_field] == poe_attrs['maz_id']
-    #     mazs.loc[maz_mask, poe_id_field] = poe_id
+    # get poe id
+    mazs[poe_id_field] = None
+    for poe_id, poe_attrs in poe_settings.items():
+        maz_mask = mazs[maz_id_field] == poe_attrs['maz_id']
+        mazs.loc[maz_mask, poe_id_field] = poe_id
 
-    # # compute colonia accessibility for poe mazs
-    # mazs[poe_access_field] = None
-    # poe_mask = ~pd.isnull(mazs[poe_id_field])
-    # mazs.loc[poe_mask, poe_access_field] = mazs.loc[poe_mask, poe_id_field].apply(
-    #     compute_poe_accessibility, colonias=colonias, colonia_pop_field=colonia_pop_field,
-    #     distance_param=distance_param)
-    # mazs = mazs.rename(columns={'mgra': 'MAZ', 'taz': 'TAZ'})
+    # compute colonia accessibility for poe mazs
+    mazs[poe_access_field] = None
+    poe_mask = ~pd.isnull(mazs[poe_id_field])
+    mazs.loc[poe_mask, poe_access_field] = mazs.loc[poe_mask, poe_id_field].apply(
+        compute_poe_accessibility, colonias=colonias, colonia_pop_field=colonia_pop_field,
+        distance_param=distance_param)
+    mazs = mazs.rename(columns={'mgra': 'MAZ', 'taz': 'TAZ'})
 
-    # # create tours and tour OD alternatives
-    # tours = create_tours(tour_settings)
-    # tour_od_alts = create_tour_od_alts(mazs, settings)
+    # create tours and tour OD alternatives
+    tours = create_tours(tour_settings)
+    tour_od_alts = create_tour_od_alts(mazs, settings)
 
-    # # create households, 1 per tour
-    # num_tours = tour_settings['num_tours']
-    # households = create_households(num_tours)
+    # create households, 1 per tour
+    num_tours = tour_settings['num_tours']
+    households = create_households(num_tours)
 
-    # # create persons, 1 per household
-    # num_households = len(households)
-    # persons = create_persons(num_households)
+    # create persons, 1 per household
+    num_households = len(households)
+    persons = create_persons(num_households)
 
-    # # assign tours to persons
-    # tours['household_id'] = np.random.choice(num_tours, num_tours, replace=False)
-    # tours['person_id'] = persons.set_index('household_id').reindex(tours['household_id'])['person_id']
+    # assign tours to persons
+    tours['household_id'] = np.random.choice(num_tours, num_tours, replace=False)
+    tours['person_id'] = persons.set_index('household_id').reindex(tours['household_id'])['person_id']
 
     # store results
-    # mazs.to_csv(os.path.join(data_dir, mazs_output_fname), index=False)
-    # tours.to_csv(os.path.join(data_dir, tours_output_fname))
-    # tour_od_alts.to_csv(os.path.join(settings['config_dir'], 'tour_od_choice_alternatives.csv'))
-    # households.to_csv(os.path.join(data_dir, households_output_fname), index=False)
-    # persons.to_csv(os.path.join(data_dir, persons_output_fname), index=False)
+    mazs.to_csv(os.path.join(data_dir, mazs_output_fname), index=False)
+    tours.to_csv(os.path.join(data_dir, tours_output_fname))
+    tour_od_alts.to_csv(os.path.join(settings['config_dir'], 'tour_od_choice_alternatives.csv'))
+    households.to_csv(os.path.join(data_dir, households_output_fname), index=False)
+    persons.to_csv(os.path.join(data_dir, persons_output_fname), index=False)
 
-    # # update skims/network data
-    # update_input_table(skims_settings['maz_to_maz']['walk'], data_dir)
-    # update_input_table(skims_settings['maz_to_tap']['walk'], data_dir)
+    # update skims/network data
+    update_input_table(skims_settings['maz_to_maz']['walk'], data_dir)
+    update_input_table(skims_settings['maz_to_tap']['walk'], data_dir)
 
     # rename transit and auto skims
     for skim_type in ['tap_to_tap', 'taz_to_taz']:
         rename_skims(settings, skim_type)
 
-    # # create taps and taplines
-    # all_taps = pd.DataFrame(pd.Series(list(transit_skims.root.lookup.zone_number)))
-    # all_taps.columns = ['TAP']
-    # all_taps.to_csv(os.path.join(data_dir, settings['taps_output_fname']), index=False)
-    # tap_lines = pd.read_csv(os.path.join(data_dir, settings['tap_lines_input_fname']))
-    # # tap_lines = tap_lines[tap_lines['TAP'].isin(all_taps)]  # not sure if this is necessary anymore
-    # tap_lines.to_csv(os.path.join(data_dir, settings['tap_lines_output_fname']))    
-
-    # # close skims files
-    # output_transit_skims.close()
-    # transit_skims.close()
+    # create taps and taplines
+    create_taps_tap_lines(settings)
     
 

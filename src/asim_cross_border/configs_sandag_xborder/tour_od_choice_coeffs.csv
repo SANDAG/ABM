@@ -1,17 +1,16 @@
-coefficient_name              ,value  ,constrain
-coef_dist                     ,-0.1250,F        
-coef_otay_mesa_mandatory      ,-0.8960,F        
-coef_otay_mesa_non_mandatory  ,-1.4960,F        
-coef_otay_mesa_calibration_adj,3.8858 ,F        
-coef_tecate_mandatory         ,1.5180 ,F        
-coef_tecate_non_mandatory     ,-0.1340,F        
-coef_tecate_calibration_adj   ,4.4856 ,F        
-coef_dist_0_2_mandatory       ,-0.7890,F        
-coef_dist_2_5_mandatory       ,-0.2030,F        
-coef_dist_5_20_mandatory      ,-0.1480,F        
-coef_dist_20_up_mandatory     ,-0.0680,F        
-coef_dist_0_2_non_mandatory   ,-0.4390,F        
-coef_dist_2_5_non_mandatory   ,-0.0700,F        
-coef_dist_5_20_non_mandatory  ,-0.1780,F        
-coef_dist_20_up_non_mandatory ,-0.0490,F        
-                              
+coefficient_name,value,constrain
+coef_dist,-0.1250,F
+coef_otay_mesa_mandatory,-0.8960,F
+coef_otay_mesa_non_mandatory,-1.4960,F
+coef_otay_mesa_calibration_adj,3.8858,F
+coef_tecate_mandatory,1.5180,F
+coef_tecate_non_mandatory,-0.1340,F
+coef_tecate_calibration_adj,4.4856,F
+coef_dist_0_2_mandatory,-0.7890,F
+coef_dist_2_5_mandatory,-0.2030,F
+coef_dist_5_20_mandatory,-0.1480,F
+coef_dist_20_up_mandatory,-0.0680,F
+coef_dist_0_2_non_mandatory,-0.4390,F
+coef_dist_2_5_non_mandatory,-0.0700,F
+coef_dist_5_20_non_mandatory,-0.1780,F
+coef_dist_20_up_non_mandatory,-0.0490,F

@@ -20,7 +20,7 @@ rebuild_tvpb_cache: True
 trace_tvpb_cache_as_csv: False
 
 taz_skims: 
-  - traffic_skims_AM.omx
+  - traffic_skims_xborder.omx
 
 tap_skims:
     # we require that skims for all tap_tap sets have unique names

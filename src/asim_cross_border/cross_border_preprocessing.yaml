@@ -63,10 +63,10 @@ tours:
   purpose_shares:
     work: 0.254
     school: 0.041
-    escort: 0.012
-    shopping: 0.547
-    social: 0.088
-    othdiscr: 0.058
+    cargo: 0.012
+    shop: 0.547
+    visit: 0.088
+    other: 0.058
   lane_shares_by_purpose: 
     work:
       regular: 0.1
@@ -78,22 +78,22 @@ tours:
       sentri: 0.2
       ready: 0.2
       ped: 0.5
-    escort:
+    cargo:
       regular: 0.1
       sentri: 0.2
       ready: 0.2
       ped: 0.5
-    shopping:
+    shop:
       regular: 0.1
       sentri: 0.2
       ready: 0.2
       ped: 0.5
-    social:
+    visit:
       regular: 0.1
       sentri: 0.2
       ready: 0.2
       ped: 0.5
-    othdiscr:
+    other:
       regular: 0.1
       sentri: 0.2
       ready: 0.2

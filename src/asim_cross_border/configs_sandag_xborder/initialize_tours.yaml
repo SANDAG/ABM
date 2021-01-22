@@ -5,3 +5,8 @@ annotate_tours:
   TABLES:
     - land_use
 
+# we want to skip this step bc we're generating our own
+# tour ID's in the pre-processing step and they don't have
+# any of the attributes that this method requires
+patch_tour_ids: False
+
