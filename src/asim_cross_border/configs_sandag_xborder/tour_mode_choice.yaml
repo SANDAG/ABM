@@ -2,9 +2,9 @@ LOGIT_TYPE: NL
 #LOGIT_TYPE: MNL
 
 tvpb_mode_path_types:
-  DRIVE_TRANSIT:
-    od: DTW
-    do: WTD
+  # DRIVE_TRANSIT:
+  #   od: DTW
+  #   do: WTD
   WALK_TRANSIT:
     od: WTW
     do: WTW
@@ -35,18 +35,6 @@ NESTS:
         coefficient: coef_nest_NONMOTORIZED
         alternatives:
           - WALK
-          - BIKE
-      - name: TRANSIT
-        coefficient:  coef_nest_TRANSIT
-        alternatives:
-          - WALK_TRANSIT
-          - DRIVE_TRANSIT
-      - name: RIDEHAIL
-        coefficient: coef_nest_RIDEHAIL
-        alternatives:
-          - TAXI
-          - TNC_SINGLE
-          - TNC_SHARED
 
 SPEC: tour_mode_choice.csv
 COEFFICIENTS: tour_mode_choice_coeffs.csv
