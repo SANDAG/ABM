@@ -1,4 +1,5 @@
 Description,Target,Expression,
+traveler has sentri pass,tour_sentri,df['lane_type'] == 'sentri'
 #,,,
 ,number_of_participants,1,
 ,is_joint,False,

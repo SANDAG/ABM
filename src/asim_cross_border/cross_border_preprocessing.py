@@ -212,6 +212,11 @@ if __name__ == '__main__':
         index='purpose_id', columns=['entry_period','return_period'], values='prob')
     scheduling_probs.columns = [str(col[0]) + '_' + str(col[1]) for col in scheduling_probs.columns]
 
+    # get poe wait times in the right place
+    poe_wait_times = pd.read_csv(os.path.join(data_dir, settings['poe_wait_times_input_fname']))
+    poe_wait_times = pd.merge(poe_wait_times, mazs[['MAZ','poe_id']], left_on='poe', right_on='poe_id')
+    poe_wait_times.to_csv(os.path.join(config_dir, settings['poe_wait_times_output_fname']))
+
     # store results
     mazs.to_csv(os.path.join(data_dir, mazs_output_fname), index=False)
     tours.to_csv(os.path.join(data_dir, tours_output_fname))
