@@ -330,7 +330,19 @@ class FileManagerTool(_m.Tool(), gen_utils.Snapshot):
                 self._stats["count"] += 1
                 # shutil.copy2 performs 5-10 times faster on download, and ~20% faster on upload
                 # than os.system copy calls 
-                _shutil.copy2(src_path, dst_path)
+                src_time = os.path.getmtime(src_path)
+                if name == 'persons.csv' or "mgra13_based" in name:
+                    src_time = os.path.getmtime(src_path)
+                    if os.path.exists(dst_path):
+                        dest_time = os.path.getmtime(dst_path)
+                        if dest_time <= src_time:
+                            _shutil.copy2(src_path, dst_path)
+                        else:
+                            pass
+                    else:
+                        _shutil.copy2(src_path, dst_path)
+                else:
+                    _shutil.copy2(src_path, dst_path)
                 self._report.append(_time.strftime("%c"))
             elif os.path.isdir(src_path):
                 if not os.path.exists(dst_path):
