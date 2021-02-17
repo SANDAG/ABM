@@ -589,7 +589,7 @@ public class AirportPartyManager
             	int airportAccessMgra = parties[i].getAirportAccessMGRA();
                 int accMode_null = -99;
                          
-                // if the arrival mode access point is transit, or it's an external trip
+                // if the arrival mode access point is transit
                 if (airportAccessMgra <= 0)
                 {
                 	String record = new String(parties[i].getID() + "," + AirportModelStructure.airport_travel_party_trip_leg_1 + "," + parties[i].getDirection() + ","
