@@ -492,7 +492,7 @@ public class AirportPartyManager
             throw new RuntimeException();
         }
         String headerString = new String(
-                "id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,tripMode,arrivalMode,boardingTAP,alightingTAP\n");
+                "travel_party_id,leg_id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,tripMode,arrivalMode,boardingTAP,alightingTAP\n");
         writer.print(headerString);
 
         // Iterate through the array, printing records to the file
@@ -505,7 +505,7 @@ public class AirportPartyManager
             	String record;
             	if (parties[i].getMode() == SandagModelStructure.WALK_ALTS[0])
             	{
-            		record = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
+            		record = new String(parties[i].getID() + "," + AirportModelStructure.airport_travel_party_trip_leg_1 + "," + parties[i].getDirection() + ","
                             + parties[i].getPurpose() + "," + parties[i].getSize() + ","
                             + parties[i].getIncome() + "," + parties[i].getNights() + ","
                             + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
@@ -516,7 +516,7 @@ public class AirportPartyManager
             	{
             		int[] tapsAP2Terminal = getAccessToTerminalTapPair(parties[i]);
                 	
-                	record = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
+                	record = new String(parties[i].getID() + "," + AirportModelStructure.airport_travel_party_trip_leg_1 + "," + parties[i].getDirection() + ","
                             + parties[i].getPurpose() + "," + parties[i].getSize() + ","
                             + parties[i].getIncome() + "," + parties[i].getNights() + ","
                             + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
@@ -537,7 +537,7 @@ public class AirportPartyManager
             // if the arrival mode access point is transit, or it's an external trip
             if (airportAccessMgra <= 0)
             {
-            	String record = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
+            	String record = new String(parties[i].getID() + "," + AirportModelStructure.airport_travel_party_trip_leg_1 + "," + parties[i].getDirection() + ","
                         + parties[i].getPurpose() + "," + parties[i].getSize() + ","
                         + parties[i].getIncome() + "," + parties[i].getNights() + ","
                         + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
@@ -557,7 +557,7 @@ public class AirportPartyManager
             	
             	if (parties[i].getDirection() == AirportModelStructure.DEPARTURE)
             	{
-            		record_Origin2Access = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
+            		record_Origin2Access = new String(parties[i].getID() + "," + AirportModelStructure.airport_travel_party_trip_leg_1 + "," + parties[i].getDirection() + ","
                             + parties[i].getPurpose() + "," + parties[i].getSize() + ","
                             + parties[i].getIncome() + "," + parties[i].getNights() + ","
                             + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
@@ -567,7 +567,7 @@ public class AirportPartyManager
             		// if access point is airport terminal, connection mode is walk
             		if (airportAccessMgra == airportMgra)
             		{     			
-            			record_Access2Destination = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
+            			record_Access2Destination = new String(parties[i].getID() + "," + AirportModelStructure.airport_travel_party_trip_leg_2 + "," + parties[i].getDirection() + ","
                                 + parties[i].getPurpose() + "," + parties[i].getSize() + ","
                                 + parties[i].getIncome() + "," + parties[i].getNights() + ","
                                 + parties[i].getDepartTime() + "," + parties[i].getAirportAccessMGRA() + ","
@@ -580,7 +580,7 @@ public class AirportPartyManager
 
                         int[] tapsAP2Terminal = getAccessToTerminalTapPair(parties[i]);
                         
-            			record_Access2Destination = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
+            			record_Access2Destination = new String(parties[i].getID() + "," + AirportModelStructure.airport_travel_party_trip_leg_2 + "," + parties[i].getDirection() + ","
                                 + parties[i].getPurpose() + "," + parties[i].getSize() + ","
                                 + parties[i].getIncome() + "," + parties[i].getNights() + ","
                                 + parties[i].getDepartTime() + "," + parties[i].getAirportAccessMGRA() + ","
@@ -592,7 +592,7 @@ public class AirportPartyManager
             	}
             	else
             	{
-            		record_Access2Destination = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
+            		record_Access2Destination = new String(parties[i].getID() + "," + AirportModelStructure.airport_travel_party_trip_leg_2 + "," + parties[i].getDirection() + ","
                             + parties[i].getPurpose() + "," + parties[i].getSize() + ","
                             + parties[i].getIncome() + "," + parties[i].getNights() + ","
                             + parties[i].getDepartTime() + "," + parties[i].getAirportAccessMGRA() + ","
@@ -601,7 +601,7 @@ public class AirportPartyManager
             		// if access point is airport terminal, connection mode is walk
             		if (airportAccessMgra == airportMgra)
             		{     			
-            			record_Origin2Access = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
+            			record_Origin2Access = new String(parties[i].getID() + "," + AirportModelStructure.airport_travel_party_trip_leg_1 + "," + parties[i].getDirection() + ","
                                 + parties[i].getPurpose() + "," + parties[i].getSize() + ","
                                 + parties[i].getIncome() + "," + parties[i].getNights() + ","
                                 + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
@@ -614,7 +614,7 @@ public class AirportPartyManager
 
                         int[] tapsAP2Terminal = getAccessToTerminalTapPair(parties[i]);
                         
-            			record_Origin2Access = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
+            			record_Origin2Access = new String(parties[i].getID() + "," + AirportModelStructure.airport_travel_party_trip_leg_1 + "," + parties[i].getDirection() + ","
                                 + parties[i].getPurpose() + "," + parties[i].getSize() + ","
                                 + parties[i].getIncome() + "," + parties[i].getNights() + ","
                                 + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","

@@ -64,7 +64,9 @@ public final class AirportModelStructure
     public static final int     employeePark_stall_index = 2;
     public static final int     employeePark_terminalpct_index = 3;
     public static final int     employeePark_transitpct_index = 4;
-
+    
+    public static final int     airport_travel_party_trip_leg_1 = 1;
+    public static final int     airport_travel_party_trip_leg_2 = 2;
 
     private AirportModelStructure()
     {
