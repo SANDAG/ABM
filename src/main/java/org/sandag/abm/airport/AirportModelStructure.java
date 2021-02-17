@@ -82,6 +82,9 @@ public final class AirportModelStructure
     public static final int     employeePark_terminalpct_index = 3;
     public static final int     employeePark_transitpct_index = 4;    
     
+    public static final int     airport_travel_party_trip_leg_1 = 1;
+    public static final int     airport_travel_party_trip_leg_2 = 2;
+    
     //reallocate the trip modes from the access choice model to ones that the trip table and other code can read, consistent with
     //resident models.
     public static final byte     REALLOCATE_WLKTRN     = 6; //walk access
