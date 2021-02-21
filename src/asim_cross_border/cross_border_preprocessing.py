@@ -108,22 +108,34 @@ def create_maz_to_tap_drive(mazs, drive_skims):
 
 def rename_skims(settings, skim_type):
     
-    skims_settings = settings['skims']
     data_dir = settings['data_dir']
+    skims_settings = settings['skims'][skim_type]
+    periods = skims_settings.get('periods', [None])
 
-    skims = omx.open_file(
-        os.path.join(data_dir, skims_settings[skim_type]['input_fname']), 'a')
-    skims.copy_file(
-        os.path.join(data_dir, skims_settings[skim_type]['output_fname']), overwrite=True)
-    output_skims = omx.open_file(
-        os.path.join(data_dir, skims_settings[skim_type]['output_fname']), 'a')
+    for period in periods:
+        print('Processing {0} {1} skims.'.format(period, skim_type))
+        if period:
+            input_base_fname = skims_settings['input_base_fname']
+            output_base_fname = skims_settings['output_base_fname']
+            input_fname = input_base_fname + '_' + period + '.omx'
+            output_fname = output_base_fname + '_' + period + '.omx'
+        else:
+            input_fname = skims_settings['input_fname']
+            output_fname = skims_settings['output_fname']
 
-    for skims_name in output_skims.list_matrices():
-        name_elems = skims_name.split('_')
-        new_name = '_'.join(name_elems[1:]) + '__' + name_elems[0]
-        output_skims[skims_name].rename(new_name)
-    skims.close()
-    output_skims.close()
+        skims = omx.open_file(
+            os.path.join(data_dir, input_fname), 'a')
+        skims.copy_file(
+            os.path.join(data_dir, output_fname), overwrite=True)
+        output_skims = omx.open_file(
+            os.path.join(data_dir, output_fname), 'a')
+
+        for skims_name in output_skims.list_matrices():
+            name_elems = skims_name.split('_')
+            new_name = '_'.join(name_elems[1:]) + '__' + name_elems[0]
+            output_skims[skims_name].rename(new_name)
+        skims.close()
+        output_skims.close()
 
     return
 
@@ -150,7 +162,7 @@ if __name__ == '__main__':
 
     # load settings
     with open('cross_border_preprocessing.yaml') as f:
-        settings = yaml.load(f)
+        settings = yaml.load(f, Loader=yaml.FullLoader)
     data_dir = settings['data_dir']
     config_dir = settings['config_dir']
     maz_input_fname = settings['maz_input_fname']
@@ -169,70 +181,72 @@ if __name__ == '__main__':
     settings['tour_scheduling_probs_output_fname']
     skims_settings = settings['skims']
     
-    # read input data
-    colonias = pd.read_csv(os.path.join(data_dir, colonia_input_fname))
-    mazs = pd.read_csv(os.path.join(data_dir, maz_input_fname))
+    # # read input data
+    # colonias = pd.read_csv(os.path.join(data_dir, colonia_input_fname))
+    # mazs = pd.read_csv(os.path.join(data_dir, maz_input_fname))
 
-    # get poe id
-    mazs[poe_id_field] = None
-    for poe_id, poe_attrs in poe_settings.items():
-        maz_mask = mazs[maz_id_field] == poe_attrs['maz_id']
-        mazs.loc[maz_mask, poe_id_field] = poe_id
+    # # get poe id
+    # mazs[poe_id_field] = None
+    # for poe_id, poe_attrs in poe_settings.items():
+    #     maz_mask = mazs[maz_id_field] == poe_attrs['maz_id']
+    #     mazs.loc[maz_mask, poe_id_field] = poe_id
 
-    # compute colonia accessibility for poe mazs
-    mazs[poe_access_field] = None
-    poe_mask = ~pd.isnull(mazs[poe_id_field])
-    mazs.loc[poe_mask, poe_access_field] = mazs.loc[poe_mask, poe_id_field].apply(
-        compute_poe_accessibility, colonias=colonias, colonia_pop_field=colonia_pop_field,
-        distance_param=distance_param)
-    mazs = mazs.rename(columns={'mgra': 'MAZ', 'taz': 'TAZ'})
+    # # compute colonia accessibility for poe mazs
+    # mazs[poe_access_field] = None
+    # poe_mask = ~pd.isnull(mazs[poe_id_field])
+    # mazs.loc[poe_mask, poe_access_field] = mazs.loc[poe_mask, poe_id_field].apply(
+    #     compute_poe_accessibility, colonias=colonias, colonia_pop_field=colonia_pop_field,
+    #     distance_param=distance_param)
+    # mazs = mazs.rename(columns={'mgra': 'MAZ', 'taz': 'TAZ'})
 
-    # create tours
-    tours = create_tours(tour_settings)
+    # # create tours
+    # tours = create_tours(tour_settings)
 
-    # create households, 1 per tour
-    num_tours = tour_settings['num_tours']
-    households = create_households(num_tours)
+    # # create households, 1 per tour
+    # num_tours = tour_settings['num_tours']
+    # households = create_households(num_tours)
 
-    # create persons, 1 per household
-    num_households = len(households)
-    persons = create_persons(num_households)
+    # # create persons, 1 per household
+    # num_households = len(households)
+    # persons = create_persons(num_households)
 
-    # assign tours to persons
-    households['tour_id'] = np.random.choice(num_tours, num_tours, replace=False)
-    persons['tour_id'] = households['tour_id'].reindex(persons['household_id'])
+    # # assign persons and households to tours
+    # tours['household_id'] = np.random.choice(num_tours, num_tours, replace=False)
+    # tours['person_id'] = persons.set_index('household_id').reindex(tours['household_id'])['person_id'].values
 
-    # reformat table of tour scheduling prob
-    scheduling_probs = pd.read_csv(
-        os.path.join(settings['data_dir'], settings['tour_scheduling_probs_input_fname']))
-    scheduling_probs.rename(columns={
-        'Purpose': 'purpose_id', 'EntryPeriod': 'entry_period',
-        'ReturnPeriod': 'return_period', 'Percent': 'prob'}, inplace=True)
-    scheduling_probs = scheduling_probs.pivot(
-        index='purpose_id', columns=['entry_period','return_period'], values='prob')
-    scheduling_probs.columns = [str(col[0]) + '_' + str(col[1]) for col in scheduling_probs.columns]
+    # # reformat table of tour scheduling prob
+    # scheduling_probs = pd.read_csv(
+    #     os.path.join(settings['data_dir'], settings['tour_scheduling_probs_input_fname']))
+    # scheduling_probs.rename(columns={
+    #     'Purpose': 'purpose_id', 'EntryPeriod': 'entry_period',
+    #     'ReturnPeriod': 'return_period', 'Percent': 'prob'}, inplace=True)
+    # scheduling_probs = scheduling_probs.pivot(
+    #     index='purpose_id', columns=['entry_period','return_period'], values='prob')
+    # scheduling_probs.columns = [str(col[0]) + '_' + str(col[1]) for col in scheduling_probs.columns]
 
-    # get poe wait times in the right place
-    poe_wait_times = pd.read_csv(os.path.join(data_dir, settings['poe_wait_times_input_fname']))
-    poe_wait_times = pd.merge(poe_wait_times, mazs[['MAZ','poe_id']], left_on='poe', right_on='poe_id')
-    poe_wait_times.to_csv(os.path.join(config_dir, settings['poe_wait_times_output_fname']))
+    # # get poe wait times in the right place
+    # poe_wait_times = pd.read_csv(os.path.join(data_dir, settings['poe_wait_times_input_fname']))
+    # poe_wait_times = pd.merge(poe_wait_times, mazs[['MAZ','poe_id']], left_on='poe', right_on='poe_id')
+    # poe_wait_times.to_csv(os.path.join(config_dir, settings['poe_wait_times_output_fname']))
 
-    # store results
-    mazs.to_csv(os.path.join(data_dir, mazs_output_fname), index=False)
-    tours.to_csv(os.path.join(data_dir, tours_output_fname))
-    households.to_csv(os.path.join(data_dir, households_output_fname), index=False)
-    persons.to_csv(os.path.join(data_dir, persons_output_fname), index=False)
-    scheduling_probs.to_csv(os.path.join(config_dir, settings['tour_scheduling_probs_output_fname']))
+    # # store results
+    # mazs.to_csv(os.path.join(data_dir, mazs_output_fname), index=False)
+    # tours.to_csv(os.path.join(data_dir, tours_output_fname))
+    # households.to_csv(os.path.join(data_dir, households_output_fname), index=False)
+    # persons.to_csv(os.path.join(data_dir, persons_output_fname), index=False)
+    # scheduling_probs.to_csv(os.path.join(config_dir, settings['tour_scheduling_probs_output_fname']))
 
-    # update skims/network data
-    update_input_table(skims_settings['maz_to_maz']['walk'], data_dir)
-    update_input_table(skims_settings['maz_to_tap']['walk'], data_dir)
+    # # update skims/network data
+    # update_input_table(skims_settings['maz_to_maz']['walk'], data_dir)
+    # update_input_table(skims_settings['maz_to_tap']['walk'], data_dir)
 
-    # rename transit and auto skims
-    for skim_type in ['tap_to_tap', 'taz_to_taz']:
+    # # rename transit and auto skims
+    for skim_type in [
+            # 'tap_to_tap',
+            'taz_to_taz']:
         rename_skims(settings, skim_type)
 
-    # create taps and taplines
-    create_taps_tap_lines(settings)
+    # # create taps and taplines
+    # create_taps_tap_lines(settings)
     
 

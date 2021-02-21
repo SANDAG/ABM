@@ -45,10 +45,13 @@ skims:
     output_fname: transit_skims_xborder.omx
   taz_to_taz:
     periods:
+      - EA
       - AM
       - MD
+      - PM
+      - EV
     input_base_fname: traffic_skims
-    output_fname: traffic_skims_xborder
+    output_base_fname: traffic_skims_xborder
 
 poes:
   0:

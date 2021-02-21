@@ -20,7 +20,11 @@ rebuild_tvpb_cache: True
 trace_tvpb_cache_as_csv: False
 
 taz_skims: 
-  - traffic_skims_xborder.omx
+  - traffic_skims_xborder_EA.omx
+  - traffic_skims_xborder_AM.omx
+  - traffic_skims_xborder_MD.omx
+  - traffic_skims_xborder_PM.omx
+  - traffic_skims_xborder_EV.omx
 
 tap_skims:
     # we require that skims for all tap_tap sets have unique names
@@ -76,12 +80,12 @@ TVPB_SETTINGS:    # find this in sandag bestPathTAP UEC
         tod: *skim_time_period_labels
       attributes_as_columns:
         - tod
-
     maz_tap_settings:
       walk:
         SPEC: tvpb_utility_walk_maz_tap.csv
         CHOOSER_COLUMNS:
-          - WALK_TRANSIT_DIST
+          - walkTime
+          - dist
 
     CONSTANTS:
       c_ivt: -0.028

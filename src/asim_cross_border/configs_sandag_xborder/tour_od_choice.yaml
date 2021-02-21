@@ -10,8 +10,10 @@ SIMULATE_CHOOSER_COLUMNS:
 
 ALT_DEST_COL_NAME: tour_od_id
 
-ORIG_COL_NAME: origin_zone_id
-DEST_COL_NAME: destination_zone_id
+# AFAIK, these column names need to be used bc the trip and tour
+# mode choice models use them as hard-coded skim keys
+ORIG_COL_NAME: origin
+DEST_COL_NAME: destination
 
 # filter to identify potential origin zones from the land use table
 ORIG_FILTER: "poe_id == poe_id"  # trick to use pandas query syntax to filter out rows with null-valued poe_id's
