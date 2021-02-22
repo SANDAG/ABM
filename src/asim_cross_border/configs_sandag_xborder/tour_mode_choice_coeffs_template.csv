@@ -1,7 +1,4 @@
 coefficient_name,shop,work,other,visit,cargo,school
-# trip mode choice logsum coeffs,,,,,,
-c_ivt,,,,,,
-c_cost,,,,,,
 # same for all segments,,,,,,
 coef_one,,,,,,
 coef_nest_root,,,,,,

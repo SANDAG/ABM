@@ -1,6 +1,4 @@
 coefficient_name,value,constrain
-
-# TOUR MODE CHOICE,,
 coef_one,1,T
 coef_nest_root,1.00,T
 coef_nest_AUTO_mandatory,.17,T
@@ -42,15 +40,24 @@ WALK_coef_calib_adj_nonmandatory,0.2989,T
 SHARED2_coef_work_mandatory,0.0275,T
 SHARED3_coef_work_mandatory,0.0935,T
 WALK_coef_work_mandatory,-1.2362,T
+SHARED2_coef_work_nonmandatory,0.0,T
+SHARED3_coef_work_nonmandatory,0.0,T
+WALK_coef_work_nonmandatory,0.0,T
 SHARED2_coef_school_mandatory,-0.0868,T
 SHARED3_coef_school_mandatory,0.0599,T
 WALK_coef_school_mandatory,-0.9567,T
 SHARED2_coef_school_nonmandatory,0.4940,T
 SHARED3_coef_school_nonmandatory,-0.0640,T
 WALK_coef_school_nonmandatory,0.4110,T
+SHARED2_coef_cargo_mandatory,0.0,T
+SHARED3_coef_cargo_mandatory,0.0,T
+WALK_coef_cargo_mandatory,0.0,T
 SHARED2_coef_cargo_nonmandatory,0.0729,T
 SHARED3_coef_cargo_nonmandatory,0.0819,T
 WALK_coef_cargo_nonmandatory,0.5089,T
+SHARED2_coef_shop_mandatory,0.0,T
+SHARED3_coef_shop_mandatory,0.0,T
+WALK_coef_shop_mandatory,0.0,T
 SHARED2_coef_shop_nonmandatory,-0.0608,T
 SHARED3_coef_shop_nonmandatory,-0.0361,T
 WALK_coef_shop_nonmandatory,0.6857,T

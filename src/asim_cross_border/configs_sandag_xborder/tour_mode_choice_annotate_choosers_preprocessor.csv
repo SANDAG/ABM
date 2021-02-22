@@ -1,6 +1,2 @@
-Description                                 ,Target                               ,Expression                                                                                                                                                                                                        ,
-# TRIP MODE CHOICE LOGSUM STUFF             ,                                     ,                                                                                                                                                                                                                  ,
-
-# ACTUAL TOUR MODE CHOICE                   ,                                     ,                                                                                                                                                                                                                  ,
-traveler has sentri pass                    ,tour_sentri                          ,df['lane_type'] == 'sentri'                                                                                                                                                                                       ,
-                                            
+Description,Target,Expression
+traveler has sentri pass,tour_sentri,df['lane_type'] == 'sentri'

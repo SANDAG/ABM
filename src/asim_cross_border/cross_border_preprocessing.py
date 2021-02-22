@@ -38,7 +38,7 @@ def create_tours(tour_settings):
     tours['tour_purpose'] = tours['purpose_id'].map(id_to_purpose)
     tours['tour_category'] = 'non_mandatory'
     tours.loc[tours['tour_purpose'].isin(['work', 'school', 'cargo']), 'tour_category'] = 'mandatory'
-    tours['tour_type'] = 'cross_border'
+    tours['tour_type'] = tours['tour_purpose']
 
     for purpose, df in tours.groupby('tour_purpose'):
         lane_probs = OrderedDict(lane_shares_by_purpose[purpose])

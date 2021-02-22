@@ -1,13 +1,9 @@
 LOGIT_TYPE: NL
-#LOGIT_TYPE: MNL
 
 tvpb_mode_path_types:
-  DRIVE_TRANSIT:
-    od: DTW
-    do: WTD
-  WALK_TRANSIT:
-    od: WTW
-    do: WTW
+  # WALK_TRANSIT:
+    # od: WTW
+    # do: WTW
 
 NESTS:
   name: root
@@ -29,7 +25,7 @@ COEFFICIENTS: tour_mode_choice_coeffs.csv
 COEFFICIENT_TEMPLATE: tour_mode_choice_coeffs_template.csv
 XBORDER_WAIT_TIME_SPEC: tour_mode_choice_poe_wait_times.csv
 XBORDER_WAIT_TIME_GEOG_COL: MAZ
-XBORDER_TOUR_GEOG_MERGE_COL: origin_zone_id
+XBORDER_TOUR_GEOG_MERGE_COL: origin
 
 CONSTANTS:
     orig_col_name: origin  # must match the values set in tour_od_choice.yaml
