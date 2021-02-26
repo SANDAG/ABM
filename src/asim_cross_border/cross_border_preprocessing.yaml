@@ -2,7 +2,7 @@ data_dir: data
 config_dir: configs_sandag_xborder
 
 maz_input_fname: mgra13_based_input2016.csv
-maz_id_field: 'mgra'
+maz_id_field: mgra
 poe_id_field: poe_id
 poe_access_field: 'colonia_pop_accessibility'
 
@@ -23,7 +23,6 @@ tour_scheduling_probs_input_fname: crossBorder_tourEntryAndReturn.csv
 tour_scheduling_probs_output_fname: tour_scheduling_probs.csv
 
 poe_wait_times_input_fname: crossBorder_pointOfEntryWaitTime.csv
-poe_wait_times_output_fname: tour_mode_choice_poe_wait_times.csv
 
 skims:
   maz_to_maz:

@@ -18,6 +18,22 @@ def compute_poe_accessibility(poe_id, colonias, colonia_pop_field, distance_para
     return total_poe_pop_access
 
 
+def get_poe_wait_times(settings):
+
+    data_dir = settings['data_dir']
+    wait_times = pd.read_csv(
+        os.path.join(data_dir, settings['poe_wait_times_input_fname']))
+    wait_times.rename(columns={
+        'StandardWait': 'std_wait', 'SENTRIWait': 'sentri_wait',
+        'PedestrianWait':'ped_wait'}, inplace=True)
+    wait_times_wide = wait_times.pivot(
+        index='poe',columns='StartPeriod', values=['std_wait','sentri_wait','ped_wait'])
+    wait_times_wide.columns = [
+        '_'.join([top, str(bottom)]) for top, bottom in wait_times_wide.columns]
+
+    return wait_times_wide
+
+
 def create_tours(tour_settings):
 
     num_tours = tour_settings['num_tours']
@@ -87,7 +103,7 @@ def create_persons(num_households):
     return persons
 
 
-def update_input_table(settings, data_dir):
+def rename_columns(settings, data_dir):
 
     input_fname = settings['input_fname']
     output_fname = settings['output_fname']
@@ -181,23 +197,27 @@ if __name__ == '__main__':
     settings['tour_scheduling_probs_output_fname']
     skims_settings = settings['skims']
     
-    # # read input data
-    # colonias = pd.read_csv(os.path.join(data_dir, colonia_input_fname))
-    # mazs = pd.read_csv(os.path.join(data_dir, maz_input_fname))
+    # load land use data
+    colonias = pd.read_csv(os.path.join(data_dir, colonia_input_fname))
+    mazs = pd.read_csv(os.path.join(data_dir, maz_input_fname))
 
-    # # get poe id
-    # mazs[poe_id_field] = None
-    # for poe_id, poe_attrs in poe_settings.items():
-    #     maz_mask = mazs[maz_id_field] == poe_attrs['maz_id']
-    #     mazs.loc[maz_mask, poe_id_field] = poe_id
+    # get poe id for maz's that have one
+    mazs[poe_id_field] = None
+    for poe_id, poe_attrs in poe_settings.items():
+        maz_mask = mazs[maz_id_field] == poe_attrs['maz_id']
+        mazs.loc[maz_mask, poe_id_field] = poe_id
 
-    # # compute colonia accessibility for poe mazs
-    # mazs[poe_access_field] = None
-    # poe_mask = ~pd.isnull(mazs[poe_id_field])
-    # mazs.loc[poe_mask, poe_access_field] = mazs.loc[poe_mask, poe_id_field].apply(
-    #     compute_poe_accessibility, colonias=colonias, colonia_pop_field=colonia_pop_field,
-    #     distance_param=distance_param)
-    # mazs = mazs.rename(columns={'mgra': 'MAZ', 'taz': 'TAZ'})
+    # compute colonia accessibility for poe mazs
+    mazs[poe_access_field] = None
+    poe_mask = ~pd.isnull(mazs[poe_id_field])
+    mazs.loc[poe_mask, poe_access_field] = mazs.loc[poe_mask, poe_id_field].apply(
+        compute_poe_accessibility, colonias=colonias, colonia_pop_field=colonia_pop_field,
+        distance_param=distance_param)
+    mazs = mazs.rename(columns={'mgra': 'MAZ', 'taz': 'TAZ'})
+
+    # merge in wide wait times
+    wide_wait_times = get_poe_wait_times(settings)
+    mazs = pd.merge(mazs, wide_wait_times, left_on='poe_id', right_on='poe', how='left')
 
     # # create tours
     # tours = create_tours(tour_settings)
@@ -224,11 +244,6 @@ if __name__ == '__main__':
     #     index='purpose_id', columns=['entry_period','return_period'], values='prob')
     # scheduling_probs.columns = [str(col[0]) + '_' + str(col[1]) for col in scheduling_probs.columns]
 
-    # # get poe wait times in the right place
-    # poe_wait_times = pd.read_csv(os.path.join(data_dir, settings['poe_wait_times_input_fname']))
-    # poe_wait_times = pd.merge(poe_wait_times, mazs[['MAZ','poe_id']], left_on='poe', right_on='poe_id')
-    # poe_wait_times.to_csv(os.path.join(config_dir, settings['poe_wait_times_output_fname']))
-
     # # store results
     # mazs.to_csv(os.path.join(data_dir, mazs_output_fname), index=False)
     # tours.to_csv(os.path.join(data_dir, tours_output_fname))
@@ -237,16 +252,12 @@ if __name__ == '__main__':
     # scheduling_probs.to_csv(os.path.join(config_dir, settings['tour_scheduling_probs_output_fname']))
 
     # # update skims/network data
-    # update_input_table(skims_settings['maz_to_maz']['walk'], data_dir)
-    # update_input_table(skims_settings['maz_to_tap']['walk'], data_dir)
+    # rename_columns(skims_settings['maz_to_maz']['walk'], data_dir)
+    # rename_columns(skims_settings['maz_to_tap']['walk'], data_dir)
 
     # # rename transit and auto skims
-    for skim_type in [
-            # 'tap_to_tap',
-            'taz_to_taz']:
-        rename_skims(settings, skim_type)
+    # for skim_type in ['tap_to_tap', 'taz_to_taz']:
+    #     rename_skims(settings, skim_type)
 
     # # create taps and taplines
     # create_taps_tap_lines(settings)
-    
-

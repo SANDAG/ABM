@@ -30,12 +30,12 @@ tour duration in hours,duration_hours,df['duration'] / PERIODS_PER_HOUR
 ,trip_orig_is_tour_dest,df.origin == tour_dest
 ,trip_dest_is_tour_dest,df.destination == tour_dest
 sandag costs need to be in cents,park_cost_day,"reindex(land_use.dparkcost, tour_dest) * 100"
-,park_cost_hour,"reindex(land_use.hparkcost, tour_dest)" * 100
-,park_cost_month,"reindex(land_use.mparkcost, tour_dest)" * 100
+,park_cost_hour,"reindex(land_use.hparkcost, tour_dest) * 100"
+,park_cost_month,"reindex(land_use.mparkcost, tour_dest) * 100"
 effective parking cost,park_cost_prim_dest,"pd.concat((park_cost_day, park_cost_hour * duration_hours), axis=1).min(axis=1)"
 ,park_cost_tour_dest_contrib,park_cost_prim_dest / tot_trips
-,park_cost_trip_orig,"reindex(land_use.hparkcost, df[ORIGIN])" * 100
-,park_cost_trip_dest,"reindex(land_use.hparkcost, df[DESTINATION])" * 100
+,park_cost_trip_orig,"reindex(land_use.hparkcost, df[ORIGIN]) * 100"
+,park_cost_trip_dest,"reindex(land_use.hparkcost, df[DESTINATION]) * 100"
 ,park_cost_trip_orig_contrib,(~first_trip * ~trip_orig_is_tour_dest) * (park_cost_trip_orig / 2) + (trip_orig_is_tour_dest * park_cost_tour_dest_contrib)
 ,park_cost_trip_dest_contrib,(~last_trip * ~trip_dest_is_tour_dest) * (park_cost_trip_dest / 2) + (trip_dest_is_tour_dest * park_cost_tour_dest_contrib)
 ,parking_cost,park_cost_tour_dest_contrib + park_cost_trip_dest_contrib + park_cost_tour_dest_contrib
@@ -55,7 +55,7 @@ vot-indexed skims,da_dist_skims,((odt_skims['SOV_NT_L_DIST'] * (_vot_bin_da == 1
 ,s3_cost_skims,((odt_skims['HOV3_L_TOLLCOST'] * (_vot_bin_s3 == 1)) + (odt_skims['HOV3_M_TOLLCOST'] * (_vot_bin_s3 == 2)) + (odt_skims['HOV3_H_TOLLCOST'] * (_vot_bin_s3 == 3)))
 ,s3_time_skims,((odt_skims['HOV3_L_TIME'] * (_vot_bin_s3 == 1)) + (odt_skims['HOV3_M_TIME'] * (_vot_bin_s3 == 2)) + (odt_skims['HOV3_H_TIME'] * (_vot_bin_s3 == 3)))
 ,walk_available,od_skims['walkTime'] < max_walk_time
-,walk_time, walk_available * c_walk_time * od_skims['walkTime']
+,walk_time,walk_available * c_walk_time * od_skims['walkTime']
 ,walk_transit_logsum,tvpb_logsum_odt['WTW']
 ,walk_transit_available,walk_transit_logsum > -500
 ,density_measure,"reindex(land_use.PopEmpDenPerMi, df[ORIGIN])"
