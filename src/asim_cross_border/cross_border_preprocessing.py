@@ -51,10 +51,10 @@ def create_tours(tour_settings):
     purpose_scaled_probs = np.subtract(purpose_cum_probs, np.random.rand(num_tours, 1))
     purpose = np.argmax((purpose_scaled_probs + 1.0).astype('i4'), axis=1)
     tours['purpose_id'] = purpose
-    tours['tour_purpose'] = tours['purpose_id'].map(id_to_purpose)
+    # tours['tour_purpose'] = tours['purpose_id'].map(id_to_purpose)
+    tours['tour_type'] = tours['purpose_id'].map(id_to_purpose)
     tours['tour_category'] = 'non_mandatory'
     tours.loc[tours['tour_purpose'].isin(['work', 'school', 'cargo']), 'tour_category'] = 'mandatory'
-    tours['tour_type'] = tours['tour_purpose']
 
     for purpose, df in tours.groupby('tour_purpose'):
         lane_probs = OrderedDict(lane_shares_by_purpose[purpose])
@@ -174,6 +174,41 @@ def create_taps_tap_lines(settings):
     return
 
 
+def create_stop_freq_specs(settings):
+
+    probs_df = pd.read_csv(
+        os.path.join(settings['data_dir'], settings['stop_frequency_input_fname']))
+    probs_df.rename(columns={'Outbound': 'out', 'Inbound': 'in'}, inplace=True)
+    probs_df['alt'] = probs_df['out'].astype(str) + 'out_' + probs_df['in'].astype(str) + 'in'
+
+    # convert probs to utils
+    probs_df['util'] = np.log(probs_df['Percent']).clip(lower=-999)
+    
+    # write out alts table
+    alts_df = probs_df.drop_duplicates(['out','in','alt'])[['alt','out','in']]
+    alts_df.to_csv(
+        os.path.join(settings['config_dir'], 'stop_frequency_alternatives.csv'), index=False)
+
+    purpose_id_map = settings['tours']['purpose_ids']
+
+    # iterate through purposes and pivot probability lookup tables to
+    # create MNL spec files with only ASC's (no covariates).
+    for purpose, purpose_id in purpose_id_map.items():
+        purpose_probs = probs_df.loc[probs_df['Purpose'] == purpose_id]
+        alt_cols = alts_df['alt'].tolist()
+        expr_df =  purpose_probs.pivot(
+            index=['DurationLo','DurationHi'], columns='alt', values='util').reset_index()
+        expr_df['Description'] = 'ASC for tour durations between ' + expr_df['DurationLo'].astype(str) + ' and ' + expr_df['DurationHi'].astype(str)
+        expr_df['Expression'] = expr_df['DurationLo'].astype(str) + ' < duration_hours <= ' + expr_df['DurationHi'].astype(str)
+        expr_df = expr_df.drop(columns=['DurationLo','DurationHi'])
+        required_cols = ['Description', 'Expression']
+        expr_df = expr_df[required_cols + [col for col in expr_df.columns if col not in required_cols]]
+
+        # write out purpose-specific model spec
+        expr_df.to_csv(
+            os.path.join(settings['config_dir'], 'stop_frequency_{0}.csv'.format(purpose)), index=False)
+
+
 if __name__ == '__main__':
 
     # load settings
@@ -181,43 +216,42 @@ if __name__ == '__main__':
         settings = yaml.load(f, Loader=yaml.FullLoader)
     data_dir = settings['data_dir']
     config_dir = settings['config_dir']
-    maz_input_fname = settings['maz_input_fname']
-    maz_id_field = settings['maz_id_field']
-    poe_id_field = settings['poe_id_field']
-    poe_access_field = settings['poe_access_field']
-    colonia_input_fname = settings['colonia_input_fname']
-    colonia_pop_field = settings['colonia_pop_field']
-    distance_param = settings['distance_param']
-    tour_settings = settings['tours']
-    poe_settings = settings['poes']
-    mazs_output_fname = settings['mazs_output_fname']
-    households_output_fname = settings['households_output_fname']
-    persons_output_fname = settings['persons_output_fname']
-    tours_output_fname = settings['tours_output_fname']
-    settings['tour_scheduling_probs_output_fname']
-    skims_settings = settings['skims']
+    # maz_input_fname = settings['maz_input_fname']
+    # maz_id_field = settings['maz_id_field']
+    # poe_id_field = settings['poe_id_field']
+    # poe_access_field = settings['poe_access_field']
+    # colonia_input_fname = settings['colonia_input_fname']
+    # colonia_pop_field = settings['colonia_pop_field']
+    # distance_param = settings['distance_param']
+    # tour_settings = settings['tours']
+    # poe_settings = settings['poes']
+    # mazs_output_fname = settings['mazs_output_fname']
+    # households_output_fname = settings['households_output_fname']
+    # persons_output_fname = settings['persons_output_fname']
+    # tours_output_fname = settings['tours_output_fname']
+    # skims_settings = settings['skims']
     
-    # load land use data
-    colonias = pd.read_csv(os.path.join(data_dir, colonia_input_fname))
-    mazs = pd.read_csv(os.path.join(data_dir, maz_input_fname))
+    # # load land use data
+    # colonias = pd.read_csv(os.path.join(data_dir, colonia_input_fname))
+    # mazs = pd.read_csv(os.path.join(data_dir, maz_input_fname))
 
-    # get poe id for maz's that have one
-    mazs[poe_id_field] = None
-    for poe_id, poe_attrs in poe_settings.items():
-        maz_mask = mazs[maz_id_field] == poe_attrs['maz_id']
-        mazs.loc[maz_mask, poe_id_field] = poe_id
+    # # get poe id for maz's that have one
+    # mazs[poe_id_field] = None
+    # for poe_id, poe_attrs in poe_settings.items():
+    #     maz_mask = mazs[maz_id_field] == poe_attrs['maz_id']
+    #     mazs.loc[maz_mask, poe_id_field] = poe_id
 
-    # compute colonia accessibility for poe mazs
-    mazs[poe_access_field] = None
-    poe_mask = ~pd.isnull(mazs[poe_id_field])
-    mazs.loc[poe_mask, poe_access_field] = mazs.loc[poe_mask, poe_id_field].apply(
-        compute_poe_accessibility, colonias=colonias, colonia_pop_field=colonia_pop_field,
-        distance_param=distance_param)
-    mazs = mazs.rename(columns={'mgra': 'MAZ', 'taz': 'TAZ'})
+    # # compute colonia accessibility for poe mazs
+    # mazs[poe_access_field] = None
+    # poe_mask = ~pd.isnull(mazs[poe_id_field])
+    # mazs.loc[poe_mask, poe_access_field] = mazs.loc[poe_mask, poe_id_field].apply(
+    #     compute_poe_accessibility, colonias=colonias, colonia_pop_field=colonia_pop_field,
+    #     distance_param=distance_param)
+    # mazs = mazs.rename(columns={'mgra': 'MAZ', 'taz': 'TAZ'})
 
-    # merge in wide wait times
-    wide_wait_times = get_poe_wait_times(settings)
-    mazs = pd.merge(mazs, wide_wait_times, left_on='poe_id', right_on='poe', how='left')
+    # # merge in wide wait times
+    # wide_wait_times = get_poe_wait_times(settings)
+    # mazs = pd.merge(mazs, wide_wait_times, left_on='poe_id', right_on='poe', how='left')
 
     # # create tours
     # tours = create_tours(tour_settings)
@@ -261,3 +295,5 @@ if __name__ == '__main__':
 
     # # create taps and taplines
     # create_taps_tap_lines(settings)
+
+    create_stop_freq_specs(settings)

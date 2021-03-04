@@ -24,6 +24,9 @@ tour_scheduling_probs_output_fname: tour_scheduling_probs.csv
 
 poe_wait_times_input_fname: crossBorder_pointOfEntryWaitTime.csv
 
+stop_frequency_input_fname: crossBorder_stopFrequency.csv
+stop_frequency_output_fname: stop_frequency_alternatives_xborder.csv
+
 skims:
   maz_to_maz:
     walk:
@@ -71,6 +74,13 @@ poes:
 
 tours:
   num_tours: 113995
+  purpose_ids:
+    work: 0
+    school: 1
+    cargo: 2
+    shop: 3
+    visit: 4
+    other: 5
   purpose_shares:
     work: 0.254
     school: 0.041
