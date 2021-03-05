@@ -320,7 +320,11 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         skipTruck = props["RunModel.skipTruck"]
         skipTripTableCreation = props["RunModel.skipTripTableCreation"]
         skipFinalHighwayAssignment = props["RunModel.skipFinalHighwayAssignment"]
-        makeFinalHighwayAssignmentStochastic = props["RunModel.makeFinalHighwayAssignmentStochastic"]
+        skipFinalHighwayAssignmentStochastic = props["RunModel.skipFinalHighwayAssignmentStochastic"]
+        if skipFinalHighwayAssignmentStochastic == True:
+        	makeFinalHighwayAssignmentStochastic = False
+        else:
+        	makeFinalHighwayAssignmentStochastic = True
         skipFinalTransitAssignment = props["RunModel.skipFinalTransitAssignment"]
         skipVisualizer = props["RunModel.skipVisualizer"]
         skipDataExport = props["RunModel.skipDataExport"]
