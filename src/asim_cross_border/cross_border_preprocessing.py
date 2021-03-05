@@ -94,11 +94,12 @@ def create_households(num_tours):
     return households
 
 
-def create_persons(num_households):
+def create_persons(settings, num_households):
 
     # one person per household
     persons = pd.DataFrame({'person_id': range(num_households)})
     persons['household_id'] = np.random.choice(num_households, num_households, replace=False)
+    persons['person_type'] = settings['dummy_cols']['person_type ']
 
     return persons
 
@@ -187,7 +188,7 @@ def create_stop_freq_specs(settings):
     # write out alts table
     alts_df = probs_df.drop_duplicates(['out','in','alt'])[['alt','out','in']]
     alts_df.to_csv(
-        os.path.join(settings['config_dir'], 'stop_frequency_alternatives.csv'), index=False)
+        os.path.join(settings['config_dir'], settings['stop_frequency_output_fname']), index=False)
 
     purpose_id_map = settings['tours']['purpose_ids']
 
@@ -208,14 +209,38 @@ def create_stop_freq_specs(settings):
         expr_df.to_csv(
             os.path.join(settings['config_dir'], 'stop_frequency_{0}.csv'.format(purpose)), index=False)
 
+    return
+
+
+def update_trip_purpose_probs(settings):
+
+    probs_df = pd.read_csv(os.path.join(settings['data_dir'], settings['trip_purpose_probs_input_fname']))
+    purpose_id_map = settings['tours']['purpose_ids']
+    purp_id_to_name = {v: k for k, v in purpose_id_map.items()}
+    probs_df.rename(columns={
+        'StopNum': 'trip_num', 'Multiple': 'multistop',
+        'StopPurp0': purp_id_to_name[0], 'StopPurp1': purp_id_to_name[1],
+        'StopPurp2': purp_id_to_name[2], 'StopPurp3': purp_id_to_name[3],
+        'StopPurp4': purp_id_to_name[4], 'StopPurp5': purp_id_to_name[5]}, inplace=True)
+    probs_df['outbound'] = ~probs_df['Inbound'].astype(bool)
+    probs_df['primary_purpose'] = probs_df['TourPurp'].map(purp_id_to_name)
+    probs_df = probs_df[
+        ['primary_purpose','outbound', 'trip_num', 'multistop'] + [purp for purp in purpose_id_map.keys()]]
+    probs_df.to_csv(
+        os.path.join(settings['config_dir'], settings['trip_purpose_probs_output_fname']),
+        index=False)
+
+    return
+
+
 
 if __name__ == '__main__':
 
     # load settings
     with open('cross_border_preprocessing.yaml') as f:
         settings = yaml.load(f, Loader=yaml.FullLoader)
-    data_dir = settings['data_dir']
-    config_dir = settings['config_dir']
+    # data_dir = settings['data_dir']
+    # config_dir = settings['config_dir']
     # maz_input_fname = settings['maz_input_fname']
     # maz_id_field = settings['maz_id_field']
     # poe_id_field = settings['poe_id_field']
@@ -296,4 +321,5 @@ if __name__ == '__main__':
     # # create taps and taplines
     # create_taps_tap_lines(settings)
 
-    create_stop_freq_specs(settings)
+    # create_stop_freq_specs(settings)
+    update_trip_purpose_probs(settings)

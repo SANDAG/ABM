@@ -25,7 +25,10 @@ tour_scheduling_probs_output_fname: tour_scheduling_probs.csv
 poe_wait_times_input_fname: crossBorder_pointOfEntryWaitTime.csv
 
 stop_frequency_input_fname: crossBorder_stopFrequency.csv
-stop_frequency_output_fname: stop_frequency_alternatives_xborder.csv
+stop_frequency_output_fname: stop_frequency_alternatives.csv
+
+trip_purpose_probs_input_fname: crossBorder_stopPurpose.csv
+trip_purpose_probs_output_fname: trip_purpose_probs.csv
 
 skims:
   maz_to_maz:

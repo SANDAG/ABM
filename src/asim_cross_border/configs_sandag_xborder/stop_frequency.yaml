@@ -3,10 +3,3 @@ LOGIT_TYPE: MNL
 preprocessor:
   SPEC: stop_frequency_annotate_tours_preprocessor
   DF: tours_merged
-
-
-CONSTANTS:
-  TRANSIT_MODES:
-    - WALK_TRANSIT
-  NONMOTORIZED_MODES:
-    - WALK
