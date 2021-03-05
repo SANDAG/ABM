@@ -22,7 +22,7 @@ class CreateScenarioGUI(Tkinter.Frame):
 
             #divider line
             divider=u"_"*120
-            self.releaseDir='T:\\ABM\\release_test\\ABM'
+            self.releaseDir='T:\\ABM\\release\\ABM'
             self.defaultScenarioDir="T:\\projects\\sr13"
             self.defaultNetworkDir="T:\\projects\\sr13\\version13_3_3\\network_build"
 
