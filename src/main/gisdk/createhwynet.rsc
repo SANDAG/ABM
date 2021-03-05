@@ -1265,9 +1265,9 @@ output file:  hwy.net - hwy network file
 
 
 macro "create hwynet"
+
    shared path, mxzone, inputDir, outputDir    
    ok = 0
-   
    RunMacro("close all")
  
 
@@ -1440,18 +1440,19 @@ macro "create hwynet"
    if !ok then goto quit
 
    // STEP 2: Highway Network Setting
-   Opts = null
-   Opts.Input.Database = db_file
-   Opts.Input.Network = net_file
-   Opts.Input.[Centroids Set] = {db_node_lyr, node_lyr, "Selection", "select * where ID <="+i2s(mxzone)}
-   Opts.Global.[Spc Turn Pen Method] = 3
-   Opts.Input.[Def Turn Pen Table] = {d_tp_tb}
-   Opts.Input.[Spc Turn Pen Table] = {s_tp_tb}
-   Opts.Field.[Link type] = "IFC"
-   Opts.Global.[Global Turn Penalties] = {0, 0, 0, 0}
-   Opts.Flag.[Use Link Types] = "True"
-   RunMacro("HwycadLog",{"createhwynet_turn.rsc: create hwynet1","Highway Network Setting"})
-   ok = RunMacro("TCB Run Operation", 2, "Highway Network Setting", Opts)
+    Opts = null
+    Opts.Input.Database = db_file
+    Opts.Input.Network = net_file
+    Opts.Input.[Centroids Set] = {db_node_lyr, node_lyr,  "Selection", "select * where ID <="+i2s(mxzone)}
+    Opts.Input.[Spc Turn Pen Field] = {s_tp_tb, "PENALTY"}
+    Opts.Input.[Def Turn Pen Table] = {d_tp_tb}
+    Opts.Global.[Global Turn Penalties] = {0, 0, 0, -1}
+    Opts.Global.[Spc Turn Pen Method] = 3
+    Opts.Field.[Link type] = "IFC"
+    Opts.Flag.[Use Link Types] = "True"
+
+    RunMacro("HwycadLog",{"createhwynet_turn.rsc: create hwynet1","Highway Network Setting"})
+    ok = RunMacro("TCB Run Operation", 2, "Highway Network Setting", Opts, )
    if !ok then goto quit
 
    mytime=GetDateAndTime()

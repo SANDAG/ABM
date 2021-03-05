@@ -90,6 +90,7 @@ Macro "Commercial Vehicle Generation"
                               0.63558 * OTHEMPN + 1.10181 * AGREMPN + 0.81576 * MWTEMPN +
                               0.15000 * MILITARY +
                               0.1 * TOTHH)
+   verySmallA = verySmallP
 
    
    // Wu added this section for military CTM trips adjustment to match military gate counts
@@ -111,13 +112,12 @@ Macro "Commercial Vehicle Generation"
 	   for i = 1 to mgra.length do
 	   	for j = 1 to mgra_m.length do
 		      if mgra[i] = mgra_m[j] then do
-			verySmallP[i]=verySmallP[i]*scale[j]			
+			verySmallP[i]=verySmallP[i]*scale[j]
+			verySmallA[i]=verySmallA[i]*scale[j]
 		      end 
 	        end
 	   end	
    end	
-
-   verySmallA = verySmallP
 
    if writeMgraData = true then do
       //create a table with the mgra trips
