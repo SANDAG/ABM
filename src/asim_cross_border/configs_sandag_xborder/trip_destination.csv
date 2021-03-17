@@ -6,8 +6,8 @@ no attractions,"@size_terms.get(df.dest_taz, df.purpose) == 0",-999,-999,-999,-9
 intermediate stops on half-tour,_stops_on_leg@df.trip_count - 1,1,1,1,1,1,1
 "Sample of alternatives correction factor","@np.minimum(np.log(df.pick_count/df.prob), 60)",1,1,1,1,1,1
 mode choice logsum,od_logsum + dp_logsum,2.12300,2.12300,2.12300,2.12300,2.12300,2.12300
-,@(df.tour_duration <= 2) * (od_logsum + dp_logsum),0.79600,0.79600,0.79600,0.79600,0.79600,0.79600
-,@(df.tour_duration >= 8) * (od_logsum + dp_logsum),-0.31700,-0.31700,-0.31700,-0.31700,-0.31700,-0.31700
+,@(df.tour_duration <= 2) * (df.od_logsum + df.dp_logsum),0.79600,0.79600,0.79600,0.79600,0.79600,0.79600
+,@(df.tour_duration >= 8) * (df.od_logsum + df.dp_logsum),-0.31700,-0.31700,-0.31700,-0.31700,-0.31700,-0.31700
 ,"@(df.trip_num == 1) * df.outbound * (_od_DIST > 1)",-0.70000,-0.70000,-0.70000,-0.70000,-0.70000,-0.70000
 ,"@(df.trip_num == _stops_on_leg) * df.outbound * (_dp_DIST > 1)",-0.84100,-0.84100,-0.84100,-0.84100,-0.84100,-0.84100
 ,"@(df.trip_num == _stops_on_leg) * df.outbound * np.clip(_dp_DIST-1, 0, 3)",-0.19400,-0.19400,-0.19400,-0.19400,-0.19400,-0.19400

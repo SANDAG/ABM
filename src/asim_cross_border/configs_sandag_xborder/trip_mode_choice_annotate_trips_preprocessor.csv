@@ -12,8 +12,8 @@ Description,Target,Expression
 ,c_walk_time,c_ivt * 1.8
 ,c_xfers_pnr,c_ivt * 15
 ,cost_per_mile,cost_per_mile_fuel + cost_per_mile_maint
-intermediate outbound stops on tour,out_stops,"df.loc[df['outbound']].groupby(['tour_id','tour_mode'])['trip_count'].sum().reindex(df[['tour_id','tour_mode']]).values - 1"
-intermediate inbound stops on tour,in_stops,"df.loc[~df['outbound']].groupby(['tour_id','tour_mode'])['trip_count'].sum().reindex(df[['tour_id','tour_mode']]).values - 1"
+intermediate outbound stops on tour,out_stops,"reindex(tours['stop_frequency'].str[0].astype(int), df.tour_id)"
+intermediate inbound stops on tour,in_stops,"reindex(tours['stop_frequency'].str[5].astype(int), df.tour_id)"
 total intermediate stops,tot_stops,out_stops + in_stops
 ,tot_trips,tot_stops + 2
 first trip of tour,first_trip,(df.trip_num == 1) & (df.outbound == True)
