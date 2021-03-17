@@ -44,19 +44,18 @@ def create_tours(tour_settings):
     
     tours = pd.DataFrame(
         index=range(tour_settings['num_tours']),
-        columns=['lane_type', 'lane_id', 'tour_purpose', 'purpose_id'])
+        columns=['lane_type', 'lane_id', 'tour_type', 'purpose_id'])
     tours.index.name = 'tour_id'
 
     purpose_cum_probs = np.array(list(purpose_probs.values())).cumsum()
     purpose_scaled_probs = np.subtract(purpose_cum_probs, np.random.rand(num_tours, 1))
     purpose = np.argmax((purpose_scaled_probs + 1.0).astype('i4'), axis=1)
     tours['purpose_id'] = purpose
-    # tours['tour_purpose'] = tours['purpose_id'].map(id_to_purpose)
     tours['tour_type'] = tours['purpose_id'].map(id_to_purpose)
     tours['tour_category'] = 'non_mandatory'
-    tours.loc[tours['tour_purpose'].isin(['work', 'school', 'cargo']), 'tour_category'] = 'mandatory'
+    tours.loc[tours['tour_type'].isin(['work', 'school', 'cargo']), 'tour_category'] = 'mandatory'
 
-    for purpose, df in tours.groupby('tour_purpose'):
+    for purpose, df in tours.groupby('tour_type'):
         lane_probs = OrderedDict(lane_shares_by_purpose[purpose])
         id_to_lane = {i: lane for i, lane in enumerate(lane_probs.keys())}
         lane_cum_probs = np.array(list(lane_probs.values())).cumsum()
@@ -104,13 +103,18 @@ def create_persons(settings, num_households):
     return persons
 
 
-def rename_columns(settings, data_dir):
+def _update_table(settings, data_dir, filter_col=None, filter_list=None):
 
     input_fname = settings['input_fname']
     output_fname = settings['output_fname']
-
+    filter_col = settings.get('filter_col', filter_col)
+    
     df = pd.read_csv(os.path.join(data_dir, input_fname))
     df.rename(columns=settings['rename_columns'], inplace=True)
+    if filter_col:
+        if filter_list is None:
+            raise ValueError("filter_list param needed to filter table.")
+        df = df.loc[df[filter_col].isin(filter_list)]
     df.to_csv(os.path.join(data_dir, output_fname), index=False)
 
     return
@@ -123,20 +127,22 @@ def create_maz_to_tap_drive(mazs, drive_skims):
     return merged
 
 
-def rename_skims(settings, skim_type):
+def _rename_skims(settings, skim_type):
     
     data_dir = settings['data_dir']
     skims_settings = settings['skims'][skim_type]
     periods = skims_settings.get('periods', [None])
 
     for period in periods:
-        print('Processing {0} {1} skims.'.format(period, skim_type))
+        
         if period:
+            print('Processing {0} {1} skims.'.format(period, skim_type))
             input_base_fname = skims_settings['input_base_fname']
             output_base_fname = skims_settings['output_base_fname']
             input_fname = input_base_fname + '_' + period + '.omx'
             output_fname = output_base_fname + '_' + period + '.omx'
         else:
+            print('Processing {0} skims.'.format(skim_type))
             input_fname = skims_settings['input_fname']
             output_fname = skims_settings['output_fname']
 
@@ -173,6 +179,39 @@ def create_taps_tap_lines(settings):
     transit_skims.close()
 
     return
+
+
+def create_skims_and_tap_files(settings):
+
+    skims_settings = settings['skims']
+    data_dir = settings['data_dir']
+
+    # create taps files and transit skims
+    print('Creating tap files.')
+    transit_skims = omx.open_file(
+        os.path.join(data_dir, skims_settings['tap_to_tap']['input_fname']), 'a')
+    all_taps = pd.DataFrame(pd.Series(list(transit_skims.root.lookup.zone_number)))
+    all_taps.columns = ['TAP']
+    all_taps.to_csv(os.path.join(data_dir, settings['taps_output_fname']), index=False)
+    tap_lines = pd.read_csv(os.path.join(data_dir, settings['tap_lines_input_fname']))
+    tap_lines.to_csv(os.path.join(data_dir, settings['tap_lines_output_fname'])) 
+    transit_skims.close()
+
+
+    # update skims/network data
+    print('Updating maz-to-maz skims.')
+    _update_table(skims_settings['maz_to_maz']['walk'], data_dir=settings['data_dir'])
+    
+    print('Updating maz-to-tap skims.')
+    _update_table(
+        skims_settings['maz_to_tap']['walk'],
+        data_dir=settings['data_dir'],
+        filter_col='TAP', filter_list=all_taps.TAP.values)
+
+    # rename transit and auto skims
+    print('Renaming skim keys')
+    for skim_type in ['tap_to_tap', 'taz_to_taz']:
+        _rename_skims(settings, skim_type)
 
 
 def create_stop_freq_specs(settings):
@@ -233,14 +272,41 @@ def update_trip_purpose_probs(settings):
     return
 
 
+def create_trip_scheduling_duration_probs(settings):
+
+    data_dir = settings['data_dir']
+    config_dir = settings['config_dir']
+
+    outbound = pd.read_csv(os.path.join(data_dir, settings['trip_scheduling_probs_input_fnames']['outbound']))
+    outbound['outbound'] = True
+    inbound = pd.read_csv(os.path.join(data_dir, settings['trip_scheduling_probs_input_fnames']['inbound']))
+    inbound['outbound'] = False
+    assert len(outbound) == len(inbound)
+
+    outbound = outbound.melt(
+        id_vars=['RemainingLow','RemainingHigh','Stop','outbound'], var_name='duration_offset', value_name='prob')
+    inbound = inbound.melt(
+        id_vars=['RemainingLow','RemainingHigh','Stop','outbound'], var_name='duration_offset', value_name='prob')
+    
+    duration_probs = pd.concat((outbound, inbound), axis=0, ignore_index=True)
+    duration_probs.rename(columns={
+        'Stop': 'stop_num',
+        'RemainingHigh': 'periods_left_max',
+        'RemainingLow': 'periods_left_min'}, inplace=True)
+    duration_probs.to_csv(
+        os.path.join(config_dir, settings['trip_scheduling_probs_output_fname']),
+        index=False)
+
+    return
+
 
 if __name__ == '__main__':
 
     # load settings
     with open('cross_border_preprocessing.yaml') as f:
         settings = yaml.load(f, Loader=yaml.FullLoader)
-    # data_dir = settings['data_dir']
-    # config_dir = settings['config_dir']
+    data_dir = settings['data_dir']
+    config_dir = settings['config_dir']
     # maz_input_fname = settings['maz_input_fname']
     # maz_id_field = settings['maz_id_field']
     # poe_id_field = settings['poe_id_field']
@@ -293,15 +359,17 @@ if __name__ == '__main__':
     # tours['household_id'] = np.random.choice(num_tours, num_tours, replace=False)
     # tours['person_id'] = persons.set_index('household_id').reindex(tours['household_id'])['person_id'].values
 
-    # # reformat table of tour scheduling prob
-    # scheduling_probs = pd.read_csv(
-    #     os.path.join(settings['data_dir'], settings['tour_scheduling_probs_input_fname']))
-    # scheduling_probs.rename(columns={
-    #     'Purpose': 'purpose_id', 'EntryPeriod': 'entry_period',
-    #     'ReturnPeriod': 'return_period', 'Percent': 'prob'}, inplace=True)
-    # scheduling_probs = scheduling_probs.pivot(
-    #     index='purpose_id', columns=['entry_period','return_period'], values='prob')
-    # scheduling_probs.columns = [str(col[0]) + '_' + str(col[1]) for col in scheduling_probs.columns]
+    # reformat table of tour scheduling prob
+    scheduling_probs = pd.read_csv(
+        os.path.join(settings['data_dir'], settings['tour_scheduling_probs_input_fname']))
+    tour_scheduling_alts = scheduling_probs.rename(
+        columns={'EntryPeriod': 'start', 'ReturnPeriod': 'end'}).drop_duplicates(['start','end'])[['start', 'end']]
+    scheduling_probs.rename(columns={
+        'Purpose': 'purpose_id', 'EntryPeriod': 'entry_period',
+        'ReturnPeriod': 'return_period', 'Percent': 'prob'}, inplace=True)
+    scheduling_probs = scheduling_probs.pivot(
+        index='purpose_id', columns=['entry_period','return_period'], values='prob')
+    scheduling_probs.columns = [str(col[0]) + '_' + str(col[1]) for col in scheduling_probs.columns]
 
     # # store results
     # mazs.to_csv(os.path.join(data_dir, mazs_output_fname), index=False)
@@ -309,17 +377,15 @@ if __name__ == '__main__':
     # households.to_csv(os.path.join(data_dir, households_output_fname), index=False)
     # persons.to_csv(os.path.join(data_dir, persons_output_fname), index=False)
     # scheduling_probs.to_csv(os.path.join(config_dir, settings['tour_scheduling_probs_output_fname']))
+    tour_scheduling_alts.to_csv(os.path.join(config_dir, settings['tour_scheduling_alts_output_fname']), index=False)
 
-    # # update skims/network data
-    # rename_columns(skims_settings['maz_to_maz']['walk'], data_dir)
-    # rename_columns(skims_settings['maz_to_tap']['walk'], data_dir)
 
-    # # rename transit and auto skims
-    # for skim_type in ['tap_to_tap', 'taz_to_taz']:
-    #     rename_skims(settings, skim_type)
 
-    # # create taps and taplines
-    # create_taps_tap_lines(settings)
+    # # update the skims
+    create_skims_and_tap_files(settings)
 
     # create_stop_freq_specs(settings)
-    update_trip_purpose_probs(settings)
+    # update_trip_purpose_probs(settings)
+
+    # process duration-based trip scheduling probs
+    # create_trip_scheduling_duration_probs(settings)
