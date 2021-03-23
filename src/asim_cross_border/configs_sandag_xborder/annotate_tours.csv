@@ -1,7 +1,4 @@
 Description,Target,Expression
 ,tour_category,tours.tour_category.str.lower()
-,tour_purpose,tours.tour_purpose.str.lower()
 ,tour_type,tours.tour_type.str.lower()
-,tour_num,1
-,tour_count,1
 ,parent_tour_id,None

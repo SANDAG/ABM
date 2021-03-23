@@ -1,5 +1,5 @@
 Description,Target,Expression
-,is_work_tour,df.tour_purpose == 'work'
+,is_work_tour,df.tour_type == 'work'
 ,work_time_factor,"rng.lognormal_for_df(df, mu=time_distrib_mean_work, sigma=time_distrib_stddev_work, broadcast=True, scale=True)"
 ,non_work_time_factor,"rng.lognormal_for_df(df, mu=time_distrib_mean_nonwork, sigma=time_distrib_stddev_nonwork, broadcast=True, scale=True)"
 ,c_ivt,c_ivt * (is_work_tour * work_time_factor + ~is_work_tour * non_work_time_factor)
@@ -12,8 +12,8 @@ Description,Target,Expression
 ,c_walk_time,c_ivt * 1.8
 ,c_xfers_pnr,c_ivt * 15
 ,cost_per_mile,cost_per_mile_fuel + cost_per_mile_maint
-intermediate outbound stops on tour,out_stops,"reindex(tours['stop_frequency'].str[0].astype(int), df.tour_id)"
-intermediate inbound stops on tour,in_stops,"reindex(tours['stop_frequency'].str[5].astype(int), df.tour_id)"
+intermediate outbound stops on tour,out_stops,df['stop_frequency'].str[0].astype(int)
+intermediate inbound stops on tour,in_stops,df['stop_frequency'].str[5].astype(int)
 total intermediate stops,tot_stops,out_stops + in_stops
 ,tot_trips,tot_stops + 2
 first trip of tour,first_trip,(df.trip_num == 1) & (df.outbound == True)

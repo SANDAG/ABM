@@ -6,7 +6,7 @@ COEFFICIENTS: tour_od_choice_coeffs.csv
 
 SIMULATE_CHOOSER_COLUMNS:
   - tour_category
-  - tour_purpose
+  - tour_type
 
 ALT_DEST_COL_NAME: tour_od_id
 
@@ -24,7 +24,7 @@ CHOOSER_TABLE_NAME: tours
 
 SIZE_TERM_SELECTOR: tour_od_choice
 
-CHOOSER_SEGMENT_COLUMN_NAME: tour_purpose
+CHOOSER_SEGMENT_COLUMN_NAME: tour_type
 
 ORIGIN_ATTR_COLS_TO_USE:
   - poe_id

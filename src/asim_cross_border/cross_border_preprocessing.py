@@ -54,6 +54,11 @@ def create_tours(tour_settings):
     tours['tour_type'] = tours['purpose_id'].map(id_to_purpose)
     tours['tour_category'] = 'non_mandatory'
     tours.loc[tours['tour_type'].isin(['work', 'school', 'cargo']), 'tour_category'] = 'mandatory'
+    
+    # for xborder model, only 1 person per tour and 1 tour per person
+    tours['number_of_participants'] = 1
+    tours['tour_num'] = 1
+    tours['tour_count'] = 1
 
     for purpose, df in tours.groupby('tour_type'):
         lane_probs = OrderedDict(lane_shares_by_purpose[purpose])
