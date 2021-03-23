@@ -1,18 +1,12 @@
-Description,Expression,work,univ,school,escort,shopping,eatout,othmaint,social,othdiscr,atwork
-,_od_DIST@od_skims['DIST'],1,1,1,1,1,1,1,1,1,1
-,_dp_DIST@dp_skims['DIST'],1,1,1,1,1,1,1,1,1,1
-Not available if walk tour not within walking distance,@(df.tour_mode=='WALK') & (od_skims['DISTWALK'] > max_walk_distance),-999,-999,-999,-999,-999,-999,-999,-999,-999,-999
-Not available if walk tour not within walking distance,@(df.tour_mode=='WALK') & (dp_skims['DISTWALK'] > max_walk_distance),-999,-999,-999,-999,-999,-999,-999,-999,-999,-999
-Not available if bike tour not within biking distance,@(df.tour_mode=='BIKE') & (od_skims['DISTBIKE'] > max_bike_distance),-999,-999,-999,-999,-999,-999,-999,-999,-999,-999
-Not available if bike tour not within biking distance,@(df.tour_mode=='BIKE') & (dp_skims['DISTBIKE'] > max_bike_distance),-999,-999,-999,-999,-999,-999,-999,-999,-999,-999
-#If transit tour is not in walk sub-zone it must be walkable,,,,,,,,,,,
-size term,"@np.log1p(size_terms.get(df.dest_taz, df.purpose))",1,1,1,1,1,1,1,1,1,1
-no attractions,"@size_terms.get(df.dest_taz, df.purpose) == 0",-999,-999,-999,-999,-999,-999,-999,-999,-999,-999
-#stop zone CBD area type,"@reindex(land_use.area_type, df.dest_taz) < setting('cbd_threshold')",,,,,,,,,,
-distance (calibration adjustment individual - inbound),@(~df.is_joint & ~df.outbound) * (_od_DIST + _dp_DIST),-0.04972591574229,-0.0613,-0.1056,-0.1491,-0.1192,-0.1029,-0.0962,-0.1329,-0.126172224,-0.122334597
-distance (calibration adjustment individual - outbound),@(~df.is_joint & df.outbound) * (_od_DIST + _dp_DIST),0.147813278663948,-0.0613,-0.1056,-0.1491,-0.1192,-0.1029,-0.0962,-0.1329,-0.126172224,-0.122334597
-distance (calibration adjustment joint),@df.is_joint * (_od_DIST + _dp_DIST),0,0,0,-0.1238,-0.1238,-0.1238,-0.1238,-0.1238,-0.123801985,0
-stop proximity to home (outbound),@df.outbound * _od_DIST,-0.3800,0,0,0,0,0,0,0,0,0
-stop proximity to home (inbound),@~df.outbound * _od_DIST,-0.1500,0,0,0,0,0,0,0,0,0
-stop proximity to main destination (outbound),@df.outbound * _dp_DIST,-0.26,,,,,,,,,
-stop proximity to main destination (inbound),@~df.outbound * _od_DIST,0,,,,,,,,,
+Description,Expression,work,school,cargo,visit,shop,other
+Size variable,"@np.log1p(size_terms.get(df.dest_taz, df.purpose))",1,1,1,1,1,1
+No attractions,"@size_terms.get(df.dest_taz, df.purpose) == 0",-999,-999,-999,-999,-999,-999
+,"_od_DIST@odt_skims['SOV_NT_M_DIST']",1,1,1,1,1,1
+,"_dp_DIST@dpt_skims['SOV_NT_M_DIST']",1,1,1,1,1,1
+intermediate stops on half-tour,_stops_on_leg@df.trip_count - 1,1,1,1,1,1,1
+,@(df.trip_num == 1) * df.outbound * (_od_DIST > 1),-0.70000,-0.70000,-0.70000,-0.70000,-0.70000,-0.70000
+,@(df.trip_num == _stops_on_leg) * df.outbound * (_dp_DIST > 1),-0.84100,-0.84100,-0.84100,-0.84100,-0.84100,-0.84100
+,"@(df.trip_num == _stops_on_leg) * df.outbound * np.clip(_dp_DIST-1, 0, 3)",-0.19400,-0.19400,-0.19400,-0.19400,-0.19400,-0.19400
+should be p->d instead of d-> dist?,@(df.trip_num == 1) * ~df.outbound * (_dp_DIST > 1),-0.86000,-0.86000,-0.86000,-0.86000,-0.86000,-0.86000
+do instead of od?,@(df.trip_num == _stops_on_leg) * ~df.outbound * (_od_DIST > 1),-0.36600,-0.36600,-0.36600,-0.36600,-0.36600,-0.36600
+do instead of od?,"@(df.trip_num == _stops_on_leg) * ~df.outbound * np.clip(_od_DIST-1, 0, 3)",-0.26900,-0.26900,-0.26900,-0.26900,-0.26900,-0.26900

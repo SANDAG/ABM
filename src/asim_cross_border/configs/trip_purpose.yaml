@@ -5,3 +5,11 @@ preprocessor:
   TABLES:
     - persons
     - tours
+
+probs_join_cols:
+  - primary_purpose
+  - outbound
+  - trip_num
+  - multistop
+
+use_depart_time: False

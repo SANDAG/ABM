@@ -1,4 +1,4 @@
-
+#
 annotate_tables:
   - tablename: persons
     annotate:
@@ -12,10 +12,3 @@ annotate_tables:
       DF: households
       TABLES:
         - persons
-        - land_use
-  - tablename: persons
-    annotate:
-      SPEC: annotate_persons_after_hh
-      DF: persons
-      TABLES:
-        - households
