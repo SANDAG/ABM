@@ -122,6 +122,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
             "num_processors", "select_link"
         ]
         self._log_level = "ENABLED"
+        self.LOCAL_ROOT = "C:\\abm_runs"
 
     def page(self):
         self.load_properties()
@@ -266,6 +267,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         props = load_properties(_join(main_directory, "conf", "sandag_abm.properties"))
         props.set_year_specific_properties(_join(main_directory, "input", "parametersByYears.csv"))
+        props.set_year_specific_properties(_join(main_directory, "input", "filesByYears.csv"))
         props.save()
         # Log current state of props file for debugging of UI / file sync issues
         attributes = dict((name, props["RunModel." + name]) for name in self._run_model_names)
@@ -327,14 +329,15 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         transitShedTOD = props["transitShed.TOD"]
 
         if useLocalDrive:
+            folder_name = os.path.basename(main_directory)
+            if not os.path.exists(_join(self.LOCAL_ROOT, username, folder_name, "report")): # check free space only if it is a new run
+                self.check_free_space(minSpaceOnC)
+            # if initialization copy ALL files from remote
+            # else check file meta data and copy those that have changed
             initialize = (skipInitialization == False and startFromIteration == 1)
             local_directory = file_manager(
                 "DOWNLOAD", main_directory, username, scenario_id, initialize=initialize)
             self._path = local_directory
-            if not os.path.exists(_join(self._path, "output")): # check free space only if it is a new run
-                self.check_free_space(minSpaceOnC)
-            # if initialization copy ALL files from remote
-            # else check file meta data and copy those that have changed
         else:
             self._path = main_directory
 
@@ -460,13 +463,13 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                         omx_file = _join(input_dir, "trip_%s.omx" % period)
                         import_demand(omx_file, "AUTO", period, base_scenario)
                         import_demand(omx_file, "TRUCK", period, base_scenario)
-                        
+
                 if not skipBikeLogsums:
                     self.run_proc("runSandagBikeLogsums.cmd", [drive, path_forward_slash],
                                   "Bike - create AT logsums and impedances")
                 if not skipCopyBikeLogsum:
                     self.copy_files(["bikeMgraLogsum.csv", "bikeTazLogsum.csv"], input_dir, output_dir)
-                    
+
             else:
                 base_scenario = main_emmebank.scenario(scenario_id)
                 transit_emmebank = _eb.Emmebank(_join(self._path, "emme_project", "Database_transit", "emmebank"))
@@ -612,10 +615,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         if scenarioYear == "2016":
             validation(self._path, main_emmebank, base_scenario)
             ### CL: Below step is temporarily used to update validation output files. When Gregor complete Upload procedure, below step should be removed. 05/31/20
-            self.run_proc("ExcelUpdate.bat",  # forced to update excel links
-                            [drive, path_no_drive, scenarioYear, 0],
-                            "Excel Update",
-                            capture_output=True)
+            # self.run_proc("ExcelUpdate.bat",  # forced to update excel links
+            #                 [drive, path_no_drive, scenarioYear, 0],
+            #                 "Excel Update",
+            #                 capture_output=True)
 
 
 
