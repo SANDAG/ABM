@@ -1,4 +1,4 @@
-Expression,shop,work,other,visit,cargo,school
+coefficient_name,shop,work,other,visit,cargo,school
 c_ivt,-0.021,-0.021,-0.021,-0.021,-0.021,-0.021
 c_cost,-0.0050,-0.0050,-0.0050,-0.0050,-0.0050,-0.0050
 s2_ASC_tour_da,-0.8160,-0.8160,-0.8160,-0.8160,-0.8160,-0.8160

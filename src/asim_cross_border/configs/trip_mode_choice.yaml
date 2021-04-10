@@ -34,6 +34,7 @@ NESTS:
 CONSTANTS:
   orig_col_name: origin
   dest_col_name: destination
+  PERIODS_PER_HOUR: 2
   time_distrib_mean_work: 1.0
   time_distrib_stddev_work: 0.7
   time_distrib_mean_nonwork: 1.0
