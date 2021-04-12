@@ -103,7 +103,6 @@ def create_persons(settings, num_households):
     # one person per household
     persons = pd.DataFrame({'person_id': range(num_households)})
     persons['household_id'] = np.random.choice(num_households, num_households, replace=False)
-    persons['person_type'] = settings['dummy_cols']['person_type ']
 
     return persons
 
@@ -312,57 +311,57 @@ if __name__ == '__main__':
         settings = yaml.load(f, Loader=yaml.FullLoader)
     data_dir = settings['data_dir']
     config_dir = settings['config_dir']
-    # maz_input_fname = settings['maz_input_fname']
-    # maz_id_field = settings['maz_id_field']
-    # poe_id_field = settings['poe_id_field']
-    # poe_access_field = settings['poe_access_field']
-    # colonia_input_fname = settings['colonia_input_fname']
-    # colonia_pop_field = settings['colonia_pop_field']
-    # distance_param = settings['distance_param']
-    # tour_settings = settings['tours']
-    # poe_settings = settings['poes']
-    # mazs_output_fname = settings['mazs_output_fname']
-    # households_output_fname = settings['households_output_fname']
-    # persons_output_fname = settings['persons_output_fname']
-    # tours_output_fname = settings['tours_output_fname']
-    # skims_settings = settings['skims']
+    maz_input_fname = settings['maz_input_fname']
+    maz_id_field = settings['maz_id_field']
+    poe_id_field = settings['poe_id_field']
+    poe_access_field = settings['poe_access_field']
+    colonia_input_fname = settings['colonia_input_fname']
+    colonia_pop_field = settings['colonia_pop_field']
+    distance_param = settings['distance_param']
+    tour_settings = settings['tours']
+    poe_settings = settings['poes']
+    mazs_output_fname = settings['mazs_output_fname']
+    households_output_fname = settings['households_output_fname']
+    persons_output_fname = settings['persons_output_fname']
+    tours_output_fname = settings['tours_output_fname']
+    skims_settings = settings['skims']
     
     # # load land use data
-    # colonias = pd.read_csv(os.path.join(data_dir, colonia_input_fname))
-    # mazs = pd.read_csv(os.path.join(data_dir, maz_input_fname))
+    colonias = pd.read_csv(os.path.join(data_dir, colonia_input_fname))
+    mazs = pd.read_csv(os.path.join(data_dir, maz_input_fname))
 
-    # # get poe id for maz's that have one
-    # mazs[poe_id_field] = None
-    # for poe_id, poe_attrs in poe_settings.items():
-    #     maz_mask = mazs[maz_id_field] == poe_attrs['maz_id']
-    #     mazs.loc[maz_mask, poe_id_field] = poe_id
+    # get poe id for maz's that have one
+    mazs[poe_id_field] = None
+    for poe_id, poe_attrs in poe_settings.items():
+        maz_mask = mazs[maz_id_field] == poe_attrs['maz_id']
+        mazs.loc[maz_mask, poe_id_field] = poe_id
 
-    # # compute colonia accessibility for poe mazs
-    # mazs[poe_access_field] = None
-    # poe_mask = ~pd.isnull(mazs[poe_id_field])
-    # mazs.loc[poe_mask, poe_access_field] = mazs.loc[poe_mask, poe_id_field].apply(
-    #     compute_poe_accessibility, colonias=colonias, colonia_pop_field=colonia_pop_field,
-    #     distance_param=distance_param)
-    # mazs = mazs.rename(columns={'mgra': 'MAZ', 'taz': 'TAZ'})
+    # compute colonia accessibility for poe mazs
+    mazs[poe_access_field] = None
+    poe_mask = ~pd.isnull(mazs[poe_id_field])
+    mazs.loc[poe_mask, poe_access_field] = mazs.loc[poe_mask, poe_id_field].apply(
+        compute_poe_accessibility, colonias=colonias, colonia_pop_field=colonia_pop_field,
+        distance_param=distance_param)
+    mazs = mazs.rename(columns={'mgra': 'MAZ', 'taz': 'TAZ'})
 
-    # # merge in wide wait times
-    # wide_wait_times = get_poe_wait_times(settings)
-    # mazs = pd.merge(mazs, wide_wait_times, left_on='poe_id', right_on='poe', how='left')
+    # merge in wide wait times
+    wide_wait_times = get_poe_wait_times(settings)
+    mazs = pd.merge(mazs, wide_wait_times, left_on='poe_id', right_on='poe', how='left')
 
-    # # create tours
-    # tours = create_tours(tour_settings)
+    # create tours
+    tours = create_tours(tour_settings)
 
-    # # create households, 1 per tour
-    # num_tours = tour_settings['num_tours']
-    # households = create_households(num_tours)
+    # create households, 1 per tour
+    num_tours = tour_settings['num_tours']
+    households = create_households(num_tours)
 
-    # # create persons, 1 per household
-    # num_households = len(households)
-    # persons = create_persons(num_households)
+    # create persons, 1 per household
+    num_households = len(households)
+    persons = create_persons(settings, num_households)
 
-    # # assign persons and households to tours
-    # tours['household_id'] = np.random.choice(num_tours, num_tours, replace=False)
-    # tours['person_id'] = persons.set_index('household_id').reindex(tours['household_id'])['person_id'].values
+    # assign persons and households to tours
+    tours['household_id'] = np.random.choice(num_tours, num_tours, replace=False)
+    tours['person_id'] = persons.set_index('household_id').reindex(tours['household_id'])['person_id'].values
 
     # reformat table of tour scheduling prob
     scheduling_probs = pd.read_csv(
@@ -376,21 +375,19 @@ if __name__ == '__main__':
         index='purpose_id', columns=['entry_period','return_period'], values='prob')
     scheduling_probs.columns = [str(col[0]) + '_' + str(col[1]) for col in scheduling_probs.columns]
 
-    # # store results
-    # mazs.to_csv(os.path.join(data_dir, mazs_output_fname), index=False)
-    # tours.to_csv(os.path.join(data_dir, tours_output_fname))
-    # households.to_csv(os.path.join(data_dir, households_output_fname), index=False)
-    # persons.to_csv(os.path.join(data_dir, persons_output_fname), index=False)
-    # scheduling_probs.to_csv(os.path.join(config_dir, settings['tour_scheduling_probs_output_fname']))
+    # store results
+    mazs.to_csv(os.path.join(data_dir, mazs_output_fname), index=False)
+    tours.to_csv(os.path.join(data_dir, tours_output_fname))
+    households.to_csv(os.path.join(data_dir, households_output_fname), index=False)
+    persons.to_csv(os.path.join(data_dir, persons_output_fname), index=False)
+    scheduling_probs.to_csv(os.path.join(config_dir, settings['tour_scheduling_probs_output_fname']))
     tour_scheduling_alts.to_csv(os.path.join(config_dir, settings['tour_scheduling_alts_output_fname']), index=False)
 
-
-
-    # # update the skims
+    # update the skims
     create_skims_and_tap_files(settings)
 
     # create_stop_freq_specs(settings)
-    # update_trip_purpose_probs(settings)
+    update_trip_purpose_probs(settings)
 
     # process duration-based trip scheduling probs
-    # create_trip_scheduling_duration_probs(settings)
+    create_trip_scheduling_duration_probs(settings)

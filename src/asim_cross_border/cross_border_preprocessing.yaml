@@ -1,5 +1,5 @@
 data_dir: data
-config_dir: configs_sandag_xborder
+config_dir: configs
 
 maz_input_fname: mgra13_based_input2016.csv
 maz_id_field: mgra
