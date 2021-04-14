@@ -13,7 +13,6 @@ if __name__ == '__main__':
     add_run_args(parser)
     args = parser.parse_args()
 
-	os.environ['MKL_NUM_THREADS'] = '1'
-
+    os.environ['MKL_NUM_THREADS'] = '1'
 
     sys.exit(run(args))
