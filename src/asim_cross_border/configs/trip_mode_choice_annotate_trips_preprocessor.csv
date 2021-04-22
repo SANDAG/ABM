@@ -26,7 +26,9 @@ last trip of tour,last_trip,(df.trip_num == df.trip_count) & (df.outbound == Fal
 ,tour_mode_is_walk,df.tour_mode == 'WALK'
 ,is_sentri,df['lane_type'] == 'sentri'
 tour duration in hours,duration_hours,df['duration'] / PERIODS_PER_HOUR
-,tour_dest,"reindex(tours.destination, df.tour_id)"
+#,tour_dest,"reindex(tours.destination, df.tour_id)"
+,_TOURS_HAVE_DEST, 'destination' in tours.columns
+for tour_od_choice logsums read tour_dest from trips table,tour_dest,"reindex(tours.destination, df.tour_id) if _TOURS_HAVE_DEST else df.destination"
 ,trip_orig_is_tour_dest,df.origin == tour_dest
 ,trip_dest_is_tour_dest,df.destination == tour_dest
 sandag costs need to be in cents,park_cost_day,"reindex(land_use.dparkcost, tour_dest) * 100"

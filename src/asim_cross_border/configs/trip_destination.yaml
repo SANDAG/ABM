@@ -22,6 +22,7 @@ PRIMARY_DEST: destination
 
 REDUNDANT_TOURS_MERGED_CHOOSER_COLUMNS:
   - tour_mode
+  - destination
 
 preprocessor:
   SPEC: trip_destination_annotate_trips_preprocessor
