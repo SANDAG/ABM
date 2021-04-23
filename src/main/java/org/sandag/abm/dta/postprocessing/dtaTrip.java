@@ -3,6 +3,8 @@ package org.sandag.abm.dta.postprocessing;
 import java.io.PrintWriter;
 import java.io.Serializable;
 
+import org.sandag.abm.application.SandagModelStructure;
+
 public class dtaTrip implements Serializable {
 
 	private int id;
@@ -184,43 +186,34 @@ public class dtaTrip implements Serializable {
    	/**
    	 * set trip mode values based on trip mode in input file
    	 */
-   	public void setTripMode(int mode) {
-   		if(mode<=8||mode>=27){
+   	public void setTripMode(int mode, SandagModelStructure modelStructure) {
+   		if(modelStructure.getTripModeIsSovOrHov(mode)||modelStructure.getTourModeIsMaas(mode)){
    			setVehicleType("passengerCar");
 			setVehicleOccupancy(1);
-   			setTollEligible(0);
-   			if(mode==2){
-   				setTollEligible(1);
-   			}
-   			if((mode>=3 && mode<=5)||mode==27){
+   			setTollEligible(1);
+   			if(modelStructure.getTripModeIsS2(mode)||modelStructure.getTourModeIsMaas(mode)){
    				setVehicleOccupancy(2);
    			}
-   			if(mode==5){
-   				setTollEligible(1);
-   			}
-   			if(mode>=6 && mode<=8){
+   			if(modelStructure.getTripModeIsS3(mode)){
    				setVehicleOccupancy(3);
    			}
-   			if(mode==8){
-   				setTollEligible(1);   				
-   			}
    		}
-   		if(mode>8 && mode<11){
+   		if(modelStructure.getTripModeIsNonMotorized(mode)){
    			setVehicleType("nonMotorized");
    			setVehicleOccupancy(0);
    			setTollEligible(0);
    		}
-   		if(mode>=11 && mode<16){
+   		if(modelStructure.getTripModeIsWalkTransit(mode)){
    			setVehicleType("WalkTransit");
    			setVehicleOccupancy(0);
    			setTollEligible(0);
    		}
-   		if(mode>=16 && mode<26){
+   		if(modelStructure.getTourModeIsDriveTransit(mode)){
    			setVehicleType("DriveTransit");
    			setVehicleOccupancy(1);
    			setTollEligible(0);
    		}
-   		if(mode==26){
+   		if(modelStructure.getTourModeIsSchoolBus(mode)){
    			setVehicleType("SchoolBus");
    		}
    	}
