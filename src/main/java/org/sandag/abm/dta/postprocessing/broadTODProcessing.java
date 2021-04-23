@@ -21,9 +21,6 @@ import org.sandag.abm.dta.postprocessing.spatialDisaggregationModel;
 
 public class broadTODProcessing {
 
-	private static final String PROPERTIES_DISAGGPATHTOD          = "dta.postprocessing.disaggregateTOD.path";
-	private static final String PROPERTIES_DISAGGPATHZONE         = "dta.postprocessing.disaggregateZone.path";
-	private static final String PROPERTIES_DISAGGPATHNODE         = "dta.postprocessing.disaggregateNode.path";
     private static final String PROPERTIES_BROADTODPROBABILITIES  = "dta.postprocessing.BroadTODFile";
     private static final String PROPERTIES_ZONEPROBABILITIES      = "dta.postprocessing.ZoneFile";
     private static final String PROPERTIES_NODEPROBABILITIES      = "dta.postprocessing.NodeFile";
@@ -83,7 +80,6 @@ public class broadTODProcessing {
 								
 		//Read in factors and maps to aggregate time periods
 		String broadFactorsFile = Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_BROADTODPROBABILITIES);
-	
 		TableDataSet BroadData = TableDataSet.readFile(broadFactorsFile);
 		int numPeriods = BroadData.getRowCount();
 		broadProbabilities = todDisaggregationModel.getTODProbabilities(BroadData, numPeriods, marketSegment);   

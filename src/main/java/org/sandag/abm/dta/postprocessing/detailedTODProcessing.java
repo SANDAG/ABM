@@ -25,14 +25,12 @@ import com.pb.common.datafile.DataTypes;
 
 public class detailedTODProcessing {
 
-	private static final String PROPERTIES_DISAGGPATHTOD          = "dta.postprocessing.disaggregateTOD.path";
-	private static final String PROPERTIES_DISAGGPATHNODE         = "dta.postprocessing.disaggregateNode.path";
 	private static final String PROPERTIES_OUTPUTSPATH            = "dta.postprocessing.outputs.path";
 	private static final String PROPERTIES_DETAILPROBABILITIES    = "dta.postprocessing.DetailedTODFile";
     private static final String PROPERTIES_NODEPROBABILITIES      = "dta.postprocessing.NodeFile";
     private static final String PROPERTIES_RANDOMSEED             = "dta.postprocessing.RandomSeed";
-	private static final String PROPERTIES_DISAGGPATHZONE         = "dta.postprocessing.disaggregateZone.path";
     private static final String PROPERTIES_ZONEPROBABILITIES      = "dta.postprocessing.ZoneFile";
+    private static final String PROPERTIES_BROADTODPROBABILITIES  = "dta.postprocessing.BroadTODFile";
 
 
     private static final int                         DA_TIME_INDEX                          = 0;
@@ -56,20 +54,20 @@ public class detailedTODProcessing {
     private todDisaggregationModel todDisaggregationModel;
     private spatialDisaggregationModel spatialDisaggregationModel;
 	
-	private String disaggTODPath;
-	private String disaggNodePath;
 	private String outputsPath;
 	
 	private double sampleRate;
 	private String inputFile;
 	private String marketSegment;
 		
+	private int[] broadTODMap;
 	private int[] detailTODMap;
 	private int[] mgraNodeMap;
 	private int[] nodeMap;
 	private int[] tazMap;
 	private int[] mgraTAZMap;
 
+	private double[] broadProbabilities;
 	private double[] detailProbabilities;
 	private double[] nodeProbabilities;
 	private double[] mgraProdProbabilities;
@@ -78,9 +76,11 @@ public class detailedTODProcessing {
 	private dtaTrip Trip;	
 	private PrintWriter tripWriter;
 
+	private TableDataSet MGRAData;
 
     private transient Logger           logger                         = Logger.getLogger("postprocessModel");
 
+    private HashMap<String,Integer> todPeriods;
 	
 	/**
 	 * Default constructor.
@@ -106,7 +106,6 @@ public class detailedTODProcessing {
 
 		//Read in factors and maps to aggregate time periods	
 		String detailedFactorsFile = Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_DETAILPROBABILITIES);
-
 		TableDataSet DetailedData = TableDataSet.readFile(detailedFactorsFile);
 		int numDetailedPeriods = DetailedData.getRowCount();
 		detailProbabilities = todDisaggregationModel.getTODProbabilities(DetailedData, numDetailedPeriods, null);
@@ -135,6 +134,12 @@ public class detailedTODProcessing {
 	    	skimMatrix[p] = MatrixReader.readMatrix(new File(skimFileName), matName);
 	    }
 		
+	    todPeriods=new HashMap<String,Integer>();
+	    todPeriods.put("EA",1);
+	    todPeriods.put("AM",2);
+	    todPeriods.put("MD",3);
+	    todPeriods.put("PM",4);
+	    todPeriods.put("EV",5);
 
  	}
 	
@@ -142,7 +147,7 @@ public class detailedTODProcessing {
 	/**
 	 * Create trip record from and disaggregate tod for detailed tod files
 	 */
-	public void createDetailedTODTrips(String inputFile, String marketSegment, HashMap<String,String> rbMap){
+	public void createDetailedTODTrips(String inputFile, String marketSegment, boolean disaggregateSpace, boolean disaggregateTOD, HashMap<String,String> rbMap){
         SandagModelStructure modelStructure = new SandagModelStructure();
 		TableDataSet tripRecords = TableDataSet.readFile(inputFile);
 		int numRecords = tripRecords.getRowCount();
@@ -167,9 +172,10 @@ public class detailedTODProcessing {
 		
 		Arrays.fill(dtaTimesPrev, 0);
 		
-		if(inputFile.contains("TripMatrices.csv")) {
+		if(disaggregateSpace) {
+			logger.info("Initializing spatial disaggregation model");
 			String mgraFactorsFile = Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_ZONEPROBABILITIES);
-			TableDataSet MGRAData = TableDataSet.readFile(mgraFactorsFile);
+			MGRAData = TableDataSet.readFile(mgraFactorsFile);
 			int numMGRAs = MGRAData.getRowCount();
 			mgraProdProbabilities = spatialDisaggregationModel.getSpatialProbabilities(MGRAData, numMGRAs, "Prods", marketSegment);
 			mgraAttrProbabilities = spatialDisaggregationModel.getSpatialProbabilities(MGRAData, numMGRAs, "Attrs", marketSegment);
@@ -178,13 +184,25 @@ public class detailedTODProcessing {
 
 		}
 		
+		if(disaggregateTOD) {
+			//Read in factors and maps to aggregate time periods
+			String broadFactorsFile = Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_BROADTODPROBABILITIES);
+			TableDataSet BroadData = TableDataSet.readFile(broadFactorsFile);
+			int numPeriods = BroadData.getRowCount();
+			broadProbabilities = todDisaggregationModel.getTODProbabilities(BroadData, numPeriods, marketSegment);   
+			broadTODMap = todDisaggregationModel.getTODMap(BroadData, numPeriods);
+		}
 		
-		logger.info("Reading "+numRecords+" trip records from disaggregate file: "+inputFile);
+		logger.info("Running "+numRecords+" trip records from disaggregate file: "+inputFile);
 		
 		// Create a trip record for each record in the input file
 		for (int i=0; i<numRecords; ++i){
+			
+			if((i<10)||(i % 10000)==0) {
+				logger.info("Processing record "+(i+1));
+			}
 			addSOVTrip = false;
-			int mode=0;
+			int mode=1;
 			double occ=1.0;
 			expansionFactor = 1.0/sampleRate;
 			double fractionalTrips = 1.0;
@@ -199,14 +217,33 @@ public class detailedTODProcessing {
 			
 			if (tripRecords.containsColumn("tripMode")){
 				//skip if the mode is string, that means it is from cv, ee, ei, or truck lists
-				if(tripRecords.getColumnType()[tripRecords.checkColumnPosition("tripMode")]==DataTypes.STRING)
-					continue;
-				mode = (int) tripRecords.getValueAt(i+1, "tripMode");
-				if (modelStructure.getTourModeIsDriveTransit(mode)){
-					addSOVTrip=true;
+				if(!(tripRecords.getColumnType()[tripRecords.checkColumnPosition("tripMode")]==DataTypes.STRING)) {
+
+					mode = (int) tripRecords.getValueAt(i+1, "tripMode");
+					if (modelStructure.getTourModeIsDriveTransit(mode)){
+						addSOVTrip=true;
+					}
+				}
+			}
+			
+			if(tripRecords.containsColumn("MODE")) {
+				if((tripRecords.getColumnType()[tripRecords.checkColumnPosition("MODE")]==DataTypes.STRING)) {
+					String modeStr = tripRecords.getStringValueAt(i+1, "MODE");
+					if(modeStr.contains("S2"))
+						occ=2.0;
+					else if(modeStr.contains("S3"))
+						occ=3.5;
 				}
 			}
 
+			if(tripRecords.containsColumn("weightTrip")) {
+				expansionFactor = tripRecords.getValueAt(i+1,"weightTrip");
+			}
+			
+			if(tripRecords.containsColumn("TRIPS")) {
+				expansionFactor = tripRecords.getValueAt(i+1,"TRIPS");
+				
+			}
 			
 			if(mode==-99){
 				continue;
@@ -280,26 +317,30 @@ public class detailedTODProcessing {
 			
 			if (tripRecords.containsColumn("originTAZ")){
 				origTAZ = (int) tripRecords.getValueAt(i+1, "originTAZ");
+			}else if(tripRecords.containsColumn("OTAZ")){
+				origTAZ = (int) tripRecords.getValueAt(i+1, "OTAZ");
 			}else{
 				origTAZ = mgraManager.getTaz(origMGRA);
 			}
 			if (tripRecords.containsColumn("destinationTAZ")){
 				destTAZ = (int) tripRecords.getValueAt(i+1, "destinationTAZ");
+			}else if(tripRecords.containsColumn("DTAZ")){
+				destTAZ = (int) tripRecords.getValueAt(i+1, "DTAZ");
 			}else{
 				destTAZ = mgraManager.getTaz(destMGRA);
 			}
 
 			if(origMGRA==0)
-				origMGRA = spatialDisaggregationModel.selectMGRAfromTAZ(Trip.getOriginTaz(),mgraTAZMap,tazMap,mgraProdProbabilities,debug);
+				origMGRA = spatialDisaggregationModel.selectMGRAfromTAZ(origTAZ,mgraTAZMap,tazMap,mgraProdProbabilities,debug);
 
 			if(destMGRA==0)
-			    destMGRA = spatialDisaggregationModel.selectMGRAfromTAZ(Trip.getOriginTaz(),mgraTAZMap,tazMap,mgraAttrProbabilities,debug);
+			    destMGRA = spatialDisaggregationModel.selectMGRAfromTAZ(destTAZ,mgraTAZMap,tazMap,mgraAttrProbabilities,debug);
 
 			if (origMGRA==0){
-				origMGRA = 50000+Trip.getOriginTaz();
+				origMGRA = 50000+origTAZ;
 			}
 			if (destMGRA==0){
-				destMGRA = 50000+Trip.getDestinationTaz();
+				destMGRA = 50000+destTAZ;
 			}
 			
 			//JEF 2021-04-21: not sure what the following code intended - removing 
@@ -328,22 +369,44 @@ public class detailedTODProcessing {
 				period = (int) tripRecords.getValueAt(i+1,"departTimeAbmHalfHour");
 				
 			}
+			int disaggregatePeriod =0;
+			if(disaggregateTOD) {
+				int broadTOD=0;
+				if(tripRecords.containsColumn("TOD")) {
+					String todLabel = tripRecords.getStringValueAt(i+1, "TOD");
+					broadTOD=todPeriods.get(todLabel);
+				}
+				
+				disaggregatePeriod = todDisaggregationModel.calculateDisaggregateTOD(broadTOD, broadTODMap, broadProbabilities, debug);
+
+			}
 			
 			if(period==0)
 				period=1;
 			
-			//Calculate number of trips to generate from the record (at a tour level where possible)
+			//Calculate number of trips to generate from the record 
+			tripExp = (int) Math.floor(expansionFactor);
+			double tripsFrac = expansionFactor - tripExp;
+			double rn = random.nextDouble();
+			if (rn<tripsFrac)
+				tripExp += 1.0; 
 			
+			/* The following code is strange.
 			if (tourid!=touridLast || persid!=persidLast || hhid!=hhidLast || (tourid==0 && hhid==0)){
 				tripExp = (int) Math.floor(expansionFactor);
 				double tripsFrac = expansionFactor - tripExp;
 				double rn = random.nextDouble();
 				if (rn<tripsFrac)
 					tripExp += 1; 
+				
+				//what is this code doing? Nothing as far as I can tell...
 				rn = random.nextDouble();
 				if (rn>fractionalTrips)
 					tripExp += 0;
 			}else if(fractionalTrips<1.0 && mode==modeLast){
+				
+				//the following code has no effect. It is checking for occ>1 on the tour and re-calculating
+				//whether to generate a trip or not. It should be turned on!
 				double rn = random.nextDouble();
 				if (rn>fractionalTrips)
 					tripExp += 0;			
@@ -353,11 +416,13 @@ public class detailedTODProcessing {
 				double rn = random.nextDouble();
 				if (rn<tripsFrac)
 					tripExp += 1; 
+				
+				//this has no effect
 				rn = random.nextDouble();
 				if (rn>fractionalTrips)
 					tripExp += 0;			
 			}
-			
+			*/
 			//logger.info("expansionFactor " + expansionFactor  + ", fractionalTrips " + fractionalTrips + ", tripExp " + tripExp);
 			// Reset the dtaTimes array
 			Arrays.fill(dtaTimes,0);
@@ -395,13 +460,17 @@ public class detailedTODProcessing {
 					logger.info("Period     dtaPeriod     Prob     cumProb     randomNumber");
 				}
 
-				dtaTimes[k] = todDisaggregationModel.calculateDisaggregateTOD(period, detailTODMap, detailProbabilities,debug);		
 							
 				// Choose nodes for the trip origin and destination					
 				int origNode = spatialDisaggregationModel.selectNodeFromMGRA(Trip.getOriginMGRA(), nodeMap, mgraNodeMap, nodeProbabilities, debug);
 				int destNode = spatialDisaggregationModel.selectNodeFromMGRA(Trip.getDestinationMGRA(), nodeMap, mgraNodeMap, nodeProbabilities, debug);
 
-				Trip.setDTAPeriod(dtaTimes[k]);
+				if(disaggregateTOD) {
+					Trip.setDTAPeriod(disaggregatePeriod);
+				}else {
+					dtaTimes[k] = todDisaggregationModel.calculateDisaggregateTOD(period, detailTODMap, detailProbabilities,debug);		
+					Trip.setDTAPeriod(dtaTimes[k]);
+				}
 				Trip.setOriginNode(origNode);
 				Trip.setDestinationNode(destNode);
 				tripWriter.print("\r\n");
@@ -432,7 +501,15 @@ public class detailedTODProcessing {
 						if(tripRecords.containsColumn("direction")){
 							dir = (int) tripRecords.getValueAt(i+1,"direction");
 						}else if(tripRecords.containsColumn("inbound")){
-							dir = (int) tripRecords.getValueAt(i+1,"inbound");
+							
+							if((tripRecords.getColumnType()[tripRecords.checkColumnPosition("inbound")]==DataTypes.STRING)) {
+								boolean isInbound = new Boolean(tripRecords.getStringValueAt(i+1, "inbound"));
+								if(isInbound)
+									dir=1;
+							}else {
+								dir = (int) tripRecords.getValueAt(i+1,"inbound");
+					
+							}
 						}
 						if(tripRecords.containsColumn("boardingTAP")){
 							boardMGRA = (int) tripRecords.getValueAt(i+1,"boardingTAP");
@@ -460,7 +537,8 @@ public class detailedTODProcessing {
 			touridLast = tourid;
 			periodLast = period;
 			modeLast = mode;
-			dtaTimesPrev = dtaTimes.clone();
+			if(!disaggregateTOD)
+				dtaTimesPrev = dtaTimes.clone();
 		}	
 		logger.info("Market "+marketSegment+" wrote out "+tripsCount+" total trips.");
 	}

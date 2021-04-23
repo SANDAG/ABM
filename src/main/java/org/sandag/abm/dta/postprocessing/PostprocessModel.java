@@ -22,8 +22,6 @@ import org.sandag.abm.ctramp.Util;
 public class PostprocessModel {
 
 	private static final String PROPERTIES_OUTPUTSPATH            = "dta.postprocessing.outputs.path";
-	private static final String PROPERTIES_DISAGGPATHTOD          = "dta.postprocessing.disaggregateTOD.path";
-	private static final String PROPERTIES_DISAGGPATHZONE         = "dta.postprocessing.disaggregateZone.path";
 	private static final String PROPERTIES_TRIPOUT                = "dta.postprocessing.outputs.TripFile";
 	private static final String PROPERTIES_HOUSEHOLD_TRACE_LIST   = "dta.postprocessing.debug.HouseholdIds";
 	private static final String PROPERTIES_ORIGIN_TRACE_LIST      = "dta.postprocessing.debug.OriginZones";
@@ -34,7 +32,6 @@ public class PostprocessModel {
     public HashSet<Integer>        originTraceSet;
     	
 	public String outputsPath;
-	public String disaggTODPath;
 	public String todType;
 	public String outputFile;
 	
@@ -43,6 +40,9 @@ public class PostprocessModel {
 	public double SampleRate;
 	
 	public PrintWriter tripWriter;
+	
+	public boolean disaggregateSpace;
+	public boolean disaggregateTOD;
 
     private static Logger           logger                         = Logger.getLogger("postprocessModel");
 
@@ -50,21 +50,22 @@ public class PostprocessModel {
 	/**
 	 * Default constructor.
 	 */
-	public PostprocessModel(HashMap<String,String> rbMap, String timeType, double sampleRate, String inputFile, String marketSegment){
+	public PostprocessModel(HashMap<String,String> rbMap, String timeType, double sampleRate, String inputFile, String marketSegment,boolean disaggregateSpace, boolean disaggregateTOD){
 		
 		this.rbMap = rbMap;
 		this.SampleRate = sampleRate;
 		this.inputFile = inputFile;
 		this.marketSegment = marketSegment;
 		this.todType = timeType;
+		this.disaggregateSpace = disaggregateSpace;
+		this.disaggregateTOD = disaggregateTOD;
 	
  	}
 	
 		
 	public void runModel(){
 		
-		disaggTODPath = Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_DISAGGPATHTOD);
-		outputFile = disaggTODPath + Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_TRIPOUT);
+		outputFile = Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_TRIPOUT);
 		outputsPath = Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_OUTPUTSPATH);
 		outputFile = outputsPath + Util.getStringValueFromPropertyMap(rbMap, PROPERTIES_TRIPOUT);
 		
@@ -103,7 +104,7 @@ public class PostprocessModel {
 						
 		if(todType.equalsIgnoreCase("broad")){
 			logger.info("Processing Broad TOD Model");
-			TableDataSet broadFiles = TableDataSet.readFile(disaggTODPath+inputFile);
+			TableDataSet broadFiles = TableDataSet.readFile(inputFile);
 			int numFiles = broadFiles.getRowCount();
 			for (int i=0; i<numFiles; ++i){
 				String inputFileName = broadFiles.getStringValueAt(i+1, "fileName");
@@ -121,7 +122,7 @@ public class PostprocessModel {
 		if(todType.equalsIgnoreCase("detailed")){
 			logger.info("Processing Detailed TOD Model: "+marketSegment);
 			detailedTODProcessing detailModel = new detailedTODProcessing(rbMap, SampleRate, inputFile, marketSegment, householdTraceSet, originTraceSet, tripWriter);
-			detailModel.createDetailedTODTrips(outputsPath+inputFile, marketSegment, rbMap);
+			detailModel.createDetailedTODTrips(inputFile, marketSegment, disaggregateSpace, disaggregateTOD, rbMap);
 		}
 		
 		tripWriter.close();
@@ -207,6 +208,8 @@ public class PostprocessModel {
         String todType = null;
         String inputFile = null;
         String marketSegment = null;
+        boolean disaggregateSpace=false;
+        boolean disaggregateTOD=false;
         double sampleRate = 1.0;
 		
 		if (args.length == 0) {
@@ -228,6 +231,13 @@ public class PostprocessModel {
 			if (args[i].equalsIgnoreCase("-marketSegment")){
 				marketSegment = (String) args[i+1];
 			}
+			if (args[i].equalsIgnoreCase("-disaggregateSpace")){
+				disaggregateSpace = new Boolean((String) args[i+1]);
+			}
+			if (args[i].equalsIgnoreCase("-disaggregateTOD")){
+				disaggregateTOD = new Boolean((String) args[i+1]);
+			}
+
 		}
         pMap = ResourceUtil.getResourceBundleAsHashMap(propertiesFile);
         
@@ -238,7 +248,7 @@ public class PostprocessModel {
         logger.info("Input File = "+inputFile);
         logger.info("Market Segment = "+marketSegment);
         	
-        PostprocessModel postprocessingModel = new PostprocessModel(pMap,todType,sampleRate,inputFile,marketSegment);
+        PostprocessModel postprocessingModel = new PostprocessModel(pMap,todType,sampleRate,inputFile,marketSegment,disaggregateSpace,disaggregateTOD);
         postprocessingModel.runModel();	
 	}
 
