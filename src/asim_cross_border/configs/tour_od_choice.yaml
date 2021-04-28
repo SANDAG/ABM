@@ -11,7 +11,7 @@ SIMULATE_CHOOSER_COLUMNS:
 # model-specific logsum-related settings
 CHOOSER_ORIG_COL_NAME: &o origin
 ALT_DEST_COL_NAME: &d destination
-
+ALT_OD_COL_NAME_PRESAMPLE: omaz_dtaz_id
 ALT_OD_COL_NAME: tour_od_id
 
 # AFAIK, these column names need to be used bc the trip and tour
