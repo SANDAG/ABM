@@ -122,5 +122,6 @@ TOURS_MERGED_CHOOSER_COLUMNS:
   - demographic_segment
   - duration
   - lane_type
+  - destination
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: trip_mode_choice_logsum

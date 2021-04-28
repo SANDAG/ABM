@@ -52,6 +52,14 @@ LOGSUM_CHOOSER_COLUMNS:
   - demographic_segment
   - c_ivt_for_segment
   - c_cost_for_segment
+  - lane_type
+  - start
+  - end
+  - duration
+  - is_university
+  - primary_purpose
+  - person_id
+  - household_id
 
 CHOICE_COL_NAME: tour_mode
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum
