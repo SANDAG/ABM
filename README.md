@@ -7,9 +7,9 @@ SANDAG maintains multiple ABM software versions, including ABM1 for <a href="htt
   - ABM2_TRUNK for ABM2 & ABM2+
   - asim-cross-border for cross border travel model (CBTM): <a href="https://github.com/ActivitySim/activitysim/wiki">ActivitySim</a>-based and will be ABM3
 - For each ABM version there is a release branch that should not receive continued development work.
-  - Release 13.3.2 for ABM1
+  - Release 13.3.3 for ABM1
   - Release 14.1.1 for ABM2
-  - Release 14.2.0 for ABM2+ (forthcoming)
+  - Release 14.2.1 for ABM2+
 - In some cases, short-lived feature branches are allowed. However, once codes on feature branch compiles and passes all tests, they should be merged to trunk and the feature branch should be deleted.
 
 ##
