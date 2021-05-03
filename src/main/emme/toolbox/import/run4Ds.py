@@ -19,8 +19,8 @@
 #   path: path to the current scenario
 #   ref_path: path to the comparison model scenario
 #   int_radius: buffer radius for intersection counts
-#   maps: default unchecked - means not generating spatial heat maps for 
-#         intersection counts. This functionality requires 
+#   maps: default unchecked - means not generating spatial heat maps for
+#         intersection counts. This functionality requires
 #         following packages; geopandas, folium, and branca
 #
 # File referenced:
@@ -30,8 +30,8 @@
 #   output\walkMgraEquivMinutes.csv
 #
 # Script example
-# python C:\ABM_runs\maint_2019_RSG\Tasks\4ds\emme_toolbox\emme\toolbox\import\run4Ds.py 
-#       0.65 r'C:\ABM_runs\maint_2019_RSG\Model\ABM2_14_2_0' r'C:\ABM_runs\maint_2019_RSG\Model\abm_test_fortran_4d' 
+# python C:\ABM_runs\maint_2019_RSG\Tasks\4ds\emme_toolbox\emme\toolbox\import\run4Ds.py
+#       0.65 r'C:\ABM_runs\maint_2019_RSG\Model\ABM2_14_2_0' r'C:\ABM_runs\maint_2019_RSG\Model\abm_test_fortran_4d'
 
 
 TOOLBOX_ORDER = 10
@@ -65,8 +65,8 @@ class FourDs(_m.Tool()):
 
     @_m.method(return_type=_m.UnicodeType)
     def tool_run_msg_status(self):
-        return self.tool_run_msg    
-    
+        return self.tool_run_msg
+
     def __init__(self):
         self._log = []
         self._error = []
@@ -94,12 +94,12 @@ class FourDs(_m.Tool()):
         load_properties = _m.Modeller().tool('sandag.utilities.properties')
         props = load_properties(_join(self.path, "conf", "sandag_abm.properties"))
         self.ref_path = props["visualizer.reference.path"]
-                    
+
         pb = _m.ToolPageBuilder(self)
         pb.title = "Run 4Ds"
         pb.description = """
-        Generate Density Variables. 
-        Generated from MGRA socio economic file and active transportation (AT) network. 
+        Generate Density Variables.
+        Generated from MGRA socio economic file and active transportation (AT) network.
         <br>
         <div style="text-align:left">
         The following files are used:
@@ -117,7 +117,7 @@ class FourDs(_m.Tool()):
         if self.tool_run_msg != "":
             pb.tool_run_status(self.tool_run_msg_status)
 
-        pb.add_select_file("path", window_type="directory", file_filter="", 
+        pb.add_select_file("path", window_type="directory", file_filter="",
                            title="Source directory:",)
 
         pb.add_text_box("int_radius", size=6, title="Buffer size (miles):")
@@ -125,7 +125,7 @@ class FourDs(_m.Tool()):
         pb.add_select_file("ref_path", window_type="directory", file_filter="", title="Reference directory for comparison")
 
         return pb.render()
-  
+
     def run(self):
         self.tool_run_msg = ""
         try:
@@ -136,8 +136,8 @@ class FourDs(_m.Tool()):
             self.tool_run_msg = _m.PageBuilder.format_exception(
                 error, _traceback.format_exc(error))
             raise
-        
-    def __call__(self, path= "", 
+
+    def __call__(self, path= "",
                  int_radius = 0.65,
                  ref_path = ""):
         _m.logbook_write("Started running 4Ds ...")
@@ -150,7 +150,7 @@ class FourDs(_m.Tool()):
         load_properties = _m.Modeller().tool('sandag.utilities.properties')
         props = load_properties(_join(self.path, "conf", "sandag_abm.properties"))
 
-		
+
         self.mgradata_file = props["mgra.socec.file"] #input/filename
         self.syn_households_file = props["PopulationSynthesizer.InputToCTRAMP.HouseholdFile"] #input/filename
         self.equivmins_file = props["active.logsum.matrix.file.walk.mgra"] #filename
@@ -164,24 +164,24 @@ class FourDs(_m.Tool()):
             "maps": self.maps,
         }
         gen_utils.log_snapshot("Run 4Ds", str(self), attributes)
-        
+
         file_paths = [_join(self.path, self.mgradata_file),_join(self.path, self.syn_households_file),_join(self.path, "output", self.equivmins_file),  _join(self.path, "input", self.inNet),  _join(self.path, "input", self.inNode)]
         for path in file_paths:
             if not os.path.exists(path):
                 raise Exception("missing file '%s'" % (path))
-        
+
         self.mgra_data = pd.read_csv(os.path.join(self.path,self.mgradata_file))
         self.base_cols = self.mgra_data.columns.tolist()
-           
+
         _m.logbook_write("Tagging intersections to mgra")
         self.get_intersection_count()
-        
+
         _m.logbook_write("Generating density variables")
         self.get_density()
-        
+
         _m.logbook_write("Creating comparison plots")
         self.make_plots()
-        
+
         _m.logbook_write("Finished running 4Ds")
 
     def get_intersection_count(self):
@@ -231,7 +231,7 @@ class FourDs(_m.Tool()):
         for int in intersections.iterrows():
             mgra_nodes['dist'] = np.sqrt((int[1][1] - mgra_nodes['x'])**2+(int[1][2] - mgra_nodes['y'])**2)
             int_dict[int[1][0]] = mgra_nodes.loc[mgra_nodes['dist'] == mgra_nodes['dist'].min()]['mgra'].values[0]
-            
+
         intersections['near_mgra'] = intersections['N'].map(int_dict)
         intersections = intersections.groupby('near_mgra', as_index = False).count()[['near_mgra','N']].rename(columns = {'near_mgra':'mgra','N':'icnt'})
         try:
@@ -244,7 +244,7 @@ class FourDs(_m.Tool()):
            mgra_landuse = pd.read_csv(os.path.join(self.path, self.mgradata_file))
         else:
            mgra_landuse = self.mgra_data
-        
+
 		# get population from synthetic population instead of mgra data file
         syn_pop = pd.read_csv(os.path.join(self.path, self.syn_households_file))
         syn_pop = syn_pop.rename(columns = {'MGRA':'mgra'})[['persons','mgra']].groupby('mgra',as_index = False).sum()
@@ -253,14 +253,14 @@ class FourDs(_m.Tool()):
             if col in self.base_cols:
                 self.base_cols.remove(col)
                 mgra_landuse = mgra_landuse.drop(col,axis=1)
-        
+
 		#merge syntetic population to landuse
         mgra_landuse = mgra_landuse.merge(syn_pop, how = 'left', on = 'mgra')
-        #all street distance  
+        #all street distance
         equiv_min = pd.read_csv(_join(self.path, "output", self.equivmins_file))
         equiv_min['dist'] = equiv_min['actual']/60*3
         print("MGRA input landuse: " + self.mgradata_file)
-        
+
         def density_function(mgra_in):
             eqmn = equiv_min[equiv_min['i'] == mgra_in]
             mgra_circa_int = eqmn[eqmn['dist'] < self.int_radius]['j'].unique()
@@ -286,7 +286,7 @@ class FourDs(_m.Tool()):
                 popEmpDenPerMi = 0
                 tot_icnt = 0
             return tot_icnt,duDen,empDen,popDen,retDen,popEmpDenPerMi
-    
+
         #new_cols = [0-'totint',1-'duden',2-'empden',3-'popden',4-'retempden',5-'totintbin',6-'empdenbin',7-'dudenbin',8-'PopEmpDenPerMi']
         mgra_landuse[self.new_cols[0]],mgra_landuse[self.new_cols[1]],mgra_landuse[self.new_cols[2]],mgra_landuse[self.new_cols[3]],mgra_landuse[self.new_cols[4]],mgra_landuse[self.new_cols[8]] = zip(*mgra_landuse['mgra'].map(density_function))
 
@@ -296,7 +296,7 @@ class FourDs(_m.Tool()):
         mgra_landuse[self.new_cols[7]] = np.where(mgra_landuse[self.new_cols[1]] < 5, 1, np.where(mgra_landuse[self.new_cols[1]] < 10, 2,3))
 
         mgra_landuse[self.base_cols+self.new_cols].to_csv(os.path.join(self.path, self.mgradata_file), index = False, float_format='%.4f' )
-        
+
         self.mgra_data = mgra_landuse
         print( "*** Finished ***")
 
@@ -306,7 +306,7 @@ class FourDs(_m.Tool()):
             self.build = pd.read_csv(os.path.join(self.path, self.mgradata_file))
         else:
             self.build = self.mgra_data
-                
+
         def plot_continuous(field):
             #colors
             rsg_orange = '#f68b1f'
@@ -314,7 +314,7 @@ class FourDs(_m.Tool()):
             #rsg_leaf   = '#63af5e'
             #rsg_grey   = '#48484a'
             #rsg_mist   = '#dcddde'
-                        
+
             max = self.base[field].max() + self.base[field].max()%5
             div = max/5 if max/5 >= 10 else max/2
             bins = np.linspace(0,max,div)
@@ -360,18 +360,18 @@ class FourDs(_m.Tool()):
                     os.remove(outfile)
             ax.get_figure().savefig(outfile)
 
-        self.base = pd.read_csv(os.path.join(self.ref_path, self.mgradata_file))
+        self.base = pd.read_csv(self.ref_path)
         self.base['type'] = 'base'
         self.build['type'] = 'build'
 
         discretedf_base = self.base[['mgra','type']+self.discrete_fields]
         discretedf_build = self.build[['mgra','type']+self.discrete_fields]
-        
+
         for f in self.continuous_fields:
-            plot_continuous(f)            
+            plot_continuous(f)
         for f in self.discrete_fields:
             plot_discrete(f)
-            
+
         if self.maps:
             import geopandas as gpd
             import folium
@@ -392,7 +392,7 @@ class FourDs(_m.Tool()):
             compare_int['colordiff'] = compare_int['diff'].map(lambda n: colormapA(n))
             compare_int['colororig'] = compare_int['TotInt'].map(lambda n: colormap(n))
             compare_int['colornew'] = compare_int['totint'].map(lambda n: colormap(n))
-            
+
             def makeheatmap(self,df, colormp,color_field,caption):
                 mapname = folium.Map(location=[32.76, -117.15], zoom_start = 13.459)
                 folium.GeoJson(compare_int,
@@ -402,11 +402,11 @@ class FourDs(_m.Tool()):
                         'weight' : 0,
                         'fillOpacity' : 0.75,
                         }).add_to(mapname)
-        
+
                 colormp.caption = caption
                 colormp.add_to(mapname)
                 return mapname
-                        
-            makeheatmap(compare_int,colormapA,'colordiff','Intersection Diff (base - build)').save('diff_intersections.html')   
-            makeheatmap(compare_int,colormap,'colororig','Intersections').save('base_intersections.html')   
-            makeheatmap(compare_int,colormap,'colororig','Intersections').save('build_intersections.html')   
+
+            makeheatmap(compare_int,colormapA,'colordiff','Intersection Diff (base - build)').save('diff_intersections.html')
+            makeheatmap(compare_int,colormap,'colororig','Intersections').save('base_intersections.html')
+            makeheatmap(compare_int,colormap,'colororig','Intersections').save('build_intersections.html')

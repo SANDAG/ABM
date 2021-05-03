@@ -54,6 +54,16 @@ output_dict = {
     ],
     "CVM": [
          "Gen and trip sum.csv"
+    ],
+    "Exporter": [
+        # NOTE: This is an incomplete list of the 40+ output files.
+        #       These shapefiles are last to be generated and their
+        #       existence indicates a successful Data Export.
+        "hwyLoad.prj",
+        "hwyLoad.cpg",
+        "hwyLoad.shx",
+        "hwyLoad.shp",
+        "hwyLoad.dbf"
     ]
 }
 
@@ -73,7 +83,11 @@ def check_output(scenario_fp, component, iteration=None):
     files = output_dict[component]
 
     # Construct output file path
-    output_dir = os.path.join(scenario_fp, 'output')
+    if component == 'Exporter':
+        out_dir = 'report'
+    else:
+        out_dir = 'output'
+    output_dir = os.path.join(scenario_fp, out_dir)
 
     # Check that required files were generated
     missing = []

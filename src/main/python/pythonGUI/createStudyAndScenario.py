@@ -54,8 +54,8 @@ class CreateScenarioGUI(Tkinter.Frame):
 
             Tkinter.Label(body, text=u"Version", font=("Helvetica", 8, 'bold')).grid(row=8)
             var = StringVar(root)
-            self.version="version_14_2_1"
-            optionList=["version_14_2_1"]
+            self.version="version_14_2_2"
+            optionList=["version_14_2_2"]
             option=Tkinter.OptionMenu(body,var,*optionList,command=self.setversion)
             option.config(width=50)
             option.grid(row=8, column=1)
@@ -72,7 +72,7 @@ class CreateScenarioGUI(Tkinter.Frame):
 
             var = StringVar(root)
             self.year="2016"
-            yearOptionList = ["2016", "2020", "2025", "2025nb", "2035", "2035nb", "2050","2050nb"]
+            yearOptionList = ["2016", "2020", "2023", "2025", "2025nb", "2026", "2029", "2030", "2030nb", "2032", "2035", "2035nb", "2040", "2040nb", "2050","2050nb"]
             option=Tkinter.OptionMenu(body,var,*yearOptionList,command=self.setyear)
             option.config(width=50)
             option.grid(row=10, column=1)

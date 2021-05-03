@@ -77,13 +77,13 @@ public class Person
 
     private int                  persNum;
     private int                  persId;
-    private int                  persAge;
-    private int                  persGender;
-    private int                  persPecasOccup;
-    private int                  persActivityCode;
-    private int                  persEmploymentCategory;
-    private int                  persStudentCategory;
-    private int                  personType;
+    private short                persAge;
+    private short                persGender;
+    private short                persPecasOccup;
+    private short                persActivityCode;
+    private short                persEmploymentCategory;
+    private short                persStudentCategory;
+    private short                personType;
     private boolean              gradeSchool;
     private boolean              highSchool;
     private boolean              highSchoolGraduate;
@@ -101,12 +101,12 @@ public class Person
     private float                schoolLocDistance;
     private float                schoolLocLogsum;
     
-    private double               timeFactorWork;
-    private double               timeFactorNonWork;
+    private float                timeFactorWork;
+    private float                timeFactorNonWork;
 
-    private int                  freeParkingAvailable;
-    private int                  internalExternalTripChoice                 = 1;
-    private double               reimbursePercent;
+    private short                freeParkingAvailable;
+    private short                internalExternalTripChoice                 = 1;
+    private float                reimbursePercent;
     
     private float                worksFromHomeLogsum;
     private float                parkingProvisionLogsum;
@@ -117,8 +117,8 @@ public class Person
     private float                inmtfLogsum;
      
     private String               cdapActivity;
-    private int                  imtfChoice;
-    private int                  inmtfChoice;
+    private short                imtfChoice;
+    private short                inmtfChoice;
 
     private int                  maxAdultOverlaps;
     private int                  maxChildOverlaps;
@@ -132,7 +132,7 @@ public class Person
 
     // private Scheduler scheduler;
     // windows[] is 1s based - indexed from 1 to number of intervals.
-    private int[]                windows;
+    private short[]                windows;
 
     private int                  windowBeforeFirstMandJointTour;
     private int                  windowBetweenFirstLastMandJointTour;
@@ -153,7 +153,7 @@ public class Person
         initializeWindows();
 
         freeParkingAvailable = ParkingProvisionModel.FP_MODEL_REIMB_ALT;
-        reimbursePercent = 0.43;
+        reimbursePercent = 0.43f;
     }
 
     public Household getHouseholdObject()
@@ -181,7 +181,7 @@ public class Person
         return atWorkSubtourArrayList;
     }
 
-    public int[] getTimeWindows()
+    public short[] getTimeWindows()
     {
         return windows;
     }
@@ -193,7 +193,7 @@ public class Person
 
     public void initializeWindows()
     {
-        windows = new int[modelStructure.getNumberOfTimePeriods() + 1];
+        windows = new short[modelStructure.getNumberOfTimePeriods() + 1];
     }
 
     public void resetTimeWindow(int startPeriod, int endPeriod)
@@ -350,7 +350,7 @@ public class Person
 
     public void setFreeParkingAvailableResult(int chosenAlt)
     {
-        freeParkingAvailable = chosenAlt;
+        freeParkingAvailable = (short) chosenAlt;
     }
 
     /**
@@ -360,12 +360,12 @@ public class Person
      */
     public void setInternalExternalTripChoiceResult(int chosenAlt)
     {
-        internalExternalTripChoice = chosenAlt;
+        internalExternalTripChoice = (short) chosenAlt;
     }
 
     public void setParkingReimbursement(double pct)
     {
-        reimbursePercent = pct;
+        reimbursePercent = (float) pct;
     }
 
     public void setWorkLocationSegmentIndex(int workSegment)
@@ -380,37 +380,37 @@ public class Person
 
     public void setPersAge(int age)
     {
-        persAge = age;
+        persAge = (short) age;
     }
 
     public void setPersGender(int gender)
     {
-        persGender = gender;
+        persGender = (short) gender;
     }
 
     public void setPersPecasOccup(int occup)
     {
-        persPecasOccup = occup;
+        persPecasOccup = (short) occup;
     }
 
     public void setPersActivityCode(int actCode)
     {
-        persActivityCode = actCode;
+        persActivityCode = (short) actCode;
     }
 
     public void setPersEmploymentCategory(int category)
     {
-        persEmploymentCategory = category;
+        persEmploymentCategory = (short) category;
     }
 
     public void setPersStudentCategory(int category)
     {
-        persStudentCategory = category;
+        persStudentCategory = (short) category;
     }
 
     public void setPersonTypeCategory(int personTypeCategory)
     {
-        personType = personTypeCategory;
+        personType = (short) personTypeCategory;
     }
 
     public void setValueOfTime(float vot)
@@ -450,12 +450,12 @@ public class Person
 
     public void setImtfChoice(int choice)
     {
-        imtfChoice = choice;
+        imtfChoice = (short) choice;
     }
 
     public void setInmtfChoice(int choice)
     {
-        inmtfChoice = choice;
+        inmtfChoice = (short) choice;
     }
 
     public int getImtfChoice()
@@ -666,7 +666,7 @@ public class Person
 
     public int getAge()
     {
-        return persAge;
+        return (int) persAge;
     }
 
     public int getHomemaker()
@@ -676,7 +676,7 @@ public class Person
 
     public int getGender()
     {
-        return persGender;
+        return (int) persGender;
     }
 
     public int getPersonIsFemale()
@@ -748,17 +748,17 @@ public class Person
 
     public int getPersPecasOccup()
     {
-        return persPecasOccup;
+        return (int) persPecasOccup;
     }
 
     public int getPersActivityCode()
     {
-        return persActivityCode;
+        return (int) persActivityCode;
     }
 
     public int getPersonEmploymentCategoryIndex()
     {
-        return persEmploymentCategory;
+        return (int) persEmploymentCategory;
     }
 
     public String getPersonEmploymentCategory()
@@ -1432,7 +1432,7 @@ public class Person
      * @return the length of the maximum pairwise available window in units of
      *         time intervals
      */
-    public int getMaximumContinuousPairwiseAvailableWindow(int[] otherWindow)
+    public int getMaximumContinuousPairwiseAvailableWindow(short[] otherWindow)
     {
         int maxWindow = 0;
         int currentWindow = 0;
@@ -1452,7 +1452,7 @@ public class Person
         return maxWindow;
     }
 
-    public void setTimeWindows(int[] win)
+    public void setTimeWindows(short[] win)
     {
         windows = win;
     }
@@ -1967,19 +1967,19 @@ public class Person
     }
 
     public double getTimeFactorWork() {
-		return timeFactorWork;
+		return (double) timeFactorWork;
 	}
 
 	public void setTimeFactorWork(double timeFactorWork) {
-		this.timeFactorWork = timeFactorWork;
+		this.timeFactorWork = (float) timeFactorWork;
 	}
 
 	public double getTimeFactorNonWork() {
-		return timeFactorNonWork;
+		return (double) timeFactorNonWork;
 	}
 
 	public void setTimeFactorNonWork(double timeFactorNonWork) {
-		this.timeFactorNonWork = timeFactorNonWork;
+		this.timeFactorNonWork = (float) timeFactorNonWork;
 	}
 
 	public enum EmployStatus

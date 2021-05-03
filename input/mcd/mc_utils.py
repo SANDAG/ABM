@@ -29,6 +29,15 @@ def calc_auto_sufficiency(hh_df, autos_col, hh_size):
 
     hh_df[autos_col] = hh_df[autos_col].map(sufficiency)
 
+def list_from_str(string):
+    
+    l = re.split(',\s?', string.strip())
+    
+    if '' in l:
+        l.remove('')
+
+    return l
+
 def create_configs():
 
     config_strs = [
@@ -47,7 +56,8 @@ def create_configs():
         ('util_cols', 'Utility Columns (comma separated) -', 'util_1,util_2,util_3,util_4,util_5,util_6,util_7,util_8,util_9,util_10,util_11,util_12,util_13'),
         ('shapefile', 'Shapefile -', 'syn_pop_and_shapefiles/shapefiles/mgra/SANDAG_MGRA.shp'),
         ('zone_col', 'Zone Column - ', 'MGRA'),
-        ('zone_crs', 'Shapefile CRS -', 'ESRI:102646')
+        ('zone_crs', 'Shapefile CRS -', 'ESRI:102646'),
+        ('layer_shapefiles', 'Layer Shapefiles (optional)', 'output/rtcov.shp, output/tapcov.shp'),
         
     ]
     
@@ -71,11 +81,11 @@ def create_configs():
 
         global CONFIG
         for w in widges: 
-            if w.name in ['hh_id_col', 'income_labels', 'mode_labels', 'prob_cols', 'util_cols']:
-                val = re.split(',\s?', w.value)
+            if w.name in ['hh_id_col', 'income_labels', 'mode_labels', 'prob_cols', 'util_cols', 'layer_shapefiles']:
+                val = list_from_str(w.value)
 
             else:
-                val = w.value
+                val = w.value.strip()
 
             CONFIG[w.name] = val
         
@@ -96,6 +106,10 @@ def create_configs():
 
             assert len(CONFIG['prob_cols']) == len(CONFIG['mode_labels']), 'One column per mode is required'
             assert len(CONFIG['util_cols']) == len(CONFIG['mode_labels']), 'One column per mode is required'
+
+            # store bins of probs and utils as comma-separated lists
+            probs = ', '.join(map(str, pd.cut(tour_df[CONFIG['prob_cols']].values.flatten(), 6, retbins=True, include_lowest=True)[1].round(2)))
+            utils = ', '.join(map(str, pd.cut(tour_df[CONFIG['util_cols']].values.flatten(), 6, retbins=True, include_lowest=True)[1].round(2)))
 
             ozone_list = sorted(list(tour_df[CONFIG['ozone_col']].unique()))
             dzone_list = sorted(list(tour_df[CONFIG['dzone_col']].unique()))
@@ -127,6 +141,17 @@ def create_configs():
             center = [zone_df.geometry.centroid.y.mean(), zone_df.geometry.centroid.x.mean()]
             print('Done.')
 
+            layer_dfs = []
+            for f in CONFIG['layer_shapefiles']:
+
+                print(f'Reading {f}... ', end='')
+                df = gpd.read_file(f)
+                df.crs = CONFIG['zone_crs']
+                df = df.to_crs('epsg:4326')
+                df.name = f
+                layer_dfs.append(df)
+                print('Done.')
+
             CONFIG.update({
                 'tour_df': tour_df,
                 'ozone_list': ozone_list,
@@ -134,32 +159,11 @@ def create_configs():
                 'purposes': purposes,
                 'incomes': incomes,
                 'zone_df': zone_df,
+                'layer_dfs': layer_dfs,
                 'center': center,
+                'prob_bins': probs,
+                'util_bins': utils,
             })
-
-            print('Creating zone map... ', end='')
-            zone_map = folium.Map(location=center, zoom_start=10)
-
-            zones = folium.Choropleth(
-                geo_data=zone_df.to_json(),
-                name=zone_col,
-                fill_opacity=0.2,
-                line_opacity=0.3,
-                highlight=True,
-                smooth_factor=2.0,
-                legend_name=zone_col,
-            )
-
-            zones.geojson.add_child(
-                folium.features.GeoJsonTooltip([zone_col], labels=True))
-
-            zone_map.add_child(zones)
-            folium.LayerControl().add_to(zone_map)
-            print('Done.')
-
-            print('Saving zone map to zone_map.html... ', end='')
-            zone_map.save('zone_map.html')
-            print('Done.')
 
         # display filter controls once configs are validated
         zone_interaction()
@@ -167,7 +171,8 @@ def create_configs():
     validate_button.on_click(validate_configs)
 
 
-def filter_tours(zone_num, choice_col, group_col, purpose=None, income=None, autos=None):
+def filter_tours(zone_num, choice_col, group_col,
+                 purpose=None, income=None, autos=None):
     zone_df = CONFIG['zone_df']
     tour_df = CONFIG['tour_df']
     zone_col = CONFIG['zone_col']
@@ -189,7 +194,9 @@ def filter_tours(zone_num, choice_col, group_col, purpose=None, income=None, aut
     if autos:
         filtered_tours = filtered_tours[filtered_tours[autos_col] == autos]
 
-    return filtered_tours.groupby([group_col]).mean()[filter_cols].round(3)
+    ft = filtered_tours.groupby([group_col]).mean()[filter_cols].round(3)
+
+    return ft
 
 
 def val_from_label(label_list, value_list, label):
@@ -215,9 +222,6 @@ def zone_interaction():
     ozone_col = CONFIG['ozone_col']
     dzone_col = CONFIG['dzone_col']
 
-#     filter_map = None
-#     filter_name = None
-
     direction_labels = {
         'Plot all origins to a single destination zone': {
             'cols': (dzone_col, ozone_col),
@@ -227,7 +231,6 @@ def zone_interaction():
             'nickname': 'Origin'},
     }
 
-    # IntText for zone_num?
     direction = widgets.RadioButtons(options=list(direction_labels.keys()), description='Direction - ', layout={'width': 'max-content'},)
     zone_num = widgets.Dropdown(options=CONFIG['dzone_list'], description='D Zone -')
     
@@ -244,6 +247,21 @@ def zone_interaction():
     direction.observe(handle_direction_change, names='value')
 
     shade = widgets.RadioButtons(options=['Probability', 'Utility'], description='Shade by -')
+    bin_list = widgets.Text(
+        description='Bins -',
+        value=CONFIG['prob_bins'],
+        disabled=False,
+    ) 
+
+    def handle_shade_change(change):
+        if change.new == 'Utility':
+            bin_list.value = CONFIG['util_bins']
+
+        else:
+            bin_list.value = CONFIG['prob_bins']
+            
+    shade.observe(handle_shade_change, names='value')
+
     mode = widgets.Dropdown(options=CONFIG['mode_labels'], description='Mode -')
     purpose = widgets.Dropdown(options=['All'] + CONFIG['purposes'], description='Purpose -')
     income = widgets.Dropdown(options=['All'] + list(CONFIG['income_labels']), description='Income -')
@@ -254,7 +272,17 @@ def zone_interaction():
     map_button = widgets.Button(description='Show Map')
     save_button = widgets.Button(description='Save Map')
 
-    selectors = widgets.VBox([direction, zone_num, shade, mode, purpose, income, autos])
+    selectors = widgets.VBox([
+        direction,
+        zone_num,
+        shade,
+        bin_list,
+        mode,
+        purpose,
+        income,
+        autos,
+    ])
+    
     buttons = widgets.HBox([map_button, save_button])
     display(selectors, buttons, output)
 
@@ -271,12 +299,18 @@ def zone_interaction():
             mode_value = val_from_label(CONFIG['mode_labels'], shade_list, mode.value)
             income_value = val_from_label(CONFIG['income_labels'], CONFIG['incomes'], income.value)
             autos_value = val_from_label(CONFIG['autos_labels'], CONFIG['autos'], autos.value)
+            bins = list(map(float, list_from_str(bin_list.value)))
 
-            ft = filter_tours(zone_num.value, choice_col, group_col,
-                              purpose=purpose_value,
-                              income=income_value, autos=autos_value)
+            ft = filter_tours(
+                zone_num.value,
+                choice_col,
+                group_col,
+                purpose=purpose_value,
+                income=income_value,
+                autos=autos_value)
 
-            ft = ft[(ft[mode_value] != 0) & (ft[mode_value] != -999)]
+            ft = ft[(ft[mode_value] >= bins[0]) &
+                    (ft[mode_value] <= bins[-1])]
 
             if ft.empty:
                 output.clear_output()
@@ -318,6 +352,7 @@ def zone_interaction():
                 key_on=f'feature.properties.{zone_col}',
                 fill_color='BuPu',
                 nan_fill_color='white',
+                bins=bins,
                 fill_opacity=0.7,
                 line_opacity=0.1,
                 highlight=True,
@@ -334,6 +369,28 @@ def zone_interaction():
                     style=style_function,
                     aliases=['zone'] + list(CONFIG['mode_labels']),
                     labels=True))
+
+            # add additional map layers, if present
+            for df in CONFIG['layer_dfs']:
+                if all(df.geometry.type == 'Point'):
+
+                    layer = folium.FeatureGroup(name=df.name)
+                    for point in df.geometry:
+                        folium.CircleMarker(
+                            [point.y, point.x],
+                            radius=4,
+                            weight=2,
+                            fill_color='red',
+                            fill_opacity=0.7,
+                        ).add_to(layer)
+
+                    layer.add_to(filter_map)
+
+                else:
+                    folium.GeoJson(
+                        data=df['geometry'],
+                        name=df.name,
+                    ).add_to(filter_map)
 
             folium.LayerControl().add_to(filter_map)
 

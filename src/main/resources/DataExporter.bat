@@ -25,6 +25,9 @@ if not errorlevel 1 (
 rem ### Running Data Exporter on scenario
 python %PROJECT_DRIVE%%PROJECT_DIRECTORY%\python\dataExporter\serialRun.py %PROJECT_DRIVE%%PROJECT_DIRECTORY%
 
+rem ### Check for the Data Exporter output files
+call %PROJECT_DIRECTORY%\bin\CheckOutput.bat %PROJECT_DIRECTORY% Exporter %ITERATION%
+
 rem ### Exiting all Anaconda3 environments
 call conda deactivate
 call conda deactivate

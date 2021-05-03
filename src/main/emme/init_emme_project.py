@@ -81,6 +81,7 @@ def init_emme_project(root, title, emmeversion):
 
     desktop.data_explorer().add_database(emmebank.path)
     desktop.add_modeller_toolbox("%<$ProjectPath>%/scripts/sandag_toolbox.mtbx")
+    desktop.add_modeller_toolbox("%<$ProjectPath>%/scripts/solutions.mtbx")
     project.save()
 
 
