@@ -1014,6 +1014,15 @@ Export network results to csv files for SQL data loader."""
                     for attr in segment_alights:
                         next_seg[attr] += seg2[attr]
                 network.merge_links(node, mapping)
+            elif node["@network_adj"] == 4:
+                nodes_to_delete.append(node)
+                # copy boarding / alighting attributes for the segments to the original segment / stop
+                for seg in node.incoming_segments():
+                    lines_to_update.add(seg.line)
+                    copy_seg_attrs(seg, seg.line.segment(seg.number+2))
+                for seg in node.outgoing_segments():
+                    lines_to_update.add(seg.line)
+                    copy_seg_attrs(seg, seg.line.segment(seg.number+1))
 
         # Backup transit lines with altered routes and remove from network
         lines = []
@@ -1021,7 +1030,7 @@ Export network results to csv files for SQL data loader."""
             seg_data = {}
             itinerary = []
             for seg in line.segments(include_hidden=True):
-                if seg.i_node["@network_adj"] in [1,2] or (seg.j_node and seg.j_node["@network_adj"] == 1):
+                if seg.i_node["@network_adj"] in [1,2,4] or (seg.j_node and seg.j_node["@network_adj"] in [1,4]):
                     continue
                 # for circle line transfers, j_node is now None for new "hidden" segment
                 j_node = seg.j_node
