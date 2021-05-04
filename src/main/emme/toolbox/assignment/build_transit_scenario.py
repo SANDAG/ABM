@@ -462,8 +462,24 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
     @_m.logbook_trace("Add timed-transfer links", save_arguments=True)
     def timed_transfers(self, network, timed_transfers_with_walk, period):
         no_walk_link_error = "no walk link from line %s to %s"
+        multiple_stops_at_same_node = "cannot connecting transfer from line %s to %s: "\
+            "both lines encounter the same node multiple times in their itineraries"
         node_not_found_error = "node %s not found in itinerary for line %s; "\
             "the to_line may end at the transfer stop"
+        all_transit_modes = set([mode for mode in network.modes() if mode.type == "TRANSIT"])
+
+        def find_common_stops(from_line, to_line):
+            to_nodes = set([s.i_node for s in to_line.segments(True)
+                            if s.allow_boardings])
+            common_stops = []
+            for seg in from_line.segments(True):
+                if not s.allow_alightings:
+                    continue
+                if seg.i_node in to_nodes:
+                    common_stops.append(seg.i_node)
+            if len(common_stops) != len(set(common_stops)):
+                raise Exception(multiple_stops_at_same_node % (from_line, to_line))
+            return common_stops
 
         def find_walk_link(from_line, to_line):
             to_nodes = set([s.i_node for s in to_line.segments(True)
@@ -492,6 +508,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                         return seg.link
             raise Exception(node_not_found_error % (node, line))
 
+        stop_transfers = []
         # Group parallel transfers together (same pair of alighting-boarding nodes from the same line)
         walk_transfers = _defaultdict(lambda: [])
         for i, transfer in enumerate(timed_transfers_with_walk, start=1):
@@ -502,18 +519,104 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                 to_line = network.transit_line(transfer["to_line"])
                 if not to_line:
                     raise Exception("to_line %s does not exist" % transfer["to_line"])
-                walk_link = find_walk_link(from_line, to_line)
-                from_link = link_on_line(from_line, walk_link.i_node, near_side_stop=True)
-                to_link = link_on_line(to_line, walk_link.j_node, near_side_stop=False)
-                walk_transfers[(from_link, to_link)].append({
-                    "to_line": to_line,
-                    "from_line": from_line,
-                    "walk_link": walk_link,
-                    "wait": transfer["wait_time"],
-                })
+                # first look for any common stops
+                nodes = find_common_stops(from_line, to_line)
+                if nodes:
+                    stop_transfers.append({
+                        "stop_nodes": nodes,
+                        "to_line": to_line.id,
+                        "from_line": from_line.id,
+                        "wait": transfer["wait_time"],
+                    })
+                else:
+                    # if no common stops find if there are any one-link walks
+                    walk_link = find_walk_link(from_line, to_line)
+                    from_link = link_on_line(from_line, walk_link.i_node, near_side_stop=True)
+                    to_link = link_on_line(to_line, walk_link.j_node, near_side_stop=False)
+                    walk_transfers[(from_link, to_link)].append({
+                        "to_line": to_line,
+                        "from_line": from_line,
+                        "walk_link": walk_link,
+                        "wait": transfer["wait_time"],
+                    })
             except Exception as error:
                 new_message = "Timed transfer[%s]: %s" % (i, error.message)
                 raise type(error), type(error)(new_message), sys.exc_info()[2]
+
+        line_attributes = network.attributes("TRANSIT_LINE")
+        seg_attributes = network.attributes("TRANSIT_SEGMENT")
+        network.create_attribute("NODE", "num_duplications")
+        for transfer in stop_transfers:
+            for stop_node in transfer["stop_nodes"]:
+                xfer_node = network.create_node(self._get_node_id(), False)
+                xfer_node.x, xfer_node.y = offset_coords(stop_node)
+                xfer_node["@network_adj"] = 4
+                xfer_node["@network_adj_src"] = stop_node.number
+                stop_node["@network_adj_src"] = xfer_node.number
+
+                transit_access_link = network.create_link(stop_node, xfer_node, all_transit_modes)
+                transit_egress_link = network.create_link(xfer_node, stop_node, all_transit_modes)
+                for link in transit_access_link, transit_egress_link:
+                    link.length = 0
+                    for p in ["ea", "am", "md", "pm", "ev"]:
+                        link["@time_link_" + p] = 0
+
+            # insert this stop into the itinerary of both lines (delete and re-add)
+            for line_id in transfer["from_line"], transfer["to_line"]:
+                # store line and segment data for re-routing
+                line = network.transit_line(line_id)
+                line_data = dict((k, line[k]) for k in line_attributes)
+                line_data["id"] = line.id
+                line_data["vehicle"] = line.vehicle
+
+                seg_data = {}
+                itinerary = []
+                new_stops = []
+                for seg in line.segments(include_hidden=True):
+                    seg_data[(seg.i_node, seg.j_node, seg.loop_index)] = \
+                        dict((k, seg[k]) for k in seg_attributes)
+                    itinerary.append(seg.i_node.number)
+                    if seg.i_node in transfer["stop_nodes"]:
+                        itinerary.extend([seg.i_node["@network_adj_src"], seg.i_node.number])
+                        new_stops.append(len(itinerary) - 1)  # index of "real" stop in itinerary
+                # delete and re-add line with new routing
+                network.delete_transit_line(line)
+                new_line = network.create_transit_line(
+                    line_data.pop("id"),
+                    line_data.pop("vehicle"),
+                    itinerary)
+                # set back all attribute data on line and segments
+                for k, v in line_data.iteritems():
+                    new_line[k] = v
+                for seg in new_line.segments(include_hidden=True):
+                    data = seg_data.get((seg.i_node, seg.j_node, seg.loop_index), {})
+                    for k, v in data.iteritems():
+                        seg[k] = v
+                for index in new_stops:
+                    real_seg = new_line.segment(index)
+                    access_seg = new_line.segment(index - 2)
+                    egress_seg = new_line.segment(index - 1)
+                    for k in seg_attributes:
+                        access_seg[k] = egress_seg[k] = real_seg[k]
+                    # set the transit time function to 3
+                    # set the invhicle fare to 0
+                    for seg in access_seg, egress_seg:
+                        seg.transit_time_func = 3
+                        seg.dwell_time = 0
+                        seg["@coaster_fare_inveh"] = 0
+                    # set the boarding / alighting and headway (wait time)
+                    access_seg.allow_boardings = False
+                    access_seg.allow_alightings = False
+                    if new_line.id == transfer["from_line"]:
+                        egress_seg.allow_boardings = False
+                        egress_seg.allow_alightings = True
+                    if new_line.id == transfer["to_line"]:
+                        egress_seg.allow_boardings = True
+                        egress_seg.allow_alightings = False
+                        egress_seg["@headway_seg"] = float(transfer["wait"]) * 2
+
+        network.delete_attribute("NODE", "num_duplications")
+
 
         # If there is only one transfer at the location (redundant case)
         # OR all transfers are from the same line (can have different waits)
@@ -602,18 +705,9 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
 
     @_m.logbook_trace("Add circle line free layover transfers")
     def connect_circle_lines(self, network):
-        network.create_attribute("NODE", "circle_lines")
+        network.create_attribute("NODE", "num_duplications")
         line_attributes = network.attributes("TRANSIT_LINE")
         seg_attributes = network.attributes("TRANSIT_SEGMENT")
-
-        def offset_coords(node):
-            rho = math.sqrt(5000)
-            phi = 3 * math.pi / 4 + node.circle_lines * math.pi / 12
-            x = node.x + rho * math.cos(phi)
-            y = node.y + rho * math.sin(phi)
-            node.circle_lines += 1
-            return(x, y)
-
         transit_lines = list(network.transit_lines())
         for line in transit_lines:
             first_seg = line.segment(0)
@@ -668,7 +762,7 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
                     for k, v in data.iteritems():
                         seg[k] = v
 
-        network.delete_attribute("NODE", "circle_lines")
+        network.delete_attribute("NODE", "num_duplications")
 
     def _init_node_id(self, network):
         new_node_id = max(n.number for n in network.nodes())
@@ -677,3 +771,12 @@ class BuildTransitNetwork(_m.Tool(), gen_utils.Snapshot):
     def _get_node_id(self):
         self._new_node_id += 1
         return self._new_node_id
+
+
+def offset_coords(node):
+    rho = math.sqrt(5000)
+    phi = 3 * math.pi / 4 + node.num_duplications * math.pi / 12
+    x = node.x + rho * math.cos(phi)
+    y = node.y + rho * math.sin(phi)
+    node.num_duplications += 1
+    return(x, y)
