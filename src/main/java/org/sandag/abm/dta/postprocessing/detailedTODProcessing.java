@@ -217,7 +217,11 @@ public class detailedTODProcessing {
 			
 			if (tripRecords.containsColumn("tripMode")){
 				//skip if the mode is string, that means it is from cv, ee, ei, or truck lists
+<<<<<<< HEAD
 				if(!(tripRecords.getColumnType()[tripRecords.checkColumnPosition("tripMode")-1]==DataTypes.STRING)) {
+=======
+				if(!(tripRecords.getColumnType()[tripRecords.checkColumnPosition("tripMode")]==DataTypes.STRING)) {
+>>>>>>> b872442d3ec8d14101157b83516b64df887af330
 
 					mode = (int) tripRecords.getValueAt(i+1, "tripMode");
 					if (modelStructure.getTourModeIsDriveTransit(mode)){
@@ -225,6 +229,7 @@ public class detailedTODProcessing {
 					}
 				}
 			}
+<<<<<<< HEAD
 			String modeStr="";
 			if(tripRecords.containsColumn("MODE")) {
 				if((tripRecords.getColumnType()[tripRecords.checkColumnPosition("MODE")-1]==DataTypes.STRING)) {
@@ -238,6 +243,16 @@ public class detailedTODProcessing {
 						occ=3.5;
 						modeStr="";
 					}
+=======
+			
+			if(tripRecords.containsColumn("MODE")) {
+				if((tripRecords.getColumnType()[tripRecords.checkColumnPosition("MODE")]==DataTypes.STRING)) {
+					String modeStr = tripRecords.getStringValueAt(i+1, "MODE");
+					if(modeStr.contains("S2"))
+						occ=2.0;
+					else if(modeStr.contains("S3"))
+						occ=3.5;
+>>>>>>> b872442d3ec8d14101157b83516b64df887af330
 				}
 			}
 
