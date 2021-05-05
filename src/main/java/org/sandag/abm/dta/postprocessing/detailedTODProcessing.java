@@ -215,6 +215,7 @@ public class detailedTODProcessing {
 				}
 			}
 			
+			String modeStr="";
 			if (tripRecords.containsColumn("tripMode")){
 				//skip if the mode is string, that means it is from cv, ee, ei, or truck lists
 
@@ -223,12 +224,20 @@ public class detailedTODProcessing {
 					if (modelStructure.getTourModeIsDriveTransit(mode)){
 						addSOVTrip=true;
 					}
+				}else {
+					modeStr = tripRecords.getStringValueAt(i+1, "tripMode");
+					if(!modeStr.contains("Truck"))
+						modeStr="";
 				}
 			}
-			String modeStr="";
 			if(tripRecords.containsColumn("MODE")) {
 				if((tripRecords.getColumnType()[tripRecords.checkColumnPosition("MODE")-1]==DataTypes.STRING)) {
 					modeStr = tripRecords.getStringValueAt(i+1, "MODE");
+					if(modeStr.contains("DA")) {
+						occ=1.0;
+						mode=1;
+						modeStr="";
+					}
 					if(modeStr.contains("S2")) {
 						occ=2.0;
 						mode=2;
@@ -537,7 +546,7 @@ public class detailedTODProcessing {
 						}else{
 							origMGRA = alightMGRA;
 						}
-						addSOVTrip(dir,period,dtaTimes[k],destMGRA,origMGRA,0,debug);
+						addSOVTrip(dir,period,dtaTimes[k],destMGRA,origMGRA,tollEligible,debug);
 						tripsCount += 1;
 					}
 				
