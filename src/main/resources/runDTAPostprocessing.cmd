@@ -32,9 +32,13 @@ SET OUTPUT_FOLDER=%PROJECT_DIRECTORY%\output
 
 IF EXIST %OUTPUT_FOLDER%\dtaTripsOut.csv DEL %OUTPUT_FOLDER%\dtaTripsOut.csv
 
-:: Internal-External Trips
+:: External-internal Vehicle Trips
 SET SAMPLERATE=1.0
-java.exe -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp %CLASSPATH% -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% -Djava.library.path=%LIB_PATH% org.sandag.abm.dta.postprocessing.PostprocessModel %PROPERTIES_NAME% -todType detailed -inputFile %PROJECT_DIRECTORY%\output\internalExternalTrips.csv -marketSegment InternalExternalTrips -sampleRate %SAMPLERATE%
+java.exe -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp %CLASSPATH% -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% -Djava.library.path=%LIB_PATH% org.sandag.abm.dta.postprocessing.PostprocessModel %PROPERTIES_NAME% -todType detailed -inputFile %PROJECT_DIRECTORY%\report\externalInternalTrips.csv -marketSegment ExternalInternalTrips -sampleRate %SAMPLERATE% -disaggregateSpace true -disaggregateTOD true
+
+:: External-external Vehicle Trips
+SET SAMPLERATE=1.0
+java.exe -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp %CLASSPATH% -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% -Djava.library.path=%LIB_PATH% org.sandag.abm.dta.postprocessing.PostprocessModel %PROPERTIES_NAME% -todType detailed -inputFile %PROJECT_DIRECTORY%\report\externalExternalTrips.csv -marketSegment ExternalExternalTrips -sampleRate %SAMPLERATE% -disaggregateSpace true -disaggregateTOD true
 
 :: Commercial Vehicle Trips
 SET SAMPLERATE=1.0
@@ -44,13 +48,9 @@ java.exe -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp %CLASSP
 SET SAMPLERATE=1.0
 java.exe -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp %CLASSPATH% -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% -Djava.library.path=%LIB_PATH% org.sandag.abm.dta.postprocessing.PostprocessModel %PROPERTIES_NAME% -todType detailed -inputFile %PROJECT_DIRECTORY%\report\trucktrip.csv -marketSegment heavyTruckTrips -sampleRate %SAMPLERATE% -disaggregateSpace true -disaggregateTOD true
 
-:: External-internal Vehicle Trips
+:: Internal-External Trips
 SET SAMPLERATE=1.0
-java.exe -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp %CLASSPATH% -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% -Djava.library.path=%LIB_PATH% org.sandag.abm.dta.postprocessing.PostprocessModel %PROPERTIES_NAME% -todType detailed -inputFile %PROJECT_DIRECTORY%\report\eitrip.csv -marketSegment ExternalInternalTrips -sampleRate %SAMPLERATE% -disaggregateSpace true -disaggregateTOD true
-
-:: External-external Vehicle Trips
-SET SAMPLERATE=1.0
-java.exe -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp %CLASSPATH% -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% -Djava.library.path=%LIB_PATH% org.sandag.abm.dta.postprocessing.PostprocessModel %PROPERTIES_NAME% -todType detailed -inputFile %PROJECT_DIRECTORY%\report\eetrip.csv -marketSegment ExternalExternalTrips -sampleRate %SAMPLERATE% -disaggregateSpace true -disaggregateTOD true
+java.exe -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp %CLASSPATH% -Dlog4j.configuration=log4j.xml -Dproject.folder=%PROJECT_DIRECTORY% -Djava.library.path=%LIB_PATH% org.sandag.abm.dta.postprocessing.PostprocessModel %PROPERTIES_NAME% -todType detailed -inputFile %PROJECT_DIRECTORY%\output\internalExternalTrips.csv -marketSegment InternalExternalTrips -sampleRate %SAMPLERATE%
 
 :: Individual Trips
 SET SAMPLERATE=1.0

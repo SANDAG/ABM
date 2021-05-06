@@ -228,6 +228,21 @@ public class detailedTODProcessing {
 					modeStr = tripRecords.getStringValueAt(i+1, "tripMode");
 					if(!modeStr.contains("Truck"))
 						modeStr="";
+					else if(modeStr.contains("Drive Alone")) {
+						occ=1.0;
+						mode=1;
+						modeStr="";
+					}
+					else if(modeStr.contains("Shared Ride 2")) {
+						occ=2.0;
+						mode=2;
+						modeStr="";
+					}
+					else if(modeStr.contains("Shared Ride 3+")) {
+						occ=3.5;
+						mode=3;
+						modeStr="";
+					}
 				}
 			}
 			if(tripRecords.containsColumn("MODE")) {
