@@ -278,7 +278,7 @@ public class detailedTODProcessing {
 				continue;
 			}
 			
-			if(!marketSegment.equalsIgnoreCase("JointTrips")){
+			if(!marketSegment.equalsIgnoreCase("JointTrips") && !marketSegment.equalsIgnoreCase("VisitorTrips")){
 				if(modelStructure.getTourModeIsS2(mode)||modelStructure.getTourModeIsMaas(mode)){
 	   				occ=2.0;
 				}
