@@ -11,24 +11,24 @@ util_ASC_s3,Shared Ride 3 - ASC,@SHARED3_asc,,,1,
 util_ASC_walk,Walk - ASC,@WALK_asc,,,,1
 util_sentri_s2,Crossing used Sentri - Shared Ride 2,@SHARED2_coef_sentri * df.tour_sentri,,1,,
 util_sentri_s3,Crossing used Sentri - Shared Ride 3,@SHARED3_coef_sentri * df.tour_sentri,,,1,
-util_visit_tour_s2,Visit Tour - Shared Ride 2,@SHARED2_coef_visit * (df.tour_purpose == 'visit'),,1,,
-util_visit_tour_s3,Visit Tour - Shared Ride 3,@SHARED3_coef_visit * (df.tour_purpose == 'visit'),,,1,
-util_visit_tour_walk,Visit Tour - Walk,@WALK_coef_visit * (df.tour_purpose == 'visit'),,,,1
-util_other_tour_s2,Other Tour - Shared Ride 2,@SHARED2_coef_other * (df.tour_purpose == 'other'),,1,,
-util_other_tour_s3,Other Tour - Shared Ride 3,@SHARED3_coef_other * (df.tour_purpose == 'other'),,,1,
-util_other_tour_walk,Other Tour - Walk,@WALK_coef_other * (df.tour_purpose == 'other'),,,,1
+util_visit_tour_s2,Visit Tour - Shared Ride 2,@SHARED2_coef_visit * (df.tour_type == 'visit'),,1,,
+util_visit_tour_s3,Visit Tour - Shared Ride 3,@SHARED3_coef_visit * (df.tour_type == 'visit'),,,1,
+util_visit_tour_walk,Visit Tour - Walk,@WALK_coef_visit * (df.tour_type == 'visit'),,,,1
+util_other_tour_s2,Other Tour - Shared Ride 2,@SHARED2_coef_other * (df.tour_type == 'other'),,1,,
+util_other_tour_s3,Other Tour - Shared Ride 3,@SHARED3_coef_other * (df.tour_type == 'other'),,,1,
+util_other_tour_walk,Other Tour - Walk,@WALK_coef_other * (df.tour_type == 'other'),,,,1
 util_calib_adj_s2,Calibration Adjustment - Shared Ride 2,@SHARED2_coef_calib_adj,,1,,
 util_calib_adj_s3,Calibration Adjustment - Shared Ride 3,@SHARED3_coef_calib_adj,,,1,
 util_calib_adj_walk,Calibration Adjustment - Walk,@WALK_coef_calib_adj,,,,1
-util_work_tour_s2,Work Tour - Shared Ride 2,@SHARED2_coef_work * (df.tour_purpose == 'work'),,1,,
-util_work_tour_s3,Work Tour - Shared Ride 3,@SHARED3_coef_work * (df.tour_purpose == 'work'),,,1,
-util_work_tour_walk,Work Tour - Walk,@WALK_coef_work * (df.tour_purpose == 'work'),,,,1
-util_school_tour_s2,School Tour - Shared Ride 2,@SHARED2_coef_school * (df.tour_purpose == 'school'),,1,,
-util_school_tour_s3,School Tour - Shared Ride 3,@SHARED3_coef_school * (df.tour_purpose == 'school'),,,1,
-util_school_tour_walk,School Tour - Walk,@WALK_coef_school * (df.tour_purpose == 'school'),,,,1
-util_cargo_tour_s2,Cargo Tour - Shared Ride 2,@SHARED2_coef_cargo * (df.tour_purpose == 'cargo'),,1,,
-util_cargo_tour_s3,Cargo Tour - Shared Ride 3,@SHARED3_coef_cargo * (df.tour_purpose == 'cargo'),,,1,
-util_cargo_tour_walk,Cargo Tour - Walk,@WALK_coef_cargo * (df.tour_purpose == 'cargo'),,,,1
-util_shop_tour_s2,Shop Tour - Shared Ride 2,@SHARED2_coef_shop * (df.tour_purpose == 'shop'),,1,,
-util_shop_tour_s3,Shop Tour - Shared Ride 3,@SHARED3_coef_shop * (df.tour_purpose == 'shop'),,,1,
-util_shop_tour_walk,Shop Tour - Walk,@WALK_coef_shop * (df.tour_purpose == 'shop'),,,,1
+util_work_tour_s2,Work Tour - Shared Ride 2,@SHARED2_coef_work * (df.tour_type == 'work'),,1,,
+util_work_tour_s3,Work Tour - Shared Ride 3,@SHARED3_coef_work * (df.tour_type == 'work'),,,1,
+util_work_tour_walk,Work Tour - Walk,@WALK_coef_work * (df.tour_type == 'work'),,,,1
+util_school_tour_s2,School Tour - Shared Ride 2,@SHARED2_coef_school * (df.tour_type == 'school'),,1,,
+util_school_tour_s3,School Tour - Shared Ride 3,@SHARED3_coef_school * (df.tour_type == 'school'),,,1,
+util_school_tour_walk,School Tour - Walk,@WALK_coef_school * (df.tour_type == 'school'),,,,1
+util_cargo_tour_s2,Cargo Tour - Shared Ride 2,@SHARED2_coef_cargo * (df.tour_type == 'cargo'),,1,,
+util_cargo_tour_s3,Cargo Tour - Shared Ride 3,@SHARED3_coef_cargo * (df.tour_type == 'cargo'),,,1,
+util_cargo_tour_walk,Cargo Tour - Walk,@WALK_coef_cargo * (df.tour_type == 'cargo'),,,,1
+util_shop_tour_s2,Shop Tour - Shared Ride 2,@SHARED2_coef_shop * (df.tour_type == 'shop'),,1,,
+util_shop_tour_s3,Shop Tour - Shared Ride 3,@SHARED3_coef_shop * (df.tour_type == 'shop'),,,1,
+util_shop_tour_walk,Shop Tour - Walk,@WALK_coef_shop * (df.tour_type == 'shop'),,,,1
