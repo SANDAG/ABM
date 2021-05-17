@@ -96,7 +96,7 @@ tours:
     cargo: 0.012
     shop: 0.547
     visit: 0.088
-    other: 0.058
+    other: 0.07
   lane_shares_by_purpose: 
     work:
       regular: 0.1
