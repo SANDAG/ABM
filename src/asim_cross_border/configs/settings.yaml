@@ -5,10 +5,10 @@ households_sample_size: 500
 chunk_size: 0
 
 multiprocess: False
-# strict: False
-# mem_tick: 30
-# num_processes: 2
-# fail_fast: True
+#strict: False
+#mem_tick: 30
+#num_processes: 30
+#fail_fast: True
 
 #trace_hh_id: 662398
 trace_hh_id: 57
@@ -99,6 +99,7 @@ output_tables:
     - households
     - persons
     - tours
+    - trips
     - attribute_combinations
 
 output_summaries:
