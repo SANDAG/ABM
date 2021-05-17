@@ -1,17 +1,16 @@
 inherit_settings: False
 
 # number of households to simulate
-households_sample_size: 500
-chunk_size: 0
+households_sample_size: 1000
+chunk_size: 15000000000
 
-multiprocess: False
-#strict: False
-#mem_tick: 30
-#num_processes: 30
-#fail_fast: True
+multiprocess: True
+strict: False
+mem_tick: 30
+num_processes: 30
+fail_fast: True
 
-#trace_hh_id: 662398
-# trace_hh_id: 57
+trace_hh_id: 77
 
 # input tables
 input_table_list:
@@ -53,7 +52,9 @@ use_shadow_pricing: False
 # (if True, tables will be written if DEST_CHOICE_SAMPLE_TABLE_NAME is specified in individual model settings)
 want_dest_choice_sample_tables: False
 
-resume_after: _ 
+want_dest_choice_presampling: True
+
+#resume_after: _
 
 models:
   - initialize_landuse
@@ -69,13 +70,13 @@ models:
   - tour_scheduling_probabilistic
   - tour_od_choice
   - tour_mode_choice_simulate
-  - stop_frequency
-  - trip_purpose
-  - trip_scheduling
-  - trip_destination
-  - trip_mode_choice
-  - write_trip_matrices
-  - write_tables
+#  - stop_frequency
+#  - trip_purpose
+#  - trip_scheduling
+#  - trip_destination
+#  - trip_mode_choice
+#  - write_trip_matrices
+#  - write_tables
 
 multiprocess_steps:
   - name: mp_initialize
@@ -86,8 +87,8 @@ multiprocess_steps:
       tables:
         - households
         - persons
-  - name: mp_summarize
-    begin: write_trip_matrices
+#  - name: mp_summarize
+#    begin: write_trip_matrices
 
 output_tables:
   h5_store: False
