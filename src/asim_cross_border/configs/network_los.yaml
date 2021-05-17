@@ -56,7 +56,8 @@ maz_to_tap:
 skim_time_periods:
     time_window: 1440
     period_minutes: 30
-    periods: [6, 12, 18, 31, 38, 54]  # 3-6,6-9, 9-1530, 1530-19, 19-3
+    # periods: [0, 11, 17, 30, 37, 48]  # asim xborder
+    periods: [0, 3, 9, 22, 29, 48]  # ctramp xborder
     labels: &skim_time_period_labels ['EA', 'AM', 'MD', 'PM', 'EV']
 
 # transit virtual path builder settings   
@@ -68,8 +69,8 @@ TVPB_SETTINGS:    # find this in sandag bestPathTAP UEC
       WTW:
         access: walk
         egress: walk
-        max_paths_across_tap_sets: 3
-        max_paths_per_tap_set: 1
+        max_paths_across_tap_sets: 4
+        max_paths_per_tap_set: 2
     tap_tap_settings:
       SPEC: tvpb_utility_tap_tap.csv
       PREPROCESSOR:
