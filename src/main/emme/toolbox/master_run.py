@@ -334,6 +334,10 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
         transitShedThreshold = props["transitShed.threshold"]
         transitShedTOD = props["transitShed.TOD"]
 
+        #check if visualizer.reference.path is valid in filesbyyears.csv
+        if not os.path.exists(visualizer_reference_path):
+            raise Exception("Visualizer reference %s does not exist. Check filesbyyears.csv." %(visualizer_reference_path))
+            
         if useLocalDrive:
             folder_name = os.path.basename(main_directory)
             if not os.path.exists(_join(self.LOCAL_ROOT, username, folder_name, "report")): # check free space only if it is a new run
@@ -618,12 +622,19 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
 
         #Validation for 2016 scenario
         if scenarioYear == "2016":
-            validation(self._path, main_emmebank, base_scenario)
+            validation(self._path, main_emmebank, base_scenario) # to create source_EMME.xlsx
+            
+            # #Create Worksheet for ABM Validation using PowerBI Visualization #JY: can be uncommented if deciding to incorporate PowerBI vis in ABM workflow
+            # self.run_proc("VisPowerBI.bat",  # forced to update excel links
+            #                 [drive, path_no_drive, scenarioYear, 0],
+            #                 "VisPowerBI",
+            #                 capture_output=True)
+
             ### CL: Below step is temporarily used to update validation output files. When Gregor complete Upload procedure, below step should be removed. 05/31/20
             # self.run_proc("ExcelUpdate.bat",  # forced to update excel links
-            #                 [drive, path_no_drive, scenarioYear, 0],
-            #                 "Excel Update",
-            #                 capture_output=True)
+                            # [drive, path_no_drive, scenarioYear, 0],
+                            # "ExcelUpdate",
+                            # capture_output=True)
 
             ### ES: Commented out until this segment is updated to reference new database. 9/10/20 ###
             # add segments below for auto-reporting, YMA, 1/23/2019
