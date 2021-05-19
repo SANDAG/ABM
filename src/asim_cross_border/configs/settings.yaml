@@ -3,14 +3,14 @@ inherit_settings: False
 # number of households to simulate
 households_sample_size: 500
 chunk_size: 0
+#chunk_size: 15000000000
 
-multiprocess: False
+#multiprocess: True
 #strict: False
 #mem_tick: 30
 #num_processes: 30
 #fail_fast: True
 
-#trace_hh_id: 662398
 trace_hh_id: 57
 
 # input tables
@@ -63,28 +63,27 @@ models:
   - initialize_tvpb
   # # ---
   - tour_scheduling_probabilistic
-  - tour_od_choice   
-  - tour_mode_choice_simulate   
-  # # - wait time update???
-  # - stop_frequency
-  # - trip_purpose
-  # - trip_scheduling
-  # - trip_destination
-  # - trip_mode_choice
-  # - write_trip_matrices
-  # - write_tables
+  - tour_od_choice
+  - tour_mode_choice_simulate
+  - stop_frequency
+  - trip_purpose
+  - trip_scheduling
+  - trip_destination
+#  - trip_mode_choice
+#  - write_trip_matrices
+#  - write_tables
 
-multiprocess_steps:
-  - name: mp_initialize
-    begin: initialize_landuse
-  - name: mp_households
-    begin: tour_od_choice
-    slice:
-      tables:
-        - households
-        - persons
-  - name: mp_summarize
-    begin: write_trip_matrices
+#multiprocess_steps:
+#  - name: mp_initialize
+#    begin: initialize_landuse
+#  - name: mp_households
+#    begin: tour_od_choice
+#    slice:
+#      tables:
+#        - households
+#        - persons
+#  - name: mp_summarize
+#    begin: write_trip_matrices
 
 output_tables:
   h5_store: False
