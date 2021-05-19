@@ -11,7 +11,7 @@ preprocessor:
 HH_EXPANSION_WEIGHT_COL: sample_rate  # added when households read in
 
 # save preprocessed trips table to pipeline if desired
-SAVE_TRIPS_TABLE: True
+SAVE_TRIPS_TABLE: False
 
 MATRICES:
   - file_name: trips_ea.omx
