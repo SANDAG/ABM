@@ -57,7 +57,7 @@ vot-indexed skims,da_dist_skims,((odt_skims['SOV_NT_L_DIST'] * (_vot_bin_da == 1
 ,s3_cost_skims,((odt_skims['HOV3_L_TOLLCOST'] * (_vot_bin_s3 == 1)) + (odt_skims['HOV3_M_TOLLCOST'] * (_vot_bin_s3 == 2)) + (odt_skims['HOV3_H_TOLLCOST'] * (_vot_bin_s3 == 3)))
 ,s3_time_skims,((odt_skims['HOV3_L_TIME'] * (_vot_bin_s3 == 1)) + (odt_skims['HOV3_M_TIME'] * (_vot_bin_s3 == 2)) + (odt_skims['HOV3_H_TIME'] * (_vot_bin_s3 == 3)))
 ,walk_available,od_skims['walkTime'] < max_walk_time
-,walk_time,walk_available * c_walk_time * od_skims['walkTime']
+#,walk_time,walk_available * c_walk_time * od_skims['walkTime']
 ,walk_transit_logsum,tvpb_logsum_odt['WTW']
 ,walk_transit_available,walk_transit_logsum > -500
 ,density_measure,"reindex(land_use.PopEmpDenPerMi, df[ORIGIN])"
