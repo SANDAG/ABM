@@ -36,21 +36,31 @@ def get_poe_wait_times(settings):
 
 def create_tours(tour_settings):
 
+    crossing_type_dict = {0: 'non_sentri', 1: 'sentri'}
     num_tours = tour_settings['num_tours']
-    purpose_probs = OrderedDict(tour_settings['purpose_shares'])
-    id_to_purpose = {i: purpose for i, purpose in enumerate(purpose_probs.keys())}
+    sentri_share = tour_settings['sentri_share']
     lane_shares_by_purpose = tour_settings['lane_shares_by_purpose']
-
+    purpose_probs_by_sentri = tour_settings['purpose_shares']
     
     tours = pd.DataFrame(
-        index=range(tour_settings['num_tours']),
-        columns=['lane_type', 'lane_id', 'tour_type', 'purpose_id'])
+        index=range(num_tours),
+        columns=['sentri_crossing', 'lane_type', 'lane_id', 'tour_type', 'purpose_id'])
     tours.index.name = 'tour_id'
 
-    purpose_cum_probs = np.array(list(purpose_probs.values())).cumsum()
-    purpose_scaled_probs = np.subtract(purpose_cum_probs, np.random.rand(num_tours, 1))
-    purpose = np.argmax((purpose_scaled_probs + 1.0).astype('i4'), axis=1)
-    tours['purpose_id'] = purpose
+    sentri_scaled_probs = np.subtract(np.array(list([sentri_share])), np.random.rand(num_tours, 1))
+    sentri = (sentri_scaled_probs + 1).astype('i4')
+    tours['sentri_crossing'] = sentri
+    for sentri, group in tours.groupby('sentri_crossing'):
+        num_xing_type_tours = len(group)
+        crossing_type = crossing_type_dict[sentri]
+        purpose_probs = OrderedDict(purpose_probs_by_sentri[crossing_type])
+        id_to_purpose = {i: purpose for i, purpose in enumerate(purpose_probs.keys())}
+        purpose_cum_probs = np.array(list(purpose_probs.values())).cumsum()
+        purpose_scaled_probs = np.subtract(purpose_cum_probs, np.random.rand(num_xing_type_tours, 1))
+        purpose = np.argmax((purpose_scaled_probs + 1.0).astype('i4'), axis=1)
+        group['purpose_id'] = purpose
+        tours.loc[group.index, 'purpose_id'] = purpose
+
     tours['tour_type'] = tours['purpose_id'].map(id_to_purpose)
     tours['tour_category'] = 'non_mandatory'
     tours.loc[tours['tour_type'].isin(['work', 'school', 'cargo']), 'tour_category'] = 'mandatory'
@@ -70,6 +80,8 @@ def create_tours(tour_settings):
         df['lane_type'] = df['lane_id'].map(id_to_lane)
         tours.loc[df.index, 'lane_id'] = df['lane_id']
         tours.loc[df.index, 'lane_type'] = df['lane_type']
+
+    breakpoint()
 
     return tours
 

@@ -1,5 +1,4 @@
 Description,Target,Expression
-traveler has sentri pass,tour_sentri,df['lane_type'] == 'sentri'
 list of POE wait periods columns,_WAIT_COLS,land_use.filter(regex=wait_time_col_regex).columns.tolist()
 list of unique POE wait periods,_WAIT_PERIOD_STARTS,"pd.Series(list(set([col.split('_wait_')[1] for col in _WAIT_COLS])))"
 subtract all tour start times from the wait time periods,_START_IDX_DIFFS,"np.subtract(_WAIT_PERIOD_STARTS.astype(int).values, df.start.values.reshape(-1,1))"

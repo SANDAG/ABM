@@ -1,6 +1,6 @@
 Label,Description,Expression,DRIVEALONE,SHARED2,SHARED3,WALK
-util_auto_wait,Auto Wait Time,@coef_wait * (~df.tour_sentri * df.std_wait),1,1,1,
-util_auto_wait_sentri,Auto Wait Time - Sentri,@coef_wait * (df.tour_sentri * df.sentri_wait),1,1,1,
+util_auto_wait,Auto Wait Time,@coef_wait * (~df.sentri_crossing * df.std_wait),1,1,1,
+util_auto_wait_sentri,Auto Wait Time - Sentri,@coef_wait * (df.sentri_crossing * df.sentri_wait),1,1,1,
 util_trip_logsum_tour_da,Drive alone - Trip Logsum,@coef_trip_logsum * (df.logsum_DRIVEALONE_outbound + df.logsum_DRIVEALONE_inbound),1,,,
 util_trip_logsum_tour_s2,Shared Ride 2 - Trip Logsum,@coef_trip_logsum * (df.logsum_SHARED2_outbound + df.logsum_SHARED2_inbound),,1,,
 util_trip_logsum_tour_s3,Shared Ride 3 - Trip Logsum,@coef_trip_logsum * (df.logsum_SHARED3_outbound + df.logsum_SHARED3_inbound),,,1,
@@ -9,8 +9,8 @@ util_trip_logsum_tour_walk,Walk - Trip Logsum,@coef_trip_logsum * (df.logsum_WAL
 util_ASC_s2,Shared Ride 2 - ASC,@SHARED2_asc,,1,,
 util_ASC_s3,Shared Ride 3 - ASC,@SHARED3_asc,,,1,
 util_ASC_walk,Walk - ASC,@WALK_asc,,,,1
-util_sentri_s2,Crossing used Sentri - Shared Ride 2,@SHARED2_coef_sentri * df.tour_sentri,,1,,
-util_sentri_s3,Crossing used Sentri - Shared Ride 3,@SHARED3_coef_sentri * df.tour_sentri,,,1,
+util_sentri_s2,Crossing used Sentri - Shared Ride 2,@SHARED2_coef_sentri * df.sentri_crossing,,1,,
+util_sentri_s3,Crossing used Sentri - Shared Ride 3,@SHARED3_coef_sentri * df.sentri_crossing,,,1,
 util_visit_tour_s2,Visit Tour - Shared Ride 2,@SHARED2_coef_visit * (df.tour_type == 'visit'),,1,,
 util_visit_tour_s3,Visit Tour - Shared Ride 3,@SHARED3_coef_visit * (df.tour_type == 'visit'),,,1,
 util_visit_tour_walk,Visit Tour - Walk,@WALK_coef_visit * (df.tour_type == 'visit'),,,,1

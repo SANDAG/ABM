@@ -74,14 +74,15 @@ poes:
   2:
     name: Tecate
     maz_id: 21895
-  3:
-    name: Otay Mesa East
-    maz_id: 7123
-  4:
-    name: Jacumba
-    maz_id: 22094
+  # 3:
+  #   name: Otay Mesa East
+  #   maz_id: 7123
+  # 4:
+  #   name: Jacumba
+  #   maz_id: 22094
 
 tours:
+  sentri_share: 0.29
   num_tours: 113995
   purpose_ids:
     work: 0
@@ -91,12 +92,20 @@ tours:
     visit: 4
     other: 5
   purpose_shares:
-    work: 0.254
-    school: 0.041
-    cargo: 0.012
-    shop: 0.547
-    visit: 0.088
-    other: 0.07
+    sentri:
+      work: 0.094789
+      school: 0.028892
+      cargo: 0.125968
+      shop: 0.521858
+      visit: 0.093134
+      other: 0.135358
+    non_sentri:
+      work: 0.211918
+      school: 0.054489
+      cargo: 0.127754
+      shop: 0.379447
+      visit: 0.082076
+      other: 0.144317
   lane_shares_by_purpose: 
     work:
       regular: 0.1

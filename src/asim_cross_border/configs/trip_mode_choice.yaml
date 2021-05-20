@@ -106,6 +106,8 @@ CONSTANTS:
     - 5000
     - 15000
 
+use_TVPB_constants: False
+
 # so far, we can use the same spec as for non-joint tours
 preprocessor:
   SPEC: trip_mode_choice_annotate_trips_preprocessor
@@ -121,6 +123,6 @@ TOURS_MERGED_CHOOSER_COLUMNS:
   - stop_frequency
   - demographic_segment
   - duration
-  - lane_type
+  - sentri_crossing
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: trip_mode_choice_logsum
