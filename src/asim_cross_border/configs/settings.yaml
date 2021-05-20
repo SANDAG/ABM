@@ -1,15 +1,14 @@
 inherit_settings: False
 
 # number of households to simulate
-households_sample_size: 600
-chunk_size: 0
-#chunk_size: 15000000000
+households_sample_size: 0
+chunk_size: 15000000000
 
-#multiprocess: True
-#strict: False
-#mem_tick: 30
-#num_processes: 30
-#fail_fast: True
+multiprocess: True
+strict: False
+mem_tick: 30
+num_processes: 30
+fail_fast: True
 
 trace_hh_id: 57
 
