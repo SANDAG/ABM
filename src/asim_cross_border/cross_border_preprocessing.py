@@ -81,8 +81,6 @@ def create_tours(tour_settings):
         tours.loc[df.index, 'lane_id'] = df['lane_id']
         tours.loc[df.index, 'lane_type'] = df['lane_type']
 
-    breakpoint()
-
     return tours
 
 
