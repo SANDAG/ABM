@@ -23,6 +23,9 @@ tour_scheduling_probs_input_fname: crossBorder_tourEntryAndReturn.csv
 tour_scheduling_probs_output_fname: tour_scheduling_probs.csv
 tour_scheduling_alts_output_fname: tour_departure_and_duration_alternatives.csv
 
+tour_purpose_control_probs_input_fname: crossBorder_tourPurpose_control.csv
+tour_purpose_control_probs_output_fname: tour_purpose_probs_by_poe.csv
+
 poe_wait_times_input_fname: crossBorder_pointOfEntryWaitTime.csv
 
 stop_frequency_input_fname: crossBorder_stopFrequency.csv

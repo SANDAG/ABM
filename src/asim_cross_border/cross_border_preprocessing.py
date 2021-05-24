@@ -314,6 +314,18 @@ def create_trip_scheduling_duration_probs(settings):
     return
 
 
+def update_tour_purpose_reassignment_probs(settings):
+
+    data_dir = settings['data_dir']
+    config_dir = settings['config_dir']
+    poe_settings = settings['poes']
+    probs_df = pd.read_csv(os.path.join(data_dir, settings['tour_purpose_control_probs_input_fname']))
+    probs_df.columns = ['Purpose', 'Description', ]
+    probs_df.to_csv(os.path.join(config_dir, settings['tour_purpose_control_probs_output_fname']), index=False)
+
+    return
+
+
 if __name__ == '__main__':
 
     # load settings
@@ -401,3 +413,6 @@ if __name__ == '__main__':
 
     # process duration-based trip scheduling probs
     create_trip_scheduling_duration_probs(settings)
+
+    # copy tour purpose by probs table
+    update_tour_purpose_reassignment_probs(settings)
