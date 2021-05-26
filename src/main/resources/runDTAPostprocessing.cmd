@@ -81,6 +81,9 @@ java.exe -server -Xms%MEMORY_SPMARKET_MIN% -Xmx%MEMORY_SPMARKET_MAX% -cp %CLASSP
 :: Output Summary
 python .\python\summarize_dta_trips.py .\output\dtaTripsOut.csv .\output\dtaSummaryOut.csv
 
+:: Process data
+python .\python\process_dtaTripsOut.py
+
 :: restore saved environment variable values, and change back to original current directory
 SET JAVA_PATH=%OLDJAVAPATH%
 SET PATH=%OLDPATH%

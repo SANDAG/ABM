@@ -405,11 +405,16 @@ public class detailedTODProcessing {
 					String todLabel = tripRecords.getStringValueAt(i+1, "TOD");
 					broadTOD=todPeriods.get(todLabel);
 				}
+				if(tripRecords.containsColumn("departTimeFiveTod")) {
+					broadTOD=(int) tripRecords.getValueAt(i+1,"departTimeFiveTod");
+			
+				}
 				
 				disaggregatePeriod = todDisaggregationModel.calculateDisaggregateTOD(broadTOD, broadTODMap, broadProbabilities, debug);
 
 			}
 			
+			//not sure why this is here.
 			if(period==0)
 				period=1;
 			

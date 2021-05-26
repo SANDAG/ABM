@@ -106,7 +106,8 @@ public class todDisaggregationModel {
 						+"     "+rn);
 			}
 			// choose the dta period if the cumulative probability has exceeded the random number
-			if (rn<cumProbability){
+			//jef added equal to
+			if (rn<=cumProbability){
 				dtaPeriod = i+1;
 				break;
 			}
