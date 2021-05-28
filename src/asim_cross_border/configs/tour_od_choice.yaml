@@ -3,6 +3,9 @@ SAMPLE_SIZE: 30
 SAMPLE_SPEC: tour_od_choice_sample.csv
 SPEC: tour_od_choice.csv
 COEFFICIENTS: tour_od_choice_coeffs.csv
+preprocessor:
+  SPEC: tour_od_choice_annotate_choosers_preprocessor
+  DF: tours
 
 SIMULATE_CHOOSER_COLUMNS:
   - tour_category
