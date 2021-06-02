@@ -8,7 +8,7 @@ preprocessor:
   DF: tours
 
 SIMULATE_CHOOSER_COLUMNS:
-  - tour_category
+  - is_mandatory  # created by preprocessor
   - tour_type
   - household_id
 
