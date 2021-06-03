@@ -39,6 +39,8 @@ trip_scheduling_probs_input_fnames:
   inbound: crossBorder_inboundStopDuration.csv
 trip_scheduling_probs_output_fname: trip_scheduling_probs.csv
 
+walk_speed: 3
+
 skims:
   maz_to_maz:
     walk:
