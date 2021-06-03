@@ -1,33 +1,33 @@
 Label,Description,Expression,set1,set2,set3
 # Set 1,,,,,
 set1_unavailable,Shut off set if unavailable,@df.not_transit_available_set1,C_UNAVAILABLE,,
-set1_ivt,set In-Vehicle Time,@~df.not_transit_available_set1 * c_ivt * df.totalIVT_set1,1,,
-set1_first_wait_time,First wait time,"@~df.not_transit_available_set1 * c_fwt * c_ivt * los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_FIRSTWAIT')",1,,
-set1_xfer_wait_time,set Transfer Wait Time,"@~df.not_transit_available_set1 * c_xwt * c_ivt *  los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_XFERWAIT')",1,,
-set1_xfer_walk_time,set Walk transfer time,"@~df.not_transit_available_set1 * c_waux * c_ivt *  los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_TOTALWALK')",1,,
-set1_fare,set Fare,"@~df.not_transit_available_set1 * c_cost *  los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_FARE') * 100",1,,
-set1_xfers,transfers penalty,@~df.not_transit_available_set1 * (df.transfers_set1 > 0) * c_ivt * 1.5 * (-23 + 23 * np.exp(0.414 * df.transfers_set1)),1,,
-set1_ASC,ASC,"@~df.not_transit_available_set1 * df.set1_ASC_EB * np.where(df.set1_ASC_EB > 0, np.where(los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_BUSIVTT')>0, 0.5, 1), 1)",1,,
-set1_cr_long_distance,CR long distance bonus,"@~df.not_transit_available_set1 * (df.cr_ivt_set1 > 10) * c_ivt * -1.0 * (np.clip(df.cr_ivt_set1, a_min=None, a_max=60) + np.where(df.cr_ivt_set1 > 40, (df.cr_ivt_set1 - 40) * 0.6, 0))",1,,
+set1_ivt,set In-Vehicle Time,@(1 - df.not_transit_available_set1) * c_ivt * df.totalIVT_set1,1,,
+set1_first_wait_time,First wait time,"@(1 - df.not_transit_available_set1) * c_fwt * c_ivt * los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_FIRSTWAIT')",1,,
+set1_xfer_wait_time,set Transfer Wait Time,"@(1 - df.not_transit_available_set1) * c_xwt * c_ivt *  los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_XFERWAIT')",1,,
+set1_xfer_walk_time,set Walk transfer time,"@(1 - df.not_transit_available_set1) * c_waux * c_ivt *  los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_TOTALWALK')",1,,
+set1_fare,set Fare,"@(1 - df.not_transit_available_set1) * c_cost *  los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_FARE') * 100",1,,
+set1_xfers,transfers penalty,@(1 - df.not_transit_available_set1) * (df.transfers_set1 > 0) * c_ivt * 1.5 * (-23 + 23 * np.exp(0.414 * df.transfers_set1)),1,,
+set1_ASC,ASC,"@(1 - df.not_transit_available_set1) * df.set1_ASC_EB * np.where(df.set1_ASC_EB > 0, np.where(los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_BUSIVTT')>0, 0.5, 1), 1)",1,,
+set1_cr_long_distance,CR long distance bonus,"@(1 - df.not_transit_available_set1) * (df.cr_ivt_set1 > 10) * c_ivt * -1.0 * (np.clip(df.cr_ivt_set1, a_min=None, a_max=60) + np.where(df.cr_ivt_set1 > 40, (df.cr_ivt_set1 - 40) * 0.6, 0))",1,,
 
 # Set 2,,,,,
 set2_unavailable,Shut off set if unavailable,@df.not_transit_available_set2,,C_UNAVAILABLE,
-set2_ivt,set In-Vehicle Time,@~df.not_transit_available_set2 * c_ivt * df.totalIVT_set2,,1,
-set2_first_wait_time,First wait time,"@~df.not_transit_available_set2 * c_fwt * c_ivt * los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_FIRSTWAIT')",,1,
-set2_xfer_wait_time,set Transfer Wait Time,"@~df.not_transit_available_set2 * c_xwt * c_ivt *  los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_XFERWAIT')",,1,
-set2_xfer_walk_time,set Walk transfer time,"@~df.not_transit_available_set2 * c_waux * c_ivt *  los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_TOTALWALK')",,1,
-set2_fare,set Fare,"@~df.not_transit_available_set2 * c_cost *  los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_FARE') * 100",,1,
-set2_xfers,transfers penalty,@~df.not_transit_available_set2 * (df.transfers_set2 > 0) * c_ivt * 1.5 * (-23 + 23 * np.exp(0.414 * df.transfers_set2)),,1,
-set2_ASC,ASC,"@~df.not_transit_available_set2 * df.set2_ASC_EB * np.where(df.set2_ASC_EB > 0, np.where(los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_BUSIVTT')>0, 0.5, 1), 1)",,1,
-set2_cr_long_distance,CR long distance bonus,"@~df.not_transit_available_set2 * (df.cr_ivt_set2 > 10) * c_ivt * -1.0 * (np.clip(df.cr_ivt_set2, a_min=None, a_max=60) + np.where(df.cr_ivt_set2 > 40, (df.cr_ivt_set2 - 40) * 0.6, 0))",,1,
+set2_ivt,set In-Vehicle Time,@(1 - df.not_transit_available_set2) * c_ivt * df.totalIVT_set2,,1,
+set2_first_wait_time,First wait time,"@(1 - df.not_transit_available_set2) * c_fwt * c_ivt * los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_FIRSTWAIT')",,1,
+set2_xfer_wait_time,set Transfer Wait Time,"@(1 - df.not_transit_available_set2) * c_xwt * c_ivt *  los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_XFERWAIT')",,1,
+set2_xfer_walk_time,set Walk transfer time,"@(1 - df.not_transit_available_set2) * c_waux * c_ivt *  los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_TOTALWALK')",,1,
+set2_fare,set Fare,"@(1 - df.not_transit_available_set2) * c_cost *  los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_FARE') * 100",,1,
+set2_xfers,transfers penalty,@(1 - df.not_transit_available_set2) * (df.transfers_set2 > 0) * c_ivt * 1.5 * (-23 + 23 * np.exp(0.414 * df.transfers_set2)),,1,
+set2_ASC,ASC,"@(1 - df.not_transit_available_set2) * df.set2_ASC_EB * np.where(df.set2_ASC_EB > 0, np.where(los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_BUSIVTT')>0, 0.5, 1), 1)",,1,
+set2_cr_long_distance,CR long distance bonus,"@(1 - df.not_transit_available_set2) * (df.cr_ivt_set2 > 10) * c_ivt * -1.0 * (np.clip(df.cr_ivt_set2, a_min=None, a_max=60) + np.where(df.cr_ivt_set2 > 40, (df.cr_ivt_set2 - 40) * 0.6, 0))",,1,
 
 # Set 3,,,,,
 set3_unavailable,Shut off set if unavailable,@df.not_transit_available_set3,,,C_UNAVAILABLE
-set3_ivt,set In-Vehicle Time,@~df.not_transit_available_set3 * c_ivt * df.totalIVT_set3,,,1
-set3_first_wait_time,First wait time,"@~df.not_transit_available_set3 * c_fwt * c_ivt * los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_FIRSTWAIT')",,,1
-set3_xfer_wait_time,set Transfer Wait Time,"@~df.not_transit_available_set3 * c_xwt * c_ivt *  los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_XFERWAIT')",,,1
-set3_xfer_walk_time,set Walk transfer time,"@~df.not_transit_available_set3 * c_waux * c_ivt *  los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_TOTALWALK')",,,1
-set3_fare,set Fare,"@~df.not_transit_available_set3 * c_cost *  los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_FARE') * 100",,,1
-set3_xfers,transfers penalty,@~df.not_transit_available_set3 * (df.transfers_set3 > 0) * c_ivt * 1.5 * (-23 + 23 * np.exp(0.414 * df.transfers_set3)),,,1
-set3_ASC,ASC,"@~df.not_transit_available_set3 * df.set3_ASC_EB * np.where(df.set3_ASC_EB > 0, np.where(los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_BUSIVTT')>0, 0.5, 1), 1)",,,1
-set3_cr_long_distance,CR long distance bonus,"@~df.not_transit_available_set3 * (df.cr_ivt_set3 > 10) * c_ivt * -1.0 * (np.clip(df.cr_ivt_set3, a_min=None, a_max=60) + np.where(df.cr_ivt_set3 > 40, (df.cr_ivt_set3 - 40) * 0.6, 0))",,,1
+set3_ivt,set In-Vehicle Time,@(1 - df.not_transit_available_set3) * c_ivt * df.totalIVT_set3,,,1
+set3_first_wait_time,First wait time,"@(1 - df.not_transit_available_set3) * c_fwt * c_ivt * los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_FIRSTWAIT')",,,1
+set3_xfer_wait_time,set Transfer Wait Time,"@(1 - df.not_transit_available_set3) * c_xwt * c_ivt *  los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_XFERWAIT')",,,1
+set3_xfer_walk_time,set Walk transfer time,"@(1 - df.not_transit_available_set3) * c_waux * c_ivt *  los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_TOTALWALK')",,,1
+set3_fare,set Fare,"@(1 - df.not_transit_available_set3) * c_cost *  los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_FARE') * 100",,,1
+set3_xfers,transfers penalty,@(1 - df.not_transit_available_set3) * (df.transfers_set3 > 0) * c_ivt * 1.5 * (-23 + 23 * np.exp(0.414 * df.transfers_set3)),,,1
+set3_ASC,ASC,"@(1 - df.not_transit_available_set3) * df.set3_ASC_EB * np.where(df.set3_ASC_EB > 0, np.where(los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_BUSIVTT')>0, 0.5, 1), 1)",,,1
+set3_cr_long_distance,CR long distance bonus,"@(1 - df.not_transit_available_set3) * (df.cr_ivt_set3 > 10) * c_ivt * -1.0 * (np.clip(df.cr_ivt_set3, a_min=None, a_max=60) + np.where(df.cr_ivt_set3 > 40, (df.cr_ivt_set3 - 40) * 0.6, 0))",,,1
