@@ -13,7 +13,7 @@ mem_tick: 30
 num_processes: 30
 fail_fast: True
 
-trace_hh_id: 79
+trace_hh_id: 15
 
 # input tables
 input_table_list:
