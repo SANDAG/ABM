@@ -31,7 +31,8 @@ public class detailedTODProcessing {
     private static final String PROPERTIES_RANDOMSEED             = "dta.postprocessing.RandomSeed";
     private static final String PROPERTIES_ZONEPROBABILITIES      = "dta.postprocessing.ZoneFile";
     private static final String PROPERTIES_BROADTODPROBABILITIES  = "dta.postprocessing.BroadTODFile";
-
+    private static final String PROPERTIES_VOT_LOW                = "valueOfTime.threshold.low";
+    private static final String PROPERTIES_VOT_MED                = "valueOfTime.threshold.med";
 
     private static final int                         DA_TIME_INDEX                          = 0;
     
@@ -73,6 +74,8 @@ public class detailedTODProcessing {
 	private double[] mgraProdProbabilities;
 	private double[] mgraAttrProbabilities;
 			
+	private float lowVOT, medVOT, highVOT;
+	
 	private dtaTrip Trip;	
 	private PrintWriter tripWriter;
 
@@ -141,6 +144,10 @@ public class detailedTODProcessing {
 	    todPeriods.put("PM",4);
 	    todPeriods.put("EV",5);
 
+	    lowVOT = Util.getFloatValueFromPropertyMap(rbMap, "valueOfTime.threshold.low");
+	    medVOT = Util.getFloatValueFromPropertyMap(rbMap, "valueOfTime.threshold.med");
+	    highVOT = medVOT*3; //assumption for now, should work.
+	    
  	}
 	
 		
@@ -206,6 +213,7 @@ public class detailedTODProcessing {
 			double occ=1.0;
 			expansionFactor = 1.0/sampleRate;
 			double fractionalTrips = 1.0;
+
 			// Use mode to determine number of trips to create
 			if (tripRecords.containsColumn("trip_mode")){
 				mode = (int) tripRecords.getValueAt(i+1, "trip_mode");
@@ -304,6 +312,8 @@ public class detailedTODProcessing {
 			int origTAZ=0;
 			int destTAZ=0;
 			int tourDriver=-1;
+			double valueOfTime=0;
+			int transponderAvailable=0;
 			
 			
 			if (tripRecords.containsColumn("hh_id")){
@@ -414,6 +424,45 @@ public class detailedTODProcessing {
 
 			}
 			
+			if(tripRecords.containsColumn("valueOfTime")){
+				valueOfTime = tripRecords.getValueAt(i+1,"valueOfTime");
+			}else {
+				
+				switch(marketSegment) {
+				
+					case "ExternalExternalTrips": 
+					case "ExternalInternalTrips": 
+						double rn = random.nextDouble();
+						if (rn<1.0/3.0) {
+							valueOfTime = lowVOT-0.01;
+						}else if(rn<2.0/3.0) {
+							valueOfTime = medVOT-0.01;
+						}else {
+							valueOfTime = highVOT;
+						}
+					case "CommercialVehicleTrips":
+						String cvMode = tripRecords.getStringValueAt(i+1, "tripMode");
+						if(cvMode.contains("Drive Alone")) {
+							valueOfTime = highVOT;
+						}
+				}
+					
+			}
+			
+			//if resident demand, there will be a transponder_avail column
+			//if EI or CV Drive Alone, assume transponder available, else no transponder
+			if(tripRecords.containsColumn("transponder_avail")) {
+				transponderAvailable = (int) tripRecords.getValueAt(i+1,"transponder_avail");
+				
+			}else if(marketSegment.equalsIgnoreCase("ExternalInternalTrips")) {
+				transponderAvailable=1;
+			}else if(marketSegment.equalsIgnoreCase("CommercialVehicleTrips")) {
+				String cvMode = tripRecords.getStringValueAt(i+1, "tripMode");
+				if(cvMode.contains("Drive Alone")) {
+					transponderAvailable=1;
+				}
+	
+			}
 			//not sure why this is here.
 			if(period==0)
 				period=1;
@@ -479,6 +528,8 @@ public class detailedTODProcessing {
 				Trip.setDetailedPeriod(period);
 				Trip.setExpansionFactor(1.0);
 				Trip.setTourDriver(tourDriver);
+				Trip.setValueOfTime(valueOfTime);
+				Trip.setTransponderAvailable(transponderAvailable);
 				
 				
 				//for trucks

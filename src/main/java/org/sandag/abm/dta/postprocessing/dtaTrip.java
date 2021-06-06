@@ -27,6 +27,8 @@ public class dtaTrip implements Serializable {
     private int driver;
     private double expansionFactor;
 
+    private double valueOfTime;
+    private int transponderAvailable;
     	
        
     /**
@@ -58,6 +60,8 @@ public class dtaTrip implements Serializable {
        	this.dtaPeriod=0;
        	this.driver=-1;
        	this.expansionFactor=1.0;
+       	this.valueOfTime=0;
+       	this.transponderAvailable=0;
         			
     }
     /**
@@ -356,7 +360,9 @@ public class dtaTrip implements Serializable {
        	   broadPeriod + "," +
        	   dtaPeriod + "," +
        	   driver + "," +
-       	   expansionFactor
+       	   expansionFactor + "," +
+       	   valueOfTime + "," +
+       	   transponderAvailable
        	   );
        	writer.print(record);
     }
@@ -372,8 +378,20 @@ public class dtaTrip implements Serializable {
      * @param writer
      */
     public void writeHeader(PrintWriter writer){
-    	String header = "hh_id,person_id,tour_id,trip_id,originTaz,destinationTaz,originMGRA,destinationMGRA,originNode,destinationNode,vehicleType,vehicleOccupancy,tollEligibility,marketSegment,detailedPeriod,broadPeriod,dtaPeriod,driver,expansionFactor";
+    	String header = "hh_id,person_id,tour_id,trip_id,originTaz,destinationTaz,originMGRA,destinationMGRA,originNode,destinationNode,vehicleType,vehicleOccupancy,tollEligibility,marketSegment,detailedPeriod,broadPeriod,dtaPeriod,driver,expansionFactor,valueOfTime,transponderAvailable";
     	writer.print(header);
     }
+	public double getValueOfTime() {
+		return valueOfTime;
+	}
+	public void setValueOfTime(double valueOfTime) {
+		this.valueOfTime = valueOfTime;
+	}
+	public int getTransponderAvailable() {
+		return transponderAvailable;
+	}
+	public void setTransponderAvailable(int transponderAvailable) {
+		this.transponderAvailable = transponderAvailable;
+	}
         
 }
