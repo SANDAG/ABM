@@ -238,8 +238,7 @@ def create_skims_and_tap_files(settings, new_mazs=None):
 
 def create_stop_freq_specs(settings):
 
-
-    logger.error('THIS IS BROKEN. NEED TO UPDATE TO CREATE COEFFS CSVS AND EXPRESSION CSVS THAT READ THE COEFFS')
+    raise ModuleNotFoundError('THIS IS BROKEN. NEED TO UPDATE TO CREATE COEFFS CSVS AND EXPRESSION CSVS THAT READ THE COEFFS')
     # probs_df = pd.read_csv(
     #     os.path.join(settings['data_dir'], settings['stop_frequency_input_fname']))
     # probs_df.rename(columns={'Outbound': 'out', 'Inbound': 'in'}, inplace=True)
