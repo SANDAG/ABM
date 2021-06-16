@@ -466,7 +466,6 @@ if __name__ == '__main__':
     
     # create input data
     mazs = create_land_use_file(settings)
-    breakpoint()
     new_mazs = mazs[mazs['original_MAZ'] > 0]
     tours = create_tours(tour_settings)
     households = create_households(settings)  # 1 per tour
@@ -482,7 +481,7 @@ if __name__ == '__main__':
     # create/update configs in place
     create_scheduling_probs_and_alts(settings)
     create_skims_and_tap_files(settings, new_mazs)
-    # create_stop_freq_specs(settings)
+    create_stop_freq_specs(settings)
     update_trip_purpose_probs(settings)
     create_trip_scheduling_duration_probs(settings)
     update_tour_purpose_reassignment_probs(settings)
