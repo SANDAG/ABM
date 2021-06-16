@@ -100,7 +100,9 @@ def create_tour_od_alts(mazs, settings):
     return ods
 
 
-def create_households(num_tours):
+def create_households(settings):
+
+    num_tours = tour_settings['num_tours']
 
     # one household per tour
     households = pd.DataFrame({'household_id': range(num_tours)})
@@ -117,28 +119,39 @@ def create_persons(settings, num_households):
     return persons
 
 
-def _update_table(settings, data_dir, filter_col=None, filter_list=None):
+def _update_sparse_skims(
+    settings, data_dir, filter_col=None, filter_list=None, new_mazs=None):
 
     input_fname = settings['input_fname']
     output_fname = settings['output_fname']
     filter_col = settings.get('filter_col', filter_col)
     
     df = pd.read_csv(os.path.join(data_dir, input_fname))
+
+    # rename columns from spec
     df.rename(columns=settings['rename_columns'], inplace=True)
+
+    # filter columns from spec
     if filter_col:
         if filter_list is None:
             raise ValueError("filter_list param needed to filter table.")
         df = df.loc[df[filter_col].isin(filter_list)]
+
+    # create new rows for new MAZs based on original MAZ counterparts 
+    cols_to_match = ['OMAZ', 'DMAZ', 'MAZ']
+    if new_mazs is not None:
+        for i, row in new_mazs.iterrows():
+            original_maz = row['original_maz']
+            new_maz_id = row['MAZ']
+            for col in cols_to_match:
+                if col in df.columns:
+                    new_rows = df[df[col] == original_maz].copy()
+                    new_rows[col] = new_maz_id
+                    df = df.append(new_rows, ignore_index=True)
+
     df.to_csv(os.path.join(data_dir, output_fname), index=False)
 
     return
-
-
-def create_maz_to_tap_drive(mazs, drive_skims):
-
-    merged = pd.merge(mazs[['MAZ', 'TAZ']], drive_skims, on='TAZ')
-    
-    return merged
 
 
 def _rename_skims(settings, skim_type):
@@ -201,75 +214,79 @@ def create_taps_tap_lines(settings):
     return
 
 
-def create_skims_and_tap_files(settings):
+def create_skims_and_tap_files(settings, new_mazs=None):
 
     skims_settings = settings['skims']
     data_dir = settings['data_dir']
 
-    # # create taps files and transit skims
-    # print('Creating tap files.')
-    # transit_skims = omx.open_file(
-    #     os.path.join(data_dir, skims_settings['tap_to_tap']['input_fname']), 'a')
-    # all_taps = pd.DataFrame(pd.Series(list(transit_skims.root.lookup.zone_number)))
-    # all_taps.columns = ['TAP']
-    # all_taps.to_csv(os.path.join(data_dir, settings['taps_output_fname']), index=False)
-    # tap_lines = pd.read_csv(os.path.join(data_dir, settings['tap_lines_input_fname']))
-    # tap_lines.to_csv(os.path.join(data_dir, settings['tap_lines_output_fname']))
-    # transit_skims.close()
-    #
-    #
-    # # update skims/network data
-    # print('Updating maz-to-maz skims.')
-    # _update_table(skims_settings['maz_to_maz']['walk'], data_dir=settings['data_dir'])
-    #
-    # print('Updating maz-to-tap skims.')
-    # _update_table(
-    #     skims_settings['maz_to_tap']['walk'],
-    #     data_dir=settings['data_dir'],
-    #     filter_col='TAP', filter_list=all_taps.TAP.values)
-    #
-    # # rename transit and auto skims
+    # create taps files and transit skims
+    print('Creating tap files.')
+    transit_skims = omx.open_file(
+        os.path.join(data_dir, skims_settings['tap_to_tap']['input_fname']), 'a')
+    all_taps = pd.DataFrame(pd.Series(list(transit_skims.root.lookup.zone_number)))
+    all_taps.columns = ['TAP']
+    all_taps.to_csv(os.path.join(data_dir, settings['taps_output_fname']), index=False)
+    tap_lines = pd.read_csv(os.path.join(data_dir, settings['tap_lines_input_fname']))
+    tap_lines.to_csv(os.path.join(data_dir, settings['tap_lines_output_fname']))
+    transit_skims.close()
+    
+    
+    # update skims/network data
+    print('Updating maz-to-maz skims.')
+    _update_sparse_skims(
+        skims_settings['maz_to_maz']['walk'],
+        data_dir=settings['data_dir'],
+        new_mazs=new_mazs)
+    
+    print('Updating maz-to-tap skims.')
+    _update_sparse_skims(
+        skims_settings['maz_to_tap']['walk'],
+        data_dir=settings['data_dir'],
+        filter_col='TAP',
+        filter_list=all_taps.TAP.values,
+        new_mazs=new_mazs)
+    
+    # rename transit and auto skims
     print('Renaming skim keys')
     for skim_type in ['tap_to_tap', 'taz_to_taz']:
-        if skim_type == 'tap_to_tap':
-            continue
-        else:
-            _rename_skims(settings, skim_type)
+        _rename_skims(settings, skim_type)
 
 
 def create_stop_freq_specs(settings):
 
-    probs_df = pd.read_csv(
-        os.path.join(settings['data_dir'], settings['stop_frequency_input_fname']))
-    probs_df.rename(columns={'Outbound': 'out', 'Inbound': 'in'}, inplace=True)
-    probs_df['alt'] = probs_df['out'].astype(str) + 'out_' + probs_df['in'].astype(str) + 'in'
 
-    # convert probs to utils
-    probs_df['util'] = np.log(probs_df['Percent']).clip(lower=-999)
+    logger.error('THIS IS BROKEN. NEED TO UPDATE TO CREATE COEFFS CSVS AND EXPRESSION CSVS THAT READ THE COEFFS')
+    # probs_df = pd.read_csv(
+    #     os.path.join(settings['data_dir'], settings['stop_frequency_input_fname']))
+    # probs_df.rename(columns={'Outbound': 'out', 'Inbound': 'in'}, inplace=True)
+    # probs_df['alt'] = probs_df['out'].astype(str) + 'out_' + probs_df['in'].astype(str) + 'in'
+
+    # # convert probs to utils
+    # probs_df['util'] = np.log(probs_df['Percent']).clip(lower=-999)
     
-    # write out alts table
-    alts_df = probs_df.drop_duplicates(['out','in','alt'])[['alt','out','in']]
-    alts_df.to_csv(
-        os.path.join(settings['config_dir'], settings['stop_frequency_output_fname']), index=False)
+    # # write out alts table
+    # alts_df = probs_df.drop_duplicates(['out','in','alt'])[['alt','out','in']]
+    # alts_df.to_csv(
+    #     os.path.join(settings['config_dir'], settings['stop_frequency_output_fname']), index=False)
 
-    purpose_id_map = settings['tours']['purpose_ids']
+    # purpose_id_map = settings['tours']['purpose_ids']
 
-    # iterate through purposes and pivot probability lookup tables to
-    # create MNL spec files with only ASC's (no covariates).
-    for purpose, purpose_id in purpose_id_map.items():
-        purpose_probs = probs_df.loc[probs_df['Purpose'] == purpose_id]
-        alt_cols = alts_df['alt'].tolist()
-        expr_df =  purpose_probs.pivot(
-            index=['DurationLo','DurationHi'], columns='alt', values='util').reset_index()
-        expr_df['Description'] = 'ASC for tour durations between ' + expr_df['DurationLo'].astype(str) + ' and ' + expr_df['DurationHi'].astype(str)
-        expr_df['Expression'] = expr_df['DurationLo'].astype(str) + ' < duration_hours <= ' + expr_df['DurationHi'].astype(str)
-        expr_df = expr_df.drop(columns=['DurationLo','DurationHi'])
-        required_cols = ['Description', 'Expression']
-        expr_df = expr_df[required_cols + [col for col in expr_df.columns if col not in required_cols]]
+    # # iterate through purposes and pivot probability lookup tables to
+    # # create MNL spec files with only ASC's (no covariates).
+    # for purpose, purpose_id in purpose_id_map.items():
+    #     purpose_probs = probs_df.loc[probs_df['Purpose'] == purpose_id]
+    #     alt_cols = alts_df['alt'].tolist()
+    #     expr_df =  purpose_probs.pivot(
+    #         index=['DurationLo','DurationHi'], columns='alt', values='util').reset_index()
+    #     expr_df['Description'] = 'ASC for tour durations between ' + expr_df['DurationLo'].astype(str) + ' and ' + expr_df['DurationHi'].astype(str)
+    #     expr_df['Expression'] = expr_df['DurationLo'].astype(str) + ' < duration_hours <= ' + expr_df['DurationHi'].astype(str)
+    #     expr_df = expr_df.drop(columns=['DurationLo','DurationHi'])
+    #     required_cols = ['Description', 'Expression']
+    #     expr_df = expr_df[required_cols + [col for col in expr_df.columns if col not in required_cols]]
 
-        # write out purpose-specific model spec
-        expr_df.to_csv(
-            os.path.join(settings['config_dir'], 'stop_frequency_{0}.csv'.format(purpose)), index=False)
+    #     # write out purpose-specific model spec
+    #     expr_df.to_csv(
+    #         os.path.join(settings['config_dir'], 'stop_frequency_{0}.csv'.format(purpose)), index=False)
 
     return
 
@@ -328,12 +345,116 @@ def update_tour_purpose_reassignment_probs(settings):
     data_dir = settings['data_dir']
     config_dir = settings['config_dir']
     poe_settings = settings['poes']
-    probs_df = pd.read_csv(os.path.join(data_dir, settings['tour_purpose_control_probs_input_fname']))
+    probs_df = pd.read_csv(
+        os.path.join(data_dir, settings['tour_purpose_control_probs_input_fname']), 
+        index_col=['Description', 'Purpose'])
+    probs_df = probs_df[[str(poe) for poe in list(poe_settings.keys())]]
+    probs_df.reset_index(inplace=True)
     probs_df['Description'] = probs_df['Description'].str.lower()
-    probs_df.columns = ['Purpose', 'Description'] + [poe_settings[poe_id]['maz_id'] for poe_id in range(len(poe_settings.keys()))]
     probs_df.to_csv(os.path.join(config_dir, settings['tour_purpose_control_probs_output_fname']), index=False)
 
     return
+
+
+def create_land_use_file(settings):
+
+    print('Creating land use (maz) table.')
+
+    data_dir = settings['data_dir']
+    maz_input_fname = settings['maz_input_fname']
+    maz_id_field = settings['maz_id_field']
+    poe_id_field = settings['poe_id_field']
+    poe_access_field = settings['poe_access_field']
+    colonia_input_fname = settings['colonia_input_fname']
+    colonia_pop_field = settings['colonia_pop_field']
+    distance_param = settings['distance_param']
+
+    # load maz/mgra + colonia data
+    colonias = pd.read_csv(os.path.join(data_dir, colonia_input_fname))
+    mazs = pd.read_csv(os.path.join(data_dir, maz_input_fname))
+
+    
+    mazs[poe_id_field] = -1
+    mazs['original_MAZ'] = -1
+    mazs['external_TAZ'] = -1
+    mazs['external_MAZ'] = -1
+    for poe_id, poe_attrs in poe_settings.items():
+
+        # get poe id for maz's that have one
+        maz_mask = mazs[maz_id_field] == poe_attrs['maz_id']
+        mazs.loc[maz_mask, poe_id_field] = poe_id
+        mazs.loc[maz_mask, 'external_TAZ'] = poe_attrs['ext_taz_id']
+
+        # add poes as new mazs
+        row = mazs.loc[maz_mask].copy()
+        for col in row.columns:
+            if row[col].dtype == float:
+                row[col] = 0.0
+            elif row[col].dtype == int:
+                row[col] = 0
+            else:
+                row[col] = None
+        row[maz_id_field] = mazs[maz_id_field].max() + 1
+        row['external_TAZ'] = -1
+        row['external_MAZ'] = -1
+        mazs.loc[maz_mask, 'external_MAZ'] = row[maz_id_field]
+        row['taz'] = poe_attrs['ext_taz_id']
+        row[poe_id_field] = poe_id
+        row['original_MAZ'] = mazs.loc[maz_mask, 'mgra']
+        mazs = mazs.append(row, ignore_index=True)
+
+    # compute colonia accessibility for poe mazs
+    mazs[poe_access_field] = None
+    poe_mask = mazs[poe_id_field] >= 0
+    mazs.loc[poe_mask, poe_access_field] = mazs.loc[poe_mask, poe_id_field].apply(
+        compute_poe_accessibility, colonias=colonias, colonia_pop_field=colonia_pop_field,
+        distance_param=distance_param)
+    mazs = mazs.rename(columns={'mgra': 'MAZ', 'taz': 'TAZ'})
+
+    # merge in wide wait times
+    wide_wait_times = get_poe_wait_times(settings)
+    mazs = pd.merge(mazs, wide_wait_times, left_on='poe_id', right_on='poe', how='left')
+
+    return mazs
+
+
+def create_scheduling_probs_and_alts(settings):
+
+    config_dir = settings['config_dir']
+    data_dir = settings['data_dir']
+    input_fname = settings['tour_scheduling_probs_input_fname']
+    output_probs_fname = settings['tour_scheduling_probs_output_fname']
+    output_alts_fname = settings['tour_scheduling_alts_output_fname']
+
+    scheduling_probs = pd.read_csv(os.path.join(data_dir, input_fname))
+    tour_scheduling_alts = scheduling_probs.rename(
+        columns={'EntryPeriod': 'start', 'ReturnPeriod': 'end'}).drop_duplicates(
+        ['start','end'])[['start', 'end']]
+    scheduling_probs.rename(columns={
+        'Purpose': 'purpose_id', 'EntryPeriod': 'entry_period',
+        'ReturnPeriod': 'return_period', 'Percent': 'prob'}, inplace=True)
+    scheduling_probs = scheduling_probs.pivot(
+        index='purpose_id', columns=['entry_period','return_period'], values='prob')
+    scheduling_probs.columns = [
+        str(col[0]) + '_' + str(col[1]) for col in scheduling_probs.columns]
+
+    scheduling_probs.to_csv(os.path.join(config_dir, output_probs_fname))
+    tour_scheduling_alts.to_csv(
+        os.path.join(config_dir, output_alts_fname), index=False)
+
+    return
+
+
+def assign_hh_p_to_tours(tours, persons):
+
+    num_tours = len(tours)
+
+    # assign persons and households to tours
+    tours['household_id'] = np.random.choice(num_tours, num_tours, replace=False)
+    tours['person_id'] = persons.set_index('household_id').reindex(
+        tours['household_id'])['person_id'].values
+
+    return tours
 
 
 if __name__ == '__main__':
@@ -359,71 +480,24 @@ if __name__ == '__main__':
     tours_output_fname = settings['tours_output_fname']
     skims_settings = settings['skims']
     
-    # load land use data
-    colonias = pd.read_csv(os.path.join(data_dir, colonia_input_fname))
-    mazs = pd.read_csv(os.path.join(data_dir, maz_input_fname))
-
-    # get poe id for maz's that have one
-    mazs[poe_id_field] = None
-    for poe_id, poe_attrs in poe_settings.items():
-        maz_mask = mazs[maz_id_field] == poe_attrs['maz_id']
-        mazs.loc[maz_mask, poe_id_field] = poe_id
-
-    # compute colonia accessibility for poe mazs
-    mazs[poe_access_field] = None
-    poe_mask = ~pd.isnull(mazs[poe_id_field])
-    mazs.loc[poe_mask, poe_access_field] = mazs.loc[poe_mask, poe_id_field].apply(
-        compute_poe_accessibility, colonias=colonias, colonia_pop_field=colonia_pop_field,
-        distance_param=distance_param)
-    mazs = mazs.rename(columns={'mgra': 'MAZ', 'taz': 'TAZ'})
-
-    # merge in wide wait times
-    wide_wait_times = get_poe_wait_times(settings)
-    mazs = pd.merge(mazs, wide_wait_times, left_on='poe_id', right_on='poe', how='left')
-
-    # create tours
+    # create input data
+    mazs = create_land_use_file(settings)
+    new_mazs = mazs[mazs['original_MAZ'] > 0]
     tours = create_tours(tour_settings)
+    households = create_households(settings)  # 1 per tour
+    persons = create_persons(settings, num_households=len(households))
+    tours = assign_hh_p_to_tours(tours, persons)
 
-    # create households, 1 per tour
-    num_tours = tour_settings['num_tours']
-    households = create_households(num_tours)
-
-    # create persons, 1 per household
-    num_households = len(households)
-    persons = create_persons(settings, num_households)
-
-    # assign persons and households to tours
-    tours['household_id'] = np.random.choice(num_tours, num_tours, replace=False)
-    tours['person_id'] = persons.set_index('household_id').reindex(tours['household_id'])['person_id'].values
-
-    # reformat table of tour scheduling prob
-    scheduling_probs = pd.read_csv(
-        os.path.join(settings['data_dir'], settings['tour_scheduling_probs_input_fname']))
-    tour_scheduling_alts = scheduling_probs.rename(
-        columns={'EntryPeriod': 'start', 'ReturnPeriod': 'end'}).drop_duplicates(['start','end'])[['start', 'end']]
-    scheduling_probs.rename(columns={
-        'Purpose': 'purpose_id', 'EntryPeriod': 'entry_period',
-        'ReturnPeriod': 'return_period', 'Percent': 'prob'}, inplace=True)
-    scheduling_probs = scheduling_probs.pivot(
-        index='purpose_id', columns=['entry_period','return_period'], values='prob')
-    scheduling_probs.columns = [str(col[0]) + '_' + str(col[1]) for col in scheduling_probs.columns]
-
-    # store results
+    # store input files to disk
     mazs.to_csv(os.path.join(data_dir, mazs_output_fname), index=False)
     tours.to_csv(os.path.join(data_dir, tours_output_fname))
     households.to_csv(os.path.join(data_dir, households_output_fname), index=False)
     persons.to_csv(os.path.join(data_dir, persons_output_fname), index=False)
-    scheduling_probs.to_csv(os.path.join(config_dir, settings['tour_scheduling_probs_output_fname']))
-    tour_scheduling_alts.to_csv(os.path.join(config_dir, settings['tour_scheduling_alts_output_fname']), index=False)
 
-    # update the skims
-    create_skims_and_tap_files(settings)
-    #
-    # # create_stop_freq_specs(settings)
+    # create/update configs in place
+    # create_scheduling_probs_and_alts(settings)
+    # create_skims_and_tap_files(settings, new_mazs)
+    # create_stop_freq_specs(settings)
     # update_trip_purpose_probs(settings)
-    #
-    # # process duration-based trip scheduling probs
     # create_trip_scheduling_duration_probs(settings)
-    #
-    # # copy tour purpose by probs table
     # update_tour_purpose_reassignment_probs(settings)

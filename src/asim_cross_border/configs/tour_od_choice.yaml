@@ -12,6 +12,7 @@ SIMULATE_CHOOSER_COLUMNS:
   - tour_type
   - household_id
 
+
 # model-specific logsum-related settings
 CHOOSER_ORIG_COL_NAME: &o origin
 ALT_DEST_COL_NAME: &d destination
@@ -22,7 +23,8 @@ ORIG_COL_NAME: *o
 DEST_COL_NAME: *d
 
 # filter to identify potential origin zones from the land use table
-ORIG_FILTER: "poe_id == poe_id"  # trick to use pandas query syntax to filter out rows with null-valued poe_id's
+# ORIG_FILTER: "poe_id == poe_id"  # trick to use pandas query syntax to filter out rows with null-valued poe_id's
+ORIG_FILTER: "external_TAZ > 0"  # only new (external) mazs copied from internal mazs
 
 OD_CHOICE_SAMPLE_TABLE_NAME: tour_od_location_sample
 
@@ -35,6 +37,9 @@ CHOOSER_SEGMENT_COLUMN_NAME: tour_type
 ORIGIN_ATTR_COLS_TO_USE:
   - poe_id
   - colonia_pop_accessibility
+  - original_MAZ
+  - external_TAZ
+  - external_MAZ
 
 SEGMENTS:
   - work

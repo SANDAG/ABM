@@ -73,12 +73,15 @@ poes:
   0:
     name: San Ysidro
     maz_id: 7090
+    ext_taz_id: 1
   1:
     name: Otay Mesa
     maz_id: 7066
+    ext_taz_id: 2
   2:
     name: Tecate
     maz_id: 21895
+    ext_taz_id: 4
   # 3:
   #   name: Otay Mesa East
   #   maz_id: 7123
