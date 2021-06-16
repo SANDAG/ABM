@@ -84,22 +84,6 @@ def create_tours(tour_settings):
     return tours
 
 
-def create_tour_od_alts(mazs, settings):
-    # parameterize poe columns to include into the yaml
-    poe_mazs = mazs.loc[mazs['poe_id'].notnull(), ['MAZ', 'poe_id', 'colonia_pop_accessibility']]
-    poe_mazs.rename(columns={'poe_id': 'origin_poe_id', 'MAZ': 'origin_maz_id'}, inplace=True)
-    ods = poe_mazs.reindex(poe_mazs.index.repeat(len(mazs))).reset_index(drop=True)
-    ods['destination_maz_id'] = mazs.MAZ.tolist() * len(poe_mazs)
-    ods = pd.merge(
-    ods, mazs[[col for col in mazs.columns if col not in poe_mazs.columns]],
-    left_on='destination_maz_id', right_on='MAZ')
-    ods['alt'] = ods['origin_poe_id'].astype(int).astype(str) + '_' + ods['destination_maz_id'].astype(str)
-    od_cols = ['origin_poe_id', 'origin_maz_id', 'destination_maz_id'] + [
-    col for col in ods.columns if col in mazs.columns]
-    ods = ods.set_index('alt')[od_cols]
-    return ods
-
-
 def create_households(settings):
 
     num_tours = tour_settings['num_tours']
@@ -141,7 +125,7 @@ def _update_sparse_skims(
     cols_to_match = ['OMAZ', 'DMAZ', 'MAZ']
     if new_mazs is not None:
         for i, row in new_mazs.iterrows():
-            original_maz = row['original_maz']
+            original_maz = row['original_MAZ']
             new_maz_id = row['MAZ']
             for col in cols_to_match:
                 if col in df.columns:
@@ -388,9 +372,9 @@ def create_land_use_file(settings):
         # add poes as new mazs
         row = mazs.loc[maz_mask].copy()
         for col in row.columns:
-            if row[col].dtype == float:
+            if pd.api.types.is_float_dtype(row[col]):
                 row[col] = 0.0
-            elif row[col].dtype == int:
+            elif pd.api.types.is_integer_dtype(row[col]):
                 row[col] = 0
             else:
                 row[col] = None
@@ -482,19 +466,19 @@ if __name__ == '__main__':
     
     # create input data
     mazs = create_land_use_file(settings)
-    new_mazs = mazs[mazs['original_MAZ'] > 0]
-    tours = create_tours(tour_settings)
-    households = create_households(settings)  # 1 per tour
-    persons = create_persons(settings, num_households=len(households))
-    tours = assign_hh_p_to_tours(tours, persons)
+    # new_mazs = mazs[mazs['original_MAZ'] > 0]
+    # tours = create_tours(tour_settings)
+    # households = create_households(settings)  # 1 per tour
+    # persons = create_persons(settings, num_households=len(households))
+    # tours = assign_hh_p_to_tours(tours, persons)
 
-    # store input files to disk
-    mazs.to_csv(os.path.join(data_dir, mazs_output_fname), index=False)
-    tours.to_csv(os.path.join(data_dir, tours_output_fname))
-    households.to_csv(os.path.join(data_dir, households_output_fname), index=False)
-    persons.to_csv(os.path.join(data_dir, persons_output_fname), index=False)
+    # # store input files to disk
+    # mazs.to_csv(os.path.join(data_dir, mazs_output_fname), index=False)
+    # tours.to_csv(os.path.join(data_dir, tours_output_fname))
+    # households.to_csv(os.path.join(data_dir, households_output_fname), index=False)
+    # persons.to_csv(os.path.join(data_dir, persons_output_fname), index=False)
 
-    # create/update configs in place
+    # # create/update configs in place
     # create_scheduling_probs_and_alts(settings)
     # create_skims_and_tap_files(settings, new_mazs)
     # create_stop_freq_specs(settings)
