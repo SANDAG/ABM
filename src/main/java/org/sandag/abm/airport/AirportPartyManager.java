@@ -6,10 +6,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.List;
+import java.util.ArrayList;
+import java.io.FileNotFoundException;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
+import org.sandag.abm.modechoice.Modes;
+
 import com.pb.common.datafile.OLD_CSVFileReader;
 import com.pb.common.datafile.TableDataSet;
 import com.pb.common.util.ResourceUtil;
@@ -20,6 +28,7 @@ public class AirportPartyManager
     private static Logger  logger = Logger.getLogger("SandagTourBasedModel.class");
 
     private AirportParty[] parties;
+    private int 		   totalPassengerParty;
 
     private double[]       purposeDistribution;
     private double[][]     sizeDistribution;
@@ -27,8 +36,12 @@ public class AirportPartyManager
     private double[][]     incomeDistribution;
     private double[][]     departureDistribution;
     private double[][]     arrivalDistribution;
+    
+    public int			   airportMgra;
 
     SandagModelStructure   sandagStructure;
+    
+    private Map<String, List<Double>> 		  employeeParkingValuesMap = new HashMap<>();
 
     /**
      * Constructor. Reads properties file and opens/stores all probability
@@ -55,6 +68,8 @@ public class AirportPartyManager
                 + Util.getStringValueFromPropertyMap(rbMap, "airport.departureTime.file");
         String arriveFile = directory
                 + Util.getStringValueFromPropertyMap(rbMap, "airport.arrivalTime.file");
+        String employeeParkFile = directory
+                + Util.getStringValueFromPropertyMap(rbMap, "airport.employeePark.file");
 
         // Read the distributions
         setPurposeDistribution(purposeFile);
@@ -63,6 +78,8 @@ public class AirportPartyManager
         incomeDistribution = setDistribution(incomeDistribution, incomeFile);
         departureDistribution = setDistribution(departureDistribution, departFile);
         arrivalDistribution = setDistribution(arrivalDistribution, arriveFile);
+        
+        readCsvFile(employeeParkFile);
 
         // calculate total number of parties
         float enplanements = new Float(Util.getStringValueFromPropertyMap(rbMap,
@@ -73,10 +90,19 @@ public class AirportPartyManager
                 "airport.annualizationFactor"));
         float averageSize = new Float(Util.getStringValueFromPropertyMap(rbMap,
                 "airport.averageSize"));
+        
+        airportMgra = Util.getIntegerValueFromPropertyMap(rbMap,
+                "airport.airportMgra");
+        
+        int totalEmployees = 0;
+        for ( String key : employeeParkingValuesMap.keySet()) {
+			totalEmployees += (int) (employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_stall_index) * employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_terminalpct_index));
+		}
 
         float directPassengers = (enplanements - connectingPassengers) / annualFactor;
         int totalParties = (int) (directPassengers / averageSize) * 2;
-        parties = new AirportParty[(int)(totalParties*sampleRate)];
+        parties = new AirportParty[(int)(totalParties*sampleRate) + totalEmployees * 2];
+        totalPassengerParty = (int) (totalParties*sampleRate);
 
         logger.info("Total airport parties: " + totalParties);
     }
@@ -92,14 +118,16 @@ public class AirportPartyManager
     public void generateAirportParties()
     {
 
-        int departures = parties.length / 2;
-        int arrivals = parties.length - departures;
+        int departures = totalPassengerParty / 2;
+        int arrivals = departures;
+        int employees = (parties.length - departures - arrivals) / 2;
         int totalParties = 0;
         int totalPassengers = 0;
+        int totalEmployees = 0;
         for (int i = 0; i < departures; ++i)
         {
 
-            AirportParty party = new AirportParty(i * 101 + 1000);
+            AirportParty party = new AirportParty(i * 101 + 1000);         
 
             // simulate from distributions
             party.setDirection(AirportModelStructure.DEPARTURE);
@@ -127,7 +155,7 @@ public class AirportPartyManager
         for (int i = 0; i < arrivals; ++i)
         {
 
-            AirportParty party = new AirportParty(i * 101 + 1000);
+            AirportParty party = new AirportParty(i * 201 + 1000);
 
             // simulate from distributions
             party.setDirection(AirportModelStructure.ARRIVAL);
@@ -153,9 +181,144 @@ public class AirportPartyManager
         }
 
         logger.info("Total passengers " + totalPassengers);
+        
+        for (String key : employeeParkingValuesMap.keySet())
+        	{
+        		double num = employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_stall_index) * employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_terminalpct_index);
+        		int stallNum = (int) num;
+        		for (int s = 0; s < stallNum; s++)
+        		{
+        			AirportParty party = new AirportParty(s * 301 + 1000);
+        			double stallMgra = employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_MGRA_index);
+        			party.setOriginMGRA((int) stallMgra);
+        			party.setDestinationMGRA(airportMgra);
+        			
+        			double transitToTerminalProb =  employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_transitpct_index);
+        			if (party.getRandom() < transitToTerminalProb)
+        			{
+        				party.setMode((byte) SandagModelStructure.WALK_TRANSIT_ALTS[0]);
+        			}
+        			else
+        			{
+        				party.setMode((byte) SandagModelStructure.WALK_ALTS[0]);
+        			}    
+        			// simulate from distributions
+                	byte period = (byte) chooseFromDistribution(AirportModelStructure.EMPLOYEE, departureDistribution,
+                             party.getRandom());
+                	 
+                	party.setDirection(AirportModelStructure.DEPARTURE);
+                	party.setPurpose(AirportModelStructure.EMPLOYEE);
+                	party.setSize((byte) 1);
+                	party.setNights((byte) -99);
+                	party.setIncome((byte) -99);
+                	party.setDepartTime(period);
+                	party.setArrivalMode((byte) -99);
+                	
+                	parties[totalParties] = party;
+                    ++totalParties;
+                    party.setID(totalParties);
+                    totalEmployees += 1;
+        		}
+        	}
+        	
+        
+        for (String key : employeeParkingValuesMap.keySet())
+        	{
+        		double num = employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_stall_index) *employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_terminalpct_index);
+        		int stallNum = (int) num;
+        		for (int s = 0; s < stallNum; s++)
+        		{
+        			AirportParty party = new AirportParty(s*101 + 1001);
+        			double stallMgra = employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_MGRA_index);
+        			party.setDestinationMGRA((int) stallMgra);
+        			party.setOriginMGRA(airportMgra);
+        			
+        			double transitToTerminalProb =  employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_transitpct_index);
+        			if (party.getRandom() < transitToTerminalProb)
+        			{
+        				party.setMode((byte) SandagModelStructure.WALK_TRANSIT_ALTS[0]);
+        			}	 
+        			else
+        			{
+        				party.setMode((byte) SandagModelStructure.WALK_ALTS[0]);
+        			}
+        			// simulate from distributions
+                	byte period = (byte) chooseFromDistribution(AirportModelStructure.EMPLOYEE, arrivalDistribution,
+                             party.getRandom());
+                	 
+                	party.setDirection(AirportModelStructure.ARRIVAL);
+                	party.setPurpose(AirportModelStructure.EMPLOYEE);
+                	party.setSize((byte) 1);
+                	party.setNights((byte) -99);
+                	party.setIncome((byte) -99);
+                	party.setDepartTime(period);
+                	party.setArrivalMode((byte) -99);
+                	
+                	parties[totalParties] = party;
+                    ++totalParties;
+                    party.setID(totalParties);
+                    totalEmployees += 0;
+        		}
+        	}
+        logger.info("Total employees going to terminal" + totalEmployees);
 
     }
+    
+    private void readCsvFile(String filePath) {
+		
+    	//Map<String, List<Double>> employeeParkingValuesMap = new HashMap<>();
+    	
+		String employeeParkIndexString = "Name";
+		
+		try (Scanner sc = new Scanner(new File(filePath))) {
+			
+			String[] record;
 
+			// process the header record
+			record = sc.nextLine().split(",", -1);
+			Map<String, Integer> fieldIndexMap;
+			fieldIndexMap = getFieldIndexMap( record );
+
+			int employeeParkingIndex = fieldIndexMap.get( employeeParkIndexString );
+			
+			while (sc.hasNextLine()) 
+			{
+				
+				record = sc.nextLine().split(",", -1);
+				String employeeParkingName = record[employeeParkingIndex];
+				
+				// pre-allocate the ArrayList to hold values for this MAZ
+				List<Double> valueList = new ArrayList<>();
+				while (valueList.size() < fieldIndexMap.size())
+					valueList.add(null);
+				
+				// convert the record[] values to double for each specified field value and save in the ArrayList.
+				for ( String field : fieldIndexMap.keySet()) {
+					int index = fieldIndexMap.get( field );
+						valueList.set( index, Double.valueOf( record[index] ) ); 
+					}
+			
+				employeeParkingValuesMap.put( employeeParkingName, valueList );
+
+			}
+		}
+		catch (FileNotFoundException e) {
+			throw new RuntimeException( "Exception caught reading csv file: " + filePath, e );
+		}
+		
+	}
+
+	/**
+	 * @param record String[] of field names read from the csv file header record.
+	 * @return Map<String, Integer> map of field names to field indices.
+	 */
+	private Map<String, Integer> getFieldIndexMap( String[] record ) {
+		Map<String, Integer> fldIdxMap = new HashMap<>();
+		for ( int i=0; i < record.length; i++ )
+			fldIdxMap.put(record[i], i);
+		return fldIdxMap;
+	}
+    
     /**
      * Read file containing probabilities by purpose. Store cumulative
      * distribution in purposeDistribution.
@@ -329,22 +492,140 @@ public class AirportPartyManager
             throw new RuntimeException();
         }
         String headerString = new String(
-                "id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,tripMode,arrivalMode,boardingTAP,alightingTAP\n");
+                "travel_party_id,leg_id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,tripMode,arrivalMode,boardingTAP,alightingTAP\n");
         writer.print(headerString);
 
         // Iterate through the array, printing records to the file
         for (int i = 0; i < parties.length; ++i)
         {
 
+        	// if employee
+            if (parties[i].getPurpose() == AirportModelStructure.EMPLOYEE)
+            {
+            	String record;
+            	if (parties[i].getMode() == SandagModelStructure.WALK_ALTS[0])
+            	{
+            		record = new String(parties[i].getID() + "," + AirportModelStructure.airport_travel_party_trip_leg_1 + "," + parties[i].getDirection() + ","
+                            + parties[i].getPurpose() + "," + parties[i].getSize() + ","
+                            + parties[i].getIncome() + "," + parties[i].getNights() + ","
+                            + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
+                            + parties[i].getDestinationMGRA() + "," + parties[i].getMode() + ","
+                            + parties[i].getArrivalMode() + "," + (int) 0 + "," + (int) 0 + "\n");
+            	}
+            	else
+            	{
+            		int[] tapsAP2Terminal = getAccessToTerminalTapPair(parties[i]);
+                	
+                	record = new String(parties[i].getID() + "," + AirportModelStructure.airport_travel_party_trip_leg_1 + "," + parties[i].getDirection() + ","
+                            + parties[i].getPurpose() + "," + parties[i].getSize() + ","
+                            + parties[i].getIncome() + "," + parties[i].getNights() + ","
+                            + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
+                            + parties[i].getDestinationMGRA() + "," + parties[i].getAP2TerminalTransitMode() + ","
+                            + parties[i].getArrivalMode() + "," + tapsAP2Terminal[0] + "," + tapsAP2Terminal[1] + "\n");
+            	}
+                
+                writer.print(record);
+                
+                continue;
+            }
+            
             int[] taps = getTapPair(parties[i]);
+            
+            int airportAccessMgra = parties[i].getAirportAccessMGRA();
+            int accMode_null = -99;
+                     
+            // if the arrival mode access point is transit, or it's an external trip
+            if (airportAccessMgra <= 0)
+            {
+            	String record = new String(parties[i].getID() + "," + AirportModelStructure.airport_travel_party_trip_leg_1 + "," + parties[i].getDirection() + ","
+                        + parties[i].getPurpose() + "," + parties[i].getSize() + ","
+                        + parties[i].getIncome() + "," + parties[i].getNights() + ","
+                        + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
+                        + parties[i].getDestinationMGRA() + "," + parties[i].getMode() + ","
+                        + parties[i].getArrivalMode() + "," + taps[0] + "," + taps[1] + "\n");
+                
+                writer.print(record);
+                
+                continue;
+            }
+            
+            // if the arrival mode access point is not transit, two trip legs will be printed out
+            else
+            {
+            	String record_Origin2Access = new String();
+            	String record_Access2Destination = new String();
+            	
+            	if (parties[i].getDirection() == AirportModelStructure.DEPARTURE)
+            	{
+            		record_Origin2Access = new String(parties[i].getID() + "," + AirportModelStructure.airport_travel_party_trip_leg_1 + "," + parties[i].getDirection() + ","
+                            + parties[i].getPurpose() + "," + parties[i].getSize() + ","
+                            + parties[i].getIncome() + "," + parties[i].getNights() + ","
+                            + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
+                            + parties[i].getAirportAccessMGRA() + "," + parties[i].getMode() + ","
+                            + parties[i].getArrivalMode() + "," + taps[0] + "," + taps[1] + "\n");
+            		
+            		// if access point is airport terminal, connection mode is walk
+            		if (airportAccessMgra == airportMgra)
+            		{     			
+            			record_Access2Destination = new String(parties[i].getID() + "," + AirportModelStructure.airport_travel_party_trip_leg_2 + "," + parties[i].getDirection() + ","
+                                + parties[i].getPurpose() + "," + parties[i].getSize() + ","
+                                + parties[i].getIncome() + "," + parties[i].getNights() + ","
+                                + parties[i].getDepartTime() + "," + parties[i].getAirportAccessMGRA() + ","
+                                + parties[i].getDestinationMGRA() + "," + SandagModelStructure.WALK_ALTS[0] + ","
+                                + accMode_null + "," + taps[0] + "," + taps[1] + "\n");
+            		}
+            		// else if access point is not airport terminal, connection mode is transit (APM)
+            		else
+            		{
 
-            String record = new String(parties[i].getID() + "," + parties[i].getDirection() + ","
-                    + parties[i].getPurpose() + "," + parties[i].getSize() + ","
-                    + parties[i].getIncome() + "," + parties[i].getNights() + ","
-                    + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
-                    + parties[i].getDestinationMGRA() + "," + parties[i].getMode() + ","
-                    + parties[i].getArrivalMode() + "," + taps[0] + "," + taps[1] + "\n");
-            writer.print(record);
+                        int[] tapsAP2Terminal = getAccessToTerminalTapPair(parties[i]);
+                        
+            			record_Access2Destination = new String(parties[i].getID() + "," + AirportModelStructure.airport_travel_party_trip_leg_2 + "," + parties[i].getDirection() + ","
+                                + parties[i].getPurpose() + "," + parties[i].getSize() + ","
+                                + parties[i].getIncome() + "," + parties[i].getNights() + ","
+                                + parties[i].getDepartTime() + "," + parties[i].getAirportAccessMGRA() + ","
+                                + parties[i].getDestinationMGRA() + "," + parties[i].getAP2TerminalTransitMode() + ","
+                                + accMode_null + "," + tapsAP2Terminal[0] + "," + tapsAP2Terminal[1] + "\n");
+            		}
+            		writer.print(record_Origin2Access);
+            		writer.print(record_Access2Destination);
+            	}
+            	else
+            	{
+            		record_Access2Destination = new String(parties[i].getID() + "," + AirportModelStructure.airport_travel_party_trip_leg_2 + "," + parties[i].getDirection() + ","
+                            + parties[i].getPurpose() + "," + parties[i].getSize() + ","
+                            + parties[i].getIncome() + "," + parties[i].getNights() + ","
+                            + parties[i].getDepartTime() + "," + parties[i].getAirportAccessMGRA() + ","
+                            + parties[i].getDestinationMGRA() + "," + parties[i].getMode() + ","
+                            + parties[i].getArrivalMode() + "," + taps[0] + "," + taps[1] + "\n");
+            		// if access point is airport terminal, connection mode is walk
+            		if (airportAccessMgra == airportMgra)
+            		{     			
+            			record_Origin2Access = new String(parties[i].getID() + "," + AirportModelStructure.airport_travel_party_trip_leg_1 + "," + parties[i].getDirection() + ","
+                                + parties[i].getPurpose() + "," + parties[i].getSize() + ","
+                                + parties[i].getIncome() + "," + parties[i].getNights() + ","
+                                + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
+                                + parties[i].getAirportAccessMGRA() + "," + SandagModelStructure.WALK_ALTS[0] + ","
+                                + accMode_null + "," + taps[0] + "," + taps[1] + "\n");
+            		}
+            		// else if access point is not airport terminal, connection mode is transit (APM)
+            		else
+            		{
+
+                        int[] tapsAP2Terminal = getAccessToTerminalTapPair(parties[i]);
+                        
+            			record_Origin2Access = new String(parties[i].getID() + "," + AirportModelStructure.airport_travel_party_trip_leg_1 + "," + parties[i].getDirection() + ","
+                                + parties[i].getPurpose() + "," + parties[i].getSize() + ","
+                                + parties[i].getIncome() + "," + parties[i].getNights() + ","
+                                + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
+                                + parties[i].getAirportAccessMGRA() + "," + parties[i].getAP2TerminalTransitMode() + ","
+                                + accMode_null + "," + tapsAP2Terminal[0] + "," + tapsAP2Terminal[1] + "\n");
+            		}
+            		writer.print(record_Origin2Access);
+            		writer.print(record_Access2Destination);
+            	}
+            }
+
         }
         writer.close();
 
@@ -383,6 +664,43 @@ public class AirportPartyManager
             if (party.getDirection() == AirportModelStructure.ARRIVAL) taps = party
                     .getWtdTapPair(rideMode);
             else taps = party.getDtwTapPair(rideMode);
+
+        return taps;
+    }
+    
+    public int[] getAccessToTerminalTapPair(AirportParty party)
+    {
+
+        int[] taps = new int[2];
+
+        // APM is coded as light rail
+        int rideMode = sandagStructure.getRideModeIndexForTripMode(SandagModelStructure.WALK_LRT);
+        
+        // walk-LRT trip mode
+        int AP2TerminalTransitMode = SandagModelStructure.WALK_LRT;
+
+        party.setAP2TerminalTransitMode(AP2TerminalTransitMode);
+        
+        taps = party.getAPtoTermBestWtwTapPairs(rideMode);
+        
+        // if there's no best path for light rail, loop through and find the available ride mode
+        	if (taps == null)
+        	{
+        		for (int i = 0; i < SandagModelStructure.WALK_TRANSIT_ALTS.length; i++)
+        		{
+        			rideMode = sandagStructure.getRideModeIndexForTripMode(SandagModelStructure.WALK_TRANSIT_ALTS[i]);
+        			taps = party.getAPtoTermBestWtwTapPairs(rideMode);
+        			
+        			if (taps != null)
+        			{
+        				AP2TerminalTransitMode = SandagModelStructure.WALK_TRANSIT_ALTS[i];
+
+        		        party.setAP2TerminalTransitMode(AP2TerminalTransitMode);
+        		        
+        				break;
+        			}
+        		}
+        	}
 
         return taps;
     }

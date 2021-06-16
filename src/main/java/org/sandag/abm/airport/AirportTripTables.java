@@ -343,9 +343,19 @@ public class AirportTripTables
             // party size is a variable in output file. it is used for transit
             // trips (person trips)
             float personTrips = (float) tripData.getValueAt(i, "size")/sampleRate;
+            
+            if (tripData.getValueAt(i, "purpose") == AirportModelStructure.EMPLOYEE)
+            {
+            	personTrips = (float) tripData.getValueAt(i, "size");
+            }
 
             // all auto trips are 1 per party
             float vehicleTrips = 1.0f/sampleRate;
+            
+            if (tripData.getValueAt(i, "purpose") == AirportModelStructure.EMPLOYEE)
+            {
+            	vehicleTrips = 1.0f;
+            }
 
             // Store in matrix
             int mode = modeIndex[tripMode];
@@ -393,8 +403,11 @@ public class AirportTripTables
 
             // generate another drive-alone trip in the opposite direction for
             // pickup/dropoff
-            if (accMode == AirportModelStructure.PUDO_CURB
-                    || accMode == AirportModelStructure.PUDO_CURB)
+            if (accMode == AirportModelStructure.CURB_LOC1
+                    || accMode == AirportModelStructure.CURB_LOC2
+                    || accMode == AirportModelStructure.CURB_LOC3
+                    || accMode == AirportModelStructure.CURB_LOC4
+                    || accMode == AirportModelStructure.CURB_LOC5)
             {
                 mode = 0; // auto mode
                 if (SandagModelStructure.getTripModeIsPay(tripMode)) // if the

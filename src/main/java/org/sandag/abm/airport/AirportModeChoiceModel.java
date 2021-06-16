@@ -1,15 +1,18 @@
 package org.sandag.abm.airport;
 
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.BestTransitPathCalculator;
 import org.sandag.abm.accessibilities.DriveTransitWalkSkimsCalculator;
 import org.sandag.abm.accessibilities.WalkTransitDriveSkimsCalculator;
 import org.sandag.abm.accessibilities.WalkTransitWalkSkimsCalculator;
+import org.sandag.abm.application.SandagModelStructure;
 import org.sandag.abm.ctramp.CtrampApplication;
 import org.sandag.abm.ctramp.Util;
 import org.sandag.abm.modechoice.MgraDataManager;
 import org.sandag.abm.modechoice.TazDataManager;
+
 import com.pb.common.calculator.VariableTable;
 import com.pb.common.newmodel.ChoiceModelApplication;
 import com.pb.common.util.Tracer;
@@ -21,11 +24,13 @@ public class AirportModeChoiceModel
     private TazDataManager                    tazManager;
     private MgraDataManager                   mgraManager;
 
-    private ChoiceModelApplication            driveAloneModel;
-    private ChoiceModelApplication            shared2Model;
-    private ChoiceModelApplication            shared3Model;
+    private ChoiceModelApplication[]          driveAloneModel;
+    private ChoiceModelApplication[]          shared2Model;
+    private ChoiceModelApplication[]          shared3Model;
     private ChoiceModelApplication            transitModel;
     private ChoiceModelApplication            accessModel;
+    private ChoiceModelApplication			  mgraModel;
+    private ChoiceModelApplication			  rideHailModel;
 
     private Tracer                            tracer;
     private boolean                           trace;
@@ -38,6 +43,9 @@ public class AirportModeChoiceModel
     protected WalkTransitWalkSkimsCalculator  wtw;
     protected WalkTransitDriveSkimsCalculator wtd;
     protected DriveTransitWalkSkimsCalculator dtw;
+    
+    private boolean							  debugChoiceModel;
+    private int								  debugPartyID;
 
     /**
      * Constructor
@@ -73,24 +81,46 @@ public class AirportModeChoiceModel
                 "airport.mc.transit.page"));
         int accessPage = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap,
                 "airport.mc.accessMode.page"));
+        int mgraPage = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap, 
+        		"airport.mc.mgra.page"));
+        int rideHailPage = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap, 
+        		"airport.mc.ridehail.page"));
 
         logger.info("Creating Airport Model Mode Choice Application UECs");
 
         // create a DMU
         AirportModelDMU dmu = dmuFactory.getAirportModelDMU();
 
-        // create a ChoiceModelApplication object for drive-alone mode choice
-        driveAloneModel = new ChoiceModelApplication(airportModeUecFileName, daPage, dataPage,
+        // get MAX mgra to initialize mgra size array in dmu
+        int maxMgra = mgraManager.getMaxMgra();
+        dmu.setMaxMgra(maxMgra);
+        
+        // fake choice model to get airport access MGRA input
+        mgraModel = new ChoiceModelApplication(airportModeUecFileName, mgraPage, dataPage,
+        		rbMap, (VariableTable) dmu);   
+        
+        solveModeMgra(dmu);
+        
+        // create ChoiceModelApplication objects for each airport mgra
+        driveAloneModel = new ChoiceModelApplication[dmu.mgra_index_map.size()];
+        shared2Model = new ChoiceModelApplication[dmu.mgra_index_map.size()];
+        shared3Model = new ChoiceModelApplication[dmu.mgra_index_map.size()];
+        
+        for (int i = 0; i < dmu.mgra_index_map.size(); i++){
+        	// create a ChoiceModelApplication object for drive-alone mode choice
+        	driveAloneModel[i] = new ChoiceModelApplication(airportModeUecFileName, daPage, dataPage,
+                    rbMap, (VariableTable) dmu);
+        	// create a ChoiceModelApplication object for shared 2 mode choice
+        	shared2Model[i] = new ChoiceModelApplication(airportModeUecFileName, s2Page, dataPage,
+                    rbMap, (VariableTable) dmu);
+        	// create a ChoiceModelApplication object for shared 3+ mode choice
+        	shared3Model[i] = new ChoiceModelApplication(airportModeUecFileName, s3Page, dataPage,
+                    rbMap, (VariableTable) dmu);
+        }
+        
+        rideHailModel = new ChoiceModelApplication(airportModeUecFileName, rideHailPage, dataPage,
                 rbMap, (VariableTable) dmu);
-
-        // create a ChoiceModelApplication object for shared 2 mode choice
-        shared2Model = new ChoiceModelApplication(airportModeUecFileName, s2Page, dataPage, rbMap,
-                (VariableTable) dmu);
-
-        // create a ChoiceModelApplication object for shared 3+ mode choice
-        shared3Model = new ChoiceModelApplication(airportModeUecFileName, s3Page, dataPage, rbMap,
-                (VariableTable) dmu);
-
+        
         // create a ChoiceModelApplication object for transit mode choice
         transitModel = new ChoiceModelApplication(airportModeUecFileName, transitPage, dataPage,
                 rbMap, (VariableTable) dmu);
@@ -119,7 +149,19 @@ public class AirportModeChoiceModel
             }
         }
         seek = Util.getBooleanValueFromPropertyMap(rbMap, "Seek");
+        
+        if (Util.getStringValueFromPropertyMap(rbMap,"airport.debug") != "")
+        {
+        	debugChoiceModel = Util.getBooleanValueFromPropertyMap(rbMap, "airport.debug");
+            debugPartyID = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap,
+                    "airport.debug.party.id"));
 
+        }
+        else
+        {
+        	debugChoiceModel = false;
+        	debugPartyID = -99;
+        }
     }
 
     /**
@@ -142,6 +184,27 @@ public class AirportModeChoiceModel
         logger.info("Finished Initializing Airport Model Best Path Calculators");
 
     }
+    
+    /**
+     * get access mode MGRA from UEC user input
+     */
+    public void solveModeMgra(AirportModelDMU dmu){ 
+    	mgraModel.computeUtilities(dmu, dmu.getDmuIndex());
+
+    	int modeCount = mgraModel.getNumberOfAlternatives();
+    	double[] mgraValues = mgraModel.getUtilities();
+    	
+    	HashMap<Integer, Integer> modeMgraMap = new HashMap<Integer, Integer>();
+    	
+    	for (int m = 0; m < modeCount; m++){
+    		int mgraValue = (int)Math.round(mgraValues[m]);
+    		modeMgraMap.put(m+1, mgraValue);
+    	}
+    	
+    	dmu.setModeMgraMap(modeMgraMap);
+    	dmu.setMgraIndexMap();
+    	dmu.setTravelTimeArraySize();
+    }
 
     /**
      * Choose airport arrival mode and trip mode for this party. Store results
@@ -157,8 +220,23 @@ public class AirportModeChoiceModel
 
         int origMgra = party.getOriginMGRA();
         int destMgra = party.getDestinationMGRA();
+        int direction = party.getDirection();
+        int airportMgra = 0;
+        int airportMgra_index = 0;
+        int nonAirportMgra = 0;
+        int accessOrigMgra = 0;
+        int accessDestMgra = 0;
+        int accessOrigTaz = 0;
+        int accessDestTaz = 0;
+        if (direction == 0){ //departure
+        	nonAirportMgra = origMgra;
+        } else { //arrival
+        	nonAirportMgra = destMgra;
+        }
+        dmu.setNonAirportMgra(nonAirportMgra);
+        dmu.setDirection(direction);
         int origTaz = mgraManager.getTaz(origMgra);
-        int destTaz = mgraManager.getTaz(destMgra);
+        int destTaz = mgraManager.getTaz(destMgra);   
         int period = party.getDepartTime();
         int skimPeriod = AirportModelStructure.getSkimPeriodIndex(period) + 1; // The
                                                                                // skims
@@ -172,6 +250,12 @@ public class AirportModeChoiceModel
         int[][] walkTransitTapPairs = wtw.getBestTapPairs(origMgra, destMgra, skimPeriod, debug,
                 logger);
         party.setBestWtwTapPairs(walkTransitTapPairs);
+        
+        if (party.getPurpose() == AirportModelStructure.EMPLOYEE)
+        {
+        	party.setAPtoTermBestWtwTapPairs(walkTransitTapPairs);
+        	return;
+        }
 
         // drive transit tap pairs depend on direction; departing parties use
         // drive-transit-walk, else walk-transit-drive is used.
@@ -194,69 +278,177 @@ public class AirportModeChoiceModel
         if (party.getDirection() == AirportModelStructure.ARRIVAL) inbound = true;
 
         dmu.setAirportParty(party);
-        dmu.setDmuIndexValues(party.getID(), origTaz, destTaz);
+
         dmu.setDmuSkimAttributes(origMgra, destMgra, period, inbound, debug);
 
         // Solve trip mode level utilities
-
-        // if 1-person party, solve for the drive-alone and 2-person logsums
-        if (party.getSize() == 1)
+        
+        for (int mode = 1; mode <= AirportModelStructure.ACCESS_MODES; mode++)
         {
-            driveAloneModel.computeUtilities(dmu, dmu.getDmuIndex());
-            double driveAloneLogsum = driveAloneModel.getLogsum();
-            dmu.setDriveAloneLogsum(driveAloneLogsum);
-
-            shared2Model.computeUtilities(dmu, dmu.getDmuIndex());
-            double shared2Logsum = shared2Model.getLogsum();
-            dmu.setShared2Logsum(shared2Logsum);
-
-        } else if (party.getSize() == 2)
-        { // if 2-person party solve for the
-          // shared 2 and shared 3+ logsums
-            shared2Model.computeUtilities(dmu, dmu.getDmuIndex());
-            double shared2Logsum = shared2Model.getLogsum();
-            dmu.setShared2Logsum(shared2Logsum);
-
-            shared3Model.computeUtilities(dmu, dmu.getDmuIndex());
-            double shared3Logsum = shared3Model.getLogsum();
-            dmu.setShared3Logsum(shared3Logsum);
-
-        } else
-        { // if 3+ person party, solve the shared 3+ logsums
-            shared3Model.computeUtilities(dmu, dmu.getDmuIndex());
-            double shared3Logsum = shared3Model.getLogsum();
-            dmu.setShared3Logsum(shared3Logsum);
+        	airportMgra = dmu.mode_mgra_map.get(mode);
+        	
+        	airportMgra_index = dmu.mgra_index_map.get(airportMgra);
+        	
+        	if (airportMgra == -999)
+        	{
+        		continue;
+        	}
+        	
+        	if (direction == 0){ //departure
+            	accessOrigMgra = nonAirportMgra;
+            	accessDestMgra = airportMgra;
+            } else { //arrival
+            	accessOrigMgra = airportMgra;
+            	accessDestMgra = nonAirportMgra;
+            }
+        	
+        	accessOrigTaz = mgraManager.getTaz(accessOrigMgra);
+        	accessDestTaz = mgraManager.getTaz(accessDestMgra);
+        	
+        	dmu.setDmuIndexValues(party.getID(), accessOrigTaz, accessDestTaz);  // should this be access point Taz?
+        	
+        	for (int los = 0; los < AirportModelStructure.LOS_TYPE; los++)
+        	{
+        		double travelTime = dmu.getModeTravelTime(nonAirportMgra, airportMgra_index, direction, los);
+        		if (travelTime == 0)
+        		{
+        			if (los == AirportModelStructure.DA){
+        				driveAloneModel[airportMgra_index].computeUtilities(dmu, dmu.getDmuIndex());
+        				double driveAloneLogsum = driveAloneModel[airportMgra_index].getLogsum();
+        				dmu.setModeTravelTime(nonAirportMgra, airportMgra_index, direction, los, driveAloneLogsum);
+        			}
+        			else if (los == AirportModelStructure.SR2){
+        				shared2Model[airportMgra_index].computeUtilities(dmu, dmu.getDmuIndex());
+        				double shared2Logsum = shared2Model[airportMgra_index].getLogsum();
+        	            dmu.setModeTravelTime(nonAirportMgra, airportMgra_index, direction, los, shared2Logsum);
+        			}
+        			else if (los == AirportModelStructure.SR3){
+        				shared3Model[airportMgra_index].computeUtilities(dmu, dmu.getDmuIndex());
+        	            double shared3Logsum = shared3Model[airportMgra_index].getLogsum();
+        	            dmu.setModeTravelTime(nonAirportMgra, airportMgra_index, direction, los, shared3Logsum);
+        			}
+        		}
+        	}
+        	
+        	if (mode == AirportModelStructure.RIDEHAILING_LOC1)
+        	{
+        		rideHailModel.computeUtilities(dmu, dmu.getDmuIndex());
+        		dmu.setRidehailTravelDistanceLocation1(rideHailModel.getUtilities()[1]);
+        		dmu.setRidehailTravelTimeLocation1(rideHailModel.getUtilities()[0]);
+        	}
+        	
+        	if (mode == AirportModelStructure.RIDEHAILING_LOC2)
+        	{
+        		rideHailModel.computeUtilities(dmu, dmu.getDmuIndex());
+        		dmu.setRidehailTravelDistanceLocation2(rideHailModel.getUtilities()[1]);
+        		dmu.setRidehailTravelTimeLocation2(rideHailModel.getUtilities()[0]);
+        	}
+        
         }
-        // always solve for the transit logsum
-        transitModel.computeUtilities(dmu, dmu.getDmuIndex());
+        
+        dmu.setDmuIndexValues(party.getID(), origTaz, destTaz);
+		transitModel.computeUtilities(dmu, dmu.getDmuIndex());
         double transitLogsum = transitModel.getLogsum();
-        dmu.setTransitLogsum(transitLogsum);
-
+        dmu.setModeTravelTime(nonAirportMgra, airportMgra_index, direction, AirportModelStructure.Transit, transitLogsum);
+        
         // calculate access mode utility and choose access mode
         accessModel.computeUtilities(dmu, dmu.getDmuIndex());
         int accessMode = accessModel.getChoiceResult(party.getRandom());
         party.setArrivalMode((byte) accessMode);
+        
+        int airportAccessMGRA = dmu.mode_mgra_map.get(accessMode);
+        
+        if (accessMode == AirportModelStructure.SHUTTLE_VAN | accessMode == AirportModelStructure.HOTEL_COURTESY)
+        {
+        	double terminal_logsum = 0;
+        	double cmh_logsum = 0;
+        	int size = party.getSize();
+        	if (size == 1)
+        	{
+        		terminal_logsum = dmu.getShared2LogsumHotelOrShuttleTerminal();
+        		cmh_logsum = dmu.getShared2LogsumHotelOrShuttleCentralMobilityHub();
+        	}
+        	else
+        	{
+        		terminal_logsum = dmu.getShared3LogsumHotelOrShuttleTerminal();
+        		cmh_logsum = dmu.getShared3LogsumHotelOrShuttleCentralMobilityHub();
+        	}
+        	
+        	if (terminal_logsum >= cmh_logsum)
+        	{
+        		airportAccessMGRA = dmu.mode_mgra_map.get(AirportModelStructure.MGRAAlt_TERM);
+        	}
+        	else
+        	{
+        		airportAccessMGRA = dmu.mode_mgra_map.get(AirportModelStructure.MGRAAlt_CMH);
+        	}
+        }
+        
+        party.setAirportAccessMGRA(airportAccessMGRA);
 
+        // add debug
+        if (debugChoiceModel & party.getID() == debugPartyID)
+        {
+        	String choiceModelDescription = "";
+            String decisionMakerLabel = "";
+            String loggingHeader = "";
+            String separator = "";
+             
+        	choiceModelDescription = String.format(
+                    "Airport Mode Choice Model for: Purpose=%s, OrigMGRA=%d, DestMGRA=%d",
+                    party.getPurpose(), party.getOriginMGRA(), party.getDestinationMGRA());
+            decisionMakerLabel = String.format("partyID=%d, partySize=%d, purpose=%s, direction=%d",
+                    party.getID(), party.getSize(),
+                    party.getPurpose(), party.getDirection());
+            loggingHeader = String.format("%s    %s", choiceModelDescription,
+                    decisionMakerLabel);
+            
+            logger.info(loggingHeader);
+            driveAloneModel[2].logUECResults(logger);
+            accessModel.logUECResults(logger);
+            transitModel.logUECResults(logger);
+        }
+ 
         // choose trip mode
         int tripMode = 0;
         int occupancy = AirportModelStructure.getOccupancy(accessMode, party.getSize());
         double randomNumber = party.getRandom();
-
+        
         if (accessMode != AirportModelStructure.TRANSIT)
         {
+        	int chosenAirportMgra_index = dmu.mgra_index_map.get(airportAccessMGRA);
             if (occupancy == 1)
             {
-                int choice = driveAloneModel.getChoiceResult(randomNumber);
+                int choice = driveAloneModel[chosenAirportMgra_index].getChoiceResult(randomNumber);
                 tripMode = choice;
             } else if (occupancy == 2)
             {
-                int choice = shared2Model.getChoiceResult(randomNumber);
-                tripMode = choice + 2;
+                int choice = shared2Model[chosenAirportMgra_index].getChoiceResult(randomNumber);
+                tripMode = choice + 2; 
             } else if (occupancy > 2)
             {
-                int choice = shared3Model.getChoiceResult(randomNumber);
+                int choice = shared3Model[chosenAirportMgra_index].getChoiceResult(randomNumber);
                 tripMode = choice + 3 + 2;
             }
+            
+            if (airportAccessMGRA != dmu.getTerminalMgra())
+            {
+            	if (direction == 0)
+            	{
+            		int[][] walkTransitTapPairs_AP2Term = wtw.getBestTapPairs(airportAccessMGRA, dmu.getTerminalMgra(), skimPeriod, debug,
+                            logger);
+                    party.setAPtoTermBestWtwTapPairs(walkTransitTapPairs_AP2Term);
+            	}
+            	else
+            	{
+            		int[][] walkTransitTapPairs_AP2Term = wtw.getBestTapPairs(dmu.getTerminalMgra(), airportAccessMGRA, skimPeriod, debug,
+                            logger);
+                    party.setAPtoTermBestWtwTapPairs(walkTransitTapPairs_AP2Term);
+            	}
+            }
+            
+            
+            
         } else
         {
             int choice = transitModel.getChoiceResult(randomNumber);
@@ -264,6 +456,7 @@ public class AirportModeChoiceModel
             else tripMode = choice + 15;
         }
         party.setMode((byte) tripMode);
+        
     }
 
     /**
@@ -274,20 +467,37 @@ public class AirportModeChoiceModel
      * @param dmuFactory
      *            A DMU Factory.
      */
-    public void chooseModes(AirportParty[] airportParties, AirportDmuFactoryIf dmuFactory)
+    public void chooseModes(HashMap<String, String> rbMap, AirportParty[] airportParties, AirportDmuFactoryIf dmuFactory)
     {
+    	this.rbMap = rbMap;
 
+        tazManager = TazDataManager.getInstance(rbMap);
+        mgraManager = MgraDataManager.getInstance(rbMap);
+        
         AirportModelDMU dmu = dmuFactory.getAirportModelDMU();
+        
+        int maxMgra = mgraManager.getMaxMgra();
+        dmu.setMaxMgra(maxMgra);
+        
+        solveModeMgra(dmu);
+        
+        int terminalMgra = Integer.parseInt(Util.getStringValueFromPropertyMap(rbMap, 
+        		"airport.airportMgra"));
+        
+        // set terminal Mgra
+        dmu.setTerminalMgra(terminalMgra);
+        
         // iterate through the array, choosing mgras and setting them
         for (AirportParty party : airportParties)
         {
 
             int ID = party.getID();
-
+            
             if ((ID <= 5) || (ID % 100) == 0)
                 logger.info("Choosing mode for party " + party.getID());
+            
+            if (party.getPurpose() < AirportModelStructure.INTERNAL_PURPOSES | party.getPurpose() == AirportModelStructure.EMPLOYEE) chooseMode(party, dmu);
 
-            if (party.getPurpose() < AirportModelStructure.INTERNAL_PURPOSES) chooseMode(party, dmu);
             else
             {
                 party.setArrivalMode((byte) -99);

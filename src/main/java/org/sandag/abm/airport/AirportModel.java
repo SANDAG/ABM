@@ -60,7 +60,7 @@ public class AirportModel
 
         AirportModeChoiceModel modeChoiceModel = new AirportModeChoiceModel(rbMap, dmuFactory);
         modeChoiceModel.initializeBestPathCalculators();
-        modeChoiceModel.chooseModes(parties, dmuFactory);
+        modeChoiceModel.chooseModes(rbMap, parties, dmuFactory);
 
         apm.writeOutputFile(rbMap);
 

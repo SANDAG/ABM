@@ -3,12 +3,13 @@ package org.sandag.abm.airport;
 public final class AirportModelStructure
 {
 
-    public static final byte     PURPOSES            = 5;
+    public static final byte     PURPOSES            = 6;  // employee is not really in the choice model
     public static final byte     RESIDENT_BUSINESS   = 0;
     public static final byte     RESIDENT_PERSONAL   = 1;
     public static final byte     VISITOR_BUSINESS    = 2;
     public static final byte     VISITOR_PERSONAL    = 3;
     public static final byte     EXTERNAL            = 4;
+    public static final byte	 EMPLOYEE			 = 5;
 
     public static final byte     INTERNAL_PURPOSES   = 4;
 
@@ -29,17 +30,43 @@ public final class AirportModelStructure
     public static final int      UPPER_PM            = 29;
     public static final String[] MODEL_PERIOD_LABELS = {"EA", "AM", "MD", "PM", "EV"};
 
-    public static final byte     ACCESS_MODES        = 9;
+    public static final int     ACCESS_MODES        = 17;
 
-    public static final byte     PARK_TMNL           = 1;
-    public static final byte     PARK_SANOFF         = 2;
-    public static final byte     PARK_PVTOFF         = 3;
-    public static final byte     PUDO_ESC            = 4;
-    public static final byte     PUDO_CURB           = 5;
-    public static final byte     RENTAL              = 6;
-    public static final byte     TAXI                = 7;
-    public static final byte     SHUTTLE_VAN         = 8;
-    public static final byte     TRANSIT             = 9;
+    public static final int     PARK_LOC1           = 1;
+    public static final int     PARK_LOC2           = 2;
+    public static final int     PARK_LOC3           = 3;
+    public static final int     PARK_LOC4		    = 4;
+    public static final int     PARK_LOC5		    = 5;
+    public static final int     PARK_ESC		    = 6;
+    public static final int     RENTAL              = 7;
+    public static final int     SHUTTLE_VAN         = 8;
+    public static final int     HOTEL_COURTESY      = 9;
+    public static final int     RIDEHAILING_LOC1    = 10;
+    public static final int     RIDEHAILING_LOC2    = 11;
+    public static final int     TRANSIT             = 12;
+    public static final int     CURB_LOC1           = 13;
+    public static final int     CURB_LOC2           = 14;
+    public static final int     CURB_LOC3           = 15;
+    public static final int     CURB_LOC4           = 16;
+    public static final int     CURB_LOC5           = 17;
+    
+    public static final int     MGRAAlt_TERM         = 8;
+    public static final int     MGRAAlt_CMH         = 9;
+    
+    public static final int     LOS_TYPE        = 4;
+    
+    public static final int     DA        		= 0;
+    public static final int     SR2        		= 1;
+    public static final int     SR3        		= 2;
+    public static final int     Transit         = 3;
+    
+    public static final int     employeePark_MGRA_index = 1;
+    public static final int     employeePark_stall_index = 2;
+    public static final int     employeePark_terminalpct_index = 3;
+    public static final int     employeePark_transitpct_index = 4;
+    
+    public static final int     airport_travel_party_trip_leg_1 = 1;
+    public static final int     airport_travel_party_trip_leg_2 = 2;
 
     private AirportModelStructure()
     {
@@ -182,24 +209,40 @@ public final class AirportModelStructure
 
         switch (accessMode)
         {
-            case PARK_TMNL:
+            case PARK_LOC1:
                 return partySize;
-            case PARK_SANOFF:
+            case PARK_LOC2:
                 return partySize;
-            case PARK_PVTOFF:
+            case PARK_LOC3:
                 return partySize;
-            case PUDO_ESC:
-                return partySize + 1;
-            case PUDO_CURB:
+            case PARK_LOC4:
+                return partySize;
+            case PARK_LOC5:
+                return partySize;
+            case PARK_ESC:
                 return partySize + 1;
             case RENTAL:
                 return partySize;
-            case TAXI:
-                return partySize + 1;
             case SHUTTLE_VAN:
+                return partySize + 1;
+            case HOTEL_COURTESY:
+                return partySize + 1;
+            case RIDEHAILING_LOC1:
+                return partySize + 1;
+            case RIDEHAILING_LOC2:
                 return partySize + 1;
             case TRANSIT:
                 return partySize;
+            case CURB_LOC1:
+                return partySize + 1;
+            case CURB_LOC2:
+                return partySize + 1;
+            case CURB_LOC3:
+                return partySize + 1;
+            case CURB_LOC4:
+                return partySize + 1;
+            case CURB_LOC5:
+                return partySize + 1;
 
             default:
                 throw new RuntimeException(

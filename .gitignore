@@ -32,3 +32,4 @@ src/main/python/reporting/abm_reports*/*
 **/bin/**/*
 *.user
 *.pyc
+*.hubstorinfo

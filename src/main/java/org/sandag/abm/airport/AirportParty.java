@@ -23,7 +23,9 @@ public class AirportParty
     // following variables chosen via choice models
     private int             originMGRA;
     private int             destinationMGRA;
-    private byte            mode;
+    private int				airportAccessMGRA;
+
+	private byte            mode;
     private byte            arrivalMode;
 
     // best tap pairs for transit path; dimensioned by ride mode, then boarding
@@ -31,8 +33,14 @@ public class AirportParty
     private int[][]         bestWtwTapPairs;
     private int[][]         bestWtdTapPairs;
     private int[][]         bestDtwTapPairs;
+    
+    private int[][]			APtoTermBestWtwTapPairs;
+    private int				AP2TerminalTransitMode;
 
-    /**
+    
+
+
+	/**
      * Public constructor.
      * 
      * @param seed
@@ -40,8 +48,7 @@ public class AirportParty
      */
     public AirportParty(long seed)
     {
-
-        random = new MersenneTwister(seed);
+    	random = new MersenneTwister(seed);
     }
 
     /**
@@ -162,6 +169,14 @@ public class AirportParty
     {
         this.originMGRA = originMGRA;
     }
+    
+    public int getAirportAccessMGRA() {
+		return airportAccessMGRA;
+	}
+
+	public void setAirportAccessMGRA(int airportAccessMGRA) {
+		this.airportAccessMGRA = airportAccessMGRA;
+	}
 
     /**
      * @return the trip mode
@@ -342,4 +357,19 @@ public class AirportParty
         this.destinationMGRA = destinationMGRA;
     }
 
+    public int[] getAPtoTermBestWtwTapPairs(int rideMode) {
+		return APtoTermBestWtwTapPairs[rideMode];
+	}
+
+	public void setAPtoTermBestWtwTapPairs(int[][] aPtoTermBestWtwTapPairs) {
+		APtoTermBestWtwTapPairs = aPtoTermBestWtwTapPairs;
+	}
+	
+	public int getAP2TerminalTransitMode() {
+		return AP2TerminalTransitMode;
+	}
+
+	public void setAP2TerminalTransitMode(int aP2TerminalTransitMode) {
+		AP2TerminalTransitMode = aP2TerminalTransitMode;
+	}
 }
