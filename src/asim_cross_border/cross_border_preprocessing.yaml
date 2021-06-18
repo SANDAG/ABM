@@ -29,7 +29,9 @@ tour_purpose_control_probs_output_fname: tour_purpose_probs_by_poe.csv
 poe_wait_times_input_fname: crossBorder_pointOfEntryWaitTime.csv
 
 stop_frequency_input_fname: crossBorder_stopFrequency.csv
-stop_frequency_output_fname: stop_frequency_alternatives.csv
+stop_frequency_alts_output_fname: stop_frequency_alternatives.csv
+stop_frequency_coeffs_output_formattable_fname: 'stop_frequency_coefficients_{purpose}.csv'
+stop_frequency_expressions_output_formattable_fname: 'stop_frequency_{purpose}.csv'
 
 trip_purpose_probs_input_fname: crossBorder_stopPurpose.csv
 trip_purpose_probs_output_fname: trip_purpose_probs.csv

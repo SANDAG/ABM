@@ -238,38 +238,55 @@ def create_skims_and_tap_files(settings, new_mazs=None):
 
 def create_stop_freq_specs(settings):
 
-    raise ModuleNotFoundError('THIS IS BROKEN. NEED TO UPDATE TO CREATE COEFFS CSVS AND EXPRESSION CSVS THAT READ THE COEFFS')
-    # probs_df = pd.read_csv(
-    #     os.path.join(settings['data_dir'], settings['stop_frequency_input_fname']))
-    # probs_df.rename(columns={'Outbound': 'out', 'Inbound': 'in'}, inplace=True)
-    # probs_df['alt'] = probs_df['out'].astype(str) + 'out_' + probs_df['in'].astype(str) + 'in'
+    probs_df = pd.read_csv(
+        os.path.join(settings['data_dir'], settings['stop_frequency_input_fname']))
+    probs_df.rename(columns={'Outbound': 'out', 'Inbound': 'in'}, inplace=True)
+    probs_df['alt'] = probs_df['out'].astype(str) + 'out_' + probs_df['in'].astype(str) + 'in'
 
-    # # convert probs to utils
-    # probs_df['util'] = np.log(probs_df['Percent']).clip(lower=-999)
+    # convert probs to utils
+    probs_df['value'] = np.log(probs_df['Percent']).clip(lower=-999)
     
-    # # write out alts table
-    # alts_df = probs_df.drop_duplicates(['out','in','alt'])[['alt','out','in']]
-    # alts_df.to_csv(
-    #     os.path.join(settings['config_dir'], settings['stop_frequency_output_fname']), index=False)
+    # write out alts table
+    alts_df = probs_df.drop_duplicates(['out','in','alt'])[['alt','out','in']]
+    alts_df.to_csv(
+        os.path.join(settings['config_dir'], settings['stop_frequency_alts_output_fname']), index=False)
 
-    # purpose_id_map = settings['tours']['purpose_ids']
+    purpose_id_map = settings['tours']['purpose_ids']
 
-    # # iterate through purposes and pivot probability lookup tables to
-    # # create MNL spec files with only ASC's (no covariates).
-    # for purpose, purpose_id in purpose_id_map.items():
-    #     purpose_probs = probs_df.loc[probs_df['Purpose'] == purpose_id]
-    #     alt_cols = alts_df['alt'].tolist()
-    #     expr_df =  purpose_probs.pivot(
-    #         index=['DurationLo','DurationHi'], columns='alt', values='util').reset_index()
-    #     expr_df['Description'] = 'ASC for tour durations between ' + expr_df['DurationLo'].astype(str) + ' and ' + expr_df['DurationHi'].astype(str)
-    #     expr_df['Expression'] = expr_df['DurationLo'].astype(str) + ' < duration_hours <= ' + expr_df['DurationHi'].astype(str)
-    #     expr_df = expr_df.drop(columns=['DurationLo','DurationHi'])
-    #     required_cols = ['Description', 'Expression']
-    #     expr_df = expr_df[required_cols + [col for col in expr_df.columns if col not in required_cols]]
+    # iterate through purposes and pivot probability lookup tables to
+    # create MNL spec files with only ASC's (no covariates).
+    required_cols = ['Description', 'Expression']
+    for purpose, purpose_id in purpose_id_map.items():
+        purpose_probs = probs_df.loc[probs_df['Purpose'] == purpose_id, :].copy()
+        purpose_probs['coefficient_name'] = purpose_probs.apply(
+            lambda x: 'coef_asc_dur_{0}_{1}_stops_{2}'.format(
+                x['DurationLo'],x['DurationHi'],x['alt']), axis=1)
 
-    #     # write out purpose-specific model spec
-    #     expr_df.to_csv(
-    #         os.path.join(settings['config_dir'], 'stop_frequency_{0}.csv'.format(purpose)), index=False)
+        coeffs_file = purpose_probs[['value','coefficient_name']].copy()
+        coeffs_file['Description'] = None
+        coeffs_file = coeffs_file[['Description','value','coefficient_name']]
+        coeffs_file_fname = settings['stop_frequency_coeffs_output_formattable_fname'].format(
+            purpose=purpose)
+        coeffs_file.to_csv(
+            os.path.join(settings['config_dir'], coeffs_file_fname), index=False)
+
+        alt_cols = alts_df['alt'].tolist()
+        expr_file =  purpose_probs.pivot(
+            index=['DurationLo','DurationHi'], columns='alt',
+            values='coefficient_name').reset_index()
+        expr_file['Description'] = 'ASC for tour durations between ' + \
+            expr_file['DurationLo'].astype(str) + ' and ' + expr_file['DurationHi'].astype(str)
+        expr_file['Expression'] = expr_file['DurationLo'].astype(str) + \
+            ' < duration_hours <= ' + expr_file['DurationHi'].astype(str)
+        expr_file = expr_file.drop(columns=['DurationLo','DurationHi'])
+        expr_file = expr_file[
+            required_cols + [col for col in expr_file.columns if col not in required_cols]]
+        expr_file_fname = settings['stop_frequency_expressions_output_formattable_fname'].format(
+            purpose=purpose)
+        expr_file.to_csv(os.path.join(
+            settings['config_dir'], expr_file_fname.format(purpose)),
+            index=False)
+        breakpoint()
 
     return
 
@@ -446,41 +463,41 @@ if __name__ == '__main__':
     with open('cross_border_preprocessing.yaml') as f:
         settings = yaml.load(f, Loader=yaml.FullLoader)
 
-    data_dir = settings['data_dir']
-    config_dir = settings['config_dir']
-    maz_input_fname = settings['maz_input_fname']
-    maz_id_field = settings['maz_id_field']
-    poe_id_field = settings['poe_id_field']
-    poe_access_field = settings['poe_access_field']
-    colonia_input_fname = settings['colonia_input_fname']
-    colonia_pop_field = settings['colonia_pop_field']
-    distance_param = settings['distance_param']
-    tour_settings = settings['tours']
-    poe_settings = settings['poes']
-    mazs_output_fname = settings['mazs_output_fname']
-    households_output_fname = settings['households_output_fname']
-    persons_output_fname = settings['persons_output_fname']
-    tours_output_fname = settings['tours_output_fname']
-    skims_settings = settings['skims']
+    # data_dir = settings['data_dir']
+    # config_dir = settings['config_dir']
+    # maz_input_fname = settings['maz_input_fname']
+    # maz_id_field = settings['maz_id_field']
+    # poe_id_field = settings['poe_id_field']
+    # poe_access_field = settings['poe_access_field']
+    # colonia_input_fname = settings['colonia_input_fname']
+    # colonia_pop_field = settings['colonia_pop_field']
+    # distance_param = settings['distance_param']
+    # tour_settings = settings['tours']
+    # poe_settings = settings['poes']
+    # mazs_output_fname = settings['mazs_output_fname']
+    # households_output_fname = settings['households_output_fname']
+    # persons_output_fname = settings['persons_output_fname']
+    # tours_output_fname = settings['tours_output_fname']
+    # skims_settings = settings['skims']
     
-    # create input data
-    mazs = create_land_use_file(settings)
-    new_mazs = mazs[mazs['original_MAZ'] > 0]
-    tours = create_tours(tour_settings)
-    households = create_households(settings)  # 1 per tour
-    persons = create_persons(settings, num_households=len(households))
-    tours = assign_hh_p_to_tours(tours, persons)
+    # # create input data
+    # mazs = create_land_use_file(settings)
+    # new_mazs = mazs[mazs['original_MAZ'] > 0]
+    # tours = create_tours(tour_settings)
+    # households = create_households(settings)  # 1 per tour
+    # persons = create_persons(settings, num_households=len(households))
+    # tours = assign_hh_p_to_tours(tours, persons)
 
-    # store input files to disk
-    mazs.to_csv(os.path.join(data_dir, mazs_output_fname), index=False)
-    tours.to_csv(os.path.join(data_dir, tours_output_fname))
-    households.to_csv(os.path.join(data_dir, households_output_fname), index=False)
-    persons.to_csv(os.path.join(data_dir, persons_output_fname), index=False)
+    # # store input files to disk
+    # mazs.to_csv(os.path.join(data_dir, mazs_output_fname), index=False)
+    # tours.to_csv(os.path.join(data_dir, tours_output_fname))
+    # households.to_csv(os.path.join(data_dir, households_output_fname), index=False)
+    # persons.to_csv(os.path.join(data_dir, persons_output_fname), index=False)
 
     # create/update configs in place
-    create_scheduling_probs_and_alts(settings)
-    create_skims_and_tap_files(settings, new_mazs)
+    # create_scheduling_probs_and_alts(settings)
+    # create_skims_and_tap_files(settings, new_mazs)
     create_stop_freq_specs(settings)
-    update_trip_purpose_probs(settings)
-    create_trip_scheduling_duration_probs(settings)
-    update_tour_purpose_reassignment_probs(settings)
+    # update_trip_purpose_probs(settings)
+    # create_trip_scheduling_duration_probs(settings)
+    # update_tour_purpose_reassignment_probs(settings)
