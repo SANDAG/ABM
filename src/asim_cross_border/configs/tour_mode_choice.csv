@@ -1,5 +1,5 @@
 Label,Description,Expression,DRIVEALONE,SHARED2,SHARED3,WALK
-util_auto_wait,Auto Wait Time,@coef_wait * ((1 - df.sentri_crossing) * df.std_wait)),1,1,1,
+util_auto_wait,Auto Wait Time,@coef_wait * ((1 - df.sentri_crossing) * df.std_wait),1,1,1,
 util_auto_wait_sentri,Auto Wait Time - Sentri,@coef_wait * (df.sentri_crossing * df.sentri_wait),1,1,1,
 util_trip_logsum_tour_da,Drive alone - Trip Logsum,@coef_trip_logsum * (df.logsum_DRIVEALONE_outbound + df.logsum_DRIVEALONE_inbound),1,,,
 util_trip_logsum_tour_s2,Shared Ride 2 - Trip Logsum,@coef_trip_logsum * (df.logsum_SHARED2_outbound + df.logsum_SHARED2_inbound),,1,,
