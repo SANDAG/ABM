@@ -255,7 +255,7 @@ def create_stop_freq_specs(settings):
 
     # iterate through purposes and pivot probability lookup tables to
     # create MNL spec files with only ASC's (no covariates).
-    required_cols = ['Description', 'Expression']
+    required_cols = ['Label', 'Description', 'Expression']
     for purpose, purpose_id in purpose_id_map.items():
         purpose_probs = probs_df.loc[probs_df['Purpose'] == purpose_id, :].copy()
         purpose_probs['coefficient_name'] = purpose_probs.apply(
@@ -274,6 +274,8 @@ def create_stop_freq_specs(settings):
         expr_file =  purpose_probs.pivot(
             index=['DurationLo','DurationHi'], columns='alt',
             values='coefficient_name').reset_index()
+        expr_file['Label'] = 'util_ASC_tour_dur_' + expr_file['DurationLo'].astype(str) + \
+            '_' + expr_file['DurationHi'].astype(str)
         expr_file['Description'] = 'ASC for tour durations between ' + \
             expr_file['DurationLo'].astype(str) + ' and ' + expr_file['DurationHi'].astype(str)
         expr_file['Expression'] = expr_file['DurationLo'].astype(str) + \
@@ -286,7 +288,6 @@ def create_stop_freq_specs(settings):
         expr_file.to_csv(os.path.join(
             settings['config_dir'], expr_file_fname.format(purpose)),
             index=False)
-        breakpoint()
 
     return
 

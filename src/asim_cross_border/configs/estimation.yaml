@@ -2,7 +2,14 @@
 enable: True
 
 bundles:
+  - tour_scheduling_probabilistic
   - tour_od_choice
+  - tour_mode_choice
+  - stop_frequency
+  - trip_purpose
+  - trip_destination
+  - trip_scheduling
+  - trip_mode_choice
 
 survey_tables:
   households:
@@ -67,6 +74,7 @@ estimation_table_recipes:
 
 
 model_estimation_table_types:
+  tour_scheduling_probabilistic: simple_probabilistic
   tour_od_choice: interaction_sample_simulate
   school_location: interaction_sample_simulate
   workplace_location:  interaction_sample_simulate
