@@ -486,7 +486,7 @@ Assignment matrices and resulting network flows are always in PCE.
 
             self.calc_network_results(period, num_processors, scenario)
 
-            if msa_iteration < 4:
+            if msa_iteration <= 4:
                 self.run_skims(period, num_processors, scenario, classes)
                 self.report(period, scenario, classes)
                 # Check that the distance matrix is valid (no disconnected zones)
