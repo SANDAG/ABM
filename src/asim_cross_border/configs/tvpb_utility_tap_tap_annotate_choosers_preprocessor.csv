@@ -5,27 +5,27 @@ Transit Unavaiable,not_transit_available_set1,"(los.get_tappairs3d(df.btap, df.a
 commuter rail IVT,cr_ivt_set1,"los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_CMRIVTT')"
 Total IVT,totalIVT_set1,"los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_BUSIVTT') + eb_fac * (los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_EXPIVTT') + los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_LTDEXPIVTT')) + brt_fac * (los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_BRTREDIVTT') + los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_BRTYELIVTT')) + lrt_fac * los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_LRTIVTT') + cr_fac * cr_ivt_set1"
 Number transfers,transfers_set1,"np.clip(los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_XFERS'), a_min=None, a_max=4)"
-ASC CR,set1_ASC_CR,(1-not_transit_available_set1) * cr_ivt_set1 * c_cr_asc
-ASC LRT,set1_ASC_LRT,"(1-not_transit_available_set1) * (set1_ASC_CR==0) * c_lrt_asc * c_ivt * (los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_LRTIVTT')>0)"
-ASC BRT,set1_ASC_BRT,"(1-not_transit_available_set1) * (set1_ASC_LRT==0) * c_brt_asc * c_ivt * ((los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_BRTREDIVTT') + los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_BRTYELIVTT'))>0)"
-ASC EB,set1_ASC_EB,"(1-not_transit_available_set1) * (set1_ASC_BRT==0) * c_exp_asc * c_ivt * ((los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_EXPIVTT') + los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_LTDEXPIVTT'))>0)"
+ASC CR,set1_ASC_CR,"(1-not_transit_available_set1) * np.where(cr_ivt_set1 > 0, cr_asc, 0)"
+ASC LRT,set1_ASC_LRT,"(1-not_transit_available_set1) * (set1_ASC_CR==0) * np.where(los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_LRTIVTT')>0, lrt_asc * c_ivt, 0)"
+ASC BRT,set1_ASC_BRT,"(1-not_transit_available_set1) * (set1_ASC_LRT==0) * np.where((los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_BRTREDIVTT') + los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_BRTYELIVTT'))>0, brt_asc * c_ivt, 0)"
+ASC EB,set1_ASC_EB,"(1-not_transit_available_set1) * (set1_ASC_BRT==0) * np.where((los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_EXPIVTT') + los.get_tappairs3d(df.btap, df.atap, df.tod, 'BUS_LTDEXPIVTT'))>0, exp_asc * c_ivt, 0)"
 
 # set2,,
 Transit Unavaiable,not_transit_available_set2,"(los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_TOTALIVTT')<=0) | (los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_TOTALIVTT')>=99999)"
 commuter rail IVT,cr_ivt_set2,"los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_CMRIVTT')"
 Total IVT,totalIVT_set2,"los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_BUSIVTT') + eb_fac * (los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_EXPIVTT') + los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_LTDEXPIVTT')) + brt_fac * (los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_BRTREDIVTT') + los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_BRTYELIVTT')) + lrt_fac * los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_LRTIVTT') + cr_fac * cr_ivt_set2"
 Number Transfers,transfers_set2,"np.clip(los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_XFERS'), a_min=None, a_max=4)"
-ASC CR,set2_ASC_CR,(1-not_transit_available_set2) * cr_ivt_set2 * c_cr_asc
-ASC LRT,set2_ASC_LRT,"(1-not_transit_available_set2) * (set2_ASC_CR==0) * c_lrt_asc * c_ivt * (los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_LRTIVTT')>0)"
-ASC BRT,set2_ASC_BRT,"(1-not_transit_available_set2) * (set2_ASC_LRT==0) * c_brt_asc * c_ivt * ((los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_BRTREDIVTT') + los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_BRTYELIVTT'))>0)"
-ASC EB,set2_ASC_EB,"(1-not_transit_available_set2) * (set2_ASC_BRT==0) * c_exp_asc * c_ivt * ((los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_EXPIVTT') + los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_LTDEXPIVTT'))>0)"
+ASC CR,set2_ASC_CR,"(1-not_transit_available_set2) * np.where(cr_ivt_set2 > 0, cr_asc, 0)"
+ASC LRT,set2_ASC_LRT,"(1-not_transit_available_set2) * (set2_ASC_CR==0) * np.where(los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_LRTIVTT')>0, lrt_asc * c_ivt, 0)"
+ASC BRT,set2_ASC_BRT,"(1-not_transit_available_set2) * (set2_ASC_LRT==0) * np.where((los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_BRTREDIVTT') + los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_BRTYELIVTT'))>0, brt_asc * c_ivt, 0)"
+ASC EB,set2_ASC_EB,"(1-not_transit_available_set2) * (set2_ASC_BRT==0) * np.where((los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_EXPIVTT') + los.get_tappairs3d(df.btap, df.atap, df.tod, 'PREM_LTDEXPIVTT'))>0, exp_asc * c_ivt, 0)"
 
 # set3,,
 Transit Unavaiable,not_transit_available_set3,"(los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_TOTALIVTT')<=0) | (los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_TOTALIVTT')>=99999) | (los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_XFERS')==0)"
 commuter rail IVT,cr_ivt_set3,"los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_CMRIVTT')"
 Total IVT,totalIVT_set3,"los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_BUSIVTT') + eb_fac * (los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_EXPIVTT') + los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_LTDEXPIVTT')) + brt_fac * (los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_BRTREDIVTT') + los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_BRTYELIVTT')) + lrt_fac * los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_LRTIVTT') + cr_fac * cr_ivt_set3"
 Number Transfers,transfers_set3,"np.clip(los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_XFERS'), a_min=None, a_max=4)"
-ASC CR,set3_ASC_CR,(1-not_transit_available_set3) * cr_ivt_set3 * c_cr_asc
-ASC LRT,set3_ASC_LRT,"(1-not_transit_available_set3) * (set3_ASC_CR==0) * c_lrt_asc * c_ivt * (los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_LRTIVTT')>0)"
-ASC BRT,set3_ASC_BRT,"(1-not_transit_available_set3) * (set3_ASC_LRT==0) * c_brt_asc * c_ivt * ((los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_BRTREDIVTT') + los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_BRTYELIVTT'))>0)"
-ASC EB,set3_ASC_EB,"(1-not_transit_available_set3) * (set3_ASC_BRT==0) * c_exp_asc * c_ivt * ((los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_EXPIVTT') + los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_LTDEXPIVTT'))>0)"
+ASC CR,set3_ASC_CR,"(1-not_transit_available_set3) * np.where(cr_ivt_set3 > 0, cr_asc, 0)"
+ASC LRT,set3_ASC_LRT,"(1-not_transit_available_set3) * (set3_ASC_CR==0) * np.where(los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_LRTIVTT')>0, lrt_asc * c_ivt, 0)"
+ASC BRT,set3_ASC_BRT,"(1-not_transit_available_set3) * (set3_ASC_LRT==0) * np.where((los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_BRTREDIVTT') + los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_BRTYELIVTT'))>0, brt_asc * c_ivt, 0)"
+ASC EB,set3_ASC_EB,"(1-not_transit_available_set3) * (set3_ASC_BRT==0) * np.where((los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_EXPIVTT') + los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_LTDEXPIVTT'))>0, exp_asc * c_ivt, 0)"
