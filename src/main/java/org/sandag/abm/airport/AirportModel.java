@@ -47,18 +47,6 @@ public class AirportModel
      */
     public void runModel()
     {
-        Runtime gfg = Runtime.getRuntime(); 
-        long memory1; 
-        // checking the total memeory 
-        System.out.println("Total memory is: "+ gfg.totalMemory()); 
-        // checking free memory 
-        memory1 = gfg.freeMemory(); 
-        System.out.println("Initial free memory at Airport model: "+ memory1); 
-        // calling the garbage collector on demand 
-        gfg.gc(); 
-        memory1 = gfg.freeMemory(); 
-        System.out.println("Free memory after garbage "+ "collection: " + memory1); 
-        
         AirportDmuFactory dmuFactory = new AirportDmuFactory();
 
         AirportPartyManager apm = new AirportPartyManager(rbMap, sampleRate, airportCode);
@@ -72,7 +60,7 @@ public class AirportModel
         destChoiceModel.chooseOrigins(parties);
 
         AirportModeChoiceModel modeChoiceModel = new AirportModeChoiceModel(rbMap, dmuFactory,airportCode);
-        modeChoiceModel.chooseModes(parties, dmuFactory);
+        modeChoiceModel.chooseModes(rbMap, parties, dmuFactory, airportCode);
 
         apm.writeOutputFile(rbMap);
 
