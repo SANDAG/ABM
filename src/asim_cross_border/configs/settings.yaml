@@ -79,8 +79,14 @@ models:
 multiprocess_steps:
   - name: mp_initialize
     begin: initialize_landuse
+  - name: mp_tvpb
+    begin: initialize_tvpb
+    num_processes: 5
+    slice:
+      tables:
+        - attribute_combinations
   - name: mp_households
-    begin: tour_od_choice
+    begin: tour_scheduling_probabilistic
     slice:
       tables:
         - households
