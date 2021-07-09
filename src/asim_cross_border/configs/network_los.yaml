@@ -97,7 +97,51 @@ TVPB_SETTINGS:    # find this in sandag bestPathTAP UEC
       cr_fac: 0.6500
       hyp_fac: 0.6500
       # coeffs used in maz_tap and tap_tap utility expressions
-      c_drive: 1.5
+      c_walk: 1.7
+      c_fwt: 1.5
+      c_waux: 2.5
+      c_xwt: 2
+      C_UNAVAILABLE: -9999
+      # alternative-specific constants
+      exp_asc: 10  # express bus asc
+      brt_asc: -10  # BRT asc
+      lrt_asc: -20  # LRT alternative-specific constant
+      cr_asc: 0.00  # Commuter Rail alternative-specific constant
+
+  trip_mode_choice:
+    units: utility
+    path_types:
+      WTW:
+        access: walk
+        egress: walk
+        max_paths_across_tap_sets: 4
+        max_paths_per_tap_set: 1
+    tap_tap_settings:
+      SPEC: tvpb_utility_tap_tap.csv
+      PREPROCESSOR:
+        SPEC: tvpb_utility_tap_tap_annotate_choosers_preprocessor.csv
+        DF: df
+      # FIXME this has to be explicitly specified, since e.g. attribute columns are assigned in expression files
+      attribute_segments:
+        tod: *skim_time_period_labels
+      attributes_as_columns:
+        - tod
+    maz_tap_settings:
+      walk:
+        SPEC: tvpb_utility_walk_maz_tap.csv
+        CHOOSER_COLUMNS:
+          - walkTime
+          - dist
+
+    CONSTANTS:
+      c_ivt: -0.03
+      c_cost: -0.0003
+      # transit "factors" from SANDAG
+      eb_fac: 1.0
+      brt_fac: 0.9000
+      lrt_fac: 0.6500
+      cr_fac: 0.6500
+      # coeffs used in maz_tap and tap_tap utility expressions
       c_walk: 1.7
       c_fwt: 1.5
       c_waux: 2.5
