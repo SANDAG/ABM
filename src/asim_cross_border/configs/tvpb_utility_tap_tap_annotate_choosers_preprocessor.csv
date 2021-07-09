@@ -56,7 +56,7 @@ first wait,first_wait_set3,"los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN
 transfer wait,xfer_wait_set3,"los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_XFERWAIT')"
 total walk time,walk_time_set3,"los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_TOTALWALK')"
 fare,fare_set3,"los.get_tappairs3d(df.btap, df.atap, df.tod, 'ALLPEN_FARE')"
-Transit avaiable,set3_available,"(total_ivt_set3 > 0) * (total_ivt_set3 < 99999) * ( != 0)"
+Transit avaiable,set3_available,"(total_ivt_set3 > 0) * (total_ivt_set3 < 99999) * (raw_transfers_set3 != 0)"
 Number Transfers,transfers_set3,"np.clip(raw_transfers_set3, a_min=None, a_max=4)"
 commuter rail ASC,asc_cr_set3,"set3_available * np.where(cr_ivt_set3 > 0, cr_asc * c_ivt, 0)"
 light rail ASC,asc_lrt_set3,"set3_available * np.where(asc_cr_set3==0, np.where(lrt_ivt_set3 > 0, lrt_asc * c_ivt, 0), asc_cr_set3)"
