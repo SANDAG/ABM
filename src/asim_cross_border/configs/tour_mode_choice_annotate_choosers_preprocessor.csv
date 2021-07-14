@@ -11,4 +11,5 @@ unpivot (a.k.a melt) the POE wait time data,_LONG_WAIT_TIMES,"land_use[land_use[
 ,std_wait,"_LONG_WAIT_TIMES.reindex([df[orig_col_name],_STD_WAIT_COLS])['time'].values"
 ,sentri_wait,"_LONG_WAIT_TIMES.reindex([df[orig_col_name],_SENTRI_WAIT_COLS])['time'].values"
 ,ped_wait,"_LONG_WAIT_TIMES.reindex([df[orig_col_name],_PED_WAIT_COLS])['time'].values"
-
+replicates CTRAMP bug where sentri is not set in DMU,ctramp_sentri,0
+replicates CTRAMP bug where purpose is not set in DMU,ctramp_tour_type,'work'
