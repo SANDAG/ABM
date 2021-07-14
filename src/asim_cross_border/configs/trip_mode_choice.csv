@@ -17,10 +17,10 @@ util_TAXI_wait,Taxi - Wait time,c_ivt * taxi_wait_time,,,,,,1,,
 util_TAXI_cost,Taxi - Fare,@c_cost * ((taxi_base_fare + (df.s2_dist_skims * taxi_cost_per_mile) + (df.s2_time_skims * taxi_cost_per_minute)) * 100 + df.s2_cost_skims),,,,,,1,,
 util_TNC_SINGLE_IVT,TNC Single - In-vehicle time,c_ivt * s2_time_skims,,,,,,,1,
 util_TNC_SINGLE_wait,TNC Single - Wait time,c_ivt * 1.5 * tnc_single_wait_time,,,,,,,1,
-util_TNC_SINGLE_cost,TNC Single - Cost,"@c_cost * (tnc_single_base_fare + (df.s2_dist_skims * tnc_single_cost_per_mile) + (df.s2_time_skims * tnc_single_cost_per_minute).clip(lower=tnc_single_cost_minimum) * 100 + df.s2_cost_skims)",,,,,,,1,
+util_TNC_SINGLE_cost,TNC Single - Cost,"@c_cost * ((tnc_single_base_fare + (df.s2_dist_skims * tnc_single_cost_per_mile) + (df.s2_time_skims * tnc_single_cost_per_minute).clip(lower=tnc_single_cost_minimum)) * 100 + df.s2_cost_skims)",,,,,,,1,
 util_TNC_SHARED_IVT,TNC Shared - In-vehicle time,@df.c_ivt * df.s2_time_skims * tnc_shared_ivt_factor,,,,,,,,1
 util_TNC_SHARED_wait,TNC Shared - Wait time,c_ivt * 1.5 * tnc_shared_wait_time,,,,,,,,1
-util_TNC_SHARED_cost,TNC Shared - Cost,"@c_cost * (tnc_shared_base_fare + (df.s2_dist_skims * tnc_shared_cost_per_mile) + (df.s2_time_skims * tnc_shared_cost_per_minute).clip(lower=tnc_shared_cost_minimum) * 100 + df.s2_cost_skims)",,,,,,,,1
+util_TNC_SHARED_cost,TNC Shared - Cost,"@c_cost * ((tnc_shared_base_fare + (df.s2_dist_skims * tnc_shared_cost_per_mile) + (df.s2_time_skims * tnc_shared_cost_per_minute).clip(lower=tnc_shared_cost_minimum)) * 100 + df.s2_cost_skims)",,,,,,,,1
 util_S2_ASC_tour_DA,s2 ASC - Tour Mode DA,@df.tour_mode_is_da * s2_ASC_tour_da,,1,,,,,,
 util_S3_ASC_tour_DA,s3 ASC - Tour Mode DA,@df.tour_mode_is_da * s3_ASC_tour_da,,,1,,,,,
 util_WALK_ASC_tour_DA,walk ASC - Tour Mode DA,@df.tour_mode_is_da * walk_ASC_tour_da,,,,1,,,,
