@@ -10,7 +10,7 @@ DESTINATION_SPEC: trip_destination.csv
 LOGSUM_SETTINGS: trip_mode_choice.yaml
 
 # optional (comment out if not desired)
-DEST_CHOICE_LOGSUM_COLUMN_NAME: destination_logsum
+# DEST_CHOICE_LOGSUM_COLUMN_NAME: destination_logsum
 
 # comment out DEST_CHOICE_LOGSUM_COLUMN_NAME if saved alt logsum table
 DEST_CHOICE_SAMPLE_TABLE_NAME: trip_destination_sample
