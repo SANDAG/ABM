@@ -25,6 +25,7 @@ CONSTANTS:
     orig_col_name: origin
     dest_col_name: destination
     wait_time_col_regex: '_wait_[0-9]+$'
+    wait_period_col_regex: '_wait_(EA|EV|NA)$'
 
 use_TVPB_constants: False
 
