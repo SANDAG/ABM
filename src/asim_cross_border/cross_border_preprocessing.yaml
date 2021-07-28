@@ -76,14 +76,20 @@ poes:
     name: San Ysidro
     maz_id: 7090
     ext_taz_id: 1
+    veh_lanes: 24
+    ped_lanes: 15
   1:
     name: Otay Mesa
     maz_id: 7066
     ext_taz_id: 2
+    veh_lanes: 13
+    ped_lanes: 6
   2:
     name: Tecate
     maz_id: 21895
     ext_taz_id: 4
+    veh_lanes: 2
+    ped_lanes: 2
   # 3:
   #   name: Otay Mesa East
   #   maz_id: 7123
@@ -118,32 +124,88 @@ tours:
       other: 0.144317
   lane_shares_by_purpose: 
     work:
-      regular: 0.1
+      std: 0.1
       sentri: 0.2
       ready: 0.2
       ped: 0.5
     school:
-      regular: 0.1
+      std: 0.1
       sentri: 0.2
       ready: 0.2
       ped: 0.5
     cargo:
-      regular: 0.1
+      std: 0.1
       sentri: 0.2
       ready: 0.2
       ped: 0.5
     shop:
-      regular: 0.1
+      std: 0.1
       sentri: 0.2
       ready: 0.2
       ped: 0.5
     visit:
-      regular: 0.1
+      std: 0.1
       sentri: 0.2
       ready: 0.2
       ped: 0.5
     other:
-      regular: 0.1
+      std: 0.1
       sentri: 0.2
       ready: 0.2
       ped: 0.5
+
+wait_time_updating:
+  iters: 3
+  periods:
+    - EA  # early am
+    - EV  # late pm
+    - NA  # all others
+  coeffs:
+    std:
+      asc: 24.4819  # c1
+      om_asc: 38.2236  # c2
+      tc_asc: -31.6399  # c3
+      vol: 2.138  # c4
+      vol_om: -1.329  # c5
+      vol_tc: -1.672  # c6
+      ea_constant: -17.017  #c7
+      ev_constant: -33.0233  # c8
+      ea_om_constant: -29.1815  # c9
+      ev_om_constant: -11.0587  # c10
+      ev_tc_constant: 21.8711  # c11
+    ready:
+      asc: 40.0794  # c1
+      om_asc: -33.5957  # c2
+      tc_asc: 0  # no c3 for ready lane????
+      vol: 2.12e-12  # c4
+      vol_om: 1.253  # c5
+      vol_tc: 0  # no c6 for ready lane??
+      ea_constant: -1.211E-11  #c7
+      ev_constant: 1.584E-12  # c8
+      ea_om_constant: -7.7458  # c9
+      ev_om_constant: -25.8116  # c10
+      ev_tc_constant: 0  # no c11 for ready lane???
+    sentri:
+      asc: 3.5404  # c1
+      om_asc: -0.3852  # c2
+      tc_asc: 0  # no c3 for sentri lane????
+      vol: 0.217  # c4
+      vol_om: -0.054  # c5
+      vol_tc: 0  # no c6 for sentri lane??
+      ea_constant: 0.1617  #c7
+      ev_constant: 0.4187  # c8
+      ea_om_constant: 0  # no c9 for sentri lane???
+      ev_om_constant: -1.1282  # c10
+      ev_tc_constant: 0  # no c11 for sentri lane???
+    ped:
+      asc: -3.5615  # c1
+      om_asc: 3.3397  # c2
+      tc_asc: -2.0119  # c3
+      vol: 0.2295  # c4
+      vol_om: -0.1517  # c5
+      vol_tc: 0.1184  # c6
+      ea_constant: 3.4151  #c7
+      ev_constant: 1.9005  # c8
+      ea_om_constant: -4.477  # c9
+      ev_om_constant: -3.8144  # c10
+      ev_tc_constant: 0  # no c11 for ped lane???
