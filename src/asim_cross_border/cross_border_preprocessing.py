@@ -561,6 +561,7 @@ if __name__ == '__main__':
             [col for col in mazs.columns if 'wait' in col] + ['poe_id']].set_index('poe_id')
 
         all_wait_times = [wait_times_wide]
+        all_vol_dfs = []
         num_iters = wait_time_settings['iters'] + 1
         
         for i in range(1, num_iters):
@@ -572,45 +573,61 @@ if __name__ == '__main__':
                 stdout=sys.stdout)
             process.wait()
             
-            # compute wait time data
+            # compute crossing volume from tour POEs
             tours = pd.read_csv('./output/wait_time_tours.csv')
             tours['period'] = 'NA'  # default period is N/A
-            # this should be read from network_los.yaml
-            tours.loc[tours['start'] <= 11, 'period'] = 'EA'
-            tours.loc[tours['start'] > 37, 'period'] = 'EV'
-            vol_df = tours.groupby(
-                ['poe_id','lane_type','period'])[['tour_id']].count().reset_index()
-            vol_df.rename(columns={'tour_id': 'vol'}, inplace=True)
+            tours.loc[tours['start'] <= 11, 'period'] = 'EA'  # this should be read from network_los.yaml
+            tours.loc[tours['start'] > 37, 'period'] = 'EV'  # this should be read from network_los.yaml
+
+            total_vol_df = tours.groupby(['poe_id', 'lane_type'])[['tour_id']].count().reset_index()
+            total_vol_df.rename(columns={'tour_id': 'total_vol'}, inplace=True)
+
+            period_vol_df = tours.groupby(['poe_id', 'lane_type', 'period'])[['tour_id']].count().reset_index()
+            period_vol_df.rename(columns={'tour_id': 'vol'}, inplace=True)
+            vol_df = pd.merge(period_vol_df, total_vol_df, on=['poe_id', 'lane_type'])
+            generic_period = vol_df['period'] == 'NA'
+            vol_df.loc[generic_period, 'vol'] = vol_df.loc[generic_period, 'total_vol']  # swap NA period vol for total
 
             # get missing rows and set vol to 0 for them
-            vol_df = pd.merge(x_df, vol_df, how='left').fillna(0)   
+            vol_df = pd.merge(x_df, vol_df, how='left').fillna(0)
+            vol_df['iter'] = i
             
             # compute vol per lane  
             lane_df = pd.DataFrame(settings['poes']).T
             vol_df = vol_df.merge(lane_df, left_on='poe_id', right_index=True)
             vol_df['vol_per_lane'] = vol_df['vol'] / vol_df['veh_lanes']
             ped_mask = vol_df['lane_type'] == 'ped'
-            vol_df.loc[ped_mask, 'vol_per_lane'] = \
-                vol_df.loc[ped_mask, 'vol'] / vol_df.loc[ped_mask, 'ped_lanes']
+            vol_df.loc[ped_mask, 'vol_per_lane'] = vol_df.loc[ped_mask, 'vol'] / vol_df.loc[ped_mask, 'ped_lanes']
 
+            # compute dummies
+            vol_df['otay'] = (vol_df['name'] == 'Otay Mesa').astype(int)
+            vol_df['tecate'] = (vol_df['name'] == 'Tecate').astype(int)
+            vol_df['EA'] = (vol_df['period'] == 'EA').astype(int)
+            vol_df['EV'] = (vol_df['period'] == 'EV').astype(int)
+
+            # data matrix
             x = np.zeros((num_choosers, len(coef_df)))
-            x[:, 0] = 1  # ASCs
-            x[:, 1] = (vol_df['name'] == 'Otay Mesa').astype(int).values  # OM ASC
-            x[:, 2] = (vol_df['name'] == 'Tecate').astype(int).values  # TC ASC
-            x[:, 3] = vol_df['vol_per_lane']  # volume per lane
-            x[:, 4] = ((vol_df['vol_per_lane']) * (vol_df['name'] == 'Otay Mesa'))
-            x[:, 5] = ((vol_df['vol_per_lane']) * (vol_df['name'] == 'Tecate'))
-            x[:, 6] = (vol_df['period'] == 'EA')
-            x[:, 7] = (vol_df['period'] == 'EV')
-            x[:, 8] = ((vol_df['vol_per_lane']) * (vol_df['name'] == 'Otay Mesa') * (vol_df['period'] == 'EA'))
-            x[:, 9] = ((vol_df['vol_per_lane']) * (vol_df['name'] == 'Otay Mesa') * (vol_df['period'] == 'EV'))
-            x[:, 10] = ((vol_df['vol_per_lane']) * (vol_df['name'] == 'Tecate') * (vol_df['period'] == 'EV'))
+            x[:, 0] = 1  # c1 - generic constant
+            x[:, 1] = vol_df['otay']  # c2 - otay mesa constant
+            x[:, 2] = vol_df['tecate']  # c3 - tecate constant
+            x[:, 3] = vol_df['vol_per_lane']  # c4 - volume per lane
+            x[:, 4] = vol_df['vol_per_lane'] * vol_df['otay']  # c5 - otay mesa vol/lane
+            x[:, 5] = vol_df['vol_per_lane'] * vol_df['tecate']  # c6 - tecate vol/lane
+            x[:, 6] = vol_df['vol_per_lane'] * vol_df['EA']  # c7 - early am vol/lane
+            x[:, 7] = vol_df['vol_per_lane'] * vol_df['EV']  # c8 - late pm vol/lane
+            x[:, 8] = vol_df['vol_per_lane'] * vol_df['otay'] * vol_df['EA']  # c9 - early am otay mesa vol/lane
+            x[:, 9] = vol_df['vol_per_lane'] * vol_df['otay'] * vol_df['EV']  # c10 - late pm otay mesa vol/lane
+            x[:, 10] = vol_df['vol_per_lane'] * vol_df['tecate'] * vol_df['EV']  # c11 - late pm otay mesa vol/lane
 
+            # coefficient matrix
             w = coef_df.loc[:, vol_df['lane_type'].tolist()].values
+
+            # pair-wise multiply and sum across rows to get regression results
             vol_df['wait_time'] = np.sum(x * w.T, axis=1)
 
             wait_times_wide = vol_df.pivot(index=['poe_id'], columns=['lane_type', 'period'], values=['wait_time'])
-            wait_times_wide.columns = ['_wait_'.join([lane_type, period]) for wt, lane_type, period in wait_times_wide.columns]
+            wait_times_wide.columns = [
+                '_wait_'.join([lane_type, period]) for wt, lane_type, period in wait_times_wide.columns]
             wait_times_wide = wait_times_wide[all_wait_times[0].columns]
             wait_times_wide = wait_times_wide.where(wait_times_wide >= 0, 0)  # min wait time = 0
 
@@ -625,9 +642,9 @@ if __name__ == '__main__':
             new_wait_times_wide = new_wait_times_wide.where(last_iter_wait_times != 999, wait_times_wide)
 
             # some wait times must be hard-coded as nulls (999) to indicate unavailable lane types
-            # tecate has no sentri lane
+            # tecate has no sentri lane and no ready lane
             if 2 in new_wait_times_wide.index.values:
-                new_wait_times_wide.loc[2, [col for col in new_wait_times_wide.columns if 'sentri' in col]] = 999
+                new_wait_times_wide.loc[2, [col for col in new_wait_times_wide.columns if ('sentri' in col) or ('ready' in col)]] = 999
             # otay mesa east has to ped lane
             if 3 in new_wait_times_wide.index.values:
                 new_wait_times_wide.loc[3, [col for col in new_wait_times_wide.columns if 'ped' in col]] = 999
@@ -635,6 +652,7 @@ if __name__ == '__main__':
             if 4 in new_wait_times_wide.index.values:
                 new_wait_times_wide.loc[4, [col for col in new_wait_times_wide.columns if ('ped' in col) or ('sentri' in col)]] = 999
 
+            all_vol_dfs.append(vol_df)
             all_wait_times.append(new_wait_times_wide)
             mazs = mazs[[col for col in mazs.columns if col not in wait_times_wide.columns]]
             mazs = pd.merge(mazs, wait_times_wide, left_on='poe_id', right_index=True, how='left')
@@ -643,6 +661,8 @@ if __name__ == '__main__':
         all_wait_times = pd.concat(all_wait_times)
         all_wait_times['iter'] = np.array(range(0, num_iters)).repeat(all_wait_times.index.nunique())
         all_wait_times.to_csv('./data/all_wait_times.csv')
+
+        pd.concat(all_vol_dfs).to_csv('./data/all_vol_dfs.csv')
 
     if run_asim:
 
