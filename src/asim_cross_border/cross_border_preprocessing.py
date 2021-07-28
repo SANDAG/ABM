@@ -6,12 +6,7 @@ import yaml
 from collections import OrderedDict
 import openmatrix as omx
 import argparse
-import importlib
 from subprocess import Popen, PIPE
-
-from activitysim.cli.run import add_run_args, run
-from activitysim.core import orca
-from activitysim import abm
 
 
 def compute_poe_accessibility(poe_id, colonias, colonia_pop_field, distance_param):
@@ -28,31 +23,14 @@ def compute_poe_accessibility(poe_id, colonias, colonia_pop_field, distance_para
 
 def get_poe_wait_times(settings):
 
-    null_val = 999.0
     data_dir = settings['data_dir']
     wait_times = pd.read_csv(
         os.path.join(data_dir, settings['poe_wait_times_input_fname']))
-
-    # replace null value with nan so null values will be ignored
-    # during aggregation
-    wait_times = wait_times.replace(999, np.nan)
     wait_times.rename(columns={
         'StandardWait': 'std_wait', 'SENTRIWait': 'sentri_wait',
         'PedestrianWait':'ped_wait'}, inplace=True)
-    wait_times['period'] = 'NA'
-    wait_times.loc[wait_times['StartPeriod'] <= 3, 'period'] = 'EA'  # ctramp defs
-    wait_times.loc[wait_times['StartPeriod'] > 29, 'period'] = 'EV'  # ctramp defs
-    
-    # aggregate by hourly wait times by period
-    wait_times = wait_times.groupby(['poe','period'])[[
-        'std_wait','sentri_wait','ped_wait']].mean().reset_index()
-
-    # replace nans with original null values
-    wait_times = wait_times.fillna(null_val)
-    wait_times['ready_wait'] = null_val
     wait_times_wide = wait_times.pivot(
-        index='poe',columns='period',
-        values=['std_wait','sentri_wait','ped_wait', 'ready_wait'])
+        index='poe',columns='StartPeriod', values=['std_wait','sentri_wait','ped_wait'])
     wait_times_wide.columns = [
         '_'.join([top, str(bottom)]) for top, bottom in wait_times_wide.columns]
 
