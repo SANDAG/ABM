@@ -608,16 +608,12 @@ if __name__ == '__main__':
             w = coef_df.loc[:, vol_df['lane_type'].tolist()].values
             vol_df['wait_time'] = np.sum(x * w.T, axis=1)
 
-            wait_times_wide = vol_df.pivot(index=['poe_id'],columns=['lane_type','period'],values=['wait_time'])
+            wait_times_wide = vol_df.pivot(index=['poe_id'], columns=['lane_type', 'period'], values=['wait_time'])
             wait_times_wide.columns = ['_wait_'.join([lane_type, period]) for wt, lane_type, period in wait_times_wide.columns]
             wait_times_wide = wait_times_wide[all_wait_times[0].columns]
             wait_times_wide = wait_times_wide.where(wait_times_wide >= 0, 0)  # min wait time = 0
 
             # method of successive averaging
-            # 1st iter: x * 0 + new_x
-            # 2nd iter: x * 1/2 + new_x * 1/2
-            # 3rd iter: x * 2/3 + new_x * 1/3
-
             msa_frac = 1.0 / i
             last_iter_wait_times = all_wait_times[-1]
             last_iter_wait_times_weighted = last_iter_wait_times * (1.0 - msa_frac)
@@ -630,14 +626,17 @@ if __name__ == '__main__':
 
             # but some entries must be null bc they are unavailable
             if 2 in new_wait_times_wide.index.values:
-                # tecate has no sentri lane
-                new_wait_times_wide.loc[2, [col for col in new_wait_times_wide.columns if 'sentri' in col]] = 999
+                # tecate has no sentri lane and no ready lane
+                new_wait_times_wide.loc[2, [
+                    col for col in new_wait_times_wide.columns if ('sentri' in col) or ('ready' in col)]] = 999
             if 3 in new_wait_times_wide.index.values:
                 # otay mesa east has to ped lane
-                new_wait_times_wide.loc[3, [col for col in new_wait_times_wide.columns if 'ped' in col]] = 999
+                new_wait_times_wide.loc[3, [
+                    col for col in new_wait_times_wide.columns if 'ped' in col]] = 999
             if 4 in new_wait_times_wide.index.values:
                 # jacumba has no sentri lane and no ped lane
-                new_wait_times_wide.loc[4, [col for col in new_wait_times_wide.columns if ('ped' in col) or ('sentri' in col)]] = 999
+                new_wait_times_wide.loc[4, [
+                    col for col in new_wait_times_wide.columns if ('ped' in col) or ('sentri' in col)]] = 999
 
             all_wait_times.append(new_wait_times_wide)
             mazs = mazs[[col for col in mazs.columns if col not in wait_times_wide.columns]]
