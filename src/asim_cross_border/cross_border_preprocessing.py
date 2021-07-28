@@ -511,29 +511,29 @@ if __name__ == '__main__':
 
         # create input data
         mazs = create_land_use_file(settings)
-        new_mazs = mazs[mazs['original_MAZ'] > 0]
-        tours = create_tours(settings['tours'])
-        households = create_households(settings)  # 1 per tour
-        persons = create_persons(settings, num_households=len(households))
-        tours = assign_hh_p_to_tours(tours, persons)
-
-        # store input files to disk
+        # new_mazs = mazs[mazs['original_MAZ'] > 0]
+        # tours = create_tours(settings['tours'])
+        # households = create_households(settings)  # 1 per tour
+        # persons = create_persons(settings, num_households=len(households))
+        # tours = assign_hh_p_to_tours(tours, persons)
+        #
+        # # store input files to disk
         mazs.to_csv(os.path.join(
             data_dir, settings['mazs_output_fname']), index=False)
-        tours.to_csv(os.path.join(
-            data_dir, settings['tours_output_fname']))
-        households.to_csv(os.path.join(
-            data_dir, settings['households_output_fname']), index=False)
-        persons.to_csv(os.path.join(
-            data_dir, settings['persons_output_fname']), index=False)
-
-        # create/update configs in place
-        create_scheduling_probs_and_alts(settings)
-        create_skims_and_tap_files(settings, new_mazs)
-        create_stop_freq_specs(settings)
-        update_trip_purpose_probs(settings)
-        create_trip_scheduling_duration_probs(settings)
-        update_tour_purpose_reassignment_probs(settings)
+        # tours.to_csv(os.path.join(
+        #     data_dir, settings['tours_output_fname']))
+        # households.to_csv(os.path.join(
+        #     data_dir, settings['households_output_fname']), index=False)
+        # persons.to_csv(os.path.join(
+        #     data_dir, settings['persons_output_fname']), index=False)
+        #
+        # # create/update configs in place
+        # create_scheduling_probs_and_alts(settings)
+        # create_skims_and_tap_files(settings, new_mazs)
+        # create_stop_freq_specs(settings)
+        # update_trip_purpose_probs(settings)
+        # create_trip_scheduling_duration_probs(settings)
+        # update_tour_purpose_reassignment_probs(settings)
 
     if update_wait_times:
 
@@ -561,8 +561,9 @@ if __name__ == '__main__':
             [col for col in mazs.columns if 'wait' in col] + ['poe_id']].set_index('poe_id')
 
         all_wait_times = [wait_times_wide]
+        num_iters = wait_time_settings['iters'] + 1
         
-        for i in range(1, wait_time_settings['iters'] + 1):
+        for i in range(1, num_iters):
 
             print('UPDATING POE WAIT TIMES: ITER {0}'.format(i))
 
@@ -618,36 +619,34 @@ if __name__ == '__main__':
             last_iter_wait_times = all_wait_times[-1]
             last_iter_wait_times_weighted = last_iter_wait_times * (1.0 - msa_frac)
             wait_times_wide_weighted = wait_times_wide * msa_frac
-
             new_wait_times_wide = last_iter_wait_times_weighted.add(wait_times_wide_weighted)
 
-            # just use new values where last iter had nulls
+            # replace averaged value with latest value where last iter had nulls
             new_wait_times_wide = new_wait_times_wide.where(last_iter_wait_times != 999, wait_times_wide)
 
-            # but some entries must be null bc they are unavailable
+            # some wait times must be hard-coded as nulls (999) to indicate unavailable lane types
+            # tecate has no sentri lane
             if 2 in new_wait_times_wide.index.values:
-                # tecate has no sentri lane and no ready lane
-                new_wait_times_wide.loc[2, [
-                    col for col in new_wait_times_wide.columns if ('sentri' in col) or ('ready' in col)]] = 999
+                new_wait_times_wide.loc[2, [col for col in new_wait_times_wide.columns if 'sentri' in col]] = 999
+            # otay mesa east has to ped lane
             if 3 in new_wait_times_wide.index.values:
-                # otay mesa east has to ped lane
-                new_wait_times_wide.loc[3, [
-                    col for col in new_wait_times_wide.columns if 'ped' in col]] = 999
+                new_wait_times_wide.loc[3, [col for col in new_wait_times_wide.columns if 'ped' in col]] = 999
+            # jacumba has no sentri lane and no ped lane
             if 4 in new_wait_times_wide.index.values:
-                # jacumba has no sentri lane and no ped lane
-                new_wait_times_wide.loc[4, [
-                    col for col in new_wait_times_wide.columns if ('ped' in col) or ('sentri' in col)]] = 999
+                new_wait_times_wide.loc[4, [col for col in new_wait_times_wide.columns if ('ped' in col) or ('sentri' in col)]] = 999
 
             all_wait_times.append(new_wait_times_wide)
             mazs = mazs[[col for col in mazs.columns if col not in wait_times_wide.columns]]
             mazs = pd.merge(mazs, wait_times_wide, left_on='poe_id', right_index=True, how='left')
             mazs.to_csv(os.path.join(data_dir, settings['mazs_output_fname']), index=False)
 
-        pd.concat(all_wait_times).to_csv('./output/all_wait_times.csv')
+        all_wait_times = pd.concat(all_wait_times)
+        all_wait_times['iter'] = np.array(range(0, num_iters)).repeat(all_wait_times.index.nunique())
+        all_wait_times.to_csv('./data/all_wait_times.csv')
 
     if run_asim:
-        print('RUNNING ACTIVITYSIM!')
 
+        print('RUNNING ACTIVITYSIM!')
         process = Popen(['python', '-u', 'simulation.py'], stdout=sys.stdout)
         process.wait()
         
