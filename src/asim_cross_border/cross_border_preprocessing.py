@@ -6,7 +6,7 @@ import yaml
 from collections import OrderedDict
 import openmatrix as omx
 import argparse
-from subprocess import Popen, PIPE
+import subprocess
 
 
 def compute_poe_accessibility(poe_id, colonias, colonia_pop_field, distance_param):
@@ -26,19 +26,36 @@ def get_poe_wait_times(settings):
     data_dir = settings['data_dir']
     wait_times = pd.read_csv(
         os.path.join(data_dir, settings['poe_wait_times_input_fname']))
+    num_poes = wait_times.poe.nunique()
     wait_times.rename(columns={
         'StandardWait': 'std_wait', 'SENTRIWait': 'sentri_wait',
         'PedestrianWait':'ped_wait'}, inplace=True)
+    start_hour_mask = wait_times['StartPeriod'] > 16
+    wait_times.loc[start_hour_mask, 'StartHour'] = wait_times.loc[
+        start_hour_mask, 'StartHour'] + 12
+    end_hour_mask = (wait_times['StartPeriod'] > 14) & (wait_times['StartPeriod'] < 40)
+    wait_times.loc[end_hour_mask, 'EndHour'] = wait_times.loc[
+        end_hour_mask, 'EndHour'] + 12
+    wait_times['StartHour'].replace(24, 0, inplace=True)
+    wait_times = wait_times.sort_values(['poe', 'StartHour'])
+
+    # full enumeration by the hour
+    wait_times['num_hours'] = (wait_times['EndHour'] - wait_times['StartHour']) * 2
+    wait_times = wait_times.loc[wait_times.index.repeat(wait_times['num_hours'])]
+    wait_times['asim_start_period'] = np.tile(np.array(range(1, 49)), num_poes)
+
+    # pivot wide
     wait_times_wide = wait_times.pivot(
-        index='poe',columns='StartPeriod', values=['std_wait','sentri_wait','ped_wait'])
+        index='poe',columns='asim_start_period', values=['std_wait','sentri_wait','ped_wait'])
     wait_times_wide.columns = [
         '_'.join([top, str(bottom)]) for top, bottom in wait_times_wide.columns]
 
     return wait_times_wide
 
 
-def create_tours(tour_settings):
+def create_tours(settings):
 
+    tour_settings = settings['tours']
     crossing_type_dict = {0: 'non_sentri', 1: 'sentri'}
     num_tours = tour_settings['num_tours']
     sentri_share = tour_settings['sentri_share']
@@ -89,6 +106,7 @@ def create_tours(tour_settings):
 
 def create_households(settings):
 
+    tour_settings = settings['tours']
     num_tours = tour_settings['num_tours']
 
     # one household per tour
@@ -316,14 +334,18 @@ def update_trip_purpose_probs(settings):
     return
 
 
-def create_trip_scheduling_duration_probs(settings):
+def create_trip_scheduling_duration_probs(settings, los_settings):
 
     data_dir = settings['data_dir']
     config_dir = settings['config_dir']
+    period_settings = los_settings['skim_time_periods']
+    num_asim_periods = int(period_settings['time_window'] / period_settings['period_minutes'])
 
-    outbound = pd.read_csv(os.path.join(data_dir, settings['trip_scheduling_probs_input_fnames']['outbound']))
+    outbound = pd.read_csv(os.path.join(
+        data_dir, settings['trip_scheduling_probs_input_fnames']['outbound']))
     outbound['outbound'] = True
-    inbound = pd.read_csv(os.path.join(data_dir, settings['trip_scheduling_probs_input_fnames']['inbound']))
+    inbound = pd.read_csv(os.path.join(
+        data_dir, settings['trip_scheduling_probs_input_fnames']['inbound']))
     inbound['outbound'] = False
     assert len(outbound) == len(inbound)
 
@@ -337,6 +359,12 @@ def create_trip_scheduling_duration_probs(settings):
         'Stop': 'stop_num',
         'RemainingHigh': 'periods_left_max',
         'RemainingLow': 'periods_left_min'}, inplace=True)
+
+    # convert to asim format
+    max_periods_left = duration_probs['periods_left_max'].max()
+    duration_probs['periods_left_max'] = duration_probs['periods_left_max'].replace(
+        max_periods_left, num_asim_periods - 1)
+
     duration_probs.to_csv(
         os.path.join(config_dir, settings['trip_scheduling_probs_output_fname']),
         index=False)
@@ -421,7 +449,7 @@ def create_land_use_file(settings):
     return mazs
 
 
-def create_scheduling_probs_and_alts(settings):
+def create_scheduling_probs_and_alts(settings, los_settings):
 
     config_dir = settings['config_dir']
     data_dir = settings['data_dir']
@@ -429,19 +457,100 @@ def create_scheduling_probs_and_alts(settings):
     output_probs_fname = settings['tour_scheduling_probs_output_fname']
     output_alts_fname = settings['tour_scheduling_alts_output_fname']
 
+    # load ctramp probs
     scheduling_probs = pd.read_csv(os.path.join(data_dir, input_fname))
-    tour_scheduling_alts = scheduling_probs.rename(
-        columns={'EntryPeriod': 'start', 'ReturnPeriod': 'end'}).drop_duplicates(
-        ['start','end'])[['start', 'end']]
     scheduling_probs.rename(columns={
         'Purpose': 'purpose_id', 'EntryPeriod': 'entry_period',
         'ReturnPeriod': 'return_period', 'Percent': 'prob'}, inplace=True)
-    scheduling_probs = scheduling_probs.pivot(
-        index='purpose_id', columns=['entry_period','return_period'], values='prob')
-    scheduling_probs.columns = [
-        str(col[0]) + '_' + str(col[1]) for col in scheduling_probs.columns]
+    num_ctramp_periods = scheduling_probs['entry_period'].nunique()
+    num_purposes = scheduling_probs['purpose_id'].nunique()
 
-    scheduling_probs.to_csv(os.path.join(config_dir, output_probs_fname))
+    # tour scheduling alts 
+    period_settings = los_settings['skim_time_periods']
+    num_periods = int(period_settings['time_window'] / period_settings['period_minutes'])
+    tour_scheduling_alts = pd.DataFrame()
+    tour_scheduling_alts['start'] = np.tile(range(1, num_periods + 1), num_periods)
+    tour_scheduling_alts['end'] = np.repeat(range(1, num_periods + 1), num_periods)
+
+    # convert to asim format (40 periods to 48)
+    scheduling_probs['entry_period'].replace(40, 0, inplace=True)
+    scheduling_probs['return_period'].replace(40, 0, inplace=True)
+    scheduling_probs = scheduling_probs.sort_values(
+        ['purpose_id','return_period','entry_period'])
+    scheduling_probs['half_hour_entry_periods'] = 1
+    scheduling_probs.loc[
+        scheduling_probs['entry_period'] == 1, 'half_hour_entry_periods'] = 4 
+    scheduling_probs.loc[
+        scheduling_probs['entry_period'] == 0, 'half_hour_entry_periods'] = 6
+    scheduling_probs['half_hour_return_periods'] = 1
+    scheduling_probs.loc[
+        scheduling_probs['return_period'] == 1, 'half_hour_return_periods'] = 4 
+    scheduling_probs.loc[
+        scheduling_probs['return_period'] == 0, 'half_hour_return_periods'] = 6
+
+    # expand entry periods
+    asim_scheduling_probs = scheduling_probs.loc[
+        scheduling_probs.index.repeat(
+            scheduling_probs['half_hour_entry_periods'])].reset_index(drop=True)
+    asim_scheduling_probs['asim_entry_period'] = np.tile(
+        range(1, num_periods + 1), num_ctramp_periods * num_purposes)
+
+    # expand return periods
+    asim_scheduling_probs = asim_scheduling_probs.loc[
+        asim_scheduling_probs.index.repeat(
+            asim_scheduling_probs['half_hour_return_periods'])].reset_index(drop=True)
+    asim_scheduling_probs = asim_scheduling_probs.sort_values(
+        ['purpose_id','asim_entry_period', 'return_period'])
+    asim_scheduling_probs['asim_return_period'] = np.tile(
+        range(1, num_periods + 1), num_periods * num_purposes)
+    asim_scheduling_probs = asim_scheduling_probs.sort_values(
+        ['purpose_id', 'asim_return_period', 'asim_entry_period'])
+    assert len(asim_scheduling_probs) == (num_periods**2) * (num_purposes)
+
+    # adjust probs
+    asim_scheduling_probs['repeats'] = asim_scheduling_probs[
+        'half_hour_return_periods'] * asim_scheduling_probs['half_hour_entry_periods']
+    asim_scheduling_probs['asim_prob'] = asim_scheduling_probs['prob'] / asim_scheduling_probs['repeats']
+    assert asim_scheduling_probs['asim_prob'].sum() == num_purposes
+
+    # sanity check entry periods
+    for asim_entry_period in range(1, 7):
+        # asim periods 1-6 = ctramp period 0 (40)
+        entry_mask = asim_scheduling_probs['asim_entry_period'] == asim_entry_period
+        assert all(asim_scheduling_probs.loc[entry_mask, 'entry_period'] == 0)
+    for asim_entry_period in range(7, 11):
+        entry_mask = asim_scheduling_probs['asim_entry_period'] == asim_entry_period
+        # asim periods 7-10 = ctramp period 1
+        assert all(asim_scheduling_probs.loc[entry_mask, 'entry_period'] == 1)
+    dif_9_mask = (asim_scheduling_probs['entry_period'] >= 2)
+    pd.testing.assert_series_equal(
+        asim_scheduling_probs.loc[dif_9_mask, 'entry_period'],
+        asim_scheduling_probs.loc[dif_9_mask, 'asim_entry_period'] - 9,
+        check_names=False)
+    
+    # sanity check return periods
+    for asim_return_period in range(1, 7):
+        return_mask = asim_scheduling_probs['asim_return_period'] == asim_return_period
+        # asim periods 1-6 = ctramp period 0 (40)
+        assert all(asim_scheduling_probs.loc[return_mask, 'return_period'] == 0)
+    for asim_return_period in range(7, 11):
+        return_mask = asim_scheduling_probs['asim_return_period'] == asim_return_period
+        # asim periods 7-10 = ctramp period 1
+        assert all(asim_scheduling_probs.loc[return_mask, 'return_period'] == 1)
+    dif_9_mask = (asim_scheduling_probs['return_period'] >= 2)
+    pd.testing.assert_series_equal(
+        asim_scheduling_probs.loc[dif_9_mask, 'return_period'],
+        asim_scheduling_probs.loc[dif_9_mask, 'asim_return_period'] - 9,
+        check_names=False)
+    
+    # pivot wide
+    asim_scheduling_probs = asim_scheduling_probs.pivot(
+        index='purpose_id', columns=['asim_entry_period', 'asim_return_period'],
+        values='asim_prob')
+    asim_scheduling_probs.columns = [
+        str(col[0]) + '_' + str(col[1]) for col in asim_scheduling_probs.columns]
+
+    asim_scheduling_probs.to_csv(os.path.join(config_dir, output_probs_fname))
     tour_scheduling_alts.to_csv(
         os.path.join(config_dir, output_alts_fname), index=False)
 
@@ -482,57 +591,65 @@ if __name__ == '__main__':
     # load settings
     with open('cross_border_preprocessing.yaml') as f:
         settings = yaml.load(f, Loader=yaml.FullLoader)
-    data_dir = settings['data_dir']
+        data_dir = settings['data_dir']
+        config_dir = settings['config_dir']
+    with open(os.path.join(config_dir, 'network_los.yaml')) as f:
+        los_settings = yaml.load(f, Loader=yaml.FullLoader)
 
     if run_preprocessor:
         print('RUNNING PREPROCESSOR!')
 
         # create input data
         mazs = create_land_use_file(settings)
-        # new_mazs = mazs[mazs['original_MAZ'] > 0]
-        # tours = create_tours(settings['tours'])
-        # households = create_households(settings)  # 1 per tour
-        # persons = create_persons(settings, num_households=len(households))
-        # tours = assign_hh_p_to_tours(tours, persons)
-        #
+        new_mazs = mazs[mazs['original_MAZ'] > 0]
+        tours = create_tours(settings)
+        households = create_households(settings)  # 1 per tour
+        persons = create_persons(settings, num_households=len(households))
+        tours = assign_hh_p_to_tours(tours, persons)
+
         # # store input files to disk
         mazs.to_csv(os.path.join(
             data_dir, settings['mazs_output_fname']), index=False)
-        # tours.to_csv(os.path.join(
-        #     data_dir, settings['tours_output_fname']))
-        # households.to_csv(os.path.join(
-        #     data_dir, settings['households_output_fname']), index=False)
-        # persons.to_csv(os.path.join(
-        #     data_dir, settings['persons_output_fname']), index=False)
+        tours.to_csv(os.path.join(
+            data_dir, settings['tours_output_fname']))
+        households.to_csv(os.path.join(
+            data_dir, settings['households_output_fname']), index=False)
+        persons.to_csv(os.path.join(
+            data_dir, settings['persons_output_fname']), index=False)
         #
         # # create/update configs in place
-        # create_scheduling_probs_and_alts(settings)
+        create_scheduling_probs_and_alts(settings, los_settings)
         # create_skims_and_tap_files(settings, new_mazs)
         # create_stop_freq_specs(settings)
         # update_trip_purpose_probs(settings)
-        # create_trip_scheduling_duration_probs(settings)
+        create_trip_scheduling_duration_probs(settings, los_settings)
         # update_tour_purpose_reassignment_probs(settings)
 
     if update_wait_times:
 
+        # load settings
         wait_time_settings = settings['wait_time_updating']
-        coef_df = pd.DataFrame(wait_time_settings['coeffs'])
+        period_settings = los_settings['skim_time_periods']
 
-        os.environ['MKL_NUM_THREADS'] = '1'
-
+        # instantiate data matrix
+        num_periods = int(period_settings['time_window'] / period_settings['period_minutes'])
+        periods = list(range(1, num_periods + 1))
         poes = list(settings['poes'].keys())
         num_poes = len(poes)
         lane_types = list(settings['tours']['lane_shares_by_purpose']['work'].keys())
         num_lanes = len(lane_types)
-        periods = wait_time_settings['periods']
-        num_periods = len(periods)
-        num_choosers = num_poes * num_lanes * num_periods
+        num_obs = num_poes * num_lanes * num_periods
         x_df = pd.DataFrame({
             'poe_id': np.repeat(poes, num_lanes * num_periods),
             'lane_type': np.tile(np.repeat(lane_types, num_periods), num_poes),
-            'period': np.tile(periods, num_poes * num_lanes)
+            'start': np.tile(periods, num_poes * num_lanes)
         })
+
+        # coefficients
+        coef_df = pd.DataFrame(wait_time_settings['coeffs']).T
+        assert len(coef_df) == num_lanes
         
+        # load existing wait times from last iteration
         mazs = pd.read_csv(os.path.join(data_dir, settings['mazs_output_fname']))
         wait_times_wide = mazs.sort_values('poe_id').loc[
             mazs['MAZ'].isin([poe['maz_id'] for poe_id, poe in settings['poes'].items()]),
@@ -540,39 +657,45 @@ if __name__ == '__main__':
 
         all_wait_times = [wait_times_wide]
         all_vol_dfs = []
-        num_iters = wait_time_settings['iters'] + 1
         
+        num_iters = wait_time_settings['iters'] + 1
         for i in range(1, num_iters):
 
             print('UPDATING POE WAIT TIMES: ITER {0}'.format(i))
 
-            process = Popen(
+            process = subprocess.Popen(
                 ['python', '-u', 'simulation.py', '--settings_file', 'wait_time_mode.yaml'],
-                stdout=sys.stdout)
-            process.wait()
+                stdout=sys.stdout, stderr=subprocess.PIPE)
+            _, stderr = process.communicate()
+            if process.returncode != 0:
+                raise subprocess.SubprocessError(stderr.decode())
             
             # compute crossing volume from tour POEs
             tours = pd.read_csv('./output/wait_time_tours.csv')
-            tours['period'] = 'NA'  # default period is N/A
-            tours.loc[tours['start'] <= 11, 'period'] = 'EA'  # this should be read from network_los.yaml
-            tours.loc[tours['start'] > 37, 'period'] = 'EV'  # this should be read from network_los.yaml
 
-            total_vol_df = tours.groupby(['poe_id', 'lane_type'])[['tour_id']].count().reset_index()
-            total_vol_df.rename(columns={'tour_id': 'total_vol'}, inplace=True)
+            vol_df = tours.groupby(['poe_id','lane_type','start']).agg(
+                vol=('tour_id', 'count')).reset_index()
 
-            period_vol_df = tours.groupby(['poe_id', 'lane_type', 'period'])[['tour_id']].count().reset_index()
-            period_vol_df.rename(columns={'tour_id': 'vol'}, inplace=True)
-            vol_df = pd.merge(period_vol_df, total_vol_df, on=['poe_id', 'lane_type'])
-            generic_period = vol_df['period'] == 'NA'
-            vol_df.loc[generic_period, 'vol'] = vol_df.loc[generic_period, 'total_vol']  # swap NA period vol for total
+            # tours['period'] = 'NA'  # default period is N/A
+            # tours.loc[tours['start'] <= 11, 'period'] = 'EA'  # this should be read from network_los.yaml
+            # tours.loc[tours['start'] > 37, 'period'] = 'EV'  # this should be read from network_los.yaml
+
+            # total_vol_df = tours.groupby(['poe_id', 'lane_type'])[['tour_id']].count().reset_index()
+            # total_vol_df.rename(columns={'tour_id': 'total_vol'}, inplace=True)
+
+            # period_vol_df = tours.groupby(['poe_id', 'lane_type', 'period'])[['tour_id']].count().reset_index()
+            # period_vol_df.rename(columns={'tour_id': 'vol'}, inplace=True)
+            # vol_df = pd.merge(period_vol_df, total_vol_df, on=['poe_id', 'lane_type'])
+            # generic_period = vol_df['period'] == 'NA'
+            # vol_df.loc[generic_period, 'vol'] = vol_df.loc[generic_period, 'total_vol']  # swap NA period vol for total
 
             # get missing rows and set vol to 0 for them
             vol_df = pd.merge(x_df, vol_df, how='left').fillna(0)
             vol_df['iter'] = i
             
             # compute vol per lane  
-            lane_df = pd.DataFrame(settings['poes']).T
-            vol_df = vol_df.merge(lane_df, left_on='poe_id', right_index=True)
+            lane_df = pd.DataFrame(settings['poes']).T[['name','veh_lanes','ped_lanes']]
+            vol_df = vol_df.merge(lane_df, left_on='poe_id', right_index=True, how='left')
             vol_df['vol_per_lane'] = vol_df['vol'] / vol_df['veh_lanes']
             ped_mask = vol_df['lane_type'] == 'ped'
             vol_df.loc[ped_mask, 'vol_per_lane'] = vol_df.loc[ped_mask, 'vol'] / vol_df.loc[ped_mask, 'ped_lanes']
@@ -580,32 +703,33 @@ if __name__ == '__main__':
             # compute dummies
             vol_df['otay'] = (vol_df['name'] == 'Otay Mesa').astype(int)
             vol_df['tecate'] = (vol_df['name'] == 'Tecate').astype(int)
-            vol_df['EA'] = (vol_df['period'] == 'EA').astype(int)
-            vol_df['EV'] = (vol_df['period'] == 'EV').astype(int)
+            vol_df['EA'] = (vol_df['start'] <= 11).astype(int)
+            vol_df['EV'] = (vol_df['start'] > 37).astype(int)
 
             # data matrix
-            x = np.zeros((num_choosers, len(coef_df)))
-            x[:, 0] = 1  # c1 - generic constant
-            x[:, 1] = vol_df['otay']  # c2 - otay mesa constant
-            x[:, 2] = vol_df['tecate']  # c3 - tecate constant
-            x[:, 3] = vol_df['vol_per_lane']  # c4 - volume per lane
-            x[:, 4] = vol_df['vol_per_lane'] * vol_df['otay']  # c5 - otay mesa vol/lane
-            x[:, 5] = vol_df['vol_per_lane'] * vol_df['tecate']  # c6 - tecate vol/lane
-            x[:, 6] = vol_df['vol_per_lane'] * vol_df['EA']  # c7 - early am vol/lane
-            x[:, 7] = vol_df['vol_per_lane'] * vol_df['EV']  # c8 - late pm vol/lane
-            x[:, 8] = vol_df['vol_per_lane'] * vol_df['otay'] * vol_df['EA']  # c9 - early am otay mesa vol/lane
-            x[:, 9] = vol_df['vol_per_lane'] * vol_df['otay'] * vol_df['EV']  # c10 - late pm otay mesa vol/lane
-            x[:, 10] = vol_df['vol_per_lane'] * vol_df['tecate'] * vol_df['EV']  # c11 - late pm otay mesa vol/lane
+            x = np.zeros((num_obs, len(coef_df.columns)))
+            x[:, 0] = 1
+            x[:, 1] = vol_df['otay']
+            x[:, 2] = vol_df['tecate']
+            x[:, 3] = vol_df['vol_per_lane']
+            x[:, 4] = vol_df['vol_per_lane'] * vol_df['otay']
+            x[:, 5] = vol_df['vol_per_lane'] * vol_df['tecate']
+            x[:, 6] = vol_df['vol_per_lane'] * vol_df['EA']
+            x[:, 7] = vol_df['vol_per_lane'] * vol_df['EV']
+            x[:, 8] = vol_df['vol_per_lane'] * vol_df['otay'] * vol_df['EA']
+            x[:, 9] = vol_df['vol_per_lane'] * vol_df['otay'] * vol_df['EV']
+            x[:, 10] = vol_df['vol_per_lane'] * vol_df['tecate'] * vol_df['EV']
 
             # coefficient matrix
-            w = coef_df.loc[:, vol_df['lane_type'].tolist()].values
+            W = coef_df.reindex(vol_df['lane_type'])
 
             # pair-wise multiply and sum across rows to get regression results
-            vol_df['wait_time'] = np.sum(x * w.T, axis=1)
+            vol_df['wait_time'] = np.sum(x * W, axis=1).values
 
-            wait_times_wide = vol_df.pivot(index=['poe_id'], columns=['lane_type', 'period'], values=['wait_time'])
+            # reshape the results and apply min bound to 0 minutes
+            wait_times_wide = vol_df.pivot(index=['poe_id'], columns=['lane_type', 'start'], values=['wait_time'])
             wait_times_wide.columns = [
-                '_wait_'.join([lane_type, period]) for wt, lane_type, period in wait_times_wide.columns]
+                '_wait_'.join([lane_type, str(start)]) for wt, lane_type, start in wait_times_wide.columns]
             wait_times_wide = wait_times_wide[all_wait_times[0].columns]
             wait_times_wide = wait_times_wide.where(wait_times_wide >= 0, 0)  # min wait time = 0
 
@@ -617,18 +741,38 @@ if __name__ == '__main__':
             new_wait_times_wide = last_iter_wait_times_weighted.add(wait_times_wide_weighted)
 
             # replace averaged value with latest value where last iter had nulls
+            # bc we don't want to average null values
             new_wait_times_wide = new_wait_times_wide.where(last_iter_wait_times != 999, wait_times_wide)
 
-            # some wait times must be hard-coded as nulls (999) to indicate unavailable lane types
-            # tecate has no sentri lane and no ready lane
-            if 2 in new_wait_times_wide.index.values:
-                new_wait_times_wide.loc[2, [col for col in new_wait_times_wide.columns if ('sentri' in col) or ('ready' in col)]] = 999
+            # some wait times must be hard-coded as nulls (999) to indicate
+            # unavailable lane types
+
+            # tecate has no sentri lane and no ready lane, and is only open
+            # from 5am (period 11) to 11pm (period 47)
+            unavail_tecate_cols = [
+                col for col in new_wait_times_wide.columns if
+                ('sentri' in col) or
+                ('ready' in col) or
+                (int(col.split('_')[-1]) < 11) or
+                ((int(col.split('_')[-1]) > 46))]
+
             # otay mesa east has to ped lane
-            if 3 in new_wait_times_wide.index.values:
-                new_wait_times_wide.loc[3, [col for col in new_wait_times_wide.columns if 'ped' in col]] = 999
+            unavail_om_east_cols = [
+                col for col in new_wait_times_wide.columns if 'ped' in col]
+
             # jacumba has no sentri lane and no ped lane
+            unavail_jacumba_cols = [
+                col for col in new_wait_times_wide.columns if
+                ('ped' in col) or ('sentri' in col)]
+
+            if 2 in new_wait_times_wide.index.values:
+                new_wait_times_wide.loc[2, unavail_tecate_cols] = 999
+            
+            if 3 in new_wait_times_wide.index.values:
+                new_wait_times_wide.loc[3, unavail_om_east_cols] = 999
+            
             if 4 in new_wait_times_wide.index.values:
-                new_wait_times_wide.loc[4, [col for col in new_wait_times_wide.columns if ('ped' in col) or ('sentri' in col)]] = 999
+                new_wait_times_wide.loc[4, unavail_jacumba_cols] = 999
 
             all_vol_dfs.append(vol_df)
             all_wait_times.append(new_wait_times_wide)
@@ -645,8 +789,12 @@ if __name__ == '__main__':
     if run_asim:
 
         print('RUNNING ACTIVITYSIM!')
-        process = Popen(['python', '-u', 'simulation.py'], stdout=sys.stdout)
-        process.wait()
+        process = subprocess.Popen(
+            ['python', '-u', 'simulation.py'],
+            stdout=sys.stdout, stderr=subprocess.PIPE)
+        _, stderr = process.communicate()
+        if process.returncode != 0:
+            raise subprocess.SubprocessError(stderr.decode())
         
 
 

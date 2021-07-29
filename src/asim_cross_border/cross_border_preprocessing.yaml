@@ -156,10 +156,6 @@ tours:
 
 wait_time_updating:
   iters: 3
-  periods:
-    - EA  # early am
-    - EV  # late pm
-    - NA  # all others
   coeffs:
     std:
       asc: 24.4819  # c1
