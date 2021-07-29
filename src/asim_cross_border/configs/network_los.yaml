@@ -55,8 +55,8 @@ maz_to_tap:
 skim_time_periods:
     time_window: 1440
     period_minutes: 30
-    # periods: [0, 11, 17, 30, 37, 48]  # asim xborder
-    periods: [0, 3, 9, 22, 29, 48]  # ctramp xborder
+    periods: [0, 11, 17, 30, 37, 48]  # asim xborder
+    # periods: [0, 3, 9, 22, 29, 48]  # ctramp xborder
     labels: &skim_time_period_labels ['EA', 'AM', 'MD', 'PM', 'EV']
 
 # transit virtual path builder settings   
