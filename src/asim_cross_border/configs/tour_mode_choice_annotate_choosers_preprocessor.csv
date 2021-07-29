@@ -1,13 +1,9 @@
 Description,Target,Expression
-list of POE wait hour columns,_WAIT_HOUR_COLS,land_use.filter(regex=wait_time_col_regex).columns.tolist()
-list of unique POE wait hours,_WAIT_HOUR_STARTS,"pd.Series(list(set([col.split('_wait_')[1] for col in _WAIT_HOUR_COLS])))"
-subtract all tour start times from the wait time periods,_WAIT_HOUR_IDX_DIFFS,"np.subtract(_WAIT_HOUR_STARTS.astype(int).values, df.start.values.reshape(-1, 1))"
-get the index of wait time period for each tour,_WAIT_HOUR_IDXS,"np.where(_WAIT_HOUR_IDX_DIFFS <= 0, _WAIT_HOUR_IDX_DIFFS, -np.inf).argmax(axis=1)"
-POE wait period for each tour,_TOUR_WAIT_HOUR,_WAIT_HOUR_STARTS[_WAIT_HOUR_IDXS]
-pedestrian crossing wait time column name for each tour,_PED_WAIT_HOUR_COLS,'ped_wait_' + _TOUR_WAIT_HOUR
-standard crossing wait time column name for each tour,_STD_WAIT_HOUR_COLS,'std_wait_' + _TOUR_WAIT_HOUR
-sentri crossing wait time column name for each tour,_SENTRI_WAIT_HOUR_COLS,'sentri_wait_' + _TOUR_WAIT_HOUR
-unpivot (a.k.a melt) the POE wait time data,_LONG_WAIT_HOUR_TIMES,"land_use[land_use['poe_id'].notnull()].reset_index().melt(id_vars='zone_id', value_vars=_WAIT_HOUR_COLS, var_name='wait_type_hour', value_name='time').set_index(['zone_id','wait_type_hour'])"
-,std_wait,"_LONG_WAIT_HOUR_TIMES.reindex([df[orig_col_name], _STD_WAIT_HOUR_COLS])['time'].values"
-,sentri_wait,"_LONG_WAIT_HOUR_TIMES.reindex([df[orig_col_name], _SENTRI_WAIT_HOUR_COLS])['time'].values"
-,ped_wait,"_LONG_WAIT_HOUR_TIMES.reindex([df[orig_col_name], _PED_WAIT_HOUR_COLS])['time'].values"
+list of POE wait time columns,_WAIT_PERIOD_COLS,land_use.filter(regex=wait_time_col_regex).columns.tolist()
+pedestrian crossing wait time column name for each tour,_PED_WAIT_PERIOD_COLS,'ped_wait_' + df.start.astype(str)
+standard crossing wait time column name for each tour,_STD_WAIT_PERIOD_COLS,'std_wait_' + df.start.astype(str)
+sentri crossing wait time column name for each tour,_SENTRI_WAIT_PERIOD_COLS,'sentri_wait_' + df.start.astype(str)
+unpivot (a.k.a melt) the POE wait time data,_LONG_WAIT_PERIOD_TIMES,"land_use[land_use['poe_id'].notnull()].reset_index().melt(id_vars='zone_id', value_vars=_WAIT_PERIOD_COLS, var_name='wait_type_period', value_name='time').set_index(['zone_id','wait_type_period'])"
+,std_wait,"_LONG_WAIT_PERIOD_TIMES.reindex([df[orig_col_name], _STD_WAIT_PERIOD_COLS])['time'].values"
+,sentri_wait,"_LONG_WAIT_PERIOD_TIMES.reindex([df[orig_col_name], _SENTRI_WAIT_PERIOD_COLS])['time'].values"
+,ped_wait,"_LONG_WAIT_PERIOD_TIMES.reindex([df[orig_col_name], _PED_WAIT_PERIOD_COLS])['time'].values"
