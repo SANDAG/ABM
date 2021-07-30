@@ -9,8 +9,7 @@
       - ActivitySim settings (e.g. number of processes, household sample size) in **configs/wait_time_mode.yaml**
       - Preprocessor settings (e.g. number of iterations) in **configs/settings.yaml**
 4. (optional) Update the border crossing wait times: `python cross_border_model.py -w`
-	  - Note: by default, the "warm start" wait times (0th iteration) are based on the CTRAMP 40-period inputs
-	  - If you've previously run the wait time updater, you may want to reconfigure the `get_poe_wait_times()` method so that it starts from the last set of updated wait times instead.
+      - If land use data does not yet have wait time columns (see below), you'll have to first run in preprocessing mode in order to generate the first set of wait times.
 5. (optional) Configure the main ActivitySim settings in **configs/settings.yaml**
       - Settings you'll likely want to tweak: `household_sample_size`, `chunk_size`, `num_processes`
 6. Run ActivitySim `python cross_border_model.py -a`
@@ -18,9 +17,10 @@
 ## Helpful tips:
 - You can execute any or all of the above processes at once by using multiple flags: `python cross_border_model.py -p -w -a`
 - Run with IPython to for easier debugging: `ipython -i cross_border_model.py -- -a` and then use `%debug` magic command if/when an error is thrown.
-
+- Each time you run with wait time mode activated (`-w`), the wait time columns in the land use table get updated. If you run preprocessing mode at the same time (`-p -w`), the first iteration of wait times will be based on CTRAMP inputs. If you run without preprocessing mode enabled, the first iteration of wait times will be based on whatever was already in the land use file.
 
 ## Required inputs (not stored in repo):
+
 ### ActivitySim
  - **land_use** (e.g. "mazs_xborder.csv")
     - custom columns (created by preprocessor):
@@ -41,6 +41,7 @@
     - transit (e.g. "transit_skims.omx")
     - transit access (e.g. "maz_tap_walk.csv", "taps.csv", and "tap_lines.csv")
     - microzone (e.g. "maz_maz_walk.csv")
+
 ### Preprocessor
 The preprocessor is mainly designed to convert old CTRAMP-formatted input/survey data into the formats needed by ActivitySim. 
 | CTRAMP input filenames | ActivitySim inputs created| Description | Preprocessor operation |
@@ -55,3 +56,6 @@ The preprocessor is mainly designed to convert old CTRAMP-formatted input/survey
 |crossBorder_stopPurpose.csv|trip_purpose_probs.csv| trip purpose probability lookup table| rename columns, delete cargo probs|
 | <ul><li>crossBorder_outboundStopDuration.csv</li><li>crossBorder_inboundStopDuration.csv</li></ul>  | trip_scheduling_probs.csv | trip scheduling probability lookup table | combine inbound and outbound alts/probs |
 |crossBorder_tourPurpose_control.csv | tour_purpose_probs_by_poe.csv | tour purpose reassignment probability lookup table | rename cols, drop cargo probs |
+
+### Wait Time Updating
+ - **land_use** with PoE wait time columns (e.g. "mazs_xborder.csv")
