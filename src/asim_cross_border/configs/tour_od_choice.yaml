@@ -22,10 +22,14 @@ ALT_DEST_COL_NAME: &d destination
 ORIG_COL_NAME: *o
 DEST_COL_NAME: *d
 
-# filter to identify potential origin zones from the land use table
-# ORIG_FILTER: "poe_id == poe_id"  # trick to use pandas query syntax to filter out rows with null-valued poe_id's
-ORIG_FILTER: "external_TAZ > 0"  # only internal mazs associated with external TAZs, AKA, the bug
-#ORIG_FILTER: "original_MAZ > 0"  # only new (external) mazs copied from internal mazs, bug fixed
+# filter to identify potential origin zones from the land use table.
+# external TAZ is only set for internal MAZs with a POE, and original_maz
+# is only set for external MAZs which must be POEs. Both values are -1
+# otherwise, so filtering out MAZs where external_TAZ <= 0 or
+# original_MAZ <= 0 will determine whether the model uses internal TAZs or
+# external TAZs for skim distances.
+ORIG_FILTER: "original_MAZ > 0"  # only new (external) mazs copied from internal mazs, bug fixed
+# ORIG_FILTER: "external_TAZ > 0"  # only internal mazs associated with external TAZs (CTRAMP bug)
 
 OD_CHOICE_SAMPLE_TABLE_NAME: tour_od_location_sample
 
