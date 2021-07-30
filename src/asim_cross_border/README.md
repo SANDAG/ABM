@@ -57,4 +57,4 @@ The preprocessor is mainly designed to convert old CTRAMP-formatted input/survey
 |crossBorder_tourPurpose_control.csv | tour_purpose_probs_by_poe.csv | tour purpose reassignment probability lookup table | rename cols, drop cargo probs |
 
 ### Wait Time Updating
- - **land_use** with PoE wait time columns (e.g. "mazs_xborder.csv")
+ - **land_use** with PoE wait time columns (e.g. "mazs_xborder.csv"). If the land use table doesn't have these columns yet, you'll have to run in preprocessing mode to generate them.
