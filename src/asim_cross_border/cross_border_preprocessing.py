@@ -7,6 +7,7 @@ from collections import OrderedDict
 import openmatrix as omx
 import argparse
 import subprocess
+import itertools
 
 
 def compute_poe_accessibility(poe_id, colonias, colonia_pop_field, distance_param):
@@ -462,21 +463,48 @@ def create_scheduling_probs_and_alts(settings, los_settings):
     scheduling_probs.rename(columns={
         'Purpose': 'purpose_id', 'EntryPeriod': 'entry_period',
         'ReturnPeriod': 'return_period', 'Percent': 'prob'}, inplace=True)
-    num_ctramp_periods = scheduling_probs['entry_period'].nunique()
+    num_ctramp_periods = int(scheduling_probs['entry_period'].nunique())
+    max_period = scheduling_probs['entry_period'].max()
     num_purposes = scheduling_probs['purpose_id'].nunique()
 
-    # tour scheduling alts 
+    # create tour scheduling alts 
     period_settings = los_settings['skim_time_periods']
     num_periods = int(period_settings['time_window'] / period_settings['period_minutes'])
     tour_scheduling_alts = pd.DataFrame()
     tour_scheduling_alts['start'] = np.tile(range(1, num_periods + 1), num_periods)
     tour_scheduling_alts['end'] = np.repeat(range(1, num_periods + 1), num_periods)
 
-    # convert to asim format (40 periods to 48)
-    scheduling_probs['entry_period'].replace(40, 0, inplace=True)
-    scheduling_probs['return_period'].replace(40, 0, inplace=True)
+    # ctramp allows tours to return after midnight b/c period 40 = 12-3am
+    # asim periods cannot accommodate these tours, but we can't set these probs
+    # to zero or else our tour purpose probs won't sum to one. Instead we
+    # force tours that start before 12am and end after 12am to return in the
+    # period just prior to midnight (39), and redistribute these probabilities
+    # accordingly. For tours that start *and* end after midnight, we simply
+    # set the entry and return periods to 0, which will later get expanded
+    # to create asim periods 1-6. At this point, the table is missing rows
+    # where the return period is 0 and the entry period is > 0. All of these
+    # missing rows will have zero probability, but we still need them for the
+    # table to be complete. The last step of the process is to create a
+    # dataframe of these missing rows and merge them back into the probability
+    # table.
+    trunc_tours_mask = (scheduling_probs['return_period'] == max_period) & (scheduling_probs['entry_period'] < max_period)
+    scheduling_probs.loc[trunc_tours_mask, 'return_period'] = max_period - 1
+    scheduling_probs['entry_period'].replace(num_ctramp_periods, 0, inplace=True)
+    scheduling_probs['return_period'].replace(num_ctramp_periods, 0, inplace=True) 
+    scheduling_probs = scheduling_probs.groupby(['purpose_id', 'entry_period', 'return_period'])['prob'].sum().reset_index()
+    missing_df = pd.DataFrame({
+        'purpose_id': np.repeat(range(0, num_purposes), num_ctramp_periods - 1),
+        'entry_period': np.tile(range(1, num_ctramp_periods), num_purposes),
+        'return_period': [0] * (num_ctramp_periods - 1) * num_purposes})
+    missing_df['prob'] = 0
+    assert len(missing_df) + len(scheduling_probs) == (num_ctramp_periods**2) * num_purposes
+    scheduling_probs = pd.concat((scheduling_probs, missing_df), ignore_index=True)
     scheduling_probs = scheduling_probs.sort_values(
-        ['purpose_id','return_period','entry_period'])
+        ['purpose_id','return_period','entry_period']).reset_index(drop=True)
+    assert scheduling_probs['prob'].sum() == num_purposes
+
+    # compute expansion factor for reach row based on the ctramp period. this
+    # will be used to convert 40-period probabilities to 48-period probs.
     scheduling_probs['half_hour_entry_periods'] = 1
     scheduling_probs.loc[
         scheduling_probs['entry_period'] == 1, 'half_hour_entry_periods'] = 4 
@@ -488,8 +516,40 @@ def create_scheduling_probs_and_alts(settings, los_settings):
     scheduling_probs.loc[
         scheduling_probs['return_period'] == 0, 'half_hour_return_periods'] = 6
 
+    # When expanding the probabilities from 40 to 48 periods, we need to divide
+    # the probabilities by the number of times a given row was repeated during
+    # expansion. Otherwise, the probs will sum to a number greater than 1 for
+    # each tour purpose. However, we will also need to force probabilities to
+    # zero wherever the entry period is later than the return period. These
+    # zero prob. rows should not count towards the number of repeats used for
+    # dividing the probability, otherwise the probabilities will sum to a 
+    # number *less* than 1 for each tour purpose. To arrive at the correct 
+    # probability divisor, we must compute the number of return periods that
+    # are earlier than their entry periods, and subtract this number from the
+    # total number of repeats. Surely there must be a better way to do this :(
+    asim_scheduling_probs = scheduling_probs.copy()
+    asim_scheduling_probs['max_entry_period'] = asim_scheduling_probs['entry_period'] + 9
+    asim_scheduling_probs['min_entry_period'] = asim_scheduling_probs['entry_period'] + 9
+    asim_scheduling_probs.loc[asim_scheduling_probs['entry_period'] == 0, 'max_entry_period'] = 6
+    asim_scheduling_probs.loc[asim_scheduling_probs['entry_period'] == 0, 'min_entry_period'] = 1
+    asim_scheduling_probs.loc[asim_scheduling_probs['entry_period'] == 1, 'max_entry_period'] = 10
+    asim_scheduling_probs.loc[asim_scheduling_probs['entry_period'] == 1, 'min_entry_period'] = 7
+    asim_scheduling_probs['max_return_period'] = asim_scheduling_probs['return_period'] + 9
+    asim_scheduling_probs['min_return_period'] = asim_scheduling_probs['return_period'] + 9
+    asim_scheduling_probs.loc[asim_scheduling_probs['return_period'] == 0, 'max_return_period'] = 6
+    asim_scheduling_probs.loc[asim_scheduling_probs['return_period'] == 0, 'min_return_period'] = 1
+    asim_scheduling_probs.loc[asim_scheduling_probs['return_period'] == 1, 'max_return_period'] = 10
+    asim_scheduling_probs.loc[asim_scheduling_probs['return_period'] == 1, 'min_return_period'] = 7
+    asim_scheduling_probs['num_returns_lt_entry'] = asim_scheduling_probs.apply(
+        lambda x: sum([i > j for i, j in itertools.product(
+            range(int(x['min_entry_period']), int(x['max_entry_period']) + 1),
+            range(int(x['min_return_period']), int(x['max_return_period']) + 1))]), axis=1)
+    asim_scheduling_probs['repeats'] = asim_scheduling_probs[
+        'half_hour_return_periods'] * asim_scheduling_probs['half_hour_entry_periods']
+    asim_scheduling_probs['prob_divisor'] = asim_scheduling_probs['repeats'] - asim_scheduling_probs['num_returns_lt_entry']
+
     # expand entry periods
-    asim_scheduling_probs = scheduling_probs.loc[
+    asim_scheduling_probs = asim_scheduling_probs.loc[
         scheduling_probs.index.repeat(
             scheduling_probs['half_hour_entry_periods'])].reset_index(drop=True)
     asim_scheduling_probs['asim_entry_period'] = np.tile(
@@ -508,10 +568,14 @@ def create_scheduling_probs_and_alts(settings, los_settings):
     assert len(asim_scheduling_probs) == (num_periods**2) * (num_purposes)
 
     # adjust probs
-    asim_scheduling_probs['repeats'] = asim_scheduling_probs[
-        'half_hour_return_periods'] * asim_scheduling_probs['half_hour_entry_periods']
-    asim_scheduling_probs['asim_prob'] = asim_scheduling_probs['prob'] / asim_scheduling_probs['repeats']
+    asim_scheduling_probs['asim_prob'] = asim_scheduling_probs['prob']
+    return_lt_entry_mask = asim_scheduling_probs['asim_entry_period'] > asim_scheduling_probs['asim_return_period']
+    asim_scheduling_probs.loc[return_lt_entry_mask, 'asim_prob'] = 0.0
+    nonzero_divisor_mask = asim_scheduling_probs['prob_divisor'] > 0
+    asim_scheduling_probs.loc[nonzero_divisor_mask, 'asim_prob'] = \
+        asim_scheduling_probs.loc[nonzero_divisor_mask, 'asim_prob'] / asim_scheduling_probs.loc[nonzero_divisor_mask, 'prob_divisor']
     assert asim_scheduling_probs['asim_prob'].sum() == num_purposes
+
 
     # sanity check entry periods
     for asim_entry_period in range(1, 7):
