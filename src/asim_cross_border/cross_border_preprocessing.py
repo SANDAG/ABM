@@ -590,7 +590,8 @@ def create_scheduling_probs_and_alts(settings, los_settings):
     pd.testing.assert_series_equal(
         asim_scheduling_probs.loc[dif_9_mask, 'entry_period'],
         asim_scheduling_probs.loc[dif_9_mask, 'asim_entry_period'] - 9,
-        check_names=False)
+        check_names=False, check_dtype=False
+    )
     
     # sanity check return periods
     for asim_return_period in range(1, 7):
@@ -605,7 +606,7 @@ def create_scheduling_probs_and_alts(settings, los_settings):
     pd.testing.assert_series_equal(
         asim_scheduling_probs.loc[dif_9_mask, 'return_period'],
         asim_scheduling_probs.loc[dif_9_mask, 'asim_return_period'] - 9,
-        check_names=False)
+        check_names=False, check_dtype=False)
     
     # pivot wide
     asim_scheduling_probs = asim_scheduling_probs.pivot(
