@@ -10,7 +10,8 @@ import subprocess
 import itertools
 
 
-def compute_poe_accessibility(poe_id, colonias, colonia_pop_field, distance_param):
+def compute_poe_accessibility(
+        poe_id, colonias, colonia_pop_field, distance_param):
 
     pop = colonias[colonia_pop_field]
     dist_col = 'Distance_poe' + str(int(poe_id))
@@ -34,22 +35,28 @@ def get_poe_wait_times(settings):
     start_hour_mask = wait_times['StartPeriod'] > 16
     wait_times.loc[start_hour_mask, 'StartHour'] = wait_times.loc[
         start_hour_mask, 'StartHour'] + 12
-    end_hour_mask = (wait_times['StartPeriod'] > 14) & (wait_times['StartPeriod'] < 40)
+    end_hour_mask = (
+        wait_times['StartPeriod'] > 14) & (wait_times['StartPeriod'] < 40)
     wait_times.loc[end_hour_mask, 'EndHour'] = wait_times.loc[
         end_hour_mask, 'EndHour'] + 12
     wait_times['StartHour'].replace(24, 0, inplace=True)
     wait_times = wait_times.sort_values(['poe', 'StartHour'])
 
     # full enumeration by the hour
-    wait_times['num_hours'] = (wait_times['EndHour'] - wait_times['StartHour']) * 2
-    wait_times = wait_times.loc[wait_times.index.repeat(wait_times['num_hours'])]
-    wait_times['asim_start_period'] = np.tile(np.array(range(1, 49)), num_poes)
+    wait_times['num_hours'] = (
+        wait_times['EndHour'] - wait_times['StartHour']) * 2
+    wait_times = wait_times.loc[
+    wait_times.index.repeat(wait_times['num_hours'])]
+    wait_times['asim_start_period'] = np.tile(
+        np.array(range(1, 49)), num_poes)
 
     # pivot wide
     wait_times_wide = wait_times.pivot(
-        index='poe',columns='asim_start_period', values=['std_wait','sentri_wait','ped_wait'])
+        index='poe', columns='asim_start_period',
+        values=['std_wait','sentri_wait','ped_wait'])
     wait_times_wide.columns = [
-        '_'.join([top, str(bottom)]) for top, bottom in wait_times_wide.columns]
+        '_'.join([top, str(bottom)])
+        for top, bottom in wait_times_wide.columns]
 
     return wait_times_wide
 
@@ -64,11 +71,13 @@ def create_tours(settings):
     purpose_probs_by_sentri = tour_settings['purpose_shares']
     
     tours = pd.DataFrame(
-        index=range(num_tours),
-        columns=['sentri_crossing', 'lane_type', 'lane_id', 'tour_type', 'purpose_id'])
+        index=range(num_tours), columns=[
+            'sentri_crossing', 'lane_type', 'lane_id', 'tour_type',
+            'purpose_id'])
     tours.index.name = 'tour_id'
 
-    sentri_scaled_probs = np.subtract(np.array(list([sentri_share])), np.random.rand(num_tours, 1))
+    sentri_scaled_probs = np.subtract(
+        np.array(list([sentri_share])), np.random.rand(num_tours, 1))
     sentri = (sentri_scaled_probs + 1).astype('i4')
     
     tours['sentri_crossing'] = sentri
@@ -82,16 +91,19 @@ def create_tours(settings):
         prob_sum = sum(purpose_probs.values())
         purpose_probs = {k: v / prob_sum for k,v in purpose_probs.items()}
 
-        id_to_purpose = {i: purpose for i, purpose in enumerate(purpose_probs.keys())}
+        id_to_purpose = {
+            i: purpose for i, purpose in enumerate(purpose_probs.keys())}
         purpose_cum_probs = np.array(list(purpose_probs.values())).cumsum()
-        purpose_scaled_probs = np.subtract(purpose_cum_probs, np.random.rand(num_xing_type_tours, 1))
+        purpose_scaled_probs = np.subtract(
+            purpose_cum_probs, np.random.rand(num_xing_type_tours, 1))
         purpose = np.argmax((purpose_scaled_probs + 1.0).astype('i4'), axis=1)
         group['purpose_id'] = purpose
         tours.loc[group.index, 'purpose_id'] = purpose
 
     tours['tour_type'] = tours['purpose_id'].map(id_to_purpose)
     tours['tour_category'] = 'non_mandatory'
-    tours.loc[tours['tour_type'].isin(['work', 'school']), 'tour_category'] = 'mandatory'
+    tours.loc[tours['tour_type'].isin(
+        ['work', 'school']), 'tour_category'] = 'mandatory'
     
     # for xborder model, only 1 person per tour and 1 tour per person
     tours['number_of_participants'] = 1
@@ -102,7 +114,8 @@ def create_tours(settings):
         lane_probs = OrderedDict(lane_shares_by_purpose[purpose])
         id_to_lane = {i: lane for i, lane in enumerate(lane_probs.keys())}
         lane_cum_probs = np.array(list(lane_probs.values())).cumsum()
-        lane_scaled_probs = np.subtract(lane_cum_probs, np.random.rand(len(df), 1))
+        lane_scaled_probs = np.subtract(
+            lane_cum_probs, np.random.rand(len(df), 1))
         lane_id = np.argmax((lane_scaled_probs + 1.0).astype('i4'), axis=1)
         df['lane_id'] = lane_id
         df['lane_type'] = df['lane_id'].map(id_to_lane)
@@ -127,7 +140,8 @@ def create_persons(settings, num_households):
 
     # one person per household
     persons = pd.DataFrame({'person_id': range(num_households)})
-    persons['household_id'] = np.random.choice(num_households, num_households, replace=False)
+    persons['household_id'] = np.random.choice(
+        num_households, num_households, replace=False)
 
     return persons
 
@@ -200,8 +214,10 @@ def _rename_skims(settings, skim_type):
             output_skims[skims_name].rename(new_name)
 
         if period == 'MD':
-            output_skims.create_matrix('walkTime', obj=output_skims['SOV_NT_M_DIST__MD'][:, :])
-            output_skims['walkTime'][:, :] = output_skims['walkTime'][:, :] / walk_speed * 60
+            output_skims.create_matrix(
+                'walkTime', obj=output_skims['SOV_NT_M_DIST__MD'][:, :])
+            output_skims['walkTime'][:, :] = output_skims[
+                'walkTime'][:, :] / walk_speed * 60
 
         skims.close()
         output_skims.close()
@@ -214,13 +230,17 @@ def create_taps_tap_lines(settings):
     skims_settings = settings['skims']
     data_dir = settings['data_dir']
 
-    transit_skims = omx.open_file(
-        os.path.join(data_dir, skims_settings['tap_to_tap']['input_fname']), 'a')
-    all_taps = pd.DataFrame(pd.Series(list(transit_skims.root.lookup.zone_number)))
+    transit_skims = omx.open_file(os.path.join(
+        data_dir, skims_settings['tap_to_tap']['input_fname']), 'a')
+    all_taps = pd.DataFrame(
+        pd.Series(list(transit_skims.root.lookup.zone_number)))
     all_taps.columns = ['TAP']
-    all_taps.to_csv(os.path.join(data_dir, settings['taps_output_fname']), index=False)
-    tap_lines = pd.read_csv(os.path.join(data_dir, settings['tap_lines_input_fname']))
-    tap_lines.to_csv(os.path.join(data_dir, settings['tap_lines_output_fname'])) 
+    all_taps.to_csv(
+        os.path.join(data_dir, settings['taps_output_fname']), index=False)
+    tap_lines = pd.read_csv(
+        os.path.join(data_dir, settings['tap_lines_input_fname']))
+    tap_lines.to_csv(
+        os.path.join(data_dir, settings['tap_lines_output_fname'])) 
 
     transit_skims.close()
 
@@ -234,13 +254,17 @@ def create_skims_and_tap_files(settings, new_mazs=None):
 
     # create taps files and transit skims
     print('Creating tap files.')
-    transit_skims = omx.open_file(
-        os.path.join(data_dir, skims_settings['tap_to_tap']['input_fname']), 'a')
-    all_taps = pd.DataFrame(pd.Series(list(transit_skims.root.lookup.zone_number)))
+    transit_skims = omx.open_file(os.path.join(
+        data_dir, skims_settings['tap_to_tap']['input_fname']), 'a')
+    all_taps = pd.DataFrame(
+        pd.Series(list(transit_skims.root.lookup.zone_number)))
     all_taps.columns = ['TAP']
-    all_taps.to_csv(os.path.join(data_dir, settings['taps_output_fname']), index=False)
-    tap_lines = pd.read_csv(os.path.join(data_dir, settings['tap_lines_input_fname']))
-    tap_lines.to_csv(os.path.join(data_dir, settings['tap_lines_output_fname']))
+    all_taps.to_csv(
+        os.path.join(data_dir, settings['taps_output_fname']), index=False)
+    tap_lines = pd.read_csv(
+        os.path.join(data_dir, settings['tap_lines_input_fname']))
+    tap_lines.to_csv(
+        os.path.join(data_dir, settings['tap_lines_output_fname']))
     transit_skims.close()
     
     
@@ -267,8 +291,8 @@ def create_skims_and_tap_files(settings, new_mazs=None):
 
 def create_stop_freq_specs(settings):
 
-    probs_df = pd.read_csv(
-        os.path.join(settings['data_dir'], settings['stop_frequency_input_fname']))
+    probs_df = pd.read_csv(os.path.join(
+        settings['data_dir'], settings['stop_frequency_input_fname']))
 
     # drop cargo
     if probs_df['Purpose'].max() == 5:
@@ -277,15 +301,17 @@ def create_stop_freq_specs(settings):
             probs_df['Purpose'] > 2, 'Purpose'] - 1
 
     probs_df.rename(columns={'Outbound': 'out', 'Inbound': 'in'}, inplace=True)
-    probs_df['alt'] = probs_df['out'].astype(str) + 'out_' + probs_df['in'].astype(str) + 'in'
+    probs_df['alt'] = probs_df['out'].astype(str) + 'out_' + \
+        probs_df['in'].astype(str) + 'in'
 
     # convert probs to utils
     probs_df['value'] = np.log(probs_df['Percent']).clip(lower=-999)
     
     # write out alts table
     alts_df = probs_df.drop_duplicates(['out','in','alt'])[['alt','out','in']]
-    alts_df.to_csv(
-        os.path.join(settings['config_dir'], settings['stop_frequency_alts_output_fname']), index=False)
+    alts_df.to_csv(os.path.join(
+        settings['config_dir'], settings['stop_frequency_alts_output_fname']),
+        index=False)
 
     purpose_id_map = settings['tours']['purpose_ids']
 
@@ -301,25 +327,30 @@ def create_stop_freq_specs(settings):
         coeffs_file = purpose_probs[['value','coefficient_name']].copy()
         coeffs_file['Description'] = None
         coeffs_file = coeffs_file[['Description','value','coefficient_name']]
-        coeffs_file_fname = settings['stop_frequency_coeffs_output_formattable_fname'].format(
+        coeffs_file_fname = settings[
+            'stop_frequency_coeffs_output_formattable_fname'].format(
             purpose=purpose)
         coeffs_file.to_csv(
-            os.path.join(settings['config_dir'], coeffs_file_fname), index=False)
+            os.path.join(settings['config_dir'], coeffs_file_fname),
+            index=False)
 
         alt_cols = alts_df['alt'].tolist()
         expr_file =  purpose_probs.pivot(
             index=['DurationLo','DurationHi'], columns='alt',
             values='coefficient_name').reset_index()
-        expr_file['Label'] = 'util_ASC_tour_dur_' + expr_file['DurationLo'].astype(str) + \
+        expr_file['Label'] = 'util_ASC_tour_dur_' + \
+            expr_file['DurationLo'].astype(str) + \
             '_' + expr_file['DurationHi'].astype(str)
         expr_file['Description'] = 'ASC for tour durations between ' + \
-            expr_file['DurationLo'].astype(str) + ' and ' + expr_file['DurationHi'].astype(str)
+            expr_file['DurationLo'].astype(str) + ' and ' + \
+            expr_file['DurationHi'].astype(str)
         expr_file['Expression'] = expr_file['DurationLo'].astype(str) + \
             ' < duration_hours <= ' + expr_file['DurationHi'].astype(str)
         expr_file = expr_file.drop(columns=['DurationLo','DurationHi'])
-        expr_file = expr_file[
-            required_cols + [col for col in expr_file.columns if col not in required_cols]]
-        expr_file_fname = settings['stop_frequency_expressions_output_formattable_fname'].format(
+        expr_file = expr_file[required_cols + [
+            col for col in expr_file.columns if col not in required_cols]]
+        expr_file_fname = settings[
+            'stop_frequency_expressions_output_formattable_fname'].format(
             purpose=purpose)
         expr_file.to_csv(os.path.join(
             settings['config_dir'], expr_file_fname.format(purpose)),
@@ -330,7 +361,8 @@ def create_stop_freq_specs(settings):
 
 def update_trip_purpose_probs(settings):
 
-    probs_df = pd.read_csv(os.path.join(settings['data_dir'], settings['trip_purpose_probs_input_fname']))
+    probs_df = pd.read_csv(os.path.join(
+        settings['data_dir'], settings['trip_purpose_probs_input_fname']))
     purpose_id_map = settings['tours']['purpose_ids']
     purp_id_to_name = {v: k for k, v in purpose_id_map.items()}
 
@@ -353,9 +385,10 @@ def update_trip_purpose_probs(settings):
     probs_df['outbound'] = ~probs_df['Inbound'].astype(bool)
     probs_df['primary_purpose'] = probs_df['TourPurp'].map(purp_id_to_name)
     probs_df = probs_df[
-        ['primary_purpose','outbound', 'trip_num', 'multistop'] + [purp for purp in purpose_id_map.keys()]]
-    probs_df.to_csv(
-        os.path.join(settings['config_dir'], settings['trip_purpose_probs_output_fname']),
+        ['primary_purpose','outbound', 'trip_num', 'multistop'] + [
+        purp for purp in purpose_id_map.keys()]]
+    probs_df.to_csv(os.path.join(
+        settings['config_dir'], settings['trip_purpose_probs_output_fname']),
         index=False)
 
     return
@@ -366,20 +399,25 @@ def create_trip_scheduling_duration_probs(settings, los_settings):
     data_dir = settings['data_dir']
     config_dir = settings['config_dir']
     period_settings = los_settings['skim_time_periods']
-    num_asim_periods = int(period_settings['time_window'] / period_settings['period_minutes'])
+    num_asim_periods = int(
+        period_settings['time_window'] / period_settings['period_minutes'])
 
     outbound = pd.read_csv(os.path.join(
-        data_dir, settings['trip_scheduling_probs_input_fnames']['outbound']))
+        data_dir,
+        settings['trip_scheduling_probs_input_fnames']['outbound']))
     outbound['outbound'] = True
     inbound = pd.read_csv(os.path.join(
-        data_dir, settings['trip_scheduling_probs_input_fnames']['inbound']))
+        data_dir,
+        settings['trip_scheduling_probs_input_fnames']['inbound']))
     inbound['outbound'] = False
     assert len(outbound) == len(inbound)
 
     outbound = outbound.melt(
-        id_vars=['RemainingLow','RemainingHigh','Stop','outbound'], var_name='duration_offset', value_name='prob')
+        id_vars=['RemainingLow','RemainingHigh','Stop','outbound'],
+        var_name='duration_offset', value_name='prob')
     inbound = inbound.melt(
-        id_vars=['RemainingLow','RemainingHigh','Stop','outbound'], var_name='duration_offset', value_name='prob')
+        id_vars=['RemainingLow','RemainingHigh','Stop','outbound'],
+        var_name='duration_offset', value_name='prob')
     
     duration_probs = pd.concat((outbound, inbound), axis=0, ignore_index=True)
     duration_probs.rename(columns={
@@ -389,11 +427,12 @@ def create_trip_scheduling_duration_probs(settings, los_settings):
 
     # convert to asim format
     max_periods_left = duration_probs['periods_left_max'].max()
-    duration_probs['periods_left_max'] = duration_probs['periods_left_max'].replace(
-        max_periods_left, num_asim_periods - 1)
+    duration_probs['periods_left_max'] = duration_probs[
+        'periods_left_max'].replace(
+            max_periods_left, num_asim_periods - 1)
 
-    duration_probs.to_csv(
-        os.path.join(config_dir, settings['trip_scheduling_probs_output_fname']),
+    duration_probs.to_csv(os.path.join(
+        config_dir, settings['trip_scheduling_probs_output_fname']),
         index=False)
 
     return
@@ -406,8 +445,8 @@ def update_tour_purpose_reassignment_probs(settings):
     tour_settings = settings['tours']
     poes = [str(poe) for poe in list(settings['poes'].keys())]
 
-    probs_df = pd.read_csv(
-        os.path.join(data_dir, settings['tour_purpose_control_probs_input_fname']), 
+    probs_df = pd.read_csv(os.path.join(
+        data_dir, settings['tour_purpose_control_probs_input_fname']), 
         index_col=['Description', 'Purpose'])
     probs_df = probs_df.loc[:, poes]
     probs_df.reset_index(inplace=True)
@@ -415,11 +454,12 @@ def update_tour_purpose_reassignment_probs(settings):
     
     # drop cargo
     probs_df = probs_df.loc[probs_df['Description'] != 'cargo', :]
-    probs_df['Purpose'] = probs_df['Description'].map(tour_settings['purpose_ids'])
+    probs_df['Purpose'] = probs_df['Description'].map(
+        tour_settings['purpose_ids'])
 
     # adjust probs to ensure they sum to 1
     for poe in poes:
-        probs_df[poe] = probs_df[poe] / probs_df[poe].sum()
+        probs_df[poe] = np.round(probs_df[poe] / probs_df[poe].sum(), 3)
 
     probs_df.to_csv(
         os.path.join(
@@ -480,14 +520,17 @@ def create_land_use_file(settings):
     # compute colonia accessibility for poe mazs
     mazs[poe_access_field] = None
     poe_mask = mazs[poe_id_field] >= 0
-    mazs.loc[poe_mask, poe_access_field] = mazs.loc[poe_mask, poe_id_field].apply(
-        compute_poe_accessibility, colonias=colonias, colonia_pop_field=colonia_pop_field,
-        distance_param=distance_param)
+    mazs.loc[poe_mask, poe_access_field] = \
+        mazs.loc[poe_mask, poe_id_field].apply(
+            compute_poe_accessibility, colonias=colonias,
+            colonia_pop_field=colonia_pop_field,
+            distance_param=distance_param)
     mazs = mazs.rename(columns={'mgra': 'MAZ', 'taz': 'TAZ'})
 
     # merge in wide wait times
     wide_wait_times = get_poe_wait_times(settings)
-    mazs = pd.merge(mazs, wide_wait_times, left_on='poe_id', right_on='poe', how='left')
+    mazs = pd.merge(
+        mazs, wide_wait_times, left_on='poe_id', right_on='poe', how='left')
 
     return mazs
 
@@ -507,9 +550,11 @@ def create_scheduling_probs_and_alts(settings, los_settings):
         'ReturnPeriod': 'return_period', 'Percent': 'prob'}, inplace=True)
 
     # drop cargo tours
-    scheduling_probs = scheduling_probs.loc[scheduling_probs['purpose_id'] != 2]
+    scheduling_probs = scheduling_probs.loc[
+        scheduling_probs['purpose_id'] != 2]
     update_mask = scheduling_probs['purpose_id'] > 2
-    scheduling_probs.loc[update_mask, 'purpose_id'] = scheduling_probs.loc[update_mask, 'purpose_id'] - 1
+    scheduling_probs.loc[update_mask, 'purpose_id'] = scheduling_probs.loc[
+        update_mask, 'purpose_id'] - 1
 
     # vars we'll need
     num_ctramp_periods = int(scheduling_probs['entry_period'].nunique())
@@ -519,10 +564,13 @@ def create_scheduling_probs_and_alts(settings, los_settings):
 
     # create tour scheduling alts 
     period_settings = los_settings['skim_time_periods']
-    num_periods = int(period_settings['time_window'] / period_settings['period_minutes'])
+    num_periods = int(
+        period_settings['time_window'] / period_settings['period_minutes'])
     tour_scheduling_alts = pd.DataFrame()
-    tour_scheduling_alts['start'] = np.tile(range(1, num_periods + 1), num_periods)
-    tour_scheduling_alts['end'] = np.repeat(range(1, num_periods + 1), num_periods)
+    tour_scheduling_alts['start'] = np.tile(
+        range(1, num_periods + 1), num_periods)
+    tour_scheduling_alts['end'] = np.repeat(
+        range(1, num_periods + 1), num_periods)
 
     # ctramp allows tours to return after midnight b/c period 40 = 12-3am
     # asim periods cannot accommodate these tours, but we can't set these probs
@@ -537,18 +585,27 @@ def create_scheduling_probs_and_alts(settings, los_settings):
     # table to be complete. The last step of the process is to create a
     # dataframe of these missing rows and merge them back into the probability
     # table.
-    trunc_tours_mask = (scheduling_probs['return_period'] == max_period) & (scheduling_probs['entry_period'] < max_period)
+    trunc_tours_mask = (
+        scheduling_probs['return_period'] == max_period) & (
+        scheduling_probs['entry_period'] < max_period)
     scheduling_probs.loc[trunc_tours_mask, 'return_period'] = max_period - 1
-    scheduling_probs['entry_period'].replace(num_ctramp_periods, 0, inplace=True)
-    scheduling_probs['return_period'].replace(num_ctramp_periods, 0, inplace=True) 
-    scheduling_probs = scheduling_probs.groupby(['purpose_id', 'entry_period', 'return_period'])['prob'].sum().reset_index()
+    scheduling_probs['entry_period'].replace(
+        num_ctramp_periods, 0, inplace=True)
+    scheduling_probs['return_period'].replace(
+        num_ctramp_periods, 0, inplace=True) 
+    scheduling_probs = scheduling_probs.groupby(
+        ['purpose_id', 'entry_period', 'return_period'])[
+        'prob'].sum().reset_index()
     missing_df = pd.DataFrame({
-        'purpose_id': np.repeat(range(0, num_purposes), num_ctramp_periods - 1),
+        'purpose_id': np.repeat(
+            range(0, num_purposes), num_ctramp_periods - 1),
         'entry_period': np.tile(range(1, num_ctramp_periods), num_purposes),
         'return_period': [0] * (num_ctramp_periods - 1) * num_purposes})
     missing_df['prob'] = 0
-    assert len(missing_df) + len(scheduling_probs) == (num_ctramp_periods**2) * num_purposes
-    scheduling_probs = pd.concat((scheduling_probs, missing_df), ignore_index=True)
+    assert len(missing_df) + len(scheduling_probs) == (
+        num_ctramp_periods**2) * num_purposes
+    scheduling_probs = pd.concat(
+        (scheduling_probs, missing_df), ignore_index=True)
     scheduling_probs = scheduling_probs.sort_values(
         ['purpose_id','return_period','entry_period']).reset_index(drop=True)
     assert scheduling_probs['prob'].sum() == num_purposes
@@ -578,25 +635,43 @@ def create_scheduling_probs_and_alts(settings, los_settings):
     # are earlier than their entry periods, and subtract this number from the
     # total number of repeats. Surely there must be a better way to do this :(
     asim_scheduling_probs = scheduling_probs.copy()
-    asim_scheduling_probs['max_entry_period'] = asim_scheduling_probs['entry_period'] + 9
-    asim_scheduling_probs['min_entry_period'] = asim_scheduling_probs['entry_period'] + 9
-    asim_scheduling_probs.loc[asim_scheduling_probs['entry_period'] == 0, 'max_entry_period'] = 6
-    asim_scheduling_probs.loc[asim_scheduling_probs['entry_period'] == 0, 'min_entry_period'] = 1
-    asim_scheduling_probs.loc[asim_scheduling_probs['entry_period'] == 1, 'max_entry_period'] = 10
-    asim_scheduling_probs.loc[asim_scheduling_probs['entry_period'] == 1, 'min_entry_period'] = 7
-    asim_scheduling_probs['max_return_period'] = asim_scheduling_probs['return_period'] + 9
-    asim_scheduling_probs['min_return_period'] = asim_scheduling_probs['return_period'] + 9
-    asim_scheduling_probs.loc[asim_scheduling_probs['return_period'] == 0, 'max_return_period'] = 6
-    asim_scheduling_probs.loc[asim_scheduling_probs['return_period'] == 0, 'min_return_period'] = 1
-    asim_scheduling_probs.loc[asim_scheduling_probs['return_period'] == 1, 'max_return_period'] = 10
-    asim_scheduling_probs.loc[asim_scheduling_probs['return_period'] == 1, 'min_return_period'] = 7
-    asim_scheduling_probs['num_returns_lt_entry'] = asim_scheduling_probs.apply(
-        lambda x: sum([i > j for i, j in itertools.product(
-            range(int(x['min_entry_period']), int(x['max_entry_period']) + 1),
-            range(int(x['min_return_period']), int(x['max_return_period']) + 1))]), axis=1)
+    asim_scheduling_probs['max_entry_period'] = asim_scheduling_probs[
+        'entry_period'] + 9
+    asim_scheduling_probs['min_entry_period'] = asim_scheduling_probs[
+        'entry_period'] + 9
+    asim_scheduling_probs.loc[
+        asim_scheduling_probs['entry_period'] == 0, 'max_entry_period'] = 6
+    asim_scheduling_probs.loc[
+        asim_scheduling_probs['entry_period'] == 0, 'min_entry_period'] = 1
+    asim_scheduling_probs.loc[
+        asim_scheduling_probs['entry_period'] == 1, 'max_entry_period'] = 10
+    asim_scheduling_probs.loc[
+        asim_scheduling_probs['entry_period'] == 1, 'min_entry_period'] = 7
+    asim_scheduling_probs['max_return_period'] = asim_scheduling_probs[
+        'return_period'] + 9
+    asim_scheduling_probs['min_return_period'] = asim_scheduling_probs[
+        'return_period'] + 9
+    asim_scheduling_probs.loc[
+        asim_scheduling_probs['return_period'] == 0, 'max_return_period'] = 6
+    asim_scheduling_probs.loc[
+        asim_scheduling_probs['return_period'] == 0, 'min_return_period'] = 1
+    asim_scheduling_probs.loc[
+        asim_scheduling_probs['return_period'] == 1, 'max_return_period'] = 10
+    asim_scheduling_probs.loc[
+        asim_scheduling_probs['return_period'] == 1, 'min_return_period'] = 7
+    asim_scheduling_probs['num_returns_lt_entry'] = \
+        asim_scheduling_probs.apply(lambda x: sum([
+            i > j for i, j in itertools.product(
+            range(
+                int(x['min_entry_period']), int(x['max_entry_period']) + 1),
+            range(
+                int(x['min_return_period']), int(x['max_return_period']) + 1))
+        ]), axis=1)
     asim_scheduling_probs['repeats'] = asim_scheduling_probs[
-        'half_hour_return_periods'] * asim_scheduling_probs['half_hour_entry_periods']
-    asim_scheduling_probs['prob_divisor'] = asim_scheduling_probs['repeats'] - asim_scheduling_probs['num_returns_lt_entry']
+        'half_hour_return_periods'] * asim_scheduling_probs[
+        'half_hour_entry_periods']
+    asim_scheduling_probs['prob_divisor'] = asim_scheduling_probs[
+        'repeats'] - asim_scheduling_probs['num_returns_lt_entry']
 
     # expand entry periods
     asim_scheduling_probs = asim_scheduling_probs.loc[
@@ -619,21 +694,26 @@ def create_scheduling_probs_and_alts(settings, los_settings):
 
     # adjust probs
     asim_scheduling_probs['asim_prob'] = asim_scheduling_probs['prob']
-    return_lt_entry_mask = asim_scheduling_probs['asim_entry_period'] > asim_scheduling_probs['asim_return_period']
+    return_lt_entry_mask = asim_scheduling_probs[
+        'asim_entry_period'] > asim_scheduling_probs['asim_return_period']
     asim_scheduling_probs.loc[return_lt_entry_mask, 'asim_prob'] = 0.0
     nonzero_divisor_mask = asim_scheduling_probs['prob_divisor'] > 0
     asim_scheduling_probs.loc[nonzero_divisor_mask, 'asim_prob'] = \
-        asim_scheduling_probs.loc[nonzero_divisor_mask, 'asim_prob'] / asim_scheduling_probs.loc[nonzero_divisor_mask, 'prob_divisor']
+        asim_scheduling_probs.loc[
+            nonzero_divisor_mask, 'asim_prob'] / asim_scheduling_probs.loc[
+            nonzero_divisor_mask, 'prob_divisor']
     assert asim_scheduling_probs['asim_prob'].sum() == num_purposes
 
 
     # sanity check entry periods
     for asim_entry_period in range(1, 7):
         # asim periods 1-6 = ctramp period 0 (40)
-        entry_mask = asim_scheduling_probs['asim_entry_period'] == asim_entry_period
+        entry_mask = asim_scheduling_probs[
+            'asim_entry_period'] == asim_entry_period
         assert all(asim_scheduling_probs.loc[entry_mask, 'entry_period'] == 0)
     for asim_entry_period in range(7, 11):
-        entry_mask = asim_scheduling_probs['asim_entry_period'] == asim_entry_period
+        entry_mask = asim_scheduling_probs[
+        'asim_entry_period'] == asim_entry_period
         # asim periods 7-10 = ctramp period 1
         assert all(asim_scheduling_probs.loc[entry_mask, 'entry_period'] == 1)
     dif_9_mask = (asim_scheduling_probs['entry_period'] >= 2)
@@ -644,13 +724,17 @@ def create_scheduling_probs_and_alts(settings, los_settings):
     
     # sanity check return periods
     for asim_return_period in range(1, 7):
-        return_mask = asim_scheduling_probs['asim_return_period'] == asim_return_period
+        return_mask = asim_scheduling_probs[
+            'asim_return_period'] == asim_return_period
         # asim periods 1-6 = ctramp period 0 (40)
-        assert all(asim_scheduling_probs.loc[return_mask, 'return_period'] == 0)
+        assert all(
+            asim_scheduling_probs.loc[return_mask, 'return_period'] == 0)
     for asim_return_period in range(7, 11):
-        return_mask = asim_scheduling_probs['asim_return_period'] == asim_return_period
+        return_mask = asim_scheduling_probs[
+            'asim_return_period'] == asim_return_period
         # asim periods 7-10 = ctramp period 1
-        assert all(asim_scheduling_probs.loc[return_mask, 'return_period'] == 1)
+        assert all(
+            asim_scheduling_probs.loc[return_mask, 'return_period'] == 1)
     dif_9_mask = (asim_scheduling_probs['return_period'] >= 2)
     pd.testing.assert_series_equal(
         asim_scheduling_probs.loc[dif_9_mask, 'return_period'],
@@ -659,10 +743,12 @@ def create_scheduling_probs_and_alts(settings, los_settings):
     
     # pivot wide
     asim_scheduling_probs = asim_scheduling_probs.pivot(
-        index='purpose_id', columns=['asim_entry_period', 'asim_return_period'],
+        index='purpose_id',
+        columns=['asim_entry_period', 'asim_return_period'],
         values='asim_prob')
     asim_scheduling_probs.columns = [
-        str(col[0]) + '_' + str(col[1]) for col in asim_scheduling_probs.columns]
+        str(col[0]) + '_' + str(col[1])
+        for col in asim_scheduling_probs.columns]
 
     asim_scheduling_probs.to_csv(os.path.join(config_dir, output_probs_fname))
     tour_scheduling_alts.to_csv(
@@ -676,7 +762,8 @@ def assign_hh_p_to_tours(tours, persons):
     num_tours = len(tours)
 
     # assign persons and households to tours
-    tours['household_id'] = np.random.choice(num_tours, num_tours, replace=False)
+    tours['household_id'] = np.random.choice(
+        num_tours, num_tours, replace=False)
     tours['person_id'] = persons.set_index('household_id').reindex(
         tours['household_id'])['person_id'].values
 
@@ -733,7 +820,7 @@ if __name__ == '__main__':
 
         # create/update configs in place
         create_scheduling_probs_and_alts(settings, los_settings)
-        create_skims_and_tap_files(settings, new_mazs)
+        # create_skims_and_tap_files(settings, new_mazs)
         create_stop_freq_specs(settings)
         update_trip_purpose_probs(settings)
         create_trip_scheduling_duration_probs(settings, los_settings)
@@ -746,11 +833,13 @@ if __name__ == '__main__':
         period_settings = los_settings['skim_time_periods']
 
         # instantiate data matrix
-        num_periods = int(period_settings['time_window'] / period_settings['period_minutes'])
+        num_periods = int(
+            period_settings['time_window'] / period_settings['period_minutes'])
         periods = list(range(1, num_periods + 1))
         poes = list(settings['poes'].keys())
         num_poes = len(poes)
-        lane_types = list(settings['tours']['lane_shares_by_purpose']['work'].keys())
+        lane_types = list(
+            settings['tours']['lane_shares_by_purpose']['work'].keys())
         num_lanes = len(lane_types)
         num_obs = num_poes * num_lanes * num_periods
         x_df = pd.DataFrame({
@@ -764,10 +853,22 @@ if __name__ == '__main__':
         assert len(coef_df) == num_lanes
         
         # load existing wait times from last iteration
-        mazs = pd.read_csv(os.path.join(data_dir, settings['mazs_output_fname']))
-        wait_times_wide = mazs.sort_values('poe_id').loc[
-            mazs['MAZ'].isin([poe['maz_id'] for poe_id, poe in settings['poes'].items()]),
-            [col for col in mazs.columns if 'wait' in col] + ['poe_id']].set_index('poe_id')
+        mazs = pd.read_csv(
+            os.path.join(data_dir, settings['mazs_output_fname']))
+        wait_times_wide = mazs.sort_values('poe_id').loc[mazs['MAZ'].isin(
+            [poe['maz_id'] for poe_id, poe in settings['poes'].items()]),
+            [col for col in mazs.columns if 'wait' in col] + 
+            ['poe_id']].set_index('poe_id')
+        
+        # ctramp inputs didn't have ready lanes so we must
+        # create them and mark them as unavailable.
+        if not any(['ready' in col for col in wait_times_wide.columns]):
+            ready_cols = wait_times_wide[[
+                col for col in wait_times_wide.columns if 'std' in col]].copy()
+            ready_cols.columns = [
+                col.replace('std', 'ready') for col in ready_cols.columns]
+            ready_cols[:] = 999
+            wait_times_wide = pd.concat((wait_times_wide, ready_cols), axis=1)
 
         all_wait_times = [wait_times_wide]
         all_vol_dfs = []
@@ -777,8 +878,9 @@ if __name__ == '__main__':
 
             print('UPDATING POE WAIT TIMES: ITER {0}'.format(i))
 
-            process = subprocess.Popen(
-                ['python', '-u', 'simulation.py', '--settings_file', 'wait_time_mode.yaml'],
+            process = subprocess.Popen([
+                    'python', '-u', 'simulation.py', '--settings_file',
+                    'wait_time_mode.yaml'],
                 stdout=sys.stdout, stderr=subprocess.PIPE)
             _, stderr = process.communicate()
             if process.returncode != 0:
@@ -795,11 +897,14 @@ if __name__ == '__main__':
             vol_df['iter'] = i
             
             # compute vol per lane  
-            lane_df = pd.DataFrame(settings['poes']).T[['name','veh_lanes','ped_lanes']]
-            vol_df = vol_df.merge(lane_df, left_on='poe_id', right_index=True, how='left')
+            lane_df = pd.DataFrame(settings['poes']).T[[
+                'name','veh_lanes','ped_lanes']]
+            vol_df = vol_df.merge(
+                lane_df, left_on='poe_id', right_index=True, how='left')
             vol_df['vol_per_lane'] = vol_df['vol'] / vol_df['veh_lanes']
             ped_mask = vol_df['lane_type'] == 'ped'
-            vol_df.loc[ped_mask, 'vol_per_lane'] = vol_df.loc[ped_mask, 'vol'] / vol_df.loc[ped_mask, 'ped_lanes']
+            vol_df.loc[ped_mask, 'vol_per_lane'] = vol_df.loc[
+                ped_mask, 'vol'] / vol_df.loc[ped_mask, 'ped_lanes']
 
             # compute dummies
             vol_df['otay'] = (vol_df['name'] == 'Otay Mesa').astype(int)
@@ -828,21 +933,27 @@ if __name__ == '__main__':
             vol_df['wait_time'] = np.sum(x * W, axis=1).values
 
             # reshape the results and apply min bound to 0 minutes
-            wait_times_wide = vol_df.pivot(index=['poe_id'], columns=['lane_type', 'start'], values=['wait_time'])
+            wait_times_wide = vol_df.pivot(
+                index=['poe_id'], columns=['lane_type', 'start'],
+                values=['wait_time'])
             wait_times_wide.columns = [
-                '_wait_'.join([lane_type, str(start)]) for wt, lane_type, start in wait_times_wide.columns]
+                '_wait_'.join([lane_type, str(start)])
+                for wt, lane_type, start in wait_times_wide.columns]
             wait_times_wide = wait_times_wide[all_wait_times[0].columns]
-            wait_times_wide = wait_times_wide.where(wait_times_wide >= 0, 0)  # min wait time = 0
+            wait_times_wide = wait_times_wide.where(wait_times_wide >= 0, 0)
 
             # method of successive averaging
             msa_frac = 1.0 / i
             last_iter_wait_times = all_wait_times[-1]
-            last_iter_wait_times_weighted = last_iter_wait_times * (1.0 - msa_frac)
+            assert last_iter_wait_times.shape == wait_times_wide.shape
+            last_iter_wait_times_weighted = last_iter_wait_times * (
+                1.0 - msa_frac)
             wait_times_wide_weighted = wait_times_wide * msa_frac
-            new_wait_times_wide = last_iter_wait_times_weighted.add(wait_times_wide_weighted)
+            new_wait_times_wide = last_iter_wait_times_weighted.add(
+                wait_times_wide_weighted)
 
-            # replace averaged value with latest value where last iter had nulls
-            # bc we don't want to average null values
+            # replace averaged value with latest value where last iter had
+            # nulls bc we don't want to average null values
             new_wait_times_wide = new_wait_times_wide.where(
                 last_iter_wait_times != 999, wait_times_wide)
 
@@ -877,12 +988,18 @@ if __name__ == '__main__':
 
             all_vol_dfs.append(vol_df)
             all_wait_times.append(new_wait_times_wide)
-            mazs = mazs[[col for col in mazs.columns if col not in wait_times_wide.columns]]
-            mazs = pd.merge(mazs, wait_times_wide, left_on='poe_id', right_index=True, how='left')
-            mazs.to_csv(os.path.join(data_dir, settings['mazs_output_fname']), index=False)
+            mazs = mazs[[
+                col for col in mazs.columns
+                if col not in wait_times_wide.columns]]
+            mazs = pd.merge(
+                mazs, wait_times_wide, left_on='poe_id', right_index=True,
+                how='left')
+            mazs.to_csv(os.path.join(
+                data_dir, settings['mazs_output_fname']), index=False)
 
         all_wait_times = pd.concat(all_wait_times)
-        all_wait_times['iter'] = np.array(range(0, num_iters)).repeat(all_wait_times.index.nunique())
+        all_wait_times['iter'] = np.array(range(0, num_iters)).repeat(
+            all_wait_times.index.nunique())
         all_wait_times.to_csv('./data/all_wait_times.csv')
 
         pd.concat(all_vol_dfs).to_csv('./data/all_vol_dfs.csv')
