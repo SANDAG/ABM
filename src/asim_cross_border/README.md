@@ -1,4 +1,3 @@
-
 # SANDAG CrossBorder ActivitySim Implementation
 
 ## To run
