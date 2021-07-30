@@ -45,7 +45,6 @@ ORIGIN_ATTR_COLS_TO_USE:
 SEGMENTS:
   - work
   - school
-  - cargo
   - shop
   - visit
   - other

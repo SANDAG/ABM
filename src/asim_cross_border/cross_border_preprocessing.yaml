@@ -103,22 +103,21 @@ tours:
   purpose_ids:
     work: 0
     school: 1
-    cargo: 2
-    shop: 3
-    visit: 4
-    other: 5
+    shop: 2
+    visit: 3
+    other: 4
   purpose_shares:
     sentri:
       work: 0.094789
       school: 0.028892
-      cargo: 0.125968
+      # cargo: 0.125968
       shop: 0.521858
       visit: 0.093134
       other: 0.135358
     non_sentri:
       work: 0.211918
       school: 0.054489
-      cargo: 0.127754
+      # cargo: 0.127754
       shop: 0.379447
       visit: 0.082076
       other: 0.144317
@@ -129,11 +128,6 @@ tours:
       ready: 0.2
       ped: 0.5
     school:
-      std: 0.1
-      sentri: 0.2
-      ready: 0.2
-      ped: 0.5
-    cargo:
       std: 0.1
       sentri: 0.2
       ready: 0.2
@@ -164,7 +158,7 @@ wait_time_updating:
       vol: 2.138  # c4
       vol_om: -1.329  # c5
       vol_tc: -1.672  # c6
-      ea_constant: -17.017  #c7
+      ea_constant: -17.017  # c7
       ev_constant: -33.0233  # c8
       ea_om_constant: -29.1815  # c9
       ev_om_constant: -11.0587  # c10
@@ -176,7 +170,7 @@ wait_time_updating:
       vol: 2.12e-12  # c4
       vol_om: 1.253  # c5
       vol_tc: 0  # c6 - no ready lane at tecate
-      ea_constant: -1.211E-11  #c7
+      ea_constant: -1.211E-11  # c7
       ev_constant: 1.584E-12  # c8
       ea_om_constant: -7.7458  # c9
       ev_om_constant: -25.8116  # c10
@@ -188,7 +182,7 @@ wait_time_updating:
       vol: 0.217  # c4
       vol_om: -0.054  # c5
       vol_tc: 0  # c6 - no sentri lane at tecate
-      ea_constant: 0.1617  #c7
+      ea_constant: 0.1617  # c7
       ev_constant: 0.4187  # c8
       ea_om_constant: 0  # c9 - no EA sentri crossings observed at otay mesa
       ev_om_constant: -1.1282  # c10
@@ -200,7 +194,7 @@ wait_time_updating:
       vol: 0.2295  # c4
       vol_om: -0.1517  # c5
       vol_tc: 0.1184  # c6
-      ea_constant: 3.4151  #c7
+      ea_constant: 3.4151  # c7
       ev_constant: 1.9005  # c8
       ea_om_constant: -4.477  # c9
       ev_om_constant: -3.8144  # c10

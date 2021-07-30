@@ -70,11 +70,18 @@ def create_tours(settings):
 
     sentri_scaled_probs = np.subtract(np.array(list([sentri_share])), np.random.rand(num_tours, 1))
     sentri = (sentri_scaled_probs + 1).astype('i4')
+    
     tours['sentri_crossing'] = sentri
     for sentri, group in tours.groupby('sentri_crossing'):
+        
         num_xing_type_tours = len(group)
         crossing_type = crossing_type_dict[sentri]
         purpose_probs = OrderedDict(purpose_probs_by_sentri[crossing_type])
+        
+        # scale probs to so they sum to 1
+        prob_sum = sum(purpose_probs.values())
+        purpose_probs = {k: v / prob_sum for k,v in purpose_probs.items()}
+
         id_to_purpose = {i: purpose for i, purpose in enumerate(purpose_probs.keys())}
         purpose_cum_probs = np.array(list(purpose_probs.values())).cumsum()
         purpose_scaled_probs = np.subtract(purpose_cum_probs, np.random.rand(num_xing_type_tours, 1))
@@ -262,6 +269,13 @@ def create_stop_freq_specs(settings):
 
     probs_df = pd.read_csv(
         os.path.join(settings['data_dir'], settings['stop_frequency_input_fname']))
+
+    # drop cargo
+    if probs_df['Purpose'].max() == 5:
+        probs_df = probs_df.loc[probs_df['Purpose'] != 2, :]
+        probs_df.loc[probs_df['Purpose'] > 2, 'Purpose'] = probs_df.loc[
+            probs_df['Purpose'] > 2, 'Purpose'] - 1
+
     probs_df.rename(columns={'Outbound': 'out', 'Inbound': 'in'}, inplace=True)
     probs_df['alt'] = probs_df['out'].astype(str) + 'out_' + probs_df['in'].astype(str) + 'in'
 
@@ -319,11 +333,23 @@ def update_trip_purpose_probs(settings):
     probs_df = pd.read_csv(os.path.join(settings['data_dir'], settings['trip_purpose_probs_input_fname']))
     purpose_id_map = settings['tours']['purpose_ids']
     purp_id_to_name = {v: k for k, v in purpose_id_map.items()}
+
+    # drop cargo
+    if probs_df['TourPurp'].max() == 5:
+        probs_df = probs_df.loc[probs_df['TourPurp'] != 2, :]
+        del probs_df['StopPurp2']
+        probs_df.rename(columns={
+            'StopPurp3': 'StopPurp2',
+            'StopPurp4': 'StopPurp3',
+            'StopPurp5': 'StopPurp4'}, inplace=True)
+        probs_df.loc[probs_df['TourPurp'] > 2, 'TourPurp'] = probs_df.loc[
+            probs_df['TourPurp'] > 2, 'TourPurp'] - 1
+
     probs_df.rename(columns={
         'StopNum': 'trip_num', 'Multiple': 'multistop',
         'StopPurp0': purp_id_to_name[0], 'StopPurp1': purp_id_to_name[1],
         'StopPurp2': purp_id_to_name[2], 'StopPurp3': purp_id_to_name[3],
-        'StopPurp4': purp_id_to_name[4], 'StopPurp5': purp_id_to_name[5]}, inplace=True)
+        'StopPurp4': purp_id_to_name[4]}, inplace=True)
     probs_df['outbound'] = ~probs_df['Inbound'].astype(bool)
     probs_df['primary_purpose'] = probs_df['TourPurp'].map(purp_id_to_name)
     probs_df = probs_df[
@@ -377,13 +403,29 @@ def update_tour_purpose_reassignment_probs(settings):
 
     data_dir = settings['data_dir']
     config_dir = settings['config_dir']
+    tour_settings = settings['tours']
+    poes = [str(poe) for poe in list(settings['poes'].keys())]
+
     probs_df = pd.read_csv(
         os.path.join(data_dir, settings['tour_purpose_control_probs_input_fname']), 
         index_col=['Description', 'Purpose'])
-    probs_df = probs_df[[str(poe) for poe in list(settings['poes'].keys())]]
+    probs_df = probs_df.loc[:, poes]
     probs_df.reset_index(inplace=True)
     probs_df['Description'] = probs_df['Description'].str.lower()
-    probs_df.to_csv(os.path.join(config_dir, settings['tour_purpose_control_probs_output_fname']), index=False)
+    
+    # drop cargo
+    probs_df = probs_df.loc[probs_df['Description'] != 'cargo', :]
+    probs_df['Purpose'] = probs_df['Description'].map(tour_settings['purpose_ids'])
+
+    # adjust probs to ensure they sum to 1
+    for poe in poes:
+        probs_df[poe] = probs_df[poe] / probs_df[poe].sum()
+
+    probs_df.to_csv(
+        os.path.join(
+            config_dir,
+            settings['tour_purpose_control_probs_output_fname']),
+        index=False)
 
     return
 
@@ -463,9 +505,17 @@ def create_scheduling_probs_and_alts(settings, los_settings):
     scheduling_probs.rename(columns={
         'Purpose': 'purpose_id', 'EntryPeriod': 'entry_period',
         'ReturnPeriod': 'return_period', 'Percent': 'prob'}, inplace=True)
+
+    # drop cargo tours
+    scheduling_probs = scheduling_probs.loc[scheduling_probs['purpose_id'] != 2]
+    update_mask = scheduling_probs['purpose_id'] > 2
+    scheduling_probs.loc[update_mask, 'purpose_id'] = scheduling_probs.loc[update_mask, 'purpose_id'] - 1
+
+    # vars we'll need
     num_ctramp_periods = int(scheduling_probs['entry_period'].nunique())
     max_period = scheduling_probs['entry_period'].max()
-    num_purposes = scheduling_probs['purpose_id'].nunique()
+    assert num_ctramp_periods == max_period
+    num_purposes = int(scheduling_probs['purpose_id'].nunique())
 
     # create tour scheduling alts 
     period_settings = los_settings['skim_time_periods']
@@ -681,14 +731,14 @@ if __name__ == '__main__':
             data_dir, settings['households_output_fname']), index=False)
         persons.to_csv(os.path.join(
             data_dir, settings['persons_output_fname']), index=False)
-        #
-        # # create/update configs in place
+
+        # create/update configs in place
         create_scheduling_probs_and_alts(settings, los_settings)
-        # create_skims_and_tap_files(settings, new_mazs)
-        # create_stop_freq_specs(settings)
-        # update_trip_purpose_probs(settings)
+        create_skims_and_tap_files(settings, new_mazs)
+        create_stop_freq_specs(settings)
+        update_trip_purpose_probs(settings)
         create_trip_scheduling_duration_probs(settings, los_settings)
-        # update_tour_purpose_reassignment_probs(settings)
+        update_tour_purpose_reassignment_probs(settings)
 
     if update_wait_times:
 
@@ -740,19 +790,6 @@ if __name__ == '__main__':
 
             vol_df = tours.groupby(['poe_id','lane_type','start']).agg(
                 vol=('tour_id', 'count')).reset_index()
-
-            # tours['period'] = 'NA'  # default period is N/A
-            # tours.loc[tours['start'] <= 11, 'period'] = 'EA'  # this should be read from network_los.yaml
-            # tours.loc[tours['start'] > 37, 'period'] = 'EV'  # this should be read from network_los.yaml
-
-            # total_vol_df = tours.groupby(['poe_id', 'lane_type'])[['tour_id']].count().reset_index()
-            # total_vol_df.rename(columns={'tour_id': 'total_vol'}, inplace=True)
-
-            # period_vol_df = tours.groupby(['poe_id', 'lane_type', 'period'])[['tour_id']].count().reset_index()
-            # period_vol_df.rename(columns={'tour_id': 'vol'}, inplace=True)
-            # vol_df = pd.merge(period_vol_df, total_vol_df, on=['poe_id', 'lane_type'])
-            # generic_period = vol_df['period'] == 'NA'
-            # vol_df.loc[generic_period, 'vol'] = vol_df.loc[generic_period, 'total_vol']  # swap NA period vol for total
 
             # get missing rows and set vol to 0 for them
             vol_df = pd.merge(x_df, vol_df, how='left').fillna(0)
@@ -807,11 +844,11 @@ if __name__ == '__main__':
 
             # replace averaged value with latest value where last iter had nulls
             # bc we don't want to average null values
-            new_wait_times_wide = new_wait_times_wide.where(last_iter_wait_times != 999, wait_times_wide)
+            new_wait_times_wide = new_wait_times_wide.where(
+                last_iter_wait_times != 999, wait_times_wide)
 
             # some wait times must be hard-coded as nulls (999) to indicate
-            # unavailable lane types
-
+            # unavailable lane types. 
             # tecate has no sentri lane and no ready lane, and is only open
             # from 5am (period 11) to 11pm (period 47)
             unavail_tecate_cols = [

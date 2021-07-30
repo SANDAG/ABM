@@ -4,7 +4,6 @@ preprocessor:
   SPEC: stop_frequency_annotate_tours_preprocessor
   DF: tours_merged
 
-
 SEGMENT_COL: primary_purpose
 
 SPEC_SEGMENTS:
@@ -23,6 +22,3 @@ SPEC_SEGMENTS:
   - primary_purpose: other
     SPEC: stop_frequency_other.csv
     COEFFICIENTS: stop_frequency_coefficients_other.csv
-  - primary_purpose: cargo
-    SPEC: stop_frequency_cargo.csv
-    COEFFICIENTS: stop_frequency_coefficients_cargo.csv
