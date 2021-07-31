@@ -23,7 +23,7 @@ ActivitySim models can be re-estimated from estimation data bundles, which injec
 - Run with IPython to for easier debugging: `ipython -i cross_border_model.py -- -a` and then use `%debug` magic command if/when an error is thrown.
 - Each time you run with wait time mode activated (`-w`), the wait time columns in the land use table get updated. If you run preprocessing mode at the same time (`-p -w`), the first iteration of wait times will be based on CTRAMP inputs. If you run without preprocessing mode enabled, the first iteration of wait times will be based on whatever was already in the land use file.
 
-## Required inputs (not stored in repo):
+## Required inputs:
 
 ### ActivitySim
  - **land use** (e.g. "mazs_xborder.csv")
@@ -48,18 +48,18 @@ ActivitySim models can be re-estimated from estimation data bundles, which injec
 
 ### Preprocessor
 The preprocessor is mainly designed to convert old CTRAMP-formatted input/survey data into the formats needed by ActivitySim. 
-| CTRAMP input filenames | ActivitySim inputs created| Description | Preprocessor operation |
-|---|---|---|---|
-| <ul><li>mgra13_based_input2016.csv</li><li>crossBorder_supercolonia.csv</li><li>crossBorder_pointOfEntryWaitTime</li></ul>  | mazs_xborder.csv  | land use data | Append PoE IDs, PoE wait times, and colonia population accessibility. Add external MAZ rows corresponding to the external TAZs that appear in the traffic skims|
-| crossBorder_tourEntryAndReturn.csv | <ul><li>tour_scheduling_probs.csv</li><li>tour_departure_and_duration_alternatives.csv</li></ul> | tour scheduling probability lookup table| convert CTRAMP 40-period probabilities and alts into ActivtySim's 48-period format |
-|microMgraEquivMinutes.csv | maz_maz_walk.csv| microzone walk access skims (i.e. MAZ to MAZ)| rename columns, augment with external MAZs access|
-|microMgraTapEquivMinutes.csv| maz_tap_walk.csv | transit access skims (i.e. MAZ to TAP)| rename/remove columns, augment with external MAZ access |
-| transit_skims.omx | transit_skims_xborder.omx| transit skims (i.e. TAP to TAP)|  |
-| traffic_skims_\<TOD\>.omx | traffic_skims_xborder\<TOD\>.omx | traffic skims (TAZ to TAZ) by time of day [EA, AM, MD, PM, EV] | reindex omx matrices for 3d lookups |
-| crossBorder_stopFrequency.csv | <ul><li>stop_frequency_alternatives.csv</li><li>stop_frequency_coefficients_\<purpose\>.csv</li><li>stop_frequency_\<purpose\>.csv</li></ul> | stop frequency probability lookup | create stop frequency alts, segmented model specs, and coefficients files from CTRAMP inputs |
-|crossBorder_stopPurpose.csv|trip_purpose_probs.csv| trip purpose probability lookup table| rename columns, delete cargo probs|
-| <ul><li>crossBorder_outboundStopDuration.csv</li><li>crossBorder_inboundStopDuration.csv</li></ul>  | trip_scheduling_probs.csv | trip scheduling probability lookup table | combine inbound and outbound alts/probs |
-|crossBorder_tourPurpose_control.csv | tour_purpose_probs_by_poe.csv | tour purpose reassignment probability lookup table | rename cols, drop cargo probs |
+| CTRAMP input filenames | ActivitySim inputs created| ActivitySim location | Description | Preprocessor operation |
+|---|---|---|---|---|
+| <ul><li>mgra13_based_input2016.csv</li><li>crossBorder_supercolonia.csv</li><li>crossBorder_pointOfEntryWaitTime</li></ul>  | <ul><li>mazs_xborder.csv</ul></li>  | `data/` | land use data | Append PoE IDs, PoE wait times, and colonia population accessibility. Add external MAZ rows corresponding to the external TAZs that appear in the traffic skims|
+| <ul><li>crossBorder_tourEntryAndReturn.csv</ul></li> | <ul><li>tour_scheduling_probs.csv</li><li>tour_departure_and_duration_alternatives.csv</li></ul> | `configs/` |tour scheduling probability lookup table| convert CTRAMP 40-period probabilities and alts into ActivtySim's 48-period format |
+|<ul><li>microMgraEquivMinutes.csv </li></ul>| <ul><li>maz_maz_walk.csv</li></ul>| `data/` | microzone walk access skims (i.e. MAZ to MAZ)| rename columns, augment with external MAZs access|
+|<ul><li>microMgraTapEquivMinutes.csv</li></ul>| <ul><li>maz_tap_walk.csv</li></ul>| `data/` |transit access skims (i.e. MAZ to TAP)| rename/remove columns, augment with external MAZ access |
+| <ul><li>transit_skims.omx </li></ul>| <ul><li>transit_skims_xborder.omx</li></ul>| `data/` | transit skims (i.e. TAP to TAP)|  |
+| <ul><li>traffic_skims_\<TOD\>.omx </li></ul>| <ul><li>traffic_skims_xborder\<TOD\>.omx</li></ul> | `data/` | traffic skims (TAZ to TAZ) by time of day [EA, AM, MD, PM, EV] | reindex omx matrices for 3d lookups |
+| <ul><li>crossBorder_stopFrequency.csv | <ul><li>stop_frequency_alternatives.csv</li><li>stop_frequency_coefficients_\<purpose\>.csv</li><li>stop_frequency_\<purpose\>.csv</li></ul> | `configs/` | stop frequency probability lookup | create stop frequency alts, segmented model specs, and coefficients files from CTRAMP inputs |
+|<ul><li>crossBorder_stopPurpose.csv</li></ul>|<ul><li>trip_purpose_probs.csv</li></ul>| `configs/` | trip purpose probability lookup table| rename columns, delete cargo probs|
+| <ul><li>crossBorder_outboundStopDuration.csv</li><li>crossBorder_inboundStopDuration.csv</li></ul>  | <li><ul>trip_scheduling_probs.csv</li></ul> | `configs/` | trip scheduling probability lookup table | combine inbound and outbound alts/probs |
+|<ul><li>crossBorder_tourPurpose_control.csv</li></ul> | <ul><li>tour_purpose_probs_by_poe.csv </li></ul>| `configs/` | tour purpose reassignment probability lookup table | rename cols, drop cargo probs |
 
 ### Wait Time Updating
  - **land use** table with PoE wait time columns (e.g. "mazs_xborder.csv"). If the land use table doesn't have these columns yet, you'll have to run in preprocessing mode to generate them.
