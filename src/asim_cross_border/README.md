@@ -1,17 +1,18 @@
 # SANDAG CrossBorder ActivitySim Implementation
 
 ## To run
-1. (optional) Configure the preprocessor settings in **cross_border_preprocessing.yaml**
-2. (optional) Run the preprocessor: `python cross_border_model.py -p`
+1. Install ActivitySim from the `xborder` branch of the [SANDAG fork](https://github.com/SANDAG/activitysim/tree/xborder)
+2. (optional) Configure the preprocessor settings in **cross_border_preprocessing.yaml**
+3. (optional) Run the preprocessor: `python cross_border_model.py -p`
       - Only necessary if converting CTRAMP inputs to ActivitySim format. Only needs to be run once.
-3. (optional) Configure the border crossing wait time updater settings
+4. (optional) Configure the border crossing wait time updater settings
       - ActivitySim settings (e.g. number of processes, household sample size) in **configs/wait_time_mode.yaml**
       - Preprocessor settings (e.g. number of iterations) in **configs/settings.yaml**
-4. (optional) Update the border crossing wait times: `python cross_border_model.py -w`
+5. (optional) Update the border crossing wait times: `python cross_border_model.py -w`
       - If land use data does not yet have wait time columns (see below), you'll have to first run in preprocessing mode in order to generate the first set of wait times.
-5. (optional) Configure the main ActivitySim settings in **configs/settings.yaml**
+6. (optional) Configure the main ActivitySim settings in **configs/settings.yaml**
       - Settings you'll likely want to tweak: `household_sample_size`, `chunk_size`, `num_processes`
-6. Run ActivitySim `python cross_border_model.py -a`
+7. Run ActivitySim `python cross_border_model.py -a`
 
 ## Helpful tips:
 - You can execute any or all of the above processes at once by using multiple flags: `python cross_border_model.py -p -w -a`
