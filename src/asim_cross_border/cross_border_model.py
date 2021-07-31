@@ -9,6 +9,8 @@ import argparse
 import subprocess
 import itertools
 
+from activitysim.cli.run import add_run_args, run
+
 
 def compute_poe_accessibility(
         poe_id, colonias, colonia_pop_field, distance_param):
@@ -773,7 +775,7 @@ def assign_hh_p_to_tours(tours, persons):
 if __name__ == '__main__':
 
     # runtime args
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(prog='preprocessor')
     parser.add_argument(
         '-w', '--wait_times',
         action='store_true', help='Update POE wait times.')
@@ -790,7 +792,7 @@ if __name__ == '__main__':
     run_asim = args.asim
 
     # load settings
-    with open('cross_border_preprocessing.yaml') as f:
+    with open('configs/preprocessing.yaml') as f:
         settings = yaml.load(f, Loader=yaml.FullLoader)
         data_dir = settings['data_dir']
         config_dir = settings['config_dir']
@@ -820,7 +822,7 @@ if __name__ == '__main__':
 
         # create/update configs in place
         create_scheduling_probs_and_alts(settings, los_settings)
-        # create_skims_and_tap_files(settings, new_mazs)
+        create_skims_and_tap_files(settings, new_mazs)
         create_stop_freq_specs(settings)
         update_trip_purpose_probs(settings)
         create_trip_scheduling_duration_probs(settings, los_settings)
@@ -1007,14 +1009,15 @@ if __name__ == '__main__':
     if run_asim:
 
         print('RUNNING ACTIVITYSIM!')
-        process = subprocess.Popen(
-            ['python', '-u', 'simulation.py'],
-            stdout=sys.stdout, stderr=subprocess.PIPE)
-        _, stderr = process.communicate()
-        if process.returncode != 0:
-            raise subprocess.SubprocessError(stderr.decode())
+
+        # TODO: more elegant solution to reinstantiating argparser
+        # for activitysim
+        sys.argv = []
+        asim_parser = argparse.ArgumentParser(prog='ActivitySim')
+        add_run_args(asim_parser)
+        args = asim_parser.parse_args()
+
+        os.environ['MKL_NUM_THREADS'] = '1'
+
+        sys.exit(run(args))
         
-
-
-
-
