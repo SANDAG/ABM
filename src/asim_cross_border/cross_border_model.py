@@ -821,7 +821,7 @@ if __name__ == '__main__':
 
         # create/update configs in place
         create_scheduling_probs_and_alts(settings, los_settings)
-        # create_skims_and_tap_files(settings, new_mazs)
+        create_skims_and_tap_files(settings, new_mazs)
         create_stop_freq_specs(settings)
         update_trip_purpose_probs(settings)
         create_trip_scheduling_duration_probs(settings, los_settings)
