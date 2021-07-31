@@ -1009,9 +1009,8 @@ if __name__ == '__main__':
     if run_asim:
 
         print('RUNNING ACTIVITYSIM!')
-        process = subprocess.Popen([
-            'python', '-u', 'simulation.py', '--settings_file',
-            'wait_time_mode.yaml'],
+        process = subprocess.Popen(
+            ['python', '-u', 'simulation.py'],
             stdout=sys.stdout, stderr=subprocess.PIPE)
         _, stderr = process.communicate()
         if process.returncode != 0:
