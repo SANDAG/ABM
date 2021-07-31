@@ -26,7 +26,7 @@ ActivitySim models can be re-estimated from estimation data bundles, which injec
 ## Required inputs (not stored in repo):
 
 ### ActivitySim
- - **land_use** (e.g. "mazs_xborder.csv")
+ - **land use** (e.g. "mazs_xborder.csv")
     - custom columns (created by preprocessor):
        - `poe_id`: port of entry (PoE) associated with each MAZ, will be null for most rows.
        - `external_TAZ`: each PoE is associated with one internal and one external MAZ/TAZ, will be null except for internal MAZs with non-null PoE IDs.
@@ -62,4 +62,4 @@ The preprocessor is mainly designed to convert old CTRAMP-formatted input/survey
 |crossBorder_tourPurpose_control.csv | tour_purpose_probs_by_poe.csv | tour purpose reassignment probability lookup table | rename cols, drop cargo probs |
 
 ### Wait Time Updating
- - **land_use** with PoE wait time columns (e.g. "mazs_xborder.csv"). If the land use table doesn't have these columns yet, you'll have to run in preprocessing mode to generate them.
+ - **land use** table with PoE wait time columns (e.g. "mazs_xborder.csv"). If the land use table doesn't have these columns yet, you'll have to run in preprocessing mode to generate them.
