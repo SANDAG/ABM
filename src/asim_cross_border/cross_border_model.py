@@ -880,7 +880,6 @@ if __name__ == '__main__':
         for i in range(1, num_iters):
 
             print('UPDATING POE WAIT TIMES: ITER {0}'.format(i))
-
             process = subprocess.Popen([
                     'python', '-u', 'simulation.py', '--settings_file',
                     'wait_time_mode.yaml'],
@@ -1010,15 +1009,11 @@ if __name__ == '__main__':
     if run_asim:
 
         print('RUNNING ACTIVITYSIM!')
-
-        # TODO: more elegant solution to reinstantiating argparser
-        # for activitysim
-        sys.argv = []
-        asim_parser = argparse.ArgumentParser(prog='ActivitySim')
-        add_run_args(asim_parser)
-        args = asim_parser.parse_args()
-
-        os.environ['MKL_NUM_THREADS'] = '1'
-
-        sys.exit(run(args))
+        process = subprocess.Popen([
+            'python', '-u', 'simulation.py', '--settings_file',
+            'wait_time_mode.yaml'],
+            stdout=sys.stdout, stderr=subprocess.PIPE)
+        _, stderr = process.communicate()
+        if process.returncode != 0:
+            raise subprocess.SubprocessError(stderr.decode())
         
