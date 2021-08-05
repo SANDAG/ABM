@@ -514,6 +514,12 @@ Assignment matrices and resulting network flows are always in PCE.
             "inro.emme.traffic_assignment.sola_traffic_assignment")
         net_calc = gen_utils.NetworkCalculator(scenario)
 
+        if period in ["AM", "PM"]:
+            # For freeway links in AM and PM periods, convert VDF to type 25 
+            net_calc("vdf", "25", "vdf=10")
+            # For freeway links in AM and PM periods, convert VDF to type 26 
+            # net_calc("vdf", "26", "vdf=10")
+
         p = period.lower()
         assign_spec = self.base_assignment_spec(
             relative_gap, max_iterations, num_processors)
@@ -674,6 +680,12 @@ Assignment matrices and resulting network flows are always in PCE.
             "solutions.stochastic_traffic_assignment")
         net_calc = gen_utils.NetworkCalculator(scenario)
 
+        if period in ["AM", "PM"]:
+            # For freeway links in AM and PM periods, convert VDF to type 25 
+            net_calc("vdf", "25", "vdf=10")
+            # For freeway links in AM and PM periods, convert VDF to type 26 
+            # net_calc("vdf", "26", "vdf=10")
+            
         p = period.lower()
         assign_spec = self.base_assignment_spec(
             relative_gap, max_iterations, num_processors)
