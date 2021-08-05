@@ -1374,7 +1374,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
 		        # make speed on HOV lanes (70mph) the same as parallel GP lanes (65mph)
                 # - set speed back to posted speed - increase travel time by (speed_adj/speed_posted)
-                if link.type == 1 and link["@lane_restriction"] == 2:
+                if link.type == 1 and (link["@lane_restriction"] == 2 or link["@lane_restriction"] == 3):
                     speed_adj = link["@speed_adjusted"]
                     speed_posted = link["@speed_posted"]
                     if speed_adj>0:
@@ -1561,6 +1561,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         # fd22: cycle length 2.0
         # fd23: cycle length 2.5
         # fd24: cycle length 2.5 and metered ramp
+        # fd25: freeway node approach (alpha = 0.8, beta = 5.5)
+        # fd26: freeway node approach (alpha = 0.8, beta = 4)
         network.create_attribute("LINK", "green_to_cycle")
         network.create_attribute("LINK", "cycle")
         vdf_cycle_map = {1.25: 20, 1.5: 21, 2.0: 22, 2.5: 23}
@@ -1904,6 +1906,18 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             "(ul1 * (1.0 + 0.8 * put((volau + volad) / ul3) ** 4.0) +"
             "2.5/ 2 * (1-el1) ** 2 * (1.0 + 6.0 * ( (volau + volad) / el3 ) ** 2.0))"
             + reliability_tmplt.format(**parameters["road"]),
+            emmebank=emmebank)
+        # freeway fd25 (AM and PM only)
+        create_function(
+            "fd25",
+            "(ul1 * (1.0 + 0.8 * put((volau + volad) / ul3) ** 5.5))"
+            + reliability_tmplt.format(**parameters["freeway"]),
+            emmebank=emmebank)
+        # freeway fd26 (AM and PM only)
+        create_function(
+            "fd26",
+            "(ul1 * (1.0 + 0.8 * put((volau + volad) / ul3) ** 4))"
+            + reliability_tmplt.format(**parameters["freeway"]),
             emmebank=emmebank)
 
         set_extra_function_params(
