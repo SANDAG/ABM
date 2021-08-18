@@ -1561,8 +1561,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         # fd22: cycle length 2.0
         # fd23: cycle length 2.5
         # fd24: cycle length 2.5 and metered ramp
-        # fd25: freeway node approach (alpha = 0.8, beta = 5.5)
-        # fd26: freeway node approach (alpha = 0.8, beta = 4)
+        # fd25: freeway node approach AM and PM only
         network.create_attribute("LINK", "green_to_cycle")
         network.create_attribute("LINK", "cycle")
         vdf_cycle_map = {1.25: 20, 1.5: 21, 2.0: 22, 2.5: 23}
@@ -1910,13 +1909,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         # freeway fd25 (AM and PM only)
         create_function(
             "fd25",
-            "(ul1 * (1.0 + 0.8 * put((volau + volad) / ul3) ** 5.5))"
-            + reliability_tmplt.format(**parameters["freeway"]),
-            emmebank=emmebank)
-        # freeway fd26 (AM and PM only)
-        create_function(
-            "fd26",
-            "(ul1 * (1.0 + 0.8 * put((volau + volad) / ul3) ** 4))"
+            "(ul1 * (1.0 + 0.6 * put((volau + volad) / ul3) ** 4))"
             + reliability_tmplt.format(**parameters["freeway"]),
             emmebank=emmebank)
 
