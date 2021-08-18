@@ -515,10 +515,8 @@ Assignment matrices and resulting network flows are always in PCE.
         net_calc = gen_utils.NetworkCalculator(scenario)
 
         if period in ["AM", "PM"]:
-            # For freeway links in AM and PM periods, convert VDF to type 25 
+            # For freeway links in AM and PM periods, convert VDF to type 25
             net_calc("vdf", "25", "vdf=10")
-            # For freeway links in AM and PM periods, convert VDF to type 26 
-            # net_calc("vdf", "26", "vdf=10")
 
         p = period.lower()
         assign_spec = self.base_assignment_spec(
@@ -683,8 +681,6 @@ Assignment matrices and resulting network flows are always in PCE.
         if period in ["AM", "PM"]:
             # For freeway links in AM and PM periods, convert VDF to type 25 
             net_calc("vdf", "25", "vdf=10")
-            # For freeway links in AM and PM periods, convert VDF to type 26 
-            # net_calc("vdf", "26", "vdf=10")
             
         p = period.lower()
         assign_spec = self.base_assignment_spec(
