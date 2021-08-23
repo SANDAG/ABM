@@ -1,5 +1,5 @@
 SPEC: trip_mode_choice.csv
-COEFFICIENTS: trip_mode_choice_coeffs.csv
+COEFFICIENTS: trip_mode_choice_coefficients.csv
 COEFFICIENT_TEMPLATE: trip_mode_choice_coefficients_template.csv
 
 tvpb_mode_path_types:
