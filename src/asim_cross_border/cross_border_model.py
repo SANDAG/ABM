@@ -9,8 +9,6 @@ import argparse
 import subprocess
 import itertools
 
-from activitysim.cli.run import add_run_args, run
-
 
 def compute_poe_accessibility(
         poe_id, colonias, colonia_pop_field, distance_param):
@@ -1015,4 +1013,3 @@ if __name__ == '__main__':
         _, stderr = process.communicate()
         if process.returncode != 0:
             raise subprocess.SubprocessError(stderr.decode())
-        
