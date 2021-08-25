@@ -1,7 +1,7 @@
 # SANDAG CrossBorder ActivitySim Implementation
 
 ## To run
-1. Install ActivitySim from the `xborder` branch of the [SANDAG fork](https://github.com/SANDAG/activitysim/tree/xborder)
+1. Install ActivitySim from the `develop` branch of the [SANDAG fork](https://github.com/SANDAG/activitysim/tree/xborder)
 2. (optional) Configure the preprocessor settings in **configs/preprocessing.yaml**
 3. (optional) Run the preprocessor: `python cross_border_model.py -p`
       - Only necessary if converting CTRAMP inputs to ActivitySim format. Only needs to be run once.
