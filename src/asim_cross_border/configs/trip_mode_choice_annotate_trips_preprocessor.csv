@@ -56,8 +56,6 @@ vot-indexed skims,da_dist_skims,((odt_skims['SOV_NT_L_DIST'] * (_vot_bin_da == 1
 ,s3_time_skims,((odt_skims['HOV3_L_TIME'] * (_vot_bin_s3 == 1)) + (odt_skims['HOV3_M_TIME'] * (_vot_bin_s3 == 2)) + (odt_skims['HOV3_H_TIME'] * (_vot_bin_s3 == 3)))
 ,walk_time,od_skims['walkTime']
 ,walk_available,((walk_time < max_walk_time) * (walk_time > 0))
-,walk_transit_logsum,tvpb_logsum_odt['WTW']
-,walk_transit_available,walk_transit_logsum > -500
 ,density_measure,"reindex(land_use.PopEmpDenPerMi, df[ORIGIN])"
 ,density_bin,"pd.cut(density_measure, bins=[-np.inf] + wait_time_distribution_by_density_breaks + [np.inf], labels=[1,2,3,4,5]).astype(int)"
 ,taxi_wait_time_mean,"density_bin.map({k: v for k,v in taxi_wait_time_mean_by_density.items()})"
