@@ -107,6 +107,7 @@ CONSTANTS:
     - 5000
     - 15000
 
+TVPB_recipe: trip_mode_choice
 use_TVPB_constants: False
 
 # so far, we can use the same spec as for non-joint tours
