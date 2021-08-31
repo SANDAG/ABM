@@ -70,7 +70,7 @@ CREATE TABLE [dimension].[geography] (
     [taz_13_shape] geometry NULL,  -- model geographies are given geometries
     [luz_13] nvarchar(20) NOT NULL,
     [cicpa_2016] nvarchar(20) NOT NULL,
-    [cicpa_2016_name] nvarchar(50) NOT NULL,
+    [cicpa_2016_name] nvarchar(100) NOT NULL,
     [cocpa_2016] nvarchar(20) NOT NULL,
     [cocpa_2016_name] nvarchar(50) NOT NULL,
     [jurisdiction_2016] nvarchar(20) NOT NULL,
