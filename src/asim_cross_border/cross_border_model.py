@@ -470,28 +470,26 @@ def update_tour_purpose_reassignment_probs(settings):
     return
 
 
-def create_land_use_file(settings):
+def create_land_use_file(
+        settings, maz_id_field='mgra', poe_id_field='poe_id',
+        poe_access_field='colonia_pop_accessibility', colonia_pop_field='Population'):
 
     print('Creating land use (maz) table.')
 
     data_dir = settings['data_dir']
     maz_input_fname = settings['maz_input_fname']
-    maz_id_field = settings['maz_id_field']
-    poe_id_field = settings['poe_id_field']
-    poe_access_field = settings['poe_access_field']
     colonia_input_fname = settings['colonia_input_fname']
-    colonia_pop_field = settings['colonia_pop_field']
     distance_param = settings['distance_param']
 
     # load maz/mgra + colonia data
     colonias = pd.read_csv(os.path.join(data_dir, colonia_input_fname))
     mazs = pd.read_csv(os.path.join(data_dir, maz_input_fname))
-
-    
     mazs[poe_id_field] = -1
     mazs['original_MAZ'] = -1
     mazs['external_TAZ'] = -1
     mazs['external_MAZ'] = -1
+
+    # update maz table
     for poe_id, poe_attrs in settings['poes'].items():
 
         # get poe id for maz's that have one
