@@ -9,13 +9,13 @@
   DTS:DTSID="{26D3E2F8-CBA5-413D-962C-252E8F66C43F}"
   DTS:ExecutableType="Microsoft.Package"
   DTS:FailParentOnFailure="True"
-  DTS:LastModifiedProductVersion="14.0.3002.68"
+  DTS:LastModifiedProductVersion="15.0.2000.170"
   DTS:LocaleID="1033"
   DTS:MaxErrorCount="0"
   DTS:ObjectName="abm_14_0_1_trips"
   DTS:PackageType="5"
-  DTS:VersionBuild="309"
-  DTS:VersionGUID="{C9E8B1D6-A08C-4B5C-8EE8-E4A983B683F4}">
+  DTS:VersionBuild="310"
+  DTS:VersionGUID="{1CE6A6E1-BE55-4F9B-995B-1DBEBD99F99F}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -1341,15 +1341,15 @@
               DTS:DataType="3"
               DTS:TextQualified="True"
               DTS:ObjectName="SerialNo"
-              DTS:DTSID="{082B7010-4DDA-4F33-A447-00A96BA78353}"
+              DTS:DTSID="{ECB19989-2120-4A44-8D68-37219C1B49D9}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
               DTS:ColumnDelimiter="_x002C_"
-              DTS:DataType="16"
+              DTS:DataType="17"
               DTS:TextQualified="True"
               DTS:ObjectName="Trip"
-              DTS:DTSID="{4C92E1EA-7E43-4999-96C7-E224A9DC9F84}"
+              DTS:DTSID="{31E7AB24-1939-4DE7-A6D3-1484B85D56D9}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1357,7 +1357,7 @@
               DTS:DataType="4"
               DTS:TextQualified="True"
               DTS:ObjectName="EndTime"
-              DTS:DTSID="{B3923A87-1D69-485D-B018-EEB770995114}"
+              DTS:DTSID="{984EECAC-74D5-4CBA-AF5B-05A9C799FD9D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1365,7 +1365,7 @@
               DTS:DataType="4"
               DTS:TextQualified="True"
               DTS:ObjectName="StopDuration"
-              DTS:DTSID="{3D5155D5-1F64-4B70-8A8D-DEE2F07847A1}"
+              DTS:DTSID="{AD9A2FD7-BBBD-41CD-8100-26C771A732DC}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1373,7 +1373,7 @@
               DTS:DataType="16"
               DTS:TextQualified="True"
               DTS:ObjectName="Model"
-              DTS:DTSID="{6ABB0A6C-EF0C-4BE7-B77B-8085E3355A66}"
+              DTS:DTSID="{65F48136-27AB-4D80-8628-C1F044DE8E3A}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1381,7 +1381,7 @@
               DTS:DataType="4"
               DTS:TextQualified="True"
               DTS:ObjectName="StartTime"
-              DTS:DTSID="{0BB660BB-4C37-4B51-A71A-633EBCE192BE}"
+              DTS:DTSID="{E01C52E4-1461-4611-95B1-06B0F525F935}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1389,7 +1389,7 @@
               DTS:DataType="3"
               DTS:TextQualified="True"
               DTS:ObjectName="HomeZone"
-              DTS:DTSID="{7F0DE7AC-3586-4025-AA50-86C6CC75D9A9}"
+              DTS:DTSID="{511C9A59-6BC5-49E6-A4B0-509DDC9BB1BE}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1397,7 +1397,7 @@
               DTS:DataType="3"
               DTS:TextQualified="True"
               DTS:ObjectName="I"
-              DTS:DTSID="{48562D2B-B7AB-4633-8A9B-5F18D6894834}"
+              DTS:DTSID="{DD964DB7-4B43-4E47-ABEF-8EBCF004D1A4}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1405,7 +1405,7 @@
               DTS:DataType="3"
               DTS:TextQualified="True"
               DTS:ObjectName="J"
-              DTS:DTSID="{BBC3B7F0-96D4-49E9-AF80-D7A14D4D9F57}"
+              DTS:DTSID="{7A28C78C-86AB-4CAA-B9F6-BD46F1B83787}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1413,7 +1413,7 @@
               DTS:DataType="16"
               DTS:TextQualified="True"
               DTS:ObjectName="Person"
-              DTS:DTSID="{76D400DF-D7AF-4891-BBFA-7132506AEC91}"
+              DTS:DTSID="{851CAE5F-4C1A-42CE-B54A-9CD59C3D172E}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1421,7 +1421,7 @@
               DTS:DataType="16"
               DTS:TextQualified="True"
               DTS:ObjectName="Tour"
-              DTS:DTSID="{90D257C2-77A7-4E64-818E-0B7B85EB553E}"
+              DTS:DTSID="{B34BD1B8-881D-41C8-90AE-0B4516588B37}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1430,7 +1430,7 @@
               DTS:DataType="130"
               DTS:TextQualified="True"
               DTS:ObjectName="ActorType"
-              DTS:DTSID="{1453F3D6-9D62-4154-9742-B83133480D54}"
+              DTS:DTSID="{C2834029-7A1A-41F1-A9C2-F480D891E01E}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1439,7 +1439,7 @@
               DTS:DataType="130"
               DTS:TextQualified="True"
               DTS:ObjectName="TollAvailable"
-              DTS:DTSID="{3D1993A8-81B0-4227-87AD-BC4F49B556D6}"
+              DTS:DTSID="{9BD04261-D66E-4007-B8BB-0A38492DA5E1}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1448,7 +1448,7 @@
               DTS:DataType="130"
               DTS:TextQualified="True"
               DTS:ObjectName="OriginalTimePeriod"
-              DTS:DTSID="{82615423-890E-4218-B473-B0A9A1434D32}"
+              DTS:DTSID="{80200C13-0094-4CF1-ADC4-FBD89A247AAF}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1457,7 +1457,7 @@
               DTS:DataType="130"
               DTS:TextQualified="True"
               DTS:ObjectName="DPurp"
-              DTS:DTSID="{5A00C1FC-8AF2-423B-9C16-45FDCE1B2177}"
+              DTS:DTSID="{094D113D-89BD-4DC5-86F6-67907350C08D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1466,7 +1466,7 @@
               DTS:DataType="130"
               DTS:TextQualified="True"
               DTS:ObjectName="Mode"
-              DTS:DTSID="{6647F513-FA67-401A-80CF-AC177863F17B}"
+              DTS:DTSID="{826C0E3E-66EE-4397-AEF0-C6812998AD3A}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1475,7 +1475,7 @@
               DTS:DataType="130"
               DTS:TextQualified="True"
               DTS:ObjectName="TourType"
-              DTS:DTSID="{CA7BD40D-F426-47D7-B215-9A32AE85E4BD}"
+              DTS:DTSID="{B167061E-DB00-4A03-8247-916DC7EF3605}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1484,7 +1484,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Time"
-              DTS:DTSID="{664F44A4-B3EC-4D4D-8E31-1DE50F5F2680}"
+              DTS:DTSID="{B7D99FDC-5E2C-4B39-819F-FEE0EBA19516}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1493,7 +1493,7 @@
               DTS:DataType="130"
               DTS:TextQualified="True"
               DTS:ObjectName="TripMode"
-              DTS:DTSID="{1C065670-4501-4632-8364-4DF6E49EA937}"
+              DTS:DTSID="{83EA3B63-8E79-4A4B-B4CC-139170FA6BAB}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1502,7 +1502,7 @@
               DTS:DataType="130"
               DTS:TextQualified="True"
               DTS:ObjectName="OPurp"
-              DTS:DTSID="{07FE0F50-9A7E-44D2-878B-677FEE0AAD57}"
+              DTS:DTSID="{37A72333-E4A2-4FE5-AC1C-7B54924465B6}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1510,7 +1510,7 @@
               DTS:DataType="4"
               DTS:TextQualified="True"
               DTS:ObjectName="TIME"
-              DTS:DTSID="{74E216FB-7133-4BA9-966F-39B8FBDF80E1}"
+              DTS:DTSID="{88FF3C72-D40A-4E90-A1AC-ED190C163DDC}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1518,7 +1518,7 @@
               DTS:DataType="4"
               DTS:TextQualified="True"
               DTS:ObjectName="DIST"
-              DTS:DTSID="{9E7461EB-E4F7-4F00-BE31-6A3D0DE4D420}"
+              DTS:DTSID="{052BB891-AA39-43BD-AD51-8756C826CCF3}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1526,7 +1526,7 @@
               DTS:DataType="4"
               DTS:TextQualified="True"
               DTS:ObjectName="AOC"
-              DTS:DTSID="{764DE371-92DA-4C10-A765-D6F97407A6B1}"
+              DTS:DTSID="{5D947D86-D87E-4F79-A06C-63DB61124515}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1534,7 +1534,7 @@
               DTS:DataType="4"
               DTS:TextQualified="True"
               DTS:ObjectName="TOLLCOST"
-              DTS:DTSID="{D0A685EA-2687-49C7-91F1-A632699B82B8}"
+              DTS:DTSID="{6657CEF7-8494-4C50-B0F2-194EA69DC2CC}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -1542,7 +1542,7 @@
               DTS:DataType="16"
               DTS:TextQualified="True"
               DTS:ObjectName="TRIPS"
-              DTS:DTSID="{BFB1ED89-9CF6-4B73-B599-A6BE59DB2E16}"
+              DTS:DTSID="{FAD190F7-FB28-4465-BBE4-DAFD352F32AA}"
               DTS:CreationName="" />
           </DTS:FlatFileColumns>
         </DTS:ConnectionManager>
@@ -6528,7 +6528,7 @@
                   dataType="System.String"
                   description="The SQL command to be executed."
                   name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
                 <property
                   dataType="System.Int32"
                   description="Specifies the column code page to use when code page information is unavailable from the data source."
@@ -7022,7 +7022,7 @@
                   dataType="System.String"
                   description="The SQL command to be executed."
                   name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
                 <property
                   dataType="System.Int32"
                   description="Specifies the column code page to use when code page information is unavailable from the data source."
@@ -7520,7 +7520,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="airport_model_reference_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="6">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -7537,7 +7537,7 @@
       DTS:LocaleID="-1"
       DTS:ObjectName="airport_model_sql_cleanup"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -7558,7 +7558,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="airport_model_staging_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="6">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -7579,7 +7579,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="airport_model_trip_fact"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -9055,7 +9055,7 @@
                   dataType="System.String"
                   description="The SQL command to be executed."
                   name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
                 <property
                   dataType="System.Int32"
                   description="Specifies the column code page to use when code page information is unavailable from the data source."
@@ -9556,7 +9556,7 @@
                   dataType="System.String"
                   description="The SQL command to be executed."
                   name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
                 <property
                   dataType="System.Int32"
                   description="Specifies the column code page to use when code page information is unavailable from the data source."
@@ -9786,7 +9786,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="cross_border_model_reference_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="6">
+      DTS:ThreadHint="5">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -9824,7 +9824,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="cross_border_model_staging_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="6">
+      DTS:ThreadHint="5">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -9845,7 +9845,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="cross_border_model_tour_dimension"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="4">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -10595,7 +10595,7 @@
                   dataType="System.String"
                   description="The SQL command to be executed."
                   name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
                 <property
                   dataType="System.Int32"
                   description="Specifies the column code page to use when code page information is unavailable from the data source."
@@ -10953,7 +10953,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="cvm_model_reference_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="7">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -10970,7 +10970,7 @@
       DTS:LocaleID="-1"
       DTS:ObjectName="cvm_model_sql_cleanup"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="3">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -10991,7 +10991,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="cvm_model_staging_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="7">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -11012,7 +11012,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="cvm_model_tour_dimension"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="5">
+      DTS:ThreadHint="4">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -11040,7 +11040,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="cvm_model_trip_fact"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="3">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -11383,7 +11383,7 @@
                   dataType="System.String"
                   description="The SQL command to be executed."
                   name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
                 <property
                   dataType="System.Int32"
                   description="Specifies the column code page to use when code page information is unavailable from the data source."
@@ -11579,7 +11579,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="ee_model_reference_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="1">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -11617,7 +11617,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="ee_model_staging_table"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="1">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -12007,7 +12007,7 @@
                   dataType="System.String"
                   description="The SQL command to be executed."
                   name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
                 <property
                   dataType="System.Int32"
                   description="Specifies the column code page to use when code page information is unavailable from the data source."
@@ -12215,7 +12215,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="ei_model_reference_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="8">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -12232,7 +12232,7 @@
       DTS:LocaleID="-1"
       DTS:ObjectName="ei_model_sql_cleanup"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="1">
+      DTS:ThreadHint="3">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -12253,7 +12253,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="ei_model_staging_table"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="8">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -12274,7 +12274,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="ei_model_trip_fact"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="1">
+      DTS:ThreadHint="3">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -13396,7 +13396,7 @@
                   dataType="System.String"
                   description="The SQL command to be executed."
                   name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
                 <property
                   dataType="System.Int32"
                   description="Specifies the column code page to use when code page information is unavailable from the data source."
@@ -13905,7 +13905,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="ie_model_reference_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="8">
+      DTS:ThreadHint="4">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -13943,7 +13943,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="ie_model_staging_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="8">
+      DTS:ThreadHint="4">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -13964,7 +13964,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="ie_model_tour_dimension"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="6">
+      DTS:ThreadHint="3">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -14020,7 +14020,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="ij_model_constraints"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="4">
+      DTS:ThreadHint="2">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -17396,7 +17396,7 @@
                   dataType="System.String"
                   description="The SQL command to be executed."
                   name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
                 <property
                   dataType="System.Int32"
                   description="Specifies the column code page to use when code page information is unavailable from the data source."
@@ -17623,7 +17623,7 @@
                   dataType="System.String"
                   description="The SQL command to be executed."
                   name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
                 <property
                   dataType="System.Int32"
                   description="Specifies the column code page to use when code page information is unavailable from the data source."
@@ -18192,7 +18192,7 @@
                   dataType="System.String"
                   description="The SQL command to be executed."
                   name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
                 <property
                   dataType="System.Int32"
                   description="Specifies the column code page to use when code page information is unavailable from the data source."
@@ -18411,7 +18411,7 @@
                   dataType="System.String"
                   description="The SQL command to be executed."
                   name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
                 <property
                   dataType="System.Int32"
                   description="Specifies the column code page to use when code page information is unavailable from the data source."
@@ -18934,7 +18934,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="ij_model_reference_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="4">
+      DTS:ThreadHint="2">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -18972,7 +18972,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="ij_model_staging_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="4">
+      DTS:ThreadHint="2">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -18993,7 +18993,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="ij_model_tour_dimension"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="7">
+      DTS:ThreadHint="2">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -19045,7 +19045,7 @@
       DTS:LocaleID="-1"
       DTS:ObjectName="tour_dimension_null_reseed"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="4">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -19111,7 +19111,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="truck_model_constraints"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="3">
+      DTS:ThreadHint="7">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -19162,7 +19162,7 @@
                   dataType="System.String"
                   description="The SQL command to be executed."
                   name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
                 <property
                   dataType="System.Int32"
                   description="Specifies the column code page to use when code page information is unavailable from the data source."
@@ -19643,7 +19643,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="truck_model_reference_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="3">
+      DTS:ThreadHint="7">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -19664,7 +19664,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="truck_model_staging_table"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="3">
+      DTS:ThreadHint="7">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -19744,7 +19744,7 @@
                   dataType="System.String"
                   description="The SQL command to be executed."
                   name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
                 <property
                   dataType="System.Int32"
                   description="Specifies the column code page to use when code page information is unavailable from the data source."
@@ -19958,7 +19958,7 @@
                   dataType="System.String"
                   description="The SQL command to be executed."
                   name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
                 <property
                   dataType="System.Int32"
                   description="Specifies the column code page to use when code page information is unavailable from the data source."
@@ -21818,7 +21818,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="visitor_model_reference_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="5">
+      DTS:ThreadHint="3">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -21856,7 +21856,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="visitor_model_staging_tables"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="5">
+      DTS:ThreadHint="3">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -21877,7 +21877,7 @@
       DTS:MaxErrorCount="0"
       DTS:ObjectName="visitor_model_tour_dimension"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2017 RC1; © 2017 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="8">
+      DTS:ThreadHint="5">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
