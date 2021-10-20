@@ -31,7 +31,7 @@ def get_poe_wait_times(settings):
     num_poes = wait_times.poe.nunique()
     wait_times.rename(columns={
         'StandardWait': 'std_wait', 'SENTRIWait': 'sentri_wait',
-        'PedestrianWait':'ped_wait'}, inplace=True)
+        'PedestrianWait': 'ped_wait', 'ReadyWait': 'ready_wait'}, inplace=True)
     start_hour_mask = wait_times['StartPeriod'] > 16
     wait_times.loc[start_hour_mask, 'StartHour'] = wait_times.loc[
         start_hour_mask, 'StartHour'] + 12
@@ -53,7 +53,7 @@ def get_poe_wait_times(settings):
     # pivot wide
     wait_times_wide = wait_times.pivot(
         index='poe', columns='asim_start_period',
-        values=['std_wait','sentri_wait','ped_wait'])
+        values=['std_wait', 'sentri_wait', 'ped_wait', 'ready_wait'])
     wait_times_wide.columns = [
         '_'.join([top, str(bottom)])
         for top, bottom in wait_times_wide.columns]
@@ -62,30 +62,34 @@ def get_poe_wait_times(settings):
 
 
 def create_tours(settings):
-
+    print('Creating tours.')
     tour_settings = settings['tours']
-    crossing_type_dict = {0: 'non_sentri', 1: 'sentri'}
+    pass_type_dict = {0: 'sentri', 1: 'ready', 2: 'no_pass'}
     num_tours = tour_settings['num_tours']
-    sentri_share = tour_settings['sentri_share']
-    lane_shares_by_purpose = tour_settings['lane_shares_by_purpose']
-    purpose_probs_by_sentri = tour_settings['purpose_shares']
+    pass_shares = tour_settings['pass_shares']
+    purpose_probs_by_pass_type = tour_settings['purpose_shares_by_pass_type']
     
     tours = pd.DataFrame(
         index=range(num_tours), columns=[
-            'sentri_crossing', 'lane_type', 'lane_id', 'tour_type',
+            'pass_type', 'tour_type',
             'purpose_id'])
     tours.index.name = 'tour_id'
 
-    sentri_scaled_probs = np.subtract(
-        np.array(list([sentri_share])), np.random.rand(num_tours, 1))
-    sentri = (sentri_scaled_probs + 1).astype('i4')
+    # assign pass types
+    pass_prob_sum = sum(pass_shares.values())
+    pass_probs = {k: v / pass_prob_sum for k, v in pass_shares.items()}
+    id_to_pass = pass_type_dict
+    pass_cum_probs = np.array(list(pass_probs.values())).cumsum()
+    pass_scaled_probs = np.subtract(
+       pass_cum_probs, np.random.rand(num_tours, 1))
+    pass_type_ids = np.argmax((pass_scaled_probs + 1.0).astype('i4'), axis=1)
     
-    tours['sentri_crossing'] = sentri
-    for sentri, group in tours.groupby('sentri_crossing'):
+    tours['pass_type_id'] = pass_type_ids
+    tours['pass_type'] = tours['pass_type_id'].map(pass_type_dict)
+    for pass_type, group in tours.groupby('pass_type'):
         
-        num_xing_type_tours = len(group)
-        crossing_type = crossing_type_dict[sentri]
-        purpose_probs = OrderedDict(purpose_probs_by_sentri[crossing_type])
+        num_pass_type_tours = len(group)
+        purpose_probs = OrderedDict(purpose_probs_by_pass_type[pass_type])
         
         # scale probs to so they sum to 1
         prob_sum = sum(purpose_probs.values())
@@ -95,7 +99,7 @@ def create_tours(settings):
             i: purpose for i, purpose in enumerate(purpose_probs.keys())}
         purpose_cum_probs = np.array(list(purpose_probs.values())).cumsum()
         purpose_scaled_probs = np.subtract(
-            purpose_cum_probs, np.random.rand(num_xing_type_tours, 1))
+            purpose_cum_probs, np.random.rand(num_pass_type_tours, 1))
         purpose = np.argmax((purpose_scaled_probs + 1.0).astype('i4'), axis=1)
         group['purpose_id'] = purpose
         tours.loc[group.index, 'purpose_id'] = purpose
@@ -110,23 +114,11 @@ def create_tours(settings):
     tours['tour_num'] = 1
     tours['tour_count'] = 1
 
-    for purpose, df in tours.groupby('tour_type'):
-        lane_probs = OrderedDict(lane_shares_by_purpose[purpose])
-        id_to_lane = {i: lane for i, lane in enumerate(lane_probs.keys())}
-        lane_cum_probs = np.array(list(lane_probs.values())).cumsum()
-        lane_scaled_probs = np.subtract(
-            lane_cum_probs, np.random.rand(len(df), 1))
-        lane_id = np.argmax((lane_scaled_probs + 1.0).astype('i4'), axis=1)
-        df['lane_id'] = lane_id
-        df['lane_type'] = df['lane_id'].map(id_to_lane)
-        tours.loc[df.index, 'lane_id'] = df['lane_id']
-        tours.loc[df.index, 'lane_type'] = df['lane_type']
-
     return tours
 
 
 def create_households(settings):
-
+    print("Creating households.")
     tour_settings = settings['tours']
     num_tours = tour_settings['num_tours']
 
@@ -138,6 +130,7 @@ def create_households(settings):
 
 def create_persons(settings, num_households):
 
+    print("Creating persons")
     # one person per household
     persons = pd.DataFrame({'person_id': range(num_households)})
     persons['household_id'] = np.random.choice(
@@ -290,7 +283,7 @@ def create_skims_and_tap_files(settings, new_mazs=None):
 
 
 def create_stop_freq_specs(settings):
-
+    print("Creating stop frequency alts and probability lookups.")
     probs_df = pd.read_csv(os.path.join(
         settings['data_dir'], settings['stop_frequency_input_fname']))
 
@@ -360,7 +353,7 @@ def create_stop_freq_specs(settings):
 
 
 def update_trip_purpose_probs(settings):
-
+    print("Creating trip purpose probability lookup table.")
     probs_df = pd.read_csv(os.path.join(
         settings['data_dir'], settings['trip_purpose_probs_input_fname']))
     purpose_id_map = settings['tours']['purpose_ids']
@@ -395,7 +388,7 @@ def update_trip_purpose_probs(settings):
 
 
 def create_trip_scheduling_duration_probs(settings, los_settings):
-
+    print("Creating trip scheduling probability lookup table.")
     data_dir = settings['data_dir']
     config_dir = settings['config_dir']
     period_settings = los_settings['skim_time_periods']
@@ -440,6 +433,7 @@ def create_trip_scheduling_duration_probs(settings, los_settings):
 
 def update_tour_purpose_reassignment_probs(settings):
 
+    print("Creating tour purpose by POE control file.")
     data_dir = settings['data_dir']
     config_dir = settings['config_dir']
     tour_settings = settings['tours']
@@ -535,6 +529,7 @@ def create_land_use_file(
 
 def create_scheduling_probs_and_alts(settings, los_settings):
 
+    print("Creating tour scheduling probability lookup and alts tables.")
     config_dir = settings['config_dir']
     data_dir = settings['data_dir']
     input_fname = settings['tour_scheduling_probs_input_fname']
@@ -606,7 +601,7 @@ def create_scheduling_probs_and_alts(settings, los_settings):
         (scheduling_probs, missing_df), ignore_index=True)
     scheduling_probs = scheduling_probs.sort_values(
         ['purpose_id','return_period','entry_period']).reset_index(drop=True)
-    assert scheduling_probs['prob'].sum() == num_purposes
+    assert np.isclose(scheduling_probs['prob'].sum(), num_purposes)
 
     # compute expansion factor for reach row based on the ctramp period. this
     # will be used to convert 40-period probabilities to 48-period probs.
@@ -700,7 +695,7 @@ def create_scheduling_probs_and_alts(settings, los_settings):
         asim_scheduling_probs.loc[
             nonzero_divisor_mask, 'asim_prob'] / asim_scheduling_probs.loc[
             nonzero_divisor_mask, 'prob_divisor']
-    assert asim_scheduling_probs['asim_prob'].sum() == num_purposes
+    assert np.isclose(asim_scheduling_probs['asim_prob'].sum(), num_purposes)
 
 
     # sanity check entry periods
