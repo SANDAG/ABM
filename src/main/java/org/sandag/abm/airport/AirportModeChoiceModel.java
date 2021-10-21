@@ -225,6 +225,7 @@ public class AirportModeChoiceModel
     	dmu.setModeMgraMap(modeMgraMap);
     	dmu.setMgraIndexMap();
     	dmu.setTravelTimeArraySize();
+    	dmu.setWalkAccessTransitLogsumAirportAccessPointToTerminalArraySize();
     }
 
     /**
@@ -375,7 +376,23 @@ public class AirportModeChoiceModel
             		dmu.setRidehailTravelDistanceLocation2(rideHailModel.getUtilities()[1]);
             		dmu.setRidehailTravelTimeLocation2(rideHailModel.getUtilities()[0]);
             	}
-            
+            	
+            	// calculate the walkTransitLogsum from airport access point to terminal
+            	int airportAccessPointMgra = dmu.mode_mgra_map.get(mode);
+            	
+            	int airportAccessPointMgra_index = dmu.mgra_index_map.get(airportAccessPointMgra);
+            	
+            	if (direction == 0){ //departure
+            		dmu.setDmuIndexValues(party.getID(), airportAccessPointMgra, dmu.getTerminalMgra());
+            		logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, airportAccessPointMgra, dmu.getTerminalMgra(), period, party.getDebugChoiceModels());
+                } else { //arrival
+                	dmu.setDmuIndexValues(party.getID(), dmu.getTerminalMgra(), airportAccessPointMgra);
+                	logsumHelper.setWtwTripMcDmuAttributes( mcDmuObject, dmu.getTerminalMgra(), airportAccessPointMgra, period, party.getDebugChoiceModels());
+                }
+            	
+            	walkTransitLogsum = mcDmuObject.getTransitLogSum(McLogsumsCalculator.WTW);
+            	dmu.setWalkAccessTransitLogsumAirportAccessPointToTerminal(airportAccessPointMgra_index, direction, walkTransitLogsum);
+                
             }
         	
         	dmu.setDmuIndexValues(party.getID(), origTaz, destTaz);
