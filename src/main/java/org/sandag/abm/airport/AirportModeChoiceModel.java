@@ -55,6 +55,8 @@ public class AirportModeChoiceModel
     private boolean							  debugChoiceModel;
     private int								  debugPartyID;
     
+    private static double 			WORST_UTILITY = -500;
+    
     /**
      * Constructor
      * 
@@ -556,11 +558,9 @@ public class AirportModeChoiceModel
                 		
                 		double[][] walkTransitTapPairs_AP2Term = logsumHelper.getBestWtwTripTaps();
                 		
-                		//pick transit path from N-paths
-                        float rn = new Double(party.getRandom()).floatValue();
-                    	int pathIndex = logsumHelper.chooseTripPath(rn, walkTransitTapPairs_AP2Term, party.getDebugChoiceModels(), logger);
-                    	if (pathIndex < 0) 
-                    	{
+                		if (mcDmuObject.getTransitLogSum(McLogsumsCalculator.WTW) < WORST_UTILITY)
+                		{
+                			// if there is no transit path from the transit network, set taps to 0
                     		int boardTap = (int) 0;
                         	int alightTap = (int) 0;
                         	int set = (int) -1;
@@ -568,17 +568,30 @@ public class AirportModeChoiceModel
                         	party.setAP2TerminalAlightTap(alightTap);
                         	party.setAP2TerminalSet(set);
                     	}
-                    	else
-                    	{
-                    		int boardTap = (int) walkTransitTapPairs_AP2Term[pathIndex][0];
-                        	int alightTap = (int) walkTransitTapPairs_AP2Term[pathIndex][1];
-                        	int set = (int) walkTransitTapPairs_AP2Term[pathIndex][2];
-                        	party.setAP2TerminalBoardTap(boardTap);
-                        	party.setAP2TerminalAlightTap(alightTap);
-                        	party.setAP2TerminalSet(set);
-                    	}
-                    	
-                        //party.setAPtoTermBestWtwTapPairs(walkTransitTapPairs_AP2Term);
+                		else
+                		{
+                			//pick transit path from N-paths
+                            float rn = new Double(party.getRandom()).floatValue();
+                        	int pathIndex = logsumHelper.chooseTripPath(rn, walkTransitTapPairs_AP2Term, party.getDebugChoiceModels(), logger);
+                        	if (pathIndex < 0) 
+                        	{
+                        		int boardTap = (int) 0;
+                            	int alightTap = (int) 0;
+                            	int set = (int) -1;
+                            	party.setAP2TerminalBoardTap(boardTap);
+                            	party.setAP2TerminalAlightTap(alightTap);
+                            	party.setAP2TerminalSet(set);
+                        	}
+                        	else
+                        	{
+                        		int boardTap = (int) walkTransitTapPairs_AP2Term[pathIndex][0];
+                            	int alightTap = (int) walkTransitTapPairs_AP2Term[pathIndex][1];
+                            	int set = (int) walkTransitTapPairs_AP2Term[pathIndex][2];
+                            	party.setAP2TerminalBoardTap(boardTap);
+                            	party.setAP2TerminalAlightTap(alightTap);
+                            	party.setAP2TerminalSet(set);
+                        	}
+                		}
                 	}
                 	else
                 	{
@@ -586,30 +599,41 @@ public class AirportModeChoiceModel
                
                 		double[][] walkTransitTapPairs_AP2Term = logsumHelper.getBestWtwTripTaps();
                 		
-                		//pick transit path from N-paths
-                        float rn = new Double(party.getRandom()).floatValue();
-                    	int pathIndex = logsumHelper.chooseTripPath(rn, walkTransitTapPairs_AP2Term, party.getDebugChoiceModels(), logger);
-                    	
-                    	if (pathIndex < 0) 
-                    	{
-                    		int boardTap = (int) 0;
+                		if (mcDmuObject.getTransitLogSum(McLogsumsCalculator.WTW) < WORST_UTILITY)
+                		{
+                			// if there is no transit path from the transit network, set taps to 0
+                			int boardTap = (int) 0;
                         	int alightTap = (int) 0;
                         	int set = (int) -1;
                         	party.setAP2TerminalBoardTap(boardTap);
                         	party.setAP2TerminalAlightTap(alightTap);
                         	party.setAP2TerminalSet(set);
-                    	}
-                    	else
-                    	{
-                    		int boardTap = (int) walkTransitTapPairs_AP2Term[pathIndex][0];
-                        	int alightTap = (int) walkTransitTapPairs_AP2Term[pathIndex][1];
-                        	int set = (int) walkTransitTapPairs_AP2Term[pathIndex][2];
-                        	party.setAP2TerminalBoardTap(boardTap);
-                        	party.setAP2TerminalAlightTap(alightTap);
-                        	party.setAP2TerminalSet(set);
-                    	}
-                    	
-                        //party.setAPtoTermBestWtwTapPairs(walkTransitTapPairs_AP2Term);
+                		}
+                		else
+                		{
+                			//pick transit path from N-paths
+                            float rn = new Double(party.getRandom()).floatValue();
+                        	int pathIndex = logsumHelper.chooseTripPath(rn, walkTransitTapPairs_AP2Term, party.getDebugChoiceModels(), logger);
+                        	
+                        	if (pathIndex < 0) 
+                        	{
+                        		int boardTap = (int) 0;
+                            	int alightTap = (int) 0;
+                            	int set = (int) -1;
+                            	party.setAP2TerminalBoardTap(boardTap);
+                            	party.setAP2TerminalAlightTap(alightTap);
+                            	party.setAP2TerminalSet(set);
+                        	}
+                        	else
+                        	{
+                        		int boardTap = (int) walkTransitTapPairs_AP2Term[pathIndex][0];
+                            	int alightTap = (int) walkTransitTapPairs_AP2Term[pathIndex][1];
+                            	int set = (int) walkTransitTapPairs_AP2Term[pathIndex][2];
+                            	party.setAP2TerminalBoardTap(boardTap);
+                            	party.setAP2TerminalAlightTap(alightTap);
+                            	party.setAP2TerminalSet(set);
+                        	}
+                		}
                 	}
                 }
                 
