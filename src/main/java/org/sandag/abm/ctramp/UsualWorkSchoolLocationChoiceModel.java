@@ -293,8 +293,12 @@ public class UsualWorkSchoolLocationChoiceModel
         				startIndex = startEndIndices[0];
         				endIndex = startEndIndices[1];
 
+       					if(innerLoop==1) {
+        					resetWorkLocationResults(startIndex,endIndex,householdDataManager);
+        				}
+
         				//check if there's work to do (JEF)
-        				if(innerLoop>0 && workLocationResultsOK(startIndex, endIndex, householdDataManager))
+        				if(workLocationResultsOK(startIndex, endIndex, householdDataManager))
         					continue;
         				
         				if (useNewSoaMethod)
@@ -504,8 +508,11 @@ public class UsualWorkSchoolLocationChoiceModel
         				startIndex = startEndIndices[0];
         				endIndex = startEndIndices[1];
         				
+       					if(innerLoop==1) {
+        					resetSchoolLocationResults(startIndex,endIndex,householdDataManager);
+        				}
         				//check if there's work to do (JEF)
-        				if(innerLoop>0 && schoolLocationResultsOK(startIndex, endIndex, householdDataManager))
+        				if( schoolLocationResultsOK(startIndex, endIndex, householdDataManager))
         					continue;
 
         				if (useNewSoaMethod)
@@ -926,6 +933,68 @@ public class UsualWorkSchoolLocationChoiceModel
     	return true;
     }
    
+       /**
+     * Reset work location choice results (before next shadow pricing iteration)
+     * @param startIndex
+     * @param endIndex
+     * @param householdDataManager
+     */
+    public void resetWorkLocationResults(int startIndex, int endIndex, HouseholdDataManagerIf householdDataManager) {
+    	
+    	
+    	// get the array of households
+        Household[] householdArray = householdDataManager.getHhArray(startIndex, endIndex);
     
+        //iterate through hhs
+        for(Household thisHousehold:householdArray) {
+    	
+        	Person[] persons = thisHousehold.getPersons();
+    	
+        	//iterate through persons
+	        for(int k=1;k<persons.length;++k) {
+    		
+	        	Person p = persons[k];
+	        	
+	            // skip person if they are not a worker
+	            if (p.getPersonIsWorker() != 1)
+	            	continue;
+	            
+	            p.setWorkLocation(0);
+	        }
+        }
+    
+    }
+    
+    
+  
+    /**
+     * Reset school locations to zero (before next shadow pricing iteration)
+     * @param startIndex
+     * @param endIndex
+     * @param householdDataManager
+     */
+    public void resetSchoolLocationResults(int startIndex, int endIndex, HouseholdDataManagerIf householdDataManager) {
+    	
+    	
+    	// get the array of households
+        Household[] householdArray = householdDataManager.getHhArray(startIndex, endIndex);
+    
+        //iterate through hhs
+        for(Household thisHousehold:householdArray) {
+    	
+        	Person[] persons = thisHousehold.getPersons();
+    	
+        	//iterate through persons
+	        for(int k=1;k<persons.length;++k) {
+    		
+	        	Person p = persons[k];
+	        	
+	            if ((p.getPersonIsPreschoolChild() == 1 || p.getPersonIsStudentNonDriving() == 1
+	                    || p.getPersonIsStudentDriving() == 1 || p.getPersonIsUniversityStudent() == 1))
+	            	p.setSchoolLoc(0);
+	
+	        }
+        }
+    }
 
 }
