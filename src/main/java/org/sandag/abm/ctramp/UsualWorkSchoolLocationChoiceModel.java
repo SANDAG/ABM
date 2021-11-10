@@ -967,6 +967,7 @@ public class UsualWorkSchoolLocationChoiceModel
 	        }
         }
     
+        householdDataManager.setHhArray(householdArray, startIndex);
     }
     
     
@@ -999,6 +1000,8 @@ public class UsualWorkSchoolLocationChoiceModel
 	
 	        }
         }
+        householdDataManager.setHhArray(householdArray, startIndex);
+
     }
 
 }
