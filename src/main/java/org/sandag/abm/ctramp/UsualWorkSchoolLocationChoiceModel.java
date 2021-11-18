@@ -250,7 +250,6 @@ public class UsualWorkSchoolLocationChoiceModel
         long initTime = System.currentTimeMillis();
 
         // shadow pricing iterations
-        int last_iter=-1;
         for (int iter = 0; iter < workerDcSizeObj.getMaxShadowPriceIterations(); iter++)
         {
 
@@ -294,7 +293,7 @@ public class UsualWorkSchoolLocationChoiceModel
         				startIndex = startEndIndices[0];
         				endIndex = startEndIndices[1];
 
-       					if(last_iter!=iter) {
+       					if (innerLoop == 1) {
         					resetWorkLocationResults(startIndex,endIndex,householdDataManager);
         				}
 
@@ -389,7 +388,6 @@ public class UsualWorkSchoolLocationChoiceModel
             householdDataManager.setUwslRandomCount(currentIter);
 
             currentIter++;
-            last_iter=iter;
 
         } // iter
 
@@ -466,7 +464,6 @@ public class UsualWorkSchoolLocationChoiceModel
         long initTime = System.currentTimeMillis();
 
         // shadow pricing iterations
-        int last_iter=-1;
         for (int iter = 0; iter < schoolDcSizeObj.getMaxShadowPriceIterations(); iter++)
         {
 
@@ -511,7 +508,7 @@ public class UsualWorkSchoolLocationChoiceModel
         				startIndex = startEndIndices[0];
         				endIndex = startEndIndices[1];
         				
-       					if(last_iter!=iter) {
+       					if (innerLoop == 1) {
         					resetSchoolLocationResults(startIndex,endIndex,householdDataManager);
         				}
         				//check if there's work to do (JEF)
@@ -610,7 +607,6 @@ public class UsualWorkSchoolLocationChoiceModel
             householdDataManager.setUwslRandomCount(currentIter);
 
             currentIter++;
-            last_iter=iter;
 
         } // iter
 
