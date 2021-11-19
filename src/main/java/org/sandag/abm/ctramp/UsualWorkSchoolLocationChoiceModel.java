@@ -293,7 +293,7 @@ public class UsualWorkSchoolLocationChoiceModel
         				startIndex = startEndIndices[0];
         				endIndex = startEndIndices[1];
 
-       					if(innerLoop==1) {
+       					if (innerLoop == 1) {
         					resetWorkLocationResults(startIndex,endIndex,householdDataManager);
         				}
 
@@ -508,7 +508,7 @@ public class UsualWorkSchoolLocationChoiceModel
         				startIndex = startEndIndices[0];
         				endIndex = startEndIndices[1];
         				
-       					if(innerLoop==1) {
+       					if (innerLoop == 1) {
         					resetSchoolLocationResults(startIndex,endIndex,householdDataManager);
         				}
         				//check if there's work to do (JEF)
@@ -963,6 +963,7 @@ public class UsualWorkSchoolLocationChoiceModel
 	        }
         }
     
+        householdDataManager.setHhArray(householdArray, startIndex);
     }
     
     
@@ -995,6 +996,8 @@ public class UsualWorkSchoolLocationChoiceModel
 	
 	        }
         }
+        householdDataManager.setHhArray(householdArray, startIndex);
+
     }
 
 }
