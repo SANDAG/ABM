@@ -1,4 +1,16 @@
 coefficient_name,value,constrain
+coef_otay_mesa_work,-0.651,F
+coef_otay_mesa_school,0.932,F
+coef_otay_mesa_shop,0.170,F
+coef_otay_mesa_visit_other,0.712,F
+coef_tecate_work,-2.192,F
+coef_tecate_school,0,F
+coef_tecate_shop,-1.302,F
+coef_tecate_visit_other,1.404,F
+coef_mc_logsum_work,0.180,F
+coef_mc_logsum_school,0.252,F
+coef_mc_logsum_shop,0.234,F
+coef_mc_logsum_visit_other,0.134,F
 coef_dist,-0.1250,F
 coef_otay_mesa_mandatory,-0.8960,F
 coef_otay_mesa_non_mandatory,-1.4960,F
