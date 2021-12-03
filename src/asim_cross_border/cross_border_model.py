@@ -431,39 +431,6 @@ def create_trip_scheduling_duration_probs(settings, los_settings):
     return
 
 
-def update_tour_purpose_reassignment_probs(settings):
-
-    print("Creating tour purpose by POE control file.")
-    data_dir = settings['data_dir']
-    config_dir = settings['config_dir']
-    tour_settings = settings['tours']
-    poes = [str(poe) for poe in list(settings['poes'].keys())]
-
-    probs_df = pd.read_csv(os.path.join(
-        data_dir, settings['tour_purpose_control_probs_input_fname']), 
-        index_col=['Description', 'Purpose'])
-    probs_df = probs_df.loc[:, poes]
-    probs_df.reset_index(inplace=True)
-    probs_df['Description'] = probs_df['Description'].str.lower()
-    
-    # drop cargo
-    probs_df = probs_df.loc[probs_df['Description'] != 'cargo', :]
-    probs_df['Purpose'] = probs_df['Description'].map(
-        tour_settings['purpose_ids'])
-
-    # adjust probs to ensure they sum to 1
-    for poe in poes:
-        probs_df[poe] = np.round(probs_df[poe] / probs_df[poe].sum(), 3)
-
-    probs_df.to_csv(
-        os.path.join(
-            config_dir,
-            settings['tour_purpose_control_probs_output_fname']),
-        index=False)
-
-    return
-
-
 def create_land_use_file(
         settings, maz_id_field='mgra', poe_id_field='poe_id',
         poe_access_field='colonia_pop_accessibility', colonia_pop_field='Population'):
@@ -818,7 +785,6 @@ if __name__ == '__main__':
         create_stop_freq_specs(settings)
         update_trip_purpose_probs(settings)
         create_trip_scheduling_duration_probs(settings, los_settings)
-        update_tour_purpose_reassignment_probs(settings)
 
     if update_wait_times:
 
