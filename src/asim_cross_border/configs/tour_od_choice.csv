@@ -14,4 +14,4 @@ util_sample_of_corrections_factor,Sample of alternatives correction factor,"@np.
 util_mode_logsum_work,tour mode choice logsum work,tour_mode_choice_logsum * (tour_type == 'work'),coef_mc_logsum_work
 util_mode_logsum_school,tour mode choice logsum school,tour_mode_choice_logsum * (tour_type == 'school'),coef_mc_logsum_school
 util_mode_logsum_shop,tour mode choice logsum shop,tour_mode_choice_logsum * (tour_type == 'shop'),coef_mc_logsum_shop
-util_mode_logsum_visit_other,tour mode choice visit/other,"tour_mode_choice_logsum * (tour_type.isin(['visit','other']))",coef_mc_logsum_visit_other
+util_mode_logsum_visit_other,tour mode choice visit/other,"tour_mode_choice_logsum * ((tour_type == 'visit' | (tour_type == 'other')))",coef_mc_logsum_visit_other
