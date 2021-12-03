@@ -3,6 +3,6 @@ util_auto_wait,Auto Wait Time,@(df.pass_type == 'no_pass') * df.std_wait,coef_wa
 util_auto_wait_sentri,Auto Wait Time - Sentri,@(df.pass_type == 'sentri') * df.sentri_wait,coef_wait,coef_wait,coef_wait,
 util_auto_wait_ready,Auto Wait Time - Ready,@(df.pass_type == 'ready') * df.ready_wait,coef_wait,coef_wait,coef_wait,
 util_ped_wait,Walk - Wait Time,@df.ped_wait,,,,coef_wait
-util_ASC_s2,Shared Ride 2 - ASC,1,,SHARED2_asc,,
-util_ASC_s3,Shared Ride 3 - ASC,1,,,SHARED3_asc,
-util_ASC_walk,Walk - ASC,1,,,,WALK_asc
+util_ASC_s2,Shared Ride 2 - ASC,1,,asc_SHARED2,,
+util_ASC_s3,Shared Ride 3 - ASC,1,,,asc_SHARED3,
+util_ASC_walk,Walk - ASC,1,,,,asc_WALK
