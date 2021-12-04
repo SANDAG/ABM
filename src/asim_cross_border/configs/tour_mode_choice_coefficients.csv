@@ -3,6 +3,8 @@ coef_one,1,T
 coef_nest_root,1.00,T
 coef_nest_AUTO_mandatory,.17,F
 coef_nest_NONMOTORIZED_mandatory,0.17,F
+coef_nest_AUTO_nonmandatory,.28,F
+coef_nest_NONMOTORIZED_nonmandatory,.28,F
 coef_wait_work,-0.066,F
 coef_wait_school,-0.109,F
 coef_wait_shop,-0.064,F
