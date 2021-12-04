@@ -799,7 +799,7 @@ if __name__ == '__main__':
         poes = list(settings['poes'].keys())
         num_poes = len(poes)
         lane_types = list(
-            settings['tours']['lane_shares_by_purpose']['work'].keys())
+            wait_time_settings['coeffs']['work'].keys())
         num_lanes = len(lane_types)
         num_obs = num_poes * num_lanes * num_periods
         x_df = pd.DataFrame({
