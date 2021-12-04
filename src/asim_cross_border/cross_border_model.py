@@ -799,7 +799,7 @@ if __name__ == '__main__':
         poes = list(settings['poes'].keys())
         num_poes = len(poes)
         lane_types = list(
-            wait_time_settings['coeffs']['work'].keys())
+            wait_time_settings['coeffs'].keys())
         num_lanes = len(lane_types)
         num_obs = num_poes * num_lanes * num_periods
         x_df = pd.DataFrame({
@@ -847,8 +847,10 @@ if __name__ == '__main__':
             
             # compute crossing volume from tour POEs
             tours = pd.read_csv('./output/wait_time_tours.csv')
-
-            vol_df = tours.groupby(['poe_id','lane_type','start']).agg(
+            tours['lane_type'] = tours['pass_type'].copy()
+            tours['lane_type'] = tours['lane_type'].replace('no_pass', 'std')
+            tours.loc[tours['tour_mode'] == 'WALK', 'lane_type'] = 'ped'
+            vol_df = tours.groupby(['poe_id', 'lane_type', 'start']).agg(
                 vol=('tour_id', 'count')).reset_index()
 
             # get missing rows and set vol to 0 for them
@@ -857,7 +859,7 @@ if __name__ == '__main__':
             
             # compute vol per lane  
             lane_df = pd.DataFrame(settings['poes']).T[[
-                'name','veh_lanes','ped_lanes']]
+                'name', 'veh_lanes', 'ped_lanes']]
             vol_df = vol_df.merge(
                 lane_df, left_on='poe_id', right_index=True, how='left')
             vol_df['vol_per_lane'] = vol_df['vol'] / vol_df['veh_lanes']

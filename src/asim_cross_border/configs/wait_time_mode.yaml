@@ -96,7 +96,6 @@ models:
   # # ---
   - tour_scheduling_probabilistic
   - tour_od_choice
-  - reassign_tour_purpose_by_poe
   - tour_mode_choice_simulate
   - write_tables
 
