@@ -2,7 +2,7 @@ Description,value,coefficient_name
 ,-0.5757457048999856,coef_asc_dur_0_4_stops_0out_0in
 ,-1.6226245412851394,coef_asc_dur_0_4_stops_0out_1in
 ,-2.7824093547650186,coef_asc_dur_0_4_stops_0out_2in
-,-3.9796609349856666,coef_asc_dur_0_4_stops_0out_3in
+,-3.523336727897733,coef_asc_dur_0_4_stops_0out_3in
 ,-2.301547263576428,coef_asc_dur_0_4_stops_1out_0in
 ,-4.79060137114203,coef_asc_dur_0_4_stops_1out_1in
 ,-5.302172202088224,coef_asc_dur_0_4_stops_1out_2in
@@ -15,10 +15,10 @@ Description,value,coefficient_name
 ,-999.0,coef_asc_dur_0_4_stops_3out_1in
 ,-999.0,coef_asc_dur_0_4_stops_3out_2in
 ,-999.0,coef_asc_dur_0_4_stops_3out_3in
-,-0.8224561003443626,coef_asc_dur_4_8_stops_0out_0in
-,-1.4293732338182952,coef_asc_dur_4_8_stops_0out_1in
+,-0.8224561003443628,coef_asc_dur_4_8_stops_0out_0in
+,-1.4293732338182956,coef_asc_dur_4_8_stops_0out_1in
 ,-2.9930741768275624,coef_asc_dur_4_8_stops_0out_2in
-,-3.1881952911883107,coef_asc_dur_4_8_stops_0out_3in
+,-1.9093246582393109,coef_asc_dur_4_8_stops_0out_3in
 ,-4.622844913060593,coef_asc_dur_4_8_stops_1out_0in
 ,-2.7419917667894307,coef_asc_dur_4_8_stops_1out_1in
 ,-999.0,coef_asc_dur_4_8_stops_1out_2in

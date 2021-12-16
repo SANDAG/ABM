@@ -3,11 +3,11 @@ inherit_settings: False
 # number of households to simulate
 
 households_sample_size: 0
-multiprocess: False
-#strict: False
-#mem_tick: 30
-#num_processes: 30
-#fail_fast: True
+multiprocess: True
+strict: False
+mem_tick: 30
+num_processes: 30
+fail_fast: True
 
 ##############
 #
@@ -106,7 +106,6 @@ models:
   # # ---
   - tour_scheduling_probabilistic
   - tour_od_choice
-  - reassign_tour_purpose_by_poe
   - tour_mode_choice_simulate
   - stop_frequency
   - trip_purpose

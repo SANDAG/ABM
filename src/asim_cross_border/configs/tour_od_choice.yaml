@@ -33,6 +33,8 @@ ORIG_FILTER: "original_MAZ > 0"  # only new (external) mazs copied from internal
 
 OD_CHOICE_SAMPLE_TABLE_NAME: tour_od_location_sample
 
+OD_CHOICE_LOGSUM_COLUMN_NAME: tour_od_logsum
+
 CHOOSER_TABLE_NAME: tours
 
 SIZE_TERM_SELECTOR: tour_od_choice
