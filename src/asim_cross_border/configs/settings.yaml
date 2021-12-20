@@ -48,11 +48,11 @@ trace_hh_id:
 # input tables
 input_table_list:
   - tablename: households
-    filename: households_survey.csv
+    filename: households_xborder.csv
     index_col: household_id
 
   - tablename: persons
-    filename: persons_survey.csv
+    filename: persons_xborder.csv
     index_col: person_id
 
   - tablename: land_use
@@ -62,7 +62,7 @@ input_table_list:
       MAZ: zone_id
 
   - tablename: tours
-    filename: tours_survey.csv
+    filename: tours_xborder.csv
     index_col: tour_id
     keep_columns:
       - pass_type
