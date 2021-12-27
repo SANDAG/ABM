@@ -36,3 +36,12 @@ school_segment university,school_segment,"np.where(is_university, SCHOOL_SEGMENT
 is_worker,is_worker,"persons.pemploy.isin([PEMPLOY_FULL, PEMPLOY_PART])"
 #,,
 home_zone_id,home_zone_id,"reindex(households.home_zone_id, persons.household_id)"
+#,,
+,_mean_work,setting('distributed_time_factor_work_mean')
+,_stddev_work,setting('distributed_time_factor_work_stddev')
+,_mean_nonwork,setting('distributed_time_factor_nonwork_mean')
+,_stddev_nonwork,setting('distributed_time_factor_nonwork_stddev')
+,_min_time_factor,setting('distributed_time_factor_min')
+,_max_time_factor,setting('distributed_time_factor_max')
+travel time sensitivity factor for work travel,time_factor_work,"rng.lognormal_for_df(df, mu=_mean_work, sigma=_stddev_work).clip(_min_time_factor, _max_time_factor)"
+travel time sensitivity factor for non-work travel,time_factor_nonwork,"rng.lognormal_for_df(df, mu=_mean_nonwork, sigma=_stddev_nonwork).clip(_min_time_factor, _max_time_factor)"

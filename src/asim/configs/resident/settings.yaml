@@ -88,6 +88,15 @@ output_tables:
     - tours
     - trips
 
+distributed_time_factor_work_mean: 1.0
+distributed_time_factor_work_stddev: 0.7
+distributed_time_factor_nonwork_mean: 1.0
+distributed_time_factor_nonwork_stddev: 0.6
+distributed_time_factor_min: 0.1
+distributed_time_factor_max: 10
+
+
+
 models:
   - initialize_landuse
   - initialize_households
