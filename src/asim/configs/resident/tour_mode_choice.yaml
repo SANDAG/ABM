@@ -40,7 +40,9 @@ NESTS:
         coefficient:  coef_nest_TRANSIT
         alternatives:
           - WALK_TRANSIT
-          - DRIVE_TRANSIT
+          - PNR_TRANSIT
+          - KNR_TRANSIT
+          - TNC_TRANSIT
       - name: RIDEHAIL
         coefficient: coef_nest_RIDEHAIL
         alternatives:
