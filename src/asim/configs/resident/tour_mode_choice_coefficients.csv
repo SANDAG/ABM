@@ -7,13 +7,7 @@ coef_nest_NONMOTORIZED,0.72,T
 coef_nest_TRANSIT,0.72,T
 coef_nest_RIDEHAIL,0.36,T
 coef_nest_SCHOOL_BUS,0.72,T
-coef_ivt_work_univ,-0.032,F
-coef_ivt_school,-0.02,F
-coef_ivt_maint,-0.034,F
-coef_ivt_disc,-0.03,F
-coef_ivt_atwork,-0.064,F
-coef_income_work,-1.25,F
-coef_income_univ_school_maint_disc_atwork,-0.524,F
+coef_ivt,-0.0175,F
 coef_cost,-0.001,F
 coef_oMix_nmot_work,0.210144,F
 coef_oMix_wTran_work,0,F
