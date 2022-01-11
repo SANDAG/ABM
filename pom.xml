@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.sandag</groupId>
     <artifactId>SANDAG-ABM</artifactId>
-    <version>version_14_2_1</version>
+    <version>version_14_2_2</version>
     <name>SANDAG CT-RAMP Activity Based Model</name>
     <properties>
         <encoding.type>UTF-8</encoding.type> 
@@ -11,11 +11,11 @@
         <mtxmgr.memory.min>60000m</mtxmgr.memory.min>
         <mtxmgr.memory.max>70000m</mtxmgr.memory.max>
         <hhmgr.memory.min>1000m</hhmgr.memory.min> 
-        <hhmgr.memory.max>20000m</hhmgr.memory.max>         
-        <client.memory.min>100000m</client.memory.min> 
-        <client.memory.max>160000m</client.memory.max>          
+        <hhmgr.memory.max>35000m</hhmgr.memory.max>         
+        <client.memory.min>90000m</client.memory.min> 
+        <client.memory.max>130000m</client.memory.max>          
         <spmarket.memory.min>30000m</spmarket.memory.min> 
-        <spmarket.memory.max>150000m</spmarket.memory.max>      
+        <spmarket.memory.max>140000m</spmarket.memory.max>      
         <bikelogsum.memory.min>20000m</bikelogsum.memory.min> 
         <bikelogsum.memory.max>30000m</bikelogsum.memory.max>    
         <walklogsum.memory.min>20000m</walklogsum.memory.min> 
@@ -43,6 +43,9 @@
         <workShadowPricing.iteration>ShadowPricingOutput_work_9.csv</workShadowPricing.iteration>
         <schoolShadowPricing.iteration>ShadowPricingOutput_school_9.csv</schoolShadowPricing.iteration>
         <model_years>2016,2020,2023,2025,2026,2029,2030,2032,2035,2040,2050</model_years>
+        <!--  local Maven Repository that contains library jars managed locally; refer to the library jars defined in the local dependency section  -->
+        <!--  IMPORTANT: update to your local folder-->
+        <locrepo>C:\Users\wsu\locrepo</locrepo>
     </properties>
     <profiles>
         <profile>
@@ -98,18 +101,15 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.16</version>
-                <configuration>
-                    <argLine>-XX:-UseSplitVerifier</argLine>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.0</version>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
+                <version>3.8.1</version>
+		        <configuration>
+		          <source>1.8</source>
+		          <target>1.8</target>
+		        </configuration>
             </plugin>
             <plugin>
 	            <groupId>org.codehaus.mojo</groupId>
@@ -171,6 +171,7 @@
                                     <filtering>false</filtering>
                                     <includes>
                                         <include>*.dll</include>
+                                        <include>*.jar</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -263,28 +264,6 @@
                             </resources>
                         </configuration>
                     </execution> 
-                    <!--                
-                    <execution>
-                        <id>copy-txt-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>${encoding.type}</encoding>
-                            <outputDirectory>${release.root}</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/resources</directory>
-                                    <filtering>true</filtering>
-                                    <includes>
-                                        <include>scen_name.txt</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    -->
                     <execution>
                         <id>copy-conf-resources</id>
                         <phase>package</phase>
@@ -509,22 +488,71 @@
         </pluginManagement>
     </build>
     <dependencies>
-        <dependency>
-            <groupId>pb</groupId>
-            <artifactId>common-base</artifactId>
-            <version>2019-10-15-ABM</version>
-            <classifier>ABM</classifier>
-        </dependency>
-        <dependency>
-            <groupId>pb</groupId>
-            <artifactId>crowbar</artifactId>
-            <version>2018-01-19</version>
-        </dependency>
-        <dependency>
-            <groupId>com.inro</groupId>
-            <artifactId>modeller</artifactId>
-            <version>1.1.0</version>
-        </dependency>
+    <!-- library jars managed by local repository at $<locrepo} -->
+      <dependency>
+         <groupId>pb</groupId>
+         <artifactId>common-base</artifactId>
+         <scope>system</scope>
+         <version>2019-10-15-ABM</version>
+         <systemPath>${locrepo}\common-base-2019-10-15-ABM-ABM.jar</systemPath>
+      </dependency>
+      <dependency>
+         <groupId>pb</groupId>
+         <artifactId>crowbar</artifactId>
+         <scope>system</scope>
+         <version>2018-01-19</version>
+         <systemPath>${locrepo}\crowbar-2018-01-19.jar</systemPath>
+      </dependency>
+      <dependency>
+         <groupId>pb</groupId>
+         <artifactId>sawdust-datatable</artifactId>
+         <scope>system</scope>
+         <version>2.0</version>
+         <systemPath>${locrepo}\sawdust-datatable-2.0.jar</systemPath>
+      </dependency>
+      <dependency>
+         <groupId>pb</groupId>
+         <artifactId>sawdust-property</artifactId>
+         <scope>system</scope>
+         <version>2.0</version>
+         <systemPath>${locrepo}\sawdust-property-2.0.jar</systemPath>
+      </dependency>
+      <dependency>
+         <groupId>pb</groupId>
+         <artifactId>sawdust-integration-excel</artifactId>
+         <scope>system</scope>
+         <version>2.0</version>
+         <systemPath>${locrepo}\sawdust-integration-excel-2.0.jar</systemPath>
+      </dependency>
+      <dependency>
+         <groupId>pb</groupId>
+         <artifactId>sawdust-utill</artifactId>
+         <scope>system</scope>
+         <version>2.0</version>
+         <systemPath>${locrepo}\sawdust-util-2.0.jar</systemPath>
+      </dependency>
+      <dependency>
+         <groupId>com.inro</groupId>
+         <artifactId>modeller</artifactId>
+         <scope>system</scope>
+         <version>1.1.0</version>
+         <systemPath>${locrepo}\modeller-1.1.0.jar</systemPath>
+      </dependency>
+      <dependency>
+         <groupId>osplanning</groupId>
+         <artifactId>omx</artifactId>
+         <scope>system</scope>
+         <version>8.28.17</version>
+         <systemPath>${locrepo}\omx-8.28.17.jar</systemPath>
+      </dependency>
+      <dependency>
+         <groupId>com.microsoft</groupId>
+         <artifactId>sql-jdbc-4</artifactId>
+         <scope>system</scope>
+         <version>3.0</version>
+         <systemPath>${locrepo}\sql-jdbc-4-3.0.jar</systemPath>
+      <!-- library jars managed by remote Central Repository -->
+      </dependency>      
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
@@ -577,30 +605,10 @@
 		    <version>1.6</version>
 		</dependency>
         <dependency>
-            <groupId>pb</groupId>
-            <artifactId>sawdust-datatable</artifactId>
-            <version>2.0</version>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.10</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>pb</groupId>
-            <artifactId>sawdust-property</artifactId>
-            <version>2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>pb</groupId>
-            <artifactId>sawdust-integration-excel</artifactId>
-            <version>2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.microsoft</groupId>
-            <artifactId>sql-jdbc-4</artifactId>
-            <version>3.0</version>
         </dependency>
 		<dependency>
 		    <groupId>org.apache.xmlbeans</groupId>
@@ -632,31 +640,5 @@
 	    	<artifactId>javadbf</artifactId>
 	    <version>0.4.0</version>
 	    </dependency>
-        <dependency>
-         <groupId>osplanning</groupId>
-        	<artifactId>omx</artifactId>
-			<version>8.28.17</version>
-		</dependency>
-	</dependencies>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>nexus-snapshots</id>
-            <name>Snapshots</name>
-            <url>http://svn.sandag.org:8081/nexus/content/repositories/snapshots</url>
-            <uniqueVersion>false</uniqueVersion>
-        </snapshotRepository>
-        <repository>
-            <id>nexus-release</id>
-            <name>Releases</name>
-            <url>http://svn.sandag.org:8081/nexus/content/repositories/releases/</url>
-        </repository>
-    </distributionManagement>
-
-    <repositories>
-        <repository>
-            <id>nexus-sandag-public</id>
-            <name>Sandag Nexus</name>
-            <url>http://svn.sandag.org:8081/nexus/content/groups/public/</url>
-        </repository>
-    </repositories>
+	</dependencies> 
 </project>

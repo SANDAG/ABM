@@ -56,7 +56,7 @@ def init_emme_project(root, title, emmeversion):
         'transit_vehicles': 200,
         'transit_lines': 450,
         'transit_segments': 40000,
-        'extra_attribute_values': 18000000,
+        'extra_attribute_values': 28000000,
 
         'functions': 99,
         'operators': 5000
@@ -81,6 +81,7 @@ def init_emme_project(root, title, emmeversion):
 
     desktop.data_explorer().add_database(emmebank.path)
     desktop.add_modeller_toolbox("%<$ProjectPath>%/scripts/sandag_toolbox.mtbx")
+    desktop.add_modeller_toolbox("%<$ProjectPath>%/scripts/solutions.mtbx")
     project.save()
 
 

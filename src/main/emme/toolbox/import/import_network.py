@@ -584,8 +584,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 # managed lanes, free for HOV2 and HOV3+, tolls for SOV
                 if arc["ITOLLO"] + arc["ITOLLA"] + arc["ITOLLP"] > 0:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV2
-                # special case of I-15 managed lanes
-                elif arc["IFC"] == 1 and arc["IPROJ"] in [41, 42, 486]:
+                # special case of I-15 managed lanes base year and 2020, no build
+                elif arc["IFC"] == 1 and arc["IPROJ"] in [41, 42, 486, 373, 711]:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV2
                 elif arc["IFC"] == 8 or arc["IFC"] == 9:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV2
@@ -595,8 +595,8 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
                 # managed lanes, free for HOV3+, tolls for SOV and HOV2
                 if arc["ITOLLO"] + arc["ITOLLA"] + arc["ITOLLP"]  > 0:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV3
-                # special case of I-15 managed lanes
-                elif arc["IFC"] == 1 and arc["IPROJ"] in [41, 42, 486]:
+                # special case of I-15 managed lanes for base year and 2020, no build 
+                elif arc["IFC"] == 1 and arc["IPROJ"] in [41, 42, 486, 373, 711]:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV3
                 elif arc["IFC"] == 8 or arc["IFC"] == 9:
                     return modes_toll_lanes[arc["ITRUCK"]] | modes_HOV3
@@ -1202,16 +1202,16 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         self._log.append({"type": "header", "content": "Import turns and turn restrictions"})
         self._log.append({"type": "text", "content": "Process LINKTYPETURNS.DBF for turn prohibited by type"})
         # Process LINKTYPETURNS.DBF for turn prohibited by type
-        f = _fiona.open(_join(self.source, "LINKTYPETURNS.DBF"), 'r')
-        link_type_turns = _defaultdict(lambda: {})
-        for record in f:
-            record = record['properties']
-            link_type_turns[record["FROM"]][record["TO"]] = {
-                "LEFT": record["LEFT"],
-                "RIGHT": record["RIGHT"],
-                "STRAIGHT": record["STRAIGHT"],
-                "UTURN": record["UTURN"]
-            }
+        with _fiona.open(_join(self.source, "LINKTYPETURNS.DBF"), 'r') as f:
+            link_type_turns = _defaultdict(lambda: {})
+            for record in f:
+                record = record['properties']
+                link_type_turns[record["FROM"]][record["TO"]] = {
+                    "LEFT": record["LEFT"],
+                    "RIGHT": record["RIGHT"],
+                    "STRAIGHT": record["STRAIGHT"],
+                    "UTURN": record["UTURN"]
+                }
         for from_link in network.links():
             if from_link.type in link_type_turns:
                 to_link_turns = link_type_turns[from_link.type]
@@ -1374,7 +1374,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
 
 		        # make speed on HOV lanes (70mph) the same as parallel GP lanes (65mph)
                 # - set speed back to posted speed - increase travel time by (speed_adj/speed_posted)
-                if link.type == 1 and link["@lane_restriction"] == 2:
+                if link.type == 1 and (link["@lane_restriction"] == 2 or link["@lane_restriction"] == 3):
                     speed_adj = link["@speed_adjusted"]
                     speed_posted = link["@speed_posted"]
                     if speed_adj>0:
@@ -1561,6 +1561,7 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
         # fd22: cycle length 2.0
         # fd23: cycle length 2.5
         # fd24: cycle length 2.5 and metered ramp
+        # fd25: freeway node approach AM and PM only
         network.create_attribute("LINK", "green_to_cycle")
         network.create_attribute("LINK", "cycle")
         vdf_cycle_map = {1.25: 20, 1.5: 21, 2.0: 22, 2.5: 23}
@@ -1904,6 +1905,12 @@ class ImportNetwork(_m.Tool(), gen_utils.Snapshot):
             "(ul1 * (1.0 + 0.8 * put((volau + volad) / ul3) ** 4.0) +"
             "2.5/ 2 * (1-el1) ** 2 * (1.0 + 6.0 * ( (volau + volad) / el3 ) ** 2.0))"
             + reliability_tmplt.format(**parameters["road"]),
+            emmebank=emmebank)
+        # freeway fd25 (AM and PM only)
+        create_function(
+            "fd25",
+            "(ul1 * (1.0 + 0.6 * put((volau + volad) / ul3) ** 4))"
+            + reliability_tmplt.format(**parameters["freeway"]),
             emmebank=emmebank)
 
         set_extra_function_params(

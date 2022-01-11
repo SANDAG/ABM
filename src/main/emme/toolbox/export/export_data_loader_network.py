@@ -395,7 +395,7 @@ Export network results to csv files for SQL data loader."""
         for p, scen_id in period_scenario_ids.iteritems():
             scenario = traffic_emmebank.scenario(scen_id)
             new_atts = [
-                ("@speed", "link travel speed", "length*60/timau"),
+                ("@speed", "link travel speed", "length*60/@auto_time"),
                 ("@sov_nt_all", "total number of SOV GP vehicles",
                          "@sov_nt_l+@sov_nt_m+@sov_nt_h" ),
                 ("@sov_tr_all", "total number of SOV TOLL vehicles",
@@ -425,7 +425,7 @@ Export network results to csv files for SQL data loader."""
                 ("@msa_flow", "MSA flow", "@non_pce_flow"), #flow from final assignment
                 ("@msa_time", "MSA time", "timau"),  #skim assignment time on msa flow
                 ("@voc", "volume over capacity", "@pce_flow/ul3"), #pce flow over road capacity
-                ("@vht", "vehicle hours travelled", "@non_pce_flow*timau/60") #vehicle flow (non-pce)*time
+                ("@vht", "vehicle hours travelled", "@non_pce_flow*@auto_time/60") #vehicle flow (non-pce)*time
             ]
 
             for name, des, formula in new_atts:
@@ -733,13 +733,15 @@ Export network results to csv files for SQL data loader."""
             return df
 
         desktop = _m.Modeller().desktop
+        desktop.refresh_data()
         data_explorer = desktop.data_explorer()
+        previous_active_database = data_explorer.active_database()
         try:
             desktop_traffic_database = data_explorer.add_database(traffic_emmebank.path)
-            previous_active_database = data_explorer.active_database()
             desktop_traffic_database.open()
-        except:
-            pass
+        except Exception as error:
+            import traceback
+            print (traceback.format_exc())
         project = desktop.project
         scenario = _m.Modeller().emmebank.scenario(101)
         data_explorer.replace_primary_scenario(scenario)

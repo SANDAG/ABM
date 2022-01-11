@@ -253,83 +253,103 @@ public class UsualWorkSchoolLocationChoiceModel
         for (int iter = 0; iter < workerDcSizeObj.getMaxShadowPriceIterations(); iter++)
         {
 
-            try
-            {
-                JPPFJob job = new JPPFJob();
-                job.setName("Work Location Choice Job");
+        	logger.info("Work location choice shadow pricing iteration "+iter);
+        	int innerLoop=0;
+        	
+        	while(true) {
+        		++innerLoop;
+        		try
+        		{
+        			JPPFJob job = new JPPFJob();
+        			job.setName("Work Location Choice Job");
 
-                ArrayList<int[]> startEndTaskIndicesList = getTaskHouseholdRanges(householdDataManager
+        			ArrayList<int[]> startEndTaskIndicesList = getTaskHouseholdRanges(householdDataManager
                         .getNumHouseholds());
 
-                DataProvider dataProvider = new MemoryMapDataProvider();
-                dataProvider.setParameter("propertyMap", propertyMap);
-                dataProvider.setParameter("ms", ms);
-                dataProvider.setParameter("hhDataManager", householdDataManager);
-                dataProvider.setParameter("modelStructure", modelStructure);
-                dataProvider.setParameter("uecIndices", WORK_LOC_SEGMENT_TO_UEC_SHEET_INDEX);
-                dataProvider.setParameter("soaUecIndices", WORK_LOC_SOA_SEGMENT_TO_UEC_SHEET_INDEX);
-                dataProvider.setParameter("tourCategory", ModelStructure.MANDATORY_CATEGORY);
-                dataProvider.setParameter("dcSizeObj", workerDcSizeObj);
-                dataProvider.setParameter("dcUecFileName", workLocUecFileName);
-                dataProvider.setParameter("soaUecFileName", soaUecFileName);
-                dataProvider.setParameter("soaSampleSize", soaWorkSampleSize);
-                dataProvider.setParameter("dmuFactory", dmuFactory);
-                dataProvider.setParameter("restartModelString", restartModelString);
+        			DataProvider dataProvider = new MemoryMapDataProvider();
+        			dataProvider.setParameter("propertyMap", propertyMap);
+        			dataProvider.setParameter("ms", ms);
+        			dataProvider.setParameter("hhDataManager", householdDataManager);
+        			dataProvider.setParameter("modelStructure", modelStructure);
+        			dataProvider.setParameter("uecIndices", WORK_LOC_SEGMENT_TO_UEC_SHEET_INDEX);
+        			dataProvider.setParameter("soaUecIndices", WORK_LOC_SOA_SEGMENT_TO_UEC_SHEET_INDEX);
+        			dataProvider.setParameter("tourCategory", ModelStructure.MANDATORY_CATEGORY);
+        			dataProvider.setParameter("dcSizeObj", workerDcSizeObj);
+        			dataProvider.setParameter("dcUecFileName", workLocUecFileName);
+        			dataProvider.setParameter("soaUecFileName", soaUecFileName);
+        			dataProvider.setParameter("soaSampleSize", soaWorkSampleSize);
+        			dataProvider.setParameter("dmuFactory", dmuFactory);
+        			dataProvider.setParameter("restartModelString", restartModelString);
 
-                job.setDataProvider(dataProvider);
+        			job.setDataProvider(dataProvider);
 
-                int startIndex = 0;
-                int endIndex = 0;
-                int taskIndex = 1;
-                WorkLocationChoiceTaskJppf myTask = null;
-                WorkLocationChoiceTaskJppfNew myTaskNew = null;
-                for (int[] startEndIndices : startEndTaskIndicesList)
-                {
-                    startIndex = startEndIndices[0];
-                    endIndex = startEndIndices[1];
+        			int startIndex = 0;
+        			int endIndex = 0;
+        			int taskIndex = 1;
+        			WorkLocationChoiceTaskJppf myTask = null;
+        			WorkLocationChoiceTaskJppfNew myTaskNew = null;
+        			for (int[] startEndIndices : startEndTaskIndicesList)
+        			{
+        				startIndex = startEndIndices[0];
+        				endIndex = startEndIndices[1];
 
-                    if (useNewSoaMethod)
-                    {
-                        myTaskNew = new WorkLocationChoiceTaskJppfNew(taskIndex, startIndex,
+       					if (innerLoop == 1) {
+        					resetWorkLocationResults(startIndex,endIndex,householdDataManager);
+        				}
+
+        				//check if there's work to do (JEF)
+        				if(workLocationResultsOK(startIndex, endIndex, householdDataManager))
+        					continue;
+        				
+        				if (useNewSoaMethod)
+        				{
+        					myTaskNew = new WorkLocationChoiceTaskJppfNew(taskIndex, startIndex,
                                 endIndex, iter);
-                        job.add(myTaskNew);
-                    } else
-                    {
-                        myTask = new WorkLocationChoiceTaskJppf(taskIndex, startIndex, endIndex,
+        					job.add(myTaskNew);
+        				} else
+        				{
+        					myTask = new WorkLocationChoiceTaskJppf(taskIndex, startIndex, endIndex,
                                 iter);
-                        job.add(myTask);
-                    }
-                    taskIndex++;
-                }
-
-                logger.info("Usual work location choice model submitting tasks to jppf job");
-                List<Task<?>> results = jppfClient.submitJob(job);
-                for (Task<?> task : results)
-                {
-                    //if (task.getException() != null) throw task.getException();
-                	//wu modefied for jppf 6.1.4
-                	if (task.getThrowable() != null) {
+        					job.add(myTask);
+        				}
+        				taskIndex++;
+        			}
+        			//nothing to do, so break out of this loop (JEF)
+        			if(job.getJobTasks().isEmpty()) {
+        				logger.info("Work location choice tasks completed successfully after "+(innerLoop-1)+" loops");
+        				break;
+        			}else {
+        				logger.info("Work location choice tasks need to be executed in loop "+innerLoop);
+        			}
+        			logger.info("Usual work location choice model submitting tasks to jppf job");
+        			List<Task<?>> results = jppfClient.submitJob(job);
+        			for (Task<?> task : results)
+        			{
+        				//if (task.getException() != null) throw task.getException();
+        				//wu modefied for jppf 6.1.4
+        				if (task.getThrowable() != null) {
                 		  Throwable t = task.getThrowable();
                 		  t.printStackTrace();
-                	}
-                    try
-                    {
-                        String stringResult = (String) task.getResult();
-                        logger.info(stringResult);
-                        System.out.println(stringResult);
-                    } catch (Exception e)
-                    {
-                        logger.error("", e);
-                        throw new RuntimeException();
-                    }
+        				}
+        				try
+        				{
+        					String stringResult = (String) task.getResult();
+        					logger.info(stringResult);
+        					System.out.println(stringResult);
+        				} catch (Exception e)
+        				{
+        					logger.error("", e);
+        					throw new RuntimeException();
+        				}
 
-                }
+        			}
 
-            } catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-
+        		} catch (Exception e)
+        		{
+        			e.printStackTrace();
+        		}
+        	}
+        	
             // sum the chosen destinations by purpose, dest zone and subzone for
             // shadow pricing adjustment
             int[][] finalModeledDestChoiceLocationsByDestMgra = householdDataManager
@@ -449,81 +469,101 @@ public class UsualWorkSchoolLocationChoiceModel
 
             // logger.info( String.format( "Size of Household[] in bytes = %d.",
             // householdDataManager.getBytesUsedByHouseholdArray() ) );
+        	logger.info("School location choice shadow pricing iteration "+iter);
+        	int innerLoop=0;
+        	
+        	while(true) {
+        		++innerLoop;
 
-            try
-            {
-                JPPFJob job = new JPPFJob();
-                job.setName("School Location Choice Job");
+        		try
+        		{
+        			JPPFJob job = new JPPFJob();
+        			job.setName("School Location Choice Job");
 
-                ArrayList<int[]> startEndTaskIndicesList = getTaskHouseholdRanges(householdDataManager
+        			ArrayList<int[]> startEndTaskIndicesList = getTaskHouseholdRanges(householdDataManager
                         .getNumHouseholds());
 
-                DataProvider dataProvider = new MemoryMapDataProvider();
-                dataProvider.setParameter("propertyMap", propertyMap);
-                dataProvider.setParameter("ms", ms);
-                dataProvider.setParameter("hhDataManager", householdDataManager);
-                dataProvider.setParameter("modelStructure", modelStructure);
-                dataProvider.setParameter("tourCategory", ModelStructure.MANDATORY_CATEGORY);
-                dataProvider.setParameter("dcSizeObj", schoolDcSizeObj);
-                dataProvider.setParameter("dcUecFileName", schoolLocUecFileName);
-                dataProvider.setParameter("soaUecFileName", soaUecFileName);
-                dataProvider.setParameter("soaSampleSize", soaSchoolSampleSize);
-                dataProvider.setParameter("dmuFactory", dmuFactory);
-                dataProvider.setParameter("restartModelString", restartModelString);
+        			DataProvider dataProvider = new MemoryMapDataProvider();
+        			dataProvider.setParameter("propertyMap", propertyMap);
+        			dataProvider.setParameter("ms", ms);
+        			dataProvider.setParameter("hhDataManager", householdDataManager);
+        			dataProvider.setParameter("modelStructure", modelStructure);
+        			dataProvider.setParameter("tourCategory", ModelStructure.MANDATORY_CATEGORY);
+        			dataProvider.setParameter("dcSizeObj", schoolDcSizeObj);
+        			dataProvider.setParameter("dcUecFileName", schoolLocUecFileName);
+        			dataProvider.setParameter("soaUecFileName", soaUecFileName);
+        			dataProvider.setParameter("soaSampleSize", soaSchoolSampleSize);
+        			dataProvider.setParameter("dmuFactory", dmuFactory);
+        			dataProvider.setParameter("restartModelString", restartModelString);
 
-                job.setDataProvider(dataProvider);
+        			job.setDataProvider(dataProvider);
 
-                int startIndex = 0;
-                int endIndex = 0;
-                int taskIndex = 1;
-                SchoolLocationChoiceTaskJppf myTask = null;
-                SchoolLocationChoiceTaskJppfNew myTaskNew = null;
-                for (int[] startEndIndices : startEndTaskIndicesList)
-                {
-                    startIndex = startEndIndices[0];
-                    endIndex = startEndIndices[1];
+        			int startIndex = 0;
+        			int endIndex = 0;
+        			int taskIndex = 1;
+        			SchoolLocationChoiceTaskJppf myTask = null;
+        			SchoolLocationChoiceTaskJppfNew myTaskNew = null;
+        			for (int[] startEndIndices : startEndTaskIndicesList)
+        			{
+        				startIndex = startEndIndices[0];
+        				endIndex = startEndIndices[1];
+        				
+       					if (innerLoop == 1) {
+        					resetSchoolLocationResults(startIndex,endIndex,householdDataManager);
+        				}
+        				//check if there's work to do (JEF)
+        				if( schoolLocationResultsOK(startIndex, endIndex, householdDataManager))
+        					continue;
 
-                    if (useNewSoaMethod)
-                    {
-                        myTaskNew = new SchoolLocationChoiceTaskJppfNew(taskIndex, startIndex,
+        				if (useNewSoaMethod)
+        				{
+        					myTaskNew = new SchoolLocationChoiceTaskJppfNew(taskIndex, startIndex,
                                 endIndex, iter);
-                        job.add(myTaskNew);
-                    } else
-                    {
-                        myTask = new SchoolLocationChoiceTaskJppf(taskIndex, startIndex, endIndex,
+        					job.add(myTaskNew);
+        				} else
+        				{
+        					myTask = new SchoolLocationChoiceTaskJppf(taskIndex, startIndex, endIndex,
                                 iter);
-                        job.add(myTask);
-                    }
-                    taskIndex++;
-                }
+        					job.add(myTask);
+        				}
+        				taskIndex++;
+        			}
 
-                List<Task<?>> results = jppfClient.submitJob(job);
-                for (Task<?> task : results)
-                {
-                    //if (task.getException() != null) throw task.getException();
-                	//wu modefied for jppf 6.1.4
-                	if (task.getThrowable() != null) {
+        			//nothing to do, so break out of this loop (JEF)
+        			if(job.getJobTasks().isEmpty()) {
+        				logger.info("School location choice tasks completed successfully after "+(innerLoop-1)+" loops");
+        				break;
+        			}else {
+        				logger.info("School location choice tasks need to be executed in loop "+innerLoop);
+        			}
+
+        			List<Task<?>> results = jppfClient.submitJob(job);
+        			for (Task<?> task : results)
+        			{
+        				//if (task.getException() != null) throw task.getException();
+        				//wu modefied for jppf 6.1.4
+        				if (task.getThrowable() != null) {
                 		  Throwable t = task.getThrowable();
                 		  t.printStackTrace();
-                	}
-                    try
-                    {
-                        String stringResult = (String) task.getResult();
-                        logger.info(stringResult);
-                        System.out.println(stringResult);
-                    } catch (Exception e)
-                    {
-                        logger.error("", e);
-                        throw new RuntimeException();
-                    }
+        				}
+        				try
+        				{
+        					String stringResult = (String) task.getResult();
+        					logger.info(stringResult);
+        					System.out.println(stringResult);
+        				} catch (Exception e)
+        				{
+        					logger.error("", e);
+        					throw new RuntimeException();
+        				}
 
-                }
+        			}
 
-            } catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-
+        		} catch (Exception e)
+        		{
+        			e.printStackTrace();
+        		}
+        	}
             // sum the chosen destinations by purpose, dest zone and subzone for
             // shadow pricing adjustment
             int[][] finalModeledDestChoiceLocationsByDestMgra = householdDataManager
@@ -818,6 +858,145 @@ public class UsualWorkSchoolLocationChoiceModel
         }
 
         return startEndIndexList;
+
+    }
+
+    
+    /**
+     * Returns true if work location results are  OK, else returns false.
+     * 
+     * @param startIndex starting range of households
+     * @param endIndex ending range of households
+     * @param HouseholdDataManagerIf household data manager
+     * @return true or false
+     */
+    public boolean workLocationResultsOK(int startIndex, int endIndex, HouseholdDataManagerIf householdDataManager) {
+    	
+    	
+    	// get the array of households
+        Household[] householdArray = householdDataManager.getHhArray(startIndex, endIndex);
+    
+        //iterate through hhs
+        for(Household thisHousehold:householdArray) {
+    	
+        	Person[] persons = thisHousehold.getPersons();
+    	
+        	//iterate through persons
+	        for(int k=1;k<persons.length;++k) {
+    		
+	        	Person p = persons[k];
+	        	
+	            // skip person if they are not a worker
+	            if (p.getPersonIsWorker() != 1)
+	            	continue;
+	            
+	            //worker, but no work location!
+	            if(p.getWorkLocation()==0)
+	            	return false;
+	        }
+        }
+    	return true;
+    }
+    
+    
+    /**
+     * Returns true if school location results are  OK, else returns false.
+     * 
+     * @param startIndex starting range of households
+     * @param endIndex ending range of households
+     * @param HouseholdDataManagerIf household data manager
+     * @return true or false
+     */
+    public boolean schoolLocationResultsOK(int startIndex, int endIndex, HouseholdDataManagerIf householdDataManager) {
+    	
+    	
+    	// get the array of households
+        Household[] householdArray = householdDataManager.getHhArray(startIndex, endIndex);
+    
+        //iterate through hhs
+        for(Household thisHousehold:householdArray) {
+    	
+        	Person[] persons = thisHousehold.getPersons();
+    	
+        	//iterate through persons
+	        for(int k=1;k<persons.length;++k) {
+    		
+	        	Person p = persons[k];
+	        	
+	            // skip person if they are not a student
+	            if ((p.getPersonIsPreschoolChild() == 1 || p.getPersonIsStudentNonDriving() == 1
+	                    || p.getPersonIsStudentDriving() == 1 || p.getPersonIsUniversityStudent() == 1)
+	            		&& (p.getPersonSchoolLocationZone()==0)) return false;
+	        
+	        	}
+        }
+    	return true;
+    }
+   
+       /**
+     * Reset work location choice results (before next shadow pricing iteration)
+     * @param startIndex
+     * @param endIndex
+     * @param householdDataManager
+     */
+    public void resetWorkLocationResults(int startIndex, int endIndex, HouseholdDataManagerIf householdDataManager) {
+    	
+    	
+    	// get the array of households
+        Household[] householdArray = householdDataManager.getHhArray(startIndex, endIndex);
+    
+        //iterate through hhs
+        for(Household thisHousehold:householdArray) {
+    	
+        	Person[] persons = thisHousehold.getPersons();
+    	
+        	//iterate through persons
+	        for(int k=1;k<persons.length;++k) {
+    		
+	        	Person p = persons[k];
+	        	
+	            // skip person if they are not a worker
+	            if (p.getPersonIsWorker() != 1)
+	            	continue;
+	            
+	            p.setWorkLocation(0);
+	        }
+        }
+    
+        householdDataManager.setHhArray(householdArray, startIndex);
+    }
+    
+    
+  
+    /**
+     * Reset school locations to zero (before next shadow pricing iteration)
+     * @param startIndex
+     * @param endIndex
+     * @param householdDataManager
+     */
+    public void resetSchoolLocationResults(int startIndex, int endIndex, HouseholdDataManagerIf householdDataManager) {
+    	
+    	
+    	// get the array of households
+        Household[] householdArray = householdDataManager.getHhArray(startIndex, endIndex);
+    
+        //iterate through hhs
+        for(Household thisHousehold:householdArray) {
+    	
+        	Person[] persons = thisHousehold.getPersons();
+    	
+        	//iterate through persons
+	        for(int k=1;k<persons.length;++k) {
+    		
+	        	Person p = persons[k];
+	        	
+	            if ((p.getPersonIsPreschoolChild() == 1 || p.getPersonIsStudentNonDriving() == 1
+	                    || p.getPersonIsStudentDriving() == 1 || p.getPersonIsUniversityStudent() == 1))
+	            	p.setSchoolLoc(0);
+	
+	        }
+        }
+        householdDataManager.setHhArray(householdArray, startIndex);
 
     }
 
