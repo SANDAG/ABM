@@ -1,5 +1,6 @@
 Label,Description,Expression,university,highschool,gradeschool
 local_dist,,_DIST@skims['DIST'],1,1,1
+#local_dist,,"_DIST@skim_dict.lookup(df.home_zone_id, df.alt_dest, ('SOV_TR_M_DIST', 'MD'))",1,1,1
 util_dist_0_1,"Distance, piecewise linear from 0 to 1 miles","@_DIST.clip(0,1)",coef_univ_dist_0_1,coef_high_dist_0_1,coef_grade_dist_0_1
 util_dist_1_2,"Distance, piecewise linear from 1 to 2 miles","@(_DIST-1).clip(0,1)",coef_univ_dist_1_2,coef_high_grade_dist_1_2,coef_high_grade_dist_1_2
 util_dist_2_5,"Distance, piecewise linear from 2 to 5 miles","@(_DIST-2).clip(0,3)",coef_univ_dist_2_5,coef_high_grade_dist_2_5,coef_high_grade_dist_2_5

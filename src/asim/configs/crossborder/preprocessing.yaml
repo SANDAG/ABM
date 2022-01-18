@@ -1,6 +1,6 @@
 # misc settings
-data_dir: data
-config_dir: configs
+data_dir: data_full
+config_dir: configs\crossborder
 distance_param: -0.19
 walk_speed: 3
 
@@ -55,7 +55,8 @@ skims:
         mgra: MAZ
   tap_to_tap:
     input_fname: transit_skims.omx
-    output_fname: transit_skims_xborder.omx
+    # output_fname: transit_skims_xborder.omx
+    output_fname: transit_skims_processed.omx
   taz_to_taz:
     periods:
       - EA
@@ -64,7 +65,8 @@ skims:
       - PM
       - EV
     input_base_fname: traffic_skims
-    output_base_fname: traffic_skims_xborder
+    output_base_fname: traffic_skims_processed
+    # output_base_fname: traffic_skims_xborder
 
 
 # Points of Entry

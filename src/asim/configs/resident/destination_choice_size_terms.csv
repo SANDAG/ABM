@@ -1,4 +1,4 @@
-model_selector,segment,TOTHH,RETEMPN,FPSEMPN,HEREMPN,OTHEMPN,AGREMPN,MWTEMPN,AGE0519,HSENROLL,COLLFTE,COLLPTE
+model_selector,segment,hh,emp_retail,emp_personal_svcs_office,emp_health,emp_restaurant_bar,emp_ag,emp_mfg_prod,enrollgradekto8,enrollgrade9to12,collegeenroll,othercollegeenroll
 workplace,work_low,0,0.129,0.193,0.383,0.12,0.01,0.164,0,0,0,0
 workplace,work_med,0,0.12,0.197,0.325,0.139,0.008,0.21,0,0,0,0
 workplace,work_high,0,0.11,0.207,0.284,0.154,0.006,0.239,0,0,0,0

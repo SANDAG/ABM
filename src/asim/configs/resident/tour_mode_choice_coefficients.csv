@@ -3,6 +3,9 @@ coef_zero,0,T
 coef_one,1,T
 coef_nest_root,1,T
 coef_nest_AUTO,0.72,T
+coef_nest_AUTO_DRIVEALONE,0.5,T
+coef_nest_AUTO_SHAREDRIDE2,0.5,T
+coef_nest_AUTO_SHAREDRIDE3,0.5,T
 coef_nest_NONMOTORIZED,0.72,T
 coef_nest_TRANSIT,0.72,T
 coef_nest_RIDEHAIL,0.36,T

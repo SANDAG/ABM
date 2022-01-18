@@ -18,24 +18,21 @@ rebuild_tvpb_cache: True
 # (n.b. csv file could be quite large if cache is STATIC!)
 trace_tvpb_cache_as_csv: False
 
-taz_skims: 
-  - traffic_skims_xborder_EA.omx
-  - traffic_skims_xborder_AM.omx
-  - traffic_skims_xborder_MD.omx
-  - traffic_skims_xborder_PM.omx
-  - traffic_skims_xborder_EV.omx
+taz_skims:
+  - traffic_skims_processed_EA.omx
+  - traffic_skims_processed_AM.omx
+  - traffic_skims_processed_MD.omx
+  - traffic_skims_processed_PM.omx
+  - traffic_skims_processed_EV.omx
 
 tap_skims:
     # we require that skims for all tap_tap sets have unique names
     # and can therefor share a single skim_dict without name collision
     # e.g. TRN_XWAIT_FAST__AM, TRN_XWAIT_SHORT__AM, TRN_XWAIT_CHEAP__AM
-    - transit_skims_xborder.omx
+    - transit_skims_processed.omx
 
-
-# FIXME why no taz.csv?
-# tas: taz.csv
-
-maz: mazs_xborder.csv   # mgra.csv
+# maz: mazs_xborder.csv   # mgra.csv
+maz: land_use.csv   # mgra.csv
 
 tap: taps.csv   # this is just tap ids
 
@@ -59,7 +56,11 @@ skim_time_periods:
     # periods: [0, 3, 9, 22, 29, 48]  # ctramp xborder
     labels: &skim_time_period_labels ['EA', 'AM', 'MD', 'PM', 'EV']
 
-# transit virtual path builder settings   
+demographic_segments: &demographic_segments
+  - &low_income_segment_id 0
+  - &high_income_segment_id 1
+
+# transit virtual path builder settings
 TVPB_SETTINGS:    # find this in sandag bestPathTAP UEC
 
   tour_mode_choice:
@@ -108,6 +109,19 @@ TVPB_SETTINGS:    # find this in sandag bestPathTAP UEC
       lrt_asc: -20  # LRT alternative-specific constant
       cr_asc: 0.00  # Commuter Rail alternative-specific constant
 
+      # demographic segmentation stuff
+      c_ivt_high_income: -0.028
+      c_ivt_low_income: -0.0175
+      c_cost_high_income: -0.00112
+      c_cost_low_income: -0.00112
+      C_LOW_INCOME_SEGMENT_ID: *low_income_segment_id
+      C_HIGH_INCOME_SEGMENT_ID: *high_income_segment_id
+      TVPB_demographic_segments_by_income_segment:
+       1: *low_income_segment_id
+       2: *low_income_segment_id
+       3: *high_income_segment_id
+       4: *high_income_segment_id
+
   trip_mode_choice:
     units: utility
     path_types:
@@ -154,3 +168,22 @@ TVPB_SETTINGS:    # find this in sandag bestPathTAP UEC
       cr_asc: 0.00  # Commuter Rail alternative-specific constant
 
 
+  accessibility:
+    units: time
+    path_types:
+      WTW:
+        access: walk
+        egress: walk
+        max_paths_across_tap_sets: 1
+        max_paths_per_tap_set: 1
+    tap_tap_settings:
+      SPEC: tvpb_accessibility_tap_tap_.csv
+    maz_tap_settings:
+        walk:
+          SPEC: tvpb_accessibility_walk_maz_tap.csv
+          CHOOSER_COLUMNS:
+            - walkTime
+            - dist
+    CONSTANTS:
+        out_of_vehicle_walk_time_weight: 1.5
+        out_of_vehicle_wait_time_weight: 2.0
