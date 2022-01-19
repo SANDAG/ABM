@@ -39,6 +39,8 @@ public class AirportPartyManager
 
     private int			   airportMgra;
     
+    private float		   sampleRate;
+    
     SandagModelStructure   sandagStructure;
     private String airportCode;
     
@@ -58,6 +60,8 @@ public class AirportPartyManager
     {
         sandagStructure = new SandagModelStructure();
         this.airportCode = airportCode;
+        
+        this.sampleRate = sampleRate;
 
         String directory = Util.getStringValueFromPropertyMap(rbMap, "Project.Directory");
         String purposeFile = directory
@@ -110,7 +114,7 @@ public class AirportPartyManager
         {
         	int totalEmployees = 0;
             for ( String key : employeeParkingValuesMap.keySet()) {
-    			totalEmployees += (int) (employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_stall_index) * employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_terminalpct_index));
+    			totalEmployees += (int) (employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_stall_index) * employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_terminalpct_index) * sampleRate);
     		}
             float directPassengers = (enplanements - connectingPassengers) / annualFactor;
             totalParties = (int) (directPassengers / averageSize) * 2;
@@ -124,7 +128,8 @@ public class AirportPartyManager
             parties = new AirportParty[(int)(totalParties*sampleRate)];
         }
         
-        logger.info("Total airport parties: " + totalParties);
+        logger.info("Total airport passenger parties: " + totalParties);
+        logger.info("Total airport passenger parties in the sample: " + totalPassengerParty);
     }
 
     /**
@@ -145,8 +150,8 @@ public class AirportPartyManager
         int totalEmployees = 0;
         if (airportCode.equals("SAN"))
         {
-        	departures = totalPassengerParty / 2;
-        	arrivals = departures;
+        	departures = (int) (totalPassengerParty / 2);
+        	arrivals = totalPassengerParty - departures;
             int employees = (parties.length - departures - arrivals) / 2;
         }
         for (int i = 0; i < departures; ++i)
@@ -181,7 +186,7 @@ public class AirportPartyManager
             totalPassengers += size;
             party.setID(totalParties);
         }
-
+        
         for (int i = 0; i < arrivals; ++i)
         {
 
@@ -209,14 +214,14 @@ public class AirportPartyManager
             party.setID(totalParties);
             totalPassengers += size;
         }
-
+        logger.info("Total airport passenger parties " + totalParties);
         logger.info("Total passengers " + totalPassengers);
         
         if (airportCode.equals("SAN"))
         {
         	for (String key : employeeParkingValuesMap.keySet())
         	{
-        		double num = employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_stall_index) * employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_terminalpct_index);
+        		double num = employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_stall_index) * employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_terminalpct_index) * sampleRate;
         		int stallNum = (int) num;
         		for (int s = 0; s < stallNum; s++)
         		{
@@ -255,7 +260,7 @@ public class AirportPartyManager
         	
         	for (String key : employeeParkingValuesMap.keySet())
         	{
-        		double num = employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_stall_index) *employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_terminalpct_index);
+        		double num = employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_stall_index) *employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_terminalpct_index) * sampleRate;
         		int stallNum = (int) num;
         		for (int s = 0; s < stallNum; s++)
         		{
@@ -292,7 +297,7 @@ public class AirportPartyManager
         		}
         	}
         	
-        	logger.info("Total employees going to terminal " + totalEmployees);
+        	logger.info("Total employees going to terminal in the sample: " + totalEmployees);
         }
 
     }
