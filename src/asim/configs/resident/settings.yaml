@@ -103,7 +103,7 @@ distributed_time_factor_nonwork_stddev: 0.6
 distributed_time_factor_min: 0.1
 distributed_time_factor_max: 10
 
-resume_after: initialize_tvpb
+resume_after: school_location
 
 models:
   - initialize_landuse

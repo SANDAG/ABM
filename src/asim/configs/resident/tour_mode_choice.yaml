@@ -16,28 +16,16 @@ NESTS:
       - name: AUTO
         coefficient: coef_nest_AUTO
         alternatives:
-            - name: DRIVEALONE
-              coefficient: coef_nest_AUTO_DRIVEALONE
-              alternatives:
-                - DRIVEALONEFREE
-                - DRIVEALONEPAY
-            - name: SHAREDRIDE2
-              coefficient: coef_nest_AUTO_SHAREDRIDE2
-              alternatives:
-                - SHARED2FREE
-                - SHARED2PAY
-            - name: SHAREDRIDE3
-              coefficient: coef_nest_AUTO_SHAREDRIDE3
-              alternatives:
-                - SHARED3FREE
-                - SHARED3PAY
+            - DRIVEALONE
+            - SHARED2
+            - SHARED3
       - name: NONMOTORIZED
         coefficient: coef_nest_NONMOTORIZED
         alternatives:
           - WALK
           - BIKE
       - name: TRANSIT
-        coefficient:  coef_nest_TRANSIT
+        coefficient: coef_nest_TRANSIT
         alternatives:
           - WALK_TRANSIT
           - PNR_TRANSIT
@@ -49,6 +37,10 @@ NESTS:
           - TAXI
           - TNC_SINGLE
           - TNC_SHARED
+      - name: SCHOOL_BUS
+        coefficient: coef_nest_SCHOOL_BUS
+        alternatives:
+          - SCH_BUS
 
 SPEC: tour_mode_choice.csv
 COEFFICIENTS: tour_mode_choice_coefficients.csv
@@ -151,6 +143,11 @@ CONSTANTS:
 #    joint_sr2_ASC_auto_deficient: 0
 #    joint_sr2_ASC_auto_sufficient: 0
 #    joint_drive_transit_ASC_no_auto: 0
+    cost_share_s2: 2
+    cost_share_s3: 3
+    vot_threshold_low: 8.81
+    vot_threshold_med: 18.00
+    max_walk_time: 60
 
 # so far, we can use the same spec as for non-joint tours
 preprocessor:
@@ -175,6 +172,9 @@ LOGSUM_CHOOSER_COLUMNS:
   - age_16_p
   - age_16_to_19
   - auto_ownership
+  - num_adults
+  - sex
+  - ptype
   - number_of_participants
   - tour_category
   - num_workers
@@ -185,5 +185,8 @@ LOGSUM_CHOOSER_COLUMNS:
   - c_ivt_for_segment
   - c_cost_for_segment
   - income
+  - time_factor_work
+  - time_factor_nonwork
+  - duration
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum

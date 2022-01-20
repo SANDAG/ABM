@@ -62,3 +62,8 @@ PTYPE_NAME:
 CDAP_ACTIVITY_MANDATORY: M
 CDAP_ACTIVITY_NONMANDATORY: N
 CDAP_ACTIVITY_HOME: H
+
+# Defines cuts on psedomsa in landuse file.  Replacement for area_type
+cbd_threshold: 2
+urban_threshold: 5
+rural_threshold: 5

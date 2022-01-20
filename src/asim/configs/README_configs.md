@@ -5,8 +5,24 @@ This readme is a record of things that might want to be fixed or changed in subs
 Input Data Prep:
 
 * Took maz and tap files from xborder implementation
-* Had to add an extra 'DIST' skim to call for school and work location choice (check out skim lists for other example models)
-  - attempting to call SOV_TR_M_DIST__AM skim directly in school location choice model (via multiple methods) did not succeed
+* Had to add an extra `DIST` skim to call for school and work location choice (check out skim lists for other example models)
+  - attempting to call `SOV_TR_M_DIST__AM` skim directly in school location choice model (via multiple methods) did not succeed
+
+---
+Changes in mutiple files
+* Landuse field called `area_type` is not a SANDAG variable.  It was used to determine CBD, urban, and rural status.
+  - changed to use SANDAG's `pseudomsa` field
+  - changed the thresholds for `[cbd,urb,rural]_threshold` in _common/constants.yaml_ to reflect the change
+  - This change appears in the following list of files (do a search in configs for land_use.pseudomsa):
+     - _annotate_households.csv_
+     - _annotate_landuse.csv_
+     - _annotate_persons_workplace.csv_, It was used to create the `work_zone_area_type` field which is used in _atwork_subtour_destination.csv_
+     - _annotate_persons_
+     - _stop_frequency_annotate_tours_preprocessor.csv_ to create `destination_area_type`
+     - _non_mandatory_tour_scheduling_annotate_tours_preprocessor.csv_
+     - _joint_tour_scheduling_annotate_tours_preprocessor.csv_
+     - _trip_destination_sample.csv_ and _trip_destination.csv_ (although these should be replaced soon)
+  - all of these files should be checked to make sure their expressions related to landuse area type still make sense with this change
 ---
 _settings.yaml_
 
@@ -52,13 +68,17 @@ _accessibility.csv_ and _accessibility.yaml_
 * changed `SOVTOLL_TIME` skim to `SOV_TR_M_TIME`
 
 ---
-_school_location.csv_ and _school_location_sample.csv_
+School Location Choice
+* Used MD `SOV_TR_M_TIME` skim in _annotate_persons_school.csv_ for time from home to school
 
-* changed `_DIST@skims['DIST']` to `_DIST@skims[('SOV_TR_M_DIST__AM', 'MD')]`.
+---
+Workplace Location Choice
+* Changed `DISTWALK` to `DIST` in _annotate_persons_workplace.csv_ while waiting on walk distance skim
+* Used MD `SOV_TR_M_TIME` skim in _annotate_persons_workplace.csv_ for time from home to work
 
 ---
 Tour mode choice
-* added coefficients to template that were missing: cost_coef
+* added coefficients to template that were missing: `cost_coef`,
 * changed expression to include the following coefficients and changed the actual coefficient to `coef_one`: `c_wacc`, `c_wegr`, `c_rel_inb`, `c_rel_oub`, `c_fwt`
   - these were causing crash because they were defined in the pre-processor, but were listed as actual coefficients
 * commented out lines in _tour_mode_choice.csv_ that were missing constants defined:
@@ -72,5 +92,25 @@ Tour mode choice
   - `coef_age65pl_sr3p` instead of `coef_age65pl_sr3`
   - `coef_age[1624,4155,5664]_sr3p` instead of `coef_age[1624,4155,5664]_sr3`
   - `coef_female_sr3p` instead of `coef_female_sr3`
-* nesting coefficients for AUTO_[DRIVEALONE, SHAREDRIDE2, SHAREDRIDE3] were missing in template and coefs files. They were added and set to 0.5.  Nesting coefficients need to be checked!!
-* `coef_income` and `income_exponent` are missing.  Used to calcualte cost_coef.  Added to pre-processor and set to arbitrary values.  Needs to be addressed!!
+* changed nesting structure in tour_mode_choice.yaml to match UEC. Set all nesting coefs to 0.5 in coeffs file (also matches UEC). Should be double checked.
+* `coef_income` was missing.  Used to calcualte cost_coef in pre-preocessor.  Added to template and coefs files and set to arbitrary value of 0.05.  Needs to be addressed!!
+* Changed parking cost to use `hparkcost`.  Expressions available for both on and off peak parking, but only one hourly parking cost is available in the landuse file, so they evaluate to the same value
+* `tour_type` is not yet decided when calculating logsums, so used df.get() function and set default to 'work'.
+  - Same with `tour_category`, although default varied cause it was used in multiple places
+* Added `coef_income` to _tour_mode_choice_coefficients.csv_ and set to arbitrary value of 0.5 and fixed to true
+* Copied `cost_share_[s2,s3]`, `vot_threshold_[low,med], maz_walk_time` from xborder model to tour_mode_choice.yaml.  Should these be moved to (common) constants?
+* `df.transponderOwnership` is not recognized in the preprocessor since there is no Transponder model yet implemented.  Setting `ownsTransponder` to 1 for now.
+* `walk_time_skims_[out,in]` need to use the walktime skims, but we don't have that. Putting placeholder in for now based on `SOV_TR_L_DIST * 3 / 60`
+* `milestocoast` was not defined, replaced with arbitrary value of 5
+* All of the bike logsums and availability stuff is not defined. commenting out for now.
+* None of the AV related constants are defined.  Commenting them out in prepreocessor for now or adding placeholders where unavoidable
+* `freeParkingEligibility` is not defined, comes from not-implemented employer parking provision and reimbursement model. Set to 0 as placeholder.
+  - same with `reimburseProportion`
+  - `reimbursePurpose` is just set to 1... seems pointless?
+* Double check units for parking costs in landuse
+* origin and destination terminal times (`oTermTime, dTermTime`) are not included in landuse data, setting to 0 as placeholder until it can be joined
+* Had to restructure calculation of `parkingCostBeforeReimb` in preprocessor. check to make it is still consistent with UEC
+* double check `walkAvailable` function is correct in preprocessor
+* `[WLK,PNR,KNR]_available` conditions need to call the TVPB logsums correctly. They are all turned on as a placeholder
+* `DTW, NTW, and KTW` TVPB settings are not set up yet.  Put in WTW for all modes for now as placeholder
+* `sharedTNCIVTFactor` not defined.  Set to 1 as placeholder in preprocessor

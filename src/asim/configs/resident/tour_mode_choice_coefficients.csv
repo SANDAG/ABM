@@ -2,14 +2,11 @@ coefficient_name,value,constrain
 coef_zero,0,T
 coef_one,1,T
 coef_nest_root,1,T
-coef_nest_AUTO,0.72,T
-coef_nest_AUTO_DRIVEALONE,0.5,T
-coef_nest_AUTO_SHAREDRIDE2,0.5,T
-coef_nest_AUTO_SHAREDRIDE3,0.5,T
-coef_nest_NONMOTORIZED,0.72,T
-coef_nest_TRANSIT,0.72,T
-coef_nest_RIDEHAIL,0.36,T
-coef_nest_SCHOOL_BUS,0.72,T
+coef_nest_AUTO,0.5,T
+coef_nest_NONMOTORIZED,0.5,T
+coef_nest_TRANSIT,0.5,T
+coef_nest_RIDEHAIL,0.5,T
+coef_nest_SCHOOL_BUS,0.5,T
 coef_ivt,-0.0175,F
 coef_cost,-0.001,F
 coef_oMix_nmot_work,0.210144,F
@@ -319,4 +316,4 @@ coef_dEmpDen_wTran_atwork,0,F
 coef_dEmpDen_dTran_atwork,0,F
 coef_bikeLogsumI_atwork,0.23,F
 coef_bikeLogsumO_atwork,0.23,F
-#,,
+coef_income,0.05,T

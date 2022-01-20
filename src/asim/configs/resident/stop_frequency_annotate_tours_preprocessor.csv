@@ -44,4 +44,4 @@ AccesibilityADestination peak transit,_dest_trPkRetail,"reindex(accessibility.tr
 AccesibilityADestination off-peak transit,_dest_trOpRetail,"reindex(accessibility.trOpRetail, df.destination)"
 AccesibilityAtDestination if transit,pracc,"pracc.where(~tour_mode_is_transit, _dest_trPkRetail.where(_tour_starts_in_peak, _dest_trOpRetail))"
 AccesibilityAtDestination if non_motorized,pracc,"pracc.where(~tour_mode_is_non_motorized, reindex(accessibility.nmRetail, df.destination))"
-,destination_area_type,"reindex(land_use.area_type, df.destination)"
+,destination_area_type,"reindex(land_use.pseudomsa, df.destination)"
