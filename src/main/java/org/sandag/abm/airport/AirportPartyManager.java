@@ -541,13 +541,16 @@ public class AirportPartyManager
             logger.fatal("Could not open file " + fileName + " for writing\n");
             throw new RuntimeException();
         }
-        String headerString = new String(
-                "travel_party_id,leg_id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,originTAZ,"
+        String san_headerString = new String(
+                "id,leg_id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,originTAZ,"
                 + "destinationTAZ,tripMode,av_avail,arrivalMode,boardingTAP,alightingTAP,set,valueOfTime\n");
-        writer.print(headerString);
+        String cbx_headerString = new String(
+                "id,direction,purpose,size,income,nights,departTime,originMGRA,destinationMGRA,originTAZ,"
+                + "destinationTAZ,tripMode,av_avail,arrivalMode,boardingTAP,alightingTAP,set,valueOfTime\n");
         
         if (airportCode.equals("SAN"))
         {
+        	writer.print(san_headerString);
         	// Iterate through the array, printing records to the file
             for (int i = 0; i < parties.length; ++i)
             {
@@ -719,6 +722,7 @@ public class AirportPartyManager
         }
         else
         {
+        	writer.print(cbx_headerString);
         	for (int i = 0; i < parties.length; ++i)
             {
 
