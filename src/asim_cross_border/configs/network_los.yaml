@@ -24,6 +24,7 @@ taz_skims:
   - traffic_skims_xborder_MD.omx
   - traffic_skims_xborder_PM.omx
   - traffic_skims_xborder_EV.omx
+  - dest_pmsa.omx
 
 tap_skims:
     # we require that skims for all tap_tap sets have unique names

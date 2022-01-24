@@ -6,3 +6,7 @@ util_ped_wait,Walk - Wait Time,@df.ped_wait,,,,coef_wait
 util_ASC_s2,Shared Ride 2 - ASC,1,,asc_SHARED2,,
 util_ASC_s3,Shared Ride 3 - ASC,1,,,asc_SHARED3,
 util_ASC_walk,Walk - ASC,1,,,,asc_WALK
+util_trip_logsum_tour_da,Drive alone - Trip Logsum,@(df.logsum_DRIVEALONE_outbound + df.logsum_DRIVEALONE_inbound),trip_logsum_tour,,,
+util_trip_logsum_tour_s2,Shared Ride 2 - Trip Logsum,@(df.logsum_SHARED2_outbound + df.logsum_SHARED2_inbound),,trip_logsum_tour,,
+util_trip_logsum_tour_s3,Shared Ride 3 - Trip Logsum,@(df.logsum_SHARED3_outbound + df.logsum_SHARED3_inbound),,,trip_logsum_tour,
+util_trip_logsum_tour_walk,Walk - Trip Logsum,@(df.logsum_WALK_outbound + df.logsum_WALK_inbound),,,,trip_logsum_tour

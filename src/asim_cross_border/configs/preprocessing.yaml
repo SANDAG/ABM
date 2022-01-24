@@ -9,7 +9,7 @@ walk_speed: 3
 maz_input_fname: mgra13_based_input2016.csv
 colonia_input_fname: crossBorder_supercolonia.csv
 tap_lines_input_fname: tapLines.csv
-tour_scheduling_probs_input_fname: crossBorder_tourEntryAndReturn.csv
+tour_scheduling_probs_input_fname: crossBorder_tourEntryAndReturn_old.csv
 poe_wait_times_input_fname: crossBorder_pointOfEntryWaitTime.csv
 stop_frequency_input_fname: crossBorder_stopFrequency.csv
 trip_purpose_probs_input_fname: crossBorder_stopPurpose.csv
