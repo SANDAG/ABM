@@ -256,7 +256,7 @@ coef_size3_sr2_disc,0.412665,F
 coef_size3_sr3p_disc,-0.79896,F
 coef_size4p_sr2_disc,0.761157,F
 coef_size4p_sr3p_disc,0.57813,F
-coef_beachParkBikeConstant _disc,0.7,F
+coef_beachParkBikeConstant,0.7,F
 coef_ageund16_bike_disc,0,F
 coef_age1624_bike_disc,0,F
 coef_age4155_bike_disc,-0.77985,F

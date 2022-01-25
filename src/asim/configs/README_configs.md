@@ -77,6 +77,16 @@ Workplace Location Choice
 * Used MD `SOV_TR_M_TIME` skim in _annotate_persons_workplace.csv_ for time from home to work
 
 ---
+Auto Ownership
+* Commented out county specific ASCs in _auto_ownership.csv_
+
+---
+Free Parking
+* Commented out county specific ASCs in _free_parking.csv_ and _free_parking_annotate_persons_preprocessor.csv_
+  - The preprocessor only had one line in it to calculate the work county, so after commenting it out, it crashed because there were no longer any expressions.  I commented out the call to the preprocessor in _free_parking.yaml_
+---
+
+---
 Tour mode choice
 * added coefficients to template that were missing: `cost_coef`,
 * changed expression to include the following coefficients and changed the actual coefficient to `coef_one`: `c_wacc`, `c_wegr`, `c_rel_inb`, `c_rel_oub`, `c_fwt`
@@ -114,3 +124,8 @@ Tour mode choice
 * `[WLK,PNR,KNR]_available` conditions need to call the TVPB logsums correctly. They are all turned on as a placeholder
 * `DTW, NTW, and KTW` TVPB settings are not set up yet.  Put in WTW for all modes for now as placeholder
 * `sharedTNCIVTFactor` not defined.  Set to 1 as placeholder in preprocessor
+* Renaming of tour purposes in _tour_mode_choice_coefficients_template.csv_
+  - Copied the maint column into three separate columns named escort, shopping, and othmaint
+  - Copied the disc column into three separate columns named eatout, social, othdiscr
+  - This was needed because all of the other models define different purposes and need to calculate logsums for each purpose. ActivitySim will crash if the purpose names do not match.
+  - Since the columns were just copied and all of the coefficient names remain the same, the utility calculated for each of the maint purposes will be the same (and similarly for disc).

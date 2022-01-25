@@ -18,8 +18,8 @@ CONSTANTS:
   ID_SONOMA: 8
   ID_MARIN: 9
 
-preprocessor:
-  SPEC: free_parking_annotate_persons_preprocessor
-  DF: persons
-  TABLES:
-    - land_use
+# preprocessor:
+#   SPEC: free_parking_annotate_persons_preprocessor
+#   DF: persons
+#   TABLES:
+#     - land_use
