@@ -10,3 +10,5 @@ util_trip_logsum_tour_da,Drive alone - Trip Logsum,@(df.logsum_DRIVEALONE_outbou
 util_trip_logsum_tour_s2,Shared Ride 2 - Trip Logsum,@(df.logsum_SHARED2_outbound + df.logsum_SHARED2_inbound),,trip_logsum_tour,,
 util_trip_logsum_tour_s3,Shared Ride 3 - Trip Logsum,@(df.logsum_SHARED3_outbound + df.logsum_SHARED3_inbound),,,trip_logsum_tour,
 util_trip_logsum_tour_walk,Walk - Trip Logsum,@(df.logsum_WALK_outbound + df.logsum_WALK_inbound),,,,trip_logsum_tour
+util_otay,Otay Mesa Mode,@(df.origin==23004),,otay_SHARED2,otay_SHARED3,otay_WALK
+util_tecate,Tecate Mode,@(df.origin==23005),,tecate_SHARED2,tecate_SHARED3,tecate_WALK

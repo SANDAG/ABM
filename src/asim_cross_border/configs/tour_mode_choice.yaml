@@ -62,6 +62,7 @@ LOGSUM_CHOOSER_COLUMNS:
   - primary_purpose
   - person_id
   - household_id
+  - origin
 
 CHOICE_COL_NAME: tour_mode
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum
