@@ -103,7 +103,7 @@ distributed_time_factor_nonwork_stddev: 0.6
 distributed_time_factor_min: 0.1
 distributed_time_factor_max: 10
 
-resume_after: non_mandatory_tour_scheduling
+resume_after:
 
 models:
   - initialize_landuse

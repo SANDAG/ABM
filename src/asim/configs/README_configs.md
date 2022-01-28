@@ -4,9 +4,14 @@ This readme is a record of things that might want to be fixed or changed in subs
 ---
 Input Data Prep:
 
-* Took maz and tap files from xborder implementation
 * Had to add an extra `DIST` skim to call for school and work location choice (check out skim lists for other example models)
   - attempting to call `SOV_TR_M_DIST__AM` skim directly in school location choice model (via multiple methods) did not succeed
+  - will also need `DISTWALK` and `DISTBIKE` skims
+* created maz_tap_drive.csv file by using _accessam.csv_
+  - _accessam.csv_ provides TAZ to TAP drive times
+  - there are only 105 unique taps in that file -- only taps that are connected to a parking lot.  This means that only these taps are available for knr and tnc-transit
+  - joined maz to taz crosswalk from landuse file to create maz to tap drive times.  This means all mazs within a taz receive the same drive time.
+  - joined tap.ptype to maz_to_tap_drive to get walk distances from the lot to the tap.  Walk distances are used in _tvbp_utility_drive_maz_tap.csv_
 
 ---
 Changes in mutiple files
@@ -40,6 +45,7 @@ _network_los.yaml_
 * Does it make sense that `max_paths_across_tap_sets: 4` and `max_paths_per_tap_set: 1`?
 * Added `demographic_segments`.  They are called in _tour_mode_choice_.  Looks like the cross border model "fakes" these segments by defining them in it's _annotate_persons.csv_
   - want to the `TVPB_demographic_segments_by_income_segment` related constants to _constants.csv_? (they were taken from SEMCOG and values should be checked)
+* Added drive access & egress to tour_mode_choice settings
 
 ---
 
@@ -122,7 +128,7 @@ Tour mode choice
 * Had to restructure calculation of `parkingCostBeforeReimb` in preprocessor. check to make it is still consistent with UEC
 * double check `walkAvailable` function is correct in preprocessor
 * `[WLK,PNR,KNR]_available` conditions need to call the TVPB logsums correctly. They are all turned on as a placeholder
-* `DTW, NTW, and KTW` TVPB settings are not set up yet.  Put in WTW for all modes for now as placeholder
+* `DTW` path is being used for PNR, KNR, and TNC.  maz to taz drive times only include taps connected to parking lots, meaning knr and tnc are restricted to only these taps
 * `sharedTNCIVTFactor` not defined.  Set to 1 as placeholder in preprocessor
 * Renaming of tour purposes in _tour_mode_choice_coefficients_template.csv_
   - Copied the maint column into three separate columns named escort, shopping, and othmaint

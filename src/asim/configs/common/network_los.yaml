@@ -48,6 +48,14 @@ maz_to_tap:
     # if provided, this column will be used (together with tap_lines table) to trim the near tap set
     # to only include the nearest tap to origin when more than one tap serves the same line
     tap_line_distance_col: dist
+    max_dist: 1.2
+  drive:
+    table: maz_tap_drive.csv
+    # if provided, this column will be used (together with tap_lines table) to trim the near tap set
+    # to only include the nearest tap to origin when more than one tap serves the same line
+    tap_line_distance_col: DDIST
+    tap_line_time_col: DTIME
+    max_dist: 5.0
 
 skim_time_periods:
     time_window: 1440
@@ -71,6 +79,16 @@ TVPB_SETTINGS:    # find this in sandag bestPathTAP UEC
         egress: walk
         max_paths_across_tap_sets: 4
         max_paths_per_tap_set: 1
+      DTW:
+        access: drive
+        egress: walk
+        max_paths_across_tap_sets: 3
+        max_paths_per_tap_set: 1
+      WTD:
+        access: walk
+        egress: drive
+        max_paths_across_tap_sets: 3
+        max_paths_per_tap_set: 1
     tap_tap_settings:
       SPEC: tvpb_utility_tap_tap.csv
       PREPROCESSOR:
@@ -87,6 +105,13 @@ TVPB_SETTINGS:    # find this in sandag bestPathTAP UEC
         CHOOSER_COLUMNS:
           - walkTime
           - dist
+      drive:
+        SPEC: tvpb_utility_drive_maz_tap.csv
+        CHOOSER_COLUMNS:
+          #- demographic_segment
+          - DDIST
+          - DTIME
+          - WDIST
 
     CONSTANTS:
       c_ivt: -0.028
