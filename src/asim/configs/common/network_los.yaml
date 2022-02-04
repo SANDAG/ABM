@@ -60,8 +60,9 @@ maz_to_tap:
 skim_time_periods:
     time_window: 1440
     period_minutes: 30
-    periods: [0, 11, 17, 30, 37, 48]  # asim xborder
+    # periods: [0, 11, 17, 30, 37, 48]  # asim xborder
     # periods: [0, 3, 9, 22, 29, 48]  # ctramp xborder
+    periods: [0, 6, 12, 25, 32, 48]  # time periods to match documentation
     labels: &skim_time_period_labels ['EA', 'AM', 'MD', 'PM', 'EV']
 
 demographic_segments: &demographic_segments
@@ -73,22 +74,48 @@ TVPB_SETTINGS:    # find this in sandag bestPathTAP UEC
 
   tour_mode_choice:
     units: utility
+    # path types are split by access, egress, and local, premium, mix transit sets
     path_types:
+      # walk transit
       WTW:
         access: walk
         egress: walk
         max_paths_across_tap_sets: 4
         max_paths_per_tap_set: 1
-      DTW:
+      # pnr transit
+      PTW:
         access: drive
         egress: walk
         max_paths_across_tap_sets: 3
         max_paths_per_tap_set: 1
-      WTD:
+      WTP:
         access: walk
         egress: drive
         max_paths_across_tap_sets: 3
         max_paths_per_tap_set: 1
+      # knr transit
+      KTW:
+        access: drive
+        egress: walk
+        max_paths_across_tap_sets: 3
+        max_paths_per_tap_set: 1
+      WTK:
+        access: walk
+        egress: drive
+        max_paths_across_tap_sets: 3
+        max_paths_per_tap_set: 1
+      # TNC transit
+      NTW:
+        access: drive
+        egress: walk
+        max_paths_across_tap_sets: 3
+        max_paths_per_tap_set: 1
+      WTN:
+        access: walk
+        egress: drive
+        max_paths_across_tap_sets: 3
+        max_paths_per_tap_set: 1
+
     tap_tap_settings:
       SPEC: tvpb_utility_tap_tap.csv
       PREPROCESSOR:

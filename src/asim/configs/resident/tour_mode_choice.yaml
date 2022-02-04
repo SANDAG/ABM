@@ -2,12 +2,18 @@ LOGIT_TYPE: NL
 #LOGIT_TYPE: MNL
 
 tvpb_mode_path_types:
-  DRIVE_TRANSIT:
-    od: DTW
-    do: WTD
   WALK_TRANSIT:
     od: WTW
     do: WTW
+  PNR_TRANSIT:
+    od: PTW
+    do: WTP
+  KNR_TRANSIT:
+    od: KTW
+    do: WTK
+  TNC_TRANSIT:
+    od: NTW
+    do: WTN
 
 NESTS:
   name: root

@@ -67,7 +67,6 @@ placeholder for sharedTNCIVTFactor,sharedTNCIVTFactor,1,
 ,daily_parking_cost,"np.where(is_mandatory, _hourly_peak_parking_cost * df.duration, _hourly_offpeak_parking_cost * df.duration)",
 # cost coef,,,
 ,income_exponent,"np.where(tour_type == 'work', 0.6, 0.5)",
-#,coef_income,.05,
 ,c_cost,"(coef_income) /(df.income.clip(0,1000).pow(income_exponent))",
 # ivt coef,,,
 ,time_factor,"np.where(tour_type=='work', df.time_factor_work, df.time_factor_nonwork)",
@@ -149,7 +148,7 @@ Auto sufficient household (enough autos for each adult),autoSufficientHH,"np.whe
 Joint tour,jointTour,"df.get('tour_category', default=False) == 'joint'",
 # Number of participants in joint tour,numberOfParticipantsInJointTour,df.number_of_participants * jointTour,
 Individual tour,indivTour,1 * (jointTour==0),
-Determining Tour Origin,origin,df.origin if 'origin' in df.columns else df.home_zone_id
+Determining Tour Origin,origin,df.origin if 'origin' in df.columns else df.home_zone_id if 'home_zone_id' in df.columns else df.workplace_zone_id
 Determining Tour Destination,destination,df.destination if 'destination' in df.columns else df.alt_dest
 Origin MGRA Dwelling Unit Density,oMGRADUDen,"reindex(land_use.household_density,origin)",
 Origin MGRA Employment Density,oMGRAEmpDen,"reindex(land_use.employment_density,origin)",
