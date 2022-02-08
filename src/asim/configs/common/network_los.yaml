@@ -177,11 +177,46 @@ TVPB_SETTINGS:    # find this in sandag bestPathTAP UEC
   trip_mode_choice:
     units: utility
     path_types:
+      # walk transit
       WTW:
         access: walk
         egress: walk
         max_paths_across_tap_sets: 4
         max_paths_per_tap_set: 1
+      # pnr transit
+      PTW:
+        access: drive
+        egress: walk
+        max_paths_across_tap_sets: 3
+        max_paths_per_tap_set: 1
+      WTP:
+        access: walk
+        egress: drive
+        max_paths_across_tap_sets: 3
+        max_paths_per_tap_set: 1
+      # knr transit
+      KTW:
+        access: drive
+        egress: walk
+        max_paths_across_tap_sets: 3
+        max_paths_per_tap_set: 1
+      WTK:
+        access: walk
+        egress: drive
+        max_paths_across_tap_sets: 3
+        max_paths_per_tap_set: 1
+      # TNC transit
+      NTW:
+        access: drive
+        egress: walk
+        max_paths_across_tap_sets: 3
+        max_paths_per_tap_set: 1
+      WTN:
+        access: walk
+        egress: drive
+        max_paths_across_tap_sets: 3
+        max_paths_per_tap_set: 1
+
     tap_tap_settings:
       SPEC: tvpb_utility_tap_tap.csv
       PREPROCESSOR:

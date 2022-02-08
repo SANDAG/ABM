@@ -1,8 +1,10 @@
 inherit_settings: settings.yaml
 
 multiprocess: True
-households_sample_size: 0
-num_processes: 28
+households_sample_size: 1000
+num_processes: 24
+
+chunk_training_mode: disabled
 
 # raise error if any sub-process fails without waiting for others to complete
 # (Shadow pricing requires fail_fast setting in multiprocessing mode)
@@ -20,7 +22,7 @@ multiprocess_steps:
     begin: initialize_los
   - name: mp_tvpb
     begin: initialize_tvpb
-    num_processes: 20
+    num_processes: 5
     slice:
       tables:
         - attribute_combinations
@@ -32,4 +34,3 @@ multiprocess_steps:
         - persons
   - name: mp_summarize
     begin: write_data_dictionary
-

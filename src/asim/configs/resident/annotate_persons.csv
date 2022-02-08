@@ -34,6 +34,8 @@ school_segment highschool,school_segment,"np.where(is_highschool, SCHOOL_SEGMENT
 school_segment university,school_segment,"np.where(is_university, SCHOOL_SEGMENT_UNIV, school_segment).astype(np.int8)"
 #,,
 is_worker,is_worker,"persons.pemploy.isin([PEMPLOY_FULL, PEMPLOY_PART])"
+is_fulltime_worker,is_fulltime_worker,"persons.pemploy == 1"
+is_parttime_worker,is_parttime_worker,"persons.pemploy == 2"
 #,,
 home_zone_id,home_zone_id,"reindex(households.home_zone_id, persons.household_id)"
 #,,

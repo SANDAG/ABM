@@ -1,62 +1,62 @@
 Label,Description,Expression,Coefficient
-util_roundtrip_auto_time_to_work,Free-flow round trip auto time shift effects - duration,roundtrip_auto_time_to_work * duration,coef_roundtrip_auto_time_to_work
-util_ft_worker_departure,Full-time worker departure shift effects,(ptype == 1) * start,coef_ft_worker_departure
-util_ft_worker_duration,Full-time worker duration shift effects,(ptype == 1) * duration,coef_ft_worker_duration
-util_non_worker_departure,Non-working adult departure shift effects,(ptype == 4) * start,coef_non_worker_departure
-util_univ_departure,University student departure shift effects,(ptype == 3) * start,coef_univ_departure
-util_univ_duration,University student duration shift effects,(ptype == 3) * duration,coef_univ_duration
-util_student_driver_duration,Student driving age duration shift effects,(ptype == 7) * duration,coef_student_driver_duration
-util_all_adults_ft_worker_duration,All adults work full time- duration,(num_workers == hhsize) * duration,coef_all_adults_ft_worker_duration
-util_subsequent_tour_must_start_after_previous_tour_ends,Subsequent tour must start after previous tour ends,(tour_num > 1) & (start < end_previous),coef_subsequent_tour_must_start_after_previous_tour_ends
-util_first_of_2plus_school_tours_departure,First of 2+ school/univ. tours- departure,((tour_count>1) & (tour_num == 1)) * start,coef_first_of_2plus_school_tours_departure
-util_first_of_2plus_school_tours_duration,First of 2+ school/univ. tours- duration,((tour_count>1) & (tour_num == 1)) * duration,coef_first_of_2plus_school_tours_duration
-util_subsequent_2plus_school_tours_duration,Subsequent of 2+ school/univ. tours- duration,(tour_num > 1) * duration,coef_subsequent_2plus_school_tours_duration
-util_hh_income_early_departure,Household income -- Early departure interaction,(income_in_thousands >= 100) & (start < 6),coef_hh_income_early_departure
-util_hh_income_late_arrival,Household income -- Late arrival interaction,(income_in_thousands >= 100) & (end > 22),coef_hh_income_late_arrival
-util_first_of_2plus_school_lt_6_hours,First of 2+ school/univ tours- duration<6 hrs,(tour_count>1) & (tour_num == 1) & (duration < 6),coef_first_of_2plus_school_lt_6_hours
-util_subsequent_of_2plus_school_lt_6_hours,Subsequent of 2+ school/univ tours- duration<6 hrs,(tour_num > 1) & (duration < 6),coef_subsequent_of_2plus_school_lt_6_hours
-util_school_plus_work_tours_by_student_lt_6_hours,School+work tours by student- duration<6 hrs,work_and_school_and_worker & (duration < 6),coef_school_plus_work_tours_by_student_lt_6_hours
-util_school_plus_work_tours_by_worker_lt_6_hours,School+work tours by worker- duration<6 hrs,work_and_school_and_student & (duration < 6),coef_school_plus_work_tours_by_worker_lt_6_hours
-#,,,
-util_mode_choice_logsum,Mode Choice Logsum,mode_choice_logsum,coef_mode_choice_logsum
-#,,,
-#,,, FIXME - use temps as timetable ops can be very time-consuming
-util_dummy_adjacent_before,,"_adjacent_window_before@tt.adjacent_window_before(df.person_id, df.start)",coef_dummy
-util_dummy_adjacent_after,,"_adjacent_window_after@tt.adjacent_window_after(df.person_id, df.end)",coef_dummy
-util_previous_tour_ends_this_departure_hour,Previously-scheduled tour ends in this departure hour,"@tt.previous_tour_ends(df.person_id, df.start)",coef_previous_tour_ends_this_departure_hour
-util_previous_tour_begins_this_arrival_hour,Previously-scheduled tour begins in this arrival hour,"@tt.previous_tour_begins(df.person_id, df.end)",coef_previous_tour_begins_this_arrival_hour
-coef_adjacent_window_exists_before_this_departure_hour_first_tour_interaction,Adjacent window exists before this departure hour - first tour interaction,"@(df.tour_count>1) & (df.tour_num == 1) & _adjacent_window_before",coef_adjacent_window_exists_before_this_departure_hour_first_tour_interaction
-coef_adjacent_window_exists_after_this_arrival_hour_first_tour_interaction,Adjacent window exists after this arrival hour - first tour interaction,"@(df.tour_count>1) & (df.tour_num == 1) & _adjacent_window_after",coef_adjacent_window_exists_after_this_arrival_hour_first_tour_interaction
-util_adjacent_window_exists_before_this_departure_hour_second_plus_tour_interaction,Adjacent window exists before this departure hour - second+ tour interaction,"@(df.tour_num > 1) & _adjacent_window_before",coef_adjacent_window_exists_before_this_departure_hour_second_plus_tour_interaction
-util_adjacent_window_exists_after_this_arrival_hour_second_plus_tour_interaction,Adjacent window exists after this arrival hour - second+ tour interaction,"@(df.tour_num > 1) & _adjacent_window_after",coef_adjacent_window_exists_after_this_arrival_hour_second_plus_tour_interaction
-util_remaining_work_school_tours_to_be_scheduled_div_number_of_unscheduled_hours,Remaining work/school tours to be scheduled / number of unscheduled hours,"@((df.tour_count>1) & (df.tour_num == 1)) * 1.0 / tt.remaining_periods_available(df.person_id, df.start, df.end)",coef_remaining_work_school_tours_to_be_scheduled_div_number_of_unscheduled_hours
-#,,,
-util_departure_constants_early_up_to_5,Departure Constants -- Early (up to 5),start < 6,coef_departure_constants_early
-util_departure_constants_am_peak_1 _6,Departure Constants -- AM peak 1 (6),start == 6,coef_departure_constants_am_peak_1
-util_departure_constants_am_peak_2_7,Departure Constants -- AM peak 2 (7),start == 7,coef_departure_constants_am_peak_2
-util_departure_constants_am_peak_3_8,Departure Constants -- AM peak 3 (8),start == 8,coef_departure_constants_am_peak_3
-util_departure_constants_am_peak_4_9,Departure Constants -- AM peak 4 (9),start == 9,coef_departure_constants_am_peak_4
-util_departure_constants_midday_1_10_to_12,Departure Constants -- Midday 1 (10 to 12),(start > 9) & (start < 13),coef_departure_constants_midday_1
-util_departure_constants_midday_2_13_to_15,Departure Constants -- Midday 2 (13 to 15),(start > 12) & (start < 16),coef_departure_constants_midday_2
-util_departure_constants_pm_peak_16_to_18,Departure Constants -- PM peak (16 to 18),(start > 15) & (start < 19),coef_departure_constants_pm_peak
-util_departure_constants_evening_19_to_21,Departure Constants -- Evening (19 to 21),(start > 18) & (start < 22),coef_departure_constants_evening
-util_departure_constants_late_22_and_later,Departure Constants -- Late (22 and later),start > 21,coef_departure_constants_late
-util_arrival_constants_early_up_to_6,Arrival Constants -- Early (up to 6),end < 7,coef_arrival_constants_early
-util_arrival_constants_am_peak_7_to_9,Arrival Constants -- AM peak (7 to 9),(end > 6) & (end < 10),coef_arrival_constants_am_peak
-util_arrival_constants_midday_1_10_to_12,Arrival Constants -- Midday 1 (10 to 12),(end > 9) & (end < 13),coef_arrival_constants_midday_1
-util_arrival_constants_midday_2_13_to_14,Arrival Constants -- Midday 2 (13 to 14),(end > 12) & (end < 15),coef_arrival_constants_midday_2
-util_arrival_constants_pm_peak_1_15,Arrival Constants -- PM peak 1 (15),end == 15,coef_arrival_constants_pm_peak_1
-util_arrival_constants_pm_peak_2_16,Arrival Constants -- PM peak 2 (16),end == 16,coef_arrival_constants_pm_peak_2
-util_arrival_constants_pm_peak_3_17,Arrival Constants -- PM peak 3 (17),end == 17,coef_arrival_constants_pm_peak_3
-util_arrival_constants_pm_peak_4_18,Arrival Constants -- PM peak 4 (18),end == 18,coef_arrival_constants_pm_peak_4
-util_arrival_constants_evening_19_to_21,Arrival Constants -- Evening (19 to 21),(end > 18) & (end < 22),coef_arrival_constants_evening
-util_arrival_constants_late_22_and_later,Arrival Constants -- Late (22 and later),end > 21,coef_arrival_constants_late
-util_duration_constants_0_to_2_hours,Duration Constants -- 0 to 2 hours,duration < 3,coef_duration_constants_0_to_2_hours
-util_duration_constants_3_to_4_hours,Duration Constants -- 3 to 4 hours,(duration > 2) & (duration < 5),coef_duration_constants_3_to_4_hours
-util_duration_constants_5_to_6_hours,Duration Constants -- 5 to 6 hours,(duration > 4) & (duration < 7),coef_duration_constants_5_to_6_hours
-util_duration_constants_7_to_8_hours,Duration Constants -- 7 to 8 hours,(duration > 6) & (duration < 9),coef_duration_constants_7_to_8_hours
-util_duration_constants_9_hours,Duration Constants -- 9 hours,duration == 9,coef_duration_constants_9_hours
-util_duration_constants_10_hours,Duration Constants -- 10 hours,duration == 10,coef_duration_constants_10_hours
-util_duration_constants_11_hours,Duration Constants -- 11 hours,duration == 11,coef_duration_constants_11_hours
-util_duration_constants_12_to_13_hours,Duration Constants -- 12 to 13 hours,(duration > 11) & (duration < 14),coef_duration_constants_12_to_13_hours
-util_duration_constants_14_to_18_hours,Duration Constants -- 14 to 18 hours,(duration > 13) & (duration < 19),coef_duration_constants_14_to_18_hours
+# writing out varibles we may need for estimation,,,
+round_trip_auto_time_to_work,round_trip_auto_time_to_work,@df.roundtrip_auto_time_to_work,zero_coef
+age,age,@df.age,zero_coef
+util_Mode_Choice_Logsum,SCHOOL - Mode Choice Logsum,mode_choice_logsum,coef_Mode_Choice_Logsum
+util_Low_income_lt25000_Departure_before_730_am__Linear,SCHOOL - Low income (<25000) - Departure before 7:30 am  - Linear,"@((df.is_income_less25K) & (df.start < df.departureRefBin_school)) *df.departureLinearShift1",coef_Low_income_lt25000_Departure_before_730_am__Linear
+util_Low_income_lt25000_Departure_after_800_am_Linear,SCHOOL - Low income (<25000) - Departure after 8:00 am - Linear,"@((df.is_income_less25K) & (df.start > df.departureRefBin_school)) *df.departureLinearShift1",coef_Low_income_lt25000_Departure_after_800_am_Linear
+util_Low_income_lt25000_Duration_lt_8hrs,SCHOOL - Low income (<25000) - Duration < 8hrs,"@((df.is_income_less25K) & (df.start < df.durationRefBin_school)) * df.durationShift_school",coef_Low_income_lt25000_Duration_lt_8hrs
+util_Low_income_lt25000_Duration_gt_8hrs,SCHOOL - Low income (<25000) - Duration > 8hrs,"@((df.is_income_less25K) & (df.start > df.durationRefBin_school)) * df.durationShift_school",coef_Low_income_lt25000_Duration_gt_8hrs
+util_Med_income_25k_to_60k_Departure_before_730_am__Linear,SCHOOL - Med income (25k to 60k) - Departure before 7:30 am  - Linear,"@((df.is_income_25K_to_60K) & (df.start < df.departureRefBin_school)) *df.departureLinearShift1",coef_Med_income_25k_to_60k_Departure_before_730_am__Linear
+util_Age_0_to_5_yrs_Departure_Before_730_am,SCHOOL - Age 0 to 5 yrs - Departure Before 7:30 am,"@(((df.age>=0) & (df.age<=5)) & (df.start < df.departureRefBin_school)) *df.departureLinearShift1",coef_Age_0_to_5_yrs_Departure_Before_730_am
+util_Age_13_to_15_yrs_Departure_Before_730_am,SCHOOL - Age 13 to 15 yrs - Departure Before 7:30 am,"@(((df.age>=13) & (df.age<=15)) & (df.start < df.departureRefBin_school)) *df.departureLinearShift1",coef_Age_13_to_15_yrs_Departure_Before_730_am
+util_Age_13_to_15_yrs_Departure_After_800_am,SCHOOL - Age 13 to 15 yrs - Departure After 8:00 am,"@(((df.age>=13) & (df.age<=15)) & (df.start > df.departureRefBin_school)) *df.departureLinearShift1",coef_Age_13_to_15_yrs_Departure_After_800_am
+util_Age_16_to_17_yrs_Departure_After_800_am,SCHOOL - Age 16 to 17 yrs - Departure After 8:00 am,"@(((df.age>=16) & (df.age<=17)) & (df.start > df.departureRefBin_school)) *df.departureLinearShift1",coef_Age_16_to_17_yrs_Departure_After_800_am
+util_Age_0_to_5_yrs_Duration_lt_8hrs,SCHOOL - Age 0 to 5 yrs - Duration < 8hrs,"@(((df.age>0) & (df.age<=5)) & (df.start < df.durationRefBin_school)) * df.durationShift_school",coef_Age_0_to_5_yrs_Duration_lt_8hrs
+util_Age_0_to_5_yrs_Duration_gt_8hrs,SCHOOL - Age 0 to 5 yrs - Duration > 8hrs,"@(((df.age>0) & (df.age<=5)) & (df.start > df.durationRefBin_school)) * df.durationShift_school",coef_Age_0_to_5_yrs_Duration_gt_8hrs
+util_Age_13_to_15_yrs_Duration_lt_8hrs,SCHOOL - Age 13 to 15 yrs - Duration < 8hrs,"@(((df.age>=13) & (df.age<=15)) & (df.start < df.durationRefBin_school)) * df.durationShift_school",coef_Age_13_to_15_yrs_Duration_lt_8hrs
+util_Age_13_to_15_yrs_Duration_gt_8hrs,SCHOOL - Age 13 to 15 yrs - Duration > 8hrs,"@(((df.age>=13) & (df.age<=15)) & (df.start > df.durationRefBin_school)) * df.durationShift_school",coef_Age_13_to_15_yrs_Duration_gt_8hrs
+util_Age_16_to_17_yrs_Duration_gt_8hrs,SCHOOL - Age 16 to 17 yrs - Duration > 8hrs,"@(((df.age>=16) & (df.age<=17)) & (df.start > df.durationRefBin_school)) * df.durationShift_school",coef_Age_16_to_17_yrs_Duration_gt_8hrs
+util_Time_SOV_freeflow_to_destination_Departure_before_730_am__Linear,SCHOOL - Time (SOV freeflow) to destination - Departure before 7:30 am  - Linear,"@(df.start < df.departureRefBin_school) *df.departureLinearShift1 * (df.roundtrip_auto_time_to_school)",coef_Time_SOV_freeflow_to_destination_Departure_before_730_am__Linear
+util_Time_SOV_freeflow_to_destination_Departure_after_800_am_Linear,SCHOOL - Time (SOV freeflow) to destination - Departure after 8:00 am - Linear,"@(df.start > df.departureRefBin_school) *df.departureLinearShift1 * (df.roundtrip_auto_time_to_school)",coef_Time_SOV_freeflow_to_destination_Departure_after_800_am_Linear
+util_Time_SOV_freeflow_to_destination_arrival_before_ref,SCHOOL - Time (SOV freeflow) to destination - Arrival < Reference Bin,"@(df.end < df.arrivalRefBin_school) * df.arrivalLinearShift1_school * (df.roundtrip_auto_time_to_school)",coef_Time_SOV_freeflow_to_destination_arrival_before_ref
+util_Time_SOV_freeflow_to_destination_arrival_after_ref,SCHOOL - Time (SOV freeflow) to destination - Duration > 8hrs,"@(df.end > df.arrivalRefBin_school) * df.arrivalLinearShift1_school * (df.roundtrip_auto_time_to_school)",coef_Time_SOV_freeflow_to_destination_arrival_after_ref
+util_All_adults_in_the_household_are_fulltime_workers_Departure_before_730_am__Linear,SCHOOL - All adults in the household are fulltime workers - Departure before 7:30 am  - Linear,"@((df.is_all_adults_full_time_workers) & (df.start < df.departureRefBin_school)) *df.departureLinearShift1",coef_All_adults_in_the_household_are_fulltime_workers_Departure_before_730_am__Linear
+util_All_adults_in_the_household_are_fulltime_workers_Departure_after_800_am_Linear,SCHOOL - All adults in the household are fulltime workers - Departure after 8:00 am - Linear,"@((df.is_all_adults_full_time_workers) & (df.start > df.departureRefBin_school)) *df.departureLinearShift1",coef_All_adults_in_the_household_are_fulltime_workers_Departure_after_800_am_Linear
+util_All_adults_in_the_household_are_fulltime_workers_arrival_before_ref,SCHOOL - All adults in the household are fulltime workers - Duration < 8hrs,"@((df.is_all_adults_full_time_workers) & (df.end < df.arrivalRefBin_school)) * df.arrivalLinearShift1_school",coef_All_adults_in_the_household_are_fulltime_workers_arrival_before_ref
+util_All_adults_in_the_household_are_fulltime_workers_arrival_after_ref,SCHOOL - All adults in the household are fulltime workers - Duration > 8hrs,"@((df.is_all_adults_full_time_workers) & (df.end > df.arrivalRefBin_school)) * df.arrivalLinearShift1_school",coef_All_adults_in_the_household_are_fulltime_workers_arrival_after_ref
+util_Subsequent_tour_is_work_tour_Duration_lt_8_hours,SCHOOL - Subsequent tour is work tour: Duration < 8 hours,"@(((df.tour_count>1) & (df.tour_num == 1) & (df.tour_type.shift(-1) == 'work') & (df.start < df.durationRefBin_school))) * df.durationShift_school",coef_Subsequent_tour_is_work_tour_Duration_lt_8_hours
+util_Subsequent_tour_is_work_tour_Duration_gt_8_hours,SCHOOL - Subsequent tour is work tour: Duration > 8 hours,"@(((df.tour_count>1) & (df.tour_num == 1) & (df.tour_type.shift(-1) == 'work') & (df.start > df.durationRefBin_school))) * df.durationShift_school",coef_Subsequent_tour_is_work_tour_Duration_gt_8_hours
+util_Subsequent_tour_is_school_tour_Departure_after_800_am,SCHOOL - Subsequent tour is school tour: Departure after 8:00 am,"@(((df.tour_count>1) & (df.tour_num == 1) & (df.tour_type.shift(-1) == 'school') & (df.start > df.departureRefBin_school))) *df.departureLinearShift1",coef_Subsequent_tour_is_school_tour_Departure_after_800_am
+util_Subsequent_tour_is_school_tour_Duration_lt_8_hours,SCHOOL - Subsequent tour is school tour: Duration < 8 hours,"@(((df.tour_count>1) & (df.tour_num == 1) & (df.tour_type.shift(-1) == 'school') & (df.start < df.durationRefBin_school))) * df.durationShift_school",coef_Subsequent_tour_is_school_tour_Duration_lt_8_hours
+util_Subsequent_tour_is_school_tour_Duration_gt_8_hours,SCHOOL - Subsequent tour is school tour: Duration > 8 hours,"@(((df.tour_count>1) & (df.tour_num == 1) & (df.tour_type.shift(-1) == 'school') & (df.start > df.durationRefBin_school))) * df.durationShift_school",coef_Subsequent_tour_is_school_tour_Duration_gt_8_hours
+util_Second_tour_of_two_mandatory_tours_Duration_lt_4_hours,SCHOOL - Second tour of two mandatory tours: Duration < 4 hours,"@(((df.tour_count>1) & (df.tour_num > 1)) & (df.duration<7)) * (((7-df.duration)*(df.duration<=7)) + ((df.duration-7)*(df.duration>7)))",coef_Second_tour_of_two_mandatory_tours_Duration_lt_4_hours
+util_Second_tour_of_two_mandatory_tours_Duration_gt_4_hours,SCHOOL - Second tour of two mandatory tours: Duration > 4 hours,"@(((df.tour_count>1) & (df.tour_num > 1)) & (df.duration>7)) * (((7-df.duration)*(df.duration<=7)) + ((df.duration-7)*(df.duration>7)))",coef_Second_tour_of_two_mandatory_tours_Duration_gt_4_hours
+util_Departure_Constant_Before_0600_AM,SCHOOL - Departure Constant: Before 06:00 AM,@(df.start<7),coef_Departure_Constant_Before_0600_AM
+util_Departure_Constant_0600_AM_to_0630_AM_7,SCHOOL - Departure Constant: 06:00 AM to 06:30 AM (7),@(df.start==7),coef_Departure_Constant_0600_AM_to_0630_AM_7
+util_Departure_Constant_0630_AM_to_0700_AM_8,SCHOOL - Departure Constant: 06:30 AM to 07:00 AM (8),@(df.start==8),coef_Departure_Constant_0630_AM_to_0700_AM_8
+util_Departure_Constant_0700_AM_to_0730_AM_9,SCHOOL - Departure Constant: 07:00 AM to 07:30 AM (9),@(df.start==9),coef_Departure_Constant_0700_AM_to_0730_AM_9
+util_Departure_Constant_0730_AM_to_0800_AM_10,SCHOOL - Departure Constant: 07:30 AM to 08:00 AM (10),@(df.start==10),coef_Departure_Constant_0730_AM_to_0800_AM_10
+util_Departure_Constant_After_0800_AM,SCHOOL - Departure Constant: After 08:00 AM,@(df.start > df.departureRefBin_school),coef_Departure_Constant_After_0800_AM
+util_Departure_Constant_Shift_for_every_30_minutes_after_830_am_Linear,SCHOOL - Departure Constant: Shift for every 30 minutes after 8:30 am - Linear,"@((df.start>11)) * (((11-df.start)*(df.start<11)) + ((df.start-11)*(df.start>11)))",coef_Departure_Constant_Shift_for_every_30_minutes_after_830_am_Linear
+util_Departure_Constant_Shift_for_every_30_minutes_after_830_am_Square_Root,SCHOOL - Departure Constant: Shift for every 30 minutes after 8:30 am - Square Root,"@((df.start>11) * (np.maximum(df.start - 11, 0) ** 0.5))",coef_Departure_Constant_Shift_for_every_30_minutes_after_830_am_Square_Root
+util_Arrival_Constant_Before_0230_PM,SCHOOL - Arrival Constant: Before 02:30 PM,@(df.end<24),coef_Arrival_Constant_Before_0230_PM
+util_Arrival_Constant_0230_PM_0300_PM_24_,SCHOOL - Arrival Constant: 02:30 PM - 03:00 PM (24) ,@(df.end==24),coef_Arrival_Constant_0230_PM_0300_PM_24_
+util_Arrival_Constant_0300_PM_0330_PM_25_,SCHOOL - Arrival Constant: 03:00 PM - 03:30 PM (25) ,@(df.end==25),coef_Arrival_Constant_0300_PM_0330_PM_25_
+util_Arrival_Constant_0330_PM_0400_PM_26_,SCHOOL - Arrival Constant: 03:30 PM - 04:00 PM (26) ,@(df.end==26),coef_Arrival_Constant_0330_PM_0400_PM_26_
+util_Arrival_Constant_0400_PM_0430_PM_27_,SCHOOL - Arrival Constant: 04:00 PM - 04:30 PM (27) ,@(df.end==27),coef_Arrival_Constant_0400_PM_0430_PM_27_
+util_Arrival_Constant_0430_PM_0500_PM_28_,SCHOOL - Arrival Constant: 04:30 PM - 05:00 PM (28) ,@(df.end==28),coef_Arrival_Constant_0430_PM_0500_PM_28_
+util_Arrival_Constant_0500_PM_0530_PM_29,SCHOOL - Arrival Constant: 05:00 PM - 05:30 PM (29),@(df.end==29),coef_Arrival_Constant_0500_PM_0530_PM_29
+util_Arrival_Constant_0530_PM_0600_PM_30_,SCHOOL - Arrival Constant: 05:30 PM - 06:00 PM (30) ,@(df.end==30),coef_Arrival_Constant_0530_PM_0600_PM_30_
+util_Arrival_Constant_After_0600_PM,SCHOOL - Arrival Constant: After 06:00 PM,@(df.end>30),coef_Arrival_Constant_After_0600_PM
+util_Arrival_Constant_Shift_for_every_30_minutes_after_630_pm_Linear,SCHOOL - Arrival Constant: Shift for every 30 minutes after 6:30 pm - Linear,"@(df.end>31) * (((31-df.end)*(df.end<31)) + ((df.end-31)*(df.end>31)))",coef_Arrival_Constant_Shift_for_every_30_minutes_after_630_pm_Linear
+util_Duration_Constant_Shift_for_every_30_minutes_less_than_6p5_hrs_Linear,SCHOOL - Duration Constant: Shift for every 30 minutes less than 6.5 hrs - Linear,"@((df.duration<13)) * (((13-df.duration)*(df.duration<13)) + ((df.duration-13)*(df.duration>13)))",coef_Duration_Constant_Shift_for_every_30_minutes_less_than_6p5_hrs_Linear
+util_Duration_Constant_Shorter_than_7_hrs,SCHOOL - Duration Constant: Shorter than 7 hrs,@(df.duration<14),coef_Duration_Constant_Shorter_than_7_hrs
+util_Duration_Constant_7_hours,SCHOOL - Duration Constant: 7 hours,@(df.duration==14),coef_Duration_Constant_7_hours
+util_Duration_Constant_7p5_hours,SCHOOL - Duration Constant: 7.5 hours,@(df.duration==15),coef_Duration_Constant_7p5_hours
+util_Duration_Constant_8_hours,SCHOOL - Duration Constant: 8 hours,@(df.duration==16),coef_Duration_Constant_8_hours
+util_Duration_Constant_8p5_hours,SCHOOL - Duration Constant: 8.5 hours,@(df.duration==17),coef_Duration_Constant_8p5_hours
+util_Duration_Constant_9_hours,SCHOOL - Duration Constant: 9 hours,@(df.duration==18),coef_Duration_Constant_9_hours
+util_Duration_Constant_Longer_than_9_hrs,SCHOOL - Duration Constant: Longer than 9 hrs,@(df.duration>18),coef_Duration_Constant_Longer_than_9_hrs
+util_Duration_Constant_Shift_for_every_30_minutes_more_than_9p5_hrs_Linear,SCHOOL - Duration Constant: Shift for every 30 minutes more than 9.5 hrs - Linear,"@(df.duration>19) * (((19-df.duration)*(df.duration<19)) + ((df.duration-19)*(df.duration>19)))",coef_Duration_Constant_Shift_for_every_30_minutes_more_than_9p5_hrs_Linear
+util_Duration_Constant_Shift_for_every_30_minutes_more_than_9p5_hrs_Squared,SCHOOL - Duration Constant: Shift for every 30 minutes more than 9.5 hrs - Squared,"@(df.duration>19) * ((((19-df.duration)*(df.duration<19)) + ((df.duration-19)*(df.duration>19))) ** 2)",coef_Duration_Constant_Shift_for_every_30_minutes_more_than_9p5_hrs_Squared

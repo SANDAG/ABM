@@ -1,59 +1,50 @@
 Label,Description,Expression,Coefficient
-#,Departure Constants,,
-util_early_start_at_5,Early start at 5,start < 6,coef_early_start_at_5
-util_am_peak_start_at_6,AM peak start at 6,start == 6,coef_am_peak_start_at_6
-util_am_peak_start_at_7,AM peak start at 7,start == 7,coef_am_peak_start_at_7
-util_am_peak_start_at_8,AM peak start at 8,start == 8,coef_am_peak_start_at_8
-util_am_peak_start_at_9,AM peak start at 9,start == 9,coef_am_peak_start_at_9
-util_midday_start_at_10_11_12,Midday start at 10/11/12,(start > 9) & (start < 13),coef_midday_start_at_10_11_12
-util_midday_start_at_13_14_15,Midday start at 13/14/15,(start > 12) & (start < 16),coef_midday_start_at_13_14_15
-util_pm_peak_start_at_16_17_18,PM peak start at 16/17/18,(start > 15) & (start < 19),coef_pm_peak_start_at_16_17_18
-util_evening_start_at_19_20_21,Evening start at 19/20/21,(start > 18) & (start < 22),coef_evening_start_at_19_20_21
-util_late_start_at_22_23,Late start at 22/23,start > 21,coef_late_start_at_22_23
-#,Arrival Constants,,
-util_early_end_at_5_6,Early end at 5/6 ,end < 7,coef_early_end_at_5_6
-util_am_peak_end,AM peak end,(end > 6) & (end < 10),coef_am_peak_end
-util_midday_end_at_10_11_12,Midday end at 10/11/12,(end > 9) & (end < 13),coef_midday_end_at_10_11_12
-util_midday_end_at_13_14,Midday end at 13/14,(end > 12) & (end < 15),coef_midday_end_at_13_14
-util_pm_peak_end_at_15,PM peak end at 15,end == 15,coef_pm_peak_end_at_15
-util_pm_peak_end_at_16,PM peak end at 16,end == 16,coef_pm_peak_end_at_16
-util_pm_peak_end_at_17,PM peak end at 17,end == 17,coef_pm_peak_end_at_17
-util_pm_peak_end_at_18,PM peak end at 18,end == 18,coef_pm_peak_end_at_18
-util_evening_end_at_19_20_21,Evening end at 19/20/21,(end > 18) & (end < 22),coef_evening_end_at_19_20_21
-util_late_end_at_22_23,Late end at 22/23,end > 21,coef_late_end_at_22_23
-#,,,
-util_duration_of_0_hours,Duration of 0 hours,duration==0,coef_duration_of_0_hours
-util_duration_of_1_hour,Duration of 1 hour,duration==1,coef_duration_of_1_hour
-util_duration_of_2_to_3_hours,Duration of 2 to 3 hours,(duration >=1) and (duration <= 4),coef_duration_of_2_to_3_hours
-util_duration_of_4_to_5_hours,Duration of 4 to 5 hours,(duration >=4) and (duration <=5),coef_duration_of_4_to_5_hours
-util_duration_of_6_to_7_hours,Duration of 6 to 7 hours,(duration >=6) and (duration <=7),coef_duration_of_6_to_7_hours
-util_duration_of_8_to_10_hours,Duration of 8 to 10 hours,(duration >=8) and (duration <=10),coef_duration_of_8_to_10_hours
-util_duration_of_11_to_13_hours,Duration of 11 to 13 hours,(duration >=11) and (duration <=13),coef_duration_of_11_to_13_hours
-util_duration_of_14_to_18_hours,Duration of 14 to 18 hours,(duration >=14) and (duration <=18),coef_duration_of_14_to_18_hours
-#,,,
-util_start_shift_for_outbound_auto_travel_time_off_peak,Start shift for outbound auto travel time for off-peak,"@df.start * np.minimum(df.sovtimemd, time_cap)",coef_start_shift_for_outbound_auto_travel_time_off_peak
-util_start_shift_for_inbound_auto_travel_time_off_peak,Start shift for inbound auto travel time for off-peak,"@df.start * np.minimum(df.sovtimemd_t, time_cap)",coef_start_shift_for_inbound_auto_travel_time_off_peak
-util_duration_shift_for_outbound_auto_travel_time_off_peak,Duration shift for outbound auto travel time for off-peak,"@df.duration * np.minimum(df.sovtimemd, time_cap)",coef_duration_shift_for_outbound_auto_travel_time_off_peak
-util_duration_shift_for_inbound_auto_travel_time_off_peak,Duration shift for inbound auto travel time for off-peak,"@df.duration * np.minimum(df.sovtimemd_t, time_cap)",coef_duration_shift_for_inbound_auto_travel_time_off_peak
-#,,,
-util_start_shift_for_business_related_,Start shift for business-related sub-tour purpose,(tour_type == 'business') * start,coef_start_shift_for_business_related_
-util_duration_shift_for_business_related_,Duration shift for business-related sub-tour purpose,(tour_type == 'business') * duration,coef_duration_shift_for_business_related_
-util_start_shift_for_first_sub_tour_of_same_work_tour,Start shift for first sub-tour of the same work tour,(tour_type_num == 1) * start,coef_start_shift_for_first_sub_tour_of_same_work_tour
-util_duration_shift_for_first_sub_tour_of_same_work_tour,Duration shift for first sub-tour of the same work tour,(tour_type_num == 1) * duration,coef_duration_shift_for_first_sub_tour_of_same_work_tour
-util_start_shift_for_subsequent_sub_tour_of_same_work_tour,Start shift for subsequent sub-tour of the same work tour,(tour_type_num == 2) * start,coef_start_shift_for_subsequent_sub_tour_of_same_work_tour
-util_duration_shift_for_subsequent_sub_tour_of_same_work_tour,Duration shift for subsequent sub-tour of the same work tour,(tour_type_num == 2) * duration,coef_duration_shift_for_subsequent_sub_tour_of_same_work_tour
-util_start_shift_for_number_of_mandatory_tours,Start shift for number of mandatory tours made by the person,start * num_mand,coef_start_shift_for_number_of_mandatory_tours
-util_duration_shift_for_number_of_mandatory_tours,Duration shift for number of mandatory tours made by the person,duration * num_mand,coef_duration_shift_for_number_of_mandatory_tours
-util_start_shift_for_number_of_joint_tours,Start shift for number of joint tours in which the person participated,start * num_joint_tours,coef_start_shift_for_number_of_joint_tours
-util_duration_shift_for_number_of_joint_tours,Duration shift for number of joint tours in which the person participated,duration * num_joint_tours,coef_duration_shift_for_number_of_joint_tours
-util_start_shift_for_number_of_individual_nonmandatory_tours,Start shift for number of individual nonm tours (including escort) made by the person,start * num_non_mand,coef_start_shift_for_number_of_individual_nonmandatory_tours
-util_duration_shift_for_number_of_individual_nonmandatory_tours,Duration shift for number of individual nonm tours (including escort) made by the person,duration * num_non_mand,coef_duration_shift_for_number_of_individual_nonmandatory_tours
-#,,,
-util_dummy_for_business_related_purpose_and_duration_from_0_to_1,Dummy for business-related purpose and duration from 0 to 1,(tour_type == 'business') & (duration <=1),coef_dummy_for_business_related_purpose_and_duration_from_0_to_1
-util_dummy_for_eating_out_purpose_and_duration_of_1_hour,Dummy for eating-out purpose and duration of 1 hour,(tour_type == 'business') & (duration ==1),coef_dummy_for_eating_out_purpose_and_duration_of_1_hour
-util_dummy_for_eating_out_purpose_and_departure_at_11,Dummy for eating-out purpose and departure at 11,(tour_type == 'business') & (start == 11),coef_dummy_for_eating_out_purpose_and_departure_at_11
-util_dummy_for_eating_out_purpose_and_departure_at_12,Dummy for eating-out purpose and departure at 12,(tour_type == 'business') & (start == 12),coef_dummy_for_eating_out_purpose_and_departure_at_12
-util_dummy_for_eating_out_purpose_and_departure_at_13,Dummy for eating-out purpose and departure at 13,(tour_type == 'business') & (start == 13),coef_dummy_for_eating_out_purpose_and_departure_at_13
-#,,,
-#,Mode Choice Logsum,mode_choice_logsum,
-#,,,
+util_Female_Departure_after_1230_pm_Linear,Female - Departure after 12:30 pm - Linear,"@np.where(((df.female) & (df.start>19)), (np.where((df.start<= 19), np.minimum(19 - df.start, 48), 0) + np.where((df.start > 19), np.minimum(df.start - 19, 48), 0)), 0)",coef_Female_Departure_after_1230_pm_Linear
+util_Parttime_worker_Departure_after_1230_pm__Linear,Part-time worker - Departure after 12:30 pm  - Linear,"@np.where(((df.ptype == 2) & (df.start>19)), (np.where((df.start<= 19), np.minimum(19 - df.start, 48), 0) + np.where((df.start > 19), np.minimum(df.start - 19, 48), 0)), 0)",coef_Parttime_worker_Departure_after_1230_pm__Linear
+util_Parttime_worker_Duration_greater_than_0p5_hours_depart_and_arrive_in_the_same_period,Part-time worker - Duration greater than 0.5 hours (depart and arrive in the same period),"@np.where(((df.ptype == 2) & (df.duration>1)), (np.where((df.duration <= 1), np.minimum(1 - df.duration, 47), 0) + np.where((df.duration > 1), np.minimum(df.duration - 1, 47), 0)), 0)",coef_Parttime_worker_Duration_greater_than_0p5_hours_depart_and_arrive_in_the_same_period
+util_Low_income_lt25000_Duration_less_than_0p5_hours_depart_and_arrive_in_the_same_period,Low income (<25000) - Duration less than 0.5 hours (depart and arrive in the same period),"@np.where(((df.is_income_less25K) & (df.duration<1)), (np.where((df.duration <= 1), np.minimum(1 - df.duration, 47), 0) + np.where((df.duration > 1), np.minimum(df.duration - 1, 47), 0)), 0)",coef_Low_income_lt25000_Duration_less_than_0p5_hours_depart_and_arrive_in_the_same_period
+util_Med_income_25k_to_60k_Duration_less_than_0p5_hours_depart_and_arrive_in_the_same_period,Med income (25k to 60k) - Duration less than 0.5 hours (depart and arrive in the same period),"@np.where(((df.is_income_25K_to_60K) & (df.duration<1)), (np.where((df.duration <= 1), np.minimum(1 - df.duration, 47), 0) + np.where((df.duration > 1), np.minimum(df.duration - 1, 47), 0)), 0)",coef_Med_income_25k_to_60k_Duration_less_than_0p5_hours_depart_and_arrive_in_the_same_period
+util_Med_income_25k_to_60k_Duration_greater_than_0p5_hours,Med income (25k to 60k) - Duration greater than 0.5 hours,"@np.where(((df.is_income_25K_to_60K) & (df.duration>1)), (np.where((df.duration <= 1), np.minimum(1 - df.duration, 47), 0) + np.where((df.duration > 1), np.minimum(df.duration - 1, 47), 0)), 0)",coef_Med_income_25k_to_60k_Duration_greater_than_0p5_hours
+util_Medhigh_income_60k_to_120k_Duration_greater_than_0p5_hours,Med-high income (60k to 120k) - Duration greater than 0.5 hours,"@np.where(((df.is_income_60K_to_120K) & (df.duration>1)), (np.where((df.duration <= 1), np.minimum(1 - df.duration, 47), 0) + np.where((df.duration > 1), np.minimum(df.duration - 1, 47), 0)), 0)",coef_Medhigh_income_60k_to_120k_Duration_greater_than_0p5_hours
+#util_Blue_collar_Duration_less_than_0p5_hours_depart_and_arrive_in_the_same_period,Blue collar - Duration less than 0.5 hours (depart and arrive in the same period),"@np.where(((df.work_segment == 5) & (df.duration<1)), (np.where((df.duration <= 1), np.minimum(1 - df.duration, 47), 0) + np.where((df.duration > 1), np.minimum(df.duration - 1, 47), 0)), 0)",coef_Blue_collar_Duration_less_than_0p5_hours_depart_and_arrive_in_the_same_period
+#util_Blue_collar_Duration_greater_than_0p5_hours,Blue collar - Duration greater than 0.5 hours,"@np.where(((df.work_segment == 5) & (df.duration>1)), (np.where((df.duration <= 1), np.minimum(1 - df.duration, 47), 0) + np.where((df.duration > 1), np.minimum(df.duration - 1, 47), 0)), 0)",coef_Blue_collar_Duration_greater_than_0p5_hours
+#util_Health_Duration_less_than_0p5_hours_depart_and_arrive_in_the_same_period,Health - Duration less than 0.5 hours (depart and arrive in the same period),"@np.where(((df.work_segment == 3) & (df.duration<1)), (np.where((df.duration <= 1), np.minimum(1 - df.duration, 47), 0) + np.where((df.duration > 1), np.minimum(df.duration - 1, 47), 0)), 0)",coef_Health_Duration_less_than_0p5_hours_depart_and_arrive_in_the_same_period
+util_Distance_to_destination_Duration_less_than_0p5_hours_depart_and_arrive_in_the_same_period,Distance to destination - Duration less than 0.5 hours (depart and arrive in the same period),"@np.where((df.duration<1), ((np.where((df.duration <= 1), np.minimum(1 - df.duration, 47), 0) + np.where((df.duration > 1), np.minimum(df.duration - 1, 47), 0))) * df.od_distance, 0)",coef_Distance_to_destination_Duration_less_than_0p5_hours_depart_and_arrive_in_the_same_period
+util_Distance_to_destination_Duration_greater_than_0p5_hours,Distance to destination - Duration greater than 0.5 hours,"@np.where((df.duration>1), ((np.where((df.duration <= 1), np.minimum(1 - df.duration, 47), 0) + np.where((df.duration > 1), np.minimum(df.duration - 1, 47), 0))) * df.od_distance, 0)",coef_Distance_to_destination_Duration_greater_than_0p5_hours
+util_Subtour_purpose_Business_Departure_before_1200_pm__Linear,Subtour purpose: Business - Departure before 12:00 pm  - Linear,"@np.where(((df.tour_type == 'business') & (df.start<19)), (np.where((df.start<= 19), np.minimum(19 - df.start, 48), 0) + np.where((df.start > 19), np.minimum(df.start - 19, 48), 0)), 0)",coef_Subtour_purpose_Business_Departure_before_1200_pm__Linear
+util_Subtour_purpose_Business_Departure_after_1230_pm_Linear,Subtour purpose: Business - Departure after 12:30 pm - Linear,"@np.where(((df.tour_type == 'business') & (df.start>19)), (np.where((df.start<= 19), np.minimum(19 - df.start, 48), 0) + np.where((df.start > 19), np.minimum(df.start - 19, 48), 0)), 0)",coef_Subtour_purpose_Business_Departure_after_1230_pm_Linear
+util_Subtour_purpose_Business_Duration_greater_than_0p5_hours,Subtour purpose: Business - Duration greater than 0.5 hours,"@np.where(((df.tour_type == 'business') & (df.duration>1)), (np.where((df.duration <= 1), np.minimum(1 - df.duration, 47), 0) + np.where((df.duration > 1), np.minimum(df.duration - 1, 47), 0)), 0)",coef_Subtour_purpose_Business_Duration_greater_than_0p5_hours
+util_Subtour_purpose_Eatout_Departure_before_1200_pm__Linear,Subtour purpose: Eat-out - Departure before 12:00 pm  - Linear,"@np.where(((df.tour_type == 'eat') & (df.start<19)), (np.where((df.start<= 19), np.minimum(19 - df.start, 48), 0) + np.where((df.start > 19), np.minimum(df.start - 19, 48), 0)), 0)",coef_Subtour_purpose_Eatout_Departure_before_1200_pm__Linear
+util_Subtour_purpose_Eatout_Departure_after_1230_pm_Linear,Subtour purpose: Eat-out - Departure after 12:30 pm - Linear,"@np.where(((df.tour_type == 'eat') & (df.start>19)), (np.where((df.start<= 19), np.minimum(19 - df.start, 48), 0) + np.where((df.start > 19), np.minimum(df.start - 19, 48), 0)), 0)",coef_Subtour_purpose_Eatout_Departure_after_1230_pm_Linear
+util_Subtour_purpose_Eatout_Duration_less_than_0p5_hours_depart_and_arrive_in_the_same_period,Subtour purpose: Eat-out - Duration less than 0.5 hours (depart and arrive in the same period),"@np.where(((df.tour_type == 'eat') & (df.duration<1)), (np.where((df.duration <= 1), np.minimum(1 - df.duration, 47), 0) + np.where((df.duration > 1), np.minimum(df.duration - 1, 47), 0)), 0)",coef_Subtour_purpose_Eatout_Duration_less_than_0p5_hours_depart_and_arrive_in_the_same_period
+util__Departure_constants,# Departure constants,,coef__Departure_constants
+util_Shift_for_every_30_minutes_before_1030_am_Linear,Shift for every 30 minutes before 10:30 am - Linear,"@np.where((df.start<16), (np.where((df.start< 16), np.minimum(16 - df.start, 9), 0) + np.where((df.start> 21), np.minimum(df.start - 21, 11), 0)), 0)",coef_Shift_for_every_30_minutes_before_1030_am_Linear
+util_Before_1100_AM,Before 11:00 AM,@(df.start<17),coef_start_Before_1100_AM
+util_1100_AM_1130_AM_start,11:00 AM - 11:30 AM,@(df.start==17),coef_start_1100_AM_1130_AM
+util_1130_AM_1200_PM_start,11:30 AM - 12:00 PM,@(df.start==18),coef_start_1130_AM_1200_PM
+util_1200_AM_1230_PM_start,12:00 AM - 12:30 PM,@(df.start==19),coef_start_1200_AM_1230_PM
+util_1230_PM_0100_PM_start,12:30 PM - 01:00 PM,@(df.start==20),coef_start_1230_PM_0100_PM
+util_After_0100_PM,After 01:00 PM,@(df.start>20),coef_start_After_0100_PM
+util_Shift_for_every_30_minutes_after_130_pm_Square_Root,Shift for every 30 minutes after 1:30 pm - Square Root,"@np.where((df.start>21), ((np.where((df.start < 16), np.minimum(16 - df.start, 9), 0) + np.where((df.start > 21), np.minimum(df.start - 21, 11), 0))** 0.5), 0)",coef_Shift_for_every_30_minutes_after_130_pm_Square_Root
+util__Arrival_constants,# Arrival constants,,coef__Arrival_constants
+util_Shift_for_every_30_minutes_before_1130_am_Linear,Shift for every 30 minutes before 11:30 am - Linear,"@np.where((df.end<18), (np.where((df.end < 14), np.minimum(14 - df.end, 9), 0) + np.where((df.end > 24), np.minimum(df.end - 24, 10), 0)), 0)",coef_Shift_for_every_30_minutes_before_1130_am_Linear
+util_Before_1200_PM,Before 12:00 PM,@(df.end<19),coef_end_Before_1200_PM
+util_1200_AM_1230_PM_end,12:00 AM - 12:30 PM,@(df.end==19),coef_end_1200_AM_1230_PM
+util_1230_PM_0100_PM_end,12:30 PM - 01:00 PM,@(df.end==20),coef_end_1230_PM_0100_PM
+util_0100_PM_0130_PM_end,01:00 PM - 01:30 PM,@(df.end==21),coef_end_0100_PM_0130_PM
+util_0130_PM_0200_PM_end,01:30 PM - 02:00 PM,@(df.end==22),coef_end_0130_PM_0200_PM
+util_0200_PM_0230_PM_end,02:00 PM - 02:30 PM,@(df.end==23),coef_end_0200_PM_0230_PM
+util_After_0230_PM,After 02:30 PM,@(df.end>23),coef_end_After_0230_PM
+util_Shift_for_every_30_minutes_after_300_pm_Linear,Shift for every 30 minutes after 3:00 pm - Linear,"@np.where((df.end>24), (np.where((df.end < 14), np.minimum(14 - df.end, 9), 0) + np.where((df.end > 24), np.minimum(df.end - 24, 10), 0)), 0)",coef_Shift_for_every_30_minutes_after_300_pm_Linear
+util__Duration_constants,# Duration constants,,coef__Duration_constants
+util_0_hrs,0 hrs,@(df.duration==0),coef_0_hrs
+util_0p5_hrs,0.5 hrs,@(df.duration==1),coef_0p5_hrs
+util_1_hrs,1 hrs,@(df.duration==2),coef_1_hrs
+util_1p5hrs,1.5hrs,@(df.duration==3),coef_1p5hrs
+util_2_hrs,2 hrs,@(df.duration==4),coef_2_hrs
+util_Longer_than_2_hrs,Longer than 2 hrs,@(df.duration>4),coef_Longer_than_2_hrs
+util_Shift_for_every_30_minutes_more_than_2p5_hrs_Square_Root,Shift for every 30 minutes more than 2.5 hrs - Square Root,"@np.where((df.duration>5), ((np.where((df.duration < 0), np.minimum(0 - df.duration, 47), 0) + np.where((df.duration > 5), np.minimum(df.duration - 5, 13), 0)) ** 0.5), 0)",coef_Shift_for_every_30_minutes_more_than_2p5_hrs_Square_Root
+util_Calibration_Constant_Departure_eq_18,Calibration Constant - Departure = 18,@(df.start==18),coef_Calibration_Constant_Departure_eq_18
+util_Calibration_Constant_Departure_eq_19,Calibration Constant - Departure = 19,@(df.start==19),coef_Calibration_Constant_Departure_eq_19
+util_Calibration_Constant_Arrival_eq_20,Calibration Constant - Arrival = 20,@(df.end==20),coef_Calibration_Constant_Arrival_eq_20
+util_Calibration_Constant_Arrival_eq_21,Calibration Constant - Arrival = 21,@(df.end==21),coef_Calibration_Constant_Arrival_eq_21

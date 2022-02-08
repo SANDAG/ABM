@@ -1,6 +1,5 @@
 This readme is a record of things that might want to be fixed or changed in subsequent versions
 
-
 ---
 Input Data Prep:
 
@@ -14,7 +13,7 @@ Input Data Prep:
   - joined tap.ptype to maz_to_tap_drive to get walk distances from the lot to the tap.  Walk distances are used in _tvbp_utility_drive_maz_tap.csv_
 
 ---
-Changes in mutiple files
+Changes in multiple files
 * Landuse field called `area_type` is not a SANDAG variable.  It was used to determine CBD, urban, and rural status.
   - changed to use SANDAG's `pseudomsa` field
   - changed the thresholds for `[cbd,urb,rural]_threshold` in _common/constants.yaml_ to reflect the change
@@ -28,6 +27,10 @@ Changes in mutiple files
      - _joint_tour_scheduling_annotate_tours_preprocessor.csv_
      - _trip_destination_sample.csv_ and _trip_destination.csv_ (although these should be replaced soon)
   - all of these files should be checked to make sure their expressions related to landuse area type still make sense with this change
+* Changed `SOV_DIST, MD` to `DIST` in the following files:
+  - _school_location.csv_ and _school_location_choice.csv_
+  - _workplace_location.csv_ and _workplace_location_sample.csv_
+  - _joint_tour_scheduling_annotate_tours_preprocessor.csv_
 ---
 _settings.yaml_
 
@@ -37,21 +40,24 @@ _settings.yaml_
 ---
 _network_los.yaml_
 
-* No drive or bike to maz skims are included.  They have pre-processors that look like aren't ever being called?
-  - Cropping script currently has drive and bike to maz skims commented out since they do not exist
+* Only have walk transit and drive transit options for building the tvpb
 * Added accessibility settings (not present in xborder model) and updated for SANDAG skim file names / columns
   - changed `df.walk_time` to `df.walkTime` in _tvpb_accessibility_walk_maz_tap.csv_
 * copied `tvpb_accessibility_tap_tap_.csv` from SEMCOG three zone implementation and updated skim names
-* Does it make sense that `max_paths_across_tap_sets: 4` and `max_paths_per_tap_set: 1`?
 * Added `demographic_segments`.  They are called in _tour_mode_choice_.  Looks like the cross border model "fakes" these segments by defining them in it's _annotate_persons.csv_
   - want to the `TVPB_demographic_segments_by_income_segment` related constants to _constants.csv_? (they were taken from SEMCOG and values should be checked)
-* Added drive access & egress to tour_mode_choice settings
+* Added drive access & egress to tour_mode_choice and trip_mode_choice settings
+* Trip mode choice constants to not match tour mode choice.  Is this on purpose?
+* Updated time periods in network_los.yaml
+  - Changed time periods in _write_trip_matrices.yaml_ to match
 
 ---
 
-_annotate_households.csv_
+Initialize Households
 
-* `home_is_urban` and `home_is_rural` values are now computed based on `pseudomsa` instead of the previous `area_type` variable that exists in other examples.  Is there a better substitute for this?
+* In _annotate_households.csv_, `home_is_urban` and `home_is_rural` values are now computed based on `pseudomsa` instead of the previous `area_type` variable that exists in other examples.  Is there a better substitute for this?
+* Added some definitions to _annotate_households.csv_, _annotate_persons.csv_, and added additional _annotate_persons_after_hh.csv_ for variables used in the scheduling models
+  - The _annotate_persons_after_hh.csv_ is needed to calculate person attributes based on household attributes that are not available when annotate_persons first runs.  (This was copied from SEMCOG along with the scheduling models)
 
 ---
 _annotate_landuse.csv_
@@ -84,13 +90,16 @@ Workplace Location Choice
 
 ---
 Auto Ownership
-* Commented out county specific ASCs in _auto_ownership.csv_
+* Deleted county specific ASCs in _auto_ownership.csv_
 
 ---
 Free Parking
-* Commented out county specific ASCs in _free_parking.csv_ and _free_parking_annotate_persons_preprocessor.csv_
-  - The preprocessor only had one line in it to calculate the work county, so after commenting it out, it crashed because there were no longer any expressions.  I commented out the call to the preprocessor in _free_parking.yaml_
+* Deleted work county specific ASCs in _free_parking.csv_
+  - The preprocessor only had one line in it to calculate the work county, so after commenting it out, it crashed because there were no longer any expressions.  I deleted the call to the preprocessor in _free_parking.yaml_ and removed the work county definitions.  Also removed _free_parking_annotate_persons_preprocessor.csv_ from repo
 ---
+Tour and Trip Scheduling
+* Replaced all tour and trip scheduling files with SEMCOG versions
+  - Updated the annotate person and houssehold files to calculate varibles used
 
 ---
 Tour mode choice
@@ -98,9 +107,7 @@ Tour mode choice
 * changed expression to include the following coefficients and changed the actual coefficient to `coef_one`: `c_wacc`, `c_wegr`, `c_rel_inb`, `c_rel_oub`, `c_fwt`
   - these were causing crash because they were defined in the pre-processor, but were listed as actual coefficients
 * commented out lines in _tour_mode_choice.csv_ that were missing constants defined:
-  - `coef_age65p_sr2`
   - `coef_hhsize`
-  - `coef_cost_out`
   - `coef_walkTime` (This one will be a little more complicated because it is derived on c_ivt, but varies by purpose.  Implementation will probably have to include it as a fixed coef in the coef files.)
 * there were a couple coefficients that I think were just typos.  They were used in defined in tour_mode_choice, but defined differently in coef files:
   - `coef_age[1624,4155,5664]p_[sr2,sr3]` instead of `coef_age[1624,4155,5664]_[sr2,sr3]`
@@ -111,13 +118,16 @@ Tour mode choice
 * changed nesting structure in tour_mode_choice.yaml to match UEC. Set all nesting coefs to 0.5 in coeffs file (also matches UEC). Should be double checked.
 * `coef_income` was missing.  Used to calcualte cost_coef in pre-preocessor.  Added to template and coefs files and set to arbitrary value of 0.05.  Needs to be addressed!!
 * Changed parking cost to use `hparkcost`.  Expressions available for both on and off peak parking, but only one hourly parking cost is available in the landuse file, so they evaluate to the same value
+  - same in trip mode choice
 * `tour_type` is not yet decided when calculating logsums, so used df.get() function and set default to 'work'.
   - Same with `tour_category`, although default varied cause it was used in multiple places
 * Added `coef_income` to _tour_mode_choice_coefficients.csv_ and set to arbitrary value of 0.5 and fixed to true
 * Copied `cost_share_[s2,s3]`, `vot_threshold_[low,med], maz_walk_time` from xborder model to tour_mode_choice.yaml.  Should these be moved to (common) constants?
 * `df.transponderOwnership` is not recognized in the preprocessor since there is no Transponder model yet implemented.  Setting `ownsTransponder` to 1 for now.
+  - same in trip mode choice
 * `walk_time_skims_[out,in]` need to use the walktime skims, but we don't have that. Putting placeholder in for now based on `SOV_TR_L_DIST * 3 / 60`
 * `milestocoast` was not defined, replaced with arbitrary value of 5
+  - applied in trip mode choice too
 * All of the bike logsums and availability stuff is not defined. commenting out for now.
 * None of the AV related constants are defined.  Commenting them out in prepreocessor for now or adding placeholders where unavoidable
 * `freeParkingEligibility` is not defined, comes from not-implemented employer parking provision and reimbursement model. Set to 0 as placeholder.
@@ -128,10 +138,57 @@ Tour mode choice
 * Had to restructure calculation of `parkingCostBeforeReimb` in preprocessor. check to make it is still consistent with UEC
 * double check `walkAvailable` function is correct in preprocessor
 * `[WLK,PNR,KNR]_available` conditions need to call the TVPB logsums correctly. They are all turned on as a placeholder
+  - large logsum values in the utility expression should make these roughly irrelevant
 * `DTW` path is being used for PNR, KNR, and TNC.  maz to taz drive times only include taps connected to parking lots, meaning knr and tnc are restricted to only these taps
-* `sharedTNCIVTFactor` not defined.  Set to 1 as placeholder in preprocessor
 * Renaming of tour purposes in _tour_mode_choice_coefficients_template.csv_
   - Copied the maint column into three separate columns named escort, shopping, and othmaint
   - Copied the disc column into three separate columns named eatout, social, othdiscr
   - This was needed because all of the other models define different purposes and need to calculate logsums for each purpose. ActivitySim will crash if the purpose names do not match.
   - Since the columns were just copied and all of the coefficient names remain the same, the utility calculated for each of the maint purposes will be the same (and similarly for disc).
+  - Since thing was applied in trip mode choice
+  - Note that this has implications when performing estimation
+* `coef_cost_out` (not defined) was replaced with `coef_cost` in the MAAS utility calculations. Is this correct?
+
+---
+Trip purpose
+* `depart_range_start` and `depart_range_end` columns need to be updated to match the new 48 half-hour time periods. Values were changed to the following mapping
+  - 5,8 -> 1,12   for outbound work (bin 12 = 8:30-9am)
+  - 9,23 -> 13,48 for outbound work
+  - 5,14 -> 1,24  for inbound work (bin 24 = 2:30-3pm)
+  - 15,23 -> 25,48  for inbound work
+  - all other purposes didn't differentiate by time of day: 5,23 -> 1,48
+---
+Trip Destination
+* `DISTBIKE` and `DISTWALK` changed to `DIST` in _trip_destination_sample.csv_ while waiting on bike and walk skims
+---
+Trip Mode Choice
+* origin and destination terminal times (`oTermTime, dTermTime`) are not included in landuse data, setting to 0 as placeholder until it can be joined
+* Removed the following variables and associated calculations since they were not used anywhere:
+  - `total_terminal_time`
+  - `daily_parking_cost` (not to be confused with `parkingCost` talked about in the next bullet)
+  - `trip_topology`
+  - `origin_density_index`
+* Parking cost calculations were commented out and `parkingCost` set to 0 for now
+  - Need to add things like `reimburseAmount`, tour destination parking cost (different than landuse with tour destination, i.e. is reimbursement included?), `freeOnsite`, etc.
+* `oMGRAMix, dMGRAMix` calculations updated to use landuse data like in tour mode choice
+* Making note of this FIXME: FIXME no transit subzones so all zones short walk to transit
+* `time_factor` not defined, setting to 1 for now
+* `coef_cost` not defined, using tour mode choice value of -.001 for now
+* copied `cost_share_s2, cost_share_s3, vot_threshld_low, vot_threshold_high, max_walk_time` variables from _tour_mode_choice.yaml_ to _trip_mode_choice.yaml_
+* `is_mandatory` variable in parking calculation costs was created.  Does this expression make sense?
+* Added AV and TNC/TAXI related constants to _constants.yaml_
+  - had to make placeholder for `useAV` False for now
+* Bike logsum calculations commented out
+  - set bike availability placeholder to true for now
+* Should we move the SR2 and SR3 cost factors to _constants.yaml_?
+* Determined tour mode by using hard coded tour mode names in pre-processor.  Do we want to pull these out into the constants / yaml files?
+* Changed walk available expression to check only against max walk threshold
+* Added `costPerMile` constant to _trip_mode_choice.yaml_ and set to 0.05 as placeholder
+* Does the 'DTW' logsum calculation need to be 'WTD' if the trip is inbound?
+  - Do we need to change the tvpb settings to make this happen?
+* Utility calculations with `parkingArea` commented out -- no `parkingArea` variable and didn't see corresponding expression in trip mode choice uec.
+---
+Write Trip Matrices
+* Modified to be consistent with new tour and trip modes and time period definitions
+  - Do we want separate demand tables for drive transit modes?
+---
