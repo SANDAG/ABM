@@ -199,6 +199,7 @@ Trip Mode Choice
   - Do we need to change the tvpb settings to make this happen?
 * Utility calculations with `parkingArea` commented out -- no `parkingArea` variable and didn't see corresponding expression in trip mode choice uec.
 * `coef_bikeTime` in the coefficients temlate is not being used. Is there an expression missing? Commented it out for now.
+* check expression for `dest_zone_sharedTNC_wait_time_mean`, I made a change to match the other similar variables and left the old one there for review.
 ---
 Write Trip Matrices
 * Modified to be consistent with new tour and trip modes and time period definitions

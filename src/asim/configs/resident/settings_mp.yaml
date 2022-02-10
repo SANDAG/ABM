@@ -1,7 +1,7 @@
 inherit_settings: settings.yaml
 
 multiprocess: True
-households_sample_size: 500
+households_sample_size: 1000
 num_processes: 24
 
 chunk_training_mode: disabled
@@ -10,7 +10,7 @@ chunk_training_mode: disabled
 # (Shadow pricing requires fail_fast setting in multiprocessing mode)
 fail_fast: True
 
-resume_after: trip_scheduling
+resume_after:
 
 models:
   - initialize_landuse
