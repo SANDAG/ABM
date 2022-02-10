@@ -11,6 +11,9 @@ Input Data Prep:
   - there are only 105 unique taps in that file -- only taps that are connected to a parking lot.  This means that only these taps are available for knr and tnc-transit
   - joined maz to taz crosswalk from landuse file to create maz to tap drive times.  This means all mazs within a taz receive the same drive time.
   - joined tap.ptype to maz_to_tap_drive to get walk distances from the lot to the tap.  Walk distances are used in _tvbp_utility_drive_maz_tap.csv_
+* Bike Times and Logsums
+  - Used the _bikeTazLogsum.csv_ file to create BIKE_LOGSUM and BIKE_TIME skims and added them to the _traffic_skims_processed_AM.omx_ file.  Do we want these in a separate skim file? Could also include other non-time-of-day specific skims in there like DIST
+  - Used the _bikeMgraLogsum.csv_ file to create _maz_maz_bike.csv_ that has columns [OMAZ, DMAZ, bikeLogsum, bikeTime]
 
 ---
 Changes in multiple files
@@ -108,7 +111,7 @@ Tour mode choice
   - these were causing crash because they were defined in the pre-processor, but were listed as actual coefficients
 * commented out lines in _tour_mode_choice.csv_ that were missing constants defined:
   - `coef_hhsize`
-  - `coef_walkTime` (This one will be a little more complicated because it is derived on c_ivt, but varies by purpose.  Implementation will probably have to include it as a fixed coef in the coef files.)
+  - `coef_walkTime` (This one will be a little more complicated because it is derived on c_ivt, but varies by purpose.  Implementation will probably have to include it as a fixed coef in the coef files.  Using placeholder for now because without walktime, lots of tour modes were walk.)
 * there were a couple coefficients that I think were just typos.  They were used in defined in tour_mode_choice, but defined differently in coef files:
   - `coef_age[1624,4155,5664]p_[sr2,sr3]` instead of `coef_age[1624,4155,5664]_[sr2,sr3]`
   - `coef_age65pl_sr2` instead of `coef_age65p_sr2`
@@ -148,6 +151,14 @@ Tour mode choice
   - Since thing was applied in trip mode choice
   - Note that this has implications when performing estimation
 * `coef_cost_out` (not defined) was replaced with `coef_cost` in the MAAS utility calculations. Is this correct?
+* Made some changes to bike logsum calculations
+  - Old version had different logsums for male and female. Input data only has one logsum.  Removed segmentation by gender.
+  - Bike logsums were separated by inbound and outbound.  Since they don't vary by time of day, and if the path is the same, shouldn't the inbound bike logsum = outbound bike logsum?
+     - This change was made because it is easy to access _od_skims_, but no _do_skims_ object exists (only _dot_skims_)
+     - The logsum matrix is not symmetric about the diagonal, so this assumption doesn't really hold....
+  - Bike is available when the sum of inbound and outbound logsums < -999
+  - Bike time is not being used. bike time coefficient is calculated in pre-processor, but is not used anywhere...
+  - Same in trip mode choice except there's no inbound / outbound distinction
 
 ---
 Trip purpose
@@ -159,7 +170,7 @@ Trip purpose
   - all other purposes didn't differentiate by time of day: 5,23 -> 1,48
 ---
 Trip Destination
-* `DISTBIKE` and `DISTWALK` changed to `DIST` in _trip_destination_sample.csv_ while waiting on bike and walk skims
+* `DISTBIKE` and `DISTWALK` changed to `DIST` in _trip_destination_sample.csv_ while waiting on bike and walk distance skims
 ---
 Trip Mode Choice
 * origin and destination terminal times (`oTermTime, dTermTime`) are not included in landuse data, setting to 0 as placeholder until it can be joined
@@ -187,6 +198,7 @@ Trip Mode Choice
 * Does the 'DTW' logsum calculation need to be 'WTD' if the trip is inbound?
   - Do we need to change the tvpb settings to make this happen?
 * Utility calculations with `parkingArea` commented out -- no `parkingArea` variable and didn't see corresponding expression in trip mode choice uec.
+* `coef_bikeTime` in the coefficients temlate is not being used. Is there an expression missing? Commented it out for now.
 ---
 Write Trip Matrices
 * Modified to be consistent with new tour and trip modes and time period definitions

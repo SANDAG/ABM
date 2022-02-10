@@ -40,7 +40,10 @@ tap_lines: tap_lines.csv
 
 maz_to_maz:
   tables:
-    - maz_maz_walk.csv   # microMgraEquivMinutes.csv
+    - maz_maz_walk.csv
+    - maz_maz_bike.csv
+  # maz_to_maz blending distance (missing or 0 means no blending)
+  max_blend_distance: 0
 
 maz_to_tap:
   walk:

@@ -57,6 +57,7 @@ util_Walk - Income 60k to 100k,Walk - Income 60k to 100k,@(df.income > 59999) * 
 util_Walk - Normalized Landuse Variable Sum [Origin Intersection + DU],Walk - Normalized Landuse Variable Sum [Origin Intersection + DU],LUVarsNormalized_walk,,,,coef_LUnorm_walk,,,,,,,,,
 "util_Walk - Normalized Destination Employment Density, walk","Walk - Normalized Destination Employment Density, walk",dMGRAEmpDenNorm_walk,,,,coef_dEmpNorm_walk ,,,,,,,,,
 #util_Walk - time coefficient,Walk - time coefficient,(walk_time_skims_inb + walk_time_skims_out),,,,coef_walkTime,,,,,,,,,
+util_Walk - placeholder,Walk - time coefficient placeholder,(walk_time_skims_inb + walk_time_skims_out),,,,coef_ivt,,,,,,,,,
 #,Bike,,,,,,,,,,,,,,
 util_BIKE_Mode unavailable,Bike - Mode unavailable,bikeAvailable == 0,,,,,-999,,,,,,,,
 "util_BIKE_Age under 16, bike","Bike - Age under 16, bike",@(df.age < 16),,,,,coef_ageund16_bike,,,,,,,,
