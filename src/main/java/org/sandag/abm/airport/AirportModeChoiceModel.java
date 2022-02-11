@@ -1,6 +1,8 @@
 package org.sandag.abm.airport;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.sandag.abm.accessibilities.AutoTazSkimsCalculator;
@@ -56,6 +58,8 @@ public class AirportModeChoiceModel
     private int								  debugPartyID;
     
     private static double 			WORST_UTILITY = -500;
+    
+    private HashSet<Integer>		airportSANPublicTransitConnectionMgraSet;
     
     /**
      * Constructor
@@ -205,6 +209,21 @@ public class AirportModeChoiceModel
         {
         	debugChoiceModel = false;
         	debugPartyID = -99;
+        }
+        
+        airportSANPublicTransitConnectionMgraSet = new HashSet<Integer>();
+     	// get the mgra id which has public transit connections
+        String airportSANPublicTransitConnectionMgraList = Util.getStringValueFromPropertyMap(rbMap, "airport.SAN.public.transit.connection.mgras");
+
+        if (airportSANPublicTransitConnectionMgraList != null)
+        {
+            StringTokenizer MgraTokenizer = new StringTokenizer(airportSANPublicTransitConnectionMgraList, ",");
+            while (MgraTokenizer.hasMoreTokens())
+            {
+                String listValue = MgraTokenizer.nextToken();
+                int idValue = Integer.parseInt(listValue.trim());
+                airportSANPublicTransitConnectionMgraSet.add(idValue);
+            }
         }
     }
 
@@ -500,6 +519,15 @@ public class AirportModeChoiceModel
             }
             
             party.setAirportAccessMGRA(airportAccessMGRA);
+            
+            boolean apHasPublicTransit = false;
+            // set access point has public transit boolean
+            for (int mgra : airportSANPublicTransitConnectionMgraSet){
+            	if (airportAccessMGRA == mgra){
+            		apHasPublicTransit = true;
+            	}
+            }
+            party.setAPHasPublicTransit(apHasPublicTransit);
         }
         
         // add debug

@@ -44,6 +44,8 @@ public class AirportParty
     private int     AP2TerminalSet = -1;
 
     private boolean avAvailable;
+    
+    private boolean APHasPublicTransit;
     /**
      * Public constructor.
      * 
@@ -373,6 +375,14 @@ public class AirportParty
 
 	public void setAP2TerminalSet(int aP2TerminalSet) {
 		AP2TerminalSet = aP2TerminalSet;
+	}
+	
+	public void setAPHasPublicTransit(boolean apHasPublicTransit) {
+		this.APHasPublicTransit = apHasPublicTransit;
+	}
+	
+	public boolean getAPHasPublicTransit() {
+		return this.APHasPublicTransit;
 	}
 
 

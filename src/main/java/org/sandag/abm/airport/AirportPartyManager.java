@@ -43,6 +43,7 @@ public class AirportPartyManager
     
     SandagModelStructure   sandagStructure;
     private String airportCode;
+    private int privateTransitMode;
     
     private float avShare;
     
@@ -62,6 +63,8 @@ public class AirportPartyManager
         this.airportCode = airportCode;
         
         this.sampleRate = sampleRate;
+        
+        this.privateTransitMode = Util.getIntegerValueFromPropertyMap(rbMap, "airport.SAN.private.transit.trip.mode.code");
 
         String directory = Util.getStringValueFromPropertyMap(rbMap, "Project.Directory");
         String purposeFile = directory
@@ -230,7 +233,7 @@ public class AirportPartyManager
         			party.setOriginMGRA((int) stallMgra);
         			party.setDestinationMGRA(airportMgra);
         			
-        			double transitToTerminalProb =  employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_transitpct_index);
+        			double transitToTerminalProb =  employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_publictransitpct_index);
         			if (party.getRandom() < transitToTerminalProb)
         			{
         				party.setMode((byte) SandagModelStructure.WALK_TRANSIT_ALTS[0]);
@@ -269,7 +272,7 @@ public class AirportPartyManager
         			party.setDestinationMGRA((int) stallMgra);
         			party.setOriginMGRA(airportMgra);
         			
-        			double transitToTerminalProb =  employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_transitpct_index);
+        			double transitToTerminalProb =  employeeParkingValuesMap.get(key).get(AirportModelStructure.employeePark_publictransitpct_index);
         			if (party.getRandom() < transitToTerminalProb)
         			{
         				party.setMode((byte) SandagModelStructure.WALK_TRANSIT_ALTS[0]);
@@ -661,7 +664,7 @@ public class AirportPartyManager
                                     + parties[i].getDepartTime() + "," + parties[i].getAirportAccessMGRA() + ","
                                     + parties[i].getDestinationMGRA() + "," 
                                     + parties[i].getOriginTAZ() + "," + parties[i].getDestinationTAZ() + ","
-                                    + SandagModelStructure.WALK_TRANSIT_ALTS[0] + ","
+                                    + (parties[i].getAPHasPublicTransit() ? SandagModelStructure.WALK_TRANSIT_ALTS[0] : privateTransitMode) + ","
                                     + (parties[i].getAvAvailable() ? 1 : 0) + ","
                                     + accMode_null + "," + parties[i].getAP2TerminalBoardTap() + "," + 
                                     + parties[i].getAP2TerminalAlightTap() + "," + parties[i].getAP2TerminalSet() + "," + 
@@ -707,7 +710,7 @@ public class AirportPartyManager
                                     + parties[i].getDepartTime() + "," + parties[i].getOriginMGRA() + ","
                                     + parties[i].getAirportAccessMGRA() + "," 
                                     + parties[i].getOriginTAZ() + "," + parties[i].getDestinationTAZ() + ","
-                                    + SandagModelStructure.WALK_TRANSIT_ALTS[0] + ","
+                                    + (parties[i].getAPHasPublicTransit() ? SandagModelStructure.WALK_TRANSIT_ALTS[0] : privateTransitMode) + ","
                                     + (parties[i].getAvAvailable() ? 1 : 0) + ","
                                     + accMode_null + "," + parties[i].getAP2TerminalBoardTap() + "," + 
                                     + parties[i].getAP2TerminalAlightTap() + "," + parties[i].getAP2TerminalSet() + "," + 
