@@ -194,5 +194,6 @@ LOGSUM_CHOOSER_COLUMNS:
   - time_factor_work
   - time_factor_nonwork
   - duration
+  - ownsTransponder
 
 MODE_CHOICE_LOGSUM_COLUMN_NAME: mode_choice_logsum

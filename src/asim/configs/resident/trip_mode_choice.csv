@@ -87,8 +87,8 @@ util_TNC Shared - Cost,TNC Shared - Cost,"@(np.maximum(costInitialSharedTNC + df
 #,School bus,,,,,,,,,,,,,,
 util_School Bus - Unavailable,School Bus - Unavailable,SCHBUS_available==0,,,,,,,,,,,,,-999
 util_School Bus - In-vehicle Time at 20 miles per hour,School Bus - In-vehicle Time at 20 miles per hour,(da_dist_skims)* 3 * time_factor,,,,,,,,,,,,,coef_ivt
-util_School Bus - Wait Time (asserted),School Bus - Wait Time (asserted),10 * c_fwt,,,,,,,,,,,,,coef_ivt
-util_School Bus - Walk Time (asserted),School Bus - Walk Time (asserted),10 * c_wacc,,,,,,,,,,,,,coef_ivt
+util_School Bus - Wait Time (asserted),School Bus - Wait Time (asserted),10 * c_fwt * time_factor,,,,,,,,,,,,,coef_ivt
+util_School Bus - Walk Time (asserted),School Bus - Walk Time (asserted),10 * c_wacc * time_factor,,,,,,,,,,,,,coef_ivt
 util_School Bus - Age 6 to 12,School Bus - Age 6 to 12,@(df.age > 5) * (df.age < 13),,,,,,,,,,,,,coef_age6to12_schb
 #,indiv tour ASCs,,,,,,,,,,,,,,
 #util_Walk_ASC_Zero_auto,Walk ASC - Zero auto,@(df.is_indiv & (df.auto_ownership == 0)),,sr2_ASC_no_auto,sr3p_ASC_no_auto,walk_ASC_no_auto,bike_ASC_no_auto,walk_transit_ASC_no_auto,drive_transit_ASC_no_auto,drive_transit_ASC_no_auto,drive_transit_ASC_no_auto,taxi_ASC_no_auto,tnc_single_ASC_no_auto,tnc_shared_ASC_no_auto,
