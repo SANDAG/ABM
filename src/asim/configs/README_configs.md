@@ -106,30 +106,30 @@ Tour and Trip Scheduling
 
 ---
 Tour mode choice
-* added coefficients to template that were missing: `cost_coef`,
+* added coefficients to template that were missing: `cost_coef`, FIXED (COT_COEF WAS NOT NEEDED, REPLACED WITH COEF_INCOME BASED CALCULATION)
 * changed expression to include the following coefficients and changed the actual coefficient to `coef_one`: `c_wacc`, `c_wegr`, `c_rel_inb`, `c_rel_oub`, `c_fwt`
   - these were causing crash because they were defined in the pre-processor, but were listed as actual coefficients
 * commented out lines in _tour_mode_choice.csv_ that were missing constants defined:
-  - `coef_hhsize`
-  - `coef_walkTime` (This one will be a little more complicated because it is derived on c_ivt, but varies by purpose.  Implementation will probably have to include it as a fixed coef in the coef files.  Using placeholder for now because without walktime, lots of tour modes were walk.)
-* there were a couple coefficients that I think were just typos.  They were used in defined in tour_mode_choice, but defined differently in coef files:
+  - `coef_hhsize` FIXED
+  - `coef_walkTime` (This one will be a little more complicated because it is derived on c_ivt, but varies by purpose.  Implementation will probably have to include it as a fixed coef in the coef files.  Using placeholder for now because without walktime, lots of tour modes were walk.) FIXED
+* there were a couple coefficients that I think were just typos.  They were used in defined in tour_mode_choice, but defined differently in coef files: FIXED (THEY WERE TYPOS!THANKS)
   - `coef_age[1624,4155,5664]p_[sr2,sr3]` instead of `coef_age[1624,4155,5664]_[sr2,sr3]`
   - `coef_age65pl_sr2` instead of `coef_age65p_sr2`
   - `coef_age65pl_sr3p` instead of `coef_age65pl_sr3`
   - `coef_age[1624,4155,5664]_sr3p` instead of `coef_age[1624,4155,5664]_sr3`
   - `coef_female_sr3p` instead of `coef_female_sr3`
 * changed nesting structure in tour_mode_choice.yaml to match UEC. Set all nesting coefs to 0.5 in coeffs file (also matches UEC). Should be double checked.
-* `coef_income` was missing.  Used to calcualte cost_coef in pre-preocessor.  Added to template and coefs files and set to arbitrary value of 0.05.  Needs to be addressed!!
+* `coef_income` was missing.  Used to calcualte cost_coef in pre-preocessor.  Added to template and coefs files and set to arbitrary value of 0.05.  Needs to be addressed!! FIXED
 * Changed parking cost to use `hparkcost`.  Expressions available for both on and off peak parking, but only one hourly parking cost is available in the landuse file, so they evaluate to the same value
   - same in trip mode choice
 * `tour_type` is not yet decided when calculating logsums, so used df.get() function and set default to 'work'.
-  - Same with `tour_category`, although default varied cause it was used in multiple places
-* Added `coef_income` to _tour_mode_choice_coefficients.csv_ and set to arbitrary value of 0.5 and fixed to true
+  - Same with `tour_category`, although default varied cause it was used in multiple places (GOOD TO KNOW)
+* Added `coef_income` to _tour_mode_choice_coefficients.csv_ and set to arbitrary value of 0.5 and fixed to true FIXED
 * Copied `cost_share_[s2,s3]`, `vot_threshold_[low,med], maz_walk_time` from xborder model to tour_mode_choice.yaml.  Should these be moved to (common) constants?
 * `df.transponderOwnership` is not recognized in the preprocessor since there is no Transponder model yet implemented.  Setting `ownsTransponder` to 1 for now.
   - same in trip mode choice
 * `walk_time_skims_[out,in]` need to use the walktime skims, but we don't have that. Putting placeholder in for now based on `SOV_TR_L_DIST * 3 / 60`
-* `milestocoast` was not defined, replaced with arbitrary value of 5
+* `milestocoast` was not defined, replaced with arbitrary value of 5, TBD: CANNOT FIND THE VALUE OF THIS VARIABLE ANYWHERE MYSELF
   - applied in trip mode choice too
 * All of the bike logsums and availability stuff is not defined. commenting out for now.
 * None of the AV related constants are defined.  Commenting them out in prepreocessor for now or adding placeholders where unavoidable
@@ -139,7 +139,7 @@ Tour mode choice
 * Double check units for parking costs in landuse
 * origin and destination terminal times (`oTermTime, dTermTime`) are not included in landuse data, setting to 0 as placeholder until it can be joined
 * Had to restructure calculation of `parkingCostBeforeReimb` in preprocessor. check to make it is still consistent with UEC
-* double check `walkAvailable` function is correct in preprocessor
+* double check `walkAvailable` function is correct in preprocessor, I THINK IT IS RIGHT
 * `[WLK,PNR,KNR]_available` conditions need to call the TVPB logsums correctly. They are all turned on as a placeholder
   - large logsum values in the utility expression should make these roughly irrelevant
 * `DTW` path is being used for PNR, KNR, and TNC.  maz to taz drive times only include taps connected to parking lots, meaning knr and tnc are restricted to only these taps
@@ -150,14 +150,14 @@ Tour mode choice
   - Since the columns were just copied and all of the coefficient names remain the same, the utility calculated for each of the maint purposes will be the same (and similarly for disc).
   - Since thing was applied in trip mode choice
   - Note that this has implications when performing estimation
-* `coef_cost_out` (not defined) was replaced with `coef_cost` in the MAAS utility calculations. Is this correct?
+* `coef_cost_out` (not defined) was replaced with `coef_cost` in the MAAS utility calculations. Is this correct? FIXED
 * Made some changes to bike logsum calculations
   - Old version had different logsums for male and female. Input data only has one logsum.  Removed segmentation by gender.
   - Bike logsums were separated by inbound and outbound.  Since they don't vary by time of day, and if the path is the same, shouldn't the inbound bike logsum = outbound bike logsum?
      - This change was made because it is easy to access _od_skims_, but no _do_skims_ object exists (only _dot_skims_)
      - The logsum matrix is not symmetric about the diagonal, so this assumption doesn't really hold....
   - Bike is available when the sum of inbound and outbound logsums < -999
-  - Bike time is not being used. bike time coefficient is calculated in pre-processor, but is not used anywhere...
+  - Bike time is not being used. bike time coefficient is calculated in pre-processor, but is not used anywhere... MANY VARIABLE ARE DEFINED BUT NOT USED IN abm2+, AND THIS IS ONE. 
   - Same in trip mode choice except there's no inbound / outbound distinction
 
 ---
