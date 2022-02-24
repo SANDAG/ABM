@@ -22,20 +22,23 @@ nonstudent_to_school,nonstudent_to_school,"(persons.ptype.isin([PTYPE_FULL, PTYP
 ,pstudent,"pstudent.where(persons.ptype!=PTYPE_FULL, PSTUDENT_NOT)"
 #,, FIXME if student category is non-student and employment is student then reset student category value to student
 ,pstudent,"pstudent.where((persons.ptype!=PTYPE_DRIVING) & (persons.ptype!=PTYPE_SCHOOL), PSTUDENT_GRADE_OR_HIGH)"
+#,pstudent,"pstudent.where(persons.ptype!=PTYPE_PRESCHOOL,  PSTUDENT_GRADE_OR_HIGH)"
 #,,
 is_student,is_student,"pstudent.isin([PSTUDENT_GRADE_OR_HIGH, PSTUDENT_UNIVERSITY])"
 preschool age can go to preschool,is_student,"is_student.where(persons.age > GRADE_SCHOOL_MIN_AGE, True)"
 preschool age can go to preschool,pstudent,"pstudent.where(persons.age > GRADE_SCHOOL_MIN_AGE, PSTUDENT_GRADE_OR_HIGH)"
-is_gradeschool,is_gradeschool,(pstudent == PSTUDENT_GRADE_OR_HIGH) & (persons.age <= GRADE_SCHOOL_MAX_AGE)
+is_preschool,is_preschool,(pstudent == PSTUDENT_GRADE_OR_HIGH) & (persons.age <= GRADE_SCHOOL_MIN_AGE)
+is_gradeschool,is_gradeschool,(pstudent == PSTUDENT_GRADE_OR_HIGH) & (persons.age <= GRADE_SCHOOL_MAX_AGE) & (persons.age > GRADE_SCHOOL_MIN_AGE)
 is_highschool,is_highschool,(pstudent == PSTUDENT_GRADE_OR_HIGH) & (persons.age > GRADE_SCHOOL_MAX_AGE)
 is_university,is_university,pstudent == PSTUDENT_UNIVERSITY
-school_segment gradeschool,school_segment,"np.where(is_gradeschool, SCHOOL_SEGMENT_GRADE, SCHOOL_SEGMENT_NONE)"
+school_segment preschool,school_segment,"np.where(is_preschool, SCHOOL_SEGMENT_PREK, SCHOOL_SEGMENT_NONE)"
+school_segment gradeschool,school_segment,"np.where(is_gradeschool, SCHOOL_SEGMENT_GRADE, school_segment)"
 school_segment highschool,school_segment,"np.where(is_highschool, SCHOOL_SEGMENT_HIGH, school_segment)"
 school_segment university,school_segment,"np.where(is_university, SCHOOL_SEGMENT_UNIV, school_segment).astype(np.int8)"
 #,,
 is_worker,is_worker,"persons.pemploy.isin([PEMPLOY_FULL, PEMPLOY_PART])"
-is_fulltime_worker,is_fulltime_worker,"persons.pemploy == 1"
-is_parttime_worker,is_parttime_worker,"persons.pemploy == 2"
+is_fulltime_worker,is_fulltime_worker,persons.pemploy == 1
+is_parttime_worker,is_parttime_worker,persons.pemploy == 2
 #,,
 home_zone_id,home_zone_id,"reindex(households.home_zone_id, persons.household_id)"
 #,,

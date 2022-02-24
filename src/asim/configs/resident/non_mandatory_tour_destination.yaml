@@ -28,6 +28,13 @@ SIMULATE_CHOOSER_COLUMNS:
   - tour_type
   - home_zone_id
   - person_id
+  - female
+  - income
+  - income_segment
+  - age
+  - tour_type_count
+  - tour_type_num
+
 
 LOGSUM_SETTINGS: tour_mode_choice.yaml
 

@@ -1,8 +1,19 @@
-Description,Expression,escort,escortkids,escortnokids,shopping,eatout,othmaint,social,othdiscr
-"Distance, piecewise linear from 0 to 1 miles","@skims['DIST'].clip(0,1)",coef_escort_dist_0_2,coef_escort_dist_0_2,coef_escort_dist_0_2,0,coef_eatout_dist_0_2,0,coef_eatout_dist_0_2,coef_othdiscr_dist_0_2
-"Distance, piecewise linear from 1 to 2 miles","@(skims['DIST']-1).clip(0,1)",coef_escort_dist_0_2,coef_escort_dist_0_2,coef_escort_dist_0_2,0,coef_eatout_dist_0_2,0,coef_eatout_dist_0_2,coef_othdiscr_dist_0_2
-"Distance, piecewise linear from 2 to 5 miles","@(skims['DIST']-2).clip(0,3)",coef_escort_dist_2_5,coef_escort_dist_2_5,coef_escort_dist_2_5,coef_shopping_dist_2_5,coef_eatout_dist_2_5,coef_othmaint_dist_2_5,coef_social_dist_2_5,coef_othdiscr_dist_2_5
-"Distance, piecewise linear from 5 to 15 miles","@(skims['DIST']-5).clip(0,10)",coef_escort_dist_5_plus,coef_escort_dist_5_plus,coef_escort_dist_5_plus,coef_shopping_dist_5_plus,coef_eatout_dist_5_plus,coef_othmaint_dist_5_plus,coef_social_dist_5_plus,coef_othdiscr_dist_5_plus
-"Distance, piecewise linear for 15+ miles",@(skims['DIST']-15.0).clip(0),coef_escort_dist_5_plus,coef_escort_dist_5_plus,coef_escort_dist_5_plus,coef_shopping_dist_5_plus,coef_eatout_dist_5_plus,coef_othmaint_dist_5_plus,coef_social_dist_5_plus,coef_othdiscr_dist_5_plus
-Size variable,@df['size_term'].apply(np.log1p),1,1,1,1,1,1,1,1
-No attractions,@df['size_term']==0,-999,-999,-999,-999,-999,-999,-999,-999
+Description,Expression,escort,shopping,eatout,othmaint,social,othdiscr
+,_DIST@skims['DIST'],1,1,1,1,1,1
+Distance,"@_DIST.clip(0,20)",coef_dist_escort,coef_dist_shopping,coef_dist_eatout,coef_dist_maint,coef_dist_social,coef_dist_discr
+Distance_squared,"@_DIST.clip(0,20)**2",coef_distsqrd_escort,coef_distsqrd_shopping,coef_distsqrd_eatout,coef_distsqrd_maint,coef_distsqrd_social,coef_distsqrd_discr
+Distance_cubed,"@_DIST.clip(0,20)**3",coef_zero,coef_distcubed_shopping,coef_distcubed_eatout,coef_zero,coef_distcubed_social,coef_distcubed_discr
+Distance_logged,"@np.log(_DIST.clip(0,20) + 0.001)",coef_zero,coef_distlogged_shopping,coef_distlogged_eatout,coef_zero,coef_distlogged_social,coef_distlogged_discr
+Distance_female,"@_DIST.clip(0,20) * df.female * np.where(df.get('tour_category', default=False) == 'joint', 0, 1)",coef_zero,coef_distfemale_shopping,coef_zero,coef_zero,coef_zero,coef_distfemale_disc
+Distance - low income_segment_escort,"@_DIST.clip(0,20) * (df.income < 30000)",coef_distlowinc_escort,coef_zero,coef_zero,coef_zero,coef_zero,coef_zero
+Distance - low income_segment_maint,"@_DIST.clip(0,20) * (df.income_segment <= 2)",coef_zero,coef_zero,coef_zero,coef_distlowinc_maint,coef_distlowinc_social,coef_zero
+Distance - lowmed income_segment_maint,"@_DIST.clip(0,20) * (df.income_segment <= 3)",coef_zero,coef_zero,coef_zero,coef_zero,coef_distmidlowinc_social,coef_zero
+#Distance - Time Pressure calculated as the log of the maxtime over tours left,"@_DIST.clip(0,20) * np.log((df.maxWindow/df.toursLeft)+0.0001)",coef_zero,coef_disttimepressure_shopping,coef_disttimepressure_eatout,coef_disttimepressure_maint,coef_zero,coef_disttimepressure_disc
+#Accessibility,@@nonMandatoryAccessibilityAlt,coef_zero,coef_accessibility_shopping,coef_zero,coef_zero,coef_zero,coef_zero
+Distance - age 16 to 24,"@_DIST.clip(0,20) * df.age.between(16, 24) * np.where(df.get('tour_category', default=False) == 'joint', 0, 1)",coef_zero,coef_zero,coef_zero,coef_distage1624_maint,coef_zero,coef_zero
+Distance - age 56 to 64,"@_DIST.clip(0,20) * (df.age.between(56, 64))",coef_distage5664_escort,coef_zero,coef_zero,coef_zero,coef_zero,coef_zero
+Distance - age 65+,"@_DIST.clip(0,20) * (df.age > 64)",coef_distage64plus_escort,coef_zero,coef_zero,coef_zero,coef_zero,coef_zero
+#escort size is zero for escort tour,@(@@householdsDestAlt * 1 + df.num_young_children * @@householdsDestAlt * 1 + df.num_gradeschool * @@gradeSchoolEnrollmentDestAlt * 100 + df.numHighSchoolStudents * @@highSchoolEnrollmentDestAlt * 100) == 0,-999,coef_zero,coef_zero,coef_zero,coef_zero,coef_zero
+#escort size is non-zero for escort tour,"@np.where(@@householdsDestAlt * 1 + df.num_young_children * @@householdsDestAlt * 1 + df.num_gradeschool * @@gradeSchoolEnrollmentDestAlt * 100 + df.numHighSchoolStudents * @@highSchoolEnrollmentDestAlt * 100 > 0, np.log(@@householdsDestAlt * 1 + df.num_y",1,coef_zero,coef_zero,coef_zero,coef_zero,coef_zero
+Size variable,@df['size_term'].apply(np.log1p),coef_zero,1,1,1,1,1
+No attractions,@df['size_term']==0,coef_zero,-999,-999,-999,-999,-999

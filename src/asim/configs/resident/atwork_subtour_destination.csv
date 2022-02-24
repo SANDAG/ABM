@@ -1,10 +1,23 @@
 Label,Description,Expression,atwork
-util_distance_piecewise_linear_from_0_to_1_miles,"Distance, piecewise linear from 0 to 1 miles","@skims['DIST'].clip(0,1)",coef_distance_piecewise_linear_from_0_to_1_miles
-util_distance_piecewise_linear_from_1_to_2_miles,"Distance, piecewise linear from 1 to 2 miles","@(skims['DIST']-1).clip(0,1)",coef_distance_piecewise_linear_from_1_to_2_miles
-util_distance_piecewise_linear_from_2_to_5_miles,"Distance, piecewise linear from 2 to 5 miles","@(skims['DIST']-2).clip(0,3)",coef_distance_piecewise_linear_from_2_to_5_miles
-util_distance_piecewise_linear_from_5_to_15_miles,"Distance, piecewise linear from 5 to 15 miles","@(skims['DIST']-5).clip(0,10)",coef_distance_piecewise_linear_from_5_to_15_miles
-util_distance_piecewise_linear_for_15_plus_miles,"Distance, piecewise linear for 15+ miles",@(skims['DIST']-15.0).clip(0),coef_distance_piecewise_linear_for_15_plus_miles
-util_size_variable_atwork,atwork size_term variable,"@df['size_term'].apply(np.log1p)",coef_size_variable_atwork
-util_no_attractions_atwork_size_variable_is_0,"No attractions, atwork size_term variable is 0",size_term==0,coef_no_attractions_atwork_size_variable_is_0
+,,_DIST@skims['DIST'],1
+util_Distance,Distance,"@_DIST.clip(0,20)",coef_dist_atwork
+util_Distance_squared,Distance_squared,"@_DIST.clip(0,20)**2",coef_distsqrd_atwork
+util_Distance_fulltime_worker,Distance_fulltime_worker,"@_DIST.clip(0,20) * (df.ptype==1)",coef_dist_ftworker_atwork
+util_Size_variable,Size_variable,@df['size_term'].apply(np.log1p),1
+util_No_attractions,No_attractions,@df['size_term']==0,-999
 util_mode_choice_logsum,Mode choice logsum,mode_choice_logsum,coef_mode_choice_logsum
-util_sample_of_alternatives_correction_factor,Sample of alternatives correction factor,"@np.minimum(np.log(df.pick_count/df.prob), 60)",coef_sample_of_alternatives_correction_factor
+#,,,
+util_Calibration_Distance,Calibration_Distance,"@np.minimum(_DIST, 20)",coef_Calibration_Distance_atwork
+util_Calibration_Distance_squared,Calibration_Distance_squared,"@np.minimum(_DIST**2, 20**2)",coef_Calibration_Distance_squared_atwork
+util_Calibration_Distance_cubed,Calibration_Distance_cubed,"@np.minimum(_DIST**3, 20**3)",coef_Calibration_Distance_cubed_atwork
+util_Calibration_Distance_logged,Calibration_Distance_logged,"@np.minimum(np.log(_DIST+0.001), np.log(20))",coef_Calibration_Distance_logged_atwork
+util_ABM2_calibration_distance,ABM2_calibration_distance,"@_DIST.clip(0,20)",coef_ABM2_calibration_distance_atwork
+util_ABM2_calibration_distance_squared,ABM2_calibration_distance_squared,"@_DIST.clip(0,20)**2",coef_ABM2_calibration_distance_squared_atwork
+util_ABM2_calibration_distance_cubed,ABM2_calibration_distance_cubed,"@_DIST.clip(0,20)**3",coef_ABM2_calibration_distance_cubed_atwork
+util_ABM2_calibration_distance_logged,ABM2_calibration_distance_logged,"@np.minimum(np.log(_DIST+0.001), np.log(20))",coef_ABM2_calibration_distance_logged_atwork
+util_ABM2_calibration_0_1_miles,ABM2_calibration_0_1_miles,@(_DIST < 1),coef_ABM2_calibration_0_1_miles_atwork
+util_ABM2_calibration_1_2_miles,ABM2_calibration_1_2_miles,@(_DIST < 2) * (_DIST >= 1),coef_ABM2_calibration_1_2_miles_atwork
+util_ABM2_calibration_2_3_miles,ABM2_calibration_2_3_miles,@(_DIST < 3) * (_DIST >= 2),coef_ABM2_calibration_2_3_miles_atwork
+util_ABM2_calibration_3_4_miles,ABM2_calibration_3_4_miles,@(_DIST < 4) * (_DIST >= 3),coef_ABM2_calibration_3_4_miles_atwork
+util_ABM2_calibration_4_5_miles,ABM2_calibration_4_5_miles,@(_DIST < 5) * (_DIST >= 4),coef_ABM2_calibration_4_5_miles_atwork
+util_ABM2_calibration_0_8_miles,ABM2_calibration_0_8_miles,@(_DIST < 8) * _DIST,coef_ABM2_calibration_0_8_miles_atwork

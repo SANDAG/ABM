@@ -16,6 +16,7 @@ SIMULATE_CHOOSER_COLUMNS:
   - person_id
   - income_segment
   - workplace_zone_id
+  - ptype
 
 LOGSUM_SETTINGS: tour_mode_choice.yaml
 

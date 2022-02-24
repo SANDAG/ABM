@@ -1,12 +1,15 @@
 Label,Description,Expression,coefficient
 local_dist,,_DIST@skims['DIST'],1
-util_dist_0_1,"Distance, piecewise linear from 0 to 1 miles","@_DIST.clip(0,1)",coef_dist_0_1
-util_dist_1_2,"Distance, piecewise linear from 1 to 2 miles","@(_DIST-1).clip(0,1)",coef_dist_1_2
-util_dist_2_5,"Distance, piecewise linear from 2 to 5 miles","@(_DIST-2).clip(0,3)",coef_dist_2_5
-util_dist_5_15,"Distance, piecewise linear from 5 to 15 miles","@(_DIST-5).clip(0,10)",coef_dist_5_15
-util_dist_15_up,"Distance, piecewise linear for 15+ miles",@(_DIST-15.0).clip(0),coef_dist_15_up
-util_dist_0_5_high,"Distance 0 to 5 mi, high and very high income",@(df['income_segment']>=WORK_HIGH_SEGMENT_ID) * _DIST.clip(upper=5),coef_dist_0_5_high
-util_dist_15_up_high,"Distance 5+ mi, high and very high income",@(df['income_segment']>=WORK_HIGH_SEGMENT_ID) * (_DIST-5).clip(0),coef_dist_5_up_high
-util_size_variable,Size variable,@(df['size_term'] * df['shadow_price_size_term_adjustment']).apply(np.log1p),1
-util_utility_adjustment,utility adjustment,@df['shadow_price_utility_adjustment'],1
-util_no_attractions,No attractions,@df['size_term']==0,-999
+#,,,
+util_dist,Distance,@_DIST,coef_dist
+util_dist_sqrt,Square root of distance,@_DIST**0.5,coef_dist_sqrt
+util_dist_sqrd,Distance squared,@_DIST**2,coef_dist_sqrd
+util_dist_cubed,Distance cubed,@_DIST**3,coef_dist_cubed
+util_dist_lowincome,Distance - low income,@_DIST * (df.income<=2),coef_dist_lowincme
+util_dist_sqrt_lowincome,Distance sqrt - low income,@(_DIST**0.5) * (df.income<=2),coef_dist_sqrt_lowincme
+util_dist_sqrd_lowincome,Distance squared - low income,@(_DIST**2) * (df.income<=2),coef_dist_sqrd__lowincme
+util_dist_highincome,Distance - high income,@_DIST * (df.income>=4),coef_dist_highincme
+util_dist_sqrd_highincome,Distance squared - high income,@(_DIST**2) * (df.income>=4),coef_dist_sqrd_highincme
+util_dist_pt,Distance - parttime worker,@_DIST * (df.ptype==2),coef_dist_ptworker
+util_dist_sqrd_pt,Distance squared - parttime worker,@(_DIST**2) * (df.ptype==2),coef_dist_sqrd_ptworker
+util_dist_femaleworker,Distance - female worker,@_DIST * (df.ptype<3) * (df.female==1),coef_dist_femaleworker
