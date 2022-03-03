@@ -390,7 +390,7 @@ class MasterRun(props_utils.PropertiesSetter, _m.Tool(), gen_utils.Snapshot):
                     self.run_proc("runSandagWalkLogsums.cmd", [drive, path_forward_slash],
                                   "Walk - create AT logsums and impedances")
                 if not skipCopyWalkImpedance:
-                    self.copy_files(["walkMgraEquivMinutes.csv", "walkMgraTapEquivMinutes.csv"],
+                    self.copy_files(["walkMgraEquivMinutes.csv", "walkMgraTapEquivMinutes.csv", "microMgraEquivMinutes.csv", "microMgraTapEquivMinutes.csv"],
                                     input_dir, output_dir)
 
                 if not skip4Ds:

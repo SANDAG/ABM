@@ -217,7 +217,7 @@ class CreateScenarioGUI(Tkinter.Frame):
                 )
             elif type=="study":
                 commandstr=u"copy_networkfiles_to_study.cmd "+self.studypath.get()+" "+self.studynetworkpath.get()
-            print commandstr
+            print (commandstr)
             os.chdir(self.releaseDir+"\\"+self.version+'\\')
             os.system(commandstr)
             self.popup=Tkinter.Tk()
