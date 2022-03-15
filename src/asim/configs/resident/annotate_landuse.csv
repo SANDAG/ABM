@@ -1,6 +1,6 @@
 Description,Target,Expression
 #,, annotate landuse table after import
-household_density,household_density,land_use.hh / land_use.acres
-employment_density,employment_density,land_use.emp_total / land_use.acres
+household_density,household_density,land_use.hh / land_use.acres.clip(lower=1)
+employment_density,employment_density,land_use.emp_total / land_use.acres.clip(lower=1)
 density_index,density_index,(household_density *employment_density) / (household_density + employment_density).clip(lower=1)
 ,is_cbd,land_use.pseudomsa == 1
