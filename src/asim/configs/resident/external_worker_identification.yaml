@@ -1,0 +1,15 @@
+
+SPEC: external_worker_identification.csv
+COEFFICIENTS: external_worker_identification_coeffs.csv
+
+#LOGIT_TYPE: NL
+LOGIT_TYPE: MNL
+
+# boolean column to filter choosers (True means keep)
+# will only expose these people to the model
+CHOOSER_FILTER_COLUMN_NAME: is_worker
+
+# Adds this column to the persons table and is set to True if workplace is external
+EXTERNAL_COL_NAME: is_external_worker
+# set to True if not external but CHOOSER_FILTER_COLUMN_NAME is True
+INTERNAL_COL_NAME: is_internal_worker
