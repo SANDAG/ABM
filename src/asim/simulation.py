@@ -7,7 +7,7 @@ import os
 
 from activitysim.cli.run import add_run_args, run
 
-#import extensions
+import extensions
 
 if __name__ == '__main__':
 
